@@ -68,11 +68,11 @@
 </div>
 <div class="row text-center">
 	<div class="add-margin">
-		<button type="submit" class="btn btn-default print" id="printBtn" onclick="printDiv('main')"><spring:message code="lbl.print" /></button>
+		<button type="submit" class="btn btn-primary print" id="printBtn" onclick="printDiv('main')"><spring:message code="lbl.print" /></button>
 		<c:choose>
 			<c:when test="${sewerageApplicationDetails.connection.status == 'ACTIVE' }">
+				<button type="button" class="btn btn-primary" id="viewDCB" ><spring:message code="lbl.view.dcb" /></button>
 				<a href="javascript:void(0)" class="btn btn-default inboxload" onclick="self.close()" ><spring:message code="lbl.close" /></a>
-				<button type="button" class="btn btn-default" id="viewDCB" ><spring:message code="lbl.view.dcb" /></button>
 			</c:when>
 			<c:otherwise>
 				<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
@@ -81,13 +81,16 @@
 	</div>
 </div>
 <script src="<cdn:url  value='/resources/js/search/connectionsearch.js?rnd=${app_release_no}'/>"></script>
-<script type="text/javascript">  
+<script type="text/javascript">
+	function printDiv(divName) {
+		var printContents = document.getElementById(divName).innerHTML;
+		var originalContents = document.body.innerHTML;
+		document.body.innerHTML = printContents;
+		window.print();
+		document.body.innerHTML = originalContents;
+	}
 
-function printDiv(divName) {
-    var printContents = document.getElementById(divName).innerHTML;
-    var originalContents = document.body.innerHTML;
-    document.body.innerHTML = printContents;
-    window.print();
-    document.body.innerHTML = originalContents;
-}
+	window.onafterprint = function() {
+		window.location.reload(true);
+	}
 </script>

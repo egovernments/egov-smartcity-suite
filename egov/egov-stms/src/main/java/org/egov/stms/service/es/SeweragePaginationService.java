@@ -48,9 +48,19 @@
 
 package org.egov.stms.service.es;
 
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_COLLECTINSPECTIONFEE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_SANCTIONED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.COLLECTDONATIONCHARHGES;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.MODIFYLEGACYCONNECTION;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.utils.DateUtils;
-import org.egov.stms.elasticsearch.entity.SewerageCollectFeeSearchRequest;
 import org.egov.stms.elasticsearch.entity.SewerageConnSearchRequest;
 import org.egov.stms.elasticsearch.entity.SewerageNoticeSearchRequest;
 import org.egov.stms.elasticsearch.entity.SewerageSearchResult;
@@ -70,17 +80,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_COLLECTINSPECTIONFEE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_SANCTIONED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.COLLECTDONATIONCHARHGES;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.MODIFYLEGACYCONNECTION;
-
 @Service
 @Transactional(readOnly = true)
 public class SeweragePaginationService {
@@ -98,7 +97,7 @@ public class SeweragePaginationService {
             List<SewerageSearchResult> searchResultFomatted) {
         final Map<String, String> actionMap = new HashMap<>();
         final List<String> roleList = new ArrayList<>();
-        final BoolQueryBuilder boolQuery = sewerageIndexService.getQueryFilter(searchRequest);
+        final BoolQueryBuilder boolQuery = sewerageIndexService.getActiveApplications(searchRequest);
         for (final Role userRole : sewerageTaxUtils.getLoginUserRoles())
             roleList.add(userRole.getName());
         SewerageApplicationDetails sewerageApplicationDetails = null;
@@ -115,7 +114,7 @@ public class SeweragePaginationService {
                 searchActions = SewerageActionDropDownUtil.getSearchResultWithActions(roleList,
                         sewerageIndexObject.getApplicationStatus(),
                         sewerageApplicationDetails);
-            if (searchActions != null && searchActions.getActions() != null)
+            if (searchActions != null && !searchActions.getActions().isEmpty())
                 getActions(searchActions, actionMap, searchRequest);
             searchResultObject.setActions(actionMap);
             searchResultFomatted.add(searchResultObject);
@@ -126,6 +125,7 @@ public class SeweragePaginationService {
 
     private void buildSearchResult(final SewerageIndex sewerageIndexObject, final SewerageSearchResult searchResultObject) {
         searchResultObject.setApplicationNumber(sewerageIndexObject.getApplicationNumber());
+        searchResultObject.setApplicationDate(DateUtils.toDefaultDateFormat(sewerageIndexObject.getApplicationDate()));
         searchResultObject.setAssessmentNumber(sewerageIndexObject.getPropertyIdentifier());
         searchResultObject.setShscNumber(sewerageIndexObject.getShscNumber());
         searchResultObject.setApplicantName(sewerageIndexObject.getConsumerName());
@@ -146,9 +146,9 @@ public class SeweragePaginationService {
 
     }
 
-    public Page<SewerageIndex> sewerageCollectSearchObj(final SewerageCollectFeeSearchRequest searchRequest,
+    public Page<SewerageIndex> searchSewerageApplnsHasCollectionPending(final SewerageConnSearchRequest searchRequest,
             final List<SewerageSearchResult> searchResultList, final List<String> roleList, final Map<String, String> actionMap) {
-        final BoolQueryBuilder boolQuery = sewerageIndexService.getSearchQueryFilter(searchRequest);
+        final BoolQueryBuilder boolQuery = sewerageIndexService.searchQueryFilterHasCollectionPending(searchRequest);
         final FieldSortBuilder sort = new FieldSortBuilder(SHSC_NUMBER).order(SortOrder.DESC);
         SewerageApplicationDetails sewerageApplicationDetails = null;
         Page<SewerageIndex> resultList = sewerageIndexService.getCollectSearchResult(boolQuery, sort, searchRequest);
@@ -162,6 +162,7 @@ public class SeweragePaginationService {
                 roleList.add(role.getName());
             if (sewerageApplicationDetails != null
                     && (APPLICATION_STATUS_COLLECTINSPECTIONFEE.equals(sewerageApplicationDetails.getStatus().getCode()) ||
+                            "FEECOLLECTIONPENDING".equals(sewerageApplicationDetails.getStatus().getCode()) ||
                             APPLICATION_STATUS_ESTIMATENOTICEGEN.equals(sewerageApplicationDetails.getStatus().getCode()) ||
                             APPLICATION_STATUS_SANCTIONED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
                                     && sewerageApplicationDetails.getCurrentDemand() != null)) {
@@ -214,7 +215,7 @@ public class SeweragePaginationService {
 
     public Page<SewerageIndex> buildPaymentSearch(final SewerageConnSearchRequest sewerageConnSearchRequest,
             final List<SewerageSearchResult> searchResultList) {
-        final BoolQueryBuilder boolQuery = sewerageIndexService.getQueryFilter(sewerageConnSearchRequest);
+        final BoolQueryBuilder boolQuery = sewerageIndexService.getActiveApplications(sewerageConnSearchRequest);
         final FieldSortBuilder sort = new FieldSortBuilder(SHSC_NUMBER).order(SortOrder.DESC);
         Page<SewerageIndex> resultList = sewerageIndexService.getOnlinePaymentSearchResult(boolQuery, sort,
                 sewerageConnSearchRequest);

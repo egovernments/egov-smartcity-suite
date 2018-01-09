@@ -61,6 +61,7 @@ public class SewerageSearchResult {
     private String address;
     private String applicationStatus;
     private String applicantName;
+    private String applicationDate;
     private String doorNumber;
     private String noticeNumber;
     private String noticeDate;
@@ -176,6 +177,14 @@ public class SewerageSearchResult {
 
     public void setNoticeDate(String noticeDate) {
         this.noticeDate = noticeDate;
+    }
+
+    public String getApplicationDate() {
+        return applicationDate;
+    }
+
+    public void setApplicationDate(String applicationDate) {
+        this.applicationDate = applicationDate;
     }
 
 }

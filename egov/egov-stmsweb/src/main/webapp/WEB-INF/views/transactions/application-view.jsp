@@ -78,24 +78,24 @@
 <div class="row text-center">
 	<div class="add-margin">
 	<c:if test="${sewerageApplicationDetails.status.code == 'ESTIMATIONNOTICEGENERATED' && sewerageApplicationDetails.status.code != 'VERIFIED'  && (checkOperator ) }">
-		<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.collect.fees"/></button>
+		<button type="submit" class="btn btn-primary btnWorkflow" id="payBtn"><spring:message code="lbl.collect.fees"/></button>
 	</c:if>
 	
 	<c:if test="${sewerageApplicationDetails.status.code == 'ESTIMATIONNOTICEGENERATED' && ( citizenRole && !checkOperator) }">
-		<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.online"/></button>
+		<button type="submit" class="btn btn-primary btnWorkflow" id="payBtn"><spring:message code="lbl.pay.online"/></button>
 	</c:if>
 	<c:if test="${sewerageApplicationDetails.status.code == 'SANCTIONED' && checkOperator && sewerageTaxDueforParent > 0}">
-		<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button>
+		<button type="submit" class="btn btn-primary btnWorkflow" id="payBtn"><spring:message code="lbl.pay.tax"/></button>
 	</c:if>
 	<c:if test="${sewerageApplicationDetails.status.code != 'ESTIMATIONNOTICEGENERATED' && sewerageTaxDueforParent > 0 && (citizenRole && !checkOperator) }">
-		<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.online"/></button>
+		<button type="submit" class="btn btn-primary btnWorkflow" id="payBtn"><spring:message code="lbl.pay.online"/></button>
 	</c:if>
 	<c:if test="${sewerageApplicationDetails.status.code != 'CREATED' && sewerageApplicationDetails.status.code != 'VERIFIED' && sewerageApplicationDetails.status.code != 'APPROVED'
 	&& sewerageApplicationDetails.status.code != 'CANCELLED' && sewerageApplicationDetails.fieldInspections.fieldInspectionDetails != null && !citizenRole}">
-		<button type="submit" class="btn btn-primary" id="viewEstimationNotice"><spring:message code="lbl.printestimationnotice"/></button>
+		<button type="submit" class="btn btn-primary btnWorkflow" id="viewEstimationNotice"><spring:message code="lbl.printestimationnotice"/></button>
 	</c:if>
 	<c:if test="${!citizenRole && (sewerageApplicationDetails.status.code == 'APPROVED' || sewerageApplicationDetails.status.code == 'WORKORDERGENERATED')}">
-		<button type="submit" class="btn btn-primary" id="viewWorkOrder"><spring:message code="lb.printworkorder"/></button>
+		<button type="submit" class="btn btn-primary btnWorkflow" id="viewWorkOrder"><spring:message code="lb.printworkorder"/></button>
 	</c:if>
 	
 		<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>

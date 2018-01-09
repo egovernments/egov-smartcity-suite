@@ -48,7 +48,46 @@
 
 package org.egov.stms.service.es;
 
-import org.apache.commons.lang.StringUtils;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
+import static org.egov.infra.utils.DateUtils.endOfGivenDate;
+import static org.egov.infra.utils.DateUtils.startOfGivenDate;
+import static org.egov.infra.utils.DateUtils.toDateTimeUsingDefaultPattern;
+import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_COLLECTINSPECTIONFEE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_FINAL_APPROVED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_SANCTIONED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_TYPE_NAME_CHANGEINCLOSETS;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_TYPE_NAME_CLOSECONNECTION;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_TYPE_NAME_NEWCONNECTION;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.CLOSESEWERAGECONNECTION;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_DONATIONCHARGE_CODE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_ESTIMATIONCHARGES_CODE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_SEWERAGETAX_CODE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.FEE_INSPECTIONCHARGE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.GROUPBYFIELD;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.MODULETYPE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.MODULE_NAME;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.NOTICE_CLOSE_CONNECTION;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.NOTICE_ESTIMATION;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.NOTICE_REJECTION;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.NOTICE_WORK_ORDER;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_ESTIMATIONNOTICE_GENERATED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_DESC_CTZN_FEE_PENDING;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.egov.collection.entity.es.CollectionDocument;
 import org.egov.collection.repository.es.CollectionDocumentRepository;
 import org.egov.commons.dao.InstallmentDao;
@@ -62,7 +101,6 @@ import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.stms.elasticsearch.entity.DailySTCollectionReportSearch;
 import org.egov.stms.elasticsearch.entity.SewerageBulkExecutionResponse;
-import org.egov.stms.elasticsearch.entity.SewerageCollectFeeSearchRequest;
 import org.egov.stms.elasticsearch.entity.SewerageConnSearchRequest;
 import org.egov.stms.elasticsearch.entity.SewerageExecutionResult;
 import org.egov.stms.elasticsearch.entity.SewerageNoticeSearchRequest;
@@ -78,7 +116,6 @@ import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
 import org.egov.stms.transactions.service.SewerageDCBReporService;
 import org.egov.stms.transactions.service.SewerageDemandService;
 import org.egov.stms.utils.SewerageTaxUtils;
-import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -103,37 +140,6 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
-import static org.egov.infra.utils.DateUtils.endOfGivenDate;
-import static org.egov.infra.utils.DateUtils.startOfGivenDate;
-import static org.egov.infra.utils.DateUtils.toDateTimeUsingDefaultPattern;
-import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_FINAL_APPROVED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_SANCTIONED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_TYPE_NAME_CHANGEINCLOSETS;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_TYPE_NAME_CLOSECONNECTION;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_TYPE_NAME_NEWCONNECTION;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.CLOSESEWERAGECONNECTION;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_DONATIONCHARGE_CODE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_ESTIMATIONCHARGES_CODE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_SEWERAGETAX_CODE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.FEE_INSPECTIONCHARGE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.GROUPBYFIELD;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.MODULETYPE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.MODULE_NAME;
 
 @Service
 @Transactional(readOnly = true)
@@ -197,7 +203,7 @@ public class SewerageIndexService {
         sewarageIndex.setApplicationDate(sewerageApplicationDetails.getApplicationDate());
         sewarageIndex.setApplicationNumber(sewerageApplicationDetails.getApplicationNumber());
         sewarageIndex.setApplicationStatus(sewerageApplicationDetails.getStatus() != null
-                ? sewerageApplicationDetails.getStatus().getDescription() :EMPTY);
+                ? sewerageApplicationDetails.getStatus().getDescription() : EMPTY);
         sewarageIndex.setConsumerNumber(sewerageApplicationDetails.getApplicationNumber());
         sewarageIndex.setApplicationType(sewerageApplicationDetails.getApplicationType() != null
                 ? sewerageApplicationDetails.getApplicationType().getName() : EMPTY);
@@ -267,7 +273,8 @@ public class SewerageIndexService {
         sewarageIndex.setRevenueBlock(
                 assessmentDetails.getBoundaryDetails() != null ? assessmentDetails.getBoundaryDetails().getBlockName() : EMPTY);
         sewarageIndex.setLocationName(
-                assessmentDetails.getBoundaryDetails() != null ? assessmentDetails.getBoundaryDetails().getLocalityName() : EMPTY);
+                assessmentDetails.getBoundaryDetails() != null ? assessmentDetails.getBoundaryDetails().getLocalityName()
+                        : EMPTY);
         sewarageIndex
                 .setAddress(assessmentDetails.getPropertyAddress() != null ? assessmentDetails.getPropertyAddress() : EMPTY);
         sewarageIndex.setSource(sewerageApplicationDetails.getSource() != null ? sewerageApplicationDetails.getSource()
@@ -333,26 +340,50 @@ public class SewerageIndexService {
         return sewarageIndex;
     }
 
-    public BoolQueryBuilder getQueryFilter(final SewerageConnSearchRequest searchRequest) {
-        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.matchQuery(ACTIVE, true));
-
-        if (StringUtils.isNotBlank(searchRequest.getUlbName()))
-            boolQuery.filter(QueryBuilders.matchQuery(ULB_NAME, searchRequest.getUlbName()));
-        if (StringUtils.isNotBlank(searchRequest.getConsumerNumber()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(CONSUMER_NUMBER, searchRequest.getConsumerNumber()));
-        if (StringUtils.isNotBlank(searchRequest.getShscNumber()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(SHSC_NUMBER, searchRequest.getShscNumber()));
-        if (StringUtils.isNotBlank(searchRequest.getApplicantName()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchPhrasePrefixQuery(CONSUMER_NAME, searchRequest.getApplicantName()));
-        if (StringUtils.isNotBlank(searchRequest.getMobileNumber()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(MOBILE_NUMBER, searchRequest.getMobileNumber()));
-        if (StringUtils.isNotBlank(searchRequest.getRevenueWard()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(WARD, searchRequest.getRevenueWard()));
-        if (StringUtils.isNotBlank(searchRequest.getDoorNumber()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(DOOR_NO, searchRequest.getDoorNumber()));
+    public BoolQueryBuilder getActiveApplications(final SewerageConnSearchRequest searchRequest) {
+        BoolQueryBuilder boolQuery = commonSearchCriteria(searchRequest);
+        boolQuery.filter(QueryBuilders.matchQuery(ACTIVE, true));
         if (searchRequest.getLegacy() != null)
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("islegacy", searchRequest.getLegacy()));
         return boolQuery;
+    }
+
+    private BoolQueryBuilder commonSearchCriteria(final SewerageConnSearchRequest searchRequest) {
+        BoolQueryBuilder boolQueryCommon = QueryBuilders.boolQuery();
+        if (isNotBlank(searchRequest.getUlbName()))
+            boolQueryCommon.filter(QueryBuilders.matchQuery(ULB_NAME, searchRequest.getUlbName()));
+        if (isNotBlank(searchRequest.getConsumerNumber()))
+            boolQueryCommon
+                    .filter(QueryBuilders.matchQuery(CONSUMER_NUMBER, searchRequest.getConsumerNumber()));
+        if (isNotBlank(searchRequest.getShscNumber()))
+            boolQueryCommon.filter(QueryBuilders.matchQuery(SHSC_NUMBER, searchRequest.getShscNumber()));
+        if (isNotBlank(searchRequest.getApplicantName()))
+            boolQueryCommon
+                    .filter(QueryBuilders.matchPhrasePrefixQuery(CONSUMER_NAME, searchRequest.getApplicantName()));
+        if (isNotBlank(searchRequest.getMobileNumber()))
+            boolQueryCommon.filter(QueryBuilders.matchQuery(MOBILE_NUMBER, searchRequest.getMobileNumber()));
+        if (isNotBlank(searchRequest.getRevenueWard()))
+            boolQueryCommon.filter(QueryBuilders.matchQuery(WARD, searchRequest.getRevenueWard()));
+        if (isNotBlank(searchRequest.getDoorNumber()))
+            boolQueryCommon.filter(QueryBuilders.matchQuery(DOOR_NO, searchRequest.getDoorNumber()));
+        if (isNotBlank(searchRequest.getFromDate())
+                && isNotBlank(searchRequest.getToDate()))
+            boolQueryCommon.filter(QueryBuilders.rangeQuery(APPLICATION_DATE)
+                    .from(startOfGivenDate(toDateTimeUsingDefaultPattern(searchRequest.getFromDate()))
+                            .toString(ES_DATE_FORMAT))
+                    .to(endOfGivenDate(toDateTimeUsingDefaultPattern(searchRequest.getToDate()))
+                            .toString(ES_DATE_FORMAT)));
+        else if (isNotBlank(searchRequest.getFromDate()))
+            boolQueryCommon.filter(QueryBuilders.rangeQuery(APPLICATION_DATE)
+                    .from(startOfGivenDate(toDateTimeUsingDefaultPattern(searchRequest.getFromDate()))
+                            .toString(ES_DATE_FORMAT))
+                    .to(DateTime.now().toString(ES_DATE_FORMAT)));
+        else if (isNotBlank(searchRequest.getToDate()))
+            boolQueryCommon.filter(QueryBuilders.rangeQuery(APPLICATION_DATE)
+                    .from(APPLICATION_STARTDATE)
+                    .to(endOfGivenDate(toDateTimeUsingDefaultPattern(searchRequest.getToDate()))
+                            .toString(ES_DATE_FORMAT)));
+        return boolQueryCommon;
     }
 
     public Page<SewerageIndex> getSearchResultByBoolQuery(final BoolQueryBuilder boolQuery, final FieldSortBuilder sort,
@@ -366,50 +397,39 @@ public class SewerageIndexService {
         return resultList;
     }
 
-    public BoolQueryBuilder getSearchQueryFilter(final SewerageCollectFeeSearchRequest searchRequest) {
-        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
-                .filter(QueryBuilders.matchQuery(ULB_NAME, searchRequest.getUlbName()));
-        if (StringUtils.isNotBlank(searchRequest.getConsumerNumber()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(CONSUMER_NUMBER, searchRequest.getConsumerNumber()));
-        if (StringUtils.isNotBlank(searchRequest.getShscNumber()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(SHSC_NUMBER, searchRequest.getShscNumber()));
-        if (StringUtils.isNotBlank(searchRequest.getApplicantName()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchPhrasePrefixQuery(CONSUMER_NAME, searchRequest.getApplicantName()));
-        if (StringUtils.isNotBlank(searchRequest.getMobileNumber()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(MOBILE_NUMBER, searchRequest.getMobileNumber()));
-        if (StringUtils.isNotBlank(searchRequest.getRevenueWard()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(WARD, searchRequest.getRevenueWard()));
-        if (StringUtils.isNotBlank(searchRequest.getDoorNumber()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(DOOR_NO, searchRequest.getDoorNumber()));
+    public BoolQueryBuilder searchQueryFilterHasCollectionPending(final SewerageConnSearchRequest searchRequest) {
+        BoolQueryBuilder boolQuery = commonSearchCriteria(searchRequest);
+        boolQuery.filter(QueryBuilders.termsQuery("applicationStatus", WF_STATE_ESTIMATIONNOTICE_GENERATED,
+                APPLICATION_STATUS_COLLECTINSPECTIONFEE, APPLICATION_STATUS_DESC_CTZN_FEE_PENDING));
         return boolQuery;
     }
 
     public BoolQueryBuilder getSearchQueryForExecuteConnection(final SewerageExecutionResult sewerageExecutionResult) {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
                 .filter(QueryBuilders.matchQuery(ULB_NAME, sewerageExecutionResult.getUlbName()));
-        if (StringUtils.isNotBlank(sewerageExecutionResult.getRevenueWard()))
+        if (isNotBlank(sewerageExecutionResult.getRevenueWard()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(WARD, sewerageExecutionResult.getRevenueWard()));
-        if (StringUtils.isNotBlank(sewerageExecutionResult.getApplicationNumber()))
+        if (isNotBlank(sewerageExecutionResult.getApplicationNumber()))
             boolQuery = boolQuery
                     .filter(QueryBuilders.matchQuery(CONSUMER_NUMBER, sewerageExecutionResult.getApplicationNumber()));
-        if (StringUtils.isNotBlank(sewerageExecutionResult.getShscNumber()))
+        if (isNotBlank(sewerageExecutionResult.getShscNumber()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(SHSC_NUMBER, sewerageExecutionResult.getShscNumber()));
-        if (StringUtils.isNotBlank(sewerageExecutionResult.getApplicationType()))
+        if (isNotBlank(sewerageExecutionResult.getApplicationType()))
             boolQuery = boolQuery
                     .filter(QueryBuilders.matchQuery(APPLICATION_TYPE, sewerageExecutionResult.getApplicationType()));
-        if (StringUtils.isNotBlank(sewerageExecutionResult.getFromDate())
-                && StringUtils.isNotBlank(sewerageExecutionResult.getToDate()))
+        if (isNotBlank(sewerageExecutionResult.getFromDate())
+                && isNotBlank(sewerageExecutionResult.getToDate()))
             boolQuery.filter(QueryBuilders.rangeQuery(APPLICATION_DATE)
                     .from(startOfGivenDate(toDateTimeUsingDefaultPattern(sewerageExecutionResult.getFromDate()))
                             .toString(ES_DATE_FORMAT))
                     .to(endOfGivenDate(toDateTimeUsingDefaultPattern(sewerageExecutionResult.getToDate()))
                             .toString(ES_DATE_FORMAT)));
-        else if (StringUtils.isNotBlank(sewerageExecutionResult.getFromDate()))
+        else if (isNotBlank(sewerageExecutionResult.getFromDate()))
             boolQuery.filter(QueryBuilders.rangeQuery(APPLICATION_DATE)
                     .from(startOfGivenDate(toDateTimeUsingDefaultPattern(sewerageExecutionResult.getFromDate()))
                             .toString(ES_DATE_FORMAT))
                     .to(DateTime.now().toString(ES_DATE_FORMAT)));
-        else if (StringUtils.isNotBlank(sewerageExecutionResult.getToDate()))
+        else if (isNotBlank(sewerageExecutionResult.getToDate()))
             boolQuery.filter(QueryBuilders.rangeQuery(APPLICATION_DATE)
                     .from(APPLICATION_STARTDATE)
                     .to(endOfGivenDate(toDateTimeUsingDefaultPattern(sewerageExecutionResult.getToDate()))
@@ -419,7 +439,7 @@ public class SewerageIndexService {
     }
 
     public Page<SewerageIndex> getCollectSearchResult(final BoolQueryBuilder boolQuery, final FieldSortBuilder sort,
-            final SewerageCollectFeeSearchRequest searchRequest) {
+            final SewerageConnSearchRequest searchRequest) {
         Page<SewerageIndex> resultList;
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices(SEWERAGE).withQuery(boolQuery)
                 .withPageable(new PageRequest(searchRequest.pageNumber(), searchRequest.pageSize(),
@@ -444,15 +464,15 @@ public class SewerageIndexService {
 
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
                 .filter(QueryBuilders.matchQuery("cityName", searchRequest.getUlbName()));
-        if (StringUtils.isNotBlank(searchRequest.getFromDate()))
+        if (isNotBlank(searchRequest.getFromDate()))
             boolQuery = boolQuery.filter(QueryBuilders.rangeQuery("receiptDate")
                     .gte(startOfGivenDate(toDateTimeUsingDefaultPattern(searchRequest.getFromDate())).toString(ES_DATE_FORMAT))
                     .lte(endOfGivenDate(toDateTimeUsingDefaultPattern(searchRequest.getToDate())).toString(ES_DATE_FORMAT)));
-        if (StringUtils.isNotBlank(searchRequest.getCollectionMode()))
+        if (isNotBlank(searchRequest.getCollectionMode()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("channel", searchRequest.getCollectionMode()));
-        if (StringUtils.isNotBlank(searchRequest.getCollectionOperator()))
+        if (isNotBlank(searchRequest.getCollectionOperator()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("receiptCreator", searchRequest.getCollectionOperator()));
-        if (StringUtils.isNotBlank(searchRequest.getStatus()))
+        if (isNotBlank(searchRequest.getStatus()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("status", searchRequest.getStatus()));
         return boolQuery;
     }
@@ -460,7 +480,7 @@ public class SewerageIndexService {
     public BoolQueryBuilder getDCRSewerageSearchResult(final DailySTCollectionReportSearch searchRequest) {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
                 .filter(QueryBuilders.matchQuery(ULB_NAME, searchRequest.getUlbName()));
-        if (StringUtils.isNotBlank(searchRequest.getRevenueWard()))
+        if (isNotBlank(searchRequest.getRevenueWard()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(WARD, searchRequest.getRevenueWard()));
         return boolQuery;
     }
@@ -483,9 +503,9 @@ public class SewerageIndexService {
             dcrReportObject.setPaidAt(collectionObject.getChannel());
             dcrReportObject.setPaymentMode(collectionObject.getPaymentMode());
             dcrReportObject.setStatus(collectionObject.getStatus());
-            if (StringUtils.isNotBlank(collectionObject.getInstallmentFrom()))
+            if (isNotBlank(collectionObject.getInstallmentFrom()))
                 dcrReportObject.setFromDate(collectionObject.getInstallmentFrom());
-            if (StringUtils.isNotBlank(collectionObject.getInstallmentTo()))
+            if (isNotBlank(collectionObject.getInstallmentTo()))
                 dcrReportObject.setToDate(collectionObject.getInstallmentTo());
             dcrReportObject.setArrearAmount(collectionObject.getArrearAmount());
             dcrReportObject.setCurrentAmount(collectionObject.getCurrentAmount());
@@ -511,26 +531,26 @@ public class SewerageIndexService {
 
     public BoolQueryBuilder getQueryFilterForNotice(final SewerageNoticeSearchRequest searchRequest) {
         BoolQueryBuilder boolQuery = null;
-        if (searchRequest.getNoticeType() != null){
-            if (searchRequest.getNoticeType().equals(SewerageTaxConstants.NOTICE_WORK_ORDER))
+        if (searchRequest.getNoticeType() != null) {
+            if (NOTICE_WORK_ORDER.equals(searchRequest.getNoticeType()))
                 boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.rangeQuery("workOrderDate")
                         .from(startOfGivenDate(toDateTimeUsingDefaultPattern(searchRequest.getNoticeGeneratedFrom()))
                                 .toString(ES_DATE_FORMAT))
                         .to(endOfGivenDate(toDateTimeUsingDefaultPattern(searchRequest.getNoticeGeneratedTo()))
                                 .toString(ES_DATE_FORMAT)));
-            else if (searchRequest.getNoticeType().equals(SewerageTaxConstants.NOTICE_ESTIMATION))
+            else if (NOTICE_ESTIMATION.equals(searchRequest.getNoticeType()))
                 boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.rangeQuery("estimationDate")
                         .from(startOfGivenDate(toDateTimeUsingDefaultPattern(searchRequest.getNoticeGeneratedFrom()))
                                 .toString(ES_DATE_FORMAT))
                         .to(endOfGivenDate(toDateTimeUsingDefaultPattern(searchRequest.getNoticeGeneratedTo()))
                                 .toString(ES_DATE_FORMAT)));
-            else if (searchRequest.getNoticeType().equals(SewerageTaxConstants.NOTICE_CLOSE_CONNECTION))
+            else if (NOTICE_CLOSE_CONNECTION.equals(searchRequest.getNoticeType()))
                 boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.rangeQuery("closureNoticeDate")
                         .from(startOfGivenDate(toDateTimeUsingDefaultPattern(searchRequest.getNoticeGeneratedFrom()))
                                 .toString(ES_DATE_FORMAT))
                         .to(endOfGivenDate(toDateTimeUsingDefaultPattern(searchRequest.getNoticeGeneratedTo()))
                                 .toString(ES_DATE_FORMAT)));
-            else if (searchRequest.getNoticeType().equals(SewerageTaxConstants.NOTICE_REJECTION))
+            else if (NOTICE_REJECTION.equals(searchRequest.getNoticeType()))
                 boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.rangeQuery("rejectionNoticeDate")
                         .from(startOfGivenDate(toDateTimeUsingDefaultPattern(searchRequest.getNoticeGeneratedFrom()))
                                 .toString(ES_DATE_FORMAT))
@@ -539,17 +559,18 @@ public class SewerageIndexService {
         }
 
         if (boolQuery != null) {
-            if (StringUtils.isNotBlank(searchRequest.getUlbName()))
+            if (isNotBlank(searchRequest.getUlbName()))
                 boolQuery = boolQuery.filter(QueryBuilders.matchQuery(ULB_NAME, searchRequest.getUlbName()));
-            if (StringUtils.isNotBlank(searchRequest.getShscNumber()))
+            if (isNotBlank(searchRequest.getShscNumber()))
                 boolQuery = boolQuery.filter(QueryBuilders.matchQuery(SHSC_NUMBER, searchRequest.getShscNumber()));
-            if (StringUtils.isNotBlank(searchRequest.getApplicantName()))
-                boolQuery = boolQuery.filter(QueryBuilders.matchPhrasePrefixQuery(CONSUMER_NAME, searchRequest.getApplicantName()));
-            if (StringUtils.isNotBlank(searchRequest.getMobileNumber()))
+            if (isNotBlank(searchRequest.getApplicantName()))
+                boolQuery = boolQuery
+                        .filter(QueryBuilders.matchPhrasePrefixQuery(CONSUMER_NAME, searchRequest.getApplicantName()));
+            if (isNotBlank(searchRequest.getMobileNumber()))
                 boolQuery = boolQuery.filter(QueryBuilders.matchQuery(MOBILE_NUMBER, searchRequest.getMobileNumber()));
-            if (StringUtils.isNotBlank(searchRequest.getRevenueWard()))
+            if (isNotBlank(searchRequest.getRevenueWard()))
                 boolQuery = boolQuery.filter(QueryBuilders.matchQuery(WARD, searchRequest.getRevenueWard()));
-            if (StringUtils.isNotBlank(searchRequest.getDoorNumber()))
+            if (isNotBlank(searchRequest.getDoorNumber()))
                 boolQuery = boolQuery.filter(QueryBuilders.matchQuery(DOOR_NO, searchRequest.getDoorNumber()));
         }
         return boolQuery;
@@ -613,7 +634,7 @@ public class SewerageIndexService {
         final List<SewerageApplicationDetails> resultList = new ArrayList<>();
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.matchQuery(ULB_NAME, ulbName));
         boolQuery = boolQuery.filter(QueryBuilders.termsQuery(PROPERTY_TYPE, propertyTypeList));
-        if (StringUtils.isNotBlank(ward))
+        if (isNotBlank(ward))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(WARD, ward));
         boolQuery = boolQuery.filter(QueryBuilders.matchQuery(ACTIVE, true));
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices(SEWERAGE).withQuery(boolQuery)
@@ -649,11 +670,11 @@ public class SewerageIndexService {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
                 .filter(QueryBuilders.matchQuery(ULB_NAME, ApplicationThreadLocals.getCityName()));
         boolQuery = boolQuery.filter(QueryBuilders.matchQuery(ACTIVE, true));
-        if (StringUtils.isNotBlank(ward))
+        if (isNotBlank(ward))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(WARD, ward));
-        if (StringUtils.isNotBlank(block))
+        if (isNotBlank(block))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("revenueBlock", block));
-        if (StringUtils.isNotBlank(locality))
+        if (isNotBlank(locality))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("locationName", locality));
 
         final SearchResponse consolidatedResponse = elasticsearchTemplate.getClient().prepareSearch(SEWERAGE)
@@ -687,10 +708,9 @@ public class SewerageIndexService {
             final String sortField, final String sortOrder) {
 
         final TermsBuilder aggregation = AggregationBuilders.terms(aggregationName).field(fieldName).size(75);
-        if (StringUtils.isNotBlank(sortField) && StringUtils.isNotEmpty(sortField) && WARD.equalsIgnoreCase(sortField)) {
+        if (isNotBlank(sortField) && WARD.equalsIgnoreCase(sortField)) {
             Boolean order = true;
-            if (StringUtils.isNotEmpty(sortOrder) && StringUtils.isNotBlank(sortOrder)
-                    && StringUtils.equalsIgnoreCase(sortOrder, DESC))
+            if (isNotBlank(sortOrder) && equalsIgnoreCase(sortOrder, DESC))
                 order = false;
             aggregation.order(Terms.Order.aggregation("_count", order));
         }
@@ -765,7 +785,7 @@ public class SewerageIndexService {
         return totalValues;
 
     }
-    
+
     public Page<SewerageIndex> getOnlinePaymentSearchResult(final BoolQueryBuilder boolQuery, final FieldSortBuilder sort,
             final SewerageConnSearchRequest searchRequest) {
         Page<SewerageIndex> resultList;
@@ -787,19 +807,19 @@ public class SewerageIndexService {
         List<SewerageExecutionResult> connectionExecutionList = new ArrayList<>();
         if (null != searchResultList && !searchResultList.isEmpty()) {
             for (SewerageIndex searchResult : searchResultList) {
-                    SewerageExecutionResult executionResult = new SewerageExecutionResult();
-                    executionResult.setApplicationType(searchResult.getApplicationType());
-                    executionResult.setApplicationDate(DateUtils.getDefaultFormattedDate(searchResult.getApplicationDate()));
-                    executionResult.setApplicationNumber(searchResult.getApplicationNumber());
-                    executionResult.setShscNumber(searchResult.getShscNumber());
-                    executionResult.setRevenueWard(searchResult.getWard());
-                    executionResult.setStatus(searchResult.getApplicationStatus());
-                    executionResult.setOwnerName(searchResult.getConsumerName());
-                    executionResult
-                            .setId(sewerageApplicationDetailsService.findByApplicationNumber(searchResult.getApplicationNumber())
-                                    .getId());
-                    connectionExecutionList.add(executionResult);
-                
+                SewerageExecutionResult executionResult = new SewerageExecutionResult();
+                executionResult.setApplicationType(searchResult.getApplicationType());
+                executionResult.setApplicationDate(DateUtils.getDefaultFormattedDate(searchResult.getApplicationDate()));
+                executionResult.setApplicationNumber(searchResult.getApplicationNumber());
+                executionResult.setShscNumber(searchResult.getShscNumber());
+                executionResult.setRevenueWard(searchResult.getWard());
+                executionResult.setStatus(searchResult.getApplicationStatus());
+                executionResult.setOwnerName(searchResult.getConsumerName());
+                executionResult
+                        .setId(sewerageApplicationDetailsService.findByApplicationNumber(searchResult.getApplicationNumber())
+                                .getId());
+                connectionExecutionList.add(executionResult);
+
             }
         }
         return connectionExecutionList;
@@ -818,11 +838,12 @@ public class SewerageIndexService {
                 sewerageApplnDetailsObj.getConnection()
                         .setExecutionDate(DateUtils.toDateUsingDefaultPattern(jsonobj.getString(EXECUTION_DATE)));
                 if (sewerageApplnDetailsObj.getConnection().getExecutionDate() != null
-                        && StringUtils.isNotEmpty(sewerageApplnDetailsObj.getConnection().getExecutionDate().toString())) {
+                        && isNotBlank(sewerageApplnDetailsObj.getConnection().getExecutionDate().toString())) {
                     if (sewerageApplnDetailsObj.getConnection().getExecutionDate()
                             .compareTo(
                                     DateUtils.toDateUsingDefaultPattern(
-                                            DateUtils.getDefaultFormattedDate(sewerageApplnDetailsObj.getApplicationDate()))) <= 0) {
+                                            DateUtils.getDefaultFormattedDate(
+                                                    sewerageApplnDetailsObj.getApplicationDate()))) <= 0) {
                         status = "DateValidationFailed";
                     } else {
                         sewerageApplicationDetailsList.add(sewerageApplnDetailsObj);
@@ -844,6 +865,7 @@ public class SewerageIndexService {
                 if (parentSewerageAppDtls != null) {
                     parentSewerageAppDtls.setActive(false);
                     sewerageObj.setParent(parentSewerageAppDtls);
+                    sewerageApplicationDetailsService.updateIndexes(parentSewerageAppDtls);
                 }
                 sewerageApplicationDetailsService.updateExecutionDate(sewerageObj);
                 sewerageApplicationDetailsService.updatePortalMessage(sewerageObj);

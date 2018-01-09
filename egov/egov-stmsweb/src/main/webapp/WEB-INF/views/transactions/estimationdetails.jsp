@@ -123,8 +123,8 @@
 								<input type="hidden" value="${var1.id}" id="table_fieldInspections${counter.index}" name="fieldInspectionsDetails[${counter.index}].id" />
 							      <tr class="data-fetched">
 									<td class="text-center"><span class="serialNo" id="slNoInsp">${counter.index+1}</span></td>
-									<td class="text-right"><form:input type="text" class="form-control table-input text-right patternvalidation quantity" data-pattern="decimalvalue" path="fieldInspections[0].fieldInspectionDetailsForUpdate[${counter.index}].noOfPipes" id="fieldInspectionDetailsForUpdate${counter.index}noOfPipes" maxlength="8" value="${var1.noOfPipes}" /></td>
-									<td class="text-center">
+									<td><form:input type="text" class="form-control table-input patternvalidation quantity" data-pattern="decimalvalue" path="fieldInspections[0].fieldInspectionDetailsForUpdate[${counter.index}].noOfPipes" id="fieldInspectionDetailsForUpdate${counter.index}noOfPipes" maxlength="8" value="${var1.noOfPipes}" /></td>
+									<td>
 										<form:select path="fieldInspections[0].fieldInspectionDetailsForUpdate[${counter.index}].pipeSize" data-first-option="false" id="fieldInspectionDetailsForUpdate${counter.index}pipeSize"
 											cssClass="form-control" >
 											<form:option value="">
@@ -133,8 +133,8 @@
 											<form:options items="${pipeSize}"  />
 										</form:select>		 
 									</td>						
-									<td class="text-right"><form:input type="text" class="form-control table-input text-right patternvalidation quantity" data-pattern="decimalvalue" path="fieldInspections[0].fieldInspectionDetailsForUpdate[${counter.index}].pipeLength" id="fieldInspectionDetailsForUpdate${counter.index}pipeLength" maxlength="8" value="${var1.pipeLength}" /></td>
-									<td class="text-right">
+									<td><form:input type="text" class="form-control table-input patternvalidation quantity" data-pattern="decimalvalue" path="fieldInspections[0].fieldInspectionDetailsForUpdate[${counter.index}].pipeLength" id="fieldInspectionDetailsForUpdate${counter.index}pipeLength" maxlength="8" value="${var1.pipeLength}" /></td>
+									<td>
 									<form:select path="fieldInspections[0].fieldInspectionDetailsForUpdate[${counter.index}].screwSize" data-first-option="false" id="fieldInspectionDetailsForUpdate${counter.index}screwSize"
 											cssClass="form-control">
 											<form:option value="">
@@ -146,11 +146,11 @@
 										    </c:forEach> --%>
 										</form:select>	 
 									</td>
-									<td class="text-right"><form:input type="text" class="form-control table-input text-right patternvalidation quantity" data-pattern="decimalvalue" path="fieldInspections[0].fieldInspectionDetailsForUpdate[${counter.index}].noOfScrews" id="fieldInspectionDetailsForUpdate${counter.index}noOfScrews" maxlength="8" value="${var1.noOfScrews}" /></td>
-									<td class="text-right"><form:input type="text" class="form-control table-input text-right patternvalidation quantity" data-pattern="decimalvalue" path="fieldInspections[0].fieldInspectionDetailsForUpdate[${counter.index}].distance" id="fieldInspectionDetailsForUpdate${counter.index}distance" maxlength="8" value="${var1.distance}" /></td>
-									<td class="text-center"><form:checkbox  path="fieldInspections[0].fieldInspectionDetailsForUpdate[${counter.index}].roadDigging" id="fieldInspectionDetailsForUpdate${counter.index}roadDigging" maxlength="8" value="${var1.roadDigging}"  onchange="enableDisableRoadInfo(this);" /></td>
-									<td class="text-right"><form:input type="text" disabled="true" class="form-control table-input text-right patternvalidation quantity roadLength" data-pattern="decimalvalue" path="fieldInspections[0].fieldInspectionDetailsForUpdate[${counter.index}].roadLength" id="fieldInspectionDetailsForUpdate${counter.index}roadLength" maxlength="8" value="${var1.roadLength}" /></td>
-							      	<td class="text-right">
+									<td><form:input type="text" class="form-control table-input patternvalidation quantity" data-pattern="decimalvalue" path="fieldInspections[0].fieldInspectionDetailsForUpdate[${counter.index}].noOfScrews" id="fieldInspectionDetailsForUpdate${counter.index}noOfScrews" maxlength="8" value="${var1.noOfScrews}" /></td>
+									<td><form:input type="text" class="form-control table-input patternvalidation quantity" data-pattern="decimalvalue" path="fieldInspections[0].fieldInspectionDetailsForUpdate[${counter.index}].distance" id="fieldInspectionDetailsForUpdate${counter.index}distance" maxlength="8" value="${var1.distance}" /></td>
+									<td class="text-center"><form:checkbox path="fieldInspections[0].fieldInspectionDetailsForUpdate[${counter.index}].roadDigging" id="fieldInspectionDetailsForUpdate${counter.index}roadDigging" maxlength="8" value="${var1.roadDigging}"  onchange="enableDisableRoadInfo(this);" /></td>
+									<td><form:input type="text" disabled="true" class="form-control table-input  patternvalidation quantity roadLength" data-pattern="decimalvalue" path="fieldInspections[0].fieldInspectionDetailsForUpdate[${counter.index}].roadLength" id="fieldInspectionDetailsForUpdate${counter.index}roadLength" maxlength="8" value="${var1.roadLength}" /></td>
+							      	<td>
 									<form:select path="fieldInspections[0].fieldInspectionDetailsForUpdate[${counter.index}].roadOwner" disabled="true" data-first-option="false" id="fieldInspectionDetailsForUpdate${counter.index}roadOwner"
 											cssClass="form-control roadOwner">
 											<form:option value="">
@@ -174,9 +174,9 @@
 						</c:when> 
 						<c:otherwise> 
 							      <tr class="data-fetchedFromDB">
-									<td class="text-center"><span class="serialNo" id="slNoInsp1">1</span></td>
-									<td class="text-center"><form:input type="text" class="form-control table-input text-right patternvalidation quantity" data-pattern="decimalvalue" path="fieldInspections[0].fieldInspectionDetailsForUpdate[0].noOfPipes" id="fieldInspectionDetailsForUpdate0noOfPipes" maxlength="8" /></td>
-									<td class="text-right">
+									<td><span class="serialNo" id="slNoInsp1">1</span></td>
+									<td><form:input type="text" class="form-control table-input patternvalidation quantity" data-pattern="decimalvalue" path="fieldInspections[0].fieldInspectionDetailsForUpdate[0].noOfPipes" id="fieldInspectionDetailsForUpdate0noOfPipes" maxlength="8" /></td>
+									<td>
 									<form:select path="fieldInspections[0].fieldInspectionDetailsForUpdate[0].pipeSize" data-first-option="false" id="fieldInspectionDetailsForUpdate0pipeSize"
 											cssClass="form-control">
 											<form:option value="">
@@ -188,8 +188,8 @@
 										    </c:forEach> --%>
 										</form:select>	 
 									</td>
-									<td class="text-right"><form:input type="text" class="form-control table-input text-right patternvalidation quantity" data-pattern="decimalvalue" path="fieldInspections[0].fieldInspectionDetailsForUpdate[0].pipeLength" id="fieldInspectionDetailsForUpdate0pipeLength" maxlength="8" /></td>
-									<td class="text-right">
+									<td><form:input type="text" class="form-control table-input patternvalidation quantity" data-pattern="decimalvalue" path="fieldInspections[0].fieldInspectionDetailsForUpdate[0].pipeLength" id="fieldInspectionDetailsForUpdate0pipeLength" maxlength="8" /></td>
+									<td>
 									<form:select path="fieldInspections[0].fieldInspectionDetailsForUpdate[0].screwSize" data-first-option="false" id="fieldInspectionDetailsForUpdate0screwSize"
 											cssClass="form-control" >
 											<form:option value="">
@@ -201,11 +201,11 @@
 										    </c:forEach> --%>
 										</form:select>	 
 									</td>
-									<td class="text-right"><form:input type="text" class="form-control table-input text-right patternvalidation quantity" data-pattern="decimalvalue" path="fieldInspections[0].fieldInspectionDetailsForUpdate[0].noOfScrews" id="fieldInspectionDetailsForUpdate0noOfScrews" maxlength="8" /></td>
-									<td class="text-right"><form:input type="text" class="form-control table-input text-right patternvalidation quantity" data-pattern="decimalvalue" path="fieldInspections[0].fieldInspectionDetailsForUpdate[0].distance" id="fieldInspectionDetailsForUpdate0distance" maxlength="8" /></td>
+									<td><form:input type="text" class="form-control table-input patternvalidation quantity" data-pattern="decimalvalue" path="fieldInspections[0].fieldInspectionDetailsForUpdate[0].noOfScrews" id="fieldInspectionDetailsForUpdate0noOfScrews" maxlength="8" /></td>
+									<td><form:input type="text" class="form-control table-input patternvalidation quantity" data-pattern="decimalvalue" path="fieldInspections[0].fieldInspectionDetailsForUpdate[0].distance" id="fieldInspectionDetailsForUpdate0distance" maxlength="8" /></td>
 									<td class="text-center"><form:checkbox path="fieldInspections[0].fieldInspectionDetailsForUpdate[0].roadDigging" id="fieldInspectionDetailsForUpdate0roadDigging" onchange="enableDisableRoadInfo(this);"/></td> 
-									<td class="text-right"><form:input type="text" disabled="true" class="form-control table-input text-right patternvalidation quantity roadLength" data-pattern="decimalvalue" path="fieldInspections[0].fieldInspectionDetailsForUpdate[0].roadLength" id="fieldInspectionDetailsForUpdate0roadLength" maxlength="8" /></td>
-							      	<td class="text-right">
+									<td><form:input type="text" disabled="true" class="form-control table-input patternvalidation quantity roadLength" data-pattern="decimalvalue" path="fieldInspections[0].fieldInspectionDetailsForUpdate[0].roadLength" id="fieldInspectionDetailsForUpdate0roadLength" maxlength="8" /></td>
+							      	<td>
 									<form:select path="fieldInspections[0].fieldInspectionDetailsForUpdate[0].roadOwner" disabled="true" data-first-option="false" id="fieldInspectionDetailsForUpdate0roadOwner"
 											cssClass="form-control roadOwner">
 											<form:option value="">

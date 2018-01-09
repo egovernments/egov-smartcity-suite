@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -52,38 +52,92 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
-
 <form:form id="sewerageSearchRequestForm" method="get"
-	class="form-horizontal form-groups-bordered" modelAttribute="sewerage">
+	class="form-horizontal form-groups-bordered"
+	modelAttribute="SewerageConnSearchRequest">
 	<div class="row">
 		<div class="col-md-12">
+			<input type="hidden" name="legacy" id="legacy" value="${legacy}">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title"></div>
 				</div>
-				<div class="form-group">
-					<label class="col-sm-3 control-label text-right"> <spring:message
-							code="lbl.application.number" /></label>
-					<div class="col-sm-3 add-margin">
-						<input type="text" name="consumerNumber" id="consumerNumber"
-							class="form-control" maxlength="13"
-							data-pattern="alphanumericwithspace" min="10" />
+				<div class="panel-body">
+					<div class="form-group">
+						<label class="col-sm-2 col-md-2 control-label "> <spring:message
+								code="lbl.application.number" /></label>
+						<div class="col-sm-3 col-md-3 add-margin">
+							<input type="text" name="consumerNumber" id="consumerNumber"
+								class="form-control" maxlength="13"
+								data-pattern="alphanumericwithspace" min="10" />
+						</div>
+						<label class="col-sm-2 col-md-2 control-label"> <spring:message
+								code="lbl.shsc.number" /></label>
+						<div class="col-sm-3 col-md-3 add-margin">
+							<input type="text" name="shscNumber" id="shscNumber"
+								class="form-control is_valid_number" maxlength="11"
+								id="app-appcodo" />
+						</div>
 					</div>
 
-					<label class="col-sm-2 control-label text-right"> <spring:message
-							code="lbl.shsc.number" /></label>
-					<div class="col-sm-3 add-margin">
-						<input type="text" name="shscNumber" id="shscNumber"
-							class="form-control is_valid_number" maxlength="11"
-							id="app-appcodo" />
+					<div class="form-group">
+						<label class="col-sm-2 col-md-2 control-label"> <spring:message
+								code="lbl.applicantname" />
+						</label>
+						<div class="col-sm-3 col-md-3 add-margin">
+							<input type="text" name="applicantName" id="applicantName"
+								class="form-control patternvalidationclass"
+								data-pattern="alphanumericwithspacespecialcharacters"
+								maxlength="100" id="app-mobno" />
+						</div>
+						<label class="col-sm-2 col-md-2 control-label"> <spring:message
+								code="lbl.mobileNo" />
+						</label>
+						<div class="col-sm-3 col-md-3 add-margin">
+							<input type="text" name="mobileNumber" id="mobileNumber"
+								class="form-control is_valid_number" maxlength="10"
+								data-inputmask="'mask': '9999999999'" id="app-appcodo" min="10" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="field-1" class="col-md-2 col-sm-2 control-label"><spring:message
+								code="lbl.revenue.ward" /></label>
+						<div class="col-sm-3 col-md-3 add-margin">
+							<select name="revenueWard" id="app-mobno" class="form-control"
+								data-first-option="false">
+								<option value="${ward.name}"></option>
+								<c:forEach items="${revenueWards}" var="ward">
+									<option value="${ward.name}">${ward.name}</option>
+								</c:forEach>
+							</select>
+						</div>
+						<label class="col-sm-2 col-md-2 control-label"><spring:message
+								code="lbl.doornumber" /></label>
+						<div class="col-sm-3 col-md-3 add-margin">
+							<input type="text" name="doorNumber" class="form-control "
+								id="app-appcodo" maxlength="24" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 col-md-2 control-label"><spring:message
+								code="lbl.fromDate" /></label>
+						<div class="col-sm-3 col-md-3 add-margin">
+							<input type="text" name="fromDate"
+								class="form-control datepicker" id="fromDate" maxlength="24" />
+						</div>
+						<label class="col-sm-2 col-md-2 control-label"><spring:message
+								code="lbl.toDate" /></label>
+						<div class="col-sm-3 col-md-3 add-margin">
+							<input type="text" name="toDate" class="form-control datepicker"
+								id="toDate" />
+						</div>
 					</div>
 				</div>
 			</div>
-			<div class="col-md-12">
+			<div class="form-group">
 				<div class="text-center">
 					<a href="javascript:void(0);" id="searchSewerageapplication"
-						class="btn btn-primary btnSearch"><spring:message
-							code='lbl.search' /></a>
+						class="btn btn-primary btnSearch"><spring:message code='lbl.search' /></a>
 
 					<button class="btn btn-danger" type="reset">
 						<spring:message code='lbl.reset' />
@@ -96,13 +150,18 @@
 		</div>
 	</div>
 </form:form>
-<div class="col-md-12">
-	<br>
-	<table class="table table-bordered datatable dt-responsive"
-		id="aplicationSearchResults">
-	</table>
-</div>
 
+<div class="row display-hide report-section" id="table_container">
+	<div class="col-md-12 table-header text-left">
+		<spring:message code='lbl.searchresult' />
+	</div>
+	<div class="col-md-12 form-group report-table-container">
+		<table class="table table-bordered table-hover multiheadertbl"
+			id="aplicationSearchResults">
+
+		</table>
+	</div>
+</div>
 <link rel="stylesheet"
 	href="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
 <link rel="stylesheet"
@@ -123,5 +182,5 @@
 <script
 	src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js' context='/egi'/>"></script>
 <script
-	src="<cdn:url  value='/resources/js/search/searchstmsforonlinepay.js?rnd=${app_release_no}'/>"
+	src="<cdn:url  value='/resources/javascript/helper.js?rnd=${app_release_no}'/>"
 	type="text/javascript"></script>

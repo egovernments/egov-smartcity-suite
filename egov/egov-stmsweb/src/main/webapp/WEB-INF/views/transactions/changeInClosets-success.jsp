@@ -131,7 +131,7 @@
 		</c:if>
 	</div>
 	<div class="add-margin">
-		<button type="submit" class="btn btn-default print" id="printBtn" onclick="printDiv('main')"><spring:message code="lbl.print" /></button>
+		<button type="submit" class="btn btn-primary print" id="printBtn" onclick="printDiv('main')"><spring:message code="lbl.print" /></button>
 		<c:choose>
 			<c:when test="${sewerageApplicationDetails.status == 'ACTIVE' }">
 				<a href="javascript:void(0)" class="btn btn-default inboxload" onclick="self.close()" ><spring:message code="lbl.close" /></a>

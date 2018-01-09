@@ -82,7 +82,7 @@
                        value="/WEB-INF/views/transactions/application-success.jsp"/>
     </definition>
     <definition name="newconnection-edit" extends="base_layout">
-        <put-attribute name="page-title" value="title.viewapplication"
+        <put-attribute name="page-title" value="title.sewerage.edit"
                        cascade="true"/>
         <put-attribute name="body"
                        value="/WEB-INF/views/transactions/newConnection-edit.jsp"/>
@@ -94,7 +94,7 @@
                        value="/WEB-INF/views/transactions/newSewerageConnection-ack.jsp"/>
     </definition>
     <definition name="application-view" extends="base_layout">
-        <put-attribute name="page-title" value="title.viewapplication" cascade="true"/>
+        <put-attribute name="page-title" value="title.sewerage.view" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/transactions/application-view.jsp"/>
     </definition>
     <definition name="sewerageRates-master" extends="base_layout">
@@ -235,7 +235,7 @@
                        value="/WEB-INF/views/reports/searchSewerageNotices.jsp"/>
     </definition>
     <definition name="changeInClosets-edit" extends="base_layout">
-        <put-attribute name="page-title" value="title.viewapplication"
+        <put-attribute name="page-title" value="title.sewerage.edit"
                        cascade="true"/>
         <put-attribute name="body"
                        value="/WEB-INF/views/transactions/changeInClosets-edit.jsp"/>
@@ -253,7 +253,7 @@
                        value="/WEB-INF/views/common/common-error.jsp"/>
     </definition>
     <definition name="seweragecollectcharges-form" extends="base_layout">
-        <put-attribute name="page-title" value="title.sewerageTaxSearch"
+        <put-attribute name="page-title" value="title.sewerage.search.collectfee"
                        cascade="true"/>
         <put-attribute name="body"
                        value="/WEB-INF/views/search/seweragecollectcharges-form.jsp"/>

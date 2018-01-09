@@ -47,111 +47,129 @@
  */
 
 var tableContainer;
-jQuery(document).ready(function($) {
-	tableContainer = $("#aplicationSearchResults");
-	 document.onkeydown=function(evt){
-		 var keyCode = evt ? (evt.which ? evt.which : evt.keyCode) : event.keyCode;
-	if(keyCode == 13){
-		submitButton();	
-	}
-	 }
-	 
-	 $('.slide-history-menu').click(function(){
-			$(this).parent().find('.history-slide').slideToggle();
-			if($(this).parent().find('#toggle-his-icon').hasClass('fa fa-angle-down'))
-			{
-				$(this).parent().find('#toggle-his-icon').removeClass('fa fa-angle-down').addClass('fa fa-angle-up');
-				//$('#see-more-link').hide();
-				}else{
-				$(this).parent().find('#toggle-his-icon').removeClass('fa fa-angle-up').addClass('fa fa-angle-down');
-				//$('#see-more-link').show();
+jQuery(document).ready(
+		function($) {
+			tableContainer = $("#aplicationSearchResults");
+			document.onkeydown = function(evt) {
+				var keyCode = evt ? (evt.which ? evt.which : evt.keyCode)
+						: event.keyCode;
+				if (keyCode == 13) {
+					submitButton();
+				}
 			}
-		}); 
+
+			$('.slide-history-menu').click(
+					function() {
+						$(this).parent().find('.history-slide').slideToggle();
+						if ($(this).parent().find('#toggle-his-icon').hasClass(
+								'fa fa-angle-down')) {
+							$(this).parent().find('#toggle-his-icon')
+									.removeClass('fa fa-angle-down').addClass(
+											'fa fa-angle-up');
+							// $('#see-more-link').hide();
+						} else {
+							$(this).parent().find('#toggle-his-icon')
+									.removeClass('fa fa-angle-up').addClass(
+											'fa fa-angle-down');
+							//$('#see-more-link').show();
+						}
+					});
+		});
+
+$(".btnSearch").click(function(event) {
+	$('#searchSewerageapplication').show();
+
+	submitButton();
+
 });
 
-$(".btn-primary").click(function(event){
-	$('#searchSewerageapplication').show();
-	
-		submitButton();
-			
-	});
-	
-   
 var prevdatatable;
+var oTable;
 function submitButton() {
-	
-	 oTable = $("#aplicationSearchResults");
-	if(prevdatatable){
+
+	oTable = $("#aplicationSearchResults");
+	if (prevdatatable) {
 		prevdatatable.fnClearTable();
 		$('#aplicationSearchResults thead tr').remove();
 	}
-	
-	prevdatatable = oTable.dataTable({
-		dom: "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-2 col-xs-6 text-right'B><'col-md-5 col-xs-6 text-right'p>>",
-		processing: true,
-        serverSide: true,
-        sort: true,
-        filter: true,
-        "searching": false,
-        "autoWidth": false,
-        "bDestroy": true,
-	
-		 ajax : {
 
-				url : "/stms/citizen/search/onlinepayment",
-				type : 'POST',
-				data : function(args) {
-					return {
-						"args" : JSON.stringify(args),
-						"consumerNumber":$('#consumerNumber').val(),
-						"shscNumber" : $('#shscNumber').val(),												
-					};
+	prevdatatable = oTable
+			.dataTable({
+				dom : "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-2 col-xs-6 text-right'B><'col-md-5 col-xs-6 text-right'p>>",
+				processing : true,
+				serverSide : true,
+				sort : true,
+				filter : true,
+				"searching" : false,
+				"autoWidth" : false,
+				"bDestroy" : true,
+				ajax : {
+					url : "/stms/citizen/search/onlinepayment",
+					type : 'POST',
+					data : function(args) {
+						return {
+							"args" : JSON.stringify(args),
+							"consumerNumber" : $('#consumerNumber').val(),
+							"shscNumber" : $('#shscNumber').val(),
+						};
+					},
 				},
-			},	
-			
-		columns : [
-					  { title : "Application Number", data:"applicationNumber"},
-					  { title : "pt assesmentno", data: "assessmentNumber", visible: false},
-					  { title : 'S.H.S.C Number', data : 'shscNumber'},		        	   
-					  { title : "Applicant Name", data: "applicantName"},
-					  { title: "Actions" ,"data" : "", "target":-1,"defaultContent": '<button type="button" class="btn btn-xs btn-secondary fa-demandCollection"><span class="glyphicon glyphicon-edit"></span>&nbsp;View DCB</button>&nbsp;<button type="button" class="btn btn-xs btn-secondary paynow"><span class="glyphicon glyphicon-edit "></span>&nbsp;Pay Now</button>'}			 
+				columns : [
+						{
+							title : "Application Number",
+							data : "applicationNumber"
+						},
+						{
+							title : "pt assesmentno",
+							data : "assessmentNumber",
+							visible : false
+						},
+						{
+							title : 'S.H.S.C Number',
+							data : 'shscNumber'
+						},
+						{
+							title : "Applicant Name",
+							data : "applicantName"
+						},
+						{
+							title : "Actions",
+							"data" : "",
+							"target" : -1,
+							"defaultContent" : '<button type="button" class="btn btn-xs btn-secondary fa-demandCollection"><span class="glyphicon glyphicon-edit"></span>&nbsp;View DCB</button>&nbsp;<button type="button" class="btn btn-xs btn-secondary paynow"><span class="glyphicon glyphicon-edit "></span>&nbsp;Pay Now</button>'
+						}
 
-					  ],
-				});
+				],
+			});
 }
-	
-	$("#aplicationSearchResults").on('click','tbody tr td .fa-demandCollection',function(e) {
-		var consumerno = oTable.fnGetData($(this).parent().parent(),0);
-		var assessmentno = oTable.fnGetData($(this).parent().parent(),1);
-		window.open("/stms/citizen/search/sewerageRateReportView/"+consumerno +'/'+assessmentno+'','_blank', 'width=900, height=700, top=300, left=150,scrollbars=yes')
-	});
-	
-	$("#aplicationSearchResults").on('click','tbody tr td .paynow',function(e) {
-		var consumerno = oTable.fnGetData($(this).parent().parent(),0);
-		var assessmentno = oTable.fnGetData($(this).parent().parent(),1);
-		var url = '/stms/citizen/search/sewerageGenerateonlinebill/';
-		openPopupPage(url+consumerno+'/'+assessmentno);
-	});
-	
-	
-	
-	
-	
-	
-	function openPopupPage(relativeUrl)
-	{
-	 OpenWindowWithPost(relativeUrl, "width=1000, height=600, left=100, top=100, resizable=yes, scrollbars=yes");
-	}
-	 
-	 
-	function OpenWindowWithPost(url, windowoption)
-	{
-	 var form = document.createElement("form");
-	 form.setAttribute("action", url);
-	 form.setAttribute("method", "post");
-	 document.body.appendChild(form);
-	 form.submit();
-	}
 
+$("#aplicationSearchResults").on(
+		'click',
+		'tbody tr td .fa-demandCollection',
+		function(e) {
+			var consumerno = oTable.fnGetData($(this).parent().parent(), 0);
+			var assessmentno = oTable.fnGetData($(this).parent().parent(), 1);
+			window.open("/stms/citizen/search/sewerageRateReportView/"
+					+ consumerno + '/' + assessmentno + '', '_blank',
+					'width=900, height=700, top=300, left=150,scrollbars=yes')
+		});
 
+$("#aplicationSearchResults").on('click', 'tbody tr td .paynow', function(e) {
+	var consumerno = oTable.fnGetData($(this).parent().parent(), 0);
+	var assessmentno = oTable.fnGetData($(this).parent().parent(), 1);
+	var url = '/stms/citizen/search/sewerageGenerateonlinebill/';
+	openPopupPage(url + consumerno + '/' + assessmentno);
+});
 
+function openPopupPage(relativeUrl) {
+	OpenWindowWithPost(relativeUrl,
+			"width=1000, height=600, left=100, top=100, resizable=yes, scrollbars=yes");
+}
+
+function OpenWindowWithPost(url, windowoption) {
+	var form = document.createElement("form");
+	form.setAttribute("action", url);
+	form.setAttribute("method", "post");
+	document.body.appendChild(form);
+	form.submit();
+}

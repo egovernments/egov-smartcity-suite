@@ -59,21 +59,19 @@
 			<c:if test="${not empty message}">
 				<div class="alert alert-success" role="alert">${message}</div>
 			</c:if>
-			<div class="panel-body" >
 				<form:form id="sewerageConnectionReportForm" method="get"
 					role="form" class="form-horizontal form-groups-bordered"
 					modelAttribute="sewerageReportResult">
 					<div class="panel panel-primary" data-collapsed="0">
 						<div class="panel-heading">
 							<div class="panel-title">
-								<strong><spring:message code="title.noOfSewerageApplications" /></strong>
 							</div>
 						</div>
 						<div class="panel-body custom-form">
 							<div class="form-group">
-								<label for="field-1" class="col-sm-5 control-label"><spring:message
+								<label for="field-1" class="col-sm-2 col-md-2 control-label"><spring:message
 										code="lbl.ward" /></label>
-								<div class="col-sm-3 add-margin">
+								<div class="col-sm-3 col-md-3 add-margin">
 									<form:select name="ward" id="ward" path="ward"
 										cssClass="form-control" cssErrorClass="form-control error">
 										<form:option value="">
@@ -82,14 +80,9 @@
 										<form:options items="${ward}" itemValue="id" itemLabel="name" />
 									</form:select>
 								</div>
-
-							</div>
-						</div>
-						<div class="panel-body custom-form">
-							<div class="form-group">
-								<label for="field-1" class="col-sm-5 control-label"><spring:message
+								<label for="field-1" class="col-sm-2 col-md-2 control-label"><spring:message
 										code="lbl.block" /></label>
-								<div class="col-sm-3 add-margin">
+								<div class="col-sm-3 col-md-3 add-margin">
 									<form:select name="block" id="block" path="block"
 										cssClass="form-control" cssErrorClass="form-control error">
 										<form:option value="">
@@ -98,36 +91,35 @@
 									</form:select>
 								</div>
 							</div>
-						</div>
-						<div class="panel-body custom-form">
-							<div class="form-group">
-								<label for="field-1" class="col-sm-5 control-label"><spring:message
-										code="lbl.locality" /></label>
-								<div class="col-sm-3 add-margin">
-									<form:select name="locality" id="locality" path="locality"
-										cssClass="form-control" cssErrorClass="form-control error">
-										<form:option value="">
+						<div class="form-group">
+							<label for="field-1" class="col-sm-2 col-md-2 control-label"><spring:message
+									code="lbl.locality" /></label>
+							<div class="col-sm-3 col-md-3 add-margin">
+								<form:select name="locality" id="locality" path="locality"
+									cssClass="form-control" cssErrorClass="form-control error">
+									<form:option value="">
 											Select
 										</form:option>
-										<form:options items="${localities}" itemValue="name"
-											itemLabel="name" />
-									</form:select>
-								</div>
+									<form:options items="${localities}" itemValue="name"
+										itemLabel="name" />
+								</form:select>
 							</div>
 						</div>
-						<div class="row">
 
-						<div class="text-center">
-							<button type="button" id="drilldownReportSearch"
-								class=" btn btn-primary">Search</button>
-							<button type="reset" class="btn btn-default"><spring:message code="lbl.reset"></spring:message></button>
-							<a href="javascript:void(0)" class="btn btn-default"
-								onclick="self.close()"> <spring:message code="lbl.close" /></a>
-						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="text-center">
+						<button type="button" id="drilldownReportSearch"
+							class=" btn btn-primary btnSearch">Search</button>
+						<button type="reset" class="btn btn-danger">
+							<spring:message code="lbl.reset"></spring:message>
+						</button>
+						<a href="javascript:void(0)" class="btn btn-default"
+							onclick="self.close()"> <spring:message code="lbl.close" /></a>
 					</div>
 				</div>
 			</form:form>
-			</div>
 			<div class="row display-hide report-section">
 				<div id="baseRegister-header"
 					class="col-md-12 table-header text-left">
@@ -179,6 +171,3 @@
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
 	src=" <cdn:url value='/resources/js/reports/sewerageNoOfConnection.js?rnd=${app_release_no}' />"></script>
-
-
-

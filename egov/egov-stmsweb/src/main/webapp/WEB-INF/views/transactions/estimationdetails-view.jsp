@@ -61,7 +61,7 @@
 			</div>
 			
 			<div class="panel-body">
-			  	<div class="row ">
+			  	<div class="row">
 					<div class="col-xs-3 add-margin"><spring:message code="lbl.inspectiondate"/></div>
 					<div class="col-xs-3 add-margin view-content" >
 						<fmt:formatDate pattern="dd/MM/yyyy" value="${sewerageApplicationDetails.fieldInspections[0].inspectionDate}" />
@@ -102,21 +102,21 @@
 						      <tr class="">
 								<td class="text-center"><span id="slNo1">${counter.index+1}</span></td> 
 								<td class="text-center"><c:out value="${fid.noOfPipes}" /></td>
-								<td class="text-right"><c:out value="${fid.pipeSize}" /></td>
-								<td class="text-right"><c:out value="${fid.pipeLength}"/></td>
-								<td class="text-right"><c:out value="${fid.screwSize}"/></td>
-								<td class="text-right"><c:out value="${fid.noOfScrews}"/></td> 
-								<td class="text-right"><c:out value="${fid.distance}"/></td>
+								<td class="text-center"><c:out value="${fid.pipeSize}" /></td>
+								<td class="text-center"><c:out value="${fid.pipeLength}"/></td>
+								<td class="text-center"><c:out value="${fid.screwSize}"/></td>
+								<td class="text-center"><c:out value="${fid.noOfScrews}"/></td> 
+								<td class="text-center"><c:out value="${fid.distance}"/></td>
 								<c:choose> 
 								  <c:when test="${fid.roadDigging}">
-								    <td class="text-right"><c:out value="Yes"/></td>
+								    <td class="text-center"><c:out value="Yes"/></td>
 								  </c:when>
 								  <c:otherwise>
-								    <td class="text-right"><c:out value="No"/></td>
+								    <td class="text-center"><c:out value="No"/></td>
 								  </c:otherwise>
 								</c:choose>
-								<td class="text-right"><c:out value="${fid.roadLength}"/></td>
-								<td class="text-right"><c:out value="${fid.roadOwner}"/></td>
+								<td class="text-center"><c:out value="${fid.roadLength}" default="N/A"/></td>
+								<td><c:out value="${fid.roadOwner}" default="N/A"/></td>
 						      </tr>
 			       		</c:forEach>
 					</tbody>
@@ -145,11 +145,11 @@
 							varStatus="counter"> 
 						      <tr class="">
 								<td class="text-center"><span id="slNo1">${counter.index+1}</span></td> 
-								<td class="text-center"><c:out value="${fid.itemDescription}" /></td>
-								<td class="text-right"><c:out value="${fid.quantity}"/></td>
-								<td class="text-right"><c:out value="${fid.unitOfMeasurement.uom}" /></td>
-								<td class="text-right"><c:out value="${fid.unitRate}"/></td>
-								<td class="text-right"><c:out value="${fid.amount}"/></td>
+								<td class="text-left"><c:out value="${fid.itemDescription}" default="N/A"/></td>
+								<td class="text-center"><c:out value="${fid.quantity}" default="N/A"/></td>
+								<td class="text-center"><c:out value="${fid.unitOfMeasurement.uom}" default="N/A" /></td>
+								<td class="text-center"><c:out value="${fid.unitRate}" default="N/A"/></td>
+								<td class="text-right"><c:out value="${fid.amount}" default="N/A"/></td>
 						      </tr>
 			       		</c:forEach>
 					</tbody>

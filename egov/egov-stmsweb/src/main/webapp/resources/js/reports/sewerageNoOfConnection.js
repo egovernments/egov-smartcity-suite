@@ -67,10 +67,19 @@ function callAjaxDataTableForReport(ward,block,locality){
 			.dataTable({
 				ajax : {
 					url : "/stms/reports/view-no-of-application",
+					traditional: true,
+					beforeSend : function() {
+						$('.loader-class').modal('show', {
+							backdrop : 'static'
+						});
+					},
 					data : {
 						'ward' : ward,
 						'block' : block,
 						'locality' : locality
+					},
+					complete : function() {
+						$('.loader-class').modal('hide');
 					}
 				},
 				"bDestroy" : true,

@@ -57,105 +57,147 @@
 		</div>
 	</div>
 	<div>
-			<spring:hasBindErrors name="sewerageApplicationDetails">
+		<spring:hasBindErrors name="sewerageApplicationDetails">
 			<div class="alert alert-danger col-md-10 col-md-offset-1">
-		     			<form:errors path="*" /><br/>
-		   	</div>
-		    </spring:hasBindErrors>
-		     <br/>
-		</div>
+				<form:errors path="*" />
+				<br />
+			</div>
+		</spring:hasBindErrors>
+		<br />
+	</div>
 	<div class="panel-body">
 		<div class="row add-border">
-			<div class="col-xs-3 add-margin"><spring:message code="lbl.shsc.number"/></div>
+			<div class="col-xs-3 add-margin">
+				<spring:message code="lbl.shsc.number" />
+			</div>
 			<div class="col-xs-3 add-margin view-content">
-				<c:choose>
-					<c:when test="${not empty sewerageApplicationDetails.connection.shscNumber}">
-						<c:out value="${sewerageApplicationDetails.connection.shscNumber}" />
-					</c:when>
-					<c:otherwise><spring:message code="lb.NA.code"/></c:otherwise>
-				</c:choose>
+				<c:out value="${sewerageApplicationDetails.connection.shscNumber}"
+					default="N/A" />
 			</div>
 			<div class="col-xs-3 add-margin">
-				<spring:message code="lbl.ack.number"/>
+				<spring:message code="lbl.ack.number" />
 			</div>
 			<div class="col-xs-3 add-margin view-content" id="applicationNumber">
-				<c:choose>
-					<c:when test="${not empty sewerageApplicationDetails.applicationNumber}">
-						<c:out value="${sewerageApplicationDetails.applicationNumber}" />
-					</c:when>
-					<c:otherwise><spring:message code="lb.NA.code"/></c:otherwise>
-				</c:choose>
+				<c:out value="${sewerageApplicationDetails.applicationNumber}"
+					default="N/A" />
 			</div>
 		</div>
-	
+
 		<div class="row add-border">
-			<div class="col-xs-3 add-margin"><spring:message code="lbl.ptassesmentnumber"/></div>
-			<div class="col-xs-3 add-margin view-content" id='propertyIdentifier'>
-				<c:out value="${sewerageApplicationDetails.connectionDetail.propertyIdentifier}" />
-				<input type="hidden" id="assessmentNo" value="${sewerageApplicationDetails.connectionDetail.propertyIdentifier}"/>
-				<input type="hidden" id="applNumber" value="${sewerageApplicationDetails.applicationNumber}"/>
-				<input type="hidden" id="shscNumber" value="${sewerageApplicationDetails.connection.shscNumber}"/>
+			<div class="col-xs-3 add-margin">
+				<spring:message code="lbl.ptassesmentnumber" />
 			</div>
-			<div class="col-xs-3 add-margin"><spring:message code="lbl.application.date"/></div>
+			<div class="col-xs-3 add-margin view-content" id='propertyIdentifier'>
+				<c:out
+					value="${sewerageApplicationDetails.connectionDetail.propertyIdentifier}"
+					default="N/A" />
+				<input type="hidden" id="assessmentNo"
+					value="${sewerageApplicationDetails.connectionDetail.propertyIdentifier}" />
+				<input type="hidden" id="applNumber"
+					value="${sewerageApplicationDetails.applicationNumber}" /> <input
+					type="hidden" id="shscNumber"
+					value="${sewerageApplicationDetails.connection.shscNumber}" />
+			</div>
+			<div class="col-xs-3 add-margin">
+				<spring:message code="lbl.application.date" />
+			</div>
 			<div class="col-xs-3 add-margin view-content" id="applicationDate">
-				<fmt:formatDate pattern="dd/MM/yyyy" value="${sewerageApplicationDetails.applicationDate}" />
+				<fmt:formatDate pattern="dd/MM/yyyy"
+					value="${sewerageApplicationDetails.applicationDate}" />
 			</div>
 		</div>
 		<c:forEach items="${propertyOwnerDetails.ownerNames}" var="owner">
-		<div class="row add-border">
-			<div class="col-xs-3 add-margin"><spring:message code="lbl.mobileNo"/></div>
-			<div class="col-xs-3 add-margin view-content" id="mobileNumber"><c:out value="${owner.mobileNumber}"/></div>
-			<div class="col-xs-3 add-margin"><spring:message code="lbl.email"/> </div>
-			<div class="col-xs-3 add-margin view-content" id="email" ><c:out value="${owner.emailId}"/></div>
-		</div>
-		<div class="row add-border">
-			<div class="col-xs-3 add-margin"><spring:message code="lbl.applicantname"/></div>
-			<div class="col-xs-3 add-margin view-content" id="applicantname"><c:out value="${owner.ownerName}"/></div>
-			<div class="col-xs-3 add-margin"><spring:message code="lbl.locality" /></div>
-			<div class="col-xs-3 add-margin view-content" id="locality"><c:out value="${propertyOwnerDetails.boundaryDetails.localityName}"/></div>
-		</div>
-		<div class="row add-border">
-			<div class="col-xs-3 add-margin"><spring:message code="lbl.address" /></div>
-			<div class="col-xs-3 add-margin view-content" id="propertyaddress" >
-				<c:out value="${propertyOwnerDetails.propertyAddress}"/>
+			<div class="row add-border">
+				<div class="col-xs-3 add-margin">
+					<spring:message code="lbl.mobileNo" />
+				</div>
+				<div class="col-xs-3 add-margin view-content" id="mobileNumber">
+					<c:out value="${owner.mobileNumber}" default="N/A" />
+				</div>
+				<div class="col-xs-3 add-margin">
+					<spring:message code="lbl.email" />
+				</div>
+				<div class="col-xs-3 add-margin view-content" id="email">
+					<c:choose>
+						<c:when test="${not empty owner.emailId}">
+							<c:out value="${owner.emailId}" />
+						</c:when>
+						<c:otherwise>
+							<spring:message code="lb.NA.code" />
+						</c:otherwise>
+					</c:choose>
+				</div>
 			</div>
-			<div class="col-xs-3 add-margin"><spring:message code="lbl.zonewardblock"/></div>
-			<div class="col-xs-3 add-margin view-content" id="zonewardblock">
-				<c:out value="${propertyOwnerDetails.boundaryDetails.zoneName}"/> <c:out value=" / "/>
-				<c:out value="${propertyOwnerDetails.boundaryDetails.wardName}"/> <c:out value=" / "/>
-				<c:out value="${propertyOwnerDetails.boundaryDetails.blockName}"/>
+			<div class="row add-border">
+				<div class="col-xs-3 add-margin">
+					<spring:message code="lbl.applicantname" />
+				</div>
+				<div class="col-xs-3 add-margin view-content" id="applicantname">
+					<c:out value="${owner.ownerName}" default="N/A" />
+				</div>
+				<div class="col-xs-3 add-margin">
+					<spring:message code="lbl.locality" />
+				</div>
+				<div class="col-xs-3 add-margin view-content" id="locality">
+					<c:out value="${propertyOwnerDetails.boundaryDetails.localityName}"
+						default="N/A" />
+				</div>
 			</div>
-		</div>
-		<div class="row add-border">
-			<div class="col-xs-3 add-margin"><spring:message code="lbl.aadhar"/></div>
-			<div class="col-xs-3 add-margin view-content" id="aadhaar">
-				<c:out value="${owner.aadhaarNumber}"/>
+			<div class="row add-border">
+				<div class="col-xs-3 add-margin">
+					<spring:message code="lbl.address" />
+				</div>
+				<div class="col-xs-3 add-margin view-content" id="propertyaddress">
+					<c:out value="${propertyOwnerDetails.propertyAddress}"
+						default="N/A" />
+				</div>
+				<div class="col-xs-3 add-margin">
+					<spring:message code="lbl.zonewardblock" />
+				</div>
+				<div class="col-xs-3 add-margin view-content" id="zonewardblock">
+					<c:out value="${propertyOwnerDetails.boundaryDetails.zoneName}" />
+					<c:out value=" / " />
+					<c:out value="${propertyOwnerDetails.boundaryDetails.wardName}" />
+					<c:out value=" / " />
+					<c:out value="${propertyOwnerDetails.boundaryDetails.blockName}" />
+				</div>
 			</div>
-			<div class="col-xs-3 add-margin"></div>
-			<div class="col-xs-3 add-margin view-content"></div>
-		</div>
+			<div class="row add-border">
+				<div class="col-xs-3 add-margin">
+					<spring:message code="lbl.aadhar" />
+				</div>
+				<div class="col-xs-3 add-margin view-content" id="aadhaar">
+					<c:out value="${owner.aadhaarNumber}" default="N/A" />
+				</div>
+				<div class="col-xs-3 add-margin"></div>
+				<div class="col-xs-3 add-margin view-content"></div>
+			</div>
 		</c:forEach>
 		<div class="row">
-			<div class="col-xs-3 add-margin"><spring:message code="lbl.properttax"/></div>
+			<div class="col-xs-3 add-margin">
+				<spring:message code="lbl.properttax" />
+			</div>
 			<div class="col-xs-3 add-margin view-content" id="propertytaxdue">
 				<c:choose>
 					<c:when test="${null!= mode && propertyTax > 0}">
 						<c:out value="${propertyTax}" />
-					</c:when>	
+					</c:when>
 					<c:otherwise>
-						<spring:message code="lbl.zero.code"/>
+						<spring:message code="lbl.zero.code" />
 					</c:otherwise>
 				</c:choose>
 			</div>
-			<div class="col-xs-3 add-margin"><spring:message code="lbl.current.due"/></div>
+			<div class="col-xs-3 add-margin">
+				<spring:message code="lbl.current.due" />
+			</div>
 			<div class="col-xs-3 add-margin view-content"></div>
 			<div class="col-xs-3 add-margin view-content">
 				<c:choose>
 					<c:when test="${null!= mode && sewerageTaxDue > 0}">
 						<c:out value="${sewerageTaxDue}" />
-					</c:when>	
+					</c:when>
 					<c:otherwise>
-						<spring:message code="lbl.zero.code"/>
+						<spring:message code="lbl.zero.code" />
 					</c:otherwise>
 				</c:choose>
 			</div>

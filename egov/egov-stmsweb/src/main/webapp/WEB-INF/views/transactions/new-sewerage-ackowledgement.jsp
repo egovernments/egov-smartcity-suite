@@ -63,7 +63,7 @@
 </form:form>
 <div class="buttonbottom" align="center">
 		<input type="button" value="Print" name="PrintAck" id="PrintAck"
-				class="button"				
+				class="button btn-primary"				
 				onclick="window.open('/stms/transactions/printacknowledgement?appNo=${applicationNo}','_self');">	
 		<input type="button" name="button2" id="button2" value="Close" class="btn btn-default" onclick="window.close();" />
 </div>

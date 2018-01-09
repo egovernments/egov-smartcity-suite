@@ -51,112 +51,128 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
-	
-	<form:form id="sewerageNoticeSearch" method="get" class="form-horizontal form-groups-bordered" modelAttribute="sewerage" commandName="">
-		<div class="panel panel-primary" data-collapsed="0">
-			<div class="panel-heading">
-				<div class="panel-title">
-					<strong><spring:message code='title.sewerage-notice-search' /></strong>
-					
+
+<form:form role="form" id="sewerageNoticeSearch" method="get"
+	class="form-horizontal form-groups-bordered" modelAttribute="sewerage"
+	commandName="">
+	<div class="panel panel-primary" data-collapsed="0">
+		<div class="panel-heading">
+			<div class="panel-title"></div>
+		</div>
+		<div class="panel-body">
+			<div class="form-group">
+				<label class="col-sm-2 col-md-2 control-label"> <spring:message
+						code="lbl.shsc.number" /></label>
+				<div class="col-sm-3 col-md-3 add-margin">
+					<input type="text" name="shscNumber" id="shscNumber"
+						class="form-control is_valid_number"
+						data-inputmask="'mask': '9999999999'" id="app-appcodo" min="10" />
+				</div>
+				<label class="col-sm-2 col-md-2 control-label"> <spring:message
+						code="lbl.applicantname" /></label>
+				<div class="col-sm-3 col-md-3 add-margin">
+					<input type="text" name="applicantName" id="applicantName"
+						class="form-control patternvalidation"
+						data-pattern="alphanumericwithspacespecialcharacters"
+						maxlength="100" id="app-mobno" />
 				</div>
 			</div>
-			<div class="panel-body">
-				<div class="form-group">
-					<label  class="col-md-4 control-label"> 
-					<spring:message code="lbl.shsc.number" /></label>
-						<div class="col-md-4 add-margin">
-							<input type="text" name="shscNumber" id="shscNumber" class="form-control is_valid_number"  data-inputmask="'mask': '9999999999'" id="app-appcodo" min="10"  />
-						</div>
-				</div> 
-				<div class="form-group">
-					<label  class="col-md-4 control-label"> 
-					<spring:message code="lbl.applicantname" /></label>
-						<div class="col-md-4 add-margin">
-							<input type="text" name="applicantName" id="applicantName" class="form-control patternvalidation" data-pattern="alphanumericwithspacespecialcharacters" maxlength="100" id="app-mobno" />
-						</div>
+			<div class="form-group">
+				<label class="col-sm-2 col-md-2 control-label"> <spring:message
+						code="lbl.mobileNo" /></label>
+				<div class="col-sm-3 col-md-3 add-margin">
+					<input type="text" name="mobileNumber" id="mobileNumber"
+						class="form-control is_valid_number" maxlength="10"
+						data-inputmask="'mask': '9999999999'" id="app-appcodo" min="10" />
 				</div>
-				<div class="form-group">
-					<label  class="col-md-4 control-label"> 
-					<spring:message code="lbl.mobileNo" /></label>
-						<div class="col-md-4 add-margin">
-							<input type="text" name="mobileNumber" id="mobileNumber" class="form-control is_valid_number" maxlength="10" data-inputmask="'mask': '9999999999'" id="app-appcodo" min="10"  />
-						</div>
+				<label class="col-sm-2 col-md-2 control-label"><spring:message
+						code="lbl.doornumber" /></label>
+				<div class="col-sm-3 col-md-3 add-margin">
+					<input type="text" name="doorNumber" class="form-control "
+						id="app-appcodo" maxlength="24" />
 				</div>
- 				<div class="form-group">
-						<label  class="col-md-4 control-label"><spring:message code="lbl.doornumber" /></label>
-						<div class="col-md-4 add-margin">
-							<input  type="text" name="doorNumber" class="form-control "  id="app-appcodo" maxlength="24" />
-						</div>
-				</div> 
-				<div class="form-group">
-					<label for="field-1" class="col-md-4 control-label"><spring:message code="lbl.revenue.ward" /></label>
-						<div class="col-md-4 add-margin">
-						 	<select name="revenueWard" id="app-mobno" class="form-control" data-first-option="false">
-								<option value="${ward.name}"></option>
-								  <c:forEach items="${revenueWards}" var="ward">
-                                    <option value="${ward.name}"> ${ward.name} </option>
-                                </c:forEach>
-					     	</select>
-						</div>
+			</div>
+			<div class="form-group">
+				<label for="field-1" class="col-sm-2 col-md-2 control-label"><spring:message
+						code="lbl.revenue.ward" /></label>
+				<div class="col-sm-3 col-md-3 add-margin">
+					<select name="revenueWard" id="app-mobno" class="form-control"
+						data-first-option="false">
+						<option value="${ward.name}"></option>
+						<c:forEach items="${revenueWards}" var="ward">
+							<option value="${ward.name}">${ward.name}</option>
+						</c:forEach>
+					</select>
 				</div>
-				<div class="form-group">
-					<label for="field-1" class="col-md-4 control-label"><spring:message code="lbl.notice.type" /><span class="mandatory"></span></label>
-						<div class="col-md-4 add-margin">
-						 	<select name="noticeType" id="noticetype" class="form-control" data-first-option="false"><span class="mandatory"></span>
-								<option value="">Select</option>
-                                <option value="EM">Estimation Notice</option>
-                                <option value="WO">Sanction order Notice</option>
-                                <option value="CC">Close Connection Notice</option>
-                                <option value="RN">Rejection Notice</option>
-					     	</select>
-						</div>
+				<label for="field-1" class="col-sm-2 col-md-2 control-label"><spring:message
+						code="lbl.notice.type" /><span class="mandatory"></span></label>
+				<div class="col-sm-3 col-md-3 add-margin">
+					<select name="noticeType" id="noticetype" class="form-control"
+						data-first-option="false" required="required">
+						<option value="">Select</option>
+						<option value="EM">Estimation Notice</option>
+						<option value="WO">Sanction order Notice</option>
+						<option value="CC">Close Connection Notice</option>
+						<option value="RN">Rejection Notice</option>
+					</select>
 				</div>
-				<div class="form-group">
-					<label for="field-1" class="col-md-4 control-label"><spring:message code="lbl.notice.fromdate" /><span class="mandatory"></span></label>
-						<div class="col-md-4 add-margin">
-						 	<input  type="text" name="noticeGeneratedFrom" class="form-control datepicker"  id="noticeGeneratedFrom" maxlength="24" required="required"/>
-						</div>
+			</div>
+			<div class="form-group">
+				<label for="field-1" class="col-sm-2 col-md-2 control-label"><spring:message
+						code="lbl.notice.fromdate" /><span class="mandatory"></span></label>
+				<div class="col-sm-3 col-md-3 add-margin">
+					<input type="text" name="noticeGeneratedFrom"
+						class="form-control datepicker" id="noticeGeneratedFrom"
+						maxlength="24" required="required" />
 				</div>
-				<div class="form-group">
-					<label for="field-1" class="col-md-4 control-label"><spring:message code="lbl.notice.todate" /><span class="mandatory"></span></label>
-						<div class="col-md-4 add-margin">
-						 	<input  type="text" name="noticeGeneratedTo" class="form-control datepicker"  id="noticeGeneratedTo" maxlength="24" required="required"/>
-						</div>
+				<label for="field-1" class="col-sm-2 col-md-2 control-label"><spring:message
+						code="lbl.notice.todate" /><span class="mandatory"></span></label>
+				<div class="col-sm-3 col-md-3 add-margin">
+					<input type="text" name="noticeGeneratedTo"
+						class="form-control datepicker" id="noticeGeneratedTo"
+						maxlength="24" required="required" />
 				</div>
-			
-					<div class="form-group">
-						<div class="text-center">
-							<a href="javascript:void(0);" id="searchSewerageNotice"
-								class="btn btn-primary"><spring:message code='lbl.search'/></a>
-							<input type="submit"   class="btn btn-primary" id="mergeanddownload" name="mergeanddownload" value="Merge & Download"/>
-							<input type="submit" class="btn btn-primary" id="zipanddownload" name="zipanddownload" value="Zip & Download"/>
-							<button class="btn btn-danger" type="reset"><spring:message code='lbl.reset'/></button>
-							<a href="javascript:void(0);" id="closeComplaints"
-								class="btn btn-default" onclick="self.close()"><spring:message code='lbl.close' /></a>
-						</div>
-				</div>
-			</div>		
+			</div>
 		</div>
-			<br/>
-		
-	</form:form>
-	<br>
-        <div class="row">
-					<div class="col-md-6 col-xs-6 table-header"><spring:message code='lbl.searchresult'/></div>
-					
-					<!-- <div class="col-md-12 add-margin text-center error-msg display-hide" id="search-exceed-msg">Search result exceeds the limit(<span id="search-exceed-count">1900</span>). Please, refine your search</div> -->
-					<div class="col-md-12 add-margin text-center error-msg display-hide" id="search-exceed-msg">Result contains more than 1000 records, please refine your search criteria.</div>
-	<div class="col-md-12" id="searchResultDiv">	
-	<table class="table table-bordered datatable dt-responsive"
-		id="sewerageNoticeSearchResults">
-				
-	</table>
+	</div>
+	<div class="form-group">
+		<div class="text-center">
+			<a href="javascript:void(0);" id="searchSewerageNotice"
+				class="btn btn-primary"><spring:message code='lbl.search' /></a> <input
+				type="submit" class="btn btn-primary" id="mergeanddownload"
+				name="mergeanddownload" value="Merge & Download" /> <input
+				type="submit" class="btn btn-primary" id="zipanddownload"
+				name="zipanddownload" value="Zip & Download" />
+			<button class="btn btn-danger" type="reset">
+				<spring:message code='lbl.reset' />
+			</button>
+			<a href="javascript:void(0);" id="closeComplaints"
+				class="btn btn-default" onclick="self.close()"><spring:message
+					code='lbl.close' /></a>
+		</div>
+	</div>
+</form:form>
+<br>
+<div class="row">
+	<div class="col-md-6 col-xs-6 table-header">
+		<spring:message code='lbl.searchresult' />
+	</div>
+	<div class="col-md-12 add-margin text-center error-msg display-hide"
+		id="search-exceed-msg">Result contains more than 1000 records,
+		please refine your search criteria.</div>
+	<div class="col-md-12" id="searchResultDiv">
+		<table class="table table-bordered datatable dt-responsive"
+			id="sewerageNoticeSearchResults">
+
+		</table>
 	</div>
 </div>
 <link rel="stylesheet"
 	href="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>" />
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
 <script
 	src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"
 	type="text/javascript"></script>
@@ -172,10 +188,13 @@
 <script
 	src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"
 	type="text/javascript"></script>
-<script src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/moment.min.js' context='/egi'/>"></script>
-<script src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js' context='/egi'/>"></script>
-<script src="<cdn:url  value='/resources/javascript/helper.js?rnd=${app_release_no}'/>"
+<script
+	src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/moment.min.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url  value='/resources/javascript/helper.js?rnd=${app_release_no}'/>"
 	type="text/javascript"></script>
-
-<script src="<cdn:url  value='/resources/js/search/sewerageNoticeSearch.js?rnd=${app_release_no}'/>"
+<script
+	src="<cdn:url  value='/resources/js/search/sewerageNoticeSearch.js?rnd=${app_release_no}'/>"
 	type="text/javascript"></script>
