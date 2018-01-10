@@ -1567,12 +1567,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         basicProperty.setAssessmentdate(propCompletionDate);
         basicProperty.setIsTaxXMLMigrated(STATUS_YES_XML_MIGRATION);
         basicPropertyService.persist(basicProperty);
-        // TODO update index by assesment no
-        // propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
         setBasicProp(basicProperty);
         setAckMessage("Property data entry saved in the system successfully and created with Assessment No "
                 + basicProperty.getUpicNo());
-        // setApplicationNoMessage(" with application number : ");
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
         if (logger.isDebugEnabled()) {
             logger.info("create: Property created successfully in system" + "; Time taken(ms) = " + elapsedTimeMillis);
