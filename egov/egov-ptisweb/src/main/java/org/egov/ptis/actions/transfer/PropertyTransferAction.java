@@ -634,7 +634,6 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             currentPropertyTaxSecondHalf = propertyTaxDetails.get(CURR_SECONDHALF_DMD_STR);
             documentTypes = transferOwnerService.getPropertyTransferDocumentTypes();
             addDropdownData("MutationReason", transferOwnerService.getPropertyTransferReasons());
-            /*setGuardianRelations(propertyTaxCommonUtils.getGuardianRelations());*/
             if (propertyMutation.getReceiptNum() != null) {
                 final boolean isCanceled = propertyTaxCommonUtils.isReceiptCanceled(propertyMutation.getReceiptNum());
                 setReceiptCanceled(isCanceled);
