@@ -202,7 +202,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 	private String amenities;
 	private String[] floorNoStr = new String[100];
 	private final SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT_DDMMYYY);
-	private transient PropertyImpl propWF;// would be current property workflow obj
+	private transient PropertyImpl propWF;
 	private transient Map<String, String> propTypeCategoryMap;
 	FinancialUtil financialUtil = new FinancialUtil();
 	private String docNumber;
@@ -435,7 +435,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 			propertyAddr = basicProp.getAddress();
 			corrsAddress = PropertyTaxUtil.getOwnerAddress(basicProp.getPropertyOwnerInfo());
 			if (propertyAddr.getHouseNoBldgApt() != null)
-				setHouseNo(propertyAddr.getHouseNoBldgApt().toString());
+				setHouseNo(propertyAddr.getHouseNoBldgApt());
 			if (propertyModel.getPropertyDetail().getFloorType() != null)
 				floorTypeId = propertyModel.getPropertyDetail().getFloorType().getId();
 			if (propertyModel.getPropertyDetail().getRoofType() != null)
@@ -1695,6 +1695,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 					woodTypeId, taxExemptedReason, propertyDepartmentId, vacantLandPlotAreaId,
 					layoutApprovalAuthorityId, Boolean.FALSE));
 			updatePropertyID(basicProp);
+			oldProperty = (PropertyImpl) basicProp.getProperty();
 			final Long oldPropTypeId = oldProperty.getPropertyDetail().getPropertyTypeMaster().getId();
 			if ((oldPropTypeId == propTypeMstr.getId() && Long.parseLong(propTypeId) != propTypeMstr.getId()
 					|| oldPropTypeId != propTypeMstr.getId() && Long.parseLong(propTypeId) == propTypeMstr.getId())
