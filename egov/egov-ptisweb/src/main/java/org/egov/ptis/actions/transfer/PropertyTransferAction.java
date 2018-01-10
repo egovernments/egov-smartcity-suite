@@ -231,7 +231,6 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private boolean receiptCanceled = Boolean.FALSE;
     private boolean allowEditDocument = Boolean.FALSE;
     private String applicationSource;
-    private transient List<String> guardianRelations;
     private Boolean citizenPortalUser = Boolean.FALSE;
     private Boolean showAckBtn = Boolean.FALSE;
     private Boolean isReassignEnabled = Boolean.FALSE;
@@ -635,7 +634,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             currentPropertyTaxSecondHalf = propertyTaxDetails.get(CURR_SECONDHALF_DMD_STR);
             documentTypes = transferOwnerService.getPropertyTransferDocumentTypes();
             addDropdownData("MutationReason", transferOwnerService.getPropertyTransferReasons());
-            setGuardianRelations(propertyTaxCommonUtils.getGuardianRelations());
+            /*setGuardianRelations(propertyTaxCommonUtils.getGuardianRelations());*/
             if (propertyMutation.getReceiptNum() != null) {
                 final boolean isCanceled = propertyTaxCommonUtils.isReceiptCanceled(propertyMutation.getReceiptNum());
                 setReceiptCanceled(isCanceled);
@@ -1332,14 +1331,6 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
     public void setApplicationSource(String applicationSource) {
         this.applicationSource = applicationSource;
-    }
-
-    public List<String> getGuardianRelations() {
-        return guardianRelations;
-    }
-
-    public void setGuardianRelations(List<String> guardianRelations) {
-        this.guardianRelations = guardianRelations;
     }
 
     public Boolean getCitizenPortalUser() {

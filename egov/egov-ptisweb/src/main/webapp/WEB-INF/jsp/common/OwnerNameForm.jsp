@@ -82,7 +82,7 @@
         </td>
         <td class="blueborderfortd" align="center">
             <s:select id="guardianRelation" name="basicProperty.propertyOwnerInfoProxy[0].owner.guardianRelation" value="%{basicProperty.propertyOwnerInfoProxy[0].owner.guardianRelation}"
-				 headerValue="Choose" headerKey="" list="guardianRelations" cssClass="selectwk" data-optional="0" data-errormsg="Guardian relation is mandatory!"/>
+				 headerValue="Choose" headerKey="" list="@org.egov.infra.persistence.entity.enums.GuardianRelation@values()" cssClass="selectwk" data-optional="0" data-errormsg="Guardian relation is mandatory!"/>
 		</td>
          <td class="blueborderfortd" align="center">
         	<s:textfield name="basicProperty.propertyOwnerInfoProxy[0].owner.guardian" maxlength="32" size="20" id="guardian"  value="%{basicProperty.propertyOwnerInfoProxy[0].owner.guardian}" 
@@ -129,7 +129,7 @@
         		</td>
         		<td class="blueborderfortd" align="center">
         		    <s:select id="guardianRelation" name="basicProperty.propertyOwnerInfoProxy[%{#ownerStatus.index}].owner.guardianRelation" value="%{basicProperty.propertyOwnerInfoProxy[#ownerStatus.index].owner.guardianRelation}"
-				headerValue="Choose" headerKey="" list="guardianRelations" data-optional="0" data-errormsg="Guardian relation is mandatory!"/>
+				headerValue="Choose" headerKey="" list="@org.egov.infra.persistence.entity.enums.GuardianRelation@values()" data-optional="0" data-errormsg="Guardian relation is mandatory!"/>
         	    </td>
         		<td class="blueborderfortd" align="center">
         	        <s:textfield name="basicProperty.propertyOwnerInfoProxy[%{#ownerStatus.index}].owner.guardian" maxlength="32" size="20" id="guardian"  value="%{basicProperty.propertyOwnerInfoProxy[#ownerStatus.index].owner.guardian}" 

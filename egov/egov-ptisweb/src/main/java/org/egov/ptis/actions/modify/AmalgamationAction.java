@@ -166,7 +166,6 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     private String reportId;
     private Boolean showAckBtn = Boolean.FALSE;
     private String instStartDt;
-    private List<String> guardianRelations;
     private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
     private Long vacantLandPlotAreaId;
     private Long layoutApprovalAuthorityId;
@@ -258,7 +257,6 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
 
         documentTypes = propService.getDocumentTypesForTransactionType(TransactionType.OBJECTION);
         setFloorNoMap(FLOOR_MAP);
-        setGuardianRelations(propertyTaxCommonUtils.getGuardianRelations());
         addDropdownData("floorType", floorTypeService.getAllFloors());
         addDropdownData("roofType", roofTypeService.getAllRoofTypes());
         addDropdownData("wallType", wallTypeService.getAllWalls());
@@ -691,13 +689,6 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
                     addActionError(getText("mandatory.ownerName"));
                 if (null == owner.getOwner().getGender())
                     addActionError(getText("mandatory.gender"));
-              //to do--- commenting is temporarily.. need to enable it later as per the requirement  
-                /*if (StringUtils.isBlank(owner.getOwner().getMobileNumber()))
-                    addActionError(getText("mandatory.mobilenumber"));
-                if (StringUtils.isBlank(owner.getOwner().getGuardianRelation()))
-                    addActionError(getText("mandatory.guardianrelation"));
-                if (StringUtils.isBlank(owner.getOwner().getGuardian()))
-                    addActionError(getText("mandatory.guardian"));*/
             }
 
         validateDuplicateMobileNo();
@@ -847,12 +838,12 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
                         logger.debug("createOwners: OwnerAddress: " + ownerAddress);
                     ownerInfo.getOwner().addAddress(basicProperty.getAddress());
                 } else {
-                    // If existing user, then do not add correspondence address
                     user.setEmailId(ownerInfo.getOwner().getEmailId());
                     user.setGuardian(ownerInfo.getOwner().getGuardian());
                     user.setGuardianRelation(ownerInfo.getOwner().getGuardianRelation());
                     ownerInfo.setOwner(user);
                     ownerInfo.setProperty(property);
+                    ownerInfo.getOwner().addAddress(basicProperty.getAddress());
                 }
             }
             property.addAmalgamationOwners(ownerInfo);
@@ -1340,14 +1331,6 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
 
     public void setInstStartDt(final String instStartDt) {
         this.instStartDt = instStartDt;
-    }
-
-    public List<String> getGuardianRelations() {
-        return guardianRelations;
-    }
-
-    public void setGuardianRelations(List<String> guardianRelations) {
-        this.guardianRelations = guardianRelations;
     }
 
     public Long getVacantLandPlotAreaId() {

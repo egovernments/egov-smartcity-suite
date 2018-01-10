@@ -248,7 +248,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private boolean eligibleInitiator = Boolean.TRUE;
     private boolean dataEntry = Boolean.FALSE;
     private String applicationSource;
-    private transient List<String> guardianRelations;
 
     @Autowired
     private transient PropertyDepartmentRepository propertyDepartmentRepository;
@@ -1047,7 +1046,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         addDropdownData("wards", Collections.emptyList());
         addDropdownData("streets", Collections.emptyList());
         addDropdownData("blocks", Collections.emptyList());
-		setGuardianRelations(propertyTaxCommonUtils.getGuardianRelations());
         setDeviationPercentageMap(DEVIATION_PERCENTAGE);
         addDropdownData("PropTypeMaster", propTypeList);
         addDropdownData("floorType", floorTypeList);
@@ -2307,13 +2305,4 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     public void setCitizenPortalUser(boolean citizenPortalUser) {
         this.citizenPortalUser = citizenPortalUser;
     }
-
-    public List<String> getGuardianRelations() {
-        return guardianRelations;
-    }
-
-    public void setGuardianRelations(List<String> guardianRelations) {
-        this.guardianRelations = guardianRelations;
-    }
-    
 }

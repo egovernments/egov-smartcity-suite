@@ -129,7 +129,7 @@
 						<td><s:select id="guardianRelation"
 								name="amalgamationOwnersProxy[%{#ownerStatus.index}].owner.guardianRelation"
 								value="%{amalgamationOwnersProxy[#ownerStatus.index].owner.guardianRelation}"
-								headerValue="Choose" list="guardianRelations"
+								headerValue="Choose" list="@org.egov.infra.persistence.entity.enums.GuardianRelation@values()"
 								data-optional="0"
 								data-errormsg="Guardian relation is mandatory!" /></td>
 						<td><s:textfield

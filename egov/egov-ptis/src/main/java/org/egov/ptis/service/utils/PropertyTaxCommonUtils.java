@@ -70,7 +70,6 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.notification.service.NotificationService;
-import org.egov.infra.persistence.entity.enums.GuardianRelation;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.NumberUtil;
@@ -110,8 +109,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.egov.collection.constants.CollectionConstants.QUERY_RECEIPTS_BY_RECEIPTNUM;
 import static org.egov.ptis.constants.PropertyTaxConstants.*;
@@ -608,10 +605,6 @@ public class PropertyTaxCommonUtils {
         return designations;
     }
 
-    public List<String> getGuardianRelations() {
-        return Stream.of(GuardianRelation.values()).map(GuardianRelation::name).collect(Collectors.toList());
-    }
-    
     public List<Long> getPositionForUser(final Long userId) {
         List<Long> positionIds = new ArrayList<>();
         if (userId != null && userId.intValue() != 0) {
