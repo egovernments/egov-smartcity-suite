@@ -262,7 +262,7 @@ public class MeterDemandNoticeController {
         final Installment installment = connectionDemandService.getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME,
                 WaterTaxConstants.MONTHLY, givenDate);
         final EgDemandReason demandReasonObj = connectionDemandService.getDemandReasonByCodeAndInstallment(
-                WaterTaxConstants.WATERTAXREASONCODE, installment);
+                WaterTaxConstants.METERED_CHARGES_REASON_CODE, installment);
         final List<EgDemandDetails> demnadDetList = demandGenericDao.getDemandDetailsForDemandAndReasons(
                 waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand(), Arrays.asList(demandReasonObj));
         if (!demnadDetList.isEmpty()) {

@@ -1069,10 +1069,10 @@ public class WaterConnectionDetailsService {
                     if (waterTaxUtils.isCSCoperator(waterConnectionDetails.getCreatedBy())
                             && UserType.BUSINESS.equals(waterConnectionDetails.getCreatedBy().getType()))
                         channel = Source.CSC.toString();
-                    else if (sourceChannel != null)
-                        channel = sourceChannel;
-                    else
+                    else if (sourceChannel == null)
                         channel = SYSTEM;
+                    else
+                        channel = sourceChannel;
                 } else
                     channel = waterConnectionDetails.getSource().toString();
 

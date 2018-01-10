@@ -48,6 +48,18 @@
 
 package org.egov.wtms.web.controller.reports;
 
+import static org.egov.demand.model.EgdmCollectedReceipt.RCPT_CANCEL_STATUS;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.METERED_CHARGES_REASON_CODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAXREASONCODE;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
 import org.egov.commons.Installment;
 import org.egov.dcb.bean.DCBDisplayInfo;
 import org.egov.dcb.bean.DCBRecord;
@@ -81,17 +93,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import static org.egov.demand.model.EgdmCollectedReceipt.RCPT_CANCEL_STATUS;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAXREASONCODE;
 
 @Controller
 @RequestMapping(value = "/viewDcb")
@@ -139,14 +140,14 @@ public class CurrentViewDcbController {
 
     @RequestMapping(value = "/showMigData/{consumerNumber}/{applicationCode}", method = RequestMethod.GET)
     public String showMigData(final Model model, @PathVariable final String consumerNumber,
-                              @PathVariable final String applicationCode) {
-        List<WaterChargesReceiptInfo> waterChargesReceiptInfo = currentDcbService.getMigratedReceiptDetails(consumerNumber);
+            @PathVariable final String applicationCode) {
+        final List<WaterChargesReceiptInfo> waterChargesReceiptInfo = currentDcbService.getMigratedReceiptDetails(consumerNumber);
         WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByOldConsumerNumberAndConnectionStatus(consumerNumber, ConnectionStatus.ACTIVE);
         if (waterConnectionDetails == null)
             waterConnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(consumerNumber,
                     ConnectionStatus.ACTIVE);
-        List<WaterChargesReceiptInfo> waterChargesReceiptInfoList = currentDcbService
+        final List<WaterChargesReceiptInfo> waterChargesReceiptInfoList = currentDcbService
                 .getMigratedReceiptDetails(waterConnectionDetails.getId());
         waterChargesReceiptInfoList.addAll(waterChargesReceiptInfo);
         model.addAttribute("waterChargesReceiptInfo", waterChargesReceiptInfoList);
@@ -188,7 +189,8 @@ public class CurrentViewDcbController {
             egDemandDetailsList.addAll(demand.getEgDemandDetails());
             Collections.sort(egDemandDetailsList, new DemandComparatorByInstallmentOrder());
             for (final EgDemandDetails demandDetails : egDemandDetailsList)
-                if (WATERTAXREASONCODE.equals(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()))
+                if (WATERTAXREASONCODE.equals(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()) ||
+                        METERED_CHARGES_REASON_CODE.equals(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()))
                     installmentList.add(demandDetails.getEgDemandReason().getEgInstallmentMaster().getDescription());
             for (final String installment : installmentList)
                 for (final Map.Entry<Installment, DCBRecord> dcbMap : dCBReport.getRecords().entrySet())

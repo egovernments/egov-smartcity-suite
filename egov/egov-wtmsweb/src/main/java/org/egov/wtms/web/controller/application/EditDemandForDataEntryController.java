@@ -47,13 +47,12 @@
  */
 package org.egov.wtms.web.controller.application;
 
-import static org.egov.wtms.utils.constants.WaterTaxConstants.CONNECTIONTYPE_METERED;
+import static org.egov.wtms.masters.entity.enums.ConnectionType.METERED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.METERED_DMDRSN_CODE_MAP;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.NON_METERED_DMDRSN_CODE_MAP;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -65,8 +64,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.wtms.application.entity.DemandDetail;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
@@ -74,7 +71,6 @@ import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.WaterTaxUtils;
-import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -91,7 +87,6 @@ public class EditDemandForDataEntryController {
 
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
-    private final WaterConnectionDetailsRepository waterConnectionDetailsRepository;
     private final ConnectionDemandService connectionDemandService;
     @Autowired
     private WaterTaxUtils waterTaxUtils;
@@ -99,7 +94,6 @@ public class EditDemandForDataEntryController {
     @Autowired
     public EditDemandForDataEntryController(final WaterConnectionDetailsRepository waterConnectionDetailsRepository,
             final ConnectionDemandService connectionDemandService) {
-        this.waterConnectionDetailsRepository = waterConnectionDetailsRepository;
         this.connectionDemandService = connectionDemandService;
     }
 
@@ -120,20 +114,18 @@ public class EditDemandForDataEntryController {
     private String loadViewData(final Model model, final WaterConnectionDetails waterConnectionDetails) {
         final List<DemandDetail> demandDetailBeanList = new ArrayList<>();
         final Set<DemandDetail> tempDemandDetail = new LinkedHashSet<>();
-        List<Installment> allInstallments = new ArrayList<>();
-        final DateFormat dateFormat = new SimpleDateFormat(PropertyTaxConstants.DATE_FORMAT_DDMMYYY);
-        try {
-            if (waterConnectionDetails.getConnectionType().toString().equals(CONNECTIONTYPE_METERED))
-                allInstallments = waterTaxUtils
-                        .getMonthlyInstallments(dateFormat.parse(dateFormat.format(waterConnectionDetails.getExecutionDate())));
-            else
-                allInstallments = waterTaxUtils.getInstallmentsForCurrYear(
-                        dateFormat.parse(dateFormat.format(waterConnectionDetails.getExecutionDate())));
-        } catch (final ParseException e) {
-            throw new ApplicationRuntimeException("Error while getting all installments from start date", e);
+        List<Installment> allInstallments;
+        Set<Map.Entry<String, String>> demandReasonMap;
+        if (waterConnectionDetails.getConnectionType().equals(METERED)) {
+            allInstallments = waterTaxUtils
+                    .getMonthlyInstallments(waterConnectionDetails.getExecutionDate());
+            demandReasonMap = METERED_DMDRSN_CODE_MAP.entrySet();
+        } else {
+            allInstallments = waterTaxUtils.getInstallmentsForCurrYear(waterConnectionDetails.getExecutionDate());
+            demandReasonMap = NON_METERED_DMDRSN_CODE_MAP.entrySet();
         }
         DemandDetail dmdDtl = null;
-        for (final Map.Entry<String, String> entry : WaterTaxConstants.NON_METERED_DMDRSN_CODE_MAP.entrySet())
+        for (final Map.Entry<String, String> entry : demandReasonMap)
             for (final Installment installObj : allInstallments) {
                 final EgDemandReason demandReasonObj = connectionDemandService
                         .getDemandReasonByCodeAndInstallment(entry.getKey(), installObj);
@@ -143,11 +135,10 @@ public class EditDemandForDataEntryController {
                         demanddet = getDemandDetailsExist(waterConnectionDetails, demandReasonObj);
                     if (demanddet != null)
                         dmdDtl = createDemandDetailBean(installObj, demandReasonObj.getEgDemandReasonMaster().getCode(),
-                                entry.getValue(), demanddet.getAmount(), demanddet.getAmtCollected(), demanddet.getId(),
-                                waterConnectionDetails);
+                                entry.getValue(), demanddet.getAmount(), demanddet.getAmtCollected(), demanddet.getId());
                     else
                         dmdDtl = createDemandDetailBean(installObj, entry.getKey(), entry.getValue(), BigDecimal.ZERO,
-                                BigDecimal.ZERO, null, waterConnectionDetails);
+                                BigDecimal.ZERO, null);
 
                 }
                 tempDemandDetail.add(dmdDtl);
@@ -184,22 +175,13 @@ public class EditDemandForDataEntryController {
 
     private DemandDetail createDemandDetailBean(final Installment installment, final String reasonMaster,
             final String reasonMasterDesc, final BigDecimal amount, final BigDecimal amountCollected,
-            final Long demanddetailId, final WaterConnectionDetails waterConnectionDetails) {
-        EgDemandDetails demandDetailsObj = null;
-        if (demanddetailId != null && waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand() != null)
-            demandDetailsObj = waterConnectionDetailsRepository.findEgDemandDetailById(demanddetailId);
-
+            final Long demanddetailId) {
         final DemandDetail demandDetail = new DemandDetail();
         demandDetail.setInstallment(installment.getDescription());
         demandDetail.setReasonMaster(reasonMaster);
         demandDetail.setId(demanddetailId);
-        if (demandDetailsObj != null) {
-            demandDetail.setActualAmount(amount);
-            demandDetail.setActualCollection(amountCollected);
-        } else {
-            demandDetail.setActualAmount(amount);
-            demandDetail.setActualCollection(amountCollected);
-        }
+        demandDetail.setActualAmount(amount);
+        demandDetail.setActualCollection(amountCollected);
         demandDetail.setReasonMasterDesc(reasonMasterDesc);
         return demandDetail;
     }

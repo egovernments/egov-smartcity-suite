@@ -48,6 +48,7 @@
 package org.egov.wtms.application.service;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.METERED_CHARGES_REASON_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PROPERTY_MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAXREASONCODE;
@@ -492,7 +493,7 @@ public class ConnectionDemandService {
         if (!demandDetailExists) {
             final Set<EgDemandDetails> dmdDetailSet = new HashSet<>();
             dmdDetailSet.add(createDemandDetails(Double.parseDouble(billAmount.toString()),
-                    WATERTAXREASONCODE, installment));
+                    METERED_CHARGES_REASON_CODE, installment));
             demandObj.setBaseDemand(demandObj.getBaseDemand().add(billAmount));
             demandObj.setEgInstallmentMaster(installment);
             demandObj.getEgDemandDetails().addAll(dmdDetailSet);

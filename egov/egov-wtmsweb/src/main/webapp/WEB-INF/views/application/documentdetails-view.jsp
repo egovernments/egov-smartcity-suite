@@ -51,42 +51,49 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<table class="table table-bordered">
-<c:if test="${not empty applicationDocList}">
-	<thead>
-		<tr>
-			<th><spring:message code="lbl.slno" /></th>
-			<th><spring:message code="lbl.documentname" /></th>
-			<th><spring:message code="lbl.documentnumber" /></th>
-			<th><spring:message code="lbl.documentdate" /></th>
-			<c:if test="${mode!='ack'}">
-				<th><spring:message code="lbl.files"/></th>
-			</c:if>
-		</tr>
-	</thead>
-	</c:if>
-	<c:choose>
-		<c:when test="${not empty applicationDocList}">
-			<c:forEach items="${applicationDocList}" var="docs" varStatus="serialNo">
-				<tbody>
-					<tr>
-						<td><c:out value="${serialNo.count}"/></td>
-						<td><c:out value="${docs.documentNames.documentName}" /></td>
-						<td><c:out value="${docs.documentNumber}" /></td>
-						<td><fmt:formatDate pattern="dd/MM/yyyy" value="${docs.documentDate}" var="docsDate"/><c:out value="${docsDate}" /></td>
-						<c:if test="${mode!='ack'}">
-						<td><c:forEach items="${docs.getSupportDocs()}" var="file">
-								<a href="/egi/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=WTMS" target="_blank"> 
-								<c:out value="${file.fileName}"/></a>
-							</c:forEach>
-						</td>
-						</c:if>
-					</tr>
-				</tbody>
-			</c:forEach>
-		</c:when>
-		<c:otherwise>
-			<div class="col-md-12 col-xs-6  panel-title">No documents found</div>
-		</c:otherwise>
-	</c:choose>
-</table>
+<div class="panel panel-primary">
+<div class="panel-heading">
+	<div class="panel-title">
+		<spring:message code="lbl.encloseddocuments"/>
+	</div>
+</div>
+	<table class="table table-bordered">
+	<c:if test="${not empty applicationDocList}">
+		<thead>
+			<tr>
+				<th><spring:message code="lbl.slno" /></th>
+				<th><spring:message code="lbl.documentname" /></th>
+				<th><spring:message code="lbl.documentnumber" /></th>
+				<th><spring:message code="lbl.documentdate" /></th>
+				<c:if test="${mode!='ack'}">
+					<th><spring:message code="lbl.files"/></th>
+				</c:if>
+			</tr>
+		</thead>
+		</c:if>
+		<c:choose>
+			<c:when test="${not empty applicationDocList}">
+				<c:forEach items="${applicationDocList}" var="docs" varStatus="serialNo">
+					<tbody>
+						<tr>
+							<td><c:out value="${serialNo.count}"/></td>
+							<td><c:out value="${docs.documentNames.documentName}" /></td>
+							<td><c:out value="${docs.documentNumber}" /></td>
+							<td><fmt:formatDate pattern="dd/MM/yyyy" value="${docs.documentDate}" var="docsDate"/><c:out value="${docsDate}" /></td>
+							<c:if test="${mode!='ack'}">
+							<td><c:forEach items="${docs.getSupportDocs()}" var="file">
+									<a href="/egi/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=WTMS" target="_blank"> 
+									<c:out value="${file.fileName}"/></a>
+								</c:forEach>
+							</td>
+							</c:if>
+						</tr>
+					</tbody>
+				</c:forEach>
+			</c:when>
+			<c:otherwise>
+				<div class="col-md-12 col-xs-6  panel-title">No documents found</div>
+			</c:otherwise>
+		</c:choose>
+	</table>
+	</div>

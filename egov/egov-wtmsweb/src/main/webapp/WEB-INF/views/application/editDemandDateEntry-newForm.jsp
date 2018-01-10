@@ -61,11 +61,6 @@
 				id="editDemandWaterConnectionform"
 				cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 				<div class="page-container" id="page-container">
-				<div class="panel-heading">
-					<div class="panel-title">
-						<spring:message code="lbl.applicant.details" />
-					</div>
-				</div>
 					<input type="hidden" id="consumerCode" name="consumerCode"
 						value="${waterConnectionDetails.connection.consumerCode}" />
 						<input type="hidden" id="current2HalfInstallment" name="current2HalfInstallment"
@@ -179,8 +174,7 @@
 					</div>
 						<div class="row">
 						<div class="text-center">
-							<button type="submit" class="btn btn-primary" id="submitButtonId"
-								>
+							<button type="submit" class="btn btn-primary" id="submitButtonId">
 								<spring:message code="lbl.submit" />
 							</button>
 							<a href="javascript:void(0);" class="btn btn-primary"

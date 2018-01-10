@@ -47,6 +47,16 @@
  */
 package org.egov.wtms.application.service;
 
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.dcb.bean.DCBDisplayInfo;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.utils.DateUtils;
@@ -59,15 +69,6 @@ import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 @Service
 @Transactional(readOnly = true)
@@ -91,6 +92,7 @@ public class CurrentDcbService {
         final List<String> reasonMasterCodes = new ArrayList<>(0);
         final List<String> reasonCategoryCodes = new ArrayList<>(0);
         reasonMasterCodes.add(WaterTaxConstants.WATERTAXREASONCODE);
+        reasonMasterCodes.add(WaterTaxConstants.METERED_CHARGES_REASON_CODE);
         dcbDispInfo.setReasonCategoryCodes(reasonCategoryCodes);
         dcbDispInfo.setReasonMasterCodes(reasonMasterCodes);
         return dcbDispInfo;
@@ -98,8 +100,8 @@ public class CurrentDcbService {
     }
 
     @ReadOnly
-    public List<WaterChargesReceiptInfo> getMigratedReceiptDetails(String consumerNumber) {
-        StringBuilder queryStr = new StringBuilder(310)
+    public List<WaterChargesReceiptInfo> getMigratedReceiptDetails(final String consumerNumber) {
+        final StringBuilder queryStr = new StringBuilder(310)
                 .append("select distinct(i_bookno) as \"bookNumber\", cast(i_ctrrcptno as varchar) as \"receiptNumber\", ")
                 .append("dt_ctrrcptdt as \"receiptDate\",dt_paidfrmprddt as \"fromDate\",dt_paidtoprddt as \"toDate\", ")
                 .append("d_crr+d_arr as \"receiptAmount\" from wt_wtchrgrcpt_tbl where i_csmrno =:consumerNumber ")
@@ -125,7 +127,7 @@ public class CurrentDcbService {
 
     @ReadOnly
     public List<DCBReportResult> getReportResult(final String paramList, final String connectionType, final String mode,
-                                                 final String reportType) {
+            final String reportType) {
         StringBuilder query;
         final StringBuilder selectQry1 = new StringBuilder();
         final StringBuilder selectQry2 = new StringBuilder();
@@ -182,8 +184,12 @@ public class CurrentDcbService {
         whereQry.append(" and dcbinfo.connectionstatus = 'ACTIVE'");
         query = selectQry1.append(selectQry2).append(fromQry).append(whereQry).append(groupByQry);
         final SQLQuery sqlQuery = entityManager.unwrap(Session.class).createSQLQuery(query.toString());
-        if (isNotBlank(paramList))
-            sqlQuery.setParameter("searchParam", Long.parseLong(paramList));
+        if (isNotBlank(paramList)) {
+            final List<Integer> locationList = new ArrayList<>();
+            for (final String location : paramList.split(","))
+                locationList.add(Integer.parseInt(location));
+            sqlQuery.setParameterList("searchParam", locationList);
+        }
         if (isNotBlank(connectionType))
             sqlQuery.setParameter("connectionType", connectionType);
         sqlQuery.setResultTransformer(new AliasToBeanResultTransformer(DCBReportResult.class));
