@@ -119,24 +119,25 @@ public class NewConnectionService {
         if (!waterTaxUtils.isMultipleNewConnectionAllowedForPID()) {
             final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                     .getPrimaryConnectionDetailsByPropertyIdentifier(propertyID);
-            if (waterConnectionDetails != null)
-                if (ACTIVE.equals(waterConnectionDetails.getConnectionStatus()))
-                    validationMessage = wcmsMessageSource.getMessage("err.validate.newconnection.active", new String[] {
-                            waterConnectionDetails.getConnection().getConsumerCode(), propertyID }, null);
-                else if (INPROGRESS.equals(waterConnectionDetails.getConnectionStatus()))
-                    validationMessage = wcmsMessageSource.getMessage("err.validate.newconnection.application.inprocess",
-                            new String[] { propertyID, waterConnectionDetails.getApplicationNumber() }, null);
-                else if (DISCONNECTED.equals(waterConnectionDetails.getConnectionStatus()))
-                    validationMessage = wcmsMessageSource
-                            .getMessage("err.validate.newconnection.disconnected", new String[] {
-                                    waterConnectionDetails.getConnection().getConsumerCode(), propertyID }, null);
-                else if (CLOSED.equals(waterConnectionDetails.getConnectionStatus()))
-                    validationMessage = wcmsMessageSource
-                            .getMessage("err.validate.newconnection.closed", new String[] {
-                                    waterConnectionDetails.getConnection().getConsumerCode(), propertyID }, null);
-                else if (HOLDING.equals(waterConnectionDetails.getConnectionStatus()))
-                    validationMessage = wcmsMessageSource.getMessage("err.validate.newconnection.holding", new String[] {
-                            waterConnectionDetails.getConnection().getConsumerCode(), propertyID }, null);
+            if (waterConnectionDetails == null)
+                return validationMessage;
+            else if (ACTIVE.equals(waterConnectionDetails.getConnectionStatus()))
+                validationMessage = wcmsMessageSource.getMessage("err.validate.newconnection.active", new String[] {
+                        waterConnectionDetails.getConnection().getConsumerCode(), propertyID }, null);
+            else if (INPROGRESS.equals(waterConnectionDetails.getConnectionStatus()))
+                validationMessage = wcmsMessageSource.getMessage("err.validate.newconnection.application.inprocess",
+                        new String[] { propertyID, waterConnectionDetails.getApplicationNumber() }, null);
+            else if (DISCONNECTED.equals(waterConnectionDetails.getConnectionStatus()))
+                validationMessage = wcmsMessageSource
+                        .getMessage("err.validate.newconnection.disconnected", new String[] {
+                                waterConnectionDetails.getConnection().getConsumerCode(), propertyID }, null);
+            else if (CLOSED.equals(waterConnectionDetails.getConnectionStatus()))
+                validationMessage = wcmsMessageSource
+                        .getMessage("err.validate.newconnection.closed", new String[] {
+                                waterConnectionDetails.getConnection().getConsumerCode(), propertyID }, null);
+            else if (HOLDING.equals(waterConnectionDetails.getConnectionStatus()))
+                validationMessage = wcmsMessageSource.getMessage("err.validate.newconnection.holding", new String[] {
+                        waterConnectionDetails.getConnection().getConsumerCode(), propertyID }, null);
         }
         return validationMessage;
     }
