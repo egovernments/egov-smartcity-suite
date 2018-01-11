@@ -51,6 +51,7 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -99,6 +100,7 @@ public class CurrentDcbService {
 
     }
 
+    @SuppressWarnings("unchecked")
     @ReadOnly
     public List<WaterChargesReceiptInfo> getMigratedReceiptDetails(final String consumerNumber) {
         final StringBuilder queryStr = new StringBuilder(310)
@@ -112,6 +114,7 @@ public class CurrentDcbService {
                 .list();
     }
 
+    @SuppressWarnings("unchecked")
     public List<WaterChargesReceiptInfo> getMigratedReceiptDetails(final Long connectiondetails) {
         final StringBuilder queryStr = new StringBuilder(300)
                 .append("select distinct(booknumber) as \"bookNumber\", receiptnumber as \"receiptNumber\",receiptdate ")
@@ -125,6 +128,7 @@ public class CurrentDcbService {
 
     }
 
+    @SuppressWarnings("unchecked")
     @ReadOnly
     public List<DCBReportResult> getReportResult(final String paramList, final String connectionType, final String mode,
             final String reportType) {
@@ -135,19 +139,19 @@ public class CurrentDcbService {
         StringBuilder whereQry = new StringBuilder();
         final StringBuilder groupByQry = new StringBuilder();
         selectQry2
-                .append("  cast(SUM(arr_demand) as bigint) AS arr_demand,cast(SUM(curr_demand) as bigint) AS curr_demand,cast(SUM(arr_coll) as bigint) AS arr_coll,cast(SUM(curr_coll) as bigint) AS curr_coll,")
-                .append("cast(SUM(arr_balance) as bigint) AS arr_balance,cast(SUM(curr_balance) as bigint) AS curr_balance ");
+                .append("  cast(SUM(arr_demand) as bigint) AS arrDemand,cast(SUM(curr_demand) as bigint) AS currDemand,cast(SUM(arr_coll) as bigint) AS arrColl,cast(SUM(curr_coll) as bigint) AS currColl,")
+                .append("cast(SUM(arr_balance) as bigint) AS arrBalance,cast(SUM(curr_balance) as bigint) AS currBalance ");
         fromQry = new StringBuilder(" from egwtr_mv_dcb_view dcbinfo,eg_boundary boundary ");
         if (ZONEWISE.equalsIgnoreCase(mode)) {
             selectQry1
-                    .append("select  distinct cast(dcbinfo.zoneid as integer) as \"zoneid\",boundary.name as \"boundaryName\", count(hscno) as countofconsumerno,");
+                    .append("select  distinct cast(dcbinfo.zoneid as integer) as \"zoneId\",boundary.name as \"boundaryName\", count(hscno) as countofconsumerno,");
             groupByQry.append(" group by dcbinfo.zoneid,boundary.name order by boundary.name");
             whereQry.append(" where dcbinfo.zoneid=boundary.id ");
             if (isNotBlank(paramList))
                 whereQry = whereQry.append(" and dcbinfo.zoneid in (:searchParam)");
         } else if (WARDWISE.equalsIgnoreCase(mode)) {
             selectQry1
-                    .append("select distinct cast(dcbinfo.wardid as integer) as \"wardid\",boundary.name as \"boundaryName\",count(hscno) as countofconsumerno, ");
+                    .append("select distinct cast(dcbinfo.wardid as integer) as \"wardId\",boundary.name as \"boundaryName\",count(hscno) as countOfConsumerNo, ");
             groupByQry.append(" group by dcbinfo.wardid,boundary.name order by boundary.name");
             whereQry.append(" where dcbinfo.wardid=boundary.id ");
             if (isNotBlank(paramList) && reportType.equalsIgnoreCase("wardWise"))
@@ -156,7 +160,7 @@ public class CurrentDcbService {
                 whereQry = whereQry.append(" and dcbinfo.zoneid in (:searchParam)");
         } else if (BLOCKWISE.equalsIgnoreCase(mode)) {
             selectQry1
-                    .append("select  distinct cast(dcbinfo.block as integer) as \"wardid\",boundary.name as \"boundaryName\", count(hscno) as countofconsumerno,");
+                    .append("select  distinct cast(dcbinfo.block as integer) as \"wardId\",boundary.name as \"boundaryName\", count(hscno) as countOfConsumerNo,");
             groupByQry.append(" group by dcbinfo.block,boundary.name order by boundary.name");
             whereQry.append(" where dcbinfo.block=boundary.id ");
             if (isNotBlank(paramList) && reportType.equalsIgnoreCase("blockWise"))
@@ -165,12 +169,12 @@ public class CurrentDcbService {
                 whereQry = whereQry.append(" and dcbinfo.wardid in (:searchParam)");
         } else if (LOCALITYWISE.equalsIgnoreCase(mode)) {
             selectQry1
-                    .append("select  distinct cast(dcbinfo.locality as integer) as \"locality\",boundary.name as \"boundaryName\",dcbinfo.username as \"username\", count(hscno) as countofconsumerno, ");
+                    .append("select  distinct cast(dcbinfo.locality as integer) as \"locality\",boundary.name as \"boundaryName\",dcbinfo.username as \"userName\", count(hscno) as countOfConsumerNo, ");
             groupByQry.append(" group by dcbinfo.locality,boundary.name,dcbinfo.username order by boundary.name");
             whereQry.append(" where dcbinfo.locality=boundary.id and dcbinfo.locality in (:searchParam)");
         } else if (PROPERTY.equalsIgnoreCase(mode)) {
             selectQry1
-                    .append("select distinct dcbinfo.hscno as hscno,dcbinfo.propertyid as \"propertyid\" ,dcbinfo.username as \"username\", ");
+                    .append("select distinct dcbinfo.hscno as hscNo,dcbinfo.propertyid as \"propertyId\" ,dcbinfo.username as \"userName\", ");
             fromQry = new StringBuilder(" from egwtr_mv_dcb_view dcbinfo ");
             groupByQry.append("group by dcbinfo.hscno,dcbinfo.propertyid,dcbinfo.username ");
             whereQry.append(" where dcbinfo.hscno is not null  ");
@@ -192,8 +196,7 @@ public class CurrentDcbService {
         }
         if (isNotBlank(connectionType))
             sqlQuery.setParameter("connectionType", connectionType);
-        sqlQuery.setResultTransformer(new AliasToBeanResultTransformer(DCBReportResult.class));
-        return sqlQuery.list();
+        return prepareResult(sqlQuery.list(), mode);
     }
 
     @SuppressWarnings("unchecked")
@@ -257,4 +260,46 @@ public class CurrentDcbService {
         }
         return resultList;
     }
+
+    public List<DCBReportResult> prepareResult(final List<Object[]> objectList, final String mode) {
+        final List<DCBReportResult> resultList = new ArrayList<>();
+        for (final Object[] object : objectList) {
+            DCBReportResult resultObj = new DCBReportResult();
+            resultObj = prepareQueryResult(resultObj, object, mode);
+            if (object[3] != null)
+                resultObj.setArrDemand(BigInteger.valueOf(Long.valueOf(object[3].toString())));
+            if (object[4] != null)
+                resultObj.setCurrDemand(BigInteger.valueOf(Long.valueOf(object[4].toString())));
+            if (object[5] != null)
+                resultObj.setArrColl(BigInteger.valueOf(Long.valueOf(object[5].toString())));
+            if (object[6] != null)
+                resultObj.setCurrColl(BigInteger.valueOf(Long.valueOf(object[6].toString())));
+            if (object[7] != null)
+                resultObj.setArrBalance(BigInteger.valueOf(Long.valueOf(object[7].toString())));
+            if (object[8] != null)
+                resultObj.setCurrBalance(BigInteger.valueOf(Long.valueOf(object[8].toString())));
+            resultList.add(resultObj);
+        }
+        return resultList;
+    }
+
+    public DCBReportResult prepareQueryResult(final DCBReportResult resultObj, final Object[] object, final String mode) {
+        if (PROPERTY.equalsIgnoreCase(mode)) {
+            if (object[0] != null)
+                resultObj.setHscNo(object[0].toString());
+            if (object[1] != null)
+                resultObj.setPropertyId(object[1].toString());
+            if (object[2] != null)
+                resultObj.setUserName(object[2].toString());
+        } else {
+            if (object[0] != null)
+                resultObj.setWardId(Integer.parseInt(object[0].toString()));
+            if (object[1] != null)
+                resultObj.setBoundaryName(object[1].toString());
+            if (object[2] != null)
+                resultObj.setCountOfConsumerNo(BigInteger.valueOf(Long.valueOf(object[2].toString())));
+        }
+        return resultObj;
+    }
+
 }

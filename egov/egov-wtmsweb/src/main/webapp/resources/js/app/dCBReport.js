@@ -283,7 +283,7 @@ function callAjaxByBoundary(event) {
 										+ ');" data-hiddenele="boundaryId" data-eleval="'
 										+ data.id + '">' + data.name + '</a>';
 							},
-							"sTitle" : "Municipality Name"
+							"sTitle" : updateTitle()
 						},{
 							"data" : "no_of_users",
 							"sTitle" : "No.of Consumer No.",
@@ -405,4 +405,15 @@ function formatNumberInr(x) {
 		return res;
 	}
 	return x;
+}
+
+function updateTitle() {
+	if($("#mode").val()==="zone")
+		return "Zone";
+	else if($("#mode").val()==="ward")
+		return "Ward";
+	else if($("#mode").val()==="block")
+		return "Block";
+	else if($("#mode").val()==="property")
+		return "Consumer Number";
 }

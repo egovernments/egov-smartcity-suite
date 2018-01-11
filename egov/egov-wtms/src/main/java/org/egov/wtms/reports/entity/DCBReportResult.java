@@ -48,47 +48,45 @@
 
 package org.egov.wtms.reports.entity;
 
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.wtms.masters.entity.enums.ConnectionType;
-
 import java.math.BigInteger;
 import java.util.List;
 
+import org.egov.infra.admin.master.entity.Boundary;
+
 public class DCBReportResult {
 
-    private ConnectionType connectionType;
     private List<Boundary> zones;
     private List<Boundary> wards;
     private List<Boundary> blocks;
-    private List<Boundary> localitys;
+    private List<Boundary> localities;
 
     private String boundaryName;
     private String boundaryId;
-    private String propertyid;
+    private String propertyId;
     private String address;
     private String mode;
     private String selectedModeBndry;
     private String reportType;
-    private String hscno;
-    private String username;
-    private Integer zoneid;
-    private Integer wardid;
+    private String hscNo;
+    private String userName;
+    private Integer zoneId;
+    private Integer wardId;
     private Integer block;
     private Integer locality;
     private Integer street;
 
-    private String connectiontype;
-    private BigInteger curr_demand = BigInteger.ZERO;
-    private BigInteger arr_demand = BigInteger.ZERO;
-    private BigInteger curr_coll = BigInteger.ZERO;
-    private BigInteger arr_coll = BigInteger.ZERO;
-    private BigInteger curr_balance = BigInteger.ZERO;
-    private BigInteger arr_balance = BigInteger.ZERO;
+    private String connectionType;
+    private BigInteger currDemand = BigInteger.ZERO;
+    private BigInteger arrDemand = BigInteger.ZERO;
+    private BigInteger currColl = BigInteger.ZERO;
+    private BigInteger arrColl = BigInteger.ZERO;
+    private BigInteger currBalance = BigInteger.ZERO;
+    private BigInteger arrBalance = BigInteger.ZERO;
 
-    private BigInteger countofconsumerno = BigInteger.ZERO;
+    private BigInteger countOfConsumerNo = BigInteger.ZERO;
 
     public Integer getId() {
-        return zoneid != null ? zoneid : wardid != null ? wardid : block != null ? block : locality != null ? locality
+        return zoneId != null ? zoneId : wardId != null ? wardId : block != null ? block : locality != null ? locality
                 : null;
     }
 
@@ -116,31 +114,12 @@ public class DCBReportResult {
         this.reportType = reportType;
     }
 
-    public void setId(final Integer id) {
-    }
-
-    public ConnectionType getConnectionType() {
-        return connectionType;
-    }
-
-    public void setConnectionType(final ConnectionType connectionType) {
-        this.connectionType = connectionType;
-    }
-
     public List<Boundary> getZones() {
         return zones;
     }
 
     public void setZones(final List<Boundary> zones) {
         this.zones = zones;
-    }
-
-    public List<Boundary> getLocalitys() {
-        return localitys;
-    }
-
-    public void setLocalitys(final List<Boundary> localitys) {
-        this.localitys = localitys;
     }
 
     public String getBoundaryName() {
@@ -159,52 +138,12 @@ public class DCBReportResult {
         this.boundaryId = boundaryId;
     }
 
-    public String getPropertyid() {
-        return propertyid;
-    }
-
-    public void setPropertyid(final String propertyid) {
-        this.propertyid = propertyid;
-    }
-
     public String getAddress() {
         return address;
     }
 
     public void setAddress(final String address) {
         this.address = address;
-    }
-
-    public String getHscno() {
-        return hscno;
-    }
-
-    public void setHscno(final String hscno) {
-        this.hscno = hscno;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(final String username) {
-        this.username = username;
-    }
-
-    public Integer getZoneid() {
-        return zoneid;
-    }
-
-    public void setZoneid(final Integer zoneid) {
-        this.zoneid = zoneid;
-    }
-
-    public Integer getWardid() {
-        return wardid;
-    }
-
-    public void setWardid(final Integer wardid) {
-        this.wardid = wardid;
     }
 
     public Integer getBlock() {
@@ -231,12 +170,60 @@ public class DCBReportResult {
         this.street = street;
     }
 
-    public String getConnectiontype() {
-        return connectiontype;
+    public String getConnectionType() {
+        return connectionType;
     }
 
-    public void setConnectiontype(final String connectiontype) {
-        this.connectiontype = connectiontype;
+    public void setConnectionType(final String connectionType) {
+        this.connectionType = connectionType;
+    }
+
+    public BigInteger getCurrDemand() {
+        return currDemand;
+    }
+
+    public void setCurrDemand(final BigInteger currDemand) {
+        this.currDemand = currDemand;
+    }
+
+    public BigInteger getArrDemand() {
+        return arrDemand;
+    }
+
+    public void setArrDemand(final BigInteger arrDemand) {
+        this.arrDemand = arrDemand;
+    }
+
+    public BigInteger getCurrColl() {
+        return currColl;
+    }
+
+    public void setCurrColl(final BigInteger currColl) {
+        this.currColl = currColl;
+    }
+
+    public BigInteger getArrColl() {
+        return arrColl;
+    }
+
+    public void setArrColl(final BigInteger arrColl) {
+        this.arrColl = arrColl;
+    }
+
+    public BigInteger getCurrBalance() {
+        return currBalance;
+    }
+
+    public void setCurrBalance(final BigInteger currBalance) {
+        this.currBalance = currBalance;
+    }
+
+    public BigInteger getArrBalance() {
+        return arrBalance;
+    }
+
+    public void setArrBalance(final BigInteger arrBalance) {
+        this.arrBalance = arrBalance;
     }
 
     public List<Boundary> getWards() {
@@ -255,85 +242,74 @@ public class DCBReportResult {
         this.blocks = blocks;
     }
 
-    public BigInteger getCurr_demand() {
-        return curr_demand;
+    public BigInteger getTotalDemand() {
+        return (currDemand == null ? BigInteger.ZERO : currDemand).add(arrDemand == null ? BigInteger.ZERO
+                : arrDemand);
     }
 
-    public void setCurr_demand(final BigInteger curr_demand) {
-        this.curr_demand = curr_demand;
+    public BigInteger getTotalColl() {
+        return (currColl == null ? BigInteger.ZERO : currColl).add(arrColl == null ? BigInteger.ZERO : arrColl);
     }
 
-    public BigInteger getArr_demand() {
-        return arr_demand;
+    public BigInteger getTotalBalance() {
+        return (currBalance == null ? BigInteger.ZERO : currBalance).add(arrBalance == null ? BigInteger.ZERO
+                : arrBalance);
     }
 
-    public void setArr_demand(final BigInteger arr_demand) {
-        this.arr_demand = arr_demand;
+    public List<Boundary> getLocalities() {
+        return localities;
     }
 
-    public BigInteger getTotal_demand() {
-        return (curr_demand == null ? BigInteger.ZERO : curr_demand).add(arr_demand == null ? BigInteger.ZERO
-                : arr_demand);
+    public void setLocalities(final List<Boundary> localities) {
+        this.localities = localities;
     }
 
-    public void setTotal_demand(final BigInteger total_demand) {
+    public String getPropertyId() {
+        return propertyId;
     }
 
-    public BigInteger getCurr_coll() {
-        return curr_coll;
+    public void setPropertyId(final String propertyId) {
+        this.propertyId = propertyId;
     }
 
-    public void setCurr_coll(final BigInteger curr_coll) {
-        this.curr_coll = curr_coll;
+    public String getHscNo() {
+        return hscNo;
     }
 
-    public BigInteger getArr_coll() {
-        return arr_coll;
+    public void setHscNo(final String hscNo) {
+        this.hscNo = hscNo;
     }
 
-    public void setArr_coll(final BigInteger arr_coll) {
-        this.arr_coll = arr_coll;
+    public String getUserName() {
+        return userName;
     }
 
-    public BigInteger getTotal_coll() {
-        return (curr_coll == null ? BigInteger.ZERO : curr_coll).add(arr_coll == null ? BigInteger.ZERO : arr_coll);
+    public void setUserName(final String userName) {
+        this.userName = userName;
     }
 
-    public void setTotal_coll(final BigInteger total_coll) {
+    public Integer getZoneId() {
+        return zoneId;
     }
 
-    public BigInteger getCurr_balance() {
-        return (curr_demand == null ? BigInteger.ZERO : curr_demand).subtract(curr_coll == null ? BigInteger.ZERO
-                : curr_coll);
+    public void setZoneId(final Integer zoneId) {
+        this.zoneId = zoneId;
     }
 
-    public void setCurr_balance(final BigInteger curr_balance) {
-        this.curr_balance = curr_balance;
+    public Integer getWardId() {
+        return wardId;
     }
 
-    public BigInteger getArr_balance() {
-        return (arr_demand == null ? BigInteger.ZERO : arr_demand).subtract(arr_coll == null ? BigInteger.ZERO
-                : arr_coll);
+    public void setWardId(final Integer wardId) {
+        this.wardId = wardId;
     }
 
-    public void setArr_balance(final BigInteger arr_balance) {
-        this.arr_balance = arr_balance;
+    public BigInteger getCountOfConsumerNo() {
+        return countOfConsumerNo;
     }
 
-    public BigInteger getTotal_balance() {
-        return (curr_balance == null ? BigInteger.ZERO : curr_balance).add(arr_balance == null ? BigInteger.ZERO
-                : arr_balance);
-    }
-
-    public void setTotal_balance(final BigInteger total_balance) {
-    }
-
-    public BigInteger getCountofconsumerno() {
-        return countofconsumerno;
-    }
-
-    public void setCountofconsumerno(final BigInteger countofconsumerno) {
-        this.countofconsumerno = countofconsumerno;
+    public void setCountOfConsumerNo(final BigInteger countOfConsumerNo) {
+        this.countOfConsumerNo = countOfConsumerNo;
     }
 
 }

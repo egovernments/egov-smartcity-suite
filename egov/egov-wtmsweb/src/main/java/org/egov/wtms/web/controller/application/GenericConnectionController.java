@@ -47,6 +47,7 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -139,7 +140,7 @@ public abstract class GenericConnectionController extends GenericWorkFlowControl
                         try {
                             return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
                                     file.getContentType(), WaterTaxConstants.FILESTORE_MODULECODE);
-                        } catch (final Exception e) {
+                        } catch (final IOException e) {
                             throw new ApplicationRuntimeException("Error occurred while getting inputstream", e);
                         }
                     }).collect(Collectors.toSet());
