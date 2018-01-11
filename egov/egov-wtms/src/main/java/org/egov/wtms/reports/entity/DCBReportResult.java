@@ -86,8 +86,19 @@ public class DCBReportResult {
     private BigInteger countOfConsumerNo = BigInteger.ZERO;
 
     public Integer getId() {
-        return zoneId != null ? zoneId : wardId != null ? wardId : block != null ? block : locality != null ? locality
-                : null;
+        if (zoneId == null) {
+            if (wardId == null) {
+                if (block == null) {
+                    if (locality == null)
+                        return null;
+                    else
+                        return locality;
+                } else
+                    return block;
+            } else
+                return wardId;
+        } else
+            return zoneId;
     }
 
     public String getMode() {
