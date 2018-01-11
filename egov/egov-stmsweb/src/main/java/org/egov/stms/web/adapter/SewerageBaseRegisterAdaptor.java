@@ -77,19 +77,30 @@ public class SewerageBaseRegisterAdaptor implements DataTableJsonAdapter<Sewerag
             baseRegisterJson.addProperty("residentialClosets", baseForm.getNoOfClosets_residential());
             baseRegisterJson.addProperty("nonResidentialClosets", baseForm.getNoOfClosets_nonResidential());
             baseRegisterJson.addProperty("period", baseForm.getPeriod());
-            baseRegisterJson.addProperty("arrears", baseForm.getArrearAmount());
-            baseRegisterJson.addProperty("currentDemand", baseForm.getDemandAmount());
-            baseRegisterJson.addProperty("totalDemand", baseForm.getTotalAmount());
-            baseRegisterJson.addProperty("arrearsCollected", baseForm.getCollectedArrearAmount());
-            baseRegisterJson.addProperty("currentTaxCollected", baseForm.getCollectedDemandAmount());
+            baseRegisterJson.addProperty("arrears",
+                    baseForm.getArrearAmount() == null ? BigDecimal.ZERO : baseForm.getArrearAmount());
+            baseRegisterJson.addProperty("currentDemand",
+                    baseForm.getDemandAmount() == null ? BigDecimal.ZERO : baseForm.getDemandAmount());
+            baseRegisterJson.addProperty("totalDemand",
+                    baseForm.getTotalAmount() == null ? BigDecimal.ZERO : baseForm.getTotalAmount());
+            baseRegisterJson.addProperty("arrearsCollected", getCollectedArrearAmount(baseForm));
+            baseRegisterJson.addProperty("currentTaxCollected", getCollecetdDemandAmount(baseForm));
             baseRegisterJson.addProperty("totalTaxCollected",
-                    baseForm.getCollectedArrearAmount() == null ? BigDecimal.ZERO
-                            : baseForm.getCollectedArrearAmount().add(baseForm.getCollectedDemandAmount()));
-            baseRegisterJson.addProperty("advanceAmount", baseForm.getExtraAdvanceAmount());
+                    getCollectedArrearAmount(baseForm).add(getCollecetdDemandAmount(baseForm)));
+            baseRegisterJson.addProperty("advanceAmount",
+                    baseForm.getExtraAdvanceAmount() == null ? BigDecimal.ZERO : baseForm.getExtraAdvanceAmount());
 
             baseRegisterResultData.add(baseRegisterJson);
         });
         return enhance(baseRegisterResultData, baseRegisterResponse);
+    }
+
+    private BigDecimal getCollectedArrearAmount(SewerageIndex baseForm) {
+        return baseForm.getCollectedArrearAmount() == null ? BigDecimal.ZERO : baseForm.getCollectedArrearAmount();
+    }
+
+    private BigDecimal getCollecetdDemandAmount(SewerageIndex baseForm) {
+        return baseForm.getCollectedDemandAmount() == null ? BigDecimal.ZERO : baseForm.getCollectedDemandAmount();
     }
 
 }

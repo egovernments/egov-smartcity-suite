@@ -76,7 +76,7 @@
                        value="/WEB-INF/views/transactions/newConnection-form.jsp"/>
     </definition>
     <definition name="application-success" extends="base_layout">
-        <put-attribute name="page-title" value="title.newconnection"
+        <put-attribute name="page-title" value="title.connection.success"
                        cascade="true"/>
         <put-attribute name="body"
                        value="/WEB-INF/views/transactions/application-success.jsp"/>
@@ -331,7 +331,7 @@
         <put-attribute name="body" value="/WEB-INF/views/transactions/sewerage-demand-status-view.jsp"/>
     </definition>
     <definition name="sewerage-acknowledgement" extends="base_layout">
-        <put-attribute name="page-title" value="title.newconnection" cascade="true"/>
+        <put-attribute name="page-title" value="title.connection.success" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/transactions/new-sewerage-ackowledgement.jsp"/>
     </definition>
     <definition name="baseRegisterSearch-form" extends="base_layout">
