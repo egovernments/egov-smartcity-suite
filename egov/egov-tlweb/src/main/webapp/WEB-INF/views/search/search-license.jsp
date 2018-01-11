@@ -47,176 +47,190 @@
   --%>
 
 
-<%@ page contentType="text/html" language="java"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+<%@ page contentType="text/html" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
 <div class="row">
-	<div class="col-md-12">
-		<form:form class="form-horizontal form-groups-bordered" action="" id="searchForm" modelAttribute="searchForm" method="get">
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading">
-					<div class="panel-title">
-						<strong><spring:message code='license.search' /></strong>
-					</div>
-				</div>
-				<div class="panel-body"></div>
-				<div class="form-group">
-					<label class="col-sm-3 control-label text-right"> <spring:message
-							code='license.applicationnumber'/></label>
-					<div class="col-sm-3 add-margin">
-						<input type="text" id="applicationNumber" class="form-control typeahead" placeholder=""
-							   autocomplete="off"/>
-						<form:hidden path="applicationNumber" id="applicationNumber"/>
-					</div>
-					<label class="col-sm-2 control-label text-right"> <spring:message
-							code='lbl.licenseapptype'/></label>
-					<div class="col-sm-3 add-margin">
-						<form:select path="applicationTypeId" id="appType" cssClass="form-control"
-									 cssErrorClass="form-control error">
-							<form:option value="">
-								<spring:message code="lbl.select"/>
-							</form:option>
-							<form:options items="${applicationType}" itemValue="id" itemLabel="name"/>
-						</form:select>
-					</div>
-				</div>
-				<div class="form-group">
-					<label class="col-sm-3 control-label text-right"> <spring:message code='search.license.status' /></label>
-					<div class="col-sm-3 add-margin">
-						<form:select path="statusId" id="status" cssClass="form-control" cssErrorClass="form-control error">
-							<form:option value="">
-								<spring:message code="lbl.category.select" />
-							</form:option>
-							<form:options items="${statusList}" itemValue="id" itemLabel="name" />
-						</form:select>
-					</div>
-					<label class="col-sm-2 control-label text-right"> <spring:message code='search.licensee.no' /></label>
-					<div class="col-sm-3 add-margin">
-						<input type="text" id="licenseNumber"class="form-control typeahead" placeholder="" autocomplete="off"/>
-						<form:hidden path="licenseNumber" id="licenseNumber"/>
-					</div>
-
-				</div>
-				<div class="form-group">
-					<label class="col-sm-3 control-label text-right"> <spring:message code='license.oldlicensenum' /></label>
-					<div class="col-sm-3 add-margin">
-						<input type="text" id="oldLicenseNumber" class="form-control typeahead" placeholder="" autocomplete="off" />
-						<form:hidden path="oldLicenseNumber" id="oldLicenseNumber"/>
-					</div>
-					<label class="col-sm-2 control-label text-right"> <spring:message code='search.license.category' /></label>
-					<div class="col-sm-3 add-margin">
-						<form:select path="categoryId" id="category" cssClass="form-control" cssErrorClass="form-control error">
-							<form:option value="">
-								<spring:message code="lbl.category.select" />
-							</form:option>
-							<form:options items="${categoryList}" itemValue="id" itemLabel="name" />
-						</form:select>
-					</div>
-
-				</div>
-				<div class="form-group">
-					<label class="col-sm-3 control-label text-right"> <spring:message code='search.license.subCategory' /></label>
-					<div class="col-sm-3 add-margin">
-						<select id="subCategory" class="form-control select2" required>
-						</select> <label id="subCategory-error" class="error display-hide"
-										 for="subCategory">Required</label>
-					</div>
-					<label class="col-sm-2 control-label text-right"> <spring:message code='search.license.establishmentname' /></label>
-					<div class="col-sm-3 add-margin">
-						<input type="text" id="tradeTitle" class="form-control typeahead" placeholder="" autocomplete="off" />
-						<form:hidden path="tradeTitle" id="tradeTitle"/>
-			       </div>
-				</div>
-				<div class="form-group">
-					<label class="col-sm-3 control-label text-right"> <spring:message code='licensee.applicantname' /></label>
-					<div class="col-sm-3 add-margin">
-						<input type="text" id="tradeOwnerName" class="form-control typeahead" placeholder="" autocomplete="off" />
-						<form:hidden path="tradeOwnerName" id="tradeOwnerName"/>
-					</div>
-					<label class="col-sm-2 control-label text-right"> <spring:message code='search.license.propertyNo' /></label>
-					<div class="col-sm-3 add-margin">
-						<input type="text" id="propertyAssessmentNo" class="form-control typeahead" placeholder="" autocomplete="off" />
-						<form:hidden path="propertyAssessmentNo" id="propertyAssessmentNo"/>
-			    	</div>
-				</div>
-				<div class="form-group">
-					<label class="col-sm-3 control-label text-right"> <spring:message
-							code='search.licensee.mobileNo'/></label>
-					<div class="col-sm-3 add-margin">
-						<input type="text" id="mobileNo" class="form-control patternvalidation typeahead" placeholder=""
-							   autocomplete="off" maxlength="10" data-pattern="number"/>
-						<form:hidden path="mobileNo" id="mobileNo"/>
-					</div>
-					<label class="col-sm-2 control-label text-right"> <spring:message
-							code='search.license.inactive'/></label>
-					<div class="col-sm-3 add-margin">
-						<form:checkbox path="inactive" id="inactive"/>
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				<div class="text-center">
-					<button type="button" id="btnsearch" class="btn btn-primary">
-						<spring:message code="lbl.search" />
-					</button>
-					<button type="reset" class="btn btn-default"><spring:message code="lbl.reset" /></button>
-					<button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();">
-						<spring:message code="lbl.close" />
-					</button>
-				</div>
-			</div>
-		</form:form>
-	</div>
+    <div class="col-md-12">
+        <form:form class="form-horizontal form-groups-bordered" action="" id="searchForm" modelAttribute="searchForm"
+                   method="get">
+            <div class="panel panel-primary" data-collapsed="0">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <strong><spring:message code='license.search'/></strong>
+                    </div>
+                </div>
+                <div class="panel-body"></div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label text-right"> <spring:message
+                            code='license.applicationnumber'/></label>
+                    <div class="col-sm-3 add-margin">
+                        <input type="text" id="applicationNumber" class="form-control typeahead" placeholder=""
+                               autocomplete="off"/>
+                        <form:hidden path="applicationNumber" id="applicationNumber"/>
+                    </div>
+                    <label class="col-sm-2 control-label text-right"> <spring:message
+                            code='search.licensee.no'/></label>
+                    <div class="col-sm-3 add-margin">
+                        <input type="text" id="licenseNumber" class="form-control typeahead" placeholder=""
+                               autocomplete="off"/>
+                        <form:hidden path="licenseNumber" id="licenseNumber"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label text-right"> <spring:message
+                            code='lbl.licenseapptype'/></label>
+                    <div class="col-sm-3 add-margin">
+                        <form:select path="applicationTypeId" id="appType" cssClass="form-control"
+                                     cssErrorClass="form-control error">
+                            <form:option value="">
+                                <spring:message code="lbl.select"/>
+                            </form:option>
+                            <form:options items="${applicationType}" itemValue="id" itemLabel="name"/>
+                        </form:select>
+                    </div>
+                    <label class="col-sm-2 control-label text-right"> <spring:message
+                            code='search.license.status'/></label>
+                    <div class="col-sm-3 add-margin">
+                        <form:select path="statusId" id="status" cssClass="form-control"
+                                     cssErrorClass="form-control error">
+                            <form:option value="">
+                                <spring:message code="lbl.category.select"/>
+                            </form:option>
+                            <form:options items="${statusList}" itemValue="id" itemLabel="name"/>
+                        </form:select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label text-right"> <spring:message
+                            code='search.license.category'/></label>
+                    <div class="col-sm-3 add-margin">
+                        <form:select path="categoryId" id="category" cssClass="form-control"
+                                     cssErrorClass="form-control error">
+                            <form:option value="">
+                                <spring:message code="lbl.category.select"/>
+                            </form:option>
+                            <form:options items="${categoryList}" itemValue="id" itemLabel="name"/>
+                        </form:select>
+                    </div>
+                    <label class="col-sm-2 control-label text-right"> <spring:message
+                            code='search.license.subCategory'/></label>
+                    <div class="col-sm-3 add-margin">
+                        <select id="subCategory" class="form-control select2" required>
+                        </select> <label id="subCategory-error" class="error display-hide"
+                                         for="subCategory">Required</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label text-right"> <spring:message
+                            code='license.oldlicensenum'/></label>
+                    <div class="col-sm-3 add-margin">
+                        <input type="text" id="oldLicenseNumber" class="form-control typeahead" placeholder=""
+                               autocomplete="off"/>
+                        <form:hidden path="oldLicenseNumber" id="oldLicenseNumber"/>
+                    </div>
+                    <label class="col-sm-2 control-label text-right"> <spring:message
+                            code='search.license.establishmentname'/></label>
+                    <div class="col-sm-3 add-margin">
+                        <input type="text" id="tradeTitle" class="form-control typeahead" placeholder=""
+                               autocomplete="off"/>
+                        <form:hidden path="tradeTitle" id="tradeTitle"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label text-right"> <spring:message
+                            code='licensee.applicantname'/></label>
+                    <div class="col-sm-3 add-margin">
+                        <input type="text" id="tradeOwnerName" class="form-control typeahead" placeholder=""
+                               autocomplete="off"/>
+                        <form:hidden path="tradeOwnerName" id="tradeOwnerName"/>
+                    </div>
+                    <label class="col-sm-2 control-label text-right"> <spring:message
+                            code='search.license.propertyNo'/></label>
+                    <div class="col-sm-3 add-margin">
+                        <input type="text" id="propertyAssessmentNo" class="form-control typeahead" placeholder=""
+                               autocomplete="off"/>
+                        <form:hidden path="propertyAssessmentNo" id="propertyAssessmentNo"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label text-right"> <spring:message
+                            code='search.licensee.mobileNo'/></label>
+                    <div class="col-sm-3 add-margin">
+                        <input type="text" id="mobileNo" class="form-control patternvalidation typeahead" placeholder=""
+                               autocomplete="off" maxlength="10" data-pattern="number"/>
+                        <form:hidden path="mobileNo" id="mobileNo"/>
+                    </div>
+                    <label class="col-sm-2 control-label text-right"> <spring:message
+                            code='search.license.inactive'/></label>
+                    <div class="col-sm-3 add-margin">
+                        <form:checkbox path="inactive" id="inactive"/>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="text-center">
+                    <button type="button" id="btnsearch" class="btn btn-primary">
+                        <spring:message code="lbl.search"/>
+                    </button>
+                    <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();">
+                        <spring:message code="lbl.close"/>
+                    </button>
+                </div>
+            </div>
+        </form:form>
+    </div>
 </div>
 
 <div class="row display-hide report-section">
-	<div class="col-md-12 table-header text-left">Search Result</div>
-	<div class="col-md-12 report-table-container">
-		<table class="table table-bordered table-hover multiheadertbl" id="tblSearchTrade">
-			<thead>
-				<tr>
-					<th>Application Number</th>
-					<th>TL Number</th>
-					<th>Old TL Number</th>
-					<th>Category</th>
-					<th>Sub Category</th>
-					<th>Title of Trade</th>
-					<th>Trade Owner</th>
-					<th>Mobile Number</th>
-					<th>Property Assessment Number</th>
-					<th>Financial Year</th>
-					<th>Application Status</th>
-					<th>License Active</th>
-					<th>Owner Name</th>
-					<th>Actions</th>
-				</tr>
-			</thead>
-		</table>
-	</div>
+    <div class="col-md-12 table-header text-left">Search Result</div>
+    <div class="col-md-12 report-table-container">
+        <table class="table table-bordered table-hover multiheadertbl" id="tblSearchTrade">
+            <thead>
+            <tr>
+                <th>Application Number</th>
+                <th>TL Number</th>
+                <th>Old TL Number</th>
+                <th>Category</th>
+                <th>Sub Category</th>
+                <th>Title of Trade</th>
+                <th>Trade Owner</th>
+                <th>Mobile Number</th>
+                <th>Property Assessment Number</th>
+                <th>Financial Year</th>
+                <th>Application Status</th>
+                <th>License Active</th>
+                <th>Owner Name</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
 </div>
 <link rel="stylesheet"
-	href="<cdn:url  value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
+      href="<cdn:url  value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
 <script type="text/javascript"
-	src="<cdn:url  value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+        src="<cdn:url  value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <link rel="stylesheet"
-	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>" />
+      href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
 <link rel="stylesheet"
-	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
+      href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
 <link rel="stylesheet"
-	  href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/fixedColumns.dataTables.min.css' context='/egi'/>">
+      href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/fixedColumns.dataTables.min.css' context='/egi'/>">
 <script type="text/javascript"
-	src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
+        src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
-		src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/extensions/fixed columns/dataTables.fixedColumns.min.js' context='/egi'/>"></script>
+        src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/extensions/fixed columns/dataTables.fixedColumns.min.js' context='/egi'/>"></script>
 <script
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/dataTables.buttons.min.js' context='/egi'/>"></script>
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/dataTables.buttons.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
-	src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+        src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
 <script type="text/javascript"
-	src="<cdn:url  value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
+        src="<cdn:url  value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
-	src="<cdn:url  value='/resources/js/app/trade-license-search.js?rnd=${app_release_no}'/>"></script>
+        src="<cdn:url  value='/resources/js/app/trade-license-search.js?rnd=${app_release_no}'/>"></script>
 
