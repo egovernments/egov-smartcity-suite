@@ -169,8 +169,8 @@ public class CurrentDcbService {
                 whereQry = whereQry.append(" and dcbinfo.wardid in (:searchParam)");
         } else if (LOCALITYWISE.equalsIgnoreCase(mode)) {
             selectQry1
-                    .append("select  distinct cast(dcbinfo.locality as integer) as \"locality\",boundary.name as \"boundaryName\",dcbinfo.username as \"userName\", count(hscno) as countOfConsumerNo, ");
-            groupByQry.append(" group by dcbinfo.locality,boundary.name,dcbinfo.username order by boundary.name");
+                    .append("select  distinct cast(dcbinfo.locality as integer) as \"locality\",boundary.name as \"boundaryName\", count(hscno) as countOfConsumerNo, ");
+            groupByQry.append(" group by dcbinfo.locality,boundary.name order by boundary.name");
             whereQry.append(" where dcbinfo.locality=boundary.id and dcbinfo.locality in (:searchParam)");
         } else if (PROPERTY.equalsIgnoreCase(mode)) {
             selectQry1
@@ -284,7 +284,9 @@ public class CurrentDcbService {
     }
 
     public DCBReportResult prepareQueryResult(final DCBReportResult resultObj, final Object[] object, final String mode) {
-        if (PROPERTY.equalsIgnoreCase(mode)) {
+        if (LOCALITYWISE.equalsIgnoreCase(mode))
+            return prepareLocalityWiseResult(resultObj, object);
+        else if (PROPERTY.equalsIgnoreCase(mode)) {
             if (object[0] != null)
                 resultObj.setHscNo(object[0].toString());
             if (object[1] != null)
@@ -300,6 +302,16 @@ public class CurrentDcbService {
                 resultObj.setCountOfConsumerNo(BigInteger.valueOf(Long.valueOf(object[2].toString())));
         }
         return resultObj;
+    }
+
+    public DCBReportResult prepareLocalityWiseResult(final DCBReportResult reportResult, final Object[] obj) {
+        if (obj[0] != null)
+            reportResult.setLocality(Integer.parseInt(obj[0].toString()));
+        if (obj[1] != null)
+            reportResult.setBoundaryName(obj[1].toString());
+        if (obj[2] != null)
+            reportResult.setCountOfConsumerNo(BigInteger.valueOf(Long.valueOf(obj[2].toString())));
+        return reportResult;
     }
 
 }

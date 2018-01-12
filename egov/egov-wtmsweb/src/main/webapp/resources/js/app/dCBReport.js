@@ -414,6 +414,8 @@ function updateTitle() {
 		return "Ward";
 	else if($("#mode").val()==="block")
 		return "Block";
+	else if($("#mode").val()==="locality")
+		return "Locality";
 	else if($("#mode").val()==="property")
 		return "Consumer Number";
 }
