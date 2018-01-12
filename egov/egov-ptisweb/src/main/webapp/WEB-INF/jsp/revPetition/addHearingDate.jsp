@@ -64,7 +64,7 @@
 						<s:text name="objection.planned.hearingDate"/><span class="mandatory1">*</span> &nbsp;
 						<s:hidden name="objection.hearings[0].id" id="objection.hearings[0].id"/>	
 						<s:textfield name="objection.hearings[0].plannedHearingDt" cssClass="datepicker" value="%{#plannedHearingDtId}" autocomplete="off"
-							id="plannedHearingDtId" size="12" maxlength="12"></s:textfield>
+							id="plannedHearingDtId" size="12" maxlength="12" data-date-start-date="0d"></s:textfield>
 					</td>
 				
 					<td class="bluebox" width="25%" colspan="1">&nbsp;&nbsp;<s:text name="objection.planned.hearingTime" />
