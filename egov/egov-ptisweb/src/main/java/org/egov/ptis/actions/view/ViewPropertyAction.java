@@ -88,6 +88,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -102,8 +103,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.*;
 public class ViewPropertyAction extends BaseFormAction {
 
     private static final String DOCUMENTDATE = "documentdate";
-	private static final String DOCUMENTNO = "documentno";
-	private static final long serialVersionUID = 4609817011534083012L;
+    private static final String DOCUMENTNO = "documentno";
+    private static final long serialVersionUID = 4609817011534083012L;
     private static final Logger LOGGER = Logger.getLogger(ViewPropertyAction.class);
     private String propertyId;
     private BasicProperty basicProperty;
@@ -141,12 +142,12 @@ public class ViewPropertyAction extends BaseFormAction {
     private transient PropertyService propService;
     @PersistenceContext
     private transient EntityManager entityManager;
+
+    private transient Map<String, Map<String, BigDecimal>> demandCollMap = new TreeMap<>();
     
-	private transient Map<String, Map<String, BigDecimal>> demandCollMap = new TreeMap<>();
-	
-	private transient List<HashMap<String, Object>> historyMap = new ArrayList<>();
-	
-	private transient List<Document> documents = new ArrayList<>();
+    private transient List<HashMap<String, Object>> historyMap = new ArrayList<>();
+    
+    private transient List<Document> documents = new ArrayList<>();
        
     @Override
     public StateAware getModel() {
@@ -259,7 +260,7 @@ public class ViewPropertyAction extends BaseFormAction {
                 viewMap.put("enableMonthlyUpdate", propertyTaxUtil.enableMonthlyUpdate(basicProperty.getUpicNo()));
             }
             final Long userId = (Long) session().get(SESSIONLOGINID);
-            if (userId != null){
+            if (userId != null) {
                 setRoleName(getRolesForUserId(userId));
                 citizenPortalUser = propService.isCitizenPortalUser(userService.getUserById(userId));
             }
@@ -268,12 +269,12 @@ public class ViewPropertyAction extends BaseFormAction {
                 LOGGER.debug("Exit from method viewForm");
             }
             if (applicationNo != null && !applicationNo.isEmpty())
-            	return "viewApplication";
-            else{
-            	viewMap.put(DOCUMENTNO,
+                return "viewApplication";
+            else {
+                viewMap.put(DOCUMENTNO,
                         basicProperty.getRegdDocNo() != null ? basicProperty.getRegdDocNo() : StringUtils.EMPTY);
                 viewMap.put(DOCUMENTDATE, basicProperty.getRegdDocDate() != null ? basicProperty.getRegdDocDate() : null);
-            	return "view";
+                return "view";
             }
         } catch (final Exception e) {
             LOGGER.error("Exception in View Property: ", e);
@@ -312,55 +313,52 @@ public class ViewPropertyAction extends BaseFormAction {
         return roleNameList.toString().toUpperCase();
     }
 
-	private void getBasicPropForAppNo(final String appNo, final String appType) {
-		if (appType != null && !appType.isEmpty())
-			if (appType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)
-					|| appType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT)
-					|| appType.equalsIgnoreCase(APPLICATION_TYPE_BIFURCATE_ASSESSENT)
-					|| appType.equals(APPLICATION_TYPE_TAX_EXEMTION)
-					|| appType.equals(APPLICATION_TYPE_AMALGAMATION)
-					|| appType.equals(APPLICATION_TYPE_DEMOLITION)){
-				property = (PropertyImpl) propertyImplService.find("from PropertyImpl where applicationNo=?", appNo);
-				setBasicProperty(property.getBasicProperty());
-				setHistoryMap(propService.populateHistory(property));
-				if (appType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)) {
-					final PropertyMutationMaster propertyMutationMaster = basicProperty.getPropertyMutationMaster();
-					if (propertyMutationMaster.getCode().equals(PROP_CREATE_RSN_BIFUR)) {
-						final PropertyStatusValues statusValues = (PropertyStatusValues) getPersistenceService()
-								.find("From PropertyStatusValues where basicProperty.id = ?", basicProperty.getId());
-						if (null != statusValues && null != statusValues.getReferenceBasicProperty())
-							viewMap.put("parentProps", statusValues.getReferenceBasicProperty().getUpicNo());
-					}
-					getDocumentDetails();
+    private void getBasicPropForAppNo(final String appNo, final String appType) {
+        if (!StringUtils.isBlank(appType))
+            if (Arrays.asList(APPLICATION_TYPE_NEW_ASSESSENT, APPLICATION_TYPE_ALTER_ASSESSENT, APPLICATION_TYPE_TAX_EXEMTION,
+                    APPLICATION_TYPE_BIFURCATE_ASSESSENT,
+                    APPLICATION_TYPE_DEMOLITION, APPLICATION_TYPE_AMALGAMATION).contains(appType)) {
+                property = (PropertyImpl) propertyImplService.find("from PropertyImpl where applicationNo=?", appNo);
+                setBasicProperty(property.getBasicProperty());
+                setHistoryMap(propService.populateHistory(property));
+                if (appType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)) {
+                    final PropertyMutationMaster propertyMutationMaster = basicProperty.getPropertyMutationMaster();
+                    if (propertyMutationMaster.getCode().equals(PROP_CREATE_RSN_BIFUR)) {
+                        final PropertyStatusValues statusValues = (PropertyStatusValues) getPersistenceService()
+                                .find("From PropertyStatusValues where basicProperty.id = ?", basicProperty.getId());
+                        if (null != statusValues && null != statusValues.getReferenceBasicProperty())
+                            viewMap.put("parentProps", statusValues.getReferenceBasicProperty().getUpicNo());
+                    }
+                    getDocumentDetails();
 
-				} else if (appType.equals(APPLICATION_TYPE_TAX_EXEMTION) && property.getIsExemptedFromTax()) {
-					property.setDocuments(property.getTaxExemptionDocuments());
-				}
-			} else if (appType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)
-					|| appType.equalsIgnoreCase(APPLICATION_TYPE_GRP)) {
-				final RevisionPetition rp = revisionPetitionPersistenceService
-						.find("from RevisionPetition where objectionNumber=?", appNo);
-				setBasicProperty(rp.getBasicProperty());
-				setHistoryMap(propService.populateHistory(rp));
-				property = rp.getBasicProperty().getActiveProperty();
-				property.setDocuments(rp.getDocuments());
-			} else if (appType.equals(APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP)) {
-				final PropertyMutation propertyMutation = transferOwnerService
-						.getPropertyMutationByApplicationNo(appNo);
-				setBasicProperty(propertyMutation.getBasicProperty());
-				setHistoryMap(propService.populateHistory(propertyMutation));
-				property = (PropertyImpl) propertyMutation.getProperty();
-				property.setDocuments(propertyMutation.getDocuments());
-			} else if (appType.equals(APPLICATION_TYPE_VACANCY_REMISSION)) {
-				final VacancyRemission vacancyRemission = vacancyRemissionPersistenceService
-						.find("from VacancyRemission where applicationNumber=?", appNo);
-				setBasicProperty(vacancyRemission.getBasicProperty());
-				setHistoryMap(propService.populateHistory(vacancyRemission));
-				property = vacancyRemission.getBasicProperty().getActiveProperty();
-				property.setDocuments(vacancyRemission.getDocuments());
-			}
-		 endorsementNotices = propertyTaxCommonUtils.getEndorsementNotices(appNo);
-	}
+                } else if (appType.equals(APPLICATION_TYPE_TAX_EXEMTION) && property.getIsExemptedFromTax()) {
+                    property.setDocuments(property.getTaxExemptionDocuments());
+                }
+            } else if (appType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)
+                    || appType.equalsIgnoreCase(APPLICATION_TYPE_GRP)) {
+                final RevisionPetition rp = revisionPetitionPersistenceService
+                        .find("from RevisionPetition where objectionNumber=?", appNo);
+                setBasicProperty(rp.getBasicProperty());
+                setHistoryMap(propService.populateHistory(rp));
+                property = rp.getBasicProperty().getActiveProperty();
+                property.setDocuments(rp.getDocuments());
+            } else if (appType.equalsIgnoreCase(APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP)) {
+                final PropertyMutation propertyMutation = transferOwnerService
+                        .getPropertyMutationByApplicationNo(appNo);
+                setBasicProperty(propertyMutation.getBasicProperty());
+                setHistoryMap(propService.populateHistory(propertyMutation));
+                property = (PropertyImpl) propertyMutation.getProperty();
+                property.setDocuments(propertyMutation.getDocuments());
+            } else if (appType.equalsIgnoreCase(APPLICATION_TYPE_VACANCY_REMISSION)) {
+                final VacancyRemission vacancyRemission = vacancyRemissionPersistenceService
+                        .find("from VacancyRemission where applicationNumber=?", appNo);
+                setBasicProperty(vacancyRemission.getBasicProperty());
+                setHistoryMap(propService.populateHistory(vacancyRemission));
+                property = vacancyRemission.getBasicProperty().getActiveProperty();
+                property.setDocuments(vacancyRemission.getDocuments());
+            }
+        endorsementNotices = propertyTaxCommonUtils.getEndorsementNotices(appNo);
+    }
     
    public void getDocumentDetails() {
         try {
