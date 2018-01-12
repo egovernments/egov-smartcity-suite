@@ -660,8 +660,8 @@ public final class CollectionConstants {
             add("Failure");
             add("INITIALIZED");
             add("F");
-            add("C");
-        }
+            add("C"); 
+        } 
     };
 
 }
