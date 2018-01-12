@@ -659,7 +659,7 @@ public final class CollectionConstants {
             add("Pending From Bank");
             add("Failure");
             add("INITIALIZED");
-            add("INITIATED");
+            add("F");
             add("C");
         }
     };
