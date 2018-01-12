@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -155,6 +155,7 @@ public class LicenseApplicationService extends TradeLicenseService {
     @Transactional
     @Override
     public void updateTradeLicense(final TradeLicense license, final WorkflowBean workflowBean) {
+        processAndStoreDocument(license);
         final BigDecimal currentDemandAmount = recalculateLicenseFee(license.getCurrentDemand());
         final BigDecimal feematrixDmdAmt = calculateFeeAmount(license);
         if (feematrixDmdAmt.compareTo(currentDemandAmount) >= 0)
