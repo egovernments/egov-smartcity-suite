@@ -119,6 +119,25 @@
 						</div>
 					</c:otherwise>
 				</c:choose>
+								<c:choose>
+					<c:when test="${councilSequenceNumber.meetingSeqNumber ne null}">
+						<div class="form-group">
+							<label class="col-sm-3 control-label text-right"> <spring:message
+									code="lbl.meeting.number" />(seq no.) :
+							</label>
+							<div class="col-sm-3 add-margin view-content">
+								${councilSequenceNumber.meetingSeqNumber}</div>
+						</div>
+					</c:when>
+					<c:otherwise>
+						<div class="form-group">
+							<label class="col-sm-3 control-label text-right"> <spring:message
+									code="lbl.meeting.number" />(seq no.) :
+							</label>
+							<div class="col-sm-3 add-margin view-content">N/A</div>
+						</div>
+					</c:otherwise>
+				</c:choose>
 				<div class="col-sm-5 add-margin">&nbsp;</div>
 			</div>
 		</div>

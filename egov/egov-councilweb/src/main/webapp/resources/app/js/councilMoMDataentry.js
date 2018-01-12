@@ -59,20 +59,32 @@ var emptyRow = '<tr><td colspan="9" id="emptyRow" class="text-center">No preambl
 var tbody = $('#preambleTable').children('tbody');
 //var table = tbody.find('tr').length == 0 ? $('#preambleTable tbody').append(emptyRow) : $('#preambleTable');
 var table = tbody.length ? tbody : $('#preambleTable');
+var row;
+if ($('#autoPreambleNoGenEnabled').val() == "true") {
 
-
-
-var row = '<tr>'+
-'<td><input type="text" class="form-control text-left patternvalidation validserial" required="required" name="meeting.meetingMOMs[{{idx}}].itemNumber" {{readonly}}  value="{{itemNumberTextBoxValue}}"/></td>'+
- '<td><select name="meeting.meetingMOMs[{{idx}}].preamble.department" class="form-control" required="required" > <option value="" >Loading...</option></select></td>'+
- '<td><input type="text" class="form-control text-left patternvalidation numberval" required="required" name="meeting.meetingMOMs[{{idx}}].preamble.preambleNumber" id="meetingMOMs[{{idx}}].preambleNumber" {{readonly}}  value="{{preamblenumberTextBoxValue}}"/></td>'+
- '<td><div class="input-group"><textarea class="form-control textarea-content" required="required" name="meeting.meetingMOMs[{{idx}}].preamble.gistOfPreamble" maxlength="10000"  value="{{gistTextBoxValue}}" /><span class="input-group-addon" id="showModal" data-header="Preamble - GIST of Preamble"><span class="glyphicon glyphicon-pencil" style="cursor:pointer"></span></span></div></td>'+
- '<td><input type="text" class="form-control text-left patternvalidation validnum" required="required" name="meeting.meetingMOMs[{{idx}}].resolutionNumber" {{readonly}}  value="{{resolutionNumberTextBoxValue}}"/></td>'+
- '<td><div class="input-group"><textarea class="form-control textarea-content addorremoverequired" required="required" name="meeting.meetingMOMs[{{idx}}].resolutionDetail" maxlength="5000" value="{{gistTextBoxValue}}" /><span class="input-group-addon" id="showModal" data-header="Preamble Resolution - Resolution comments"><span class="glyphicon glyphicon-pencil" style="cursor:pointer"></span></span></div></td>'+
- '<td><input type="text" class="form-control text-left patternvalidation text-right" name="meeting.meetingMOMs[{{idx}}].preamble.sanctionAmount" {{readonly}} data-pattern="number" value="{{amountTextBoxValue}}"/></td>'+
- '<td><select name="meeting.meetingMOMs[{{idx}}].resolutionStatus" class="form-control addorremoverequired" required="required"><option value="">Loading...</option></select></td>'+
- '<td></a>&nbsp;<button type="button" class="fa fa-trash-o delete" style="font-size:20px;color:red" ></button></td>'+
- '</tr>';
+	 row = '<tr>'
+			+ '<td><input type="text" class="form-control text-left patternvalidation validserial" required="required" name="meeting.meetingMOMs[{{idx}}].itemNumber" {{readonly}}  value="{{itemNumberTextBoxValue}}"/></td>'
+			+ '<td><select name="meeting.meetingMOMs[{{idx}}].preamble.department" class="form-control" required="required" > <option value="" >Loading...</option></select></td>'
+			+ '<td><div class="input-group"><textarea class="form-control textarea-content" required="required" name="meeting.meetingMOMs[{{idx}}].preamble.gistOfPreamble" maxlength="10000"  value="{{gistTextBoxValue}}" /><span class="input-group-addon" id="showModal" data-header="Preamble - GIST of Preamble"><span class="glyphicon glyphicon-pencil" style="cursor:pointer"></span></span></div></td>'
+			+ '<td><input type="text" class="form-control text-left patternvalidation validnum" required="required" name="meeting.meetingMOMs[{{idx}}].resolutionNumber" {{readonly}}  value="{{resolutionNumberTextBoxValue}}"/></td>'
+			+ '<td><div class="input-group"><textarea class="form-control textarea-content addorremoverequired" required="required" name="meeting.meetingMOMs[{{idx}}].resolutionDetail" maxlength="5000" value="{{gistTextBoxValue}}" /><span class="input-group-addon" id="showModal" data-header="Preamble Resolution - Resolution comments"><span class="glyphicon glyphicon-pencil" style="cursor:pointer"></span></span></div></td>'
+			+ '<td><input type="text" class="form-control text-left patternvalidation text-right" name="meeting.meetingMOMs[{{idx}}].preamble.sanctionAmount" {{readonly}} data-pattern="number" value="{{amountTextBoxValue}}"/></td>'
+			+ '<td><select name="meeting.meetingMOMs[{{idx}}].resolutionStatus" class="form-control addorremoverequired" required="required"><option value="">Loading...</option></select></td>'
+			+ '<td></a>&nbsp;<button type="button" class="fa fa-trash-o delete" style="font-size:20px;color:red" ></button></td>'
+			+ '</tr>';
+} else {
+	 row = '<tr>'
+			+ '<td><input type="text" class="form-control text-left patternvalidation validserial" required="required" name="meeting.meetingMOMs[{{idx}}].itemNumber" {{readonly}}  value="{{itemNumberTextBoxValue}}"/></td>'
+			+ '<td><select name="meeting.meetingMOMs[{{idx}}].preamble.department" class="form-control" required="required" > <option value="" >Loading...</option></select></td>'
+			+ '<td><input type="text" class="form-control text-left patternvalidation numberval" required="required" name="meeting.meetingMOMs[{{idx}}].preamble.preambleNumber" id="meetingMOMs[{{idx}}].preambleNumber" {{readonly}}  value="{{preamblenumberTextBoxValue}}"/></td>'
+			+ '<td><div class="input-group"><textarea class="form-control textarea-content" required="required" name="meeting.meetingMOMs[{{idx}}].preamble.gistOfPreamble" maxlength="10000"  value="{{gistTextBoxValue}}" /><span class="input-group-addon" id="showModal" data-header="Preamble - GIST of Preamble"><span class="glyphicon glyphicon-pencil" style="cursor:pointer"></span></span></div></td>'
+			+ '<td><input type="text" class="form-control text-left patternvalidation validnum" required="required" name="meeting.meetingMOMs[{{idx}}].resolutionNumber" {{readonly}}  value="{{resolutionNumberTextBoxValue}}"/></td>'
+			+ '<td><div class="input-group"><textarea class="form-control textarea-content addorremoverequired" required="required" name="meeting.meetingMOMs[{{idx}}].resolutionDetail" maxlength="5000" value="{{gistTextBoxValue}}" /><span class="input-group-addon" id="showModal" data-header="Preamble Resolution - Resolution comments"><span class="glyphicon glyphicon-pencil" style="cursor:pointer"></span></span></div></td>'
+			+ '<td><input type="text" class="form-control text-left patternvalidation text-right" name="meeting.meetingMOMs[{{idx}}].preamble.sanctionAmount" {{readonly}} data-pattern="number" value="{{amountTextBoxValue}}"/></td>'
+			+ '<td><select name="meeting.meetingMOMs[{{idx}}].resolutionStatus" class="form-control addorremoverequired" required="required"><option value="">Loading...</option></select></td>'
+			+ '<td></a>&nbsp;<button type="button" class="fa fa-trash-o delete" style="font-size:20px;color:red" ></button></td>'
+			+ '</tr>';
+}
 
 jQuery('#add-preamble').click(function(){
 	$('.agenda-section').show();
@@ -354,15 +366,18 @@ function loadDepartmentlist(selectBoxName){
 function validateAgengaDetails(){
     
     var isValid=true;
+    var autoPreambleNoGenEnabled=$('#autoPreambleNoGenEnabled').val();
     $('#preambleTable tbody tr').each(function(index){
         var itemNumber  = $(this).find('*[name$="itemNumber"]').val();
         var department = $(this).find('*[name$="department"]').val();
+        if (!autoPreambleNoGenEnabled== "true"){
         var preambleNumber = $(this).find('*[name$="preambleNumber"]').val(); 
+        }
         var gistOfPreamble = $(this).find('*[name$="gistOfPreamble"]').val(); 
         var resolutionNumber = $(this).find('*[name$="resolutionNumber"]').val(); 
         var resolutionDetail = $(this).find('*[name$="resolutionDetail"]').val(); 
         var resolutionStatus = $(this).find('*[name$="resolutionStatus"]').val(); 
-        if(!itemNumber || !department || !preambleNumber || !gistOfPreamble || !resolutionNumber || !resolutionDetail || !resolutionStatus) { 
+        if(!itemNumber || !department || (!autoPreambleNoGenEnabled== "true" && !preambleNumber) || !gistOfPreamble || !resolutionNumber || !resolutionDetail || !resolutionStatus) { 
             bootbox.alert("Enter all values for existing rows before adding. Values cannot be empty.");
             isValid=false;
             return false;

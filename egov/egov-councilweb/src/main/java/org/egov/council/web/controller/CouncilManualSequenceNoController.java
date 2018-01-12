@@ -70,13 +70,15 @@ public class CouncilManualSequenceNoController {
 
     private static final String COUNCILSEQUENCECREATE = "councilsequence";
     @Autowired
-    CouncilSequenceGenerationService councilSequenceGenerationService;
+    private CouncilSequenceGenerationService councilSequenceGenerationService;
 
     @RequestMapping(value = "/create", method = GET)
     public String newForm(final Model model) {
         String preambleseq = StringUtils.EMPTY;
         String resolutionseq = StringUtils.EMPTY;
         String agendaSeq = StringUtils.EMPTY;
+        String meetingsequence = StringUtils.EMPTY;
+
         if (!councilSequenceGenerationService.getPreambleLastSeq().isEmpty())
             preambleseq = councilSequenceGenerationService.getPreambleLastSeq();
 
@@ -86,10 +88,14 @@ public class CouncilManualSequenceNoController {
         if (!councilSequenceGenerationService.getAgendaLastSeq().isEmpty())
             agendaSeq = councilSequenceGenerationService.getAgendaLastSeq();
 
+        if (!councilSequenceGenerationService.getMeetingSeqNumber().isEmpty())
+            meetingsequence = councilSequenceGenerationService.getMeetingSeqNumber();
+
         model.addAttribute("preambleseq", preambleseq);
         model.addAttribute("councilSequenceNumber", new CouncilSequenceNumber());
         model.addAttribute("resolutionseq", resolutionseq);
         model.addAttribute("agendaSeq", agendaSeq);
+        model.addAttribute("meetingSeq", meetingsequence);
 
         return COUNCILSEQUENCECREATE;
     }
@@ -111,6 +117,8 @@ public class CouncilManualSequenceNoController {
         if (request.getParameter("lastResolutionSeq") != null)
             resolutionseq = request.getParameter("lastResolutionSeq");
 
+        if (request.getParameter("lastMeetingSeq") != null)
+            resolutionseq = request.getParameter("lastMeetingSeq");
         councilSequenceGenerationService.validate(resultBinder, councilSequenceNumber, preambleseq, resolutionseq, agendaSeq);
 
         if (resultBinder.hasErrors()) {

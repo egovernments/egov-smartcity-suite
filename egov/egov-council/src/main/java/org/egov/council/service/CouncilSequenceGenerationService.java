@@ -76,9 +76,9 @@ public class CouncilSequenceGenerationService {
     }
 
     @Transactional
-    public CouncilSequenceNumber create(CouncilSequenceNumber CouncilSequenceNumber) {
-        councilSequenceNumberRepository.save(CouncilSequenceNumber);
-        return CouncilSequenceNumber;
+    public CouncilSequenceNumber create(CouncilSequenceNumber councilSequenceNumber) {
+        councilSequenceNumberRepository.save(councilSequenceNumber);
+        return councilSequenceNumber;
     }
 
     @Transactional
@@ -94,6 +94,8 @@ public class CouncilSequenceGenerationService {
         String preamblesequence = "seq_egcncl_preamble_number";
         String agendasequence = "seq_egcncl_agenda_number";
         String resolutionsequence = "seq_egcncl_mom_number";
+        String meetingsequence = "seq_egcncl_meeting_number";
+
         if (councilSequenceNumber.getPreambleSeqNumber() != null)
             update(preamblesequence, councilSequenceNumber.getPreambleSeqNumber());
 
@@ -102,6 +104,9 @@ public class CouncilSequenceGenerationService {
 
         if (councilSequenceNumber.getResolutionSeqNumber() != null)
             update(resolutionsequence, councilSequenceNumber.getResolutionSeqNumber());
+        
+        if (councilSequenceNumber.getMeetingSeqNumber() != null)
+            update(meetingsequence, councilSequenceNumber.getMeetingSeqNumber());
     }
 
     @Transactional
@@ -124,6 +129,13 @@ public class CouncilSequenceGenerationService {
         javax.persistence.Query query = entityManager.createNativeQuery(sql);
         return query.getSingleResult() != null ? query.getSingleResult().toString() : StringUtils.EMPTY;
     }
+   
+    @Transactional
+    public String getMeetingSeqNumber() {
+        String sql = "select last_value from seq_egcncl_meeting_number";
+        javax.persistence.Query query = entityManager.createNativeQuery(sql);
+        return query.getSingleResult() != null ? query.getSingleResult().toString() : StringUtils.EMPTY;
+    }
 
     public void validate(final Errors error, final CouncilSequenceNumber councilSequenceNumber, String preambleseq,
             String resolutionseq, String agendaSeq) {
@@ -138,6 +150,10 @@ public class CouncilSequenceGenerationService {
         if (councilSequenceNumber.getResolutionSeqNumber() != null && Integer
                 .valueOf(councilSequenceNumber.getResolutionSeqNumber()).compareTo(Integer.valueOf(resolutionseq)) <= 0) {
             error.rejectValue("resolutionSeqNumber", "err.resolution.sequence");
+        }
+        if (councilSequenceNumber.getMeetingSeqNumber() != null && Integer
+                .valueOf(councilSequenceNumber.getMeetingSeqNumber()).compareTo(Integer.valueOf(resolutionseq)) <= 0) {
+            error.rejectValue("meetingSeqNumber", "err.meeting.sequence");
         }
     }
 }

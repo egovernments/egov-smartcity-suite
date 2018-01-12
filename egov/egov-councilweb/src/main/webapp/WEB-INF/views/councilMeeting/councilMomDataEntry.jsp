@@ -56,6 +56,7 @@
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<%@ include file="councilmeeting-dataentry.jsp"%>
+<input type="hidden" id="autoPreambleNoGenEnabled" value="${autoPreambleNoGenEnabled}" />
 
 	<div class="panel panel-primary" data-collapsed="0">
 		<div class="panel-heading custom_form_panel_heading">
@@ -67,7 +68,7 @@
 						code="lbl.agendaNumber" /></label>
 				<div class="col-md-2 col-sm-3">
 					<form:input path="agenda.agendaNumber" id="agendaNumber" type="text"
-						class="form-control text-left patternvalidation" maxlength="5"
+						class="form-control text-left patternvalidation" maxlength="20"
 						placeholder="" autocomplete="off" />
 					<form:errors path="agenda.agendaNumber" cssClass="error-msg" />
 				</div>
@@ -92,21 +93,23 @@
 					<thead>
 						<tr>
 							<th width="5%" align="center"><spring:message
-									code="lbl.serial.no" /><span class="mandatory"></span></th>
+									code="lbl.itemno" /><span class="mandatory"></span></th>
 							<th width="10%"><spring:message code="lbl.department" /><span
 								class="mandatory"></span></th>
+							<c:if test="${!autoPreambleNoGenEnabled}">
 							<th width="10%"><spring:message code="lbl.preamble.number" /><span
 								class="mandatory"></span></th>
+														</c:if>
 							<th width="20%"><spring:message code="lbl.gistofpreamble" /><span
 								class="mandatory"></span></th>
 							<th width="10%"><spring:message code="lbl.resolutionNumber" /><span
 								class="mandatory"></span></th>
-							<th width="20%"><spring:message code="lbl.comments" /><span
+							<th width="10%"><spring:message code="lbl.comments" /><span
 								class="mandatory"></span></th>
 							<th width="10%"><spring:message code="lbl.amount" /></th>
 							<th width="10%"><spring:message code="lbl.status" /><span
 								class="mandatory"></span></th>
-							<th width="5%"><spring:message code="lbl.action" /></th>
+							<th width="15%"><spring:message code="lbl.action" /></th>
 
 						</tr>
 					</thead>
@@ -116,10 +119,12 @@
 			</div>
 		</div>
 	</div>
+		<%@ include file="upload-dataentry-documents.jsp"%>
+	
 	<div class="form-group">
 		<div class="text-center">
 			<button type="button" id="add-preamble" class='btn btn-primary'>
-				<spring:message code='lbl.addpreamble' />
+				<spring:message code='lbl.additem' />
 			</button>
 			<button type='submit' class='btn btn-primary' id="buttonSubmit">
 				<spring:message code='lbl.save' />

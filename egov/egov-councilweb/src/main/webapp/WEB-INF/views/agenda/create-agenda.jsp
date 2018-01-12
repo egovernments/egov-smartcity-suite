@@ -88,7 +88,7 @@
 								code="lbl.agendaNumber" /> <span class="mandatory"></span> </label>
 						<div class="col-md-5 col-sm-5">
 							<form:input path="agendaNumber" id="agendaNumber" type="text"
-								class="form-control" maxlength="5" placeholder=""
+								class="form-control" maxlength="20" placeholder=""
 								autocomplete="off" />
 							<form:errors path="agendaNumber" cssClass="error-msg" />
 						</div>
