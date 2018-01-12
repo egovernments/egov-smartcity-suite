@@ -304,7 +304,7 @@ public class CurrentDcbService {
         return resultObj;
     }
 
-    public DCBReportResult prepareLocalityWiseResult(final DCBReportResult reportResult, final Object[] obj) {
+    public DCBReportResult prepareLocalityWiseResult(final DCBReportResult reportResult, final Object... obj) {
         if (obj[0] != null)
             reportResult.setLocality(Integer.parseInt(obj[0].toString()));
         if (obj[1] != null)
