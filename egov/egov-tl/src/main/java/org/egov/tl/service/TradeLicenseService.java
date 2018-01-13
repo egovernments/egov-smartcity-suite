@@ -131,6 +131,7 @@ import static org.egov.tl.utils.Constants.CLOSURE_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.COMMISSIONER_DESGN;
 import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
 import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
+import static org.egov.tl.utils.Constants.PERMANENT_NATUREOFBUSINESS;
 import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.TRADE_LICENSE;
 import static org.hibernate.criterion.MatchMode.ANYWHERE;
@@ -417,7 +418,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     public List<DemandNoticeForm> getLicenseDemandNotices(final DemandNoticeForm demandnoticeForm) {
         final Criteria searchCriteria = entityQueryService.getSession().createCriteria(TradeLicense.class);
         searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat").createAlias("tradeName", "subcat")
-                .createAlias("status", "licstatus");
+                .createAlias("status", "licstatus").createAlias("natureOfBusiness", "nob");
         if (isNotBlank(demandnoticeForm.getLicenseNumber()))
             searchCriteria.add(Restrictions.eq("licenseNumber", demandnoticeForm.getLicenseNumber()).ignoreCase());
         if (isNotBlank(demandnoticeForm.getOldLicenseNumber()))
@@ -437,8 +438,10 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
             searchCriteria.add(Restrictions.eq("status.id", demandnoticeForm.getStatusId()));
         else
             searchCriteria.add(Restrictions.ne("licstatus.statusCode", StringUtils.upperCase("CAN")));
-
-        searchCriteria.addOrder(Order.asc("id"));
+        searchCriteria
+                .add(Restrictions.eq("isActive", true))
+                .add(Restrictions.eq("nob.name", PERMANENT_NATUREOFBUSINESS))
+                .addOrder(Order.asc("id"));
         final List<DemandNoticeForm> finalList = new LinkedList<>();
 
         for (final TradeLicense license : (List<TradeLicense>) searchCriteria.list()) {

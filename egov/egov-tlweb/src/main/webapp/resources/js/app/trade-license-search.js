@@ -409,16 +409,16 @@ $(document).ready(function () {
                                 return '<a href="javascript:void(0);" onclick="goToView(' + row.licenseId + ');" data-hiddenele="licenseId" data-eleval="'
                                     + data.id + '">' + data.name + '</a>';
                             },
-                            "sTitle": "Application Number",
+                            "sTitle": "Application No.",
                             "name": "applicationNumber"
                         }, {
                             "data": "tlNumber",
                             "name": "licenseNumber",
-                            "sTitle": "TL Number"
+                            "sTitle": "License No."
                         }, {
                             "data": "oldTLNumber",
                             "name": "oldLicenseNumber",
-                            "sTitle": "Old TL Number"
+                            "sTitle": "Old License No."
                         }, {
                             "data": "category",
                             "name": "categoryName",
@@ -426,11 +426,11 @@ $(document).ready(function () {
                         }, {
                             "data": "subCategory",
                             "name": "tradeName.name",
-                            "sTitle": "Sub-Category"
+                            "sTitle": "Subcategory"
                         }, {
                             "data": "tradeTitle",
                             "name": "nameOfEstablishment",
-                            "sTitle": "Title of Trade"
+                            "sTitle": "Trade Title"
                         }, {
                             "data": "tradeOwner",
                             "name": "licensee.applicantName",
@@ -442,7 +442,7 @@ $(document).ready(function () {
                         }, {
                             "data": "propertyAssmntNo",
                             "name": "assessmentNo",
-                            "sTitle": "Property Assessment Number"
+                            "sTitle": "Property ID"
                         }, {
                             "data": "expiryYear",
                             "name": "dateOfExpiry",
@@ -459,7 +459,7 @@ $(document).ready(function () {
                             "data": "ownerName",
                             "orderable": false,
                             "sortable": false,
-                            "sTitle": "Owner Name"
+                            "sTitle": "Process Owner"
                         }, {
                             "sTitle": "Actions",
                             "render": function (data, type, row) {
