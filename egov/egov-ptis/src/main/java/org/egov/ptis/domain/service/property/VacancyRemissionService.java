@@ -724,7 +724,10 @@ public class VacancyRemissionService {
 
     public DocumentType getDocType(final String docname) {
         return vacancyRemissionRepository.findDocumentTypeByNameAndTransactionType(docname, TransactionType.VACANCYREMISSION);
-
+    }
+    
+    public DocumentType getMUDocType(final String name) {
+        return vacancyRemissionRepository.findDocumentTypeByNameAndTransactionType(name, TransactionType.VRMONTHLYUPDATE);
     }
 
     public ReportOutput generateReport(final VacancyRemission vacancyRemission, final HttpServletRequest request,
@@ -988,4 +991,5 @@ public class VacancyRemissionService {
                 : Boolean.valueOf((Boolean) propertyService.getWaterTaxDues(assessmentNo, request)
                 .get(PropertyTaxConstants.UNDER_WTMS_WF));
     }
+
 }
