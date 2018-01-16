@@ -58,6 +58,7 @@ import static org.egov.council.utils.constants.CouncilConstants.RESOLUTION_APPRO
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -76,6 +77,7 @@ import org.egov.council.service.CouncilAgendaService;
 import org.egov.council.service.CouncilMeetingService;
 import org.egov.council.service.CouncilMeetingTypeService;
 import org.egov.council.service.CouncilPreambleService;
+import org.egov.council.service.es.CouncilMeetingIndexService;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -115,6 +117,8 @@ public class CouncilDataEntryController {
     
     @Autowired
     private CouncilAgendaService councilAgendaService;
+    @Autowired
+    private CouncilMeetingIndexService councilMeetingIndexService;
 
     @ModelAttribute("committeeType")
     public List<CommitteeType> getCommitteTypeList() {
@@ -145,7 +149,7 @@ public class CouncilDataEntryController {
     public String update(
             @ModelAttribute final MeetingMOM meetingMOM,
             final BindingResult errors, final Model model,
-            final RedirectAttributes redirectAttrs) {
+            final RedirectAttributes redirectAttrs) throws ParseException {
         if (errors.hasErrors()) {
             return COUNCILMOM_DATAENTRY;
         }
@@ -183,6 +187,7 @@ public class CouncilDataEntryController {
         councilMeetingService.createDataEntry(meetingMOMList);
         CouncilMeeting councilMeeting = councilMeetingService.findOne(meetingMOM.getMeeting().getId());
         councilMeetingService.sortMeetingMomByItemNumber(councilMeeting);
+        councilMeetingIndexService.createCouncilMeetingIndex(councilMeeting);
         model.addAttribute(COUNCIL_MEETING, councilMeeting);
         return COUNCILMOM_VIEW;
     }
