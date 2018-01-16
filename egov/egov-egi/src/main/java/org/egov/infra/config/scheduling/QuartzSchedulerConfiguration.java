@@ -49,7 +49,6 @@
 package org.egov.infra.config.scheduling;
 
 import org.egov.infra.scheduler.quartz.QuartzJobAwareBeanFactory;
-import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -63,7 +62,19 @@ import org.springframework.scheduling.quartz.SpringBeanJobFactory;
 import javax.sql.DataSource;
 import java.util.Properties;
 
+import static org.quartz.impl.StdSchedulerFactory.AUTO_GENERATE_INSTANCE_ID;
+import static org.quartz.impl.StdSchedulerFactory.PROP_SCHED_BATCH_TIME_WINDOW;
+import static org.quartz.impl.StdSchedulerFactory.PROP_SCHED_INSTANCE_ID;
+import static org.quartz.impl.StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME;
+import static org.quartz.impl.StdSchedulerFactory.PROP_SCHED_MAX_BATCH_SIZE;
+import static org.quartz.impl.StdSchedulerFactory.PROP_SCHED_SCHEDULER_THREADS_INHERIT_CONTEXT_CLASS_LOADER_OF_INITIALIZING_THREAD;
+import static org.quartz.impl.StdSchedulerFactory.PROP_SCHED_WRAP_JOB_IN_USER_TX;
+
 public class QuartzSchedulerConfiguration {
+
+    private static final String APP_SCHEDULER_NAME = "ERP_APP_SCHEDULER";
+    private static final String FALSE = "false";
+    private static final String TRUE = "true";
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -83,9 +94,9 @@ public class QuartzSchedulerConfiguration {
     public SimpleThreadPoolTaskExecutor taskExecutor() {
         SimpleThreadPoolTaskExecutor taskExecutor = new SimpleThreadPoolTaskExecutor();
         taskExecutor.setInstanceId("AUTO");
-        taskExecutor.setInstanceName("ERP_APP_SCHEDULER");
+        taskExecutor.setInstanceName(APP_SCHEDULER_NAME);
         taskExecutor.setThreadCount(10);
-        taskExecutor.setThreadNamePrefix("ERP_APP_SCHEDULER");
+        taskExecutor.setThreadNamePrefix(APP_SCHEDULER_NAME);
         taskExecutor.setThreadPriority(5);
         taskExecutor.setThreadsInheritContextClassLoaderOfInitializingThread(true);
         taskExecutor.setThreadsInheritGroupOfInitializingThread(true);
@@ -111,25 +122,25 @@ public class QuartzSchedulerConfiguration {
         Properties quartzProps = new Properties();
 
         //Scheduler config
-        quartzProps.put(StdSchedulerFactory.PROP_SCHED_INSTANCE_ID, "AUTO");
-        quartzProps.put(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, "ERP_APP_SCHEDULER");
-        quartzProps.put(StdSchedulerFactory.PROP_SCHED_WRAP_JOB_IN_USER_TX, "false");
-        quartzProps.put(StdSchedulerFactory.PROP_SCHED_MAX_BATCH_SIZE, 10);
-        quartzProps.put(StdSchedulerFactory.PROP_SCHED_BATCH_TIME_WINDOW, 1000);
-        quartzProps.put("org.quartz.scheduler.threadsInheritContextClassLoaderOfInitializer", "true");
+        quartzProps.put(PROP_SCHED_INSTANCE_ID, AUTO_GENERATE_INSTANCE_ID);
+        quartzProps.put(PROP_SCHED_INSTANCE_NAME, APP_SCHEDULER_NAME);
+        quartzProps.put(PROP_SCHED_WRAP_JOB_IN_USER_TX, FALSE);
+        quartzProps.put(PROP_SCHED_MAX_BATCH_SIZE, 10);
+        quartzProps.put(PROP_SCHED_BATCH_TIME_WINDOW, 1000);
+        quartzProps.put(PROP_SCHED_SCHEDULER_THREADS_INHERIT_CONTEXT_CLASS_LOADER_OF_INITIALIZING_THREAD, TRUE);
 
         //Cluster job store config
         quartzProps.put("org.quartz.jobStore.isClustered", env.getProperty("scheduler.clustered"));
         quartzProps.put("org.quartz.jobStore.clusterCheckinInterval", "60000");
-        quartzProps.put("org.quartz.jobStore.acquireTriggersWithinLock", "false");
+        quartzProps.put("org.quartz.jobStore.acquireTriggersWithinLock", FALSE);
         quartzProps.put("org.quartz.jobStore.driverDelegateClass", "org.quartz.impl.jdbcjobstore.PostgreSQLDelegate");
-        quartzProps.put("org.quartz.jobStore.useProperties", "true");
+        quartzProps.put("org.quartz.jobStore.useProperties", TRUE);
         quartzProps.put("org.quartz.jobStore.dataSource", "quartzDS");
         quartzProps.put("org.quartz.jobStore.nonManagedTXDataSource", "quartzNoTXDS");
         quartzProps.put("org.quartz.jobStore.tablePrefix", env.getProperty("scheduler.default.table.prefix"));
         quartzProps.put("org.quartz.jobStore.class", "org.quartz.impl.jdbcjobstore.JobStoreCMT");
-        quartzProps.put("org.quartz.jobStore.dontSetNonManagedTXConnectionAutoCommitFalse", "false");
-        quartzProps.put("org.quartz.jobStore.dontSetAutoCommitFalse", "true");
+        quartzProps.put("org.quartz.jobStore.dontSetNonManagedTXConnectionAutoCommitFalse", FALSE);
+        quartzProps.put("org.quartz.jobStore.dontSetAutoCommitFalse", FALSE);
 
         //Datasource config
         quartzProps.put("org.quartz.dataSource.quartzDS.jndiURL", env.getProperty("default.jdbc.jndi.datasource"));
@@ -148,7 +159,7 @@ public class QuartzSchedulerConfiguration {
 
         //Shutdown plugin config
         quartzProps.put("org.quartz.plugin.shutdownHook.class", "org.quartz.plugins.management.ShutdownHookPlugin");
-        quartzProps.put("org.quartz.plugin.shutdownHook.cleanShutdown", "true");
+        quartzProps.put("org.quartz.plugin.shutdownHook.cleanShutdown", TRUE);
 
         return quartzProps;
     }
