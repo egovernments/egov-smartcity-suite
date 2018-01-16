@@ -47,8 +47,8 @@
  */
 package org.egov.ptis.client.util;
 
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.RandomStringGenerator;
 import org.apache.log4j.Logger;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
@@ -86,7 +86,6 @@ import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.MoneyUtils;
 import org.egov.infstr.services.PersistenceService;
@@ -135,7 +134,6 @@ import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
 import org.egov.ptis.domain.model.calculator.MiscellaneousTaxDetail;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
-import org.egov.ptis.domain.service.property.RebatePeriodService;
 import org.egov.ptis.domain.service.property.RebateService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.egov.ptis.wtms.ConsumerConsumption;
@@ -143,7 +141,6 @@ import org.egov.ptis.wtms.PropertyWiseConsumptions;
 import org.egov.ptis.wtms.WaterChargesIntegrationService;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.CriteriaSpecification;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.slf4j.LoggerFactory;
@@ -233,16 +230,12 @@ public class PropertyTaxUtil {
     @Autowired
     private ModuleService moduleDao;
     @Autowired
-    private RebatePeriodService rebatePeriodService;
-    @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
     @Autowired
     @Qualifier("ptaxApplicationTypeService")
     private PersistenceService<PtApplicationType, Long> ptaxApplicationTypeService;
     @Autowired
     private ReportService reportService;
-    @Autowired
-    private ApplicationNumberGenerator applicationNumberGenerator;
     @PersistenceContext
     private EntityManager entityManager;
     @Autowired
@@ -1836,14 +1829,15 @@ public class PropertyTaxUtil {
         return roleNameList.toString().toUpperCase();
     }
 
-    public String generateUserName(final String name) {
+    public String generateUserName(final String mobileNumber) {
         final StringBuilder userNameBuilder = new StringBuilder();
-        String userName = "";
-        if (name.length() < 6)
-            userName = String.format("%-6s", name).replace(' ', '0');
+        String userName;
+        if (mobileNumber.length() < 10)
+            userName = String.format("%-10s", mobileNumber).replace(' ', '0');
         else
-            userName = name.substring(0, 6).replace(' ', '0');
-        userNameBuilder.append(userName).append(RandomStringUtils.randomNumeric(4));
+            userName = mobileNumber.substring(0, 10).replace(' ', '0');
+        RandomStringGenerator generator = new RandomStringGenerator.Builder().withinRange('0', '9').build();
+        userNameBuilder.append(userName).append(generator.generate(5));
         return userNameBuilder.toString();
     }
 
