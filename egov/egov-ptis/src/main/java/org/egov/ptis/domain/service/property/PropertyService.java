@@ -3484,7 +3484,7 @@ public class PropertyService {
 	 * @param currentDemand
 	 * @return
 	 */
-	private Map<Installment, BigDecimal> getInstallmentWiseDemand(final EgDemand currentDemand) {
+	public Map<Installment, BigDecimal> getInstallmentWiseDemand(final EgDemand currentDemand) {
 		final Map<Installment, BigDecimal> installmentWiseDemand = new TreeMap<>();
 		String demandReason = "";
 		Installment installment = null;

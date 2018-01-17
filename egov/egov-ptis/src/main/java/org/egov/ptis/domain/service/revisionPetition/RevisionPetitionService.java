@@ -49,6 +49,7 @@ package org.egov.ptis.domain.service.revisionPetition;
 
 import org.apache.struts2.ServletActionContext;
 import org.egov.commons.EgwStatus;
+import org.egov.commons.Installment;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.entity.Source;
 import org.egov.demand.model.EgDemandDetails;
@@ -105,6 +106,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -628,5 +630,32 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
                 infoBean.setExistingUCPenalty(demandDetail.getAmount());
         }
     }
+
+    public Boolean validateDemand(final RevisionPetition objection) {
+        Boolean demandIncerased = false;
+        Set<Ptdemand> newDemandSet = objection.getProperty().getPtDemandSet();
+        List<Ptdemand> ptDemandList = new ArrayList<>();
+        ptDemandList.addAll(newDemandSet);
+
+        Installment currentInstall = propertyTaxCommonUtils.getCurrentInstallment();
+
+        BigDecimal oldDemand = getDemandforCurrenttInst(propertyService.getInstallmentWiseDemand(
+                ptDemandDAO.getNonHistoryCurrDmdForProperty(objection.getBasicProperty().getProperty())), currentInstall);
+        BigDecimal newDemand = getDemandforCurrenttInst(propertyService.getInstallmentWiseDemand(ptDemandList.get(0)),
+                currentInstall);
+        if (newDemand.compareTo(oldDemand) > 0) 
+            demandIncerased= true;
+        return demandIncerased;
+    }
+
+    private BigDecimal getDemandforCurrenttInst(Map<Installment, BigDecimal> instWiseDemand, Installment currentInstall) {
+        BigDecimal demand = BigDecimal.ZERO;
+        for (Map.Entry<Installment, BigDecimal> entry : instWiseDemand.entrySet()){
+            if(entry.getKey().equals(currentInstall))
+                demand= entry.getValue();
+        }
+        return demand;
+    }
+
 
 }
