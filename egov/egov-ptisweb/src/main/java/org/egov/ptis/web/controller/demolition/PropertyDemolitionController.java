@@ -260,7 +260,9 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
             model.addAttribute(
                     "successMessage",
                     "Property demolition data saved successfully in the system and forwarded to "
-                            + propertyTaxUtil.getApproverUserName(approvalPosition));
+                            + propertyTaxUtil.getApproverUserName(approvalPosition)
+                            + " with application number "
+                            + property.getApplicationNo());
             if (propertyService.isMeesevaUser(loggedInUser))
                 target = "redirect:/property/demolition/generate-meesevareceipt/"
                         + ((PropertyImpl) property).getBasicProperty().getUpicNo() + "?transactionServiceNumber="
