@@ -415,7 +415,7 @@ public class SearchPropertyAction extends SearchFormAction {
         loggedUserIsMeesevaUser = propertyService.isMeesevaUser(securityUtils.getCurrentUser());
         if (loggedUserIsMeesevaUser)
             if (APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP.equals(applicationType))
-                return APPLICATION_TYPE_MEESEVA_TRANSFER_OF_OWNERSHIP;
+                return MUTATION_TYPE_REGISTERED_TRANSFER;
             else if (APPLICATION_TYPE_GRP.equals(applicationType))
                 return APPLICATION_TYPE_MEESEVA_GRP;
             else if (APPLICATION_TYPE_REVISION_PETITION.equals(applicationType))
