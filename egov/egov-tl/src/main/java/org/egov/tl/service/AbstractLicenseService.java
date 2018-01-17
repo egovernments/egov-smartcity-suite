@@ -625,6 +625,7 @@ public abstract class AbstractLicenseService<T extends License> {
         final User currentUser = this.securityUtils.getCurrentUser();
         if (license.hasState() && !license.getState().isEnded())
             throw new ValidationException("lic.appl.wf.validation", "Cannot initiate Closure process, application under processing");
+        license.setNewWorkflow(false);
         Position position = null;
         if (workflowBean.getApproverPositionId() != null) {
             position = positionMasterService.getPositionById(workflowBean.getApproverPositionId());
