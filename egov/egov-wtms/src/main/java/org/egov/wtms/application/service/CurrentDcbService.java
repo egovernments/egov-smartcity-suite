@@ -49,6 +49,9 @@ package org.egov.wtms.application.service;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import static org.egov.wtms.masters.entity.enums.ConnectionType.METERED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.METERED_CHARGES_REASON_CODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAXREASONCODE;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -63,8 +66,8 @@ import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.utils.DateUtils;
 import org.egov.wtms.application.entity.DonationChargesDCBReportSearch;
 import org.egov.wtms.application.entity.WaterChargesReceiptInfo;
+import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.reports.entity.DCBReportResult;
-import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -88,12 +91,14 @@ public class CurrentDcbService {
         return entityManager.unwrap(Session.class);
     }
 
-    public DCBDisplayInfo getDcbDispInfo() {
+    public DCBDisplayInfo getDcbDispInfo(final ConnectionType connectionType) {
         final DCBDisplayInfo dcbDispInfo = new DCBDisplayInfo();
         final List<String> reasonMasterCodes = new ArrayList<>(0);
         final List<String> reasonCategoryCodes = new ArrayList<>(0);
-        reasonMasterCodes.add(WaterTaxConstants.WATERTAXREASONCODE);
-        reasonMasterCodes.add(WaterTaxConstants.METERED_CHARGES_REASON_CODE);
+        if (METERED.equals(connectionType))
+            reasonMasterCodes.add(METERED_CHARGES_REASON_CODE);
+        else
+            reasonMasterCodes.add(WATERTAXREASONCODE);
         dcbDispInfo.setReasonCategoryCodes(reasonCategoryCodes);
         dcbDispInfo.setReasonMasterCodes(reasonMasterCodes);
         return dcbDispInfo;
@@ -109,7 +114,7 @@ public class CurrentDcbService {
                 .append("d_crr+d_arr as \"receiptAmount\" from wt_wtchrgrcpt_tbl where i_csmrno =:consumerNumber ")
                 .append("order by dt_ctrrcptdt desc");
         return getCurrentSession().createSQLQuery(queryStr.toString())
-                .setString("consumerNumber", consumerNumber)
+                .setLong("consumerNumber", Long.parseLong(consumerNumber))
                 .setResultTransformer(new AliasToBeanResultTransformer(WaterChargesReceiptInfo.class))
                 .list();
     }

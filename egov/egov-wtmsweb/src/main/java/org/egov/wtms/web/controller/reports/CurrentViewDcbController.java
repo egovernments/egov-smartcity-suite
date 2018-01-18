@@ -174,7 +174,7 @@ public class CurrentViewDcbController {
         model.addAttribute("connectionType", waterConnectionDetailsService.getConnectionTypesMap()
                 .get(waterConnectionDetails.getConnectionType().name()));
         if (waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand() != null) {
-            final DCBDisplayInfo dcbDispInfo = currentDcbService.getDcbDispInfo();
+            final DCBDisplayInfo dcbDispInfo = currentDcbService.getDcbDispInfo(waterConnectionDetails.getConnectionType());
             final WaterConnectionBillable waterConnectionBillable = (WaterConnectionBillable) context
                     .getBean("waterConnectionBillable");
             final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
