@@ -637,19 +637,17 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
         List<Ptdemand> ptDemandList = new ArrayList<>();
         ptDemandList.addAll(newDemandSet);
 
-        Installment currentInstall = propertyTaxCommonUtils.getCurrentInstallment();
-
         BigDecimal oldDemand = getDemandforCurrenttInst(propertyService.getInstallmentWiseDemand(
-                ptDemandDAO.getNonHistoryCurrDmdForProperty(objection.getBasicProperty().getProperty())), currentInstall);
-        BigDecimal newDemand = getDemandforCurrenttInst(propertyService.getInstallmentWiseDemand(ptDemandList.get(0)),
-                currentInstall);
+                ptDemandDAO.getNonHistoryCurrDmdForProperty(objection.getBasicProperty().getProperty())));
+        BigDecimal newDemand = getDemandforCurrenttInst(propertyService.getInstallmentWiseDemand(ptDemandList.get(0)));
         if (newDemand.compareTo(oldDemand) > 0) 
             demandIncerased= true;
         return demandIncerased;
     }
 
-    private BigDecimal getDemandforCurrenttInst(Map<Installment, BigDecimal> instWiseDemand, Installment currentInstall) {
+    private BigDecimal getDemandforCurrenttInst(Map<Installment, BigDecimal> instWiseDemand) {
         BigDecimal demand = BigDecimal.ZERO;
+        Installment currentInstall = propertyTaxCommonUtils.getCurrentInstallment();
         for (Map.Entry<Installment, BigDecimal> entry : instWiseDemand.entrySet()){
             if(entry.getKey().equals(currentInstall))
                 demand= entry.getValue();
