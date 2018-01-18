@@ -83,7 +83,7 @@ public class TradeLicense extends License {
 
     @Override
     public String getStateDetails() {
-        StringBuilder details = new StringBuilder();
+        StringBuilder details = new StringBuilder(28);
         if (isNotBlank(getLicenseNumber()))
             details.append("License No. ").append(getLicenseNumber()).append(" and ");
         details.append("Application No. ").append(applicationNumber).append(" dated ")
