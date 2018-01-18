@@ -77,7 +77,7 @@ public class CouncilManualSequenceNoController {
         String preambleseq = StringUtils.EMPTY;
         String resolutionseq = StringUtils.EMPTY;
         String agendaSeq = StringUtils.EMPTY;
-        String meetingsequence = StringUtils.EMPTY;
+        String meetingSeq = StringUtils.EMPTY;
 
         if (!councilSequenceGenerationService.getPreambleLastSeq().isEmpty())
             preambleseq = councilSequenceGenerationService.getPreambleLastSeq();
@@ -89,13 +89,13 @@ public class CouncilManualSequenceNoController {
             agendaSeq = councilSequenceGenerationService.getAgendaLastSeq();
 
         if (!councilSequenceGenerationService.getMeetingSeqNumber().isEmpty())
-            meetingsequence = councilSequenceGenerationService.getMeetingSeqNumber();
+            meetingSeq = councilSequenceGenerationService.getMeetingSeqNumber();
 
         model.addAttribute("preambleseq", preambleseq);
         model.addAttribute("councilSequenceNumber", new CouncilSequenceNumber());
         model.addAttribute("resolutionseq", resolutionseq);
         model.addAttribute("agendaSeq", agendaSeq);
-        model.addAttribute("meetingSeq", meetingsequence);
+        model.addAttribute("meetingSeq", meetingSeq);
 
         return COUNCILSEQUENCECREATE;
     }
@@ -104,7 +104,8 @@ public class CouncilManualSequenceNoController {
     public String createCouncilSequence(final Model model, final HttpServletRequest request,
             @ModelAttribute final CouncilSequenceNumber councilSequenceNumber, final BindingResult resultBinder)
             throws SQLException {
-
+        
+        String meetingSeq = null;
         String preambleseq = null;
         String resolutionseq = null;
         String agendaSeq = null;
@@ -118,22 +119,22 @@ public class CouncilManualSequenceNoController {
             resolutionseq = request.getParameter("lastResolutionSeq");
 
         if (request.getParameter("lastMeetingSeq") != null)
-            resolutionseq = request.getParameter("lastMeetingSeq");
-        councilSequenceGenerationService.validate(resultBinder, councilSequenceNumber, preambleseq, resolutionseq, agendaSeq);
+            meetingSeq = request.getParameter("lastMeetingSeq");
+        councilSequenceGenerationService.validate(resultBinder, councilSequenceNumber, preambleseq, resolutionseq, agendaSeq,
+                meetingSeq);
 
         if (resultBinder.hasErrors()) {
             model.addAttribute("preambleseq", preambleseq);
             model.addAttribute("councilSequenceNumber", councilSequenceNumber);
             model.addAttribute("resolutionseq", resolutionseq);
             model.addAttribute("agendaSeq", agendaSeq);
-
+            model.addAttribute("meetingSeq", meetingSeq);
             return COUNCILSEQUENCECREATE;
 
         }
 
         CouncilSequenceNumber sequence = councilSequenceGenerationService.create(councilSequenceNumber);
         councilSequenceGenerationService.updatesequences(sequence);
-
         model.addAttribute("message", "Sequence Numbers Updated suceesfully");
 
         return "councilsequence-success";

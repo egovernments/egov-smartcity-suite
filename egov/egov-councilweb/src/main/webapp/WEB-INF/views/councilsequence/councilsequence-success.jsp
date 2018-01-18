@@ -51,7 +51,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
 <div class="row">
-	<div class="col-md-12">
+	<div class="col-md-13">
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<div class="panel-title text-center" align="center">
@@ -104,7 +104,7 @@
 					<c:when test="${councilSequenceNumber.resolutionSeqNumber ne null}">
 						<div class="form-group">
 							<label class="col-sm-3 control-label text-right"> <spring:message
-									code="lbl.resolutionNumber" />(seq no.) :
+									code="lbl.resolutionNumber" />(seq no.):
 							</label>
 							<div class="col-sm-3 add-margin view-content">
 								${councilSequenceNumber.resolutionSeqNumber}</div>

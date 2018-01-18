@@ -138,7 +138,7 @@ public class CouncilSequenceGenerationService {
     }
 
     public void validate(final Errors error, final CouncilSequenceNumber councilSequenceNumber, String preambleseq,
-            String resolutionseq, String agendaSeq) {
+            String resolutionseq, String agendaSeq,String meetingSeq) {
         if (councilSequenceNumber.getPreambleSeqNumber() != null
                 && Integer.valueOf(councilSequenceNumber.getPreambleSeqNumber()).compareTo(Integer.valueOf(preambleseq)) <= 0) {
             error.rejectValue("preambleSeqNumber", "err.preamble.sequence");
@@ -152,7 +152,7 @@ public class CouncilSequenceGenerationService {
             error.rejectValue("resolutionSeqNumber", "err.resolution.sequence");
         }
         if (councilSequenceNumber.getMeetingSeqNumber() != null && Integer
-                .valueOf(councilSequenceNumber.getMeetingSeqNumber()).compareTo(Integer.valueOf(resolutionseq)) <= 0) {
+                .valueOf(councilSequenceNumber.getMeetingSeqNumber()).compareTo(Integer.valueOf(meetingSeq)) <= 0) {
             error.rejectValue("meetingSeqNumber", "err.meeting.sequence");
         }
     }
