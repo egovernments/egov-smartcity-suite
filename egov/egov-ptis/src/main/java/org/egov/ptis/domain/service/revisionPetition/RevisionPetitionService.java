@@ -647,7 +647,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
 
     private BigDecimal getDemandforCurrenttInst(Map<Installment, BigDecimal> instWiseDemand) {
         BigDecimal demand = BigDecimal.ZERO;
-        Installment currentInstall = propertyTaxCommonUtils.getCurrentInstallment();
+        Installment currentInstall = propertyTaxCommonUtils.getCurrentPeriodInstallment();
         for (Map.Entry<Installment, BigDecimal> entry : instWiseDemand.entrySet()){
             if(entry.getKey().equals(currentInstall))
                 demand= entry.getValue();
