@@ -65,7 +65,7 @@
 		<div class="panel-body">
 			<div class="form-group">
 				<label class="col-md-2 col-sm-3 control-label text-right"><spring:message
-						code="lbl.agendaNumber" /></label>
+						code="lbl.agendaNumber" /><span class="mandatory"></label>
 				<div class="col-md-2 col-sm-3">
 					<form:input path="agenda.agendaNumber" id="agendaNumber" type="text"
 						class="form-control text-left patternvalidation" maxlength="20"
@@ -74,7 +74,7 @@
 				</div>
 				
 				<label class="col-sm-2 control-label text-right"><spring:message
-						code="lbl.committeetype" /></label>
+						code="lbl.committeetype" /><span class="mandatory"></label>
 				<div class="col-sm-3 add-margin">
 					<form:select path="agenda.committeeType" id="committeeType"
 						required="required" cssClass="form-control"

@@ -72,6 +72,7 @@
 <form:form role="form" action="create" modelAttribute="councilAgenda"
 	id="councilAgendaform" cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
+<input type="hidden" id="autoAgendaNoGenEnabled" value="${autoAgendaNoGenEnabled}" />
 
 	<div class="row display-hide agenda-section">
 		<c:choose>
@@ -84,9 +85,9 @@
 				<br />
 				<div class="col-md-12">
 					<div class="col-md-6 col-sm-6">
-						<label class="col-md-3 col-sm-3"><spring:message
+						<label class="col-md-4 control-label text-right"><spring:message
 								code="lbl.agendaNumber" /> <span class="mandatory"></span> </label>
-						<div class="col-md-5 col-sm-5">
+						<div class="col-md-5 col-sm-5 ">
 							<form:input path="agendaNumber" id="agendaNumber" type="text"
 								class="form-control" maxlength="20" placeholder=""
 								autocomplete="off" />
@@ -95,7 +96,7 @@
 					</div>
 					<div class="col-md-6 col-sm-6">
 						<label class="col-md-7 control-label text-right"><spring:message
-								code="lbl.committeetype" /> </label>
+								code="lbl.committeetype" /><span class="mandatory"></span> </label>
 						<div class="col-md-5 col-sm-5 pull-right">
 							<form:select path="committeeType" id="committeeType"
 								required="required" cssClass="form-control"

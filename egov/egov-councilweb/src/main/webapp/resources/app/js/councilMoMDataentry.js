@@ -196,6 +196,14 @@ $('#buttonSubmit').click(function(e) {
 		bootbox.alert("Atleast one preamble item should be added into agenda");
 		e.preventDefault();
 	}
+	
+	if($("#agendaNumber").val()==''){
+		bootbox.alert("Please enter Agenda Number");
+    	$("#agendaNumber").attr('required', true) ;	
+    	e.preventDefault();
+    }
+    
+    
 	else if ($('form').valid()) {
 		 var action = '/council/councilmom/savedataentry' ;
 			$('#councilMeetingform').attr('method', 'post');

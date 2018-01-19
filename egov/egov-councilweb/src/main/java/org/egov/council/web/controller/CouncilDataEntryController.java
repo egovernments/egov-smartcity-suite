@@ -119,13 +119,13 @@ public class CouncilDataEntryController {
     private CouncilAgendaService councilAgendaService;
     @Autowired
     private CouncilMeetingIndexService councilMeetingIndexService;
+    @Autowired
+    private AutonumberServiceBeanResolver autonumberServiceBeanResolver;
 
     @ModelAttribute("committeeType")
     public List<CommitteeType> getCommitteTypeList() {
         return committeeTypeService.getActiveCommiteeType();
     }
-    @Autowired
-    private AutonumberServiceBeanResolver autonumberServiceBeanResolver;
 
     @ModelAttribute("meetingTimingMap")
     public Map<String, String> getMeetingTimingList() {
