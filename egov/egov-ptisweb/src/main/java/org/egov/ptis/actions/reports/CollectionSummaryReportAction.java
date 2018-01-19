@@ -147,24 +147,23 @@ public class CollectionSummaryReportAction extends BaseFormAction {
     private String transMode;
     private String mode;
 
-    BigDecimal taxAmount = ZERO;
-    BigDecimal totTaxAmt = ZERO;
-    BigDecimal arrearTaxAmount = ZERO;
-    BigDecimal totArrearTaxAmt = ZERO;
-    BigDecimal penaltyAmount = ZERO;
-    BigDecimal totPenaltyAmt = ZERO;
-    BigDecimal arrearPenaltyAmount = ZERO;
-    BigDecimal totArrearPenaltyAmt = ZERO;
-    BigDecimal libCessAmount = ZERO;
-    BigDecimal totLibCessAmt = ZERO;
-    BigDecimal arrearLibCessAmount = ZERO;
-    BigDecimal totArrearLibCessAmt = ZERO;
-    BigDecimal grandTotal = ZERO;
-    Long prevZone = null;
-    Long prevWard = null;
-    Long prevBlock = null;
-    Long prevLocality = null;
-    String prevPropertyType = null;
+    private BigDecimal taxAmount = ZERO;
+    private BigDecimal totTaxAmt = ZERO;
+    private BigDecimal arrearTaxAmount = ZERO;
+    private BigDecimal totArrearTaxAmt = ZERO;
+    private BigDecimal penaltyAmount = ZERO;
+    private BigDecimal totPenaltyAmt = ZERO;
+    private BigDecimal arrearPenaltyAmount = ZERO;
+    private BigDecimal totArrearPenaltyAmt = ZERO;
+    private BigDecimal libCessAmount = ZERO;
+    private BigDecimal totLibCessAmt = ZERO;
+    private BigDecimal arrearLibCessAmount = ZERO;
+    private BigDecimal totArrearLibCessAmt = ZERO;
+    private Long prevZone = null;
+    private Long prevWard = null;
+    private Long prevBlock = null;
+    private Long prevLocality = null;
+    private String prevPropertyType = null;
 
     @Override
     public Object getModel() {
