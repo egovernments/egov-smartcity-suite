@@ -47,15 +47,27 @@
  */
 package org.egov.ptis.web.controller.reports;
 
+import static org.egov.infra.utils.JsonUtils.toJSON;
+import static org.egov.ptis.constants.PropertyTaxConstants.BLOCK;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
+
+import java.io.IOException;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.io.IOUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
+import org.egov.ptis.domain.service.report.ReportService;
 import org.egov.ptis.master.service.PropertyUsageService;
-import org.hibernate.SQLQuery;
+import org.egov.ptis.report.bean.NatureOfUsageResult;
 import org.hibernate.Session;
-import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -64,19 +76,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.egov.infra.utils.JsonUtils.toJSON;
-import static org.egov.ptis.constants.PropertyTaxConstants.BLOCK;
-import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
 
 /**
  *
@@ -98,6 +97,9 @@ public class NatureOfUsageReportController {
 
     @Autowired
     private BoundaryService boundaryService;
+    
+    @Autowired
+    private ReportService reportService;
 
     @ModelAttribute("natureOfUsages")
     public List<PropertyUsage> getNatureOfUsages() {
@@ -123,53 +125,11 @@ public class NatureOfUsageReportController {
     @RequestMapping(value = "/natureOfUsageReportList", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody void search(final HttpServletRequest request, final HttpServletResponse response, final Model model)
             throws IOException {
-        final List<NatureOfUsageResult> natureOfUsageResultList = getReportResults(request);
+        final List<NatureOfUsageResult> natureOfUsageResultList = reportService.getNatureOfUsageReportList(request);
         final StringBuilder natureOfUsageSONData = new StringBuilder("{ \"data\":").append(toJSON(natureOfUsageResultList, NatureOfUsageResult.class, NatureOfUsageReportAdaptor.class))
                 .append("}");
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         IOUtils.write(natureOfUsageSONData.toString(), response.getWriter());
-    }
-
-    @SuppressWarnings("unchecked")
-    private List<NatureOfUsageResult> getReportResults(final HttpServletRequest request) {
-        final StringBuffer query = new StringBuffer(
-                "select distinct pi.upicno \"assessmentNumber\", pi.ownersname \"ownerName\", pi.mobileno \"mobileNumber\", pi.houseno \"doorNumber\", pi.address \"address\", cast(pi.AGGREGATE_CURRENT_FIRSTHALF_DEMAND as numeric) \"halfYearTax\" "
-                        + "from egpt_mv_propertyInfo pi ");
-        final StringBuffer whereQuery = new StringBuffer(" where pi.upicno is not null and pi.isactive = true ");
-
-        final String natureOfUsage = request.getParameter("natureOfUsage");
-        final String ward = request.getParameter("ward");
-        final String block = request.getParameter("block");
-        final StringBuffer srchCriteria = new StringBuffer("Total number of properties with");
-        final Map<String, Object> params = new HashMap<String, Object>();
-        if (!(null == natureOfUsage || "-1".equals(natureOfUsage) || "".equals(natureOfUsage))) {
-            final PropertyUsage propertyUsage = propertyUsageService.findById(Long.valueOf(natureOfUsage));
-            srchCriteria.append(" Nature of usage : " + propertyUsage.getUsageName());
-            query.append(",EGPT_MV_CURRENT_FLOOR_DETAIL fd ");
-            whereQuery.append(" and fd.basicpropertyid = pi.basicpropertyid and fd.natureofusage = :natureOfUsage");
-            params.put("natureOfUsage", propertyUsage.getUsageName());
-        }
-        if (!(null == ward || "-1".equals(ward) || "".equals(ward))) {
-            final Boundary wardBndry = boundaryService.getBoundaryById(Long.valueOf(ward));
-            srchCriteria.append(" Ward : " + wardBndry.getName());
-            whereQuery.append(" and pi.wardid = :ward");
-            params.put("ward", Long.valueOf(ward));
-        }
-        if (!(null == block || "-1".equals(block) || "".equals(block))) {
-            final Boundary blockBndry = boundaryService.getBoundaryById(Long.valueOf(block));
-            srchCriteria.append(" Block : " + blockBndry.getName());
-            whereQuery.append(" and pi.blockid = :block");
-            params.put("block", Long.valueOf(block));
-        }
-        final SQLQuery sqlQuery = getSession()
-                .createSQLQuery(
-                        query.append(whereQuery).toString());
-        for (final String key : params.keySet())
-            sqlQuery.setParameter(key, params.get(key));
-        sqlQuery.setResultTransformer(Transformers.aliasToBean(NatureOfUsageResult.class));
-        final List<NatureOfUsageResult> results = sqlQuery.list();
-        srchCriteria.append(" are : " + results.size());
-        return results;
     }
 
     public Session getSession() {

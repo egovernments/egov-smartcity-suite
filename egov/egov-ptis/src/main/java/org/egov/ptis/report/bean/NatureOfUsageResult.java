@@ -45,7 +45,7 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.ptis.web.controller.reports;
+package org.egov.ptis.report.bean;
 
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
@@ -53,11 +53,6 @@ import org.egov.ptis.domain.entity.property.PropertyUsage;
 import java.math.BigDecimal;
 import java.util.List;
 
-/**
- *
- * @author subhash
- *
- */
 public class NatureOfUsageResult {
     private List<PropertyUsage> natureOfUsages;
     private List<Boundary> wards;

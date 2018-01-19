@@ -66,6 +66,7 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyMutationTransferee;
+import org.egov.ptis.domain.service.report.ReportService;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -83,7 +84,6 @@ import java.util.List;
 import static org.egov.infra.utils.JsonUtils.toJSON;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 
-@SuppressWarnings("serial")
 @ParentPackage("egov")
 @Validations
 @Results({ @Result(name = TitleTransferRegisterAction.SEARCH, location = "titleTransferRegister-search.jsp") })
@@ -101,11 +101,13 @@ public class TitleTransferRegisterAction extends BaseFormAction {
     private String fromDate;
     private String toDate;
     @Autowired
-    private BoundaryService boundaryService;
+    private transient BoundaryService boundaryService;
     @Autowired
-    public FinancialYearDAO financialYearDAO;
+    public transient FinancialYearDAO financialYearDAO;
     @Autowired
-    public PropertyTaxUtil propertyTaxUtil;
+    public transient PropertyTaxUtil propertyTaxUtil;
+    @Autowired
+    private transient ReportService reportService;
     private String finYearStartDate;
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -116,7 +118,6 @@ public class TitleTransferRegisterAction extends BaseFormAction {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void prepare() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Entered into prepare method");
@@ -145,7 +146,6 @@ public class TitleTransferRegisterAction extends BaseFormAction {
      * @param zoneExists
      * @param wardExists
      */
-    @SuppressWarnings("unchecked")
     private void prepareWardDropDownData(final boolean zoneExists, final boolean wardExists) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Entered into prepareWardDropDownData method");
@@ -167,7 +167,6 @@ public class TitleTransferRegisterAction extends BaseFormAction {
      * @param wardExists
      * @param blockExists
      */
-    @SuppressWarnings("unchecked")
     private void prepareBlockDropDownData(final boolean wardExists, final boolean blockExists) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Entered into prepareBlockDropDownData method");
@@ -198,14 +197,13 @@ public class TitleTransferRegisterAction extends BaseFormAction {
      * Invoked by Title Transfer Register Report. Shows list of ownership
      * transfer happend for a property
      */
-    @SuppressWarnings("unchecked")
     @Action(value = "/titleTransferRegister-getPropertyList")
     public void getPropertyList() throws IOException {
         List<TitleTransferReportResult> resultList = new ArrayList<TitleTransferReportResult>();
         String result = null;
         final Query query = propertyTaxUtil
                 .prepareQueryforTitleTransferReport(zoneId, wardId, areaId, fromDate, toDate);
-        resultList = prepareOutput(query.list());
+        resultList = prepareOutput(reportService.getTitleTransferReportList(query));
         // for converting resultList to JSON objects.
         // Write back the JSON Response.
         result = new StringBuilder("{ \"data\":").append(toJSON(resultList, TitleTransferReportResult.class,
@@ -222,7 +220,7 @@ public class TitleTransferRegisterAction extends BaseFormAction {
     private List<TitleTransferReportResult> prepareOutput(final List<PropertyMutation> propertyMutationList) {
         final List<TitleTransferReportResult> ttrFinalList = new LinkedList<TitleTransferReportResult>();
         final CFinancialYear finyear = financialYearDAO.getFinancialYearByDate(new Date());
-        final List basicPropList = new ArrayList();
+        final List<Long> basicPropList = new ArrayList<>();
         TitleTransferReportResult ttrInfoTotal = null;
         TitleTransferReportResult titleTransferReportInfo = new TitleTransferReportResult();
 

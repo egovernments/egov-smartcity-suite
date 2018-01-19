@@ -47,6 +47,29 @@
  */
 package org.egov.ptis.domain.service.report;
 
+import static java.math.BigDecimal.ZERO;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.ROLE_COLLECTION_OPERATOR;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
@@ -54,10 +77,13 @@ import org.egov.commons.RegionalHeirarchy;
 import org.egov.commons.RegionalHeirarchyType;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.service.RegionalHeirarchyService;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.EnvironmentSettings;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.util.PropertyTaxUtil;
@@ -67,38 +93,26 @@ import org.egov.ptis.domain.entity.property.BaseRegisterResult;
 import org.egov.ptis.domain.entity.property.BaseRegisterVLTResult;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BillCollectorDailyCollectionReportResult;
+import org.egov.ptis.domain.entity.property.CollectionSummary;
 import org.egov.ptis.domain.entity.property.CurrentInstDCBReportResult;
 import org.egov.ptis.domain.entity.property.DailyCollectionReportResult;
 import org.egov.ptis.domain.entity.property.DefaultersInfo;
 import org.egov.ptis.domain.entity.property.FloorDetailsView;
 import org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView;
 import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
+import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
+import org.egov.ptis.domain.entity.property.PropertyUsage;
+import org.egov.ptis.master.service.PropertyUsageService;
+import org.egov.ptis.report.bean.NatureOfUsageResult;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
-import static java.math.BigDecimal.ZERO;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.ROLE_COLLECTION_OPERATOR;
 
 @Transactional(readOnly = true)
 public class ReportService {
@@ -139,6 +153,12 @@ public class ReportService {
     private BasicPropertyDAO basicPropertyDAO;
     @Autowired
     private EnvironmentSettings environmentSettings;
+    @PersistenceContext
+    private EntityManager entityManager;
+    @Autowired
+    private PropertyUsageService propertyUsageService;
+    @Autowired
+    private BoundaryService boundaryService;
 
     /**
      * Method gives List of properties with current and arrear individual demand
@@ -1228,6 +1248,71 @@ public class ReportService {
         return propertyViewList;
     }
     
+    @SuppressWarnings("unchecked")
+	@ReadOnly
+    public List<CollectionSummary> getCollectionSummaryList(final String fromDate, final String toDate,
+            final String collMode, final String transMode, final String mode, final String boundaryId,
+            final String propTypeCategoryId, final Long zoneId, final Long wardId, final Long blockId){
+    	 try {
+             final Query query = propertyTaxUtil.prepareQueryforCollectionSummaryReport(fromDate, toDate, collMode, transMode, mode,
+                     boundaryId,
+                     propTypeCategoryId, zoneId, wardId, blockId);
+             return query.list();
+         } catch (final Exception e) {
+             throw new ApplicationRuntimeException("Error occured in Class : CollectionSummaryReportAction  Method : list "
+                     + e.getMessage());
+         }
+    }
+    
+   	@SuppressWarnings("unchecked")
+	@ReadOnly
+    public List<PropertyMutation> getTitleTransferReportList(Query query){
+      	return query.list();
+    }
+   	
+    @SuppressWarnings("unchecked")
+    @ReadOnly
+    public List<NatureOfUsageResult> getNatureOfUsageReportList(final HttpServletRequest request) {
+        final StringBuilder query = new StringBuilder(
+                "select distinct pi.upicno \"assessmentNumber\", pi.ownersname \"ownerName\", pi.mobileno \"mobileNumber\", pi.houseno \"doorNumber\", pi.address \"address\", cast(pi.AGGREGATE_CURRENT_FIRSTHALF_DEMAND as numeric) \"halfYearTax\" "
+                        + "from egpt_mv_propertyInfo pi ");
+        final StringBuilder whereQuery = new StringBuilder(" where pi.upicno is not null and pi.isactive = true ");
+
+        final String natureOfUsage = request.getParameter("natureOfUsage");
+        final String ward = request.getParameter("ward");
+        final String block = request.getParameter("block");
+        final StringBuilder srchCriteria = new StringBuilder("Total number of properties with");
+        final Map<String, Object> params = new HashMap<>();
+        if (!(null == natureOfUsage || "-1".equals(natureOfUsage) || "".equals(natureOfUsage))) {
+            final PropertyUsage propertyUsage = propertyUsageService.findById(Long.valueOf(natureOfUsage));
+            srchCriteria.append(" Nature of usage : " + propertyUsage.getUsageName());
+            query.append(",EGPT_MV_CURRENT_FLOOR_DETAIL fd ");
+            whereQuery.append(" and fd.basicpropertyid = pi.basicpropertyid and fd.natureofusage = :natureOfUsage");
+            params.put("natureOfUsage", propertyUsage.getUsageName());
+        }
+        if (!(null == ward || "-1".equals(ward) || "".equals(ward))) {
+            final Boundary wardBndry = boundaryService.getBoundaryById(Long.valueOf(ward));
+            srchCriteria.append(" Ward : " + wardBndry.getName());
+            whereQuery.append(" and pi.wardid = :ward");
+            params.put("ward", Long.valueOf(ward));
+        }
+        if (!(null == block || "-1".equals(block) || "".equals(block))) {
+            final Boundary blockBndry = boundaryService.getBoundaryById(Long.valueOf(block));
+            srchCriteria.append(" Block : " + blockBndry.getName());
+            whereQuery.append(" and pi.blockid = :block");
+            params.put("block", Long.valueOf(block));
+        }
+        
+        final SQLQuery sqlQuery = propertyTaxCommonUtils.getSession().createSQLQuery(
+                        query.append(whereQuery).toString());
+        for (final String key : params.keySet())
+            sqlQuery.setParameter(key, params.get(key));
+        sqlQuery.setResultTransformer(Transformers.aliasToBean(NatureOfUsageResult.class));
+        final List<NatureOfUsageResult> results = sqlQuery.list();
+        srchCriteria.append(" are : " + results.size());
+        return results;
+    }
+   	
     private BigDecimal getAggCurrSecHalfPenColl(final PropertyMaterlizeView propView) {
         return propView.getAggrCurrSecondHalfPenalyColl() != null ? propView
                 .getAggrCurrSecondHalfPenalyColl() : ZERO;

@@ -48,7 +48,26 @@
 
 package org.egov.ptis.actions.reports;
 
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import static java.math.BigDecimal.ZERO;
+import static org.egov.infra.utils.JsonUtils.toJSON;
+import static org.egov.infra.web.struts.actions.BaseFormAction.VIEW;
+import static org.egov.ptis.constants.PropertyTaxConstants.COLL_MODES_MAP;
+import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -70,30 +89,12 @@ import org.egov.ptis.domain.dao.property.PropertyUsageDAO;
 import org.egov.ptis.domain.entity.property.CollectionSummary;
 import org.egov.ptis.domain.entity.property.CollectionSummaryDetails;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
-import org.hibernate.Query;
+import org.egov.ptis.domain.service.report.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 
-import static java.math.BigDecimal.ZERO;
-import static org.egov.infra.utils.JsonUtils.toJSON;
-import static org.egov.infra.web.struts.actions.BaseFormAction.VIEW;
-import static org.egov.ptis.constants.PropertyTaxConstants.COLL_MODES_MAP;
-import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
-
-@SuppressWarnings("serial")
 @ParentPackage("egov")
 @Validations
 @Results({ @Result(name = VIEW, location = "collectionSummaryReport-view.jsp") })
@@ -113,13 +114,15 @@ public class CollectionSummaryReportAction extends BaseFormAction {
     private List<PropertyUsage> propUsageList;
     
     @Autowired
-    public PropertyTaxUtil propertyTaxUtil;
+    public transient PropertyTaxUtil propertyTaxUtil;
     @Autowired
-    public FinancialYearDAO financialYearDAO;
+    public transient FinancialYearDAO financialYearDAO;
     @Autowired
-    public PropertyUsageDAO propertyUsageDAO;
+    public transient PropertyUsageDAO propertyUsageDAO;
     @Autowired
-    private BoundaryService boundaryService;
+    private transient BoundaryService boundaryService;
+    @Autowired
+    private transient ReportService reportService;
     
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     
@@ -144,12 +147,23 @@ public class CollectionSummaryReportAction extends BaseFormAction {
     private String transMode;
     private String mode;
 
-    BigDecimal taxAmount = ZERO, totTaxAmt = ZERO, arrearTaxAmount = ZERO, totArrearTaxAmt = ZERO, penaltyAmount = ZERO,
-            totPenaltyAmt = ZERO;
-    BigDecimal arrearPenaltyAmount = ZERO, totArrearPenaltyAmt = ZERO, libCessAmount = ZERO, totLibCessAmt = ZERO,
-            arrearLibCessAmount = ZERO;
-    BigDecimal totArrearLibCessAmt = ZERO, grandTotal = ZERO;
-    Long prevZone = null, prevWard = null, prevBlock = null, prevLocality = null;
+    BigDecimal taxAmount = ZERO;
+    BigDecimal totTaxAmt = ZERO;
+    BigDecimal arrearTaxAmount = ZERO;
+    BigDecimal totArrearTaxAmt = ZERO;
+    BigDecimal penaltyAmount = ZERO;
+    BigDecimal totPenaltyAmt = ZERO;
+    BigDecimal arrearPenaltyAmount = ZERO;
+    BigDecimal totArrearPenaltyAmt = ZERO;
+    BigDecimal libCessAmount = ZERO;
+    BigDecimal totLibCessAmt = ZERO;
+    BigDecimal arrearLibCessAmount = ZERO;
+    BigDecimal totArrearLibCessAmt = ZERO;
+    BigDecimal grandTotal = ZERO;
+    Long prevZone = null;
+    Long prevWard = null;
+    Long prevBlock = null;
+    Long prevLocality = null;
     String prevPropertyType = null;
 
     @Override
@@ -200,7 +214,6 @@ public class CollectionSummaryReportAction extends BaseFormAction {
      * @param wardExists
      * @param blockExists
      */
-    @SuppressWarnings("unchecked")
     private void prepareBlockDropDownData(final boolean wardExists, final boolean blockExists) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Entered into prepareBlockDropDownData method");
@@ -281,40 +294,23 @@ public class CollectionSummaryReportAction extends BaseFormAction {
      * locality or usagetype
      * @throws ParseException
      */
-    @SuppressWarnings("unchecked")
     @ValidationErrorPage(value = "view")
     @Action(value = "/reports/collectionSummaryReport-list")
     public void list() throws ParseException, IOException {
-        List<CollectionSummaryReportResult> resultList = new ArrayList<CollectionSummaryReportResult>();
         String result = null;
-        final Query query = prepareQuery();
-        resultList = prepareOutput(query.list());
+        final String currDate = sdf.format(new Date());
+        if (currDate.equals(fromDate) || currDate.equals(toDate))
+            dateSelected = CURR_DATE;
+        List<CollectionSummaryReportResult> collectionSummaryResultList = prepareOutput(reportService.getCollectionSummaryList(fromDate, toDate, collMode, transMode, mode,
+                boundaryId,
+                propTypeCategoryId, zoneId, wardId, blockId));
         // for converting resultList to JSON objects.
         // Write back the JSON Response.
-        result = new StringBuilder("{ \"data\":").append(toJSON(resultList, CollectionSummaryReportResult.class,
+        result = new StringBuilder("{ \"data\":").append(toJSON(collectionSummaryResultList, CollectionSummaryReportResult.class,
                 CollectionSummaryReportHelperAdaptor.class)).append("}").toString();
         final HttpServletResponse response = ServletActionContext.getResponse();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         IOUtils.write(result, response.getWriter());
-    }
-
-    /**
-     * @return
-     */
-    public Query prepareQuery() {
-        try {
-            final String currDate = sdf.format(new Date());
-            if (currDate.equals(fromDate) || currDate.equals(toDate))
-                dateSelected = CURR_DATE;
-            return propertyTaxUtil.prepareQueryforCollectionSummaryReport(fromDate, toDate, collMode, transMode, mode,
-                    boundaryId,
-                    propTypeCategoryId, zoneId, wardId, blockId);
-        } catch (final Exception e) {
-
-            LOGGER.error("Error occured in Class : CollectionSummaryReportAction  Method : list", e);
-            throw new ApplicationRuntimeException("Error occured in Class : CollectionSummaryReportAction  Method : list "
-                    + e.getMessage());
-        }
     }
 
     /**
