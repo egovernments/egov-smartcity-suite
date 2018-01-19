@@ -50,7 +50,18 @@
  */
 package org.egov.egf.web.actions.voucher;
 
-import com.exilant.eGov.src.transactions.VoucherTypeForULB;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -92,17 +103,7 @@ import org.egov.utils.VoucherHelper;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 
 public class BaseVoucherAction extends GenericWorkFlowAction {
     private static final long serialVersionUID = 1L;
@@ -492,10 +493,10 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
                      * voucherDetails.getGlcodeIdDetail()+'-'+voucherHeader.getFunctionId()); }else{
                      */
                     accountDetailMap.put("glcodeId-funcId",
-                            voucherDetails.getGlcodeIdDetail() + '-' + voucherDetails.getFunctionIdDetail());
+                            voucherDetails.getGlcodeIdDetail().toString() + '-' + voucherDetails.getFunctionIdDetail().toString());
                 // }
                 else
-                    accountDetailMap.put("glcodeId-funcId", voucherDetails.getGlcodeIdDetail() + '-' + "0");
+                    accountDetailMap.put("glcodeId-funcId", voucherDetails.getGlcodeIdDetail().toString().concat("-0"));
                 accountDetailMap.put("glcode", voucherDetails.getGlcodeDetail());
                 if (voucherDetails.getDebitAmountDetail().compareTo(BigDecimal.ZERO) == 0)
                     accountDetailMap.put("amount", voucherDetails.getCreditAmountDetail());
@@ -520,12 +521,12 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
                 // multiple times
                 // then take the function into consideration while calculating the total sl amount , else igone the function by
                 // paasing function value=0
-                if (null != subledAmtmap.get(voucherDetails.getGlcode().getId() + '-' + function)) {
-                    final BigDecimal debitTotalAmount = subledAmtmap.get(voucherDetails.getGlcode().getId() + '-' + function)
+                if (null != subledAmtmap.get(voucherDetails.getGlcode().getId().toString() + '-' + function)) {
+                    final BigDecimal debitTotalAmount = subledAmtmap.get(voucherDetails.getGlcode().getId().toString() + '-' + function)
                             .add(voucherDetails.getAmount());
-                    subledAmtmap.put(voucherDetails.getGlcode().getId() + '-' + function, debitTotalAmount);
+                    subledAmtmap.put(voucherDetails.getGlcode().getId().toString() + '-' + function, debitTotalAmount);
                 } else
-                    subledAmtmap.put(voucherDetails.getGlcode().getId() + '-' + function
+                    subledAmtmap.put(voucherDetails.getGlcode().getId().toString() + '-' + function
                             , voucherDetails.getAmount());
                 final StringBuffer subledgerDetailRow = new StringBuffer();
                 if (voucherDetails.getDetailType().getId() == 0 || null == voucherDetails.getDetailKeyId()) {
@@ -725,13 +726,19 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
     protected void removeEmptyRowsAccoutDetail(final List list) {
         for (final Iterator<VoucherDetails> detail = list.iterator(); detail.hasNext();) {
             final VoucherDetails next = detail.next();
-            if (next != null && (next.getGlcodeDetail() == null || next.getGlcodeDetail().trim().isEmpty())
-                    && (next.getFunctionDetail() == null || next.getFunctionDetail().trim().isEmpty())
-                    &&
-                    next.getDebitAmountDetail().compareTo(BigDecimal.ZERO)==0 && next.getCreditAmountDetail().compareTo(BigDecimal.ZERO)==0)
+            if (next == null)
                 detail.remove();
-            else if (next == null)
-                detail.remove();
+            else {
+                if (next.getDebitAmountDetail() == null)
+                    next.setDebitAmountDetail(BigDecimal.ZERO);
+                if (next.getCreditAmountDetail() == null)
+                    next.setCreditAmountDetail(BigDecimal.ZERO);
+                if ((next.getGlcodeDetail() == null || StringUtils.isEmpty(next.getGlcodeDetail()))
+                        && (next.getFunctionDetail() == null || StringUtils.isEmpty(next.getFunctionDetail()))
+                        && next.getDebitAmountDetail().compareTo(BigDecimal.ZERO) == 0
+                        && next.getCreditAmountDetail().compareTo(BigDecimal.ZERO) == 0)
+                    detail.remove();
+            }
         }
     }
 
