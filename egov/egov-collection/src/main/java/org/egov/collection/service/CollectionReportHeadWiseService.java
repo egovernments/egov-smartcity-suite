@@ -93,7 +93,7 @@ public class CollectionReportHeadWiseService {
                         +
                         " (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='card' THEN count(distinct(EGCL_COLLECTIONHEADER.id)) END) AS cardCount, "
                         +
-                        " count(*) as totalReceiptCount, " +
+                        " count(distinct(EGCL_COLLECTIONHEADER.id)) as totalReceiptCount, " +
                         " EGCL_COLLECTIONHEADER.SOURCE AS source,CAO.NAME || '-' || CAO.GLCODE AS GLCODE,");
         final StringBuilder revSelectQueryStr = new StringBuilder(selectQueryStr).append(
                 " (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cash' THEN SUM(EGCL_COLLECTIONDETAILS.CRAMOUNT) END) AS cashAmount, " +
