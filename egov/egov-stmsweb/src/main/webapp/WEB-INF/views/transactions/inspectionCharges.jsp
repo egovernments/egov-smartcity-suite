@@ -79,29 +79,29 @@
 									
 							<c:choose>			
 							  <c:when test="${fm.feesDetail.isFixedRate == 'true'}">  	
-									<form:input type="text" class="form-control table-input text-right patternvalidation" data-pattern="decimalvalue" path="connectionFees[${counter.index}].amount" id="feesDetail${counter.index}amount"  value="${fm.amount}" readonly="true" /> 
+								     	     <input type="text" class="form-control table-input text-right patternvalidation" data-pattern="number" id="feesDetail${counter.index}amount" name="connectionFees[${counter.index}].amount" value="<fmt:formatNumber type="number" pattern="0" maxFractionDigits="0" value="${fm.amount}" />" readonly="true" /> 
 						      </c:when>  
 						  <c:otherwise>  
 						    <c:choose>
 							   <c:when test="${mode == 'edit'}">  
 							     <c:choose>
 							       <c:when test="${sewerageApplicationDetails.connectionFees[counter.index].feesDetail.code == 'INSPECTIONCHARGE' }">
-							        	<form:input type="text" class="form-control table-input text-right patternvalidation" data-pattern="decimalvalue" path="connectionFees[${counter.index}].amount" id="feesDetail${counter.index}amount"  value="${fm.amount}" readonly="true" /> 
+								     	     <input type="text" class="form-control table-input text-right patternvalidation" data-pattern="number" id="feesDetail${counter.index}amount" name="connectionFees[${counter.index}].amount" value="<fmt:formatNumber type="number" pattern="0" maxFractionDigits="0" value="${fm.amount}" />" readonly="true" /> 
 									</c:when>  
 									
 									<c:when test="${sewerageApplicationDetails.connectionFees[counter.index].feesDetail.code == 'SEWERAGETAX' }">
-							        	<form:input type="text" class="form-control table-input text-right patternvalidation" data-pattern="decimalvalue" path="connectionFees[${counter.index}].amount" id="feesDetail${counter.index}amount"  value="${fm.amount}" readonly="true" /> 
+								     	     <input type="text" class="form-control table-input text-right patternvalidation" data-pattern="number" id="feesDetail${counter.index}amount" name="connectionFees[${counter.index}].amount" value="<fmt:formatNumber type="number" pattern="0" maxFractionDigits="0" value="${fm.amount}" />" readonly="true" /> 
 									</c:when>
 									<c:when test="${sewerageApplicationDetails.connectionFees[counter.index].feesDetail.code == 'DONATIONCHARGE' }">
-							        	<form:input type="text" class="form-control table-input text-right patternvalidation" data-pattern="decimalvalue" path="connectionFees[${counter.index}].amount" id="feesDetail${counter.index}amount"  value="${fm.amount}" readonly="true" /> 
+								     	     <input type="text" class="form-control table-input text-right patternvalidation" data-pattern="number" id="feesDetail${counter.index}amount" name="connectionFees[${counter.index}].amount" value="<fmt:formatNumber type="number" pattern="0" maxFractionDigits="0" value="${fm.amount}" />" readonly="true" /> 
 									</c:when>
 						          	<c:otherwise>  
 						          	   <c:choose> 
 							           	<c:when test="${fm.feesDetail.isMandatory == 'true'}">
-								     	     <form:input type="text" class="form-control table-input text-right patternvalidation" data-pattern="decimalvalue" path="connectionFees[${counter.index}].amount" id="feesDetail${counter.index}amount"  value="${fm.amount}" required="required" /> 
+								     	     <input type="text" class="form-control table-input text-right patternvalidation" data-pattern="number" id="feesDetail${counter.index}amount" name="connectionFees[${counter.index}].amount" value="<fmt:formatNumber type="number" pattern="0" maxFractionDigits="0" value="${fm.amount}" />"  required="true"/> 
 								     	 </c:when>
 								     	<c:otherwise>   
-								     	    <form:input type="text" class="form-control table-input text-right patternvalidation" data-pattern="decimalvalue" path="connectionFees[${counter.index}].amount" id="feesDetail${counter.index}amount"  value="${fm.amount}" /> 
+								     	     <input type="text" class="form-control table-input text-right patternvalidation" data-pattern="number" id="feesDetail${counter.index}amount" name="connectionFees[${counter.index}].amount" value="<fmt:formatNumber type="number" pattern="0" maxFractionDigits="0" value="${fm.amount}" />" /> 
 								        </c:otherwise> 	
 								       </c:choose> 
 								    </c:otherwise>

@@ -369,12 +369,12 @@ function calculateTotalAmount() {
     	var unitRate = $('#estimationDetailsForUpdate'+currentIndex+'unitRate').val();
     	var total = 0;
     	if(quantity!='' && unitRate!='') {
-    		total = quantity*unitRate;
+    		total = Math.round(quantity*unitRate);
     		$('#estimationDetailsForUpdate'+currentIndex+'amount').val(total);
     		grandTotal = grandTotal + total;
     	}
     }
-    $('#grandTotal').val(grandTotal);
+    $('#grandTotal').val(Math.round(grandTotal));
 }
 
 function calculateGrandTotal(){
