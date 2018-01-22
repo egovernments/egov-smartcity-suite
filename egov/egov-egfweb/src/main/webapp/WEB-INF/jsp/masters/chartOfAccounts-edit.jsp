@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -52,9 +52,18 @@
 <html>
 <head>
 <title><s:text name="chartOfAccount.modify" /></title>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/chartofaccountsHelper.js"></script>
 <script type="text/javascript">
 	function validateAndSubmit() {
 
+		jQuery("#accountDetailTypeAss option[value!='']").each(function() {
+			jQuery(this).prop('selected', true);
+			accountDetailTypeList.push(jQuery(this).val());
+		});
+
+		if (!validateData())
+			return false;
 		document.chartOfAccountsForm.action = '${pageContext.request.contextPath}/masters/chartOfAccounts-update.action';
 		document.chartOfAccountsForm.submit();
 
@@ -64,12 +73,12 @@
 </head>
 <body>
 	<jsp:include page="../budget/budgetHeader.jsp" />
+
 	<div class="subheadnew">
 		<s:text name="chartOfAccount.modify" />
 	</div>
-	<s:actionmessage theme="simple" />
-	<s:actionerror />
-	<s:fielderror />
+	<span style="color: red"> <s:actionmessage /> <s:actionerror />
+		<s:fielderror /></span>
 	<s:form name="chartOfAccountsForm" action="chartOfAccounts"
 		theme="simple">
 		<div class="formmainbox">
@@ -133,25 +142,6 @@
 						</s:else></td>
 				</tr>
 				<tr>
-					<td width="20%" class="greybox">&nbsp;</td>
-
-					<td width="10%" class="greybox"><strong><s:text
-								name="chartOfAccount.activeForPosting" />:</strong></td>
-					<td class="greybox"><s:if
-							test="%{getIsActiveForPosting() == true}">
-							<s:checkbox name="activeForPosting" value="isActiveForPosting"
-								checked="checked"></s:checkbox>
-						</s:if> <s:else>
-							<s:checkbox name="activeForPosting" value="isActiveForPosting"></s:checkbox>
-						</s:else></td>
-					<td width="10%" class="greybox"><strong><s:text
-								name="chartOfAccount.accountDetailType" />:</strong></td>
-					<td width="22%"><s:select
-							list="dropdownData.accountDetailTypeList" listKey="id"
-							listValue="name" name="accountDetailTypeList" multiple="true"
-							size="5" value="accountDetailTypeList"></s:select></td>
-				</tr>
-				<tr>
 					<td width="20%" class="bluebox">&nbsp;</td>
 					<td width="10%" class="bluebox"><strong><s:text
 								name="chartOfAccount.functionRequired" />:</strong></td>
@@ -171,7 +161,67 @@
 							<s:checkbox name="budgetCheckRequired" value="budgetCheckReq"></s:checkbox>
 						</s:else></td>
 				</tr>
+				<tr>
+					<td width="20%" class="greybox">&nbsp;</td>
+
+					<td width="10%" class="greybox"><strong><s:text
+								name="chartOfAccount.activeForPosting" />:</strong></td>
+					<td class="greybox"><s:if
+							test="%{getIsActiveForPosting() == true}">
+							<s:checkbox name="activeForPosting" value="isActiveForPosting"
+								checked="checked"></s:checkbox>
+						</s:if> <s:else>
+							<s:checkbox name="activeForPosting" value="isActiveForPosting"></s:checkbox>
+						</s:else></td>
+
+				</tr>
 			</table>
+		</div>
+		<br />
+		<br />
+		<div class="formmainbox">
+			<div class="subheadnew">Account Detail Type Mapping</div>
+			<table>
+				<tr>
+					<td width="10%" class="greybox">
+					<td width="5%" class="greybox"><div align="left"></td>
+
+					<td width="5%"></td>
+					<td width="10%" class="greybox"><div align="left">
+							<strong><s:text
+									name="chartOfAccount.accountDetailType.mapped" />:</strong>
+						</div></td>
+
+				</tr>
+				<tr>
+					<td width="13%" class="greybox">
+					<td width="20%"><div class="col-xs-10">
+							<s:select list="dropdownData.accountDetailTypeList" listKey="id"
+								listValue="name" id="accountDetailType" multiple="true"
+								cssClass="form-control" size="5"></s:select>
+						</div></td>
+					<td width="5%"><div class="col-xs-10">
+							<div>&nbsp;</div>
+							<br />
+							<button type="button" id="multiselect_rightSelected"
+								class="btn btn-block btn-default">
+								<i class="glyphicon glyphicon-chevron-right"></i>
+							</button>
+							<button type="button" id="multiselect_leftSelected"
+								class="btn btn-block btn-default">
+								<i class="glyphicon glyphicon-chevron-left"></i>
+							</button>
+						</div></td>
+
+					<td width="20%"><div class="col-xs-10">
+							<s:select list="dropdownData.mappedAccountDetailTypeList"
+								listKey="id" listValue="name" name="accountDetailTypeList"
+								id="accountDetailTypeAss" multiple="true" size="5"
+								cssClass="form-control" value="accountDetailTypeList"></s:select>
+						</div></td>
+				</tr>
+			</table>
+
 			<br /> <br />
 		</div>
 		<div class="buttonbottom">

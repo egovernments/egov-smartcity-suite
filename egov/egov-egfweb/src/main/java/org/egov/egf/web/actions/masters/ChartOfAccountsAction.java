@@ -48,8 +48,13 @@
 package org.egov.egf.web.actions.masters;
 
 
-import com.exilant.GLEngine.ChartOfAccounts;
-import com.exilant.GLEngine.CoaCache;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -64,6 +69,7 @@ import org.egov.commons.CGeneralLedger;
 import org.egov.commons.CGeneralLedgerDetail;
 import org.egov.commons.EgfAccountcodePurpose;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
+import org.egov.commons.service.AccountdetailtypeService;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
@@ -77,12 +83,8 @@ import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import com.exilant.GLEngine.ChartOfAccounts;
+import com.exilant.GLEngine.CoaCache;
 
 @ParentPackage("egov")
 @Results({
@@ -111,6 +113,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
     private PersistenceService<CChartOfAccountDetail, Long> chartOfAccountDetailService;
     CChartOfAccounts model = new CChartOfAccounts();
     List<String> accountDetailTypeList = new ArrayList<String>();
+    List<Accountdetailtype> mappedAccountDetailTypeList = new ArrayList<>();
     List<Accountdetailtype> accountDetailType = new ArrayList<Accountdetailtype>();
     private static final Logger LOGGER = Logger.getLogger(ChartOfAccountsAction.class);
  
@@ -141,6 +144,9 @@ public class ChartOfAccountsAction extends BaseFormAction {
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
     @Autowired
     private GeneralLedgerService generalLedgerService;
+    
+    @Autowired
+    private AccountdetailtypeService accountdetailtypeService;
 
     @Override
     public Object getModel() {
@@ -168,13 +174,21 @@ public class ChartOfAccountsAction extends BaseFormAction {
             if (accountcodePurpose != null && accountcodePurpose.getId() != null)
                 accountcodePurpose = getPurposeCode(Integer.valueOf(accountcodePurpose.getId()));
         dropdownData.put("purposeList", persistenceService.findAllBy("from EgfAccountcodePurpose order by name"));
-        dropdownData.put("accountDetailTypeList", persistenceService.findAllBy("from Accountdetailtype order by name"));
+        dropdownData.put("accountDetailTypeList", accountdetailtypeService.findAll());
     }
 
     private void populateAccountDetailTypeList() {
-        if (model.getChartOfAccountDetails() != null)
-            for (final CChartOfAccountDetail entry : model.getChartOfAccountDetails())
-                accountDetailTypeList.add(entry.getDetailTypeId().getId().toString());
+        if (model.getChartOfAccountDetails() != null && !model.getChartOfAccountDetails().isEmpty())
+            for (final CChartOfAccountDetail entry : model.getChartOfAccountDetails()) {
+                mappedAccountDetailTypeList.add(entry.getDetailTypeId());
+            }
+        dropdownData.put("mappedAccountDetailTypeList", mappedAccountDetailTypeList);
+        List<Accountdetailtype> detailTypeList = accountdetailtypeService.findAll();
+        for (Accountdetailtype detailType : mappedAccountDetailTypeList) {
+            detailTypeList.remove(detailType);
+        }
+        dropdownData.put("accountDetailTypeList", detailTypeList);
+
     }
 
     void populateGlCodeLengths() {
@@ -257,8 +271,10 @@ public class ChartOfAccountsAction extends BaseFormAction {
         model.setIsActiveForPosting(activeForPosting);
         model.setFunctionReqd(functionRequired);
         model.setBudgetCheckReq(budgetCheckRequired);
+        dropdownData.put("mappedAccountDetailTypeList", accountDetailType);
         chartOfAccountsService.persist(model);
         saveCoaDetails(model);
+        populateAccountDetailTypeList();
         addActionMessage(getText("chartOfAccount.modified.successfully"));
         clearCache();
         coaId = model.getId();
@@ -400,7 +416,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
 
     List<Accountdetailtype> getAccountDetailTypeToBeDeleted(final List<Accountdetailtype> accountDetailType,
             final CChartOfAccounts accounts) {
-        final List<Accountdetailtype> rowsToBeDeleted = new ArrayList<Accountdetailtype>();
+        final List<Accountdetailtype> rowsToBeDeleted = new ArrayList<>();
         for (final CChartOfAccountDetail entry : accounts.getChartOfAccountDetails())
             if (accountDetailType != null && accountDetailType.isEmpty())
                 rowsToBeDeleted.add(entry.getDetailTypeId());
@@ -811,6 +827,14 @@ public class ChartOfAccountsAction extends BaseFormAction {
 
     public void setModel(final CChartOfAccounts model) {
         this.model = model;
+    }
+
+    public List<Accountdetailtype> getMappedAccountDetailTypeList() {
+        return mappedAccountDetailTypeList;
+    }
+
+    public void setMappedAccountDetailTypeList(List<Accountdetailtype> mappedAccountDetailTypeList) {
+        this.mappedAccountDetailTypeList = mappedAccountDetailTypeList;
     }
 
 }
