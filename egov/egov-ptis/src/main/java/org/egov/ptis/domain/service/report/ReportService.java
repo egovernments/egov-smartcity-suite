@@ -86,6 +86,7 @@ import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.ptis.report.bean.ApartmentDCBReportResult;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
@@ -884,7 +885,7 @@ public class ReportService {
         }
 
     }
-
+   
     /**
      * @param boundaryId, mode, courtCase, propertyTypes
      * @return
@@ -1273,36 +1274,33 @@ public class ReportService {
     @SuppressWarnings("unchecked")
     @ReadOnly
     public List<NatureOfUsageResult> getNatureOfUsageReportList(final HttpServletRequest request) {
-        final StringBuilder query = new StringBuilder(
-                "select distinct pi.upicno \"assessmentNumber\", pi.ownersname \"ownerName\", pi.mobileno \"mobileNumber\", pi.houseno \"doorNumber\", pi.address \"address\", cast(pi.AGGREGATE_CURRENT_FIRSTHALF_DEMAND as numeric) \"halfYearTax\" "
-                        + "from egpt_mv_propertyInfo pi ");
+        final StringBuilder query = new StringBuilder();
+        query.append("select distinct pi.upicno \"assessmentNumber\", pi.ownersname \"ownerName\", pi.mobileno \"mobileNumber\", pi.houseno \"doorNumber\", pi.address \"address\", cast(pi.AGGREGATE_CURRENT_FIRSTHALF_DEMAND as numeric) \"halfYearTax\" from egpt_mv_propertyInfo pi ")	;
         final StringBuilder whereQuery = new StringBuilder(" where pi.upicno is not null and pi.isactive = true ");
-
         final String natureOfUsage = request.getParameter("natureOfUsage");
         final String ward = request.getParameter("ward");
         final String block = request.getParameter("block");
         final StringBuilder srchCriteria = new StringBuilder("Total number of properties with");
         final Map<String, Object> params = new HashMap<>();
-        if (!(null == natureOfUsage || "-1".equals(natureOfUsage) || "".equals(natureOfUsage))) {
+        if (StringUtils.isNotBlank(natureOfUsage) && !"-1".equals(natureOfUsage)) {
             final PropertyUsage propertyUsage = propertyUsageService.findById(Long.valueOf(natureOfUsage));
             srchCriteria.append(" Nature of usage : " + propertyUsage.getUsageName());
             query.append(",EGPT_MV_CURRENT_FLOOR_DETAIL fd ");
             whereQuery.append(" and fd.basicpropertyid = pi.basicpropertyid and fd.natureofusage = :natureOfUsage");
             params.put("natureOfUsage", propertyUsage.getUsageName());
         }
-        if (!(null == ward || "-1".equals(ward) || "".equals(ward))) {
+        if (StringUtils.isNotBlank(ward) && !"-1".equals(ward)) {
             final Boundary wardBndry = boundaryService.getBoundaryById(Long.valueOf(ward));
             srchCriteria.append(" Ward : " + wardBndry.getName());
             whereQuery.append(" and pi.wardid = :ward");
             params.put("ward", Long.valueOf(ward));
         }
-        if (!(null == block || "-1".equals(block) || "".equals(block))) {
+        if (StringUtils.isNotBlank(block) && !"-1".equals(block)) {
             final Boundary blockBndry = boundaryService.getBoundaryById(Long.valueOf(block));
             srchCriteria.append(" Block : " + blockBndry.getName());
             whereQuery.append(" and pi.blockid = :block");
             params.put("block", Long.valueOf(block));
         }
-        
         final SQLQuery sqlQuery = propertyTaxCommonUtils.getSession().createSQLQuery(
                         query.append(whereQuery).toString());
         for (final String key : params.keySet())
@@ -1378,6 +1376,49 @@ public class ReportService {
         }
         return inst==null?maxInstallment:inst;
     }
+
+    @SuppressWarnings("unchecked")
+    @ReadOnly
+	public List<ApartmentDCBReportResult> prepareQueryForApartmentDCBReport(final Long boundaryId, final String mode, final Long apartmentId) {
+        final String PROPERTY = "property";
+        final StringBuilder queryStr = new StringBuilder("");
+        String commonFromQry = "";
+        String finalCommonQry = "";
+        String finalSelectQry = "";
+        String finalGrpQry = "";
+        String boundaryQry = "";
+        String whereQry = " where ";
+        whereQry= whereQry + " pd.apartment=a.id and p.id=pd.id_property and pi.basicpropertyid=p.id_basic_property"
+        		+ "  and pi.isexempted=false and p.status in ('A','I')  and pi.isactive = true and pi.isexempted = false ";
+        
+        commonFromQry = " from egpt_mv_propertyinfo pi , egpt_apartment a,egpt_property_detail pd,egpt_property p ";
+        if (boundaryId != -1 && boundaryId != null && boundaryId != 0){
+            boundaryQry = " and pi.wardid = "+boundaryId;
+        }
+        if (apartmentId != -1 && apartmentId != null && apartmentId !=0){
+        	whereQry = whereQry + " and pd.apartment = "+apartmentId;
+        }
+        finalCommonQry = "cast(COALESCE(sum(pi.ARREAR_DEMAND),0) as numeric) as \"dmndArrearPT\","
+                + " cast(COALESCE(sum(pi.pen_aggr_arrear_demand),0) AS numeric) as \"dmndArrearPFT\", cast(COALESCE(sum(pi.annualdemand),0) AS numeric) as \"dmndCurrentPT\", "
+                + " cast(COALESCE(sum(pi.pen_aggr_current_firsthalf_demand),0)+COALESCE(sum(pi.pen_aggr_current_secondhalf_demand),0) AS numeric) as \"dmndCurrentPFT\","
+                + " cast(COALESCE(sum(pi.ARREAR_COLLECTION),0) AS numeric) as \"clctnArrearPT\", cast(COALESCE(sum(pi.pen_aggr_arr_coll),0) AS numeric) as \"clctnArrearPFT\","
+                + " cast(COALESCE(sum(pi.annualcoll),0) AS numeric) as \"clctnCurrentPT\","
+                + " cast(COALESCE(sum(pi.pen_aggr_current_firsthalf_coll),0)+COALESCE(sum(pi.pen_aggr_current_secondhalf_coll),0) AS numeric) as \"clctnCurrentPFT\"  ";
+        if (!mode.equalsIgnoreCase(PROPERTY)) {
+            finalSelectQry = "select count(distinct pi.upicno) as \"assessmentCount\",cast(a.id as integer) as \"apartmentId\",a.name as \"apartmentName\", ";
+            finalGrpQry = " group by a.id,a.name order by a.name";
+        }
+        else if (mode.equalsIgnoreCase(PROPERTY)) {
+            finalSelectQry = "select distinct pi.upicno as \"assessmentNo\", pi.houseno as \"houseNo\", pi.ownersname as \"ownerName\", ";
+            finalGrpQry = " group by pi.upicno, pi.houseno, pi.ownersname order by pi.upicno ";
+        }
+        queryStr.append(finalSelectQry).append(finalCommonQry).append(commonFromQry).append(whereQry)
+                .append(boundaryQry).append(finalGrpQry);
+        final SQLQuery sqlQuery = propertyTaxCommonUtils.getSession().createSQLQuery(queryStr.toString());
+        sqlQuery.setResultTransformer(new AliasToBeanResultTransformer(ApartmentDCBReportResult.class));
+        return sqlQuery.list();
+    }
+    
     private BigDecimal getVacLandTax(InstDmdCollMaterializeView idc) {
         return idc.getVacantLandTax() != null ? idc.getVacantLandTax() : ZERO;
     }

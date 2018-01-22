@@ -49,6 +49,7 @@ package org.egov.ptis.actions.common;
 
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.entity.property.Apartment;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -128,7 +129,7 @@ public class CommonServices {
 	}
 
 	public static Map<Long, String> getFormattedBndryMap(List<Boundary> zoneList) {
-		Map<Long, String> zoneMap = new TreeMap<Long, String>();
+		Map<Long, String> zoneMap = new TreeMap<>();
 		for (Boundary boundary : zoneList) {
 			zoneMap.put(boundary.getId(),
 			boundary.getLocalName());
@@ -136,6 +137,15 @@ public class CommonServices {
 		return zoneMap;
 	}
 
+	public static Map<Long, String> getFormattedApartmentMap(List<Apartment> apartmentList) {
+		Map<Long, String> apartmentMap = new TreeMap<>();
+		for (Apartment apartment : apartmentList) {
+			apartmentMap.put(apartment.getId(),
+			apartment.getName());
+		}
+		return apartmentMap;
+	}
+	
 	public static List<String> getTaxExemptedList() {
 		return Arrays.asList("Agiaries", "Andhalaya", "Beggars Home", "Budh Vihar", "Burial ground", "Charitable",
 				"Church", "Dharmshala", "Durgahs", "Government Tenant", "Gurudwara", "Jain Temple", "Mosque",

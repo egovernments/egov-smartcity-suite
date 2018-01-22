@@ -566,4 +566,8 @@
         <put-attribute name="page-title" value="lbl.wfhistory" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/common/workflowHistoryView.jsp"/>
     </definition>
+    <definition name="apartmentdcb-form" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.title.apartmentDCBReport.report" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/apartmentdcbreport-form.jsp"/>
+    </definition>
 </tiles-definitions> 
