@@ -71,8 +71,8 @@
 						<spring:message code="lbl.ward" /></label>
 						<div class="col-sm-3 add-margin">
 							<form:select path="" data-first-option="false" id="wardId" class="form-control">
-								<form:option value="">
-									<spring:message code="lbl.select" />
+								<form:option value="0">
+									<spring:message code="lbl.default.all" />
 								</form:option>
 								<form:options items="${wards}" />
 							</form:select>
@@ -83,8 +83,8 @@
 								code="lbl.apartmenttype" /></label>
 						<div class="col-sm-6 add-margin">
 							<form:select path="" id="apartment" cssClass="form-control">
-								<form:option value="">
-									<spring:message code="lbl.select" />
+								<form:option value="0">
+									<spring:message code="lbl.default.all" />
 								</form:option>
 								<form:options items="${apartmenttype}" />
 							</form:select>

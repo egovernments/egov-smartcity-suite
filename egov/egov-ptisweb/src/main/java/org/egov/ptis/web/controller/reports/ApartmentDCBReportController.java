@@ -95,17 +95,13 @@ public class ApartmentDCBReportController {
         final List<Boundary> wardList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
                 PropertyTaxConstants.WARD,
                 PropertyTaxConstants.REVENUE_HIERARCHY_TYPE);
-        Map<Long, String> wardBndryMap = CommonServices.getFormattedBndryMap(wardList);
-        wardBndryMap.put(0l, "All");
-        return wardBndryMap;
+        return CommonServices.getFormattedBndryMap(wardList);
     }
     
     @ModelAttribute("apartmenttype")
 	public Map<Long, String> listApartment() {
     	final List<Apartment> wardList =  apartmentService.getAllApartments();
-    	Map<Long, String> apartmentMap = CommonServices.getFormattedApartmentMap(wardList);
-    	 apartmentMap.put(0l, "All");
-         return apartmentMap;
+         return CommonServices.getFormattedApartmentMap(wardList);
 	}
 
     @RequestMapping(method = RequestMethod.GET)

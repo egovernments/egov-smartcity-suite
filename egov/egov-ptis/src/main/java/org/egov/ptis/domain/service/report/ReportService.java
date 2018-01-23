@@ -1381,36 +1381,35 @@ public class ReportService {
     @ReadOnly
 	public List<ApartmentDCBReportResult> prepareQueryForApartmentDCBReport(final Long boundaryId, final String mode, final Long apartmentId) {
         final String PROPERTY = "property";
-        final StringBuilder queryStr = new StringBuilder("");
-        String commonFromQry = "";
-        String finalCommonQry = "";
-        String finalSelectQry = "";
-        String finalGrpQry = "";
-        String boundaryQry = "";
-        String whereQry = " where ";
-        whereQry= whereQry + " pd.apartment=a.id and p.id=pd.id_property and pi.basicpropertyid=p.id_basic_property"
-        		+ "  and pi.isexempted=false and p.status in ('A','I')  and pi.isactive = true and pi.isexempted = false ";
-        
-        commonFromQry = " from egpt_mv_propertyinfo pi , egpt_apartment a,egpt_property_detail pd,egpt_property p ";
+        final StringBuilder queryStr = new StringBuilder();
+        StringBuilder commonFromQry = new StringBuilder();
+        StringBuilder finalCommonQry = new StringBuilder();
+        StringBuilder finalSelectQry = new StringBuilder();
+        StringBuilder finalGrpQry = new StringBuilder();
+        StringBuilder boundaryQry = new StringBuilder();
+        StringBuilder whereQry = new StringBuilder();
+        whereQry.append(" where ");
+        whereQry.append(" pd.apartment=a.id and p.id=pd.id_property and pi.basicpropertyid=p.id_basic_property  and pi.isexempted=false and p.status in ('A','I')  and pi.isactive = true and pi.isexempted = false ");
+        commonFromQry.append(" from egpt_mv_propertyinfo pi , egpt_apartment a,egpt_property_detail pd,egpt_property p ");
         if (boundaryId != -1 && boundaryId != null && boundaryId != 0){
-            boundaryQry = " and pi.wardid = "+boundaryId;
+            boundaryQry.append(" and pi.wardid = "+boundaryId);
         }
         if (apartmentId != -1 && apartmentId != null && apartmentId !=0){
-        	whereQry = whereQry + " and pd.apartment = "+apartmentId;
+        	whereQry.append(" and pd.apartment = "+apartmentId);
         }
-        finalCommonQry = "cast(COALESCE(sum(pi.ARREAR_DEMAND),0) as numeric) as \"dmndArrearPT\","
-                + " cast(COALESCE(sum(pi.pen_aggr_arrear_demand),0) AS numeric) as \"dmndArrearPFT\", cast(COALESCE(sum(pi.annualdemand),0) AS numeric) as \"dmndCurrentPT\", "
-                + " cast(COALESCE(sum(pi.pen_aggr_current_firsthalf_demand),0)+COALESCE(sum(pi.pen_aggr_current_secondhalf_demand),0) AS numeric) as \"dmndCurrentPFT\","
-                + " cast(COALESCE(sum(pi.ARREAR_COLLECTION),0) AS numeric) as \"clctnArrearPT\", cast(COALESCE(sum(pi.pen_aggr_arr_coll),0) AS numeric) as \"clctnArrearPFT\","
-                + " cast(COALESCE(sum(pi.annualcoll),0) AS numeric) as \"clctnCurrentPT\","
-                + " cast(COALESCE(sum(pi.pen_aggr_current_firsthalf_coll),0)+COALESCE(sum(pi.pen_aggr_current_secondhalf_coll),0) AS numeric) as \"clctnCurrentPFT\"  ";
+        finalCommonQry.append(" cast(COALESCE(sum(pi.ARREAR_DEMAND),0) as numeric) as \"dmndArrearPT\",");
+        finalCommonQry.append(" cast(COALESCE(sum(pi.pen_aggr_arrear_demand),0) AS numeric) as \"dmndArrearPFT\", cast(COALESCE(sum(pi.annualdemand),0) AS numeric) as \"dmndCurrentPT\", ");
+        finalCommonQry.append(" cast(COALESCE(sum(pi.pen_aggr_current_firsthalf_demand),0)+COALESCE(sum(pi.pen_aggr_current_secondhalf_demand),0) AS numeric) as \"dmndCurrentPFT\",");
+        finalCommonQry.append(" cast(COALESCE(sum(pi.ARREAR_COLLECTION),0) AS numeric) as \"clctnArrearPT\", cast(COALESCE(sum(pi.pen_aggr_arr_coll),0) AS numeric) as \"clctnArrearPFT\",");
+        finalCommonQry.append(" cast(COALESCE(sum(pi.annualcoll),0) AS numeric) as \"clctnCurrentPT\",");
+        finalCommonQry.append(" cast(COALESCE(sum(pi.pen_aggr_current_firsthalf_coll),0)+COALESCE(sum(pi.pen_aggr_current_secondhalf_coll),0) AS numeric) as \"clctnCurrentPFT\"  ");
         if (!mode.equalsIgnoreCase(PROPERTY)) {
-            finalSelectQry = "select count(distinct pi.upicno) as \"assessmentCount\",cast(a.id as integer) as \"apartmentId\",a.name as \"apartmentName\", ";
-            finalGrpQry = " group by a.id,a.name order by a.name";
+            finalSelectQry.append( "select count(distinct pi.upicno) as \"assessmentCount\",cast(a.id as integer) as \"apartmentId\",a.name as \"apartmentName\", ");
+            finalGrpQry.append(" group by a.id,a.name order by a.name");
         }
         else if (mode.equalsIgnoreCase(PROPERTY)) {
-            finalSelectQry = "select distinct pi.upicno as \"assessmentNo\", pi.houseno as \"houseNo\", pi.ownersname as \"ownerName\", ";
-            finalGrpQry = " group by pi.upicno, pi.houseno, pi.ownersname order by pi.upicno ";
+        	finalSelectQry.append( "select distinct pi.upicno as \"assessmentNo\", pi.houseno as \"houseNo\", pi.ownersname as \"ownerName\", ");
+            finalGrpQry.append(" group by pi.upicno, pi.houseno, pi.ownersname order by pi.upicno ");
         }
         queryStr.append(finalSelectQry).append(finalCommonQry).append(commonFromQry).append(whereQry)
                 .append(boundaryQry).append(finalGrpQry);
