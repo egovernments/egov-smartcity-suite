@@ -140,7 +140,7 @@ public class QuartzSchedulerConfiguration {
         quartzProps.put("org.quartz.jobStore.tablePrefix", env.getProperty("scheduler.default.table.prefix"));
         quartzProps.put("org.quartz.jobStore.class", "org.quartz.impl.jdbcjobstore.JobStoreCMT");
         quartzProps.put("org.quartz.jobStore.dontSetNonManagedTXConnectionAutoCommitFalse", FALSE);
-        quartzProps.put("org.quartz.jobStore.dontSetAutoCommitFalse", FALSE);
+        quartzProps.put("org.quartz.jobStore.dontSetAutoCommitFalse", TRUE);
 
         //Datasource config
         quartzProps.put("org.quartz.dataSource.quartzDS.jndiURL", env.getProperty("default.jdbc.jndi.datasource"));
