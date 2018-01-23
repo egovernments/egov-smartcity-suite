@@ -109,6 +109,9 @@
 		</td>
 	</tr>
 </table>
+<s:if test="%{!documentTypes.isEmpty() && objection.documents.isEmpty()}">
+		<%@ include file="../common/DocumentUploadForm.jsp"%>
+</s:if>
 <script>
 	function chkReceivedByLen(obj) {
 		if (obj.value.length > 256) {
