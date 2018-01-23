@@ -107,8 +107,9 @@ $(document)
 							'#pendingActions').val() == 'Digital Signature Pending')
 							|| $('#registrationStatus').val() == 'DIGITALSIGNED') {
 						$(':input').attr('readonly', 'readonly');
+						$('.form-control').attr("disabled", 'disabled');
 						$('#form-updateregistration select').attr('disabled',
-								'true');
+								'disabled');
 						$(':checkbox[readonly="readonly"]').click(function() {
 							return false;
 						});
@@ -118,8 +119,9 @@ $(document)
 					} else if ($('#registrationStatus').val() == 'APPROVED'
 							&& $('#pendingActions').val() == 'Certificate Print Pending') {
 						$(':input').attr('readonly', 'readonly');
+						$('.form-control').attr("disabled", 'disabled');
 						$('#form-updateregistration select').attr('disabled',
-								'true');
+								'disabled');
 						$(':checkbox[readonly="readonly"]').click(function() {
 							return false;
 						});
