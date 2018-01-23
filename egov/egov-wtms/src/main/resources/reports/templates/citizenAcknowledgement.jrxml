@@ -3,7 +3,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -46,9 +46,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
   -->
-
-<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-03-20T15:45:06 -->
+<!-- Created with Jaspersoft Studio version 6.4.0.final using JasperReports Library version 6.4.1  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReconnacknowlgementNotice" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e9770880-71cf-4aae-a82f-c57adc04545e">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -78,14 +76,14 @@
 			<staticText>
 				<reportElement x="350" y="387" width="180" height="20" uuid="5a9790dd-6c32-4dc0-a2c3-ecc0b6657599"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold"/>
+					<font fontName="Times New Roman" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Signature]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="9" y="454" width="533" height="16" uuid="bef162ad-07ca-42d2-885c-4a1dcb931f90"/>
 				<textElement textAlignment="Left" verticalAlignment="Top">
-					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="Times-Roman"/>
+					<font fontName="Times New Roman" size="10" isBold="false"/>
 				</textElement>
 				<text><![CDATA[   2.	If the service is not closed on or before the due date, Rs. 50/- will be paid for each day of delay as compensation.
 
@@ -113,7 +111,7 @@
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold"/>
+					<font fontName="Times New Roman" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{applicationType}!=null?$P{applicationType}:"N/A"]]></textFieldExpression>
 			</textField>
@@ -130,7 +128,7 @@
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold"/>
+					<font fontName="Times New Roman" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{closeconnectiontype}!=null?$P{closeconnectiontype}:"N/A"]]></textFieldExpression>
 			</textField>
@@ -141,13 +139,13 @@
 				</textElement>
 				<text><![CDATA[Close Connection Reason		:														]]></text>
 			</staticText>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="195" y="278" width="196" height="20" uuid="598dff50-ce72-404c-be1e-fd31a89db17e">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold"/>
+					<font fontName="Times New Roman" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{closeconnectionreason}!=null?$P{closeconnectionreason}:"N/A"]]></textFieldExpression>
 			</textField>
@@ -158,13 +156,13 @@
 				</textElement>
 				<text><![CDATA[Reconnection Reason		:														]]></text>
 			</staticText>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="195" y="308" width="196" height="20" uuid="598dff50-ce72-404c-be1e-fd31a89db17e">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold"/>
+					<font fontName="Times New Roman" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{reconnectionreason}!=null?$P{reconnectionreason}:"N/A"]]></textFieldExpression>
 			</textField>
@@ -174,7 +172,7 @@
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold"/>
+					<font fontName="Times New Roman" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{applicantName}!=null?$P{applicantName}:"N/A"]]></textFieldExpression>
 			</textField>
@@ -185,13 +183,13 @@
 				</textElement>
 				<text><![CDATA[Name	                      	:                ]]></text>
 			</staticText>
-			<textField>
-				<reportElement x="195" y="159" width="224" height="20" uuid="8892ecb2-bea4-41d4-b267-03479c2e3b9e">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="195" y="159" width="360" height="20" uuid="8892ecb2-bea4-41d4-b267-03479c2e3b9e">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold"/>
+					<font fontName="Times New Roman" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{address}!=null?$P{address}:"N/A"]]></textFieldExpression>
 			</textField>
@@ -208,7 +206,7 @@
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold"/>
+					<font fontName="Times New Roman" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{electionWard}!=null?$P{electionWard}:"N/A"]]></textFieldExpression>
 			</textField>
@@ -232,7 +230,7 @@
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold"/>
+					<font fontName="Times New Roman" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{applicationDate}!=null?$P{applicationDate}:"N/A"]]></textFieldExpression>
 			</textField>
@@ -242,7 +240,7 @@
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold"/>
+					<font fontName="Times New Roman" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{applicationDueDate}!=null?$P{applicationDueDate}:"N/A"]]></textFieldExpression>
 			</textField>
@@ -261,38 +259,38 @@
 					<pen lineStyle="Dashed"/>
 				</graphicElement>
 			</line>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true">
 				<reportElement x="4" y="55" width="549" height="20" uuid="a769eeb0-3a91-4614-b762-50e56b70a0b7"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="Times-Bold"/>
+					<font fontName="Times New Roman" size="11" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["[Citizen Service Centre]"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="4" y="35" width="549" height="20" uuid="58d7c775-2909-4d6a-bea7-dadace90b7ac"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="14" isBold="true" pdfFontName="Times-Bold"/>
+					<font fontName="Times New Roman" size="14" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Puraseva Centre"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="4" y="12" width="549" height="21" uuid="b79a25fc-17db-4095-be72-1dd65f734527"/>
 				<textElement textAlignment="Center">
-					<font fontName="Times New Roman" size="14" isBold="true" pdfFontName="Times-Bold"/>
+					<font fontName="Times New Roman" size="14" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($P{cityName}!=null?$P{cityName}:"" )+"Municipality/Corporation/Nagarapanchayat"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="4" y="75" width="549" height="20" uuid="f247ef2e-c4fc-4f10-8d2d-6e5df7f691d1"/>
 				<textElement textAlignment="Center">
-					<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="Times-Bold"/>
+					<font fontName="Times New Roman" size="11" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Receipt-cum-Acknowledgement No. "+($P{applicationNumber}!=null?$P{applicationNumber}:"")]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="9" y="416" width="94" height="17" uuid="a927b8ec-a06c-4e6c-8ae3-3fa12adf2ea2"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold"/>
+					<font fontName="Times New Roman" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Note:]]></text>
 			</staticText>
@@ -302,14 +300,14 @@
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
-					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman"/>
+					<font fontName="Times New Roman" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA["   1.	You can track the status of your application from  <style isBold=\"true\">"+$P{cityUrl}+"</style>"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="9" y="470" width="533" height="16" uuid="20275ade-bf4e-478b-9125-d8e9e6e0d924"/>
 				<textElement textAlignment="Left" verticalAlignment="Top">
-					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="Times-Roman"/>
+					<font fontName="Times New Roman" size="10" isBold="false"/>
 				</textElement>
 				<text><![CDATA[   3.	Don’t consult any mediator/broker.]]></text>
 			</staticText>
