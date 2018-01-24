@@ -80,7 +80,7 @@
 				    </div>
 					<div>
 						<label class="col-sm-3 control-label"> <spring:message
-								code="lbl.apartmenttype" /></label>
+								code="lbl.apartment.name" /></label>
 						<div class="col-sm-6 add-margin">
 							<form:select path="" id="apartment" cssClass="form-control">
 								<form:option value="0">
