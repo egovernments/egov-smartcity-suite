@@ -150,7 +150,10 @@ import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY_DMDRS
 		@Result(name = EditDemandAction.RESULT_ACK, location = "edit/editDemand-ack.jsp") })
 public class EditDemandAction extends BaseFormAction {
 
-	/**
+	private static final String IS_NEW = "isNew";
+    private static final String COLLECTION = "collection";
+    private static final String AMOUNT = "amount";
+    /**
 	 *
 	 */
 	private static final long serialVersionUID = -2456087421120805855L;
@@ -259,116 +262,113 @@ public class EditDemandAction extends BaseFormAction {
 	}
 
 	@Override
-	public void validate() {
-		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("Entered into validate");
+    public void validate() {
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into validate");
 
-		final Set<Installment> newInstallments = new TreeSet<Installment>();
-		final Set<String> installmentsChqPenalty = new TreeSet<String>();
-		final Set<String> instDmdRsnMaster = new HashSet<String>();
-		List<String> instString;
-		final Set<String> actAmtInstallments = new TreeSet<String>();
-		List<String> errorParams = null;
+        final Set<Installment> newInstallments = new TreeSet<Installment>();
+        final Set<String> installmentsChqPenalty = new TreeSet<String>();
+        final Set<String> instDmdRsnMaster = new HashSet<String>();
+        List<String> instString;
+        final Set<String> actAmtInstallments = new TreeSet<String>();
+        List<String> errorParams = null;
 
-		for (final DemandDetail dd : demandDetailBeanList)
-			if (dd.getIsNew() != null && dd.getIsNew()) {
-				instString = new ArrayList<String>();
-				instString.add(dd.getReasonMaster());
-				if (dd.getReasonMaster().equalsIgnoreCase(DEMANDRSN_STR_GENERAL_TAX)
-						|| dd.getReasonMaster().equalsIgnoreCase(DEMANDRSN_STR_VACANT_TAX))
-					if (dd.getInstallment().getId() == null || dd.getInstallment().getId().equals(-1))
-						addActionError(getText("error.editDemand.selectInstallment"));
+        for (final DemandDetail dd : demandDetailBeanList)
+            if (dd.getIsNew() != null && dd.getIsNew()) {
+                instString = new ArrayList<String>();
+                instString.add(dd.getReasonMaster());
+                if ((dd.getReasonMaster().equalsIgnoreCase(DEMANDRSN_STR_GENERAL_TAX)
+                        || dd.getReasonMaster().equalsIgnoreCase(DEMANDRSN_STR_VACANT_TAX)) && (dd.getInstallment().getId() == null
+                        || dd.getInstallment().getId().equals(-1)))
+                    addActionError(getText("error.editDemand.selectInstallment"));
 
-				if (null != dd.getInstallment().getId() && !dd.getInstallment().getId().equals(-1)) {
-					if (null == dd.getActualAmount())
-						addActionError(getText("error.editDemand.actualAmount", instString));
-					if (null != dd.getActualAmount() && null != dd.getActualCollection())
-						if (dd.getActualAmount().intValue() < dd.getActualCollection().intValue())
-							addActionError(getText("error.collection.greaterThan.actualAmount"));
-				}
+                if (null != dd.getInstallment().getId() && !dd.getInstallment().getId().equals(-1)) {
+                    if (null == dd.getActualAmount())
+                        addActionError(getText("error.editDemand.actualAmount", instString));
+                    if (null != dd.getActualAmount() && null != dd.getActualCollection()
+                            && dd.getActualAmount().intValue() < dd.getActualCollection().intValue())
+                        addActionError(getText("error.collection.greaterThan.actualAmount"));
+                }
 
-				if (dd.getActualAmount() == null) {
-					if (dd.getActualCollection() != null)
-						actAmtInstallments.add(dd.getInstallment().getDescription());
-				} else if (dd.getReasonMaster().equalsIgnoreCase(DEMANDRSN_STR_GENERAL_TAX)
-						|| dd.getReasonMaster().equalsIgnoreCase(DEMANDRSN_STR_VACANT_TAX))
-					if (dd.getInstallment().getId() == null || dd.getInstallment().getId().equals(-1))
-						addActionError(getText("error.editDemand.selectInstallment"));
-					else {
-						newInstallments.add(dd.getInstallment());
-						final String instRsn = dd.getInstallment().toString().concat(EDIT_TYPE_POSTFIX)
-								.concat(dd.getReasonMaster());
-						if (instDmdRsnMaster.add(instRsn) == false) {
-							instString.add(dd.getInstallment().toString());
-							addActionError(getText("error.editDemand.duplicateInstallment", instString));
-						}
-					}
-			} else {
-				newInstallments.add(dd.getInstallment());
+                if (dd.getActualAmount() == null) {
+                    if (dd.getActualCollection() != null)
+                        actAmtInstallments.add(dd.getInstallment().getDescription());
+                } else if (dd.getReasonMaster().equalsIgnoreCase(DEMANDRSN_STR_GENERAL_TAX)
+                        || dd.getReasonMaster().equalsIgnoreCase(DEMANDRSN_STR_VACANT_TAX))
+                    if (dd.getInstallment().getId() == null || dd.getInstallment().getId().equals(-1))
+                        addActionError(getText("error.editDemand.selectInstallment"));
+                    else {
+                        newInstallments.add(dd.getInstallment());
+                        final String instRsn = dd.getInstallment().toString().concat(EDIT_TYPE_POSTFIX)
+                                .concat(dd.getReasonMaster());
+                        if (!instDmdRsnMaster.add(instRsn)) {
+                            instString.add(dd.getInstallment().toString());
+                            addActionError(getText("error.editDemand.duplicateInstallment", instString));
+                        }
+                    }
+            } else {
+                newInstallments.add(dd.getInstallment());
 
-				if (null != dd.getRevisedAmount() && isZero(dd.getRevisedAmount()))
-					if (dd.getActualCollection().compareTo(BigDecimal.ZERO) > 0 && isNull(dd.getRevisedCollection())) {
-						errorParams = new ArrayList<String>();
-						errorParams.add(dd.getReasonMaster());
-						errorParams.add(dd.getInstallment().getDescription());
-						addActionError(getText("error.editDemand.collectionForUpdatedDemand", errorParams));
-					}
-				if (null != dd.getRevisedAmount() && null != dd.getActualCollection())
-					if (dd.getRevisedAmount().intValue() < dd.getActualCollection().intValue())
-						addActionError(getText("error.collection.greaterThan.revisedAmount"));
-				if (null != dd.getRevisedAmount() && null != dd.getRevisedCollection())
-					if (dd.getRevisedAmount().intValue() < dd.getRevisedCollection().intValue())
-						addActionError(getText("error.revisedCollecion.greaterThan.revisedAmount"));
-			}
+                if (null != dd.getRevisedAmount() && isZero(dd.getRevisedAmount())
+                        && dd.getActualCollection().compareTo(BigDecimal.ZERO) > 0 && isNull(dd.getRevisedCollection())) {
+                    errorParams = new ArrayList<String>();
+                    errorParams.add(dd.getReasonMaster());
+                    errorParams.add(dd.getInstallment().getDescription());
+                    addActionError(getText("error.editDemand.collectionForUpdatedDemand", errorParams));
+                }
+                if (null != dd.getRevisedAmount() && null != dd.getActualCollection()
+                        && dd.getRevisedAmount().intValue() < dd.getActualCollection().intValue())
+                    addActionError(getText("error.collection.greaterThan.revisedAmount"));
+                if (null != dd.getRevisedAmount() && null != dd.getRevisedCollection()
+                        && dd.getRevisedAmount().intValue() < dd.getRevisedCollection().intValue())
+                    addActionError(getText("error.revisedCollecion.greaterThan.revisedAmount"));
+            }
 
-		if (actAmtInstallments.size() > 0) {
-			final String inst = actAmtInstallments.toString().replace('[', ' ').replace(']', ' ');
-			final List<String> instStrings = new ArrayList<String>() {
-				/**
-				 *
-				 */
-				private static final long serialVersionUID = 475636030882352813L;
+        if (!actAmtInstallments.isEmpty()) {
+            final String inst = actAmtInstallments.toString().replace('[', ' ').replace(']', ' ');
+            final List<String> instStrings = new ArrayList<String>() {
+                private static final long serialVersionUID = 475636030882352813L;
 
-				{
-					add(inst);
-				}
-			};
-			addActionError(getText("error.editDemand.actualAmount", instStrings));
-		}
+                {
+                    add(inst);
+                }
+            };
+            addActionError(getText("error.editDemand.actualAmount", instStrings));
+        }
 
-		List<Installment> installmentsInOrder = null;
-		if (!newInstallments.isEmpty()) {
-			installmentsInOrder = propertyTaxUtil.getInstallmentListByStartDateToCurrFinYearDesc(
-					new ArrayList<Installment>(newInstallments).get(0).getFromDate());
+        List<Installment> installmentsInOrder = null;
+        if (!newInstallments.isEmpty()) {
+            installmentsInOrder = propertyTaxUtil.getInstallmentListByStartDateToCurrFinYearDesc(
+                    new ArrayList<Installment>(newInstallments).get(0).getFromDate());
 
-			if (newInstallments.size() != installmentsInOrder.size())
-				addActionError(getText("error.editDemand.badInstallmentSelection"));
+            if (newInstallments.size() != installmentsInOrder.size())
+                addActionError(getText("error.editDemand.badInstallmentSelection"));
 
-			final Date currDate = new Date();
-			final Map<String, Installment> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(currDate);
-			if (!DateUtils.compareDates(currDate, currYearInstMap.get(CURRENTYEAR_SECOND_HALF).getFromDate())) {
-				if (newInstallments.contains(currYearInstMap.get(CURRENTYEAR_FIRST_HALF))
-						&& !newInstallments.contains(currYearInstMap.get(CURRENTYEAR_SECOND_HALF))
-						|| !newInstallments.contains(currYearInstMap.get(CURRENTYEAR_FIRST_HALF))
-								&& newInstallments.contains(currYearInstMap.get(CURRENTYEAR_SECOND_HALF)))
-					addActionError(getText("error.currentyearinstallments"));
-			} else if (!newInstallments.contains(currYearInstMap.get(CURRENTYEAR_SECOND_HALF)))
-				addActionError(getText("error.currentInst"));
+            final Date currDate = new Date();
+            final Map<String, Installment> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(currDate);
+            if (!DateUtils.compareDates(currDate, currYearInstMap.get(CURRENTYEAR_SECOND_HALF).getFromDate())) {
+                if (newInstallments.contains(currYearInstMap.get(CURRENTYEAR_FIRST_HALF))
+                        && !newInstallments.contains(currYearInstMap.get(CURRENTYEAR_SECOND_HALF))
+                        || !newInstallments.contains(currYearInstMap.get(CURRENTYEAR_FIRST_HALF))
+                                && newInstallments.contains(currYearInstMap.get(CURRENTYEAR_SECOND_HALF)))
+                    addActionError(getText("error.currentyearinstallments"));
+            } else if (!newInstallments.contains(currYearInstMap.get(CURRENTYEAR_SECOND_HALF)))
+                addActionError(getText("error.currentInst"));
 
-		}
+        }
 
-		if (installmentsChqPenalty.size() > 0) {
-			final String inst = installmentsChqPenalty.toString().replace('[', ' ').replace(']', ' ');
-			final List<String> instStrings = new ArrayList<String>();
-			instStrings.add(inst);
-			addActionError(getText("error.editDemand.chqBouncePenaltyIsZero", instStrings));
-		}
+        if (!installmentsChqPenalty.isEmpty()) {
+            final String inst = installmentsChqPenalty.toString().replace('[', ' ').replace(']', ' ');
+            final List<String> instStrings = new ArrayList<String>();
+            instStrings.add(inst);
+            addActionError(getText("error.editDemand.chqBouncePenaltyIsZero", instStrings));
+        }
 
-		if (StringUtils.isBlank(remarks))
-			addActionError(getText("mandatory.editDmdCollRemarks"));
-		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("Exiting from validate");
-	}
+        if (StringUtils.isBlank(remarks))
+            addActionError(getText("mandatory.editDmdCollRemarks"));
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Exiting from validate");
+    }
 
 	@SuppressWarnings("unchecked")
 	@SkipValidation
@@ -378,7 +378,7 @@ public class EditDemandAction extends BaseFormAction {
 			LOGGER.debug("Entered into newEditForm");
 		String resultPage;
 		final RevisionPetition generalRevisionPetition = revisionPetitionService.getExistingGRP(basicProperty);
-		Date effectiveDate;
+		Date effectiveDate =null;
 		PropertyImpl propertyModel = null;
 		if (generalRevisionPetition == null) {
 			if ((SOURCEOFDATA_DATAENTRY.toString().equalsIgnoreCase(basicProperty.getSource().toString())
@@ -387,13 +387,15 @@ public class EditDemandAction extends BaseFormAction {
 
 		} else if (NATURE_OF_WORK_GRP.equalsIgnoreCase(generalRevisionPetition.getType()))
 			propertyModel = generalRevisionPetition.getProperty();
-
+		if(!(SOURCEOFDATA_DATAENTRY.toString().equalsIgnoreCase(basicProperty.getSource().toString())
+                        && basicProperty.getPropertySet().size() == 1)){
 		if (!propertyModel.getPropertyDetail().getPropertyTypeMaster().getCode()
 				.equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
 			effectiveDate = getLowestDtOfCompFloorWise(propertyModel.getPropertyDetail().getFloorDetails());
 		else
 			effectiveDate = propertyModel.getPropertyDetail().getDateOfCompletion();
 			
+		}
 		ownerName = basicProperty.getFullOwnerName();
 		mobileNumber = basicProperty.getMobileNumber();
 		propertyAddress = basicProperty.getAddress().toString();
@@ -436,17 +438,17 @@ public class EditDemandAction extends BaseFormAction {
 				if (newMap.get(dd.getEgDemandReason().getEgInstallmentMaster()) == null) {
 					final Map<String, Map<String, Object>> rsns = new LinkedHashMap<>();
 					final Map<String, Object> dtls = new HashMap<>();
-					dtls.put("amount", dd.getAmount());
-					dtls.put("collection", dd.getAmtCollected());
-					dtls.put("isNew", false);
+					dtls.put(AMOUNT, dd.getAmount());
+					dtls.put(COLLECTION, dd.getAmtCollected());
+					dtls.put(IS_NEW, false);
 					rsns.put(dd.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster(), dtls);
 					newMap.put(dd.getEgDemandReason().getEgInstallmentMaster(), rsns);
 				} else if (newMap.get(dd.getEgDemandReason().getEgInstallmentMaster()) != null
 						&& dd.getAmount().compareTo(BigDecimal.ZERO) == 0) {
 					final Map<String, Object> dtls = new HashMap<>();
-					dtls.put("amount", BigDecimal.ZERO);
-					dtls.put("collection", BigDecimal.ZERO);
-					dtls.put("isNew", false);
+					dtls.put(AMOUNT, BigDecimal.ZERO);
+					dtls.put(COLLECTION, BigDecimal.ZERO);
+					dtls.put(IS_NEW, false);
 					newMap.get(dd.getEgDemandReason().getEgInstallmentMaster())
 							.put(dd.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster(), dtls);
 
@@ -454,9 +456,9 @@ public class EditDemandAction extends BaseFormAction {
 						&& dd.getAmount().compareTo(BigDecimal.ZERO) != 0) {
 					final Map<String, Map<String, Object>> rsns = new LinkedHashMap<>();
 					final Map<String, Object> dtls = new HashMap<>();
-					dtls.put("amount", dd.getAmount());
-					dtls.put("collection", dd.getAmtCollected());
-					dtls.put("isNew", false);
+					dtls.put(AMOUNT, dd.getAmount());
+					dtls.put(COLLECTION, dd.getAmtCollected());
+					dtls.put(IS_NEW, false);
 					rsns.put(dd.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster(), dtls);
 					newMap.get(dd.getEgDemandReason().getEgInstallmentMaster()).putAll(rsns);
 				}
@@ -466,16 +468,16 @@ public class EditDemandAction extends BaseFormAction {
 					if (!newDDMap.get(inst).contains(rsn))
 						if (newMap.get(inst) == null) {
 							final Map<String, Object> dtls = new HashMap<String, Object>();
-							dtls.put("amount", BigDecimal.ZERO);
-							dtls.put("collection", BigDecimal.ZERO);
-							dtls.put("isNew", true);
+							dtls.put(AMOUNT, BigDecimal.ZERO);
+							dtls.put(COLLECTION, BigDecimal.ZERO);
+							dtls.put(IS_NEW, true);
 							rsnList.put(rsn, dtls);
 							newMap.put(inst, rsnList);
 						} else if (newMap.get(inst) != null) {
 							final Map<String, Object> dtls = new HashMap<String, Object>();
-							dtls.put("amount", BigDecimal.ZERO);
-							dtls.put("collection", BigDecimal.ZERO);
-							dtls.put("isNew", true);
+							dtls.put(AMOUNT, BigDecimal.ZERO);
+							dtls.put(COLLECTION, BigDecimal.ZERO);
+							dtls.put(IS_NEW, true);
 							rsnList.put(rsn, dtls);
 							newMap.get(inst).put(rsn, dtls);
 						}
@@ -483,10 +485,9 @@ public class EditDemandAction extends BaseFormAction {
 				for (final String rsn : newMap.get(inst1).keySet()) {
 					final Map<String, Map<String, Object>> amtMap = newMap.get(inst1);
 					final Map<String, Object> dtls = amtMap.get(rsn);
-					final DemandDetail dmdDtl2 = createDemandDetailBean(inst1, rsn, (BigDecimal) dtls.get("amount"),
-							(BigDecimal) dtls.get("collection"), (Boolean) dtls.get("isNew"), effectiveDate);
+					final DemandDetail dmdDtl2 = createDemandDetailBean(inst1, rsn, (BigDecimal) dtls.get(AMOUNT),
+							(BigDecimal) dtls.get(COLLECTION), (Boolean) dtls.get(IS_NEW), effectiveDate);
 					demandDetailBeanList.add(dmdDtl2);
-
 				}
 		} else
 			for (final Map.Entry<String, String> entry : demandReasonMap.entrySet()) {
@@ -555,7 +556,7 @@ public class EditDemandAction extends BaseFormAction {
 		dcbDispInfo.setReasonMasterCodes(reasonList);
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("DCB Display Info : " + dcbDispInfo);
-			LOGGER.debug("Number of Demand Reasons : " + (reasonList != null ? reasonList.size() : ZERO));
+			LOGGER.debug("Number of Demand Reasons : " + (!reasonList.isEmpty() ? reasonList.size() : ZERO));
 			LOGGER.debug("Exit from method prepareDisplayInfo");
 		}
 	}
@@ -761,7 +762,7 @@ public class EditDemandAction extends BaseFormAction {
 
 		final DemandAuditDetails dmdAdtDtls = new DemandAuditDetails();
 		dmdAdtDtls.setYear(dmdDetail.getInstallment().toString());
-		dmdAdtDtls.setAction(dmdDetail.getIsNew() == true ? "Add" : "Edit");
+		dmdAdtDtls.setAction(dmdDetail.getIsNew() ? "Add" : "Edit");
 		dmdAdtDtls.setTaxType(dmdDetail.getReasonMaster());
 		dmdAdtDtls.setActualDmd(dmdDetail.getActualAmount() != null ? dmdDetail.getActualAmount() : BigDecimal.ZERO);
 		dmdAdtDtls
