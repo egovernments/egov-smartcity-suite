@@ -70,6 +70,15 @@ public class NotificationConfiguration {
         return smsQueue;
     }
 
+    @Bean(name = "flashQueue")
+    public JndiObjectFactoryBean flashQueue() {
+        JndiObjectFactoryBean flashQueue = new JndiObjectFactoryBean();
+        flashQueue.setExpectedType(Destination.class);
+        flashQueue.setResourceRef(true);
+        flashQueue.setJndiName("java:/jms/queue/flash");
+        return flashQueue;
+    }
+
     @Bean(name = "emailQueue")
     public JndiObjectFactoryBean emailQueue() {
         JndiObjectFactoryBean emailQueue = new JndiObjectFactoryBean();

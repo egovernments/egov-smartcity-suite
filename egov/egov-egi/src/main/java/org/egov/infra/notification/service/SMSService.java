@@ -138,9 +138,11 @@ public class SMSService {
             post.setEntity(new UrlEncodedFormEntity(urlParameters, encoding()));
             HttpResponse response = client.execute(post);
             String responseCode = IOUtils.toString(response.getEntity().getContent(), encoding());
+            if (LOGGER.isInfoEnabled())
+                LOGGER.info("SMS :- Mobile Number : {} Response : {}", responseCode);
             return smsErrorCodes.parallelStream().noneMatch(responseCode::startsWith);
         } catch (UnsupportedOperationException | IOException e) {
-            LOGGER.error("Error occurred while sending SMS [%s]", e);
+            LOGGER.error("Error occurred while sending SMS [{}]", e, mobileNumber);
         }
         return false;
     }
