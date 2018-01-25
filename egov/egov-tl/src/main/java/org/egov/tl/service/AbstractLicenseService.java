@@ -744,7 +744,7 @@ public abstract class AbstractLicenseService<T extends License> {
                     wfAssignment.getEmployee().getUsername() + DELIMITER_COLON + wfAssignment.getEmployee().getName())
                     .withComments(comment).withNatureOfTask(CLOSURE_NATUREOFTASK)
                     .withStateValue("NEW").withDateInfo(new Date()).withOwner(wfAssignment.getPosition())
-                    .withNextAction("SI/SS Approval Pending").withInitiator(wfAssignment.getPosition());
+                    .withNextAction("SI/SS Approval Pending").withInitiator(wfAssignment.getPosition()).withExtraInfo(license.getLicenseAppType().getName());
             license.setEgwStatus(
                     egwStatusHibernateDAO.getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_CREATED_CODE));
         } else
