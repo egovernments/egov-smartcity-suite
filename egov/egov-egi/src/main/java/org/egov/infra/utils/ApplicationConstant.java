@@ -91,8 +91,8 @@ public final class ApplicationConstant {
     public static final String ANONYMOUS_USERNAME = "anonymous";
     public static final String TENANTID_KEY = "tenant_id";
 
-    public static final String CONTENT_DISPOSITION_ATTACH = "attachment;filename=\"%s\"";
-    public static final String CONTENT_DISPOSITION_INLINE = "inline;filename=\"%s\"";
+    public static final String CONTENT_DISPOSITION_ATTACH = "attachment;filename=%s";
+    public static final String CONTENT_DISPOSITION_INLINE = "inline;filename=%s";
     public static final String CONTENT_DISPOSITION = "content-disposition";
 
     public static final Character Y = 'Y';
