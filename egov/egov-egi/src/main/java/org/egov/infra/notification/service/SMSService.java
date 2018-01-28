@@ -142,7 +142,7 @@ public class SMSService {
                 LOGGER.info("SMS :- Mobile Number : {} Response : {}", responseCode);
             return smsErrorCodes.parallelStream().noneMatch(responseCode::startsWith);
         } catch (UnsupportedOperationException | IOException e) {
-            LOGGER.error("Error occurred while sending SMS [{}]", e, mobileNumber);
+            LOGGER.error("Error occurred while sending SMS [{}]", mobileNumber, e);
         }
         return false;
     }
