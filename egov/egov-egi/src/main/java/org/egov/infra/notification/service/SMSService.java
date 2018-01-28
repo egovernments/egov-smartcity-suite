@@ -139,7 +139,7 @@ public class SMSService {
             HttpResponse response = client.execute(post);
             String responseCode = IOUtils.toString(response.getEntity().getContent(), encoding());
             if (LOGGER.isInfoEnabled())
-                LOGGER.info("SMS :- Mobile Number : {} Response : {}", responseCode);
+                LOGGER.info("SMS :- Mobile Number : {} Response : {}", mobileNumber, responseCode);
             return smsErrorCodes.parallelStream().noneMatch(responseCode::startsWith);
         } catch (UnsupportedOperationException | IOException e) {
             LOGGER.error("Error occurred while sending SMS [{}]", mobileNumber, e);
