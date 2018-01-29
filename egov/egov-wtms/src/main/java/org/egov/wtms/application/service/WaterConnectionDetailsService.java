@@ -235,6 +235,7 @@ public class WaterConnectionDetailsService {
     private static final String REQ_EXECUTION_DATE = "ExecutionDateRequired";
     private static final String REQ_INITIAL_READING = "InitialReadingRequired";
     private static final String REQ_METER_SERIAL_NUMBER = "MeterSerialNumberRequired";
+    private static final String ERR_WATER_RATES_NOT_DEFINED = "WaterRatesNotDefined";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -1449,7 +1450,7 @@ public class WaterConnectionDetailsService {
         return queryString;
     }
 
-    public String validateDate(final WaterConnectionExecutionResponse executionDetailsResponse,
+    public String validateInput(final WaterConnectionExecutionResponse executionDetailsResponse,
             final List<WaterConnectionDetails> connectionDetailsList) {
         final JSONObject jsonObject = new JSONObject(executionDetailsResponse);
         final JSONArray jsonArray = jsonObject.getJSONArray("executeWaterApplicationDetails");
@@ -1457,17 +1458,20 @@ public class WaterConnectionDetailsService {
         for (int i = 0; i < jsonArray.length(); ++i) {
             final JSONObject jsonObj = jsonArray.getJSONObject(i);
             final WaterConnectionDetails connectionDetails = findBy(jsonObj.getLong("id"));
-            if (!jsonObj.getString(EXECUTION_DATE).isEmpty() && connectionDetails != null
-                    && isNotBlank(jsonObj.getString(EXECUTION_DATE))) {
-                connectionDetails
-                        .setExecutionDate(DateUtils.toDateUsingDefaultPattern(jsonObj.getString(EXECUTION_DATE)));
-                if (connectionDetails.getExecutionDate() != null
-                        && connectionDetails.getExecutionDate().compareTo(DateUtils.toDateUsingDefaultPattern(
-                                DateUtils.getDefaultFormattedDate(connectionDetails.getApplicationDate()))) < 0)
-                    status = DATE_VALIDATION_FAILED;
-                else
-                    connectionDetailsList.add(connectionDetails);
-            }
+            if (validateDonationDetails(connectionDetails)) {
+                if (!jsonObj.getString(EXECUTION_DATE).isEmpty() && connectionDetails != null
+                        && isNotBlank(jsonObj.getString(EXECUTION_DATE))) {
+                    connectionDetails
+                            .setExecutionDate(DateUtils.toDateUsingDefaultPattern(jsonObj.getString(EXECUTION_DATE)));
+                    if (connectionDetails.getExecutionDate() != null
+                            && connectionDetails.getExecutionDate().compareTo(DateUtils.toDateUsingDefaultPattern(
+                                    DateUtils.getDefaultFormattedDate(connectionDetails.getApplicationDate()))) < 0)
+                        status = DATE_VALIDATION_FAILED;
+                    else
+                        connectionDetailsList.add(connectionDetails);
+                }
+            } else
+                status = ERR_WATER_RATES_NOT_DEFINED;
         }
 
         return status;
@@ -1617,5 +1621,11 @@ public class WaterConnectionDetailsService {
         }
 
         return waterConnectionDetails;
+    }
+
+    public Boolean validateDonationDetails(final WaterConnectionDetails waterConnectionDetails) {
+        final WaterRatesDetails waterRatesDetails = connectionDemandService
+                .getWaterRatesDetailsForDemandUpdate(waterConnectionDetails);
+        return waterRatesDetails == null ? false : true;
     }
 }

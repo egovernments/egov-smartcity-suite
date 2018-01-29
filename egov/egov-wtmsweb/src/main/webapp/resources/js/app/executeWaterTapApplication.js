@@ -272,6 +272,9 @@ $('#update').on('click', function(){
 				else if (response == "UpdateExecutionFailed") {
 					bootbox.alert("Please enter connection execution date of selected applications");
 					return false;
+				} else if (response == "WaterRatesNotDefined") {
+					bootbox.alert(" Active Monthly Water Rates are not defined for the selected application");
+					return false;
 				}
 				
 			},

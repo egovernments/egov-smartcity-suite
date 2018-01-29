@@ -79,6 +79,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value = "/application/execute-update")
 public class UpdateWaterConnectionExecutionController {
 
+    private static final String ERR_WATER_RATES_NOT_DEFINED = "WaterRatesNotDefined";
+
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
 
@@ -142,8 +144,10 @@ public class UpdateWaterConnectionExecutionController {
     @ResponseBody
     public String getSearchResult(@RequestBody final WaterConnectionExecutionResponse waterApplicationDetails) {
         final List<WaterConnectionDetails> connectionDetailsList = new ArrayList<>();
-        final String validationStatus = waterConnectionDetailsService.validateDate(waterApplicationDetails,
+        final String validationStatus = waterConnectionDetailsService.validateInput(waterApplicationDetails,
                 connectionDetailsList);
+        if (ERR_WATER_RATES_NOT_DEFINED.equalsIgnoreCase(validationStatus))
+            return ERR_WATER_RATES_NOT_DEFINED;
         final Boolean updateStatus = waterConnectionDetailsService.updateStatus(connectionDetailsList);
         return waterConnectionDetailsService.getResultStatus(waterApplicationDetails, validationStatus, updateStatus);
     }
