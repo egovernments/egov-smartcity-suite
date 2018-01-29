@@ -90,6 +90,7 @@ import org.egov.tl.utils.LicenseUtils;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -401,8 +402,10 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     public BigDecimal[] getDemandColl(License license) {
         BigDecimal[] dmdColl = new BigDecimal[3];
         Arrays.fill(dmdColl, BigDecimal.ZERO);
+        final Installment latestInstallment = this.installmentDao.getInsatllmentByModuleForGivenDate(getModuleName(),
+                new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate());
         license.getCurrentDemand().getEgDemandDetails().stream().forEach(egDemandDetails -> {
-                    if (license.getCurrentDemand().getEgInstallmentMaster().equals(egDemandDetails.getEgDemandReason().getEgInstallmentMaster())) {
+                    if (latestInstallment.equals(egDemandDetails.getEgDemandReason().getEgInstallmentMaster())) {
                         dmdColl[1] = dmdColl[1].add(egDemandDetails.getAmount());
                         dmdColl[2] = dmdColl[2].add(egDemandDetails.getAmtCollected());
                     } else {
