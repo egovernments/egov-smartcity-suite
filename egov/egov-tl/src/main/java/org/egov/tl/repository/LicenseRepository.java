@@ -95,7 +95,7 @@ public interface LicenseRepository extends JpaRepository<License, Long> {
     List<String> findAllMobilePhoneNumberLike(@Param("mobilePhoneNumber") String mobilePhoneNumber);
 
     @Query("select l.id from org.egov.tl.entity.License l where l.natureOfBusiness.name='Permanent' " +
-            "and l.status.name='Active' and l.licenseDemand.egInstallmentMaster.fromDate < :installmentFromDate ")
+            "and l.isActive=true and l.licenseDemand.egInstallmentMaster.fromDate < :installmentFromDate ")
     List<Long> findLicenseIdsForDemandGeneration(@Param("installmentFromDate") Date installmentFromDate);
 
     List<License> findByStateNextActionAndStateOwnerPositionIn(String nextAction, List<Position> ownerPosition);
