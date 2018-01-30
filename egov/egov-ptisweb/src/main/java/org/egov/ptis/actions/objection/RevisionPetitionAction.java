@@ -1126,8 +1126,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 	private void checkIfEligibleForDocEdit() {
 		final String designation = propService.getDesignationForPositionAndUser(
 				objection.getCurrentState().getOwnerPosition().getId(), securityUtils.getCurrentUser().getId());
-		if (objection.getCurrentState().getValue().endsWith(STATUS_REJECTED)
-				|| REVENUE_INSPECTOR_DESGN.equals(designation))
+        if (objection.getCurrentState().getValue().endsWith(STATUS_REJECTED) ||
+                objection.getCurrentState().getValue().endsWith(WFLOW_ACTION_NEW)
+                || REVENUE_INSPECTOR_DESGN.equals(designation))
 			setAllowEditDocument(Boolean.TRUE);
 	}
 
