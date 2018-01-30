@@ -184,7 +184,10 @@
 			<table>
 				<tr>
 					<td width="10%" class="greybox">
-					<td width="5%" class="greybox"><div align="left"></td>
+					<td width="5%" class="greybox"><div align="left">
+							<strong><s:text
+									name="chartOfAccount.accountDetailType" />:</strong>
+						</div></td>
 
 					<td width="5%"></td>
 					<td width="10%" class="greybox"><div align="left">

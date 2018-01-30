@@ -2350,7 +2350,7 @@ public class CommonAction extends BaseFormAction {
                             +
                             "and rem.paymentvhid=vh.id ");
             if (recoveryId != null && recoveryId != 0)
-                queryString = queryString.append(" and rem.tdsid==" + recoveryId);
+                queryString = queryString.append(" and rem.tdsid=" + recoveryId);
             queryString = queryString.append(
                     " and gl.voucherheaderid=vh.id and ph.voucherheaderid=vh.id and bank.isactive=true  and bankBranch.isactive=true "
                             +
@@ -2388,7 +2388,7 @@ public class CommonAction extends BaseFormAction {
                             +
                             " rem.paymentvhid=vh.id ");
             if (recoveryId != null && recoveryId != 0)
-                queryString = queryString.append(" and rem.tdsid==" + recoveryId);
+                queryString = queryString.append(" and rem.tdsid=" + recoveryId);
             queryString = queryString
                     .append(" and ih.id_status=egws.id and egws.description in ('Surrendered','Surrender_For_Reassign') ");
             if (fundId != null && fundId != 0 && fundId != -1)
