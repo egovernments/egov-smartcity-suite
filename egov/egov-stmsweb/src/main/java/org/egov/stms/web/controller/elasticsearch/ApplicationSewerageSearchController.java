@@ -57,6 +57,7 @@ import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.stms.elasticsearch.entity.SewerageConnSearchRequest;
 import org.egov.stms.elasticsearch.entity.SewerageSearchResult;
 import org.egov.stms.entity.es.SewerageIndex;
+import org.egov.stms.masters.entity.enums.SewerageConnectionStatus;
 import org.egov.stms.service.es.SeweragePaginationService;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
@@ -145,6 +146,12 @@ public class ApplicationSewerageSearchController {
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
         if (cityWebsite != null)
             searchRequest.setUlbName(cityWebsite.getName());
+        if (searchRequest.getShscNumber() != null) {
+            SewerageApplicationDetails sewerageApplicationDetails = sewerageApplicationDetailsService
+                    .findByConnectionShscNumberAndConnectionStatus(searchRequest.getShscNumber(),
+                            SewerageConnectionStatus.ACTIVE);
+            searchRequest.setLegacy(sewerageApplicationDetails.getConnection().getLegacy());
+        }
         final List<SewerageSearchResult> searchResultFomatted = new ArrayList<>();
         final Pageable pageable = new PageRequest(searchRequest.pageNumber(),
                 searchRequest.pageSize(), searchRequest.orderDir(), searchRequest.orderBy());

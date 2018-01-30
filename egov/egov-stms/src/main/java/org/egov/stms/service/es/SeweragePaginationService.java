@@ -134,6 +134,7 @@ public class SeweragePaginationService {
         searchResultObject.setRevenueWard(sewerageIndexObject.getWard());
         searchResultObject.setAddress(sewerageIndexObject.getAddress());
         searchResultObject.setApplicationStatus(sewerageIndexObject.getApplicationStatus());
+        searchResultObject.setLegacy(sewerageIndexObject.getIslegacy());
     }
 
     private void getActions(final SewerageSearchResult searchActions, final Map<String, String> actionMap,
@@ -141,9 +142,9 @@ public class SeweragePaginationService {
         for (final Map.Entry<String, String> entry : searchActions.getActions().entrySet())
             if (entry.getValue().equals(MODIFYLEGACYCONNECTION) && searchRequest.getLegacy() == null)
                 actionMap.remove(entry.getKey(), entry.getValue());
-            else if (!entry.getValue().equals(COLLECTDONATIONCHARHGES))
+            else if ((searchRequest.getLegacy() != null && searchRequest.getLegacy().equals(Boolean.TRUE)
+                    && entry.getValue().equals(COLLECTDONATIONCHARHGES)) || !entry.getValue().equals(COLLECTDONATIONCHARHGES))
                 actionMap.put(entry.getKey(), entry.getValue());
-
     }
 
     public Page<SewerageIndex> searchSewerageApplnsHasCollectionPending(final SewerageConnSearchRequest searchRequest,
