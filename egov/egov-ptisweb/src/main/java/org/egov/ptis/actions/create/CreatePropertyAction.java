@@ -1262,6 +1262,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             ownerAddress.setStreetRoadLine(getCorrAddress2());
             ownerAddress.setCityTownVillage(cityName);
             ownerAddress.setPinCode(getCorrPinCode());
+            ownerAddress.setHouseNoBldgApt(null);
         }
     }
 
