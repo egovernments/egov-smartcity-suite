@@ -61,6 +61,8 @@ import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_STATUS_
 import static org.egov.council.utils.constants.CouncilConstants.RESOLUTION_APPROVED_PREAMBLE;
 import static org.egov.council.utils.constants.CouncilConstants.RESOLUTION_STATUS_ADJURNED;
 import static org.egov.council.utils.constants.CouncilConstants.RESOLUTION_STATUS_APPROVED;
+import static org.egov.council.utils.constants.CouncilConstants.RESOLUTION_STATUS_RECORDED;
+import static org.egov.council.utils.constants.CouncilConstants.RESOLUTION_STATUS_SANCTIONED;
 import static org.egov.council.utils.constants.CouncilConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.council.utils.constants.CouncilConstants.WARD;
 import static org.egov.infra.utils.JsonUtils.toJSON;
@@ -350,11 +352,15 @@ public class CouncilMomController {
     public String generateResolutionnumber(
             @Valid @ModelAttribute final CouncilMeeting councilMeeting) throws ParseException {
         byte[] reportOutput;
-
+       
         EgwStatus resoulutionApprovedStatus = egwStatusHibernateDAO.getStatusByModuleAndCode(COUNCIL_RESOLUTION,
                 RESOLUTION_STATUS_APPROVED);
         EgwStatus resoulutionAdjurnedStatus = egwStatusHibernateDAO.getStatusByModuleAndCode(COUNCIL_RESOLUTION,
                 RESOLUTION_STATUS_ADJURNED);
+        EgwStatus resoulutionSanctionedStatus = egwStatusHibernateDAO.getStatusByModuleAndCode(COUNCIL_RESOLUTION,
+                RESOLUTION_STATUS_SANCTIONED);
+        EgwStatus resoulutionRecordedStatus = egwStatusHibernateDAO.getStatusByModuleAndCode(COUNCIL_RESOLUTION,
+                RESOLUTION_STATUS_RECORDED);
         EgwStatus preambleAdjurnedStatus = egwStatusHibernateDAO.getStatusByModuleAndCode(PREAMBLE_MODULENAME,
                 PREAMBLE_STATUS_ADJOURNED);
         EgwStatus resolutionApprovedStatus = egwStatusHibernateDAO.getStatusByModuleAndCode(PREAMBLE_MODULENAME,
@@ -389,6 +395,14 @@ public class CouncilMomController {
             } else if (meetingMOM.getResolutionStatus().getCode().equals(resoulutionAdjurnedStatus.getCode())) {
                 meetingMOM.getPreamble()
                         .setStatus(preambleAdjurnedStatus);
+            }
+            else if (meetingMOM.getResolutionStatus().getCode().equals(resoulutionRecordedStatus.getCode())) {
+                meetingMOM.getPreamble()
+                        .setStatus(resoulutionRecordedStatus);
+            }
+            else if (meetingMOM.getResolutionStatus().getCode().equals(resoulutionSanctionedStatus.getCode())) {
+                meetingMOM.getPreamble()
+                        .setStatus(resoulutionSanctionedStatus);
             }
         }
 
