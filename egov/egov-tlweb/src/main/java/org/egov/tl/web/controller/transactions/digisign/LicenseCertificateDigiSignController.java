@@ -50,6 +50,7 @@ package org.egov.tl.web.controller.transactions.digisign;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.utils.FileStoreUtils;
 import org.egov.tl.entity.License;
+import org.egov.tl.service.LicenseAppTypeService;
 import org.egov.tl.service.LicenseCertificateDigiSignService;
 import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,6 +81,9 @@ public class LicenseCertificateDigiSignController {
     private FileStoreUtils fileStoreUtils;
 
     @Autowired
+    private LicenseAppTypeService licenseAppTypeService;
+
+    @Autowired
     private LicenseCertificateDigiSignService licenseCertificateDigiSignService;
 
     @GetMapping("/digisign-transition")
@@ -104,9 +108,16 @@ public class LicenseCertificateDigiSignController {
     @GetMapping(value = "/bulk-digisign")
     public String showLicenseBulkDigiSignForm(Model model) {
         if (licenseUtils.isDigitalSignEnabled())
-            model.addAttribute("licenses", licenseCertificateDigiSignService.getLicensePendingForDigiSign());
+            model.addAttribute("applicationType", licenseAppTypeService.findByDisplayTrue());
         else
             model.addAttribute("message", "msg.digisign.enabled");
+        return "license-bulk-digisign-form";
+    }
+
+    @GetMapping(value = "/bulk-digisign/")
+    public String getLicenseForDigiSign(@RequestParam Long licenseAppTypeId, Model model) {
+        model.addAttribute("licenses", licenseCertificateDigiSignService.getLicensePendingForDigiSign(licenseAppTypeId));
+        model.addAttribute("applicationType", licenseAppTypeService.findByDisplayTrue());
         return "license-bulk-digisign-form";
     }
 

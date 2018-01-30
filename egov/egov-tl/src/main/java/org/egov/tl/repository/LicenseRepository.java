@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -97,6 +97,9 @@ public interface LicenseRepository extends JpaRepository<License, Long> {
     @Query("select l.id from org.egov.tl.entity.License l where l.natureOfBusiness.name='Permanent' " +
             "and l.isActive=true and l.licenseDemand.egInstallmentMaster.fromDate < :installmentFromDate ")
     List<Long> findLicenseIdsForDemandGeneration(@Param("installmentFromDate") Date installmentFromDate);
+
+    List<License> findByLicenseAppTypeIdAndStateNextActionAndStateOwnerPositionIn(Long licenseAppTypeId,
+                                                                                  String nextAction, List<Position> ownerPosition);
 
     List<License> findByStateNextActionAndStateOwnerPositionIn(String nextAction, List<Position> ownerPosition);
 }

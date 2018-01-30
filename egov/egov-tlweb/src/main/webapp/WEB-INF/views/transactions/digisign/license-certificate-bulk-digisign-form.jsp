@@ -54,8 +54,8 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <div class="row">
     <div class="col-md-12">
-        <form:form role="form" class="form-horizontal form-groups-bordered" id="bulkdigisignform"
-                   method="POST">
+        <form:form role="form" action="" class="form-horizontal form-groups-bordered" id="bulkdigisignform"
+                   modelAttribute="applicationType" method="POST">
             <c:choose>
                 <c:when test="${not empty message}">
                     <div class="alert alert-info view-content">
@@ -68,85 +68,106 @@
                 </c:when>
                 <c:otherwise>
                     <input type="hidden" id="licenseIds" name="licenseIds">
+                    <input type="hidden" id="licenseTypeId" name="licenseAppTypeId">
                     <div class="panel panel-primary" data-collapsed="0">
                         <div class="panel-heading">
                             <div class="panel-title">
                                 <strong><spring:message code="lbl.digitalSignature"/></strong>
                             </div>
                         </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label text-right"> <spring:message
+                                    code='lbl.licenseapptype'/></label>
+                            <div class="col-sm-4 add-margin">
+                                <form:select path="" id="appType" cssClass="form-control"
+                                             cssErrorClass="form-control error">
+                                    <form:option value="0">All</form:option>
+                                    <form:options items="${applicationType}" itemValue="id" itemLabel="name"/>
+                                </form:select>
+                            </div>
+                        </div>
+                        <div class="row" id="searchlicense">
+                            <div class="text-center">
+                                <button type="button" id="btnsearch" class="btn btn-primary">
+                                    <spring:message code="lbl.search"/>
+                                </button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal"
+                                        onclick="window.close();">
+                                    <spring:message code="lbl.close"/>
+                                </button>
+                            </div>
+                        </div>
                         <div class="panel-body">
                             <div class="main-content">
                                 <div class="row">
-                                    <div class="col-md-12">
-                                        <table class="table table-bordered datatable" id="digSignDetailsTab"
-                                               name="digSignDetailsTab">
-                                            <thead>
-                                            <tr>
-                                                <th><spring:message code="lbl.digitalSignature.type"/></th>
-                                                <th><spring:message code="search.licensee.no"/></th>
-                                                <th><spring:message code="license.applicationnumber"/></th>
-                                                <th><spring:message code="license.category.lbl"/></th>
-                                                <th><spring:message code="license.subCategory.lbl"/></th>
-                                                <th><spring:message code="lbl.amount"/></th>
-                                                <th style="text-align: center"><input type="checkbox"
-                                                                                      id="selectAll"/><spring:message
-                                                        code="lbl.digitalSignature.select"/></th>
-                                            </tr>
-                                            </thead>
-                                            <c:choose>
-                                                <c:when test="${!licenses.isEmpty()}">
-                                                    <c:forEach items="${licenses}" var="license"
-                                                               varStatus="counter">
-                                                        <tr>
-                                                            <td class="col-md-2" style="cursor: pointer"
-                                                                onclick=openLicenseForDigitalSign(${license.id})>
-                                                                <c:out value="${license.state.natureOfTask}"/>
-                                                            </td>
-                                                            <td style="cursor: pointer"
-                                                                onclick=openLicenseForDigitalSign(${license.id})>
-                                                                <c:out value="${license.licenseNumber}"/>
-                                                            </td>
-                                                            <td style="cursor: pointer"
-                                                                onclick=openLicenseForDigitalSign(${license.id})>
-                                                                <c:out value="${license.applicationNumber}"/>
-                                                            </td>
-                                                            <td>
-                                                                <c:out value="${license.category.name}"/>
-                                                            </td>
-                                                            <td style="cursor: pointer"
-                                                                onclick=openLicenseForDigitalSign(${license.id})>
-                                                                <c:out value="${license.tradeName.name}"/>
-                                                            </td>
-                                                            <td style="cursor: pointer"
-                                                                onclick=openLicenseForDigitalSign(${license.id})>
-                                                                <c:out value="${license.getLatestAmountPaid()}"/>
-                                                            </td>
-                                                            <td style="text-align: center">
-                                                                <input type="checkbox" class="check-box"
-                                                                       id="${license.id}" name="rowCheckBox"/>
-                                                            </td>
-                                                        </tr>
-                                                    </c:forEach>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <tr><spring:message code="lbl.norecord.found"/></tr>
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </table>
-                                        <div class="text-center">
-                                            <c:choose>
-                                                <c:when test="${!licenses.isEmpty()}">
-                                                    <button type="submit" onclick="return submitform();"
-                                                            class="btn btn-primary"
-                                                            id="submitButton">
-                                                        <spring:message code="lbl.sign"/>
-                                                    </button>
-                                                </c:when>
-                                            </c:choose>
-                                            <a href="javascript:void(0)" class="btn btn-default"
-                                               onclick="self.close()"><spring:message code="lbl.close"/></a>
+                                    <c:if test="${not empty licenses}">
+                                        <div class="col-md-12">
+                                            <table class="table table-bordered datatable" id="digSignDetailsTab"
+                                                   name="digSignDetailsTab">
+                                                <thead>
+                                                <tr>
+                                                    <th><spring:message code="lbl.digitalSignature.type"/></th>
+                                                    <th><spring:message code="search.licensee.no"/></th>
+                                                    <th><spring:message code="license.applicationnumber"/></th>
+                                                    <th><spring:message code="lbl.category"/></th>
+                                                    <th><spring:message code="lbl.subcategory"/></th>
+                                                    <th><spring:message code="lbl.license.fee"/></th>
+                                                    <th style="text-align: center"><input type="checkbox"
+                                                                                          id="selectAll"/><spring:message
+                                                            code="lbl.digitalSignature.select"/></th>
+                                                </tr>
+                                                </thead>
+
+                                                <c:forEach items="${licenses}" var="license"
+                                                           varStatus="counter">
+                                                    <tr>
+                                                        <td class="col-md-2" style="cursor: pointer"
+                                                            onclick=openLicenseForDigitalSign(${license.id})>
+                                                            <c:out value="${license.state.natureOfTask}"/>
+                                                        </td>
+                                                        <td style="cursor: pointer"
+                                                            onclick=openLicenseForDigitalSign(${license.id})>
+                                                            <c:out value="${license.licenseNumber}"/>
+                                                        </td>
+                                                        <td style="cursor: pointer"
+                                                            onclick=openLicenseForDigitalSign(${license.id})>
+                                                            <c:out value="${license.applicationNumber}"/>
+                                                        </td>
+                                                        <td>
+                                                            <c:out value="${license.category.name}"/>
+                                                        </td>
+                                                        <td style="cursor: pointer"
+                                                            onclick=openLicenseForDigitalSign(${license.id})>
+                                                            <c:out value="${license.tradeName.name}"/>
+                                                        </td>
+                                                        <td style="cursor: pointer"
+                                                            onclick=openLicenseForDigitalSign(${license.id})>
+                                                            <c:out value="${license.getLatestAmountPaid()}"/>
+                                                        </td>
+                                                        <td style="text-align: center">
+                                                            <input type="checkbox" class="check-box"
+                                                                   id="${license.id}" name="rowCheckBox"/>
+                                                        </td>
+                                                    </tr>
+                                                </c:forEach>
+
+                                            </table>
+                                            <div class="text-center">
+
+                                                <button type="submit" onclick="return submitform();"
+                                                        class="btn btn-primary"
+                                                        id="submitButton">
+                                                    <spring:message code="lbl.sign"/>
+                                                </button>
+
+                                            </div>
                                         </div>
-                                    </div>
+                                    </c:if>
+                                    <c:if test="${licenses != null && empty licenses}">
+                                        <div class="text-center col-sm-12 alert alert-warning">
+                                            <spring:message code="lbl.norecord.found"/>
+                                        </div>
+                                    </c:if>
                                 </div>
                             </div>
                         </div>

@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -97,9 +97,13 @@ public class LicenseCertificateDigiSignService {
     }
 
     @ReadOnly
-    public List<License> getLicensePendingForDigiSign() {
-        return licenseRepository.findByStateNextActionAndStateOwnerPositionIn("Digital Signature Pending",
-                positionMasterService.getCurrentUserPositions());
+    public List<License> getLicensePendingForDigiSign(Long licenseAppTypeId) {
+        if (licenseAppTypeId != 0)
+            return licenseRepository.findByLicenseAppTypeIdAndStateNextActionAndStateOwnerPositionIn(licenseAppTypeId,
+                    "Digital Signature Pending", positionMasterService.getCurrentUserPositions());
+        else
+            return licenseRepository.findByStateNextActionAndStateOwnerPositionIn("Digital Signature Pending",
+                    positionMasterService.getCurrentUserPositions());
     }
 
     public List<License> generateLicenseCertificateForDigiSign(List<Long> licenseIds) {
