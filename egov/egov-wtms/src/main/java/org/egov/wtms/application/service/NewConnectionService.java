@@ -61,7 +61,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
@@ -194,7 +193,7 @@ public class NewConnectionService {
 
         final ConnectionCategory connectionCategory = connectionCategoryService.findOne(categoryId);
         if (connectionCategory != null && documentRequired != null
-                && connectionCategory.getCode().equalsIgnoreCase(CATEGORY_BPL)
+                && connectionCategory.getName().equalsIgnoreCase(CATEGORY_BPL)
                 && documentRequired.equalsIgnoreCase(applicationDocument.getDocumentNames().getDocumentName()))
             validateDocumentsForBPLCategory(applicationDocs, applicationDocument, resultBinder, i);
         else {
@@ -216,7 +215,7 @@ public class NewConnectionService {
         }
         if (applicationDocument.getDocumentNumber() != null && applicationDocument.getDocumentDate() != null) {
             Iterator<MultipartFile> stream = null;
-            if (ArrayUtils.isNotEmpty(applicationDocument.getFiles()))
+            if (applicationDocument.getFiles()[0].getSize() > 0)
                 stream = Arrays.asList(applicationDocument.getFiles()).stream().filter(file -> !file.isEmpty())
                         .iterator();
             if (stream == null) {
@@ -238,7 +237,7 @@ public class NewConnectionService {
         }
 
         Iterator<MultipartFile> stream;
-        if (ArrayUtils.isNotEmpty(applicationDocument.getFiles())) {
+        if (applicationDocument.getFiles()[0].getSize() > 0) {
             stream = Arrays.asList(applicationDocument.getFiles()).stream().filter(file -> !file.isEmpty())
                     .iterator();
 
