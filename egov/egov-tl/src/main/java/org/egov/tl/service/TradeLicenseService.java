@@ -113,6 +113,7 @@ import java.util.Optional;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.config.core.LocalizationSettings.currencySymbolUtf8;
@@ -270,7 +271,11 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
             reportOutput = reportService.createReport(
                     new ReportRequest("tl_licenseCertificate", license, getReportParamsForCertificate(license, isProvisional)));
         }
-        reportOutput.setReportName(appendTimestamp(license.getLicenseNumber().replace("/", "_")));
+        String reportName = appendTimestamp((isBlank(license.getLicenseNumber())
+                ? license.getApplicationNumber()
+                : license.getLicenseNumber()).replaceAll("[/-]", "_"));
+
+        reportOutput.setReportName(reportName);
         return reportOutput;
     }
 
@@ -487,7 +492,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
             User lastModifiedUser = state.getLastModifiedBy();
             final HashMap<String, Object> currentStateDetail = new HashMap<>();
             currentStateDetail.put("date", state.getLastModifiedDate());
-            currentStateDetail.put("updatedBy", !lastModifiedUser.getType().equals(UserType.EMPLOYEE) ? tradeLicense.getLicensee().getApplicantName() : lastModifiedUser.getName());
+            currentStateDetail.put("updatedBy", lastModifiedUser.getType().equals(UserType.CITIZEN) ? tradeLicense.getLicensee().getApplicantName() : lastModifiedUser.getName());
             currentStateDetail.put("status", "END".equals(state.getValue()) ? "Completed" : state.getValue());
             currentStateDetail.put("comments", defaultString(state.getComments()));
             User ownerUser = state.getOwnerUser();
