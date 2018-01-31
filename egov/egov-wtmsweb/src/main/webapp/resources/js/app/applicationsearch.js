@@ -70,8 +70,6 @@ jQuery(document).ready(function ($) {
 	    		return false;
 	    });
 		
-	
-	
 	  
 		function validRange(start, end) {
 	        var startDate = Date.parse(start);
@@ -122,7 +120,10 @@ jQuery(document).ready(function ($) {
 		tableContainer.fnFilter(this.value);
 	});
 	
-	$('#aplicationSearchResults').on('click','tbody tr',function() {
+	$('#aplicationSearchResults').on('click','tbody tr',function(e) {
+	    var elementType = $(e.target).prop('nodeName');
+
+		if(elementType != 'BUTTON'){
 		tableContainer.$('tr.row_selected').removeClass('row_selected');
         $(this).addClass('row_selected');
         var url= tableContainer.fnGetData( this,1);
@@ -130,6 +131,7 @@ jQuery(document).ready(function ($) {
 		$('#applicationSearchRequestForm').attr('action', url);
 		$('#applicationSearchRequestForm').attr('mode', 'search');
 		window.open(url,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
+		}
 		 
 	});
 	
@@ -161,9 +163,76 @@ jQuery(document).ready(function ($) {
 		$('#searchResultDiv').hide();
 	});
 
-	
+	$("#aplicationSearchResults").on('click','tbody tr td  .view',function(event) {
+		var moduleName = reportdatatable.fnGetData($(this).parent().parent(),11);
+		var applicantName = reportdatatable.fnGetData($(this).parent().parent(),4);
+		var consumerCode = reportdatatable.fnGetData($(this).parent().parent(),10);
+		var applicantAddress = reportdatatable.fnGetData($(this).parent().parent(),6);
+		var url = reportdatatable.fnGetData($(this).parent().parent(),1);
+		if(consumerCode=='' || consumerCode === null){
+			bootbox.alert("you can't link the application which is under process")
+			
+		}
+		else{
+		bootbox.confirm({
+							    message: "Do you want to link\n" +
+							    		"consumer Number " + consumerCode  + 
+							    		" with applicant Name "+ applicantName +
+							    		" and applicant address "+ applicantAddress +
+							    		"\nto your account",
+							    buttons: {
+							        confirm: {
+							            label: 'Yes',
+							            className: 'btn-primary'
+							        },
+							        cancel: {
+							            label: 'No',
+							            className: 'btn-danger'
+							        }
+							    },
+							    callback: function(result) {
+									if (result) {
+										openPopupPage("/portal/citizen/linkconnection/",consumerCode,moduleName,url,applicantName);
+									} else {
+										event.stopPropagation();
+										event.preventDefault();
+										
+									}
+								}
+							});
+		
+		}
+		
+	});
 	
 });
+function openPopupPage(relativeUrl,consumerCode,moduleName,url,applicantName)
+{
+ var param = { 'consumerCode' : consumerCode, 'moduleName': moduleName ,'url': url,'applicantName':applicantName };
+ OpenWindowWithPost(relativeUrl, "width=1000, height=600, left=100, top=100, resizable=yes, scrollbars=yes", param);
+}
+ 
+
+function OpenWindowWithPost(url, windowoption,params)
+{
+	 var form = document.createElement("form");
+	 form.setAttribute("action", url);
+	// form.setAttribute("target", name);
+	 form.setAttribute("method", "post");
+	 for (var i in params)
+	 {
+	   if (params.hasOwnProperty(i))
+	   {
+	     var input = document.createElement('input');
+	     input.type = 'hidden';
+	     input.name = i;
+	     input.value = params[i];
+	     form.appendChild(input);
+	   }
+	 }
+	 document.body.appendChild(form);
+	 form.submit();
+	}
 
 $(document).on("keypress", 'form', function (e) {
     var code = e.keyCode || e.which;
@@ -173,13 +242,14 @@ $(document).on("keypress", 'form', function (e) {
     }
 });
 
+var reportdatatable;
 function submitForm(){
 	$('.loader-class').modal('show', {backdrop: 'static'});
 	$.post("/wtms/elastic/appSearch/", $('#applicationSearchRequestForm').serialize())
 	.done(function (searchResult) {
 		//console.log(JSON.stringify(searchResult));
 		
-		tableContainer.dataTable({
+		reportdatatable = tableContainer.dataTable({
 			destroy:true,
 			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
 			"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
@@ -195,11 +265,25 @@ function submitForm(){
 			{title: 'Channel', data: 'source'},
 			{title: 'Applicant Address', data: 'applicationAddress'},
 			{title: 'Status', data: 'applicationStatus'},
-			{title: 'Current Owner', data: 'ownername'}
+			{title: 'Current Owner', data: 'ownername'},
+			{title:'action', "data" : null, "sClass" : "text-center", "target":-1,"bVisible": false,
+			    sortable: false,
+			    "render": function ( data, type, full, meta ) {
+			       	return '<button type="button" id ="viewbutton" class="btn btn-xs btn-secondary view"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;&nbsp;LINK</button>';
+			    }
+			},
+			{ title: 'Counsumer code', data: 'consumerCode', "bVisible": false
+				},
+				{
+					title: 'Module code', data: 'moduleName', "bVisible": false
+				}
 			],
 			"aaSorting": [[1, 'desc']]
 		});
-		
+	    if($('#citizenRole').val()=='true'){
+	    	console.log($('#citizenRole').val());
+	    	reportdatatable.fnSetColumnVis(9, true);
+	    }
 	});
 	$('.loader-class').modal('hide');
 }
