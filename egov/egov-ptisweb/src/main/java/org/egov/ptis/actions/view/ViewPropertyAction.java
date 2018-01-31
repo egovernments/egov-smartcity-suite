@@ -64,6 +64,8 @@ import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
+import org.egov.ptis.domain.dao.property.PropertyMutationDAO;
+import org.egov.ptis.domain.dao.property.PropertyMutationHibDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.document.DocumentTypeDetails;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
@@ -140,6 +142,8 @@ public class ViewPropertyAction extends BaseFormAction {
     private transient PersistenceService<VacancyRemission, Long> vacancyRemissionPersistenceService;
     @Autowired
     private transient PropertyService propService;
+    @Autowired
+    private transient PropertyMutationDAO propertyMutationDAO;
     @PersistenceContext
     private transient EntityManager entityManager;
 
@@ -270,17 +274,31 @@ public class ViewPropertyAction extends BaseFormAction {
             }
             if (applicationNo != null && !applicationNo.isEmpty())
                 return "viewApplication";
-            else {
-                viewMap.put(DOCUMENTNO,
-                        basicProperty.getRegdDocNo() != null ? basicProperty.getRegdDocNo() : StringUtils.EMPTY);
-                viewMap.put(DOCUMENTDATE, basicProperty.getRegdDocDate() != null ? basicProperty.getRegdDocDate() : null);
-                return "view";
-            }
+			else {
+				getPropertyDocumentDetails();
+				return "view";
+			}
         } catch (final Exception e) {
             LOGGER.error("Exception in View Property: ", e);
             throw new ApplicationRuntimeException("Exception in View Property : " + e);
         }
     }
+
+	private void getPropertyDocumentDetails() {
+		if (propertyMutationDAO.getLatestApprovedMutationForAssessmentNo(basicProperty.getUpicNo()) != null) {
+			PropertyMutation propertyMutation = propertyMutationDAO
+					.getLatestApprovedMutationForAssessmentNo(basicProperty.getUpicNo());
+			viewMap.put(DOCUMENTNO,
+					propertyMutation.getDeedNo() != null ? propertyMutation.getDeedNo() : StringUtils.EMPTY);
+			viewMap.put(DOCUMENTDATE,
+					propertyMutation.getDeedDate() != null ? propertyMutation.getDeedDate() : null);
+		} else {
+			viewMap.put(DOCUMENTNO,
+					basicProperty.getRegdDocNo() != null ? basicProperty.getRegdDocNo() : StringUtils.EMPTY);
+			viewMap.put(DOCUMENTDATE,
+					basicProperty.getRegdDocDate() != null ? basicProperty.getRegdDocDate() : null);
+		}
+	}
 
     private void checkIsDemandActive(final Property property) {
         if (LOGGER.isDebugEnabled())
