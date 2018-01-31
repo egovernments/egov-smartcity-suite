@@ -155,7 +155,7 @@ public class UpdateWaterConnectionExecutionController {
     @GetMapping(value = "/search-result", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public List<MeterCost> getMeterDetails() {
-        return meterCostService.findAll();
+        return meterCostService.getActiveMeterCostList();
     }
 
     @PostMapping(value = "/search-result", produces = MediaType.APPLICATION_JSON_VALUE)
