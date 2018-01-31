@@ -125,6 +125,7 @@ import static org.egov.infra.utils.FileUtils.addFilesToZip;
 import static org.egov.infra.utils.FileUtils.byteArrayToFile;
 import static org.egov.infra.utils.FileUtils.toByteArray;
 import static org.egov.infra.utils.StringUtils.append;
+import static org.egov.infra.utils.StringUtils.appendTimestamp;
 import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
 import static org.egov.tl.utils.Constants.BUTTONREJECT;
 import static org.egov.tl.utils.Constants.CITY_GRADE_CORPORATION;
@@ -261,13 +262,16 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
     @ReadOnly
     public ReportOutput generateLicenseCertificate(License license, boolean isProvisional) {
+        ReportOutput reportOutput;
         if (CITY_GRADE_CORPORATION.equals(cityService.getCityGrade())) {
-            return reportService.createReport(
+            reportOutput = reportService.createReport(
                     new ReportRequest("tl_licenseCertificateForCorp", license, getReportParamsForCertificate(license, isProvisional)));
         } else {
-            return reportService.createReport(
+            reportOutput = reportService.createReport(
                     new ReportRequest("tl_licenseCertificate", license, getReportParamsForCertificate(license, isProvisional)));
         }
+        reportOutput.setReportName(appendTimestamp(license.getLicenseNumber().replace("/", "_")));
+        return reportOutput;
     }
 
     private Map<String, Object> getReportParamsForCertificate(License license, boolean isProvisional) {
