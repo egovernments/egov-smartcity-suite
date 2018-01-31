@@ -47,6 +47,9 @@
  */
 package org.egov.wtms.application.repository;
 
+import java.util.Date;
+import java.util.List;
+
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
@@ -60,9 +63,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import java.util.Date;
-import java.util.List;
 
 @Repository
 public interface WaterConnectionDetailsRepository extends JpaRepository<WaterConnectionDetails, Long> {
@@ -134,7 +134,7 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
     @Query(" from WaterConnectionDetails WCD where WCD.connectionStatus in(:status)"
             + " and WCD.connection.propertyIdentifier =:propertyIdentifier")
     WaterConnectionDetails getConnectionDetailsInWorkflow(@Param("propertyIdentifier") String propertyIdentifier,
-            @Param("status") ConnectionStatus Status);
+            @Param("status") ConnectionStatus status);
 
     WaterConnectionDetails findByConnection_PropertyIdentifierAndConnectionStatusAndConnection_ParentConnectionIsNull(
             String propertyIdentifier, ConnectionStatus connectionStatus);
@@ -146,7 +146,7 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
     WaterConnectionDetails findByDemand(@Param("demand") EgDemand demand);
 
     @Query("select wcd from MeterReadingConnectionDetails wcd where wcd.waterConnectionDetails.id=:waterConnDetId order by wcd.id desc")
-    List<MeterReadingConnectionDetails> findPreviousMeterReadingReading(@Param("waterConnDetId") Long waterConnDetId);
+    List<MeterReadingConnectionDetails> findPreviousMeterReading(@Param("waterConnDetId") Long waterConnDetId);
 
     @Query("select wcd from WaterConnectionDetails wcd  where wcd.connection.id  in (select wc.id from WaterConnection wc where wc.parentConnection.id = :parentId) ")
     List<WaterConnectionDetails> getAllConnectionDetailsByParentConnection(@Param("parentId") Long parentId);

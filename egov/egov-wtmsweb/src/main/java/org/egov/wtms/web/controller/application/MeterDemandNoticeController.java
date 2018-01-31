@@ -154,7 +154,7 @@ public class MeterDemandNoticeController {
                 billObj = billlist.get(0);
             final MeterReadingConnectionDetails meterReadingpriviousObj = new MeterReadingConnectionDetails();
             final List<MeterReadingConnectionDetails> meterReadingpriviousObjlist = waterConnectionDetailsRepository
-                    .findPreviousMeterReadingReading(waterConnectionDetails.getId());
+                    .findPreviousMeterReading(waterConnectionDetails.getId());
             if (meterReadingpriviousObjlist.size() > 1) {
                 meterReadingpriviousObj.setCurrentReading(meterReadingpriviousObjlist.get(1).getCurrentReading());
                 if (meterReadingpriviousObjlist.get(1).getCurrentReadingDate() != null)
@@ -165,8 +165,10 @@ public class MeterDemandNoticeController {
                 if (waterConnectionDetails.getConnection().getInitialReading() != null)
                     meterReadingpriviousObj.setCurrentReading(waterConnectionDetails.getConnection()
                             .getInitialReading());
-                else
+                else if (waterConnectionDetails.getExistingConnection() == null)
                     meterReadingpriviousObj.setCurrentReading(0l);
+                else
+                    meterReadingpriviousObj.setCurrentReading(waterConnectionDetails.getExistingConnection().getCurrentReading());
                 meterReadingpriviousObj.setCurrentReadingDate(waterConnectionDetails.getExecutionDate());
             }
             final Format formattermonth = new SimpleDateFormat("MMMM");
