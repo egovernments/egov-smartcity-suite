@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -61,7 +61,7 @@ public class ReportOutput implements Serializable {
     private static final long serialVersionUID = -2559611205589631905L;
     private byte[] reportOutputData;
     private ReportFormat reportFormat;
-    private String reportName;
+    private String reportName = "report";
     private ReportDisposition reportDisposition = ReportDisposition.INLINE;
 
     public ReportOutput() {
