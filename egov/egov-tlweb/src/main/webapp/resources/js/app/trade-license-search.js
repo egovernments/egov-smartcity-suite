@@ -392,7 +392,8 @@ $(document).ready(function () {
                                     statusId: status,
                                     expiryYear: expiryYear,
                                     inactive: inactive,
-                                    applicationTypeId:$('#appType').val()
+                                    applicationTypeId:$('#appType').val(),
+                                    natureOfBusinessId:$('#natureOfBusiness').val()
                                 }
                             }
                         },
@@ -505,7 +506,7 @@ function goToAction(obj, id) {
     else if (obj.options[obj.selectedIndex].innerHTML == 'Generate Demand')
         window.open("/tl/demand/generate/" + id, 'gd' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
     else if (obj.options[obj.selectedIndex].innerHTML == 'Print Acknowledgment')
-        window.open("/tl/license/acknowledgement/" + id);
+        window.open("/tl/license/acknowledgement/" + id );
     else if (obj.options[obj.selectedIndex].innerHTML =='Closure Endorsement Notice')
         window.open("/tl/license/closure/endorsementnotice/" + id);
     $(obj).val('');
