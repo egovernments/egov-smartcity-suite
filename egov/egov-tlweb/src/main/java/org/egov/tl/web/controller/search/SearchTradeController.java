@@ -53,6 +53,7 @@ import org.egov.tl.entity.contracts.SearchForm;
 import org.egov.tl.service.LicenseAppTypeService;
 import org.egov.tl.service.LicenseCategoryService;
 import org.egov.tl.service.LicenseStatusService;
+import org.egov.tl.service.NatureOfBusinessService;
 import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.web.response.adaptor.SearchTradeResultHelperAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,6 +88,9 @@ public class SearchTradeController {
     @Autowired
     private LicenseAppTypeService licenseAppTypeService;
 
+    @Autowired
+    private NatureOfBusinessService natureOfBusinessService;
+
     @ModelAttribute("searchForm")
     public SearchForm searchForm() {
         return new SearchForm();
@@ -98,6 +102,7 @@ public class SearchTradeController {
         model.addAttribute("subCategoryList", Collections.emptyList());
         model.addAttribute("statusList", licenseStatusService.findAll());
         model.addAttribute("applicationType", licenseAppTypeService.findByDisplayTrue());
+        model.addAttribute("natureOfBusiness", natureOfBusinessService.getNatureOfBusinesses());
         return "searchtrade-license";
     }
 

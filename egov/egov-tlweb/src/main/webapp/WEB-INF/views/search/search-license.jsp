@@ -93,14 +93,14 @@
                         </form:select>
                     </div>
                     <label class="col-sm-2 control-label text-right"> <spring:message
-                            code='search.license.status'/></label>
+                            code='lbl.natureofbusiness'/></label>
                     <div class="col-sm-3 add-margin">
-                        <form:select path="statusId" id="status" cssClass="form-control"
+                        <form:select path="natureOfBusinessId" id="natureOfBusiness" cssClass="form-control"
                                      cssErrorClass="form-control error">
                             <form:option value="">
-                                <spring:message code="lbl.category.select"/>
+                                <spring:message code="lbl.select"/>
                             </form:option>
-                            <form:options items="${statusList}" itemValue="id" itemLabel="name"/>
+                            <form:options items="${natureOfBusiness}" itemValue="id" itemLabel="name"/>
                         </form:select>
                     </div>
                 </div>
@@ -165,6 +165,19 @@
                         <form:hidden path="mobileNo" id="mobileNo"/>
                     </div>
                     <label class="col-sm-2 control-label text-right"> <spring:message
+                            code='search.license.status'/></label>
+                    <div class="col-sm-3 add-margin">
+                        <form:select path="statusId" id="status" cssClass="form-control"
+                                     cssErrorClass="form-control error">
+                            <form:option value="">
+                                <spring:message code="lbl.category.select"/>
+                            </form:option>
+                            <form:options items="${statusList}" itemValue="id" itemLabel="name"/>
+                        </form:select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label text-right"> <spring:message
                             code='search.license.inactive'/></label>
                     <div class="col-sm-3 add-margin">
                         <form:checkbox path="inactive" id="inactive"/>

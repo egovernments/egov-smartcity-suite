@@ -91,6 +91,8 @@ public final class SearchTradeSpec {
                 predicate.getExpressions()
                         .add(builder.equal(root.get("licenseAppType").get("id"), searchForm.getApplicationTypeId()));
             predicate.getExpressions().add(builder.isNotNull(root.get("applicationNumber")));
+            if (searchForm.getNatureOfBusinessId() != null)
+                predicate.getExpressions().add(builder.equal(root.get("natureOfBusiness"), searchForm.getNatureOfBusinessId()));
 
             return predicate;
         };

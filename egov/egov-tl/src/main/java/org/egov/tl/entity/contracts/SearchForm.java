@@ -83,6 +83,7 @@ public class SearchForm extends DataTableSearchRequest {
     private String active;
     private Boolean inactive;
     private Long applicationTypeId;
+    private Long natureOfBusinessId;
 
     public SearchForm() {
         // For form binding
@@ -105,6 +106,7 @@ public class SearchForm extends DataTableSearchRequest {
         setExpiryYear(expiryYear);
         setDateOfExpiry(license.getDateOfExpiry());
         setApplicationTypeId(license.getLicenseAppType().getId());
+        setNatureOfBusinessId(license.getNatureOfBusiness().getId());
         addActions(license, userRoles);
     }
 
@@ -320,5 +322,13 @@ public class SearchForm extends DataTableSearchRequest {
 
     public void setApplicationTypeId(Long applicationTypeId) {
         this.applicationTypeId = applicationTypeId;
+    }
+
+    public Long getNatureOfBusinessId() {
+        return natureOfBusinessId;
+    }
+
+    public void setNatureOfBusinessId(Long natureOfBusinessId) {
+        this.natureOfBusinessId = natureOfBusinessId;
     }
 }
