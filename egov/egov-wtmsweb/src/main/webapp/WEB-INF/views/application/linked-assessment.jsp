@@ -234,7 +234,7 @@
 										<div class="col-xs-3 add-margin"><spring:message
 			code="lbl.propertyaddress" /></div>
 										<div class="col-xs-9 add-margin ">
-										<form:input class="form-control patternvalidation" data-pattern="number" maxlength="50" id="actAddress" path="activeAssessmentDetails.address" />
+										<form:input class="form-control patternvalidation" data-pattern="number" maxlength="150" id="actAddress" path="activeAssessmentDetails.address" />
 		<form:errors path="activeAssessmentDetails.address" cssClass="add-margin error-msg" />
 										</div>
 									</div>
