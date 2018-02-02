@@ -159,7 +159,7 @@ public class BudgetCheckService {
     }
 
     public BigDecimal getAllocatedBudget(final BudgetCheck budgetCheck) {
-        BigDecimal allocatedBudgetAmount, budgetAmountForYear, planningPercentForYear;
+        BigDecimal  budgetAmountForYear, planningPercentForYear;
         final Scheme scheme = schemeService.findByCode(budgetCheck.getSchemeCode());
         final SubScheme subScheme = subSchemeService.findByCode(budgetCheck.getSubSchemeCode());
         final List<BudgetGroup> budgetheadid = new ArrayList<>();
@@ -176,9 +176,11 @@ public class BudgetCheckService {
         paramMap.put("budgetheadid", budgetheadid);
         paramMap.put("financialyearid", financialYearHibernateDAO.getFinYearByDate(new Date()).getId());
         budgetAmountForYear = budgetDetailsDAO.getBudgetedAmtForYear(paramMap);
+        
         paramMap.put(Constants.DEPTID, departmentService.getDepartmentByCode(budgetCheck.getDepartmentCode()).getId().intValue());
         planningPercentForYear = budgetDetailsDAO.getPlanningPercentForYear(paramMap);
-        return (budgetAmountForYear.multiply(budgetAmountForYear)).setScale(2, BigDecimal.ROUND_UP);
+        
+        return ((budgetAmountForYear.multiply(planningPercentForYear)).divide(new BigDecimal(100))).setScale(2, BigDecimal.ROUND_UP);
     }
 
 }
