@@ -47,6 +47,13 @@
  */
 package org.egov.restapi.service;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
@@ -55,19 +62,16 @@ import org.egov.commons.service.FunctionService;
 import org.egov.commons.service.FundService;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.model.budget.BudgetGroup;
 import org.egov.restapi.constants.RestApiConstants;
 import org.egov.restapi.model.BudgetCheck;
 import org.egov.restapi.model.RestErrors;
 import org.egov.services.budget.BudgetGroupService;
 import org.egov.services.masters.SchemeService;
 import org.egov.services.masters.SubSchemeService;
+import org.egov.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 @Service
 public class BudgetCheckService {
@@ -137,7 +141,6 @@ public class BudgetCheckService {
 
         final List<Long> budgetheadid = new ArrayList<>();
         budgetheadid.add(budgetGroupService.getBudgetGroupByName(budgetCheck.getBudgetHeadName()).getId());
-
         budgetAvailable = budgetDetailsDAO.getPlanningBudgetAvailable(
                 financialYearHibernateDAO.getFinYearByDate(new Date()).getId(),
                 Integer.parseInt(
@@ -153,6 +156,29 @@ public class BudgetCheckService {
                 Integer.parseInt(fundService.findByCode(budgetCheck.getFundCode()).getId().toString()));
 
         return budgetAvailable.toString();
+    }
+
+    public BigDecimal getAllocatedBudget(final BudgetCheck budgetCheck) {
+        BigDecimal allocatedBudgetAmount, budgetAmountForYear, planningPercentForYear;
+        final Scheme scheme = schemeService.findByCode(budgetCheck.getSchemeCode());
+        final SubScheme subScheme = subSchemeService.findByCode(budgetCheck.getSubSchemeCode());
+        final List<BudgetGroup> budgetheadid = new ArrayList<>();
+        budgetheadid.add(budgetGroupService.getBudgetGroupByName(budgetCheck.getBudgetHeadName()));
+        Map<String, Object> paramMap = new HashMap<String, Object>();
+        // prepare paramMap
+        paramMap.put(Constants.DEPTID, departmentService.getDepartmentByCode(budgetCheck.getDepartmentCode()).getId());
+        paramMap.put(Constants.FUNCTIONID, functionService.findByCode(budgetCheck.getFunctionCode()).getId());
+        paramMap.put(Constants.FUNCTIONARYID, null);
+        paramMap.put(Constants.SCHEMEID, scheme == null ? null : Integer.parseInt(scheme.getId().toString()));
+        paramMap.put(Constants.SUBSCHEMEID, subScheme == null ? null : Integer.parseInt(subScheme.getId().toString()));
+        paramMap.put(Constants.FUNDID, Integer.parseInt(fundService.findByCode(budgetCheck.getFundCode()).getId().toString()));
+        paramMap.put(Constants.BOUNDARYID, null);
+        paramMap.put("budgetheadid", budgetheadid);
+        paramMap.put("financialyearid", financialYearHibernateDAO.getFinYearByDate(new Date()).getId());
+        budgetAmountForYear = budgetDetailsDAO.getBudgetedAmtForYear(paramMap);
+        paramMap.put(Constants.DEPTID, departmentService.getDepartmentByCode(budgetCheck.getDepartmentCode()).getId().intValue());
+        planningPercentForYear = budgetDetailsDAO.getPlanningPercentForYear(paramMap);
+        return (budgetAmountForYear.multiply(budgetAmountForYear)).setScale(2, BigDecimal.ROUND_UP);
     }
 
 }
