@@ -80,6 +80,13 @@ import java.util.List;
 @SuppressWarnings("unchecked")
 public class SimpleWorkflowService<T extends StateAware> implements WorkflowService<T> {
 
+    private static final String WF_ACTION_ARG = "action";
+    private static final String WF_ITEM_ARG = "wfItem";
+    private static final String PERSISTENCE_SERVICE_ARG = "persistenceService";
+    private static final String CURRENT_DESIGNATION = "currentDesignation";
+    private static final String DEPARTMENT = "department";
+    private static final String FROM_QTY = "fromQty";
+    private static final String TO_QTY = "toQty";
     private final PersistenceService<T, Long> stateAwarePersistenceService;
 
     @Autowired
@@ -94,8 +101,8 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
 
     @Override
     public T transition(final WorkflowAction workflowAction, final T stateAware, final String comments) {
-        scriptService.executeScript(getScript(stateAware, workflowAction.getName()), ScriptService.createContext("action", this,
-                "wfItem", stateAware, "persistenceService", this.stateAwarePersistenceService, "workflowService", this,
+        scriptService.executeScript(getScript(stateAware, workflowAction.getName()), ScriptService.createContext(WF_ACTION_ARG, this,
+                WF_ITEM_ARG, stateAware, PERSISTENCE_SERVICE_ARG, this.stateAwarePersistenceService, "workflowService", this,
                 "comments", comments));
         return this.stateAwarePersistenceService.persist(stateAware);
     }
@@ -114,7 +121,7 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
         final String scriptName = stateAware.getStateType() + ".workflow.validactions";
         final Script trasitionScript = this.scriptService.getByName(scriptName);
         final List<String> actionNames = (List<String>) scriptService.executeScript(trasitionScript,
-                ScriptService.createContext("wfItem", stateAware, "workflowService", this, "persistenceService",
+                ScriptService.createContext(WF_ITEM_ARG, stateAware, "workflowService", this, PERSISTENCE_SERVICE_ARG,
                         this.stateAwarePersistenceService));
         final List<WorkflowAction> savedWorkflowActions = workflowActionService
                 .getAllWorkflowActionByTypeAndActionNames(stateAware.getStateType(), actionNames);
@@ -123,21 +130,22 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
 
     public Object execute(final T stateAware) {
         final Script script = getScript(stateAware, "");
-        return scriptService.executeScript(script, ScriptService.createContext("action", this, "wfItem", stateAware,
-                "persistenceService", this.stateAwarePersistenceService));
+        return scriptService.executeScript(script, ScriptService.createContext(WF_ACTION_ARG, this, WF_ITEM_ARG, stateAware,
+                PERSISTENCE_SERVICE_ARG, this.stateAwarePersistenceService));
     }
 
     public Object execute(final T stateAware, final String comments) {
         final Script script = getScript(stateAware, "");
-        return scriptService.executeScript(script, ScriptService.createContext("action", this, "wfItem", stateAware,
-                "persistenceService", this.stateAwarePersistenceService, "comments", comments));
+        return scriptService.executeScript(script, ScriptService.createContext(WF_ACTION_ARG, this, WF_ITEM_ARG, stateAware,
+                PERSISTENCE_SERVICE_ARG, this.stateAwarePersistenceService, "comments", comments));
     }
 
     private Script getScript(final T stateAware, final String actionName) {
         Script script = null;
 
         if (!actionName.isEmpty())
-            script = this.scriptService.getByName(stateAware.getStateType() + ".workflow." + actionName);
+            script = this.scriptService.getByName(new StringBuilder(10).append(stateAware.getStateType())
+                    .append(".workflow.").append(actionName).toString());
 
         if (script == null)
             script = scriptService.getByName(stateAware.getStateType() + ".workflow");
@@ -188,7 +196,7 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
         final Criterion crit1 = Restrictions.le("fromDate", date == null ? new Date() : date);
         final Criterion crit2 = Restrictions.ge("toDate", date == null ? new Date() : date);
         final Criterion crit3 = Restrictions.conjunction().add(crit1).add(crit2);
-        final Criterion criteriaDesignation = Restrictions.ilike("currentDesignation",
+        final Criterion criteriaDesignation = Restrictions.ilike(CURRENT_DESIGNATION,
                 org.apache.commons.lang.StringUtils.isNotBlank(designation) ? designation : "");
         wfMatrixCriteria.add(criteriaDesignation);
         wfMatrixCriteria.add(Restrictions.or(crit3, crit1));
@@ -204,7 +212,7 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
         if (objectTypeList.isEmpty()) {
             final Criteria defaulfWfMatrixCriteria = commonWorkFlowMatrixCriteria(type, additionalRule, currentState,
                     pendingActions);
-            defaulfWfMatrixCriteria.add(Restrictions.eq("department", "ANY"));
+            defaulfWfMatrixCriteria.add(Restrictions.eq(DEPARTMENT, "ANY"));
             final List<WorkFlowMatrix> defaultObjectTypeList = defaulfWfMatrixCriteria.list();
             if (defaultObjectTypeList.isEmpty())
                 return null;
@@ -219,15 +227,16 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
     }
 
     private WorkFlowMatrix getWorkflowMatrixObj(final String type, final String additionalRule,
-                                                final String currentState, final String pendingActions, final String designation, final Criteria wfMatrixCriteria) {
+                                                final String currentState, final String pendingActions,
+                                                final String designation, final Criteria wfMatrixCriteria) {
         final List<WorkFlowMatrix> objectTypeList = wfMatrixCriteria.list();
 
         if (objectTypeList.isEmpty()) {
             final Criteria defaulfWfMatrixCriteria = commonWorkFlowMatrixCriteria(type, additionalRule, currentState,
                     pendingActions);
-            defaulfWfMatrixCriteria.add(Restrictions.eq("department", "ANY"));
+            defaulfWfMatrixCriteria.add(Restrictions.eq(DEPARTMENT, "ANY"));
             if (org.apache.commons.lang.StringUtils.isNotBlank(designation))
-                defaulfWfMatrixCriteria.add(Restrictions.ilike("currentDesignation", designation));
+                defaulfWfMatrixCriteria.add(Restrictions.ilike(CURRENT_DESIGNATION, designation));
             final List<WorkFlowMatrix> defaultObjectTypeList = defaulfWfMatrixCriteria.list();
             if (defaultObjectTypeList.isEmpty())
                 return null;
@@ -247,15 +256,15 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
         final Criteria wfMatrixCriteria = commonWorkFlowMatrixCriteria(type, additionalRule, currentState,
                 pendingActions);
         if (department != null && !"".equals(department.trim()))
-            wfMatrixCriteria.add(Restrictions.eq("department", department));
+            wfMatrixCriteria.add(Restrictions.eq(DEPARTMENT, department));
 
         // Added restriction for amount rule
         if (amountRule != null && BigDecimal.ZERO.compareTo(amountRule) != 0) {
-            final Criterion amount1st = Restrictions.conjunction().add(Restrictions.le("fromQty", amountRule))
-                    .add(Restrictions.ge("toQty", amountRule));
+            final Criterion amount1st = Restrictions.conjunction().add(Restrictions.le(FROM_QTY, amountRule))
+                    .add(Restrictions.ge(TO_QTY, amountRule));
 
-            final Criterion amount2nd = Restrictions.conjunction().add(Restrictions.le("fromQty", amountRule))
-                    .add(Restrictions.isNull("toQty"));
+            final Criterion amount2nd = Restrictions.conjunction().add(Restrictions.le(FROM_QTY, amountRule))
+                    .add(Restrictions.isNull(TO_QTY));
             wfMatrixCriteria.add(Restrictions.disjunction().add(amount1st).add(amount2nd));
 
         }
@@ -268,21 +277,21 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
         final Criteria wfMatrixCriteria = commonWorkFlowMatrixCriteria(type, additionalRule, currentState,
                 pendingActions);
         if (department != null && !"".equals(department.trim()))
-            wfMatrixCriteria.add(Restrictions.eq("department", department));
+            wfMatrixCriteria.add(Restrictions.eq(DEPARTMENT, department));
 
         // Added restriction for amount rule
         if (amountRule != null && BigDecimal.ZERO.compareTo(amountRule) != 0) {
-            final Criterion amount1st = Restrictions.conjunction().add(Restrictions.le("fromQty", amountRule))
-                    .add(Restrictions.ge("toQty", amountRule));
+            final Criterion amount1st = Restrictions.conjunction().add(Restrictions.le(FROM_QTY, amountRule))
+                    .add(Restrictions.ge(TO_QTY, amountRule));
 
-            final Criterion amount2nd = Restrictions.conjunction().add(Restrictions.le("fromQty", amountRule))
-                    .add(Restrictions.isNull("toQty"));
+            final Criterion amount2nd = Restrictions.conjunction().add(Restrictions.le(FROM_QTY, amountRule))
+                    .add(Restrictions.isNull(TO_QTY));
             wfMatrixCriteria.add(Restrictions.disjunction().add(amount1st).add(amount2nd));
 
         }
 
         if (org.apache.commons.lang.StringUtils.isNotBlank(designation))
-            wfMatrixCriteria.add(Restrictions.ilike("currentDesignation", designation));
+            wfMatrixCriteria.add(Restrictions.ilike(CURRENT_DESIGNATION, designation));
 
         return wfMatrixCriteria;
     }
@@ -292,18 +301,18 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
 
         final Criteria wfMatrixCriteria = previousWorkFlowMatrixCriteria(type, additionalRule, currentState, pendingActions);
         if (department != null && !"".equals(department))
-            wfMatrixCriteria.add(Restrictions.eq("department", department));
+            wfMatrixCriteria.add(Restrictions.eq(DEPARTMENT, department));
         else
-            wfMatrixCriteria.add(Restrictions.eq("department", "ANY"));
+            wfMatrixCriteria.add(Restrictions.eq(DEPARTMENT, "ANY"));
 
         // Added restriction for amount rule
         if (amountRule != null && BigDecimal.ZERO.compareTo(amountRule) != 0) {
             final Criterion amount1st = Restrictions.conjunction()
-                    .add(Restrictions.le("fromQty", amountRule))
-                    .add(Restrictions.ge("toQty", amountRule));
+                    .add(Restrictions.le(FROM_QTY, amountRule))
+                    .add(Restrictions.ge(TO_QTY, amountRule));
             final Criterion amount2nd = Restrictions.conjunction()
-                    .add(Restrictions.le("fromQty", amountRule))
-                    .add(Restrictions.isNull("toQty"));
+                    .add(Restrictions.le(FROM_QTY, amountRule))
+                    .add(Restrictions.isNull(TO_QTY));
             wfMatrixCriteria.add(Restrictions.disjunction().add(amount1st)
                     .add(amount2nd));
 
