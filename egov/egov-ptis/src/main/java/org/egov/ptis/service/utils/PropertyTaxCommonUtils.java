@@ -77,6 +77,7 @@ import org.egov.infra.workflow.entity.State;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.dao.property.PropertyMutationDAO;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
@@ -148,6 +149,9 @@ public class PropertyTaxCommonUtils {
         
     @Autowired
     private NotificationService notificationService;
+    
+    @Autowired
+    private PropertyMutationDAO propertyMutationDAO;
 
     /**
      * Gives the first half of the current financial year
@@ -798,5 +802,9 @@ public class PropertyTaxCommonUtils {
         oldSurroundings.setWestBoundary(propertyId.getWestBoundary() != null ? propertyId.getWestBoundary() : null);
         return oldSurroundings;
     }
+    
+	public PropertyMutation getLatestApprovedMutationForAssessmentNo(String assessmentNo) {
+		return propertyMutationDAO.getLatestApprovedMutationForAssessmentNo(assessmentNo);
+	}
 
 }

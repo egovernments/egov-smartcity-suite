@@ -64,7 +64,6 @@ import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
-import org.egov.ptis.domain.dao.property.PropertyMutationDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.document.DocumentTypeDetails;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
@@ -141,8 +140,6 @@ public class ViewPropertyAction extends BaseFormAction {
     private transient PersistenceService<VacancyRemission, Long> vacancyRemissionPersistenceService;
     @Autowired
     private transient PropertyService propService;
-    @Autowired
-    private transient PropertyMutationDAO propertyMutationDAO;
     @PersistenceContext
     private transient EntityManager entityManager;
 
@@ -284,8 +281,8 @@ public class ViewPropertyAction extends BaseFormAction {
     }
 
 	private void getPropertyDocumentDetails() {
-		if (propertyMutationDAO.getLatestApprovedMutationForAssessmentNo(basicProperty.getUpicNo()) != null) {
-			PropertyMutation propertyMutation = propertyMutationDAO
+		if (propertyTaxCommonUtils.getLatestApprovedMutationForAssessmentNo(basicProperty.getUpicNo()) != null) {
+			PropertyMutation propertyMutation = propertyTaxCommonUtils
 					.getLatestApprovedMutationForAssessmentNo(basicProperty.getUpicNo());
 			viewMap.put(DOCUMENTNO,
 					propertyMutation.getDeedNo() != null ? propertyMutation.getDeedNo() : StringUtils.EMPTY);
