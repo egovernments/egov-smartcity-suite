@@ -1212,12 +1212,10 @@ public class WaterConnectionDetailsService {
         final DonationDetails donationDetails = connectionDemandService.getDonationDetails(waterConnectionDetails);
         if (donationDetails == null)
             throw new ValidationException("donation.combination.required");
-        if (waterConnectionDetails.getConnectionType().equals(ConnectionType.NON_METERED)) {
-            final WaterRatesDetails waterRatesDetails = connectionDemandService
-                    .getWaterRatesDetailsForDemandUpdate(waterConnectionDetails);
-            if (waterRatesDetails == null)
-                throw new ValidationException("err.water.rate.not.found");
-        }
+        final WaterRatesDetails waterRatesDetails = connectionDemandService
+                .getWaterRatesDetailsForDemandUpdate(waterConnectionDetails);
+        if (waterRatesDetails == null)
+            throw new ValidationException("err.water.rate.not.found");
     }
 
     public String getApprovalPositionOnValidate(final Long approvalPositionId) {
@@ -1459,8 +1457,7 @@ public class WaterConnectionDetailsService {
             final JSONObject jsonObj = jsonArray.getJSONObject(i);
             final WaterConnectionDetails connectionDetails = findBy(jsonObj.getLong("id"));
             if (validateDonationDetails(connectionDetails)) {
-                if (!jsonObj.getString(EXECUTION_DATE).isEmpty() && connectionDetails != null
-                        && isNotBlank(jsonObj.getString(EXECUTION_DATE))) {
+                if (connectionDetails != null && isNotBlank(jsonObj.getString(EXECUTION_DATE))) {
                     connectionDetails
                             .setExecutionDate(DateUtils.toDateUsingDefaultPattern(jsonObj.getString(EXECUTION_DATE)));
                     if (connectionDetails.getExecutionDate() != null
