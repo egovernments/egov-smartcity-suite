@@ -48,8 +48,8 @@
 
 package org.egov.pgr.integration.ivrs.repository.specs;
 
-import org.egov.pgr.integration.ivrs.entiry.IVRSFeedback;
-import org.egov.pgr.integration.ivrs.entiry.contract.IVRSFeedbackSearchRequest;
+import org.egov.pgr.integration.ivrs.entity.IVRSFeedback;
+import org.egov.pgr.integration.ivrs.entity.contract.IVRSFeedbackSearchRequest;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.Predicate;

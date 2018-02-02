@@ -46,88 +46,44 @@
  *
  */
 
-package org.egov.pgr.integration.ivrs.entiry;
+package org.egov.pgr.integration.ivrs.entity.contract;
 
-import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+public class IVRSFeedbackUpdateResponse {
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+    private String crn = "";
 
-import static org.egov.pgr.integration.ivrs.entiry.IVRSRating.SEQ_IVRS_RATING;
+    private String status;
 
-@Entity
-@Table(name = "EGPGR_IVRS_RATING")
-@SequenceGenerator(name = SEQ_IVRS_RATING, sequenceName = SEQ_IVRS_RATING, allocationSize = 1)
-@Unique(fields = "name", enableDfltMsg = true)
-public class IVRSRating extends AbstractPersistable<Long> {
+    private String message;
 
-    protected static final String SEQ_IVRS_RATING = "SEQ_EGPGR_IVRS_RATING";
-    private static final long serialVersionUID = 5284597197319506583L;
+    private boolean success;
 
-    @Id
-    @GeneratedValue(generator = SEQ_IVRS_RATING, strategy = GenerationType.SEQUENCE)
-    private Long id;
-
-    @SafeHtml
-    @Length(min = 1, max = 64)
-    private String name;
-
-    @NotNull
-    private Integer weight;
-
-    @SafeHtml
-    @Length(max = 100)
-    private String discription;
-
-    private boolean requiredReview;
-
-    @Override
-    public Long getId() {
-        return this.id;
+    public IVRSFeedbackUpdateResponse(boolean success, String status, String message) {
+        this.success = success;
+        this.status = status;
+        this.message = message;
     }
 
-    @Override
-    protected void setId(final Long id) {
-        this.id = id;
+    public IVRSFeedbackUpdateResponse(boolean success, String crn, String status, String message) {
+        this.success = success;
+        this.crn = crn;
+        this.status = status;
+        this.message = message;
     }
 
-    public String getName() {
-        return name;
+    public String getCrn() {
+        return crn;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getStatus() {
+        return status;
     }
 
-    public Integer getWeight() {
-        return weight;
+    public String getMessage() {
+        return message;
     }
 
-    public void setWeight(Integer weight) {
-        this.weight = weight;
-    }
-
-    public String getDiscription() {
-        return discription;
-    }
-
-    public void setDiscription(String discription) {
-        this.discription = discription;
-    }
-
-    public boolean isRequiredReview() {
-        return requiredReview;
-    }
-
-    public void setRequiredReview(boolean requiredReview) {
-        this.requiredReview = requiredReview;
+    public boolean isSuccess() {
+        return success;
     }
 }

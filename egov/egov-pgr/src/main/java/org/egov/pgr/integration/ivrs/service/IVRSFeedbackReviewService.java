@@ -49,8 +49,8 @@
 package org.egov.pgr.integration.ivrs.service;
 
 import org.egov.pgr.entity.Complaint;
-import org.egov.pgr.integration.ivrs.entiry.IVRSFeedbackReview;
-import org.egov.pgr.integration.ivrs.entiry.IVRSFeedbackReviewHistory;
+import org.egov.pgr.integration.ivrs.entity.IVRSFeedbackReview;
+import org.egov.pgr.integration.ivrs.entity.IVRSFeedbackReviewHistory;
 import org.egov.pgr.integration.ivrs.repository.IVRSFeedbackReviewRepository;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintStatusService;

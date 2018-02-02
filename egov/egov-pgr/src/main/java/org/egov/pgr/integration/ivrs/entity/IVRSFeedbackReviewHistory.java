@@ -46,48 +46,69 @@
  *
  */
 
-package org.egov.pgr.integration.ivrs.entiry;
+package org.egov.pgr.integration.ivrs.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.pgr.entity.Complaint;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import static org.egov.pgr.integration.ivrs.entiry.IVRSFeedback.SEQ_IVRSFEEDBACK;
+import static org.egov.pgr.integration.ivrs.entity.IVRSFeedbackReviewHistory.SEQ_IVRS_FEEDBACKREVIEW_HISTORY;
 
 
 @Entity
-@Table(name = "EGPGR_IVRS_FEEDBACK")
-@Unique(fields = "complaint", enableDfltMsg = true)
-@SequenceGenerator(name = SEQ_IVRSFEEDBACK, sequenceName = SEQ_IVRSFEEDBACK, allocationSize = 1)
-public class IVRSFeedback extends AbstractAuditable {
+@Table(name = "EGPGR_IVRS_FEEDBACK_REVIEW_HISTORY")
+@SequenceGenerator(name = SEQ_IVRS_FEEDBACKREVIEW_HISTORY, sequenceName = SEQ_IVRS_FEEDBACKREVIEW_HISTORY, allocationSize = 1)
+public class IVRSFeedbackReviewHistory extends AbstractAuditable {
 
-    protected static final String SEQ_IVRSFEEDBACK = "SEQ_EGPGR_IVRS_FEEDBACK";
-    private static final long serialVersionUID = -50976413861068913L;
+    protected static final String SEQ_IVRS_FEEDBACKREVIEW_HISTORY = "SEQ_IVRS_FEEDBACK_REVIEW_HISTORY";
+    private static final long serialVersionUID = 1176499350876549092L;
 
     @Id
-    @GeneratedValue(generator = SEQ_IVRSFEEDBACK, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_IVRS_FEEDBACKREVIEW_HISTORY, strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @ManyToOne(targetEntity = IVRSFeedbackReview.class, fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "feedbackReview")
+    private IVRSFeedbackReview feedbackReview;
+
     @NotNull
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "complaint")
     private Complaint complaint;
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "ivrsRating")
-    private IVRSRating ivrsRating;
+    @JoinColumn(name = "rating")
+    private IVRSRating rating;
+
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "feedbackReason")
+    private IVRSFeedbackReason feedbackReason;
+
+    private String detail;
+
+    public IVRSFeedbackReviewHistory() {
+        //default for mvc
+    }
+
+    public IVRSFeedbackReviewHistory(IVRSFeedbackReview feedbackReview) {
+        setFeedbackReason(feedbackReview.getFeedbackReason());
+        setComplaint(feedbackReview.getComplaint());
+        setDetail(feedbackReview.getDetail());
+        setRating(feedbackReview.getRating());
+        setFeedbackReview(feedbackReview);
+    }
 
     @Override
     public Long getId() {
@@ -99,6 +120,14 @@ public class IVRSFeedback extends AbstractAuditable {
         this.id = id;
     }
 
+    public IVRSFeedbackReview getFeedbackReview() {
+        return feedbackReview;
+    }
+
+    public void setFeedbackReview(IVRSFeedbackReview feedbackReview) {
+        this.feedbackReview = feedbackReview;
+    }
+
     public Complaint getComplaint() {
         return complaint;
     }
@@ -107,12 +136,27 @@ public class IVRSFeedback extends AbstractAuditable {
         this.complaint = complaint;
     }
 
-    public IVRSRating getIvrsRating() {
-        return ivrsRating;
+    public IVRSRating getRating() {
+        return rating;
     }
 
-    public void setIvrsRating(IVRSRating ivrsRating) {
-        this.ivrsRating = ivrsRating;
+    public void setRating(IVRSRating rating) {
+        this.rating = rating;
+    }
+
+    public IVRSFeedbackReason getFeedbackReason() {
+        return feedbackReason;
+    }
+
+    public void setFeedbackReason(IVRSFeedbackReason feedbackReason) {
+        this.feedbackReason = feedbackReason;
+    }
+
+    public String getDetail() {
+        return detail;
+    }
+
+    public void setDetail(String detail) {
+        this.detail = detail;
     }
 }
-

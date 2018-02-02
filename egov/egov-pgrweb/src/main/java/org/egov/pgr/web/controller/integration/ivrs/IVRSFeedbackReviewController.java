@@ -48,9 +48,9 @@
 
 package org.egov.pgr.web.controller.integration.ivrs;
 
-import org.egov.pgr.integration.ivrs.entiry.IVRSFeedback;
-import org.egov.pgr.integration.ivrs.entiry.IVRSFeedbackReason;
-import org.egov.pgr.integration.ivrs.entiry.IVRSFeedbackReview;
+import org.egov.pgr.integration.ivrs.entity.IVRSFeedback;
+import org.egov.pgr.integration.ivrs.entity.IVRSFeedbackReason;
+import org.egov.pgr.integration.ivrs.entity.IVRSFeedbackReview;
 import org.egov.pgr.integration.ivrs.service.IVRSFeedbackReasonService;
 import org.egov.pgr.integration.ivrs.service.IVRSFeedbackReviewService;
 import org.egov.pgr.integration.ivrs.service.IVRSFeedbackService;

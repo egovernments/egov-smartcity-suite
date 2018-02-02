@@ -46,11 +46,14 @@
  *
  */
 
-package org.egov.pgr.integration.ivrs.entiry;
+package org.egov.pgr.integration.ivrs.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.pgr.entity.Complaint;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -58,90 +61,67 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
+import java.util.Set;
 
-import static org.egov.pgr.integration.ivrs.entiry.IVRSFeedbackReviewHistory.SEQ_IVRS_FEEDBACKREVIEW_HISTORY;
-
+import static org.egov.pgr.integration.ivrs.entity.IVRSFeedbackReview.SEQ_IVRS_FEEDBACKREVIEW;
 
 @Entity
-@Table(name = "EGPGR_IVRS_FEEDBACK_REVIEW_HISTORY")
-@SequenceGenerator(name = SEQ_IVRS_FEEDBACKREVIEW_HISTORY, sequenceName = SEQ_IVRS_FEEDBACKREVIEW_HISTORY, allocationSize = 1)
-public class IVRSFeedbackReviewHistory extends AbstractAuditable {
+@Table(name = "EGPGR_IVRS_FEEDBACK_REVIEW")
+@SequenceGenerator(name = SEQ_IVRS_FEEDBACKREVIEW, sequenceName = SEQ_IVRS_FEEDBACKREVIEW, allocationSize = 1)
+public class IVRSFeedbackReview extends AbstractAuditable {
 
-    protected static final String SEQ_IVRS_FEEDBACKREVIEW_HISTORY = "SEQ_IVRS_FEEDBACK_REVIEW_HISTORY";
-    private static final long serialVersionUID = 1176499350876549092L;
+    protected static final String SEQ_IVRS_FEEDBACKREVIEW = "SEQ_EGPGR_IVRS_FEEDBACK_REVIEW";
+    private static final long serialVersionUID = -1375433581373197712L;
 
     @Id
-    @GeneratedValue(generator = SEQ_IVRS_FEEDBACKREVIEW_HISTORY, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_IVRS_FEEDBACKREVIEW, strategy = GenerationType.SEQUENCE)
     private Long id;
-
-    @ManyToOne(targetEntity = IVRSFeedbackReview.class, fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "feedbackReview")
-    private IVRSFeedbackReview feedbackReview;
-
-    @NotNull
-    @ManyToOne
-    @JoinColumn(name = "complaint")
-    private Complaint complaint;
-
-    @NotNull
-    @ManyToOne
-    @JoinColumn(name = "rating")
-    private IVRSRating rating;
 
     @NotNull
     @ManyToOne
     @JoinColumn(name = "feedbackReason")
     private IVRSFeedbackReason feedbackReason;
 
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "rating")
+    private IVRSRating rating;
+
+    @SafeHtml
+    @Length(max = 128)
     private String detail;
 
-    public IVRSFeedbackReviewHistory() {
-        //default for mvc
-    }
+    @NotNull
+    @OneToOne
+    @JoinColumn(name = "complaint")
+    private Complaint complaint;
 
-    public IVRSFeedbackReviewHistory(IVRSFeedbackReview feedbackReview) {
-        setFeedbackReason(feedbackReview.getFeedbackReason());
-        setComplaint(feedbackReview.getComplaint());
-        setDetail(feedbackReview.getDetail());
-        setRating(feedbackReview.getRating());
-        setFeedbackReview(feedbackReview);
-    }
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY,
+            mappedBy = "feedbackReview", targetEntity = IVRSFeedbackReviewHistory.class)
+    @OrderBy("id")
+    private Set<IVRSFeedbackReviewHistory> history = new HashSet<>();
 
-    @Override
+    private Integer reopenCount = 0;
+
+    private Integer reviewCount = 0;
+
+    @Transient
+    private boolean existing;
+
     public Long getId() {
-        return id;
+        return this.id;
     }
 
-    @Override
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public IVRSFeedbackReview getFeedbackReview() {
-        return feedbackReview;
-    }
-
-    public void setFeedbackReview(IVRSFeedbackReview feedbackReview) {
-        this.feedbackReview = feedbackReview;
-    }
-
-    public Complaint getComplaint() {
-        return complaint;
-    }
-
-    public void setComplaint(Complaint complaint) {
-        this.complaint = complaint;
-    }
-
-    public IVRSRating getRating() {
-        return rating;
-    }
-
-    public void setRating(IVRSRating rating) {
-        this.rating = rating;
     }
 
     public IVRSFeedbackReason getFeedbackReason() {
@@ -152,11 +132,63 @@ public class IVRSFeedbackReviewHistory extends AbstractAuditable {
         this.feedbackReason = feedbackReason;
     }
 
+    public IVRSRating getRating() {
+        return rating;
+    }
+
+    public void setRating(IVRSRating rating) {
+        this.rating = rating;
+    }
+
     public String getDetail() {
         return detail;
     }
 
     public void setDetail(String detail) {
         this.detail = detail;
+    }
+
+    public Complaint getComplaint() {
+        return complaint;
+    }
+
+    public void setComplaint(Complaint complaint) {
+        this.complaint = complaint;
+    }
+
+    public Integer getReopenCount() {
+        return reopenCount;
+    }
+
+    public void setReopenCount(Integer reopenCount) {
+        this.reopenCount = reopenCount;
+    }
+
+    public Integer getReviewCount() {
+        return reviewCount;
+    }
+
+    public void setReviewCount(Integer reviewCount) {
+        this.reviewCount = reviewCount;
+    }
+
+    public boolean isExisting() {
+        return existing;
+    }
+
+    public void setExisting(boolean existing) {
+        this.existing = existing;
+    }
+
+    public Set<IVRSFeedbackReviewHistory> getHistory() {
+        return history;
+    }
+
+    public void setHistory(Set<IVRSFeedbackReviewHistory> history) {
+        this.history = history;
+    }
+
+    public void addHistory(IVRSFeedbackReviewHistory history) {
+        this.history.add(history);
     }
 }

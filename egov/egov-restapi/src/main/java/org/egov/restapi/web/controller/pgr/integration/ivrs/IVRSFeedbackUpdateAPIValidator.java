@@ -48,7 +48,7 @@
 
 package org.egov.restapi.web.controller.pgr.integration.ivrs;
 
-import org.egov.pgr.integration.ivrs.entiry.contract.IVRSFeedbackUpdateRequest;
+import org.egov.pgr.integration.ivrs.entity.contract.IVRSFeedbackUpdateRequest;
 import org.egov.pgr.integration.ivrs.repository.IVRSRatingRepository;
 import org.egov.pgr.service.ComplaintService;
 import org.springframework.beans.factory.annotation.Autowired;

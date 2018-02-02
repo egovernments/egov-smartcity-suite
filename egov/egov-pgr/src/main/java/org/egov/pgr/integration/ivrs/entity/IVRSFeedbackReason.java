@@ -46,71 +46,91 @@
  *
  */
 
-package org.egov.pgr.integration.ivrs.entiry.contract;
+package org.egov.pgr.integration.ivrs.entity;
 
-import org.egov.infra.web.support.search.DataTableSearchRequest;
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.SafeHtml;
 
-import java.util.Date;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
-public class IVRSFeedbackSearchRequest extends DataTableSearchRequest {
+import static org.egov.pgr.integration.ivrs.entity.IVRSFeedbackReason.SEQ_IVRS_FEEDBACKREASON;
 
-    private String crn;
+@Entity
+@Table(name = "EGPGR_IVRS_FEEDBACK_REASON")
+@SequenceGenerator(name = SEQ_IVRS_FEEDBACKREASON, sequenceName = SEQ_IVRS_FEEDBACKREASON, allocationSize = 1)
+@Unique(fields = {"code", "name"}, enableDfltMsg = true)
+public class IVRSFeedbackReason extends AbstractPersistable<Long> {
 
-    private Long complaintId;
+    protected static final String SEQ_IVRS_FEEDBACKREASON = "SEQ_EGPGR_IVRS_FEEDBACK_REASON";
+    private static final long serialVersionUID = -2138876792685904697L;
 
-    private Date fromDate;
+    @Id
+    @GeneratedValue(generator = SEQ_IVRS_FEEDBACKREASON, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-    private Date toDate;
+    @NotBlank
+    @SafeHtml
+    @Length(max = 128)
+    private String name;
 
-    private Long locationId;
+    @NotBlank
+    @SafeHtml
+    @Length(max = 5)
+    private String code;
 
-    private Long childLocationId;
+    @SafeHtml
+    @Length(max = 256)
+    private String description;
 
-    public String getCrn() {
-        return crn;
+    private boolean toBeReopened;
+
+    @Override
+    public Long getId() {
+        return this.id;
     }
 
-    public void setCrn(String crn) {
-        this.crn = crn;
+    @Override
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public Long getComplaintId() {
-        return complaintId;
+    public String getName() {
+        return name;
     }
 
-    public void setComplaintId(Long complaintId) {
-        this.complaintId = complaintId;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public Date getFromDate() {
-        return fromDate;
+    public String getCode() {
+        return code;
     }
 
-    public void setFromDate(Date fromDate) {
-        this.fromDate = fromDate;
+    public void setCode(String code) {
+        this.code = code;
     }
 
-    public Date getToDate() {
-        return toDate;
+    public String getDescription() {
+        return description;
     }
 
-    public void setToDate(Date toDate) {
-        this.toDate = toDate;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public Long getLocationId() {
-        return locationId;
+    public boolean isToBeReopened() {
+        return toBeReopened;
     }
 
-    public void setLocationId(Long locationId) {
-        this.locationId = locationId;
-    }
-
-    public Long getChildLocationId() {
-        return childLocationId;
-    }
-
-    public void setChildLocationId(Long childLocationId) {
-        this.childLocationId = childLocationId;
+    public void setToBeReopened(boolean toBeReopened) {
+        this.toBeReopened = toBeReopened;
     }
 }

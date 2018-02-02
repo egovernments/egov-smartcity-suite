@@ -52,7 +52,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.web.support.ui.DataTable;
 import org.egov.pgr.entity.ComplaintType;
-import org.egov.pgr.integration.ivrs.entiry.contract.IVRSFeedbackSearchRequest;
+import org.egov.pgr.integration.ivrs.entity.contract.IVRSFeedbackSearchRequest;
 import org.egov.pgr.integration.ivrs.service.IVRSFeedbackService;
 import org.egov.pgr.report.entity.contract.IVRSFeedbackSearchResponseAdaptor;
 import org.egov.pgr.service.ComplaintTypeService;

@@ -48,7 +48,7 @@
 
 package org.egov.pgr.integration.ivrs.repository;
 
-import org.egov.pgr.integration.ivrs.entiry.IVRSFeedbackReview;
+import org.egov.pgr.integration.ivrs.entity.IVRSFeedbackReview;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -46,45 +46,88 @@
  *
  */
 
-package org.egov.pgr.integration.ivrs.entiry.contract;
+package org.egov.pgr.integration.ivrs.entity;
 
-import org.hibernate.validator.constraints.NotBlank;
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
-public class IVRSFeedbackUpdateRequest {
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
+import static org.egov.pgr.integration.ivrs.entity.IVRSRating.SEQ_IVRS_RATING;
+
+@Entity
+@Table(name = "EGPGR_IVRS_RATING")
+@SequenceGenerator(name = SEQ_IVRS_RATING, sequenceName = SEQ_IVRS_RATING, allocationSize = 1)
+@Unique(fields = "name", enableDfltMsg = true)
+public class IVRSRating extends AbstractPersistable<Long> {
+
+    protected static final String SEQ_IVRS_RATING = "SEQ_EGPGR_IVRS_RATING";
+    private static final long serialVersionUID = 5284597197319506583L;
+
+    @Id
+    @GeneratedValue(generator = SEQ_IVRS_RATING, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
     @SafeHtml
-    @NotBlank(message = "ULB code must be present")
-    private String ulbCode;
+    @Length(min = 1, max = 64)
+    private String name;
+
+    @NotNull
+    private Integer weight;
 
     @SafeHtml
-    private String crn;
+    @Length(max = 100)
+    private String discription;
 
-    @SafeHtml
-    private String rating;
+    private boolean requiredReview;
 
-    public String getUlbCode() {
-        return ulbCode;
+    @Override
+    public Long getId() {
+        return this.id;
     }
 
-    public void setUlbCode(String ulbCode) {
-        this.ulbCode = ulbCode;
+    @Override
+    protected void setId(final Long id) {
+        this.id = id;
     }
 
-    public String getCrn() {
-        return crn;
+    public String getName() {
+        return name;
     }
 
-    public void setCrn(String crn) {
-        this.crn = crn;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getRating() {
-        return rating;
+    public Integer getWeight() {
+        return weight;
     }
 
-    public void setRating(String rating) {
-        this.rating = rating;
+    public void setWeight(Integer weight) {
+        this.weight = weight;
+    }
+
+    public String getDiscription() {
+        return discription;
+    }
+
+    public void setDiscription(String discription) {
+        this.discription = discription;
+    }
+
+    public boolean isRequiredReview() {
+        return requiredReview;
+    }
+
+    public void setRequiredReview(boolean requiredReview) {
+        this.requiredReview = requiredReview;
     }
 }
-

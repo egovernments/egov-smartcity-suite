@@ -46,44 +46,45 @@
  *
  */
 
-package org.egov.pgr.integration.ivrs.entiry.contract;
+package org.egov.pgr.integration.ivrs.entity.contract;
 
-public class IVRSFeedbackUpdateResponse {
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.SafeHtml;
 
-    private String crn = "";
+public class IVRSFeedbackUpdateRequest {
 
-    private String status;
+    @SafeHtml
+    @NotBlank(message = "ULB code must be present")
+    private String ulbCode;
 
-    private String message;
+    @SafeHtml
+    private String crn;
 
-    private boolean success;
+    @SafeHtml
+    private String rating;
 
-    public IVRSFeedbackUpdateResponse(boolean success, String status, String message) {
-        this.success = success;
-        this.status = status;
-        this.message = message;
+    public String getUlbCode() {
+        return ulbCode;
     }
 
-    public IVRSFeedbackUpdateResponse(boolean success, String crn, String status, String message) {
-        this.success = success;
-        this.crn = crn;
-        this.status = status;
-        this.message = message;
+    public void setUlbCode(String ulbCode) {
+        this.ulbCode = ulbCode;
     }
 
     public String getCrn() {
         return crn;
     }
 
-    public String getStatus() {
-        return status;
+    public void setCrn(String crn) {
+        this.crn = crn;
     }
 
-    public String getMessage() {
-        return message;
+    public String getRating() {
+        return rating;
     }
 
-    public boolean isSuccess() {
-        return success;
+    public void setRating(String rating) {
+        this.rating = rating;
     }
 }
+

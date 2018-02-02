@@ -48,7 +48,7 @@
 
 package org.egov.pgr.web.controller.integration.ivrs.master;
 
-import org.egov.pgr.integration.ivrs.entiry.IVRSFeedbackReason;
+import org.egov.pgr.integration.ivrs.entity.IVRSFeedbackReason;
 import org.egov.pgr.integration.ivrs.service.IVRSFeedbackReasonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
