@@ -691,7 +691,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     private void updateBillDetails(final BillReceiptInfo bri) throws InvalidAccountHeadException {
         if (bri == null)
             throw new ApplicationRuntimeException(" Bill Receipt Info not found");
-        EgBill egBill = egBillDao.findById(new Long(bri.getBillReferenceNum()), false);
+        EgBill egBill = egBillDao.findById(Long.valueOf(bri.getBillReferenceNum()), false);
         final List<EgBillDetails> billDetList = egBillDetailsDao.getBillDetailsByBill(egBill);
 
         if (bri.getEvent() != null && bri.getEvent().equals(BillingIntegrationService.EVENT_RECEIPT_CREATED)) {
