@@ -292,10 +292,9 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                     billdetail.setCrAmount(demandDetail.getAmount().subtract(demandDetail.getAmtCollected()));
                 }
 
-                if (LOGGER.isDebugEnabled())
-                    LOGGER.debug("demandDetail.getEgDemandReason()"
-                            + demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster() + " glcodeerror"
-                            + demandDetail.getEgDemandReason().getGlcodeId());
+                if (LOG.isDebugEnabled())
+                    LOG.debug("Demand Reason : {}, GLCode : {}", demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster(),
+                            demandDetail.getEgDemandReason().getGlcodeId());
                 billdetail.setGlcode(demandDetail.getEgDemandReason().getGlcodeId().getGlcode());
                 billdetail.setEgDemandReason(demandDetail.getEgDemandReason());
                 billdetail.setAdditionalFlag(1);
@@ -310,8 +309,8 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
             }
 
         }
-        if (LOGGER.isDebugEnabled())
-            LOG.debug("created Bill Details");
+        if (LOG.isDebugEnabled())
+            LOG.debug("License Bill Details Created");
         return billDetails;
     }
 
@@ -357,8 +356,8 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
             try {
                 updateNewReceipt(billReceipts);
             } catch (final Exception e) {
-                LOGGER.error("Error occurred while updating receipt details for License");
-                throw new ApplicationRuntimeException("Update Receipt Failed", e);
+                LOG.error("Error occurred while updating receipt details for License", e);
+                throw new ApplicationRuntimeException("Update License Receipt Failed", e);
             }
     }
 
@@ -391,8 +390,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                         } else
                             installmentWiseDemandDetailsByReason.get(installmentDesc).put(
                                     dmdRsn.getEgDemandReasonMaster().getReasonMaster(), dmdDtls);
-                    } else if (LOGGER.isDebugEnabled())
-                        LOGGER.debug("saveCollectionDetails - demand detail amount is zero " + dmdDtls);
+                    }
 
                 EgDemandDetails demandDetail;
 
@@ -408,10 +406,9 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                             demand.addCollected(rcptAccInfo.getCrAmount());
                         persistCollectedReceipts(demandDetail, billReceipt.getReceiptNum(), billReceipt.getTotalAmount(),
                                 billReceipt.getReceiptDate(), demandDetail.getAmtCollected());
-                        if (LOGGER.isDebugEnabled())
-                            LOGGER.debug("Persisted demand and receipt details for tax : " + reason + " installment : "
-                                    + instDesc + " with receipt No : " + billReceipt.getReceiptNum() + " for Rs. "
-                                    + rcptAccInfo.getCrAmount());
+                        if (LOG.isDebugEnabled())
+                            LOG.debug("Created demand and receipt for Reason : {}, Installment : {}, Receipt No.: {}, Amount : {}"
+                                    , reason, instDesc, billReceipt.getReceiptNum(), rcptAccInfo.getCrAmount());
                     }
 
                 if (ld.getLicense().hasState())
@@ -429,8 +426,8 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
             else if (billReceipt.getEvent().equals(EVENT_INSTRUMENT_BOUNCED))
                 reconcileCollForChequeBounce(demand, billReceipt);// needs to be
         } catch (final Exception e) {
-            LOGGER.error("Error occurred while updating demand details", e);
-            throw new ApplicationRuntimeException("Updating Demand Details Failed", e);
+            LOG.error("Error occurred while updating License demand details", e);
+            throw new ApplicationRuntimeException("Updating License Demand Details Failed", e);
         }
 
         return true;
@@ -451,16 +448,11 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
             licenseUtils.applicationStatusChange(licenseObj, APPLICATION_STATUS_DIGUPDATE_CODE);
             final Position position = licenseUtils.getCityLevelCommissioner();
             licenseUtils.applicationStatusChange(licenseObj, APPLICATION_STATUS_APPROVED_CODE);
-            if (licenseObj.isReNewApplication())
-                licenseObj.transition().progressWithStateCopy().withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
-                        .withComments(WF_SECOND_LVL_FEECOLLECTED)
-                        .withStateValue(DIGI_ENABLED_WF_SECOND_LVL_FEECOLLECTED).withDateInfo(currentDate.toDate())
-                        .withOwner(position).withNextAction(WF_ACTION_DIGI_PENDING);
-            else
-                licenseObj.transition().progressWithStateCopy().withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
-                        .withComments(WF_SECOND_LVL_FEECOLLECTED)
-                        .withStateValue(DIGI_ENABLED_WF_SECOND_LVL_FEECOLLECTED).withDateInfo(currentDate.toDate())
-                        .withOwner(position).withNextAction(WF_ACTION_DIGI_PENDING);
+            licenseObj.transition().progressWithStateCopy().withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
+                    .withComments(WF_SECOND_LVL_FEECOLLECTED)
+                    .withStateValue(DIGI_ENABLED_WF_SECOND_LVL_FEECOLLECTED).withDateInfo(currentDate.toDate())
+                    .withOwner(position).withNextAction(WF_ACTION_DIGI_PENDING);
+
         } else {
             licenseUtils.licenseStatusUpdate(licenseObj, STATUS_UNDERWORKFLOW);
             if (licenseObj.getEgwStatus().getCode().equals(APPLICATION_STATUS_CREATED_CODE))
@@ -515,7 +507,6 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
      * @param billRcptInfo
      */
     private void updateDmdDetForRcptCancel(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
-        LOGGER.debug("Entering method updateDmdDetForRcptCancel");
         for (final ReceiptAccountInfo rcptAccInfo : billRcptInfo.getAccountDetails())
             if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(ZERO) > 0
                     && !rcptAccInfo.getIsRevenueAccount()) {
@@ -528,13 +519,13 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                             .getDescription())) {
                         demandDetail
                                 .setAmtCollected(demandDetail.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
-                        LOGGER.info("Deducted Collected amount and receipt details for tax : " + reason
-                                + " installment : " + installment + " with receipt No : "
-                                + billRcptInfo.getReceiptNum() + " for Rs. " + demandDetail.getAmtCollected());
+
+                        if (LOG.isDebugEnabled())
+                            LOG.debug("Deducted collected amount for Reason : {}, Installment : {}, Receipt No.: {}, Amount : {}"
+                                    , reason, installment, billRcptInfo.getReceiptNum(), demandDetail.getAmtCollected());
                     }
             }
         updateReceiptStatusWhenCancelled(billRcptInfo.getReceiptNum());
-        LOGGER.debug("Exiting method saveCollectionAndDemandDetails");
     }
 
     private void updateReceiptStatusWhenCancelled(final String receiptNumber) {
@@ -551,8 +542,8 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         /**
          * Deducts the collected amounts as per the amount of the bounced cheque, and also imposes a cheque-bounce penalty.
          */
-        LOGGER.debug("updateDemandForChequeBounce : Updating Collection For Demand : Demand - " + demand
-                + " with BillReceiptInfo - " + billRcptInfo);
+        if (LOG.isDebugEnabled())
+            LOG.debug("Updating collection for License Demand : {} with BillReceiptInfo - {} ", demand, billRcptInfo);
         final LicenseDemand ld = (LicenseDemand) demand;
         BigDecimal totalCollChqBounced = getTotalChequeAmt(billRcptInfo);
         final BigDecimal chqBouncePenalty = CHQ_BOUNCE_PENALTY;
@@ -576,7 +567,6 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         demand.setStatus(DMD_STATUS_CHEQUE_BOUNCED);
         demand.addEgDemandDetails(dmdDet);
         totalCollChqBounced = updateDmdDetForChqBounce(demand, totalCollChqBounced);
-        LOGGER.debug("updateDemandForChequeBounce : Updated Collection For Demand : " + demand);
         return totalCollChqBounced;
     }
 
@@ -698,30 +688,27 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         return egBill;
     }
 
-    private EgBill updateBillDetails(final BillReceiptInfo bri) throws InvalidAccountHeadException {
-        EgBill egBill;
+    private void updateBillDetails(final BillReceiptInfo bri) throws InvalidAccountHeadException {
         if (bri == null)
             throw new ApplicationRuntimeException(" Bill Receipt Info not found");
-        egBill = egBillDao.findById(new Long(bri.getBillReferenceNum()), false);
+        EgBill egBill = egBillDao.findById(new Long(bri.getBillReferenceNum()), false);
         final List<EgBillDetails> billDetList = egBillDetailsDao.getBillDetailsByBill(egBill);
 
         if (bri.getEvent() != null && bri.getEvent().equals(BillingIntegrationService.EVENT_RECEIPT_CREATED)) {
             final BigDecimal totalCollectedAmt = calculateTotalCollectedAmt(bri, billDetList);
-            egBill = updateBill(bri, egBill, totalCollectedAmt);
+            updateBill(bri, egBill, totalCollectedAmt);
         } else if (bri.getEvent() != null && bri.getEvent().equals(BillingIntegrationService.EVENT_INSTRUMENT_BOUNCED))
-            egBill = updateBillForChqBounce(egBill, getTotalChequeAmt(bri));
-        return egBill;
+            updateBillForChqBounce(egBill, getTotalChequeAmt(bri));
     }
 
     private BigDecimal getTotalChequeAmt(final BillReceiptInfo bri) {
         BigDecimal totalCollAmt = ZERO;
         try {
-            if (bri != null)
-                for (final ReceiptInstrumentInfo rctInst : bri.getBouncedInstruments())
-                    if (rctInst.getInstrumentAmount() != null)
-                        totalCollAmt = totalCollAmt.add(rctInst.getInstrumentAmount());
+            for (final ReceiptInstrumentInfo rctInst : bri.getBouncedInstruments())
+                if (rctInst.getInstrumentAmount() != null)
+                    totalCollAmt = totalCollAmt.add(rctInst.getInstrumentAmount());
         } catch (final ApplicationRuntimeException e) {
-            throw new ApplicationRuntimeException("Exception in calculate Total Collected Amt" + e);
+            throw new ApplicationRuntimeException("Exception in calculate Total Collected Amt", e);
         }
 
         return totalCollAmt;
