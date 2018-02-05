@@ -47,6 +47,10 @@
  */
 package org.egov.restapi.web.rest;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
+import java.util.List;
+
 import org.egov.council.entity.CouncilMeeting;
 import org.egov.restapi.model.CouncilMeetingDetails;
 import org.egov.restapi.model.CouncilMeetingRequest;
@@ -58,10 +62,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-
 @RestController
 @RequestMapping("/councilmeeting")
 public class RestCouncilMeetingController {
@@ -71,9 +71,10 @@ public class RestCouncilMeetingController {
 
     @GetMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public List<CouncilMeetingDetails> getCouncilMeetingDetials(final CouncilMeetingRequest councilMeetingRequest) {
-        final List<CouncilMeeting> councilMeetingList = councilMeetingDetailService.getMeetingDetailsByMeetingNo(
+        final List<CouncilMeeting> councilMeetingList = councilMeetingDetailService.getMeetingDetails(
                 councilMeetingRequest.getMeetingNumber(),
-                councilMeetingRequest.getMeetingType());
+                councilMeetingRequest.getMeetingType(), councilMeetingRequest.getPreambleNo(),
+                councilMeetingRequest.getAgendaNo(), councilMeetingRequest.getResolutionNo());
         return councilMeetingDetailService.getCouncilMeetingDetailsList(councilMeetingList);
     }
 
