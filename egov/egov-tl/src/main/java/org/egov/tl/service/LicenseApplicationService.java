@@ -123,6 +123,7 @@ public class LicenseApplicationService extends TradeLicenseService {
 
     @Transactional
     public License renew(final TradeLicense license, final WorkflowBean workflowBean) {
+        license.setApplicationDate(new Date());
         license.setLicenseAppType(this.getLicenseApplicationTypeForRenew());
         if (!currentUserIsMeeseva())
             license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());

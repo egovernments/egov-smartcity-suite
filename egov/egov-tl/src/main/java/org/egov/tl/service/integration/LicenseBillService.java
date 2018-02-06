@@ -212,26 +212,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
             module = moduleService.getModuleByName(TRADE_LICENSE);
         getCurrentInstallment(module);
         final List<EgDemandDetails> orderedDetailsList = new ArrayList<>();
-        Map<Installment, BigDecimal> installmentPenalty = new HashMap<>();
-        Map<Installment, EgDemandDetails> installmentWisePenaltyDemandDetail;
-        if (license.isNewApplication())
-            installmentPenalty = billable.getCalculatedPenalty(license.getCommencementDate(), new Date(), demand);
-        else if (license.isReNewApplication())
-            installmentPenalty = billable.getCalculatedPenalty(null, new Date(), demand);
-        installmentWisePenaltyDemandDetail = getInstallmentWisePenaltyDemandDetails(license.getCurrentDemand());
-        for (final Map.Entry<Installment, BigDecimal> penalty : installmentPenalty.entrySet()) {
-            EgDemandDetails penaltyDemandDetail;
-            if (penalty.getValue().signum() > 0) {
-                penaltyDemandDetail = installmentWisePenaltyDemandDetail.get(penalty.getKey());
-                if (penaltyDemandDetail != null)
-                    penaltyDemandDetail.setAmount(penalty.getValue().setScale(0, RoundingMode.HALF_UP));
-                else {
-                    penaltyDemandDetail = insertPenaltyDmdDetail(license, penalty.getKey(), penalty.getValue().setScale(0, RoundingMode.HALF_UP));
-                    if (penaltyDemandDetail != null)
-                        demand.getEgDemandDetails().add(penaltyDemandDetail);
-                }
-            }
-        }
+        calcPenaltyDemandDetails(billable, license, demand);
         license.getLicenseDemand().recalculateBaseDemand();
         for (final EgDemandDetails demandDetail : demand.getEgDemandDetails()) {
             final Installment installment = demandDetail.getEgDemandReason().getEgInstallmentMaster();
@@ -312,6 +293,30 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         if (LOG.isDebugEnabled())
             LOG.debug("License Bill Details Created");
         return billDetails;
+    }
+
+    private void calcPenaltyDemandDetails(LicenseBill billable, License license, EgDemand demand) {
+        Map<Installment, BigDecimal> installmentPenalty = new HashMap<>();
+        Map<Installment, EgDemandDetails> installmentWisePenaltyDemandDetail;
+        if (license.isNewApplication())
+            installmentPenalty = billable.getCalculatedPenalty(license.getCommencementDate(), new Date(), demand);
+        else if (license.isReNewApplication())
+            installmentPenalty = billable.getCalculatedPenalty(null, new Date(), demand);
+        installmentWisePenaltyDemandDetail = getInstallmentWisePenaltyDemandDetails(license.getCurrentDemand());
+        for (final Map.Entry<Installment, BigDecimal> penalty : installmentPenalty.entrySet()) {
+            EgDemandDetails penaltyDemandDetail = installmentWisePenaltyDemandDetail.get(penalty.getKey());
+            if (penalty.getValue().signum() > 0) {
+                if (penaltyDemandDetail != null)
+                    penaltyDemandDetail.setAmount(penalty.getValue().setScale(0, RoundingMode.HALF_UP));
+                else {
+                    penaltyDemandDetail = insertPenaltyDmdDetail(license, penalty.getKey(), penalty.getValue().setScale(0, RoundingMode.HALF_UP));
+                    if (penaltyDemandDetail != null)
+                        demand.getEgDemandDetails().add(penaltyDemandDetail);
+                }
+            } else if (penalty.getValue().signum() == 0 && penaltyDemandDetail != null) {
+                penaltyDemandDetail.setAmount(penalty.getValue().setScale(0, RoundingMode.HALF_UP));
+            }
+        }
     }
 
     private Map<Installment, EgDemandDetails> getInstallmentWisePenaltyDemandDetails(final EgDemand currentDemand) {
@@ -923,13 +928,26 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                 }
                 final BigDecimal demandAmount = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
                 feeByTypes.put(demandReason, demandAmount.setScale(0, RoundingMode.HALF_UP));
-                BigDecimal penaltyAmt = penaltyRatesService.calculatePenalty(license, fromDate, new Date(), demandAmount);
+                BigDecimal penaltyAmt = penaltyRatesService.calculatePenalty(license, fromDate, new Date(), demandDetail.getAmount());
                 if (penaltyAmt.compareTo(ZERO) > 0)
                     feeByTypes.put("Penalty", penaltyAmt.setScale(0, RoundingMode.HALF_UP));
                 outstandingFee.put(installmentYear.getDescription(), feeByTypes);
             }
         }
+        recalculatePenaltyAmt(outstandingFee, licenseDemand);
         return outstandingFee;
+    }
 
+    private void recalculatePenaltyAmt(Map<String, Map<String, BigDecimal>> outstandingFee, LicenseDemand licenseDemand) {
+        for (final EgDemandDetails demandDetails : licenseDemand.getEgDemandDetails()) {
+            final Installment installmentYear = demandDetails.getEgDemandReason().getEgInstallmentMaster();
+            if (PENALTY_DMD_REASON_CODE.equals(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode())) {
+                Map<String, BigDecimal> feeType = outstandingFee.get(installmentYear.getDescription());
+                if (feeType != null && feeType.containsKey(PENALTY_DMD_REASON_CODE)) {
+                    feeType.put("Penalty", feeType.get(PENALTY_DMD_REASON_CODE).subtract(demandDetails.getAmtCollected()));
+                    outstandingFee.put(installmentYear.getDescription(), feeType);
+                }
+            }
+        }
     }
 }
