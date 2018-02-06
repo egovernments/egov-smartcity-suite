@@ -73,6 +73,7 @@ public class BillRegister implements Serializable {
     private String schemeCode;
     private String subSchemeCode;
     private String fundCode;
+    private String checkListUrl;
     private List<BillDetails> billDetails = new ArrayList<>();
     private List<BillPayeeDetails> billPayeeDetails = new ArrayList<>();
 
@@ -203,4 +204,13 @@ public class BillRegister implements Serializable {
     public void setBillPayeeDetails(final List<BillPayeeDetails> billPayeeDetails) {
         this.billPayeeDetails = billPayeeDetails;
     }
+
+    public String getCheckListUrl() {
+        return checkListUrl;
+    }
+
+    public void setCheckListUrl(String checkListUrl) {
+        this.checkListUrl = checkListUrl;
+    }
+
 }

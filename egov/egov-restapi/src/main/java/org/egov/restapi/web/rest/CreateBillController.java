@@ -150,6 +150,7 @@ public class CreateBillController {
         }
         jsonObject.addProperty("successMessage", "Works Bill created Successfully");
         jsonObject.addProperty("billNumber", responseJson);
+        jsonObject.addProperty("checkListURL", egBillregister.getEgBillregistermis().getSourcePath());
         response.setStatus(HttpServletResponse.SC_CREATED);
         return jsonObject.toString();
     }
