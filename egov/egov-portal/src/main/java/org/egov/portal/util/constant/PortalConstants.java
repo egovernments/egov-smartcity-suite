@@ -51,7 +51,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class PortalConstants {
+public final class PortalConstants {
 
     public static final String PROPERTY_TAX = "Property Tax";
     public static final String WATER_CHARGES = "Water Charges";
@@ -59,12 +59,12 @@ public class PortalConstants {
     public static final String PTIS_URL = "%s/restapi/property/propertytaxdetails";
     public static final String WTMS_URL = "%s/restapi/watercharges/getwatertaxdetails";
     public static final String STMS_URL = "%s/restapi/sewerage/getseweragedetails";
+    private static final List<String> MODULELIST = new ArrayList<>();
 
     private PortalConstants() {
-
+        // To hide implicit public
     }
 
-    private static final List<String> MODULELIST = new ArrayList<>();
     static {
         MODULELIST.add(PROPERTY_TAX);
         MODULELIST.add(WATER_CHARGES);
