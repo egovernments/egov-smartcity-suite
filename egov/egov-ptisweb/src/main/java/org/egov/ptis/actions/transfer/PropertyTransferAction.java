@@ -399,8 +399,13 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         String target = "";
         if (StringUtils.isNotBlank(assessmentNo))
             propertyMutation = transferOwnerService.getCurrentPropertyMutationByAssessmentNo(assessmentNo);
-        else if (StringUtils.isNotBlank(applicationNo))
+        else if (StringUtils.isNotBlank(applicationNo)){
             propertyMutation = transferOwnerService.getPropertyMutationByApplicationNo(applicationNo);
+            if (propertyMutation.getState().getValue().equals(WF_STATE_CLOSED)) {
+            	addActionError(getText("error.cancelled.applicationno"));
+                target = SEARCH;
+            }
+        }
         else {
             addActionError(getText("mandatory.assessmentno.applicationno"));
             target = SEARCH;
