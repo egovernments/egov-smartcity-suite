@@ -473,4 +473,12 @@
     	<put-attribute name="page-title" value="title.AppliactionSearch" cascade="true"></put-attribute>
     	<put-attribute name="body" value="/WEB-INF/views/application/execute-search-screen.jsp"></put-attribute>
     </definition>
+     <definition name="upload-document" extends="base_layout">
+    	<put-attribute name="page-title" value="title.update.application" cascade="true"></put-attribute>
+    	<put-attribute name="body" value="/WEB-INF/views/application/upload-document.jsp"></put-attribute>
+    </definition>
+    <definition name="upload-document-success" extends="base_layout">
+    	<put-attribute name="page-title" value="title.update.application" cascade="true"></put-attribute>
+    	<put-attribute name="body" value="/WEB-INF/views/application/upload-document-success.jsp"></put-attribute>
+    </definition>
 </tiles-definitions>
