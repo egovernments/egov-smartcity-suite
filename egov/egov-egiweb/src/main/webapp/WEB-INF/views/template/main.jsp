@@ -50,21 +50,14 @@
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-113734696-1"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'UA-113734696-1');
-        var _gaq = _gaq || [];
-        _gaq.push(['_setAccount', 'UA-113734696-1']);
-        _gaq.push(['_setDomainName', 'egovernments.org']);
-        _gaq.push(['_trackPageview']);
-    </script>
+    <spring:eval expression="@environment.getProperty('analytics.enabled')" scope="application" var="analyticsEnabled"/>
+    <c:if test="${analyticsEnabled}">
+        <spring:eval expression="@environment.getProperty('analytics.config')" scope="application"/>
+    </c:if>
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -106,7 +99,7 @@
 <div class="page-container">
     <tiles:insertAttribute name="header"/>
     <div class="main-content">
-        <spring:htmlEscape defaultHtmlEscape="true" />
+        <spring:htmlEscape defaultHtmlEscape="true"/>
         <tiles:insertAttribute name="body"/>
     </div>
     <tiles:insertAttribute name="footer"/>

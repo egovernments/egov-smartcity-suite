@@ -52,6 +52,10 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <html>
 <head>
+    <spring:eval expression="@environment.getProperty('analytics.enabled')" scope="application" var="analyticsEnabled"/>
+    <c:if test="${analyticsEnabled}">
+        <spring:eval expression="@environment.getProperty('analytics.config')" scope="application"/>
+    </c:if>
     <%@ include file="/includes/meta.jsp" %>
     <title>eGov - <decorator:title/></title>
 

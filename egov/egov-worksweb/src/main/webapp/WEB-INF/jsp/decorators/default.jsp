@@ -48,8 +48,13 @@
 
 <%@ include file="/includes/taglibs.jsp" %>
 <%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <html>
 <head>
+	<spring:eval expression="@environment.getProperty('analytics.enabled')" scope="application" var="analyticsEnabled"/>
+	<c:if test="${analyticsEnabled}">
+		<spring:eval expression="@environment.getProperty('analytics.config')" scope="application"/>
+	</c:if>
  <%@ include file="/includes/meta.jsp" %>  
 <title>eGov Works <decorator:title/></title>
 <link rel="icon" href="<cdn:url value='/resources/global/images/favicon.png' context='/egi'/>" sizes="32x32">
