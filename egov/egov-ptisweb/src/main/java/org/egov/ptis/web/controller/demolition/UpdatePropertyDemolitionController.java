@@ -80,6 +80,7 @@ import javax.validation.Valid;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
@@ -136,7 +137,6 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
 
     @RequestMapping(method = RequestMethod.GET)
     public String view(@ModelAttribute PropertyImpl property, final Model model, @PathVariable final Long id, final HttpServletRequest request) {
-        boolean endorsementRequired;
         String currentDesignation = null;
         final String currState = property.getState().getValue();
         final String nextAction = property.getState().getNextAction();
@@ -154,12 +154,11 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
             currentDesignation = propertyDemolitionService.getLoggedInUserDesignation(
                     property.getCurrentState().getOwnerPosition().getId(),
                     securityUtils.getCurrentUser());
-        endorsementRequired = propertyTaxCommonUtils.getEndorsementGenerate(securityUtils.getCurrentUser().getId(),
-                property.getCurrentState());
-        model.addAttribute("endorsementRequired", endorsementRequired);
+        
+        propertyDemolitionService.addEndorsementToModelAttribute(property, model);
         model.addAttribute("ownersName", property.getBasicProperty().getFullOwnerName());
         model.addAttribute("applicationNo", property.getApplicationNo());
-        model.addAttribute("endorsementNotices", propertyTaxCommonUtils.getEndorsementNotices(property.getApplicationNo()));
+        
         if (!currState.endsWith(STATUS_REJECTED))
             model.addAttribute("currentDesignation", currentDesignation);
         final WorkflowContainer workflowContainer = new WorkflowContainer();
@@ -186,10 +185,18 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
                          final RedirectAttributes redirectAttributes, final HttpServletRequest request, final Model model,
                          @RequestParam final String workFlowAction) throws TaxCalculatorExeption {
         String workFlowAct = workFlowAction;
-        propertyDemolitionService.validateProperty(property, errors, request);
-        if (errors.hasErrors()) {
+        Map<String, String> errorMessages = propertyDemolitionService.validateProperty(property);
+        if (!errorMessages.isEmpty()) {
+        	propertyDemolitionService.addEndorsementToModelAttribute(property, model);
+        	model.addAttribute("errorMsg", errorMessages);
+        	model.addAttribute("isEmployee", propService.isEmployee(securityUtils.getCurrentUser()));
+        	propertyDemolitionService.addModelAttributes(model, property.getBasicProperty());
+        	model.addAttribute("currentState", property.getCurrentState().getValue());
+            model.addAttribute("pendingActions", property.getState().getNextAction());
+            model.addAttribute("additionalRule", DEMOLITION);
             prepareWorkflow(model, (PropertyImpl) property, new WorkflowContainer());
             model.addAttribute("stateType", property.getClass().getSimpleName());
+            model.addAttribute("property", property);
             return DEMOLITION_FORM;
         } else {
 

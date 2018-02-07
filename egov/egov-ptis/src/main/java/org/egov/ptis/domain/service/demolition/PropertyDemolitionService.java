@@ -92,12 +92,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 
-import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -478,39 +477,46 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         return isanyone;
     }
 
-    public void validateProperty(final Property property, final BindingResult errors, final HttpServletRequest request) {
+    public Map<String, String> validateProperty(final Property property) {
         final PropertyDetail propertyDetail = property.getPropertyDetail();
+        HashMap<String, String> errorMessages =  new HashMap<>();
         if (StringUtils.isBlank(propertyDetail.getPattaNumber()))
-            errors.rejectValue("propertyDetail.pattaNumber", "pattaNumber.required");
+        	errorMessages.put("propertyDetail.pattaNumber", "pattaNumber.required");
         if (StringUtils.isBlank(propertyDetail.getSurveyNumber()))
-            errors.rejectValue("propertyDetail.surveyNumber", "surveyNumber.required");
+        	errorMessages.put("propertyDetail.surveyNumber", "surveyNumber.required");
         if (null == propertyDetail.getSitalArea().getArea())
-            errors.rejectValue("propertyDetail.sitalArea.area", "vacantLandArea.required");
+        	errorMessages.put("propertyDetail.sitalArea.area", "vacantLandArea.required");
         if (null == propertyDetail.getMarketValue())
-            errors.rejectValue("propertyDetail.marketValue", "marketValue.required");
+        	errorMessages.put("propertyDetail.marketValue", "marketValue.required");
         if (null == propertyDetail.getCurrentCapitalValue())
-            errors.rejectValue("propertyDetail.currentCapitalValue", "currCapitalValue.required");
+        	errorMessages.put("propertyDetail.currentCapitalValue", "currCapitalValue.required");
+        if (propertyDetail.getCurrentCapitalValue() != null
+                && propertyDetail.getCurrentCapitalValue() < Double
+                        .parseDouble(VACANTLAND_MIN_CUR_CAPITALVALUE))
+        	errorMessages.put("minvalue.capitalValue" , "minvalue.capitalValue");
         if (StringUtils.isBlank(property.getBasicProperty().getPropertyID().getNorthBoundary()))
-            errors.rejectValue("basicProperty.propertyID.northBoundary", "northBoundary.required");
+        	errorMessages.put("basicProperty.propertyID.northBoundary", "northBoundary.required");
         if (StringUtils.isBlank(property.getBasicProperty().getPropertyID().getEastBoundary()))
-            errors.rejectValue("basicProperty.propertyID.eastBoundary", "eastBoundary.required");
+        	errorMessages.put("basicProperty.propertyID.eastBoundary", "eastBoundary.required");
         if (StringUtils.isBlank(property.getBasicProperty().getPropertyID().getWestBoundary()))
-            errors.rejectValue("basicProperty.propertyID.westBoundary", "westBoundary.required");
+        	errorMessages.put("basicProperty.propertyID.westBoundary", "westBoundary.required");
         if (StringUtils.isBlank(property.getBasicProperty().getPropertyID().getSouthBoundary()))
-            errors.rejectValue("basicProperty.propertyID.southBoundary", "southBoundary.required");
+        	errorMessages.put("basicProperty.propertyID.southBoundary", "southBoundary.required");
         if (StringUtils.isBlank(property.getDemolitionReason()))
-            errors.rejectValue("demolitionReason", "demolitionReason.required");
-        validateAssignmentForCscUser(property, errors);
+        	errorMessages.put("demolitionReason.required", "demolitionReason.required");
+        validateAssignmentForCscUser(property, errorMessages);
+        return errorMessages;
     }
 
-    public void validateAssignmentForCscUser(final Property property, final BindingResult errors) {
+    public Map<String, String> validateAssignmentForCscUser(final Property property, final Map<String, String> errorMessages) {
         if (isNotEmployee() && property.getBasicProperty() != null) {
             final Assignment assignment = propertyService.isCscOperator(securityUtils.getCurrentUser())
                     ? propertyService.getAssignmentByDeptDesigElecWard(property.getBasicProperty())
                     : null;
             if (assignment == null && propertyService.getUserPositionByZone(property.getBasicProperty(), false) == null)
-                errors.reject("notexists.position", "notexists.position");
+            	errorMessages.put("notexists.position", "notexists.position");
         }
+        return errorMessages;
     }
 
     public void addModelAttributes(final Model model, final BasicProperty basicProperty) {
@@ -630,5 +636,13 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
          return saveProperty(oldProperty, newProperty, status, comments, workFlowAction,
                 approverPosition, DEMOLITION);
     }
+    
+    public void addEndorsementToModelAttribute(PropertyImpl property, final Model model) {
+		boolean endorsementRequired;
+		endorsementRequired = propertyTaxCommonUtils.getEndorsementGenerate(securityUtils.getCurrentUser().getId(),
+                property.getCurrentState());
+        model.addAttribute("endorsementRequired", endorsementRequired);
+        model.addAttribute("endorsementNotices", propertyTaxCommonUtils.getEndorsementNotices(property.getApplicationNo()));
+	}
 
 }

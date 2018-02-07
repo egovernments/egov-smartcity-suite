@@ -216,8 +216,10 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
                                       @RequestParam String workFlowAction) throws TaxCalculatorExeption {
         String target;
         User loggedInUser = securityUtils.getCurrentUser();
-        propertyDemolitionService.validateProperty(property, errors, request);
-        if (errors.hasErrors()) {
+        Map<String, String> errorMessages = propertyDemolitionService.validateProperty(property);
+        if (!errorMessages.isEmpty()) {
+        	model.addAttribute(ERROR_MSG, errorMessages);
+        	model.addAttribute("property", property);
             prepareWorkflow(model, (PropertyImpl) property, new WorkflowContainer());
             model.addAttribute("stateType", property.getClass().getSimpleName());
             model.addAttribute("isEmployee", !ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName()) && propService.isEmployee(loggedInUser));
