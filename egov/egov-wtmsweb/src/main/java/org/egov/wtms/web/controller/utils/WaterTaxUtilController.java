@@ -84,7 +84,7 @@ public class WaterTaxUtilController extends GenericConnectionController {
 
     @PostMapping
     public String storeDocument(@ModelAttribute final WaterConnectionDetails waterConnectionDetails,
-            @RequestParam("files") final MultipartFile[] files) {
+            @RequestParam("files") final MultipartFile... files) {
         WaterConnectionDetails connectionDetails = null;
         if (waterConnectionDetails.getApplicationNumber() != null)
             connectionDetails = connectionDetailsService
