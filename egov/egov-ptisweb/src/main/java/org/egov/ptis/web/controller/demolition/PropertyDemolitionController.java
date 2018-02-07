@@ -165,6 +165,10 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
             model.addAttribute(ERROR_MSG, "error.superstruc.prop.notallowed");
             return PROPERTY_VALIDATION;
         }
+        if ((PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND).equalsIgnoreCase(property.getPropertyDetail().getPropertyTypeMaster().getCode())) {
+            model.addAttribute(ERROR_MSG, "demolition.on.vlt");
+            return PROPERTY_VALIDATION;
+        }
         if (propertyService.isMeesevaUser(loggedInUser))
             if (meesevaApplicationNumber == null)
                 throw new ApplicationRuntimeException("MEESEVA.005");
