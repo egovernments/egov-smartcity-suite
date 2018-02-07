@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -45,75 +45,36 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.restapi.model;
+package org.egov.restapi.web.rest;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class CouncilMeetingRequest {
+import java.util.List;
 
-    private String ulbCode;
-    private String meetingType;
-    private String meetingNumber;
-    private String preambleNo;
-    private String agendaNo;
-    private String resolutionNo;
-    private String committeeType;
+import org.egov.restapi.model.CouncilMeetingRequest;
+import org.egov.restapi.model.CouncilResolutionsResponse;
+import org.egov.restapi.model.RestErrors;
+import org.egov.restapi.service.CouncilResolutionsService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-    public String getUlbCode() {
-        return ulbCode;
+@RestController
+@RequestMapping("/councilresolutions")
+public class RestCouncilResolutionsController {
+
+    @Autowired
+    private CouncilResolutionsService councilResolutionsService;
+
+    @GetMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public List<CouncilResolutionsResponse> getCouncilResolutionsDetails(final CouncilMeetingRequest councilMeetingRequest) {
+        return councilResolutionsService.getResolutionsDetails(councilMeetingRequest);
     }
 
-    public void setUlbCode(String ulbCode) {
-        this.ulbCode = ulbCode;
+    @ExceptionHandler(RuntimeException.class)
+    public RestErrors restErrors(final RuntimeException runtimeException) {
+        return new RestErrors("COUNCIL RESOLUTIONS DOES NOT EXIST", runtimeException.getMessage());
     }
-
-    public String getMeetingType() {
-        return meetingType;
-    }
-
-    public void setMeetingType(String meetingType) {
-        this.meetingType = meetingType;
-    }
-
-    public String getMeetingNumber() {
-        return meetingNumber;
-    }
-
-    public void setMeetingNumber(String meetingNumber) {
-        this.meetingNumber = meetingNumber;
-    }
-
-    public String getPreambleNo() {
-        return preambleNo;
-    }
-
-    public void setPreambleNo(String preambleNo) {
-        this.preambleNo = preambleNo;
-    }
-
-    public String getAgendaNo() {
-        return agendaNo;
-    }
-
-    public void setAgendaNo(String agendaNo) {
-        this.agendaNo = agendaNo;
-    }
-
-    public String getResolutionNo() {
-        return resolutionNo;
-    }
-
-    public void setResolutionNo(String resolutionNo) {
-        this.resolutionNo = resolutionNo;
-    }
-
-    public String getCommitteeType() {
-        return committeeType;
-    }
-
-    public void setCommitteeType(String committeeType) {
-        this.committeeType = committeeType;
-    }
-
 }

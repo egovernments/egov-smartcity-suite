@@ -47,73 +47,90 @@
  */
 package org.egov.restapi.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.math.BigDecimal;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class CouncilMeetingRequest {
+public class CouncilResolutionsResponse {
 
-    private String ulbCode;
     private String meetingType;
-    private String meetingNumber;
-    private String preambleNo;
-    private String agendaNo;
-    private String resolutionNo;
     private String committeeType;
-
-    public String getUlbCode() {
-        return ulbCode;
-    }
-
-    public void setUlbCode(String ulbCode) {
-        this.ulbCode = ulbCode;
-    }
+    private String department;
+    private String agendaNo;
+    private String serialNo;
+    private String preambleNo;
+    private String resolutionNo;
+    private String status;
+    private BigDecimal sanctionAmount;
 
     public String getMeetingType() {
         return meetingType;
-    }
-
-    public void setMeetingType(String meetingType) {
-        this.meetingType = meetingType;
-    }
-
-    public String getMeetingNumber() {
-        return meetingNumber;
-    }
-
-    public void setMeetingNumber(String meetingNumber) {
-        this.meetingNumber = meetingNumber;
-    }
-
-    public String getPreambleNo() {
-        return preambleNo;
-    }
-
-    public void setPreambleNo(String preambleNo) {
-        this.preambleNo = preambleNo;
-    }
-
-    public String getAgendaNo() {
-        return agendaNo;
-    }
-
-    public void setAgendaNo(String agendaNo) {
-        this.agendaNo = agendaNo;
-    }
-
-    public String getResolutionNo() {
-        return resolutionNo;
-    }
-
-    public void setResolutionNo(String resolutionNo) {
-        this.resolutionNo = resolutionNo;
     }
 
     public String getCommitteeType() {
         return committeeType;
     }
 
+    public String getDepartment() {
+        return department;
+    }
+
+    public String getAgendaNo() {
+        return agendaNo;
+    }
+
+    public String getSerialNo() {
+        return serialNo;
+    }
+
+    public String getPreambleNo() {
+        return preambleNo;
+    }
+
+    public String getResolutionNo() {
+        return resolutionNo;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public BigDecimal getSanctionAmount() {
+        return sanctionAmount;
+    }
+
+    public void setMeetingType(String meetingType) {
+        this.meetingType = meetingType;
+    }
+
     public void setCommitteeType(String committeeType) {
         this.committeeType = committeeType;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    public void setAgendaNo(String agendaNo) {
+        this.agendaNo = agendaNo;
+    }
+
+    public void setSerialNo(String serialNo) {
+        this.serialNo = serialNo;
+    }
+
+    public void setPreambleNo(String preambleNo) {
+        this.preambleNo = preambleNo;
+    }
+
+    public void setResolutionNo(String resolutionNo) {
+        this.resolutionNo = resolutionNo;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setSanctionAmount(BigDecimal sanctionAmount) {
+        this.sanctionAmount = sanctionAmount;
     }
 
 }
