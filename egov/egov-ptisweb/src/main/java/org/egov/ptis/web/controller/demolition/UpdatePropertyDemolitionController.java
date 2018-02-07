@@ -186,40 +186,38 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
                          @RequestParam final String workFlowAction) throws TaxCalculatorExeption {
         String workFlowAct = workFlowAction;
         Map<String, String> errorMessages = propertyDemolitionService.validateProperty(property);
-        if (!errorMessages.isEmpty()) {
-        	propertyDemolitionService.addEndorsementToModelAttribute(property, model);
-        	model.addAttribute("errorMsg", errorMessages);
-        	model.addAttribute("isEmployee", propService.isEmployee(securityUtils.getCurrentUser()));
-        	propertyDemolitionService.addModelAttributes(model, property.getBasicProperty());
-        	model.addAttribute("currentState", property.getCurrentState().getValue());
-            model.addAttribute("pendingActions", property.getState().getNextAction());
-            model.addAttribute("additionalRule", DEMOLITION);
-            prepareWorkflow(model, (PropertyImpl) property, new WorkflowContainer());
-            model.addAttribute("stateType", property.getClass().getSimpleName());
-            model.addAttribute("property", property);
-            return DEMOLITION_FORM;
-        } else {
-
-            final Character status = STATUS_WORKFLOW;
-            Long approvalPosition = 0l;
-            String approvalComent = "";
-            final Property oldProperty = property.getBasicProperty().getActiveProperty();
-
-            if (isApprovalCommentNotNull(request))
-                approvalComent = request.getParameter("approvalComent");
-            if (isWorkFlowActionNotNull(request))
-                workFlowAct = request.getParameter("workFlowAction");
-            if (isApprovalPosNotNull(request))
-                approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
-            approveAction(property, workFlowAct, oldProperty);
-            if (isWfNoticeGenOrPrevOrSign(workFlowAct))
-                return "redirect:/notice/propertyTaxNotice-generateNotice.action?basicPropId="
-                        + property.getBasicProperty().getId() + "&noticeType=" + NOTICE_TYPE_SPECIAL_NOTICE
-                        + "&noticeMode=" + APPLICATION_TYPE_DEMOLITION + "&actionType=" + workFlowAct;
-            else
-                return ifNotNoticeGenAndModeViewOrSave(property, request, model, workFlowAct, status, approvalPosition,
-                        approvalComent);
-        }
+		if (errorMessages.isEmpty()) {
+			final Character status = STATUS_WORKFLOW;
+			Long approvalPosition = 0l;
+			String approvalComent = "";
+			final Property oldProperty = property.getBasicProperty().getActiveProperty();
+			if (isApprovalCommentNotNull(request))
+				approvalComent = request.getParameter("approvalComent");
+			if (isWorkFlowActionNotNull(request))
+				workFlowAct = request.getParameter("workFlowAction");
+			if (isApprovalPosNotNull(request))
+				approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
+			approveAction(property, workFlowAct, oldProperty);
+			if (isWfNoticeGenOrPrevOrSign(workFlowAct))
+				return "redirect:/notice/propertyTaxNotice-generateNotice.action?basicPropId="
+						+ property.getBasicProperty().getId() + "&noticeType=" + NOTICE_TYPE_SPECIAL_NOTICE
+						+ "&noticeMode=" + APPLICATION_TYPE_DEMOLITION + "&actionType=" + workFlowAct;
+			else
+				return ifNotNoticeGenAndModeViewOrSave(property, request, model, workFlowAct, status, approvalPosition,
+						approvalComent);
+		} else {
+			propertyDemolitionService.addEndorsementToModelAttribute(property, model);
+			model.addAttribute("errorMsg", errorMessages);
+			model.addAttribute("isEmployee", propService.isEmployee(securityUtils.getCurrentUser()));
+			propertyDemolitionService.addModelAttributes(model, property.getBasicProperty());
+			model.addAttribute("currentState", property.getCurrentState().getValue());
+			model.addAttribute("pendingActions", property.getState().getNextAction());
+			model.addAttribute("additionalRule", DEMOLITION);
+			prepareWorkflow(model, (PropertyImpl) property, new WorkflowContainer());
+			model.addAttribute("stateType", property.getClass().getSimpleName());
+			model.addAttribute("property", property);
+			return DEMOLITION_FORM;
+		}
     }
 
     private void approveAction(final Property property, final String workFlowAct, final Property oldProperty) {
