@@ -319,7 +319,9 @@
 								pattern="dd/MM/yyyy" />
 		                    </td>
 		                   <td>${linkedItem.moduleName} </td>
-		                   <td><input type="Button" type="submit" value="Pay Tax" class="buttonsubmit" onclick="onlinePayTaxForm('${linkedItem.paymentURL}');"> </td>
+		                   <td><input type="Button" type="submit" value="Pay Tax" class="buttonsubmit" onclick="onlinePayTaxForm('${linkedItem.paymentURL}');"> 
+		                   		<input type="Button" type="submit" value="View DCB" class="buttonsubmit" onclick="onlinePayTaxForm('${linkedItem.viewDcbURL}');">
+		                   </td>
 		                 </tr>
                   </c:forEach>
                 </tbody>

@@ -77,7 +77,7 @@ html {
     overflow: auto;
     font-size: 14px;
     position: relative; }
-    html body .modal.in .modal-dialog {
+    /*html body  .modal.in .modal-dialog {
       position: fixed;
       max-height: 100%;
       overflow-y: auto;
@@ -105,7 +105,7 @@ html {
       transition: all 0.25s linear; }
     html body .modal.fade.in .modal-dialog {
       opacity: 1;
-      transform: scale(1); }
+      transform: scale(1); } */
     html body .timeline {
       list-style-type: none;
       display: flex;

@@ -47,67 +47,30 @@
  */
 package org.egov.portal.entity;
 
-import static org.egov.portal.entity.PortalLink.SEQ_PORTALLINK;
+public class PortalLinkResponse {
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+    private String assessmentNo;
 
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.validator.constraints.Length;
+    private String ownerName;
 
-@Entity
-@Table(name = "egp_portallink")
-@Unique(fields = "consumerNo", enableDfltMsg = true)
-@SequenceGenerator(name = SEQ_PORTALLINK, sequenceName = SEQ_PORTALLINK, allocationSize = 1)
-public class PortalLink extends AbstractAuditable {
-
-    private static final long serialVersionUID = 7499865870515221052L;
-
-    public static final String SEQ_PORTALLINK = "seq_egp_link";
-
-    @Id
-    @GeneratedValue(generator = SEQ_PORTALLINK, strategy = GenerationType.SEQUENCE)
-    private Long id;
+    private String consumerNo;
 
     private String moduleName;
 
-    @Length(max = 50)
-    @NotNull
-    private String consumerNo;
-
-    private Boolean isActive;
-
-    private String applicantName;
-
-    private String paymentURL;
-    
-    private String viewDcbURL;
-
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userid", nullable = false)
-    private User user;
-
-    private String url;
-
-    @Override
-    public Long getId() {
-        return id;
+    public String getAssessmentNo() {
+        return assessmentNo;
     }
 
-    @Override
-    public void setId(Long id) {
-        this.id = id;
+    public void setAssessmentNo(String assessmentNo) {
+        this.assessmentNo = assessmentNo;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
     }
 
     public String getConsumerNo() {
@@ -118,60 +81,12 @@ public class PortalLink extends AbstractAuditable {
         this.consumerNo = consumerNo;
     }
 
-    public Boolean getIsActive() {
-        return isActive;
-    }
-
-    public void setIsActive(Boolean isActive) {
-        this.isActive = isActive;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
     public String getModuleName() {
         return moduleName;
     }
 
     public void setModuleName(String moduleName) {
         this.moduleName = moduleName;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getApplicantName() {
-        return applicantName;
-    }
-
-    public void setApplicantName(String applicantName) {
-        this.applicantName = applicantName;
-    }
-
-    public String getPaymentURL() {
-        return paymentURL;
-    }
-
-    public void setPaymentURL(String paymentURL) {
-        this.paymentURL = paymentURL;
-    }
-
-    public String getViewDcbURL() {
-        return viewDcbURL;
-    }
-
-    public void setViewDcbURL(String viewDcbURL) {
-        this.viewDcbURL = viewDcbURL;
     }
 
 }
