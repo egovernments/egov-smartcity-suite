@@ -109,10 +109,10 @@ public class LicenseApplicationService extends TradeLicenseService {
             license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
         processAndStoreDocument(license);
         if (securityUtils.currentUserIsEmployee())
-            licenseProcessWorkflowService.createNewLicenseWorkflowTransition((TradeLicense) license, workflowBean);
+            licenseProcessWorkflowService.createNewLicenseWorkflowTransition(license, workflowBean);
 
         else
-            licenseProcessWorkflowService.getWfWithThirdPartyOp((TradeLicense) license, workflowBean);
+            licenseProcessWorkflowService.getWfWithThirdPartyOp(license, workflowBean);
         licenseRepository.save(license);
         if (securityUtils.currentUserIsCitizen())
             licenseCitizenPortalService.onCreate(license);
@@ -132,10 +132,10 @@ public class LicenseApplicationService extends TradeLicenseService {
         license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
         processAndStoreDocument(license);
         if (securityUtils.currentUserIsEmployee())
-            licenseProcessWorkflowService.createNewLicenseWorkflowTransition((TradeLicense) license, workflowBean);
+            licenseProcessWorkflowService.createNewLicenseWorkflowTransition(license, workflowBean);
 
         else
-            licenseProcessWorkflowService.getWfWithThirdPartyOp((TradeLicense) license, workflowBean);
+            licenseProcessWorkflowService.getWfWithThirdPartyOp(license, workflowBean);
         this.licenseRepository.save(license);
         if (securityUtils.currentUserIsCitizen())
             licenseCitizenPortalService.onCreate(license);
@@ -166,9 +166,9 @@ public class LicenseApplicationService extends TradeLicenseService {
         else
             license.setCollectionPending(false);
         if (BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
-            licenseProcessWorkflowService.getRejectTransition((TradeLicense) license, workflowBean);
+            licenseProcessWorkflowService.getRejectTransition(license, workflowBean);
         else
-            licenseProcessWorkflowService.createNewLicenseWorkflowTransition((TradeLicense) license, workflowBean);
+            licenseProcessWorkflowService.createNewLicenseWorkflowTransition(license, workflowBean);
 
         if (BUTTONAPPROVE.equals(workflowBean.getWorkFlowAction()) && isEmpty(license.getLicenseNumber()) && license.isNewApplication())
             license.setLicenseNumber(licenseNumberUtils.generateLicenseNumber());

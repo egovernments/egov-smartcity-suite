@@ -66,6 +66,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 /**
  * This is a generic bean so do not use this to do transition of your own StateAware objects<br/>
  * For your own StateAware object transition declare a separate bean definition like<br/>
@@ -77,7 +80,6 @@ import java.util.List;
  *       &lt;/bean&gt;
  * </pre>
  **/
-@SuppressWarnings("unchecked")
 public class SimpleWorkflowService<T extends StateAware> implements WorkflowService<T> {
 
     private static final String WF_ACTION_ARG = "action";
@@ -87,6 +89,7 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
     private static final String DEPARTMENT = "department";
     private static final String FROM_QTY = "fromQty";
     private static final String TO_QTY = "toQty";
+    private static final String ANY = "ANY";
     private final PersistenceService<T, Long> stateAwarePersistenceService;
 
     @Autowired
@@ -95,12 +98,12 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
     @Autowired
     private ScriptService scriptService;
 
-    public SimpleWorkflowService(final PersistenceService<T, Long> stateAwarePersistenceService) {
+    public SimpleWorkflowService(PersistenceService<T, Long> stateAwarePersistenceService) {
         this.stateAwarePersistenceService = stateAwarePersistenceService;
     }
 
     @Override
-    public T transition(final WorkflowAction workflowAction, final T stateAware, final String comments) {
+    public T transition(WorkflowAction workflowAction, T stateAware, String comments) {
         scriptService.executeScript(getScript(stateAware, workflowAction.getName()), ScriptService.createContext(WF_ACTION_ARG, this,
                 WF_ITEM_ARG, stateAware, PERSISTENCE_SERVICE_ARG, this.stateAwarePersistenceService, "workflowService", this,
                 "comments", comments));
@@ -108,7 +111,7 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
     }
 
     @Override
-    public T transition(final String actionName, final T stateAware, final String comment) {
+    public T transition(String actionName, T stateAware, String comment) {
         WorkflowAction workflowAction = workflowActionService.getWorkflowActionByNameAndType(actionName,
                 stateAware.getStateType());
         if (workflowAction == null)
@@ -117,200 +120,142 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
     }
 
     @Override
-    public List<WorkflowAction> getValidActions(final T stateAware) {
-        final String scriptName = stateAware.getStateType() + ".workflow.validactions";
-        final Script trasitionScript = this.scriptService.getByName(scriptName);
-        final List<String> actionNames = (List<String>) scriptService.executeScript(trasitionScript,
+    public List<WorkflowAction> getValidActions(T stateAware) {
+        String scriptName = stateAware.getStateType() + ".workflow.validactions";
+        Script transitionScript = this.scriptService.getByName(scriptName);
+        List<String> actionNames = (List<String>) scriptService.executeScript(transitionScript,
                 ScriptService.createContext(WF_ITEM_ARG, stateAware, "workflowService", this, PERSISTENCE_SERVICE_ARG,
                         this.stateAwarePersistenceService));
-        final List<WorkflowAction> savedWorkflowActions = workflowActionService
+        List<WorkflowAction> savedWorkflowActions = workflowActionService
                 .getAllWorkflowActionByTypeAndActionNames(stateAware.getStateType(), actionNames);
         return savedWorkflowActions.isEmpty() ? createActions(stateAware, actionNames) : savedWorkflowActions;
     }
 
-    public Object execute(final T stateAware) {
-        final Script script = getScript(stateAware, "");
-        return scriptService.executeScript(script, ScriptService.createContext(WF_ACTION_ARG, this, WF_ITEM_ARG, stateAware,
-                PERSISTENCE_SERVICE_ARG, this.stateAwarePersistenceService));
+    public Object execute(T stateAware) {
+        return scriptService
+                .executeScript(getScript(stateAware, EMPTY), ScriptService.createContext(WF_ACTION_ARG, this, WF_ITEM_ARG,
+                        stateAware, PERSISTENCE_SERVICE_ARG, this.stateAwarePersistenceService));
     }
 
-    public Object execute(final T stateAware, final String comments) {
-        final Script script = getScript(stateAware, "");
-        return scriptService.executeScript(script, ScriptService.createContext(WF_ACTION_ARG, this, WF_ITEM_ARG, stateAware,
-                PERSISTENCE_SERVICE_ARG, this.stateAwarePersistenceService, "comments", comments));
+    public Object execute(T stateAware, String comments) {
+        return scriptService
+                .executeScript(getScript(stateAware, EMPTY), ScriptService.createContext(WF_ACTION_ARG, this, WF_ITEM_ARG,
+                        stateAware, PERSISTENCE_SERVICE_ARG, this.stateAwarePersistenceService, "comments", comments));
     }
 
-    private Script getScript(final T stateAware, final String actionName) {
+    private Script getScript(T stateAware, String actionName) {
         Script script = null;
-
-        if (!actionName.isEmpty())
+        if (isNotBlank(actionName))
             script = this.scriptService.getByName(new StringBuilder(10).append(stateAware.getStateType())
                     .append(".workflow.").append(actionName).toString());
-
         if (script == null)
             script = scriptService.getByName(stateAware.getStateType() + ".workflow");
-
         if (script == null)
             throw new ApplicationRuntimeException("workflow.script.notfound");
-
         return script;
     }
 
-    private List<WorkflowAction> createActions(final T stateAware, final List<String> actionNames) {
-        final List<WorkflowAction> workflowActions = new ArrayList<>();
-        for (final String action : actionNames)
+    private List<WorkflowAction> createActions(T stateAware, List<String> actionNames) {
+        List<WorkflowAction> workflowActions = new ArrayList<>();
+        for (String action : actionNames)
             workflowActions.add(new WorkflowAction(action, stateAware.getStateType(), action));
         return workflowActions;
     }
 
     @Override
-    public WorkFlowMatrix getWfMatrix(final String type, final String department, final BigDecimal amountRule,
-                                      final String additionalRule, final String currentState, final String pendingActions) {
-        final Criteria wfMatrixCriteria = createWfMatrixAdditionalCriteria(type, department, amountRule,
-                additionalRule, currentState, pendingActions);
-
-        return getWorkflowMatrixObj(type, additionalRule, currentState, pendingActions, wfMatrixCriteria);
-
+    public WorkFlowMatrix getWfMatrix(String type, String department, BigDecimal amountRule,
+                                      String additionalRule, String currentState, String pendingActions) {
+        Criteria wfMatrixCriteria = createWfMatrixAdditionalCriteria(type, department, amountRule,
+                additionalRule, currentState, pendingActions, null);
+        return getWorkflowMatrixObj(type, additionalRule, currentState, pendingActions, null, wfMatrixCriteria);
     }
 
     @Override
-    public WorkFlowMatrix getWfMatrix(final String type, final String department, final BigDecimal amountRule,
-                                      final String additionalRule, final String currentState, final String pendingActions, final Date date) {
-        final Criteria wfMatrixCriteria = createWfMatrixAdditionalCriteria(type, department, amountRule,
-                additionalRule, currentState, pendingActions);
-        final Criterion crit1 = Restrictions.le("fromDate", date == null ? new Date() : date);
-        final Criterion crit2 = Restrictions.ge("toDate", date == null ? new Date() : date);
-        final Criterion crit3 = Restrictions.conjunction().add(crit1).add(crit2);
-        wfMatrixCriteria.add(Restrictions.or(crit3, crit1));
-
-        return getWorkflowMatrixObj(type, additionalRule, currentState, pendingActions, wfMatrixCriteria);
-
+    public WorkFlowMatrix getWfMatrix(String type, String department, BigDecimal amountRule,
+                                      String additionalRule, String currentState, String pendingActions, Date date) {
+        Criteria wfMatrixCriteria = createWfMatrixAdditionalCriteria(type, department, amountRule,
+                additionalRule, currentState, pendingActions, null);
+        Criterion fromDateCriteria = Restrictions.le("fromDate", date == null ? new Date() : date);
+        Criterion toDateCriteria = Restrictions.ge("toDate", date == null ? new Date() : date);
+        Criterion dateCriteria = Restrictions.conjunction().add(fromDateCriteria).add(toDateCriteria);
+        wfMatrixCriteria.add(Restrictions.or(dateCriteria, fromDateCriteria));
+        return getWorkflowMatrixObj(type, additionalRule, currentState, pendingActions, null, wfMatrixCriteria);
     }
 
     @Override
-    public WorkFlowMatrix getWfMatrix(final String type, final String department, final BigDecimal amountRule,
-                                      final String additionalRule, final String currentState, final String pendingActions, final Date date,
-                                      final String designation) {
-        final Criteria wfMatrixCriteria = createWfMatrixAdditionalCriteria(type, department, amountRule,
+    public WorkFlowMatrix getWfMatrix(String type, String department, BigDecimal amountRule,
+                                      String additionalRule, String currentState, String pendingActions, Date date,
+                                      String designation) {
+        Criteria wfMatrixCriteria = createWfMatrixAdditionalCriteria(type, department, amountRule,
                 additionalRule, currentState, pendingActions, designation);
-        final Criterion crit1 = Restrictions.le("fromDate", date == null ? new Date() : date);
-        final Criterion crit2 = Restrictions.ge("toDate", date == null ? new Date() : date);
-        final Criterion crit3 = Restrictions.conjunction().add(crit1).add(crit2);
-        final Criterion criteriaDesignation = Restrictions.ilike(CURRENT_DESIGNATION,
-                org.apache.commons.lang.StringUtils.isNotBlank(designation) ? designation : "");
+        Criterion fromDateCriteria = Restrictions.le("fromDate", date == null ? new Date() : date);
+        Criterion toDateCriteria = Restrictions.ge("toDate", date == null ? new Date() : date);
+        Criterion dateCriteria = Restrictions.conjunction().add(fromDateCriteria).add(toDateCriteria);
+        Criterion criteriaDesignation = Restrictions.ilike(CURRENT_DESIGNATION, isNotBlank(designation) ? designation : EMPTY);
         wfMatrixCriteria.add(criteriaDesignation);
-        wfMatrixCriteria.add(Restrictions.or(crit3, crit1));
-
+        wfMatrixCriteria.add(Restrictions.or(dateCriteria, fromDateCriteria));
         return getWorkflowMatrixObj(type, additionalRule, currentState, pendingActions, designation, wfMatrixCriteria);
-
     }
 
-    private WorkFlowMatrix getWorkflowMatrixObj(final String type, final String additionalRule,
-                                                final String currentState, final String pendingActions, final Criteria wfMatrixCriteria) {
-        final List<WorkFlowMatrix> objectTypeList = wfMatrixCriteria.list();
-
-        if (objectTypeList.isEmpty()) {
-            final Criteria defaulfWfMatrixCriteria = commonWorkFlowMatrixCriteria(type, additionalRule, currentState,
-                    pendingActions);
-            defaulfWfMatrixCriteria.add(Restrictions.eq(DEPARTMENT, "ANY"));
-            final List<WorkFlowMatrix> defaultObjectTypeList = defaulfWfMatrixCriteria.list();
-            if (defaultObjectTypeList.isEmpty())
-                return null;
-            else
-                return defaultObjectTypeList.get(0);
+    private WorkFlowMatrix getWorkflowMatrixObj(String type, String additionalRule,
+                                                String currentState, String pendingActions,
+                                                String designation, Criteria wfMatrixCriteria) {
+        List<WorkFlowMatrix> workflowMatrix = wfMatrixCriteria.list();
+        if (workflowMatrix.isEmpty()) {
+            Criteria defaultCriteria = commonWorkFlowMatrixCriteria(type, additionalRule, currentState, pendingActions);
+            defaultCriteria.add(Restrictions.eq(DEPARTMENT, ANY));
+            if (isNotBlank(designation))
+                defaultCriteria.add(Restrictions.ilike(CURRENT_DESIGNATION, designation));
+            List<WorkFlowMatrix> defaultMatrix = defaultCriteria.list();
+            return defaultMatrix.isEmpty() ? null : defaultMatrix.get(0);
         } else {
-            for (final WorkFlowMatrix matrix : objectTypeList)
+            for (WorkFlowMatrix matrix : workflowMatrix)
                 if (matrix.getToDate() == null)
                     return matrix;
-            return objectTypeList.get(0);
+            return workflowMatrix.get(0);
         }
     }
 
-    private WorkFlowMatrix getWorkflowMatrixObj(final String type, final String additionalRule,
-                                                final String currentState, final String pendingActions,
-                                                final String designation, final Criteria wfMatrixCriteria) {
-        final List<WorkFlowMatrix> objectTypeList = wfMatrixCriteria.list();
-
-        if (objectTypeList.isEmpty()) {
-            final Criteria defaulfWfMatrixCriteria = commonWorkFlowMatrixCriteria(type, additionalRule, currentState,
-                    pendingActions);
-            defaulfWfMatrixCriteria.add(Restrictions.eq(DEPARTMENT, "ANY"));
-            if (org.apache.commons.lang.StringUtils.isNotBlank(designation))
-                defaulfWfMatrixCriteria.add(Restrictions.ilike(CURRENT_DESIGNATION, designation));
-            final List<WorkFlowMatrix> defaultObjectTypeList = defaulfWfMatrixCriteria.list();
-            if (defaultObjectTypeList.isEmpty())
-                return null;
-            else
-                return defaultObjectTypeList.get(0);
-        } else {
-            for (final WorkFlowMatrix matrix : objectTypeList)
-                if (matrix.getToDate() == null)
-                    return matrix;
-            return objectTypeList.get(0);
-        }
-    }
-
-    private Criteria createWfMatrixAdditionalCriteria(final String type, final String department,
-                                                      final BigDecimal amountRule, final String additionalRule, final String currentState,
-                                                      final String pendingActions) {
-        final Criteria wfMatrixCriteria = commonWorkFlowMatrixCriteria(type, additionalRule, currentState,
+    private Criteria createWfMatrixAdditionalCriteria(String type, String department,
+                                                      BigDecimal amountRule, String additionalRule, String currentState,
+                                                      String pendingActions, String designation) {
+        Criteria wfMatrixCriteria = commonWorkFlowMatrixCriteria(type, additionalRule, currentState,
                 pendingActions);
-        if (department != null && !"".equals(department.trim()))
+        if (isNotBlank(department))
             wfMatrixCriteria.add(Restrictions.eq(DEPARTMENT, department));
 
         // Added restriction for amount rule
         if (amountRule != null && BigDecimal.ZERO.compareTo(amountRule) != 0) {
-            final Criterion amount1st = Restrictions.conjunction().add(Restrictions.le(FROM_QTY, amountRule))
+            Criterion amount1st = Restrictions.conjunction().add(Restrictions.le(FROM_QTY, amountRule))
                     .add(Restrictions.ge(TO_QTY, amountRule));
 
-            final Criterion amount2nd = Restrictions.conjunction().add(Restrictions.le(FROM_QTY, amountRule))
-                    .add(Restrictions.isNull(TO_QTY));
-            wfMatrixCriteria.add(Restrictions.disjunction().add(amount1st).add(amount2nd));
-
-        }
-        return wfMatrixCriteria;
-    }
-
-    private Criteria createWfMatrixAdditionalCriteria(final String type, final String department,
-                                                      final BigDecimal amountRule, final String additionalRule, final String currentState,
-                                                      final String pendingActions, final String designation) {
-        final Criteria wfMatrixCriteria = commonWorkFlowMatrixCriteria(type, additionalRule, currentState,
-                pendingActions);
-        if (department != null && !"".equals(department.trim()))
-            wfMatrixCriteria.add(Restrictions.eq(DEPARTMENT, department));
-
-        // Added restriction for amount rule
-        if (amountRule != null && BigDecimal.ZERO.compareTo(amountRule) != 0) {
-            final Criterion amount1st = Restrictions.conjunction().add(Restrictions.le(FROM_QTY, amountRule))
-                    .add(Restrictions.ge(TO_QTY, amountRule));
-
-            final Criterion amount2nd = Restrictions.conjunction().add(Restrictions.le(FROM_QTY, amountRule))
+            Criterion amount2nd = Restrictions.conjunction().add(Restrictions.le(FROM_QTY, amountRule))
                     .add(Restrictions.isNull(TO_QTY));
             wfMatrixCriteria.add(Restrictions.disjunction().add(amount1st).add(amount2nd));
 
         }
 
-        if (org.apache.commons.lang.StringUtils.isNotBlank(designation))
+        if (isNotBlank(designation))
             wfMatrixCriteria.add(Restrictions.ilike(CURRENT_DESIGNATION, designation));
 
         return wfMatrixCriteria;
     }
 
-    public WorkFlowMatrix getPreviousStateFromWfMatrix(final String type, final String department, final BigDecimal amountRule,
-                                                       final String additionalRule, final String currentState, final String pendingActions) {
+    public WorkFlowMatrix getPreviousStateFromWfMatrix(String type, String department, BigDecimal amountRule,
+                                                       String additionalRule, String currentState, String pendingActions) {
 
-        final Criteria wfMatrixCriteria = previousWorkFlowMatrixCriteria(type, additionalRule, currentState, pendingActions);
+        Criteria wfMatrixCriteria = previousWorkFlowMatrixCriteria(type, additionalRule, currentState, pendingActions);
         if (department != null && !"".equals(department))
             wfMatrixCriteria.add(Restrictions.eq(DEPARTMENT, department));
         else
-            wfMatrixCriteria.add(Restrictions.eq(DEPARTMENT, "ANY"));
+            wfMatrixCriteria.add(Restrictions.eq(DEPARTMENT, ANY));
 
         // Added restriction for amount rule
         if (amountRule != null && BigDecimal.ZERO.compareTo(amountRule) != 0) {
-            final Criterion amount1st = Restrictions.conjunction()
+            Criterion amount1st = Restrictions.conjunction()
                     .add(Restrictions.le(FROM_QTY, amountRule))
                     .add(Restrictions.ge(TO_QTY, amountRule));
-            final Criterion amount2nd = Restrictions.conjunction()
+            Criterion amount2nd = Restrictions.conjunction()
                     .add(Restrictions.le(FROM_QTY, amountRule))
                     .add(Restrictions.isNull(TO_QTY));
             wfMatrixCriteria.add(Restrictions.disjunction().add(amount1st)
@@ -318,47 +263,44 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
 
         }
 
-        final List<WorkFlowMatrix> objectTypeList = wfMatrixCriteria.list();
+        List<WorkFlowMatrix> workflowMatrix = wfMatrixCriteria.list();
 
-        if (!objectTypeList.isEmpty())
-            return objectTypeList.get(0);
-
-        return null;
+        return workflowMatrix.isEmpty() ? null : workflowMatrix.get(0);
 
     }
 
-    private Criteria previousWorkFlowMatrixCriteria(final String type, final String additionalRule, final String currentState,
-                                                    final String pendingActions) {
-        final Criteria commonWfMatrixCriteria = this.stateAwarePersistenceService.getSession()
+    private Criteria previousWorkFlowMatrixCriteria(String type, String additionalRule, String currentState,
+                                                    String pendingActions) {
+        Criteria commonWfMatrixCriteria = this.stateAwarePersistenceService.getSession()
                 .createCriteria(WorkFlowMatrix.class);
         commonWfMatrixCriteria.add(Restrictions.eq("objectType", type));
 
-        if (org.apache.commons.lang.StringUtils.isNotBlank(additionalRule))
+        if (isNotBlank(additionalRule))
             commonWfMatrixCriteria.add(Restrictions.eq("additionalRule", additionalRule));
 
-        if (org.apache.commons.lang.StringUtils.isNotBlank(pendingActions))
+        if (isNotBlank(pendingActions))
             commonWfMatrixCriteria.add(Restrictions.ilike("nextAction", pendingActions, MatchMode.EXACT));
 
-        if (org.apache.commons.lang.StringUtils.isNotBlank(currentState))
+        if (isNotBlank(currentState))
             commonWfMatrixCriteria.add(Restrictions.ilike("nextState", currentState, MatchMode.EXACT));
         return commonWfMatrixCriteria;
     }
 
-    private Criteria commonWorkFlowMatrixCriteria(final String type, final String additionalRule,
-                                                  final String currentState, final String pendingActions) {
+    private Criteria commonWorkFlowMatrixCriteria(String type, String additionalRule,
+                                                  String currentState, String pendingActions) {
 
-        final Criteria commonWfMatrixCriteria = this.stateAwarePersistenceService.getSession().createCriteria(
+        Criteria commonWfMatrixCriteria = this.stateAwarePersistenceService.getSession().createCriteria(
                 WorkFlowMatrix.class);
 
         commonWfMatrixCriteria.add(Restrictions.eq("objectType", type));
 
-        if (additionalRule != null && !"".equals(additionalRule.trim()))
+        if (isNotBlank(additionalRule))
             commonWfMatrixCriteria.add(Restrictions.eq("additionalRule", additionalRule));
 
-        if (pendingActions != null && !"".equals(pendingActions.trim()))
+        if (isNotBlank(pendingActions))
             commonWfMatrixCriteria.add(Restrictions.ilike("pendingActions", pendingActions, MatchMode.ANYWHERE));
 
-        if (currentState != null && !"".equals(currentState.trim()))
+        if (isNotBlank(currentState))
             commonWfMatrixCriteria.add(Restrictions.ilike("currentState", currentState, MatchMode.EXACT));
         else
             commonWfMatrixCriteria.add(Restrictions.ilike("currentState", "NEW", MatchMode.EXACT));
