@@ -71,6 +71,8 @@ import org.egov.portal.service.PortalLinkService;
 import org.egov.portal.util.constant.PortalConstants;
 import org.egov.portal.web.adaptor.PortallinkJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -82,6 +84,7 @@ import org.springframework.web.client.RestTemplate;
 @Controller
 public class PortalLinkController {
 
+    private static final String REFERER_IP = "103.21.58.98";
     @Autowired
     private PortalLinkService portalLinkService;
     @Autowired
@@ -102,20 +105,24 @@ public class PortalLinkController {
         String restURL = null;
         PortalLinkResponse response = null;
         if (portalLinkRequest.getModuleName() != null) {
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("REFERER", REFERER_IP);
             if (portalLinkRequest.getModuleName().equalsIgnoreCase(PROPERTY_TAX)) {
                 SearchPropertyRequest searchPortalRequest = new SearchPropertyRequest();
                 searchPortalRequest.setAssessmentNo(portalLinkRequest.getAssessmentNo());
                 searchPortalRequest.setUlbCode(ApplicationThreadLocals.getCityCode());
                 restURL = format(PTIS_URL,
                         WebUtils.extractRequestDomainURL(request, false));
-                response = restTemplate.postForObject(restURL, searchPortalRequest, PortalLinkResponse.class);
+                HttpEntity<SearchPropertyRequest> requestObj = new HttpEntity<>(searchPortalRequest, headers);
+                response = restTemplate.postForObject(restURL, requestObj, PortalLinkResponse.class);
             } else if (portalLinkRequest.getModuleName().equalsIgnoreCase(WATER_CHARGES)) {
                 SearchConnectionRequest searchConnectionRequest = new SearchConnectionRequest();
                 searchConnectionRequest.setConsumerNo(portalLinkRequest.getAssessmentNo());
                 searchConnectionRequest.setUlbCode(ApplicationThreadLocals.getCityCode());
                 restURL = format(WTMS_URL,
                         WebUtils.extractRequestDomainURL(request, false));
-                response = restTemplate.postForObject(restURL, searchConnectionRequest, PortalLinkResponse.class);
+                HttpEntity<SearchConnectionRequest> requestObj = new HttpEntity<>(searchConnectionRequest, headers);
+                response = restTemplate.postForObject(restURL, requestObj, PortalLinkResponse.class);
             } else if (portalLinkRequest.getModuleName().equalsIgnoreCase(SEWERAGE_TAX)) {
                 SearchConnectionRequest searchConnectionRequest = new SearchConnectionRequest();
                 searchConnectionRequest.setConsumerNo(portalLinkRequest.getAssessmentNo());
