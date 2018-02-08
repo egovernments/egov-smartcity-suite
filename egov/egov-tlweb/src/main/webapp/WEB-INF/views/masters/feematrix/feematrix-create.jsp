@@ -174,7 +174,6 @@
                         </label>
                         <div class="col-sm-3 add-margin">
                             <form:input id="effectiveTo" path="effectiveTo" class="datepicker form-control text-left" maxlength="10"/>
-                            <form:errors path="effectiveTo" cssClass="add-margin error-msg"/>
                         </div>
                     </div>
                     <div class="panel-heading">
