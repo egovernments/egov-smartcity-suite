@@ -1444,7 +1444,10 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
 				if (position != null) {
 					objection.transition().progressWithStateCopy().withNextAction(OBJECTION_RECORD_INSPECTIONDETAILS)
-							.withStateValue(PropertyTaxConstants.WF_STATE_REJECTED).withOwner(position)
+							.withStateValue(
+									PROPERTY_MODIFY_REASON_REVISION_PETITION.equalsIgnoreCase(objection.getType())
+											? RP_APP_STATUS_REJECTED : GRP_APP_STATUS_REJECTED)
+							.withOwner(position)
 							.withSenderName(loggedInUser.getUsername() + "::" + loggedInUser.getName())
 							.withDateInfo(new DateTime().toDate()).withComments(approverComments);
 					final String actionMessage = propertyTaxUtil.getApproverUserName(position.getId());
