@@ -114,7 +114,7 @@
         	<span class="bold"><fmt:formatNumber type = "number" value = "${basicProperty.property.propertyDetail.marketValue}" /></span>
 		</td>
         <td class="blueborderfortd">
-        	<span class="bold"><fmt:formatNumber type = "number" value = "${basicProperty.property.propertyDetail.currentCapitalValue}" />" default="N/A"/></span>
+        	<span class="bold"><fmt:formatNumber type = "number" value = "${basicProperty.property.propertyDetail.currentCapitalValue}" /></span>
         </td>
         <td class="blueborderfortd">
         <s:date name="%{basicProperty.property.propertyDetail.dateOfCompletion}" var="occupationDate" format="dd/MM/yyyy" />
