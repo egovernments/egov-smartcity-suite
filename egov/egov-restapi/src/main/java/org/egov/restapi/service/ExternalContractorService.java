@@ -47,20 +47,28 @@
  */
 package org.egov.restapi.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
+import org.egov.commons.ContractorGrade;
 import org.egov.commons.dao.BankHibernateDAO;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.persistence.entity.component.Period;
 import org.egov.restapi.constants.RestApiConstants;
+import org.egov.restapi.model.ContractorDetailsRequest;
 import org.egov.restapi.model.ContractorHelper;
 import org.egov.restapi.model.RestErrors;
+import org.egov.works.master.service.ContractorGradeService;
 import org.egov.works.master.service.ContractorService;
 import org.egov.works.models.masters.Contractor;
+import org.egov.works.models.masters.ContractorDetail;
 import org.egov.works.models.masters.ExemptionForm;
+import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -87,6 +95,15 @@ public class ExternalContractorService {
 
     @Autowired
     private BankHibernateDAO bankHibernateDAO;
+
+    @Autowired
+    private DepartmentService departmentService;
+
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
+
+    @Autowired
+    private ContractorGradeService contractorGradeService;
 
     public ContractorHelper populateContractorData(final Contractor contractor) {
         return createContractorData(contractor);
@@ -149,6 +166,61 @@ public class ExternalContractorService {
             restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONTRACTOR_NAME_MAXLENGTH);
             errors.add(restErrors);
         }
+        if (contractorHelper.getContractorDetails().isEmpty()) {
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CONTRACTOR_DETAIL_NOTEXIST);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONTRACTOR_DETAIL_NOTEXIST);
+            errors.add(restErrors);
+        }
+        for (ContractorDetailsRequest c : contractorHelper.getContractorDetails()) {
+            if (c.getDepartmentCode() == null || StringUtils.isBlank(c.getDepartmentCode())) {
+                restErrors = new RestErrors();
+                restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_NO_DEPARTMENT);
+                restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_DEPARTMENT_EXIST);
+                errors.add(restErrors);
+            }
+
+            if (c.getStatus() == null || StringUtils.isBlank(c.getStatus())) {
+                restErrors = new RestErrors();
+                restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_NO_STATUS);
+                restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_STATUS);
+                errors.add(restErrors);
+            }
+            if (c.getStartDate() == null) {
+                restErrors = new RestErrors();
+                restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_NO_STARTDATE);
+                restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_STARTDATE);
+                errors.add(restErrors);
+            }
+
+            if (c.getContractorCategory() != null && StringUtils.isNotBlank(c.getContractorCategory())) {
+                String[] categoryValues = contractorService.getContractorMasterCategoryValues();
+                int count = 0;
+                if (categoryValues.length != 0)
+                    for (int i = 0; i < categoryValues.length; i++) {
+                        if (categoryValues[i].equalsIgnoreCase(c.getContractorCategory()))
+                            count++;
+                    }
+                if (count == 0) {
+                    restErrors = new RestErrors();
+                    restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_NO_CONTRACTOR_CATEGORY);
+                    restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_CONTRACTOR_CATEGORY);
+                    errors.add(restErrors);
+                }
+            }
+            if (c.getContractorClass() != null && StringUtils.isNotBlank(c.getContractorClass())) {
+                ContractorGrade contractorClass = contractorGradeService.findByContractorClass(c.getContractorClass());
+
+                if (contractorClass == null) {
+                    restErrors = new RestErrors();
+                    restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_NO_CONTRACTOR_CLASS);
+                    restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_CONTRACTOR_CLASS);
+                    errors.add(restErrors);
+                }
+            }
+
+        }
+
         errors = validateNonMandatorFields(contractorHelper, errors, restErrors);
 
         return errors;
@@ -232,6 +304,7 @@ public class ExternalContractorService {
             restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONTRACTOR_MOBILENUMBER_INVALID);
             errors.add(restErrors);
         }
+
         return errors;
     }
 
@@ -255,6 +328,7 @@ public class ExternalContractorService {
     public Contractor populateContractorToCreate(final ContractorHelper contractorHelper) {
         final Contractor contractor = new Contractor();
         populateContractor(contractorHelper, contractor);
+
         return contractor;
     }
 
@@ -291,6 +365,32 @@ public class ExternalContractorService {
         contractor.setTinNumber(contractorHelper.getTinNumber());
         contractor.setPwdApprovalCode(contractorHelper.getPwdApprovalCode());
         contractor.setNarration(contractorHelper.getNarration());
+        populateContractorDetails(contractorHelper, contractor);
+    }
+
+    private void populateContractorDetails(final ContractorHelper contractorHelper, final Contractor contractor) {
+        contractor.getContractorDetails().clear();
+        if (!contractorHelper.getContractorDetails().isEmpty())
+            for (ContractorDetailsRequest cd : contractorHelper.getContractorDetails()) {
+                ContractorDetail contractorDetail = new ContractorDetail();
+                Period period = new Period();
+                contractorDetail.setDepartment(departmentService.getDepartmentByCode(cd.getDepartmentCode()));
+                contractorDetail.setRegistrationNumber(cd.getRegistrationNumber());
+                contractorDetail.setGrade(contractorGradeService.findByContractorClass(cd.getContractorClass()));
+                contractorDetail.setStatus(
+                        egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.STATUS_MODULE_NAME, cd.getStatus()));
+                contractorDetail.setCategory(cd.getContractorCategory());
+                period.setStartDate(cd.getStartDate());
+
+                if (cd.getEndDate() != null)
+                    period.setEndDate(cd.getEndDate());
+                contractorDetail.setValidity(period);
+                if (contractor.getId() != null) {
+                    contractorDetail.setCreatedBy(contractor.getCreatedBy());
+                    contractorDetail.setCreatedDate(contractor.getCreatedDate());
+                }
+                contractor.getContractorDetails().add(contractorDetail);
+            }
     }
 
     public Contractor saveContractor(final Contractor contractor) {
@@ -339,19 +439,38 @@ public class ExternalContractorService {
     }
 
     private void populateContractorDetailsData(final Contractor contractor, final ContractorHelper contractorHelper) {
-        if (!contractor.getContractorDetails().isEmpty()
-                && StringUtils.isNotBlank(contractor.getContractorDetails().get(0).getCategory()))
-            contractorHelper.setContractorCategory(contractor.getContractorDetails().get(0).getCategory());
-        else
-            contractorHelper.setContractorCategory(StringUtils.EMPTY);
-        if (!contractor.getContractorDetails().isEmpty() && contractor.getContractorDetails().get(0).getGrade() != null)
-            contractorHelper.setContractorClass(contractor.getContractorDetails().get(0).getGrade().getGrade());
-        else
-            contractorHelper.setContractorClass(StringUtils.EMPTY);
-        if (!contractor.getContractorDetails().isEmpty())
-            contractorHelper.setStatus(contractor.getContractorDetails().get(0).getStatus().getCode());
-        else
-            contractorHelper.setStatus(StringUtils.EMPTY);
+        if (!contractor.getContractorDetails().isEmpty()) {
+            for (ContractorDetail c : contractor.getContractorDetails()) {
+                if (c != null) {
+                    ContractorDetailsRequest contractorDetailsRequest = new ContractorDetailsRequest();
+                    if (c.getCategory() != null && StringUtils.isNotBlank(c.getCategory()))
+                        contractorDetailsRequest.setContractorCategory(c.getCategory());
+                    else
+                        contractorDetailsRequest.setContractorCategory(StringUtils.EMPTY);
+                    if (c.getGrade() != null)
+                        contractorDetailsRequest.setContractorClass(c.getGrade().getGrade());
+                    else
+                        contractorDetailsRequest.setContractorClass(StringUtils.EMPTY);
+                    contractorDetailsRequest.setStatus(c.getStatus().getCode());
+                    if (c.getRegistrationNumber() != null && StringUtils.isNotBlank(c.getRegistrationNumber())) {
+                        contractorDetailsRequest.setRegistrationNumber(c.getRegistrationNumber());
+                    } else
+                        contractorDetailsRequest.setRegistrationNumber(StringUtils.EMPTY);
+                    if (c.getDepartment() != null) {
+
+                        contractorDetailsRequest.setDepartmentCode(c.getDepartment().getCode());
+                    }
+
+                    if (c.getValidity() != null) {
+                        contractorDetailsRequest.setStartDate(c.getValidity().getStartDate());
+                        if (c.getValidity().getEndDate() != null)
+                            contractorDetailsRequest.setEndDate(c.getValidity().getEndDate());
+
+                    }
+                    contractorHelper.getContractorDetails().add(contractorDetailsRequest);
+                }
+            }
+        }
     }
 
     private void createContractorHeaderData(final Contractor contractor, final ContractorHelper contractorHelper) {

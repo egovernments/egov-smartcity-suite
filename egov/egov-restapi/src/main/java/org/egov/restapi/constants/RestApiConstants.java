@@ -509,7 +509,26 @@ public class RestApiConstants {
 
     public static final String THIRD_PARTY_ERR_CONTRACTOR_EMAIL_INVALID = "EGWORKS-CONTRACTOR-20";
     public static final String THIRD_PARTY_ERR_MSG_CONTRACTOR_EMAIL_INVALID = "Email is not a valid";
+    
+    public static final String THIRD_PARTY_ERR_CONTRACTOR_DETAIL_NOTEXIST = "EGWORKS-CONTRACTOR-21";
+    public static final String THIRD_PARTY_ERR_MSG_CONTRACTOR_DETAIL_NOTEXIST = "Contractor detail should not be empty";
 
+    public static final String THIRD_PARTY_ERR_NO_DEPARTMENT = "EGWORKS-CONTRACTOR-22";
+    public static final String THIRD_PARTY_ERR_MSG_NO_DEPARTMENT_EXIST = "Department code should not be empty";
+    
+    public static final String THIRD_PARTY_ERR_NO_CONTRACTOR_CATEGORY = "EGWORKS-CONTRACTOR-23";
+    public static final String THIRD_PARTY_ERR_MSG_NO_CONTRACTOR_CATEGORY = "Contractor Category in not valid";
+
+    public static final String THIRD_PARTY_ERR_NO_CONTRACTOR_CLASS = "EGWORKS-CONTRACTOR-24";
+    public static final String THIRD_PARTY_ERR_MSG_NO_CONTRACTOR_CLASS = "Contractor class or grade is not valid";
+
+    public static final String THIRD_PARTY_ERR_NO_STATUS = "EGWORKS-CONTRACTOR-25";
+    public static final String THIRD_PARTY_ERR_MSG_NO_STATUS = "Status should not be empty";
+
+    public static final String THIRD_PARTY_ERR_NO_STARTDATE = "EGWORKS-CONTRACTOR-26";
+    public static final String THIRD_PARTY_ERR_MSG_NO_STARTDATE = "Start date should not be empty";
+
+    
     public static final String THIRD_PARTY_ERR_CODE_JSON_REQUEST = "EGF-VOUCHER-1";
     public static final String THIRD_PARTY_ERR_MSG_JSON_REQUEST = "Please send valid JSON request";
 
