@@ -152,10 +152,10 @@ function uniqueCheckCode(){
 	dom.get('error_area').innerHTML = '';
 	dom.get("error_area").style.display="none"
 	var serviceCode = dom.get("serviceCode").value.trim();
-	var serviceCodeInitVal ='<s:property value="%{code}" />';
+	 var serviceCodeInitVal ='<s:property value="%{code}" />';
     if(serviceCode !="" && serviceCodeInitVal.trim() != serviceCode){
 		populateCodeUnique({code:dom.get('serviceCode').value});
-   }	
+   }
 }
 
 function clearCodeIfExists(){
@@ -203,7 +203,7 @@ function enableUrl(obj) {
 			<td width="25%" class="bluebox"><s:property value="serviceCategory.name"/></td>
 			<td width="25%" class="bluebox"> </td><td width="25%" class="bluebox"> </td>
 		</tr>
-		<s:set name="serviceCodeInitVal" id="serviceCodeInitVal" value="%{code}"></s:set>
+		<s:set var="serviceCodeInitVal" value="%{code}"></s:set>
 		<tr>
 		    <td></td>
 			<egov:uniquecheck id="CodeUnique" fields="['Value']" url='/service/serviceDetails-codeUniqueCheck.action'
