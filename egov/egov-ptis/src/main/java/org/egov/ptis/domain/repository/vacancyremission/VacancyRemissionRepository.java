@@ -83,4 +83,7 @@ public interface VacancyRemissionRepository extends JpaRepository<VacancyRemissi
     
     @Query("select vr from VacancyRemission vr where vr.basicProperty.upicNo=:upicNo and vr.status = 'IN_WORKFLOW'")
     VacancyRemission getVRUnderWorkflowByUpicNo(@Param("upicNo") String name);
+    
+    @Query("select vr from VacancyRemission vr where vr.applicationNumber=:appNo")
+    VacancyRemission getVRByApplicationNo(@Param("appNo") String name);
 }

@@ -59,7 +59,6 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.StringUtils;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
@@ -73,9 +72,9 @@ import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
-import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
+import org.egov.ptis.domain.repository.vacancyremission.VacancyRemissionRepository;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
 import org.egov.ptis.notice.PtNotice;
@@ -128,18 +127,14 @@ public class ViewPropertyAction extends BaseFormAction {
     @Autowired
     private transient UserService userService;
     @Autowired
-    private transient PersistenceService<Property, Long> propertyImplService;
-    @Autowired
-    private transient PersistenceService<RevisionPetition, Long> revisionPetitionPersistenceService;
-    @Autowired
     @Qualifier("transferOwnerService")
     private transient PropertyTransferService transferOwnerService;
     @Autowired
     private transient PropertyTaxCommonUtils propertyTaxCommonUtils;
     @Autowired
-    private transient PersistenceService<VacancyRemission, Long> vacancyRemissionPersistenceService;
-    @Autowired
     private transient PropertyService propService;
+    @Autowired
+    private VacancyRemissionRepository vacancyRemissionRepository;
     @PersistenceContext
     private transient EntityManager entityManager;
 
@@ -259,6 +254,14 @@ public class ViewPropertyAction extends BaseFormAction {
                 viewMap.put("enableVacancyRemission", propertyTaxUtil.enableVacancyRemission(basicProperty.getUpicNo()));
                 viewMap.put("enableMonthlyUpdate", propertyTaxUtil.enableMonthlyUpdate(basicProperty.getUpicNo()));
             }
+            
+            final Query query = entityManager.createNamedQuery("PROP_STATUS_VALUES_BY_BASICPROPERTY");
+            query.setParameter("basicProperty", basicProperty);
+            PropertyStatusValues statusValues = !query.getResultList().isEmpty()
+                    ? (PropertyStatusValues) query.getResultList().get(0) : null;
+            if (null != statusValues && null != statusValues.getReferenceBasicProperty())
+                viewMap.put("parentProps", statusValues.getReferenceBasicProperty().getUpicNo());
+            
             final Long userId = (Long) session().get(SESSIONLOGINID);
             if (userId != null) {
                 setRoleName(getRolesForUserId(userId));
@@ -332,26 +335,21 @@ public class ViewPropertyAction extends BaseFormAction {
             if (Arrays.asList(APPLICATION_TYPE_NEW_ASSESSENT, APPLICATION_TYPE_ALTER_ASSESSENT, APPLICATION_TYPE_TAX_EXEMTION,
                     APPLICATION_TYPE_BIFURCATE_ASSESSENT,
                     APPLICATION_TYPE_DEMOLITION, APPLICATION_TYPE_AMALGAMATION).contains(appType)) {
-                property = (PropertyImpl) propertyImplService.find("from PropertyImpl where applicationNo=?", appNo);
+                final Query query = entityManager.createNamedQuery("PROPERTYIMPL_BY_APPLICATIONNO");
+                query.setParameter("applicatiNo", appNo);
+                property = (PropertyImpl) query.getSingleResult();
                 setBasicProperty(property.getBasicProperty());
                 setHistoryMap(propService.populateHistory(property));
                 if (appType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)) {
-                    final PropertyMutationMaster propertyMutationMaster = basicProperty.getPropertyMutationMaster();
-                    if (propertyMutationMaster.getCode().equals(PROP_CREATE_RSN_BIFUR)) {
-                        final PropertyStatusValues statusValues = (PropertyStatusValues) getPersistenceService()
-                                .find("From PropertyStatusValues where basicProperty.id = ?", basicProperty.getId());
-                        if (null != statusValues && null != statusValues.getReferenceBasicProperty())
-                            viewMap.put("parentProps", statusValues.getReferenceBasicProperty().getUpicNo());
-                    }
                     getDocumentDetails();
-
                 } else if (appType.equals(APPLICATION_TYPE_TAX_EXEMTION) && property.getIsExemptedFromTax()) {
                     property.setDocuments(property.getTaxExemptionDocuments());
                 }
             } else if (appType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)
                     || appType.equalsIgnoreCase(APPLICATION_TYPE_GRP)) {
-                final RevisionPetition rp = revisionPetitionPersistenceService
-                        .find("from RevisionPetition where objectionNumber=?", appNo);
+                final Query query = entityManager.createNamedQuery("RP_BY_APPLICATIONNO");
+                query.setParameter("applicatiNo", appNo);
+                RevisionPetition rp = (RevisionPetition) query.getSingleResult();
                 setBasicProperty(rp.getBasicProperty());
                 setHistoryMap(propService.populateHistory(rp));
                 property = rp.getBasicProperty().getActiveProperty();
@@ -364,8 +362,7 @@ public class ViewPropertyAction extends BaseFormAction {
                 property = (PropertyImpl) propertyMutation.getProperty();
                 property.setDocuments(propertyMutation.getDocuments());
             } else if (appType.equalsIgnoreCase(APPLICATION_TYPE_VACANCY_REMISSION)) {
-                final VacancyRemission vacancyRemission = vacancyRemissionPersistenceService
-                        .find("from VacancyRemission where applicationNumber=?", appNo);
+                final VacancyRemission vacancyRemission= vacancyRemissionRepository.getVRByApplicationNo(appNo);
                 setBasicProperty(vacancyRemission.getBasicProperty());
                 setHistoryMap(propService.populateHistory(vacancyRemission));
                 property = vacancyRemission.getBasicProperty().getActiveProperty();

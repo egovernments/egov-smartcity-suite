@@ -93,4 +93,7 @@
 			class="org.egov.ptis.domain.entity.property.BasicPropertyImpl" />
 
 	</class>
+	
+	<query name="PROP_STATUS_VALUES_BY_BASICPROPERTY">
+           <![CDATA[From PropertyStatusValues where basicProperty = :basicProperty]]></query>
 </hibernate-mapping>

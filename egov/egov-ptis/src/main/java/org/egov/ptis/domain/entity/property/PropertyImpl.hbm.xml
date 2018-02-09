@@ -184,6 +184,9 @@
 	<query name="PROPERTYIMPL_BYID">
         <![CDATA[from PropertyImpl where id=?]]></query>	
         
+    <query name="PROPERTYIMPL_BY_APPLICATIONNO">
+        <![CDATA[from PropertyImpl where applicationNo= :applicatiNo]]></query>
+            
     <query name="WORKFLOW_PROPERTYIMPL_BYID">
         <![CDATA[from PropertyImpl where id=? and status = 'W']]></query>
         
