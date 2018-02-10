@@ -47,12 +47,12 @@
  */
 package org.egov.wtms.entity.es;
 
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
 import static org.egov.infra.utils.DateUtils.toDateTimeUsingDefaultPattern;
+
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 public class CompensationReportRequest {
     private static final DateTimeFormatter ES_DATE_FORMATTER = DateTimeFormat.forPattern(ES_DATE_FORMAT);
@@ -61,7 +61,6 @@ public class CompensationReportRequest {
     private String applicationType;
     private String fromDate;
     private String toDate;
-    private String searchText;
     private String applicationNumber;
     private String applicantName;
     private String applicationDate;
