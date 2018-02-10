@@ -481,4 +481,8 @@
     	<put-attribute name="page-title" value="title.update.application" cascade="true"></put-attribute>
     	<put-attribute name="body" value="/WEB-INF/views/application/upload-document-success.jsp"></put-attribute>
     </definition>
+     <definition name="compensationReport-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.compensation.report" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/elasticSearch/compensationReport-search.jsp"/>
+    </definition>
 </tiles-definitions>
