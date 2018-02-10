@@ -139,14 +139,14 @@ public class BoundaryService {
     }
 
     public List<Boundary> getParentBoundariesByBoundaryId(final Long boundaryId) {
-        List<Boundary> boundaries = new ArrayList<>();
-        final Boundary boundary = getBoundaryById(boundaryId);
-        if (boundary != null) {
-            boundaries.add(boundary);
-            if (boundary.getParent() != null)
-                boundaries = getParentBoundariesByBoundaryId(boundary.getParent().getId());
+        List<Boundary> boundaryList = new ArrayList<>();
+        final Boundary bndry = getBoundaryById(boundaryId);
+        if (bndry != null) {
+            boundaryList.add(bndry);
+            if (bndry.getParent() != null)
+                boundaryList = getParentBoundariesByBoundaryId(bndry.getParent().getId());
         }
-        return boundaries;
+        return boundaryList;
     }
 
     public List<Boundary> getActiveBoundariesByBoundaryTypeId(final Long boundaryTypeId) {
