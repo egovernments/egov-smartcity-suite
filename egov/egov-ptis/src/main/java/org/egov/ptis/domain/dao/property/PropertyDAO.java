@@ -244,4 +244,6 @@ public interface PropertyDAO {
 
 	public List getInstallmentAndReasonWiseDemandDetails(EgDemand egDemand);
 
+    public Property getLatestGISPropertyForBasicProperty(BasicProperty basicProperty);
+
 }

@@ -1177,7 +1177,7 @@ public class PropertyExternalService {
         final PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
         BasicProperty basicProperty = createBscPropty(viewpropertyDetails, propService);
         final Address ownerCorrAddr = createCorrespondenceAddress(viewpropertyDetails, basicProperty.getAddress());
-        PropertyImpl property = (PropertyImpl) basicProperty.getProperty();
+        PropertyImpl property = (PropertyImpl) basicProperty.getWFProperty();
         property.setSource(SOURCE_SURVEY);
         property.setReferenceId(viewpropertyDetails.getReferenceId());
         List<File> fileAttachments = new ArrayList<>(0);
@@ -1190,6 +1190,15 @@ public class PropertyExternalService {
         processAndStoreDocumentsWithReason(basicProperty, DOCS_CREATE_PROPERTY, fileAttachments, uploadFileNames,
                 uploadContentTypes);
         basicPropertyService.createOwners(property, basicProperty, ownerCorrAddr);
+        /*
+         * Duplicate GIS property will be persisted, which will be used for generating comparison reports  
+         */
+        PropertyImpl gisProperty = (PropertyImpl) property.createPropertyclone();
+        for(Floor floor : gisProperty.getPropertyDetail().getFloorDetails())
+            floor.setPropertyDetail(gisProperty.getPropertyDetail());
+        gisProperty.setStatus('G');
+        gisProperty.setSource(SOURCE_SURVEY);
+        basicProperty.addProperty(gisProperty);
         transitionWorkFlow(property, propService, PROPERTY_MODE_CREATE);
         basicPropertyService.applyAuditing(property.getState());
         basicProperty = basicPropertyService.persist(basicProperty);
@@ -1198,7 +1207,7 @@ public class PropertyExternalService {
         if (null != basicProperty) {
             newPropertyDetails = new NewPropertyDetails();
             newPropertyDetails.setReferenceId(viewpropertyDetails.getReferenceId());
-            newPropertyDetails.setApplicationNo(basicProperty.getProperty().getApplicationNo());
+            newPropertyDetails.setApplicationNo(property.getApplicationNo());
             final ErrorDetails errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(THIRD_PARTY_ERR_CODE_SUCCESS);
             errorDetails.setErrorMessage(THIRD_PARTY_ERR_MSG_SUCCESS);
@@ -1231,7 +1240,8 @@ public class PropertyExternalService {
                 wallType = wallTypeService.getWallTypeById(Long.valueOf(viewPropertyDetails.getWallType()));
             if (StringUtils.isNotBlank(viewPropertyDetails.getWoodType()))
                 woodType = woodTypeService.getWoodTypeById(Long.valueOf(viewPropertyDetails.getWoodType()));
-
+            
+            propertyImpl.getPropertyDetail().setFloorDetailsProxy(getFloorList(viewPropertyDetails.getFloorDetails()));
             setAmenities(viewPropertyDetails, propertyImpl);
 
             property = propService.createProperty(propertyImpl, viewPropertyDetails.getExtentOfSite(),
@@ -1252,7 +1262,7 @@ public class PropertyExternalService {
         }
 
         Date propCompletionDate = getCompletionDate(propService, property);
-        property.setStatus(STATUS_DEMAND_INACTIVE);
+        property.setStatus(STATUS_WORKFLOW);
         property.setPropertyModifyReason(PROP_CREATE_RSN);
         property.getPropertyDetail().setCategoryType(viewPropertyDetails.getCategory());
         basicProperty.addProperty(property);
@@ -1371,7 +1381,6 @@ public class PropertyExternalService {
     }
 
     private void setAmenities(ViewPropertyDetails viewPropertyDetails, PropertyImpl propertyImpl) throws ParseException {
-        propertyImpl.getPropertyDetail().setFloorDetailsProxy(getFloorList(viewPropertyDetails.getFloorDetails()));
         propertyImpl.getPropertyDetail().setLift(viewPropertyDetails.getHasLift());
         propertyImpl.getPropertyDetail().setToilets(viewPropertyDetails.getHasToilet());
         propertyImpl.getPropertyDetail().setWaterTap(viewPropertyDetails.getHasWaterTap());
@@ -2304,7 +2313,21 @@ public class PropertyExternalService {
         basicProperty.setLatitude(viewPropertyDetails.getLatitude());
         basicProperty.setLongitude(viewPropertyDetails.getLongitude());
         property.setReferenceId(viewPropertyDetails.getReferenceId());
-
+        
+        /*
+         * Duplicate GIS property will be persisted, which will be used for generating comparison reports  
+         */
+        PropertyImpl gisProperty = (PropertyImpl) property.createPropertyclone();
+        for(Floor floor : gisProperty.getPropertyDetail().getFloorDetails()){
+            floor.setPropertyDetail(gisProperty.getPropertyDetail());
+            basicPropertyService.applyAuditing(floor);
+        }
+        gisProperty.setStatus('G');
+        basicProperty.addProperty(gisProperty);
+        
+        Ptdemand gisPtDemand = gisProperty.getPtDemandSet().iterator().next();
+        basicPropertyService.applyAuditing(gisPtDemand.getDmdCalculations());
+       
         transitionWorkFlow(property, propService, PROPERTY_MODE_MODIFY);
         basicPropertyService.applyAuditing(property.getState());
         propService.updateIndexes(property, PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT);

@@ -76,7 +76,16 @@
 		if(userDesign == 'Commissioner') {
 			jQuery('#Forward').hide();
 		} 
+		var gisFlag = '<s:property value="%{showCheckboxForGIS}"/>';
+		if(gisFlag == 'true'){
+			enableDisableActionsForGIS();
+		}
 	}
+	
+	jQuery(document).on('change', ".thirdPartyVerifiedcheckbox", function () {
+		enableDisableActionsForGIS();
+	});
+	
  	function setCorrCheckBox(){
     	<s:if test="%{isAddressCheck()}">
 			document.getElementById("corrAddressDiff").checked=true;
@@ -188,7 +197,13 @@
 					<s:if test="%{state != null}">
 						<tr>
 							<%@ include file="../common/workflowHistoryView.jsp"%>
-						<tr>					
+						<tr>	
+						<br />
+						<s:if test="%{showCheckboxForGIS && model.state.nextAction.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVAL_PENDING)
+							&& @org.egov.ptis.constants.PropertyTaxConstants@SOURCE_SURVEY.equalsIgnoreCase(model.source)}">
+							<s:checkbox name="model.thirdPartyVerified" id="thirdPartyVerified" value="%{thirdPartyVerified}" cssClass="thirdPartyVerifiedcheckbox"/>
+							<s:text name="survey.thirdparty.verfied " />
+						</s:if>				
 					</s:if> 
 					<s:if test="%{currentDesignation != null && !currentDesignation.toUpperCase().equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN)}">
 						<tr>

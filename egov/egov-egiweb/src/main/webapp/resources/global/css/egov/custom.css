@@ -1416,6 +1416,15 @@ label.error {
   background-color: #f2851f;
   border-color: #f2851f;
 }
+
+.page-container .main-content div.formmainbox input.buttonsubmit[disabled=disabled]:hover,
+.page-container .main-content div.formmainbox input.buttonsubmit[disabled=disabled]:active,
+.page-container .main-content div.formmainbox input.buttonsubmit[disabled=disabled]:focus{
+  color: #fff;
+  background-color: #6b4f2c;
+  border-color: #6b4f2c;
+}
+
 .page-container .main-content div.subheadnew {
   font-family: semibold;
   font-size: 16px;

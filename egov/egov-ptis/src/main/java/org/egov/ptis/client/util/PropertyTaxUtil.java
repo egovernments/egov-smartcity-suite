@@ -2484,5 +2484,45 @@ public class PropertyTaxUtil {
 
         return amount != null ? new BigDecimal((Double) amount) : BigDecimal.ZERO;
     }
+    
+    /**
+     * API returns the percentage of tax difference between GIS survey tax and application tax
+     * Current second half taxes, exluding UAC penalty will be considered for the comparison
+     * @param propertyImpl
+     * @return BigDecimal
+     */
+    public BigDecimal getTaxDifferenceForGIS(PropertyImpl propertyImpl){
+        BigDecimal taxDiffPerc = BigDecimal.ZERO;
+        BigDecimal gisHalfYrTax = BigDecimal.ZERO;
+        BigDecimal applHalfYrTax = BigDecimal.ZERO;
+        Map<String, Installment> currYearInstMap = getInstallmentsForCurrYear(new Date());
+        PropertyImpl gisProperty = (PropertyImpl) propertyDAO.getLatestGISPropertyForBasicProperty(propertyImpl.getBasicProperty());
+        if(gisProperty != null){
+            Ptdemand gisPtdemand = gisProperty.getPtDemandSet().iterator().next();
+            if(gisPtdemand != null){
+                for (EgDemandDetails demandDetails : gisPtdemand.getEgDemandDetails()) {
+                    if (currYearInstMap.get(CURRENTYEAR_SECOND_HALF).getFromDate().equals(demandDetails.getInstallmentStartDate()) &&
+                            !PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY
+                                    .equalsIgnoreCase(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()))
+                        gisHalfYrTax = gisHalfYrTax.add(demandDetails.getAmount());
+                }
+            }
+        }
+        Ptdemand ptdemand = propertyImpl.getPtDemandSet().iterator().next();
+        if(ptdemand != null){
+            for (EgDemandDetails demandDetails : ptdemand.getEgDemandDetails()) {
+                if (currYearInstMap.get(CURRENTYEAR_SECOND_HALF).getFromDate().equals(demandDetails.getInstallmentStartDate()) &&
+                        !PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY
+                                .equalsIgnoreCase(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()))
+                    applHalfYrTax = applHalfYrTax.add(demandDetails.getAmount());
+            }
+        }
+        if(gisHalfYrTax.compareTo(BigDecimal.ZERO) > 0)
+            taxDiffPerc = ((gisHalfYrTax.subtract(applHalfYrTax)).multiply(BIGDECIMAL_100)).divide(gisHalfYrTax, BigDecimal.ROUND_HALF_UP);
+        
+        if(gisProperty != null)
+            gisProperty.setSurveyVariance(taxDiffPerc);
+        return taxDiffPerc;
+    }
 
 }

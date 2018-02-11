@@ -175,6 +175,8 @@
 		</bag>
 		<property name="source" column="source" type="java.lang.String"/>
 		<property name="referenceId" column="REFERENCEID" />
+		<property name="thirdPartyVerified" column="THIRD_PARTY_VERIFIED" type="boolean" />
+		<property name="surveyVariance" column="SURVEY_VARIANCE" type="java.math.BigDecimal" />
 		<bag name="taxExemptionDocuments" table="EGPT_TAX_EXEMPTION_DOCS" cascade="all">
 			<key column="ID_PROPERTY" not-null="true" />
 			<many-to-many class="org.egov.ptis.domain.entity.property.Document" column="DOCUMENT"/>

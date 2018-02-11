@@ -674,6 +674,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         transactionType = APPLICATION_TYPE_NEW_ASSESSENT;
         final String currState = property.getState().getValue();
         populateFormData();
+        if(SOURCE_SURVEY.equalsIgnoreCase(property.getSource()))
+            enableActionsForGIS(property, documentTypes);
         if (currState.endsWith(WF_STATE_REJECTED)
                 || property.getState().getNextAction() != null && property.getState().getNextAction()
                         .equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING)
@@ -768,7 +770,11 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             transitionWorkFlow(property);
             return reject();
         }
-
+        if(SOURCE_SURVEY.equalsIgnoreCase(property.getSource()) 
+                && property.getCurrentState().getValue().toUpperCase().endsWith(WF_STATE_REVENUE_OFFICER_APPROVED.toUpperCase())){
+            BigDecimal surveyVariance = propertyTaxUtil.getTaxDifferenceForGIS(property);
+            property.setSurveyVariance(surveyVariance);
+        }
         basicProp.setUnderWorkflow(true);
         basicPropertyService.applyAuditing(property.getState());
         basicProp.addProperty(property);

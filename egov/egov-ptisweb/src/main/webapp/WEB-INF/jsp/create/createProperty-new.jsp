@@ -124,6 +124,12 @@
 					</s:if>
 					<s:if test="%{eligibleInitiator == true}">
 					<s:if test="%{propertyByEmployee == true}">
+						<s:if test="%{model.thirdPartyVerified 
+							&& showCheckboxForGIS
+							&& @org.egov.ptis.constants.PropertyTaxConstants@SOURCE_SURVEY.equalsIgnoreCase(model.source)}">
+							<s:checkbox name="model.thirdPartyVerified" id="thirdPartyVerified" value="%{model.thirdPartyVerified}" />
+							<s:text name="survey.thirdparty.verfied " />
+						</s:if>	
 							<s:if test="%{!citizenPortalUser}">
 								<tr>
 									<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
@@ -231,6 +237,11 @@
 			<s:if test = '%{propertyDetail.appurtenantLandChecked}'>
 				jQuery('#vacantLandArea').attr('readOnly', true);
 			</s:if>
+			<s:if test='%{showCheckboxForGIS && @org.egov.ptis.constants.PropertyTaxConstants@SOURCE_SURVEY.equalsIgnoreCase(model.source)}'>
+				if(jQuery('#thirdPartyVerified').is(":checked")){
+					jQuery('#thirdPartyVerified').attr('disabled', true);
+				}
+			</s:if>	
 		}
 
 		function onSubmit() {

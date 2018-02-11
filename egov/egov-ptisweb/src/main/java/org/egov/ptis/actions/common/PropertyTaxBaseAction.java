@@ -77,6 +77,7 @@ import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.document.DocumentTypeDetails;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyDetail;
@@ -182,6 +183,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     protected String userDesignationList;
     protected String applicationType;
     protected String initiator;
+    protected boolean showCheckboxForGIS = false;
 
     @Autowired
     transient LayoutApprovalAuthorityRepository layoutApprovalAuthorityRepo;
@@ -1054,6 +1056,23 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         } else
             return Boolean.FALSE;
     }
+    
+    public void enableActionsForGIS(PropertyImpl property, List<DocumentType> documentTypes) {
+        if (property.getState().getNextAction().endsWith(WF_STATE_COMMISSIONER_APPROVAL_PENDING)
+                && property.getSurveyVariance().compareTo(BigDecimal.TEN) > 0) {
+            showCheckboxForGIS = true;
+        }
+        if (property.isThirdPartyVerified()
+                && property.getState().getValue().startsWith(TRANSACTION_TYPE_CREATE.concat(":").concat(WF_STATE_REJECTED))
+                && WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING
+                        .equalsIgnoreCase(property.getState().getNextAction())) {
+            showCheckboxForGIS = true;
+            for (DocumentType docType : documentTypes) {
+                if (DOCUMENT_TYPE_THIRD_PARTY_SURVEY.equalsIgnoreCase(docType.getName()))
+                    docType.setMandatory(true);
+            }
+        }
+    }
 
     public WorkflowBean getWorkflowBean() {
         return workflowBean;
@@ -1260,6 +1279,14 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
     public void setAssessmentNumber(String assessmentNumber) {
         this.assessmentNumber = assessmentNumber;
+    }
+
+    public boolean isShowCheckboxForGIS() {
+        return showCheckboxForGIS;
+    }
+
+    public void setShowCheckboxForGIS(boolean showCheckboxForGIS) {
+        this.showCheckboxForGIS = showCheckboxForGIS;
     }
 
 }
