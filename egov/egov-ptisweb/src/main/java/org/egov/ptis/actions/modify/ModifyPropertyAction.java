@@ -507,6 +507,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         final String currWfState = propertyModel.getState().getValue();
         populateFormData(Boolean.TRUE);
         isEligibleForDocEdit();
+        if(SOURCE_SURVEY.equalsIgnoreCase(propertyModel.getSource()))
+            enableActionsForGIS(propertyModel, documentTypes);
         corrsAddress = PropertyTaxUtil.getOwnerAddress(propertyModel.getBasicProperty().getPropertyOwnerInfo());
         amalgPropIds = new String[10];
         if (!propertyModel.getPropertyDetail().getFloorDetails().isEmpty())
@@ -740,6 +742,11 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         if (multipleSubmitCondition(propertyModel, approverPositionId))
             return multipleSubmitRedirect();
         transitionWorkFlow(propertyModel);
+        if(SOURCE_SURVEY.equalsIgnoreCase(propertyModel.getSource()) 
+                && propertyModel.getCurrentState().getValue().toUpperCase().endsWith(WF_STATE_REVENUE_OFFICER_APPROVED.toUpperCase())){
+            BigDecimal surveyVariance = propertyTaxUtil.getTaxDifferenceForGIS(propertyModel);
+            propertyModel.setSurveyVariance(surveyVariance);
+        }
         propService.updateIndexes(propertyModel, getApplicationType());
         basicPropertyService.update(basicProp);
         if (propertyModel.getSource().equalsIgnoreCase(Source.CITIZENPORTAL.toString()))

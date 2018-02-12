@@ -1194,8 +1194,10 @@ public class PropertyExternalService {
          * Duplicate GIS property will be persisted, which will be used for generating comparison reports  
          */
         PropertyImpl gisProperty = (PropertyImpl) property.createPropertyclone();
-        for(Floor floor : gisProperty.getPropertyDetail().getFloorDetails())
-            floor.setPropertyDetail(gisProperty.getPropertyDetail());
+        if(!gisProperty.getPropertyDetail().getFloorDetails().isEmpty()){
+            for(Floor floor : gisProperty.getPropertyDetail().getFloorDetails())
+                floor.setPropertyDetail(gisProperty.getPropertyDetail());
+        }
         gisProperty.setStatus('G');
         gisProperty.setSource(SOURCE_SURVEY);
         basicProperty.addProperty(gisProperty);
@@ -2318,11 +2320,14 @@ public class PropertyExternalService {
          * Duplicate GIS property will be persisted, which will be used for generating comparison reports  
          */
         PropertyImpl gisProperty = (PropertyImpl) property.createPropertyclone();
-        for(Floor floor : gisProperty.getPropertyDetail().getFloorDetails()){
-            floor.setPropertyDetail(gisProperty.getPropertyDetail());
-            basicPropertyService.applyAuditing(floor);
+        if(!gisProperty.getPropertyDetail().getFloorDetails().isEmpty()){
+            for(Floor floor : gisProperty.getPropertyDetail().getFloorDetails()){
+                floor.setPropertyDetail(gisProperty.getPropertyDetail());
+                basicPropertyService.applyAuditing(floor);
+            }
         }
         gisProperty.setStatus('G');
+        gisProperty.setSource(SOURCE_SURVEY);
         basicProperty.addProperty(gisProperty);
         
         Ptdemand gisPtDemand = gisProperty.getPtDemandSet().iterator().next();

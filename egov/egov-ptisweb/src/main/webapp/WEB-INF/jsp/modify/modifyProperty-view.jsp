@@ -132,8 +132,20 @@
 				if(userDesign == 'Commissioner') {
 					jQuery('#Forward').hide();
 				}
+				var gisFlag = '<s:property value="%{showCheckboxForGIS}"/>';
+				var currentState = '<s:property value="%{currentState.value}" />';
+				if(gisFlag == 'true'){
+					enableDisableActionsForGIS();
+					if(currentState == 'Alter:Rejected' && jQuery('#thirdPartyVerified').is(":checked")){
+						jQuery('#thirdPartyVerified').attr('disabled', true);
+					}
+				}
 			}
-
+			
+			jQuery(document).on('change', ".thirdPartyVerifiedcheckbox", function () {
+				enableDisableActionsForGIS();
+			});
+			
 			function enableDisableFirmName(obj) { 
 				if(obj != null) {
 				var selIndex = obj.selectedIndex;
@@ -347,7 +359,13 @@
 					<s:if test="%{state != null}">   
 						<tr>
 							<%@ include file="../common/workflowHistoryView.jsp"%>
-						<tr>					
+						<tr>	
+						<br />
+						<s:if test="%{showCheckboxForGIS 
+							&& @org.egov.ptis.constants.PropertyTaxConstants@SOURCE_SURVEY.equalsIgnoreCase(model.source)}">
+							<s:checkbox name="model.thirdPartyVerified" id="thirdPartyVerified" value="%{thirdPartyVerified}" cssClass="thirdPartyVerifiedcheckbox"/>
+							<s:text name="survey.thirdparty.verfied" /> 
+						</s:if>						
 					</s:if> 
 					<s:if test="%{(currentDesignation != null && !@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(currentDesignation.toUpperCase())) ||
 					   model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REJECTED) ||

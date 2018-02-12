@@ -1063,7 +1063,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             showCheckboxForGIS = true;
         }
         if (property.isThirdPartyVerified()
-                && property.getState().getValue().startsWith(TRANSACTION_TYPE_CREATE.concat(":").concat(WF_STATE_REJECTED))
+                && property.getState().getValue().endsWith(":".concat(WF_STATE_REJECTED))
                 && WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING
                         .equalsIgnoreCase(property.getState().getNextAction())) {
             showCheckboxForGIS = true;
