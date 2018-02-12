@@ -60,10 +60,11 @@ public class AuditableEntityListener implements RevisionListener {
     public void newRevision(Object revisionEntity) {
         BaseRevisionEntity revision = (BaseRevisionEntity) revisionEntity;
         revision.setUserId(ApplicationThreadLocals.getUserId());
-        if (ApplicationThreadLocals.getIPAddress() != null)
-            revision.setIpAddress(ApplicationThreadLocals.getIPAddress());
-        else
+        if (ApplicationThreadLocals.getIPAddress() == null)
             revision.setIpAddress(UNKNOWN);
+        else
+            revision.setIpAddress(ApplicationThreadLocals.getIPAddress());
+
     }
 
 }

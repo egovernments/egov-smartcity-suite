@@ -105,7 +105,7 @@ public class ApplicationCoreFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpSession session = request.getSession();
         try {
-            prepareRequestDetails(session, request);
+            prepareRequestOriginDetails(session, request);
             prepareUserSession(session);
             prepareApplicationThreadLocal(session);
             chain.doFilter(request, resp);
@@ -141,7 +141,7 @@ public class ApplicationCoreFilter implements Filter {
         ApplicationThreadLocals.setIPAddress((String) session.getAttribute(IP_ADDRESS));
     }
 
-    private void prepareRequestDetails(HttpSession session, HttpServletRequest request) {
+    private void prepareRequestOriginDetails(HttpSession session, HttpServletRequest request) {
         if (session.getAttribute(IP_ADDRESS) == null) {
             String ipAddress = request.getRemoteAddr();
             String proxiedIPAddress = request.getHeader(X_FORWARDED_FOR_HEADER);
