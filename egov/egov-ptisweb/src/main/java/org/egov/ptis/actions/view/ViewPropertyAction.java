@@ -352,7 +352,7 @@ public class ViewPropertyAction extends BaseFormAction {
                 RevisionPetition rp = (RevisionPetition) query.getSingleResult();
                 setBasicProperty(rp.getBasicProperty());
                 setHistoryMap(propService.populateHistory(rp));
-                property = rp.getBasicProperty().getActiveProperty();
+                property = (PropertyImpl) rp.getBasicProperty().getProperty();
                 property.setDocuments(rp.getDocuments());
             } else if (appType.equalsIgnoreCase(APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP)) {
                 final PropertyMutation propertyMutation = transferOwnerService
