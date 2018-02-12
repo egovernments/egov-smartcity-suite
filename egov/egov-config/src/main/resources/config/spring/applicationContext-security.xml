@@ -97,9 +97,6 @@
             <list>
                 <value>j_password</value>
                 <value>locationId</value>
-                <value>loginType</value>
-                <value>ipAddress</value>
-                <value>userAgentInfo</value>
             </list>
         </property>
         <property name="authenticationSuccessHandler" ref="authenticationSuccessHandler"/>

@@ -62,9 +62,9 @@ import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 import java.util.Date;
 
-import static org.egov.infra.security.utils.SecurityConstants.LOGIN_IP;
+import static org.egov.infra.security.utils.SecurityConstants.IP_ADDRESS;
 import static org.egov.infra.security.utils.SecurityConstants.LOGIN_TIME;
-import static org.egov.infra.security.utils.SecurityConstants.LOGIN_USER_AGENT;
+import static org.egov.infra.security.utils.SecurityConstants.USER_AGENT;
 import static org.egov.infra.utils.ApplicationConstant.TENANTID_KEY;
 import static org.egov.infra.utils.ApplicationConstant.USERID_KEY;
 
@@ -95,14 +95,14 @@ public class UserSessionDestroyListener implements HttpSessionListener {
     }
 
     private void auditUserLogin(final HttpSession session) {
-        if (session.getAttribute(LOGIN_IP) != null) {
+        if (session.getAttribute(LOGIN_TIME) != null) {
             try {
                 ApplicationThreadLocals.setTenantID((String) session.getAttribute(TENANTID_KEY));
                 LoginAudit loginAudit = new LoginAudit();
                 loginAudit.setLoginTime((Date) session.getAttribute(LOGIN_TIME));
                 loginAudit.setUser(userService.getUserById((Long) session.getAttribute(USERID_KEY)));
-                loginAudit.setIpAddress((String) session.getAttribute(LOGIN_IP));
-                loginAudit.setUserAgent((String) session.getAttribute(LOGIN_USER_AGENT));
+                loginAudit.setIpAddress((String) session.getAttribute(IP_ADDRESS));
+                loginAudit.setUserAgent((String) session.getAttribute(USER_AGENT));
                 loginAudit.setLogoutTime(new Date());
                 if (entityValidator.validate(loginAudit).isEmpty())
                     loginAuditService.auditLogin(loginAudit);

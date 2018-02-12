@@ -60,14 +60,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.regex.Pattern;
 
-import static org.egov.infra.security.utils.SecurityConstants.IPADDR_FIELD;
-import static org.egov.infra.security.utils.SecurityConstants.LOGIN_IP;
 import static org.egov.infra.security.utils.SecurityConstants.LOGIN_TIME;
-import static org.egov.infra.security.utils.SecurityConstants.LOGIN_USER_AGENT;
-import static org.egov.infra.security.utils.SecurityConstants.USERAGENT_FIELD;
 import static org.springframework.util.StringUtils.hasText;
 
 public class ApplicationAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
@@ -87,7 +82,8 @@ public class ApplicationAuthenticationSuccessHandler extends SimpleUrlAuthentica
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws ServletException, IOException {
-        auditLoginDetails(request, authentication);
+        HttpSession session = request.getSession(false);
+        session.setAttribute(LOGIN_TIME, new Date());
         redirectToSuccessPage(request, response, authentication);
     }
 
@@ -111,13 +107,5 @@ public class ApplicationAuthenticationSuccessHandler extends SimpleUrlAuthentica
         if (excludedUrls.matcher(targetUrl).find())
             targetUrl = getDefaultTargetUrl();
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
-    }
-
-    private void auditLoginDetails(HttpServletRequest request, Authentication authentication) {
-        HashMap<String, String> credentials = (HashMap<String, String>) authentication.getCredentials();
-        HttpSession session = request.getSession(false);
-        session.setAttribute(LOGIN_TIME, new Date());
-        session.setAttribute(LOGIN_IP, credentials.get(IPADDR_FIELD));
-        session.setAttribute(LOGIN_USER_AGENT, credentials.get(USERAGENT_FIELD));
     }
 }

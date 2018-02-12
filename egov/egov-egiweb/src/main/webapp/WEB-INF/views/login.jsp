@@ -45,17 +45,6 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
   --%>
-
-<%@page import="org.apache.commons.lang3.StringUtils" %>
-<%
-    String ipAddress = request.getRemoteAddr();
-    String proxiedIPAddress = request.getHeader("X-Forwarded-For");
-    if (StringUtils.isNotBlank(proxiedIPAddress)) {
-        String[] ipAddresses = proxiedIPAddress.split(",");
-        ipAddress = ipAddresses[ipAddresses.length - 1].trim();
-    }
-    String userAgentInfo = request.getHeader("User-Agent");
-%>
 <!DOCTYPE html>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -261,9 +250,6 @@
                                 <i class="fa fa-sign-in"></i> <spring:message code="lbl.login"/>
                             </button>
                         </div>
-                        <input type="hidden" id="ipAddress" name="ipAddress" value="<%=ipAddress%>"/>
-                        <input type="hidden" id="loginType" name="loginType"/>
-                        <input type="hidden" name="userAgentInfo" value="<%=userAgentInfo%>"/>
                     </form>
                 </div>
             </div>
