@@ -128,7 +128,7 @@
 							&& showCheckboxForGIS
 							&& @org.egov.ptis.constants.PropertyTaxConstants@SOURCE_SURVEY.equalsIgnoreCase(model.source)}">
 							<s:checkbox name="model.thirdPartyVerified" id="thirdPartyVerified" value="%{model.thirdPartyVerified}" />
-							<s:text name="survey.thirdparty.verfied " />
+							<s:text name="survey.thirdparty.verfied" />
 						</s:if>	
 							<s:if test="%{!citizenPortalUser}">
 								<tr>
