@@ -85,6 +85,7 @@ import org.egov.ptis.domain.entity.property.PropertyID;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
+import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.SurroundingsAudit;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
@@ -806,5 +807,12 @@ public class PropertyTaxCommonUtils {
 	public PropertyMutation getLatestApprovedMutationForAssessmentNo(String assessmentNo) {
 		return propertyMutationDAO.getLatestApprovedMutationForAssessmentNo(assessmentNo);
 	}
+	
+    public PropertyStatusValues getPropStatusValues(BasicProperty basicProperty) {
+        final String query = "from PropertyStatusValues where basicProperty = :basicPropertyId";
+        Query query1 = getSession().createQuery(query);
+        query1.setParameter("basicPropertyId", basicProperty);
+        return query1.list().isEmpty() ? null : (PropertyStatusValues) query1.list().get(0);
+    }
 
 }

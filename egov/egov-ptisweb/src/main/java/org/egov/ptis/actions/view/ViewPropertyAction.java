@@ -254,11 +254,7 @@ public class ViewPropertyAction extends BaseFormAction {
                 viewMap.put("enableVacancyRemission", propertyTaxUtil.enableVacancyRemission(basicProperty.getUpicNo()));
                 viewMap.put("enableMonthlyUpdate", propertyTaxUtil.enableMonthlyUpdate(basicProperty.getUpicNo()));
             }
-            
-            final Query query = entityManager.createNamedQuery("PROP_STATUS_VALUES_BY_BASICPROPERTY");
-            query.setParameter("basicProperty", basicProperty);
-            PropertyStatusValues statusValues = !query.getResultList().isEmpty()
-                    ? (PropertyStatusValues) query.getResultList().get(0) : null;
+            PropertyStatusValues statusValues = propertyTaxCommonUtils.getPropStatusValues(basicProperty);
             if (null != statusValues && null != statusValues.getReferenceBasicProperty())
                 viewMap.put("parentProps", statusValues.getReferenceBasicProperty().getUpicNo());
             
