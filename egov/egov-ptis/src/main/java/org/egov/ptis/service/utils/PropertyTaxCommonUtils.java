@@ -809,10 +809,9 @@ public class PropertyTaxCommonUtils {
 	}
 	
     public PropertyStatusValues getPropStatusValues(BasicProperty basicProperty) {
-        final String query = "from PropertyStatusValues where basicProperty = :basicPropertyId";
-        Query query1 = getSession().createQuery(query);
-        query1.setParameter("basicPropertyId", basicProperty);
-        return query1.list().isEmpty() ? null : (PropertyStatusValues) query1.list().get(0);
+        final Query query = getSession().createQuery("from PropertyStatusValues where basicProperty = :basicPropertyId");
+        query.setParameter("basicPropertyId", basicProperty);
+        return query.list().isEmpty() ? null : (PropertyStatusValues) query.list().get(0);
     }
 
 }
