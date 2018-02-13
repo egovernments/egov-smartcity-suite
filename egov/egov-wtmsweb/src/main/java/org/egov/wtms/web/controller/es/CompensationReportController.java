@@ -150,12 +150,15 @@ public class CompensationReportController {
             compensationReport.setApplicantName(applicationIndex.getApplicantName());
             compensationReport.setApplicationNumber(applicationIndex.getApplicationNumber());
             compensationReport.setApplicationType(applicationIndex.getApplicationType());
-            compensationReport.setAdharNumber(applicationIndex.getAadharNumber());
+            compensationReport.setAadharNumber(applicationIndex.getAadharNumber());
             compensationReport.setDelayedDays(applicationIndex.getElapsedDays() - applicationIndex.getSla());
             compensationReport.setApplicationDate(dateFormat.format(applicationIndex.getApplicationDate()));
             compensationReport.setApplicationCloseDate(dateFormat.format(applicationIndex.getDisposalDate()));
+            compensationReport.setSla(applicationIndex.getSla());
             if (compensationReport.getDelayedDays() > 0)
                 compensationReport.setCompensationAmount(compensationReport.getDelayedDays().intValue() * compensationAmount);
+            else
+                compensationReport.setDelayedDays(0);
             reportResult.add(compensationReport);
         }
         return reportResult;

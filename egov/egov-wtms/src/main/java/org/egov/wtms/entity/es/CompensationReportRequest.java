@@ -65,9 +65,10 @@ public class CompensationReportRequest {
     private String applicantName;
     private String applicationDate;
     private String applicationCloseDate;
-    private String adharNumber;
+    private String aadharNumber;
     private Integer compensationAmount = 0;
     private Integer delayedDays;
+    private Integer sla;
 
     public String getModuleName() {
         return moduleName;
@@ -119,14 +120,6 @@ public class CompensationReportRequest {
             this.toDate = toDateTimeUsingDefaultPattern(toDate).millisOfDay().withMaximumValue().toString(ES_DATE_FORMATTER);
     }
 
-    public String getAdharNumber() {
-        return adharNumber;
-    }
-
-    public void setAdharNumber(String adharNumber) {
-        this.adharNumber = adharNumber;
-    }
-
     public Integer getDelayedDays() {
         return delayedDays;
     }
@@ -157,6 +150,22 @@ public class CompensationReportRequest {
 
     public void setCompensationAmount(Integer compensationAmount) {
         this.compensationAmount = compensationAmount;
+    }
+
+    public String getAadharNumber() {
+        return aadharNumber;
+    }
+
+    public void setAadharNumber(String aadharNumber) {
+        this.aadharNumber = aadharNumber;
+    }
+
+    public Integer getSla() {
+        return sla;
+    }
+
+    public void setSla(Integer sla) {
+        this.sla = sla;
     }
 
 }

@@ -183,7 +183,7 @@ function submitForm(){
 						    filename: 'Compensation Report',
 							message : "Report generated on "+today+"",
 							exportOptions : {
-								columns : [0,1, 2, 3, 4, 5, 6, 7, 8]
+								columns : [0,1, 2, 3, 4, 5, 6, 7, 8,9]
 							}
 						}
 					],
@@ -195,9 +195,10 @@ function submitForm(){
 			{title: 'Application Type', data: 'applicationType'},
 			{title: 'Application Date', data :"applicationDate"},
 			{title: 'Application Close Date', data :"applicationCloseDate"},
+			{title: 'SLA', data: 'sla'},
 			{title: 'Number of days delayed', data: 'delayedDays'},
 			{title: 'Applicant Name', data: 'applicantName'},
-			{title: 'Applicant Aadhar Number', data: 'adharNumber'},
+			{title: 'Applicant Aadhar Number', data: 'aadharNumber'},
 			{title: 'Compensation Amount', data: 'compensationAmount'}
 			]
 		});
