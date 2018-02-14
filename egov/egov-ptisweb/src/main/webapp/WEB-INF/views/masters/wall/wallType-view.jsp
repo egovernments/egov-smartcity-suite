@@ -84,7 +84,14 @@
 							<strong><c:out value="${wallType.code}" /> </strong>
 						</div>
 					</div>
-
+					<div class="form-group">
+						<label class="col-sm-3 control-label">
+							<spring:message code="lbl.active" /></label>
+						<div class="col-md-6 view-content" style="padding-top: 7px">
+							<strong><c:out
+									value="${wallType.active ? 'Yes' :'No'}" /> </strong>
+						</div>
+					</div>
 				</div>
 			</div>
 			<div class="row">

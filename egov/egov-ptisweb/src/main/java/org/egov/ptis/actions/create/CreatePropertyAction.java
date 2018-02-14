@@ -87,8 +87,12 @@ import org.egov.ptis.domain.entity.property.vacantland.LayoutApprovalAuthority;
 import org.egov.ptis.domain.entity.property.vacantland.VacantLandPlotArea;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.repository.PropertyDepartmentRepository;
+import org.egov.ptis.domain.repository.master.floortype.FloorTypeRepository;
+import org.egov.ptis.domain.repository.master.rooftype.RoofTypeRepository;
 import org.egov.ptis.domain.repository.master.vacantland.LayoutApprovalAuthorityRepository;
 import org.egov.ptis.domain.repository.master.vacantland.VacantLandPlotAreaRepository;
+import org.egov.ptis.domain.repository.master.walltype.WallTypeRepository;
+import org.egov.ptis.domain.repository.master.woodtype.WoodTypeRepository;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.reassign.ReassignService;
@@ -260,7 +264,19 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     
     @Autowired
     private transient ReassignService reassignmentservice;
+    
+    @Autowired
+    private transient WoodTypeRepository woodTypeRepository;
+    
+    @Autowired
+    private transient WallTypeRepository wallTypeRepository;
+    
+    @Autowired
+    private transient RoofTypeRepository roofTypeRepository;
 
+    @Autowired
+    private transient FloorTypeRepository floorTypeRepository;
+    
     @PersistenceContext
     private transient EntityManager entityManager;
 
@@ -1010,10 +1026,10 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     }
         documentTypes = propService.getDocumentTypesForTransactionType(TransactionType.CREATE);
         assessmentDocumentTypes = propService.getDocumentTypesForTransactionType(TransactionType.CREATE_ASMT_DOC);
-        final List<FloorType> floorTypeList = getPersistenceService().findAllBy("from FloorType order by name");
-        final List<RoofType> roofTypeList = getPersistenceService().findAllBy("from RoofType order by name");
-        final List<WallType> wallTypeList = getPersistenceService().findAllBy("from WallType order by name");
-        final List<WoodType> woodTypeList = getPersistenceService().findAllBy("from WoodType order by name");
+        final List<FloorType> floorTypeList = floorTypeRepository.findByActiveTrueOrderByName();
+        final List<RoofType> roofTypeList = roofTypeRepository.findByActiveTrueOrderByName();
+        final List<WallType> wallTypeList = wallTypeRepository.findByActiveTrueOrderByName();
+        final List<WoodType> woodTypeList = woodTypeRepository.findByActiveTrueOrderByName();
         final List<PropertyTypeMaster> propTypeList = getPersistenceService()
                 .findAllBy("from PropertyTypeMaster where type != 'EWSHS' order by orderNo");
         final List<PropertyOccupation> propOccList = getPersistenceService().findAllBy("from PropertyOccupation");

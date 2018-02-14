@@ -93,8 +93,12 @@ import org.egov.ptis.domain.entity.property.*;
 import org.egov.ptis.domain.entity.property.vacantland.LayoutApprovalAuthority;
 import org.egov.ptis.domain.entity.property.vacantland.VacantLandPlotArea;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
+import org.egov.ptis.domain.repository.master.floortype.FloorTypeRepository;
+import org.egov.ptis.domain.repository.master.rooftype.RoofTypeRepository;
 import org.egov.ptis.domain.repository.master.vacantland.LayoutApprovalAuthorityRepository;
 import org.egov.ptis.domain.repository.master.vacantland.VacantLandPlotAreaRepository;
+import org.egov.ptis.domain.repository.master.walltype.WallTypeRepository;
+import org.egov.ptis.domain.repository.master.woodtype.WoodTypeRepository;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.reassign.ReassignService;
@@ -296,6 +300,18 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 
     @Autowired
     private transient CityService cityService;
+    
+    @Autowired
+    private transient WoodTypeRepository woodTypeRepository;
+    
+    @Autowired
+    private transient WallTypeRepository wallTypeRepository;
+    
+    @Autowired
+    private transient RoofTypeRepository roofTypeRepository;
+
+    @Autowired
+    private transient FloorTypeRepository floorTypeRepository;
 
     public ModifyPropertyAction() {
         super();
@@ -1020,10 +1036,10 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         final List<String> taxExemptionReasonList = getPersistenceService()
                 .findAllBy("from TaxExemptionReason where isActive = true order by name");
         final List<String> apartmentsList = getPersistenceService().findAllBy("from Apartment order by name");
-        final List<FloorType> floorTypes = getPersistenceService().findAllBy("from FloorType order by name");
-        final List<RoofType> roofTypes = getPersistenceService().findAllBy("from RoofType order by name");
-        final List<WallType> wallTypes = getPersistenceService().findAllBy("from WallType order by name");
-        final List<WoodType> woodTypes = getPersistenceService().findAllBy("from WoodType order by name");
+        final List<FloorType> floorTypes = floorTypeRepository.findByActiveTrueOrderByName();
+        final List<RoofType> roofTypes = roofTypeRepository.findByActiveTrueOrderByName();
+        final List<WallType> wallTypes = wallTypeRepository.findByActiveTrueOrderByName();
+        final List<WoodType> woodTypes = woodTypeRepository.findByActiveTrueOrderByName();
         final List<Boundary> zones = boundaryService
                 .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE, REVENUE_HIERARCHY_TYPE);
         final List<Boundary> localities = boundaryService

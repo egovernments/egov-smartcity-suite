@@ -74,6 +74,8 @@ public class WallType extends AbstractAuditable {
 
     @SafeHtml
     private String code;
+    
+    private Boolean active;
 
     public String getName() {
         return name;
@@ -99,6 +101,14 @@ public class WallType extends AbstractAuditable {
     @Override
     public void setId(final Long id) {
         this.id = id;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
 }
