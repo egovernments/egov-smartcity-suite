@@ -43,7 +43,6 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- *
  */
 package org.egov.council.service;
 
@@ -81,8 +80,9 @@ public class CouncilThirdPartyService {
         final State<Position> workflowState = councilPreamble.getState();
         final HashMap<String, Object> workFlowHistory = new HashMap<>();
         if (null != workflowState) {
-            if (null != councilPreamble.getStateHistory() && !councilPreamble.getStateHistory().isEmpty())
+            if (null != councilPreamble.getStateHistory() && !councilPreamble.getStateHistory().isEmpty()) {
                 Collections.reverse(councilPreamble.getStateHistory());
+            }
 
             for (final StateHistory<Position> stateHistory : councilPreamble.getStateHistory()) {
                 final HashMap<String, Object> historyMap = new HashMap<>();
@@ -100,10 +100,10 @@ public class CouncilThirdPartyService {
                                     .getDepartmentForUser(userObject.getId()).getName() : "");
                 } else if (null != owner && null != owner.getDeptDesig()) {
                     primaryAssignment=assignmentService.getPrimaryAssignmentForPositon(owner.getId());
-                    if(primaryAssignment!=null)
+                    if(primaryAssignment!=null) {
                         userObject=primaryAssignment.getEmployee();
-                    else{
-                    userObject = eisCommonService.getUserForPosition(owner.getId(), new Date());
+                    } else{
+                        userObject = eisCommonService.getUserForPosition(owner.getId(), new Date());
                     }   
                     historyMap
                             .put("user", null != userObject.getUsername() ? userObject.getUsername() + "::" + userObject.getName()
@@ -128,9 +128,9 @@ public class CouncilThirdPartyService {
                                 .getDepartmentForUser(userObject.getId()).getName() : "");
             } else if (null != ownerPosition && null != ownerPosition.getDeptDesig()) {
                 primaryAssignment = assignmentService.getPrimaryAssignmentForPositon(ownerPosition.getId());
-                if (primaryAssignment != null)
+                if (primaryAssignment != null) {
                     userObject = primaryAssignment.getEmployee();
-                else {
+                } else {
                     userObject = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
                 }
                 workFlowHistory.put("user",
@@ -142,5 +142,4 @@ public class CouncilThirdPartyService {
         }
         return historyTable;
     }
-
 }
