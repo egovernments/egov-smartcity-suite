@@ -48,6 +48,8 @@
 package org.egov.council.service;
 
 import org.egov.council.entity.CouncilPreamble;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.State;
@@ -69,9 +71,12 @@ public class CouncilThirdPartyService {
     private static final String DEPARTMENT = "department";
     @Autowired
     private EisCommonService eisCommonService;
+    @Autowired
+    private AssignmentService assignmentService;
 
     public List<HashMap<String, Object>> getHistory(final CouncilPreamble councilPreamble) {
         User userObject;
+        Assignment primaryAssignment;
         final List<HashMap<String, Object>> historyTable = new ArrayList<>();
         final State<Position> workflowState = councilPreamble.getState();
         final HashMap<String, Object> workFlowHistory = new HashMap<>();
@@ -94,7 +99,12 @@ public class CouncilThirdPartyService {
                             null != eisCommonService.getDepartmentForUser(userObject.getId()) ? eisCommonService
                                     .getDepartmentForUser(userObject.getId()).getName() : "");
                 } else if (null != owner && null != owner.getDeptDesig()) {
+                    primaryAssignment=assignmentService.getPrimaryAssignmentForPositon(owner.getId());
+                    if(primaryAssignment!=null)
+                        userObject=primaryAssignment.getEmployee();
+                    else{
                     userObject = eisCommonService.getUserForPosition(owner.getId(), new Date());
+                    }   
                     historyMap
                             .put("user", null != userObject.getUsername() ? userObject.getUsername() + "::" + userObject.getName()
                                     : "");
@@ -117,7 +127,12 @@ public class CouncilThirdPartyService {
                         null != eisCommonService.getDepartmentForUser(userObject.getId()) ? eisCommonService
                                 .getDepartmentForUser(userObject.getId()).getName() : "");
             } else if (null != ownerPosition && null != ownerPosition.getDeptDesig()) {
-                userObject = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
+                primaryAssignment = assignmentService.getPrimaryAssignmentForPositon(ownerPosition.getId());
+                if (primaryAssignment != null)
+                    userObject = primaryAssignment.getEmployee();
+                else {
+                    userObject = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
+                }
                 workFlowHistory.put("user",
                         null != userObject.getUsername() ? userObject.getUsername() + "::" + userObject.getName() : "");
                 workFlowHistory.put(DEPARTMENT, null != ownerPosition.getDeptDesig().getDepartment() ? ownerPosition

@@ -1,0 +1,12 @@
+
+INSERT into egw_status (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (nextval('SEQ_EGW_STATUS'),'COUNCILPREAMBLE','HODAPPROVED',now(),'HODAPPROVED',9);
+INSERT into egw_status (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (nextval('SEQ_EGW_STATUS'),'COUNCILPREAMBLE','MANAGERAPPROVED',now(),'MANAGERAPPROVED',10);
+
+delete from eg_wf_matrix where id=(select id from eg_wf_matrix where objecttype ='CouncilPreamble' and currentstate='Created');
+update eg_wf_matrix set nextdesignation ='' where id=(select id from eg_wf_matrix where objecttype ='CouncilPreamble' and currentstate='NEW');
+update eg_wf_matrix set nextaction ='HOD approval pending' where id=(select id from eg_wf_matrix where objecttype ='CouncilPreamble' and currentstate='NEW');
+UPDATE eg_wf_matrix set validactions ='Forward,Cancel' where objecttype ='CouncilPreamble' and currentstate='Rejected';
+
+INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction, nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate) VALUES (nextval('seq_eg_wf_matrix'), 'ANY', 'CouncilPreamble', 'APPROVED', 'HODAPPROVED', 'Manager approval pending', 'Manager', null, 'APPROVED', 'Commissioner approval pending', 'Commissioner', 'MANAGERAPPROVED', 'Forward,Reject', NULL, NULL, '2016-04-01', '2099-04-01');
+INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction, nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate) VALUES (nextval('seq_eg_wf_matrix'), 'ANY', 'CouncilPreamble', 'Created', 'CREATED', 'HOD approval pending', '', null, 'APPROVED', 'Approver approval pending', 'Commissioner,Manager', 'HODAPPROVED', 'Forward,Reject', NULL, NULL, '2016-04-01', '2099-04-01');
+INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction, nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate) VALUES (nextval('seq_eg_wf_matrix'), 'ANY', 'CouncilPreamble', 'APPROVED', 'HODAPPROVED', 'Commissioner approval pending', 'Commissioner', null, 'END', 'END', null, 'APPROVED', 'Approve,Reject,Provide more info', NULL, NULL, '2016-04-01', '2099-04-01');

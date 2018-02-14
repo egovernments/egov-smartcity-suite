@@ -309,7 +309,7 @@ public class CouncilPreambleController extends GenericWorkFlowController {
                         "Error in loading Employee photo" + e.getMessage(), e);
             }
         }
-
+        
         Long approvalPosition = 0l;
         String approvalComment = StringUtils.EMPTY;
         String message = StringUtils.EMPTY;
@@ -386,9 +386,19 @@ public class CouncilPreambleController extends GenericWorkFlowController {
 
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
     public String edit(@PathVariable("id") final Long id, final Model model,
-                       final HttpServletResponse response){
+            final HttpServletResponse response) {
         CouncilPreamble councilPreamble = councilPreambleService.findOne(id);
         WorkflowContainer workFlowContainer = new WorkflowContainer();
+        //Setting pending action based on owner
+        if (CouncilConstants.DESIGNATION_MANAGER.equalsIgnoreCase(councilPreamble.getState().getOwnerPosition().getDeptDesig().getDesignation().getName())
+                && CouncilConstants.MANAGER_APPROVALPENDING.equalsIgnoreCase(councilPreamble.getState().getNextAction())) {
+            workFlowContainer.setPendingActions(councilPreamble.getState().getNextAction());
+        }
+        if (CouncilConstants.DESIGNATION_COMMISSIONER
+                .equalsIgnoreCase(councilPreamble.getState().getOwnerPosition().getDeptDesig().getDesignation().getName())
+                && CouncilConstants.COMMISSIONER_APPROVALPENDING.equalsIgnoreCase(councilPreamble.getState().getNextAction())) {
+            workFlowContainer.setPendingActions(councilPreamble.getState().getNextAction());
+        }
         prepareWorkflow(model, councilPreamble, workFlowContainer);
         model.addAttribute("stateType", councilPreamble.getClass()
                 .getSimpleName());
@@ -397,7 +407,7 @@ public class CouncilPreambleController extends GenericWorkFlowController {
         model.addAttribute(COUNCIL_PREAMBLE, councilPreamble);
         model.addAttribute(APPLICATION_HISTORY,
                 councilThirdPartyService.getHistory(councilPreamble));
-
+        model.addAttribute("wfNextAction", councilPreamble.getState().getNextAction());
         if ("PREAMBLEAPPROVEDFORMOM".equals(councilPreamble.getStatus().getCode())) {
             return COUNCILPREAMBLE_VIEW;
         }

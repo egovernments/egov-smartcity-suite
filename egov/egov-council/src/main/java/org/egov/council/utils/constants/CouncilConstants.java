@@ -84,11 +84,18 @@ public class CouncilConstants {
     public static final String APPROVED ="APPROVED";
     public static final String REJECTED ="REJECTED";
     public static final String ADJOURNED ="ADJOURNED";
+    public static final String CANCEL ="CANCEL";
+
     public static final String ATTENDANCEFINALIZED ="ATTENDANCE FINALIZED";
     public static final String RESOLUTION_APPROVED_PREAMBLE="Resolution Approved";
     public static final String IMPLEMENTATIONSTATUS = "IMPLEMENTATIONSTATUS";
     public static final String IMPLEMENTATION_STATUS_WORKINPROGRESS="Work In Progress";
     public static final String IMPLEMENTATION_STATUS_FINISHED="Finished";
+    
+    public static final String DESIGNATION_MANAGER="Manager";
+    public static final String DESIGNATION_COMMISSIONER="Commissioner";
+    public static final String MANAGER_APPROVALPENDING="Manager approval pending";
+    public static final String COMMISSIONER_APPROVALPENDING="Commissioner approval pending";
     
     public static final Map<String, String> MEETING_TIMINGS = new LinkedHashMap<String, String>() {
         /**
