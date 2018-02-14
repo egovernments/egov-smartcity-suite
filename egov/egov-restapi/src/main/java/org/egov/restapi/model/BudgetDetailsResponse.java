@@ -47,73 +47,90 @@
  */
 package org.egov.restapi.model;
 
-import org.hibernate.validator.constraints.NotBlank;
+import java.math.BigDecimal;
 
-public class BudgetCheck {
+public class BudgetDetailsResponse {
 
-    @NotBlank(message = "ULB code must be present")
-    private String ulbCode;
-    private String departmentCode;
-    private String functionCode;
-    private String schemeCode;
-    private String subSchemeCode;
-    private String fundCode;
-    private String budgetHeadName;
+    private String departmentName;
+    private String functionName;
+    private String fundName;
+    private String budgetHead;
+    private String schemeName;
+    private String subschemeName;
+    private BigDecimal availableBalance;
+    private BigDecimal budgetAllocated;
+    private BigDecimal budgetUtilized;
 
-    public String getUlbCode() {
-        return ulbCode;
+    public String getDepartmentName() {
+        return departmentName;
     }
 
-    public void setUlbCode(String ulbCode) {
-        this.ulbCode = ulbCode;
+    public String getFunctionName() {
+        return functionName;
     }
 
-    public String getDepartmentCode() {
-        return departmentCode;
+    public String getFundName() {
+        return fundName;
     }
 
-    public void setDepartmentCode(final String departmentCode) {
-        this.departmentCode = departmentCode;
+    public String getBudgetHead() {
+        return budgetHead;
     }
 
-    public String getFunctionCode() {
-        return functionCode;
+    public String getSchemeName() {
+        return schemeName;
     }
 
-    public void setFunctionCode(final String functionCode) {
-        this.functionCode = functionCode;
+    public String getSubschemeName() {
+        return subschemeName;
     }
 
-    public String getSchemeCode() {
-        return schemeCode;
+    public BigDecimal getAvailableBalance() {
+        return availableBalance;
     }
 
-    public void setSchemeCode(final String schemeCode) {
-        this.schemeCode = schemeCode;
+    public BigDecimal getBudgetAllocated() {
+        return budgetAllocated;
     }
 
-    public String getSubSchemeCode() {
-        return subSchemeCode;
+    public BigDecimal getBudgetUtilized() {
+        return budgetUtilized;
     }
 
-    public void setSubSchemeCode(final String subSchemeCode) {
-        this.subSchemeCode = subSchemeCode;
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
     }
 
-    public String getFundCode() {
-        return fundCode;
+    public void setFunctionName(String functionName) {
+        this.functionName = functionName;
     }
 
-    public void setFundCode(final String fundCode) {
-        this.fundCode = fundCode;
+    public void setFundName(String fundName) {
+        this.fundName = fundName;
     }
 
-    public String getBudgetHeadName() {
-        return budgetHeadName;
+    public void setBudgetHead(String budgetHead) {
+        this.budgetHead = budgetHead;
     }
 
-    public void setBudgetHeadName(String budgetHeadName) {
-        this.budgetHeadName = budgetHeadName;
+    public void setSchemeName(String schemeName) {
+        this.schemeName = schemeName;
+    }
+
+    public void setSubschemeName(String subschemeName) {
+        this.subschemeName = subschemeName;
+    }
+
+    public void setAvailableBalance(BigDecimal availableBalance) {
+        this.availableBalance = availableBalance;
+    }
+
+    public void setBudgetAllocated(BigDecimal budgetAllocated) {
+        this.budgetAllocated = budgetAllocated;
+    }
+
+    public void setBudgetUtilized(BigDecimal budgetUtilized) {
+        this.budgetUtilized = budgetUtilized;
     }
 
 }

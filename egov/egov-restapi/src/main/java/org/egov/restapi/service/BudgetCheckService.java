@@ -62,6 +62,7 @@ import org.egov.commons.service.FunctionService;
 import org.egov.commons.service.FundService;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.restapi.constants.RestApiConstants;
 import org.egov.restapi.model.BudgetCheck;
@@ -156,6 +157,41 @@ public class BudgetCheckService {
                 Integer.parseInt(fundService.findByCode(budgetCheck.getFundCode()).getId().toString()));
 
         return budgetAvailable.toString();
+    }
+    
+    public List<BudgetDetail> getBudgetAvailableDetails(final BudgetCheck budgetCheck) {
+        List<BudgetDetail> budgetDetails;
+        Scheme scheme = null;
+        SubScheme subScheme = null;
+        Integer departmentId = null;
+        Long functionId = null;
+        Integer fundId = null;
+        List<Long> budgetheadid = new ArrayList<>();
+        if (budgetCheck.getSchemeCode() != null) {
+            scheme = schemeService.findByCode(budgetCheck.getSchemeCode());
+        }
+        if (budgetCheck.getSubSchemeCode() != null) {
+            subScheme = subSchemeService.findByCode(budgetCheck.getSubSchemeCode());
+        }
+        if (budgetCheck.getBudgetHeadName() != null) {
+            budgetheadid.add(budgetGroupService.getBudgetGroupByName(budgetCheck.getBudgetHeadName()).getId());
+        }
+        if (budgetCheck.getDepartmentCode() != null) {
+            departmentId = departmentService.getDepartmentByCode(budgetCheck.getDepartmentCode()).getId().intValue();
+        }
+        if (budgetCheck.getFunctionCode() != null) {
+            functionId = functionService.findByCode(budgetCheck.getFunctionCode()).getId();
+        }
+        if (budgetCheck.getFundCode() != null) {
+            fundId = fundService.findByCode(budgetCheck.getFundCode()).getId();
+        }
+        budgetDetails = budgetDetailsDAO.getBudgetAvailableDetail(
+                financialYearHibernateDAO.getFinYearByDate(new Date()).getId(), departmentId, functionId, null,
+                scheme == null ? null : Integer.parseInt(
+                        scheme.getId().toString()),
+                subScheme == null ? null : Integer.parseInt(subScheme.getId().toString()), null, budgetheadid, fundId);
+
+        return budgetDetails;
     }
 
     public BigDecimal getAllocatedBudget(final BudgetCheck budgetCheck) {

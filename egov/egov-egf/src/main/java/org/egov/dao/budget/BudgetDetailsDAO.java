@@ -53,17 +53,17 @@
  */
 package org.egov.dao.budget;
 
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFunction;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.model.budget.BudgetUsage;
-
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Administrator
@@ -94,6 +94,10 @@ public interface BudgetDetailsDAO {
     public BigDecimal getSanctionedPlanningBudget(Map<String, Object> paramMap) throws ValidationException;
 
     public BigDecimal getPlanningBudgetAvailable(Long financialyearid, Integer departmentid, Long functionid,
+            Integer functionaryid, Integer schemeid, Integer subschemeid, Integer boundaryid, List<Long> budgetheadid,
+            Integer fundid) throws ValidationException;
+    
+    public List<BudgetDetail> getBudgetAvailableDetail(Long financialyearid, Integer departmentid, Long functionid,
             Integer functionaryid, Integer schemeid, Integer subschemeid, Integer boundaryid, List<Long> budgetheadid,
             Integer fundid) throws ValidationException;
 

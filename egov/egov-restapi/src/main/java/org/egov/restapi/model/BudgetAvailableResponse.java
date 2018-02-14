@@ -47,73 +47,28 @@
  */
 package org.egov.restapi.model;
 
-import org.hibernate.validator.constraints.NotBlank;
+import java.util.List;
+import java.util.Map;
 
-public class BudgetCheck {
+public class BudgetAvailableResponse {
 
-    @NotBlank(message = "ULB code must be present")
-    private String ulbCode;
-    private String departmentCode;
-    private String functionCode;
-    private String schemeCode;
-    private String subSchemeCode;
-    private String fundCode;
-    private String budgetHeadName;
+    private List<BudgetDetailsResponse> budgetDetailsResponse;
+    private Map<String, String> status;
 
-    public String getUlbCode() {
-        return ulbCode;
+    public List<BudgetDetailsResponse> getBudgetDetailsResponse() {
+        return budgetDetailsResponse;
     }
 
-    public void setUlbCode(String ulbCode) {
-        this.ulbCode = ulbCode;
+    public Map<String, String> getStatus() {
+        return status;
     }
 
-    public String getDepartmentCode() {
-        return departmentCode;
+    public void setBudgetDetailsResponse(List<BudgetDetailsResponse> budgetDetailsResponse) {
+        this.budgetDetailsResponse = budgetDetailsResponse;
     }
 
-    public void setDepartmentCode(final String departmentCode) {
-        this.departmentCode = departmentCode;
-    }
-
-    public String getFunctionCode() {
-        return functionCode;
-    }
-
-    public void setFunctionCode(final String functionCode) {
-        this.functionCode = functionCode;
-    }
-
-    public String getSchemeCode() {
-        return schemeCode;
-    }
-
-    public void setSchemeCode(final String schemeCode) {
-        this.schemeCode = schemeCode;
-    }
-
-    public String getSubSchemeCode() {
-        return subSchemeCode;
-    }
-
-    public void setSubSchemeCode(final String subSchemeCode) {
-        this.subSchemeCode = subSchemeCode;
-    }
-
-    public String getFundCode() {
-        return fundCode;
-    }
-
-    public void setFundCode(final String fundCode) {
-        this.fundCode = fundCode;
-    }
-
-    public String getBudgetHeadName() {
-        return budgetHeadName;
-    }
-
-    public void setBudgetHeadName(String budgetHeadName) {
-        this.budgetHeadName = budgetHeadName;
+    public void setStatus(Map<String, String> status) {
+        this.status = status;
     }
 
 }
