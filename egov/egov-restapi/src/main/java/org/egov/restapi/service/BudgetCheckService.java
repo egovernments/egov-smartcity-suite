@@ -65,7 +65,9 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.restapi.constants.RestApiConstants;
+import org.egov.restapi.model.BudgetAvailableResponse;
 import org.egov.restapi.model.BudgetCheck;
+import org.egov.restapi.model.BudgetDetailsResponse;
 import org.egov.restapi.model.RestErrors;
 import org.egov.services.budget.BudgetGroupService;
 import org.egov.services.masters.SchemeService;
@@ -219,4 +221,34 @@ public class BudgetCheckService {
         return ((budgetAmountForYear.multiply(planningPercentForYear)).divide(new BigDecimal(100))).setScale(2, BigDecimal.ROUND_UP);
     }
 
+    public void setResponse(List<BudgetDetail> budgetDetailresponse, List<BudgetDetailsResponse> response,
+            BudgetAvailableResponse budgetAvailableResponse) {
+        Map<String, String> status = new HashMap<>();
+        for (BudgetDetail bd : budgetDetailresponse) {
+            BudgetDetailsResponse budgetDetailsResponse = new BudgetDetailsResponse();
+            budgetDetailsResponse.setDepartmentName(bd.getExecutingDepartment().getName());
+            budgetDetailsResponse.setFundName(bd.getFund().getName());
+            budgetDetailsResponse.setFunctionName(bd.getFunction().getName());
+            budgetDetailsResponse.setSchemeName(bd.getScheme() == null ? StringUtils.EMPTY : bd.getScheme().getName());
+            budgetDetailsResponse.setSubschemeName(bd.getSubScheme() == null ? StringUtils.EMPTY : bd.getSubScheme().getName());
+            budgetDetailsResponse.setBudgetHead(bd.getBudgetGroup().getName());
+            budgetDetailsResponse
+                    .setAvailableBalance(bd.getBudgetAvailable() == null ? BigDecimal.ZERO : bd.getBudgetAvailable());
+            budgetDetailsResponse.setBudgetAllocated(bd.getApprovedAmount().add(
+                    bd.getApprovedReAppropriationsTotal() == null ? BigDecimal.ZERO : bd.getApprovedReAppropriationsTotal()));
+            budgetDetailsResponse.setBudgetUtilized(
+                    budgetDetailsResponse.getBudgetAllocated().subtract(budgetDetailsResponse.getAvailableBalance()));
+            response.add(budgetDetailsResponse);
+        }
+        if (response.isEmpty()) {
+            status.put("Code", "FAILED");
+            status.put("Message", "No data found");
+            budgetAvailableResponse.setStatus(status);
+        } else {
+            status.put("Code", "SUCCESS");
+            status.put("Message", "Total " + response.size() + " record found");
+            budgetAvailableResponse.setStatus(status);
+            budgetAvailableResponse.setBudgetDetailsResponse(response);
+        }
+    }
 }

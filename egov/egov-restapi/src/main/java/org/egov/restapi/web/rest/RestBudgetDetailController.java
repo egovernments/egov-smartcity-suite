@@ -49,15 +49,11 @@ package org.egov.restapi.web.rest;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.validation.Valid;
 
-import org.apache.commons.lang.StringUtils;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.restapi.model.BudgetAvailableResponse;
 import org.egov.restapi.model.BudgetCheck;
@@ -82,39 +78,8 @@ public class RestBudgetDetailController {
         List<BudgetDetailsResponse> response = new ArrayList<>();
         BudgetAvailableResponse budgetAvailableResponse = new BudgetAvailableResponse();
         List<BudgetDetail> budgetDetailresponse = budgetCheckService.getBudgetAvailableDetails(budgetCheck);
-        setResponse(budgetDetailresponse, response, budgetAvailableResponse);
+        budgetCheckService.setResponse(budgetDetailresponse, response, budgetAvailableResponse);
         return budgetAvailableResponse;
-    }
-
-    void setResponse(List<BudgetDetail> budgetDetailresponse, List<BudgetDetailsResponse> response,
-            BudgetAvailableResponse budgetAvailableResponse) {
-        Map<String, String> status = new HashMap<>();
-        for (BudgetDetail bd : budgetDetailresponse) {
-            BudgetDetailsResponse budgetDetailsResponse = new BudgetDetailsResponse();
-            budgetDetailsResponse.setDepartmentName(bd.getExecutingDepartment().getName());
-            budgetDetailsResponse.setFundName(bd.getFund().getName());
-            budgetDetailsResponse.setFunctionName(bd.getFunction().getName());
-            budgetDetailsResponse.setSchemeName(bd.getScheme() == null ? StringUtils.EMPTY : bd.getScheme().getName());
-            budgetDetailsResponse.setSubschemeName(bd.getSubScheme() == null ? StringUtils.EMPTY : bd.getSubScheme().getName());
-            budgetDetailsResponse.setBudgetHead(bd.getBudgetGroup().getName());
-            budgetDetailsResponse
-                    .setAvailableBalance(bd.getBudgetAvailable() == null ? BigDecimal.ZERO : bd.getBudgetAvailable());
-            budgetDetailsResponse.setBudgetAllocated(bd.getApprovedAmount().add(
-                    bd.getApprovedReAppropriationsTotal() == null ? BigDecimal.ZERO : bd.getApprovedReAppropriationsTotal()));
-            budgetDetailsResponse.setBudgetUtilized(
-                    budgetDetailsResponse.getBudgetAllocated().subtract(budgetDetailsResponse.getAvailableBalance()));
-            response.add(budgetDetailsResponse);
-        }
-        if (response.isEmpty()) {
-            status.put("Code", "FAILED");
-            status.put("Message", "No data found");
-            budgetAvailableResponse.setStatus(status);
-        } else {
-            status.put("Code", "SUCCESS");
-            status.put("Message", "Total " + response.size() + " record found");
-            budgetAvailableResponse.setStatus(status);
-            budgetAvailableResponse.setBudgetDetailsResponse(response);
-        }
     }
 
     @ExceptionHandler(RuntimeException.class)
