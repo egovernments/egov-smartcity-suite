@@ -354,9 +354,10 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
     }
 
     private List<FloorDetails> setFloorDetails(PropertyDetail propertyDetail) {
-        FloorDetails floorDetails = new FloorDetails();
+        FloorDetails floorDetails;
         List<FloorDetails> floorDetailsList = new ArrayList<>();
         for (Floor floor : propertyDetail.getFloorDetails()) {
+            floorDetails = new FloorDetails();
             floorDetails.setFloorNoCode(FLOOR_MAP.get(floor.getFloorNo()));
             floorDetails.setBuildClassificationCode(floor.getStructureClassification().getTypeName());
             floorDetails.setNatureOfUsageCode(floor.getPropertyUsage().getUsageName());
