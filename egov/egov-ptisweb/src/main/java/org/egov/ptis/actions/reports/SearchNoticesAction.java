@@ -77,6 +77,7 @@ import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.bean.CitizenMutationInfo;
 import org.egov.ptis.bean.CitizenNoticeBean;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
@@ -601,6 +602,8 @@ public class SearchNoticesAction extends SearchFormAction {
         if (NOTICE_TYPE_BILL.equalsIgnoreCase(noticeType))
             criteriaString = criteriaString.append(
                     " and bill.isactive = true and bill.isHistory='N' and bill.billnumber = notice.noticeNo and pmv.propertyId=bill.assessmentNo");
+        else if(PropertyTaxConstants.NOTICE_TYPE_SURVEY_COMPARISON.equalsIgnoreCase(noticeType))
+            criteriaString = criteriaString.append(" and notice.basicProperty.id=bp.id and bp.id=pmv.basicPropertyID ");
         else
             criteriaString = criteriaString.append(" and bp.upicNo=pmv.propertyId");
         if (ownerName != null && !ownerName.equals("")) {

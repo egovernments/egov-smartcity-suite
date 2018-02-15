@@ -238,6 +238,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private transient ReportViewerUtil reportViewerUtil;
     @Autowired
     private transient PropertySurveyService propertySurveyService;
+    @Autowired
+    private transient NoticeService noticeService;
     
 
     private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
@@ -794,9 +796,11 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             return reject();
         }
         if(SOURCE_SURVEY.equalsIgnoreCase(property.getSource()) 
-                && property.getCurrentState().getValue().toUpperCase().endsWith(WF_STATE_REVENUE_OFFICER_APPROVED.toUpperCase())){
+               && property.getCurrentState().getValue().toUpperCase().endsWith(WF_STATE_REVENUE_OFFICER_APPROVED.toUpperCase())){
             BigDecimal surveyVariance = propertyTaxUtil.getTaxDifferenceForGIS(property);
             property.setSurveyVariance(surveyVariance);
+            if(surveyVariance.compareTo(BigDecimal.TEN)>0 && !property.isThirdPartyVerified())
+                noticeService.generateComparisonNotice(property);
         }
         basicProp.setUnderWorkflow(true);
         basicPropertyService.applyAuditing(property.getState());

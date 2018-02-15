@@ -1680,6 +1680,7 @@ public interface PropertyTaxConstants {
     public static final String VALUATION_CERTIFICATE_MUNICIPALITY = "ValuationCertificate_Municipality";
     public static final String NOTICE_TYPE_OC = "Ownership Certificate";
     public static final String NOTICE_TYPE_ENDORSEMENT = "Endorsement Notice";  
+    public static final String NOTICE_TYPE_SURVEY_COMPARISON="Survey Comparison Document";
     //esd notice section act and distress section act for corporation use the same constant
     public static final String CORPORATION_ESD_NOTICE_SECTION_ACT = "(Issued under Section 269(2) of Municipal Corporations Act,1955 (formerly GHMC Act, 1955)";
     
@@ -1763,6 +1764,7 @@ public interface PropertyTaxConstants {
     public static final String GENERAL_REVISION_PETETION_APPTYPE = "GENERAL_REVISION_PETETION";
 	public static final List<String> PROPERTY_TYPE_GOVT_LIST = ImmutableList.of(OWNERSHIP_TYPE_STATE_GOVT,
 			OWNERSHIP_TYPE_CENTRAL_GOVT_333, OWNERSHIP_TYPE_CENTRAL_GOVT_50, OWNERSHIP_TYPE_CENTRAL_GOVT_75);
+   public static final String NOTICE_TEMPLATE_COMPARISON_NOTICE="mainGIS_comparitiveReport";
 
     public static final String DOCUMENT_TYPE_THIRD_PARTY_SURVEY = "Third Party Verification Copy";
 }

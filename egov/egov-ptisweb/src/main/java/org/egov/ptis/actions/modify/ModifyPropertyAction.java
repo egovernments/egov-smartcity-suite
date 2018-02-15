@@ -101,6 +101,7 @@ import org.egov.ptis.domain.repository.master.vacantland.LayoutApprovalAuthority
 import org.egov.ptis.domain.repository.master.vacantland.VacantLandPlotAreaRepository;
 import org.egov.ptis.domain.repository.master.walltype.WallTypeRepository;
 import org.egov.ptis.domain.repository.master.woodtype.WoodTypeRepository;
+import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.PropertySurveyService;
@@ -303,6 +304,10 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 
     @Autowired
     private transient CityService cityService;
+    
+    @Autowired
+    private transient NoticeService noticeService;
+    
     @Autowired
     private transient WoodTypeRepository woodTypeRepository;
     
@@ -781,6 +786,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 && propertyModel.getCurrentState().getValue().toUpperCase().endsWith(WF_STATE_REVENUE_OFFICER_APPROVED.toUpperCase())){
             BigDecimal surveyVariance = propertyTaxUtil.getTaxDifferenceForGIS(propertyModel);
             propertyModel.setSurveyVariance(surveyVariance);
+            if(surveyVariance.compareTo(BigDecimal.TEN)>0 && !propertyModel.isThirdPartyVerified())
+                noticeService.generateComparisonNotice(propertyModel);
         }
         if (SOURCE_SURVEY.equalsIgnoreCase(propertyModel.getSource())){
         SurveyBean surveyBean = new SurveyBean();

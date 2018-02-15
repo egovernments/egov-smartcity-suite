@@ -4295,5 +4295,16 @@ public class PropertyService {
 									? ApprovalStatus.REJECTED : ApprovalStatus.INPROGRESS);
 		applicationIndexService.updateApplicationIndex(applicationIndex);
 	}
+	
+	public BigDecimal getTotalTaxExcludingUACPenalty(Installment installment, Ptdemand ptDemand) {
+	        BigDecimal halfYearlyTax = ZERO;
+	        for (EgDemandDetails demandDetails : ptDemand.getEgDemandDetails()) {
+	            if (installment.getFromDate().equals(demandDetails.getInstallmentStartDate()) &&
+	                    !PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY
+	                            .equalsIgnoreCase(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()))
+	                halfYearlyTax = halfYearlyTax.add(demandDetails.getAmount());
+	        }
+	        return halfYearlyTax;
+	}
 
 }

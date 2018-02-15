@@ -1197,6 +1197,10 @@ public class PropertyExternalService {
          * Duplicate GIS property will be persisted, which will be used for generating comparison reports  
          */
         PropertyImpl gisProperty = (PropertyImpl) property.createPropertyclone();
+        Ptdemand ptdemand = property.getPtDemandSet().iterator().next();
+        Ptdemand gisPtdemand = gisProperty.getPtDemandSet().iterator().next();
+        if(gisPtdemand != null)
+            gisPtdemand.getDmdCalculations().setAlv(ptdemand.getDmdCalculations().getAlv());
         if(!gisProperty.getPropertyDetail().getFloorDetails().isEmpty()){
             for(Floor floor : gisProperty.getPropertyDetail().getFloorDetails())
                 floor.setPropertyDetail(gisProperty.getPropertyDetail());
@@ -2342,6 +2346,10 @@ public class PropertyExternalService {
         }
         gisProperty.setStatus('G');
         gisProperty.setSource(SOURCE_SURVEY);
+        Ptdemand ptdemand = property.getPtDemandSet().iterator().next();
+        Ptdemand gisPtdemand = gisProperty.getPtDemandSet().iterator().next();
+        if(gisPtdemand != null)
+            gisPtdemand.getDmdCalculations().setAlv(ptdemand.getDmdCalculations().getAlv());
         basicProperty.addProperty(gisProperty);
         
         Ptdemand gisPtDemand = gisProperty.getPtDemandSet().iterator().next();
@@ -3029,11 +3037,12 @@ public class PropertyExternalService {
         PropertyImpl propertyImpl = (PropertyImpl) basicProperty.getProperty();
         taxCalculatorResponse.setAssessmentNo(basicProperty.getUpicNo());
         taxCalculatorResponse.setZoneNo(basicProperty.getPropertyID().getZone().getBoundaryNum());
-        if (StringUtils.isNotBlank(propertyImpl.getReferenceId()))
-            taxCalculatorResponse.setReferenceId(propertyImpl.getReferenceId());
 
         if (propertyImpl != null) {
-            Map<String, BigDecimal> calculationsMap = getARVAndTaxDetails(propertyImpl,
+            if (StringUtils.isNotBlank(propertyImpl.getReferenceId()))
+                taxCalculatorResponse.setReferenceId(propertyImpl.getReferenceId());
+
+            Map<String, BigDecimal> calculationsMap = getARVAndTaxDetails(propService, propertyImpl,
                     currYearInstMap.get(CURRENTYEAR_SECOND_HALF), false);
             taxCalculatorResponse.setExistingARV(calculationsMap.get(ARV));
             taxCalculatorResponse.setExistingHalfYearlyTax(calculationsMap.get(HALF_YEARLY_TAX));
@@ -3046,7 +3055,7 @@ public class PropertyExternalService {
             } catch (TaxCalculatorExeption e) {
                 LOGGER.error("create : There are no Unit rates defined for chosen combinations", e);
             }
-            calculationsMap = getARVAndTaxDetails(propertyImpl, currYearInstMap.get(CURRENTYEAR_SECOND_HALF), true);
+            calculationsMap =getARVAndTaxDetails(propService, propertyImpl, currYearInstMap.get(CURRENTYEAR_SECOND_HALF), true);
             taxCalculatorResponse.setCalculatedARV(calculationsMap.get(ARV));
             taxCalculatorResponse.setNewHalfYearlyTax(calculationsMap.get(HALF_YEARLY_TAX));
 
@@ -3064,8 +3073,8 @@ public class PropertyExternalService {
         return taxCalculatorResponse;
     }
 
-    private Map<String, BigDecimal> getARVAndTaxDetails(PropertyImpl propertyImpl, Installment installment,
-            boolean forNewCalculation) {
+    private Map<String, BigDecimal> getARVAndTaxDetails(PropertyService propService, PropertyImpl propertyImpl,
+            Installment installment, boolean forNewCalculation) {
         Map<String, BigDecimal> calculationDetailsMap = new HashMap<>();
         Ptdemand ptDemand;
         if (!propertyImpl.getPtDemandSet().isEmpty()) {
@@ -3074,7 +3083,7 @@ public class PropertyExternalService {
             else
                 ptDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(propertyImpl);
             if (ptDemand != null) {
-                BigDecimal halfYearlyTax = getTotalTaxExcludingUACPenalty(installment, ptDemand);
+                BigDecimal halfYearlyTax = propService.getTotalTaxExcludingUACPenalty(installment, ptDemand);
                 calculationDetailsMap.put(HALF_YEARLY_TAX, halfYearlyTax);
                 if (ptDemand.getDmdCalculations() != null)
                     calculationDetailsMap.put(ARV, ptDemand.getDmdCalculations().getAlv() == null ? ZERO
@@ -3084,17 +3093,6 @@ public class PropertyExternalService {
         }
 
         return calculationDetailsMap;
-    }
-
-    private BigDecimal getTotalTaxExcludingUACPenalty(Installment installment, Ptdemand ptDemand) {
-        BigDecimal halfYearlyTax = ZERO;
-        for (EgDemandDetails demandDetails : ptDemand.getEgDemandDetails()) {
-            if (installment.getFromDate().equals(demandDetails.getInstallmentStartDate()) &&
-                    !PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY
-                            .equalsIgnoreCase(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()))
-                halfYearlyTax = halfYearlyTax.add(demandDetails.getAmount());
-        }
-        return halfYearlyTax;
     }
 
     private void prepareFloorDetailsForTaxCalculation(TaxCalculatorRequest taxCalculatorRequest, PropertyImpl propertyImpl,
