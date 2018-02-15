@@ -61,6 +61,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Area;
 import org.egov.commons.Installment;
 import org.egov.commons.entity.Source;
+import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.entity.Assignment;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Role;
@@ -92,6 +93,7 @@ import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.property.*;
 import org.egov.ptis.domain.entity.property.vacantland.LayoutApprovalAuthority;
 import org.egov.ptis.domain.entity.property.vacantland.VacantLandPlotArea;
+import org.egov.ptis.domain.entity.property.view.SurveyBean;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.repository.master.floortype.FloorTypeRepository;
 import org.egov.ptis.domain.repository.master.rooftype.RoofTypeRepository;
@@ -101,6 +103,7 @@ import org.egov.ptis.domain.repository.master.walltype.WallTypeRepository;
 import org.egov.ptis.domain.repository.master.woodtype.WoodTypeRepository;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.domain.service.property.PropertySurveyService;
 import org.egov.ptis.domain.service.reassign.ReassignService;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -300,7 +303,6 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 
     @Autowired
     private transient CityService cityService;
-    
     @Autowired
     private transient WoodTypeRepository woodTypeRepository;
     
@@ -312,6 +314,9 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 
     @Autowired
     private transient FloorTypeRepository floorTypeRepository;
+    @Autowired
+    private transient PropertySurveyService propertySurveyService;
+    
 
     public ModifyPropertyAction() {
         super();
@@ -669,6 +674,20 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         basicProp.setUnderWorkflow(Boolean.TRUE);
         basicPropertyService.applyAuditing(propertyModel.getState());
         propService.updateIndexes(propertyModel, getApplicationType());
+        if (SOURCE_SURVEY.equalsIgnoreCase(propertyModel.getSource())) {
+            SurveyBean surveyBean = new SurveyBean();
+            BigDecimal totalTax = BigDecimal.ZERO;
+            if (StringUtils.containsIgnoreCase(userDesignationList, REVENUE_INSPECTOR_DESGN)
+                    || StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT)
+                    || StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT)) {
+                for (EgDemandDetails demandDetail : propertyModel.getPtDemandSet().iterator().next().getEgDemandDetails())
+                    totalTax = totalTax.add(demandDetail.getAmount());
+            }
+            surveyBean.setProperty(propertyModel);
+            surveyBean.setApplicationTax(totalTax);
+            propertySurveyService.updateSurveyIndex(APPLICATION_TYPE_ALTER_ASSESSENT, surveyBean);
+        }
+        
         // added to set createdDate for DemandCalculation object
         if (basicProp.getWFProperty() != null && basicProp.getWFProperty().getPtDemandSet() != null
                 && !basicProp.getWFProperty().getPtDemandSet().isEmpty())
@@ -763,6 +782,11 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             BigDecimal surveyVariance = propertyTaxUtil.getTaxDifferenceForGIS(propertyModel);
             propertyModel.setSurveyVariance(surveyVariance);
         }
+        if (SOURCE_SURVEY.equalsIgnoreCase(propertyModel.getSource())){
+        SurveyBean surveyBean = new SurveyBean();
+        surveyBean.setProperty(propertyModel);
+        propertySurveyService.updateSurveyIndex(APPLICATION_TYPE_ALTER_ASSESSENT, surveyBean);
+    }
         propService.updateIndexes(propertyModel, getApplicationType());
         basicPropertyService.update(basicProp);
         if (propertyModel.getSource().equalsIgnoreCase(Source.CITIZENPORTAL.toString()))
@@ -810,6 +834,15 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 || PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION.equals(modifyRsn))
             updateAddress();
         propService.updateIndexes(propertyModel, getApplicationType());
+        if (SOURCE_SURVEY.equalsIgnoreCase(propertyModel.getSource())) {
+            SurveyBean surveyBean = new SurveyBean();
+            BigDecimal totalTax = BigDecimal.ZERO;
+            for (EgDemandDetails demandDetail : propertyModel.getPtDemandSet().iterator().next().getEgDemandDetails())
+                totalTax = totalTax.add(demandDetail.getAmount());
+            surveyBean.setApprovedTax(totalTax);
+            surveyBean.setProperty(propertyModel);
+            propertySurveyService.updateSurveyIndex(applicationSource, surveyBean);
+        }
         basicPropertyService.update(basicProp);
         setBasicProp(basicProp);
         if (propertyModel.getSource().equalsIgnoreCase(Source.CITIZENPORTAL.toString()))
@@ -907,6 +940,12 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
             if (propertyModel.getSource().equalsIgnoreCase(Source.CITIZENPORTAL.toString()))
                 propService.updatePortal(propertyModel, getApplicationType());
+            if (SOURCE_SURVEY.equalsIgnoreCase(propertyModel.getSource())) {
+                SurveyBean surveyBean = new SurveyBean();
+                surveyBean.setProperty(propertyModel);
+                propertySurveyService.updateSurveyIndex(applicationSource, surveyBean);
+            }
+            
         }
         final String username = getInitiator();
 

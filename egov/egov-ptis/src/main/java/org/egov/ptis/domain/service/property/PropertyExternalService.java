@@ -154,6 +154,7 @@ import org.egov.ptis.domain.entity.property.TaxExemptionReason;
 import org.egov.ptis.domain.entity.property.VacantProperty;
 import org.egov.ptis.domain.entity.property.WallType;
 import org.egov.ptis.domain.entity.property.WoodType;
+import org.egov.ptis.domain.entity.property.view.SurveyBean;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.BoundaryDetails;
 import org.egov.ptis.domain.model.ErrorDetails;
@@ -274,6 +275,8 @@ public class PropertyExternalService {
     @Autowired
     @Qualifier("documentTypeDetailsService")
     private PersistenceService<DocumentTypeDetails, Long> documentTypeDetailsService;
+    @Autowired
+    private PropertySurveyService surveyService ;
 
     private PropertyImpl propty = new PropertyImpl();
 
@@ -1203,6 +1206,16 @@ public class PropertyExternalService {
         basicProperty.addProperty(gisProperty);
         transitionWorkFlow(property, propService, PROPERTY_MODE_CREATE);
         basicPropertyService.applyAuditing(property.getState());
+        BigDecimal totalTax = BigDecimal.ZERO;
+        SurveyBean surveyBean = new SurveyBean();
+        for (EgDemandDetails demandDetail : property.getPtDemandSet().iterator().next().getEgDemandDetails())
+            totalTax = totalTax.add(demandDetail.getAmount());
+        surveyBean.setGisTax(totalTax);
+        surveyBean.setProperty(property);
+        surveyBean.setApplicationTax(totalTax);
+        surveyBean.setAgeOfCompletion(propService.getSlaValue(APPLICATION_TYPE_NEW_ASSESSENT));
+        surveyService.updateSurveyIndex(APPLICATION_TYPE_NEW_ASSESSENT, surveyBean);
+
         basicProperty = basicPropertyService.persist(basicProperty);
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
         saveDocumentTypeDetails(basicProperty, viewpropertyDetails);
@@ -2309,6 +2322,7 @@ public class PropertyExternalService {
         final PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
         BasicProperty basicProperty = updateBasicProperty(viewPropertyDetails, propService);
         PropertyImpl property = (PropertyImpl) basicProperty.getWFProperty();
+        PropertyImpl activeProperty=(PropertyImpl) basicProperty.getActiveProperty();
         property.getPropertyDetail().setCategoryType(viewPropertyDetails.getCategory());
         basicProperty.setUnderWorkflow(Boolean.TRUE);
         basicProperty.setParcelId(viewPropertyDetails.getParcelId());
@@ -2336,6 +2350,24 @@ public class PropertyExternalService {
         transitionWorkFlow(property, propService, PROPERTY_MODE_MODIFY);
         basicPropertyService.applyAuditing(property.getState());
         propService.updateIndexes(property, PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT);
+        if (SOURCE_SURVEY.equalsIgnoreCase(property.getSource())) {
+            SurveyBean surveyBean = new SurveyBean();
+            BigDecimal totalTax = BigDecimal.ZERO;
+            BigDecimal activeTax = BigDecimal.ZERO;
+            for (EgDemandDetails demandDetail : property.getPtDemandSet().iterator().next().getEgDemandDetails())
+                totalTax = totalTax.add(demandDetail.getAmount());
+            surveyBean.setProperty(property);
+            surveyBean.setGisTax(totalTax);
+            surveyBean.setApplicationTax(totalTax);
+            surveyBean.setAgeOfCompletion(propService.getSlaValue(APPLICATION_TYPE_ALTER_ASSESSENT));
+            if (activeProperty != null) {
+                for (EgDemandDetails activeDemandDetail : activeProperty.getPtDemandSet().iterator().next().getEgDemandDetails())
+                    activeTax = activeTax.add(activeDemandDetail.getAmount());
+                surveyBean.setSystemTax(activeTax);
+            }
+            surveyService.updateSurveyIndex(APPLICATION_TYPE_ALTER_ASSESSENT, surveyBean);
+        }
+  
         if (basicProperty.getWFProperty() != null && basicProperty.getWFProperty().getPtDemandSet() != null
                 && !basicProperty.getWFProperty().getPtDemandSet().isEmpty()) {
             for (Ptdemand ptDemand : basicProperty.getWFProperty().getPtDemandSet()) {
