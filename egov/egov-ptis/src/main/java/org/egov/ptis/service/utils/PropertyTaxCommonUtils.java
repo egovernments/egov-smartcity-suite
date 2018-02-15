@@ -776,9 +776,9 @@ public class PropertyTaxCommonUtils {
         String reason = null;
         List<String> list = new ArrayList<>();
         if (isCorporation())
-            noOfDays = "30";
-        else
             noOfDays = "15";
+        else
+            noOfDays = "30";
         list.add(noOfDays);
         if (basicProperty.getProperty().getStatus() == 'I') {
             if ("CREATE".equals(basicProperty.getProperty().getPropertyModifyReason()))
