@@ -801,6 +801,10 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             property.setSurveyVariance(surveyVariance);
             if(surveyVariance.compareTo(BigDecimal.TEN)>0 && !property.isThirdPartyVerified())
                 noticeService.generateComparisonNotice(property);
+            SurveyBean surveyBean = new SurveyBean();
+            surveyBean.setProperty(property);
+            surveyBean.setToBeRefferdThirdParty(true);
+            propertySurveyService.updateSurveyIndex(APPLICATION_TYPE_NEW_ASSESSENT, surveyBean);
         }
         basicProp.setUnderWorkflow(true);
         basicPropertyService.applyAuditing(property.getState());

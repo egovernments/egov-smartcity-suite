@@ -59,6 +59,7 @@ public class SurveyBean {
     private BigDecimal approvedTax = BigDecimal.ZERO;
     private boolean thirdPartyFlag = false;
     private int ageOfCompletion;
+    private boolean isToBeRefferdThirdParty=false;
 
     public PropertyImpl getProperty() {
         return property;
@@ -114,6 +115,14 @@ public class SurveyBean {
 
     public void setAgeOfCompletion(int ageOfCompletion) {
         this.ageOfCompletion = ageOfCompletion;
+    }
+
+    public boolean isToBeRefferdThirdParty() {
+        return isToBeRefferdThirdParty;
+    }
+
+    public void setToBeRefferdThirdParty(boolean isToBeRefferdThirdParty) {
+        this.isToBeRefferdThirdParty = isToBeRefferdThirdParty;
     }
 
 }

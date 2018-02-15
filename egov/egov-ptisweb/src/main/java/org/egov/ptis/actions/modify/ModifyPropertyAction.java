@@ -785,9 +785,13 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         if(SOURCE_SURVEY.equalsIgnoreCase(propertyModel.getSource()) 
                 && propertyModel.getCurrentState().getValue().toUpperCase().endsWith(WF_STATE_REVENUE_OFFICER_APPROVED.toUpperCase())){
             BigDecimal surveyVariance = propertyTaxUtil.getTaxDifferenceForGIS(propertyModel);
+            SurveyBean surveyBean = new SurveyBean();
             propertyModel.setSurveyVariance(surveyVariance);
             if(surveyVariance.compareTo(BigDecimal.TEN)>0 && !propertyModel.isThirdPartyVerified())
                 noticeService.generateComparisonNotice(propertyModel);
+            surveyBean.setProperty(propertyModel);
+            surveyBean.setToBeRefferdThirdParty(true);
+            propertySurveyService.updateSurveyIndex(APPLICATION_TYPE_ALTER_ASSESSENT, surveyBean);  
         }
         if (SOURCE_SURVEY.equalsIgnoreCase(propertyModel.getSource())){
         SurveyBean surveyBean = new SurveyBean();

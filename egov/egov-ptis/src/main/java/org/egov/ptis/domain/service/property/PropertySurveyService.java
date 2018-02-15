@@ -60,6 +60,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -98,8 +99,8 @@ public class PropertySurveyService {
         if (!applicationType.isEmpty() && propService.propertyApplicationTypes().contains(applicationType))
             updateIndex(applicationType, surveyBean);
     }
-
-    private void updateIndex(final String applicationType, final SurveyBean surveyBean) {
+    @Transactional
+    public void updateIndex(final String applicationType, final SurveyBean surveyBean) {
         PTGISIndex ptGisIndex = findByApplicationNo(surveyBean.getProperty().getApplicationNo());
         if (ptGisIndex == null)
             createPropertySurveyindex(applicationType, surveyBean);
@@ -113,19 +114,16 @@ public class PropertySurveyService {
         PTGISIndex ptGisIndex;
         Double taxVar;
         final String state;
-        if (applicationType.equalsIgnoreCase(PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT))
-            taxVar = ((surveyBean.getApprovedTax().subtract(surveyBean.getSystemTax())).multiply(BigDecimal.valueOf(100.0)))
-                    .divide(surveyBean.getSystemTax()).doubleValue();
-        else
-            taxVar = Double.valueOf(100);
+        taxVar = calculatetaxvariance(applicationType, surveyBean);
         state = surveyBean.getProperty().getState().getValue();
-        final Date applicationDate = surveyBean.getProperty().getCreatedDate() != null ? surveyBean.getProperty().getCreatedDate()
-                : new Date();
+        final Date applicationDate = surveyBean.getProperty().getCreatedDate() == null ? new Date()
+                : surveyBean.getProperty().getCreatedDate();
         final Date completionDate = state.contains(PropertyTaxConstants.WF_STATE_CLOSED)
                 ? surveyBean.getProperty().getState().getLastModifiedDate() : null;
         final String source = propertyTaxCommonUtils.getPropertySource(surveyBean.getProperty());
-        final String assessmentNo = surveyBean.getProperty().getBasicProperty().getUpicNo() != null
-                ? surveyBean.getProperty().getBasicProperty().getUpicNo() : null;
+        final String assessmentNo = StringUtils.isBlank(surveyBean.getProperty().getBasicProperty().getUpicNo())
+                ? StringUtils.EMPTY
+                : surveyBean.getProperty().getBasicProperty().getUpicNo();
 
         final PropertyID propId = surveyBean.getProperty().getBasicProperty().getPropertyID();
         final BasicPropertyImpl basicProp = (BasicPropertyImpl) surveyBean.getProperty().getBasicProperty();
@@ -163,20 +161,26 @@ public class PropertySurveyService {
         createPTGISIndex(ptGisIndex);
     }
 
+    private Double calculatetaxvariance(final String applicationType, final SurveyBean surveyBean) {
+        Double taxVar;
+        if (applicationType.equalsIgnoreCase(PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT))
+            taxVar = ((surveyBean.getApprovedTax().subtract(surveyBean.getSystemTax())).multiply(BigDecimal.valueOf(100.0)))
+                    .divide(surveyBean.getSystemTax()).doubleValue();
+        else
+            taxVar = Double.valueOf(100);
+        return taxVar;
+    }
+   @Transactional
     public void updatePropertySurveyIndex(final String applicationType, final SurveyBean surveyBean,
             final PTGISIndex ptGisIndex) {
 
-        final Date applicationDate = surveyBean.getProperty().getCreatedDate() != null ? surveyBean.getProperty().getCreatedDate()
-                : new Date();
-        final Date completionDate = surveyBean.getProperty().getState().getValue().contains(PropertyTaxConstants.WF_STATE_CLOSED)
-                ? surveyBean.getProperty().getState().getLastModifiedDate() : null;
         Double taxVar;
+        final Date applicationDate = surveyBean.getProperty().getCreatedDate() == null ? new Date()
+                : surveyBean.getProperty().getCreatedDate();
         String stateValue = surveyBean.getProperty().getState().getValue();
-        if (applicationType.equalsIgnoreCase(PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT))
-            taxVar = ((surveyBean.getApprovedTax().doubleValue() - (ptGisIndex.getSystemTax())) * 100)
-                    / ptGisIndex.getSystemTax();
-        else
-            taxVar = Double.valueOf(100);
+        final Date completionDate = stateValue.contains(PropertyTaxConstants.WF_STATE_CLOSED)
+                ? surveyBean.getProperty().getState().getLastModifiedDate() : null;
+        taxVar = calculateVariance(applicationType, surveyBean, ptGisIndex);
 
         Double applicationTax = stateValue.endsWith(ASSISTANT_APPROVED) || stateValue.endsWith(RI_APPROVED)
                 ? surveyBean.getApplicationTax().doubleValue() : ptGisIndex.getApplicationTax();
@@ -192,10 +196,19 @@ public class PropertySurveyService {
         prepareAddress(surveyBean, ptGisIndex);
         ptGisIndex.setAssistantName(assistantName);
         ptGisIndex.setRiName(riName);
-        ptGisIndex.setToReferedToThrdPrty(stateValue.endsWith(PropertyTaxConstants.WF_STATE_REVENUE_OFFICER_APPROVED) ? true
-                : ptGisIndex.getToReferedToThrdPrty());
+        ptGisIndex.setToReferedToThrdPrty(surveyBean.isToBeRefferdThirdParty());
         ptGisIndex.setThirdPrtyFlag(surveyBean.getProperty().isThirdPartyVerified());
         createPTGISIndex(ptGisIndex);
+    }
+
+    private Double calculateVariance(final String applicationType, final SurveyBean surveyBean, final PTGISIndex ptGisIndex) {
+        Double taxVar;
+        if (applicationType.equalsIgnoreCase(PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT))
+            taxVar = ((surveyBean.getApprovedTax().doubleValue() - (ptGisIndex.getSystemTax())) * 100)
+                    / ptGisIndex.getSystemTax();
+        else
+            taxVar = Double.valueOf(100);
+        return taxVar;
     }
 
     private void prepareAddress(final SurveyBean surveyBean, final PTGISIndex ptGisIndex) {
@@ -212,8 +225,9 @@ public class PropertySurveyService {
         ptGisIndex.setApplicationNo(surveyBean.getProperty().getApplicationNo());
         ptGisIndex.setApplicationStatus(surveyBean.getProperty().getState().getValue());
         ptGisIndex.setApplicationType(applicationType);
-        ptGisIndex.setAssessmentNo(surveyBean.getProperty().getBasicProperty().getUpicNo() != null
-                ? surveyBean.getProperty().getBasicProperty().getUpicNo() : null);
+        ptGisIndex.setAssessmentNo(StringUtils.isBlank(surveyBean.getProperty().getBasicProperty().getUpicNo())
+                ? StringUtils.EMPTY
+                : surveyBean.getProperty().getBasicProperty().getUpicNo());
         ptGisIndex.setSource(ptGisIndex.getSource());
         ptGisIndex.setIsApproved(
                 stateValue.contains(WF_STATE_COMMISSIONER_APPROVED)
@@ -238,6 +252,11 @@ public class PropertySurveyService {
         surveyIndex.setCityName(defaultString((String) cityInfo.get(CITY_NAME_KEY)));
         surveyIndex.setRegionName(defaultString((String) cityInfo.get(CITY_REGION_NAME_KEY)));
         surveyIndex.setDistrictName(defaultString((String) cityInfo.get(CITY_DIST_NAME_KEY)));
+        surveyRepository.save(surveyIndex);
+        return surveyIndex;
+    }
+
+    public PTGISIndex updatePTGISIndex(PTGISIndex surveyIndex) {
         surveyRepository.save(surveyIndex);
         return surveyIndex;
     }
