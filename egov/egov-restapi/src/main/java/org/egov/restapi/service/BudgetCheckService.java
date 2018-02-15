@@ -251,4 +251,38 @@ public class BudgetCheckService {
             budgetAvailableResponse.setBudgetDetailsResponse(response);
         }
     }
+    
+    public List<RestErrors> validateBudget(BudgetCheck budgetCheck) {
+        List<RestErrors> errors = new ArrayList<>();
+        RestErrors restErrors;
+        if (budgetCheck.getDepartmentCode() != null
+                && departmentService.getDepartmentByCode(budgetCheck.getDepartmentCode()) == null) {
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_DEPARTMENT);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_DEPARTMENT);
+            errors.add(restErrors);
+
+        }
+        if (budgetCheck.getFunctionCode() != null && functionService.findByCode(budgetCheck.getFunctionCode()) == null) {
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_FUNCTION);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_FUNCTION);
+            errors.add(restErrors);
+        }
+
+        if (budgetCheck.getFundCode() != null && fundService.findByCode(budgetCheck.getFundCode()) == null) {
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_FUND);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_FUND);
+            errors.add(restErrors);
+        }
+        if (budgetCheck.getBudgetHeadName() != null
+                && budgetGroupService.getBudgetGroupByName(budgetCheck.getBudgetHeadName()) == null) {
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_BUDGETHEAD);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_BUDGETHEAD);
+            errors.add(restErrors);
+        }
+        return errors;
+    }
 }

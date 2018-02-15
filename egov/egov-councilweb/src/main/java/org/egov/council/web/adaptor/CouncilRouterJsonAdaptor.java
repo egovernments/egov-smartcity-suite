@@ -65,11 +65,11 @@ public class CouncilRouterJsonAdaptor implements JsonSerializer<CouncilRouter> {
         final JsonObject jsonObject = new JsonObject();
         if (councilRouter != null) {
             jsonObject.addProperty("department",
-                    councilRouter.getDepartment() != null ? councilRouter.getDepartment().getName() : StringUtils.EMPTY);
+                    councilRouter.getDepartment() == null ? StringUtils.EMPTY : councilRouter.getDepartment().getName());
             jsonObject.addProperty("position",
-                    councilRouter.getPosition() != null ? councilRouter.getPosition().getName() : StringUtils.EMPTY);
+                    councilRouter.getPosition() == null ? StringUtils.EMPTY : councilRouter.getPosition().getName());
             jsonObject.addProperty("type",
-                    councilRouter.getType() != null ? councilRouter.getType().name() : StringUtils.EMPTY);
+                    councilRouter.getType() == null ? StringUtils.EMPTY : councilRouter.getType().name());
             jsonObject.addProperty("id", councilRouter.getId());
         }
         return jsonObject;

@@ -60,6 +60,7 @@ import org.egov.restapi.model.BudgetCheck;
 import org.egov.restapi.model.BudgetDetailsResponse;
 import org.egov.restapi.model.RestErrors;
 import org.egov.restapi.service.BudgetCheckService;
+import org.egov.restapi.util.JsonConvertor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -74,12 +75,19 @@ public class RestBudgetDetailController {
     private BudgetCheckService budgetCheckService;
 
     @GetMapping(value = "/budgetdetails", produces = APPLICATION_JSON_VALUE)
-    public BudgetAvailableResponse budgetAvailableDetails(@Valid final BudgetCheck budgetCheck) {
+    public String budgetAvailableDetails(@Valid final BudgetCheck budgetCheck) {
         List<BudgetDetailsResponse> response = new ArrayList<>();
-        BudgetAvailableResponse budgetAvailableResponse = new BudgetAvailableResponse();
-        List<BudgetDetail> budgetDetailresponse = budgetCheckService.getBudgetAvailableDetails(budgetCheck);
-        budgetCheckService.setResponse(budgetDetailresponse, response, budgetAvailableResponse);
-        return budgetAvailableResponse;
+        List<RestErrors> errors;
+        BudgetAvailableResponse budgetAvailableResponse;
+        errors = budgetCheckService.validateBudget(budgetCheck);
+        if (!errors.isEmpty()) {
+            return JsonConvertor.convert(errors);
+        } else {
+            budgetAvailableResponse = new BudgetAvailableResponse();
+            List<BudgetDetail> budgetDetailresponse = budgetCheckService.getBudgetAvailableDetails(budgetCheck);
+            budgetCheckService.setResponse(budgetDetailresponse, response, budgetAvailableResponse);
+        }
+        return JsonConvertor.convert(budgetAvailableResponse);
     }
 
     @ExceptionHandler(RuntimeException.class)
