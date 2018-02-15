@@ -165,7 +165,7 @@ public class PropertySurveyService {
         Double taxVar;
         if (applicationType.equalsIgnoreCase(PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT))
             taxVar = ((surveyBean.getApprovedTax().subtract(surveyBean.getSystemTax())).multiply(BigDecimal.valueOf(100.0)))
-                    .divide(surveyBean.getSystemTax()).doubleValue();
+                    .divide(surveyBean.getSystemTax(), BigDecimal.ROUND_HALF_UP).doubleValue();
         else
             taxVar = Double.valueOf(100);
         return taxVar;
