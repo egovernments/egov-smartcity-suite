@@ -286,8 +286,7 @@ public class LicenseProcessWorkflowService {
             if (nextWorkFlowMatrix != null)
                 licenseStateInfo.setWfMatrixRef(nextWorkFlowMatrix.getId());
             initiateWfTransition(license);
-            license.transition().withSenderName(
-                    wfAssignment.getEmployee().getUsername() + DELIMITER_COLON + wfAssignment.getEmployee().getName())
+            license.transition().withSenderName(securityUtils.getCurrentUser().getName())
                     .withComments(workflowBean.getApproverComments())
                     .withNatureOfTask(license.isReNewApplication() ? RENEWAL_NATUREOFWORK : NEW_NATUREOFWORK)
                     .withStateValue(workFlowMatrix.getNextState()).withDateInfo(new Date()).withOwner(wfAssignment.getPosition())
