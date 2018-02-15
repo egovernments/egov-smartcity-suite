@@ -2052,7 +2052,7 @@ public class PropertyService {
 		});
 	}
 
-	private List<String> propertyApplicationTypes() {
+	public List<String> propertyApplicationTypes() {
 		final List<String> applicationTypes = new ArrayList<>();
 		applicationTypes.add(APPLICATION_TYPE_NEW_ASSESSENT);
 		applicationTypes.add(APPLICATION_TYPE_ALTER_ASSESSENT);
