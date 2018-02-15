@@ -64,19 +64,12 @@ public class CouncilRouterJsonAdaptor implements JsonSerializer<CouncilRouter> {
             final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
         if (councilRouter != null) {
-            if (councilRouter.getDepartment() != null)
-                jsonObject.addProperty("department", councilRouter.getDepartment().getName());
-            else
-                jsonObject.addProperty("department", StringUtils.EMPTY);
-            if (councilRouter.getPosition() != null)
-                jsonObject.addProperty("position", councilRouter.getPosition().getName());
-            else
-                jsonObject.addProperty("position", StringUtils.EMPTY);
-            if (councilRouter.getType() != null)
-                jsonObject.addProperty("type", councilRouter.getType().name());
-            else
-                jsonObject.addProperty("type", StringUtils.EMPTY);
-
+            jsonObject.addProperty("department",
+                    councilRouter.getDepartment() != null ? councilRouter.getDepartment().getName() : StringUtils.EMPTY);
+            jsonObject.addProperty("position",
+                    councilRouter.getPosition() != null ? councilRouter.getPosition().getName() : StringUtils.EMPTY);
+            jsonObject.addProperty("type",
+                    councilRouter.getType() != null ? councilRouter.getType().name() : StringUtils.EMPTY);
             jsonObject.addProperty("id", councilRouter.getId());
         }
         return jsonObject;
