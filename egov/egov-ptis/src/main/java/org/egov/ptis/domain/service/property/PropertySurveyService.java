@@ -163,7 +163,8 @@ public class PropertySurveyService {
 
     private Double calculatetaxvariance(final String applicationType, final SurveyBean surveyBean) {
         Double taxVar;
-        if (applicationType.equalsIgnoreCase(PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT))
+        if (applicationType.equalsIgnoreCase(PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT)
+                && surveyBean.getSystemTax().compareTo(BigDecimal.ZERO) > 0)
             taxVar = ((surveyBean.getApprovedTax().subtract(surveyBean.getSystemTax())).multiply(BigDecimal.valueOf(100.0)))
                     .divide(surveyBean.getSystemTax(), BigDecimal.ROUND_HALF_UP).doubleValue();
         else
