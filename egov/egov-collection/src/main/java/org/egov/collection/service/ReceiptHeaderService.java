@@ -715,6 +715,9 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             try {
                 billingService.updateReceiptDetails(billReceipts);
                 return true;
+            } catch (ValidationException e) {
+                LOGGER.error("Validation error occurred while updating receipt details ", e);
+                throw e;
             } catch (final Exception e) {
                 final String errMsg = "Exception while updating billing system [" + serviceDetails.getCode()
                         + "] with receipt details!";

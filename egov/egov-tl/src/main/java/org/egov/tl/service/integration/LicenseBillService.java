@@ -48,7 +48,6 @@
 
 package org.egov.tl.service.integration;
 
-import org.egov.InvalidAccountHeadException;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillAccountDetails;
 import org.egov.collection.integration.models.BillReceiptInfo;
@@ -82,6 +81,7 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
@@ -360,7 +360,9 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         if (billReceipts != null)
             try {
                 updateNewReceipt(billReceipts);
-            } catch (final Exception e) {
+            } catch (ValidationException e) {
+                throw e;
+            } catch (Exception e) {
                 LOG.error("Error occurred while updating receipt details for License", e);
                 throw new ApplicationRuntimeException("Update License Receipt Failed", e);
             }
@@ -430,6 +432,8 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                 reconcileCollForRcptCancel(demand, billReceipt);
             else if (billReceipt.getEvent().equals(EVENT_INSTRUMENT_BOUNCED))
                 reconcileCollForChequeBounce(demand, billReceipt);// needs to be
+        } catch (ValidationException e) {
+            throw e;
         } catch (final Exception e) {
             LOG.error("Error occurred while updating License demand details", e);
             throw new ApplicationRuntimeException("Updating License Demand Details Failed", e);
@@ -618,21 +622,15 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
 
     @Transactional
     public boolean updateNewReceipt(final Set<BillReceiptInfo> billReceipts) {
-        try {
-            for (final BillReceiptInfo bri : billReceipts) {
-                linkBillToReceipt(bri);
-                updateBillDetails(bri);
-                updateDemandDetails(bri);
-            }
-        } catch (final Exception e) {
-            throw new ApplicationRuntimeException("Error occurred while updating receipt for license", e);
+        for (BillReceiptInfo bri : billReceipts) {
+            linkBillToReceipt(bri);
+            updateBillDetails(bri);
+            updateDemandDetails(bri);
         }
         return true;
-
     }
 
-    private EgBill updateBill(final BillReceiptInfo bri, final EgBill egBill, final BigDecimal totalCollectedAmt)
-            throws InvalidAccountHeadException {
+    private EgBill updateBill(final BillReceiptInfo bri, final EgBill egBill, final BigDecimal totalCollectedAmt) {
         if (bri != null) {
             for (final EgBillDetails billDet : egBill.getEgBillDetails()) {
                 Boolean glCodeExist = false;
@@ -646,7 +644,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                         egBillDetailsDao.update(billDet);
                     }
                 if (!glCodeExist)
-                    throw new InvalidAccountHeadException("GlCode does not exist for " + billDet.getGlcode());
+                    throw new ApplicationRuntimeException("GlCode does not exist for " + billDet.getGlcode());
             }
             egBill.setTotalCollectedAmount(totalCollectedAmt);
             egBillDao.update(egBill);
@@ -693,7 +691,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         return egBill;
     }
 
-    private void updateBillDetails(final BillReceiptInfo bri) throws InvalidAccountHeadException {
+    private void updateBillDetails(final BillReceiptInfo bri) {
         if (bri == null)
             throw new ApplicationRuntimeException(" Bill Receipt Info not found");
         EgBill egBill = egBillDao.findById(Long.valueOf(bri.getBillReferenceNum()), false);
@@ -719,8 +717,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         return totalCollAmt;
     }
 
-    private BigDecimal calculateTotalCollectedAmt(final BillReceiptInfo bri, final List<EgBillDetails> billDetList)
-            throws InvalidAccountHeadException {
+    private BigDecimal calculateTotalCollectedAmt(final BillReceiptInfo bri, final List<EgBillDetails> billDetList) {
         BigDecimal totalCollAmt = ZERO;
         try {
             if (bri != null && billDetList != null)
@@ -732,10 +729,10 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                             totalCollAmt = totalCollAmt.add(acctDet.getCrAmount());
                         }
                     if (!glCodeExist)
-                        throw new InvalidAccountHeadException("GlCode does not exist for " + billDet.getGlcode());
+                        throw new ApplicationRuntimeException("GlCode does not exist for " + billDet.getGlcode());
                 }
-        } catch (final ApplicationRuntimeException e) {
-            throw new ApplicationRuntimeException("Exception in calculate Total Collected Amt" + e);
+        } catch (ApplicationRuntimeException e) {
+            throw new ApplicationRuntimeException("Exception in calculate Total Collected Amt", e);
         }
 
         return totalCollAmt;
@@ -761,7 +758,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         return billRecpt;
     }
 
-    private BillReceipt linkBillToReceipt(final BillReceiptInfo bri) throws InvalidAccountHeadException {
+    private BillReceipt linkBillToReceipt(final BillReceiptInfo bri) {
         BillReceipt billRecpt = null;
         if (bri == null)
             throw new ApplicationRuntimeException(" BillReceiptInfo Object is null ");
