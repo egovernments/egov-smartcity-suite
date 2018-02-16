@@ -56,6 +56,7 @@ import static org.egov.infra.utils.ApplicationConstant.CITY_REGION_NAME_KEY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_OFFICER_APPROVED;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -86,8 +87,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 public class PropertySurveyService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PropertySurveyService.class);
-
     @Autowired
     private PTGISIndexRepository surveyRepository;
 
@@ -108,7 +107,6 @@ public class PropertySurveyService {
     public void updateSurveyIndex(final String applicationType, final SurveyBean surveyBean) {
         final PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
         if (!applicationType.isEmpty() && propService.propertyApplicationTypes().contains(applicationType)) {
-            LOGGER.info("UPDATE SURVEY INDEX API CALL");
             updateIndex(applicationType, surveyBean);
         }
     }
@@ -118,15 +116,9 @@ public class PropertySurveyService {
         PTGISIndex ptGisIndex = findByApplicationNo(surveyBean.getProperty().getApplicationNo());
 
         if (ptGisIndex == null) {
-
-            LOGGER.info("CREATING SURVEY INDEX");
-            ptGisIndex = createPropertySurveyindex(applicationType, surveyBean);
-            LOGGER.info(ptGisIndex.toString());
+            ptGisIndex=createPropertySurveyindex(applicationType, surveyBean);
         } else {
-            LOGGER.info("UPDATING SURVEY INDEX");
-            LOGGER.info("SURVERY INDEX BEFORE : " + ptGisIndex.toString());
-            ptGisIndex = updatePropertySurveyIndex(surveyBean, ptGisIndex);
-            LOGGER.info("SURVERY INDEX AFTER : " + ptGisIndex.toString());
+            ptGisIndex=updatePropertySurveyIndex(surveyBean, ptGisIndex);
         }
 
     }
@@ -246,14 +238,16 @@ public class PropertySurveyService {
             ptGisIndex.setCompletionDate(propertyImpl.getState().getLastModifiedDate());
             ptGisIndex.setIsApproved(true);
         }
-
+        if (stateValue.endsWith(WF_STATE_REVENUE_OFFICER_APPROVED)
+                && propertyImpl.getSurveyVariance().compareTo(BigDecimal.TEN) > 0 && !propertyImpl.isThirdPartyVerified()) {
+            ptGisIndex.setSentToThirdParty(true);
+        }
         ptGisIndex.setApplicationStatus(stateValue);
         ptGisIndex.setAssessmentNo(StringUtils.isBlank(basicProperty.getUpicNo())
                 ? StringUtils.EMPTY
                 : basicProperty.getUpicNo());
 
         ptGisIndex.setIsCancelled(stateValue.contains(WF_STATE_REJECTED) ? true : false);
-        ptGisIndex.setSentToThirdParty(surveyBean.isToBeRefferdThirdParty());
         ptGisIndex.setThirdPrtyFlag(propertyImpl.isThirdPartyVerified());
         ptGisIndex.setDoorNo(doorNo == null ? ptGisIndex.getDoorNo() : doorNo);
 
