@@ -75,7 +75,6 @@ import org.egov.commons.Bankbranch;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.BankaccountHibernateDAO;
 import org.egov.commons.dao.FinancialYearDAO;
-import org.egov.eis.service.EmployeeService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -124,8 +123,6 @@ public class BankRemittanceAction extends BaseFormAction {
     private Date remittanceDate;
     @Autowired
     private transient FinancialYearDAO financialYearDAO;
-    @Autowired
-    private transient EmployeeService employeeService;
     @Autowired
     private transient BankaccountHibernateDAO bankaccountHibernateDAO;
 

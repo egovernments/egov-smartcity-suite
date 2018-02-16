@@ -108,7 +108,7 @@ public class RemittanceServiceImpl extends RemittanceService {
     @Autowired
     @Qualifier("branchUserMapService")
     private PersistenceService<BranchUserMap, Long> branchUserMapService;
-    final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
     /**
      * Create Contra Vouchers for String array passed of serviceName, totalCashAmount, totalChequeAmount, totalCardAmount and
@@ -406,12 +406,6 @@ public class RemittanceServiceImpl extends RemittanceService {
             final String serviceCodes, final String fundCodes, final Date startDate, final Date endDate) {
 
         final List<HashMap<String, Object>> paramList = new ArrayList<>();
-        final String queryBuilder = "SELECT sum(ih.instrumentamount) as INSTRUMENTMAOUNT,date(ch.RECEIPTDATE) AS RECEIPTDATE,"
-                + "sd.NAME as SERVICENAME,it.TYPE as INSTRUMENTTYPE,fnd.name AS FUNDNAME,dpt.name AS DEPARTMENTNAME,"
-                + "fnd.code AS FUNDCODE,dpt.code AS DEPARTMENTCODE from EGCL_COLLECTIONHEADER ch,"
-                + "EGF_INSTRUMENTHEADER ih,EGCL_COLLECTIONINSTRUMENT ci,EGCL_SERVICEDETAILS sd,"
-                + "EGF_INSTRUMENTTYPE it,EGCL_COLLECTIONMIS cm,FUND fnd,EG_DEPARTMENT dpt";
-
         final String whereClauseBeforInstumentType = " where ch.id=cm.collectionheader AND "
                 + "fnd.id=cm.fund AND dpt.id=cm.department and ci.INSTRUMENTHEADER=ih.ID and "
                 + "ch.SERVICEDETAILS=sd.ID and ch.ID=ci.COLLECTIONHEADER and ih.INSTRUMENTTYPE=it.ID and ";
@@ -434,9 +428,14 @@ public class RemittanceServiceImpl extends RemittanceService {
         /**
          * Query to get the collection of the instrument types Cash for bank remittance
          */
-        final StringBuilder queryStringForCash = new StringBuilder(queryBuilder
-                + whereClauseBeforInstumentType + whereClauseForServiceAndFund + "it.TYPE in ('"
-                + CollectionConstants.INSTRUMENTTYPE_CASH + "')");
+        final StringBuilder queryStringForCash = new StringBuilder(
+                "SELECT sum(ih.instrumentamount) as INSTRUMENTMAOUNT,date(ch.RECEIPTDATE) AS RECEIPTDATE,")
+                        .append("sd.NAME as SERVICENAME,it.TYPE as INSTRUMENTTYPE,fnd.name AS FUNDNAME,dpt.name AS DEPARTMENTNAME,")
+                        .append("fnd.code AS FUNDCODE,dpt.code AS DEPARTMENTCODE from EGCL_COLLECTIONHEADER ch,")
+                        .append("EGF_INSTRUMENTHEADER ih,EGCL_COLLECTIONINSTRUMENT ci,EGCL_SERVICEDETAILS sd,")
+                        .append("EGF_INSTRUMENTTYPE it,EGCL_COLLECTIONMIS cm,FUND fnd,EG_DEPARTMENT dpt")
+                        .append(whereClauseBeforInstumentType + whereClauseForServiceAndFund + "it.TYPE in ('")
+                        .append(CollectionConstants.INSTRUMENTTYPE_CASH + "')");
 
         if (collectionsUtil.isBankCollectionRemitter(collectionsUtil.getLoggedInUser())) {
             BranchUserMap branchUserMap = branchUserMapService.findByNamedQuery(
@@ -505,25 +504,25 @@ public class RemittanceServiceImpl extends RemittanceService {
 
         final List<HashMap<String, Object>> paramList = new ArrayList<>();
         final StringBuilder chequeRemittanceListQuery = new StringBuilder(
-                "SELECT ih.instrumentamount as INSTRUMENTMAOUNT,date(ch.RECEIPTDATE) AS RECEIPTDATE,"
-                        + " ch.RECEIPTNUMBER AS RECEIPTNUMBER,ih.INSTRUMENTNUMBER AS INSTRUMENTNUMBER,ih.INSTRUMENTDATE as INSTRUMENTDATE,"
-                        + "sd.NAME as SERVICENAME,it.TYPE as INSTRUMENTTYPE,fnd.name AS FUNDNAME,dpt.name AS DEPARTMENTNAME,"
-                        + "fnd.code AS FUNDCODE,dpt.code AS DEPARTMENTCODE,ih.ID as INSTRUMENTID,ih.BANKBRANCHNAME as bankbranchname,bank.NAME as bankname "
-                        + " from EGCL_COLLECTIONHEADER ch,EGF_INSTRUMENTHEADER ih,EGCL_COLLECTIONINSTRUMENT ci,EGCL_SERVICEDETAILS sd,"
-                        + "EGF_INSTRUMENTTYPE it,EGCL_COLLECTIONMIS cm,FUND fnd,EG_DEPARTMENT dpt, BANK bank  where ch.id=cm.collectionheader AND "
-                        + "fnd.id=cm.fund AND dpt.id=cm.department and ci.INSTRUMENTHEADER=ih.ID and "
-                        + "ch.SERVICEDETAILS=sd.ID and ch.ID=ci.COLLECTIONHEADER and ih.INSTRUMENTTYPE=it.ID and ih.BANKID=bank.ID and"
-                        + " sd.code in (" + serviceCodes + ")" + " and fnd.code in ("
-                        + fundCodes + ")" + " and  it.TYPE in ('" + CollectionConstants.INSTRUMENTTYPE_CHEQUE + "','"
-                        + CollectionConstants.INSTRUMENTTYPE_DD + "')"
-                        + " AND ih.ID_STATUS=(select id from egw_status where moduletype='"
-                        + CollectionConstants.MODULE_NAME_INSTRUMENTHEADER + "' " + "and description='"
-                        + CollectionConstants.INSTRUMENT_NEW_STATUS
-                        + "') and ih.ISPAYCHEQUE='0' and ch.STATUS in(select id from egw_status where " + "moduletype='"
-                        + CollectionConstants.MODULE_NAME_RECEIPTHEADER + "' and code in('"
-                        + CollectionConstants.RECEIPT_STATUS_CODE_APPROVED + "','"
-                        + CollectionConstants.RECEIPT_STATUS_CODE_PARTIAL_REMITTED
-                        + "')) " + " AND ch.source='" + Source.SYSTEM + "' ");
+                "SELECT ih.instrumentamount as INSTRUMENTMAOUNT,date(ch.RECEIPTDATE) AS RECEIPTDATE,")
+                        .append(" ch.RECEIPTNUMBER AS RECEIPTNUMBER,ih.INSTRUMENTNUMBER AS INSTRUMENTNUMBER,ih.INSTRUMENTDATE as INSTRUMENTDATE,sd.NAME as SERVICENAME, ")
+                        .append("it.TYPE as INSTRUMENTTYPE,fnd.name AS FUNDNAME,dpt.name AS DEPARTMENTNAME,")
+                        .append("fnd.code AS FUNDCODE,dpt.code AS DEPARTMENTCODE,ih.ID as INSTRUMENTID,ih.BANKBRANCHNAME as bankbranchname,bank.NAME as bankname ")
+                        .append(" from EGCL_COLLECTIONHEADER ch,EGF_INSTRUMENTHEADER ih,EGCL_COLLECTIONINSTRUMENT ci,EGCL_SERVICEDETAILS sd,")
+                        .append("EGF_INSTRUMENTTYPE it,EGCL_COLLECTIONMIS cm,FUND fnd,EG_DEPARTMENT dpt, BANK bank  where ch.id=cm.collectionheader AND ")
+                        .append("fnd.id=cm.fund AND dpt.id=cm.department and ci.INSTRUMENTHEADER=ih.ID and ")
+                        .append("ch.SERVICEDETAILS=sd.ID and ch.ID=ci.COLLECTIONHEADER and ih.INSTRUMENTTYPE=it.ID and ih.BANKID=bank.ID and")
+                        .append(" sd.code in (" + serviceCodes + ")" + " and fnd.code in (")
+                        .append(fundCodes + ")" + " and  it.TYPE in ('" + CollectionConstants.INSTRUMENTTYPE_CHEQUE + "','")
+                        .append(CollectionConstants.INSTRUMENTTYPE_DD
+                                + "')  AND ih.ID_STATUS=(select id from egw_status where moduletype='")
+                        .append(CollectionConstants.MODULE_NAME_INSTRUMENTHEADER + "' " + "and description='")
+                        .append(CollectionConstants.INSTRUMENT_NEW_STATUS)
+                        .append("') and ih.ISPAYCHEQUE='0' and ch.STATUS in(select id from egw_status where " + "moduletype='")
+                        .append(CollectionConstants.MODULE_NAME_RECEIPTHEADER + "' and code in('")
+                        .append(CollectionConstants.RECEIPT_STATUS_CODE_APPROVED + "','")
+                        .append(CollectionConstants.RECEIPT_STATUS_CODE_PARTIAL_REMITTED)
+                        .append("')) " + " AND ch.source='" + Source.SYSTEM + "' ");
 
         if (startDate != null && endDate != null)
             chequeRemittanceListQuery.append(" AND date(ch.receiptdate) between '" + startDate + "' and '" + endDate + "' ");
@@ -632,8 +631,6 @@ public class RemittanceServiceImpl extends RemittanceService {
         final SimpleDateFormat dateFomatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         final String receiptInstrumentQueryString = "select DISTINCT (instruments) from org.egov.collection.entity.ReceiptHeader receipt "
                 + "join receipt.receiptInstrument as instruments join receipt.receiptMisc as receiptMisc where instruments.id=?";
-        final String instrumentStatusCondition = "and instruments.statusId.id=? ";
-        final String instrumentTypeCondition = "and instruments.instrumentType.type = ? ";
 
         final Query chequeInHand = persistenceService.getSession()
                 .createSQLQuery("SELECT COA.GLCODE FROM CHARTOFACCOUNTS COA,EGF_INSTRUMENTACCOUNTCODES IAC,EGF_INSTRUMENTTYPE IT "
@@ -692,7 +689,7 @@ public class RemittanceServiceImpl extends RemittanceService {
                         && chequeInHandGlcode != null) {
                     final StringBuilder chequeQueryBuilder = new StringBuilder(receiptInstrumentQueryString);
                     final Object arguments[] = new Object[1];
-                    arguments[0] = new Long(instrumentIdArray[i]);
+                    arguments[0] = Long.valueOf(instrumentIdArray[i]);
                     fundCode = fundCodeArray[i];
                     instrumentHeaderListCheque = persistenceService.findAllBy(chequeQueryBuilder.toString(), arguments);
                     totalChequeAmount = totalChequeAmount.add(new BigDecimal(totalChequeAmountArr[i]));
