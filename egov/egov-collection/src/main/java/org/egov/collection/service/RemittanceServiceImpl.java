@@ -108,7 +108,6 @@ public class RemittanceServiceImpl extends RemittanceService {
     @Autowired
     @Qualifier("branchUserMapService")
     private PersistenceService<BranchUserMap, Long> branchUserMapService;
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
     /**
      * Create Contra Vouchers for String array passed of serviceName, totalCashAmount, totalChequeAmount, totalCardAmount and
@@ -413,14 +412,16 @@ public class RemittanceServiceImpl extends RemittanceService {
         final String whereClauseForServiceAndFund = " sd.code in (" + serviceCodes + ")" + " and fnd.code in ("
                 + fundCodes + ")" + " and ";
 
-        String whereClause = " AND ih.ID_STATUS=(select id from egw_status where moduletype='"
-                + CollectionConstants.MODULE_NAME_INSTRUMENTHEADER + "' " + "and description='"
-                + CollectionConstants.INSTRUMENT_NEW_STATUS
-                + "') and ih.ISPAYCHEQUE='0' and ch.STATUS=(select id from egw_status where " + "moduletype='"
-                + CollectionConstants.MODULE_NAME_RECEIPTHEADER + "' and code='"
-                + CollectionConstants.RECEIPT_STATUS_CODE_APPROVED + "') " + " AND ch.source='" + Source.SYSTEM + "' ";
+        StringBuilder whereClause = new StringBuilder(" AND ih.ID_STATUS=(select id from egw_status where moduletype='")
+                .append(CollectionConstants.MODULE_NAME_INSTRUMENTHEADER).append("' " + "and description='")
+                .append(CollectionConstants.INSTRUMENT_NEW_STATUS)
+                .append("') and ih.ISPAYCHEQUE='0' and ch.STATUS=(select id from egw_status where moduletype='")
+                .append(CollectionConstants.MODULE_NAME_RECEIPTHEADER).append("' and code='")
+                .append(CollectionConstants.RECEIPT_STATUS_CODE_APPROVED).append("') AND ch.source='").append(Source.SYSTEM)
+                .append("' ");
         if (startDate != null && endDate != null)
-            whereClause = whereClause + " AND date(ch.receiptdate) between '" + startDate + "' and '" + endDate + "' ";
+            whereClause.append(" AND date(ch.receiptdate) between '").append(startDate).append("' and '").append(endDate)
+                    .append("' ");
 
         final String groupByClause = " group by date(ch.RECEIPTDATE),sd.NAME,it.TYPE,fnd.name,dpt.name,fnd.code,dpt.code";
         final String orderBy = " order by RECEIPTDATE";
@@ -514,11 +515,12 @@ public class RemittanceServiceImpl extends RemittanceService {
                         .append("ch.SERVICEDETAILS=sd.ID and ch.ID=ci.COLLECTIONHEADER and ih.INSTRUMENTTYPE=it.ID and ih.BANKID=bank.ID and")
                         .append(" sd.code in (" + serviceCodes + ")" + " and fnd.code in (")
                         .append(fundCodes + ")" + " and  it.TYPE in ('" + CollectionConstants.INSTRUMENTTYPE_CHEQUE + "','")
-                        .append(CollectionConstants.INSTRUMENTTYPE_DD
-                                + "')  AND ih.ID_STATUS=(select id from egw_status where moduletype='")
-                        .append(CollectionConstants.MODULE_NAME_INSTRUMENTHEADER + "' " + "and description='")
+                        .append(CollectionConstants.INSTRUMENTTYPE_DD)
+                        .append("')  AND ih.ID_STATUS=(select id from egw_status where moduletype='")
+                        .append(CollectionConstants.MODULE_NAME_INSTRUMENTHEADER)
+                        .append("' ").append("and description='")
                         .append(CollectionConstants.INSTRUMENT_NEW_STATUS)
-                        .append("') and ih.ISPAYCHEQUE='0' and ch.STATUS in(select id from egw_status where " + "moduletype='")
+                        .append("') and ih.ISPAYCHEQUE='0' and ch.STATUS in(select id from egw_status where moduletype='")
                         .append(CollectionConstants.MODULE_NAME_RECEIPTHEADER + "' and code in('")
                         .append(CollectionConstants.RECEIPT_STATUS_CODE_APPROVED + "','")
                         .append(CollectionConstants.RECEIPT_STATUS_CODE_PARTIAL_REMITTED)
@@ -533,14 +535,14 @@ public class RemittanceServiceImpl extends RemittanceService {
             chequeRemittanceListQuery.append(" AND cm.depositedbranch=" + branchUserMap.getBankbranch().getId());
         } else
             chequeRemittanceListQuery.append(
-                    " AND cm.depositedbranch is null AND ch.CREATEDBY in (select distinct ujl.employee from egeis_jurisdiction ujl where ujl.boundary in ("
-                            + boundaryIdList + "))");
+                    " AND cm.depositedbranch is null AND ch.CREATEDBY in (select distinct ujl.employee from egeis_jurisdiction ujl where ujl.boundary in (")
+                    .append(boundaryIdList).append("))");
         chequeRemittanceListQuery.append(" order by RECEIPTDATE,bankname ");
         final Query query = receiptHeaderService.getSession()
                 .createSQLQuery(chequeRemittanceListQuery.toString());
 
         final List<Object[]> queryResults = query.list();
-
+        final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         for (int i = 0; i < queryResults.size(); i++) {
             final Object[] arrayObjectInitialIndex = queryResults.get(i);
             HashMap<String, Object> objHashMap = new HashMap<>(0);
@@ -632,10 +634,12 @@ public class RemittanceServiceImpl extends RemittanceService {
         final String receiptInstrumentQueryString = "select DISTINCT (instruments) from org.egov.collection.entity.ReceiptHeader receipt "
                 + "join receipt.receiptInstrument as instruments join receipt.receiptMisc as receiptMisc where instruments.id=?";
 
+        StringBuilder chequeInHandQuery = new StringBuilder(
+                "SELECT COA.GLCODE FROM CHARTOFACCOUNTS COA,EGF_INSTRUMENTACCOUNTCODES IAC,EGF_INSTRUMENTTYPE IT ")
+                        .append("WHERE IT.ID=IAC.TYPEID AND IAC.GLCODEID=COA.ID AND IT.TYPE='")
+                        .append(CollectionConstants.INSTRUMENTTYPE_CHEQUE).append("'");
         final Query chequeInHand = persistenceService.getSession()
-                .createSQLQuery("SELECT COA.GLCODE FROM CHARTOFACCOUNTS COA,EGF_INSTRUMENTACCOUNTCODES IAC,EGF_INSTRUMENTTYPE IT "
-                        + "WHERE IT.ID=IAC.TYPEID AND IAC.GLCODEID=COA.ID AND IT.TYPE='"
-                        + CollectionConstants.INSTRUMENTTYPE_CHEQUE + "'");
+                .createSQLQuery(chequeInHandQuery.toString());
         String chequeInHandGlcode = null;
         if (!chequeInHand.list().isEmpty())
             chequeInHandGlcode = chequeInHand.list().get(0).toString();
