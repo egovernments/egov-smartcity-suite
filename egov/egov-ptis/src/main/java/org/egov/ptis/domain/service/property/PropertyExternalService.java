@@ -2323,10 +2323,15 @@ public class PropertyExternalService {
      */
     public NewPropertyDetails updateProperty(ViewPropertyDetails viewPropertyDetails) throws ParseException {
         NewPropertyDetails newPropertyDetails = null;
+        BigDecimal activeTax = BigDecimal.ZERO;
         final PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
         BasicProperty basicProperty = updateBasicProperty(viewPropertyDetails, propService);
         PropertyImpl property = (PropertyImpl) basicProperty.getWFProperty();
-        PropertyImpl activeProperty=(PropertyImpl) basicProperty.getActiveProperty();
+        PropertyImpl activeProperty= basicProperty.getActiveProperty();
+        if (activeProperty != null) {
+            for (EgDemandDetails activeDemandDetail : activeProperty.getPtDemandSet().iterator().next().getEgDemandDetails())
+                activeTax = activeTax.add(activeDemandDetail.getAmount());
+        }
         property.getPropertyDetail().setCategoryType(viewPropertyDetails.getCategory());
         basicProperty.setUnderWorkflow(Boolean.TRUE);
         basicProperty.setParcelId(viewPropertyDetails.getParcelId());
@@ -2361,18 +2366,14 @@ public class PropertyExternalService {
         if (SOURCE_SURVEY.equalsIgnoreCase(property.getSource())) {
             SurveyBean surveyBean = new SurveyBean();
             BigDecimal totalTax = BigDecimal.ZERO;
-            BigDecimal activeTax = BigDecimal.ZERO;
+            
             for (EgDemandDetails demandDetail : property.getPtDemandSet().iterator().next().getEgDemandDetails())
                 totalTax = totalTax.add(demandDetail.getAmount());
             surveyBean.setProperty(property);
             surveyBean.setGisTax(totalTax);
             surveyBean.setApplicationTax(totalTax);
             surveyBean.setAgeOfCompletion(propService.getSlaValue(APPLICATION_TYPE_ALTER_ASSESSENT));
-            if (activeProperty != null) {
-                for (EgDemandDetails activeDemandDetail : activeProperty.getPtDemandSet().iterator().next().getEgDemandDetails())
-                    activeTax = activeTax.add(activeDemandDetail.getAmount());
-                surveyBean.setSystemTax(activeTax);
-            }
+            surveyBean.setSystemTax(activeTax);
             surveyService.updateSurveyIndex(APPLICATION_TYPE_ALTER_ASSESSENT, surveyBean);
         }
   

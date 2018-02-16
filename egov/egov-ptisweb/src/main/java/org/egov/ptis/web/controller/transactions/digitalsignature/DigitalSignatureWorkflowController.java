@@ -64,9 +64,11 @@ import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.egov.ptis.domain.entity.property.VacancyRemissionApproval;
+import org.egov.ptis.domain.entity.property.view.SurveyBean;
 import org.egov.ptis.domain.repository.vacancyremission.VacancyRemissionApprovalRepository;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.domain.service.property.PropertySurveyService;
 import org.egov.ptis.domain.service.revisionPetition.RevisionPetitionService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Session;
@@ -98,6 +100,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION_APPROVAL;
+import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_SURVEY;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_EXEMPTION;
@@ -164,6 +167,8 @@ public class DigitalSignatureWorkflowController {
 
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
+    @Autowired
+    private PropertySurveyService propertySurveyService;
 
     @RequestMapping(value = "/propertyTax/transitionWorkflow")
     public String transitionWorkflow(final HttpServletRequest request, final Model model) {
@@ -194,6 +199,11 @@ public class DigitalSignatureWorkflowController {
         final BasicProperty basicProperty = property.getBasicProperty();
         final String applicationType = transition(property);
         propertyService.updateIndexes(property, getApplicationTypes().get(applicationType));
+        if (SOURCE_SURVEY.equalsIgnoreCase(property.getSource())) {
+            SurveyBean surveyBean = new SurveyBean();
+            surveyBean.setProperty(property);
+            propertySurveyService.updateSurveyIndex(getApplicationTypes().get(applicationType), surveyBean);
+        }
         basicPropertyService.update(basicProperty);
         propertyTaxCommonUtils.buildMailAndSMS(property);
     }

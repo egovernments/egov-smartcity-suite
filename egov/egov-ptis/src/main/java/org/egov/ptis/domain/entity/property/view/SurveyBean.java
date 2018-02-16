@@ -59,7 +59,7 @@ public class SurveyBean {
     private BigDecimal approvedTax = BigDecimal.ZERO;
     private boolean thirdPartyFlag = false;
     private int ageOfCompletion;
-    private boolean isToBeRefferdThirdParty=false;
+    private boolean toBeRefferdThirdParty=false;
 
     public PropertyImpl getProperty() {
         return property;
@@ -118,11 +118,11 @@ public class SurveyBean {
     }
 
     public boolean isToBeRefferdThirdParty() {
-        return isToBeRefferdThirdParty;
+        return toBeRefferdThirdParty;
     }
 
-    public void setToBeRefferdThirdParty(boolean isToBeRefferdThirdParty) {
-        this.isToBeRefferdThirdParty = isToBeRefferdThirdParty;
+    public void setToBeRefferdThirdParty(boolean toBeRefferdThirdParty) {
+        this.toBeRefferdThirdParty = toBeRefferdThirdParty;
     }
 
 }

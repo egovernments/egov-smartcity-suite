@@ -53,6 +53,7 @@ import static org.egov.infra.utils.ApplicationConstant.CITY_CODE_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_DIST_NAME_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_NAME_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_REGION_NAME_KEY;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 
@@ -66,8 +67,10 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.es.PTGISIndex;
+import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyID;
+import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.view.SurveyBean;
 import org.egov.ptis.repository.es.PTGISIndexRepository;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
@@ -94,18 +97,20 @@ public class PropertySurveyService {
     private static final String RI_APPROVED = "UD Revenue Inspector Approved";
     private static final String ASSISTANT_APPROVED = "Assistant Approved";
 
+    @Transactional
     public void updateSurveyIndex(final String applicationType, final SurveyBean surveyBean) {
         final PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
         if (!applicationType.isEmpty() && propService.propertyApplicationTypes().contains(applicationType))
             updateIndex(applicationType, surveyBean);
     }
+
     @Transactional
     public void updateIndex(final String applicationType, final SurveyBean surveyBean) {
         PTGISIndex ptGisIndex = findByApplicationNo(surveyBean.getProperty().getApplicationNo());
         if (ptGisIndex == null)
             createPropertySurveyindex(applicationType, surveyBean);
         else
-            updatePropertySurveyIndex(applicationType, surveyBean, ptGisIndex);
+            updatePropertySurveyIndex(surveyBean, ptGisIndex);
 
     }
 
@@ -154,7 +159,7 @@ public class PropertySurveyService {
                 .withRiName(surveyBean.getProperty().getState().getValue()
                         .endsWith(PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVED)
                                 ? surveyBean.getProperty().getState().getLastModifiedBy().getName() : null)
-                .withToReferedToThrdPrty(false)
+                .withSentToThirdParty(false)
                 .withAssistantName(null)
                 .withRiName(null)
                 .build();
@@ -171,40 +176,32 @@ public class PropertySurveyService {
             taxVar = Double.valueOf(100);
         return taxVar;
     }
-   @Transactional
-    public void updatePropertySurveyIndex(final String applicationType, final SurveyBean surveyBean,
+
+    @Transactional
+    public void updatePropertySurveyIndex(final SurveyBean surveyBean,
             final PTGISIndex ptGisIndex) {
 
         Double taxVar;
-        final Date applicationDate = surveyBean.getProperty().getCreatedDate() == null ? new Date()
-                : surveyBean.getProperty().getCreatedDate();
         String stateValue = surveyBean.getProperty().getState().getValue();
-        final Date completionDate = stateValue.contains(PropertyTaxConstants.WF_STATE_CLOSED)
-                ? surveyBean.getProperty().getState().getLastModifiedDate() : null;
-        taxVar = calculateVariance(applicationType, surveyBean, ptGisIndex);
 
-        Double applicationTax = stateValue.endsWith(ASSISTANT_APPROVED) || stateValue.endsWith(RI_APPROVED)
-                ? surveyBean.getApplicationTax().doubleValue() : ptGisIndex.getApplicationTax();
-        Double approvedTax = stateValue.endsWith(WF_STATE_COMMISSIONER_APPROVED) ? surveyBean.getApprovedTax().doubleValue()
-                : ptGisIndex.getApprovedTax();
+        taxVar = calculateVariance(ptGisIndex.getApplicationType(), surveyBean, ptGisIndex);
 
         String riName = stateValue.endsWith(PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVED)
                 ? surveyBean.getProperty().getState().getLastModifiedBy().getName() : ptGisIndex.getRiName();
         String assistantName = stateValue.endsWith(PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVED)
                 ? surveyBean.getProperty().getState().getLastModifiedBy().getName() : ptGisIndex.getAssistantName();
-        prepareApplicationDetails(applicationType, surveyBean, ptGisIndex, applicationDate, completionDate, stateValue);
-        prepareTax(ptGisIndex, taxVar, applicationTax, approvedTax);
-        prepareAddress(surveyBean, ptGisIndex);
+        updateApplicationDetails(surveyBean, ptGisIndex, taxVar);
+
         ptGisIndex.setAssistantName(assistantName);
         ptGisIndex.setRiName(riName);
-        ptGisIndex.setToReferedToThrdPrty(surveyBean.isToBeRefferdThirdParty());
-        ptGisIndex.setThirdPrtyFlag(surveyBean.getProperty().isThirdPartyVerified());
-        createPTGISIndex(ptGisIndex);
+        updatePTGISIndex(ptGisIndex);
     }
 
     private Double calculateVariance(final String applicationType, final SurveyBean surveyBean, final PTGISIndex ptGisIndex) {
         Double taxVar;
-        if (applicationType.equalsIgnoreCase(PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT))
+        if (applicationType.equalsIgnoreCase(PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT)
+                && ptGisIndex.getSystemTax() != 0)
+
             taxVar = ((surveyBean.getApprovedTax().doubleValue() - (ptGisIndex.getSystemTax())) * 100)
                     / ptGisIndex.getSystemTax();
         else
@@ -212,41 +209,41 @@ public class PropertySurveyService {
         return taxVar;
     }
 
-    private void prepareAddress(final SurveyBean surveyBean, final PTGISIndex ptGisIndex) {
-        String doorNo = surveyBean.getProperty().getBasicProperty().getAddress().getHouseNoBldgApt();
-        ptGisIndex.setElectionWard(ptGisIndex.getElectionWard());
-        ptGisIndex.setBlockName(ptGisIndex.getBlockName());
-        ptGisIndex.setLocalityName(ptGisIndex.getLocalityName());
-        ptGisIndex.setDoorNo(doorNo == null ? ptGisIndex.getDoorNo() : doorNo);
-    }
+    private void updateApplicationDetails(final SurveyBean surveyBean, final PTGISIndex ptGisIndex,
+            final Double taxVar) {
+        PropertyImpl propertyImpl = surveyBean.getProperty();
+        BasicProperty basicProperty = propertyImpl.getBasicProperty();
+        String stateValue = propertyImpl.getState().getValue();
+        String doorNo = basicProperty.getAddress().getHouseNoBldgApt();
 
-    private void prepareApplicationDetails(final String applicationType, final SurveyBean surveyBean, final PTGISIndex ptGisIndex,
-            final Date applicationDate, final Date completionDate, String stateValue) {
-        ptGisIndex.setApplicationDate(applicationDate);
-        ptGisIndex.setApplicationNo(surveyBean.getProperty().getApplicationNo());
-        ptGisIndex.setApplicationStatus(surveyBean.getProperty().getState().getValue());
-        ptGisIndex.setApplicationType(applicationType);
-        ptGisIndex.setAssessmentNo(StringUtils.isBlank(surveyBean.getProperty().getBasicProperty().getUpicNo())
+        if (stateValue.endsWith(ASSISTANT_APPROVED) || stateValue.endsWith(RI_APPROVED)) {
+            ptGisIndex.setApplicationTax(surveyBean.getApplicationTax().doubleValue());
+        }
+
+        if (stateValue.endsWith(WF_STATE_COMMISSIONER_APPROVED)) {
+            ptGisIndex.setApprovedTax(surveyBean.getApprovedTax().doubleValue());
+            ptGisIndex.setIsApproved(true);
+        }
+
+        if (stateValue.endsWith(WF_STATE_CLOSED)) {
+            ptGisIndex.setCompletionDate(propertyImpl.getState().getLastModifiedDate());
+            ptGisIndex.setIsApproved(true);
+        }
+
+        ptGisIndex.setApplicationStatus(stateValue);
+        ptGisIndex.setAssessmentNo(StringUtils.isBlank(basicProperty.getUpicNo())
                 ? StringUtils.EMPTY
-                : surveyBean.getProperty().getBasicProperty().getUpicNo());
-        ptGisIndex.setSource(ptGisIndex.getSource());
-        ptGisIndex.setIsApproved(
-                stateValue.contains(WF_STATE_COMMISSIONER_APPROVED)
-                        || stateValue.contains(PropertyTaxConstants.WF_STATE_CLOSED) ? true
-                                : false);
-        ptGisIndex.setIsCancelled(stateValue.contains(WF_STATE_REJECTED) ? true : false);
-        ptGisIndex.setCompletionDate(completionDate);
-        ptGisIndex.setAgeOfCompletion(ptGisIndex.getAgeOfCompletion());
-    }
+                : basicProperty.getUpicNo());
 
-    private void prepareTax(final PTGISIndex ptGisIndex, Double taxVar, Double applicationTax, Double approvedTax) {
-        ptGisIndex.setApplicationTax(applicationTax);
-        ptGisIndex.setApprovedTax(approvedTax);
-        ptGisIndex.setGisTax(ptGisIndex.getGisTax());
-        ptGisIndex.setSystemTax(ptGisIndex.getSystemTax());
+        ptGisIndex.setIsCancelled(stateValue.contains(WF_STATE_REJECTED) ? true : false);
+        ptGisIndex.setSentToThirdParty(surveyBean.isToBeRefferdThirdParty());
+        ptGisIndex.setThirdPrtyFlag(propertyImpl.isThirdPartyVerified());
+        ptGisIndex.setDoorNo(doorNo == null ? ptGisIndex.getDoorNo() : doorNo);
+
         ptGisIndex.setTaxVariance(taxVar);
     }
 
+    @Transactional
     public PTGISIndex createPTGISIndex(PTGISIndex surveyIndex) {
         Map<String, Object> cityInfo = cityService.cityDataAsMap();
         surveyIndex.setCityCode(defaultString((String) cityInfo.get(CITY_CODE_KEY)));
@@ -257,6 +254,7 @@ public class PropertySurveyService {
         return surveyIndex;
     }
 
+    @Transactional
     public PTGISIndex updatePTGISIndex(PTGISIndex surveyIndex) {
         surveyRepository.save(surveyIndex);
         return surveyIndex;

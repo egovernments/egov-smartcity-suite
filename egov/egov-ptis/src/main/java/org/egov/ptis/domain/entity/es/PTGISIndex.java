@@ -119,10 +119,8 @@ public class PTGISIndex {
     private Boolean isApproved;
     @Field(type = FieldType.Boolean)
     private Boolean isCancelled;
-
     @Field(type = FieldType.Boolean)
-    private Boolean toReferedToThrdPrty;
-
+    private Boolean sentToThirdParty;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT, timezone = DEFAULT_TIMEZONE)
     @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT)
     private Date completionDate;
@@ -332,13 +330,12 @@ public class PTGISIndex {
     public void setIsCancelled(Boolean isCancelled) {
         this.isCancelled = isCancelled;
     }
-
-    public Boolean getToReferedToThrdPrty() {
-        return toReferedToThrdPrty;
+    public Boolean getSentToThirdParty() {
+        return sentToThirdParty;
     }
 
-    public void setToReferedToThrdPrty(Boolean toReferedToThrdPrty) {
-        this.toReferedToThrdPrty = toReferedToThrdPrty;
+    public void setSentToThirdParty(Boolean sentToThirdParty) {
+        this.sentToThirdParty = sentToThirdParty;
     }
 
     public Date getCompletionDate() {
@@ -357,6 +354,7 @@ public class PTGISIndex {
         this.ageOfCompletion = ageOfCompletion;
     }
 
+    
     public String getId() {
         return id;
     }
@@ -389,7 +387,7 @@ public class PTGISIndex {
         private String doorNo;
         private String assistantName;
         private String riName;
-        private Boolean toReferedToThrdPrty;
+        private Boolean sentToThirdParty;
 
         private Builder() {
 
@@ -509,9 +507,9 @@ public class PTGISIndex {
             this.riName = riName;
             return this;
         }
-
-        public Builder withToReferedToThrdPrty(final Boolean toReferedToThrdPrty) {
-            this.toReferedToThrdPrty = toReferedToThrdPrty;
+        
+        public Builder withSentToThirdParty(final Boolean sentToThirdParty) {
+            this.sentToThirdParty = sentToThirdParty;
             return this;
         }
 
@@ -541,7 +539,7 @@ public class PTGISIndex {
             ptGisIndex.setDoorNo(doorNo);
             ptGisIndex.setAssistantName(assistantName);
             ptGisIndex.setRiName(riName);
-            ptGisIndex.setToReferedToThrdPrty(toReferedToThrdPrty);
+            ptGisIndex.setSentToThirdParty(sentToThirdParty);
 
             return ptGisIndex;
         }
