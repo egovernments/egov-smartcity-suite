@@ -799,12 +799,13 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                && property.getCurrentState().getValue().toUpperCase().endsWith(WF_STATE_REVENUE_OFFICER_APPROVED.toUpperCase())){
             BigDecimal surveyVariance = propertyTaxUtil.getTaxDifferenceForGIS(property);
             property.setSurveyVariance(surveyVariance);
-            if(surveyVariance.compareTo(BigDecimal.TEN)>0 && !property.isThirdPartyVerified())
-                noticeService.generateComparisonNotice(property);
             SurveyBean surveyBean = new SurveyBean();
-            surveyBean.setProperty(property);
-            surveyBean.setToBeRefferdThirdParty(true);
-            propertySurveyService.updateSurveyIndex(APPLICATION_TYPE_NEW_ASSESSENT, surveyBean);
+            if(surveyVariance.compareTo(BigDecimal.TEN)>0 && !property.isThirdPartyVerified()){
+                noticeService.generateComparisonNotice(property);
+                surveyBean.setProperty(property);
+                surveyBean.setToBeRefferdThirdParty(true);
+                propertySurveyService.updateSurveyIndex(APPLICATION_TYPE_NEW_ASSESSENT, surveyBean);
+            }
         }
         basicProp.setUnderWorkflow(true);
         basicPropertyService.applyAuditing(property.getState());
