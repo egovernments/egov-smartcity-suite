@@ -47,6 +47,17 @@
  */
 package org.egov.collection.web.actions.receipts;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -58,18 +69,13 @@ import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.CollectionBankRemittanceReport;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.service.RemittanceServiceImpl;
-import org.egov.collection.service.RemittanceServiceImpl;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankbranch;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.BankaccountHibernateDAO;
 import org.egov.commons.dao.FinancialYearDAO;
-import org.egov.eis.entity.Employee;
-import org.egov.eis.entity.Jurisdiction;
 import org.egov.eis.service.EmployeeService;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -77,19 +83,6 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 @Results({
         @Result(name = BankRemittanceAction.NEW, location = "bankRemittance-new.jsp"),
@@ -192,7 +185,6 @@ public class BankRemittanceAction extends BaseFormAction {
         addDropdownData("financialYearList", financialYearDAO.getAllActivePostingAndNotClosedFinancialYears());
     }
 
-
     @Action(value = "/receipts/bankRemittance-listData")
     @SkipValidation
     public String listData() {
@@ -220,10 +212,11 @@ public class BankRemittanceAction extends BaseFormAction {
                 final Object[] arrayObjectInitialIndex = queryResults.get(i);
                 serviceCodeList.add(arrayObjectInitialIndex[0].toString());
                 fundCodeSet.add(arrayObjectInitialIndex[1].toString());
-            } 
+            }
             final CFinancialYear financialYear = financialYearDAO.getFinancialYearById(finYearId);
-            paramList = remittanceService.findCashRemittanceDetailsForServiceAndFund(collectionsUtil.getJurisdictionBoundary(), "'"
-                    + StringUtils.join(serviceCodeList, "','") + "'",
+            paramList = remittanceService.findCashRemittanceDetailsForServiceAndFund(collectionsUtil.getJurisdictionBoundary(),
+                    "'"
+                            + StringUtils.join(serviceCodeList, "','") + "'",
                     "'" + StringUtils.join(fundCodeSet, "','") + "'",
                     fromDate == null ? financialYear.getStartingDate() : fromDate,
                     toDate == null ? financialYear.getEndingDate() : toDate);
@@ -274,7 +267,7 @@ public class BankRemittanceAction extends BaseFormAction {
         if (accountNumberId == null || accountNumberId == -1)
             throw new ValidationException(Arrays.asList(new ValidationError("Please select Account number",
                     "bankremittance.error.noaccountNumberselected")));
-        voucherHeaderValues = remittanceService.createCashBankRemittance(getServiceNameArray(), getTotalCashAmountArray(),    
+        voucherHeaderValues = remittanceService.createCashBankRemittance(getServiceNameArray(), getTotalCashAmountArray(),
                 getTotalChequeAmountArray(), getTotalCardAmountArray(), getReceiptDateArray(), getFundCodeArray(),
                 getDepartmentCodeArray(), accountNumberId, positionUser, getReceiptNumberArray(), remittanceDate);
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
@@ -601,6 +594,7 @@ public class BankRemittanceAction extends BaseFormAction {
     public void setVoucherNumber(final String voucherNumber) {
         this.voucherNumber = voucherNumber;
     }
+
     public Date getFromDate() {
         return fromDate;
     }
