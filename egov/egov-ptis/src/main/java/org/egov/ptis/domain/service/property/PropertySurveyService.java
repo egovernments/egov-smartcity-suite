@@ -107,6 +107,10 @@ public class PropertySurveyService {
     @Transactional
     public void updateIndex(final String applicationType, final SurveyBean surveyBean) {
         PTGISIndex ptGisIndex = findByApplicationNo(surveyBean.getProperty().getApplicationNo());
+        if (ptGisIndex != null)
+            System.out.println(
+                    "Index data" + ptGisIndex.getGisTax() + ptGisIndex.getApplicationNo() + ptGisIndex.getAssistantName());
+
         if (ptGisIndex == null)
             createPropertySurveyindex(applicationType, surveyBean);
         else

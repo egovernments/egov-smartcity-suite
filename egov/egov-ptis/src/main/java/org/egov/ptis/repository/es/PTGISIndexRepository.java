@@ -49,7 +49,8 @@ package org.egov.ptis.repository.es;
 
 import org.egov.ptis.domain.entity.es.PTGISIndex;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
-
+import org.springframework.stereotype.Repository;
+@Repository
 public interface PTGISIndexRepository extends ElasticsearchRepository<PTGISIndex, String> {
     PTGISIndex findByApplicationNoAndCityName(String applicationNo, String cityName);
 
