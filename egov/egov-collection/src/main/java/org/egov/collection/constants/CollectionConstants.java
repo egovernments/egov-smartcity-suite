@@ -125,6 +125,7 @@ public final class CollectionConstants {
     public static final String RECEIPT_STATUS_CODE_FAILED = "FAILED";
     public static final String RECEIPT_STATUS_CODE_PENDING = "PENDING";
     public static final String RECEIPT_STATUS_CODE_REMITTED = "REMITTED";
+    public static final String RECEIPT_STATUS_CODE_PARTIAL_REMITTED = "PARTIAL_REMITTED";
     public static final String RECEIPT_STATUS_CODE_CANCELLATION_CREATED = "CANCELLATION_CREATED";
     public static final String RECEIPT_STATUS_CODE_CANCELLATION_CHECKED = "CANCELLATION_CHECKED";
     public static final String RECEIPT_STATUS_CODE_CANCELLATION_REJECTED = "CANCELLATION_REJECTED";
@@ -350,6 +351,12 @@ public final class CollectionConstants {
     public static final String BANKREMITTANCE_DEPARTMENTNAME = "DEPARTMENTNAME";
     public static final String BANKREMITTANCE_FUNDCODE = "FUNDCODE";
     public static final String BANKREMITTANCE_DEPARTMENTCODE = "DEPARTMENTCODE";
+    public static final String BANKREMITTANCE_RECEIPTNUMBER = "RECEIPTNUMBER";
+    public static final String BANKREMITTANCE_CHEQUEDD_NUMBER = "CHEQUEDDNUMBER";
+    public static final String BANKREMITTANCE_CHEQUEDD_DATE = "CHEQUEDDDATE";
+    public static final String BANKREMITTANCE_DRAWEE_BANK = "DRAWEEBANK";
+    public static final String BANKREMITTANCE_DRAWEE_BANKBRANCH = "DRAWEEBANKBRANCH";
+    public static final String BANKREMITTANCE_INSTRUMENTID = "INSTRUMENTID";
 
     // Key entries in maps
     public static final String MAP_KEY_EGOVCOMMON_CASHINHAND = "cashInHand";

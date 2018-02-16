@@ -60,17 +60,19 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.xml.bind.ValidationException;
+
 public abstract class RemittanceService implements Serializable {
     private static final long serialVersionUID = 1849734164810403255L;
 
-    public abstract List<ReceiptHeader> createBankRemittance(final String[] serviceNameArr,
+    public abstract List<ReceiptHeader> createCashBankRemittance(final String[] serviceNameArr,
             final String[] totalCashAmount, final String[] totalChequeAmount, final String[] totalCardAmount,
             final String[] receiptDateArray, final String[] fundCodeArray,
             final String[] departmentCodeArray, final Integer accountNumberId, final Integer positionUser,
             final String[] receiptNumberArray, final Date remittanceDate);
     
-    public abstract List<HashMap<String, Object>> findAllRemittanceDetailsForServiceAndFund(final String boundaryIdList,
-            final String serviceCodes, final String fundCodes, Date startDate, Date endDate, String paymentMode);
+    public abstract List<HashMap<String, Object>> findCashRemittanceDetailsForServiceAndFund(final String boundaryIdList,
+            final String serviceCodes, final String fundCodes, Date startDate, Date endDate);
     
     public List<CollectionBankRemittanceReport> prepareBankRemittanceReport(final List<ReceiptHeader> receiptHeaders) {
         final List<CollectionBankRemittanceReport> reportList = new ArrayList<CollectionBankRemittanceReport>(0);
@@ -99,5 +101,12 @@ public abstract class RemittanceService implements Serializable {
         }
         return reportList;
     }
-
+    public abstract List<HashMap<String, Object>> findChequeRemittanceDetailsForServiceAndFund(final String boundaryIdList,
+            final String serviceCodes, final String fundCodes, Date startDate, Date endDate);
+   
+    public abstract List<ReceiptHeader> createChequeBankRemittance(final String[] serviceNameArr,
+            final String[] totalCashAmount, final String[] totalChequeAmount, final String[] totalCardAmount,
+            final String[] receiptDateArray, final String[] fundCodeArray,
+            final String[] departmentCodeArray, final Integer accountNumberId, final Integer positionUser,
+            final String[] receiptNumberArray, final Date remittanceDate,final String[] instrumentIdArray);
 }

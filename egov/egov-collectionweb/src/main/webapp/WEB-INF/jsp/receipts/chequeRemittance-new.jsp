@@ -3,7 +3,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -50,7 +50,7 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title><s:text name="cash.bankRemittance.title" /></title>
+<title><s:text name="cheque.remittance.title" /></title>
 <script type="text/javascript">
 	jQuery.noConflict();
 	var isDatepickerOpened = false;
@@ -163,7 +163,7 @@
 				document.getElementsByName('serviceNameArray')[i].value = document
 						.getElementsByName('serviceNameTempArray')[i].value;
 				document.getElementsByName('fundCodeArray')[i].value = document
-						.getElementsByName('fundCodeTempArray')[i].value;
+				.getElementsByName('fundCodeTempArray')[i].value;
 				document.getElementsByName('departmentCodeArray')[i].value = document
 						.getElementsByName('departmentCodeTempArray')[i].value;
 				document.getElementsByName('totalCashAmountArray')[i].value = document
@@ -176,24 +176,22 @@
 						.getElementsByName('totalOnlineAmountTempArray')[i].value;
 				document.getElementsByName('receiptDateArray')[i].value = document
 						.getElementsByName('receiptDateTempArray')[i].value;
+				document.getElementsByName('instrumentIdArray')[i].value = document
+				.getElementsByName('instrumentIdTempArray')[i].value;
 			} else if (isSelected[i].checked == false) {
-				document.bankRemittanceForm.serviceNameArray[i].value = "";
-				document.bankRemittanceForm.fundCodeArray[i].value = "";
-				document.bankRemittanceForm.departmentCodeArray[i].value = "";
-				document.bankRemittanceForm.totalCashAmountArray[i].value = "";
-				document.bankRemittanceForm.totalChequeAmountArray[i].value = "";
-				document.bankRemittanceForm.totalCardAmountArray[i].value = "";
-				document.bankRemittanceForm.totalOnlineAmountArray[i].value = "";
-				document.bankRemittanceForm.receiptDateArray[i].value = "";
+				document.chequeRemittanceForm.serviceNameArray[i].value = "";
+				document.chequeRemittanceForm.fundCodeArray[i].value = "";
+				document.chequeRemittanceForm.departmentCodeArray[i].value = "";
+				document.chequeRemittanceForm.totalCashAmountArray[i].value = "";
+				document.chequeRemittanceForm.totalChequeAmountArray[i].value = "";
+				document.chequeRemittanceForm.totalCardAmountArray[i].value = "";
+				document.chequeRemittanceForm.totalOnlineAmountArray[i].value = "";
+				document.chequeRemittanceForm.receiptDateArray[i].value = "";
+				document.chequeRemittanceForm.instrumentIdArray[i].value = "";
 			}
 			j++;
 		}
-		var totalCashAmt = document.getElementsByName('totalCashAmountArray');
 		var totalAmtDisplay = 0.00;
-		for (i = 0; i < totalCashAmt.length; i++) {
-			totalAmtDisplay = totalAmtDisplay
-					+ +document.getElementsByName('totalCashAmountArray')[i].value;
-		}
 		var totalChequeAmt = document
 				.getElementsByName('totalChequeAmountArray');
 		for (i = 0; i < totalChequeAmt.length; i++) {
@@ -315,7 +313,7 @@
 		} else {
 		       	doLoadingMask('#loadingMask');
 				jQuery('#finYearId').prop("disabled", false);
-				document.bankRemittanceForm.action = "bankRemittance-create.action";
+				document.chequeRemittanceForm.action = "chequeRemittance-create.action";
 				return true;
 		}
 
@@ -361,7 +359,7 @@
 		}
 		jQuery('#finYearId').prop("disabled", false);
 		jQuery('#remittanceAmount').val("");
-		document.bankRemittanceForm.action = "bankRemittance-listData.action";
+		document.chequeRemittanceForm.action = "chequeRemittance-listData.action";
 		return true;
 	}
 
@@ -469,7 +467,7 @@
 		<li><font size="2" color="red"><b><s:text
 						name="bankremittance.error.noApproverselected" /> </b></font></li>
 	</span>
-	<s:form theme="simple" name="bankRemittanceForm" >
+	<s:form theme="simple" name="chequeRemittanceForm" >
 		<s:push value="model">
 			<s:token />
 			<s:if test="%{hasErrors()}">
@@ -485,7 +483,7 @@
 			</s:if>
 			<div class="formmainbox">
 				<div class="subheadnew">
-					<s:text name="cash.bankRemittance.title" />
+					<s:text name="cheque.remittance.title" />
 				</div>
 				<div align="center">
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -545,7 +543,7 @@
 						<display:table name="paramList" uid="currentRow"
 							pagesize="${pageSize}" style="border:1px;width:100%"
 							cellpadding="0" cellspacing="0" export="false" requestURI=""
-							excludedParams="serviceNameArray fundCodeArray departmentCodeArray totalCashAmountArray totalChequeAmountArray totalCardAmountArray totalATMAmountArray totalATMAmountTempArray departmentCodeTempArray totalOnlineAmountTempArray receiptDateTempArray serviceNameTempArray totalCardAmountTempArray totalCashAmountTempArray totalChequeAmountTempArray">
+							excludedParams="serviceNameArray fundCodeArray departmentCodeArray totalCashAmountArray totalChequeAmountArray totalCardAmountArray totalATMAmountArray totalATMAmountTempArray departmentCodeTempArray totalOnlineAmountTempArray receiptDateTempArray serviceNameTempArray totalCardAmountTempArray totalCashAmountTempArray totalChequeAmountTempArray  instrumentIdTempArray">
 							<display:column headerClass="bluebgheadtd"
 								class="blueborderfortd"
 								title="Select<input type='checkbox' name='selectAllReceipts' value='on' onClick='setCheckboxStatuses(this.checked);handleReceiptSelectionEvent(this.checked);'/>"
@@ -557,7 +555,10 @@
 									value="${currentRow.SERVICENAME}" />
 								<input type="hidden" name="fundCodeTempArray"
 									disabled="disabled" id="fundCodeTempArray"
-									value="${currentRow.FUNDCODE}" />
+									value="${currentRow.FUNDCODE}" />	
+								<input type="hidden" name="instrumentIdTempArray"
+									disabled="disabled" id="instrumentIdTempArray"
+									value="${currentRow.INSTRUMENTID}" />
 								<input type="hidden" name="departmentCodeTempArray"
 									id="departmentCodeTempArray" disabled="disabled"
 									value="${currentRow.DEPARTMENTCODE}" />
@@ -597,37 +598,47 @@
 								<input type="hidden" name="receiptDateArray"
 									id="receiptDateArray"
 									value="${receiptDateArray[currentRow_rowNum-1]}" />
+								<input type="hidden" name="instrumentIdArray"
+									id="instrumentIdArray"
+									value="${instrumentIdArray[currentRow_rowNum-1]}" />
 							</display:column>
 
 							<display:column headerClass="bluebgheadtd"
-								class="blueborderfortd" title="Date"
+								class="blueborderfortd" title="Receipt date"
 								style="width:10%;text-align: center"
 								value="${currentRow.RECEIPTDATE}" format="{0,date,dd/MM/yyyy}" />
 							<display:column headerClass="bluebgheadtd"
-								class="blueborderfortd" title="Service Name"
+								class="blueborderfortd" title="Receipt number"
+								style="width:10%;text-align: center"
+								value="${currentRow.RECEIPTNUMBER}" />
+								
+							<display:column headerClass="bluebgheadtd"
+								class="blueborderfortd" title="Cheque/DD number and date"
 								style="width:20%;text-align: center"
+								value="${currentRow.CHEQUEDDNUMBER}  ${currentRow.CHEQUEDDDATE}"  />
+							<display:column headerClass="bluebgheadtd"
+								class="blueborderfortd" title="Drawee bank and branch"
+								style="width:20%;text-align: center"
+								value="${currentRow.DRAWEEBANK}  ${currentRow.DRAWEEBANKBRANCH}"  />
+							<display:column headerClass="bluebgheadtd"
+								class="blueborderfortd" title="Service Name"
+								style="width:15%;text-align: center"
 								value="${currentRow.SERVICENAME}" />
 
 							<display:column headerClass="bluebgheadtd"
-								class="blueborderfortd" title="Fund"
-								style="width:10%;text-align: center"
-								value="${currentRow.FUNDNAME}" />
-
-							<display:column headerClass="bluebgheadtd"
 								class="blueborderfortd" title="Department"
-								style="width:10%;text-align: center"
+								style="width:15%;text-align: center"
 								value="${currentRow.DEPARTMENTNAME}" />
 							<display:column headerClass="bluebgheadtd"
-									class="blueborderfortd" title="Total Cash Collection"
+									class="blueborderfortd" title="Cheque /DD Amount (Rs)"
 									style="width:10%;text-align: center">
 									<div align="center">
-										<c:if test="${not empty currentRow.SERVICETOTALCASHAMOUNT}">
-											<c:out value="${currentRow.SERVICETOTALCASHAMOUNT}" />
+										<c:if test="${not empty currentRow.SERVICETOTALCHEQUEAMOUNT}">
+											<c:out value="${currentRow.SERVICETOTALCHEQUEAMOUNT}" />
 										</c:if>
 										&nbsp;
 									</div>
 							</display:column>
-							
 						</display:table>
 				
 				<br />

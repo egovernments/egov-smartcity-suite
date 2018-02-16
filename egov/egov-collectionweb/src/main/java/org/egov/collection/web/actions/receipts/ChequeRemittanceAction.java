@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -45,7 +45,19 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
+
 package org.egov.collection.web.actions.receipts;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -58,18 +70,12 @@ import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.CollectionBankRemittanceReport;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.service.RemittanceServiceImpl;
-import org.egov.collection.service.RemittanceServiceImpl;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankbranch;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.BankaccountHibernateDAO;
 import org.egov.commons.dao.FinancialYearDAO;
-import org.egov.eis.entity.Employee;
-import org.egov.eis.entity.Jurisdiction;
-import org.egov.eis.service.EmployeeService;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -78,36 +84,26 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
 @Results({
-        @Result(name = BankRemittanceAction.NEW, location = "bankRemittance-new.jsp"),
-        @Result(name = BankRemittanceAction.PRINT_BANK_CHALLAN, type = "redirectAction", location = "remittanceStatementReport-printBankChallan.action", params = {
+        @Result(name = BankRemittanceAction.NEW, location = "chequeRemittance-new.jsp"),
+        @Result(name = BankRemittanceAction.PRINT_BANK_CHALLAN, type = "redirectAction", location = "remittanceStatementReport-printChequeBankChallan.action", params = {
                 "namespace", "/reports", "totalCashAmount", "${totalCashAmount}", "totalChequeAmount",
                 "${totalChequeAmount}", "bank", "${bank}", "bankAccount", "${bankAccount}", "remittanceDate",
                 "${remittanceDate}" }),
-        @Result(name = BankRemittanceAction.INDEX, location = "bankRemittance-index.jsp") })
+        @Result(name = BankRemittanceAction.INDEX, location = "chequeRemittance-index.jsp") })
 @ParentPackage("egov")
-public class BankRemittanceAction extends BaseFormAction {
+public class ChequeRemittanceAction extends BaseFormAction {
     protected static final String PRINT_BANK_CHALLAN = "printBankChallan";
     private static final long serialVersionUID = 1L;
-    private static final Logger LOGGER = Logger.getLogger(BankRemittanceAction.class);
+    private static final Logger LOGGER = Logger.getLogger(ChequeRemittanceAction.class);
     private static final String BANK_ACCOUNT_NUMBER_QUERY = "select distinct ba.accountnumber from BANKACCOUNT ba where ba.id =:accountNumberId";
-    private static final String SERVICE_FUND_QUERY = new StringBuilder()
-            .append("select distinct sd.code as servicecode,fd.code as fundcode from BANKACCOUNT ba,")
-            .append("EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd where asm.BANKACCOUNT=ba.ID ")
-            .append("and asm.servicedetails=sd.ID and fd.ID=ba.FUNDID and ba.id= :accountNumberId").toString();
+    private static final String SERVICE_QUERY = new StringBuilder()
+            .append("select distinct sd.code as servicecode from ")
+            .append("EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd where ")
+            .append("asm.servicedetails=sd.ID and asm.bankaccount= :accountNumberId").toString();
+    private static final String FUND_QUERY = new StringBuilder()
+            .append("select fd.code as fundcode from BANKACCOUNT ba,FUND fd")
+            .append(" where fd.ID=ba.FUNDID and ba.id= :accountNumberId").toString();
     private transient List<HashMap<String, Object>> paramList = null;
     private final ReceiptHeader receiptHeaderIntsance = new ReceiptHeader();
     private List<ReceiptHeader> voucherHeaderValues = new ArrayList<>(0);
@@ -131,8 +127,6 @@ public class BankRemittanceAction extends BaseFormAction {
     private Date remittanceDate;
     @Autowired
     private transient FinancialYearDAO financialYearDAO;
-    @Autowired
-    private transient EmployeeService employeeService;
     @Autowired
     private transient BankaccountHibernateDAO bankaccountHibernateDAO;
 
@@ -161,7 +155,7 @@ public class BankRemittanceAction extends BaseFormAction {
         this.collectionsUtil = collectionsUtil;
     }
 
-    @Action(value = "/receipts/bankRemittance-newform")
+    @Action(value = "/receipts/chequeRemittance-newform")
     @SkipValidation
     public String newform() {
         populateRemittanceList();
@@ -192,14 +186,12 @@ public class BankRemittanceAction extends BaseFormAction {
         addDropdownData("financialYearList", financialYearDAO.getAllActivePostingAndNotClosedFinancialYears());
     }
 
-
-    @Action(value = "/receipts/bankRemittance-listData")
+    @Action(value = "/receipts/chequeRemittance-listData")
     @SkipValidation
     public String listData() {
         isListData = true;
         remitAccountNumber = "";
         if (accountNumberId != null) {
-
             final Query bankAccountQry = persistenceService.getSession().createSQLQuery(BANK_ACCOUNT_NUMBER_QUERY);
             bankAccountQry.setLong("accountNumberId", accountNumberId);
             final Object bankAccountResult = bankAccountQry.uniqueResult();
@@ -210,21 +202,18 @@ public class BankRemittanceAction extends BaseFormAction {
         if (fromDate != null && toDate != null && toDate.before(fromDate))
             addActionError(getText("bankremittance.before.fromdate"));
         if (!hasErrors() && accountNumberId != null) {
-            final Query serviceFundQuery = persistenceService.getSession().createSQLQuery(SERVICE_FUND_QUERY);
-            serviceFundQuery.setLong("accountNumberId", accountNumberId);
-            final List<Object[]> queryResults = serviceFundQuery.list();
 
-            final List<String> serviceCodeList = new ArrayList<>(0);
-            final HashSet<String> fundCodeSet = new HashSet<>(0);
-            for (int i = 0; i < queryResults.size(); i++) {
-                final Object[] arrayObjectInitialIndex = queryResults.get(i);
-                serviceCodeList.add(arrayObjectInitialIndex[0].toString());
-                fundCodeSet.add(arrayObjectInitialIndex[1].toString());
-            } 
+            final Query serviceQuery = persistenceService.getSession().createSQLQuery(SERVICE_QUERY);
+            serviceQuery.setLong("accountNumberId", accountNumberId);
+            final List<String> serviceCodeList = serviceQuery.list();
+
+            final Query fundQuery = persistenceService.getSession().createSQLQuery(FUND_QUERY);
+            fundQuery.setLong("accountNumberId", accountNumberId);
+            final String fundCode = fundQuery.list().get(0).toString();
+
             final CFinancialYear financialYear = financialYearDAO.getFinancialYearById(finYearId);
-            paramList = remittanceService.findCashRemittanceDetailsForServiceAndFund(collectionsUtil.getJurisdictionBoundary(), "'"
-                    + StringUtils.join(serviceCodeList, "','") + "'",
-                    "'" + StringUtils.join(fundCodeSet, "','") + "'",
+            paramList = remittanceService.findChequeRemittanceDetailsForServiceAndFund(collectionsUtil.getJurisdictionBoundary(),
+                    "'" + StringUtils.join(serviceCodeList, "','") + "'", "'"+fundCode+"'",
                     fromDate == null ? financialYear.getStartingDate() : fromDate,
                     toDate == null ? financialYear.getEndingDate() : toDate);
             if (fromDate != null && toDate != null)
@@ -235,7 +224,7 @@ public class BankRemittanceAction extends BaseFormAction {
         return NEW;
     }
 
-    @Action(value = "/receipts/bankRemittance-printBankChallan")
+    @Action(value = "/receipts/chequeRemittance-printBankChallan")
     @SkipValidation
     public String printBankChallan() {
         return PRINT_BANK_CHALLAN;
@@ -267,16 +256,18 @@ public class BankRemittanceAction extends BaseFormAction {
         addDropdownData(ACCOUNT_NUMBER_LIST, Collections.emptyList());
     }
 
-    @Action(value = "/receipts/bankRemittance-create")
-    @ValidationErrorPage(value = NEW)
+    @ValidationErrorPage(value = "error")
+    @Action(value = "/receipts/chequeRemittance-create")
     public String create() {
         final long startTimeMillis = System.currentTimeMillis();
         if (accountNumberId == null || accountNumberId == -1)
             throw new ValidationException(Arrays.asList(new ValidationError("Please select Account number",
                     "bankremittance.error.noaccountNumberselected")));
-        voucherHeaderValues = remittanceService.createCashBankRemittance(getServiceNameArray(), getTotalCashAmountArray(),    
+        voucherHeaderValues = remittanceService.createChequeBankRemittance(getServiceNameArray(), getTotalCashAmountArray(),
                 getTotalChequeAmountArray(), getTotalCardAmountArray(), getReceiptDateArray(), getFundCodeArray(),
-                getDepartmentCodeArray(), accountNumberId, positionUser, getReceiptNumberArray(), remittanceDate);
+                getDepartmentCodeArray(), accountNumberId, positionUser, getReceiptNumberArray(), remittanceDate,
+                getInstrumentIdArray());
+
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
         LOGGER.info("$$$$$$ Time taken to persist the remittance list (ms) = " + elapsedTimeMillis);
         bankRemittanceList = remittanceService.prepareBankRemittanceReport(voucherHeaderValues);
@@ -286,7 +277,7 @@ public class BankRemittanceAction extends BaseFormAction {
         final Bankaccount bankAcc = bankaccountHibernateDAO.findById(Long.valueOf(accountNumberId), false);
         bankAccount = bankAcc.getAccountnumber();
         bank = bankAcc.getBankbranch().getBank().getName();
-        totalCashAmount = getSum(getTotalCashAmountArray());
+        totalCashAmount = 0.0;
         totalChequeAmount = getSum(getTotalChequeAmountArray());
         return INDEX;
     }
@@ -601,6 +592,7 @@ public class BankRemittanceAction extends BaseFormAction {
     public void setVoucherNumber(final String voucherNumber) {
         this.voucherNumber = voucherNumber;
     }
+
     public Date getFromDate() {
         return fromDate;
     }

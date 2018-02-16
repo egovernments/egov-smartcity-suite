@@ -48,6 +48,18 @@
 
 package org.egov.collection.utils;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 import org.egov.collection.config.properties.CollectionApplicationProperties;
 import org.egov.collection.constants.CollectionConstants;
@@ -73,10 +85,13 @@ import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.commons.exception.NoSuchObjectException;
 import org.egov.eis.entity.Assignment;
+import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.EmployeeView;
+import org.egov.eis.entity.Jurisdiction;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EisCommonService;
+import org.egov.eis.service.EmployeeService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -115,18 +130,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 @Service
 public class CollectionsUtil {
@@ -201,6 +204,9 @@ public class CollectionsUtil {
     @Autowired
     @Qualifier("branchUserMapService")
     private PersistenceService<BranchUserMap, Long> branchUserMapService;
+
+    @Autowired
+    private transient EmployeeService employeeService;
 
     /**
      * Returns the Status object for given status code for a receipt
@@ -1065,6 +1071,26 @@ public class CollectionsUtil {
             bankBranchArrayList.add(newBankbranch);
         }
         return bankBranchArrayList;
+    }
+
+    public String getJurisdictionBoundary() {
+        final User user = getLoggedInUser();
+        if (!isBankCollectionRemitter(user)) {
+            final Employee employee = employeeService.getEmployeeById(user.getId());
+            final StringBuilder jurValuesId = new StringBuilder();
+            for (final Jurisdiction element : employee.getJurisdictions()) {
+                if (jurValuesId.length() > 0)
+                    jurValuesId.append(',');
+                jurValuesId.append(element.getBoundary().getId());
+
+                for (final Boundary boundary : element.getBoundary().getChildren()) {
+                    jurValuesId.append(',');
+                    jurValuesId.append(boundary.getId());
+                }
+            }
+            return jurValuesId.toString();
+        } else
+            return "";
     }
 
 }

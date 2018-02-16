@@ -467,6 +467,28 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         }
         return check;
     }
+    
+    public int checkIfChequeMapObjectExist(final List<HashMap<String, Object>> paramList,
+            final Object[] arrayObjectInitialIndexTemp) {
+        int check = -1;
+        for (int m = 0; m < paramList.size(); m++) {
+            final HashMap<String, Object> objHashMapTemp = paramList.get(m);
+
+            if (arrayObjectInitialIndexTemp[1] != null && arrayObjectInitialIndexTemp[2] != null)
+                if (arrayObjectInitialIndexTemp[1].equals(objHashMapTemp
+                        .get(CollectionConstants.BANKREMITTANCE_RECEIPTDATE))
+                        && arrayObjectInitialIndexTemp[2].equals(objHashMapTemp
+                                .get(CollectionConstants.BANKREMITTANCE_RECEIPTNUMBER))
+                        && arrayObjectInitialIndexTemp[11].equals(objHashMapTemp
+                                .get(CollectionConstants.BANKREMITTANCE_INSTRUMENTID))) {
+                    check = m;
+                    break;
+                } else
+                    continue;
+
+        }
+        return check;
+    }
 
     @Transactional
     public void updateChequeCardRemittance(final Map<String, Object> instrumentDepositeMap,
