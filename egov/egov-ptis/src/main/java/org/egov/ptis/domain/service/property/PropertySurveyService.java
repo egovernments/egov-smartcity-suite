@@ -74,6 +74,8 @@ import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.view.SurveyBean;
 import org.egov.ptis.repository.es.PTGISIndexRepository;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -83,6 +85,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 
 public class PropertySurveyService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PropertySurveyService.class);
+
     @Autowired
     private PTGISIndexRepository surveyRepository;
 
@@ -102,28 +107,32 @@ public class PropertySurveyService {
     @Transactional
     public void updateSurveyIndex(final String applicationType, final SurveyBean surveyBean) {
         final PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
-        if (!applicationType.isEmpty() && propService.propertyApplicationTypes().contains(applicationType))
+        if (!applicationType.isEmpty() && propService.propertyApplicationTypes().contains(applicationType)) {
+            LOGGER.info("UPDATE SURVEY INDEX API CALL");
             updateIndex(applicationType, surveyBean);
+        }
     }
 
     @Transactional
     public void updateIndex(final String applicationType, final SurveyBean surveyBean) {
         PTGISIndex ptGisIndex = findByApplicationNo(surveyBean.getProperty().getApplicationNo());
 
-        if (ptGisIndex == null){
-            System.out.println(" ptindex is null =---------- ");
-            createPropertySurveyindex(applicationType, surveyBean);
-        }
-        else{
-            System.out.println(
-                    "Index data -------------- " + (ptGisIndex.getGisTax() > 0 ? ptGisIndex.getGisTax() : "GIS tax not present or zero ------ ") );
-            updatePropertySurveyIndex(surveyBean, ptGisIndex);
+        if (ptGisIndex == null) {
+
+            LOGGER.info("CREATING SURVEY INDEX");
+            ptGisIndex = createPropertySurveyindex(applicationType, surveyBean);
+            LOGGER.info(ptGisIndex.toString());
+        } else {
+            LOGGER.info("UPDATING SURVEY INDEX");
+            LOGGER.info("SURVERY INDEX BEFORE : " + ptGisIndex.toString());
+            ptGisIndex = updatePropertySurveyIndex(surveyBean, ptGisIndex);
+            LOGGER.info("SURVERY INDEX AFTER : " + ptGisIndex.toString());
         }
 
     }
 
     @Transactional
-    public void createPropertySurveyindex(final String applicationType, final SurveyBean surveyBean) {
+    public PTGISIndex createPropertySurveyindex(final String applicationType, final SurveyBean surveyBean) {
         PTGISIndex ptGisIndex;
         Double taxVar;
         final String state;
@@ -171,7 +180,7 @@ public class PropertySurveyService {
                 .withAssistantName(null)
                 .withRiName(null)
                 .build();
-        createPTGISIndex(ptGisIndex);
+        return createPTGISIndex(ptGisIndex);
     }
 
     private Double calculatetaxvariance(final String applicationType, final SurveyBean surveyBean) {
@@ -186,7 +195,7 @@ public class PropertySurveyService {
     }
 
     @Transactional
-    public void updatePropertySurveyIndex(final SurveyBean surveyBean,
+    public PTGISIndex updatePropertySurveyIndex(final SurveyBean surveyBean,
             final PTGISIndex ptGisIndex) {
 
         Double taxVar;
@@ -202,7 +211,7 @@ public class PropertySurveyService {
 
         ptGisIndex.setAssistantName(assistantName);
         ptGisIndex.setRiName(riName);
-        updatePTGISIndex(ptGisIndex);
+        return updatePTGISIndex(ptGisIndex);
     }
 
     private Double calculateVariance(final String applicationType, final SurveyBean surveyBean, final PTGISIndex ptGisIndex) {
@@ -264,7 +273,7 @@ public class PropertySurveyService {
 
     @Transactional
     public PTGISIndex updatePTGISIndex(PTGISIndex surveyIndex) {
-        System.out.println("Inside updatePTGISIndex------------------" +surveyIndex.getGisTax() );
+        System.out.println("Inside updatePTGISIndex------------------" + surveyIndex.getGisTax());
         surveyRepository.save(surveyIndex);
         return surveyIndex;
     }
