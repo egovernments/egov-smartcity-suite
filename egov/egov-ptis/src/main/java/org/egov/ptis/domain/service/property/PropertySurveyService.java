@@ -80,6 +80,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
+
 public class PropertySurveyService {
     @Autowired
     private PTGISIndexRepository surveyRepository;
@@ -107,14 +109,16 @@ public class PropertySurveyService {
     @Transactional
     public void updateIndex(final String applicationType, final SurveyBean surveyBean) {
         PTGISIndex ptGisIndex = findByApplicationNo(surveyBean.getProperty().getApplicationNo());
-        if (ptGisIndex != null)
-            System.out.println(
-                    "Index data" + ptGisIndex.getGisTax() + ptGisIndex.getApplicationNo() + ptGisIndex.getAssistantName());
 
-        if (ptGisIndex == null)
+        if (ptGisIndex == null){
+            System.out.println(" ptindex is null =---------- ");
             createPropertySurveyindex(applicationType, surveyBean);
-        else
+        }
+        else{
+            System.out.println(
+                    "Index data -------------- " + (ptGisIndex.getGisTax() > 0 ? ptGisIndex.getGisTax() : "GIS tax not present or zero ------ ") );
             updatePropertySurveyIndex(surveyBean, ptGisIndex);
+        }
 
     }
 
@@ -260,6 +264,7 @@ public class PropertySurveyService {
 
     @Transactional
     public PTGISIndex updatePTGISIndex(PTGISIndex surveyIndex) {
+        System.out.println("Inside updatePTGISIndex------------------" +surveyIndex.getGisTax() );
         surveyRepository.save(surveyIndex);
         return surveyIndex;
     }
