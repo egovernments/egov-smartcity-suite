@@ -112,6 +112,7 @@ import java.util.zip.ZipOutputStream;
 import static java.math.BigDecimal.ZERO;
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_SURVEY_COMPARISON;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 
@@ -131,6 +132,7 @@ public class SearchNoticesAction extends SearchFormAction {
     protected static final String SUCCESS = "success";
     private static final String FROM_CLAUSE = " from PtNotice notice left join notice.basicProperty bp,PropertyMaterlizeView pmv";
     private static final String BILL_FROM_CLAUSE = " from DemandBill bill, PtNotice notice left join notice.basicProperty bp, PropertyMaterlizeView pmv";
+    private static final String COMPARISON_REPORT_FROM_CLAUSE = " from PtNotice notice left join notice.basicProperty bp ";
     private static final String ORDER_BY = " order by notice.noticeDate desc";
     private static final String BILL_ORDER_BY = " order by notice.basicProperty.address.houseNoBldgApt asc";
     protected static final String CITIZEN_SEARCH = "citizen_search";
@@ -427,8 +429,12 @@ public class SearchNoticesAction extends SearchFormAction {
             final byte[] bFile = FileUtils.readFileToByteArray(file);
             final InputStream myInputStream = new ByteArrayInputStream(bFile);
             fileStream = myInputStream;
-            fileName = new StringBuffer(ptNotice.getBasicProperty().getUpicNo()).append("-")
-                    .append(ptNotice.getNoticeType()).toString();
+            if(NOTICE_TYPE_SURVEY_COMPARISON.equalsIgnoreCase(noticeType))
+                fileName = new StringBuffer(ptNotice.getApplicationNumber()).append("-")
+                        .append(ptNotice.getNoticeType()).toString();
+            else
+                fileName = new StringBuffer(ptNotice.getBasicProperty().getUpicNo()).append("-")
+                        .append(ptNotice.getNoticeType()).toString();
             contentType = "application/pdf";
             contentLength = Long.valueOf(file.length());
         }
@@ -602,8 +608,8 @@ public class SearchNoticesAction extends SearchFormAction {
         if (NOTICE_TYPE_BILL.equalsIgnoreCase(noticeType))
             criteriaString = criteriaString.append(
                     " and bill.isactive = true and bill.isHistory='N' and bill.billnumber = notice.noticeNo and pmv.propertyId=bill.assessmentNo");
-        else if(PropertyTaxConstants.NOTICE_TYPE_SURVEY_COMPARISON.equalsIgnoreCase(noticeType))
-            criteriaString = criteriaString.append(" and notice.basicProperty.id=bp.id and bp.id=pmv.basicPropertyID ");
+        else if(NOTICE_TYPE_SURVEY_COMPARISON.equalsIgnoreCase(noticeType))
+            criteriaString = criteriaString.append(" and notice.basicProperty.id=bp.id ");
         else
             criteriaString = criteriaString.append(" and bp.upicNo=pmv.propertyId");
         if (ownerName != null && !ownerName.equals("")) {
@@ -707,7 +713,8 @@ public class SearchNoticesAction extends SearchFormAction {
             LOGGER.debug("Entered into Search Query, criteria=" + criteria);
 
         final StringBuilder searchQuery = new StringBuilder("select notice");
-        searchQuery.append(noticeType.equals(NOTICE_TYPE_BILL) ? BILL_FROM_CLAUSE : FROM_CLAUSE);
+        searchQuery.append(noticeType.equals(NOTICE_TYPE_BILL) ? BILL_FROM_CLAUSE
+                : (NOTICE_TYPE_SURVEY_COMPARISON.equalsIgnoreCase(noticeType) ? COMPARISON_REPORT_FROM_CLAUSE : FROM_CLAUSE));
         searchQuery.append(criteria);
         searchQuery.append(noticeType.equals(NOTICE_TYPE_BILL) ? BILL_ORDER_BY : ORDER_BY);
         if (LOGGER.isDebugEnabled())
@@ -725,7 +732,8 @@ public class SearchNoticesAction extends SearchFormAction {
             LOGGER.debug("Entered into prepareCountQuery , criteria=" + criteria);
 
         final StringBuilder countQuery = new StringBuilder("select count(notice)");
-        countQuery.append(noticeType.equals(NOTICE_TYPE_BILL) ? BILL_FROM_CLAUSE : FROM_CLAUSE);
+        countQuery.append(noticeType.equals(NOTICE_TYPE_BILL) ? BILL_FROM_CLAUSE
+                : (NOTICE_TYPE_SURVEY_COMPARISON.equalsIgnoreCase(noticeType) ? COMPARISON_REPORT_FROM_CLAUSE : FROM_CLAUSE));
         countQuery.append(criteria);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Count Query : " + countQuery);
