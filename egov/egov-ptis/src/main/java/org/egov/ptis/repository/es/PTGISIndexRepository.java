@@ -52,6 +52,6 @@ import org.springframework.data.elasticsearch.repository.ElasticsearchRepository
 import org.springframework.stereotype.Repository;
 @Repository
 public interface PTGISIndexRepository extends ElasticsearchRepository<PTGISIndex, String> {
-    PTGISIndex findByApplicationNoAndCityName(String applicationNo, String cityName);
+    PTGISIndex findByApplicationNoAndCityCode(String applicationNo, String cityCode);
 
 }

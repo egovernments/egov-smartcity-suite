@@ -273,13 +273,12 @@ public class PropertySurveyService {
 
     @Transactional
     public PTGISIndex updatePTGISIndex(PTGISIndex surveyIndex) {
-        System.out.println("Inside updatePTGISIndex------------------" + surveyIndex.getGisTax());
         surveyRepository.save(surveyIndex);
         return surveyIndex;
     }
 
     public PTGISIndex findByApplicationNo(String applicationNo) {
-        return surveyRepository.findByApplicationNoAndCityName(applicationNo, ApplicationThreadLocals.getCityName());
+        return surveyRepository.findByApplicationNoAndCityCode(applicationNo, ApplicationThreadLocals.getCityCode());
 
     }
 
