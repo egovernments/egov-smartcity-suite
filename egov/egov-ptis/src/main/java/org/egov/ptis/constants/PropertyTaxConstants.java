@@ -1400,7 +1400,7 @@ public interface PropertyTaxConstants {
     public static final Character SOURCEOFDATA_DATAENTRY = 'D';
     public static final Character SOURCEOFDATA_MEESEWA = 'T';
     public static final Character SOURCEOFDATA_ONLINE = 'O';
-    public static final Character SOURCEOFDATA_MOBILE = 'S';
+    public static final Character SOURCEOFDATA_SURVEY = 'S';
     public static final Character SOURCEOFDATA_ESEVA = 'E';
     public static final Character SOURCEOFDATA_CARD = 'D';
     

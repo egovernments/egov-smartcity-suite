@@ -993,7 +993,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         buildEmailandSms(property, APPLICATION_TYPE_NEW_ASSESSENT);
         Assignment assignment;
         if (property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_ONLINE)
-                || property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_MOBILE))
+                || property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_SURVEY))
             propertyInitiatedBy = propertyTaxUtil
                     .getApproverUserName(property.getStateHistory().get(0).getOwnerPosition().getId());
         else

@@ -1302,7 +1302,7 @@ public class PropertyExternalService {
     private BasicProperty setBasicPropertyValues(ViewPropertyDetails viewPropertyDetails, PropertyService propService) {
         BasicProperty basicProperty = new BasicPropertyImpl();
         basicProperty.setActive(Boolean.TRUE);
-        basicProperty.setSource(SOURCEOFDATA_MOBILE);
+        basicProperty.setSource(SOURCEOFDATA_SURVEY);
 
         // Get PropertyStatus object to set the status of the property
         final PropertyStatus propertyStatus = getPropertyStatus();
@@ -2736,7 +2736,7 @@ public class PropertyExternalService {
 
         final BasicProperty basicProperty = new BasicPropertyImpl();
         basicProperty.setActive(Boolean.TRUE);
-        basicProperty.setSource(SOURCEOFDATA_MOBILE);
+        basicProperty.setSource(SOURCEOFDATA_SURVEY);
         // Creating Property Address object
         final Boundary block = getBoundaryByNumberAndType(viewPropertyDetails.getBlockName(), BLOCK, REVENUE_HIERARCHY_TYPE);
         final PropertyAddress propAddress = createPropAddress(viewPropertyDetails, block);

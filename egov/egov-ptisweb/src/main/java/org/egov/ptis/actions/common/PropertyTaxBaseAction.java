@@ -741,10 +741,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             final String stateValue = property.getCurrentState().getValue().split(":")[0] + ":" + WF_STATE_REJECTED;
             property.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                     .withComments(approverComments).withStateValue(stateValue).withDateInfo(currentDate.toDate())
-                    .withOwner(owner).withNextAction(
-                            property.getBasicProperty().getSource().equals(SOURCEOFDATA_MOBILE)
-                                    ? UD_REVENUE_INSPECTOR_APPROVAL_PENDING
-                                    : nextAction);
+                    .withOwner(owner).withNextAction(nextAction);
         }
     }
 
