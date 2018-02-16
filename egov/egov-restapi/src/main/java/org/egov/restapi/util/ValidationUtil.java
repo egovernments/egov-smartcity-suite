@@ -999,38 +999,39 @@ public class ValidationUtil {
 	}
 
 	public ErrorDetails validateUpdateRequest(final CreatePropertyDetails createPropDetails, final String mode)
-			throws ParseException {
-		ErrorDetails errorDetails = new ErrorDetails();
-		final BasicProperty bp = propertyExternalService
-				.getBasicPropertyByPropertyID(createPropDetails.getAssessmentNumber());
-		if (bp.isUnderWorkflow()) {
-			errorDetails.setErrorCode(PROPERTY_UNDERWORKFLOW_CODE);
-			errorDetails.setErrorMessage(PROPERTY_UNDERWORKFLOW_REQ_MSG);
-			return errorDetails;
-		} else {
-			final Property prop = propertyExternalService.getPropertyByBasicPropertyID(bp);
-			if (prop.getStatus().equals(PropertyTaxConstants.STATUS_DEMAND_INACTIVE)) {
-				errorDetails.setErrorCode(DEMAND_INACTIVE_CODE);
-				errorDetails.setErrorMessage(DEMAND_INACTIVE_REQ_MSG);
-				return errorDetails;
-			} else {
-				errorDetails = validateCreateRequest(createPropDetails, mode);
-				if (errorDetails != null && errorDetails.getErrorCode() != null)
-					return errorDetails;
-			}
-		}
-		if (!bp.getActiveProperty().getPropertyDetail().getCategoryType()
-				.equals(PropertyTaxConstants.CATEGORY_VACANT_LAND)
-				&& createPropDetails.getPropertyTypeMasterCode()
-						.equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND)) {
-			errorDetails.setErrorCode(NON_VACANT_TO_VACANT);
-			errorDetails.setErrorMessage(NON_VACANT_TO_VACANT_MSG);
-			return errorDetails;
-		}
-			
-		return errorDetails;
+            throws ParseException {
+        ErrorDetails errorDetails = new ErrorDetails();
+        final BasicProperty bp = propertyExternalService
+                .getBasicPropertyByPropertyID(createPropDetails.getAssessmentNumber());
+        if (bp != null) {
+            if (bp.isUnderWorkflow()) {
+                errorDetails.setErrorCode(PROPERTY_UNDERWORKFLOW_CODE);
+                errorDetails.setErrorMessage(PROPERTY_UNDERWORKFLOW_REQ_MSG);
+                return errorDetails;
+            } else {
+                final Property prop = propertyExternalService.getPropertyByBasicPropertyID(bp);
+                if (prop.getStatus().equals(PropertyTaxConstants.STATUS_DEMAND_INACTIVE)) {
+                    errorDetails.setErrorCode(DEMAND_INACTIVE_CODE);
+                    errorDetails.setErrorMessage(DEMAND_INACTIVE_REQ_MSG);
+                    return errorDetails;
+                } else {
+                    errorDetails = validateCreateRequest(createPropDetails, mode);
+                    if (errorDetails != null && errorDetails.getErrorCode() != null)
+                        return errorDetails;
+                }
+            }
+            if (!bp.getActiveProperty().getPropertyDetail().getCategoryType()
+                    .equals(PropertyTaxConstants.CATEGORY_VACANT_LAND)
+                    && createPropDetails.getPropertyTypeMasterCode()
+                            .equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND)) {
+                errorDetails.setErrorCode(NON_VACANT_TO_VACANT);
+                errorDetails.setErrorMessage(NON_VACANT_TO_VACANT_MSG);
+                return errorDetails;
+            }
+        }
+        return errorDetails;
 
-	}
+    }
 
 	public ErrorDetails validateBoundaries(final PropertyAddressDetails propertyAddressDetails,
 			ErrorDetails errorDetails,  final String mode) {
