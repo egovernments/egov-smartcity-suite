@@ -2884,7 +2884,7 @@ public class PropertyExternalService {
 
     public Property getPropertyByBasicPropertyID(BasicProperty basicpropertyId) {
         StringBuilder queryString = new StringBuilder();
-        queryString.append("from PropertyImpl prop where prop.basicProperty =:basicpropertyId  and prop.status='A' ");
+        queryString.append("from PropertyImpl prop where prop.basicProperty =:basicpropertyId  and prop.status in('A','I') ");
         Property property;
         final Query qry = entityManager.createQuery(queryString.toString());
         qry.setParameter("basicpropertyId", basicpropertyId);

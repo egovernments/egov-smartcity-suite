@@ -603,7 +603,7 @@ public class RestApiConstants {
     public static final String INVALID_GUARDIAN_RELATION_REQ_MSG = "Invalid Guardian Relation";
 
     public static final String DEMAND_INACTIVE_CODE = "101";
-    public static final String DEMAND_INACTIVE_REQ_MSG = "Demand is Inactive Foe given Property";
+    public static final String DEMAND_INACTIVE_REQ_MSG = "Demand is Inactive for given Property";
 
     public static final String PROPERTY_UNDERWORKFLOW_CODE = "102";
     public static final String PROPERTY_UNDERWORKFLOW_REQ_MSG = "Property is Under workflow";
