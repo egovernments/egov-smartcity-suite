@@ -545,4 +545,18 @@ public class PTGISIndex {
         }
 
     }
+
+    @Override
+    public String toString() {
+        return "PTGISIndex [id=" + id + ", cityCode=" + cityCode + ", cityName=" + cityName + ", districtName=" + districtName
+                + ", regionName=" + regionName + ", revenueWard=" + revenueWard + ", electionWard=" + electionWard
+                + ", blockName=" + blockName + ", localityName=" + localityName + ", doorNo=" + doorNo + ", source=" + source
+                + ", applicationDate=" + applicationDate + ", applicationNo=" + applicationNo + ", applicationType="
+                + applicationType + ", assessmentNo=" + assessmentNo + ", assistantName=" + assistantName + ", riName=" + riName
+                + ", systemTax=" + systemTax + ", gisTax=" + gisTax + ", applicationTax=" + applicationTax + ", thirdPrtyFlag="
+                + thirdPrtyFlag + ", approvedTax=" + approvedTax + ", taxVariance=" + taxVariance + ", applicationStatus="
+                + applicationStatus + ", isApproved=" + isApproved + ", isCancelled=" + isCancelled + ", sentToThirdParty="
+                + sentToThirdParty + ", completionDate=" + completionDate + ", ageOfCompletion=" + ageOfCompletion + "]";
+    }
+    
 }
