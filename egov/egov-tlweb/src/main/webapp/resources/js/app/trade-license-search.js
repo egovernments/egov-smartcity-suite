@@ -465,7 +465,7 @@ $(document).ready(function () {
                             "sTitle": "Actions",
                             "render": function (data, type, row) {
                                 var option = "<option value=''>Select from Below</option>";
-                                $.each(JSON.parse(row.actions), function (key, value) {
+                                $.each(JSON.parse(row.actions), function (key, value ) {
                                     option += "<option>" + value.key + "</option>";
                                 });
                                 return ('<select class="dropchange" id="recordActions" onchange="goToAction(this,' + row.licenseId + ')" >' + option + '</select>');
@@ -502,7 +502,7 @@ function goToAction(obj, id) {
     else if (obj.options[obj.selectedIndex].innerHTML == 'Generate Demand Notice')
         window.open("/tl/demand-notice/generate/" + id, 'dn' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
     else if (obj.options[obj.selectedIndex].innerHTML == 'Closure')
-        window.open("/tl/viewtradelicense/showclosureform.action?id=" + id, 'vt' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
+        window.open("/tl/license/closure/" + id, id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Generate Demand')
         window.open("/tl/demand/generate/" + id, 'gd' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
     else if (obj.options[obj.selectedIndex].innerHTML == 'Print Acknowledgment')

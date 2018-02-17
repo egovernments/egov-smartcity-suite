@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -51,6 +51,7 @@ package org.egov.tl.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import java.io.File;
@@ -92,6 +93,9 @@ public class LicenseDocument extends AbstractAuditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "license")
     private License license;
+
+    @Transient
+    private transient List<MultipartFile> multipartFiles;
 
     @Transient
     private List<File> uploads = new ArrayList<>();
@@ -182,5 +186,13 @@ public class LicenseDocument extends AbstractAuditable {
 
     public void setLicense(final License license) {
         this.license = license;
+    }
+
+    public List<MultipartFile> getMultipartFiles() {
+        return multipartFiles;
+    }
+
+    public void setMultipartFiles(List<MultipartFile> multipartFiles) {
+        this.multipartFiles = multipartFiles;
     }
 }

@@ -63,6 +63,7 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
@@ -98,8 +99,10 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -127,16 +130,7 @@ import static org.egov.infra.utils.FileUtils.byteArrayToFile;
 import static org.egov.infra.utils.FileUtils.toByteArray;
 import static org.egov.infra.utils.StringUtils.append;
 import static org.egov.infra.utils.StringUtils.appendTimestamp;
-import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
-import static org.egov.tl.utils.Constants.BUTTONREJECT;
-import static org.egov.tl.utils.Constants.CITY_GRADE_CORPORATION;
-import static org.egov.tl.utils.Constants.CLOSURE_LIC_APPTYPE;
-import static org.egov.tl.utils.Constants.COMMISSIONER_DESGN;
-import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
-import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
-import static org.egov.tl.utils.Constants.PERMANENT_NATUREOFBUSINESS;
-import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
-import static org.egov.tl.utils.Constants.TRADE_LICENSE;
+import static org.egov.tl.utils.Constants.*;
 import static org.hibernate.criterion.MatchMode.ANYWHERE;
 
 @Transactional(readOnly = true)
@@ -492,7 +486,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
             User lastModifiedUser = state.getLastModifiedBy();
             final HashMap<String, Object> currentStateDetail = new HashMap<>();
             currentStateDetail.put("date", state.getLastModifiedDate());
-            currentStateDetail.put("updatedBy", lastModifiedUser.getType().equals(UserType.CITIZEN) ? tradeLicense.getLicensee().getApplicantName() : lastModifiedUser.getName());
+            currentStateDetail.put("updatedBy", lastModifiedUser.getType() == UserType.CITIZEN ? tradeLicense.getLicensee().getApplicantName() : lastModifiedUser.getName());
             currentStateDetail.put("status", "END".equals(state.getValue()) ? "Completed" : state.getValue());
             currentStateDetail.put("comments", defaultString(state.getComments()));
             User ownerUser = state.getOwnerUser();
@@ -514,7 +508,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         final HashMap<String, Object> processHistory = new HashMap<>();
         User lastModifiedUser = stateHistory.getLastModifiedBy();
         processHistory.put("date", stateHistory.getLastModifiedDate());
-        processHistory.put("updatedBy", !lastModifiedUser.getType().equals(UserType.EMPLOYEE) ? tradeLicense.getLicensee().getApplicantName() : lastModifiedUser.getName());
+        processHistory.put("updatedBy", lastModifiedUser.getType() == UserType.CITIZEN ? tradeLicense.getLicensee().getApplicantName() : lastModifiedUser.getName());
         processHistory.put("status", "END".equals(stateHistory.getValue()) ? "Completed" : stateHistory.getValue());
         processHistory.put("comments", defaultString(stateHistory.getComments()));
         Position ownerPosition = stateHistory.getOwnerPosition();
@@ -547,6 +541,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         Map<String, Map<String, List<LicenseDocument>>> licenseDocumentDetails = new HashMap<>();
         licenseDocumentDetails.put(NEW_LIC_APPTYPE.toUpperCase(), new HashMap<>());
         licenseDocumentDetails.put(RENEWAL_LIC_APPTYPE.toUpperCase(), new HashMap<>());
+        licenseDocumentDetails.put(CLOSURE_LIC_APPTYPE.toUpperCase(), new HashMap<>());
 
         for (LicenseDocument document : licenseDocuments) {
             String docType = document.getType().getName();
@@ -596,4 +591,30 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
                     "tl_closure_notice_", ".pdf").toFile())));
         return reportOutput;
     }
+
+    public void processSupportDocuments(TradeLicense license) {
+        List<LicenseDocument> documents = license.getLicenseDocuments();
+        for (LicenseDocument document : documents) {
+            List<MultipartFile> files = document.getMultipartFiles();
+            for (MultipartFile file : files) {
+                try {
+                    if (!file.isEmpty()) {
+                        document.getFiles()
+                                .add(fileStoreService.store(
+                                        file.getInputStream(),
+                                        file.getOriginalFilename(),
+                                        file.getContentType(), "EGTL"));
+                        document.setEnclosed(true);
+                        document.setDocDate(license.getApplicationDate());
+                    }
+                } catch (IOException exp) {
+                    throw new ApplicationRuntimeException("Error occurred while storing files ", exp);
+                }
+                document.setLicense(license);
+            }
+        }
+        documents.removeIf(licenseDocument -> licenseDocument.getFiles().isEmpty());
+        license.getDocuments().addAll(documents);
+    }
+
 }

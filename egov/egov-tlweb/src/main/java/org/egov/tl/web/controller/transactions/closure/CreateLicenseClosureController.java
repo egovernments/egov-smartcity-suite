@@ -45,80 +45,57 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-
-package org.egov.tl.web.controller.transactions.legacy;
+package org.egov.tl.web.controller.transactions.closure;
 
 import org.egov.tl.entity.TradeLicense;
-import org.egov.tl.service.LicenseAppTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
-import java.util.Date;
-import java.util.Map;
 
-import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.egov.tl.utils.Constants.AUTO;
+import static org.egov.tl.utils.Constants.MESSAGE;
+
 
 @Controller
-@RequestMapping("/legacylicense")
-public class CreateLegacyLicenseController extends LegacyLicenseController {
+@RequestMapping(value = "/license/closure/{licenseId}")
+public class CreateLicenseClosureController extends LicenseClosureProcessflowController {
 
-    private static final String CREATE_LEGACY_LICENSE = "create-legacylicense";
-
-    @Autowired
-    private LegacyLicenseValidator legacyLicenseValidator;
+    private static final String REDIRECT_TO_VIEW = "redirect:/license/view/";
+    private static final String LICENSECLOSURE = "license-closure";
 
     @Autowired
-    private LicenseAppTypeService licenseAppTypeService;
+    private CreateLicenseClosureValidator createLicenseClosureValidator;
 
-    @ModelAttribute("tradeLicense")
-    public TradeLicense tradeLicense() {
-        TradeLicense license = new TradeLicense();
-        license.setLicenseAppType(licenseAppTypeService.getLicenseAppTypeByName(NEW_LIC_APPTYPE));
-        license.setApplicationDate(new Date());
-        license.setApplicationNumber("AC-123");
-        return license;
-    }
-
-    @ModelAttribute("legacyFeePayStatus")
-    public Map<Integer, Boolean> legacyFeePayStatus() {
-        return legacyService.legacyFeePayStatusForCreate();
-    }
-
-    @ModelAttribute("legacyInstallmentwiseFees")
-    public Map<Integer, Integer> legacyInstallmentwiseFees() {
-        return legacyService.legacyInstallmentwiseFeesForCreate();
-    }
-
-    @GetMapping("/create")
-    public String create() {
-        return CREATE_LEGACY_LICENSE;
-    }
-
-    @PostMapping("/create")
-    public String create(@Valid @ModelAttribute TradeLicense tradeLicense, BindingResult binding, Model model) {
-        legacyLicenseValidator.validate(tradeLicense, binding);
-        if (binding.hasErrors()) {
-            model.addAttribute("legacyInstallmentwiseFees", legacyService.legacyInstallmentfee(tradeLicense));
-            model.addAttribute("legacyFeePayStatus", legacyService.legacyFeeStatus(tradeLicense));
-            return CREATE_LEGACY_LICENSE;
+    @GetMapping
+    public String showClosureForm(@ModelAttribute TradeLicense license, RedirectAttributes redirectAttributes) {
+        if (license.transitionInprogress()) {
+            redirectAttributes.addFlashAttribute(MESSAGE, "msg.license.process");
+            return REDIRECT_TO_VIEW + license.getId();
         }
-        legacyService.createLegacy(tradeLicense);
-        return "redirect:/legacylicense/view/" + tradeLicense.getApplicationNumber();
+        license.setApplicationNumber(AUTO);
+        return LICENSECLOSURE;
     }
 
-    @GetMapping(value = "/old-licenseno-is-unique", produces = APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public Boolean checkOldLicenseNumber(@RequestParam String oldLicenseNumber) {
-        return licenseRepository.findByOldLicenseNumber(oldLicenseNumber) != null;
+    @PostMapping
+    public String createClosure(@Valid @ModelAttribute TradeLicense tradeLicense, BindingResult bindingResult,
+                                RedirectAttributes redirectAttributes) {
+        createLicenseClosureValidator.validate(tradeLicense, bindingResult);
+        if (bindingResult.hasErrors())
+            return LICENSECLOSURE;
+        if (tradeLicense.transitionInprogress()) {
+            redirectAttributes.addFlashAttribute(MESSAGE, "msg.license.process");
+            return REDIRECT_TO_VIEW + tradeLicense.getId();
+        }
+        licenseClosureService.createClosure(tradeLicense);
+        redirectAttributes.addFlashAttribute(MESSAGE, "msg.closure.initiated");
+        return REDIRECT_TO_VIEW + tradeLicense.getId();
     }
+
 }

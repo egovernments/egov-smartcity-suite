@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -48,6 +48,7 @@
 
 package org.egov.tl.entity;
 
+import org.egov.eis.web.contract.WorkflowContainer;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
 import org.springframework.web.multipart.MultipartFile;
@@ -70,16 +71,20 @@ public class TradeLicense extends License {
 
     private static final long serialVersionUID = 986289058758315223L;
     private static final String CLOSURE_APPROVAL_URL = "/tl/viewtradelicense/viewTradeLicense-closure.action?model.id=%d";
+    private static final String CLOSURE_UPDATE_URL = "/tl/license/closure/update/%d";
     private static final String NEW_RENEW_APPROVAL_URL = "/tl/newtradelicense/newTradeLicense-showForApproval.action?model.id=%d";
-
+    @Transient
+    private transient MultipartFile[] files;
+    @Transient
+    private transient WorkflowContainer workflowContainer = new WorkflowContainer();
+    @Transient
+    private transient List<LicenseDocument> licenseDocuments = new ArrayList<>();
     @Transient
     private List<Integer> financialyear = new ArrayList<>();
     @Transient
     private List<Integer> legacyInstallmentwiseFees = new ArrayList<>();
     @Transient
     private List<Boolean> legacyFeePayStatus = new ArrayList<>();
-    @Transient
-    private transient MultipartFile[] files;
 
     @Override
     public String getStateDetails() {
@@ -96,7 +101,10 @@ public class TradeLicense extends License {
     @Override
     public String myLinkId() {
         if (CLOSURE_NATUREOFTASK.equals(getState().getNatureOfTask()))
-            return format(CLOSURE_APPROVAL_URL, id);
+            if (isNewWorkflow())
+                return format(CLOSURE_UPDATE_URL, id);
+            else
+                return format(CLOSURE_APPROVAL_URL, id);
         else
             return format(NEW_RENEW_APPROVAL_URL, id);
     }
@@ -133,4 +141,19 @@ public class TradeLicense extends License {
         this.files = files;
     }
 
+    public WorkflowContainer getWorkflowContainer() {
+        return workflowContainer;
+    }
+
+    public void setWorkflowContainer(WorkflowContainer workflowContainer) {
+        this.workflowContainer = workflowContainer;
+    }
+
+    public List<LicenseDocument> getLicenseDocuments() {
+        return licenseDocuments;
+    }
+
+    public void setLicenseDocuments(List<LicenseDocument> licenseDocuments) {
+        this.licenseDocuments = licenseDocuments;
+    }
 }

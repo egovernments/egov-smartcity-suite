@@ -46,78 +46,56 @@
   ~
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <%@ include file="/includes/taglibs.jsp" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<div id="content" class="printable">
-    <div class="formmainbox panel-primary">
-        <div class="subheadnew text-center" id="headingdiv">
-            <spring:message code="page.title.viewtrade"/>
-        </div>
-        <table>
-            <tr>
-                <td align="left" style="color: #FF0000">
-                    <actionerror
-                            cssStyle="color: #FF0000"/>
-                    <fielderror/>
-                    <actionmessage/>
-                </td>
-            </tr>
-        </table>
-        <form:form action="" modelAttribute="tradeLicense" theme="simple">
 
-            <c:set var="trclass" value="greybox"/>
-            <div class="text-right error-msg" style="font-size: 14px;">
-                <spring:message code="dateofapplication.lbl"/>
-                :
-                <c:out value="${tradeLicense.applicationDate}"/>
+<div class="modal fade reassign-screen display-hide" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header  alert-info">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 div class="modal-title"><strong><spring:message code='lbl.reassign.title'/></strong></h4>
             </div>
-            <c:if test="${applicationNumber!=null}">
-                <div class="text-right error-msg" style="font-size: 14px;">
-                    <spring:message code="license.applicationnumber"/>
-                    :
-                    <c:out value="${applicationNumber}"/>
-                </div>
-            </c:if>
-            <table width="100%">
-                <%@ include file='license-view.jsp' %>
-                <c:if test="${tradeLicense.documents.size()>0}">
-                    <div class="panel-heading  custom_form_panel_heading subheadnew">
-
-                        <div class="panel-title">
-                            <spring:message code='license.support.docs'/>
+            <div class="modal-body">
+                <form id="reassign-form" class="form-horizontal form-groups-bordered">
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            <label class="control-label"><spring:message code='lbl.reassign.to'/><span
+                                    class="mandatory"></span></label>
+                        </div>
+                        <div class="col-md-8 add-margin">
+                            <select id="approvalPosition" name="approvalPosition" required="required"
+                                    class="form-control">
+                                <option value=""><spring:message code='lbl.select'/></option>
+                            </select><br/>
+                            <div id="reassignment_error" class="error-msg" style="display:none;" align="center"></div>
                         </div>
                     </div>
-                </c:if>
-                <div class="panel-body">
-                    <div class="row add-border">
-                        <%@ include file="supportdocs-view.jsp" %>
+                    <div class="form-group text-center">
+                        <div class="col-md-12 add-margin">
+                            <button type="button" class="btn btn-primary" id="ReassignSubmit">
+                                <spring:message code='btn.reassign'/>
+                            </button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal"><spring:message
+                                    code='lbl.close'/></button>
+                        </div>
+                    </div>
+                </form>
+                <div id="success-div" style="display: none">
+                    <div><b>
+                        <span class="control-label" id="successmsg"/></b>
+                    </div>
+                    <br/>
+                    <div class="text-center">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" id="reassignclose">
+                            <spring:message code='lbl.close'/></button>
                     </div>
                 </div>
-            </table>
-        </form:form>
+            </div>
+        </div>
     </div>
 </div>
-<div align="center" class="buttonbottom" id="buttondiv">
-    <table>
-        <tr>
-            <td>
-                <button type="submit" class="btn btn-default printbtn"><spring:message code="lbl.print"/></button>
-
-            </td>
-            <td>
-                <button type="button" class="btn btn-default" onclick="self.close()">
-                    <spring:message code="lbl.close"/>
-                </button>
-
-            </td>
-        </tr>
-    </table>
-</div>
-<script
-        src="<cdn:url  value='/resources/global/js/jquery/plugins/jQuery.print.js' context='/egi'/>"></script>
+<script src="<cdn:url  value='/resources/js/app/process-owner-reassignment.js?rnd=${app_release_no}'/>"></script>

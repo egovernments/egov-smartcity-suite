@@ -45,16 +45,40 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.tl.entity.enums;
 
-import org.apache.commons.lang3.StringUtils;
+package org.egov.tl.web.controller.transactions.closure;
 
-public enum ApplicationType {
-    NEW, RENEW,CLOSURE;
+import org.egov.tl.entity.TradeLicense;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
+
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.egov.tl.utils.Constants.BUTTONFORWARD;
+
+@Component
+public class LicenseClosureValidator implements Validator {
 
     @Override
-    public String toString() {
-        return StringUtils.capitalize(name());
+    public boolean supports(Class<?> clazz) {
+        return TradeLicense.class.equals(clazz);
     }
-}
 
+    @Override
+    public void validate(Object target, Errors errors) {
+        TradeLicense license = (TradeLicense) target;
+
+        if (BUTTONFORWARD.equals(license.getWorkflowContainer().getWorkFlowAction())) {
+            if (license.getWorkflowContainer().getApproverPositionId() == null)
+                errors.rejectValue("workflowContainer.approverPositionId", "validate.approver.position");
+
+            if (isBlank(license.getWorkflowContainer().getApproverDesignation()))
+                errors.rejectValue("workflowContainer.approverDesignation", "validate.approver.designation");
+        }
+
+        if (isBlank(license.getWorkflowContainer().getApproverComments()))
+            errors.rejectValue("workflowContainer.approverComments", "validate.remark");
+
+    }
+
+}

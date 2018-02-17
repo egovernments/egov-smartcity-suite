@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -314,7 +314,7 @@ public class LicenseProcessWorkflowService {
         }
     }
 
-    private List<Assignment> getAssignments(WorkFlowMatrix workFlowMatrix) {
+    public List<Assignment> getAssignments(WorkFlowMatrix workFlowMatrix) {
         Department nextAssigneeDept = departmentService.getDepartmentByName(workFlowMatrix.getDepartment());
         List<Designation> nextDesig = designationService.getDesignationsByNames(Arrays.asList(StringUtils.upperCase(workFlowMatrix.getNextDesignation()).split(",")));
         List<Assignment> assignmentList = getAssignmentsForDeptAndDesignation(nextAssigneeDept, nextDesig);

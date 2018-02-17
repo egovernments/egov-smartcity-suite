@@ -49,37 +49,33 @@
 <%@ page language="java" pageEncoding="UTF-8" %>
 <%@ include file="/includes/taglibs.jsp" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<c:choose>
-    <c:when test="${not empty documents}">
-        <div class="col-md-12 col-sm-12 col-xs-12">
-            <ul class="nav nav-tabs" id="settingstab">
-                <li class="active"><a data-toggle="tab" href="#newDocs"
-                                      data-tabidx="0" aria-expanded="true">New</a></li>
-                <li class=""><a data-toggle="tab" href="#renewDocs"
-                                data-tabidx="1" aria-expanded="false">Renew</a></li>
-                <li class=""><a data-toggle="tab" href="#closureDocs"
-                                data-tabidx="1" aria-expanded="false">Closure</a></li>
-            </ul>
-            <div class="tab-content">
-                <div class="tab-pane fade active in" id="newDocs"><br/>
-                    <div id="newTbl">
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="renewDocs"><br/>
-                    <div id="renewTbl">
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="closureDocs"><br/>
-                    <div id="closureTbl">
-                    </div>
-                </div>
+<div class="col-md-12 col-sm-12 col-xs-12">
+    <ul class="nav nav-tabs" id="settingstab">
+        <li class="active"><a data-toggle="tab" href="#newDocs"
+                              data-tabidx="0" aria-expanded="true">
+            <spring:message code="lbl.new"/></a></li>
+        <li class=""><a data-toggle="tab" href="#renewDocs"
+                        data-tabidx="1" aria-expanded="false">
+            <spring:message code="lbl.renew"/></a></li>
+        <li class=""><a data-toggle="tab" href="#closureDocs"
+                        data-tabidx="1" aria-expanded="false">
+            <spring:message code="lbl.closure"/></a></li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane fade active in" id="newDocs"><br/>
+            <div id="newTbl">
             </div>
         </div>
-    </c:when>
-    <c:otherwise>
-        <s:text name="lbl.document.notattach"/>
-    </c:otherwise>
-</c:choose>
+        <div class="tab-pane fade" id="renewDocs"><br/>
+            <div id="renewTbl">
+            </div>
+        </div>
+        <div class="tab-pane fade" id="closureDocs"><br/>
+            <div id="closureTbl">
+            </div>
+        </div>
+    </div>
+</div>
 <style>
     #newTbl > table {
         margin-left: 0;
@@ -101,5 +97,3 @@
         src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
         src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
-
-<script src="<cdn:url  value='/resources/js/app/license-support-docs.js?rnd=${app_release_no}'/>"></script>

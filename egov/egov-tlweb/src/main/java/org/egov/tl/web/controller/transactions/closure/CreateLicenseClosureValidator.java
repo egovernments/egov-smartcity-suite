@@ -46,53 +46,65 @@
  *
  */
 
-package org.egov.tl.web.controller.transactions.legacy;
+package org.egov.tl.web.controller.transactions.closure;
 
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
+import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.tl.entity.TradeLicense;
+import org.egov.tl.service.LicenseClosureProcessflowService;
+import org.egov.tl.service.LicenseProcessWorkflowService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.Errors;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.Valid;
+import java.util.List;
+import java.util.Optional;
 
-@Controller
-@RequestMapping("/legacylicense")
-public class ModifyLegacyLicenseController extends LegacyLicenseController {
-
-    private static final String UPDATE_LEGACY_FORM = "updateform-legacylicense";
+@Component
+public class CreateLicenseClosureValidator extends LicenseClosureValidator {
 
     @Autowired
-    private LegacyLicenseValidator legacyLicenseValidator;
+    private LicenseProcessWorkflowService licenseProcessWorkflowService;
 
-    @ModelAttribute("tradeLicense")
-    public TradeLicense tradeLicense(@PathVariable final Long id) {
-        return tradeLicenseService.getLicenseById(id);
-    }
+    @Autowired
+    private LicenseClosureProcessflowService licenseClosureProcessflowService;
 
-    @GetMapping("/update/{id}")
-    public String update(@ModelAttribute TradeLicense tradeLicense, Model model) {
-        model.addAttribute("legacyInstallmentwiseFees", legacyService.legacyInstallmentwiseFees(tradeLicense));
-        model.addAttribute("legacyFeePayStatus", legacyService.legacyFeePayStatus(tradeLicense));
-        return UPDATE_LEGACY_FORM;
-    }
+    @Autowired
+    private SecurityUtils securityUtils;
 
-    @PostMapping("/update/{id}")
-    public String update(@Valid @ModelAttribute TradeLicense tradeLicense, BindingResult binding, Model model) {
+    @Autowired
+    private AssignmentService assignmentService;
 
-        legacyLicenseValidator.validate(tradeLicense, binding);
-        if (binding.hasErrors()) {
-            model.addAttribute("legacyInstallmentwiseFees", legacyService.legacyInstallmentfee(tradeLicense));
-            model.addAttribute("legacyFeePayStatus", legacyService.legacyInstallmentStatus(tradeLicense));
-            return UPDATE_LEGACY_FORM;
+    @Override
+    public void validate(Object target, Errors errors) {
+        super.validate(target, errors);
+        TradeLicense license = (TradeLicense) target;
+
+        if (!securityUtils.currentUserIsEmployee()) {
+            WorkFlowMatrix workflowMatrix = licenseClosureProcessflowService.getWorkFlowMatrix(license);
+            List<Assignment> assignmentList = licenseProcessWorkflowService.getAssignments(workflowMatrix);
+            if (assignmentList.isEmpty())
+                errors.reject("validate.initiator.not.defined");
+        } else {
+
+            List<Assignment> assignments = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(securityUtils.getCurrentUser().getId());
+            if (assignments.isEmpty()) {
+                errors.reject("validate.assignee");
+            } else {
+                String designation = licenseClosureProcessflowService.getWorkFlowMatrix(license).getCurrentDesignation();
+                Optional<Assignment> empAssignment = assignments
+                        .stream()
+                        .filter(assignment -> designation.contains(assignment.getDesignation().getName())).findAny();
+                if (!empAssignment.isPresent())
+                    errors.reject("validate.assignee");
+            }
         }
-        legacyService.updateLegacy(tradeLicense);
-        return "redirect:/legacylicense/view/" + tradeLicense.getApplicationNumber();
-    }
 
+        if (license.getLicenseDocuments().stream().anyMatch(licenseDocument -> licenseDocument.getType().isMandatory()
+                && licenseDocument.getMultipartFiles().stream().anyMatch(MultipartFile::isEmpty)))
+            errors.reject("validate.supportDocs");
+    }
 }
