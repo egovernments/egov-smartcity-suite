@@ -795,22 +795,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             transitionWorkFlow(property);
             return reject();
         }
-        if(SOURCE_SURVEY.equalsIgnoreCase(property.getSource()) 
-               && property.getCurrentState().getValue().toUpperCase().endsWith(WF_STATE_REVENUE_OFFICER_APPROVED.toUpperCase())){
-            BigDecimal surveyVariance = propertyTaxUtil.getTaxDifferenceForGIS(property);
-            property.setSurveyVariance(surveyVariance);
-            SurveyBean surveyBean = new SurveyBean();
-            if(surveyVariance.compareTo(BigDecimal.TEN)>0 && !property.isThirdPartyVerified()){
-                noticeService.generateComparisonNotice(property);
-                surveyBean.setProperty(property);
-                surveyBean.setToBeRefferdThirdParty(true);
-                propertySurveyService.updateSurveyIndex(APPLICATION_TYPE_NEW_ASSESSENT, surveyBean);
-            }
-        }
         basicProp.setUnderWorkflow(true);
         basicPropertyService.applyAuditing(property.getState());
-        basicProp.addProperty(property);
-        propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
         if (SOURCE_SURVEY.equalsIgnoreCase(property.getSource())) {
             SurveyBean surveyBean = new SurveyBean();
             BigDecimal totalTax = BigDecimal.ZERO;
@@ -820,11 +806,22 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                     || StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT)) {
                 for (EgDemandDetails demandDetail : property.getPtDemandSet().iterator().next().getEgDemandDetails())
                     totalTax = totalTax.add(demandDetail.getAmount());
+                surveyBean.setApplicationTax(totalTax);
             }
-            surveyBean.setApplicationTax(totalTax);
+            if(property.getCurrentState().getValue().toUpperCase().endsWith(WF_STATE_REVENUE_OFFICER_APPROVED.toUpperCase())){
+                BigDecimal surveyVariance = propertyTaxUtil.getTaxDifferenceForGIS(property);
+                property.setSurveyVariance(surveyVariance);
+                if(surveyVariance.compareTo(BigDecimal.TEN)>0 && !property.isThirdPartyVerified()){
+                    noticeService.generateComparisonNotice(property);
+                    property.setSentToThirdParty(true);
+                    surveyBean.setProperty(property);
+                }
+            }
             propertySurveyService.updateSurveyIndex(APPLICATION_TYPE_NEW_ASSESSENT, surveyBean);
         }
         
+        basicProp.addProperty(property);
+        propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
         if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(property.getSource()))
             propService.updatePortal(property, APPLICATION_TYPE_NEW_ASSESSENT);
         basicPropertyService.persist(basicProp);

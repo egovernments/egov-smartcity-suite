@@ -130,6 +130,7 @@ public class PropertyImpl extends StateAware<Position> implements Property {
     private String referenceId;
     private boolean thirdPartyVerified = false;
     private BigDecimal surveyVariance = BigDecimal.ZERO;
+    private boolean sentToThirdParty = false;
 
     /**
      * @Size(min=1) is not working when we modify a migrated property, Reason is
@@ -806,6 +807,16 @@ public class PropertyImpl extends StateAware<Position> implements Property {
     @Override
     public void setSurveyVariance(BigDecimal surveyVariance) {
         this.surveyVariance = surveyVariance;
+    }
+
+    @Override
+    public boolean isSentToThirdParty() {
+        return sentToThirdParty;
+    }
+
+    @Override
+    public void setSentToThirdParty(boolean sentToThirdParty) {
+        this.sentToThirdParty = sentToThirdParty;
     }
     
 }

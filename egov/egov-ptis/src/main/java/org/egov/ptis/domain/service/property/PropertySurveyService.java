@@ -56,7 +56,6 @@ import static org.egov.infra.utils.ApplicationConstant.CITY_REGION_NAME_KEY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_OFFICER_APPROVED;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -75,8 +74,6 @@ import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.view.SurveyBean;
 import org.egov.ptis.repository.es.PTGISIndexRepository;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -116,9 +113,9 @@ public class PropertySurveyService {
         PTGISIndex ptGisIndex = findByApplicationNo(surveyBean.getProperty().getApplicationNo());
 
         if (ptGisIndex == null) {
-            ptGisIndex=createPropertySurveyindex(applicationType, surveyBean);
+            createPropertySurveyindex(applicationType, surveyBean);
         } else {
-            ptGisIndex=updatePropertySurveyIndex(surveyBean, ptGisIndex);
+            updatePropertySurveyIndex(surveyBean, ptGisIndex);
         }
 
     }
@@ -238,10 +235,6 @@ public class PropertySurveyService {
             ptGisIndex.setCompletionDate(propertyImpl.getState().getLastModifiedDate());
             ptGisIndex.setIsApproved(true);
         }
-        if (stateValue.endsWith(WF_STATE_REVENUE_OFFICER_APPROVED)
-                && propertyImpl.getSurveyVariance().compareTo(BigDecimal.TEN) > 0 && !propertyImpl.isThirdPartyVerified()) {
-            ptGisIndex.setSentToThirdParty(true);
-        }
         ptGisIndex.setApplicationStatus(stateValue);
         ptGisIndex.setAssessmentNo(StringUtils.isBlank(basicProperty.getUpicNo())
                 ? StringUtils.EMPTY
@@ -250,6 +243,7 @@ public class PropertySurveyService {
         ptGisIndex.setIsCancelled(stateValue.contains(WF_STATE_REJECTED) ? true : false);
         ptGisIndex.setThirdPrtyFlag(propertyImpl.isThirdPartyVerified());
         ptGisIndex.setDoorNo(doorNo == null ? ptGisIndex.getDoorNo() : doorNo);
+        ptGisIndex.setSentToThirdParty(propertyImpl.isSentToThirdParty());
 
         ptGisIndex.setTaxVariance(taxVar);
     }

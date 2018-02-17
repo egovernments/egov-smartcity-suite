@@ -244,4 +244,8 @@ public interface Property extends Auditable {
 
     public void setSurveyVariance(BigDecimal surveyVariance);
     
+    public boolean isSentToThirdParty();
+
+    public void setSentToThirdParty(boolean sentToThirdParty);
+    
 }

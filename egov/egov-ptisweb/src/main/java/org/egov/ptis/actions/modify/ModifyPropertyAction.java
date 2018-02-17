@@ -782,24 +782,21 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         if (multipleSubmitCondition(propertyModel, approverPositionId))
             return multipleSubmitRedirect();
         transitionWorkFlow(propertyModel);
-        if(SOURCE_SURVEY.equalsIgnoreCase(propertyModel.getSource()) 
-                && propertyModel.getCurrentState().getValue().toUpperCase().endsWith(WF_STATE_REVENUE_OFFICER_APPROVED.toUpperCase())){
-            BigDecimal surveyVariance = propertyTaxUtil.getTaxDifferenceForGIS(propertyModel);
-            propertyModel.setSurveyVariance(surveyVariance);
-            if(surveyVariance.compareTo(BigDecimal.TEN)>0 && !propertyModel.isThirdPartyVerified()){
-                SurveyBean surveyBean = new SurveyBean();
-                noticeService.generateComparisonNotice(propertyModel);
-                surveyBean.setProperty(propertyModel);
-                surveyBean.setToBeRefferdThirdParty(true);
-                propertySurveyService.updateSurveyIndex(APPLICATION_TYPE_ALTER_ASSESSENT, surveyBean);  
+        if (SOURCE_SURVEY.equalsIgnoreCase(propertyModel.getSource())) {
+            SurveyBean surveyBean = new SurveyBean();
+            if (propertyModel.getCurrentState().getValue().toUpperCase()
+                    .endsWith(WF_STATE_REVENUE_OFFICER_APPROVED.toUpperCase())) {
+                BigDecimal surveyVariance = propertyTaxUtil.getTaxDifferenceForGIS(propertyModel);
+                propertyModel.setSurveyVariance(surveyVariance);
+                if (surveyVariance.compareTo(BigDecimal.TEN) > 0 && !propertyModel.isThirdPartyVerified()) {
+                    noticeService.generateComparisonNotice(propertyModel);
+                    propertyModel.setSentToThirdParty(true);
+                }
             }
-            
+            surveyBean.setProperty(propertyModel);
+            propertySurveyService.updateSurveyIndex(APPLICATION_TYPE_ALTER_ASSESSENT, surveyBean);
         }
-        if (SOURCE_SURVEY.equalsIgnoreCase(propertyModel.getSource())){
-        SurveyBean surveyBean = new SurveyBean();
-        surveyBean.setProperty(propertyModel);
-        propertySurveyService.updateSurveyIndex(APPLICATION_TYPE_ALTER_ASSESSENT, surveyBean);
-    }
+
         propService.updateIndexes(propertyModel, getApplicationType());
         basicPropertyService.update(basicProp);
         if (propertyModel.getSource().equalsIgnoreCase(Source.CITIZENPORTAL.toString()))
