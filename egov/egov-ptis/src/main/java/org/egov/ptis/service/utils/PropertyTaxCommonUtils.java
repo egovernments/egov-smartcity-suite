@@ -204,10 +204,10 @@ public class PropertyTaxCommonUtils {
                         wfPropTaxDetailsMap.put("firstHalf", CURRENTYEAR_FIRST_HALF);
                         wfPropTaxDetailsMap.put("firstHalfGT",
                                 reasonDmd.get(DEMANDRSN_STR_GENERAL_TAX) != null
-                                        ? reasonDmd.get(DEMANDRSN_STR_GENERAL_TAX)
+                                        ? getAggregateGenralTax(reasonDmd)
                                         : demandCollMap.get(DEMANDRSN_STR_VACANT_TAX));
-                        wfPropTaxDetailsMap.put("firstHalfEC", reasonDmd.get(DEMANDRSN_STR_EDUCATIONAL_CESS) != null
-                                ? reasonDmd.get(DEMANDRSN_STR_EDUCATIONAL_CESS) : BigDecimal.ZERO);
+                        wfPropTaxDetailsMap.put("firstHalfEC", reasonDmd.get(DEMANDRSN_STR_EDUCATIONAL_TAX) != null
+                                ? reasonDmd.get(DEMANDRSN_STR_EDUCATIONAL_TAX) : BigDecimal.ZERO);
                         wfPropTaxDetailsMap.put("firstHalfLC", reasonDmd.get(DEMANDRSN_STR_LIBRARY_CESS));
                         wfPropTaxDetailsMap.put("firstHalfUAP",
                                 reasonDmd.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) != null
@@ -224,10 +224,10 @@ public class PropertyTaxCommonUtils {
                         wfPropTaxDetailsMap.put("secondHalf", CURRENTYEAR_SECOND_HALF);
                         wfPropTaxDetailsMap.put("secondHalfGT",
                                 reasonDmd.get(DEMANDRSN_STR_GENERAL_TAX) != null
-                                        ? reasonDmd.get(DEMANDRSN_STR_GENERAL_TAX)
+                                        ? getAggregateGenralTax(reasonDmd)
                                         : demandCollMap.get(DEMANDRSN_STR_VACANT_TAX));
-                        wfPropTaxDetailsMap.put("secondHalfEC", reasonDmd.get(DEMANDRSN_STR_EDUCATIONAL_CESS) != null
-                                ? reasonDmd.get(DEMANDRSN_STR_EDUCATIONAL_CESS) : BigDecimal.ZERO);
+                        wfPropTaxDetailsMap.put("secondHalfEC", reasonDmd.get(DEMANDRSN_STR_EDUCATIONAL_TAX) != null
+                                ? reasonDmd.get(DEMANDRSN_STR_EDUCATIONAL_TAX) : BigDecimal.ZERO);
                         wfPropTaxDetailsMap.put("secondHalfLC", reasonDmd.get(DEMANDRSN_STR_LIBRARY_CESS));
                         wfPropTaxDetailsMap.put("secondHalfUAP",
                                 reasonDmd.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) != null
@@ -395,11 +395,11 @@ public class PropertyTaxCommonUtils {
         BigDecimal serviceCharges = BigDecimal.ZERO;
         for (final UnitTaxCalculationInfo unitTaxCalcInfo : calculationInfo.getUnitTaxCalculationInfos())
             for (final MiscellaneousTax miscTax : unitTaxCalcInfo.getMiscellaneousTaxes())
-                if (miscTax.getTaxName() == DEMANDRSN_CODE_GENERAL_TAX)
+                if (NON_VACANT_TAX_DEMAND_CODES.contains(miscTax.getTaxName()))
                     genTax = genTax.add(miscTax.getTotalCalculatedTax());
                 else if (miscTax.getTaxName() == DEMANDRSN_CODE_UNAUTHORIZED_PENALTY)
                     unAuthPenalty = unAuthPenalty.add(miscTax.getTotalCalculatedTax());
-                else if (miscTax.getTaxName() == DEMANDRSN_CODE_EDUCATIONAL_CESS)
+                else if (miscTax.getTaxName() == DEMANDRSN_CODE_EDUCATIONAL_TAX)
                     eduTax = eduTax.add(miscTax.getTotalCalculatedTax());
                 else if (miscTax.getTaxName() == DEMANDRSN_CODE_VACANT_TAX)
                     vacLandTax = vacLandTax.add(miscTax.getTotalCalculatedTax());
@@ -426,7 +426,7 @@ public class PropertyTaxCommonUtils {
         if (OWNERSHIP_TYPE_VAC_LAND.equalsIgnoreCase(propTypeMstr.getCode()))
             resultString.append("~Vacant Land Tax=" + formatAmount(vacLandTax));
         else
-            resultString.append("~Property Tax=" + formatAmount(genTax) + "~Education Cess=" + formatAmount(eduTax));
+            resultString.append("~Property Tax=" + formatAmount(genTax) + "~Education Tax=" + formatAmount(eduTax));
         resultString.append("~Library Cess=" + formatAmount(libCess));
         final Boolean isCorporation = propertyTaxUtil.isCorporation();
         if (isCorporation)
@@ -804,6 +804,32 @@ public class PropertyTaxCommonUtils {
         oldSurroundings.setSouthBoundary(propertyId.getSouthBoundary() != null ? propertyId.getSouthBoundary() : null);
         oldSurroundings.setWestBoundary(propertyId.getWestBoundary() != null ? propertyId.getWestBoundary() : null);
         return oldSurroundings;
+    }
+    
+    /**
+     * Returns sum of all primary tax heads
+     *
+     * @return BigDecimal
+     */
+    public BigDecimal getAggregateGenralTax(Map<String, BigDecimal> demandCollMap) {
+        
+        return nullCheckBigDecimal(demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX))
+                .add(nullCheckBigDecimal(demandCollMap.get(PropertyTaxConstants.DEMANDRSN_STR_LIGHT_TAX)))
+                .add(nullCheckBigDecimal(demandCollMap.get(DEMANDRSN_STR_WATER_TAX)))
+                .add(nullCheckBigDecimal(demandCollMap.get(DEMANDRSN_STR_SCAVENGE_TAX)))
+                .add(nullCheckBigDecimal(demandCollMap.get(DEMANDRSN_STR_DRAINAGE_TAX)));
+
+    }
+    
+
+    /**
+     * Returns zero if value is null otherwise value
+     *
+     * @return BigDecimal
+     */
+    public BigDecimal nullCheckBigDecimal(BigDecimal value) {
+
+        return value != null ? value : BigDecimal.ZERO;
     }
 
 }

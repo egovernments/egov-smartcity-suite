@@ -353,8 +353,9 @@ public class VacancyRemissionService {
         final Set<Ptdemand> activePropPtDemandSet = vacancyRemission.getBasicProperty().getActiveProperty().getPtDemandSet();
         BigDecimal excess = BigDecimal.ZERO;
         final Set<String> demandReasons = new LinkedHashSet<>(
-                Arrays.asList(DEMANDRSN_CODE_GENERAL_TAX, DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_EDUCATIONAL_CESS,
-                        DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY));
+                Arrays.asList(DEMANDRSN_CODE_GENERAL_TAX, DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_EDUCATIONAL_TAX,
+                        DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, DEMANDRSN_CODE_SCAVENGE_TAX, 
+                        DEMANDRSN_CODE_WATER_TAX, DEMANDRSN_CODE_LIGHT_TAX, DEMANDRSN_CODE_DRAINAGE_TAX));
         Ptdemand currPtDemand = getCurrentPTDemand(demandInstallment, activePropPtDemandSet);
         if (currPtDemand != null) {
             final Set<EgDemandDetails> effectiveInstDemandDetails = propertyService
@@ -438,9 +439,9 @@ public class VacancyRemissionService {
                 final Map<String, Map<String, BigDecimal>> demandCollMap = propertyTaxUtil.prepareDemandDetForView(property,
                         propertyTaxCommonUtils.getCurrentInstallment());
                 final Map<String, BigDecimal> currentTaxDetails = propertyService.getCurrentTaxDetails(demandCollMap, new Date());
-                model.addAttribute("propertyTax", currentTaxDetails.get(DEMANDRSN_STR_GENERAL_TAX));
-                model.addAttribute("eduCess", currentTaxDetails.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO
-                        : currentTaxDetails.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
+                model.addAttribute("propertyTax", propertyTaxCommonUtils.getAggregateGenralTax(currentTaxDetails));
+                model.addAttribute("eduCess", currentTaxDetails.get(DEMANDRSN_STR_EDUCATIONAL_TAX) == null ? BigDecimal.ZERO
+                        : currentTaxDetails.get(DEMANDRSN_STR_EDUCATIONAL_TAX));
                 model.addAttribute("libraryCess", currentTaxDetails.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO
                         : currentTaxDetails.get(DEMANDRSN_STR_LIBRARY_CESS));
                 model.addAttribute("currTax", currentTaxDetails.get(CURR_DMD_STR));

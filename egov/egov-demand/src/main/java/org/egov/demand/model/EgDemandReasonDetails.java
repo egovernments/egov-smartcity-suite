@@ -58,11 +58,11 @@ import java.util.Date;
 
 public class EgDemandReasonDetails implements java.io.Serializable {
 
-	// Fields
+	
+    private static final long serialVersionUID = -1544619397670000743L;
 
 	private Long id;
-	private EgDemandReason egDemandReason;
-	// ToDo: Make it Float
+	private EgDemandReasonMaster egDemandReasonMaster;
 	private BigDecimal percentage;
 	private Date fromDate;
 	private Date toDate;
@@ -104,12 +104,12 @@ public class EgDemandReasonDetails implements java.io.Serializable {
 		this.id = id;
 	}
 
-	public EgDemandReason getEgDemandReason() {
-		return this.egDemandReason;
+	public EgDemandReasonMaster getEgDemandReasonMaster() {
+		return this.egDemandReasonMaster;
 	}
 
-	public void setEgDemandReason(EgDemandReason egDemandReason) {
-		this.egDemandReason = egDemandReason;
+	public void setEgDemandReasonMaster(EgDemandReasonMaster egDemandReason) {
+		this.egDemandReasonMaster = egDemandReason;
 	}
 
 	public BigDecimal getPercentage() {

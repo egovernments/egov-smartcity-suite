@@ -89,7 +89,7 @@ import java.util.List;
 import java.util.Set;
 
 import static java.math.BigDecimal.ZERO;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY;
@@ -412,7 +412,7 @@ public class DailyCollectionReportAction extends BaseFormAction {
 						arrTotalChequeCollInfo.setGeneralTax(arrTotalChequeCollInfo.getGeneralTax().add(
 								rcptDetail.getCramount()));
 					}
-				} else if (GLCODEMAP_FOR_ARREARTAX.get(DEMANDRSN_CODE_EDUCATIONAL_CESS).equals(glcode)) {
+				} else if (GLCODEMAP_FOR_ARREARTAX.get(DEMANDRSN_CODE_EDUCATIONAL_TAX).equals(glcode)) {
 
 					arrCollInfo.setSewerageTax(arrCollInfo.getSewerageTax().add(
 							rcptDetail.getCramount() != null ? rcptDetail.getCramount() : ZERO));
@@ -467,7 +467,7 @@ public class DailyCollectionReportAction extends BaseFormAction {
 						currTotalChequeCollInfo.setGeneralTax(currTotalChequeCollInfo.getGeneralTax().add(
 								rcptDetail.getCramount()));
 					}
-				} else if (GLCODEMAP_FOR_CURRENTTAX.get(DEMANDRSN_CODE_EDUCATIONAL_CESS).equals(glcode)) {
+				} else if (GLCODEMAP_FOR_CURRENTTAX.get(DEMANDRSN_CODE_EDUCATIONAL_TAX).equals(glcode)) {
 
 					currCollInfo.setSewerageTax(rcptDetail.getCramount());
 					currTotalCollInfo.setSewerageTax(currTotalCollInfo.getSewerageTax().add(rcptDetail.getCramount()));

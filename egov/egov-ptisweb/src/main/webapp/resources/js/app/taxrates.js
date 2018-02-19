@@ -64,7 +64,7 @@ function validateTaxValues() {
 		return false;
 	} else if (Number(existEduTax) > Number(newEduTax)) {
 		bootbox
-				.alert('New Tax for Education Cess should be greater than existing tax!');
+				.alert('New Tax for Education Tax should be greater than existing tax!');
 		return false;
 	}
 	return true;

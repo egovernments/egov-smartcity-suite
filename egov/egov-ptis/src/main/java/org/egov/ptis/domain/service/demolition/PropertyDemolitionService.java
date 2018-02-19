@@ -529,9 +529,9 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
                 final Map<String, Map<String, BigDecimal>> demandCollMap = propertyTaxUtil.prepareDemandDetForView(property,
                         propertyTaxCommonUtils.getCurrentInstallment());
                 final Map<String, BigDecimal> currentTaxDetails = propertyService.getCurrentTaxDetails(demandCollMap, new Date());
-                model.addAttribute("propertyTax", currentTaxDetails.get(DEMANDRSN_STR_GENERAL_TAX));
-                model.addAttribute("eduCess", currentTaxDetails.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO
-                        : currentTaxDetails.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
+                model.addAttribute("propertyTax", propertyTaxCommonUtils.getAggregateGenralTax(currentTaxDetails));
+                model.addAttribute("eduCess", currentTaxDetails.get(DEMANDRSN_STR_EDUCATIONAL_TAX) == null ? BigDecimal.ZERO
+                        : currentTaxDetails.get(DEMANDRSN_STR_EDUCATIONAL_TAX));
                 model.addAttribute("libraryCess", currentTaxDetails.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO
                         : currentTaxDetails.get(DEMANDRSN_STR_LIBRARY_CESS));
                 model.addAttribute("currTax", currentTaxDetails.get(CURR_DMD_STR));

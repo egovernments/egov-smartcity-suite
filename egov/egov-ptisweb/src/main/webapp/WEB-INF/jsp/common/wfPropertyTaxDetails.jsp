@@ -53,7 +53,7 @@
 				<tr>
 				<th class="bluebgheadtd"></th>
 				<th class="bluebgheadtd">Property Tax</th>
-			    <th class="bluebgheadtd">Education Cess</th>
+			    <th class="bluebgheadtd">Education Tax</th>
 			    <th class="bluebgheadtd">Library Cess</th>
 			    <th class="bluebgheadtd">Unauthorized Penalty</th>
 				<th class="bluebgheadtd">Total Tax</th>

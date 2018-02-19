@@ -581,12 +581,12 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
                 totalTax = totalTax.add(demandDetail.getAmount());
 
                 if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                        .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS))
+                        .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_TAX))
                     propertyTax = propertyTax.add(demandDetail.getAmount());
                 setLibraryCess(infoBean, propertyType, demandDetail);
 
-                if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                        .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX)
+                        if(PropertyTaxConstants.NON_VACANT_TAX_DEMAND_CODES
+                                .contains(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode())
                         || demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
                                 .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX))
                     propertyTax = propertyTax.add(demandDetail.getAmount());
