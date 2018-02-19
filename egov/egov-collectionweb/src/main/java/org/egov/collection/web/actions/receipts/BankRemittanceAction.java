@@ -269,7 +269,7 @@ public class BankRemittanceAction extends BaseFormAction {
                 getDepartmentCodeArray(), accountNumberId, positionUser, getReceiptNumberArray(), remittanceDate);
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
         LOGGER.info("$$$$$$ Time taken to persist the remittance list (ms) = " + elapsedTimeMillis);
-        bankRemittanceList = remittanceService.prepareBankRemittanceReport(voucherHeaderValues);
+        bankRemittanceList = remittanceService.prepareCashRemittanceReport(voucherHeaderValues);
         if (getSession().get(REMITTANCE_LIST) != null)
             getSession().remove(REMITTANCE_LIST);
         getSession().put(REMITTANCE_LIST, bankRemittanceList);

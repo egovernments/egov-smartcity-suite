@@ -47,6 +47,9 @@
  */
 package org.egov.collection.integration.services;
 
+import java.util.List;
+import java.util.Map;
+
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.RemittanceInstrument;
 import org.egov.collection.utils.CollectionsUtil;
@@ -61,9 +64,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Map;
 
 @Transactional(readOnly = true)
 @Service
@@ -97,7 +97,7 @@ public class RemittanceSchedulerService {
         Boolean voucherTypeForChequeDDCard = false;
         if (collectionsUtil.getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                 CollectionConstants.APPCONFIG_VALUE_REMITTANCEVOUCHERTYPEFORCHEQUEDDCARD).equals(
-                CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE))
+                        CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE))
             voucherTypeForChequeDDCard = true;
         final Map<String, Object> instrumentDepositMap = financialsUtil.prepareForUpdateInstrumentDepositSQL();
         if (!reconcileList.isEmpty())
@@ -110,7 +110,7 @@ public class RemittanceSchedulerService {
                                         .getVoucherHeader());
                         financialsUtil.updateCashDeposit(cashMap, remittanceInstrument.getRemittance()
                                 .getVoucherHeader(), remittanceInstrument.getInstrumentHeader(), remittanceInstrument
-                                .getRemittance().getBankAccount());
+                                        .getRemittance().getBankAccount());
                     }
                     remittanceInstrument.setReconciled(Boolean.TRUE);
                     remittanceInstrumentService.persist(remittanceInstrument);
@@ -120,21 +120,21 @@ public class RemittanceSchedulerService {
                     if (bankRemit.getRemittance().getVoucherHeader().getId() != null) {
                         final Map<String, Object> chequeMap = constructInstrumentMap(instrumentDepositMap, bankRemit
                                 .getRemittance().getBankAccount(), bankRemit.getInstrumentHeader(), bankRemit
-                                .getRemittance().getVoucherHeader());
+                                        .getRemittance().getVoucherHeader());
                         if (voucherTypeForChequeDDCard)
                             financialsUtil.updateCheque_DD_Card_Deposit_Receipt(chequeMap);
                         else
                             financialsUtil.updateCheque_DD_Card_Deposit(chequeMap, bankRemit.getRemittance()
                                     .getVoucherHeader(), bankRemit.getInstrumentHeader(), bankRemit.getRemittance()
-                                    .getBankAccount());
+                                            .getBankAccount());
                     }
                     bankRemit.setReconciled(Boolean.TRUE);
                     remittanceInstrumentService.persist(bankRemit);
                 }
     }
 
-    private Map<String, Object> constructInstrumentMap(final Map<String, Object> instrumentDepositMap,
-                                                       final Bankaccount bankaccount, final InstrumentHeader instrumentHeader, final CVoucherHeader voucherHeader) {
+    public Map<String, Object> constructInstrumentMap(final Map<String, Object> instrumentDepositMap,
+            final Bankaccount bankaccount, final InstrumentHeader instrumentHeader, final CVoucherHeader voucherHeader) {
         final InstrumentType instrumentType = (InstrumentType) persistenceService.find(
                 "select it from InstrumentType it,InstrumentHeader ih where " + "ih.instrumentType=it.id and ih.id=?",
                 instrumentHeader.getId());

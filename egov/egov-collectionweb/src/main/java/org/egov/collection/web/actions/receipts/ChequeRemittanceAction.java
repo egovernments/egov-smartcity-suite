@@ -105,7 +105,7 @@ public class ChequeRemittanceAction extends BaseFormAction {
             .append(" where fd.ID=ba.FUNDID and ba.id= :accountNumberId").toString();
     private transient List<HashMap<String, Object>> paramList = null;
     private final ReceiptHeader receiptHeaderIntsance = new ReceiptHeader();
-    private List<ReceiptHeader> voucherHeaderValues = new ArrayList<>(0);
+    private List<ReceiptHeader> remittedReceiptHeaderList = new ArrayList<>(0);
     private String[] serviceNameArray;
     private String[] totalCashAmountArray;
     private String[] totalChequeAmountArray;
@@ -262,14 +262,15 @@ public class ChequeRemittanceAction extends BaseFormAction {
         if (accountNumberId == null || accountNumberId == -1)
             throw new ValidationException(Arrays.asList(new ValidationError("Please select Account number",
                     "bankremittance.error.noaccountNumberselected")));
-        voucherHeaderValues = remittanceService.createChequeBankRemittance(getServiceNameArray(), getTotalCashAmountArray(),
+        remittedReceiptHeaderList = remittanceService.createChequeBankRemittance(getServiceNameArray(), getTotalCashAmountArray(),
                 getTotalChequeAmountArray(), getTotalCardAmountArray(), getReceiptDateArray(), getFundCodeArray(),
                 getDepartmentCodeArray(), accountNumberId, positionUser, getReceiptNumberArray(), remittanceDate,
                 getInstrumentIdArray());
 
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
         LOGGER.info("$$$$$$ Time taken to persist the remittance list (ms) = " + elapsedTimeMillis);
-        bankRemittanceList = remittanceService.prepareBankRemittanceReport(voucherHeaderValues);
+        bankRemittanceList = remittanceService.prepareChequeRemittanceReport(remittedReceiptHeaderList,
+                Arrays.asList(instrumentIdArray));
         if (getSession().get(REMITTANCE_LIST) != null)
             getSession().remove(REMITTANCE_LIST);
         getSession().put(REMITTANCE_LIST, bankRemittanceList);
@@ -390,20 +391,6 @@ public class ChequeRemittanceAction extends BaseFormAction {
      */
     public void setReceiptDateArray(final String[] receiptDateArray) {
         this.receiptDateArray = receiptDateArray;
-    }
-
-    /**
-     * @return the voucherHeaderValues
-     */
-    public List<ReceiptHeader> getVoucherHeaderValues() {
-        return voucherHeaderValues;
-    }
-
-    /**
-     * @param voucherHeaderValues the voucherHeaderValues to set
-     */
-    public void setVoucherHeaderValues(final List<ReceiptHeader> voucherHeaderValues) {
-        this.voucherHeaderValues = voucherHeaderValues;
     }
 
     /**
@@ -646,6 +633,14 @@ public class ChequeRemittanceAction extends BaseFormAction {
 
     public void setInstrumentIdArray(String[] instrumentIdArray) {
         this.instrumentIdArray = instrumentIdArray;
+    }
+
+    public List<ReceiptHeader> getRemittedReceiptHeaderList() {
+        return remittedReceiptHeaderList;
+    }
+
+    public void setRemittedReceiptHeaderList(List<ReceiptHeader> remittedReceiptHeaderList) {
+        this.remittedReceiptHeaderList = remittedReceiptHeaderList;
     }
 
 }

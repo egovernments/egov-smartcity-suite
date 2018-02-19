@@ -53,11 +53,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.egov.billsaccounting.services.VoucherConstant;
@@ -67,6 +69,7 @@ import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.entity.Remittance;
 import org.egov.collection.entity.RemittanceDetail;
 import org.egov.collection.entity.RemittanceInstrument;
+import org.egov.collection.integration.services.RemittanceSchedulerService;
 import org.egov.collection.utils.CollectionsNumberGenerator;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.collection.utils.FinancialsUtil;
@@ -108,6 +111,11 @@ public class RemittanceServiceImpl extends RemittanceService {
     @Autowired
     @Qualifier("branchUserMapService")
     private PersistenceService<BranchUserMap, Long> branchUserMapService;
+    @Autowired
+    @Qualifier("remittanceInstrumentService")
+    private PersistenceService<RemittanceInstrument, Long> remittanceInstrumentService;
+    @Autowired
+    private transient RemittanceSchedulerService remittanceSchedulerService;
 
     /**
      * Create Contra Vouchers for String array passed of serviceName, totalCashAmount, totalChequeAmount, totalCardAmount and
@@ -245,7 +253,7 @@ public class RemittanceServiceImpl extends RemittanceService {
         }
         final Remittance remittance = populateAndPersistRemittance(totalCashAmt, BigDecimal.ZERO, fundCode,
                 cashInHandGLCode, null, serviceGlCode, functionCode, bankRemitList, createVoucher,
-                voucherDate, depositedBankAccount, totalCashVoucherAmt, BigDecimal.ZERO);
+                voucherDate, depositedBankAccount, totalCashVoucherAmt, BigDecimal.ZERO, Collections.EMPTY_LIST);
 
         for (final ReceiptHeader receiptHeader : bankRemitList) {
             receiptHeader.setStatus(receiptStatusRemitted);
@@ -303,12 +311,13 @@ public class RemittanceServiceImpl extends RemittanceService {
             final String fundCode, final String cashInHandGLCode, final String chequeInHandGLcode,
             final String serviceGLCode, final String functionCode, final List<ReceiptHeader> receiptHeadList,
             final String createVoucher, final Date voucherDate, final Bankaccount depositedBankAccount,
-            final BigDecimal totalCashVoucherAmt, final BigDecimal totalChequeVoucherAmt) {
+            final BigDecimal totalCashVoucherAmt, final BigDecimal totalChequeVoucherAmt, List<String> instrumentId) {
         CVoucherHeader voucherHeader;
         final CFinancialYear financialYear = collectionsUtil.getFinancialYearforDate(new Date());
         BigDecimal totalAmount = BigDecimal.ZERO;
         final Remittance remittance = new Remittance();
         final List<RemittanceDetail> remittanceDetailsList = new ArrayList<>();
+        Boolean isChequeAmount = Boolean.FALSE;
         remittance.setReferenceDate(voucherDate);
         final EgwStatus receiptStatusApproved = collectionsUtil.getStatusForModuleAndCode(
                 CollectionConstants.MODULE_NAME_REMITTANCE, CollectionConstants.REMITTANCE_STATUS_CODE_APPROVED);
@@ -328,9 +337,11 @@ public class RemittanceServiceImpl extends RemittanceService {
             remittanceDetailsList.addAll(
                     getRemittanceDetailsList(totalChequeAmount, BigDecimal.ZERO, chequeInHandGLcode, remittance));
             totalAmount = totalAmount.add(totalChequeAmount);
+            isChequeAmount = Boolean.TRUE;
         }
         remittanceDetailsList.addAll(getRemittanceDetailsList(BigDecimal.ZERO, totalAmount, serviceGLCode, remittance));
         remittance.setRemittanceDetails(new HashSet<RemittanceDetail>(remittanceDetailsList));
+        HashSet<RemittanceInstrument> remittanceInstrumentSet = new HashSet<RemittanceInstrument>();
         remittancePersistService.persist(remittance);
         if (CollectionConstants.YES.equalsIgnoreCase(createVoucher)
                 && (totalCashVoucherAmt.compareTo(BigDecimal.ZERO) > 0
@@ -340,21 +351,27 @@ public class RemittanceServiceImpl extends RemittanceService {
             remittance.setVoucherHeader(voucherHeader);
             for (ReceiptHeader receiptHeader : receiptHeadList) {
                 for (InstrumentHeader instHead : receiptHeader.getReceiptInstrument()) {
-                    persistRemittanceInstrument(remittance, instHead);
+                    if (!isChequeAmount || (isChequeAmount && instrumentId.contains(instHead.getId().toString())))
+                        remittanceInstrumentSet.add(prepareRemittanceInstrument(remittance, instHead));
                 }
             }
+            remittance.setRemittanceInstruments(remittanceInstrumentSet);
             remittancePersistService.persist(remittance);
         }
         return remittance;
     }
 
-    @Transactional
-    public void persistRemittanceInstrument(Remittance remittance, InstrumentHeader instrumentHeader) {
+    private RemittanceInstrument prepareRemittanceInstrument(Remittance remittance, InstrumentHeader instrumentHeader) {
         RemittanceInstrument remittanceInstrument = new RemittanceInstrument();
         remittanceInstrument.setRemittance(remittance);
         remittanceInstrument.setInstrumentHeader(instrumentHeader);
-        remittanceInstrument.setReconciled(Boolean.FALSE);
-        persistenceService.persist(remittanceInstrument);
+        if (instrumentHeader != null
+                && (instrumentHeader.getInstrumentType().getType().equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE)
+                        || instrumentHeader.getInstrumentType().getType().equals(CollectionConstants.INSTRUMENTTYPE_DD))) {
+            remittanceInstrument.setReconciled(Boolean.TRUE);
+        } else
+            remittanceInstrument.setReconciled(Boolean.FALSE);
+        return remittanceInstrument;
     }
 
     public HashMap<String, Object> prepareAccountCodeDetails(final String glCode, final String functionCode,
@@ -627,7 +644,6 @@ public class RemittanceServiceImpl extends RemittanceService {
             String[] totalChequeAmountArr, String[] totalCardAmount, String[] receiptDateArray, String[] fundCodeArray,
             String[] departmentCodeArray, Integer accountNumberId, Integer positionUser, String[] receiptNumberArray,
             Date remittanceDate, String[] instrumentIdArray) {
-
         final List<ReceiptHeader> bankRemittanceList = new ArrayList<>(0);
         final List<ReceiptHeader> bankRemitList = new ArrayList<>();
         final SimpleDateFormat dateFomatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
@@ -674,6 +690,13 @@ public class RemittanceServiceImpl extends RemittanceService {
         final Bankaccount depositedBankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
                 Long.valueOf(accountNumberId.longValue()));
         final String serviceGlCode = depositedBankAccount.getChartofaccounts().getGlcode();
+
+        Boolean voucherTypeForChequeDDCard = false;
+        if (collectionsUtil.getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                CollectionConstants.APPCONFIG_VALUE_REMITTANCEVOUCHERTYPEFORCHEQUEDDCARD).equals(
+                        CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE))
+            voucherTypeForChequeDDCard = true;
+        final Map<String, Object> instrumentDepositMap = financialsUtil.prepareForUpdateInstrumentDepositSQL();
         for (int i = 0; i < serviceNameArr.length; i++) {
             final String serviceName = serviceNameArr[i].trim();
             if (serviceName != null && serviceName.length() > 0) {
@@ -714,22 +737,43 @@ public class RemittanceServiceImpl extends RemittanceService {
                     + " between bank challan and the remittance voucher , please contact system administrator ";
             throw new ValidationException(Arrays.asList(new ValidationError(validationMessage, validationMessage)));
         }
+        List<String> instrumentIdList = Arrays.asList(instrumentIdArray);
         final Remittance remittance = populateAndPersistRemittance(BigDecimal.ZERO, totalChequeAmount, fundCode,
                 null, chequeInHandGlcode, serviceGlCode, functionCode, bankRemitList, createVoucher,
-                voucherDate, depositedBankAccount, BigDecimal.ZERO, totalChequeVoucherAmt);
+                voucherDate, depositedBankAccount, BigDecimal.ZERO, totalChequeVoucherAmt, instrumentIdList);
+
+        // For cheque update instrument status to deposited.
+        for (final RemittanceInstrument bankRemitInstrument : remittance.getRemittanceInstruments()) {
+            final Map<String, Object> chequeMap = remittanceSchedulerService.constructInstrumentMap(instrumentDepositMap,
+                    depositedBankAccount, bankRemitInstrument.getInstrumentHeader(), remittance.getVoucherHeader());
+            if (voucherTypeForChequeDDCard)
+                financialsUtil.updateCheque_DD_Card_Deposit_Receipt(chequeMap);
+            else
+                financialsUtil.updateCheque_DD_Card_Deposit(chequeMap, remittance.getVoucherHeader(),
+                        bankRemitInstrument.getInstrumentHeader(), depositedBankAccount);
+            bankRemitInstrument.setReconciled(Boolean.TRUE);
+            remittanceInstrumentService.persist(bankRemitInstrument);
+        }
 
         for (final ReceiptHeader receiptHeader : bankRemitList) {
-            boolean isRemitReceipt = Boolean.TRUE;
-            for (InstrumentHeader instrumentHead : receiptHeader.getReceiptInstrument()) {
-                if (instrumentHead.getStatusId().getCode().equals(instrmentStatusNew.getCode()))
-                    isRemitReceipt = Boolean.FALSE;
-            }
-            if (isRemitReceipt)
+
+            if (receiptHeader.getReceiptInstrument().size() == 1) {
                 receiptHeader.setStatus(receiptStatusRemitted);
-            else
-                receiptHeader.setStatus(receiptStatusPartialRemitted);// check receipt has multiple instruments and if few
-                                                                      // instrument deposited few are not deposite then set
-                                                                      // receipt status as partial remitted.
+            } else {
+
+                boolean allInstrumentsRemitted = Boolean.TRUE;
+                for (InstrumentHeader instrumentHead : receiptHeader.getReceiptInstrument()) {
+                    if (!(instrumentIdList.contains(instrumentHead.getId().toString()))
+                            && instrumentHead.getStatusId().getCode().equals(instrmentStatusNew.getCode()))
+                        allInstrumentsRemitted = Boolean.FALSE;
+                }
+                if (allInstrumentsRemitted)
+                    receiptHeader.setStatus(receiptStatusRemitted);
+                else
+                    receiptHeader.setStatus(receiptStatusPartialRemitted);// check receipt has multiple instruments and if few
+                                                                          // instrument deposited few are not deposite then set
+                                                                          // receipt status as partial remitted.
+            }
             receiptHeader.setRemittanceReferenceNumber(remittance.getReferenceNumber());
             receiptHeaderService.update(receiptHeader);
             receiptHeaderService.updateCollectionIndexAndPushMail(receiptHeader);

@@ -100,6 +100,42 @@ public abstract class RemittanceService implements Serializable {
         return reportList;
     }
 
+    public List<CollectionBankRemittanceReport> prepareChequeRemittanceReport(final List<ReceiptHeader> receiptHeaders,
+            List<String> instrumentIdList) {
+        final List<CollectionBankRemittanceReport> reportList = new ArrayList<CollectionBankRemittanceReport>(0);
+        for (final ReceiptHeader receiptHead : receiptHeaders) {
+            @SuppressWarnings("rawtypes")
+            final Iterator itr = receiptHead.getReceiptInstrument().iterator();
+            while (itr.hasNext()) {
+                final CollectionBankRemittanceReport collBankRemitReport = new CollectionBankRemittanceReport();
+                final InstrumentHeader instHead = (InstrumentHeader) itr.next();
+                if (instrumentIdList.contains(instHead.getId().toString())) {
+                    collBankRemitReport.setChequeNo(instHead.getInstrumentNumber());
+                    collBankRemitReport.setBranchName(instHead.getBankBranchName());
+                    collBankRemitReport.setBankName(instHead.getBankId() != null ? instHead.getBankId().getName() : "");
+                    collBankRemitReport.setChequeDate(instHead.getInstrumentDate());
+                    collBankRemitReport.setPaymentMode(instHead.getInstrumentType().getType());
+                    collBankRemitReport.setAmount(instHead.getInstrumentAmount().doubleValue());
+                    collBankRemitReport.setReceiptNumber(receiptHead.getReceiptnumber());
+                    collBankRemitReport.setReceiptDate(receiptHead.getReceiptDate());
+                    collBankRemitReport.setVoucherNumber(receiptHead.getRemittanceReferenceNumber());
+                    reportList.add(collBankRemitReport);
+                }
+            }
+        }
+        return reportList;
+    }
+
+    public List<CollectionBankRemittanceReport> prepareCashRemittanceReport(final List<ReceiptHeader> receiptHeaders) {
+        final List<CollectionBankRemittanceReport> reportList = new ArrayList<CollectionBankRemittanceReport>(0);
+        for (final ReceiptHeader receiptHead : receiptHeaders) {
+            final CollectionBankRemittanceReport collBankRemitReport = new CollectionBankRemittanceReport();
+            collBankRemitReport.setVoucherNumber(receiptHead.getRemittanceReferenceNumber());
+            reportList.add(collBankRemitReport);
+        }
+        return reportList;
+    }
+
     public abstract List<HashMap<String, Object>> findChequeRemittanceDetailsForServiceAndFund(final String boundaryIdList,
             final String serviceCodes, final String fundCodes, Date startDate, Date endDate);
 
