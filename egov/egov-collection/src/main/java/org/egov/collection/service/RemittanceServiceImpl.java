@@ -251,6 +251,11 @@ public class RemittanceServiceImpl extends RemittanceService {
                 if (!bankRemitList.contains(receiptHeader))
                     bankRemitList.add(receiptHeader);
         }
+        if (totalCashVoucherAmt.compareTo(totalCashAmt) != 0) {
+            String validationMessage = "There is a difference of amount " + totalCashAmt.subtract(totalCashVoucherAmt)
+                    + " between bank challan and the remittance voucher , please contact system administrator ";
+            throw new ValidationException(Arrays.asList(new ValidationError(validationMessage, validationMessage)));
+        }
         final Remittance remittance = populateAndPersistRemittance(totalCashAmt, BigDecimal.ZERO, fundCode,
                 cashInHandGLCode, null, serviceGlCode, functionCode, bankRemitList, createVoucher,
                 voucherDate, depositedBankAccount, totalCashVoucherAmt, BigDecimal.ZERO, Collections.EMPTY_LIST);
@@ -365,13 +370,9 @@ public class RemittanceServiceImpl extends RemittanceService {
         RemittanceInstrument remittanceInstrument = new RemittanceInstrument();
         remittanceInstrument.setRemittance(remittance);
         remittanceInstrument.setInstrumentHeader(instrumentHeader);
-        if (instrumentHeader != null
-                && (instrumentHeader.getInstrumentType().getType().equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE)
-                        || instrumentHeader.getInstrumentType().getType().equals(CollectionConstants.INSTRUMENTTYPE_DD))) {
-            remittanceInstrument.setReconciled(Boolean.TRUE);
-        } else
-            remittanceInstrument.setReconciled(Boolean.FALSE);
-        return remittanceInstrument;
+        remittanceInstrument.setReconciled(Boolean.FALSE);
+        remittanceInstrument =  (RemittanceInstrument) persistenceService.persist(remittanceInstrument);
+        return remittanceInstrument;  
     }
 
     public HashMap<String, Object> prepareAccountCodeDetails(final String glCode, final String functionCode,
