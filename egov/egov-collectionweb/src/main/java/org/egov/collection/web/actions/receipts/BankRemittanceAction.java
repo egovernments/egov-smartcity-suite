@@ -257,8 +257,8 @@ public class BankRemittanceAction extends BaseFormAction {
         addDropdownData(ACCOUNT_NUMBER_LIST, Collections.emptyList());
     }
 
+    @ValidationErrorPage(value = "error")
     @Action(value = "/receipts/bankRemittance-create")
-    @ValidationErrorPage(value = NEW)
     public String create() {
         final long startTimeMillis = System.currentTimeMillis();
         if (accountNumberId == null || accountNumberId == -1)
