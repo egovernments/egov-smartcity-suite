@@ -45,30 +45,49 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.eis.utils.constants;
 
-public class EisConstants {
+package org.egov.eis.web.controller.es.dashboard;
 
-    public static final String ROLE_EMPLOYEE = "EMPLOYEE";
-    public static final String DEFAULT_EMPLOYEE_PWD = "12345678";
-    public static final String EMPLOYEE_TYPE_PERMANENT = "Permanent";
-    public static final Boolean ISACTIVE_TRUE = true;
-    public static final String FROM_DATE = "01/04/2015";
-    public static final String TO_DATE = "31/12/2099";
-    public static final String BOUNDARY_TYPE_CITY = "City";
-    public static final String HIERARCHY_TYPE_ADMIN = "ADMINISTRATION";
-    public static final Boolean IS_PRIMARY_TRUE = true;
-    public static final String EMPLOYEE_INDEX_NAME = "employeemaster";
-    public static final String GENDER = "gender";
-    public static final String EMPLOYEE_TYPE = "employeetype";
-    public static final String EMPLOYEE_CODE = "code";
+import org.egov.eis.es.dashboard.EmployeeCountResponse;
+import org.egov.eis.es.dashboard.EmployeeDetailRequest;
+import org.egov.eis.es.dashboard.EmployeeDetailResponse;
+import org.egov.eis.es.utils.EISDashBoardUtils;
+import org.egov.eis.service.es.dashboard.EmployeeDetailsDashboardService;
+import org.egov.eis.service.es.dashboard.EmployeeStatisticsDashboardService;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
-    public static final String DISTNAME = "distname";
-    public static final String ULBNAME = "ulbname";
-    public static final String ULBGRADE = "ulbgrade";
-    public static final String ULBCODE = "ulbcode";
-    public static final String REGNAME = "regname";
-    public static final String DEPARTMENT_NAME = "department";
+import java.io.IOException;
+import java.util.List;
 
+@RestController
+@RequestMapping(value = "/eisdashboard")
+public class EISDashboardController {
+
+    @Autowired
+    private EmployeeStatisticsDashboardService employeeStatisticsDashboardService;
+
+    @Autowired
+    private EmployeeDetailsDashboardService employeeDetailsDashboardService;
+
+    @RequestMapping(value = "/employeestatistics", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<EmployeeCountResponse> getEmployeeStatistics(final EmployeeDetailRequest employeesDetailRequest)
+            throws IOException {
+        final BoolQueryBuilder boolQuery = EISDashBoardUtils.prepareWhereClause(employeesDetailRequest, QueryBuilders.boolQuery());
+        final String aggrField = EISDashBoardUtils.getAggregationGroupingField(employeesDetailRequest);
+        return employeeStatisticsDashboardService.getEmployeeCount(employeesDetailRequest, boolQuery, aggrField);
+    }
+
+    @RequestMapping(value = "/employeedetails", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<EmployeeDetailResponse> getEmployeeDetails(final EmployeeDetailRequest employeesDetailRequest)
+            throws IOException {
+        final BoolQueryBuilder boolQuery = EISDashBoardUtils.prepareWhereClauseForEmployees(employeesDetailRequest);
+        return employeeDetailsDashboardService.getEmployeeDetails(boolQuery);
+    }
 
 }

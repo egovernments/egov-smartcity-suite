@@ -45,30 +45,65 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.eis.utils.constants;
 
-public class EisConstants {
+package org.egov.eis.es.dashboard;
 
-    public static final String ROLE_EMPLOYEE = "EMPLOYEE";
-    public static final String DEFAULT_EMPLOYEE_PWD = "12345678";
-    public static final String EMPLOYEE_TYPE_PERMANENT = "Permanent";
-    public static final Boolean ISACTIVE_TRUE = true;
-    public static final String FROM_DATE = "01/04/2015";
-    public static final String TO_DATE = "31/12/2099";
-    public static final String BOUNDARY_TYPE_CITY = "City";
-    public static final String HIERARCHY_TYPE_ADMIN = "ADMINISTRATION";
-    public static final Boolean IS_PRIMARY_TRUE = true;
-    public static final String EMPLOYEE_INDEX_NAME = "employeemaster";
-    public static final String GENDER = "gender";
-    public static final String EMPLOYEE_TYPE = "employeetype";
-    public static final String EMPLOYEE_CODE = "code";
+public class EmployeeDetailRequest {
 
-    public static final String DISTNAME = "distname";
-    public static final String ULBNAME = "ulbname";
-    public static final String ULBGRADE = "ulbgrade";
-    public static final String ULBCODE = "ulbcode";
-    public static final String REGNAME = "regname";
-    public static final String DEPARTMENT_NAME = "department";
+    private String region;
+    private String district;
+    private String grade;
+    private String ulbCode;
+    private String departmentName;
+    private String aggregationLevel;
 
+
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(final String region) {
+        this.region = region;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(final String district) {
+        this.district = district;
+    }
+
+    public String getGrade() {
+        return grade;
+    }
+
+    public void setGrade(final String grade) {
+        this.grade = grade;
+    }
+
+    public String getUlbCode() {
+        return ulbCode;
+    }
+
+    public void setUlbCode(final String ulbCode) {
+        this.ulbCode = ulbCode;
+    }
+
+    public String getDepartmentName() {
+        return departmentName;
+    }
+
+    public void setDepartmentName(final String departmentName) {
+        this.departmentName = departmentName;
+    }
+
+    public String getAggregationLevel() {
+        return aggregationLevel;
+    }
+
+    public void setAggregationLevel(final String aggregationLevel) {
+        this.aggregationLevel = aggregationLevel;
+    }
 
 }
