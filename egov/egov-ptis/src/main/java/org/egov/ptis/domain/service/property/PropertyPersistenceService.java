@@ -55,6 +55,7 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.persistence.entity.Address;
+import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -74,6 +75,7 @@ import org.springframework.validation.BindingResult;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -221,6 +223,8 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
         ackBean.setNoticeDueDate(tempNoticeDate);
         reportParams.put("logoPath", cityService.getCityLogoURL());
         reportParams.put("cityName", cityService.getMunicipalityName());
+        if (Arrays.asList(UserType.BUSINESS, UserType.EMPLOYEE)
+                .contains(userService.getUserById(ApplicationThreadLocals.getUserId()).getType()))
         reportParams.put("loggedInUsername", userService.getUserById(ApplicationThreadLocals.getUserId()).getName());
         final ReportRequest reportInput = new ReportRequest(CREATE_ACK_TEMPLATE, ackBean, reportParams);
         reportInput.setReportFormat(ReportFormat.PDF);
