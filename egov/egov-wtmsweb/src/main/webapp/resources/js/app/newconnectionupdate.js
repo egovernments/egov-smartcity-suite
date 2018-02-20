@@ -229,8 +229,7 @@ $(document)
 											document.forms[0].submit();
 										}
 										if (status == 'ESTIMATIONNOTICEGENERATED') {
-											if (action == null || action == ''
-													|| action == 'Forward')
+											if (action == null || action == '')
 												return false;
 										}
 										if (action == 'Approve'

@@ -48,6 +48,7 @@
 package org.egov.council.entity;
 
 import org.egov.commons.EgwStatus;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -98,6 +99,8 @@ public class MeetingMOM implements Serializable {
     private String resolutionNumber;
     
     private boolean isLegacy;
+    
+    private transient MultipartFile[] files;
 
     public CouncilMeeting getMeeting() {
         return meeting;
@@ -169,6 +172,14 @@ public class MeetingMOM implements Serializable {
 
     public void setLegacy(boolean isLegacy) {
         this.isLegacy = isLegacy;
+    }
+
+    public MultipartFile[] getFiles() {
+        return files;
+    }
+
+    public void setFiles(MultipartFile[] files) {
+        this.files = files;
     }
 
 }

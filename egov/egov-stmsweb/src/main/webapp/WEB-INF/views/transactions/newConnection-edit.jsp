@@ -160,11 +160,16 @@
 	</c:if>
 	<c:choose>
 		<c:when
-			test="${(isInspectionFeePaid==null && sewerageApplicationDetails.status.code !='ESTIMATIONNOTICEGENERATED') || isInspectionFeePaid }">
+			test="${!isCitizenPortalUser && (isInspectionFeePaid==null && sewerageApplicationDetails.status.code !='ESTIMATIONNOTICEGENERATED') || isInspectionFeePaid }">
 			<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
 		</c:when>
 		<c:otherwise>
 			<div class="buttonbottom" align="center">
+				<c:if test="${isCitizenPortalUser && !isInspectionFeePaid}">
+					<a href="javascript:void(0)" class="btn btn-primary"
+						onclick="window.open('/stms/citizen/search/sewerageGenerateonlinebill/${sewerageApplicationDetails.applicationNumber}/${sewerageApplicationDetails.connectionDetail.propertyIdentifier}','name','width=800, height=600,scrollbars=yes')">
+						Pay Tax</a>
+				</c:if>
 				<input type="button" name="button2" id="button2" value="Close"
 					class="btn btn-default" onclick="window.close();" />
 			</div>
@@ -180,16 +185,6 @@
 
 	</div>
 
-	<div class="row text-center">
-		<div class="add-margin">
-			<c:if test="${isCitizenPortalUser && !isInspectionFeePaid}">
-				<a href="javascript:void(0)" class="btn btn-default"
-					onclick="window.open('/stms/citizen/search/sewerageGenerateonlinebill/${sewerageApplicationDetails.applicationNumber}/${sewerageApplicationDetails.connectionDetail.propertyIdentifier}','name','width=800, height=600,scrollbars=yes')">
-					Pay Fee</a>
-			</c:if>
-		</div>
-	</div>
-
 </form:form>
 <script
 	src="<cdn:url  value='/resources/js/transactions/applicationsuccess.js?rnd=${app_release_no}'/>"></script>
@@ -199,7 +194,6 @@
 	src="<cdn:url  value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script
 	src="<cdn:url  value='/resources/javascript/helper.js?rnd=${app_release_no}'/>"></script>
-
 
 <script type="text/javascript">
 function renderWorkOrderPdf() {

@@ -120,9 +120,9 @@
                     }
                 }
                 </s:if>
-                if (name == "Forward" || name == "forward" || name == "approve" || name == "Approve") {
+                if (name == "Save" || name == "save" || name == "Forward" || name == "forward" || name == "approve" || name == "Approve" || name == "Sign" || name == "sign") {
                     if (approverComments == null || approverComments == "" || approverComments.trim().length == 0) {
-                        bootbox.alert("Please Enter Approver Remarks ");
+                        bootbox.alert("Please enter the Remarks ");
                         return false;
                     }
                 }

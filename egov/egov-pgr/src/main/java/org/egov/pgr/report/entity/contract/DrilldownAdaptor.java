@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -60,7 +60,8 @@ import org.egov.pgr.report.entity.view.DrilldownReportView;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import static org.egov.infra.utils.DateUtils.getFormattedDate;
+import static org.egov.infra.utils.ApplicationConstant.NA;
+import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
 import static org.egov.infra.utils.StringUtils.defaultIfBlank;
 
 public class DrilldownAdaptor implements DataTableJsonAdapter<DrilldownReportView> {
@@ -72,14 +73,15 @@ public class DrilldownAdaptor implements DataTableJsonAdapter<DrilldownReportVie
         final JsonArray drilldownReportData = new JsonArray();
         functionarywiseResult.forEach(reportObject -> {
             final JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("crn", defaultIfBlank(reportObject.getCrn()));
-            jsonObject.addProperty("createddate", defaultIfBlank(getFormattedDate(reportObject.getCreatedDate(), "dd-MM-yyyy hh:mm a")));
+            jsonObject.addProperty("crn", reportObject.getCrn());
+            jsonObject.addProperty("createddate", toDefaultDateTimeFormat(reportObject.getCreatedDate()));
             jsonObject.addProperty("complainantname", defaultIfBlank(reportObject.getComplainantName()));
             jsonObject.addProperty("details", defaultIfBlank(reportObject.getComplaintDetail()));
             jsonObject.addProperty("boundaryname", defaultIfBlank(reportObject.getBoundaryName()));
-            jsonObject.addProperty("status", defaultIfBlank(reportObject.getStatus()));
+            jsonObject.addProperty("status", reportObject.getStatus());
             jsonObject.addProperty("complaintId", reportObject.getComplainantId());
-            jsonObject.addProperty("feedback", CitizenFeedback.value(reportObject.getFeedback()));
+            jsonObject.addProperty("feedback", reportObject.getFeedback() == null
+                    ?  NA : CitizenFeedback.value(reportObject.getFeedback()).toString());
             jsonObject.addProperty("issla", defaultIfBlank(reportObject.getIsSLA()));
             drilldownReportData.add(jsonObject);
         });

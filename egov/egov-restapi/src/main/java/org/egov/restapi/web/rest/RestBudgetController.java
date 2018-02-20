@@ -47,7 +47,16 @@
  */
 package org.egov.restapi.web.rest;
 
-import com.google.gson.JsonObject;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -63,13 +72,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import com.google.gson.JsonObject;
 
 @RestController
 public class RestBudgetController {
@@ -87,6 +90,7 @@ public class RestBudgetController {
     public String getBudgetAvailable(@RequestBody final String requestJson,
             final HttpServletResponse response) throws IOException {
         String planningBudgetAvailable;
+        BigDecimal budgetAllocated, budgetUtilized;
         final BudgetCheck budgetCheck = (BudgetCheck) getObjectFromJSONRequest(requestJson,
                 BudgetCheck.class);
 
@@ -97,7 +101,8 @@ public class RestBudgetController {
                 return JsonConvertor.convert(restErrors);
             }
             planningBudgetAvailable = budgetCheckService.getPlanningBudgetAvailable(budgetCheck);
-
+            budgetAllocated = budgetCheckService.getAllocatedBudget(budgetCheck);
+            budgetUtilized = budgetAllocated.subtract(new BigDecimal(planningBudgetAvailable));
         } catch (final ValidationException v) {
             final List<RestErrors> errorList = new ArrayList<>(0);
             final RestErrors re = new RestErrors();
@@ -108,6 +113,8 @@ public class RestBudgetController {
         }
         final JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("AvailableBalance", planningBudgetAvailable);
+        jsonObject.addProperty("budgetAllocated", budgetAllocated.toString());
+        jsonObject.addProperty("budgetUtilized", budgetUtilized.toString());
         response.setStatus(HttpServletResponse.SC_CREATED);
         return jsonObject.toString();
     }

@@ -60,7 +60,7 @@
 			<label class="col-sm-3 control-label text-right"><spring:message
 					code="lbl.connectiontype" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
-				<form:select path="connectionType" data-first-option="false" cssClass="form-control" required="required"> 
+				<form:select path="connectionType" data-first-option="false" cssClass="form-control" disabled="true"> 
 					<form:option value="">
 						<spring:message code="lbl.select" />
 					</form:option>

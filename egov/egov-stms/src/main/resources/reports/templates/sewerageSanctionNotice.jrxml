@@ -1,6 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) 2017  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
+  -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-12-18T17:23:52 -->
+<!-- 2018-01-16T15:46:21 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sewerageSanctionNotice" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="824a53df-5632-432a-8613-e4ea7f8e246b">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -47,70 +94,67 @@
 		</band>
 	</background>
 	<detail>
-		<band height="739" splitType="Stretch">
+		<band height="802" splitType="Stretch">
+			<textField>
+				<reportElement x="55" y="240" width="461" height="39" uuid="d33a8b7d-6f9e-4d44-9645-d069f22a8f51"/>
+				<textFieldExpression><![CDATA["             In the reference 1st citied, Sri/Smt"+" "+$P{applicantname}+" "+" has submitted an application seeking sewerage connection to the house bearing Door No: "+" "+$P{doorno}+" "+ "and paid the following amounts towards donation and other charges."]]></textFieldExpression>
+			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="0" y="24" width="555" height="15" uuid="36381485-7e1f-4e51-a7bf-c336561add07"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{district}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="0" y="9" width="555" height="15" uuid="dbd52c31-9177-4ba6-a907-21ea6f8e55ff"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{municipality}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="0" y="39" width="555" height="15" uuid="9dbf9c63-f5ad-4b4e-97bc-e8f13d764082"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Present: "+$P{presentCommissioner}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="186" y="53" width="190" height="15" uuid="b356fe02-df58-4754-b751-15c61f1d8135"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Commissioner"]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="55" y="325" width="92" height="15" uuid="284b1b23-30fc-4738-b5e1-58678f758c4c"/>
-				<textElement verticalAlignment="Middle">
+				<reportElement x="58" y="345" width="92" height="15" uuid="284b1b23-30fc-4738-b5e1-58678f758c4c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="10" isBold="false"/>
 				</textElement>
 				<text><![CDATA[Total]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="55" y="310" width="92" height="15" uuid="3bcab30f-0518-4008-bea9-e662b4c519a2"/>
+				<reportElement x="58" y="330" width="92" height="15" uuid="3bcab30f-0518-4008-bea9-e662b4c519a2"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="false"/>
 				</textElement>
 				<text><![CDATA[3.Sewerage Tax          ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="55" y="295" width="92" height="15" uuid="c683d38a-de57-4111-8592-be24bc1b5d7d"/>
+				<reportElement x="58" y="315" width="92" height="15" uuid="c683d38a-de57-4111-8592-be24bc1b5d7d"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="false"/>
 				</textElement>
 				<text><![CDATA[2.Estimation Charges ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="55" y="280" width="92" height="15" uuid="d7ba2dee-7d60-4295-9dbf-2b53b8959d28"/>
+				<reportElement x="58" y="300" width="92" height="15" uuid="d7ba2dee-7d60-4295-9dbf-2b53b8959d28"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="false"/>
 				</textElement>
 				<text><![CDATA[1.Donation                  ]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true">
-				<reportElement x="55" y="240" width="457" height="29" uuid="111bfdfa-ce41-47bf-82bf-7eb5baf5b605"/>
-				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="styled">
-					<font size="10" isBold="false" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["             In the reference 1st citied, Sri/Smt <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{applicantname}+"</style> has submitted an application seeking sewerage connection to the house bearing Door No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{doorno}+"</style> and paid the following amounts towards donation and other charges."]]></textFieldExpression>
-			</textField>
 			<staticText>
 				<reportElement x="45" y="220" width="65" height="15" uuid="fe883ad5-190f-4a69-a00e-6bb18978d722"/>
 				<textElement verticalAlignment="Middle">
@@ -127,15 +171,8 @@
 				<text><![CDATA[sub :]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="53" y="362" width="481" height="31" uuid="9ebb0a7c-bd88-4c49-885f-10a3a53cd7ad"/>
+				<reportElement x="53" y="380" width="481" height="31" uuid="9ebb0a7c-bd88-4c49-885f-10a3a53cd7ad"/>
 				<textFieldExpression><![CDATA["2.Therefore sanction is hereby accorded for execution of "+$P{noOfSeatsResidential}+" residential and "+$P{noOfSeatsNonResidential}+" Nonresidential closets for sewerage connection to the above premises with consumer no:"+$P{consumerNumber}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement x="111" y="160" width="432" height="15" uuid="4296067d-ffa8-4dd9-a839-71d9681b7f0e"/>
-				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="styled">
-					<font size="10" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["1.Application of Sri/Smt S. Radha Devi D.No "+$P{doorno}+" Locality "+$P{locality}+" Dated "+$P{applicationDate}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="111" y="130" width="437" height="20" uuid="39adabf5-addb-4c94-914f-02bf3076555b"/>
@@ -148,14 +185,14 @@
 			<textField isBlankWhenNull="true">
 				<reportElement x="53" y="550" width="224" height="10" uuid="4cdd9dcd-09c6-4944-8aca-8190005b566a"/>
 				<textElement verticalAlignment="Middle">
-					<font size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Sri/Smt            "+$P{applicantname}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="53" y="560" width="223" height="10" uuid="efc48e7b-a576-4759-a634-21cbda1506e1"/>
 				<textElement verticalAlignment="Middle">
-					<font size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA["D.No               "+$P{doorno}]]></textFieldExpression>
 			</textField>
@@ -233,37 +270,30 @@
 				<reportElement x="110" y="105" width="100" height="14" uuid="93570a15-9939-4729-89ca-8040c4b98a0a"/>
 				<textFieldExpression><![CDATA[$P{workorderno}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement x="147" y="280" width="370" height="15" uuid="4ae4d442-1c76-499a-9845-1a8520947aa6"/>
-				<textElement verticalAlignment="Middle" markup="styled">
-					<font size="10" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[":        Rs."+$P{donationCharges}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement x="147" y="295" width="370" height="15" uuid="705a12b6-3529-4fb8-8b13-3facd388bef6"/>
-				<textElement verticalAlignment="Middle" markup="styled">
-					<font size="10" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[":        Rs."+$P{estimationCharges}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement x="147" y="310" width="370" height="15" uuid="25c57c1a-80d5-4082-87b5-3aa6d1c699cc"/>
-				<textElement verticalAlignment="Middle" markup="styled">
-					<font size="10" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[":        Rs."+$P{sewerageTax}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement x="147" y="325" width="370" height="15" uuid="e7f6fb35-b6e7-427e-8fda-5e6dffb4084d"/>
-				<textElement verticalAlignment="Middle" markup="styled">
-					<font size="10" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[":        Rs."+$P{totalCharges}]]></textFieldExpression>
-			</textField>
 			<textField>
 				<reportElement x="50" y="660" width="481" height="31" uuid="ec60c97b-f4f1-4644-a817-f1f05afaa550"/>
 				<textFieldExpression><![CDATA["Copy to Asst Engineer with a direction to get the road cutting portion repaired within a week and report compliance."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="110" y="160" width="433" height="12" uuid="1490517e-9d52-4327-aca7-7ff09935bc1a"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["1.Application of Sri/Smt "+" "+$P{applicantname}+" "+" D.No "+$P{doorno}+" Locality "+$P{locality}+" Dated "+$P{applicationDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="150" y="300" width="368" height="14" uuid="aeda3e76-8ac5-4773-99ed-9ff0b492bd42"/>
+				<textFieldExpression><![CDATA[":        Rs."+$P{donationCharges}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="150" y="315" width="368" height="14" uuid="730981d8-a471-4fa8-9349-751f9f0394f2"/>
+				<textFieldExpression><![CDATA[":        Rs."+$P{estimationCharges}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="150" y="330" width="368" height="14" uuid="40c85449-5b88-48f3-897f-0f47a1224bc1"/>
+				<textFieldExpression><![CDATA[":        Rs."+$P{sewerageTax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="150" y="345" width="368" height="14" uuid="ab3279d2-79a8-4f8e-9806-a9e83593b230"/>
+				<textFieldExpression><![CDATA[":        Rs."+$P{totalCharges}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -272,28 +302,28 @@
 			<textField isBlankWhenNull="true">
 				<reportElement x="0" y="24" width="555" height="15" uuid="95e21c47-1aaa-4d8e-9344-819b0608a48c"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{district}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="0" y="9" width="555" height="15" uuid="4f0a0ef8-2443-4072-a8bd-53c6dc9148fa"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{municipality}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="0" y="39" width="555" height="15" uuid="433264e0-8eda-42c7-9695-d9946f57f143"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Present: "+$P{presentCommissioner}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="186" y="53" width="190" height="15" uuid="c0e246ba-75b9-4251-a302-40a77eb99f93"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Commissioner"]]></textFieldExpression>
 			</textField>
@@ -305,40 +335,33 @@
 				<text><![CDATA[To Citizen]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="55" y="325" width="92" height="15" uuid="41b796b8-5a23-4229-8d95-ef5f3b355b20"/>
-				<textElement verticalAlignment="Middle">
+				<reportElement x="53" y="350" width="92" height="15" uuid="41b796b8-5a23-4229-8d95-ef5f3b355b20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="10" isBold="false"/>
 				</textElement>
 				<text><![CDATA[Total]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="55" y="310" width="92" height="15" uuid="090f200d-dcb0-4398-977d-e6342937098f"/>
+				<reportElement x="53" y="335" width="92" height="15" uuid="090f200d-dcb0-4398-977d-e6342937098f"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="false"/>
 				</textElement>
 				<text><![CDATA[3.Sewerage Tax          ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="55" y="295" width="92" height="15" uuid="c770c8d8-0747-43be-9b2e-e01a1b92c8dc"/>
+				<reportElement x="53" y="320" width="92" height="15" uuid="c770c8d8-0747-43be-9b2e-e01a1b92c8dc"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="false"/>
 				</textElement>
 				<text><![CDATA[2.Estimation Charges ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="55" y="280" width="92" height="15" uuid="76a9d51e-3ca7-42df-80d2-ca2074653ae1"/>
+				<reportElement x="53" y="305" width="92" height="15" uuid="76a9d51e-3ca7-42df-80d2-ca2074653ae1"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="false"/>
 				</textElement>
 				<text><![CDATA[1.Donation                  ]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true">
-				<reportElement x="55" y="240" width="457" height="29" uuid="7eebdb0f-f36a-4cb3-a5d2-a1327ca92053"/>
-				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="styled">
-					<font size="10" isBold="false" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["             In the reference 1st citied, Sri/Smt <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{applicantname}+"</style> has submitted an application seeking sewerage connection to the house bearing Door No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{doorno}+"</style> and paid the following amounts towards donation and other charges."]]></textFieldExpression>
-			</textField>
 			<staticText>
 				<reportElement x="44" y="220" width="55" height="15" uuid="1f357af2-28ed-43de-b666-db1b61ad37eb"/>
 				<textElement verticalAlignment="Middle">
@@ -346,34 +369,6 @@
 				</textElement>
 				<text><![CDATA[ORDER :]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true">
-				<reportElement x="147" y="280" width="336" height="15" uuid="abe2685b-b825-4a9b-b4ec-aa44677adb21"/>
-				<textElement verticalAlignment="Middle" markup="styled">
-					<font size="10" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[":        Rs."+$P{donationCharges}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement x="147" y="295" width="336" height="15" uuid="18858582-71c4-4692-bd3f-bb36b9500d90"/>
-				<textElement verticalAlignment="Middle" markup="styled">
-					<font size="10" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[":        Rs."+$P{estimationCharges}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement x="147" y="310" width="336" height="15" uuid="df83fddc-9420-48cc-a6da-010eb6b30828"/>
-				<textElement verticalAlignment="Middle" markup="styled">
-					<font size="10" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[":        Rs."+$P{sewerageTax}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement x="147" y="325" width="336" height="15" uuid="af2b4d5c-ff6c-4c3b-a66e-6d2ad5d77964"/>
-				<textElement verticalAlignment="Middle" markup="styled">
-					<font size="10" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[":        Rs."+$P{totalCharges}]]></textFieldExpression>
-			</textField>
 			<staticText>
 				<reportElement x="70" y="160" width="43" height="21" uuid="a5a2a4d5-82c1-4bf3-a439-03862962addd"/>
 				<text><![CDATA[ref :]]></text>
@@ -383,15 +378,8 @@
 				<text><![CDATA[sub :]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="53" y="362" width="481" height="31" uuid="af8086c5-94ec-4472-a348-247873dd0124"/>
+				<reportElement x="53" y="380" width="481" height="31" uuid="af8086c5-94ec-4472-a348-247873dd0124"/>
 				<textFieldExpression><![CDATA["2.Therefore sanction is hereby accorded for execution of "+$P{noOfSeatsResidential}+" residential and "+$P{noOfSeatsNonResidential}+" Nonresidential closets for sewerage connection to the above premises with consumer no:"+$P{consumerNumber}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement x="111" y="160" width="432" height="15" uuid="b1681ab3-27c6-4111-a7a4-ce984c5cb198"/>
-				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="styled">
-					<font size="10" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["1.Application of Sri/Smt S. Radha Devi D.No "+$P{doorno}+" Locality "+$P{locality}+" Dated "+$P{applicationDate}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="111" y="130" width="437" height="20" uuid="2aad07fc-70e2-400a-9be1-a01095574ed0"/>
@@ -422,7 +410,9 @@
 			</textField>
 			<textField>
 				<reportElement x="111" y="181" width="433" height="19" uuid="d6a84c84-348e-4d9f-960e-2bf92b2dce3d"/>
-				<textElement verticalAlignment="Middle"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="false"/>
+				</textElement>
 				<textFieldExpression><![CDATA["2.Remarks of the Municipal Engineer,Dated"]]></textFieldExpression>
 			</textField>
 			<staticText>
@@ -453,14 +443,14 @@
 			<textField isBlankWhenNull="true">
 				<reportElement x="53" y="560" width="223" height="10" uuid="43cf0430-bb27-4c54-a91b-fa513b00dc74"/>
 				<textElement verticalAlignment="Middle">
-					<font size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA["D.No               "+$P{doorno}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="53" y="550" width="224" height="10" uuid="a647f807-5196-4608-8d3e-85409b9eeb09"/>
 				<textElement verticalAlignment="Middle">
-					<font size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
+					<font size="8" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Sri/Smt            "+$P{applicantname}]]></textFieldExpression>
 			</textField>
@@ -485,6 +475,31 @@
 			<textField>
 				<reportElement x="50" y="660" width="481" height="31" uuid="ec0c89f3-cc80-4aac-828c-f0ae954f6b6d"/>
 				<textFieldExpression><![CDATA["Copy to Asst Engineer with a direction to get the road cutting portion repaired within a week and report compliance."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="145" y="305" width="368" height="14" uuid="1bbe8c03-9402-4552-a350-d1711033ff61"/>
+				<textFieldExpression><![CDATA[":        Rs."+$P{donationCharges}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="145" y="320" width="368" height="14" uuid="80208ee4-57b0-4843-a189-dcd8501fc678"/>
+				<textFieldExpression><![CDATA[":        Rs."+$P{estimationCharges}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="145" y="335" width="368" height="14" uuid="6986046e-0c56-40c1-a230-942bf6f05218"/>
+				<textFieldExpression><![CDATA[":        Rs."+$P{sewerageTax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="145" y="350" width="368" height="14" uuid="84a47305-b36a-4dee-b75a-62d2d31e216e"/>
+				<textFieldExpression><![CDATA[":        Rs."+$P{totalCharges}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="55" y="239" width="461" height="40" uuid="42f1211f-b395-4f3e-bd40-2f1c5d65f7df"/>
+				<textFieldExpression><![CDATA["             In the reference 1st citied, Sri/Smt"+" "+$P{applicantname}+" "+" has submitted an application seeking sewerage connection to the house bearing Door No: "+" "+$P{doorno}+" "+ "and paid the following amounts towards donation and other charges."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="110" y="164" width="433" height="12" uuid="3b3678a0-8df1-4855-880a-779df5879cde"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["1.Application of Sri/Smt "+" "+$P{applicantname}+" "+" D.No "+$P{doorno}+" Locality "+$P{locality}+" Dated "+$P{applicationDate}]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>

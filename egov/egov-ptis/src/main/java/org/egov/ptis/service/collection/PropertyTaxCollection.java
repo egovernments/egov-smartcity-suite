@@ -75,11 +75,14 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.utils.MoneyUtils;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.service.CollectionApportioner;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.service.property.RebateService;
@@ -90,6 +93,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -148,6 +152,9 @@ public class PropertyTaxCollection extends TaxCollection {
 
     @Autowired
     private RebateService rebateService;
+    
+    @Autowired
+    private BasicPropertyDAO basicPropertyDAO;
 
     @Override
     protected Module module() {
@@ -161,8 +168,14 @@ public class PropertyTaxCollection extends TaxCollection {
         LOGGER.debug("updateDemandDetails : Updating Demand Details Started, billRcptInfo : " + billRcptInfo);
         try {
             final EgDemand demand = getCurrentDemand(Long.valueOf(billRcptInfo.getBillReferenceNum()));
-            final String assessmentNo = ((BillReceiptInfoImpl) billRcptInfo).getReceiptMisc().getReceiptHeader()
-                    .getConsumerCode();
+			final String assessmentNo = ((BillReceiptInfoImpl) billRcptInfo).getReceiptMisc().getReceiptHeader()
+					.getConsumerCode();
+			if (!basicPropertyDAO.isAssessmentNoExist(assessmentNo)) {
+				LOGGER.error("ULB code or assessment number does not match!");
+				throw new ValidationException(
+						Arrays.asList(new ValidationError("ULB code or assessment number does not match",
+								"ULB code or assessment number does not match")));
+			}
             LOGGER.info("updateDemandDetails : Demand before proceeding : " + demand);
             LOGGER.info("updateDemandDetails : collection back update started for property : " + assessmentNo
                     + " and receipt event is " + billRcptInfo.getEvent() + ". Total Receipt amount is." + totalAmount

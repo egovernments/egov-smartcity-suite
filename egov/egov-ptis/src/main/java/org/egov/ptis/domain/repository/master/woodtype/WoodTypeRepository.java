@@ -59,5 +59,6 @@ public interface WoodTypeRepository extends JpaRepository<WoodType, Long> {
     WoodType findByName(String name);
 
     List<WoodType> findByNameContainingIgnoreCase(String name);
-
+    
+    List<WoodType> findByActiveTrueOrderByName();
 }

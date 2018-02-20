@@ -93,6 +93,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_REJECTED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WORKFLOW_ACTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WORKFLOW_CLOSUREADDITIONALRULE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WORKFLOW_RECONNCTIONINITIATED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPROVED;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -562,7 +563,8 @@ public class UpdateConnectionController extends GenericConnectionController {
                         || waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_CLOSERINPROGRESS)
                         || waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_CLOSERINITIATED)))
             approvalPosition = waterTaxUtils.getApproverPosition(ROLE_CLERKFORADONI, waterConnectionDetails);
-        if (approvalPosition == null)
+        if ((approvalPosition ==null || approvalPosition.equals(Long.valueOf(0))) && (waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_DIGITALSIGNPENDING) 
+                || waterConnectionDetails.getStatus().getCode().equals(APPROVED)))
             throw new ValidationException("err.nouserdefinedforworkflow");
         if (!resultBinder.hasErrors()) {
             try {

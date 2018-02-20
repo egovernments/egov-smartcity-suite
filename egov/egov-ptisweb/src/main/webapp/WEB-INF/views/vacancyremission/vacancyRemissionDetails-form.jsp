@@ -68,6 +68,20 @@
 								<div class="panel-title"><spring:message code="lbl.vacancyremission.details" /></div>
 							</div>
 							<div class="panel-body custom-form">
+							<div class="panel-body">
+								<label class="col-xs-3 add-margin text-right"> <spring:message
+										code="lbl.fromDate" /> :
+								</label>
+								<div class="col-xs-3 add-margin view-content">
+								<strong><fmt:formatDate value="${vacancyRemission.vacancyFromDate}" pattern="dd-MM-yyyy"/> </strong>
+								</div>
+								<label class="col-xs-3 add-margin text-right"> <spring:message
+										code="lbl.toDate" /> :
+								</label>
+								<div class="col-xs-3 add-margin view-content">
+								<strong><fmt:formatDate value="${vacancyRemission.vacancyToDate}" pattern="dd-MM-yyyy"/> </strong>
+								</div>
+								</div>
 							<c:choose>
 							<c:when test="${!detailsHistory.isEmpty()}">
 							<div class="panel-heading">
@@ -112,7 +126,6 @@
 										<form:textarea path="${remissionDetailsObj.comments}" id="remissionComments" name="remissionComments" class="form-control" required="required" />
 									</div>
 								</div>
-							</div>
 						</div>
 					</div>
 				</div>

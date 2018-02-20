@@ -376,7 +376,7 @@ public class TaxExemptionController extends GenericWorkFlowController {
     public ResponseEntity<byte[]> printAck(final HttpServletRequest request, final Model model,
             @PathVariable("assessmentNo") final String assessmentNo) {
         final ReportOutput reportOutput = propertyTaxUtil.generateCitizenCharterAcknowledgement(assessmentNo, TAX_EXEMPTION,
-                WFLOW_ACTION_NAME_EXEMPTION);
+                WFLOW_ACTION_NAME_EXEMPTION, null);
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition", "inline;filename=CitizenCharterAcknowledgement.pdf");

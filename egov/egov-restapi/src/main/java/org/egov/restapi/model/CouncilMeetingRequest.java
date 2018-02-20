@@ -55,6 +55,10 @@ public class CouncilMeetingRequest {
     private String ulbCode;
     private String meetingType;
     private String meetingNumber;
+    private String preambleNo;
+    private String agendaNo;
+    private String resolutionNo;
+    private String committeeType;
 
     public String getUlbCode() {
         return ulbCode;
@@ -78,6 +82,38 @@ public class CouncilMeetingRequest {
 
     public void setMeetingNumber(String meetingNumber) {
         this.meetingNumber = meetingNumber;
+    }
+
+    public String getPreambleNo() {
+        return preambleNo;
+    }
+
+    public void setPreambleNo(String preambleNo) {
+        this.preambleNo = preambleNo;
+    }
+
+    public String getAgendaNo() {
+        return agendaNo;
+    }
+
+    public void setAgendaNo(String agendaNo) {
+        this.agendaNo = agendaNo;
+    }
+
+    public String getResolutionNo() {
+        return resolutionNo;
+    }
+
+    public void setResolutionNo(String resolutionNo) {
+        this.resolutionNo = resolutionNo;
+    }
+
+    public String getCommitteeType() {
+        return committeeType;
+    }
+
+    public void setCommitteeType(String committeeType) {
+        this.committeeType = committeeType;
     }
 
 }

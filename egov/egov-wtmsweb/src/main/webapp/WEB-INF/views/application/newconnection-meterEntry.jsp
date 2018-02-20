@@ -115,7 +115,7 @@
 							</c:if>
 
 							<div class="form-group">
-								<label class="col-sm-2 control-label text-right"><spring:message
+								<label class="col-sm-3 control-label text-right"><spring:message
 										code="lbl.meterread.currentReading" /></label>
 								<div class="col-sm-3 add-margin">
 									<form:input class="form-control patternvalidation"
@@ -134,7 +134,7 @@
 										required="required" />
 									<form:errors path="" cssClass="add-margin error-msg" />
 								</div>
-								<label class="col-sm-2 control-label text-right"><spring:message
+								<label class="col-sm-3 control-label text-right"><spring:message
 										code="lbl.ismeterdamaged" /></label>
 								<div class="col-sm-3 add-margin">
 									<input type="checkbox" name="waterConnectionDetails.meterConnection.isMeterDamaged" onchange="changeIsMeterDamaged();"

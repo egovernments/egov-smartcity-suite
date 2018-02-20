@@ -362,6 +362,15 @@ $(document).ready(function() {
 			bootbox.alert("Please select committe type");
 			e.preventDefault();
 		} 
+		
+		if($('#autoAgendaNoGenEnabled').val() == "false"){
+			
+		    if($("#agendaNumber").val()==''){
+				bootbox.alert("Please enter Agenda Number");
+		    	$("#agendaNumber").attr('required', true) ;	
+		    	e.preventDefault();
+		    }
+		}
 		if($('#emptyRow').length){
 			bootbox.alert("Atleast one preamble item should be added into agenda");
 			e.preventDefault();
@@ -407,8 +416,8 @@ $(document).ready(function() {
 });
 
 function validateAgendaNumber(agendaNumber){
-	var agendaNo= agendaNumber.val()
-	if(agendaNo) {
+	var agendaNo= agendaNumber.val();	
+	if(agendaNo !='') {
 		$.ajax({
 			url: "/council/councilmom/checkUnique-agendaNo",      
 			type: "GET",

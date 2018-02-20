@@ -61,9 +61,9 @@ import org.egov.infra.web.struts.actions.ReportFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.ptis.bean.PropertyWiseArrearInfo;
 import org.egov.ptis.bean.ReportInfo;
-import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView;
 import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
+import org.egov.ptis.domain.service.report.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
@@ -76,7 +76,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TY
 import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_ARREARREGISTER;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 
-@SuppressWarnings("serial")
 @ParentPackage("egov")
 @Validations
 @Results({ @Result(name = ArrearRegisterReportAction.INDEX, location = "arrearRegisterReport-index.jsp"),
@@ -93,10 +92,10 @@ public class ArrearRegisterReportAction extends ReportFormAction {
     private Long localityId;
     public static final String GENERATE = "generate";
     @Autowired
-    private BoundaryService boundaryService;
+    private transient BoundaryService boundaryService;
     @Autowired
-    private PropertyTaxUtil propertyTaxUtil;
-    private List<PropertyWiseArrearInfo> propertyWiseInfoList;
+    private transient ReportService reportService;
+    private transient List<PropertyWiseArrearInfo> propertyWiseInfoList;
 
     @Override
     public void prepare() {
@@ -178,7 +177,6 @@ public class ArrearRegisterReportAction extends ReportFormAction {
      * 
      * @return
      */
-    @SuppressWarnings("unchecked")
     @ValidationErrorPage(value = INDEX)
     @Action(value = "/reports/arrearRegisterReport-generateArrearReport")
     public String generateArrearReport() {
@@ -204,11 +202,26 @@ public class ArrearRegisterReportAction extends ReportFormAction {
         strMunicipal=getSession().get("citymunicipalityname").toString();
         strDistrict=getSession().get("districtName").toString();
         strDistrict=strDistrict.substring(0,1)+strDistrict.substring(1, strDistrict.length()).toLowerCase();
-        final List<PropertyMaterlizeView> propertyViewList = propertyTaxUtil.prepareQueryforArrearRegisterReport(zoneId, wardId,
+        final List<PropertyMaterlizeView> propertyViewList = reportService.prepareQueryforArrearRegisterReport(zoneId, wardId,
                 areaId, localityId);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("PropertyMaterlizeView List Size" + propertyViewList.size());
 
+        getInstallmentWiseInfo(propertyViewList);
+        reportInfo.setZoneNo(strZoneNum);
+        reportInfo.setWardNo(strWardNum);
+        reportInfo.setBlockNo(strBlockNum);
+        reportInfo.setLocalityNo(strLocalityNum);
+        reportInfo.setMunicipal(strMunicipal);
+        reportInfo.setDistrict(strDistrict);
+        reportInfo.setPropertyWiseArrearInfoList(propertyWiseInfoList);
+        setDataSourceType(ReportDataSourceType.JAVABEAN);
+        setReportData(reportInfo);
+        super.report();
+        return "generate";
+    }
+
+    private void getInstallmentWiseInfo(final List<PropertyMaterlizeView> propertyViewList) {
         for (final PropertyMaterlizeView propMatView : propertyViewList)
             // If there is only one Arrear Installment
             if (propMatView.getInstDmdColl().size() == 1) {
@@ -221,44 +234,36 @@ public class ArrearRegisterReportAction extends ReportFormAction {
                 // if there are more than one arrear Installments
                 final List<InstDmdCollMaterializeView> idcList = new ArrayList<>(
                         propMatView.getInstDmdColl());
-                final List unitList = new ArrayList();
                 PropertyWiseArrearInfo propertyWiseInfoTotal = null;
-
-                for (final InstDmdCollMaterializeView instlDmdColMatView : idcList) {
-                    final PropertyWiseArrearInfo propertyWiseInfo = preparePropertyWiseInfo(instlDmdColMatView);
-                    if (propertyWiseInfo != null) {
-                        // initially the block is executed
-                        if (unitList.isEmpty()) {
-                            unitList.add(propertyWiseInfo.getArrearInstallmentDesc());
-                            propertyWiseInfoTotal = propertyWiseInfo;
-                        }
-                        else if (unitList.contains(propertyWiseInfo.getArrearInstallmentDesc()))
-                            propertyWiseInfoTotal = addPropertyWiseInfo(propertyWiseInfoTotal, propertyWiseInfo);
-                        else if (!unitList.contains(propertyWiseInfo.getArrearInstallmentDesc())) {
-
-                            propertyWiseInfoList.add(propertyWiseInfoTotal);
-                            unitList.add(propertyWiseInfo.getArrearInstallmentDesc());
-                            propertyWiseInfoTotal = propertyWiseInfo;
-                            propertyWiseInfoTotal.setIndexNumber("");
-                            propertyWiseInfoTotal.setOwnerName("");
-                            propertyWiseInfoTotal.setHouseNo("");
-                        }
-                    } // end of if - null condition
-                    else
-                        propertyWiseInfoList.add(propertyWiseInfoTotal);
-                }
+                getInstallmentwiseArrear(idcList, propertyWiseInfoTotal);
             }
-        reportInfo.setZoneNo(strZoneNum);
-        reportInfo.setWardNo(strWardNum);
-        reportInfo.setBlockNo(strBlockNum);
-        reportInfo.setLocalityNo(strLocalityNum);
-        reportInfo.setMunicipal(strMunicipal);
-        reportInfo.setDistrict(strDistrict);
-        reportInfo.setPropertyWiseArrearInfoList(propertyWiseInfoList);
-        setDataSourceType(ReportDataSourceType.JAVABEAN);
-        setReportData(reportInfo);
-        super.report();
-        return "generate";
+    }
+
+    private void getInstallmentwiseArrear(final List<InstDmdCollMaterializeView> idcList, 
+            PropertyWiseArrearInfo propertyWiseInfoTotal) {
+        final List<String> unitList = new ArrayList<>();
+        for (final InstDmdCollMaterializeView instlDmdColMatView : idcList) {
+            final PropertyWiseArrearInfo propertyWiseInfo = preparePropertyWiseInfo(instlDmdColMatView);
+            if (propertyWiseInfo != null) {
+                // initially the block is executed
+                if (unitList.isEmpty()) {
+                    unitList.add(propertyWiseInfo.getArrearInstallmentDesc());
+                    propertyWiseInfoTotal = propertyWiseInfo;
+                }
+                else if (unitList.contains(propertyWiseInfo.getArrearInstallmentDesc()))
+                    addPropertyWiseInfo(propertyWiseInfoTotal, propertyWiseInfo);
+                else if (!unitList.contains(propertyWiseInfo.getArrearInstallmentDesc())) {
+                    propertyWiseInfoList.add(propertyWiseInfoTotal);
+                    unitList.add(propertyWiseInfo.getArrearInstallmentDesc());
+                    propertyWiseInfoTotal = propertyWiseInfo;
+                    propertyWiseInfoTotal.setIndexNumber("");
+                    propertyWiseInfoTotal.setOwnerName("");
+                    propertyWiseInfoTotal.setHouseNo("");
+                }
+            } // end of if - null condition
+            else
+                propertyWiseInfoList.add(propertyWiseInfoTotal);
+        }
     }
 
     /**

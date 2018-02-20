@@ -68,10 +68,6 @@ public class ReportViewerUtil {
         return ReportUtil.contentType(fileFormat);
     }
 
-    public static String getContentDisposition(ReportFormat fileFormat) {
-        return "inline; filename=report." + fileFormat.toString();
-    }
-
     public String addReportToTempCache(ReportOutput reportOutput) {
         String reportId = UUID.randomUUID().toString();
         applicationCacheManager.put(reportId, reportOutput);

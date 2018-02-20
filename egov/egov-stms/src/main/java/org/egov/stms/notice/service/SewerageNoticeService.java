@@ -323,8 +323,9 @@ public class SewerageNoticeService {
             reportParams.put(ADDRESS, assessmentDetails.getPropertyAddress());
             reportParams.put("inspectionDetails", sewerageApplicationDetails.getFieldInspections().get(0)
                     .getFieldInspectionDetails());
+            reportParams.put("estimationDetails", sewerageApplicationDetails.getEstimationDetails());
             reportParams.put("houseNo", doorNo != null ? doorNo[0] : "");
-            reportInput = new ReportRequest(ESTIMATION_NOTICE, sewerageApplicationDetails.getEstimationDetails(),
+            reportInput = new ReportRequest(ESTIMATION_NOTICE, sewerageApplicationDetails,
                     reportParams);
         }
         return reportService.createReport(reportInput);

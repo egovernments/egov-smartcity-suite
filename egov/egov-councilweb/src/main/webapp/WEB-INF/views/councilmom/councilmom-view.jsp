@@ -94,7 +94,7 @@
 					</div>
 					<div class="col-sm-3 add-margin view-content">
 						${councilMeeting.meetingTime}</div>
-				</div>
+					</div>
 			</div>
 		</div>
 		<div class="panel panel-primary" data-collapsed="0">
@@ -205,7 +205,7 @@
 	<div class="add-margin">
 		<button type="button" id="printAgenda" value="Print Agenda"
 			onclick="location.href='/council/councilmeeting/generateagenda/'+${councilMeeting.id};"
-			class='btn btn-primary'>Print</button>
+			class='btn btn-primary'>Print Meeting Notice</button>
 		<a href="javascript:void(0)" class="btn btn-default"
 			onclick="self.close()">Close</a>
 	</div>

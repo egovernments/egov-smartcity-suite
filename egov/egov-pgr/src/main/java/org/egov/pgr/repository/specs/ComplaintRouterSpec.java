@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -52,27 +52,33 @@ import org.egov.pgr.entity.ComplaintRouter;
 import org.egov.pgr.entity.contract.ComplaintRouterSearchRequest;
 import org.springframework.data.jpa.domain.Specification;
 
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 
 public final class ComplaintRouterSpec {
+
+    private static final String COMPLAINTTYPE = "complaintType";
 
     private ComplaintRouterSpec() {
         // Due to static method
     }
 
-    public static Specification<ComplaintRouter> search(final ComplaintRouterSearchRequest routerSearchRequest) {
+    public static Specification<ComplaintRouter> search(ComplaintRouterSearchRequest routerSearchRequest) {
         return (root, query, builder) -> {
-            final Predicate predicate = builder.conjunction();
+            root.join(COMPLAINTTYPE, JoinType.LEFT);
+            Predicate predicate = builder.conjunction();
             if (routerSearchRequest.getBoundaryId() != null)
                 predicate.getExpressions()
-                        .add(builder.equal(root.get("boundary").get("id"), routerSearchRequest.getBoundaryId()));
+                        .add(builder.equal(root.get("boundary"), routerSearchRequest.getBoundaryId()));
             if (routerSearchRequest.getBoundaryTypeId() != null)
-                predicate.getExpressions().add(builder.equal(root.get("boundary").get("boundaryType").get("id"),
+                predicate.getExpressions().add(builder.equal(root.get("boundary").get("boundaryType"),
                         routerSearchRequest.getBoundaryTypeId()));
             if (routerSearchRequest.getComplaintTypeId() != null)
                 predicate.getExpressions()
-                        .add(builder.equal(root.get("complaintType").get("id"), routerSearchRequest.getComplaintTypeId()));
-            predicate.getExpressions().add(builder.equal(root.get("complaintType").get("isActive"), true));
+                        .add(builder.equal(root.get(COMPLAINTTYPE), routerSearchRequest.getComplaintTypeId()));
+
+            predicate.getExpressions().add(builder.or(builder.isNull(root.get(COMPLAINTTYPE)),
+                    builder.equal(root.get(COMPLAINTTYPE).get("isActive"), true)));
             return predicate;
         };
     }

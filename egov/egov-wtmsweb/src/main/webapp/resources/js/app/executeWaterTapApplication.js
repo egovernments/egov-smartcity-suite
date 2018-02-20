@@ -132,22 +132,6 @@ $('#search').on('click', function() {
 			"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 			"autoWidth": false,
 			"bDestroy": true,
-		"oTableTools" : {
-			"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-			"aButtons" : [ 
-			               {
-				             "sExtends": "pdf",
-	                         "title": "Base Register Report",
-	                         "sPdfOrientation": "landscape"
-			                },
-			                {
-					             "sExtends": "xls",
-	                             "title": "Base Register Report"
-				             },{
-					             "sExtends": "print",
-	                             "title": "Base Register Report"
-				               }],
-		},
 	        columns : [
 	        	{  
 	        	  "class" : "text-center",
@@ -272,6 +256,9 @@ $('#update').on('click', function(){
 				else if (response == "UpdateExecutionFailed") {
 					bootbox.alert("Please enter connection execution date of selected applications");
 					return false;
+				} else if (response == "WaterRatesNotDefined") {
+					bootbox.alert(" Active Monthly Water Rates are not defined for the selected application");
+					return false;
 				}
 				
 			},
@@ -337,22 +324,6 @@ $('#searchApplication').on('click', function() {
 		"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 		"autoWidth": false,
 		"bDestroy": true,
-	"oTableTools" : {
-		"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-		"aButtons" : [ 
-		               {
-			             "sExtends": "pdf",
-                         "title": "Base Register Report",
-                         "sPdfOrientation": "landscape"
-		                },
-		                {
-				             "sExtends": "xls",
-                             "title": "Base Register Report"
-			             },{
-				             "sExtends": "print",
-                             "title": "Base Register Report"
-			               }],
-	},
         columns : [
         	{ "data":"applicationNumber", 
         		"class":"text-center", 

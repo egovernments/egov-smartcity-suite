@@ -59,7 +59,7 @@
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
-						<strong><spring:message code='license.search' /></strong>
+						<strong><spring:message code='license.demand.notice.search' /></strong>
 					</div>
 				</div>
 				<div class="panel-body"></div>
@@ -148,20 +148,20 @@
 		<table class="table table-bordered table-hover multiheadertbl" id="tblSearchTradefornotice">
 			<thead>
 				<tr>
-				<th>Application No.</th>
-					<th>TIN Number</th>
-					<th>Old TL Number</th>
-					<th>Title of Trade</th>
+				    <th>Application No.</th>
+					<th>License No.</th>
+					<th>Old License No.</th>
+					<th>Trade Title</th>
 					<th>Category</th>
-					<th>Sub Category</th>			
+					<th>Subcategory</th>
 					<th>Trade Owner</th>
 					<th>Mobile Number</th>
-					<th>ward No.</th>
-					<th>Trade License Fee (Arrears)</th>
-					<th>Trade License Penalty (Arrears )</th>
-					<th>Trade License Fee (Current)</th>
+					<th>Ward No.</th>
+					<th>License Fee (Arrears)</th>
+					<th>License Penalty (Arrears )</th>
+					<th>License Fee (Current)</th>
 					<th>Status</th>
-					<th>Owner Name</th>
+					<th>Process OWner</th>
 				</tr>
 			</thead>
 		</table>

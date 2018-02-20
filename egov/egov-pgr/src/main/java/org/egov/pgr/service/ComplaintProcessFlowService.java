@@ -96,7 +96,7 @@ public class ComplaintProcessFlowService {
     private ConfigurationService configurationService;
 
     public void onRegistration(Complaint complaint) {
-        Position assignee = complaintRouterService.getAssignee(complaint);
+        Position assignee = complaintRouterService.getComplaintAssignee(complaint);
         complaint.transition()
                 .start()
                 .withSenderName(complaint.getComplainant().getName())
@@ -149,7 +149,7 @@ public class ComplaintProcessFlowService {
         } else if (complaint.reopened()) {
             Position nextAssignee = complaint.getState().getOwnerPosition();
             if (configurationService.assignReopenedComplaintBasedOnRouterPosition())
-                nextAssignee = complaintRouterService.getAssignee(complaint);
+                nextAssignee = complaintRouterService.getComplaintAssignee(complaint);
             complaint.transition().reopen().withComments(complaint.approverComment())
                     .withSenderName(userName).withOwner(nextAssignee)
                     .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date());

@@ -413,11 +413,19 @@ function addAmalgamatedProperties()
 			var tbody=tableObj.tBodies[0];
 			var lastRow = tableObj.rows.length;
 			var rowObj = tableObj.rows[1].cloneNode(true);
-			
 			var nextIdx=(lastRow-1);
-			jQuery(rowObj).find("input, select").each(
-					function() {
-					
+			var valid = true;
+			
+			jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+(nextIdx-1)+') td input').each(function(i,v){
+				if(!jQuery.trim(jQuery(v).val())){
+					valid = false;
+					bootbox.alert("Enter all values for existing rows!");
+					return false;
+				}
+			});
+			if (valid) {
+				jQuery(rowObj).find("input, select").each(function() {
+		
 					jQuery(this).attr({
 								'id' : function(_, id) {
 									return id.replace('[0]', '['
@@ -443,7 +451,7 @@ function addAmalgamatedProperties()
 			jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+nextIdx+')')
 			.find('.amlgpropassessmentno').removeAttr('disabled');
 			 jQuery('#amalgamatedPropertiesTbl tbody tr:last').find('input').val('');
-		   
+		   }
 }
 
 jQuery(document).on('click',"#delete_row",function (){

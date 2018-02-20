@@ -125,6 +125,8 @@ public class VacanyRemissionApprovalController extends GenericWorkFlowController
         model.addAttribute("ownersName", vacancyRemission.getBasicProperty().getFullOwnerName());
         model.addAttribute("applicationNo", vacancyRemission.getApplicationNumber());
         model.addAttribute("endorsementNotices", propertyTaxCommonUtils.getEndorsementNotices(vacancyRemission.getApplicationNumber()));
+        model.addAttribute("vacancyFromDate", vacancyRemission.getVacancyFromDate());
+        model.addAttribute("vacancyToDate", vacancyRemission.getVacancyToDate());
         }
         return "vacancyRemissionApproval-form";
     }

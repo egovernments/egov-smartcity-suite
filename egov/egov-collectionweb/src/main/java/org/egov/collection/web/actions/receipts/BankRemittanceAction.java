@@ -47,6 +47,17 @@
  */
 package org.egov.collection.web.actions.receipts;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -64,11 +75,6 @@ import org.egov.commons.Bankbranch;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.BankaccountHibernateDAO;
 import org.egov.commons.dao.FinancialYearDAO;
-import org.egov.eis.entity.Employee;
-import org.egov.eis.entity.Jurisdiction;
-import org.egov.eis.service.EmployeeService;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -77,21 +83,9 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
 @Results({
         @Result(name = BankRemittanceAction.NEW, location = "bankRemittance-new.jsp"),
-        @Result(name = BankRemittanceAction.PRINT_BANK_CHALLAN, type = "redirectAction", location = "remittanceStatementReport-printBankChallan.action", params = {
+        @Result(name = BankRemittanceAction.PRINT_BANK_CHALLAN, type = "redirectAction", location = "remittanceStatementReport-printCashBankChallan.action", params = {
                 "namespace", "/reports", "totalCashAmount", "${totalCashAmount}", "totalChequeAmount",
                 "${totalChequeAmount}", "bank", "${bank}", "bankAccount", "${bankAccount}", "remittanceDate",
                 "${remittanceDate}" }),
@@ -117,6 +111,7 @@ public class BankRemittanceAction extends BaseFormAction {
     private String[] receiptNumberArray;
     private String[] fundCodeArray;
     private String[] departmentCodeArray;
+    private String[] instrumentIdArray;
     private Integer accountNumberId;
     private transient CollectionsUtil collectionsUtil;
     private Integer branchId;
@@ -128,8 +123,6 @@ public class BankRemittanceAction extends BaseFormAction {
     private Date remittanceDate;
     @Autowired
     private transient FinancialYearDAO financialYearDAO;
-    @Autowired
-    private transient EmployeeService employeeService;
     @Autowired
     private transient BankaccountHibernateDAO bankaccountHibernateDAO;
 
@@ -143,8 +136,6 @@ public class BankRemittanceAction extends BaseFormAction {
     private Long finYearId;
     private RemittanceServiceImpl remittanceService;
     private String voucherNumber;
-    private SortedMap<String, String> paymentModesMap = new TreeMap<>();
-    private String paymentMode;
     private Date fromDate;
     private Date toDate;
     private Integer pageSize;
@@ -189,30 +180,6 @@ public class BankRemittanceAction extends BaseFormAction {
         } else
             addDropdownData(ACCOUNT_NUMBER_LIST, Collections.emptyList());
         addDropdownData("financialYearList", financialYearDAO.getAllActivePostingAndNotClosedFinancialYears());
-        final TreeMap<String, String> paymentModes = new TreeMap<>();
-        paymentModes.put(CollectionConstants.INSTRUMENTTYPE_CASH, CollectionConstants.INSTRUMENTTYPE_CASH);
-        paymentModes.put(CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD, CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD);
-        paymentModesMap.putAll(paymentModes);
-    }
-
-    public String getJurisdictionBoundary() {
-        final User user = collectionsUtil.getLoggedInUser();
-        if (!collectionsUtil.isBankCollectionRemitter(user)) {
-            final Employee employee = employeeService.getEmployeeById(user.getId());
-            final StringBuilder jurValuesId = new StringBuilder();
-            for (final Jurisdiction element : employee.getJurisdictions()) {
-                if (jurValuesId.length() > 0)
-                    jurValuesId.append(',');
-                jurValuesId.append(element.getBoundary().getId());
-
-                for (final Boundary boundary : element.getBoundary().getChildren()) {
-                    jurValuesId.append(',');
-                    jurValuesId.append(boundary.getId());
-                }
-            }
-            return jurValuesId.toString();
-        } else
-            return "";
     }
 
     @Action(value = "/receipts/bankRemittance-listData")
@@ -237,18 +204,19 @@ public class BankRemittanceAction extends BaseFormAction {
             final List<Object[]> queryResults = serviceFundQuery.list();
 
             final List<String> serviceCodeList = new ArrayList<>(0);
-            final List<String> fundCodeList = new ArrayList<>(0);
+            final HashSet<String> fundCodeSet = new HashSet<>(0);
             for (int i = 0; i < queryResults.size(); i++) {
                 final Object[] arrayObjectInitialIndex = queryResults.get(i);
                 serviceCodeList.add(arrayObjectInitialIndex[0].toString());
-                fundCodeList.add(arrayObjectInitialIndex[1].toString());
+                fundCodeSet.add(arrayObjectInitialIndex[1].toString());
             }
             final CFinancialYear financialYear = financialYearDAO.getFinancialYearById(finYearId);
-            paramList = remittanceService.findAllRemittanceDetailsForServiceAndFund(getJurisdictionBoundary(), "'"
-                    + StringUtils.join(serviceCodeList, "','") + "'",
-                    "'" + StringUtils.join(fundCodeList, "','") + "'",
+            paramList = remittanceService.findCashRemittanceDetailsForServiceAndFund(collectionsUtil.getJurisdictionBoundary(),
+                    "'"
+                            + StringUtils.join(serviceCodeList, "','") + "'",
+                    "'" + StringUtils.join(fundCodeSet, "','") + "'",
                     fromDate == null ? financialYear.getStartingDate() : fromDate,
-                    toDate == null ? financialYear.getEndingDate() : toDate, paymentMode);
+                    toDate == null ? financialYear.getEndingDate() : toDate);
             if (fromDate != null && toDate != null)
                 pageSize = paramList.size();
             else
@@ -289,19 +257,19 @@ public class BankRemittanceAction extends BaseFormAction {
         addDropdownData(ACCOUNT_NUMBER_LIST, Collections.emptyList());
     }
 
+    @ValidationErrorPage(value = "error")
     @Action(value = "/receipts/bankRemittance-create")
-    @ValidationErrorPage(value = NEW)
     public String create() {
         final long startTimeMillis = System.currentTimeMillis();
         if (accountNumberId == null || accountNumberId == -1)
             throw new ValidationException(Arrays.asList(new ValidationError("Please select Account number",
                     "bankremittance.error.noaccountNumberselected")));
-        voucherHeaderValues = remittanceService.createBankRemittance(getServiceNameArray(), getTotalCashAmountArray(),    
+        voucherHeaderValues = remittanceService.createCashBankRemittance(getServiceNameArray(), getTotalCashAmountArray(),
                 getTotalChequeAmountArray(), getTotalCardAmountArray(), getReceiptDateArray(), getFundCodeArray(),
                 getDepartmentCodeArray(), accountNumberId, positionUser, getReceiptNumberArray(), remittanceDate);
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
         LOGGER.info("$$$$$$ Time taken to persist the remittance list (ms) = " + elapsedTimeMillis);
-        bankRemittanceList = remittanceService.prepareBankRemittanceReport(voucherHeaderValues);
+        bankRemittanceList = remittanceService.prepareCashRemittanceReport(voucherHeaderValues);
         if (getSession().get(REMITTANCE_LIST) != null)
             getSession().remove(REMITTANCE_LIST);
         getSession().put(REMITTANCE_LIST, bankRemittanceList);
@@ -624,22 +592,6 @@ public class BankRemittanceAction extends BaseFormAction {
         this.voucherNumber = voucherNumber;
     }
 
-    public SortedMap<String, String> getPaymentModesMap() {
-        return paymentModesMap;
-    }
-
-    public void setPaymentModesMap(final SortedMap<String, String> paymentModesMap) {
-        this.paymentModesMap = paymentModesMap;
-    }
-
-    public String getPaymentMode() {
-        return paymentMode;
-    }
-
-    public void setPaymentMode(final String paymentMode) {
-        this.paymentMode = paymentMode;
-    }
-
     public Date getFromDate() {
         return fromDate;
     }
@@ -686,6 +638,14 @@ public class BankRemittanceAction extends BaseFormAction {
 
     public void setRemitAccountNumber(String remitAccountNumber) {
         this.remitAccountNumber = remitAccountNumber;
+    }
+
+    public String[] getInstrumentIdArray() {
+        return instrumentIdArray;
+    }
+
+    public void setInstrumentIdArray(String[] instrumentIdArray) {
+        this.instrumentIdArray = instrumentIdArray;
     }
 
 }

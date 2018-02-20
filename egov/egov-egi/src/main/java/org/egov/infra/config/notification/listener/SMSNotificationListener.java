@@ -62,6 +62,7 @@ import javax.jms.Message;
 import static org.egov.infra.notification.NotificationConstants.MESSAGE;
 import static org.egov.infra.notification.NotificationConstants.MOBILE;
 import static org.egov.infra.notification.NotificationConstants.PRIORITY;
+import static org.egov.infra.notification.entity.NotificationPriority.HIGH;
 
 @Component
 public class SMSNotificationListener {
@@ -70,12 +71,22 @@ public class SMSNotificationListener {
     private SMSService smsService;
 
     @JmsListener(destination = "java:/jms/queue/sms")
-    public void processMessage(Message message) {
+    public void sendSMS(Message message) {
         try {
-            final MapMessage emailMessage = (MapMessage) message;
+            MapMessage emailMessage = (MapMessage) message;
             smsService.sendSMS(emailMessage.getString(MOBILE), emailMessage.getString(MESSAGE),
                     NotificationPriority.valueOf(emailMessage.getString(PRIORITY)));
-        } catch (final JMSException e) {
+        } catch (JMSException e) {
+            throw JmsUtils.convertJmsAccessException(e);
+        }
+    }
+
+    @JmsListener(destination = "java:/jms/queue/flash")
+    public void sendQuickSMS(Message message) {
+        try {
+            MapMessage emailMessage = (MapMessage) message;
+            smsService.sendSMS(emailMessage.getString(MOBILE), emailMessage.getString(MESSAGE), HIGH);
+        } catch (JMSException e) {
             throw JmsUtils.convertJmsAccessException(e);
         }
     }

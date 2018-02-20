@@ -48,18 +48,19 @@
 
 package org.egov.collection.utils;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.billsaccounting.services.VoucherConstant;
+import org.egov.collection.constants.CollectionConstants;
 import org.egov.commons.CVoucherHeader;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)
@@ -77,7 +78,7 @@ public class FinancialsVoucherUtil {
         try {
             if (headerdetails instanceof HashMap) {
                 // fetch from eg_modules once have master data in place
-                headerdetails.put(VoucherConstant.MODULEID, "10");
+                headerdetails.put(VoucherConstant.MODULEID, CollectionConstants.COLLECTIONS_EG_MODULES_ID);
                 voucherHeaders = createVoucher.createVoucher((HashMap<String, Object>) headerdetails,
                         accountcodedetails, subledgerdetails);
             }

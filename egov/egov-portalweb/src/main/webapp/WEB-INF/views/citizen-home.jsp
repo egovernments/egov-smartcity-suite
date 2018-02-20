@@ -93,7 +93,7 @@
           </header>
           
           <div class="main-content">
-            <div class="action-bar hide">
+            <div class="action-bar">
               <div class="action-item"><input type="text" id="search" placeholder="Search"></div>
               <div class="action-item"><i class="material-icons">search</i></div>
             </div>
@@ -281,6 +281,7 @@
               </table>
           </div>
             </div><br>
+          
             <input type="hidden" value="<spring:message code="error.pwd.invalid.case" />" id="errorPwdInvalid" />
             
             <c:forEach items="${services}" var="service" varStatus="item">
@@ -292,6 +293,41 @@
 	              </div>
 	            </div>
 	        </c:forEach>
+	         <div class="col-md-12"><br>
+	          <div class="linkedApplications">
+            	<table class="table table-striped datatable" id="linkedTable">
+                <thead>
+                  <tr>
+                    <th><spring:message code="lbl.slno" /></th>
+                    <th><spring:message code="lbl.consumernumber" /></th>
+                    <th><spring:message code="lbl.applicant.name" /></th>
+                    <th><spring:message code="lbl.linkeddate" /></th>
+                    <th><spring:message code="lbl.servicegroup" /></th>
+                    <th><spring:message code="lbl.action" /></th>
+                 
+                  </tr>
+                </thead>
+                <tbody>
+                	<c:forEach items="${totalServicesLinked}" var="linkedItem" varStatus="item">
+                	<tr>
+		                   <td><span class="spansno">${item.index + 1}</span></td>
+		                   <td><a href="#" onclick="openPopUp('${linkedItem.url}');">${linkedItem.consumerNo}</a></td>
+		                   <td>${linkedItem.applicantName}</td>
+		                   <td>
+		                   <fmt:formatDate
+								value="${linkedItem.createdDate}"
+								pattern="dd/MM/yyyy" />
+		                    </td>
+		                   <td>${linkedItem.moduleName} </td>
+		                   <td><input type="Button" type="submit" value="Pay Tax" class="buttonsubmit" onclick="onlinePayTaxForm('${linkedItem.paymentURL}');"> 
+		                   		<input type="Button" type="submit" value="View DCB" class="buttonsubmit" onclick="onlinePayTaxForm('${linkedItem.viewDcbURL}');">
+		                   </td>
+		                 </tr>
+                  </c:forEach>
+                </tbody>
+                </table>
+            </div>
+            </div>
           </div>
         </div>
       </div>

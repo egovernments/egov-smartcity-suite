@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -63,7 +63,9 @@
                         <label class="col-sm-2 control-label text-right"><spring:message code="lbl.name"/>
                             <span id="mandatory" class="mandatory"></span></label>
                         <div class="col-sm-3 add-margin">
-                            <form:input path="name" id="name" cssClass="form-control" cssErrorClass="form-control error" required="required" maxLength="256"/>
+                            <form:input path="name" id="name" cssClass="form-control patternvalidation"
+                                        data-pattern="alphabetwithspacehyphenunderscore"
+                                        cssErrorClass="form-control error" required="required" maxLength="256"/>
                             <form:errors path="name" cssClass="error-msg"/>
                         </div>
                         <label class="col-sm-2 control-label text-right"><spring:message code="lbl.code"/>
@@ -81,8 +83,10 @@
     <div class="form-group">
         <div class="text-center">
             <button type='submit' class='btn btn-primary' id="buttonSubmit"><spring:message code='lbl.save'/></button>
-            <button type="reset" class="btn btn-default" onclick="window.location.reload()"><spring:message code="lbl.reset"/></button>
-            <a href='javascript:void(0)' class='btn btn-default' onclick='self.close()'><spring:message code='lbl.close'/></a>
+            <button type="reset" class="btn btn-default" onclick="window.location.reload()"><spring:message
+                    code="lbl.reset"/></button>
+            <a href='javascript:void(0)' class='btn btn-default' onclick='self.close()'><spring:message
+                    code='lbl.close'/></a>
         </div>
     </div>
 </form:form>

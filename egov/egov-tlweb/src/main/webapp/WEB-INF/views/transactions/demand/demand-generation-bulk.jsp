@@ -117,6 +117,11 @@
 
                 </form:form>
             </div>
+            <div class="panel-footer">
+                <div class="alert alert-warning">
+                    <spring:message code="msg.demand.gen.footer" />
+                </div>
+            </div>
         </div>
     </div>
 </div>

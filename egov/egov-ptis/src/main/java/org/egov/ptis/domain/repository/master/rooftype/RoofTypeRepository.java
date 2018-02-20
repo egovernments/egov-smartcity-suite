@@ -60,4 +60,5 @@ public interface RoofTypeRepository extends JpaRepository<RoofType, Long> {
 
     List<RoofType> findByNameContainingIgnoreCase(String name);
 
+    List<RoofType> findByActiveTrueOrderByName();
 }

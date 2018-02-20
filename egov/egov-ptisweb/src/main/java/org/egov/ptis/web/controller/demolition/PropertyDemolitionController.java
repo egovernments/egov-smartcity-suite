@@ -165,6 +165,10 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
             model.addAttribute(ERROR_MSG, "error.superstruc.prop.notallowed");
             return PROPERTY_VALIDATION;
         }
+        if ((PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND).equalsIgnoreCase(property.getPropertyDetail().getPropertyTypeMaster().getCode())) {
+            model.addAttribute(ERROR_MSG, "demolition.on.vlt");
+            return PROPERTY_VALIDATION;
+        }
         if (propertyService.isMeesevaUser(loggedInUser))
             if (meesevaApplicationNumber == null)
                 throw new ApplicationRuntimeException("MEESEVA.005");
@@ -216,59 +220,59 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
                                       @RequestParam String workFlowAction) throws TaxCalculatorExeption {
         String target;
         User loggedInUser = securityUtils.getCurrentUser();
-        propertyDemolitionService.validateProperty(property, errors, request);
-        if (errors.hasErrors()) {
-            prepareWorkflow(model, (PropertyImpl) property, new WorkflowContainer());
-            model.addAttribute("stateType", property.getClass().getSimpleName());
-            model.addAttribute("isEmployee", !ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName()) && propService.isEmployee(loggedInUser));
-            propertyDemolitionService.addModelAttributes(model, property.getBasicProperty());
-            return DEMOLITION_FORM;
-        } else {
+        Map<String, String> errorMessages = propertyDemolitionService.validateProperty(property);
+		if (errorMessages.isEmpty()) {
+			final Character status = STATUS_WORKFLOW;
+			Long approvalPosition = 0l;
+			String approvalComent = "";
+			if (request.getParameter("approvalComent") != null)
+				approvalComent = request.getParameter("approvalComent");
+			if (request.getParameter("workFlowAction") != null)
+				workFlowAction = request.getParameter("workFlowAction");
+			if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
+				approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+			if (propertyService.isMeesevaUser(loggedInUser)) {
+				final HashMap<String, String> meesevaParams = new HashMap<>();
+				meesevaParams.put("APPLICATIONNUMBER", ((PropertyImpl) property).getMeesevaApplicationNumber());
+				if (StringUtils.isBlank(property.getApplicationNo())) {
+					property.setApplicationNo(((PropertyImpl) property).getMeesevaApplicationNumber());
+					property.setSource(PropertyTaxConstants.SOURCE_MEESEVA);
+				}
+				propertyDemolitionService.saveProperty(property.getBasicProperty().getActiveProperty(), property,
+						status, approvalComent, workFlowAction, approvalPosition, DEMOLITION, meesevaParams);
+			} else
+				propertyDemolitionService.saveProperty(property.getBasicProperty().getActiveProperty(), property,
+						status, approvalComent, workFlowAction, approvalPosition, DEMOLITION);
 
-            final Character status = STATUS_WORKFLOW;
-            Long approvalPosition = 0l;
-            String approvalComent = "";
-
-            if (request.getParameter("approvalComent") != null)
-                approvalComent = request.getParameter("approvalComent");
-            if (request.getParameter("workFlowAction") != null)
-                workFlowAction = request.getParameter("workFlowAction");
-            if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
-                approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
-            if (propertyService.isMeesevaUser(loggedInUser)) {
-                final HashMap<String, String> meesevaParams = new HashMap<>();
-                meesevaParams.put("APPLICATIONNUMBER", ((PropertyImpl) property).getMeesevaApplicationNumber());
-                if (StringUtils.isBlank(property.getApplicationNo())) {
-                    property.setApplicationNo(((PropertyImpl) property).getMeesevaApplicationNumber());
-                    property.setSource(PropertyTaxConstants.SOURCE_MEESEVA);
-                }
-                propertyDemolitionService.saveProperty(property.getBasicProperty().getActiveProperty(), property, status,
-                        approvalComent, workFlowAction,
-                        approvalPosition, DEMOLITION, meesevaParams);
-            } else
-            propertyDemolitionService.saveProperty(property.getBasicProperty().getActiveProperty(), property, status, approvalComent, workFlowAction,
-                    approvalPosition, DEMOLITION);
-
-            if (!propService.isEmployee(loggedInUser) || ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName())) {
-                Assignment assignment = propertyDemolitionService.getUserAssignment(loggedInUser, property);
-                if (assignment != null)
-                    approvalPosition = assignment.getPosition().getId();
-            }
-            model.addAttribute("showAckBtn", Boolean.TRUE);
-            model.addAttribute("isOnlineApplication", ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName()));
-            model.addAttribute("propertyId", property.getBasicProperty().getUpicNo());
-            model.addAttribute(
-                    "successMessage",
-                    "Property demolition data saved successfully in the system and forwarded to "
-                            + propertyTaxUtil.getApproverUserName(approvalPosition));
-            if (propertyService.isMeesevaUser(loggedInUser))
-                target = "redirect:/property/demolition/generate-meesevareceipt/"
-                        + ((PropertyImpl) property).getBasicProperty().getUpicNo() + "?transactionServiceNumber="
-                        + ((PropertyImpl) property).getApplicationNo();
-            else
-                target = DEMOLITION_SUCCESS;
-        return target;
-        }
+			if (!propService.isEmployee(loggedInUser) || ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName())) {
+				Assignment assignment = propertyDemolitionService.getUserAssignment(loggedInUser, property);
+				if (assignment != null)
+					approvalPosition = assignment.getPosition().getId();
+			}
+			model.addAttribute("showAckBtn", Boolean.TRUE);
+			model.addAttribute("isOnlineApplication", ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName()));
+			model.addAttribute("propertyId", property.getBasicProperty().getUpicNo());
+			model.addAttribute("successMessage",
+					"Property demolition data saved successfully in the system and forwarded to "
+							+ propertyTaxUtil.getApproverUserName(approvalPosition) + " with application number "
+							+ property.getApplicationNo());
+			if (propertyService.isMeesevaUser(loggedInUser))
+				target = "redirect:/property/demolition/generate-meesevareceipt/"
+						+ ((PropertyImpl) property).getBasicProperty().getUpicNo() + "?transactionServiceNumber="
+						+ ((PropertyImpl) property).getApplicationNo();
+			else
+				target = DEMOLITION_SUCCESS;
+			return target;
+		} else {
+			model.addAttribute(ERROR_MSG, errorMessages);
+			model.addAttribute("property", property);
+			prepareWorkflow(model, (PropertyImpl) property, new WorkflowContainer());
+			model.addAttribute("stateType", property.getClass().getSimpleName());
+			model.addAttribute("isEmployee",
+					!ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName()) && propService.isEmployee(loggedInUser));
+			propertyDemolitionService.addModelAttributes(model, property.getBasicProperty());
+			return DEMOLITION_FORM;
+		}
     }
     
     @RequestMapping(value = "/generate-meesevareceipt/{assessmentNo}", method = RequestMethod.GET)

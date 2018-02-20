@@ -46,8 +46,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
   -->
-<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-03-23T11:40:01 -->
+<!-- Created with Jaspersoft Studio version 6.4.3.final using JasperReports Library version 6.4.3  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ESDCertificate_Corporation" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="5f99a57d-d4d7-42d2-824c-02ee7d858b01">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="org.egov.infra.reporting.util.*"/>
@@ -197,11 +196,11 @@
 				<text><![CDATA[To,]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="30" y="562" width="410" height="30" uuid="75a82923-78eb-4539-b104-83b7af8cdeed"/>
+				<reportElement x="30" y="560" width="410" height="30" uuid="75a82923-78eb-4539-b104-83b7af8cdeed"/>
 				<textElement textAlignment="Left" markup="styled">
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA["M/s, Smt/ Sri <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{ownerName}+"</style>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["M/s, Smt/ Sri <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+JRStringUtil.xmlEncode($P{ownerName})+"</style>"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="96" y="75" width="384" height="30" uuid="06213648-623d-47c0-844d-3f05b12307f3"/>

@@ -48,9 +48,6 @@
 
 package org.egov.ptis.domain.entity.property;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.SafeHtml;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -58,48 +55,61 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.SafeHtml;
+
 @Entity
 @Table(name = "egpt_floor_type")
 @SequenceGenerator(name = FloorType.SEQ_FLOORTYPE, sequenceName = FloorType.SEQ_FLOORTYPE, allocationSize = 1)
 public class FloorType extends AbstractAuditable {
 
-	private static final long serialVersionUID = 1L;
-	public static final String SEQ_FLOORTYPE = "SEQ_EGPT_FLOOR_TYPE";
-	
-	@Id
-	@GeneratedValue(generator = SEQ_FLOORTYPE, strategy = GenerationType.SEQUENCE)
-	private Long id;
-	
-	@SafeHtml
-	private String name;
-	
-	@SafeHtml
-	private String code;
+    private static final long serialVersionUID = 1L;
+    public static final String SEQ_FLOORTYPE = "SEQ_EGPT_FLOOR_TYPE";
 
-	public  String getName() {
-		return name;
-	}
+    @Id
+    @GeneratedValue(generator = SEQ_FLOORTYPE, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    @SafeHtml
+    private String name;
 
-	public String getCode() {
-		return code;
-	}
+    @SafeHtml
+    private String code;
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    private Boolean active;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    public String getName() {
+        return name;
+    }
 
-	@Override
-	public void setId(final Long id) {
-		this.id = id;
-	}
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(final String code) {
+        this.code = code;
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(final Boolean active) {
+        this.active = active;
+    }
 
 }

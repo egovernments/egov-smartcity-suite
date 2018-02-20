@@ -195,10 +195,10 @@ public class CommonWaterTaxSearchController {
         if (searchRequest.getMeesevaApplicationNumber() != null)
             model.addAttribute(MEESEVA_APPLICATION_NUMBER, searchRequest.getMeesevaApplicationNumber());
         if (applicationType != null && applicationType.equals(RECONNECTIONCONNECTION))
-            waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(
+            waterConnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(
                     searchRequest.getConsumerCode(), ConnectionStatus.CLOSED);
         else
-            waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(
+            waterConnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(
                     searchRequest.getConsumerCode(), ConnectionStatus.ACTIVE);
         if (waterConnectionDetails == null) {
             resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, INVALID_CONSUMERNUMBER);
@@ -216,7 +216,8 @@ public class CommonWaterTaxSearchController {
             } else if ((CHANGEOFUSE.equals(waterConnectionDetails.getApplicationType().getCode())
                     || NEWCONNECTION.equals(waterConnectionDetails.getApplicationType().getCode())
                     || RECONNECTIONCONNECTION.equals(waterConnectionDetails.getApplicationType().getCode()))
-                    && ConnectionStatus.ACTIVE.equals(waterConnectionDetails.getConnectionStatus()))
+                    && ConnectionStatus.ACTIVE.equals(waterConnectionDetails.getConnectionStatus())
+                    && waterConnectionDetails.getConnection().getParentConnection() == null)
                 return "redirect:/application/addconnection/"
                         + waterConnectionDetails.getConnection().getConsumerCode();
             else {
@@ -336,7 +337,7 @@ public class CommonWaterTaxSearchController {
         if (applicationType != null
                 && applicationType.equals(SEARCH_MENUTREE_APPLICATIONTYPE_COLLECTTAX)) {
             BigDecimal amoutToBeCollected = BigDecimal.ZERO;
-            if (null != waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand())
+            if (waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand() != null)
                 amoutToBeCollected = waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
             final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                     waterConnectionDetails.getConnection().getPropertyIdentifier(),
@@ -347,9 +348,9 @@ public class CommonWaterTaxSearchController {
                     model.addAttribute(APPLICATIONTYPE, applicationType);
                     resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, COLLECTION_ALREADY_DONE);
                     return COMMON_FORM_SEARCH;
-                } else if ((amoutToBeCollected.doubleValue() > 0
-                        && waterConnectionDetails.getConnectionType().equals(ConnectionType.METERED)
-                        || waterConnectionDetails.getConnectionType().equals(ConnectionType.NON_METERED))
+                } else if (amoutToBeCollected.doubleValue() > 0
+                        && (waterConnectionDetails.getConnectionType().equals(ConnectionType.METERED)
+                                || waterConnectionDetails.getConnectionType().equals(ConnectionType.NON_METERED))
                         && (waterConnectionDetails.getApplicationType().getCode()
                                 .equals(NEWCONNECTION)
                                 || waterConnectionDetails.getApplicationType().getCode()

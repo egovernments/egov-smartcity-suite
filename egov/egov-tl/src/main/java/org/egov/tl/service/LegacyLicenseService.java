@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -53,8 +53,8 @@ import org.egov.demand.dao.DemandGenericHibDao;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.validation.exception.ValidationException;
 import org.egov.tl.entity.LicenseDemand;
 import org.egov.tl.entity.LicenseDocument;
 import org.egov.tl.entity.TradeLicense;
@@ -123,7 +123,7 @@ public class LegacyLicenseService {
     }
 
     @Transactional
-    public void createLegacy(final TradeLicense license) throws IOException {
+    public void createLegacy(final TradeLicense license) {
 
         storeDocument(license);
         addLegacyDemand(license);
@@ -137,7 +137,7 @@ public class LegacyLicenseService {
     }
 
     @Transactional
-    public void updateLegacy(final TradeLicense license) throws IOException {
+    public void updateLegacy(final TradeLicense license) {
 
         storeDocument(license);
         updateLegacyDemand(license);
@@ -307,24 +307,26 @@ public class LegacyLicenseService {
         licenseDemand.recalculateBaseDemand();
     }
 
-    public void storeDocument(final TradeLicense license) throws IOException {
-        final List<LicenseDocument> documents = license.getDocuments();
-        final MultipartFile[] files = license.getFiles();
+    public void storeDocument(TradeLicense license) {
+        List<LicenseDocument> documents = license.getDocuments();
+        MultipartFile[] files = license.getFiles();
         if (files != null)
             for (int i = 0; i < files.length; i++) {
                 documents.get(i).setType(licenseDocumentTypeRepository.findOne(documents.get(i).getType().getId()));
-                if (!files[i].isEmpty()) {
-                    documents.get(i).getFiles()
-                            .add(fileStoreService.store(
-                                    files[i].getInputStream(),
-                                    files[i].getOriginalFilename(),
-                                    files[i].getContentType(), "EGTL"));
-                    documents.get(i).setEnclosed(true);
-                    documents.get(i).setDocDate(license.getApplicationDate());
-                } else if (documents.get(i).getType().isMandatory() && files[i].isEmpty() && documents.isEmpty()) {
-                    documents.get(i).getFiles().clear();
-                    throw new ValidationException("TL-011", "File should not be Empty",
-                            documents.get(i).getType().getName());
+                try {
+                    if (!files[i].isEmpty()) {
+                        documents.get(i).getFiles()
+                                .add(fileStoreService.store(
+                                        files[i].getInputStream(),
+                                        files[i].getOriginalFilename(),
+                                        files[i].getContentType(), "EGTL"));
+                        documents.get(i).setEnclosed(true);
+                        documents.get(i).setDocDate(license.getApplicationDate());
+                    } else if (documents.get(i).getType().isMandatory() && files[i].isEmpty() && documents.isEmpty()) {
+                        documents.get(i).getFiles().clear();
+                    }
+                } catch (IOException exp) {
+                    throw new ApplicationRuntimeException("Error occurred while storing files ", exp);
                 }
                 documents.get(i).setLicense(license);
             }

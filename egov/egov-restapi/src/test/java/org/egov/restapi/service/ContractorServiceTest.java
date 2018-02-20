@@ -47,6 +47,15 @@
  */
 package org.egov.restapi.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.egov.restapi.model.ContractorDetailsRequest;
 import org.egov.restapi.model.ContractorHelper;
 import org.egov.restapi.model.RestErrors;
 import org.egov.restapi.web.rest.AbstractContextControllerTest;
@@ -60,13 +69,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
 
 public class ContractorServiceTest extends AbstractContextControllerTest<ExternalContractorService> {
 
@@ -105,6 +107,7 @@ public class ContractorServiceTest extends AbstractContextControllerTest<Externa
 
     private void fillContractor() {
         contractorHelper = new ContractorHelper();
+        ContractorDetailsRequest contractorDetailsRequest = new ContractorDetailsRequest();
         contractorHelper.setCode("gdfkhsfkhsd");
         contractorHelper.setName("contractorName");
         contractorHelper.setBankName("SBI");
@@ -120,9 +123,11 @@ public class ContractorServiceTest extends AbstractContextControllerTest<Externa
         contractorHelper.setTinNumber("TIN0123456");
         contractorHelper.setPwdApprovalCode("PWDCode");
         contractorHelper.setNarration("Narration");
-        contractorHelper.setStatus("Active");
-        contractorHelper.setContractorCategory("Public Health Engineering");
-        contractorHelper.setContractorClass("Class-I");
+        contractorDetailsRequest.setDepartmentCode("ENG");
+        contractorDetailsRequest.setStatus("Active");
+        contractorDetailsRequest.setStartDate(new Date());
+        contractorDetailsRequest.setEndDate(new Date());
+        contractorHelper.getContractorDetails().add(contractorDetailsRequest);
     }
 
     @Test

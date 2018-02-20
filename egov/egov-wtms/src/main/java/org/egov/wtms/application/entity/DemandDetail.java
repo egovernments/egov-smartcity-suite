@@ -52,14 +52,18 @@ import java.math.BigDecimal;
 
 public class DemandDetail implements Serializable {
 
+    /**
+     *
+     */
+    private static final long serialVersionUID = 2093863857347504526L;
     private Long id;
     private String installment;
     private String reasonMaster;
     private String reasonMasterDesc;
-    private BigDecimal actualAmount;
-    private BigDecimal revisedAmount;
-    private BigDecimal actualCollection;
-    private BigDecimal revisedCollection;
+    private BigDecimal actualAmount = BigDecimal.ZERO;
+    private BigDecimal revisedAmount = BigDecimal.ZERO;
+    private BigDecimal actualCollection = BigDecimal.ZERO;
+    private BigDecimal revisedCollection = BigDecimal.ZERO;
 
     public DemandDetail() {
     }

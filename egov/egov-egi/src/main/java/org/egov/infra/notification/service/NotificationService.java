@@ -69,6 +69,7 @@ import static org.egov.infra.notification.NotificationConstants.MESSAGE;
 import static org.egov.infra.notification.NotificationConstants.MOBILE;
 import static org.egov.infra.notification.NotificationConstants.PRIORITY;
 import static org.egov.infra.notification.NotificationConstants.SUBJECT;
+import static org.egov.infra.notification.entity.NotificationPriority.HIGH;
 import static org.egov.infra.notification.entity.NotificationPriority.MEDIUM;
 
 @Service
@@ -84,6 +85,10 @@ public class NotificationService {
     @Autowired
     @Qualifier("smsQueue")
     private Destination smsQueue;
+
+    @Autowired
+    @Qualifier("flashQueue")
+    private Destination flashQueue;
 
     @Autowired
     private MessageTemplateService messageTemplateService;
@@ -137,7 +142,7 @@ public class NotificationService {
 
     public void sendSMS(String mobileNo, String message, NotificationPriority priority) {
         if (smsEnabled && isNoneBlank(mobileNo, message))
-            jmsTemplate.send(smsQueue, session -> {
+            jmsTemplate.send(HIGH.equals(priority) ? flashQueue : smsQueue, session -> {
                 MapMessage mapMessage = session.createMapMessage();
                 mapMessage.setString(MOBILE, mobileNo);
                 mapMessage.setString(MESSAGE, message);

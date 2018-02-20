@@ -1,0 +1,1 @@
+UPDATE egp_portalservice SET code='Link Services',url='/portal/citizen/searchforlinking', name ='Link Services' WHERE code='Link Service';

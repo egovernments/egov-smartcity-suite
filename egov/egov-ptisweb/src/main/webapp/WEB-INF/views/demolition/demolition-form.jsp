@@ -61,7 +61,14 @@ body
 </style>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/javascript/validations.js'/>"></script>
-
+<c:if test="${not empty errorMsg}">
+	<div class="alert alert-danger" role="alert">
+		<c:forEach var="error" items="${errorMsg}" varStatus="status">
+			<spring:message code="${error.value}" />
+				<br/>
+		</c:forEach>
+	</div>
+</c:if>
 <form:form id="demolition" method="post"
 	class="form-horizontal form-groups-bordered" modelAttribute="property">
 	<div class="page-container" id="page-container">

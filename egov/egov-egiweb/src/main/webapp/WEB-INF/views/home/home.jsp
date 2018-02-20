@@ -53,6 +53,10 @@
 <!DOCTYPE html>
 <html class="no-js" oncontextmenu="return false;">
 	<head>
+		<spring:eval expression="@environment.getProperty('analytics.enabled')" scope="application" var="analyticsEnabled"/>
+		<c:if test="${analyticsEnabled}">
+            <spring:eval expression="@environment.getProperty('analytics.config')" scope="application"/>
+		</c:if>
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		

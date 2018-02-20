@@ -483,7 +483,8 @@ public class MarriageCertificateService {
                 && reIssue.getRegistration().getRegistrationNo() != null) {
             criteriaReissue.createAlias("certificate.reIssue", "reIssue").createAlias(RE_ISSUE_DOT_REGISTRATION, "reg");
             criteriaReissue
-                    .add(Restrictions.eq("reg.registrationNo", reIssue.getRegistration().getRegistrationNo().trim()));
+                    .add(Restrictions.eq("reg.registrationNo", reIssue.getRegistration().getRegistrationNo().trim()))
+                    .add(Restrictions.eq("reIssue", reIssue));
         }
         return criteriaReissue.list();
     }

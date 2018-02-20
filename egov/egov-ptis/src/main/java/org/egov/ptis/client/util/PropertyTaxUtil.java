@@ -47,8 +47,8 @@
  */
 package org.egov.ptis.client.util;
 
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.RandomStringGenerator;
 import org.apache.log4j.Logger;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
@@ -86,7 +86,6 @@ import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.MoneyUtils;
 import org.egov.infstr.services.PersistenceService;
@@ -135,7 +134,6 @@ import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
 import org.egov.ptis.domain.model.calculator.MiscellaneousTaxDetail;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
-import org.egov.ptis.domain.service.property.RebatePeriodService;
 import org.egov.ptis.domain.service.property.RebateService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.egov.ptis.wtms.ConsumerConsumption;
@@ -143,7 +141,6 @@ import org.egov.ptis.wtms.PropertyWiseConsumptions;
 import org.egov.ptis.wtms.WaterChargesIntegrationService;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.CriteriaSpecification;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.slf4j.LoggerFactory;
@@ -233,16 +230,12 @@ public class PropertyTaxUtil {
     @Autowired
     private ModuleService moduleDao;
     @Autowired
-    private RebatePeriodService rebatePeriodService;
-    @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
     @Autowired
     @Qualifier("ptaxApplicationTypeService")
     private PersistenceService<PtApplicationType, Long> ptaxApplicationTypeService;
     @Autowired
     private ReportService reportService;
-    @Autowired
-    private ApplicationNumberGenerator applicationNumberGenerator;
     @PersistenceContext
     private EntityManager entityManager;
     @Autowired
@@ -1825,14 +1818,15 @@ public class PropertyTaxUtil {
         return roleNameList.toString().toUpperCase();
     }
 
-    public String generateUserName(final String name) {
+    public String generateUserName(final String mobileNumber) {
         final StringBuilder userNameBuilder = new StringBuilder();
-        String userName = "";
-        if (name.length() < 6)
-            userName = String.format("%-6s", name).replace(' ', '0');
+        String userName;
+        if (mobileNumber.length() < 10)
+            userName = String.format("%-10s", mobileNumber).replace(' ', '0');
         else
-            userName = name.substring(0, 6).replace(' ', '0');
-        userNameBuilder.append(userName).append(RandomStringUtils.randomNumeric(4));
+            userName = mobileNumber.substring(0, 10).replace(' ', '0');
+        RandomStringGenerator generator = new RandomStringGenerator.Builder().withinRange('0', '9').build();
+        userNameBuilder.append(userName).append(generator.generate(5));
         return userNameBuilder.toString();
     }
 
@@ -1961,50 +1955,7 @@ public class PropertyTaxUtil {
         return qry;
     }
 
-    /**
-     * @param zoneId
-     * @param wardId
-     * @param areaId
-     * @param localityId
-     * @return
-     */
-    public List<PropertyMaterlizeView> prepareQueryforArrearRegisterReport(final Long zoneId, final Long wardId,
-            final Long areaId, final Long localityId) {
-        // Get current installment
-        final Installment currentInst = propertyTaxCommonUtils.getCurrentInstallment();
-        final StringBuffer query = new StringBuffer(300);
-
-        // Query that retrieves all the properties that has arrears.
-        query.append("select distinct pmv from PropertyMaterlizeView pmv,InstDmdCollMaterializeView idc where "
-                + "pmv.basicPropertyID = idc.propMatView.basicPropertyID and pmv.isActive = true and idc.installment.fromDate not between  ('"
-                + currentInst.getFromDate() + "') and ('" + currentInst.getToDate() + "') ");
-
-        if (isWard(localityId))
-            query.append(" and pmv.locality.id= :localityId ");
-        if (isWard(zoneId))
-            query.append(" and pmv.zone.id= :zoneId ");
-        if (isWard(wardId))
-            query.append("  and pmv.ward.id= :wardId ");
-        if (isWard(areaId))
-            query.append("  and pmv.block.id= :areaId ");
-
-        query.append(" order by pmv.basicPropertyID ");
-        final Query qry = persistenceService.getSession().createQuery(query.toString());
-
-        if (isWard(localityId))
-            qry.setParameter("localityId", localityId);
-        if (isWard(zoneId))
-            qry.setParameter("zoneId", zoneId);
-        if (isWard(wardId))
-            qry.setParameter("wardId", wardId);
-        if (isWard(areaId))
-            qry.setParameter("areaId", areaId);
-        final List<PropertyMaterlizeView> propertyViewList = qry.setResultTransformer(
-                CriteriaSpecification.DISTINCT_ROOT_ENTITY).list();
-        return propertyViewList;
-    }
-
-    /**
+     /**
      * @param zoneId
      * @param wardId
      * @param areaId
@@ -2322,7 +2273,7 @@ public class PropertyTaxUtil {
         return StringUtils.isNotBlank(ownerShipType);
     }
 
-    private boolean isWard(final Long wardId) {
+    public boolean isWard(final Long wardId) {
         return wardId != null && wardId != -1;
     }
 
@@ -2455,7 +2406,7 @@ public class PropertyTaxUtil {
     }
 
     public ReportOutput generateCitizenCharterAcknowledgement(final String propertyId, final String applicationType,
-            final String serviceType) {
+            final String serviceType, final String applicationNo) {
         ReportRequest reportInput;
         Long resolutionTime;
         final Map<String, Object> reportParams = new HashMap<>();
@@ -2471,7 +2422,10 @@ public class PropertyTaxUtil {
         reportParams.put(AS_ON_DATE, sdf.format(new Date()));
         reportParams.put(ULB_NAME, city.getPreferences().getMunicipalityName());
         reportParams.put(CITY_NAME, city.getName());
-        reportParams.put(ACK_NO, applicationNumberGenerator.generate());
+        if (!(Arrays.asList(REVISION_PETETION, VACANCY_REMISSION, GENERAL_REVISION_PETETION_APPTYPE)).contains(applicationType))
+            reportParams.put(ACK_NO, basicProperty.getWFProperty().getApplicationNo());
+        else
+            reportParams.put(ACK_NO, applicationNo);
         reportParams.put(SERVICE_TYPE, serviceType);
         reportInput = new ReportRequest("MainCitizenCharterAcknowledgement", reportParams, reportParams);
         reportInput.setReportFormat(ReportFormat.PDF);
@@ -2518,6 +2472,46 @@ public class PropertyTaxUtil {
                 .setParameterList("codes", DEMAND_REASONS_FOR_REBATE_CALCULATION).uniqueResult();
 
         return amount != null ? new BigDecimal((Double) amount) : BigDecimal.ZERO;
+    }
+    
+    /**
+     * API returns the percentage of tax difference between GIS survey tax and application tax
+     * Current second half taxes, exluding UAC penalty will be considered for the comparison
+     * @param propertyImpl
+     * @return BigDecimal
+     */
+    public BigDecimal getTaxDifferenceForGIS(PropertyImpl propertyImpl){
+        BigDecimal taxDiffPerc = BigDecimal.ZERO;
+        BigDecimal gisHalfYrTax = BigDecimal.ZERO;
+        BigDecimal applHalfYrTax = BigDecimal.ZERO;
+        Map<String, Installment> currYearInstMap = getInstallmentsForCurrYear(new Date());
+        PropertyImpl gisProperty = (PropertyImpl) propertyDAO.getLatestGISPropertyForBasicProperty(propertyImpl.getBasicProperty());
+        if(gisProperty != null){
+            Ptdemand gisPtdemand = gisProperty.getPtDemandSet().iterator().next();
+            if(gisPtdemand != null){
+                for (EgDemandDetails demandDetails : gisPtdemand.getEgDemandDetails()) {
+                    if (currYearInstMap.get(CURRENTYEAR_SECOND_HALF).getFromDate().equals(demandDetails.getInstallmentStartDate()) &&
+                            !PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY
+                                    .equalsIgnoreCase(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()))
+                        gisHalfYrTax = gisHalfYrTax.add(demandDetails.getAmount());
+                }
+            }
+        }
+        Ptdemand ptdemand = propertyImpl.getPtDemandSet().iterator().next();
+        if(ptdemand != null){
+            for (EgDemandDetails demandDetails : ptdemand.getEgDemandDetails()) {
+                if (currYearInstMap.get(CURRENTYEAR_SECOND_HALF).getFromDate().equals(demandDetails.getInstallmentStartDate()) &&
+                        !PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY
+                                .equalsIgnoreCase(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()))
+                    applHalfYrTax = applHalfYrTax.add(demandDetails.getAmount());
+            }
+        }
+        if(gisHalfYrTax.compareTo(BigDecimal.ZERO) > 0)
+            taxDiffPerc = ((gisHalfYrTax.subtract(applHalfYrTax)).multiply(BIGDECIMAL_100)).divide(gisHalfYrTax, BigDecimal.ROUND_HALF_UP);
+        
+        if(gisProperty != null)
+            gisProperty.setSurveyVariance(taxDiffPerc);
+        return taxDiffPerc;
     }
 
 }

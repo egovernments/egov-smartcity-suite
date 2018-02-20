@@ -342,7 +342,8 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
             if (wfInitiator.getPosition().equals(property.getState().getOwnerPosition())) {
                 property.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approvarComments).withDateInfo(currentDate.toDate()).withNextAction(null).withOwner((Position)null);
+                        .withComments(approvarComments).withDateInfo(currentDate.toDate()).withNextAction(null)
+                        .withOwner(property.getState().getOwnerPosition());
                 property.setStatus(STATUS_CANCELLED);
                 property.getBasicProperty().setUnderWorkflow(FALSE);
             } else {
@@ -375,7 +376,8 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
                         .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null);
             } else if (property.getCurrentState().getNextAction().equalsIgnoreCase("END"))
                 property.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approvarComments).withDateInfo(currentDate.toDate()).withNextAction(null);
+                        .withComments(approvarComments).withDateInfo(currentDate.toDate()).withNextAction(null)
+                        .withOwner(property.getCurrentState().getOwnerPosition());
             else {
                 wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null, null, additionalRule,
                         property.getCurrentState().getValue(), property.getCurrentState().getNextAction(), null,

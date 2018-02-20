@@ -89,10 +89,11 @@ public final class ApplicationConstant {
     public static final String CITIZEN_ROLE_NAME = "CITIZEN";
     public static final String PUBLIC_ROLE_NAME = "PUBLIC";
     public static final String ANONYMOUS_USERNAME = "anonymous";
+    public static final String SYSTEM_USERNAME = "system";
     public static final String TENANTID_KEY = "tenant_id";
 
-    public static final String CONTENT_DISPOSITION_ATTACH = "attachment;filename=\"%s\"";
-    public static final String CONTENT_DISPOSITION_INLINE = "inline;filename=\"%s\"";
+    public static final String CONTENT_DISPOSITION_ATTACH = "attachment;filename=%s";
+    public static final String CONTENT_DISPOSITION_INLINE = "inline;filename=%s";
     public static final String CONTENT_DISPOSITION = "content-disposition";
 
     public static final Character Y = 'Y';
@@ -106,6 +107,8 @@ public final class ApplicationConstant {
     public static final String SLASH = "/";
     public static final String COLON = ":";
     public static final String DOT = ".";
+    public static final String COMMA = ",";
+    public static final String UNKNOWN = "Unknown";
 
 
     private ApplicationConstant() {

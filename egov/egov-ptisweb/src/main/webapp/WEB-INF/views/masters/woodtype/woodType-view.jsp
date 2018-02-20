@@ -67,7 +67,7 @@
 				<div class="panel-body custom-form">
 					<div class="form-group">
 						<label class="col-sm-3 control-label"><spring:message code="lbl.woodType.name"/></label>
-						<div class="col-md-12 view-content" style="padding-top: 7px">
+						<div class="col-md-6 view-content" style="padding-top: 7px">
 							<strong><c:out value="${woodType.name}" /> </strong>                 
 							<input id="htName" type="hidden" value="<c:out value="${woodType.name}" />" />     
 						</div>
@@ -76,11 +76,18 @@
 						<label class="col-sm-3 control-label">
 							<spring:message code="lbl.woodType.code"/>
 						</label>
-						<div class="col-md-12 view-content" style="padding-top: 7px">
+						<div class="col-md-6 view-content" style="padding-top: 7px">
 							<strong><c:out value="${woodType.code}" /> </strong>   
 						</div>
 					</div>
-					
+					<div class="form-group">
+						<label class="col-sm-3 control-label">
+							<spring:message code="lbl.active" /></label>
+						<div class="col-md-6 view-content" style="padding-top: 7px">
+							<strong><c:out
+									value="${woodType.active ? 'Yes' :'No'}" /> </strong>
+						</div>
+					</div>
 				</div>
 			</div>
 			<div class="row">

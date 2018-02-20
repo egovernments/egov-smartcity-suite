@@ -52,6 +52,9 @@ import org.egov.commons.CFinancialYear;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.CompareDates;
 import org.egov.infra.persistence.validator.annotation.UniqueDateOverlap;
+import org.hibernate.envers.AuditMappedBy;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.RelationTargetAuditMode;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -81,6 +84,7 @@ import java.util.Objects;
 @UniqueDateOverlap(fromField = "effectiveFrom", toField = "effectiveTo", uniqueFields =
         {"natureOfBusiness", "licenseCategory", "subCategory", "licenseAppType", "feeType"},
         message = "{feematrix.exist}")
+@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 public class FeeMatrix extends AbstractAuditable {
     public static final String SEQ = "seq_egtl_feematrix";
     private static final long serialVersionUID = 3119126267277124321L;
@@ -131,6 +135,7 @@ public class FeeMatrix extends AbstractAuditable {
     @OrderBy("uomFrom")
     @OneToMany(mappedBy = "feeMatrix", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
             fetch = FetchType.LAZY, orphanRemoval = true)
+    @AuditMappedBy(mappedBy = "feeMatrix")
     private List<FeeMatrixDetail> feeMatrixDetail = new ArrayList<>();
 
     @Override

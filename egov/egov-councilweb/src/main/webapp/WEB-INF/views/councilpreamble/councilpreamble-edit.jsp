@@ -61,6 +61,7 @@
 	<div class="panel panel-primary" data-collapsed="0">
 		<jsp:include page="applicationhistory-view.jsp"></jsp:include>
 	</div>
+	<form:hidden path="" id="wfStatus" name="wfStatus" />
 	<form:hidden path="" id="workFlowAction" name="workFlowAction" />
 	<jsp:include page="../workflow/commonWorkflowMatrix.jsp" />
 	<div class="buttonbottom" align="center">

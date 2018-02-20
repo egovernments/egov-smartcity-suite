@@ -77,7 +77,7 @@
 									<c:choose>
 									<c:when test="${editdonationcharge && (sewerageApplicationDetails.status.code == 'INITIALAPPROVED') && (inspection.feesDetail.description)=='Donation Charge'}">
 									<td class="text-right"><%-- <c:out value="${inspection.amount}" /> --%>
-									<form:input class="form-control table-input text-right patternvalidation" data-pattern="decimalvalue" path="connectionFees[${counter.index}].amount" id="feesDetail${counter.index}amount"  value="${inspection.amount}"/>
+									<form:input class="form-control table-input text-right patternvalidation" data-pattern="number" path="connectionFees[${counter.index}].amount" id="feesDetail${counter.index}amount"  value="${inspection.amount}"/>
 									</c:when>
 									
 									<c:otherwise>

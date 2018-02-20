@@ -51,6 +51,19 @@
  */
 package org.egov.dao.budget;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.CChartOfAccounts;
@@ -93,18 +106,6 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Administrator TODO To change the template for this generated type
@@ -739,6 +740,35 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
         }
         return " and bd.budget.status.description='Approved' and bd.status.description='Approved'  " + query;
     }
+    
+    
+    private String prepareQueryToGetBudgetDetails(final Integer departmentid, final Long functionid, final Integer functionaryid,
+            final Integer schemeid, final Integer subschemeid, final Integer boundaryid, final Integer fundid) {
+        StringBuilder query = new StringBuilder();
+
+        if (departmentid != null) {
+            query = query.append(getQuery(Department.class, departmentid.longValue(), " and bd.executingDepartment="));
+        }
+        if (functionid != null) {
+            query = query.append(getQuery(CFunction.class, functionid, " and bd.function="));
+        }
+        if (functionaryid != null) {
+            query = query.append(getQuery(Functionary.class, functionaryid, " and bd.functionary="));
+        }
+        if (fundid != null) {
+            query = query.append(getQuery(Fund.class, fundid, " and bd.fund="));
+        }
+        if (schemeid != null) {
+            query = query.append(getQuery(Scheme.class, schemeid, " and bd.scheme="));
+        }
+        if (subschemeid != null) {
+            query = query.append(getQuery(SubScheme.class, subschemeid, " and bd.subScheme="));
+        }
+        if (boundaryid != null) {
+            query = query.append(getQuery(Boundary.class, boundaryid.longValue(), " and bd.boundary="));
+        }
+        return query.append(" and bd.budget.status.description='Approved' and bd.status.description='Approved'  ").toString();
+    }
 
     private Object findById(final Class clazz, final Serializable id) {
         if (id == null)
@@ -819,6 +849,41 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
                         "No Budget is defined for the parameters for this year->" + financialyear.getFinYearRange());
             else
                 return (BigDecimal) obj;
+        } catch (final ValidationException v) {
+            LOGGER.error("Exp in getPlanningBudgetAvailable API()===" + v.getErrors());
+            throw new ValidationException(v.getErrors());
+        } catch (final Exception e) {
+            LOGGER.error("Exception in getPlanningBudgetAvailable API()=" + e.getMessage());
+            throw new ValidationException(EMPTY_STRING, e.getMessage());
+        }
+    }
+    
+    @Override
+    public List<BudgetDetail> getBudgetAvailableDetail(final Long financialyearid, final Integer departmentid,
+            final Long functionid, final Integer functionaryid, final Integer schemeid, final Integer subschemeid,
+            final Integer boundaryid, final List<Long> budgetheadid, final Integer fundid) {
+        try {
+
+            String query = prepareQueryToGetBudgetDetails(departmentid, functionid, functionaryid, schemeid, subschemeid,
+                    boundaryid, fundid);
+
+            if (budgetheadid != null && !budgetheadid.isEmpty())
+                query = query.concat(" and bd.budgetGroup.id in (:budgetheadid) ");
+            final String finalquery = "select bd from BudgetDetail bd where bd.budget.isbere=:type and bd.budget.financialYear.id=:financialyearid"
+                    + query;
+
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("Final query=" + finalquery);
+            final Query q = getCurrentSession().createQuery(finalquery);
+            if (budgetService.hasApprovedReForYear(financialyearid))
+                q.setParameter("type", "RE");
+            else
+                q.setParameter("type", "BE");
+            q.setParameter("financialyearid", financialyearid);
+            if (budgetheadid != null && !budgetheadid.isEmpty())
+                q.setParameterList("budgetheadid", budgetheadid);
+
+            return q.list();
         } catch (final ValidationException v) {
             LOGGER.error("Exp in getPlanningBudgetAvailable API()===" + v.getErrors());
             throw new ValidationException(v.getErrors());

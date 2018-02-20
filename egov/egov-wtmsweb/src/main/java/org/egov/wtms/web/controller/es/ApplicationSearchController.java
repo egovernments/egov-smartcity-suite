@@ -162,6 +162,7 @@ public class ApplicationSearchController {
             customerObj.setOwnername(applicationIndex.getOwnerName());
             customerObj.setSource(applicationIndex.getChannel());
             customerObj.setApplicationType(applicationIndex.getApplicationType());
+            customerObj.setModuleName(applicationIndex.getModuleName());
             if (applicationIndex.getApplicationDate() != null)
                 customerObj.setApplicationCreatedDate(ft.format(applicationIndex.getApplicationDate()));
             customerObj.setUrl(applicationIndex.getUrl());

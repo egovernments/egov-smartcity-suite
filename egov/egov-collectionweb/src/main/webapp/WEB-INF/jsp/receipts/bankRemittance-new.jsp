@@ -50,7 +50,7 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title><s:text name="bankRemittance.title" /></title>
+<title><s:text name="cash.bankRemittance.title" /></title>
 <script type="text/javascript">
 	jQuery.noConflict();
 	var isDatepickerOpened = false;
@@ -485,7 +485,7 @@
 			</s:if>
 			<div class="formmainbox">
 				<div class="subheadnew">
-					<s:text name="bankRemittance.title" />
+					<s:text name="cash.bankRemittance.title" />
 				</div>
 				<div align="center">
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -519,12 +519,8 @@
 									list="dropdownData.financialYearList" listKey="id"
 									id="finYearId" listValue="finYearRange" label="finYearRange"
 									name="finYearId" value="%{finYearId}" /></td>
-							<td class="bluebox"><s:text
-									name="collectionReport.criteria.payment.mode" /></td>
-							<td class="bluebox"><s:select headerKey="-1"
-									headerValue="--Select--" list="paymentModesMap"
-									id="paymentMode" label="paymentMode" name="paymentMode"
-									value="%{paymentMode}" /></td>
+							<td class="bluebox">&nbsp;</td>
+							<td class="bluebox">&nbsp;</td>
 						</tr>
 						<tr id="dateDiv">
 							<td width="4%" class="bluebox">&nbsp;</td>
@@ -621,10 +617,7 @@
 								class="blueborderfortd" title="Department"
 								style="width:10%;text-align: center"
 								value="${currentRow.DEPARTMENTNAME}" />
-
-							<s:if
-								test="paymentMode.equals(@org.egov.collection.constants.CollectionConstants@INSTRUMENTTYPE_CASH) || paymentMode.equals('-1')">
-								<display:column headerClass="bluebgheadtd"
+							<display:column headerClass="bluebgheadtd"
 									class="blueborderfortd" title="Total Cash Collection"
 									style="width:10%;text-align: center">
 									<div align="center">
@@ -633,45 +626,8 @@
 										</c:if>
 										&nbsp;
 									</div>
-								</display:column>
-							</s:if>
-							<s:if
-								test="paymentMode.equals(@org.egov.collection.constants.CollectionConstants@INSTRUMENTTYPE_CHEQUEORDD) || paymentMode.equals('-1')">
-								<display:column headerClass="bluebgheadtd"
-									class="blueborderfortd" title="Total Cheque Collection"
-									style="width:10%;text-align: center">
-									<div align="center">
-										<c:if test="${not empty currentRow.SERVICETOTALCHEQUEAMOUNT}">
-											<c:out value="${currentRow.SERVICETOTALCHEQUEAMOUNT}" />
-										</c:if>
-										&nbsp;
-									</div>
-								</display:column>
-							</s:if>
-							<s:if test="showCardAndOnlineColumn">
-								<display:column headerClass="bluebgheadtd"
-									class="blueborderfortd" title="Total Card Collection"
-									style="width:10%;text-align: center">
-									<div align="center">
-										<c:if
-											test="${not empty currentRow.SERVICETOTALCARDPAYMENTAMOUNT && showCardAndOnlineColumn}">
-											<c:out value="${currentRow.SERVICETOTALCARDPAYMENTAMOUNT}" />
-										</c:if>
-										&nbsp;
-									</div>
-								</display:column>
-								<display:column headerClass="bluebgheadtd"
-									class="blueborderfortd" title="Total Online Collection"
-									style="width:10%;text-align: center">
-									<div align="center">
-										<c:if
-											test="${not empty currentRow.SERVICETOTALONLINEPAYMENTAMOUNT}">
-											<c:out value="${currentRow.SERVICETOTALONLINEPAYMENTAMOUNT}" />
-										</c:if>
-										&nbsp;
-									</div>
-								</display:column>
-							</s:if>
+							</display:column>
+							
 						</display:table>
 				
 				<br />

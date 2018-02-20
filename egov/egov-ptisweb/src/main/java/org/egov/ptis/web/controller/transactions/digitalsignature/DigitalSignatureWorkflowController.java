@@ -64,9 +64,11 @@ import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.egov.ptis.domain.entity.property.VacancyRemissionApproval;
+import org.egov.ptis.domain.entity.property.view.SurveyBean;
 import org.egov.ptis.domain.repository.vacancyremission.VacancyRemissionApprovalRepository;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.domain.service.property.PropertySurveyService;
 import org.egov.ptis.domain.service.revisionPetition.RevisionPetitionService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Session;
@@ -98,6 +100,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION_APPROVAL;
+import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_SURVEY;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_EXEMPTION;
@@ -164,6 +167,8 @@ public class DigitalSignatureWorkflowController {
 
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
+    @Autowired
+    private PropertySurveyService propertySurveyService;
 
     @RequestMapping(value = "/propertyTax/transitionWorkflow")
     public String transitionWorkflow(final HttpServletRequest request, final Model model) {
@@ -194,6 +199,11 @@ public class DigitalSignatureWorkflowController {
         final BasicProperty basicProperty = property.getBasicProperty();
         final String applicationType = transition(property);
         propertyService.updateIndexes(property, getApplicationTypes().get(applicationType));
+        if (SOURCE_SURVEY.equalsIgnoreCase(property.getSource())) {
+            SurveyBean surveyBean = new SurveyBean();
+            surveyBean.setProperty(property);
+            propertySurveyService.updateSurveyIndex(getApplicationTypes().get(applicationType), surveyBean);
+        }
         basicPropertyService.update(basicProperty);
         propertyTaxCommonUtils.buildMailAndSMS(property);
     }
@@ -288,7 +298,7 @@ public class DigitalSignatureWorkflowController {
         if (applicationType.equalsIgnoreCase(AMALG))
             for (final Amalgamation amalProp : property.getBasicProperty().getAmalgamations())
                 amalProp.getAmalgamatedProperty().setUnderWorkflow(false);
-        property.transition().end().withOwner((Position) null).withNextAction(null);
+        property.transition().end().withOwner(property.getCurrentState().getOwnerPosition()).withNextAction(null);
         property.getBasicProperty().setUnderWorkflow(false);
         return applicationType;
     }
@@ -299,17 +309,18 @@ public class DigitalSignatureWorkflowController {
         revPetition.getBasicProperty().getProperty().setStatus(STATUS_ISHISTORY);
         revPetition.getBasicProperty().setUnderWorkflow(Boolean.FALSE);
         revPetition.getProperty().setStatus(STATUS_ISACTIVE);
-        revPetition.transition().end().withOwner((Position) null).withNextAction(null);
+        revPetition.transition().end().withOwner(revPetition.getCurrentState().getOwnerPosition()).withNextAction(null);
     }
 
     public void transition(final PropertyMutation propertyMutation) {
-        propertyMutation.transition().end().withOwner((Position) null).withNextAction(null);
+        propertyMutation.transition().end().withOwner(propertyMutation.getCurrentState().getOwnerPosition()).withNextAction(null);
         propertyMutation.getBasicProperty().setUnderWorkflow(false);
     }
 
     private void transition(final VacancyRemission vacancyRemission) {
         final VacancyRemissionApproval vacancyRemissionApproval = vacancyRemission.getVacancyRemissionApproval().get(0);
-        vacancyRemissionApproval.transition().end().withOwner((Position) null).withNextAction(null);
+        vacancyRemissionApproval.transition().end().withOwner(vacancyRemissionApproval.getCurrentState().getOwnerPosition())
+                .withNextAction(null);
         vacancyRemission.getBasicProperty().setUnderWorkflow(false);
     }
 

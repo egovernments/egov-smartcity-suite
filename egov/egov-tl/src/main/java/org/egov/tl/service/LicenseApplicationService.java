@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -109,10 +109,10 @@ public class LicenseApplicationService extends TradeLicenseService {
             license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
         processAndStoreDocument(license);
         if (securityUtils.currentUserIsEmployee())
-            licenseProcessWorkflowService.createNewLicenseWorkflowTransition((TradeLicense) license, workflowBean);
+            licenseProcessWorkflowService.createNewLicenseWorkflowTransition(license, workflowBean);
 
         else
-            licenseProcessWorkflowService.getWfWithThirdPartyOp((TradeLicense) license, workflowBean);
+            licenseProcessWorkflowService.getWfWithThirdPartyOp(license, workflowBean);
         licenseRepository.save(license);
         if (securityUtils.currentUserIsCitizen())
             licenseCitizenPortalService.onCreate(license);
@@ -123,6 +123,7 @@ public class LicenseApplicationService extends TradeLicenseService {
 
     @Transactional
     public License renew(final TradeLicense license, final WorkflowBean workflowBean) {
+        license.setApplicationDate(new Date());
         license.setLicenseAppType(this.getLicenseApplicationTypeForRenew());
         if (!currentUserIsMeeseva())
             license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
@@ -131,10 +132,10 @@ public class LicenseApplicationService extends TradeLicenseService {
         license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
         processAndStoreDocument(license);
         if (securityUtils.currentUserIsEmployee())
-            licenseProcessWorkflowService.createNewLicenseWorkflowTransition((TradeLicense) license, workflowBean);
+            licenseProcessWorkflowService.createNewLicenseWorkflowTransition(license, workflowBean);
 
         else
-            licenseProcessWorkflowService.getWfWithThirdPartyOp((TradeLicense) license, workflowBean);
+            licenseProcessWorkflowService.getWfWithThirdPartyOp(license, workflowBean);
         this.licenseRepository.save(license);
         if (securityUtils.currentUserIsCitizen())
             licenseCitizenPortalService.onCreate(license);
@@ -155,6 +156,7 @@ public class LicenseApplicationService extends TradeLicenseService {
     @Transactional
     @Override
     public void updateTradeLicense(final TradeLicense license, final WorkflowBean workflowBean) {
+        processAndStoreDocument(license);
         final BigDecimal currentDemandAmount = recalculateLicenseFee(license.getCurrentDemand());
         final BigDecimal feematrixDmdAmt = calculateFeeAmount(license);
         if (feematrixDmdAmt.compareTo(currentDemandAmount) >= 0)
@@ -164,9 +166,9 @@ public class LicenseApplicationService extends TradeLicenseService {
         else
             license.setCollectionPending(false);
         if (BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
-            licenseProcessWorkflowService.getRejectTransition((TradeLicense) license, workflowBean);
+            licenseProcessWorkflowService.getRejectTransition(license, workflowBean);
         else
-            licenseProcessWorkflowService.createNewLicenseWorkflowTransition((TradeLicense) license, workflowBean);
+            licenseProcessWorkflowService.createNewLicenseWorkflowTransition(license, workflowBean);
 
         if (BUTTONAPPROVE.equals(workflowBean.getWorkFlowAction()) && isEmpty(license.getLicenseNumber()) && license.isNewApplication())
             license.setLicenseNumber(licenseNumberUtils.generateLicenseNumber());

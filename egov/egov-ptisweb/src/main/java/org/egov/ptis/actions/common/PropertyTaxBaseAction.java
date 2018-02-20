@@ -77,6 +77,7 @@ import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.document.DocumentTypeDetails;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyDetail;
@@ -182,6 +183,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     protected String userDesignationList;
     protected String applicationType;
     protected String initiator;
+    protected boolean showCheckboxForGIS = false;
 
     @Autowired
     transient LayoutApprovalAuthorityRepository layoutApprovalAuthorityRepo;
@@ -671,7 +673,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                     .withNatureOfTask(nature).withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null);
         } else if (property.getCurrentState().getNextAction().equalsIgnoreCase(END))
             property.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
-                    .withComments(approverComments).withDateInfo(currentDate.toDate()).withNextAction(null);
+                    .withComments(approverComments).withDateInfo(currentDate.toDate()).withNextAction(null)
+                    .withOwner(property.getCurrentState().getOwnerPosition());
         else {
             final String nextAction = getNextAction(property, approverDesignation);
             wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null,
@@ -711,7 +714,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         Position owner = null;
         if (wfInitiator.getPosition().equals(property.getState().getOwnerPosition())) {
             property.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
-                    .withComments(approverComments).withDateInfo(currentDate.toDate()).withNextAction(null).withOwner((Position)null);
+                    .withComments(approverComments).withDateInfo(currentDate.toDate()).withNextAction(null)
+                    .withOwner(property.getState().getOwnerPosition());
             property.setStatus(STATUS_CANCELLED);
             property.getBasicProperty().setUnderWorkflow(FALSE);
         } else {
@@ -737,10 +741,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             final String stateValue = property.getCurrentState().getValue().split(":")[0] + ":" + WF_STATE_REJECTED;
             property.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                     .withComments(approverComments).withStateValue(stateValue).withDateInfo(currentDate.toDate())
-                    .withOwner(owner).withNextAction(
-                            property.getBasicProperty().getSource().equals(SOURCEOFDATA_MOBILE)
-                                    ? UD_REVENUE_INSPECTOR_APPROVAL_PENDING
-                                    : nextAction);
+                    .withOwner(owner).withNextAction(nextAction);
         }
     }
 
@@ -1052,6 +1053,23 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         } else
             return Boolean.FALSE;
     }
+    
+    public void enableActionsForGIS(PropertyImpl property, List<DocumentType> documentTypes) {
+        if (property.getState().getNextAction().endsWith(WF_STATE_COMMISSIONER_APPROVAL_PENDING)
+                && property.getSurveyVariance().compareTo(BigDecimal.TEN) > 0) {
+            showCheckboxForGIS = true;
+        }
+        if (property.isThirdPartyVerified()
+                && property.getState().getValue().endsWith(":".concat(WF_STATE_REJECTED))
+                && WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING
+                        .equalsIgnoreCase(property.getState().getNextAction())) {
+            showCheckboxForGIS = true;
+            for (DocumentType docType : documentTypes) {
+                if (DOCUMENT_TYPE_THIRD_PARTY_SURVEY.equalsIgnoreCase(docType.getName()))
+                    docType.setMandatory(true);
+            }
+        }
+    }
 
     public WorkflowBean getWorkflowBean() {
         return workflowBean;
@@ -1258,6 +1276,14 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
     public void setAssessmentNumber(String assessmentNumber) {
         this.assessmentNumber = assessmentNumber;
+    }
+
+    public boolean isShowCheckboxForGIS() {
+        return showCheckboxForGIS;
+    }
+
+    public void setShowCheckboxForGIS(boolean showCheckboxForGIS) {
+        this.showCheckboxForGIS = showCheckboxForGIS;
     }
 
 }

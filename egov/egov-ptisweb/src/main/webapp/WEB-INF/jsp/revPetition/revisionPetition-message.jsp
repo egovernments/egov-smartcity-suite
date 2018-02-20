@@ -100,7 +100,7 @@
 					</s:if>
 					<td>
 						<s:if test="%{showAckBtn}">
-							<a href="/ptis/revPetition/revPetition-printAck.action?wfType=<s:property value='%{wfType}'/>&propertyId=<s:property value='%{propertyId}'/>" class="btn btn-default">Generate Acknowledgment</a>
+							<a href="/ptis/revPetition/revPetition-printAck.action?wfType=<s:property value='%{wfType}'/>&propertyId=<s:property value='%{propertyId}'/>&applicationNumber=<s:property value='%{applicationNumber}'/>" class="btn btn-default">Generate Acknowledgment</a>
 						</s:if>
 						<input type="button" name="button2" id="button2"
 						value="Close" class="button" onclick="window.close();" />

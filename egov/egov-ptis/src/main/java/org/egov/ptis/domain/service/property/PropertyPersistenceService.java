@@ -134,6 +134,7 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
                     ownerInfo.setOwner(user);
                     ownerInfo.setOrderNo(orderNo);
                     ownerInfo.setBasicProperty(basicProperty);
+                    ownerInfo.getOwner().addAddress(ownerAddress);
                 }
             }
 
@@ -194,7 +195,7 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
         newOwner.setName(ownerInfo.getOwner().getName());
         newOwner.setSalutation(ownerInfo.getOwner().getSalutation());
         newOwner.setPassword("NOTSET");
-        newOwner.setUsername(propertyTaxUtil.generateUserName(ownerInfo.getOwner().getName()));
+        newOwner.setUsername(propertyTaxUtil.generateUserName(ownerInfo.getOwner().getMobileNumber()));
         return userService.createUser(newOwner);
     }
 

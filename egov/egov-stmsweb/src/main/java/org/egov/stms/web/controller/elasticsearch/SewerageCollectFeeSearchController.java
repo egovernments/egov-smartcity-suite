@@ -47,6 +47,16 @@
  */
 package org.egov.stms.web.controller.elasticsearch;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.REVENUE_WARD;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.BoundaryService;
@@ -54,7 +64,7 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.web.support.ui.DataTable;
 import org.egov.ptis.domain.model.AssessmentDetails;
-import org.egov.stms.elasticsearch.entity.SewerageCollectFeeSearchRequest;
+import org.egov.stms.elasticsearch.entity.SewerageConnSearchRequest;
 import org.egov.stms.elasticsearch.entity.SewerageSearchResult;
 import org.egov.stms.entity.es.SewerageIndex;
 import org.egov.stms.service.es.SeweragePaginationService;
@@ -77,15 +87,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.REVENUE_WARD;
-
 @Controller
 @RequestMapping(value = "/collectfee/search")
 public class SewerageCollectFeeSearchController {
@@ -104,8 +105,8 @@ public class SewerageCollectFeeSearchController {
     private SeweragePaginationService seweragePaginationService;
 
     @ModelAttribute
-    public SewerageCollectFeeSearchRequest searchRequest() {
-        return new SewerageCollectFeeSearchRequest();
+    public SewerageConnSearchRequest searchRequest() {
+        return new SewerageConnSearchRequest();
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -122,7 +123,8 @@ public class SewerageCollectFeeSearchController {
     @RequestMapping(value = "/view/{consumernumber}/{assessmentnumber}", method = RequestMethod.GET)
     public ModelAndView view(@PathVariable final String consumernumber, @PathVariable final String assessmentnumber,
             final Model model, final ModelMap modelMap, final HttpServletRequest request) {
-        SewerageApplicationDetails sewerageApplicationDetails = sewerageApplicationDetailsService.findByApplicationNumber(consumernumber);
+        SewerageApplicationDetails sewerageApplicationDetails = sewerageApplicationDetailsService
+                .findByApplicationNumber(consumernumber);
         final AssessmentDetails propertyOwnerDetails = sewerageThirdPartyServices.getPropertyDetails(assessmentnumber,
                 request);
         if (propertyOwnerDetails != null)
@@ -137,7 +139,7 @@ public class SewerageCollectFeeSearchController {
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public DataTable<SewerageSearchResult> searchApplication(
-            @ModelAttribute final SewerageCollectFeeSearchRequest searchRequest) {
+            @ModelAttribute final SewerageConnSearchRequest searchRequest) {
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
         if (cityWebsite != null)
             searchRequest.setUlbName(cityWebsite.getName());
@@ -146,10 +148,10 @@ public class SewerageCollectFeeSearchController {
         final Map<String, String> actionMap = new HashMap<>();
         final Pageable pageable = new PageRequest(searchRequest.pageNumber(),
                 searchRequest.pageSize(), searchRequest.orderDir(), searchRequest.orderBy());
-        Page<SewerageIndex> resultList = seweragePaginationService.sewerageCollectSearchObj(searchRequest, searchResultList, roleList, actionMap);
+        Page<SewerageIndex> resultList = seweragePaginationService.searchSewerageApplnsHasCollectionPending(searchRequest,
+                searchResultList, roleList, actionMap);
         return new DataTable<>(new PageImpl<>(searchResultList, pageable, resultList.getTotalElements()), searchRequest.draw());
 
     }
 
-    
 }

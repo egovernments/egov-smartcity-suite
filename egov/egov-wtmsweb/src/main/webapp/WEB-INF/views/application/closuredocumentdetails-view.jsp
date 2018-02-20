@@ -56,52 +56,31 @@
 		<div class="panel-heading">
 			<c:if test="${waterConnectionDetails.applicationType.code=='CLOSINGCONNECTION'}">
 					<div class="panel-title">
-						Closure Connection Documents
+						<spring:message code="lbl.closure.documents"/>
 					</div>
 			</c:if>
 			<c:if test="${waterConnectionDetails.applicationType.code=='RECONNECTION'}">
 					<div class="panel-title">
-						ReConnection Documents
+						<spring:message code="lbl.reconnection.documents"/>
 					</div>
 			</c:if>
-								
-			<c:if test="${!appforDocumentList.isEmpty()}">
-				<thead>
-					<tr>
-						<th><spring:message code="lbl.slno" /></th>
-						<th><spring:message code="lbl.documentname" /></th>
-						<th><spring:message code="lbl.documentnumber" /></th>
-						<th><spring:message code="lbl.documentdate" /></th>
-						<c:if test="${mode!='ack'}">
-							<th><spring:message code="lbl.files"/></th>
-						</c:if>
-					</tr>
-				</thead>
-			</c:if>
-			<c:choose>
-				<c:when test="${!appforDocumentList.isEmpty()}">
-					<c:forEach items="${appforDocumentList}" var="docs" varStatus="serialNo">
-						<tbody>
-							<tr>
-								<td><c:out value="${serialNo.count}"/></td>
-								<td><c:out value="${docs.documentNames.documentName}" /></td>
-								<td><c:out value="${docs.documentNumber}" /></td>
-								<td><fmt:formatDate pattern="dd/MM/yyyy" value="${docs.documentDate}" var="docsDate"/><c:out value="${docsDate}" /></td>
-								<c:if test="${mode!='ack'}">
-								<td><c:forEach items="${docs.getSupportDocs()}" var="file">
-										<a href="/egi/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=WTMS" target="_blank"> 
-										<c:out value="${file.fileName}"/></a>
-									</c:forEach>
-								</td>
-								</c:if>
-							</tr>
-						</tbody>
-					</c:forEach>
-				</c:when>
-				<c:otherwise>
-					<div class="col-md-12 col-xs-6  panel-title">No documents found</div>
-				</c:otherwise>
-			</c:choose>
 		</div>
+			<div class="form-group">
+				<div class="row add-border">
+					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.attached.document"/></label>
+					<div class="col-sm-3 add-margin view-content">
+						<c:choose>
+							<c:when test="${waterConnectionDetails.fileStore != null}">
+								<a href="/egi/downloadfile?fileStoreId=${waterConnectionDetails.fileStore.fileStoreId}&moduleName=WTMS" target="_blank"> 
+								<c:out value="${waterConnectionDetails.fileStore.fileName}"/></a>
+							</c:when>
+							<c:otherwise>
+								<spring:message code="lbl.no.documents.found"/>
+							</c:otherwise>
+						</c:choose>
+					</div>
+				</div>
+			</div>
+		
 	</table>
 </div>

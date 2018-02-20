@@ -49,8 +49,10 @@
 package org.egov.tl.entity;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -66,6 +68,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "egtl_feematrix_detail")
 @SequenceGenerator(name = FeeMatrixDetail.SEQ, sequenceName = FeeMatrixDetail.SEQ, allocationSize = 1)
+@Audited
 public class FeeMatrixDetail extends AbstractPersistable<Long> {
     public static final String SEQ = "seq_egtl_feematrix_detail";
     private static final long serialVersionUID = -1477850420070873621L;
@@ -74,7 +77,7 @@ public class FeeMatrixDetail extends AbstractPersistable<Long> {
     @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "feeMatrix")
     private FeeMatrix feeMatrix;
 

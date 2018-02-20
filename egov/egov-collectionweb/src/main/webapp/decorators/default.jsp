@@ -91,8 +91,13 @@
 <%@ taglib uri="http://www.opensymphony.com/sitemesh/page" prefix="page"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <html>
     <head>
+		<spring:eval expression="@environment.getProperty('analytics.enabled')" scope="application" var="analyticsEnabled"/>
+		<c:if test="${analyticsEnabled}">
+			<spring:eval expression="@environment.getProperty('analytics.config')" scope="application"/>
+		</c:if>
         <%@ include file="/includes/meta.jsp" %>
 
         <title>eGov  - <decorator:title/> </title>

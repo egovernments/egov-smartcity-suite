@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -77,6 +77,21 @@
 						<input type="text" id="applicationNumber"
 							class="form-control typeahead" placeholder="" autocomplete="off" />
 						<form:hidden path="applicationNumber" id="applicationNumber" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label text-right"> <spring:message
+							code='search.licensee.mobileNo'/></label>
+					<div class="col-sm-3 add-margin">
+						<form:input type="text" path="mobileNo" id="mobileNo" data-pattern="number"
+									minlength="10" maxlength="10" class="form-control patternvalidation"
+									placeholder="" autocomplete="off"/>
+					</div>
+					<label class="col-sm-3 control-label text-right"> <spring:message
+							code='licensee.applicantname'/></label>
+					<div class="col-sm-3 add-margin">
+						<form:input type="text" path="tradeOwnerName" id="tradeOwnerName"
+									class="form-control" placeholder="" autocomplete="off"/>
 					</div>
 				</div>
 			</div>

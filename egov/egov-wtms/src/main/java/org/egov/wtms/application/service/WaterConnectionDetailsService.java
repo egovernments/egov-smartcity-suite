@@ -75,7 +75,6 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.APPROVEWORKFLOWACT
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ASSISTANT_ENGINEER_DESIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ASSISTANT_EXECUTIVE_ENGINEER_DESIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CHANGEOFUSE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.CITIZENPORTAL;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSINGCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CONNECTIONTYPE_METERED;
@@ -94,7 +93,6 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.NON_METERED_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTIONCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SIGNED_DOCUMENT_PREFIX;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SIGNWORKFLOWACTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.SOURCECHANNEL_ONLINE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SUPERIENTEND_ENGINEER_DESIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SYSTEM;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.TAP_INSPPECTOR_DESIGN;
@@ -131,6 +129,7 @@ import javax.validation.ValidationException;
 
 import org.egov.commons.EgModules;
 import org.egov.commons.Installment;
+import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.entity.Source;
 import org.egov.demand.model.EgDemand;
 import org.egov.eis.entity.Assignment;
@@ -236,6 +235,7 @@ public class WaterConnectionDetailsService {
     private static final String REQ_EXECUTION_DATE = "ExecutionDateRequired";
     private static final String REQ_INITIAL_READING = "InitialReadingRequired";
     private static final String REQ_METER_SERIAL_NUMBER = "MeterSerialNumberRequired";
+    private static final String ERR_WATER_RATES_NOT_DEFINED = "WaterRatesNotDefined";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -304,6 +304,9 @@ public class WaterConnectionDetailsService {
 
     @Autowired
     private MeterCostService meterCostService;
+
+    @Autowired
+    private FinancialYearDAO financialYearDAO;
 
     @Autowired
     public WaterConnectionDetailsService(final WaterConnectionDetailsRepository waterConnectionDetailsRepository) {
@@ -562,10 +565,14 @@ public class WaterConnectionDetailsService {
                     final Installment nonMeterCurrentInstallment = connectionDemandService.getCurrentInstallment(
                             WATER_RATES_NONMETERED_PTMODULE, null,
                             waterConnectionDetails.getReconnectionApprovalDate());
-                    final Calendar cal = Calendar.getInstance();
-                    cal.setTime(nonMeterCurrentInstallment.getToDate());
-                    cal.add(Calendar.DATE, 1);
-                    final Date newDateForNextInstall = cal.getTime();
+                    Date newDateForNextInstall = null;
+                    if (DateUtils.noOfMonthsBetween(waterConnectionDetails.getReconnectionApprovalDate(),
+                            financialYearDAO.getFinancialYearByDate(new Date()).getEndingDate()) >= 6)
+                        newDateForNextInstall = DateUtils
+                                .addDays(nonMeterCurrentInstallment.getToDate(), 1);
+                    else
+                        newDateForNextInstall = waterConnectionDetails.getReconnectionApprovalDate();
+
                     nonMeterReconnInstallment = connectionDemandService.getCurrentInstallment(
                             WATER_RATES_NONMETERED_PTMODULE, null, newDateForNextInstall);
                     reconnInSameInstallment = Boolean.TRUE;
@@ -1063,12 +1070,10 @@ public class WaterConnectionDetailsService {
                     if (waterTaxUtils.isCSCoperator(waterConnectionDetails.getCreatedBy())
                             && UserType.BUSINESS.equals(waterConnectionDetails.getCreatedBy().getType()))
                         channel = Source.CSC.toString();
-                    else if (sourceChannel != null && SOURCECHANNEL_ONLINE.equalsIgnoreCase(sourceChannel))
-                        channel = SOURCECHANNEL_ONLINE;
-                    else if (sourceChannel != null && CITIZENPORTAL.equalsIgnoreCase(sourceChannel))
-                        channel = CITIZENPORTAL;
-                    else
+                    else if (sourceChannel == null)
                         channel = SYSTEM;
+                    else
+                        channel = sourceChannel;
                 } else
                     channel = waterConnectionDetails.getSource().toString();
 
@@ -1207,12 +1212,10 @@ public class WaterConnectionDetailsService {
         final DonationDetails donationDetails = connectionDemandService.getDonationDetails(waterConnectionDetails);
         if (donationDetails == null)
             throw new ValidationException("donation.combination.required");
-        if (waterConnectionDetails.getConnectionType().equals(ConnectionType.NON_METERED)) {
-            final WaterRatesDetails waterRatesDetails = connectionDemandService
-                    .getWaterRatesDetailsForDemandUpdate(waterConnectionDetails);
-            if (waterRatesDetails == null)
-                throw new ValidationException("err.water.rate.not.found");
-        }
+        final WaterRatesDetails waterRatesDetails = connectionDemandService
+                .getWaterRatesDetailsForDemandUpdate(waterConnectionDetails);
+        if (waterRatesDetails == null)
+            throw new ValidationException("err.water.rate.not.found");
     }
 
     public String getApprovalPositionOnValidate(final Long approvalPositionId) {
@@ -1445,7 +1448,7 @@ public class WaterConnectionDetailsService {
         return queryString;
     }
 
-    public String validateDate(final WaterConnectionExecutionResponse executionDetailsResponse,
+    public String validateInput(final WaterConnectionExecutionResponse executionDetailsResponse,
             final List<WaterConnectionDetails> connectionDetailsList) {
         final JSONObject jsonObject = new JSONObject(executionDetailsResponse);
         final JSONArray jsonArray = jsonObject.getJSONArray("executeWaterApplicationDetails");
@@ -1453,17 +1456,19 @@ public class WaterConnectionDetailsService {
         for (int i = 0; i < jsonArray.length(); ++i) {
             final JSONObject jsonObj = jsonArray.getJSONObject(i);
             final WaterConnectionDetails connectionDetails = findBy(jsonObj.getLong("id"));
-            if (!jsonObj.getString(EXECUTION_DATE).isEmpty() && connectionDetails != null
-                    && isNotBlank(jsonObj.getString(EXECUTION_DATE))) {
-                connectionDetails
-                        .setExecutionDate(DateUtils.toDateUsingDefaultPattern(jsonObj.getString(EXECUTION_DATE)));
-                if (connectionDetails.getExecutionDate() != null
-                        && connectionDetails.getExecutionDate().compareTo(DateUtils.toDateUsingDefaultPattern(
-                                DateUtils.getDefaultFormattedDate(connectionDetails.getApplicationDate()))) < 0)
-                    status = DATE_VALIDATION_FAILED;
-                else
-                    connectionDetailsList.add(connectionDetails);
-            }
+            if (validateDonationDetails(connectionDetails)) {
+                if (connectionDetails != null && isNotBlank(jsonObj.getString(EXECUTION_DATE))) {
+                    connectionDetails
+                            .setExecutionDate(DateUtils.toDateUsingDefaultPattern(jsonObj.getString(EXECUTION_DATE)));
+                    if (connectionDetails.getExecutionDate() != null
+                            && connectionDetails.getExecutionDate().compareTo(DateUtils.toDateUsingDefaultPattern(
+                                    DateUtils.getDefaultFormattedDate(connectionDetails.getApplicationDate()))) < 0)
+                        status = DATE_VALIDATION_FAILED;
+                    else
+                        connectionDetailsList.add(connectionDetails);
+                }
+            } else
+                status = ERR_WATER_RATES_NOT_DEFINED;
         }
 
         return status;
@@ -1613,5 +1618,11 @@ public class WaterConnectionDetailsService {
         }
 
         return waterConnectionDetails;
+    }
+
+    public Boolean validateDonationDetails(final WaterConnectionDetails waterConnectionDetails) {
+        final WaterRatesDetails waterRatesDetails = connectionDemandService
+                .getWaterRatesDetailsForDemandUpdate(waterConnectionDetails);
+        return waterRatesDetails == null ? false : true;
     }
 }

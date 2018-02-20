@@ -59,5 +59,7 @@ public interface FloorTypeRepository extends JpaRepository<FloorType, Long> {
     FloorType findByName(String name);
 
     List<FloorType> findByNameContainingIgnoreCase(String name);
+    
+    List<FloorType> findByActiveTrueOrderByName();
 
 }

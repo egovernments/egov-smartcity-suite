@@ -364,5 +364,25 @@
         <put-attribute name="page-title" value="title.councilmom.dataentery" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/councilMeeting/councilMomDataEntry.jsp"/>
     </definition>
+    <definition name="councilrouter-new" extends="base_layout">
+        <put-attribute name="page-title" value="title.council.router" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/councilrouter/councilrouter-new.jsp"/>
+    </definition>
+    <definition name="councilrouter-result" extends="base_layout">
+        <put-attribute name="page-title" value="title.council.router.result" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/councilrouter/councilrouter-result.jsp"/>
+    </definition>
+    <definition name="councilrouter-view" extends="base_layout">
+        <put-attribute name="page-title" value="title.council.router.view" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/councilrouter/councilrouter-view.jsp"/>
+    </definition>
+    <definition name="councilrouter-edit" extends="base_layout">
+        <put-attribute name="page-title" value="title.council.router.edit" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/councilrouter/councilrouter-edit.jsp"/>
+    </definition>
+    <definition name="councilrouter-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.council.router.search" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/councilrouter/councilrouter-search.jsp"/>
+    </definition>
     
 </tiles-definitions>

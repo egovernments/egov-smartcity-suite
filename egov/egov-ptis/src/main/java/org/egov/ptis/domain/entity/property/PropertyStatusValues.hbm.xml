@@ -93,4 +93,5 @@
 			class="org.egov.ptis.domain.entity.property.BasicPropertyImpl" />
 
 	</class>
+	
 </hibernate-mapping>

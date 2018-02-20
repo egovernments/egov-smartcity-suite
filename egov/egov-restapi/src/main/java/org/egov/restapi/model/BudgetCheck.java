@@ -47,14 +47,26 @@
  */
 package org.egov.restapi.model;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 public class BudgetCheck {
 
+    @NotBlank(message = "ULB code must be present")
+    private String ulbCode;
     private String departmentCode;
     private String functionCode;
     private String schemeCode;
     private String subSchemeCode;
     private String fundCode;
     private String budgetHeadName;
+
+    public String getUlbCode() {
+        return ulbCode;
+    }
+
+    public void setUlbCode(String ulbCode) {
+        this.ulbCode = ulbCode;
+    }
 
     public String getDepartmentCode() {
         return departmentCode;
@@ -100,7 +112,7 @@ public class BudgetCheck {
         return budgetHeadName;
     }
 
-    public void setBudgetHeadname(final String budgetHeadName) {
+    public void setBudgetHeadName(String budgetHeadName) {
         this.budgetHeadName = budgetHeadName;
     }
 

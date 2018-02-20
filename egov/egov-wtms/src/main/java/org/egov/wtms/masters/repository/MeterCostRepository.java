@@ -47,12 +47,12 @@
  */
 package org.egov.wtms.masters.repository;
 
+import java.util.List;
+
 import org.egov.wtms.masters.entity.MeterCost;
 import org.egov.wtms.masters.entity.PipeSize;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public interface MeterCostRepository extends JpaRepository<MeterCost, Long> {
@@ -60,6 +60,8 @@ public interface MeterCostRepository extends JpaRepository<MeterCost, Long> {
     List<MeterCost> findByMeterMake(String meterMake);
 
     List<MeterCost> findByPipeSize(PipeSize pipeSize);
+
+    List<MeterCost> findByActiveTrueOrderByMeterMakeAsc();
 
     MeterCost findByMeterMakeAndPipeSize(String meterMake, PipeSize pipeSize);
 }

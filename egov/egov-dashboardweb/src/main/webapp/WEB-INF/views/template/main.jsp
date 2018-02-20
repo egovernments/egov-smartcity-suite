@@ -48,6 +48,8 @@
 
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <!--[if lt IE 7 ]> <html lang="en" class="no-js ie6 lt8"> <![endif]-->
 <!--[if IE 7 ]> <html lang="en" class="no-js ie7 lt8"> <![endif]-->
@@ -57,6 +59,10 @@
 <html lang="en" class="no-js">
 <!--<![endif]-->
 <head>
+    <spring:eval expression="@environment.getProperty('analytics.enabled')" scope="application" var="analyticsEnabled"/>
+    <c:if test="${analyticsEnabled}">
+        <spring:eval expression="@environment.getProperty('analytics.config')" scope="application"/>
+    </c:if>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title>${sessionScope.citymunicipalityname} Smart City Dashboard</title>

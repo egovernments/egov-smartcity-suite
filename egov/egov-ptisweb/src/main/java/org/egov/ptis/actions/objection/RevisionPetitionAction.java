@@ -488,6 +488,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 				propService.pushRevisionPetitionPortalMessage(objection, APPLICATION_TYPE_GRP);
 		currentStatus = REVISION_PETITION_CREATED;
 		sendEmailandSms(objection, REVISION_PETITION_CREATED);
+		applicationNumber =  objection.getObjectionNumber();
 		if (logger.isDebugEnabled())
 			logger.debug("ObjectionAction | Create | End " + objection);
 		return isMeesevaUser ? MEESEVA_RESULT_ACK : STRUTS_RESULT_MESSAGE;
@@ -645,7 +646,13 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 			addActionError(getText("unitrate.error"));
 			return "view";
 		}
-
+        if (revisionPetitionService.validateDemand(objection)) {
+            if (PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION.equals(objection.getType()))
+                addActionError(getText("grp.tax.increase.msg"));
+            else
+                addActionError(getText("rp.tax.increase.msg"));
+            return "view";
+        }
 		final String designation = propService.getDesignationForPositionAndUser(
 				objection.getCurrentState().getOwnerPosition().getId(), securityUtils.getCurrentUser().getId());
 		if (REVENUE_INSPECTOR_DESGN.equals(designation))
@@ -874,143 +881,116 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		return NOTICE;
 	}
 
-	@SuppressWarnings("deprecation")
-	@ValidationErrorPage(value = "view")
-	@Action(value = "/revPetition-generateEnodresementNotice")
-	public String generateEnodresementNotice() {
-		ReportOutput reportOutput = new ReportOutput();
-		InputStream endoresementPdf = null;
+    @SuppressWarnings("deprecation")
+    @ValidationErrorPage(value = "view")
+    @Action(value = "/revPetition-generateEnodresementNotice")
+    public String generateEnodresementNotice() {
+        ReportOutput reportOutput = new ReportOutput();
+        InputStream endoresementPdf = null;
+        if (objection.getGenerateSpecialNotice() != null && !objection.getGenerateSpecialNotice()) {
+            objection.getBasicProperty()
+                    .setStatus(propertyStatusDAO.getPropertyStatusByCode(PropertyTaxConstants.STATUS_CODE_ASSESSED));
+            objection.getBasicProperty().setUnderWorkflow(Boolean.FALSE);
+            objection.transition().end().withStateValue(PropertyTaxConstants.WFLOW_ACTION_END).withNextAction(null)
+                    .withOwner((Position) null)
+                    .withOwner(securityUtils.getCurrentUser()).withComments(approverComments);
+        } else
+            updateStateAndStatus(objection);
 
-		/*
-		 * Change basic property status from Objected to Assessed.
-		 */
-		Position position;
-		User user;
+        reportOutput = revisionPetitionService.createEndoresement(reportOutput, objection);
+        if (reportOutput != null && reportOutput.getReportOutputData() != null)
+            endoresementPdf = new ByteArrayInputStream(reportOutput.getReportOutputData());
+        noticeService.saveNotice(objection.getObjectionNumber(),
+                objection.getObjectionNumber()
+                        .concat(PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT_PREFIX),
+                PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT, objection.getBasicProperty(),
+                endoresementPdf);
+        revisionPetitionService.updateRevisionPetition(objection);
+        if (NATURE_OF_WORK_RP.equalsIgnoreCase(objection.getType()))
+            addActionMessage(getText("objection.endoresementNotice.success"));
+        else
+            addActionMessage(getText("objection.grp.endoresementNotice.success"));
+        if (logger.isDebugEnabled())
+            logger.debug("ObjectionAction | generateEnodresementNotice | End " + objection);
 
-		position = eisCommonService.getPositionByUserId(ApplicationThreadLocals.getUserId());
-		user = userService.getUserById(ApplicationThreadLocals.getUserId());
+        if (objection != null && objection.getObjectionNumber() != null) {
+            final PtNotice ptNotice = noticeService.getPtNoticeByNoticeNumberAndNoticeType(
+                    objection.getObjectionNumber()
+                            .concat(PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT_PREFIX),
+                    PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT);
+            if (ptNotice != null) {
+                final FileStoreMapper fsm = ptNotice.getFileStore();
+                final File file = fileStoreService.fetch(fsm, FILESTORE_MODULE_NAME);
+                byte[] bFile;
+                try {
+                    bFile = FileUtils.readFileToByteArray(file);
+                } catch (final IOException e) {
+                    throw new ApplicationRuntimeException(HEARING_NOTCIE_EXCEPTION_MESSAGE + e);
+                }
+                reportOutput.setReportOutputData(bFile);
+                reportOutput.setReportFormat(ReportFormat.PDF);
+                reportId = reportViewerUtil.addReportToTempCache(reportOutput);
+            }
+        }
+        return NOTICE;
+    }
 
-		/*
-		 * Change workflow object as Active property and Active one to history.
-		 */
-		if (objection.getGenerateSpecialNotice() != null && !objection.getGenerateSpecialNotice()) {
-			objection.getBasicProperty()
-					.setStatus(propertyStatusDAO.getPropertyStatusByCode(PropertyTaxConstants.STATUS_CODE_ASSESSED));
-			objection.getBasicProperty().setUnderWorkflow(Boolean.FALSE);
-			objection.transition().end().withStateValue(PropertyTaxConstants.WFLOW_ACTION_END).withOwner(position)
-					.withOwner(user).withComments(approverComments);
+    @ValidationErrorPage(value = "view")
+    @Action(value = "/revPetition-generateSpecialNotice")
+    public String generateSpecialNotice() {
+        setUlbCode(ApplicationThreadLocals.getCityCode());
 
-		} else
-			updateStateAndStatus(objection); // If objection not rejected, then
-												// print special notice.
-		reportOutput = revisionPetitionService.createEndoresement(reportOutput, objection);
-		if (reportOutput != null && reportOutput.getReportOutputData() != null)
-			endoresementPdf = new ByteArrayInputStream(reportOutput.getReportOutputData());
-		noticeService.saveNotice(objection.getObjectionNumber(),
-				objection.getObjectionNumber()
-						.concat(PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT_PREFIX),
-				PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT, objection.getBasicProperty(),
-				endoresementPdf);
+        if (objection.getGenerateSpecialNotice() != null && objection.getGenerateSpecialNotice()
+                && !PREVIEW.equals(actionType))
+            if (WFLOW_ACTION_STEP_PRINT_NOTICE.equals(actionType)) {
+                objection.getBasicProperty().setStatus(
+                        propertyStatusDAO.getPropertyStatusByCode(PropertyTaxConstants.STATUS_CODE_ASSESSED));
+                objection.getBasicProperty().setUnderWorkflow(Boolean.FALSE);
 
-		revisionPetitionService.updateRevisionPetition(objection);
-		if (NATURE_OF_WORK_RP.equalsIgnoreCase(objection.getType()))
-			addActionMessage(getText("objection.endoresementNotice.success"));
-		else
-			addActionMessage(getText("objection.grp.endoresementNotice.success"));
-		if (logger.isDebugEnabled())
-			logger.debug("ObjectionAction | generateEnodresementNotice | End " + objection);
+                objection.transition().end().withOwner(securityUtils.getCurrentUser()).withComments(approverComments)
+                        .withNextAction(null).withOwner(objection.getCurrentState().getOwnerPosition());
+            } else if (!WFLOW_ACTION_STEP_SIGN.equals(actionType))
+                updateStateAndStatus(objection);
 
-		if (objection != null && objection.getObjectionNumber() != null) {
-			final PtNotice ptNotice = noticeService.getPtNoticeByNoticeNumberAndNoticeType(
-					objection.getObjectionNumber()
-							.concat(PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT_PREFIX),
-					PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT);
-			if (ptNotice != null) {
-				final FileStoreMapper fsm = ptNotice.getFileStore();
-				final File file = fileStoreService.fetch(fsm, FILESTORE_MODULE_NAME);
-				byte[] bFile;
-				try {
-					bFile = FileUtils.readFileToByteArray(file);
-				} catch (final IOException e) {
+        generateSpecialNotice(objection.getProperty(), (BasicPropertyImpl) objection.getBasicProperty());
 
-					throw new ApplicationRuntimeException(HEARING_NOTCIE_EXCEPTION_MESSAGE + e);
-				}
-				reportOutput.setReportOutputData(bFile);
-				reportOutput.setReportFormat(ReportFormat.PDF);
-				reportId = reportViewerUtil.addReportToTempCache(reportOutput);
-			}
-		}
-		return NOTICE;
-	}
+        if (!WFLOW_ACTION_STEP_SIGN.equals(actionType))
+            revisionPetitionService.updateRevisionPetition(objection);
+        final ReportOutput reportOutput = new ReportOutput();
+        if (objection != null && objection.getObjectionNumber() != null) {
+            final PtNotice ptNotice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(
+                    objection.getObjectionNumber(), NOTICE_TYPE_RPPROCEEDINGS);
+            if (ptNotice != null) {
+                final FileStoreMapper fsm = ptNotice.getFileStore();
+                final File file = fileStoreService.fetch(fsm, FILESTORE_MODULE_NAME);
+                byte[] bFile;
+                try {
+                    bFile = FileUtils.readFileToByteArray(file);
+                } catch (final IOException e) {
 
-	@ValidationErrorPage(value = "view")
-	@Action(value = "/revPetition-generateSpecialNotice")
-	public String generateSpecialNotice() {
-		setUlbCode(ApplicationThreadLocals.getCityCode());
-		/*
-		 * Change basic property status from Objected to Assessed.
-		 */
-		Position position;
-		User user;
+                    throw new ApplicationRuntimeException(HEARING_NOTCIE_EXCEPTION_MESSAGE + e);
+                }
+                reportOutput.setReportOutputData(bFile);
+                reportOutput.setReportFormat(ReportFormat.PDF);
+                if (!WFLOW_ACTION_STEP_SIGN.equals(actionType))
+                    reportId = reportViewerUtil.addReportToTempCache(reportOutput);
+            }
+        }
+        if (WFLOW_ACTION_STEP_PRINT_NOTICE.equals(actionType)) {
+            if (wfType.equalsIgnoreCase(NATURE_OF_WORK_RP))
+                propService.updateIndexes(objection, APPLICATION_TYPE_REVISION_PETITION);
+            else
+                propService.updateIndexes(objection, APPLICATION_TYPE_GRP);
 
-		position = positionMasterService.getPositionByUserId(securityUtils.getCurrentUser().getId());
-		user = securityUtils.getCurrentUser();
-		/*
-		 * End workflow
-		 */
-		if (objection.getGenerateSpecialNotice() != null && objection.getGenerateSpecialNotice()
-				&& !PREVIEW.equals(actionType))
-			if (WFLOW_ACTION_STEP_PRINT_NOTICE.equals(actionType)) {
-				objection.getBasicProperty().setStatus(
-						propertyStatusDAO.getPropertyStatusByCode(PropertyTaxConstants.STATUS_CODE_ASSESSED));
-				objection.getBasicProperty().setUnderWorkflow(Boolean.FALSE);
-
-				objection.transition().end().withOwner(position).withOwner(user).withComments(approverComments)
-						.withNextAction(null).withOwner((Position)null);
-			} else if (!WFLOW_ACTION_STEP_SIGN.equals(actionType))
-				updateStateAndStatus(objection);
-
-		generateSpecialNotice(objection.getProperty(), (BasicPropertyImpl) objection.getBasicProperty());
-
-		if (!WFLOW_ACTION_STEP_SIGN.equals(actionType))
-			revisionPetitionService.updateRevisionPetition(objection);
-		final ReportOutput reportOutput = new ReportOutput();
-		if (objection != null && objection.getObjectionNumber() != null) {
-			final PtNotice ptNotice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(
-					objection.getObjectionNumber(), NOTICE_TYPE_RPPROCEEDINGS);
-			if (ptNotice != null) {
-				final FileStoreMapper fsm = ptNotice.getFileStore();
-				final File file = fileStoreService.fetch(fsm, FILESTORE_MODULE_NAME);
-				byte[] bFile;
-				try {
-					bFile = FileUtils.readFileToByteArray(file);
-				} catch (final IOException e) {
-
-					throw new ApplicationRuntimeException(HEARING_NOTCIE_EXCEPTION_MESSAGE + e);
-				}
-				reportOutput.setReportOutputData(bFile);
-				reportOutput.setReportFormat(ReportFormat.PDF);
-				if (!WFLOW_ACTION_STEP_SIGN.equals(actionType))
-					reportId = reportViewerUtil.addReportToTempCache(reportOutput);
-			}
-		}
-		if (WFLOW_ACTION_STEP_PRINT_NOTICE.equals(actionType)) {
-			if (wfType.equalsIgnoreCase(NATURE_OF_WORK_RP))
-				propService.updateIndexes(objection, APPLICATION_TYPE_REVISION_PETITION);
-			else
-				propService.updateIndexes(objection, APPLICATION_TYPE_GRP);
-
-			if (objection.getSource() != null
-					&& Source.CITIZENPORTAL.toString().equalsIgnoreCase(objection.getSource()))
-				if (NATURE_OF_WORK_RP.equalsIgnoreCase(wfType))
-					propService.updatePortal(objection, APPLICATION_TYPE_REVISION_PETITION);
-				else
-					propService.updatePortal(objection, APPLICATION_TYPE_GRP);
-
-		}
-
-		return WFLOW_ACTION_STEP_SIGN.equals(actionType) ? DIGITAL_SIGNATURE_REDIRECTION : NOTICE;
-	}
+            if (objection != null && objection.getSource() != null
+                    && Source.CITIZENPORTAL.toString().equalsIgnoreCase(objection.getSource()))
+                if (NATURE_OF_WORK_RP.equalsIgnoreCase(wfType))
+                    propService.updatePortal(objection, APPLICATION_TYPE_REVISION_PETITION);
+                else
+                    propService.updatePortal(objection, APPLICATION_TYPE_GRP);
+        }
+        return WFLOW_ACTION_STEP_SIGN.equals(actionType) ? DIGITAL_SIGNATURE_REDIRECTION : NOTICE;
+    }
 
 	/**
 	 * @param objection
@@ -1146,8 +1126,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 	private void checkIfEligibleForDocEdit() {
 		final String designation = propService.getDesignationForPositionAndUser(
 				objection.getCurrentState().getOwnerPosition().getId(), securityUtils.getCurrentUser().getId());
-		if (objection.getCurrentState().getValue().endsWith(STATUS_REJECTED)
-				|| REVENUE_INSPECTOR_DESGN.equals(designation))
+        if (objection.getCurrentState().getValue().endsWith(STATUS_REJECTED) ||
+                objection.getCurrentState().getValue().endsWith(WFLOW_ACTION_NEW)
+                || REVENUE_INSPECTOR_DESGN.equals(designation))
 			setAllowEditDocument(Boolean.TRUE);
 	}
 
@@ -1431,11 +1412,12 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 					.withComments(approverComments);
 
 			if (wfmatrix.getNextAction() != null && wfmatrix.getNextAction().equalsIgnoreCase("END"))
-				objection.transition().end().withStateValue(wfmatrix.getNextState())
-						.withOwner(objection.getCurrentState().getOwnerPosition())
-						.withSenderName(loggedInUser.getUsername() + "::" + loggedInUser.getName())
-						.withNextAction(wfmatrix.getNextAction()).withDateInfo(new DateTime().toDate())
-						.withComments(approverComments).withNextAction(null);
+                objection.transition().end().withStateValue(wfmatrix.getNextState())
+                        .withOwner(objection.getCurrentState().getOwnerPosition())
+                        .withSenderName(loggedInUser.getUsername() + "::" + loggedInUser.getName())
+                        .withNextAction(wfmatrix.getNextAction()).withDateInfo(new DateTime().toDate())
+                        .withComments(approverComments).withNextAction(null)
+                        .withOwner(objection.getCurrentState().getOwnerPosition());
 
 			if (wfmatrix.getNextStatus() != null)
 				updateRevisionPetitionStatus(wfmatrix, objection, null);
@@ -1462,7 +1444,10 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
 				if (position != null) {
 					objection.transition().progressWithStateCopy().withNextAction(OBJECTION_RECORD_INSPECTIONDETAILS)
-							.withStateValue(PropertyTaxConstants.WF_STATE_REJECTED).withOwner(position)
+							.withStateValue(
+									PROPERTY_MODIFY_REASON_REVISION_PETITION.equalsIgnoreCase(objection.getType())
+											? RP_APP_STATUS_REJECTED : GRP_APP_STATUS_REJECTED)
+							.withOwner(position)
 							.withSenderName(loggedInUser.getUsername() + "::" + loggedInUser.getName())
 							.withDateInfo(new DateTime().toDate()).withComments(approverComments);
 					final String actionMessage = propertyTaxUtil.getApproverUserName(position.getId());
@@ -1482,10 +1467,11 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 			if (objection.getCurrentState() != null
 					&& (objection.getCurrentState().getValue().equalsIgnoreCase(REJECTED) || objection.getCurrentState()
 							.getValue().equalsIgnoreCase(PropertyTaxConstants.RP_CREATED))) {
-				objection.transition().end().withStateValue(wfmatrix.getNextState()).withOwner(position)
-						.withSenderName(loggedInUser.getUsername() + "::" + loggedInUser.getName())
-						.withNextAction(wfmatrix.getNextAction()).withDateInfo(new DateTime().toDate())
-						.withComments(approverComments).withNextAction(null).withOwner((Position)null);
+                objection.transition().end().withStateValue(wfmatrix.getNextState()).withOwner(position)
+                        .withSenderName(loggedInUser.getUsername() + "::" + loggedInUser.getName())
+                        .withNextAction(wfmatrix.getNextAction()).withDateInfo(new DateTime().toDate())
+                        .withComments(approverComments).withNextAction(null)
+                        .withOwner(objection.getCurrentState().getOwnerPosition());
 
 				updateRevisionPetitionStatus(wfmatrix, objection, REJECTED);
 
@@ -1693,7 +1679,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		}
 		if (ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()))
 			setApplicationSource(SOURCE_ONLINE.toLowerCase());
-		reportOutput = propertyTaxUtil.generateCitizenCharterAcknowledgement(propertyId, applicationType, serviceType);
+		reportOutput = propertyTaxUtil.generateCitizenCharterAcknowledgement(propertyId, applicationType, serviceType, applicationNumber);
 		reportId = reportViewerUtil.addReportToTempCache(reportOutput);
 		return NOTICE;
 	}

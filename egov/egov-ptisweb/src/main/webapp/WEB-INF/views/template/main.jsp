@@ -54,6 +54,10 @@
 <!DOCTYPE html>
 <html oncontextmenu="return false;">
 <head>
+    <spring:eval expression="@environment.getProperty('analytics.enabled')" scope="application" var="analyticsEnabled"/>
+    <c:if test="${analyticsEnabled}">
+        <spring:eval expression="@environment.getProperty('analytics.config')" scope="application"/>
+    </c:if>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">

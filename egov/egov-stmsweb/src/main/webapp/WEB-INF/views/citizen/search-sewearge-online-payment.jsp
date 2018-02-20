@@ -52,12 +52,11 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
-<div class="row">
-	<form:form id="sewerageSearchRequestForm" method="get"
-		class="form-horizontal form-groups-bordered" modelAttribute="sewerage"
-		commandName="">
-		<div class="col-md-12">
 
+<form:form id="sewerageSearchRequestForm" method="get"
+	class="form-horizontal form-groups-bordered" modelAttribute="sewerage">
+	<div class="row">
+		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title"></div>
@@ -80,30 +79,28 @@
 					</div>
 				</div>
 			</div>
-		</div>
+			<div class="col-md-12">
+				<div class="text-center">
+					<a href="javascript:void(0);" id="searchSewerageapplication"
+						class="btn btn-primary btnSearch"><spring:message
+							code='lbl.search' /></a>
 
-		<div class="col-md-12">
-			<div class="text-center">
-				<a href="javascript:void(0);" id="searchSewerageapplication"
-					class="btn btn-primary"><spring:message code='lbl.search' /></a>
-
-				<button class="btn btn-danger" type="reset">
-					<spring:message code='lbl.reset' />
-				</button>
-				<a href="javascript:void(0);" id="closeComplaints"
-					class="btn btn-default" onclick="self.close()"><spring:message
-						code='lbl.close' /></a>
+					<button class="btn btn-danger" type="reset">
+						<spring:message code='lbl.reset' />
+					</button>
+					<a href="javascript:void(0);" id="closeComplaints"
+						class="btn btn-default" onclick="self.close()"><spring:message
+							code='lbl.close' /></a>
+				</div>
 			</div>
 		</div>
-	</form:form>
-
-	<div class="col-md-12">
-		<br>
-		<table class="table table-bordered datatable dt-responsive"
-			id="aplicationSearchResults">
-
-		</table>
 	</div>
+</form:form>
+<div class="col-md-12">
+	<br>
+	<table class="table table-bordered datatable dt-responsive"
+		id="aplicationSearchResults">
+	</table>
 </div>
 
 <link rel="stylesheet"
@@ -125,10 +122,6 @@
 	src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/moment.min.js' context='/egi'/>"></script>
 <script
 	src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js' context='/egi'/>"></script>
-
-
 <script
 	src="<cdn:url  value='/resources/js/search/searchstmsforonlinepay.js?rnd=${app_release_no}'/>"
 	type="text/javascript"></script>
-
-

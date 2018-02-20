@@ -47,23 +47,6 @@
  */
 package org.egov.collection.service;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.egov.collection.constants.CollectionConstants;
-import org.egov.collection.entity.CollectionSummaryReport;
-import org.egov.collection.entity.CollectionSummaryReportResult;
-import org.egov.collection.entity.OnlinePaymentResult;
-import org.egov.infra.config.core.EnvironmentSettings;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
-import org.hibernate.transform.AliasToBeanResultTransformer;
-import org.hibernate.transform.Transformers;
-import org.hibernate.type.BigDecimalType;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -72,10 +55,34 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.egov.collection.constants.CollectionConstants;
+import org.egov.collection.entity.CollectionSummaryReport;
+import org.egov.collection.entity.CollectionSummaryReportResult;
+import org.egov.collection.entity.OnlinePaymentResult;
+import org.egov.infra.config.core.EnvironmentSettings;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.transform.Transformers;
+import org.hibernate.type.BigDecimalType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 @Service
 public class CollectionReportService {
     private static final Logger LOGGER = Logger.getLogger(CollectionReportService.class);
-
+    private static final String amountSelectQuery = " SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) AS ";
+    private static final String cashZeroSelectQuery = "SELECT 0 AS cashCount, 0 AS cashAmount,";
+    private static final String chequeDDZeroSelectQuery = " 0 AS chequeddCount, 0 AS chequeddAmount,";
+    private static final String onlineZeroSelectQuery = " 0 AS onlineCount, 0 AS onlineAmount,";
+    private static final String bankZeroSelectQuery = " 0 AS bankCount, 0 AS bankAmount,";
+    private static final String cardZeroSelectQuery = " 0 AS cardCount, 0 AS cardAmount";
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -153,58 +160,29 @@ public class CollectionReportService {
         StringBuilder userwiseQuery = new StringBuilder();
         final StringBuilder finalUserwiseQuery = new StringBuilder();
         final StringBuilder finalAggregateQuery = new StringBuilder();
-        final StringBuilder selectQuery = new StringBuilder(
-                "SELECT (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cash' THEN count(distinct(EGCL_COLLECTIONHEADER.ID)) END) AS cashCount,  "
-                        +
-                        "(CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cheque' THEN count(distinct(EGCL_COLLECTIONHEADER.ID)) WHEN EGF_INSTRUMENTTYPE.TYPE='dd' THEN count(distinct(EGCL_COLLECTIONHEADER.ID)) END) AS chequeddCount, "
-                        +
-                        " (CASE WHEN EGF_INSTRUMENTTYPE.TYPE= 'online' THEN count(distinct(EGCL_COLLECTIONHEADER.ID)) END) AS onlineCount, "
-                        +
-                        " EGCL_COLLECTIONHEADER.SOURCE AS source, SER.NAME AS serviceName," +
-                        " (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cash' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) END) AS cashAmount, "
-                        +
-                        " (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cheque' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) WHEN EGF_INSTRUMENTTYPE.TYPE='dd' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) END) AS chequeddAmount,"
-                        +
-                        " (CASE WHEN EGF_INSTRUMENTTYPE.TYPE= 'online' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) END) AS onlineAmount, "
-                        +
-                        " (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='bankchallan' THEN count(distinct(EGCL_COLLECTIONHEADER.ID)) END) AS bankCount, "
-                        +
-                        " (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='bankchallan' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) END) AS bankAmount, "
-                        +
-                        " (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='card' THEN count(distinct(EGCL_COLLECTIONHEADER.ID)) END) AS cardCount, "
-                        +
-                        " (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='card' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) END) AS cardAmount, "
-                        +
-                        " count(distinct(EGCL_COLLECTIONHEADER.ID)) as totalReceiptCount ");
+        final StringBuilder selectQuery = new StringBuilder("SELECT ");
+
         final StringBuilder fromQuery = new StringBuilder(
-                " FROM EGCL_COLLECTIONHEADER EGCL_COLLECTIONHEADER INNER JOIN EGCL_COLLECTIONINSTRUMENT EGCL_COLLECTIONINSTRUMENT ON EGCL_COLLECTIONHEADER.ID = EGCL_COLLECTIONINSTRUMENT.COLLECTIONHEADER"
-                        +
-                        " INNER JOIN EGF_INSTRUMENTHEADER EGF_INSTRUMENTHEADER ON EGCL_COLLECTIONINSTRUMENT.INSTRUMENTHEADER = EGF_INSTRUMENTHEADER.ID"
-                        +
-                        " INNER JOIN EGW_STATUS EGW_STATUS ON EGCL_COLLECTIONHEADER.STATUS = EGW_STATUS.ID" +
-                        " INNER JOIN EGF_INSTRUMENTTYPE EGF_INSTRUMENTTYPE ON EGF_INSTRUMENTHEADER.INSTRUMENTTYPE = EGF_INSTRUMENTTYPE.ID"
-                        +
-                        " INNER JOIN EGCL_COLLECTIONMIS EGCL_COLLECTIONMIS ON EGCL_COLLECTIONHEADER.ID = EGCL_COLLECTIONMIS.COLLECTIONHEADER"
-                        +
-                        " INNER JOIN EGCL_SERVICEDETAILS SER ON SER.ID = EGCL_COLLECTIONHEADER.SERVICEDETAILS ");
+                " FROM EGCL_COLLECTIONHEADER EGCL_COLLECTIONHEADER INNER JOIN EGCL_COLLECTIONINSTRUMENT EGCL_COLLECTIONINSTRUMENT ON EGCL_COLLECTIONHEADER.ID = EGCL_COLLECTIONINSTRUMENT.COLLECTIONHEADER")
+                        .append(" INNER JOIN EGF_INSTRUMENTHEADER EGF_INSTRUMENTHEADER ON EGCL_COLLECTIONINSTRUMENT.INSTRUMENTHEADER = EGF_INSTRUMENTHEADER.ID")
+                        .append(" INNER JOIN EGW_STATUS EGW_STATUS ON EGCL_COLLECTIONHEADER.STATUS = EGW_STATUS.ID")
+                        .append(" INNER JOIN EGF_INSTRUMENTTYPE EGF_INSTRUMENTTYPE ON EGF_INSTRUMENTHEADER.INSTRUMENTTYPE = EGF_INSTRUMENTTYPE.ID")
+                        .append(" INNER JOIN EGCL_COLLECTIONMIS EGCL_COLLECTIONMIS ON EGCL_COLLECTIONHEADER.ID = EGCL_COLLECTIONMIS.COLLECTIONHEADER")
+                        .append(" INNER JOIN EGCL_SERVICEDETAILS SER ON SER.ID = EGCL_COLLECTIONHEADER.SERVICEDETAILS ");
         final StringBuilder whereQuery = new StringBuilder(" WHERE EGW_STATUS.DESCRIPTION != 'Cancelled'");
-        final StringBuilder groupQuery = new StringBuilder(" GROUP BY  source, counterName, employeeName, USERID,serviceName, "
-                + "EGF_INSTRUMENTTYPE.TYPE");
-
-        aggregateQuery.append(selectQuery)
-                .append(" , '' AS counterName, '' AS employeeName, 0 AS USERID ")
+        final StringBuilder groupQuery = new StringBuilder(" GROUP BY  source, counterName, employeeName, USERID,serviceName ");
+        aggregateQuery.append(
+                " ,count(distinct(EGCL_COLLECTIONHEADER.ID)) as totalReceiptCount ,EGCL_COLLECTIONHEADER.SOURCE AS source, SER.NAME AS serviceName, '' AS counterName, '' AS employeeName, 0 AS USERID ")
                 .append(fromQuery);
-
-        userwiseQuery.append(selectQuery)
-                .append(" , EG_LOCATION.NAME AS counterName, EG_USER.NAME AS employeeName, EG_USER.ID AS USERID")
-                .append(fromQuery)
-                .append(" LEFT JOIN EG_LOCATION EG_LOCATION ON EGCL_COLLECTIONHEADER.LOCATION = EG_LOCATION.ID "
+        userwiseQuery.append(
+                " ,count(distinct(EGCL_COLLECTIONHEADER.ID)) as totalReceiptCount ,EGCL_COLLECTIONHEADER.SOURCE AS source, SER.NAME AS serviceName, EG_LOCATION.NAME AS counterName, EG_USER.NAME AS employeeName, EG_USER.ID AS USERID")
+                .append(fromQuery).append(" LEFT JOIN EG_LOCATION EG_LOCATION ON EGCL_COLLECTIONHEADER.LOCATION = EG_LOCATION.ID "
                         + " INNER JOIN EG_USER EG_USER ON EGCL_COLLECTIONHEADER.CREATEDBY = EG_USER.ID ");
 
         if (fromDate != null && toDate != null) {
-            whereQuery.append(" AND EGCL_COLLECTIONHEADER.RECEIPTDATE between to_timestamp('"
-                    + fromDateFormatter.format(fromDate) + "', 'YYYY-MM-DD HH24:MI:SS') and " + " to_timestamp('"
-                    + toDateFormatter.format(toDate) + "', 'YYYY-MM-DD HH24:MI:SS') ");
+            whereQuery.append(" AND EGCL_COLLECTIONHEADER.RECEIPTDATE between to_timestamp('")
+                    .append(fromDateFormatter.format(fromDate) + "', 'YYYY-MM-DD HH24:MI:SS') and " + " to_timestamp('")
+                    .append(toDateFormatter.format(toDate) + "', 'YYYY-MM-DD HH24:MI:SS') ");
         }
 
         if (!source.isEmpty() && !source.equals(CollectionConstants.ALL)) {
@@ -213,7 +191,6 @@ public class CollectionReportService {
             userwiseQuery.setLength(0);
             userwiseQuery.append(aggregateQuery);
         }
-
         if (serviceId != null && serviceId != -1)
             whereQuery.append(" AND EGCL_COLLECTIONHEADER.SERVICEDETAILS =:serviceId");
         if (status != -1)
@@ -226,15 +203,14 @@ public class CollectionReportService {
                 userwiseQuery.setLength(0);
                 userwiseQuery.append(aggregateQuery);
             }
-            userwiseQuery.append(whereQuery).append(groupQuery);
-            aggregateQuery.append(whereQuery).append(groupQuery);
+            userwiseQuery = prepareSelectQuery(paymentMode).append(userwiseQuery).append(whereQuery).append(groupQuery);
+            aggregateQuery = prepareSelectQuery(paymentMode).append(aggregateQuery).append(whereQuery).append(groupQuery);
         } else {
             userwiseQuery.append(whereQuery);
             aggregateQuery.append(whereQuery);
             userwiseQuery = prepareQueryForAllPaymentMode(userwiseQuery, groupQuery);
             aggregateQuery = prepareQueryForAllPaymentMode(aggregateQuery, groupQuery);
         }
-
         final StringBuilder finalSelectQuery = new StringBuilder(
                 "SELECT cast(sum(cashCount) AS NUMERIC) AS cashCount,cast(sum(chequeddCount) AS NUMERIC) AS chequeddCount,cast(sum(onlineCount) AS NUMERIC) AS onlineCount,source,counterName,employeeName,serviceName,cast(sum(cashAmount) AS NUMERIC) AS cashAmount, cast(sum(chequeddAmount) AS NUMERIC) AS chequeddAmount, cast(sum(onlineAmount) AS NUMERIC) AS onlineAmount ,USERID,cast(sum(bankCount) AS NUMERIC) AS bankCount, cast(sum(bankAmount) AS NUMERIC) AS bankAmount, "
                         + "  cast(sum(cardCount) AS NUMERIC) AS cardCount, cast(sum(cardAmount) AS NUMERIC) AS cardAmount, cast(sum(totalReceiptCount) AS NUMERIC) as totalReceiptCount  FROM (");
@@ -284,22 +260,27 @@ public class CollectionReportService {
     public StringBuilder prepareQueryForAllPaymentMode(StringBuilder query, StringBuilder groupQuery) {
         String unionString = " union ";
         StringBuilder queryString = new StringBuilder();
+        queryString.append(prepareSelectQuery(CollectionConstants.INSTRUMENTTYPE_CASH));
         queryString.append(query);
         queryString.append(" AND EGF_INSTRUMENTTYPE.TYPE = 'cash'");
         queryString.append(groupQuery);
         queryString.append(unionString);
+        queryString.append(prepareSelectQuery(CollectionConstants.INSTRUMENTTYPE_BANK));
         queryString.append(query);
         queryString.append(" AND EGF_INSTRUMENTTYPE.TYPE = 'bankchallan'");
         queryString.append(groupQuery);
         queryString.append(unionString);
+        queryString.append(prepareSelectQuery(CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD));
         queryString.append(query);
         queryString.append(" AND EGF_INSTRUMENTTYPE.TYPE in( 'cheque','dd')");
         queryString.append(groupQuery);
         queryString.append(unionString);
+        queryString.append(prepareSelectQuery(CollectionConstants.INSTRUMENTTYPE_ONLINE));
         queryString.append(query);
         queryString.append(" AND EGF_INSTRUMENTTYPE.TYPE = 'online'");
         queryString.append(groupQuery);
         queryString.append(unionString);
+        queryString.append(prepareSelectQuery(CollectionConstants.INSTRUMENTTYPE_CARD));
         queryString.append(query);
         queryString.append(" AND EGF_INSTRUMENTTYPE.TYPE  = 'card' ");
         queryString.append(groupQuery);
@@ -323,6 +304,47 @@ public class CollectionReportService {
                 .addScalar("cardCount", org.hibernate.type.StringType.INSTANCE)
                 .addScalar("totalReceiptCount", org.hibernate.type.StringType.INSTANCE)
                 .setResultTransformer(Transformers.aliasToBean(CollectionSummaryReport.class));
+    }
+
+    public StringBuilder prepareSelectQuery(String instrumentType) {
+
+        StringBuilder countSelectQuery = new StringBuilder(" COUNT(DISTINCT(EGCL_COLLECTIONHEADER.ID)) AS ");
+        StringBuilder selectQueryString = new StringBuilder();
+
+        if (instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_CASH)) {
+            StringBuilder cashCountAmountSelectQuery = new StringBuilder("SELECT ").append(countSelectQuery.toString())
+                    .append(" cashCount,")
+                    .append(amountSelectQuery).append(" cashAmount,");
+            selectQueryString.append(cashCountAmountSelectQuery).append(chequeDDZeroSelectQuery).append(onlineZeroSelectQuery)
+                    .append(bankZeroSelectQuery).append(cardZeroSelectQuery);
+        } else if (instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD)) {
+            String chequeDDCountAmountSelectQuery = countSelectQuery.append(" chequeddCount,")
+                    .append(amountSelectQuery)
+                    .append(" chequeddAmount,").toString();
+            selectQueryString.append(cashZeroSelectQuery).append(chequeDDCountAmountSelectQuery).append(onlineZeroSelectQuery)
+                    .append(bankZeroSelectQuery).append(cardZeroSelectQuery);
+        } else if (instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_ONLINE)) {
+            String onlineCountAmountSelectQuery = countSelectQuery.append(" onlineCount,")
+                    .append(amountSelectQuery)
+                    .append(" onlineAmount,").toString();
+            selectQueryString.append(cashZeroSelectQuery).append(chequeDDZeroSelectQuery).append(onlineCountAmountSelectQuery)
+                    .append(bankZeroSelectQuery).append(cardZeroSelectQuery);
+        } else if (instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_BANK)) {
+            String bankCountAmountSelectQuery = countSelectQuery.append(" bankCount,")
+                    .append(amountSelectQuery)
+                    .append(" bankAmount,").toString();
+            selectQueryString.append(cashZeroSelectQuery).append(chequeDDZeroSelectQuery).append(onlineZeroSelectQuery)
+                    .append(bankCountAmountSelectQuery).append(cardZeroSelectQuery);
+        } else if (instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_CARD)) {
+            String cardCountAmountSelectQuery = countSelectQuery.append(" cardCount,")
+                    .append(amountSelectQuery).append(" cardAmount").toString();
+            selectQueryString.append(cashZeroSelectQuery).append(chequeDDZeroSelectQuery).append(onlineZeroSelectQuery)
+                    .append(bankZeroSelectQuery).append(cardCountAmountSelectQuery);
+        } else
+            throw new ApplicationRuntimeException(" Error while preparing select query:: Invalid Instrument Type");
+
+        return selectQueryString;
+
     }
 
     public List<CollectionSummaryReport> populateQueryResults(final List<CollectionSummaryReport> queryResults) {

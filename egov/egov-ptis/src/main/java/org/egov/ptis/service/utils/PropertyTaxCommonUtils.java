@@ -70,7 +70,6 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.notification.service.NotificationService;
-import org.egov.infra.persistence.entity.enums.GuardianRelation;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.NumberUtil;
@@ -78,6 +77,7 @@ import org.egov.infra.workflow.entity.State;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.dao.property.PropertyMutationDAO;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
@@ -85,6 +85,7 @@ import org.egov.ptis.domain.entity.property.PropertyID;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
+import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.SurroundingsAudit;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
@@ -110,8 +111,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.egov.collection.constants.CollectionConstants.QUERY_RECEIPTS_BY_RECEIPTNUM;
 import static org.egov.ptis.constants.PropertyTaxConstants.*;
@@ -151,6 +150,9 @@ public class PropertyTaxCommonUtils {
         
     @Autowired
     private NotificationService notificationService;
+    
+    @Autowired
+    private PropertyMutationDAO propertyMutationDAO;
 
     /**
      * Gives the first half of the current financial year
@@ -608,10 +610,6 @@ public class PropertyTaxCommonUtils {
         return designations;
     }
 
-    public List<String> getGuardianRelations() {
-        return Stream.of(GuardianRelation.values()).map(GuardianRelation::name).collect(Collectors.toList());
-    }
-    
     public List<Long> getPositionForUser(final Long userId) {
         List<Long> positionIds = new ArrayList<>();
         if (userId != null && userId.intValue() != 0) {
@@ -778,9 +776,9 @@ public class PropertyTaxCommonUtils {
         String reason = null;
         List<String> list = new ArrayList<>();
         if (isCorporation())
-            noOfDays = "30";
-        else
             noOfDays = "15";
+        else
+            noOfDays = "30";
         list.add(noOfDays);
         if (basicProperty.getProperty().getStatus() == 'I') {
             if ("CREATE".equals(basicProperty.getProperty().getPropertyModifyReason()))
@@ -804,6 +802,17 @@ public class PropertyTaxCommonUtils {
         oldSurroundings.setSouthBoundary(propertyId.getSouthBoundary() != null ? propertyId.getSouthBoundary() : null);
         oldSurroundings.setWestBoundary(propertyId.getWestBoundary() != null ? propertyId.getWestBoundary() : null);
         return oldSurroundings;
+    }
+    
+
+    public PropertyMutation getLatestApprovedMutationForAssessmentNo(String assessmentNo) {
+        return propertyMutationDAO.getLatestApprovedMutationForAssessmentNo(assessmentNo);
+    }
+
+    public PropertyStatusValues getPropStatusValues(BasicProperty basicProperty) {
+        final Query query = getSession().createQuery("from PropertyStatusValues where basicProperty = :basicPropertyId");
+        query.setParameter("basicPropertyId", basicProperty);
+        return query.list().isEmpty() ? null : (PropertyStatusValues) query.list().get(0);
     }
     
     /**

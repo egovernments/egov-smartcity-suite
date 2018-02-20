@@ -1,0 +1,5 @@
+CREATE INDEX idx_egptmvinfo_upicno ON egpt_mv_propertyinfo(upicno);
+CREATE INDEX idx_egptmvinfo_basicpropertyid ON egpt_mv_propertyinfo(basicpropertyid);
+CREATE INDEX idx_egptmvidc_basicpropertyid ON egpt_mv_inst_dem_coll(id_basic_property);
+CREATE INDEX idx_egptmvfloor_basicpropertyid ON egpt_mv_current_floor_detail(basicpropertyid);
+CREATE INDEX idx_egptmvasmt_assessmentno ON egpt_mv_assessments(assessmentno);

@@ -48,6 +48,8 @@
 package org.egov.restapi.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ContractorHelper implements Serializable {
 
@@ -67,57 +69,7 @@ public class ContractorHelper implements Serializable {
     private String pwdApprovalCode;
     private String exemptionName;
     private String mobileNumber;
-    private String contractorClass;
-    private String status;
-    private String contractorCategory;
-
-    public String getContractorClass() {
-        return contractorClass;
-    }
-
-    public void setContractorClass(final String contractorClass) {
-        this.contractorClass = contractorClass;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(final String status) {
-        this.status = status;
-    }
-
-    public String getContractorCategory() {
-        return contractorCategory;
-    }
-
-    public void setContractorCategory(final String contractorCategory) {
-        this.contractorCategory = contractorCategory;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(final String code) {
-        this.code = code;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public String getCorrespondenceAddress() {
-        return correspondenceAddress;
-    }
-
-    public void setCorrespondenceAddress(final String correspondenceAddress) {
-        this.correspondenceAddress = correspondenceAddress;
-    }
+    private List<ContractorDetailsRequest> contractorDetails = new ArrayList<>();
 
     public String getPaymentAddress() {
         return paymentAddress;
@@ -214,4 +166,37 @@ public class ContractorHelper implements Serializable {
     public void setMobileNumber(final String mobileNumber) {
         this.mobileNumber = mobileNumber;
     }
+
+    public List<ContractorDetailsRequest> getContractorDetails() {
+        return contractorDetails;
+    }
+
+    public void setContractorDetails(List<ContractorDetailsRequest> contractorDetails) {
+        this.contractorDetails = contractorDetails;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getCorrespondenceAddress() {
+        return correspondenceAddress;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setCorrespondenceAddress(String correspondenceAddress) {
+        this.correspondenceAddress = correspondenceAddress;
+    }
+
 }

@@ -441,7 +441,9 @@ public class VacanyRemissionController extends GenericWorkFlowController {
     @RequestMapping(value = "/printAck/{assessmentNo}", method = RequestMethod.GET)
     public ResponseEntity<byte[]> printAck(final HttpServletRequest request, final Model model,
             @PathVariable("assessmentNo") final String assessmentNo) {
-        ReportOutput reportOutput = propertyTaxUtil.generateCitizenCharterAcknowledgement(assessmentNo , VACANCY_REMISSION , NATURE_VACANCY_REMISSION);
+        final VacancyRemission remission = vacancyRemissionService
+                .getVRUnderWFByUpicNo(assessmentNo);
+        ReportOutput reportOutput = propertyTaxUtil.generateCitizenCharterAcknowledgement(assessmentNo , VACANCY_REMISSION , NATURE_VACANCY_REMISSION, remission.getApplicationNumber());
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition", "inline;filename=CitizenCharterAcknowledgement.pdf");

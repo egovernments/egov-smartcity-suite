@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -55,6 +55,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -85,5 +86,11 @@ public class LicenseController {
         ReportOutput reportOutput = tradeLicenseService.generateAcknowledgment(licenseId);
         reportOutput.setReportDisposition(ReportDisposition.ATTACHMENT);
         return reportAsResponseEntity(reportOutput);
+    }
+
+    @GetMapping("view/{licenseId}")
+    public String successView(@PathVariable Long licenseId, Model model) {
+        model.addAttribute("tradeLicense", tradeLicenseService.getLicenseById(licenseId));
+        return "license-success-view";
     }
 }

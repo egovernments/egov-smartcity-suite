@@ -195,9 +195,9 @@ public class CouncilMeetingIndexService {
     public BoolQueryBuilder prepareWhereClause(final CouncilMeetingDetailsSearchRequest searchRequest){
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.matchQuery("ulbName", searchRequest.getUlbName()));
         if (searchRequest.getFrom() != null && searchRequest.getTo() != null){
-         boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.rangeQuery("meetingDate")
-                .from(searchRequest.getFrom())
-                .to(searchRequest.getTo()));
+            boolQuery = boolQuery.filter(QueryBuilders.rangeQuery("meetingDate")
+                    .from(searchRequest.getFrom())
+                    .to(searchRequest.getTo()));
         }
         if (StringUtils.isNotBlank(searchRequest.getCommitteeType()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(COMMITTEE_TYPE, searchRequest.getCommitteeType()));

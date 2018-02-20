@@ -165,7 +165,8 @@
 							<label><spring:message code="lbl.builtUpArea" /></label>
 						</div>
 						<div class="col-xs-3 add-margin view-content">
-							<strong><c:out value="${apartment.builtUpArea}" /> </strong>
+							<strong><c:out value="${apartment.builtUpArea}" 
+							default="N/A" /> </strong>
 						</div>
 						<div class="col-xs-3 add-margin">
 							<label><spring:message code="lbl.openSpaceArea" /></label>
@@ -173,6 +174,15 @@
 						<div class="col-xs-3 add-margin view-content">
 							<strong><c:out value="${apartment.openSpaceArea}" 
 							default="N/A" /> </strong>
+						</div>
+					</div>
+					<div class="row add-border">
+						<div class="col-xs-3 add-margin">
+							<label><spring:message code="lbl.active" /></label>
+						</div>
+						<div class="col-xs-3 add-margin view-content">
+							<strong><c:out
+									value="${apartment.active ? 'Yes' :'No'}" /> </strong>
 						</div>
 					</div>
 					<div class="row">

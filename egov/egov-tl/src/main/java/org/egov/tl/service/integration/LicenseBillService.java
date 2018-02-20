@@ -48,7 +48,6 @@
 
 package org.egov.tl.service.integration;
 
-import org.egov.InvalidAccountHeadException;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillAccountDetails;
 import org.egov.collection.integration.models.BillReceiptInfo;
@@ -82,6 +81,7 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
@@ -212,26 +212,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
             module = moduleService.getModuleByName(TRADE_LICENSE);
         getCurrentInstallment(module);
         final List<EgDemandDetails> orderedDetailsList = new ArrayList<>();
-        Map<Installment, BigDecimal> installmentPenalty = new HashMap<>();
-        Map<Installment, EgDemandDetails> installmentWisePenaltyDemandDetail;
-        if (license.isNewApplication())
-            installmentPenalty = billable.getCalculatedPenalty(license.getCommencementDate(), new Date(), demand);
-        else if (license.isReNewApplication())
-            installmentPenalty = billable.getCalculatedPenalty(null, new Date(), demand);
-        installmentWisePenaltyDemandDetail = getInstallmentWisePenaltyDemandDetails(license.getCurrentDemand());
-        for (final Map.Entry<Installment, BigDecimal> penalty : installmentPenalty.entrySet()) {
-            EgDemandDetails penaltyDemandDetail;
-            if (penalty.getValue().signum() > 0) {
-                penaltyDemandDetail = installmentWisePenaltyDemandDetail.get(penalty.getKey());
-                if (penaltyDemandDetail != null)
-                    penaltyDemandDetail.setAmount(penalty.getValue().setScale(0, RoundingMode.HALF_UP));
-                else {
-                    penaltyDemandDetail = insertPenaltyDmdDetail(license, penalty.getKey(), penalty.getValue().setScale(0, RoundingMode.HALF_UP));
-                    if (penaltyDemandDetail != null)
-                        demand.getEgDemandDetails().add(penaltyDemandDetail);
-                }
-            }
-        }
+        calcPenaltyDemandDetails(billable, license, demand);
         license.getLicenseDemand().recalculateBaseDemand();
         for (final EgDemandDetails demandDetail : demand.getEgDemandDetails()) {
             final Installment installment = demandDetail.getEgDemandReason().getEgInstallmentMaster();
@@ -292,10 +273,9 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                     billdetail.setCrAmount(demandDetail.getAmount().subtract(demandDetail.getAmtCollected()));
                 }
 
-                if (LOGGER.isDebugEnabled())
-                    LOGGER.debug("demandDetail.getEgDemandReason()"
-                            + demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster() + " glcodeerror"
-                            + demandDetail.getEgDemandReason().getGlcodeId());
+                if (LOG.isDebugEnabled())
+                    LOG.debug("Demand Reason : {}, GLCode : {}", demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster(),
+                            demandDetail.getEgDemandReason().getGlcodeId());
                 billdetail.setGlcode(demandDetail.getEgDemandReason().getGlcodeId().getGlcode());
                 billdetail.setEgDemandReason(demandDetail.getEgDemandReason());
                 billdetail.setAdditionalFlag(1);
@@ -310,9 +290,33 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
             }
 
         }
-        if (LOGGER.isDebugEnabled())
-            LOG.debug("created Bill Details");
+        if (LOG.isDebugEnabled())
+            LOG.debug("License Bill Details Created");
         return billDetails;
+    }
+
+    private void calcPenaltyDemandDetails(LicenseBill billable, License license, EgDemand demand) {
+        Map<Installment, BigDecimal> installmentPenalty = new HashMap<>();
+        Map<Installment, EgDemandDetails> installmentWisePenaltyDemandDetail;
+        if (license.isNewApplication())
+            installmentPenalty = billable.getCalculatedPenalty(license.getCommencementDate(), new Date(), demand);
+        else if (license.isReNewApplication())
+            installmentPenalty = billable.getCalculatedPenalty(null, new Date(), demand);
+        installmentWisePenaltyDemandDetail = getInstallmentWisePenaltyDemandDetails(license.getCurrentDemand());
+        for (final Map.Entry<Installment, BigDecimal> penalty : installmentPenalty.entrySet()) {
+            EgDemandDetails penaltyDemandDetail = installmentWisePenaltyDemandDetail.get(penalty.getKey());
+            if (penalty.getValue().signum() > 0) {
+                if (penaltyDemandDetail != null)
+                    penaltyDemandDetail.setAmount(penalty.getValue().setScale(0, RoundingMode.HALF_UP));
+                else {
+                    penaltyDemandDetail = insertPenaltyDmdDetail(license, penalty.getKey(), penalty.getValue().setScale(0, RoundingMode.HALF_UP));
+                    if (penaltyDemandDetail != null)
+                        demand.getEgDemandDetails().add(penaltyDemandDetail);
+                }
+            } else if (penalty.getValue().signum() == 0 && penaltyDemandDetail != null) {
+                penaltyDemandDetail.setAmount(penalty.getValue().setScale(0, RoundingMode.HALF_UP));
+            }
+        }
     }
 
     private Map<Installment, EgDemandDetails> getInstallmentWisePenaltyDemandDetails(final EgDemand currentDemand) {
@@ -356,9 +360,11 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         if (billReceipts != null)
             try {
                 updateNewReceipt(billReceipts);
-            } catch (final Exception e) {
-                LOGGER.error("Error occurred while updating receipt details for License");
-                throw new ApplicationRuntimeException("Update Receipt Failed", e);
+            } catch (ValidationException e) {
+                throw e;
+            } catch (Exception e) {
+                LOG.error("Error occurred while updating receipt details for License", e);
+                throw new ApplicationRuntimeException("Update License Receipt Failed", e);
             }
     }
 
@@ -391,8 +397,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                         } else
                             installmentWiseDemandDetailsByReason.get(installmentDesc).put(
                                     dmdRsn.getEgDemandReasonMaster().getReasonMaster(), dmdDtls);
-                    } else if (LOGGER.isDebugEnabled())
-                        LOGGER.debug("saveCollectionDetails - demand detail amount is zero " + dmdDtls);
+                    }
 
                 EgDemandDetails demandDetail;
 
@@ -408,10 +413,9 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                             demand.addCollected(rcptAccInfo.getCrAmount());
                         persistCollectedReceipts(demandDetail, billReceipt.getReceiptNum(), billReceipt.getTotalAmount(),
                                 billReceipt.getReceiptDate(), demandDetail.getAmtCollected());
-                        if (LOGGER.isDebugEnabled())
-                            LOGGER.debug("Persisted demand and receipt details for tax : " + reason + " installment : "
-                                    + instDesc + " with receipt No : " + billReceipt.getReceiptNum() + " for Rs. "
-                                    + rcptAccInfo.getCrAmount());
+                        if (LOG.isDebugEnabled())
+                            LOG.debug("Created demand and receipt for Reason : {}, Installment : {}, Receipt No.: {}, Amount : {}"
+                                    , reason, instDesc, billReceipt.getReceiptNum(), rcptAccInfo.getCrAmount());
                     }
 
                 if (ld.getLicense().hasState())
@@ -428,9 +432,11 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                 reconcileCollForRcptCancel(demand, billReceipt);
             else if (billReceipt.getEvent().equals(EVENT_INSTRUMENT_BOUNCED))
                 reconcileCollForChequeBounce(demand, billReceipt);// needs to be
+        } catch (ValidationException e) {
+            throw e;
         } catch (final Exception e) {
-            LOGGER.error("Error occurred while updating demand details", e);
-            throw new ApplicationRuntimeException("Updating Demand Details Failed", e);
+            LOG.error("Error occurred while updating License demand details", e);
+            throw new ApplicationRuntimeException("Updating License Demand Details Failed", e);
         }
 
         return true;
@@ -451,16 +457,11 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
             licenseUtils.applicationStatusChange(licenseObj, APPLICATION_STATUS_DIGUPDATE_CODE);
             final Position position = licenseUtils.getCityLevelCommissioner();
             licenseUtils.applicationStatusChange(licenseObj, APPLICATION_STATUS_APPROVED_CODE);
-            if (licenseObj.isReNewApplication())
-                licenseObj.transition().progressWithStateCopy().withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
-                        .withComments(WF_SECOND_LVL_FEECOLLECTED)
-                        .withStateValue(DIGI_ENABLED_WF_SECOND_LVL_FEECOLLECTED).withDateInfo(currentDate.toDate())
-                        .withOwner(position).withNextAction(WF_ACTION_DIGI_PENDING);
-            else
-                licenseObj.transition().progressWithStateCopy().withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
-                        .withComments(WF_SECOND_LVL_FEECOLLECTED)
-                        .withStateValue(DIGI_ENABLED_WF_SECOND_LVL_FEECOLLECTED).withDateInfo(currentDate.toDate())
-                        .withOwner(position).withNextAction(WF_ACTION_DIGI_PENDING);
+            licenseObj.transition().progressWithStateCopy().withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
+                    .withComments(WF_SECOND_LVL_FEECOLLECTED)
+                    .withStateValue(DIGI_ENABLED_WF_SECOND_LVL_FEECOLLECTED).withDateInfo(currentDate.toDate())
+                    .withOwner(position).withNextAction(WF_ACTION_DIGI_PENDING);
+
         } else {
             licenseUtils.licenseStatusUpdate(licenseObj, STATUS_UNDERWORKFLOW);
             if (licenseObj.getEgwStatus().getCode().equals(APPLICATION_STATUS_CREATED_CODE))
@@ -515,7 +516,6 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
      * @param billRcptInfo
      */
     private void updateDmdDetForRcptCancel(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
-        LOGGER.debug("Entering method updateDmdDetForRcptCancel");
         for (final ReceiptAccountInfo rcptAccInfo : billRcptInfo.getAccountDetails())
             if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(ZERO) > 0
                     && !rcptAccInfo.getIsRevenueAccount()) {
@@ -528,13 +528,13 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                             .getDescription())) {
                         demandDetail
                                 .setAmtCollected(demandDetail.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
-                        LOGGER.info("Deducted Collected amount and receipt details for tax : " + reason
-                                + " installment : " + installment + " with receipt No : "
-                                + billRcptInfo.getReceiptNum() + " for Rs. " + demandDetail.getAmtCollected());
+
+                        if (LOG.isDebugEnabled())
+                            LOG.debug("Deducted collected amount for Reason : {}, Installment : {}, Receipt No.: {}, Amount : {}"
+                                    , reason, installment, billRcptInfo.getReceiptNum(), demandDetail.getAmtCollected());
                     }
             }
         updateReceiptStatusWhenCancelled(billRcptInfo.getReceiptNum());
-        LOGGER.debug("Exiting method saveCollectionAndDemandDetails");
     }
 
     private void updateReceiptStatusWhenCancelled(final String receiptNumber) {
@@ -551,8 +551,8 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         /**
          * Deducts the collected amounts as per the amount of the bounced cheque, and also imposes a cheque-bounce penalty.
          */
-        LOGGER.debug("updateDemandForChequeBounce : Updating Collection For Demand : Demand - " + demand
-                + " with BillReceiptInfo - " + billRcptInfo);
+        if (LOG.isDebugEnabled())
+            LOG.debug("Updating collection for License Demand : {} with BillReceiptInfo - {} ", demand, billRcptInfo);
         final LicenseDemand ld = (LicenseDemand) demand;
         BigDecimal totalCollChqBounced = getTotalChequeAmt(billRcptInfo);
         final BigDecimal chqBouncePenalty = CHQ_BOUNCE_PENALTY;
@@ -576,7 +576,6 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         demand.setStatus(DMD_STATUS_CHEQUE_BOUNCED);
         demand.addEgDemandDetails(dmdDet);
         totalCollChqBounced = updateDmdDetForChqBounce(demand, totalCollChqBounced);
-        LOGGER.debug("updateDemandForChequeBounce : Updated Collection For Demand : " + demand);
         return totalCollChqBounced;
     }
 
@@ -623,21 +622,15 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
 
     @Transactional
     public boolean updateNewReceipt(final Set<BillReceiptInfo> billReceipts) {
-        try {
-            for (final BillReceiptInfo bri : billReceipts) {
-                linkBillToReceipt(bri);
-                updateBillDetails(bri);
-                updateDemandDetails(bri);
-            }
-        } catch (final Exception e) {
-            throw new ApplicationRuntimeException("Error occurred while updating receipt for license", e);
+        for (BillReceiptInfo bri : billReceipts) {
+            linkBillToReceipt(bri);
+            updateBillDetails(bri);
+            updateDemandDetails(bri);
         }
         return true;
-
     }
 
-    private EgBill updateBill(final BillReceiptInfo bri, final EgBill egBill, final BigDecimal totalCollectedAmt)
-            throws InvalidAccountHeadException {
+    private EgBill updateBill(final BillReceiptInfo bri, final EgBill egBill, final BigDecimal totalCollectedAmt) {
         if (bri != null) {
             for (final EgBillDetails billDet : egBill.getEgBillDetails()) {
                 Boolean glCodeExist = false;
@@ -651,7 +644,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                         egBillDetailsDao.update(billDet);
                     }
                 if (!glCodeExist)
-                    throw new InvalidAccountHeadException("GlCode does not exist for " + billDet.getGlcode());
+                    throw new ApplicationRuntimeException("GlCode does not exist for " + billDet.getGlcode());
             }
             egBill.setTotalCollectedAmount(totalCollectedAmt);
             egBillDao.update(egBill);
@@ -698,37 +691,33 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         return egBill;
     }
 
-    private EgBill updateBillDetails(final BillReceiptInfo bri) throws InvalidAccountHeadException {
-        EgBill egBill;
+    private void updateBillDetails(final BillReceiptInfo bri) {
         if (bri == null)
             throw new ApplicationRuntimeException(" Bill Receipt Info not found");
-        egBill = egBillDao.findById(new Long(bri.getBillReferenceNum()), false);
+        EgBill egBill = egBillDao.findById(Long.valueOf(bri.getBillReferenceNum()), false);
         final List<EgBillDetails> billDetList = egBillDetailsDao.getBillDetailsByBill(egBill);
 
         if (bri.getEvent() != null && bri.getEvent().equals(BillingIntegrationService.EVENT_RECEIPT_CREATED)) {
             final BigDecimal totalCollectedAmt = calculateTotalCollectedAmt(bri, billDetList);
-            egBill = updateBill(bri, egBill, totalCollectedAmt);
+            updateBill(bri, egBill, totalCollectedAmt);
         } else if (bri.getEvent() != null && bri.getEvent().equals(BillingIntegrationService.EVENT_INSTRUMENT_BOUNCED))
-            egBill = updateBillForChqBounce(egBill, getTotalChequeAmt(bri));
-        return egBill;
+            updateBillForChqBounce(egBill, getTotalChequeAmt(bri));
     }
 
     private BigDecimal getTotalChequeAmt(final BillReceiptInfo bri) {
         BigDecimal totalCollAmt = ZERO;
         try {
-            if (bri != null)
-                for (final ReceiptInstrumentInfo rctInst : bri.getBouncedInstruments())
-                    if (rctInst.getInstrumentAmount() != null)
-                        totalCollAmt = totalCollAmt.add(rctInst.getInstrumentAmount());
+            for (final ReceiptInstrumentInfo rctInst : bri.getBouncedInstruments())
+                if (rctInst.getInstrumentAmount() != null)
+                    totalCollAmt = totalCollAmt.add(rctInst.getInstrumentAmount());
         } catch (final ApplicationRuntimeException e) {
-            throw new ApplicationRuntimeException("Exception in calculate Total Collected Amt" + e);
+            throw new ApplicationRuntimeException("Exception in calculate Total Collected Amt", e);
         }
 
         return totalCollAmt;
     }
 
-    private BigDecimal calculateTotalCollectedAmt(final BillReceiptInfo bri, final List<EgBillDetails> billDetList)
-            throws InvalidAccountHeadException {
+    private BigDecimal calculateTotalCollectedAmt(final BillReceiptInfo bri, final List<EgBillDetails> billDetList) {
         BigDecimal totalCollAmt = ZERO;
         try {
             if (bri != null && billDetList != null)
@@ -740,10 +729,10 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                             totalCollAmt = totalCollAmt.add(acctDet.getCrAmount());
                         }
                     if (!glCodeExist)
-                        throw new InvalidAccountHeadException("GlCode does not exist for " + billDet.getGlcode());
+                        throw new ApplicationRuntimeException("GlCode does not exist for " + billDet.getGlcode());
                 }
-        } catch (final ApplicationRuntimeException e) {
-            throw new ApplicationRuntimeException("Exception in calculate Total Collected Amt" + e);
+        } catch (ApplicationRuntimeException e) {
+            throw new ApplicationRuntimeException("Exception in calculate Total Collected Amt", e);
         }
 
         return totalCollAmt;
@@ -769,7 +758,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         return billRecpt;
     }
 
-    private BillReceipt linkBillToReceipt(final BillReceiptInfo bri) throws InvalidAccountHeadException {
+    private BillReceipt linkBillToReceipt(final BillReceiptInfo bri) {
         BillReceipt billRecpt = null;
         if (bri == null)
             throw new ApplicationRuntimeException(" BillReceiptInfo Object is null ");
@@ -936,13 +925,26 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                 }
                 final BigDecimal demandAmount = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
                 feeByTypes.put(demandReason, demandAmount.setScale(0, RoundingMode.HALF_UP));
-                BigDecimal penaltyAmt = penaltyRatesService.calculatePenalty(license, fromDate, new Date(), demandAmount);
+                BigDecimal penaltyAmt = penaltyRatesService.calculatePenalty(license, fromDate, new Date(), demandDetail.getAmount());
                 if (penaltyAmt.compareTo(ZERO) > 0)
                     feeByTypes.put("Penalty", penaltyAmt.setScale(0, RoundingMode.HALF_UP));
                 outstandingFee.put(installmentYear.getDescription(), feeByTypes);
             }
         }
+        recalculatePenaltyAmt(outstandingFee, licenseDemand);
         return outstandingFee;
+    }
 
+    private void recalculatePenaltyAmt(Map<String, Map<String, BigDecimal>> outstandingFee, LicenseDemand licenseDemand) {
+        for (final EgDemandDetails demandDetails : licenseDemand.getEgDemandDetails()) {
+            final Installment installmentYear = demandDetails.getEgDemandReason().getEgInstallmentMaster();
+            if (PENALTY_DMD_REASON_CODE.equals(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode())) {
+                Map<String, BigDecimal> feeType = outstandingFee.get(installmentYear.getDescription());
+                if (feeType != null && feeType.containsKey(PENALTY_DMD_REASON_CODE)) {
+                    feeType.put("Penalty", feeType.get(PENALTY_DMD_REASON_CODE).subtract(demandDetails.getAmtCollected()));
+                    outstandingFee.put(installmentYear.getDescription(), feeType);
+                }
+            }
+        }
     }
 }

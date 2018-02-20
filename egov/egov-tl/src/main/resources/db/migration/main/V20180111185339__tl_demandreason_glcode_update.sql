@@ -1,0 +1,3 @@
+update eg_demand_reason set glcodeid=(select id from chartofaccounts  where glcode='1401101') where id_demand_reason_master =(select id from eg_demand_reason_master where reasonmaster='License Fee') and id_installment=(select id from eg_installment_master where id_module=(select id from eg_module where name='Trade License') and description='TL/18-19');
+
+update eg_demand_reason set glcodeid=(select id from chartofaccounts  where glcode='1402001') where id_demand_reason_master =(select id from eg_demand_reason_master where reasonmaster='Penalty' and category=(select id from eg_reason_category where name ='PENALTY')) and id_installment=(select id from eg_installment_master where id_module=(select id from eg_module where name='Trade License') and description='TL/18-19');

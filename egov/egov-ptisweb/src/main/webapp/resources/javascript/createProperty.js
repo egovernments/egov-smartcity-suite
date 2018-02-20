@@ -1276,3 +1276,17 @@ function confirmSubmit(msg) {
 		return false;		
 	}
 }
+
+function enableDisableActionsForGIS(){
+	var thirdPartyCheckVal = jQuery('#thirdPartyVerified').prop("checked");
+	if(thirdPartyCheckVal != undefined){
+		if(thirdPartyCheckVal){
+			 jQuery('#Approve').removeAttr("disabled");
+			 jQuery('#Reject').removeAttr("disabled");
+		 }
+		 else{
+			 jQuery('#Approve').attr('disabled', 'disabled');
+			 jQuery('#Reject').attr('disabled', 'disabled');
+		 }
+	}
+}
