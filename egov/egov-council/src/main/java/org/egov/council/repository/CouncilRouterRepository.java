@@ -49,12 +49,19 @@
 package org.egov.council.repository;
 
 import org.egov.council.entity.CouncilRouter;
+import org.egov.council.enums.PreambleTypeEnum;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CouncilRouterRepository extends JpaRepository<CouncilRouter, Long> {
 
     CouncilRouter findById(Long id);
+
+    @Query(" from CouncilRouter c where c.department.id =:departmentId and c.type =:type and c.position.id =:positionId")
+    CouncilRouter findByAllParams(@Param("departmentId") Long departmentId, @Param("type") PreambleTypeEnum type,
+            @Param("positionId") Long positionId);
 
 }

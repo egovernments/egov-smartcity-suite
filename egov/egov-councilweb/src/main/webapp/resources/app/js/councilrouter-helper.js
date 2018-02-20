@@ -102,3 +102,24 @@ function callAjaxSearch() {
 				} ]
 			});
 }
+
+function getPosition() {
+	var department = $('#department').val();
+	
+	jQuery.ajax({
+			url: "/eis/report/positions?deptId="
+				+ department + "&desigId=",
+			type: "GET",
+			dataType: "json",
+			success: function (response) {
+				$('#position').empty();
+				$('#position').append(
+						$("<option value=''>Select from below</option>"));
+				$.each(response, function(index, value) {
+					$('#position').append($('<option>').text(value.name).attr('value', value.id));
+				});
+			}, 
+			error: function (response) {
+			}
+		});	
+}

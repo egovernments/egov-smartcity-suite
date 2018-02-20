@@ -54,6 +54,13 @@
 <form:form role="form" action="create" modelAttribute="councilRouter"
 	id="councilRouterform" cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
+	 <spring:hasBindErrors name="councilRouter">
+        <div class="alert alert-danger"
+             style="margin-top: 20px; margin-bottom: 10px;">
+            <form:errors path="*"/>
+            <br/>
+        </div>
+    </spring:hasBindErrors>
 	<%@ include file="councilrouter-form.jsp"%>
 	<div class="form-group">
 		<div class="text-center">
@@ -74,3 +81,5 @@
 		}
 	});
 </script>
+<script type="text/javascript"
+	src="<cdn:url value='/resources/app/js/councilrouter-helper.js?rnd=${app_release_no}'/>"></script>

@@ -66,7 +66,7 @@
 
 							<div class="col-sm-6 add-margin">
 								<form:select path="department" id="department"
-									cssClass="form-control" cssErrorClass="form-control error">
+									cssClass="form-control" cssErrorClass="form-control error" onchange="getPosition();">
 									<form:option value="">
 										<spring:message code="lbl.select" />
 									</form:option>

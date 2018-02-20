@@ -50,9 +50,16 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
-<form:form role="form" action="../update" modelAttribute="councilRouter"
+<form:form role="form"  modelAttribute="councilRouter"
 	id="councilRouterform" cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
+	<spring:hasBindErrors name="councilRouter">
+        <div class="alert alert-danger"
+             style="margin-top: 20px; margin-bottom: 10px;">
+            <form:errors path=""/>
+            <br/>
+        </div>
+    </spring:hasBindErrors>
 	<%@ include file="councilrouter-form.jsp"%>
 	<input type="hidden" name="councilRouter" value="${councilRouter.id}" />
 	<div class="form-group">
@@ -69,8 +76,13 @@
 <script>
 	$('#buttonSubmit').click(function(e) {
 		if ($('form').valid()) {
+			 var action = '/council/councilrouter/update' ;
+			$('#councilRouterform').attr('method', 'post');
+			$('#councilRouterform').attr('action', action); 
 		} else {
 			e.preventDefault();
 		}
 	});
 </script>
+<script type="text/javascript"
+	src="<cdn:url value='/resources/app/js/councilrouter-helper.js?rnd=${app_release_no}'/>"></script>

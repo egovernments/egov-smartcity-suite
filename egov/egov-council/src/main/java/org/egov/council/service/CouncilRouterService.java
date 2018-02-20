@@ -61,6 +61,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
 
 @Service
 @Transactional(readOnly = true)
@@ -109,4 +110,12 @@ public class CouncilRouterService {
         return criteria.list();
     }
 
+    public void validateCouncilRouter(CouncilRouter councilRouter, BindingResult errors) {
+        CouncilRouter router = councilRouterRepository.findByAllParams(councilRouter.getDepartment().getId(),
+                councilRouter.getType(), councilRouter.getPosition().getId());
+        if (router != null && (councilRouter.getId() == null || councilRouter.getId() != router.getId())) {
+            errors.reject("Duplicate entry", "Council Router is already exist");
+        }
+
+    }
 }

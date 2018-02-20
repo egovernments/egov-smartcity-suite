@@ -50,6 +50,7 @@ package org.egov.council.web.controller;
 
 import static org.egov.infra.utils.JsonUtils.toJSON;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -76,6 +77,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/councilrouter")
 public class CouncilRouterController {
+    private static final String POSITION = "position";
     private static final String COUNCILROUTER_NEW = "councilrouter-new";
     private static final String COUNCILROUTER_RESULT = "councilrouter-result";
     private static final String COUNCILROUTER_SEARCH = "councilrouter-search";
@@ -96,7 +98,6 @@ public class CouncilRouterController {
     private CouncilRouterService councilRouterService;
 
     private void prepareNewForm(final Model model) {
-        model.addAttribute("position", positionMasterService.getAllPositions());
         model.addAttribute("department", departmentService.getAllDepartments());
         model.addAttribute("preambleType", PreambleTypeEnum.values());
     }
@@ -105,6 +106,7 @@ public class CouncilRouterController {
     public String newForm(final Model model) {
         prepareNewForm(model);
         CouncilRouter councilRouter = new CouncilRouter();
+        model.addAttribute(POSITION, new ArrayList<>());
         model.addAttribute(COUNCILROUTER, councilRouter);
         return COUNCILROUTER_NEW;
     }
@@ -112,8 +114,11 @@ public class CouncilRouterController {
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final CouncilRouter councilRouter, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs) {
+
+        councilRouterService.validateCouncilRouter(councilRouter, errors);
         if (errors.hasErrors()) {
             prepareNewForm(model);
+            model.addAttribute(POSITION, positionMasterService.getPositionsByDepartment(councilRouter.getDepartment().getId()));
             return COUNCILROUTER_NEW;
         }
         councilRouterService.create(councilRouter);
@@ -131,8 +136,10 @@ public class CouncilRouterController {
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute final CouncilRouter councilRouter, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs) {
+        councilRouterService.validateCouncilRouter(councilRouter, errors);
         if (errors.hasErrors()) {
             prepareNewForm(model);
+            model.addAttribute(POSITION, positionMasterService.getPositionsByDepartment(councilRouter.getDepartment().getId()));
             return COUNCILROUTER_EDIT;
         }
 
@@ -163,6 +170,7 @@ public class CouncilRouterController {
     public String edit(@PathVariable("id") final Long id, final Model model) {
         final CouncilRouter councilRouter = councilRouterService.findById(id);
         prepareNewForm(model);
+        model.addAttribute(POSITION, positionMasterService.getPositionsByDepartment(councilRouter.getDepartment().getId()));
         model.addAttribute(COUNCILROUTER, councilRouter);
         return COUNCILROUTER_EDIT;
     }
