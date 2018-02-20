@@ -98,6 +98,7 @@ import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -128,6 +129,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.*;
         @Result(name = PropertyTransferAction.DIGITAL_SIGNATURE_REDIRECTION, location = "transfer/transferProperty-digitalSignatureRedirection.jsp")})
 @Namespace("/property/transfer")
 public class PropertyTransferAction extends GenericWorkFlowAction {
+    private static final String WITH_ASSESSMENT_NUMBER = " with assessment number : ";
     public static final String ACK_FOR_REGISTRATION = "ackForRegistration";
     public static final String ACK = "ack";
     public static final String ERROR = "error";
@@ -340,7 +342,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         buildEmail(propertyMutation);
         mutationEventPublisher.publishEvent(propertyMutation);
         setAckMessage("Transfer of ownership data saved successfully in the system and forwarded to : ");
-        setAssessmentNoMessage(" with assessment number : ");
+        setAssessmentNoMessage(WITH_ASSESSMENT_NUMBER);
 
         if (ADDTIONAL_RULE_FULL_TRANSFER.equalsIgnoreCase(propertyMutation.getType())){
             propertyOwner = basicproperty.getFullOwnerName();
@@ -451,7 +453,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         }
         buildSMS(propertyMutation);
         buildEmail(propertyMutation);
-        setAssessmentNoMessage(" with assessment number : ");
+        setAssessmentNoMessage(WITH_ASSESSMENT_NUMBER);
         return ACK;
     }
 
@@ -465,6 +467,11 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             else
                 return EDIT;
         }
+        if(transferOwnerService.getWorkflowInitiator(propertyMutation) == null){
+            addActionError(getText("reject.error.initiator.inactive", Arrays.asList(ASSISTANT_DESGN)));
+            return VIEW;
+        }
+
         if (mutationId != null) {
             propertyMutation = (PropertyMutation) persistenceService.find("From PropertyMutation where id = ? ",
                     mutationId);
@@ -505,7 +512,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 setAckMessage("Transfer of ownership data rejected successfuly By ");
             } else
                 setAckMessage("Transfer of ownership data rejected successfuly and forwarded to : ");
-            setAssessmentNoMessage(" with assessment number : ");
+            setAssessmentNoMessage(WITH_ASSESSMENT_NUMBER);
         } else
             setAckMessage(getText(PROPERTY_MODIFY_REJECT_FAILURE));
         return ACK;
@@ -814,9 +821,6 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
         if (propertyMutation.getId() != null)
             wfInitiator = transferOwnerService.getWorkflowInitiator(propertyMutation);
-        else if (wfInitiator == null)
-            wfInitiator = propertyTaxCommonUtils.getWorkflowInitiatorAssignment(user.getId());
-
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
             if (wfInitiator.getPosition().equals(propertyMutation.getState().getOwnerPosition())
                     || propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER)) {
