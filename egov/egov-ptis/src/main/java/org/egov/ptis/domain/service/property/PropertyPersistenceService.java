@@ -63,6 +63,7 @@ import org.egov.infra.utils.DateUtils;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.portal.entity.Citizen;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.domain.entity.property.AmalgamationOwner;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
@@ -305,7 +306,7 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
         return update(basicProperty);
     }
     
-    public void createAmalgamatedOwners(final List<PropertyOwnerInfo> childOwners, final BasicProperty basicProperty) {
+    public void createAmalgamatedOwners(final BasicProperty basicProperty) {
         int orderNo = 0;
         List<Long> parentOwners = new ArrayList<>();
         for (PropertyOwnerInfo ownerInfo : basicProperty.getPropertyOwnerInfo()) {
@@ -313,13 +314,12 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
                 orderNo = ownerInfo.getOrderNo();
             parentOwners.add(ownerInfo.getOwner().getId());
         }
-        for (PropertyOwnerInfo ownerInfo : childOwners) {
+        for (AmalgamationOwner ownerInfo : basicProperty.getWFProperty().getAmalgamationOwners()) {
             orderNo++;
             if (ownerInfo != null && !parentOwners.contains(ownerInfo.getOwner().getId())) {
                 PropertyOwnerInfo childOwnerInfo = new PropertyOwnerInfo();
                 childOwnerInfo.setOwner(ownerInfo.getOwner());
                 childOwnerInfo.setOrderNo(orderNo);
-                childOwnerInfo.setSource(ownerInfo.getSource());
                 childOwnerInfo.setBasicProperty(basicProperty);
                 basicProperty.addPropertyOwners(childOwnerInfo);
             }

@@ -453,6 +453,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         if (hasErrors())
             if (getModelId() == null || getModelId().isEmpty() || checkDesignationsForEdit()) {
                 allowEditDocument = Boolean.TRUE;
+                setPropAddress(basicProp.getAddress().toString());
                 return NEW;
             } else if (checkDesignationsForView())
                 return VIEW;
@@ -660,11 +661,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         if (isBlank(propertyModel.getPropertyDetail().getCategoryType())
                 || "-1".equals(propertyModel.getPropertyDetail().getCategoryType()))
             addActionError(getText("mandatory.propTypeCategory"));
-
-        if (basicProp.getAmalgamationsProxy() == null || basicProp.getAmalgamationsProxy() != null
-                && basicProp.getAmalgamationsProxy().get(0).getAssessmentNo().isEmpty())
-            addActionError(getText("error.amalgamatedprops.required"));
-
+        validateAmalgmationProxy();
         validateOwners();
         final PropertyDetail propertyDetail = propertyModel.getPropertyDetail();
         final Date regDocDate = propertyModel.getBasicProperty().getRegdDocDate();
@@ -681,6 +678,16 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         if (logger.isDebugEnabled())
             logger.debug("Exiting from validate, BasicProperty: " + getBasicProp());
     }
+
+	private void validateAmalgmationProxy() {
+		if (basicProp.getAmalgamationsProxy() == null || basicProp.getAmalgamationsProxy() != null)
+			if (basicProp.getAmalgamationsProxy().get(0).getAssessmentNo().isEmpty())
+				addActionError(getText("error.amalgamatedprops.required"));
+			else
+				for (Amalgamation amalgamatedProp : basicProp.getAmalgamationsProxy())
+					if (amalgamatedProp.getAssessmentNo().isEmpty())
+						addActionError(getText("error.amalgamatedprops.missing"));
+	}
 
     private void validateOwners() {
         for (final AmalgamationOwner owner : propertyModel.getAmalgamationOwnersProxy())
@@ -887,7 +894,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
             logger.debug("approve: Workflow property: " + propertyModel);
         basicProp = propertyModel.getBasicProperty();
         oldProperty = (PropertyImpl) basicProp.getProperty();
-        amalgamateOwners();
+        basicPropertyService.createAmalgamatedOwners(basicProp);
         for (final Amalgamation childProperty : basicProp.getAmalgamations()) {
             childProperties.add(childProperty.getAmalgamatedProperty().getUpicNo());
         }
@@ -918,12 +925,6 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         if (logger.isDebugEnabled())
             logger.debug("Exiting approve");
         return RESULT_ACK;
-    }
-
-    private void amalgamateOwners() {
-        for (Amalgamation childProperty : basicProp.getAmalgamations())
-            basicPropertyService.createAmalgamatedOwners(childProperty.getAmalgamatedProperty().getPropertyOwnerInfo(),
-                    childProperty.getParentProperty());
     }
 
     private void createPropertyStatusValues() {
