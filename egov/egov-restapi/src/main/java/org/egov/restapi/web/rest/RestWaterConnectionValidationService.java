@@ -57,6 +57,7 @@ import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.restapi.constants.RestApiConstants;
 import org.egov.restapi.model.WaterChargesConnectionInfo;
 import org.egov.restapi.model.WaterConnectionInfo;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.wtms.application.entity.RegularisedConnection;
 import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -235,6 +236,8 @@ public class RestWaterConnectionValidationService {
         final RegularisedConnection regularisedConnection = new RegularisedConnection();
         regularisedConnection.setApplicationNumber(applicationNumberGenerator.generate());
         regularisedConnection.setApplicationDate(new Date());
+        regularisedConnection.setSource(PropertyTaxConstants.SOURCE_SURVEY);
+        regularisedConnection.setReferenceNumber(waterChargesConnectionInfo.getReferenceId());
         final WorkFlowMatrix wfmatrix = waterConnectionWorkflowService.getWfMatrix(regularisedConnection.getStateType(), null,
                 null, REGULARIZE_CONNECTION, "Created", null);
         final User user = securityUtils.getCurrentUser();
