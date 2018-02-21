@@ -102,10 +102,6 @@ public interface PropertyDAO {
 
 	public Citizen getOwnerByOwnerId(Long id);
 
-	public List getPropertyDemand(String propertyId);
-
-	public List getPropertyRebate(String propertyId);
-
 	public List getPropertyCollection(String propertyId);
 
 	public List getPTDemandArvByNoticeNumber(String noticeNo);

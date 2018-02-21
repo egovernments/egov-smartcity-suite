@@ -933,8 +933,6 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 							 */
 							retSearchResult.setCurrYearArv(existARV.toString());
 
-							demand = (BigDecimal) propertyDAO.getPropertyDemand(basicProperty.getUpicNo()).get(0);
-							rebate = (BigDecimal) propertyDAO.getPropertyRebate(basicProperty.getUpicNo()).get(0);
 							collection = (BigDecimal) propertyDAO.getPropertyCollection(basicProperty.getUpicNo()).get(
 									0);
 

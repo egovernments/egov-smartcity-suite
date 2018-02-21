@@ -349,30 +349,6 @@ public class PropertyHibernateDAO implements PropertyDAO {
         return owner;
     }
 
-    @Override
-    public List getPropertyDemand(final String propertyId) {
-        final String rebate = EGovConfig.getProperty("ptis_egov_config.xml", "ACCOUNT_HEAD_REBATE", "", "PT");
-        final Query qry = getCurrentSession()
-                .createQuery(
-                        " select sum(dd.amount) from PropertyTaxDemand pt left join "
-                                + "pt.demandDetails dd where pt.history = 'N' and dd.accountHead.accountHeadName !=:accHead and pt.property.basicProperty.upicNo =:PID ");
-        qry.setString("accHead", rebate);
-        qry.setString("PID", propertyId);
-        return qry.list();
-    }
-
-    @Override
-    public List getPropertyRebate(final String propertyId) {
-        final String rebate = EGovConfig.getProperty("ptis_egov_config.xml", "ACCOUNT_HEAD_REBATE", "", "PT");
-        final Query qry = getCurrentSession()
-                .createQuery(
-                        " select sum(dd.amount) from PropertyTaxDemand pt left join "
-                                + "pt.demandDetails dd where pt.history = 'N' and dd.isApproved = '1' and dd.accountHead.accountHeadName =:accHead and "
-                                + "pt.property.basicProperty.upicNo =:PID ");
-        qry.setString("accHead", rebate);
-        qry.setString("PID", propertyId);
-        return qry.list();
-    }
 
     @Override
     public List getPropertyCollection(final String propertyId) {
