@@ -78,7 +78,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
@@ -276,11 +275,15 @@ public class APTaxCalculator implements PropertyTaxCalculator {
                 halfYearHeadTax = taxIfGovtProperty(propTypeCode, halfYearHeadTax);
                 generalTax = halfYearHeadTax;
             }
-            if (applicableTax.equals(DEMANDRSN_CODE_EDUCATIONAL_TAX))
-                halfYearHeadTax = calculateHalfYearNonVacantTax(applicableTax, alv, floor);
+            if (applicableTax.equals(DEMANDRSN_CODE_EDUCATIONAL_TAX)){
+                if (floor != null && floor.getPropertyUsage().getIsResidential())
+                    halfYearHeadTax =  getYearTax(alv, getTaxPercentage(applicableTax + "_R"));
+                else
+                    halfYearHeadTax =  getYearTax(alv, getTaxPercentage(applicableTax + "_NR"));
+            }
             if (applicableTax.equals(DEMANDRSN_CODE_LIBRARY_CESS))
-                halfYearHeadTax = calculateHalfYearTax(applicableTax, generalTax.add(educationTax));
-
+                halfYearHeadTax = getYearTax(generalTax.add(educationTax), getTaxPercentage(DEMANDRSN_CODE_LIBRARY_CESS));
+            
             if (halfYearHeadTax.compareTo(BigDecimal.ZERO) > 0) {
                 totalHalfTaxPayable = totalHalfTaxPayable.add(halfYearHeadTax);
                 createMiscTax(applicableTax, halfYearHeadTax, unitTaxCalculationInfo);
@@ -544,13 +547,12 @@ public class APTaxCalculator implements PropertyTaxCalculator {
 
 
     private BigDecimal getHalfYearTax(final BigDecimal annualTax) {
-        return annualTax.divide(new BigDecimal(2)).setScale(2, BigDecimal.ROUND_HALF_UP);
+        return annualTax.divide(BigDecimal.valueOf(2)).setScale(2, BigDecimal.ROUND_HALF_UP);
     }
 
     private BigDecimal calculateHalfYearTax(final String applicableTax, final BigDecimal annualTax) {
-        final BigDecimal taxRatePerc = taxRatesService.getTaxRateByInstallmentAndDemandReasonCode(applicableTax);
-        return getHalfYearTax(annualTax.multiply(taxRatePerc.divide(BigDecimal.valueOf(100))).setScale(
-                2, BigDecimal.ROUND_HALF_UP));
+        final BigDecimal taxRatePerc = getTaxPercentage(applicableTax);
+        return getHalfYearTax(getYearTax(annualTax,taxRatePerc));
     }
 
     private BigDecimal calculateHalfYearNonVacantTax(final String applicableTax, final BigDecimal annualTax, final Floor floor) {
@@ -558,6 +560,15 @@ public class APTaxCalculator implements PropertyTaxCalculator {
             return calculateHalfYearTax(applicableTax + "_R", annualTax);
         else
             return calculateHalfYearTax(applicableTax + "_NR", annualTax);
+    }
+    
+    private BigDecimal getTaxPercentage(final String applicableTax){
+        return taxRatesService.getTaxRateByInstallmentAndDemandReasonCode(applicableTax);
+    }
+    
+    private BigDecimal getYearTax(final BigDecimal annualTax,final BigDecimal taxRatePerc){
+        return annualTax.multiply(taxRatePerc.divide(BigDecimal.valueOf(100))).setScale(
+                2, BigDecimal.ROUND_HALF_UP);
     }
 
 }
