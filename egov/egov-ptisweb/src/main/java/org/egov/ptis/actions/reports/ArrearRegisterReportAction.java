@@ -294,7 +294,8 @@ public class ArrearRegisterReportAction extends ReportFormAction {
         PropertyWiseArrearInfo propertyWiseInfo;
         propertyWiseInfo = preparePropInfo(currInstDmdColMatView.getPropMatView());
         final BigDecimal totalTax = currInstDmdColMatView.getLibCessTax()
-                .add(currInstDmdColMatView.getGeneralTax().equals(BigDecimal.ZERO)?currInstDmdColMatView.getVacantLandTax():currInstDmdColMatView.getGeneralTax())
+                .add(currInstDmdColMatView.getGeneralTax().compareTo(BigDecimal.ZERO) == 0
+                        ? currInstDmdColMatView.getVacantLandTax() : currInstDmdColMatView.getGeneralTax())
                 .add(currInstDmdColMatView.getPenaltyFinesTax()).add(currInstDmdColMatView.getEduCessTax());
 
         propertyWiseInfo.setArrearInstallmentDesc(currInstDmdColMatView.getInstallment().getDescription());

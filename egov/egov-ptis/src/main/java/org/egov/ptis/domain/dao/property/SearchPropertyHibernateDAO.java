@@ -938,13 +938,13 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 							collection = (BigDecimal) propertyDAO.getPropertyCollection(basicProperty.getUpicNo()).get(
 									0);
 
-							if (demand != null && !demand.equals(BigDecimal.ZERO)) {
+							if (demand != null && demand.compareTo(BigDecimal.ZERO) != 0) {
 								currDemand = demand;
 							}
-							if (rebate != null && !rebate.equals(BigDecimal.ZERO)) {
+							if (rebate != null && rebate.compareTo(BigDecimal.ZERO) != 0) {
 								currDemand = demand.subtract(rebate);
 							}
-							if (collection != null && !collection.equals(BigDecimal.ZERO)) {
+							if (collection != null && collection.compareTo(BigDecimal.ZERO) != 0) {
 								currDemand = currDemand.subtract(collection);
 							}
 							retSearchResult.setCurrDemand(currDemand);

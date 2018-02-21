@@ -495,16 +495,16 @@ public class PtDemandHibernateDao implements PtDemandDao {
             instId = Integer.valueOf(listObj[0].toString());
             installment = installmentDao.findById(instId, false);
             if (installment.equals(currInst)) {
-                if (listObj[2] != null && !new BigDecimal((Double) listObj[2]).equals(BigDecimal.ZERO))
+                if (listObj[2] != null && (new BigDecimal((Double) listObj[2])).compareTo(BigDecimal.ZERO) != 0)
                     currPenaltyColl = currPenaltyColl.add(new BigDecimal((Double) listObj[2]));
-                if (listObj[3] != null && !new BigDecimal((Double) listObj[3]).equals(BigDecimal.ZERO))
+                if (listObj[3] != null && (new BigDecimal((Double) listObj[3])).compareTo(BigDecimal.ZERO) != 0)
                     currPenaltyColl = currPenaltyColl.add(new BigDecimal((Double) listObj[3]));
                 currPenalty = currPenalty.add(new BigDecimal((Double) listObj[1]));
             } else {
                 arrPenalty = arrPenalty.add(new BigDecimal((Double) listObj[1]));
-                if (listObj[2] != null && !new BigDecimal((Double) listObj[2]).equals(BigDecimal.ZERO))
+                if (listObj[2] != null && (new BigDecimal((Double) listObj[2])).compareTo(BigDecimal.ZERO) != 0)
                     arrPenaltyColl = arrPenaltyColl.add(new BigDecimal((Double) listObj[2]));
-                if (listObj[3] != null && !new BigDecimal((Double) listObj[3]).equals(BigDecimal.ZERO))
+                if (listObj[3] != null && (new BigDecimal((Double) listObj[3])).compareTo(BigDecimal.ZERO) != 0)
                     arrPenaltyColl = arrPenaltyColl.add(new BigDecimal((Double) listObj[3]));
             }
         }

@@ -883,7 +883,7 @@ public class PropertyTaxUtil {
             installment = installmentDao.findById(instId, false);
             reason = listObj[5].toString();
             if (currDemand.getEgInstallmentMaster().equals(installment)) {
-                if (listObj[2] != null && !listObj[2].equals(BigDecimal.ZERO))
+                if (listObj[2] != null && (new BigDecimal((Double) listObj[2])).compareTo(BigDecimal.ZERO) != 0)
                     currCollection = currCollection.add(new BigDecimal(listObj[2].toString()));
 
                 currentRebate = currentRebate.add(new BigDecimal(listObj[3].toString()));
@@ -892,7 +892,7 @@ public class PropertyTaxUtil {
                 secondHalfTax = secondHalfTax.add(new BigDecimal(listObj[1].toString()));
             else {
                 arrDmd = arrDmd.add(new BigDecimal((Double) listObj[1]));
-                if (listObj[2] != null && !listObj[2].equals(BigDecimal.ZERO))
+                if (listObj[2] != null && (new BigDecimal((Double) listObj[2])).compareTo(BigDecimal.ZERO) != 0)
                     arrColelection = arrColelection.add(new BigDecimal(listObj[2].toString()));
                 arrearRebate = arrearRebate.add(new BigDecimal(listObj[3].toString()));
             }

@@ -345,7 +345,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
         EgDemandDetails insertPenDmdDetail = null;
 
         final boolean thereIsPenalty = penalty != null
-                && !(penalty.equals(BigDecimal.ZERO) || penalty.equals(BigDecimal.valueOf(0.0))) ? true : false;
+                && !(penalty.compareTo(BigDecimal.ZERO) == 0 || penalty.compareTo(BigDecimal.valueOf(0.0)) == 0) ? true : false;
         final DateTime installmentDate = new DateTime(installment.getInstallmentYear().getTime());
 
         // Checking whether to impose penalty or not
