@@ -77,6 +77,9 @@
 			jQuery('#Forward').hide();
 		} 
 		var gisFlag = '<s:property value="%{showCheckboxForGIS}"/>';
+		<s:if test='%{showCheckboxForGIS && @org.egov.ptis.constants.PropertyTaxConstants@SOURCE_SURVEY.equalsIgnoreCase(model.source)}'>
+			jQuery('#thirdPartyVerified').attr('disabled', true);
+		</s:if>	
 		if(gisFlag == 'true'){
 			enableDisableActionsForGIS();
 		}
