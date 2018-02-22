@@ -121,7 +121,7 @@ public class ValidationUtil {
 	APTaxCalculator aPTaxCalculator;
 	
 	@Autowired
-    private LayoutApprovalAuthorityRepository layoutApprovalAuthorityRepo;
+        private LayoutApprovalAuthorityRepository layoutApprovalAuthorityRepo;
 	
 	@Autowired
 	private VacantLandPlotAreaRepository vacantLandPlotAreaRepository;
@@ -432,8 +432,10 @@ public class ValidationUtil {
 						errorDetails.setErrorMessage(INACTIVE_USAGE_REQ_MSG);
 						return errorDetails;
 					}
-					if (!floorDetails.getNatureOfUsageCode().equalsIgnoreCase(PropertyTaxConstants.PROPTYPE_RESD)
-							&& StringUtils.isBlank(floorDetails.getFirmName())) {
+					
+                    if (!propertyUsageService.getUsageByCode(floorDetails.getNatureOfUsageCode()).getUsageName()
+                            .equalsIgnoreCase(PropertyTaxConstants.NATURE_OF_USAGE_RESIDENCE)
+                            && StringUtils.isBlank(floorDetails.getFirmName())) {
 						errorDetails.setErrorCode(FIRMNAME_REQ_CODE);
 						errorDetails.setErrorMessage(FIRMNAME_REQ_MSG);
 						return errorDetails;
