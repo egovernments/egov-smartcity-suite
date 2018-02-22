@@ -59,7 +59,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_REASON_ORDER_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_RSNS_LIST;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY_DMDRSN_CODE_MAP;
 
 import java.math.BigDecimal;
@@ -79,6 +78,10 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -92,7 +95,6 @@ import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.dcb.bean.DCBDisplayInfo;
 import org.egov.demand.dao.EgDemandDetailsDao;
-import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -104,6 +106,7 @@ import org.egov.ptis.bean.DemandDetail;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
+import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.demand.PTDemandCalculations;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -147,28 +150,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
         @Result(name = AddDemandAction.RESULT_ACK, location = "edit/addDemand-ack.jsp") })
 public class AddDemandAction extends BaseFormAction {
 
+    private static final String BASIC_PROPERTY = "basicProperty";
     private static final Logger LOGGER = Logger.getLogger(AddDemandAction.class);
     protected static final String RESULT_NEW = "addForm";
     protected static final String RESULT_ERROR = "error";
     protected static final String RESULT_ACK = "ack";
     private static final String MSG_ERROR_NOT_MIGRATED_PROPERTY = " This is not a migrated property ";
 
-    private static final String QUERY_DEMAND_DETAILS = "SELECT dd FROM Ptdemand ptd "
-            + "LEFT JOIN ptd.egDemandDetails dd " + "LEFT JOIN ptd.egptProperty p " + "LEFT JOIN  p.basicProperty bp "
-            + "WHERE bp = ? " + "AND bp.active = true " + "AND p.status = 'A' ";
-
-    private static final String queryInstallmentPTDemand = "select ptd from Ptdemand ptd inner join fetch ptd.egDemandDetails dd "
-            + "inner join fetch dd.egDemandReason dr inner join fetch dr.egDemandReasonMaster drm "
-            + "inner join fetch ptd.egptProperty p inner join fetch p.basicProperty bp "
-            + "where bp.active = true and (p.status = 'A' or p.status = 'I' or p.status = 'W') "
-            + "and bp = ? and ptd.egInstallmentMaster = ? ";
-
-    private static final String QUERY_NONZERO_DEMAND_DETAILS = QUERY_DEMAND_DETAILS + "AND dd.amount >= 0 ";
-
-    private static final String queryInstallmentDemandDetails = QUERY_NONZERO_DEMAND_DETAILS
-            + " AND ptd.egInstallmentMaster = ? ";
-
-   
     private static final String ADD_DEMAND = "Add Demand";
     private static final String ADD_TYPE_POSTFIX = "-";
 
@@ -185,6 +173,8 @@ public class AddDemandAction extends BaseFormAction {
     @Autowired
     private InstallmentHibDao installmentDAO;
     @Autowired
+    private transient BasicPropertyDAO basicPropertyDAO;
+    @Autowired
     private PropertyTaxUtil propertyTaxUtil;
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
@@ -196,16 +186,17 @@ public class AddDemandAction extends BaseFormAction {
     @Autowired
     @Qualifier("propertyImplService")
     private PersistenceService propertyImplService;
-
+    @PersistenceContext
+    private EntityManager entityManager;
 
     DemandAudit demandAudit = new DemandAudit();
 
-    private List<EgDemandDetails> demandDetails = new ArrayList<EgDemandDetails>();
-    private List<DemandDetail> demandDetailBeanList = new ArrayList<DemandDetail>();
-    private List<Installment> allInstallments = new ArrayList<Installment>();
-    private Set<Installment> propertyInstallments = new TreeSet<Installment>();
-    private Map<Installment, Map<String, Boolean>> collectionDetails = new HashMap<Installment, Map<String, Boolean>>();
-    private Map<String, String> demandReasonMap = new HashMap<String, String>();
+    private List<EgDemandDetails> demandDetails = new ArrayList<>();
+    private List<DemandDetail> demandDetailBeanList = new ArrayList<>();
+    private List<Installment> allInstallments = new ArrayList<>();
+    private Set<Installment> propertyInstallments = new TreeSet<>();
+    private Map<Installment, Map<String, Boolean>> collectionDetails = new HashMap<>();
+    private Map<String, String> demandReasonMap = new HashMap<>();
 
     @Override
     public Object getModel() {
@@ -213,14 +204,11 @@ public class AddDemandAction extends BaseFormAction {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     @SkipValidation
     public void prepare() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Entered into prepare");
-
-        basicProperty = (BasicProperty) getPersistenceService().findByNamedQuery(QUERY_BASICPROPERTY_BY_UPICNO,
-                propertyId);
+        basicProperty= basicPropertyDAO.getBasicPropertyByPropertyID(propertyId);
         if (null != basicProperty.getActiveProperty())
             if (basicProperty.getActiveProperty().getPropertyDetail().getPropertyTypeMaster().getCode()
                     .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
@@ -255,41 +243,34 @@ public class AddDemandAction extends BaseFormAction {
             LOGGER.debug("Exiting from prepare");
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void validate() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Entered into validate");
-
-        // Set<String> instDemandRsn = new LinkedHashSet<String>();
-        Set<Installment> newInstallments = new TreeSet<Installment>();
-        Set<String> installmentsChqPenalty = new TreeSet<String>();
-        Set<String> instDmdRsnMaster = new HashSet<String>();
+        Set<Installment> newInstallments = new TreeSet<>();
+        Set<String> installmentsChqPenalty = new TreeSet<>();
+        Set<String> instDmdRsnMaster = new HashSet<>();
         List<String> instString;
-        Set<String> actAmtInstallments = new TreeSet<String>();
+        Set<String> actAmtInstallments = new TreeSet<>();
         List<String> errorParams = null;
 
         for (DemandDetail dd : demandDetailBeanList) {
 
             if (dd.getIsNew() != null && dd.getIsNew()) {
-                instString = new ArrayList<String>();
+                instString = new ArrayList<>();
                 instString.add(dd.getReasonMaster());
-                if (dd.getReasonMaster().equalsIgnoreCase(DEMANDRSN_STR_GENERAL_TAX)
-                        || dd.getReasonMaster().equalsIgnoreCase(DEMANDRSN_STR_VACANT_TAX)) {
-                    if (dd.getInstallment().getId() == null || dd.getInstallment().getId().equals(-1)) {
-                        addActionError(getText("error.editDemand.selectInstallment"));
-                    }
-                }
+                if ((dd.getReasonMaster().equalsIgnoreCase(DEMANDRSN_STR_GENERAL_TAX)
+                        || dd.getReasonMaster().equalsIgnoreCase(DEMANDRSN_STR_VACANT_TAX)) && (dd.getInstallment().getId() == null
+                                || dd.getInstallment().getId().equals(-1))) 
+                    addActionError(getText("error.editDemand.selectInstallment"));
 
                 if (null != dd.getInstallment().getId() && !dd.getInstallment().getId().equals(-1)) {
                     if (null == dd.getActualAmount()) {
                         addActionError(getText("error.editDemand.actualAmount", instString));
                     }
-                    if (null != dd.getActualAmount() && null != dd.getActualCollection()) {
-                        if (dd.getActualAmount().intValue() < dd.getActualCollection().intValue()) {
-                            addActionError(getText("error.collection.greaterThan.actualAmount"));
-                        }
-                    }
+                    if (null != dd.getActualAmount() && null != dd.getActualCollection() &&
+                            dd.getActualAmount().intValue() < dd.getActualCollection().intValue())
+                        addActionError(getText("error.collection.greaterThan.actualAmount"));
                 }
 
                 if (dd.getActualAmount() == null) {
@@ -305,7 +286,7 @@ public class AddDemandAction extends BaseFormAction {
                             newInstallments.add(dd.getInstallment());
                             String instRsn = dd.getInstallment().toString().concat(ADD_TYPE_POSTFIX)
                                     .concat(dd.getReasonMaster());
-                            if (instDmdRsnMaster.add(instRsn) == false) {
+                            if (!instDmdRsnMaster.add(instRsn)) {
                                 instString.add(dd.getInstallment().toString());
                                 addActionError(getText("error.editDemand.duplicateInstallment", instString));
                             }
@@ -315,35 +296,27 @@ public class AddDemandAction extends BaseFormAction {
             } else {
                 newInstallments.add(dd.getInstallment());
 
-                if (null != dd.getRevisedAmount() && isZero(dd.getRevisedAmount())) {
-                    if (dd.getActualCollection().compareTo(BigDecimal.ZERO) > 0 && isNull(dd.getRevisedCollection())) {
-                        errorParams = new ArrayList<String>();
-                        errorParams.add(dd.getReasonMaster());
-                        errorParams.add(dd.getInstallment().getDescription());
-                        addActionError(getText("error.editDemand.collectionForUpdatedDemand", errorParams));
-                    }
+                if (null != dd.getRevisedAmount() && isZero(dd.getRevisedAmount())
+                        && dd.getActualCollection().compareTo(BigDecimal.ZERO) > 0 && isNull(dd.getRevisedCollection())) {
+                    errorParams = new ArrayList<>();
+                    errorParams.add(dd.getReasonMaster());
+                    errorParams.add(dd.getInstallment().getDescription());
+                    addActionError(getText("error.editDemand.collectionForUpdatedDemand", errorParams));
                 }
-                if (null != dd.getRevisedAmount() && null != dd.getActualCollection()) {
-                    if (dd.getRevisedAmount().intValue() < dd.getActualCollection().intValue()) {
+                if (null != dd.getRevisedAmount() && null != dd.getActualCollection()
+                        && dd.getRevisedAmount().intValue() < dd.getActualCollection().intValue()) 
                         addActionError(getText("error.collection.greaterThan.revisedAmount"));
-                    }
-                }
-                if (null != dd.getRevisedAmount() && null != dd.getRevisedCollection()) {
-                    if (dd.getRevisedAmount().intValue() < dd.getRevisedCollection().intValue()) {
+                if (null != dd.getRevisedAmount() && null != dd.getRevisedCollection()
+                        && dd.getRevisedAmount().intValue() < dd.getRevisedCollection().intValue()) 
                         addActionError(getText("error.revisedCollecion.greaterThan.revisedAmount"));
-                    }
-                }
             }
 
         }
 
-        if (actAmtInstallments.size() > 0) {
+        if (!actAmtInstallments.isEmpty()) {
             final String inst = actAmtInstallments.toString().replace('[', ' ').replace(']', ' ');
-            List<String> instStrings = new ArrayList<String>() {
-                {
-                    add(inst);
-                }
-            };
+            List<String> instStrings = new ArrayList<>();
+            instStrings.add(inst);
             addActionError(getText("error.editDemand.actualAmount", instStrings));
         }
 
@@ -371,9 +344,9 @@ public class AddDemandAction extends BaseFormAction {
 
         }
 
-        if (installmentsChqPenalty.size() > 0) {
+        if (!installmentsChqPenalty.isEmpty()) {
             String inst = installmentsChqPenalty.toString().replace('[', ' ').replace(']', ' ');
-            List<String> instStrings = new ArrayList<String>();
+            List<String> instStrings = new ArrayList<>();
             instStrings.add(inst);
             addActionError(getText("error.editDemand.chqBouncePenaltyIsZero", instStrings));
         }
@@ -385,14 +358,12 @@ public class AddDemandAction extends BaseFormAction {
             LOGGER.debug("Exiting from validate");
     }
 
-    @SuppressWarnings("unchecked")
     @SkipValidation
     @Action(value = "/addDemand-newAddForm")
     public String newAddForm() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Entered into newAddForm");
         String resultPage = "";
-
         if (basicProperty != null && !basicProperty.getSource().equals(PropertyTaxConstants.SOURCEOFDATA_DATAENTRY)
                 && !basicProperty.getSource().equals(PropertyTaxConstants.SOURCEOFDATA_MIGRATION)) {
             setErrorMessage(MSG_ERROR_NOT_MIGRATED_PROPERTY);
@@ -400,8 +371,6 @@ public class AddDemandAction extends BaseFormAction {
         } else {
             ownerName = basicProperty.getFullOwnerName();
             propertyAddress = basicProperty.getAddress().toString();
-            demandDetails = getPersistenceService().findAllBy(queryInstallmentDemandDetails, basicProperty,
-                    propertyTaxCommonUtils.getCurrentInstallment());
             if (!demandDetails.isEmpty()) {
                 Collections.sort(demandDetails, new Comparator<EgDemandDetails>() {
                     @Override
@@ -414,8 +383,7 @@ public class AddDemandAction extends BaseFormAction {
 
             PropertyTaxBillable billable = new PropertyTaxBillable();
             billable.setBasicProperty(basicProperty);
-            Boolean isInstallmentExists = false;
-            Map<Installment, List<String>> installmentDemandReason = new HashMap<Installment, List<String>>();
+            Map<Installment, List<String>> installmentDemandReason = new HashMap<>();
 
             if (!demandDetails.isEmpty()) {
                 for (EgDemandDetails demandDetail : demandDetails) {
@@ -423,7 +391,7 @@ public class AddDemandAction extends BaseFormAction {
                     String reasonMaster = demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster();
                     propertyInstallments.add(installment);
                     if (installmentDemandReason.get(installment) == null) {
-                        List<String> rsns = new ArrayList<String>();
+                        List<String> rsns = new ArrayList<>();
                         rsns.add(reasonMaster);
                         installmentDemandReason.put(installment, rsns);
                     } else {
@@ -440,8 +408,6 @@ public class AddDemandAction extends BaseFormAction {
                     demandDetailBeanList.add(dmdDtl);
                 }
             }
-
-            Installment currentInstallment = propertyTaxCommonUtils.getCurrentInstallment();
             resultPage = RESULT_NEW;
         }
 
@@ -490,12 +456,12 @@ public class AddDemandAction extends BaseFormAction {
             LOGGER.debug("Entered into method prepareDisplayInfo");
         dcbDispInfo = new DCBDisplayInfo();
         dcbDispInfo.setReasonCategoryCodes(Collections.<String> emptyList());
-        List<String> reasonList = new ArrayList<String>();
+        List<String> reasonList = new ArrayList<>();
         reasonList.addAll(DEMAND_REASON_ORDER_MAP.keySet());
         dcbDispInfo.setReasonMasterCodes(reasonList);
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("DCB Display Info : " + dcbDispInfo);
-            LOGGER.debug("Number of Demand Reasons : " + (reasonList != null ? reasonList.size() : ZERO));
+            LOGGER.debug("Number of Demand Reasons : " + (reasonList.size()));
             LOGGER.debug("Exit from method prepareDisplayInfo");
         }
     }
@@ -506,47 +472,17 @@ public class AddDemandAction extends BaseFormAction {
     public String update() {
         if (LOGGER.isDebugEnabled())
             LOGGER.info("Entered into update, basicProperty=" + basicProperty);
-
-        boolean isAllRevisedTaxesBlank = true;
-        boolean isAllRevisedCollectionsBlank = true;
-        boolean isAllNewActTaxesBlank = true;
-        boolean isAllNewRvsdTaxesBlank = true;
-
-        for (DemandDetail dmdDetail : demandDetailBeanList) {
-
-            if (dmdDetail.getIsNew()) {
-                if (dmdDetail.getActualAmount() != null) {
-                    isAllNewActTaxesBlank = false;
-                    break;
-                }
-
-                if (dmdDetail.getActualCollection() != null) {
-                    isAllNewRvsdTaxesBlank = false;
-                    break;
-                }
-            } else {
-                if (dmdDetail.getRevisedAmount() != null) {
-                    isAllRevisedTaxesBlank = false;
-                    break;
-                }
-
-                if (dmdDetail.getRevisedCollection() != null) {
-                    isAllRevisedCollectionsBlank = false;
-                    break;
-                }
-            }
-        }
-
-        List<EgDemandDetails> demandDetailsFromDB = getPersistenceService().findAllBy(QUERY_NONZERO_DEMAND_DETAILS,
-                basicProperty);
+        Query qry = entityManager.createNamedQuery("QUERY_DEMAND_DET_NON_ZERODEMAND");
+        qry.setParameter(BASIC_PROPERTY, basicProperty);
+        List<EgDemandDetails> demandDetailsFromDB = qry.getResultList();
+        
         Installment currentInstallment = propertyTaxCommonUtils.getCurrentInstallment();
-        Map<Installment, List<EgDemandDetails>> demandDetails = new TreeMap<Installment, List<EgDemandDetails>>();
+        Map<Installment, List<EgDemandDetails>> demandDetails = new TreeMap<>();
 
-        String queryZeroDemandDetails = QUERY_DEMAND_DETAILS + " AND dd.amount = 0";
-
-        List<EgDemandDetails> dmdDtlsWithZeroAmt = getPersistenceService().findAllBy(queryZeroDemandDetails,
-                basicProperty);
-        Set<Installment> zeroInstallments = new TreeSet<Installment>();
+        Query qry1 = entityManager.createNamedQuery("QUERY_DEMAND_DET_WITH_ZERODEMAND");
+        qry1.setParameter(BASIC_PROPERTY, basicProperty);
+        List<EgDemandDetails> dmdDtlsWithZeroAmt = qry1.getResultList();
+        Set<Installment> zeroInstallments = new TreeSet<>();
 
         BigDecimal totalDmd = BigDecimal.ZERO;
         EgDemandDetails egDemandDtls = null;
@@ -585,18 +521,14 @@ public class AddDemandAction extends BaseFormAction {
                     }
                 }
 
-                if (dmdDtlsWithZeroAmt.isEmpty()) {
-                    if(dmdDetail.getActualAmount().compareTo(BigDecimal.ZERO)!=0 && dmdDetail.getIsNew()){
-                        egDemandDtls = propService.createDemandDetails(dmdDetail.getActualAmount(),
-                                dmdDetail.getActualCollection(), egDmdRsn, dmdDetail.getInstallment());
-                        totalDmd = totalDmd.add(egDemandDtls.getAmount());
-                    }
-                    
-                    
-
+                if (dmdDtlsWithZeroAmt.isEmpty() && dmdDetail.getActualAmount().compareTo(BigDecimal.ZERO) != 0
+                        && dmdDetail.getIsNew()) {
+                    egDemandDtls = propService.createDemandDetails(dmdDetail.getActualAmount(),
+                            dmdDetail.getActualCollection(), egDmdRsn, dmdDetail.getInstallment());
+                    totalDmd = totalDmd.add(egDemandDtls.getAmount());
                 }
                 logAudit(dmdDetail);
-                List<EgDemandDetails> dmdDtl = new ArrayList<EgDemandDetails>();
+                List<EgDemandDetails> dmdDtl = new ArrayList<>();
                 if (demandDetails.get(dmdDetail.getInstallment()) == null) {
 
                     dmdDtl.add(egDemandDtls);
@@ -604,11 +536,9 @@ public class AddDemandAction extends BaseFormAction {
                 } else {
                     demandDetails.get(dmdDetail.getInstallment()).add(egDemandDtls);
                 }
-
             }
 
         }
-        
         
         for (EgDemandDetails ddFromDB : demandDetailsFromDB) {
 
@@ -632,7 +562,7 @@ public class AddDemandAction extends BaseFormAction {
                             && ddFromDB.getEgDemandReason().getEgDemandReasonMaster().getCode()
                                     .equalsIgnoreCase(demandReasonMap.get(dmdDetail.getReasonMaster()))) {
 
-                        Installment inst = (Installment) installmentDAO.findById(dmdDetail.getInstallment().getId(),
+                        Installment inst = installmentDAO.findById(dmdDetail.getInstallment().getId(),
                                 false);
 
                         if (ddFromDB.getEgDemandReason().getEgInstallmentMaster().equals(inst)) {
@@ -664,23 +594,20 @@ public class AddDemandAction extends BaseFormAction {
             }
 
         }
-        if (demandAudit.getDemandAuditDetails() != null && demandAudit.getDemandAuditDetails().size() > 0)
+        if (!demandAudit.getDemandAuditDetails().isEmpty())
             demandAuditService.saveDetails(demandAudit);
-
-        List<EgDemandDetails> currentInstdemandDetailsFromDB = getPersistenceService().findAllBy(
-                queryInstallmentDemandDetails, basicProperty, propertyTaxCommonUtils.getCurrentInstallment());
-
-        EgDemand currentPtdemand = null;
-        if (!currentInstdemandDetailsFromDB.isEmpty())
-            currentPtdemand = currentInstdemandDetailsFromDB.get(0).getEgDemand();
+        Query query = entityManager.createNamedQuery("QUERY_DEMAND_DETAILS_FOR_CURRINST");
+        query.setParameter(BASIC_PROPERTY, basicProperty);
+        query.setParameter("installment", propertyTaxCommonUtils.getCurrentInstallment());
+        List<EgDemandDetails> currentInstdemandDetailsFromDB = query.getResultList();
 
         Map<Installment, Set<EgDemandDetails>> demandDetailsSetByInstallment = getEgDemandDetailsSetByInstallment(
                 currentInstdemandDetailsFromDB);
-        List<Installment> installments = new ArrayList<Installment>(demandDetailsSetByInstallment.keySet());
+        List<Installment> installments = new ArrayList<>(demandDetailsSetByInstallment.keySet());
         Collections.sort(installments);
 
         for (Installment inst : installments) {
-            Map<String, BigDecimal> dmdRsnAmt = new LinkedHashMap<String, BigDecimal>();
+            Map<String, BigDecimal> dmdRsnAmt = new LinkedHashMap<>();
             for (String rsn : DEMAND_RSNS_LIST) {
                 EgDemandDetails newDmndDtls = propService
                         .getEgDemandDetailsForReason(demandDetailsSetByInstallment.get(inst), rsn);
@@ -700,22 +627,19 @@ public class AddDemandAction extends BaseFormAction {
         }
 
         LOGGER.info("Excess Collection - " + propService.getExcessCollAmtMap());
-
-        Map<Installment, String> addedInstallments = new TreeMap<Installment, String>();
-
-        Set<EgDemandDetails> demandDetailsToBeSaved = new HashSet<EgDemandDetails>();
+        Set<EgDemandDetails> demandDetailsToBeSaved = new HashSet<>();
         for (Map.Entry<Installment, List<EgDemandDetails>> entry : demandDetails.entrySet()) {
             if (!entry.getValue().get(0).getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
                     .equalsIgnoreCase(DEMANDRSN_STR_CHQ_BOUNCE_PENALTY)) {
 
                 demandDetailsToBeSaved.addAll(new HashSet<EgDemandDetails>(entry.getValue()));
             }
-
         }
-        List<Ptdemand> currPtdemand = getPersistenceService().findAllBy(queryInstallmentPTDemand, basicProperty,
-                propertyTaxCommonUtils.getCurrentInstallment());
-
-        if (currPtdemand != null && currPtdemand.isEmpty()) {
+        Query query1 = entityManager.createNamedQuery("QUERY_CURRENT_PTDEMAND");
+        query1.setParameter(BASIC_PROPERTY, basicProperty);
+        query1.setParameter("installment", propertyTaxCommonUtils.getCurrentInstallment());
+        List<Ptdemand> currPtdemand = query1.getResultList();
+        if (currPtdemand.isEmpty()) {
             Ptdemand ptDemand = new Ptdemand();
             PTDemandCalculations ptDmdCalc = new PTDemandCalculations();
 
@@ -746,7 +670,7 @@ public class AddDemandAction extends BaseFormAction {
     }
 
     public Map<Installment, Set<EgDemandDetails>> getEgDemandDetailsSetByInstallment(List<EgDemandDetails> demandDtls) {
-        Map<Installment, Set<EgDemandDetails>> newEgDemandDetailsSetByInstallment = new HashMap<Installment, Set<EgDemandDetails>>();
+        Map<Installment, Set<EgDemandDetails>> newEgDemandDetailsSetByInstallment = new HashMap<>();
 
         for (EgDemandDetails dd : demandDtls) {
 
@@ -755,7 +679,7 @@ public class AddDemandAction extends BaseFormAction {
             }
 
             if (newEgDemandDetailsSetByInstallment.get(dd.getEgDemandReason().getEgInstallmentMaster()) == null) {
-                Set<EgDemandDetails> ddSet = new HashSet<EgDemandDetails>();
+                Set<EgDemandDetails> ddSet = new HashSet<>();
                 ddSet.add(dd);
                 newEgDemandDetailsSetByInstallment.put(dd.getEgDemandReason().getEgInstallmentMaster(), ddSet);
             } else {
@@ -769,7 +693,7 @@ public class AddDemandAction extends BaseFormAction {
 
         DemandAuditDetails dmdAdtDtls = new DemandAuditDetails();
         dmdAdtDtls.setYear(dmdDetail.getInstallment().toString());
-        dmdAdtDtls.setAction(dmdDetail.getIsNew() == true ? "Add" : "Edit");
+        dmdAdtDtls.setAction(dmdDetail.getIsNew() ? "Add" : "Edit");
         dmdAdtDtls.setTaxType(dmdDetail.getReasonMaster());
         dmdAdtDtls.setActualDmd(dmdDetail.getActualAmount() != null ? dmdDetail.getActualAmount() : BigDecimal.ZERO);
         dmdAdtDtls
