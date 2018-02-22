@@ -46,13 +46,9 @@
  *
  */
 
-
 package org.egov.ptis.domain.entity.property;
 
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.envers.Audited;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -61,21 +57,24 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import java.util.Date;
+
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.envers.Audited;
 
 /**
  * <p>
- * This class defines Property Usage i.e A Property is linked to a PropertyUsage
- * indicating its current usage. Property Usage can be Residential,
- * Non-Residential, Industrial etc.
+ * This class defines Property Usage i.e A Property is linked to a PropertyUsage indicating its current usage. Property Usage can
+ * be Residential, Non-Residential, Industrial etc.
  * </p>
- * 
+ *
  * @author Gayathri Joshi
  * @version 2.00
  * @since 2.00
  */
 @Entity
-@Unique(fields = {"usageName"}, enableDfltMsg = true)
+@Unique(fields = { "usageName" }, enableDfltMsg = true)
 @Table(name = "EGPT_PROPERTY_USAGE_MASTER")
 @SequenceGenerator(name = PropertyUsage.SEQ_PROPERTY_USAGE, sequenceName = PropertyUsage.SEQ_PROPERTY_USAGE, allocationSize = 1)
 public class PropertyUsage extends AbstractAuditable {
@@ -86,33 +85,33 @@ public class PropertyUsage extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = SEQ_PROPERTY_USAGE, strategy = GenerationType.SEQUENCE)
     private Long id;
-    
+
     @Audited
     @Column(name = "USG_NAME")
     private String usageName;
-    
+
     @Audited
     @Column(name = "CODE")
     private String usageCode;
-    
+
     @Column(name = "ORDER_ID")
     private Integer orderId;
-    
+
     @Column(name = "USAGE_FACTOR")
     private Float usagePercentage;
-    
+
     @Column(name = "FROM_DATE")
     private Date fromDate;
-    
+
     @Column(name = "TO_DATE")
     private Date toDate;
-    
+
     @Column(name = "IS_ENABLED")
     private Integer isEnabled;
-    
+
     @Column(name = "ISRESIDENTIAL")
     private Boolean isResidential;
-    
+
     @Audited
     @Column(name = "ISACTIVE")
     private Boolean isActive;
@@ -120,7 +119,8 @@ public class PropertyUsage extends AbstractAuditable {
     /**
      * @return Returns if the given Object is equal to PropertyUsage
      */
-    public boolean equals(Object that) {
+    @Override
+    public boolean equals(final Object that) {
 
         if (that == null)
             return false;
@@ -132,32 +132,32 @@ public class PropertyUsage extends AbstractAuditable {
             return false;
         final PropertyUsage thatPropUsage = (PropertyUsage) that;
 
-        if (this.getId() != null && thatPropUsage.getId() != null) {
+        if (getId() != null && thatPropUsage.getId() != null) {
             if (getId().equals(thatPropUsage.getId()))
                 return true;
             else
                 return false;
-        } else if (this.getUsageName() != null && thatPropUsage.getUsageName() != null) {
+        } else if (getUsageName() != null && thatPropUsage.getUsageName() != null) {
             if (getUsageName().equals(thatPropUsage.getUsageName()))
                 return true;
             else
                 return false;
-        } else {
+        } else
             return false;
-        }
     }
 
     /**
      * @return Returns the hashCode
      */
+    @Override
     public int hashCode() {
 
         int hashCode = 0;
-        if (this.getId() != null)
-            hashCode += this.getId().hashCode();
+        if (getId() != null)
+            hashCode += getId().hashCode();
 
-        if (this.getUsageName() != null)
-            hashCode += this.getUsageName().hashCode();
+        if (getUsageName() != null)
+            hashCode += getUsageName().hashCode();
         return hashCode;
     }
 
@@ -177,7 +177,7 @@ public class PropertyUsage extends AbstractAuditable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         sb.append(id).append("|").append(usageCode).append("|").append(usagePercentage);
         return sb.toString();
     }
@@ -186,7 +186,7 @@ public class PropertyUsage extends AbstractAuditable {
         return usageName;
     }
 
-    public void setUsageName(String usageName) {
+    public void setUsageName(final String usageName) {
         this.usageName = usageName;
     }
 
@@ -194,7 +194,7 @@ public class PropertyUsage extends AbstractAuditable {
         return usageCode;
     }
 
-    public void setUsageCode(String usageCode) {
+    public void setUsageCode(final String usageCode) {
         this.usageCode = usageCode.toUpperCase();
     }
 
@@ -202,7 +202,7 @@ public class PropertyUsage extends AbstractAuditable {
         return orderId;
     }
 
-    public void setOrderId(Integer orderId) {
+    public void setOrderId(final Integer orderId) {
         this.orderId = orderId;
     }
 
@@ -210,23 +210,15 @@ public class PropertyUsage extends AbstractAuditable {
         return usagePercentage;
     }
 
-    public void setUsagePercentage(Float usagePercentage) {
+    public void setUsagePercentage(final Float usagePercentage) {
         this.usagePercentage = usagePercentage;
     }
-
-    /*public Date getLastUpdatedTimeStamp() {
-        return lastUpdatedTimeStamp;
-    }
-
-    public void setLastUpdatedTimeStamp(Date lastUpdatedTimeStamp) {
-        this.lastUpdatedTimeStamp = lastUpdatedTimeStamp;
-    }*/
 
     public Date getFromDate() {
         return fromDate;
     }
 
-    public void setFromDate(Date fromDate) {
+    public void setFromDate(final Date fromDate) {
         this.fromDate = fromDate;
     }
 
@@ -234,7 +226,7 @@ public class PropertyUsage extends AbstractAuditable {
         return toDate;
     }
 
-    public void setToDate(Date toDate) {
+    public void setToDate(final Date toDate) {
         this.toDate = toDate;
     }
 
@@ -242,7 +234,7 @@ public class PropertyUsage extends AbstractAuditable {
         return isEnabled;
     }
 
-    public void setIsEnabled(Integer isEnabled) {
+    public void setIsEnabled(final Integer isEnabled) {
         this.isEnabled = isEnabled;
     }
 
@@ -250,7 +242,7 @@ public class PropertyUsage extends AbstractAuditable {
         return isResidential;
     }
 
-    public void setIsResidential(Boolean isResidential) {
+    public void setIsResidential(final Boolean isResidential) {
         this.isResidential = isResidential;
     }
 
@@ -258,7 +250,7 @@ public class PropertyUsage extends AbstractAuditable {
         return isActive;
     }
 
-    public void setIsActive(Boolean isActive) {
+    public void setIsActive(final Boolean isActive) {
         this.isActive = isActive;
     }
 
