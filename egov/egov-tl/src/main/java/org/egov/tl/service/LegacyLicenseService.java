@@ -309,26 +309,29 @@ public class LegacyLicenseService {
 
     public void storeDocument(TradeLicense license) {
         List<LicenseDocument> documents = license.getDocuments();
-        MultipartFile[] files = license.getFiles();
-        if (files != null)
-            for (int i = 0; i < files.length; i++) {
-                documents.get(i).setType(licenseDocumentTypeRepository.findOne(documents.get(i).getType().getId()));
+        for (LicenseDocument document : documents) {
+            List<MultipartFile> files = document.getMultipartFiles();
+            document.setType(licenseDocumentTypeRepository.findOne(document.getType().getId()));
+            for (MultipartFile file : files) {
                 try {
-                    if (!files[i].isEmpty()) {
-                        documents.get(i).getFiles()
+                    if (!file.isEmpty()) {
+                        document.getFiles()
                                 .add(fileStoreService.store(
-                                        files[i].getInputStream(),
-                                        files[i].getOriginalFilename(),
-                                        files[i].getContentType(), "EGTL"));
-                        documents.get(i).setEnclosed(true);
-                        documents.get(i).setDocDate(license.getApplicationDate());
-                    } else if (documents.get(i).getType().isMandatory() && files[i].isEmpty() && documents.isEmpty()) {
-                        documents.get(i).getFiles().clear();
+                                        file.getInputStream(),
+                                        file.getOriginalFilename(),
+                                        file.getContentType(), "EGTL"));
+                        document.setEnclosed(true);
+                        document.setDocDate(license.getApplicationDate());
+                    } else if (document.getType().isMandatory() && file.isEmpty() && documents.isEmpty()) {
+                        document.getFiles().clear();
                     }
                 } catch (IOException exp) {
                     throw new ApplicationRuntimeException("Error occurred while storing files ", exp);
                 }
-                documents.get(i).setLicense(license);
+                document.setLicense(license);
             }
+        }
+        documents.removeIf(licenseDocument -> licenseDocument.getFiles().isEmpty());
+        license.getDocuments().addAll(documents);
     }
 }

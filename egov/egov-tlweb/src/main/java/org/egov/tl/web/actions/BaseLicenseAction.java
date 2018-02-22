@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -70,6 +70,7 @@ import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.NumberUtil;
 import org.egov.infra.utils.StringUtils;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
@@ -79,6 +80,7 @@ import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseCategory;
 import org.egov.tl.entity.LicenseDemand;
 import org.egov.tl.entity.LicenseDocument;
+import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.entity.NatureOfBusiness;
 import org.egov.tl.entity.TradeLicense;
@@ -107,6 +109,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.egov.tl.utils.Constants.*;
 
@@ -126,6 +129,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     private static final long serialVersionUID = 1L;
     private static final String WF_ITEM_PROCESSED = "wf.item.processed";
     private static final String MESSAGE = "message";
+    private static final String VALIDATE_SUPPORT_DOCUMENT="error.support.docs";
 
     protected transient WorkflowBean workflowBean = new WorkflowBean();
     protected transient List<String> buildingTypeList;
@@ -244,6 +248,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
                         .addReportToTempCache(tradeLicenseService.generateLicenseCertificate(license(), true));
                 return REPORT_PAGE;
             }
+            addNewDocuments();
             licenseApplicationService.updateTradeLicense((TradeLicense) license(), workflowBean);
             successMessage();
             if (GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
@@ -354,10 +359,6 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
 
         setupWorkflowDetails();
         feeTypeId = feeTypeService.findByName(LICENSE_FEE_TYPE).getId();
-    }
-
-    public void prepareShowForApproval() {
-        prepareNewForm();
     }
 
     /**
@@ -625,5 +626,45 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
             return workFlowMatrix.getEnableFields();
         } else
             return "all";
+    }
+
+    public void supportDocumentsValidation() {
+        List<LicenseDocument> supportDocs = licenseDocument
+                .stream()
+                .filter(document -> document.getType().isMandatory() && document.getUploads().isEmpty())
+                .collect(Collectors.toList());
+
+        if (!supportDocs.isEmpty())
+            throw new ValidationException(VALIDATE_SUPPORT_DOCUMENT, VALIDATE_SUPPORT_DOCUMENT);
+    }
+
+    public void supportDocumentsValidationForApproval(TradeLicense license) {
+
+        List<LicenseDocument> supportDocs = licenseDocument
+                .stream()
+                .filter(document -> document.getType().isMandatory())
+                .collect(Collectors.toList());
+
+        List<LicenseDocument> existingDocs = new ArrayList<>();
+        if (license.getDocuments().stream().anyMatch(document -> !document.getFiles().isEmpty())) {
+            existingDocs = license.getDocuments()
+                    .stream()
+                    .filter(document -> document.getType().getApplicationType().name().equalsIgnoreCase(
+                            license.getLicenseAppType().getName()))
+                    .collect(Collectors.toList());
+        }
+
+        List<String> supportDocType = supportDocs.stream().map(LicenseDocument::getType).map(LicenseDocumentType::getName)
+                .collect(Collectors.toList());
+
+        List<String> existingDocsType = existingDocs.stream().map(LicenseDocument::getType).map(LicenseDocumentType::getName)
+                .collect(Collectors.toList());
+
+        if (!supportDocs.isEmpty() && supportDocs.stream().anyMatch(document -> document.getUploads().isEmpty()) &&
+                (existingDocs.isEmpty()
+                        || !supportDocType.stream().filter(
+                                licenseDocumentType -> !existingDocsType.contains(licenseDocumentType)).collect(Collectors.toList()).isEmpty())) {
+            throw new ValidationException(VALIDATE_SUPPORT_DOCUMENT, VALIDATE_SUPPORT_DOCUMENT);
+        }
     }
 }

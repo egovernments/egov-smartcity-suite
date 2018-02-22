@@ -48,52 +48,61 @@
 
 package org.egov.tl.web.controller.transactions.legacy;
 
+import org.egov.tl.entity.LicenseDocument;
+import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.TradeLicense;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.egov.tl.entity.enums.ApplicationType;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.Errors;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
-@Controller
-@RequestMapping("/legacylicense/update/{id}")
-public class ModifyLegacyLicenseController extends LegacyLicenseController {
+@Component
+public class ModifyLegacyLicenseValidator extends LegacyLicenseValidator {
 
-    private static final String UPDATE_LEGACY_FORM = "updateform-legacylicense";
-
-    @Autowired
-    private ModifyLegacyLicenseValidator modifyLegacyLicenseValidator;
-
-    @ModelAttribute("tradeLicense")
-    public TradeLicense tradeLicense(@PathVariable final Long id) {
-        return tradeLicenseService.getLicenseById(id);
+    @Override
+    public boolean supports(Class<?> clazz) {
+        return TradeLicense.class.equals(clazz);
     }
 
-    @GetMapping
-    public String update(@ModelAttribute TradeLicense tradeLicense, Model model) {
-        model.addAttribute("legacyInstallmentwiseFees", legacyService.legacyInstallmentwiseFees(tradeLicense));
-        model.addAttribute("legacyFeePayStatus", legacyService.legacyFeePayStatus(tradeLicense));
-        return UPDATE_LEGACY_FORM;
-    }
+    @Override
+    public void validate(Object target, Errors errors) {
+        super.validate(target, errors);
+        TradeLicense license = (TradeLicense) target;
 
-    @PostMapping
-    public String update(@Valid @ModelAttribute TradeLicense tradeLicense, BindingResult binding, Model model) {
+        List<LicenseDocument> supportDocs = license.getLicenseDocuments()
+                .stream()
+                .filter(licenseDocument -> licenseDocument.getType().isMandatory())
+                .collect(Collectors.toList());
 
-        modifyLegacyLicenseValidator.validate(tradeLicense, binding);
-        if (binding.hasErrors()) {
-            model.addAttribute("legacyInstallmentwiseFees", legacyService.legacyInstallmentfee(tradeLicense));
-            model.addAttribute("legacyFeePayStatus", legacyService.legacyInstallmentStatus(tradeLicense));
-            return UPDATE_LEGACY_FORM;
+        List<LicenseDocument> existingDocs = new ArrayList<>();
+        if (license.getDocuments().stream().anyMatch(licenseDocument -> !licenseDocument.getFiles().isEmpty())) {
+            existingDocs.addAll(license.getDocuments()
+                    .stream()
+                    .filter(licenseDocument -> licenseDocument.getType().getApplicationType().equals(ApplicationType.NEW)
+                            && licenseDocument.getId() != null)
+                    .collect(Collectors.toList()));
         }
-        tradeLicense.setDocuments(tradeLicense.getLicenseDocuments());
-        legacyService.updateLegacy(tradeLicense);
-        return "redirect:/legacylicense/view/" + tradeLicense.getApplicationNumber();
+
+        List<String> supportDocType = supportDocs.stream().map(LicenseDocument::getType).map(LicenseDocumentType::getName)
+                .collect(Collectors.toList());
+
+        List<String> existingDocsType = existingDocs.stream().map(LicenseDocument::getType).map(LicenseDocumentType::getName)
+                .collect(Collectors.toList());
+
+        if (!supportDocs.isEmpty()
+                && supportDocs.stream().anyMatch(licenseDocument -> licenseDocument.getMultipartFiles().stream().anyMatch(MultipartFile::isEmpty))
+                && (existingDocs.isEmpty() || !supportDocType.stream().filter(
+                        licenseDocumentType -> !existingDocsType.contains(licenseDocumentType)).collect(Collectors.toList()).isEmpty())) {
+            errors.reject("validate.supportDocs");
+        }
+
+        if (license.getCurrentState() != null)
+            errors.rejectValue("id", "validate.legacy.license.modify", new Object[]{license.getLicenseAppType().getName()}, "");
+
     }
 
 }

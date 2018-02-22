@@ -75,7 +75,7 @@ public class CreateLegacyLicenseController extends LegacyLicenseController {
     private static final String CREATE_LEGACY_LICENSE = "create-legacylicense";
 
     @Autowired
-    private LegacyLicenseValidator legacyLicenseValidator;
+    private CreateLegacyLicenseValidator createLegacyLicenseValidator;
 
     @Autowired
     private LicenseAppTypeService licenseAppTypeService;
@@ -106,7 +106,7 @@ public class CreateLegacyLicenseController extends LegacyLicenseController {
 
     @PostMapping("/create")
     public String create(@Valid @ModelAttribute TradeLicense tradeLicense, BindingResult binding, Model model) {
-        legacyLicenseValidator.validate(tradeLicense, binding);
+        createLegacyLicenseValidator.validate(tradeLicense, binding);
         if (binding.hasErrors()) {
             model.addAttribute("legacyInstallmentwiseFees", legacyService.legacyInstallmentfee(tradeLicense));
             model.addAttribute("legacyFeePayStatus", legacyService.legacyFeeStatus(tradeLicense));

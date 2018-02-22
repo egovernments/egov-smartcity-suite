@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -66,7 +66,7 @@
 			<form:hidden path="applicationDate" id="DATE" />
 			<form:hidden id="applicationNumber" path="applicationNumber"
 				value="${applicationNumber}" />
-			<form:hidden path="id" id="tradeLicense.id" value="${id}" />
+			<form:hidden path="id" id="id" value="${id}" />
 			<input type="hidden" name="feeTypeId" id="feeTypeId"
 				value="${feeTypeId}" />
 			<form:hidden path="licenseNumber" id="licenseNumber" />
@@ -76,6 +76,11 @@
 					<div class="panel-title" style="text-align: center">
 						<spring:message code="page.title.entertrade.update" />
 					</div>
+				</div>
+				<div align="center">
+					<form:errors path="" cssClass="alert alert-warning" id="formerror"/>
+					</br>
+				</div>
 					<center><form:errors path="id"  cssClass="error-msg" /></center>
 					<ul class="nav nav-tabs" id="settingstab">
 						<li class="active"><a data-toggle="tab" href="#tradedetails"
@@ -85,7 +90,6 @@
 							data-tabidx="1" aria-expanded="false"><spring:message
 									code="license.support.docs" /></a></li>
 					</ul>
-				</div>
 
 				<div class="panel-body custom-form">
 					<div class="tab-content">

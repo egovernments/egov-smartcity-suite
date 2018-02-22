@@ -486,7 +486,7 @@ public abstract class AbstractLicenseService<T extends License> {
                 }
                 document.setEnclosed(true);
                 document.setDocDate(new Date());
-            } else if (document.getType().isMandatory() && document.getFiles().isEmpty()) {
+            } else if (document.getType().isMandatory() && document.getFiles().isEmpty() && document.getId() == null) {
                 document.getFiles().clear();
                 throw new ValidationException("TL-004", "TL-004", document.getType().getName());
             }

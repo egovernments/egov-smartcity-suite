@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -138,6 +138,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @ValidationErrorPage(NEW)
     @Action(value = "/newtradelicense/newTradeLicense-create")
     public String create() {
+        supportDocumentsValidation();
         return super.create(tradeLicense);
     }
 
@@ -244,6 +245,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @ValidationErrorPageExt(action = NEW, makeCall = true, toMethod = "prepareShowForApproval")
     @Action(value = "/newtradelicense/newTradeLicense-approve")
     public String approve() {
+        supportDocumentsValidationForApproval(tradeLicense);
         if ("Submit".equals(workFlowAction) && mode.equalsIgnoreCase(VIEW)
                 && tradeLicense.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED_STR)
                 && !tradeLicense.isPaid() && !workFlowAction.equalsIgnoreCase(BUTTONREJECT)) {
@@ -252,6 +254,12 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
             throw new ValidationException(Arrays.asList(vr));
         }
         return super.approve();
+    }
+
+    public void prepareShowForApproval() {
+        prepareNewForm();
+        documentTypes = tradeLicenseService.getDocumentTypesByApplicationType(ApplicationType.valueOf(license()
+                .getLicenseAppType().getName().toUpperCase()));
     }
 
     @Override
@@ -277,11 +285,13 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @ValidationErrorPageExt(action = BEFORE_RENEWAL, makeCall = true, toMethod = "prepareRenew")
     @Action(value = "/newtradelicense/newTradeLicense-renewal")
     public String renew() {
+        supportDocumentsValidation();
         return super.renew();
     }
 
     public void prepareRenew() {
         prepareNewForm();
+        documentTypes = tradeLicenseService.getDocumentTypesByApplicationType(ApplicationType.RENEW);
     }
 
     @Override
@@ -385,6 +395,8 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @ValidationErrorPage(NEW)
     @Action(value = "/newtradelicense/newTradeLicense-save")
     public String save() {
+        addNewDocuments();
+        tradeLicenseService.processAndStoreDocument(tradeLicense);
         tradeLicenseService.save(tradeLicense);
         addActionMessage(this.getText("license.saved.succesful"));
         return MESSAGE;

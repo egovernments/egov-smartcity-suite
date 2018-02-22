@@ -49,51 +49,26 @@
 package org.egov.tl.web.controller.transactions.legacy;
 
 import org.egov.tl.entity.TradeLicense;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.Errors;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.Valid;
+@Component
+public class CreateLegacyLicenseValidator extends LegacyLicenseValidator {
 
-@Controller
-@RequestMapping("/legacylicense/update/{id}")
-public class ModifyLegacyLicenseController extends LegacyLicenseController {
-
-    private static final String UPDATE_LEGACY_FORM = "updateform-legacylicense";
-
-    @Autowired
-    private ModifyLegacyLicenseValidator modifyLegacyLicenseValidator;
-
-    @ModelAttribute("tradeLicense")
-    public TradeLicense tradeLicense(@PathVariable final Long id) {
-        return tradeLicenseService.getLicenseById(id);
+    @Override
+    public boolean supports(Class<?> clazz) {
+        return TradeLicense.class.equals(clazz);
     }
 
-    @GetMapping
-    public String update(@ModelAttribute TradeLicense tradeLicense, Model model) {
-        model.addAttribute("legacyInstallmentwiseFees", legacyService.legacyInstallmentwiseFees(tradeLicense));
-        model.addAttribute("legacyFeePayStatus", legacyService.legacyFeePayStatus(tradeLicense));
-        return UPDATE_LEGACY_FORM;
-    }
+    @Override
+    public void validate(Object target, Errors errors) {
+        super.validate(target, errors);
+        TradeLicense license = (TradeLicense) target;
 
-    @PostMapping
-    public String update(@Valid @ModelAttribute TradeLicense tradeLicense, BindingResult binding, Model model) {
-
-        modifyLegacyLicenseValidator.validate(tradeLicense, binding);
-        if (binding.hasErrors()) {
-            model.addAttribute("legacyInstallmentwiseFees", legacyService.legacyInstallmentfee(tradeLicense));
-            model.addAttribute("legacyFeePayStatus", legacyService.legacyInstallmentStatus(tradeLicense));
-            return UPDATE_LEGACY_FORM;
-        }
-        tradeLicense.setDocuments(tradeLicense.getLicenseDocuments());
-        legacyService.updateLegacy(tradeLicense);
-        return "redirect:/legacylicense/view/" + tradeLicense.getApplicationNumber();
+        if (license.getDocuments().stream().anyMatch(licenseDocument -> licenseDocument.getType().isMandatory()
+                && licenseDocument.getMultipartFiles().stream().anyMatch(MultipartFile::isEmpty)))
+            errors.reject("validate.supportDocs");
     }
 
 }
