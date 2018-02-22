@@ -99,3 +99,9 @@
     </div>
 </div>
 <script src="<cdn:url  value='/resources/js/app/process-owner-reassignment.js?rnd=${app_release_no}'/>"></script>
+<script>
+    function showMessage(id, msg) {
+        $('#' + id).show();
+        $('#' + id).text(msg);
+    }
+</script>
