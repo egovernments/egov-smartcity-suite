@@ -136,9 +136,9 @@
 				var currentState = '<s:property value="%{currentState.value}" />';
 				if(gisFlag == 'true'){
 					enableDisableActionsForGIS();
-					if(currentState == 'Alter:Rejected' && jQuery('#thirdPartyVerified').is(":checked")){
+					//if(currentState == 'Alter:Rejected' && jQuery('#thirdPartyVerified').is(":checked")){
 						jQuery('#thirdPartyVerified').attr('disabled', true);
-					}
+					//}
 				}
 			}
 			
