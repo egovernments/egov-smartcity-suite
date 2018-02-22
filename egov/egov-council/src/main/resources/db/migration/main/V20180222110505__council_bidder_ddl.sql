@@ -4,7 +4,7 @@ create table egcncl_preamble_bidder(
  bidder bigint,
  tendertype varchar(25) ,
  percentage double precision DEFAULT 0,
- Amount bigint,PHOENIX-7728
+ Amount bigint,
  position varchar(10),
  isAwarded boolean,
  CONSTRAINT fk_egcncl_preamble_bidder FOREIGN KEY (preamble)
