@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2018  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -45,28 +45,51 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
+package org.egov.restapi.web.controller.council;
 
-package org.egov.council.repository;
+import static org.apache.commons.lang.StringUtils.isBlank;
 
-import org.egov.council.entity.CouncilRouter;
 import org.egov.council.enums.PreambleTypeEnum;
-import org.egov.infra.admin.master.entity.Department;
-import org.springframework.data.elasticsearch.annotations.Query;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+import org.egov.council.service.CouncilPreambleService;
+import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.restapi.web.contracts.councilpreamble.CouncilPreambleRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
 
-@Repository
-public interface CouncilRouterRepository extends JpaRepository<CouncilRouter, Long> {
+@Component
+public class PreambleCreateAPIValidator implements Validator {
 
-    CouncilRouter findById(Long id);
+    @Autowired
+    private DepartmentService departmentService;
 
-    CouncilRouter findByTypeAndDepartment(@Param("type") PreambleTypeEnum type, @Param("department") Department department);
+    @Autowired
+    private CouncilPreambleService councilPreambleService;
 
-    CouncilRouter findByType(@Param("type") PreambleTypeEnum type);
+    @Override
+    public boolean supports(final Class<?> clazz) {
+        return CouncilPreambleRequest.class.equals(clazz);
+    }
 
-    @Query(" from CouncilRouter c where c.department.id =:departmentId and c.type =:type and c.position.id =:positionId")
-    CouncilRouter findByAllParams(@Param("departmentId") Long departmentId, @Param("type") PreambleTypeEnum type,
-            @Param("positionId") Long positionId);
+    @Override
+    public void validate(final Object target, final Errors errors) {
 
+        final CouncilPreambleRequest preamble = (CouncilPreambleRequest) target;
+
+        if (departmentService.getDepartmentByCode(preamble.getDepartmentcode()) == null)
+            errors.rejectValue("departmentcode", "Invalid DepartMent Code", "Invalid DepartMent Code");
+
+        if (isBlank(preamble.getReferenceNumber()))
+            errors.rejectValue("referenceNumber", "Provide Reference Number",
+                    "Provide Reference Number");
+
+        if (!preamble.getPreambleType().equals(PreambleTypeEnum.WORKS.name().toString()))
+            errors.rejectValue("preambleType", "Invalid preambleType", "Invalid preambleType");
+
+        if (councilPreambleService.findbyReferenceNumber(preamble.getReferenceNumber()) != null)
+            errors.rejectValue("referenceNumber", "Preamble already Created",
+                    "Preamble already Created with reference Number " + preamble.getReferenceNumber());
+
+    }
 }

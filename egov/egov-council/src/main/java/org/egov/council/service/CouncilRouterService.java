@@ -53,8 +53,11 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.council.entity.CouncilPreamble;
 import org.egov.council.entity.CouncilRouter;
 import org.egov.council.repository.CouncilRouterRepository;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.pims.commons.Position;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -110,6 +113,26 @@ public class CouncilRouterService {
         return criteria.list();
     }
 
+    
+    public Position getCouncilAssignee(CouncilPreamble councilPreamble) {
+        CouncilRouter councilRouter = getCouncilRouter(councilPreamble);
+        if (councilRouter == null)
+            throw new ApplicationRuntimeException("COUNCIL.001");
+        else
+            return councilRouter.getPosition();
+    }
+    
+    public CouncilRouter getCouncilRouter(CouncilPreamble councilPreamble) {
+        CouncilRouter councilRouter;
+        councilRouter = councilRouterRepository
+                    .findByTypeAndDepartment(councilPreamble.getTypeOfPreamble(), councilPreamble.getDepartment());
+            if (councilRouter == null) {               
+                councilRouter = councilRouterRepository.findByType(councilPreamble.getTypeOfPreamble());               
+            }
+        
+        return councilRouter;
+    }
+    
     public void validateCouncilRouter(CouncilRouter councilRouter, BindingResult errors) {
         CouncilRouter router = councilRouterRepository.findByAllParams(councilRouter.getDepartment().getId(),
                 councilRouter.getType(), councilRouter.getPosition().getId());

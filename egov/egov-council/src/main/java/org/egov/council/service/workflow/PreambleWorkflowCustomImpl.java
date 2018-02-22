@@ -51,6 +51,7 @@ import java.util.Date;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.council.entity.CouncilPreamble;
+import org.egov.council.service.CouncilRouterService;
 import org.egov.council.utils.constants.CouncilConstants;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -72,6 +73,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class PreambleWorkflowCustomImpl implements PreambleWorkflowCustom {
+    private static final String ANONYMOUS = "Anonymous";
+
     private static final Logger LOG = LoggerFactory.getLogger(PreambleWorkflowCustomImpl.class);
 
     @Autowired
@@ -88,6 +91,9 @@ public class PreambleWorkflowCustomImpl implements PreambleWorkflowCustom {
     @Autowired
     @Qualifier("workflowService")
     private SimpleWorkflowService<CouncilPreamble> councilPreambleWorkflowService;
+ 
+    @Autowired
+    private CouncilRouterService councilRouterService;
 
     @Override
     public void createCommonWorkflowTransition(CouncilPreamble councilPreamble, Long approvalPosition,
@@ -103,6 +109,9 @@ public class PreambleWorkflowCustomImpl implements PreambleWorkflowCustom {
         WorkFlowMatrix wfmatrix = null;
 
         if (null != councilPreamble.getId()) {
+            if(ANONYMOUS.equalsIgnoreCase(councilPreamble.getCreatedBy().getName()))
+            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(councilPreamble.getState().getInitiatorPosition().getId());
+            else
             wfInitiator = assignmentService.getPrimaryAssignmentForUser(councilPreamble.getCreatedBy().getId());
         }
 
@@ -254,4 +263,17 @@ public class PreambleWorkflowCustomImpl implements PreambleWorkflowCustom {
     private EgwStatus getStatusByPassingStatusCode(String statusCode) {
         return egwStatusHibernateDAO.getStatusByModuleAndCode(CouncilConstants.PREAMBLE_MODULE_TYPE, statusCode);
     }
+    
+    public void onCreatePreambleAPI(CouncilPreamble councilPreamble) {
+    WorkFlowMatrix  wfmatrix= councilPreambleWorkflowService.getWfMatrix(councilPreamble.getStateType(), null, null, null,
+            CouncilConstants.WF_NEW_STATE, null);
+    Position assignee = councilRouterService .getCouncilAssignee(councilPreamble);
+    
+    councilPreamble.transition()
+            .start()
+            .withStateValue(CouncilConstants.WF_NEW_STATE)
+            .withOwner(assignee).withNextAction(wfmatrix.getNextAction()).withDateInfo(new Date())
+            .withNatureOfTask(CouncilConstants.NATURE_OF_WORK).withInitiator(assignee);
+    }
+   
 }

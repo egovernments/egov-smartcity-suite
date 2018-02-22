@@ -70,6 +70,8 @@ import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.council.autonumber.PreambleNumberGenerator;
 import org.egov.council.entity.CouncilPreamble;
 import org.egov.council.entity.enums.PreambleType;
+import org.egov.council.enums.PreambleTypeEnum;
+import org.egov.council.service.BidderService;
 import org.egov.council.service.CouncilPreambleService;
 import org.egov.council.service.CouncilThirdPartyService;
 import org.egov.council.utils.constants.CouncilConstants;
@@ -119,10 +121,14 @@ public class CouncilPreambleController extends GenericWorkFlowController {
     private static final String COUNCILPREAMBLE_NEW = "councilpreamble-new";
     private static final String COUNCILPREAMBLE_RESULT = "councilpreamble-result";
     private static final String COUNCILPREAMBLE_EDIT = "councilpreamble-edit";
+    private static final String COUNCILPREAMBLE_API_EDIT ="councilpreambleapi-edit";
     private static final String COUNCILPREAMBLE_VIEW = "councilpreamble-view";
     private static final String COUNCILPREAMBLE_SEARCH = "councilpreamble-search";
     private static final String COUNCILPREAMBLE_UPDATE_STATUS = "councilpreamble-update-status";
     private static final String COMMONERRORPAGE = "common-error-page";
+    
+    
+    private static final String COUNCILPREAMBLE_API_VIEW = "councilpreamble-viewnew";
     private static final Logger LOGGER = Logger
             .getLogger(CouncilPreambleController.class);
     @Qualifier("fileStoreService")
@@ -146,6 +152,8 @@ public class CouncilPreambleController extends GenericWorkFlowController {
     private BoundaryService boundaryService;
     @Autowired
     private AppConfigValueService appConfigValueService;
+    @Autowired
+    private BidderService bidderService;
 
     @ModelAttribute("departments")
     public List<Department> getDepartmentList() {
@@ -408,12 +416,20 @@ public class CouncilPreambleController extends GenericWorkFlowController {
         model.addAttribute(APPLICATION_HISTORY,
                 councilThirdPartyService.getHistory(councilPreamble));
         model.addAttribute("wfNextAction", councilPreamble.getState().getNextAction());
-        if ("PREAMBLEAPPROVEDFORMOM".equals(councilPreamble.getStatus().getCode())) {
+        if ("PREAMBLEAPPROVEDFORMOM".equals(councilPreamble.getStatus().getCode())
+                && !PreambleTypeEnum.WORKS.equals(councilPreamble.getTypeOfPreamble())) {
             return COUNCILPREAMBLE_VIEW;
         }
+        if (PreambleTypeEnum.WORKS.equals(councilPreamble.getTypeOfPreamble())) {
+            model.addAttribute("bidders", bidderService.getBidderDetails(councilPreamble.getId()));
+            if ("PREAMBLEAPPROVEDFORMOM".equals(councilPreamble.getStatus().getCode()))
+                return COUNCILPREAMBLE_API_VIEW;
+            return COUNCILPREAMBLE_API_EDIT;
+        }
         return COUNCILPREAMBLE_EDIT;
-
+                 
     }
+   
 
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
     public String view(@PathVariable("id") final Long id, Model model) {

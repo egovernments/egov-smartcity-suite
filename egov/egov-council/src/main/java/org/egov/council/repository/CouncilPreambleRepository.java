@@ -64,5 +64,7 @@ public interface CouncilPreambleRepository extends JpaRepository<CouncilPreamble
     List<CouncilPreamble> findBydepartment(@Param("department") long department);
 
     CouncilPreamble findByPreambleNumber(String preambleNumber);
+    
+    CouncilPreamble findByReferenceNumber(String referenceNumber);
 
 }

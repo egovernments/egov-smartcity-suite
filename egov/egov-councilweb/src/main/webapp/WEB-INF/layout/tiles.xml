@@ -189,6 +189,11 @@
         <put-attribute name="page-title" value="title.councilpreamble.edit" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/councilpreamble/councilpreamble-edit.jsp"/>
     </definition>
+    
+    <definition name="councilpreambleapi-edit" extends="base_layout">
+        <put-attribute name="page-title" value="title.councilpreamble.edit" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/councilpreamble/councilpreambleapi-edit.jsp"/>
+    </definition>
 
     <definition name="councilpreamble-search" extends="base_layout">
         <put-attribute name="page-title" value="title.councilpreamble.search" cascade="true"/>
@@ -199,6 +204,13 @@
         <put-attribute name="page-title" value="title.councilpreamble.view" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/councilpreamble/councilpreamble-view.jsp"/>
     </definition>
+    
+    <definition name="councilpreamble-viewnew" extends="base_layout">
+        <put-attribute name="page-title" value="title.councilpreamble.view" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/councilpreamble/councilpreamble-viewnew.jsp"/>
+    </definition>
+    
+    
 
     <definition name="councilcommittetype-new" extends="base_layout">
         <put-attribute name="page-title" value="title.councilcommitteetype.new" cascade="true"/>

@@ -46,27 +46,60 @@
  *
  */
 
-package org.egov.council.repository;
+package org.egov.restapi.web.contracts.councilpreamble;
 
-import org.egov.council.entity.CouncilRouter;
-import org.egov.council.enums.PreambleTypeEnum;
-import org.egov.infra.admin.master.entity.Department;
-import org.springframework.data.elasticsearch.annotations.Query;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+public class CouncilPreambleResponse {
 
-@Repository
-public interface CouncilRouterRepository extends JpaRepository<CouncilRouter, Long> {
+    private String referenceNumber = "";
 
-    CouncilRouter findById(Long id);
+    private String preambleNumber = "";
 
-    CouncilRouter findByTypeAndDepartment(@Param("type") PreambleTypeEnum type, @Param("department") Department department);
+    private String status;
 
-    CouncilRouter findByType(@Param("type") PreambleTypeEnum type);
+    private String message;
 
-    @Query(" from CouncilRouter c where c.department.id =:departmentId and c.type =:type and c.position.id =:positionId")
-    CouncilRouter findByAllParams(@Param("departmentId") Long departmentId, @Param("type") PreambleTypeEnum type,
-            @Param("positionId") Long positionId);
+    public CouncilPreambleResponse(String status, String message) {
+        this.status = status;
+        this.message = message;
+    }
+
+    public CouncilPreambleResponse(String referenceNumber, String preambleNumber, String status, String message) {
+        this.referenceNumber = referenceNumber;
+        this.preambleNumber = preambleNumber;
+        this.status = status;
+        this.message = message;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getReferenceNumber() {
+        return referenceNumber;
+    }
+
+    public void setReferenceNumber(String referenceNumber) {
+        this.referenceNumber = referenceNumber;
+    }
+
+    public String getPreambleNumber() {
+        return preambleNumber;
+    }
+
+    public void setPreambleNumber(String preambleNumber) {
+        this.preambleNumber = preambleNumber;
+    }
 
 }

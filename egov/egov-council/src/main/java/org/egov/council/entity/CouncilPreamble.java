@@ -48,8 +48,32 @@
 
 package org.egov.council.entity;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+
 import org.egov.commons.EgwStatus;
 import org.egov.council.entity.enums.PreambleType;
+import org.egov.council.enums.PreambleTypeEnum;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.filestore.entity.FileStoreMapper;
@@ -57,13 +81,6 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Position;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 @Entity
 @Table(name = "egcncl_preamble")
@@ -116,7 +133,21 @@ public class CouncilPreamble extends StateAware<Position> {
 
     @Enumerated(EnumType.ORDINAL)
     private PreambleType type;
-
+    
+    @Length(max = 256)
+    private String referenceNumber;
+    
+    @Enumerated(EnumType.ORDINAL)
+    @JoinColumn(name = "preamble_type")
+    private PreambleTypeEnum typeOfPreamble; 
+    
+    @Length(max = 10000)
+    @JoinColumn(name = "addtionalGistOfPreamble")
+    private String addtionalGistOfPreamble;
+    
+    @OneToMany(mappedBy = "preamble", cascade = CascadeType.ALL)
+    private List<CouncilPreambleBidderDetails> bidderDetails = new ArrayList<>();
+    
     @Transient
     private Date fromDate;
 
@@ -273,5 +304,38 @@ public class CouncilPreamble extends StateAware<Position> {
 
     public void setImplementationStatus(EgwStatus implementationStatus) {
         this.implementationStatus = implementationStatus;
+    }
+
+    public String getReferenceNumber() {
+        return referenceNumber;
+    }
+
+    public void setReferenceNumber(String referenceNumber) {
+        this.referenceNumber = referenceNumber;
+    }
+
+    public PreambleTypeEnum getTypeOfPreamble() {
+        return typeOfPreamble;
+    }
+
+    public void setTypeOfPreamble(PreambleTypeEnum typeOfPreamble) {
+        this.typeOfPreamble = typeOfPreamble;
+    }
+
+
+    public List<CouncilPreambleBidderDetails> getBidderDetails() {
+        return bidderDetails;
+    }
+
+    public void setBidderDetails(List<CouncilPreambleBidderDetails> bidderDetails) {
+        this.bidderDetails = bidderDetails;
+    }
+
+    public String getAddtionalGistOfPreamble() {
+        return addtionalGistOfPreamble;
+    }
+
+    public void setAddtionalGistOfPreamble(String addtionalGistOfPreamble) {
+        this.addtionalGistOfPreamble = addtionalGistOfPreamble;
     }
 }
