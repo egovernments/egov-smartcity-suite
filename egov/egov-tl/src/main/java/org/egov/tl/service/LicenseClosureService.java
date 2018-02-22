@@ -66,6 +66,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -168,6 +169,7 @@ public class LicenseClosureService {
         if (AUTO.equals(license.getApplicationNumber()))
             license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
         license.setNewWorkflow(true);
+        license.setApplicationDate(new Date());
         license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
         license.setLicenseAppType(licenseAppTypeService.getLicenseAppTypeByName(CLOSURE_LIC_APPTYPE));
         licenseRepository.saveAndFlush(license);

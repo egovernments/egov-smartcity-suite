@@ -58,7 +58,7 @@
 	</parameter>
 	<field name="licensee" class="java.lang.Object"/>
 	<field name="boundary" class="java.lang.Object"/>
-	<field name="tradeName" class="java.lang.Object"/>
+	<field name="nameOfEstablishment" class="java.lang.String"/>
 	<field name="licenseNumber" class="java.lang.String"/>
 	<field name="assessmentNo" class="java.lang.String"/>
 	<field name="applicationNumber" class="java.lang.String"/>
@@ -165,7 +165,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Your Application No. "+$F{applicationNumber}+"  dt. " +new SimpleDateFormat("dd/MM/yyyy").format($P{License}.getCreatedDate())]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Your Application No. "+$F{applicationNumber}+"  dt. " +new SimpleDateFormat("dd/MM/yyyy").format($P{License}.getApplicationDate())]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="33" y="239" width="475" height="100" isPrintWhenDetailOverflows="true" uuid="25a7f3f8-9b67-460c-bed4-0c4e2e9c7870"/>
@@ -216,7 +216,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{tradeName}.getName()+" ,"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{nameOfEstablishment}+" ,"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="33" y="528" width="247" height="20" isPrintWhenDetailOverflows="true" uuid="ab8661e3-7824-42dc-b7ce-39b1cac8f3fa"/>
