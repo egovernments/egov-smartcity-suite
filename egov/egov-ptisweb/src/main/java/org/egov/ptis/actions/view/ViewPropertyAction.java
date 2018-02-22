@@ -47,6 +47,47 @@
  */
 package org.egov.ptis.actions.view;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_AMALGAMATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARREARS;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_UNAUTHORIZED_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOT_AVAILABLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -82,19 +123,7 @@ import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 @ParentPackage("egov")
 @Results({ @Result(name = "view", location = "viewProperty-view.jsp"),
@@ -134,7 +163,7 @@ public class ViewPropertyAction extends BaseFormAction {
     @Autowired
     private transient PropertyService propService;
     @Autowired
-    private VacancyRemissionRepository vacancyRemissionRepository;
+    private transient VacancyRemissionRepository vacancyRemissionRepository;
     @PersistenceContext
     private transient EntityManager entityManager;
 
@@ -196,12 +225,12 @@ public class ViewPropertyAction extends BaseFormAction {
                         viewMap.put("firstHalf", CURRENTYEAR_FIRST_HALF);
                         viewMap.put(
                                 "firstHalfGT",
-                                reasonDmd.get(DEMANDRSN_STR_GENERAL_TAX) != null ? reasonDmd
-                                        .get(DEMANDRSN_STR_GENERAL_TAX) : reasonDmd.get(DEMANDRSN_STR_VACANT_TAX));
+                                reasonDmd.get(DEMANDRSN_STR_GENERAL_TAX) != null ? propertyTaxCommonUtils.getAggregateGenralTax(reasonDmd)
+                                        : reasonDmd.get(DEMANDRSN_STR_VACANT_TAX));
                         viewMap.put(
                                 "firstHalfEC",
-                                reasonDmd.get(DEMANDRSN_STR_EDUCATIONAL_CESS) != null ? reasonDmd
-                                        .get(DEMANDRSN_STR_EDUCATIONAL_CESS) : BigDecimal.ZERO);
+                                reasonDmd.get(DEMANDRSN_STR_EDUCATIONAL_TAX) != null ? reasonDmd
+                                        .get(DEMANDRSN_STR_EDUCATIONAL_TAX) : BigDecimal.ZERO);
                         viewMap.put("firstHalfLC", reasonDmd.get(DEMANDRSN_STR_LIBRARY_CESS));
                         viewMap.put(
                                 "firstHalfUAP",
@@ -218,12 +247,12 @@ public class ViewPropertyAction extends BaseFormAction {
                         viewMap.put("secondHalf", CURRENTYEAR_SECOND_HALF);
                         viewMap.put(
                                 "secondHalfGT",
-                                reasonDmd.get(DEMANDRSN_STR_GENERAL_TAX) != null ? reasonDmd
-                                        .get(DEMANDRSN_STR_GENERAL_TAX) : reasonDmd.get(DEMANDRSN_STR_VACANT_TAX));
+                                reasonDmd.get(DEMANDRSN_STR_GENERAL_TAX) != null ? propertyTaxCommonUtils.getAggregateGenralTax(reasonDmd)
+                                        : reasonDmd.get(DEMANDRSN_STR_VACANT_TAX));
                         viewMap.put(
                                 "secondHalfEC",
-                                reasonDmd.get(DEMANDRSN_STR_EDUCATIONAL_CESS) != null ? reasonDmd
-                                        .get(DEMANDRSN_STR_EDUCATIONAL_CESS) : BigDecimal.ZERO);
+                                reasonDmd.get(DEMANDRSN_STR_EDUCATIONAL_TAX) != null ? reasonDmd
+                                        .get(DEMANDRSN_STR_EDUCATIONAL_TAX) : BigDecimal.ZERO);
                         viewMap.put("secondHalfLC", reasonDmd.get(DEMANDRSN_STR_LIBRARY_CESS));
                         viewMap.put(
                                 "secondHalfUAP",

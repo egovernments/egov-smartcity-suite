@@ -63,190 +63,156 @@ import java.util.Set;
 
 public class EgDemandReason implements java.io.Serializable {
 
-	// Fields
+    private static final long serialVersionUID = -350500622911242114L;
+    private Long id;
+    private EgDemandReason egDemandReason;
+    private EgDemandReasonMaster egDemandReasonMaster;
+    private Installment egInstallmentMaster;
+    private BigDecimal percentageBasis;
+    private Date createDate;
+    private Date modifiedDate;
+    private Set<EgDemandDetails> egDemandDetails = new HashSet<>(
+            0);
+    private CChartOfAccounts glcodeId;
 
-	private Long id;
-	private EgDemandReason egDemandReason;
-	private EgDemandReasonMaster egDemandReasonMaster;
-	private Installment egInstallmentMaster;
-	private BigDecimal percentageBasis;
-	private Date createDate;
-	private Date modifiedDate;
-	private Set<EgDemandReasonDetails> egDemandReasonDetails = new HashSet<EgDemandReasonDetails>(
-			0);
-	private Set<EgDemandDetails> egDemandDetails = new HashSet<EgDemandDetails>(
-			0);
-	/**
-	 * FIXME Check with ramki eg_demand_reason does not have purpose_id
-	 */
-	//private EgfAccountcodePurpose purposeCode = null;
-	private CChartOfAccounts glcodeId;
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(egDemandReasonMaster).append("-").append(egInstallmentMaster);
+        return sb.toString();
+    }
 
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(egDemandReasonMaster).append("-").append(egInstallmentMaster);
-		return sb.toString();
-	}
+    public Long getId() {
+        return this.id;
+    }
 
-	public Long getId() {
-		return this.id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public EgDemandReason getEgDemandReason() {
+        return this.egDemandReason;
+    }
 
-	public EgDemandReason getEgDemandReason() {
-		return this.egDemandReason;
-	}
+    public void setEgDemandReason(EgDemandReason egDemandReason) {
+        this.egDemandReason = egDemandReason;
+    }
 
-	public void setEgDemandReason(EgDemandReason egDemandReason) {
-		this.egDemandReason = egDemandReason;
-	}
+    public EgDemandReasonMaster getEgDemandReasonMaster() {
+        return this.egDemandReasonMaster;
+    }
 
-	public EgDemandReasonMaster getEgDemandReasonMaster() {
-		return this.egDemandReasonMaster;
-	}
+    public void setEgDemandReasonMaster(
+            EgDemandReasonMaster egDemandReasonMaster) {
+        this.egDemandReasonMaster = egDemandReasonMaster;
+    }
 
-	public void setEgDemandReasonMaster(
-			EgDemandReasonMaster egDemandReasonMaster) {
-		this.egDemandReasonMaster = egDemandReasonMaster;
-	}
+    public Installment getEgInstallmentMaster() {
+        return this.egInstallmentMaster;
+    }
 
-	public Installment getEgInstallmentMaster() {
-		return this.egInstallmentMaster;
-	}
+    public void setEgInstallmentMaster(Installment egInstallmentMaster) {
+        this.egInstallmentMaster = egInstallmentMaster;
+    }
 
-	public void setEgInstallmentMaster(Installment egInstallmentMaster) {
-		this.egInstallmentMaster = egInstallmentMaster;
-	}
+    public BigDecimal getPercentageBasis() {
+        return this.percentageBasis;
+    }
 
-	public BigDecimal getPercentageBasis() {
-		return this.percentageBasis;
-	}
+    public void setPercentageBasis(BigDecimal percentageBasis) {
+        this.percentageBasis = percentageBasis;
+    }
 
-	public void setPercentageBasis(BigDecimal percentageBasis) {
-		this.percentageBasis = percentageBasis;
-	}
+    public Set<EgDemandDetails> getEgDemandDetails() {
+        return egDemandDetails;
+    }
 
-	public Set<EgDemandReasonDetails> getEgDemandReasonDetails() {
-		return egDemandReasonDetails;
-	}
+    public void setEgDemandDetails(Set<EgDemandDetails> egDemandDetails) {
+        this.egDemandDetails = egDemandDetails;
+    }
 
-	public void setEgDemandReasonDetails(
-			Set<EgDemandReasonDetails> egDemandReasonDetails) {
-		this.egDemandReasonDetails = egDemandReasonDetails;
-	}
+    public void addEgDemandDetails(EgDemandDetails egDemandDetails) {
+        getEgDemandDetails().add(egDemandDetails);
+    }
 
-	public Set<EgDemandDetails> getEgDemandDetails() {
-		return egDemandDetails;
-	}
+    public void removeEgDemandDetails(EgDemandDetails egDemandDetails) {
+        getEgDemandDetails().remove(egDemandDetails);
+    }
 
-	public void setEgDemandDetails(Set<EgDemandDetails> egDemandDetails) {
-		this.egDemandDetails = egDemandDetails;
-	}
+    public Date getCreateDate() {
+        return createDate;
+    }
 
-	public void addEgDemandReasonDetails(
-			EgDemandReasonDetails egDemandReasonDetails) {
-		getEgDemandReasonDetails().add(egDemandReasonDetails);
-	}
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
 
-	public void removeEgDemandReasonDetails(
-			EgDemandReasonDetails egDemandReasonDetails) {
-		getEgDemandReasonDetails().remove(egDemandReasonDetails);
-	}
+    public Date getModifiedDate() {
+        return modifiedDate;
+    }
 
-	public void addEgDemandDetails(EgDemandDetails egDemandDetails) {
-		getEgDemandDetails().add(egDemandDetails);
-	}
+    public void setModifiedDate(Date modifiedDate) {
+        this.modifiedDate = modifiedDate;
+    }
 
-	public void removeEgDemandDetails(EgDemandDetails egDemandDetails) {
-		getEgDemandDetails().remove(egDemandDetails);
-	}
+    /**
+     * @return Returns if the given Object is equal to PropertyImpl
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null)
+            return false;
 
-	/*public EgfAccountcodePurpose getPurposeCode() {
-		return purposeCode;
-	}
+        if (this == obj)
+            return true;
 
-	public void setPurposeCode(EgfAccountcodePurpose purposeCode) {
-		this.purposeCode = purposeCode;
-	}*/
+        if (!(obj instanceof EgDemandReason))
+            return false;
 
-	public Date getCreateDate() {
-		return createDate;
-	}
+        final EgDemandReason other = (EgDemandReason) obj;
 
-	public void setCreateDate(Date createDate) {
-		this.createDate = createDate;
-	}
+        if (getId() != null || other.getId() != null) {
+            if (getId().equals(other.getId())) {
+                return true;
+            }
+        }
+        if ((getEgDemandReasonMaster() != null || other
+                .getEgDemandReasonMaster() != null)
+                && (getEgInstallmentMaster() != null || other
+                        .getEgInstallmentMaster() != null)) {
+            return getEgDemandReasonMaster().equals(
+                    other.getEgDemandReasonMaster())
+                    && getEgInstallmentMaster().equals(
+                            other.getEgInstallmentMaster());
+        } else
+            return false;
+    }
 
-	public Date getModifiedDate() {
-		return modifiedDate;
-	}
+    /**
+     * @return Returns the hashCode
+     */
+    @Override
+    public int hashCode() {
+        int hashCode = 0;
 
-	public void setModifiedDate(Date modifiedDate) {
-		this.modifiedDate = modifiedDate;
-	}
+        if (getId() != null) {
+            hashCode = hashCode + this.getId().hashCode();
+        }
+        if (getEgDemandReasonMaster() != null) {
+            hashCode = hashCode + this.getEgDemandReasonMaster().hashCode();
+        }
+        if (getEgInstallmentMaster() != null) {
+            hashCode = hashCode + this.getEgInstallmentMaster().hashCode();
+        }
+        return hashCode;
+    }
 
-	/**
-	 * @return Returns if the given Object is equal to PropertyImpl
-	 */
-	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
+    public CChartOfAccounts getGlcodeId() {
+        return glcodeId;
+    }
 
-		if (this == obj)
-			return true;
-
-		if (!(obj instanceof EgDemandReason))
-			return false;
-
-		final EgDemandReason other = (EgDemandReason) obj;
-
-		if (getId() != null || other.getId() != null) {
-			if (getId().equals(other.getId())) {
-				return true;
-			}
-		}
-		if ((getEgDemandReasonMaster() != null || other
-				.getEgDemandReasonMaster() != null)
-				&& (getEgInstallmentMaster() != null || other
-						.getEgInstallmentMaster() != null)) {
-			if (getEgDemandReasonMaster().equals(
-					other.getEgDemandReasonMaster())
-					&& getEgInstallmentMaster().equals(
-							other.getEgInstallmentMaster())) {
-				return true;
-			} else
-				return false;
-		} else
-			return false;
-	}
-
-	/**
-	 * @return Returns the hashCode
-	 */
-	public int hashCode() {
-		int hashCode = 0;
-
-		if (getId() != null) {
-			hashCode = hashCode + this.getId().hashCode();
-		}
-		if (getEgDemandReasonMaster() != null) {
-			hashCode = hashCode + this.getEgDemandReasonMaster().hashCode();
-		}
-		if (getEgInstallmentMaster() != null) {
-			hashCode = hashCode + this.getEgInstallmentMaster().hashCode();
-		}
-		return hashCode;
-	}
-
-	public CChartOfAccounts getGlcodeId() {
-		return glcodeId;
-	}
-
-	public void setGlcodeId(CChartOfAccounts glcodeId) {
-		this.glcodeId = glcodeId;
-	}
+    public void setGlcodeId(CChartOfAccounts glcodeId) {
+        this.glcodeId = glcodeId;
+    }
 
 }

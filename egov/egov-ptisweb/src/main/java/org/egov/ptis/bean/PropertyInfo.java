@@ -86,7 +86,7 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.NON_HISTORY_TAX_DETAIL;
@@ -197,7 +197,7 @@ public class PropertyInfo {
 
 		try {
 			taxAndMinEffDate.put(DEMANDRSN_CODE_GENERAL_TAX, getMinEffectiveDate(DEMANDRSN_CODE_GENERAL_TAX));
-			taxAndMinEffDate.put(DEMANDRSN_CODE_EDUCATIONAL_CESS, getMinEffectiveDate(DEMANDRSN_CODE_EDUCATIONAL_CESS));
+			taxAndMinEffDate.put(DEMANDRSN_CODE_EDUCATIONAL_TAX, getMinEffectiveDate(DEMANDRSN_CODE_EDUCATIONAL_TAX));
 			taxAndMinEffDate.put(DEMANDRSN_CODE_LIBRARY_CESS, getMinEffectiveDate(DEMANDRSN_CODE_LIBRARY_CESS));
 		} catch (ParseException pe) {
 			LOGGER.error(errorMsg, pe);

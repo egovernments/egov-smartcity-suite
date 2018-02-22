@@ -47,11 +47,11 @@
  */
 package org.egov.demand.model;
 
-import org.egov.infra.admin.master.entity.Module;
-
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.egov.infra.admin.master.entity.Module;
 
 /**
  * EgDemandReasonMaster entity.
@@ -65,110 +65,119 @@ import java.util.Set;
  */
 public class EgDemandReasonMaster implements java.io.Serializable {
 
-	// Fields
+    private static final long serialVersionUID = -1095476256868037807L;
+    private Long id;
+    private Module egModule;
+    private EgReasonCategory egReasonCategory;
+    private String reasonMaster;
+    private String isDebit;
+    private String code;
+    private Long orderId;
+    private Date createdDate;
+    private Date modifiedDate;
+    private Set<EgDemandReason> egDemandReasons = new HashSet<>(0);
+    private Set<EgDemandReasonDetails> egDemandReasonDetails = new HashSet<>(0);
+    private Boolean isDemand;
 
-	private Long id;
-	private Module egModule;
-	private EgReasonCategory egReasonCategory;
-	private String reasonMaster;
-	private String isDebit;
-	private String code;
-	private Long orderId;
-	private Date createdDate;
-	private Date modifiedDate;
-	private Set<EgDemandReason> egDemandReasons = new HashSet<EgDemandReason>(0);
-	private Boolean isDemand;
-	public String toString() {
-	    return code;
-	}
+    @Override
+    public String toString() {
+        return code;
+    }
 
-	public Long getId() {
-		return this.id;
-	}
+    public Long getId() {
+        return this.id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public Module getEgModule() {
-		return this.egModule;
-	}
+    public Module getEgModule() {
+        return this.egModule;
+    }
 
-	public void setEgModule(Module egModule) {
-		this.egModule = egModule;
-	}
+    public void setEgModule(Module egModule) {
+        this.egModule = egModule;
+    }
 
-	public EgReasonCategory getEgReasonCategory() {
-		return this.egReasonCategory;
-	}
+    public EgReasonCategory getEgReasonCategory() {
+        return this.egReasonCategory;
+    }
 
-	public void setEgReasonCategory(EgReasonCategory egReasonCategory) {
-		this.egReasonCategory = egReasonCategory;
-	}
+    public void setEgReasonCategory(EgReasonCategory egReasonCategory) {
+        this.egReasonCategory = egReasonCategory;
+    }
 
-	public String getReasonMaster() {
-		return this.reasonMaster;
-	}
+    public String getReasonMaster() {
+        return this.reasonMaster;
+    }
 
-	public void setReasonMaster(String reasonMaster) {
-		this.reasonMaster = reasonMaster;
-	}
+    public void setReasonMaster(String reasonMaster) {
+        this.reasonMaster = reasonMaster;
+    }
 
-	public String getIsDebit() {
-		return this.isDebit;
-	}
+    public String getIsDebit() {
+        return this.isDebit;
+    }
 
-	public void setIsDebit(String isDebit) {
-		this.isDebit = isDebit;
-	}
+    public void setIsDebit(String isDebit) {
+        this.isDebit = isDebit;
+    }
 
-	public String getCode() {
-		return this.code;
-	}
+    public String getCode() {
+        return this.code;
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public Long getOrderId() {
-		return this.orderId;
-	}
+    public Long getOrderId() {
+        return this.orderId;
+    }
 
-	public void setOrderId(Long orderId) {
-		this.orderId = orderId;
-	}
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
+    }
 
-	public Set<EgDemandReason> getEgDemandReasons() {
-		return this.egDemandReasons;
-	}
+    public Set<EgDemandReason> getEgDemandReasons() {
+        return this.egDemandReasons;
+    }
 
-	public void setEgDemandReasons(Set<EgDemandReason> egDemandReasons) {
-		this.egDemandReasons = egDemandReasons;
-	}
+    public void setEgDemandReasons(Set<EgDemandReason> egDemandReasons) {
+        this.egDemandReasons = egDemandReasons;
+    }
 
-	public Date getCreatedDate() {
-		return createdDate;
-	}
+    public Date getCreatedDate() {
+        return createdDate;
+    }
 
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
 
-	public Date getModifiedDate() {
-		return modifiedDate;
-	}
+    public Date getModifiedDate() {
+        return modifiedDate;
+    }
 
-	public void setModifiedDate(Date modifiedDate) {
-		this.modifiedDate = modifiedDate;
-	}
+    public void setModifiedDate(Date modifiedDate) {
+        this.modifiedDate = modifiedDate;
+    }
 
-        public Boolean getIsDemand() {
-            return isDemand;
-        }
-    
-        public void setIsDemand(Boolean isDemand) {
-            this.isDemand = isDemand;
-        }
+    public Boolean getIsDemand() {
+        return isDemand;
+    }
 
+    public void setIsDemand(Boolean isDemand) {
+        this.isDemand = isDemand;
+    }
+
+    public Set<EgDemandReasonDetails> getEgDemandReasonDetails() {
+        return egDemandReasonDetails;
+    }
+
+    public void setEgDemandReasonDetails(Set<EgDemandReasonDetails> egDemandReasonDetails) {
+        this.egDemandReasonDetails = egDemandReasonDetails;
+    }
 
 }

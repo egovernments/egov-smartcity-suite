@@ -416,8 +416,8 @@ public class PropertyTaxCollection extends TaxCollection {
                         demandDetail.addCollectedWithOnePaisaTolerance(rcptAccInfo.getCrAmount());
                         if (rebateAmount.compareTo(BigDecimal.ZERO) > 0
                                 && instDesc.equals(currInstallments.get(CURRENTYEAR_FIRST_HALF).getDescription())
-                                && (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                                        .equals(DEMANDRSN_CODE_GENERAL_TAX)
+                                && (PropertyTaxConstants.NON_VACANT_TAX_DEMAND_CODES.
+                                        contains(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode())
                                         || demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
                                                 .equals(DEMANDRSN_CODE_VACANT_TAX))) {
                             demandDetail.setAmtRebate(rebateAmount);
@@ -482,7 +482,7 @@ public class PropertyTaxCollection extends TaxCollection {
 
                             if (rebateRcptAccInfo != null)
                                 if (demandDetail.getAmtRebate().compareTo(BigDecimal.ZERO) > 0
-                                        && (demandReasonMaster.getCode().equals(DEMANDRSN_CODE_GENERAL_TAX) || demandReasonMaster
+                                        && (PropertyTaxConstants.NON_VACANT_TAX_DEMAND_CODES.contains(demandReasonMaster.getCode()) || demandReasonMaster
                                                 .getCode().equalsIgnoreCase(DEMANDRSN_CODE_ADVANCE)))
                                     demandDetail.setAmtRebate(demandDetail.getAmtRebate().subtract(
                                             rebateRcptAccInfo.getDrAmount()));

@@ -288,17 +288,6 @@ public class PropertyTaxUtil {
                 demandReasonCode, installment.getId());
     }
 
-    public EgDemandReasonDetails getDemandReasonDetailsByDemandReasonId(final EgDemandReason demandReason,
-            final BigDecimal grossAnnualRentAfterDeduction) {
-        return (EgDemandReasonDetails) persistenceService.findByNamedQuery(QUERY_DEMANDREASONDETAILBY_DEMANDREASONID,
-                demandReason.getId(), grossAnnualRentAfterDeduction);
-    }
-
-    public List<EgDemandReasonDetails> getDemandReasonDetails(final String demandReasonCode,
-            final BigDecimal grossAnnualRentAfterDeduction, final Installment installment) {
-        return persistenceService.findAllByNamedQuery(QUERY_DEMANDREASONDETAILS_BY_DEMANDREASON_AND_INSTALLMENT,
-                demandReasonCode, grossAnnualRentAfterDeduction, installment.getFromDate(), installment.getToDate());
-    }
 
     /**
      * This method returns the currently active config value for the given module name and key
@@ -350,9 +339,9 @@ public class PropertyTaxUtil {
         } else if (data[0].toString().equals(DEMANDRSN_CODE_LIBRARY_CESS)) {
             tmpVal = taxSum.get(DEMANDRSN_CODE_LIBRARY_CESS);
             taxSum.put(DEMANDRSN_CODE_LIBRARY_CESS, tmpVal.add(((BigDecimal) data[2]).subtract((BigDecimal) data[3])));
-        } else if (data[0].toString().equals(DEMANDRSN_CODE_EDUCATIONAL_CESS)) {
-            tmpVal = taxSum.get(DEMANDRSN_CODE_EDUCATIONAL_CESS);
-            taxSum.put(DEMANDRSN_CODE_EDUCATIONAL_CESS,
+        } else if (data[0].toString().equals(DEMANDRSN_CODE_EDUCATIONAL_TAX)) {
+            tmpVal = taxSum.get(DEMANDRSN_CODE_EDUCATIONAL_TAX);
+            taxSum.put(DEMANDRSN_CODE_EDUCATIONAL_TAX,
                     tmpVal.add(((BigDecimal) data[2]).subtract((BigDecimal) data[3])));
         } else if (data[0].toString().equals(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY)) {
             tmpVal = taxSum.get(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY);
@@ -418,7 +407,7 @@ public class PropertyTaxUtil {
 
         taxSum.put(DEMANDRSN_CODE_GENERAL_TAX, BigDecimal.ZERO);
         taxSum.put(DEMANDRSN_CODE_LIBRARY_CESS, BigDecimal.ZERO);
-        taxSum.put(DEMANDRSN_CODE_EDUCATIONAL_CESS, BigDecimal.ZERO);
+        taxSum.put(DEMANDRSN_CODE_EDUCATIONAL_TAX, BigDecimal.ZERO);
         taxSum.put(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, BigDecimal.ZERO);
         taxSum.put(DEMANDRSN_CODE_PENALTY_FINES, BigDecimal.ZERO);
         taxSum.put(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY, BigDecimal.ZERO);
@@ -1316,8 +1305,8 @@ public class PropertyTaxUtil {
                 demandDetailAndReason.put(DEMANDRSN_CODE_GENERAL_TAX, egDmndDtls);
             else if (dmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_LIBRARY_CESS))
                 demandDetailAndReason.put(DEMANDRSN_CODE_LIBRARY_CESS, egDmndDtls);
-            else if (dmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_EDUCATIONAL_CESS))
-                demandDetailAndReason.put(DEMANDRSN_CODE_EDUCATIONAL_CESS, egDmndDtls);
+            else if (dmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_EDUCATIONAL_TAX))
+                demandDetailAndReason.put(DEMANDRSN_CODE_EDUCATIONAL_TAX, egDmndDtls);
             else if (dmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY))
                 demandDetailAndReason.put(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, egDmndDtls);
             else if (dmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_PENALTY_FINES))
@@ -2028,8 +2017,8 @@ public class PropertyTaxUtil {
                 + " and prop.id = ptd.id_property and ptd.id_demand = d.id " + " and d.id = dd.id_demand "
                 + " and dd.id_demand_reason = dr.id and drm.id = dr.id_demand_reason_master "
                 + " and dr.id_installment = inst.id and bp.id =:basicPropId " + " and inst.start_date between '"
-                + finyear.getStartingDate() + "' and '" + finyear.getEndingDate() + "'" + " and drm.code = '"
-                + PropertyTaxConstants.GEN_TAX + "') as genTaxDtls";
+                + finyear.getStartingDate() + "' and '" + finyear.getEndingDate() + "'" + " and drm.code in '"
+                + PropertyTaxConstants.NON_VACANT_TAX_DEMAND_CODES + "') as genTaxDtls";
         final Query qry = persistenceService.getSession().createSQLQuery(selectQuery)
                 .setLong("basicPropId", basicPropId);
         list = qry.list();
@@ -2460,7 +2449,7 @@ public class PropertyTaxUtil {
                 .setLong("currentDemandId", currentDemand.getId())
                 .setDate("firstHlfFromdt",currentFirstHalf.getFromDate())
                 .setDate("firstHlfTodt", currentFirstHalf.getToDate())
-                .setParameterList("codelist", Arrays.asList(PropertyTaxConstants.GEN_TAX,PropertyTaxConstants.VAC_LAND_TAX));
+                .setParameterList("codelist", Arrays.asList(PropertyTaxConstants.NON_VACANT_TAX_DEMAND_CODES,PropertyTaxConstants.VAC_LAND_TAX));
         rebateAmt = qry.uniqueResult();
         return rebateAmt != null ? new BigDecimal((Double) rebateAmt) : BigDecimal.ZERO;
     }

@@ -82,7 +82,7 @@ import java.util.Map;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.ARREARS_DMD;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENT_DMD;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES;
@@ -148,7 +148,7 @@ public class PropertyBillInfo {
         halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(DEMANDRSN_CODE_GENERAL_TAX));
         currentGeneralTax = halfYearTaxes[0];
 
-        halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(DEMANDRSN_CODE_EDUCATIONAL_CESS));
+        halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(DEMANDRSN_CODE_EDUCATIONAL_TAX));
         currentEduCess = halfYearTaxes[0];
 
         halfYearTaxes = getHalfYearTaxes(reasonwiseDues.get(CURRENT_DMD).get(DEMANDRSN_CODE_LIBRARY_CESS));
@@ -193,7 +193,7 @@ public class PropertyBillInfo {
     }
 
     public BigDecimal getArrEduCess() {
-        return reasonwiseDues.get(ARREARS_DMD).get(DEMANDRSN_CODE_EDUCATIONAL_CESS).setScale(2);
+        return reasonwiseDues.get(ARREARS_DMD).get(DEMANDRSN_CODE_EDUCATIONAL_TAX).setScale(2);
     }
 
     public BigDecimal getArrLibCess() {
@@ -209,7 +209,7 @@ public class PropertyBillInfo {
     }
 
     public BigDecimal getCurrEduCess() {
-        return reasonwiseDues.get(CURRENT_DMD).get(DEMANDRSN_CODE_EDUCATIONAL_CESS).setScale(2);
+        return reasonwiseDues.get(CURRENT_DMD).get(DEMANDRSN_CODE_EDUCATIONAL_TAX).setScale(2);
     }
 
     public BigDecimal getCurrLibCess() {

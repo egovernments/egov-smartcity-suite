@@ -924,8 +924,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
         propertyTaxDetailsMap.put(
                 "eduCess",
-                demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap
-                        .get(DEMANDRSN_STR_EDUCATIONAL_CESS));
+                demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_TAX) == null ? BigDecimal.ZERO : demandCollMap
+                        .get(DEMANDRSN_STR_EDUCATIONAL_TAX));
         propertyTaxDetailsMap.put(
                 "libraryCess",
                 demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap
@@ -933,12 +933,12 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         BigDecimal totalTax;
         if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
             propertyTaxDetailsMap.put("generalTax",
-                    demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX) == null ? BigDecimal.ZERO : demandCollMap
-                            .get(DEMANDRSN_STR_GENERAL_TAX));
-            totalTax = (demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX) == null ? BigDecimal.ZERO : demandCollMap
-                    .get(DEMANDRSN_STR_GENERAL_TAX))
-                            .add(demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap
-                                    .get(DEMANDRSN_STR_EDUCATIONAL_CESS))
+                    demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX) == null ? BigDecimal.ZERO : propertyTaxCommonUtils.
+                            getAggregateGenralTax(demandCollMap));
+            totalTax = (demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX) == null ? BigDecimal.ZERO : propertyTaxCommonUtils.
+                getAggregateGenralTax(demandCollMap))
+                            .add(demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_TAX) == null ? BigDecimal.ZERO : demandCollMap
+                                    .get(DEMANDRSN_STR_EDUCATIONAL_TAX))
                             .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap
                                     .get(DEMANDRSN_STR_LIBRARY_CESS));
             // If unauthorized property, then add unauthorized penalty

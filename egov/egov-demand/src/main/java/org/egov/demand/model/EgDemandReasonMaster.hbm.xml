@@ -98,5 +98,11 @@
             </key>
             <one-to-many class="org.egov.demand.model.EgDemandReason" />
         </set>
+         <set name="egDemandReasonDetails" table="EG_DEMAND_REASON_DETAILS">
+            <key>
+                <column name="ID_DEMAND_REASON_MASTER"  not-null="true" />
+            </key>
+            <one-to-many class="org.egov.demand.model.EgDemandReasonDetails" />
+        </set>
     </class>
 </hibernate-mapping>

@@ -415,7 +415,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
 
                 final Map<String, BigDecimal> currentTaxDetails = propertyService.getCurrentTaxDetails(demandCollMap, new Date());
                 model.addAttribute("currTax", currentTaxDetails.get(CURR_DMD_STR));
-                model.addAttribute("eduCess", currentTaxDetails.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
+                model.addAttribute("eduCess", currentTaxDetails.get(DEMANDRSN_STR_EDUCATIONAL_TAX));
                 model.addAttribute("currTaxDue",
                         currentTaxDetails.get(CURR_DMD_STR).subtract(currentTaxDetails.get(CURR_COLL_STR)));
                 model.addAttribute("libraryCess", currentTaxDetails.get(DEMANDRSN_STR_LIBRARY_CESS));
@@ -423,14 +423,14 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
                         currentTaxDetails.get(ARR_DMD_STR).subtract(currentTaxDetails.get(ARR_COLL_STR)));
                 BigDecimal propertyTax = BigDecimal.ZERO;
                 if (null != currentTaxDetails.get(DEMANDRSN_STR_GENERAL_TAX))
-                    propertyTax = currentTaxDetails.get(DEMANDRSN_STR_GENERAL_TAX);
+                    propertyTax = propertyTaxCommonUtils.getAggregateGenralTax(currentTaxDetails);
                 else if (null != currentTaxDetails.get(DEMANDRSN_STR_VACANT_TAX))
                     propertyTax = currentTaxDetails.get(DEMANDRSN_STR_VACANT_TAX);
                 final BigDecimal totalTax = propertyTax
                         .add(currentTaxDetails.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO
                                 : currentTaxDetails.get(DEMANDRSN_STR_LIBRARY_CESS))
-                        .add(currentTaxDetails.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO
-                                : currentTaxDetails.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
+                        .add(currentTaxDetails.get(DEMANDRSN_STR_EDUCATIONAL_TAX) == null ? BigDecimal.ZERO
+                                : currentTaxDetails.get(DEMANDRSN_STR_EDUCATIONAL_TAX));
                 model.addAttribute("propertyTax", propertyTax);
                 if (currentTaxDetails.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) != null) {
                     model.addAttribute("unauthorisedPenalty", currentTaxDetails.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY));
