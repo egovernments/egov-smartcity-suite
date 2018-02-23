@@ -134,6 +134,7 @@ import org.egov.ptis.domain.entity.property.BuiltUpProperty;
 import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.FloorType;
+import org.egov.ptis.domain.entity.property.GisDetails;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyAddress;
 import org.egov.ptis.domain.entity.property.PropertyDetail;
@@ -1207,16 +1208,28 @@ public class PropertyExternalService {
         }
         gisProperty.setStatus('G');
         gisProperty.setSource(SOURCE_SURVEY);
+        BigDecimal gisTax = BigDecimal.ZERO;
+        for (EgDemandDetails demandDetail : gisPtdemand.getEgDemandDetails())
+            gisTax = gisTax.add(demandDetail.getAmount());
+        
+        GisDetails gisDetails = new GisDetails();
+        gisDetails.setGisProperty(gisProperty);
+        gisDetails.setApplicationProperty(property);
+        gisDetails.setGisTax(gisTax);
+        gisDetails.setApplicationTax(gisTax);
+        gisDetails.setGisZone(basicProperty.getPropertyID().getZone());
+        gisDetails.setPropertyZone(basicProperty.getPropertyID().getZone());
+        gisProperty.setGisDetails(gisDetails);
+        property.setGisDetails(gisDetails);
+        
+        
         basicProperty.addProperty(gisProperty);
         transitionWorkFlow(property, propService, PROPERTY_MODE_CREATE);
         basicPropertyService.applyAuditing(property.getState());
-        BigDecimal totalTax = BigDecimal.ZERO;
         SurveyBean surveyBean = new SurveyBean();
-        for (EgDemandDetails demandDetail : property.getPtDemandSet().iterator().next().getEgDemandDetails())
-            totalTax = totalTax.add(demandDetail.getAmount());
-        surveyBean.setGisTax(totalTax);
+        surveyBean.setGisTax(gisTax);
         surveyBean.setProperty(property);
-        surveyBean.setApplicationTax(totalTax);
+        surveyBean.setApplicationTax(gisTax);
         surveyBean.setAgeOfCompletion(propService.getSlaValue(APPLICATION_TYPE_NEW_ASSESSENT));
         surveyService.updateSurveyIndex(APPLICATION_TYPE_NEW_ASSESSENT, surveyBean);
 

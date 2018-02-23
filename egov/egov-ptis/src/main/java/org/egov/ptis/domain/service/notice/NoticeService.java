@@ -325,7 +325,9 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
         reportParams.put("applicationNo", property.getApplicationNo());
         reportParams.put("ownerName", basicProperty.getFullOwnerName());
         reportParams.put("doorNo", basicProperty.getAddress().getHouseNoBldgApt());
-        reportParams.put("zone", basicProperty.getPropertyID().getZone().getName());
+        if(property.getGisDetails() != null)
+            reportParams.put("gisZone", property.getGisDetails().getGisZone().getName());
+        reportParams.put("applZone", basicProperty.getPropertyID().getZone().getName());
         reportParams.put("halfYearlyTax", halfYearlyTax);
         reportParams.put("gisHalfYearlyTax", gisHalfYearlyTax);
         reportParams.put("applARV", applARV);

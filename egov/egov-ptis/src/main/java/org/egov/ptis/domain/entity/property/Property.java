@@ -248,4 +248,8 @@ public interface Property extends Auditable {
 
     public void setSentToThirdParty(boolean sentToThirdParty);
     
+    public GisDetails getGisDetails();
+
+    public void setGisDetails(GisDetails gisDetails);
+    
 }

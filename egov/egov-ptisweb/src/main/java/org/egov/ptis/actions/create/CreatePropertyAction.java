@@ -807,6 +807,13 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 for (EgDemandDetails demandDetail : property.getPtDemandSet().iterator().next().getEgDemandDetails())
                     totalTax = totalTax.add(demandDetail.getAmount());
                 surveyBean.setApplicationTax(totalTax);
+                GisDetails gisDetails = property.getGisDetails();
+                if(gisDetails != null){
+                    gisDetails.setPropertyZone(basicProp.getPropertyID().getZone());
+                    gisDetails.setApplicationTax(totalTax);
+                    GisAuditDetails auditDetails = new GisAuditDetails(gisDetails);
+                    gisDetails.addAuditDetails(auditDetails);
+                }
             }
             if(property.getCurrentState().getValue().toUpperCase().endsWith(WF_STATE_REVENUE_OFFICER_APPROVED.toUpperCase())){
                 BigDecimal surveyVariance = propertyTaxUtil.getTaxDifferenceForGIS(property);
