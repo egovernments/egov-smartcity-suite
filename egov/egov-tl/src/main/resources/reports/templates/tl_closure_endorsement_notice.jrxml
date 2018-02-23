@@ -82,7 +82,7 @@
 				<textElement textAlignment="Center">
 					<font size="16" isBold="true"/>
 				</textElement>
-				<text><![CDATA[MUNICIPAL ADMINISTRTION DEPARTMENT]]></text>
+				<text><![CDATA[MUNICIPAL ADMINISTRATION DEPARTMENT]]></text>
 			</staticText>
 		</band>
 	</pageHeader>
