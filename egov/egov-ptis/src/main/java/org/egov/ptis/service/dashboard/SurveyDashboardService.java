@@ -78,7 +78,7 @@ public class SurveyDashboardService {
         SearchResponse response = elasticsearchTemplate.getClient()
                 .prepareSearch("propertysurveydetails")
                 .setQuery(prepareQuery(surveyDashboardRequest))
-                .addAggregation(aggregationBuilder).setSize(100000)
+                .addAggregation(aggregationBuilder).setSize(10000)
                 .execute().actionGet();
         getPropertySurveyList(surveyList, response);
         return surveyList;
@@ -91,10 +91,9 @@ public class SurveyDashboardService {
             surveyResponse = new SurveyResponse();
             Map<String, Object> sourceAsMap = hit.sourceAsMap();
             String applicationNo = sourceAsMap.get("applicationNo").toString();
-            String cityUrl = ApplicationThreadLocals.getDomainURL();
             String ptUrl = "/ptis/view/viewProperty-viewForm.action?";
             String applicationType = sourceAsMap.get("applicationType").toString();
-            String appViewURL = cityUrl.concat(ptUrl).concat("applicationNo=").concat(applicationNo).concat("&applicationType")
+            String appViewURL = ptUrl.concat("applicationNo=").concat(applicationNo).concat("&applicationType")
                     .concat(applicationType);
             surveyResponse.setApplicationNo(applicationNo);
             surveyResponse.setAssessmentNo(
@@ -114,6 +113,7 @@ public class SurveyDashboardService {
             surveyResponse.setIsreffered((boolean) sourceAsMap.get("sentToThirdParty"));
             surveyResponse.setIsVarified((boolean) sourceAsMap.get("thirdPrtyFlag"));
             surveyResponse.setAppViewURL(appViewURL);
+            surveyResponse.setUlbCode(sourceAsMap.get("cityCode").toString());
             surveyList.add(surveyResponse);
         }
     }

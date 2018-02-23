@@ -81,7 +81,7 @@ public class SurveyResponse {
     private String assistantName;
     private String riName;
     private Boolean isreffered;
-    private Boolean isVarified;
+    private Boolean isVerified;
     private String appViewURL;
 
     public String getRegionName() {
@@ -340,12 +340,12 @@ public class SurveyResponse {
         this.isreffered = isreffered;
     }
 
-    public Boolean getIsVarified() {
-        return isVarified;
+    public Boolean getIsVerified() {
+        return isVerified;
     }
 
-    public void setIsVarified(Boolean isVarified) {
-        this.isVarified = isVarified;
+    public void setIsVarified(Boolean isVerified) {
+        this.isVerified = isVerified;
     }
 
     public String getAppViewURL() {
