@@ -273,13 +273,14 @@ public class APTaxCalculator implements PropertyTaxCalculator {
                 else
                     halfYearHeadTax = halfYearHeadTax.add(calculateHalfYearNonVacantTax(applicableTax, alv, floor));
                 halfYearHeadTax = taxIfGovtProperty(propTypeCode, halfYearHeadTax);
-                generalTax = halfYearHeadTax;
+                generalTax = generalTax.add(halfYearHeadTax);
             }
             if (applicableTax.equals(DEMANDRSN_CODE_EDUCATIONAL_TAX)){
                 if (floor != null && floor.getPropertyUsage().getIsResidential())
-                    halfYearHeadTax =  getYearTax(alv, getTaxPercentage(applicableTax + "_R"));
+                    educationTax =  getYearTax(alv, getTaxPercentage(applicableTax + "_R"));
                 else
-                    halfYearHeadTax =  getYearTax(alv, getTaxPercentage(applicableTax + "_NR"));
+                    educationTax =  getYearTax(alv, getTaxPercentage(applicableTax + "_NR"));
+                halfYearHeadTax = educationTax;
             }
             if (applicableTax.equals(DEMANDRSN_CODE_LIBRARY_CESS))
                 halfYearHeadTax = getYearTax(generalTax.add(educationTax), getTaxPercentage(DEMANDRSN_CODE_LIBRARY_CESS));
@@ -332,12 +333,13 @@ public class APTaxCalculator implements PropertyTaxCalculator {
         final List<String> applicableTaxes = new ArrayList<>();
         if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equals(OWNERSHIP_TYPE_VAC_LAND)) {
             applicableTaxes.add(DEMANDRSN_CODE_GENERAL_TAX);
-            applicableTaxes.add(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY);
-            applicableTaxes.add(DEMANDRSN_CODE_EDUCATIONAL_TAX);
             applicableTaxes.add(DEMANDRSN_CODE_DRAINAGE_TAX);
             applicableTaxes.add(DEMANDRSN_CODE_LIGHT_TAX);
             applicableTaxes.add(DEMANDRSN_CODE_SCAVENGE_TAX);
             applicableTaxes.add(DEMANDRSN_CODE_WATER_TAX);
+            applicableTaxes.add(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY);
+            applicableTaxes.add(DEMANDRSN_CODE_EDUCATIONAL_TAX);
+            
         } else
             applicableTaxes.add(DEMANDRSN_CODE_VACANT_TAX);
         applicableTaxes.add(DEMANDRSN_CODE_LIBRARY_CESS);
