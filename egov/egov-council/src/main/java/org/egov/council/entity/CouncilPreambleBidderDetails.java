@@ -91,6 +91,8 @@ public class CouncilPreambleBidderDetails {
     private String position;
 
     private Boolean isAwarded;
+    
+    private String code;
 
     public Long getId() {
         return id;
@@ -156,4 +158,13 @@ public class CouncilPreambleBidderDetails {
         this.bidder = bidder;
     }
 
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    
 }

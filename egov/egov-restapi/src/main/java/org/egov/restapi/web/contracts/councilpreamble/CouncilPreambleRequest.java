@@ -54,6 +54,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import org.egov.council.entity.CouncilPreambleBidderDetails;
 import org.egov.council.enums.PreambleTypeEnum;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.works.models.masters.Contractor;
@@ -81,7 +82,7 @@ public class CouncilPreambleRequest {
     
     private List<Boundary> wards = new ArrayList<>();
     
-    private List<Contractor> bidders = new ArrayList<>();
+    private List<CouncilPreambleBidderDetails> bidders = new ArrayList<>();
     
     private BigDecimal quotedAmount ;
     
@@ -131,11 +132,13 @@ public class CouncilPreambleRequest {
         this.departmentcode = departmentcode;
     }
 
-    public List<Contractor> getBidders() {
+
+
+    public List<CouncilPreambleBidderDetails> getBidders() {
         return bidders;
     }
 
-    public void setBidders(List<Contractor> bidders) {
+    public void setBidders(List<CouncilPreambleBidderDetails> bidders) {
         this.bidders = bidders;
     }
 

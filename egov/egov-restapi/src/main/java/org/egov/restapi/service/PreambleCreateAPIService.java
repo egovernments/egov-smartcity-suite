@@ -52,14 +52,9 @@ public class PreambleCreateAPIService {
         }
         councilPreamble.setWards(wards);
         List<CouncilPreambleBidderDetails> bidderList = new ArrayList<>();
-        for (Contractor contractor : councilPreambleRequest.getBidders()) {
-            CouncilPreambleBidderDetails bidder = new CouncilPreambleBidderDetails();
-            Contractor contracterDetail = contractorService.getContractorByCode(contractor.getCode());
-            bidder.setBidder(contracterDetail);
-            bidder.setAmount(councilPreambleRequest.getQuotedAmount());
-            bidder.setPercentage(councilPreambleRequest.getPercentage());
-            bidder.setPosition(councilPreambleRequest.getPosition());
-            bidder.setTenderType(councilPreambleRequest.getTenderType());
+        for(CouncilPreambleBidderDetails bidder:councilPreambleRequest.getBidders()){
+            Contractor contracterDetail = contractorService.getContractorByCode(bidder.getCode());
+            bidder.setBidder(contracterDetail); 
             bidder.setPreamble(councilPreamble);
             bidderList.add(bidder);
 
