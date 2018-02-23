@@ -54,7 +54,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.BUILTUP_PROPERTY_DMDR
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_CHQ_BOUNCE_PENALTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_REASON_ORDER_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_RSNS_LIST;
@@ -258,7 +257,7 @@ public class AddDemandAction extends BaseFormAction {
             if (dd.getIsNew() != null && dd.getIsNew()) {
                 instString = new ArrayList<>();
                 instString.add(dd.getReasonMaster());
-                if ((dd.getReasonMaster().equalsIgnoreCase(DEMANDRSN_STR_GENERAL_TAX)
+                if ((PropertyTaxConstants.NON_VACANT_TAX_DEMAND_CODES.contains(dd.getReasonMaster())
                         || dd.getReasonMaster().equalsIgnoreCase(DEMANDRSN_STR_VACANT_TAX))
                         && (dd.getInstallment().getId() == null
                                 || dd.getInstallment().getId().equals(-1)))
@@ -275,7 +274,7 @@ public class AddDemandAction extends BaseFormAction {
                 if (dd.getActualAmount() == null) {
                     if (dd.getActualCollection() != null)
                         actAmtInstallments.add(dd.getInstallment().getDescription());
-                } else if (dd.getReasonMaster().equalsIgnoreCase(DEMANDRSN_STR_GENERAL_TAX)
+                } else if (PropertyTaxConstants.NON_VACANT_TAX_DEMAND_CODES.contains(dd.getReasonMaster())
                         || dd.getReasonMaster().equalsIgnoreCase(DEMANDRSN_STR_VACANT_TAX))
                     if (dd.getInstallment().getId() == null || dd.getInstallment().getId().equals(-1))
                         addActionError(getText("error.editDemand.selectInstallment"));
