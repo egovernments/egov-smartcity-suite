@@ -295,12 +295,14 @@ function onChangePaymentMode(obj)
 	    </div>
 	</s:if>
 	<tr>
+	<div align="right">
 		<td class="blueborderfortd"><s:text
 							name="collectionsWorkflow.payment.mode" /></td>
 							<td class="bluebox"><s:select headerKey="ALL"
 									headerValue="%{getText('collectionsWorkflow.payment.mode.all')}" list="paymentModesMap"
 									id="paymentMode" label="paymentMode" name="paymentMode"
 									value="%{paymentMode}" onchange="onChangePaymentMode(this);" /></td>
+	</div>
 			<s:hidden name="inboxItemDetails" id="inboxItemDetails" value="%{inboxItemDetails}"/>								
 									
 	</tr>	
