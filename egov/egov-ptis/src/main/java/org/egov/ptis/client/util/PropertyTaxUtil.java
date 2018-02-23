@@ -2140,10 +2140,10 @@ public class PropertyTaxUtil {
      * @return boolean
      */
     public boolean checkForParentUsedInBifurcation(final String upicNo) {
-        boolean isChildUnderWorkflow = false;
-        final PropertyStatusValues statusValues = (PropertyStatusValues) persistenceService
-                .find("select psv from PropertyStatusValues psv where psv.referenceBasicProperty.upicNo=? and psv.basicProperty.underWorkflow = 't' and (psv.remarks is null or psv.remarks != ? )",
-                        upicNo, APPURTENANT_PROPERTY);
+    	boolean isChildUnderWorkflow = false;
+		final String query = "select psv from PropertyStatusValues psv,PropertyImpl p where p.basicProperty.id=psv.basicProperty.id and psv.referenceBasicProperty.upicNo=:upicNo and p.propertyModifyReason='CREATE' and psv.basicProperty.underWorkflow = 't' and p.status='W' and (psv.remarks is null or psv.remarks != :remarks )";
+		final PropertyStatusValues statusValues = (PropertyStatusValues) entityManager.unwrap(Session.class).createQuery(query)
+                .setEntity("upicNo", upicNo).setEntity("remarks", APPURTENANT_PROPERTY).list();
         if (statusValues != null)
             isChildUnderWorkflow = true;
         return isChildUnderWorkflow;
