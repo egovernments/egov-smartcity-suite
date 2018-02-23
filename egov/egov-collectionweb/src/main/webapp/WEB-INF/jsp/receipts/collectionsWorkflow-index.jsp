@@ -264,6 +264,11 @@ function readOnlyCheckBox() {
    return false;
 }
 
+function onChangePaymentMode(obj)
+{
+    document.collectionsWorkflowForm.action="collectionsWorkflow-listWorkflow.action";
+	document.collectionsWorkflowForm.submit();
+}
 </script>
 </head>
 <body onload="javascript:refreshSummary()">
@@ -289,10 +294,21 @@ function readOnlyCheckBox() {
 	    	<s:actionmessage theme="simple"/>
 	    </div>
 	</s:if>
+	<tr>
+		<td class="blueborderfortd"><s:text
+							name="collectionsWorkflow.payment.mode" /></td>
+							<td class="bluebox"><s:select headerKey="ALL"
+									headerValue="%{getText('collectionsWorkflow.payment.mode.all')}" list="paymentModesMap"
+									id="paymentMode" label="paymentMode" name="paymentMode"
+									value="%{paymentMode}" onchange="onChangePaymentMode(this);" /></td>
+			<s:hidden name="inboxItemDetails" id="inboxItemDetails" value="%{inboxItemDetails}"/>								
+									
+	</tr>	
+	<br/><br/>
 	<s:if test="%{!receiptHeaders.isEmpty() && !hasErrors()}">
 		<table width="100%" border="0" align="center" cellpadding="0"
 			cellspacing="0" class="tablebottom">
-			<s:hidden name="inboxItemDetails" id="inboxItemDetails" value="%{inboxItemDetails}"/>	
+		
 			<display:table name="receiptHeaders"
 				uid="currentRow" pagesize="30" style="border:1px;empty-cells:show;border-collapse:collapse;" cellpadding="0"
 				cellspacing="0" export="false" requestURI="">
@@ -460,6 +476,15 @@ function readOnlyCheckBox() {
 				onclick="window.close()" />
 			</div>		
 			</table>
+			</s:if>
+			
+			<s:if test='%{receiptHeaders.isEmpty()}'>
+				<table width="90%" border="0" align="center" cellpadding="0" cellspacing="0" class="tablebottom">
+				<tr> 
+					<div>&nbsp;</div>
+					<div class="subheadnew"><s:text name="collectionsWorkflow.noReceipts"/></div>
+				</tr>
+				</table>
 			</s:if>
 			</s:form>
 			</div>
