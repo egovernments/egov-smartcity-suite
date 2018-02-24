@@ -117,7 +117,8 @@ public class CouncilRouterService {
     public Position getCouncilAssignee(CouncilPreamble councilPreamble) {
         CouncilRouter councilRouter = getCouncilRouter(councilPreamble);
         if (councilRouter == null)
-            throw new ApplicationRuntimeException("COUNCIL.001");
+            throw new ApplicationRuntimeException(councilPreamble.getReferenceNumber()+","+
+             "No clerk is configured to receive preamble");
         else
             return councilRouter.getPosition();
     }

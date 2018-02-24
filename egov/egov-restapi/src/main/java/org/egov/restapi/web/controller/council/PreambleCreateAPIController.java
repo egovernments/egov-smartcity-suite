@@ -54,6 +54,7 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 
 import org.egov.council.entity.CouncilPreamble;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.restapi.service.PreambleCreateAPIService;
@@ -107,6 +108,14 @@ public class PreambleCreateAPIController {
     public ResponseEntity<Object> restErrors() {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new CouncilPreambleResponse(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Server Error"));
+    }
+    
+    @ExceptionHandler(ApplicationRuntimeException.class)
+    public ResponseEntity<Object> configurationErrors(ApplicationRuntimeException exception) 
+    {
+        String error[] = exception.getMessage().split(",");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new CouncilPreambleResponse(error[0], "", HttpStatus.INTERNAL_SERVER_ERROR.toString(), error[1]));
     }
     
     
