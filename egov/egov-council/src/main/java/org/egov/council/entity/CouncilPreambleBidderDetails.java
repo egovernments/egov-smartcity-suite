@@ -86,7 +86,8 @@ public class CouncilPreambleBidderDetails {
 
     private Double percentage;
 
-    private BigDecimal amount;
+    @JoinColumn(name = "quotedAmount")
+    private BigDecimal quotedAmount;
 
     private String position;
 
@@ -126,14 +127,6 @@ public class CouncilPreambleBidderDetails {
         this.percentage = percentage;
     }
 
-    public BigDecimal getAmount() {
-        return amount;
-    }
-
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
-
     public String getPosition() {
         return position;
     }
@@ -164,6 +157,14 @@ public class CouncilPreambleBidderDetails {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public BigDecimal getQuotedAmount() {
+        return quotedAmount;
+    }
+
+    public void setQuotedAmount(BigDecimal quotedAmount) {
+        this.quotedAmount = quotedAmount;
     }
 
     

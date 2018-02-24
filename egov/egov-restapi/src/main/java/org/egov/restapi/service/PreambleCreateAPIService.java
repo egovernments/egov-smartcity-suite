@@ -42,6 +42,7 @@ public class PreambleCreateAPIService {
         councilPreamble.setDepartment(departmentService.getDepartmentByCode(councilPreambleRequest.getDepartmentcode()));
         councilPreamble.setGistOfPreamble(councilPreambleRequest.getGistOfPreamble());
         councilPreamble.setTypeOfPreamble(PreambleTypeEnum.valueOf(councilPreambleRequest.getPreambleType()));
+        councilPreamble.setSanctionAmount(councilPreambleRequest.getEstimateAmount());
         final BoundaryType boundaryType = boundaryTypeService
                 .getBoundaryTypeByNameAndHierarchyTypeName( "Ward", "ADMINISTRATION");
         List<Boundary> wards = new ArrayList<>();

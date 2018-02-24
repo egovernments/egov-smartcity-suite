@@ -204,7 +204,7 @@
 								<c:out value="${bidders.bidder.name}" />
 							</div>
 							<div class="col-sm-2 col-xs-12 add-margin">
-								<c:out value="${bidders.amount}" />
+								<c:out value="${bidders.quotedAmount}" />
 							</div>
 							<c:if test="${bidders.percentage!=null}">
 							<div class="col-sm-2 col-xs-12 add-margin">

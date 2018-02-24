@@ -57,7 +57,6 @@ import javax.validation.constraints.NotNull;
 import org.egov.council.entity.CouncilPreambleBidderDetails;
 import org.egov.council.enums.PreambleTypeEnum;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.works.models.masters.Contractor;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -80,17 +79,11 @@ public class CouncilPreambleRequest {
     @NotNull(message = "Provide Preamble Type")
     private PreambleTypeEnum preambleType;
     
+    private BigDecimal estimateAmount;
+    
     private List<Boundary> wards = new ArrayList<>();
     
     private List<CouncilPreambleBidderDetails> bidders = new ArrayList<>();
-    
-    private BigDecimal quotedAmount ;
-    
-    private Double percentage;
-    
-    private String position;
-    
-    private String tenderType;
     
     public String getReferenceNumber() {
         return referenceNumber;
@@ -133,7 +126,6 @@ public class CouncilPreambleRequest {
     }
 
 
-
     public List<CouncilPreambleBidderDetails> getBidders() {
         return bidders;
     }
@@ -150,36 +142,12 @@ public class CouncilPreambleRequest {
         this.ulbCode = ulbCode;
     }
 
-    public BigDecimal getQuotedAmount() {
-        return quotedAmount;
+    public BigDecimal getEstimateAmount() {
+        return estimateAmount;
     }
 
-    public void setQuotedAmount(BigDecimal quotedAmount) {
-        this.quotedAmount = quotedAmount;
-    }
-
-    public Double getPercentage() {
-        return percentage;
-    }
-
-    public void setPercentage(Double percentage) {
-        this.percentage = percentage;
-    }
-
-    public String getPosition() {
-        return position;
-    }
-
-    public void setPosition(String position) {
-        this.position = position;
-    }
-
-    public String getTenderType() {
-        return tenderType;
-    }
-
-    public void setTenderType(String tenderType) {
-        this.tenderType = tenderType;
+    public void setEstimateAmount(BigDecimal estimateAmount) {
+        this.estimateAmount = estimateAmount;
     }
 
 }
