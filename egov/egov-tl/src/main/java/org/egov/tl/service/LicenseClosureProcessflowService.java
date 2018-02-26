@@ -179,6 +179,7 @@ public class LicenseClosureProcessflowService {
                 .withComments(licenseUtils.isDigitalSignEnabled() ? WF_DIGI_SIGNED : "Approved")
                 .withDateInfo(new Date())
                 .withStateValue(workflowMatrix.getNextState());
+        license.setApprovedBy(currentUser);
     }
 
     public void processForward(TradeLicense license) {

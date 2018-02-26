@@ -159,7 +159,6 @@ public class LicenseProcessWorkflowService {
         tradeLicense.setCollectionPending(false);
         if (tradeLicense.isNewApplication())
             tradeLicense.setActive(false);
-        tradeLicense.setNewWorkflow(false);
     }
 
     private void initiateWfTransition(TradeLicense tradeLicense) {
@@ -188,6 +187,9 @@ public class LicenseProcessWorkflowService {
         DateTime currentDate = new DateTime();
         User currentUser = securityUtils.getCurrentUser();
         Position owner = getCurrentPositionByWorkFlowBean(workflowBean, tradeLicense.getCurrentState());
+
+        if (BUTTONAPPROVE.equals(workflowBean.getWorkFlowAction()))
+            tradeLicense.setApprovedBy(currentUser);
 
         if (!licenseUtils.isDigitalSignEnabled() && BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction()) && !tradeLicense.isCollectionPending()) {
             tradeLicense.transition().end().withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
@@ -270,7 +272,6 @@ public class LicenseProcessWorkflowService {
         tradeLicense.setActive(true);
         tradeLicense.setLegacy(false);
         validityService.applyLicenseValidity(tradeLicense);
-        tradeLicense.setNewWorkflow(false);
     }
 
     public void getWfWithThirdPartyOp(final TradeLicense license, final WorkflowBean workflowBean) {

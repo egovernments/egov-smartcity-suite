@@ -310,13 +310,17 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         reportParams.put("demandUpdateDate", getDefaultFormattedDate(license.getCurrentDemand().getModifiedDate()));
         reportParams.put("demandTotalamt", amtPaid);
 
-        List<Assignment> commissionerAssignments = assignmentService.findPrimaryAssignmentForDesignationName(COMMISSIONER_DESGN);
-        if (!commissionerAssignments.isEmpty()) {
-            User commissioner = commissionerAssignments.get(0).getEmployee();
-            ByteArrayInputStream commissionerSign = new ByteArrayInputStream(
-                    commissioner.getSignature() == null ? new byte[0] : commissioner.getSignature());
-            reportParams.put("commissionerSign", commissionerSign);
+        User approver;
+        if (isProvisional || license.getApprovedBy() == null) {
+            List<Assignment> commissionerAssignments = assignmentService.findPrimaryAssignmentForDesignationName(COMMISSIONER_DESGN);
+            approver = commissionerAssignments.get(0).getEmployee();
+        } else {
+            approver = license.getApprovedBy();
         }
+        ByteArrayInputStream commissionerSign = new ByteArrayInputStream(
+                approver.getSignature() == null ? new byte[0] : approver.getSignature());
+        reportParams.put("commissionerSign", commissionerSign);
+
         if (isProvisional)
             reportParams.put("certificateType", "provisional");
         else {
