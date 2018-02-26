@@ -291,6 +291,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
 
     public void prepareRenew() {
         prepareNewForm();
+        renewAppType = RENEWAL_LIC_APPTYPE;
         documentTypes = tradeLicenseService.getDocumentTypesByApplicationType(ApplicationType.RENEW);
     }
 
