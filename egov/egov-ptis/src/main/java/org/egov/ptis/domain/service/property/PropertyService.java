@@ -2390,6 +2390,7 @@ public class PropertyService {
 	private void updatePropertyIndex(final StateAware stateAwareObject, final String applictionType,
 			final User stateOwner, final int sla) {
 		final PropertyImpl property = (PropertyImpl) stateAwareObject;
+		if(!"SURVEY".equalsIgnoreCase(property.getSource())){
 		final ApplicationIndex applicationIndex = applicationIndexService
 				.findByApplicationNumber(property.getApplicationNo());
 		final User owner = property.getBasicProperty().getPrimaryOwner();
@@ -2398,7 +2399,8 @@ public class PropertyService {
 			createPropertyApplicationIndex(applictionType, stateOwner, sla, property, owner, source);
 		else
 			updatePropertyApplicationIndex(applictionType, stateOwner, property, applicationIndex, owner);
-	}
+	        }
+       }
 
 	/**
 	 * @param applictionType
