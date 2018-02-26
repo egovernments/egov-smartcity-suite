@@ -52,9 +52,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.ptis.bean.dashboard.SurveyRequest;
-import org.egov.ptis.bean.dashboard.SurveyResponse;
+import org.egov.ptis.bean.dashboard.SurveyDashboardResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -71,8 +70,8 @@ public class SurveyDashboardService {
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
 
-    public List<SurveyResponse> getGisApplicationDetails(final SurveyRequest surveyDashboardRequest) {
-        List<SurveyResponse> surveyList = new ArrayList<>();
+    public List<SurveyDashboardResponse> getGisApplicationDetails(final SurveyRequest surveyDashboardRequest) {
+        List<SurveyDashboardResponse> surveyList = new ArrayList<>();
         @SuppressWarnings("rawtypes")
         AggregationBuilder aggregationBuilder = AggregationBuilders.terms("by_ward").field("revenueWard").size(100);
         SearchResponse response = elasticsearchTemplate.getClient()
@@ -84,11 +83,11 @@ public class SurveyDashboardService {
         return surveyList;
     }
 
-    private void getPropertySurveyList(List<SurveyResponse> surveyList, SearchResponse response) {
-        SurveyResponse surveyResponse;
+    private void getPropertySurveyList(List<SurveyDashboardResponse> surveyList, SearchResponse response) {
+        SurveyDashboardResponse surveyResponse;
         SearchHits hits = response.getHits();
         for (SearchHit hit : hits) {
-            surveyResponse = new SurveyResponse();
+            surveyResponse = new SurveyDashboardResponse();
             Map<String, Object> sourceAsMap = hit.sourceAsMap();
             String applicationNo = sourceAsMap.get("applicationNo").toString();
             String ptUrl = "/ptis/view/viewProperty-viewForm.action?";

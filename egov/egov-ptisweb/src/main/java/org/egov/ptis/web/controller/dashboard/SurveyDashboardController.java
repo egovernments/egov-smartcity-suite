@@ -50,7 +50,7 @@ package org.egov.ptis.web.controller.dashboard;
 import java.util.List;
 
 import org.egov.ptis.bean.dashboard.SurveyRequest;
-import org.egov.ptis.bean.dashboard.SurveyResponse;
+import org.egov.ptis.bean.dashboard.SurveyDashboardResponse;
 import org.egov.ptis.service.dashboard.SurveyDashboardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -65,7 +65,7 @@ public class SurveyDashboardController {
     private SurveyDashboardService surveyDashboardService;
 
     @RequestMapping(value = "/applicationdetails", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<SurveyResponse> getApplicationInfo(final SurveyRequest surveydashboardRequest) {
+    public List<SurveyDashboardResponse> getApplicationInfo(final SurveyRequest surveydashboardRequest) {
         return surveyDashboardService
                 .getGisApplicationDetails(surveydashboardRequest);
 
