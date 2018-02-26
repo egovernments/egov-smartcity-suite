@@ -258,6 +258,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
 
     public void prepareShowForApproval() {
         prepareNewForm();
+        licenseHistory = tradeLicenseService.populateHistory(tradeLicense);
         documentTypes = tradeLicenseService.getDocumentTypesByApplicationType(ApplicationType.valueOf(license()
                 .getLicenseAppType().getName().toUpperCase()));
     }
