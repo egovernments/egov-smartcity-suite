@@ -128,6 +128,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WTMS_AMALGAMATE_WATER_CONNECTIONS_URL;
 import static org.egov.ptis.constants.PropertyTaxConstants.WTMS_TAXDUE_RESTURL;
+import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_SURVEY;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -2390,7 +2391,7 @@ public class PropertyService {
 	private void updatePropertyIndex(final StateAware stateAwareObject, final String applictionType,
 			final User stateOwner, final int sla) {
 		final PropertyImpl property = (PropertyImpl) stateAwareObject;
-		if(!"SURVEY".equalsIgnoreCase(property.getSource())){
+		if(!SOURCE_SURVEY.equalsIgnoreCase(property.getSource())){
 		final ApplicationIndex applicationIndex = applicationIndexService
 				.findByApplicationNumber(property.getApplicationNo());
 		final User owner = property.getBasicProperty().getPrimaryOwner();
