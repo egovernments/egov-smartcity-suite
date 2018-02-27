@@ -49,6 +49,7 @@
 package org.egov.pgr.integration.ivrs.service;
 
 import org.egov.pgr.entity.Complaint;
+import org.egov.pgr.integration.ivrs.entity.IVRSFeedbackReason;
 import org.egov.pgr.integration.ivrs.entity.IVRSFeedbackReview;
 import org.egov.pgr.integration.ivrs.entity.IVRSFeedbackReviewHistory;
 import org.egov.pgr.integration.ivrs.repository.IVRSFeedbackReviewRepository;
@@ -87,7 +88,10 @@ public class IVRSFeedbackReviewService {
     @Transactional
     public void createFeedbackReview(IVRSFeedbackReview feedbackReview) {
         if (feedbackReview.getFeedbackReason().isToBeReopened()) {
-            reopenComplaintOnFeedbackReview(feedbackReview);
+            Complaint complaint = feedbackReview.getComplaint();
+            complaint.setStatus(complaintStatusService.getByName(COMPLAINT_REOPENED));
+            complaint.approverComment(feedbackReview.getDetail());
+            complaintService.updateComplaint(complaint);
             feedbackReview.setReopenCount(1);
         }
         feedbackReview.setReviewCount(1);
@@ -96,24 +100,27 @@ public class IVRSFeedbackReviewService {
 
     @Transactional
     public void updateFeedbackReview(IVRSFeedbackReview feedbackReview) {
-        if (feedbackReview.getFeedbackReason().isToBeReopened()
-                && feedbackReview.getReopenCount() < Long.valueOf(configurationService.getValueByKey("IVRS_REOPEN_COUNT"))) {
-            reopenComplaintOnFeedbackReview(feedbackReview);
-            feedbackReview.setReopenCount(feedbackReview.getReopenCount() + 1);
-        }
-        feedbackReview.setReviewCount(feedbackReview.getReviewCount() + 1);
-        entityManager.detach(feedbackReview);
-        IVRSFeedbackReviewHistory history = new IVRSFeedbackReviewHistory(ivrsFeedbackReviewRepository
-                .findByComplaintCrn(feedbackReview.getComplaint().getCrn()));
-        feedbackReview = entityManager.merge(feedbackReview);
-        feedbackReview.getHistory().add(history);
-        ivrsFeedbackReviewRepository.save(feedbackReview);
-    }
-
-    public void reopenComplaintOnFeedbackReview(IVRSFeedbackReview feedbackReview) {
         Complaint complaint = feedbackReview.getComplaint();
-        complaint.setStatus(complaintStatusService.getByName(COMPLAINT_REOPENED));
-        complaintService.updateComplaint(complaint);
+        IVRSFeedbackReason newReason = feedbackReview.getFeedbackReason();
+        boolean tobeReopened = false;
+        if (newReason.isToBeReopened()
+                && feedbackReview.getReopenCount() < Long.valueOf(configurationService.getValueByKey("IVRS_REOPEN_COUNT"))) {
+            tobeReopened = true;
+        }
+        entityManager.detach(feedbackReview);
+        IVRSFeedbackReview currentReview = ivrsFeedbackReviewRepository.findByComplaintCrn(complaint.getCrn());
+        currentReview = entityManager.merge(currentReview);
+        currentReview.getHistory().add(new IVRSFeedbackReviewHistory(currentReview));
+        currentReview.setDetail(feedbackReview.getDetail());
+        currentReview.setFeedbackReason(newReason);
+        currentReview.setReviewCount(currentReview.getReviewCount() + 1);
+        if (tobeReopened) {
+            complaint.setStatus(complaintStatusService.getByName(COMPLAINT_REOPENED));
+            complaint.approverComment(feedbackReview.getDetail());
+            complaintService.updateComplaint(complaint);
+            currentReview.setReopenCount(currentReview.getReopenCount() + 1);
+        }
+        ivrsFeedbackReviewRepository.saveAndFlush(currentReview);
     }
 
     public Optional<IVRSFeedbackReview> getExistingFeedbackReviewByCRN(String crn) {

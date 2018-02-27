@@ -68,11 +68,20 @@ $(document).ready(function (e) {
     });
 
     $('#btnsearch').click(function (e) {
-        if ($('#searchform').valid()) {
+        var valid = 0;
+        $('form').find('input[type=text], select').each(function () {
+            if ($(this).val()) {
+                valid += 1;
+
+            }
+        });
+        if (valid > 0) {
             onSubmitEvent(e);
         }
-        else
+        else {
+            bootbox.alert('Atleast one search criteria is mandatory!');
             return false;
+        }
     });
 });
 

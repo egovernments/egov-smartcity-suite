@@ -76,11 +76,11 @@
                             <form:errors path="crn" cssClass="error-msg"/>
                         </div>
                         <label class="col-sm-2 control-label text-right">
-                            <spring:message code="title.complaintType"/><span class="mandatory"></span>
+                            <spring:message code="title.complaintType"/>
                         </label>
                         <div class="col-sm-3 add-margin" style="margin-bottom: 15px;">
                             <form:select path="complaintId" id="complaintId" cssClass="form-control"
-                                         cssErrorClass="form-control error" required="required">
+                                         cssErrorClass="form-control error">
                                 <form:option value="">
                                     <spring:message code="lbl.select"/>
                                 </form:option>
@@ -138,7 +138,7 @@
             </div>
             <div class="form-group">
                 <div class="text-center">
-                    <button type="submit" id="btnsearch" class="btn btn-primary">
+                    <button type="button" id="btnsearch" class="btn btn-primary">
                         <spring:message code="lbl.search"/>
                     </button>
                     <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();">

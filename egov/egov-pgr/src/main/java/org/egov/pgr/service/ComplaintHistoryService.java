@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -74,18 +74,7 @@ import java.util.Optional;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.defaultString;
-import static org.egov.pgr.utils.constants.PGRConstants.COMMENT;
-import static org.egov.pgr.utils.constants.PGRConstants.DATE;
-import static org.egov.pgr.utils.constants.PGRConstants.DELIMITER_COLON;
-import static org.egov.pgr.utils.constants.PGRConstants.DEPT;
-import static org.egov.pgr.utils.constants.PGRConstants.ESCALATEDSTATUS;
-import static org.egov.pgr.utils.constants.PGRConstants.NOASSIGNMENT;
-import static org.egov.pgr.utils.constants.PGRConstants.STATUS;
-import static org.egov.pgr.utils.constants.PGRConstants.SYSTEMUSER;
-import static org.egov.pgr.utils.constants.PGRConstants.UPDATEDBY;
-import static org.egov.pgr.utils.constants.PGRConstants.UPDATEDUSERTYPE;
-import static org.egov.pgr.utils.constants.PGRConstants.USER;
-import static org.egov.pgr.utils.constants.PGRConstants.USERTYPE;
+import static org.egov.pgr.utils.constants.PGRConstants.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -108,7 +97,7 @@ public class ComplaintHistoryService {
         if ("Complaint is escalated".equals(state.getComments())) {
             map.put(UPDATEDBY, SYSTEMUSER);
             map.put(STATUS, ESCALATEDSTATUS);
-        } else if (!state.getLastModifiedBy().getType().equals(UserType.EMPLOYEE))
+        } else if (state.getLastModifiedBy().getType().equals(UserType.CITIZEN))
             map.put(UPDATEDBY, complaint.getComplainant().getName());
         else
             map.put(UPDATEDBY, defaultIfBlank(state.getSenderName(),
@@ -155,8 +144,8 @@ public class ComplaintHistoryService {
             complaintHistory.put(UPDATEDBY, SYSTEMUSER);
             complaintHistory.put(STATUS, ESCALATEDSTATUS);
         } else
-            complaintHistory.put(UPDATEDBY, stateHistory.getLastModifiedBy().getType().equals(UserType.EMPLOYEE)
-                    ? stateHistory.getSenderName() : complaint.getComplainant().getName());
+            complaintHistory.put(UPDATEDBY, stateHistory.getLastModifiedBy().getType().equals(UserType.CITIZEN)
+                    ? complaint.getComplainant().getName() : stateHistory.getSenderName());
 
         complaintHistory.put(UPDATEDUSERTYPE, stateHistory.getLastModifiedBy().getType());
         Position owner = stateHistory.getOwnerPosition();
