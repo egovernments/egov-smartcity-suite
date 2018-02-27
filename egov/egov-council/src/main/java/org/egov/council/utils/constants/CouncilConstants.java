@@ -134,6 +134,7 @@ public class CouncilConstants {
     public static final String WF_STATE_REJECT =  "Reject";
     public static final String WF_REJECT_STATE = "Rejected";
     public static final String WF_NEW_STATE = "NEW";
+    public static final String WF_ANONYMOUSPREAMBLE_STATE ="PreambleCreated";
     public static final String COLON_CONCATE = "::";
     public static final String NATURE_OF_WORK = "Preamble";
     public static final String PREAMBLE_MODULE_TYPE = "COUNCILPREAMBLE";
