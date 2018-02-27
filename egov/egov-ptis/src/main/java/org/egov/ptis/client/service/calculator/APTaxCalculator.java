@@ -559,9 +559,9 @@ public class APTaxCalculator implements PropertyTaxCalculator {
 
     private BigDecimal calculateHalfYearNonVacantTax(final String applicableTax, final BigDecimal annualTax, final Floor floor) {
         if (floor != null && floor.getPropertyUsage().getIsResidential())
-            return calculateHalfYearTax(applicableTax + "_R", annualTax);
+            return getYearTax(annualTax, getTaxPercentage(applicableTax + "_R"));
         else
-            return calculateHalfYearTax(applicableTax + "_NR", annualTax);
+            return getYearTax(annualTax, getTaxPercentage(applicableTax + "_NR"));
     }
     
     private BigDecimal getTaxPercentage(final String applicableTax){
