@@ -48,8 +48,10 @@
 
 package org.egov.wtms.application.service;
 
+import org.egov.infra.admin.master.entity.User;
 import org.egov.wtms.application.entity.RegularisedConnection;
 import org.egov.wtms.application.repository.RegularisedConnectionRepository;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -73,6 +75,18 @@ public class RegularisedConnectionService {
 
     public RegularisedConnection findById(final Long id) {
         return regularisedConnectionRepository.findOne(id);
+    }
+    
+    public RegularisedConnection findByApplicationNumber(final String applicationNumber) {
+        return regularisedConnectionRepository.findByApplicationNumber(applicationNumber);
+    }
+    
+    public void updateCurrentWorkFlow(final RegularisedConnection regularisedConnection) {
+        if(regularisedConnection!=null && !regularisedConnection.getState().getValue().equalsIgnoreCase("END")) {
+            User user = null;
+            regularisedConnection.transition().end().withDateInfo(new DateTime().toDate()).withOwner(user).withStateValue("END").withNextAction("END");
+            save(regularisedConnection);
+        }
     }
 
 }

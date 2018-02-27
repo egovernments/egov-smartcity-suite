@@ -45,16 +45,22 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.commons.entity;
 
-import org.apache.commons.lang3.StringUtils;
+package org.egov.wtms.masters.service;
 
-public enum Source {
+import java.util.Comparator;
 
-    APONLINE, ESEVA, MEESEVA, SYSTEM, SOFTTECH, CARD, MOBILE, LEADWINNER, CSC, CITIZENPORTAL, SMARTVIZAG, ANYEMI, ONLINE, PAYTM, BILLDESK, SURVEY;
+import org.egov.demand.model.EgDemandDetails;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@Transactional(readOnly = true)
+public class DemandComparatorByInstallmentStartDate implements Comparator<EgDemandDetails> {
 
     @Override
-    public String toString() {
-        return StringUtils.capitalize(name());
+    public int compare(final EgDemandDetails demandDetailsOne, final EgDemandDetails demandDetailsTwo) {
+        return demandDetailsOne.getEgDemandReason().getEgInstallmentMaster().getFromDate().compareTo(
+                demandDetailsTwo.getEgDemandReason().getEgInstallmentMaster().getFromDate());
     }
 }

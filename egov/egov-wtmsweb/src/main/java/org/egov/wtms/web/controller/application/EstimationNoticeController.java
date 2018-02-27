@@ -47,6 +47,17 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.FILESTORE_MODULECODE;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.WordUtils;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -74,16 +85,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.egov.wtms.utils.constants.WaterTaxConstants.FILESTORE_MODULECODE;
 
 @Controller
 @RequestMapping(value = "/application")
@@ -133,7 +134,6 @@ public class EstimationNoticeController {
             } else {
 
                 final Map<String, Object> reportParams = new HashMap<>();
-                final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
                 final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                         waterConnectionDetails.getConnection().getPropertyIdentifier(),
                         PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ACTIVE);
@@ -151,7 +151,7 @@ public class EstimationNoticeController {
                 reportParams.put("cityName", session.getAttribute("citymunicipalityname"));
                 reportParams.put("district", session.getAttribute("districtName"));
                 reportParams.put("estimationDate",
-                        formatter.format(waterConnectionDetails.getFieldInspectionDetails().getCreatedDate()));
+                        toDefaultDateFormat(waterConnectionDetails.getFieldInspectionDetails().getCreatedDate()));
                 reportParams.put("estimationNumber", waterConnectionDetails.getEstimationNumber());
                 reportParams.put("donationCharges", waterConnectionDetails.getDonationCharges());
                 final double totalCharges = waterConnectionDetails.getDonationCharges()
@@ -159,7 +159,7 @@ public class EstimationNoticeController {
                         + waterConnectionDetails.getFieldInspectionDetails().getRoadCuttingCharges()
                         + waterConnectionDetails.getFieldInspectionDetails().getSecurityDeposit();
                 reportParams.put("totalCharges", totalCharges);
-                reportParams.put("applicationDate", formatter.format(waterConnectionDetails.getApplicationDate()));
+                reportParams.put("applicationDate", toDefaultDateFormat(waterConnectionDetails.getApplicationDate()));
                 reportParams.put("applicantName", ownerName.toString());
                 reportParams.put("address", assessmentDetails.getPropertyAddress());
                 reportParams.put("houseNo", doorNo[0]);

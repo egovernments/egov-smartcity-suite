@@ -152,6 +152,13 @@ jQuery(document).ready(function($) {
 											$('#waterSearchRequestForm').attr('action', url);
 											window.location=url;
 										}
+										
+										if(this.value==16) {
+											url='/wtms/application/regulariseconnection/proceedings-view/'+applicationNumber;
+											$('#waterSearchRequestForm').attr('method', 'get');
+											$('#waterSearchRequestForm').attr('action', url);
+											window.location=url;
+										}
 									});
 
 						$('#aplicationSearchResults').on('click','tbody tr td.row-detail',
@@ -550,6 +557,9 @@ function submitButton()
  			   }
  		   } 
  		   
+ 		   if(full!=null && full!=undefined && full.applicationType !=undefined && full.applicationType =='REGLZNCONNECTION' && full.status=='ACTIVE') {
+ 			   return ('<select class="dropchange" id="regulariseConnection"> <option>Select From Below</option><option value="0">View water tap connection</option><option value="16">Download Regularise Connection Proceedings</option></select>');
+ 		   }
  		   if (full!=null && full !=undefined ){
  			   if((full.status == 'CLOSED'|| full.status == 'HOLDING'|| (approverUserRole!=null && approverUserRole!=""))) { // Assistant
  				   // Engineer,Commitioner

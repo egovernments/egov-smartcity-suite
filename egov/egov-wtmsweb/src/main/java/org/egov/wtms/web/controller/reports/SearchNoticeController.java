@@ -48,11 +48,32 @@
 
 package org.egov.wtms.web.controller.reports;
 
-import com.lowagie.text.Document;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfImportedPage;
-import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfWriter;
+import static java.math.BigDecimal.ZERO;
+import static org.egov.infra.utils.JsonUtils.toJSON;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.zip.Deflater;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.ValidationException;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -82,30 +103,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.ValidationException;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.zip.Deflater;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
-import static java.math.BigDecimal.ZERO;
-import static org.egov.infra.utils.JsonUtils.toJSON;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import com.lowagie.text.Document;
+import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfImportedPage;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfWriter;
 
 @Controller
 @RequestMapping("/report/notice/search")
@@ -123,6 +125,7 @@ public class SearchNoticeController {
     private static final String TODATE = "toDate";
     private static final String SANCTION_ORDER = "Sanction Order";
     private static final String DEMAND_BILL = "Demand Bill";
+    private static final String REGULARISATION_DEMAND_NOTE = "Regularisation Demand Note";
 
     @Autowired
     private PropertyTypeService propertyTypeService;
@@ -186,6 +189,7 @@ public class SearchNoticeController {
         final List<String> noticeList = new ArrayList<>();
         noticeList.add(DEMAND_BILL);
         noticeList.add(SANCTION_ORDER);
+        noticeList.add(REGULARISATION_DEMAND_NOTE);
         return noticeList;
     }
 
@@ -205,6 +209,14 @@ public class SearchNoticeController {
                         request.getParameter(ASSESSMENT_NUMBER),
                         request.getParameter(FROMDATE), request.getParameter(TODATE));
             else if (SANCTION_ORDER.equals(request.getParameter(NOTICE_TYPE)))
+                generateConnectionBillList = searchNoticeService.getSanctionOrderDetails(searchNoticeDetails,
+                        request.getParameter("zone"),
+                        request.getParameter(REVENUEWARD), request.getParameter(PROPERTY_TYPE),
+                        request.getParameter(APPLICATION_TYPE), request.getParameter(CONNECTION_TYPE),
+                        request.getParameter(WATERCHARGES_CONSUMERCODE), request.getParameter(HOUSE_NUMBER),
+                        request.getParameter(ASSESSMENT_NUMBER),
+                        request.getParameter(FROMDATE), request.getParameter(TODATE));
+            else if (REGULARISATION_DEMAND_NOTE.equals(request.getParameter(NOTICE_TYPE)))
                 generateConnectionBillList = searchNoticeService.getSanctionOrderDetails(searchNoticeDetails,
                         request.getParameter("zone"),
                         request.getParameter(REVENUEWARD), request.getParameter(PROPERTY_TYPE),
@@ -237,12 +249,15 @@ public class SearchNoticeController {
             @RequestParam("billNo") final String billNo, @RequestParam("workOrderNumber") final String workOrderNumber) {
         List<Long> waterChargesDocumentslist;
         final List<String> waterChargesFileStoreId = new ArrayList<>();
+        final WaterConnectionDetails waterConnectionDetails = getWaterConnectionDetails(consumerCode);
         if (SANCTION_ORDER.equals(noticeType)) {
-            final WaterConnectionDetails waterConnectionDetails = getWaterConnectionDetails(consumerCode);
             if (waterConnectionDetails != null)
                 waterChargesFileStoreId.add(waterConnectionDetails.getFileStore() != null
                         ? waterConnectionDetails.getFileStore().getFileStoreId() : null);
-        } else {
+        } else if (REGULARISATION_DEMAND_NOTE.equals(noticeType)
+                && waterConnectionDetails.getEstimationNoticeFileStoreId() != null)
+            waterChargesFileStoreId.add(waterConnectionDetails.getEstimationNoticeFileStoreId().getFileStoreId());
+        else {
             waterChargesDocumentslist = searchNoticeService.getDocuments(consumerCode,
                     waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerCode).getApplicationType()
                             .getName());

@@ -60,10 +60,18 @@ $(document)
 						$("#waterSourceDropdown").prop("disabled", true);
 						$("#connectionCategorie").prop("disabled", true);
 					}
+					var executionDate = $("#executionDate").val();
 					var status = $('#statuscode').val();
 					var wfstate = $('#wfstate').val();
 					var currentstate = $('#wfstateDesc').val();
 					var mode = $('#mode').val();
+					if(mode==='addDemand' && executionDate==="" || mode==='fieldInspection') {
+						$("#Forward").hide();
+						$('#approvalComent').removeAttr('required');
+						$('#approvalComent').hide();
+					} else {
+						$("#Forward").show();
+					}
 					var isCommissionerLoggedIn = $('#isCommissionerLoggedIn')
 							.val();
 					$('#approvalComent').show();
@@ -108,7 +116,7 @@ $(document)
 						$('#approvalDesignation').removeAttr('required');
 						$('#approvalPosition').removeAttr('required');
 					}
-					if (isCommissionerLoggedIn == 'true') {
+					if (isCommissionerLoggedIn == 'true' || (typeOfConnection=='REGLZNCONNECTION' && approvalPositionExist=='' && status == 'CREATED' && executionDate=='')) {
 						$(".show-row").hide();
 						$('#approverDetailHeading').hide();
 						$('#approvalDepartment').removeAttr('required');
@@ -313,7 +321,12 @@ $(document)
 													$('#estimationCharges')
 															.focus();
 													return false;
-												} else {
+												} 
+												else if($("#applicationType").val()==='REGLZNCONNECTION' && $("#waterTaxDueforParent").val()>0) {
+													bootbox.alert("Water Tax demand is due. Please pay the amount "+$("#waterTaxDueforParent").val()+" and continue workflow");
+													return false;
+												} 
+												else {
 													validateWorkFlowApprover(action);
 													document.forms[0].submit();
 												}
@@ -450,4 +463,4 @@ $(document)
 					if ($('#meterFocus').val() == 'true') {
 						$('#meterSerialNumber').focus();
 					}
-				});
+	});

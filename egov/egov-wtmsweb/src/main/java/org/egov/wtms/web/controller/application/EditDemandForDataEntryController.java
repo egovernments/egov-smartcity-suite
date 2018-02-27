@@ -99,14 +99,24 @@ public class EditDemandForDataEntryController {
 
     @ModelAttribute
     public WaterConnectionDetails getWaterConnectionDetails(@PathVariable final String consumerCode) {
-        return waterConnectionDetailsService
+        WaterConnectionDetails waterConnectionDetails = null;
+        waterConnectionDetails = waterConnectionDetailsService
                 .findByConsumerCodeAndConnectionStatus(consumerCode, ConnectionStatus.ACTIVE);
+        if (waterConnectionDetails == null)
+            waterConnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(consumerCode,
+                    ConnectionStatus.INPROGRESS);
+        return waterConnectionDetails;
     }
 
     @RequestMapping(value = "/editDemand/{consumerCode}", method = GET)
     public String newForm(final Model model, @PathVariable final String consumerCode,
             @ModelAttribute final WaterConnectionDetails waterConnectionDetails, final HttpServletRequest request) {
-
+        if (waterConnectionDetails == null && consumerCode != null) {
+            final WaterConnectionDetails connectionDetails = waterConnectionDetailsService
+                    .findByConsumerCodeAndConnectionStatus(consumerCode, ConnectionStatus.INPROGRESS);
+            if (connectionDetails != null)
+                return loadViewData(model, connectionDetails);
+        }
         return loadViewData(model, waterConnectionDetails);
 
     }

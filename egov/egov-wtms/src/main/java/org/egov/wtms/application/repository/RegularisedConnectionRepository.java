@@ -48,13 +48,13 @@
 
 package org.egov.wtms.application.repository;
 
+import java.util.List;
+
 import org.egov.wtms.application.entity.RegularisedConnection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public interface RegularisedConnectionRepository extends JpaRepository<RegularisedConnection, Long> {
@@ -62,4 +62,6 @@ public interface RegularisedConnectionRepository extends JpaRepository<Regularis
     @Query("select conn from RegularisedConnection conn where conn.ulbCode=:ulbCode and conn.propertyIdentifier=:propertyIdentifier")
     List<RegularisedConnection> findByUlbCodeAndPropertyIdentifier(@Param("ulbCode") String ulbCode,
             @Param("propertyIdentifier") String propertyIdentifier);
+
+    RegularisedConnection findByApplicationNumber(String applicationNumber);
 }

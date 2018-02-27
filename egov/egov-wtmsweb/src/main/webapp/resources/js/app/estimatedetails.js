@@ -47,6 +47,7 @@
  */
 $(document).ready(function()
 {	
+	calculateTotalAmount();
 	if($('#pipelineDistance') != null && $('#pipelineDistance').val() == 0.0)
 		$('#pipelineDistance').val('');	
 	

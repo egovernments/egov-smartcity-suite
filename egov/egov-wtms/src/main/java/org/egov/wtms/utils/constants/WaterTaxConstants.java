@@ -168,6 +168,14 @@ public class WaterTaxConstants {
     public static final String WF_STATE_STATE_FORWARD = "Application Approval Pending";
     public static final String WF_STATE_ASSISTANT_ENGINEER_APPROVED = "Asst engg approved";
     public static final String WF_STATE_WORK_ORDER_GENERETED = "Work order generated";
+    public static final String WF_STATE_DEE_APPROVED = "Deputy Executive Engineer approved";
+    public static final String WF_STATE_EE_APPROVED = "Executive Engineer approved";
+    public static final String WF_STATE_SE_APPROVED = "Superintending Engineer approved";
+    public static final String WF_STATE_ME_APPROVED = "Municipal Engineer approved";
+    public static final String WF_STATE_DEE_FORWARD_PENDING = "Deputy Executive Engineer forward pending";
+    public static final String WF_STATE_EE_FORWARD_PENDING = "Executive Engineer forward pending";
+    public static final String WF_STATE_SE_FORWARD_PENDING = "Superintending Engineer forward pending";
+    public static final String WF_STATE_ME_FORWARD_PENDING = "Municipal Engineer forward pending";
 
     public static final String APPROVEWORKFLOWACTION = "Approve";
     public static final String FORWARDWORKFLOWACTION = "Forward";
@@ -388,6 +396,7 @@ public class WaterTaxConstants {
     public static final String MUNICIPAL_ENGINEER_DESIGN = "Municipal Engineer";
     public static final String DEPUTY_ENGINEER_DESIGN = "Deputy Executive engineer";
     public static final String SUPERIENTEND_ENGINEER_DESIGN = "Superintendent Engineer";
+    public static final String SUPERINTENDING_ENGINEER_DESIGNATION = "Superintending Engineer";
     public static final String TAP_INSPPECTOR_DESIGN = "Tap Inspector";
     public static final String ASSISTANT_ENGINEER_DESIGN = "Assistant engineer";
     public static final String ASSISTANT_EXECUTIVE_ENGINEER_DESIGN = "Assistant executive engineer";
@@ -421,4 +430,8 @@ public class WaterTaxConstants {
     public static final String SURVEY = "Survey";
     public static final String APPLICATION_GIS_SYSTEM = "Application has been created through GIS survey system";
     public static final String MIGRATED_CONNECTION = "Migrated Connection";
+
+    public static final String WCMS_SERVICE_CHARGES = "WCMS_SERVICE_CHARGES";
+    public static final String SERVICECHARGES = "SERVICECHARGES";
+    public static final String PENALTYCHARGES = "PENALTYCHARGES";
 }
