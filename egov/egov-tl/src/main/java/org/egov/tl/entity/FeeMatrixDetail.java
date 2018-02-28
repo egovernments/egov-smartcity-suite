@@ -61,6 +61,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -82,12 +83,15 @@ public class FeeMatrixDetail extends AbstractPersistable<Long> {
     private FeeMatrix feeMatrix;
 
     @NotNull
+    @Min(0)
     private Integer uomFrom;
 
     @NotNull
+    @Min(1)
     private Integer uomTo;
 
     @NotNull
+    @Min(1)
     private BigDecimal amount;
 
     @Transient
@@ -139,7 +143,7 @@ public class FeeMatrixDetail extends AbstractPersistable<Long> {
         return markedForRemoval;
     }
 
-    public void setMarkedForRemoval(final boolean markedForRemoval) {
+    public void setMarkedForRemoval(boolean markedForRemoval) {
         this.markedForRemoval = markedForRemoval;
     }
 
