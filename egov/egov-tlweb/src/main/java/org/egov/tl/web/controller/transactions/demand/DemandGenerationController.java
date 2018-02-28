@@ -94,10 +94,11 @@ public class DemandGenerationController {
     @PostMapping("generate")
     @ResponseBody
     public String generateDemand(DemandGenerationRequest demandGenerationRequest) {
-        String demandGenerationLogJSON = toJSON(demandGenerationService.generateDemand(demandGenerationRequest),
+        demandGenerationService.generateDemand(demandGenerationRequest);
+        CFinancialYear financialYear = financialYearService.getLatestFinancialYear();
+        demandGenerationService.updateDemandGenerationLog(financialYear);
+        return toJSON(demandGenerationService.getDemandGenerationLog(financialYear).getDetails(),
                 DemandGenerationLogDetail.class, DemandGenerationResponseAdaptor.class);
-        demandGenerationService.updateDemandGenerationLog(financialYearService.getLatestFinancialYear());
-        return demandGenerationLogJSON;
     }
 
     @GetMapping("generate/{licenseId}")

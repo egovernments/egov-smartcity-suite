@@ -84,10 +84,8 @@ import static org.egov.tl.utils.Constants.TRADE_LICENSE;
 public class DemandGenerationService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DemandGenerationService.class);
-    private static final String LICENSE_NOT_ACTIVE = "License Not Active";
     private static final String SUCCESSFUL = "Successful";
-    private static final String DEMAND_EXIST = "Demand exist";
-    private static final String ERRORMSG = "Error occurred while generating demand for license {}";
+    private static final String ERROR_MSG = "Error occurred while generating demand for license {}";
 
     @Autowired
     private DemandGenerationLogService demandGenerationLogService;
@@ -159,17 +157,13 @@ public class DemandGenerationService {
                 DemandGenerationLogDetail demandGenerationLogDetail = demandGenerationLogService.
                         createOrGetDemandGenerationLogDetail(demandGenerationLog, license);
                 try {
-                    if (!license.getIsActive()) {
-                        demandGenerationLogDetail.setDetail(LICENSE_NOT_ACTIVE);
-                    } else if (!installment.equals(license.getCurrentDemand().getEgInstallmentMaster())) {
+                    if (!installment.equals(license.getCurrentDemand().getEgInstallmentMaster())) {
                         licenseService.raiseDemand(license, module, installment);
                         demandGenerationLogDetail.setDetail(SUCCESSFUL);
-                    } else {
-                        demandGenerationLogDetail.setDetail(DEMAND_EXIST);
                     }
                     demandGenerationLogDetail.setStatus(COMPLETED);
                 } catch (RuntimeException e) {
-                    LOGGER.warn(ERRORMSG, license.getLicenseNumber(), e);
+                    LOGGER.warn(ERROR_MSG, license.getLicenseNumber(), e);
                     demandGenerationLogService.updateDemandGenerationLogDetailOnException(demandGenerationLog, demandGenerationLogDetail, e);
                 }
                 flushBatchUpdate(entityManager, ++batchUpdateCount, batchSize);
@@ -189,7 +183,7 @@ public class DemandGenerationService {
                     getInsatllmentByModuleForGivenDate(licenseService.getModuleName(),
                             new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate()));
         } catch (ValidationException e) {
-            LOGGER.warn(ERRORMSG, e);
+            LOGGER.warn(ERROR_MSG, e);
             generationSuccess = false;
         }
         return generationSuccess;
