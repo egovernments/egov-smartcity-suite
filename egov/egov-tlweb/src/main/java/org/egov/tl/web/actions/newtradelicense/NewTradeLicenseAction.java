@@ -397,6 +397,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @ValidationErrorPageExt(action = NEW, makeCall = true, toMethod = "prepareShowForApproval")
     @Action(value = "/newtradelicense/newTradeLicense-save")
     public String save() {
+        supportDocumentsValidationForApproval(tradeLicense);
         addNewDocuments();
         tradeLicenseService.save(tradeLicense);
         addActionMessage(this.getText("license.saved.succesful"));

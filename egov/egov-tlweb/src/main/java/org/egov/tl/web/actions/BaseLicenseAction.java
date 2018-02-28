@@ -642,7 +642,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
 
         List<LicenseDocument> supportDocs = licenseDocument
                 .stream()
-                .filter(document -> document.getType().isMandatory())
+                .filter(document -> document.getType().isMandatory() && document.getUploads().isEmpty())
                 .collect(Collectors.toList());
 
         List<LicenseDocument> existingDocs = new ArrayList<>();
@@ -654,10 +654,10 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
                     .collect(Collectors.toList());
         }
 
-        List<String> supportDocType = supportDocs.stream().map(LicenseDocument::getType).map(LicenseDocumentType::getName)
+        List<Long> supportDocType = supportDocs.stream().map(LicenseDocument::getType).map(LicenseDocumentType::getId)
                 .collect(Collectors.toList());
 
-        List<String> existingDocsType = existingDocs.stream().map(LicenseDocument::getType).map(LicenseDocumentType::getName)
+        List<Long> existingDocsType = existingDocs.stream().map(LicenseDocument::getType).map(LicenseDocumentType::getId)
                 .collect(Collectors.toList());
 
         if (!supportDocs.isEmpty() && supportDocs.stream().anyMatch(document -> document.getUploads().isEmpty()) &&

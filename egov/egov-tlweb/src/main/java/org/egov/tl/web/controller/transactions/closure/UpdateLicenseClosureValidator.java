@@ -52,6 +52,7 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.tl.entity.LicenseDocument;
+import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.enums.ApplicationType;
 import org.egov.tl.service.LicenseClosureProcessflowService;
@@ -83,7 +84,8 @@ public class UpdateLicenseClosureValidator extends LicenseClosureValidator {
 
         List<LicenseDocument> supportDocs = license.getLicenseDocuments()
                 .stream()
-                .filter(licenseDocument -> licenseDocument.getType().isMandatory())
+                .filter(licenseDocument -> licenseDocument.getType().isMandatory()
+                        && licenseDocument.getMultipartFiles().stream().anyMatch(MultipartFile::isEmpty))
                 .collect(Collectors.toList());
 
         List<LicenseDocument> existingDocs = license.getDocuments()
@@ -91,10 +93,18 @@ public class UpdateLicenseClosureValidator extends LicenseClosureValidator {
                 .filter(licenseDocument -> licenseDocument.getType().getApplicationType().equals(ApplicationType.CLOSURE))
                 .collect(Collectors.toList());
 
+
+        List<Long> supportDocType = supportDocs.stream().map(LicenseDocument::getType).map(LicenseDocumentType::getId)
+                .collect(Collectors.toList());
+
+        List<Long> existingDocsType = existingDocs.stream().map(LicenseDocument::getType).map(LicenseDocumentType::getId)
+                .collect(Collectors.toList());
+
         if (!supportDocs.isEmpty()
                 && supportDocs.stream().anyMatch(
                 licenseDocument -> licenseDocument.getMultipartFiles().stream().anyMatch(MultipartFile::isEmpty))
-                && (existingDocs.isEmpty() || existingDocs.stream().anyMatch(licenseDocument -> licenseDocument.equals(supportDocs)))) {
+                && (existingDocs.isEmpty() || !supportDocType.stream().filter(
+                licenseDocumentType -> !existingDocsType.contains(licenseDocumentType)).collect(Collectors.toList()).isEmpty())) {
             errors.reject("validate.supportDocs");
         }
     }
