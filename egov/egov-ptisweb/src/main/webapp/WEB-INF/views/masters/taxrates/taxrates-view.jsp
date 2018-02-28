@@ -102,7 +102,7 @@
 												items="${taxRatesForm.demandReasonDetails}"
 												varStatus="status">
 												<c:if test="${status.index % 2 == 0}">
-										</tr>
+										
 										<tr>
 											<td><c:out value="${count}" /></td>
 											<c:set var="count" value="${count + 1}" />
@@ -128,22 +128,41 @@
 													value="${formattedRate}" /></td>
 											</c:forEach>
 										</tr>
+									</tbody>
+								</table>
+								
+								<table class="table table-bordered table-hover">
+								<tbody>
+								<tr>
+										<c:forEach var="cess" items="${VLT_LIB_DETAILS}" >
+											<tr>
+											<c:choose>
+											<c:when test="${cess.key == 'Library Cess'}">
+											<td><spring:message code="lbl.lib.cess" /></td>
+											</c:when>
+											<c:otherwise>
+											<td><spring:message code="lbl.vlt" /></td>
+											</c:otherwise>
+											</c:choose>
+											<td class="text-right"><fmt:formatNumber
+													var="formattedRate" type="number" minFractionDigits="2"
+													maxFractionDigits="2" value="${cess.value}" /><c:out value="${formattedRate}" /></td>
+											</tr>
+										</c:forEach>
+										</tr>
 										<tr>
-											<td></td>
-											<td><spring:message code="lbl.total.resd" /></td>
+											<td><spring:message code="lbl.total.resd.view" /></td>
 											<td class="text-right"><fmt:formatNumber
 													var="countResdRate" type="number" minFractionDigits="2"
-													maxFractionDigits="2" value="${countResd}" /> <input
-												name="genTaxResd" id="sum" class="patternvalidation"
-												data-pattern="decimalvalue" autocomplete="off" maxlength="5"
-												value="${countResdRate}" readonly="true" /></td>
-											<td><spring:message code="lbl.total.nresd" /></td>
+													maxFractionDigits="2" value="${countResd}" /> <c:out
+												value="${countResdRate}"  /></td>
+												</tr>
+												<tr>
+											<td><spring:message code="lbl.total.nresd.view" /></td>
 											<td class="text-right"><fmt:formatNumber
 													var="countNresdRate" type="number" minFractionDigits="2"
-													maxFractionDigits="2" value="${countNresd}" /> <input
-												name="genTaxNonResd" id="sum" class="patternvalidation"
-												data-pattern="decimalvalue" autocomplete="off" maxlength="5"
-												value="${countNresdRate}" readonly="true" /></td>
+													maxFractionDigits="2" value="${countNresd}" /> <c:out
+												value="${countNresdRate}"/></td>
 
 										</tr>
 									</tbody>

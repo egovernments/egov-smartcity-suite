@@ -61,7 +61,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemandReasonDetails;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.repository.AppConfigValueRepository;
@@ -95,6 +94,9 @@ public class TaxRatesService {
     @Autowired
     @Qualifier("egDemandReasonDetailsService")
     private PersistenceService<EgDemandReasonDetails, Long> egDemandReasonDetailsService;
+    
+    protected static final Map<String, String> VIEW_TAX_RATES_MAP = ImmutableMap.of("VAC_LAND_TAX", PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX,
+            "LIB_CESS", PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS);
     
     protected static final Map<String, String> TAX_RATES_MAP = ImmutableMap.of("VAC_LAND_TAX", PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX,
             "TOT_RESD_TAX", "Total Residential Tax", "LIB_CESS", PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS, "TOT_NR_RESD_TAX",
@@ -155,6 +157,18 @@ public class TaxRatesService {
         return demandReasonDetailsList;
     }
 
+    public Map<String, BigDecimal> getVltAndLibPercentage(List<EgDemandReasonDetails> demandReasonDetailsList) {
+        Iterator<EgDemandReasonDetails> demandReasons = demandReasonDetailsList.iterator();
+        Map<String, BigDecimal> vltAndLib = new HashMap<>();
+        while (demandReasons.hasNext()) {
+            EgDemandReasonDetails egDemandReasonDetails = demandReasons.next();
+            if (VIEW_TAX_RATES_MAP.containsValue(
+                    egDemandReasonDetails.getEgDemandReasonMaster().getReasonMaster()))
+            	vltAndLib.put(egDemandReasonDetails.getEgDemandReasonMaster().getReasonMaster(), egDemandReasonDetails.getPercentage());
+        }
+        return vltAndLib;
+    }
+    
     @Transactional
     public void updateTaxRates(EgDemandReasonDetails egDemandReasonDetails) {
         egDemandReasonDetailsService.persist(egDemandReasonDetails);

@@ -147,7 +147,9 @@ public class TaxRatesController {
     @RequestMapping(value = "/view", method = RequestMethod.GET)
     public String showTaxRates(final Model model) {
         DemandReasonDetailsBean taxRatesForm = new DemandReasonDetailsBean();
-        taxRatesForm.setDemandReasonDetails(taxRatesService.excludeOldTaxHeads(taxRatesService.getTaxRates()));
+        List<EgDemandReasonDetails> taxRates = taxRatesService.getTaxRates();
+        model.addAttribute("VLT_LIB_DETAILS", taxRatesService.getVltAndLibPercentage(taxRates));
+        taxRatesForm.setDemandReasonDetails(taxRatesService.excludeOldTaxHeads(taxRates));
         model.addAttribute(TAX_RATES_FORM, taxRatesForm);
         addTotalTaxHeadsToModel(model);
         return "taxrates-view";
