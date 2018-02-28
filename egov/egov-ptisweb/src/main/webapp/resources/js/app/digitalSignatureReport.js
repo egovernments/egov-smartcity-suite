@@ -64,7 +64,7 @@ function generateNotice(obj, actionName, currentState){
 	var noticeType='Special Notice';  
 	var type = currentState.split(":");
 	var url = null;
-	if (type[0] == 'Create' || type[0] == 'Bifurcate') {
+	if (type[0] == 'Create' || type[0] == 'Bifurcate' || type[0] == 'Amalgamation') {
 		url = "/ptis/notice/propertyTaxNotice-generateNotice.action?basicPropId="+basicPropertyId+"&noticeType="+noticeType+"&noticeMode=create&actionType="+actionName;
 	}else if (type[0] == 'Alter') {
 		url = "/ptis/notice/propertyTaxNotice-generateNotice.action?basicPropId="+basicPropertyId+"&noticeType="+noticeType+"&noticeMode=modify&actionType="+actionName;
