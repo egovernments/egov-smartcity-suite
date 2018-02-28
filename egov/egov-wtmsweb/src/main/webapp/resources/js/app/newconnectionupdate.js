@@ -65,7 +65,7 @@ $(document)
 					var wfstate = $('#wfstate').val();
 					var currentstate = $('#wfstateDesc').val();
 					var mode = $('#mode').val();
-					if(mode==='addDemand' && executionDate==="" || mode==='fieldInspection') {
+					if(typeOfConnection == "REGLZNCONNECTION" && (mode==='addDemand' && executionDate==="" || mode==='fieldInspection')){
 						$("#Forward").hide();
 						$('#approvalComent').removeAttr('required');
 						$('#approvalComent').hide();
