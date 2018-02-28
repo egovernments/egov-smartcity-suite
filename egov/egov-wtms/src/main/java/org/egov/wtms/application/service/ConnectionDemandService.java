@@ -280,7 +280,8 @@ public class ConnectionDemandService {
         return demandDetail;
     }
 
-    private EgDemandDetails createDemandDetailsrForDataEntry(final BigDecimal amount, final BigDecimal collectAmount,
+    @Transactional
+    public EgDemandDetails createDemandDetailsrForDataEntry(final BigDecimal amount, final BigDecimal collectAmount,
             final String demandReason, final String installment, final DemandDetail demandTempObj,
             final WaterConnectionDetails waterConnectionDetails, final String mode) {
         Installment installObj;

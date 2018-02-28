@@ -117,6 +117,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ReportGenerationService {
@@ -719,6 +720,7 @@ public class ReportGenerationService {
         return reportOutput;
     }
 
+    @Transactional
     public void saveRegulariseConnDemandNote(WaterConnectionDetails waterConnectionDetails, ReportOutput reportOutput) {
         if (reportOutput != null) {
             String fileName;
@@ -760,6 +762,7 @@ public class ReportGenerationService {
         return outputObject;
     }
 
+    @Transactional
     public void saveRegulariseConnProceedings(final WaterConnectionDetails waterConnectionDetails, ReportOutput reportOutput) {
         if (reportOutput != null) {
             String fileName;

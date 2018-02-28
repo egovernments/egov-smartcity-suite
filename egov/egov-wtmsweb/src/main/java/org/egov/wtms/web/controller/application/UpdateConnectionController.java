@@ -449,10 +449,10 @@ public class UpdateConnectionController extends GenericConnectionController {
                 waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand() != null) {
             final boolean isWaterChargeDemandPresent = connectionDemandService
                     .checkWaterChargesCurrentDemand(waterConnectionDetails);
-            if (!isWaterChargeDemandPresent)
-                model.addAttribute(MODE, ADD_DEMAND);
-            else
+            if (isWaterChargeDemandPresent)
                 model.addAttribute(MODE, EDIT_DEMAND);
+            else
+                model.addAttribute(MODE, ADD_DEMAND);
         } else if (!recordCreatedBYNonEmployee && waterConnectionDetails.getStatus() != null
                 && waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_CREATED)) {
             model.addAttribute(MODE, FIELDINSPECTION);

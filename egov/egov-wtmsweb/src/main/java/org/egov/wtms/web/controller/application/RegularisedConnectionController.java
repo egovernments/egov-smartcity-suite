@@ -161,7 +161,6 @@ public class RegularisedConnectionController extends GenericConnectionController
     public String createRegularisedConnection(@ModelAttribute final WaterConnectionDetails waterConnectionDetails,
             @PathVariable final String id, final BindingResult errors, final Model model, final HttpServletRequest request) {
 
-        final String sourceChannel = request.getParameter("Source");
         final Boolean citizenPortalUser = waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser());
         final Boolean isCSCOperator = waterTaxUtils.isCSCoperator(securityUtils.getCurrentUser());
         final Boolean isAnonymousUser = waterTaxUtils.isAnonymousUser(securityUtils.getCurrentUser());
@@ -181,7 +180,6 @@ public class RegularisedConnectionController extends GenericConnectionController
             if ("SURVEY".equals(connection.getSource()))
                 waterConnectionDetails.setSource(Source.SURVEY);
         }
-        final Boolean applicationByOthers = waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser());
         if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType()))
             waterConnectionDetailsService.validateWaterRateAndDonationHeader(waterConnectionDetails);
         final List<ApplicationDocuments> applicationDocuments = new ArrayList<>();
@@ -221,13 +219,12 @@ public class RegularisedConnectionController extends GenericConnectionController
         if (isNotBlank(request.getParameter(APPROVALPOSITION)))
             approvalPosition = Long.valueOf(request.getParameter(APPROVALPOSITION));
 
+        final Boolean applicationByOthers = waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser());
         if (applicationByOthers != null && applicationByOthers.equals(true) || citizenPortalUser || isAnonymousUser) {
             final Position userPosition = waterTaxUtils.getZonalLevelClerkForLoggedInUser(
                     waterConnectionDetails.getConnection().getPropertyIdentifier());
 
-            if (userPosition != null)
-                approvalPosition = userPosition.getId();
-            else {
+            if (userPosition == null) {
                 model.addAttribute(VALIDIFPTDUEEXISTS, waterTaxUtils.isNewConnectionAllowedIfPTDuePresent());
                 final WorkflowContainer workflowContainer = new WorkflowContainer();
                 prepareWorkflow(model, waterConnectionDetails, workflowContainer);
@@ -238,7 +235,8 @@ public class RegularisedConnectionController extends GenericConnectionController
                 errors.rejectValue(CONNECTION_PROPERTYID, "err.validate.connection.user.mapping",
                         "err.validate.connection.user.mapping");
                 model.addAttribute("noJAORSAMessage", "No JA/SA exists to forward the application.");
-            }
+            } else
+                approvalPosition = userPosition.getId();
         }
 
         if (isAnonymousUser)
@@ -255,7 +253,7 @@ public class RegularisedConnectionController extends GenericConnectionController
                 waterConnectionDetails.setSource(Source.MEESEVA);
             }
         }
-
+        final String sourceChannel = request.getParameter("Source");
         regularisedConnectionService.updateCurrentWorkFlow(connection);
         waterConnectionDetailsService.createNewWaterConnection(waterConnectionDetails,
                 approvalPosition, approvalComment, waterConnectionDetails.getApplicationType().getCode(),
