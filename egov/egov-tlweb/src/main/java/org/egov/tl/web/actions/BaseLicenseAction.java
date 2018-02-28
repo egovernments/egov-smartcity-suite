@@ -129,7 +129,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     private static final long serialVersionUID = 1L;
     private static final String WF_ITEM_PROCESSED = "wf.item.processed";
     private static final String MESSAGE = "message";
-    private static final String VALIDATE_SUPPORT_DOCUMENT="error.support.docs";
+    private static final String VALIDATE_SUPPORT_DOCUMENT = "error.support.docs";
 
     protected transient WorkflowBean workflowBean = new WorkflowBean();
     protected transient List<String> buildingTypeList;
@@ -270,7 +270,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
             final InputStream fileStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
             final FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, "application/pdf", FILESTORE_MODULECODE);
             license().setDigiSignedCertFileStoreId(fileStore.getFileStoreId());
-            licenseService().save(license());
+            tradeLicenseService.save(license());
             fileStoreIds = fileStore.getFileStoreId();
             ulbCode = ApplicationThreadLocals.getCityCode();
             applicationNo = license().getApplicationNumber();
@@ -663,7 +663,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         if (!supportDocs.isEmpty() && supportDocs.stream().anyMatch(document -> document.getUploads().isEmpty()) &&
                 (existingDocs.isEmpty()
                         || !supportDocType.stream().filter(
-                                licenseDocumentType -> !existingDocsType.contains(licenseDocumentType)).collect(Collectors.toList()).isEmpty())) {
+                        licenseDocumentType -> !existingDocsType.contains(licenseDocumentType)).collect(Collectors.toList()).isEmpty())) {
             throw new ValidationException(VALIDATE_SUPPORT_DOCUMENT, VALIDATE_SUPPORT_DOCUMENT);
         }
     }

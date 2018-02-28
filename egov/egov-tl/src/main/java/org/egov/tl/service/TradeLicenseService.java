@@ -190,6 +190,13 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     }
 
     @Transactional
+    public void save(final License license) {
+        updateDemandForChangeTradeArea((TradeLicense) license);
+        processAndStoreDocument(license);
+        licenseRepository.save(license);
+    }
+
+    @Transactional
     public void updateTradeLicense(final TradeLicense license, final WorkflowBean workflowBean) {
         processAndStoreDocument(license);
         licenseRepository.save(license);
