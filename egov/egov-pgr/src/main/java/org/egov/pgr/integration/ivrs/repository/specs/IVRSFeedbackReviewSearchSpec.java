@@ -60,7 +60,7 @@ import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_COMPLETED;
 public final class IVRSFeedbackReviewSearchSpec {
 
     private static final String COMPALINT = "complaint";
-    private static final String CREATEDDATE = "createddate";
+    private static final String CREATEDDATE = "createdDate";
 
     private IVRSFeedbackReviewSearchSpec() {
         // Due to static method
