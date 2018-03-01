@@ -292,7 +292,7 @@ public class VacancyRemissionService {
                 vacancyRemission.getBasicProperty().setUnderWorkflow(false);
             }
         } else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
-            final String stateValue = WF_STATE_REJECTED;
+            final String stateValue = VR_APP_STATUS_REJECTED;
             vacancyRemission.setStatus(VR_STATUS_REJECTED);
             vacancyRemission.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                     .withComments(approvalComent).withStateValue(stateValue).withDateInfo(currentDate.toDate())
