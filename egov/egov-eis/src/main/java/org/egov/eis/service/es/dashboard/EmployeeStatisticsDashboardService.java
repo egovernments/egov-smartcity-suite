@@ -79,9 +79,21 @@ public class EmployeeStatisticsDashboardService {
     private static final String TOTALEMPLOYEE = "totalEmployee";
     private static final String TOTALMALE = "totalMale";
     private static final String TOTALFEMALE = "totalFemale";
-    private static final String TOTALREGULAREMPLOYEE = "totalRegularEmployee";
-    private static final String TOTALREGULARMALE = "totalRegularMale";
-    private static final String TOTALREGULARFEMALE = "totalRegularFemale";
+    private static final String TOTALPERMANENTEMPLOYEE = "totalPermanentEmployee";
+    private static final String TOTALPERMANENTMALE = "totalPermanentMale";
+    private static final String TOTALPERMANENTFEMALE = "totalPermanentFemale";
+    private static final String TOTALDEPEMPLOYEE = "totalDepEmployee";
+    private static final String TOTALDEPMALE = "totalDepMale";
+    private static final String TOTALDEPFEMALE = "totalDepFemale";
+    private static final String TOTALTEMPEMPLOYEE = "totalTemporaryEmployee";
+    private static final String TOTALTEMPMALE = "totalTemporaryMale";
+    private static final String TOTALTEMPFEMALE = "totalTemporaryFemale";
+    private static final String TOTALOUTSOURCEDEMPLOYEE = "totalOutsourcedEmployee";
+    private static final String TOTALOUTSOURCEDMALE = "totalOutsourcedMale";
+    private static final String TOTALOUTSOURCEDFEMALE = "totalOutsourcedFemale";
+    private static final String DEPUTATION = "Deputation";
+    private static final String TEMPORARY = "Temporary";
+    private static final String OUTSOURCED = "Outsourced";
     private static final String EMPLOYEERECORDS = "employeerecords";
     private static final String MALE = "Male";
     private static final String FEMALE = "Female";
@@ -99,9 +111,21 @@ public class EmployeeStatisticsDashboardService {
         StringTerms aggrEmp = empSearchResponse.get(TOTALEMPLOYEE).getAggregations().get(AGGRFIELD);
         StringTerms aggrMale = empSearchResponse.get(TOTALMALE).getAggregations().get(AGGRFIELD);
         StringTerms aggrFemale = empSearchResponse.get(TOTALFEMALE).getAggregations().get(AGGRFIELD);
-        StringTerms aggrRegularEmp = empSearchResponse.get(TOTALREGULAREMPLOYEE).getAggregations().get(AGGRFIELD);
-        StringTerms aggrRegularMale = empSearchResponse.get(TOTALREGULARMALE).getAggregations().get(AGGRFIELD);
-        StringTerms aggrRegularFemale = empSearchResponse.get(TOTALREGULARFEMALE).getAggregations().get(AGGRFIELD);
+        StringTerms aggrPermanentEmp = empSearchResponse.get(TOTALPERMANENTEMPLOYEE).getAggregations().get(AGGRFIELD);
+        StringTerms aggrPermanentMale = empSearchResponse.get(TOTALPERMANENTMALE).getAggregations().get(AGGRFIELD);
+        StringTerms aggrPermanentFemale = empSearchResponse.get(TOTALPERMANENTFEMALE).getAggregations().get(AGGRFIELD);
+
+        StringTerms aggrDepEmp = empSearchResponse.get(TOTALDEPEMPLOYEE).getAggregations().get(AGGRFIELD);
+        StringTerms aggrDepMale = empSearchResponse.get(TOTALDEPMALE).getAggregations().get(AGGRFIELD);
+        StringTerms aggrDepFemale = empSearchResponse.get(TOTALDEPFEMALE).getAggregations().get(AGGRFIELD);
+
+        StringTerms aggrTempEmp = empSearchResponse.get(TOTALTEMPEMPLOYEE).getAggregations().get(AGGRFIELD);
+        StringTerms aggrTempMale = empSearchResponse.get(TOTALTEMPMALE).getAggregations().get(AGGRFIELD);
+        StringTerms aggrTempFemale = empSearchResponse.get(TOTALTEMPFEMALE).getAggregations().get(AGGRFIELD);
+
+        StringTerms aggrOutsourceEmp = empSearchResponse.get(TOTALOUTSOURCEDEMPLOYEE).getAggregations().get(AGGRFIELD);
+        StringTerms aggrOutsourceMale = empSearchResponse.get(TOTALOUTSOURCEDMALE).getAggregations().get(AGGRFIELD);
+        StringTerms aggrOutsourceFemale = empSearchResponse.get(TOTALOUTSOURCEDFEMALE).getAggregations().get(AGGRFIELD);
         employeeCountRes = empCountRes;
 
         for (final Terms.Bucket entry : aggrEmp.getBuckets()) {
@@ -116,10 +140,12 @@ public class EmployeeStatisticsDashboardService {
             empCountResponse.setTotalEmployee(countEmp);
             empCountResponse.setTotalMale(getTotalCountForAggrField(aggrMale, keyName));
             empCountResponse.setTotalFemale(getTotalCountForAggrField(aggrFemale, keyName));
-            empCountResponse.setTotalRegularEmployee(getTotalCountForAggrField(aggrRegularEmp, keyName));
-            empCountResponse.setTotalRegularMale(getTotalCountForAggrField(aggrRegularMale, keyName));
-            empCountResponse.setTotalRegularFemale(getTotalCountForAggrField(aggrRegularFemale, keyName));
-
+            empCountResponse.setTotalRegularEmployee(getTotalCountForAggrField(aggrPermanentEmp, keyName) + getTotalCountForAggrField(aggrDepEmp, keyName));
+            empCountResponse.setTotalRegularMale(getTotalCountForAggrField(aggrPermanentMale, keyName) + getTotalCountForAggrField(aggrDepMale, keyName));
+            empCountResponse.setTotalRegularFemale(getTotalCountForAggrField(aggrPermanentFemale, keyName) + getTotalCountForAggrField(aggrDepFemale, keyName));
+            empCountResponse.setTotalContractEmployee(getTotalCountForAggrField(aggrTempEmp, keyName) + getTotalCountForAggrField(aggrOutsourceEmp, keyName));
+            empCountResponse.setTotalContractMale(getTotalCountForAggrField(aggrTempMale, keyName) + getTotalCountForAggrField(aggrOutsourceMale, keyName));
+            empCountResponse.setTotalContractFemale(getTotalCountForAggrField(aggrTempFemale, keyName) + getTotalCountForAggrField(aggrOutsourceFemale, keyName));
             setValues(employeesDetailRequest, empCountResponse, topHits, aggrField, keyName);
             empCountRes.put(keyName, empCountResponse);
         }
@@ -152,15 +178,15 @@ public class EmployeeStatisticsDashboardService {
         empSearchResponse.put(TOTALEMPLOYEE, getResponseFromIndexForTotalCount(boolQuery, aggrField));
 
         BoolQueryBuilder filterTypeQuery = boolQuery.must(QueryBuilders.matchQuery(EisConstants.EMPLOYEE_TYPE, EisConstants.EMPLOYEE_TYPE_PERMANENT));
-        empSearchResponse.put(TOTALREGULAREMPLOYEE, getResponseFromIndexForTotalCount(filterTypeQuery, aggrField));
+        empSearchResponse.put(TOTALPERMANENTEMPLOYEE, getResponseFromIndexForTotalCount(filterTypeQuery, aggrField));
 
         filterTypeQuery.must(QueryBuilders.matchQuery(EisConstants.GENDER, MALE));
-        empSearchResponse.put(TOTALREGULARMALE, getResponseFromIndexForTotalCount(filterTypeQuery, aggrField));
+        empSearchResponse.put(TOTALPERMANENTMALE, getResponseFromIndexForTotalCount(filterTypeQuery, aggrField));
 
         BoolQueryBuilder boolQueryBuilder = EISDashBoardUtils.prepareWhereClause(employeeDetailRequest, QueryBuilders.boolQuery());
         boolQueryBuilder.must(QueryBuilders.matchQuery(EisConstants.EMPLOYEE_TYPE, EisConstants.EMPLOYEE_TYPE_PERMANENT))
                 .must(QueryBuilders.matchQuery(EisConstants.GENDER, FEMALE));
-        empSearchResponse.put(TOTALREGULARFEMALE, getResponseFromIndexForTotalCount(boolQueryBuilder, aggrField));
+        empSearchResponse.put(TOTALPERMANENTFEMALE, getResponseFromIndexForTotalCount(boolQueryBuilder, aggrField));
 
         BoolQueryBuilder filterMaleQuery = EISDashBoardUtils.prepareWhereClause(employeeDetailRequest, QueryBuilders.boolQuery());
         filterMaleQuery.must(QueryBuilders.matchQuery(EisConstants.GENDER, MALE));
@@ -170,7 +196,56 @@ public class EmployeeStatisticsDashboardService {
         filterFemaleQuery.must(QueryBuilders.matchQuery(EisConstants.GENDER, FEMALE));
         empSearchResponse.put(TOTALFEMALE, getResponseFromIndexForTotalCount(filterFemaleQuery, aggrField));
 
+        getDeputationTypeResonse(employeeDetailRequest, empSearchResponse, aggrField);
+        getTemporaryTypeResonse(employeeDetailRequest, empSearchResponse, aggrField);
+        getOutsourcedTypeResonse(employeeDetailRequest, empSearchResponse, aggrField);
+
         return empSearchResponse;
+    }
+
+    private void getDeputationTypeResonse(EmployeeDetailRequest employeeDetailRequest, Map<String, SearchResponse> empSearchResponse, String aggrField) {
+        BoolQueryBuilder filterDepTypeQuery = EISDashBoardUtils.prepareWhereClause(employeeDetailRequest, QueryBuilders.boolQuery());
+
+        filterDepTypeQuery.must(QueryBuilders.matchQuery(EisConstants.EMPLOYEE_TYPE, DEPUTATION));
+        empSearchResponse.put(TOTALDEPEMPLOYEE, getResponseFromIndexForTotalCount(filterDepTypeQuery, aggrField));
+
+        filterDepTypeQuery.must(QueryBuilders.matchQuery(EisConstants.GENDER, MALE));
+        empSearchResponse.put(TOTALDEPMALE, getResponseFromIndexForTotalCount(filterDepTypeQuery, aggrField));
+
+        BoolQueryBuilder filterDepFemaleQuery = EISDashBoardUtils.prepareWhereClause(employeeDetailRequest, QueryBuilders.boolQuery());
+        filterDepFemaleQuery.must(QueryBuilders.matchQuery(EisConstants.EMPLOYEE_TYPE, DEPUTATION))
+                .must(QueryBuilders.matchQuery(EisConstants.GENDER, FEMALE));
+        empSearchResponse.put(TOTALDEPFEMALE, getResponseFromIndexForTotalCount(filterDepFemaleQuery, aggrField));
+    }
+
+    private void getTemporaryTypeResonse(EmployeeDetailRequest employeeDetailRequest, Map<String, SearchResponse> empSearchResponse, String aggrField) {
+        BoolQueryBuilder filterDepTypeQuery = EISDashBoardUtils.prepareWhereClause(employeeDetailRequest, QueryBuilders.boolQuery());
+
+        filterDepTypeQuery.must(QueryBuilders.matchQuery(EisConstants.EMPLOYEE_TYPE, TEMPORARY));
+        empSearchResponse.put(TOTALTEMPEMPLOYEE, getResponseFromIndexForTotalCount(filterDepTypeQuery, aggrField));
+
+        filterDepTypeQuery.must(QueryBuilders.matchQuery(EisConstants.GENDER, MALE));
+        empSearchResponse.put(TOTALTEMPMALE, getResponseFromIndexForTotalCount(filterDepTypeQuery, aggrField));
+
+        BoolQueryBuilder filterDepFemaleQuery = EISDashBoardUtils.prepareWhereClause(employeeDetailRequest, QueryBuilders.boolQuery());
+        filterDepFemaleQuery.must(QueryBuilders.matchQuery(EisConstants.EMPLOYEE_TYPE, TEMPORARY))
+                .must(QueryBuilders.matchQuery(EisConstants.GENDER, FEMALE));
+        empSearchResponse.put(TOTALTEMPFEMALE, getResponseFromIndexForTotalCount(filterDepFemaleQuery, aggrField));
+    }
+
+    private void getOutsourcedTypeResonse(EmployeeDetailRequest employeeDetailRequest, Map<String, SearchResponse> empSearchResponse, String aggrField) {
+        BoolQueryBuilder filterDepTypeQuery = EISDashBoardUtils.prepareWhereClause(employeeDetailRequest, QueryBuilders.boolQuery());
+
+        filterDepTypeQuery.must(QueryBuilders.matchQuery(EisConstants.EMPLOYEE_TYPE, OUTSOURCED));
+        empSearchResponse.put(TOTALOUTSOURCEDEMPLOYEE, getResponseFromIndexForTotalCount(filterDepTypeQuery, aggrField));
+
+        filterDepTypeQuery.must(QueryBuilders.matchQuery(EisConstants.GENDER, MALE));
+        empSearchResponse.put(TOTALOUTSOURCEDMALE, getResponseFromIndexForTotalCount(filterDepTypeQuery, aggrField));
+
+        BoolQueryBuilder filterDepFemaleQuery = EISDashBoardUtils.prepareWhereClause(employeeDetailRequest, QueryBuilders.boolQuery());
+        filterDepFemaleQuery.must(QueryBuilders.matchQuery(EisConstants.EMPLOYEE_TYPE, OUTSOURCED))
+                .must(QueryBuilders.matchQuery(EisConstants.GENDER, FEMALE));
+        empSearchResponse.put(TOTALOUTSOURCEDFEMALE, getResponseFromIndexForTotalCount(filterDepFemaleQuery, aggrField));
     }
 
     private SearchResponse getResponseFromIndexForTotalCount(BoolQueryBuilder boolQuery, String aggrField) {
