@@ -47,17 +47,19 @@
  */
 package org.egov.ptis.bean.dashboard;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class SurveyResponse {
 
-    private String regionName;
-    private String districtName;
-    private String ulbGrade;
-    private String ulbCode;
-    private String ulbName;
-    private String wardName;
-    private String billCollector;
-    private String billCollMobile;
-    private String serviceName;
+    private String regionName = StringUtils.EMPTY;
+    private String districtName = StringUtils.EMPTY;
+    private String ulbGrade = StringUtils.EMPTY;
+    private String ulbCode = StringUtils.EMPTY;
+    private String ulbName = StringUtils.EMPTY;
+    private String wardName = StringUtils.EMPTY;
+    private String billCollector = StringUtils.EMPTY;
+    private String billCollMobile = StringUtils.EMPTY;
+    private String serviceName = StringUtils.EMPTY;
     private long totalReceived = 0;
     private long totalCompleted = 0;
     private long totalPending = 0;
