@@ -289,7 +289,8 @@ public class SurveyDashboardService {
             surveyResponse.setExptdIncr((totalGisTax.subtract(totalSystemTax)).doubleValue());
             surveyResponse.setActlIncr((totalApprovedTax.subtract(totalSystemTax)).doubleValue());
             surveyResponse.setDifference(surveyResponse.getExptdIncr() - surveyResponse.getActlIncr());
-            surveyResponse.setTotalCompleted(completedApplicationsMap.get(name));
+            if(completedApplicationsMap.get(name) != null)
+                surveyResponse.setTotalCompleted(completedApplicationsMap.get(name));
             surveyResponse.setTotalPending(surveyResponse.getTotalReceived() - surveyResponse.getTotalCompleted());
 
             responseList.add(surveyResponse);
