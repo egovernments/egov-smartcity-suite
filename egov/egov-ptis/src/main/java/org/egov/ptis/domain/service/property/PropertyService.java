@@ -2731,7 +2731,7 @@ public class PropertyService {
 		List<Assignment> assignment = new ArrayList<>();
 		for (final String dept : department) {
 			for (final String desg : designation) {
-				assignment = assignmentService.findByDepartmentDesignationAndBoundary(
+				assignment = assignmentService.findAssignmentByDepartmentDesignationAndBoundary(
 						departmentService.getDepartmentByName(dept).getId(),
 						designationService.getDesignationByName(desg).getId(),
 						basicProperty.getPropertyID().getElectionBoundary().getId());
