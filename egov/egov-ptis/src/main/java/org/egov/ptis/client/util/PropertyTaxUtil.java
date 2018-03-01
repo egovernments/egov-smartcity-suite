@@ -2006,6 +2006,7 @@ public class PropertyTaxUtil {
      * @param finyear
      * @return
      */
+    @SuppressWarnings("unchecked")
     public BigDecimal getPropertyTaxDetails(final Long basicPropId, final CFinancialYear finyear) {
         List<Object> list = new ArrayList<Object>();
 
@@ -2017,10 +2018,11 @@ public class PropertyTaxUtil {
                 + " and prop.id = ptd.id_property and ptd.id_demand = d.id " + " and d.id = dd.id_demand "
                 + " and dd.id_demand_reason = dr.id and drm.id = dr.id_demand_reason_master "
                 + " and dr.id_installment = inst.id and bp.id =:basicPropId " + " and inst.start_date between '"
-                + finyear.getStartingDate() + "' and '" + finyear.getEndingDate() + "'" + " and drm.code in '"
-                + PropertyTaxConstants.NON_VACANT_TAX_DEMAND_CODES + "') as genTaxDtls";
-        final Query qry = persistenceService.getSession().createSQLQuery(selectQuery)
+                + finyear.getStartingDate() + "' and '" + finyear.getEndingDate() + "'"
+                + " and drm.code in (:demandReasonList)) as genTaxDtls";
+        final Query qry = entityManager.unwrap(Session.class).createSQLQuery(selectQuery)
                 .setLong("basicPropId", basicPropId);
+        qry.setParameterList("demandReasonList", PropertyTaxConstants.NON_VACANT_TAX_DEMAND_CODES);
         list = qry.list();
         return null != list && !list.contains(null) ? new BigDecimal((Double) list.get(0)) : null;
     }
