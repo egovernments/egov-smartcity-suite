@@ -147,7 +147,7 @@
 								<td class="text-center"><span id="slNo1">${counter.index+1}</span></td> 
 								<td class="text-left"><c:out value="${fid.itemDescription}" default="N/A"/></td>
 								<td class="text-center"><c:out value="${fid.quantity}" default="N/A"/></td>
-								<td class="text-center"><c:out value="${fid.unitOfMeasurement.uom}" default="N/A" /></td>
+								<td class="text-center"><c:out value="${fid.unitOfMeasurement}" default="N/A" /></td>
 								<td class="text-center"><c:out value="${fid.unitRate}" default="N/A"/></td>
 								<td class="text-right"><c:out value="${fid.amount}" default="N/A"/></td>
 						      </tr>

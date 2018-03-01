@@ -249,18 +249,8 @@
 							      <tr id="estimationRow">
 									<td class="text-center"><span class="serialNumber" id="slNo${counter.index}">${counter.index+1}</span></td>
 									<td class="text-center"><form:textarea class="form-control table-input" path="estimationDetailsForUpdate[${counter.index}].itemDescription" id="estimationDetailsForUpdate${counter.index}itemDescription" maxlength="256" value="${var1.itemDescription}"></form:textarea></td>
-									<td class="text-right"><form:input type="text" class="form-control table-input text-right patternvalidation quantity" data-pattern="decimalvalue" path="estimationDetailsForUpdate[${counter.index}].quantity" id="estimationDetailsForUpdate${counter.index}quantity" maxlength="8" onblur="calculateTotalAmount();" value="${var1.quantity}"/></td>
-									<td class="text-right">
-											<form:select path="estimationDetailsForUpdate[${counter.index}].unitOfMeasurement" data-first-option="false" id="estimationDetailsForUpdate${counter.index}unitOfMeasurement"
-												cssClass="form-control" >
-												<form:option value="">
-													<spring:message code="lbl.select" /> 
-												</form:option>
-												<form:options items="${uomList}" itemLabel="uom" itemValue="id" />
-												<%-- <c:forEach items="${uomList}" var="entry">
-											        <option value="${entry.id}">${entry.uom}</option> 
-											    </c:forEach> --%>
-										</form:select>	
+									<td class="text-right"><form:input type="text" class="form-control table-input text-right patternvalidation quantity" data-pattern="decimalvalue" path="estimationDetailsForUpdate[${counter.index}].quantity" id="estimationDetailsForUpdate${counter.index}quantity" maxlength="8" onblur="calculateTotalAmount();" value="${var1.quantity}"/></td> 
+								    <td class="text-right"><form:input type="text" class="form-control table-input patternvalidation" data-pattern="alphanumerichyphenbackslash" path="estimationDetailsForUpdate[${counter.index}].unitOfMeasurement" id="estimationDetailsForUpdate${counter.index}unitOfMeasurement" maxlength="50" /></td>									
 									<td class="text-right"><form:input type="text" class="form-control table-input text-right patternvalidation unitrate" data-pattern="decimalvalue" path="estimationDetailsForUpdate[${counter.index}].unitRate" id="estimationDetailsForUpdate${counter.index}unitRate" maxlength="8" onblur="calculateTotalAmount();" value="${var1.unitRate}" /></td>
 									<td class="text-right"><form:input type="text" class="form-control table-input text-right patternvalidation quantity" data-pattern="decimalvalue" path="estimationDetailsForUpdate[${counter.index}].amount" id="estimationDetailsForUpdate${counter.index}amount" maxlength="8" onblur="calculateGrandTotal();" value="${var1.amount}" /></td>
 									<c:if test="${counter.index==0}">
@@ -276,18 +266,8 @@
 							      <tr class="">
 									<td class="text-center"><span class="serialNumber" id="slNo1">1</span></td>
 									<td class="text-center"><form:textarea class="form-control table-input" path="estimationDetailsForUpdate[0].itemDescription" id="estimationDetailsForUpdate0itemDescription" maxlength="256"></form:textarea></td>
-									<td class="text-right"><form:input type="text" class="form-control table-input text-right patternvalidation quantity" data-pattern="decimalvalue" path="estimationDetailsForUpdate[0].quantity" id="estimationDetailsForUpdate0quantity" maxlength="8" onblur="calculateTotalAmount();" value="0"/></td>
-									<td class="text-right">
-										<form:select path="estimationDetailsForUpdate[0].unitOfMeasurement" data-first-option="false" id="estimationDetailsForUpdate0unitOfMeasurement"
-												cssClass="form-control">
-												<form:option value="">
-													<spring:message code="lbl.select" /> 
-												</form:option>
-												<form:options items="${uomList}" itemLabel="uom" itemValue="id" />
-												<%-- <c:forEach items="${uomList}" var="entry">
-											        <option value="${entry.id}">${entry.uom}</option> 
-											    </c:forEach> --%>
-										</form:select>	
+									<td class="text-right"><form:input type="text" class="form-control table-input text-right patternvalidation quantity" data-pattern="decimalvalue" path="estimationDetailsForUpdate[0].quantity" id="estimationDetailsForUpdate0quantity" maxlength="8" onblur="calculateTotalAmount();" value="0"/></td>											
+									<td class="text-right"><form:input type="text" class="form-control table-input patternvalidation" data-pattern="alphanumerichyphenbackslash" path="estimationDetailsForUpdate[0].unitOfMeasurement" id="estimationDetailsForUpdate0unitOfMeasurement" maxlength="50"/></td>
 									<td class="text-right"><form:input type="text" class="form-control table-input text-right patternvalidation unitrate" data-pattern="decimalvalue" path="estimationDetailsForUpdate[0].unitRate" id="estimationDetailsForUpdate0unitRate" maxlength="8" onblur="calculateTotalAmount();" value="0.00" /></td>
 									<td class="text-right"><form:input type="text" class="form-control table-input text-right patternvalidation quantity" data-pattern="decimalvalue" path="estimationDetailsForUpdate[0].amount" id="estimationDetailsForUpdate0amount" maxlength="8" onblur="calculateGrandTotal();" value="0.00" /></td>
 									<td class="text-center"><a href="javascript:void(0)" class="btn-sm btn-default" id="addRowId"><i class="fa fa-plus"></i></a></td>

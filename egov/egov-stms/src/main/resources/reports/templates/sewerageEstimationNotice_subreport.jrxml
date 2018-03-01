@@ -47,7 +47,7 @@
   ~
   -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2018-01-08T11:52:09 -->
+<!-- 2018-03-01T18:36:59 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="remittance_statement_report" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="822" leftMargin="10" rightMargin="10" topMargin="20" bottomMargin="20" uuid="66091296-e2fe-4748-baa1-34b0b8cbb97b">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -71,7 +71,7 @@
 	<field name="quantity" class="java.lang.Double"/>
 	<field name="unitRate" class="java.lang.Double"/>
 	<field name="itemDescription" class="java.lang.String"/>
-	<field name="unitOfMeasurement" class="org.egov.common.entity.UOM"/>
+	<field name="unitOfMeasurement" class="java.lang.String"/>
 	<variable name="serialnumber" class="java.lang.Integer" resetType="Group" resetGroup="sewerageestimationgroup" calculation="Count">
 		<initialValueExpression><![CDATA[new java.lang.Integer(1)]]></initialValueExpression>
 	</variable>
@@ -314,7 +314,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{unitOfMeasurement}.getUom()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{unitOfMeasurement}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="420" y="0" width="53" height="20" uuid="dfdc59f6-16ee-40ae-934d-f27474470f31"/>

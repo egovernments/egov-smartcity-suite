@@ -141,14 +141,17 @@ $(document).ready(function()
         newCol = document.createElement("td");
 		newRow.appendChild(newCol);
         var cell4 = row.insertCell(3);
-        var uom = document.createElement("select");
-        uom.setAttribute("class","form-control");
+        cell4.className = "text-right";
+        var uom = document.createElement("input");
+
+        uom.setAttribute("class","form-control table-input  patternvalidation");
+        uom.type = "text";
+        uom.setAttribute("data-pattern","alphanumerichyphenbackslash"); 
         uom.setAttribute("name", "estimationDetailsForUpdate[" + elementIndex + "].unitOfMeasurement");
         uom.setAttribute("id", "estimationDetailsForUpdate"+elementIndex+"unitOfMeasurement");
+        uom.setAttribute("maxlength", "50");
+
         cell4.appendChild(uom);  
-      
-        $('#estimationDetailsForUpdate'+elementIndex+'unitOfMeasurement').html($("#estimationDetailsForUpdate0unitOfMeasurement").html());
-        $('#estimationDetailsForUpdate'+elementIndex+'unitOfMeasurement').val('');
         
         newCol = document.createElement("td");
 		newRow.appendChild(newCol);
@@ -343,7 +346,7 @@ function validateEstimationDetailsOnAdd(){
     var material=$('*[name="estimationDetailsForUpdate['+lastRow+'].itemDescription"]').val();
    // var  material=getControlInBranch(tbl.rows[lastRow],'estimationDetails['+lastRow+'].itemDescription').val(); 
     var quantity=$('*[name="estimationDetailsForUpdate['+lastRow+'].quantity"]').val();
-    var uom=$('*[name="estimationDetailsForUpdate['+lastRow+'].uom"]').val();
+    var uom=$('*[name="estimationDetailsForUpdate['+lastRow+'].unitOfMeasurement"]').val();
     var rate=$('*[name="estimationDetailsForUpdate['+lastRow+'].rate"]').val();
     var amount=$('*[name="estimationDetailsForUpdate['+lastRow+'].amount"]').val();
   //  alert('*'+material+'*');  
