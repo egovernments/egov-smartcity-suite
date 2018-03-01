@@ -50,6 +50,7 @@ package org.egov.ptis.web.controller.dashboard;
 import java.util.List;
 
 import org.egov.ptis.bean.dashboard.SurveyRequest;
+import org.egov.ptis.bean.dashboard.SurveyResponse;
 import org.egov.ptis.bean.dashboard.SurveyDashboardResponse;
 import org.egov.ptis.service.dashboard.SurveyDashboardService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +70,12 @@ public class SurveyDashboardController {
         return surveyDashboardService
                 .getGisApplicationDetails(surveydashboardRequest);
 
+    }
+    
+    @RequestMapping(value = "/surveyimpactanalysis", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<SurveyResponse> getSurveyImpactAnalysisData(SurveyRequest surveyRequest) {
+        return surveyDashboardService
+                .getAggregatedSurveyDetails(surveyRequest);
     }
 
 }

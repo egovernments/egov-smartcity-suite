@@ -54,10 +54,11 @@ public class SurveyResponse {
     private String ulbGrade;
     private String ulbCode;
     private String ulbName;
+    private String wardName;
     private String billCollector;
     private String billCollMobile;
     private String serviceName;
-    private long todaysReceived = 0;
+    private long totalReceived = 0;
     private long totalCompleted = 0;
     private long totalPending = 0;
     private double pctCompleted = 0;
@@ -67,22 +68,6 @@ public class SurveyResponse {
     private double exptdIncr = 0;
     private double actlIncr = 0;
     private double difference = 0;
-    private String applicationNo;
-    private String assessmentNo;
-    private String doorNo;
-    private String revenueWard;
-    private String revenueBlock;
-    private String locality;
-    private String electionWard;
-    private double systemTax = 0;
-    private double gisTax = 0;
-    private double applicationTax = 0;
-    private String appStatus;
-    private String assistantName;
-    private String riName;
-    private Boolean isreffered;
-    private Boolean isVerified;
-    private String appViewURL;
 
     public String getRegionName() {
         return regionName;
@@ -124,6 +109,14 @@ public class SurveyResponse {
         this.ulbName = ulbName;
     }
 
+    public String getWardName() {
+        return wardName;
+    }
+
+    public void setWardName(String wardName) {
+        this.wardName = wardName;
+    }
+
     public String getBillCollector() {
         return billCollector;
     }
@@ -148,12 +141,12 @@ public class SurveyResponse {
         this.serviceName = serviceName;
     }
 
-    public long getTodaysReceived() {
-        return todaysReceived;
+    public long getTotalReceived() {
+        return totalReceived;
     }
 
-    public void setTodaysReceived(long todaysReceived) {
-        this.todaysReceived = todaysReceived;
+    public void setTotalReceived(long totalReceived) {
+        this.totalReceived = totalReceived;
     }
 
     public long getTotalCompleted() {
@@ -226,134 +219,6 @@ public class SurveyResponse {
 
     public void setDifference(double difference) {
         this.difference = difference;
-    }
-
-    public String getApplicationNo() {
-        return applicationNo;
-    }
-
-    public void setApplicationNo(String applicationNo) {
-        this.applicationNo = applicationNo;
-    }
-
-    public String getAssessmentNo() {
-        return assessmentNo;
-    }
-
-    public void setAssessmentNo(String assessmentNo) {
-        this.assessmentNo = assessmentNo;
-    }
-
-    public String getDoorNo() {
-        return doorNo;
-    }
-
-    public void setDoorNo(String doorNo) {
-        this.doorNo = doorNo;
-    }
-
-    public String getRevenueWard() {
-        return revenueWard;
-    }
-
-    public void setRevenueWard(String revenueWard) {
-        this.revenueWard = revenueWard;
-    }
-
-    public String getRevenueBlock() {
-        return revenueBlock;
-    }
-
-    public void setRevenueBlock(String revenueBlock) {
-        this.revenueBlock = revenueBlock;
-    }
-
-    public String getLocality() {
-        return locality;
-    }
-
-    public void setLocality(String locality) {
-        this.locality = locality;
-    }
-
-    public String getElectionWard() {
-        return electionWard;
-    }
-
-    public void setElectionWard(String electionWard) {
-        this.electionWard = electionWard;
-    }
-
-    public Double getSystemTax() {
-        return systemTax;
-    }
-
-    public void setSystemTax(Double systemTax) {
-        this.systemTax = systemTax;
-    }
-
-    public Double getGisTax() {
-        return gisTax;
-    }
-
-    public void setGisTax(Double gisTax) {
-        this.gisTax = gisTax;
-    }
-
-    public Double getApplicationTax() {
-        return applicationTax;
-    }
-
-    public void setApplicationTax(Double applicationTax) {
-        this.applicationTax = applicationTax;
-    }
-
-    public String getAppStatus() {
-        return appStatus;
-    }
-
-    public void setAppStatus(String appStatus) {
-        this.appStatus = appStatus;
-    }
-
-    public String getAssistantName() {
-        return assistantName;
-    }
-
-    public void setAssistantName(String assistantName) {
-        this.assistantName = assistantName;
-    }
-
-    public String getRiName() {
-        return riName;
-    }
-
-    public void setRiName(String riName) {
-        this.riName = riName;
-    }
-
-    public Boolean getIsreffered() {
-        return isreffered;
-    }
-
-    public void setIsreffered(Boolean isreffered) {
-        this.isreffered = isreffered;
-    }
-
-    public Boolean getIsVerified() {
-        return isVerified;
-    }
-
-    public void setIsVarified(Boolean isVerified) {
-        this.isVerified = isVerified;
-    }
-
-    public String getAppViewURL() {
-        return appViewURL;
-    }
-
-    public void setAppViewURL(String appViewURL) {
-        this.appViewURL = appViewURL;
     }
 
 }

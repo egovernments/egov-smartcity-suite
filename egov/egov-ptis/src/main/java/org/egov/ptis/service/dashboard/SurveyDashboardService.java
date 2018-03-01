@@ -47,13 +47,25 @@
  */
 package org.egov.ptis.service.dashboard;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_DISTRICTWISE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_REGIONWISE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_SERVICEWISE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_ULBWISE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_WARDWISE;
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.egov.ptis.bean.dashboard.SurveyRequest;
+import org.egov.ptis.bean.dashboard.CollectionDetailsRequest;
 import org.egov.ptis.bean.dashboard.SurveyDashboardResponse;
+import org.egov.ptis.bean.dashboard.SurveyRequest;
+import org.egov.ptis.bean.dashboard.SurveyResponse;
+import org.egov.ptis.domain.entity.es.BillCollectorIndex;
+import org.egov.ptis.service.es.CollectionIndexElasticSearchService;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -61,21 +73,36 @@ import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms.Bucket;
+import org.elasticsearch.search.aggregations.metrics.sum.Sum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
 public class SurveyDashboardService {
+    private static final String AGGREGATIONWISE = "aggregationwise";
+    private static final String SENT_TO_THIRD_PARTY = "sentToThirdParty";
+    private static final String PROPERTYSURVEYDETAILS_INDEX = "propertysurveydetails";
+    private static final String CITY_NAME = "cityName";
+    private static final String DISTRICT_NAME = "districtName";
+    private static final String REGION_NAME = "regionName";
+    private static final String REVENUE_WARD = "revenueWard";
+    private static final String APPLICATION_TYPE = "applicationType";
+
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
+
+    @Autowired
+    private CollectionIndexElasticSearchService collectionIndexElasticSearchService;
 
     public List<SurveyDashboardResponse> getGisApplicationDetails(final SurveyRequest surveyDashboardRequest) {
         List<SurveyDashboardResponse> surveyList = new ArrayList<>();
         @SuppressWarnings("rawtypes")
         AggregationBuilder aggregationBuilder = AggregationBuilders.terms("by_ward").field("revenueWard").size(100);
         SearchResponse response = elasticsearchTemplate.getClient()
-                .prepareSearch("propertysurveydetails")
+                .prepareSearch(PROPERTYSURVEYDETAILS_INDEX)
                 .setQuery(prepareQuery(surveyDashboardRequest))
                 .addAggregation(aggregationBuilder).setSize(10000)
                 .execute().actionGet();
@@ -109,7 +136,7 @@ public class SurveyDashboardService {
             surveyResponse.setAssistantName(
                     sourceAsMap.get("assistantName") == null ? "N/A" : sourceAsMap.get("assistantName").toString());
             surveyResponse.setRiName(sourceAsMap.get("riName") == null ? "N/A" : sourceAsMap.get("riName").toString());
-            surveyResponse.setIsreffered((boolean) sourceAsMap.get("sentToThirdParty"));
+            surveyResponse.setIsreffered((boolean) sourceAsMap.get(SENT_TO_THIRD_PARTY));
             surveyResponse.setIsVarified((boolean) sourceAsMap.get("thirdPrtyFlag"));
             surveyResponse.setAppViewURL(appViewURL);
             surveyResponse.setUlbCode(sourceAsMap.get("cityCode").toString());
@@ -117,20 +144,156 @@ public class SurveyDashboardService {
         }
     }
 
-    private BoolQueryBuilder prepareQuery(final SurveyRequest surveydashboardRequest) {
-
+    private BoolQueryBuilder prepareQuery(final SurveyRequest surveyRequest) {
         BoolQueryBuilder boolQuery = new BoolQueryBuilder();
-        if (StringUtils.isNotBlank(surveydashboardRequest.getUlbCode())) {
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("cityCode", surveydashboardRequest.getUlbCode()));
+        if (StringUtils.isNotBlank(surveyRequest.getRegionName()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("regionName", surveyRequest.getRegionName()));
+        if (StringUtils.isNotBlank(surveyRequest.getDistrictName()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("districtName", surveyRequest.getDistrictName()));
+        if (StringUtils.isNotBlank(surveyRequest.getUlbName()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("cityName", surveyRequest.getUlbName()));
+        if (StringUtils.isNotBlank(surveyRequest.getServiceName()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("applicationType", surveyRequest.getServiceName()));
+        if (surveyRequest.getThirdParty() != null) {
+            if (surveyRequest.getThirdParty() == 'Y')
+                boolQuery = boolQuery.filter(QueryBuilders.matchQuery(SENT_TO_THIRD_PARTY, true));
+            else
+                boolQuery = boolQuery.filter(QueryBuilders.matchQuery(SENT_TO_THIRD_PARTY, false));
         }
-        if (StringUtils.isNotBlank(surveydashboardRequest.getWardName())) {
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("wardName", surveydashboardRequest.getWardName()));
+        if (StringUtils.isNotBlank(surveyRequest.getUlbCode())) {
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("cityCode", surveyRequest.getUlbCode()));
         }
-
-        if (StringUtils.isNotBlank(surveydashboardRequest.getLocalityName())) {
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("localityName", surveydashboardRequest.getLocalityName()));
+        if (StringUtils.isNotBlank(surveyRequest.getWardName())) {
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("wardName", surveyRequest.getWardName()));
+        }
+        if (StringUtils.isNotBlank(surveyRequest.getLocalityName())) {
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("localityName", surveyRequest.getLocalityName()));
         }
         return boolQuery;
     }
 
+    public static AggregationBuilder getCountWithGrouping(final String aggregationName, final String fieldName, final int size) {
+        return AggregationBuilders.terms(aggregationName).field(fieldName).size(size);
+    }
+
+    public String getAggregrationField(SurveyRequest surveyRequest) {
+        String aggregationField = REGION_NAME;
+        if (DASHBOARD_GROUPING_REGIONWISE.equalsIgnoreCase(surveyRequest.getAggregationLevel()))
+            aggregationField = REGION_NAME;
+        else if (DASHBOARD_GROUPING_DISTRICTWISE.equalsIgnoreCase(surveyRequest.getAggregationLevel()))
+            aggregationField = DISTRICT_NAME;
+        else if (DASHBOARD_GROUPING_ULBWISE.equalsIgnoreCase(surveyRequest.getAggregationLevel()))
+            aggregationField = CITY_NAME;
+        else if (DASHBOARD_GROUPING_WARDWISE.equalsIgnoreCase(surveyRequest.getAggregationLevel()))
+            aggregationField = REVENUE_WARD;
+        else if (DASHBOARD_GROUPING_SERVICEWISE.equalsIgnoreCase(surveyRequest.getAggregationLevel()))
+            aggregationField = APPLICATION_TYPE;
+        return aggregationField;
+    }
+
+    public List<SurveyResponse> getAggregatedSurveyDetails(SurveyRequest surveyRequest) {
+        List<SurveyResponse> responseList;
+        String aggregationField = REGION_NAME;
+        if (StringUtils.isNotBlank(surveyRequest.getAggregationLevel()))
+            aggregationField = getAggregrationField(surveyRequest);
+
+        AggregationBuilder aggregationBuilder = AggregationBuilders.terms(AGGREGATIONWISE).field(aggregationField).size(100);
+        SearchResponse response = elasticsearchTemplate.getClient().prepareSearch(PROPERTYSURVEYDETAILS_INDEX).setSize(0)
+                .setQuery(prepareQuery(surveyRequest))
+                .addAggregation(aggregationBuilder
+                        .subAggregation(getCountWithGrouping("verificationDone", "thirdPrtyFlag", 2))
+                        .subAggregation(getCountWithGrouping("sentForReference", SENT_TO_THIRD_PARTY, 2))
+                        .subAggregation(AggregationBuilders.sum("gisTotal").field("gisTax"))
+                        .subAggregation(AggregationBuilders.sum("systemTotal").field("systemTax"))
+                        .subAggregation(AggregationBuilders.sum("approvedTotal").field("approvedTax")))
+                .execute().actionGet();
+
+        SearchResponse completedResponse = elasticsearchTemplate.getClient().prepareSearch(PROPERTYSURVEYDETAILS_INDEX).setSize(0)
+                .setQuery(prepareQuery(surveyRequest).filter(QueryBuilders.matchQuery("applicationStatus", "Closed")))
+                .addAggregation(aggregationBuilder).execute().actionGet();
+        Terms completedAggr = completedResponse.getAggregations().get(AGGREGATIONWISE);
+        Map<String, Long> completedApplicationsMap = new HashMap<>();
+        Map<String, BillCollectorIndex> wardWiseBillCollectors = new HashMap<>();
+        for (Bucket bucket : completedAggr.getBuckets())
+            completedApplicationsMap.put(bucket.getKeyAsString(), bucket.getDocCount());
+
+        if (DASHBOARD_GROUPING_WARDWISE.equalsIgnoreCase(surveyRequest.getAggregationLevel())) {
+            CollectionDetailsRequest collectionDetailsRequest = new CollectionDetailsRequest();
+            collectionDetailsRequest.setUlbCode(surveyRequest.getUlbCode());
+            wardWiseBillCollectors = collectionIndexElasticSearchService.getWardWiseBillCollectors(collectionDetailsRequest);
+        }
+
+        responseList = setSurveyResponse(surveyRequest, aggregationField, response, completedApplicationsMap,
+                wardWiseBillCollectors);
+        return responseList;
+    }
+
+    private List<SurveyResponse> setSurveyResponse(SurveyRequest surveyRequest, String aggregationField,
+            SearchResponse response, Map<String, Long> completedApplicationsMap,
+            Map<String, BillCollectorIndex> wardWiseBillCollectors) {
+        SurveyResponse surveyResponse;
+        List<SurveyResponse> responseList = new ArrayList<>();
+        Terms ulbTerms = response.getAggregations().get(AGGREGATIONWISE);
+        Terms verfTerms;
+        Terms sentForRefTerms;
+        Sum gisSumAggr;
+        Sum systemSumAggr;
+        Sum approvedSumAggr;
+        BigDecimal totalGisTax;
+        BigDecimal totalSystemTax;
+        BigDecimal totalApprovedTax;
+        String name;
+        for (Bucket bucket : ulbTerms.getBuckets()) {
+            surveyResponse = new SurveyResponse();
+            name = bucket.getKeyAsString();
+
+            if (REGION_NAME.equals(aggregationField))
+                surveyResponse.setRegionName(name);
+            else if (DISTRICT_NAME.equals(aggregationField))
+                surveyResponse.setDistrictName(name);
+            else if (CITY_NAME.equals(aggregationField))
+                surveyResponse.setUlbName(name);
+            else if (REVENUE_WARD.equals(aggregationField)) {
+                surveyResponse.setWardName(name);
+                if (DASHBOARD_GROUPING_WARDWISE.equalsIgnoreCase(surveyRequest.getAggregationLevel())
+                        && !wardWiseBillCollectors.isEmpty()) {
+                    surveyResponse.setBillCollector(wardWiseBillCollectors.get(name) == null ? StringUtils.EMPTY
+                            : wardWiseBillCollectors.get(name).getBillCollector());
+                    surveyResponse.setBillCollMobile(wardWiseBillCollectors.get(name) == null ? StringUtils.EMPTY
+                            : wardWiseBillCollectors.get(name).getMobileNumber());
+                }
+
+            } else if (APPLICATION_TYPE.equalsIgnoreCase(aggregationField))
+                surveyResponse.setServiceName(name);
+
+            surveyResponse.setTotalReceived(bucket.getDocCount());
+            verfTerms = bucket.getAggregations().get("verificationDone");
+            for (Bucket verfBucket : verfTerms.getBuckets()) {
+                if (verfBucket.getKeyAsNumber().intValue() == 1)
+                    surveyResponse.setVerifyDone(verfBucket.getDocCount());
+            }
+
+            sentForRefTerms = bucket.getAggregations().get("sentForReference");
+            for (Bucket refBucket : sentForRefTerms.getBuckets()) {
+                if (refBucket.getKeyAsNumber().intValue() == 1)
+                    surveyResponse.setVerifyPending(refBucket.getDocCount() - surveyResponse.getVerifyDone());
+            }
+
+            gisSumAggr = bucket.getAggregations().get("gisTotal");
+            totalGisTax = BigDecimal.valueOf(gisSumAggr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
+            systemSumAggr = bucket.getAggregations().get("systemTotal");
+            totalSystemTax = BigDecimal.valueOf(systemSumAggr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
+            approvedSumAggr = bucket.getAggregations().get("approvedTotal");
+            totalApprovedTax = BigDecimal.valueOf(approvedSumAggr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
+
+            surveyResponse.setExptdIncr((totalGisTax.subtract(totalSystemTax)).doubleValue());
+            surveyResponse.setActlIncr((totalApprovedTax.subtract(totalSystemTax)).doubleValue());
+            surveyResponse.setDifference(surveyResponse.getExptdIncr() - surveyResponse.getActlIncr());
+            surveyResponse.setTotalCompleted(completedApplicationsMap.get(name));
+            surveyResponse.setTotalPending(surveyResponse.getTotalReceived() - surveyResponse.getTotalCompleted());
+
+            responseList.add(surveyResponse);
+        }
+        return responseList;
+    }
 }
