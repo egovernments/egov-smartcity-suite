@@ -94,7 +94,7 @@ public class EmployeeStatisticsDashboardService {
         Map<String, SearchResponse> empSearchResponse = getResponseFromIndex(employeesDetailRequest, boolQry, aggrField);
 
         Map<String, EmployeeCountResponse> empCountRes = new HashMap<>();
-        Map<String, EmployeeCountResponse> employeeCountRes ;
+        Map<String, EmployeeCountResponse> employeeCountRes;
 
         StringTerms aggrEmp = empSearchResponse.get(TOTALEMPLOYEE).getAggregations().get(AGGRFIELD);
         StringTerms aggrMale = empSearchResponse.get(TOTALMALE).getAggregations().get(AGGRFIELD);
@@ -105,11 +105,6 @@ public class EmployeeStatisticsDashboardService {
         employeeCountRes = empCountRes;
 
         for (final Terms.Bucket entry : aggrEmp.getBuckets()) {
-            Long maleCount = 0L;
-            Long femaleCount = 0L;
-            Long regularMaleCount = 0L;
-            Long regularFemaleCount = 0L;
-            Long regularEmpCount = 0L;
 
             String keyName = entry.getKeyAsString();
             final TopHits topHits = entry.getAggregations().get("employeerecords");
@@ -119,11 +114,11 @@ public class EmployeeStatisticsDashboardService {
             ValueCount aggregation = entry.getAggregations().get(EisConstants.EMPLOYEE_CODE);
             Long countEmp = aggregation.getValue();
             empCountResponse.setTotalEmployee(countEmp);
-            empCountResponse.setTotalMale(getTotalCountForAggrField(aggrMale, keyName, maleCount));
-            empCountResponse.setTotalFemale(getTotalCountForAggrField(aggrFemale, keyName, femaleCount));
-            empCountResponse.setTotalRegularEmployee(getTotalCountForAggrField(aggrRegularEmp, keyName, regularEmpCount));
-            empCountResponse.setTotalRegularMale(getTotalCountForAggrField(aggrRegularMale, keyName, regularMaleCount));
-            empCountResponse.setTotalRegularFemale(getTotalCountForAggrField(aggrRegularFemale, keyName, regularFemaleCount));
+            empCountResponse.setTotalMale(getTotalCountForAggrField(aggrMale, keyName));
+            empCountResponse.setTotalFemale(getTotalCountForAggrField(aggrFemale, keyName));
+            empCountResponse.setTotalRegularEmployee(getTotalCountForAggrField(aggrRegularEmp, keyName));
+            empCountResponse.setTotalRegularMale(getTotalCountForAggrField(aggrRegularMale, keyName));
+            empCountResponse.setTotalRegularFemale(getTotalCountForAggrField(aggrRegularFemale, keyName));
 
             setValues(employeesDetailRequest, empCountResponse, topHits, aggrField, keyName);
             empCountRes.put(keyName, empCountResponse);
@@ -135,14 +130,15 @@ public class EmployeeStatisticsDashboardService {
         return employeeCountResponses;
     }
 
-    private Long getTotalCountForAggrField(StringTerms aggrEmployeeData, String keyName, Long value) {
+    private Long getTotalCountForAggrField(StringTerms aggrEmployeeData, String keyName) {
+        Long count = 0L;
         for (final Terms.Bucket empEntry : aggrEmployeeData.getBuckets()) {
             if (keyName.equalsIgnoreCase(empEntry.getKeyAsString())) {
                 ValueCount aggrValue = empEntry.getAggregations().get(EisConstants.EMPLOYEE_CODE);
-                value = aggrValue.getValue();
+                count = aggrValue.getValue();
             }
         }
-        return value;
+        return count;
     }
 
 
@@ -205,9 +201,26 @@ public class EmployeeStatisticsDashboardService {
         }
         if (employeeDetailRequest.getUlbCode() != null) {
             response.setUlbCode(employeeDetailRequest.getUlbCode());
+            setDepartmentAggrValues(response, aggrField, topHits);
         }
 
         setAggregationFieldValues(response, aggrField, topHits, keyName);
+    }
+
+    private void setDepartmentAggrValues(EmployeeCountResponse response, String aggrField, TopHits topHits) {
+        final SearchHit[] hit = topHits.getHits().getHits();
+
+        String regionName = hit[0].field(EisConstants.REGNAME).getValue();
+        String districtName = hit[0].field(EisConstants.DISTNAME).getValue();
+        String grade = hit[0].field(EisConstants.ULBGRADE).getValue();
+        String ulb = hit[0].field(EisConstants.ULBNAME).getValue();
+
+        if ("department".equalsIgnoreCase(aggrField)) {
+            response.setDistrict(districtName);
+            response.setRegion(regionName);
+            response.setUlbName(ulb);
+            response.setGrade(grade);
+        }
     }
 
     private void setAggregationFieldValues(EmployeeCountResponse response, String aggrField, TopHits topHits, String keyName) {
@@ -232,12 +245,10 @@ public class EmployeeStatisticsDashboardService {
             response.setGrade(ulbGrade);
             response.setUlbCode(keyName);
         }
-        if ("department".equalsIgnoreCase(aggrField)) {
-            response.setDistrict(disName);
-            response.setRegion(regName);
-            response.setUlbName(ulbName);
+        if ("ulbgrade".equalsIgnoreCase(aggrField)) {
             response.setGrade(ulbGrade);
-            response.setUlbCode(keyName);
+        }
+        if ("department".equalsIgnoreCase(aggrField)) {
             response.setDepartment(department);
         }
     }
