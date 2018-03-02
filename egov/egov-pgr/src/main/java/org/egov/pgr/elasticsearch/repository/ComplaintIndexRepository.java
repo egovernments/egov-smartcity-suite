@@ -61,4 +61,5 @@ public interface ComplaintIndexRepository extends ElasticsearchRepository<Compla
 
     long countByComplainantMobileAndComplaintStatusNameIn(String mobileNumber, List<String> statusName);
 
+    long countByCreatedDateIsBetween(String createdDateFrom, String createdDateTo);
 }

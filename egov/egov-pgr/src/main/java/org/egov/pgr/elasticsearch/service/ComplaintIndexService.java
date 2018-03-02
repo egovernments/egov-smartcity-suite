@@ -85,6 +85,7 @@ import org.elasticsearch.search.aggregations.bucket.terms.Terms.Bucket;
 import org.elasticsearch.search.aggregations.metrics.avg.Avg;
 import org.elasticsearch.search.aggregations.metrics.tophits.TopHits;
 import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -103,6 +104,7 @@ import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
 import static org.egov.infra.utils.ApplicationConstant.NA;
+import static org.egov.infra.utils.DateUtils.startOfToday;
 import static org.egov.pgr.utils.constants.PGRConstants.*;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
@@ -617,8 +619,9 @@ public class ComplaintIndexService {
         final Range currentYearCount = consolidatedResponse.getAggregations().get("currentYear");
         result.put("CYTDComplaint", currentYearCount.getBuckets().get(0).getDocCount());
 
-        final Range todaysCount = consolidatedResponse.getAggregations().get("todaysComplaintCount");
-        result.put("todaysComplaintsCount", todaysCount.getBuckets().get(0).getDocCount());
+        result.put("todaysComplaintsCount", complaintIndexRepository
+                .countByCreatedDateIsBetween(startOfToday().toString(PGR_INDEX_DATE_FORMAT),
+                        new DateTime().plusDays(1).toString(PGR_INDEX_DATE_FORMAT)));
 
         // For Dynamic results based on grouping fields
 
