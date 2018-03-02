@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -49,9 +49,7 @@
 package org.egov.tl.entity.view;
 
 import org.hibernate.annotations.Immutable;
-import org.hibernate.annotations.Type;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -64,21 +62,19 @@ import java.util.Date;
 @Table(name = "egtl_dcb_aggr_view")
 public class InstallmentWiseDCB {
 
-    private String licensenumber;
     @Id
+    private Long id;
+    private String licensenumber;
     private Long licenseid;
     private String licaddress;
     private String username;
     private Long wardid;
     private Long locality;
 
-    @Column(name = "curr_demand")
     private BigDecimal currentdemand;
 
-    @Column(name = "curr_coll")
     private BigDecimal currentcollection;
 
-    @Column(name = "curr_balance")
     private BigDecimal currentbalance;
 
     @Transient
@@ -88,12 +84,15 @@ public class InstallmentWiseDCB {
     @Transient
     private BigDecimal arrearbalance;
 
-    @Type(type = "true_false")
-    private Boolean active;
+    private boolean active;
 
     private Date installment;
 
-    public InstallmentWiseDCB(long licenseid, String licensenumber, Boolean active, BigDecimal currentdemand,
+    private String demandReason;
+
+    private String financialYear;
+
+    public InstallmentWiseDCB(long licenseid, String licensenumber, boolean active, BigDecimal currentdemand,
                               BigDecimal currentcollection, BigDecimal currentbalance, BigDecimal arreardemand,
                               BigDecimal arrearcollection, BigDecimal arrearbalance) {
         this.licenseid = licenseid;
@@ -114,6 +113,14 @@ public class InstallmentWiseDCB {
 
     public InstallmentWiseDCB() {
 
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getLicensenumber() {
@@ -235,13 +242,27 @@ public class InstallmentWiseDCB {
                 : arrearbalance);
     }
 
-    public Boolean getActive() {
+    public boolean isActive() {
         return active;
     }
 
-    public void setActive(Boolean active) {
+    public void setActive(boolean active) {
         this.active = active;
     }
 
+    public String getDemandReason() {
+        return demandReason;
+    }
 
+    public void setDemandReason(String demandReason) {
+        this.demandReason = demandReason;
+    }
+
+    public String getFinancialYear() {
+        return financialYear;
+    }
+
+    public void setFinancialYear(String financialYear) {
+        this.financialYear = financialYear;
+    }
 }

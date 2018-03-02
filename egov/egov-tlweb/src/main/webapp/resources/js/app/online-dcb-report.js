@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -56,40 +56,17 @@ function populateData(reportData) {
     $('.report-section').removeClass('display-hide');
     $('#report-footer').show();
     var dcbTable = $("#tbldcbdrilldown");
-    reportdatatable = dcbTable.dataTable({
+    var reportdatatable = dcbTable.dataTable({
         dom: "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-3 col-xs-6 text-right'B><'col-md-4 col-xs-6 text-right'p>>",
         "autoWidth": false,
         "bDestroy": true,
+        "bPaginate": false,
+        "bInfo": false,
         responsive: true,
         destroy: true,
         "searching": false,
         'aaData': reportData,
-        buttons: [{
-            extend: 'pdf',
-            title: 'DCB Report By Trade Wise',
-            filename: 'DCB Report By Trade Wiset',
-            orientation: 'landscape',
-            footer: true,
-            pageSize: 'A3',
-            exportOptions: {
-                columns: ':visible'
-            }
-        }, {
-            extend: 'excel',
-            filename: 'DCB Report By Trade Wise',
-            footer: true,
-            exportOptions: {
-                columns: ':visible'
-            }
-        }, {
-            extend: 'print',
-            title: 'DCB Report By Trade Wise',
-            filename: 'DCB Report By Trade Wise',
-            footer: true,
-            exportOptions: {
-                columns: ':visible'
-            }
-        }],
+        buttons: [],
         columns: [
             {
                 "data": function (row, type, set, meta) {
@@ -168,4 +145,84 @@ function populateData(reportData) {
     } else {
         reportdatatable.fnSetColumnVis(1, true);
     }
+}
+
+function installmentwiseReportDate(reportData) {
+    $('.report-section').removeClass('display-hide');
+    $('#report-footer').show();
+    var dcbTable = $("#tblinstallmentdcb");
+    var reportdatatable = dcbTable.dataTable({
+        dom: "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-3 col-xs-6 text-right'B><'col-md-4 col-xs-6 text-right'p>>",
+        "autoWidth": false,
+        "bDestroy": true,
+        "bPaginate": false,
+        "bInfo": false,
+        responsive: true,
+        destroy: true,
+        "searching": false,
+        'aaData': reportData,
+        buttons: [],
+        "order": [[0, "desc"]],
+        columns: [{
+            "data": "installment",
+            "sTitle": "Demand Reason"
+        }, {
+            "data": "currentDemand",
+            "sTitle": "Demand"
+        }, {
+            "data": "currentCollection",
+            "sTitle": "Collection"
+        }, {
+            "data": "currentBalance",
+            "sTitle": "Balance"
+        }],
+        "footerCallback": function (row, data, start, end, display) {
+            var api = this.api(), data;
+            if (data.length == 0) {
+                $('#report-footer').hide();
+            } else {
+                $('#report-footer').show();
+            }
+            if (data.length > 0) {
+                updateTotalFooter(1, api);
+                updateTotalFooter(2, api);
+                updateTotalFooter(3, api);
+            }
+        }
+    });
+}
+
+function updateTotalFooter(colidx, api) {
+    // Remove the formatting to get integer data for summation
+    var intVal = function (i) {
+        return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1
+            : typeof i === 'number' ? i : 0;
+    };
+
+    // Total over this page
+    var pageTotal = api.column(colidx, {page: 'current'}).data().reduce(function (a, b) {
+        return intVal(a) + intVal(b);
+    }, 0);
+
+    // Update footer
+    $(api.column(colidx).footer()).html(formatNumberInr(pageTotal));
+}
+
+function formatNumberInr(x) {
+    if (x) {
+        x = x.toString();
+        var afterPoint = '';
+        if (x.indexOf('.') > 0)
+            afterPoint = x.substring(x.indexOf('.'), x.length);
+        x = Math.floor(x);
+        x = x.toString();
+        var lastThree = x.substring(x.length - 3);
+        var otherNumbers = x.substring(0, x.length - 3);
+        if (otherNumbers != '')
+            lastThree = ',' + lastThree;
+        var res = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",")
+            + lastThree + afterPoint;
+        return res;
+    }
+    return x;
 }

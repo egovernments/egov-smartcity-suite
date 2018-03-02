@@ -48,45 +48,27 @@
 
 package org.egov.tl.web.response.adaptor;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
-import org.egov.infra.web.support.ui.DataTable;
+import com.google.gson.JsonSerializer;
 import org.egov.tl.entity.view.InstallmentWiseDCB;
 
 import java.lang.reflect.Type;
-import java.util.List;
 
-import static org.egov.infra.utils.StringUtils.defaultIfBlank;
-import static org.egov.infra.utils.StringUtils.toYesOrNo;
-
-public class InstallmentWiseDCBResponse implements DataTableJsonAdapter<InstallmentWiseDCB> {
+public class OnlineInstallmentwiseDCBReportAdaptor implements JsonSerializer<InstallmentWiseDCB> {
 
     @Override
-    public JsonElement serialize(final DataTable<InstallmentWiseDCB> installmentWiseDCBResponse, final Type type,
-                                 final JsonSerializationContext jsc) {
-        final List<InstallmentWiseDCB> installmentWiseDCBFormResult = installmentWiseDCBResponse.getData();
-        final JsonArray installmentWiseDCBFormData = new JsonArray();
-        installmentWiseDCBFormResult.forEach(installmentWiseDCBForm -> {
-            final JsonObject installmentWiseResponse = new JsonObject();
-            installmentWiseResponse.addProperty("licenseid", installmentWiseDCBForm.getLicenseid());
-            installmentWiseResponse.addProperty("active", toYesOrNo(installmentWiseDCBForm.isActive()));
-            installmentWiseResponse.addProperty("licensenumber", defaultIfBlank(installmentWiseDCBForm.getLicensenumber()));
-            installmentWiseResponse.addProperty("curr_demand", installmentWiseDCBForm.getCurrentdemand());
-            installmentWiseResponse.addProperty("arr_demand", installmentWiseDCBForm.getArreardemand());
-            installmentWiseResponse.addProperty("total_demand", installmentWiseDCBForm.getTotaldemand());
-            installmentWiseResponse.addProperty("curr_coll", installmentWiseDCBForm.getCurrentcollection());
-            installmentWiseResponse.addProperty("arr_coll", installmentWiseDCBForm.getArrearcollection());
-            installmentWiseResponse.addProperty("total_coll", installmentWiseDCBForm.getTotalcollection());
-            installmentWiseResponse.addProperty("curr_balance", installmentWiseDCBForm.getCurrentbalance());
-            installmentWiseResponse.addProperty("arr_balance", installmentWiseDCBForm.getArrearbalance());
-            installmentWiseResponse.addProperty("total_balance", installmentWiseDCBForm.getTotalbalance());
-
-            installmentWiseDCBFormData.add(installmentWiseResponse);
-        });
-        return enhance(installmentWiseDCBFormData, installmentWiseDCBResponse);
+    public JsonElement serialize(InstallmentWiseDCB installmentwiseReportObj, Type type, JsonSerializationContext jsc) {
+        JsonObject installmentwiseResponse = new JsonObject();
+        if (installmentwiseReportObj != null) {
+            installmentwiseResponse.addProperty("installment", new StringBuilder(installmentwiseReportObj.getFinancialYear())
+                    .append(" / ").append(installmentwiseReportObj.getDemandReason()).toString());
+            installmentwiseResponse.addProperty("currentDemand", installmentwiseReportObj.getCurrentdemand());
+            installmentwiseResponse.addProperty("currentCollection", installmentwiseReportObj.getCurrentcollection());
+            installmentwiseResponse.addProperty("currentBalance", installmentwiseReportObj.getCurrentbalance());
+        }
+        return installmentwiseResponse;
     }
 
 }

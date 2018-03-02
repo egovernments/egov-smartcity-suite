@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -166,6 +166,31 @@
             </tfoot>
         </table>
     </div>
+    <div class="col-md-12 table-header text-left">
+        <spring:message code="lbl.installmentwise.dcb.detail"/>
+    </div>
+    <div class="col-md-12 form-group report-table-container">
+        <table
+                class="table table-bordered datatable dt-responsive table-hover multiheadertbl"
+                id="tblinstallmentdcb">
+            <thead>
+            <tr>
+                <th><spring:message code="lbl.demand.reason"/></th>
+                <th><spring:message code="lbl.demand"/></th>
+                <th><spring:message code="lbl.collection"/></th>
+                <th><spring:message code="lbl.balance"/></th>
+            </tr>
+            </thead>
+            <tfoot id="report-footer">
+            <tr>
+                <td><spring:message code="lbl.total"/></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
     <c:if test="${not empty receipts}">
         <div class="col-md-12 table-header text-left">
             <spring:message code="lbl.receipt.details"/>
@@ -219,28 +244,12 @@
         src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
         src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
-<script
-        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/dataTables.buttons.min.js' context='/egi'/>"></script>
-<script
-        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.bootstrap.min.js' context='/egi'/>"></script>
-<script
-        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.flash.min.js' context='/egi'/>"></script>
-<script
-        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/jszip.min.js' context='/egi'/>"></script>
-<script
-        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/pdfmake.min.js' context='/egi'/>"></script>
-<script
-        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/vfs_fonts.js' context='/egi'/>"></script>
-<script
-        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.html5.min.js' context='/egi'/>"></script>
-<script
-        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.print.min.js' context='/egi'/>"></script>
-<script type="text/javascript"
-        src="<cdn:url  value='/resources/js/app/dcb-report.js?rnd=${app_release_no}'/>"></script>
 <script type="text/javascript"
         src="<cdn:url  value='/resources/js/app/online-dcb-report.js?rnd=${app_release_no}'/>"></script>
 <script>
     var dcbreportdata = ${dcbreport};
     populateData(dcbreportdata);
+    var installmentwiseDCBReportData =${installmentwiseReport};
+    installmentwiseReportDate(installmentwiseDCBReportData);
 </script>
 
