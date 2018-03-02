@@ -142,6 +142,15 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
     private ElasticsearchTemplate elasticsearchTemplate;
 
     @Override
+    public SearchResponse todaysComplaintCount(BoolQueryBuilder query) {
+        return elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
+                .setQuery(query)
+                .setSize(0).addAggregation(getCountBetweenSpecifiedDates("todaysComplaintCount", "createdDate",
+                        new DateTime().toString(formatter), new DateTime().plusDays(1).toString(formatter)))
+                .execute().actionGet();
+    }
+
+    @Override
     public Map<String, SearchResponse> findAllGrievanceByFilter(final ComplaintDashBoardRequest complaintDashBoardRequest,
                                                                 final BoolQueryBuilder query, final String grouByField) {
         /**

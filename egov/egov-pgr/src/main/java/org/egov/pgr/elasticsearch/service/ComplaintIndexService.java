@@ -619,9 +619,11 @@ public class ComplaintIndexService {
         final Range currentYearCount = consolidatedResponse.getAggregations().get("currentYear");
         result.put("CYTDComplaint", currentYearCount.getBuckets().get(0).getDocCount());
 
-        result.put("todaysComplaintsCount", complaintIndexRepository
-                .countByCreatedDateIsBetween(startOfToday().toString(PGR_INDEX_DATE_FORMAT),
-                        new DateTime().plusDays(1).toString(PGR_INDEX_DATE_FORMAT)));
+        BoolQueryBuilder todaysComplaintQuery = getFilterQuery(complaintDashBoardRequest, true);
+        Range todaysCount = complaintIndexRepository
+                .todaysComplaintCount(todaysComplaintQuery)
+                .getAggregations().get("todaysComplaintCount");
+        result.put("todaysComplaintsCount", todaysCount.getBuckets().get(0).getDocCount());
 
         // For Dynamic results based on grouping fields
 
@@ -1311,8 +1313,16 @@ public class ComplaintIndexService {
     }
 
     private BoolQueryBuilder getFilterQuery(final ComplaintDashBoardRequest complaintDashBoardRequest) {
+        return getFilterQuery(complaintDashBoardRequest, false);
+    }
+
+    private BoolQueryBuilder getFilterQuery(final ComplaintDashBoardRequest complaintDashBoardRequest, boolean todays) {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().filter(termQuery("registered", 1));
-        if (isNotBlank(complaintDashBoardRequest.getFromDate()) && isNotBlank(complaintDashBoardRequest.getToDate()))
+        if (todays) {
+            boolQuery = boolQuery.must(rangeQuery("createdDate")
+                    .from(startOfToday().toString(PGR_INDEX_DATE_FORMAT))
+                    .to(new DateTime().plusDays(1).toString(PGR_INDEX_DATE_FORMAT)));
+        } else if (isNotBlank(complaintDashBoardRequest.getFromDate()) && isNotBlank(complaintDashBoardRequest.getToDate()))
             boolQuery = boolQuery.must(rangeQuery("createdDate").from(complaintDashBoardRequest.getFromDate()).to(complaintDashBoardRequest.getToDate()));
         if (complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ALL_ULB) ||
                 complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ALL_WARDS) ||

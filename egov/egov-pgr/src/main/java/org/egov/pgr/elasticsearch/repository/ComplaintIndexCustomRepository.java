@@ -64,6 +64,8 @@ public interface ComplaintIndexCustomRepository {
     Map<String, SearchResponse> findAllGrievanceByComplaintType(ComplaintDashBoardRequest complaintDashBoardRequest,
                                                                 BoolQueryBuilder query, String grouByField);
 
+    SearchResponse todaysComplaintCount(BoolQueryBuilder queryBuilders);
+
     String getWardName(String wardNo);
 
     String getFunctionryMobileNumber(String functionaryName);

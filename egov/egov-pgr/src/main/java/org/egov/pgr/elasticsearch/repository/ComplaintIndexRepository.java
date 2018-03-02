@@ -60,6 +60,4 @@ public interface ComplaintIndexRepository extends ElasticsearchRepository<Compla
     ComplaintIndex findByCrnAndCityCode(String crn, String cityCode);
 
     long countByComplainantMobileAndComplaintStatusNameIn(String mobileNumber, List<String> statusName);
-
-    long countByCreatedDateIsBetween(String createdDateFrom, String createdDateTo);
 }
