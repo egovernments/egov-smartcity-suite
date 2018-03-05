@@ -581,7 +581,8 @@ public class ConnectionDemandService {
             demandObj.setCreateDate(new Date());
         if (demandObj.getId() == null) {
             WaterDemandConnection waterdemandConnection = new WaterDemandConnection();
-            if (waterConnectionDetails.getWaterDemandConnection().isEmpty()) {
+            if (waterConnectionDetails.getWaterDemandConnection().isEmpty() ||
+                    "Y".equalsIgnoreCase(waterConnectionDetails.getWaterDemandConnection().get(0).getDemand().getIsHistory())) {
                 waterdemandConnection.setDemand(demandObj);
                 waterdemandConnection.setWaterConnectionDetails(waterConnectionDetails);
                 waterConnectionDetails.addWaterDemandConnection(waterdemandConnection);
