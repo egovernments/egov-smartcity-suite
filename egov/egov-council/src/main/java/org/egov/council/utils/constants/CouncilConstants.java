@@ -97,6 +97,25 @@ public class CouncilConstants {
     public static final String MANAGER_APPROVALPENDING = "Manager approval pending";
     public static final String COMMISSIONER_APPROVALPENDING = "Commissioner approval pending";
 
+    public static final String SENDSMSFORCOUNCIL = "SENDSMSFORCOUNCILMEMBER";
+    public static final String SENDEMAILFORCOUNCIL = "SENDEMAILFORCOUNCILMEMBER";
+
+    public static final String SMSEMAILTYPEFORCOUNCILMEETING = "COUNCILMEETING";
+    public static final String WF_STATE_REJECT = "Reject";
+    public static final String WF_REJECT_STATE = "Rejected";
+    public static final String WF_NEW_STATE = "NEW";
+    public static final String WF_ANONYMOUSPREAMBLE_STATE = "PreambleCreated";
+    public static final String COLON_CONCATE = "::";
+    public static final String NATURE_OF_WORK = "Preamble";
+    public static final String PREAMBLE_MODULE_TYPE = "COUNCILPREAMBLE";
+    public static final String WF_APPROVE_BUTTON = "Approve";
+    public static final String MEETINGSTATUSCREATED = "CREATED";
+    public static final String MEETINGSTATUSAPPROVED = "APPROVED";
+    public static final String MEETINGRESOLUTIONFILENAME = "MeetingResolution.rtf";
+    public static final String WF_FORWARD_BUTTON = "Forward";
+    public static final String WF_PROVIDE_INFO_BUTTON = "Provide more info";
+    public static final String CHECK_BUDGET = "budgetcheckurl";
+
     private static final Map<String, String> MEETING_TIMINGS = new LinkedHashMap<>();
     static {
         MEETING_TIMINGS.put("09:00 AM", "09:00 AM");
@@ -128,25 +147,6 @@ public class CouncilConstants {
     private CouncilConstants() {
         // To hide implicit public
     }
-
-    public static final String SENDSMSFORCOUNCIL = "SENDSMSFORCOUNCILMEMBER";
-    public static final String SENDEMAILFORCOUNCIL = "SENDEMAILFORCOUNCILMEMBER";
-
-    public static final String SMSEMAILTYPEFORCOUNCILMEETING = "COUNCILMEETING";
-    public static final String WF_STATE_REJECT = "Reject";
-    public static final String WF_REJECT_STATE = "Rejected";
-    public static final String WF_NEW_STATE = "NEW";
-    public static final String WF_ANONYMOUSPREAMBLE_STATE = "PreambleCreated";
-    public static final String COLON_CONCATE = "::";
-    public static final String NATURE_OF_WORK = "Preamble";
-    public static final String PREAMBLE_MODULE_TYPE = "COUNCILPREAMBLE";
-    public static final String WF_APPROVE_BUTTON = "Approve";
-    public static final String MEETINGSTATUSCREATED = "CREATED";
-    public static final String MEETINGSTATUSAPPROVED = "APPROVED";
-    public static final String MEETINGRESOLUTIONFILENAME = "MeetingResolution.rtf";
-    public static final String WF_FORWARD_BUTTON = "Forward";
-    public static final String WF_PROVIDE_INFO_BUTTON = "Provide more info";
-    public static final String CHECK_BUDGET = "budgetcheckurl";
 
     public static final List<String> CATEGORY = Collections.unmodifiableList(
             Arrays.asList("Special knowledge", "Minority"));
