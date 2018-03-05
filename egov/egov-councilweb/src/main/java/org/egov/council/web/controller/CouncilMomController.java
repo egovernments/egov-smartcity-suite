@@ -52,7 +52,7 @@ import static org.egov.council.utils.constants.CouncilConstants.COUNCIL_RESOLUTI
 import static org.egov.council.utils.constants.CouncilConstants.MEETINGRESOLUTIONFILENAME;
 import static org.egov.council.utils.constants.CouncilConstants.MEETINGUSEDINRMOM;
 import static org.egov.council.utils.constants.CouncilConstants.MEETING_MODULENAME;
-import static org.egov.council.utils.constants.CouncilConstants.MEETING_TIMINGS;
+import static org.egov.council.utils.constants.CouncilConstants.getMeetingTimings;
 import static org.egov.council.utils.constants.CouncilConstants.MODULE_FULLNAME;
 import static org.egov.council.utils.constants.CouncilConstants.MODULE_NAME;
 import static org.egov.council.utils.constants.CouncilConstants.MOM_FINALISED;
@@ -176,7 +176,7 @@ public class CouncilMomController {
 
     @ModelAttribute("meetingTimingMap")
     public Map<String, String> getMeetingTimingList() {
-        return MEETING_TIMINGS;
+        return getMeetingTimings();
     }
     
     @ModelAttribute("meetingType")
@@ -277,7 +277,10 @@ public class CouncilMomController {
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
     public String view(@PathVariable("id") final Long id, Model model) {
         CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
-        sortMeetingMomByItemNumber(councilMeeting);
+        if (!councilMeeting.getMeetingMOMs().get(0).isLegacy()) {
+
+            sortMeetingMomByItemNumber(councilMeeting);
+        }
         model.addAttribute(COUNCIL_MEETING, councilMeeting);
 
         return COUNCILMOM_VIEW;

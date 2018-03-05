@@ -50,11 +50,12 @@ package org.egov.council.web.controller;
 import static org.egov.council.utils.constants.CouncilConstants.AGENDAUSEDINMEETING;
 import static org.egov.council.utils.constants.CouncilConstants.AGENDA_MODULENAME;
 import static org.egov.council.utils.constants.CouncilConstants.MEETING_MODULENAME;
-import static org.egov.council.utils.constants.CouncilConstants.MEETING_TIMINGS;
 import static org.egov.council.utils.constants.CouncilConstants.MODULE_FULLNAME;
 import static org.egov.council.utils.constants.CouncilConstants.MOM_FINALISED;
 import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_MODULENAME;
 import static org.egov.council.utils.constants.CouncilConstants.RESOLUTION_APPROVED_PREAMBLE;
+import static org.egov.council.utils.constants.CouncilConstants.getMeetingTimings;
+
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
@@ -129,7 +130,7 @@ public class CouncilDataEntryController {
 
     @ModelAttribute("meetingTimingMap")
     public Map<String, String> getMeetingTimingList() {
-        return MEETING_TIMINGS;
+        return getMeetingTimings();
     }
     
     @ModelAttribute("meetingType")
@@ -186,7 +187,6 @@ public class CouncilDataEntryController {
         meetingMOM.getAgenda().setAgendaDetails(preambleList);
         councilMeetingService.createDataEntry(meetingMOMList);
         CouncilMeeting councilMeeting = councilMeetingService.findOne(meetingMOM.getMeeting().getId());
-        councilMeetingService.sortMeetingMomByItemNumber(councilMeeting);
         councilMeetingIndexService.createCouncilMeetingIndex(councilMeeting);
         model.addAttribute(COUNCIL_MEETING, councilMeeting);
         return COUNCILMOM_VIEW;
