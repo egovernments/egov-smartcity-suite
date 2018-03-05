@@ -187,7 +187,7 @@ public abstract class AbstractLicenseService<T extends License> {
     private DepartmentService departmentService;
 
     @Autowired
-    private DesignationService designationService;
+    protected DesignationService designationService;
 
     @Autowired
     private TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
