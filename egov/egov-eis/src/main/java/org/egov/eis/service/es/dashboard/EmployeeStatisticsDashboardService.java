@@ -183,16 +183,16 @@ public class EmployeeStatisticsDashboardService {
         filterTypeQuery.must(QueryBuilders.matchQuery(EisConstants.GENDER, MALE));
         empSearchResponse.put(TOTALPERMANENTMALE, getResponseFromIndexForTotalCount(filterTypeQuery, aggrField));
 
-        BoolQueryBuilder boolQueryBuilder = EISDashBoardUtils.prepareWhereClause(employeeDetailRequest, QueryBuilders.boolQuery());
+        BoolQueryBuilder boolQueryBuilder = EISDashBoardUtils.prepareWhereClauseForEmployees(employeeDetailRequest);
         boolQueryBuilder.must(QueryBuilders.matchQuery(EisConstants.EMPLOYEE_TYPE, EisConstants.EMPLOYEE_TYPE_PERMANENT))
                 .must(QueryBuilders.matchQuery(EisConstants.GENDER, FEMALE));
         empSearchResponse.put(TOTALPERMANENTFEMALE, getResponseFromIndexForTotalCount(boolQueryBuilder, aggrField));
 
-        BoolQueryBuilder filterMaleQuery = EISDashBoardUtils.prepareWhereClause(employeeDetailRequest, QueryBuilders.boolQuery());
+        BoolQueryBuilder filterMaleQuery = EISDashBoardUtils.prepareWhereClauseForEmployees(employeeDetailRequest);
         filterMaleQuery.must(QueryBuilders.matchQuery(EisConstants.GENDER, MALE));
         empSearchResponse.put(TOTALMALE, getResponseFromIndexForTotalCount(filterMaleQuery, aggrField));
 
-        BoolQueryBuilder filterFemaleQuery = EISDashBoardUtils.prepareWhereClause(employeeDetailRequest, QueryBuilders.boolQuery());
+        BoolQueryBuilder filterFemaleQuery = EISDashBoardUtils.prepareWhereClauseForEmployees(employeeDetailRequest);
         filterFemaleQuery.must(QueryBuilders.matchQuery(EisConstants.GENDER, FEMALE));
         empSearchResponse.put(TOTALFEMALE, getResponseFromIndexForTotalCount(filterFemaleQuery, aggrField));
 
@@ -204,7 +204,7 @@ public class EmployeeStatisticsDashboardService {
     }
 
     private void getDeputationTypeResonse(EmployeeDetailRequest employeeDetailRequest, Map<String, SearchResponse> empSearchResponse, String aggrField) {
-        BoolQueryBuilder filterDepTypeQuery = EISDashBoardUtils.prepareWhereClause(employeeDetailRequest, QueryBuilders.boolQuery());
+        BoolQueryBuilder filterDepTypeQuery = EISDashBoardUtils.prepareWhereClauseForEmployees(employeeDetailRequest);
 
         filterDepTypeQuery.must(QueryBuilders.matchQuery(EisConstants.EMPLOYEE_TYPE, DEPUTATION));
         empSearchResponse.put(TOTALDEPEMPLOYEE, getResponseFromIndexForTotalCount(filterDepTypeQuery, aggrField));
@@ -212,14 +212,14 @@ public class EmployeeStatisticsDashboardService {
         filterDepTypeQuery.must(QueryBuilders.matchQuery(EisConstants.GENDER, MALE));
         empSearchResponse.put(TOTALDEPMALE, getResponseFromIndexForTotalCount(filterDepTypeQuery, aggrField));
 
-        BoolQueryBuilder filterDepFemaleQuery = EISDashBoardUtils.prepareWhereClause(employeeDetailRequest, QueryBuilders.boolQuery());
+        BoolQueryBuilder filterDepFemaleQuery = EISDashBoardUtils.prepareWhereClauseForEmployees(employeeDetailRequest);
         filterDepFemaleQuery.must(QueryBuilders.matchQuery(EisConstants.EMPLOYEE_TYPE, DEPUTATION))
                 .must(QueryBuilders.matchQuery(EisConstants.GENDER, FEMALE));
         empSearchResponse.put(TOTALDEPFEMALE, getResponseFromIndexForTotalCount(filterDepFemaleQuery, aggrField));
     }
 
     private void getTemporaryTypeResonse(EmployeeDetailRequest employeeDetailRequest, Map<String, SearchResponse> empSearchResponse, String aggrField) {
-        BoolQueryBuilder filterDepTypeQuery = EISDashBoardUtils.prepareWhereClause(employeeDetailRequest, QueryBuilders.boolQuery());
+        BoolQueryBuilder filterDepTypeQuery = EISDashBoardUtils.prepareWhereClauseForEmployees(employeeDetailRequest);
 
         filterDepTypeQuery.must(QueryBuilders.matchQuery(EisConstants.EMPLOYEE_TYPE, TEMPORARY));
         empSearchResponse.put(TOTALTEMPEMPLOYEE, getResponseFromIndexForTotalCount(filterDepTypeQuery, aggrField));
@@ -227,14 +227,14 @@ public class EmployeeStatisticsDashboardService {
         filterDepTypeQuery.must(QueryBuilders.matchQuery(EisConstants.GENDER, MALE));
         empSearchResponse.put(TOTALTEMPMALE, getResponseFromIndexForTotalCount(filterDepTypeQuery, aggrField));
 
-        BoolQueryBuilder filterDepFemaleQuery = EISDashBoardUtils.prepareWhereClause(employeeDetailRequest, QueryBuilders.boolQuery());
+        BoolQueryBuilder filterDepFemaleQuery = EISDashBoardUtils.prepareWhereClauseForEmployees(employeeDetailRequest);
         filterDepFemaleQuery.must(QueryBuilders.matchQuery(EisConstants.EMPLOYEE_TYPE, TEMPORARY))
                 .must(QueryBuilders.matchQuery(EisConstants.GENDER, FEMALE));
         empSearchResponse.put(TOTALTEMPFEMALE, getResponseFromIndexForTotalCount(filterDepFemaleQuery, aggrField));
     }
 
     private void getOutsourcedTypeResonse(EmployeeDetailRequest employeeDetailRequest, Map<String, SearchResponse> empSearchResponse, String aggrField) {
-        BoolQueryBuilder filterDepTypeQuery = EISDashBoardUtils.prepareWhereClause(employeeDetailRequest, QueryBuilders.boolQuery());
+        BoolQueryBuilder filterDepTypeQuery = EISDashBoardUtils.prepareWhereClauseForEmployees(employeeDetailRequest);
 
         filterDepTypeQuery.must(QueryBuilders.matchQuery(EisConstants.EMPLOYEE_TYPE, OUTSOURCED));
         empSearchResponse.put(TOTALOUTSOURCEDEMPLOYEE, getResponseFromIndexForTotalCount(filterDepTypeQuery, aggrField));
@@ -242,7 +242,7 @@ public class EmployeeStatisticsDashboardService {
         filterDepTypeQuery.must(QueryBuilders.matchQuery(EisConstants.GENDER, MALE));
         empSearchResponse.put(TOTALOUTSOURCEDMALE, getResponseFromIndexForTotalCount(filterDepTypeQuery, aggrField));
 
-        BoolQueryBuilder filterDepFemaleQuery = EISDashBoardUtils.prepareWhereClause(employeeDetailRequest, QueryBuilders.boolQuery());
+        BoolQueryBuilder filterDepFemaleQuery = EISDashBoardUtils.prepareWhereClauseForEmployees(employeeDetailRequest);
         filterDepFemaleQuery.must(QueryBuilders.matchQuery(EisConstants.EMPLOYEE_TYPE, OUTSOURCED))
                 .must(QueryBuilders.matchQuery(EisConstants.GENDER, FEMALE));
         empSearchResponse.put(TOTALOUTSOURCEDFEMALE, getResponseFromIndexForTotalCount(filterDepFemaleQuery, aggrField));
@@ -273,6 +273,9 @@ public class EmployeeStatisticsDashboardService {
         }
         if (employeeDetailRequest.getGrade() != null) {
             response.setUlbName(employeeDetailRequest.getGrade());
+        }
+        if (employeeDetailRequest.getDepartmentName() != null) {
+            response.setDepartment(employeeDetailRequest.getDepartmentName());
         }
         if (employeeDetailRequest.getUlbCode() != null) {
             response.setUlbCode(employeeDetailRequest.getUlbCode());

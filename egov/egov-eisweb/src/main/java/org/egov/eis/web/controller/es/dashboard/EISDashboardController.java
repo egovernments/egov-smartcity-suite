@@ -55,7 +55,6 @@ import org.egov.eis.es.utils.EISDashBoardUtils;
 import org.egov.eis.service.es.dashboard.EmployeeDetailsDashboardService;
 import org.egov.eis.service.es.dashboard.EmployeeStatisticsDashboardService;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -78,7 +77,7 @@ public class EISDashboardController {
     @RequestMapping(value = "/employeestatistics", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<EmployeeCountResponse> getEmployeeStatistics(final EmployeeDetailRequest employeesDetailRequest)
             throws IOException {
-        final BoolQueryBuilder boolQuery = EISDashBoardUtils.prepareWhereClause(employeesDetailRequest, QueryBuilders.boolQuery());
+        final BoolQueryBuilder boolQuery = EISDashBoardUtils.prepareWhereClauseForEmployees(employeesDetailRequest);
         final String aggrField = EISDashBoardUtils.getAggregationGroupingField(employeesDetailRequest);
         return employeeStatisticsDashboardService.getEmployeeCount(employeesDetailRequest, boolQuery, aggrField);
     }
