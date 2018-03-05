@@ -101,8 +101,8 @@ public class InstallmentwiseDCBReportService {
     }
 
     @ReadOnly
-    public List<InstallmentWiseDCB> getInstallmentWiseDCBReport(String licenseNumber) {
-        return installmentwiseDCBReportRepository.findAllByLicensenumber(licenseNumber);
+    public List<InstallmentWiseDCB> getInstallmentWiseDCBReport(Long licenseId) {
+        return installmentwiseDCBReportRepository.findAllByLicenseid(licenseId);
     }
 
     @ReadOnly
