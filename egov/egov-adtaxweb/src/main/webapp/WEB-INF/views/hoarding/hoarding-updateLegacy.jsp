@@ -91,12 +91,12 @@ var adminBoundry = '${advertisementPermitDetail.advertisement.ward.id}';
 var revenueBoundary = '${advertisementPermitDetail.advertisement.locality.id}';
 
 $(window).load(function(){
-	
-	document.getElementById("applicationNumber").readOnly=true;
-	document.getElementById("applicationDate").readOnly=true;
-	document.getElementById("permissionNumber").readOnly=true;
-	document.getElementById("advertisementnumber").readOnly=true;
-});
+		$("#applicationNumber").prop("readonly", true);
+		$("#applicationDate").prop("readonly", true);
+		$("#permissionNumber").prop("readonly", true);
+		$("#advertisementnumber").prop("readonly", true);
+		$('#applicationDate').datepicker('remove');
+				});
 
 $('#submit').click(function(e){
 	if($('#hoardingform').valid()){

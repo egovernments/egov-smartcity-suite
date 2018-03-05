@@ -157,30 +157,52 @@
 						<spring:message code="lbl.advertisement.permitDetail"/>
 						</div>
 					</div>
-					<div class="form-group">
-						<label class="col-sm-3 control-label text-right">
-						<spring:message code="lbl.advertisement.application.no"/>
-						</label>
-						<div class="col-sm-3 add-margin">
-						<form:hidden path="advertisement.legacy" id="legacy" value="${renewalPermitDetail.advertisement.legacy}" />
-						<form:hidden path="advertisement.status" id="advStatus" value="${advertisement.status}" />
-						<%-- 
+							<div class="form-group">
+								<label class="col-sm-3 control-label text-right"> <spring:message
+										code="lbl.advertisement.application.no" />
+								</label>
+								<div class="col-sm-3 add-margin">
+									<form:hidden path="advertisement.legacy" id="legacy"
+										value="${renewalPermitDetail.advertisement.legacy}" />
+									<form:hidden path="advertisement.status" id="advStatus"
+										value="${advertisement.status}" />
+									<%-- 
 						<form:hidden path="status" id="status" value="${status.id}" /> 
 						 --%>
-						<form:input type="text"  cssClass="form-control patternvalidation" 
-                      	      data-pattern="alphanumerichyphenbackslash" path="applicationNumber" maxlength="25" id="applicationNumber" readonly="true"/>
-                        	<form:errors path="applicationNumber" cssClass="error-msg" />
-						</div>
-						<label class="col-sm-2 control-label text-right">
-						<spring:message code="lbl.application.date"/>
-						<span class="mandatory"></span>
-						</label>
-						<div class="col-sm-3 add-margin">
-							<form:input type="text" cssClass="form-control datepicker" path="applicationDate" id="applicationDate" required="required" readonly="true"/>
-                            <form:errors path="applicationDate" cssClass="error-msg" />
-						</div>
-					</div>
-					<div class="form-group">
+									<form:input type="text"
+										cssClass="form-control patternvalidation"
+										data-pattern="alphanumerichyphenbackslash"
+										path="applicationNumber" maxlength="25" id="applicationNumber"
+										readonly="true" />
+									<form:errors path="applicationNumber" cssClass="error-msg" />
+								</div>
+								<c:choose>
+									<c:when
+										test="${renewalPermitDetail.advertisement.legacy eq false}">
+										<label class="col-sm-2 control-label text-right"> <spring:message
+												code="lbl.application.date" /> <span class="mandatory"></span>
+										</label>
+										<div class="col-sm-3 add-margin">
+											<form:input type="text" cssClass="form-control"
+												path="applicationDate" id="applicationDate"
+												readonly="true" />
+											<form:errors path="applicationDate" cssClass="error-msg" />
+										</div>
+									</c:when>
+									<c:otherwise>
+										<label class="col-sm-2 control-label text-right"> <spring:message
+												code="lbl.application.date" /> <span class="mandatory"></span>
+										</label>
+										<div class="col-sm-3 add-margin">
+											<form:input  type="text" cssClass="form-control datepicker"
+												path="applicationDate" id="applicationDate"
+												required="required" />
+											<form:errors path="applicationDate" cssClass="error-msg" />
+										</div>
+									</c:otherwise>
+								</c:choose>
+							</div>
+							<div class="form-group">
 						<label class="col-sm-3 control-label text-right">
 						<spring:message code="lbl.advertisement.permission.no"/>
 						</label>
