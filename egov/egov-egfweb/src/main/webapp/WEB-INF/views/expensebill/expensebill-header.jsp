@@ -109,7 +109,7 @@
 		<label class="col-sm-2 control-label text-right"><spring:message code="lbl.narration" />
 		</label>
 		<div class="col-sm-3 add-margin">
-			<form:textarea path="egBillregistermis.narration" id="narration" class="form-control" maxlength="300" ></form:textarea>
+			<form:textarea path="egBillregistermis.narration" id="narration" class="form-control" maxlength="1024" ></form:textarea>
 			<form:errors path="egBillregistermis.narration" cssClass="add-margin error-msg" />
 		</div>
 	</div>
