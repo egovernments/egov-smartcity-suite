@@ -418,13 +418,16 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                                     , reason, instDesc, billReceipt.getReceiptNum(), rcptAccInfo.getCrAmount());
                     }
 
-                if (ld.getLicense().hasState())
+                if (ld.getLicense().hasState()) {
+                    if (ld.getLicense().transitionCompleted())
+                        throw new ValidationException("TL-008", "License application may be already cancelled");
                     if (!ld.getLicense().isNewWorkflow())
                         updateWorkflowState(ld.getLicense());
                     else {
                         ld.getLicense().setCollectionPending(false);
                         licenseApplicationService.collectionTransition((TradeLicense) ld.getLicense());
                     }
+                }
                 licenseCitizenPortalService.onUpdate((TradeLicense) ld.getLicense());
                 licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(ld.getLicense());
                 tradeLicenseSmsAndEmailService.sendSMsAndEmailOnCollection(ld.getLicense(), billReceipt.getTotalAmount());
