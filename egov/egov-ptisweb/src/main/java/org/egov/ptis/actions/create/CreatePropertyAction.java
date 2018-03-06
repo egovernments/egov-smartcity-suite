@@ -1485,6 +1485,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 if (StringUtils.isNotBlank(parentIndex)) {
                     final BasicProperty basicProperty = basicPropertyService
                             .find("From BasicPropertyImpl where upicNo = ? ", parentIndex);
+                    checkIfParentIsUnderWorkflow(basicProperty);
                     if (areaOfPlot != null && !areaOfPlot.isEmpty()) {
                         final Area area = new Area();
                         area.setArea(new Float(areaOfPlot));
@@ -1532,6 +1533,11 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         if (upicNo == null || "".equals(upicNo))
             validateDocumentDetails(getDocumentTypeDetails());
     }
+
+	private void checkIfParentIsUnderWorkflow(final BasicProperty basicProperty) {
+		if(basicProperty.isUnderWorkflow())
+			addActionError(getText("error.parent.under.wf"));
+	}
 
     @SkipValidation
     @Action(value = "/createProperty-printAck")
