@@ -64,10 +64,10 @@
             <div class="col-sm-3">
 
                 <span class="docname"><s:property value="name"/></span>
-                <c:if test="${mode!=('editForReject'||'editForApprover')}">
-                    <s:if test="mandatory">
-                        <span class="mandatory"></span>
-                    </s:if>
+                <c:if test="${mode!=('editForReject')}">
+                <s:if test="mandatory">
+                    <span class="mandatory"></span>
+                </s:if>
                 </c:if>
                 <s:hidden name="licenseDocument[%{#stat.index}].type.id" value="%{id}"/>
                 <s:hidden name="licenseDocument[%{#stat.index}].type.name" value="%{name}"/>
