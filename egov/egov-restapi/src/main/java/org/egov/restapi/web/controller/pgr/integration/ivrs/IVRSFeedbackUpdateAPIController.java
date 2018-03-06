@@ -48,9 +48,12 @@
 
 package org.egov.restapi.web.controller.pgr.integration.ivrs;
 
+import com.beust.jcommander.ParameterException;
 import org.egov.pgr.integration.ivrs.entity.contract.IVRSFeedbackUpdateRequest;
 import org.egov.pgr.integration.ivrs.entity.contract.IVRSFeedbackUpdateResponse;
 import org.egov.pgr.integration.ivrs.service.IVRSFeedbackService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -67,6 +70,8 @@ import java.util.stream.Collectors;
 
 @RestController
 public class IVRSFeedbackUpdateAPIController {
+
+    private static final Logger LOG = LoggerFactory.getLogger(IVRSFeedbackUpdateAPIController.class);
 
     @Autowired
     private IVRSFeedbackService ivrsFeedbackService;
@@ -91,8 +96,16 @@ public class IVRSFeedbackUpdateAPIController {
         }
     }
 
+    @ExceptionHandler(ParameterException.class)
+    public ResponseEntity<Object> paramterErrors(ParameterException exception) {
+        LOG.error("Error occurred while updating feedback", exception);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new IVRSFeedbackUpdateResponse(false, HttpStatus.BAD_REQUEST.toString(), exception.getMessage()));
+    }
+
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> restErrors() {
+    public ResponseEntity<Object> restErrors(Exception exception) {
+        LOG.error("Error occurred while taking IVRS response", exception);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new IVRSFeedbackUpdateResponse(false, HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Server Error"));
     }

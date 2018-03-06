@@ -56,6 +56,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
+
 @Component
 public class IVRSFeedbackUpdateAPIValidator implements Validator {
 
@@ -75,10 +77,13 @@ public class IVRSFeedbackUpdateAPIValidator implements Validator {
 
         IVRSFeedbackUpdateRequest request = (IVRSFeedbackUpdateRequest) target;
 
-        if (request.getCrn().isEmpty() || complaintService.getComplaintByCRN(request.getCrn()) == null)
+        if (isBlank(request.getUlbCode()))
+            errors.rejectValue("ulbCode", "ULB code must be present", "ULB code must be present");
+
+        if (isBlank(request.getCrn()) || complaintService.getComplaintByCRN(request.getCrn()) == null)
             errors.rejectValue("crn", "Invalid CRN", "Invalid CRN");
 
-        if (request.getRating().isEmpty() || feedbackRatingRepository.findByName(request.getRating()) == null)
+        if (isBlank(request.getRating()) || feedbackRatingRepository.findByName(request.getRating()) == null)
             errors.rejectValue("rating", "Invalid Rating", "Invalid Rating");
 
     }
