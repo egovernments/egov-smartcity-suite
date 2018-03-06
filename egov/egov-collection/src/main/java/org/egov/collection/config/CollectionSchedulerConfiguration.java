@@ -48,6 +48,13 @@
 
 package org.egov.collection.config;
 
+import static org.quartz.CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.sql.DataSource;
+
 import org.egov.collection.scheduler.AtomReconciliationJob;
 import org.egov.collection.scheduler.AxisReconciliationJob;
 import org.egov.collection.scheduler.RemittanceInstrumentJob;
@@ -59,12 +66,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
-
-import javax.sql.DataSource;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.quartz.CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING;
 
 @Configuration
 @Conditional(SchedulerConfigCondition.class)
@@ -84,11 +85,7 @@ public class CollectionSchedulerConfiguration extends QuartzSchedulerConfigurati
                 axisReconciliationCronTrigger().getObject(),
                 atomReconciliationCronTrigger().getObject(),
                 remittanceCashInstrumentCronTrigger0().getObject(),
-                remittanceCashInstrumentCronTrigger1().getObject(),
-                remittanceDDInstrumentCronTrigger0().getObject(),
-                remittanceDDInstrumentCronTrigger1().getObject(),
-                remittanceChequeInstrumentCronTrigger0().getObject(),
-                remittanceChequeInstrumentCronTrigger1().getObject());
+                remittanceCashInstrumentCronTrigger1().getObject());
         return collectionScheduler;
     }
 
@@ -119,7 +116,7 @@ public class CollectionSchedulerConfiguration extends QuartzSchedulerConfigurati
         axisReconciliationCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
         return axisReconciliationCron;
     }
-    
+
     @Bean("axisReconciliationJob")
     public AxisReconciliationJob axisReconciliationJob() {
         return new AxisReconciliationJob();
@@ -136,26 +133,6 @@ public class CollectionSchedulerConfiguration extends QuartzSchedulerConfigurati
     }
 
     @Bean
-    public JobDetailFactoryBean remittanceDDInstrumentJobDetail0() {
-        return createJobDetailFactory(INSTRUMENT_TYPE_DD, 0);
-    }
-
-    @Bean
-    public JobDetailFactoryBean remittanceDDInstrumentJobDetail1() {
-        return createJobDetailFactory(INSTRUMENT_TYPE_DD, 1);
-    }
-
-    @Bean
-    public JobDetailFactoryBean remittanceChequeInstrumentJobDetail0() {
-        return createJobDetailFactory(INSTRUMENT_TYPE_CHEQUE, 0);
-    }
-
-    @Bean
-    public JobDetailFactoryBean remittanceChequeInstrumentJobDetail1() {
-        return createJobDetailFactory(INSTRUMENT_TYPE_CHEQUE, 1);
-    }
-
-    @Bean
     public CronTriggerFactoryBean remittanceCashInstrumentCronTrigger0() {
         return createCronTrigger(remittanceCashInstrumentJobDetail0(), INSTRUMENT_TYPE_CASH, 0);
     }
@@ -163,62 +140,6 @@ public class CollectionSchedulerConfiguration extends QuartzSchedulerConfigurati
     @Bean
     public CronTriggerFactoryBean remittanceCashInstrumentCronTrigger1() {
         return createCronTrigger(remittanceCashInstrumentJobDetail1(), INSTRUMENT_TYPE_CASH, 1);
-    }
-
-    @Bean
-    public CronTriggerFactoryBean remittanceDDInstrumentCronTrigger0() {
-        return createCronTrigger(remittanceDDInstrumentJobDetail0(), INSTRUMENT_TYPE_DD, 0);
-    }
-
-    @Bean
-    public CronTriggerFactoryBean remittanceDDInstrumentCronTrigger1() {
-        return createCronTrigger(remittanceDDInstrumentJobDetail1(), INSTRUMENT_TYPE_DD, 1);
-    }
-
-    @Bean
-    public CronTriggerFactoryBean remittanceChequeInstrumentCronTrigger0() {
-        return createCronTrigger(remittanceChequeInstrumentJobDetail0(), INSTRUMENT_TYPE_CHEQUE, 0);
-    }
-
-    @Bean
-    public CronTriggerFactoryBean remittanceChequeInstrumentCronTrigger1() {
-        return createCronTrigger(remittanceChequeInstrumentJobDetail1(), INSTRUMENT_TYPE_CHEQUE, 1);
-    }
-
-    @Bean("remittanceddInstrumentJob0")
-    public RemittanceInstrumentJob remittanceddInstrumentJob0() {
-        RemittanceInstrumentJob remittanceInstrumentJob = new RemittanceInstrumentJob();
-        remittanceInstrumentJob.setModulo(0);
-        remittanceInstrumentJob.setInstrumentType(INSTRUMENT_TYPE_DD);
-        return remittanceInstrumentJob;
-
-    }
-
-    @Bean("remittanceddInstrumentJob1")
-    public RemittanceInstrumentJob remittanceddInstrumentJob1() {
-        RemittanceInstrumentJob remittanceInstrumentJob = new RemittanceInstrumentJob();
-        remittanceInstrumentJob.setModulo(1);
-        remittanceInstrumentJob.setInstrumentType(INSTRUMENT_TYPE_DD);
-        return remittanceInstrumentJob;
-
-    }
-
-    @Bean("remittancechequeInstrumentJob0")
-    public RemittanceInstrumentJob remittancechequeInstrumentJob0() {
-        RemittanceInstrumentJob remittanceInstrumentJob = new RemittanceInstrumentJob();
-        remittanceInstrumentJob.setModulo(0);
-        remittanceInstrumentJob.setInstrumentType(INSTRUMENT_TYPE_CHEQUE);
-        return remittanceInstrumentJob;
-
-    }
-
-    @Bean("remittancechequeInstrumentJob1")
-    public RemittanceInstrumentJob remittancechequeInstrumentJob1() {
-        RemittanceInstrumentJob remittanceInstrumentJob = new RemittanceInstrumentJob();
-        remittanceInstrumentJob.setModulo(1);
-        remittanceInstrumentJob.setInstrumentType(INSTRUMENT_TYPE_CHEQUE);
-        return remittanceInstrumentJob;
-
     }
 
     @Bean("remittancecashInstrumentJob0")
@@ -264,7 +185,7 @@ public class CollectionSchedulerConfiguration extends QuartzSchedulerConfigurati
         remittanceCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
         return remittanceCron;
     }
-    
+
     @Bean
     public JobDetailFactoryBean atomReconciliationJobDetail() {
         JobDetailFactoryBean atomReconciliationJobDetail = new JobDetailFactoryBean();
@@ -292,7 +213,7 @@ public class CollectionSchedulerConfiguration extends QuartzSchedulerConfigurati
         atomReconciliationCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
         return atomReconciliationCron;
     }
-    
+
     @Bean("atomReconciliationJob")
     public AtomReconciliationJob atomReconciliationJob() {
         return new AtomReconciliationJob();
