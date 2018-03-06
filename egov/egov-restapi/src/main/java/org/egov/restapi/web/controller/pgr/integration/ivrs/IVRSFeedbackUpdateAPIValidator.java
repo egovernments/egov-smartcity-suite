@@ -77,9 +77,6 @@ public class IVRSFeedbackUpdateAPIValidator implements Validator {
 
         IVRSFeedbackUpdateRequest request = (IVRSFeedbackUpdateRequest) target;
 
-        if (isBlank(request.getUlbCode()))
-            errors.rejectValue("ulbCode", "ULB code must be present", "ULB code must be present");
-
         if (isBlank(request.getCrn()) || complaintService.getComplaintByCRN(request.getCrn()) == null)
             errors.rejectValue("crn", "Invalid CRN", "Invalid CRN");
 

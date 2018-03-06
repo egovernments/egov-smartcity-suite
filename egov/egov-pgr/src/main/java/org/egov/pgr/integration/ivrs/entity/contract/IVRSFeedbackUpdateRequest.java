@@ -48,28 +48,15 @@
 
 package org.egov.pgr.integration.ivrs.entity.contract;
 
-import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 public class IVRSFeedbackUpdateRequest {
-
-    @SafeHtml
-    @NotBlank(message = "ULB code must be present")
-    private String ulbCode;
 
     @SafeHtml
     private String crn;
 
     @SafeHtml
     private String rating;
-
-    public String getUlbCode() {
-        return ulbCode;
-    }
-
-    public void setUlbCode(String ulbCode) {
-        this.ulbCode = ulbCode;
-    }
 
     public String getCrn() {
         return crn;
