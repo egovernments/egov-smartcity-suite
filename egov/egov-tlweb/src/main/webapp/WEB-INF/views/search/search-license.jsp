@@ -93,7 +93,7 @@
                         </form:select>
                     </div>
                     <label class="col-sm-2 control-label text-right"> <spring:message
-                            code='lbl.natureofbusiness'/></label>
+                            code='lbl.tradetype'/></label>
                     <div class="col-sm-3 add-margin">
                         <form:select path="natureOfBusinessId" id="natureOfBusiness" cssClass="form-control"
                                      cssErrorClass="form-control error">

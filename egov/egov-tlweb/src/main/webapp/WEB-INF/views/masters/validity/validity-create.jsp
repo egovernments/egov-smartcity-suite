@@ -60,7 +60,7 @@
                 </div>
                 <div class="panel-body">
                     <div class="form-group">
-                        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.natureofbusiness"/> <span
+                        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.tradetype"/> <span
                                 class="mandatory"></span> </label>
                         <div class="col-sm-3 add-margin">
                             <form:select path="natureOfBusiness" id="natureOfBusiness" cssClass="form-control"
