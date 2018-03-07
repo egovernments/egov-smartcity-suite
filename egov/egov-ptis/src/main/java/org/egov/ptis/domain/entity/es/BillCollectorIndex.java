@@ -59,7 +59,7 @@ public class BillCollectorIndex {
 
     @Id
     private String id;
-    
+
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String cityGrade;
 
@@ -77,12 +77,18 @@ public class BillCollectorIndex {
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String revenueWard;
-    
+
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String billCollector;
-    
+
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String mobileNumber;
+
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String revenueInspector;
+
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String revenueOfficer;
 
     public String getCityGrade() {
         return cityGrade;
@@ -154,6 +160,22 @@ public class BillCollectorIndex {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getRevenueInspector() {
+        return revenueInspector;
+    }
+
+    public void setRevenueInspector(String revenueInspector) {
+        this.revenueInspector = revenueInspector;
+    }
+
+    public String getRevenueOfficer() {
+        return revenueOfficer;
+    }
+
+    public void setRevenueOfficer(String revenueOfficer) {
+        this.revenueOfficer = revenueOfficer;
     }
 
 }
