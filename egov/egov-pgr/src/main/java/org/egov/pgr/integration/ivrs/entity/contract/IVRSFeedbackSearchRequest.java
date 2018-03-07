@@ -66,6 +66,8 @@ public class IVRSFeedbackSearchRequest extends DataTableSearchRequest {
 
     private Long childLocationId;
 
+    private Long complaintTypeCategoryId;
+
     public String getCrn() {
         return crn;
     }
@@ -112,5 +114,13 @@ public class IVRSFeedbackSearchRequest extends DataTableSearchRequest {
 
     public void setChildLocationId(Long childLocationId) {
         this.childLocationId = childLocationId;
+    }
+
+    public Long getComplaintTypeCategoryId() {
+        return complaintTypeCategoryId;
+    }
+
+    public void setComplaintTypeCategoryId(Long complaintTypeCategoryId) {
+        this.complaintTypeCategoryId = complaintTypeCategoryId;
     }
 }

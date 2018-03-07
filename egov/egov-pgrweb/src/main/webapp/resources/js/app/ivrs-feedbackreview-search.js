@@ -85,6 +85,24 @@ $(document).ready(function (e) {
     });
 });
 
+$('#complaintTypeCategory').change(function () {
+    $('#complaintId').find('option:gt(0)').remove();
+    $.ajax({
+        type: "GET",
+        url: "/pgr/complaint/citizen/anonymous/complainttypes-by-category",
+        cache: true,
+        data: {
+            'categoryId': this.value
+        },
+        dataType: "json",
+        success: function (response) {
+            $.each(response, function (index, value) {
+                $('#complaintId').append($('<option>').text(value.name).attr('value', value.id));
+            });
+        }
+    })
+});
+
 function onSubmitEvent(event) {
     $('.report-section').removeClass('display-hide');
     event.preventDefault();
@@ -112,7 +130,8 @@ function onSubmitEvent(event) {
                     "toDate": $("#toDate").val(),
                     "rating": $("#rating").val(),
                     "locationId": $("#location").val(),
-                    "childLocationId": $("#childLocation").val()
+                    "childLocationId": $("#childLocation").val(),
+                    "complaintTypeCategoryId": $('#complaintTypeCategory').val()
                 };
             }
         },

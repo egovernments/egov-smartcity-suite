@@ -51,11 +51,11 @@ package org.egov.pgr.web.controller.integration.ivrs;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.web.support.ui.DataTable;
-import org.egov.pgr.entity.ComplaintType;
+import org.egov.pgr.entity.ComplaintTypeCategory;
 import org.egov.pgr.integration.ivrs.entity.contract.IVRSFeedbackSearchRequest;
 import org.egov.pgr.integration.ivrs.service.IVRSFeedbackService;
 import org.egov.pgr.report.entity.contract.IVRSFeedbackSearchResponseAdaptor;
-import org.egov.pgr.service.ComplaintTypeService;
+import org.egov.pgr.service.ComplaintTypeCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -74,7 +74,7 @@ public class IVRSFeedbackSearchController {
     private static final String FEEDBACKREVIEWSEARCH = "feedbackreview-search";
 
     @Autowired
-    private ComplaintTypeService complaintTypeService;
+    protected ComplaintTypeCategoryService complaintTypeCategoryService;
 
     @Autowired
     private IVRSFeedbackService ivrsFeedbackService;
@@ -85,9 +85,9 @@ public class IVRSFeedbackSearchController {
     @Autowired
     private BoundaryService boundaryService;
 
-    @ModelAttribute("complaintType")
-    public List<ComplaintType> complaintType() {
-        return complaintTypeService.findAll();
+    @ModelAttribute("complaintTypeCategories")
+    public List<ComplaintTypeCategory> complaintTypeCategories() {
+        return complaintTypeCategoryService.findAll();
     }
 
     @ModelAttribute("ward")

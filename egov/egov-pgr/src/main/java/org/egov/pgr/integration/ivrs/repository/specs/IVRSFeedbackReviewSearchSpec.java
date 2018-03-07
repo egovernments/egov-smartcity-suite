@@ -88,6 +88,10 @@ public final class IVRSFeedbackReviewSearchSpec {
             if (ivrsFeedbackSearchRequest.getChildLocationId() != null)
                 predicate.getExpressions().add(builder.equal(root.get(COMPALINT).get("childLocation").get("id"),
                         ivrsFeedbackSearchRequest.getChildLocationId()));
+            if (ivrsFeedbackSearchRequest.getComplaintTypeCategoryId() != null)
+                predicate.getExpressions().add(builder.equal(root.get(COMPALINT).get("complaintType").get("category"),
+                        ivrsFeedbackSearchRequest.getComplaintTypeCategoryId()));
+
             predicate.getExpressions().add(builder.isTrue(root.get("ivrsRating").get("requiredReview")));
             predicate.getExpressions().add(builder.equal(root.get(COMPALINT).get("status").get("name"), COMPLAINT_COMPLETED));
             return predicate;

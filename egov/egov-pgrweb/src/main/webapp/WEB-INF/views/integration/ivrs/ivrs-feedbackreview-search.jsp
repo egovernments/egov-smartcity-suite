@@ -67,13 +67,18 @@
                 </div>
                 <div class="panel-body custom-form">
                     <div class="form-group">
-                        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.complaint.number"/>
+                        <label class="col-sm-3 control-label">
+                            <spring:message code="lbl.category"/>
                         </label>
-                        <div class="col-sm-3 add-margin" style="margin-bottom: 15px;">
-                            <input type="text" name="crn" id="complaintNumber" class="form-control patternvalidation"
-                                   data-pattern="alphanumericwithhyphen"
-                                   placeholder="<spring:message code='lbl.complaint.number'/>"/>
-                            <form:errors path="crn" cssClass="error-msg"/>
+                        <div class="col-sm-3 add-margin">
+                            <form:select path="complaintTypeCategoryId" id="complaintTypeCategory"
+                                         cssClass="form-control" cssErrorClass="form-control error">
+                                <form:option value="">
+                                    <spring:message code="lbl.select"/>
+                                </form:option>
+                                <form:options items="${complaintTypeCategories}" itemValue="id" itemLabel="name"/>
+                            </form:select>
+                            <form:errors path="complaintTypeCategoryId" cssClass="error-msg"/>
                         </div>
                         <label class="col-sm-2 control-label text-right">
                             <spring:message code="title.complaintType"/>
@@ -84,7 +89,6 @@
                                 <form:option value="">
                                     <spring:message code="lbl.select"/>
                                 </form:option>
-                                <form:options items="${complaintType}" itemValue="id" itemLabel="name"/>
                             </form:select>
                             <form:errors name="categories" cssClass="error-msg"/>
                         </div>
@@ -132,6 +136,16 @@
                                     <spring:message code="lbl.select"/>
                                 </form:option>
                             </form:select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.complaint.number"/>
+                        </label>
+                        <div class="col-sm-3 add-margin" style="margin-bottom: 15px;">
+                            <input type="text" name="crn" id="complaintNumber" class="form-control patternvalidation"
+                                   data-pattern="alphanumericwithhyphen"
+                                   placeholder="<spring:message code='lbl.complaint.number'/>"/>
+                            <form:errors path="crn" cssClass="error-msg"/>
                         </div>
                     </div>
                 </div>
