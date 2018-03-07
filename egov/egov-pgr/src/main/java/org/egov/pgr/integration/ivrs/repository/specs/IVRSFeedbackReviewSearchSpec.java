@@ -55,6 +55,8 @@ import org.springframework.data.jpa.domain.Specification;
 import javax.persistence.criteria.Predicate;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.egov.infra.utils.DateUtils.endOfDay;
+import static org.egov.infra.utils.DateUtils.startOfDay;
 import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_COMPLETED;
 
 public final class IVRSFeedbackReviewSearchSpec {
@@ -78,10 +80,10 @@ public final class IVRSFeedbackReviewSearchSpec {
                         ivrsFeedbackSearchRequest.getCrn()));
             if (ivrsFeedbackSearchRequest.getToDate() != null)
                 predicate.getExpressions().add(builder.lessThanOrEqualTo(root.get(COMPALINT).get(CREATEDDATE),
-                        ivrsFeedbackSearchRequest.getToDate()));
+                        endOfDay(ivrsFeedbackSearchRequest.getToDate())));
             if (ivrsFeedbackSearchRequest.getFromDate() != null)
                 predicate.getExpressions().add(builder.greaterThanOrEqualTo(root.get(COMPALINT).get(CREATEDDATE),
-                        ivrsFeedbackSearchRequest.getFromDate()));
+                        startOfDay(ivrsFeedbackSearchRequest.getFromDate())));
             if (ivrsFeedbackSearchRequest.getLocationId() != null)
                 predicate.getExpressions().add(builder.equal(root.get(COMPALINT).get("location").get("id"),
                         ivrsFeedbackSearchRequest.getLocationId()));
