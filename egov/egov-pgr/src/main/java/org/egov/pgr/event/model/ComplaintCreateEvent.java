@@ -48,55 +48,14 @@
 
 package org.egov.pgr.event.model;
 
+import org.egov.infra.event.model.ApplicationEvent;
 import org.egov.pgr.entity.Complaint;
-import org.springframework.context.ApplicationEvent;
 
-public class ComplaintEvent extends ApplicationEvent {
+public class ComplaintCreateEvent extends ApplicationEvent<Complaint> {
 
-    private Complaint complaint;
-    private String cityCode;
-    private String cityName;
-    private String domainURL;
-    private String tenant;
-
-    public ComplaintEvent(final Object source, Complaint complaint) {
-        super(source);
-        this.complaint = complaint;
-    }
-
-    public Complaint getComplaint() {
-        return complaint;
-    }
-
-    public String getCityCode() {
-        return this.cityCode;
-    }
-
-    public void setCityCode(String cityCode) {
-        this.cityCode = cityCode;
-    }
-
-    public String getCityName() {
-        return cityName;
-    }
-
-    public void setCityName(String cityName) {
-        this.cityName = cityName;
-    }
-
-    public String getDomainURL() {
-        return domainURL;
-    }
-
-    public void setDomainURL(String domainURL) {
-        this.domainURL = domainURL;
-    }
-
-    public String getTenant() {
-        return tenant;
-    }
-
-    public void setTenant(String tenant) {
-        this.tenant = tenant;
+    public ComplaintCreateEvent(Complaint complaint) {
+        super(complaint);
     }
 }
+
+

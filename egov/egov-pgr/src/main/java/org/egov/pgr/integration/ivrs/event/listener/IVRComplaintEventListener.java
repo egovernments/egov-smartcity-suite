@@ -50,12 +50,13 @@ package org.egov.pgr.integration.ivrs.event.listener;
 
 import org.egov.infra.rest.client.SimpleRestClient;
 import org.egov.pgr.entity.Complaint;
-import org.egov.pgr.event.model.ComplaintEvent;
+import org.egov.pgr.event.model.ComplaintUpdateEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
@@ -65,13 +66,14 @@ import java.util.Map;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
 import static org.egov.infra.utils.DateUtils.currentDateToGivenFormat;
 import static org.egov.infra.utils.DateUtils.getFormattedDate;
 import static org.egov.pgr.entity.enums.ComplaintStatus.COMPLETED;
 import static org.egov.pgr.utils.constants.PGRConstants.MODULE_NAME;
 
 @Component
-public class IVRComplaintEventListener implements ApplicationListener<ComplaintEvent> {
+public class IVRComplaintEventListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(IVRComplaintEventListener.class);
     private static final String IVR_DATE_FORMAT = "dd-MM-yy";
@@ -85,14 +87,15 @@ public class IVRComplaintEventListener implements ApplicationListener<ComplaintE
     @Value("${ivr.enabled}")
     private boolean ivrEnabled;
 
-    @Override
-    public void onApplicationEvent(ComplaintEvent complaintEvent) {
+    @EventListener
+    @Async
+    public void onComplaintUpdate(ComplaintUpdateEvent complaintUpdateEvent) {
         try {
-            Complaint complaint = complaintEvent.getComplaint();
+            Complaint complaint = complaintUpdateEvent.initializeAndGetSource();
             if (ivrEnabled && isNotBlank(complaint.getComplainant().getMobile())
                     && COMPLETED.toString().equalsIgnoreCase(complaint.getStatus().getName())) {
                 String ivrRequestURL = String
-                        .format(ivrURL, complaint.getCrn(), complaintEvent.getCityCode(), MODULE_NAME,
+                        .format(ivrURL, complaint.getCrn(), getCityCode(), MODULE_NAME,
                                 complaint.getComplaintType().getCategory().getId(), complaint.getComplainant().getMobile(),
                                 URLEncoder.encode(complaint.getState().getComments(), UTF_8.toString()),
                                 getFormattedDate(complaint.getCreatedDate(), IVR_DATE_FORMAT),
@@ -108,6 +111,8 @@ public class IVRComplaintEventListener implements ApplicationListener<ComplaintE
             }
         } catch (UnsupportedEncodingException e) {
             LOG.error("Error occurred while sending IVR request", e);
+        } finally {
+            complaintUpdateEvent.finish();
         }
     }
 }
