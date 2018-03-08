@@ -85,16 +85,13 @@
 					<div class="col-sm-3 add-margin view-content">
 						${councilPreamble.sanctionAmount}</div>
 				</div>
+				
 				<div class="row add-border">
-					<label class="col-sm-2 control-label text-right"><spring:message
-							code="lbl.gistofpreamble" /> : </label>
-					<div class="col-sm-8 add-margin">
-						<textarea id="gistOfPreamble" data-role="none" rows="5"
-							class="form-control text-left" maxlength="10000" readonly="true">
-							<c:out
-								value="${councilPreamble.gistOfPreamble}</br>${councilPreamble.addtionalGistOfPreamble}" />
-							</textarea>
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.gistofpreamble" />
 					</div>
+					<div class="col-sm-9 add-margin view-content">
+						${councilPreamble.gistOfPreamble}<br>${councilPreamble.addtionalGistOfPreamble}</div>
 				</div>
 				<div class="row add-border">
 					<div class="col-md-3 col-xs-6 add-margin">
@@ -159,7 +156,7 @@
 						<c:forEach items="${bidders}" var="bidders">
 							<div class="row add-margin">
 								<div class="col-sm-2 col-xs-12 add-margin">
-									<c:out value="${bidders.bidderName}" />
+									<c:out value="${bidders.bidder.name}" />
 								</div>
 								<div class="col-sm-2 col-xs-12 add-margin">
 									<c:out value="${bidders.quotedAmount}" />

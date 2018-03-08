@@ -437,8 +437,11 @@ public class CouncilPreambleController extends GenericWorkFlowController {
         model.addAttribute(COUNCIL_PREAMBLE, councilPreamble);
         model.addAttribute(APPLICATION_HISTORY,
                 councilThirdPartyService.getHistory(councilPreamble));
-
-        return COUNCILPREAMBLE_VIEW;
+        if (PreambleTypeEnum.WORKS.equals(councilPreamble.getTypeOfPreamble())) {
+            model.addAttribute("bidders", bidderService.getBidderDetails(councilPreamble.getId()));
+            return COUNCILPREAMBLE_API_VIEW;
+        } else
+            return COUNCILPREAMBLE_VIEW;
     }
 
     @RequestMapping(value = "/search/{mode}", method = RequestMethod.GET)
