@@ -59,7 +59,6 @@ import org.egov.tl.entity.LicenseDemand;
 import org.egov.tl.entity.LicenseDocument;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.repository.LicenseDocumentTypeRepository;
-import org.egov.tl.repository.LicenseRepository;
 import org.egov.tl.utils.LicenseNumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -69,7 +68,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -81,10 +82,11 @@ import static java.math.BigDecimal.ZERO;
 import static org.egov.tl.utils.Constants.LICENSE_STATUS_ACTIVE;
 
 @Service
-public class LegacyLicenseService {
+public class LegacyLicenseService extends LicenseService {
 
-    @Autowired
-    private LicenseRepository licenseRepository;
+    private static final String ARREAR = "arrear";
+    private static final String CURRENT = "current";
+    private static final String TRADE_LICENSE = "Trade License";
 
     @Autowired
     private LicenseStatusService licenseStatusService;
@@ -105,9 +107,6 @@ public class LegacyLicenseService {
     private LicenseDocumentTypeRepository licenseDocumentTypeRepository;
 
     @Autowired
-    private TradeLicenseService tradeLicenseService;
-
-    @Autowired
     private FileStoreService fileStoreService;
 
     private static <K extends Comparable<? super K>, V> Map<K, V> sortByKey(Map<K, V> map) {
@@ -123,7 +122,7 @@ public class LegacyLicenseService {
     }
 
     @Transactional
-    public void createLegacy(final TradeLicense license) {
+    public void createLegacy(TradeLicense license) {
 
         storeDocument(license);
         addLegacyDemand(license);
@@ -133,20 +132,20 @@ public class LegacyLicenseService {
         license.setLegacy(true);
         license.setActive(true);
         license.setLicenseNumber(licenseNumberUtils.generateLicenseNumber());
-        licenseRepository.save(license);
+        save(license);
     }
 
     @Transactional
-    public void updateLegacy(final TradeLicense license) {
+    public void updateLegacy(TradeLicense license) {
 
         storeDocument(license);
         updateLegacyDemand(license);
-        licenseRepository.save(license);
+        save(license);
     }
 
     public Map<Integer, Integer> legacyInstallmentwiseFeesForCreate() {
-        final Map<Integer, Integer> legacyInstallmentwiseFees = new LinkedHashMap<>();
-        for (final Installment installment : tradeLicenseService.getLastFiveYearInstallmentsForLicense())
+        Map<Integer, Integer> legacyInstallmentwiseFees = new LinkedHashMap<>();
+        for (Installment installment : getLastFiveYearInstallmentsForLicense())
             legacyInstallmentwiseFees.put(installment.getInstallmentNumber(), 0);
         return legacyInstallmentwiseFees;
     }
@@ -160,8 +159,8 @@ public class LegacyLicenseService {
     }
 
     public Map<Integer, Boolean> legacyFeePayStatusForCreate() {
-        final Map<Integer, Boolean> legacyFeePayStatus = new LinkedHashMap<>();
-        for (final Installment installment : tradeLicenseService.getLastFiveYearInstallmentsForLicense())
+        Map<Integer, Boolean> legacyFeePayStatus = new LinkedHashMap<>();
+        for (Installment installment : getLastFiveYearInstallmentsForLicense())
             legacyFeePayStatus.put(installment.getInstallmentNumber(), false);
         return legacyFeePayStatus;
     }
@@ -230,7 +229,7 @@ public class LegacyLicenseService {
         licenseDemand.setModifiedDate(new Date());
         licenseDemand.setLicense(license);
         licenseDemand.setIsLateRenewal('0');
-        final Module module = moduleService.getModuleByName("Trade License");
+        final Module module = moduleService.getModuleByName(TRADE_LICENSE);
         for (final Entry<Integer, Integer> legacyInstallmentwiseFee : legacyInstallmentwiseFees.entrySet())
             if (legacyInstallmentwiseFee.getValue() != null && legacyInstallmentwiseFee.getValue() > 0) {
                 final Installment installment = installmentDao.fetchInstallmentByModuleAndInstallmentNumber(module,
@@ -287,7 +286,7 @@ public class LegacyLicenseService {
     private void updateNewLegacyDemand(final Map<Integer, Integer> updatedInstallmentFees,
                                        final Map<Integer, Boolean> legacyFeePayStatus, final LicenseDemand licenseDemand) {
 
-        final Module module = moduleService.getModuleByName("Trade License");
+        final Module module = moduleService.getModuleByName(TRADE_LICENSE);
         for (final Entry<Integer, Integer> updatedInstallmentFee : updatedInstallmentFees.entrySet())
             if (updatedInstallmentFee.getValue() != null && updatedInstallmentFee.getValue() > 0) {
 
@@ -333,5 +332,36 @@ public class LegacyLicenseService {
         }
         documents.removeIf(licenseDocument -> licenseDocument.getFiles().isEmpty());
         license.getDocuments().addAll(documents);
+    }
+
+    private List<Installment> getLastFiveYearInstallmentsForLicense() {
+        List<Installment> installmentList = installmentDao.fetchInstallments(
+                moduleService.getModuleByName(TRADE_LICENSE), new Date(), 6);
+        Collections.reverse(installmentList);
+        return installmentList;
+    }
+
+    public Map<String, Map<String, BigDecimal>> getOutstandingFee(TradeLicense license) {
+        Map<String, Map<String, BigDecimal>> outstandingFee = new HashMap<>();
+        LicenseDemand licenseDemand = license.getCurrentDemand();
+        for (EgDemandDetails demandDetail : licenseDemand.getEgDemandDetails()) {
+            String demandReason = demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster();
+            Installment installmentYear = demandDetail.getEgDemandReason().getEgInstallmentMaster();
+            Map<String, BigDecimal> feeByTypes;
+            if (outstandingFee.containsKey(demandReason))
+                feeByTypes = outstandingFee.get(demandReason);
+            else {
+                feeByTypes = new HashMap<>();
+                feeByTypes.put(ARREAR, ZERO);
+                feeByTypes.put(CURRENT, ZERO);
+            }
+            BigDecimal demandAmount = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
+            if (installmentYear.equals(licenseDemand.getEgInstallmentMaster()))
+                feeByTypes.put(CURRENT, demandAmount);
+            else
+                feeByTypes.put(ARREAR, feeByTypes.get(ARREAR).add(demandAmount));
+            outstandingFee.put(demandReason, feeByTypes);
+        }
+        return outstandingFee;
     }
 }

@@ -119,6 +119,6 @@ public class CreateLegacyLicenseController extends LegacyLicenseController {
     @GetMapping(value = "/old-licenseno-is-unique", produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public Boolean checkOldLicenseNumber(@RequestParam String oldLicenseNumber) {
-        return licenseRepository.findByOldLicenseNumber(oldLicenseNumber) != null;
+        return legacyService.getLicenseByOldLicenseNumber(oldLicenseNumber) != null;
     }
 }

@@ -48,6 +48,7 @@
 
 package org.egov.tl.web.controller.transactions.legacy;
 
+import org.egov.tl.entity.License;
 import org.egov.tl.entity.TradeLicense;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -71,8 +72,8 @@ public class ModifyLegacyLicenseController extends LegacyLicenseController {
     private ModifyLegacyLicenseValidator modifyLegacyLicenseValidator;
 
     @ModelAttribute("tradeLicense")
-    public TradeLicense tradeLicense(@PathVariable final Long id) {
-        return tradeLicenseService.getLicenseById(id);
+    public License tradeLicense(@PathVariable Long id) {
+        return legacyService.getLicenseById(id);
     }
 
     @GetMapping

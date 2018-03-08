@@ -63,7 +63,6 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
@@ -99,10 +98,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -608,31 +605,6 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
             reportOutput.setReportOutputData(toByteArray(addFilesToZip(byteArrayToFile(reportOutput.getReportOutputData(),
                     "tl_closure_notice_", ".pdf").toFile())));
         return reportOutput;
-    }
-
-    public void processSupportDocuments(TradeLicense license) {
-        List<LicenseDocument> documents = license.getLicenseDocuments();
-        for (LicenseDocument document : documents) {
-            List<MultipartFile> files = document.getMultipartFiles();
-            for (MultipartFile file : files) {
-                try {
-                    if (!file.isEmpty()) {
-                        document.getFiles()
-                                .add(fileStoreService.store(
-                                        file.getInputStream(),
-                                        file.getOriginalFilename(),
-                                        file.getContentType(), "EGTL"));
-                        document.setEnclosed(true);
-                        document.setDocDate(license.getApplicationDate());
-                    }
-                } catch (IOException exp) {
-                    throw new ApplicationRuntimeException("Error occurred while storing files ", exp);
-                }
-                document.setLicense(license);
-            }
-        }
-        documents.removeIf(licenseDocument -> licenseDocument.getFiles().isEmpty());
-        license.getDocuments().addAll(documents);
     }
 
 }

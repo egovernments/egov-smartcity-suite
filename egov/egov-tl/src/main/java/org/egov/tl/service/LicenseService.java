@@ -46,82 +46,36 @@
  *
  */
 
-package org.egov.tl.web.controller.transactions.legacy;
+package org.egov.tl.service;
 
-import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.tl.entity.LicenseCategory;
-import org.egov.tl.entity.LicenseDocumentType;
-import org.egov.tl.entity.NatureOfBusiness;
-import org.egov.tl.entity.enums.ApplicationType;
-import org.egov.tl.service.DocumentTypeService;
-import org.egov.tl.service.FeeTypeService;
-import org.egov.tl.service.LegacyLicenseService;
-import org.egov.tl.service.LicenseCategoryService;
-import org.egov.tl.service.NatureOfBusinessService;
-import org.egov.tl.utils.Constants;
+import org.egov.tl.entity.License;
+import org.egov.tl.entity.TradeLicense;
+import org.egov.tl.repository.LicenseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import static org.egov.tl.utils.Constants.LOCALITY;
-import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
-
-@Controller
-public class LegacyLicenseController extends GenericWorkFlowController {
+@Service
+@Transactional(readOnly = true)
+public class LicenseService {
 
     @Autowired
-    protected DocumentTypeService documentTypeService;
+    private LicenseRepository licenseRepository;
 
-    @Autowired
-    protected FeeTypeService feeTypeService;
-
-    @Autowired
-    protected BoundaryService boundaryService;
-
-    @Autowired
-    protected LicenseCategoryService licenseCategoryService;
-
-    @Autowired
-    protected LegacyLicenseService legacyService;
-
-    @Autowired
-    private NatureOfBusinessService natureOfBusinessService;
-
-    @ModelAttribute("boundary")
-    public List<Boundary> boundaries() {
-        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
-                LOCALITY, LOCATION_HIERARCHY_TYPE);
+    @Transactional
+    public void save(TradeLicense license) {
+        licenseRepository.save(license);
     }
 
-    @ModelAttribute("ownershipType")
-    public Map<String, String> ownership() {
-        return Constants.getOwnershipTypes();
+    public License getLicenseById(Long id) {
+        return licenseRepository.findOne(id);
     }
 
-    @ModelAttribute("natureOfBusiness")
-    public List<NatureOfBusiness> natureOfBusiness() {
-        return Arrays.asList(natureOfBusinessService.getPermanentBusinessNature());
+    public License getLicenseByApplicationNumber(String applicationNumber) {
+        return licenseRepository.findByApplicationNumber(applicationNumber);
     }
 
-    @ModelAttribute("category")
-    public List<LicenseCategory> category() {
-        return licenseCategoryService.getCategories();
+    public License getLicenseByOldLicenseNumber(String oldLicenseNumber) {
+        return licenseRepository.findByOldLicenseNumber(oldLicenseNumber);
     }
-
-    @ModelAttribute("documentTypes")
-    public List<LicenseDocumentType> documentsList() {
-        return documentTypeService.getDocumentTypesByApplicationType(ApplicationType.NEW);
-    }
-
-    @ModelAttribute("feeTypeId")
-    public Long feeType() {
-        return feeTypeService.findByName(Constants.LICENSE_FEE_TYPE).getId();
-    }
-
 }
