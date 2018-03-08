@@ -107,7 +107,7 @@ $(document)
 						$("#Preview").hide();
 
 					}
-					if ((typeOfConnection == "REGLZNCONNECTION" && mode=="fieldInspection") && (approvalPositionExist != 0
+					if ((typeOfConnection == "REGLZNCONNECTION" && mode=="fieldInspection") || (approvalPositionExist != 0
 							&& ((status == 'CREATED' && wfstate != null)
 									|| status == 'VERIFIED'
 									|| status == 'WORKORDERGENERATED' || status == 'APPROVED'

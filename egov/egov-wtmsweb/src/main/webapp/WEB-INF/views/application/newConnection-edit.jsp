@@ -102,12 +102,14 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enc
 		<div class="panel panel-primary" data-collapsed="0">
 			<jsp:include page="documentdetails-view.jsp"></jsp:include>
 		</div>
-			<c:if test="${waterConnectionDetails.fieldInspectionDetails.id==null}"> 
-				<jsp:include page="estimationdetails.jsp"></jsp:include>
-			</c:if>
-			<c:if test="${waterConnectionDetails.fieldInspectionDetails.id!=null}"> 
-				<jsp:include page="estimationdetails-view.jsp"></jsp:include>
-			</c:if>
+			<c:choose>
+				<c:when test="${waterConnectionDetails.applicationType.code=='REGLZNCONNECTION' && waterConnectionDetails.fieldInspectionDetails.id!=null}"> 
+					<jsp:include page="estimationdetails-view.jsp"></jsp:include>
+				</c:when>
+				<c:otherwise>
+					<jsp:include page="estimationdetails.jsp"></jsp:include>
+				</c:otherwise>
+			</c:choose>
 	</c:if>	
 			
 	<c:if test="${waterConnectionDetails.status.code =='CREATED' && mode=='edit' }">
