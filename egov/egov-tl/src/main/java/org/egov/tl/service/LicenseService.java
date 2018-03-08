@@ -63,7 +63,7 @@ public class LicenseService {
     private LicenseRepository licenseRepository;
 
     @Transactional
-    public void save(TradeLicense license) {
+    public void update(TradeLicense license) {
         licenseRepository.save(license);
     }
 

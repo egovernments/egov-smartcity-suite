@@ -132,7 +132,7 @@ public class LegacyLicenseService extends LicenseService {
         license.setLegacy(true);
         license.setActive(true);
         license.setLicenseNumber(licenseNumberUtils.generateLicenseNumber());
-        save(license);
+        update(license);
     }
 
     @Transactional
@@ -140,7 +140,7 @@ public class LegacyLicenseService extends LicenseService {
 
         storeDocument(license);
         updateLegacyDemand(license);
-        save(license);
+        update(license);
     }
 
     public Map<Integer, Integer> legacyInstallmentwiseFeesForCreate() {

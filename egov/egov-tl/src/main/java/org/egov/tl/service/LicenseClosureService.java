@@ -141,7 +141,7 @@ public class LicenseClosureService extends LicenseService {
                     "application/pdf", FILESTORE_MODULECODE);
             license.setDigiSignedCertFileStoreId(fileStore.getFileStoreId());
             processSupportDocuments(license);
-            save(license);
+            update(license);
         }
         return license;
     }
@@ -153,7 +153,7 @@ public class LicenseClosureService extends LicenseService {
         license.setClosed(true);
         license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_CANCELLED));
         licenseClosureProcessflowService.processApproval(license);
-        save(license);
+        update(license);
         licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
         licenseCitizenPortalService.onUpdate(license);
         tradeLicenseSmsAndEmailService.sendLicenseClosureMessage(license, BUTTONAPPROVE);
@@ -170,7 +170,7 @@ public class LicenseClosureService extends LicenseService {
         license.setApplicationDate(new Date());
         license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
         license.setLicenseAppType(licenseAppTypeService.getLicenseAppTypeByName(CLOSURE_LIC_APPTYPE));
-        save(license);
+        update(license);
         licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
         tradeLicenseSmsAndEmailService.sendLicenseClosureMessage(license, license.getWorkflowContainer().getWorkFlowAction());
         if (securityUtils.currentUserIsCitizen())
@@ -186,7 +186,7 @@ public class LicenseClosureService extends LicenseService {
         license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACTIVE));
         processSupportDocuments(license);
         licenseClosureProcessflowService.processCancellation(license);
-        save(license);
+        update(license);
         licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
         licenseCitizenPortalService.onUpdate(license);
     }
@@ -195,7 +195,7 @@ public class LicenseClosureService extends LicenseService {
     public void rejectClosure(TradeLicense license) {
         processSupportDocuments(license);
         licenseClosureProcessflowService.processRejection(license);
-        save(license);
+        update(license);
         licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
         licenseCitizenPortalService.onUpdate(license);
     }
@@ -205,7 +205,7 @@ public class LicenseClosureService extends LicenseService {
         processSupportDocuments(license);
         license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_UNDERWORKFLOW));
         licenseClosureProcessflowService.processForward(license);
-        save(license);
+        update(license);
         licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
         licenseCitizenPortalService.onUpdate(license);
     }
