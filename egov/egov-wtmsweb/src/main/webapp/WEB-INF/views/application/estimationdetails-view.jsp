@@ -50,6 +50,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <div class="row">
 	<div class="col-md-12">
 	<form:hidden path="fieldInspectionDetails.waterConnectionDetails" id="fieldInspectionDetails" value="${waterConnectionDetails.id}"/> 
@@ -79,7 +80,7 @@
 							<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation quantity" data-pattern="decimalvalue" name="estimationDetails[${status.index}].quantity" id="estimationDetails${status.index}quantity" maxlength="8" onblur="calculateTotalAmount();" value="${estimationDetails.quantity}" readOnly="readonly"></td>
 							<td class="text-right"><input type="text" class="form-control table-input patternvalidation" data-pattern="alphanumerichyphenbackslash" name="estimationDetails[${status.index}].unitOfMeasurement" id="estimationDetails${status.index}unitOfMeasurement" maxlength="50" value="${estimationDetails.unitOfMeasurement}" readOnly="readonly"></td>
 							<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation unitrate" data-pattern="decimalvalue" name="estimationDetails[${status.index}].unitRate" id="estimationDetails${status.index}unitRate" maxlength="8" onblur="calculateTotalAmount();" value="${estimationDetails.unitRate}" readOnly="readonly"></td>
-							<td class="text-right"><input type="text" class="form-control table-input text-right" id="estimationDetails${status.index}amount" disabled "></td>
+							<td class="text-right"><input type="text" class="form-control table-input text-right" id="estimationDetails${status.index}amount" readOnly="readonly" "></td>
 					      </tr>
 					    </c:forEach>
 					      <tr>
@@ -88,7 +89,7 @@
 							<td class="text-right"></td>
 							<td class="text-right"></td>
 							<td class="text-right"><spring:message code="lbl.grandtotal" /></td>
-							<td class="text-right"><input type="text" class="form-control text-right" id="grandTotal" disabled></td>
+							<td class="text-right"><input type="text" class="form-control text-right" id="grandTotal" readOnly="readonly"></td>
 					      </tr>
 					</tbody>
 				</table>
@@ -96,15 +97,13 @@
 					<div class="row">
 						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.categoryofroad" /></label>
 						<div class="col-sm-3 add-margin">
-							<form:select path="fieldInspectionDetails.roadCategory" data-first-option="false" id="roadCategory"
-								cssClass="form-control" value="${fieldInspectionDetails.roadCategory.name}" disabled="true">
-								<form:option value="">
-									<spring:message code="lbl.select" />
-								</form:option>
-								<form:options items="${roadCategoryList}" itemValue="id"
-									itemLabel="name" />
-							</form:select>
-							<form:errors path="fieldInspectionDetails.roadCategory" cssClass="add-margin error-msg" />
+							<select name="fieldInspectionDetails.roadCategory" id="roadCategory"
+								class="form-control action-dropdown" disabled="true">
+								<c:forEach items="${roadCategoryList}" var="roadCategory">
+									<option></option>
+									<option value="${roadCategory.id}" title="${roadCategory.name}" <c:if test="${fn:contains(waterConnectionDetails.fieldInspectionDetails.roadCategory, roadCategory)}"> Selected </c:if> >${roadCategory.name}</option>
+								</c:forEach>
+							</select>
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.existingpipeline" /><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
@@ -167,15 +166,6 @@
 						</div>
 					</div>
 				</div>
-				<div class="form-group">
-					<div class="row">
-				<label class="col-sm-2 control-label text-right hide"><spring:message code="lbl.estimationcharges" /></label>
-						<div class="col-sm-3 add-margin hide"> 
-							<form:input class="form-control text-right patternvalidation" data-pattern="number" maxlength="8" id="estimationCharges" path="fieldInspectionDetails.estimationCharges" value="${fieldInspectionDetails.estimationCharges}" readOnly="readonly"/>
-							<form:errors path="fieldInspectionDetails.estimationCharges" cssClass="add-margin error-msg" />
-						</div>
-					</div>
-			   </div>
 			</div>				
 		</div>
 	</div>

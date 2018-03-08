@@ -142,6 +142,7 @@ import org.egov.wtms.application.service.WaterDemandConnectionService;
 import org.egov.wtms.autonumber.EstimationNumberGenerator;
 import org.egov.wtms.autonumber.WorkOrderNumberGenerator;
 import org.egov.wtms.masters.entity.ConnectionCategory;
+import org.egov.wtms.masters.entity.DonationDetails;
 import org.egov.wtms.masters.entity.enums.ClosureType;
 import org.egov.wtms.masters.service.MeterCostService;
 import org.egov.wtms.masters.service.RoadCategoryService;
@@ -252,7 +253,9 @@ public class UpdateConnectionController extends GenericConnectionController {
         if (REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) &&
                 (APPLICATION_STATUS_CREATED.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()) ||
                         APPLICATION_STATUS_ESTIMATENOTICEGEN.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()))) {
-            final Double donationAmount = connectionDemandService.getDonationDetails(waterConnectionDetails).getAmount();
+            final DonationDetails donationDetails = connectionDemandService.getDonationDetails(waterConnectionDetails);
+            final Double donationAmount = donationDetails == null ? 0d
+                    : connectionDemandService.getDonationDetails(waterConnectionDetails).getAmount();
             final AppConfig appConfig = appConfigService.getAppConfigByKeyName(WCMS_SERVICE_CHARGES);
             final BigDecimal serviceCharges = BigDecimal.valueOf(Long.valueOf(appConfig.getConfValues().get(0).getValue()));
             model.addAttribute("serviceCharges", serviceCharges);
@@ -366,7 +369,9 @@ public class UpdateConnectionController extends GenericConnectionController {
                 || MUNICIPAL_ENGINEER_DESIGN.equalsIgnoreCase(loggedInUserDesignation)
                 || SUPERIENTEND_ENGINEER_DESIGN.equalsIgnoreCase(loggedInUserDesignation)
                 || SUPERINTENDING_ENGINEER_DESIGNATION.equalsIgnoreCase(loggedInUserDesignation)
-                        && waterConnectionDetails.getApprovalNumber() == null)
+                        && (waterConnectionDetails.getApprovalNumber() == null ||
+                                !APPLICATION_STATUS_DIGITALSIGNPENDING
+                                        .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())))
             isSanctionedDetailEnable = Boolean.TRUE;
 
         final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
@@ -426,7 +431,8 @@ public class UpdateConnectionController extends GenericConnectionController {
                             "edit", ""));
         }
         // "edit" mode for AE inbox record FROM CSC and Record from Clerk
-        else if ((recordCreatedBYNonEmployee || recordCreatedBYCitizenPortal)
+        else if (!REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) &&
+                (recordCreatedBYNonEmployee || recordCreatedBYCitizenPortal)
                 && request.getAttribute(MODE) == null
                 && waterConnectionDetails.getState().getHistory() != null && waterConnectionDetails.getStatus() != null) {
             String additionalRule = "";
@@ -453,6 +459,11 @@ public class UpdateConnectionController extends GenericConnectionController {
                 model.addAttribute(MODE, EDIT_DEMAND);
             else
                 model.addAttribute(MODE, ADD_DEMAND);
+            model.addAttribute("roadCategoryList", roadCategoryService.getAllRoadCategory());
+        } else if (REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) &&
+                waterConnectionDetails.getExecutionDate() == null && recordCreatedBYNonEmployee) {
+            model.addAttribute(MODE, FIELDINSPECTION);
+            model.addAttribute("roadCategoryList", roadCategoryService.getAllRoadCategory());
         } else if (!recordCreatedBYNonEmployee && waterConnectionDetails.getStatus() != null
                 && waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_CREATED)) {
             model.addAttribute(MODE, FIELDINSPECTION);

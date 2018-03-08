@@ -214,7 +214,7 @@
 		</div>
 	</div>
 </div>
-<c:if test="${waterConnectionDetails.applicationType.code=='REGLZNCONNECTION' && waterConnectionDetails.status.code=='CREATED'}">
+<c:if test="${waterConnectionDetails.applicationType.code=='REGLZNCONNECTION' && waterConnectionDetails.status.code=='CREATED' && currentState != 'NEW'}">
 	<div class="form-group">
 		<label class="col-sm-3 control-label text-right">
 				<spring:message code="lbl.service.charges"/>
@@ -236,7 +236,7 @@
 			<form:input class="form-control patternvalidation" path="donationCharges" data-pattern="number" maxlength="6" id="donationChargesInput" value='${donationCharges}'/>
 		</div>
 	</div>
-	<c:if test="${waterConnectionDetails.applicationType.code=='REGLZNCONNECTION' && waterConnectionDetails.status.code=='CREATED'}">
+	<c:if test="${waterConnectionDetails.applicationType.code=='REGLZNCONNECTION' && waterConnectionDetails.status.code=='CREATED' && currentState != 'NEW'}">
 		<div>
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.connectiondate"/><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
@@ -268,6 +268,11 @@
 </c:if>	
 
 <script>
+
+	$("#donationChargesInput").on('change', function() {
+		$("#penaltyAmount").val($("#donationChargesInput").val());
+	});
+	
 	if($("#connectionType").val()=='METERED'){
 		$('#donationChargesDiv').show();
 		$('#donationChargesInput').attr('required','required');

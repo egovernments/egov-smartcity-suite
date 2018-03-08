@@ -65,7 +65,9 @@ $(document)
 					var wfstate = $('#wfstate').val();
 					var currentstate = $('#wfstateDesc').val();
 					var mode = $('#mode').val();
-					if(typeOfConnection == "REGLZNCONNECTION" && (mode==='addDemand' && executionDate==="" || mode==='fieldInspection')){
+					var source =$("#source").val();
+					if(("SURVEY"==source || "CSC"===source || "CITIZENPORTAL"==source || "MEESEVA"==source || "SYSTEM"==source || ""==source) && 
+							typeOfConnection == "REGLZNCONNECTION" && ((mode==='addDemand' || mode==='fieldInspection') && executionDate==="")){
 						$("#Forward").hide();
 						$('#approvalComent').removeAttr('required');
 						$('#approvalComent').hide();
@@ -105,11 +107,11 @@ $(document)
 						$("#Preview").hide();
 
 					}
-					if (approvalPositionExist != 0
+					if ((typeOfConnection == "REGLZNCONNECTION" && mode=="fieldInspection") && (approvalPositionExist != 0
 							&& ((status == 'CREATED' && wfstate != null)
 									|| status == 'VERIFIED'
 									|| status == 'WORKORDERGENERATED' || status == 'APPROVED'
-										)) {
+										))) {
 						$(".show-row").hide();
 						$('#approverDetailHeading').hide();
 						$('#approvalDepartment').removeAttr('required');

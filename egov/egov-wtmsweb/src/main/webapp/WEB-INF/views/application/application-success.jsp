@@ -136,12 +136,8 @@
 							<c:when test="${waterConnectionDetails.applicationType.code== 'REGLZNCONNECTION' && waterConnectionDetails.status.code=='DIGITALSIGNATUREPENDING'}">
 								<span><spring:message code="msg.connection.approved.success" />${approverName}~${nextDesign}</span>
 							</c:when>
-							<c:when test="${waterConnectionDetails.applicationType.code== 'REGLZNCONNECTION' && waterConnectionDetails.status.code=='VERIFIED'}">
-								<spring:message code="msg.newconnection.ack.success" />
-								<span ><spring:message code="msg.success.forward" />${approverName}~${nextDesign}</span>
-							</c:when>
-							<c:when test="${waterConnectionDetails.applicationType.code== 'REGLZNCONNECTION' && waterConnectionDetails.status.code=='ESTIMATIONAMOUNTPAID'}">
-								<spring:message code="msg.newconnection.ack.success" />
+							<c:when test="${waterConnectionDetails.applicationType.code== 'REGLZNCONNECTION' &&  waterConnectionDetails.connectionStatus == 'INPROGRESS'}">
+								<spring:message code="msg.regulariseconnection.ack.success" />
 								<span ><spring:message code="msg.success.forward" />${approverName}~${nextDesign}</span>
 							</c:when>
 				</c:choose>

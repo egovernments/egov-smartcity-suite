@@ -49,6 +49,11 @@ $(document).ready(function(){
 	
 	loadPropertyDetails();
 	
+	var typeOfApplication=$("#typeOfConnection").val();
+	var propertyId = $("#propertyId").val();
+	if("REGLZNCONNECTION"===typeOfApplication && propertyId=="")
+		$("#propertyIdentifier").removeAttr("readonly");
+	
 	if($("#connectionType").val()=="METERED"){
 		$(".showfields").show();
 	}

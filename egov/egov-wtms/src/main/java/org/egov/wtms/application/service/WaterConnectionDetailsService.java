@@ -836,6 +836,7 @@ public class WaterConnectionDetailsService {
                     approvalPosition = waterTaxUtils.getApproverPosition(wfmatrix.getNextDesignation(),
                             waterConnectionDetails);
             else if (waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_APPROVED)
+                    && wfmatrix.getNextDesignation() != null
                     || !"".equals(workFlowAction) && workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)
                             && waterConnectionDetails.getStatus().getCode()
                                     .equals(APPLICATION_STATUS_CLOSERINITIATED)
@@ -1202,7 +1203,6 @@ public class WaterConnectionDetailsService {
         return balance;
     }
 
-    @Transactional(readOnly = true)
     public List<ApplicationDocuments> getApplicationDocForExceptClosureAndReConnection(
             final WaterConnectionDetails waterConnectionDetails) {
         final List<ApplicationDocuments> tempDocList = new ArrayList<>(0);
@@ -1213,7 +1213,8 @@ public class WaterConnectionDetailsService {
                         || appDoc.getDocumentNames().getApplicationType().getCode()
                                 .equals(ADDNLCONNECTION)
                         || appDoc.getDocumentNames().getApplicationType().getCode()
-                                .equals(CHANGEOFUSE)))
+                                .equals(CHANGEOFUSE))
+                        || REGULARIZE_CONNECTION.equals(appDoc.getDocumentNames().getApplicationType().getCode()))
                     tempDocList.add(appDoc);
         return tempDocList;
     }

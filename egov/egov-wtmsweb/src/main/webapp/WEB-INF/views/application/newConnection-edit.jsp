@@ -79,6 +79,7 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enc
 	<input type="hidden" id="isSanctionedDetailEnable" value="${isSanctionedDetailEnable}"/>
 	<input type="hidden" id="proceedWithoutDonation" value="${proceedWithoutDonation}"/>
 	<input type="hidden" id="executionDate" value="${waterConnectionDetails.executionDate}"/>
+	<input type="hidden" id="source" value="${waterConnectionDetails.source}" />
 	<input type="hidden" id="currentDemand" value="${currentDemand}" />
 	<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
 	<div class="panel panel-primary" data-collapsed="0">

@@ -108,7 +108,7 @@
 		<tr>
 			<td>
 				<c:if test="${waterConnectionDetails.applicationType.code=='REGLZNCONNECTION' && waterConnectionDetails.status.code=='CREATED'
-				&& waterConnectionDetails.executionDate== null}">
+				&& waterConnectionDetails.executionDate== null && currentState != 'NEW'}">
 					<input type="button" value="Save" id="save" onclick="validateWorkFlowApprover('save')" class="btn btn-primary" />
 				</c:if>
 				<c:if test="${waterConnectionDetails.applicationType.code=='REGLZNCONNECTION' && (waterConnectionDetails.status.code=='CREATED' ||

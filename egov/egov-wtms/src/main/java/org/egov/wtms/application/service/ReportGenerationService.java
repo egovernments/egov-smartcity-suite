@@ -49,9 +49,9 @@ package org.egov.wtms.application.service;
 
 import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ADDNLCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_APPROVED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CREATED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_SANCTIONED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPROVEWORKFLOWACTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSURECONN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSURE_ESTIMATION_NOTICE;
@@ -646,7 +646,7 @@ public class ReportGenerationService {
             reportRequest = new ReportRequest(REGULARISE_CONN_DEMAND_NOTE, waterConnectionDetails, reportParams);
             reportOutput = reportService.createReport(reportRequest);
             saveRegulariseConnDemandNote(waterConnectionDetails, reportOutput);
-
+            waterConnectionDetailsService.updateIndexes(waterConnectionDetails, null);
         } else
             reportOutput = getRegulariseConnDemandNote(waterConnectionDetails.getEstimationNoticeFileStoreId());
         return reportOutput;
@@ -772,7 +772,7 @@ public class ReportGenerationService {
                     FILESTORE_MODULECODE);
             waterConnectionDetails.setFileStore(fileStore);
             waterConnectionDetails
-                    .setStatus(waterTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_SANCTIONED, MODULETYPE));
+                    .setStatus(waterTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_APPROVED, MODULETYPE));
             waterConnectionDetailsService.save(waterConnectionDetails);
         }
     }
