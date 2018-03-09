@@ -2755,13 +2755,12 @@ public class PropertyService {
 	 */
 	public Assignment getAssignmentByDeptDesigElecWard(final BasicProperty basicProperty) {
 		final String designationStr = getDesignationForCscOperatorWorkFlow();
-		final String departmentStr = getDepartmentForCscOperatorWorkFlow();
-		final String[] department = departmentStr.split(",");
+		final String department = getDepartmentForCscOperatorWorkFlow();
 		final String[] designation = designationStr.split(",");
 		List<Assignment> assignment = new ArrayList<>();
-		for (final String dept : department) {
+		if(StringUtils.isNotBlank(department)) {
 			for (final String desg : designation) {
-				final Long deptId = departmentService.getDepartmentByName(dept).getId();
+				final Long deptId = departmentService.getDepartmentByName(department).getId();
 				final Long desgId = designationService.getDesignationByName(desg).getId();
 				final Long boundaryId = basicProperty.getPropertyID().getElectionBoundary().getId();
 				assignment = assignmentService.findAssignmentByDepartmentDesignationAndBoundary(deptId, desgId,
@@ -2769,9 +2768,8 @@ public class PropertyService {
 				if (!assignment.isEmpty())
 					break;
 			}
-			if (!assignment.isEmpty())
-				break;
 		}
+		
 		return !assignment.isEmpty() ? assignment.get(0) : null;
 	}
 
