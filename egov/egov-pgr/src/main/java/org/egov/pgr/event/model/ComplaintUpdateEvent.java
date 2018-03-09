@@ -48,10 +48,10 @@
 
 package org.egov.pgr.event.model;
 
-import org.egov.infra.event.model.ApplicationEvent;
+import org.egov.infra.event.model.AbstractApplicationEvent;
 import org.egov.pgr.entity.Complaint;
 
-public class ComplaintUpdateEvent extends ApplicationEvent<Complaint> {
+public class ComplaintUpdateEvent extends AbstractApplicationEvent<Complaint> {
 
     public ComplaintUpdateEvent(Complaint complaint) {
         super(complaint);

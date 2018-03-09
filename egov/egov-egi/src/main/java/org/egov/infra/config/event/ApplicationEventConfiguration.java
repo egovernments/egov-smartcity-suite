@@ -64,9 +64,11 @@ public class ApplicationEventConfiguration implements AsyncConfigurer {
     @Override
     public Executor getAsyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(7);
-        executor.setMaxPoolSize(42);
-        executor.setQueueCapacity(11);
+        executor.setCorePoolSize(10);
+        executor.setMaxPoolSize(250);
+        executor.setQueueCapacity(100);
+        executor.setWaitForTasksToCompleteOnShutdown(true);
+        executor.setAllowCoreThreadTimeOut(true);
         executor.setThreadNamePrefix("ApplicationEvent-");
         executor.initialize();
         return executor;

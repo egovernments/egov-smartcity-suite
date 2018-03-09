@@ -64,7 +64,7 @@ import static org.egov.infra.config.core.ApplicationThreadLocals.setMunicipality
 import static org.egov.infra.config.core.ApplicationThreadLocals.setTenantID;
 import static org.egov.infra.config.core.ApplicationThreadLocals.setUserId;
 
-public abstract class ApplicationEvent<T> {
+public abstract class AbstractApplicationEvent<T> {
 
     private T sourceObject;
     private Long userId;
@@ -75,7 +75,7 @@ public abstract class ApplicationEvent<T> {
     private String domainName;
     private String municiplalityName;
 
-    public ApplicationEvent(T sourceObject) {
+    public AbstractApplicationEvent(T sourceObject) {
         this.sourceObject = sourceObject;
         this.userId = getUserId();
         this.tenantId = getTenantID();
