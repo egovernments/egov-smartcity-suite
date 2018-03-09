@@ -52,7 +52,6 @@ import static org.egov.council.utils.constants.CouncilConstants.COUNCIL_RESOLUTI
 import static org.egov.council.utils.constants.CouncilConstants.MEETINGRESOLUTIONFILENAME;
 import static org.egov.council.utils.constants.CouncilConstants.MEETINGUSEDINRMOM;
 import static org.egov.council.utils.constants.CouncilConstants.MEETING_MODULENAME;
-import static org.egov.council.utils.constants.CouncilConstants.getMeetingTimings;
 import static org.egov.council.utils.constants.CouncilConstants.MODULE_FULLNAME;
 import static org.egov.council.utils.constants.CouncilConstants.MODULE_NAME;
 import static org.egov.council.utils.constants.CouncilConstants.MOM_FINALISED;
@@ -65,6 +64,7 @@ import static org.egov.council.utils.constants.CouncilConstants.RESOLUTION_STATU
 import static org.egov.council.utils.constants.CouncilConstants.RESOLUTION_STATUS_SANCTIONED;
 import static org.egov.council.utils.constants.CouncilConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.council.utils.constants.CouncilConstants.WARD;
+import static org.egov.council.utils.constants.CouncilConstants.getMeetingTimings;
 import static org.egov.infra.utils.JsonUtils.toJSON;
 
 import java.lang.reflect.Type;
@@ -72,12 +72,16 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.apache.commons.lang.StringUtils;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.council.autonumber.MOMResolutionNumberGenerator;
 import org.egov.council.entity.CommitteeType;
+import org.egov.council.entity.CouncilDataResponse;
+import org.egov.council.entity.CouncilDataUpdateRequest;
 import org.egov.council.entity.CouncilMeeting;
 import org.egov.council.entity.CouncilMeetingType;
 import org.egov.council.entity.MeetingMOM;
@@ -95,12 +99,15 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.FileUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.web.support.json.adapter.BoundaryAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -110,6 +117,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.google.gson.Gson;
@@ -118,7 +126,7 @@ import com.google.gson.reflect.TypeToken;
 @Controller
 @RequestMapping("/councilmom")
 public class CouncilMomController {
-
+    
     private static final String RESOLUTION_NUMBER_AUTO = "RESOLUTION_NUMBER_AUTO";
     private static final String MESSAGE = "message";
     private static final String COUNCIL_MEETING = "councilMeeting";
@@ -178,12 +186,12 @@ public class CouncilMomController {
     public Map<String, String> getMeetingTimingList() {
         return getMeetingTimings();
     }
-    
+
     @ModelAttribute("meetingType")
     public List<CouncilMeetingType> getmeetingTypeList() {
         return councilMeetingTypeService.findAllActiveMeetingType();
     }
-    
+
     @ModelAttribute("resolutionStatus")
     public List<EgwStatus> getResolutionStatusList() {
         return egwStatusHibernateDAO.getStatusByModule(COUNCIL_RESOLUTION);
@@ -268,7 +276,7 @@ public class CouncilMomController {
 
     @RequestMapping(value = "/meetingsearch/{mode}", method = RequestMethod.GET)
     public String searchMeeting(@PathVariable("mode") final String mode,
-                                Model model) {
+            Model model) {
         model.addAttribute(COUNCIL_MEETING, new CouncilMeeting());
         return COUNCIL_MOM_MEETING_SEARCH;
 
@@ -352,10 +360,11 @@ public class CouncilMomController {
     }
 
     @RequestMapping(value = "/generateresolution", method = RequestMethod.POST)
-    public String generateResolutionnumber(
+    public String generateResolutionnumber( final HttpServletRequest request,
             @Valid @ModelAttribute final CouncilMeeting councilMeeting) throws ParseException {
         byte[] reportOutput;
-       
+        final RestTemplate restTemplate = new RestTemplate();
+        String response = null;
         EgwStatus resoulutionApprovedStatus = egwStatusHibernateDAO.getStatusByModuleAndCode(COUNCIL_RESOLUTION,
                 RESOLUTION_STATUS_APPROVED);
         EgwStatus resoulutionAdjurnedStatus = egwStatusHibernateDAO.getStatusByModuleAndCode(COUNCIL_RESOLUTION,
@@ -385,6 +394,7 @@ public class CouncilMomController {
         }
 
         for (MeetingMOM meetingMOM : councilMeeting.getMeetingMOMs()) {
+
             // if mom status is approved, generate resolution number
             if (meetingMOM.getResolutionStatus().getCode().equals(resoulutionApprovedStatus.getCode())
                     && isAutoResolutionNoGenEnabled()) {
@@ -398,23 +408,55 @@ public class CouncilMomController {
             } else if (meetingMOM.getResolutionStatus().getCode().equals(resoulutionAdjurnedStatus.getCode())) {
                 meetingMOM.getPreamble()
                         .setStatus(preambleAdjurnedStatus);
-            }
-            else if (meetingMOM.getResolutionStatus().getCode().equals(resoulutionRecordedStatus.getCode())) {
+            } else if (meetingMOM.getResolutionStatus().getCode().equals(resoulutionRecordedStatus.getCode())) {
                 meetingMOM.getPreamble()
                         .setStatus(resoulutionRecordedStatus);
-            }
-            else if (meetingMOM.getResolutionStatus().getCode().equals(resoulutionSanctionedStatus.getCode())) {
+            } else if (meetingMOM.getResolutionStatus().getCode().equals(resoulutionSanctionedStatus.getCode())) {
                 meetingMOM.getPreamble()
                         .setStatus(resoulutionSanctionedStatus);
             }
         }
+        councilMeeting.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(MEETING_MODULENAME, MOM_FINALISED));
+        for (MeetingMOM meetingMOM : councilMeeting.getMeetingMOMs()) {
+            if (meetingMOM.getPreamble().getId() != null && meetingMOM.getPreamble().getReferenceNumber() != null
+                    && null == meetingMOM.getPreamble().getStatusMessage()) {
+                CouncilDataUpdateRequest councilDataUpdateRequest = new CouncilDataUpdateRequest();
+                councilDataUpdateRequest.setReferenceNo(meetingMOM.getPreamble().getReferenceNumber());
+                councilDataUpdateRequest.setPreambleNo(meetingMOM.getPreamble().getPreambleNumber());
+                councilDataUpdateRequest.setResolutionDate(DateUtils.currentDateToGivenFormat("yyyy/MM/dd"));
+                councilDataUpdateRequest.setSanctionAmount(meetingMOM.getPreamble().getSanctionAmount().doubleValue());
+                councilDataUpdateRequest.setResolutionNo(meetingMOM.getResolutionNumber());
+                councilDataUpdateRequest.setResolution(meetingMOM.getResolutionDetail());
+                councilDataUpdateRequest.setResolutionStatus(meetingMOM.getResolutionStatus().getDescription());
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+                HttpEntity<CouncilDataUpdateRequest> requestObj = new HttpEntity<>(councilDataUpdateRequest, headers);
 
+                response = restTemplate.postForObject(messageSource.getMessage("appms.endpoint.url", null, null), requestObj,
+                        String.class);
+                if (response != null) {
+                    Gson gson = new Gson();
+                    CouncilDataResponse res = gson.fromJson(response, CouncilDataResponse.class);
+                    if (null == res) {
+                        meetingMOM.getPreamble().setStatusMessage(StringUtils.EMPTY);
+                    } else if (res.getStatus().equalsIgnoreCase("0")) {
+                        meetingMOM.getPreamble().setStatusMessage("Failed");
+                    }
+
+                    else if (res.getStatus().equalsIgnoreCase("1")) {
+                        meetingMOM.getPreamble().setStatusMessage("Success");
+                    }
+                }
+
+            }
+
+        }
         reportOutput = generateMomPdfByPassingMeeting(councilMeeting);
         if (reportOutput != null) {
-            councilMeeting.setFilestore(fileStoreService.store(FileUtils.byteArrayToFile(reportOutput, MEETINGRESOLUTIONFILENAME,"rtf" ).toFile(), MEETINGRESOLUTIONFILENAME,
+            councilMeeting.setFilestore(fileStoreService.store(
+                    FileUtils.byteArrayToFile(reportOutput, MEETINGRESOLUTIONFILENAME, "rtf").toFile(), MEETINGRESOLUTIONFILENAME,
                     APPLICATION_RTF, MODULE_NAME));
         }
-        councilMeeting.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(MEETING_MODULENAME, MOM_FINALISED));
         councilMeetingService.update(councilMeeting);
         councilMeetingIndexService.createCouncilMeetingIndex(councilMeeting);
         councilSmsAndEmailService.sendSms(councilMeeting, null);
@@ -425,7 +467,7 @@ public class CouncilMomController {
     private byte[] generateMomPdfByPassingMeeting(final CouncilMeeting councilMeeting) {
         return councilReportService.generatePDFForMom(councilMeeting);
     }
-    
+
     public Boolean isAutoResolutionNoGenEnabled() {
         return councilPreambleService.autoGenerationModeEnabled(
                 MODULE_FULLNAME, RESOLUTION_NUMBER_AUTO);

@@ -162,6 +162,9 @@ public class CouncilPreamble extends StateAware<Position> {
 
     @Transient
     private Long approvalPosition;
+    
+    @Column
+    private String statusMessage;
 
     @Override
     public Long getId() {
@@ -338,4 +341,13 @@ public class CouncilPreamble extends StateAware<Position> {
     public void setAddtionalGistOfPreamble(String addtionalGistOfPreamble) {
         this.addtionalGistOfPreamble = addtionalGistOfPreamble;
     }
+
+    public String getStatusMessage() {
+        return statusMessage;
+    }
+
+    public void setStatusMessage(String statusMessage) {
+        this.statusMessage = statusMessage;
+    }
+    
 }
