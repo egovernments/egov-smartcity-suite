@@ -1283,8 +1283,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 propertyDetail.isAttachedBathRoom(), propertyDetail.isWaterHarvesting(), propertyDetail.isCable(),
                 propertyDetail.getSiteOwner(), propertyDetail.getPattaNumber(), propertyDetail.getCurrentCapitalValue(),
                 propertyDetail.getMarketValue(), propertyDetail.getCategoryType(),
-				propertyDetail.getOccupancyCertificationNo(), propertyDetail.getOccupancyCertificationDate(),
-				propertyDetail.isAppurtenantLandChecked(),
+                                propertyDetail.getOccupancyCertificationNo(), propertyDetail.getOccupancyCertificationDate(),
+                                propertyDetail.isAppurtenantLandChecked(),
                 propertyDetail.isCorrAddressDiff(), propertyDetail.getPropertyDepartment(),
                 propertyDetail.getVacantLandPlotArea(), propertyDetail.getLayoutApprovalAuthority(),
                 propertyDetail.getLayoutPermitNo(), propertyDetail.getLayoutPermitDate());
@@ -1436,33 +1436,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
         if (electionWardId == null || electionWardId == -1)
             addActionError(getText("mandatory.election.ward"));
-        for (final PropertyOwnerInfo owner : property.getBasicProperty().getPropertyOwnerInfoProxy())
-            if (owner != null) {
-                if (StringUtils.isBlank(owner.getOwner().getName()))
-                    addActionError(getText("mandatory.ownerName"));
-                if (null == owner.getOwner().getGender())
-                    addActionError(getText("mandatory.gender"));
-                if (StringUtils.isBlank(owner.getOwner().getMobileNumber()))
-                    addActionError(getText("mandatory.mobilenumber"));
-                if (StringUtils.isBlank(owner.getOwner().getGuardianRelation()))
-                    addActionError(getText("mandatory.guardianrelation"));
-                if (StringUtils.isBlank(owner.getOwner().getGuardian()))
-                    addActionError(getText("mandatory.guardian"));
-            }
-
-        final int count = property.getBasicProperty().getPropertyOwnerInfoProxy().size();
-        for (int i = 0; i < count; i++) {
-            final PropertyOwnerInfo owner = property.getBasicProperty().getPropertyOwnerInfoProxy().get(i);
-            if (owner != null)
-                for (int j = i + 1; j <= count - 1; j++) {
-                    final PropertyOwnerInfo owner1 = property.getBasicProperty().getPropertyOwnerInfoProxy().get(j);
-                    if (owner1 != null && owner.getOwner().getMobileNumber().equalsIgnoreCase(owner1.getOwner().getMobileNumber())
-                                && owner.getOwner().getName().equalsIgnoreCase(owner1.getOwner().getName()))
-                            addActionError(getText("error.owner.duplicateMobileNo", "",
-                                    owner.getOwner().getMobileNumber().concat(",").concat(owner.getOwner().getName())));
-                }
-        }
-
+        validateOwnerDetails(property);
         validateProperty(property, areaOfPlot, dateOfCompletion, eastBoundary, westBoundary, southBoundary,
                 northBoundary, propTypeId, null != zoneId && zoneId != -1 ? String.valueOf(zoneId) : "", propOccId,
                 floorTypeId, roofTypeId, wallTypeId, woodTypeId, null, null, vacantLandPlotAreaId,
@@ -1485,7 +1459,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 if (StringUtils.isNotBlank(parentIndex)) {
                     final BasicProperty basicProperty = basicPropertyService
                             .find("From BasicPropertyImpl where upicNo = ? ", parentIndex);
-                    checkIfParentIsUnderWorkflow(basicProperty);
                     if (areaOfPlot != null && !areaOfPlot.isEmpty()) {
                         final Area area = new Area();
                         area.setArea(new Float(areaOfPlot));
@@ -1533,11 +1506,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         if (upicNo == null || "".equals(upicNo))
             validateDocumentDetails(getDocumentTypeDetails());
     }
-
-	private void checkIfParentIsUnderWorkflow(final BasicProperty basicProperty) {
-		if(basicProperty.isUnderWorkflow())
-			addActionError(getText("error.parent.under.wf"));
-	}
 
     @SkipValidation
     @Action(value = "/createProperty-printAck")

@@ -297,6 +297,20 @@
 			</td>
 		</tr>
 	</s:if>
+	<s:if test="%{!assessmentDocumentTypesRP.isEmpty() && isSuperStructure()}">
+						<tr>
+						<td colspan="5">
+							<%@ include file="document-typedetails-view-rp.jsp"%>
+							</td>
+						</tr>
+	</s:if>
+	<s:if test="%{!assessmentDocumentTypesRP.isEmpty() && isSuperStructure()}">
+						<tr>
+						<td colspan="5">
+							<%@ include file="doctype-attachments-view-rp.jsp"%>
+							</td>
+						</tr>
+	</s:if>
 	
 </table>
 <script type="text/javascript">

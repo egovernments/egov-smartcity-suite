@@ -1787,5 +1787,7 @@ public interface PropertyTaxConstants {
 
     public static final List<String> NON_VACANT_TAX_DEMAND_CODES = ImmutableList.of(DEMANDRSN_CODE_DRAINAGE_TAX,
 	        DEMANDRSN_CODE_GENERAL_TAX, DEMANDRSN_CODE_SCAVENGE_TAX, DEMANDRSN_CODE_WATER_TAX, DEMANDRSN_CODE_LIGHT_TAX);
+    public static final List<String> ASSESSMENT_DOCUMENT_NAMES_RP = ImmutableList.of("Patta Certificate (Issued by Revenue Department)",
+            "Registered Will Document", "Un-registered Will Document", "Decree by Civil Court", "Registered Document");
     
 }

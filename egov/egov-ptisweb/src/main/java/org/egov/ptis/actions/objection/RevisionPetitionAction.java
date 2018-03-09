@@ -66,7 +66,6 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
-import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
@@ -101,6 +100,7 @@ import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyStatusDAO;
 import org.egov.ptis.domain.dao.property.PropertyStatusValuesDAO;
+import org.egov.ptis.domain.entity.document.DocumentTypeDetails;
 import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
 import org.egov.ptis.domain.entity.property.*;
@@ -109,6 +109,7 @@ import org.egov.ptis.domain.entity.property.vacantland.VacantLandPlotArea;
 import org.egov.ptis.domain.repository.master.vacantland.LayoutApprovalAuthorityRepository;
 import org.egov.ptis.domain.repository.master.vacantland.VacantLandPlotAreaRepository;
 import org.egov.ptis.domain.service.notice.NoticeService;
+import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.SMSEmailService;
 import org.egov.ptis.domain.service.reassign.ReassignService;
@@ -116,7 +117,6 @@ import org.egov.ptis.domain.service.revisionPetition.RevisionPetitionService;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
-import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -134,6 +134,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
@@ -198,7 +202,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 	private Map<String, String> deviationPercentageMap;
 	private Map<String, String> hearingTimingMap;
 	private String areaOfPlot;
-
 	private List<DocumentType> documentTypes = new ArrayList<>();
 	private String northBoundary;
 	private String southBoundary;
@@ -213,6 +216,25 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 	private Long vacantLandPlotAreaId;
 	private Long layoutApprovalAuthorityId;
 	private boolean citizenPortalUser;
+	private transient SMSEmailService sMSEmailService;
+        private String actionType;
+        private String fileStoreIds;
+        private String ulbCode;
+        private transient Map<String, Object> wfPropTaxDetailsMap;
+        private boolean digitalSignEnabled;
+        private Boolean isMeesevaUser = Boolean.FALSE;
+        private String meesevaApplicationNumber;
+        private String wfType;
+        private boolean allowEditDocument = Boolean.FALSE;
+        private Boolean showAckBtn = Boolean.FALSE;
+        private String applicationSource;
+        private boolean isGenerateAck = true;
+        private transient PropertyTaxNumberGenerator propertyTaxNumberGenerator;
+        private boolean isShowAckMessage;
+        private Boolean superStructure = Boolean.FALSE;
+        private transient List<DocumentType> assessmentDocumentTypesRP = new ArrayList<>();
+        private transient List<String> assessmentDocumentNames;
+        private transient DocumentTypeDetails documentTypeDetails = new DocumentTypeDetails();
         
 	@Autowired
 	private transient PropertyStatusValuesDAO propertyStatusValuesDAO;
@@ -222,63 +244,39 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 	private transient NoticeService noticeService;
 	@Autowired
 	private transient BasicPropertyDAO basicPropertyDAO;
-	private transient PropertyTaxNumberGenerator propertyTaxNumberGenerator;
 	@Autowired
 	@Qualifier("workflowService")
 	protected transient SimpleWorkflowService<RevisionPetition> revisionPetitionWorkFlowService;
-
-	private boolean isShowAckMessage;
 	@Autowired
 	private transient PtDemandDao ptDemandDAO;
 	@Autowired
 	private transient SecurityUtils securityUtils;
 	@Autowired
 	private transient UserService userService;
-
 	@Autowired
 	private transient PropertyStatusDAO propertyStatusDAO;
-
 	@Autowired
 	private transient EgwStatusHibernateDAO egwStatusDAO;
 	@Autowired
-	private transient EisCommonService eisCommonService;
-	@Autowired
 	private transient PositionMasterService positionMasterService;
-
 	@Autowired
 	private transient ApplicationNumberGenerator applicationNumberGenerator;
 	@Autowired
 	private transient NotificationService notificationService;
 	@Autowired
-	private transient PropertyTaxCommonUtils propertyTaxCommonUtils;
-	@Autowired
 	private transient ReportViewerUtil reportViewerUtil;
-	
 	@Autowired
 	private transient ReassignService reassignmentservice;
-
-	private transient SMSEmailService sMSEmailService;
-	private String actionType;
-	private String fileStoreIds;
-	private String ulbCode;
-	private transient Map<String, Object> wfPropTaxDetailsMap;
-	private boolean digitalSignEnabled;
-	private Boolean isMeesevaUser = Boolean.FALSE;
-	private String meesevaApplicationNumber;
-	private String wfType;
-	private boolean allowEditDocument = Boolean.FALSE;
-	private Boolean showAckBtn = Boolean.FALSE;
-	private String applicationSource;
-	private boolean isGenerateAck = true;
-
 	@Autowired
 	private transient VacantLandPlotAreaRepository vacantLandPlotAreaRepository;
-
 	@Autowired
 	private transient LayoutApprovalAuthorityRepository layoutApprovalAuthorityRepository;
-
 	@Autowired
 	private transient CityService cityService;
+	@Autowired
+	transient PropertyPersistenceService basicPropertyService;
+	@PersistenceContext
+	private transient EntityManager entityManager;
 
 	public RevisionPetitionAction() {
 
@@ -328,6 +326,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                             transactionType = GENERAL_REVISION_PETITION;
                          else
                             transactionType = REVISION_PETITION;
+                        setSuperStructure(objection.getBasicProperty().getProperty().getPropertyDetail().isStructure());
 		}
 		loggedUserIsEmployee = propService.isEmployee(securityUtils.getCurrentUser())
 				&& !ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName());
@@ -336,6 +335,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		super.prepare();
 		setUserInfo();
 		documentTypes = propService.getDocumentTypesForTransactionType(TransactionType.OBJECTION);
+		assessmentDocumentTypesRP = propService.getDocumentTypesForTransactionType(TransactionType.CREATE_ASMT_DOC);
 		final List<WallType> wallTypes = getPersistenceService().findAllBy("from WallType order by name");
 		final List<WoodType> woodTypes = getPersistenceService().findAllBy("from WoodType order by name");
 		final List<PropertyTypeMaster> propTypeList = getPersistenceService()
@@ -369,6 +369,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		setLayoutApprovalAuthorityList(layoutApprovalAuthorityRepository.findAll());
 		addDropdownData("vacantLandPlotAreaList", vacantLandPlotAreaList);
 		addDropdownData("layoutApprovalAuthorityList", layoutApprovalAuthorityList);
+		setAssessmentDocumentNames(PropertyTaxConstants.ASSESSMENT_DOCUMENT_NAMES_RP);
+	        addDropdownData("assessmentDocumentNameList", assessmentDocumentNames);
 	}
 
 	/**
@@ -636,12 +638,17 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 			logger.debug("ObjectionAction | recordInspectionDetails | start "
 					+ objection.getInspections().get(objection.getInspections().size() - 1));
 		vaidatePropertyDetails();
+		if(objection.getProperty().getPropertyDetail().isStructure()){
+		    validateOwnerDetails(objection.getProperty());
+		    validateDocumentDetails(getDocumentTypeDetails());
+		}
 		if (hasErrors()) {
 			checkIfEligibleForDocEdit();
 			return "view";
 		}
 		try {
 			modifyBasicProp();
+			basicPropertyService.createOwners(objection.getProperty(), objection.getBasicProperty(), objection.getBasicProperty().getPrimaryOwner().getAddress().get(0));
 		} catch (final TaxCalculatorExeption e) {
 			addActionError(getText("unitrate.error"));
 			return "view";
@@ -655,12 +662,18 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         }
 		final String designation = propService.getDesignationForPositionAndUser(
 				objection.getCurrentState().getOwnerPosition().getId(), securityUtils.getCurrentUser().getId());
-		if (REVENUE_INSPECTOR_DESGN.equals(designation))
+		if (REVENUE_INSPECTOR_DESGN.equals(designation)){
 			propService.processAndStoreDocument(objection.getDocuments());
+			if(getDocumentTypeDetails() != null){
+			propService.processAndStoreDocument(objection.getProperty().getAssessmentDocuments());
+			propService.saveDocumentTypeDetails(objection.getBasicProperty(), getDocumentTypeDetails());
+			}
+		}
 		updateStateAndStatus(objection);
 		if (logger.isDebugEnabled())
 			logger.debug("ObjectionAction | recordInspectionDetails | End "
 					+ objection.getInspections().get(objection.getInspections().size() - 1));
+		basicPropertyService.update(objection.getBasicProperty());
 		propertyImplService.merge(objection.getProperty());
 		revisionPetitionService.updateRevisionPetition(objection);
 		return STRUTS_RESULT_MESSAGE;
@@ -881,7 +894,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		return NOTICE;
 	}
 
-    @SuppressWarnings("deprecation")
     @ValidationErrorPage(value = "view")
     @Action(value = "/revPetition-generateEnodresementNotice")
     public String generateEnodresementNotice() {
@@ -1080,6 +1092,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		if (logger.isDebugEnabled())
 			logger.debug("ObjectionAction | view | Start");
 		getPropertyView(objection.getBasicProperty().getUpicNo());
+		objection.getBasicProperty().setPropertyOwnerInfoProxy(objection.getBasicProperty().getPropertyOwnerInfo());
 		isReassignEnabled = reassignmentservice.isReassignEnabled();
                 stateAwareId = objection.getId();
 		if (objection.getBasicProperty() != null
@@ -1102,11 +1115,11 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 				setFloorDetails(objection.getProperty());
 			if (objection.getProperty().getPropertyDetail().getPropertyTypeMaster() != null)
 				propTypeObjId = objection.getProperty().getPropertyDetail().getPropertyTypeMaster().getId().toString();
+			setSuperStructure(objection.getProperty().getPropertyDetail().isStructure());
 		}
 
 		setOwnerName(objection.getBasicProperty().getProperty());
 		setPropertyAddress(objection.getBasicProperty().getAddress());
-
 		propStatVal = propertyStatusValuesDAO.getLatestPropertyStatusValuesByPropertyIdAndreferenceNo(
 				objection.getBasicProperty().getUpicNo(), objection.getObjectionNumber());
 
@@ -1118,8 +1131,15 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		setOwnerName(objection.getBasicProperty().getProperty());
 		setPropertyAddress(objection.getBasicProperty().getAddress());
 		setWfType(objection.getType());
+		try {
+	                final Query query = entityManager.createNamedQuery("DOCUMENT_TYPE_DETAILS_BY_ID");
+	                query.setParameter(1, objection.getBasicProperty().getId());
+	                setDocumentTypeDetails((DocumentTypeDetails) query.getSingleResult());
+	            } catch (final Exception e) {
+	                logger.error("No Document type details present for Basicproperty " + e);
+	            }
 		if (logger.isDebugEnabled())
-			logger.debug("ObjectionAction | view | End");
+                    logger.debug("ObjectionAction | view | End");
 		return "view";
 	}
 
@@ -2144,4 +2164,36 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		if (getModel().getId() == null)
 			showAckBtn = Boolean.TRUE;
 	}
+
+    public Boolean isSuperStructure() {
+        return superStructure;
+    }
+
+    public void setSuperStructure(Boolean superStructure) {
+        this.superStructure = superStructure;
+    }
+
+    public List<DocumentType> getAssessmentDocumentTypesRP() {
+        return assessmentDocumentTypesRP;
+    }
+
+    public void setAssessmentDocumentTypesRP(List<DocumentType> assessmentDocumentTypesRP) {
+        this.assessmentDocumentTypesRP = assessmentDocumentTypesRP;
+    }
+
+    public List<String> getAssessmentDocumentNames() {
+        return assessmentDocumentNames;
+    }
+
+    public void setAssessmentDocumentNames(List<String> assessmentDocumentNames) {
+        this.assessmentDocumentNames = assessmentDocumentNames;
+    }
+
+    public DocumentTypeDetails getDocumentTypeDetails() {
+        return documentTypeDetails;
+    }
+
+    public void setDocumentTypeDetails(DocumentTypeDetails documentTypeDetails) {
+        this.documentTypeDetails = documentTypeDetails;
+    }
 }

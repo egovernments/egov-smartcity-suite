@@ -1070,6 +1070,35 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             }
         }
     }
+    
+    public void validateOwnerDetails(PropertyImpl property){
+        for (final PropertyOwnerInfo owner : property.getBasicProperty().getPropertyOwnerInfoProxy())
+            if (owner != null) {
+                if (StringUtils.isBlank(owner.getOwner().getName()))
+                    addActionError(getText("mandatory.ownerName"));
+                if (null == owner.getOwner().getGender())
+                    addActionError(getText("mandatory.gender"));
+                if (StringUtils.isBlank(owner.getOwner().getMobileNumber()))
+                    addActionError(getText("mandatory.mobilenumber"));
+                if (StringUtils.isBlank(owner.getOwner().getGuardianRelation()))
+                    addActionError(getText("mandatory.guardianrelation"));
+                if (StringUtils.isBlank(owner.getOwner().getGuardian()))
+                    addActionError(getText("mandatory.guardian"));
+            }
+
+        final int count = property.getBasicProperty().getPropertyOwnerInfoProxy().size();
+        for (int i = 0; i < count; i++) {
+            final PropertyOwnerInfo owner = property.getBasicProperty().getPropertyOwnerInfoProxy().get(i);
+            if (owner != null)
+                for (int j = i + 1; j <= count - 1; j++) {
+                    final PropertyOwnerInfo owner1 = property.getBasicProperty().getPropertyOwnerInfoProxy().get(j);
+                    if (owner1 != null && owner.getOwner().getMobileNumber().equalsIgnoreCase(owner1.getOwner().getMobileNumber())
+                                && owner.getOwner().getName().equalsIgnoreCase(owner1.getOwner().getName()))
+                            addActionError(getText("error.owner.duplicateMobileNo", "",
+                                    owner.getOwner().getMobileNumber().concat(",").concat(owner.getOwner().getName())));
+                }
+        }
+    }
 
     public WorkflowBean getWorkflowBean() {
         return workflowBean;

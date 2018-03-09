@@ -48,6 +48,16 @@
 
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
+
+
+<s:if test="isSuperStructure()">
+
+	<div id="OwnerDiv">
+				<%@ include file="../common/ownerform-revision-petetion.jsp"%>
+			</div>
+
+</s:if>
+<s:else>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table-fixed">
 	<tr>
 		<td class="greybox" width="5%">
@@ -106,7 +116,11 @@
 			&nbsp;
 		</td>
 	</tr>
+	</table>
+	</s:else>
+	<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table-fixed">
 <tr>
+
 		<td colspan="5">
 			<div class="headingsmallbg">
 				<span class="bold"><s:text name="assessmentDetails.title"/></span>
@@ -285,6 +299,20 @@
 			<%@ include file="../common/taxDetails.jsp"%>
 		</td>
 	</tr>
+	<s:if test="%{!assessmentDocumentTypesRP.isEmpty() && isSuperStructure()}">
+						<tr>
+						<td colspan="5">
+							<%@ include file="document-typedetails-form-rp.jsp"%>
+							</td>
+						</tr>
+	</s:if>
+	<s:if test="%{!assessmentDocumentTypesRP.isEmpty() && isSuperStructure()}">
+						<tr>
+						<td colspan="5">
+							<%@ include file="doctype-attachments-form-rp.jsp"%>
+							</td>
+						</tr>
+	</s:if>
 </table>
 <script type="text/javascript">
 	function populatePropTypeCategory() {
