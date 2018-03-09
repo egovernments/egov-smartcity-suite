@@ -335,7 +335,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		super.prepare();
 		setUserInfo();
 		documentTypes = propService.getDocumentTypesForTransactionType(TransactionType.OBJECTION);
-		assessmentDocumentTypesRP = propService.getDocumentTypesForTransactionType(TransactionType.CREATE_ASMT_DOC);
 		final List<WallType> wallTypes = getPersistenceService().findAllBy("from WallType order by name");
 		final List<WoodType> woodTypes = getPersistenceService().findAllBy("from WoodType order by name");
 		final List<PropertyTypeMaster> propTypeList = getPersistenceService()
@@ -369,6 +368,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		setLayoutApprovalAuthorityList(layoutApprovalAuthorityRepository.findAll());
 		addDropdownData("vacantLandPlotAreaList", vacantLandPlotAreaList);
 		addDropdownData("layoutApprovalAuthorityList", layoutApprovalAuthorityList);
+		assessmentDocumentTypesRP = propService.getDocumentTypesForTransactionType(TransactionType.CREATE_ASMT_DOC);
 		setAssessmentDocumentNames(PropertyTaxConstants.ASSESSMENT_DOCUMENT_NAMES_RP);
 	        addDropdownData("assessmentDocumentNameList", assessmentDocumentNames);
 	}
@@ -638,9 +638,10 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 			logger.debug("ObjectionAction | recordInspectionDetails | start "
 					+ objection.getInspections().get(objection.getInspections().size() - 1));
 		vaidatePropertyDetails();
-		if(objection.getProperty().getPropertyDetail().isStructure()){
+		if(superStructureRP(objection)){
 		    validateOwnerDetails(objection.getProperty());
 		    validateDocumentDetails(getDocumentTypeDetails());
+		    basicPropertyService.createOwners(objection.getProperty(), objection.getBasicProperty(), objection.getBasicProperty().getPrimaryOwner().getAddress().get(0));
 		}
 		if (hasErrors()) {
 			checkIfEligibleForDocEdit();
@@ -648,7 +649,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		}
 		try {
 			modifyBasicProp();
-			basicPropertyService.createOwners(objection.getProperty(), objection.getBasicProperty(), objection.getBasicProperty().getPrimaryOwner().getAddress().get(0));
 		} catch (final TaxCalculatorExeption e) {
 			addActionError(getText("unitrate.error"));
 			return "view";
@@ -673,7 +673,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		if (logger.isDebugEnabled())
 			logger.debug("ObjectionAction | recordInspectionDetails | End "
 					+ objection.getInspections().get(objection.getInspections().size() - 1));
-		basicPropertyService.update(objection.getBasicProperty());
+		if(superStructureRP(objection))
+		    basicPropertyService.update(objection.getBasicProperty());
 		propertyImplService.merge(objection.getProperty());
 		revisionPetitionService.updateRevisionPetition(objection);
 		return STRUTS_RESULT_MESSAGE;
@@ -1092,7 +1093,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		if (logger.isDebugEnabled())
 			logger.debug("ObjectionAction | view | Start");
 		getPropertyView(objection.getBasicProperty().getUpicNo());
-		objection.getBasicProperty().setPropertyOwnerInfoProxy(objection.getBasicProperty().getPropertyOwnerInfo());
+		if(superStructureRP(objection))
+		    objection.getBasicProperty().setPropertyOwnerInfoProxy(objection.getBasicProperty().getPropertyOwnerInfo());
 		isReassignEnabled = reassignmentservice.isReassignEnabled();
                 stateAwareId = objection.getId();
 		if (objection.getBasicProperty() != null
@@ -1712,6 +1714,12 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 				layoutApprovalAuthorityId = objection.getProperty().getPropertyDetail().getLayoutApprovalAuthority()
 						.getId();
 		}
+	}
+	
+	public Boolean superStructureRP(RevisionPetition objection){
+	    Boolean b = objection.getProperty() != null ? objection.getProperty().getPropertyDetail().isStructure() 
+	            : objection.getBasicProperty().getProperty().getPropertyDetail().isStructure();
+	    return b && !PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION.equals(objection.getType());
 	}
 
 	public List<Floor> getFloorDetails() {
