@@ -71,7 +71,7 @@ public final class HMAC {
         try {
             Mac hmac = Mac.getInstance(HMAC_SHA_256);
             hmac.init(new SecretKeySpec(privateKey.getBytes(UTF_8), HMAC_SHA_256));
-            return Hex.encodeHexString(hmac.doFinal(message.getBytes(US_ASCII)));
+            return Hex.encodeHexString(hmac.doFinal(privateKey.concat(message).getBytes(US_ASCII)));
         } catch (NoSuchAlgorithmException | InvalidKeyException e) {
             throw new ApplicationRuntimeException("Error occurred while hashing message", e);
         }
