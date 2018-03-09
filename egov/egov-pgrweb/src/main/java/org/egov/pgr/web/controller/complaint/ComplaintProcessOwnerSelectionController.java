@@ -72,6 +72,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.egov.pgr.utils.constants.PGRConstants.GO_ROLE_NAME;
+import static org.egov.pgr.utils.constants.PGRConstants.GRO_ROLE_NAME;
+import static org.egov.pgr.utils.constants.PGRConstants.RO_ROLE_NAME;
+
 @Controller
 public class ComplaintProcessOwnerSelectionController {
 
@@ -113,18 +117,17 @@ public class ComplaintProcessOwnerSelectionController {
 
     @GetMapping(value = "/ajax-approvalPositions", produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String getPositions(@RequestParam Integer approvalDepartment,
-                               @RequestParam Integer approvalDesignation) {
-        if (approvalDepartment != null && approvalDepartment != 0 && approvalDesignation != null && approvalDesignation != 0) {
+    public String getPositions(@RequestParam Integer approvalDepartment, @RequestParam Integer approvalDesignation) {
+        if (approvalDepartment > 0 && approvalDesignation > 0) {
             HashMap<String, String> paramMap = new HashMap<>();
             paramMap.put("departmentId", String.valueOf(approvalDepartment));
             paramMap.put("designationId", String.valueOf(approvalDesignation));
             List<EmployeeView> employeeViewData = eisService.getEmployeeInfoList(paramMap);
+            String currentUserName = securityUtils.getCurrentUser().getUsername();
             Set<EmployeeView> processOwners = employeeViewData
                     .stream()
-                    .filter(employeeView -> (employeeView.getEmployee().hasRole("Redressal Officer")
-                            || employeeView.getEmployee().hasRole("Grievance Officer")
-                            || employeeView.getEmployee().hasRole("Grievance Routing Officer")) && !securityUtils.getCurrentUser().getName().equals(employeeView.getName()))
+                    .filter(employeeView -> (employeeView.getEmployee().hasAnyRole(RO_ROLE_NAME, GO_ROLE_NAME, GRO_ROLE_NAME))
+                            && !currentUserName.equals(employeeView.getUserName()))
                     .collect(Collectors.toSet());
             return JsonUtils.toJSON(processOwners, EmployeeView.class, ProcessOwnerAdaptor.class);
         }

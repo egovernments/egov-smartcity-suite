@@ -56,16 +56,18 @@ import org.egov.eis.entity.EmployeeView;
 
 import java.lang.reflect.Type;
 
+import static java.lang.String.format;
+
 public class ProcessOwnerAdaptor implements JsonSerializer<EmployeeView> {
 
+    private static final String PROCESS_OWNER = "%s [%s]";
+
     @Override
-    public JsonElement serialize(final EmployeeView src, final Type typeOfSrc, final JsonSerializationContext context) {
-        final JsonObject empJsonObject = new JsonObject();
-        empJsonObject.addProperty("name", src.getName());
-        empJsonObject.addProperty("positionId", src.getPosition().getId());
-        empJsonObject.addProperty("empId", src.getEmployee().getId());
-        return empJsonObject;
-
+    public JsonElement serialize(EmployeeView employee, Type typeOfSrc, JsonSerializationContext context) {
+        JsonObject processOwner = new JsonObject();
+        processOwner.addProperty("name", format(PROCESS_OWNER, employee.getName(), employee.getPosition().getName()));
+        processOwner.addProperty("positionId", employee.getPosition().getId());
+        processOwner.addProperty("empId", employee.getEmployee().getId());
+        return processOwner;
     }
-
 }
