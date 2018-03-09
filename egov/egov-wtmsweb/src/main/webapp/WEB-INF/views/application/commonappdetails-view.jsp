@@ -147,21 +147,42 @@
 			</c:choose>
 			
 		</div>
-		<div class="row">
-		<div class="col-xs-3 add-margin"><spring:message code="lbl.connectiondate"/></div>
-		
-		<div class="col-xs-3 add-margin view-content"><fmt:formatDate pattern="dd/MM/yyyy" value="${waterConnectionDetails.executionDate}" /></div>
-		
-		<div class="col-xs-3 add-margin"><spring:message code="lbl.oldconsumerno"/></div>
-		
-		<div class="col-xs-3 add-margin view-content">
+		<div class="row add-border">
+			<div class="col-xs-3 add-margin"><spring:message code="lbl.connectiondate"/></div>
+			<div class="col-xs-3 add-margin view-content">
+				<c:choose>
+					<c:when test="${not empty waterConnectionDetails.executionDate}">
+						<fmt:formatDate pattern="dd/MM/yyyy" value="${waterConnectionDetails.executionDate}" />
+					</c:when>
+					<c:otherwise><spring:message code="lb.NA.code"/></c:otherwise>
+				</c:choose>
+			</div>
+			<div class="col-xs-3 add-margin"><spring:message code="lbl.oldconsumerno"/></div>
+			<div class="col-xs-3 add-margin view-content">
+				<c:choose>
+					<c:when test="${not empty waterConnectionDetails.connection.oldConsumerNumber}">
+						<c:out value="${waterConnectionDetails.connection.oldConsumerNumber}" />
+					</c:when>
+					<c:otherwise><spring:message code="lb.NA.code"/></c:otherwise>
+				</c:choose>
+			</div>
+		</div>
+		<div class="row add-border">
+			<div class="col-xs-3 add-margin"><spring:message code="lbl.entered.through"/></div>
 			<c:choose>
-				<c:when test="${not empty waterConnectionDetails.connection.oldConsumerNumber}">
-					<c:out value="${waterConnectionDetails.connection.oldConsumerNumber}" />
+				<c:when test="${not empty waterConnectionDetails.connectionReason}">
+					<div class="col-xs-3 add-margin view-content"><c:out value="${waterConnectionDetails.connectionReason}" /></div>
 				</c:when>
-				<c:otherwise><spring:message code="lb.NA.code"/></c:otherwise>
-			</c:choose>
-		</div>
-		</div>
+				<c:otherwise>
+					<c:choose>
+						<c:when test="${waterConnectionDetails.legacy==true}">
+							<div class="col-xs-3 add-margin view-content"><spring:message code='lbl.dataentry'/></div>
+						</c:when>
+						<c:otherwise><div class="col-xs-3 add-margin view-content"><spring:message code='lbl.system'/></div></c:otherwise>
+					</c:choose>
+				</c:otherwise>
+			</c:choose>	
+		</div>	
+		
 	</div>
 
