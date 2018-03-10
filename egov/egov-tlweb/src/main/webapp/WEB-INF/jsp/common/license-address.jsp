@@ -54,40 +54,54 @@
 <div class="form-group">
     <label class="col-sm-3 control-label text-right"><s:text name='license.propertyNo.lbl'/></label>
     <div class="col-sm-3 add-margin">
-        <s:textfield name="assessmentNo" id="propertyNo" value="%{assessmentNo}" maxlength="15" onblur="getPropertyDetails();" class="form-control"/>
+        <s:textfield name="assessmentNo" id="propertyNo" value="%{assessmentNo}" maxlength="15"
+                     onblur="getPropertyDetails();" class="form-control"/>
     </div>
 
-    <label class="col-sm-2 control-label text-right"><s:text name='license.locality.lbl'/><span class="mandatory"></span></label>
+    <label class="col-sm-2 control-label text-right"><s:text name='license.locality.lbl'/><span
+            class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
         <s:select name="boundary" id="boundary" list="dropdownData.localityList"
-                  listKey="id" listValue="name" headerKey="" headerValue="%{getText('default.select')}" required="true" value="%{boundary.id}" class="form-control"/>
+                  listKey="id" listValue="name" headerKey="" headerValue="%{getText('default.select')}" required="true"
+                  value="%{boundary.id}" class="form-control"/>
         <div id="locality_error" class="error-msg" style="display:none;" align="left"></div>
     </div>
 </div>
 <div class="form-group">
-    <label class="col-sm-3 control-label text-right"><s:text name='license.division'/><span class="mandatory"></span></label>
+    <label class="col-sm-3 control-label text-right"><s:text name='license.division'/><span
+            class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
         <select name="parentBoundary" id="parentBoundary" class="form-control" required="true">
             <option value=""><s:text name='default.select'/></option>
         </select>
     </div>
+    <label class="col-sm-2 control-label text-right"><s:text name='lbl.admin.ward'/></label>
+    <div class="col-sm-3 add-margin">
+        <select name="adminWard" id="adminWard" class="form-control">
+            <option value=""><s:text name='default.select'/></option>
+        </select>
+    </div>
 </div>
 <div class="form-group">
-    <label class="col-sm-3 control-label text-right"><s:text name='license.ownerShipType.lbl'/><span class="mandatory"></span></label>
+    <label class="col-sm-3 control-label text-right"><s:text name='license.ownerShipType.lbl'/><span
+            class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
         <s:select headerKey="-1" headerValue="%{getText('default.select')}" name="ownershipType"
                   id="ownershipType" listKey="key" listValue="value"
                   list="ownerShipTypeMap" cssClass="form-control" value="%{ownershipType}" required="true"/>
         <div id="ownership_error" class="error-msg" style="display:none;" align="left"></div>
     </div>
-    <label class="col-sm-2 control-label text-right"><s:text name='license.address'/><span class="mandatory"></span></label>
+    <label class="col-sm-2 control-label text-right"><s:text name='license.address'/><span
+            class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
-        <s:textarea name="address" id="address" maxlength="250" onblur="checkLength(this,250)" class="form-control" required="true"/>
+        <s:textarea name="address" id="address" maxlength="250" onblur="checkLength(this,250)" class="form-control"
+                    required="true"/>
         <div id="address_error" class="error-msg" style="display:none;" align="left"></div>
     </div>
 </div>
 <script>
     var parentBoundary = '${parentBoundary.id}';
+    var adminWard = '${adminWard.id}';
     $(document).ready(function () {
         if ($('#boundary').val() != '') {
             $('#boundary').trigger('blur');

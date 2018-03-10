@@ -56,7 +56,7 @@ import org.egov.egf.autonumber.BudgetReAppropriationSequenceNumberGenerator;
 import org.egov.egf.model.BudgetReAppropriationView;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationError;
@@ -98,7 +98,7 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
     @Autowired
-    private ApplicationSequenceNumberGenerator sequenceGenerator;
+    private GenericSequenceNumberGenerator sequenceGenerator;
     @Autowired
     private AppConfigValueService appConfigValuesService;
     @Autowired
@@ -123,11 +123,11 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
         super(type);
     }
 
-    public ApplicationSequenceNumberGenerator getSequenceGenerator() {
+    public GenericSequenceNumberGenerator getSequenceGenerator() {
         return sequenceGenerator;
     }
 
-    public void setSequenceGenerator(final ApplicationSequenceNumberGenerator sequenceGenerator) {
+    public void setSequenceGenerator(final GenericSequenceNumberGenerator sequenceGenerator) {
         this.sequenceGenerator = sequenceGenerator;
     }
 

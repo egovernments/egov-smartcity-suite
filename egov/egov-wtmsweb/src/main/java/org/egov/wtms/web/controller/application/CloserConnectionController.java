@@ -47,6 +47,8 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.egov.commons.entity.Source.MEESEVA;
 import static org.egov.commons.entity.Source.ONLINE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MODE;
@@ -55,26 +57,25 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.SOURCECHANNEL_ONLI
 
 import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.ValidationException;
 
-import org.apache.commons.lang3.StringUtils;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.pims.commons.Position;
-import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.CloserConnectionService;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.ConnectionCategory;
-import org.egov.wtms.masters.entity.DocumentNames;
 import org.egov.wtms.masters.entity.PipeSize;
 import org.egov.wtms.masters.entity.UsageType;
 import org.egov.wtms.masters.entity.enums.ClosureType;
@@ -258,21 +259,14 @@ public class CloserConnectionController extends GenericConnectionController {
 
         waterConnectionDetails.setPreviousApplicationType(request.getParameter("previousApplicationType"));
 
-        final List<DocumentNames> documentListForClosed = waterConnectionDetailsService
-                .getAllActiveDocumentNames(applicationTypeService.findByCode(WaterTaxConstants.CLOSINGCONNECTION));
-        if (!documentListForClosed.isEmpty()) {
-            final ApplicationDocuments applicationDocument = new ApplicationDocuments();
-            applicationDocument.setDocumentNames(documentListForClosed.get(0));
+        final Set<FileStoreMapper> fileStoreSet = addToFileStore(files);
+        Iterator<FileStoreMapper> fsIterator = null;
+        if (fileStoreSet != null && !fileStoreSet.isEmpty())
+            fsIterator = fileStoreSet.iterator();
+        if (fsIterator != null && fsIterator.hasNext())
+            waterConnectionDetails.setFileStore(fsIterator.next());
 
-            applicationDocument.setWaterConnectionDetails(waterConnectionDetails);
-            applicationDocument.setSupportDocs(addToFileStore(files));
-            // TODO: as off now saving 111 temp number for Closure Connection In
-            // ApplicationDocument as it is Its nOT NUll
-            applicationDocument.setDocumentNumber("111");
-            applicationDocument.setDocumentDate(new Date());
-            waterConnectionDetails.getApplicationDocs().add(applicationDocument);
-        }
-        if (request.getParameter(APPROVALPOSITION) != null && !request.getParameter(APPROVALPOSITION).isEmpty())
+        if (isNotBlank(request.getParameter(APPROVALPOSITION)))
             approvalPosition = Long.valueOf(request.getParameter(APPROVALPOSITION));
         if (request.getParameter("closeConnectionType") != null
                 && request.getParameter("closeConnectionType").equals(WaterTaxConstants.PERMENENTCLOSECODE))
@@ -288,7 +282,7 @@ public class CloserConnectionController extends GenericConnectionController {
             sourceChannel = SOURCECHANNEL_ONLINE;
         }
         if (citizenPortalUser && (waterConnectionDetails.getSource() == null
-                || StringUtils.isBlank(waterConnectionDetails.getSource().toString())))
+                || isBlank(waterConnectionDetails.getSource().toString())))
             waterConnectionDetails.setSource(waterTaxUtils.setSourceOfConnection(securityUtils.getCurrentUser()));
         if (loggedUserIsMeesevaUser) {
             waterConnectionDetails.setApplicationNumber(waterConnectionDetails.getMeesevaApplicationNumber());

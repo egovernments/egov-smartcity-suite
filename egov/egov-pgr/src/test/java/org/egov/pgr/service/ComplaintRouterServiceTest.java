@@ -64,8 +64,8 @@ import org.egov.pgr.repository.ComplaintRouterRepository;
 import org.egov.pims.commons.Position;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -74,17 +74,19 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 public class ComplaintRouterServiceTest {
 
-    @Autowired
+    @InjectMocks
     private ComplaintRouterService complaintRouterService;
 
     @Mock
     private ComplaintRouterRepository complaintRouterRepository;
-    
-    @Mock private BoundaryService boundaryService;
+
+    @Mock
+    private BoundaryService boundaryService;
+
     private Complaint complaint;
 
     private ComplaintType complaintType;
-    
+
     private Boundary ward;
 
     private Position wardOfficer;
@@ -101,24 +103,20 @@ public class ComplaintRouterServiceTest {
 
     @Before
     public void before() {
-
         initMocks(this);
         setupRoutingMaster();
-
     }
 
     private void setupRoutingMaster() {
-        complaintRouterService = new ComplaintRouterService(complaintRouterRepository,boundaryService);
-
         final Department dept = new DepartmentBuilder().withDbDefaults().build();
         complaintType = new ComplaintTypeBuilder().withDepartment(dept).withName("test-ctype").build();
         city = new BoundaryBuilder().withDbDefaults().build();
         zone = new BoundaryBuilder().withDbDefaults().build();
         ward = new BoundaryBuilder().withDbDefaults().build();
-        wardOfficer = new PositionBuilder().withName("WardOfficer").build();
-        healthInspector = new PositionBuilder().withName("HO").build();
-        zonalOfficer = new PositionBuilder().withName("ZonalOfficer").build();
-        grievanceOfficer = new PositionBuilder().withName("Grievance Officer").build();
+        wardOfficer = new PositionBuilder().withId(1L).withName("WardOfficer").build();
+        healthInspector = new PositionBuilder().withId(2L).withName("HO").build();
+        zonalOfficer = new PositionBuilder().withId(3L).withName("ZonalOfficer").build();
+        grievanceOfficer = new PositionBuilder().withId(4L).withName("Grievance Officer").build();
 
         final ComplaintRouter type_boundary_position = new ComplaintRouterBuilder().withComplaintType(complaintType)
                 .withBoundary(ward).withPosition(wardOfficer).build();
@@ -126,70 +124,66 @@ public class ComplaintRouterServiceTest {
         final ComplaintRouter type_position = new ComplaintRouterBuilder().withComplaintType(complaintType)
                 .withPosition(healthInspector).build();
 
-        final ComplaintRouter boundary_position = new ComplaintRouterBuilder().withBoundary((Boundary) zone)
+        final ComplaintRouter boundary_position = new ComplaintRouterBuilder().withBoundary(zone)
                 .withPosition(zonalOfficer).build();
 
         when(complaintRouterRepository.findByComplaintTypeAndBoundary(complaintType, ward)).thenReturn(
                 type_boundary_position);
         when(complaintRouterRepository.findByOnlyComplaintType(complaintType)).thenReturn(type_position);
-        when(complaintRouterRepository.findByBoundary((Boundary) zone)).thenReturn(boundary_position);
+        when(complaintRouterRepository.findByBoundary(zone)).thenReturn(boundary_position);
         when(complaintRouterRepository.findByOnlyBoundary(ward)).thenReturn(
                 type_boundary_position);
 
     }
 
     @Test
-    public void testGetAssignee_By_Type_Location() {
+    public void testGetAssigneeByTypeLocation() {
 
         complaint = new ComplaintBuilder().withComplaintType(complaintType).withLocation(ward).withDbDefaults().build();
-        final Position assignee = complaintRouterService.getAssignee(complaint);
-        assertEquals(healthInspector, assignee);
+        final Position assignee = complaintRouterService.getComplaintAssignee(complaint);
+        assertEquals(wardOfficer, assignee);
 
     }
 
     @Test
-    public void testGetAssignee_By_Type() {
+    public void testGetAssigneeByType() {
         // this will create a new boundary which is not mapped
         complaint = new ComplaintBuilder().withComplaintType(complaintType).withDbDefaults().build();
-        final Position assignee = complaintRouterService.getAssignee(complaint);
+        final Position assignee = complaintRouterService.getComplaintAssignee(complaint);
         assertEquals(healthInspector, assignee);
 
     }
 
     @Test
-    public void testGetAssignee_By_Boundary() {
+    public void testGetAssigneeByBoundary() {
         // this will create a new boundary which is not mapped
-       // complaintType = new ComplaintTypeBuilder().withDbDefaults().build();
-
         complaint = new ComplaintBuilder().withComplaintType(complaintType).withLocation(zone).withDbDefaults().build();
-        final Position assignee = complaintRouterService.getAssignee(complaint);
+        final Position assignee = complaintRouterService.getComplaintAssignee(complaint);
         assertEquals(healthInspector, assignee);
 
     }
 
     @Test(expected = ApplicationRuntimeException.class)
-    public void testGetAssignee_By_Go_without_Go_Insertion() {
+    public void testGetAssigneeByGoWithoutGoInsertion() {
         // this will create a new boundary which is not mapped
         complaintType = new ComplaintTypeBuilder().withDbDefaults().build();
 
-        complaint = new ComplaintBuilder().withComplaintType(complaintType).withLocation((Boundary) city).build();
-        final Position assignee = complaintRouterService.getAssignee(complaint);
+        complaint = new ComplaintBuilder().withComplaintType(complaintType).withLocation(city).build();
+        final Position assignee = complaintRouterService.getComplaintAssignee(complaint);
         assertNull(assignee);
 
     }
 
     @Test
-    public void testGetAssignee_By_Go_After_Go_Insertion() {
+    public void testGetAssigneeByGoAfterGoInsertion() {
         // this will create a new boundary which is mapped
-     //   complaintType = new ComplaintTypeBuilder().withDbDefaults().build();
         final ComplaintRouter GoPosition = new ComplaintRouterBuilder().withBoundary(city)
                 .withPosition(grievanceOfficer).build();
         when(complaintRouterRepository.findGrievanceOfficer()).thenReturn(GoPosition);
 
         complaint = new ComplaintBuilder().withComplaintType(complaintType).withLocation(city).withDbDefaults().build();
-        final Position assignee = complaintRouterService.getAssignee(complaint);
+        final Position assignee = complaintRouterService.getComplaintAssignee(complaint);
         assertEquals(healthInspector, assignee);
-
     }
 
 }

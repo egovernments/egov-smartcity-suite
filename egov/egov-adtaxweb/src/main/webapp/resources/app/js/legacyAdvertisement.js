@@ -339,11 +339,14 @@ $(document).ready(function () {
 
         return formatted;
     }
-    
     $('#advertisementnumber').blur(function () {
+    	if($('#advertisementnumber').attr('readonly') == 'readonly'){
+    		//
+    	}
+    	else
         validateAdvertisementNumber();
     });
-    
+
     function validateAdvertisementNumber(){
     	var advertisementnumber=$('#advertisementnumber').val();
     	if(advertisementnumber != '') {

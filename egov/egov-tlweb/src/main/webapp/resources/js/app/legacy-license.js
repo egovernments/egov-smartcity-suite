@@ -68,6 +68,7 @@ $(document).ready(function () {
 
     $('#boundary').change(function () {
         parentBoundary = '';
+        adminWard = '';
     });
 
     if ($('#category').val() != '') {
@@ -148,6 +149,7 @@ function checkOldLicenseNumberUnique() {
 
 $('#boundary').change(function () {
     $('#parentBoundary').find('option:gt(0)').remove();
+    $('#adminWard').find('option:gt(0)').remove();
     if (this.value !== '') {
         $.ajax({
             type: "GET",
@@ -168,6 +170,26 @@ $('#boundary').change(function () {
                     + 'value="' + boundary.wardId + '">' + boundary.wardName + '</option>');
             });
             $('#parentBoundary').removeAttr('data-selected-id');
+        });
+        $.ajax({
+            type: "GET",
+            url: "/egi/boundary/ward-bylocality",
+            cache: true,
+            dataType: "json",
+            data: {'locality': this.value}
+        }).done(function (response) {
+            if (response.results.boundaries.length < 1) {
+                bootbox.alert("Could not find ward for Locality : " +
+                    $('#boundary').find(":selected").text());
+                $('#boundary').val('');
+                return;
+            }
+            $.each(response, function (key, boundary) {
+                $('#adminWard').append('<option '
+                    + (boundary.wardId === $('#adminWard').data('selected-id') ? 'selected="selected"' : "")
+                    + 'value="' + boundary.wardId + '">' + boundary.wardName + '</option>');
+            });
+            $('#adminWard').removeAttr('data-selected-id');
         });
     }
 });

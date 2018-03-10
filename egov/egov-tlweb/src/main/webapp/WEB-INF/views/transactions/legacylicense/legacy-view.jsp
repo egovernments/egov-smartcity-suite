@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -46,63 +46,78 @@
   ~
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
-<%@ include file="/includes/taglibs.jsp"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<%@ include file="/includes/taglibs.jsp" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <div id="content" class="printable">
-	<div class="formmainbox panel-primary">
-		<div class="subheadnew text-center" id="headingdiv">
-			<spring:message code="page.title.viewtrade" />
-		</div>
-		<table>
-			<tr>
-				<td align="left" style="color: #FF0000"><actionerror
-						cssStyle="color: #FF0000" /> <fielderror /> <actionmessage /></td>
-			</tr>
-		</table>
-		<form:form action="" modelAttribute="tradeLicense" theme="simple">
+    <div class="formmainbox panel-primary">
+        <div class="subheadnew text-center" id="headingdiv">
+            <spring:message code="page.title.viewtrade"/>
+        </div>
+        <table>
+            <tr>
+                <td align="left" style="color: #FF0000">
+                    <actionerror
+                            cssStyle="color: #FF0000"/>
+                    <fielderror/>
+                    <actionmessage/>
+                </td>
+            </tr>
+        </table>
+        <form:form action="" modelAttribute="tradeLicense" theme="simple">
 
-			<c:set var="trclass" value="greybox" />
-			<div class="text-right error-msg" style="font-size: 14px;">
-				<spring:message code="dateofapplication.lbl" />
-				:
-				<c:out value="${tradeLicense.applicationDate}" />
-			</div>
-			<c:if test="${applicationNumber!=null}">
-				<div class="text-right error-msg" style="font-size: 14px;">
-					<spring:message code="license.applicationnumber" />
-					:
-					<c:out value="${applicationNumber}" />
-				</div>
-			</c:if>
-			<table width="100%">
-				<%@ include file='license-view.jsp'%>
-			</table>
-		</form:form>
+            <c:set var="trclass" value="greybox"/>
+            <div class="text-right error-msg" style="font-size: 14px;">
+                <spring:message code="dateofapplication.lbl"/>
+                :
+                <c:out value="${tradeLicense.applicationDate}"/>
+            </div>
+            <c:if test="${applicationNumber!=null}">
+                <div class="text-right error-msg" style="font-size: 14px;">
+                    <spring:message code="license.applicationnumber"/>
+                    :
+                    <c:out value="${applicationNumber}"/>
+                </div>
+            </c:if>
+            <table width="100%">
+                <%@ include file='license-view.jsp' %>
+                <c:if test="${tradeLicense.documents.size()>0}">
+                    <div class="panel-heading  custom_form_panel_heading subheadnew">
 
-
-	</div>
+                        <div class="panel-title">
+                            <spring:message code='license.support.docs'/>
+                        </div>
+                    </div>
+                </c:if>
+                <div class="panel-body">
+                    <div class="row add-border">
+                        <%@ include file="supportdocs-view.jsp" %>
+                    </div>
+                </div>
+            </table>
+        </form:form>
+    </div>
 </div>
 <div align="center" class="buttonbottom" id="buttondiv">
-	<table>
-		<tr>
-			<td>
-				<button type="submit" class="btn btn-default printbtn"><spring:message code="lbl.print"/></button>
+    <table>
+        <tr>
+            <td>
+                <button type="submit" class="btn btn-default printbtn"><spring:message code="lbl.print"/></button>
 
-			</td>
-			<td>
-				<button type="button" class="btn btn-default" onclick="self.close()">
-					<spring:message code="lbl.close" />
-				</button>
+            </td>
+            <td>
+                <button type="button" class="btn btn-default" onclick="self.close()">
+                    <spring:message code="lbl.close"/>
+                </button>
 
-			</td>
-		</tr>
-	</table>
+            </td>
+        </tr>
+    </table>
 </div>
 <script
-	src="<cdn:url  value='/resources/global/js/jquery/plugins/jQuery.print.js' context='/egi'/>"></script>
+        src="<cdn:url  value='/resources/global/js/jquery/plugins/jQuery.print.js' context='/egi'/>"></script>

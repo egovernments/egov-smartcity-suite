@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -69,7 +69,7 @@ import static org.egov.infra.utils.ApplicationConstant.CONTENT_DISPOSITION;
 @Component("reportViewer")
 public class ReportViewer implements HttpRequestHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(ReportViewer.class);
-    private static final String REPORT_ERROR_CONTENT = "<html><body><b>ERROR: %s!</b></body></html>";
+    private static final String REPORT_ERROR_RESPONSE = "<html><body><b>Report not generated, Reason : %s!</b></body></html>";
 
     @Autowired
     private ReportViewerUtil reportViewerUtil;
@@ -80,43 +80,51 @@ public class ReportViewer implements HttpRequestHandler {
         try {
             ReportOutput reportOutput = reportViewerUtil.getReportOutputFormCache(reportId);
             if (reportOutput == null) {
-                renderHtml(response, "Report output not available");
+                renderError(response, "Report output not available");
                 return;
             }
 
             ReportFormat reportFormat = reportOutput.getReportFormat();
             if (reportFormat == null) {
-                renderHtml(response, "Report format not available");
+                renderError(response, "Report format not available");
                 return;
             }
 
             byte[] reportData = reportOutput.getReportOutputData();
             if (reportData == null) {
-                renderHtml(response, "Report data not available");
+                renderError(response, "Report data not available");
                 return;
             }
 
-            renderReport(response, reportData, reportFormat);
+            renderReport(response, reportOutput);
         } catch (Exception e) {
             LOGGER.error("Invalid report id [{}]", reportId, e);
-            renderHtml(response, "Report can not be rendered");
+            renderError(response, "Report can not be rendered");
         } finally {
             reportViewerUtil.removeReportOutputFromCache(reportId);
         }
     }
 
-    private void renderHtml(HttpServletResponse resp, String htmContent) {
-        renderReport(resp, String.format(REPORT_ERROR_CONTENT, htmContent).getBytes(), ReportFormat.HTM);
+    private void renderReport(HttpServletResponse resp, ReportOutput reportOutput) {
+        try (BufferedOutputStream outputStream = new BufferedOutputStream(resp.getOutputStream())) {
+            resp.setHeader(CONTENT_DISPOSITION, reportOutput.reportDisposition());
+            resp.setContentType(ReportViewerUtil.getContentType(reportOutput.getReportFormat()));
+            resp.setContentLength(reportOutput.getReportOutputData().length);
+            outputStream.write(reportOutput.getReportOutputData());
+        } catch (Exception e) {
+            LOGGER.error("Exception in rendering report response with format [{}]!", reportOutput.getReportFormat(), e);
+            throw new ApplicationRuntimeException("Error occurred in report viewer", e);
+        }
     }
 
-    private void renderReport(HttpServletResponse resp, byte[] reportData, ReportFormat reportFormat) {
+    private void renderError(HttpServletResponse resp, String error) {
+        byte[] errorResponse = String.format(REPORT_ERROR_RESPONSE, error).getBytes();
         try (BufferedOutputStream outputStream = new BufferedOutputStream(resp.getOutputStream())) {
-            resp.setHeader(CONTENT_DISPOSITION, ReportViewerUtil.getContentDisposition(reportFormat));
-            resp.setContentType(ReportViewerUtil.getContentType(reportFormat));
-            resp.setContentLength(reportData.length);
-            outputStream.write(reportData);
+            resp.setContentType(ReportViewerUtil.getContentType(ReportFormat.HTM));
+            resp.setContentLength(errorResponse.length);
+            outputStream.write(errorResponse);
         } catch (Exception e) {
-            LOGGER.error("Exception in rendering report with format [{}]!", e);
+            LOGGER.error("Error occurred while preparing report error response!", e);
             throw new ApplicationRuntimeException("Error occurred in report viewer", e);
         }
     }

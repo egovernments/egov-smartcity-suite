@@ -114,15 +114,14 @@
 					test="${sewerageApplicationDetails.currentState.value == 'NEW'}">
 					<c:if test="${isReassignEnabled}">
 						<input type="hidden" id="applicationNumber" value="${sewerageApplicationDetails.applicationNumber}"/>  
-						<input type="hidden" id="appType" value="${sewerageApplicationDetails.applicationType.code}"/>  
-						
-						<input type="button" value="Reassign" class="btn btn-primary"
+						<input type="hidden" id="appType" value="${sewerageApplicationDetails.applicationType.code}"/>  		
+						<input type="button" value="Reassign" style=" color: #fff;background-color: #6b4f2c; " class="btn "
 							id="Reassign" name="Reassign"
 							onclick="return openReassignWindow();" />
 					</c:if>
 				</c:if> 
 		<c:forEach items="${validActionList}" var="validButtons">
-				<form:button type="submit" id="${validButtons}" class="btn btn-primary"  value="${validButtons}" onclick="validateWorkFlowApprover('${validButtons}');">
+				<form:button type="submit" id="${validButtons}" class="btn btn-primary btnWorkflow"  value="${validButtons}" onclick="validateWorkFlowApprover('${validButtons}');">
 						<c:out value="${validButtons}" /> </form:button>
 			</c:forEach>
 				<input type="button" name="button2" id="button2" value="Close"

@@ -49,8 +49,6 @@ $(document).ready(function() {
 	
 	var isSubmit = false;
 	$('#search').click(function(){
-		var propertyType=document.getElementById('propertyType').value;
-		var selectedward=document.getElementById('ward').value;
 		if(isSubmit){
 			return true;
 		}
@@ -58,9 +56,8 @@ $(document).ready(function() {
 			return true;
 	});
 	 
-    var prevdatatable;
 	function submitButton() {
-	drillDowntableContainer = $('#tbldcbdrilldown-report');
+	var drillDowntableContainer = $('#tbldcbdrilldown-report');
 	$('.report-section').removeClass('display-hide');
 	$("#report-footer").show();
 	var wardsList = $('#ward').val();
@@ -77,18 +74,24 @@ $(document).ready(function() {
 			}
 		}
 	}
-	var reportdatatable = drillDowntableContainer
-	.dataTable({
+	drillDowntableContainer.dataTable({
 		type : 'POST',
 		responsive : true,
 		destroy : true,
 		ajax : {
 			url : "/stms/reports/dcbReportWardwiseList",
+			beforeSend : function() {
+				$('.loader-class').modal('show', {
+					backdrop : 'static'
+				});
+			},
 			data : {
 				'propertyType' : $("#propertyType").val(),
 				'mode' : temp
 			},
-			
+			complete : function() {
+				$('.loader-class').modal('hide');
+			},
 			dataSrc: function ( json ) {  
 				jQuery('.loader-class').modal('hide'); 
 				return json.data;
@@ -139,7 +142,7 @@ $(document).ready(function() {
 		           {
 						"data" : "noofassessments",
 						"sTitle" : "No.of Assessments",
-						"className": "text-right"
+						"className": "text-center"
 					},{
 						"data" : "arr_demand",
 						"sTitle" : "Arrears",

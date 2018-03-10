@@ -59,7 +59,7 @@
                 </div>
                 <div class="panel-body custom-form">
                     <div class="form-group">
-                        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.natureofbusiness"/> </label>
+                        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.tradetype"/> </label>
                         <div class="col-sm-3 add-margin">
                             <form:select path="natureOfBusiness" id="natureOfBusiness" cssClass="form-control"
                                          cssErrorClass="form-control error">
@@ -102,7 +102,7 @@
         <table class="table table-bordered table-hover multiheadertbl" id="resultTable">
             <thead>
             <tr>
-                <th><spring:message code="lbl.natureofbusiness"/></th>
+                <th><spring:message code="lbl.tradetype"/></th>
                 <th><spring:message code="lbl.licensecategory"/></th>
                 <th><spring:message code="lbl.basedon.finyear"/></th>
                 <th><spring:message code="lbl.day"/></th>

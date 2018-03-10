@@ -47,15 +47,18 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import static org.egov.infra.utils.DateUtils.toDateUsingDefaultPattern;
+import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CONNECTIONTYPE_METERED;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.NON_METERED_DMDRSN_CODE_MAP;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.METERCHARGESDEMANDREASON;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.METERED_CHARGES_REASON_CODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.NONMETEREDDEMANDREASON;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAXREASONCODE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -67,8 +70,6 @@ import javax.validation.ValidationException;
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.wtms.application.entity.DemandDetail;
 import org.egov.wtms.application.entity.LegacyReceipts;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -125,39 +126,20 @@ public class EditCollectionController {
 
     private String loadViewData(final Model model, final WaterConnectionDetails waterConnectionDetails) {
         final List<DemandDetail> demandDetailBeanList = new ArrayList<>();
-        final Set<DemandDetail> tempDemandDetail = new LinkedHashSet<>();
-        List<Installment> allInstallments = new ArrayList<>();
-        final DateFormat dateFormat = new SimpleDateFormat(PropertyTaxConstants.DATE_FORMAT_DDMMYYY);
-        try {
-            if (waterConnectionDetails.getConnectionType().toString().equals(CONNECTIONTYPE_METERED))
-                allInstallments = waterTaxUtils
-                        .getMonthlyInstallments(dateFormat.parse(dateFormat.format(waterConnectionDetails.getExecutionDate())));
-            else
-                allInstallments = waterTaxUtils.getInstallmentsForCurrYear(
-                        dateFormat.parse(dateFormat.format(waterConnectionDetails.getExecutionDate())));
-        } catch (final ParseException e) {
-            throw new ApplicationRuntimeException("Error while getting all installments from start date", e);
+        Set<DemandDetail> tempDemandDetail;
+        List<Installment> allInstallments;
+        final Map<String, String> demandReasonMap = new HashMap<>();
+        if (waterConnectionDetails.getConnectionType().toString().equals(CONNECTIONTYPE_METERED)) {
+            allInstallments = waterTaxUtils
+                    .getMonthlyInstallments(
+                            toDateUsingDefaultPattern(toDefaultDateFormat(waterConnectionDetails.getExecutionDate())));
+            demandReasonMap.put(METERED_CHARGES_REASON_CODE, METERCHARGESDEMANDREASON);
+        } else {
+            allInstallments = waterTaxUtils.getInstallmentsForCurrYear(
+                    toDateUsingDefaultPattern(toDefaultDateFormat(waterConnectionDetails.getExecutionDate())));
+            demandReasonMap.put(WATERTAXREASONCODE, NONMETEREDDEMANDREASON);
         }
-        DemandDetail dmdDtl = null;
-        for (final Map.Entry<String, String> entry : NON_METERED_DMDRSN_CODE_MAP.entrySet())
-            for (final Installment installObj : allInstallments) {
-                final EgDemandReason demandReasonObj = connectionDemandService
-                        .getDemandReasonByCodeAndInstallment(entry.getKey(), installObj);
-                if (demandReasonObj != null) {
-                    EgDemandDetails demanddet = null;
-                    if (waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand() != null)
-                        demanddet = getDemandDetailsExist(waterConnectionDetails, demandReasonObj);
-                    if (demanddet != null)
-                        dmdDtl = createDemandDetailBean(installObj, demandReasonObj.getEgDemandReasonMaster().getCode(),
-                                entry.getValue(), demanddet.getAmount(), demanddet.getAmtCollected(), demanddet.getId(),
-                                waterConnectionDetails);
-                    else
-                        dmdDtl = createDemandDetailBean(installObj, entry.getKey(), entry.getValue(), BigDecimal.ZERO,
-                                BigDecimal.ZERO, null, waterConnectionDetails);
-
-                }
-                tempDemandDetail.add(dmdDtl);
-            }
+        tempDemandDetail = getDemandDetails(allInstallments, demandReasonMap, waterConnectionDetails);
         for (final DemandDetail demandDetList : tempDemandDetail)
             if (demandDetList != null)
                 demandDetailBeanList.add(demandDetList);
@@ -186,7 +168,6 @@ public class EditCollectionController {
                 break;
             }
         return demandDet;
-
     }
 
     private DemandDetail createDemandDetailBean(final Installment installment, final String reasonMaster,
@@ -231,6 +212,31 @@ public class EditCollectionController {
                 .save(waterconnectionDetails);
         model.addAttribute("waterConnectionDetails", savedWaterConnectionDetails);
         return "editCollection-Ack";
+    }
+    
+    public Set<DemandDetail> getDemandDetails(List<Installment> allInstallments, Map<String, String> demandReasonMap, WaterConnectionDetails waterConnectionDetails) {
+        DemandDetail dmdDtl = null;
+        final Set<DemandDetail> tempDemandDetail = new LinkedHashSet<>();
+        for (final Map.Entry<String, String> entry : demandReasonMap.entrySet())
+            for (final Installment installObj : allInstallments) {
+                final EgDemandReason demandReasonObj = connectionDemandService
+                        .getDemandReasonByCodeAndInstallment(entry.getKey(), installObj);
+                if (demandReasonObj != null) {
+                    EgDemandDetails demanddet = null;
+                    if (waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand() != null)
+                        demanddet = getDemandDetailsExist(waterConnectionDetails, demandReasonObj);
+                    if (demanddet == null)
+                        dmdDtl = createDemandDetailBean(installObj, entry.getKey(), entry.getValue(), BigDecimal.ZERO,
+                                BigDecimal.ZERO, null, waterConnectionDetails);
+                    else
+                        dmdDtl = createDemandDetailBean(installObj, demandReasonObj.getEgDemandReasonMaster().getCode(),
+                                entry.getValue(), demanddet.getAmount(), demanddet.getAmtCollected(), demanddet.getId(),
+                                waterConnectionDetails);
+
+                }
+                tempDemandDetail.add(dmdDtl);
+            }
+        return tempDemandDetail;
     }
 
 }

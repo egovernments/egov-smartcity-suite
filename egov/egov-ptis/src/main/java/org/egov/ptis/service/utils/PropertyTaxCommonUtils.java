@@ -70,7 +70,6 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.notification.service.NotificationService;
-import org.egov.infra.persistence.entity.enums.GuardianRelation;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.NumberUtil;
@@ -78,6 +77,7 @@ import org.egov.infra.workflow.entity.State;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.dao.property.PropertyMutationDAO;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
@@ -85,6 +85,7 @@ import org.egov.ptis.domain.entity.property.PropertyID;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
+import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.SurroundingsAudit;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
@@ -110,8 +111,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.egov.collection.constants.CollectionConstants.QUERY_RECEIPTS_BY_RECEIPTNUM;
 import static org.egov.ptis.constants.PropertyTaxConstants.*;
@@ -151,6 +150,9 @@ public class PropertyTaxCommonUtils {
         
     @Autowired
     private NotificationService notificationService;
+    
+    @Autowired
+    private PropertyMutationDAO propertyMutationDAO;
 
     /**
      * Gives the first half of the current financial year
@@ -204,10 +206,10 @@ public class PropertyTaxCommonUtils {
                         wfPropTaxDetailsMap.put("firstHalf", CURRENTYEAR_FIRST_HALF);
                         wfPropTaxDetailsMap.put("firstHalfGT",
                                 reasonDmd.get(DEMANDRSN_STR_GENERAL_TAX) != null
-                                        ? reasonDmd.get(DEMANDRSN_STR_GENERAL_TAX)
+                                        ? getAggregateGenralTax(reasonDmd)
                                         : demandCollMap.get(DEMANDRSN_STR_VACANT_TAX));
-                        wfPropTaxDetailsMap.put("firstHalfEC", reasonDmd.get(DEMANDRSN_STR_EDUCATIONAL_CESS) != null
-                                ? reasonDmd.get(DEMANDRSN_STR_EDUCATIONAL_CESS) : BigDecimal.ZERO);
+                        wfPropTaxDetailsMap.put("firstHalfEC", reasonDmd.get(DEMANDRSN_STR_EDUCATIONAL_TAX) != null
+                                ? reasonDmd.get(DEMANDRSN_STR_EDUCATIONAL_TAX) : BigDecimal.ZERO);
                         wfPropTaxDetailsMap.put("firstHalfLC", reasonDmd.get(DEMANDRSN_STR_LIBRARY_CESS));
                         wfPropTaxDetailsMap.put("firstHalfUAP",
                                 reasonDmd.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) != null
@@ -224,10 +226,10 @@ public class PropertyTaxCommonUtils {
                         wfPropTaxDetailsMap.put("secondHalf", CURRENTYEAR_SECOND_HALF);
                         wfPropTaxDetailsMap.put("secondHalfGT",
                                 reasonDmd.get(DEMANDRSN_STR_GENERAL_TAX) != null
-                                        ? reasonDmd.get(DEMANDRSN_STR_GENERAL_TAX)
+                                        ? getAggregateGenralTax(reasonDmd)
                                         : demandCollMap.get(DEMANDRSN_STR_VACANT_TAX));
-                        wfPropTaxDetailsMap.put("secondHalfEC", reasonDmd.get(DEMANDRSN_STR_EDUCATIONAL_CESS) != null
-                                ? reasonDmd.get(DEMANDRSN_STR_EDUCATIONAL_CESS) : BigDecimal.ZERO);
+                        wfPropTaxDetailsMap.put("secondHalfEC", reasonDmd.get(DEMANDRSN_STR_EDUCATIONAL_TAX) != null
+                                ? reasonDmd.get(DEMANDRSN_STR_EDUCATIONAL_TAX) : BigDecimal.ZERO);
                         wfPropTaxDetailsMap.put("secondHalfLC", reasonDmd.get(DEMANDRSN_STR_LIBRARY_CESS));
                         wfPropTaxDetailsMap.put("secondHalfUAP",
                                 reasonDmd.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) != null
@@ -395,11 +397,11 @@ public class PropertyTaxCommonUtils {
         BigDecimal serviceCharges = BigDecimal.ZERO;
         for (final UnitTaxCalculationInfo unitTaxCalcInfo : calculationInfo.getUnitTaxCalculationInfos())
             for (final MiscellaneousTax miscTax : unitTaxCalcInfo.getMiscellaneousTaxes())
-                if (miscTax.getTaxName() == DEMANDRSN_CODE_GENERAL_TAX)
+                if (NON_VACANT_TAX_DEMAND_CODES.contains(miscTax.getTaxName()))
                     genTax = genTax.add(miscTax.getTotalCalculatedTax());
                 else if (miscTax.getTaxName() == DEMANDRSN_CODE_UNAUTHORIZED_PENALTY)
                     unAuthPenalty = unAuthPenalty.add(miscTax.getTotalCalculatedTax());
-                else if (miscTax.getTaxName() == DEMANDRSN_CODE_EDUCATIONAL_CESS)
+                else if (miscTax.getTaxName() == DEMANDRSN_CODE_EDUCATIONAL_TAX)
                     eduTax = eduTax.add(miscTax.getTotalCalculatedTax());
                 else if (miscTax.getTaxName() == DEMANDRSN_CODE_VACANT_TAX)
                     vacLandTax = vacLandTax.add(miscTax.getTotalCalculatedTax());
@@ -426,7 +428,7 @@ public class PropertyTaxCommonUtils {
         if (OWNERSHIP_TYPE_VAC_LAND.equalsIgnoreCase(propTypeMstr.getCode()))
             resultString.append("~Vacant Land Tax=" + formatAmount(vacLandTax));
         else
-            resultString.append("~Property Tax=" + formatAmount(genTax) + "~Education Cess=" + formatAmount(eduTax));
+            resultString.append("~Property Tax=" + formatAmount(genTax) + "~Education Tax=" + formatAmount(eduTax));
         resultString.append("~Library Cess=" + formatAmount(libCess));
         final Boolean isCorporation = propertyTaxUtil.isCorporation();
         if (isCorporation)
@@ -608,10 +610,6 @@ public class PropertyTaxCommonUtils {
         return designations;
     }
 
-    public List<String> getGuardianRelations() {
-        return Stream.of(GuardianRelation.values()).map(GuardianRelation::name).collect(Collectors.toList());
-    }
-    
     public List<Long> getPositionForUser(final Long userId) {
         List<Long> positionIds = new ArrayList<>();
         if (userId != null && userId.intValue() != 0) {
@@ -778,9 +776,9 @@ public class PropertyTaxCommonUtils {
         String reason = null;
         List<String> list = new ArrayList<>();
         if (isCorporation())
-            noOfDays = "30";
-        else
             noOfDays = "15";
+        else
+            noOfDays = "30";
         list.add(noOfDays);
         if (basicProperty.getProperty().getStatus() == 'I') {
             if ("CREATE".equals(basicProperty.getProperty().getPropertyModifyReason()))
@@ -804,6 +802,43 @@ public class PropertyTaxCommonUtils {
         oldSurroundings.setSouthBoundary(propertyId.getSouthBoundary() != null ? propertyId.getSouthBoundary() : null);
         oldSurroundings.setWestBoundary(propertyId.getWestBoundary() != null ? propertyId.getWestBoundary() : null);
         return oldSurroundings;
+    }
+    
+
+    public PropertyMutation getLatestApprovedMutationForAssessmentNo(String assessmentNo) {
+        return propertyMutationDAO.getLatestApprovedMutationForAssessmentNo(assessmentNo);
+    }
+
+    public PropertyStatusValues getPropStatusValues(BasicProperty basicProperty) {
+        final Query query = getSession().createQuery("from PropertyStatusValues where basicProperty = :basicPropertyId");
+        query.setParameter("basicPropertyId", basicProperty);
+        return query.list().isEmpty() ? null : (PropertyStatusValues) query.list().get(0);
+    }
+    
+    /**
+     * Returns sum of all primary tax heads
+     *
+     * @return BigDecimal
+     */
+    public BigDecimal getAggregateGenralTax(Map<String, BigDecimal> demandCollMap) {
+        
+        return nullCheckBigDecimal(demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX))
+                .add(nullCheckBigDecimal(demandCollMap.get(PropertyTaxConstants.DEMANDRSN_STR_LIGHT_TAX)))
+                .add(nullCheckBigDecimal(demandCollMap.get(DEMANDRSN_STR_WATER_TAX)))
+                .add(nullCheckBigDecimal(demandCollMap.get(DEMANDRSN_STR_SCAVENGE_TAX)))
+                .add(nullCheckBigDecimal(demandCollMap.get(DEMANDRSN_STR_DRAINAGE_TAX)));
+
+    }
+    
+
+    /**
+     * Returns zero if value is null otherwise value
+     *
+     * @return BigDecimal
+     */
+    public BigDecimal nullCheckBigDecimal(BigDecimal value) {
+
+        return value != null ? value : BigDecimal.ZERO;
     }
 
 }

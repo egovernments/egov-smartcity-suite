@@ -50,18 +50,22 @@ package org.egov.council.web.controller;
 import static org.egov.council.utils.constants.CouncilConstants.AGENDAUSEDINMEETING;
 import static org.egov.council.utils.constants.CouncilConstants.AGENDA_MODULENAME;
 import static org.egov.council.utils.constants.CouncilConstants.MEETING_MODULENAME;
-import static org.egov.council.utils.constants.CouncilConstants.MEETING_TIMINGS;
+import static org.egov.council.utils.constants.CouncilConstants.MODULE_FULLNAME;
 import static org.egov.council.utils.constants.CouncilConstants.MOM_FINALISED;
 import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_MODULENAME;
 import static org.egov.council.utils.constants.CouncilConstants.RESOLUTION_APPROVED_PREAMBLE;
+import static org.egov.council.utils.constants.CouncilConstants.getMeetingTimings;
+
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.council.autonumber.PreambleNumberGenerator;
 import org.egov.council.entity.CommitteeType;
 import org.egov.council.entity.CouncilAgendaDetails;
 import org.egov.council.entity.CouncilMeeting;
@@ -74,6 +78,8 @@ import org.egov.council.service.CouncilAgendaService;
 import org.egov.council.service.CouncilMeetingService;
 import org.egov.council.service.CouncilMeetingTypeService;
 import org.egov.council.service.CouncilPreambleService;
+import org.egov.council.service.es.CouncilMeetingIndexService;
+import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -93,6 +99,8 @@ public class CouncilDataEntryController {
     private static final String COUNCILMOM_DATAENTRY = "councilMom-dataentry";
     private static final String COUNCILMOM_VIEW = "councilmom-view";
     private static final String MEETING_MOM = "MeetingMOM";
+    private static final String PREAMBLE_NUMBER_AUTO = "PREAMBLE_NUMBER_AUTO";
+
 
     @Autowired
     private CommitteeTypeService committeeTypeService;
@@ -110,6 +118,10 @@ public class CouncilDataEntryController {
     
     @Autowired
     private CouncilAgendaService councilAgendaService;
+    @Autowired
+    private CouncilMeetingIndexService councilMeetingIndexService;
+    @Autowired
+    private AutonumberServiceBeanResolver autonumberServiceBeanResolver;
 
     @ModelAttribute("committeeType")
     public List<CommitteeType> getCommitteTypeList() {
@@ -118,7 +130,7 @@ public class CouncilDataEntryController {
 
     @ModelAttribute("meetingTimingMap")
     public Map<String, String> getMeetingTimingList() {
-        return MEETING_TIMINGS;
+        return getMeetingTimings();
     }
     
     @ModelAttribute("meetingType")
@@ -130,6 +142,7 @@ public class CouncilDataEntryController {
     public String showCouncilForm(final Model model) {
         MeetingMOM meetingMOM = new MeetingMOM();
         model.addAttribute(MEETING_MOM, meetingMOM);
+        model.addAttribute("autoPreambleNoGenEnabled", true);            
         return COUNCILMOM_DATAENTRY;
     }
 
@@ -137,10 +150,11 @@ public class CouncilDataEntryController {
     public String update(
             @ModelAttribute final MeetingMOM meetingMOM,
             final BindingResult errors, final Model model,
-            final RedirectAttributes redirectAttrs) {
+            final RedirectAttributes redirectAttrs) throws ParseException {
         if (errors.hasErrors()) {
             return COUNCILMOM_DATAENTRY;
         }
+
         List<MeetingMOM> meetingMOMList = new ArrayList<>();
         List<CouncilAgendaDetails> preambleList = new ArrayList<>();
         for (MeetingMOM meetingMoMs : meetingMOM.getMeeting().getMeetingMOMs()) {
@@ -148,6 +162,12 @@ public class CouncilDataEntryController {
                     PREAMBLE_MODULENAME, RESOLUTION_APPROVED_PREAMBLE));
             meetingMoMs.getPreamble().setType(PreambleType.GENERAL);
             meetingMoMs.setMeeting(meetingMOM.getMeeting());
+            if (isAutoPreambleNoGenEnabled()){
+                PreambleNumberGenerator preamblenumbergenerator = autonumberServiceBeanResolver
+                        .getAutoNumberServiceFor(PreambleNumberGenerator.class);
+                meetingMoMs.getPreamble().setPreambleNumber(preamblenumbergenerator
+                        .getNextNumber(meetingMoMs.getPreamble()));
+                }
             meetingMoMs.getMeeting().setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(MEETING_MODULENAME, MOM_FINALISED));
             meetingMoMs.getMeeting().setCommitteeType(meetingMOM.getAgenda().getCommitteeType());
             meetingMoMs.setAgenda(meetingMOM.getAgenda());
@@ -161,10 +181,13 @@ public class CouncilDataEntryController {
             preambleList.add(councilAgendaDetails);
             meetingMOMList.add(meetingMoMs);
         }
+        if (meetingMOM.getMeeting().getFiles() != null && meetingMOM.getMeeting().getFiles().length > 0) {
+            meetingMOM.getMeeting().setSupportDocs(councilMeetingService.addToFileStore(meetingMOM.getMeeting().getFiles()));
+        }
         meetingMOM.getAgenda().setAgendaDetails(preambleList);
         councilMeetingService.createDataEntry(meetingMOMList);
         CouncilMeeting councilMeeting = councilMeetingService.findOne(meetingMOM.getMeeting().getId());
-        councilMeetingService.sortMeetingMomByItemNumber(councilMeeting);
+        councilMeetingIndexService.createCouncilMeetingIndex(councilMeeting);
         model.addAttribute(COUNCIL_MEETING, councilMeeting);
         return COUNCILMOM_VIEW;
     }
@@ -211,4 +234,9 @@ public class CouncilDataEntryController {
     public boolean uniqueAgendaNumber(@RequestParam final String agendaNumber) {
         return councilAgendaService.findByAgendaNumber(agendaNumber) != null ? false : true;
     }
+    public Boolean isAutoPreambleNoGenEnabled() {
+        return councilPreambleService.autoGenerationModeEnabled(
+                MODULE_FULLNAME, PREAMBLE_NUMBER_AUTO);
+    }
+
 }

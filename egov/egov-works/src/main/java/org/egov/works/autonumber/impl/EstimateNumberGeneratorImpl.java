@@ -48,9 +48,9 @@
 package org.egov.works.autonumber.impl;
 
 import org.egov.commons.CFinancialYear;
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
-import org.egov.infra.persistence.utils.DBSequenceGenerator;
-import org.egov.infra.persistence.utils.SequenceNumberGenerator;
+import org.egov.infra.persistence.utils.DatabaseSequenceCreator;
+import org.egov.infra.persistence.utils.DatabaseSequenceProvider;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.autonumber.EstimateNumberGenerator;
@@ -68,17 +68,17 @@ public class EstimateNumberGeneratorImpl implements EstimateNumberGenerator {
     private static final String ESTIMATE_NUMBER_SEQ_PREFIX = "SEQ_ESTIMATE_NUMBER";
 
     @Autowired
-    private SequenceNumberGenerator sequenceGenerator;
+    private DatabaseSequenceProvider sequenceGenerator;
     @Autowired
-    private DBSequenceGenerator dbSequenceGenerator;
+    private DatabaseSequenceCreator databaseSequenceCreator;
     @Autowired
-    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
     @Autowired
     private ScriptService scriptService;
 
     public String getEstimateNumber(final AbstractEstimate estimate, final CFinancialYear financialYear) {
         final ScriptContext scriptContext = ScriptService.createContext("estimate", estimate, "finYear",
-                financialYear, "sequenceGenerator", sequenceGenerator, "dbSequenceGenerator", dbSequenceGenerator);
+                financialYear, "sequenceGenerator", sequenceGenerator, "dbSequenceGenerator", databaseSequenceCreator);
         return scriptService.executeScript("works.estimatenumber.generator", scriptContext).toString();
 
     }
@@ -88,8 +88,7 @@ public class EstimateNumberGeneratorImpl implements EstimateNumberGenerator {
         final String financialYearRange = financialYear.getFinYearRange();
         final String finYearRange[] = financialYearRange.split("-");
         final String sequenceName = ESTIMATE_NUMBER_SEQ_PREFIX + "_" + finYearRange[0] + "_" + finYearRange[1];
-        Serializable sequenceNumber;
-        sequenceNumber = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
+        Serializable sequenceNumber = genericSequenceNumberGenerator.getNextSequence(sequenceName);
         return String.format("%s/%s/%05d", lineEstimate.getExecutingDepartment().getCode(), financialYearRange,
                 sequenceNumber);
     }

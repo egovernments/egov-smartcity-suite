@@ -87,7 +87,7 @@ import org.egov.infra.admin.master.service.HierarchyTypeService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -216,8 +216,8 @@ public class CreateVoucher {
 	@Autowired
 	private BoundaryService boundaryService;
 	
-	 @Autowired
-	private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+	@Autowired
+	private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
 	private static final String ERR = "Exception in CreateVoucher";
 	private static final String DEPTMISSINGMSG = "Department is missing in the Bill cannot proceed creating vouvher";
@@ -3005,7 +3005,7 @@ public class CreateVoucher {
 	            throw new ApplicationRuntimeException("Fiscal period is not defined for the voucher date");
 	        sequenceName = "sq_" + vh.getFundId().getIdentifier() + "_" + getCgnType(vh.getType()).toLowerCase() + "_cgvn_"
 	                + fiscalPeriod.getName();
-	        Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
+	        Serializable nextSequence = genericSequenceNumberGenerator.getNextSequence(sequenceName);
 
 	        cgvnNumber = String.format("%s/%s/%s%010d", vh.getFundId().getIdentifier(), getCgnType(vh.getType()), "CGVN",
 	                nextSequence);

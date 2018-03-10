@@ -1,4 +1,4 @@
-{"projectCode" : "1234", "billDate" : "20-02-2017", "billType" : "Final Bill", "nameOfWork" : "", "payTo" : "manoj", "billAmount" : "1000", "narration" : "abcd", "partyBillNumber" : "bill001", "partyBillDate" : "20-02-2017", "departmentCode" : "ENG", "functionCode" : "202102", "schemeCode" : "", "subSchemeCode" : "", "fundCode" : "01", 
+{"projectCode" : "1234", "billDate" : "20-02-2017", "billType" : "Final Bill", "nameOfWork" : "", "payTo" : "manoj", "billAmount" : "1000", "narration" : "abcd", "partyBillNumber" : "bill001", "partyBillDate" : "20-02-2017", "departmentCode" : "ENG", "functionCode" : "202102", "schemeCode" : "", "subSchemeCode" : "", "fundCode" : "01", "checkListUrl" : "bill/test.pdf",  
 		"billDetails" : [{"glcode" : "4120043", "debitAmount": "1000", "creditAmount" : "-10"}, 
 						{"glcode" : "3401002", "debitAmount": "-10", "creditAmount" : "1000"}], 
 		"billPayeeDetails" : [{"glcode" : "4120043", "accountDetailType": "PROJECTCODE", "accountDetailKey" : "1234", "debitAmount": "1000", "creditAmount" : "0"},

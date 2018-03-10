@@ -166,7 +166,6 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     private String reportId;
     private Boolean showAckBtn = Boolean.FALSE;
     private String instStartDt;
-    private List<String> guardianRelations;
     private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
     private Long vacantLandPlotAreaId;
     private Long layoutApprovalAuthorityId;
@@ -258,7 +257,6 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
 
         documentTypes = propService.getDocumentTypesForTransactionType(TransactionType.OBJECTION);
         setFloorNoMap(FLOOR_MAP);
-        setGuardianRelations(propertyTaxCommonUtils.getGuardianRelations());
         addDropdownData("floorType", floorTypeService.getAllFloors());
         addDropdownData("roofType", roofTypeService.getAllRoofTypes());
         addDropdownData("wallType", wallTypeService.getAllWalls());
@@ -455,6 +453,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         if (hasErrors())
             if (getModelId() == null || getModelId().isEmpty() || checkDesignationsForEdit()) {
                 allowEditDocument = Boolean.TRUE;
+                setPropAddress(basicProp.getAddress().toString());
                 return NEW;
             } else if (checkDesignationsForView())
                 return VIEW;
@@ -662,11 +661,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         if (isBlank(propertyModel.getPropertyDetail().getCategoryType())
                 || "-1".equals(propertyModel.getPropertyDetail().getCategoryType()))
             addActionError(getText("mandatory.propTypeCategory"));
-
-        if (basicProp.getAmalgamationsProxy() == null || basicProp.getAmalgamationsProxy() != null
-                && basicProp.getAmalgamationsProxy().get(0).getAssessmentNo().isEmpty())
-            addActionError(getText("error.amalgamatedprops.required"));
-
+        validateAmalgmationProxy();
         validateOwners();
         final PropertyDetail propertyDetail = propertyModel.getPropertyDetail();
         final Date regDocDate = propertyModel.getBasicProperty().getRegdDocDate();
@@ -684,6 +679,16 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
             logger.debug("Exiting from validate, BasicProperty: " + getBasicProp());
     }
 
+	private void validateAmalgmationProxy() {
+		if (basicProp.getAmalgamationsProxy() == null || basicProp.getAmalgamationsProxy() != null)
+			if (basicProp.getAmalgamationsProxy().get(0).getAssessmentNo().isEmpty())
+				addActionError(getText("error.amalgamatedprops.required"));
+			else
+				for (Amalgamation amalgamatedProp : basicProp.getAmalgamationsProxy())
+					if (amalgamatedProp.getAssessmentNo().isEmpty())
+						addActionError(getText("error.amalgamatedprops.missing"));
+	}
+
     private void validateOwners() {
         for (final AmalgamationOwner owner : propertyModel.getAmalgamationOwnersProxy())
             if (owner != null) {
@@ -691,13 +696,6 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
                     addActionError(getText("mandatory.ownerName"));
                 if (null == owner.getOwner().getGender())
                     addActionError(getText("mandatory.gender"));
-              //to do--- commenting is temporarily.. need to enable it later as per the requirement  
-                /*if (StringUtils.isBlank(owner.getOwner().getMobileNumber()))
-                    addActionError(getText("mandatory.mobilenumber"));
-                if (StringUtils.isBlank(owner.getOwner().getGuardianRelation()))
-                    addActionError(getText("mandatory.guardianrelation"));
-                if (StringUtils.isBlank(owner.getOwner().getGuardian()))
-                    addActionError(getText("mandatory.guardian"));*/
             }
 
         validateDuplicateMobileNo();
@@ -847,12 +845,12 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
                         logger.debug("createOwners: OwnerAddress: " + ownerAddress);
                     ownerInfo.getOwner().addAddress(basicProperty.getAddress());
                 } else {
-                    // If existing user, then do not add correspondence address
                     user.setEmailId(ownerInfo.getOwner().getEmailId());
                     user.setGuardian(ownerInfo.getOwner().getGuardian());
                     user.setGuardianRelation(ownerInfo.getOwner().getGuardianRelation());
                     ownerInfo.setOwner(user);
                     ownerInfo.setProperty(property);
+                    ownerInfo.getOwner().addAddress(basicProperty.getAddress());
                 }
             }
             property.addAmalgamationOwners(ownerInfo);
@@ -896,7 +894,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
             logger.debug("approve: Workflow property: " + propertyModel);
         basicProp = propertyModel.getBasicProperty();
         oldProperty = (PropertyImpl) basicProp.getProperty();
-        amalgamateOwners();
+        basicPropertyService.createAmalgamatedOwners(basicProp);
         for (final Amalgamation childProperty : basicProp.getAmalgamations()) {
             childProperties.add(childProperty.getAmalgamatedProperty().getUpicNo());
         }
@@ -927,12 +925,6 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         if (logger.isDebugEnabled())
             logger.debug("Exiting approve");
         return RESULT_ACK;
-    }
-
-    private void amalgamateOwners() {
-        for (Amalgamation childProperty : basicProp.getAmalgamations())
-            basicPropertyService.createAmalgamatedOwners(childProperty.getAmalgamatedProperty().getPropertyOwnerInfo(),
-                    childProperty.getParentProperty());
     }
 
     private void createPropertyStatusValues() {
@@ -1022,7 +1014,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     @Action(value = "/amalgamation-printAck")
     public String printAck() {
         final ReportOutput reportOutput = propertyTaxUtil
-                .generateCitizenCharterAcknowledgement(indexNumber, AMALGAMATION, APPLICATION_TYPE_AMALGAMATION);
+                .generateCitizenCharterAcknowledgement(indexNumber, AMALGAMATION, APPLICATION_TYPE_AMALGAMATION, null);
         reportId = reportViewerUtil.addReportToTempCache(reportOutput);
         return NOTICE;
     }
@@ -1340,14 +1332,6 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
 
     public void setInstStartDt(final String instStartDt) {
         this.instStartDt = instStartDt;
-    }
-
-    public List<String> getGuardianRelations() {
-        return guardianRelations;
-    }
-
-    public void setGuardianRelations(List<String> guardianRelations) {
-        this.guardianRelations = guardianRelations;
     }
 
     public Long getVacantLandPlotAreaId() {

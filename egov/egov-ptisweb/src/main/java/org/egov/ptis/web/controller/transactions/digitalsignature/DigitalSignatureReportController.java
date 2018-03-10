@@ -101,7 +101,8 @@ public class DigitalSignatureReportController {
                                 || record.getState().getValue().startsWith("Alter")
                                 || record.getState().getValue().startsWith("Bifurcate")
                                 || record.getState().getValue().startsWith("Demolition")
-                                || record.getState().getValue().startsWith("Exemption"))
+                                || record.getState().getValue().startsWith("Exemption")
+                                || record.getState().getValue().startsWith("Amalgamation"))
                             tempMap.put("objectId", ((PropertyImpl) record).getBasicProperty().getId());
                         else
                             tempMap.put("objectId", record.getId());

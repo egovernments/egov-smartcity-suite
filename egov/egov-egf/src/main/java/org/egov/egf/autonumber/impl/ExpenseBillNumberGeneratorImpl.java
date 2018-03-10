@@ -52,7 +52,7 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.egf.autonumber.ExpenseBillNumberGenerator;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.model.bills.EgBillregister;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -65,7 +65,7 @@ public class ExpenseBillNumberGeneratorImpl implements ExpenseBillNumberGenerato
     @Autowired
     private FinancialYearDAO financialYearDAO;
     @Autowired
-    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
     /**
      * 
@@ -82,7 +82,7 @@ public class ExpenseBillNumberGeneratorImpl implements ExpenseBillNumberGenerato
         if (financialYear == null)
             throw new ApplicationRuntimeException("Financial Year is not defined for the voucher date");
         sequenceName = "seq_expense_billnumber_" + financialYear.getFinYearRange();
-        Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
+        Serializable nextSequence = genericSequenceNumberGenerator.getNextSequence(sequenceName);
 
         expenseBillNumber = String.format("%s/%s/%04d/%s", br.getEgBillregistermis().getEgDepartment().getCode(), "EJV",
                 nextSequence, financialYear.getFinYearRange());

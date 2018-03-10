@@ -47,7 +47,20 @@
  */
 package org.egov.ptis.master.service;
 
-import com.google.common.collect.ImmutableMap;
+import static org.egov.ptis.constants.PropertyTaxConstants.TAX_RATES;
+import static org.egov.ptis.constants.PropertyTaxConstants.TAX_RATES_TEMP;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
 import org.egov.demand.model.EgDemandReasonDetails;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.repository.AppConfigValueRepository;
@@ -55,22 +68,13 @@ import org.egov.infra.admin.master.repository.ModuleRepository;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.repository.master.taxrates.TaxRatesRepository;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.TAX_RATES;
-import static org.egov.ptis.constants.PropertyTaxConstants.TAX_RATES_TEMP;
+import com.google.common.collect.ImmutableMap;
 
 @Service
 @Transactional(readOnly = true)
@@ -91,9 +95,12 @@ public class TaxRatesService {
     @Qualifier("egDemandReasonDetailsService")
     private PersistenceService<EgDemandReasonDetails, Long> egDemandReasonDetailsService;
     
+    protected static final Map<String, String> VIEW_TAX_RATES_MAP = ImmutableMap.of("VAC_LAND_TAX", PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX,
+            "LIB_CESS", PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS);
+    
     protected static final Map<String, String> TAX_RATES_MAP = ImmutableMap.of("VAC_LAND_TAX", PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX,
             "TOT_RESD_TAX", "Total Residential Tax", "LIB_CESS", PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS, "TOT_NR_RESD_TAX",
-            "Total Non Residential Tax", "EDU_CESS", PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_CESS);
+            "Total Non Residential Tax", "EDU_TAX", PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_TAX);
     
     @Autowired
     public TaxRatesService(final TaxRatesRepository taxRatesRepository) {
@@ -120,7 +127,7 @@ public class TaxRatesService {
         Map<String, Double> taxRatesDisplayMap = new LinkedHashMap<>();
         taxRatesDisplayMap.put("General Tax Residential", taxRatesMap.get("General Tax Residential"));
         taxRatesDisplayMap.put("General Tax Non Residential", taxRatesMap.get("General Tax Non Residential"));
-        taxRatesDisplayMap.put("Education Cess", taxRatesMap.get("Education Cess"));
+        taxRatesDisplayMap.put("Education Tax", taxRatesMap.get("Education Tax"));
         taxRatesDisplayMap.put("Vacant Land Tax", taxRatesMap.get("Vacant Land Tax"));
         taxRatesDisplayMap.put("Library Cess", taxRatesMap.get("Library Cess"));
         return taxRatesDisplayMap;
@@ -144,12 +151,24 @@ public class TaxRatesService {
             EgDemandReasonDetails egDemandReasonDetails = excludedList.next();
 
             if (TAX_RATES_MAP.containsValue(
-                    egDemandReasonDetails.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()))
+                    egDemandReasonDetails.getEgDemandReasonMaster().getReasonMaster()))
                 excludedList.remove();
         }
         return demandReasonDetailsList;
     }
 
+    public Map<String, BigDecimal> getVltAndLibPercentage(List<EgDemandReasonDetails> demandReasonDetailsList) {
+        Iterator<EgDemandReasonDetails> demandReasons = demandReasonDetailsList.iterator();
+        Map<String, BigDecimal> vltAndLib = new HashMap<>();
+        while (demandReasons.hasNext()) {
+            EgDemandReasonDetails egDemandReasonDetails = demandReasons.next();
+            if (VIEW_TAX_RATES_MAP.containsValue(
+                    egDemandReasonDetails.getEgDemandReasonMaster().getReasonMaster()))
+            	vltAndLib.put(egDemandReasonDetails.getEgDemandReasonMaster().getReasonMaster(), egDemandReasonDetails.getPercentage());
+        }
+        return vltAndLib;
+    }
+    
     @Transactional
     public void updateTaxRates(EgDemandReasonDetails egDemandReasonDetails) {
         egDemandReasonDetailsService.persist(egDemandReasonDetails);
@@ -160,4 +179,12 @@ public class TaxRatesService {
         qry.setParameter(1, id);
         return (EgDemandReasonDetails) qry.getSingleResult();
     }
+    
+    public BigDecimal getTaxRateByInstallmentAndDemandReasonCode(final String demandCode) {
+        final org.hibernate.Query query = entityManager.unwrap(Session.class).createQuery(
+                "from EgDemandReasonDetails drd where drd.egDemandReasonMaster.egModule.name= 'Property Tax' and drd.egDemandReasonMaster.code= :demandCode order by drd.egDemandReasonMaster.orderId ");
+        query.setParameter("demandCode", demandCode);
+        return ((EgDemandReasonDetails) query.list().get(0)).getPercentage();
+    }
+    
 }

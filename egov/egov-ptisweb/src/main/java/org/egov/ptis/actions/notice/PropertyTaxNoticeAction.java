@@ -800,7 +800,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 						.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES))
 					totalTax = totalTax.add(demandDetail.getAmount());
 				if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
-						.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS))
+						.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_TAX))
 					propertyTax = propertyTax.add(demandDetail.getAmount());
 				if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
 						.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS)) {
@@ -811,8 +811,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 						infoBean.setRevLibraryCess(demandDetail.getAmount());
 				}
 
-				if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
-						.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX)
+				if (NON_VACANT_TAX_DEMAND_CODES.contains(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode())
 						|| demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
 								.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX))
 					propertyTax = propertyTax.add(demandDetail.getAmount());
@@ -848,13 +847,12 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 						.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES))
 					totalTax = totalTax.add(demandDetail.getAmount());
 				if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
-						.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS))
+						.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_TAX))
 					propertyTax = propertyTax.add(demandDetail.getAmount());
 				if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
 						.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS))
 					infoBean.setExistingLibraryCess(demandDetail.getAmount());
-				if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
-						.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX)
+				if (NON_VACANT_TAX_DEMAND_CODES.contains(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode())
 						|| demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
 								.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX))
 					propertyTax = propertyTax.add(demandDetail.getAmount());

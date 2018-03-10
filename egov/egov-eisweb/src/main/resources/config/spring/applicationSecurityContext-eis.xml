@@ -60,6 +60,7 @@
 				<security:filter-chain pattern="/resources/**" filters="none" />
 				<security:filter-chain pattern="/index.jsp" filters="none" />
 				<security:filter-chain pattern="/complaints/citizen/anonymous/**" filters="none" />
+				<security:filter-chain pattern="/eisdashboard/*" filters="none" />
 				<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
 			</list>
 		</constructor-arg>

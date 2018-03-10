@@ -77,6 +77,7 @@ import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.application.service.WaterConnectionService;
 import org.egov.wtms.masters.entity.DocumentNames;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
+import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
@@ -215,7 +216,8 @@ public class NewConnectionController extends GenericConnectionController {
 
         String sourceChannel = request.getParameter("Source");
         newConnectionService.validatePropertyID(waterConnectionDetails, resultBinder);
-        waterConnectionDtlsService.validateWaterRateAndDonationHeader(waterConnectionDetails);
+        if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType()))
+            waterConnectionDtlsService.validateWaterRateAndDonationHeader(waterConnectionDetails);
         final List<ApplicationDocuments> applicationDocs = new ArrayList<>();
         int i = 0;
         final String documentRequired = waterTaxUtils.documentRequiredForBPLCategory();

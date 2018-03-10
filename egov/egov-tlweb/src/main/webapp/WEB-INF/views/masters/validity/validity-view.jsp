@@ -60,7 +60,7 @@
             <div class="panel-body custom">
                 <div class="row add-border">
                     <div class="col-xs-3 add-margin">
-                        <spring:message code="lbl.natureofbusiness"/>
+                        <spring:message code="lbl.tradetype"/>
                     </div>
                     <div class="col-sm-3 add-margin view-content">${validity.natureOfBusiness.name}</div>
                     <div class="col-xs-3 add-margin">

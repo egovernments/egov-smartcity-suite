@@ -49,32 +49,25 @@ package org.egov.council.autonumber.impl;
 
 import org.egov.council.autonumber.MOMResolutionNumberGenerator;
 import org.egov.council.entity.MeetingMOM;
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.infra.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.Serializable;
-
 @Service
-public class MOMResolutionNumberGeneratorImpl implements
-		MOMResolutionNumberGenerator {
-	private static final String MOM_NUMBER_SEQ = "SEQ_EGCNCL_MOM_NUMBER";
+public class MOMResolutionNumberGeneratorImpl implements MOMResolutionNumberGenerator {
+    private static final String MOM_NUMBER_SEQ = "SEQ_EGCNCL_MOM_NUMBER";
 
-	@Autowired
-	private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+    @Autowired
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
-	@Override
-	public String getNextNumber(MeetingMOM meetingMOM) {
-		final String sequenceName = MOM_NUMBER_SEQ;
-
-		final String meetingDate = DateUtils.getDefaultFormattedDate(meetingMOM
-				.getMeeting().getMeetingDate());
-		Serializable sequenceNumber = applicationSequenceNumberGenerator
-				.getNextSequence(sequenceName);
-		final String result = String.format("%s-%d", meetingDate,
-				sequenceNumber);
-		return result;
-	}
+    @Override
+    public String getNextNumber(MeetingMOM meetingMOM) {
+        final String meetingDate = DateUtils.getDefaultFormattedDate(meetingMOM
+                .getMeeting().getMeetingDate());
+        return String.format("%s-%d", meetingDate,
+                genericSequenceNumberGenerator
+                        .getNextSequence(MOM_NUMBER_SEQ));
+    }
 
 }

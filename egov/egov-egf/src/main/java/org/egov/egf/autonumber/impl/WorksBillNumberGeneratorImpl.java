@@ -52,7 +52,7 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.egf.autonumber.WorksBillNumberGenerator;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.model.bills.EgBillregister;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -65,7 +65,7 @@ public class WorksBillNumberGeneratorImpl implements WorksBillNumberGenerator {
     @Autowired
     private FinancialYearDAO financialYearDAO;
     @Autowired
-    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
     /**
      *
@@ -82,7 +82,7 @@ public class WorksBillNumberGeneratorImpl implements WorksBillNumberGenerator {
         if (financialYear == null)
             throw new ApplicationRuntimeException("Financial Year is not defined for the voucher date");
         sequenceName = "seq_works_billnumber_" + financialYear.getFinYearRange();
-        final Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
+        final Serializable nextSequence = genericSequenceNumberGenerator.getNextSequence(sequenceName);
 
         worksBillNumber = String.format("%s/%s/%04d/%s", br.getEgBillregistermis().getEgDepartment().getCode(), "WBILL",
                 nextSequence, financialYear.getFinYearRange());

@@ -110,6 +110,7 @@ import static org.egov.tl.utils.Constants.STATUS_CANCELLED;
 import static org.egov.tl.utils.Constants.TL_LICENSE_ACT_CORPORATION;
 import static org.egov.tl.utils.Constants.TL_LICENSE_ACT_DEFAULT;
 import static org.egov.tl.utils.Constants.TRADE_LICENSE;
+import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
@@ -172,13 +173,13 @@ public class DemandNoticeController {
                 .append("}").toString();
     }
 
-    @GetMapping("generate/{licenseId}")
+    @GetMapping(value = "generate/{licenseId}", produces = APPLICATION_PDF_VALUE)
     @ResponseBody
     public ResponseEntity<InputStreamResource> generateDemandNotice(@PathVariable Long licenseId) {
         return ReportUtil.reportAsResponseEntity(generateReport(tradeLicenseService.getLicenseById(licenseId)));
     }
 
-    @GetMapping("generate")
+    @GetMapping(value = "generate", produces = APPLICATION_PDF_VALUE)
     @ResponseBody
     public ResponseEntity<InputStreamResource> mergeAndDownload(@ModelAttribute DemandNoticeForm searchRequest) {
         List<DemandNoticeForm> demandNotices = tradeLicenseService.getLicenseDemandNotices(searchRequest);

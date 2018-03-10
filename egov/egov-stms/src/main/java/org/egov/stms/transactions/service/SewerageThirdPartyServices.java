@@ -83,7 +83,7 @@ import org.egov.demand.model.EgDemand;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.persistence.utils.SequenceNumberGenerator;
+import org.egov.infra.persistence.utils.DatabaseSequenceProvider;
 import org.egov.infra.rest.client.SimpleRestClient;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.web.utils.WebUtils;
@@ -133,7 +133,7 @@ public class SewerageThirdPartyServices {
     @Autowired
     private ApplicationContext context;
     @Autowired
-    private SequenceNumberGenerator sequenceNumberGenerator;
+    private DatabaseSequenceProvider databaseSequenceProvider;
     @Autowired
     private InstallmentDao installmentDao;
     @Autowired
@@ -304,7 +304,7 @@ public class SewerageThirdPartyServices {
         sewerageBillable.setUserId(2L);// FIX: Hardcoded to get ananymous user
         ApplicationThreadLocals.setUserId(2L);
 
-        final Serializable referenceNumber = sequenceNumberGenerator.getNextSequence(SewerageTaxConstants.SEWERAGE_BILLNUMBER);
+        final Serializable referenceNumber = databaseSequenceProvider.getNextSequence(SewerageTaxConstants.SEWERAGE_BILLNUMBER);
 
         sewerageBillable.setReferenceNumber(String.format("%s%06d", "", referenceNumber));
 

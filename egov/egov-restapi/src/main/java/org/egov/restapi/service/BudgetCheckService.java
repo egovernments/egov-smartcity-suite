@@ -47,6 +47,13 @@
  */
 package org.egov.restapi.service;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
@@ -55,19 +62,19 @@ import org.egov.commons.service.FunctionService;
 import org.egov.commons.service.FundService;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.model.budget.BudgetDetail;
+import org.egov.model.budget.BudgetGroup;
 import org.egov.restapi.constants.RestApiConstants;
+import org.egov.restapi.model.BudgetAvailableResponse;
 import org.egov.restapi.model.BudgetCheck;
+import org.egov.restapi.model.BudgetDetailsResponse;
 import org.egov.restapi.model.RestErrors;
 import org.egov.services.budget.BudgetGroupService;
 import org.egov.services.masters.SchemeService;
 import org.egov.services.masters.SubSchemeService;
+import org.egov.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 @Service
 public class BudgetCheckService {
@@ -137,7 +144,6 @@ public class BudgetCheckService {
 
         final List<Long> budgetheadid = new ArrayList<>();
         budgetheadid.add(budgetGroupService.getBudgetGroupByName(budgetCheck.getBudgetHeadName()).getId());
-
         budgetAvailable = budgetDetailsDAO.getPlanningBudgetAvailable(
                 financialYearHibernateDAO.getFinYearByDate(new Date()).getId(),
                 Integer.parseInt(
@@ -154,5 +160,129 @@ public class BudgetCheckService {
 
         return budgetAvailable.toString();
     }
+    
+    public List<BudgetDetail> getBudgetAvailableDetails(final BudgetCheck budgetCheck) {
+        List<BudgetDetail> budgetDetails;
+        Scheme scheme = null;
+        SubScheme subScheme = null;
+        Integer departmentId = null;
+        Long functionId = null;
+        Integer fundId = null;
+        List<Long> budgetheadid = new ArrayList<>();
+        if (budgetCheck.getSchemeCode() != null) {
+            scheme = schemeService.findByCode(budgetCheck.getSchemeCode());
+        }
+        if (budgetCheck.getSubSchemeCode() != null) {
+            subScheme = subSchemeService.findByCode(budgetCheck.getSubSchemeCode());
+        }
+        if (budgetCheck.getBudgetHeadName() != null) {
+            budgetheadid.add(budgetGroupService.getBudgetGroupByName(budgetCheck.getBudgetHeadName()).getId());
+        }
+        if (budgetCheck.getDepartmentCode() != null) {
+            departmentId = departmentService.getDepartmentByCode(budgetCheck.getDepartmentCode()).getId().intValue();
+        }
+        if (budgetCheck.getFunctionCode() != null) {
+            functionId = functionService.findByCode(budgetCheck.getFunctionCode()).getId();
+        }
+        if (budgetCheck.getFundCode() != null) {
+            fundId = fundService.findByCode(budgetCheck.getFundCode()).getId();
+        }
+        budgetDetails = budgetDetailsDAO.getBudgetAvailableDetail(
+                financialYearHibernateDAO.getFinYearByDate(new Date()).getId(), departmentId, functionId, null,
+                scheme == null ? null : Integer.parseInt(
+                        scheme.getId().toString()),
+                subScheme == null ? null : Integer.parseInt(subScheme.getId().toString()), null, budgetheadid, fundId);
 
+        return budgetDetails;
+    }
+
+    public BigDecimal getAllocatedBudget(final BudgetCheck budgetCheck) {
+        BigDecimal  budgetAmountForYear, planningPercentForYear;
+        final Scheme scheme = schemeService.findByCode(budgetCheck.getSchemeCode());
+        final SubScheme subScheme = subSchemeService.findByCode(budgetCheck.getSubSchemeCode());
+        final List<BudgetGroup> budgetheadid = new ArrayList<>();
+        budgetheadid.add(budgetGroupService.getBudgetGroupByName(budgetCheck.getBudgetHeadName()));
+        Map<String, Object> paramMap = new HashMap<String, Object>();
+        // prepare paramMap
+        paramMap.put(Constants.DEPTID, departmentService.getDepartmentByCode(budgetCheck.getDepartmentCode()).getId());
+        paramMap.put(Constants.FUNCTIONID, functionService.findByCode(budgetCheck.getFunctionCode()).getId());
+        paramMap.put(Constants.FUNCTIONARYID, null);
+        paramMap.put(Constants.SCHEMEID, scheme == null ? null : Integer.parseInt(scheme.getId().toString()));
+        paramMap.put(Constants.SUBSCHEMEID, subScheme == null ? null : Integer.parseInt(subScheme.getId().toString()));
+        paramMap.put(Constants.FUNDID, Integer.parseInt(fundService.findByCode(budgetCheck.getFundCode()).getId().toString()));
+        paramMap.put(Constants.BOUNDARYID, null);
+        paramMap.put("budgetheadid", budgetheadid);
+        paramMap.put("financialyearid", financialYearHibernateDAO.getFinYearByDate(new Date()).getId());
+        budgetAmountForYear = budgetDetailsDAO.getBudgetedAmtForYear(paramMap);
+        
+        paramMap.put(Constants.DEPTID, departmentService.getDepartmentByCode(budgetCheck.getDepartmentCode()).getId().intValue());
+        planningPercentForYear = budgetDetailsDAO.getPlanningPercentForYear(paramMap);
+        
+        return ((budgetAmountForYear.multiply(planningPercentForYear)).divide(new BigDecimal(100))).setScale(2, BigDecimal.ROUND_UP);
+    }
+
+    public void setResponse(List<BudgetDetail> budgetDetailresponse, List<BudgetDetailsResponse> response,
+            BudgetAvailableResponse budgetAvailableResponse) {
+        Map<String, String> status = new HashMap<>();
+        for (BudgetDetail bd : budgetDetailresponse) {
+            BudgetDetailsResponse budgetDetailsResponse = new BudgetDetailsResponse();
+            budgetDetailsResponse.setDepartmentName(bd.getExecutingDepartment().getName());
+            budgetDetailsResponse.setFundName(bd.getFund().getName());
+            budgetDetailsResponse.setFunctionName(bd.getFunction().getName());
+            budgetDetailsResponse.setSchemeName(bd.getScheme() == null ? StringUtils.EMPTY : bd.getScheme().getName());
+            budgetDetailsResponse.setSubschemeName(bd.getSubScheme() == null ? StringUtils.EMPTY : bd.getSubScheme().getName());
+            budgetDetailsResponse.setBudgetHead(bd.getBudgetGroup().getName());
+            budgetDetailsResponse
+                    .setAvailableBalance(bd.getBudgetAvailable() == null ? BigDecimal.ZERO : bd.getBudgetAvailable());
+            budgetDetailsResponse.setBudgetAllocated(bd.getApprovedAmount().add(
+                    bd.getApprovedReAppropriationsTotal() == null ? BigDecimal.ZERO : bd.getApprovedReAppropriationsTotal()));
+            budgetDetailsResponse.setBudgetUtilized(
+                    budgetDetailsResponse.getBudgetAllocated().subtract(budgetDetailsResponse.getAvailableBalance()));
+            response.add(budgetDetailsResponse);
+        }
+        if (response.isEmpty()) {
+            status.put("Code", "FAILED");
+            status.put("Message", "No data found");
+            budgetAvailableResponse.setStatus(status);
+        } else {
+            status.put("Code", "SUCCESS");
+            status.put("Message", "Total " + response.size() + " record found");
+            budgetAvailableResponse.setStatus(status);
+            budgetAvailableResponse.setBudgetDetailsResponse(response);
+        }
+    }
+    
+    public List<RestErrors> validateBudget(BudgetCheck budgetCheck) {
+        List<RestErrors> errors = new ArrayList<>();
+        RestErrors restErrors;
+        if (budgetCheck.getDepartmentCode() != null
+                && departmentService.getDepartmentByCode(budgetCheck.getDepartmentCode()) == null) {
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_DEPARTMENT);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_DEPARTMENT);
+            errors.add(restErrors);
+
+        }
+        if (budgetCheck.getFunctionCode() != null && functionService.findByCode(budgetCheck.getFunctionCode()) == null) {
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_FUNCTION);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_FUNCTION);
+            errors.add(restErrors);
+        }
+
+        if (budgetCheck.getFundCode() != null && fundService.findByCode(budgetCheck.getFundCode()) == null) {
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_FUND);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_FUND);
+            errors.add(restErrors);
+        }
+        if (budgetCheck.getBudgetHeadName() != null
+                && budgetGroupService.getBudgetGroupByName(budgetCheck.getBudgetHeadName()) == null) {
+            restErrors = new RestErrors();
+            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_BUDGETHEAD);
+            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_BUDGETHEAD);
+            errors.add(restErrors);
+        }
+        return errors;
+    }
 }

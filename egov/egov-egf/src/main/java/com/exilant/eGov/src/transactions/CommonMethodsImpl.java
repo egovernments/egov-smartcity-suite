@@ -59,7 +59,7 @@ package com.exilant.eGov.src.transactions;
 import com.exilant.exility.common.TaskFailedException;
 import org.apache.log4j.Logger;
 import org.egov.commons.CFiscalPeriod;
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.utils.VoucherHelper;
 import org.hibernate.Query;
@@ -72,9 +72,6 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class CommonMethodsImpl implements CommonMethodsI {
-	Query pst;
-	Connection connection;
-	List<Object[]> rset;
 	private static final Logger LOGGER = Logger.getLogger(CommonMethodsImpl.class);
 
 	@Autowired
@@ -82,7 +79,7 @@ public class CommonMethodsImpl implements CommonMethodsI {
 	private PersistenceService persistenceService ;
 
 	@Autowired
-	ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+	private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
 	/**
 	 * Get the cash in hand code account for the boundary
@@ -94,10 +91,10 @@ public class CommonMethodsImpl implements CommonMethodsI {
 			final String query = " SELECT a.glcode FROM CHARTOFACCOUNTS a,EG_BOUNDARY b,eg_boundary_type c "
 					+
 					" WHERE id=(SELECT cashinhand FROM CODEMAPPING WHERE EG_BOUNDARYID= ? )  and b.ID_BNDRY_TYPE=c.ID_BNDRY_TYPE and b.ID_BNDRY= ?";
-			pst = persistenceService.getSession().createSQLQuery(query);
+			Query pst = persistenceService.getSession().createSQLQuery(query);
 			pst.setInteger(0, BoundaryId);
 			pst.setInteger(1, BoundaryId);
-			rset = pst.list();
+			List<Object[]> rset = pst.list();
 			for (final Object[] element : rset)
 				cashinHandCode = element[0].toString();
 			if (rset == null || rset.size() == 0)
@@ -121,10 +118,10 @@ public class CommonMethodsImpl implements CommonMethodsI {
 			final String query = " SELECT a.glcode FROM CHARTOFACCOUNTS a,EG_BOUNDARY b,eg_boundary_type c "
 					+
 					" WHERE id=(SELECT chequeinhand FROM CODEMAPPING WHERE EG_BOUNDARYID= ? )  and b.ID_BNDRY_TYPE=c.ID_BNDRY_TYPE and b.ID_BNDRY= ?";
-			pst = persistenceService.getSession().createSQLQuery(query);
+			Query pst = persistenceService.getSession().createSQLQuery(query);
 			pst.setInteger(0, BoundaryId);
 			pst.setInteger(1, BoundaryId);
-			rset = pst.list();
+			List<Object[]> rset = pst.list();
 			for (final Object[] element : rset)
 				chequeinHandCode = element[0].toString();
 			if (rset == null || rset.size() == 0)
@@ -152,9 +149,9 @@ public class CommonMethodsImpl implements CommonMethodsI {
 				if (LOGGER.isInfoEnabled())
 					LOGGER.info("  forYear  " + forYear);
 				final String query1 = "select financialyear from financialyear  where ? between startingdate and endingdate";
-				pst = persistenceService.getSession().createSQLQuery(query1);
+				Query pst = persistenceService.getSession().createSQLQuery(query1);
 				pst.setString(0, forYear);
-				rset = pst.list();
+				List<Object[]> rset = pst.list();
 				String fId = "", isOld = "";
 				for (final Object[] element : rset)
 					fId = element[0].toString();
@@ -219,8 +216,8 @@ public class CommonMethodsImpl implements CommonMethodsI {
 			{
 				// if foryear is not given, then use Sespense code
 				final String query = "select a.glcode, a.name from chartofaccounts a,egf_accountcode_purpose b where a.purposeid=b.id and upper(b.name)=upper('SuspenseCode')";
-				pst = persistenceService.getSession().createSQLQuery(query);
-				rset = pst.list();
+				Query pst = persistenceService.getSession().createSQLQuery(query);
+				List<Object[]> rset = pst.list();
 				for (final Object[] element : rset) {
 					ptCodeAndName = element[0].toString();
 					ptCodeAndName = ptCodeAndName + "#" + element[1].toString();
@@ -247,9 +244,9 @@ public class CommonMethodsImpl implements CommonMethodsI {
 		String bankCodeAndName = "";
 		try {
 			final String query = "select glcode,name from chartofaccounts where id=(select glcodeid from bankaccount where id= ?)";
-			pst = persistenceService.getSession().createSQLQuery(query);
+			Query pst = persistenceService.getSession().createSQLQuery(query);
 			pst.setInteger(0, bankAccountId);
-			rset = pst.list();
+			List<Object[]> rset = pst.list();
 			for (final Object[] element : rset) {
 				bankCodeAndName = element[0].toString();
 				bankCodeAndName = bankCodeAndName + "#" + element[1].toString();
@@ -275,9 +272,9 @@ public class CommonMethodsImpl implements CommonMethodsI {
 		try
 		{
 			final String query = "select id from fiscalperiod  where ? between startingdate and endingdate";
-			pst = persistenceService.getSession().createSQLQuery(query);
+			Query pst = persistenceService.getSession().createSQLQuery(query);
 			pst.setString(0, vDate);
-			rset = pst.list();
+			List<Object[]> rset = pst.list();
 			for (final Object[] element : rset) {
 				fiscalPeriodID = element[0].toString();
 				if (LOGGER.isInfoEnabled())
@@ -306,9 +303,9 @@ public class CommonMethodsImpl implements CommonMethodsI {
 		String bankAndBranchId = "null";
 		try {
 			final String sql = "select b.id,c.id from bankaccount a,bankbranch b,bank c where a.branchid=b.id and b.bankid=c.id and a.id= ?";
-			pst = persistenceService.getSession().createSQLQuery(sql);
+			Query pst = persistenceService.getSession().createSQLQuery(sql);
 			pst.setInteger(0, bankAccountId);
-			rset = pst.list();
+			List<Object[]> rset = pst.list();
 			for (final Object[] element : rset) {
 				bankAndBranchId = element[0].toString();
 				bankAndBranchId = bankAndBranchId + "#" + element[1].toString();
@@ -339,11 +336,11 @@ public class CommonMethodsImpl implements CommonMethodsI {
 					"AND endingDate >= ?)  AND glCodeId =(select glcodeid from bankaccount where id= ?)";
 			if (LOGGER.isInfoEnabled())
 				LOGGER.info(str);
-			pst = persistenceService.getSession().createSQLQuery(str);
+			Query pst = persistenceService.getSession().createSQLQuery(str);
 			pst.setString(0, vcDate);
 			pst.setString(1, vcDate);
 			pst.setInteger(2, bankAccountId);
-			rset = pst.list();
+			List<Object[]> rset = pst.list();
 			for (final Object[] element : rset)
 				opeAvailable = Double.parseDouble(element[0].toString());
 			if (LOGGER.isInfoEnabled())
@@ -386,9 +383,9 @@ public class CommonMethodsImpl implements CommonMethodsI {
 		String codeAndName = "null";
 		try {
 			final String query = "select a.glcode, a.name from chartofaccounts a,egf_accountcode_purpose b where a.purposeid=b.id and b.id= ?";
-			pst = persistenceService.getSession().createSQLQuery(query);
+			Query pst = persistenceService.getSession().createSQLQuery(query);
 			pst.setString(0, purposeId);
-			rset = pst.list();
+			List<Object[]> rset = pst.list();
 			// for(int i=0;rset.next();i++){
 			for (final Object[] element : rset) {
 				codeAndName = element[0].toString();
@@ -414,9 +411,9 @@ public class CommonMethodsImpl implements CommonMethodsI {
 			final String query = "select name from chartofaccounts where glcode= ?";
 			if (LOGGER.isInfoEnabled())
 				LOGGER.info("  query   " + query);
-			pst = persistenceService.getSession().createSQLQuery(query);
+			Query pst = persistenceService.getSession().createSQLQuery(query);
 			pst.setString(0, glcode);
-			rset = pst.list();
+			List<Object[]> rset = pst.list();
 			for (final Object[] element : rset) {
 				codeName = element[0].toString();
 				if (LOGGER.isInfoEnabled())
@@ -442,9 +439,9 @@ public class CommonMethodsImpl implements CommonMethodsI {
 			final String query = "select glcode from chartofaccounts where id= ?";
 			if (LOGGER.isInfoEnabled())
 				LOGGER.info("  query   " + query);
-			pst = persistenceService.getSession().createSQLQuery(query);
+			Query pst = persistenceService.getSession().createSQLQuery(query);
 			pst.setString(0, glCodeId);
-			rset = pst.list();
+			List<Object[]> rset = pst.list();
 			for (final Object[] element : rset) {
 				glCode = element[0].toString();
 				if (LOGGER.isInfoEnabled())
@@ -471,10 +468,10 @@ public class CommonMethodsImpl implements CommonMethodsI {
 			final String query = "SELECT VOUCHERNUMBER FROM integrationlog WHERE RECORDID= ? and USERID= ? order by id desc";
 			if (LOGGER.isInfoEnabled())
 				LOGGER.info("  query   " + query);
-			pst = persistenceService.getSession().createSQLQuery(query);
+			Query pst = persistenceService.getSession().createSQLQuery(query);
 			pst.setString(0, recordId);
 			pst.setInteger(1, userId);
-			rset = pst.list();
+			List<Object[]> rset = pst.list();
 			for (final Object[] element : rset) {
 				cgn = element[0].toString();
 				if (LOGGER.isInfoEnabled())
@@ -500,9 +497,9 @@ public class CommonMethodsImpl implements CommonMethodsI {
 			LOGGER.debug("Divisio code query-->>>>>>>> " + sql);
 		try {
 
-			pst = persistenceService.getSession().createSQLQuery(sql);
+			Query pst = persistenceService.getSession().createSQLQuery(sql);
 			pst.setInteger(0, divid);
-			rset = pst.list();
+			List<Object[]> rset = pst.list();
 			for (final Object[] element : rset) {
 				divCode = element[0].toString();
 				if (LOGGER.isDebugEnabled())
@@ -530,8 +527,8 @@ public class CommonMethodsImpl implements CommonMethodsI {
 			LOGGER.debug("Division id query-->>>>>>>> " + sql);
 		try {
 
-			pst = persistenceService.getSession().createSQLQuery(sql);
-			rset = pst.list();
+			Query pst = persistenceService.getSession().createSQLQuery(sql);
+			List<Object[]> rset = pst.list();
 			for (final Object[] element : rset)
 				divId = Integer.parseInt(element[0].toString());
 			if (LOGGER.isDebugEnabled())
@@ -554,8 +551,8 @@ public class CommonMethodsImpl implements CommonMethodsI {
 		final String sql = "select FINANCIALYEAR from FINANCIALYEAR  where '" + vDate + "' between startingdate and endingdate";
 		try
 		{
-			pst = persistenceService.getSession().createSQLQuery(sql);
-			rset = pst.list();
+			Query pst = persistenceService.getSession().createSQLQuery(sql);
+			List<Object[]> rset = pst.list();
 			for (final Object[] element : rset) {
 				finYear = element[0].toString();
 				if (LOGGER.isDebugEnabled())
@@ -581,9 +578,9 @@ public class CommonMethodsImpl implements CommonMethodsI {
 			final String query = "select id from chartofaccounts where glCode like ?";
 			if (LOGGER.isInfoEnabled())
 				LOGGER.info("  query   " + query);
-			pst = persistenceService.getSession().createSQLQuery(query);
+			Query pst = persistenceService.getSession().createSQLQuery(query);
 			pst.setString(0, glCode);
-			rset = pst.list();
+			List<Object[]> rset = pst.list();
 			for (final Object[] element : rset) {
 				glCodeId = element[0].toString();
 				if (LOGGER.isDebugEnabled())
@@ -623,9 +620,9 @@ public class CommonMethodsImpl implements CommonMethodsI {
 			LOGGER.info(sql);
 		try
 		{
-			pst = persistenceService.getSession().createSQLQuery(sql);
+			Query pst = persistenceService.getSession().createSQLQuery(sql);
 			pst.setString(0, txndate);
-			rset = pst.list();
+			List<Object[]> rset = pst.list();
 			for (final Object[] element : rset) {
 				finYear = element[0].toString();
 				fiscalPeriod = element[1].toString();
@@ -646,7 +643,7 @@ public class CommonMethodsImpl implements CommonMethodsI {
 					Long.parseLong(fiscalPeriod));
 			// Sequence name will be SQ_U_DBP_CGVN_FP7 for txnType U/DBP/CGVN and fiscalPeriodIdStr 7
 			final String sequenceName = VoucherHelper.sequenceNameFor(txnType, fiscalPeriodObj.getName());
-			Serializable runningNumber =   applicationSequenceNumberGenerator.getNextSequence(sequenceName);
+			Serializable runningNumber =   genericSequenceNumberGenerator.getNextSequence(sequenceName);
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug("----- Txn Number : " + runningNumber);
 			// ---
@@ -694,9 +691,9 @@ public class CommonMethodsImpl implements CommonMethodsI {
 
 			// This is for getting fund type based on the fund id.
 			final String query = "SELECT identifier as \"fund_identi\" from fund where id= ?";
-			pst = persistenceService.getSession().createSQLQuery(query);
+			Query pst = persistenceService.getSession().createSQLQuery(query);
 			pst.setString(0, fundId);
-			rset = pst.list();
+			List<Object[]> rset = pst.list();
 			for (final Object[] element : rset) {
 				fType = element[0].toString();
 
@@ -731,7 +728,7 @@ public class CommonMethodsImpl implements CommonMethodsI {
 					Long.parseLong(fiscalPeriod));
 			// Sequence name will be SQ_U_DBP_CGVN_FP7 for txnType U/DBP/CGVN and fiscalPeriodIdStr 7
 			final String sequenceName = VoucherHelper.sequenceNameFor(txnType, fiscalPeriodObj.getName());
-			Serializable runningNumber = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
+			Serializable runningNumber = genericSequenceNumberGenerator.getNextSequence(sequenceName);
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug("----- Txn Number : " + runningNumber);
 			// ---
@@ -777,9 +774,9 @@ public class CommonMethodsImpl implements CommonMethodsI {
 
 			// This is for getting fund type based on the fund id.
 			final String query = "SELECT identifier as \"fund_identi\" from fund where id= ?";
-			pst = persistenceService.getSession().createSQLQuery(query);
+			Query pst = persistenceService.getSession().createSQLQuery(query);
 			pst.setString(0, fundId);
-			rset = pst.list();
+			List<Object[]> rset = pst.list();
 			for (final Object[] element : rset) {
 				fType = element[0].toString();
 				if (LOGGER.isInfoEnabled())
@@ -807,7 +804,7 @@ public class CommonMethodsImpl implements CommonMethodsI {
 					Long.parseLong(fiscalPeriod));
 			// Sequence name will be SQ_U_DBP_CGVN_FP7 for txnType U/DBP/CGVN and fiscalPeriodIdStr 7
 			final String sequenceName = VoucherHelper.sequenceNameFor(txnType, fiscalPeriodObj.getName());
-			Serializable runningNumber = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
+			Serializable runningNumber = genericSequenceNumberGenerator.getNextSequence(sequenceName);
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug("----- Running Number : " + runningNumber);
 			// ---
@@ -833,9 +830,9 @@ public class CommonMethodsImpl implements CommonMethodsI {
 		final String sql = "Select id_bndry from EG_BOUNDARY where BNDRY_NUM= ? and is_bndry_active=1 order by id_bndry_type desc";
 		if (LOGGER.isInfoEnabled())
 			LOGGER.info("Sub Field id query-->>>>>>>> " + sql);
-		pst = persistenceService.getSession().createSQLQuery(sql);
+		Query pst = persistenceService.getSession().createSQLQuery(sql);
 		pst.setString(0, divisionCode);
-		rset = pst.list();
+		List<Object[]> rset = pst.list();
 		for (final Object[] element : rset)
 			divId = Integer.parseInt(element[0].toString());
 		if (LOGGER.isInfoEnabled())

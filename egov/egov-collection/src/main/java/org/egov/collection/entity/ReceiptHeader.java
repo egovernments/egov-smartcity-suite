@@ -449,8 +449,8 @@ public class ReceiptHeader extends StateAware<Position> implements Auditable {
                 .append(getCreatedBy().getUsername()).append(CollectionConstants.SEPARATOR_HYPHEN)
                 .append(toDefaultDateFormat(getReceiptdate()))
                 .append(location == null ? "" : CollectionConstants.SEPARATOR_HYPHEN + location.getId())
-                .append(CollectionConstants.SEPARATOR_HYPHEN).append(receipttype);
-
+                .append(CollectionConstants.SEPARATOR_HYPHEN).append(receipttype)
+                .append(CollectionConstants.SEPARATOR_HYPHEN).append(CollectionConstants.ALL);
         return linkId.toString();
     }
 

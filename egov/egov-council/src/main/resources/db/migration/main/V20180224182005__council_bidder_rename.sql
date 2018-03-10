@@ -1,0 +1,1 @@
+alter table egcncl_preamble_bidder rename amount to quotedamount;

@@ -69,7 +69,7 @@ jQuery(document).ready(function($) {
 		}); 
 });
 
-$(".btn-primary").click(function(event){
+$(".btnSearch").click(function(event){
 	$('#searchSewerageapplication').show();
 	var consumerNumber=$('#consumerNumber').val();
 	var shscNumber=$('#shscNumber').val();
@@ -77,9 +77,10 @@ $(".btn-primary").click(function(event){
 	var mobileNumber=$('#mobileNumber').val();
 	var wardName=$('#app-mobno').val();
 	var doorNo=$('#app-appcodo').val();
+	var fromDate=$('#fromDate').val();
+	var toDate=$('#toDate').val();
 	
-	if(consumerNumber=='' && shscNumber ==''  && applicantName == ''  && mobileNumber == ''
-			&& wardName == ''  && doorNo == '') {
+	if(consumerNumber == '' && shscNumber == '' && applicantName == '' && mobileNumber == '' && wardName == '' && doorNo == '' && fromDate == '' && toDate == '') {
 				bootbox.alert("Please Enter Atleast One Input Value For Searching");
 				return false;
 			}
@@ -87,12 +88,11 @@ $(".btn-primary").click(function(event){
 				submitButton();
 				return true;
 			}
-		event.preventDefault();
 	});
 
 $(document).on('change', 'select.actiondropdown', function() {
-	var ptassessmentno= oTable.fnGetData($(this).parent().parent(), 1);
-	var shscnumber= oTable.fnGetData($(this).parent().parent(), 2); 
+	var ptassessmentno= oTable.fnGetData($(this).parent().parent(), 2);
+	var shscnumber= oTable.fnGetData($(this).parent().parent(), 3); 
 	
 	if($(this).find(":selected").text()=="Change number of seats"){
 		var changeincloseturl=$(this).val();
@@ -140,8 +140,9 @@ function openPopup(url){
 }
 
 var prevdatatable;
+var oTable;
 function submitButton() {
-	
+	$('.report-section').removeClass('display-hide');
 	oTable = $("#aplicationSearchResults");
 	if(prevdatatable){
 		prevdatatable.fnClearTable();
@@ -163,26 +164,27 @@ function submitButton() {
 
 				url : "/stms/collectfee/search/",
 				type : 'POST',
+				beforeSend : function() {
+					$('.loader-class').modal('show', {
+						backdrop : 'static'
+					});
+				},
 				data : function(args) {
-					return {
-						"args" : JSON.stringify(args),
-						"consumerNumber":$('#consumerNumber').val(),
-						"shscNumber" : $('#shscNumber').val(),
-						"applicantName" : $('#applicantName').val(),
-						"mobileNumber":$('#mobileNumber').val(),
-					 	"revenueWard": $('#app-mobno').val(),
-					 	"doorNumber" : $('#app-appcodo').val()
-												
-					};
+					var formData = getFormData(jQuery('form'));
+					formData['args']=JSON.stringify(args);
+					return formData;
+				},
+				complete : function() {
+					$('.loader-class').modal('hide');
 				},
 			},	
 			
 		columns : [
 					  { title : "Application Number", data:"applicationNumber"},
-					  { title : "pt assesmentno", data: "assessmentNumber", visible: false},
+					  { title : "Application Date", data:"applicationDate"},
+					  { title : "pt assesmentno", targets: [2], data: "assessmentNumber", visible: false},
 					  {title : 'S.H.S.C Number',class : 'row-detail', data : 'shscNumber',
 			        	   "render": function ( data, type, row, meta ) {
-			        		   
 					            return '<a onclick="openPopup(\'/stms/existing/sewerage/view/'+row.applicationNumber+'/'+row.assessmentNumber+'\')" href="javascript:void(0);">'+data+'</a>';} },
 					  { title : "Applicant Name", data: "applicantName"},
 					  { title : "Application Type", data: "applicationType"},
@@ -202,7 +204,7 @@ function submitButton() {
 						  }
 					  }
 					  ],
-					  "aaSorting": [[4, 'asc']] 
+					  "aaSorting": [[5, 'asc']] 
 				});
 }
 
@@ -211,4 +213,12 @@ $("#viewDCB").click(function(){
 	var assessmentNum=document.getElementById("assessmentNo").value;
 	window.open("/stms/reports/sewerageRateReportView/"+appNumber+"/"+assessmentNum, '_blank', "width=800, height=600, scrollbars=yes");
 });
-  
+
+function getFormData($form) {
+    var unindexed_array = $form.serializeArray();
+    var indexed_array = {};
+    $.map(unindexed_array, function(n, i){
+        indexed_array[n['name']] = n['value'];
+    });
+    return indexed_array;
+}

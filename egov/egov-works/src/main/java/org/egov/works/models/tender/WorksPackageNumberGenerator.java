@@ -48,8 +48,8 @@
 package org.egov.works.models.tender;
 
 import org.egov.commons.CFinancialYear;
-import org.egov.infra.persistence.utils.DBSequenceGenerator;
-import org.egov.infra.persistence.utils.SequenceNumberGenerator;
+import org.egov.infra.persistence.utils.DatabaseSequenceCreator;
+import org.egov.infra.persistence.utils.DatabaseSequenceProvider;
 import org.egov.infra.script.service.ScriptService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -57,15 +57,15 @@ import javax.script.ScriptContext;
 
 public class WorksPackageNumberGenerator {
     @Autowired
-    private SequenceNumberGenerator squenceGenerator;
+    private DatabaseSequenceProvider squenceGenerator;
     @Autowired
-    private DBSequenceGenerator dbSequenceGenerator;
+    private DatabaseSequenceCreator databaseSequenceCreator;
     @Autowired
     private ScriptService scriptService;
 
     public String getWorksPackageNumber(final WorksPackage entity, final CFinancialYear finYear) {
         final ScriptContext scriptContext = ScriptService.createContext("worksPackage", entity, "finYear", finYear,
-                "sequenceGenerator", squenceGenerator, "dbSequenceGenerator", dbSequenceGenerator);
+                "sequenceGenerator", squenceGenerator, "dbSequenceGenerator", databaseSequenceCreator);
         return scriptService.executeScript("works.wpNumber.generator", scriptContext).toString();
 
     }

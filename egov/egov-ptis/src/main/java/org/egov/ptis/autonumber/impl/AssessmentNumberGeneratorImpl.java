@@ -47,26 +47,24 @@
  */
 package org.egov.ptis.autonumber.impl;
 
-import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.ptis.autonumber.AssessmentNumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.Serializable;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
 
 @Service
-public class AssessmentNumberGeneratorImpl implements AssessmentNumberGenerator{
-	
-	private static final String SEQ_EGPT_ASSESSMENT_NUMBER = "seq_egpt_assessment_number";
+public class AssessmentNumberGeneratorImpl implements AssessmentNumberGenerator {
 
-	@Autowired
-    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+    private static final String SEQ_EGPT_ASSESSMENT_NUMBER = "seq_egpt_assessment_number";
 
-	@Override
-	public String generateAssessmentNumber() {
-		final String sequenceName = SEQ_EGPT_ASSESSMENT_NUMBER;
-        final Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
-        return String.format("%s%06d",ApplicationThreadLocals.getCityCode(), nextSequence);
-	}
+    @Autowired
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
+
+    @Override
+    public String generateAssessmentNumber() {
+        return String.format("%s%06d", getCityCode(),
+                genericSequenceNumberGenerator.getNextSequence(SEQ_EGPT_ASSESSMENT_NUMBER));
+    }
 }

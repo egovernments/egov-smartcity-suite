@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -391,7 +391,9 @@ $(document).ready(function () {
                                     ownerName: ownerName,
                                     statusId: status,
                                     expiryYear: expiryYear,
-                                    inactive: inactive
+                                    inactive: inactive,
+                                    applicationTypeId:$('#appType').val(),
+                                    natureOfBusinessId:$('#natureOfBusiness').val()
                                 }
                             }
                         },
@@ -408,16 +410,16 @@ $(document).ready(function () {
                                 return '<a href="javascript:void(0);" onclick="goToView(' + row.licenseId + ');" data-hiddenele="licenseId" data-eleval="'
                                     + data.id + '">' + data.name + '</a>';
                             },
-                            "sTitle": "Application Number",
+                            "sTitle": "Application No.",
                             "name": "applicationNumber"
                         }, {
                             "data": "tlNumber",
                             "name": "licenseNumber",
-                            "sTitle": "TL Number"
+                            "sTitle": "License No."
                         }, {
                             "data": "oldTLNumber",
                             "name": "oldLicenseNumber",
-                            "sTitle": "Old TL Number"
+                            "sTitle": "Old License No."
                         }, {
                             "data": "category",
                             "name": "categoryName",
@@ -425,11 +427,11 @@ $(document).ready(function () {
                         }, {
                             "data": "subCategory",
                             "name": "tradeName.name",
-                            "sTitle": "Sub-Category"
+                            "sTitle": "Subcategory"
                         }, {
                             "data": "tradeTitle",
                             "name": "nameOfEstablishment",
-                            "sTitle": "Title of Trade"
+                            "sTitle": "Trade Title"
                         }, {
                             "data": "tradeOwner",
                             "name": "licensee.applicantName",
@@ -441,7 +443,7 @@ $(document).ready(function () {
                         }, {
                             "data": "propertyAssmntNo",
                             "name": "assessmentNo",
-                            "sTitle": "Property Assessment Number"
+                            "sTitle": "Property ID"
                         }, {
                             "data": "expiryYear",
                             "name": "dateOfExpiry",
@@ -458,12 +460,12 @@ $(document).ready(function () {
                             "data": "ownerName",
                             "orderable": false,
                             "sortable": false,
-                            "sTitle": "Owner Name"
+                            "sTitle": "Process Owner"
                         }, {
                             "sTitle": "Actions",
                             "render": function (data, type, row) {
                                 var option = "<option value=''>Select from Below</option>";
-                                $.each(JSON.parse(row.actions), function (key, value) {
+                                $.each(JSON.parse(row.actions), function (key, value ) {
                                     option += "<option>" + value.key + "</option>";
                                 });
                                 return ('<select class="dropchange" id="recordActions" onchange="goToAction(this,' + row.licenseId + ')" >' + option + '</select>');
@@ -500,11 +502,11 @@ function goToAction(obj, id) {
     else if (obj.options[obj.selectedIndex].innerHTML == 'Generate Demand Notice')
         window.open("/tl/demand-notice/generate/" + id, 'dn' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
     else if (obj.options[obj.selectedIndex].innerHTML == 'Closure')
-        window.open("/tl/viewtradelicense/showclosureform.action?id=" + id, 'vt' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
+        window.open("/tl/license/closure/" + id, id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Generate Demand')
         window.open("/tl/demand/generate/" + id, 'gd' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
     else if (obj.options[obj.selectedIndex].innerHTML == 'Print Acknowledgment')
-        window.open("/tl/license/acknowledgement/" + id);
+        window.open("/tl/license/acknowledgement/" + id );
     else if (obj.options[obj.selectedIndex].innerHTML =='Closure Endorsement Notice')
         window.open("/tl/license/closure/endorsementnotice/" + id);
     $(obj).val('');

@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -48,40 +48,46 @@
 
 package org.egov.tl.service;
 
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
-import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.tl.entity.License;
+import org.egov.tl.entity.LicenseDocument;
 import org.egov.tl.entity.TradeLicense;
-import org.egov.tl.repository.LicenseRepository;
 import org.egov.tl.service.es.LicenseApplicationIndexService;
-import org.egov.tl.utils.LicenseUtils;
-import org.joda.time.DateTime;
+import org.egov.tl.utils.LicenseNumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
-import static org.egov.tl.utils.Constants.APPLICATION_STATUS_CANCELLED;
+import static org.egov.tl.utils.Constants.AUTO;
 import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
-import static org.egov.tl.utils.Constants.CLOSURE_ADDITIONAL_RULE;
-import static org.egov.tl.utils.Constants.DELIMITER_COLON;
+import static org.egov.tl.utils.Constants.CLOSURE_LIC_APPTYPE;
+import static org.egov.tl.utils.Constants.FILESTORE_MODULECODE;
+import static org.egov.tl.utils.Constants.LICENSE_STATUS_ACKNOWLEDGED;
+import static org.egov.tl.utils.Constants.LICENSE_STATUS_ACTIVE;
 import static org.egov.tl.utils.Constants.LICENSE_STATUS_CANCELLED;
-import static org.egov.tl.utils.Constants.WF_DIGI_SIGNED;
+import static org.egov.tl.utils.Constants.LICENSE_STATUS_UNDERWORKFLOW;
+import static org.egov.tl.utils.Constants.SIGNED_DOCUMENT_PREFIX;
 
 @Service
 @Transactional(readOnly = true)
-public class LicenseClosureService {
+public class LicenseClosureService extends LicenseService {
 
     @Autowired
     private CityService cityService;
@@ -90,19 +96,19 @@ public class LicenseClosureService {
     private ReportService reportService;
 
     @Autowired
-    private LicenseUtils licenseUtils;
-
-    @Autowired
     private SecurityUtils securityUtils;
 
     @Autowired
-    private LicenseRepository licenseRepository;
+    private FileStoreService fileStoreService;
 
     @Autowired
     private LicenseStatusService licenseStatusService;
 
     @Autowired
-    private TradeLicenseService tradeLicenseService;
+    private LicenseNumberUtils licenseNumberUtils;
+
+    @Autowired
+    private LicenseAppTypeService licenseAppTypeService;
 
     @Autowired
     private TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
@@ -114,8 +120,7 @@ public class LicenseClosureService {
     private LicenseCitizenPortalService licenseCitizenPortalService;
 
     @Autowired
-    @Qualifier("workflowService")
-    private SimpleWorkflowService<TradeLicense> licenseWorkflowService;
+    private LicenseClosureProcessflowService licenseClosureProcessflowService;
 
     public ReportOutput generateClosureEndorsementNotice(License license) {
         Map<String, Object> reportParams = new HashMap<>();
@@ -127,28 +132,107 @@ public class LicenseClosureService {
     }
 
     @Transactional
-    public License approveClosure(String applicationNumber) {
-        User user = securityUtils.getCurrentUser();
-        License license = new License();
-        if (isNotBlank(applicationNumber)) {
-            license = licenseRepository.findByApplicationNumber(applicationNumber);
-            DateTime currentDate = new DateTime();
-            license.setActive(false);
-            license.setClosed(true);
-            WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
-                    null, CLOSURE_ADDITIONAL_RULE, license.getCurrentState().getValue(), null);
-            license.transition().end()
-                    .withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
-                    .withComments(WF_DIGI_SIGNED).withStateValue(wfmatrix.getNextState())
-                    .withDateInfo(currentDate.toDate()).withOwner(tradeLicenseService.getCommissionerPosition())
-                    .withNextAction(wfmatrix.getNextAction());
-            licenseUtils.applicationStatusChange(license, APPLICATION_STATUS_CANCELLED);
-            license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_CANCELLED));
-            licenseRepository.save(license);
-            tradeLicenseSmsAndEmailService.sendSMsAndEmailOnClosure(license, BUTTONAPPROVE);
-            licenseCitizenPortalService.onUpdate((TradeLicense) license);
-            licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
+    public License generateClosureEndorsement(TradeLicense license) {
+        ReportOutput reportOutput = generateClosureEndorsementNotice(license);
+        if (reportOutput != null) {
+            InputStream fileStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
+            FileStoreMapper fileStore = fileStoreService.store(fileStream,
+                    SIGNED_DOCUMENT_PREFIX + license.getApplicationNumber() + ".pdf",
+                    "application/pdf", FILESTORE_MODULECODE);
+            license.setDigiSignedCertFileStoreId(fileStore.getFileStoreId());
+            processSupportDocuments(license);
+            update(license);
         }
         return license;
     }
+
+    @Transactional
+    public License approveClosure(String applicationNumber) {
+        TradeLicense license = (TradeLicense) getLicenseByApplicationNumber(applicationNumber);
+        license.setActive(false);
+        license.setClosed(true);
+        license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_CANCELLED));
+        licenseClosureProcessflowService.processApproval(license);
+        update(license);
+        licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
+        licenseCitizenPortalService.onUpdate(license);
+        tradeLicenseSmsAndEmailService.sendLicenseClosureMessage(license, BUTTONAPPROVE);
+        return license;
+    }
+
+    @Transactional
+    public License createClosure(TradeLicense license) {
+        processSupportDocuments(license);
+        licenseClosureProcessflowService.startClosureProcessflow(license);
+        if (AUTO.equals(license.getApplicationNumber()))
+            license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
+        license.setNewWorkflow(true);
+        license.setApplicationDate(new Date());
+        license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
+        license.setLicenseAppType(licenseAppTypeService.getLicenseAppTypeByName(CLOSURE_LIC_APPTYPE));
+        update(license);
+        licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
+        tradeLicenseSmsAndEmailService.sendLicenseClosureMessage(license, license.getWorkflowContainer().getWorkFlowAction());
+        if (securityUtils.currentUserIsCitizen())
+            licenseCitizenPortalService.onCreate(license);
+        return license;
+    }
+
+    @Transactional
+    public void cancelClosure(TradeLicense license) {
+        if (license.getState().getExtraInfo() != null)
+            license.setLicenseAppType(licenseAppTypeService
+                    .getLicenseAppTypeByName(license.extraInfo().getOldAppType()));
+        license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACTIVE));
+        processSupportDocuments(license);
+        licenseClosureProcessflowService.processCancellation(license);
+        update(license);
+        licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
+        licenseCitizenPortalService.onUpdate(license);
+    }
+
+    @Transactional
+    public void rejectClosure(TradeLicense license) {
+        processSupportDocuments(license);
+        licenseClosureProcessflowService.processRejection(license);
+        update(license);
+        licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
+        licenseCitizenPortalService.onUpdate(license);
+    }
+
+    @Transactional
+    public void forwardClosure(TradeLicense license) {
+        processSupportDocuments(license);
+        license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_UNDERWORKFLOW));
+        licenseClosureProcessflowService.processForward(license);
+        update(license);
+        licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
+        licenseCitizenPortalService.onUpdate(license);
+    }
+
+    private void processSupportDocuments(TradeLicense license) {
+        List<LicenseDocument> documents = license.getLicenseDocuments();
+        for (LicenseDocument document : documents) {
+            List<MultipartFile> files = document.getMultipartFiles();
+            for (MultipartFile file : files) {
+                try {
+                    if (!file.isEmpty()) {
+                        document.getFiles()
+                                .add(fileStoreService.store(
+                                        file.getInputStream(),
+                                        file.getOriginalFilename(),
+                                        file.getContentType(), "EGTL"));
+                        document.setEnclosed(true);
+                        document.setDocDate(license.getApplicationDate());
+                    }
+                } catch (IOException exp) {
+                    throw new ApplicationRuntimeException("Error occurred while storing files ", exp);
+                }
+                document.setLicense(license);
+            }
+        }
+        documents.removeIf(licenseDocument -> licenseDocument.getFiles().isEmpty());
+        license.getDocuments().addAll(documents);
+    }
+
 }

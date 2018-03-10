@@ -56,106 +56,115 @@
 
 <div class="row">
 	<div class="col-md-12">
-	<form:form id="sewerageBaseRegisterForm" method="post" class="form-horizontal form-groups-bordered" modelAttribute="sewerageBaseRegisterResult" >
+		<form:form id="sewerageBaseRegisterForm" method="post"
+			class="form-horizontal form-groups-bordered"
+			modelAttribute="sewerageBaseRegisterResult">
 
-	<div class="panel panel-primary" data-collapsed="0">
-			<div class="panel-heading">
-				<div class="panel-title">
-					<strong><spring:message code='title.sewerage.BaseRegisterReport' /></strong>
-					
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading">
+					<div class="panel-title">
+					</div>
+				</div>
+				<div class="panel-body">
+					<div class="form-group">
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.ward"></spring:message></label>
+						<div class="col-sm-3 add-margin">
+							<select name="wards" multiple id="ward" size="10"
+								class="wards tick-indicator form-control">
+								<option value="0">All</option>
+								<c:forEach items="${wards}" var="ward">
+									<option value="${ward.id}" title="${ward.name}">${ward.name}</option>
+								</c:forEach>
+							</select>
+							<form:errors path="wards" cssClass="error-msg" />
+						</div>
+					</div>
 				</div>
 			</div>
-			<div class="panel-body">
-				<div class="form-group">
-								<label class="col-sm-2 control-label text-right" ><spring:message code="lbl.ward"></spring:message></label>
-						<div class="col-sm-3 add-margin">
-							<form:select path="wards" multiple="true" id="ward" size="10" cssClass="form-control" cssErrorClass="form-control error">
-								<form:option value="0" id="selectall">All</form:option>
-								<form:options items="${wards}" itemValue="id" itemLabel="name"></form:options>
-							</form:select>
-							<form:errors path="wards" cssClass="error-msg" /> 
-						</div>
-						<spring:message code="lbl.pressCntrlToSelectMultipleWards"></spring:message>
 
-							</div>
-				</div>
-				</div>
-				
-				<div class="row">
+			<div class="row">
 				<div class="text-center">
-					<button type="button" class="btn btn-primary"
+					<button type="button" class="btn btn-primary btnSearch"
 						id="baseRegisterReportSearch">
 						<spring:message code="lbl.search" />
 					</button>
+					<button type="reset" class="btn btn-danger"><spring:message code="lbl.reset"/></button>
 					<a href="javascript:void(0)" class="btn btn-default"
 						data-dismiss="modal" onclick="self.close()"><spring:message
 							code="lbl.close" /></a>
 				</div>
 			</div>
-			
+
 			<div class="row">
-					<div class="col-md-6 col-xs-6 table-header" id ="baseregisterheader">
-					<spring:message code="lbl.baseRegister.report.details" />:
-			
-					</div>
-					
-	<div class="col-md-12" id="searchResultDiv">	
-	<table class="table table-bordered datatable dt-responsive table-hover multiheadertbl"
-		id="aplicationSearchResults">
-		
-		<tfoot id="report-footer">
-				<tr>
-					<td colspan="2" align="center"><spring:message code="lbl.total"/></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					
-				</tr>
-			</tfoot>
-				
-	</table>
+				<div class="col-md-6 col-xs-6 table-header" id="baseregisterheader">
+					<spring:message code="lbl.baseRegister.report.details" />
+					:
+
+				</div>
+
+				<div class="col-md-12" id="searchResultDiv">
+					<table
+						class="table table-bordered datatable dt-responsive table-hover multiheadertbl"
+						id="aplicationSearchResults">
+
+						<tfoot id="report-footer">
+							<tr>
+								<td colspan="2" align="center"><spring:message
+										code="lbl.total" /></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+							</tr>
+						</tfoot>
+					</table>
+				</div>
+			</div>
+		</form:form>
 	</div>
 </div>
-	</form:form>
-	</div>
-	</div>
-	
-	<link rel="stylesheet"
+
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/css/sewerage-style.css?rnd=${app_release_no}'/>" />
+<link rel="stylesheet"
 	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>" />
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
-
 <script
-        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/dataTables.buttons.min.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/dataTables.buttons.min.js' context='/egi'/>"></script>
 <script
-        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.bootstrap.min.js' context='/egi'/>"></script>
-
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.bootstrap.min.js' context='/egi'/>"></script>
 <script
-        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.flash.min.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.flash.min.js' context='/egi'/>"></script>
 <script
-        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/jszip.min.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/jszip.min.js' context='/egi'/>"></script>
 <script
-        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/pdfmake.min.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/pdfmake.min.js' context='/egi'/>"></script>
 <script
-        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/vfs_fonts.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/vfs_fonts.js' context='/egi'/>"></script>
 <script
-        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.html5.min.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.html5.min.js' context='/egi'/>"></script>
 <script
-        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.print.min.js' context='/egi'/>"></script>
-<script src="<cdn:url  value='/resources/js/reports/sewerageBaseRegister.js?rnd=${app_release_no}'/>"
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.print.min.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url  value='/resources/js/reports/sewerageBaseRegister.js?rnd=${app_release_no}'/>"
 	type="text/javascript"></script>
+<script type="text/javascript"
+	src="<cdn:url value='/resources/js/search/common-util-helper.js?rnd=${app_release_no}'/>"></script>

@@ -49,6 +49,7 @@ package org.egov.ptis.domain.service.revisionPetition;
 
 import org.apache.struts2.ServletActionContext;
 import org.egov.commons.EgwStatus;
+import org.egov.commons.Installment;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.entity.Source;
 import org.egov.demand.model.EgDemandDetails;
@@ -105,6 +106,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -581,12 +583,12 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
                 totalTax = totalTax.add(demandDetail.getAmount());
 
                 if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                        .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS))
+                        .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_TAX))
                     propertyTax = propertyTax.add(demandDetail.getAmount());
                 setLibraryCess(infoBean, propertyType, demandDetail);
 
-                if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                        .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX)
+                        if(PropertyTaxConstants.NON_VACANT_TAX_DEMAND_CODES
+                                .contains(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode())
                         || demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
                                 .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX))
                     propertyTax = propertyTax.add(demandDetail.getAmount());
@@ -628,5 +630,30 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
                 infoBean.setExistingUCPenalty(demandDetail.getAmount());
         }
     }
+
+    public Boolean validateDemand(final RevisionPetition objection) {
+        Boolean demandIncerased = false;
+        Set<Ptdemand> newDemandSet = objection.getProperty().getPtDemandSet();
+        List<Ptdemand> ptDemandList = new ArrayList<>();
+        ptDemandList.addAll(newDemandSet);
+
+        BigDecimal oldDemand = getDemandforCurrenttInst(propertyService.getInstallmentWiseDemand(
+                ptDemandDAO.getNonHistoryCurrDmdForProperty(objection.getBasicProperty().getProperty())));
+        BigDecimal newDemand = getDemandforCurrenttInst(propertyService.getInstallmentWiseDemand(ptDemandList.get(0)));
+        if (newDemand.compareTo(oldDemand) > 0) 
+            demandIncerased= true;
+        return demandIncerased;
+    }
+
+    private BigDecimal getDemandforCurrenttInst(Map<Installment, BigDecimal> instWiseDemand) {
+        BigDecimal demand = BigDecimal.ZERO;
+        Installment currentInstall = propertyTaxCommonUtils.getCurrentPeriodInstallment();
+        for (Map.Entry<Installment, BigDecimal> entry : instWiseDemand.entrySet()){
+            if(entry.getKey().equals(currentInstall))
+                demand= entry.getValue();
+        }
+        return demand;
+    }
+
 
 }

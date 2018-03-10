@@ -68,11 +68,13 @@
 						<li class="active"><a data-toggle="tab"
 							href="#hoardingdetails" data-tabidx="0" aria-expanded="false"><spring:message
 									code="lbl.hoarding.details" /></a></li>
-					<c:if test="${not empty advertisementPermitDetail.advertisement.documents}">
-						<li class=""><a data-toggle="tab" href="#hoardingattachments"
-							data-tabidx="1" aria-expanded="false"><spring:message
-									code="lbl.hoarding.enclosure" /></a></li>
-					</c:if>
+						<c:if
+							test="${not empty advertisementPermitDetail.advertisement.documents}">
+							<li class=""><a data-toggle="tab"
+								href="#hoardingattachments" data-tabidx="1"
+								aria-expanded="false"><spring:message
+										code="lbl.hoarding.enclosure" /></a></li>
+						</c:if>
 					</ul>
 				</div>
 				<div class="panel-body custom-form">
@@ -84,13 +86,17 @@
 
 								</label>
 								<div class="col-sm-3 add-margin view-content view-content">
-									${advertisementPermitDetail.applicationNumber}</div>
+									<c:out value="${advertisementPermitDetail.applicationNumber}"
+										default="N/A" />
+								</div>
 								<label class="col-sm-2 control-label text-right"> <spring:message
 										code="lbl.application.date" />
 
 								</label>
 								<div class="col-sm-3 add-margin view-content">
-									${advertisementPermitDetail.applicationDate}</div>
+									<c:out value="${advertisementPermitDetail.applicationDate}"
+										default="N/A" />
+								</div>
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right"> <spring:message
@@ -98,41 +104,44 @@
 
 								</label>
 								<div class="col-sm-3 add-margin view-content">
-									${advertisementPermitDetail.permissionNumber}</div>
+									<c:out value="${advertisementPermitDetail.permissionNumber}"
+										default="N/A" />
+								</div>
 								<label class="col-sm-2 control-label text-right"> <spring:message
 										code="lbl.hoarding.no" />
 
 								</label>
 								<div class="col-sm-3 add-margin view-content">
-									${advertisementPermitDetail.advertisement.advertisementNumber}
+									<c:out
+										value="${advertisementPermitDetail.advertisement.advertisementNumber}"
+										default="N/A" />
 								</div>
 							</div>
 							<div class="form-group">
-								<%-- <label class="col-sm-3 control-label text-right">
-								<spring:message code="lbl.hoarding.name"/>
-								
-								</label>
-								<div class="col-sm-3 add-margin view-content">
-									${hoarding.hoardingName}
-								</div> --%>
 								<label class="col-sm-3 control-label text-right"> <spring:message
 										code="lbl.hoarding.type" />
 								</label>
 								<div
 									class="col-sm-3 add-margin view-content dynamic-span capitalize">
-									${advertisementPermitDetail.advertisement.type}</div>
+									<c:out value="${advertisementPermitDetail.advertisement.type}"
+										default="N/A" />
+								</div>
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right"> <spring:message
 										code="lbl.hoarding.agency" />
 								</label>
 								<div class="col-sm-3 add-margin view-content">
-									${advertisementPermitDetail.agency.name}</div>
+									<c:out value="${advertisementPermitDetail.agency.name}"
+										default="N/A" />
+								</div>
 								<label class="col-sm-2 control-label text-right"> <spring:message
 										code="lbl.hoarding.adv" />
 								</label>
 								<div class="col-sm-3 add-margin view-content">
-									${advertisementPermitDetail.advertiser}</div>
+									<c:out value="${advertisementPermitDetail.advertiser}"
+										default="N/A" />
+								</div>
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right"> <spring:message
@@ -140,7 +149,10 @@
 
 								</label>
 								<div class="col-sm-3 add-margin view-content">
-									${advertisementPermitDetail.advertisementParticular}</div>
+									<c:out
+										value="${advertisementPermitDetail.advertisementParticular}"
+										default="N/A" />
+								</div>
 								<label class="col-sm-2 control-label text-right"> <spring:message
 										code="lbl.hoarding.prop.type" />
 								</label>
@@ -152,13 +164,18 @@
 										code="lbl.hoarding.status" />
 								</label>
 								<div class="col-sm-3 add-margin view-content">
-									${advertisementPermitDetail.advertisement.status}</div>
+									<c:out
+										value="${advertisementPermitDetail.advertisement.status}"
+										default="N/A" />
+								</div>
 								<label class="col-sm-2 control-label text-right"> <spring:message
 										code="lbl.owner.detail" />
 
 								</label>
 								<div class="col-sm-3 add-margin view-content">
-									${advertisementPermitDetail.ownerDetail}</div>
+									<c:out value="${advertisementPermitDetail.ownerDetail}"
+										default="N/A" />
+								</div>
 							</div>
 
 							<div class="panel-heading custom_form_panel_heading">
@@ -242,13 +259,18 @@
 										code="lbl.category" />
 								</label>
 								<div class="col-sm-3 add-margin view-content">
-									${advertisementPermitDetail.advertisement.category.name}</div>
+									<c:out
+										value="${advertisementPermitDetail.advertisement.category.name}"
+										default="N/A" />
+								</div>
 								<label class="col-sm-2 control-label text-right"> <spring:message
 										code="lbl.subcategory" />
 
 								</label>
 								<div class="col-sm-3 add-margin view-content">
-									${advertisementPermitDetail.advertisement.subCategory.description}
+									<c:out
+										value="${advertisementPermitDetail.advertisement.subCategory.description}"
+										default="N/A" />
 								</div>
 							</div>
 							<div class="form-group">
@@ -257,24 +279,31 @@
 
 								</label>
 								<div class="col-sm-3 add-margin view-content">
-									${advertisementPermitDetail.measurement}</div>
+									<c:out value="${advertisementPermitDetail.measurement}"
+										default="N/A" />
+								</div>
 								<label class="col-sm-2 control-label text-right"> <spring:message
 										code="lbl.uom" />
 								</label>
 								<div class="col-sm-3 add-margin view-content">
-									${advertisementPermitDetail.unitOfMeasure.description}</div>
+								<c:out value="${advertisementPermitDetail.unitOfMeasure.description}"
+										default="N/A" />
+									</div>
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right"> <spring:message
 										code="lbl.length" />
 								</label>
 								<div class="col-sm-3 add-margin view-content">
-									${advertisementPermitDetail.length}</div>
+									<c:out value="${advertisementPermitDetail.length}"
+										default="N/A" />
+								</div>
 								<label class="col-sm-2 control-label text-right"> <spring:message
 										code="lbl.width" />
 								</label>
 								<div class="col-sm-3 add-margin view-content">
-									${advertisementPermitDetail.width}</div>
+									<c:out value="${advertisementPermitDetail.width}" default="N/A" />
+								</div>
 							</div>
 							<div class="form-group">
 								<%-- <label class="col-sm-3 control-label text-right">
@@ -288,7 +317,9 @@
 
 								</label>
 								<div class="col-sm-3 add-margin view-content">
-									${advertisementPermitDetail.totalHeight}</div>
+									<c:out value="${advertisementPermitDetail.totalHeight}"
+										default="N/A" />
+								</div>
 							</div>
 
 							<div class="form-group">
@@ -321,7 +352,7 @@
 								<label class="col-sm-2 control-label text-right"> <spring:message
 										code="lbl.hoarding.electricityservicenumber" />
 								</label>
-								<div class="col-sm-3 add-margin">
+								<div class="col-sm-3 add-margin view-content">
 									<c:out
 										value="${advertisementPermitDetail.advertisement.electricityServiceNumber}"
 										default="N/A" />
@@ -344,7 +375,7 @@
 								<label class="col-sm-2 control-label text-right"> <spring:message
 										code="lbl.advertisement.permit.todate" />
 								</label>
-								<div class="col-sm-3 add-margin">
+								<div class="col-sm-3 add-margin view-content">
 									<c:out value="${advertisementPermitDetail.permissionenddate}"
 										default="N/A" />
 								</div>
@@ -381,7 +412,7 @@
 								</div>
 							</div>
 						</div>
-					
+
 						<div class="tab-pane fade" id="hoardingattachments">
 							<form:hidden path="advertisement.latitude" id="latitude" />
 							<form:hidden path="advertisement.longitude" id="longitude" />
@@ -399,7 +430,7 @@
 									<spring:message code="lbl.attachdocument" />
 								</div>
 							</div>
-							</br></br>
+							</br> </br>
 							<c:forEach var="docs"
 								items="${advertisementPermitDetail.advertisement.documents}"
 								varStatus="status">

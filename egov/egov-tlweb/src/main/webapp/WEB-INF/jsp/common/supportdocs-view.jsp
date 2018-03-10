@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -49,30 +49,47 @@
 <%@ page language="java" pageEncoding="UTF-8" %>
 <%@ include file="/includes/taglibs.jsp" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<div class="col-md-12 col-sm-12 col-xs-12">
-    <ul class="nav nav-tabs" id="settingstab">
-        <li class="active"><a data-toggle="tab" href="#newDocs"
-                              data-tabidx="0" aria-expanded="true">New</a></li>
-        <li class=""><a data-toggle="tab" href="#renewDocs"
-                        data-tabidx="1" aria-expanded="false">Renew</a></li>
-    </ul>
-    <div class="tab-content">
-        <div class="tab-pane fade active in" id="newDocs"><br/>
-            <div id="newTbl">
+<c:choose>
+    <c:when test="${not empty documents}">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <ul class="nav nav-tabs" id="settingstab">
+                <li class="active"><a data-toggle="tab" href="#newDocs"
+                                      data-tabidx="0" aria-expanded="true">New</a></li>
+                <li class=""><a data-toggle="tab" href="#renewDocs"
+                                data-tabidx="1" aria-expanded="false">Renew</a></li>
+                <li class=""><a data-toggle="tab" href="#closureDocs"
+                                data-tabidx="1" aria-expanded="false">Closure</a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane fade active in" id="newDocs"><br/>
+                    <div id="newTbl">
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="renewDocs"><br/>
+                    <div id="renewTbl">
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="closureDocs"><br/>
+                    <div id="closureTbl">
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="tab-pane fade" id="renewDocs"><br/>
-            <div id="renewTbl">
-            </div>
-        </div>
-    </div>
-</div>
+    </c:when>
+    <c:otherwise>
+        <s:text name="lbl.document.notattach"/>
+    </c:otherwise>
+</c:choose>
 <style>
     #newTbl > table {
         margin-left: 0;
     }
 
     #renewTbl > table {
+        margin-left: 0;
+    }
+
+    #closureTbl > table {
         margin-left: 0;
     }
 </style>

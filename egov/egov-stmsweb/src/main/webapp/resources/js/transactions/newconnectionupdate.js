@@ -80,7 +80,7 @@ $(document).ready(function()
 			$('.loader-class').modal('hide');
 	});
 		
-	$(".btn-primary").click(function() { 
+	$(".btnWorkflow").click(function() { 
 		 var action = document.getElementById("workFlowAction").value;
 		 var status=$('#statuscode').val();
 		 

@@ -51,7 +51,7 @@ import org.egov.collection.autonumber.ReceiptNumberGenerator;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.CFinancialYear;
-import org.egov.infra.persistence.utils.SequenceNumberGenerator;
+import org.egov.infra.persistence.utils.DatabaseSequenceProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -65,7 +65,7 @@ public class ReceiptNumberGeneratorImpl implements ReceiptNumberGenerator {
     private CollectionsUtil collectionsUtil;
 
     @Autowired
-    private SequenceNumberGenerator sequenceNumberGenerator;
+    private DatabaseSequenceProvider databaseSequenceProvider;
 
     @Override
     public String generateReceiptNumber(final ReceiptHeader receiptHeader) {
@@ -74,7 +74,7 @@ public class ReceiptNumberGeneratorImpl implements ReceiptNumberGenerator {
         final String formattedDate = sdf.format(receiptHeader.getReceiptdate());
         final String strObj = "SQ_RECEIPTHEADER_" + financialYear.getFinYearRange().replace("-", "_");
         final String result = formattedDate + '/' + financialYear.getFinYearRange() + '/'
-                + sequenceNumberGenerator.getNextSequence(strObj);
+                + databaseSequenceProvider.getNextSequence(strObj);
         return result;
     }
 

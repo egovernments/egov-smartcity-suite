@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -72,7 +72,7 @@ public class InstallmentWiseDCBResponse implements DataTableJsonAdapter<Installm
         installmentWiseDCBFormResult.forEach(installmentWiseDCBForm -> {
             final JsonObject installmentWiseResponse = new JsonObject();
             installmentWiseResponse.addProperty("licenseid", installmentWiseDCBForm.getLicenseid());
-            installmentWiseResponse.addProperty("active", toYesOrNo(installmentWiseDCBForm.getActive()));
+            installmentWiseResponse.addProperty("active", toYesOrNo(installmentWiseDCBForm.isActive()));
             installmentWiseResponse.addProperty("licensenumber", defaultIfBlank(installmentWiseDCBForm.getLicensenumber()));
             installmentWiseResponse.addProperty("curr_demand", installmentWiseDCBForm.getCurrentdemand());
             installmentWiseResponse.addProperty("arr_demand", installmentWiseDCBForm.getArreardemand());

@@ -50,6 +50,10 @@
 <%@ include file="/includes/taglibs.jsp" %>
 <html>
 <head>
+	<spring:eval expression="@environment.getProperty('analytics.enabled')" scope="application" var="analyticsEnabled"/>
+	<c:if test="${analyticsEnabled}">
+		<spring:eval expression="@environment.getProperty('analytics.config')" scope="application"/>
+	</c:if>
  <%@ include file="/includes/meta.jsp" %>    
 		<title>eGov Financials <decorator:title/></title>
 		<link rel="icon" href="<cdn:url value='/resources/global/images/favicon.png' context='/egi'/>" sizes="32x32">

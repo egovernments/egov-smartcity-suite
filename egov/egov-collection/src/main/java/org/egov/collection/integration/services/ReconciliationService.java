@@ -47,6 +47,10 @@
  */
 package org.egov.collection.integration.services;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ReceiptDetail;
@@ -63,10 +67,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -87,7 +87,7 @@ public class ReconciliationService {
 
     @Autowired
     private PersistenceService persistenceService;
-    
+
     @Autowired
     private ApplicationContext beanProvider;
 
@@ -128,11 +128,18 @@ public class ReconciliationService {
                 existingReceiptDetails.add(newReceiptDetail);
             }
 
-        final List<ReceiptDetail> reconstructedList = collectionsUtil.reconstructReceiptDetail(onlinePaymentReceiptHeader,
+        final List<ReceiptDetail> reapportionedList = collectionsUtil.reconstructReceiptDetail(onlinePaymentReceiptHeader,
                 existingReceiptDetails);
 
+        List<ReceiptDetail> reconstructedList = new ArrayList<ReceiptDetail>();
+        if (reapportionedList != null && !reapportionedList.isEmpty()) {
+            reconstructedList = reapportionedList;
+        } else {
+            reconstructedList = existingReceiptDetails;
+        }
+
         ReceiptDetail debitAccountDetail = null;
-        if (reconstructedList != null){
+        if (reconstructedList != null) {
             DebitAccountHeadDetailsService debitAccountHeadService = (DebitAccountHeadDetailsService) beanProvider
                     .getBean(collectionsUtil.getBeanNameForDebitAccountHead());
             debitAccountDetail = debitAccountHeadService.addDebitAccountHeadDetails(

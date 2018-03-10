@@ -134,7 +134,7 @@
 				<textElement textAlignment="Center" markup="none">
 					<font size="11" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{loggedInUsername}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{loggedInUsername} != null ? $P{loggedInUsername} :""]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="178" y="50" width="352" height="20" uuid="9a1701d1-8007-420b-b784-12c7c88862ca"/>

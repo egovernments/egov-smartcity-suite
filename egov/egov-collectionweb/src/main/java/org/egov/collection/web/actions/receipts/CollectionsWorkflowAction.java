@@ -47,6 +47,14 @@
  */
 package org.egov.collection.web.actions.receipts;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -61,12 +69,6 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Action class for "Approve Collections"
@@ -97,8 +99,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     private Long[] receiptIds;
 
     /**
-     * Map of instrument type wise amounts for all receipts that are eligible
-     * for the workflow
+     * Map of instrument type wise amounts for all receipts that are eligible for the workflow
      */
     private final Map<String, BigDecimal> instrumentWiseAmounts = new HashMap<String, BigDecimal>(4);
 
@@ -142,8 +143,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     private String remarks;
 
     /**
-     * Workflow action (SUBMIT/APPROVE). Based on this, the JSP can decide to
-     * display/hide various buttons
+     * Workflow action (SUBMIT/APPROVE). Based on this, the JSP can decide to display/hide various buttons
      */
     private String wfAction;
 
@@ -154,16 +154,17 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     private String receiptDate;
     private String approverName;
     /**
-     * Result for cash submission report (redirects to the cash collection
-     * report)
+     * Result for cash submission report (redirects to the cash collection report)
      */
     protected static final String SUBMISSION_REPORT_CASH = "submissionReportCash";
 
     /**
-     * Result for cheque submission report (redirects to the cheque collection
-     * report)
+     * Result for cheque submission report (redirects to the cheque collection report)
      */
     protected static final String SUBMISSION_REPORT_CHEQUE = "submissionReportCheque";
+
+    private SortedMap<String, String> paymentModesMap = new TreeMap<>();
+    private String paymentMode = CollectionConstants.ALL;
 
     @Autowired
     private SecurityUtils securityUtils;
@@ -174,17 +175,15 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     }
 
     /**
-     * This method is called when user clicks on a collections work flow item in
-     * the inbox. The inbox item details contains the next work flow action to
-     * be performed, service code, user id and counter id in the following form:
+     * This method is called when user clicks on a collections work flow item in the inbox. The inbox item details contains the
+     * next work flow action to be performed, service code, user id and counter id in the following form:
      * <next-workflow-action>-servicecode-username-counterid
      *
-     * @param inboxItemDetails
-     *            the id to set
+     * @param inboxItemDetails the id to set
      */
     public void setInboxItemDetails(final String inboxItemDetails) {
         final String params[] = inboxItemDetails.split(CollectionConstants.SEPARATOR_HYPHEN, -1);
-        if (params.length <= 6) {
+        if (params.length <= 7) {
             setWfAction(params[0]);
             setServiceCode(params[1]);
             setUserName(params[2]);
@@ -195,16 +194,14 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     }
 
     /**
-     * @param collectionsUtil
-     *            the collectionsUtil to set
+     * @param collectionsUtil the collectionsUtil to set
      */
     public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
         this.collectionsUtil = collectionsUtil;
     }
 
     /**
-     * @param workflow
-     *            the receipt workflow service
+     * @param workflow the receipt workflow service
      */
     public void setReceiptHeaderService(final ReceiptHeaderService receiptHeaderService) {
         this.receiptHeaderService = receiptHeaderService;
@@ -218,8 +215,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     }
 
     /**
-     * @return true if partial selection is to be allowed for
-     *         submission/approval, else false
+     * @return true if partial selection is to be allowed for submission/approval, else false
      */
     public Boolean getAllowPartialSelection() {
         // return wfAction.equals(CollectionConstants.WF_ACTION_SUBMIT);
@@ -263,8 +259,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     }
 
     /**
-     * @param counterId
-     *            the counter id to be set
+     * @param counterId the counter id to be set
      */
     public void setCounterId(final Long counterId) {
         this.counterId = counterId;
@@ -278,8 +273,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     }
 
     /**
-     * @param userName
-     *            the user name to set
+     * @param userName the user name to set
      */
     public void setUserName(final String userName) {
         this.userName = userName;
@@ -293,8 +287,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     }
 
     /**
-     * @param serviceCode
-     *            the Service Code to set
+     * @param serviceCode the Service Code to set
      */
     public void setServiceCode(final String serviceCode) {
         this.serviceCode = serviceCode;
@@ -317,8 +310,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     /**
      * Returns amount for given instrument type
      *
-     * @param instrumentType
-     *            The instrument type
+     * @param instrumentType The instrument type
      * @return amount for given instrument type
      */
     private BigDecimal getInstrumentTypeAmount(final String instrumentType) {
@@ -328,56 +320,49 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     }
 
     /**
-     * @return Total amount collected as cash amongst all receipts eligible for
-     *         the workflow action
+     * @return Total amount collected as cash amongst all receipts eligible for the workflow action
      */
     public BigDecimal getCashAmount() {
         return getInstrumentTypeAmount(CollectionConstants.INSTRUMENTTYPE_CASH);
     }
 
     /**
-     * @return Total amount collected as cheque amongst all receipts eligible
-     *         for the workflow action
+     * @return Total amount collected as cheque amongst all receipts eligible for the workflow action
      */
     public BigDecimal getChequeAmount() {
         return getInstrumentTypeAmount(CollectionConstants.INSTRUMENTTYPE_CHEQUE);
     }
 
     /**
-     * @return Total amount collected as dd amongst all receipts eligible for
-     *         the workflow action
+     * @return Total amount collected as dd amongst all receipts eligible for the workflow action
      */
     public BigDecimal getDdAmount() {
         return getInstrumentTypeAmount(CollectionConstants.INSTRUMENTTYPE_DD);
     }
 
     /**
-     * @return Total amount collected using card amongst all receipts eligible
-     *         for the workflow action
+     * @return Total amount collected using card amongst all receipts eligible for the workflow action
      */
     public BigDecimal getCardAmount() {
         return getInstrumentTypeAmount(CollectionConstants.INSTRUMENTTYPE_CARD);
     }
 
     /**
-     * @return Total amount collected using bank amongst all receipts eligible
-     *         for the workflow action
+     * @return Total amount collected using bank amongst all receipts eligible for the workflow action
      */
     public BigDecimal getBankAmount() {
         return getInstrumentTypeAmount(CollectionConstants.INSTRUMENTTYPE_BANK);
     }
 
     /**
-     * @param Array
-     *            of receipt Ids
+     * @param Array of receipt Ids
      */
     public void setReceiptIds(final Long[] receiptIds) {
         this.receiptIds = receiptIds;
     }
 
     /**
-     * @param Submission
-     *            /Approval/Rejection remarks
+     * @param Submission /Approval/Rejection remarks
      */
     public void setRemarks(final String remarks) {
         this.remarks = remarks;
@@ -386,10 +371,8 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     /**
      * Updates the receipt's status by invoking the workflow action
      *
-     * @param wfAction
-     *            Workflow action e.g. submit_for_approval/approve/reject
-     * @param remarks
-     *            Approval/rejection remarks
+     * @param wfAction Workflow action e.g. submit_for_approval/approve/reject
+     * @param remarks Approval/rejection remarks
      * @return SUCCESS/ERROR
      */
     private String updateReceiptWorkflowStatus(final String wfAction, final String remarks) {
@@ -431,14 +414,11 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     }
 
     /**
-     * Fetches all receipts for set user-counter combination and given status
-     * code. Also sets the work flow action code to given value, and calculates
-     * the various amounts using the fetched receipts.
+     * Fetches all receipts for set user-counter combination and given status code. Also sets the work flow action code to given
+     * value, and calculates the various amounts using the fetched receipts.
      *
-     * @param statusCode
-     *            Status code for which receipts are to be fetched
-     * @param workflowAction
-     *            Work flow action code
+     * @param statusCode Status code for which receipts are to be fetched
+     * @param workflowAction Work flow action code
      */
     private void fetchReceipts(final String workflowAction) {// Get
         // all
@@ -464,14 +444,17 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     }
 
     /**
-     * Action that will be called from the workflow inbox. The inbox also passes
-     * the id of the clicked item which is of the form:
+     * Action that will be called from the workflow inbox. The inbox also passes the id of the clicked item which is of the form:
      * <next-workflow-action>-servicecode-userid-counterid
      *
      * @return Next page to be displayed (index)
      */
     @Action(value = "/receipts/collectionsWorkflow-listWorkflow")
     public String listWorkflow() {
+        paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_CASH, CollectionConstants.INSTRUMENTTYPE_CASH);
+        paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD, CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD);
+        inboxItemDetails = inboxItemDetails.substring(0, (inboxItemDetails.lastIndexOf(CollectionConstants.SEPARATOR_HYPHEN)) + 1)
+                + paymentMode;
         if (wfAction != null && wfAction.equals(CollectionConstants.WF_ACTION_APPROVE))
             fetchReceipts(CollectionConstants.WF_ACTION_APPROVE);
         else
@@ -547,8 +530,7 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     }
 
     /**
-     * Calculates instrument type wise amounts of all receipts eligible for the
-     * workflow
+     * Calculates instrument type wise amounts of all receipts eligible for the workflow
      */
     private void calculateAmounts() {
         totalAmount = BigDecimal.ZERO;
@@ -585,5 +567,21 @@ public class CollectionsWorkflowAction extends BaseFormAction {
 
     public void setApproverName(final String approverName) {
         this.approverName = approverName;
+    }
+
+    public SortedMap<String, String> getPaymentModesMap() {
+        return paymentModesMap;
+    }
+
+    public void setPaymentModesMap(final SortedMap<String, String> paymentModesMap) {
+        this.paymentModesMap = paymentModesMap;
+    }
+
+    public String getPaymentMode() {
+        return paymentMode;
+    }
+
+    public void setPaymentMode(String paymentMode) {
+        this.paymentMode = paymentMode;
     }
 }

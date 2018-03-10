@@ -60,10 +60,6 @@ div.dataTables_processing { z-index: 1; }
 
 <div class="row">
 	<div class="col-md-12">
-
-
-
-
 		<form:form class="form-horizontal form-groups-bordered" action=""
 			id="waterSearchRequestForm" modelAttribute="dCBReportResult"
 			method="get">
@@ -173,14 +169,14 @@ div.dataTables_processing { z-index: 1; }
 										code="lbl.locality" /> <span class="mandatory"></span>
 								</label>
 								<div class="col-sm-6 add-margin">
-									<form:select path="localitys" multiple="true" size="10"
+									<form:select path="localities" multiple="true" size="10"
 										id="localitys" cssClass="form-control"
 										cssErrorClass="form-control error" required="required">
 										<form:options items="${localitys}" itemValue="id"
 											itemLabel="name" />
 									</form:select>
 
-									<form:errors path="localitys" cssClass="error-msg" />
+									<form:errors path="localities" cssClass="error-msg" />
 								</div>
 								<spring:message
 									code="lbl.localitys.pressCntrlToSelectMultipleLocality" />

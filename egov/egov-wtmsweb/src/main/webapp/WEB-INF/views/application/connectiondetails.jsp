@@ -214,21 +214,47 @@
 		</div>
 	</div>
 </div>
-<div class="form-group display-hide showfields" id="donationChargesDiv" style="display:none">
-	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.donationorcontribution"/><span class="mandatory"/></label>
-	<div class="col-sm-3 add-margin">
-		<form:input class="form-control patternvalidation" path="donationCharges" data-pattern="number" maxlength="6" id="donationChargesInput" value='${donationCharges}'/>
+<c:if test="${waterConnectionDetails.applicationType.code=='REGLZNCONNECTION' && waterConnectionDetails.status.code=='CREATED' && currentState != 'NEW'}">
+	<div class="form-group">
+		<label class="col-sm-3 control-label text-right">
+				<spring:message code="lbl.service.charges"/>
+			</label>
+			<div class="col-sm-3 add-margin">
+				<input class="form-control" id="serviceCharges" disabled="true" value="${serviceCharges}"/> 
+			</div>
+		<label class="col-sm-2 control-label text-right">
+			<spring:message code="lbl.penalty.amount"/>
+		</label>
+		<div class="col-sm-3 add-margin">
+			<input class="form-control" id="penaltyAmount" value="${penaltyAmount}" disabled="true"/>
+		</div>
 	</div>
-</div>
+</c:if>
+	<div class="form-group display-hide showfields" id="donationChargesDiv" style="display:none">
+		<label class="col-sm-3 control-label text-right"><spring:message code="lbl.donationorcontribution"/><span class="mandatory"/></label>
+		<div class="col-sm-3 add-margin">
+			<form:input class="form-control patternvalidation" path="donationCharges" data-pattern="number" maxlength="6" id="donationChargesInput" value='${donationCharges}'/>
+		</div>
+	</div>
+	<c:if test="${waterConnectionDetails.applicationType.code=='REGLZNCONNECTION' && waterConnectionDetails.status.code=='CREATED' && currentState != 'NEW'}">
+		<div>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.connectiondate"/><span class="mandatory"></span></label>
+			<div class="col-sm-3 add-margin">
+				<form:input path="executionDate" title="Please enter a valid date" class="form-control datepicker" pattern="\d{1,2}/\d{1,2}/\d{4}" 
+					data-date-end-date="-1d" id="executionDate" data-inputmask="'mask': 'd/m/y'" required="required" />
+				<form:errors path="executionDate" cssClass="add-margin error-msg" />
+			</div>
+		</div>
+	</c:if>
+	<div class="form-group" id ="cardHolderDiv">
+		<label class="col-sm-3 control-label text-right"><spring:message
+				code="lbl.bpl.cardholdername" /><span class="mandatory"></span></label> 
+		<div class="col-sm-3 add-margin">
+			<form:input class="form-control patternvalidation" data-pattern="alphabetwithspace" maxlength="50" id="bplCardHolderName" path="bplCardHolderName" required="required"  />
+			<form:errors path="bplCardHolderName" cssClass="add-margin error-msg" />		
+		</div>
+	</div>
 
-<div class="form-group" id ="cardHolderDiv">
-	<label class="col-sm-3 control-label text-right"><spring:message
-			code="lbl.bpl.cardholdername" /><span class="mandatory"></span></label> 
-	<div class="col-sm-3 add-margin">
-		<form:input class="form-control patternvalidation" data-pattern="alphabetwithspace" maxlength="50" id="bplCardHolderName" path="bplCardHolderName" required="required"  />
-		<form:errors path="bplCardHolderName" cssClass="add-margin error-msg" />		
-	</div>
-</div>
 <form:hidden id="typeOfConnection" path="" value="${typeOfConnection}"/>
 <c:if test="${mode=='addconnection'}">
 <div class="form-group">
@@ -242,13 +268,24 @@
 </c:if>	
 
 <script>
+
+	$("#donationChargesInput").on('change', function() {
+		$("#penaltyAmount").val($("#donationChargesInput").val());
+	});
+	
 	if($("#connectionType").val()=='METERED'){
 		$('#donationChargesDiv').show();
 		$('#donationChargesInput').attr('required','required');
+	}
+	else if ($('#connectionType').val()=='NON_METERED' && $("#applicationType").val()=='REGLZNCONNECTION') {
+		$('#donationChargesDiv').show();
+		$('#donationChargesInput').prop('disabled', true);
 	}
 	else if($('#connectionType').val()=='NON_METERED'){
 		$('#donationChargesDiv').hide();
 		$('#donationChargesInput').attr('disabled', true);
 	}
 </script>
+
+
 		

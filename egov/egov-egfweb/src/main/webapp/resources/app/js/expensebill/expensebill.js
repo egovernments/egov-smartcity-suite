@@ -322,6 +322,8 @@ function creditGlcode_initialize() {
 
 $('#subLedgerType').change(function () {
 	$('#subLedgerCode').val("");
+	$("#payTo").val("");
+	$("#detailkeyId").val("");
 	if($('#subLedgerType').val() != ""){
 		subLedgerDisplayName=$('#subLedgerType').find(":selected").text() + " Code";
 		detailTypeName=$('#subLedgerType').find(":selected").text();

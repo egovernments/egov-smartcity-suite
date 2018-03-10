@@ -48,8 +48,8 @@
 package org.egov.works.models.contractoradvance;
 
 import org.egov.commons.CFinancialYear;
-import org.egov.infra.persistence.utils.DBSequenceGenerator;
-import org.egov.infra.persistence.utils.SequenceNumberGenerator;
+import org.egov.infra.persistence.utils.DatabaseSequenceCreator;
+import org.egov.infra.persistence.utils.DatabaseSequenceProvider;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infstr.services.PersistenceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,9 +59,9 @@ import javax.script.ScriptContext;
 public class ContractorAdvanceRequisitionNumberGenerator {
     public static final String SEQUENCE_TYPE = "CONTRACTOR_ARF";
     @Autowired
-    private SequenceNumberGenerator sequenceGenerator;
+    private DatabaseSequenceProvider sequenceGenerator;
     @Autowired
-    private DBSequenceGenerator dbSequenceGenerator;
+    private DatabaseSequenceCreator databaseSequenceCreator;
     @Autowired
     private ScriptService scriptService;
 
@@ -69,7 +69,7 @@ public class ContractorAdvanceRequisitionNumberGenerator {
             final CFinancialYear financialYear, final PersistenceService persistenceService) {
         final ScriptContext scriptContext = ScriptService.createContext("contractorAdvanceRequisition",
                 contractorAdvanceRequisition, "finYear", financialYear, "sequenceGenerator", sequenceGenerator,
-                "dbSequenceGenerator", dbSequenceGenerator, "persistenceService", persistenceService);
+                "dbSequenceGenerator", databaseSequenceCreator, "persistenceService", persistenceService);
         return scriptService.executeScript("works.contractor.arfnumber.generator", scriptContext).toString();
 
     }

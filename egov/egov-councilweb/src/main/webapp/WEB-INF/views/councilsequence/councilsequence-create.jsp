@@ -126,6 +126,25 @@
 						</div>
 						<form:errors path="resolutionSeqNumber" cssClass="error-msg" />
 					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label text-right"><spring:message
+								code="lbl.meeting.number" /> (seq no.)</label>
+						<div class="col-sm-1 add-margin">
+							<form:input path="" maxlength="3" value="${meetingSeq}"
+								id="lastMeetingSeq" name="lastMeetingSeq"
+								class="form-control text-left patternvalidation"
+								data-pattern="number" readonly="true" />
+						</div>
+						<label class="col-sm-3 control-label text-right"><spring:message
+								code="lbl.meeting.number" /> (seq no.)</label>
+						<div class="col-sm-1 add-margin">
+							<form:input path="meetingSeqNumber" maxlength="3"
+								id="enteredMeetingSeq"
+								class="form-control text-left patternvalidation"
+								data-pattern="number" />
+						</div>
+						<form:errors path="meetingSeqNumber" cssClass="error-msg" />
+					</div>
 					<div class=" mandatory text-left"> Note : * System will generate from the number entered
 					 Please double confirm once you enter all the sequence numbers to be generated going forward.</div>
 				</div>

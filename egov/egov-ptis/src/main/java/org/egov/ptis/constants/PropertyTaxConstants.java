@@ -47,19 +47,6 @@
  */
 package org.egov.ptis.constants;
 
-import com.google.common.collect.ImmutableList;
-
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
 import static java.util.Calendar.APRIL;
 import static java.util.Calendar.AUGUST;
 import static java.util.Calendar.DECEMBER;
@@ -75,6 +62,20 @@ import static java.util.Calendar.SEPTEMBER;
 import static org.egov.collection.constants.CollectionConstants.COLLECTION_TYPE_COUNTER;
 import static org.egov.collection.constants.CollectionConstants.COLLECTION_TYPE_FIELDCOLLECTION;
 import static org.egov.collection.constants.CollectionConstants.COLLECTION_TYPE_ONLINECOLLECTION;
+
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 public interface PropertyTaxConstants {
 
@@ -424,9 +425,7 @@ public interface PropertyTaxConstants {
     public static final String QUERY_NOTICE_BY_NOTICENO = "getNoticeByNoticeNo";
     public static final String QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR = "INSTALLMENTLISTBY_MODULE_AND_STARTYEAR";
     public static final String QUERY_DEMANDREASONBY_CODE_AND_INSTALLMENTID = "DEMANDREASONBY_CODE_AND_INSTALLMENTID";
-    public static final String QUERY_DEMANDREASONDETAILBY_DEMANDREASONID = "DEMANDREASONDETAILBY_DEMANDREASONID";
     public static final String QUERY_DEMANDREASONDETAILS_BY_DEMANDREASONID_DATE = "DEMANDREASONDETAILS_BY_DEMANDREASONID_DATE";
-    public static final String QUERY_DEMANDREASONDETAILS_BY_DEMANDREASON_AND_INSTALLMENT = "DEMANDREASONDETAILS_BY_DEMANDREASON_AND_INSTALLMENT";
     public static final String QUERY_BASERENT_BY_BOUNDARY_FOR_OPENPLOT = "QUERY_BASERENT_BY_BOUNDARY_FOR_OPENPLOT";
     public static final String QUERY_DEPARTMENTS_BY_DEPTCODE = "getDepartmentsByDeptCode";
     public static final String QUERY_LATEST_BILL_FOR_PROPERTY = "getLatestBillsForProperty";
@@ -474,7 +473,7 @@ public interface PropertyTaxConstants {
     public static final String DEMANDRSN_CODE_GENERAL_TAX = "GEN_TAX";
     public static final String DEMANDRSN_CODE_VACANT_TAX = "VAC_LAND_TAX";
     public static final String DEMANDRSN_CODE_LIBRARY_CESS = "LIB_CESS";
-    public static final String DEMANDRSN_CODE_EDUCATIONAL_CESS = "EDU_CESS";
+    public static final String DEMANDRSN_CODE_EDUCATIONAL_TAX = "EDU_TAX";
     public static final String DEMANDRSN_CODE_SEWERAGE_TAX = "SEW_TAX";
     public static final String DEMANDRSN_CODE_PRIMARY_SERVICE_CHARGES = "PRIMARY_SER_CHRG";
     public static final String DEMANDRSN_CODE_UNAUTHORIZED_PENALTY = "UNAUTH_PENALTY";
@@ -487,17 +486,26 @@ public interface PropertyTaxConstants {
     public static final String DEMANDRSN_CODE_NOTICE_FEE = "NOTICE_FEE";
     public static final String DEMANDRSN_CODE_COURT_FEE = "COURT_FEE";
     public static final String DEMANDRSN_CODE_RECOVERY_FEE = "RECOVERY_FEE";
+    public static final String DEMANDRSN_CODE_DRAINAGE_TAX = "DRAINAGE_TAX";
+    public static final String DEMANDRSN_CODE_SCAVENGE_TAX = "SCAVENGE_TAX";
+    public static final String DEMANDRSN_CODE_LIGHT_TAX = "LIGHT_TAX";
+    public static final String DEMANDRSN_CODE_WATER_TAX = "WATER_TAX";
 
     // Demand Reason master Strings
     public static final String DEMANDRSN_STR_GENERAL_TAX = "General Tax";
     public static final String DEMANDRSN_STR_VACANT_TAX = "Vacant Land Tax";
     public static final String DEMANDRSN_STR_LIBRARY_CESS = "Library Cess";
-    public static final String DEMANDRSN_STR_EDUCATIONAL_CESS = "Education Cess";
+    public static final String DEMANDRSN_STR_EDUCATIONAL_TAX = "Education Tax";
     public static final String DEMANDRSN_STR_UNAUTHORIZED_PENALTY = "Unauthorized Penalty";
     public static final String DEMANDRSN_STR_CHQ_BOUNCE_PENALTY = "Cheque Bounce Penalty";
     public static final String DEMANDRSN_STR_PENALTY_FINES = "Penalty Fines";
     public static final String DEMANDRSN_STR_ADVANCE = "Advance";
     public static final String DEMANDRSN_STR_ADVANCE_REBATE = "ADVANCE_REBATE";
+    public static final String DEMANDRSN_STR_DRAINAGE_TAX = "Drainage Tax";
+    public static final String DEMANDRSN_STR_SCAVENGE_TAX = "Scavenging Tax";
+    public static final String DEMANDRSN_STR_LIGHT_TAX = "Lighting Tax";
+    public static final String DEMANDRSN_STR_WATER_TAX = "Water Tax";
+
 
     // Tax Payable constants
     public static final String DEMANDRSN_CODE_GEN_TAX_PAYABLE = "PROPERTY TAX-PROPERTY TAX ON ALL PROPERTIES";
@@ -520,13 +528,17 @@ public interface PropertyTaxConstants {
             put(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY, 0);
             put(DEMANDRSN_CODE_PENALTY_FINES, 1);
             put(DEMANDRSN_CODE_GENERAL_TAX, 2);
-            put(DEMANDRSN_CODE_VACANT_TAX, 2);
-            put(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, 3);
-            put(DEMANDRSN_CODE_LIBRARY_CESS, 4);
-            put(DEMANDRSN_CODE_EDUCATIONAL_CESS, 5);
-            put(DEMANDRSN_CODE_SEWERAGE_TAX, 6);
-            put(DEMANDRSN_CODE_REBATE, 7);
-            put(DEMANDRSN_CODE_ADVANCE, 8);
+            put(DEMANDRSN_CODE_SCAVENGE_TAX, 3);
+            put(DEMANDRSN_CODE_DRAINAGE_TAX, 4);
+            put(DEMANDRSN_CODE_LIGHT_TAX, 5);
+            put(DEMANDRSN_CODE_WATER_TAX, 6);
+            put(DEMANDRSN_CODE_VACANT_TAX, 7);
+            put(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, 8);
+            put(DEMANDRSN_CODE_LIBRARY_CESS, 9);
+            put(DEMANDRSN_CODE_EDUCATIONAL_TAX, 10);
+            put(DEMANDRSN_CODE_SEWERAGE_TAX, 11);
+            put(DEMANDRSN_CODE_REBATE, 12);
+            put(DEMANDRSN_CODE_ADVANCE, 13);
         }
     };
 
@@ -793,52 +805,47 @@ public interface PropertyTaxConstants {
     public static final String GISCITY = "nmc";
     public static final String GISVERSION = "/mapguide/";
 
+    public static final String ARREAR_DEMANDRSN_GLCODE = "4311004";
     // HashMap for GLCodes for Current Taxes
-    public static final HashMap<String, String> GLCODEMAP_FOR_CURRENTTAX = new HashMap<String, String>() {
-        /**
-         *
-         */
-        private static final long serialVersionUID = 540382999962934138L;
-
-        {
-
-            put(DEMANDRSN_CODE_GENERAL_TAX, "1100101");
-            put(DEMANDRSN_CODE_LIBRARY_CESS, "3503001");
-            put(DEMANDRSN_CODE_EDUCATIONAL_CESS, "3503002");
-            put(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, "1402001");
-
-        }
-    };
+    public static final ImmutableMap<String, String> GLCODEMAP_FOR_CURRENTTAX = ImmutableMap.<String, String>builder()
+            
+            .put(DEMANDRSN_CODE_GENERAL_TAX, "1100101")
+            .put(DEMANDRSN_CODE_WATER_TAX, "1100101")
+            .put(DEMANDRSN_CODE_SCAVENGE_TAX, "1100101")
+            .put(DEMANDRSN_CODE_DRAINAGE_TAX, "1100101")
+            .put(DEMANDRSN_CODE_LIGHT_TAX, "1100101")
+            .put(DEMANDRSN_CODE_LIBRARY_CESS, "3503001")
+            .put(DEMANDRSN_CODE_EDUCATIONAL_TAX, "3503002")
+            .put(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, "1402001")
+            .build();
+    
     // HashMap for GLCodes for Arrear Taxes
-    public static final HashMap<String, String> GLCODEMAP_FOR_ARREARTAX = new HashMap<String, String>() {
-        /**
-         *
-         */
-        private static final long serialVersionUID = -1173164400673765190L;
-
-        {
-            put(DEMANDRSN_CODE_GENERAL_TAX, "4311004");
-            put(DEMANDRSN_CODE_LIBRARY_CESS, "4311004");
-            put(DEMANDRSN_CODE_EDUCATIONAL_CESS, "4311004");
-            put(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, "4311004");
-        }
-    };
+    public static final ImmutableMap<String, String> GLCODEMAP_FOR_ARREARTAX = ImmutableMap.<String, String>builder()
+       
+            .put(DEMANDRSN_CODE_GENERAL_TAX, ARREAR_DEMANDRSN_GLCODE)
+            .put(DEMANDRSN_CODE_WATER_TAX, ARREAR_DEMANDRSN_GLCODE)
+            .put(DEMANDRSN_CODE_SCAVENGE_TAX, ARREAR_DEMANDRSN_GLCODE)
+            .put(DEMANDRSN_CODE_DRAINAGE_TAX, ARREAR_DEMANDRSN_GLCODE)
+            .put(DEMANDRSN_CODE_LIGHT_TAX, ARREAR_DEMANDRSN_GLCODE)
+            .put(DEMANDRSN_CODE_LIBRARY_CESS, ARREAR_DEMANDRSN_GLCODE)
+            .put(DEMANDRSN_CODE_EDUCATIONAL_TAX, ARREAR_DEMANDRSN_GLCODE)
+            .put(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, ARREAR_DEMANDRSN_GLCODE)
+            .build();
+   
 
     // HashMap for GLCodes for Tax Payables
-
-    public static final HashMap<String, String> GLCODEMAP_FOR_TAX_PAYABLE = new HashMap<String, String>() {
-        /**
-         *
-         */
-        private static final long serialVersionUID = -2436431552947552642L;
-
-        {
-            put(DEMANDRSN_CODE_GENERAL_TAX, "1100101");
-            put(DEMANDRSN_CODE_LIBRARY_CESS, "3503001");
-            put(DEMANDRSN_CODE_EDUCATIONAL_CESS, "3503002");
-            put(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, "1402001");
-        }
-    };
+    public static final ImmutableMap<String, String> GLCODEMAP_FOR_TAX_PAYABLE = ImmutableMap.<String, String>builder()
+       
+            .put(DEMANDRSN_CODE_GENERAL_TAX, "1100101")
+            .put(DEMANDRSN_CODE_WATER_TAX, "1100101")
+            .put(DEMANDRSN_CODE_SCAVENGE_TAX, "1100101")
+            .put(DEMANDRSN_CODE_DRAINAGE_TAX, "1100101")
+            .put(DEMANDRSN_CODE_LIGHT_TAX, "1100101")
+            .put(DEMANDRSN_CODE_LIBRARY_CESS, "3503001")
+            .put(DEMANDRSN_CODE_EDUCATIONAL_TAX, "3503002")
+            .put(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, "1402001")
+            .build();
+    
 
     // List for GLCodes for Current Taxes
     public static final List<String> GLCODES_FOR_CURRENTTAX = new ArrayList<String>() {
@@ -866,8 +873,12 @@ public interface PropertyTaxConstants {
     public static final LinkedHashMap<String, String> BUILTUP_PROPERTY_DMDRSN_CODE_MAP = new LinkedHashMap<String, String>() {
         {
             put(DEMANDRSN_STR_GENERAL_TAX, DEMANDRSN_CODE_GENERAL_TAX);
+            put(DEMANDRSN_STR_SCAVENGE_TAX, DEMANDRSN_CODE_SCAVENGE_TAX);
+            put(DEMANDRSN_STR_DRAINAGE_TAX, DEMANDRSN_CODE_DRAINAGE_TAX);
+            put(DEMANDRSN_STR_LIGHT_TAX, DEMANDRSN_CODE_LIGHT_TAX);
+            put(DEMANDRSN_STR_WATER_TAX, DEMANDRSN_CODE_WATER_TAX);
             put(DEMANDRSN_STR_LIBRARY_CESS, DEMANDRSN_CODE_LIBRARY_CESS);
-            put(DEMANDRSN_STR_EDUCATIONAL_CESS, DEMANDRSN_CODE_EDUCATIONAL_CESS);
+            put(DEMANDRSN_STR_EDUCATIONAL_TAX, DEMANDRSN_CODE_EDUCATIONAL_TAX);
             put(DEMANDRSN_STR_UNAUTHORIZED_PENALTY, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY);
         }
     };
@@ -877,7 +888,7 @@ public interface PropertyTaxConstants {
         {
             put(DEMANDRSN_STR_VACANT_TAX, DEMANDRSN_CODE_VACANT_TAX);
             put(DEMANDRSN_STR_LIBRARY_CESS, DEMANDRSN_CODE_LIBRARY_CESS);
-            put(DEMANDRSN_STR_EDUCATIONAL_CESS, DEMANDRSN_CODE_EDUCATIONAL_CESS);
+            put(DEMANDRSN_STR_EDUCATIONAL_TAX, DEMANDRSN_CODE_EDUCATIONAL_TAX);
         }
     };
 
@@ -963,7 +974,7 @@ public interface PropertyTaxConstants {
     public static final String GLCODE_FOR_LIGHTINGTAX_ARREARS = "4311041";
     public static final String GLCODE_FOR_LIGHTINGTAX_CURRENT = "4311042";
     public static final String GLCODE_FOR_BIG_RESIDENTIAL_BLDG_TAX_ARREARS = "4311003";
-    public static final String GLCODE_FOR_BIG_RESIDENTIAL_BLDG_TAX_CURRENT = "4311004";
+    public static final String GLCODE_FOR_BIG_RESIDENTIAL_BLDG_TAX_CURRENT = ARREAR_DEMANDRSN_GLCODE;
     public static final String GLCODE_FOR_MUTATION_FEE = "1404009";
 
     @SuppressWarnings("serial")
@@ -976,7 +987,7 @@ public interface PropertyTaxConstants {
         }
     };
 
-    public static final String STR_EDU_CESS = "Education Cess";
+    public static final String STR_EDU_CESS = "Education Tax";
     public static final String STR_EGS_CESS = "EGS Cess";
 
     public static final String REPORT_START_DATE = "01/04/2012";
@@ -1030,10 +1041,13 @@ public interface PropertyTaxConstants {
         {
             add(DEMANDRSN_CODE_GENERAL_TAX);
             add(DEMANDRSN_CODE_VACANT_TAX);
+            add(DEMANDRSN_CODE_SCAVENGE_TAX);
+            add(DEMANDRSN_CODE_DRAINAGE_TAX);
+            add(DEMANDRSN_CODE_LIGHT_TAX);
+            add(DEMANDRSN_CODE_WATER_TAX);
             add(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY);
             add(DEMANDRSN_CODE_LIBRARY_CESS);
-            add(DEMANDRSN_CODE_SEWERAGE_TAX);
-            add(DEMANDRSN_CODE_EDUCATIONAL_CESS);
+            add(DEMANDRSN_CODE_EDUCATIONAL_TAX);
         }
     };
 
@@ -1070,9 +1084,10 @@ public interface PropertyTaxConstants {
     public static final String APPCONFIG_KEY_BULKBILL_WARD = "WardNum";
     public static final Integer QUARTZ_BULKBILL_JOBS = 5;
 
-    public static final List<String> ORDERED_DEMAND_RSNS_LIST = Arrays.asList(DEMANDRSN_CODE_PENALTY_FINES,
-            DEMANDRSN_CODE_GENERAL_TAX, DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY,
-            DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_EDUCATIONAL_CESS, DEMANDRSN_CODE_SEWERAGE_TAX,
+    public static final List<String> ORDERED_DEMAND_RSNS_LIST = ImmutableList.of(DEMANDRSN_CODE_PENALTY_FINES,
+            DEMANDRSN_CODE_GENERAL_TAX, DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_SCAVENGE_TAX,
+            DEMANDRSN_CODE_DRAINAGE_TAX, DEMANDRSN_CODE_LIGHT_TAX, DEMANDRSN_CODE_WATER_TAX, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY,
+            DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_EDUCATIONAL_TAX, DEMANDRSN_CODE_SEWERAGE_TAX,
             DEMANDRSN_CODE_REBATE, DEMANDRSN_CODE_ADVANCE, DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY);
 
     public static final String APPCONFIG_KEY_WARDSFOR_BULKBILL = "WardNum";
@@ -1400,7 +1415,7 @@ public interface PropertyTaxConstants {
     public static final Character SOURCEOFDATA_DATAENTRY = 'D';
     public static final Character SOURCEOFDATA_MEESEWA = 'T';
     public static final Character SOURCEOFDATA_ONLINE = 'O';
-    public static final Character SOURCEOFDATA_MOBILE = 'S';
+    public static final Character SOURCEOFDATA_SURVEY = 'S';
     public static final Character SOURCEOFDATA_ESEVA = 'E';
     public static final Character SOURCEOFDATA_CARD = 'D';
     
@@ -1488,7 +1503,7 @@ public interface PropertyTaxConstants {
 
         {
             put("VAC_LAND_TAX", "Vacant Land Tax");
-            put("EDU_CESS", "Education Cess");
+            put("EDU_TAX", "Education Tax");
             put("GEN_TAX_RESD", "General Tax Residential");
             put("LIB_CESS", "Library Cess");
             put("GEN_TAX_NR", "General Tax Non Residential");
@@ -1557,7 +1572,6 @@ public interface PropertyTaxConstants {
     public static final String CURRENTYEAR_SECOND_HALF = "Current 2nd Half";
     public static final String ARREARS = "Arrears";
 
-    public static final String ARREAR_DEMANDRSN_GLCODE = "4311004";
     public static final String REVISIONPETITION_STATUS_CODE = "RP";
 
     public static final String APPCONFIG_DIGITAL_SIGNATURE = "PTIS_DIGITAL_SIGNATURE_REQUIRED";
@@ -1629,6 +1643,7 @@ public interface PropertyTaxConstants {
     public static final String DASHBOARD_GROUPING_CITYWISE = "city";
     public static final String DASHBOARD_GROUPING_BILLCOLLECTORWISE = "billcollector";
     public static final String DASHBOARD_GROUPING_ALLWARDS = "allwards";
+    public static final String DASHBOARD_GROUPING_SERVICEWISE = "service";
     
     public static final String DASHBOARD_PROPERTY_TYPE_PRIVATE = "Private";
     public static final String DASHBOARD_PROPERTY_TYPE_VACANT_LAND = "Vacant Land";
@@ -1680,6 +1695,7 @@ public interface PropertyTaxConstants {
     public static final String VALUATION_CERTIFICATE_MUNICIPALITY = "ValuationCertificate_Municipality";
     public static final String NOTICE_TYPE_OC = "Ownership Certificate";
     public static final String NOTICE_TYPE_ENDORSEMENT = "Endorsement Notice";  
+    public static final String NOTICE_TYPE_SURVEY_COMPARISON="Survey Comparison Document";
     //esd notice section act and distress section act for corporation use the same constant
     public static final String CORPORATION_ESD_NOTICE_SECTION_ACT = "(Issued under Section 269(2) of Municipal Corporations Act,1955 (formerly GHMC Act, 1955)";
     
@@ -1748,16 +1764,30 @@ public interface PropertyTaxConstants {
     public static final String UNDER_WTMS_WF = "isInWorkFlow";
     
     public static final String SUPER_STRUCTURE = "Super Structure";
+    public static final String GRP_APP_STATUS_REJECTED = "GRP:Rejected";
+    public static final String RP_APP_STATUS_REJECTED = "RP:Rejected";
 
     public static final List<String> DEMAND_REASONS_FOR_REBATE_CALCULATION = ImmutableList.of(DEMANDRSN_CODE_GENERAL_TAX,
-            DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_EDUCATIONAL_CESS);
+            DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_EDUCATIONAL_TAX);
     
     public static final List<String> PROPERTY_TYPE_SERVICE_CODES = ImmutableList.of("PT","VLT");
     public static final List<String> SERVICE_TYPES=ImmutableList.of("New_Assessment","Alter_Assessment","General_Revision_Petition","Revision_Petition");
 
     public static final String NOTARY_DOCUMENT_OWNER = "The Holder Of The Premises";
             
-	public static final List<String> PROPERTY_TYPE_GOVT_LIST = ImmutableList.of(OWNERSHIP_TYPE_STATE_GOVT,
+    public static final List<String> PROPERTY_TYPE_GOVT_LIST = ImmutableList.of(OWNERSHIP_TYPE_STATE_GOVT,
 			OWNERSHIP_TYPE_CENTRAL_GOVT_333, OWNERSHIP_TYPE_CENTRAL_GOVT_50, OWNERSHIP_TYPE_CENTRAL_GOVT_75);
+    public static final String REVISION_PETETION = "REVISION_PETETION";
+    public static final String VACANCY_REMISSION = "VACANCY_REMISSION";  
+    public static final String GENERAL_REVISION_PETETION_APPTYPE = "GENERAL_REVISION_PETETION";
+        
+    public static final String NOTICE_TEMPLATE_COMPARISON_NOTICE="mainGIS_comparitiveReport";
+    
+    public static final String DOCUMENT_TYPE_THIRD_PARTY_SURVEY = "Third Party Verification Copy";
 
+    public static final List<String> NON_VACANT_TAX_DEMAND_CODES = ImmutableList.of(DEMANDRSN_CODE_DRAINAGE_TAX,
+	        DEMANDRSN_CODE_GENERAL_TAX, DEMANDRSN_CODE_SCAVENGE_TAX, DEMANDRSN_CODE_WATER_TAX, DEMANDRSN_CODE_LIGHT_TAX);
+    public static final List<String> ASSESSMENT_DOCUMENT_NAMES_RP = ImmutableList.of("Patta Certificate (Issued by Revenue Department)",
+            "Registered Will Document", "Un-registered Will Document", "Decree by Civil Court", "Registered Document");
+    
 }

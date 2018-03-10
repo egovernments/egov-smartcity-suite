@@ -71,7 +71,7 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.persistence.utils.SequenceNumberGenerator;
+import org.egov.infra.persistence.utils.DatabaseSequenceProvider;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -115,7 +115,6 @@ import javax.script.ScriptContext;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -152,7 +151,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     private BudgetGroupService budgetGroupService;
 
     @Autowired
-    private SequenceNumberGenerator sequenceNumberGenerator;
+    private DatabaseSequenceProvider databaseSequenceProvider;
 
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
@@ -1763,8 +1762,6 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
             budgetUploadList = createBudgetDetails(BE, budgetUploadList, beFYear, budgetDetailStatus);
 
-        } catch (final SQLException e) {
-            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(), e.getMessage())));
         } catch (final ValidationException e) {
             throw new ValidationException(Arrays
                     .asList(new ValidationError(e.getErrors().get(0).getMessage(), e.getErrors().get(0).getMessage())));
@@ -1861,9 +1858,8 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     public BudgetDetail setBudgetDetailStatus(final BudgetDetail budgetDetail) {
         Long stateId;
         Serializable sequenceNumber = null;
-        State budgetDetailState = null;
         try {
-            sequenceNumber = sequenceNumberGenerator.getNextSequence("seq_eg_wf_states");
+            sequenceNumber = databaseSequenceProvider.getNextSequence("seq_eg_wf_states");
         } catch (final SQLGrammarException e) {
         }
         stateId = Long.valueOf(sequenceNumber.toString());
@@ -1871,8 +1867,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         persistenceService.getSession().createSQLQuery(BUDGETDETAIL_STATES_INSERT).setLong("stateId", stateId)
                 .executeUpdate();
 
-        budgetDetailState = (State) persistenceService.find("from State where id = ?", stateId);
-        budgetDetail.setWfState(budgetDetailState);
+        budgetDetail.setWfState((State) persistenceService.find("from State where id = ?", stateId));
         return budgetDetail;
     }
 
@@ -1887,7 +1882,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         try {
             Serializable sequenceNumber = null;
             try {
-                sequenceNumber = sequenceNumberGenerator.getNextSequence("seq_egf_budgetgroup");
+                sequenceNumber = databaseSequenceProvider.getNextSequence("seq_egf_budgetgroup");
             } catch (final SQLGrammarException e) {
             }
 
@@ -1936,7 +1931,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
     @Transactional
     public void createRootBudget(final String budgetType, final CFinancialYear beFYear, final CFinancialYear reFYear,
-            final List<String> deptList, final EgwStatus status) throws SQLException {
+            final List<String> deptList, final EgwStatus status) {
         String budgetName, budgetDes;
         CFinancialYear budgetFinancialYear;
         String rootmaterial;
@@ -2011,7 +2006,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         Serializable sequenceNumber = null;
         Long stateId;
         try {
-            sequenceNumber = sequenceNumberGenerator.getNextSequence("seq_eg_wf_states");
+            sequenceNumber = databaseSequenceProvider.getNextSequence("seq_eg_wf_states");
             stateId = Long.valueOf(sequenceNumber.toString());
         } catch (final SQLGrammarException e) {
             throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(), e.getMessage())));
@@ -2026,7 +2021,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     @Transactional
     public void createCapitalOrRevenueBudget(final Budget parent, final String capitalOrRevenue,
             final String rootmaterial, final String budgetType, final CFinancialYear beFYear,
-            final CFinancialYear reFYear, final List<String> deptList, final EgwStatus status) throws SQLException {
+            final CFinancialYear reFYear, final List<String> deptList, final EgwStatus status) {
         String budgetName, budgetDes;
         CFinancialYear budgetFinancialYear;
         Budget budget = new Budget();
@@ -2084,7 +2079,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     @Transactional
     public void createDeptBudgetHeads(final Budget parent, final String capitalOrRevenue, final String budgetType,
             final CFinancialYear beFYear, final CFinancialYear reFYear, final String revOrCap,
-            final List<String> deptList, final EgwStatus status) throws SQLException {
+            final List<String> deptList, final EgwStatus status) {
         String budgetName, budgetDes, rootmaterial;
         CFinancialYear budgetFinancialYear;
         rootmaterial = parent.getMaterializedPath() + ".";

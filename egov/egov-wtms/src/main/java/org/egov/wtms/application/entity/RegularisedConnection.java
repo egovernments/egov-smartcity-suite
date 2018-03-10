@@ -62,6 +62,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Position;
 
@@ -84,9 +85,13 @@ public class RegularisedConnection extends StateAware<Position> {
     private String propertyIdentifier;
 
     private String applicationNumber;
-
+    
     @Temporal(value = TemporalType.DATE)
     private Date applicationDate;
+    
+    private String source;
+ 
+    private String referenceNumber;
 
     @Override
     public String getStateDetails() {
@@ -136,4 +141,21 @@ public class RegularisedConnection extends StateAware<Position> {
     public void setApplicationDate(final Date applicationDate) {
         this.applicationDate = applicationDate;
     }
+    
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public String getReferenceNumber() {
+        return referenceNumber;
+    }
+
+    public void setReferenceNumber(String referenceNumber) {
+        this.referenceNumber = referenceNumber;
+    }
+
 }

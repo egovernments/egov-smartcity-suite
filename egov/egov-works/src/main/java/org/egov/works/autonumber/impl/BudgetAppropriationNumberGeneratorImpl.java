@@ -49,32 +49,28 @@ package org.egov.works.autonumber.impl;
 
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.works.autonumber.BudgetAppropriationNumberGenerator;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.Serializable;
-
 @Service
 public class BudgetAppropriationNumberGeneratorImpl implements BudgetAppropriationNumberGenerator {
+    private static final String SEQ_LINEESTIMATEAPPROPRIATION_NUMBER = "SEQ_LINEESTIMATEAPPROPRIATION_NUMBER";
 
     @Autowired
-    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
     @Autowired
     private FinancialYearHibernateDAO financialYearHibernateDAO;
 
     @Transactional
     public String getNextNumber(final LineEstimateDetails lineEstimateDetails) {
-        final CFinancialYear cFinancialYear = financialYearHibernateDAO
+        CFinancialYear cFinancialYear = financialYearHibernateDAO
                 .getFinYearByDate(lineEstimateDetails.getLineEstimate().getLineEstimateDate());
-        final String sequenceName = "SEQ_LINEESTIMATEAPPROPRIATION_NUMBER";
-        Serializable sequenceNumber;
-        sequenceNumber = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
-        return String.format("BAS/%05d/%s", sequenceNumber,
+        return String.format("BAS/%05d/%s", genericSequenceNumberGenerator.getNextSequence(SEQ_LINEESTIMATEAPPROPRIATION_NUMBER),
                 cFinancialYear.getFinYearRange());
     }
 

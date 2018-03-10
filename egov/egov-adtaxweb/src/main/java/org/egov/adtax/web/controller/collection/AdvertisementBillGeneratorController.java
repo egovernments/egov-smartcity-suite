@@ -54,7 +54,6 @@ import org.egov.adtax.entity.AgencyWiseCollection;
 import org.egov.adtax.entity.AgencyWiseCollectionSearch;
 import org.egov.adtax.service.AdvertisementDemandService;
 import org.egov.adtax.service.AdvertisementPermitDetailService;
-import org.egov.adtax.service.AdvertisementService;
 import org.egov.adtax.service.AgencyService;
 import org.egov.adtax.service.AgencyWiseCollectionService;
 import org.egov.adtax.service.collection.AdvertisementBillServiceImpl;
@@ -62,7 +61,7 @@ import org.egov.adtax.service.collection.AdvertisementBillable;
 import org.egov.adtax.service.collection.AgencyWiseBillServiceImpl;
 import org.egov.adtax.service.collection.AgencyWiseBillable;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
-import org.egov.infra.persistence.utils.SequenceNumberGenerator;
+import org.egov.infra.persistence.utils.DatabaseSequenceProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -82,18 +81,35 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequestMapping(value = "/hoarding")
 public class AdvertisementBillGeneratorController {
 
-    private @Autowired AdvertisementBillServiceImpl advertisementBillServiceImpl;
-    private @Autowired AdvertisementService advertisementService;
-    private @Autowired AdvertisementBillable advertisementBillable;
-    private @Autowired AgencyWiseBillable agencyWiseBillable;
+    private static final String ADVERTISEMENT_BILLNUMBER = "SEQ_advertisementbill_NUMBER";
 
-    private @Autowired AgencyWiseBillServiceImpl agencyWiseBillServiceImpl;
-    private @Autowired SequenceNumberGenerator sequenceNumberGenerator;
-    private @Autowired AdvertisementDemandService advertisementDemandService;
-    private @Autowired AgencyWiseCollectionService agencyWiseCollectionService;
-    private @Autowired AgencyService agencyService;
-    private @Autowired AdvertisementPermitDetailService advertisementPermitDetailService;
-    private String ADVERTISEMENT_BILLNUMBER = "SEQ_advertisementbill_NUMBER";
+    @Autowired
+    private AdvertisementBillServiceImpl advertisementBillServiceImpl;
+
+    @Autowired
+    private AdvertisementBillable advertisementBillable;
+
+    @Autowired
+    private AgencyWiseBillable agencyWiseBillable;
+
+    @Autowired
+    private AgencyWiseBillServiceImpl agencyWiseBillServiceImpl;
+
+    @Autowired
+    private DatabaseSequenceProvider databaseSequenceProvider;
+
+    @Autowired
+    private AdvertisementDemandService advertisementDemandService;
+
+    @Autowired
+    private AgencyWiseCollectionService agencyWiseCollectionService;
+
+    @Autowired
+    private AgencyService agencyService;
+
+    @Autowired
+    private AdvertisementPermitDetailService advertisementPermitDetailService;
+
 
  /*
     @RequestMapping(value = "/collectTaxByAgency/{agencyName}/{hoardingIds}/{total}", method = GET)
@@ -190,7 +206,7 @@ public class AdvertisementBillGeneratorController {
                 // collection table and send billable object.
                 // Iterate hordingids, get demand pending,penalty amount and
                 // build agencywisecollection detail object.
-                final Serializable referenceNumber = sequenceNumberGenerator.getNextSequence(ADVERTISEMENT_BILLNUMBER);
+                final Serializable referenceNumber = databaseSequenceProvider.getNextSequence(ADVERTISEMENT_BILLNUMBER);
 
                 final AgencyWiseCollection agencyWiseCollection = agencyWiseCollectionService
                         .buildAgencyWiseObjectByHoardings(hoardingList);
@@ -252,9 +268,8 @@ public class AdvertisementBillGeneratorController {
                 }
                 advertisementBillable.setAdvertisement(advertisement);
 
-                final Serializable referenceNumber = sequenceNumberGenerator.getNextSequence(ADVERTISEMENT_BILLNUMBER);
                 advertisementBillable.setReferenceNumber(AdvertisementTaxConstants.SERVICE_CODE.concat(String.format(
-                        "%s%06d", "", referenceNumber)));
+                        "%s%06d", "", databaseSequenceProvider.getNextSequence(ADVERTISEMENT_BILLNUMBER))));
                 model.addAttribute("collectxml", advertisementBillServiceImpl.getBillXML(advertisementBillable));
                 return "collectAdvtax-redirection";
             } else {

@@ -57,6 +57,7 @@ public class ApplicationThreadLocals {
     private static ThreadLocal<String> cityName = new ThreadLocal<>();
     private static ThreadLocal<String> municipalityName = new ThreadLocal<>();
     private static ThreadLocal<String> domainURL = new ThreadLocal<>();
+    private static ThreadLocal<String> ipAddress = new ThreadLocal<>();
 
     private ApplicationThreadLocals() {
         //Not to be initialized
@@ -118,6 +119,14 @@ public class ApplicationThreadLocals {
         domainURL.set(domURL);
     }
 
+    public static String getIPAddress() {
+        return ipAddress.get();
+    }
+
+    public static void setIPAddress(String ipAddr) {
+        ipAddress.set(ipAddr);
+    }
+
     public static void clearValues() {
         domainName.remove();
         userId.remove();
@@ -126,6 +135,6 @@ public class ApplicationThreadLocals {
         cityName.remove();
         municipalityName.remove();
         domainURL.remove();
-
+        ipAddress.remove();
     }
 }

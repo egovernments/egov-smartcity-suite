@@ -51,7 +51,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
-import java.io.Serializable;
 import java.util.List;
 
 import org.egov.adtax.entity.Advertisement;
@@ -66,7 +65,7 @@ import org.egov.adtax.service.AgencyService;
 import org.egov.adtax.service.collection.AdvertisementBillServiceImpl;
 import org.egov.adtax.service.collection.AdvertisementBillable;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
-import org.egov.infra.persistence.utils.SequenceNumberGenerator;
+import org.egov.infra.persistence.utils.DatabaseSequenceProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -102,7 +101,7 @@ public class AdtaxCitizenSupportController {
     @Autowired
     private AdvertisementBillServiceImpl advertisementBillServiceImpl;
     @Autowired
-    private SequenceNumberGenerator sequenceNumberGenerator;
+    private DatabaseSequenceProvider databaseSequenceProvider;
     @Autowired
     private AdvertisementDemandService advertisementDemandService;
 
@@ -142,9 +141,8 @@ public class AdtaxCitizenSupportController {
                 }
                 advertisementBillable.setCollectionType(AdvertisementTaxConstants.ADVERTISEMENT_COLLECTION_TYPE);
                 advertisementBillable.setAdvertisement(advertisement);
-                final Serializable referenceNumber = sequenceNumberGenerator.getNextSequence(ADVERTISEMENT_BILLNUMBER);
                 advertisementBillable.setReferenceNumber(AdvertisementTaxConstants.SERVICE_CODE.concat(String.format(
-                        "%s%06d", "", referenceNumber)));
+                        "%s%06d", "", databaseSequenceProvider.getNextSequence(ADVERTISEMENT_BILLNUMBER))));
                 model.addAttribute("collectxml", advertisementBillServiceImpl.getBillXML(advertisementBillable));
                 return ONLINEPAYMENT_REDIRECTION;
             } else {

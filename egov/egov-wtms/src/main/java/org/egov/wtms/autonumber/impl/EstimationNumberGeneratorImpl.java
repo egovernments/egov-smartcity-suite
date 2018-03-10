@@ -47,29 +47,26 @@
  */
 package org.egov.wtms.autonumber.impl;
 
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.wtms.autonumber.EstimationNumberGenerator;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.io.Serializable;
 
 @Service
 public class EstimationNumberGeneratorImpl implements EstimationNumberGenerator {
     private static final String ESTIMATION_NUMBER_SEQ_PREFIX = "SEQ_ESTIMATION_NUMBER";
     private static final String ESTIMATION_NUMBER = "EN-";
     @Autowired
-    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
     @Autowired
     private WaterTaxUtils waterTaxUtils;
 
     @Override
     public String generateEstimationNumber() {
-        final String sequenceName = ESTIMATION_NUMBER_SEQ_PREFIX;
-        final Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
-        return String.format("%s%s%06d", ESTIMATION_NUMBER,waterTaxUtils.getCityCode(), nextSequence);
+        return String.format("%s%s%06d", ESTIMATION_NUMBER, waterTaxUtils.getCityCode(),
+                genericSequenceNumberGenerator.getNextSequence(ESTIMATION_NUMBER_SEQ_PREFIX));
     }
 
 }

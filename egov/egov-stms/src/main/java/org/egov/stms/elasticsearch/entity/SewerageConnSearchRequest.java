@@ -63,6 +63,8 @@ public class SewerageConnSearchRequest extends DataTableSearchRequest {
     private String ulbName;
     private String applicationDate;
     private Boolean legacy;
+    private String fromDate;
+    private String toDate;
 
     public String getModuleName() {
         return moduleName;
@@ -158,6 +160,22 @@ public class SewerageConnSearchRequest extends DataTableSearchRequest {
 
     public void setLegacy(Boolean legacy) {
         this.legacy = legacy;
+    }
+
+    public String getFromDate() {
+        return fromDate;
+    }
+
+    public void setFromDate(String fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public String getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(String toDate) {
+        this.toDate = toDate;
     }
 
 }

@@ -68,7 +68,7 @@ import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationError;
@@ -168,7 +168,7 @@ public class JournalVoucherService {
     private FundService fundService;
 
     @Autowired
-    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
     @Autowired
     private EgBillSubTypeService egBillSubTypeService;
@@ -579,7 +579,7 @@ public class JournalVoucherService {
         sequenceName = "sq_" + voucherHeader.getFundId().getIdentifier() + "_" + getCgnType(voucherHeader.getType()).toLowerCase()
                 + "_cgvn_"
                 + fiscalPeriod.getName();
-        final Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
+        final Serializable nextSequence = genericSequenceNumberGenerator.getNextSequence(sequenceName);
 
         cgvnNumber = String.format("%s/%s/%s%010d", voucherHeader.getFundId().getIdentifier(),
                 getCgnType(voucherHeader.getType()), "CGVN",

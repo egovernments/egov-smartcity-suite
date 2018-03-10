@@ -225,6 +225,8 @@
 										<th class="bluebgheadtd"><s:text name="GuardianRelation" /></th>
 										<th class="bluebgheadtd"><s:text name="Guardian" /></th>
 									</tr>
+									<s:if
+						test="%{!@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED.equalsIgnoreCase(state.value)}">
 									<s:iterator value="basicproperty.propertyOwnerInfo"
 										status="status">
 										<tr>
@@ -256,96 +258,8 @@
 														default="N/A" /></span></td>
 										</tr>
 									</s:iterator>
-								</tbody>
-							</table>
-						</td>
-					</tr>
-					<s:if
-						test="%{!@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED.equalsIgnoreCase(state.value)}">
-						<tr>
-							<td colspan="5">
-								<div class="headingsmallbg">
-									<span class="bold"><s:text name="transfereeDtls" /></span>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td colspan="5">
-								<table width="100%" border="0" cellspacing="0" cellpadding="0"
-									class="tablebottom" id="nameTable">
-									<tr>
-										<th class="bluebgheadtd"><s:text name="adharno" /></th>
-										<th class="bluebgheadtd"><s:text name="MobileNumber" />(without
-											+91)</th>
-										<th class="bluebgheadtd"><s:text name="OwnerName" /></th>
-										<th class="bluebgheadtd"><s:text name="gender" /></th>
-										<th class="bluebgheadtd"><s:text name="EmailAddress" /></th>
-										<th class="bluebgheadtd"><s:text name="GuardianRelation" /></th>
-										<th class="bluebgheadtd"><s:text name="Guardian" /></th>
-									</tr>
-									<s:iterator value="transfereeInfosProxy" status="ownerStatus">
-										<tr>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"> <s:if
-														test='%{transfereeInfosProxy[#ownerStatus.index].transferee.aadhaarNumber == ""}'>N/A</s:if>
-													<s:else>
-														<s:property
-															value="%{transfereeInfosProxy[#ownerStatus.index].transferee.aadhaarNumber}" />
-													</s:else>
-											</span></td>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"><s:property
-														value="%{transfereeInfosProxy[#ownerStatus.index].transferee.mobileNumber}" /></span>
-											</td>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"><s:property
-														value="%{transfereeInfosProxy[#ownerStatus.index].transferee.name}" /></span></td>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"><s:property
-														value="%{transfereeInfosProxy[#ownerStatus.index].transferee.gender}" /></span></td>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"> <s:if
-														test='%{transfereeInfosProxy[#ownerStatus.index].transferee.emailId == ""}'>N/A</s:if>
-													<s:else>
-														<s:property
-															value="%{transfereeInfosProxy[#ownerStatus.index].transferee.emailId}" />
-													</s:else>
-											</span></td>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"><s:property
-														value="%{transfereeInfosProxy[#ownerStatus.index].transferee.guardianRelation}" /></span>
-											</td>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"><s:property
-														value="%{transfereeInfosProxy[#ownerStatus.index].transferee.guardian}" /></span></td>
-										</tr>
-									</s:iterator>
-								</table>
-							</td>
-						</tr>
-					</s:if>
-					<s:else>
-						<tr>
-							<td colspan="5">
-								<div class="headingsmallbg">
-									<span class="bold"><s:text name="transferorDetails" /></span>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td colspan="5">
-								<table width="100%" border="0" cellspacing="0" cellpadding="0"
-									class="tablebottom" id="nameTable">
-									<tr>
-										<th class="bluebgheadtd"><s:text name="adharno" /></th>
-										<th class="bluebgheadtd"><s:text name="MobileNumber" />(without
-											+91)</th>
-										<th class="bluebgheadtd"><s:text name="OwnerName" /></th>
-										<th class="bluebgheadtd"><s:text name="gender" /></th>
-										<th class="bluebgheadtd"><s:text name="EmailAddress" /></th>
-										<th class="bluebgheadtd"><s:text name="GuardianRelation" /></th>
-										<th class="bluebgheadtd"><s:text name="Guardian" /></th>
-									</tr>
+									</s:if>
+									<s:else>
 									<s:iterator value="transfereeInfos" status="ownerStatus">
 										<tr>
 											<td class="blueborderfortd" align="center"><span
@@ -383,10 +297,108 @@
 														value="%{transferorInfos[#ownerStatus.index].guardian}" /></span></td>
 										</tr>
 									</s:iterator>
+									</s:else>
+								</tbody>
+							</table>
+						</td>
+					</tr>
+						<tr>
+							<td colspan="5">
+								<div class="headingsmallbg">
+									<span class="bold"><s:text name="transfereeDtls" /></span>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="5">
+								<table width="100%" border="0" cellspacing="0" cellpadding="0"
+									class="tablebottom" id="nameTable">
+									<tr>
+										<th class="bluebgheadtd"><s:text name="adharno" /></th>
+										<th class="bluebgheadtd"><s:text name="MobileNumber" />(without
+											+91)</th>
+										<th class="bluebgheadtd"><s:text name="OwnerName" /></th>
+										<th class="bluebgheadtd"><s:text name="gender" /></th>
+										<th class="bluebgheadtd"><s:text name="EmailAddress" /></th>
+										<th class="bluebgheadtd"><s:text name="GuardianRelation" /></th>
+										<th class="bluebgheadtd"><s:text name="Guardian" /></th>
+									</tr>
+									<s:if
+						test="%{!@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED.equalsIgnoreCase(state.value)}">
+									<s:iterator value="transfereeInfosProxy" status="ownerStatus">
+										<tr>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"> <s:if
+														test='%{transfereeInfosProxy[#ownerStatus.index].transferee.aadhaarNumber == ""}'>N/A</s:if>
+													<s:else>
+														<s:property
+															value="%{transfereeInfosProxy[#ownerStatus.index].transferee.aadhaarNumber}" />
+													</s:else>
+											</span></td>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"><s:property
+														value="%{transfereeInfosProxy[#ownerStatus.index].transferee.mobileNumber}" /></span>
+											</td>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"><s:property
+														value="%{transfereeInfosProxy[#ownerStatus.index].transferee.name}" /></span></td>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"><s:property
+														value="%{transfereeInfosProxy[#ownerStatus.index].transferee.gender}" /></span></td>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"> <s:if
+														test='%{transfereeInfosProxy[#ownerStatus.index].transferee.emailId == ""}'>N/A</s:if>
+													<s:else>
+														<s:property
+															value="%{transfereeInfosProxy[#ownerStatus.index].transferee.emailId}" />
+													</s:else>
+											</span></td>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"><s:property
+														value="%{transfereeInfosProxy[#ownerStatus.index].transferee.guardianRelation}" /></span>
+											</td>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"><s:property
+														value="%{transfereeInfosProxy[#ownerStatus.index].transferee.guardian}" /></span></td>
+										</tr>
+									</s:iterator>
+									</s:if>
+									<s:else>
+									<s:iterator value="basicproperty.propertyOwnerInfo"
+										status="status">
+										<tr>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"> <s:if
+														test='%{owner.aadhaarNumber == ""}'>
+								        				N/A
+								        			</s:if> <s:else>
+														<s:property value="%{owner.aadhaarNumber}" default="N/A" />
+													</s:else>
+											</span></td>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"><s:property value="owner.mobileNumber" /></span></td>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"><s:property value="owner.name" /></span></td>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"><s:property value="owner.gender" /></span></td>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"> <s:if test='%{owner.emailId == ""}'>N/A</s:if>
+													<s:else>
+														<s:property value="%{owner.emailId}" />
+													</s:else>
+											</span></td>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"><s:property
+														value="owner.guardianRelation" default="N/A" /></span></td>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"><s:property value="owner.guardian"
+														default="N/A" /></span></td>
+										</tr>
+									</s:iterator>
+									</s:else>		
 								</table>
 							</td>
 						</tr>
-					</s:else>
 					<tr>
 						<td>&nbsp;</td>
 					</tr>

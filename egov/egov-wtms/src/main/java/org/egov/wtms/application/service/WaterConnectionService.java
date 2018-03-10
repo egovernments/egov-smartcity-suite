@@ -47,6 +47,13 @@
  */
 package org.egov.wtms.application.service;
 
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
+
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.repository.WaterConnectionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,12 +63,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.List;
-
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
 
 @Service
 @Transactional(readOnly = true)
@@ -105,5 +106,9 @@ public class WaterConnectionService {
 
     public WaterConnection findParentWaterConnection(final String propertyIdentifer) {
         return waterConnectionRepository.findParentWaterConnection(propertyIdentifer);
+    }
+
+    public List<WaterConnection> findByOldConsumerNumber(final String consumerCode) {
+        return waterConnectionRepository.findByOldConsumerNumber(consumerCode);
     }
 }

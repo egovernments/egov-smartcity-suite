@@ -49,6 +49,7 @@ package org.egov.ptis.domain.service.notice;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.CFinancialYear;
+import org.egov.commons.Installment;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
@@ -58,7 +59,12 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.Floor;
+import org.egov.ptis.domain.entity.property.PropertyDetail;
+import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
+import org.egov.ptis.domain.model.FloorDetails;
+import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.notice.PtNotice;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,13 +79,34 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 
+import static java.math.BigDecimal.ZERO;
+import org.egov.infra.utils.DateUtils;
+import org.egov.infra.reporting.engine.ReportFormat;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TEMPLATE_COMPARISON_NOTICE;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_SURVEY_COMPARISON;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+
+import org.egov.ptis.bean.SurveyReportBean;
+import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
+import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.dao.property.PropertyHibernateDAO;
+import org.egov.ptis.domain.entity.demand.Ptdemand;
+
+import java.io.ByteArrayInputStream;
+import java.math.BigDecimal;
+import java.util.*;
+
 
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class NoticeService extends PersistenceService<PtNotice, Long> {
-    
     @Autowired
     PersistenceService<BasicProperty, Long> basicPropertyService;
     @Autowired
@@ -91,6 +118,16 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
     private FinancialYearDAO financialYearDAO;
     @PersistenceContext
     private EntityManager eManager;
+    @Autowired
+    private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
+    @Autowired
+    private PropertyHibernateDAO propertyHibernateDAO;
+    @Autowired
+    private ReportService reportService;
+    @Autowired
+    private PropertyService propService;
+    @Autowired
+    PropertyTaxUtil propertyTaxUtil;
     
     public NoticeService() {
         super(PtNotice.class);
@@ -99,7 +136,7 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
     public NoticeService(final Class<PtNotice> type) {
         super(type);
     }
-
+    
     /**
      * This method populates the <code>PtNotice</code> object along with notice input stream
      *
@@ -240,5 +277,99 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
         qry.setParameter(1, assessementNumber);
         return qry.getResultList();
     }
-    
+
+    /**
+     * API generates the GIS comparison report on RO approval before the third party verification
+     */
+    public void generateComparisonNotice(PropertyImpl property) {
+        InputStream noticePDF = null;
+        String noticeType = NOTICE_TYPE_SURVEY_COMPARISON;
+        final String noticeNo = propertyTaxNumberGenerator.generateNoticeNumber(noticeType);
+        ReportRequest reportInput = generateReportRequestForComparisonReport(property);
+        ReportOutput reportOutput = reportService.createReport(reportInput);
+        if (reportOutput != null && reportOutput.getReportOutputData() != null)
+            noticePDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
+        saveNotice(property.getApplicationNo(), noticeNo, noticeType,
+                property.getBasicProperty(), noticePDF);
+    }
+
+    private ReportRequest generateReportRequestForComparisonReport(final PropertyImpl property) {
+        BigDecimal halfYearlyTax = BigDecimal.ZERO;
+        BigDecimal gisHalfYearlyTax = BigDecimal.ZERO;
+        BigDecimal applARV = BigDecimal.ZERO;
+        BigDecimal gisARV = BigDecimal.ZERO;
+        final Map<String, Object> reportParams = new HashMap<>();
+        final Map<String, Installment> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
+        BasicProperty basicProperty = property.getBasicProperty();
+        PropertyImpl gisProperty = (PropertyImpl) propertyHibernateDAO
+                .getLatestGISPropertyForBasicProperty(basicProperty);
+        Ptdemand ptdemand = property.getPtDemandSet().iterator().next();
+        if (ptdemand != null) {
+            halfYearlyTax = propService.getTotalTaxExcludingUACPenalty(currYearInstMap.get(CURRENTYEAR_SECOND_HALF),
+                    property.getPtDemandSet().iterator().next());
+            applARV = ptdemand.getDmdCalculations().getAlv() == null ? ZERO
+                    : ptdemand.getDmdCalculations().getAlv();
+        }
+        if (gisProperty != null) {
+            Ptdemand gisPtdemand = gisProperty.getPtDemandSet().iterator().next();
+            if (gisPtdemand != null) {
+                gisHalfYearlyTax = propService.getTotalTaxExcludingUACPenalty(currYearInstMap.get(CURRENTYEAR_SECOND_HALF),
+                        gisProperty.getPtDemandSet().iterator().next());
+                gisARV = gisPtdemand.getDmdCalculations().getAlv() == null ? ZERO
+                        : gisPtdemand.getDmdCalculations().getAlv();
+            }
+        }
+        reportParams.put("ulbName", ApplicationThreadLocals.getCityName());
+        reportParams.put("ulbCode", ApplicationThreadLocals.getCityCode());
+        reportParams.put("upicNo", basicProperty.getUpicNo());
+        reportParams.put("applicationNo", property.getApplicationNo());
+        reportParams.put("ownerName", basicProperty.getFullOwnerName());
+        reportParams.put("doorNo", basicProperty.getAddress().getHouseNoBldgApt());
+        if(property.getGisDetails() != null)
+            reportParams.put("gisZone", property.getGisDetails().getGisZone().getName());
+        reportParams.put("applZone", basicProperty.getPropertyID().getZone().getName());
+        reportParams.put("halfYearlyTax", halfYearlyTax);
+        reportParams.put("gisHalfYearlyTax", gisHalfYearlyTax);
+        reportParams.put("applARV", applARV);
+        reportParams.put("gisARV", gisARV);
+
+        SurveyReportBean reportBean = setBeanDetailsForNotice(property, gisProperty);
+        ReportRequest reportInput = new ReportRequest(NOTICE_TEMPLATE_COMPARISON_NOTICE, reportBean,
+                reportParams);
+        reportInput.setPrintDialogOnOpenReport(true);
+        reportInput.setReportFormat(ReportFormat.PDF);
+
+        return reportInput;
+    }
+
+    private SurveyReportBean setBeanDetailsForNotice(final PropertyImpl property, final PropertyImpl gisProperty) {
+        SurveyReportBean surveyReportBean = new SurveyReportBean();
+        PropertyDetail propertyDetail = property.getPropertyDetail();
+        Collections.sort(propertyDetail.getFloorDetails(),
+                (floor1, floor2) -> floor1.getFloorNo().compareTo(floor2.getFloorNo()));
+        surveyReportBean.setApplicationFloors(setFloorDetails(propertyDetail));
+        PropertyDetail gisPropertyDetail = gisProperty.getPropertyDetail();
+        Collections.sort(gisPropertyDetail.getFloorDetails(),
+                (floor1, floor2) -> floor1.getFloorNo().compareTo(floor2.getFloorNo()));
+        surveyReportBean.setGisFloors(setFloorDetails(gisPropertyDetail));
+        return surveyReportBean;
+    }
+
+    private List<FloorDetails> setFloorDetails(PropertyDetail propertyDetail) {
+        FloorDetails floorDetails;
+        List<FloorDetails> floorDetailsList = new ArrayList<>();
+        for (Floor floor : propertyDetail.getFloorDetails()) {
+            floorDetails = new FloorDetails();
+            floorDetails.setFloorNoCode(FLOOR_MAP.get(floor.getFloorNo()));
+            floorDetails.setBuildClassificationCode(floor.getStructureClassification().getTypeName());
+            floorDetails.setNatureOfUsageCode(floor.getPropertyUsage().getUsageName());
+            floorDetails.setOccupancyCode(floor.getPropertyOccupation().getOccupation());
+            floorDetails.setPlinthArea(floor.getBuiltUpArea().getArea());
+            floorDetails.setConstructionDate(
+                    DateUtils.getFormattedDate(floor.getConstructionDate(), PropertyTaxConstants.DATE_FORMAT_DDMMYYY));
+            floorDetailsList.add(floorDetails);
+        }
+        return floorDetailsList;
+    }
+
 }

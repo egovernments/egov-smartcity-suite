@@ -47,13 +47,11 @@
  */
 package org.egov.stms.autonumber.impl;
 
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.stms.autonumber.SewerageRejectionNoticeNumberGenerator;
 import org.egov.stms.utils.SewerageTaxUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.io.Serializable;
 
 @Service
 public class SewerageRejectionNoticeNumberGeneratorImpl implements SewerageRejectionNoticeNumberGenerator {
@@ -61,16 +59,15 @@ public class SewerageRejectionNoticeNumberGeneratorImpl implements SewerageRejec
     private static final String REJECTION_NOTICE_NUMBER_SEQ_PREFIX = "SEQ_EGSWTAX_REJECTION_NOTICE_NUMBER";
 
     @Autowired
-    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
     @Autowired
     private SewerageTaxUtils sewerageTaxUtils;
 
     @Override
     public String generateRejectionNoticeNumber() {
-        final String sequenceName = REJECTION_NOTICE_NUMBER_SEQ_PREFIX;
-        final Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
-        return String.format("%s%06d", sewerageTaxUtils.getCityCode(), nextSequence);
+        return String.format("%s%06d", sewerageTaxUtils.getCityCode(),
+                genericSequenceNumberGenerator.getNextSequence(REJECTION_NOTICE_NUMBER_SEQ_PREFIX));
     }
 
 }

@@ -130,4 +130,18 @@ public class PropertyMutationHibDAO implements PropertyMutationDAO {
 	    }
 	    return propertyMutation;
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public PropertyMutation getLatestApprovedMutationForAssessmentNo(String assessmentNo) {
+		PropertyMutation propertyMutation = null;
+		String query = "select pm from PropertyMutation pm,PtNotice n where pm.basicProperty.upicNo =:assessmentNo and n.applicationNumber = pm.applicationNo and n.noticeType = 'Mutation Certificate' order by mutationDate desc";
+	    Query qry = getCurrentSession().createQuery(query);
+	    qry.setParameter("assessmentNo", assessmentNo);
+	    List<PropertyMutation> mutationList = qry.list();
+	    if(!mutationList.isEmpty()){
+	    	propertyMutation = mutationList.get(0);
+	    }
+	    return propertyMutation;
+	}
 }

@@ -50,7 +50,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<c:if test="${nextAction != 'END' && (currentState != 'Created' && currentState != 'Commissioner Approved')}" > 
+<c:if test="${wfNextAction !='Commissioner approval pending' or (nextAction != 'END' && pendingActions !='Commissioner approval pending')}" > 
 		<div class="panel panel-primary" data-collapsed="0" >				
 			<div class="panel-heading">
 				<div class="panel-title">
@@ -78,9 +78,10 @@
 <form:hidden path="" name="stateType" id="stateType" value="${stateType}"/>	
 	<form:hidden path="" id="workFlowAction" name="workFlowAction"/>		
 				<div class="row show-row"  id="approverDetailHeading">
-				<div class="show-row form-group" >
+				<div class="show-row form-group" > 
+				
 					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.approverdepartment"/><span class="mandatory"></span></label>
-					<div class="col-sm-3 add-margin">
+					<div class="col-sm-3 add-margin">					
 						<form:select path="approvalDepartment" data-first-option="false" name="approvalDepartment"
 							id="approvalDepartment" cssClass="form-control"
 							cssErrorClass="form-control error" required="required">

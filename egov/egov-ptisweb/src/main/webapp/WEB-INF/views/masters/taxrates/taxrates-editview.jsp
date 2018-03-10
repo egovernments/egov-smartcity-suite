@@ -116,15 +116,15 @@
 													id="reasonDetailsId" />
 												<c:choose>
 													<c:when
-														test="${fn:endsWith(taxRate.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster(), 'Non Residential')}">
+														test="${fn:endsWith(taxRate.getEgDemandReasonMaster().getReasonMaster(), 'Non Residential')}">
 														<td><c:out
-																value="${fn:substringBefore(taxRate.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster(), 'Non')}" /></td>
+																value="${fn:substringBefore(taxRate.getEgDemandReasonMaster().getReasonMaster(), 'Non')}" /></td>
 														<c:set var="countNresd"
 															value="${taxRate.percentage + countNresd}" />
 													</c:when>
 													<c:otherwise>
 														<td><c:out
-																value="${fn:substringBefore(taxRate.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster(), 'Residential')}" /></td>
+																value="${fn:substringBefore(taxRate.getEgDemandReasonMaster().getReasonMaster(), 'Residential')}" /></td>
 														<c:set var="countResd"
 															value="${taxRate.percentage + countResd}" />
 													</c:otherwise>

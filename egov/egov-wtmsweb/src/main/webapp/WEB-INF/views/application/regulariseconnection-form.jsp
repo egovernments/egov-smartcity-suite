@@ -56,7 +56,7 @@
 <div class="row">
 	<div class="col-md-12"> 
 		<div class="text-right error-msg" style="font-size:14px;"><spring:message code="lbl.application.date"/> : <fmt:formatDate pattern="dd/MM/yyyy" value="${waterConnectionDetails.applicationDate}" /></div>
-		<form:form role="form" action="regulariseconnection-create"
+		<form:form role="form" action="" method="post"
 			modelAttribute="waterConnectionDetails" id="regulariseWaterConnectionForm"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
@@ -101,6 +101,6 @@
 	$('#propertyIdentifier').attr('readOnly', true);
 
 </script>
-<script src="<cdn:url value='/resources/js/app/newconnection.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url value='/resources/js/app/regulariseconnection.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url value='/resources/js/app/connectiondetails.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>

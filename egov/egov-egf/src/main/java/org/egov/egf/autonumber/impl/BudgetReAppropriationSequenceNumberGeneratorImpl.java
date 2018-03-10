@@ -50,7 +50,7 @@ package org.egov.egf.autonumber.impl;
 
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.egf.autonumber.BudgetReAppropriationSequenceNumberGenerator;
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.model.budget.BudgetDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -61,9 +61,7 @@ import java.io.Serializable;
 public class BudgetReAppropriationSequenceNumberGeneratorImpl implements BudgetReAppropriationSequenceNumberGenerator {
 
     @Autowired
-    private FinancialYearDAO financialYearDAO;
-    @Autowired
-    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
     /**
      * 
@@ -83,7 +81,7 @@ public class BudgetReAppropriationSequenceNumberGeneratorImpl implements BudgetR
         } else {
             sequenceName = "seq_budget_reapp_seqnum_be_" + finRange;
         }
-        Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
+        Serializable nextSequence = genericSequenceNumberGenerator.getNextSequence(sequenceName);
 
         reAppropriationNumber = String.format("%s/%04d/%s", type, nextSequence, finRange);
 

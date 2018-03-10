@@ -53,7 +53,7 @@ import org.egov.commons.CVoucherHeader;
 import org.egov.commons.dao.FiscalPeriodHibernateDAO;
 import org.egov.egf.autonumber.VouchernumberGenerator;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -65,7 +65,7 @@ public class VouchernumberGeneratorImpl implements VouchernumberGenerator {
     @Autowired
     private FiscalPeriodHibernateDAO fiscalPeriodHibernateDAO;
     @Autowired
-    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
     /**
      *
@@ -82,7 +82,7 @@ public class VouchernumberGeneratorImpl implements VouchernumberGenerator {
         if (fiscalPeriod == null)
             throw new ApplicationRuntimeException("Fiscal period is not defined for the voucher date");
         sequenceName = "sq_" + vh.getFundId().getIdentifier() + "_" + vh.getVoucherNumberPrefix() + "_" + fiscalPeriod.getName();
-        final Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
+        final Serializable nextSequence = genericSequenceNumberGenerator.getNextSequence(sequenceName);
 
         voucherNumber = String.format("%s/%s/%08d/%02d/%s", vh.getFundId().getIdentifier(), vh.getVoucherNumberPrefix(),
                 nextSequence, vh.getVoucherDate().getMonth() + 1, fiscalPeriod.getcFinancialYear().getFinYearRange());

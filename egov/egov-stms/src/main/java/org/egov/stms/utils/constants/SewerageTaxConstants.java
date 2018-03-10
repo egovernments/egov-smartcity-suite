@@ -90,6 +90,7 @@ public class SewerageTaxConstants {
     public static final String APPLICATION_STATUS_SANCTIONED_WITH_DEMAND_NOT_PAID = "SANCTIONEDWITHDEMAND";
     public static final String APPLICATION_STATUS_CLOSERSANCTIONED = "CLOSERSANCTIONED";
     public static final String APPLICATION_STATUS_FINAL_APPROVED = "Final Approved";
+    public static final String APPLICATION_STATUS_DESC_CTZN_FEE_PENDING = "citizen fee collection pending";
     // application status constants - end
 
     // workflow related - start

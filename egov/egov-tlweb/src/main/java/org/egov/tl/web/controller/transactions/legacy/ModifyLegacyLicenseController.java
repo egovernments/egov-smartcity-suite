@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -48,6 +48,7 @@
 
 package org.egov.tl.web.controller.transactions.legacy;
 
+import org.egov.tl.entity.License;
 import org.egov.tl.entity.TradeLicense;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -60,39 +61,38 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.validation.Valid;
-import java.io.IOException;
 
 @Controller
-@RequestMapping("/legacylicense")
+@RequestMapping("/legacylicense/update/{id}")
 public class ModifyLegacyLicenseController extends LegacyLicenseController {
 
     private static final String UPDATE_LEGACY_FORM = "updateform-legacylicense";
 
     @Autowired
-    private LegacyLicenseValidator legacyLicenseValidator;
+    private ModifyLegacyLicenseValidator modifyLegacyLicenseValidator;
 
     @ModelAttribute("tradeLicense")
-    public TradeLicense tradeLicense(@PathVariable final Long id) {
-        return tradeLicenseService.getLicenseById(id);
+    public License tradeLicense(@PathVariable Long id) {
+        return legacyService.getLicenseById(id);
     }
 
-    @GetMapping("/update/{id}")
+    @GetMapping
     public String update(@ModelAttribute TradeLicense tradeLicense, Model model) {
         model.addAttribute("legacyInstallmentwiseFees", legacyService.legacyInstallmentwiseFees(tradeLicense));
         model.addAttribute("legacyFeePayStatus", legacyService.legacyFeePayStatus(tradeLicense));
         return UPDATE_LEGACY_FORM;
     }
 
-    @PostMapping("/update/{id}")
-    public String update(@Valid @ModelAttribute TradeLicense tradeLicense, BindingResult binding, Model model)
-            throws IOException {
+    @PostMapping
+    public String update(@Valid @ModelAttribute TradeLicense tradeLicense, BindingResult binding, Model model) {
 
-        legacyLicenseValidator.validate(tradeLicense, binding);
+        modifyLegacyLicenseValidator.validate(tradeLicense, binding);
         if (binding.hasErrors()) {
             model.addAttribute("legacyInstallmentwiseFees", legacyService.legacyInstallmentfee(tradeLicense));
             model.addAttribute("legacyFeePayStatus", legacyService.legacyInstallmentStatus(tradeLicense));
             return UPDATE_LEGACY_FORM;
         }
+        tradeLicense.setDocuments(tradeLicense.getLicenseDocuments());
         legacyService.updateLegacy(tradeLicense);
         return "redirect:/legacylicense/view/" + tradeLicense.getApplicationNumber();
     }

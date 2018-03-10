@@ -49,33 +49,24 @@ package org.egov.council.autonumber.impl;
 
 import org.egov.council.autonumber.CouncilMeetingNumberGenerator;
 import org.egov.council.entity.CouncilMeeting;
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.infra.utils.DateUtils;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 @Service
 public class CouncilMeetingNumberGeneratorImpl implements CouncilMeetingNumberGenerator {
 
-    private static final String MEETING_NUMBER_SEQ = "SEQ_EGCNCL_MEETING_NUMBER"; 
+    private static final String MEETING_NUMBER_SEQ = "SEQ_EGCNCL_MEETING_NUMBER";
     @Autowired
-    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
     @Override
     public String getNextNumber(CouncilMeeting councilMeeting) {
-        
-        final SimpleDateFormat sdf = new SimpleDateFormat("MM");
-        final String formattedDate = sdf.format(new Date());
-        final String sequenceName = MEETING_NUMBER_SEQ;
-        final String currentYear = DateUtils.currentDateToYearFormat();
-        Serializable sequenceNumber = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
-
-        final String result = String.format("%d/%s/%s", sequenceNumber, formattedDate, currentYear);
-        return result;
+        return String.format("%d/%s/%s",
+                genericSequenceNumberGenerator.getNextSequence(MEETING_NUMBER_SEQ),
+                new DateTime().toString("MM"), DateUtils.currentYear());
 
     }
 

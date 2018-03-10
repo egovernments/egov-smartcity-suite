@@ -48,8 +48,10 @@
 
 package org.egov.infra.filestore.entity;
 
-import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.hibernate.validator.constraints.NotBlank;
+import static org.egov.infra.filestore.entity.FileStoreMapper.SEQ_FILESTOREMAPPER;
+
+import java.util.Date;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -60,10 +62,11 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import java.util.Date;
-import java.util.Objects;
 
-import static org.egov.infra.filestore.entity.FileStoreMapper.SEQ_FILESTOREMAPPER;
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Table(name = "eg_filestoremap")
 @Entity
@@ -76,12 +79,17 @@ public class FileStoreMapper extends AbstractPersistable<Long> {
     private Long id;
 
     @NotBlank
+    @Length(max = 36)
     @Column(length = 36, unique = true, nullable = false)
     private String fileStoreId;
 
     @NotBlank
+    @Length(max = 100)
+    @SafeHtml
     private String fileName;
 
+    @Length(max = 100)
+    @SafeHtml
     private String contentType;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -96,10 +104,12 @@ public class FileStoreMapper extends AbstractPersistable<Long> {
         this.fileName = fileName;
     }
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
@@ -137,12 +147,12 @@ public class FileStoreMapper extends AbstractPersistable<Long> {
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o)
+    public boolean equals(Object other) {
+        if (this == other)
             return true;
-        if (!(o instanceof FileStoreMapper))
+        if (!(other instanceof FileStoreMapper))
             return false;
-        final FileStoreMapper that = (FileStoreMapper) o;
+        final FileStoreMapper that = (FileStoreMapper) other;
         return that.id != null && Objects.equals(id, that.id);
     }
 

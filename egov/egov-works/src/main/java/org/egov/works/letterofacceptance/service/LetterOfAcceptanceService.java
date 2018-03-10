@@ -430,7 +430,7 @@ public class LetterOfAcceptanceService {
 
         if (StringUtils.isNotBlank(searchRequestLetterOfAcceptance.getWorkIdentificationNumber()))
             queryStr.append(
-                    " and wo.estimateNumber = (select led.estimateNumber from LineEstimateDetails led where led.projectCode = (select po.id from ProjectCode po where upper(po.code) = :workIdentificationNumber))");
+                    " and wo.estimateNumber in (select led.estimateNumber from LineEstimateDetails led where led.projectCode in (select po.id from ProjectCode po where upper(po.code) = :workIdentificationNumber))");
 
         if (StringUtils.isNotBlank(searchRequestLetterOfAcceptance.getEstimateNumber()))
             queryStr.append(" and upper(wo.estimateNumber) = :estimateNumber");

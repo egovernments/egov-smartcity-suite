@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -50,9 +50,12 @@ package org.egov.tl.web.controller.transactions.payment;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.contracts.DCBReportSearchRequest;
 import org.egov.tl.entity.view.DCBReportResult;
+import org.egov.tl.entity.view.InstallmentWiseDCB;
 import org.egov.tl.service.DCBReportService;
+import org.egov.tl.service.InstallmentwiseDCBReportService;
 import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.web.response.adaptor.OnlineDCBReportResponseAdaptor;
+import org.egov.tl.web.response.adaptor.OnlineInstallmentwiseDCBReportAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -72,6 +75,9 @@ public class ViewDCBController {
     @Autowired
     private DCBReportService dCBReportService;
 
+    @Autowired
+    private InstallmentwiseDCBReportService installmentwiseDCBReportService;
+
     @GetMapping("{id}")
     public String search(@PathVariable Long id, Model model, DCBReportSearchRequest searchRequest) {
         License licenseObj = tradeLicenseService.getLicenseById(id);
@@ -79,6 +85,8 @@ public class ViewDCBController {
         model.addAttribute("license", licenseObj);
         model.addAttribute("dcbreport", toJSON(dCBReportService.getDCBRecords(searchRequest), DCBReportResult.class,
                 OnlineDCBReportResponseAdaptor.class));
+        model.addAttribute("installmentwiseReport", toJSON(installmentwiseDCBReportService.getInstallmentWiseDCBReport(
+                licenseObj.getId()), InstallmentWiseDCB.class, OnlineInstallmentwiseDCBReportAdaptor.class));
         model.addAttribute("receipts", tradeLicenseService.getReceipts(licenseObj));
         return "view-license-dcb";
     }

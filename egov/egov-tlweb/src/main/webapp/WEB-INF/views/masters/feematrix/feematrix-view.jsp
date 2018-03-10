@@ -71,7 +71,7 @@
                                         cssErrorClass="form-control error"/>
                         </div>
                         <label class="col-sm-3 control-label">
-                            <spring:message code="lbl.natureofbusiness"/><span class="mandatory"></span>
+                            <spring:message code="lbl.tradetype"/><span class="mandatory"></span>
                         </label>
                         <div class="col-sm-3 add-margin">
                             <form:input path="natureOfBusiness.name" id="natureOfBusiness" cssClass="form-control" readonly="true" required="true"

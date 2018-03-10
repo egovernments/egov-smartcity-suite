@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -53,7 +53,7 @@ $('#selectAll').click(function (e) {
 });
 
 function openLicenseForDigitalSign(licenseid) {
-    window.open("/tl/newtradelicense/newTradeLicense-showForApproval.action?model.id=" + licenseid,"_self");
+    window.open("/tl/newtradelicense/newTradeLicense-showForApproval.action?model.id=" + licenseid, "_self");
 }
 
 function submitform() {
@@ -72,6 +72,15 @@ function submitform() {
             })
         })
         $("#licenseIds").val(licenseids);
+        $("#bulkdigisignform").attr('action', '/tl/tradelicense/bulk-digisign');
+        $("#bulkdigisignform").attr('method', 'post');
         $("#bulkdigisignform").submit();
     }
 }
+
+$('#btnsearch').click(function (e) {
+    $("#licenseTypeId").val($("#appType").val())
+    $("#bulkdigisignform").attr('action', '/tl/tradelicense/bulk-digisign/');
+    $("#bulkdigisignform").attr('method', 'get');
+    $("#bulkdigisignform").submit();
+})

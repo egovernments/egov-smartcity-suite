@@ -58,7 +58,6 @@
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
-						<strong><spring:message code="lbl.dcbDrillDownReportWardwise"></spring:message></strong>
 					</div>
 				</div>
 				<div class="panel-body">
@@ -73,20 +72,26 @@
 						<form:errors path="propertyType" cssClass="add-margin error-msg" />
 					</div>
 						<label class="col-sm-2 control-label text-right" ><spring:message code="lbl.ward"></spring:message></label>
-						<div class="col-sm-3 add-margin">
-							<form:select path="wards" multiple="true" id="ward" size="10" cssClass="form-control" cssErrorClass="form-control error">
-								<form:option value="0">ALL</form:option>
-								<form:options items="${wards}" itemValue="id" itemLabel="name"></form:options>
-							</form:select>
-							<form:errors path="wards" cssClass="error-msg" /> 
-						</div>
-						<spring:message code="lbl.pressCntrlToSelectMultipleWards"></spring:message>
-				</div>
-				<div class="row">
-					<div class="text-center">
-						<button type="button" class="btn btn-primary" id="search"><spring:message code="lbl.search"/></button>
-						<a href="javascript:void(0)" onclick="self.close()" class="btn btn-default"><spring:message code="lbl.close"/></a>
+					<div class="col-sm-3 add-margin">
+						<select name="wards" multiple id="ward" size="10"
+							class="form-control wards tick-indicator">
+							<option value="0">All</option>
+							<c:forEach items="${wards}" var="ward">
+								<option value="${ward.id}" title="${ward.name}">${ward.name}</option>
+							</c:forEach>
+						</select>
+						<form:errors path="wards" cssClass="error-msg" />
 					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="text-center">
+					<button type="button" class="btn btn-primary btnSearch" id="search">
+						<spring:message code="lbl.search" />
+					</button>
+					<button type="reset" class="btn btn-danger"><spring:message code="lbl.reset"/></button>
+					<a href="javascript:void(0)" onclick="self.close()"
+						class="btn btn-default"><spring:message code="lbl.close" /></a>
 				</div>
 			</div>
 		</form:form>
@@ -133,6 +138,8 @@
 		</table>
 	</div>
 </div>
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/css/sewerage-style.css?rnd=${app_release_no}'/>" />
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
 <script type="text/javascript" src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
@@ -143,3 +150,5 @@
 <script src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/moment.min.js' context='/egi'/>"></script>
 <script src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js' context='/egi'/>"></script>
 <script  src="<cdn:url  value='/resources/js/reports/sewerageDCBWardwise.js?rnd=${app_release_no}' /> " ></script>
+<script type="text/javascript"
+	src="<cdn:url value='/resources/js/search/common-util-helper.js?rnd=${app_release_no}'/>"></script>

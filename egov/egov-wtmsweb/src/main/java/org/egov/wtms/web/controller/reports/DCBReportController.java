@@ -79,6 +79,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.LOCALITY;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 @Controller
 @RequestMapping(value = "/reports")
@@ -162,15 +163,14 @@ public class DCBReportController {
     @ResponseBody
     public void search(final HttpServletRequest request, final HttpServletResponse response,
             final Model model) throws IOException {
-        List<DCBReportResult> resultList;
         String connectionType = "";
         String mode = "";
         String reportType = "";
         String[] boundaryId = null;
         final StringBuilder zones = new StringBuilder();
-        if (request.getParameter("boundaryId[]") != null && !"".equals(request.getParameter("boundaryId[]")))
+        if (isNotBlank(request.getParameter("boundaryId[]")))
             boundaryId = request.getParameterValues("boundaryId[]");
-        else if (request.getParameter("boundaryId") != null && !"".equals(request.getParameter("boundaryId")))
+        else if (isNotBlank(request.getParameter("boundaryId")))
             boundaryId = request.getParameterValues("boundaryId");
         if (boundaryId != null)
             for (final String n : boundaryId) {
@@ -178,15 +178,14 @@ public class DCBReportController {
                     zones.append(',');
                 zones.append(n);
             }
-        if (request.getParameter("connectionType") != null && !"".equals(request.getParameter("connectionType")))
+        if (isNotBlank(request.getParameter("connectionType")))
             connectionType = request.getParameter("connectionType");
-        if (request.getParameter("mode") != null && !"".equals(request.getParameter("mode")))
+        if (isNotBlank(request.getParameter("mode")))
             mode = request.getParameter("mode");
-        if (request.getParameter("reportType") != null && !"".equals(request.getParameter("reportType")))
+        if (isNotBlank(request.getParameter("reportType")))
             reportType = request.getParameter("reportType");
-        resultList = currentDcbService.getReportResult(zones.toString(), connectionType, mode, reportType);
         String result;
-        result = new StringBuilder("{ \"data\":").append(toJSON(resultList, DCBReportResult.class, DCBReportHelperAdaptor.class))
+        result = new StringBuilder("{ \"data\":").append(toJSON(currentDcbService.getReportResult(zones.toString(), connectionType, mode, reportType), DCBReportResult.class, DCBReportHelperAdaptor.class))
                 .append("}").toString();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         IOUtils.write(result, response.getWriter());

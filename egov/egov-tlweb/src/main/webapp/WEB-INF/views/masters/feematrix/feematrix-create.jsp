@@ -76,7 +76,7 @@
                             </form:select>
                         </div>
                         <label class="col-sm-3 control-label">
-                            <spring:message code="lbl.natureofbusiness"/><span class="mandatory"></span>
+                            <spring:message code="lbl.tradetype"/><span class="mandatory"></span>
                         </label>
                         <div class="col-sm-3 add-margin">
                             <form:select path="natureOfBusiness" id="natureOfBusiness" cssClass="form-control" required="true"
@@ -174,7 +174,6 @@
                         </label>
                         <div class="col-sm-3 add-margin">
                             <form:input id="effectiveTo" path="effectiveTo" class="datepicker form-control text-left" maxlength="10"/>
-                            <form:errors path="effectiveTo" cssClass="add-margin error-msg"/>
                         </div>
                     </div>
                     <div class="panel-heading">

@@ -68,8 +68,8 @@
 		access="property"
 		unsaved-value="null"
 	    />
-        <many-to-one name="egDemandReason" class="org.egov.demand.model.EgDemandReason" >
-            <column name="ID_DEMAND_REASON"  not-null="true" />
+        <many-to-one name="egDemandReasonMaster" class="org.egov.demand.model.EgDemandReasonMaster" >
+            <column name="ID_DEMAND_REASON_MASTER"  not-null="true" />
         </many-to-one>
       
         <property name="percentage" type="java.math.BigDecimal">
@@ -98,17 +98,11 @@
             <column name="IS_FLATAMNT_MAX"  />
          </property>
     </class>
-    <query name="DEMANDREASONDETAILBY_DEMANDREASONID">
-    	<![CDATA[select drd from EgDemandReasonDetails drd where drd.egDemandReason.id= ? and ? between drd.lowLimit and drd.highLimit]]>
-	</query>
 	<query name="DEMANDREASONDETAILS_BY_DEMANDREASONID_DATE">
-    	<![CDATA[select drd from EgDemandReasonDetails drd where drd.egDemandReason.egDemandReasonMaster.code = ? and ? between drd.lowLimit and drd.highLimit and ? between drd.fromDate and drd.toDate]]>
-	</query>
-	<query name="DEMANDREASONDETAILS_BY_DEMANDREASON_AND_INSTALLMENT">
-    	<![CDATA[select drd from EgDemandReasonDetails drd where drd.egDemandReason.egDemandReasonMaster.code = ? and ? between drd.lowLimit and drd.highLimit and ((? between drd.fromDate and drd.toDate) or (? between drd.fromDate and drd.toDate)) order by drd.fromDate]]>
+    	<![CDATA[select drd from EgDemandReasonDetails drd where drd.egDemandReasonMaster.code = ? and ? between drd.lowLimit and drd.highLimit and ? between drd.fromDate and drd.toDate]]>
 	</query>
 	<query name="DEMANDREASONDETAILS_BY_MOUDULEID">
-    	<![CDATA[select drd from EgDemandReasonDetails drd where drd.egDemandReason.egDemandReasonMaster.egModule = ? order by drd.egDemandReason.egDemandReasonMaster.orderId]]>
+    	<![CDATA[select drd from EgDemandReasonDetails drd where drd.egDemandReasonMaster.egModule = ? order by drd.egDemandReasonMaster.orderId]]>
 	</query>
 	<query name="DEMANDREASONDETAILS_BY_ID">
     	<![CDATA[select drd from EgDemandReasonDetails drd where drd.id = ?]]>

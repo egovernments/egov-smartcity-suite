@@ -47,6 +47,17 @@
  */
 package org.egov.ptis.web.controller.reports;
 
+import static org.egov.infra.utils.JsonUtils.toJSON;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
@@ -54,7 +65,6 @@ import org.egov.ptis.actions.reports.DefaultersReportHelperAdaptor;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.DefaultersInfo;
-import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
 import org.egov.ptis.domain.service.report.ReportService;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,16 +76,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import static org.egov.infra.utils.JsonUtils.toJSON;
 
 @Controller
 @RequestMapping(value = "/report")
@@ -156,8 +156,7 @@ public class DefaultersReportController {
             final HttpServletResponse response) throws IOException {
         Query query = propertyTaxUtil.prepareQueryforDefaultersReport(Long.valueOf(wardId), fromAmount, toAmount,
                 StringUtils.isBlank(limit) ? null : Integer.valueOf(limit), category,proptype);
-        List<PropertyMaterlizeView> properties = query.list();
-        List<DefaultersInfo> defaultersList = reportService.getDefaultersInformation(properties,noofyr,StringUtils.isBlank(limit) ? null : Integer.valueOf(limit));
+        List<DefaultersInfo> defaultersList = reportService.getDefaultersInformation(query,noofyr,StringUtils.isBlank(limit) ? null : Integer.valueOf(limit));
         return new StringBuilder("{ \"data\":").append(toJSON(defaultersList, DefaultersInfo.class,
                 DefaultersReportHelperAdaptor.class)).append("}").toString();
     }

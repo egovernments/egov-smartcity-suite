@@ -48,7 +48,6 @@
 
 package org.egov.infra.config.security.authentication.filter;
 
-import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.config.security.authentication.userdetail.CurrentUser;
 import org.egov.infra.security.utils.SecurityConstants;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -65,6 +64,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.utils.ApplicationConstant.USERID_KEY;
 import static org.egov.infra.utils.ApplicationConstant.USERNAME_KEY;
 import static org.egov.infra.utils.StringUtils.emptyIfNull;
@@ -87,7 +87,7 @@ public class ApplicationAuthenticationFilter extends UsernamePasswordAuthenticat
                                             FilterChain filterChain, Authentication authResult) throws IOException, ServletException {
         String location = request.getParameter(SecurityConstants.LOCATION_FIELD);
         HttpSession session = request.getSession();
-        if (StringUtils.isNotBlank(location))
+        if (isNotBlank(location))
             session.setAttribute(SecurityConstants.LOCATION_FIELD, location);
 
         if (authResult != null) {

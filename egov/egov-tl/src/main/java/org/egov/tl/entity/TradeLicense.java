@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -48,7 +48,7 @@
 
 package org.egov.tl.entity;
 
-import org.egov.tl.utils.Constants;
+import org.egov.eis.web.contract.WorkflowContainer;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
 import org.springframework.web.multipart.MultipartFile;
@@ -59,8 +59,10 @@ import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
+import static org.egov.tl.utils.Constants.CLOSURE_NATUREOFTASK;
 
 @Entity
 @Table(name = "egtl_trade_license")
@@ -68,39 +70,50 @@ import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
 public class TradeLicense extends License {
 
     private static final long serialVersionUID = 986289058758315223L;
+    private static final String CLOSURE_APPROVAL_URL = "/tl/viewtradelicense/viewTradeLicense-closure.action?model.id=%d";
+    private static final String CLOSURE_UPDATE_URL = "/tl/license/closure/update/%d";
+    private static final String NEW_RENEW_APPROVAL_URL = "/tl/newtradelicense/newTradeLicense-showForApproval.action?model.id=%d";
+    @Transient
+    private transient MultipartFile[] files;
+    @Transient
+    private transient WorkflowContainer workflowContainer = new WorkflowContainer();
+    @Transient
+    private transient List<LicenseDocument> licenseDocuments = new ArrayList<>();
     @Transient
     private List<Integer> financialyear = new ArrayList<>();
     @Transient
     private List<Integer> legacyInstallmentwiseFees = new ArrayList<>();
     @Transient
     private List<Boolean> legacyFeePayStatus = new ArrayList<>();
-    @Transient
-    private MultipartFile[] files;
 
     @Override
     public String getStateDetails() {
-        final StringBuilder details = new StringBuilder();
+        StringBuilder details = new StringBuilder(28);
         if (isNotBlank(getLicenseNumber()))
-            details.append("Trade License Number").append(getLicenseNumber()).append(" and ");
-        details.append("App No. ").append(applicationNumber).append(" dated ").append(toDefaultDateFormat(applicationDate));
+            details.append("License No. ").append(getLicenseNumber()).append(" and ");
+        details.append("Application No. ").append(applicationNumber).append(" dated ")
+                .append(toDefaultDateFormat(applicationDate));
         if (isNotBlank(getState().getComments()))
-            details.append("<br/> Remarks : ").append(getState().getComments());
+            details.append("<br/>Remarks : ").append(getState().getComments());
         return details.toString();
     }
 
     @Override
     public String myLinkId() {
-        if (Constants.CLOSURE_NATUREOFTASK.equals(getState().getNatureOfTask()))
-            return "/tl/viewtradelicense/viewTradeLicense-closure.action?model.id=" + id;
+        if (CLOSURE_NATUREOFTASK.equals(getState().getNatureOfTask()))
+            if (isNewWorkflow())
+                return format(CLOSURE_UPDATE_URL, id);
+            else
+                return format(CLOSURE_APPROVAL_URL, id);
         else
-            return "/tl/newtradelicense/newTradeLicense-showForApproval.action?model.id=" + id;
+            return format(NEW_RENEW_APPROVAL_URL, id);
     }
 
     public List<Integer> getFinancialyear() {
         return financialyear;
     }
 
-    public void setFinancialyear(final List<Integer> financialyear) {
+    public void setFinancialyear(List<Integer> financialyear) {
         this.financialyear = financialyear;
     }
 
@@ -108,7 +121,7 @@ public class TradeLicense extends License {
         return legacyInstallmentwiseFees;
     }
 
-    public void setLegacyInstallmentwiseFees(final List<Integer> legacyInstallmentwiseFees) {
+    public void setLegacyInstallmentwiseFees(List<Integer> legacyInstallmentwiseFees) {
         this.legacyInstallmentwiseFees = legacyInstallmentwiseFees;
     }
 
@@ -116,7 +129,7 @@ public class TradeLicense extends License {
         return legacyFeePayStatus;
     }
 
-    public void setLegacyFeePayStatus(final List<Boolean> legacyFeePayStatus) {
+    public void setLegacyFeePayStatus(List<Boolean> legacyFeePayStatus) {
         this.legacyFeePayStatus = legacyFeePayStatus;
     }
 
@@ -128,4 +141,19 @@ public class TradeLicense extends License {
         this.files = files;
     }
 
+    public WorkflowContainer getWorkflowContainer() {
+        return workflowContainer;
+    }
+
+    public void setWorkflowContainer(WorkflowContainer workflowContainer) {
+        this.workflowContainer = workflowContainer;
+    }
+
+    public List<LicenseDocument> getLicenseDocuments() {
+        return licenseDocuments;
+    }
+
+    public void setLicenseDocuments(List<LicenseDocument> licenseDocuments) {
+        this.licenseDocuments = licenseDocuments;
+    }
 }

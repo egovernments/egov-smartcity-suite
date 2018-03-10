@@ -208,7 +208,7 @@ public class SewerageTaxUtils {
      * 'Revenue,Accounts,Administration' for department
      *
      * @param asessmentNumber ,
-     * @Param assessmentDetails
+     * @param assessmentDetails
      * @param boundaryObj
      * @return Assignment
      */
@@ -367,7 +367,7 @@ public class SewerageTaxUtils {
     }
 
     public String getCityCode() {
-        return cityService.getCityByURL(ApplicationThreadLocals.getDomainName()).getCode();
+        return ApplicationThreadLocals.getCityCode();
     }
 
     // allowing only for CollectionOperator to collect Fees
@@ -434,9 +434,9 @@ public class SewerageTaxUtils {
      */
 
     /**
-     * @description returns list of installments from the given date to till date
      * @param currDate
      * @return
+     * @description returns list of installments from the given date to till date
      */
     public List<Installment> getInstallmentsForCurrYear(final Date currDate) {
         final Module module = moduleService.getModuleByName(SewerageTaxConstants.MODULE_NAME);

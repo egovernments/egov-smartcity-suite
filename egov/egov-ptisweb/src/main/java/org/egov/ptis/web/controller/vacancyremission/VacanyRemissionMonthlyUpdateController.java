@@ -179,7 +179,7 @@ public class VacanyRemissionMonthlyUpdateController {
         if (!vacancyRemission.getDocuments().isEmpty())
             for (final Document applicationDocument : vacancyRemission.getDocuments())
                 if (applicationDocument.getFile() != null) {
-                    applicationDocument.setType(vacancyRemissionService.getDocType(applicationDocument.getType().getName()));
+                    applicationDocument.setType(vacancyRemissionService.getMUDocType(applicationDocument.getType().getName()));
                     applicationDocument.setFiles(propertyService.addToFileStore(applicationDocument.getFile()));
                 }
     }

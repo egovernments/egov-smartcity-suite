@@ -89,8 +89,15 @@
 								<form:errors path="code" cssClass="error-msg" />
 							</div>
 						</div>
+						<div class="form-group">
+						<label for="Field-1" class="col-sm-3 control-label"><spring:message
+								code="lbl.active" /></label>
+						<div class="col-sm-6 add-margin">
+							<form:checkbox id="active" path="active" checked="checked" />
+							<form:errors path="active" cssClass="error-msg" />
+						</div>
+					  </div>
 					</div>
-
 				</div>
 				<div class="row">
 					<div class="text-center">

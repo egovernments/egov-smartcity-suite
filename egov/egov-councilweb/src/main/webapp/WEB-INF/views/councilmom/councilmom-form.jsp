@@ -121,7 +121,8 @@
 								<th><spring:message code="lbl.resolutionNumber" /><span
 								class="mandatory"></span></th>
 							</c:if>
-							<th width="24%"><spring:message code="lbl.comments" /></th>
+							<th width="24%"><spring:message code="lbl.comments" /><span
+								class="mandatory"></span></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -220,12 +221,14 @@
 							<th width="27%"><spring:message code="lbl.gist.sumoto" /><span
 								class="mandatory"></span></th>
 							<th width="15%"><spring:message code="lbl.amount" /></th>
-							<th width="12%"><spring:message code="lbl.resolution" /></th>
+							<th width="12%"><spring:message code="lbl.resolution" /><span
+								class="mandatory"></span></th>
 							<c:if test="${!autoResolutionNoGenEnabled}">
 								<th><spring:message code="lbl.resolutionNumber" /><span
 								class="mandatory"></span></th>
 							</c:if>
-							<th width="27%"><spring:message code="lbl.comments" /></th>
+							<th width="27%"><spring:message code="lbl.comments" /><span
+								class="mandatory"></span></th>
 						</tr>
 					</thead>
 					<tbody data-existing-len="${fn:length(councilMeeting.meetingMOMs)}">

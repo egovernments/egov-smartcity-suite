@@ -47,13 +47,28 @@
  */
 package org.egov.council.service;
 
+import static org.egov.council.utils.constants.CouncilConstants.ADJOURNED;
+import static org.egov.council.utils.constants.CouncilConstants.APPROVED;
+import static org.egov.council.utils.constants.CouncilConstants.IMPLEMENTATION_STATUS_FINISHED;
+import static org.egov.council.utils.constants.CouncilConstants.REJECTED;
+import static org.egov.council.utils.constants.CouncilConstants.RESOLUTION_APPROVED_PREAMBLE;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.commons.EgwStatus;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.council.autonumber.PreambleNumberGenerator;
 import org.egov.council.autonumber.SumotoNumberGenerator;
 import org.egov.council.entity.CouncilPreamble;
 import org.egov.council.entity.MeetingMOM;
 import org.egov.council.entity.enums.PreambleType;
 import org.egov.council.repository.CouncilPreambleRepository;
 import org.egov.council.service.workflow.PreambleWorkflowCustomImpl;
+import org.egov.council.utils.constants.CouncilConstants;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.AppConfigValueService;
@@ -68,17 +83,6 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.egov.council.utils.constants.CouncilConstants.ADJOURNED;
-import static org.egov.council.utils.constants.CouncilConstants.APPROVED;
-import static org.egov.council.utils.constants.CouncilConstants.IMPLEMENTATION_STATUS_FINISHED;
-import static org.egov.council.utils.constants.CouncilConstants.REJECTED;
-import static org.egov.council.utils.constants.CouncilConstants.RESOLUTION_APPROVED_PREAMBLE;
 
 @Service
 @Transactional(readOnly = true)
@@ -96,6 +100,9 @@ public class CouncilPreambleService {
 
     @Autowired
     protected AutonumberServiceBeanResolver autonumberServiceBeanResolver;
+    
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
     @Autowired
     public CouncilPreambleService(final CouncilPreambleRepository councilPreambleRepository) {
@@ -114,6 +121,25 @@ public class CouncilPreambleService {
             preambleWorkflowCustomImpl.createCommonWorkflowTransition(councilPreamble,
                     approvalPosition, approvalComment, workFlowAction);
 
+        councilPreambleRepository.save(councilPreamble);
+        return councilPreamble;
+    }
+    
+    @Transactional
+    public CouncilPreamble createPreambleAPI(final CouncilPreamble councilPreamble) {
+
+        PreambleNumberGenerator preamblenumbergenerator = autonumberServiceBeanResolver
+                .getAutoNumberServiceFor(PreambleNumberGenerator.class);
+        councilPreamble.setPreambleNumber(preamblenumbergenerator
+                .getNextNumber(councilPreamble));
+        
+        
+        
+        councilPreamble.setStatus(egwStatusHibernateDAO
+                .getStatusByModuleAndCode(CouncilConstants.PREAMBLE_MODULENAME,
+                        CouncilConstants.PREAMBLE_STATUS_CREATED));
+        councilPreamble.setType(PreambleType.GENERAL);
+        preambleWorkflowCustomImpl.onCreatePreambleAPI(councilPreamble);
         councilPreambleRepository.save(councilPreamble);
         return councilPreamble;
     }
@@ -140,6 +166,10 @@ public class CouncilPreambleService {
     
     public CouncilPreamble findbyPreambleNumber(String preambleNumber) {
         return councilPreambleRepository.findByPreambleNumber(preambleNumber);
+    }
+    
+    public CouncilPreamble findbyReferenceNumber(String referenceNumber) {
+        return councilPreambleRepository.findByReferenceNumber(referenceNumber);
     }
     
     public Boolean autoGenerationModeEnabled(final String moduleName, final String keyName) {

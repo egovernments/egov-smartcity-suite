@@ -77,4 +77,6 @@ public interface PropertyMutationDAO {
          * @return PropertyMutation
          */
         public PropertyMutation getPropertyLatestMutationForAssessmentNo(String assessmentNo);
+        
+        public PropertyMutation getLatestApprovedMutationForAssessmentNo(String assessmentNo);
 }

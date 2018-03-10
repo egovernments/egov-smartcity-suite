@@ -213,6 +213,11 @@ public class VacancyRemissionService {
     public VacancyRemission getRejectedVacancyRemissionForProperty(final String upicNo) {
         return vacancyRemissionRepository.findRejectedByUpicNo(upicNo);
     }
+    
+    public VacancyRemission getVRUnderWFByUpicNo(final String upicNo) {
+        return vacancyRemissionRepository.getVRUnderWorkflowByUpicNo(upicNo);
+    }
+
 
     @Transactional
     public VacancyRemission saveVacancyRemission(final VacancyRemission vacancyRemission, Long approvalPosition,
@@ -282,11 +287,12 @@ public class VacancyRemissionService {
             if (wfInitiator.getPosition().equals(vacancyRemission.getState().getOwnerPosition())) {
                 vacancyRemission.setStatus(VR_STATUS_REJECTION_ACK_GENERATED);
                 vacancyRemission.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNextAction(null).withOwner((Position) null);
+                        .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNextAction(null)
+                        .withOwner(vacancyRemission.getCurrentState().getOwnerPosition());
                 vacancyRemission.getBasicProperty().setUnderWorkflow(false);
             }
         } else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
-            final String stateValue = WF_STATE_REJECTED;
+            final String stateValue = VR_APP_STATUS_REJECTED;
             vacancyRemission.setStatus(VR_STATUS_REJECTED);
             vacancyRemission.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                     .withComments(approvalComent).withStateValue(stateValue).withDateInfo(currentDate.toDate())
@@ -353,8 +359,9 @@ public class VacancyRemissionService {
         final Set<Ptdemand> activePropPtDemandSet = vacancyRemission.getBasicProperty().getActiveProperty().getPtDemandSet();
         BigDecimal excess = BigDecimal.ZERO;
         final Set<String> demandReasons = new LinkedHashSet<>(
-                Arrays.asList(DEMANDRSN_CODE_GENERAL_TAX, DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_EDUCATIONAL_CESS,
-                        DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY));
+                Arrays.asList(DEMANDRSN_CODE_GENERAL_TAX, DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_EDUCATIONAL_TAX,
+                        DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, DEMANDRSN_CODE_SCAVENGE_TAX, 
+                        DEMANDRSN_CODE_WATER_TAX, DEMANDRSN_CODE_LIGHT_TAX, DEMANDRSN_CODE_DRAINAGE_TAX));
         Ptdemand currPtDemand = getCurrentPTDemand(demandInstallment, activePropPtDemandSet);
         if (currPtDemand != null) {
             final Set<EgDemandDetails> effectiveInstDemandDetails = propertyService
@@ -438,9 +445,9 @@ public class VacancyRemissionService {
                 final Map<String, Map<String, BigDecimal>> demandCollMap = propertyTaxUtil.prepareDemandDetForView(property,
                         propertyTaxCommonUtils.getCurrentInstallment());
                 final Map<String, BigDecimal> currentTaxDetails = propertyService.getCurrentTaxDetails(demandCollMap, new Date());
-                model.addAttribute("propertyTax", currentTaxDetails.get(DEMANDRSN_STR_GENERAL_TAX));
-                model.addAttribute("eduCess", currentTaxDetails.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO
-                        : currentTaxDetails.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
+                model.addAttribute("propertyTax", propertyTaxCommonUtils.getAggregateGenralTax(currentTaxDetails));
+                model.addAttribute("eduCess", currentTaxDetails.get(DEMANDRSN_STR_EDUCATIONAL_TAX) == null ? BigDecimal.ZERO
+                        : currentTaxDetails.get(DEMANDRSN_STR_EDUCATIONAL_TAX));
                 model.addAttribute("libraryCess", currentTaxDetails.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO
                         : currentTaxDetails.get(DEMANDRSN_STR_LIBRARY_CESS));
                 model.addAttribute("currTax", currentTaxDetails.get(CURR_DMD_STR));
@@ -581,20 +588,25 @@ public class VacancyRemissionService {
         if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_NOTICE_GENERATE)) {
             if (VR_STATUS_APPROVED.equalsIgnoreCase(vacancyRemissionApproval.getStatus())) {
                 vacancyRemissionApproval.setStatus(VR_STATUS_NOTICE_GENERATED);
-                vacancyRemissionApproval.transition().end().withSenderName(user.getUsername() + "::" + user.getName()).withComments(approvalComent)
-                        .withDateInfo(currentDate.toDate()).withNextAction(null);
+                vacancyRemissionApproval.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvalComent)
+                        .withDateInfo(currentDate.toDate()).withNextAction(null)
+                        .withOwner(vacancyRemissionApproval.getCurrentState().getOwnerPosition());
 
             } else {
                 vacancyRemissionApproval.setStatus(VR_STATUS_REJECTION_ACK_GENERATED);
-                vacancyRemissionApproval.transition().end().withSenderName(user.getUsername() + "::" + user.getName()).withComments(approvalComent)
-                        .withDateInfo(currentDate.toDate()).withNextAction(null);
+                vacancyRemissionApproval.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvalComent)
+                        .withDateInfo(currentDate.toDate()).withNextAction(null)
+                        .withOwner(vacancyRemissionApproval.getCurrentState().getOwnerPosition());
             }
 
         } else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
             if (wfInitiator != null)
                 if (wfInitiator.getPosition().equals(vacancyRemissionApproval.getCurrentState().getOwnerPosition())) {
                     vacancyRemissionApproval.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
-                            .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNextAction(null);
+                            .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNextAction(null)
+                            .withOwner(vacancyRemissionApproval.getCurrentState().getOwnerPosition());
                     vacancyRemissionApproval.setStatus(VR_STATUS_REJECTED);
                     vacancyRemissionApproval.getVacancyRemission().getBasicProperty().setUnderWorkflow(FALSE);
                 } else {
@@ -627,7 +639,8 @@ public class VacancyRemissionService {
                         .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null);
             } else if ("END".equalsIgnoreCase(vacancyRemissionApproval.getCurrentState().getNextAction()))
                 vacancyRemissionApproval.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNextAction(null);
+                        .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNextAction(null)
+                        .withOwner(vacancyRemissionApproval.getCurrentState().getOwnerPosition());
             else {
                 wfmatrix = vacancyRemissionWorkflowService.getWfMatrix(vacancyRemissionApproval.getStateType(), null,
                         null, additionalRule, vacancyRemissionApproval.getCurrentState().getValue(),
@@ -712,7 +725,10 @@ public class VacancyRemissionService {
 
     public DocumentType getDocType(final String docname) {
         return vacancyRemissionRepository.findDocumentTypeByNameAndTransactionType(docname, TransactionType.VACANCYREMISSION);
-
+    }
+    
+    public DocumentType getMUDocType(final String name) {
+        return vacancyRemissionRepository.findDocumentTypeByNameAndTransactionType(name, TransactionType.VRMONTHLYUPDATE);
     }
 
     public ReportOutput generateReport(final VacancyRemission vacancyRemission, final HttpServletRequest request,
@@ -902,7 +918,8 @@ public class VacancyRemissionService {
     @Transactional
     public void closeVacancyRemission(final VacancyRemission vacancyRemission) {
         final User user = securityUtils.getCurrentUser();
-        vacancyRemission.transition().end().withSenderName(user.getName()).withDateInfo(new Date()).withNextAction(null);
+        vacancyRemission.transition().end().withSenderName(user.getName()).withDateInfo(new Date()).withNextAction(null)
+                .withOwner(vacancyRemission.getCurrentState().getOwnerPosition());
         if (!VR_STATUS_APPROVED.equals(vacancyRemission.getStatus())) {
             vacancyRemission.setStatus(VR_STATUS_REJECTION_ACK_GENERATED);
             vacancyRemission.getBasicProperty().setUnderWorkflow(false);
@@ -975,4 +992,5 @@ public class VacancyRemissionService {
                 : Boolean.valueOf((Boolean) propertyService.getWaterTaxDues(assessmentNo, request)
                 .get(PropertyTaxConstants.UNDER_WTMS_WF));
     }
+
 }

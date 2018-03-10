@@ -162,6 +162,7 @@ public class JpaConfiguration {
         properties.put(RELEASE_CONNECTIONS, "after_statement");
         properties.put("jadira.usertype.autoRegisterUserTypes", true);
         properties.put("jadira.usertype.databaseZone", "jvm");
+        properties.put("org.hibernate.envers.store_data_at_delete", true);
 
         // Multitenancy Configuration
         if (multiTenancyEnabled) {

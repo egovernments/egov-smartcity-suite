@@ -54,6 +54,8 @@ import com.google.gson.JsonSerializer;
 
 import java.lang.reflect.Type;
 
+import org.egov.ptis.report.bean.NatureOfUsageResult;
+
 /**
  *
  * @author subhash

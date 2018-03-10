@@ -47,13 +47,20 @@
  */
 package org.egov.portal.web.controller.citizen;
 
+import static org.egov.infra.persistence.entity.enums.UserType.BUSINESS;
+import static org.egov.infra.persistence.entity.enums.UserType.CITIZEN;
+
+import java.util.List;
+
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.portal.entity.CitizenInbox;
 import org.egov.portal.entity.PortalInboxUser;
+import org.egov.portal.entity.PortalLink;
 import org.egov.portal.service.CitizenInboxService;
 import org.egov.portal.service.PortalInboxUserService;
+import org.egov.portal.service.PortalLinkService;
 import org.egov.portal.service.PortalServiceTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -62,11 +69,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.util.List;
-
-import static org.egov.infra.persistence.entity.enums.UserType.BUSINESS;
-import static org.egov.infra.persistence.entity.enums.UserType.CITIZEN;
 
 @Controller
 @RequestMapping(value = "/home")
@@ -86,6 +88,9 @@ public class HomeController {
 
     @Autowired
     private CityService cityService;
+    
+    @Autowired
+    private PortalLinkService portalLinkService;
 
     @RequestMapping(method = RequestMethod.GET)
     public String showHomePage(ModelMap modelData) {
@@ -131,6 +136,8 @@ public class HomeController {
         List<PortalInboxUser> totalServicesApplied = portalInboxUserService.getPortalInboxByUserId(user.getId());
         List<PortalInboxUser> totalServicesCompleted = portalInboxUserService.getPortalInboxByResolved(user.getId(), true);
         List<PortalInboxUser> totalServicesPending = portalInboxUserService.getPortalInboxByResolved(user.getId(), false);
+        List<PortalLink> totalServicesLinked = portalLinkService.findByUser(user);
+        modelData.addAttribute("totalServicesLinked",totalServicesLinked);
         modelData.addAttribute("totalServicesPending", totalServicesPending);
         modelData.addAttribute("totalServicesApplied", totalServicesApplied);
         modelData.addAttribute("totalServicesCompleted", totalServicesCompleted);

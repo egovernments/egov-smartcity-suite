@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -180,9 +180,10 @@
 						<tr>
 							<th><spring:message code="lbl.escalation.heading.fromPosition" /></th>
 							<th><spring:message code="lbl.escalation.complaintType" /></th>
-								<th><spring:message code="lbl.escalation.heading.department" /></th>
-								<th><spring:message code="lbl.escalation.heading.designation" /></th>
+							<th><spring:message code="lbl.escalation.heading.department" /></th>
+							<th><spring:message code="lbl.escalation.heading.designation" /></th>
 							<th><spring:message code="lbl.escalation.heading.toPosition" /></th>
+							<th><spring:message code="lbl.escalation.action"/> </th>
 						</tr>
 					</thead>
 					<tbody>

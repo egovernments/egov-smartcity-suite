@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -48,8 +48,9 @@
 
 package org.egov.tl.web.controller.transactions.legacy;
 
+import org.egov.tl.entity.License;
 import org.egov.tl.entity.TradeLicense;
-import org.egov.tl.service.TradeLicenseService;
+import org.egov.tl.service.LegacyLicenseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -63,16 +64,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class ViewLegacyLicenseController {
 
     @Autowired
-    private TradeLicenseService tradeLicenseService;
+    private LegacyLicenseService legacyLicenseService;
 
     @ModelAttribute("tradeLicense")
-    public TradeLicense tradeLicense(@PathVariable final String applicationNumber) {
-        return tradeLicenseService.getLicenseByApplicationNumber(applicationNumber);
+    public License tradeLicense(@PathVariable String applicationNumber) {
+        return legacyLicenseService.getLicenseByApplicationNumber(applicationNumber);
     }
 
     @GetMapping("/view/{applicationNumber}")
-    public String view(@ModelAttribute("tradeLicense") final TradeLicense tradeLicense, final ModelMap model) {
-        model.addAttribute("outstandingFee", tradeLicenseService.getOutstandingFee(tradeLicense));
+    public String view(@ModelAttribute("tradeLicense") TradeLicense tradeLicense, ModelMap model) {
+        model.addAttribute("outstandingFee", legacyLicenseService.getOutstandingFee(tradeLicense));
         return "license-view";
     }
 }

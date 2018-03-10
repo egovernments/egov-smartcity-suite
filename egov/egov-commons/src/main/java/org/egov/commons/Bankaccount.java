@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -47,8 +47,10 @@
  */
 package org.egov.commons;
 
-import org.egov.commons.utils.BankAccountType;
-import org.egov.infra.persistence.entity.AbstractAuditable;
+import static org.egov.commons.Bankaccount.SEQ_BANKACCOUNT;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -65,14 +67,16 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
-import java.util.Set;
 
-import static org.egov.commons.Bankaccount.SEQ_BANKACCOUNT;
+import org.egov.commons.utils.BankAccountType;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "BANKACCOUNT")
 @SequenceGenerator(name = SEQ_BANKACCOUNT, sequenceName = SEQ_BANKACCOUNT, allocationSize = 1)
+@Unique(fields = { "accountnumber" }, enableDfltMsg = true)
 public class Bankaccount extends AbstractAuditable implements java.io.Serializable {
 
     public static final String SEQ_BANKACCOUNT = "SEQ_BANKACCOUNT";
@@ -96,6 +100,7 @@ public class Bankaccount extends AbstractAuditable implements java.io.Serializab
     private Fund fund;
 
     @NotNull
+    @Length(max = 20)
     private String accountnumber;
 
     private String accounttype;

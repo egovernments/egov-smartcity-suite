@@ -308,7 +308,7 @@ public class BakayaFeristReportAction extends ReportFormAction {
                 if (currentInstallment.equals(demandDetailsAndInstallment.getInstallment())) {
                     taxInfo.setGrandTotal(grandTotal.setScale(2, BigDecimal.ROUND_HALF_UP));
                 }
-                if (!taxInfo.getTotal().equals(BigDecimal.ZERO.setScale(2))) {
+                if (taxInfo.getTotal().compareTo(BigDecimal.ZERO.setScale(2)) != 0) {
                     taxInfos.add(taxInfo);
                 }
             }

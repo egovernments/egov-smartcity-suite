@@ -112,15 +112,18 @@ $(document).ready(function(){
     $('.services-item .services').hide();
     $('#showServiceGroup').hide();
     if(module == 'home'){
-      $('.inbox-modules').show();
-      $('.action-bar').addClass('hide');
-      $('#showServiceGroup').show();
+      $('.inbox-modules #showServiceGroup').show();
+      $('.action-bar').hide();
+      $('.linkedApplications').hide();
       inboxloadmethod();
     }
+    else if(module == 'My Services'){
+        $('.inbox-modules').hide();
+        $('[data-services="'+module+'"], .action-bar, .linkedApplications').show();
+    }	
     else{
-      $('.inbox-modules').hide();
-      $('[data-services="'+module+'"]').show();
-      $('.action-bar').removeClass('hide');
+      $('.inbox-modules, .linkedApplications').hide();
+      $('[data-services="'+module+'"], .action-bar').show();
     }
   })
 
@@ -202,10 +205,14 @@ $(document).ready(function(){
 	  }
   });
   
-  
+  $('.linkedApplications, .action-bar').hide();
   
 
 });
+
+function onlinePayTaxForm(url){
+	window.open(url,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
+}
 
 function leftmenuheight(){
   //console.log($( window ).height(), $('.modules-ul').height());

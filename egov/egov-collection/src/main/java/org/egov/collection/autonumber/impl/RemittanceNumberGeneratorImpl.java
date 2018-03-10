@@ -50,35 +50,25 @@ package org.egov.collection.autonumber.impl;
 import org.egov.collection.autonumber.RemittanceNumberGenerator;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.commons.CFinancialYear;
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.infra.utils.DateUtils;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 @Service
 public class RemittanceNumberGeneratorImpl implements RemittanceNumberGenerator {
+    private static final String APP_NUMBER_SEQ_PREFIX = "SQ_REMITTANCE%s";
 
     @Autowired
-    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
     @Override
     public String generateRemittanceNumber(final CFinancialYear financialYear) {
-
-        final String APP_NUMBER_SEQ_PREFIX = "SQ_REMITTANCE%s";
-        final SimpleDateFormat sdf = new SimpleDateFormat("MM");
-        final String formattedDate = sdf.format(new Date());
-
-        final String currentYear = DateUtils.currentDateToYearFormat();
-        final String sequenceName = String.format(APP_NUMBER_SEQ_PREFIX, currentYear);
-        final Serializable sequenceNumber = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
-
-        final String result = String.format("%s/%06d/%s/%s", CollectionConstants.REMITTANCE_NUMBER_PREFIX,
-                sequenceNumber, formattedDate, financialYear.getFinYearRange());
-        return result;
+        final String sequenceName = String.format(APP_NUMBER_SEQ_PREFIX, DateUtils.currentYear());
+        return String.format("%s/%06d/%s/%s", CollectionConstants.REMITTANCE_NUMBER_PREFIX,
+                genericSequenceNumberGenerator.getNextSequence(sequenceName), new DateTime().toString("MM"),
+                financialYear.getFinYearRange());
     }
 
 }

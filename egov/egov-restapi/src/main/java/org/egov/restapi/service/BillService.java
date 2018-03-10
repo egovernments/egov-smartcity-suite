@@ -512,6 +512,7 @@ public class BillService {
         egBillregistermis.setNarration(billRegister.getNarration());
         egBillregistermis.setPartyBillNumber(billRegister.getPartyBillNumber());
         egBillregistermis.setPartyBillDate(billRegister.getPartyBillDate());
+        egBillregistermis.setSourcePath(billRegister.getCheckListUrl());
 
         egBillregister.setEgBillregistermis(egBillregistermis);
     }

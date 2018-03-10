@@ -65,10 +65,23 @@
 			document.getElementById("urlDetails").style.display = "none";
 		}
 	}
+	function disableAll()  
+	{
+		var frmIndex=0;
+		for(var i=0;i<document.forms[frmIndex].length;i++)
+		{
+			for(var i=0;i<document.forms[0].length;i++)
+			{
+				if(document.forms[0].elements[i].value != 'Close'){
+					document.forms[frmIndex].elements[i].disabled =true;   
+				}						
+			}	
+		}  
+	}
 </script>
 <title> <s:text name="service.master.search.header"></s:text> </title>
 
-</head>
+</head>  
 
 <body onload="onBodyLoad();loadDropDownCodes();loadGridOnValidationFail();disableAll();">
 <s:form theme="simple" name="serviceDetailsForm" action="serviceDetails" method="post">
@@ -87,22 +100,5 @@
 		</div>
 </s:push>
 </s:form>
-
-<script>
-
-function disableAll()  
-{
-	var frmIndex=0;
-	for(var i=0;i<document.forms[frmIndex].length;i++)
-	{
-		for(var i=0;i<document.forms[0].length;i++)
-		{
-			if(document.forms[0].elements[i].value != 'Close'){
-				document.forms[frmIndex].elements[i].disabled =true;   
-			}						
-		}	
-	}
-}
-</script>
 </body>
 </html>

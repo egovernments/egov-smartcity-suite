@@ -70,7 +70,7 @@
 	<td class="bluebox"></td>
 	<td class="bluebox"><s:text name="voucher.narration" /></td>
 	<td class="bluebox" colspan="3"><s:textarea name="description"
-			id="description" cols="120" /><br /> <span class="highlight2">Max.
+			id="description" cols="120"  maxlength="1024"/><br /> <span class="highlight2">Max.
 			1024 characters</span></td>
 </tr>
 <tr id="budgetReappRow">

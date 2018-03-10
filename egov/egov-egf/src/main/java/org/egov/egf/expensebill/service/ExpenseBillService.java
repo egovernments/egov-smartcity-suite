@@ -247,8 +247,10 @@ public class ExpenseBillService {
 
 
         // TODO: add the code to handle new screen for view bills of all type
-        savedEgBillregister.getEgBillregistermis().setSourcePath(
-                "/EGF/expensebill/view/" + savedEgBillregister.getId().toString());
+        if (savedEgBillregister.getEgBillregistermis().getSourcePath() == null
+                || StringUtils.isBlank(savedEgBillregister.getEgBillregistermis().getSourcePath()))
+            savedEgBillregister.getEgBillregistermis().setSourcePath(
+                    "/EGF/expensebill/view/" + savedEgBillregister.getId().toString());
 
         return expenseBillRepository.save(savedEgBillregister);
     }

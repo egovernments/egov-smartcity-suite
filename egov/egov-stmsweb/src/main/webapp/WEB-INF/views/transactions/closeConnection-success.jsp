@@ -90,7 +90,7 @@
 		</c:if>
 		<c:choose>
 			<c:when test="${sewerageApplicationDetails.status == 'ACTIVE' }">
-				<a href="javascript:void(0)" class="btn btn-default inboxload" onclick="self.close()" ><spring:message code="lbl.close" /></a>
+				<a href="javascript:void(0)" class="btn btn-primary inboxload" onclick="self.close()" ><spring:message code="lbl.close" /></a>
 			</c:when>
 			<c:otherwise>
 				<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>

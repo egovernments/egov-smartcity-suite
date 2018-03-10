@@ -48,31 +48,30 @@
 
 package org.egov.mrs.autonumber.impl;
 
-import org.egov.infra.persistence.utils.SequenceNumberGenerator;
+import org.egov.infra.persistence.utils.DatabaseSequenceProvider;
 import org.egov.mrs.autonumber.MarriageRegistrationNumberGenerator;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Service
-public class MarriageRegistrationNumberGeneratorImpl implements MarriageRegistrationNumberGenerator{
+public class MarriageRegistrationNumberGeneratorImpl implements MarriageRegistrationNumberGenerator {
 
     private static final String SEQ_REGISTRATIONNO = "SEQ_EGMRS_REGISTRATIONNO";
 
     @Autowired
-    private SequenceNumberGenerator sequenceNoGenerator;
+    private DatabaseSequenceProvider sequenceNoGenerator;
+
     @Override
     public String generateMarriageRegistrationNumber(MarriageRegistration registration) {
-        
-        final Serializable referenceNumber = sequenceNoGenerator.getNextSequence(SEQ_REGISTRATIONNO);
-        return new  SimpleDateFormat("ddMMyyyy").format(new Date())
+
+        return new SimpleDateFormat("ddMMyyyy").format(new Date())
                 .concat(String.format(
-                "%s%06d", "", referenceNumber));
-       
+                        "%s%06d", "", sequenceNoGenerator.getNextSequence(SEQ_REGISTRATIONNO)));
+
     }
 
 }

@@ -74,7 +74,7 @@ jQuery(document).ready(function($) {
 });
 	
 
-$(".btn-primary").click(function(event){
+$(".btnSearch").click(function(event){
 	$('#searchSewerageapplication').show();
 	var consumerNumber=$('#consumerNumber').val();
 	var shscNumber=$('#shscNumber').val();
@@ -82,22 +82,21 @@ $(".btn-primary").click(function(event){
 	var mobileNumber=$('#mobileNumber').val();
 	var wardName=$('#app-mobno').val();
 	var doorNo=$('#app-appcodo').val();
+	var fromDate=$('#fromDate').val();
+	var toDate=$('#toDate').val();
 	
-	if(consumerNumber=='' && shscNumber ==''  && applicantName == ''  && mobileNumber == ''
-			&& wardName == ''  && doorNo == '') {
+	if(consumerNumber == '' && shscNumber == '' && applicantName == '' && mobileNumber == '' && wardName == '' && doorNo == '' && fromDate == '' && toDate == '') {
 				bootbox.alert("Please Enter Atleast One Input Value For Searching");
 				return false;
-			}
-			else {
+			} else {
 				submitButton();
 				return true;
 			}
-		event.preventDefault();
 	});
 
 $(document).on('change', 'select.actiondropdown', function() {
-	var ptassessmentno= prevdatatable.fnGetData($(this).parent().parent(), 1);
-	var shscnumber= prevdatatable.fnGetData($(this).parent().parent(), 2); 
+	var ptassessmentno= prevdatatable.fnGetData($(this).parent().parent(), 2);
+	var shscnumber= prevdatatable.fnGetData($(this).parent().parent(), 3); 
 	
 	if($(this).find(":selected").text()=="Change number of seats"){
 		var changeincloseturl=$(this).val();
@@ -111,12 +110,10 @@ $(document).on('change', 'select.actiondropdown', function() {
 			},
 			datatype: "text",
 			success: function (response) {
-				console.log("success"+response);
-				if(response!=""){
+				if(response!="") {
 				bootbox.alert(response);
 				return false;
-				}
-				else{
+				} else {
 					loadPropertyDetails(changeincloseturl,consumerno,shscnumber,ptassessmentno);
 				}
 			}, 
@@ -171,16 +168,15 @@ function openPopup(url){
 
 
 var prevdatatable;
+var oTable;
 function submitButton() {
-	oTable= $('#aplicationSearchResults');
+	$('.report-section').removeClass('display-hide');
+	oTable = $('#aplicationSearchResults');
 	if(prevdatatable)
 	{
 		prevdatatable.fnClearTable();
 		$('#aplicationSearchResults thead tr').remove();
 	}
-	/*$.post("/stms/existing/sewerage/",$('#sewerageSearchRequestForm').serialize())
-	.done(function(searchResult) {
-		console.log(searchResult);*/
 	prevdatatable = oTable.dataTable({
 		dom: "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-2 col-xs-6 text-right'B><'col-md-5 col-xs-6 text-right'p>>",
 		processing: true,
@@ -191,34 +187,29 @@ function submitButton() {
         "order": [[0, 'asc']],
         "autoWidth": false,
         "bDestroy": true,
-        
-        
-
         ajax : {
-
 		url : "/stms/existing/sewerage/",
 		type : 'POST',
-		data : function(args) {
-			return {
-				"args" : JSON.stringify(args),
-				"consumerNumber":$('#consumerNumber').val(), 
-				"shscNumber" : $('#shscNumber').val(),
-				"applicantName" : $('#applicantName').val(),
-				"mobileNumber":$('#mobileNumber').val(),
-			 	"revenueWard": $('#app-mobno').val(),
-			 	"doorNumber" : $('#app-appcodo').val(),
-			 	"legacy" : $('#legacy').val()
-				
-				
-			};
+		beforeSend : function() {
+			$('.loader-class').modal('show', {
+				backdrop : 'static'
+			});
 		},
+		data : function(args) {
+			var formData = getFormData(jQuery('form'));
+			formData['args']=JSON.stringify(args);
+			return formData;
+		},
+		complete : function() {
+			$('.loader-class').modal('hide');
+		}
 	},	
 		columns : [
 					  { title : "Application Number", data:"applicationNumber"},
-					  { title : "pt assesmentno", data: "assessmentNumber", visible: false},
+					  { title : "Application Date", data:"applicationDate"},
+					  { title : "pt assesmentno", targets: [2], data: "assessmentNumber", visible: false},
 					  {title : 'S.H.S.C Number',class : 'row-detail', data : 'shscNumber',
 			        	   "render": function ( data, type, row, meta ) {
-			        		   
 					            return '<a onclick="openPopup(\'/stms/existing/sewerage/view/'+row.applicationNumber+'/'+row.assessmentNumber+'\')" href="javascript:void(0);">'+data+'</a>';} },
 					  { title : "Applicant Name", data: "applicantName"},
 					  { title : "Application Type", data: "applicationType"},
@@ -238,7 +229,7 @@ function submitButton() {
 						  }
 					  }
 					  ],
-					  "aaSorting": [[4, 'asc']] 
+					  "aaSorting": [[5, 'asc']] 
 				});
 	
 }
@@ -262,23 +253,19 @@ function loadPropertyDetails(url,consumerno,shscnumber, propertyID) {
 				var waterTaxDue = getWaterTaxDue(propertyID);
 					if(applicationType==="changenumberofseats"){
 						subErrorMessage = " change number of seats";
-					}
-					else{
+					} else {
 						subErrorMessage = " close sewerage connection";
 					}
 					if(response.propertyDetails.taxDue > 0) {
 						errorMessage = "For entered Property tax Assessment number "+propertyID+" demand is due Rs."+ response.propertyDetails.taxDue+"/-. Please clear demand and apply for"+subErrorMessage;
-					}
-					else if(waterTaxDue['WATERTAXDUE'] > 0) {
+					} else if(waterTaxDue['WATERTAXDUE'] > 0) {
 						errorMessage = "For entered Property tax Assessment number "+propertyID+" linked water tap connection demand with Consumer code:"+waterTaxDue['CONSUMERCODE'][0]+" is due Rs."+ waterTaxDue['WATERTAXDUE']+"/- . Please clear demand and apply for"+subErrorMessage;
 					}
 					if(response.propertyDetails.taxDue > 0 || waterTaxDue['WATERTAXDUE'] > 0) {
 						bootbox.alert(errorMessage);
-					}
-					else{
+					} else {
 						callurl(url, consumerno, propertyID, shscnumber);
 					}
-				
 			}, 
 			error: function (response) {
 				console.log("failed");
@@ -306,3 +293,11 @@ function getWaterTaxDue(propertyID) {
 	}
 }
 
+function getFormData($form) {
+    var unindexed_array = $form.serializeArray();
+    var indexed_array = {};
+    $.map(unindexed_array, function(n, i){
+        indexed_array[n['name']] = n['value'];
+    });
+    return indexed_array;
+}

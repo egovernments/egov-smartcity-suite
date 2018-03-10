@@ -129,6 +129,7 @@ import java.util.stream.Collectors;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.egov.infra.validation.regex.Constants.EMAIL;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
@@ -283,17 +284,13 @@ public class ComplaintController extends ApiController {
     }
 
     @RequestMapping(value = {ApiUrl.COMPLAINT_CREATE, "/cross-city/complaint/create"}, method = RequestMethod.POST)
-    public ResponseEntity<String> complaintCreate(
-            @RequestParam(value = "json_complaint") final String complaintJSON,
-            @RequestParam("files") final MultipartFile[] files) {
+    public ResponseEntity<String> complaintCreate(@RequestParam(value = "json_complaint") String complaintJSON,
+                                                  @RequestParam("files") MultipartFile[] files) {
         try {
 
-            final JSONObject complaintRequest = (JSONObject) JSONValue.parse(complaintJSON);
-
-            final Complaint complaint = new Complaint();
-
+            JSONObject complaintRequest = (JSONObject) JSONValue.parse(complaintJSON);
+            Complaint complaint = new Complaint();
             if (complaintRequest.containsKey(COMPLAINANT_NAME) && complaintRequest.containsKey(COMPLAINANT_MOBILE_NO)) {
-
                 if (isEmpty(complaintRequest.get(COMPLAINANT_NAME).toString())
                         || isEmpty(complaintRequest.get(COMPLAINANT_MOBILE_NO).toString()))
                     return getResponseHandler().error(getMessage("msg.complaint.reg.failed.user"));
@@ -305,7 +302,8 @@ public class ComplaintController extends ApiController {
                     final String email = complaintRequest.get(COMPLAINANT_EMAIL).toString().trim();
                     if (!email.matches(EMAIL))
                         return getResponseHandler().error(getMessage("msg.invalid.mail"));
-                    complaint.getComplainant().setEmail(email);
+                    if (isNotEmpty(email))
+                        complaint.getComplainant().setEmail(email);
                 }
 
             } else if (!securityUtils.currentUserIsCitizen()) {
@@ -562,12 +560,20 @@ public class ComplaintController extends ApiController {
      * @return Complaint
      */
 
-    @RequestMapping(value = {
-            ApiUrl.CITIZEN_COMPLAINT_COUNT, "/cross-city/citizen/getMyComplaint/count"},
-            method = GET, produces = TEXT_PLAIN_VALUE)
+    @GetMapping(value = ApiUrl.CITIZEN_COMPLAINT_COUNT, produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getComplaintsCount() {
         try {
             return getResponseHandler().success(complaintService.getMyComplaintsCount());
+        } catch (final Exception e) {
+            LOGGER.error(EGOV_API_ERROR, e);
+            return getResponseHandler().error(getMessage(SERVER_ERROR));
+        }
+    }
+
+    @GetMapping(value = "/cross-city/complaint/count/{mobileNumber}", produces = TEXT_PLAIN_VALUE)
+    public ResponseEntity<String> getComplaintsCount(@PathVariable String mobileNumber) {
+        try {
+            return getResponseHandler().success(complaintIndexService.getCrossCityComplaintsCount(mobileNumber));
         } catch (final Exception e) {
             LOGGER.error(EGOV_API_ERROR, e);
             return getResponseHandler().error(getMessage(SERVER_ERROR));

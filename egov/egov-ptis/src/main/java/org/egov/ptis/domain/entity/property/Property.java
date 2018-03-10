@@ -236,5 +236,20 @@ public interface Property extends Auditable {
     
     void setReferenceId(String referenceId);
 
+    public boolean isThirdPartyVerified();
 
+    public void setThirdPartyVerified(boolean thirdPartyVerified);
+    
+    public BigDecimal getSurveyVariance();
+
+    public void setSurveyVariance(BigDecimal surveyVariance);
+    
+    public boolean isSentToThirdParty();
+
+    public void setSentToThirdParty(boolean sentToThirdParty);
+    
+    public GisDetails getGisDetails();
+
+    public void setGisDetails(GisDetails gisDetails);
+    
 }

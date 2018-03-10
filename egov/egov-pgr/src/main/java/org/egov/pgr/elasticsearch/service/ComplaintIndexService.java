@@ -85,11 +85,13 @@ import org.elasticsearch.search.aggregations.bucket.terms.Terms.Bucket;
 import org.elasticsearch.search.aggregations.metrics.avg.Avg;
 import org.elasticsearch.search.aggregations.metrics.tophits.TopHits;
 import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -102,14 +104,8 @@ import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
 import static org.egov.infra.utils.ApplicationConstant.NA;
-import static org.egov.pgr.utils.constants.PGRConstants.CITY_CODE;
-import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_REOPENED;
-import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_ALL_FUNCTIONARY;
-import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_ALL_LOCALITIES;
-import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_ALL_ULB;
-import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_ALL_WARDS;
-import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_CITY;
-import static org.egov.pgr.utils.constants.PGRConstants.NOASSIGNMENT;
+import static org.egov.infra.utils.DateUtils.startOfToday;
+import static org.egov.pgr.utils.constants.PGRConstants.*;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.elasticsearch.index.query.QueryBuilders.termQuery;
@@ -623,7 +619,10 @@ public class ComplaintIndexService {
         final Range currentYearCount = consolidatedResponse.getAggregations().get("currentYear");
         result.put("CYTDComplaint", currentYearCount.getBuckets().get(0).getDocCount());
 
-        final Range todaysCount = consolidatedResponse.getAggregations().get("todaysComplaintCount");
+        BoolQueryBuilder todaysComplaintQuery = getFilterQuery(complaintDashBoardRequest, true);
+        Range todaysCount = complaintIndexRepository
+                .todaysComplaintCount(todaysComplaintQuery)
+                .getAggregations().get("todaysComplaintCount");
         result.put("todaysComplaintsCount", todaysCount.getBuckets().get(0).getDocCount());
 
         // For Dynamic results based on grouping fields
@@ -1314,8 +1313,16 @@ public class ComplaintIndexService {
     }
 
     private BoolQueryBuilder getFilterQuery(final ComplaintDashBoardRequest complaintDashBoardRequest) {
+        return getFilterQuery(complaintDashBoardRequest, false);
+    }
+
+    private BoolQueryBuilder getFilterQuery(final ComplaintDashBoardRequest complaintDashBoardRequest, boolean todays) {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().filter(termQuery("registered", 1));
-        if (isNotBlank(complaintDashBoardRequest.getFromDate()) && isNotBlank(complaintDashBoardRequest.getToDate()))
+        if (todays) {
+            boolQuery = boolQuery.must(rangeQuery("createdDate")
+                    .from(startOfToday().toString(PGR_INDEX_DATE_FORMAT))
+                    .to(new DateTime().plusDays(1).toString(PGR_INDEX_DATE_FORMAT)));
+        } else if (isNotBlank(complaintDashBoardRequest.getFromDate()) && isNotBlank(complaintDashBoardRequest.getToDate()))
             boolQuery = boolQuery.must(rangeQuery("createdDate").from(complaintDashBoardRequest.getFromDate()).to(complaintDashBoardRequest.getToDate()));
         if (complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ALL_ULB) ||
                 complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ALL_WARDS) ||
@@ -1602,4 +1609,18 @@ public class ComplaintIndexService {
 
         }
     }
+
+    public Map<String, Long> getCrossCityComplaintsCount(String mobileNumber) {
+        HashMap<String, Long> complaintsCount = new HashMap<>();
+        complaintsCount.put(COMPLAINT_PENDING,
+                complaintIndexRepository.countByComplainantMobileAndComplaintStatusNameIn(mobileNumber, Arrays.asList(PENDING_STATUS)));
+        complaintsCount.put(COMPLAINT_COMPLETED,
+                complaintIndexRepository.countByComplainantMobileAndComplaintStatusNameIn(mobileNumber, Arrays.asList(COMPLETED_STATUS)));
+        complaintsCount.put(COMPLAINT_REJECTED,
+                complaintIndexRepository.countByComplainantMobileAndComplaintStatusNameIn(mobileNumber, Arrays.asList(REJECTED_STATUS)));
+        complaintsCount.put(COMPLAINT_ALL, complaintsCount.get(COMPLAINT_PENDING) + complaintsCount.get(COMPLAINT_COMPLETED)
+                + complaintsCount.get(COMPLAINT_REJECTED));
+        return complaintsCount;
+    }
+
 }

@@ -53,6 +53,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class WaterTaxConstants {
     public static final String FILESTORE_MODULECODE = "WTMS";
@@ -167,6 +168,14 @@ public class WaterTaxConstants {
     public static final String WF_STATE_STATE_FORWARD = "Application Approval Pending";
     public static final String WF_STATE_ASSISTANT_ENGINEER_APPROVED = "Asst engg approved";
     public static final String WF_STATE_WORK_ORDER_GENERETED = "Work order generated";
+    public static final String WF_STATE_DEE_APPROVED = "Deputy Executive Engineer approved";
+    public static final String WF_STATE_EE_APPROVED = "Executive Engineer approved";
+    public static final String WF_STATE_SE_APPROVED = "Superintending Engineer approved";
+    public static final String WF_STATE_ME_APPROVED = "Municipal Engineer approved";
+    public static final String WF_STATE_DEE_FORWARD_PENDING = "Deputy Executive Engineer forward pending";
+    public static final String WF_STATE_EE_FORWARD_PENDING = "Executive Engineer forward pending";
+    public static final String WF_STATE_SE_FORWARD_PENDING = "Superintending Engineer forward pending";
+    public static final String WF_STATE_ME_FORWARD_PENDING = "Municipal Engineer forward pending";
 
     public static final String APPROVEWORKFLOWACTION = "Approve";
     public static final String FORWARDWORKFLOWACTION = "Forward";
@@ -247,6 +256,7 @@ public class WaterTaxConstants {
     public static final String MONTHLY = "Monthly";
 
     public static final String WATERTAXREASONCODE = "WTAXCHARGES";
+    public static final String METERED_CHARGES_REASON_CODE = "METERCHARGES";
     public static final String WF_ESTIMATION_NOTICE_BUTTON = "Generate Estimation Notice";
     public static final String WF_CLOSERACKNOWLDGEENT_BUTTON = "Generate Acknowledgement";
     public static final Character DMD_STATUS_CHEQUE_BOUNCED = 'B';
@@ -262,6 +272,7 @@ public class WaterTaxConstants {
     public static final String RESIDENTIAL = "RESIDENTIAL";
     public static final String WFLOW_ACTION_STEP_THIRDPARTY_CREATED = "Created";
     public static final String NONMETEREDDEMANDREASON = "Water Charges";
+    public static final String METERCHARGESDEMANDREASON = "Water Tap Meter charges";
     public static final String MASTERSTATUSACTIVE = "ACTIVE";
     public static final String MASTERSTATUSINACTIVE = "IN ACTIVE";
     public static final String COLLECTION_STRING_SERVICE_CODE = "WT";
@@ -275,15 +286,22 @@ public class WaterTaxConstants {
     public static final String PAYMENT_TYPE_ADVANCE = "Advance";
     public static final String CONTENT_DISPOSITION = "Content-disposition";
     // HashMap map b/n Demand reason string and code
-    public static final LinkedHashMap<String, String> NON_METERED_DMDRSN_CODE_MAP = new LinkedHashMap<String, String>() {
+    public static final Map<String, String> NON_METERED_DMDRSN_CODE_MAP = new LinkedHashMap<String, String>() {
         private static final long serialVersionUID = -9153822216362973956L;
 
         {
             put(WATERTAXREASONCODE, NONMETEREDDEMANDREASON);
         }
     };
+
+    public static final Map<String, String> METERED_DMDRSN_CODE_MAP = new LinkedHashMap<String, String>() {
+        private static final long serialVersionUID = -9153822216362973956L;
+        {
+            put(METERED_CHARGES_REASON_CODE, METERCHARGESDEMANDREASON);
+        }
+    };
     public static final String TOTAL_AMOUNT = "amount";
-    public final static String PAID_BY = "paidBy";
+    public static final String PAID_BY = "paidBy";
     public static final String DEMANDRSN_CODE_ADVANCE = "WTADVANCE";
     public static final String DEMANDRSN_REASON_ADVANCE = "Advance";
     public static final String CURRENTYEAR_FIRST_HALF = "Current 1st Half";
@@ -378,6 +396,7 @@ public class WaterTaxConstants {
     public static final String MUNICIPAL_ENGINEER_DESIGN = "Municipal Engineer";
     public static final String DEPUTY_ENGINEER_DESIGN = "Deputy Executive engineer";
     public static final String SUPERIENTEND_ENGINEER_DESIGN = "Superintendent Engineer";
+    public static final String SUPERINTENDING_ENGINEER_DESIGNATION = "Superintending Engineer";
     public static final String TAP_INSPPECTOR_DESIGN = "Tap Inspector";
     public static final String ASSISTANT_ENGINEER_DESIGN = "Assistant engineer";
     public static final String ASSISTANT_EXECUTIVE_ENGINEER_DESIGN = "Assistant executive engineer";
@@ -411,4 +430,8 @@ public class WaterTaxConstants {
     public static final String SURVEY = "Survey";
     public static final String APPLICATION_GIS_SYSTEM = "Application has been created through GIS survey system";
     public static final String MIGRATED_CONNECTION = "Migrated Connection";
+
+    public static final String WCMS_SERVICE_CHARGES = "WCMS_SERVICE_CHARGES";
+    public static final String SERVICECHARGES = "SERVICECHARGES";
+    public static final String PENALTYCHARGES = "PENALTYCHARGES";
 }

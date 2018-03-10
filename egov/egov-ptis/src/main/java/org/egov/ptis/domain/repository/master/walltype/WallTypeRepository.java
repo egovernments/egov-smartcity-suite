@@ -59,5 +59,6 @@ public interface WallTypeRepository extends JpaRepository<WallType, Long> {
     WallType findByName(String name);
 
     List<WallType> findByNameContainingIgnoreCase(String name);
-
+    
+    List<WallType> findByActiveTrueOrderByName();
 }

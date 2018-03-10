@@ -54,7 +54,8 @@ jQuery(document).ready(function() {
         var startDate = Date.parse(start);
         var endDate = Date.parse(end);
 		
-        // Check the date range, 86400000 is the number of milliseconds in one day
+        // Check the date range, 86400000 is the number of milliseconds in one
+		// day
         var difference = (endDate - startDate) / (86400000 * 7);
         if (difference < 0) {
         	bootbox.alert("From date  should not be greater than the To Date.");
@@ -63,25 +64,20 @@ jQuery(document).ready(function() {
 			} else {
 			return true;
 		}
-        return true;
 	}
 	
-//TODO: SHSC Number showing is pending in search results,
-//now instead SHSC No. Application No. is showing in results.
 $('#dailyCollectionReportSearch').click(function(e){
 	if($('form').valid()){
+		$('.report-section').removeClass('display-hide');
 			if($('#fromDate').val() != '' && $('#toDate').val() != ''){
 				var start = $('#fromDate').val();
 				var end = $('#toDate').val();
 				var stsplit = start.split("/");
 					var ensplit = end.split("/");
-					
 					start = stsplit[1] + "/" + stsplit[0] + "/" + stsplit[2];
 					end = ensplit[1] + "/" + ensplit[0] + "/" + ensplit[2];
-					if(!validRange(start,end))
-					{
-						
-					return false;
+					if(!validRange(start,end)) {
+						return false;
 					}
 			}
 			var fromDate = $("#fromDate").val();
@@ -94,7 +90,6 @@ $('#dailyCollectionReportSearch').click(function(e){
 	        $("#resultDateLabel").html(fromDate+" - "+toDate);	
 	        $.post("/stms/reports/dailySTCollectionReport/search/",$('#dailyCollectionform').serialize())
 	    	.done(function(searchResult) {
-	    	console.log(JSON.stringify(searchResult));
 			oTable.dataTable({
 				"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
 				"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],

@@ -107,6 +107,17 @@
 	<table>
 		<tr>
 			<td>
+				<c:if test="${waterConnectionDetails.applicationType.code=='REGLZNCONNECTION' && waterConnectionDetails.status.code=='CREATED'
+				&& waterConnectionDetails.executionDate== null && currentState != 'NEW'}">
+					<input type="button" value="Save" id="save" onclick="validateWorkFlowApprover('save')" class="btn btn-primary" />
+				</c:if>
+				<c:if test="${waterConnectionDetails.applicationType.code=='REGLZNCONNECTION' && (waterConnectionDetails.status.code=='CREATED' ||
+				 waterConnectionDetails.status.code=='ESTIMATIONNOTICEGENERATED')&& waterConnectionDetails.executionDate!=null}">
+				 	<input type="button" value="Generate Demand Note" name="Generate Demand Note" id="generateDemandNote" class="btn btn-primary" 
+							onclick="generateDemandNotice('${waterConnectionDetails.applicationNumber}')" />
+					<input type="button" value="Add/Edit DCB" name="Add/Edit DCB" id="editDCB" class="btn btn-primary" 
+							onclick="showeditDcb('${waterConnectionDetails.connection.consumerCode}')" />
+				</c:if>
 				<c:if test="${hasJuniorOrSeniorAssistantRole  && reassignEnabled  && applicationState=='NEW'}">
 					<button type="button" class="btn btn-primary" id="reassign">Reassign</button>
 				</c:if>

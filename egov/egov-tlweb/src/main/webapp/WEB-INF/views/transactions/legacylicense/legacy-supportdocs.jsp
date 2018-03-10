@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -84,23 +84,13 @@
                         <c:out value="${documentType.name}"/>
                     </c:otherwise>
                 </c:choose>
-                <form:hidden path="documents[${stat.index}].type.id"
+                <form:hidden path="documents[${stat.index}].type"
                              id="documents${stat.index}type.id" value="${documentType.id}"/>
-                <form:hidden path="documents[${stat.index}].type.name"
-                             id="documents${stat.index}type.name" value="${documentType.name}"/>
-                <form:hidden path="documents[${stat.index}].type.mandatory" value="${documentType.mandatory}"/>
             </div>
             <div class="col-sm-4">
-                <c:choose>
-                    <c:when test="${documentType.mandatory}">
-                        <input type="file" name="files" id="uploadFile${stat.index}" class="file-ellipsis upload-file"
-                               required="true"/>
-                    </c:when>
-                    <c:otherwise>
-                        <input type="file" name="files" id="uploadFile${stat.index}" class="file-ellipsis upload-file"/>
-                    </c:otherwise>
-                </c:choose>
-                <form:errors path="documents[${stat.index}].files" class="add-margin error-msg"/>
+                <input type="file" name="documents[${stat.index}].multipartFiles" id="uploadFile${stat.index}"
+                       class="file-ellipsis upload-file"/>
+                <form:errors path="documents[${stat.index}].multipartFiles" class="add-margin error-msg"/>
             </div>
             <div class="col-sm-3 add-margin">
                 <form:textarea path="documents[${stat.index}].description" class="form-control"/>

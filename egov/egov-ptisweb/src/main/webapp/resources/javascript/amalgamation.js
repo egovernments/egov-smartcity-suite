@@ -413,11 +413,15 @@ function addAmalgamatedProperties()
 			var tbody=tableObj.tBodies[0];
 			var lastRow = tableObj.rows.length;
 			var rowObj = tableObj.rows[1].cloneNode(true);
-			
 			var nextIdx=(lastRow-1);
+			var currentAssessment = jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+jQuery(this).closest('tr').index()+')')
+			.find('.amlgpropassessmentno').val();
+				if(currentAssessment==''){
+					bootbox.alert("Enter all values for existing rows!");
+					return false;
+				}
 			jQuery(rowObj).find("input, select").each(
 					function() {
-					
 					jQuery(this).attr({
 								'id' : function(_, id) {
 									return id.replace('[0]', '['

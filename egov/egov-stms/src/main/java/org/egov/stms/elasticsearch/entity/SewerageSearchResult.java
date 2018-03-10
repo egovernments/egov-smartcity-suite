@@ -61,9 +61,12 @@ public class SewerageSearchResult {
     private String address;
     private String applicationStatus;
     private String applicantName;
+    private String applicationDate;
     private String doorNumber;
     private String noticeNumber;
     private String noticeDate;
+    private Boolean legacy;
+
     private Map<String, String> actions;
 
     public String getApplicationNumber() {
@@ -176,6 +179,22 @@ public class SewerageSearchResult {
 
     public void setNoticeDate(String noticeDate) {
         this.noticeDate = noticeDate;
+    }
+
+    public String getApplicationDate() {
+        return applicationDate;
+    }
+
+    public void setApplicationDate(String applicationDate) {
+        this.applicationDate = applicationDate;
+    }
+
+    public Boolean getLegacy() {
+        return legacy;
+    }
+
+    public void setLegacy(Boolean legacy) {
+        this.legacy = legacy;
     }
 
 }

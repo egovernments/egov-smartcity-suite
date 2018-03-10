@@ -48,14 +48,12 @@
 package org.egov.mrs.autonumber.impl;
 
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.mrs.autonumber.MarriageCertificateNumberGenerator;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.ReIssue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.io.Serializable;
 
 @Service
 public class MarriageCertificateNumberGeneratorImpl implements MarriageCertificateNumberGenerator {
@@ -63,19 +61,18 @@ public class MarriageCertificateNumberGeneratorImpl implements MarriageCertifica
     private static final String CERTIFICATE_NUMBER_SEQ_PREFIX = "SEQ_EGMRS_CERTIFICATE_NUMBER";
 
     @Autowired
-    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
     @Override
     public String generateCertificateNumber(MarriageRegistration marriageRegistration) {
-        final String sequenceName = CERTIFICATE_NUMBER_SEQ_PREFIX;
-        final Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
-        return String.format("%s%06d", ApplicationThreadLocals.getCityCode(), nextSequence);
+        return String.format("%s%06d", ApplicationThreadLocals.getCityCode(),
+                genericSequenceNumberGenerator.getNextSequence(CERTIFICATE_NUMBER_SEQ_PREFIX));
     }
 
     @Override
     public String generateCertificateNumber(ReIssue reIssue) {
-        final String sequenceName = CERTIFICATE_NUMBER_SEQ_PREFIX;
-        final Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
-        return String.format("%s%06d", ApplicationThreadLocals.getCityCode(), nextSequence);
+        //Same API ?
+        return String.format("%s%06d", ApplicationThreadLocals.getCityCode(),
+                genericSequenceNumberGenerator.getNextSequence(CERTIFICATE_NUMBER_SEQ_PREFIX));
     }
 }

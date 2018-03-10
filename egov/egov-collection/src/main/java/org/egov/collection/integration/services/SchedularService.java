@@ -62,6 +62,7 @@ import org.egov.collection.integration.pgi.AtomAdaptor;
 import org.egov.collection.integration.pgi.AxisAdaptor;
 import org.egov.collection.integration.pgi.PaymentResponse;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -109,31 +110,36 @@ public class SchedularService {
 
         LOGGER.debug("Thread ID = " + Thread.currentThread().getId() + ": got " + reconcileList.size() + " results.");
         if (!reconcileList.isEmpty()) {
-            for (final OnlinePayment onlinePaymentObj : reconcileList) {
-                final long startTimeInMilis = System.currentTimeMillis();
-                LOGGER.info("AXIS Receiptid::::" + onlinePaymentObj.getReceiptHeader().getId());
-                PaymentResponse paymentResponse = axisAdaptor.createOfflinePaymentRequest(onlinePaymentObj);
-                if (paymentResponse != null && isNotBlank(paymentResponse.getReceiptId())) {
-                    LOGGER.info("paymentResponse.getReceiptId():" + paymentResponse.getReceiptId());
-                    LOGGER.info("paymentResponse.getAdditionalInfo6():" + paymentResponse.getAdditionalInfo6());
-                    LOGGER.info("paymentResponse.getAuthStatus():" + paymentResponse.getAuthStatus());
-                    ReceiptHeader onlinePaymentReceiptHeader = (ReceiptHeader) persistenceService.findByNamedQuery(
-                            CollectionConstants.QUERY_RECEIPT_BY_ID_AND_CITYCODE, Long.valueOf(paymentResponse.getReceiptId()),
-                            ApplicationThreadLocals.getCityCode());
+            try {
+                for (final OnlinePayment onlinePaymentObj : reconcileList) {
+                    final long startTimeInMilis = System.currentTimeMillis();
+                    LOGGER.info("AXIS Receiptid::::" + onlinePaymentObj.getReceiptHeader().getId());
+                    PaymentResponse paymentResponse = axisAdaptor.createOfflinePaymentRequest(onlinePaymentObj);
+                    if (paymentResponse != null && isNotBlank(paymentResponse.getReceiptId())) {
+                        LOGGER.info("paymentResponse.getReceiptId():" + paymentResponse.getReceiptId());
+                        LOGGER.info("paymentResponse.getAdditionalInfo6():" + paymentResponse.getAdditionalInfo6());
+                        LOGGER.info("paymentResponse.getAuthStatus():" + paymentResponse.getAuthStatus());
+                        ReceiptHeader onlinePaymentReceiptHeader = (ReceiptHeader) persistenceService.findByNamedQuery(
+                                CollectionConstants.QUERY_RECEIPT_BY_ID_AND_CITYCODE,
+                                Long.valueOf(paymentResponse.getReceiptId()),
+                                ApplicationThreadLocals.getCityCode());
 
-                    if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(paymentResponse.getAuthStatus()))
-                        reconciliationService.processSuccessMsg(onlinePaymentReceiptHeader, paymentResponse);
-                    else
-                        reconciliationService.processFailureMsg(onlinePaymentReceiptHeader, paymentResponse);
+                        if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(paymentResponse.getAuthStatus()))
+                            reconciliationService.processSuccessMsg(onlinePaymentReceiptHeader, paymentResponse);
+                        else
+                            reconciliationService.processFailureMsg(onlinePaymentReceiptHeader, paymentResponse);
 
-                    final long elapsedTimeInMillis = System.currentTimeMillis() - startTimeInMilis;
-                    LOGGER.info("$$$$$$ Online Receipt Persisted with Receipt Number: "
-                            + onlinePaymentReceiptHeader.getReceiptnumber()
-                            + (onlinePaymentReceiptHeader.getConsumerCode() != null ? " and consumer code: "
-                                    + onlinePaymentReceiptHeader.getConsumerCode() : "")
-                            + "; Time taken(ms) = "
-                            + elapsedTimeInMillis);
+                        final long elapsedTimeInMillis = System.currentTimeMillis() - startTimeInMilis;
+                        LOGGER.info("$$$$$$ Online Receipt Persisted with Receipt Number: "
+                                + onlinePaymentReceiptHeader.getReceiptnumber()
+                                + (onlinePaymentReceiptHeader.getConsumerCode() != null ? " and consumer code: "
+                                        + onlinePaymentReceiptHeader.getConsumerCode() : "")
+                                + "; Time taken(ms) = "
+                                + elapsedTimeInMillis);
+                    }
                 }
+            } catch (final ApplicationRuntimeException ex) {
+                LOGGER.error("AXIS payment reconciliation failed" + ex);
             }
         }
     }
@@ -141,8 +147,8 @@ public class SchedularService {
     @Transactional
     public void reconcileATOM() {
         LOGGER.debug("Inside reconcileATOM");
-        final Calendar fourDaysBackCalender = Calendar.getInstance();
-        fourDaysBackCalender.add(Calendar.DATE, -4);
+        final Calendar fiveDaysBackCalender = Calendar.getInstance();
+        fiveDaysBackCalender.add(Calendar.DATE, -5);
         final Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MINUTE, -30);
         final Query qry = persistenceService
@@ -157,52 +163,58 @@ public class SchedularService {
         final List<OnlinePayment> reconcileList = qry.list();
         LOGGER.debug("Thread ID = " + Thread.currentThread().getId() + ": got " + reconcileList.size() + " results.");
         if (!reconcileList.isEmpty()) {
-            for (final OnlinePayment onlinePaymentObj : reconcileList) {
-                final long startTimeInMilis = System.currentTimeMillis();
-                LOGGER.info("ATOM Receiptid::::" + onlinePaymentObj.getReceiptHeader().getId());
-                PaymentResponse paymentResponse = atomAdaptor.createOfflinePaymentRequest(onlinePaymentObj);
-                if (paymentResponse != null && isNotBlank(paymentResponse.getReceiptId())) {
-                    LOGGER.info("paymentResponse.getReceiptId():" + paymentResponse.getReceiptId());
-                    LOGGER.info("paymentResponse.getAdditionalInfo6():" + paymentResponse.getAdditionalInfo6());
-                    LOGGER.info("paymentResponse.getAuthStatus():" + paymentResponse.getAuthStatus());
-                    ReceiptHeader onlinePaymentReceiptHeader = null;
-                    if (paymentResponse.getAdditionalInfo2() != null && !paymentResponse.getAdditionalInfo2().isEmpty()) {
-                        if (paymentResponse.getAdditionalInfo2().equals(ApplicationThreadLocals.getCityCode()))
+            try {
+                for (final OnlinePayment onlinePaymentObj : reconcileList) {
+                    final long startTimeInMilis = System.currentTimeMillis();
+                    LOGGER.info("ATOM Receiptid::::" + onlinePaymentObj.getReceiptHeader().getId());
+                    PaymentResponse paymentResponse = atomAdaptor.createOfflinePaymentRequest(onlinePaymentObj);
+                    if (paymentResponse != null && isNotBlank(paymentResponse.getReceiptId())) {
+                        LOGGER.info("paymentResponse.getReceiptId():" + paymentResponse.getReceiptId());
+                        LOGGER.info("paymentResponse.getAdditionalInfo6():" + paymentResponse.getAdditionalInfo6());
+                        LOGGER.info("paymentResponse.getAuthStatus():" + paymentResponse.getAuthStatus());
+                        ReceiptHeader onlinePaymentReceiptHeader = null;
+                        if (paymentResponse.getAdditionalInfo2() != null && !paymentResponse.getAdditionalInfo2().isEmpty()) {
+                            if (paymentResponse.getAdditionalInfo2().equals(ApplicationThreadLocals.getCityCode()))
+                                onlinePaymentReceiptHeader = (ReceiptHeader) persistenceService.findByNamedQuery(
+                                        CollectionConstants.QUERY_RECEIPT_BY_ID_AND_CITYCODE,
+                                        Long.valueOf(paymentResponse.getReceiptId()),
+                                        paymentResponse.getAdditionalInfo2());
+                            else {
+                                LOGGER.error("City code is not match");
+                                throw new ValidationException(Arrays.asList(new ValidationError("City code is not match",
+                                        "City code is not match")));
+                            }
+                        } else
                             onlinePaymentReceiptHeader = (ReceiptHeader) persistenceService.findByNamedQuery(
                                     CollectionConstants.QUERY_RECEIPT_BY_ID_AND_CITYCODE,
                                     Long.valueOf(paymentResponse.getReceiptId()),
-                                    paymentResponse.getAdditionalInfo2());
-                        else {
-                            LOGGER.error("City code is not match");
-                            throw new ValidationException(Arrays.asList(new ValidationError("City code is not match",
-                                    "City code is not match")));
-                        }
-                    } else
-                        onlinePaymentReceiptHeader = (ReceiptHeader) persistenceService.findByNamedQuery(
-                                CollectionConstants.QUERY_RECEIPT_BY_ID_AND_CITYCODE,
-                                Long.valueOf(paymentResponse.getReceiptId()),
-                                ApplicationThreadLocals.getCityCode());
-                    if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(paymentResponse.getAuthStatus()))
-                        reconciliationService.processSuccessMsg(onlinePaymentReceiptHeader, paymentResponse);
-                    else if ((DateUtils.compareDates(onlinePaymentReceiptHeader.getCreatedDate(), fourDaysBackCalender.getTime()))
-                            &&
-                            (onlinePaymentReceiptHeader.getOnlinePayment().getService().getCode().equals(CollectionConstants.SERVICECODE_ATOM) &&
-                                    CollectionConstants.ATOM_AUTHORISATION_CODES_WAITINGFOR_PAY_GATEWAY_RESPONSE
-                                            .contains(paymentResponse.getAuthStatus()))) {
-                        onlinePaymentReceiptHeader.getOnlinePayment().setAuthorisationStatusCode(
-                                paymentResponse.getAuthStatus());
-                        onlinePaymentReceiptHeader.getOnlinePayment().setRemarks(paymentResponse.getErrorDescription());
-                    } else
-                        reconciliationService.processFailureMsg(onlinePaymentReceiptHeader, paymentResponse);
+                                    ApplicationThreadLocals.getCityCode());
+                        if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(paymentResponse.getAuthStatus()))
+                            reconciliationService.processSuccessMsg(onlinePaymentReceiptHeader, paymentResponse);
+                        else if ((DateUtils.compareDates(onlinePaymentReceiptHeader.getCreatedDate(),
+                                fiveDaysBackCalender.getTime()))
+                                &&
+                                (onlinePaymentReceiptHeader.getOnlinePayment().getService().getCode()
+                                        .equals(CollectionConstants.SERVICECODE_ATOM) &&
+                                        CollectionConstants.ATOM_AUTHORISATION_CODES_WAITINGFOR_PAY_GATEWAY_RESPONSE
+                                                .contains(paymentResponse.getAuthStatus()))) {
+                            onlinePaymentReceiptHeader.getOnlinePayment().setAuthorisationStatusCode(
+                                    paymentResponse.getAuthStatus());
+                            onlinePaymentReceiptHeader.getOnlinePayment().setRemarks(paymentResponse.getErrorDescription());
+                        } else
+                            reconciliationService.processFailureMsg(onlinePaymentReceiptHeader, paymentResponse);
 
-                    final long elapsedTimeInMillis = System.currentTimeMillis() - startTimeInMilis;
-                    LOGGER.info("$$$$$$ Online Receipt Persisted with Receipt Number: "
-                            + onlinePaymentReceiptHeader.getReceiptnumber()
-                            + (onlinePaymentReceiptHeader.getConsumerCode() != null ? " and consumer code: "
-                                    + onlinePaymentReceiptHeader.getConsumerCode() : "")
-                            + "; Time taken(ms) = "
-                            + elapsedTimeInMillis);
+                        final long elapsedTimeInMillis = System.currentTimeMillis() - startTimeInMilis;
+                        LOGGER.info("$$$$$$ Online Receipt Persisted with Receipt Number: "
+                                + onlinePaymentReceiptHeader.getReceiptnumber()
+                                + (onlinePaymentReceiptHeader.getConsumerCode() != null ? " and consumer code: "
+                                        + onlinePaymentReceiptHeader.getConsumerCode() : "")
+                                + "; Time taken(ms) = "
+                                + elapsedTimeInMillis);
+                    }
                 }
+            } catch (final ApplicationRuntimeException ex) {
+                LOGGER.error("ATOM payment reconciliation failed" + ex);
             }
         }
     }

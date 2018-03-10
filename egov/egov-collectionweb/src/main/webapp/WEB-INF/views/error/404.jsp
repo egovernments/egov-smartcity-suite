@@ -47,5 +47,9 @@
   --%>
 
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<h1>404</h1>
-<p><spring:message code="error.404"/></p>
+<div class="alert alert-danger" role="alert">
+	<i class="fa fa-exclamation-triangle error-symbol"></i>
+	<hr/>
+	<p style="color:#000;font-size:17px"><spring:message code="error.404"/></p>
+	<hr/>
+</div>

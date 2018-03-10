@@ -47,6 +47,13 @@
  */
 package org.egov.restapi.service;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.council.entity.CouncilMeeting;
 import org.egov.council.entity.MeetingMOM;
 import org.egov.infra.utils.DateUtils;
@@ -58,12 +65,6 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
 @Service
 @Transactional(readOnly = true)
 public class CouncilMeetingDetailService {
@@ -72,22 +73,34 @@ public class CouncilMeetingDetailService {
     private EntityManager entityManager;
 
     @SuppressWarnings("unchecked")
-    public List<CouncilMeeting> getMeetingDetailsByMeetingNo(String meetingNumber,
-            String meetingType) {
+    public List<CouncilMeeting> getMeetingDetails(String meetingNumber,
+            String meetingType, String preambleNo, String agendaNo, String resolutionNo) {
 
         final StringBuilder queryString = new StringBuilder();
         queryString
-                .append(" from CouncilMeeting C where C.committeeType.isActive=true");
+                .append("select C from CouncilMeeting C left outer join MeetingMOM mom on mom.meeting=C.id where C.committeeType.isActive=true");
         if (meetingNumber != null)
             queryString.append(" and C.meetingNumber =:meetingNumber ");
         if (meetingType != null)
             queryString.append(" and C.committeeType.name =:meetingType ");
+        if (preambleNo != null)
+            queryString.append(" and mom.preamble.preambleNumber =:preambleNo ");
+        if (agendaNo != null)
+            queryString.append(" and mom.agenda.agendaNumber =:agendaNo ");
+        if (resolutionNo != null)
+            queryString.append(" and mom.resolutionNumber =:resolutionNo ");
         final Query query = entityManager.unwrap(Session.class).createQuery(queryString.toString());
 
         if (meetingNumber != null)
             query.setParameter("meetingNumber", meetingNumber);
         if (meetingType != null)
             query.setParameter("meetingType", meetingType);
+        if (preambleNo != null)
+            query.setParameter("preambleNo", preambleNo);
+        if (agendaNo != null)
+            query.setParameter("agendaNo", agendaNo);
+        if (resolutionNo != null)
+            query.setParameter("resolutionNo", resolutionNo);
         return query.list();
     }
 

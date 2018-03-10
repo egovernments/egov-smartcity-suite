@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -159,7 +159,6 @@ public class LicenseProcessWorkflowService {
         tradeLicense.setCollectionPending(false);
         if (tradeLicense.isNewApplication())
             tradeLicense.setActive(false);
-        tradeLicense.setNewWorkflow(false);
     }
 
     private void initiateWfTransition(TradeLicense tradeLicense) {
@@ -188,6 +187,9 @@ public class LicenseProcessWorkflowService {
         DateTime currentDate = new DateTime();
         User currentUser = securityUtils.getCurrentUser();
         Position owner = getCurrentPositionByWorkFlowBean(workflowBean, tradeLicense.getCurrentState());
+
+        if (BUTTONAPPROVE.equals(workflowBean.getWorkFlowAction()))
+            tradeLicense.setApprovedBy(currentUser);
 
         if (!licenseUtils.isDigitalSignEnabled() && BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction()) && !tradeLicense.isCollectionPending()) {
             tradeLicense.transition().end().withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
@@ -270,7 +272,6 @@ public class LicenseProcessWorkflowService {
         tradeLicense.setActive(true);
         tradeLicense.setLegacy(false);
         validityService.applyLicenseValidity(tradeLicense);
-        tradeLicense.setNewWorkflow(false);
     }
 
     public void getWfWithThirdPartyOp(final TradeLicense license, final WorkflowBean workflowBean) {
@@ -286,8 +287,7 @@ public class LicenseProcessWorkflowService {
             if (nextWorkFlowMatrix != null)
                 licenseStateInfo.setWfMatrixRef(nextWorkFlowMatrix.getId());
             initiateWfTransition(license);
-            license.transition().withSenderName(
-                    wfAssignment.getEmployee().getUsername() + DELIMITER_COLON + wfAssignment.getEmployee().getName())
+            license.transition().withSenderName(securityUtils.getCurrentUser().getName())
                     .withComments(workflowBean.getApproverComments())
                     .withNatureOfTask(license.isReNewApplication() ? RENEWAL_NATUREOFWORK : NEW_NATUREOFWORK)
                     .withStateValue(workFlowMatrix.getNextState()).withDateInfo(new Date()).withOwner(wfAssignment.getPosition())
@@ -315,7 +315,7 @@ public class LicenseProcessWorkflowService {
         }
     }
 
-    private List<Assignment> getAssignments(WorkFlowMatrix workFlowMatrix) {
+    public List<Assignment> getAssignments(WorkFlowMatrix workFlowMatrix) {
         Department nextAssigneeDept = departmentService.getDepartmentByName(workFlowMatrix.getDepartment());
         List<Designation> nextDesig = designationService.getDesignationsByNames(Arrays.asList(StringUtils.upperCase(workFlowMatrix.getNextDesignation()).split(",")));
         List<Assignment> assignmentList = getAssignmentsForDeptAndDesignation(nextAssigneeDept, nextDesig);

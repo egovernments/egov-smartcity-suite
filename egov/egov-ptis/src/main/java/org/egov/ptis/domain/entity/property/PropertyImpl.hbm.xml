@@ -175,15 +175,23 @@
 		</bag>
 		<property name="source" column="source" type="java.lang.String"/>
 		<property name="referenceId" column="REFERENCEID" />
+		<property name="thirdPartyVerified" column="THIRD_PARTY_VERIFIED" type="boolean" />
+		<property name="surveyVariance" column="SURVEY_VARIANCE" type="java.math.BigDecimal" />
+		<property name="sentToThirdParty" column="SENT_TO_THIRD_PARTY" type="boolean" />
 		<bag name="taxExemptionDocuments" table="EGPT_TAX_EXEMPTION_DOCS" cascade="all">
 			<key column="ID_PROPERTY" not-null="true" />
 			<many-to-many class="org.egov.ptis.domain.entity.property.Document" column="DOCUMENT"/>
 		</bag>
+		<one-to-one name="gisDetails"
+			class="org.egov.ptis.domain.entity.property.GisDetails" property-ref="applicationProperty" cascade="all" />
  	</class>
 	
 	<query name="PROPERTYIMPL_BYID">
         <![CDATA[from PropertyImpl where id=?]]></query>	
         
+    <query name="PROPERTYIMPL_BY_APPLICATIONNO">
+        <![CDATA[from PropertyImpl where applicationNo= :applicatiNo]]></query>
+            
     <query name="WORKFLOW_PROPERTYIMPL_BYID">
         <![CDATA[from PropertyImpl where id=? and status = 'W']]></query>
         

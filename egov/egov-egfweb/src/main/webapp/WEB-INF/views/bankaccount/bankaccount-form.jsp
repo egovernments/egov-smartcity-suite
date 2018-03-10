@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -61,7 +61,7 @@
 						<form:select path="bankbranch" data-first-option="false" id="bankbranch" class="form-control" required="required">
 							<form:option value=""><spring:message code="lbl.select" /></form:option>
 							<c:forEach var="branch" items="${bankbranches}">
-							<form:option  value="${branch.id}" ><c:out value="${branch.bank.name} - ${branch.branchname}"/>
+							<form:option  value="${branch}" ><c:out value="${branch.bank.name} - ${branch.branchname}"/>
 							</form:option>
 							</c:forEach>
 						</form:select>

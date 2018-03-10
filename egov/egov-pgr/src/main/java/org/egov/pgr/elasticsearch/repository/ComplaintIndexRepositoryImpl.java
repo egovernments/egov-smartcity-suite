@@ -142,6 +142,15 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
     private ElasticsearchTemplate elasticsearchTemplate;
 
     @Override
+    public SearchResponse todaysComplaintCount(BoolQueryBuilder query) {
+        return elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
+                .setQuery(query)
+                .setSize(0).addAggregation(getCountBetweenSpecifiedDates("todaysComplaintCount", "createdDate",
+                        new DateTime().toString(formatter), new DateTime().plusDays(1).toString(formatter)))
+                .execute().actionGet();
+    }
+
+    @Override
     public Map<String, SearchResponse> findAllGrievanceByFilter(final ComplaintDashBoardRequest complaintDashBoardRequest,
                                                                 final BoolQueryBuilder query, final String grouByField) {
         /**
@@ -149,13 +158,10 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
          * current date +1 day
          */
         DateTime fromDate = new DateTime();
-        DateTime toDate;
         if (isNotBlank(complaintDashBoardRequest.getFromDate())
-                && isNotBlank(complaintDashBoardRequest.getToDate())) {
+                && isNotBlank(complaintDashBoardRequest.getToDate()))
             fromDate = new DateTime(complaintDashBoardRequest.getFromDate());
-            toDate = fromDate.plusDays(1);
-        } else
-            toDate = fromDate.plusDays(1);
+
 
         // This is size used to fetch those many number of documents
         int size = 120;
@@ -179,7 +185,7 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                         currentYearFromDate.toString(formatter),
                         new DateTime().toString(formatter)))
                 .addAggregation(getCountBetweenSpecifiedDates("todaysComplaintCount", "createdDate",
-                        fromDate.toString(formatter), toDate.toString(formatter)))
+                        new DateTime().toString(formatter), new DateTime().plusDays(1).toString(formatter)))
                 .execute().actionGet();
 
         SearchResponse tableResponse;

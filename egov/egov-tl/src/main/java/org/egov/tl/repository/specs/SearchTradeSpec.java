@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -87,7 +87,12 @@ public final class SearchTradeSpec {
                         .add(builder.equal(root.get("licensee").get("mobilePhoneNumber"), searchForm.getMobileNo()));
             if (searchForm.getInactive() != null && searchForm.getInactive().equals(Boolean.TRUE))
                 predicate.getExpressions().add(builder.equal(root.get("isActive"), false));
+            if (searchForm.getApplicationTypeId() != null)
+                predicate.getExpressions()
+                        .add(builder.equal(root.get("licenseAppType").get("id"), searchForm.getApplicationTypeId()));
             predicate.getExpressions().add(builder.isNotNull(root.get("applicationNumber")));
+            if (searchForm.getNatureOfBusinessId() != null)
+                predicate.getExpressions().add(builder.equal(root.get("natureOfBusiness"), searchForm.getNatureOfBusinessId()));
 
             return predicate;
         };

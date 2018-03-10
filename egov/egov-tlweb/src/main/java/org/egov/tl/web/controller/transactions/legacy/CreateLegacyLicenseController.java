@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -62,7 +62,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.validation.Valid;
-import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
 
@@ -76,7 +75,7 @@ public class CreateLegacyLicenseController extends LegacyLicenseController {
     private static final String CREATE_LEGACY_LICENSE = "create-legacylicense";
 
     @Autowired
-    private LegacyLicenseValidator legacyLicenseValidator;
+    private CreateLegacyLicenseValidator createLegacyLicenseValidator;
 
     @Autowired
     private LicenseAppTypeService licenseAppTypeService;
@@ -106,9 +105,8 @@ public class CreateLegacyLicenseController extends LegacyLicenseController {
     }
 
     @PostMapping("/create")
-    public String create(@Valid @ModelAttribute TradeLicense tradeLicense, BindingResult binding, Model model)
-            throws IOException {
-        legacyLicenseValidator.validate(tradeLicense, binding);
+    public String create(@Valid @ModelAttribute TradeLicense tradeLicense, BindingResult binding, Model model) {
+        createLegacyLicenseValidator.validate(tradeLicense, binding);
         if (binding.hasErrors()) {
             model.addAttribute("legacyInstallmentwiseFees", legacyService.legacyInstallmentfee(tradeLicense));
             model.addAttribute("legacyFeePayStatus", legacyService.legacyFeeStatus(tradeLicense));
@@ -121,6 +119,6 @@ public class CreateLegacyLicenseController extends LegacyLicenseController {
     @GetMapping(value = "/old-licenseno-is-unique", produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public Boolean checkOldLicenseNumber(@RequestParam String oldLicenseNumber) {
-        return licenseRepository.findByOldLicenseNumber(oldLicenseNumber) != null;
+        return legacyService.getLicenseByOldLicenseNumber(oldLicenseNumber) != null;
     }
 }

@@ -66,7 +66,6 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infra.workflow.service.WorkflowTypeService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.Priority;
 import org.egov.pgr.service.PriorityService;
 import org.egov.pims.commons.Position;
@@ -218,9 +217,12 @@ public class EmployeeController extends ApiController {
 
     private JsonArray createInboxData(final List<StateAware> inboxStates) {
         final JsonArray inboxItems = new JsonArray();
-        inboxStates.stream().sorted(Comparator.comparing(stateAware -> stateAware.getState().getCreatedDate()));
-        Collections.reverse(inboxStates);
-        for (final StateAware stateAware : inboxStates)
+        List<StateAware> inboxSorted = inboxStates
+                .stream()
+                .sorted(Comparator.comparing(stateAware -> stateAware.getState().getCreatedDate()))
+                .collect(Collectors.toList());
+        Collections.reverse(inboxSorted);
+        for (final StateAware stateAware : inboxSorted)
             inboxItems.add(new JsonParser().parse(stateAware.getStateInfoJson()).getAsJsonObject());
         return inboxItems;
     }
@@ -282,38 +284,43 @@ public class EmployeeController extends ApiController {
     public List<HashMap<String, Object>> getWorkflowTypesWithCount(final Long userId, final List<Long> ownerPostitions)
             throws ClassNotFoundException {
 
-        final List<HashMap<String, Object>> workFlowTypesWithItemsCount = new ArrayList<>();
-        final Query query = entityQueryService.getSession().createQuery(
-                "select type, count(type) from State  where ownerPosition.id in (:ownerPositions) and status != :statusEnded and createdBy.id != :userId group by type");
-        query.setParameterList("ownerPositions", ownerPostitions);
-        query.setParameter("statusEnded", StateStatus.ENDED);
-        query.setParameter("userId", userId);
+        if (ownerPostitions.isEmpty()) {
+            return Collections.emptyList();
+        } else {
+            final List<HashMap<String, Object>> workFlowTypesWithItemsCount = new ArrayList<>();
+            final Query query = entityQueryService.getSession().createQuery(
+                    "select type, count(type) from State  where ownerPosition.id in (:ownerPositions) " +
+                            "and status != :statusEnded and createdBy.id != :userId group by type");
+            query.setParameterList("ownerPositions", ownerPostitions);
+            query.setParameter("statusEnded", StateStatus.ENDED);
+            query.setParameter("userId", userId);
 
-        final List<Object[]> result = query.list();
-        Map<String, Long> prioritiesListCount = new LinkedHashMap<>();
-        for (final Object[] rowObj : result) {
-            String workFlowTypeStr = String.valueOf(rowObj[0]);
-            final Long wftitemscount = (Long) getWorkflowItemsCountByWFType(userId, ownerPostitions, workFlowTypeStr, "");
-            if (wftitemscount > 0) {
-                final HashMap<String, Object> workFlowType = new HashMap<>();
-                final WorkflowTypes workFlowTypeObj = workflowTypeService.getEnabledWorkflowTypeByType(workFlowTypeStr);
-                workFlowType.put("workflowtype", workFlowTypeStr);
-                workFlowType.put("inboxlistcount", wftitemscount);
-                workFlowType.put("workflowtypename", workFlowTypeObj.getDisplayName());
-                workFlowType.put("workflowgroupYN", workFlowTypeObj.isGrouped() ? Y : N);
+            final List<Object[]> result = query.list();
+            Map<String, Long> prioritiesListCount = new LinkedHashMap<>();
+            for (final Object[] rowObj : result) {
+                String workFlowTypeStr = String.valueOf(rowObj[0]);
+                final Long wftitemscount = (Long) getWorkflowItemsCountByWFType(userId, ownerPostitions, workFlowTypeStr, "");
+                if (wftitemscount > 0) {
+                    final HashMap<String, Object> workFlowType = new HashMap<>();
+                    final WorkflowTypes workFlowTypeObj = workflowTypeService.getEnabledWorkflowTypeByType(workFlowTypeStr);
+                    workFlowType.put("workflowtype", workFlowTypeStr);
+                    workFlowType.put("inboxlistcount", wftitemscount);
+                    workFlowType.put("workflowtypename", workFlowTypeObj.getDisplayName());
+                    workFlowType.put("workflowgroupYN", workFlowTypeObj.isGrouped() ? Y : N);
 
-                if (workFlowTypeStr.equals(Complaint.class.getSimpleName())) {
-                    for (Priority priority : priorityService.getAllPriorities()) {
-                        prioritiesListCount.put(priority.getCode(), (Long) getWorkflowItemsCountByWFType(userId, ownerPostitions,
-                                workFlowTypeStr, priority.getCode()));
+                    if ("Complaint".equals(workFlowTypeStr)) {
+                        for (Priority priority : priorityService.getAllPriorities()) {
+                            prioritiesListCount.put(priority.getCode(), (Long) getWorkflowItemsCountByWFType(userId, ownerPostitions,
+                                    workFlowTypeStr, priority.getCode()));
+                        }
+                        workFlowType.put("prioritylistcount", prioritiesListCount);
                     }
-                    workFlowType.put("prioritylistcount", prioritiesListCount);
-                }
 
-                workFlowTypesWithItemsCount.add(workFlowType);
+                    workFlowTypesWithItemsCount.add(workFlowType);
+                }
             }
+            return workFlowTypesWithItemsCount;
         }
-        return workFlowTypesWithItemsCount;
     }
 
     private Criterion addPriorityCondition(Criterion existingCondition, String priority) {

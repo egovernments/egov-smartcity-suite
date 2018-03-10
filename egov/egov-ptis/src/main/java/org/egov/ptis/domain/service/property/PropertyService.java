@@ -47,6 +47,111 @@
  */
 package org.egov.ptis.domain.service.property;
 
+import static java.lang.Boolean.FALSE;
+import static java.lang.String.format;
+import static java.math.BigDecimal.ZERO;
+import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_AMALGAMATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION_APPROVAL;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
+import static org.egov.ptis.constants.PropertyTaxConstants.BUILT_UP_PROPERTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.CITIZEN_ROLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.CSC_OPERATOR_ROLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_BAL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.DATE_FORMAT_DDMMYYY;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_DRAINAGE_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIGHT_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_SCAVENGE_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_SEWERAGE_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_WATER_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_RSNS_LIST;
+import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
+import static org.egov.ptis.constants.PropertyTaxConstants.MEESEVA_OPERATOR_ROLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_WORK_GRP;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_WORK_RP;
+import static org.egov.ptis.constants.PropertyTaxConstants.NON_VACANT_TAX_DEMAND_CODES;
+import static org.egov.ptis.constants.PropertyTaxConstants.OPEN_PLOT_UNIT_FLOORNUMBER;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTYTAX_ROLEFORNONEMPLOYEE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTYTAX_WORKFLOWDEPARTEMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTYTAX_WORKFLOWDEPARTEMENT_FOR_CSCOPERATOR;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTYTAX_WORKFLOWDESIGNATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTYTAX_WORKFLOWDESIGNATION_FOR_CSCOPERATOR;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_IS_DEFAULT;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_ADD_OR_ALTER;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_AMALG;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_BIFURCATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_DATA_ENTRY;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_MARK_DEACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_BIFUR;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROP_SOURCE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.PT_WORKFLOWDESIGNATION_MOBILE;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVISIONPETITION_STATUS_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ROLE_DATAENTRY_OPERATOR;
+import static org.egov.ptis.constants.PropertyTaxConstants.SQUARE_YARD_TO_SQUARE_METER_VALUE;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
+import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_MODIFY;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WTMS_AMALGAMATE_WATER_CONNECTIONS_URL;
+import static org.egov.ptis.constants.PropertyTaxConstants.WTMS_TAXDUE_RESTURL;
+import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_SURVEY;
+
+import java.io.File;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -111,7 +216,35 @@ import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.document.DocumentTypeDetails;
 import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
-import org.egov.ptis.domain.entity.property.*;
+import org.egov.ptis.domain.entity.property.Apartment;
+import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.Document;
+import org.egov.ptis.domain.entity.property.DocumentType;
+import org.egov.ptis.domain.entity.property.Floor;
+import org.egov.ptis.domain.entity.property.FloorType;
+import org.egov.ptis.domain.entity.property.Property;
+import org.egov.ptis.domain.entity.property.PropertyDepartment;
+import org.egov.ptis.domain.entity.property.PropertyDetail;
+import org.egov.ptis.domain.entity.property.PropertyID;
+import org.egov.ptis.domain.entity.property.PropertyImpl;
+import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
+import org.egov.ptis.domain.entity.property.PropertyMutation;
+import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
+import org.egov.ptis.domain.entity.property.PropertyOccupation;
+import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
+import org.egov.ptis.domain.entity.property.PropertySource;
+import org.egov.ptis.domain.entity.property.PropertyStatus;
+import org.egov.ptis.domain.entity.property.PropertyStatusValues;
+import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
+import org.egov.ptis.domain.entity.property.PropertyUsage;
+import org.egov.ptis.domain.entity.property.PtApplicationType;
+import org.egov.ptis.domain.entity.property.RoofType;
+import org.egov.ptis.domain.entity.property.StructureClassification;
+import org.egov.ptis.domain.entity.property.TaxExemptionReason;
+import org.egov.ptis.domain.entity.property.VacancyRemission;
+import org.egov.ptis.domain.entity.property.VacancyRemissionApproval;
+import org.egov.ptis.domain.entity.property.WallType;
+import org.egov.ptis.domain.entity.property.WoodType;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.BoundaryDetails;
 import org.egov.ptis.domain.model.OwnerName;
@@ -134,32 +267,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
-
-import static java.lang.Boolean.FALSE;
-import static java.lang.String.format;
-import static java.math.BigDecimal.ZERO;
-import static org.egov.ptis.constants.PropertyTaxConstants.*;
-
 /**
  * Service class to perform services related to an Assessment
  *
@@ -179,6 +286,10 @@ public class PropertyService {
 	public static final String SEARCH = "search";
 	public static final String COUNT = "count";
 	public static final String PARAMS = "params";
+	protected static final Set<String> DEMAND_REASONS = new LinkedHashSet<>(Arrays.asList(DEMANDRSN_CODE_PENALTY_FINES,
+	            DEMANDRSN_CODE_GENERAL_TAX, DEMANDRSN_CODE_DRAINAGE_TAX, DEMANDRSN_CODE_SCAVENGE_TAX, 
+	            DEMANDRSN_CODE_WATER_TAX, DEMANDRSN_CODE_LIGHT_TAX,  DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_EDUCATIONAL_TAX,
+	            DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY));
 	final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
 
 	@SuppressWarnings("rawtypes")
@@ -953,11 +1064,11 @@ public class PropertyService {
 			private static final long serialVersionUID = 860234856101419601L;
 
 			{
-				add(DEMANDRSN_CODE_GENERAL_TAX);
+				addAll(NON_VACANT_TAX_DEMAND_CODES);
 				add(DEMANDRSN_CODE_VACANT_TAX);
 				add(DEMANDRSN_CODE_LIBRARY_CESS);
 				add(DEMANDRSN_CODE_SEWERAGE_TAX);
-				add(DEMANDRSN_CODE_EDUCATIONAL_CESS);
+				add(DEMANDRSN_CODE_EDUCATIONAL_TAX);
 			}
 		};
 
@@ -968,11 +1079,11 @@ public class PropertyService {
 			private static final long serialVersionUID = -1654413629447625291L;
 
 			{
-				add(DEMANDRSN_CODE_GENERAL_TAX);
+				addAll(NON_VACANT_TAX_DEMAND_CODES);
 				add(DEMANDRSN_CODE_VACANT_TAX);
 				add(DEMANDRSN_CODE_LIBRARY_CESS);
 				add(DEMANDRSN_CODE_SEWERAGE_TAX);
-				add(DEMANDRSN_CODE_EDUCATIONAL_CESS);
+				add(DEMANDRSN_CODE_EDUCATIONAL_TAX);
 			}
 		};
 
@@ -983,11 +1094,11 @@ public class PropertyService {
 			private static final long serialVersionUID = -8513477823231046385L;
 
 			{
-				add(DEMANDRSN_CODE_GENERAL_TAX);
+				addAll(NON_VACANT_TAX_DEMAND_CODES);
 				add(DEMANDRSN_CODE_VACANT_TAX);
 				add(DEMANDRSN_CODE_LIBRARY_CESS);
 				add(DEMANDRSN_CODE_SEWERAGE_TAX);
-				add(DEMANDRSN_CODE_EDUCATIONAL_CESS);
+				add(DEMANDRSN_CODE_EDUCATIONAL_TAX);
 			}
 		};
 
@@ -1307,10 +1418,18 @@ public class PropertyService {
 			final EgDemandReasonMaster dmndRsnMstr = egDmndDtls.getEgDemandReason().getEgDemandReasonMaster();
 			if (dmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_GENERAL_TAX))
 				egDemandDetailsMap.put(DEMANDRSN_CODE_GENERAL_TAX, egDmndDtls);
+			else if (dmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_LIGHT_TAX))
+			        egDemandDetailsMap.put(DEMANDRSN_CODE_LIGHT_TAX, egDmndDtls);
+			else if (dmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_SCAVENGE_TAX))
+                                egDemandDetailsMap.put(DEMANDRSN_CODE_SCAVENGE_TAX, egDmndDtls);
+			else if (dmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_DRAINAGE_TAX))
+                                egDemandDetailsMap.put(DEMANDRSN_CODE_DRAINAGE_TAX, egDmndDtls);
+			else if (dmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_WATER_TAX))
+			        egDemandDetailsMap.put(DEMANDRSN_CODE_WATER_TAX, egDmndDtls);
 			else if (dmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_VACANT_TAX))
 				egDemandDetailsMap.put(DEMANDRSN_CODE_VACANT_TAX, egDmndDtls);
-			else if (dmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_EDUCATIONAL_CESS))
-				egDemandDetailsMap.put(DEMANDRSN_CODE_EDUCATIONAL_CESS, egDmndDtls);
+			else if (dmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_EDUCATIONAL_TAX))
+				egDemandDetailsMap.put(DEMANDRSN_CODE_EDUCATIONAL_TAX, egDmndDtls);
 			else if (dmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_LIBRARY_CESS))
 				egDemandDetailsMap.put(DEMANDRSN_CODE_LIBRARY_CESS, egDmndDtls);
 			else if (dmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY))
@@ -1345,7 +1464,7 @@ public class PropertyService {
 			if (egDmndDtls.getEgDemandReason().getEgInstallmentMaster().equals(inst)) {
 				final EgDemandReasonMaster egDmndRsnMstr = egDmndDtls.getEgDemandReason().getEgDemandReasonMaster();
 				if (!egDmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_LIBRARY_CESS)
-						&& !egDmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_EDUCATIONAL_CESS)
+						&& !egDmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_EDUCATIONAL_TAX)
 						&& !egDmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY))
 					// totalDmndAdjstmntAmnt =
 					// totalDmndAdjstmntAmnt.add(egDmndDtls.getAmount().subtract(
@@ -1359,7 +1478,7 @@ public class PropertyService {
 
 			final EgDemandReasonMaster egDmndRsnMstr = egDmndDtls.getEgDemandReason().getEgDemandReasonMaster();
 
-			if (egDmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_EDUCATIONAL_CESS))
+			if (egDmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_EDUCATIONAL_TAX))
 				egDmndDtls.setAmtCollected(totalCollAdjstmntAmnt.multiply(new BigDecimal("0.50")));
 			else if (egDmndRsnMstr.getCode().equalsIgnoreCase(DEMANDRSN_CODE_LIBRARY_CESS))
 				egDmndDtls.setAmtCollected(totalCollAdjstmntAmnt.multiply(new BigDecimal("0.25")));
@@ -1465,7 +1584,7 @@ public class PropertyService {
 				floorDmdCalc.setTax2(floorDmdCalc.getTax2().add(miscTax.getTotalCalculatedTax()));
 			else if (PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS.equals(miscTax.getTaxName()))
 				floorDmdCalc.setTax3(floorDmdCalc.getTax3().add(miscTax.getTotalCalculatedTax()));
-			else if (PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS.equals(miscTax.getTaxName()))
+			else if (PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_TAX.equals(miscTax.getTaxName()))
 				floorDmdCalc.setTax4(floorDmdCalc.getTax4().add(miscTax.getTotalCalculatedTax()));
 			else if (PropertyTaxConstants.DEMANDRSN_CODE_SEWERAGE_TAX.equals(miscTax.getTaxName()))
 				floorDmdCalc.setTax5(floorDmdCalc.getTax5().add(miscTax.getTotalCalculatedTax()));
@@ -1843,12 +1962,8 @@ public class PropertyService {
 		LOGGER.info("adjustExcessCollectionAmount: installments - " + installments
 				+ ", newDemandDetailsByInstallment.size - " + newDemandDetailsByInstallment.size());
 
-		final Set<String> demandReasons = new LinkedHashSet<>(Arrays.asList(DEMANDRSN_CODE_PENALTY_FINES,
-				DEMANDRSN_CODE_GENERAL_TAX, DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_EDUCATIONAL_CESS,
-				DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY));
-
 		if (!excessCollAmtMap.isEmpty())
-			adjustCollection(installments, newDemandDetailsByInstallment, demandReasons, ptDemand);
+			adjustCollection(installments, newDemandDetailsByInstallment, DEMAND_REASONS, ptDemand);
 
 		LOGGER.info("Excess collection adjustment is successfully completed..");
 		LOGGER.debug("Exiting from adjustExcessCollectionAmount");
@@ -2052,7 +2167,7 @@ public class PropertyService {
 		});
 	}
 
-	private List<String> propertyApplicationTypes() {
+	public List<String> propertyApplicationTypes() {
 		final List<String> applicationTypes = new ArrayList<>();
 		applicationTypes.add(APPLICATION_TYPE_NEW_ASSESSENT);
 		applicationTypes.add(APPLICATION_TYPE_ALTER_ASSESSENT);
@@ -2089,7 +2204,7 @@ public class PropertyService {
 
 	private User getOwnerName(final StateAware<Position> stateAwareObject) {
 		User user = null;
-		final Position position = stateAwareObject.getState().getOwnerPosition();
+	        final Position position = stateAwareObject.getState().getOwnerPosition() != null ? stateAwareObject.getState().getOwnerPosition() : stateAwareObject.getState().getPreviousOwner();
 		if (position != null)
 			user = assignmentService.getAssignmentsForPosition(position.getId(), new Date()).get(0).getEmployee();
 		return user;
@@ -2125,8 +2240,7 @@ public class PropertyService {
 				.withStatus(vacancyRemissionApproval.getState().getValue())
 				.withUrl(format(APPLICATION_VIEW_URL, vacancyRemission.getApplicationNumber(), applictionType))
 				.withApplicantAddress(vacancyRemission.getBasicProperty().getAddress().toString())
-				.withOwnername(vacancyRemissionApproval.getState().getValue().contains(WF_STATE_CLOSED) ? null
-						: stateOwner.getUsername() + "::" + stateOwner.getName())
+				.withOwnername(stateOwner.getUsername() + "::" + stateOwner.getName())
 				.withChannel(source).withMobileNumber(owner.getMobileNumber())
 				.withAadharNumber(owner.getAadhaarNumber())
 				.withConsumerCode(vacancyRemission.getBasicProperty().getUpicNo()).withClosed(closureStatus)
@@ -2144,8 +2258,7 @@ public class PropertyService {
 			final VacancyRemissionApproval vacancyRemissionApproval) {
 		applicationIndex.setStatus(vacancyRemissionApproval.getState().getValue());
 		applicationIndex.setApplicantName(owner.getName());
-		applicationIndex.setOwnerName(vacancyRemissionApproval.getState().getValue().contains(WF_STATE_CLOSED) ? null
-				: stateOwner.getUsername() + "::" + stateOwner.getName());
+		applicationIndex.setOwnerName(stateOwner.getUsername() + "::" + stateOwner.getName());
 		applicationIndex.setMobileNumber(owner.getMobileNumber());
 		applicationIndex.setAadharNumber(owner.getAadhaarNumber());
 		applicationIndex.setClosed(vacancyRemissionApproval.getState().getValue().contains(WF_STATE_CLOSED)
@@ -2186,8 +2299,7 @@ public class PropertyService {
 				.withStatus(propertyMutation.getState().getValue())
 				.withUrl(format(APPLICATION_VIEW_URL, propertyMutation.getApplicationNo(), applictionType))
 				.withApplicantAddress(propertyMutation.getBasicProperty().getAddress().toString())
-				.withOwnername(propertyMutation.getState().getValue().contains(WF_STATE_CLOSED) ? null
-						: stateOwner.getUsername() + "::" + stateOwner.getName())
+				.withOwnername(stateOwner.getUsername() + "::" + stateOwner.getName())
 				.withChannel(source).withMobileNumber(owner.getMobileNumber())
 				.withAadharNumber(owner.getAadhaarNumber())
 				.withConsumerCode(propertyMutation.getBasicProperty().getUpicNo()).withClosed(closureStatus)
@@ -2204,8 +2316,7 @@ public class PropertyService {
 			final ApplicationIndex applicationIndex, final User owner) {
 		applicationIndex.setStatus(propertyMutation.getState().getValue());
 		applicationIndex.setApplicantName(owner.getName());
-		applicationIndex.setOwnerName(propertyMutation.getState().getValue().contains(WF_STATE_CLOSED) ? null
-				: stateOwner.getUsername() + "::" + stateOwner.getName());
+		applicationIndex.setOwnerName(stateOwner.getUsername() + "::" + stateOwner.getName());
 		applicationIndex.setMobileNumber(owner.getMobileNumber());
 		applicationIndex.setAadharNumber(owner.getAadhaarNumber());
 		applicationIndex.setClosed(propertyMutation.getState().getValue().contains(WF_STATE_CLOSED) ? ClosureStatus.YES
@@ -2245,8 +2356,7 @@ public class PropertyService {
 				.withStatus(revisionPetition.getState().getValue())
 				.withUrl(format(APPLICATION_VIEW_URL, revisionPetition.getObjectionNumber(), applictionType))
 				.withApplicantAddress(revisionPetition.getBasicProperty().getAddress().toString())
-				.withOwnername(revisionPetition.getState().getValue().contains(WF_STATE_CLOSED) ? null
-						: stateOwner.getUsername() + "::" + stateOwner.getName())
+				.withOwnername(stateOwner.getUsername() + "::" + stateOwner.getName())
 				.withChannel(source).withMobileNumber(owner.getMobileNumber())
 				.withAadharNumber(owner.getAadhaarNumber())
 				.withConsumerCode(revisionPetition.getBasicProperty().getUpicNo()).withClosed(closureStatus)
@@ -2264,8 +2374,7 @@ public class PropertyService {
 		applicationIndex.setStatus(revisionPetition.getState().getValue());
 		if (applictionType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)
 				|| applictionType.equalsIgnoreCase(APPLICATION_TYPE_GRP)) {
-			applicationIndex.setOwnerName(revisionPetition.getState().getValue().contains(WF_STATE_CLOSED) ? null
-					: stateOwner.getUsername() + "::" + stateOwner.getName());
+			applicationIndex.setOwnerName(stateOwner.getUsername() + "::" + stateOwner.getName());
 			applicationIndex.setClosed(revisionPetition.getState().getValue().contains(WF_STATE_CLOSED)
 					? ClosureStatus.YES : ClosureStatus.NO);
 			if (!ApprovalStatus.APPROVED.equals(applicationIndex.getApproved()))
@@ -2282,6 +2391,7 @@ public class PropertyService {
 	private void updatePropertyIndex(final StateAware stateAwareObject, final String applictionType,
 			final User stateOwner, final int sla) {
 		final PropertyImpl property = (PropertyImpl) stateAwareObject;
+		if(!SOURCE_SURVEY.equalsIgnoreCase(property.getSource())){
 		final ApplicationIndex applicationIndex = applicationIndexService
 				.findByApplicationNumber(property.getApplicationNo());
 		final User owner = property.getBasicProperty().getPrimaryOwner();
@@ -2290,7 +2400,8 @@ public class PropertyService {
 			createPropertyApplicationIndex(applictionType, stateOwner, sla, property, owner, source);
 		else
 			updatePropertyApplicationIndex(applictionType, stateOwner, property, applicationIndex, owner);
-	}
+	        }
+       }
 
 	/**
 	 * @param applictionType
@@ -2312,8 +2423,7 @@ public class PropertyService {
 				.withStatus(property.getState().getValue())
 				.withUrl(format(APPLICATION_VIEW_URL, property.getApplicationNo(), applictionType))
 				.withApplicantAddress(property.getBasicProperty().getAddress().toString())
-				.withOwnername(property.getState().getValue().contains(WF_STATE_CLOSED) ? null
-						: stateOwner.getUsername() + "::" + stateOwner.getName())
+				.withOwnername(stateOwner.getUsername() + "::" + stateOwner.getName())
 				.withChannel(source).withMobileNumber(owner.getMobileNumber())
 				.withAadharNumber(owner.getAadhaarNumber()).withConsumerCode(property.getBasicProperty().getUpicNo())
 				.withClosed(closureStatus)
@@ -2340,8 +2450,7 @@ public class PropertyService {
 		if (propertyApplicationTypes().contains(applictionType)) {
 			applicationIndex.setConsumerCode(property.getBasicProperty().getUpicNo());
 			applicationIndex.setApplicantName(owner.getName());
-			applicationIndex.setOwnerName(property.getState().getValue().contains(WF_STATE_CLOSED) ? null
-					: stateOwner.getUsername() + "::" + stateOwner.getName());
+			applicationIndex.setOwnerName(stateOwner.getUsername() + "::" + stateOwner.getName());
 			applicationIndex.setMobileNumber(owner.getMobileNumber());
 			applicationIndex.setAadharNumber(owner.getAadhaarNumber());
 			applicationIndex.setClosed(
@@ -2646,13 +2755,12 @@ public class PropertyService {
 	 */
 	public Assignment getAssignmentByDeptDesigElecWard(final BasicProperty basicProperty) {
 		final String designationStr = getDesignationForCscOperatorWorkFlow();
-		final String departmentStr = getDepartmentForCscOperatorWorkFlow();
-		final String[] department = departmentStr.split(",");
+		final String department = getDepartmentForCscOperatorWorkFlow();
 		final String[] designation = designationStr.split(",");
 		List<Assignment> assignment = new ArrayList<>();
-		for (final String dept : department) {
+		if(StringUtils.isNotBlank(department)) {
 			for (final String desg : designation) {
-				final Long deptId = departmentService.getDepartmentByName(dept).getId();
+				final Long deptId = departmentService.getDepartmentByName(department).getId();
 				final Long desgId = designationService.getDesignationByName(desg).getId();
 				final Long boundaryId = basicProperty.getPropertyID().getElectionBoundary().getId();
 				assignment = assignmentService.findAssignmentByDepartmentDesignationAndBoundary(deptId, desgId,
@@ -2660,9 +2768,8 @@ public class PropertyService {
 				if (!assignment.isEmpty())
 					break;
 			}
-			if (!assignment.isEmpty())
-				break;
 		}
+		
 		return !assignment.isEmpty() ? assignment.get(0) : null;
 	}
 
@@ -3255,7 +3362,11 @@ public class PropertyService {
 	public Map<String, BigDecimal> getCurrentPropertyTaxDetails(final Property propertyImpl) {
 		return ptDemandDAO.getDemandCollMap(propertyImpl);
 	}
-
+	
+	public Map<String, BigDecimal> getCurrentPropertyTaxDetailsIncludingPenalty(final Property propertyImpl) {
+            return ptDemandDAO.getDemandCollMapIncludingPenaltyAndAdvance(propertyImpl);
+	}
+    
 	/**
 	 * Returns a map of current tax and balance, based on passed date being in
 	 * first half or second half of the installments for current year
@@ -3283,6 +3394,26 @@ public class PropertyService {
 							.subtract(propertyTaxDetails.get(PropertyTaxConstants.CURR_SECONDHALF_COLL_STR)));
 		}
 		return taxValues;
+	}
+	
+	public Map<String, BigDecimal> getCurrentTaxAndBalanceIncludingPenalty(final Map<String, BigDecimal> propertyTaxDetails,final Date currDate) {
+            final Map<String, BigDecimal> taxValues = new HashMap<>();
+            final Map<String, Installment> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(currDate);
+            final Installment currInstFirstHalf = currYearInstMap.get(PropertyTaxConstants.CURRENTYEAR_FIRST_HALF);
+            if (DateUtils.between(new Date(), currInstFirstHalf.getFromDate(), currInstFirstHalf.getToDate())) {
+                    taxValues.put(PropertyTaxConstants.CURR_DMD_STR,
+                                    propertyTaxDetails.get(PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR));
+                    taxValues.put(PropertyTaxConstants.CURR_BAL_STR,
+                                    (propertyTaxDetails.get(PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR).add(propertyTaxDetails.get(PropertyTaxConstants.CURR_FIRSTHALF_PENALTY_DMD_STR)))
+                                                .subtract((propertyTaxDetails.get(PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR)).add(propertyTaxDetails.get(PropertyTaxConstants.CURR_FIRSTHALF_PENALTY_COLL_STR))));
+            } else {
+                    taxValues.put(PropertyTaxConstants.CURR_DMD_STR,
+                                    propertyTaxDetails.get(PropertyTaxConstants.CURR_SECONDHALF_DMD_STR));
+                    taxValues.put(PropertyTaxConstants.CURR_BAL_STR,
+                            (propertyTaxDetails.get(PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR).add(propertyTaxDetails.get(PropertyTaxConstants.CURR_FIRSTHALF_PENALTY_DMD_STR)).add(propertyTaxDetails.get(PropertyTaxConstants.CURR_SECONDHALF_DMD_STR)).add(propertyTaxDetails.get(PropertyTaxConstants.CURR_SECONDHALF_PENALTY_DMD_STR)))
+                                                .subtract((propertyTaxDetails.get(PropertyTaxConstants.CURR_SECONDHALF_COLL_STR)).add(propertyTaxDetails.get(PropertyTaxConstants.CURR_SECONDHALF_PENALTY_COLL_STR)).add(propertyTaxDetails.get(PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR)).add(propertyTaxDetails.get(PropertyTaxConstants.CURR_FIRSTHALF_PENALTY_COLL_STR))));
+            }
+            return taxValues;
 	}
 
 	/**
@@ -3343,8 +3474,8 @@ public class PropertyService {
 					propertyTaxDetails.get(installmentHalf).get(PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX));
 		taxValues.put(PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS,
 				propertyTaxDetails.get(installmentHalf).get(PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS));
-		taxValues.put(PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_CESS,
-				propertyTaxDetails.get(installmentHalf).get(PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_CESS));
+		taxValues.put(PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_TAX,
+				propertyTaxDetails.get(installmentHalf).get(PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_TAX));
 		taxValues.put(PropertyTaxConstants.DEMANDRSN_STR_UNAUTHORIZED_PENALTY,
 				propertyTaxDetails.get(installmentHalf).get(PropertyTaxConstants.DEMANDRSN_STR_UNAUTHORIZED_PENALTY));
 		taxValues.put(PropertyTaxConstants.ARR_DMD_STR,
@@ -3425,15 +3556,12 @@ public class PropertyService {
 	 */
 	private void adjustExcessPenalty(final EgDemand currentDemand, final List<Installment> installments,
 			BigDecimal excessPenalty) {
-		final Set<String> demandReasons = new LinkedHashSet<>(Arrays.asList(DEMANDRSN_CODE_PENALTY_FINES,
-				DEMANDRSN_CODE_GENERAL_TAX, DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_EDUCATIONAL_CESS,
-				DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY));
 		final List<EgDemandDetails> demandDetailsList = new ArrayList<>(currentDemand.getEgDemandDetails());
 		final Map<Installment, Set<EgDemandDetails>> installmentWiseDemandDetails = getEgDemandDetailsSetAsMap(
 				demandDetailsList, installments);
 		for (final Installment installment : installments) {
 			final Set<EgDemandDetails> demandDetailsSet = installmentWiseDemandDetails.get(installment);
-			for (final String demandReason : demandReasons) {
+			for (final String demandReason : DEMAND_REASONS) {
 				final EgDemandDetails demandDetails = getEgDemandDetailsForReason(demandDetailsSet, demandReason);
 				if (demandDetails != null) {
 					final BigDecimal balance = demandDetails.getAmount().subtract(demandDetails.getAmtCollected());
@@ -3468,7 +3596,7 @@ public class PropertyService {
 	 * @param currentDemand
 	 * @return
 	 */
-	private Map<Installment, BigDecimal> getInstallmentWiseDemand(final EgDemand currentDemand) {
+	public Map<Installment, BigDecimal> getInstallmentWiseDemand(final EgDemand currentDemand) {
 		final Map<Installment, BigDecimal> installmentWiseDemand = new TreeMap<>();
 		String demandReason = "";
 		Installment installment = null;
@@ -3947,10 +4075,6 @@ public class PropertyService {
 	            totalColl = totalColl.add(dmdDetails.getAmtCollected());
 	    }
 
-	    final Set<String> demandReasons = new LinkedHashSet<>(Arrays.asList(DEMANDRSN_CODE_PENALTY_FINES,
-		DEMANDRSN_CODE_GENERAL_TAX, DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_EDUCATIONAL_CESS,
-		DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY));
-
 	    if (ptDemandNew != null) {
 	        final Map<Installment, Set<EgDemandDetails>> installmentWiseDemandDetails = getEgDemandDetailsSetByInstallment(
 	                ptDemandNew.getEgDemandDetails());
@@ -3958,7 +4082,7 @@ public class PropertyService {
 	        Collections.sort(installments);
         
 	        for (final Installment installment : installments) {
-	            for (final String demandReason : demandReasons) {
+	            for (final String demandReason : DEMAND_REASONS) {
 	                final EgDemandDetails newDemandDetail = getEgDemandDetailsForReason(
 	                        installmentWiseDemandDetails.get(installment), demandReason);
 	                totalColl = updateCollection(totalColl, newDemandDetail);
@@ -4249,8 +4373,7 @@ public class PropertyService {
 				.withStatus(vacancyRemission.getState().getValue())
 				.withUrl(format(APPLICATION_VIEW_URL, vacancyRemission.getApplicationNumber(), applictionType))
 				.withApplicantAddress(vacancyRemission.getBasicProperty().getAddress().toString())
-				.withOwnername(vacancyRemission.getState().getValue().contains(WF_STATE_CLOSED) ? null
-						: stateOwner.getUsername() + "::" + stateOwner.getName())
+				.withOwnername(stateOwner.getUsername() + "::" + stateOwner.getName())
 				.withChannel(source).withMobileNumber(owner.getMobileNumber())
 				.withAadharNumber(owner.getAadhaarNumber())
 				.withConsumerCode(vacancyRemission.getBasicProperty().getUpicNo()).withClosed(closureStatus)
@@ -4267,8 +4390,7 @@ public class PropertyService {
 			final User owner, final VacancyRemission vacancyRemission) {
 		applicationIndex.setStatus(vacancyRemission.getState().getValue());
 		applicationIndex.setApplicantName(owner.getName());
-		applicationIndex.setOwnerName(vacancyRemission.getState().getValue().contains(WF_STATE_CLOSED) ? null
-				: stateOwner.getUsername() + "::" + stateOwner.getName());
+		applicationIndex.setOwnerName(stateOwner.getUsername() + "::" + stateOwner.getName());
 		applicationIndex.setMobileNumber(owner.getMobileNumber());
 		applicationIndex.setAadharNumber(owner.getAadhaarNumber());
 		applicationIndex.setClosed(vacancyRemission.getState().getValue().contains(WF_STATE_CLOSED) ? ClosureStatus.YES
@@ -4280,6 +4402,17 @@ public class PropertyService {
 							|| vacancyRemission.getState().getValue().contains(WF_STATE_CLOSED)
 									? ApprovalStatus.REJECTED : ApprovalStatus.INPROGRESS);
 		applicationIndexService.updateApplicationIndex(applicationIndex);
+	}
+	
+	public BigDecimal getTotalTaxExcludingUACPenalty(Installment installment, Ptdemand ptDemand) {
+	        BigDecimal halfYearlyTax = ZERO;
+	        for (EgDemandDetails demandDetails : ptDemand.getEgDemandDetails()) {
+	            if (installment.getFromDate().equals(demandDetails.getInstallmentStartDate()) &&
+	                    !PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY
+	                            .equalsIgnoreCase(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()))
+	                halfYearlyTax = halfYearlyTax.add(demandDetails.getAmount());
+	        }
+	        return halfYearlyTax;
 	}
 
 }

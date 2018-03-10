@@ -47,12 +47,19 @@
  */
 package org.egov.restapi.web.rest;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
+
+import java.util.Date;
+
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.restapi.constants.RestApiConstants;
 import org.egov.restapi.model.WaterChargesConnectionInfo;
@@ -80,16 +87,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Date;
-
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
-
 @RestController
 public class RestWaterConnectionValidationService {
 
-    private static final String REGULARISED_CONN_NATUREOFTASK = "Regularised Water Tap Connection";
+    private static final String REGULARISED_CONN_NATUREOFTASK = "Regularization connection Water Tap Connection";
 
     @Autowired
     private WaterPropertyUsageService waterPropertyUsageService;
@@ -235,6 +236,8 @@ public class RestWaterConnectionValidationService {
         final RegularisedConnection regularisedConnection = new RegularisedConnection();
         regularisedConnection.setApplicationNumber(applicationNumberGenerator.generate());
         regularisedConnection.setApplicationDate(new Date());
+        regularisedConnection.setSource(PropertyTaxConstants.SOURCE_SURVEY);
+        regularisedConnection.setReferenceNumber(waterChargesConnectionInfo.getReferenceId());
         final WorkFlowMatrix wfmatrix = waterConnectionWorkflowService.getWfMatrix(regularisedConnection.getStateType(), null,
                 null, REGULARIZE_CONNECTION, "Created", null);
         final User user = securityUtils.getCurrentUser();

@@ -78,6 +78,10 @@ public class CouncilSequenceNumber {
 
     @Column(name = "resolutionSeqNumber", unique = true)
     private String resolutionSeqNumber;
+    
+    @Column(name = "meetingSeqNumber", unique = true)
+    private String meetingSeqNumber;
+    
 
     public Long getId() {
         return id;
@@ -109,6 +113,14 @@ public class CouncilSequenceNumber {
 
     public void setResolutionSeqNumber(String resolutionSeqNumber) {
         this.resolutionSeqNumber = resolutionSeqNumber;
+    }
+
+    public String getMeetingSeqNumber() {
+        return meetingSeqNumber;
+    }
+
+    public void setMeetingSeqNumber(String meetingSeqNumber) {
+        this.meetingSeqNumber = meetingSeqNumber;
     }
 
 }

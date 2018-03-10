@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -196,6 +196,9 @@ public final class Constants {
     public static final String GENERATE_PROVISIONAL_CERTIFICATE = "Generate Provisional Certificate";
     public static final String REPORT_PAGE = "report";
     public static final String STATUS_COLLECTIONPENDING="COLLECTIONPENDING";
+    public static final String EXTERNAL_CLOSURE_LICENSE="EXTERNALCLOSUREAPPLICATION";
+    public static final String CLOSURE_LICENSE_REJECT="CLOSURELICENSEREJECT";
+    public static final String AUTO = "Auto";
     static {
 
         OWNERSHIP_TYPE.put(OWNERSHIP_TYPE_OWN, OWNERSHIP_TYPE_OWN);

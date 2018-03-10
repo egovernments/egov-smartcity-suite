@@ -50,26 +50,21 @@ package org.egov.infra.config.persistence.auditing.listener;
 
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.persistence.auditing.BaseRevisionEntity;
-import org.egov.infra.security.utils.SecurityUtils;
 import org.hibernate.envers.RevisionListener;
-import org.springframework.security.core.Authentication;
 
-import java.util.HashMap;
-import java.util.Optional;
-
-import static org.egov.infra.security.utils.SecurityUtils.userAnonymouslyAuthenticated;
+import static org.egov.infra.utils.ApplicationConstant.UNKNOWN;
 
 public class AuditableEntityListener implements RevisionListener {
 
     @Override
-    public void newRevision(final Object revisionEntity) {
-        final BaseRevisionEntity revision = (BaseRevisionEntity) revisionEntity;
+    public void newRevision(Object revisionEntity) {
+        BaseRevisionEntity revision = (BaseRevisionEntity) revisionEntity;
         revision.setUserId(ApplicationThreadLocals.getUserId());
-        final Optional<Authentication> auth = SecurityUtils.getCurrentAuthentication();
-        if (auth.isPresent() && !userAnonymouslyAuthenticated(auth))
-            revision.setIpAddress(((HashMap<String, String>) auth.get().getCredentials()).get("ipAddress"));
+        if (ApplicationThreadLocals.getIPAddress() == null)
+            revision.setIpAddress(UNKNOWN);
         else
-            revision.setIpAddress("unknown");
+            revision.setIpAddress(ApplicationThreadLocals.getIPAddress());
+
     }
 
 }

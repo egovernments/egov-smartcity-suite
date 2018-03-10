@@ -68,6 +68,7 @@ public class EmailService {
     public void sendEmail(String toEmail, String subject, String mailBody) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(toEmail);
+        mailMessage.setFrom(mailSender.getUsername());
         mailMessage.setSubject(subject);
         mailMessage.setText(mailBody);
         mailSender.send(mailMessage);
@@ -77,12 +78,13 @@ public class EmailService {
                           byte[] attachment) {
         MimeMessage message = mailSender.createMimeMessage();
         try {
-            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(message, true);
-            mimeMessageHelper.setTo(toEmail);
-            mimeMessageHelper.setSubject(subject);
-            mimeMessageHelper.setText(mailBody);
+            MimeMessageHelper mimeMessage = new MimeMessageHelper(message, true);
+            mimeMessage.setTo(toEmail);
+            mimeMessage.setFrom(mailSender.getUsername());
+            mimeMessage.setSubject(subject);
+            mimeMessage.setText(mailBody);
             ByteArrayDataSource source = new ByteArrayDataSource(attachment, fileType);
-            mimeMessageHelper.addAttachment(fileName, source);
+            mimeMessage.addAttachment(fileName, source);
         } catch (MessagingException | IllegalArgumentException e) {
             throw new ApplicationRuntimeException("Error occurred while sending email with attachment", e);
         }

@@ -47,6 +47,13 @@
  */
 package org.egov.ptis.web.controller.masters.taxrates;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.demand.bean.DemandReasonDetailsBean;
 import org.egov.demand.model.EgDemandReasonDetails;
@@ -60,12 +67,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 @Controller
 @RequestMapping(value = "/taxrates")
 public class TaxRatesController {
@@ -75,7 +76,7 @@ public class TaxRatesController {
     private static final String TAXRATE_EDIT = "taxrates-edit";
     private static final String GENERAL_TAX_RESD = "GEN_TAX_RESD";
     private static final String GENERAL_TAX_NONRESD = "GEN_TAX_NR";
-    private static final String EDUCATIONAL_TAX = "EDU_CESS";
+    private static final String EDUCATIONAL_TAX = "EDU_TAX";
     private static final String REDIRECT_URL = "redirect:/taxrates/appconfig/edit";
     private static final String REDIRECT_VIEW_URL = "redirect:/taxrates/appconfig/view";
     private static final String MESSAGE = "message";
@@ -112,7 +113,7 @@ public class TaxRatesController {
             final HttpServletRequest request, final RedirectAttributes redirectAttributes) {
         final String resTaxValue = request.getParameter("General Tax Residential-value");
         final String nonResTaxValue = request.getParameter("General Tax Non Residential-value");
-        final String eduTax = request.getParameter("Education Cess-value");
+        final String eduTax = request.getParameter("Education Tax-value");
         if (StringUtils.isNotBlank(resTaxValue) && StringUtils.isNotBlank(nonResTaxValue)
                 && StringUtils.isNotBlank(eduTax) && validateTaxValues(resTaxValue, nonResTaxValue, eduTax)) {
             final StringBuilder newTaxStr = new StringBuilder();
@@ -125,7 +126,7 @@ public class TaxRatesController {
                 else if (GENERAL_TAX_NONRESD.equalsIgnoreCase(value[0]))
                     newTaxStr.append("GEN_TAX_NR=" + nonResTaxValue + "\n");
                 else if (EDUCATIONAL_TAX.equalsIgnoreCase(value[0]))
-                    newTaxStr.append("EDU_CESS=" + eduTax + "\n");
+                    newTaxStr.append("EDU_TAX=" + eduTax + "\n");
                 else
                     newTaxStr.append(rows[rows.length - 1] == row ? value[0] + "=" + value[1]
                             : value[0] + "=" + value[1] + "\n");
@@ -146,7 +147,9 @@ public class TaxRatesController {
     @RequestMapping(value = "/view", method = RequestMethod.GET)
     public String showTaxRates(final Model model) {
         DemandReasonDetailsBean taxRatesForm = new DemandReasonDetailsBean();
-        taxRatesForm.setDemandReasonDetails(taxRatesService.excludeOldTaxHeads(taxRatesService.getTaxRates()));
+        List<EgDemandReasonDetails> taxRates = taxRatesService.getTaxRates();
+        model.addAttribute("VLT_LIB_DETAILS", taxRatesService.getVltAndLibPercentage(taxRates));
+        taxRatesForm.setDemandReasonDetails(taxRatesService.excludeOldTaxHeads(taxRates));
         model.addAttribute(TAX_RATES_FORM, taxRatesForm);
         addTotalTaxHeadsToModel(model);
         return "taxrates-view";
@@ -203,7 +206,7 @@ public class TaxRatesController {
             existingDemandReasonDetails = taxRatesService.getDemandReasonDetailsById(egDemandReasonDetail.getId());
             existingDemandReasonDetails.setPercentage(egDemandReasonDetail.getPercentage());
             updatedTaxRatesForm.add(existingDemandReasonDetails);
-            if(existingDemandReasonDetails.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster().endsWith("Non Residential"))
+            if(existingDemandReasonDetails.getEgDemandReasonMaster().getReasonMaster().endsWith("Non Residential"))
                 netNonResdPercentage = netNonResdPercentage.add(existingDemandReasonDetails.getPercentage());
             else 
                 netResdPercentage = netResdPercentage.add(existingDemandReasonDetails.getPercentage());
@@ -229,11 +232,11 @@ public class TaxRatesController {
         BigDecimal totNRsdTax=BigDecimal.ZERO;
         BigDecimal eduTax=BigDecimal.ZERO;
         for (EgDemandReasonDetails drd : taxRatesService.getTaxRates()) {
-            if (drd.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(TOTAL_TAX_RESD))
+            if (drd.getEgDemandReasonMaster().getCode().equals(TOTAL_TAX_RESD))
                 totRsdTax=drd.getPercentage();
-            if (drd.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(TOTAL_TAX_NONRESD))
+            if (drd.getEgDemandReasonMaster().getCode().equals(TOTAL_TAX_NONRESD))
                 totNRsdTax=drd.getPercentage();
-            if(drd.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(EDUCATIONAL_TAX))
+            if(drd.getEgDemandReasonMaster().getCode().equals(EDUCATIONAL_TAX))
                 eduTax=drd.getPercentage();
         }
         totRsdTax=totRsdTax.add(eduTax);

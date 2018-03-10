@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -50,13 +50,12 @@ package org.egov.pgr.entity.enums;
 
 import org.apache.commons.lang3.StringUtils;
 
-import static org.egov.infra.utils.ApplicationConstant.NA;
 
 public enum CitizenFeedback {
     UNSPECIFIED, ONE, TWO, THREE, FOUR, FIVE;
 
-    public static String value(Integer ordinal) {
-        return ordinal == null ? NA : values()[ordinal].toString();
+    public static CitizenFeedback value(Integer ordinal) {
+        return values()[ordinal];
     }
 
     @Override

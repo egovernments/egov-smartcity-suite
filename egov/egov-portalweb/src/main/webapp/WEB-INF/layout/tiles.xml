@@ -101,6 +101,11 @@
         <put-attribute name="page-title" value="title.servicetype" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/servicetype/portalservicetype-search.jsp"/>
     </definition>
+    
+    <definition name="seachfor-link" extends="base_layout">
+        <put-attribute name="page-title" value="title.servicetype" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/link/seachfor-link.jsp"/>
+    </definition>
 
     <definition name="portalservicetype-edit" extends="base_layout">
         <put-attribute name="page-title" value="title.servicetype" cascade="true"/>
@@ -111,4 +116,13 @@
         <put-attribute name="page-title" value="title.servicetype" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/servicetype/portalservicetype-ack.jsp"/>
     </definition>
+    <definition name="connectionlink-success" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.link.connection" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/link/connectionlink-success.jsp" />
+	</definition>
+
+ 	<definition name="common-error" extends="base_layout">
+		<put-attribute name="page-title" value="title.citizenHome" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/link/common-error.jsp" />
+	</definition>
 </tiles-definitions>

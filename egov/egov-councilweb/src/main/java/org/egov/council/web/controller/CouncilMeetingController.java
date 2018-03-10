@@ -54,7 +54,7 @@ import static org.egov.council.utils.constants.CouncilConstants.ATTENDANCEFINALI
 import static org.egov.council.utils.constants.CouncilConstants.COUNCILMEETING;
 import static org.egov.council.utils.constants.CouncilConstants.MEETINGRESOLUTIONFILENAME;
 import static org.egov.council.utils.constants.CouncilConstants.MEETING_MODULENAME;
-import static org.egov.council.utils.constants.CouncilConstants.MEETING_TIMINGS;
+import static org.egov.council.utils.constants.CouncilConstants.getMeetingTimings;
 import static org.egov.council.utils.constants.CouncilConstants.MODULE_NAME;
 import static org.egov.council.utils.constants.CouncilConstants.MOM_FINALISED;
 import static org.egov.infra.utils.JsonUtils.toJSON;
@@ -174,7 +174,7 @@ public class CouncilMeetingController {
 
     @ModelAttribute("meetingTimingMap")
     public Map<String, String> getMeetingTimingList() {
-        return MEETING_TIMINGS;
+        return getMeetingTimings();
     }
 
     @ModelAttribute("departments")

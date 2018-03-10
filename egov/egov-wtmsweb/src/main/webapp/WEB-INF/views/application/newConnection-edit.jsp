@@ -52,8 +52,16 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
+	
 <form:form role="form" method="post" modelAttribute="waterConnectionDetails" 
-id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">				
+id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">	
+<div class="container-fluid">
+	<spring:hasBindErrors name="waterConnectionDetails">
+	<div class="alert alert-danger col-md-12 col-md-offset-0">
+		<form:errors path="*" />
+	</div>
+	</spring:hasBindErrors>
+</div>	
 <div class="page-container" id="page-container">
 	<form:hidden id="mode" path="" name="mode" value="${mode}"/> 
 	<form:hidden path="" id="approvalPositionExist" value="${approvalPositionExist}"/>
@@ -62,13 +70,17 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enc
 	<form:hidden path="" id="isCommissionerLoggedIn" value="${isCommissionerLoggedIn}"/>
 	<form:hidden path="" id="wfstate" value="${waterConnectionDetails.state.id}"/> 
 	<form:hidden path="" id="waterconnectiondetailid" value="${waterConnectionDetails.id}"/>
-	<input type="hidden" id="closerConnection" value="${waterConnectionDetails.closeConnectionType}"/> 
+	<input type="hidden" id="closerConnection" value="${waterConnectionDetails.closeConnectionType}"/>
+	<input type="hidden" id="applicationType" value="${waterConnectionDetails.applicationType.code}"/>  
 	<input type="hidden" id="currentUser" value="${currentUser}"/>  
 	<input type="hidden" id="waterTaxDueforParent" value="${waterTaxDueforParent}" name="waterTaxDueforParent"/>  
 	<input type="hidden" id ="typeOfConnection"  value="${typeOfConnection}"/>
 	<input type="hidden" id="meterFocus" value="${meterFocus}"/>
 	<input type="hidden" id="isSanctionedDetailEnable" value="${isSanctionedDetailEnable}"/>
 	<input type="hidden" id="proceedWithoutDonation" value="${proceedWithoutDonation}"/>
+	<input type="hidden" id="executionDate" value="${waterConnectionDetails.executionDate}"/>
+	<input type="hidden" id="source" value="${waterConnectionDetails.source}" />
+	<input type="hidden" id="currentDemand" value="${currentDemand}" />
 	<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
 	<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
@@ -81,12 +93,23 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enc
 	<c:if test="${waterConnectionDetails.status.code != 'CREATED'}">
 		<jsp:include page="connectiondetails-view.jsp"></jsp:include>
 	</c:if>
-	<c:if test="${(waterConnectionDetails.status.code =='CREATED'  )&& mode=='fieldInspection'}">
+	<c:if test="${(waterConnectionDetails.status.code =='CREATED'  )&& (mode=='fieldInspection' || mode == 'addDemand' || mode=='editDemand')}">
 		<div class="panel panel-primary" data-collapsed="0">
-			<jsp:include page="connectiondetails.jsp"></jsp:include> 	
+			<div class="panel panel-body" >
+				<jsp:include page="connectiondetails.jsp"></jsp:include> 
+			</div>	
 		</div>
-		<jsp:include page="documentdetails-view.jsp"></jsp:include> 
-			<jsp:include page="estimationdetails.jsp"></jsp:include>
+		<div class="panel panel-primary" data-collapsed="0">
+			<jsp:include page="documentdetails-view.jsp"></jsp:include>
+		</div>
+			<c:choose>
+				<c:when test="${waterConnectionDetails.applicationType.code=='REGLZNCONNECTION' && waterConnectionDetails.fieldInspectionDetails.id!=null}"> 
+					<jsp:include page="estimationdetails-view.jsp"></jsp:include>
+				</c:when>
+				<c:otherwise>
+					<jsp:include page="estimationdetails.jsp"></jsp:include>
+				</c:otherwise>
+			</c:choose>
 	</c:if>	
 			
 	<c:if test="${waterConnectionDetails.status.code =='CREATED' && mode=='edit' }">
@@ -94,7 +117,7 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enc
 			<jsp:include page="connectiondetails.jsp"></jsp:include> 	
 		</div>
 		<jsp:include page="documentdetails-view.jsp"></jsp:include> 
-			</c:if>
+	</c:if>
 	
 	<c:if test="${waterConnectionDetails.status.code =='CREATED' && mode=='' && waterConnectionDetails.state.value =='Rejected'}">
 		<div class="panel panel-primary" data-collapsed="0">
@@ -117,7 +140,6 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enc
 		<c:if test="${waterConnectionDetails.status.code == 'WORKORDERGENERATED'}">
 			<jsp:include page="tapexecutiondetails-form.jsp"></jsp:include>
 		</c:if>
-		
 		<c:if test="${(waterConnectionDetails.status.code =='CLOSERINITIATED'  ||   waterConnectionDetails.status.code =='CLOSERINPROGRESS'||waterConnectionDetails.status.code =='CLOSERSANCTIONED') }">
 			<jsp:include page="closerForm-details.jsp"></jsp:include>
 			<jsp:include page="closuredocumentdetails-view.jsp"></jsp:include>
@@ -135,6 +157,30 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enc
 		<jsp:include page="application-reassignment.jsp"></jsp:include>
 	</c:if>
 </form:form>
+<script>
+	function showeditDcb(obj)
+	{
+		window.location="/wtms/application/editDemand/"+obj;
+	}
+	
+	function generateDemandNotice(obj) {
+		window.location="/wtms/application/regulariseconnection/demandnote-view/"+obj;
+	}
+	
+	if($("#applicationType").val()==='REGLZNCONNECTION' && $("#statuscode").val()==='CREATED' && $("#executionDate").val()==='') {
+		$(".workAction").hide();
+		$("#editDCB").hide();
+	}
+	else if($("#applicationType").val()==='REGLZNCONNECTION' && $("#statuscode").val()==='CREATED' && $("#executionDate").val()!='' 
+			&& $("#currentDemand").val==null) {
+		$(".workAction").hide();
+		$("#save").hide();
+	}
+	else
+		{
+			$(".workAction").show();
+		}
+</script>
 <script src="<cdn:url value='/resources/js/app/applicationsuccess.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url value='/resources/js/app/newconnectionupdate.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>

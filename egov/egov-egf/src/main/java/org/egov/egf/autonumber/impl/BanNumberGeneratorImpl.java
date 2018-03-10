@@ -52,45 +52,29 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.egf.autonumber.BanNumberGenerator;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.Serializable;
 import java.util.Date;
 
 @Service
 public class BanNumberGeneratorImpl implements BanNumberGenerator {
+    private static final String BUDGET_REAPP_SEQ_NAME = "budget_reappropriation";
 
     @Autowired
     private FinancialYearDAO financialYearDAO;
+
     @Autowired
-    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
-    /**
-     * 
-     * Format BANo:seqnumber/financialyear but sequence is running number for a year
-     *
-     */
     public String getNextNumber() {
-        String banNumber = "";
-
-        String sequenceName = "";
-        Date date = new Date();
-
-        final CFinancialYear financialYear = financialYearDAO
-                .getFinYearByDate(date);
+        final CFinancialYear financialYear = financialYearDAO.getFinYearByDate(new Date());
         if (financialYear == null)
-            throw new ApplicationRuntimeException(
-                    "Financial Year is not defined for the voucher date");
-        sequenceName = "budget_reappropriation";
-        Serializable nextSequence = applicationSequenceNumberGenerator
-                .getNextSequence(sequenceName);
-
-        banNumber = String.format("%s:%03d/%s", "BANo", nextSequence,
+            throw new ApplicationRuntimeException("Financial Year is not defined for the voucher date");
+        return String.format("%s:%03d/%s", "BANo", genericSequenceNumberGenerator
+                        .getNextSequence(BUDGET_REAPP_SEQ_NAME),
                 financialYear.getFinYearRange());
-
-        return banNumber;
     }
 
 }

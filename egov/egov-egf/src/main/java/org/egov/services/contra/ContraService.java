@@ -47,7 +47,16 @@
  */
 package org.egov.services.contra;
 
-import com.exilant.GLEngine.Transaxtion;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankreconciliation;
@@ -87,15 +96,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import com.exilant.GLEngine.Transaxtion;
 
 /**
  *
@@ -103,8 +104,7 @@ import java.util.Map;
  *
  */
 
-public class ContraService extends PersistenceService<ContraJournalVoucher, Long>
-{
+public class ContraService extends PersistenceService<ContraJournalVoucher, Long> {
     private static final Logger LOGGER = Logger.getLogger(ContraService.class);
     @Autowired
     @Qualifier("persistenceService")
@@ -132,7 +132,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
 
     private @Autowired EgovCommon egovCommon;
 
-    public ContraService()  {
+    public ContraService() {
         super(ContraJournalVoucher.class);
     }
 
@@ -140,13 +140,11 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
         super(type);
     }
 
-    public Position getPositionForWfItem(final ContraJournalVoucher rv)
-    {
+    public Position getPositionForWfItem(final ContraJournalVoucher rv) {
         return eisCommonService.getPositionByUserId(rv.getCreatedBy().getId());
     }
 
-    public Department getDepartmentForUser(final User user)
-    {
+    public Department getDepartmentForUser(final User user) {
         return egovCommon.getDepartmentForUser(user, eisCommonService, employeeServiceOld, persistenceService);
     }
 
@@ -270,7 +268,8 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
 
     }
 
-    public Map<String, Object> getpayInSlipVoucher(final Long voucherId, final ContraBean contraBean, List<PayInBean> iHeaderList) {
+    public Map<String, Object> getpayInSlipVoucher(final Long voucherId, final ContraBean contraBean,
+            List<PayInBean> iHeaderList) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("ContraService | getpayInSlipVoucher | Start");
         final SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
@@ -329,8 +328,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
 
     public void updateCheque_DD_Card_Deposit(final Long payInId, final String toBankaccountGlcode,
             final InstrumentHeader instrumentHeader,
-            final Map valuesMap)
-    {
+            final Map valuesMap) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(" updateCheque_DD_Card_Deposit | Start");
         if (LOGGER.isDebugEnabled())
@@ -343,7 +341,8 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
                 instrumentHeader,
                 (EgwStatus) persistenceService.find("from EgwStatus where id = ?",
                         Integer.valueOf(valuesMap.get("instrumentDepositedStatus").toString())));
-        final ContraJournalVoucher cjv = addToContra(payIn, (Bankaccount) valuesMap.get("depositedBankAccount"), instrumentHeader);
+        final ContraJournalVoucher cjv = addToContra(payIn, (Bankaccount) valuesMap.get("depositedBankAccount"),
+                instrumentHeader);
         addToBankRecon(payIn, instrumentHeader, (EgwStatus) persistenceService.find("from EgwStatus where id = ?",
                 Integer.valueOf(valuesMap.get("instrumentReconciledStatus").toString())));
         if (LOGGER.isDebugEnabled())
@@ -357,10 +356,10 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
      * @return
      */
 
-    public Map prepareForUpdateInstrumentDeposit(final String toBankaccountGlcode)
-    {
+    public Map prepareForUpdateInstrumentDeposit(final String toBankaccountGlcode) {
         final Map<String, Object> valuesMap = new HashMap<String, Object>();
-        final List<AppConfigValues> configValuesByModuleAndKey = appConfigValuesService.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,
+        final List<AppConfigValues> configValuesByModuleAndKey = appConfigValuesService.getConfigValuesByModuleAndKey(
+                FinancialConstants.MODULE_NAME_APPCONFIG,
                 "PREAPPROVEDVOUCHERSTATUS");
         preapprovalStatus = Integer.valueOf(configValuesByModuleAndKey.get(0).getValue());
         final EgwStatus instrumentDepositedStatus = (EgwStatus) persistenceService.find(
@@ -389,8 +388,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
      */
     @Transactional
     public void updateCheque_DD_Card_Deposit_Receipt(final Long receiptId, final String toBankaccountGlcode,
-            final InstrumentHeader instrumentHeader, final Map valuesMap)
-    {
+            final InstrumentHeader instrumentHeader, final Map valuesMap) {
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(" updateCheque_DD_Card_Deposit_Receipt | Start");
@@ -413,12 +411,12 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
 
     @Transactional
     public void updateCashDeposit(final Long payInId, final String toBankaccountGlcode, final InstrumentHeader instrumentHeader,
-            final Map valuesMap)
-    {
+            final Map valuesMap) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Contra Service | updateCashDeposit | Start");
 
-        final List<AppConfigValues> appConfigList = appConfigValuesService.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,"PREAPPROVEDVOUCHERSTATUS");
+        final List<AppConfigValues> appConfigList = appConfigValuesService
+                .getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, "PREAPPROVEDVOUCHERSTATUS");
 
         if (null != appConfigList && !appConfigList.isEmpty())
             for (final AppConfigValues appConfigVal : appConfigList)
@@ -436,7 +434,8 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
                 instrumentHeader,
                 (EgwStatus) persistenceService.find("from EgwStatus where id = ?",
                         Integer.valueOf(valuesMap.get("instrumentReconciledStatus").toString())));
-        final ContraJournalVoucher cjv = addToContra(payIn, (Bankaccount) valuesMap.get("depositedBankAccount"), instrumentHeader);
+        final ContraJournalVoucher cjv = addToContra(payIn, (Bankaccount) valuesMap.get("depositedBankAccount"),
+                instrumentHeader);
         addToBankRecon(
                 payIn,
                 instrumentHeader,
@@ -455,34 +454,31 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
     }
 
     public void cancelVoucher(final ContraJournalVoucher cjv) {
-        final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, "cancelledstatus");
+        final List<AppConfigValues> appList = appConfigValuesService
+                .getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, "cancelledstatus");
         final String approvedVoucherStatus = appList.get(0).getValue();
         cjv.getVoucherHeaderId().setStatus(Integer.valueOf(approvedVoucherStatus));
     }
 
-    public String getDesginationName()
-    {
+    public String getDesginationName() {
         // TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav
         final Assignment assignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(ApplicationThreadLocals.getUserId(),
                 new Date());
         return assignment.getDesignation().getName();
     }
 
-    public Department getDepartmentForWfItem(final ContraJournalVoucher cjv)
-    {
+    public Department getDepartmentForWfItem(final ContraJournalVoucher cjv) {
         // TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav
         final Assignment assignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(cjv.getCreatedBy().getId(),
                 new Date());
         return assignment.getDepartment();
     }
 
-    public Boundary getBoundaryForUser(final ContraJournalVoucher rv)
-    {
+    public Boundary getBoundaryForUser(final ContraJournalVoucher rv) {
         return egovCommon.getBoundaryForUser(rv.getCreatedBy());
     }
 
-    public Position getPositionForEmployee(final Employee emp) throws ApplicationRuntimeException
-    {
+    public Position getPositionForEmployee(final Employee emp) throws ApplicationRuntimeException {
         return eisCommonService.getPrimaryAssignmentPositionForEmp(emp.getId());
     }
 
@@ -512,8 +508,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
     @Transactional
     private void updateInstrumentAndPayin(final CVoucherHeader payIn, final Bankaccount account,
             final InstrumentHeader instrumentHeader,
-            final EgwStatus status)
-    {
+            final EgwStatus status) {
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("updateInstrumentAndPayin | Start");
@@ -531,10 +526,10 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
             LOGGER.debug("updateInstrumentAndPayin | End");
     }
 
-    public Map prepareForUpdateInstrumentDepositSQL()
-    {
+    public Map prepareForUpdateInstrumentDepositSQL() {
         final Map<String, Object> valuesMap = new HashMap<String, Object>();
-        final List<AppConfigValues> configValuesByModuleAndKey = appConfigValuesService.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,
+        final List<AppConfigValues> configValuesByModuleAndKey = appConfigValuesService.getConfigValuesByModuleAndKey(
+                FinancialConstants.MODULE_NAME_APPCONFIG,
                 "PREAPPROVEDVOUCHERSTATUS");
         preapprovalStatus = Integer.valueOf(configValuesByModuleAndKey.get(0).getValue());
         final Integer instrumentDepositedStatusId = (Integer) persistenceService.find(
@@ -563,8 +558,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
      * prepareForUpdateInstrumentDepositSQL which should be called only once
      */
 
-    public void updateCheque_DD_Card_Deposit_Receipt(final Map instrumentDetailsMap)
-    {
+    public void updateCheque_DD_Card_Deposit_Receipt(final Map instrumentDetailsMap) {
         // if(LOGGER.isDebugEnabled()) LOGGER.debug("Starting updateCheque_DD_Card_Deposit_ReceiptSql ");
         updateInstrumentAndPayinSql(instrumentDetailsMap);
         addToBankReconcilationSQL(instrumentDetailsMap);
@@ -575,39 +569,37 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
      * @param isntrumentDetailsMap
      * @see public void updateCheque_DD_Card_Deposit_Receipt(Map isntrumentDetailsMap) fordetails
      */
-    public void updateCheque_DD_Card_Deposit(final Map instrumentDetailsMap)
-    {
+    public void updateCheque_DD_Card_Deposit(final Map instrumentDetailsMap) {
         // if(LOGGER.isDebugEnabled()) LOGGER.debug(" updateCheque_DD_Card_Deposit | start");
         updateInstrumentAndPayinSql(instrumentDetailsMap);
         addToBankReconcilationSQL(instrumentDetailsMap);
         addToContraSql(instrumentDetailsMap);
         // if(LOGGER.isDebugEnabled()) LOGGER.debug(" updateCheque_DD_Card_Deposit | End"+instrumentCount);
     }
-    
-    public void updateCheque_DD_Card_Deposit(final Map instrumentDetailsMap, CVoucherHeader cVoucherHeader, InstrumentHeader instrumentHeader, Bankaccount bankaccount)
-    {
+
+    public void updateCheque_DD_Card_Deposit(final Map instrumentDetailsMap, CVoucherHeader cVoucherHeader,
+            InstrumentHeader instrumentHeader, Bankaccount bankaccount) {
         updateInstrumentAndPayinSql(instrumentDetailsMap);
         addToBankReconcilationSQL(instrumentDetailsMap);
-        addToContraJournal(cVoucherHeader,instrumentHeader,bankaccount);
+        addToContraJournal(cVoucherHeader, instrumentHeader, bankaccount);
     }
 
     /**
      * @see public void updateCheque_DD_Card_Deposit_Receipt(Map isntrumentDetailsMap) fordetails
      * @param isntrumentDetailsMap
      */
-    public void updateCashDeposit(final Map instrumentDetailsMap)
-    {
+    public void updateCashDeposit(final Map instrumentDetailsMap) {
         updateInstrumentAndPayinSql(instrumentDetailsMap);
         addToBankReconcilationSQL(instrumentDetailsMap);
         addToContraSql(instrumentDetailsMap);
     }
-    
+
     @Transactional
-    public void updateCashDeposit(final Map instrumentDetailsMap, CVoucherHeader cVoucherHeader, InstrumentHeader instrumentHeader, Bankaccount bankaccount)
-    {
+    public void updateCashDeposit(final Map instrumentDetailsMap, CVoucherHeader cVoucherHeader,
+            InstrumentHeader instrumentHeader, Bankaccount bankaccount) {
         updateInstrumentAndPayinSql(instrumentDetailsMap);
         addToBankReconcilationSQL(instrumentDetailsMap);
-        addToContraJournal(cVoucherHeader,instrumentHeader,bankaccount);
+        addToContraJournal(cVoucherHeader, instrumentHeader, bankaccount);
     }
 
     private void updateInstrumentAndPayinSql(final Map instrumentDetailsMap) {
@@ -626,15 +618,20 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
                 + " LASTMODIFIEDDATE =:modifiedDate where id=:ihId";
 
         final SQLQuery ihSQLQuery = getSession().createSQLQuery(ihSql);
-        ihSQLQuery.setLong("statusId", (Long) instrumentDetailsMap.get("instrumentDepositedStatus"))
-                .setLong("ihId", (Long) instrumentDetailsMap.get("instrumentheader"))
+        if (instrumentDetailsMap.get("instrumenttype").equals(FinancialConstants.INSTRUMENT_TYPE_DD)
+                || instrumentDetailsMap.get("instrumenttype").equals(FinancialConstants.INSTRUMENT_TYPE_CHEQUE))
+            ihSQLQuery.setLong("statusId", (Long) instrumentDetailsMap.get("instrumentDepositedStatus"));
+        else if (instrumentDetailsMap.get("instrumenttype").equals(FinancialConstants.INSTRUMENT_TYPE_CASH))
+            ihSQLQuery.setLong("statusId", (Long) instrumentDetailsMap.get("instrumentReconciledStatus"));
+
+        ihSQLQuery.setLong("ihId", (Long) instrumentDetailsMap.get("instrumentheader"))
                 .setLong("bankAccId", (Long) instrumentDetailsMap.get("bankaccountid"))
                 .setDate("modifiedDate", new Date())
                 .setLong("modifiedBy", (Long) instrumentDetailsMap.get("createdby"));
         ihSQLQuery.executeUpdate();
 
     }
-    
+
     /**
      *
      * @param instrumentDetailsMap
@@ -660,9 +657,9 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
                 FinancialConstants.INSTRUMENT_TYPE_BANK.equalsIgnoreCase((String) instrumentDetailsMap.get("instrumenttype"))
                 ||
                 FinancialConstants.INSTRUMENT_TYPE_BANK_TO_BANK.equalsIgnoreCase((String) instrumentDetailsMap
-                        .get("instrumenttype")) ||
-                FinancialConstants.INSTRUMENT_TYPE_ECS.equalsIgnoreCase((String) instrumentDetailsMap.get("instrumenttype")))
-        {
+                        .get("instrumenttype"))
+                ||
+                FinancialConstants.INSTRUMENT_TYPE_ECS.equalsIgnoreCase((String) instrumentDetailsMap.get("instrumenttype"))) {
             final String ioSql = "update EGF_instrumentOtherdetails set reconciledamount=:reconciledAmt,INSTRUMENTSTATUSDATE=:ihStatusDate,LASTMODIFIEDBY=:modifiedBy,"
                     +
                     " LASTMODIFIEDDATE =:modifiedDate where INSTRUMENTHEADERID=:ihId";
@@ -702,7 +699,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
         ioSQLQuery.executeUpdate();
 
     }
-    
+
     @Transactional
     public void addToContraJournal(CVoucherHeader cVoucherHeader, InstrumentHeader instrumentHeader, Bankaccount bankaccount) {
         ContraJournalVoucher contraJournalVoucher = new ContraJournalVoucher();

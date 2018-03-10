@@ -115,7 +115,7 @@
                             <tr>
                                 <th></th>
                                 <th></th>
-                                <th><spring:message code="lbl.natureofbusiness"/></th>
+                                <th><spring:message code="lbl.tradetype"/></th>
                                 <th><spring:message code="lbl.licenseapptype"/></th>
                                 <th><spring:message code="lbl.licensecategory"/></th>
                                 <th><spring:message code="lbl.subcategory"/></th>

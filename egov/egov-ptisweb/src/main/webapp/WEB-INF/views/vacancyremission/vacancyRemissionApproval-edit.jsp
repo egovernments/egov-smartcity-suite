@@ -78,14 +78,24 @@ $(document).ready(function()
 								<div class="panel-title"><spring:message code="lbl.vacancyremission.details" /></div>
 							</div>
 							<div class="panel-body custom-form">
-								<div class="form-group">
-									<label class="col-sm-3 control-label text-right">
-										<spring:message code="lbl.vacancyremission.details.comments" /> <span class="mandatory"></span>
-									</label>
-									<div class="col-sm-8 add-margin">
-										<form:textarea path="comments" class="form-control" required="required" readonly="true" disabled="true" />
-										<form:errors path="comments" cssClass="add-margin error-msg"/>
-									</div>
+								<label class="col-xs-3 add-margin text-right"> <spring:message
+										code="lbl.fromDate" /> :
+								</label>
+								<div class="col-xs-3 add-margin view-content">
+								<strong><fmt:formatDate value="${vacancyFromDate}" pattern="dd-MM-yyyy"/> </strong>
+								</div>
+								<label class="col-xs-3 add-margin text-right"> <spring:message
+										code="lbl.toDate" /> :
+								</label>
+								<div class="col-xs-3 add-margin view-content">
+								<strong><fmt:formatDate value="${vacancyToDate}" pattern="dd-MM-yyyy"/> </strong>
+								</div>
+								<label class="col-sm-3 control-label text-right">
+									<spring:message code="lbl.vacancyremission.details.comments" /> <span class="mandatory"></span>
+								</label>
+								<div class="col-sm-8 add-margin">
+									<form:textarea path="comments" class="form-control" required="required" readonly="true" disabled="true"/>
+									<form:errors path="comments" cssClass="add-margin error-msg"/>
 								</div>
 							</div>
 						</div>

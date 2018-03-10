@@ -72,6 +72,7 @@ import org.egov.wtms.application.service.ConnectionDetailService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.DocumentNames;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
+import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
@@ -192,7 +193,8 @@ public class ChangeOfUseController extends GenericConnectionController {
                     applicationDocs.add(applicationDocument);
                 i++;
             }
-        waterConnectionDetailsService.validateWaterRateAndDonationHeader(changeOfUse);
+        if (ConnectionType.NON_METERED.equals(changeOfUse.getConnectionType()))
+            waterConnectionDetailsService.validateWaterRateAndDonationHeader(changeOfUse);
         if (resultBinder.hasErrors()) {
             final WaterConnectionDetails parentConnectionDetails = waterConnectionDetailsService
                     .getActiveConnectionDetailsByConnection(changeOfUse.getConnection());

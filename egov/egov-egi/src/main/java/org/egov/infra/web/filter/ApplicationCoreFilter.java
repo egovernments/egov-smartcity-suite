@@ -68,13 +68,21 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Optional;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.security.utils.SecurityConstants.IP_ADDRESS;
+import static org.egov.infra.security.utils.SecurityConstants.USER_AGENT;
+import static org.egov.infra.security.utils.SecurityConstants.USER_AGENT_HEADER;
+import static org.egov.infra.security.utils.SecurityConstants.X_FORWARDED_FOR_HEADER;
 import static org.egov.infra.security.utils.SecurityUtils.getCurrentAuthentication;
 import static org.egov.infra.utils.ApplicationConstant.APP_RELEASE_ATTRIB_NAME;
 import static org.egov.infra.utils.ApplicationConstant.CDN_ATTRIB_NAME;
 import static org.egov.infra.utils.ApplicationConstant.CITY_CODE_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_NAME_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_NAME_KEY;
+import static org.egov.infra.utils.ApplicationConstant.COMMA;
 import static org.egov.infra.utils.ApplicationConstant.TENANTID_KEY;
+import static org.egov.infra.utils.ApplicationConstant.UNKNOWN;
 import static org.egov.infra.utils.ApplicationConstant.USERID_KEY;
 
 public class ApplicationCoreFilter implements Filter {
@@ -97,6 +105,7 @@ public class ApplicationCoreFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpSession session = request.getSession();
         try {
+            prepareRequestOriginDetails(session, request);
             prepareUserSession(session);
             prepareApplicationThreadLocal(session);
             chain.doFilter(request, resp);
@@ -129,6 +138,21 @@ public class ApplicationCoreFilter implements Filter {
         ApplicationThreadLocals.setCityName((String) session.getAttribute(CITY_NAME_KEY));
         ApplicationThreadLocals.setMunicipalityName((String) session.getAttribute(CITY_CORP_NAME_KEY));
         ApplicationThreadLocals.setUserId((Long) session.getAttribute(USERID_KEY));
+        ApplicationThreadLocals.setIPAddress((String) session.getAttribute(IP_ADDRESS));
+    }
+
+    private void prepareRequestOriginDetails(HttpSession session, HttpServletRequest request) {
+        if (session.getAttribute(IP_ADDRESS) == null) {
+            String ipAddress = request.getRemoteAddr();
+            String proxiedIPAddress = request.getHeader(X_FORWARDED_FOR_HEADER);
+            if (isNotBlank(proxiedIPAddress)) {
+                String[] ipAddresses = proxiedIPAddress.split(COMMA);
+                ipAddress = ipAddresses[ipAddresses.length - 1].trim();
+            }
+            String userAgent = request.getHeader(USER_AGENT_HEADER);
+            session.setAttribute(IP_ADDRESS, ipAddress);
+            session.setAttribute(USER_AGENT, isBlank(userAgent) ? UNKNOWN : userAgent);
+        }
     }
 
     @Override

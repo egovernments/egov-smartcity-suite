@@ -237,7 +237,7 @@ function resetSubmit()
 				</tr>
 				<tr>
 					<s:if test="%{isFieldMandatory('boundary')}">
-						<td class="greybox"><s:text name="field" id="field" />:<span
+						<td class="greybox"><s:text name="field"/>:<span
 							class="mandatory1">*</span></td>
 						<td class="greybox"><s:select list="dropdownData.fieldList"
 								listKey="id" listValue="name" headerKey="0"

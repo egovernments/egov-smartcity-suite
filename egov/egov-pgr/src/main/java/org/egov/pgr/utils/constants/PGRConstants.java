@@ -51,6 +51,7 @@ package org.egov.pgr.utils.constants;
 public final class PGRConstants {
     public static final String MODULE_NAME = "PGR";
     public static final String EG_OBJECT_TYPE_COMPLAINT = "Complaint";
+    public static final String RO_ROLE_NAME = "Redressal Officer";
     public static final String GO_ROLE_NAME = "Grievance Officer";
     public static final String GRO_ROLE_NAME = "Grievance Routing Officer";
     public static final String PGR_INDEX_NAME = "complaint";

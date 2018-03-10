@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -62,8 +62,9 @@
                     <label class="col-sm-2 control-label"> <spring:message code="lbl.name"/><span class="mandatory"></span>
                     </label>
                     <div class="col-sm-3">
-                        <form:input path="name" id="name" type="text" class="form-control low-width patternvalidation" maxlength="50"
-                                    cssErrorClass="form-control error low-width patternvalidation" data-pattern="alphabetwithspace" required="required"/>
+                        <form:input path="name" id="name" type="text" class="form-control low-width patternvalidation" maxlength="32"
+                                    cssErrorClass="form-control error low-width patternvalidation"
+                                    data-pattern="alphanumericwithspacehyphenunderscore" required="required"/>
                         <form:errors path="name" cssClass="error-msg"/>
                     </div>
                     <label class="col-sm-2 control-label"> <spring:message code="lbl.code"/><span class="mandatory"></span>

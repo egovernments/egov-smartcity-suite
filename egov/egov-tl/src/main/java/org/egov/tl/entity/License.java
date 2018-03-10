@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -52,6 +52,7 @@ import com.google.gson.annotations.Expose;
 import org.egov.commons.EgwStatus;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Position;
@@ -206,6 +207,10 @@ public class License extends StateAware<Position> {
     protected Boundary parentBoundary;
 
     @ManyToOne
+    @JoinColumn(name = "adminward")
+    protected Boundary adminWard;
+
+    @ManyToOne
     @JoinColumn(name = "NATUREOFBUSINESS")
     protected NatureOfBusiness natureOfBusiness;
 
@@ -240,6 +245,10 @@ public class License extends StateAware<Position> {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "license")
     protected List<LicenseDocument> documents = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "approvedBy")
+    private User approvedBy;
 
     //To be removed
     private boolean newWorkflow;
@@ -612,5 +621,21 @@ public class License extends StateAware<Position> {
     public boolean canCollectLicenseFee() {
         return this.isNewWorkflow() && !isNatureOfTaskClosure() &&
                 (STATUS_ACKNOWLEDGED.equals(this.getStatus().getStatusCode()) || STATUS_COLLECTIONPENDING.equals(this.getStatus().getStatusCode()));
+    }
+
+    public Boundary getAdminWard() {
+        return adminWard;
+    }
+
+    public void setAdminWard(Boundary adminWard) {
+        this.adminWard = adminWard;
+    }
+
+    public User getApprovedBy() {
+        return approvedBy;
+    }
+
+    public void setApprovedBy(User approvedBy) {
+        this.approvedBy = approvedBy;
     }
 }

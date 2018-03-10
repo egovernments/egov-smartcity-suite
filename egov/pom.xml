@@ -217,7 +217,7 @@
         <joda-time-jsptag-version>1.1.1</joda-time-jsptag-version>
         <jsoup-version>1.10.3</jsoup-version>
         <jython-version>2.7.1b3</jython-version>
-        <flyway-core-version>4.2.0</flyway-core-version>
+        <flyway-core-version>5.0.3</flyway-core-version>
         <junit-version>4.12</junit-version>
         <mockito-all-version>1.10.19</mockito-all-version>
         <springockito-version>1.0.9</springockito-version>

@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -71,19 +71,11 @@ public class LegacyLicenseValidator implements Validator {
 
         TradeLicense license = (TradeLicense) target;
 
-        if (!license.getDocuments().isEmpty()) {
-            for (int index = 0; index < license.getFiles().length; index++)
-                if (license.getDocuments().get(index).getType().isMandatory() && license.getFiles()[index].getOriginalFilename().isEmpty())
-                    errors.rejectValue("documents[" + index + "].description", "TL-011");
-        }
         if (validityService.getApplicableLicenseValidity(license) == null)
             errors.rejectValue("category", "validate.license.validity");
 
         if (license.getTradeArea_weight().intValue() < 1)
             errors.rejectValue("tradeArea_weight", "validate.fee.range");
-
-        if (license.getCurrentState() != null)
-            errors.rejectValue("id", "validate.legacy.license.modify", new Object[]{license.getLicenseAppType().getName()}, "");
     }
 
 }

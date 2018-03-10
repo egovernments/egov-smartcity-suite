@@ -111,14 +111,14 @@
 		document.forms[0].submit();
 	}
 
-	function displayNotice(noticeNumber, isBlob) {
+	function displayNotice(noticeNumber, isBlob, noticeType) {
 		var sUrl;
 		if (isBlob == 'N') {
 			sUrl = "/egi/docmgmt/ajaxFileDownload.action?moduleName=PT&docNumber="
 					+ noticeNumber + "&fileName=" + noticeNumber + ".pdf";
 		} else {
 			sUrl = "/ptis/reports/searchNotices-showNotice.action?noticeNumber="
-					+ noticeNumber;
+					+ noticeNumber + "&noticeType=" + noticeType;
 		}
 		window.open(sUrl, "window",
 				'scrollbars=yes,resizable=no,height=200,width=400,status=yes');
@@ -263,7 +263,8 @@
 			<display:column headerClass="bluebgheadtd" class="blueborderfortd"
 				title="Notice Number" style="text-align:center;width:10%;">
 				<a
-					href="javascript:displayNotice('<s:property value="#attr.currentRowObject.noticeNo"/>','<s:property value="#attr.currentRowObject.isBlob"/>')">
+					href="javascript:displayNotice('<s:property value="#attr.currentRowObject.noticeNo"/>','<s:property value="#attr.currentRowObject.isBlob"/>',
+					'<s:property value="#attr.currentRowObject.noticeType"/>')">
 					<s:property value="#attr.currentRowObject.noticeNo" />
 				</a>
 			</display:column>

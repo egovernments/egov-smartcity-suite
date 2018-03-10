@@ -47,39 +47,9 @@
  */
 package org.egov.ptis.domain.service.report;
 
-import org.apache.commons.lang.StringUtils;
-import org.egov.commons.CFinancialYear;
-import org.egov.commons.Installment;
-import org.egov.commons.RegionalHeirarchy;
-import org.egov.commons.RegionalHeirarchyType;
-import org.egov.commons.dao.FinancialYearDAO;
-import org.egov.commons.service.RegionalHeirarchyService;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.config.core.EnvironmentSettings;
-import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
-import org.egov.infra.utils.DateUtils;
-import org.egov.infstr.services.PersistenceService;
-import org.egov.ptis.client.util.PropertyTaxUtil;
-import org.egov.ptis.constants.PropertyTaxConstants;
-import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
-import org.egov.ptis.domain.entity.property.BaseRegisterResult;
-import org.egov.ptis.domain.entity.property.BaseRegisterVLTResult;
-import org.egov.ptis.domain.entity.property.BasicProperty;
-import org.egov.ptis.domain.entity.property.BillCollectorDailyCollectionReportResult;
-import org.egov.ptis.domain.entity.property.CurrentInstDCBReportResult;
-import org.egov.ptis.domain.entity.property.DailyCollectionReportResult;
-import org.egov.ptis.domain.entity.property.DefaultersInfo;
-import org.egov.ptis.domain.entity.property.FloorDetailsView;
-import org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView;
-import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
-import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
-import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
-import org.hibernate.transform.AliasToBeanResultTransformer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+import static java.math.BigDecimal.ZERO;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.ROLE_COLLECTION_OPERATOR;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -88,6 +58,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -95,9 +66,54 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import static java.math.BigDecimal.ZERO;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.ROLE_COLLECTION_OPERATOR;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+import org.egov.commons.CFinancialYear;
+import org.egov.commons.Installment;
+import org.egov.commons.RegionalHeirarchy;
+import org.egov.commons.RegionalHeirarchyType;
+import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.commons.service.RegionalHeirarchyService;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.EnvironmentSettings;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.utils.DateUtils;
+import org.egov.infstr.services.PersistenceService;
+import org.egov.ptis.report.bean.ApartmentDCBReportResult;
+import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
+import org.egov.ptis.domain.entity.property.BaseRegisterResult;
+import org.egov.ptis.domain.entity.property.BaseRegisterVLTResult;
+import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.BillCollectorDailyCollectionReportResult;
+import org.egov.ptis.domain.entity.property.CollectionSummary;
+import org.egov.ptis.domain.entity.property.CurrentInstDCBReportResult;
+import org.egov.ptis.domain.entity.property.DailyCollectionReportResult;
+import org.egov.ptis.domain.entity.property.DefaultersInfo;
+import org.egov.ptis.domain.entity.property.FloorDetailsView;
+import org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView;
+import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
+import org.egov.ptis.domain.entity.property.PropertyMutation;
+import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
+import org.egov.ptis.domain.entity.property.PropertyUsage;
+import org.egov.ptis.master.service.PropertyUsageService;
+import org.egov.ptis.report.bean.NatureOfUsageResult;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
+import org.hibernate.Query;
+import org.hibernate.SQLQuery;
+import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.transform.Transformers;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
 public class ReportService {
@@ -138,6 +154,12 @@ public class ReportService {
     private BasicPropertyDAO basicPropertyDAO;
     @Autowired
     private EnvironmentSettings environmentSettings;
+    @PersistenceContext
+    private EntityManager entityManager;
+    @Autowired
+    private PropertyUsageService propertyUsageService;
+    @Autowired
+    private BoundaryService boundaryService;
 
     /**
      * Method gives List of properties with current and arrear individual demand
@@ -863,7 +885,7 @@ public class ReportService {
         }
 
     }
-
+   
     /**
      * @param boundaryId, mode, courtCase, propertyTypes
      * @return
@@ -1079,7 +1101,7 @@ public class ReportService {
      * @return list
      */
     @ReadOnly
-    public List<DefaultersInfo> getDefaultersInformation(List<PropertyMaterlizeView> propertyViewList,final String noofyrs,final Integer limit) {
+    public List<DefaultersInfo> getDefaultersInformation(Query query,final String noofyrs,final Integer limit) {
         List<DefaultersInfo> defaultersList = new ArrayList<>();
         List<DefaultersInfo> defaultersListForYrs = new ArrayList<>();
         DefaultersInfo defaultersInfo;
@@ -1089,7 +1111,7 @@ public class ReportService {
         int count = 1;
 
         int reqyr = 0;
-       
+        List<PropertyMaterlizeView> propertyViewList = query.list();
         
         for (final PropertyMaterlizeView propView : propertyViewList) {
             
@@ -1185,6 +1207,110 @@ public class ReportService {
         }
         return defaultersInfo;
     }
+    
+    /**
+     * @param zoneId
+     * @param wardId
+     * @param areaId
+     * @param localityId
+     * @return
+     */
+    @ReadOnly
+    public List<PropertyMaterlizeView> prepareQueryforArrearRegisterReport(final Long zoneId, final Long wardId,
+            final Long areaId, final Long localityId) {
+        // Get current installment
+        final Installment currentInst = propertyTaxCommonUtils.getCurrentInstallment();
+        final StringBuffer query = new StringBuffer(300);
+        // Query that retrieves all the properties that has arrears.
+        query.append("select distinct pmv from PropertyMaterlizeView pmv,InstDmdCollMaterializeView idc where "
+                + "pmv.basicPropertyID = idc.propMatView.basicPropertyID and pmv.isActive = true and idc.installment.fromDate not between  ('"
+                + currentInst.getFromDate() + "') and ('" + currentInst.getToDate() + "') ");
+        if (propertyTaxUtil.isWard(localityId))
+            query.append(" and pmv.locality.id= :localityId ");
+        if (propertyTaxUtil.isWard(zoneId))
+            query.append(" and pmv.zone.id= :zoneId ");
+        if (propertyTaxUtil.isWard(wardId))
+            query.append("  and pmv.ward.id= :wardId ");
+        if (propertyTaxUtil.isWard(areaId))
+            query.append("  and pmv.block.id= :areaId ");
+        query.append(" order by pmv.basicPropertyID ");
+        final Query qry = propPerServ.getSession().createQuery(query.toString());
+        if (propertyTaxUtil.isWard(localityId))
+            qry.setParameter("localityId", localityId);
+        if (propertyTaxUtil.isWard(zoneId))
+            qry.setParameter("zoneId", zoneId);
+        if (propertyTaxUtil.isWard(wardId))
+            qry.setParameter("wardId", wardId);
+        if (propertyTaxUtil.isWard(areaId))
+            qry.setParameter("areaId", areaId);
+        @SuppressWarnings("unchecked")
+        final List<PropertyMaterlizeView> propertyViewList = qry.setResultTransformer(
+                CriteriaSpecification.DISTINCT_ROOT_ENTITY).list();
+        return propertyViewList;
+    }
+    
+    @SuppressWarnings("unchecked")
+	@ReadOnly
+    public List<CollectionSummary> getCollectionSummaryList(final String fromDate, final String toDate,
+            final String collMode, final String transMode, final String mode, final String boundaryId,
+            final String propTypeCategoryId, final Long zoneId, final Long wardId, final Long blockId){
+    	 try {
+             final Query query = propertyTaxUtil.prepareQueryforCollectionSummaryReport(fromDate, toDate, collMode, transMode, mode,
+                     boundaryId,
+                     propTypeCategoryId, zoneId, wardId, blockId);
+             return query.list();
+         } catch (final Exception e) {
+             throw new ApplicationRuntimeException("Error occured in Class : CollectionSummaryReportAction  Method : list "
+                     + e.getMessage());
+         }
+    }
+    
+   	@SuppressWarnings("unchecked")
+	@ReadOnly
+    public List<PropertyMutation> getTitleTransferReportList(Query query){
+      	return query.list();
+    }
+   	
+    @SuppressWarnings("unchecked")
+    @ReadOnly
+    public List<NatureOfUsageResult> getNatureOfUsageReportList(final HttpServletRequest request) {
+        final StringBuilder query = new StringBuilder();
+        query.append("select distinct pi.upicno \"assessmentNumber\", pi.ownersname \"ownerName\", pi.mobileno \"mobileNumber\", pi.houseno \"doorNumber\", pi.address \"address\", cast(pi.AGGREGATE_CURRENT_FIRSTHALF_DEMAND as numeric) \"halfYearTax\" from egpt_mv_propertyInfo pi ")	;
+        final StringBuilder whereQuery = new StringBuilder(" where pi.upicno is not null and pi.isactive = true ");
+        final String natureOfUsage = request.getParameter("natureOfUsage");
+        final String ward = request.getParameter("ward");
+        final String block = request.getParameter("block");
+        final StringBuilder srchCriteria = new StringBuilder("Total number of properties with");
+        final Map<String, Object> params = new HashMap<>();
+        if (StringUtils.isNotBlank(natureOfUsage) && !"-1".equals(natureOfUsage)) {
+            final PropertyUsage propertyUsage = propertyUsageService.findById(Long.valueOf(natureOfUsage));
+            srchCriteria.append(" Nature of usage : " + propertyUsage.getUsageName());
+            query.append(",EGPT_MV_CURRENT_FLOOR_DETAIL fd ");
+            whereQuery.append(" and fd.basicpropertyid = pi.basicpropertyid and fd.natureofusage = :natureOfUsage");
+            params.put("natureOfUsage", propertyUsage.getUsageName());
+        }
+        if (StringUtils.isNotBlank(ward) && !"-1".equals(ward)) {
+            final Boundary wardBndry = boundaryService.getBoundaryById(Long.valueOf(ward));
+            srchCriteria.append(" Ward : " + wardBndry.getName());
+            whereQuery.append(" and pi.wardid = :ward");
+            params.put("ward", Long.valueOf(ward));
+        }
+        if (StringUtils.isNotBlank(block) && !"-1".equals(block)) {
+            final Boundary blockBndry = boundaryService.getBoundaryById(Long.valueOf(block));
+            srchCriteria.append(" Block : " + blockBndry.getName());
+            whereQuery.append(" and pi.blockid = :block");
+            params.put("block", Long.valueOf(block));
+        }
+        final SQLQuery sqlQuery = propertyTaxCommonUtils.getSession().createSQLQuery(
+                        query.append(whereQuery).toString());
+        for (final String key : params.keySet())
+            sqlQuery.setParameter(key, params.get(key));
+        sqlQuery.setResultTransformer(Transformers.aliasToBean(NatureOfUsageResult.class));
+        final List<NatureOfUsageResult> results = sqlQuery.list();
+        srchCriteria.append(" are : " + results.size());
+        return results;
+    }
+   	
     private BigDecimal getAggCurrSecHalfPenColl(final PropertyMaterlizeView propView) {
         return propView.getAggrCurrSecondHalfPenalyColl() != null ? propView
                 .getAggrCurrSecondHalfPenalyColl() : ZERO;
@@ -1250,6 +1376,48 @@ public class ReportService {
         }
         return inst==null?maxInstallment:inst;
     }
+
+    @SuppressWarnings("unchecked")
+    @ReadOnly
+	public List<ApartmentDCBReportResult> prepareQueryForApartmentDCBReport(final Long boundaryId, final String mode, final Long apartmentId) {
+        final String PROPERTY = "property";
+        final StringBuilder queryStr = new StringBuilder();
+        StringBuilder commonFromQry = new StringBuilder();
+        StringBuilder finalCommonQry = new StringBuilder();
+        StringBuilder finalSelectQry = new StringBuilder();
+        StringBuilder finalGrpQry = new StringBuilder();
+        StringBuilder boundaryQry = new StringBuilder();
+        StringBuilder whereQry = new StringBuilder();
+        whereQry.append(" where ");
+        whereQry.append(" pd.apartment=a.id and p.id=pd.id_property and pi.basicpropertyid=p.id_basic_property  and pi.isexempted=false and p.status in ('A','I')  and pi.isactive = true and pi.isexempted = false ");
+        commonFromQry.append(" from egpt_mv_propertyinfo pi , egpt_apartment a,egpt_property_detail pd,egpt_property p ");
+        if (boundaryId != -1 && boundaryId != null && boundaryId != 0){
+            boundaryQry.append(" and pi.wardid = "+boundaryId);
+        }
+        if (apartmentId != -1 && apartmentId != null && apartmentId !=0){
+        	whereQry.append(" and pd.apartment = "+apartmentId);
+        }
+        finalCommonQry.append(" cast(COALESCE(sum(pi.ARREAR_DEMAND),0) as numeric) as \"dmndArrearPT\",");
+        finalCommonQry.append(" cast(COALESCE(sum(pi.pen_aggr_arrear_demand),0) AS numeric) as \"dmndArrearPFT\", cast(COALESCE(sum(pi.annualdemand),0) AS numeric) as \"dmndCurrentPT\", ");
+        finalCommonQry.append(" cast(COALESCE(sum(pi.pen_aggr_current_firsthalf_demand),0)+COALESCE(sum(pi.pen_aggr_current_secondhalf_demand),0) AS numeric) as \"dmndCurrentPFT\",");
+        finalCommonQry.append(" cast(COALESCE(sum(pi.ARREAR_COLLECTION),0) AS numeric) as \"clctnArrearPT\", cast(COALESCE(sum(pi.pen_aggr_arr_coll),0) AS numeric) as \"clctnArrearPFT\",");
+        finalCommonQry.append(" cast(COALESCE(sum(pi.annualcoll),0) AS numeric) as \"clctnCurrentPT\",");
+        finalCommonQry.append(" cast(COALESCE(sum(pi.pen_aggr_current_firsthalf_coll),0)+COALESCE(sum(pi.pen_aggr_current_secondhalf_coll),0) AS numeric) as \"clctnCurrentPFT\"  ");
+        if (!mode.equalsIgnoreCase(PROPERTY)) {
+            finalSelectQry.append( "select count(distinct pi.upicno) as \"assessmentCount\",cast(a.id as integer) as \"apartmentId\",a.name as \"apartmentName\", ");
+            finalGrpQry.append(" group by a.id,a.name order by a.name");
+        }
+        else if (mode.equalsIgnoreCase(PROPERTY)) {
+        	finalSelectQry.append( "select distinct pi.upicno as \"assessmentNo\", pi.houseno as \"houseNo\", pi.ownersname as \"ownerName\", ");
+            finalGrpQry.append(" group by pi.upicno, pi.houseno, pi.ownersname order by pi.upicno ");
+        }
+        queryStr.append(finalSelectQry).append(finalCommonQry).append(commonFromQry).append(whereQry)
+                .append(boundaryQry).append(finalGrpQry);
+        final SQLQuery sqlQuery = propertyTaxCommonUtils.getSession().createSQLQuery(queryStr.toString());
+        sqlQuery.setResultTransformer(new AliasToBeanResultTransformer(ApartmentDCBReportResult.class));
+        return sqlQuery.list();
+    }
+    
     private BigDecimal getVacLandTax(InstDmdCollMaterializeView idc) {
         return idc.getVacantLandTax() != null ? idc.getVacantLandTax() : ZERO;
     }

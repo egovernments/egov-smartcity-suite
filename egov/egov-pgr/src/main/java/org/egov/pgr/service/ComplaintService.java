@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -55,21 +55,20 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
-import org.egov.infra.web.support.search.DataTableSearchRequest;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pgr.elasticsearch.service.ComplaintIndexService;
 import org.egov.pgr.entity.Complaint;
-import org.egov.pgr.event.ComplaintEventPublisher;
-import org.egov.pgr.event.ComplaintRegisterEventPublisher;
+import org.egov.pgr.event.model.ComplaintCreateEvent;
+import org.egov.pgr.event.model.ComplaintUpdateEvent;
 import org.egov.pgr.repository.ComplaintRepository;
 import org.egov.pims.commons.Position;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -141,10 +140,7 @@ public class ComplaintService {
     private CitizenComplaintDataPublisher citizenComplaintDataPublisher;
 
     @Autowired
-    private ComplaintEventPublisher complaintEventPublisher;
-
-    @Autowired
-    private ComplaintRegisterEventPublisher complaintRegisterEventPublisher;
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Complaint createComplaint(Complaint complaint) {
@@ -174,7 +170,7 @@ public class ComplaintService {
             complaint.setPriority(configurationService.getDefaultComplaintPriority());
 
         complaintRepository.saveAndFlush(complaint);
-        complaintRegisterEventPublisher.publishEvent(complaint);
+        applicationEventPublisher.publishEvent(new ComplaintCreateEvent(complaint));
         if (securityUtils.currentUserIsCitizen())
             citizenComplaintDataPublisher.onRegistration(complaint);
         complaintNotificationService.sendRegistrationMessage(complaint);
@@ -190,7 +186,7 @@ public class ComplaintService {
         else
             complaint.setDepartment(complaint.getAssignee().getDeptDesig().getDepartment());
         complaintRepository.saveAndFlush(complaint);
-        complaintEventPublisher.publishEvent(complaint);
+        applicationEventPublisher.publishEvent(new ComplaintUpdateEvent(complaint));
         citizenComplaintDataPublisher.onUpdation(complaint);
         complaintNotificationService.sendUpdateMessage(complaint);
         complaintIndexService.updateComplaintIndex(complaint);
@@ -234,7 +230,6 @@ public class ComplaintService {
                     Restrictions.in("complaint.assignee", assignee));
             return criteria.list();
         }
-
     }
 
     @ReadOnly
@@ -311,9 +306,4 @@ public class ComplaintService {
         return complaintList;
     }
 
-    @ReadOnly
-    public Page<Complaint> getComplaints(Specification<Complaint> spec, DataTableSearchRequest searchRequest) {
-        return complaintRepository.findAll(spec,
-                new PageRequest(searchRequest.pageNumber(), searchRequest.pageSize()));
-    }
 }

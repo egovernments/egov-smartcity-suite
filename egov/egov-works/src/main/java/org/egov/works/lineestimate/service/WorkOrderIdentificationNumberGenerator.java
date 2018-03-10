@@ -49,18 +49,14 @@ package org.egov.works.lineestimate.service;
 
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.persistence.utils.DBSequenceGenerator;
-import org.egov.infra.persistence.utils.SequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.enums.WorkCategory;
-import org.hibernate.exception.SQLGrammarException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
-import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -70,39 +66,28 @@ public class WorkOrderIdentificationNumberGenerator {
     private static final String PROJECTCODE_SEQ_PREFIX = "SEQ_PROJECTCODE";
 
     @Autowired
-    private SequenceNumberGenerator sequenceNumberGenerator;
-
-    @Autowired
-    private DBSequenceGenerator dbSequenceGenerator;
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
     @Autowired
     private FinancialYearHibernateDAO financialYearHibernateDAO;
 
     @Transactional
     public String generateWorkOrderIdentificationNumber(final LineEstimateDetails lineEstimateDetails) {
-        try {
-            final CFinancialYear financialYear = financialYearHibernateDAO
-                    .getFinYearByDate(lineEstimateDetails.getLineEstimate().getLineEstimateDate());
-            final String finYearRange[] = financialYear.getFinYearRange().split("-");
-            final String sequenceName = PROJECTCODE_SEQ_PREFIX + "_" + finYearRange[0] + "_" + finYearRange[1];
-            final String workCategory;
-            if (!lineEstimateDetails.getLineEstimate().getWorkCategory().toString().equals(WorkCategory.NON_SLUM.toString()))
-                workCategory = "SL";
-            else
-                workCategory = "NS";
-            Serializable sequenceNumber;
-            try {
-                sequenceNumber = sequenceNumberGenerator.getNextSequence(sequenceName);
-            } catch (final SQLGrammarException e) {
-                sequenceNumber = dbSequenceGenerator.createAndGetNextSequence(sequenceName);
-            }
-            return String.format("%s/%s/%05d/%02d/%s", lineEstimateDetails.getLineEstimate().getExecutingDepartment().getCode(),
-                    workCategory, sequenceNumber,
-                    getMonthOfTransaction(lineEstimateDetails.getLineEstimate().getLineEstimateDate()),
-                    financialYear.getFinYearRange());
-        } catch (final SQLException e) {
-            throw new ApplicationRuntimeException("Error occurred while generating WIN", e);
-        }
+        final CFinancialYear financialYear = financialYearHibernateDAO
+                .getFinYearByDate(lineEstimateDetails.getLineEstimate().getLineEstimateDate());
+        final String finYearRange[] = financialYear.getFinYearRange().split("-");
+        final String sequenceName = new StringBuilder().append(PROJECTCODE_SEQ_PREFIX).append("_")
+                .append(finYearRange[0]).append("_").append(finYearRange[1]).toString();
+        final String workCategory;
+        if (!lineEstimateDetails.getLineEstimate().getWorkCategory().toString().equals(WorkCategory.NON_SLUM.toString()))
+            workCategory = "SL";
+        else
+            workCategory = "NS";
+        Serializable sequenceNumber = genericSequenceNumberGenerator.getNextSequence(sequenceName);
+        return String.format("%s/%s/%05d/%02d/%s", lineEstimateDetails.getLineEstimate().getExecutingDepartment().getCode(),
+                workCategory, sequenceNumber,
+                getMonthOfTransaction(lineEstimateDetails.getLineEstimate().getLineEstimateDate()),
+                financialYear.getFinYearRange());
     }
 
     private int getMonthOfTransaction(final Date lineEstimateDate) {

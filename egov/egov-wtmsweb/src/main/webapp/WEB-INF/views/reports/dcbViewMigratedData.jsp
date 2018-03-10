@@ -56,119 +56,108 @@
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 			
-					<div class="panel panel-primary" data-collapsed="0">
-						<div class="panel-heading">
+		<div class="panel panel-primary" data-collapsed="0">
+			<div class="panel-heading">
+			</div>
+					
+			<div class="form-group">
+				<label class="col-sm-3 control-label text-right"><spring:message code="lbl1.consumer.number" /></label>
+				<div class="col-sm-3 add-margin view-content">
+					<c:out value="${consumerNumber}" />
+				</div>
+			</div>
+ 			<br/>
+	<c:choose>
+    	<c:when test="${waterChargesReceiptInfo.isEmpty()}">
+    		<div class="form-group" align ="center">
+       			<spring:message code="lbl.no.receipts.available"/>        
+    		</div>
+     	</c:when>
+    	<c:otherwise>
+      		<table width="100%" border="1" align="center" cellpadding="0" cellspacing="0" class="table table-bordered">
+             <thead>
+				<tr>
+					<th colspan="6">
+                         <spring:message code="lbl.receipts"/>
+					</th>
+				</tr>
+				<tr>
+					<th colspan="1" >
+						<div align="center">
+							<spring:message code="lbl.bookno" /> 
 						</div>
-					
-					<div class="panel-body custom-form ">
-					<div class="form-group" align ="center">
-								For Consumer Number :<c:out value="${consumerNumber}" />
-								</div>
- 					
-	              <c:choose>
-    <c:when test="${waterChargesReceiptInfo.isEmpty()}">
-    <div class="form-group" align ="center">
-       No Receipts are available        
-     </div>
-     </c:when>
-    <c:otherwise>
-      <table width="100%" border="1" align="center" cellpadding="0" cellspacing="0" class="table table-bordered">
-                  <thead>
-					<tr>
-						<th colspan="6">
-                         Receipts
-						</th>
-					</tr>
-					<tr>
-						<th colspan="1" >
-							<div align="center">
-						 <spring:message code="lbl.bookno" /> 
-						    </div>
-					
-							
-						</th>
-						<th   colspan="1" >
-						   <div align="center">
-						<spring:message code="lbl.receiptNo" /> 
-						    </div>
-							
-						</th>
-						<th   colspan="1" >
-						   <div align="center">
-						<spring:message code="lbl.receiptDate" />
-						   </div>
-							
-						</th>
-						<th  align="center" colspan="1" >
-						   <div align="center">
-						<spring:message code="lbl.fromDate" />
-						    </div>
-						
-						</th>
-						<th   colspan="1" >
-						   <div align="center">
-						<spring:message code="lbl.toDate" />
-						    </div>
-					
-						</th>
-						<th   colspan="1" >
-						    <div align="center">
-						<spring:message code="lbl.receiptAmt" />
-						    </div>
-						
-						</th>
-					</tr>
-					</thead>
-					<c:forEach var="receipt" items="${waterChargesReceiptInfo}" >
-					<tr>
-							<td  colspan="1" >
-								<div align="center">
-								<c:out value="${receipt.bookNumber}" />
-								<!-- 	<s:property value="bookNumber" /> -->
-								</div>
-							</td>
-							<td  colspan="1" >
-								<div align="center">
-								<c:out value="${receipt.receiptNumber}" />
-								
-								</div>
-							</td>
-							<td  colspan="1" >
-								<div align="center">
-								<fmt:formatDate pattern="dd-MM-yyyy" value="${receipt.receiptDate}"/>
-								</div>
-							</td>
-							<td  colspan="1" >
-								<div align="center">
-								<fmt:formatDate pattern="dd-MM-yyyy" value="${receipt.fromDate}"/>
-								</div>
-							</td>
-							<td  colspan="1" >
-								<div align="center">
-								<fmt:formatDate pattern="dd-MM-yyyy" value="${receipt.toDate}"/>
-								</div>
-							</td>
-							<td  colspan="1">
-								<div align="center">
-								<c:out value="${receipt.receiptAmount}" />
-								
-								</div>
-							</td>
-						</tr>
-						</c:forEach> 	
-					</table>
+					</th>
+					<th colspan="1" >
+						<div align="center">
+							<spring:message code="lbl.receiptNo" /> 
+						</div>
+					</th>
+					<th colspan="1" >
+						<div align="center">
+							<spring:message code="lbl.receiptDate" />
+						</div>
+					</th>
+					<th  align="center" colspan="1" >
+						<div align="center">
+							<spring:message code="lbl.fromDate" />
+						</div>
+					</th>
+					<th colspan="1" >
+						<div align="center">
+							<spring:message code="lbl.toDate" />
+						</div>
+					</th>
+					<th colspan="1" >
+						<div align="center">
+							<spring:message code="lbl.receiptAmt" />
+						</div>
+					</th>
+				</tr>
+			</thead>
+			<c:forEach var="receipt" items="${waterChargesReceiptInfo}" >
+				<tr>
+					<td colspan="1" >
+						<div align="center">
+							<c:out value="${receipt.bookNumber}" />
+						</div>
+					</td>
+					<td colspan="1" >
+						<div align="center">
+							<c:out value="${receipt.receiptNumber}" />
+						</div>
+					</td>
+					<td colspan="1" >
+						<div align="center">
+							<fmt:formatDate pattern="dd-MM-yyyy" value="${receipt.receiptDate}"/>
+						</div>
+					</td>
+					<td colspan="1" >
+						<div align="center">
+							<fmt:formatDate pattern="dd-MM-yyyy" value="${receipt.fromDate}"/>
+						</div>
+					</td>
+					<td colspan="1" >
+						<div align="center">
+							<fmt:formatDate pattern="dd-MM-yyyy" value="${receipt.toDate}"/>
+						</div>
+					</td>
+					<td colspan="1">
+						<div align="center">
+							<c:out value="${receipt.receiptAmount}" />
+						</div>
+					</td>
+				</tr>
+			</c:forEach> 	
+		</table>
     </c:otherwise>
-     </c:choose>
-     <div class="form-group text-center" >
-								
-								<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close"/></a>
-							</div>
-     </div>
-     </div>
-    
-       
-					
-		</form:form>	
+  </c:choose>
+  <br/>
+  	<div class="text-center" >
+		<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close"/></a>
+	</div>
+   </div>
+  </div>
+</form:form>	
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">

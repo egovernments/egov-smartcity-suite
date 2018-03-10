@@ -349,30 +349,6 @@ public class PropertyHibernateDAO implements PropertyDAO {
         return owner;
     }
 
-    @Override
-    public List getPropertyDemand(final String propertyId) {
-        final String rebate = EGovConfig.getProperty("ptis_egov_config.xml", "ACCOUNT_HEAD_REBATE", "", "PT");
-        final Query qry = getCurrentSession()
-                .createQuery(
-                        " select sum(dd.amount) from PropertyTaxDemand pt left join "
-                                + "pt.demandDetails dd where pt.history = 'N' and dd.accountHead.accountHeadName !=:accHead and pt.property.basicProperty.upicNo =:PID ");
-        qry.setString("accHead", rebate);
-        qry.setString("PID", propertyId);
-        return qry.list();
-    }
-
-    @Override
-    public List getPropertyRebate(final String propertyId) {
-        final String rebate = EGovConfig.getProperty("ptis_egov_config.xml", "ACCOUNT_HEAD_REBATE", "", "PT");
-        final Query qry = getCurrentSession()
-                .createQuery(
-                        " select sum(dd.amount) from PropertyTaxDemand pt left join "
-                                + "pt.demandDetails dd where pt.history = 'N' and dd.isApproved = '1' and dd.accountHead.accountHeadName =:accHead and "
-                                + "pt.property.basicProperty.upicNo =:PID ");
-        qry.setString("accHead", rebate);
-        qry.setString("PID", propertyId);
-        return qry.list();
-    }
 
     @Override
     public List getPropertyCollection(final String propertyId) {
@@ -694,4 +670,15 @@ public class PropertyHibernateDAO implements PropertyDAO {
         return null;
     }
 
+    /**
+     * API gives the latest GIS survey property for the basicproperty
+     */
+    @Override
+    public Property getLatestGISPropertyForBasicProperty(BasicProperty basicProperty) {
+        Query qry = getCurrentSession()
+                .createQuery("from PropertyImpl where basicProperty =:basicProperty and status = 'G' order by id desc ");
+        qry.setEntity("basicProperty", basicProperty);
+        qry.setMaxResults(1);
+        return (Property) qry.uniqueResult();
+    }
 }

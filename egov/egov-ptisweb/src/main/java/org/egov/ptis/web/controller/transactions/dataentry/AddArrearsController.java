@@ -80,7 +80,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES;
@@ -211,7 +211,7 @@ public class AddArrearsController {
         }
         if (arrearsInfo.getEducationCess() != null && arrearsInfo.getEducationCess().compareTo(BigDecimal.ZERO) == 1) {
             EgDemandReason demandReason = demandGenericDao.getEgDemandReasonByCodeInstallmentModule(
-                    DEMANDRSN_CODE_EDUCATIONAL_CESS, installment, module, null);
+                    DEMANDRSN_CODE_EDUCATIONAL_TAX, installment, module, null);
             demandDetails = propertyService.createDemandDetails(arrearsInfo.getEducationCess(), null, demandReason, installment);
             ptDemand.getEgDemandDetails().add(demandDetails);
         }

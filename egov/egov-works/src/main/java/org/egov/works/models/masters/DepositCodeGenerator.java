@@ -47,8 +47,8 @@
  */
 package org.egov.works.models.masters;
 
-import org.egov.infra.persistence.utils.DBSequenceGenerator;
-import org.egov.infra.persistence.utils.SequenceNumberGenerator;
+import org.egov.infra.persistence.utils.DatabaseSequenceCreator;
+import org.egov.infra.persistence.utils.DatabaseSequenceProvider;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.validation.exception.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,9 +58,9 @@ import javax.script.ScriptContext;
 public class DepositCodeGenerator {
 
     @Autowired
-    private SequenceNumberGenerator sequenceGenerator;
+    private DatabaseSequenceProvider sequenceGenerator;
     @Autowired
-    private DBSequenceGenerator dbSequenceGenerator;
+    private DatabaseSequenceCreator databaseSequenceCreator;
     @Autowired
     private ScriptService scriptService;
 
@@ -68,7 +68,7 @@ public class DepositCodeGenerator {
 
         try {
             final ScriptContext scriptContext = ScriptService.createContext("depositCode", depositCode,
-                    "sequenceGenerator", sequenceGenerator, "dbSequenceGenerator", dbSequenceGenerator, "finYear",
+                    "sequenceGenerator", sequenceGenerator, "dbSequenceGenerator", databaseSequenceCreator, "finYear",
                     depositCode.getFinancialYear());
 
             return scriptService.executeScript("works.depositCode.generator", scriptContext).toString();

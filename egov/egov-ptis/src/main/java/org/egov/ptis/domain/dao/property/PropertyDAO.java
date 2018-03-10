@@ -102,10 +102,6 @@ public interface PropertyDAO {
 
 	public Citizen getOwnerByOwnerId(Long id);
 
-	public List getPropertyDemand(String propertyId);
-
-	public List getPropertyRebate(String propertyId);
-
 	public List getPropertyCollection(String propertyId);
 
 	public List getPTDemandArvByNoticeNumber(String noticeNo);
@@ -243,5 +239,7 @@ public interface PropertyDAO {
 	public Property update(Property property);
 
 	public List getInstallmentAndReasonWiseDemandDetails(EgDemand egDemand);
+
+    public Property getLatestGISPropertyForBasicProperty(BasicProperty basicProperty);
 
 }

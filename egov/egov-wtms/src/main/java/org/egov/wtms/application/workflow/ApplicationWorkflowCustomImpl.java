@@ -49,6 +49,7 @@ package org.egov.wtms.application.workflow;
 
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSINGCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTIONCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_APPROVERROLE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SIGNWORKFLOWACTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_REJECT;
@@ -300,6 +301,9 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                 pos = positionMasterService.getPositionById(approvalPosition);
             WorkFlowMatrix wfmatrix = null;
             if (null == waterConnectionDetails.getState()) {
+                if (REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) &&
+                        currState.isEmpty())
+                    currState = "NEW";
                 wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
                         additionalRule, currState, null);
                 waterConnectionDetails.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
@@ -369,7 +373,13 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                             .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
                             .withNatureOfTask(natureOfwork);
             } else {
-                if (getloggedinUserDesignationForEstimationAndWorkOrderGeneratedStatus(waterConnectionDetails,
+                if (REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
+                    wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null,
+                            null, additionalRule, waterConnectionDetails.getCurrentState().getValue(),
+                            waterConnectionDetailsService.getReglnConnectionPendingAction(waterConnectionDetails,
+                                    loggedInUserDesignation, workFlowAction),
+                            null);
+                else if (getloggedinUserDesignationForEstimationAndWorkOrderGeneratedStatus(waterConnectionDetails,
                         loggedInUserDesignation))
 
                     wfmatrix = getMatrixbyStatusAndLoggedInUser(waterConnectionDetails, additionalRule, workFlowAction,
