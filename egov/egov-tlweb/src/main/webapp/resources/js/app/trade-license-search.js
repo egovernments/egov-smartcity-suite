@@ -48,8 +48,8 @@
 
 var reportdatatable;
 var drillDowntableContainer = $("#tblSearchTrade");
+var searchwins = [];
 $(document).ready(function () {
-
     $('#toggle-searchmore').click(function () {
         if ($(this).html() == "More..") {
             $(this).html('Less..');
@@ -346,7 +346,10 @@ $(document).ready(function () {
 
     $("#btnsearch").click(
         function () {
-
+            $.each(searchwins, function (i, val) {
+                var window = val;
+                window.close();
+            });
             var valid = 0;
 
             $('form').find('input[type=text],input[type="checkbox"], select').each(function () {
@@ -474,31 +477,37 @@ $(document).ready(function () {
 });
 
 function goToView(id) {
-    window.open("/tl/viewtradelicense/viewTradeLicense-view.action?id=" + id, '', 'scrollbars=yes,width=1000,height=700,status=yes');
+    openWindow("/tl/viewtradelicense/viewTradeLicense-view.action?id=" + id, 'vt' + id);
 }
 
 function goToAction(obj, id) {
     if (obj.options[obj.selectedIndex].innerHTML == 'View Trade')
-        window.open("/tl/viewtradelicense/viewTradeLicense-view.action?id=" + id, 'vt' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
+        openWindow("/tl/viewtradelicense/viewTradeLicense-view.action?id=" + id, 'vt' + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Modify Legacy License')
-        window.open("/tl/legacylicense/update/" + id, 'mll' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
+        openWindow("/tl/legacylicense/update/" + id, 'mll' + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Collect Fees')
-        window.open("/tl/integration/licenseBillCollect.action?licenseId=" + id, 'cf' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
+        openWindow("/tl/integration/licenseBillCollect.action?licenseId=" + id, 'cf' + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Print Certificate')
-        window.open("/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id=" + id);
+        openWindow("/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id=" + id, 'pc' + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Print Provisional Certificate')
-        window.open("/tl/viewtradelicense/generate-provisional-certificate.action?model.id=" + id);
+        openWindow("/tl/viewtradelicense/generate-provisional-certificate.action?model.id=" + id, 'ppc' + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Renew License')
-        window.open("/tl/newtradelicense/newTradeLicense-beforeRenew.action?model.id=" + id, 'rl' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
+        openWindow("/tl/newtradelicense/newTradeLicense-beforeRenew.action?model.id=" + id, 'rl' + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Generate Demand Notice')
-        window.open("/tl/demand-notice/generate/" + id, 'dn' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
+        openWindow("/tl/demand-notice/generate/" + id, 'gdn' + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Closure')
-        window.open("/tl/license/closure/" + id, id);
+        openWindow("/tl/license/closure/" + id, 'cl' + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Generate Demand')
-        window.open("/tl/demand/generate/" + id, 'gd' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
+        openWindow("/tl/demand/generate/" + id, 'gd' + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Print Acknowledgment')
-        window.open("/tl/license/acknowledgement/" + id);
+        openWindow("/tl/license/acknowledgement/" + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Closure Endorsement Notice')
-        window.open("/tl/license/closure/endorsementnotice/" + id);
+        openWindow("/tl/license/closure/endorsementnotice/" + id, 'cen' + id);
     $(obj).val('');
+}
+
+function openWindow(url, name) {
+    var windRef = window.open(url, name, 'scrollbars=yes,width=1000,height=700,status=yes');
+    searchwins.push(windRef);
+    windRef.focus()
 }
