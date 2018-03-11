@@ -131,63 +131,63 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     private static final String TL_FUNCTION_CODE = "1500";
 
     @Autowired
-    private EgBillDetailsDao egBillDetailsDao;
+    protected EgBillDetailsDao egBillDetailsDao;
 
     @Autowired
     @Qualifier("tradeLicenseWorkflowService")
-    private SimpleWorkflowService tradeLicenseWorkflowService;
+    protected SimpleWorkflowService tradeLicenseWorkflowService;
 
     @Autowired
-    private ModuleService moduleService;
+    protected ModuleService moduleService;
 
     @Autowired
-    private SecurityUtils securityUtils;
+    protected SecurityUtils securityUtils;
 
     @Autowired
-    private EgBillReceiptDao egBillReceiptDao;
+    protected EgBillReceiptDao egBillReceiptDao;
 
     @Autowired
-    private LicenseApplicationIndexService licenseApplicationIndexService;
+    protected LicenseApplicationIndexService licenseApplicationIndexService;
 
     @Autowired
-    private TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
+    protected TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
 
     @Autowired
-    private EgBillDao egBillDao;
+    protected EgBillDao egBillDao;
 
     @Autowired
-    private DemandGenericDao demandGenericDao;
+    protected DemandGenericDao demandGenericDao;
 
     @Autowired
-    private EgdmCollectedReceiptDao egdmCollectedReceiptDao;
+    protected EgdmCollectedReceiptDao egdmCollectedReceiptDao;
 
     @Autowired
-    private InstallmentDao installmentDao;
+    protected InstallmentDao installmentDao;
 
     @Autowired
     @Qualifier("entityQueryService")
-    private PersistenceService entityQueryService;
+    protected PersistenceService entityQueryService;
 
     @Autowired
-    private LicenseUtils licenseUtils;
+    protected LicenseUtils licenseUtils;
 
     @Autowired
-    private PenaltyRatesService penaltyRatesService;
+    protected PenaltyRatesService penaltyRatesService;
 
     @Autowired
-    private LicenseNumberUtils licenseNumberUtils;
+    protected LicenseNumberUtils licenseNumberUtils;
 
     @Autowired
-    private LicenseApplicationService licenseApplicationService;
+    protected LicenseApplicationService licenseApplicationService;
 
     @Autowired
-    private LicenseCitizenPortalService licenseCitizenPortalService;
+    protected LicenseCitizenPortalService licenseCitizenPortalService;
 
     @Autowired
-    private LicenseStatusService licenseStatusService;
+    protected LicenseStatusService licenseStatusService;
 
     @Autowired
-    private EgwStatusHibernateDAO egwStatusHibernateDAO;
+    protected EgwStatusHibernateDAO egwStatusHibernateDAO;
 
     @Transactional
     public String createLicenseBillXML(License license) {
