@@ -50,9 +50,7 @@ package org.egov.tl.service;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
-import org.egov.commons.service.CFinancialYearService;
 import org.egov.demand.model.BillReceipt;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.entity.Assignment;
@@ -150,9 +148,6 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     private SearchTradeRepository searchTradeRepository;
 
     @Autowired
-    private CFinancialYearService cFinancialYearService;
-
-    @Autowired
     private CityService cityService;
 
     @Autowired
@@ -211,48 +206,41 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
                 license.setLicenseNumber(licenseNumberUtils.generateLicenseNumber());
 
             if (license.getCurrentDemand().getBaseDemand().compareTo(license.getCurrentDemand().getAmtCollected()) <= 0)
-                licenseUtils.applicationStatusChange(license,
-                        Constants.APPLICATION_STATUS_APPROVED_CODE);
+                license.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_APPROVED_CODE));
             else
-                licenseUtils.applicationStatusChange(license,
-                        Constants.APPLICATION_STATUS_SECONDCOLLECTION_CODE);
+                license.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_SECONDCOLLECTION_CODE));
 
         }
-        if (BUTTONAPPROVE.equals(workFlowAction) || Constants.BUTTONFORWARD.equals(workFlowAction)) {
-            license.setStatus(licenseStatusService.getLicenseStatusByCode(Constants.STATUS_UNDERWORKFLOW));
-            if (license.getState().getValue().equals(Constants.WF_REVENUECLERK_APPROVED))
-                licenseUtils.applicationStatusChange(license,
-                        Constants.APPLICATION_STATUS_INSPE_CODE);
-            if (license.getState().getValue().equals(Constants.WORKFLOW_STATE_REJECTED))
-                licenseUtils.applicationStatusChange(license,
-                        Constants.APPLICATION_STATUS_CREATED_CODE);
+        if (BUTTONAPPROVE.equals(workFlowAction) || BUTTONFORWARD.equals(workFlowAction)) {
+            license.setStatus(licenseStatusService.getLicenseStatusByCode(STATUS_UNDERWORKFLOW));
+            if (license.getState().getValue().equals(WF_REVENUECLERK_APPROVED))
+                license.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_INSPE_CODE));
+            else if (license.getState().getValue().equals(WORKFLOW_STATE_REJECTED))
+                license.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_CREATED_CODE));
         }
 
-        if (Constants.GENERATECERTIFICATE.equals(workFlowAction)) {
+        if (GENERATECERTIFICATE.equals(workFlowAction)) {
             license.setActive(true);
-            license.setStatus(licenseStatusService.getLicenseStatusByCode(Constants.STATUS_ACTIVE));
+            license.setStatus(licenseStatusService.getLicenseStatusByCode(STATUS_ACTIVE));
             // setting license to non-legacy, old license number will be the only tracking
             // to check a license created as legacy or new hereafter.
             license.setLegacy(false);
             validityService.applyLicenseValidity(license);
-            licenseUtils.applicationStatusChange(license,
-                    Constants.APPLICATION_STATUS_GENECERT_CODE);
+            license.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_GENECERT_CODE));
         }
         if (BUTTONREJECT.equals(workFlowAction))
             if (license.getLicenseAppType() != null && userPositions.contains(license.getCurrentState().getInitiatorPosition())
                     && ("Rejected".equals(license.getState().getValue()))
                     || "License Created".equals(license.getState().getValue())) {
-                license.setStatus(licenseStatusService.getLicenseStatusByCode(Constants.STATUS_CANCELLED));
-                licenseUtils.applicationStatusChange(license,
-                        Constants.APPLICATION_STATUS_CANCELLED);
+                license.setStatus(licenseStatusService.getLicenseStatusByCode(STATUS_CANCELLED));
+                license.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_CANCELLED));
                 if (license.isNewApplication())
                     license.setActive(false);
             } else {
-                license.setStatus(licenseStatusService.getLicenseStatusByCode(Constants.STATUS_REJECTED));
-                licenseUtils.applicationStatusChange(license,
-                        Constants.APPLICATION_STATUS_REJECTED);
+                license.setStatus(licenseStatusService.getLicenseStatusByCode(STATUS_REJECTED));
+                license.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_REJECTED));
             }
-        if (license.hasState() && license.getState().getValue().contains(Constants.WF_REVENUECLERK_APPROVED)) {
+        if (license.hasState() && license.getState().getValue().contains(WF_REVENUECLERK_APPROVED)) {
             final BigDecimal currentDemandAmount = recalculateLicenseFee(license.getCurrentDemand());
             final BigDecimal recalDemandAmount = calculateFeeAmount(license);
             if (recalDemandAmount.compareTo(currentDemandAmount) >= 0)
@@ -317,15 +305,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
         User approver;
         if (isProvisional || license.getApprovedBy() == null) {
-            List<Assignment> commissionerAssignments;
-            commissionerAssignments = assignmentService.findPrimaryAssignmentForDesignationName(COMMISSIONER_DESGN);
-            if (!commissionerAssignments.isEmpty()) {
-                approver = commissionerAssignments.get(0).getEmployee();
-            } else {
-                commissionerAssignments = assignmentService.getAllActiveAssignments(
-                        designationService.getDesignationByName(COMMISSIONER_DESGN).getId());
-                approver = commissionerAssignments.isEmpty() ? null : commissionerAssignments.get(0).getEmployee();
-            }
+            approver = licenseUtils.getCommissionerAssignment().getEmployee();
         } else {
             approver = license.getApprovedBy();
         }
@@ -354,25 +334,25 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     @ReadOnly
     public List<String> getTradeLicenseForGivenParam(final String paramValue, final String paramType) {
         List<String> licenseList = new ArrayList<>();
-        if (paramType.equals(Constants.SEARCH_BY_APPNO))
+        if (SEARCH_BY_APPNO.equals(paramType))
             licenseList = licenseRepository.findAllApplicationNumberLike(paramValue);
 
-        else if (paramType.equals(Constants.SEARCH_BY_LICENSENO))
+        else if (SEARCH_BY_LICENSENO.equals(paramType))
             licenseList = licenseRepository.findAllLicenseNumberLike(paramValue);
 
-        else if (paramType.equals(Constants.SEARCH_BY_OLDLICENSENO))
+        else if (SEARCH_BY_OLDLICENSENO.equals(paramType))
             licenseList = licenseRepository.findAllOldLicenseNumberLike(paramValue);
 
-        else if (paramType.equals(Constants.SEARCH_BY_TRADETITLE))
+        else if (SEARCH_BY_TRADETITLE.equals(paramType))
             licenseList = licenseRepository.findAllNameOfEstablishmentLike(paramValue);
 
-        else if (paramType.equals(Constants.SEARCH_BY_TRADEOWNERNAME))
+        else if (SEARCH_BY_TRADEOWNERNAME.equals(paramType))
             licenseList = licenseRepository.findAllApplicantNameLike(paramValue);
 
-        else if (paramType.equals(Constants.SEARCH_BY_PROPERTYASSESSMENTNO))
+        else if (SEARCH_BY_PROPERTYASSESSMENTNO.equals(paramType))
             licenseList = licenseRepository.findAllAssessmentNoLike(paramValue);
 
-        else if (paramType.equals(Constants.SEARCH_BY_MOBILENO))
+        else if (SEARCH_BY_MOBILENO.equals(paramType))
             licenseList = licenseRepository.findAllMobilePhoneNumberLike(paramValue);
 
         return licenseList;
@@ -385,9 +365,9 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         String currentUserRoles = securityUtils.getCurrentUser().getRoles().toString();
         Page<License> licenses = searchTradeRepository.findAll(SearchTradeSpec.searchTrade(searchForm), pageable);
         List<SearchForm> searchResults = new ArrayList<>();
-        licenses.forEach(license -> {
-            searchResults.add(new SearchForm(license, currentUserRoles, getOwnerName(license)));
-        });
+        licenses.forEach(license ->
+                searchResults.add(new SearchForm(license, currentUserRoles, getOwnerName(license)))
+        );
         return new PageImpl<>(searchResults, pageable, licenses.getTotalElements());
     }
 

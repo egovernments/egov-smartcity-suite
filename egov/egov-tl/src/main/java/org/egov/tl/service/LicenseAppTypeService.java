@@ -80,4 +80,8 @@ public class LicenseAppTypeService {
     public List<LicenseAppType> findByDisplayTrue() {
         return licenseAppTypeRepository.findByDisplayTrueOrderByNameAsc();
     }
+
+    public List<LicenseAppType> getAllApplicationTypes() {
+        return licenseAppTypeRepository.findAll();
+    }
 }

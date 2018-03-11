@@ -49,7 +49,6 @@
 package org.egov.tl.utils;
 
 import org.egov.commons.Installment;
-import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -60,26 +59,23 @@ import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.ModuleService;
-import org.egov.pims.commons.Designation;
-import org.egov.pims.commons.Position;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.tl.config.properties.TlApplicationProperties;
-import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.LicenseSubCategory;
-import org.egov.tl.service.LicenseStatusService;
 import org.egov.tl.service.LicenseSubCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.egov.tl.utils.Constants.COMMISSIONER_DESGN;
 import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
-import static org.egov.tl.utils.Constants.TRADELICENSEMODULE;
 import static org.egov.tl.utils.Constants.TRADE_LICENSE;
+
 @Service
 public class LicenseUtils {
     @Autowired
@@ -96,13 +92,8 @@ public class LicenseUtils {
     private AppConfigValueService appConfigValuesService;
 
     @Autowired
-    private EgwStatusHibernateDAO egwStatusHibernateDAO;
-
-    @Autowired
     private LicenseSubCategoryService licenseSubCategoryService;
 
-    @Autowired
-    private LicenseStatusService licenseStatusService;
     @Autowired
     private TlApplicationProperties tlApplicationProperties;
 
@@ -134,29 +125,15 @@ public class LicenseUtils {
         return appConfigValue.isEmpty() ? EMPTY : appConfigValue.get(0).getValue();
     }
 
-    public Position getCityLevelCommissioner() {
-        final Department deptObj = departmentService.getDepartmentByName(Constants.ROLE_COMMISSIONERDEPARTEMNT);
-        final Designation desgnObj = designationService.getDesignationByName("Commissioner");
-        List<Assignment> assignlist = new ArrayList<>();
-        if (deptObj != null)
-            assignlist = assignmentService.getAssignmentsByDeptDesigAndDates(deptObj.getId(), desgnObj.getId(), new Date(),
-                    new Date());
-        if (assignlist.isEmpty())
-            assignlist = assignmentService.getAllPositionsByDepartmentAndDesignationForGivenRange(null, desgnObj.getId(),
-                    new Date());
-        if (assignlist.isEmpty())
-            assignlist = assignmentService.getAllActiveAssignments(desgnObj.getId());
-        return !assignlist.isEmpty() ? assignlist.get(0).getPosition() : null;
-    }
-
-    public License applicationStatusChange(final License licenseObj, final String code) {
-        licenseObj.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(TRADELICENSEMODULE, code));
-        return licenseObj;
-    }
-
-    public License licenseStatusUpdate(final License licenseObj, final String code) {
-        licenseObj.setStatus(licenseStatusService.getLicenseStatusByCode(code));
-        return licenseObj;
+    public Assignment getCommissionerAssignment() {
+        List<Assignment> commissionerAssignments = assignmentService.findPrimaryAssignmentForDesignationName(COMMISSIONER_DESGN);
+        if (commissionerAssignments.isEmpty()) {
+            commissionerAssignments = assignmentService.getAllActiveAssignments(
+                    designationService.getDesignationByName(COMMISSIONER_DESGN).getId());
+        }
+        if (commissionerAssignments.isEmpty())
+            throw new ValidationException("TL-0010", "No valid Commissioner assignment found.");
+        return commissionerAssignments.get(0);
     }
 
     public Integer getSlaForAppType(LicenseAppType licenseAppType) {

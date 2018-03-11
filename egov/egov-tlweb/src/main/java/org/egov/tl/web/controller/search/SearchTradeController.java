@@ -101,7 +101,7 @@ public class SearchTradeController {
         model.addAttribute("categoryList", licenseCategoryService.getCategories());
         model.addAttribute("subCategoryList", Collections.emptyList());
         model.addAttribute("statusList", licenseStatusService.findAll());
-        model.addAttribute("applicationType", licenseAppTypeService.findByDisplayTrue());
+        model.addAttribute("applicationType", licenseAppTypeService.getAllApplicationTypes());
         model.addAttribute("natureOfBusiness", natureOfBusinessService.getNatureOfBusinesses());
         return "searchtrade-license";
     }

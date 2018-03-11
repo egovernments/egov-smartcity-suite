@@ -93,14 +93,14 @@
                         </form:select>
                     </div>
                     <label class="col-sm-2 control-label text-right"> <spring:message
-                            code='lbl.tradetype'/></label>
+                            code='search.license.status'/></label>
                     <div class="col-sm-3 add-margin">
-                        <form:select path="natureOfBusinessId" id="natureOfBusiness" cssClass="form-control"
+                        <form:select path="statusId" id="status" cssClass="form-control"
                                      cssErrorClass="form-control error">
                             <form:option value="">
-                                <spring:message code="lbl.select"/>
+                                <spring:message code="lbl.category.select"/>
                             </form:option>
-                            <form:options items="${natureOfBusiness}" itemValue="id" itemLabel="name"/>
+                            <form:options items="${statusList}" itemValue="id" itemLabel="name"/>
                         </form:select>
                     </div>
                 </div>
@@ -133,54 +133,54 @@
                     </div>
                     <div class="form-group">
                         <label class="col-sm-3 control-label text-right"> <spring:message
+                                code='lbl.tradetype'/></label>
+                        <div class="col-sm-3 add-margin">
+                            <form:select path="natureOfBusinessId" id="natureOfBusiness" cssClass="form-control"
+                                         cssErrorClass="form-control error">
+                                <form:option value="">
+                                    <spring:message code="lbl.select"/>
+                                </form:option>
+                                <form:options items="${natureOfBusiness}" itemValue="id" itemLabel="name"/>
+                            </form:select>
+                        </div>
+                        <label class="col-sm-2 control-label text-right"> <spring:message
                                 code='license.oldlicensenum'/></label>
                         <div class="col-sm-3 add-margin">
                             <input type="text" id="oldLicenseNumber" class="form-control typeahead" placeholder=""
                                    autocomplete="off"/>
                             <form:hidden path="oldLicenseNumber" id="oldLicenseNumber"/>
                         </div>
-                        <label class="col-sm-2 control-label text-right"> <spring:message
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label text-right"> <spring:message
                                 code='search.license.establishmentname'/></label>
                         <div class="col-sm-3 add-margin">
                             <input type="text" id="tradeTitle" class="form-control typeahead" placeholder=""
                                    autocomplete="off"/>
                             <form:hidden path="tradeTitle" id="tradeTitle"/>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label text-right"> <spring:message
+                        <label class="col-sm-2 control-label text-right"> <spring:message
                                 code='licensee.applicantname'/></label>
                         <div class="col-sm-3 add-margin">
                             <input type="text" id="tradeOwnerName" class="form-control typeahead" placeholder=""
                                    autocomplete="off"/>
                             <form:hidden path="tradeOwnerName" id="tradeOwnerName"/>
                         </div>
-                        <label class="col-sm-2 control-label text-right"> <spring:message
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label text-right"> <spring:message
                                 code='search.license.propertyNo'/></label>
                         <div class="col-sm-3 add-margin">
                             <input type="text" id="propertyAssessmentNo" class="form-control typeahead" placeholder=""
                                    autocomplete="off"/>
                             <form:hidden path="propertyAssessmentNo" id="propertyAssessmentNo"/>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label text-right"> <spring:message
+                        <label class="col-sm-2 control-label text-right"> <spring:message
                                 code='search.licensee.mobileNo'/></label>
                         <div class="col-sm-3 add-margin">
                             <input type="text" id="mobileNo" class="form-control patternvalidation typeahead" placeholder=""
                                    autocomplete="off" maxlength="10" data-pattern="number"/>
                             <form:hidden path="mobileNo" id="mobileNo"/>
-                        </div>
-                        <label class="col-sm-2 control-label text-right"> <spring:message
-                                code='search.license.status'/></label>
-                        <div class="col-sm-3 add-margin">
-                            <form:select path="statusId" id="status" cssClass="form-control"
-                                         cssErrorClass="form-control error">
-                                <form:option value="">
-                                    <spring:message code="lbl.category.select"/>
-                                </form:option>
-                                <form:options items="${statusList}" itemValue="id" itemLabel="name"/>
-                            </form:select>
                         </div>
                     </div>
                     <div class="form-group">

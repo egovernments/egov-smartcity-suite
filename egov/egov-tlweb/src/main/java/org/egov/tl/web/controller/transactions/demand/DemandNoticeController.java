@@ -64,13 +64,13 @@ import org.egov.tl.entity.LicenseStatus;
 import org.egov.tl.entity.PenaltyRates;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.contracts.DemandNoticeForm;
+import org.egov.tl.entity.contracts.LicenseDemandDetail;
 import org.egov.tl.service.LicenseCategoryService;
 import org.egov.tl.service.LicenseStatusService;
 import org.egov.tl.service.PenaltyRatesService;
 import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
-import org.egov.tl.utils.TradeLicenseDemandBillHelper;
 import org.egov.tl.web.response.adaptor.DemandNoticeAdaptor;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -253,7 +253,7 @@ public class DemandNoticeController {
             }
 
             BigDecimal totalAmount = currLicenseFee.add(arrLicenseFee).add(arrLicensePenalty);
-            List<TradeLicenseDemandBillHelper> monthWiseDemandDetails = new LinkedList<>();
+            List<LicenseDemandDetail> monthWiseDemandDetails = new LinkedList<>();
             getMonthWiseLatePenaltyFeeDetails(license, currentInstallment, currLicenseFee, arrLicenseFee,
                     arrLicensePenalty, monthWiseDemandDetails);
 
@@ -291,7 +291,7 @@ public class DemandNoticeController {
 
     private void getMonthWiseLatePenaltyFeeDetails(TradeLicense license, Installment currentInstallment,
                                                    BigDecimal currLicenseFee, BigDecimal arrLicenseFee, BigDecimal arrLicensePenalty,
-                                                   List<TradeLicenseDemandBillHelper> monthWiseDemandDetails) {
+                                                   List<LicenseDemandDetail> monthWiseDemandDetails) {
 
         Date previousInstallmentEndDate = new DateTime(currentInstallment.getFromDate()).withMonthOfYear(3)
                 .withDayOfMonth(31).toDate();
@@ -301,7 +301,7 @@ public class DemandNoticeController {
         // details
         Map<Integer, String> monthMap = DateUtils.getAllMonths();
         for (int i = 1; i <= 12; i++) {
-            TradeLicenseDemandBillHelper demandBillDtl = new TradeLicenseDemandBillHelper();
+            LicenseDemandDetail demandBillDtl = new LicenseDemandDetail();
 
             DateTime financialYearDate = new DateTime(currentInstallment.getFromDate()).withMonthOfYear(i);
             Date monthEndDate = new DateTime(financialYearDate)

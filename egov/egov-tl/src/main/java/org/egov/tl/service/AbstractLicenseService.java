@@ -175,7 +175,10 @@ public abstract class AbstractLicenseService<T extends License> {
     protected NatureOfBusinessService natureOfBusinessService;
 
     @Autowired
-    private EgwStatusHibernateDAO egwStatusHibernateDAO;
+    protected EgwStatusHibernateDAO egwStatusHibernateDAO;
+
+    @Autowired
+    protected DesignationService designationService;
 
     @Autowired
     private PenaltyRatesService penaltyRatesService;
@@ -185,9 +188,6 @@ public abstract class AbstractLicenseService<T extends License> {
 
     @Autowired
     private DepartmentService departmentService;
-
-    @Autowired
-    protected DesignationService designationService;
 
     @Autowired
     private TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
@@ -650,7 +650,8 @@ public abstract class AbstractLicenseService<T extends License> {
                 closureWfWithOperator(license);
             if (!currentUserIsMeeseva())
                 license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
-            licenseUtils.applicationStatusChange(license, APPLICATION_STATUS_CREATED_CODE);
+            license.setEgwStatus(egwStatusHibernateDAO
+                    .getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_CREATED_CODE));
             license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
             license.setLicenseAppType(getClosureLicenseApplicationType());
             tradeLicenseSmsAndEmailService.sendLicenseClosureMessage(license, workflowBean.getWorkFlowAction());
@@ -673,7 +674,8 @@ public abstract class AbstractLicenseService<T extends License> {
                 null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
         if (workflowBean.getWorkFlowAction() != null && workflowBean.getWorkFlowAction().contains(BUTTONREJECT))
             if (WORKFLOW_STATE_REJECTED.equals(license.getState().getValue())) {
-                licenseUtils.applicationStatusChange(license, APPLICATION_STATUS_GENECERT_CODE);
+                license.setEgwStatus(egwStatusHibernateDAO
+                        .getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_GENECERT_CODE));
                 license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACTIVE));
                 license.setActive(true);
                 if (license.getState().getExtraInfo() != null)
@@ -682,7 +684,8 @@ public abstract class AbstractLicenseService<T extends License> {
                         .withComments(workflowBean.getApproverComments())
                         .withDateInfo(new DateTime().toDate());
             } else {
-                licenseUtils.applicationStatusChange(license, APPLICATION_STATUS_CREATED_CODE);
+                license.setEgwStatus(egwStatusHibernateDAO
+                        .getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_CREATED_CODE));
                 license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
                 final String stateValue = WORKFLOW_STATE_REJECTED;
                 license.transition().progressWithStateCopy()
@@ -700,12 +703,14 @@ public abstract class AbstractLicenseService<T extends License> {
                     .withComments(workflowBean.getApproverComments())
                     .withStateValue(newwfmatrix.getNextState()).withDateInfo(new DateTime().toDate()).withOwner(owner)
                     .withNextAction(newwfmatrix.getNextAction());
-            licenseUtils.applicationStatusChange(license, APPLICATION_STATUS_CREATED_CODE);
+            license.setEgwStatus(egwStatusHibernateDAO
+                    .getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_CREATED_CODE));
             license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
         } else if ("Revenue Clerk/JA Approved".equals(license.getState().getValue())
                 || WORKFLOW_STATE_REJECTED.equals(license.getState().getValue())) {
 
-            licenseUtils.applicationStatusChange(license, APPLICATION_STATUS_CREATED_CODE);
+            license.setEgwStatus(egwStatusHibernateDAO
+                    .getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_CREATED_CODE));
             license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_UNDERWORKFLOW));
             license.transition().progressWithStateCopy()
                     .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
@@ -767,7 +772,8 @@ public abstract class AbstractLicenseService<T extends License> {
         if (isNotBlank(applicationNumber)) {
             License license = licenseRepository.findByApplicationNumber(applicationNumber);
             final DateTime currentDate = new DateTime();
-            license = licenseUtils.applicationStatusChange(license, APPLICATION_STATUS_APPROVED_CODE);
+            license.setEgwStatus(egwStatusHibernateDAO
+                    .getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_APPROVED_CODE));
             WorkFlowMatrix wfmatrix;
             if (license.isReNewApplication())
                 wfmatrix = this.licenseWorkflowService.getWfMatrix(TRADELICENSE, null, null,

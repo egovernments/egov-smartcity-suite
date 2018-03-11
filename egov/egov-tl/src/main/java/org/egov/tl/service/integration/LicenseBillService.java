@@ -57,6 +57,7 @@ import org.egov.collection.integration.models.ReceiptAmountInfo;
 import org.egov.collection.integration.models.ReceiptInstrumentInfo;
 import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.commons.Installment;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.dao.DemandGenericDao;
 import org.egov.demand.dao.EgBillDao;
@@ -85,12 +86,12 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.pims.commons.Position;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseDemand;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.service.LicenseApplicationService;
 import org.egov.tl.service.LicenseCitizenPortalService;
+import org.egov.tl.service.LicenseStatusService;
 import org.egov.tl.service.PenaltyRatesService;
 import org.egov.tl.service.TradeLicenseSmsAndEmailService;
 import org.egov.tl.service.es.LicenseApplicationIndexService;
@@ -112,6 +113,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -129,56 +131,63 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     private static final String TL_FUNCTION_CODE = "1500";
 
     @Autowired
-    protected EgBillDetailsDao egBillDetailsDao;
+    private EgBillDetailsDao egBillDetailsDao;
 
     @Autowired
     @Qualifier("tradeLicenseWorkflowService")
-    protected SimpleWorkflowService tradeLicenseWorkflowService;
+    private SimpleWorkflowService tradeLicenseWorkflowService;
 
     @Autowired
-    protected ModuleService moduleService;
+    private ModuleService moduleService;
 
     @Autowired
-    protected SecurityUtils securityUtils;
+    private SecurityUtils securityUtils;
 
     @Autowired
-    protected EgBillReceiptDao egBillReceiptDao;
+    private EgBillReceiptDao egBillReceiptDao;
 
     @Autowired
-    protected LicenseApplicationIndexService licenseApplicationIndexService;
+    private LicenseApplicationIndexService licenseApplicationIndexService;
 
     @Autowired
-    protected TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
+    private TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
 
     @Autowired
-    protected EgBillDao egBillDao;
+    private EgBillDao egBillDao;
 
     @Autowired
-    protected DemandGenericDao demandGenericDao;
+    private DemandGenericDao demandGenericDao;
 
     @Autowired
-    protected EgdmCollectedReceiptDao egdmCollectedReceiptDao;
+    private EgdmCollectedReceiptDao egdmCollectedReceiptDao;
 
     @Autowired
-    protected InstallmentDao installmentDao;
+    private InstallmentDao installmentDao;
 
     @Autowired
     @Qualifier("entityQueryService")
-    protected PersistenceService entityQueryService;
+    private PersistenceService entityQueryService;
 
     @Autowired
-    protected LicenseUtils licenseUtils;
+    private LicenseUtils licenseUtils;
 
     @Autowired
-    protected PenaltyRatesService penaltyRatesService;
+    private PenaltyRatesService penaltyRatesService;
 
     @Autowired
-    protected LicenseNumberUtils licenseNumberUtils;
+    private LicenseNumberUtils licenseNumberUtils;
 
     @Autowired
-    protected LicenseApplicationService licenseApplicationService;
+    private LicenseApplicationService licenseApplicationService;
+
     @Autowired
     private LicenseCitizenPortalService licenseCitizenPortalService;
+
+    @Autowired
+    private LicenseStatusService licenseStatusService;
+
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
     @Transactional
     public String createLicenseBillXML(License license) {
@@ -457,20 +466,21 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         final String natureOfWork = licenseObj.isReNewApplication()
                 ? RENEWAL_NATUREOFWORK : NEW_NATUREOFWORK;
         if (digitalSignEnabled && !licenseObj.getEgwStatus().getCode().equals(APPLICATION_STATUS_CREATED_CODE)) {
-            licenseUtils.applicationStatusChange(licenseObj, APPLICATION_STATUS_DIGUPDATE_CODE);
-            final Position position = licenseUtils.getCityLevelCommissioner();
-            licenseUtils.applicationStatusChange(licenseObj, APPLICATION_STATUS_APPROVED_CODE);
+            licenseObj.setEgwStatus(egwStatusHibernateDAO
+                    .getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_APPROVED_CODE));
             licenseObj.transition().progressWithStateCopy().withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
                     .withComments(WF_SECOND_LVL_FEECOLLECTED)
                     .withStateValue(DIGI_ENABLED_WF_SECOND_LVL_FEECOLLECTED).withDateInfo(currentDate.toDate())
-                    .withOwner(position).withNextAction(WF_ACTION_DIGI_PENDING);
+                    .withOwner(licenseUtils.getCommissionerAssignment().getPosition()).withNextAction(WF_ACTION_DIGI_PENDING);
 
         } else {
-            licenseUtils.licenseStatusUpdate(licenseObj, STATUS_UNDERWORKFLOW);
+            licenseObj.setStatus(licenseStatusService.getLicenseStatusByCode(STATUS_UNDERWORKFLOW));
             if (licenseObj.getEgwStatus().getCode().equals(APPLICATION_STATUS_CREATED_CODE))
-                licenseUtils.applicationStatusChange(licenseObj, APPLICATION_STATUS_FIRSTCOLLECTIONDONE_CODE);
+                licenseObj.setEgwStatus(egwStatusHibernateDAO
+                        .getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_FIRSTCOLLECTIONDONE_CODE));
             else
-                licenseUtils.applicationStatusChange(licenseObj, APPLICATION_STATUS_APPROVED_CODE);
+                licenseObj.setEgwStatus(egwStatusHibernateDAO
+                        .getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_APPROVED_CODE));
             if (licenseObj.isReNewApplication()) {
                 if (licenseObj.getEgwStatus().getCode().equals(APPLICATION_STATUS_FIRSTCOLLECTIONDONE_CODE))
                     wfmatrix = tradeLicenseWorkflowService.getWfMatrix(TRADELICENSE, null, null, RENEW_ADDITIONAL_RULE,
@@ -910,30 +920,35 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     }
 
     public Map<String, Map<String, BigDecimal>> getPaymentFee(final License license) {
-        final Map<String, Map<String, BigDecimal>> outstandingFee = new HashMap<>();
+        final Map<String, Map<String, BigDecimal>> outstandingFee = new LinkedHashMap<>();
         final LicenseDemand licenseDemand = license.getCurrentDemand();
-
-        for (final EgDemandDetails demandDetail : licenseDemand.getEgDemandDetails()) {
-            Date fromDate = license.isNewApplication() ? license.getCommencementDate() : demandDetail.getEgDemandReason().getEgInstallmentMaster().getFromDate();
-            final String demandReason = demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster();
-            final Installment installmentYear = demandDetail.getEgDemandReason().getEgInstallmentMaster();
-            Map<String, BigDecimal> feeByTypes;
-            if (!PENALTY_DMD_REASON_CODE.equals(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode())
-                    && demandDetail.getAmount().subtract(demandDetail.getAmtCollected()).signum() == 1) {
-                if (outstandingFee.containsKey(installmentYear.getDescription()))
-                    feeByTypes = outstandingFee.get(installmentYear.getDescription());
-                else {
-                    feeByTypes = new HashMap<>();
-                    feeByTypes.put(demandReason, ZERO);
-                }
-                final BigDecimal demandAmount = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
-                feeByTypes.put(demandReason, demandAmount.setScale(0, RoundingMode.HALF_UP));
-                BigDecimal penaltyAmt = penaltyRatesService.calculatePenalty(license, fromDate, new Date(), demandDetail.getAmount());
-                if (penaltyAmt.compareTo(ZERO) > 0)
-                    feeByTypes.put("Penalty", penaltyAmt.setScale(0, RoundingMode.HALF_UP));
-                outstandingFee.put(installmentYear.getDescription(), feeByTypes);
-            }
-        }
+        licenseDemand.getEgDemandDetails()
+                .stream()
+                .sorted(Comparator.comparing(EgDemandDetails::getInstallmentStartDate))
+                .forEach(demandDetail -> {
+                            Date fromDate = license.isNewApplication() ? license.getCommencementDate() : demandDetail.getEgDemandReason()
+                                    .getEgInstallmentMaster().getFromDate();
+                            String demandReason = demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster();
+                            Installment installmentYear = demandDetail.getEgDemandReason().getEgInstallmentMaster();
+                            Map<String, BigDecimal> feeByTypes;
+                            if (!PENALTY_DMD_REASON_CODE.equals(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode())
+                                    && demandDetail.getAmount().subtract(demandDetail.getAmtCollected()).signum() == 1) {
+                                if (outstandingFee.containsKey(installmentYear.getDescription()))
+                                    feeByTypes = outstandingFee.get(installmentYear.getDescription());
+                                else {
+                                    feeByTypes = new HashMap<>();
+                                    feeByTypes.put(demandReason, ZERO);
+                                }
+                                BigDecimal demandAmount = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
+                                feeByTypes.put(demandReason, demandAmount.setScale(0, RoundingMode.HALF_UP));
+                                BigDecimal penaltyAmt = penaltyRatesService.calculatePenalty(license, fromDate, new Date(),
+                                        demandDetail.getAmount());
+                                if (penaltyAmt.compareTo(ZERO) > 0)
+                                    feeByTypes.put("Penalty", penaltyAmt.setScale(0, RoundingMode.HALF_UP));
+                                outstandingFee.put(installmentYear.getDescription(), feeByTypes);
+                            }
+                        }
+                );
         recalculatePenaltyAmt(outstandingFee, licenseDemand);
         return outstandingFee;
     }

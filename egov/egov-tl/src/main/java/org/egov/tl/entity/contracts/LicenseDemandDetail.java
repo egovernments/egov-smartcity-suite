@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -45,52 +45,55 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
+package org.egov.tl.entity.contracts;
 
-package org.egov.tl.utils;
+import java.math.BigDecimal;
 
-public class LicenseChecklistHelper {
+public class LicenseDemandDetail {
+    private String month;
+    private BigDecimal arrersWithPenalty = BigDecimal.ZERO;
+    private BigDecimal licenseFee = BigDecimal.ZERO;
+    private BigDecimal penalty = BigDecimal.ZERO;
+    private BigDecimal totalDues = BigDecimal.ZERO;
 
-	private Integer id;
-	private String name;
-	private String val;
-	private String checked;
+    public String getMonth() {
+        return month;
+    }
 
-	public Integer getId() {
-		return id;
-	}
+    public void setMonth(String month) {
+        this.month = month;
+    }
 
-	public void setId(final Integer id) {
-		this.id = id;
-	}
+    public BigDecimal getArrersWithPenalty() {
+        return arrersWithPenalty;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void setArrersWithPenalty(BigDecimal arrersWithPenalty) {
+        this.arrersWithPenalty = arrersWithPenalty;
+    }
 
-	public void setName(final String name) {
-		this.name = name;
-	}
+    public BigDecimal getLicenseFee() {
+        return licenseFee;
+    }
 
-	public String getVal() {
-		return val;
-	}
+    public void setLicenseFee(BigDecimal licenseFee) {
+        this.licenseFee = licenseFee;
+    }
 
-	public void setVal(final String val) {
-		this.val = val;
-	}
+    public BigDecimal getPenalty() {
+        return penalty;
+    }
 
-	public String getChecked() {
-		return checked;
-	}
+    public void setPenalty(BigDecimal penalty) {
+        this.penalty = penalty;
+    }
 
-	public void setChecked(final String checked) {
-		this.checked = checked;
-	}
+    public BigDecimal getTotalDues() {
+        return totalDues;
+    }
 
-	public LicenseChecklistHelper(final String name, final String val,
-			final String checked) {
-		this.name = name;
-		this.val = val;
-		this.checked = checked;
-	}
+    public void setTotalDues(BigDecimal totalDues) {
+        this.totalDues = totalDues;
+    }
+
 }
