@@ -60,6 +60,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.infra.admin.master.entity.es.CityIndex;
+import org.egov.infra.admin.master.service.es.CityIndexService;
 import org.egov.ptis.bean.dashboard.CollectionDetailsRequest;
 import org.egov.ptis.bean.dashboard.SurveyDashboardResponse;
 import org.egov.ptis.bean.dashboard.SurveyRequest;
@@ -96,6 +98,9 @@ public class SurveyDashboardService {
 
     @Autowired
     private CollectionIndexElasticSearchService collectionIndexElasticSearchService;
+    
+    @Autowired
+    private CityIndexService cityIndexService;
 
     public List<SurveyDashboardResponse> getGisApplicationDetails(final SurveyRequest surveyDashboardRequest) {
         List<SurveyDashboardResponse> surveyList = new ArrayList<>();
@@ -243,6 +248,11 @@ public class SurveyDashboardService {
         BigDecimal totalSystemTax;
         BigDecimal totalApprovedTax;
         String name;
+        Map<String, String> cityInfoMap = new HashMap<>();
+        Iterable<CityIndex> cities = cityIndexService.findAll();
+        for (CityIndex city : cities) 
+            cityInfoMap.put(city.getName(), city.getCitycode());
+
         for (Bucket bucket : ulbTerms.getBuckets()) {
             surveyResponse = new SurveyResponse();
             name = bucket.getKeyAsString();
@@ -251,8 +261,11 @@ public class SurveyDashboardService {
                 surveyResponse.setRegionName(name);
             else if (DISTRICT_NAME.equals(aggregationField))
                 surveyResponse.setDistrictName(name);
-            else if (CITY_NAME.equals(aggregationField))
+            else if (CITY_NAME.equals(aggregationField)){
                 surveyResponse.setUlbName(name);
+                surveyResponse.setUlbCode(cityInfoMap.get(name) == null ? StringUtils.EMPTY
+                        : cityInfoMap.get(name));
+            }
             else if (REVENUE_WARD.equals(aggregationField)) {
                 surveyResponse.setWardName(name);
                 if (DASHBOARD_GROUPING_WARDWISE.equalsIgnoreCase(surveyRequest.getAggregationLevel())
