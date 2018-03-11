@@ -61,40 +61,38 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.egov.infra.utils.StringUtils.defaultIfBlank;
+
 public class SearchTradeResultHelperAdaptor implements DataTableJsonAdapter<SearchForm> {
 
     @Override
-    public JsonElement serialize(final DataTable<SearchForm> searchFormDate, final Type type,
-                                 final JsonSerializationContext jsc) {
-        final List<SearchForm> searchFormResponse = searchFormDate.getData();
-        final JsonArray searchTradeResult = new JsonArray();
-        searchFormResponse.forEach(searchFormObj -> {
-            final JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("licenseId", searchFormObj.getLicenseId());
-            jsonObject.addProperty("applicationNumber", searchFormObj.getApplicationNumber());
-            jsonObject.addProperty("tlNumber", searchFormObj.getLicenseNumber());
-            jsonObject.addProperty("oldTLNumber", searchFormObj.getOldLicenseNumber());
-            jsonObject.addProperty("category", searchFormObj.getCategoryName());
-            jsonObject.addProperty("subCategory", searchFormObj.getSubCategoryName());
-            jsonObject.addProperty("tradeTitle", searchFormObj.getTradeTitle());
-            jsonObject.addProperty("tradeOwner", searchFormObj.getTradeOwnerName());
-            jsonObject.addProperty("mobileNumber", searchFormObj.getMobileNo());
-            jsonObject.addProperty("propertyAssmntNo", searchFormObj.getPropertyAssessmentNo());
-            jsonObject.addProperty("status", searchFormObj.getStatus());
-            jsonObject.addProperty("active", searchFormObj.getActive());
-            jsonObject.addProperty("expiryYear", searchFormObj.getExpiryYear());
-            jsonObject.addProperty("ownerName", searchFormObj.getOwnerName());
-            // To add set of actions for search results
-            final Gson gson = new Gson();
-            final ArrayList<JsonObject> list = new ArrayList<>();
-            for (int i = 0; i < searchFormObj.getActions().size(); i++) {
-                final JsonObject objectInList = new JsonObject();
-                objectInList.addProperty("key", searchFormObj.getActions().get(i));
+    public JsonElement serialize(DataTable<SearchForm> searchForm, Type type,
+                                 JsonSerializationContext jsc) {
+        List<SearchForm> searchFormResponse = searchForm.getData();
+        JsonArray searchTradeResult = new JsonArray();
+        searchFormResponse.forEach(searchResult -> {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("licenseId", searchResult.getLicenseId());
+            jsonObject.addProperty("applicationNumber", searchResult.getApplicationNumber());
+            jsonObject.addProperty("tlNumber", defaultIfBlank(searchResult.getLicenseNumber()));
+            jsonObject.addProperty("category", searchResult.getCategoryName());
+            jsonObject.addProperty("subCategory", searchResult.getSubCategoryName());
+            jsonObject.addProperty("tradeTitle", searchResult.getTradeTitle());
+            jsonObject.addProperty("tradeOwner", searchResult.getTradeOwnerName());
+            jsonObject.addProperty("mobileNumber", searchResult.getMobileNo());
+            jsonObject.addProperty("status", searchResult.getStatus());
+            jsonObject.addProperty("active", searchResult.getActive());
+            jsonObject.addProperty("ownerName", searchResult.getOwnerName());
+            Gson gson = new Gson();
+            ArrayList<JsonObject> list = new ArrayList<>();
+            for (String action : searchResult.getActions()) {
+                JsonObject objectInList = new JsonObject();
+                objectInList.addProperty("key", action);
                 list.add(objectInList);
             }
             jsonObject.addProperty("actions", gson.toJson(list));
             searchTradeResult.add(jsonObject);
         });
-        return enhance(searchTradeResult, searchFormDate);
+        return enhance(searchTradeResult, searchForm);
     }
 }

@@ -198,27 +198,24 @@
         </form:form>
     </div>
 </div>
-
+<br/>
+<br/>
 <div class="row display-hide report-section">
-    <div class="col-md-12 table-header text-left">Search Result</div>
     <div class="col-md-12 report-table-container">
         <table class="table table-bordered table-hover multiheadertbl" id="tblSearchTrade">
             <thead>
             <tr>
-                <th>Application Number</th>
-                <th>TL Number</th>
-                <th>Old TL Number</th>
-                <th>Category</th>
-                <th>Sub Category</th>
-                <th>Title of Trade</th>
-                <th>Trade Owner</th>
-                <th>Mobile Number</th>
-                <th>Property Assessment Number</th>
-                <th>Financial Year</th>
-                <th>Application Status</th>
-                <th>License Active</th>
-                <th>Owner Name</th>
-                <th>Actions</th>
+                <th><spring:message code="lbl.action"/></th>
+                <th><spring:message code="license.applicationnumber"/></th>
+                <th><spring:message code="lbl.license.no"/></th>
+                <th><spring:message code="search.license.status"/></th>
+                <th><spring:message code="lbl.active"/></th>
+                <th><spring:message code="lbl.wf.process.owner"/></th>
+                <th><spring:message code="search.license.establishmentname"/></th>
+                <th><spring:message code="lbl.trade.owner"/></th>
+                <th><spring:message code="lbl.licensecategory"/></th>
+                <th><spring:message code="lbl.subcategory"/></th>
+                <th><spring:message code="search.licensee.mobileNo"/></th>
             </tr>
             </thead>
         </table>

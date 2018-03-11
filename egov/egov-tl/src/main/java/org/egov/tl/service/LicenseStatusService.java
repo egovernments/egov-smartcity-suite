@@ -72,6 +72,6 @@ public class LicenseStatusService {
     }
 
     public List<LicenseStatus> findAll() {
-        return licenseStatusRepository.findAllByOrderByIdAsc();
+        return licenseStatusRepository.findAllByOrderByNameAsc();
     }
 }

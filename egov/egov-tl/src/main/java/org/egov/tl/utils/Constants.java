@@ -199,6 +199,8 @@ public final class Constants {
     public static final String EXTERNAL_CLOSURE_LICENSE="EXTERNALCLOSUREAPPLICATION";
     public static final String CLOSURE_LICENSE_REJECT="CLOSURELICENSEREJECT";
     public static final String AUTO = "Auto";
+    public static final String PROCESS_OWNER_FORMAT = "%s [%s]";
+
     static {
 
         OWNERSHIP_TYPE.put(OWNERSHIP_TYPE_OWN, OWNERSHIP_TYPE_OWN);

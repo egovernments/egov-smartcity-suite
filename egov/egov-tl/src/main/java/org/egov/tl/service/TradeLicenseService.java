@@ -118,6 +118,7 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.config.core.LocalizationSettings.currencySymbolUtf8;
 import static org.egov.infra.security.utils.SecureCodeUtils.generatePDF417Code;
+import static org.egov.infra.utils.ApplicationConstant.NA;
 import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
 import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
 import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
@@ -379,15 +380,13 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
     @ReadOnly
     public Page<SearchForm> searchTradeLicense(final SearchForm searchForm) {
-        final Pageable pageable = new PageRequest(searchForm.pageNumber(),
+        Pageable pageable = new PageRequest(searchForm.pageNumber(),
                 searchForm.pageSize(), searchForm.orderDir(), searchForm.orderBy());
-        final String currentUserRoles = securityUtils.getCurrentUser().getRoles().toString();
+        String currentUserRoles = securityUtils.getCurrentUser().getRoles().toString();
         Page<License> licenses = searchTradeRepository.findAll(SearchTradeSpec.searchTrade(searchForm), pageable);
         List<SearchForm> searchResults = new ArrayList<>();
         licenses.forEach(license -> {
-            final CFinancialYear financialYear = cFinancialYearService.getFinancialYearByDate(license.getDateOfExpiry());
-            final String expiryYear = financialYear != null ? financialYear.getFinYearRange() : "";
-            searchResults.add(new SearchForm(license, currentUserRoles, getOwnerName(license), expiryYear));
+            searchResults.add(new SearchForm(license, currentUserRoles, getOwnerName(license)));
         });
         return new PageImpl<>(searchResults, pageable, licenses.getTotalElements());
     }
@@ -482,14 +481,13 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     }
 
     public String getOwnerName(License license) {
-        String ownerName;
-        if (license.getState() != null) {
-            final List<Assignment> assignmentList = assignmentService
+        String ownerName = NA;
+        if (license.getState() != null && license.getState().getOwnerPosition() != null) {
+            List<Assignment> assignmentList = assignmentService
                     .getAssignmentsForPosition(license.getState().getOwnerPosition().getId(), new Date());
-            ownerName = !assignmentList.isEmpty() ? assignmentList.get(0).getEmployee().getName()
-                    : license.getLastModifiedBy().getName();
-        } else
-            ownerName = license.getLastModifiedBy().getName();
+            if (!assignmentList.isEmpty())
+                ownerName = assignmentList.get(0).getEmployee().getName();
+        }
         return ownerName;
 
     }

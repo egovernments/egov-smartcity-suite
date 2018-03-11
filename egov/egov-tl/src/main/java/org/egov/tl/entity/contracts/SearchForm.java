@@ -48,7 +48,6 @@
 
 package org.egov.tl.entity.contracts;
 
-import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.web.support.search.DataTableSearchRequest;
 import org.egov.tl.entity.License;
 import org.egov.tl.utils.Constants;
@@ -58,8 +57,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static java.lang.String.format;
+import static org.egov.infra.utils.ApplicationConstant.NA;
+import static org.egov.infra.utils.StringUtils.toYesOrNo;
 import static org.egov.tl.utils.Constants.CLOSURE_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.CSCOPERATOR;
+import static org.egov.tl.utils.Constants.PROCESS_OWNER_FORMAT;
 
 public class SearchForm extends DataTableSearchRequest {
     private Long licenseId;
@@ -78,7 +81,6 @@ public class SearchForm extends DataTableSearchRequest {
     private Long categoryId;
     private Long subCategoryId;
     private Long statusId;
-    private Date dateOfExpiry;
     private List<String> actions;
     private String active;
     private Boolean inactive;
@@ -89,22 +91,19 @@ public class SearchForm extends DataTableSearchRequest {
         // For form binding
     }
 
-    public SearchForm(final License license, final String userRoles, final String ownerName, final String expiryYear) {
+    public SearchForm(License license, String userRoles, String ownerName) {
         setLicenseId(license.getId());
         setApplicationNumber(license.getApplicationNumber());
         setLicenseNumber(license.getLicenseNumber());
-        setOldLicenseNumber(StringUtils.defaultIfEmpty(license.getOldLicenseNumber(), ""));
         setCategoryName(license.getCategory().getName());
         setSubCategoryName(license.getTradeName().getName());
         setTradeTitle(license.getNameOfEstablishment());
         setTradeOwnerName(license.getLicensee().getApplicantName());
         setMobileNo(license.getLicensee().getMobilePhoneNumber());
-        setPropertyAssessmentNo(license.getAssessmentNo() != null ? license.getAssessmentNo() : "");
         setStatus(license.getStatus().getName());
-        setActive(license.getIsActive() ? "YES" : "NO");
-        setOwnerName(ownerName);
-        setExpiryYear(expiryYear);
-        setDateOfExpiry(license.getDateOfExpiry());
+        setActive(toYesOrNo(license.getIsActive()));
+        setOwnerName(NA.equals(ownerName) ? NA : format(PROCESS_OWNER_FORMAT, ownerName, license.getCurrentState()
+                .getOwnerPosition().getName()));
         setApplicationTypeId(license.getLicenseAppType().getId());
         setNatureOfBusinessId(license.getNatureOfBusiness().getId());
         addActions(license, userRoles);
@@ -290,14 +289,6 @@ public class SearchForm extends DataTableSearchRequest {
 
     public void setSubCategoryId(final Long subCategoryId) {
         this.subCategoryId = subCategoryId;
-    }
-
-    public Date getDateOfExpiry() {
-        return dateOfExpiry;
-    }
-
-    public void setDateOfExpiry(final Date dateOfExpiry) {
-        this.dateOfExpiry = dateOfExpiry;
     }
 
     public String getActive() {
