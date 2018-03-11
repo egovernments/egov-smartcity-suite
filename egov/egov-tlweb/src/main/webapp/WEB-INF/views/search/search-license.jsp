@@ -105,82 +105,90 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-3 control-label text-right"> <spring:message
-                            code='search.license.category'/></label>
-                    <div class="col-sm-3 add-margin">
-                        <form:select path="categoryId" id="category" cssClass="form-control"
-                                     cssErrorClass="form-control error">
-                            <form:option value="">
-                                <spring:message code="lbl.category.select"/>
-                            </form:option>
-                            <form:options items="${categoryList}" itemValue="id" itemLabel="name"/>
-                        </form:select>
-                    </div>
-                    <label class="col-sm-2 control-label text-right"> <spring:message
-                            code='search.license.subCategory'/></label>
-                    <div class="col-sm-3 add-margin">
-                        <select id="subCategory" class="form-control select2" required>
-                        </select> <label id="subCategory-error" class="error display-hide"
-                                         for="subCategory">Required</label>
+                    <div class="col-md-3 add-margin" style="margin-left: 10%">
+                        <a href="javascript:void(0);" id="toggle-searchmore"
+                           class="btn btn-secondary"><spring:message code='lbl.more' />..</a>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label class="col-sm-3 control-label text-right"> <spring:message
-                            code='license.oldlicensenum'/></label>
-                    <div class="col-sm-3 add-margin">
-                        <input type="text" id="oldLicenseNumber" class="form-control typeahead" placeholder=""
-                               autocomplete="off"/>
-                        <form:hidden path="oldLicenseNumber" id="oldLicenseNumber"/>
+                <div class="form-group show-search-more display-hide">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label text-right"> <spring:message
+                                code='search.license.category'/></label>
+                        <div class="col-sm-3 add-margin">
+                            <form:select path="categoryId" id="category" cssClass="form-control"
+                                         cssErrorClass="form-control error">
+                                <form:option value="">
+                                    <spring:message code="lbl.category.select"/>
+                                </form:option>
+                                <form:options items="${categoryList}" itemValue="id" itemLabel="name"/>
+                            </form:select>
+                        </div>
+                        <label class="col-sm-2 control-label text-right"> <spring:message
+                                code='search.license.subCategory'/></label>
+                        <div class="col-sm-3 add-margin">
+                            <select id="subCategory" class="form-control select2" required>
+                            </select> <label id="subCategory-error" class="error display-hide"
+                                             for="subCategory">Required</label>
+                        </div>
                     </div>
-                    <label class="col-sm-2 control-label text-right"> <spring:message
-                            code='search.license.establishmentname'/></label>
-                    <div class="col-sm-3 add-margin">
-                        <input type="text" id="tradeTitle" class="form-control typeahead" placeholder=""
-                               autocomplete="off"/>
-                        <form:hidden path="tradeTitle" id="tradeTitle"/>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label text-right"> <spring:message
+                                code='license.oldlicensenum'/></label>
+                        <div class="col-sm-3 add-margin">
+                            <input type="text" id="oldLicenseNumber" class="form-control typeahead" placeholder=""
+                                   autocomplete="off"/>
+                            <form:hidden path="oldLicenseNumber" id="oldLicenseNumber"/>
+                        </div>
+                        <label class="col-sm-2 control-label text-right"> <spring:message
+                                code='search.license.establishmentname'/></label>
+                        <div class="col-sm-3 add-margin">
+                            <input type="text" id="tradeTitle" class="form-control typeahead" placeholder=""
+                                   autocomplete="off"/>
+                            <form:hidden path="tradeTitle" id="tradeTitle"/>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-sm-3 control-label text-right"> <spring:message
-                            code='licensee.applicantname'/></label>
-                    <div class="col-sm-3 add-margin">
-                        <input type="text" id="tradeOwnerName" class="form-control typeahead" placeholder=""
-                               autocomplete="off"/>
-                        <form:hidden path="tradeOwnerName" id="tradeOwnerName"/>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label text-right"> <spring:message
+                                code='licensee.applicantname'/></label>
+                        <div class="col-sm-3 add-margin">
+                            <input type="text" id="tradeOwnerName" class="form-control typeahead" placeholder=""
+                                   autocomplete="off"/>
+                            <form:hidden path="tradeOwnerName" id="tradeOwnerName"/>
+                        </div>
+                        <label class="col-sm-2 control-label text-right"> <spring:message
+                                code='search.license.propertyNo'/></label>
+                        <div class="col-sm-3 add-margin">
+                            <input type="text" id="propertyAssessmentNo" class="form-control typeahead" placeholder=""
+                                   autocomplete="off"/>
+                            <form:hidden path="propertyAssessmentNo" id="propertyAssessmentNo"/>
+                        </div>
                     </div>
-                    <label class="col-sm-2 control-label text-right"> <spring:message
-                            code='search.license.propertyNo'/></label>
-                    <div class="col-sm-3 add-margin">
-                        <input type="text" id="propertyAssessmentNo" class="form-control typeahead" placeholder=""
-                               autocomplete="off"/>
-                        <form:hidden path="propertyAssessmentNo" id="propertyAssessmentNo"/>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label text-right"> <spring:message
+                                code='search.licensee.mobileNo'/></label>
+                        <div class="col-sm-3 add-margin">
+                            <input type="text" id="mobileNo" class="form-control patternvalidation typeahead" placeholder=""
+                                   autocomplete="off" maxlength="10" data-pattern="number"/>
+                            <form:hidden path="mobileNo" id="mobileNo"/>
+                        </div>
+                        <label class="col-sm-2 control-label text-right"> <spring:message
+                                code='search.license.status'/></label>
+                        <div class="col-sm-3 add-margin">
+                            <form:select path="statusId" id="status" cssClass="form-control"
+                                         cssErrorClass="form-control error">
+                                <form:option value="">
+                                    <spring:message code="lbl.category.select"/>
+                                </form:option>
+                                <form:options items="${statusList}" itemValue="id" itemLabel="name"/>
+                            </form:select>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-sm-3 control-label text-right"> <spring:message
-                            code='search.licensee.mobileNo'/></label>
-                    <div class="col-sm-3 add-margin">
-                        <input type="text" id="mobileNo" class="form-control patternvalidation typeahead" placeholder=""
-                               autocomplete="off" maxlength="10" data-pattern="number"/>
-                        <form:hidden path="mobileNo" id="mobileNo"/>
-                    </div>
-                    <label class="col-sm-2 control-label text-right"> <spring:message
-                            code='search.license.status'/></label>
-                    <div class="col-sm-3 add-margin">
-                        <form:select path="statusId" id="status" cssClass="form-control"
-                                     cssErrorClass="form-control error">
-                            <form:option value="">
-                                <spring:message code="lbl.category.select"/>
-                            </form:option>
-                            <form:options items="${statusList}" itemValue="id" itemLabel="name"/>
-                        </form:select>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-sm-3 control-label text-right"> <spring:message
-                            code='search.license.inactive'/></label>
-                    <div class="col-sm-3 add-margin">
-                        <form:checkbox path="inactive" id="inactive"/>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label text-right"> <spring:message
+                                code='search.license.inactive'/></label>
+                        <div class="col-sm-3 add-margin">
+                            <form:checkbox path="inactive" id="inactive"/>
+                        </div>
                     </div>
                 </div>
             </div>

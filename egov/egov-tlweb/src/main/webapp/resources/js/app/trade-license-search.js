@@ -49,6 +49,18 @@
 var reportdatatable;
 var drillDowntableContainer = $("#tblSearchTrade");
 $(document).ready(function () {
+
+    $('#toggle-searchmore').click(function () {
+        if ($(this).html() == "More..") {
+            $(this).html('Less..');
+            $('.show-search-more').show();
+        } else {
+            $(this).html('More..');
+            $('.show-search-more').hide();
+        }
+
+    });
+
     // Instantiate the application number Bloodhound suggestion engine
     var applicationnoengine = new Bloodhound({
         datumTokenizer: function (datum) {
