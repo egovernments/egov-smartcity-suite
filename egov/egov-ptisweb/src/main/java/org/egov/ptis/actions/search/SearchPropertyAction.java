@@ -310,7 +310,12 @@ public class SearchPropertyAction extends SearchFormAction {
             }
         }
         if (APPLICATION_TYPE_EDIT_OWNER.equals(applicationType))
-            return APPLICATION_TYPE_EDIT_OWNER;
+            if (basicProperty.getProperty().getPropertyDetail().isStructure()) {
+                addActionError(getText("error.superstruc.prop.notallowed"));
+                return COMMON_FORM;
+            }
+            else
+                return APPLICATION_TYPE_EDIT_OWNER;
         checkIsDemandActive(basicProperty.getProperty());
         if (!applicationType.equalsIgnoreCase(APPLICATION_TYPE_COLLECT_TAX)
                 && !applicationType.equalsIgnoreCase(APPLICATION_TYPE_DEMAND_BILL)
