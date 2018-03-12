@@ -1685,8 +1685,9 @@ public class PropertyExternalService {
             additionalRule = ADDTIONAL_RULE_ALTER_ASSESSMENT;
             natureOftask = NATURE_ALTERATION;
         }
-        final Assignment assignment = propService.getUserPositionByZone(property.getBasicProperty(), false);
-        final Position pos = assignment.getPosition();
+        final Assignment assignment = getAssignment(property, propService);
+        Position pos = assignment.getPosition();
+        pos = null;
         final WorkFlowMatrix wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null, null,
                 additionalRule, currentState, null);
         property.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
@@ -1695,6 +1696,10 @@ public class PropertyExternalService {
                 .withNatureOfTask(natureOftask).withInitiator(assignment != null ? assignment.getPosition() : null);
 
         return property;
+    }
+
+    public Assignment getAssignment(PropertyImpl property, PropertyService propService) {
+        return propService.getUserPositionByZone(property.getBasicProperty(), false);
     }
 
     @SuppressWarnings("unchecked")

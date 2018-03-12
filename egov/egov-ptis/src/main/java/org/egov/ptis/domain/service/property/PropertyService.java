@@ -2725,21 +2725,18 @@ public class PropertyService {
 	 */
 	public Assignment getUserPositionByZone(final BasicProperty basicProperty, final boolean isForMobile) {
 		final String designationStr = getDesignationForThirdPartyUser(isForMobile);
-		final String departmentStr = getDepartmentForWorkFlow();
-		final String[] department = departmentStr.split(",");
+		final String department = getDepartmentForWorkFlow();
 		final String[] designation = designationStr.split(",");
 		List<Assignment> assignment = new ArrayList<>();
-		for (final String dept : department) {
+		if(StringUtils.isNotBlank(department)) {
 			for (final String desg : designation) {
 				assignment = assignmentService.findByDepartmentDesignationAndBoundary(
-						departmentService.getDepartmentByName(dept).getId(),
+						departmentService.getDepartmentByName(department).getId(),
 						designationService.getDesignationByName(desg).getId(),
 						basicProperty.getPropertyID().getElectionBoundary().getId());
 				if (!assignment.isEmpty())
 					break;
 			}
-			if (!assignment.isEmpty())
-				break;
 		}
 		return !assignment.isEmpty() ? assignment.get(0) : null;
 	}

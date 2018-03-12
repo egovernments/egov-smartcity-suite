@@ -68,6 +68,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.collection.integration.models.BillReceiptInfo;
+import org.egov.eis.entity.Assignment;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.ptis.client.service.calculator.APTaxCalculator;
@@ -75,7 +76,10 @@ import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.Property;
+import org.egov.ptis.domain.entity.property.PropertyID;
+import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.domain.model.FloorDetails;
@@ -85,6 +89,7 @@ import org.egov.ptis.domain.model.TaxCalculatorRequest;
 import org.egov.ptis.domain.repository.master.vacantland.LayoutApprovalAuthorityRepository;
 import org.egov.ptis.domain.repository.master.vacantland.VacantLandPlotAreaRepository;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
+import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.master.service.PropertyUsageService;
 import org.egov.ptis.master.service.StructureClassificationService;
 import org.egov.restapi.model.AssessmentRequest;
@@ -96,6 +101,7 @@ import org.egov.restapi.model.PropertyTransferDetails;
 import org.egov.restapi.model.SurroundingBoundaryDetails;
 import org.egov.restapi.model.VacantLandDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -125,6 +131,9 @@ public class ValidationUtil {
 
     @Autowired
     private VacantLandPlotAreaRepository vacantLandPlotAreaRepository;
+    
+    @Autowired
+    private ApplicationContext beanProvider;
 
     private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
             + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
@@ -337,6 +346,7 @@ public class ValidationUtil {
             }
         }
 
+        Boundary electionWard = null;
         // Property Address validations
         final PropertyAddressDetails propertyAddressDetails = createPropDetails.getPropertyAddressDetails();
         if (!mode.equals(PropertyTaxConstants.PROPERTY_MODE_MODIFY))
@@ -358,6 +368,9 @@ public class ValidationUtil {
                     final Boundary ward = propertyExternalService.getBoundarybyboundaryNumberTypeHierarchy(
                             propertyAddressDetails.getWardNum(),
                             propertyExternalService.getBoundaryTypeByNameandHierarchy(WARD, REVENUE_HIERARCHY_TYPE));
+                    electionWard = propertyExternalService.getBoundarybyboundaryNumberTypeHierarchy(
+                            propertyAddressDetails.getElectionWardNum(),
+                            propertyExternalService.getBoundaryTypeByNameandHierarchy(WARD, ADMIN_HIERARCHY_TYPE));
                     errorDetails = validateCrossHierarchyMapping(locality, ward, block, errorDetails);
                     if (errorDetails != null && errorDetails.getErrorCode() != null)
                         return errorDetails;
@@ -603,9 +616,35 @@ public class ValidationUtil {
                     }
             }
         }
+        
+        if(electionWard != null){
+            PropertyID propertyID = new PropertyID();
+            propertyID.setElectionBoundary(electionWard);
+            PropertyImpl property = new PropertyImpl();
+            BasicProperty basicProperty = new BasicPropertyImpl();
+            basicProperty.setPropertyID(propertyID);
+            property.setBasicProperty(basicProperty);
+            errorDetails = validateAssignment(property);
+            if (StringUtils.isNotBlank(errorDetails.getErrorCode()))
+                return errorDetails;
+        }
+        /*errorDetails = validateVacantLandDetails(createPropDetails, errorDetails);
+        if (errorDetails != null && errorDetails.getErrorCode() != null)
+            return errorDetails;*/
         return errorDetails;
     }
 
+    private ErrorDetails validateAssignment(PropertyImpl property){
+        ErrorDetails errorDetails = new ErrorDetails();
+        PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
+        Assignment assignment = propertyExternalService.getAssignment(property, propService);
+        if(assignment == null){
+            errorDetails.setErrorCode(ASSIGNMENT_NULL_ERROR_CODE);
+            errorDetails.setErrorMessage(ASSIGNMENT_NULL_ERROR_MSG);
+        }
+        return errorDetails;
+        
+    }
     public Date convertStringToDate(final String dateInString) throws ParseException {
         final SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
         return sdf.parse(dateInString);
@@ -1018,6 +1057,9 @@ public class ValidationUtil {
                     if (errorDetails != null && errorDetails.getErrorCode() != null)
                         return errorDetails;
                 }
+                errorDetails = validateAssignment((PropertyImpl) prop);
+                if (StringUtils.isNotBlank(errorDetails.getErrorCode()))
+                    return errorDetails;
             }
             if (!bp.getActiveProperty().getPropertyDetail().getCategoryType()
                     .equals(PropertyTaxConstants.CATEGORY_VACANT_LAND)

@@ -683,4 +683,7 @@ public class RestApiConstants {
     
     public static final String UNSTR_LAND_PLINTH_AREA_REQ="124";
     public static final String UNSTR_LAND_PLINTH_AREA_MSG="Plinth area is required for unstructure land";
+    
+    public static final String ASSIGNMENT_NULL_ERROR_CODE="125";
+    public static final String ASSIGNMENT_NULL_ERROR_MSG="No Senior or Junior assistants exist with valid assignment,so please check";
 }
