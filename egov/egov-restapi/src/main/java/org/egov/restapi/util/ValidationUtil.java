@@ -628,9 +628,6 @@ public class ValidationUtil {
             if (StringUtils.isNotBlank(errorDetails.getErrorCode()))
                 return errorDetails;
         }
-        /*errorDetails = validateVacantLandDetails(createPropDetails, errorDetails);
-        if (errorDetails != null && errorDetails.getErrorCode() != null)
-            return errorDetails;*/
         return errorDetails;
     }
 
