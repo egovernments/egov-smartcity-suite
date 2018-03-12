@@ -47,7 +47,6 @@
  */
 package org.egov.tl.web.controller.transactions;
 
-import org.egov.infra.reporting.engine.ReportDisposition;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.tl.entity.LicenseDocument;
 import org.egov.tl.service.TradeLicenseService;
@@ -84,7 +83,6 @@ public class LicenseController {
     @ResponseBody
     public ResponseEntity<InputStreamResource> acknowledgment(@PathVariable Long licenseId) {
         ReportOutput reportOutput = tradeLicenseService.generateAcknowledgment(licenseId);
-        reportOutput.setReportDisposition(ReportDisposition.ATTACHMENT);
         return reportAsResponseEntity(reportOutput);
     }
 

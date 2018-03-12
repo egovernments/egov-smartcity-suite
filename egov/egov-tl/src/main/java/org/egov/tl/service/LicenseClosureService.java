@@ -75,15 +75,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
-import static org.egov.tl.utils.Constants.AUTO;
-import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
-import static org.egov.tl.utils.Constants.CLOSURE_LIC_APPTYPE;
-import static org.egov.tl.utils.Constants.FILESTORE_MODULECODE;
-import static org.egov.tl.utils.Constants.LICENSE_STATUS_ACKNOWLEDGED;
-import static org.egov.tl.utils.Constants.LICENSE_STATUS_ACTIVE;
-import static org.egov.tl.utils.Constants.LICENSE_STATUS_CANCELLED;
-import static org.egov.tl.utils.Constants.LICENSE_STATUS_UNDERWORKFLOW;
-import static org.egov.tl.utils.Constants.SIGNED_DOCUMENT_PREFIX;
+import static org.egov.tl.utils.Constants.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -194,6 +186,7 @@ public class LicenseClosureService extends LicenseService {
     @Transactional
     public void rejectClosure(TradeLicense license) {
         processSupportDocuments(license);
+        license.setStatus(licenseStatusService.getLicenseStatusByCode(STATUS_REJECTED));
         licenseClosureProcessflowService.processRejection(license);
         update(license);
         licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
