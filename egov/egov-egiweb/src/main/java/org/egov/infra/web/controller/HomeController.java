@@ -130,9 +130,6 @@ public class HomeController {
     @Value("${employee.portal.access.role}")
     private String portalAccessibleRole;
 
-    @Value("${user.pwd.expiry.days}")
-    private Integer userPasswordExpiryInDays;
-
     @Value("${app.version}")
     private String appVersion;
 
@@ -178,9 +175,7 @@ public class HomeController {
             if (!validatorUtils.isValidPassword(newPwd))
                 return "NEWPWD_INVALID";
             if (newPwd.equals(retypeNewPwd)) {
-                user.setPassword(passwordEncoder.encode(newPwd));
-                user.updateNextPwdExpiryDate(userPasswordExpiryInDays);
-                userService.updateUser(user);
+                userService.updateUserPassword(user, newPwd);
                 return "SUCCESS";
             }
             return "NEWPWD_UNMATCH";

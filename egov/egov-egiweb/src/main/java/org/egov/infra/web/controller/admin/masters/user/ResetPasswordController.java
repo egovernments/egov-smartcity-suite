@@ -50,9 +50,7 @@ package org.egov.infra.web.controller.admin.masters.user;
 
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.config.core.EnvironmentSettings;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -67,12 +65,6 @@ public class ResetPasswordController {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private EnvironmentSettings environmentSettings;
-
     @GetMapping("reset-password")
     public String showResetPassword() {
         return "reset-password";
@@ -80,10 +72,7 @@ public class ResetPasswordController {
 
     @PostMapping("reset-password")
     public String resetPassword(@RequestParam Long userId, @RequestParam String password, RedirectAttributes redirAttrib) {
-        User user = userService.getUserById(userId);
-        user.setPassword(passwordEncoder.encode(password));
-        user.updateNextPwdExpiryDate(environmentSettings.userPasswordExpiryInDays());
-        userService.updateUser(user);
+        User user = userService.updateUserPassword(userService.getUserById(userId), password);
         redirAttrib.addFlashAttribute("message", "lbl.pwd.reset.success");
         redirAttrib.addFlashAttribute("name", user.getName());
         return "redirect:/user/reset-password";
