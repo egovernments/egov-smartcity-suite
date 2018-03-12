@@ -197,6 +197,13 @@ $('#buttonSubmit').click(function(e) {
 		e.preventDefault();
 	}
 	
+	var tbody = $("#preambleTable tbody");
+
+	if (tbody.children().length == 0) {
+		bootbox.alert("Atleast one preamble item should be added into agenda to proceed");
+		e.preventDefault();
+	}
+	
 	if($("#agendaNumber").val()==''){
 		bootbox.alert("Please enter Agenda Number");
     	$("#agendaNumber").attr('required', true) ;	
