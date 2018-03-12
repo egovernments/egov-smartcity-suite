@@ -483,6 +483,8 @@ function goToView(id) {
 function goToAction(obj, id) {
     if (obj.options[obj.selectedIndex].innerHTML == 'View Trade')
         openWindow("/tl/viewtradelicense/viewTradeLicense-view.action?id=" + id, 'vt' + id);
+    else if (obj.options[obj.selectedIndex].innerHTML == 'View DCB')
+        openWindow("/tl/dcb/view/" + id, 'vdcb' + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Modify Legacy License')
         openWindow("/tl/legacylicense/update/" + id, 'mll' + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Collect Fees')

@@ -83,7 +83,6 @@ import org.egov.tl.entity.contracts.OnlineSearchForm;
 import org.egov.tl.entity.contracts.SearchForm;
 import org.egov.tl.repository.SearchTradeRepository;
 import org.egov.tl.repository.specs.SearchTradeSpec;
-import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
@@ -362,11 +361,11 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     public Page<SearchForm> searchTradeLicense(final SearchForm searchForm) {
         Pageable pageable = new PageRequest(searchForm.pageNumber(),
                 searchForm.pageSize(), searchForm.orderDir(), searchForm.orderBy());
-        String currentUserRoles = securityUtils.getCurrentUser().getRoles().toString();
+        User currentUser = securityUtils.getCurrentUser();
         Page<License> licenses = searchTradeRepository.findAll(SearchTradeSpec.searchTrade(searchForm), pageable);
         List<SearchForm> searchResults = new ArrayList<>();
         licenses.forEach(license ->
-                searchResults.add(new SearchForm(license, currentUserRoles, getOwnerName(license)))
+                searchResults.add(new SearchForm(license, currentUser, getOwnerName(license)))
         );
         return new PageImpl<>(searchResults, pageable, licenses.getTotalElements());
     }
