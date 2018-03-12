@@ -667,8 +667,16 @@ public final class CollectionConstants {
             add("Failure");
             add("INITIALIZED");
             add("F");
-            add("C"); 
-        } 
+            add("C");
+        }
+    };
+    public static final ArrayList<String> AXIS_AUTHORISATION_CODES_WAITINGFOR_PAY_GATEWAY_RESPONSE = new ArrayList<String>() {
+        {
+            add("3");
+            add("6");
+            add("D");
+            add("P");
+        }
     };
 
 }
