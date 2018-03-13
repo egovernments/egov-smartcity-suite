@@ -86,6 +86,7 @@
 	}
 	function onSubmit() {
 		var actionName = document.getElementById("workFlowAction").value;
+		jQuery('.transfereeGender').removeAttr('disabled');
 		if (actionName == 'Forward') {
 			document.forms[0].action = '/ptis/property/transfer/forward.action';
 		} else {

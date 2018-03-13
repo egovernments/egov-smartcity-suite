@@ -413,6 +413,7 @@
 				return false;
 			}
 			var tosubmit = true;
+			jQuery('.transfereeGender').removeAttr('disabled');
 			var mutationType = '<s:property value="%{model.type}"/>'; 
 			if(mutationType == 'REGISTERED TRANSFER'){
 				jQuery(".validateDocs").each(function() {
