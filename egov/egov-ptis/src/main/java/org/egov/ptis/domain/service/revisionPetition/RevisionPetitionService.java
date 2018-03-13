@@ -250,7 +250,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
     @Transactional
     public RevisionPetition createRevisionPetitionForRest(RevisionPetition objection) {
         Position position = null;
-        WorkFlowMatrix wfmatrix = null;
+        WorkFlowMatrix wfmatrix;
         User user = null;
         if (objection.getId() == null) {
             if (objection.getObjectionNumber() == null)
@@ -427,7 +427,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
     }
 
     public RevisionPetition createRevisionPetition(final RevisionPetition objection,
-            final HashMap<String, String> meesevaParams) {
+            final Map<String, String> meesevaParams) {
         createRevisionPetition(objection);
         return objection;
     }
@@ -715,9 +715,9 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
         String pendingAction;
         User user = securityUtils.getCurrentUser();
         final Map<String, String[]> actionMessages = new HashMap<>();
-        final Boolean loggedUserIsEmployee = propertyService.isEmployee(securityUtils.getCurrentUser())
-                && !ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName());
-        final Boolean citizenPortalUser = propertyService.isCitizenPortalUser(securityUtils.getCurrentUser());
+        final Boolean loggedUserIsEmployee = propertyService.isEmployee(user)
+                && !ANONYMOUS_USER.equalsIgnoreCase(user.getName());
+        final Boolean citizenPortalUser = propertyService.isCitizenPortalUser(user);
         if (objection.getState() != null) {
             loggedInUserAssign = assignmentService.getAssignmentByPositionAndUserAsOnDate(
                     objection.getCurrentState().getOwnerPosition().getId(), user.getId(), new Date());
@@ -785,7 +785,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
             objection.transition().start().withNextAction(wfmatrix.getPendingActions())
                     .withStateValue(wfmatrix.getNextState()).withDateInfo(new DateTime().toDate()).withOwner(position)
                     .withSenderName(
-                            securityUtils.getCurrentUser().getUsername() + "::" + securityUtils.getCurrentUser().getName())
+                            user.getUsername() + "::" + user.getName())
                     .withOwner(user)
                     .withComments(approverComments).withNextAction(wfmatrix.getNextAction())
                     .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null)
@@ -828,7 +828,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
                 else
                     position = objection.getState().getOwnerPosition();
             } else if (position == null)
-                position = positionMasterService.getPositionByUserId(securityUtils.getCurrentUser().getId());
+                position = positionMasterService.getPositionByUserId(user.getId());
 
             if (wfmatrix != null)
                 actionMessages.putAll(workFlowTransition(objection, workFlowAction, approverComments, wfmatrix, position, approverPositionId,
@@ -858,7 +858,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
      * @param comments
      * @param wfmatrix
      * @param position
-     * @param securityUtils.getCurrentUser()
+     * @param user
      */
     public Map<String, String[]> workFlowTransition(final RevisionPetition objection, final String workFlowAction, final String approverComments,
             final WorkFlowMatrix wfmatrix, Position position, final Long approverPositionId, final String approverName) {
@@ -956,7 +956,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
             objection.transition().progressWithStateCopy()
                     .withStateValue(nextState != null ? nextState : wfmatrix.getNextState()).withOwner(position)
                     .withSenderName(
-                            securityUtils.getCurrentUser().getUsername() + "::" + securityUtils.getCurrentUser().getName())
+                            user.getUsername() + "::" + user.getName())
                     .withDateInfo(new DateTime().toDate())
                     .withNextAction(nextAction != null ? nextAction : wfmatrix.getNextAction())
                     .withComments(approverComments);
@@ -965,7 +965,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
                 objection.transition().end().withStateValue(wfmatrix.getNextState())
                         .withOwner(objection.getCurrentState().getOwnerPosition())
                         .withSenderName(
-                                securityUtils.getCurrentUser().getUsername() + "::" + securityUtils.getCurrentUser().getName())
+                                user.getUsername() + "::" + user.getName())
                         .withNextAction(wfmatrix.getNextAction()).withDateInfo(new DateTime().toDate())
                         .withComments(approverComments).withNextAction(null)
                         .withOwner(objection.getCurrentState().getOwnerPosition());
@@ -975,9 +975,9 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
             if (approverName != null && !approverName.isEmpty() && !approverName.equalsIgnoreCase(CHOOSE))
                 actionMessages.put(OBJECTION_FORWARD,
                         new String[] { approverName.concat("~").concat(position.getName()) });
-            else if (securityUtils.getCurrentUser() != null && !positionFoundInHistory)
+            else if (user != null && !positionFoundInHistory)
                 actionMessages.put(OBJECTION_FORWARD,
-                        new String[] { securityUtils.getCurrentUser().getName().concat("~").concat(position.getName()) });
+                        new String[] { user.getName().concat("~").concat(position.getName()) });
 
         } else if (workFlowAction.equalsIgnoreCase(REJECT_INSPECTION_STR)) {
             final List<StateHistory<Position>> stateHistoryList = objection.getStateHistory();
@@ -999,8 +999,8 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
                                     PROPERTY_MODIFY_REASON_REVISION_PETITION.equalsIgnoreCase(objection.getType())
                                             ? RP_APP_STATUS_REJECTED : GRP_APP_STATUS_REJECTED)
                             .withOwner(position)
-                            .withSenderName(securityUtils.getCurrentUser().getUsername() + "::"
-                                    + securityUtils.getCurrentUser().getName())
+                            .withSenderName(user.getUsername() + "::"
+                                    + user.getName())
                             .withDateInfo(new DateTime().toDate()).withComments(approverComments);
                     final String actionMessage = propertyTaxUtil.getApproverUserName(position.getId());
                     if (actionMessage != null)
@@ -1021,7 +1021,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
                             .getValue().equalsIgnoreCase(PropertyTaxConstants.RP_CREATED))) {
                 objection.transition().end().withStateValue(wfmatrix.getNextState()).withOwner(position)
                         .withSenderName(
-                                securityUtils.getCurrentUser().getUsername() + "::" + securityUtils.getCurrentUser().getName())
+                                user.getUsername() + "::" + user.getName())
                         .withNextAction(wfmatrix.getNextAction()).withDateInfo(new DateTime().toDate())
                         .withComments(approverComments).withNextAction(null)
                         .withOwner(objection.getCurrentState().getOwnerPosition());
@@ -1032,7 +1032,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
                     // DATA.
                 objection.transition().progressWithStateCopy().withStateValue(wfmatrix.getCurrentState())
                         .withOwner(position).withSenderName(
-                                securityUtils.getCurrentUser().getUsername() + "::" + securityUtils.getCurrentUser().getName())
+                                user.getUsername() + "::" + user.getName())
                         .withDateInfo(new DateTime().toDate()).withNextAction(wfmatrix.getPendingActions())
                         .withComments(approverComments);
 
@@ -1043,14 +1043,14 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
             if (approverName != null && !approverName.isEmpty() && !approverName.equalsIgnoreCase(CHOOSE))
                 actionMessages.put(OBJECTION_FORWARD,
                         new String[] { approverName.concat("~").concat(position.getName()) });
-            else if (securityUtils.getCurrentUser() != null)
+            else if (user != null)
                 actionMessages.put(OBJECTION_FORWARD,
-                        new String[] { securityUtils.getCurrentUser().getName().concat("~").concat(position.getName()) });
+                        new String[] { user.getName().concat("~").concat(position.getName()) });
         } else if (workFlowAction.equalsIgnoreCase(PRINT_ENDORESEMENT)) {
             position = objection.getState().getOwnerPosition();
             objection.transition().progressWithStateCopy().withStateValue(wfmatrix.getCurrentState())
                     .withOwner(position).withSenderName(
-                            securityUtils.getCurrentUser().getUsername() + "::" + securityUtils.getCurrentUser().getName())
+                            user.getUsername() + "::" + user.getName())
                     .withDateInfo(new DateTime().toDate()).withNextAction(wfmatrix.getNextAction())
                     .withComments(approverComments);
             if (logger.isDebugEnabled())
@@ -1059,14 +1059,14 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
         } else if (WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(workFlowAction))
             objection.transition().progressWithStateCopy().withStateValue(wfmatrix.getCurrentState())
                     .withOwner(position).withSenderName(
-                            securityUtils.getCurrentUser().getUsername() + "::" + securityUtils.getCurrentUser().getName())
+                            user.getUsername() + "::" + user.getName())
                     .withDateInfo(new DateTime().toDate()).withNextAction(wfmatrix.getNextAction())
                     .withComments(approverComments);
         else if (workFlowAction.equalsIgnoreCase(APPROVE)) {
             position = objection.getState().getOwnerPosition();
             objection.transition().progressWithStateCopy().withStateValue(wfmatrix.getNextState()).withOwner(position)
                     .withSenderName(
-                            securityUtils.getCurrentUser().getUsername() + "::" + securityUtils.getCurrentUser().getName())
+                            user.getUsername() + "::" + user.getName())
                     .withDateInfo(new DateTime().toDate()).withNextAction(wfmatrix.getNextAction())
                     .withComments(approverComments);
         }
