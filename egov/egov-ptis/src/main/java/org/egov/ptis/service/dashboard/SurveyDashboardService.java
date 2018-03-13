@@ -124,7 +124,7 @@ public class SurveyDashboardService {
             String applicationNo = sourceAsMap.get("applicationNo").toString();
             String ptUrl = "/ptis/view/viewProperty-viewForm.action?";
             String applicationType = sourceAsMap.get("applicationType").toString();
-            String appViewURL = ptUrl.concat("applicationNo=").concat(applicationNo).concat("&applicationType")
+            String appViewURL = ptUrl.concat("applicationNo=").concat(applicationNo).concat("&applicationType=")
                     .concat(applicationType);
             surveyResponse.setApplicationNo(applicationNo);
             surveyResponse.setAssessmentNo(
