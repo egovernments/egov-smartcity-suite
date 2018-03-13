@@ -470,9 +470,9 @@ public class ConnectionDemandService {
         Installment installment;
         List<Installment> installmentList = new ArrayList<>();
         if (noofmonths > 1 && !waterConnectionDetails.getMeterConnection().get(0).isMeterDamaged())
-            installmentList = installmentDao.getInstallmentsByModuleForGivenDateAndInstallmentType(
+            installmentList = installmentDao.getInstallmentsByModuleAndFromDateAndInstallmentType(
                     moduleService.getModuleByName(WaterTaxConstants.MODULE_NAME),
-                    previousDate, WaterTaxConstants.MONTHLY);
+                    previousDate, currentDate, WaterTaxConstants.MONTHLY);
 
         installment = getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME,
                 WaterTaxConstants.MONTHLY, currentDate);

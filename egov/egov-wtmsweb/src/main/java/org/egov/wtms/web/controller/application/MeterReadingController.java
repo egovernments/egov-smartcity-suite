@@ -62,6 +62,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ValidationException;
 
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
@@ -211,11 +212,8 @@ public class MeterReadingController {
         if (isNotBlank(request.getParameter(METERCURRENTREADING)))
             currentReadingValue = Long.valueOf(request.getParameter(METERCURRENTREADING));
 
-        if (currentReadingValue != null && currentReadingValue < previousReading) {
-            final String message = "Current rate should not be less than Previous reading";
-            model.addAttribute("message", message);
-            return NEWCONNECTIONMETERENTRY;
-        }
+        if (currentReadingValue != null && currentReadingValue < previousReading)
+            throw new ValidationException("err.invalid.meter.reading");
         final WaterConnectionDetails waterconnectionDetails = billCalculationAndDemandUpdate(waterConnectionDetails, request,
                 meterReadingConnectionDetailObj, previousReading);
         final WaterConnectionDetails savedWaterConnectionDetails = waterConnectionDetailsRepository
@@ -231,7 +229,7 @@ public class MeterReadingController {
         Date currentDate = null;
         Date previousDate = null;
         int noofmonths;
-        Long noOfUnitsPerMonth = 0l;
+        BigDecimal noOfUnitsPerMonth = BigDecimal.ZERO;
         currentDate = toDateUsingDefaultPattern(request.getParameter("metercurrentReadingDate"));
         if (request.getParameter("previousreadingDate") != null)
             previousDate = toDateUsingDefaultPattern(request.getParameter("previousreadingDate"));
@@ -240,28 +238,31 @@ public class MeterReadingController {
         meterReadingConnectionDetailObj.setCurrentReadingDate(currentDate);
 
         populateMeterReadingDetails(meterReadingConnectionDetailObj, waterConnectionDetails);
-        if (previousDate == null)
-            noofmonths = noOfMonthsBetween(new Date(), currentDate);
-        else
+        if (previousDate == null) {
+            noofmonths = noOfMonthsBetween(waterConnectionDetails.getExecutionDate(), currentDate);
+            previousDate = waterConnectionDetails.getExecutionDate();
+        } else
             noofmonths = noOfMonthsBetween(previousDate, currentDate);
 
         if (!meterReadingConnectionDetailObj.isMeterDamaged()) {
             final Long currentToPreviousDiffOfUnits = Long.valueOf(request.getParameter(METERCURRENTREADING))
                     - previousReading;
             if (noofmonths > 0)
-                noOfUnitsPerMonth = currentToPreviousDiffOfUnits / noofmonths;
+                noOfUnitsPerMonth = BigDecimal.valueOf(currentToPreviousDiffOfUnits)
+                        .divide(BigDecimal.valueOf(noofmonths), 0, BigDecimal.ROUND_HALF_UP);
             else
-                noOfUnitsPerMonth = currentToPreviousDiffOfUnits;
+                noOfUnitsPerMonth = BigDecimal.valueOf(currentToPreviousDiffOfUnits);
         }
-        WaterConnectionDetails waterconnectionDetails;
+        WaterConnectionDetails waterconnectionDetails = null;
         if (meterReadingConnectionDetailObj.isMeterDamaged())
             waterconnectionDetails = calculateDemandForDamagedMeter(waterConnectionDetails, previousDate, noofmonths);
         else {
-            final double finalAmountToBePaid = calculateAmountTobePaid(waterConnectionDetails, noOfUnitsPerMonth);
+            final BigDecimal finalAmountToBePaid = calculateAmountTobePaid(waterConnectionDetails, noOfUnitsPerMonth)
+                    .setScale(0, BigDecimal.ROUND_HALF_UP);
 
-            if (BigDecimal.valueOf(finalAmountToBePaid).compareTo(BigDecimal.ZERO) > 0)
+            if (finalAmountToBePaid.compareTo(BigDecimal.ZERO) > 0)
                 waterconnectionDetails = connectionDemandService.updateDemandForMeteredConnection(waterConnectionDetails,
-                        BigDecimal.valueOf(finalAmountToBePaid), currentDate, previousDate, noofmonths);
+                        finalAmountToBePaid, currentDate, previousDate, noofmonths);
             else
                 throw new ApplicationRuntimeException("err.no.amount.due");
         }
@@ -270,7 +271,7 @@ public class MeterReadingController {
 
     private WaterConnectionDetails calculateDemandForDamagedMeter(final WaterConnectionDetails waterConnectionDetails,
             final Date previousDate, final int noofmonths) {
-        Double amountValue;
+        BigDecimal amountValue;
         new WaterConnectionDetails();
         Installment currentInstallment;
         List<Installment> newInstallmentList;
@@ -293,50 +294,51 @@ public class MeterReadingController {
                             lastInstStartDate.toDate(), instalmentVal.getFromDate(), MONTHLY);
 
             amountValue = calculateDamagedMeterAverageDemand(lastInstallmentList, waterConnectionDetails);
-            if (BigDecimal.valueOf(amountValue).compareTo(BigDecimal.ZERO) > 0)
+            if (amountValue.compareTo(BigDecimal.ZERO) > 0)
                 connectionDemandService.updateDemandForMeteredConnection(waterConnectionDetails,
-                        BigDecimal.valueOf(amountValue), instalmentVal.getFromDate(), previousDate, noofmonths);
+                        amountValue, instalmentVal.getFromDate(),
+                        previousDate, noofmonths);
             dateTime = new DateTime(instalmentVal.getFromDate());
             dateTime = dateTime.plusMonths(1);
         }
         return waterConnectionDetails;
     }
 
-    private double calculateAmountTobePaid(final WaterConnectionDetails waterConnectionDetails,
-            final Long noOfUnitsPerMonth) {
+    private BigDecimal calculateAmountTobePaid(final WaterConnectionDetails waterConnectionDetails,
+            final BigDecimal noOfUnitsPerMonth) {
         MeteredRates meteredRates = null;
         MeteredRatesDetail meteredRatesDetail;
-        Double amountToBeCollected = 0d;
+        BigDecimal amountToBeCollected = BigDecimal.ZERO;
         UsageSlab usageSlab = null;
-        if (noOfUnitsPerMonth != 0)
+        if (!noOfUnitsPerMonth.equals(BigDecimal.ZERO))
             usageSlab = usageSlabService
-                    .getUsageSlabForWaterVolumeConsumed(waterConnectionDetails.getUsageType().getName(), noOfUnitsPerMonth);
+                    .getUsageSlabForWaterVolumeConsumed(waterConnectionDetails.getUsageType().getName(),
+                            noOfUnitsPerMonth.longValue());
         if (usageSlab != null && usageSlab.getSlabName() != null)
             meteredRates = meteredRatesService.findBySlabName(usageSlab.getSlabName());
-        else if (noOfUnitsPerMonth != 0)
+        else if (!noOfUnitsPerMonth.equals(BigDecimal.ZERO))
             throw new ApplicationRuntimeException("err.usageslab.not.present");
 
         if (meteredRates == null || meteredRates.getSlabName() == null)
             throw new ApplicationRuntimeException(ERROR_METER_RATE_NOT_PRESENT);
         else {
             meteredRatesDetail = meteredRatesDetailService.getActiveRateforSlab(meteredRates.getSlabName(), new Date());
-            if (meteredRatesDetail == null)
-                throw new ApplicationRuntimeException(ERROR_METER_RATE_NOT_PRESENT);
-            else if (meteredRatesDetail.getRateAmount() == null && meteredRatesDetail.getFlatAmount() == null)
+            if (meteredRatesDetail == null
+                    || meteredRatesDetail.getRateAmount() == null && meteredRatesDetail.getFlatAmount() == null)
                 throw new ApplicationRuntimeException(ERROR_METER_RATE_NOT_PRESENT);
             else if (meteredRatesDetail.isRecursive())
                 amountToBeCollected = calculateDemandWithRecursiveAmount(usageSlab, meteredRatesDetail, noOfUnitsPerMonth);
             else if (meteredRatesDetail.getRateAmount() != null && meteredRatesDetail.getRateAmount() != 0)
-                amountToBeCollected = meteredRatesDetail.getRateAmount() * noOfUnitsPerMonth;
+                amountToBeCollected = BigDecimal.valueOf(meteredRatesDetail.getRateAmount()).multiply(noOfUnitsPerMonth);
             else if (meteredRatesDetail.getFlatAmount() != null && meteredRatesDetail.getFlatAmount() != 0)
-                amountToBeCollected = meteredRatesDetail.getFlatAmount();
+                amountToBeCollected = BigDecimal.valueOf(meteredRatesDetail.getFlatAmount());
         }
         return amountToBeCollected;
     }
 
-    private Double calculateDamagedMeterAverageDemand(final List<Installment> installmentList,
+    private BigDecimal calculateDamagedMeterAverageDemand(final List<Installment> installmentList,
             final WaterConnectionDetails waterConnectionDetails) {
-        Double totalAmount = 0d;
+        BigDecimal totalAmount = BigDecimal.ZERO;
         int count = 0;
         Set<EgDemandDetails> demandDtlSet = null;
         BigDecimal meterDemandAmount = BigDecimal.ZERO;
@@ -350,26 +352,33 @@ public class MeterReadingController {
                     meterDemandAmount = meterDemandAmount.add(demandDetail.getAmount());
                 }
         if (count != 0)
-            totalAmount = meterDemandAmount.doubleValue() / count;
+            totalAmount = meterDemandAmount.divide(BigDecimal.valueOf(count), 0, BigDecimal.ROUND_HALF_UP);
         return totalAmount;
     }
 
-    private Double calculateDemandWithRecursiveAmount(final UsageSlab usageSlab, final MeteredRatesDetail meteredRatesDetail,
-            final Long numberOfUnitsPerMonth) {
-        Double totalAmount = 0d;
-        Double amtValue;
-        Double amount1;
-        Double amount2;
+    private BigDecimal calculateDemandWithRecursiveAmount(final UsageSlab usageSlab, final MeteredRatesDetail meteredRatesDetail,
+            final BigDecimal numberOfUnitsPerMonth) {
+        BigDecimal totalAmount = BigDecimal.ZERO;
+        BigDecimal amtValue;
+        BigDecimal amount1;
+        BigDecimal amount2;
         if (meteredRatesDetail.getFlatAmount() != null && meteredRatesDetail.getFlatAmount() != 0
-                && numberOfUnitsPerMonth >= usageSlab.getFromVolume()) {
-            amtValue = ((double) numberOfUnitsPerMonth - usageSlab.getFromVolume() + 1) / meteredRatesDetail.getRecursiveFactor();
-            totalAmount = meteredRatesDetail.getFlatAmount() + Math.ceil(amtValue) * meteredRatesDetail.getRecursiveAmount();
+                && numberOfUnitsPerMonth.compareTo(BigDecimal.valueOf(usageSlab.getFromVolume())) > -1) {
+            amtValue = numberOfUnitsPerMonth.subtract(BigDecimal.valueOf(usageSlab.getFromVolume()).add(BigDecimal.ONE)
+                    .divide(BigDecimal.valueOf(meteredRatesDetail.getRecursiveFactor()))).setScale(0, BigDecimal.ROUND_HALF_UP);
+            totalAmount = BigDecimal.valueOf(meteredRatesDetail.getFlatAmount()).add(amtValue)
+                    .multiply(BigDecimal.valueOf(meteredRatesDetail.getRecursiveAmount()));
         } else if (meteredRatesDetail.getRateAmount() != null && meteredRatesDetail.getRateAmount() != 0
-                && numberOfUnitsPerMonth >= usageSlab.getFromVolume()) {
-            amount1 = ((double) usageSlab.getFromVolume() - 1) * meteredRatesDetail.getRateAmount();
-            amount2 = ((double) numberOfUnitsPerMonth - usageSlab.getFromVolume() + 1) / meteredRatesDetail.getRecursiveFactor();
-            amtValue = Math.ceil(amount2) * meteredRatesDetail.getRecursiveAmount();
-            totalAmount = amount1 + amtValue;
+                && numberOfUnitsPerMonth.compareTo(BigDecimal.valueOf(usageSlab.getFromVolume())) > -1) {
+            amount1 = BigDecimal.valueOf(usageSlab.getFromVolume()).subtract(BigDecimal.ONE)
+                    .multiply(BigDecimal.valueOf(meteredRatesDetail.getRateAmount()));
+            amount2 = numberOfUnitsPerMonth
+                    .subtract(BigDecimal.valueOf(usageSlab.getFromVolume()))
+                    .add(BigDecimal.ONE)
+                    .divide(BigDecimal.valueOf(meteredRatesDetail.getRecursiveFactor()), 0, BigDecimal.ROUND_HALF_UP);
+            amtValue = amount2.multiply(BigDecimal.valueOf(meteredRatesDetail.getRecursiveAmount())).setScale(0,
+                    BigDecimal.ROUND_HALF_UP);
+            totalAmount = amount1.add(amtValue);
         }
         return totalAmount;
     }
