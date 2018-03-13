@@ -82,13 +82,28 @@ public class BillCollectorIndex {
     private String billCollector;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String mobileNumber;
+    private String billCollectorMobileNo;
+
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String billCollectorCode;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String revenueInspector;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String revenueInspectorMobileNo;
+
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String revenueInspectorCode;
+
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String revenueOfficer;
+
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String revenueOfficerMobileNo;
+
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String revenueOfficerCode;
 
     public String getCityGrade() {
         return cityGrade;
@@ -146,12 +161,20 @@ public class BillCollectorIndex {
         this.billCollector = billCollector;
     }
 
-    public String getMobileNumber() {
-        return mobileNumber;
+    public String getBillCollectorMobileNo() {
+        return billCollectorMobileNo;
     }
 
-    public void setMobileNumber(String mobileNumber) {
-        this.mobileNumber = mobileNumber;
+    public void setBillCollectorMobileNo(String billCollectorMobileNo) {
+        this.billCollectorMobileNo = billCollectorMobileNo;
+    }
+
+    public String getBillCollectorCode() {
+        return billCollectorCode;
+    }
+
+    public void setBillCollectorCode(String billCollectorCode) {
+        this.billCollectorCode = billCollectorCode;
     }
 
     public String getId() {
@@ -170,6 +193,22 @@ public class BillCollectorIndex {
         this.revenueInspector = revenueInspector;
     }
 
+    public String getRevenueInspectorMobileNo() {
+        return revenueInspectorMobileNo;
+    }
+
+    public void setRevenueInspectorMobileNo(String revenueInspectorMobileNo) {
+        this.revenueInspectorMobileNo = revenueInspectorMobileNo;
+    }
+
+    public String getRevenueInspectorCode() {
+        return revenueInspectorCode;
+    }
+
+    public void setRevenueInspectorCode(String revenueInspectorCode) {
+        this.revenueInspectorCode = revenueInspectorCode;
+    }
+
     public String getRevenueOfficer() {
         return revenueOfficer;
     }
@@ -178,4 +217,19 @@ public class BillCollectorIndex {
         this.revenueOfficer = revenueOfficer;
     }
 
+    public String getRevenueOfficerMobileNo() {
+        return revenueOfficerMobileNo;
+    }
+
+    public void setRevenueOfficerMobileNo(String revenueOfficerMobileNo) {
+        this.revenueOfficerMobileNo = revenueOfficerMobileNo;
+    }
+
+    public String getRevenueOfficerCode() {
+        return revenueOfficerCode;
+    }
+
+    public void setRevenueOfficerCode(String revenueOfficerCode) {
+        this.revenueOfficerCode = revenueOfficerCode;
+    }
 }

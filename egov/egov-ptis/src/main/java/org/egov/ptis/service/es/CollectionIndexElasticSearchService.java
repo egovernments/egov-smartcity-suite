@@ -986,7 +986,7 @@ public class CollectionIndexElasticSearchService {
                 collIndData.setBillCollector(wardWiseBillCollectors.get(name) == null ? StringUtils.EMPTY
                         : wardWiseBillCollectors.get(name).getBillCollector());
                 collIndData.setMobileNumber(wardWiseBillCollectors.get(name) == null ? StringUtils.EMPTY
-                        : wardWiseBillCollectors.get(name).getMobileNumber());
+                        : wardWiseBillCollectors.get(name).getBillCollectorMobileNo());
             }
         }
         collIndData.setBoundaryName(name);
@@ -1837,10 +1837,11 @@ public class CollectionIndexElasticSearchService {
         List<BillCollectorIndex> billCollectorsList = getBillCollectorDetails(collectionDetailsRequest);
         for (BillCollectorIndex billCollIndex : billCollectorsList) {
             if (wardReceiptDetails.get(billCollIndex.getRevenueWard()) != null
-                    && StringUtils.isNotBlank(billCollIndex.getRevenueWard())) {
+                    && StringUtils.isNotBlank(billCollIndex.getRevenueWard()) 
+                    && StringUtils.isNotBlank(billCollIndex.getBillCollector())) {
                 billCollectorNameNumber = billCollIndex.getBillCollector().concat("~")
-                        .concat(StringUtils.isBlank(billCollIndex.getMobileNumber()) ? StringUtils.EMPTY
-                                : billCollIndex.getMobileNumber());
+                        .concat(StringUtils.isBlank(billCollIndex.getBillCollectorMobileNo()) ? StringUtils.EMPTY
+                                : billCollIndex.getBillCollectorMobileNo());
                 if (billCollectorWiseMap.isEmpty()) {
                     collDetails.add(wardReceiptDetails.get(billCollIndex.getRevenueWard()));
                     billCollectorWiseMap.put(billCollectorNameNumber, collDetails);
