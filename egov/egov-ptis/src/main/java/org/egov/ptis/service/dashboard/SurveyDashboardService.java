@@ -169,7 +169,7 @@ public class SurveyDashboardService {
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("cityCode", surveyRequest.getUlbCode()));
         }
         if (StringUtils.isNotBlank(surveyRequest.getWardName())) {
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("wardName", surveyRequest.getWardName()));
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("revenueWard", surveyRequest.getWardName()));
         }
         if (StringUtils.isNotBlank(surveyRequest.getLocalityName())) {
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("localityName", surveyRequest.getLocalityName()));
