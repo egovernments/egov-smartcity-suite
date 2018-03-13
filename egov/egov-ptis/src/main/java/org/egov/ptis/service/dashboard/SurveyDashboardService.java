@@ -273,7 +273,7 @@ public class SurveyDashboardService {
                     surveyResponse.setBillCollector(wardWiseBillCollectors.get(name) == null ? StringUtils.EMPTY
                             : wardWiseBillCollectors.get(name).getBillCollector());
                     surveyResponse.setBillCollMobile(wardWiseBillCollectors.get(name) == null ? StringUtils.EMPTY
-                            : wardWiseBillCollectors.get(name).getMobileNumber());
+                            : wardWiseBillCollectors.get(name).getBillCollectorMobileNo());
                 }
 
             } else if (APPLICATION_TYPE.equalsIgnoreCase(aggregationField))
