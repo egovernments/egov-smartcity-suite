@@ -455,7 +455,7 @@ public class PropertyTaxElasticSearchIndexService {
                     taxDetail.setBillCollector(wardWiseBillCollectors.get(fieldName) == null ? StringUtils.EMPTY
                             : wardWiseBillCollectors.get(fieldName).getBillCollector());
                     taxDetail.setMobileNumber(wardWiseBillCollectors.get(fieldName) == null ? StringUtils.EMPTY
-                            : wardWiseBillCollectors.get(fieldName).getMobileNumber());
+                            : wardWiseBillCollectors.get(fieldName).getBillCollectorMobileNo());
                 }
             } else
                 taxDetail.setUlbName(fieldName);
@@ -706,8 +706,8 @@ public class PropertyTaxElasticSearchIndexService {
             if (wardWiseTaxPayersDetails.get(billCollIndex.getRevenueWard()) != null
                     && StringUtils.isNotBlank(billCollIndex.getRevenueWard())) {
                 billCollectorNameNumber = billCollIndex.getBillCollector().concat("~")
-                        .concat(StringUtils.isBlank(billCollIndex.getMobileNumber()) ? StringUtils.EMPTY
-                                : billCollIndex.getMobileNumber());
+                        .concat(StringUtils.isBlank(billCollIndex.getBillCollectorMobileNo()) ? StringUtils.EMPTY
+                                : billCollIndex.getBillCollectorMobileNo());
                 if (billCollectorWiseMap.isEmpty()) {
                     taxPayerDetailsList.add(wardWiseTaxPayersDetails.get(billCollIndex.getRevenueWard()));
                     billCollectorWiseMap.put(billCollectorNameNumber, taxPayerDetailsList);
