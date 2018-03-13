@@ -46,163 +46,175 @@
  *
  */
 
-jQuery(document).ready(function() {
-	$('#dailyCollectionReport-header').hide();
-	$('#report-footer').hide();
+jQuery(document).ready(function () {
+    $('#dailyCollectionReport-header').hide();
+    $('#report-footer').hide();
 
-	function validRange(start, end) {
+    function validDateRange(start, end) {
 
-        if (start.getTime() > end.getTime() ) {
-        	bootbox.alert("From date  should not be greater than the To Date.");
-			$('#end_date').val('');
-			return false;
-			} else
-			return true;
+        if (start.getTime() > end.getTime()) {
+            bootbox.alert("From date  should not be greater than the To Date.");
+            $('#toDate').val('');
+            return false;
+        } else
+            return true;
 
-	}
+    }
 
 
-		$('#dailyCollectionReportSearch').click(function(e){
-			$('#dailyCollectionReport-header').hide();
-			if($('#dailyCollectionform').valid()){
-			var fromDate = $("#fromDate").datepicker('getDate');
-			var toDate = $("#toDate").datepicker('getDate');
-			var status = $("#status").val();
-			validRange(fromDate,toDate);
-			var oTable= $('#dailyCollReport-table');
-			$('#dailyCollectionReport-header').show();
-	        $("#resultDateLabel").html(fromDate+" - "+toDate);
-	        $.post("/tl/reports/dailycollectionreport",$('#dailyCollectionform').serialize())
-	    	.done(function(searchResult) {
-			oTable.dataTable({
-				"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
-				"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-				"autoWidth": false,
-				"bDestroy": true,
-				"oTableTools" : {
-					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-					"aButtons" : [
-					               {
-						             "sExtends": "pdf",
-	                                 "sPdfMessage": "Daily Trade License Collection Report result for dates : "+fromDate+" - "+toDate+"",
-	                                 "sTitle": "Daily Trade License Collection Report",
-	                                 "sPdfOrientation": "landscape"
-					                },
-					                {
-							             "sExtends": "xls",
-		                                 "sPdfMessage": "Daily Trade License Collection Report result for dates : "+fromDate+" - "+toDate+"",
-		                                 "sTitle": "Daily Water Tax Collection Report"
-						             },
-						             {
-							             "sExtends": "print",
-		                                 "sPdfMessage": "Daily Trade License Collection Report result for dates : "+fromDate+" - "+toDate+"",
-		                                 "sTitle": "Daily Water Tax Collection Report"
-						             }],
-
-				},
-				searchable : true,
-				data : searchResult,
-				columns : [
-						{title: 'Receipt Number', data: 'receiptNumber'},
-						{title: 'Receipt Date', data: 'receiptDate',
-							render: function (data, type, full) {
-								if(data!=null && data!=undefined &&  data!= undefined) {
-									var regDateSplit = data.split("T")[0].split("-");
-									return regDateSplit[2] + "/" + regDateSplit[1] + "/" + regDateSplit[0];
-								}
-								else return "";
-					    	}
-						},
-						{title: 'Trade License Number', data: 'consumerCode'},
-						{title: 'Owner Name', data: 'consumerName'},
-						{title:'Ward',data:'revenueWard'},
-						{title: 'Paid At', data: 'channel'},
-						{title: 'Payment mode', data: 'paymentMode'},
-						{title: 'Status', data: 'status'},
-						{title: 'Paid From', data: 'installmentFrom'},
-                   		{title: 'Paid To', data: 'installmentTo'},
-						{title: 'Arrear Total', data: 'arrearAmount',"className": "text-right"},
-						{title: 'Current Total', data: 'currentAmount',"className": "text-right"},
-						{title: 'Total Penalty', data: 'latePaymentCharges',"className": "text-right"},
-						{title: 'Total Collection', data: 'totalAmount',"className": "text-right"}
-						],
-							  "aaSorting": [[4, 'desc']] ,
-							  "footerCallback" : function(row, data, start, end, display) {
-									var api = this.api(), data;
-									if (data.length == 0) {
-										jQuery('#report-footer').hide();
-									} else {
-										jQuery('#report-footer').show();
-									}
-									if (data.length > 0) {
-										updateTotalFooter(10, api);
-										updateTotalFooter(11, api);
-										updateTotalFooter(12, api);
-										updateTotalFooter(13, api);
-									}
-								},
-								"aoColumnDefs" : [ {
-									"aTargets" : [10,11,12,13],
-									"mRender" : function(data, type, full) {
-										return formatNumberInr(data);
-									}
-								} ]
-					});
-			e.stopPropagation();
-
-	});
-	        return true;
-	}
-	else
-		return false;
+    $('#dailyCollectionReportSearch').click(function (e) {
+        $('#dailyCollectionReport-header').hide();
+        if ($('#dailyCollectionform').valid()) {
+            $('.loader-class').modal('show', {backdrop: 'static'});
+            validDateRange($("#fromDate").datepicker('getDate'), $("#toDate").datepicker('getDate'));
+            var frmDt = $("#fromDate").val();
+            var toDt = $("#toDate").val();
+            $('#frmDt').text(frmDt);
+            $('#toDt').text(toDt);
+            var oTable = $('#dailyCollReport-table');
+            $.post("/tl/reports/dailycollectionreport", $('#dailyCollectionform').serialize())
+                .done(function (searchResult) {
+                    $('#dailyCollectionReport-header').show();
+                    oTable.DataTable({
+                        "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                        dom: "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l>" +
+                        "<'col-md-2 col-xs-6 text-left'B><'col-md-5 col-xs-6 text-right'p>>",
+                        "autoWidth": false,
+                        "bDestroy": true,
+                        responsive: true,
+                        destroy: true,
+                        buttons: [{
+                            extend: 'pdf',
+                            title: 'Trade License Daily Collection Report [' + frmDt + ' - ' + toDt + ']',
+                            filename: 'TL_DCR_' + frmDt + ' - ' + toDt,
+                            orientation: 'landscape',
+                            pageSize: 'A4',
+                            footer: true,
+                            exportOptions: {
+                                columns: ':visible'
+                            }
+                        }, {
+                            extend: 'excel',
+                            title: 'Trade License Daily Collection Report [' + frmDt + ' - ' + toDt + ']',
+                            filename: 'TL_DCR_' + frmDt + ' - ' + toDt,
+                            footer: true,
+                            exportOptions: {
+                                columns: ':visible'
+                            }
+                        }, {
+                            extend: 'print',
+                            title: 'Trade License Daily Collection Report [' + frmDt + ' - ' + toDt + ']',
+                            filename: 'TL_DCR_' + frmDt + ' - ' + toDt,
+                            orientation: 'landscape',
+                            pageSize: 'A4',
+                            footer: true,
+                            exportOptions: {
+                                columns: ':visible'
+                            }
+                        }],
+                        searchable: true,
+                        data: searchResult,
+                        columns: [
+                            {title: 'Receipt No.', data: 'receiptNumber'},
+                            {
+                                title: 'Receipt Date', data: 'receiptDate',
+                                render: function (data, type, full) {
+                                    if (data != null && data != undefined && data != undefined) {
+                                        var regDateSplit = data.split("T")[0].split("-");
+                                        return regDateSplit[2] + "/" + regDateSplit[1] + "/" + regDateSplit[0];
+                                    }
+                                    else return "";
+                                }
+                            },
+                            {title: 'License / Application No.', data: 'consumerCode'},
+                            {title: 'Owner Name', data: 'consumerName'},
+                            {title: 'Ward', data: 'revenueWard'},
+                            {title: 'Paid At', data: 'channel'},
+                            {title: 'Payment mode', data: 'paymentMode'},
+                            {title: 'Status', data: 'status'},
+                            {title: 'Paid From', data: 'installmentFrom'},
+                            {title: 'Paid To', data: 'installmentTo'},
+                            {title: 'Arrears', data: 'arrearAmount', "className": "text-right"},
+                            {title: 'Current', data: 'currentAmount', "className": "text-right"},
+                            {title: 'Penalty', data: 'latePaymentCharges', "className": "text-right"},
+                            {title: 'Collection', data: 'totalAmount', "className": "text-right"}
+                        ],
+                        "aaSorting": [[4, 'desc']],
+                        "footerCallback": function (row, data, start, end, display) {
+                            var api = this.api(), data;
+                            if (data.length == 0) {
+                                jQuery('#report-footer').hide();
+                            } else {
+                                jQuery('#report-footer').show();
+                            }
+                            if (data.length > 0) {
+                                updateTotalFooter(10, api);
+                                updateTotalFooter(11, api);
+                                updateTotalFooter(12, api);
+                                updateTotalFooter(13, api);
+                            }
+                        },
+                        "aoColumnDefs": [{
+                            "aTargets": [10, 11, 12, 13],
+                            "mRender": function (data, type, full) {
+                                return formatNumberInr(data);
+                            }
+                        }]
+                    });
+                    e.stopPropagation();
+                    $('.loader-class').modal('hide');
+                });
+            return true;
+        }
+        else
+            return false;
+    });
 });
-});
-
 
 
 function updateTotalFooter(colidx, api) {
-	// Remove the formatting to get integer data for summation
-	var intVal = function(i) {
-		return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1
-				: typeof i === 'number' ? i : 0;
-	};
+    // Remove the formatting to get integer data for summation
+    var intVal = function (i) {
+        return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1
+            : typeof i === 'number' ? i : 0;
+    };
 
-	// Total over all pages
-	var total = api.column(colidx).data().reduce(function(a, b) {
-		return intVal(a) + intVal(b);
-	});
+    // Total over all pages
+    var total = api.column(colidx).data().reduce(function (a, b) {
+        return intVal(a) + intVal(b);
+    });
 
-	// Total over this page
-	var pageTotal = api.column(colidx, {
-		page : 'current'
-	}).data().reduce(function(a, b) {
-		return intVal(a) + intVal(b);
-	}, 0);
+    // Total over this page
+    var pageTotal = api.column(colidx, {
+        page: 'current'
+    }).data().reduce(function (a, b) {
+        return intVal(a) + intVal(b);
+    }, 0);
 
-	// Update footer
-	$(api.column(colidx).footer()).html(
-			formatNumberInr(pageTotal) + ' (' + formatNumberInr(total)
-					+ ')');
+    // Update footer
+    $(api.column(colidx).footer()).html(
+        formatNumberInr(pageTotal) + ' (' + formatNumberInr(total)
+        + ')');
 }
 
 
 //inr formatting number
 function formatNumberInr(x) {
-	if (x) {
-		x = x.toString();
-		var afterPoint = '';
-		if (x.indexOf('.') > 0)
-			afterPoint = x.substring(x.indexOf('.'), x.length);
-		x = Math.floor(x);
-		x = x.toString();
-		var lastThree = x.substring(x.length - 3);
-		var otherNumbers = x.substring(0, x.length - 3);
-		if (otherNumbers != '')
-			lastThree = ',' + lastThree;
-		var res = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",")
-				+ lastThree + afterPoint;
-		return res;
-	}
-	return x;
+    if (x) {
+        x = x.toString();
+        var afterPoint = '';
+        if (x.indexOf('.') > 0)
+            afterPoint = x.substring(x.indexOf('.'), x.length);
+        x = Math.floor(x);
+        x = x.toString();
+        var lastThree = x.substring(x.length - 3);
+        var otherNumbers = x.substring(0, x.length - 3);
+        if (otherNumbers != '')
+            lastThree = ',' + lastThree;
+        var res = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",")
+            + lastThree + afterPoint;
+        return res;
+    }
+    return x;
 }
 

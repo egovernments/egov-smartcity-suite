@@ -46,154 +46,151 @@
   ~
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
 <div class="row" id="page-content">
-	<div class="col-md-12">
-		<c:if test="${not empty message}">
-			<div class="alert alert-success" role="alert">
-				<spring:message code="${message}" />
-			</div>
-		</c:if>
-		<form:form class="form-horizontal form-groups-bordered"
-			id="dailyCollectionform" modelAttribute="dcrSearchRequest"
-			method="post">
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading">
-					<div class="panel-title">
-						<spring:message code="title.dailycollection" />
-					</div>
-				</div>
-				<div class="panel-body custom-form">
-					<div class="form-group">
-						<label for="field-1" class="col-sm-2 control-label">
-							<spring:message code="lbl.fromdate" />
-							<span class="mandatory"></span>
-						</label>
-						<div class="col-sm-3 add-margin">
-							<fmt:formatDate value="${currentDate}" var="fromDate" pattern="dd/MM/yyyy" />
-							<form:input path="" name="fromDate" id="fromDate"
-								cssClass="form-control datepicker" value="${fromDate}"
-								cssErrorClass="form-control error" required="required" />
-						</div>
+    <div class="col-md-12">
+        <c:if test="${not empty message}">
+            <div class="alert alert-success" role="alert">
+                <spring:message code="${message}"/>
+            </div>
+        </c:if>
+        <form:form class="form-horizontal form-groups-bordered" id="dailyCollectionform" modelAttribute="dcrSearchRequest" method="post">
+            <div class="panel panel-primary" data-collapsed="0">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <spring:message code="title.dailycollection"/>
+                    </div>
+                </div>
+                <div class="panel-body custom-form">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">
+                            <spring:message code="lbl.fromdate"/>
+                            <span class="mandatory"></span>
+                        </label>
+                        <div class="col-sm-3 add-margin">
+                            <fmt:formatDate value="${currentDate}" var="currentDate" pattern="dd/MM/yyyy"/>
+                            <form:input path="fromDate" name="fromDate" id="fromDate"
+                                        cssClass="form-control datepicker" value="${currentDate}"
+                                        cssErrorClass="form-control error" required="required"/>
+                        </div>
 
-						<label for="field-1" class="col-sm-2 control-label">
-							<spring:message code="lbl.todate" />
-							<span class="mandatory"></span>
-					   </label>
-						<div class="col-sm-3 add-margin">
-							<fmt:formatDate value="${currentDate}" var="toDate" pattern="dd/MM/yyyy" />
-							<form:input path="" name="toDate" id="toDate"
-								cssClass="form-control datepicker" value="${toDate}"
-								cssErrorClass="form-control error" required="required" />
-						</div>
+                        <label class="col-sm-2 control-label">
+                            <spring:message code="lbl.todate"/>
+                            <span class="mandatory"></span>
+                        </label>
+                        <div class="col-sm-3 add-margin">
+                            <form:input path="toDate" name="toDate" id="toDate"
+                                        cssClass="form-control datepicker" value="${currentDate}"
+                                        cssErrorClass="form-control error" required="required"/>
+                        </div>
 
-					</div>
-				</div>
+                    </div>
+                </div>
 
-				<div class="panel-body custom-form">
-					<div class="form-group">
+                <div class="panel-body custom-form">
+                    <div class="form-group">
 
-						<label for="field-1" class="col-sm-2 control-label">
-							<spring:message code="lbl.collectionOperator" />
-						</label>
-						<div class="col-sm-3 add-margin">
-							<form:select name="collectionOperator" id="collectionOperator" path="" cssClass="form-control"
-								cssErrorClass="form-control error">
-								<form:option value="">
-									<spring:message code="lbl.select" />
-								</form:option>
-								<form:options items="${operators}" id="collectionOperator" name="collectionOperator" 
-											itemValue="name" itemLabel="name" />
-							</form:select>
-						</div>
+                        <label class="col-sm-3 control-label">
+                            <spring:message code="lbl.collectionOperator"/>
+                        </label>
+                        <div class="col-sm-3 add-margin">
+                            <form:select name="collectionOperator" id="collectionOperator" path="" cssClass="form-control"
+                                         cssErrorClass="form-control error">
+                                <form:option value="">
+                                    <spring:message code="lbl.select"/>
+                                </form:option>
+                                <form:options items="${operators}" id="collectionOperator" name="collectionOperator"
+                                              itemValue="name" itemLabel="name"/>
+                            </form:select>
+                        </div>
 
-						<label for="field-1" class="col-sm-2 control-label">
-							<spring:message code="lbl.status" />
-						</label>
-						<div class="col-sm-3 add-margin">
-							<form:select id="status" name="status" path="" cssClass="form-control" cssErrorClass="form-control error">
-								<form:option value="">
-									<spring:message code="lbl.select" />
-								</form:option>
-								<form:options items="${status}" itemValue="description" itemLabel="description" />
-							</form:select>
-						</div>
-					</div>
-				</div>
-				<div class="panel-body custom-form">
-					<div class="form-group">
-						<label for="field-1" class="col-sm-2 control-label">
-							<spring:message code="lbl.ward" />
-						</label>
-						<div class="col-sm-3 add-margin">
-							<form:select name="revenueWard" id="revenueward" path="" cssClass="form-control" cssErrorClass="form-control error">
-								<form:option value="">
-									<spring:message code="lbl.select" />
-								</form:option>
-								<form:options items="${wards}" id="revenueWard" name="revenueWard" itemValue="name" itemLabel="name" />
-							</form:select>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				<div class="text-center">
-					<button type="button" class="btn btn-primary" id="dailyCollectionReportSearch">Submit</button>
-					<a href="javascript:void(0)" class="btn btn-default" data-dismiss="modal" onclick="self.close()">
-					<spring:message code="lbl.close" /></a>
-				</div>
-			</div>
-		</form:form>
-		<div id="dailyCollectionReport-header" class="col-md-12 table-header text-left">
-			<fmt:formatDate value="${currentDate}" var="currDate"
-				pattern="dd-MM-yyyy" />
-			<spring:message code="lbl.dailyCollection.report.details" />
-			:
-			<c:out value="${currDate}"></c:out>
-		</div>
-		<table class="table table-bordered table-hover multiheadertbl" id="dailyCollReport-table" width="200%">
-			<tbody>
-			<tfoot id="report-footer">
-				<tr>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td>Total</td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-				</tr>
-			</tfoot>
-			</tbody>
-		</table>
-	</div>
+                        <label class="col-sm-2 control-label">
+                            <spring:message code="lbl.receipt.status"/>
+                        </label>
+                        <div class="col-sm-3 add-margin">
+                            <form:select id="status" name="status" path="status" cssClass="form-control" cssErrorClass="form-control error">
+                                <form:option value="">
+                                    <spring:message code="lbl.select"/>
+                                </form:option>
+                                <form:options items="${status}" itemValue="description" itemLabel="description"/>
+                            </form:select>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body custom-form">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">
+                            <spring:message code="lbl.ward"/>
+                        </label>
+                        <div class="col-sm-3 add-margin">
+                            <form:select name="revenueWard" id="revenueward" path="revenueWard" cssClass="form-control" cssErrorClass="form-control error">
+                                <form:option value="">
+                                    <spring:message code="lbl.select"/>
+                                </form:option>
+                                <form:options items="${wards}" id="revenueWard" name="revenueWard" itemValue="name" itemLabel="name"/>
+                            </form:select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="text-center">
+                    <button type="button" class="btn btn-primary" id="dailyCollectionReportSearch"><spring:message code="lbl.search"/></button>
+                    <a href="javascript:void(0)" class="btn btn-default" data-dismiss="modal" onclick="self.close()">
+                        <spring:message code="lbl.close"/></a>
+                </div>
+            </div>
+        </form:form>
+        <div id="dailyCollectionReport-header" class="col-md-12">
+            <span class="table-header">
+                <spring:message code="lbl.dailyCollection.report.details" arguments="${fromDate},${toDate}"/>
+            </span>
+            <table class="table table-bordered table-hover multiheadertbl" id="dailyCollReport-table" width="200%">
+                <tbody>
+                <tfoot id="report-footer">
+                <tr>
+                    <td colspan="9"></td>
+                    <td>Total</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                </tfoot>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 <link rel="stylesheet"
-	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>" />
+      href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
 <link rel="stylesheet"
-	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
+      href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
 <script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
-<script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
-<script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
 <script
-	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/dataTables.buttons.min.js' context='/egi'/>"></script>
 <script
-	src="<cdn:url value='/resources/js/app/dcr-report.js?rnd=${app_release_no}'/>"></script>
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.bootstrap.min.js' context='/egi'/>"></script>
+<script
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.flash.min.js' context='/egi'/>"></script>
+<script
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/jszip.min.js' context='/egi'/>"></script>
+<script
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/pdfmake.min.js' context='/egi'/>"></script>
+<script
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/vfs_fonts.js' context='/egi'/>"></script>
+<script
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.html5.min.js' context='/egi'/>"></script>
+<script
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.print.min.js' context='/egi'/>"></script>
+<script
+        src="<cdn:url value='/resources/js/app/dcr-report.js?rnd=${app_release_no}'/>"></script>
