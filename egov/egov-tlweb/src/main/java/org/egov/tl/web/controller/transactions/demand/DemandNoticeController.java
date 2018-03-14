@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -106,6 +106,7 @@ import static org.egov.infra.utils.PdfUtils.appendFiles;
 import static org.egov.tl.utils.Constants.CITY_GRADE_CORPORATION;
 import static org.egov.tl.utils.Constants.LOCALITY;
 import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
+import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.STATUS_CANCELLED;
 import static org.egov.tl.utils.Constants.TL_LICENSE_ACT_CORPORATION;
 import static org.egov.tl.utils.Constants.TL_LICENSE_ACT_DEFAULT;
@@ -263,7 +264,7 @@ public class DemandNoticeController {
             reportParams.put("arrearLicenseFee", arrLicenseFee);
             reportParams.put("totalLicenseFee", totalAmount.setScale(0, BigDecimal.ROUND_HALF_UP));
             List<PenaltyRates> penaltyRates = penaltyRatesService.search(license.getLicenseAppType().getId());
-            reportParams.put("penaltyCalculationMessage", getPenaltyRateDetails(penaltyRates, currentInstallment));
+            reportParams.put("penaltyCalculationMessage", getPenaltyRateDetails(penaltyRates, currentInstallment, license.getLicenseAppType().getName()));
             reportParams.put("currentYear", toYearFormat(currentInstallment.getFromDate()));
 
         }
@@ -293,8 +294,6 @@ public class DemandNoticeController {
                                                    BigDecimal currLicenseFee, BigDecimal arrLicenseFee, BigDecimal arrLicensePenalty,
                                                    List<LicenseDemandDetail> monthWiseDemandDetails) {
 
-        Date previousInstallmentEndDate = new DateTime(currentInstallment.getFromDate()).withMonthOfYear(3)
-                .withDayOfMonth(31).toDate();
         String installmentYear = toYearFormat(currentInstallment.getFromDate());
 
         // GET LICENSE FEE TYPES AND DECIDE PENALTY. Monthwise, show penalty
@@ -310,7 +309,7 @@ public class DemandNoticeController {
             // Eg: 31/03/2016 vs 31/01/2016 days penalty 0%
             // 31/03/2016 vs 29/02/2016 days penalty 0%
             // 31/03/2016 vs 31/03/2016 days penalty 25%
-            BigDecimal penaltyAmt = penaltyRatesService.calculatePenalty(license, previousInstallmentEndDate,
+            BigDecimal penaltyAmt = penaltyRatesService.calculatePenalty(license, currentInstallment.getFromDate(),
                     monthEndDate, currLicenseFee);
 
             demandBillDtl.setMonth(monthMap.get(i).concat(", ").concat(installmentYear));
@@ -323,10 +322,16 @@ public class DemandNoticeController {
         }
     }
 
-    public String getPenaltyRateDetails(List<PenaltyRates> penaltyRates, Installment currentInstallment) {
+    public String getPenaltyRateDetails(List<PenaltyRates> penaltyRates, Installment currentInstallment, String licenseAppType) {
         StringBuilder penaltylist = new StringBuilder();
         for (PenaltyRates penaltyRate : penaltyRates) {
-            LocalDate currentinstStartdate = LocalDate.fromDateFields(currentInstallment.getFromDate());
+            LocalDate currentinstStartdate;
+            if (NEW_LIC_APPTYPE.equals(licenseAppType)) {
+                currentinstStartdate = LocalDate.fromDateFields(currentInstallment.getFromDate());
+            } else {
+                currentinstStartdate = LocalDate.fromDateFields(currentInstallment.getFromDate()).plusDays(1);
+            }
+            LocalDate currentStartDate = LocalDate.fromDateFields(currentInstallment.getFromDate());
             if (penaltyRate.getRate() <= 0) {
                 penaltylist.append("Before ")
                         .append(getDefaultFormattedDate(
@@ -337,7 +342,7 @@ public class DemandNoticeController {
             if (penaltyRate.getRate() > 0) {
                 if (penaltyRate.getToRange() >= 999) {
                     penaltylist.append("    After ").append(getDefaultFormattedDate(
-                            currentinstStartdate.plusDays(penaltyRate.getFromRange().intValue()).toDate())).append(WITH)
+                            currentStartDate.plusDays(penaltyRate.getFromRange().intValue()).toDate())).append(WITH)
                             .append(penaltyRate.getRate().intValue()).append("% penalty");
                 } else if (penaltyRate.getFromRange() <= -999) {
                     penaltylist.append("Before ")
@@ -348,7 +353,7 @@ public class DemandNoticeController {
                 } else {
                     penaltylist.append("    From ").append(getDefaultFormattedDate(currentinstStartdate
                             .plusDays(penaltyRate.getFromRange().intValue()).toDate())).append(" to ")
-                            .append(getDefaultFormattedDate(currentinstStartdate
+                            .append(getDefaultFormattedDate(currentStartDate
                                     .plusDays(penaltyRate.getToRange().intValue()).toDate()))
                             .append(WITH).append(penaltyRate.getRate().intValue()).append("% penalty\n");
 

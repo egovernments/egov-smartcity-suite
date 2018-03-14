@@ -82,7 +82,7 @@ public class ModifyLegacyLicenseValidator extends LegacyLicenseValidator {
         if (license.getDocuments().stream().anyMatch(licenseDocument -> !licenseDocument.getFiles().isEmpty())) {
             existingDocs.addAll(license.getDocuments()
                     .stream()
-                    .filter(licenseDocument -> licenseDocument.getType().getApplicationType().equals(ApplicationType.NEW)
+                    .filter(licenseDocument -> licenseDocument.getType().getApplicationType().equals(ApplicationType.RENEW)
                             && licenseDocument.getId() != null)
                     .collect(Collectors.toList()));
         }
@@ -96,7 +96,7 @@ public class ModifyLegacyLicenseValidator extends LegacyLicenseValidator {
         if (!supportDocs.isEmpty()
                 && supportDocs.stream().anyMatch(licenseDocument -> licenseDocument.getMultipartFiles().stream().anyMatch(MultipartFile::isEmpty))
                 && (existingDocs.isEmpty() || !supportDocType.stream().filter(
-                        licenseDocumentType -> !existingDocsType.contains(licenseDocumentType)).collect(Collectors.toList()).isEmpty())) {
+                licenseDocumentType -> !existingDocsType.contains(licenseDocumentType)).collect(Collectors.toList()).isEmpty())) {
             errors.reject("validate.supportDocs");
         }
 

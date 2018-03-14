@@ -116,7 +116,7 @@ public class LegacyLicenseController extends GenericWorkFlowController {
 
     @ModelAttribute("documentTypes")
     public List<LicenseDocumentType> documentsList() {
-        return documentTypeService.getDocumentTypesByApplicationType(ApplicationType.NEW);
+        return documentTypeService.getDocumentTypesByApplicationType(ApplicationType.RENEW);
     }
 
     @ModelAttribute("feeTypeId")
