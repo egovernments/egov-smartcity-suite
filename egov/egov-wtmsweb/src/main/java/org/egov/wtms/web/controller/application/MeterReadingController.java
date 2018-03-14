@@ -363,10 +363,10 @@ public class MeterReadingController {
         BigDecimal amount2;
         if (meteredRatesDetail.getFlatAmount() != null && meteredRatesDetail.getFlatAmount() != 0
                 && numberOfUnitsPerMonth.compareTo(BigDecimal.valueOf(usageSlab.getFromVolume())) > -1) {
-            amtValue = numberOfUnitsPerMonth.subtract(BigDecimal.valueOf(usageSlab.getFromVolume()).add(BigDecimal.ONE)
-                    .divide(BigDecimal.valueOf(meteredRatesDetail.getRecursiveFactor()))).setScale(0, BigDecimal.ROUND_HALF_UP);
-            totalAmount = BigDecimal.valueOf(meteredRatesDetail.getFlatAmount()).add(amtValue)
-                    .multiply(BigDecimal.valueOf(meteredRatesDetail.getRecursiveAmount()));
+            amtValue = numberOfUnitsPerMonth.subtract(BigDecimal.valueOf(usageSlab.getFromVolume())).add(BigDecimal.ONE)
+                    .divide(BigDecimal.valueOf(meteredRatesDetail.getRecursiveFactor()).setScale(0, BigDecimal.ROUND_HALF_UP));
+            totalAmount = BigDecimal.valueOf(meteredRatesDetail.getFlatAmount()).add(amtValue
+                    .multiply(BigDecimal.valueOf(meteredRatesDetail.getRecursiveAmount())));
         } else if (meteredRatesDetail.getRateAmount() != null && meteredRatesDetail.getRateAmount() != 0
                 && numberOfUnitsPerMonth.compareTo(BigDecimal.valueOf(usageSlab.getFromVolume())) > -1) {
             amount1 = BigDecimal.valueOf(usageSlab.getFromVolume()).subtract(BigDecimal.ONE)
