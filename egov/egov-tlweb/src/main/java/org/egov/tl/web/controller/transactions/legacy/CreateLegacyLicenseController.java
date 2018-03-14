@@ -65,8 +65,8 @@ import javax.validation.Valid;
 import java.util.Date;
 import java.util.Map;
 
-import static org.egov.tl.entity.enums.ApplicationType.RENEW;
 import static org.egov.tl.utils.Constants.AUTO;
+import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Controller
@@ -84,7 +84,7 @@ public class CreateLegacyLicenseController extends LegacyLicenseController {
     @ModelAttribute("tradeLicense")
     public TradeLicense tradeLicense() {
         TradeLicense license = new TradeLicense();
-        license.setLicenseAppType(licenseAppTypeService.getLicenseAppTypeByName(RENEW.toString()));
+        license.setLicenseAppType(licenseAppTypeService.getLicenseAppTypeByName(RENEWAL_LIC_APPTYPE));
         license.setApplicationDate(new Date());
         license.setApplicationNumber(AUTO);
         return license;
