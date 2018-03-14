@@ -82,6 +82,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.COLLECION_BILLING_SER
 import static org.egov.ptis.constants.PropertyTaxConstants.COLLECION_BILLING_SERVICE_WTMS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_ALLWARDS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_BILLCOLLECTORWISE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_REVENUEINSPECTORWISE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_REVENUEOFFICERWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS;
 
@@ -242,8 +244,10 @@ public class PropTaxDashboardService {
                     .getMonthwiseCollectionDetails(collectionDetailsRequest);
             collectionIndexDetails.setCollTrends(collectionTrends);
         }
-        if (StringUtils.isNotBlank(collectionDetailsRequest.getType()) && collectionDetailsRequest.getType()
-                .equalsIgnoreCase(DASHBOARD_GROUPING_BILLCOLLECTORWISE))
+        if (StringUtils.isNotBlank(collectionDetailsRequest.getType()) && (collectionDetailsRequest.getType()
+                .equalsIgnoreCase(DASHBOARD_GROUPING_BILLCOLLECTORWISE) 
+                || DASHBOARD_GROUPING_REVENUEINSPECTORWISE.equalsIgnoreCase(collectionDetailsRequest.getType()) 
+                || DASHBOARD_GROUPING_REVENUEOFFICERWISE.equalsIgnoreCase(collectionDetailsRequest.getType())))
             collIndexData = collectionIndexElasticSearchService
                     .getResponseTableDataForBillCollector(collectionDetailsRequest);
         else if (DASHBOARD_GROUPING_ALLWARDS.equalsIgnoreCase(collectionDetailsRequest.getType())) {

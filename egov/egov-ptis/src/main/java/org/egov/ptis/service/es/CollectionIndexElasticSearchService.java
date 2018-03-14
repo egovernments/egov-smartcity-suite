@@ -985,8 +985,16 @@ public class CollectionIndexElasticSearchService {
                     && !wardWiseBillCollectors.isEmpty()) {
                 collIndData.setBillCollector(wardWiseBillCollectors.get(name) == null ? StringUtils.EMPTY
                         : wardWiseBillCollectors.get(name).getBillCollector());
-                collIndData.setMobileNumber(wardWiseBillCollectors.get(name) == null ? StringUtils.EMPTY
+                collIndData.setBillCollMobNo(wardWiseBillCollectors.get(name) == null ? StringUtils.EMPTY
                         : wardWiseBillCollectors.get(name).getBillCollectorMobileNo());
+                collIndData.setRevenueInspector(wardWiseBillCollectors.get(name) == null ? StringUtils.EMPTY
+                        : wardWiseBillCollectors.get(name).getRevenueInspector());
+                collIndData.setRevInspectorMobNo(wardWiseBillCollectors.get(name) == null ? StringUtils.EMPTY
+                        : wardWiseBillCollectors.get(name).getRevenueInspectorMobileNo());
+                collIndData.setRevenueOfficer(wardWiseBillCollectors.get(name) == null ? StringUtils.EMPTY
+                        : wardWiseBillCollectors.get(name).getRevenueOfficer());
+                collIndData.setRevOfficerMobNo(wardWiseBillCollectors.get(name) == null ? StringUtils.EMPTY
+                        : wardWiseBillCollectors.get(name).getRevenueOfficerMobileNo());
             }
         }
         collIndData.setBoundaryName(name);
@@ -1003,7 +1011,9 @@ public class CollectionIndexElasticSearchService {
         else if (collectionDetailsRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_GRADEWISE))
             aggregationField = CITY_GRADE;
         else if (collectionDetailsRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_WARDWISE)
-                || collectionDetailsRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_BILLCOLLECTORWISE))
+                || collectionDetailsRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_BILLCOLLECTORWISE)
+                || DASHBOARD_GROUPING_REVENUEINSPECTORWISE.equalsIgnoreCase(collectionDetailsRequest.getType()) 
+                || DASHBOARD_GROUPING_REVENUEOFFICERWISE.equalsIgnoreCase(collectionDetailsRequest.getType()))
             aggregationField = REVENUE_WARD;
         return aggregationField;
     }
@@ -1822,7 +1832,7 @@ public class CollectionIndexElasticSearchService {
         List<CollTableData> collDetails = new ArrayList<>();
         List<CollTableData> billCollectorWiseTableData = new ArrayList<>();
         CollTableData collTableData;
-        String billCollectorNameNumber;
+        String userNameAndNumber = StringUtils.EMPTY;
         /**
          * Fetch the Ward-wise data
          */
@@ -1837,21 +1847,31 @@ public class CollectionIndexElasticSearchService {
         List<BillCollectorIndex> billCollectorsList = getBillCollectorDetails(collectionDetailsRequest);
         for (BillCollectorIndex billCollIndex : billCollectorsList) {
             if (wardReceiptDetails.get(billCollIndex.getRevenueWard()) != null
-                    && StringUtils.isNotBlank(billCollIndex.getRevenueWard()) 
-                    && StringUtils.isNotBlank(billCollIndex.getBillCollector())) {
-                billCollectorNameNumber = billCollIndex.getBillCollector().concat("~")
-                        .concat(StringUtils.isBlank(billCollIndex.getBillCollectorMobileNo()) ? StringUtils.EMPTY
-                                : billCollIndex.getBillCollectorMobileNo());
+                    && StringUtils.isNotBlank(billCollIndex.getRevenueWard())) {
+                if (DASHBOARD_GROUPING_BILLCOLLECTORWISE.equalsIgnoreCase(collectionDetailsRequest.getType()))
+                    userNameAndNumber = billCollIndex.getBillCollector().concat("~")
+                            .concat(StringUtils.isBlank(billCollIndex.getBillCollectorMobileNo()) ? StringUtils.EMPTY
+                                    : billCollIndex.getBillCollectorMobileNo());
+                else if (DASHBOARD_GROUPING_REVENUEINSPECTORWISE.equalsIgnoreCase(collectionDetailsRequest.getType()))
+                    userNameAndNumber = (StringUtils.isBlank(billCollIndex.getRevenueInspector()) ? StringUtils.EMPTY
+                            : billCollIndex.getRevenueInspector()).concat("~")
+                                    .concat(StringUtils.isBlank(billCollIndex.getRevenueInspectorMobileNo()) ? StringUtils.EMPTY
+                                            : billCollIndex.getRevenueInspectorMobileNo());
+                else if (DASHBOARD_GROUPING_REVENUEOFFICERWISE.equalsIgnoreCase(collectionDetailsRequest.getType()))
+                    userNameAndNumber = (StringUtils.isBlank(billCollIndex.getRevenueOfficer()) ? StringUtils.EMPTY
+                            : billCollIndex.getRevenueOfficer()).concat("~")
+                                    .concat(StringUtils.isBlank(billCollIndex.getRevenueOfficerMobileNo()) ? StringUtils.EMPTY
+                                            : billCollIndex.getRevenueOfficerMobileNo());
                 if (billCollectorWiseMap.isEmpty()) {
                     collDetails.add(wardReceiptDetails.get(billCollIndex.getRevenueWard()));
-                    billCollectorWiseMap.put(billCollectorNameNumber, collDetails);
+                    billCollectorWiseMap.put(userNameAndNumber, collDetails);
                 } else {
-                    if (!billCollectorWiseMap.containsKey(billCollectorNameNumber)) {
+                    if (!billCollectorWiseMap.containsKey(userNameAndNumber)) {
                         collDetails = new ArrayList<>();
                         collDetails.add(wardReceiptDetails.get(billCollIndex.getRevenueWard()));
-                        billCollectorWiseMap.put(billCollectorNameNumber, collDetails);
+                        billCollectorWiseMap.put(userNameAndNumber, collDetails);
                     } else {
-                        billCollectorWiseMap.get(billCollectorNameNumber)
+                        billCollectorWiseMap.get(userNameAndNumber)
                                 .add(wardReceiptDetails.get(billCollIndex.getRevenueWard()));
                     }
                 }
@@ -1860,13 +1880,13 @@ public class CollectionIndexElasticSearchService {
 
         for (Entry<String, List<CollTableData>> entry : billCollectorWiseMap.entrySet()) {
             collTableData = new CollTableData();
-            setTableValuesForBillCollector(collTableData, entry);
+            setTableValuesForBillCollector(collTableData, entry, collectionDetailsRequest.getType());
             billCollectorWiseTableData.add(collTableData);
         }
         return billCollectorWiseTableData;
     }
 
-    private void setTableValuesForBillCollector(CollTableData collTableData, Entry<String, List<CollTableData>> entry) {
+    private void setTableValuesForBillCollector(CollTableData collTableData, Entry<String, List<CollTableData>> entry, String aggregationLevel) {
         BigDecimal currDayColl = BigDecimal.ZERO;
         BigDecimal cytdColl = BigDecimal.ZERO;
         BigDecimal lytdColl = BigDecimal.ZERO;
@@ -1900,7 +1920,7 @@ public class CollectionIndexElasticSearchService {
         BigDecimal lyTotalAdvance = BigDecimal.ZERO;
         BigDecimal lyTotalColl = BigDecimal.ZERO;
         
-        String[] billCollectorNameNumberArr = entry.getKey().split("~");
+        String[] userNameNumberArr = entry.getKey().split("~");
         for (CollTableData tableData : entry.getValue()) {
             currDayColl = currDayColl
                     .add(tableData.getTodayColl() == null ? BigDecimal.ZERO : tableData.getTodayColl());
@@ -1939,9 +1959,16 @@ public class CollectionIndexElasticSearchService {
             currentInterestDemand = currentInterestDemand.add(tableData.getCurrentInterestDemand() == null ? BigDecimal.ZERO : tableData.getCurrentInterestDemand());
             
         }
-        collTableData.setBillCollector(billCollectorNameNumberArr[0]);
-        collTableData
-                .setMobileNumber(billCollectorNameNumberArr.length > 1 ? billCollectorNameNumberArr[1] : StringUtils.EMPTY);
+        if (DASHBOARD_GROUPING_BILLCOLLECTORWISE.equalsIgnoreCase(aggregationLevel)) {
+            collTableData.setBillCollector(userNameNumberArr[0]);
+            collTableData.setBillCollMobNo(userNameNumberArr.length > 1 ? userNameNumberArr[1] : StringUtils.EMPTY);
+        } else if (DASHBOARD_GROUPING_REVENUEINSPECTORWISE.equalsIgnoreCase(aggregationLevel)) {
+            collTableData.setRevenueInspector(userNameNumberArr[0]);
+            collTableData.setRevInspectorMobNo(userNameNumberArr.length > 1 ? userNameNumberArr[1] : StringUtils.EMPTY);
+        } else if (DASHBOARD_GROUPING_REVENUEOFFICERWISE.equalsIgnoreCase(aggregationLevel)) {
+            collTableData.setRevenueOfficer(userNameNumberArr[0]);
+            collTableData.setRevOfficerMobNo(userNameNumberArr.length > 1 ? userNameNumberArr[1] : StringUtils.EMPTY);
+        }
         collTableData.setTodayColl(currDayColl);
         collTableData.setCytdColl(cytdColl);
         collTableData.setCytdDmd(cytdDmd);
@@ -1983,7 +2010,7 @@ public class CollectionIndexElasticSearchService {
     public List<BillCollectorIndex> getBillCollectorDetails(CollectionDetailsRequest collectionDetailsRequest) {
         SearchQuery searchQueryColl = new NativeSearchQueryBuilder()
                 .withIndices(PropertyTaxConstants.BILL_COLLECTOR_INDEX_NAME)
-                .withFields("billCollector", "mobileNumber", REVENUE_WARD)
+                .withFields("billCollector", "billCollectorMobileNo", "revenueInspector", "revenueInspectorMobileNo", "revenueOfficer", "revenueOfficerMobileNo", REVENUE_WARD)
                 .withQuery(QueryBuilders.boolQuery()
                         .filter(QueryBuilders.matchQuery(CITY_CODE, collectionDetailsRequest.getUlbCode())))
                 .withSort(new FieldSortBuilder("billCollector").order(SortOrder.ASC))
