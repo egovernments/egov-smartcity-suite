@@ -1687,7 +1687,6 @@ public class PropertyExternalService {
         }
         final Assignment assignment = getAssignment(property, propService);
         Position pos = assignment.getPosition();
-        pos = null;
         final WorkFlowMatrix wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null, null,
                 additionalRule, currentState, null);
         property.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
