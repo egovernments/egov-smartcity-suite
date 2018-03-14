@@ -1416,6 +1416,32 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         }
 
     }
+    
+    @Override
+    public String getPendingActions() {
+        if (objection != null && objection.getId() != null) {
+            if (PropertyTaxConstants.RP_INSPECTIONVERIFIED.equalsIgnoreCase(objection.getCurrentState().getValue())
+                    || PropertyTaxConstants.GRP_INSPECTIONVERIFIED
+                            .equalsIgnoreCase(objection.getCurrentState().getValue())
+                    || objection.getCurrentState().getValue().endsWith("Forwarded")
+                    || objection.getCurrentState().getValue().endsWith("Approved"))
+                return objection.getCurrentState().getNextAction();
+            else
+                return null;
+        } else
+            return null;
+
+    }
+
+    @Override
+    public String getAdditionalRule() {
+        String addittionalRule;
+        if (PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION.equals(objection.getType()))
+            addittionalRule = GENERAL_REVISION_PETITION;
+        else
+            addittionalRule = REVISION_PETITION;
+        return addittionalRule;
+    }
 
     public List<Floor> getFloorDetails() {
         return new ArrayList<>(objection.getBasicProperty().getProperty().getPropertyDetail().getFloorDetails());
