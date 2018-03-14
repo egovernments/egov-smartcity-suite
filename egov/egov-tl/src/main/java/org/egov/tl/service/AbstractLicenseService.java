@@ -65,6 +65,7 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -106,6 +107,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeMap;
 
 import static java.math.BigDecimal.ZERO;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -243,10 +245,9 @@ public abstract class AbstractLicenseService<T extends License> {
                 findAllAssignmentsByDeptDesigAndDates(nextAssigneeDept.getId(), nextAssigneeDesig.getId(), new Date());
     }
 
-    public BigDecimal raiseNewDemand(final T license) {
+    public void raiseNewDemand(final T license) {
         final LicenseDemand ld = new LicenseDemand();
         final Module moduleName = this.getModuleName();
-        BigDecimal totalAmount = ZERO;
         final Installment installment = this.installmentDao.getInsatllmentByModuleForGivenDate(moduleName,
                 license.getCommencementDate());
         ld.setIsHistory("N");
@@ -267,13 +268,12 @@ public abstract class AbstractLicenseService<T extends License> {
             if (reason != null) {
                 BigDecimal tradeAmt = calculateAmountByRateType(license, fm);
                 ld.getEgDemandDetails().add(EgDemandDetails.fromReasonAndAmounts(tradeAmt, reason, ZERO));
-                totalAmount = totalAmount.add(tradeAmt);
             }
         }
 
-        ld.setBaseDemand(totalAmount);
+        calcPenaltyDemandDetails(license, ld);
+        ld.recalculateBaseDemand();
         license.setLicenseDemand(ld);
-        return totalAmount;
     }
 
     private BigDecimal calculateAmountByRateType(License license, FeeMatrixDetail feeMatrixDetail) {
@@ -307,11 +307,99 @@ public abstract class AbstractLicenseService<T extends License> {
                     dmd.setAmount(tradeAmt);
                     dmd.setModifiedDate(date);
                 }
+        calcPenaltyDemandDetails(license, licenseDemand);
         licenseDemand.recalculateBaseDemand();
         return license;
 
     }
 
+    public void calcPenaltyDemandDetails(License license, EgDemand demand) {
+        Map<Installment, BigDecimal> installmentPenalty = new HashMap<>();
+        Map<Installment, EgDemandDetails> installmentWisePenaltyDemandDetail;
+        Map<Installment, EgDemandDetails> installmentWiseLicenseDemandDetail = getInstallmentWiseLicenseDemandDetails(license.getLicenseDemand());
+        if (license.isNewApplication())
+            installmentPenalty = getCalculatedPenalty(license, license.getCommencementDate(), new Date(), demand);
+        else if (license.isReNewApplication())
+            installmentPenalty = getCalculatedPenalty(license, null, new Date(), demand);
+        installmentWisePenaltyDemandDetail = getInstallmentWisePenaltyDemandDetails(license.getCurrentDemand());
+        for (final Map.Entry<Installment, BigDecimal> penalty : installmentPenalty.entrySet()) {
+            EgDemandDetails penaltyDemandDetail = installmentWisePenaltyDemandDetail.get(penalty.getKey());
+            EgDemandDetails licenseDemandDetail = installmentWiseLicenseDemandDetail.get(penalty.getKey());
+            if (penalty.getValue().signum() > 0) {
+                if (penaltyDemandDetail != null)
+                    penaltyDemandDetail.setAmount(penalty.getValue().setScale(0, RoundingMode.HALF_UP));
+                else if (licenseDemandDetail.getBalance().signum() > 0) {
+                    penaltyDemandDetail = insertPenaltyDmdDetail(license, penalty.getKey(), penalty.getValue().setScale(0, RoundingMode.HALF_UP));
+                    if (penaltyDemandDetail != null)
+                        demand.getEgDemandDetails().add(penaltyDemandDetail);
+                }
+            } else if (penalty.getValue().signum() == 0 && penaltyDemandDetail != null) {
+                penaltyDemandDetail.setAmount(penalty.getValue().setScale(0, RoundingMode.HALF_UP));
+            }
+        }
+    }
+
+    private Map<Installment, EgDemandDetails> getInstallmentWisePenaltyDemandDetails(final EgDemand currentDemand) {
+        final Map<Installment, EgDemandDetails> installmentWisePenaltyDemandDetails = new TreeMap<>();
+        if (currentDemand != null)
+            for (final EgDemandDetails dmdDet : currentDemand.getEgDemandDetails())
+                if (dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(PENALTY_DMD_REASON_CODE))
+                    installmentWisePenaltyDemandDetails.put(dmdDet.getEgDemandReason().getEgInstallmentMaster(), dmdDet);
+
+        return installmentWisePenaltyDemandDetails;
+    }
+
+    private Map<Installment, EgDemandDetails> getInstallmentWiseLicenseDemandDetails(final EgDemand currentDemand) {
+        final Map<Installment, EgDemandDetails> installmentWiseLicenseDemandDetails = new TreeMap<>();
+        if (currentDemand != null)
+            for (final EgDemandDetails dmdDet : currentDemand.getEgDemandDetails())
+                if (!dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(PENALTY_DMD_REASON_CODE))
+                    installmentWiseLicenseDemandDetails.put(dmdDet.getEgDemandReason().getEgInstallmentMaster(), dmdDet);
+
+        return installmentWiseLicenseDemandDetails;
+    }
+
+    private Map<Installment, BigDecimal> getCalculatedPenalty(License license, Date fromDate, Date collectionDate,
+                                                              EgDemand demand) {
+        final Map<Installment, BigDecimal> installmentPenalty = new HashMap<>();
+        for (final EgDemandDetails demandDetails : demand.getEgDemandDetails())
+            if (!demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(PENALTY_DMD_REASON_CODE)
+                    && demandDetails.getAmount().subtract(demandDetails.getAmtCollected()).signum() >= 0)
+                if (fromDate != null)
+                    installmentPenalty.put(demandDetails.getEgDemandReason().getEgInstallmentMaster(),
+                            penaltyRatesService.calculatePenalty(license, fromDate, collectionDate, demandDetails.getAmount()));
+                else
+                    installmentPenalty.put(demandDetails.getEgDemandReason().getEgInstallmentMaster(),
+                            penaltyRatesService.calculatePenalty(license, demandDetails.getEgDemandReason().getEgInstallmentMaster().getFromDate(),
+                                    collectionDate, demandDetails.getAmount()));
+        return installmentPenalty;
+    }
+
+    private EgDemandDetails insertPenaltyDmdDetail(License license, final Installment inst, final BigDecimal penaltyAmount) {
+        EgDemandDetails demandDetail = null;
+        if (penaltyAmount != null && penaltyAmount.compareTo(ZERO) > 0) {
+            final Module module = license.getTradeName().getLicenseType().getModule();
+            final EgDemandReasonMaster egDemandReasonMaster = demandGenericDao.getDemandReasonMasterByCode(
+                    PENALTY_DMD_REASON_CODE,
+                    module);
+            if (egDemandReasonMaster == null)
+                throw new ApplicationRuntimeException(" Penalty Demand reason Master is null in method  insertPenalty");
+
+            final EgDemandReason egDemandReason = demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(
+                    egDemandReasonMaster, inst, module);
+
+            if (egDemandReason == null)
+                throw new ApplicationRuntimeException(" Penalty Demand reason is null in method  insertPenalty ");
+
+            demandDetail = createDemandDetails(egDemandReason, ZERO, penaltyAmount);
+        }
+        return demandDetail;
+    }
+
+    private EgDemandDetails createDemandDetails(final EgDemandReason egDemandReason, final BigDecimal amtCollected,
+                                                final BigDecimal dmdAmount) {
+        return EgDemandDetails.fromReasonAndAmounts(dmdAmount, egDemandReason, amtCollected);
+    }
 
     public void recalculateDemand(final List<FeeMatrixDetail> feeList, final T license) {
         final LicenseDemand licenseDemand = license.getCurrentDemand();
@@ -323,11 +411,10 @@ public abstract class AbstractLicenseService<T extends License> {
                                 .equalsIgnoreCase(fm.getFeeMatrix().getFeeType().getName())) {
                     BigDecimal tradeAmt = calculateAmountByRateType(license, fm);
                     dmd.setAmount(tradeAmt.setScale(0, RoundingMode.HALF_UP));
-                    dmd.setAmtCollected(ZERO);
                 }
+        calcPenaltyDemandDetails(license, licenseDemand);
         licenseDemand.recalculateBaseDemand();
     }
-
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void raiseDemand(final T licenze, final Module module, final Installment installment) {
@@ -365,7 +452,6 @@ public abstract class AbstractLicenseService<T extends License> {
                     reasonWiseDemandDetails.put(demandDetail.getEgDemandReason(), demandDetail);
         return reasonWiseDemandDetails;
     }
-
 
     public void transitionWorkFlow(final T license, final WorkflowBean workflowBean) {
         DateTime currentDate = new DateTime();
@@ -593,7 +679,6 @@ public abstract class AbstractLicenseService<T extends License> {
 
     }
 
-
     public BigDecimal calculateFeeAmount(final License license) {
         final Date licenseDate = license.isNewApplication() ? license.getCommencementDate()
                 : license.getLicenseDemand().getEgInstallmentMaster().getFromDate();
@@ -756,7 +841,6 @@ public abstract class AbstractLicenseService<T extends License> {
                 financialYear.getStartingDate());
         return licenseRepository.findLicenseIdsForDemandGeneration(installment.getFromDate());
     }
-
 
     public License closureWithMeeseva(T license, WorkflowBean wfBean) {
         return saveClosure(license, wfBean);
