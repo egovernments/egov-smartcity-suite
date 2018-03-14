@@ -109,6 +109,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/councilpreamble")
 public class CouncilPreambleController extends GenericWorkFlowController {
+    private static final String COUNCIL_COMMON_WORKFLOW = "CouncilCommonWorkflow";
     private static final String PREAMBLE_NUMBER_AUTO = "PREAMBLE_NUMBER_AUTO";
     private static final String REDIRECT_COUNCILPREAMBLE_RESULT = "redirect:/councilpreamble/result/";
     private static final String MESSAGE2 = "message";
@@ -190,9 +191,9 @@ public class CouncilPreambleController extends GenericWorkFlowController {
         councilPreamble.setType(PreambleType.GENERAL);
         model.addAttribute("autoPreambleNoGenEnabled", isAutoPreambleNoGenEnabled());     
         model.addAttribute(COUNCIL_PREAMBLE, councilPreamble);
+        model.addAttribute("additionalRule", COUNCIL_COMMON_WORKFLOW);
         prepareWorkFlowOnLoad(model, councilPreamble);
         model.addAttribute(CURRENT_STATE, "NEW");
-
         return COUNCILPREAMBLE_NEW;
     }
 
@@ -321,6 +322,9 @@ public class CouncilPreambleController extends GenericWorkFlowController {
         Long approvalPosition = 0l;
         String approvalComment = StringUtils.EMPTY;
         String message = StringUtils.EMPTY;
+        String nextDesignation = "";
+        String approverName = "";
+
         if (request.getParameter(APPROVAL_COMENT) != null)
             approvalComment = request.getParameter(APPROVAL_COMENT);
         if (request.getParameter(WORK_FLOW_ACTION) != null)
@@ -329,25 +333,31 @@ public class CouncilPreambleController extends GenericWorkFlowController {
                 && !request.getParameter(APPROVAL_POSITION).isEmpty())
             approvalPosition = Long.valueOf(request
                     .getParameter(APPROVAL_POSITION));
+        if (request.getParameter("approverName") != null)
+            approverName = request.getParameter("approverName");
+        if( request.getParameter("nextDesignation") == null)
+            nextDesignation=StringUtils.EMPTY;
+            else
+            nextDesignation = request.getParameter("nextDesignation");
 
         councilPreambleService.update(councilPreamble, approvalPosition,
                 approvalComment, workFlowAction);
         if (null != workFlowAction) {
             if (CouncilConstants.WF_STATE_REJECT
                     .equalsIgnoreCase(workFlowAction)) {
-                message = getMessage("msg.councilPreamble.reject",
+                message = getMessage("msg.councilPreamble.reject",nextDesignation,approverName,
                         councilPreamble);
             } else if (CouncilConstants.WF_APPROVE_BUTTON
                     .equalsIgnoreCase(workFlowAction)) {
-                message = getMessage("msg.councilPreamble.success",
+                message = getMessage("msg.councilPreamble.success",nextDesignation,approverName,
                         councilPreamble);
             } else if (CouncilConstants.WF_FORWARD_BUTTON
                     .equalsIgnoreCase(workFlowAction)) {
-                message = getMessage("msg.councilPreamble.forward",
+                message = getMessage("msg.councilPreamble.forward",nextDesignation,approverName,
                         councilPreamble);
             } else if (CouncilConstants.WF_PROVIDE_INFO_BUTTON
                     .equalsIgnoreCase(workFlowAction)) {
-                message = getMessage("msg.councilPreamble.moreInfo",
+                message = getMessage("msg.councilPreamble.moreInfo",nextDesignation,approverName,
                         councilPreamble);
             }
             redirectAttrs.addFlashAttribute(MESSAGE2, message);
@@ -384,11 +394,11 @@ public class CouncilPreambleController extends GenericWorkFlowController {
         return REDIRECT_COUNCILPREAMBLE_RESULT + councilPreamble.getId();
     }
 
-    private String getMessage(String messageLabel,
+    private String getMessage(String messageLabel,String designation,String approver,
                               final CouncilPreamble councilPreamble) {
         String message;
         message = messageSource.getMessage(messageLabel,
-                new String[]{councilPreamble.getPreambleNumber()}, null);
+                new String[] { approver.concat("~").concat(designation), councilPreamble.getPreambleNumber() }, null);
         return message;
     }
 
@@ -406,6 +416,11 @@ public class CouncilPreambleController extends GenericWorkFlowController {
                 .equalsIgnoreCase(councilPreamble.getState().getOwnerPosition().getDeptDesig().getDesignation().getName())
                 && CouncilConstants.COMMISSIONER_APPROVALPENDING.equalsIgnoreCase(councilPreamble.getState().getNextAction())) {
             workFlowContainer.setPendingActions(councilPreamble.getState().getNextAction());
+        }
+        if(CouncilConstants.REJECTED.equalsIgnoreCase(councilPreamble.getStatus().getCode()))
+        {
+            model.addAttribute("additionalRule", COUNCIL_COMMON_WORKFLOW);
+
         }
         prepareWorkflow(model, councilPreamble, workFlowContainer);
         model.addAttribute("stateType", councilPreamble.getClass()

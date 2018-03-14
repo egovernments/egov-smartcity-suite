@@ -419,7 +419,7 @@ public class CouncilMomController {
         councilMeeting.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(MEETING_MODULENAME, MOM_FINALISED));
         for (MeetingMOM meetingMOM : councilMeeting.getMeetingMOMs()) {
             if (meetingMOM.getPreamble().getId() != null && meetingMOM.getPreamble().getReferenceNumber() != null
-                    && null == meetingMOM.getPreamble().getStatusMessage()) {
+                    && null == meetingMOM.getPreamble().getStatusMessage() &&  meetingMOM.getPreamble().getTypeOfPreamble().ordinal()==0) {
                 CouncilDataUpdateRequest councilDataUpdateRequest = new CouncilDataUpdateRequest();
                 councilDataUpdateRequest.setReferenceNo(meetingMOM.getPreamble().getReferenceNumber());
                 councilDataUpdateRequest.setPreambleNo(meetingMOM.getPreamble().getPreambleNumber());

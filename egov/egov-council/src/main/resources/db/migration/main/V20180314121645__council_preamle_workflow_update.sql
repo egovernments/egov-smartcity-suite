@@ -1,0 +1,2 @@
+update eg_wf_matrix set additionalrule ='CouncilCommonWorkflow' where id =(select id from eg_wf_matrix where objecttype ='CouncilPreamble' and currentstate='Rejected' and pendingactions is null);
+update eg_wf_matrix set additionalrule ='CouncilCommonWorkflow' where id =(select id from eg_wf_matrix where objecttype ='CouncilPreamble'  and currentstate='New' and pendingactions is null);
