@@ -55,21 +55,22 @@
 				</div>
 				<div class="panel-body">
 					<div class="form-group">
+						<form:hidden path="employee.id" name="employee.id" id="employee.id" />
 						<label class="col-sm-3 control-label text-right"><spring:message
-								code="lbl.employeecode" /> <span class="mandatory"></span> </label>
+								code="lbl.employeecode" />  </label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="employee"
+							<form:input path="employee.code"
 								class="form-control text-left patternvalidation"
 								data-pattern="alphanumeric" maxlength="50" required="required"  readOnly="true"/>
-							<form:errors path="employee" cssClass="error-msg" />
+							<form:errors path="employee.code" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-3 control-label text-right"><spring:message
-								code="lbl.employeename" /> <span class="mandatory"></span> </label>
+								code="lbl.employeename" />  </label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="employee"
+							<form:input path="employee.name"
 								class="form-control text-left patternvalidation"
 								data-pattern="alphanumeric" maxlength="50" required="required" readOnly="true"/>
-							<form:errors path="employee" cssClass="error-msg" />
+							<form:errors path="employee.name" cssClass="error-msg" />
 						</div>
 					</div>
 
