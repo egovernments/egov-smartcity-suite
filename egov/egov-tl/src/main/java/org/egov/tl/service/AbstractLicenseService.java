@@ -315,13 +315,12 @@ public abstract class AbstractLicenseService<T extends License> {
 
     public void calcPenaltyDemandDetails(License license, EgDemand demand) {
         Map<Installment, BigDecimal> installmentPenalty = new HashMap<>();
-        Map<Installment, EgDemandDetails> installmentWisePenaltyDemandDetail;
-        Map<Installment, EgDemandDetails> installmentWiseLicenseDemandDetail = getInstallmentWiseLicenseDemandDetails(license.getLicenseDemand());
+        Map<Installment, EgDemandDetails> installmentWisePenaltyDemandDetail = getInstallmentWisePenaltyDemandDetails(demand);
+        Map<Installment, EgDemandDetails> installmentWiseLicenseDemandDetail = getInstallmentWiseLicenseDemandDetails(demand);
         if (license.isNewApplication())
             installmentPenalty = getCalculatedPenalty(license, license.getCommencementDate(), new Date(), demand);
         else if (license.isReNewApplication())
             installmentPenalty = getCalculatedPenalty(license, null, new Date(), demand);
-        installmentWisePenaltyDemandDetail = getInstallmentWisePenaltyDemandDetails(license.getCurrentDemand());
         for (final Map.Entry<Installment, BigDecimal> penalty : installmentPenalty.entrySet()) {
             EgDemandDetails penaltyDemandDetail = installmentWisePenaltyDemandDetail.get(penalty.getKey());
             EgDemandDetails licenseDemandDetail = installmentWiseLicenseDemandDetail.get(penalty.getKey());
