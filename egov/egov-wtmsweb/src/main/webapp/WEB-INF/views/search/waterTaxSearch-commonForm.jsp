@@ -82,7 +82,7 @@
 							<button type="submit" class="btn btn-primary" id="submitButtonId">
 								<spring:message code="lbl.submit" />
 							</button>
-							<button class="btn btn-danger" type="reset"><spring:message code='lbl.reset'/></button>
+							<input type="button" class="btn btn-default" onclick="customReset();" value="Reset"/>
 							<a href="javascript:void(0);" id="closeComplaints"
 								class="btn btn-default" onclick="self.close()"><spring:message code='lbl.close' /></a>
 						</div>
@@ -92,7 +92,11 @@
 		</div>
 	</div>
 </div>
-
+<script>
+	function customReset() {
+		$("#consumerCode").val('');
+	}
+</script>
 <script src="<cdn:url value='/resources/js/app/connectionCommonsearch.js?rnd=${app_release_no}'/>"
 	type="text/javascript"></script>
 	

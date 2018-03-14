@@ -308,7 +308,6 @@ public class MeterReadingController {
             final BigDecimal noOfUnitsPerMonth) {
         MeteredRates meteredRates = null;
         MeteredRatesDetail meteredRatesDetail;
-        BigDecimal amountToBeCollected = BigDecimal.ZERO;
         UsageSlab usageSlab = null;
         if (!noOfUnitsPerMonth.equals(BigDecimal.ZERO))
             usageSlab = usageSlabService
@@ -318,7 +317,7 @@ public class MeterReadingController {
             meteredRates = meteredRatesService.findBySlabName(usageSlab.getSlabName());
         else if (!noOfUnitsPerMonth.equals(BigDecimal.ZERO))
             throw new ApplicationRuntimeException("err.usageslab.not.present");
-
+        BigDecimal amountToBeCollected = BigDecimal.ZERO;
         if (meteredRates == null || meteredRates.getSlabName() == null)
             throw new ApplicationRuntimeException(ERROR_METER_RATE_NOT_PRESENT);
         else {
