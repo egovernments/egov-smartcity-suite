@@ -45,9 +45,60 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
+package org.egov.eis.service;
 
-package org.egov.eis.entity.enums;
+import java.util.List;
 
-public enum EmployeeGrievanceStatus {
-    REGISTERED, REJECTED, REDRESSED,INPROCESS;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.egov.eis.entity.EmployeeGrievanceType;
+import org.egov.eis.repository.EmployeeGrievanceTypeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@Transactional(readOnly = true)
+public class EmployeeGrievanceTypeService {
+
+    private final EmployeeGrievanceTypeRepository employeeGrievanceTypeRepository;
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @Autowired
+    public EmployeeGrievanceTypeService(final EmployeeGrievanceTypeRepository employeeGrievanceTypeRepository) {
+        this.employeeGrievanceTypeRepository = employeeGrievanceTypeRepository;
+    }
+
+    @Transactional
+    public EmployeeGrievanceType create(final EmployeeGrievanceType employeeGrievanceType) {
+        return employeeGrievanceTypeRepository.save(employeeGrievanceType);
+    }
+
+    @Transactional
+    public EmployeeGrievanceType update(final EmployeeGrievanceType employeeGrievanceType) {
+        return employeeGrievanceTypeRepository.save(employeeGrievanceType);
+    }
+
+    public List<EmployeeGrievanceType> findAll() {
+        return employeeGrievanceTypeRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+    }
+
+    public EmployeeGrievanceType findByName(String name) {
+        return employeeGrievanceTypeRepository.findByName(name);
+    }
+
+    public EmployeeGrievanceType findByCode(String code) {
+        return employeeGrievanceTypeRepository.findByCode(code);
+    }
+
+    public EmployeeGrievanceType findOne(Long id) {
+        return employeeGrievanceTypeRepository.findOne(id);
+    }
+
+    public List<EmployeeGrievanceType> search(EmployeeGrievanceType employeeGrievanceType) {
+        return employeeGrievanceTypeRepository.findAll();
+    }
 }

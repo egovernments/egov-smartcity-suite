@@ -46,8 +46,14 @@
  *
  */
 
-package org.egov.eis.entity.enums;
+package org.egov.eis.autonumber;
 
-public enum EmployeeGrievanceStatus {
-    REGISTERED, REJECTED, REDRESSED,INPROCESS;
+import org.egov.eis.entity.EmployeeGrievance;
+import org.springframework.stereotype.Service;
+
+@Service
+public interface EmployeeGrievanceNumberGenerator {
+
+    public String getNextNumber(EmployeeGrievance employeeGrievance);
+
 }

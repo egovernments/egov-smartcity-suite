@@ -46,8 +46,35 @@
  *
  */
 
-package org.egov.eis.entity.enums;
+package org.egov.eis.web.adaptor;
 
-public enum EmployeeGrievanceStatus {
-    REGISTERED, REJECTED, REDRESSED,INPROCESS;
+import java.lang.reflect.Type;
+
+import org.egov.eis.entity.EmployeeGrievance;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+
+public class EmployeeGrievanceJsonAdaptor implements JsonSerializer<EmployeeGrievance> {
+    @Override
+    public JsonElement serialize(final EmployeeGrievance employeeGrievance, final Type type, final JsonSerializationContext jsc) {
+        final JsonObject jsonObject = new JsonObject();
+        if (employeeGrievance != null) {
+            jsonObject.addProperty("grievanceNumber",
+                    employeeGrievance.getGrievanceNumber() == null ? "" : employeeGrievance.getGrievanceNumber());
+            jsonObject.addProperty("employeeGrievanceType", employeeGrievance.getEmployeeGrievanceType() == null ? ""
+                    : employeeGrievance.getEmployeeGrievanceType().getName());
+            jsonObject.addProperty("employee",
+                    employeeGrievance.getEmployee() == null ? "" : employeeGrievance.getEmployee().getName());
+            jsonObject.addProperty("status",
+                    employeeGrievance.getStatus() == null ? "" : employeeGrievance.getStatus().toString());
+            jsonObject.addProperty("details", employeeGrievance.getDetails() == null ? "" : employeeGrievance.getDetails());
+            jsonObject.addProperty("grievanceResolution",
+                    employeeGrievance.getGrievanceResolution() == null ? "" : employeeGrievance.getGrievanceResolution());
+            jsonObject.addProperty("id", employeeGrievance.getId());
+        }
+        return jsonObject;
+    }
 }

@@ -45,9 +45,27 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
+package org.egov.eis.autonumber.impl;
 
-package org.egov.eis.entity.enums;
+import org.egov.eis.autonumber.EmployeeGrievanceNumberGenerator;
+import org.egov.eis.entity.EmployeeGrievance;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
+import org.egov.infra.utils.DateUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-public enum EmployeeGrievanceStatus {
-    REGISTERED, REJECTED, REDRESSED,INPROCESS;
+@Service
+public class EmployeeGrievanceNumberGeneratorImpl implements EmployeeGrievanceNumberGenerator {
+
+    private static final String GRIEVANCE_NUMBER_SEQ = "SEQ_EGEIS_GRIEVANCE";
+
+    @Autowired
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
+
+    @Override
+    public String getNextNumber(EmployeeGrievance employeeGrievance) {
+        return String.format("%s-%05d-%s", "EG", genericSequenceNumberGenerator
+                .getNextSequence(GRIEVANCE_NUMBER_SEQ),
+                DateUtils.currentYear());
+    }
 }

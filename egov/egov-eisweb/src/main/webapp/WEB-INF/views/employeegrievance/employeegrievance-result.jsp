@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<%--
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -45,25 +44,10 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
-  -->
-<beans xmlns="http://www.springframework.org/schema/beans"
-	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	   xmlns:context="http://www.springframework.org/schema/context"
-	   xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
-	   default-lazy-init="true">
+  --%>
 
-	<context:component-scan base-package="org.egov.pims"/>
-	<context:component-scan base-package="org.egov.eis"/>
-	
-	<bean id="personalInformationServiceOld" class="org.egov.pims.service.PersonalInformationService"/>
-	
-	<bean id="employeeServiceOld" class="org.egov.pims.service.EmployeeServiceImpl"/>
-	
-	 <bean id="employeeGrievancePersistenceService" parent="abstractPersistenceService">
-        <constructor-arg name="type" value="org.egov.eis.entity.EmployeeGrievance" />
-    </bean>
-	<bean id="EmployeeGrievanceInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
-        <constructor-arg index="0" ref="employeeGrievancePersistenceService"/>
-    </bean>
-</beans>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ include file="/includes/taglibs.jsp"%>
+<div class="alert alert-success" role="alert">
+	<strong>${message}</strong>
+</div><%@ include file="employeegrievance-view.jsp"%>

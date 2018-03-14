@@ -46,8 +46,13 @@
  *
  */
 
-package org.egov.eis.entity.enums;
+package org.egov.eis.repository;
 
-public enum EmployeeGrievanceStatus {
-    REGISTERED, REJECTED, REDRESSED,INPROCESS;
+import org.egov.eis.entity.EmployeeGrievance;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface EmployeeGrievanceRepository extends JpaRepository<EmployeeGrievance, Long> {
+
 }

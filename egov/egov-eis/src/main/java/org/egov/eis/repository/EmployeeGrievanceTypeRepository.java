@@ -45,9 +45,16 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
+package org.egov.eis.repository;
 
-package org.egov.eis.entity.enums;
+import org.egov.eis.entity.EmployeeGrievanceType;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public enum EmployeeGrievanceStatus {
-    REGISTERED, REJECTED, REDRESSED,INPROCESS;
+@Repository
+public interface EmployeeGrievanceTypeRepository extends JpaRepository<EmployeeGrievanceType, Long> {
+
+    EmployeeGrievanceType findByName(String name);
+
+    EmployeeGrievanceType findByCode(String code);
 }
