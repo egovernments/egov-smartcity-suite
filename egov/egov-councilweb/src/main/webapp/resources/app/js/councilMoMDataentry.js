@@ -209,6 +209,11 @@ $('#buttonSubmit').click(function(e) {
     	$("#agendaNumber").attr('required', true) ;	
     	e.preventDefault();
     }
+	if($("#agendaNumber").val()!=''){
+		
+		validateAgendaNumber();
+	}
+	
     
     
 	else if ($('form').valid()) {
