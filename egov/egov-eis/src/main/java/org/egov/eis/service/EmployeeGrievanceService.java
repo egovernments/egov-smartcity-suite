@@ -51,9 +51,6 @@ package org.egov.eis.service;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.EmployeeGrievance;
 import org.egov.eis.repository.EmployeeGrievanceRepository;
@@ -74,8 +71,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class EmployeeGrievanceService {
 
     private final EmployeeGrievanceRepository employeeGrievanceRepository;
-    @PersistenceContext
-    private EntityManager entityManager;
     @Autowired
     @Qualifier("workflowService")
     private SimpleWorkflowService<EmployeeGrievance> employeeGrievanceWorkflowService;

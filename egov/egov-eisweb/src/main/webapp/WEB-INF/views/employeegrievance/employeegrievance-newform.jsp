@@ -55,7 +55,6 @@
 				</div>
 				<div class="panel-body">
 					<div class="form-group">
-						<form:hidden path="employee.id" name="employee.id" id="employee.id" />
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.employeecode" />  </label>
 						<div class="col-sm-3 add-margin">
@@ -130,3 +129,5 @@
 						</div>
 						<input type="hidden" name="employeeGrievance"
 							value="${employeeGrievance.id}" />
+						<input type="hidden" name="employee" id="employee" value="${employeeGrievance.employee.id}" />
+							
