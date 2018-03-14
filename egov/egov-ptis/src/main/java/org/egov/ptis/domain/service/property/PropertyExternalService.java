@@ -1698,7 +1698,7 @@ public class PropertyExternalService {
     }
 
     public Assignment getAssignment(PropertyImpl property, PropertyService propService) {
-        return propService.getUserPositionByZone(property.getBasicProperty(), false);
+        return propService.getMappedAssignmentForCscOperator(property.getBasicProperty());
     }
 
     @SuppressWarnings("unchecked")
