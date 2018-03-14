@@ -398,7 +398,7 @@ public class CouncilPreambleController extends GenericWorkFlowController {
                               final CouncilPreamble councilPreamble) {
         String message;
         message = messageSource.getMessage(messageLabel,
-                new String[] { approver.concat("~").concat(designation), councilPreamble.getPreambleNumber() }, null);
+                new String[] { councilPreamble.getPreambleNumber() ,approver.concat("~").concat(designation) }, null);
         return message;
     }
 
