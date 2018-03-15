@@ -69,6 +69,7 @@ import static org.egov.infra.utils.JsonUtils.toJSON;
 
 import java.lang.reflect.Type;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -84,7 +85,9 @@ import org.egov.council.entity.CouncilDataResponse;
 import org.egov.council.entity.CouncilDataUpdateRequest;
 import org.egov.council.entity.CouncilMeeting;
 import org.egov.council.entity.CouncilMeetingType;
+import org.egov.council.entity.CouncilPreambleBidderDetails;
 import org.egov.council.entity.MeetingMOM;
+import org.egov.council.service.BidderService;
 import org.egov.council.service.CommitteeTypeService;
 import org.egov.council.service.CouncilMeetingService;
 import org.egov.council.service.CouncilMeetingTypeService;
@@ -162,6 +165,8 @@ public class CouncilMomController {
 
     @Autowired
     private CouncilPreambleService councilPreambleService;
+    @Autowired
+    private BidderService bidderService;
 
     @Autowired
     private CouncilReportService councilReportService;
@@ -230,10 +235,32 @@ public class CouncilMomController {
     public String update(
             @Valid @ModelAttribute final CouncilMeeting councilMeeting,
             final BindingResult errors, final Model model,
-            final RedirectAttributes redirectAttrs) {
+            final RedirectAttributes redirectAttrs,final HttpServletRequest request) {
         if (errors.hasErrors()) {
             return COUNCILMEETING_EDIT;
         }
+        String biddersId = request.getParameter("councilBidderHdn");
+        String[] bidderId = biddersId.split(",");
+
+        ArrayList<CouncilPreambleBidderDetails> bidderlist = new ArrayList<>();
+        ArrayList<CouncilPreambleBidderDetails> existingBidderlist = new ArrayList<>();
+        for (String bidder : bidderId) {
+            if (bidder != null && !bidder.isEmpty())
+                bidderlist.add(bidderService.getBidderDetailsbyId(Long.valueOf(bidder)));
+        }
+        for (MeetingMOM mom : councilMeeting.getMeetingMOMs()) {
+            for (CouncilPreambleBidderDetails bidders : mom.getPreamble().getBidderDetails()) {
+                existingBidderlist.add(bidders);
+            }
+        }
+        existingBidderlist.removeAll(bidderlist);
+        for (CouncilPreambleBidderDetails selectedBidder : bidderlist) {
+            selectedBidder.setIsAwarded(true);
+        }
+        for (CouncilPreambleBidderDetails rejectedBidder : existingBidderlist) {
+            rejectedBidder.setIsAwarded(false);
+        }
+        
         EgwStatus preambleResolutionApprovedStatus = egwStatusHibernateDAO.getStatusByModuleAndCode(PREAMBLE_MODULENAME,
                 RESOLUTION_APPROVED_PREAMBLE);
         Long itemNumber = Long.valueOf(0);
