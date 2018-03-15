@@ -76,7 +76,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.lang.StringUtils;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.council.autonumber.MOMResolutionNumberGenerator;
@@ -104,6 +103,7 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.FileUtils;
+import org.egov.infra.utils.StringUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.web.support.json.adapter.BoundaryAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -240,6 +240,7 @@ public class CouncilMomController {
             return COUNCILMEETING_EDIT;
         }
         String biddersId = request.getParameter("councilBidderHdn");
+        if (StringUtils.isNotEmpty(biddersId)) {
         String[] bidderId = biddersId.split(",");
 
         ArrayList<CouncilPreambleBidderDetails> bidderlist = new ArrayList<>();
@@ -259,6 +260,7 @@ public class CouncilMomController {
         }
         for (CouncilPreambleBidderDetails rejectedBidder : existingBidderlist) {
             rejectedBidder.setIsAwarded(false);
+        }
         }
         
         EgwStatus preambleResolutionApprovedStatus = egwStatusHibernateDAO.getStatusByModuleAndCode(PREAMBLE_MODULENAME,
