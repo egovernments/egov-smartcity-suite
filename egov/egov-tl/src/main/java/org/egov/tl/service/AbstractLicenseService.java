@@ -418,18 +418,18 @@ public abstract class AbstractLicenseService<T extends License> {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void raiseDemand(final T licenze, final Module module, final Installment installment) {
         // Refetching license in this txn to avoid lazy initialization issue
-        final License license = licenseRepository.findOne(licenze.getId());
-        final Map<EgDemandReason, EgDemandDetails> reasonWiseDemandDetails = getReasonWiseDemandDetails(
-                license.getLicenseDemand());
-        for (final FeeMatrixDetail feeMatrixDetail : feeMatrixService.getLicenseFeeDetails(license, installment.getFromDate())) {
-            final String feeType = feeMatrixDetail.getFeeMatrix().getFeeType().getName();
+        License license = licenseRepository.findOne(licenze.getId());
+        Map<EgDemandReason, EgDemandDetails> reasonWiseDemandDetails = getReasonWiseDemandDetails(license.getLicenseDemand());
+        license.setLicenseAppType(licenseAppTypeService.getLicenseAppTypeByName(RENEWAL_LIC_APPTYPE));
+        for (FeeMatrixDetail feeMatrixDetail : feeMatrixService.getLicenseFeeDetails(license, installment.getFromDate())) {
+            String feeType = feeMatrixDetail.getFeeMatrix().getFeeType().getName();
             if (feeType.contains("Late"))
                 continue;
-            final EgDemandReason reason = demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(
+            EgDemandReason reason = demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(
                     demandGenericDao.getDemandReasonMasterByCode(feeType, module), installment, module);
             if (reason == null)
                 throw new ValidationException("TL-007", "Demand reason missing for " + feeType);
-            final EgDemandDetails licenseDemandDetail = reasonWiseDemandDetails.get(reason);
+            EgDemandDetails licenseDemandDetail = reasonWiseDemandDetails.get(reason);
             BigDecimal tradeAmt = calculateAmountByRateType(license, feeMatrixDetail);
             if (licenseDemandDetail == null)
                 license.getLicenseDemand().getEgDemandDetails()
