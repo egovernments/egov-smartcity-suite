@@ -65,6 +65,7 @@ import org.egov.tl.entity.PenaltyRates;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.contracts.DemandNoticeForm;
 import org.egov.tl.entity.contracts.LicenseDemandDetail;
+import org.egov.tl.service.LicenseAppTypeService;
 import org.egov.tl.service.LicenseCategoryService;
 import org.egov.tl.service.LicenseStatusService;
 import org.egov.tl.service.PenaltyRatesService;
@@ -107,6 +108,7 @@ import static org.egov.tl.utils.Constants.CITY_GRADE_CORPORATION;
 import static org.egov.tl.utils.Constants.LOCALITY;
 import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
+import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.STATUS_CANCELLED;
 import static org.egov.tl.utils.Constants.TL_LICENSE_ACT_CORPORATION;
 import static org.egov.tl.utils.Constants.TL_LICENSE_ACT_DEFAULT;
@@ -149,6 +151,9 @@ public class DemandNoticeController {
 
     @Autowired
     private LicenseCategoryService licenseCategoryService;
+
+    @Autowired
+    private LicenseAppTypeService licenseAppTypeService;
 
     @GetMapping("search")
     public String searchFormforNotice(final Model model) {
@@ -263,8 +268,13 @@ public class DemandNoticeController {
             reportParams.put("penaltyFee", arrLicensePenalty);
             reportParams.put("arrearLicenseFee", arrLicenseFee);
             reportParams.put("totalLicenseFee", totalAmount.setScale(0, BigDecimal.ROUND_HALF_UP));
-            List<PenaltyRates> penaltyRates = penaltyRatesService.search(license.getLicenseAppType().getId());
-            reportParams.put("penaltyCalculationMessage", getPenaltyRateDetails(penaltyRates, currentInstallment, license.getLicenseAppType().getName()));
+            Long licenseAppId;
+            if (license.getIsActive())
+                licenseAppId = licenseAppTypeService.getLicenseAppTypeByName(RENEWAL_LIC_APPTYPE).getId();
+            else
+                licenseAppId = licenseAppTypeService.getLicenseAppTypeByName(NEW_LIC_APPTYPE).getId();
+            List<PenaltyRates> penaltyRates = penaltyRatesService.search(licenseAppId);
+            reportParams.put("penaltyCalculationMessage", getPenaltyRateDetails(penaltyRates, currentInstallment));
             reportParams.put("currentYear", toYearFormat(currentInstallment.getFromDate()));
 
         }
@@ -322,15 +332,10 @@ public class DemandNoticeController {
         }
     }
 
-    public String getPenaltyRateDetails(List<PenaltyRates> penaltyRates, Installment currentInstallment, String licenseAppType) {
+    public String getPenaltyRateDetails(List<PenaltyRates> penaltyRates, Installment currentInstallment) {
         StringBuilder penaltylist = new StringBuilder();
         for (PenaltyRates penaltyRate : penaltyRates) {
-            LocalDate currentinstStartdate;
-            if (NEW_LIC_APPTYPE.equals(licenseAppType)) {
-                currentinstStartdate = LocalDate.fromDateFields(currentInstallment.getFromDate());
-            } else {
-                currentinstStartdate = LocalDate.fromDateFields(currentInstallment.getFromDate()).plusDays(1);
-            }
+            LocalDate currentinstStartdate = LocalDate.fromDateFields(currentInstallment.getFromDate()).plusDays(1);
             LocalDate currentStartDate = LocalDate.fromDateFields(currentInstallment.getFromDate());
             if (penaltyRate.getRate() <= 0) {
                 penaltylist.append("Before ")
