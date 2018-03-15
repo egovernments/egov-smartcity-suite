@@ -325,7 +325,7 @@ public abstract class AbstractLicenseService<T extends License> {
             EgDemandDetails penaltyDemandDetail = installmentWisePenaltyDemandDetail.get(penalty.getKey());
             EgDemandDetails licenseDemandDetail = installmentWiseLicenseDemandDetail.get(penalty.getKey());
             if (penalty.getValue().signum() > 0) {
-                if (penaltyDemandDetail != null)
+                if (penaltyDemandDetail != null && licenseDemandDetail.getBalance().signum() > 0)
                     penaltyDemandDetail.setAmount(penalty.getValue().setScale(0, RoundingMode.HALF_UP));
                 else if (licenseDemandDetail.getBalance().signum() > 0) {
                     penaltyDemandDetail = insertPenaltyDmdDetail(license, penalty.getKey(), penalty.getValue().setScale(0, RoundingMode.HALF_UP));
@@ -622,7 +622,6 @@ public abstract class AbstractLicenseService<T extends License> {
                 feeByTypes.put(ARREAR, feeByTypes.get(ARREAR).add(demandAmount));
             outstandingFee.put(demandReason, feeByTypes);
         }
-
         return outstandingFee;
 
     }
