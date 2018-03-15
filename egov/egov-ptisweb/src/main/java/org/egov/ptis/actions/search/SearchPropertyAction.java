@@ -886,7 +886,7 @@ public class SearchPropertyAction extends SearchFormAction {
             LOGGER.debug("Entered into getSearchResults method");
             LOGGER.debug(ASSESSMENT_NUMBER + assessmentNumber);
         }
-        if (!StringUtils.isBlank(assessmentNumber)) {
+        if (StringUtils.isNotBlank(assessmentNumber)) {
             final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNumber);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("BasicProperty : " + basicProperty);
