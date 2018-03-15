@@ -51,7 +51,7 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Online Payment</title>
+<title><s:text name="title.onlineReceipts"/></title>
 <script
 	src="${pageContext.request.contextPath}/resources/common/watermark.js"
 	type="text/javascript"></script>
@@ -78,7 +78,6 @@ var accountscount=0;
 var initialSetting="true";
 var multiplePayee="false";
 function populateapportioningamountnew(){
-	//document.getElementById("button2").disabled = true;
 	document.getElementById("receipt_error_area").innerHTML='';
 	dom.get("receipt_error_area").style.display="none";
 	// total of actual amt to be credited - can be removed
@@ -385,7 +384,8 @@ function callAjax(paymentServiceId){
 }
 
 function onLoad(){
-	 //document.getElementById("button2").disabled = true;
+	if(dom.get("isTransactionPending").value == "true")
+	    document.getElementById("button2").disabled = true; // If any  transactions in pending statu then Disable the Pay Online button.
 }
  </script>
 <style type="text/css">
@@ -403,6 +403,12 @@ function onLoad(){
 </head>
 
 <body onload="onLoad();">
+<s:if test="%{hasActionMessages()}">
+    <div class="errorstyle">
+      <s:actionmessage/>
+    </div>
+</s:if>  
+
 	<div class="maincontainer">
 		<s:form theme="simple" name="collDetails"
 			action="onlineReceipt-saveNew.action">
@@ -417,59 +423,7 @@ function onLoad(){
 				</div>
 
 				<div class="margin20 container-medium">
-					<s:if test="%{!lastThreeOnlinePayments().isEmpty()}">
-						<div class="text-left margin-5">
-							<s:text name="onlineReceipts.lastthreetransaction" />
-						</div>
-
-						<table width="100%" border="0" cellspacing="0" cellpadding="0">
-
-							<tr>
-								<th class="bluebgheadtd"><s:text
-										name="onlineReceipts.lastthreetbl.sno" /></th>
-								<th class="bluebgheadtd"><s:text
-										name="onlineReceipts.lastthreetbl.transid" /></th>
-								<th class="bluebgheadtd"><s:text
-										name="onlineReceipts.lastthreetbl.transdatetime" /></th>
-								<th class="bluebgheadtd"><s:text
-										name="onlineReceipts.lastthreetbl.amtrs" /></th>
-								<th class="bluebgheadtd"><s:text
-										name="onlineReceipts.lastthreetbl.status" /></th>
-							</tr>
-
-
-							<tr>
-								<%
-								    int onPayDtlCnt = 0;
-								%>
-								<s:iterator value="%{lastThreeOnlinePayments}"
-									status="onPaystatus">
-									<%
-									    onPayDtlCnt = onPayDtlCnt + 1;
-									%>
-									<tr>
-										<td class="blueborderfortd text-center"><%=onPayDtlCnt%></td>
-										<td class="blueborderfortd text-center"><s:property
-												value="%{receiptHeader.id}" /></td>
-										<td class="blueborderfortd text-center"><s:date
-												name='receiptHeader.createdDate' format='dd/MM/yyyy HH:mm'
-												var="createddate" /> <s:property value="createddate" /></td>
-										<td class="blueborderfortd text-center"><fmt:formatNumber
-												value="${receiptHeader.totalAmount}" pattern="#0.00" />
-										<td class="blueborderfortd text-center"><s:property
-												value="%{status.description}" /></td>
-									<tr>
-
-									</tr>
-								</s:iterator>
-							</tr>
-
-						</table>
-					</s:if>
-
-
 					<div class="rbroundbox3">
-
 						<div class="rbcontent4">
 							<div class="containerformsg1">
 
@@ -512,6 +466,8 @@ function onLoad(){
 									<s:hidden id="paymentServiceId" value="%{paymentServiceId}"
 										name="paymentServiceId" />
 									<s:hidden id="refNumber" value="%{refNumber}" name="refNumber" />
+									<s:hidden id="isTransactionPending" value="%{isTransactionPending}" 
+									name="isTransactionPending"/>
 									<%
 									    int i = 1;
 									%>
@@ -523,8 +479,6 @@ function onLoad(){
 										<td>
 											<div class="switchgroup1"
 												id="bobcontent<s:property value="#receiptheaderrowstatus.index + 1" />">
-
-
 
 												<table width="100%" border="0" cellpadding="0"
 													cellspacing="0" id="accountdetailtable<%=i%>"
@@ -544,7 +498,6 @@ function onLoad(){
 													<s:iterator value="%{receiptDetailList}"
 														status="rowreceiptdetailstatus">
 														<tr>
-
 
 															<td class="blueborderfortd"><s:property
 																	value="%{description}" /></td>
