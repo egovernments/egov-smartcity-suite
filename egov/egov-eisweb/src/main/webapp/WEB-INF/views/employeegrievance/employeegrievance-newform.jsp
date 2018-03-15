@@ -92,9 +92,8 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.description" /><span class="mandatory"></span> </label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="details"
-								class="form-control text-left patternvalidation"
-								data-pattern="alphanumeric" maxlength="1000" required="required"/>
+							<form:textarea path="details"
+								data-pattern="alphanumeric" class="form-control" maxlength="1000" required="required"/>
 							<form:errors path="details" cssClass="error-msg" />
 						</div>
 					</div>

@@ -48,14 +48,17 @@
 
 package org.egov.eis.service;
 
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.EmployeeGrievance;
+import org.egov.eis.entity.enums.EmployeeGrievanceStatus;
 import org.egov.eis.repository.EmployeeGrievanceRepository;
+import org.egov.eis.utils.constants.EisConstants;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Designation;
@@ -108,19 +111,78 @@ public class EmployeeGrievanceService {
         return employeeGrievanceRepository.findAll();
     }
 
-    public void prepareWorkFlow(EmployeeGrievance employeeGrievance) {
-        WorkFlowMatrix wfmatrix = employeeGrievanceWorkflowService.getWfMatrix(employeeGrievance.getStateType(), null, null, null,
-                "Registered", null);
+    public void prepareWorkFlowTransition(EmployeeGrievance employeeGrievance) {
+
+        final User user = securityUtils.getCurrentUser();
+        String stateValue;
+        WorkFlowMatrix wfmatrix;
         Designation des = designationService.getDesignationByName("Commissioner");
         List<Assignment> assignment = assignmentService.getAllActiveAssignments(des.getId());
         Position assigneePosition = assignment.get(0).getPosition();
-        final User user = securityUtils.getCurrentUser();
+        if (employeeGrievance != null)
 
-        employeeGrievance.transition()
-                .start()
-                .withStateValue("Registered")
-                .withOwner(assigneePosition).withNextAction(wfmatrix.getNextAction()).withDateInfo(new Date())
-                .withNatureOfTask("EmployeeGrievance").withInitiator(assigneePosition)
-                .withSenderName(user.getUsername() + ":" + user.getName());
+            if (employeeGrievance.getStatus().equals(EmployeeGrievanceStatus.REGISTERED)) {
+
+                wfmatrix = employeeGrievanceWorkflowService.getWfMatrix(employeeGrievance.getStateType(), null, null, null,
+                        "Registered", null);
+                employeeGrievance.transition()
+                        .start()
+                        .withStateValue("Registered")
+                        .withOwner(assigneePosition).withNextAction(wfmatrix.getNextAction()).withDateInfo(DateUtils.now())
+                        .withNatureOfTask(EisConstants.EMPLOYEE_GRIEVANCE).withInitiator(assigneePosition)
+                        .withSenderName(user.getUsername() + ":" + user.getName());
+            }
+
+            else if (employeeGrievance.getStatus().equals(EmployeeGrievanceStatus.INPROCESS)) {
+                stateValue = EisConstants.WORKFLOW_STATE_INPROCESS;
+
+                wfmatrix = employeeGrievanceWorkflowService.getWfMatrix(employeeGrievance.getStateType(), null,
+                        null, null, employeeGrievance.getCurrentState().getValue(), null);
+
+                if (stateValue.isEmpty())
+                    stateValue = wfmatrix.getNextState();
+
+                employeeGrievance.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments("")
+                        .withStateValue(stateValue).withDateInfo(DateUtils.now())
+                        .withOwner(assigneePosition)
+                        .withNextAction(wfmatrix.getNextAction())
+                        .withNatureOfTask(EisConstants.EMPLOYEE_GRIEVANCE);
+
+            }
+
+            else if (employeeGrievance.getStatus().equals(EmployeeGrievanceStatus.REDRESSED)) {
+                wfmatrix = employeeGrievanceWorkflowService.getWfMatrix(employeeGrievance.getStateType(), null,
+                        null, null, employeeGrievance.getCurrentState().getValue(), null);
+                stateValue = EisConstants.WORKFLOW_STATE_REDRESSED;
+                if (stateValue.isEmpty())
+                    stateValue = wfmatrix.getNextState();
+
+                employeeGrievance.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments("")
+                        .withStateValue(stateValue).withDateInfo(DateUtils.now())
+                        .withNextAction(wfmatrix.getNextAction())
+                        .withNatureOfTask(EisConstants.EMPLOYEE_GRIEVANCE);
+            } else if (employeeGrievance.getStatus().equals(EmployeeGrievanceStatus.REJECTED)) {
+                stateValue = EisConstants.WORKFLOW_STATE_CANCELLED;
+                employeeGrievance.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments("")
+                        .withStateValue(stateValue).withDateInfo(DateUtils.now())
+                        .withNextAction("")
+                        .withNatureOfTask(EisConstants.EMPLOYEE_GRIEVANCE);
+            }
+    }
+
+    public String getApproverName(final Long approvalPosition) {
+        Assignment assignment = null;
+        List<Assignment> asignList;
+        if (approvalPosition != null)
+            assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(approvalPosition, DateUtils.now());
+        if (assignment != null) {
+            asignList = new ArrayList<>();
+            asignList.add(assignment);
+        } else
+            asignList = assignmentService.getAssignmentsForPosition(approvalPosition, DateUtils.now());
+        return !asignList.isEmpty() ? asignList.get(0).getEmployee().getName() : "";
     }
 }

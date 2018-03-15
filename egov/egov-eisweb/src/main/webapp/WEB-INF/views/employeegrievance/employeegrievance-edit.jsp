@@ -48,7 +48,7 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<form:form role="form" action="//eis/employeegrievance/update"
+<form:form role="form" action="/eis/employeegrievance/update"
 	modelAttribute="employeeGrievance" id="employeeGrievanceform"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
@@ -79,3 +79,4 @@
 </script>
 <script type="text/javascript"
 	src="<c:url value='/resources/app/js/employeegrievance-helper.js'/>"></script>
+

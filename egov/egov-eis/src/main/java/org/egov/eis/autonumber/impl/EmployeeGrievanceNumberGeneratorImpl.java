@@ -57,7 +57,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class EmployeeGrievanceNumberGeneratorImpl implements EmployeeGrievanceNumberGenerator {
 
-    private static final String GRIEVANCE_NUMBER_SEQ = "SEQ_EGEIS_GRIEVANCE";
+    private static final String GRIEVANCE_NUMBER_SEQ = "SEQ_EIS_GRIEVANCENUMBER";
 
     @Autowired
     private GenericSequenceNumberGenerator genericSequenceNumberGenerator;

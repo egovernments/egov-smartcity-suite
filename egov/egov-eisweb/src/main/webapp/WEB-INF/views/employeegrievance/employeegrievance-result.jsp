@@ -48,6 +48,8 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<div class="alert alert-success" role="alert">
-	<strong>${message}</strong>
-</div><%@ include file="employeegrievance-view.jsp"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+
+<%@ include file="employeegrievance-view.jsp"%>
+<script
+	src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>

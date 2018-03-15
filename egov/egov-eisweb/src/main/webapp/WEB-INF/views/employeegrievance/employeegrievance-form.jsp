@@ -55,48 +55,66 @@
 				</div>
 				<div class="panel-body">
 					<div class="row ">
-						<div class="col-md-3 col-xs-6 add-margin ">
+						<div class="col-md-3 col-xs-6 add-margin">
 							<spring:message code="lbl.grievancenumber" />
 						</div>
-						<div class="col-md-3 col-xs-6 add-margin view-content">
+						<div class="col-md-3  col-xs-6 add-margin view-content">
 							${employeeGrievance.grievanceNumber}</div>
 						<div class="col-md-3 col-xs-6 add-margin">
-							<spring:message code="lbl.name" />
+							<spring:message code="lbl.grievanceDate" />
 						</div>
 						<div class="col-md-3 col-xs-6 add-margin view-content">
-							${employeeGrievance.employee.name}</div>
-						
+							<fmt:formatDate value="${employeeGrievance.createdDate}"
+								pattern="dd	-MM-yyyy HH:mm:ss" />
+						</div>
+
 					</div>
 					<div class="row ">
 						<div class="col-md-3 col-xs-6 add-margin">
-							<spring:message code="lbl.code" />
+							<spring:message code="lbl.employeecode" />
 						</div>
 						<div class="col-md-3 col-xs-6 add-margin view-content">
 							${employeeGrievance.employee.code}</div>
+						<div class="col-md-3 col-xs-6 add-margin">
+							<spring:message code="lbl.employeename" />
+						</div>
+						<div class="col-md-3 col-xs-6 add-margin view-content">
+							${employeeGrievance.employee.name}</div>
+
+					</div>
+
+					<div class="row ">
 						<div class="col-md-3 col-xs-6 add-margin ">
 							<spring:message code="lbl.employeegrievancetype" />
 						</div>
 						<div class="col-md-3 col-xs-6 add-margin  view-content">
 							${employeeGrievance.employeeGrievanceType.name}</div>
-					</div>
-
-					<div class="row add-border">
 						<div class="col-md-3 col-xs-6 add-margin ">
-							<spring:message code="lbl.details" />
+							<spring:message code="lbl.description" />
 						</div>
 						<div class="col-md-3 col-xs-6 add-margin  view-content">
 							${employeeGrievance.details}</div>
+					</div>
+					<div class="row add-border">
 						<div class="col-md-3 col-xs-6 add-margin ">
 							<spring:message code="lbl.attachments" />
 						</div>
-						<c:if
-							test="${employeeGrievance.grievanceDocs != null &&  !employeeGrievance.grievanceDocs.isEmpty()}">
-							<c:forEach items="${employeeGrievance.grievanceDocs}"
-								var="documentDetials">
-								<a href="/eis/employeegrievance/downloadfile/" ${documentDetials.fileStoreId }>${documentDetials.fileName }</a>
-								<br />
-							</c:forEach>
-						</c:if>
+						<div class="col-md-3 col-xs-6 add-margin ">
+							<c:choose>
+								<c:when
+									test="${employeeGrievance.grievanceDocs != null &&  !employeeGrievance.grievanceDocs.isEmpty()}">
+									<c:forEach items="${employeeGrievance.grievanceDocs}"
+										var="documentDetials">
+										<a
+											href="/eis/employeegrievance/downloadfile/${documentDetials.fileStoreId}">${documentDetials.fileName }</a>
+										<br />
+									</c:forEach>
+								</c:when>
+								<c:otherwise>
+									<spring:message code="msg.no.attach.found" />
+								</c:otherwise>
+							</c:choose>
+						</div>
 					</div>
 
 					<div class="row ">
@@ -104,7 +122,7 @@
 								code="lbl.grievanceresolution" /><span class="mandatory"></span>
 						</label>
 						<div class="col-sm-3 col-xs-6 add-margin">
-							<form:input path="grievanceResolution"
+							<form:textarea path="grievanceResolution"
 								class="form-control text-left patternvalidation"
 								data-pattern="alphanumeric" maxlength="1000" required="required" />
 							<form:errors path="grievanceResolution" cssClass="error-msg" />
@@ -114,13 +132,17 @@
 						<label class="col-sm-3 col-xs-6 add-margin"><spring:message
 								code="lbl.status" /> <span class="mandatory"></span> </label>
 						<div class="col-sm-3 col-xs-6 add-margin">
-							<form:select path="status" id="employeeGrievanceType"
-								cssClass="form-control" required="required"
-								cssErrorClass="form-control error">
+							<form:select path="status" id="status" cssClass="form-control"
+								required="required" cssErrorClass="form-control error">
 								<form:option value="">
 									<spring:message code="lbl.select" />
 								</form:option>
-								<form:options items="${employeeGrievanceStatus}" />
+								<%-- <form:options var="item" items="${employeeGrievanceStatus}" /> --%>
+								<c:forEach var="enum" items="${employeeGrievanceStatus}">
+									<c:if test="${enum != 'REGISTERED'}">
+										<option value="${enum}">${enum}</option>
+									</c:if>
+								</c:forEach>
 							</form:select>
 							<form:errors path="status" cssClass="error-msg" />
 						</div>

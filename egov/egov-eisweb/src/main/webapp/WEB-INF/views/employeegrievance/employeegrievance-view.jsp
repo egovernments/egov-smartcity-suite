@@ -48,64 +48,95 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<div class="main-content">
-	<div class="row">
-		<div class="col-md-12">
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading">
-					<div class="panel-title">EmployeeGrievance</div>
-				</div>
-				<div class="panel-body custom">
-					<div class="row ">
-						<div class="col-md-3 col-xs-6 add-margin ">
-							<spring:message code="lbl.grievancenumber" />
-						</div>
-						<div class="col-md-3 col-xs-6 add-margin view-content">
-							${employeeGrievance.grievanceNumber}</div>
-						<div class="col-md-3 col-xs-6 add-margin">
-							<spring:message code="lbl.name" />
-						</div>
-						<div class="col-md-3 col-xs-6 add-margin view-content">
-							${employeeGrievance.employee.name}</div>
-						
-					</div>
-					<div class="row ">
-						<div class="col-md-3 col-xs-6 add-margin">
-							<spring:message code="lbl.code" />
-						</div>
-						<div class="col-md-3 col-xs-6 add-margin view-content">
-							${employeeGrievance.employee.code}</div>
-						<div class="col-md-3 col-xs-6 add-margin ">
-							<spring:message code="lbl.employeegrievancetype" />
-						</div>
-						<div class="col-md-3 col-xs-6 add-margin  view-content">
-							${employeeGrievance.employeeGrievanceType.name}</div>
-					</div>
+<div class="panel panel-primary" data-collapsed="0">
+	<div class="panel-heading">
+		<div class="panel-title">${message }</div>
+	</div>
 
-					<div class="row add-border">
-						<div class="col-md-3 col-xs-6 add-margin ">
-							<spring:message code="lbl.details" />
-						</div>
-						<div class="col-md-3 col-xs-6 add-margin  view-content">
-							${employeeGrievance.details}</div>
-						<div class="col-md-3 col-xs-6 add-margin ">
-							<spring:message code="lbl.attachments" />
-						</div>
-						<c:if
-							test="${employeeGrievance.grievanceDocs != null &&  !employeeGrievance.grievanceDocs.isEmpty()}">
-							<c:forEach items="${employeeGrievance.grievanceDocs}"
-								var="documentDetials">
-								<a href="/eis/employeegrievance/downloadfile/" ${documentDetials.fileStoreId }>${documentDetials.fileName }</a>
-								<br />
-							</c:forEach>
-						</c:if>
-					</div>
+	<div class="panel-body">
+		<div class="row ">
+			<div class="col-md-3 col-xs-6 add-margin">
+				<spring:message code="lbl.grievancenumber" />
+			</div>
+			<div class="col-md-3  col-xs-6 add-margin view-content">
+				${employeeGrievance.grievanceNumber}</div>
+			<div class="col-md-3 col-xs-6 add-margin">
+				<spring:message code="lbl.grievanceDate" />
+			</div>
+
+
+			<div class="col-md-3 col-xs-6 add-margin view-content">
+				<fmt:formatDate value="${employeeGrievance.createdDate}"
+					pattern="dd	-MM-yyyy HH:mm:ss" />
+			</div>
+
+		</div>
+		<div class="row ">
+			<div class="col-md-3 col-xs-6 add-margin">
+				<spring:message code="lbl.employeecode" />
+			</div>
+			<div class="col-md-3 col-xs-6 add-margin view-content">
+				${employeeGrievance.employee.code}</div>
+			<div class="col-md-3 col-xs-6 add-margin">
+				<spring:message code="lbl.employeename" />
+			</div>
+			<div class="col-md-3 col-xs-6 add-margin view-content">
+				${employeeGrievance.employee.name}</div>
+
+		</div>
+
+		<div class="row ">
+			<div class="col-md-3 col-xs-6 add-margin ">
+				<spring:message code="lbl.employeegrievancetype" />
+			</div>
+			<div class="col-md-3 col-xs-6 add-margin  view-content">
+				${employeeGrievance.employeeGrievanceType.name}</div>
+
+			<div class="col-md-3 col-xs-6 add-margin ">
+				<spring:message code="lbl.currentstatus" />
+			</div>
+			<div class="col-md-3 col-xs-6 add-margin  view-content">
+				${employeeGrievance.status}</div>
+		</div>
+		<div class="row ">
+			<div class="col-md-3 col-xs-6 add-margin ">
+				<spring:message code="lbl.description" />
+			</div>
+			<div class="col-md-3 col-xs-6 add-margin  view-content">
+				${employeeGrievance.details}</div>
+			<c:if
+				test="${employeeGrievance.grievanceDocs != null &&  !employeeGrievance.grievanceDocs.isEmpty()}">
+
+				<div class="col-md-3 col-xs-6 add-margin ">
+					<spring:message code="lbl.attachments" />
 				</div>
-			</div>
+				<div class="col-md-3 col-xs-6 add-margin ">
+
+					<c:forEach items="${employeeGrievance.grievanceDocs}"
+						var="documentDetials">
+						<a
+							href="/eis/employeegrievance/downloadfile/${documentDetials.fileStoreId}">${documentDetials.fileName }</a>
+						<br />
+					</c:forEach>
+				</div>
+			</c:if>
 		</div>
-		<div class="row text-center">
-			<div class="add-margin">
-				<a href="javascript:void(0)" class="btn btn-default"
-					onclick="self.close()">Close</a>
-			</div>
+
+		<div class="row add-border">
+			<c:if test="${employeeGrievance.grievanceResolution != null}">
+				<div class="col-md-3 col-xs-6 add-margin ">
+					<spring:message code="lbl.grievanceresolution" />
+				</div>
+				<div class="col-md-3 col-xs-6 add-margin  view-content">
+					${employeeGrievance.grievanceResolution}</div>
+			</c:if>
 		</div>
+
+	</div>
+</div>
+<div class="row text-center">
+	<div class="add-margin">
+		<a href="javascript:void(0)" class="btn btn-default"
+			onclick="self.close()">Close</a>
+	</div>
+</div>

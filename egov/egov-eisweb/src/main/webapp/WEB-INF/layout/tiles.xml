@@ -152,7 +152,7 @@
 	</definition>
 
 	<definition name="employeegrievance-edit" extends="base_layout">
-	  <put-attribute name="page-title" value="title.employeegrievance.edit" cascade="true"/>
+	  <put-attribute name="page-title" value="title.employeegrievance" cascade="true"/>
 	  <put-attribute name="body" value="/WEB-INF/views/employeegrievance/employeegrievance-edit.jsp"/>
 	</definition>
 

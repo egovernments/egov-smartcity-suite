@@ -52,8 +52,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.validation.Valid;
-
 import org.apache.log4j.Logger;
 import org.egov.eis.autonumber.EmployeeGrievanceNumberGenerator;
 import org.egov.eis.entity.EmployeeGrievance;
@@ -133,7 +131,7 @@ public class EmployeeGrievanceController {
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String create(final EmployeeGrievance employeeGrievance, final BindingResult errors,
+    public String create(@ModelAttribute final EmployeeGrievance employeeGrievance, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs, @RequestParam("file") final MultipartFile[] files) {
         if (errors.hasErrors()) {
             prepareNewForm(model);
@@ -157,17 +155,12 @@ public class EmployeeGrievanceController {
             }
         }
         employeeGrievance.setStatus(EmployeeGrievanceStatus.REGISTERED);
-        model.addAttribute("stateType", employeeGrievance.getClass().getSimpleName());
         EmployeeGrievanceNumberGenerator employeeGrievancenumbergenerator = autonumberServiceBeanResolver
                 .getAutoNumberServiceFor(EmployeeGrievanceNumberGenerator.class);
         employeeGrievance.setGrievanceNumber(employeeGrievancenumbergenerator
                 .getNextNumber(employeeGrievance));
-        employeeGrievanceService.prepareWorkFlow(employeeGrievance);
+        employeeGrievanceService.prepareWorkFlowTransition(employeeGrievance);
         EmployeeGrievance savedEmployeeGrievance = employeeGrievanceService.create(employeeGrievance);
-        redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.employeegrievance.success",
-                new String[] { savedEmployeeGrievance.getGrievanceNumber(),
-                        savedEmployeeGrievance.getState().getOwnerPosition().getName() },
-                null));
         return "redirect:/employeegrievance/result/" + savedEmployeeGrievance.getId();
     }
 
@@ -181,14 +174,16 @@ public class EmployeeGrievanceController {
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute final EmployeeGrievance employeeGrievance, final BindingResult errors,
+    public String update(@ModelAttribute final EmployeeGrievance employeeGrievance, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs) {
         if (errors.hasErrors()) {
             prepareNewForm(model);
             return EMPLOYEEGRIEVANCE_EDIT;
         }
+        employeeGrievanceService.prepareWorkFlowTransition(employeeGrievance);
         employeeGrievanceService.update(employeeGrievance);
         redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.employeegrievance.success", null, null));
+
         return "redirect:/employeegrievance/result/" + employeeGrievance.getId();
     }
 
@@ -203,7 +198,10 @@ public class EmployeeGrievanceController {
     @RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
     public String result(@PathVariable("id") final Long id, Model model) {
         EmployeeGrievance employeeGrievance = employeeGrievanceService.findOne(id);
+        final String message = getMessageByStatus(employeeGrievance);
+        model.addAttribute("message", message);
         model.addAttribute(EMPLOYEE_GRIEVANCE, employeeGrievance);
+
         return EMPLOYEEGRIEVANCE_RESULT;
     }
 
@@ -235,6 +233,28 @@ public class EmployeeGrievanceController {
     public ResponseEntity<InputStreamResource> download(@PathVariable final String fileStoreId) {
         return fileStoreUtils.fileAsResponseEntity(fileStoreId,
                 "EIS", false);
+    }
+
+    private String getMessageByStatus(final EmployeeGrievance employeeGrievance) {
+        String message = "";
+        String ownerName = employeeGrievanceService.getApproverName(employeeGrievance.getState().getOwnerPosition().getId());
+        if (employeeGrievance.getStatus().equals(EmployeeGrievanceStatus.REGISTERED)) {
+
+            message = messageSource.getMessage("msg.employeegrievance.success",
+                    new String[] { employeeGrievance.getGrievanceNumber(), ownerName }, null);
+
+        } else if (employeeGrievance.getStatus().equals(EmployeeGrievanceStatus.INPROCESS)) {
+            message = messageSource.getMessage("msg.employeegrievance.inprocess",
+                    new String[] { employeeGrievance.getGrievanceNumber(), ownerName }, null);
+        } else if (employeeGrievance.getStatus().equals(EmployeeGrievanceStatus.REDRESSED)) {
+            message = messageSource.getMessage("msg.employeegrievance.redressed",
+                    new String[] { employeeGrievance.getGrievanceNumber() }, null);
+        } else if (employeeGrievance.getStatus().equals(EmployeeGrievanceStatus.REJECTED)) {
+            message = messageSource.getMessage("msg.employeegrievance.rejected",
+                    new String[] { employeeGrievance.getGrievanceNumber() }, null);
+        }
+
+        return message;
     }
 
 }
