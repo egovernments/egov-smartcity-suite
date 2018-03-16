@@ -123,7 +123,6 @@ public class PropertyDeactivationController extends GenericWorkFlowController {
 
     @ModelAttribute
     public PropertyDeactivation propertyDeactivation() {
-        BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID("1016054887");
         return new PropertyDeactivation();
     }
 
@@ -159,7 +158,7 @@ public class PropertyDeactivationController extends GenericWorkFlowController {
                 .getBasicPropertyByPropertyID(propertyDeactivation.getOriginalAssessment());
         if (basicProperty == null) {
             resultBinder.rejectValue(BASIC_PROPERTY, NO_PROP_ERROR);
-            return DEACT_FORM; 
+            return DEACT_FORM;
         } else {
             isPropChildUnderWF = propertyTaxUtil.checkForParentUsedInBifurcation(basicProperty.getUpicNo());
             if (basicProperty.isUnderWorkflow() || isPropChildUnderWF) {
