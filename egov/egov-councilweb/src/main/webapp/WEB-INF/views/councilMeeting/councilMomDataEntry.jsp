@@ -52,12 +52,21 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <form:form role="form" action="savedataentry"
-	modelAttribute="MeetingMOM" id="councilMeetingform"
+	modelAttribute="meetingMOM" id="councilMeetingform"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<%@ include file="councilmeeting-dataentry.jsp"%>
 <input type="hidden" id="autoPreambleNoGenEnabled" value="${autoPreambleNoGenEnabled}" />
 
+			<div>
+				<spring:hasBindErrors name="meetingMOM">
+					<div class="alert alert-danger col-md-12 col-md-offset-0">
+						<form:errors path="*" />
+						<br />
+					</div>
+				</spring:hasBindErrors>
+				<br />
+			</div>
 	<div class="panel panel-primary" data-collapsed="0">
 		<div class="panel-heading custom_form_panel_heading">
 			<div class="panel-title">Agenda Details</div>
@@ -70,12 +79,11 @@
 					<form:input path="agenda.agendaNumber" id="agendaNumber" type="text"
 						class="form-control text-left patternvalidation" maxlength="20"
 						placeholder="" autocomplete="off" />
-					<form:errors path="agenda.agendaNumber" cssClass="error-msg" />
+					<form:errors path="agenda.agendaNumber" cssClass="add-margin error-msg" />
 				</div>
-				
 				<label class="col-sm-2 control-label text-right"><spring:message
 						code="lbl.committeetype" /><span class="mandatory"></label>
-				<div class="col-sm-3 add-margin">
+				 <div class="col-sm-3 add-margin">
 					<form:select path="agenda.committeeType" id="committeeType"
 						required="required" cssClass="form-control"
 						cssErrorClass="form-control error">
