@@ -66,13 +66,12 @@ public class EmployeeGrievanceJsonAdaptor implements JsonSerializer<EmployeeGrie
                     employeeGrievance.getGrievanceNumber() == null ? "" : employeeGrievance.getGrievanceNumber());
             jsonObject.addProperty("employeeGrievanceType", employeeGrievance.getEmployeeGrievanceType() == null ? ""
                     : employeeGrievance.getEmployeeGrievanceType().getName());
-            jsonObject.addProperty("employee",
+            jsonObject.addProperty("employeeCode",
+                    employeeGrievance.getEmployee() == null ? "" : employeeGrievance.getEmployee().getCode());
+            jsonObject.addProperty("employeeName",
                     employeeGrievance.getEmployee() == null ? "" : employeeGrievance.getEmployee().getName());
             jsonObject.addProperty("status",
                     employeeGrievance.getStatus() == null ? "" : employeeGrievance.getStatus().toString());
-            jsonObject.addProperty("details", employeeGrievance.getDetails() == null ? "" : employeeGrievance.getDetails());
-            jsonObject.addProperty("grievanceResolution",
-                    employeeGrievance.getGrievanceResolution() == null ? "" : employeeGrievance.getGrievanceResolution());
             jsonObject.addProperty("id", employeeGrievance.getId());
         }
         return jsonObject;

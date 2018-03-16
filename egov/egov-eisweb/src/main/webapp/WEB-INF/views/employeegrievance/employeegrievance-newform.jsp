@@ -101,7 +101,6 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.grievancedocs" /> </label>
 						<div class="col-sm-3 add-margin">
-						<input type="hidden" value="${fn:length(employeeGrievance.grievanceDocs)}" id="documentsSize">
 							<div>
 								<table width="100%">
 									<tbody>

@@ -1,4 +1,4 @@
-jQuery('#btnsearch').click(function(e) {
+jQuery('#btnsearch').click(function() {
 
 	callAjaxSearch();
 });
@@ -7,7 +7,7 @@ function getFormData($form) {
 	var unindexed_array = $form.serializeArray();
 	var indexed_array = {};
 
-	$.map(unindexed_array, function(n, i) {
+	$.map(unindexed_array, function(n) {
 		indexed_array[n['name']] = n['value'];
 	});
 
@@ -15,26 +15,24 @@ function getFormData($form) {
 }
 
 function callAjaxSearch() {
-	drillDowntableContainer = jQuery("#resultTable");
+	var drillDowntableContainer = jQuery("#resultTable");
 	jQuery('.report-section').removeClass('display-hide');
-	reportdatatable = drillDowntableContainer
+	drillDowntableContainer
 			.dataTable({
 				ajax : {
-					url : "//eis/employeegrievance/ajaxsearch/"
-							+ $('#mode').val(),
+					url : "/eis/employeegrievance/ajaxsearch/" + $('#mode').val(),
 					type : "POST",
 					"data" : getFormData(jQuery('form'))
 				},
-				"fnRowCallback" : function(row, data, index) {
+				"fnRowCallback" : function(row, data) {
 					$(row).on(
 							'click',
 							function() {
-								window.open('//eis/employeegrievance/'
-										+ $('#mode').val() + '/' + data.id, '',
+								window.open('/eis/employeegrievance/' + $('#mode').val()
+										+ '/' + data.id, '',
 										'width=800, height=600');
 							});
 				},
-				"sPaginationType" : "bootstrap",
 				"bDestroy" : true,
 				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
 				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
@@ -50,17 +48,14 @@ function callAjaxSearch() {
 					"data" : "employeeGrievanceType",
 					"sClass" : "text-left"
 				}, {
-					"data" : "employee",
+					"data" : "employeeCode",
+					"sClass" : "text-left"
+				}, {
+					"data" : "employeeName",
 					"sClass" : "text-left"
 				}, {
 					"data" : "status",
 					"sClass" : "text-left"
-				}, {
-					"data" : "details",
-					"sClass" : "text-left"
-				}, {
-					"data" : "grievanceResolution",
-					"sClass" : "text-left"
-				} ]
+				}]
 			});
 }

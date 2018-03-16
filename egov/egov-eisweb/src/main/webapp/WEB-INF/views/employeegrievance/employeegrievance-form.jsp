@@ -96,56 +96,53 @@
 							${employeeGrievance.details}</div>
 					</div>
 					<div class="row add-border">
-						<div class="col-md-3 col-xs-6 add-margin ">
-							<spring:message code="lbl.attachments" />
-						</div>
-						<div class="col-md-3 col-xs-6 add-margin ">
-							<c:choose>
-								<c:when
-									test="${employeeGrievance.grievanceDocs != null &&  !employeeGrievance.grievanceDocs.isEmpty()}">
-									<c:forEach items="${employeeGrievance.grievanceDocs}"
-										var="documentDetials">
-										<a
-											href="/eis/employeegrievance/downloadfile/${documentDetials.fileStoreId}">${documentDetials.fileName }</a>
-										<br />
-									</c:forEach>
-								</c:when>
-								<c:otherwise>
-									<spring:message code="msg.no.attach.found" />
-								</c:otherwise>
-							</c:choose>
-						</div>
-					</div>
 
-					<div class="row ">
-						<label class="col-sm-3 col-xs-6 add-margin"><spring:message
-								code="lbl.grievanceresolution" /><span class="mandatory"></span>
-						</label>
-						<div class="col-sm-3 col-xs-6 add-margin">
-							<form:textarea path="grievanceResolution"
-								class="form-control text-left patternvalidation"
-								data-pattern="alphanumeric" maxlength="1000" required="required" />
-							<form:errors path="grievanceResolution" cssClass="error-msg" />
-						</div>
-					</div>
-					<div class="row ">
-						<label class="col-sm-3 col-xs-6 add-margin"><spring:message
-								code="lbl.status" /> <span class="mandatory"></span> </label>
-						<div class="col-sm-3 col-xs-6 add-margin">
-							<form:select path="status" id="status" cssClass="form-control"
-								required="required" cssErrorClass="form-control error">
-								<form:option value="">
-									<spring:message code="lbl.select" />
-								</form:option>
-								<%-- <form:options var="item" items="${employeeGrievanceStatus}" /> --%>
-								<c:forEach var="enum" items="${employeeGrievanceStatus}">
-									<c:if test="${enum != 'REGISTERED'}">
-										<option value="${enum}">${enum}</option>
-									</c:if>
+						<c:if
+							test="${employeeGrievance.grievanceDocs != null &&  !employeeGrievance.grievanceDocs.isEmpty()}">
+							<div class="col-md-3 col-xs-6 add-margin ">
+								<spring:message code="lbl.attachments" />
+							</div>
+							<div class="col-md-3 col-xs-6 add-margin ">
+								<c:forEach items="${employeeGrievance.grievanceDocs}"
+									var="documentDetials">
+									<a
+										href="/eis/employeegrievance/downloadfile/${documentDetials.fileStoreId}">${documentDetials.fileName }</a>
+									<br />
 								</c:forEach>
-							</form:select>
-							<form:errors path="status" cssClass="error-msg" />
-						</div>
+						</c:if>
 
 					</div>
 				</div>
+
+				<div class="row ">
+					<label class="col-sm-3 col-xs-6 add-margin"><spring:message
+							code="lbl.grievanceresolution" /><span class="mandatory"></span>
+					</label>
+					<div class="col-sm-3 col-xs-6 add-margin">
+						<form:textarea path="grievanceResolution"
+							class="form-control text-left patternvalidation"
+							data-pattern="alphanumeric" maxlength="1000" required="required" />
+						<form:errors path="grievanceResolution" cssClass="error-msg" />
+					</div>
+				</div>
+				<div class="row ">
+					<label class="col-sm-3 col-xs-6 add-margin"><spring:message
+							code="lbl.status" /> <span class="mandatory"></span> </label>
+					<div class="col-sm-3 col-xs-6 add-margin">
+						<form:select path="status" id="status" cssClass="form-control"
+							required="required" cssErrorClass="form-control error">
+							<form:option value="">
+								<spring:message code="lbl.select" />
+							</form:option>
+							<%-- <form:options var="item" items="${employeeGrievanceStatus}" /> --%>
+							<c:forEach var="enum" items="${employeeGrievanceStatus}">
+								<c:if test="${enum != 'REGISTERED'}">
+									<option value="${enum}">${enum}</option>
+								</c:if>
+							</c:forEach>
+						</form:select>
+						<form:errors path="status" cssClass="error-msg" />
+					</div>
+
+				</div>
+			</div>

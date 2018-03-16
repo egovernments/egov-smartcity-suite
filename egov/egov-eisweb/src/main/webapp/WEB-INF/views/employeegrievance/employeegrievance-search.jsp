@@ -49,6 +49,7 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <form:form role="form" action="search"
 	modelAttribute="employeeGrievance" id="employeeGrievancesearchform"
 	cssClass="form-horizontal form-groups-bordered"
@@ -58,7 +59,7 @@
 			<div class="col-md-12">
 				<div class="panel panel-primary" data-collapsed="0">
 					<div class="panel-heading">
-						<div class="panel-title">SearchEmployeeGrievance</div>
+						<div class="panel-title">Search Employee Grievance</div>
 					</div>
 					<div class="panel-body">
 						<div class="form-group">
@@ -87,38 +88,37 @@
 						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label text-right"><spring:message
-									code="lbl.employee" /> </label>
+									code="lbl.employeecode" /> </label>
 							<div class="col-sm-3 add-margin">
-								<form:select path="employee" id="employee"
-									cssClass="form-control" cssErrorClass="form-control error">
-									<form:option value="">
-										<spring:message code="lbl.select" />
-									</form:option>
-									<form:options items="${employees}" itemValue="id"
-										itemLabel="name" />
-								</form:select>
-								<form:errors path="employee" cssClass="error-msg" />
+								<form:input path="employee.code"
+									class="form-control text-left patternvalidation"
+									data-pattern="alphanumeric" maxlength="50" />
+								<form:errors path="employee.code" cssClass="error-msg" />
 							</div>
-							 
+							<label class="col-sm-3 control-label text-right"><spring:message
+									code="lbl.employeename" /> </label>
+							<div class="col-sm-3 add-margin">
+								<form:input path="employee.name"
+									class="form-control text-left patternvalidation"
+									data-pattern="alphanumeric" maxlength="50" />
+								<form:errors path="employee.name" cssClass="error-msg" />
+							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label text-right"><spring:message
-									code="lbl.details" /> </label>
-							<div class="col-sm-3 add-margin">
-								<form:input path="details"
-									class="form-control text-left patternvalidation"
-									data-pattern="alphanumeric" maxlength="500" />
-								<form:errors path="details" cssClass="error-msg" />
-							</div>
-							<label class="col-sm-3 control-label text-right"><spring:message
-									code="lbl.grievanceresolution" /> </label>
-							<div class="col-sm-3 add-margin">
-								<form:input path="grievanceResolution"
-									class="form-control text-left patternvalidation"
-									data-pattern="alphanumeric" maxlength="500" />
-								<form:errors path="grievanceResolution" cssClass="error-msg" />
+									code="lbl.status" /> </label>
+							<div class="col-sm-3 col-xs-6 add-margin">
+								<form:select path="status" id="status" cssClass="form-control"
+									cssErrorClass="form-control error">
+									<form:option value="">
+										<spring:message code="lbl.select" />
+									</form:option>
+									<form:options var="item" items="${employeeGrievanceStatus}" />
+								</form:select>
+								<form:errors path="status" cssClass="error-msg" />
 							</div>
 						</div>
+
 						<input type="hidden" id="mode" name="mode" value="${mode}" />
 						<div class="form-group">
 							<div class="text-center">
@@ -136,7 +136,7 @@
 	</div>
 </form:form>
 <div class="row display-hide report-section">
-	<div class="col-md-12 table-header text-left">EmployeeGrievance
+	<div class="col-md-12 table-header text-left">Employee Grievance
 		Search Result</div>
 	<div class="col-md-12 form-group report-table-container">
 		<table class="table table-bordered table-hover multiheadertbl"
@@ -145,41 +145,46 @@
 				<tr>
 					<th><spring:message code="lbl.grievancenumber" /></th>
 					<th><spring:message code="lbl.employeegrievancetype" /></th>
-					<th><spring:message code="lbl.employee" /></th>
+					<th><spring:message code="lbl.employeecode" /></th>
+					<th><spring:message code="lbl.employeename" /></th>
 					<th><spring:message code="lbl.status" /></th>
-					<th><spring:message code="lbl.details" /></th>
-					<th><spring:message code="lbl.grievanceresolution" /></th>
 				</tr>
 			</thead>
 		</table>
 	</div>
 </div>
-<script> 
-$('#btnsearch').click(function(e){
- if($('form').valid()){
- }else{
- e.preventDefault();
- }  });
+<script>
+	$('#btnsearch').click(function(e) {
+		if ($('form').valid()) {
+		} else {
+			e.preventDefault();
+		}
+	});
 </script>
-<link rel="stylesheet" href="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>"/>
 <link rel="stylesheet"
-	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
+	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>" />
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
 <script type="text/javascript"
-	src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
-	src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
 <script type="text/javascript"
-	src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
 <script type="text/javascript"
-	src="<c:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
-	src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.columnFilter.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script
-	src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
-	src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 <script
-	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
+	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
 	type="text/javascript"></script>
 <script type="text/javascript"
 	src="<c:url value='/resources/js/app/employeegrievance-helper.js'/>"></script>

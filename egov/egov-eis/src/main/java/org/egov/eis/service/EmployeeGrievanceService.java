@@ -51,6 +51,9 @@ package org.egov.eis.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.EmployeeGrievance;
 import org.egov.eis.entity.enums.EmployeeGrievanceStatus;
@@ -63,6 +66,9 @@ import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Sort;
@@ -83,10 +89,16 @@ public class EmployeeGrievanceService {
     protected AssignmentService assignmentService;
     @Autowired
     private SecurityUtils securityUtils;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Autowired
     public EmployeeGrievanceService(final EmployeeGrievanceRepository employeeGrievanceRepository) {
         this.employeeGrievanceRepository = employeeGrievanceRepository;
+    }
+
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
     }
 
     @Transactional
@@ -108,7 +120,27 @@ public class EmployeeGrievanceService {
     }
 
     public List<EmployeeGrievance> search(EmployeeGrievance employeeGrievance) {
-        return employeeGrievanceRepository.findAll();
+        final Criteria criteria = getCurrentSession().createCriteria(
+                EmployeeGrievance.class);
+        criteria.createAlias("employee", "emp");
+        if (employeeGrievance.getGrievanceNumber() != null) {
+            String number = "%" + employeeGrievance.getGrievanceNumber() + "%";
+            criteria.add(Restrictions.ilike("grievanceNumber", number));
+        }
+
+        if (employeeGrievance.getStatus() != null)
+            criteria.add(Restrictions.eq("status", employeeGrievance.getStatus()));
+        if (employeeGrievance.getEmployeeGrievanceType() != null)
+            criteria.add(Restrictions.eq("employeeGrievanceType", employeeGrievance.getEmployeeGrievanceType()));
+        if (employeeGrievance.getEmployee() != null && employeeGrievance.getEmployee().getCode() != null) {
+            String empCode = "%" + employeeGrievance.getEmployee().getCode() + "%";
+            criteria.add(Restrictions.ilike("emp.code", empCode));
+        }
+        if (employeeGrievance.getEmployee() != null && employeeGrievance.getEmployee().getName() != null) {
+            String empName = "%" + employeeGrievance.getEmployee().getName() + "%";
+            criteria.add(Restrictions.ilike("emp.name", empName));
+        }
+        return criteria.list();
     }
 
     public void prepareWorkFlowTransition(EmployeeGrievance employeeGrievance) {

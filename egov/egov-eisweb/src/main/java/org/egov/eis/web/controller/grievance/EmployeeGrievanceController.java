@@ -64,6 +64,7 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.FileStoreUtils;
+import org.egov.infra.utils.StringUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -141,14 +142,16 @@ public class EmployeeGrievanceController {
             try {
 
                 Set<FileStoreMapper> fileStore = new HashSet<>();
-                for (MultipartFile file : files) {
-                    FileStoreMapper fileStoreMapper = fileStoreService.store(
-                            file.getInputStream(),
-                            file.getOriginalFilename(),
-                            file.getContentType(),
-                            "EIS");
-                    fileStore.add(fileStoreMapper);
-                }
+                for (MultipartFile file : files)
+                    if (!StringUtils.EMPTY.equals(file.getOriginalFilename())) {
+                        FileStoreMapper fileStoreMapper = fileStoreService.store(
+                                file.getInputStream(),
+                                file.getOriginalFilename(),
+                                file.getContentType(),
+                                "EIS");
+                        fileStore.add(fileStoreMapper);
+                    }
+
                 employeeGrievance.setGrievanceDocs(fileStore);
             } catch (IOException e) {
                 LOGGER.error("Error in loading documents" + e.getMessage(), e);
