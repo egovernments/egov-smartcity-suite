@@ -53,7 +53,11 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <script
 	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
-
+<input type="hidden" id="amalgamatedPropertyNote" value="<spring:message code='msg.propertydeactivate.reason.amalgamated'/>">
+<input type="hidden" id="doublePropertyNote" value="<spring:message code='msg.propertydeactivate.reason.double'/>">
+<input type="hidden" id="demolishedPropertyNote" value="<spring:message code='msg.propertydeactivate.reason.demolished'/>">
+<input type="hidden" id="untracedPropertyNote" value="<spring:message code='msg.propertydeactivate.reason.untraced'/>">
+<input type="hidden" id="newPropertyNote" value="<spring:message code='msg.propertydeactivate.reason.newproperty'/>">
 <div class="row" id="page-content">
 	<div class="col-md-12">
 		<c:if test="${not empty message}">
@@ -84,7 +88,7 @@
 				<div class="panel-body custom-form">
 					<div class="form-group">
 						<label for="Field-1" class="col-sm-4 control-label"><spring:message
-								code="lbl.assessment" /><span class="mandatory"></span></label>
+								code="lbl.assessmentNumber.deactivate" /><span class="mandatory"></span></label>
 
 						<div class="col-sm-3 add-margin">
 							<form:input id="basicproperty" path="basicproperty" type="text"
@@ -124,7 +128,8 @@
 						</div>
 					</div>
 				</div>
-			</div>
+			   </div>
+			
 			<div class="row">
 				<div class="text-center">
 					<button type="button" class="btn btn-primary add-margin"
@@ -137,6 +142,12 @@
 					</button>
 				</div>
 			</div>
+			<input type="hidden" id="reason"/>
+			<font size="3"><div class="col-md-8 mandatory1" id="notelabel">
+				<label class="notelbel"><spring:message code="lbl.note" />:</label>
+			    </div></font>
+              <font size="2"><div class="col-md-10 mandatory1" id="note">    
+			   </div></font> 
 			<br>
 			<c:if test="${propDetails!=null || orgPropDetails!=null}">
 				<div class="panel panel-primary">

@@ -65,7 +65,7 @@ jQuery(document)
 										} else if (jQuery("#originalAssessment")
 												.val() == ''
 												&& jQuery("#reasonMaster")
-														.val() != 'Bogus Property') {
+														.val() != 'Untraced Property') {
 											bootbox
 													.alert("Original Assessment number required");
 											return false;
@@ -138,25 +138,45 @@ jQuery(document)
 
 					jQuery(window).load(function() {
 						var reason = jQuery("#reasonMaster").val();
-
+						jQuery('#notelabel').hide();
+						jQuery('#note').text(''); 
 						if (reason) {
 							jQuery("#reasonMaster option").filter(function() {
 								return this.text == reason;
 							}).attr('selected', true);
-							hideOnReason(reason);
+							if (reason === 'Untraced Property') {
+								jQuery('#originalAssessment').val('');
+								jQuery('#orgnlAssmnt').addClass('display-hide');
+								
+							} else {
+								jQuery('#orgnlAssmnt').removeClass('display-hide'); 
+							}
 						}
 
 					});
 
-					function hideOnReason(reason) {
-						if (reason === 'Bogus Property') {
+					function hideOnReason(reason) { 
+						jQuery('#notelabel').show();
+						if (reason === 'Untraced Property') {
 							jQuery('#originalAssessment').val('');
 							jQuery('#orgnlAssmnt').addClass('display-hide');
-
 						} else {
-							jQuery('#orgnlAssmnt').removeClass('display-hide');
+							jQuery('#orgnlAssmnt').removeClass('display-hide'); 
 						}
-
+						if (reason === 'Untraced Property') {
+							jQuery("#note").text(jQuery("#untracedPropertyNote").val());
+						} else if (reason === 'Double Assessment') {
+							jQuery("#note").text(jQuery("#doublePropertyNote").val());
+						} else if (reason === 'Amalgamated Property') { 
+							jQuery("#note").text(jQuery("#amalgamatedPropertyNote").val());
+						} else if (reason === 'Demolished Property') { 
+							jQuery("#note").text(jQuery("#demolishedPropertyNote").val());
+						} else if (reason === 'Converted To New Property') {
+							jQuery("#note").text(jQuery("#newPropertyNote").val());
+						} else {
+							jQuery("#notelabel").hide();
+							jQuery("#note").text('');
+						}
 					}
 
 					jQuery(".dateval")
