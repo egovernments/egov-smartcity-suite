@@ -183,7 +183,10 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
     @Transactional
     public void save(final License license) {
-        updateDemandForChangeTradeArea((TradeLicense) license);
+        final BigDecimal currentDemandAmount = recalculateLicenseFee(license.getCurrentDemand());
+        final BigDecimal feematrixDmdAmt = calculateFeeAmount(license);
+        if (feematrixDmdAmt.compareTo(currentDemandAmount) >= 0)
+            updateDemandForChangeTradeArea((TradeLicense) license);
         processAndStoreDocument(license);
         licenseRepository.save(license);
     }
