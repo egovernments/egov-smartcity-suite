@@ -306,7 +306,7 @@
 
 							<div class="col-sm-3 add-margin">
 								<form:input id="councilno" path="councilno" type="text"
-									value="${councilno}" cssClass="form-control" autocomplete="off"
+									value="${councilno}" cssClass="form-control is_valid_number" autocomplete="off"
 									required="required" maxlength="10" />
 								<form:errors path="councilno" cssClass="error-msg" />
 							</div>

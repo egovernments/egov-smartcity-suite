@@ -100,7 +100,7 @@ jQuery(document)
 													"#originalAssessment")
 													.val() == ''
 													&& jQuery("#reasonMaster")
-															.val() != 'Bogus Property') {
+															.val() != 'Untraced Property') {
 												bootbox
 														.alert("Original Assessment number required");
 												return false;
@@ -147,7 +147,6 @@ jQuery(document)
 							if (reason === 'Untraced Property') {
 								jQuery('#originalAssessment').val('');
 								jQuery('#orgnlAssmnt').addClass('display-hide');
-								
 							} else {
 								jQuery('#orgnlAssmnt').removeClass('display-hide'); 
 							}
@@ -158,7 +157,7 @@ jQuery(document)
 					function hideOnReason(reason) { 
 						jQuery('#notelabel').show();
 						if (reason === 'Untraced Property') {
-							jQuery('#originalAssessment').val('');
+							jQuery('#originalAssessment').val(''); 
 							jQuery('#orgnlAssmnt').addClass('display-hide');
 						} else {
 							jQuery('#orgnlAssmnt').removeClass('display-hide'); 
