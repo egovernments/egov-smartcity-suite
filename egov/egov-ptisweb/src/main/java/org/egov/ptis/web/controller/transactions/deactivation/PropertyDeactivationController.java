@@ -99,6 +99,7 @@ public class PropertyDeactivationController extends GenericWorkFlowController {
     private static final String DEACTIVATE_REASONS = "deactivationReasons";
     private static final String DEACT_FORM = "deactivation-form";
     private static final String UNTRACED_PROPERTY = "Untraced Property";
+    private static final String DEMOLISHED_PROPERTY = "DEMOLISHED PROPERTY";
     private static final String NO_PROP_ERROR = "error.noproperty";
     private static final String DOCS_LIST = "documentsList";
 
@@ -164,6 +165,9 @@ public class PropertyDeactivationController extends GenericWorkFlowController {
             if (basicProperty.isUnderWorkflow() || isPropChildUnderWF) {
                 resultBinder.rejectValue(BASIC_PROPERTY, "error.prop.under.wf");
                 return DEACT_FORM;
+            } else if(DEMOLISHED_PROPERTY.equalsIgnoreCase(propertyDeactivation.getReasonMaster()) && basicProperty.getProperty().getPropertyDetail().getPropertyType().equals(PropertyTaxConstants.VACANT_PROPERTY)) {
+                resultBinder.rejectValue(BASIC_PROPERTY, "error.vacantproperty");
+                return DEACT_FORM;
             } else if (!UNTRACED_PROPERTY.equalsIgnoreCase(propertyDeactivation.getReasonMaster())) {
                 if (orgBasicProp == null || basicProperty.getUpicNo().equals(orgBasicProp.getUpicNo())) {
                     resultBinder.rejectValue(ORIGINAL_PROPERTY, NO_PROP_ERROR);
@@ -172,8 +176,12 @@ public class PropertyDeactivationController extends GenericWorkFlowController {
                     Map<String, String> orgPropDetails = propertyDeactivationService.getPropertyDetails(orgBasicProp);
                     List<Map<String, Object>> orgPropWCDetails = propertyService.getWCDetails(orgBasicProp.getUpicNo(),
                             request);
+                    Map<String, String> propDetails = propertyDeactivationService.getPropertyDetails(basicProperty);
+                    List<Map<String, Object>> wcDetails = propertyService.getWCDetails(basicProperty.getUpicNo(), request);
                     model.addAttribute("orgPropDetails", orgPropDetails);
                     model.addAttribute("orgPropWCDetails", orgPropWCDetails);
+                    model.addAttribute("propDetails", propDetails);
+                    model.addAttribute("wcDetails", wcDetails);
 
                 }
             } else {
