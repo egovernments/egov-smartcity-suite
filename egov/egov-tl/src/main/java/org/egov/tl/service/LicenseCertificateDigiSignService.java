@@ -53,19 +53,20 @@ import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.pims.commons.Position;
 import org.egov.tl.entity.License;
 import org.egov.tl.repository.LicenseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.egov.infra.reporting.engine.ReportFormat.PDF;
+import static org.egov.infra.reporting.util.ReportUtil.CONTENT_TYPES;
 import static org.egov.tl.utils.Constants.FILESTORE_MODULECODE;
-import static org.egov.tl.utils.Constants.SIGNED_DOCUMENT_PREFIX;
+import static org.egov.tl.utils.Constants.WF_ACTION_DIGI_PENDING;
 
 @Service
 public class LicenseCertificateDigiSignService {
@@ -98,25 +99,24 @@ public class LicenseCertificateDigiSignService {
 
     @ReadOnly
     public List<License> getLicensePendingForDigiSign(Long licenseAppTypeId) {
-        if (licenseAppTypeId != 0)
-            return licenseRepository.findByLicenseAppTypeIdAndStateNextActionAndStateOwnerPositionIn(licenseAppTypeId,
-                    "Digital Signature Pending", positionMasterService.getCurrentUserPositions());
-        else
-            return licenseRepository.findByStateNextActionAndStateOwnerPositionIn("Digital Signature Pending",
-                    positionMasterService.getCurrentUserPositions());
+        List<Position> currentUserPositions = positionMasterService.getCurrentUserPositions();
+        return licenseAppTypeId == 0 ?
+                licenseRepository.findByStateNextActionAndStateOwnerPositionIn(WF_ACTION_DIGI_PENDING, currentUserPositions)
+                :
+                licenseRepository.findByLicenseAppTypeIdAndStateNextActionAndStateOwnerPositionIn(licenseAppTypeId,
+                        WF_ACTION_DIGI_PENDING, currentUserPositions);
+
     }
 
     public List<License> generateLicenseCertificateForDigiSign(List<Long> licenseIds) {
 
         List<License> licenses = new ArrayList<>();
         for (Long licenseId : licenseIds) {
-            License license = tradeLicenseService.getLicenseById(Long.valueOf(licenseId));
+            License license = tradeLicenseService.getLicenseById(licenseId);
             ReportOutput reportOutput = tradeLicenseService.generateLicenseCertificate(license, false);
             if (reportOutput != null) {
-                InputStream fileStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
-                FileStoreMapper fileStore = fileStoreService.store(fileStream,
-                        SIGNED_DOCUMENT_PREFIX + license.getApplicationNumber() + ".pdf",
-                        "application/pdf", FILESTORE_MODULECODE);
+                FileStoreMapper fileStore = fileStoreService.store(reportOutput.getReportOutputData(),
+                        license.generateCertificateFileName() + ".pdf", CONTENT_TYPES.get(PDF), FILESTORE_MODULECODE);
                 license.setDigiSignedCertFileStoreId(fileStore.getFileStoreId());
                 tradeLicenseService.save(license);
                 licenses.add(license);

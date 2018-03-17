@@ -110,7 +110,6 @@ import java.util.Optional;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultString;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.config.core.LocalizationSettings.currencySymbolUtf8;
@@ -124,7 +123,6 @@ import static org.egov.infra.utils.FileUtils.addFilesToZip;
 import static org.egov.infra.utils.FileUtils.byteArrayToFile;
 import static org.egov.infra.utils.FileUtils.toByteArray;
 import static org.egov.infra.utils.StringUtils.append;
-import static org.egov.infra.utils.StringUtils.appendTimestamp;
 import static org.egov.tl.utils.Constants.*;
 import static org.hibernate.criterion.MatchMode.ANYWHERE;
 
@@ -252,19 +250,14 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
     @ReadOnly
     public ReportOutput generateLicenseCertificate(License license, boolean isProvisional) {
-        ReportOutput reportOutput;
-        if (CITY_GRADE_CORPORATION.equals(cityService.getCityGrade())) {
-            reportOutput = reportService.createReport(
-                    new ReportRequest("tl_licenseCertificateForCorp", license, getReportParamsForCertificate(license, isProvisional)));
-        } else {
-            reportOutput = reportService.createReport(
-                    new ReportRequest("tl_licenseCertificate", license, getReportParamsForCertificate(license, isProvisional)));
-        }
-        String reportName = appendTimestamp((isBlank(license.getLicenseNumber())
-                ? license.getApplicationNumber()
-                : license.getLicenseNumber()).replaceAll("[/-]", "_"));
-
-        reportOutput.setReportName(reportName);
+        String reportTemplate;
+        if (CITY_GRADE_CORPORATION.equals(cityService.getCityGrade()))
+            reportTemplate = "tl_licenseCertificateForCorp";
+        else
+            reportTemplate = "tl_licenseCertificate";
+        ReportOutput reportOutput = reportService.createReport(new ReportRequest(reportTemplate, license,
+                getReportParamsForCertificate(license, isProvisional)));
+        reportOutput.setReportName(license.generateCertificateFileName());
         return reportOutput;
     }
 

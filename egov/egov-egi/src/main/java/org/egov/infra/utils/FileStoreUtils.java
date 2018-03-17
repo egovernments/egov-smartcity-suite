@@ -191,15 +191,15 @@ public class FileStoreUtils {
 
     public ResponseEntity<InputStreamResource> fileAsPDFResponse(String fileStoreId, String fileName, String moduleName) {
         try {
-            File signedFile = fileStoreService.fetch(fileStoreId, moduleName);
-            byte[] signFileBytes = FileUtils.readFileToByteArray(signedFile);
-            return ResponseEntity.
-                    ok().
-                    contentType(MediaType.parseMediaType(APPLICATION_PDF_VALUE)).
-                    cacheControl(CacheControl.noCache()).
-                    contentLength(signFileBytes.length).
-                    header("content-disposition", "inline;filename=" + fileName + ".pdf").
-                    body(new InputStreamResource(new ByteArrayInputStream(signFileBytes)));
+            File file = fileStoreService.fetch(fileStoreId, moduleName);
+            byte[] fileBytes = FileUtils.readFileToByteArray(file);
+            return ResponseEntity
+                    .ok()
+                    .contentType(MediaType.parseMediaType(APPLICATION_PDF_VALUE))
+                    .cacheControl(CacheControl.noCache())
+                    .contentLength(fileBytes.length)
+                    .header(CONTENT_DISPOSITION, format(CONTENT_DISPOSITION_INLINE, fileName + ".pdf"))
+                    .body(new InputStreamResource(new ByteArrayInputStream(fileBytes)));
         } catch (IOException e) {
             throw new ApplicationRuntimeException("Error while reading file", e);
         }

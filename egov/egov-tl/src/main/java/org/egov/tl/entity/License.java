@@ -73,6 +73,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.egov.infra.utils.StringUtils.appendTimestamp;
 import static org.egov.tl.utils.Constants.CLOSURE_NATUREOFTASK;
 import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
 import static org.egov.tl.utils.Constants.LICENSE_STATUS_CANCELLED;
@@ -637,5 +639,11 @@ public class License extends StateAware<Position> {
 
     public void setApprovedBy(User approvedBy) {
         this.approvedBy = approvedBy;
+    }
+
+    public String generateCertificateFileName() {
+        return appendTimestamp((isBlank(this.getLicenseNumber())
+                ? this.getApplicationNumber()
+                : this.getLicenseNumber()).replaceAll("[/-]", "_"));
     }
 }
