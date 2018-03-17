@@ -55,7 +55,7 @@ import org.egov.tl.service.LicenseCategoryService;
 import org.egov.tl.service.LicenseStatusService;
 import org.egov.tl.service.NatureOfBusinessService;
 import org.egov.tl.service.TradeLicenseService;
-import org.egov.tl.web.response.adaptor.SearchTradeResultHelperAdaptor;
+import org.egov.tl.web.response.adaptor.LicenseSearchResponseAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -74,7 +74,7 @@ import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
 @RequestMapping("/search")
-public class SearchTradeController {
+public class LicenseSearchController {
 
     @Autowired
     private LicenseCategoryService licenseCategoryService;
@@ -110,7 +110,7 @@ public class SearchTradeController {
     @ResponseBody
     public String searchLicense(final SearchForm searchForm) {
         return new DataTable<>(tradeLicenseService.searchTradeLicense(searchForm), searchForm.draw())
-                .toJson(SearchTradeResultHelperAdaptor.class);
+                .toJson(LicenseSearchResponseAdaptor.class);
     }
 
     @GetMapping(value = "autocomplete", produces = APPLICATION_JSON_VALUE)

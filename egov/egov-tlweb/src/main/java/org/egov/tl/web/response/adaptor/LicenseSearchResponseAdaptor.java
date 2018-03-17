@@ -65,29 +65,29 @@ import static org.egov.infra.utils.ApplicationConstant.NA;
 import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
 import static org.egov.infra.utils.StringUtils.defaultIfBlank;
 
-public class SearchTradeResultHelperAdaptor implements DataTableJsonAdapter<SearchForm> {
+public class LicenseSearchResponseAdaptor implements DataTableJsonAdapter<SearchForm> {
 
     @Override
     public JsonElement serialize(DataTable<SearchForm> searchForm, Type type,
                                  JsonSerializationContext jsc) {
-        List<SearchForm> searchFormResponse = searchForm.getData();
-        JsonArray searchTradeResult = new JsonArray();
-        searchFormResponse.forEach(searchResult -> {
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("licenseId", searchResult.getLicenseId());
-            jsonObject.addProperty("applicationNumber", searchResult.getApplicationNumber());
-            jsonObject.addProperty("tlNumber", defaultIfBlank(searchResult.getLicenseNumber()));
-            jsonObject.addProperty("oldLicenseNumber", defaultIfBlank(searchResult.getOldLicenseNumber()));
-            jsonObject.addProperty("expiryDate", searchResult.getExpiryDate() != null ?
-                    toDefaultDateFormat(searchResult.getExpiryDate()) : NA);
-            jsonObject.addProperty("category", searchResult.getCategoryName());
-            jsonObject.addProperty("subCategory", searchResult.getSubCategoryName());
-            jsonObject.addProperty("tradeTitle", searchResult.getTradeTitle());
-            jsonObject.addProperty("tradeOwner", searchResult.getTradeOwnerName());
-            jsonObject.addProperty("mobileNumber", searchResult.getMobileNo());
-            jsonObject.addProperty("status", searchResult.getStatus());
-            jsonObject.addProperty("active", searchResult.getActive());
-            jsonObject.addProperty("ownerName", searchResult.getOwnerName());
+        List<SearchForm> searchResults = searchForm.getData();
+        JsonArray licenseSearchResponse = new JsonArray();
+        searchResults.forEach(searchResult -> {
+            JsonObject responseJson = new JsonObject();
+            responseJson.addProperty("licenseId", searchResult.getLicenseId());
+            responseJson.addProperty("applicationNumber", searchResult.getApplicationNumber());
+            responseJson.addProperty("tlNumber", defaultIfBlank(searchResult.getLicenseNumber()));
+            responseJson.addProperty("oldLicenseNumber", defaultIfBlank(searchResult.getOldLicenseNumber()));
+            responseJson.addProperty("expiryDate", searchResult.getExpiryDate() == null ? NA :
+                    toDefaultDateFormat(searchResult.getExpiryDate()));
+            responseJson.addProperty("category", searchResult.getCategoryName());
+            responseJson.addProperty("subCategory", searchResult.getSubCategoryName());
+            responseJson.addProperty("tradeTitle", searchResult.getTradeTitle());
+            responseJson.addProperty("tradeOwner", searchResult.getTradeOwnerName());
+            responseJson.addProperty("mobileNumber", searchResult.getMobileNo());
+            responseJson.addProperty("status", searchResult.getStatus());
+            responseJson.addProperty("active", searchResult.getActive());
+            responseJson.addProperty("ownerName", searchResult.getOwnerName());
             Gson gson = new Gson();
             ArrayList<JsonObject> list = new ArrayList<>();
             for (String action : searchResult.getActions()) {
@@ -95,9 +95,9 @@ public class SearchTradeResultHelperAdaptor implements DataTableJsonAdapter<Sear
                 objectInList.addProperty("key", action);
                 list.add(objectInList);
             }
-            jsonObject.addProperty("actions", gson.toJson(list));
-            searchTradeResult.add(jsonObject);
+            responseJson.addProperty("actions", gson.toJson(list));
+            licenseSearchResponse.add(responseJson);
         });
-        return enhance(searchTradeResult, searchForm);
+        return enhance(licenseSearchResponse, searchForm);
     }
 }
