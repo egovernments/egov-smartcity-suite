@@ -343,6 +343,9 @@ $(document).ready(function () {
         }
     });
 
+    $.fn.dataTable.ext.errMode = function () {
+        $('.loader-class').modal('hide');
+    };
 
     $("#btnsearch").click(
         function () {
@@ -363,6 +366,7 @@ $(document).ready(function () {
             });
 
             if (valid > 0) {
+                $('.loader-class').modal('show', {backdrop: 'static'});
                 $('.report-section').show();
                 var applicationNumber = $('#applicationNumber').val();
                 var licenseNumber = $('#licenseNumber').val();
@@ -412,6 +416,9 @@ $(document).ready(function () {
                                 }
                             }
                         },
+                        "initComplete": function (settings, json) {
+                            $('.loader-class').modal('hide');
+                        },
                         "bDestroy": true,
                         "autoWidth": true,
                         "order": [[2, 'asc']],
@@ -442,11 +449,17 @@ $(document).ready(function () {
                                 "data": "tlNumber",
                                 "name": "licenseNumber",
                             }, {
+                                "data": "oldLicenseNumber",
+                                "name": "oldLicenseNumber",
+                            }, {
                                 "data": "status",
                                 "name": "status.id",
                             }, {
                                 "data": "active",
                                 "name": "isActive",
+                            }, {
+                                "data": "expiryDate",
+                                "name": "dateOfExpiry",
                             }, {
                                 "data": "ownerName"
                             }, {

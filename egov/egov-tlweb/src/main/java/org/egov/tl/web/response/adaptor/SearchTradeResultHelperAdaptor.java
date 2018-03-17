@@ -61,6 +61,8 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.egov.infra.utils.ApplicationConstant.NA;
+import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
 import static org.egov.infra.utils.StringUtils.defaultIfBlank;
 
 public class SearchTradeResultHelperAdaptor implements DataTableJsonAdapter<SearchForm> {
@@ -75,6 +77,9 @@ public class SearchTradeResultHelperAdaptor implements DataTableJsonAdapter<Sear
             jsonObject.addProperty("licenseId", searchResult.getLicenseId());
             jsonObject.addProperty("applicationNumber", searchResult.getApplicationNumber());
             jsonObject.addProperty("tlNumber", defaultIfBlank(searchResult.getLicenseNumber()));
+            jsonObject.addProperty("oldLicenseNumber", defaultIfBlank(searchResult.getOldLicenseNumber()));
+            jsonObject.addProperty("expiryDate", searchResult.getExpiryDate() != null ?
+                    toDefaultDateFormat(searchResult.getExpiryDate()) : NA);
             jsonObject.addProperty("category", searchResult.getCategoryName());
             jsonObject.addProperty("subCategory", searchResult.getSubCategoryName());
             jsonObject.addProperty("tradeTitle", searchResult.getTradeTitle());

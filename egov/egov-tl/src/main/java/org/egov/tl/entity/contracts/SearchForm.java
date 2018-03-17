@@ -90,6 +90,7 @@ public class SearchForm extends DataTableSearchRequest {
     private Boolean inactive;
     private Long applicationTypeId;
     private Long natureOfBusinessId;
+    private Date expiryDate;
 
     public SearchForm() {
         // For form binding
@@ -106,6 +107,8 @@ public class SearchForm extends DataTableSearchRequest {
         setMobileNo(license.getLicensee().getMobilePhoneNumber());
         setStatus(license.getStatus().getName());
         setActive(toYesOrNo(license.getIsActive()));
+        setOldLicenseNumber(license.getOldLicenseNumber());
+        setExpiryDate(license.getDateOfExpiry());
         setOwnerName(NA.equals(ownerName) ? NA : format(PROCESS_OWNER_FORMAT, ownerName, license.getCurrentState()
                 .getOwnerPosition().getName()));
         setApplicationTypeId(license.getLicenseAppType().getId());
@@ -329,5 +332,13 @@ public class SearchForm extends DataTableSearchRequest {
 
     public void setNatureOfBusinessId(Long natureOfBusinessId) {
         this.natureOfBusinessId = natureOfBusinessId;
+    }
+
+    public Date getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(final Date expiryDate) {
+        this.expiryDate = expiryDate;
     }
 }

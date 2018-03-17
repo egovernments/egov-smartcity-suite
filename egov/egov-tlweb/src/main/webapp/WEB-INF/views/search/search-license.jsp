@@ -216,8 +216,10 @@
                 <th><spring:message code="lbl.action"/></th>
                 <th><spring:message code="license.applicationnumber"/></th>
                 <th><spring:message code="lbl.license.no"/></th>
+                <th><spring:message code="license.oldlicensenum"/></th>
                 <th><spring:message code="search.license.status"/></th>
                 <th><spring:message code="lbl.active"/></th>
+                <th><spring:message code="lbl.expiry.date"/></th>
                 <th><spring:message code="lbl.wf.process.owner"/></th>
                 <th><spring:message code="search.license.establishmentname"/></th>
                 <th><spring:message code="lbl.trade.owner"/></th>

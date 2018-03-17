@@ -59,25 +59,28 @@
             <div class="panel panel-primary" data-collapsed="0">
                 <div class="panel-heading">
                     <div class="panel-title">
-                        <strong><spring:message code="title.licensewisedcbreport"/></strong>
+                        <strong><spring:message code="title.dcbreport"/></strong>
                     </div>
                 </div>
                 <div class="panel-body"></div>
                 <div class="form-group">
-                    <label class="col-sm-3 control-label text-right"> License
-                        Number</label>
+                    <label class="col-sm-3 control-label text-right">
+                        <spring:message code="lbl.license.no"/>
+                    </label>
                     <div class="col-sm-6 add-margin">
                         <input type="text" name="licensenumber" id="licensenumber"
                                class="form-control patternvalidation" maxlength="15"/>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-3 control-label text-right">Status</label>
+                    <label class="col-sm-3 control-label text-right">
+                        <spring:message code="lbl.license.status"/>
+                    </label>
                     <div class="col-sm-6 add-margin">
                         <select name="active" id="activeLicense" class="form-control">
-                            <option value="0">All</option>
-                            <option value="1">Active</option>
-                            <option value="2">Inactive</option>
+                            <option value="0"><spring:message code="lbl.default.all"/></option>
+                            <option value="1"><spring:message code="lbl.isactive"/></option>
+                            <option value="2"><spring:message code="lbl.inactive"/></option>
                         </select>
                     </div>
                 </div>
