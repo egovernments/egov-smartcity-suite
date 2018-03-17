@@ -49,8 +49,6 @@
 package org.egov.api.controller.core;
 
 import org.egov.infra.filestore.service.FileStoreService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -61,16 +59,16 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.Locale;
 
 public abstract class ApiController {
 
-    protected static final Logger Log = LoggerFactory.getLogger(ApiController.class);
-
-    @PersistenceContext
-    protected EntityManager entityManager;
+    public static final String EMAIL_ID_FIELD = "emailId";
+    public static final String MOBILE_FIELD = "mobileNumber";
+    public static final String DEVICE_ID_FIELD = "deviceId";
+    public static final String ALT_CONTACT_NUMBER_FIELD = "altContactNumber";
+    public static final String EGOV_API_ERROR = "EGOV-API ERROR ";
+    public static final String SERVER_ERROR_KEY = "server.error";
 
     @Autowired
     @Qualifier("fileStoreService")
@@ -87,22 +85,22 @@ public abstract class ApiController {
         return ApiResponse.newInstance();
     }
 
-    @ExceptionHandler({ HttpMessageNotReadableException.class })
+    @ExceptionHandler({HttpMessageNotReadableException.class})
     public ResponseEntity<String> apiExceptionHandler(HttpMessageNotReadableException ex) {
         return getResponseHandler().error(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler({ MissingServletRequestParameterException.class })
+    @ExceptionHandler({MissingServletRequestParameterException.class})
     public ResponseEntity<String> apiExceptionHandler(MissingServletRequestParameterException ex) {
         return getResponseHandler().error(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler({ Exception.class })
+    @ExceptionHandler({Exception.class})
     public ResponseEntity<String> apiExceptionHandler(Exception ex) {
         return getResponseHandler().error(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler({ MethodArgumentNotValidException.class })
+    @ExceptionHandler({MethodArgumentNotValidException.class})
     public ResponseEntity<String> apiExceptionHandler(MethodArgumentNotValidException ex) {
         return getResponseHandler().error(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
