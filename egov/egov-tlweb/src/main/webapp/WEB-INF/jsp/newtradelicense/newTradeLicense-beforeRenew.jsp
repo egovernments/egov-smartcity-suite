@@ -98,81 +98,87 @@
                         <div class="tab-content">
                             <div class="tab-pane fade active in" id="tradedetails">
                                 <%@ include file='../common/license-detail-view.jsp' %>
-
-                                <div class="panel-heading custom_form_panel_heading">
-                                    <div class="panel-title">Editable <s:text name='license.details.lbl'/></div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label text-right"><s:text
-                                            name='license.locality.lbl'/><span class="mandatory"></span></label>
-                                    <div class="col-sm-3 add-margin">
-                                        <s:select name="boundary" id="boundary" list="dropdownData.localityList"
-                                                  listKey="id" listValue="name" headerKey=""
-                                                  headerValue="%{getText('default.select')}" required="true"
-                                                  value="%{boundary.id}" class="form-control"/>
-                                    </div>
-                                    <label class="col-sm-2 control-label text-right"><s:text
-                                            name='license.division'/><span class="mandatory"></span></label>
-                                    <div class="col-sm-3 add-margin">
-                                        <select name="parentBoundary" id="parentBoundary" class="form-control"
-                                                required="true">
-                                            <option value=""><s:text name='default.select'/></option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label text-right"><s:text
-                                            name='lbl.admin.ward'/></label>
-                                    <div class="col-sm-3 add-margin">
-                                        <select name="adminWard" id="adminWard" class="form-control">
-                                            <option value=""><s:text name='default.select'/></option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label text-right"><s:text
-                                            name='license.category.lbl'/><span class="mandatory"></span></label>
-                                    <div class="col-sm-3 add-margin">
-                                        <s:select name="category" id="category" list="dropdownData.categoryList"
-                                                  listKey="id" listValue="name" headerKey="-1"
-                                                  headerValue="%{getText('default.select')}" value="%{category.id}"
-                                                  class="form-control" onChange="setupAjaxSubCategory(this);"/>
-                                        <egov:ajaxdropdown id="populateSubCategory" fields="['Text','Value']"
-                                                           dropdownId='subCategory'
-                                                           url='domain/commonTradeLicenseAjax-populateSubCategory.action'/>
-                                    </div>
-
-                                    <label class="col-sm-2 control-label text-right"><s:text
-                                            name='license.subCategory.lbl'/><span class="mandatory"></span></label>
-                                    <div class="col-sm-3 add-margin">
-                                        <s:select name="tradeName" id="subCategory" list="dropdownData.subCategoryList"
-                                                  listKey="id" listValue="name" headerKey="-1"
-                                                  headerValue="%{getText('default.select')}" value="%{tradeName.id}"
-                                                  class="form-control select2"/>
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label text-right"><s:text
-                                            name='license.uom.lbl'/><span class="mandatory"></span></label>
-                                    <div class="col-sm-3 add-margin">
-                                        <s:textfield name="uom" maxlength="8" id="uom"
-                                                     value="%{tradeName.licenseSubCategoryDetails.iterator.next.uom.name}"
-                                                     readOnly="true" class="form-control"/>
-                                    </div>
-                                    <label class="col-sm-2 control-label text-right"><s:text
-                                            name='license.premises.lbl'/><span class="mandatory"></span></label>
-                                    <div class="col-sm-3 add-margin">
-                                        <s:textfield name="tradeArea_weight" maxlength="8" id="tradeArea_weight"
-                                                     value="%{tradeArea_weight}"
-                                                     cssClass="form-control patternvalidation"
-                                                     data-pattern="number"/>
-                                    </div>
-                                </div>
                             </div>
+
                             <div class="tab-pane fade" id="tradeattachments">
                                 <%@include file="../common/supportdocs-renew.jsp" %>
                             </div>
+                        </div>
+                    </div>
+                </div>
+                <%@ include file='../common/license-fee-detail-view.jsp' %>
+                <s:if test="%{transitionInprogress()}">
+                    <%@ include file='../common/license-workflow-history.jsp' %>
+                </s:if>
+                <div class="panel panel-primary">
+                    <div class="panel-heading custom_form_panel_heading">
+                        <div class="panel-title">Editable <s:text name='license.details.lbl'/></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label text-right"><s:text
+                                name='license.locality.lbl'/><span class="mandatory"></span></label>
+                        <div class="col-sm-3 add-margin">
+                            <s:select name="boundary" id="boundary" list="dropdownData.localityList"
+                                      listKey="id" listValue="name" headerKey=""
+                                      headerValue="%{getText('default.select')}" required="true"
+                                      value="%{boundary.id}" class="form-control"/>
+                        </div>
+                        <label class="col-sm-2 control-label text-right"><s:text
+                                name='license.division'/><span class="mandatory"></span></label>
+                        <div class="col-sm-3 add-margin">
+                            <select name="parentBoundary" id="parentBoundary" class="form-control"
+                                    required="true">
+                                <option value=""><s:text name='default.select'/></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label text-right"><s:text
+                                name='lbl.admin.ward'/></label>
+                        <div class="col-sm-3 add-margin">
+                            <select name="adminWard" id="adminWard" class="form-control">
+                                <option value=""><s:text name='default.select'/></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label text-right"><s:text
+                                name='license.category.lbl'/><span class="mandatory"></span></label>
+                        <div class="col-sm-3 add-margin">
+                            <s:select name="category" id="category" list="dropdownData.categoryList"
+                                      listKey="id" listValue="name" headerKey="-1"
+                                      headerValue="%{getText('default.select')}" value="%{category.id}"
+                                      class="form-control" onChange="setupAjaxSubCategory(this);"/>
+                            <egov:ajaxdropdown id="populateSubCategory" fields="['Text','Value']"
+                                               dropdownId='subCategory'
+                                               url='domain/commonTradeLicenseAjax-populateSubCategory.action'/>
+                        </div>
+
+                        <label class="col-sm-2 control-label text-right"><s:text
+                                name='license.subCategory.lbl'/><span class="mandatory"></span></label>
+                        <div class="col-sm-3 add-margin">
+                            <s:select name="tradeName" id="subCategory" list="dropdownData.subCategoryList"
+                                      listKey="id" listValue="name" headerKey="-1"
+                                      headerValue="%{getText('default.select')}" value="%{tradeName.id}"
+                                      class="form-control select2"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label text-right"><s:text
+                                name='license.uom.lbl'/><span class="mandatory"></span></label>
+                        <div class="col-sm-3 add-margin">
+                            <s:textfield name="uom" maxlength="8" id="uom"
+                                         value="%{tradeName.licenseSubCategoryDetails.iterator.next.uom.name}"
+                                         readOnly="true" class="form-control"/>
+                        </div>
+                        <label class="col-sm-2 control-label text-right"><s:text
+                                name='license.premises.lbl'/><span class="mandatory"></span></label>
+                        <div class="col-sm-3 add-margin">
+                            <s:textfield name="tradeArea_weight" maxlength="8" id="tradeArea_weight"
+                                         value="%{tradeArea_weight}"
+                                         cssClass="form-control patternvalidation"
+                                         data-pattern="number"/>
                         </div>
                     </div>
                 </div>
@@ -241,6 +247,7 @@
     function onSubmitValidations() {
         return true;
     }
+
     function onSubmit() {
         if (!validateEditableFields()) {
             return false;
@@ -248,6 +255,7 @@
         document.renewForm.action = '${pageContext.request.contextPath}/newtradelicense/newTradeLicense-renewal.action';
         return true;
     }
+
     function validateEditableFields() {
         if ($('#licenseForm').valid()) {
             if (document.getElementById("category").value == '-1') {

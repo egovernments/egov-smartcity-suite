@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -45,42 +45,49 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
   --%>
+<s:set value="outstandingFee" var="feeInfo"/>
+<s:if test="%{id !=null}">
+    <div class="panel panel-primary">
+        <div class="panel-heading custom_form_panel_heading">
+            <div class="panel-title">
+                <s:text name='license.title.feedetail'/>
+            </div>
+        </div>
 
-<%@ include file="/includes/taglibs.jsp" %>
-<s:if test="%{!licenseHistory.isEmpty}">
-    <div class="panel-heading  custom_form_panel_heading subheadnew">
-        <div class="panel-title"><s:text name='lbl.licensehistory'/></div>
-    </div>
-    <div class="panel-body">
-        <table class="table table-bordered" style="width:97%;margin:0 auto;">
-            <thead>
-            <tr>
-                <th><s:text name="lbl.wf.date"/></th>
-                <th><s:text name="lbl.wf.updatedby"/></th>
-                <th><s:text name="lbl.wf.currentowner"/></th>
-                <th><s:text name="lbl.wf.status"/></th>
-                <th><s:text name="lbl.wf.comments"/></th>
-            </tr>
-            </thead>
-            <tbody>
+        <div class="panel-body">
+            <s:if test="%{#attr.feeInfo.size > 0 }">
+                <table class="table table-bordered " style="width:97%;margin:0 auto;">
+                    <thead>
+                    <tr>
+                        <th><s:text name='license.fee.type'/></th>
+                        <th><s:text name='license.fee.current'/></th>
+                        <th><s:text name='license.fee.arrears'/></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <s:iterator value="feeInfo" var="fee" status="status">
+                        <tr>
+                            <td>${fee.key}</td>
+                            <td>${fee.value['current']}</td>
+                            <td>${fee.value['arrear']}</td>
+                        </tr>
+                    </s:iterator>
+                    </tbody>
+                </table>
+            </s:if>
 
-            <s:iterator value="%{licenseHistory}" var="history">
+            <table border="0" style="width:97%;margin:0 auto;">
                 <tr>
-                    <td class="blueborderfortd" style="text-align: left"><s:date
-                            name="#history.date" var="updatedDate"
-                            format="dd/MM/yyyy hh:mm a"/> <s:property
-                            value="#updatedDate"/></td>
-                    <td class="blueborderfortd" style="text-align: left"><s:property
-                            value="%{#history.updatedBy}"/></td>
-                    <td class="blueborderfortd" style="text-align: left"><s:property
-                            value="%{#history.user}"/></td>
-                    <td class="blueborderfortd" style="text-align: left"><s:property
-                            value="%{#history.status}"/></td>
-                    <td class="blueborderfortd" style="text-align: left"><s:property
-                            value="%{#history.comments}"/></td>
+                    <td colspan="3">
+                        <a name="viewdcb" class="btn btn-secondary " id="viewdcb-btn"
+                           onclick="window.open('/tl/dcb/view/'+ <s:property
+                                   value="%{id}"/>, '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');"><s:text
+                                name='license.show.dcb'/></a>
+                    </td>
                 </tr>
-            </s:iterator>
-            </tbody>
-        </table>
+            </table>
+
+        </div>
     </div>
 </s:if>
+

@@ -54,11 +54,9 @@
 </head>
 <body>
 <div id="content" class="printable">
-    <s:form action="viewTradeLicense-cancelLicense" theme="simple" name="viewForm" method="POST">
-        <div class="formmainbox panel-primary">
-        <div class="subheadnew text-center" id="headingdiv">
-            <s:text name="page.title.closuretrade"/>
-        </div>
+<div class="row">
+    <div class="col-md-12">
+        <s:form action="viewTradeLicense-cancelLicense" theme="simple" name="viewForm" method="POST">
         <table>
             <tr>
                 <td align="left" style="color: #FF0000">
@@ -87,23 +85,33 @@
                     <s:text name="application.num"/> : <s:property value="%{applicationNumber}"/>
                 </div>
             </s:if>
-            <ul class="nav nav-tabs" id="settingstab">
-                <li class="active"><a data-toggle="tab" href="#tradedetails" data-tabidx="0"
-                                      aria-expanded="true"><s:text name="license.tradedetail"/></a></li>
-                <li class=""><a data-toggle="tab" href="#tradeattachments" id="getdocuments" data-tabidx="1"
-                                aria-expanded="false"><s:text name="license.support.docs"/></a></li>
-            </ul>
-            <div class="panel-body">
-                <div class="tab-content">
-                    <div class="tab-pane fade active in" id="tradedetails">
-                        <%@ include file='../common/license-detail-view.jsp' %>
+            <div class="panel panel-primary" data-collapsed="0">
+                <div class="panel-heading">
+                    <div class="subheadnew text-center" id="headingdiv">
+                        <s:text name="page.title.closuretrade"/>
                     </div>
-                    <div class="tab-pane fade" id="tradeattachments">
-                        <br/><br/>
-                        <%@include file="../common/supportdocs-view.jsp" %>
+                    <ul class="nav nav-tabs" id="settingstab">
+                        <li class="active"><a data-toggle="tab" href="#tradedetails" data-tabidx="0"
+                                              aria-expanded="true"><s:text name="license.tradedetail"/></a></li>
+                        <li class=""><a data-toggle="tab" href="#tradeattachments" id="getdocuments" data-tabidx="1"
+                                        aria-expanded="false"><s:text name="license.support.docs"/></a></li>
+                    </ul>
+                </div>
+                <div class="panel-body">
+                    <div class="tab-content">
+                        <div class="tab-pane fade active in" id="tradedetails">
+                            <%@ include file='../common/license-detail-view.jsp' %>
+                        </div>
+                        <div class="tab-pane fade" id="tradeattachments">
+                            <br/><br/>
+                            <%@include file="../common/supportdocs-view.jsp" %>
+                        </div>
                     </div>
                 </div>
             </div>
+            <%@ include file='../common/license-fee-detail-view.jsp' %>
+            <div class="panel panel-primary">
+                <%@ include file='../common/license-workflow-history.jsp' %>
             </div>
             <s:if test="!hasCSCPublicRole()">
                 <div class="panel panel-primary" id="workflowDiv">
@@ -126,13 +134,17 @@
                 </div>
             </s:else>
         </s:push>
+    </div>
     </s:form>
 </div>
+</div>
+
 <jsp:include page="../common/process-owner-reassignment.jsp"/>
 <script>
     function onSubmitValidations() {
         return true;
     }
+
     function onSubmit() {
         var licid = $('#licenseId').val();
         var url = $('#url').val();

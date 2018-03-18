@@ -56,7 +56,6 @@
 <body>
 <div class="row">
     <div class="col-md-12">
-
         <table>
             <tr>
                 <td align="left" style="color: #FF0000">
@@ -67,15 +66,14 @@
             </tr>
         </table>
         <s:form action="viewTradeLicense" theme="simple" name="viewForm">
-
         <s:push value="model">
         <s:hidden name="actionName" value="create"/>
         <s:hidden id="detailChanged" name="detailChanged"></s:hidden>
         <s:hidden name="id" id="id"/>
         <c:set var="trclass" value="greybox"/>
         <div class="text-right error-msg" style="font-size:14px;">
-            <s:text name="dateofapplication.lbl"/> : <s:date name="applicationDate"
-                                                             format="dd/MM/yyyy"/></div>
+            <s:text name="dateofapplication.lbl"/> : <s:date name="applicationDate" format="dd/MM/yyyy"/>
+        </div>
         <s:if test="%{applicationNumber!=null}">
             <div class="text-right error-msg" style="font-size:14px;">
                 <s:text name="application.num"/> : <s:property value="%{applicationNumber}"/>
@@ -104,7 +102,10 @@
             </div>
             </s:push>
             </s:form>
-
+        </div>
+        <%@ include file='../common/license-fee-detail-view.jsp' %>
+        <div class="panel panel-primary">
+            <%@ include file='../common/license-workflow-history.jsp' %>
         </div>
         <div align="center" class="buttonbottom" id="buttondiv">
             <table>

@@ -269,7 +269,7 @@
                 if (document.getElementById("mode").value == 'ACK') {
 
                     toggleFields(true, ['approverDepartment', 'approverDesignation', 'approverPositionId', 'approverComments', 'Generate Certificate',
-                        'Forward', 'Reject','Reassign', 'button2', 'Approve', 'Sign', 'Preview', 'closeBtn', 'closeDiv', 'currentWfstate']);
+                        'Forward', 'Reject', 'Reassign', 'button2', 'Approve', 'Sign', 'Preview', 'closeBtn', 'closeDiv', 'currentWfstate']);
                     //remove onclick event for propertyno search button
                     $("#searchImg").removeAttr("onclick");
                     // remove onclick event for add and delete button having class = add-padding
@@ -291,7 +291,7 @@
                 if (document.getElementById("mode").value == 'view' || document.getElementById("mode").value == 'editForReject') {
 
                     toggleFields(true, ['approverDepartment', 'approverDesignation', 'approverPositionId', 'approverComments', 'Generate Certificate',
-                        'Forward', 'Reject','Reassign', 'button2', 'Approve', 'Sign', 'Preview', 'currentWfstate']);
+                        'Forward', 'Reject', 'Reassign', 'button2', 'Approve', 'Sign', 'Preview', 'currentWfstate']);
                     //remove onclick event for propertyno search button
                     $("#searchImg").removeAttr("onclick");
                     // remove onclick event for add and delete button having class = add-padding
@@ -312,7 +312,7 @@
             try {
                 if (document.getElementById("mode").value == 'editForApproval') {
                     toggleFields(true, ['approverDepartment', 'approverDesignation', 'approverPositionId', 'approverComments', 'Generate Certificate',
-                        'Forward', 'Reject','Reassign', 'button2', 'Approve']);
+                        'Forward', 'Reject', 'Reassign', 'button2', 'Approve']);
                     //remove onclick event for propertyno search button
                     document.getElementById("tradeArea_weight").disabled = false;
                     $("#searchImg").removeAttr("onclick");
@@ -392,7 +392,6 @@
                 cssClass="form-horizontal form-groups-bordered" validate="true">
             <s:push value="model">
                 <s:token/>
-
                 <s:hidden name="actionName" value="create"/>
                 <s:hidden id="detailChanged" name="detailChanged"/>
                 <s:hidden id="applicationDate" name="applicationDate"/>
@@ -431,16 +430,12 @@
                                                 aria-expanded="false"><s:text name="license.support.docs"/></a></li>
                             </ul>
                         </div>
-
                         <div class="panel-body">
                             <div class="tab-content">
                                 <div class="tab-pane fade active in" id="tradedetails">
                                     <%@ include file='../common/licensee.jsp' %>
                                     <%@ include file='../common/license-address.jsp' %>
                                     <%@ include file='../common/license.jsp' %>
-                                    <s:if test="%{transitionInprogress()}">
-                                        <%@ include file='../common/license-workflow-history.jsp' %>
-                                    </s:if>
                                 </div>
                                 <div class="tab-pane fade" id="tradeattachments">
                                     <%@include file="../common/supportdocs-new.jsp" %>
@@ -448,6 +443,12 @@
                             </div>
                         </div>
                     </div>
+                    <%@ include file='../common/license-fee-detail-view.jsp' %>
+                    <s:if test="%{transitionInprogress()}">
+                        <div class="panel panel-primary">
+                            <%@ include file='../common/license-workflow-history.jsp' %>
+                        </div>
+                    </s:if>
                     <div style="text-align: center;" hidden="true" id="closeDiv">
                         <input type="button" name="closeBtn" id="closeBtn" value="Close"
                                class="button" onclick="window.close();" style="margin:0 5px"/>
@@ -463,7 +464,8 @@
                         <div class="text-center">
                             <s:hidden id="workFlowAction" name="workFlowAction"/>
                             <s:hidden name="currentState" value="%{state.value}"/>
-                            <button type="submit" id="btncancel" class="btn btn-primary" onclick="return onCancelSubmit();">
+                            <button type="submit" id="btncancel" class="btn btn-primary"
+                                    onclick="return onCancelSubmit();">
                                 Cancel
                             </button>
                             <button type="button" id="closebn" class="btn btn-default" onclick="window.close();">
@@ -474,7 +476,8 @@
                     <s:else>
                         <div class="row">
                             <div class="text-center">
-                                <button type="submit" id="btnsave" class="btn btn-primary" onclick="return formsubmit();">
+                                <button type="submit" id="btnsave" class="btn btn-primary"
+                                        onclick="return formsubmit();">
                                     Save
                                 </button>
                                 <button type="button" id="btnclose" class="btn btn-default" onclick="window.close();">
@@ -511,7 +514,6 @@
                                                 aria-expanded="false"><s:text name="license.support.docs"/></a></li>
                             </ul>
                         </div>
-
                         <div class="panel-body">
                             <div class="tab-content">
                                 <div class="tab-pane fade active in" id="tradedetails">
@@ -524,15 +526,17 @@
                                 </div>
                             </div>
                         </div>
-                        <s:if test="%{transitionInprogress()}">
-                            <%@ include file='../common/license-workflow-history.jsp' %>
-                        </s:if>
                     </div>
+                    <%@ include file='../common/license-fee-detail-view.jsp' %>
+                    <s:if test="%{transitionInprogress()}">
+                        <div class="panel panel-primary">
+                            <%@ include file='../common/license-workflow-history.jsp' %>
+                        </div>
+                    </s:if>
                     <div style="text-align: center;" hidden="true" id="closeDiv">
                         <input type="button" name="closeBtn" id="closeBtn" value="Close"
                                class="button" onclick="window.close();" style="margin:0 5px"/>
                     </div>
-
                     <div class="panel panel-primary" id="workflowDiv">
                         <%@ include file='../common/license-workflow-dropdown.jsp' %>
                         <%@ include file='../common/license-workflow-button.jsp' %>
@@ -548,10 +552,12 @@
             </s:push>
         </s:form>
         <div style="text-align: center;" id="btndiv">
-            <input type="button" class="btn btn-primary" id="certificateDiv" value="Generate Provisional Certificate" style="display: none;"
-                   onclick="window.open('/tl/viewtradelicense/generate-provisional-certificate.action?model.id=<s:property value="%{id}"/>', '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');"/>
+            <input type="button" class="btn btn-primary" id="certificateDiv" value="Generate Provisional Certificate"
+                   style="display: none;"
+                   onclick="window.open('/tl/viewtradelicense/generate-provisional-certificate.action?model.id=
+                   <s:property
+                           value="%{id}"/>', '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');"/>
         </div>
-
     </div>
 </div>
 <jsp:include page="../common/process-owner-reassignment.jsp"/>
