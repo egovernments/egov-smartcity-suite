@@ -760,6 +760,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                         Arrays.asList(JUNIOR_ASSISTANT + "/" + SENIOR_ASSISTANT)));
             return mode.equalsIgnoreCase(EDIT) ? RESULT_NEW : RESULT_VIEW;
         }
+        if (multipleSubmitCondition(property, approverPositionId)) {
+            return multipleSubmitRedirect();
+        }
         if (mode.equalsIgnoreCase(EDIT)) {
             validate();
             if (hasErrors() && (StringUtils.containsIgnoreCase(userDesignationList, REVENUE_INSPECTOR_DESGN)
@@ -782,9 +785,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             validateApproverDetails();
             if (hasErrors())
                 return RESULT_VIEW;
-        }
-        if (multipleSubmitCondition(property, approverPositionId)) {
-            return multipleSubmitRedirect();
         }
         if (!WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction))
             transitionWorkFlow(property);
