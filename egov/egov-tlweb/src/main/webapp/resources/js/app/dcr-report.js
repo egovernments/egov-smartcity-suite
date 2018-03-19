@@ -61,113 +61,125 @@ jQuery(document).ready(function () {
 
     }
 
+    $.fn.dataTable.ext.errMode = function () {
+        $('.loader-class').modal('hide');
+    };
 
     $('#dailyCollectionReportSearch').click(function (e) {
-        $('#dailyCollectionReport-header').hide();
-        if ($('#dailyCollectionform').valid()) {
-            $('.loader-class').modal('show', {backdrop: 'static'});
-            validDateRange($("#fromDate").datepicker('getDate'), $("#toDate").datepicker('getDate'));
-            var frmDt = $("#fromDate").val();
-            var toDt = $("#toDate").val();
-            $('#frmDt').text(frmDt);
-            $('#toDt').text(toDt);
-            var oTable = $('#dailyCollReport-table');
-            $.post("/tl/reports/dailycollectionreport", $('#dailyCollectionform').serialize())
-                .done(function (searchResult) {
-                    $('#dailyCollectionReport-header').show();
-                    oTable.DataTable({
-                        "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-                        dom: "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l>" +
-                        "<'col-md-2 col-xs-6 text-left'B><'col-md-5 col-xs-6 text-right'p>>",
-                        "autoWidth": false,
-                        "bDestroy": true,
-                        responsive: true,
-                        destroy: true,
-                        buttons: [{
-                            extend: 'pdf',
-                            title: 'Trade License Daily Collection Report [' + frmDt + ' - ' + toDt + ']',
-                            filename: 'TL_DCR_' + frmDt + ' - ' + toDt,
-                            orientation: 'landscape',
-                            pageSize: 'A4',
-                            footer: true,
-                            exportOptions: {
-                                columns: ':visible'
-                            }
-                        }, {
-                            extend: 'excel',
-                            title: 'Trade License Daily Collection Report [' + frmDt + ' - ' + toDt + ']',
-                            filename: 'TL_DCR_' + frmDt + ' - ' + toDt,
-                            footer: true,
-                            exportOptions: {
-                                columns: ':visible'
-                            }
-                        }, {
-                            extend: 'print',
-                            title: 'Trade License Daily Collection Report [' + frmDt + ' - ' + toDt + ']',
-                            filename: 'TL_DCR_' + frmDt + ' - ' + toDt,
-                            orientation: 'landscape',
-                            pageSize: 'A4',
-                            footer: true,
-                            exportOptions: {
-                                columns: ':visible'
-                            }
-                        }],
-                        searchable: true,
-                        data: searchResult,
-                        columns: [
-                            {title: 'Receipt No.', data: 'receiptNumber'},
-                            {
-                                title: 'Receipt Date', data: 'receiptDate',
-                                render: function (data, type, full) {
-                                    if (data != null && data != undefined && data != undefined) {
-                                        var regDateSplit = data.split("T")[0].split("-");
-                                        return regDateSplit[2] + "/" + regDateSplit[1] + "/" + regDateSplit[0];
+        try {
+            $('#dailyCollectionReport-header').hide();
+            if ($('#dailyCollectionform').valid()) {
+                $('.loader-class').modal('show', {backdrop: 'static'});
+                validDateRange($("#fromDate").datepicker('getDate'), $("#toDate").datepicker('getDate'));
+                var frmDt = $("#fromDate").val();
+                var toDt = $("#toDate").val();
+                $('#frmDt').text(frmDt);
+                $('#toDt').text(toDt);
+                var oTable = $('#dailyCollReport-table');
+                $.post("/tl/reports/dailycollectionreport", $('#dailyCollectionform').serialize())
+                    .done(function (searchResult) {
+                        $('#dailyCollectionReport-header').show();
+                        oTable.DataTable({
+                            "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                            dom: "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l>" +
+                            "<'col-md-2 col-xs-6 text-left'B><'col-md-5 col-xs-6 text-right'p>>",
+                            "autoWidth": true,
+                            "bDestroy": true,
+                            responsive: true,
+                            destroy: true,
+                            scrollX: true,
+                            buttons: [{
+                                extend: 'pdf',
+                                title: 'Trade License Daily Collection Report [' + frmDt + ' - ' + toDt + ']',
+                                filename: 'TL_DCR_' + frmDt + ' - ' + toDt,
+                                orientation: 'landscape',
+                                pageSize: 'A4',
+                                footer: true,
+                                exportOptions: {
+                                    columns: ':visible'
+                                }
+                            }, {
+                                extend: 'excel',
+                                title: 'Trade License Daily Collection Report [' + frmDt + ' - ' + toDt + ']',
+                                filename: 'TL_DCR_' + frmDt + ' - ' + toDt,
+                                footer: true,
+                                exportOptions: {
+                                    columns: ':visible'
+                                }
+                            }, {
+                                extend: 'print',
+                                title: 'Trade License Daily Collection Report [' + frmDt + ' - ' + toDt + ']',
+                                filename: 'TL_DCR_' + frmDt + ' - ' + toDt,
+                                orientation: 'landscape',
+                                pageSize: 'A4',
+                                footer: true,
+                                exportOptions: {
+                                    columns: ':visible'
+                                }
+                            }],
+                            searchable: true,
+                            data: searchResult,
+                            columns: [
+                                {title: 'Receipt No.', data: 'receiptNumber'},
+                                {
+                                    title: 'Receipt Date', data: 'receiptDate',
+                                    render: function (data, type, full) {
+                                        if (data != null && data != undefined && data != undefined) {
+                                            var regDateSplit = data.split("T")[0].split("-");
+                                            return regDateSplit[2] + "/" + regDateSplit[1] + "/" + regDateSplit[0];
+                                        }
+                                        else return "";
                                     }
-                                    else return "";
+                                },
+                                {title: 'License / Application No.', data: 'consumerCode'},
+                                {title: 'Owner Name', data: 'consumerName'},
+                                {title: 'Ward', data: 'revenueWard'},
+                                {title: 'Paid At', data: 'channel'},
+                                {title: 'Payment mode', data: 'paymentMode'},
+                                {title: 'Status', data: 'status'},
+                                {title: 'Paid From', data: 'installmentFrom'},
+                                {title: 'Paid To', data: 'installmentTo'},
+                                {title: 'Arrears', data: 'arrearAmount', "className": "text-right"},
+                                {title: 'Current', data: 'currentAmount', "className": "text-right"},
+                                {title: 'Penalty', data: 'latePaymentCharges', "className": "text-right"},
+                                {title: 'Collection', data: 'totalAmount', "className": "text-right"}
+                            ],
+                            "aaSorting": [[4, 'desc']],
+                            "footerCallback": function (row, data, start, end, display) {
+                                var api = this.api(), data;
+                                if (data.length == 0) {
+                                    jQuery('#report-footer').hide();
+                                } else {
+                                    jQuery('#report-footer').show();
+                                }
+                                if (data.length > 0) {
+                                    updateTotalFooter(10, api);
+                                    updateTotalFooter(11, api);
+                                    updateTotalFooter(12, api);
+                                    updateTotalFooter(13, api);
                                 }
                             },
-                            {title: 'License / Application No.', data: 'consumerCode'},
-                            {title: 'Owner Name', data: 'consumerName'},
-                            {title: 'Ward', data: 'revenueWard'},
-                            {title: 'Paid At', data: 'channel'},
-                            {title: 'Payment mode', data: 'paymentMode'},
-                            {title: 'Status', data: 'status'},
-                            {title: 'Paid From', data: 'installmentFrom'},
-                            {title: 'Paid To', data: 'installmentTo'},
-                            {title: 'Arrears', data: 'arrearAmount', "className": "text-right"},
-                            {title: 'Current', data: 'currentAmount', "className": "text-right"},
-                            {title: 'Penalty', data: 'latePaymentCharges', "className": "text-right"},
-                            {title: 'Collection', data: 'totalAmount', "className": "text-right"}
-                        ],
-                        "aaSorting": [[4, 'desc']],
-                        "footerCallback": function (row, data, start, end, display) {
-                            var api = this.api(), data;
-                            if (data.length == 0) {
-                                jQuery('#report-footer').hide();
-                            } else {
-                                jQuery('#report-footer').show();
-                            }
-                            if (data.length > 0) {
-                                updateTotalFooter(10, api);
-                                updateTotalFooter(11, api);
-                                updateTotalFooter(12, api);
-                                updateTotalFooter(13, api);
-                            }
-                        },
-                        "aoColumnDefs": [{
-                            "aTargets": [10, 11, 12, 13],
-                            "mRender": function (data, type, full) {
-                                return formatNumberInr(data);
-                            }
-                        }]
+                            "initComplete": function (settings, json) {
+                                $('.loader-class').modal('hide');
+                            },
+                            "aoColumnDefs": [{
+                                "aTargets": [10, 11, 12, 13],
+                                "mRender": function (data, type, full) {
+                                    return formatNumberInr(data);
+                                }
+                            }]
+                        });
+                        e.stopPropagation();
+                        $('.loader-class').modal('hide');
                     });
-                    e.stopPropagation();
-                    $('.loader-class').modal('hide');
-                });
-            return true;
+                return true;
+            }
+            else
+                return false;
+        } catch (e) {
+            $('.loader-class').modal('hide');
+            console.log(e);
         }
-        else
-            return false;
     });
 });
 

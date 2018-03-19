@@ -60,14 +60,16 @@
                 <spring:message code="${message}"/>
             </div>
         </c:if>
-        <form:form class="form-horizontal form-groups-bordered" id="dailyCollectionform" modelAttribute="dcrSearchRequest" method="post">
-            <div class="panel panel-primary" data-collapsed="0">
-                <div class="panel-heading">
-                    <div class="panel-title">
-                        <spring:message code="title.dailycollection"/>
-                    </div>
+        <div class="panel panel-primary" data-collapsed="0">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    <spring:message code="title.dailycollection"/>
                 </div>
-                <div class="panel-body custom-form">
+            </div>
+            <div class="panel-body custom-form">
+                <form:form class="form-horizontal form-groups-bordered" id="dailyCollectionform" modelAttribute="dcrSearchRequest" method="post">
+
+
                     <div class="form-group">
                         <label class="col-sm-3 control-label">
                             <spring:message code="lbl.fromdate"/>
@@ -91,9 +93,7 @@
                         </div>
 
                     </div>
-                </div>
 
-                <div class="panel-body custom-form">
                     <div class="form-group">
 
                         <label class="col-sm-3 control-label">
@@ -122,8 +122,6 @@
                             </form:select>
                         </div>
                     </div>
-                </div>
-                <div class="panel-body custom-form">
                     <div class="form-group">
                         <label class="col-sm-3 control-label">
                             <spring:message code="lbl.ward"/>
@@ -137,34 +135,37 @@
                             </form:select>
                         </div>
                     </div>
+
+                    <div class="form-group add-margin">
+                        <div class="text-center">
+                            <button type="button" class="btn btn-primary" id="dailyCollectionReportSearch"><spring:message code="lbl.search"/></button>
+                            <a href="javascript:void(0)" class="btn btn-default" data-dismiss="modal" onclick="self.close()">
+                                <spring:message code="lbl.close"/></a>
+                        </div>
+                    </div>
+                </form:form>
+                <div id="dailyCollectionReport-header" class="panel-body">
+                    <br/>
+                    <span class="table-header">
+                    <spring:message code="lbl.dailyCollection.report.details" arguments="${fromDate},${toDate}"/>
+                </span>
+                    <table class="table table-bordered table-hover multiheadertbl" id="dailyCollReport-table"
+                           style="overflow-x: auto;max-width: 100%;min-width: 100%">
+                        <tbody>
+                        <tfoot id="report-footer">
+                        <tr>
+                            <td colspan="9"></td>
+                            <td>Total</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        </tfoot>
+                        </tbody>
+                    </table>
                 </div>
             </div>
-            <div class="row">
-                <div class="text-center">
-                    <button type="button" class="btn btn-primary" id="dailyCollectionReportSearch"><spring:message code="lbl.search"/></button>
-                    <a href="javascript:void(0)" class="btn btn-default" data-dismiss="modal" onclick="self.close()">
-                        <spring:message code="lbl.close"/></a>
-                </div>
-            </div>
-        </form:form>
-        <div id="dailyCollectionReport-header" class="col-md-12">
-            <span class="table-header">
-                <spring:message code="lbl.dailyCollection.report.details" arguments="${fromDate},${toDate}"/>
-            </span>
-            <table class="table table-bordered table-hover multiheadertbl" id="dailyCollReport-table" width="200%">
-                <tbody>
-                <tfoot id="report-footer">
-                <tr>
-                    <td colspan="9"></td>
-                    <td>Total</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                </tfoot>
-                </tbody>
-            </table>
         </div>
     </div>
 </div>

@@ -68,6 +68,9 @@ public class BaseRegister implements Serializable {
 
     private static final long serialVersionUID = -5366096182840879108L;
 
+    @Id
+    private BigInteger licenseid;
+
     @Column(name = "cat")
     private Long categoryId;
 
@@ -80,13 +83,8 @@ public class BaseRegister implements Serializable {
     @Column(name = "ward")
     private Long wardId;
 
-    @Id
-    private BigInteger licenseid;
-
-    @Transient
-    private String filterName;
-
     private String licensenumber;
+    private String oldLicenseNumber;
     private String tradetitle;
     private String owner;
     private String mobile;
@@ -94,7 +92,6 @@ public class BaseRegister implements Serializable {
     private String subcategoryname;
     private String assessmentno;
     private String wardname;
-
     private String localityname;
     private String tradeaddress;
     private String commencementdate;
@@ -110,6 +107,9 @@ public class BaseRegister implements Serializable {
     private Long uom;
     private Long apptype;
     private Date appdate;
+
+    @Transient
+    private String filterName;
 
     public Long getCategoryId() {
         return categoryId;
@@ -149,6 +149,14 @@ public class BaseRegister implements Serializable {
 
     public void setLicensenumber(String licensenumber) {
         this.licensenumber = licensenumber;
+    }
+
+    public String getOldLicenseNumber() {
+        return oldLicenseNumber;
+    }
+
+    public void setOldLicenseNumber(final String oldLicenseNumber) {
+        this.oldLicenseNumber = oldLicenseNumber;
     }
 
     public String getTradetitle() {
@@ -225,6 +233,10 @@ public class BaseRegister implements Serializable {
 
     public String getCommencementdate() {
         return commencementdate;
+    }
+
+    public void setCommencementdate(final String commencementdate) {
+        this.commencementdate = commencementdate;
     }
 
     public void setCommencementdate(Date commencementdate) {
@@ -333,10 +345,6 @@ public class BaseRegister implements Serializable {
 
     public void setAppdate(Date appdate) {
         this.appdate = appdate;
-    }
-
-    public void setCommencementdate(final String commencementdate) {
-        this.commencementdate = commencementdate;
     }
 
     public String getFilterName() {
