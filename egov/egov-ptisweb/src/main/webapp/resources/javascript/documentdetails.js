@@ -143,6 +143,7 @@ function documentTypeToggle(dropdownvalue) {
 		jQuery("#mobileNumber").attr('readonly', true);
 		jQuery("#emailId").attr('readonly', true);
 		jQuery(".mobilecheckbox").hide();
+		jQuery("#corrAddressDiff").remove();
 	}
 }
 
