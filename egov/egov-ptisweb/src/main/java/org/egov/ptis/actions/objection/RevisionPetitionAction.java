@@ -53,6 +53,7 @@ package org.egov.ptis.actions.objection;
 import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.DATE_FORMAT_DDMMYYY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEVIATION_PERCENTAGE;
@@ -208,6 +209,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
         @Result(name = RevisionPetitionAction.MEESEVA_RESULT_ACK, location = "common/meesevaAck.jsp"),
         @Result(name = RevisionPetitionAction.MEESEVA_ERROR, location = "common/meeseva-errorPage.jsp") })
 public class RevisionPetitionAction extends PropertyTaxBaseAction {
+    private static final String REJECT_ERROR_INITIATOR_INACTIVE = "reject.error.initiator.inactive";
     private static final Logger logger = Logger.getLogger(RevisionPetitionAction.class);
     private static final String NOTEXISTS_POSITION = "notexists.position";
     private static final String HEARING_NOTCIE_EXCEPTION_MESSAGE = "Exception while generating Hearing Notcie : ";
@@ -717,6 +719,11 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 propService.saveDocumentTypeDetails(objection.getBasicProperty(), getDocumentTypeDetails());
             }
         }
+        if (assignmentService.getAssignmentsForPosition(
+                objection.getStateHistory().get(0).getOwnerPosition().getId(), new Date()).isEmpty()) {
+            addActionError(getText(REJECT_ERROR_INITIATOR_INACTIVE, Arrays.asList(ASSISTANT_DESGN)));
+            return "view";
+        }
         addAllActionMessages(revisionPetitionService.updateStateAndStatus(objection, approverPositionId, workFlowAction,
                 approverComments, approverName));
         if (logger.isDebugEnabled())
@@ -732,6 +739,11 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     @ValidationErrorPage(value = "view")
     @Action(value = "/revPetition-validateInspectionDetails")
     public String validateInspectionDetails() {
+        if (assignmentService.getAssignmentsForPosition(
+                objection.getStateHistory().get(0).getOwnerPosition().getId(), new Date()).isEmpty()) {
+            addActionError(getText(REJECT_ERROR_INITIATOR_INACTIVE, Arrays.asList(ASSISTANT_DESGN)));
+            return "view";
+        }
         addAllActionMessages(revisionPetitionService.updateStateAndStatus(objection, approverPositionId, workFlowAction,
                 approverComments, approverName));
         revisionPetitionService.updateRevisionPetition(objection);
@@ -749,7 +761,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         final Assignment initiator = propService.getUserOnRejection(objection);
         if (propertyTaxCommonUtils.isRoOrCommissioner(loggedInUserDesignation) && initiator == null) {
             getPropertyView(objection.getBasicProperty().getUpicNo());
-            addActionError(getText("reject.error.initiator.inactive", Arrays.asList(REVENUE_INSPECTOR_DESGN)));
+            addActionError(getText(REJECT_ERROR_INITIATOR_INACTIVE, Arrays.asList(REVENUE_INSPECTOR_DESGN)));
             return "view";
         }
         addAllActionMessages(revisionPetitionService.updateStateAndStatus(objection, approverPositionId, workFlowAction,
