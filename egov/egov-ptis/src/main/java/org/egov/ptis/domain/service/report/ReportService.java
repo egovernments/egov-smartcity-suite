@@ -154,8 +154,6 @@ public class ReportService {
     private BasicPropertyDAO basicPropertyDAO;
     @Autowired
     private EnvironmentSettings environmentSettings;
-    @PersistenceContext
-    private EntityManager entityManager;
     @Autowired
     private PropertyUsageService propertyUsageService;
     @Autowired
