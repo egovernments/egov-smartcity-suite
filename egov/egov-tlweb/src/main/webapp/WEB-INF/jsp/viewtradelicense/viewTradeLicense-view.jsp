@@ -66,47 +66,47 @@
             </tr>
         </table>
         <s:form action="viewTradeLicense" theme="simple" name="viewForm">
-        <s:push value="model">
-        <s:hidden name="actionName" value="create"/>
-        <s:hidden id="detailChanged" name="detailChanged"></s:hidden>
-        <s:hidden name="id" id="id"/>
-        <c:set var="trclass" value="greybox"/>
-        <div class="text-right error-msg" style="font-size:14px;">
-            <s:text name="dateofapplication.lbl"/> : <s:date name="applicationDate" format="dd/MM/yyyy"/>
-        </div>
-        <s:if test="%{applicationNumber!=null}">
-            <div class="text-right error-msg" style="font-size:14px;">
-                <s:text name="application.num"/> : <s:property value="%{applicationNumber}"/>
-            </div>
-        </s:if>
-        <div class="panel panel-primary" data-collapsed="0">
-            <div class="subheadnew text-center" id="headingdiv">
-                <s:text name="page.title.viewtrade"/>
-            </div>
-            <ul class="nav nav-tabs" id="settingstab">
-                <li class="active"><a data-toggle="tab" href="#tradedetails" data-tabidx="0"
-                                      aria-expanded="true"><s:text name="license.tradedetail"/></a></li>
-                <li class=""><a data-toggle="tab" href="#tradeattachments" id="getdocuments" data-tabidx="1"
-                                aria-expanded="false"><s:text name="license.support.docs"/></a></li>
-            </ul>
-            <div class="panel-body">
-                <div class="tab-content">
-                    <div class="tab-pane fade active in" id="tradedetails">
-                        <%@ include file='../common/license-detail-view.jsp' %>
+            <s:push value="model">
+                <s:hidden name="actionName" value="create"/>
+                <s:hidden id="detailChanged" name="detailChanged"></s:hidden>
+                <s:hidden name="id" id="id"/>
+                <c:set var="trclass" value="greybox"/>
+                <div class="text-right error-msg" style="font-size:14px;">
+                    <s:text name="dateofapplication.lbl"/> : <s:date name="applicationDate" format="dd/MM/yyyy"/>
+                </div>
+                <s:if test="%{applicationNumber!=null}">
+                    <div class="text-right error-msg" style="font-size:14px;">
+                        <s:text name="application.num"/> : <s:property value="%{applicationNumber}"/>
                     </div>
-                    <div class="tab-pane fade" id="tradeattachments">
-                        <br/><br/>
-                        <%@include file="../common/supportdocs-view.jsp" %>
+                </s:if>
+                <div class="panel panel-primary" data-collapsed="0">
+                    <div class="subheadnew text-center" id="headingdiv">
+                        <s:text name="page.title.viewtrade"/>
+                    </div>
+                    <ul class="nav nav-tabs" id="settingstab">
+                        <li class="active"><a data-toggle="tab" href="#tradedetails" data-tabidx="0"
+                                              aria-expanded="true"><s:text name="license.tradedetail"/></a></li>
+                        <li class=""><a data-toggle="tab" href="#tradeattachments" id="getdocuments" data-tabidx="1"
+                                        aria-expanded="false"><s:text name="license.support.docs"/></a></li>
+                    </ul>
+                    <div class="panel-body">
+                        <div class="tab-content">
+                            <div class="tab-pane fade active in" id="tradedetails">
+                                <%@ include file='../common/license-detail-view.jsp' %>
+                            </div>
+                            <div class="tab-pane fade" id="tradeattachments">
+                                <br/><br/>
+                                <%@include file="../common/supportdocs-view.jsp" %>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
+                <%@ include file='../common/license-fee-detail-view.jsp' %>
+                <div class="panel panel-primary">
+                    <%@ include file='../common/license-workflow-history.jsp' %>
+                </div>
             </s:push>
-            </s:form>
-        </div>
-        <%@ include file='../common/license-fee-detail-view.jsp' %>
-        <div class="panel panel-primary">
-            <%@ include file='../common/license-workflow-history.jsp' %>
-        </div>
+        </s:form>
         <div align="center" class="buttonbottom" id="buttondiv">
             <table>
                 <tr>
