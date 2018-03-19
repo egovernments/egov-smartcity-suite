@@ -66,6 +66,8 @@ public class SurveyDashboardResponse {
     private Boolean isreffered;
     private Boolean isVerified;
     private String appViewURL;
+    private String serviceName;
+    private int ageing;
 
     public String getUlbCode() {
         return ulbCode;
@@ -201,6 +203,22 @@ public class SurveyDashboardResponse {
 
     public void setAppViewURL(String appViewURL) {
         this.appViewURL = appViewURL;
+    }
+
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+    }
+
+    public int getAgeing() {
+        return ageing;
+    }
+
+    public void setAgeing(int ageing) {
+        this.ageing = ageing;
     }
 
 }
