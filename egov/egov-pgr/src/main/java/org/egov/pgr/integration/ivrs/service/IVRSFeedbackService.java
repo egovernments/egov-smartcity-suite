@@ -90,10 +90,10 @@ public class IVRSFeedbackService {
             ivrsFeedback.setComplaint(complaint);
         IVRSRating rating = ivrsRatingRepository.findByName(request.getRating());
         ivrsFeedback.setIvrsRating(rating);
+        ivrsFeedback = ivrsFeedbackRepository.saveAndFlush(ivrsFeedback);
         complaint.setCitizenFeedback(CitizenFeedback.value(rating.getWeight()));
         complaintService.updateComplaint(complaint);
-
-        return ivrsFeedbackRepository.save(ivrsFeedback);
+        return ivrsFeedback;
     }
 
     public IVRSFeedback getComplaintByCRN(String crn) {
