@@ -845,6 +845,7 @@ public class WaterConnectionDetailsService {
                         waterConnectionDetails);
             else if (wfmatrix.getNextDesignation() != null
                     && !workFlowAction.equals(APPROVEWORKFLOWACTION)
+                    && !workFlowAction.equals(SIGNWORKFLOWACTION)
                     && (waterConnectionDetails.getStatus().getCode()
                             .equals(APPLICATION_STATUS_FEEPAID)
                             || waterConnectionDetails.getStatus().getCode()
