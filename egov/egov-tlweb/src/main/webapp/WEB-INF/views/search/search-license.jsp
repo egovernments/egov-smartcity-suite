@@ -53,6 +53,11 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
+<style>
+    .DTFC_LeftBodyLiner{
+        overflow-x: hidden;
+    }
+</style>
 <div class="row">
     <div class="col-md-12">
         <form:form class="form-horizontal form-groups-bordered" action="" id="searchForm" modelAttribute="searchForm"

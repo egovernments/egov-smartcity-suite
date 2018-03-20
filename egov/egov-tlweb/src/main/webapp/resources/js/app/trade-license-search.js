@@ -432,7 +432,7 @@ $(document).ready(function () {
                                     $.each(JSON.parse(row.actions), function (key, value) {
                                         option += "<option>" + value.key + "</option>";
                                     });
-                                    return ('<select class="form-control" style="font-size: small" id="recordActions" onchange="goToAction(this,' + row.licenseId + ')" >' + option + '</select>');
+                                    return ('<select class="form-control" style="width:200px;font-size: small" id="recordActions" onchange="goToAction(this,' + row.licenseId + ')" >' + option + '</select>');
                                 },
                                 "sortable": false,
                                 "orderable": false
