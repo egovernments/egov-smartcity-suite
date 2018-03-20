@@ -87,15 +87,6 @@ if ($('#autoPreambleNoGenEnabled').val() == "true") {
 }
 
 jQuery('#add-preamble').click(function(){
-	
-	if($("#agendaNumber").val()!=''){
-		validateAgendaNumber();
-		if($("#agendaNumber").val()==''){
-		bootbox.alert("Agenda Number Validation failed.Please enter Agenda Number Again." );
-    	$("#agendaNumber").attr('required', true) ;	
-    	e.preventDefault();
-	}
-    }
 	$('.agenda-section').show();
 	
 	var idx=$(tbody).find('tr').length;
@@ -152,6 +143,9 @@ $("#preambleTable tbody").on('blur','tr .validserial',function(event) {
 	validateSerialNumber(rowObj.index(), $(rowObj).find('.validserial').val());
 });
 
+$('#meetingNumber').mouseleave(function(){
+	validateMeetingNumber();
+});
 
 function validateSerialNumber(idx, sNo) {
 	if (sNo) {
@@ -200,50 +194,8 @@ function validateUniqueResolutionNumber(idx, resNo) {
 	}
 }
 
-$('#buttonSubmit').click(function(e) {
-	if($('#emptyRow').length){
-		bootbox.alert("Atleast one preamble item should be added into agenda");
-		e.preventDefault();
-	}
-	
-	var tbody = $("#preambleTable tbody");
-
-	if (tbody.children().length == 0) {
-		bootbox.alert("Atleast one preamble item should be added into agenda to proceed");
-		e.preventDefault();
-	}
-	
-	if($("#agendaNumber").val()==''){
-		bootbox.alert("Please enter Agenda Number");
-    	$("#agendaNumber").attr('required', true) ;	
-    	e.preventDefault();
-    }
-	if($("#agendaNumber").val()!=''){
-		
-		validateAgendaNumber();
-	}
-	
-    
-    
-	else if ($('form').valid()) {
-		 var action = '/council/councilmom/savedataentry' ;
-			$('#councilMeetingform').attr('method', 'post');
-			$('#councilMeetingform').attr('action', action); 
-	} else {
-		e.preventDefault();
-	}
-});	 
-
-$('#meetingNumber').mouseleave(function(){
-	validateMeetingNumber();
-});
-
-$('#agendaNumber').mouseleave(function(){
-	validateAgendaNumber();
-});
-
-function validateAgendaNumber(){
-	var agendaNumber=$('#agendaNumber').val();
+function validateAgendaNumber(agendaNumber){
+	var agendaresponse=false;
 	if(agendaNumber != '') {
 		$.ajax({
 			url: "/council/councilmom/checkUnique-agendaNo",      
@@ -256,14 +208,19 @@ function validateAgendaNumber(){
 				if(!response) {
 						$('#agendaNumber').val('');
 						bootbox.alert("Entered Agenda Number already exists. Please Enter Unique Number.");
+						$("#agendaNumber").prop('required', true) ;	
+						agendaresponse=true;
 				}
 			}, 
 			error: function (response) {
 				$('#agendaNumber').val('');
-				bootbox.alert("connection validation failed");
+				$("#agendaNumber").prop('required', true) ;	
+				bootbox.alert("Entered Agenda Number already exists. Please Enter Unique Number.");
+				agendaresponse=true;
 			}
 		});
 	}	
+	return agendaresponse;
 }
 
 
@@ -338,6 +295,35 @@ function validateResolutionNumber(resolutionNumber){
 		});
 	}	
 }
+
+
+$('#buttonSubmit').click(function(e) {
+	var nonUniqueAgenda=validateAgendaNumber($('#agendaNumber').val());
+	if($('#emptyRow').length){
+		bootbox.alert("Atleast one preamble item should be added into agenda");
+		e.preventDefault();
+	}
+	var tbody = $("#preambleTable tbody");
+	 if(tbody.children().length == 0) {
+		bootbox.alert("Atleast one preamble item should be added into agenda to proceed");
+		e.preventDefault();
+	}
+	 if($('#agendaNumber').val()!=""){
+		 alert("Validating agenda number...");
+		 if(nonUniqueAgenda){
+				$("#agendaNumber").prop('required', required) ;	
+				e.preventDefault();
+		 }
+	 }
+	 if ($('form').valid() && !nonUniqueAgenda) {
+		 var action = '/council/councilmom/savedataentry' ;
+			$('#councilMeetingform').attr('method', 'post');
+			$('#councilMeetingform').attr('action', action); 
+			$('form').submit();			
+	} else {
+		e.preventDefault();
+	}
+});	 
 
 function regenerateIndexes()
 {

@@ -73,11 +73,12 @@
 		</div>
 		<div class="panel-body">
 			<div class="form-group">
+			
 				<label class="col-md-2 col-sm-3 control-label text-right"><spring:message
 						code="lbl.agendaNumber" /><span class="mandatory"></label>
 				<div class="col-md-2 col-sm-3">
 					<form:input path="agenda.agendaNumber" id="agendaNumber" type="text"
-						class="form-control text-left patternvalidation" maxlength="20"
+						class="form-control text-left patternvalidation" maxlength="20" 
 						placeholder="" autocomplete="off" />
 					<form:errors path="agenda.agendaNumber" cssClass="add-margin error-msg" />
 				</div>
@@ -134,7 +135,7 @@
 			<button type="button" id="add-preamble" class='btn btn-primary'>
 				<spring:message code='lbl.additem' />
 			</button>
-			<button type='submit' class='btn btn-primary' id="buttonSubmit">
+			<button type='button' class='btn btn-primary' id="buttonSubmit">
 				<spring:message code='lbl.save' />
 			</button>
 			<a href='javascript:void(0)' class='btn btn-default'

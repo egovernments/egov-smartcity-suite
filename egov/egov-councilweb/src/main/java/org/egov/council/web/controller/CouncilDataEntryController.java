@@ -64,6 +64,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.council.autonumber.PreambleNumberGenerator;
 import org.egov.council.entity.CommitteeType;
@@ -142,7 +143,7 @@ public class CouncilDataEntryController {
     public String showCouncilForm(final Model model) {
         MeetingMOM meetingMOM = new MeetingMOM();
         model.addAttribute(MEETING_MOM, meetingMOM);
-        model.addAttribute("autoPreambleNoGenEnabled", true);            
+        model.addAttribute("autoPreambleNoGenEnabled", isAutoPreambleNoGenEnabled());            
         return COUNCILMOM_DATAENTRY;
     }
 
@@ -152,17 +153,16 @@ public class CouncilDataEntryController {
             final BindingResult errors, final Model model,
             final RedirectAttributes redirectAttrs) throws ParseException {
 
-
         List<MeetingMOM> meetingMOMList = new ArrayList<>();
         List<CouncilAgendaDetails> preambleList = new ArrayList<>();
-        if(councilAgendaService.findByAgendaNo(meetingMOM.getAgenda().getAgendaNumber()).get(0)!=null)
-        {
-            errors.rejectValue("agenda.agendaNumber", "err.agenda.alreadyexists");
 
+        if (StringUtils.isNotBlank(meetingMOM.getAgenda().getAgendaNumber())
+                && (!councilAgendaService.findByAgendaNo(meetingMOM.getAgenda().getAgendaNumber()).isEmpty())) {
+            errors.rejectValue("agenda.agendaNumber", "err.agenda.alreadyexists");
         }
         if (errors.hasErrors()) {
             model.addAttribute(MEETING_MOM, meetingMOM);
-            model.addAttribute("autoPreambleNoGenEnabled", true);  
+            model.addAttribute("autoPreambleNoGenEnabled", isAutoPreambleNoGenEnabled());  
             return COUNCILMOM_DATAENTRY;
         }
         for (MeetingMOM meetingMoMs : meetingMOM.getMeeting().getMeetingMOMs()) {
@@ -241,8 +241,13 @@ public class CouncilDataEntryController {
     @RequestMapping(value = "/checkUnique-agendaNo", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public boolean uniqueAgendaNumber(@RequestParam final String agendaNumber) {
-        return councilAgendaService.findByAgendaNo(agendaNumber).isEmpty() ? true : false;
+        if(agendaNumber.isEmpty()){
+            return true;
+        }
+        else
+        return councilAgendaService.findByAgendaNo(agendaNumber).isEmpty();
     }
+    
     public Boolean isAutoPreambleNoGenEnabled() {
         return councilPreambleService.autoGenerationModeEnabled(
                 MODULE_FULLNAME, PREAMBLE_NUMBER_AUTO);

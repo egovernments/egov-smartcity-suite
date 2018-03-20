@@ -159,6 +159,10 @@ public class CouncilAgendaController {
             @Valid @ModelAttribute final CouncilAgenda councilAgenda,
             final BindingResult errors, final Model model,
             final RedirectAttributes redirectAttrs) {
+        
+        if (!councilAgendaService.findByAgendaNo(councilAgenda.getAgendaNumber()).isEmpty()) {
+            errors.rejectValue("agendaNumber", "err.agenda.alreadyexists");
+        }
         if (errors.hasErrors()) {
             return COUNCILAGENDA_NEW;
         }
