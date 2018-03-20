@@ -270,6 +270,7 @@ public class SurveyDashboardService {
                         : cityInfoMap.get(name));
             } else if (REVENUE_WARD.equals(aggregationField)) {
                 surveyResponse.setWardName(name);
+                surveyResponse.setUlbCode(surveyRequest.getUlbCode());
                 if (DASHBOARD_GROUPING_WARDWISE.equalsIgnoreCase(surveyRequest.getAggregationLevel())
                         && !wardWiseBillCollectors.isEmpty()) {
                     surveyResponse.setBillCollector(wardWiseBillCollectors.get(name) == null ? StringUtils.EMPTY
