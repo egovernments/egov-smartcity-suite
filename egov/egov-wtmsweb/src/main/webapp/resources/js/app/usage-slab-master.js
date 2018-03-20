@@ -55,9 +55,11 @@ function setSlabName(){
 	var fromvolume = $("#fromVolume").val();
 	var tovolume = $('#toVolume').val();
 	
-	if(usage=="" || fromVolume=="" || toVolume==""){
+	if(usage=="" || fromVolume==""){
 		return false;
 	}
+	if(usage!="" && fromvolume!="" && tovolume=="")
+		tovolume="above";
 	var slabName = usage.substring(0,3)+"_"+fromvolume+"_"+tovolume;
 	$('#slabName').val(slabName);
 } 
