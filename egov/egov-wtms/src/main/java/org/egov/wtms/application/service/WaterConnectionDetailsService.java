@@ -103,6 +103,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.TEMPERARYCLOSECODE
 import static org.egov.wtms.utils.constants.WaterTaxConstants.USERNAME_MEESEVA;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_PREVIEW_BUTTON;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_BUTTON_GENERATEESTIMATE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_DEE_FORWARD_PENDING;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_EE_FORWARD_PENDING;
@@ -846,6 +847,7 @@ public class WaterConnectionDetailsService {
             else if (wfmatrix.getNextDesignation() != null
                     && !workFlowAction.equals(APPROVEWORKFLOWACTION)
                     && !workFlowAction.equals(SIGNWORKFLOWACTION)
+                    && !workFlowAction.equals(WF_PREVIEW_BUTTON)
                     && (waterConnectionDetails.getStatus().getCode()
                             .equals(APPLICATION_STATUS_FEEPAID)
                             || waterConnectionDetails.getStatus().getCode()
@@ -877,16 +879,17 @@ public class WaterConnectionDetailsService {
                         waterConnectionDetails.getConnection().getPropertyIdentifier());
                 if (posobj != null)
                     approvalPosition = posobj.getId();
-            } else if (workFlowAction.equals(SIGNWORKFLOWACTION) || workFlowAction.equals(APPROVEWORKFLOWACTION)
-                    && (waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_FEEPAID)
-                            || APPLICATION_STATUS_DIGITALSIGNPENDING.equals(waterConnectionDetails.getStatus().getCode())
-                            || waterConnectionDetails.getStatus().getCode()
-                                    .equals(APPLICATION_STATUS_CLOSERINPROGRESS)
-                            || waterConnectionDetails
-                                    .getStatus().getCode()
-                                    .equals(APPLICATION_STATUS__RECONNCTIONINPROGRESS)
-                            || waterConnectionDetails.getStatus().getCode()
-                                    .equals(APPLICATION_STATUS_APPROVED)))
+            } else if (WF_PREVIEW_BUTTON.equals(workFlowAction) || workFlowAction.equals(SIGNWORKFLOWACTION)
+                    || workFlowAction.equals(APPROVEWORKFLOWACTION)
+                            && (waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_FEEPAID)
+                                    || APPLICATION_STATUS_DIGITALSIGNPENDING.equals(waterConnectionDetails.getStatus().getCode())
+                                    || waterConnectionDetails.getStatus().getCode()
+                                            .equals(APPLICATION_STATUS_CLOSERINPROGRESS)
+                                    || waterConnectionDetails
+                                            .getStatus().getCode()
+                                            .equals(APPLICATION_STATUS__RECONNCTIONINPROGRESS)
+                                    || waterConnectionDetails.getStatus().getCode()
+                                            .equals(APPLICATION_STATUS_APPROVED)))
                 approvalPosition = waterConnectionDetails.getState().getOwnerPosition().getId();
 
         return approvalPosition;
