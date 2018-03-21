@@ -59,7 +59,7 @@ function downloadSignedNotice(signedFileStoreId) {
 	    'width='+screen.width,
 	    'fullscreen=yes' 
 	].join(',');
-	window.open('/wtms/digitalSignature/waterTax/downloadSignedWorkOrderConnection?signedFileStoreId='+signedFileStoreId+"&workOrderNumber="+workOrderNumber, "NoticeWindow", params);
+	window.open('/wtms/digitalSignature/waterTax/downloadSignedWorkOrderConnection?signedFileStoreId='+signedFileStoreId+'&workOrderNumber='+workOrderNumber, "NoticeWindow", params);
 }
 //Generate notice for the pending water connection document
 function generateNotice(obj, actionName, currentState){
