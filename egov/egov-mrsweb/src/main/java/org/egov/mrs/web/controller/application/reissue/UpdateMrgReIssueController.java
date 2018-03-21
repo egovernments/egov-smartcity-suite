@@ -55,6 +55,7 @@ import static org.egov.mrs.application.MarriageConstants.APPLICATION_NUMBER;
 import static org.egov.mrs.application.MarriageConstants.APPROVAL_COMMENT;
 import static org.egov.mrs.application.MarriageConstants.APPROVED;
 import static org.egov.mrs.application.MarriageConstants.CREATED;
+import static org.egov.mrs.application.MarriageConstants.FILESTORE_MODULECODE;
 import static org.egov.mrs.application.MarriageConstants.FILE_STORE_ID_APPLICATION_NUMBER;
 import static org.egov.mrs.application.MarriageConstants.JUNIOR_SENIOR_ASSISTANCE_APPROVAL_PENDING;
 import static org.egov.mrs.application.MarriageConstants.WFLOW_ACTION_STEP_APPROVE;
@@ -72,6 +73,7 @@ import static org.egov.mrs.application.MarriageConstants.WFSTATE_APPROVER_REJECT
 import static org.egov.mrs.application.MarriageConstants.WFSTATE_CMOH_APPROVED;
 import static org.egov.mrs.application.MarriageConstants.WFSTATE_MHO_APPROVED;
 import static org.egov.mrs.application.MarriageConstants.WFSTATE_REV_CLRK_APPROVED;
+import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -79,7 +81,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
@@ -89,8 +90,8 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.FileStoreUtils;
 import org.egov.mrs.application.MarriageUtils;
 import org.egov.mrs.application.service.MarriageCertificateService;
 import org.egov.mrs.application.service.workflow.RegistrationWorkflowService;
@@ -104,6 +105,7 @@ import org.egov.mrs.domain.service.ReIssueService;
 import org.egov.mrs.masters.service.MarriageRegistrationUnitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -155,6 +157,8 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
 
     @Autowired
     private SecurityUtils securityUtils;
+    @Autowired
+    private FileStoreUtils fileStoreUtils;
 
     private static final Logger LOGGER = Logger.getLogger(UpdateMrgReIssueController.class);
 
@@ -380,23 +384,19 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
         model.addAttribute("successMessage", message);
         model.addAttribute("objectType", MarriageCertificateType.REISSUE.toString());
         model.addAttribute("fileStoreId", fileStoreIdArr.length == 1 ? fileStoreIdArr[0] : "");
+        model.addAttribute("registrationno",reIssueObj!=null?reIssueObj.getRegistration().getRegistrationNo():"");
         LOGGER.debug("..........End of Digital Signature Transition : ReIssue........");
         return "mrdigitalsignature-success";
     }
 
     /**
      * @description download digitally signed certificate.
-     * @param request
-     * @param response
      */
-    @RequestMapping(value = "/downloadSignedCertificate")
-    public void downloadReIssueDigiSignedCertificate(final HttpServletRequest request, final HttpServletResponse response) {
-        final String signedFileStoreId = request.getParameter("signedFileStoreId");
-        try {
-            marriageUtils.downloadSignedCertificate(signedFileStoreId, response);
-        } catch (final ApplicationRuntimeException ex) {
-            throw new ApplicationRuntimeException("Exception while downloading file : " + ex);
-        }
+    @RequestMapping(value = "/downloadSignedCertificate", produces = APPLICATION_PDF_VALUE)
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> downloadReIssueDigiSignedCertificate(@RequestParam String signedFileStoreId,
+            @RequestParam String registrationNo) {
+       return fileStoreUtils.fileAsPDFResponse(signedFileStoreId, registrationNo, FILESTORE_MODULECODE);
     }
 
     /**

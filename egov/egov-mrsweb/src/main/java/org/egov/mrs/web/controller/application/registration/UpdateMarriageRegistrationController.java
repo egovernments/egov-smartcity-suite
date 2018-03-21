@@ -76,6 +76,7 @@ import static org.egov.mrs.application.MarriageConstants.WFSTATE_CMOH_APPROVED;
 import static org.egov.mrs.application.MarriageConstants.WFSTATE_MHO_APPROVED;
 import static org.egov.mrs.application.MarriageConstants.WFSTATE_REV_CLRK_APPROVED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -87,7 +88,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
@@ -97,9 +97,9 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.repository.FileStoreMapperRepository;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.utils.FileStoreUtils;
 import org.egov.mrs.application.MarriageUtils;
 import org.egov.mrs.application.service.MarriageCertificateService;
 import org.egov.mrs.application.service.workflow.RegistrationWorkflowService;
@@ -108,6 +108,7 @@ import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.enums.MarriageCertificateType;
 import org.egov.mrs.service.es.MarriageRegistrationUpdateIndexesService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -154,6 +155,8 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
     private RegistrationWorkflowService registrationWorkflowService;
     @Autowired
     private MarriageCertificateService marriageCertificateService;
+    @Autowired
+    private FileStoreUtils fileStoreUtils;
 
     private static final Logger LOGGER = Logger.getLogger(UpdateMarriageRegistrationController.class);
 
@@ -427,6 +430,7 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
         }
         model.addAttribute("objectType", MarriageCertificateType.REGISTRATION.toString());
         model.addAttribute("fileStoreId", fileStoreIdArr.length == 1 ? fileStoreIdArr[0] : "");
+        model.addAttribute("registrationNo", marriageRegistrationObj == null ? "" : marriageRegistrationObj.getRegistrationNo());
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("..........END of Digital Signature Transition : Registration........");
         return "mrdigitalsignature-success";
@@ -434,17 +438,13 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
 
     /**
      * @description download digitally signed certificate.
-     * @param request
-     * @param response
      */
-    @RequestMapping(value = "/downloadSignedCertificate")
-    public void downloadRegDigiSignedCertificate(final HttpServletRequest request, final HttpServletResponse response) {
-        final String signedFileStoreId = request.getParameter("signedFileStoreId");
-        try {
-            marriageUtils.downloadSignedCertificate(signedFileStoreId, response);
-        } catch (final ApplicationRuntimeException ex) {
-            throw new ApplicationRuntimeException("Exception while downloading file : " + ex);
-        }
+    @RequestMapping(value = "/downloadSignedCertificate", produces = APPLICATION_PDF_VALUE)
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> downloadRegDigiSignedCertificate(@RequestParam String signedFileStoreId,
+            @RequestParam String registrationNo) {
+
+        return fileStoreUtils.fileAsPDFResponse(signedFileStoreId, registrationNo, FILESTORE_MODULECODE);
     }
 
     /**
