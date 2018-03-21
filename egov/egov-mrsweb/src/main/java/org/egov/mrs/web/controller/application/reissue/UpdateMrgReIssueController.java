@@ -384,7 +384,7 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
         model.addAttribute("successMessage", message);
         model.addAttribute("objectType", MarriageCertificateType.REISSUE.toString());
         model.addAttribute("fileStoreId", fileStoreIdArr.length == 1 ? fileStoreIdArr[0] : "");
-        model.addAttribute("registrationno",reIssueObj!=null?reIssueObj.getRegistration().getRegistrationNo():"");
+        model.addAttribute("registrationNo", reIssueObj == null ? "" : reIssueObj.getRegistration().getRegistrationNo());
         LOGGER.debug("..........End of Digital Signature Transition : ReIssue........");
         return "mrdigitalsignature-success";
     }
