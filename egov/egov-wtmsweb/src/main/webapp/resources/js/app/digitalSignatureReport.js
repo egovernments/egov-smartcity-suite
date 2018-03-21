@@ -53,12 +53,13 @@ function selectAllCheckbox(e){
 
 //This function is used to show the report which is digitally signed.
 function downloadSignedNotice(signedFileStoreId) {
+	var workOrderNumber = $("#workOrderNumber").val();
 	var params = [
 		'height='+screen.height, 
 	    'width='+screen.width,
 	    'fullscreen=yes' 
 	].join(',');
-	window.open('/wtms/digitalSignature/waterTax/downloadSignedWorkOrderConnection?signedFileStoreId='+signedFileStoreId, "NoticeWindow", params);
+	window.open('/wtms/digitalSignature/waterTax/downloadSignedWorkOrderConnection?signedFileStoreId='+signedFileStoreId+"&workOrderNumber="+workOrderNumber, "NoticeWindow", params);
 }
 //Generate notice for the pending water connection document
 function generateNotice(obj, actionName, currentState){
