@@ -48,7 +48,15 @@
 
 package org.egov.mrs.application;
 
-import org.apache.commons.io.FileUtils;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.Assignment;
@@ -56,10 +64,6 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.filestore.repository.FileStoreMapperRepository;
-import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.mrs.application.service.MarriageCertificateService;
@@ -77,22 +81,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.validation.ValidationException;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.egov.infra.utils.PdfUtils.appendFiles;
-
 @Service
 public class MarriageUtils {
 
@@ -105,12 +93,6 @@ public class MarriageUtils {
 
     @Autowired
     private AppConfigValueService appConfigValuesService;
-
-    @Autowired
-    private FileStoreService fileStoreService;
-
-    @Autowired
-    private FileStoreMapperRepository fileStoreMapperRepository;
 
     @Autowired
     private MarriageCertificateService marriageCertificateService;
@@ -183,36 +165,6 @@ public class MarriageUtils {
                 + "</p></body></html>";
         final byte[] byteData = errorMessage.getBytes();
         return new ResponseEntity<>(byteData, HttpStatus.CREATED);
-    }
-
-    public void downloadSignedCertificate(String signedFileStoreId, final HttpServletResponse response) {
-        final File file = fileStoreService.fetch(signedFileStoreId, MarriageConstants.FILESTORE_MODULECODE);
-        try {
-            final FileStoreMapper fileStoreMapper = fileStoreMapperRepository.findByFileStoreId(signedFileStoreId);
-            final List<InputStream> pdfs = new ArrayList<>();
-            final byte[] bFile = FileUtils.readFileToByteArray(file);
-            pdfs.add(new ByteArrayInputStream(bFile));
-            getServletResponse(response, pdfs, fileStoreMapper.getFileName());
-        } catch (final FileNotFoundException fileNotFoundExcep) {
-            throw new ApplicationRuntimeException("Exception while loading file : " + fileNotFoundExcep);
-        } catch (final IOException ioExcep) {
-            throw new ApplicationRuntimeException("Exception while generating work order : " + ioExcep);
-        }
-    }
-
-
-    private HttpServletResponse getServletResponse(final HttpServletResponse response, final List<InputStream> pdfs,
-                                                   final String filename) {
-        try {
-            final byte[] data = appendFiles(pdfs);
-            response.setHeader("Content-disposition", "attachment;filename=" + filename + ".pdf");
-            response.setContentType("application/pdf");
-            response.setContentLength(data.length);
-            response.getOutputStream().write(data);
-            return response;
-        } catch (final IOException e) {
-            throw new ValidationException(e.getMessage());
-        }
     }
 
     public boolean isReassignEnabled() {
