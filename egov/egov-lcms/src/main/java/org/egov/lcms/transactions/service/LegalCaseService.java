@@ -47,6 +47,11 @@
  */
 package org.egov.lcms.transactions.service;
 
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.lcms.entity.es.LegalCaseDocument;
 import org.egov.lcms.masters.entity.AdvocateMaster;
@@ -74,11 +79,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -128,6 +128,10 @@ public class LegalCaseService {
         return legalCaseRepository.findByCaseNumber(caseNumber);
     }
 
+    public List<LegalCase> getLegalCaseByCaseNumberLike(final String caseNumber) {
+        return legalCaseRepository.findByCaseNumberContainingIgnoreCase(caseNumber);
+    }
+
     @Transactional
     public LegalCase persist(final LegalCase legalcase, final MultipartFile[] files)
             throws IOException, ParseException {
@@ -169,8 +173,7 @@ public class LegalCaseService {
     @Transactional
     public void updateCounterAffidavitAndPwr(final LegalCase legalcase, final List<Pwr> pwrList) {
         /*
-         * final List<LegalCaseDepartment> legalcaseDetails = new
-         * ArrayList<LegalCaseDepartment>(0);
+         * final List<LegalCaseDepartment> legalcaseDetails = new ArrayList<LegalCaseDepartment>(0);
          */
         final List<Pwr> pwrListtemp = new ArrayList<Pwr>(0);
         final List<CounterAffidavit> caListtemp = new ArrayList<CounterAffidavit>(0);
@@ -187,19 +190,13 @@ public class LegalCaseService {
         legalcase.getCounterAffidavits().clear();
         legalcase.setCounterAffidavits(caListtemp);
         /*
-         * for (final LegalCaseDepartment legaldeptObj : legalDept) { String[]
-         * stremp = null; legaldeptObj.setLegalCase(legalcase); if
-         * (legaldeptObj.getPosition().getName() != null &&
-         * legaldeptObj.getPosition().getName().contains("@")) { stremp =
-         * legaldeptObj.getPosition().getName().split("@");
-         * legaldeptObj.setPosition(legalCaseUtil.getPositionByName(stremp[0]));
-         * } else {
-         * legaldeptObj.setPosition(legalCaseUtil.getPositionByName(legaldeptObj
-         * .getPosition().getName())); }
-         * legaldeptObj.setDepartment(legalCaseUtil.getDepartmentByName(
-         * legaldeptObj.getDepartment().getName()));
-         * legalcaseDetails.add(legaldeptObj); }
-         * legalcase.getLegalCaseDepartment().clear();
+         * for (final LegalCaseDepartment legaldeptObj : legalDept) { String[] stremp = null;
+         * legaldeptObj.setLegalCase(legalcase); if (legaldeptObj.getPosition().getName() != null &&
+         * legaldeptObj.getPosition().getName().contains("@")) { stremp = legaldeptObj.getPosition().getName().split("@");
+         * legaldeptObj.setPosition(legalCaseUtil.getPositionByName(stremp[0])); } else {
+         * legaldeptObj.setPosition(legalCaseUtil.getPositionByName(legaldeptObj .getPosition().getName())); }
+         * legaldeptObj.setDepartment(legalCaseUtil.getDepartmentByName( legaldeptObj.getDepartment().getName()));
+         * legalcaseDetails.add(legaldeptObj); } legalcase.getLegalCaseDepartment().clear();
          * legalcase.setLegalCaseDepartment(legalcaseDetails);
          */
 
