@@ -1235,6 +1235,7 @@ public interface PropertyTaxConstants {
     public static final String THIRD_PARTY_ERR_CODE_TRANSANCTIONID_VALIDATE = "PTIS-REST-26";
     public static final String THIRD_PARTY_ERR_MSG_TRANSANCTIONID_VALIDATE = "Invalid Request, Used transaction ID is associated";
     public static final String THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_NOT_FOUND = "Assessment number not found";
+    public static final String CHECK_PROPERTY_CATEGORY="Please enter correct property type";
     public static final String THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_REQUIRED = "PTIS-REST-12";
     public static final String THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_REQUIRED = "Assessment number is required";
     public static final String THIRD_PARTY_ERR_CODE_PAYMENT_MODE_REQUIRED = "PTIS-REST-13";
