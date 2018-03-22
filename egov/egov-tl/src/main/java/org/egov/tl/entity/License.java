@@ -623,8 +623,9 @@ public class License extends StateAware<Position> {
     }
 
     public boolean canCollectLicenseFee() {
-        return this.isNewWorkflow() && !isNatureOfTaskClosure() &&
-                (STATUS_ACKNOWLEDGED.equals(this.getStatus().getStatusCode()) || STATUS_COLLECTIONPENDING.equals(this.getStatus().getStatusCode()));
+        return this.isNewWorkflow() && !isNatureOfTaskClosure() && !isPaid() &&
+                (STATUS_ACKNOWLEDGED.equals(this.getStatus().getStatusCode())
+                        || STATUS_COLLECTIONPENDING.equals(this.getStatus().getStatusCode()));
     }
 
     public Boundary getAdminWard() {

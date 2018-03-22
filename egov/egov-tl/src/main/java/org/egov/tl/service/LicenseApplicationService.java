@@ -128,8 +128,11 @@ public class LicenseApplicationService extends TradeLicenseService {
         license.setLicenseAppType(this.getLicenseApplicationTypeForRenew());
         if (!currentUserIsMeeseva())
             license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
-        recalculateDemand(this.feeMatrixService.getLicenseFeeDetails(license,
-                license.getLicenseDemand().getEgInstallmentMaster().getFromDate()), license);
+        final BigDecimal currentDemandAmount = recalculateLicenseFee(license.getCurrentDemand());
+        final BigDecimal feematrixDmdAmt = calculateFeeAmount(license);
+        if (feematrixDmdAmt.compareTo(currentDemandAmount) >= 0)
+            recalculateDemand(this.feeMatrixService.getLicenseFeeDetails(license,
+                    license.getLicenseDemand().getEgInstallmentMaster().getFromDate()), license);
         license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
         processAndStoreDocument(license);
         if (license.isPaid())
