@@ -54,6 +54,7 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.Validity;
 import org.egov.tl.repository.ValidityRepository;
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -134,13 +135,26 @@ public class ValidityService {
 
     private void applyValidityToLegacyLicense(License license, Validity validity) {
         license.getCurrentDemand().getEgDemandDetails().stream().
-                filter(demandDetail -> demandDetail.getAmount().subtract(demandDetail.getAmtCollected()).doubleValue() <= 0).
+                filter(demandDetail -> demandDetail.getAmount().doubleValue() > 0
+                        && demandDetail.getAmount().subtract(demandDetail.getAmtCollected()).doubleValue() <= 0).
                 max(Comparator.comparing(EgDemandDetails::getInstallmentEndDate)).
                 ifPresent(demandDetail -> {
                             if (validity.isBasedOnFinancialYear())
                                 license.setDateOfExpiry(demandDetail.getInstallmentEndDate());
                             else
                                 applyLicenseValidityBasedOnCustomValidity(license, validity);
+                        }
+                );
+    }
+
+    public void applyValidityToLegacyLicenseIfNull(License license) {
+        Validity validity = getApplicableLicenseValidity(license);
+        license.getCurrentDemand().getEgDemandDetails().stream().
+                filter(demandDetail -> demandDetail.getAmount().doubleValue() > 0).
+                min(Comparator.comparing(EgDemandDetails::getInstallmentEndDate)).
+                ifPresent(demandDetail -> {
+                            if (validity.isBasedOnFinancialYear())
+                                license.setDateOfExpiry(new DateTime(demandDetail.getInstallmentEndDate()).minusYears(1).toDate());
                         }
                 );
     }

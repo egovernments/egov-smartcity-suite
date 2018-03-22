@@ -102,9 +102,11 @@
                     </div>
                 </div>
                 <%@ include file='../common/license-fee-detail-view.jsp' %>
-                <div class="panel panel-primary">
-                    <%@ include file='../common/license-workflow-history.jsp' %>
-                </div>
+                <s:if test="%{!licenseHistory.isEmpty}">
+                    <div class="panel panel-primary">
+                        <%@ include file='../common/license-workflow-history.jsp' %>
+                    </div>
+                </s:if>
             </s:push>
         </s:form>
         <div align="center" class="buttonbottom" id="buttondiv">

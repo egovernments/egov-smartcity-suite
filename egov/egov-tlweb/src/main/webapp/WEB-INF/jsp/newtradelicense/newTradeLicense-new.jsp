@@ -444,7 +444,7 @@
                         </div>
                     </div>
                     <%@ include file='../common/license-fee-detail-view.jsp' %>
-                    <s:if test="%{transitionInprogress()}">
+                    <s:if test="%{transitionInprogress() && !licenseHistory.isEmpty}">
                         <div class="panel panel-primary">
                             <%@ include file='../common/license-workflow-history.jsp' %>
                         </div>
@@ -528,7 +528,7 @@
                         </div>
                     </div>
                     <%@ include file='../common/license-fee-detail-view.jsp' %>
-                    <s:if test="%{transitionInprogress()}">
+                    <s:if test="%{transitionInprogress() && !licenseHistory.isEmpty}">
                         <div class="panel panel-primary">
                             <%@ include file='../common/license-workflow-history.jsp' %>
                         </div>

@@ -123,6 +123,8 @@ public class LegacyLicenseService extends LicenseService {
         license.setActive(true);
         license.setLicenseNumber(licenseNumberUtils.generateLicenseNumber());
         validityService.applyLicenseValidity(license);
+        if (license.getDateOfExpiry() == null)
+            validityService.applyValidityToLegacyLicenseIfNull(license);
         update(license);
     }
 
@@ -131,6 +133,8 @@ public class LegacyLicenseService extends LicenseService {
         storeDocument(license);
         updateLegacyDemand(license);
         validityService.applyLicenseValidity(license);
+        if (license.getDateOfExpiry() == null)
+            validityService.applyValidityToLegacyLicenseIfNull(license);
         update(license);
     }
 

@@ -47,40 +47,40 @@
   --%>
 
 <%@ include file="/includes/taglibs.jsp" %>
-<s:if test="%{!licenseHistory.isEmpty}">
-    <div class="panel-heading  custom_form_panel_heading subheadnew">
-        <div class="panel-title"><s:text name='lbl.licensehistory'/></div>
-    </div>
-    <div class="panel-body">
-        <table class="table table-bordered" style="width:97%;margin:0 auto;">
-            <thead>
-            <tr>
-                <th><s:text name="lbl.wf.date"/></th>
-                <th><s:text name="lbl.wf.updatedby"/></th>
-                <th><s:text name="lbl.wf.currentowner"/></th>
-                <th><s:text name="lbl.wf.status"/></th>
-                <th><s:text name="lbl.wf.comments"/></th>
-            </tr>
-            </thead>
-            <tbody>
 
-            <s:iterator value="%{licenseHistory}" var="history">
-                <tr>
-                    <td class="blueborderfortd" style="text-align: left"><s:date
-                            name="#history.date" var="updatedDate"
-                            format="dd/MM/yyyy hh:mm a"/> <s:property
-                            value="#updatedDate"/></td>
-                    <td class="blueborderfortd" style="text-align: left"><s:property
-                            value="%{#history.updatedBy}"/></td>
-                    <td class="blueborderfortd" style="text-align: left"><s:property
-                            value="%{#history.user}"/></td>
-                    <td class="blueborderfortd" style="text-align: left"><s:property
-                            value="%{#history.status}"/></td>
-                    <td class="blueborderfortd" style="text-align: left"><s:property
-                            value="%{#history.comments}"/></td>
-                </tr>
-            </s:iterator>
-            </tbody>
-        </table>
-    </div>
-</s:if>
+<div class="panel-heading  custom_form_panel_heading subheadnew">
+    <div class="panel-title"><s:text name='lbl.licensehistory'/></div>
+</div>
+<div class="panel-body">
+    <table class="table table-bordered" style="width:97%;margin:0 auto;">
+        <thead>
+        <tr>
+            <th><s:text name="lbl.wf.date"/></th>
+            <th><s:text name="lbl.wf.updatedby"/></th>
+            <th><s:text name="lbl.wf.currentowner"/></th>
+            <th><s:text name="lbl.wf.status"/></th>
+            <th><s:text name="lbl.wf.comments"/></th>
+        </tr>
+        </thead>
+        <tbody>
+
+        <s:iterator value="%{licenseHistory}" var="history">
+            <tr>
+                <td class="blueborderfortd" style="text-align: left"><s:date
+                        name="#history.date" var="updatedDate"
+                        format="dd/MM/yyyy hh:mm a"/> <s:property
+                        value="#updatedDate"/></td>
+                <td class="blueborderfortd" style="text-align: left"><s:property
+                        value="%{#history.updatedBy}"/></td>
+                <td class="blueborderfortd" style="text-align: left"><s:property
+                        value="%{#history.user}"/></td>
+                <td class="blueborderfortd" style="text-align: left"><s:property
+                        value="%{#history.status}"/></td>
+                <td class="blueborderfortd" style="text-align: left"><s:property
+                        value="%{#history.comments}"/></td>
+            </tr>
+        </s:iterator>
+        </tbody>
+    </table>
+</div>
+
