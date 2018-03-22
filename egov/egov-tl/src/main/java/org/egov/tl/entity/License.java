@@ -567,7 +567,9 @@ public class License extends StateAware<Position> {
     }
 
     public boolean isReadyForRenewal() {
-        return isActiveAndPermanent() && !isPaid() && (transitionCompleted() || isLegacyWithNoState());
+        return isActiveAndPermanent()
+                && getDateOfExpiry().before(getCurrentDemand().getEgInstallmentMaster().getToDate())
+                && (transitionCompleted() || isLegacyWithNoState());
     }
 
     public boolean isActiveAndPermanent() {

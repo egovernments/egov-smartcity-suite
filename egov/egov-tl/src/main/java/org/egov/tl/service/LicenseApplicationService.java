@@ -72,6 +72,7 @@ import static org.egov.tl.utils.Constants.NEWLICENSEREJECT;
 import static org.egov.tl.utils.Constants.RENEWLICENSE;
 import static org.egov.tl.utils.Constants.RENEWLICENSEREJECT;
 import static org.egov.tl.utils.Constants.SIGNWORKFLOWACTION;
+import static org.egov.tl.utils.Constants.RENEW_WITHOUT_FEE;
 
 @Service
 @Transactional(readOnly = true)
@@ -131,9 +132,11 @@ public class LicenseApplicationService extends TradeLicenseService {
                 license.getLicenseDemand().getEgInstallmentMaster().getFromDate()), license);
         license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
         processAndStoreDocument(license);
+        if (license.isPaid())
+            workflowBean.setAdditionaRule(RENEW_WITHOUT_FEE);
+
         if (securityUtils.currentUserIsEmployee())
             licenseProcessWorkflowService.createNewLicenseWorkflowTransition(license, workflowBean);
-
         else
             licenseProcessWorkflowService.getWfWithThirdPartyOp(license, workflowBean);
         this.licenseRepository.save(license);
@@ -143,7 +146,6 @@ public class LicenseApplicationService extends TradeLicenseService {
         licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
         return license;
     }
-
 
     @Transactional
     public License save(final TradeLicense license) {

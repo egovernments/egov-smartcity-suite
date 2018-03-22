@@ -205,7 +205,6 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         } else {
             licenseApplicationService.create((TradeLicense) license, workflowBean);
             addActionMessage(this.getText("license.submission.succesful") + license().getApplicationNumber());
-            setHasCscOperatorRole(securityUtils.getCurrentUser().getRoles().toString().contains(CSCOPERATOR));
         }
         return tradeLicenseService.currentUserIsMeeseva() ? MEESEVA_RESULT_ACK : ACKNOWLEDGEMENT;
     }
@@ -302,19 +301,10 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         } else {
             licenseApplicationService.renew((TradeLicense) license(), workflowBean);
             addActionMessage(this.getText("license.renew.submission.succesful") + " " + license().getApplicationNumber());
-            setHasCscOperatorRole(securityUtils.getCurrentUser().getRoles().toString().contains(CSCOPERATOR));
         }
         return tradeLicenseService.currentUserIsMeeseva() ? MEESEVA_RESULT_ACK : ACKNOWLEDGEMENT;
     }
 
-    @SkipValidation
-    public String enterExistingForm() {
-        return NEW;
-    }
-
-    public void prepareEnterExistingForm() {
-        prepareNewForm();
-    }
 
     // create workflow and pushes to drafts
     public void initiateWorkFlowForLicense() {
@@ -553,7 +543,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     }
 
     public boolean isHasCscOperatorRole() {
-        return hasCscOperatorRole;
+        return securityUtils.getCurrentUser().hasRole(CSCOPERATOR);
     }
 
     public void setHasCscOperatorRole(boolean hasCscOperatorRole) {
@@ -622,7 +612,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
             WorkFlowMatrix workFlowMatrix = this.customizedWorkFlowService.getWfMatrix(getModel()
                             .getStateType(), getWorkFlowDepartment(), getAmountRule(),
                     getAdditionalRule(), getModel().getCurrentState().getValue(),
-                    getPendingActions(), getModel().getCreatedDate(), "%" + license().getCurrentState().getOwnerPosition().getDeptDesig().getDesignation().getName() + "%");
+                    this.getPendingActions(), getModel().getCreatedDate(), "%" + license().getCurrentState().getOwnerPosition().getDeptDesig().getDesignation().getName() + "%");
             return workFlowMatrix.getEnableFields();
         } else
             return "all";
@@ -666,5 +656,10 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
                         licenseDocumentType -> !existingDocsType.contains(licenseDocumentType)).collect(Collectors.toList()).isEmpty())) {
             throw new ValidationException(VALIDATE_SUPPORT_DOCUMENT, VALIDATE_SUPPORT_DOCUMENT);
         }
+    }
+
+    @Override
+    public String getPendingActions() {
+        return getModel() != null && getModel().getCurrentState() != null ? getModel().getState().getNextAction() : null;
     }
 }
