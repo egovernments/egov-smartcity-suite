@@ -106,6 +106,12 @@
 		<property name="source" column="source" type="java.lang.String"/>
 	</class>
 	<query name="BY_APPLICATION_NO">
-		<![CDATA[from PropertyMutation p where p.applicationNo=?]]>
+		<![CDATA[from PropertyMutation p where p.applicationNo= :applicationNo]]>
+	</query>
+	<query name="BY_MUTATION_ID">
+		<![CDATA[from PropertyMutation p where p.id= :id]]>
+	</query>
+	<query name="USER_BY_NAMEANDMOBILENO">
+		<![CDATA[From User where name = :name and mobileNumber = :mobileNumber and gender = :gender ]]>
 	</query>
 </hibernate-mapping>

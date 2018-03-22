@@ -94,7 +94,6 @@ public interface PropertyTaxConstants {
     public static final String SESSIONLOGINID = "userid";
     public static final String SESSION_VAR_LOGIN_USER_NAME = "username";
     public static final String PROP_ADDR_TYPE = "PROPERTY";
-    public static final String OWNER_ADDR_TYPE = "OWNER";
     public static final String TRANSFER = "TRANSFER";
 
     // Workflow statuses
@@ -104,14 +103,11 @@ public interface PropertyTaxConstants {
 
     // Demand Category Constants used across Clients
     public static final String REASON_CATEGORY_CODE_TAX = "TAX";
-    public static final String REASON_CATEGORY_CODE_PENALTY = "PENALTY";
-    public static final String REASON_CATEGORY_CODE_ADVANCE = "ADVANCE";
     public static final String REASON_CATEGORY_CODE_FINES = "FINES";
 
     // Demand Reason Constants used across Clients
     public static final String ADVANCE_DMD_RSN_CODE = "ADVANCE";
     public static final String PENALTY_DMD_RSN_CODE = "PENALTY";
-    public static final String LPPAY_PENALTY_DMDRSNCODE = "PENALTY_FINES";
 
     // Others
     public static final String CURR_DMD_STR = "CURR_DMD";
@@ -168,7 +164,6 @@ public interface PropertyTaxConstants {
 
     public static final String NOTICE_TYPE_GRPPROCEEDINGS = "GRP Proceedings";
     public static final String NOTICE_TYPE_GRPHEARINGS = "GRP Hearing Notice";
-    public static final String GRP_RP_CREATED = "CREATED";
     public static final String GRP_RP_INSP_VRFD = "verified";
     public static final String GRP_RP_HEARING_DATE_FIXED = "fixed";
     public static final String PROPERTY_MODIFY_REASON_REVISION_PETITION = "RP";
@@ -339,7 +334,6 @@ public interface PropertyTaxConstants {
     public static final String WARRANT_APPLICATION = "Warrant-application";
     public static final String REPORT_TEMPLATENAME_EGS_EDU_CESS_COLLECTION = "Egs_EduCess_CollectionInfo";
     public static final String REPORT_TEMPLATENAME_CALSHEET_FOR_GOVT_PROPS = "IndCalSheetForGovtProperties";
-    public static final String REPORT_TEMPLATENAME_MUTATION_CERTIFICATE = "MutationCertificate";
     public static final String REPORT_TEMPLATENAME_ARREARREGISTER = "ArrearRegister";
     public static final String REPORT_TEMPLATENAME_BAKAYAFERIST = "Bakaya_Ferist";
     public static final String REPORT_TEMPLATENAME_HEADWISEDMDCOLL = "HeadWiseDmdNdRec";
@@ -359,9 +353,6 @@ public interface PropertyTaxConstants {
 
     // TreeMap for Non Vacant Land types
     public static final TreeMap<String, String> NON_VAC_LAND_PROPERTY_TYPE_CATEGORY = new TreeMap<String, String>() {
-        /**
-         *
-         */
         private static final long serialVersionUID = -8758751964576480520L;
 
         {
@@ -373,9 +364,6 @@ public interface PropertyTaxConstants {
 
     // TreeMap for Vacant Land types
     public static final HashMap<String, String> VAC_LAND_PROPERTY_TYPE_CATEGORY = new HashMap<String, String>() {
-        /**
-         *
-         */
         private static final long serialVersionUID = 4641144830413085281L;
 
         {
@@ -411,9 +399,9 @@ public interface PropertyTaxConstants {
     };
     // Un authorized penalty percentages on property tax
     public static final BigDecimal DEVIATION_TAXPERC_10 = BigDecimal.valueOf(0.1);// 10%
-    public static final BigDecimal BPA_DEVIATION_TAXPERC_1_10 = new BigDecimal(0.25);// 25%
-    public static final BigDecimal BPA_DEVIATION_TAXPERC_ABOVE_11 = new BigDecimal(0.5);// 50%
-    public static final BigDecimal BPA_DEVIATION_TAXPERC_NOT_DEFINED = new BigDecimal(1);// 100%
+    public static final BigDecimal BPA_DEVIATION_TAXPERC_1_10 = BigDecimal.valueOf(0.25);// 25%
+    public static final BigDecimal BPA_DEVIATION_TAXPERC_ABOVE_11 = BigDecimal.valueOf(0.5);// 50%
+    public static final BigDecimal BPA_DEVIATION_TAXPERC_NOT_DEFINED = BigDecimal.valueOf(1);// 100%
 
     // Named Queries
     public static final String QUERY_DEPRECIATION_BY_YEAR = "DEPRECIATION_BY_YEAR";
@@ -449,7 +437,7 @@ public interface PropertyTaxConstants {
     public static final BigDecimal BASERENT_FROM_APRIL2008_OPENPLOT = new BigDecimal("5");
 
     // Standard Deduction 10%
-    public static final Double STANDARD_DEDUCTION_PERCENTAGE = new Double(.1d);
+    public static final Double STANDARD_DEDUCTION_PERCENTAGE = Double.valueOf(.1d);
 
     // ALV Constant for Large Residential Premises Tax
     public static final BigDecimal LARGE_RESIDENTIAL_PREMISES_ALV = new BigDecimal("1500");
@@ -555,9 +543,6 @@ public interface PropertyTaxConstants {
     public static final String EFFECTIVE_ASSESSMENT_PERIOD4 = "1 Oct";
 
     public static final TreeMap<Integer, String> FLOOR_MAP = new TreeMap<Integer, String>() {
-        /**
-         *
-         */
         private static final long serialVersionUID = 464912402295082366L;
 
         {
@@ -733,20 +718,20 @@ public interface PropertyTaxConstants {
     public static final String PROPERTY_MODIFY_REASON_BULK_BOUNDARY = "BULK BOUNDARY UPDATION";
     
     // Constants for Government Properties
-    public static final Double STATEGOVT_BUILDING_ALV_PERCENTAGE = new Double(8.25d);
-    public static final Double CENTRALGOVT_BUILDING_ALV_PERCENTAGE = new Double(9d);
-    public static final Double STATEGOVT_BUILDING_GENERALTAX_ADDITIONALDEDUCTION = new Double(20d);
+    public static final Double STATEGOVT_BUILDING_ALV_PERCENTAGE = Double.valueOf(8.25d);
+    public static final Double CENTRALGOVT_BUILDING_ALV_PERCENTAGE = Double.valueOf(9d);
+    public static final Double STATEGOVT_BUILDING_GENERALTAX_ADDITIONALDEDUCTION = Double.valueOf(20d);
 
     // Amenities
     public static final String AMENITY_TYPE_FULL = "Full";
     public static final String AMENITY_TYPE_PARTIAL = "Partial";
     public static final String AMENITY_TYPE_NIL = "Nil";
-    public static final Double AMENITY_PERCENTAGE_FULL = new Double(75d);
-    public static final Double AMENITY_PERCENTAGE_PARTIAL = new Double(50d);
-    public static final Double AMENITY_PERCENTAGE_NIL = new Double(33.33d);
+    public static final Double AMENITY_PERCENTAGE_FULL = Double.valueOf(75d);
+    public static final Double AMENITY_PERCENTAGE_PARTIAL = Double.valueOf(50d);
+    public static final Double AMENITY_PERCENTAGE_NIL = Double.valueOf(33.33d);
 
     // Residential Cum Commercial properties
-    public static final Double RESD_CUM_COMMERCIAL_PROP_ALV_PERCENTAGE = new Double(50d);
+    public static final Double RESD_CUM_COMMERCIAL_PROP_ALV_PERCENTAGE = Double.valueOf(50d);
 
     // Property Status
     public static final String PROPERTY_STATUS_MARK_DEACTIVE = "MARK_DEACTIVE";
@@ -1024,7 +1009,7 @@ public interface PropertyTaxConstants {
     public static final String BASEMENT = "Basement";
 
     // 1Sq.Mt = 10.76Sq.Ft
-    public static final BigDecimal SqFt = new BigDecimal(10.76);
+    public static final BigDecimal SqFt = BigDecimal.valueOf(10.76);
 
     // Used during Notice Generation
     public static final String STYLE_TAG_BEGIN = "<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">";
@@ -1131,9 +1116,10 @@ public interface PropertyTaxConstants {
 
     public static final String MUTATIONRS_OBJECTION_CODE = "OBJ";
     public static final String MUTATIONRS_OTHERS = "OTHERS";
-    public static final String MUTATIONRS_SALES_DEED = "Sale Deed";
+    public static final String MUTATIONRS_SALES_DEED = "Registered Sale Deed";
     public static final String MUTATIONRS_COURT_ORDER = "Court Deed";
     public static final String MUTATIONRS_DECREE_BY_CIVIL_COURT = "Decree by Civil Court";
+    public static final String MUTATIONRS_SUCCESSION="Succession";
     
     @SuppressWarnings("serial")
     public static final Map<String, String> SALUTATION = new HashMap<String, String>() {

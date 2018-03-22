@@ -57,6 +57,7 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.PositionMasterService;
 import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
@@ -104,6 +105,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
@@ -188,6 +192,12 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
     @Autowired
     private transient CityService cityService;
+    
+    @Autowired
+    private transient PositionMasterService positionMasterService;
+    
+    @PersistenceContext
+    private EntityManager entityManager;
 
     // Model and View data
     private Long mutationId;
@@ -202,6 +212,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private BigDecimal currentWaterTaxDue;
     private BigDecimal arrearPropertyTaxDue;
     private List<DocumentType> documentTypes = new ArrayList<>();
+    private List<DocumentType> successionDocs = new ArrayList<>();
     private BasicProperty basicproperty; // Do not change variable name, struts2
     // crazy.
     private String reportId;
@@ -473,8 +484,9 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         }
 
         if (mutationId != null) {
-            propertyMutation = (PropertyMutation) persistenceService.find("From PropertyMutation where id = ? ",
-                    mutationId);
+            final javax.persistence.Query qry = entityManager.createNamedQuery("BY_MUTATION_ID");
+            qry.setParameter("id", mutationId);
+            propertyMutation = (PropertyMutation) qry.getSingleResult();
             persistenceService.getSession().refresh(propertyMutation);
         }
 
@@ -625,13 +637,14 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         propertyByEmployee = propertyService.isEmployee(transferOwnerService.getLoggedInUser());
         citizenPortalUser = propertyService.isCitizenPortalUser(securityUtils.getCurrentUser());
         final String actionInvoked = ActionContext.getContext().getActionInvocation().getProxy().getMethod();
-        if (!(actionInvoked.equals("search") || actionInvoked.equals("collectFee"))) {
+        if (!(actionInvoked.equals(SEARCH) || actionInvoked.equals("collectFee"))) {
             if (StringUtils.isNotBlank(assessmentNo) && mutationId == null)
                 basicproperty = transferOwnerService.getBasicPropertyByUpicNo(assessmentNo);
 
             if (mutationId != null) {
-                propertyMutation = (PropertyMutation) persistenceService.find("From PropertyMutation where id = ? ",
-                        mutationId);
+                final javax.persistence.Query qry = entityManager.createNamedQuery("BY_MUTATION_ID");
+                qry.setParameter("id", mutationId);
+                propertyMutation = (PropertyMutation) qry.getSingleResult();
                 basicproperty = propertyMutation.getBasicProperty();
                 historyMap = propertyService.populateHistory(propertyMutation);
             }
@@ -645,6 +658,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             currentPropertyTaxFirstHalf = propertyTaxDetails.get(CURR_FIRSTHALF_DMD_STR);
             currentPropertyTaxSecondHalf = propertyTaxDetails.get(CURR_SECONDHALF_DMD_STR);
             documentTypes = transferOwnerService.getPropertyTransferDocumentTypes();
+            successionDocs = transferOwnerService.getSuccessionDouments();
             addDropdownData("MutationReason", transferOwnerService.getPropertyTransferReasons());
             if (propertyMutation.getReceiptNum() != null) {
                 final boolean isCanceled = propertyTaxCommonUtils.isReceiptCanceled(propertyMutation.getReceiptNum());
@@ -663,8 +677,13 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
     private void checkForMandatoryDocuments(){
         if(!MUTATION_TYPE_REGISTERED_TRANSFER.equalsIgnoreCase(propertyMutation.getType())){
-            for(DocumentType docType : documentTypes)
-                docType.setMandatory(false);
+            if(!propertyMutation.getMutationReason().getMutationName().equals(MUTATIONRS_SUCCESSION)){
+                for(DocumentType docType : documentTypes)
+                    docType.setMandatory(false);
+            }
+            else
+                for(DocumentType docType : successionDocs)
+                    docType.setMandatory(false);
         }
     }
     
@@ -694,11 +713,19 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         if (propertyMutation.getDepartmentValue() == null)
             addActionError(getText("mandatory.department.value"));
         boolean anyDocIsMandatory = false;
+        if(!propertyMutation.getMutationReason().getMutationName().equals("Succession")){
         for (final DocumentType docTypes : documentTypes)
             if (docTypes.isMandatory()) {
                 anyDocIsMandatory = true;
                 break;
             }
+        }
+        else
+            for (final DocumentType docTypes : successionDocs)
+                if (docTypes.isMandatory()) {
+                    anyDocIsMandatory = true;
+                    break;
+                }
 
         if (anyDocIsMandatory)
             if (propertyMutation.getDocuments().isEmpty())
@@ -857,7 +884,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction))
                 pos = propertyMutation.getCurrentState().getOwnerPosition();
             else if (null != approverPositionId && approverPositionId != -1)
-                pos = (Position) persistenceService.find("from Position where id=?", approverPositionId);
+                pos = positionMasterService.getPositionById(approverPositionId);
             else
                 pos = wfInitiator.getPosition();
             if (null == propertyMutation.getState()) {
@@ -1429,4 +1456,11 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         this.ownersName = ownersName;
     }
 
+    public List<DocumentType> getSuccessionDocs() {
+        return successionDocs;
+    }
+
+    public void setSuccessionDocs(List<DocumentType> successionDocs) {
+        this.successionDocs = successionDocs;
+    }
 }

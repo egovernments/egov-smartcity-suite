@@ -473,7 +473,7 @@ public class PropertyHibernateDAO implements PropertyDAO {
                         + "','"
                         + PropertyTaxConstants.PENALTY_DMD_RSN_CODE
                         + "','"
-                        + PropertyTaxConstants.LPPAY_PENALTY_DMDRSNCODE
+                        + PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES
                         + "') " + "group by dmdRes.id_installment, inst.start_date " + "order by inst.start_date ");
         final Query qry = getCurrentSession().createSQLQuery(strBuf.toString()).setLong("dmdId", egDemand.getId());
         return qry.list();
@@ -493,7 +493,7 @@ public class PropertyHibernateDAO implements PropertyDAO {
                         + "and dmdresmas.code = :dmdRsnCode "
                         + "group by dmdRes.id_installment, inst.start_date " + "order by inst.start_date ");
         final Query qry = getCurrentSession().createSQLQuery(strBuf.toString()).setLong("dmdId", egDemand.getId())
-                .setString("dmdRsnCode", PropertyTaxConstants.LPPAY_PENALTY_DMDRSNCODE);
+                .setString("dmdRsnCode", PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES);
         return qry.list();
     }
 

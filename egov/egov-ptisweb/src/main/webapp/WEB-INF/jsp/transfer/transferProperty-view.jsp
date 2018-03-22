@@ -110,14 +110,6 @@
 				</div>
 			</div>
 		</s:if>
-		<%-- <s:if
-			test="%{!mutationFeePaid && 
-			model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING)}">
-			<div id="mutationFeeError" style="color: red; font-size: 15px;"
-				align="center">
-				<s:text name="error.mutation.feeNotPaid"></s:text>
-			</div>
-		</s:if> --%>
 		<s:form action="" name="transferform" theme="simple">
 			<s:push value="model">
 				<s:hidden name="mode" id="mode" value="%{mode}"></s:hidden>
@@ -506,11 +498,13 @@
 						</s:if>
 					</table>
 				</table>
-				<s:if test="%{!documentTypes.isEmpty()}">
-					<tr>
-						<%@ include file="../common/DocumentUploadView.jsp"%>
-					</tr>
+				<s:if
+					test="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_SUCCESSION.equalsIgnoreCase(mutationReason.mutationName) && !successionDocs.isEmpty()}">
+					<%@ include file="succession-documents.jsp"%>
 				</s:if>
+				<s:elseif test="%{!documentTypes.isEmpty()}">
+						<%@ include file="../common/DocumentUploadForm.jsp"%>
+				</s:elseif>
 				<s:if test="%{state != null}">
 					<tr>
 						<%@ include file="../common/workflowHistoryView.jsp"%>

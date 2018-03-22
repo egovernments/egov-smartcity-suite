@@ -351,9 +351,13 @@
 					</s:else>
 					</table>
 				</table>
-				<s:if test="%{!documentTypes.isEmpty()}">
-					<%@ include file="../common/DocumentUploadForm.jsp"%>
+				<s:if
+					test="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_SUCCESSION.equalsIgnoreCase(mutationReason.mutationName) && !successionDocs.isEmpty()}">
+					<%@ include file="succession-documents.jsp"%>
 				</s:if>
+				<s:elseif test="%{!documentTypes.isEmpty()}">
+						<%@ include file="../common/DocumentUploadForm.jsp"%>
+				</s:elseif>
 				<s:if test="%{state != null}">
 					<tr>
 						<%@ include file="../common/workflowHistoryView.jsp"%>

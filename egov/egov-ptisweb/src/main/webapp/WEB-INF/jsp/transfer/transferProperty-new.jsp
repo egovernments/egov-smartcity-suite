@@ -81,8 +81,7 @@
 				getAadharDetailsForTransferee(this);
 			}
 		});
-		loadDesignationFromMatrix();
-	}
+	} 
 </script>
 </head>
 <body onload="loadOnStartUp();">
@@ -315,9 +314,16 @@
 					</tr>
 					</table>
 					</table>
-					<s:if test="%{!documentTypes.isEmpty()}">
-						<%@ include file="../common/DocumentUploadForm.jsp"%>
-					</s:if>
+					<div class="panel-body custom-form" id="otherReasons">
+						<s:if test="%{!documentTypes.isEmpty()}">
+							<jsp:include page="../common/DocumentUploadForm.jsp" />
+						</s:if>
+					</div>
+					<div class="panel-body custom-form" id="succession">
+						<s:if test="%{!successionDocs.isEmpty()}">
+							<jsp:include page="succession-documents.jsp" />
+						</s:if>
+					</div>
 					<s:if test="%{!(@org.egov.ptis.constants.PropertyTaxConstants@ADDTIONAL_RULE_FULL_TRANSFER.equalsIgnoreCase(type) 
 						&& applicationSource.equalsIgnoreCase('online'))}">
 
@@ -325,16 +331,16 @@
 							test="%{propertyByEmployee == true && applicationSource != 'online' && !citizenPortalUser}">
 						<table width="100%" border="0" cellspacing="0" cellpadding="0">
 								<tr>
-									<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
+									<jsp:include page="../workflow/commonWorkflowMatrix.jsp" />
 								</tr>
 								<tr>
-									<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
+									<jsp:include page="../workflow/commonWorkflowMatrix-button.jsp" />
 								</tr>
 							</table>
 						</s:if>
 						<s:else>
 							<tr align="center">
-								<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
+								<jsp:include page="../workflow/commonWorkflowMatrix-button.jsp" />
 							</tr>
 						</s:else>
 					</s:if>
@@ -399,6 +405,15 @@
 				jQuery("td.deedDetailsRow").show();
 				 }
 			}
+			var detachObj=jQuery('#otherReasons');
+			if (selectedValue == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_SUCCESSION}" />') {
+				jQuery('#succession').show();
+				jQuery('#otherReasons').hide();
+			}
+			else {
+				jQuery('#succession').hide();
+				jQuery('#otherReasons').show();
+			}
 		}
 		
 		function onSubmit() {
@@ -412,6 +427,12 @@
 				bootbox.alert("Please enter valid values in Parties consideration value and Department guidelines value for Mutation Fee calculations");
 				return false;
 			}
+			var obj = document.getElementById("transRsnId");
+				var selectedValue = obj.options[obj.selectedIndex].text;
+			if(selectedValue =='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_SUCCESSION}" />')
+				jQuery('#otherReasons').remove();
+			else 
+				jQuery('#succession').remove();
 			var tosubmit = true;
 			jQuery('.transfereeGender').removeAttr('disabled');
 			var mutationType = '<s:property value="%{model.type}"/>'; 
