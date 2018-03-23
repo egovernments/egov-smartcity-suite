@@ -143,9 +143,10 @@ public class LicenseProcessWorkflowService {
                     .withDateInfo(currentDate.toDate());
             updateCancelStatus(tradeLicense);
         } else if (SIGNWORKFLOWACTION.equals(workflowBean.getWorkFlowAction())) {
-            tradeLicense.transition().end().withStateValue(WF_DIGI_SIGNED).withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
-                    .withComments(workflowBean.getApproverComments()).withStateValue(workFlowMatrix.getCurrentState())
-                    .withDateInfo(currentDate.toDate()).withNextAction(workFlowMatrix.getCurrentStatus());
+            tradeLicense.transition().end().withStateValue(WF_DIGI_SIGNED)
+                    .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
+                    .withComments(workflowBean.getApproverComments()).withDateInfo(currentDate.toDate())
+                    .withNextAction(workFlowMatrix.getCurrentStatus());
             updateActiveStatus(tradeLicense);
         } else {
             Position owner = getCurrentPositionByWorkFlowBean(workflowBean, currentState);
