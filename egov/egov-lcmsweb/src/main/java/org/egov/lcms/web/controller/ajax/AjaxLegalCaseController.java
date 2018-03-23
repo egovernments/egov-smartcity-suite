@@ -51,6 +51,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -59,6 +60,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.lcms.masters.entity.AdvocateMaster;
@@ -181,28 +184,27 @@ public class AjaxLegalCaseController {
     }
 
     @RequestMapping(value = "ajax-caseDetailsByCaseNumber", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public void getCaseDetailsByCaseNumber(@RequestParam final String caseNumber, HttpServletResponse response)
-            throws IOException {
-        final JsonArray jsonArray = new JsonArray();
+    public @ResponseBody LinkedHashMap<String, String> getCaseDetailsByCaseNumber(@RequestParam final String caseNumber,
+            HttpServletResponse response) throws JsonGenerationException, JsonMappingException, IOException {
+        LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
+
         if (StringUtils.isNotBlank(caseNumber)) {
             LegalCase legalCase = legalCaseService.getLegalCaseByCaseNumber(caseNumber);
             if (legalCase != null) {
-                JsonObject jsonObject = new JsonObject();
-                jsonObject.addProperty("caseStatus", legalCase.getStatus().getDescription());
-                jsonObject.addProperty("caseTitle", legalCase.getCaseTitle());
-                jsonObject.addProperty("caseType", legalCase.getCaseTypeMaster().getCaseType());
-                jsonObject.addProperty("viewLegalCase", LcmsConstants.VIEW_LEGALCASE_LINK + legalCase.getLcNumber());
+                map.put("caseStatus", legalCase.getStatus().getDescription());
+                map.put("caseTitle", legalCase.getCaseTitle());
+                map.put("caseType", legalCase.getCaseTypeMaster().getCaseType());
+                map.put("viewLegalCase", LcmsConstants.VIEW_LEGALCASE_LINK + legalCase.getLcNumber());
                 if (!legalCase.getJudgment().isEmpty()) {
-                    jsonObject.addProperty("judgmentType", legalCase.getJudgment().get(0).getJudgmentType().getName());
-                    jsonObject.addProperty("judgmentDescription",
+                    map.put("judgmentType", legalCase.getJudgment().get(0).getJudgmentType().getName());
+                    map.put("judgmentDescription",
                             legalCase.getJudgment().get(0).getJudgmentType().getDescription());
                 } else {
-                    jsonObject.addProperty("judgmentType", "");
-                    jsonObject.addProperty("judgmentDescription", "");
+                    map.put("judgmentType", "");
+                    map.put("judgmentDescription", "");
                 }
-                jsonArray.add(jsonObject);
             }
         }
-        IOUtils.write(jsonArray.toString(), response.getWriter());
+        return map;
     }
 }
