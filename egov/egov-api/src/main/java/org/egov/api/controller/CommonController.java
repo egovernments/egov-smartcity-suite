@@ -76,6 +76,7 @@ import java.util.Date;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.validation.regex.Constants.MOBILE_NUM;
 
 /**
  * @author Sheik
@@ -135,7 +136,7 @@ public class CommonController extends ApiController {
             }
 
             if (isNotBlank(citizenCreate.getEmailId()) && userservice.getUserByEmailId(citizenCreate.getEmailId()) != null) {
-                    return res.error(getMessage("user.register.duplicate.email"));
+                return res.error(getMessage("user.register.duplicate.email"));
             }
 
             if (citizen.get("activationCode") != null &&
@@ -229,12 +230,6 @@ public class CommonController extends ApiController {
 
             }
 
-            if (identity.matches("\\d+") && !identity.matches("\\d{10}")) {
-                    return res.error(getMessage("msg.invalid.mobileno"));
-            } else if (!identity.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
-                return res.error(getMessage("msg.invalid.mail"));
-            }
-
             Citizen citizen = citizenService.getCitizenByUserName(identity);
 
             if (citizen == null) {
@@ -268,7 +263,7 @@ public class CommonController extends ApiController {
         ApiResponse res = ApiResponse.newInstance();
         String mobileNo = request.getParameter("identity");
         try {
-            if (!mobileNo.matches("\\d{10}")) {
+            if (!mobileNo.matches(MOBILE_NUM)) {
                 return res.error(getMessage("msg.invalid.mobileno"));
             }
             citizenService.sendOTPMessage(mobileNo);

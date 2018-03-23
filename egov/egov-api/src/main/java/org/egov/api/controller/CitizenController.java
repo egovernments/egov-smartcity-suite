@@ -75,6 +75,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import java.util.Date;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.validation.regex.Constants.EMAIL;
 
 @org.springframework.web.bind.annotation.RestController
 @RequestMapping("/v1.0")
@@ -151,7 +152,9 @@ public class CitizenController extends ApiController {
             final Citizen citizenUpdate = citizenService.getCitizenByUserName(citizen.get("userName").toString());
             citizenUpdate.setName(citizen.get("name").toString());
             citizenUpdate.setGender(Gender.valueOf(citizen.get("gender").toString()));
-            if (citizen.get(EMAIL_ID_FIELD) != null && isNotBlank(citizen.get(EMAIL_ID_FIELD).toString()))
+            if (citizen.get(EMAIL_ID_FIELD) != null
+                    && isNotBlank(citizen.get(EMAIL_ID_FIELD).toString())
+                    && citizen.get(EMAIL_ID_FIELD).toString().matches(EMAIL))
                 citizenUpdate.setEmailId(citizen.get(EMAIL_ID_FIELD).toString());
 
             if (citizen.get(ALT_CONTACT_NUMBER_FIELD) != null && isNotBlank(citizen.get(ALT_CONTACT_NUMBER_FIELD).toString()))
