@@ -240,10 +240,6 @@ public class PropertyTransferService {
         basicProperty.setUnderWorkflow(true);
         processAndStoreDocument(propertyMutation.getDocuments());
 
-        if (propertyMutation.getMutationReason() != null
-                && MUTATIONRS_SALES_DEED.equalsIgnoreCase(propertyMutation.getMutationReason().getMutationName()))
-            propertyMutation.setSaleDetail(propertyMutation.getSaleDetail().replaceAll("[\\t\\n\\r]+", " "));
-
         propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
         mutationRegistrationService.persist(propertyMutation.getMutationRegistrationDetails());
         if (propertyService.isCitizenPortalUser(getLoggedInUser()))
@@ -661,7 +657,6 @@ public class PropertyTransferService {
      *
      * @param assessmentNumber
      * @param mutationReasonCode
-     * @param saleDetails
      * @param deedNo
      * @param deedDate
      * @param ownerDetailsList
@@ -669,7 +664,7 @@ public class PropertyTransferService {
      * @throws ParseException
      */
     public NewPropertyDetails createPropertyMutation(final String assessmentNumber, final String mutationReasonCode,
-            final String saleDetails, final String deedNo, final String deedDate, final List<OwnerDetails> ownerDetailsList)
+            final String deedNo, final String deedDate, final List<OwnerDetails> ownerDetailsList)
             throws ParseException {
         PropertyMutation propertyMutation = new PropertyMutation();
         NewPropertyDetails newPropertyDetails = null;
@@ -677,7 +672,6 @@ public class PropertyTransferService {
         final PropertyMutationMaster mutationMaster = getPropertyTransferReasonsByCode(mutationReasonCode);
         propertyMutation.setDeedNo(deedNo);
         propertyMutation.setDeedDate(propertyService.convertStringToDate(deedDate));
-        propertyMutation.setSaleDetail(saleDetails);
         propertyMutation.setMutationReason(mutationMaster);
         propertyMutation.setBasicProperty(basicProperty);
         propertyMutation.setProperty(basicProperty.getActiveProperty());
@@ -869,16 +863,10 @@ public class PropertyTransferService {
     public void updateMutationReason(final PropertyMutation propertyMutation) {
         final String reasonForTransfer = propertyMutation.getMutationReason().getMutationName();
         if (MUTATIONRS_DECREE_BY_CIVIL_COURT.equalsIgnoreCase(reasonForTransfer)) {
-            propertyMutation.setSaleDetail(null);
             propertyMutation.setDeedDate(null);
             propertyMutation.setDeedNo(null);
-        } else if (MUTATIONRS_SALES_DEED.equalsIgnoreCase(reasonForTransfer)) {
-            propertyMutation.setSaleDetail(propertyMutation.getSaleDetail().replaceAll("[\\t\\n\\r]+", " "));
-            propertyMutation.setDecreeDate(null);
-            propertyMutation.setDecreeNumber(null);
-            propertyMutation.setCourtName(null);
-        } else {
-            propertyMutation.setSaleDetail(null);
+        }
+        else {
             propertyMutation.setDecreeDate(null);
             propertyMutation.setDecreeNumber(null);
             propertyMutation.setCourtName(null);

@@ -411,12 +411,6 @@
 									:</td>
 								<td class="bluebox"><span class="bold"><s:property
 											value="%{mutationReason.mutationName}" /></span></td>
-								<td class="bluebox"><s:text name="saleDetls" /> :</td>
-								<td class="bluebox"><span class="bold"> <s:if
-											test="%{saleDetail == ''}">N/A</s:if> <s:else>
-											<s:property value="%{saleDetail}" default="N/A" />
-										</s:else>
-								</span></td>
 							</tr>
 							<tr>
 								<td class="bluebox2">&nbsp;</td>
@@ -500,7 +494,7 @@
 				</table>
 				<s:if
 					test="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_SUCCESSION.equalsIgnoreCase(mutationReason.mutationName) && !successionDocs.isEmpty()}">
-					<%@ include file="succession-documents.jsp"%>
+					<%@ include file="succession-docview.jsp"%>
 				</s:if>
 				<s:elseif test="%{!documentTypes.isEmpty()}">
 						<%@ include file="../common/DocumentUploadForm.jsp"%>

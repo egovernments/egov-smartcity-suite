@@ -1116,7 +1116,6 @@ public interface PropertyTaxConstants {
 
     public static final String MUTATIONRS_OBJECTION_CODE = "OBJ";
     public static final String MUTATIONRS_OTHERS = "OTHERS";
-    public static final String MUTATIONRS_SALES_DEED = "Registered Sale Deed";
     public static final String MUTATIONRS_COURT_ORDER = "Court Deed";
     public static final String MUTATIONRS_DECREE_BY_CIVIL_COURT = "Decree by Civil Court";
     public static final String MUTATIONRS_SUCCESSION="Succession";

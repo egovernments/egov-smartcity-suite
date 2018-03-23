@@ -692,10 +692,6 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         if (PropertyTaxConstants.MUTATION_TYPE_REGISTERED_TRANSFER.equalsIgnoreCase(propertyMutation.getType())) {
             if (propertyMutation.getMutationReason() == null || propertyMutation.getMutationReason().getId() == -1)
                 addActionError(getText("mandatory.trRsnId"));
-            else if (propertyMutation.getMutationReason().getMutationName()
-                    .equals(PropertyTaxConstants.MUTATIONRS_SALES_DEED)
-                    && StringUtils.isBlank(propertyMutation.getSaleDetail()))
-                addActionError(getText("mandatory.saleDtl"));
             else if (PropertyTaxConstants.MUTATIONRS_DECREE_BY_CIVIL_COURT
                     .equals(propertyMutation.getMutationReason().getMutationName())) {
                 validateDecreeDetails();

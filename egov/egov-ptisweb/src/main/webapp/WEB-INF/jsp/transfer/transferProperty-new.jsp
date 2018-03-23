@@ -243,12 +243,6 @@
 									listValue="mutationName" headerKey="-1"
 									headerValue="%{getText('default.select')}"
 									value="%{mutationReason.id}" onchange="enableBlock();" /></td>
-							<td class="greybox reasonRow"><s:text name="saleDetls" /> <span
-								class="mandatory1">*</span> :</td>
-							<td class="greybox reasonRow"><s:textarea cols="30" rows="2"
-									name="saleDetail" id="saleDetail"
-									onchange="return validateMaxLength(this);"
-									onblur="trim(this,this.value);"></s:textarea></td>
 								<td class="bluebox decreeDetailsRow"><s:text name="decreeNum" /><span
 								class="mandatory1">*</span> :</td>
 							<td class="bluebox decreeDetailsRow"><s:textfield name="decreeNumber" id="decreeNum"
@@ -360,23 +354,6 @@
 			Mandatory Fields</div>
 	</div>
 	<script type="text/javascript">
-		function enableSaleDtls(obj) {
-			var selectedValue = obj.options[obj.selectedIndex].text;
-			if (selectedValue == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_SALES_DEED}" />') {
-				document.getElementById("saleDetail").readOnly = false;
-				document.getElementById("saleDetail").className = "";
-			} else {
-				document.getElementById("saleDetail").value = "";
-				document.getElementById("saleDetail").className = "hiddentext";
-				document.getElementById("saleDetail").readOnly = true;
-			}
-
-			if (selectedValue == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_OTHERS}" />') {
-				document.getElementById("mutationRsnRow").style.display = "";
-			} else {
-				document.getElementById("mutationRsnRow").style.display = "none";
-			}
-		}
 		function confirmClose() {
 			var result = confirm("Do you want to close the window?");
 			if (result == true) {
@@ -390,12 +367,6 @@
 			var obj = document.getElementById("transRsnId");
 			if (obj != null || obj != "undefined") {
 				var selectedValue = obj.options[obj.selectedIndex].text;
-				if (selectedValue == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_SALES_DEED}" />') {
-					jQuery("#saleDetail").val("");
-					jQuery("td.reasonRow").show();
-				} else {
-					jQuery("td.reasonRow").hide();
-				}
 				if (selectedValue == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_DECREE_BY_CIVIL_COURT}" />') {
 					jQuery("td.decreeDetailsRow").show();
 				jQuery("td.deedDetailsRow").hide();
