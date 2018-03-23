@@ -677,13 +677,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
     private void checkForMandatoryDocuments(){
         if(!MUTATION_TYPE_REGISTERED_TRANSFER.equalsIgnoreCase(propertyMutation.getType())){
-            if(!propertyMutation.getMutationReason().getMutationName().equals(MUTATIONRS_SUCCESSION)){
-                for(DocumentType docType : documentTypes)
-                    docType.setMandatory(false);
-            }
-            else
-                for(DocumentType docType : successionDocs)
-                    docType.setMandatory(false);
+            for(DocumentType docType : documentTypes)
+                docType.setMandatory(false);
         }
     }
     
@@ -709,19 +704,11 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         if (propertyMutation.getDepartmentValue() == null)
             addActionError(getText("mandatory.department.value"));
         boolean anyDocIsMandatory = false;
-        if(!propertyMutation.getMutationReason().getMutationName().equals("Succession")){
         for (final DocumentType docTypes : documentTypes)
             if (docTypes.isMandatory()) {
                 anyDocIsMandatory = true;
                 break;
             }
-        }
-        else
-            for (final DocumentType docTypes : successionDocs)
-                if (docTypes.isMandatory()) {
-                    anyDocIsMandatory = true;
-                    break;
-                }
 
         if (anyDocIsMandatory)
             if (propertyMutation.getDocuments().isEmpty())

@@ -314,7 +314,7 @@
 						</s:if>
 					</div>
 					<div class="panel-body custom-form" id="succession">
-						<s:if test="%{!successionDocs.isEmpty()}">
+						<s:if test="%{!successionDocs.isEmpty() && !(@org.egov.ptis.constants.PropertyTaxConstants@ADDTIONAL_RULE_FULL_TRANSFER.equalsIgnoreCase(type))}">
 							<jsp:include page="succession-documents.jsp" />
 						</s:if>
 					</div>

@@ -497,7 +497,7 @@
 					<%@ include file="succession-docview.jsp"%>
 				</s:if>
 				<s:elseif test="%{!documentTypes.isEmpty()}">
-						<%@ include file="../common/DocumentUploadForm.jsp"%>
+						<%@ include file="../common/DocumentUploadView.jsp"%>
 				</s:elseif>
 				<s:if test="%{state != null}">
 					<tr>
