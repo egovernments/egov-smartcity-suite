@@ -53,11 +53,6 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <script
 	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
-<input type="hidden" id="amalgamatedPropertyNote" value="<spring:message code='msg.propertydeactivate.reason.amalgamated'/>">
-<input type="hidden" id="doublePropertyNote" value="<spring:message code='msg.propertydeactivate.reason.double'/>">
-<input type="hidden" id="demolishedPropertyNote" value="<spring:message code='msg.propertydeactivate.reason.demolished'/>">
-<input type="hidden" id="untracedPropertyNote" value="<spring:message code='msg.propertydeactivate.reason.untraced'/>">
-<input type="hidden" id="newPropertyNote" value="<spring:message code='msg.propertydeactivate.reason.newproperty'/>">
 <div class="row" id="page-content">
 	<div class="col-md-12">
 		<c:if test="${not empty message}">
@@ -142,12 +137,13 @@
 					</button>
 				</div>
 			</div>
-			<input type="hidden" id="reason"/>
-			<font size="3"><div class="col-md-8 mandatory1" id="notelabel">
+			
+		 	<font size="3"><div class="col-md-8 mandatory1" id="notelabel">
 				<label class="notelbel"><spring:message code="lbl.note" />:</label>
 			    </div></font>
-              <font size="2"><div class="col-md-10 mandatory1" id="note">    
-			   </div></font> 
+             <font size="2"><div class="col-md-10 mandatory1" id="note">  
+                  <spring:message code="msg.propertydeactivate.reason.note" />  
+			 </div></font> 
 			<br>
 			<c:if test="${propDetails!=null || orgPropDetails!=null}">
 				<div class="panel panel-primary">
@@ -161,6 +157,7 @@
 							</p>
 						</div>
 					</div>
+					<input type="hidden" id="showNote" value="No">
 					<c:if test="${propDetails!=null}">
 						<div class="panel-body">
 							<table class="table table-bordered" width="100%">
@@ -191,15 +188,16 @@
 									<spring:message code="lbl.hdr.wcdetails" />
 								</div>
 							</div>
-
-							<table class="table table-bordered" width="100%">
+                            <c:choose>
+                            <c:when test="${not empty wcDetails}">
+							 <table class="table table-bordered" width="100%">
 								<tr>
 									<th align="center" class="bluebgheadtd">Consumer Number</th>
 									<th align="center" class="bluebgheadtd">Connection Type</th>
 									<th align="center" class="bluebgheadtd">Tax Due</th>
 									<th align="center" class="bluebgheadtd"">status</th>
 								</tr>
-								<c:if test="${not empty wcDetails}">
+								
 									<c:forEach var="rowObj" items="${wcDetails}">
 										<tr>
 											<td align="center"><c:out value="${rowObj.consumerCode}"
@@ -212,8 +210,15 @@
 													value="${rowObj.connectionStatus}" default="N/A" /></td>
 										</tr>
 									</c:forEach>
-								</c:if>
-							</table>
+									</table>
+								</c:when>
+								<c:otherwise>
+								<div class="panel-body">
+								No data found
+								</div>
+								</c:otherwise>
+								</c:choose>
+								
 						</div>
 					</c:if>
 				</div>
@@ -262,7 +267,8 @@
 									<spring:message code="lbl.hdr.wcdetails" />
 								</div>
 							</div>
-							<c:if test="${not empty orgPropWCDetails}">
+							<c:choose>
+							<c:when test="${not empty orgPropWCDetails}">
 								<table class="table table-bordered" width="100%">
 									<tr>
 										<th align="center" class="bluebgheadtd">Consumer Number</th>
@@ -284,13 +290,19 @@
 									</c:forEach>
 
 								</table>
-							</c:if>
+							</c:when>
+							<c:otherwise>
+								<div class="panel-body">
+								No data found
+								</div>
+								</c:otherwise>
+							</c:choose>
 
 						</div>
 
 					</div>
 				</c:if>
-				<c:if test="${hasActiveWC !=true}">
+			<%-- 	<c:if test="${hasActiveWC !=true}"> --%>
 					<div class="panel panel-primary">
 						<div class="panel-heading">
 							<div class="panel-title">
@@ -334,7 +346,7 @@
 						</div>
 
 					</div>
-				</c:if>
+				<%-- </c:if> --%>
 			</c:if>
 		</form:form>
 	</div>
