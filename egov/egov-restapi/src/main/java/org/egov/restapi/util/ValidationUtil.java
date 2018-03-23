@@ -179,22 +179,6 @@ public class ValidationUtil {
             return errorDetails;
         }
 
-        if (mutationReasonCode.equalsIgnoreCase(PropertyTaxConstants.MUTATION_REASON_CODE_SALE)
-                && StringUtils.isBlank(propertyTransferDetails.getSaleDetails())) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(SALE_DETAILS_REQ_CODE);
-            errorDetails.setErrorMessage(SALE_DETAILS_REQ_MSG);
-            return errorDetails;
-        }
-
-        if (!mutationReasonCode.equalsIgnoreCase(PropertyTaxConstants.MUTATION_REASON_CODE_SALE)
-                && StringUtils.isNotBlank(propertyTransferDetails.getSaleDetails())) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(OTHER_MUTATION_CODES_SALE_DETAILS_VALIDATION_CODE);
-            errorDetails.setErrorMessage(OTHER_MUTATION_CODES_SALE_DETAILS_VALIDATION_MSG);
-            return errorDetails;
-        }
-
         final String deedNo = propertyTransferDetails.getDeedNo();
         if (StringUtils.isBlank(deedNo)) {
             errorDetails = new ErrorDetails();

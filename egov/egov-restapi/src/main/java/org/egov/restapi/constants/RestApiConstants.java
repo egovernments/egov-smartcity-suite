@@ -187,9 +187,6 @@ public class RestApiConstants {
     public static final String MUTATION_REASON_CODE_REQ_CODE = "52";
     public static final String MUTATION_REASON_CODE_REQ_MSG = "Mutation Reason Code is required.";
 
-    public static final String SALE_DETAILS_REQ_CODE = "53";
-    public static final String SALE_DETAILS_REQ_MSG = "Sale Details are required.";
-
     public static final String DEED_NO_REQ_CODE = "54";
     public static final String DEED_NO_REQ_MSG = "Deed Number is required.";
 
@@ -198,9 +195,6 @@ public class RestApiConstants {
 
     public static final String MUTATION_REASON_INVALID_CODE_REQ_CODE = "56";
     public static final String MUTATION_REASON_INVALID_CODE_REQ_MSG = "Invalid Mutation Reason Code. It can be GIFTDEED/WILLDEED/SALEDEED/RELINQUISH/PARTITIOND";
-
-    public static final String OTHER_MUTATION_CODES_SALE_DETAILS_VALIDATION_CODE = "57";
-    public static final String OTHER_MUTATION_CODES_SALE_DETAILS_VALIDATION_MSG = "Sale Details are required only if reason is Sale Deed.";
 
     public static final String APPLICATION_NO_REQ_CODE = "58";
     public static final String APPLICATION_NO_REQ_MSG = "Application Number is required.";
