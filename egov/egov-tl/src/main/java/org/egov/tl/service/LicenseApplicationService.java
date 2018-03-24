@@ -100,7 +100,8 @@ public class LicenseApplicationService extends TradeLicenseService {
                 .getFromDate();
         final Date toRange = installmentDao
                 .getInsatllmentByModuleForGivenDate(this.getModuleName(), new DateTime().plusYears(1).toDate()).getToDate();
-        if (license.getCommencementDate().before(fromRange) || license.getCommencementDate().after(toRange))
+        if (license.getCommencementDate() == null || license.getCommencementDate().before(fromRange)
+                || license.getCommencementDate().after(toRange))
             throw new ValidationException("TL-009", "TL-009");
         license.setLicenseAppType(getLicenseApplicationType());
         raiseNewDemand(license);
