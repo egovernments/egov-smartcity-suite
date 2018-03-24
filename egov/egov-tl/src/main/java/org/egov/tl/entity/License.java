@@ -75,18 +75,7 @@ import java.util.Optional;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.egov.infra.utils.StringUtils.appendTimestamp;
-import static org.egov.tl.utils.Constants.CLOSURE_NATUREOFTASK;
-import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
-import static org.egov.tl.utils.Constants.LICENSE_STATUS_CANCELLED;
-import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
-import static org.egov.tl.utils.Constants.PERMANENT_NATUREOFBUSINESS;
-import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
-import static org.egov.tl.utils.Constants.STATUS_ACKNOWLEDGED;
-import static org.egov.tl.utils.Constants.STATUS_ACTIVE;
-import static org.egov.tl.utils.Constants.STATUS_COLLECTIONPENDING;
-import static org.egov.tl.utils.Constants.TEMP_NATUREOFBUSINESS;
-import static org.egov.tl.utils.Constants.WF_STATE_COMMISSIONER_APPROVED_STR;
-import static org.egov.tl.utils.Constants.WORKFLOW_STATE_REJECTED;
+import static org.egov.tl.utils.Constants.*;
 
 @Entity
 @Table(name = "EGTL_LICENSE")
@@ -247,6 +236,10 @@ public class License extends StateAware<Position> {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "license")
     protected List<LicenseDocument> documents = new ArrayList<>();
+
+    @SafeHtml
+    @Length(max = 40)
+    protected String certificateFileId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "approvedBy")
@@ -642,6 +635,14 @@ public class License extends StateAware<Position> {
 
     public void setApprovedBy(User approvedBy) {
         this.approvedBy = approvedBy;
+    }
+
+    public String getCertificateFileId() {
+        return certificateFileId;
+    }
+
+    public void setCertificateFileId(String certificateFileId) {
+        this.certificateFileId = certificateFileId;
     }
 
     public String generateCertificateFileName() {

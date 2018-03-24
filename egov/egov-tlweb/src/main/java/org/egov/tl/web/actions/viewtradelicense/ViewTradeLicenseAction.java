@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -77,6 +77,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.egov.infra.utils.ApplicationConstant.CITIZEN_ROLE_NAME;
 import static org.egov.infra.utils.ApplicationConstant.PUBLIC_ROLE_NAME;
 import static org.egov.tl.utils.Constants.*;
@@ -135,8 +136,8 @@ ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     public String generateCertificate() {
         setLicenseIdIfServletRedirect();
         tradeLicense = tradeLicenseService.getLicenseById(license().getId());
-        if (tradeLicense.getDigiSignedCertFileStoreId() != null) {
-            setDigiSignedFile(license().getDigiSignedCertFileStoreId());
+        if (isNotBlank(tradeLicense.getCertificateFileId())) {
+            setDigiSignedFile(license().getCertificateFileId());
             setApplNum(license().getApplicationNumber());
             return "digisigncertificate";
         } else {

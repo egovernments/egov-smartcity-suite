@@ -71,8 +71,8 @@ import static org.egov.tl.utils.Constants.NEWLICENSE;
 import static org.egov.tl.utils.Constants.NEWLICENSEREJECT;
 import static org.egov.tl.utils.Constants.RENEWLICENSE;
 import static org.egov.tl.utils.Constants.RENEWLICENSEREJECT;
-import static org.egov.tl.utils.Constants.SIGNWORKFLOWACTION;
 import static org.egov.tl.utils.Constants.RENEW_WITHOUT_FEE;
+import static org.egov.tl.utils.Constants.SIGNWORKFLOWACTION;
 
 @Service
 @Transactional(readOnly = true)
@@ -175,8 +175,11 @@ public class LicenseApplicationService extends TradeLicenseService {
         else
             licenseProcessWorkflowService.createNewLicenseWorkflowTransition(license, workflowBean);
 
-        if (BUTTONAPPROVE.equals(workflowBean.getWorkFlowAction()) && isEmpty(license.getLicenseNumber()) && license.isNewApplication())
-            license.setLicenseNumber(licenseNumberUtils.generateLicenseNumber());
+        if (BUTTONAPPROVE.equals(workflowBean.getWorkFlowAction())) {
+            generateAndStoreCertificate(license);
+            if (isEmpty(license.getLicenseNumber()) && license.isNewApplication())
+                license.setLicenseNumber(licenseNumberUtils.generateLicenseNumber());
+        }
 
         licenseRepository.save(license);
         licenseCitizenPortalService.onUpdate(license);
@@ -184,12 +187,13 @@ public class LicenseApplicationService extends TradeLicenseService {
         licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
     }
 
-    public void digitalSignature(String applicationNumber) {
+    public void processDigitalSignature(String applicationNumber) {
         if (isNotBlank(applicationNumber)) {
             License license = licenseRepository.findByApplicationNumber(applicationNumber);
             WorkflowBean workflowBean = new WorkflowBean();
             workflowBean.setWorkFlowAction(SIGNWORKFLOWACTION);
             workflowBean.setAdditionaRule(license.isNewApplication() ? NEWLICENSE : RENEWLICENSE);
+            license.setCertificateFileId(license.getDigiSignedCertFileStoreId());
             licenseProcessWorkflowService.createNewLicenseWorkflowTransition((TradeLicense) license, workflowBean);
             licenseRepository.save(license);
             licenseCitizenPortalService.onUpdate((TradeLicense) license);

@@ -618,6 +618,10 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
             return "all";
     }
 
+    public boolean isDigitalSignatureEnabled() {
+        return licenseUtils.isDigitalSignEnabled();
+    }
+
     public void supportDocumentsValidation() {
         List<LicenseDocument> supportDocs = licenseDocument
                 .stream()

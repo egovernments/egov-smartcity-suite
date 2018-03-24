@@ -61,6 +61,7 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
+import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
@@ -113,6 +114,8 @@ import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.config.core.LocalizationSettings.currencySymbolUtf8;
+import static org.egov.infra.reporting.engine.ReportFormat.PDF;
+import static org.egov.infra.reporting.util.ReportUtil.CONTENT_TYPES;
 import static org.egov.infra.security.utils.SecureCodeUtils.generatePDF417Code;
 import static org.egov.infra.utils.ApplicationConstant.NA;
 import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
@@ -209,6 +212,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
                 license.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_APPROVED_CODE));
             else
                 license.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_SECONDCOLLECTION_CODE));
+            generateAndStoreCertificate(license);
 
         }
         if (BUTTONAPPROVE.equals(workFlowAction) || BUTTONFORWARD.equals(workFlowAction)) {
@@ -578,6 +582,15 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
             reportOutput.setReportOutputData(toByteArray(addFilesToZip(byteArrayToFile(reportOutput.getReportOutputData(),
                     "tl_closure_notice_", ".pdf").toFile())));
         return reportOutput;
+    }
+
+    public void generateAndStoreCertificate(TradeLicense license) {
+        ReportOutput reportOutput = generateLicenseCertificate(license, false);
+        if (reportOutput != null) {
+            FileStoreMapper fileStore = fileStoreService.store(reportOutput.getReportOutputData(),
+                    license.generateCertificateFileName() + ".pdf", CONTENT_TYPES.get(PDF), FILESTORE_MODULECODE);
+            license.setCertificateFileId(fileStore.getFileStoreId());
+        }
     }
 
 }

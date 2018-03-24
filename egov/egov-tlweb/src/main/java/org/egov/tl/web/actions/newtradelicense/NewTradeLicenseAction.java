@@ -254,6 +254,8 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
             final ValidationError vr = new ValidationError("license.fee.notcollected", "license.fee.notcollected");
             throw new ValidationException(Arrays.asList(vr));
         }
+        if (SIGNWORKFLOWACTION.equals(workFlowAction) && !licenseUtils.isDigitalSignEnabled())
+            throw new ValidationException("error.digisign.disabled", "error.digisign.disabled");
         return super.approve();
     }
 

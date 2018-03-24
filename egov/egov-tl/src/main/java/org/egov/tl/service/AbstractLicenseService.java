@@ -870,6 +870,7 @@ public abstract class AbstractLicenseService<T extends License> {
                     .withComments(WF_DIGI_SIGNED).withStateValue(wfmatrix.getCurrentState())
                     .withDateInfo(currentDate.toDate()).withOwner(license.getCurrentState().getInitiatorPosition())
                     .withNextAction(wfmatrix.getCurrentStatus());
+            license.setCertificateFileId(license.getDigiSignedCertFileStoreId());
             licenseRepository.save(license);
             tradeLicenseSmsAndEmailService.sendSMsAndEmailOnDigitalSign(license);
             licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);

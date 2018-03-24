@@ -93,7 +93,7 @@ public class LicenseCertificateDigiSignService {
             if (!license.isNewWorkflow())
                 tradeLicenseService.digitalSignTransition(applicationNumber);
             else
-                licenseApplicationService.digitalSignature(applicationNumber);
+                licenseApplicationService.processDigitalSignature(applicationNumber);
         }
     }
 
