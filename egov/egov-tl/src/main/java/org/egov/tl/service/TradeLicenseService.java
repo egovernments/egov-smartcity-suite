@@ -48,7 +48,6 @@
 
 package org.egov.tl.service;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.Installment;
 import org.egov.demand.model.BillReceipt;
@@ -59,7 +58,6 @@ import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.ModuleService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.enums.UserType;
@@ -109,18 +107,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.apache.commons.lang.StringEscapeUtils.escapeXml;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.egov.infra.config.core.LocalizationSettings.currencySymbolUtf8;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getMunicipalityName;
 import static org.egov.infra.reporting.engine.ReportFormat.PDF;
 import static org.egov.infra.reporting.util.ReportUtil.CONTENT_TYPES;
-import static org.egov.infra.security.utils.SecureCodeUtils.generatePDF417Code;
 import static org.egov.infra.utils.ApplicationConstant.NA;
 import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
 import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
-import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
 import static org.egov.infra.utils.DateUtils.toYearFormat;
 import static org.egov.infra.utils.FileUtils.addFilesToZip;
 import static org.egov.infra.utils.FileUtils.byteArrayToFile;
@@ -273,31 +270,31 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         reportParams.put("licencenumber", license.getLicenseNumber());
         reportParams.put("wardName", license.getBoundary().getName());
         reportParams.put("cscNumber", "");
-        reportParams.put("nameOfEstablishment", license.getNameOfEstablishment());
-        reportParams.put("licenceAddress", StringEscapeUtils.escapeXml(license.getAddress()));
+        reportParams.put("nameOfEstablishment", escapeXml(license.getNameOfEstablishment()));
+        reportParams.put("licenceAddress", escapeXml(license.getAddress()));
         reportParams.put("municipality", cityService.getMunicipalityName());
         reportParams.put("district", cityService.getDistrictName());
-        reportParams.put("category", license.getCategory().getName());
-        reportParams.put("subCategory", license.getTradeName().getName());
+        reportParams.put("category", escapeXml(license.getCategory().getName()));
+        reportParams.put("subCategory", escapeXml(license.getTradeName().getName()));
         reportParams.put("appType", license.isNewApplication() ? "New Trade" : "Renewal");
         reportParams.put("currentDate", currentDateToDefaultDateFormat());
-        reportParams.put("carporationulbType", ApplicationThreadLocals.getMunicipalityName().contains("Corporation"));
-        String startYear;
-        String endYear;
-        BigDecimal amtPaid;
+        reportParams.put("carporationulbType", getMunicipalityName().contains("Corporation"));
         Optional<EgDemandDetails> demandDetails = license.getCurrentDemand().getEgDemandDetails().stream()
                 .sorted(Comparator.comparing(EgDemandDetails::getInstallmentEndDate).reversed())
                 .filter(demandDetail -> demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster().equals(LICENSE_FEE_TYPE))
                 .filter(demandDetail -> demandDetail.getAmtCollected().doubleValue() > 0)
                 .findFirst();
+        BigDecimal amtPaid;
+        String installmentYear;
         if (demandDetails.isPresent()) {
             amtPaid = demandDetails.get().getAmtCollected();
-            startYear = toYearFormat(demandDetails.get().getInstallmentStartDate());
-            endYear = toYearFormat(demandDetails.get().getInstallmentEndDate());
-        } else
+            installmentYear = toYearFormat(demandDetails.get().getInstallmentStartDate()) + "-" +
+                    toYearFormat(demandDetails.get().getInstallmentEndDate());
+        } else {
             throw new ValidationException("License Fee is not paid", "License Fee is not paid");
+        }
 
-        reportParams.put("installMentYear", startYear + "-" + endYear);
+        reportParams.put("installMentYear", installmentYear);
         reportParams.put("applicationdate", getDefaultFormattedDate(license.getApplicationDate()));
         reportParams.put("demandUpdateDate", getDefaultFormattedDate(license.getCurrentDemand().getModifiedDate()));
         reportParams.put("demandTotalamt", amtPaid);
@@ -315,16 +312,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         if (isProvisional)
             reportParams.put("certificateType", "provisional");
         else {
-            StringBuilder qrCodeValue = new StringBuilder();
-            qrCodeValue.append("License Number : ").append(license.getLicenseNumber()).append(System.lineSeparator());
-            qrCodeValue.append("Trade Title : ").append(license.getNameOfEstablishment()).append(System.lineSeparator());
-            qrCodeValue.append("Owner Name : ").append(license.getLicensee().getApplicantName()).append(System.lineSeparator());
-            qrCodeValue.append("Valid Till : ").append(toDefaultDateTimeFormat(license.getDateOfExpiry())).append(System.lineSeparator());
-            qrCodeValue.append("Installment Year : ").append(reportParams.get("installMentYear")).append(System.lineSeparator());
-            qrCodeValue.append("Paid Amount : ").append(currencySymbolUtf8()).append(amtPaid).append(System.lineSeparator());
-            qrCodeValue.append("More : ").append(ApplicationThreadLocals.getDomainURL())
-                    .append("/tl/viewtradelicense/viewTradeLicense-view.action?id=").append(license.getId());
-            reportParams.put("qrCode", generatePDF417Code(qrCodeValue.toString()));
+            reportParams.put("qrCode", license.qrCode(installmentYear, amtPaid));
         }
 
         return reportParams;

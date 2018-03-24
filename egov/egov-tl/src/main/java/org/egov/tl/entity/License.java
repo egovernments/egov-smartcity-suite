@@ -53,6 +53,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Position;
@@ -66,6 +67,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -73,9 +75,24 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static java.lang.System.lineSeparator;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.egov.infra.config.core.LocalizationSettings.currencySymbolUtf8;
+import static org.egov.infra.security.utils.SecureCodeUtils.generatePDF417Code;
+import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
 import static org.egov.infra.utils.StringUtils.appendTimestamp;
-import static org.egov.tl.utils.Constants.*;
+import static org.egov.tl.utils.Constants.CLOSURE_NATUREOFTASK;
+import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
+import static org.egov.tl.utils.Constants.LICENSE_STATUS_CANCELLED;
+import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
+import static org.egov.tl.utils.Constants.PERMANENT_NATUREOFBUSINESS;
+import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
+import static org.egov.tl.utils.Constants.STATUS_ACKNOWLEDGED;
+import static org.egov.tl.utils.Constants.STATUS_ACTIVE;
+import static org.egov.tl.utils.Constants.STATUS_COLLECTIONPENDING;
+import static org.egov.tl.utils.Constants.TEMP_NATUREOFBUSINESS;
+import static org.egov.tl.utils.Constants.WF_STATE_COMMISSIONER_APPROVED_STR;
+import static org.egov.tl.utils.Constants.WORKFLOW_STATE_REJECTED;
 
 @Entity
 @Table(name = "EGTL_LICENSE")
@@ -649,5 +666,18 @@ public class License extends StateAware<Position> {
         return appendTimestamp((isBlank(this.getLicenseNumber())
                 ? this.getApplicationNumber()
                 : this.getLicenseNumber()).replaceAll("[/-]", "_"));
+    }
+
+    public File qrCode(String installmentYear, BigDecimal licenseFeePaid) {
+        StringBuilder qrCodeContent = new StringBuilder(170);
+        qrCodeContent.append("License Number : ").append(getLicenseNumber()).append(lineSeparator());
+        qrCodeContent.append("Trade Title : ").append(getNameOfEstablishment()).append(lineSeparator());
+        qrCodeContent.append("Owner Name : ").append(getLicensee().getApplicantName()).append(lineSeparator());
+        qrCodeContent.append("Valid Till : ").append(toDefaultDateTimeFormat(getDateOfExpiry())).append(lineSeparator());
+        qrCodeContent.append("Installment Year : ").append(installmentYear).append(lineSeparator());
+        qrCodeContent.append("Paid Amount : ").append(currencySymbolUtf8()).append(licenseFeePaid).append(lineSeparator());
+        qrCodeContent.append("More : ").append(ApplicationThreadLocals.getDomainURL())
+                .append("/tl/viewtradelicense/viewTradeLicense-view.action?id=").append(getId());
+        return generatePDF417Code(qrCodeContent.toString());
     }
 }

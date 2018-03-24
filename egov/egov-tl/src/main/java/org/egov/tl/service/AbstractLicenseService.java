@@ -100,7 +100,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -593,12 +592,6 @@ public abstract class AbstractLicenseService<T extends License> {
 
     public T getLicenseByApplicationNumber(final String applicationNumber) {
         return (T) this.licenseRepository.findByApplicationNumber(applicationNumber);
-    }
-
-    public List<Installment> getLastFiveYearInstallmentsForLicense() {
-        final List<Installment> installmentList = this.installmentDao.fetchInstallments(this.getModuleName(), new Date(), 6);
-        Collections.reverse(installmentList);
-        return installmentList;
     }
 
     public Map<String, Map<String, BigDecimal>> getOutstandingFee(final T license) {
