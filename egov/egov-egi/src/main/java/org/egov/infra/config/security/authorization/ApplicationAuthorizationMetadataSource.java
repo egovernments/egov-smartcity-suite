@@ -63,6 +63,7 @@ import java.util.List;
 
 import static org.egov.infra.security.utils.SecurityConstants.LOGIN_URI;
 import static org.egov.infra.security.utils.SecurityConstants.PUBLIC_URI;
+import static org.egov.infra.utils.ApplicationConstant.NO_ROLE_NAME;
 
 public class ApplicationAuthorizationMetadataSource implements FilterInvocationSecurityMetadataSource {
 
@@ -93,19 +94,18 @@ public class ApplicationAuthorizationMetadataSource implements FilterInvocationS
     }
 
     private Collection<ConfigAttribute> lookupAttributes(String contextRoot, String url) {
+        List<ConfigAttribute> configAttributes = new ArrayList<>();
         if (url.startsWith(LOGIN_URI) || url.startsWith(PUBLIC_URI) || isPatternExcluded(url))
-            return Collections.emptyList();
+            return configAttributes;
         else {
             Action action = actionService.getActionByUrlAndContextRoot(url, contextRoot);
             if (action != null) {
-                List<ConfigAttribute> configAttributes = new ArrayList<>();
-                action.getRoles().forEach(role ->
-                        configAttributes.add(new SecurityConfig(role.getName()))
-                );
-                return configAttributes;
+                action.getRoles().forEach(role -> configAttributes.add(new SecurityConfig(role.getName())));
+                if (configAttributes.isEmpty())
+                    configAttributes.add(new SecurityConfig(NO_ROLE_NAME));
             }
         }
-        return Collections.emptyList();
+        return configAttributes;
     }
 
     private Boolean isPatternExcluded(String pattern) {

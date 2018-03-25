@@ -88,6 +88,7 @@ public final class ApplicationConstant {
     public static final String USERNAME_KEY = "username";
     public static final String CITIZEN_ROLE_NAME = "CITIZEN";
     public static final String PUBLIC_ROLE_NAME = "PUBLIC";
+    public static final String NO_ROLE_NAME = "NONE";
     public static final String ANONYMOUS_USERNAME = "anonymous";
     public static final String SYSTEM_USERNAME = "system";
     public static final String TENANTID_KEY = "tenant_id";
