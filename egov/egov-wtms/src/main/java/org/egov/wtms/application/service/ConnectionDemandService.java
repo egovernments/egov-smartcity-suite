@@ -466,10 +466,11 @@ public class ConnectionDemandService {
      */
     @Transactional
     public WaterConnectionDetails updateDemandForMeteredConnection(final WaterConnectionDetails waterConnectionDetails,
-            final BigDecimal billAmount, final Date currentDate, final Date previousDate, final int noofmonths) {
+            final BigDecimal billAmount, final Date currentDate, final Date previousDate, final int noofmonths,
+            final Boolean isCurrentMonthIncluded) {
         Installment installment;
         List<Installment> installmentList = new ArrayList<>();
-        if (noofmonths > 1 && !waterConnectionDetails.getMeterConnection().get(0).isMeterDamaged())
+        if (!waterConnectionDetails.getMeterConnection().get(0).isMeterDamaged())
             installmentList = installmentDao.getInstallmentsByModuleAndFromDateAndInstallmentType(
                     moduleService.getModuleByName(WaterTaxConstants.MODULE_NAME),
                     previousDate, currentDate, WaterTaxConstants.MONTHLY);
@@ -477,12 +478,23 @@ public class ConnectionDemandService {
         installment = getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME,
                 WaterTaxConstants.MONTHLY, currentDate);
 
-        if (installmentList.isEmpty() || !installmentList.contains(installment))
-            installmentList.add(installment);
+        if (!isCurrentMonthIncluded && installmentList.size() > 1 && installmentList.contains(installment))
+            installmentList.remove(installment);
 
-        final EgDemand demandObj = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
-        if (demandObj == null && waterConnectionDetails.getLegacy())
-            throw new ApplicationRuntimeException("err.legacy.demand.not.present");
+        EgDemand demandObj = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+        if (demandObj == null && waterConnectionDetails.getLegacy()) {
+            EgDemand demand = new EgDemand();
+            demand.setEgInstallmentMaster(installment);
+            demand.setIsHistory("N");
+            demand.setCreateDate(new Date());
+            demand.setModifiedDate(new Date());
+            demandObj = demand;
+            WaterDemandConnection waterDemandConnection = new WaterDemandConnection();
+            waterDemandConnection.setDemand(demandObj);
+            waterDemandConnection.setWaterConnectionDetails(waterConnectionDetails);
+            waterConnectionDetails.addWaterDemandConnection(waterDemandConnection);
+            waterDemandConnectionService.createWaterDemandConnection(waterDemandConnection);
+        }
         if (!installmentList.isEmpty()) {
             for (final Installment installmentVal : installmentList)
                 createMeteredDemandDetails(demandObj, waterConnectionDetails, billAmount, installmentVal);
@@ -495,14 +507,13 @@ public class ConnectionDemandService {
                 egBillDAO.create(billObj);
             }
             generateBillForMeterAndMonthly(waterConnectionDetails.getConnection().getConsumerCode());
-        }
-
-        else
+        } else
             throw new ValidationException("err.water.meteredinstallment.not.found");
         waterConnectionDetails.getWaterDemandConnection().get(0).setDemand(demandObj);
         return waterConnectionDetails;
     }
 
+    @Transactional
     public void createMeteredDemandDetails(final EgDemand demandObj, final WaterConnectionDetails waterConnectionDetails,
             final BigDecimal billAmount, final Installment installment) {
         Boolean demandDetailExists = false;

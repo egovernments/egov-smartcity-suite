@@ -47,6 +47,8 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
+
 import java.math.BigDecimal;
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -81,6 +83,7 @@ import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -134,7 +137,6 @@ public class MeterDemandNoticeController {
         ReportOutput reportOutput;
         if (waterConnectionDetails != null) {
             Map<String, Object> reportParams;
-            final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                     waterConnectionDetails.getConnection().getPropertyIdentifier(),
                     PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ACTIVE);
@@ -171,15 +173,10 @@ public class MeterDemandNoticeController {
                     meterReadingpriviousObj.setCurrentReading(waterConnectionDetails.getExistingConnection().getCurrentReading());
                 meterReadingpriviousObj.setCurrentReadingDate(waterConnectionDetails.getExecutionDate());
             }
-            final Format formattermonth = new SimpleDateFormat("MMMM");
-            final Format formatterYear = new SimpleDateFormat("YYYY");
-            final String monthName = formattermonth.format(waterConnectionDetails.getMeterConnection().get(0)
-                    .getCurrentReadingDate());
-            final String yearName = formatterYear.format(waterConnectionDetails.getMeterConnection().get(0)
-                    .getCurrentReadingDate());
-            reportParams = prepareReportParams(waterConnectionDetails, session, formatter, assessmentDetails,
+
+            reportParams = prepareReportParams(waterConnectionDetails, session, assessmentDetails,
                     ownerName.toString(), billObj,
-                    meterReadingpriviousObj, monthName, yearName);
+                    meterReadingpriviousObj);
             reportInput = new ReportRequest(METERDEMAND_NOTICE, waterConnectionDetails,
                     reportParams);
             reportInput.setPrintDialogOnOpenReport(true);
@@ -203,10 +200,25 @@ public class MeterDemandNoticeController {
      * @param yearName
      */
     private Map<String, Object> prepareReportParams(final WaterConnectionDetails waterConnectionDetails,
-            final HttpSession session,
-            final SimpleDateFormat formatter, final AssessmentDetails assessmentDetails, final String ownerName,
-            final EgBill billObj, final MeterReadingConnectionDetails meterReadingpriviousObj, final String monthName,
-            final String yearName) {
+            final HttpSession session, final AssessmentDetails assessmentDetails, final String ownerName,
+            final EgBill billObj, final MeterReadingConnectionDetails meterReadingpriviousObj) {
+        final Format formattermonth = new SimpleDateFormat("MMMM");
+        final Format formatterYear = new SimpleDateFormat("YYYY");
+        DateTime dateTime = new DateTime();
+        final String monthName;
+        final String yearName;
+        if (!waterConnectionDetails.getMeterConnection().isEmpty()) {
+            final Date currentReadingDate = waterConnectionDetails.getMeterConnection().get(0).getCurrentReadingDate();
+            dateTime = new DateTime(currentReadingDate);
+            if (dateTime != null) {
+                final int currentMidday = dateTime.dayOfMonth().getMaximumValue() / 2;
+                final DateTime currentMidDate = new DateTime(currentReadingDate).withDayOfMonth(currentMidday);
+                if (currentReadingDate.before(currentMidDate.toDate()))
+                    dateTime = dateTime.minusMonths(1);
+            }
+        }
+        monthName = formattermonth.format(dateTime.toDate());
+        yearName = formatterYear.format(dateTime.toDate());
         final Map<String, Object> reportParams = new HashMap<>();
         if (WaterTaxConstants.NEWCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
                 || WaterTaxConstants.ADDNLCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType()
@@ -226,26 +238,25 @@ public class MeterDemandNoticeController {
                 : "");
         reportParams.put("billMonth", monthName + "-" + yearName);
         reportParams.put("demandNoticeDate",
-                billObj != null && billObj.getCreateDate() != null ? formatter.format(billObj.getCreateDate())
+                billObj != null && billObj.getCreateDate() != null ? toDefaultDateFormat(billObj.getCreateDate())
                         : null);
         reportParams.put("previousReading", meterReadingpriviousObj.getCurrentReading());
         if (meterReadingpriviousObj.getCurrentReadingDate() != null)
-            reportParams.put("previousReadingDate", formatter.format(meterReadingpriviousObj.getCurrentReadingDate()));
+            reportParams.put("previousReadingDate", toDefaultDateFormat(meterReadingpriviousObj.getCurrentReadingDate()));
         else
             reportParams.put("previousReadingDate", "");
         reportParams.put("currentReading", waterConnectionDetails.getMeterConnection().get(0).getCurrentReading());
         reportParams.put("currrentReadingDate",
-                formatter.format(waterConnectionDetails.getMeterConnection().get(0).getCurrentReadingDate()));
+                toDefaultDateFormat(waterConnectionDetails.getMeterConnection().get(0).getCurrentReadingDate()));
         if (meterReadingpriviousObj.getCurrentReading() != null
                 && !waterConnectionDetails.getMeterConnection().isEmpty()
                 && waterConnectionDetails.getMeterConnection().get(0).getCurrentReading() != null)
             reportParams.put("noofunitsconsume", waterConnectionDetails.getMeterConnection().get(0).getCurrentReading()
                     - meterReadingpriviousObj.getCurrentReading());
         reportParams.put("totalBilltoCollect", waterConnectionDetailsService.getTotalAmount(waterConnectionDetails));
-        reportParams.put("currentMonthCharges", getCurrentMonthDemandAmount(waterConnectionDetails,
-                waterConnectionDetails.getMeterConnection().get(0).getCurrentReadingDate()));
+        reportParams.put("currentMonthCharges", getCurrentMonthDemandAmount(waterConnectionDetails, dateTime.toDate()));
         reportParams.put("totalDueAmount",
-                getTotalDue(waterConnectionDetails, waterConnectionDetails.getMeterConnection().get(0).getCurrentReadingDate()));
+                getTotalDue(waterConnectionDetails, dateTime.toDate()));
 
         reportParams.put("address", assessmentDetails.getPropertyAddress());
         return reportParams;
