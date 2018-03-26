@@ -306,21 +306,13 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 				property = (PropertyImpl) basicProperty.getWFProperty();
 			notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(noticeType,
 					revisionPetition.getObjectionNumber());
-		} else if (AMALGAMATION.equalsIgnoreCase(type)) {
-		    property = (PropertyImpl) getPersistenceService()
-                    .findByNamedQuery(QUERY_PROPERTYIMPL_BYID, basicPropertyId);
-		    basicProperty = (BasicPropertyImpl) property.getBasicProperty();
-                    ownerPosition = property.getCurrentState().getOwnerPosition();
-                    notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(noticeType,
-                            property.getApplicationNo());
-                } else if ( VACANCYREMISSIONAPPROVAL.equalsIgnoreCase(type)){
-                vacancyRemissionApproval = vacancyRemissionService.getVacancyRemissionApprovalById(basicPropertyId);
-                ownerPosition = vacancyRemissionApproval.getCurrentState().getOwnerPosition();
-                basicProperty = vacancyRemissionApproval.getVacancyRemission().getBasicProperty(); 
-                notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(NOTICE_TYPE_VRPROCEEDINGS,
-                        vacancyRemissionApproval.getVacancyRemission().getApplicationNumber());
-                }
-		else {
+		} else if (VACANCYREMISSIONAPPROVAL.equalsIgnoreCase(type)) {
+			vacancyRemissionApproval = vacancyRemissionService.getVacancyRemissionApprovalById(basicPropertyId);
+			ownerPosition = vacancyRemissionApproval.getCurrentState().getOwnerPosition();
+			basicProperty = vacancyRemissionApproval.getVacancyRemission().getBasicProperty();
+			notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(NOTICE_TYPE_VRPROCEEDINGS,
+					vacancyRemissionApproval.getVacancyRemission().getApplicationNumber());
+		} else {
 			basicProperty = (BasicPropertyImpl) getPersistenceService()
 					.findByNamedQuery(QUERY_BASICPROPERTY_BY_BASICPROPID, basicPropertyId);
 			property = (PropertyImpl) basicProperty.getProperty();
