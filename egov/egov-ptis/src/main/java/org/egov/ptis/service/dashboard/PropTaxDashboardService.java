@@ -399,7 +399,7 @@ public class PropTaxDashboardService {
             collectionAchievementsService.createAchievementsIndex(taxPayerDetails);
         Long timeTaken = System.currentTimeMillis() - startTime;
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Time taken by getFinYearsCollByService() for Property Tax is : " + timeTaken + MILLISECS);
+            LOGGER.debug("Time taken by pushAchievements() is : " + timeTaken + MILLISECS);
     }
     
     /**
