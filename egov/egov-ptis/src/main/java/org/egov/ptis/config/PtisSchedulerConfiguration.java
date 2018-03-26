@@ -51,6 +51,7 @@ package org.egov.ptis.config;
 import org.egov.infra.config.scheduling.QuartzSchedulerConfiguration;
 import org.egov.infra.config.scheduling.SchedulerConfigCondition;
 import org.egov.ptis.scheduler.BulkBillGenerationJob;
+import org.egov.ptis.scheduler.CollectionAchievementsJob;
 import org.egov.ptis.scheduler.DemandActivationJob;
 import org.egov.ptis.scheduler.RecoveryNoticesJob;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -84,7 +85,8 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
                 ptisBulkBillGenerationCronTrigger2().getObject(),
                 ptisBulkBillGenerationCronTrigger3().getObject(),
                 ptisBulkBillGenerationCronTrigger4().getObject(),
-                demandActivationCronTrigger().getObject()
+                demandActivationCronTrigger().getObject(),
+                collectionAchievementsCronTrigger().getObject()
         );
         return ptisScheduler;
     }
@@ -116,7 +118,7 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
         recoveryNoticeJobDetail.setJobDataAsMap(jobDetailMap);
         return recoveryNoticeJobDetail;
     }
-
+    
     @Bean("demandActivationJob")
     public DemandActivationJob demandActivationJob() {
         return new DemandActivationJob();
@@ -148,6 +150,39 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
         demandActivationCron.setCronExpression("0 15 0 * * ?");
         demandActivationCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
         return demandActivationCron;
+    }
+    
+    @Bean("collectionAchievementsJob")
+    public CollectionAchievementsJob collectionAchievementsJob() {
+        return new CollectionAchievementsJob();
+    }
+
+    @Bean
+    public JobDetailFactoryBean collectionAchievementsJobDetail() {
+        JobDetailFactoryBean collectionAchievementsJobDetail = new JobDetailFactoryBean();
+        collectionAchievementsJobDetail.setGroup("PTIS_JOB_GROUP");
+        collectionAchievementsJobDetail.setName("PTIS_COLLECTION_ACHIEVEMENTS_JOB");
+        collectionAchievementsJobDetail.setDurability(true);
+        collectionAchievementsJobDetail.setJobClass(CollectionAchievementsJob.class);
+        collectionAchievementsJobDetail.setRequestsRecovery(true);
+        Map<String, String> jobDetailMap = new HashMap<>();
+        jobDetailMap.put("jobBeanName", "collectionAchievementsJob");
+        jobDetailMap.put("userName", "system");
+        jobDetailMap.put("cityDataRequired", "false");
+        jobDetailMap.put("moduleName", "ptis");
+        collectionAchievementsJobDetail.setJobDataAsMap(jobDetailMap);
+        return collectionAchievementsJobDetail;
+    }
+
+    @Bean
+    public CronTriggerFactoryBean collectionAchievementsCronTrigger() {
+        CronTriggerFactoryBean collectionAchievementsCron = new CronTriggerFactoryBean();
+        collectionAchievementsCron.setJobDetail(collectionAchievementsJobDetail().getObject());
+        collectionAchievementsCron.setGroup("PTIS_TRIGGER_GROUP");
+        collectionAchievementsCron.setName("PTIS_COLLECTION_ACHIEVEMENTS_TRIGGER");
+        collectionAchievementsCron.setCronExpression("0 0 7 ? * * *");
+        collectionAchievementsCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
+        return collectionAchievementsCron;
     }
 
     @Bean("bulkBillGenerationJob0")

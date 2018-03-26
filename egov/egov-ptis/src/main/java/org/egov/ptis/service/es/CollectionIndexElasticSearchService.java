@@ -347,12 +347,12 @@ public class CollectionIndexElasticSearchService {
             toDate = DateUtils.addDays(new Date(), 1);
         }
         // Today’s collection
-        todayColl = getCollectionBetweenDates(collectionDetailsRequest, fromDate, toDate, null, TOTAL_AMOUNT);
+        todayColl = getCollectionBetweenDates(collectionDetailsRequest, fromDate, toDate, null, null, TOTAL_AMOUNT);
         collectionIndexDetails.setTodayColl(todayColl);
 
         // Last year Today’s day collection
         todayColl = getCollectionBetweenDates(collectionDetailsRequest, DateUtils.addYears(fromDate, -1),
-                DateUtils.addYears(toDate, -1), null, TOTAL_AMOUNT);
+                DateUtils.addYears(toDate, -1), null, null, TOTAL_AMOUNT);
         collectionIndexDetails.setLyTodayColl(todayColl);
 
         /**
@@ -369,18 +369,18 @@ public class CollectionIndexElasticSearchService {
             toDate = DateUtils.addDays(new Date(), 1);
         }
         // Current Year till today collection
-        tillDateColl = getCollectionBetweenDates(collectionDetailsRequest, fromDate, toDate, null, TOTAL_AMOUNT);
+        tillDateColl = getCollectionBetweenDates(collectionDetailsRequest, fromDate, toDate, null, null, TOTAL_AMOUNT);
         collectionIndexDetails.setCytdColl(tillDateColl);
 
         BigDecimal demandColl = calculateDemandCollection(collectionDetailsRequest, fromDate, toDate);
         collectionIndexDetails.setDmdColl(demandColl);
 
         collectionIndexDetails.setPntlyColl(getCollectionBetweenDates(collectionDetailsRequest, fromDate,
-                toDate, null, LATE_PAYMENT_CHARGES));
+                toDate, null, null, LATE_PAYMENT_CHARGES));
 
         // Last year till same date of today’s date collection
         tillDateColl = getCollectionBetweenDates(collectionDetailsRequest, DateUtils.addYears(fromDate, -1),
-                DateUtils.addYears(toDate, -1), null, TOTAL_AMOUNT);
+                DateUtils.addYears(toDate, -1), null, null, TOTAL_AMOUNT);
         collectionIndexDetails.setLytdColl(tillDateColl);
         Long timeTaken = System.currentTimeMillis() - startTime;
         LOGGER.debug("Time taken by getCompleteCollectionIndexDetails() is : " + timeTaken + MILLISECS);
@@ -394,10 +394,10 @@ public class CollectionIndexElasticSearchService {
      * @return BigDecimal
      */
     private BigDecimal calculateDemandCollection(CollectionDetailsRequest collectionDetailsRequest, Date fromDate, Date toDate) {
-        return getCollectionBetweenDates(collectionDetailsRequest, fromDate, toDate, null, ARREAR_AMOUNT)
-                .add(getCollectionBetweenDates(collectionDetailsRequest, fromDate, toDate, null, CURRENT_AMOUNT))
-                .add(getCollectionBetweenDates(collectionDetailsRequest, fromDate, toDate, null, ARREAR_CESS))
-                .add(getCollectionBetweenDates(collectionDetailsRequest, fromDate, toDate, null, CURRENT_CESS));
+        return getCollectionBetweenDates(collectionDetailsRequest, fromDate, toDate, null, null, ARREAR_AMOUNT)
+                .add(getCollectionBetweenDates(collectionDetailsRequest, fromDate, toDate, null, null, CURRENT_AMOUNT))
+                .add(getCollectionBetweenDates(collectionDetailsRequest, fromDate, toDate, null, null, ARREAR_CESS))
+                .add(getCollectionBetweenDates(collectionDetailsRequest, fromDate, toDate, null, null, CURRENT_CESS));
     }
 
     /**
@@ -410,7 +410,7 @@ public class CollectionIndexElasticSearchService {
      * @return BigDecimal
      */
     public BigDecimal getCollectionBetweenDates(CollectionDetailsRequest collectionDetailsRequest, Date fromDate,
-            Date toDate, String cityName, String fieldName) {
+            Date toDate, String cityName, String wardName, String fieldName) {
         Long startTime = System.currentTimeMillis();
         BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, COLLECTION_INDEX_NAME);
         boolQuery = boolQuery
@@ -419,6 +419,8 @@ public class CollectionIndexElasticSearchService {
                 .mustNot(QueryBuilders.matchQuery(STATUS, CANCELLED));
         if (StringUtils.isNotBlank(cityName))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(CITY_NAME, cityName));
+        else if (StringUtils.isNotBlank(wardName))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(REVENUE_WARD, wardName));
         
         SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(COLLECTION_INDEX_NAME)
                 .withQuery(boolQuery).addAggregation(AggregationBuilders.sum(COLLECTIONTOTAL).field(fieldName))
@@ -2008,16 +2010,20 @@ public class CollectionIndexElasticSearchService {
      * @return List
      */
     public List<BillCollectorIndex> getBillCollectorDetails(CollectionDetailsRequest collectionDetailsRequest) {
+        String sortField = REVENUE_WARD;
+        if(DASHBOARD_GROUPING_BILLCOLLECTORWISE.equalsIgnoreCase(collectionDetailsRequest.getType()))
+            sortField = "billCollector";
+        else if(DASHBOARD_GROUPING_REVENUEINSPECTORWISE.equalsIgnoreCase(collectionDetailsRequest.getType()))
+            sortField = "revenueInspector";
+        else if(DASHBOARD_GROUPING_REVENUEOFFICERWISE.equalsIgnoreCase(collectionDetailsRequest.getType()))
+            sortField = "revenueOfficer";
         SearchQuery searchQueryColl = new NativeSearchQueryBuilder()
                 .withIndices(PropertyTaxConstants.BILL_COLLECTOR_INDEX_NAME)
-                .withFields("billCollector", "billCollectorMobileNo", "revenueInspector", "revenueInspectorMobileNo", "revenueOfficer", "revenueOfficerMobileNo", REVENUE_WARD)
                 .withQuery(QueryBuilders.boolQuery()
                         .filter(QueryBuilders.matchQuery(CITY_CODE, collectionDetailsRequest.getUlbCode())))
-                .withSort(new FieldSortBuilder("billCollector").order(SortOrder.ASC))
+                .withSort(new FieldSortBuilder(sortField).order(SortOrder.ASC))
                 .withPageable(new PageRequest(0, 250)).build();
-        List<BillCollectorIndex> billCollectorsList = elasticsearchTemplate.queryForList(searchQueryColl,
-                BillCollectorIndex.class);
-        return billCollectorsList;
+        return elasticsearchTemplate.queryForList(searchQueryColl, BillCollectorIndex.class);
     }
 
     /**

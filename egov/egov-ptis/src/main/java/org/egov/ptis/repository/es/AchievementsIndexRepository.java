@@ -45,21 +45,13 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
+package org.egov.ptis.repository.es;
 
-package org.egov.infra.admin.master.repository.es;
-
-import org.egov.infra.admin.master.entity.es.CityIndex;
+import org.egov.ptis.domain.entity.es.CollectionAchievementsIndex;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
-public interface CityIndexRepository extends ElasticsearchRepository<CityIndex, String>,CityIndexCustomRepository {
+public interface AchievementsIndexRepository extends ElasticsearchRepository<CollectionAchievementsIndex, String> {
 
-	CityIndex findByCitycode(String code);
-	
-	List<CityIndex> findByDistrictcode(String districtCode);
-	
-	List<CityIndex> findByRegionname(String regionName);
 }

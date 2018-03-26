@@ -45,21 +45,29 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
+package org.egov.ptis.scheduler;
 
-package org.egov.infra.admin.master.repository.es;
+import org.apache.log4j.Logger;
+import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
+import org.egov.ptis.service.dashboard.PropTaxDashboardService;
+import org.quartz.DisallowConcurrentExecution;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import org.egov.infra.admin.master.entity.es.CityIndex;
-import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
-import org.springframework.stereotype.Repository;
+@DisallowConcurrentExecution
+public class CollectionAchievementsJob extends AbstractQuartzJob {
 
-import java.util.List;
+    private static final long serialVersionUID = 1L;
 
-@Repository
-public interface CityIndexRepository extends ElasticsearchRepository<CityIndex, String>,CityIndexCustomRepository {
+    private static final Logger LOGGER = Logger.getLogger(CollectionAchievementsJob.class);
+    
+    @Autowired
+    private transient PropTaxDashboardService propTaxDashboardService;
+    
+    @Override
+    public void executeJob() {
+        LOGGER.debug("------ Entered into CollectionAchievementsJob.executeJob ------ ");
+        propTaxDashboardService.pushAchievements();
+        LOGGER.debug("------ Exiting from CollectionAchievementsJob.executeJob ------ ");  
+    }
 
-	CityIndex findByCitycode(String code);
-	
-	List<CityIndex> findByDistrictcode(String districtCode);
-	
-	List<CityIndex> findByRegionname(String regionName);
 }
