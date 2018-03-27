@@ -63,6 +63,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.eis.service.AssignmentService;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -75,7 +76,6 @@ import org.egov.ptis.domain.entity.property.view.SurveyBean;
 import org.egov.ptis.repository.es.PTGISIndexRepository;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -86,23 +86,20 @@ public class PropertySurveyService {
 
     @Autowired
     private PTGISIndexRepository surveyRepository;
-
     @Autowired
     private CityService cityService;
-    @Autowired
-    private ApplicationContext beanProvider;
-
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
     @Autowired
     protected AssignmentService assignmentService;
-
+    @Autowired
+    private PropertyService propService;
+    
     private static final String RI_APPROVED = "UD Revenue Inspector Approved";
     private static final String ASSISTANT_APPROVED = "Assistant Approved";
 
     @Transactional
     public void updateSurveyIndex(final String applicationType, final SurveyBean surveyBean) {
-        final PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
         if (!applicationType.isEmpty() && propService.propertyApplicationTypes().contains(applicationType)) {
             updateIndex(applicationType, surveyBean);
         }
@@ -140,7 +137,7 @@ public class PropertySurveyService {
         final BasicPropertyImpl basicProp = (BasicPropertyImpl) surveyBean.getProperty().getBasicProperty();
         final boolean isApproved = state.contains(WF_STATE_COMMISSIONER_APPROVED) ? true : false;
         final boolean isCancelled = state.contains(WF_STATE_REJECTED) ? true : false;
-
+        
         ptGisIndex = PTGISIndex.builder().withApplicationNo(surveyBean.getProperty().getApplicationNo())
                 .withApplicationdate(applicationDate)
                 .withApplicationStatus(state).withApplicationType(applicationType)
@@ -168,8 +165,14 @@ public class PropertySurveyService {
                 .withSentToThirdParty(false)
                 .withAssistantName(null)
                 .withRiName(null)
+                .withFunctionaryName(getFunctionaryDetail(surveyBean))
                 .build();
         return createPTGISIndex(ptGisIndex);
+    }
+
+    private String getFunctionaryDetail(final SurveyBean surveyBean) {
+        final User functionary = propService.getOwnerName(surveyBean.getProperty());
+        return functionary.getUsername().concat("::").concat(functionary.getName());
     }
 
     private Double calculatetaxvariance(final String applicationType, final SurveyBean surveyBean) {
@@ -244,8 +247,8 @@ public class PropertySurveyService {
         ptGisIndex.setThirdPrtyFlag(propertyImpl.isThirdPartyVerified());
         ptGisIndex.setDoorNo(doorNo == null ? ptGisIndex.getDoorNo() : doorNo);
         ptGisIndex.setSentToThirdParty(propertyImpl.isSentToThirdParty());
-
         ptGisIndex.setTaxVariance(taxVar);
+        ptGisIndex.setFunctionaryName(getFunctionaryDetail(surveyBean));
     }
 
     @Transactional

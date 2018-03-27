@@ -2155,7 +2155,7 @@ public class PropertyService {
 
     }
 
-    private User getOwnerName(final StateAware<Position> stateAwareObject) {
+    public User getOwnerName(final StateAware<Position> stateAwareObject) {
         User user = null;
         final Position position = stateAwareObject.getState().getOwnerPosition() != null
                 ? stateAwareObject.getState().getOwnerPosition() : stateAwareObject.getState().getPreviousOwner();
