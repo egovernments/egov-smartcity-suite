@@ -180,7 +180,7 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
         collectionAchievementsCron.setJobDetail(collectionAchievementsJobDetail().getObject());
         collectionAchievementsCron.setGroup("PTIS_TRIGGER_GROUP");
         collectionAchievementsCron.setName("PTIS_COLLECTION_ACHIEVEMENTS_TRIGGER");
-        collectionAchievementsCron.setCronExpression("0 0 7 ? * * *");
+        collectionAchievementsCron.setCronExpression("0 */30 * * * ?");
         collectionAchievementsCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
         return collectionAchievementsCron;
     }
