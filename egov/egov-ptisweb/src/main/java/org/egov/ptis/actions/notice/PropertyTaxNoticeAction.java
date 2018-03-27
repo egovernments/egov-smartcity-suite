@@ -631,7 +631,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 		reportParams.put(OWNER_NAME, basicProperty.getFullOwnerName().trim());
 		reportParams.put(DOOR_NUMBER, basicProperty.getAddress().getHouseNoBldgApt());
 		reportParams.put(ASSESSMENT_NUMBER, basicProperty.getUpicNo());
-		reportParams.put(LOCALITY, basicProperty.getAddress().getAreaLocalitySector().trim());
+		reportParams.put(LOCALITY, basicProperty.getPropertyID().getLocality().getName().trim());
 		reportParams.put(NOTICE_DATE, formatter.format(new Date()));
 		reportParams.put(COMMISSIONER, securityUtils.getCurrentUser().getName());
 		reportParams.put(EXEMPTION_REASON, basicProperty.getProperty().getTaxExemptedReason().getName());
