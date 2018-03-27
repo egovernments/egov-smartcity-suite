@@ -46,9 +46,8 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
   -->
-
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-11-10T16:25:18 -->
+<!-- 2018-03-26T20:39:04 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -198,151 +197,163 @@
 		</band>
 	</title>
 	<detail>
-		<band height="196" splitType="Stretch">
+		<band height="230" splitType="Stretch">
 			<staticText>
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="100" width="119" height="25" uuid="a39eb3a1-a7c5-43ea-befe-bab6617d6054"/>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="140" width="119" height="30" uuid="a39eb3a1-a7c5-43ea-befe-bab6617d6054"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle"/>
 				<text><![CDATA[Class]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="118" y="30" width="159" height="36" isPrintWhenDetailOverflows="true" uuid="c72e5656-23ed-47b6-ae5c-95d70b233511"/>
+				<reportElement stretchType="RelativeToBandHeight" x="118" y="34" width="159" height="36" isPrintWhenDetailOverflows="true" uuid="c72e5656-23ed-47b6-ae5c-95d70b233511"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[":  "+$P{agencyname}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="118" y="101" width="159" height="26" isPrintWhenDetailOverflows="true" uuid="ecde275c-1eff-426f-87dc-ced679545eba"/>
+				<reportElement stretchType="RelativeToBandHeight" x="118" y="140" width="159" height="28" isPrintWhenDetailOverflows="true" uuid="ecde275c-1eff-426f-87dc-ced679545eba"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[":  "+$P{class}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="118" y="65" width="159" height="37" isPrintWhenDetailOverflows="true" uuid="8c088985-941c-43d7-8d98-ead95debd2db"/>
+				<reportElement stretchType="RelativeToBandHeight" x="118" y="106" width="159" height="34" isPrintWhenDetailOverflows="true" uuid="8c088985-941c-43d7-8d98-ead95debd2db"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[":  "+$P{category}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="30" width="119" height="36" uuid="dfa15534-aaed-4483-8a54-732ca4304390"/>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="34" width="119" height="36" uuid="dfa15534-aaed-4483-8a54-732ca4304390"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle"/>
 				<text><![CDATA[Name of the Advertiser]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToBandHeight" x="276" y="65" width="110" height="37" uuid="cd0befcc-64cc-4cff-8af9-202f273c712a"/>
+				<reportElement stretchType="RelativeToBandHeight" x="276" y="107" width="110" height="33" uuid="cd0befcc-64cc-4cff-8af9-202f273c712a"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle"/>
 				<text><![CDATA[Sub-Category]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToBandHeight" x="276" y="30" width="110" height="36" uuid="eba2a82b-72b9-4f53-bff5-0d6c02f0caf9"/>
+				<reportElement stretchType="RelativeToBandHeight" x="276" y="34" width="110" height="36" uuid="eba2a82b-72b9-4f53-bff5-0d6c02f0caf9"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle"/>
-				<text><![CDATA[Address]]></text>
+				<text><![CDATA[Owner address]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="385" y="30" width="170" height="36" isPrintWhenDetailOverflows="true" uuid="ee4009ce-ddf8-4ad2-951a-8ac4632dd765"/>
+				<reportElement stretchType="RelativeToBandHeight" x="385" y="34" width="170" height="36" isPrintWhenDetailOverflows="true" uuid="ee4009ce-ddf8-4ad2-951a-8ac4632dd765"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[":  "+$P{agencyaddress}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[":  "+$P{address}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="385" y="100" width="170" height="26" isPrintWhenDetailOverflows="true" uuid="4eb10d84-be3a-4dbb-9af7-5ccfde727bcf"/>
+				<reportElement stretchType="RelativeToBandHeight" x="385" y="140" width="170" height="31" isPrintWhenDetailOverflows="true" uuid="4eb10d84-be3a-4dbb-9af7-5ccfde727bcf"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[":  "+$P{durationOfAdvt}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="385" y="66" width="170" height="35" isPrintWhenDetailOverflows="true" uuid="373fd0da-ddf3-4bd3-9a0e-0d95b64b3225"/>
+				<reportElement stretchType="RelativeToBandHeight" x="385" y="107" width="170" height="33" isPrintWhenDetailOverflows="true" uuid="373fd0da-ddf3-4bd3-9a0e-0d95b64b3225"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[":  "+$P{subCategory}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="118" y="0" width="159" height="31" isPrintWhenDetailOverflows="true" uuid="efb6adce-48bc-4cd7-a6a1-262eb25f66a1"/>
+				<reportElement stretchType="RelativeToBandHeight" x="118" y="0" width="159" height="34" isPrintWhenDetailOverflows="true" uuid="efb6adce-48bc-4cd7-a6a1-262eb25f66a1"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[":  "+$P{advertisementnumber}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="119" height="31" uuid="0b8f67cf-296b-49b2-9122-7357b3526e61"/>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="119" height="34" uuid="0b8f67cf-296b-49b2-9122-7357b3526e61"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle"/>
 				<text><![CDATA[Advertisement Number]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="385" y="125" width="170" height="26" isPrintWhenDetailOverflows="true" uuid="bea9bcd0-dc13-49bb-b6c8-f1f881e6c79d"/>
+				<reportElement stretchType="RelativeToBandHeight" x="385" y="170" width="170" height="27" isPrintWhenDetailOverflows="true" uuid="bea9bcd0-dc13-49bb-b6c8-f1f881e6c79d"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[":  "+$P{electionWard}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="118" y="126" width="159" height="23" isPrintWhenDetailOverflows="true" uuid="0e1f1694-e71e-4b44-863a-3c35b7c9a4f3"/>
+				<reportElement stretchType="RelativeToBandHeight" x="118" y="169" width="159" height="26" isPrintWhenDetailOverflows="true" uuid="0e1f1694-e71e-4b44-863a-3c35b7c9a4f3"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[":  "+$P{revenueWard}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="124" width="119" height="25" uuid="bb5c699f-8aca-4ee2-bade-e66f28ce03d1"/>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="169" width="119" height="28" uuid="bb5c699f-8aca-4ee2-bade-e66f28ce03d1"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle"/>
 				<text><![CDATA[Revenue Ward]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToBandHeight" x="276" y="125" width="110" height="26" uuid="09344e16-c190-414a-8162-d4ee7dfd74d6"/>
+				<reportElement stretchType="RelativeToBandHeight" x="276" y="170" width="110" height="27" uuid="09344e16-c190-414a-8162-d4ee7dfd74d6"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle"/>
 				<text><![CDATA[Election Ward]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToBandHeight" x="276" y="0" width="110" height="31" uuid="53a4d903-32ee-4073-9ea6-f41b3417b6f3"/>
+				<reportElement stretchType="RelativeToBandHeight" x="276" y="0" width="110" height="34" uuid="53a4d903-32ee-4073-9ea6-f41b3417b6f3"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle"/>
 				<text><![CDATA[Application Number]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="385" y="0" width="170" height="31" isPrintWhenDetailOverflows="true" uuid="c4b8ec80-2b4e-4828-939e-9220d45c1567"/>
+				<reportElement stretchType="RelativeToBandHeight" x="385" y="0" width="170" height="34" isPrintWhenDetailOverflows="true" uuid="c4b8ec80-2b4e-4828-939e-9220d45c1567"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[":  "+$P{applicationNumber}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement stretchType="RelativeToBandHeight" x="276" y="101" width="110" height="25" uuid="179373e5-2612-4338-8b6b-a52ec3dba194"/>
+				<reportElement stretchType="RelativeToBandHeight" x="276" y="140" width="110" height="31" uuid="179373e5-2612-4338-8b6b-a52ec3dba194"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle"/>
 				<text><![CDATA[Duration of Advt]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="148" width="119" height="36" uuid="8178e3cd-c05d-42c4-8ecf-1205fc8fd180"/>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="106" width="119" height="34" uuid="135b32fb-3e6c-48f4-bdd8-78876e784979"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle"/>
-				<text><![CDATA[Ad Particulars]]></text>
+				<text><![CDATA[Category]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="118" y="148" width="159" height="36" isPrintWhenDetailOverflows="true" uuid="e4fa7686-2fcb-446b-9eec-a01df9b4d7f0"/>
+				<reportElement stretchType="RelativeToBandHeight" x="118" y="70" width="159" height="37" isPrintWhenDetailOverflows="true" uuid="498d4f17-c6c3-43e5-859d-04990a3d0bd8"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[":  "+$P{category}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="70" width="119" height="36" uuid="4f3046c9-6aa2-48ff-a4e0-24fc826ee1ec"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<text><![CDATA[Agency address]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="386" y="70" width="168" height="36" isPrintWhenDetailOverflows="true" uuid="12c69482-930e-4e47-bbbb-767c08810de1"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[":  "+$P{adParticular}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement stretchType="RelativeToBandHeight" x="276" y="150" width="110" height="34" uuid="b3676ac9-858b-4a03-bf82-9ba85fd3433b"/>
+				<reportElement stretchType="RelativeToBandHeight" x="276" y="70" width="104" height="36" uuid="17da1c50-1fa5-46de-afe0-21486c05fef2"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<text><![CDATA[Ad Particulars]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" x="1" y="196" width="118" height="34" uuid="52261837-7da9-41d7-b568-3594b85727f4"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle"/>
 				<text><![CDATA[Measurement]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="385" y="150" width="170" height="34" isPrintWhenDetailOverflows="true" uuid="bc8cebea-b5a0-4947-ae93-cc575b8cce9e"/>
+				<reportElement stretchType="RelativeToBandHeight" x="118" y="196" width="162" height="34" isPrintWhenDetailOverflows="true" uuid="b4743ab6-1fa5-4a51-b3b6-91727461d361"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[":  "+$P{measurement}]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="65" width="119" height="36" uuid="135b32fb-3e6c-48f4-bdd8-78876e784979"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle"/>
-				<text><![CDATA[Category]]></text>
-			</staticText>
 		</band>
 		<band height="232">
 			<staticText>
@@ -1042,14 +1053,14 @@ or online through Creditcard/Debitcard/Net Banking.]]></text>
 			<staticText>
 				<reportElement stretchType="RelativeToBandHeight" x="289" y="70" width="76" height="26" uuid="9004f29d-2f86-4037-9de0-6bd5ad9c6f14"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle"/>
-				<text><![CDATA[Address]]></text>
+				<text><![CDATA[Owner Address]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" x="365" y="70" width="191" height="26" isPrintWhenDetailOverflows="true" uuid="0c57ae0b-48e2-442e-8073-d6de4cc71189"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[":  "+$P{agencyaddress}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[":  "+$P{address}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" x="365" y="48" width="191" height="23" isPrintWhenDetailOverflows="true" uuid="b6cfc12f-e09c-4f31-83f3-e690863f8180"/>
