@@ -47,7 +47,7 @@
   ~
   -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2018-03-26T20:39:04 -->
+<!-- 2018-03-27T16:37:23 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -197,7 +197,7 @@
 		</band>
 	</title>
 	<detail>
-		<band height="230" splitType="Stretch">
+		<band height="223" splitType="Stretch">
 			<staticText>
 				<reportElement stretchType="RelativeToBandHeight" x="0" y="140" width="119" height="30" uuid="a39eb3a1-a7c5-43ea-befe-bab6617d6054"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle"/>
@@ -323,7 +323,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[":  "+$P{category}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[":  "+$P{agencyaddress}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement stretchType="RelativeToBandHeight" x="0" y="70" width="119" height="36" uuid="4f3046c9-6aa2-48ff-a4e0-24fc826ee1ec"/>
@@ -343,12 +343,12 @@
 				<text><![CDATA[Ad Particulars]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToBandHeight" x="1" y="196" width="118" height="34" uuid="52261837-7da9-41d7-b568-3594b85727f4"/>
+				<reportElement stretchType="RelativeToBandHeight" x="1" y="196" width="118" height="24" uuid="52261837-7da9-41d7-b568-3594b85727f4"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle"/>
 				<text><![CDATA[Measurement]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="118" y="196" width="162" height="34" isPrintWhenDetailOverflows="true" uuid="b4743ab6-1fa5-4a51-b3b6-91727461d361"/>
+				<reportElement stretchType="RelativeToBandHeight" x="118" y="196" width="158" height="24" isPrintWhenDetailOverflows="true" uuid="b4743ab6-1fa5-4a51-b3b6-91727461d361"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
@@ -1037,7 +1037,7 @@ or online through Creditcard/Debitcard/Net Banking.]]></text>
 				<textFieldExpression><![CDATA["Powered by www.egovernments.org Visit your city portal at http://"+$P{cityName}+".emunicipal.ap.gov.in"]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="151">
+		<band height="151" splitType="Stretch">
 			<staticText>
 				<reportElement stretchType="RelativeToBandHeight" x="0" y="70" width="119" height="26" uuid="6cb3cc27-00ce-4a41-8127-21bc3fd02c99"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle"/>
