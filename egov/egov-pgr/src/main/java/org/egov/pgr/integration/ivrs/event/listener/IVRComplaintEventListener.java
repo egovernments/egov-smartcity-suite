@@ -100,7 +100,8 @@ public class IVRComplaintEventListener {
                                 URLEncoder.encode(complaint.getState().getComments(), UTF_8.toString()),
                                 getFormattedDate(complaint.getCreatedDate(), IVR_DATE_FORMAT),
                                 currentDateToGivenFormat(IVR_DATE_FORMAT), complaint.getComplaintType().getId(),
-                                complaint.getDepartment().getId(), URLEncoder.encode(complaint.getDetails(), UTF_8.toString()));
+                                complaint.getDepartment().getId(), URLEncoder.encode(complaint.getDetails(), UTF_8.toString()),
+                                complaint.getComplainant().getName());
                 if (LOG.isInfoEnabled())
                     LOG.info("IVR Request : {}", ivrRequestURL);
                 Map<String, Object> ivrResponse = simpleRestClient.getRESTResponseAsMap(ivrRequestURL);
