@@ -59,16 +59,14 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Map;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
 import static org.egov.infra.utils.DateUtils.currentDateToGivenFormat;
 import static org.egov.infra.utils.DateUtils.getFormattedDate;
+import static org.egov.infra.utils.StringUtils.encodeURL;
 import static org.egov.pgr.entity.enums.ComplaintStatus.COMPLETED;
 import static org.egov.pgr.utils.constants.PGRConstants.MODULE_NAME;
 
@@ -97,20 +95,20 @@ public class IVRComplaintEventListener {
                 String ivrRequestURL = String
                         .format(ivrURL, complaint.getCrn(), getCityCode(), MODULE_NAME,
                                 complaint.getComplaintType().getCategory().getId(), complaint.getComplainant().getMobile(),
-                                URLEncoder.encode(complaint.getState().getComments(), UTF_8.toString()),
+                                encodeURL(complaint.getState().getComments()),
                                 getFormattedDate(complaint.getCreatedDate(), IVR_DATE_FORMAT),
                                 currentDateToGivenFormat(IVR_DATE_FORMAT), complaint.getComplaintType().getId(),
-                                complaint.getDepartment().getId(), URLEncoder.encode(complaint.getDetails(), UTF_8.toString()),
-                                complaint.getComplainant().getName());
+                                complaint.getDepartment().getId(), encodeURL(complaint.getDetails()),
+                                encodeURL(complaint.getComplainant().getName()));
                 if (LOG.isInfoEnabled())
                     LOG.info("IVR Request : {}", ivrRequestURL);
                 Map<String, Object> ivrResponse = simpleRestClient.getRESTResponseAsMap(ivrRequestURL);
                 if (LOG.isInfoEnabled())
-                    LOG.info("IVR Request, Response : {}, Date : {}, Error : {}",
+                    LOG.info("IVR Response : {}, Date : {}, Error : {}",
                             ivrResponse.get("result"), ivrResponse.get("incoming"),
                             defaultString((String) ivrResponse.get("error")));
             }
-        } catch (UnsupportedEncodingException e) {
+        } catch (RuntimeException e) {
             LOG.error("Error occurred while sending IVR request", e);
         } finally {
             complaintUpdateEvent.finish();
