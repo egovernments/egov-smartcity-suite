@@ -108,6 +108,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASO
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_AMALG;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_BIFURCATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_DATA_ENTRY;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_MARK_DEACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_BIFUR;
@@ -117,6 +118,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PT_WORKFLOWDESIGNATIO
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVISIONPETITION_STATUS_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ROLE_DATAENTRY_OPERATOR;
+import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_SURVEY;
 import static org.egov.ptis.constants.PropertyTaxConstants.SQUARE_YARD_TO_SQUARE_METER_VALUE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
@@ -128,7 +130,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WTMS_AMALGAMATE_WATER_CONNECTIONS_URL;
 import static org.egov.ptis.constants.PropertyTaxConstants.WTMS_TAXDUE_RESTURL;
-import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_SURVEY;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -873,7 +874,9 @@ public class PropertyService {
             LOGGER.info("modifyBasicProp, Could not get the previous property. DCB for arrears will be incorrect");
         else {
             modProperty = createDemandForModify(oldProperty, newProperty, propCompletionDate);
-            modProperty = createArrearsDemand(oldProperty, propCompletionDate, newProperty);
+            if(!(propertyModel.getPropertyModifyReason().equalsIgnoreCase(PROPERTY_MODIFY_REASON_REVISION_PETITION) &&
+                    oldProperty.getPropertyModifyReason().equalsIgnoreCase(PROP_CREATE_RSN)))
+              modProperty = createArrearsDemand(oldProperty, propCompletionDate, newProperty);
         }
 
         Map<Installment, Set<EgDemandDetails>> demandDetailsSetByInstallment;
