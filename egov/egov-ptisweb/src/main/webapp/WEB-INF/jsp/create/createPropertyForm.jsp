@@ -190,6 +190,7 @@
 	</tr>
  	<s:hidden id="appurtenantLandChecked" name="propertyDetail.appurtenantLandChecked" value="%{propertyDetail.appurtenantLandChecked}"/>
  	<s:hidden id="extentAppartenauntLand" name="propertyDetail.extentAppartenauntLand" value="%{propertyDetail.extentAppartenauntLand}"/>
+ 	<s:hidden id="sitalArea" name="sitalArea" value="%{areaOfPlot}"/>
 	
 	<%-- <tr class="superStructureRow">
 		<td class="greybox">&nbsp;</td>
