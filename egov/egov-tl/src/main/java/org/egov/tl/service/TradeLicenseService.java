@@ -107,8 +107,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static java.lang.String.format;
 import static org.apache.commons.lang.StringEscapeUtils.escapeXml;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -449,11 +449,12 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
     public String getOwnerName(License license) {
         String ownerName = NA;
-        if (license.getState() != null && license.getState().getOwnerPosition() != null) {
+        if (license.getState() != null && license.currentAssignee() != null) {
             List<Assignment> assignmentList = assignmentService
-                    .getAssignmentsForPosition(license.getState().getOwnerPosition().getId(), new Date());
+                    .getAssignmentsForPosition(license.currentAssignee().getId(), new Date());
             if (!assignmentList.isEmpty())
                 ownerName = assignmentList.get(0).getEmployee().getName();
+            ownerName = format(PROCESS_OWNER_FORMAT, ownerName, license.currentAssignee().getName());
         }
         return ownerName;
 
@@ -473,9 +474,9 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
             Position ownerPosition = state.getOwnerPosition();
             if (ownerPosition != null) {
                 User usr = eisCommonService.getUserForPosition(ownerPosition.getId(), state.getLastModifiedDate());
-                currentStateDetail.put("user", usr == null ? EMPTY : usr.getName());
+                currentStateDetail.put("user", usr == null ? NA : usr.getName());
             } else
-                currentStateDetail.put("user", ownerUser == null ? EMPTY : ownerUser.getName());
+                currentStateDetail.put("user", ownerUser == null ? NA : ownerUser.getName());
 
             processHistoryDetails.add(currentStateDetail);
             state.getHistory().stream().sorted(Comparator.comparing(StateHistory<Position>::getLastModifiedDate).reversed()).
@@ -495,10 +496,10 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         User ownerUser = stateHistory.getOwnerUser();
         if (ownerPosition != null) {
             User userPos = eisCommonService.getUserForPosition(ownerPosition.getId(), stateHistory.getLastModifiedDate());
-            processHistory.put("user", userPos == null ? EMPTY : userPos.getName());
+            processHistory.put("user", userPos == null ? NA : userPos.getName());
         } else
             processHistory.put("user",
-                    ownerUser == null ? EMPTY : ownerUser.getName());
+                    ownerUser == null ? NA : ownerUser.getName());
         return processHistory;
     }
 

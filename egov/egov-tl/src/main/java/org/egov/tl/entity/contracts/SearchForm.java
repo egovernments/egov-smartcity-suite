@@ -59,11 +59,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static java.lang.String.format;
-import static org.egov.infra.utils.ApplicationConstant.NA;
 import static org.egov.infra.utils.StringUtils.toYesOrNo;
 import static org.egov.tl.utils.Constants.CLOSURE_LIC_APPTYPE;
-import static org.egov.tl.utils.Constants.PROCESS_OWNER_FORMAT;
 import static org.egov.tl.utils.Constants.ROLE_BILLCOLLECTOR;
 import static org.egov.tl.utils.Constants.TL_APPROVER_ROLENAME;
 import static org.egov.tl.utils.Constants.TL_CREATOR_ROLENAME;
@@ -109,8 +106,7 @@ public class SearchForm extends DataTableSearchRequest {
         setActive(toYesOrNo(license.getIsActive()));
         setOldLicenseNumber(license.getOldLicenseNumber());
         setExpiryDate(license.getDateOfExpiry());
-        setOwnerName(NA.equals(ownerName) ? NA : format(PROCESS_OWNER_FORMAT, ownerName, license.getCurrentState()
-                .getOwnerPosition().getName()));
+        setOwnerName(ownerName);
         setApplicationTypeId(license.getLicenseAppType().getId());
         setNatureOfBusinessId(license.getNatureOfBusiness().getId());
         addActions(license, user);
