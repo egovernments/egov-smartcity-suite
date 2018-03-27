@@ -88,6 +88,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.SOURCEOFDATA_MIGRATIO
 import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_MEESEVA;
 import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_ONLINE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_MARKASCOURTCASE;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -135,6 +136,7 @@ import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.master.service.PropertyCourtCaseService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -209,7 +211,8 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
         @Result(name = APPLICATION_TYPE_AMALGAMATION, type = "redirectAction", location = "amalgamation-newForm", params = {
                 "namespace", "/amalgamation", "indexNumber", "${assessmentNum}", "meesevaApplicationNumber",
                 "${meesevaApplicationNumber}", "applicationType", "${applicationType}",
-                "modifyRsn", "AMALG" }) })
+                "modifyRsn", "AMALG" }),
+        @Result(name = APPLICATION_TYPE_MARKASCOURTCASE, type = "redirect", location = "../markascourtcase/${assessmentNum}") })
 
 public class SearchPropertyAction extends SearchFormAction {
     private static final String ADDRESS = "address";
@@ -302,6 +305,9 @@ public class SearchPropertyAction extends SearchFormAction {
 
     @Autowired
     private transient PropertyMutationDAO propertyMutationDAO;
+    
+    @Autowired 
+    private transient PropertyCourtCaseService propertyCourtCaseService;
 
     @Override
     public Object getModel() {
@@ -355,6 +361,10 @@ public class SearchPropertyAction extends SearchFormAction {
             addActionError(getText("validation.property.doesnot.exists"));
             return COMMON_FORM;
         }
+		if (APPLICATION_TYPE_MARKASCOURTCASE.equals(applicationType) && !propertyCourtCaseService.findByAssessmentNo(assessmentNum).isEmpty()) {
+				addActionError(getText("validation.property.already.under.courtcase"));
+				return COMMON_FORM;
+		}
         if (Arrays.asList(APPLICATION_TYPE_ALTER_ASSESSENT, APPLICATION_TYPE_TAX_EXEMTION, APPLICATION_TYPE_BIFURCATE_ASSESSENT,
                 APPLICATION_TYPE_DEMOLITION, APPLICATION_TYPE_AMALGAMATION).contains(applicationType)) {
             final Ptdemand ptDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(basicProperty.getProperty());
@@ -1206,6 +1216,12 @@ public class SearchPropertyAction extends SearchFormAction {
         setApplicationType(APPLICATION_TYPE_AMALGAMATION);
         return commonForm();
     }
+    
+    @Action(value = "/search/searchproperty-markundercourtcase")
+	public String markAsCourtCase() {
+			setApplicationType(APPLICATION_TYPE_MARKASCOURTCASE);
+			return commonForm();
+	}
 
     public List<Map<String, String>> getSearchResultList() {
         return searchResultList;

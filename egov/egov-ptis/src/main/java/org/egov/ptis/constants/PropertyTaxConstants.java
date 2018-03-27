@@ -1370,6 +1370,7 @@ public interface PropertyTaxConstants {
     public static final String APPLICATION_TYPE_MEESEVA_GRP = "Meeseva_General_Revision_Petition";
     public static final String APPLICATION_TYPE_MEESEVA_RP = "Meeseva_Revision_Petition";
     public static final String APPLICATION_TYPE_AMALGAMATION = "Amalgamation";
+    public static final String APPLICATION_TYPE_MARKASCOURTCASE = "Mark_As_Court_Case";
 
     // AppConfig values
     public static final String PROPERTYTAX_WORKFLOWDEPARTEMENT = "PROPERTYTAXDEPARTMENTFORWORKFLOW";
