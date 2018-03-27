@@ -812,11 +812,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
         if (WFLOW_ACTION_STEP_FORWARD.equalsIgnoreCase(workFlowAction)
                 && getNatureOfTask().equalsIgnoreCase(ADDTIONAL_RULE_REGISTERED_TRANSFER)
-                && (approverDesignation.equalsIgnoreCase(ASSISTANT_COMMISSIONER_DESIGN) ||
-                approverDesignation.equalsIgnoreCase(DEPUTY_COMMISSIONER_DESIGN)
-                || approverDesignation.equalsIgnoreCase(ADDITIONAL_COMMISSIONER_DESIGN)
-                || approverDesignation.equalsIgnoreCase(ZONAL_COMMISSIONER_DESIGN) ||
-                approverDesignation.equalsIgnoreCase(COMMISSIONER_DESGN)))
+                && COMMISSIONER_DESIGNATIONS.contains(approverDesignation))
             if (propertyMutation.getCurrentState().getNextAction().equalsIgnoreCase(WF_STATE_DIGITAL_SIGNATURE_PENDING))
                 nextAction = WF_STATE_DIGITAL_SIGNATURE_PENDING;
             else {
@@ -840,11 +836,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 propertyMutation.getBasicProperty().setUnderWorkflow(Boolean.FALSE);
             } else {
                 if (loggedInUserDesignation.equalsIgnoreCase(REVENUE_OFFICER_DESGN)
-                        || loggedInUserDesignation.equalsIgnoreCase(ASSISTANT_COMMISSIONER_DESIGN) ||
-                        loggedInUserDesignation.equalsIgnoreCase(ADDITIONAL_COMMISSIONER_DESIGN)
-                        || loggedInUserDesignation.equalsIgnoreCase(DEPUTY_COMMISSIONER_DESIGN) ||
-                        loggedInUserDesignation.equalsIgnoreCase(COMMISSIONER_DESGN) ||
-                        loggedInUserDesignation.equalsIgnoreCase(ZONAL_COMMISSIONER_DESIGN)) {
+                        || COMMISSIONER_DESIGNATIONS.contains(loggedInUserDesignation)) {
                     nextAction = UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
                     final Assignment assignmentOnreject = propertyService.getUserOnRejection(propertyMutation);
                     wfInitiator = assignmentOnreject;
