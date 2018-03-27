@@ -104,6 +104,7 @@ public class MeterReadingController {
     private static final String METERCURRENTREADING = "metercurrentReading";
     private static final String REDIRECT_TO_METERDEMANDNOTICE = "redirect:/application/meterdemandnotice?pathVar=";
     private static final String ERROR_METER_RATE_NOT_PRESENT = "err.metered.rate.not.present";
+    private static final String METER_CURRENT_READING_DATE = "metercurrentReadingDate";
 
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
@@ -145,24 +146,25 @@ public class MeterReadingController {
 
     private String loadViewData(final Model model,
             final WaterConnectionDetails waterConnectionDetails) {
-        MeterReadingConnectionDetails meterReadingpriviousObj;
-        final List<MeterReadingConnectionDetails> meterReadingpriviousObjlist = waterConnectionDetailsRepository
+        MeterReadingConnectionDetails meterReadingPreviousObj = null;
+        final List<MeterReadingConnectionDetails> meterReadingPreviousObjList = waterConnectionDetailsRepository
                 .findPreviousMeterReading(waterConnectionDetails.getId());
-        if (!meterReadingpriviousObjlist.isEmpty())
-            meterReadingpriviousObj = meterReadingpriviousObjlist.get(0);
-        else {
-            meterReadingpriviousObj = new MeterReadingConnectionDetails();
-            meterReadingpriviousObj.setCurrentReadingDate(waterConnectionDetails.getExistingConnection().getReadingDate());
+        if (meterReadingPreviousObjList == null || meterReadingPreviousObjList.isEmpty()) {
+            meterReadingPreviousObj = new MeterReadingConnectionDetails();
+            meterReadingPreviousObj.setCurrentReadingDate(waterConnectionDetails.getExistingConnection().getReadingDate());
             if (waterConnectionDetails.getConnection().getInitialReading() != null)
-                meterReadingpriviousObj.setCurrentReading(waterConnectionDetails.getConnection().getInitialReading());
+                meterReadingPreviousObj.setCurrentReading(waterConnectionDetails.getConnection().getInitialReading());
             else if (waterConnectionDetails.getExistingConnection() == null)
-                meterReadingpriviousObj.setCurrentReading(0l);
+                meterReadingPreviousObj.setCurrentReading(0l);
             else
-                meterReadingpriviousObj.setCurrentReading(waterConnectionDetails.getExistingConnection().getCurrentReading());
-        }
-        model.addAttribute("meterReadingpriviousObj", meterReadingpriviousObj);
+                meterReadingPreviousObj.setCurrentReading(waterConnectionDetails.getExistingConnection().getCurrentReading());
+        } else
+            meterReadingPreviousObj = meterReadingPreviousObjList.get(0);
+
+        model.addAttribute("meterReadingpriviousObj", meterReadingPreviousObj);
         model.addAttribute("waterConnectionDetails", waterConnectionDetails);
-        model.addAttribute("executionDate", toDefaultDateFormat(waterConnectionDetails.getExecutionDate()));
+        if (waterConnectionDetails.getExecutionDate() != null)
+            model.addAttribute("executionDate", toDefaultDateFormat(waterConnectionDetails.getExecutionDate()));
         model.addAttribute("feeDetails", connectionDemandService.getSplitFee(waterConnectionDetails));
         model.addAttribute(
                 "connectionType",
@@ -170,8 +172,8 @@ public class MeterReadingController {
                         waterConnectionDetails.getConnectionType().name()));
         model.addAttribute("mode", "meterEntry");
         model.addAttribute("meterReadingCurrentObj", new MeterReadingConnectionDetails());
-        final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
-        model.addAttribute("waterTaxDueforParent", waterTaxDueforParent);
+        final BigDecimal waterTaxDueForParent = waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
+        model.addAttribute("waterTaxDueforParent", waterTaxDueForParent);
         return NEWCONNECTIONMETERENTRY;
     }
 
@@ -194,7 +196,8 @@ public class MeterReadingController {
             final HttpServletRequest request) {
         final String sourceChannel = request.getParameter("Source");
         Date givenDate = null;
-        givenDate = toDateUsingDefaultPattern(request.getParameter("metercurrentReadingDate"));
+        if (request.getParameter(METER_CURRENT_READING_DATE) != null)
+            givenDate = toDateUsingDefaultPattern(request.getParameter(METER_CURRENT_READING_DATE));
         if (connectionDemandService.meterEntryAllReadyExistForCurrentMonth(waterConnectionDetails, givenDate))
             return REDIRECT_TO_METERDEMANDNOTICE
                     + waterConnectionDetails.getConnection().getConsumerCode();
@@ -202,14 +205,14 @@ public class MeterReadingController {
         Long previousReading = 0l;
         Long currentReadingValue = null;
         Boolean meterDamaged;
-        Boolean isCurrentMonthIncluded = false;
+        Boolean currentMonthIncluded = false;
         if ("true".equals(request.getParameter("waterConnectionDetails.meterConnection.isMeterDamaged"))) {
             meterDamaged = true;
             meterReadingConnectionDetailObj.setMeterDamaged(meterDamaged);
         }
         Date currentDate = null;
         Date previousDate = null;
-        currentDate = toDateUsingDefaultPattern(request.getParameter("metercurrentReadingDate"));
+        currentDate = toDateUsingDefaultPattern(request.getParameter(METER_CURRENT_READING_DATE));
         if (request.getParameter("previousreadingDate") != null)
             previousDate = toDateUsingDefaultPattern(request.getParameter("previousreadingDate"));
         if (currentDate != null) {
@@ -225,7 +228,7 @@ public class MeterReadingController {
                         getFormattedDate(midDate.toDate(), "dd MMMM YYYY") },
                         "err.invalid.meter.reading.date");
             else if (!currentDate.before(midDate.toDate()))
-                isCurrentMonthIncluded = true;
+                currentMonthIncluded = true;
         }
 
         if (errors.hasErrors()) {
@@ -242,7 +245,7 @@ public class MeterReadingController {
         if (currentReadingValue != null && currentReadingValue < previousReading)
             throw new ValidationException("err.invalid.meter.reading");
         final WaterConnectionDetails waterconnectionDetails = billCalculationAndDemandUpdate(waterConnectionDetails, request,
-                meterReadingConnectionDetailObj, previousReading, currentDate, previousDate, isCurrentMonthIncluded);
+                meterReadingConnectionDetailObj, previousReading, currentDate, previousDate, currentMonthIncluded);
         final WaterConnectionDetails savedWaterConnectionDetails = waterConnectionDetailsRepository
                 .save(waterconnectionDetails);
         waterConnectionDetailsService.updateIndexes(savedWaterConnectionDetails, sourceChannel);
@@ -252,15 +255,18 @@ public class MeterReadingController {
 
     private WaterConnectionDetails billCalculationAndDemandUpdate(final WaterConnectionDetails waterConnectionDetails,
             final HttpServletRequest request, final MeterReadingConnectionDetails meterReadingConnectionDetailObj,
-            final Long previousReading, final Date currentDate, Date previousDate, final Boolean isCurrentMonthIncluded) {
-        int noofmonths;
+            final Long previousReading, final Date currentDate, final Date previousDate, final Boolean currentMonthIncluded) {
+        int noOfMonths;
+        Date previousReadingDate = null;
+        if (previousDate != null)
+            previousReadingDate = previousDate;
         BigDecimal noOfUnitsPerMonth = BigDecimal.ZERO;
         if (isNotBlank(request.getParameter(METERCURRENTREADING)))
             meterReadingConnectionDetailObj.setCurrentReading(Long.valueOf(request.getParameter(METERCURRENTREADING)));
         meterReadingConnectionDetailObj.setCurrentReadingDate(currentDate);
         DateTime previousMidDate = null;
-        if (previousDate != null) {
-            final DateTime previousDateTime = new DateTime(previousDate);
+        if (previousReadingDate != null) {
+            final DateTime previousDateTime = new DateTime(previousReadingDate);
             final int previousMidday = previousDateTime.dayOfMonth().getMaximumValue() / 2;
             previousMidDate = new DateTime(previousDateTime).withDayOfMonth(previousMidday);
         }
@@ -269,36 +275,36 @@ public class MeterReadingController {
         final DateTime currentMidDate = new DateTime(currentDate).withDayOfMonth(currentMidday);
 
         populateMeterReadingDetails(meterReadingConnectionDetailObj, waterConnectionDetails);
-        if (previousDate == null) {
-            noofmonths = noOfMonthsBetween(waterConnectionDetails.getExecutionDate(), currentDate);
-            previousDate = waterConnectionDetails.getExecutionDate();
+        if (previousReadingDate == null) {
+            noOfMonths = noOfMonthsBetween(waterConnectionDetails.getExecutionDate(), currentDate);
+            previousReadingDate = waterConnectionDetails.getExecutionDate();
         } else
-            noofmonths = noOfMonthsBetween(previousDate, currentDate);
+            noOfMonths = noOfMonthsBetween(previousReadingDate, currentDate);
 
-        if (previousDate != null && previousMidDate != null && previousDate.before(previousMidDate.toDate()) &&
+        if (previousReadingDate != null && previousMidDate != null && previousReadingDate.before(previousMidDate.toDate()) &&
                 !currentDate.before(currentMidDate.toDate()))
-            noofmonths++;
+            noOfMonths++;
 
         if (!meterReadingConnectionDetailObj.isMeterDamaged()) {
             final Long currentToPreviousDiffOfUnits = Long.valueOf(request.getParameter(METERCURRENTREADING))
                     - previousReading;
-            if (noofmonths > 0)
+            if (noOfMonths > 0)
                 noOfUnitsPerMonth = BigDecimal.valueOf(currentToPreviousDiffOfUnits)
-                        .divide(BigDecimal.valueOf(noofmonths), 0, BigDecimal.ROUND_HALF_UP);
+                        .divide(BigDecimal.valueOf(noOfMonths), 0, BigDecimal.ROUND_HALF_UP);
             else
                 noOfUnitsPerMonth = BigDecimal.valueOf(currentToPreviousDiffOfUnits);
         }
         WaterConnectionDetails waterconnectionDetails = null;
         if (meterReadingConnectionDetailObj.isMeterDamaged())
-            waterconnectionDetails = calculateDemandForDamagedMeter(waterConnectionDetails, previousDate, noofmonths,
-                    isCurrentMonthIncluded);
+            waterconnectionDetails = calculateDemandForDamagedMeter(waterConnectionDetails, previousReadingDate, noOfMonths,
+                    currentMonthIncluded);
         else {
             final BigDecimal finalAmountToBePaid = calculateAmountTobePaid(waterConnectionDetails, noOfUnitsPerMonth)
                     .setScale(0, BigDecimal.ROUND_HALF_UP);
 
             if (finalAmountToBePaid.compareTo(BigDecimal.ZERO) > 0)
                 waterconnectionDetails = connectionDemandService.updateDemandForMeteredConnection(waterConnectionDetails,
-                        finalAmountToBePaid, currentDate, previousDate, noofmonths, isCurrentMonthIncluded);
+                        finalAmountToBePaid, currentDate, previousReadingDate, noOfMonths, currentMonthIncluded);
             else
                 throw new ApplicationRuntimeException("err.no.amount.due");
         }
@@ -306,7 +312,7 @@ public class MeterReadingController {
     }
 
     private WaterConnectionDetails calculateDemandForDamagedMeter(final WaterConnectionDetails waterConnectionDetails,
-            final Date previousDate, final int noofmonths, final Boolean isCurrentMonthIncluded) {
+            final Date previousDate, final int noOfMonths, final Boolean currentMonthIncluded) {
         BigDecimal amountValue;
         new WaterConnectionDetails();
         Installment currentInstallment;
@@ -321,20 +327,20 @@ public class MeterReadingController {
         if (newInstallmentList.isEmpty() || !newInstallmentList.contains(currentInstallment))
             newInstallmentList.add(currentInstallment);
 
-        for (final Installment instalmentVal : newInstallmentList) {
+        for (final Installment installment : newInstallmentList) {
             lastInstReadingDate = dateTime.minusMonths(6);
             lastInstStartDate = lastInstReadingDate.withDayOfMonth(1).withTimeAtStartOfDay();
             final List<Installment> lastInstallmentList = installmentDao
                     .getInstallmentsByModuleBetweenFromDateAndToDateAndInstallmentType(
                             moduleService.getModuleByName(MODULE_NAME),
-                            lastInstStartDate.toDate(), instalmentVal.getFromDate(), MONTHLY);
+                            lastInstStartDate.toDate(), installment.getFromDate(), MONTHLY);
 
             amountValue = calculateDamagedMeterAverageDemand(lastInstallmentList, waterConnectionDetails);
             if (amountValue.compareTo(BigDecimal.ZERO) > 0)
                 connectionDemandService.updateDemandForMeteredConnection(waterConnectionDetails,
-                        amountValue, instalmentVal.getFromDate(),
-                        previousDate, noofmonths, isCurrentMonthIncluded);
-            dateTime = new DateTime(instalmentVal.getFromDate());
+                        amountValue, installment.getFromDate(),
+                        previousDate, noOfMonths, currentMonthIncluded);
+            dateTime = new DateTime(installment.getFromDate());
             dateTime = dateTime.plusMonths(1);
         }
         return waterConnectionDetails;
@@ -343,7 +349,6 @@ public class MeterReadingController {
     private BigDecimal calculateAmountTobePaid(final WaterConnectionDetails waterConnectionDetails,
             final BigDecimal noOfUnitsPerMonth) {
         MeteredRates meteredRates = null;
-        MeteredRatesDetail meteredRatesDetail;
         UsageSlab usageSlab = null;
         if (!noOfUnitsPerMonth.equals(BigDecimal.ZERO))
             usageSlab = usageSlabService
@@ -353,22 +358,29 @@ public class MeterReadingController {
             meteredRates = meteredRatesService.findBySlabName(usageSlab.getSlabName());
         else if (!noOfUnitsPerMonth.equals(BigDecimal.ZERO))
             throw new ApplicationRuntimeException("err.usageslab.not.present");
-        BigDecimal amountToBeCollected = BigDecimal.ZERO;
+        BigDecimal amountToBeCollected;
         if (meteredRates == null || meteredRates.getSlabName() == null)
             throw new ApplicationRuntimeException(ERROR_METER_RATE_NOT_PRESENT);
-        else {
-            meteredRatesDetail = meteredRatesDetailService.getActiveRateforSlab(meteredRates.getSlabName(), new Date());
-            if (meteredRatesDetail == null
-                    || meteredRatesDetail.getRateAmount() == null && meteredRatesDetail.getFlatAmount() == null)
-                throw new ApplicationRuntimeException(ERROR_METER_RATE_NOT_PRESENT);
-            else if (meteredRatesDetail.isRecursive())
-                amountToBeCollected = calculateDemandWithRecursiveAmount(usageSlab, meteredRatesDetail, noOfUnitsPerMonth);
-            else if (meteredRatesDetail.getRateAmount() != null && meteredRatesDetail.getRateAmount() != 0)
-                amountToBeCollected = BigDecimal.valueOf(meteredRatesDetail.getRateAmount()).multiply(noOfUnitsPerMonth);
-            else if (meteredRatesDetail.getFlatAmount() != null && meteredRatesDetail.getFlatAmount() != 0)
-                amountToBeCollected = BigDecimal.valueOf(meteredRatesDetail.getFlatAmount());
-        }
+        else
+            amountToBeCollected = getAmountToBeCollected(meteredRates, usageSlab, noOfUnitsPerMonth);
         return amountToBeCollected;
+    }
+
+    public BigDecimal getAmountToBeCollected(final MeteredRates meteredRates, final UsageSlab usageSlab,
+            final BigDecimal noOfUnitsPerMonth) {
+        MeteredRatesDetail meteredRatesDetail;
+        meteredRatesDetail = meteredRatesDetailService.getActiveRateforSlab(meteredRates.getSlabName(), new Date());
+        if (meteredRatesDetail == null
+                || meteredRatesDetail.getRateAmount() == null && meteredRatesDetail.getFlatAmount() == null)
+            throw new ApplicationRuntimeException(ERROR_METER_RATE_NOT_PRESENT);
+        else if (meteredRatesDetail.isRecursive())
+            return calculateDemandWithRecursiveAmount(usageSlab, meteredRatesDetail, noOfUnitsPerMonth);
+        else if (meteredRatesDetail.getRateAmount() != null && meteredRatesDetail.getRateAmount() != 0)
+            return BigDecimal.valueOf(meteredRatesDetail.getRateAmount()).multiply(noOfUnitsPerMonth);
+        else if (meteredRatesDetail.getFlatAmount() != null && meteredRatesDetail.getFlatAmount() != 0)
+            return BigDecimal.valueOf(meteredRatesDetail.getFlatAmount());
+        else
+            return BigDecimal.ZERO;
     }
 
     private BigDecimal calculateDamagedMeterAverageDemand(final List<Installment> installmentList,

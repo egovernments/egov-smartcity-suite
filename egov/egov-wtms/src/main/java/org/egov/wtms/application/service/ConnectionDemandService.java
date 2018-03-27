@@ -239,7 +239,6 @@ public class ConnectionDemandService {
             final Set<EgDemandDetails> dmdDetailSet = new HashSet<>();
             for (final String demandReason : feeDetails.keySet())
                 dmdDetailSet.add(createDemandDetails((Double) feeDetails.get(demandReason), demandReason, installment));
-
             egDemand = new EgDemand();
             egDemand.setEgInstallmentMaster(installment);
             egDemand.getEgDemandDetails().addAll(dmdDetailSet);
@@ -275,8 +274,6 @@ public class ConnectionDemandService {
         demandDetail.setAmtCollected(BigDecimal.ZERO);
         demandDetail.setAmtRebate(BigDecimal.ZERO);
         demandDetail.setEgDemandReason(demandReasonObj);
-        demandDetail.setCreateDate(new Date());
-        demandDetail.setModifiedDate(new Date());
         return demandDetail;
     }
 
@@ -467,7 +464,7 @@ public class ConnectionDemandService {
     @Transactional
     public WaterConnectionDetails updateDemandForMeteredConnection(final WaterConnectionDetails waterConnectionDetails,
             final BigDecimal billAmount, final Date currentDate, final Date previousDate, final int noofmonths,
-            final Boolean isCurrentMonthIncluded) {
+            final Boolean currentMonthIncluded) {
         Installment installment;
         List<Installment> installmentList = new ArrayList<>();
         if (!waterConnectionDetails.getMeterConnection().get(0).isMeterDamaged())
@@ -478,7 +475,7 @@ public class ConnectionDemandService {
         installment = getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME,
                 WaterTaxConstants.MONTHLY, currentDate);
 
-        if (!isCurrentMonthIncluded && installmentList.size() > 1 && installmentList.contains(installment))
+        if (!currentMonthIncluded && installmentList.size() > 1 && installmentList.contains(installment))
             installmentList.remove(installment);
 
         EgDemand demandObj = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
