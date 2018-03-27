@@ -172,11 +172,13 @@ public class PropTaxDashboardService {
                 .noOfMonthsBetween(DateUtils.startOfDay(currFinYear.getStartingDate()), new Date()) + 1;
         consolidatedData.setTotalDmd(totalDmd.divide(BigDecimal.valueOf(12), BigDecimal.ROUND_HALF_UP)
                 .multiply(BigDecimal.valueOf(noOfMonths)));
-        consolidatedData.setPerformance(consolidatedData.getCytdColl().multiply(BIGDECIMAL_100)
-                .divide(consolidatedData.getTotalDmd(), 1, BigDecimal.ROUND_HALF_UP));
-        consolidatedData.setLyVar(
-                (consolidatedData.getCytdColl().subtract(consolidatedData.getLytdColl()).multiply(BIGDECIMAL_100))
-                        .divide(consolidatedData.getLytdColl(), 1, BigDecimal.ROUND_HALF_UP));
+        if(consolidatedData.getTotalDmd().compareTo(BigDecimal.ZERO) > 0)
+            consolidatedData.setPerformance(consolidatedData.getCytdColl().multiply(BIGDECIMAL_100)
+                    .divide(consolidatedData.getTotalDmd(), 1, BigDecimal.ROUND_HALF_UP));
+        if(consolidatedData.getLytdColl().compareTo(BigDecimal.ZERO) > 0)
+            consolidatedData.setLyVar(
+                    (consolidatedData.getCytdColl().subtract(consolidatedData.getLytdColl()).multiply(BIGDECIMAL_100))
+                            .divide(consolidatedData.getLytdColl(), 1, BigDecimal.ROUND_HALF_UP));
         consolidatedCollectionDetails.setPropertyTax(consolidatedData);
 
         // For Water Tax collections
@@ -198,11 +200,13 @@ public class PropTaxDashboardService {
         timeTaken = System.currentTimeMillis() - startTime;
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Time taken by Water Tax getTotalDemand() is : " + timeTaken + MILLISECS);
-        consolidatedData.setPerformance(consolidatedData.getCytdColl().multiply(BIGDECIMAL_100)
-                .divide(consolidatedData.getTotalDmd(), 1, BigDecimal.ROUND_HALF_UP));
-        consolidatedData.setLyVar(
-                (consolidatedData.getCytdColl().subtract(consolidatedData.getLytdColl()).multiply(BIGDECIMAL_100))
-                        .divide(consolidatedData.getLytdColl(), 1, BigDecimal.ROUND_HALF_UP));
+        if(consolidatedData.getTotalDmd().compareTo(BigDecimal.ZERO) > 0)
+            consolidatedData.setPerformance(consolidatedData.getCytdColl().multiply(BIGDECIMAL_100)
+                    .divide(consolidatedData.getTotalDmd(), 1, BigDecimal.ROUND_HALF_UP));
+        if(consolidatedData.getLytdColl().compareTo(BigDecimal.ZERO) > 0)
+            consolidatedData.setLyVar(
+                    (consolidatedData.getCytdColl().subtract(consolidatedData.getLytdColl()).multiply(BIGDECIMAL_100))
+                            .divide(consolidatedData.getLytdColl(), 1, BigDecimal.ROUND_HALF_UP));
         consolidatedCollectionDetails.setWaterTax(consolidatedData);
 
         // Other collections - temporarily set to 0
