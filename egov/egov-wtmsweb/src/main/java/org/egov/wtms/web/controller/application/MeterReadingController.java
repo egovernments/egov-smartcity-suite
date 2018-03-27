@@ -379,8 +379,7 @@ public class MeterReadingController {
             return BigDecimal.valueOf(meteredRatesDetail.getRateAmount()).multiply(noOfUnitsPerMonth);
         else if (meteredRatesDetail.getFlatAmount() != null && meteredRatesDetail.getFlatAmount() != 0)
             return BigDecimal.valueOf(meteredRatesDetail.getFlatAmount());
-        else
-            return BigDecimal.ZERO;
+        return BigDecimal.ZERO;
     }
 
     private BigDecimal calculateDamagedMeterAverageDemand(final List<Installment> installmentList,

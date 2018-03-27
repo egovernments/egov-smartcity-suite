@@ -274,6 +274,8 @@ public class ConnectionDemandService {
         demandDetail.setAmtCollected(BigDecimal.ZERO);
         demandDetail.setAmtRebate(BigDecimal.ZERO);
         demandDetail.setEgDemandReason(demandReasonObj);
+        demandDetail.setCreateDate(new Date());
+        demandDetail.setModifiedDate(new Date());
         return demandDetail;
     }
 

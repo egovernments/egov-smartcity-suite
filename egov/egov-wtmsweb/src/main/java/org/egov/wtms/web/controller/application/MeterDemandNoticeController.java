@@ -240,10 +240,11 @@ public class MeterDemandNoticeController {
         reportParams.put("demandNoticeDate",
                 billObj == null || billObj.getCreateDate() == null ? null : toDefaultDateFormat(billObj.getCreateDate()));
         reportParams.put("previousReading", meterReadingPreviousObj.getCurrentReading());
-        if (meterReadingPreviousObj.getCurrentReadingDate() != null)
-            reportParams.put("previousReadingDate", toDefaultDateFormat(meterReadingPreviousObj.getCurrentReadingDate()));
-        else
+        if (meterReadingPreviousObj.getCurrentReadingDate() == null)
             reportParams.put("previousReadingDate", "");
+        else
+            reportParams.put("previousReadingDate", toDefaultDateFormat(meterReadingPreviousObj.getCurrentReadingDate()));
+            
         reportParams.put("currentReading", waterConnectionDetails.getMeterConnection().get(0).getCurrentReading());
         reportParams.put("currrentReadingDate",
                 toDefaultDateFormat(waterConnectionDetails.getMeterConnection().get(0).getCurrentReadingDate()));
