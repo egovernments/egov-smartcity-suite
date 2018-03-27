@@ -314,7 +314,7 @@ public class PropertyTaxElasticSearchIndexService {
             taxPayerDetails.setUlbName(city.getName());
             taxPayerDetails.setUlbCode(city.getCitycode());
         }
-        LOGGER.info("Type ------- " + collectionDetailsRequest.getType() + " ------- TaxPayerDetails size ------- "
+        LOGGER.info("City ------ "+city.getName()+" ----- Type ------- " + collectionDetailsRequest.getType() + " ------- TaxPayerDetails size ------- "
                 + userWiseTaxPayerDetails.size());
         return userWiseTaxPayerDetails;
     }
@@ -936,15 +936,15 @@ public class PropertyTaxElasticSearchIndexService {
             }
             
             if (DASHBOARD_GROUPING_BILLCOLLECTORWISE.equalsIgnoreCase(collectionDetailsRequest.getType())) {
-                taxPayerDetails.setBillCollector(userNameNumberArr[0]);
+                taxPayerDetails.setBillCollector(userNameNumberArr.length > 0 ? userNameNumberArr[0] : StringUtils.EMPTY);
                 taxPayerDetails.setBillCollMobNo(userNameNumberArr.length > 1 ? userNameNumberArr[1] : StringUtils.EMPTY);
                 taxPayerDetails.setBillCollectorCode(userNameNumberArr.length > 2 ? userNameNumberArr[2] : StringUtils.EMPTY);
             } else if (DASHBOARD_GROUPING_REVENUEINSPECTORWISE.equalsIgnoreCase(collectionDetailsRequest.getType())) {
-                taxPayerDetails.setRevenueInspector(userNameNumberArr[0]);
+                taxPayerDetails.setRevenueInspector(userNameNumberArr.length > 0 ? userNameNumberArr[0] : StringUtils.EMPTY);
                 taxPayerDetails.setRevInspectorMobNo(userNameNumberArr.length > 1 ? userNameNumberArr[1] : StringUtils.EMPTY);
                 taxPayerDetails.setRevenueInspectorCode(userNameNumberArr.length > 2 ? userNameNumberArr[2] : StringUtils.EMPTY);
             } else if (DASHBOARD_GROUPING_REVENUEOFFICERWISE.equalsIgnoreCase(collectionDetailsRequest.getType())) {
-                taxPayerDetails.setRevenueOfficer(userNameNumberArr[0]);
+                taxPayerDetails.setRevenueOfficer(userNameNumberArr.length > 0 ? userNameNumberArr[0] : StringUtils.EMPTY);
                 taxPayerDetails.setRevOfficerMobNo(userNameNumberArr.length > 1 ? userNameNumberArr[1] : StringUtils.EMPTY);
                 taxPayerDetails.setRevenueOfficerCode(userNameNumberArr.length > 2 ? userNameNumberArr[2] : StringUtils.EMPTY);
             }

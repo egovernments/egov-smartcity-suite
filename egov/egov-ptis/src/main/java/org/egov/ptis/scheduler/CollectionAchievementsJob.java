@@ -65,9 +65,9 @@ public class CollectionAchievementsJob extends AbstractQuartzJob {
     
     @Override
     public void executeJob() {
-        LOGGER.debug("------ Entered into CollectionAchievementsJob.executeJob ------ ");
+        LOGGER.info("------ Entered into CollectionAchievementsJob.executeJob ------ ");
         propTaxDashboardService.pushAchievements();
-        LOGGER.debug("------ Exiting from CollectionAchievementsJob.executeJob ------ ");  
+        LOGGER.info("------ Exiting from CollectionAchievementsJob.executeJob ------ ");  
     }
 
 }

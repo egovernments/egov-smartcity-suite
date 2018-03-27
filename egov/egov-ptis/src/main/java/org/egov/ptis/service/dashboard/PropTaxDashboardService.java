@@ -402,8 +402,7 @@ public class PropTaxDashboardService {
         for (TaxPayerDetails taxPayerDetails : taxPayersList)
             collectionAchievementsService.createAchievementsIndex(taxPayerDetails);
         Long timeTaken = System.currentTimeMillis() - startTime;
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Time taken by pushAchievements() is : " + timeTaken + MILLISECS);
+        LOGGER.info("Time taken by pushAchievements() is : " + timeTaken + MILLISECS);
     }
     
     /**
