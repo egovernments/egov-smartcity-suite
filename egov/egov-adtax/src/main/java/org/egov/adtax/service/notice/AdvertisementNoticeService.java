@@ -347,7 +347,7 @@ public class AdvertisementNoticeService {
                 && isNotBlank(advertisementPermitDetail.getOwnerDetail())) {
             reportParams.put(AGENCYNAME, advertisementPermitDetail.getAgency().getName() + "/"
                     + advertisementPermitDetail.getOwnerDetail());
-            reportParams.put(AGENCYADDRESS, advertisementPermitDetail.getAgency().getAddress());
+            reportParams.put(AGENCYADDRESS, defaultIfBlank(advertisementPermitDetail.getAgency().getAddress(), notMentioned));
         } else if (advertisementPermitDetail.getAgency() != null
                 && isBlank(advertisementPermitDetail.getOwnerDetail())) {
             reportParams.put(AGENCYNAME, advertisementPermitDetail.getAgency().getName());
