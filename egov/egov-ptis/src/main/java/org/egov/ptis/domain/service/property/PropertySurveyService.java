@@ -53,6 +53,8 @@ import static org.egov.infra.utils.ApplicationConstant.CITY_CODE_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_DIST_NAME_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_NAME_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_REGION_NAME_KEY;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_DEMAND_INACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
@@ -136,7 +138,7 @@ public class PropertySurveyService {
         final PropertyID propId = surveyBean.getProperty().getBasicProperty().getPropertyID();
         final BasicPropertyImpl basicProp = (BasicPropertyImpl) surveyBean.getProperty().getBasicProperty();
         final boolean isApproved = state.contains(WF_STATE_COMMISSIONER_APPROVED) ? true : false;
-        final boolean isCancelled = state.contains(WF_STATE_REJECTED) ? true : false;
+        final boolean isCancelled = (state.contains(WF_STATE_REJECTED) && surveyBean.getProperty().getStatus().equals(STATUS_CANCELLED)) ? true : false;
         
         ptGisIndex = PTGISIndex.builder().withApplicationNo(surveyBean.getProperty().getApplicationNo())
                 .withApplicationdate(applicationDate)
@@ -234,22 +236,24 @@ public class PropertySurveyService {
             ptGisIndex.setIsApproved(true);
         }
 
-        if (stateValue.endsWith(WF_STATE_CLOSED)) {
+        if (stateValue.endsWith(WF_STATE_CLOSED)&& propertyImpl.getStatus().equals(STATUS_DEMAND_INACTIVE)) {
             ptGisIndex.setCompletionDate(propertyImpl.getState().getLastModifiedDate());
             ptGisIndex.setIsApproved(true);
         }
+        
         ptGisIndex.setApplicationStatus(stateValue);
         ptGisIndex.setAssessmentNo(StringUtils.isBlank(basicProperty.getUpicNo())
                 ? StringUtils.EMPTY
                 : basicProperty.getUpicNo());
 
-        ptGisIndex.setIsCancelled(stateValue.contains(WF_STATE_REJECTED) ? true : false);
+        ptGisIndex.setIsCancelled((stateValue.contains(WF_STATE_CLOSED) && propertyImpl.getStatus().equals(STATUS_CANCELLED)) ? true : false);
         ptGisIndex.setThirdPrtyFlag(propertyImpl.isThirdPartyVerified());
         ptGisIndex.setDoorNo(doorNo == null ? ptGisIndex.getDoorNo() : doorNo);
         ptGisIndex.setSentToThirdParty(propertyImpl.isSentToThirdParty());
         ptGisIndex.setTaxVariance(taxVar);
         ptGisIndex.setFunctionaryName(getFunctionaryDetail(surveyBean));
     }
+
 
     @Transactional
     public PTGISIndex createPTGISIndex(PTGISIndex surveyIndex) {

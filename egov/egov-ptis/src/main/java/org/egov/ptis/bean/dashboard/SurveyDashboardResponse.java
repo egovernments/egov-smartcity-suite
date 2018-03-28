@@ -68,6 +68,8 @@ public class SurveyDashboardResponse {
     private String appViewURL;
     private String serviceName;
     private int ageing;
+    private String functionaryName;
+    private String wfStatus;
 
     public String getUlbCode() {
         return ulbCode;
@@ -219,6 +221,22 @@ public class SurveyDashboardResponse {
 
     public void setAgeing(int ageing) {
         this.ageing = ageing;
+    }
+
+    public String getFunctionaryName() {
+        return functionaryName;
+    }
+
+    public void setFunctionaryName(String functionaryName) {
+        this.functionaryName = functionaryName;
+    }
+
+    public String getWfStatus() {
+        return wfStatus;
+    }
+
+    public void setWfStatus(String wfStatus) {
+        this.wfStatus = wfStatus;
     }
 
 }

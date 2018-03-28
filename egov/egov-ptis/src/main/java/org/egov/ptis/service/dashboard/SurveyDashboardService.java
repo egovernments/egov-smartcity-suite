@@ -47,12 +47,16 @@
  */
 package org.egov.ptis.service.dashboard;
 
+import static java.lang.String.format;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_DISTRICTWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_FUNCTIONARYWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_REGIONWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_SERVICEWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_ULBWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_WARDWISE;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITALLY_SIGNED;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -60,7 +64,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import static java.lang.String.format;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.admin.master.entity.es.CityIndex;
 import org.egov.infra.admin.master.service.es.CityIndexService;
@@ -97,7 +101,13 @@ public class SurveyDashboardService {
     private static final String REVENUE_WARD = "revenueWard";
     private static final String APPLICATION_TYPE = "applicationType";
     private static final String APP_VIEW_URL = "/ptis/view/viewProperty-viewForm.action?applicationNo=%s&applicationType=%s";
-
+    private static final String THIRD_PARTY_FLAG="thirdPrtyFlag";
+    private static final String FUNCTIONARY_NAME="functionaryName";
+    private static final String APPLICATION_STATUS ="applicationStatus";
+    private static final String WF_STATUS_CANCELLED="Cancelled";
+    private static final String WF_STATUS_UNDER_WF="Under Workflow";
+    private static final String STATUS_IS_APPROVED="isApproved";
+    private static final String STATUS_IS_CANCELLED="isCancelled";
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
 
@@ -126,6 +136,7 @@ public class SurveyDashboardService {
         for (SearchHit hit : hits) {
             surveyResponse = new SurveyDashboardResponse();
             Map<String, Object> sourceAsMap = hit.sourceAsMap();
+            
             String applicationNo = sourceAsMap.get("applicationNo").toString();
             String applicationType = sourceAsMap.get(APPLICATION_TYPE).toString();
             surveyResponse.setApplicationNo(applicationNo);
@@ -139,19 +150,35 @@ public class SurveyDashboardService {
             surveyResponse.setSystemTax((double) sourceAsMap.get("systemTax"));
             surveyResponse.setGisTax((double) sourceAsMap.get("gisTax"));
             surveyResponse.setApplicationTax((double) sourceAsMap.get("applicationTax"));
-            surveyResponse.setAppStatus(sourceAsMap.get("applicationStatus").toString());
+            surveyResponse.setAppStatus(sourceAsMap.get(APPLICATION_STATUS).toString());
             surveyResponse.setAssistantName(
                     sourceAsMap.get("assistantName") == null ? "N/A" : sourceAsMap.get("assistantName").toString());
             surveyResponse.setRiName(sourceAsMap.get("riName") == null ? "N/A" : sourceAsMap.get("riName").toString());
             surveyResponse.setIsreffered((boolean) sourceAsMap.get(SENT_TO_THIRD_PARTY));
-            surveyResponse.setIsVarified((boolean) sourceAsMap.get("thirdPrtyFlag"));
+            surveyResponse.setIsVarified((boolean) sourceAsMap.get(THIRD_PARTY_FLAG));
             surveyResponse.setServiceName(applicationType);
             surveyResponse.setAppViewURL(format(APP_VIEW_URL, applicationNo, applicationType));
             surveyResponse.setUlbCode(sourceAsMap.get("cityCode").toString());
             Date applictionDate = DateUtils.getDate(sourceAsMap.get("applicationDate").toString(), "yyyy-MM-dd");
             surveyResponse.setAgeing(DateUtils.daysBetween(applictionDate, DateUtils.now()));
+            surveyResponse.setFunctionaryName(sourceAsMap.get(FUNCTIONARY_NAME)==null?"N/A":sourceAsMap.get(FUNCTIONARY_NAME).toString());
+            surveyResponse.setWfStatus(fetchWorkflowStatus(sourceAsMap));
             surveyList.add(surveyResponse);
         }
+    }
+
+    private String fetchWorkflowStatus(Map<String, Object> sourceAsMap) {
+        String wfStatus;
+        String appStatus = sourceAsMap.get(APPLICATION_STATUS).toString();
+        if (sourceAsMap.get(STATUS_IS_APPROVED).equals(true))
+            wfStatus = STATUS_APPROVED;
+        else if (sourceAsMap.get(STATUS_IS_CANCELLED).equals(true))
+            wfStatus = WF_STATUS_CANCELLED;
+        else if (appStatus.endsWith(WF_STATE_CLOSED) && sourceAsMap.get("isApproved").equals(true))
+            wfStatus = WF_STATE_DIGITALLY_SIGNED;
+        else
+            wfStatus = WF_STATUS_UNDER_WF;
+        return wfStatus;
     }
 
     private BoolQueryBuilder prepareQuery(final SurveyRequest surveyRequest) {
@@ -162,9 +189,7 @@ public class SurveyDashboardService {
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("districtName", surveyRequest.getDistrictName()));
         if (StringUtils.isNotBlank(surveyRequest.getUlbName()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("cityName", surveyRequest.getUlbName()));
-        if (StringUtils.isNotBlank(surveyRequest.getServiceName()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("applicationType", surveyRequest.getServiceName()));
-        if (surveyRequest.getThirdParty() != null) {
+                if (surveyRequest.getThirdParty() != null) {
             if (surveyRequest.getThirdParty() == 'Y')
                 boolQuery = boolQuery.filter(QueryBuilders.matchQuery(SENT_TO_THIRD_PARTY, true));
             else
@@ -179,7 +204,30 @@ public class SurveyDashboardService {
         if (StringUtils.isNotBlank(surveyRequest.getLocalityName())) {
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("localityName", surveyRequest.getLocalityName()));
         }
+        if (StringUtils.isNotBlank(surveyRequest.getFunctionaryName()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(FUNCTIONARY_NAME, surveyRequest.getFunctionaryName()));
+
+        boolQuery = prepareApplicationStatusQuery(surveyRequest, boolQuery);
+
         return boolQuery;
+    }
+
+    private BoolQueryBuilder prepareApplicationStatusQuery(final SurveyRequest surveyRequest, BoolQueryBuilder boolQuery) {
+        BoolQueryBuilder statusQuery = boolQuery;
+        if (StringUtils.isNotBlank(surveyRequest.getServiceName()))
+            statusQuery = statusQuery.filter(QueryBuilders.matchQuery("applicationType", surveyRequest.getServiceName()));
+        if (StringUtils.isNotBlank(surveyRequest.getApproved()))
+            statusQuery = statusQuery.filter(QueryBuilders.matchQuery(STATUS_IS_APPROVED, surveyRequest.getApproved()));
+
+        if (StringUtils.isNotBlank(surveyRequest.getCancelled()))
+            statusQuery = statusQuery.filter(QueryBuilders.matchQuery(STATUS_IS_CANCELLED, surveyRequest.getCancelled()));
+
+        if (StringUtils.isNotBlank(surveyRequest.getThirdPartyReffered()))
+            statusQuery = statusQuery.filter(QueryBuilders.matchQuery("sentToThirdParty", surveyRequest.getThirdPartyReffered()));
+
+        if (StringUtils.isNotBlank(surveyRequest.getVerified()))
+            statusQuery = statusQuery.filter(QueryBuilders.matchQuery(THIRD_PARTY_FLAG, surveyRequest.getVerified()));
+        return statusQuery;
     }
 
     public static AggregationBuilder getCountWithGrouping(final String aggregationName, final String fieldName, final int size) {
@@ -222,7 +270,7 @@ public class SurveyDashboardService {
                 .execute().actionGet();
 
         SearchResponse completedResponse = elasticsearchTemplate.getClient().prepareSearch(PROPERTYSURVEYDETAILS_INDEX).setSize(0)
-                .setQuery(prepareQuery(surveyRequest).filter(QueryBuilders.matchQuery("applicationStatus", "Closed")))
+                .setQuery(prepareQuery(surveyRequest).filter(QueryBuilders.matchQuery(APPLICATION_STATUS, "Closed")))
                 .addAggregation(aggregationBuilder).execute().actionGet();
         Terms completedAggr = completedResponse.getAggregations().get(AGGREGATIONWISE);
         Map<String, Long> completedApplicationsMap = new HashMap<>();

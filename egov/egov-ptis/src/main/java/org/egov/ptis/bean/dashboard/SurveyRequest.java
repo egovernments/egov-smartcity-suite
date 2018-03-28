@@ -59,6 +59,11 @@ public class SurveyRequest {
     private String aggregationLevel;
     private String wardName;
     private String localityName;
+    private String functionaryName;
+    private String approved;
+    private String cancelled;
+    private String thirdPartyReffered;
+    private String verified;
 
     public String getRegionName() {
         return regionName;
@@ -139,4 +144,45 @@ public class SurveyRequest {
     public void setLocalityName(String localityName) {
         this.localityName = localityName;
     }
+
+    public String getFunctionaryName() {
+        return functionaryName;
+    }
+
+    public void setFunctionaryName(String functionaryName) {
+        this.functionaryName = functionaryName;
+    }
+
+    public String getApproved() {
+        return approved;
+    }
+
+    public void setApproved(String approved) {
+        this.approved = approved;
+    }
+
+    public String getCancelled() {
+        return cancelled;
+    }
+
+    public void setCancelled(String cancelled) {
+        this.cancelled = cancelled;
+    }
+
+    public String getThirdPartyReffered() {
+        return thirdPartyReffered;
+    }
+
+    public void setThirdPartyReffered(String thirdPartyReffered) {
+        this.thirdPartyReffered = thirdPartyReffered;
+    }
+
+    public String getVerified() {
+        return verified;
+    }
+
+    public void setVerified(String verified) {
+        this.verified = verified;
+    }
+
 }
