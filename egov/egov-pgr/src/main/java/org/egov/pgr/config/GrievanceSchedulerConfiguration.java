@@ -107,7 +107,7 @@ public class GrievanceSchedulerConfiguration extends QuartzSchedulerConfiguratio
         escalationCron.setJobDetail(complaintEscalationJobDetail().getObject());
         escalationCron.setGroup("PGR_TRIGGER_GROUP");
         escalationCron.setName("PGR_ESCALATION_TRIGGER");
-        escalationCron.setCronExpression("0 */5 * * * ?");
+        escalationCron.setCronExpression("0 */52 * * * ?");
         return escalationCron;
     }
 
