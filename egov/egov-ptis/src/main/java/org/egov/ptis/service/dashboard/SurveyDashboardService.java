@@ -47,7 +47,6 @@
  */
 package org.egov.ptis.service.dashboard;
 
-import static java.lang.String.format;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_DISTRICTWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_FUNCTIONARYWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_REGIONWISE;
@@ -58,13 +57,13 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITALLY_SIGNED;
 
+import static java.lang.String.format;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.admin.master.entity.es.CityIndex;
 import org.egov.infra.admin.master.service.es.CityIndexService;
@@ -101,13 +100,15 @@ public class SurveyDashboardService {
     private static final String REVENUE_WARD = "revenueWard";
     private static final String APPLICATION_TYPE = "applicationType";
     private static final String APP_VIEW_URL = "/ptis/view/viewProperty-viewForm.action?applicationNo=%s&applicationType=%s";
-    private static final String THIRD_PARTY_FLAG="thirdPrtyFlag";
-    private static final String FUNCTIONARY_NAME="functionaryName";
-    private static final String APPLICATION_STATUS ="applicationStatus";
-    private static final String WF_STATUS_CANCELLED="Cancelled";
-    private static final String WF_STATUS_UNDER_WF="Under Workflow";
-    private static final String STATUS_IS_APPROVED="isApproved";
-    private static final String STATUS_IS_CANCELLED="isCancelled";
+    private static final String THIRD_PARTY_FLAG = "thirdPrtyFlag";
+    private static final String FUNCTIONARY_NAME = "functionaryName";
+    private static final String APPLICATION_STATUS = "applicationStatus";
+    private static final String WF_STATUS_CANCELLED = "Cancelled";
+    private static final String WF_STATUS_UNDER_WF = "Under Workflow";
+    private static final String STATUS_IS_APPROVED = "isApproved";
+    private static final String STATUS_IS_CANCELLED = "isCancelled";
+    private static final String APPLICATION_TAX = "applicationTax";
+
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
 
@@ -136,7 +137,7 @@ public class SurveyDashboardService {
         for (SearchHit hit : hits) {
             surveyResponse = new SurveyDashboardResponse();
             Map<String, Object> sourceAsMap = hit.sourceAsMap();
-            
+
             String applicationNo = sourceAsMap.get("applicationNo").toString();
             String applicationType = sourceAsMap.get(APPLICATION_TYPE).toString();
             surveyResponse.setApplicationNo(applicationNo);
@@ -149,7 +150,7 @@ public class SurveyDashboardService {
             surveyResponse.setElectionWard(sourceAsMap.get("electionWard").toString());
             surveyResponse.setSystemTax((double) sourceAsMap.get("systemTax"));
             surveyResponse.setGisTax((double) sourceAsMap.get("gisTax"));
-            surveyResponse.setApplicationTax((double) sourceAsMap.get("applicationTax"));
+            surveyResponse.setApplicationTax((double) sourceAsMap.get(APPLICATION_TAX));
             surveyResponse.setAppStatus(sourceAsMap.get(APPLICATION_STATUS).toString());
             surveyResponse.setAssistantName(
                     sourceAsMap.get("assistantName") == null ? "N/A" : sourceAsMap.get("assistantName").toString());
@@ -161,7 +162,8 @@ public class SurveyDashboardService {
             surveyResponse.setUlbCode(sourceAsMap.get("cityCode").toString());
             Date applictionDate = DateUtils.getDate(sourceAsMap.get("applicationDate").toString(), "yyyy-MM-dd");
             surveyResponse.setAgeing(DateUtils.daysBetween(applictionDate, DateUtils.now()));
-            surveyResponse.setFunctionaryName(sourceAsMap.get(FUNCTIONARY_NAME)==null?"N/A":sourceAsMap.get(FUNCTIONARY_NAME).toString());
+            surveyResponse.setFunctionaryName(sourceAsMap.get(FUNCTIONARY_NAME).equals(StringUtils.EMPTY) ? "N/A"
+                    : sourceAsMap.get(FUNCTIONARY_NAME).toString());
             surveyResponse.setWfStatus(fetchWorkflowStatus(sourceAsMap));
             surveyList.add(surveyResponse);
         }
@@ -174,7 +176,7 @@ public class SurveyDashboardService {
             wfStatus = STATUS_APPROVED;
         else if (sourceAsMap.get(STATUS_IS_CANCELLED).equals(true))
             wfStatus = WF_STATUS_CANCELLED;
-        else if (appStatus.endsWith(WF_STATE_CLOSED) && sourceAsMap.get("isApproved").equals(true))
+        else if (appStatus.endsWith(WF_STATE_CLOSED) && sourceAsMap.get(STATUS_IS_APPROVED).equals(true))
             wfStatus = WF_STATE_DIGITALLY_SIGNED;
         else
             wfStatus = WF_STATUS_UNDER_WF;
@@ -189,7 +191,7 @@ public class SurveyDashboardService {
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("districtName", surveyRequest.getDistrictName()));
         if (StringUtils.isNotBlank(surveyRequest.getUlbName()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("cityName", surveyRequest.getUlbName()));
-                if (surveyRequest.getThirdParty() != null) {
+        if (surveyRequest.getThirdParty() != null) {
             if (surveyRequest.getThirdParty() == 'Y')
                 boolQuery = boolQuery.filter(QueryBuilders.matchQuery(SENT_TO_THIRD_PARTY, true));
             else
@@ -266,7 +268,7 @@ public class SurveyDashboardService {
                         .subAggregation(AggregationBuilders.sum("gisTotal").field("gisTax"))
                         .subAggregation(AggregationBuilders.sum("systemTotal").field("systemTax"))
                         .subAggregation(AggregationBuilders.sum("approvedTotal").field("approvedTax"))
-                        .subAggregation(AggregationBuilders.sum("applicationTax").field("applicationTax")))
+                        .subAggregation(AggregationBuilders.sum(APPLICATION_TAX).field(APPLICATION_TAX)))
                 .execute().actionGet();
 
         SearchResponse completedResponse = elasticsearchTemplate.getClient().prepareSearch(PROPERTYSURVEYDETAILS_INDEX).setSize(0)
@@ -336,7 +338,7 @@ public class SurveyDashboardService {
 
             } else if (APPLICATION_TYPE.equalsIgnoreCase(aggregationField))
                 surveyResponse.setServiceName(name);
-            else if(FUNCTIONARY.equalsIgnoreCase(aggregationField))
+            else if (FUNCTIONARY.equalsIgnoreCase(aggregationField))
                 surveyResponse.setFunctionaryName(name);
 
             surveyResponse.setTotalReceived(bucket.getDocCount());
@@ -358,9 +360,9 @@ public class SurveyDashboardService {
             totalSystemTax = BigDecimal.valueOf(systemSumAggr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
             approvedSumAggr = bucket.getAggregations().get("approvedTotal");
             totalApprovedTax = BigDecimal.valueOf(approvedSumAggr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
-            appTaxSumAggr = bucket.getAggregations().get("applicationTax");
+            appTaxSumAggr = bucket.getAggregations().get(APPLICATION_TAX);
             totalApplicationTax = BigDecimal.valueOf(appTaxSumAggr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
-            
+
             surveyResponse.setExptdIncr((totalGisTax.subtract(totalSystemTax)).doubleValue());
             surveyResponse.setActlIncr((totalApprovedTax.subtract(totalSystemTax)).doubleValue());
             surveyResponse.setDiffFromSurveytax((totalGisTax.subtract(totalApplicationTax)).doubleValue());
