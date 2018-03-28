@@ -48,6 +48,7 @@
 package org.egov.ptis.service.dashboard;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_DISTRICTWISE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_FUNCTIONARYWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_REGIONWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_SERVICEWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_ULBWISE;
@@ -86,6 +87,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class SurveyDashboardService {
+    private static final String FUNCTIONARY = "functionary";
     private static final String AGGREGATIONWISE = "aggregationwise";
     private static final String SENT_TO_THIRD_PARTY = "sentToThirdParty";
     private static final String PROPERTYSURVEYDETAILS_INDEX = "propertysurveydetails";
@@ -196,6 +198,8 @@ public class SurveyDashboardService {
             aggregationField = REVENUE_WARD;
         else if (DASHBOARD_GROUPING_SERVICEWISE.equalsIgnoreCase(surveyRequest.getAggregationLevel()))
             aggregationField = APPLICATION_TYPE;
+        else if (DASHBOARD_GROUPING_FUNCTIONARYWISE.equalsIgnoreCase(surveyRequest.getAggregationLevel()))
+            aggregationField = FUNCTIONARY;
         return aggregationField;
     }
 
@@ -213,7 +217,8 @@ public class SurveyDashboardService {
                         .subAggregation(getCountWithGrouping("sentForReference", SENT_TO_THIRD_PARTY, 2))
                         .subAggregation(AggregationBuilders.sum("gisTotal").field("gisTax"))
                         .subAggregation(AggregationBuilders.sum("systemTotal").field("systemTax"))
-                        .subAggregation(AggregationBuilders.sum("approvedTotal").field("approvedTax")))
+                        .subAggregation(AggregationBuilders.sum("approvedTotal").field("approvedTax"))
+                        .subAggregation(AggregationBuilders.sum("applicationTax").field("applicationTax")))
                 .execute().actionGet();
 
         SearchResponse completedResponse = elasticsearchTemplate.getClient().prepareSearch(PROPERTYSURVEYDETAILS_INDEX).setSize(0)
@@ -247,9 +252,11 @@ public class SurveyDashboardService {
         Sum gisSumAggr;
         Sum systemSumAggr;
         Sum approvedSumAggr;
+        Sum appTaxSumAggr;
         BigDecimal totalGisTax;
         BigDecimal totalSystemTax;
         BigDecimal totalApprovedTax;
+        BigDecimal totalApplicationTax;
         String name;
         Map<String, String> cityInfoMap = new HashMap<>();
         Iterable<CityIndex> cities = cityIndexService.findAll();
@@ -281,6 +288,8 @@ public class SurveyDashboardService {
 
             } else if (APPLICATION_TYPE.equalsIgnoreCase(aggregationField))
                 surveyResponse.setServiceName(name);
+            else if(FUNCTIONARY.equalsIgnoreCase(aggregationField))
+                surveyResponse.setFunctionaryName(name);
 
             surveyResponse.setTotalReceived(bucket.getDocCount());
             verfTerms = bucket.getAggregations().get("verificationDone");
@@ -301,9 +310,12 @@ public class SurveyDashboardService {
             totalSystemTax = BigDecimal.valueOf(systemSumAggr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
             approvedSumAggr = bucket.getAggregations().get("approvedTotal");
             totalApprovedTax = BigDecimal.valueOf(approvedSumAggr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
-
+            appTaxSumAggr = bucket.getAggregations().get("applicationTax");
+            totalApplicationTax = BigDecimal.valueOf(appTaxSumAggr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
+            
             surveyResponse.setExptdIncr((totalGisTax.subtract(totalSystemTax)).doubleValue());
             surveyResponse.setActlIncr((totalApprovedTax.subtract(totalSystemTax)).doubleValue());
+            surveyResponse.setDiffFromSurveytax((totalGisTax.subtract(totalApplicationTax)).doubleValue());
             surveyResponse.setDifference(surveyResponse.getExptdIncr() - surveyResponse.getActlIncr());
             if (completedApplicationsMap.get(name) != null)
                 surveyResponse.setTotalCompleted(completedApplicationsMap.get(name));
