@@ -46,134 +46,131 @@
  *
  */
 
-$(document).ready(function(){
-	
-	$('#otp-section,#signup-section').hide();
-	
-   $('#mobileNumber').blur(function(){
-		if($('#mobileNumber').val().length>0 && $('#mobileNumber').val().length<10){
-			$('#mobnumberValid').show();
-			$('#mobileNumber').val("");
-		}else{
-			$('#mobnumberValid').hide();
-		}
-	});
+$(document).ready(function () {
 
-	$('#emailId').blur(function(){
-		var pattern = new RegExp("^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$");
-		var email = $('#emailId').val();
-		if(!pattern.test(email) && $('#emailId').val().length>0){
-			$('#emailValid').show();
-			$('#emailId').val("");
-		}else{
-			$('#emailValid').hide();
-		}
-	});
-	
-	$('.check-password').blur(function(){
-		if(($('#password').val()!="") && ($('#con-password').val()!=""))
-		{
-			if ($('#password').val() === $('#con-password').val()) {
-				$('.password-error').hide();
-				$('.check-password').removeClass('error');
-			}else{
-				$('.password-error').show();
-				$('.check-password').addClass('error');
-				if($('.error-check').is(':visible')){
-					$('.error-check').hide();
-				}
-			}
-		}
-	});
+    $('#otp-section,#signup-section').hide();
 
-	$('#password').blur(
-		function () {
+    $('#mobileNumber').blur(function () {
+        if ($('#mobileNumber').val().length > 0 && $('#mobileNumber').val().length < 10) {
+            $('#mobnumberValid').show();
+            $('#mobileNumber').val("");
+        } else {
+            $('#mobnumberValid').hide();
+        }
+    });
+
+    $('#emailId').blur(function () {
+        var pattern = new RegExp("^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$");
+        var email = $('#emailId').val();
+        if (!pattern.test(email) && $('#emailId').val().length > 0) {
+            $('#emailValid').show();
+            $('#emailId').val("");
+        } else {
+            $('#emailValid').hide();
+        }
+    });
+
+    $('.check-password').blur(function () {
+        if (($('#password').val() != "") && ($('#con-password').val() != "")) {
+            if ($('#password').val() === $('#con-password').val()) {
+                $('.password-error').hide();
+                $('.check-password').removeClass('error');
+            } else {
+                $('.password-error').show();
+                $('.check-password').addClass('error');
+                if ($('.error-check').is(':visible')) {
+                    $('.error-check').hide();
+                }
+            }
+        }
+    });
+
+    $('#password').blur(
+        function () {
             $('.password-invalid').hide();
-			if($(this).val()) {
-				$.ajax({
-					url: "signup/validate-pwd",
-					dataType: "json",
-					data : {"pswd" : $(this).val()},
-					success: function(data) {
-						if(data){
-							$('.password-invalid').hide();
-						} else {
+            if ($(this).val()) {
+                $.ajax({
+                    url: "signup/validate-pwd",
+                    dataType: "json",
+                    data: {"pswd": $(this).val()},
+                    success: function (data) {
+                        if (data) {
+                            $('.password-invalid').hide();
+                        } else {
                             $('.password-invalid').show();
                         }
-					},
-					error: function() {
-						console.error('Error while validating password');
-					}
-				});
-			}
-		}
-	);
+                    },
+                    error: function () {
+                        console.error('Error while validating password');
+                    }
+                });
+            }
+        }
+    );
 
-	$('#name').keyup(function(){
-		var arr = $(this).val().split(' ');
-	    var result = "";
-	    for (var x=0; x<arr.length; x++)
-        result+=arr[x].substring(0,1).toUpperCase()+arr[x].substring(1)+' ';
-	    $(this).val(result.substring(0, result.length-1));
-	});
-	
-	$('#signupbtn').click(function(e){
-		if($('form').valid()){
-			$('#username').val($('#mobileNumber').val());
-			$('#signupform').trigger('submit');
-		}else{
-			e.preventDefault();
-		}
-	});
+    $('#name').keyup(function () {
+        var arr = $(this).val().split(' ');
+        var result = "";
+        for (var x = 0; x < arr.length; x++)
+            result += arr[x].substring(0, 1).toUpperCase() + arr[x].substring(1) + ' ';
+        $(this).val(result.substring(0, result.length - 1));
+    });
 
-	$('#password, #username').popover({ trigger: "focus",placement: "bottom"})
+    $('#signupbtn').click(function (e) {
+        if ($('form').valid()) {
+            $('#username').val($('#mobileNumber').val());
+            $('#signupform').trigger('submit');
+        } else {
+            e.preventDefault();
+        }
+    });
 
-	$('#otpbtn').click(function () {
-		console.log('came!!!')
-		if (!$('#mobileNumber').val()) {
+    $('#password, #username').popover({trigger: "focus", placement: "bottom"})
+
+    $('#otpbtn').click(function () {
+        if (!$('#mobileNumber').val()) {
             $(".mobile-error").show();
             return false;
         } else {
             $(".mobile-error").hide();
             $(this).hide();
         }
-		$.ajax({
-			url: "signup/otp/"+$('#mobileNumber').val(),
-			dataType: "json",
-			success: function(data) {
-				if(data){
-					console.log('OTP sent');
-					$('#activationcode').val('');
-					$('#signup-section,#otp-section').show();
-					$('#otpbtn-section').hide();
-				}
-			},
-			error: function() {
+        $.ajax({
+            url: "signup/otp/" + $('#mobileNumber').val(),
+            dataType: "json",
+            success: function (data) {
+                if (data) {
+                    console.log('OTP sent');
+                    $('#activationcode').val('');
+                    $('#signup-section,#otp-section').show();
+                    $('#otpbtn-section').hide();
+                }
+            },
+            error: function () {
 				console.error('Error while sending otp');
-				$(this).show();
-			}
-		});
-	});
-	
-	$(document).on('click','.password-view,.otp-view',function(){
-		//console.log($(this).data('view'));
-		if($(this).hasClass('password-view')){
-			if($(this).data('view') == 'show'){
-				$('.check-password').attr({type : 'text', autocomplete : 'off'});
-				$(this).parent().empty().html('<i class="fa fa-eye-slash password-view" data-view="hide" aria-hidden="true"></i>');
-			}else{
-				$('.check-password').attr({type : 'password', autocomplete : 'new-password'});
-				$(this).parent().empty().html('<i class="fa fa-eye password-view" data-view="show" aria-hidden="true"></i>');
-			}
-		}else if($(this).hasClass('otp-view')){
-			if($(this).data('view') == 'show'){
-				$(this).closest('.form-group').find('input').attr({type : 'text', autocomplete : 'off'});
-				$(this).parent().empty().html('<i class="fa fa-eye-slash otp-view" data-view="hide" aria-hidden="true"></i>');
-			}else{
-				$(this).closest('.form-group').find('input').attr({type : 'password', autocomplete : 'new-password'});
-				$(this).parent().empty().html('<i class="fa fa-eye otp-view" data-view="show" aria-hidden="true"></i>');
-			}
-		} 
-	});
-	
+                $(this).show();
+            }
+        });
+    });
+
+    $(document).on('click', '.password-view,.otp-view', function () {
+        if ($(this).hasClass('password-view')) {
+            if ($(this).data('view') == 'show') {
+                $('.check-password').attr({type: 'text', autocomplete: 'off'});
+                $(this).parent().empty().html('<i class="fa fa-eye-slash password-view" data-view="hide" aria-hidden="true"></i>');
+            } else {
+                $('.check-password').attr({type: 'password', autocomplete: 'new-password'});
+                $(this).parent().empty().html('<i class="fa fa-eye password-view" data-view="show" aria-hidden="true"></i>');
+            }
+        } else if ($(this).hasClass('otp-view')) {
+            if ($(this).data('view') == 'show') {
+                $(this).closest('.form-group').find('input').attr({type: 'text', autocomplete: 'off'});
+                $(this).parent().empty().html('<i class="fa fa-eye-slash otp-view" data-view="hide" aria-hidden="true"></i>');
+            } else {
+                $(this).closest('.form-group').find('input').attr({type: 'password', autocomplete: 'new-password'});
+                $(this).parent().empty().html('<i class="fa fa-eye otp-view" data-view="show" aria-hidden="true"></i>');
+            }
+        }
+    });
+
 });
