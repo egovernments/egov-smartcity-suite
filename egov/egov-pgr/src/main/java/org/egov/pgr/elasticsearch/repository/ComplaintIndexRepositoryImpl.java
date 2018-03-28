@@ -72,7 +72,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.utils.StringUtils.defaultIfBlank;
 import static org.egov.pgr.elasticsearch.repository.ComplaintIndexAggregationBuilder.getAverageWithExclusion;
 import static org.egov.pgr.elasticsearch.repository.ComplaintIndexAggregationBuilder.getAverageWithFilter;
 import static org.egov.pgr.elasticsearch.repository.ComplaintIndexAggregationBuilder.getCount;
@@ -593,8 +595,9 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                 .execute().actionGet();
 
         Iterator<SearchHit> searchHits = response.getHits().iterator();
-        return searchHits.hasNext() ? searchHits.next().getSource().get(INITIAL_FUNCTIONARY_MOBILE_NUMBER).toString()
-                : StringUtils.EMPTY;
+
+        return searchHits.hasNext() ?
+                defaultIfBlank((String) searchHits.next().getSource().get(INITIAL_FUNCTIONARY_MOBILE_NUMBER)) : EMPTY;
     }
 
     @Override
