@@ -63,6 +63,7 @@ public class MarriageConstants {
 
     public static final String REISSUE_FEECRITERIA = "Re-Issue Fee";
     public static final String ADDITIONAL_RULE_REGISTRATION = "MARRIAGE REGISTRATION";
+    public static final String SOURCE_API= "API";
 
     // validactions
     public static final String WFLOW_ACTION_STEP_REJECT = "Reject";
@@ -86,6 +87,8 @@ public class MarriageConstants {
     public static final String WFSTATE_APPROVER_REJECTED ="Approver Rejected Application";
     public static final String WFSTATE_MHO_APPROVED="Municipal Health Officer Approved";
     public static final String WFSTATE_CMOH_APPROVED="Chief Medical Officer of Health Approved";
+    public static final String WFSTATE_MARRIAGEAPI_NEW ="MarriageAPI NEW";
+    public static final String COMMISSIONER ="Commissioner";
     
 
     public static final String APPROVED = "APPROVED";
@@ -95,6 +98,7 @@ public class MarriageConstants {
     public static final String SENDEMAILFROOMMARRIAGEMODULE = "SENDEMAILFROOMMARRIAGEMODULE";
 
     public static final String APPL_INDEX_MODULE_NAME = "Marriage Registration";
+    public static final String INDAIN_NATIONALITY ="Indian";
 
     public static final String REGISTER_NO_OF_DAYS = "90";
     public static final String MARRIAGEREGISTRATION_DAYS_VALIDATION = "MARRIAGEREGISTRATION_DAYS_VALIDATION";

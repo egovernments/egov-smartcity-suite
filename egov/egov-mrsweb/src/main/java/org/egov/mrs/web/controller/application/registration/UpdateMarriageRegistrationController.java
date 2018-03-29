@@ -75,6 +75,7 @@ import static org.egov.mrs.application.MarriageConstants.WFSTATE_APPROVER_REJECT
 import static org.egov.mrs.application.MarriageConstants.WFSTATE_CMOH_APPROVED;
 import static org.egov.mrs.application.MarriageConstants.WFSTATE_MHO_APPROVED;
 import static org.egov.mrs.application.MarriageConstants.WFSTATE_REV_CLRK_APPROVED;
+import static org.egov.mrs.application.MarriageConstants.WFSTATE_MARRIAGEAPI_NEW;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -164,6 +165,7 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
     public String showRegistration(@PathVariable final Long id, final Model model) {
         final MarriageRegistration marriageRegistration = marriageRegistrationService.get(id);
         buildMrgRegistrationUpdateResult(marriageRegistration, model);
+        model.addAttribute("source",marriageRegistration.getSource());
         return MRG_REGISTRATION_EDIT;
     }
 
@@ -234,6 +236,7 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
 
         if ((WFSTATE_REV_CLRK_APPROVED.equals(registration.getState().getValue())
                 || WFSTATE_MHO_APPROVED.equals(registration.getState().getValue())
+                || WFSTATE_MARRIAGEAPI_NEW.equals(registration.getState().getValue())
                 || WFSTATE_CMOH_APPROVED.equals(registration.getState().getValue()))
                 && WFLOW_PENDINGACTION_APPROVAL_APPROVEPENDING.equals(registration.getState().getNextAction())) {
             workFlowContainer.setPendingActions(WFLOW_PENDINGACTION_APPRVLPENDING_DIGISIGN);
@@ -272,9 +275,14 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
         String workFlowAction = EMPTY;
         if (isNotBlank(request.getParameter(WORK_FLOW_ACTION)))
             workFlowAction = request.getParameter(WORK_FLOW_ACTION);
-
+        if(!marriageRegistration.getSource().equals("API")){
         validateApplicationDate(marriageRegistration, errors);
         marriageFormValidator.validate(marriageRegistration, errors, "registration");
+        }
+        if(marriageRegistration.getSource().equals("API")){
+            marriageRegistration.getWitnesses().clear();
+            marriageRegistration.setZone(null);
+        }
         Assignment approverAssign = null;
         if (isNotBlank(request.getParameter(APPROVAL_POSITION)))
             approverAssign = assignmentService

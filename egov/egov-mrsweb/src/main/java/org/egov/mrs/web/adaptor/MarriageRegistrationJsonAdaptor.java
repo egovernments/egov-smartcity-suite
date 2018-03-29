@@ -85,9 +85,11 @@ public class MarriageRegistrationJsonAdaptor implements JsonSerializer<MarriageR
             jsonObject.addProperty("wifereligion", defaultIfBlank(registration.getWife().getReligion().getName(), N_A));
             jsonObject.addProperty("wifeMaritalStatus",
                     defaultIfBlank(registration.getWife().getMaritalStatus().toString(), N_A));
-            jsonObject.addProperty("zone", defaultIfBlank(registration.getZone().getName(), N_A));
+            jsonObject.addProperty("zone",
+                    defaultIfBlank(registration.getZone() == null ? "" : registration.getZone().getName(), N_A));
             jsonObject.addProperty("marriageRegistrationUnit",
-                    defaultIfBlank(registration.getMarriageRegistrationUnit().getName(), N_A));
+                    defaultIfBlank(registration.getMarriageRegistrationUnit() == null ? ""
+                            : registration.getMarriageRegistrationUnit().getName(), N_A));
             if (registration.getMarriageCertificate().isEmpty())
                 jsonObject.addProperty("certificateIssued", "No");
             else if (registration.getMarriageCertificate().get(0).isCertificateIssued())

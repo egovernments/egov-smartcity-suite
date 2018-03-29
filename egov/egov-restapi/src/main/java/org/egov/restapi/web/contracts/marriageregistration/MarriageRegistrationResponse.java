@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -45,22 +45,61 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
+package org.egov.restapi.web.contracts.marriageregistration;
 
-package org.egov.commons.repository;
+public class MarriageRegistrationResponse {
 
-import org.egov.common.entity.EducationalQualification;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+    private String applicationNo;
 
-import java.util.List;
+    private String status;
 
-@Repository
-public interface EducationalQualificationRepository extends JpaRepository<EducationalQualification, java.lang.Long> {
+    private String message;
 
-    public EducationalQualification findByName(String name);
+    private boolean success;
 
-    public List<EducationalQualification> findByisActive(Boolean isActive);
-    
-    public EducationalQualification findByCode(String code);
+    public String getApplicationNo() {
+        return applicationNo;
+    }
+
+    public void setApplicationNo(String applicationNo) {
+        this.applicationNo = applicationNo;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public MarriageRegistrationResponse(boolean success, String status, String message) {
+        this.success = success;
+        this.status = status;
+        this.message = message;
+    }
+
+    public MarriageRegistrationResponse(boolean success, String applicationNo, String status, String message) {
+        this.success = success;
+        this.applicationNo = applicationNo;
+        this.status = status;
+        this.message = message;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public void setSuccess(boolean success) {
+        this.success = success;
+    }
 
 }

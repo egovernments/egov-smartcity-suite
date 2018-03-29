@@ -49,6 +49,7 @@
 package org.egov.mrs.application.service.workflow;
 import static org.egov.mrs.application.MarriageConstants.ANONYMOUS_USER;
 import static org.egov.mrs.application.MarriageConstants.CMO_DESIG;
+import static org.egov.mrs.application.MarriageConstants.COMMISSIONER;
 import static org.egov.mrs.application.MarriageConstants.CREATED;
 import static org.egov.mrs.application.MarriageConstants.CSC_OPERATOR_CREATED;
 import static org.egov.mrs.application.MarriageConstants.MEESEVA_OPERATOR_ROLE;
@@ -81,10 +82,12 @@ import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
+import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.ReIssue;
 import org.egov.pims.commons.Designation;
@@ -565,6 +568,25 @@ public class RegistrationWorkflowService {
                     if (role != null && role.getName().equalsIgnoreCase(MEESEVA_OPERATOR_ROLE))
                             return true;
             return false;
+    }
+
+    public void onCreateRegistrationAPI(MarriageRegistration marriageRegistration) {
+
+        WorkFlowMatrix wfmatrix = marriageRegistrationWorkflowService.getWfMatrix(marriageRegistration.getStateType(), null, null,
+                null,
+                MarriageConstants.WFSTATE_MARRIAGEAPI_NEW, null);
+        Designation des = designationService.getDesignationByName(COMMISSIONER);
+        List<Assignment> assignment = assignmentService.getAllActiveAssignments(des.getId());
+        if (assignment.isEmpty())
+            throw new ApplicationRuntimeException(
+                    "No Commisioner is configured to receive Marriage regitration");
+        Position assignee = assignment.get(0).getPosition();
+        marriageRegistration.transition()
+                .start()
+                .withStateValue(MarriageConstants.WFSTATE_REV_CLRK_APPROVED)
+                .withOwner(assignee).withNextAction(wfmatrix.getNextAction()).withDateInfo(new Date())
+                .withNatureOfTask("Marriage Registration :: New Registration").withInitiator(assignee);
+
     }
 
 }
