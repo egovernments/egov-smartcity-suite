@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -46,49 +46,11 @@
  *
  */
 
-package org.egov.infra.web.spring.handler;
+package org.egov.infra.exception;
 
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.exception.ApplicationValidationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.servlet.FlashMap;
-import org.springframework.web.servlet.support.RequestContextUtils;
-import org.springframework.web.servlet.view.RedirectView;
+public class ApplicationValidationException extends ApplicationRuntimeException {
 
-import javax.servlet.http.HttpServletRequest;
-
-@ControllerAdvice(annotations = Controller.class)
-public final class GlobalExceptionHandler {
-    private static final Logger LOG = LoggerFactory.getLogger(GlobalExceptionHandler.class);
-
-    private static final String DEFAULT_ERROR_VIEW = "/error/500";
-    private static final String ERROR_MESSAGE = "An error occurred while processing the request";
-    private static final String VALIDATION_ERROR_MESSAGE = "Validation failed";
-
-    @ExceptionHandler({Exception.class, ApplicationRuntimeException.class})
-    public RedirectView handleGenericException(HttpServletRequest request, Exception e) {
-        LOG.error(ERROR_MESSAGE, e);
-        return errorView(request, e.getMessage());
-    }
-
-    @ExceptionHandler(ApplicationValidationException.class)
-    public RedirectView handleValidationException(HttpServletRequest request, ApplicationValidationException e) {
-        if (LOG.isWarnEnabled())
-            LOG.warn(VALIDATION_ERROR_MESSAGE, e);
-        return errorView(request, e.getMessage());
-    }
-
-    public RedirectView errorView(HttpServletRequest request, String message) {
-        RedirectView rw = new RedirectView(DEFAULT_ERROR_VIEW, true);
-        FlashMap outputFlashMap = RequestContextUtils.getOutputFlashMap(request);
-        if (outputFlashMap != null) {
-            outputFlashMap.put("error", message);
-            outputFlashMap.put("url", request.getRequestURL());
-        }
-        return rw;
+    public ApplicationValidationException(String msg) {
+        super(msg);
     }
 }

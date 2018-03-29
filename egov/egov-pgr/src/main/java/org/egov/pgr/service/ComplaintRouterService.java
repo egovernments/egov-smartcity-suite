@@ -51,7 +51,7 @@ package org.egov.pgr.service;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
-import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.exception.ApplicationValidationException;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -88,7 +88,7 @@ public class ComplaintRouterService {
     public Position getComplaintAssignee(Complaint complaint) {
         ComplaintRouter complaintRouter = getComplaintRouter(complaint);
         if (complaintRouter == null)
-            throw new ApplicationRuntimeException("PGR.001");
+            throw new ApplicationValidationException("PGR.001");
         else
             return complaintRouter.getPosition();
     }
