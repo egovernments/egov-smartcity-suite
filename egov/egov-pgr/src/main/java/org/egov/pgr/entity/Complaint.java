@@ -175,6 +175,9 @@ public class Complaint extends StateAware<Position> {
 
     private boolean notifyComplainant = true;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date completionDate;
+
     @Transient
     private String latlngAddress;
 
@@ -376,6 +379,14 @@ public class Complaint extends StateAware<Position> {
 
     public void setNotifyComplainant(boolean notifyComplainant) {
         this.notifyComplainant = notifyComplainant;
+    }
+
+    public Date getCompletionDate() {
+        return completionDate;
+    }
+
+    public void setCompletionDate(Date completionDate) {
+        this.completionDate = completionDate;
     }
 
     public Long getCrossHierarchyId() {
