@@ -87,6 +87,7 @@ import org.elasticsearch.search.aggregations.metrics.tophits.TopHits;
 import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -1308,8 +1309,8 @@ public class ComplaintIndexService {
         return responseDetailsList;
     }
 
-    public Iterable<ComplaintIndex> searchComplaintIndex(final BoolQueryBuilder searchQuery) {
-        return complaintIndexRepository.search(searchQuery);
+    public Page<ComplaintIndex> searchComplaintIndex(final BoolQueryBuilder searchQuery) {
+        return (Page<ComplaintIndex>) complaintIndexRepository.search(searchQuery);
     }
 
     private BoolQueryBuilder getFilterQuery(final ComplaintDashBoardRequest complaintDashBoardRequest) {
