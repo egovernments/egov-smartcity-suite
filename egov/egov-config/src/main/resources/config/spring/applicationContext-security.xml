@@ -228,5 +228,12 @@
     </bean>
 
     <bean id="applicationAuthorizationMetadataSource"
-          class="org.egov.infra.config.security.authorization.ApplicationAuthorizationMetadataSource"/>
+          class="org.egov.infra.config.security.authorization.ApplicationAuthorizationMetadataSource">
+        <property name="excludePatterns">
+            <list>
+                <value>/login</value>
+                <value>/public</value>
+            </list>
+        </property>
+    </bean>
 </beans>
