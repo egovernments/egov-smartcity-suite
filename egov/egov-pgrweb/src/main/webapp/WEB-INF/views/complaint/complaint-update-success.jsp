@@ -64,7 +64,7 @@
                             <spring:message code="lbl.complaintDate"/>
                         </div>
                         <div class="col-md-3 col-xs-6 add-margin view-content">
-                            <fmt:formatDate value="${complaint.createdDate}" pattern="dd MMM yyyy HH:mm:ss a" var="complaintDate"/>
+                            <fmt:formatDate value="${complaint.createdDate}" pattern="dd MMM yyyy hh:mm:ss a" var="complaintDate"/>
                             ${complaintDate}
                         </div>
                     </div>
