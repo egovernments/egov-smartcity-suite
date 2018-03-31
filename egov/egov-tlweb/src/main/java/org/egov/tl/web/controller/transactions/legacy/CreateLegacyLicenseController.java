@@ -65,6 +65,7 @@ import javax.validation.Valid;
 import java.util.Date;
 import java.util.Map;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.tl.utils.Constants.AUTO;
 import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -120,6 +121,6 @@ public class CreateLegacyLicenseController extends LegacyLicenseController {
     @GetMapping(value = "/old-licenseno-is-unique", produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public Boolean checkOldLicenseNumber(@RequestParam String oldLicenseNumber) {
-        return legacyService.getLicenseByOldLicenseNumber(oldLicenseNumber) != null;
+        return isNotBlank(oldLicenseNumber) && legacyService.getLicenseByOldLicenseNumber(oldLicenseNumber) != null;
     }
 }
