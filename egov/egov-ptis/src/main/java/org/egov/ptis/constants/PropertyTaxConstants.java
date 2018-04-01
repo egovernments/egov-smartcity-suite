@@ -791,17 +791,18 @@ public interface PropertyTaxConstants {
     public static final String GISVERSION = "/mapguide/";
 
     public static final String ARREAR_DEMANDRSN_GLCODE = "4311004";
+    public static final String CURRENT_DEMANDRSN_GLCODE = "4311001";
     // HashMap for GLCodes for Current Taxes
     public static final ImmutableMap<String, String> GLCODEMAP_FOR_CURRENTTAX = ImmutableMap.<String, String>builder()
             
-            .put(DEMANDRSN_CODE_GENERAL_TAX, "1100101")
-            .put(DEMANDRSN_CODE_WATER_TAX, "1100101")
-            .put(DEMANDRSN_CODE_SCAVENGE_TAX, "1100101")
-            .put(DEMANDRSN_CODE_DRAINAGE_TAX, "1100101")
-            .put(DEMANDRSN_CODE_LIGHT_TAX, "1100101")
-            .put(DEMANDRSN_CODE_LIBRARY_CESS, "3503001")
-            .put(DEMANDRSN_CODE_EDUCATIONAL_TAX, "3503002")
-            .put(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, "1402001")
+            .put(DEMANDRSN_CODE_GENERAL_TAX, CURRENT_DEMANDRSN_GLCODE)
+            .put(DEMANDRSN_CODE_WATER_TAX, CURRENT_DEMANDRSN_GLCODE)
+            .put(DEMANDRSN_CODE_SCAVENGE_TAX, CURRENT_DEMANDRSN_GLCODE)
+            .put(DEMANDRSN_CODE_DRAINAGE_TAX, CURRENT_DEMANDRSN_GLCODE)
+            .put(DEMANDRSN_CODE_LIGHT_TAX, CURRENT_DEMANDRSN_GLCODE)
+            .put(DEMANDRSN_CODE_LIBRARY_CESS, CURRENT_DEMANDRSN_GLCODE)
+            .put(DEMANDRSN_CODE_EDUCATIONAL_TAX, CURRENT_DEMANDRSN_GLCODE)
+            .put(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, CURRENT_DEMANDRSN_GLCODE)
             .build();
     
     // HashMap for GLCodes for Arrear Taxes
@@ -821,14 +822,14 @@ public interface PropertyTaxConstants {
     // HashMap for GLCodes for Tax Payables
     public static final ImmutableMap<String, String> GLCODEMAP_FOR_TAX_PAYABLE = ImmutableMap.<String, String>builder()
        
-            .put(DEMANDRSN_CODE_GENERAL_TAX, "1100101")
-            .put(DEMANDRSN_CODE_WATER_TAX, "1100101")
-            .put(DEMANDRSN_CODE_SCAVENGE_TAX, "1100101")
-            .put(DEMANDRSN_CODE_DRAINAGE_TAX, "1100101")
-            .put(DEMANDRSN_CODE_LIGHT_TAX, "1100101")
-            .put(DEMANDRSN_CODE_LIBRARY_CESS, "3503001")
-            .put(DEMANDRSN_CODE_EDUCATIONAL_TAX, "3503002")
-            .put(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, "1402001")
+            .put(DEMANDRSN_CODE_GENERAL_TAX, CURRENT_DEMANDRSN_GLCODE)
+            .put(DEMANDRSN_CODE_WATER_TAX, CURRENT_DEMANDRSN_GLCODE)
+            .put(DEMANDRSN_CODE_SCAVENGE_TAX, CURRENT_DEMANDRSN_GLCODE)
+            .put(DEMANDRSN_CODE_DRAINAGE_TAX, CURRENT_DEMANDRSN_GLCODE)
+            .put(DEMANDRSN_CODE_LIGHT_TAX, CURRENT_DEMANDRSN_GLCODE)
+            .put(DEMANDRSN_CODE_LIBRARY_CESS, CURRENT_DEMANDRSN_GLCODE)
+            .put(DEMANDRSN_CODE_EDUCATIONAL_TAX, CURRENT_DEMANDRSN_GLCODE)
+            .put(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY, CURRENT_DEMANDRSN_GLCODE)
             .build();
     
 
