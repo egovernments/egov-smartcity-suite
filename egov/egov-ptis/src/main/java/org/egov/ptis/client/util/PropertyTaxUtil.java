@@ -2501,7 +2501,7 @@ public class PropertyTaxUtil {
         Map<String, Installment> currInstallments = getInstallmentsForCurrYear(new Date());
         Installment currentFirstHalf=currInstallments.get(CURRENTYEAR_FIRST_HALF);
 
-        final String selectQuery = " select dd.amt_rebate as rebateamount from eg_demand_details dd, eg_demand_reason dr,"
+        final String selectQuery = " select sum(dd.amt_rebate) as rebateamount from eg_demand_details dd, eg_demand_reason dr,"
                 + " eg_demand_reason_master drm, eg_installment_master inst "
                 + " where dd.id_demand_reason = dr.id and drm.id = dr.id_demand_reason_master "
                 + " and dr.id_installment = inst.id and dd.id_demand =:currentDemandId and inst.start_date between "
@@ -2511,7 +2511,10 @@ public class PropertyTaxUtil {
                 .setLong("currentDemandId", currentDemand.getId())
                 .setDate("firstHlfFromdt",currentFirstHalf.getFromDate())
                 .setDate("firstHlfTodt", currentFirstHalf.getToDate())
-                .setParameterList("codelist", Arrays.asList(PropertyTaxConstants.NON_VACANT_TAX_DEMAND_CODES,PropertyTaxConstants.VAC_LAND_TAX));
+                .setParameterList("codelist", Arrays.asList(DEMANDRSN_CODE_GENERAL_TAX,
+                        PropertyTaxConstants.DEMANDRSN_CODE_DRAINAGE_TAX,PropertyTaxConstants.DEMANDRSN_CODE_LIGHT_TAX,
+                        PropertyTaxConstants.DEMANDRSN_CODE_SCAVENGE_TAX,PropertyTaxConstants.DEMANDRSN_CODE_WATER_TAX
+                        ,PropertyTaxConstants.VAC_LAND_TAX));
         rebateAmt = qry.uniqueResult();
         return rebateAmt != null ? new BigDecimal((Double) rebateAmt) : BigDecimal.ZERO;
     }

@@ -1759,6 +1759,7 @@ public interface PropertyTaxConstants {
     public static final String RP_APP_STATUS_REJECTED = "RP:Rejected";
 
     public static final List<String> DEMAND_REASONS_FOR_REBATE_CALCULATION = ImmutableList.of(DEMANDRSN_CODE_GENERAL_TAX,
+            DEMANDRSN_CODE_DRAINAGE_TAX, DEMANDRSN_CODE_SCAVENGE_TAX, DEMANDRSN_CODE_WATER_TAX, DEMANDRSN_CODE_LIGHT_TAX,
             DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_EDUCATIONAL_TAX);
     
     public static final List<String> PROPERTY_TYPE_SERVICE_CODES = ImmutableList.of("PT","VLT");
