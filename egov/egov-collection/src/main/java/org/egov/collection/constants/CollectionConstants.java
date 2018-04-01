@@ -687,12 +687,12 @@ public final class CollectionConstants {
             add("C");
         }
     };
+    public static final String ATOM_AUTHORISATION_CODE_REFUNDED = "AUTO REVERSAL";
     public static final ArrayList<String> AXIS_AUTHORISATION_CODES_WAITINGFOR_PAY_GATEWAY_RESPONSE = new ArrayList<String>() {
         {
-            add("3");
             add("6");
             add("D");
             add("P");
-        }
+        } 
     };
 }
