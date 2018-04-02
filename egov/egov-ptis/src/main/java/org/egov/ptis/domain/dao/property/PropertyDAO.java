@@ -242,4 +242,6 @@ public interface PropertyDAO {
 
     public Property getLatestGISPropertyForBasicProperty(BasicProperty basicProperty);
 
+    public Property getHistoryPropertyForBasicProperty(BasicProperty basicProperty);
+
 }

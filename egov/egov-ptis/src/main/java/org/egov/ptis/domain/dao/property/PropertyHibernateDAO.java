@@ -681,4 +681,16 @@ public class PropertyHibernateDAO implements PropertyDAO {
         qry.setMaxResults(1);
         return (Property) qry.uniqueResult();
     }
+    
+    /**
+     * API gives the history property for the basicproperty
+     */
+    @Override
+    public Property getHistoryPropertyForBasicProperty(BasicProperty basicProperty) {
+        Query qry = getCurrentSession()
+                .createQuery("from PropertyImpl where basicProperty =:basicProperty and status = 'H' order by id desc ");
+        qry.setEntity("basicProperty", basicProperty);
+        qry.setMaxResults(1);
+        return (Property) qry.uniqueResult();
+    } 
 }

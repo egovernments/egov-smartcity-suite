@@ -72,7 +72,12 @@ import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_GRPPROCEE
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_HEARINGNOTICE;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_RPPROCEEDINGS;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_ADD_OR_ALTER;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_MODIFY;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVISIONPETITION_STATUS_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVISION_PETITION;
@@ -121,11 +126,15 @@ import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Area;
+import org.egov.commons.Installment;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.commons.dao.InstallmentDao;
 import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
+import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -154,6 +163,7 @@ import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyStatusDAO;
 import org.egov.ptis.domain.dao.property.PropertyStatusValuesDAO;
+import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.document.DocumentTypeDetails;
 import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
@@ -320,6 +330,11 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     transient PropertyPersistenceService basicPropertyService;
     @PersistenceContext
     private transient EntityManager entityManager;
+    @Autowired
+    private InstallmentDao installmentDao;
+
+    @Autowired
+    private ModuleService moduleDao;
 
     public RevisionPetitionAction() {
 
@@ -1301,7 +1316,31 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             else
                 propService.changePropertyDetail(objection.getProperty(), new BuiltUpProperty(),
                         objection.getProperty().getPropertyDetail().getFloorDetails().size());
-        propService.modifyDemand(objection.getProperty(), (PropertyImpl) objection.getBasicProperty().getProperty());
+        final Property modProperty = propService.modifyDemand(objection.getProperty(), (PropertyImpl) objection.getBasicProperty().getProperty());
+        if(objection.getProperty().getPropertyModifyReason().equalsIgnoreCase(PROPERTY_MODIFY_REASON_REVISION_PETITION) &&
+                objection.getBasicProperty().getProperty().getPropertyModifyReason().equalsIgnoreCase(PROPERTY_MODIFY_REASON_ADD_OR_ALTER)) {
+            Property historyProperty = propService.getHistoryPropertyByUpinNo(objection.getBasicProperty());
+            final Installment currInstall = propertyTaxCommonUtils.getCurrentInstallment();
+            Ptdemand currPtDmd = null;
+            for (final Ptdemand demand : modProperty.getPtDemandSet())
+                if ("N".equalsIgnoreCase(demand.getIsHistory()))
+                    if (demand.getEgInstallmentMaster().equals(currInstall)) {
+                        currPtDmd = demand;
+                        break;
+                    }
+            Ptdemand oldCurrPtDmd = null;
+            for (final Ptdemand ptDmd : historyProperty.getPtDemandSet())
+                if ("N".equalsIgnoreCase(ptDmd.getIsHistory()))
+                    if (ptDmd.getEgInstallmentMaster().equals(currInstall)) {
+                        oldCurrPtDmd = ptDmd;
+                        break;
+                    }
+
+            Installment effectiveInstall;
+            final Module module = moduleDao.getModuleByName(PTMODULENAME);
+            effectiveInstall = installmentDao.getInsatllmentByModuleForGivenDate(module, propCompletionDate);
+            propService.addArrDmdDetToCurrentDmd(oldCurrPtDmd, currPtDmd, effectiveInstall, false);
+        }
 
         if (objection.getProperty().getPropertyDetail().getLayoutApprovalAuthority() != null && "No Approval"
                 .equals(objection.getProperty().getPropertyDetail().getLayoutApprovalAuthority().getName())) {

@@ -130,6 +130,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WTMS_AMALGAMATE_WATER_CONNECTIONS_URL;
 import static org.egov.ptis.constants.PropertyTaxConstants.WTMS_TAXDUE_RESTURL;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_MODIFY;
+
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -211,6 +213,7 @@ import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
+import org.egov.ptis.domain.dao.property.PropertyHibernateDAO;
 import org.egov.ptis.domain.dao.property.PropertyStatusValuesDAO;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations;
@@ -391,6 +394,9 @@ public class PropertyService {
 
     @PersistenceContext
     private EntityManager entityManager;
+    
+    @Autowired
+    private PropertyHibernateDAO propertyHibernateDAO;
 
     /**
      * Creates a new property if property is in transient state else updates persisted property
@@ -875,7 +881,8 @@ public class PropertyService {
         else {
             modProperty = createDemandForModify(oldProperty, newProperty, propCompletionDate);
             if(!(propertyModel.getPropertyModifyReason().equalsIgnoreCase(PROPERTY_MODIFY_REASON_REVISION_PETITION) &&
-                    oldProperty.getPropertyModifyReason().equalsIgnoreCase(PROP_CREATE_RSN)))
+                    (oldProperty.getPropertyModifyReason().equalsIgnoreCase(PROP_CREATE_RSN) ||
+                            oldProperty.getPropertyModifyReason().equalsIgnoreCase(PROPERTY_MODIFY_REASON_ADD_OR_ALTER))))
               modProperty = createArrearsDemand(oldProperty, propCompletionDate, newProperty);
         }
 
@@ -4355,6 +4362,10 @@ public class PropertyService {
                 halfYearlyTax = halfYearlyTax.add(demandDetails.getAmount());
         }
         return halfYearlyTax;
+    }
+    
+    public Property getHistoryPropertyByUpinNo(BasicProperty basicProperty) {
+        return propertyHibernateDAO.getHistoryPropertyForBasicProperty(basicProperty);
     }
 
 }
