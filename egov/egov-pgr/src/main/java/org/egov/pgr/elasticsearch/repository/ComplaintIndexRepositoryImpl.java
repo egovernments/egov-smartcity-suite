@@ -185,7 +185,7 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                 .addAggregation(getAverageWithExclusion(SATISFACTION_AVERAGE, SATISFACTION_INDEX))
                 .addAggregation(getCountBetweenSpecifiedDates("currentYear", "createdDate",
                         currentYearFromDate.toString(formatter),
-                        new DateTime().toString(formatter)))
+                        new DateTime().plusDays(1).toString(formatter)))
                 .addAggregation(getCountBetweenSpecifiedDates("todaysComplaintCount", "createdDate",
                         new DateTime().toString(formatter), new DateTime().plusDays(1).toString(formatter)))
                 .execute().actionGet();

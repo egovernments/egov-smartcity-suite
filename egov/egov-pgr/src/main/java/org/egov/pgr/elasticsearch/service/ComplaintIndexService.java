@@ -587,10 +587,10 @@ public class ComplaintIndexService {
         result.put("TotalComplaint", totalCount.getValue());
         final Filter filter = consolidatedResponse.getAggregations().get("agg");
         final Avg averageAgeing = filter.getAggregations().get("AgeingInWeeks");
-        result.put("AvgAgeingInWeeks", averageAgeing.getValue() / 7);
+        result.put("AvgAgeingInWeeks", Double.isNaN(averageAgeing.getValue()) ? 0 : averageAgeing.getValue() / 7);
         Range satisfactionAverage = consolidatedResponse.getAggregations().get(EXCLUDE_ZERO);
         final Avg averageSatisfaction = satisfactionAverage.getBuckets().get(0).getAggregations().get("satisfactionAverage");
-        result.put("AvgCustomeSatisfactionIndex", averageSatisfaction.getValue());
+        result.put("AvgCustomeSatisfactionIndex", Double.isNaN(averageSatisfaction.getValue()) ? 0 : averageSatisfaction.getValue());
 
         if (isNotBlank(complaintDashBoardRequest.getUlbCode())) {
             final CityIndex city = cityIndexService.findOne(complaintDashBoardRequest.getUlbCode());
@@ -1323,8 +1323,11 @@ public class ComplaintIndexService {
             boolQuery = boolQuery.must(rangeQuery("createdDate")
                     .from(startOfToday().toString(PGR_INDEX_DATE_FORMAT))
                     .to(new DateTime().plusDays(1).toString(PGR_INDEX_DATE_FORMAT)));
-        } else if (isNotBlank(complaintDashBoardRequest.getFromDate()) && isNotBlank(complaintDashBoardRequest.getToDate()))
-            boolQuery = boolQuery.must(rangeQuery("createdDate").from(complaintDashBoardRequest.getFromDate()).to(complaintDashBoardRequest.getToDate()));
+        } else if (isNotBlank(complaintDashBoardRequest.getFromDate()) && isNotBlank(complaintDashBoardRequest.getToDate())) {
+            String fromDate = new DateTime(complaintDashBoardRequest.getFromDate()).withTimeAtStartOfDay().toString(PGR_INDEX_DATE_FORMAT);
+            String toDate = new DateTime(complaintDashBoardRequest.getToDate()).plusDays(1).toString(PGR_INDEX_DATE_FORMAT);
+            boolQuery = boolQuery.must(rangeQuery("createdDate").from(fromDate).to(toDate));
+        }
         if (complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ALL_ULB) ||
                 complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ALL_WARDS) ||
                 complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ALL_LOCALITIES) ||
