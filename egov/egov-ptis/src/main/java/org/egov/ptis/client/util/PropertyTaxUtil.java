@@ -222,6 +222,7 @@ import org.egov.ptis.domain.model.calculator.MiscellaneousTaxDetail;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
 import org.egov.ptis.domain.service.property.RebateService;
+import org.egov.ptis.master.service.TaxRatesService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.egov.ptis.wtms.ConsumerConsumption;
 import org.egov.ptis.wtms.PropertyWiseConsumptions;
@@ -300,7 +301,9 @@ public class PropertyTaxUtil {
     private EntityManager entityManager;
     @Autowired
     private RebateService rebateService;
-
+    @Autowired
+    private TaxRatesService taxRatesService;
+    
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
     public void setPersistenceService(final PersistenceService persistenceService) {
@@ -1900,20 +1903,6 @@ public class PropertyTaxUtil {
         return propertyWiseConsumptions;
     }
 
-    public Properties loadTaxRates() {
-        final Properties taxRates = new Properties();
-        final String s = appConfigValuesService.getAppConfigValueByDate(PTMODULENAME, "PT_TAXRATES", new Date())
-                .getValue();
-        final StringReader sr = new StringReader(s);
-        try {
-            taxRates.load(sr);
-        } catch (final IOException e) {
-            throw new ApplicationRuntimeException("Could not decipher Tax rates from string" + s, e);
-        }
-        sr.close();
-        return taxRates;
-    }
-
     /**
      * @param fromDate
      * @param toDate
@@ -2579,4 +2568,7 @@ public class PropertyTaxUtil {
         return taxDiffPerc;
     }
 
+    public BigDecimal getTaxRates() {
+        return taxRatesService.getTaxRateByDemandReasonCode(PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX);
+    }
 }

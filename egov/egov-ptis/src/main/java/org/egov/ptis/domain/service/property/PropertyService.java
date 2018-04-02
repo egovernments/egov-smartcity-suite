@@ -3978,9 +3978,6 @@ public class PropertyService {
         final Query qry = propPerServ.getSession().createQuery(
                 "from BasicPropertyImpl bp where bp.address.houseNoBldgApt = :houseNo  and bp.active = 'Y'");
         qry.setParameter("houseNo", houseNo);
-
-        // this condition is reqd bcoz, after rejection the validation shouldn't
-        // happen for the same houseNo
         return !qry.list().isEmpty()
                 && (basicProperty == null || !basicProperty.getAddress().getHouseNoBldgApt().equals(houseNo));
     }
