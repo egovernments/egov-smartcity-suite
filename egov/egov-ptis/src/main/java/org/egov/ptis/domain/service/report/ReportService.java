@@ -80,7 +80,6 @@ import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.ptis.report.bean.ApartmentDCBReportResult;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.BillCollectorDailyCollectionReportResult;
 import org.egov.ptis.domain.entity.property.CollectionSummary;
@@ -91,6 +90,7 @@ import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.master.service.PropertyUsageService;
+import org.egov.ptis.report.bean.ApartmentDCBReportResult;
 import org.egov.ptis.report.bean.NatureOfUsageResult;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Query;
@@ -126,7 +126,7 @@ public class ReportService {
     private static final String ABOVE_FIVE_YEARS = "Above 5 Years";
     final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
     private PersistenceService propPerServ;
-    
+
     @Autowired
     private RegionalHeirarchyService regionalHeirarchyService;
     @Autowired
@@ -143,13 +143,14 @@ public class ReportService {
     private PropertyUsageService propertyUsageService;
     @Autowired
     private BoundaryService boundaryService;
-    
+
     @ReadOnly
-    public List<CurrentInstDCBReportResult> getCurrentInstallmentDCB(String ward) {
+    public List<CurrentInstDCBReportResult> getCurrentInstallmentDCB(final String ward) {
         final StringBuilder queryStr = new StringBuilder(500);
 
-        queryStr.append("select ward.name as \"wardName\", cast(count(*) as integer) as \"noOfProperties\", cast(sum(pi.aggregate_current_firsthalf_demand+pi.aggregate_current_secondhalf_demand) as numeric) as \"currDemand\", cast(sum(pi.current_firsthalf_collection+pi.current_secondhalf_collection) as numeric) as \"currCollection\", cast(sum(pi.aggregate_arrear_demand) as numeric) as \"arrearDemand\",cast(sum(pi.arrearcollection) as numeric) as \"arrearCollection\" from egpt_mv_propertyinfo pi,"
-                + " eg_boundary ward where ward.id = pi.wardid and pi.isexempted = false and pi.isactive=true and ward.boundarytype = (select id from eg_boundary_type where name='Ward' and hierarchytype = (select id from eg_hierarchy_type where name= 'REVENUE')) ");
+        queryStr.append(
+                "select ward.name as \"wardName\", cast(count(*) as integer) as \"noOfProperties\", cast(sum(pi.aggregate_current_firsthalf_demand+pi.aggregate_current_secondhalf_demand) as numeric) as \"currDemand\", cast(sum(pi.current_firsthalf_collection+pi.current_secondhalf_collection) as numeric) as \"currCollection\", cast(sum(pi.aggregate_arrear_demand) as numeric) as \"arrearDemand\",cast(sum(pi.arrearcollection) as numeric) as \"arrearCollection\" from egpt_mv_propertyinfo pi,"
+                        + " eg_boundary ward where ward.id = pi.wardid and pi.isexempted = false and pi.isactive=true and ward.boundarytype = (select id from eg_boundary_type where name='Ward' and hierarchytype = (select id from eg_hierarchy_type where name= 'REVENUE')) ");
 
         if (StringUtils.isNotBlank(ward))
             queryStr.append(" and pi.wardid=:ward ");
@@ -171,13 +172,13 @@ public class ReportService {
         return propPerServ;
     }
 
-    public void setPropPerServ(PersistenceService propPerServ) {
+    public void setPropPerServ(final PersistenceService propPerServ) {
         this.propPerServ = propPerServ;
     }
-    
+
     @ReadOnly
-    public List<BillCollectorDailyCollectionReportResult> getBillCollectorWiseDailyCollection(Date date,
-                                                                                              BillCollectorDailyCollectionReportResult bcDailyCollectionReportResult) {
+    public List<BillCollectorDailyCollectionReportResult> getBillCollectorWiseDailyCollection(final Date date,
+            final BillCollectorDailyCollectionReportResult bcDailyCollectionReportResult) {
         boolean whereConditionAdded = false;
         List<BillCollectorDailyCollectionReportResult> listBcPayment = new ArrayList<BillCollectorDailyCollectionReportResult>(
                 0);
@@ -185,8 +186,8 @@ public class ReportService {
         final StringBuilder queryBuilder = new StringBuilder(
                 " select distinct district,ulbname  \"ulbName\" ,ulbcode \"ulbCode\" ,collectorname,mobilenumber,sum(target_arrears_demand) \"target_arrears_demand\",sum(target_current_demand) \"target_current_demand\",sum(today_arrears_collection) \"today_arrears_collection\",sum(today_currentyear_collection) \"today_currentyear_collection\", "
                         + " sum(cummulative_arrears_collection) \"cummulative_arrears_collection\",sum(cummulative_currentyear_collection) \"cummulative_currentyear_collection\",sum(lastyear_collection) \"lastyear_collection\",sum(lastyear_cummulative_collection) \"lastyear_cummulative_collection\"   "
-                        + "from "+ environmentSettings.statewideSchemaName()+".billColl_DialyCollection_view ");
-        String value_ALL = "ALL";
+                        + "from " + environmentSettings.statewideSchemaName() + ".billColl_DialyCollection_view ");
+        final String value_ALL = "ALL";
 
         if (bcDailyCollectionReportResult != null) {
             if (bcDailyCollectionReportResult.getCity() != null && !bcDailyCollectionReportResult.getCity().equals("")
@@ -204,25 +205,22 @@ public class ReportService {
                 }
             } else if (bcDailyCollectionReportResult.getRegion() != null
                     && !bcDailyCollectionReportResult.getRegion().equals("")
-                    && !bcDailyCollectionReportResult.getRegion().equalsIgnoreCase(value_ALL)) {
+                    && !bcDailyCollectionReportResult.getRegion().equalsIgnoreCase(value_ALL))
                 if (whereConditionAdded)
                     queryBuilder.append(" and  lower(district) in (:districtNames) ");
                 else {
                     whereConditionAdded = addWhereCondition(whereConditionAdded, queryBuilder);
                     queryBuilder.append("   lower(district) in (:districtNames) ");
                 }
-            }
 
             if (bcDailyCollectionReportResult.getType() != null && !bcDailyCollectionReportResult.getType().equals("")
-                    && !bcDailyCollectionReportResult.getType().equalsIgnoreCase(value_ALL)) {
-
+                    && !bcDailyCollectionReportResult.getType().equalsIgnoreCase(value_ALL))
                 if (whereConditionAdded)
                     queryBuilder.append(" and type =:typeOfSearch ");
                 else {
                     whereConditionAdded = addWhereCondition(whereConditionAdded, queryBuilder);
                     queryBuilder.append(" type =:typeOfSearch ");
                 }
-            }
 
         }
         queryBuilder
@@ -230,26 +228,23 @@ public class ReportService {
         final Query query = propPerServ.getSession().createSQLQuery(queryBuilder.toString());
         if (bcDailyCollectionReportResult != null) {
             if (bcDailyCollectionReportResult.getCity() != null && !bcDailyCollectionReportResult.getCity().equals("")
-                    && !bcDailyCollectionReportResult.getCity().equalsIgnoreCase(value_ALL)) {
+                    && !bcDailyCollectionReportResult.getCity().equalsIgnoreCase(value_ALL))
                 query.setString("cityName", bcDailyCollectionReportResult.getCity().toLowerCase());
-
-            } else if (bcDailyCollectionReportResult.getDistrict() != null
+            else if (bcDailyCollectionReportResult.getDistrict() != null
                     && !bcDailyCollectionReportResult.getDistrict().equals("")
-                    && !bcDailyCollectionReportResult.getDistrict().equalsIgnoreCase(value_ALL)) {
+                    && !bcDailyCollectionReportResult.getDistrict().equalsIgnoreCase(value_ALL))
                 query.setString("districtName", bcDailyCollectionReportResult.getDistrict().toLowerCase());
-
-            } else if (bcDailyCollectionReportResult.getRegion() != null
+            else if (bcDailyCollectionReportResult.getRegion() != null
                     && !bcDailyCollectionReportResult.getRegion().equals("")
                     && !bcDailyCollectionReportResult.getRegion().equalsIgnoreCase(value_ALL)) {
-                LinkedList<String> districtlist = new LinkedList<>();
+                final LinkedList<String> districtlist = new LinkedList<>();
                 if (regionalHeirarchyService != null) {
-                    List<RegionalHeirarchy> regions = regionalHeirarchyService
+                    final List<RegionalHeirarchy> regions = regionalHeirarchyService
                             .getActiveChildRegionHeirarchyByPassingParentNameAndType(RegionalHeirarchyType.DISTRICT,
                                     bcDailyCollectionReportResult.getRegion());
                     if (regions != null && !regions.isEmpty()) {
-                        for (RegionalHeirarchy regiion : regions) {
+                        for (final RegionalHeirarchy regiion : regions)
                             districtlist.add(regiion.getName().toLowerCase());
-                        }
                         query.setParameterList("districtNames", districtlist);
                     }
 
@@ -258,18 +253,17 @@ public class ReportService {
             }
 
             if (bcDailyCollectionReportResult.getType() != null && !bcDailyCollectionReportResult.getType().equals("")
-                    && !bcDailyCollectionReportResult.getType().equalsIgnoreCase(value_ALL)) {
+                    && !bcDailyCollectionReportResult.getType().equalsIgnoreCase(value_ALL))
                 query.setString("typeOfSearch", bcDailyCollectionReportResult.getType());
-            }
         }
 
         query.setResultTransformer(new AliasToBeanResultTransformer(BillCollectorDailyCollectionReportResult.class));
 
-        listBcPayment = (List<BillCollectorDailyCollectionReportResult>) query.list();
+        listBcPayment = query.list();
 
         if (financialYearDAO != null && !listBcPayment.isEmpty()) {
 
-            CFinancialYear currentFinancialYear = financialYearDAO.getFinancialYearByDate(new Date());
+            final CFinancialYear currentFinancialYear = financialYearDAO.getFinancialYearByDate(new Date());
             if (currentFinancialYear != null)
                 noofDays = DateUtils.daysBetween(new Date(), currentFinancialYear.getEndingDate());
         }
@@ -287,7 +281,7 @@ public class ReportService {
     }
 
     @ReadOnly
-    public List<BillCollectorDailyCollectionReportResult> getUlbWiseDailyCollection(Date date) {
+    public List<BillCollectorDailyCollectionReportResult> getUlbWiseDailyCollection(final Date date) {
 
         List<BillCollectorDailyCollectionReportResult> listBcPayment = new ArrayList<BillCollectorDailyCollectionReportResult>(
                 0);
@@ -297,15 +291,16 @@ public class ReportService {
                 " select distinct district,ulbname \"ulbName\" ,ulbcode \"ulbCode\"  ,  collectorname \"collectorname\" ,mobilenumber \"mobilenumber\",  "
                         + "target_arrears_demand,target_current_demand,today_arrears_collection,today_currentyear_collection,   "
                         + "cummulative_arrears_collection,cummulative_currentyear_collection,lastyear_collection,lastyear_cummulative_collection  "
-                        + "from "+ environmentSettings.statewideSchemaName()+".ulbWise_DialyCollection_view  order by district,ulbname ");
+                        + "from " + environmentSettings.statewideSchemaName()
+                        + ".ulbWise_DialyCollection_view  order by district,ulbname ");
         final Query query = propPerServ.getSession().createSQLQuery(queryBuilder.toString());
         query.setResultTransformer(new AliasToBeanResultTransformer(BillCollectorDailyCollectionReportResult.class));
 
-        listBcPayment = (List<BillCollectorDailyCollectionReportResult>) query.list();
+        listBcPayment = query.list();
 
         if (financialYearDAO != null && !listBcPayment.isEmpty()) {
 
-            CFinancialYear currentFinancialYear = financialYearDAO.getFinancialYearByDate(new Date());
+            final CFinancialYear currentFinancialYear = financialYearDAO.getFinancialYearByDate(new Date());
             if (currentFinancialYear != null)
                 noofDays = DateUtils.daysBetween(new Date(), currentFinancialYear.getEndingDate());
         }
@@ -314,8 +309,8 @@ public class ReportService {
 
     }
 
-    private void buildCollectionReport(List<BillCollectorDailyCollectionReportResult> listBcPayment, int noofDays) {
-        for (BillCollectorDailyCollectionReportResult bcResult : listBcPayment) {
+    private void buildCollectionReport(final List<BillCollectorDailyCollectionReportResult> listBcPayment, final int noofDays) {
+        for (final BillCollectorDailyCollectionReportResult bcResult : listBcPayment) {
 
             if (bcResult.getTarget_arrears_demand() == null)
                 bcResult.setTarget_arrears_demand(0.0);
@@ -340,19 +335,19 @@ public class ReportService {
             bcResult.setCummulative_total_Collection(bcResult.getCummulative_arrears_collection()
                     + bcResult.getCummulative_currentyear_collection());
 
-            if (noofDays > 0) {
+            if (noofDays > 0)
                 bcResult.setDay_target(BigDecimal
                         .valueOf(bcResult.getTarget_total_demand() - bcResult.getCummulative_total_Collection())
                         .divide(BigDecimal.valueOf(noofDays), 4, RoundingMode.HALF_UP)
                         .setScale(2, RoundingMode.HALF_UP));
-            } else
+            else
                 bcResult.setDay_target(ZERO);
 
             if (bcResult.getCummulative_total_Collection() > 0)
-                bcResult.setCummulative_currentYear_Percentage(((BigDecimal.valueOf(bcResult
+                bcResult.setCummulative_currentYear_Percentage(BigDecimal.valueOf(bcResult
                         .getCummulative_total_Collection()).divide(
-                        BigDecimal.valueOf(bcResult.getTarget_total_demand()), 4, RoundingMode.HALF_UP))
-                        .multiply(BigDecimal.valueOf(100))).setScale(2, RoundingMode.HALF_UP));
+                                BigDecimal.valueOf(bcResult.getTarget_total_demand()), 4, RoundingMode.HALF_UP)
+                        .multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP));
 
             if (bcResult.getLastyear_collection() == null)
                 bcResult.setLastyear_collection(0.0);
@@ -368,15 +363,15 @@ public class ReportService {
                     - bcResult.getLastyear_cummulative_collection());
 
             if (bcResult.getLastyear_cummulative_collection() > 0)
-                bcResult.setGrowth((BigDecimal.valueOf(bcResult.getCummulative_total_Collection()
+                bcResult.setGrowth(BigDecimal.valueOf(bcResult.getCummulative_total_Collection()
                         - bcResult.getLastyear_cummulative_collection()).divide(
-                        BigDecimal.valueOf(bcResult.getLastyear_cummulative_collection()), 4, RoundingMode.HALF_UP))
+                                BigDecimal.valueOf(bcResult.getLastyear_cummulative_collection()), 4, RoundingMode.HALF_UP)
                         .multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP));
             else
-                bcResult.setGrowth((ZERO));
+                bcResult.setGrowth(ZERO);
         }
 
-        for (BillCollectorDailyCollectionReportResult bcResult : listBcPayment) {
+        for (final BillCollectorDailyCollectionReportResult bcResult : listBcPayment) {
 
             bcResult.setTarget_arrears_demand(formatAmt(bcResult.getTarget_arrears_demand()).doubleValue());
             bcResult.setTarget_current_demand(formatAmt(bcResult.getTarget_current_demand()).doubleValue());
@@ -397,23 +392,22 @@ public class ReportService {
         }
     }
 
-    public BigDecimal formatAmt(double amt) {
+    public BigDecimal formatAmt(final double amt) {
         return BigDecimal.valueOf(amt / 1000).setScale(2, BigDecimal.ROUND_HALF_UP);
     }
-    
+
     @ReadOnly
-    public List<BillCollectorDailyCollectionReportResult> getUlbWiseDcbCollection(Date date,
-                                                                                  BillCollectorDailyCollectionReportResult bcDailyCollectionReportResult) {
+    public List<BillCollectorDailyCollectionReportResult> getUlbWiseDcbCollection(final Date date,
+            final BillCollectorDailyCollectionReportResult bcDailyCollectionReportResult) {
 
         boolean whereConditionAdded = false;
         List<BillCollectorDailyCollectionReportResult> listBcPayment = new ArrayList<BillCollectorDailyCollectionReportResult>(
                 0);
-        int noofDays = 0;
         final StringBuilder queryBuilder = new StringBuilder(
                 " select distinct district,ulbname  \"ulbName\" ,ulbcode \"ulbCode\",collectorname,mobilenumber ,sum(totalaccessments) \"totalaccessments\" , sum(current_demand) \"current_demand\", sum(arrears_demand) \"arrears_demand\", sum(current_demand_collection) \"current_demand_collection\" ,sum(arrears_demand_collection) \"arrears_demand_collection\" , sum(current_penalty) \"current_penalty\", sum(arrears_penalty) \"arrears_penalty\"  , sum(current_penalty_collection) \"current_penalty_collection\"  , sum(arrears_penalty_collection) \"arrears_penalty_collection\"  "
-                        + "from "+ environmentSettings.statewideSchemaName()+".ulbWise_DCBCollection_view ");
+                        + "from " + environmentSettings.statewideSchemaName() + ".ulbWise_DCBCollection_view ");
 
-        String valueAll = "ALL";
+        final String valueAll = "ALL";
 
         if (bcDailyCollectionReportResult != null) {
             if (bcDailyCollectionReportResult.getCity() != null && !bcDailyCollectionReportResult.getCity().equals("")
@@ -431,25 +425,22 @@ public class ReportService {
                 }
             } else if (bcDailyCollectionReportResult.getRegion() != null
                     && !bcDailyCollectionReportResult.getRegion().equals("")
-                    && !bcDailyCollectionReportResult.getRegion().equalsIgnoreCase(valueAll)) {
+                    && !bcDailyCollectionReportResult.getRegion().equalsIgnoreCase(valueAll))
                 if (whereConditionAdded)
                     queryBuilder.append(" and  lower(district) in (:districtNames) ");
                 else {
                     whereConditionAdded = addWhereCondition(whereConditionAdded, queryBuilder);
                     queryBuilder.append("   lower(district) in (:districtNames) ");
                 }
-            }
 
             if (bcDailyCollectionReportResult.getType() != null && !bcDailyCollectionReportResult.getType().equals("")
-                    && !bcDailyCollectionReportResult.getType().equalsIgnoreCase(valueAll)) {
-
+                    && !bcDailyCollectionReportResult.getType().equalsIgnoreCase(valueAll))
                 if (whereConditionAdded)
                     queryBuilder.append(" and category in (:typeOfSearch) ");
                 else {
                     whereConditionAdded = addWhereCondition(whereConditionAdded, queryBuilder);
                     queryBuilder.append(" category in (:typeOfSearch) ");
                 }
-            }
 
         }
         queryBuilder
@@ -457,26 +448,23 @@ public class ReportService {
         final Query query = propPerServ.getSession().createSQLQuery(queryBuilder.toString());
         if (bcDailyCollectionReportResult != null) {
             if (bcDailyCollectionReportResult.getCity() != null && !bcDailyCollectionReportResult.getCity().equals("")
-                    && !bcDailyCollectionReportResult.getCity().equalsIgnoreCase(valueAll)) {
+                    && !bcDailyCollectionReportResult.getCity().equalsIgnoreCase(valueAll))
                 query.setString("cityName", bcDailyCollectionReportResult.getCity().toLowerCase());
-
-            } else if (bcDailyCollectionReportResult.getDistrict() != null
+            else if (bcDailyCollectionReportResult.getDistrict() != null
                     && !bcDailyCollectionReportResult.getDistrict().equals("")
-                    && !bcDailyCollectionReportResult.getDistrict().equalsIgnoreCase(valueAll)) {
+                    && !bcDailyCollectionReportResult.getDistrict().equalsIgnoreCase(valueAll))
                 query.setString("districtName", bcDailyCollectionReportResult.getDistrict().toLowerCase());
-
-            } else if (bcDailyCollectionReportResult.getRegion() != null
+            else if (bcDailyCollectionReportResult.getRegion() != null
                     && !bcDailyCollectionReportResult.getRegion().equals("")
                     && !bcDailyCollectionReportResult.getRegion().equalsIgnoreCase(valueAll)) {
-                LinkedList<String> districtlist = new LinkedList<>();
+                final LinkedList<String> districtlist = new LinkedList<>();
                 if (regionalHeirarchyService != null) {
-                    List<RegionalHeirarchy> regions = regionalHeirarchyService
+                    final List<RegionalHeirarchy> regions = regionalHeirarchyService
                             .getActiveChildRegionHeirarchyByPassingParentNameAndType(RegionalHeirarchyType.DISTRICT,
                                     bcDailyCollectionReportResult.getRegion());
                     if (regions != null && !regions.isEmpty()) {
-                        for (RegionalHeirarchy regiion : regions) {
+                        for (final RegionalHeirarchy regiion : regions)
                             districtlist.add(regiion.getName().toLowerCase());
-                        }
                         query.setParameterList("districtNames", districtlist);
                     }
 
@@ -485,22 +473,21 @@ public class ReportService {
             }
 
             if (bcDailyCollectionReportResult.getType() != null && !bcDailyCollectionReportResult.getType().equals("")
-                    && !bcDailyCollectionReportResult.getType().equalsIgnoreCase(valueAll)) {
+                    && !bcDailyCollectionReportResult.getType().equalsIgnoreCase(valueAll))
                 query.setParameterList("typeOfSearch", prepareTypeOfSearch(bcDailyCollectionReportResult.getType()));
-            }
         }
 
         query.setResultTransformer(new AliasToBeanResultTransformer(BillCollectorDailyCollectionReportResult.class));
 
-        listBcPayment = (List<BillCollectorDailyCollectionReportResult>) query.list();
+        listBcPayment = query.list();
 
         buildCollectionReportForUlbWiseDCb(listBcPayment);
         return listBcPayment;
 
     }
 
-    private List<String> prepareTypeOfSearch(String type) {
-        List<String> types = new ArrayList<>();
+    private List<String> prepareTypeOfSearch(final String type) {
+        final List<String> types = new ArrayList<>();
         if (PRIVATE.equals(type)) {
             types.add(PRIVATE);
             types.add(EWSHS);
@@ -530,9 +517,9 @@ public class ReportService {
         return types;
     }
 
-    private void buildCollectionReportForUlbWiseDCb(List<BillCollectorDailyCollectionReportResult> listBcPayment) {
+    private void buildCollectionReportForUlbWiseDCb(final List<BillCollectorDailyCollectionReportResult> listBcPayment) {
         Double percentage = 0.0;
-        for (BillCollectorDailyCollectionReportResult bcResult : listBcPayment) {
+        for (final BillCollectorDailyCollectionReportResult bcResult : listBcPayment) {
 
             if (bcResult.getArrears_demand() == null)
                 bcResult.setArrears_demand(0.0);
@@ -563,10 +550,12 @@ public class ReportService {
                     + bcResult.getArrears_penalty_collection());
 
             if (bcResult.getTarget_total_demand() != 0.0) {
-                percentage = (bcResult.getCummulative_total_Collection() * 100) / bcResult.getTarget_total_demand();
+                percentage = bcResult.getCummulative_total_Collection() * 100 / bcResult.getTarget_total_demand();
                 bcResult.setCummulative_total_CollectionPercentage(BigDecimal.valueOf(percentage.isNaN() ? 0.0 : percentage));
-                percentage = ((bcResult.getCummulative_total_Collection() + bcResult.getCummulative_total_CollectionInterest()) * 100) / (bcResult.getTarget_total_demand());
-                bcResult.setCummulative_total_CollectionInterestPercentage(BigDecimal.valueOf(percentage.isNaN() ? 0.0 : percentage));
+                percentage = (bcResult.getCummulative_total_Collection() + bcResult.getCummulative_total_CollectionInterest())
+                        * 100 / bcResult.getTarget_total_demand();
+                bcResult.setCummulative_total_CollectionInterestPercentage(
+                        BigDecimal.valueOf(percentage.isNaN() ? 0.0 : percentage));
             } else {
                 bcResult.setCummulative_total_CollectionPercentage(ZERO);
                 bcResult.setCummulative_total_CollectionInterestPercentage(ZERO);
@@ -578,10 +567,11 @@ public class ReportService {
             bcResult.setBalance_currentInterest(bcResult.getCurrent_penalty()
                     - bcResult.getCurrent_penalty_collection());
             bcResult.setBalance_total(bcResult.getTarget_total_demand() - bcResult.getCummulative_total_Collection());
-            bcResult.setBalance_totalInterest(bcResult.getTarget_total_demandInterest() - bcResult.getCummulative_total_CollectionInterest());
+            bcResult.setBalance_totalInterest(
+                    bcResult.getTarget_total_demandInterest() - bcResult.getCummulative_total_CollectionInterest());
         }
 
-        for (BillCollectorDailyCollectionReportResult bcResult : listBcPayment) {
+        for (final BillCollectorDailyCollectionReportResult bcResult : listBcPayment) {
 
             bcResult.setBalance_arrearTax(formatAmt(bcResult.getBalance_arrearTax()).doubleValue());
             bcResult.setBalance_arrearInterest(formatAmt(bcResult.getBalance_arrearInterest()).doubleValue());
@@ -605,20 +595,21 @@ public class ReportService {
             bcResult.setTarget_total_demandInterest(formatAmt(bcResult.getTarget_total_demandInterest()).doubleValue());
             bcResult.setCummulative_total_CollectionInterest(formatAmt(bcResult.getCummulative_total_CollectionInterest())
                     .doubleValue());
-            bcResult.setCummulative_total_CollectionPercentage(bcResult.getCummulative_total_CollectionPercentage().setScale(2, BigDecimal.ROUND_HALF_EVEN));
-            bcResult.setCummulative_total_CollectionInterestPercentage(bcResult.getCummulative_total_CollectionInterestPercentage().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+            bcResult.setCummulative_total_CollectionPercentage(
+                    bcResult.getCummulative_total_CollectionPercentage().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+            bcResult.setCummulative_total_CollectionInterestPercentage(
+                    bcResult.getCummulative_total_CollectionInterestPercentage().setScale(2, BigDecimal.ROUND_HALF_EVEN));
         }
 
     }
-   
+
     /**
      * @param boundaryId, mode, courtCase, propertyTypes
-     * @return
-     * @ Description - Returns query that retrieves zone/ward/block/propertywise
-     * Arrear, Current Demand and Collection Details
+     * @return @ Description - Returns query that retrieves zone/ward/block/propertywise Arrear, Current Demand and Collection
+     * Details
      */
     public SQLQuery prepareQueryForDCBReport(final Long boundaryId, final String mode, final Boolean courtCase,
-                                             final List<String> propertyTypes) {
+            final List<String> propertyTypes) {
 
         final String WARDWISE = "ward";
         final String BLOCKWISE = BLOCK;
@@ -631,25 +622,22 @@ public class ReportService {
 
         if (propertyTypes != null && !propertyTypes.isEmpty()) {
             propertyTypeIds = propertyTypes.get(0);
-            for (int i = 1; i < propertyTypes.size(); i++) {
+            for (int i = 1; i < propertyTypes.size(); i++)
                 propertyTypeIds += "," + propertyTypes.get(i);
-            }
         }
 
         if (courtCase) {
             courtCaseTable = ",egpt_courtcases cc ";
             courtCaseQry = " and cc.assessmentno = pi.upicno";
-        } else {
+        } else
             courtCaseQry = " and not exists (select 1 from egpt_courtcases cc where pi.upicno = cc.assessmentno )";
-        }
 
         if (boundaryId != -1 && boundaryId != null)
             param = boundaryId;
 
         commonFromQry = " from egpt_mv_propertyinfo pi ";
-        if (!mode.equalsIgnoreCase(PROPERTY)) {
+        if (!mode.equalsIgnoreCase(PROPERTY))
             commonFromQry = commonFromQry + ", eg_boundary boundary ";
-        }
         commonFromQry = commonFromQry + courtCaseTable + " where pi.isactive = true and pi.isexempted = false " + courtCaseQry;
 
         finalCommonQry = "cast(COALESCE(sum(pi.ARREAR_DEMAND),0) as numeric) as \"dmnd_arrearPT\","
@@ -665,7 +653,8 @@ public class ReportService {
             finalGrpQry = " group by boundary.id,boundary.name order by boundary.name";
         }
         if (propertyTypes == null)
-            whereQry = whereQry + " and pi.proptymaster not in (select id from egpt_property_type_master where code = 'VAC_LAND') ";
+            whereQry = whereQry
+                    + " and pi.proptymaster not in (select id from egpt_property_type_master where code = 'VAC_LAND') ";
         if (mode.equalsIgnoreCase(WARDWISE)) {
             if (param != 0)
                 whereQry = whereQry + " and pi.WARDID = " + param;
@@ -682,7 +671,7 @@ public class ReportService {
             whereQry = whereQry + " and pi.blockid = " + param;
             if (propertyTypes != null && !propertyTypes.isEmpty())
                 whereQry = whereQry + AND_PI_PROPTYMASTER_IN + propertyTypeIds + ") ";
-            boundaryQry = " and pi.wardid = ( select parent from eg_boundary where id = "+param+" ) ";
+            boundaryQry = " and pi.wardid = ( select parent from eg_boundary where id = " + param + " ) ";
             finalGrpQry = " group by pi.upicno, pi.houseno, pi.ownersname order by pi.upicno ";
         }
 
@@ -699,9 +688,9 @@ public class ReportService {
      * @return list
      */
     @ReadOnly
-    public List<DefaultersInfo> getDefaultersInformation(Query query,final String noofyrs,final Integer limit) {
-        List<DefaultersInfo> defaultersList = new ArrayList<>();
-        List<DefaultersInfo> defaultersListForYrs = new ArrayList<>();
+    public List<DefaultersInfo> getDefaultersInformation(final Query query, final String noofyrs, final Integer limit) {
+        final List<DefaultersInfo> defaultersList = new ArrayList<>();
+        final List<DefaultersInfo> defaultersListForYrs = new ArrayList<>();
         DefaultersInfo defaultersInfo;
         BigDecimal totalDue;
         BigDecimal currPenalty;
@@ -709,16 +698,15 @@ public class ReportService {
         int count = 1;
 
         int reqyr = 0;
-        List<PropertyMaterlizeView> propertyViewList = query.list();
-        
+        final List<PropertyMaterlizeView> propertyViewList = query.list();
+
         for (final PropertyMaterlizeView propView : propertyViewList) {
-            
-           if (isCountInLimit(limit, count))
-               break;
-                
-            
-           defaultersInfo= getInstDmdInfo(propView);
-         
+
+            if (isCountInLimit(limit, count))
+                break;
+
+            defaultersInfo = getInstDmdInfo(propView);
+
             defaultersInfo.setSlNo(count);
             defaultersInfo.setAssessmentNo(propView.getPropertyId());
             defaultersInfo.setOwnerName(getOwerName(propView));
@@ -727,85 +715,72 @@ public class ReportService {
             defaultersInfo.setLocality(getLocality(propView));
             defaultersInfo.setMobileNumber(getMobileNo(propView));
             defaultersInfo.setArrearsDue(propView.getAggrArrDmd().subtract(propView.getAggrArrColl()));
-            defaultersInfo.setCurrentDue((propView.getAggrCurrFirstHalfDmd().add(propView.getAggrCurrSecondHalfDmd()))
+            defaultersInfo.setCurrentDue(propView.getAggrCurrFirstHalfDmd().add(propView.getAggrCurrSecondHalfDmd())
                     .subtract(propView.getAggrCurrFirstHalfColl().add(propView.getAggrCurrSecondHalfColl())));
             defaultersInfo.setAggrArrearPenalyDue(getAggArrPenaltyDue(propView));
             currPenalty = getAggCurrFirstHalfPenalty(propView)
                     .add(getAggCurrSecHalfPenalty(propView));
             currPenaltyColl = getAggCurrFirstHalfPenColl(propView)
-                            .add(getAggCurrSecHalfPenColl(propView));
+                    .add(getAggCurrSecHalfPenColl(propView));
             defaultersInfo.setAggrCurrPenalyDue(currPenalty.subtract(currPenaltyColl));
             totalDue = defaultersInfo.getArrearsDue().add(defaultersInfo.getCurrentDue())
                     .add(defaultersInfo.getAggrArrearPenalyDue()).add(defaultersInfo.getAggrCurrPenalyDue());
             defaultersInfo.setTotalDue(totalDue);
-            int yrs =0;
-     
-          
-            if(isNotMoreThanFiveYrs(noofyrs)){
-                reqyr=Integer.parseInt(noofyrs.substring(0,1));
-                yrs=propertyTaxUtil.getNoOfYears(defaultersInfo.getMinDate(),defaultersInfo.getMaxDate());
-                
+            int yrs = 0;
+
+            if (isNotMoreThanFiveYrs(noofyrs)) {
+                reqyr = Integer.parseInt(noofyrs.substring(0, 1));
+                yrs = propertyTaxUtil.getNoOfYears(defaultersInfo.getMinDate(), defaultersInfo.getMaxDate());
+
             }
-           if(isNotMoreThanFiveYrs(noofyrs) && reqyr >= yrs){
-               defaultersListForYrs.add(defaultersInfo);
+            if (isNotMoreThanFiveYrs(noofyrs) && reqyr >= yrs) {
+                defaultersListForYrs.add(defaultersInfo);
                 count++;
-            }else if(noofyrs ==null || (noofyrs!=null && ABOVE_FIVE_YEARS.equalsIgnoreCase(noofyrs))){
+            } else if (noofyrs == null || noofyrs != null && ABOVE_FIVE_YEARS.equalsIgnoreCase(noofyrs)) {
                 defaultersList.add(defaultersInfo);
                 count++;
-           }
+            }
         }
 
-        return defaultersListForYrs.isEmpty()?defaultersList:defaultersListForYrs;
+        return defaultersListForYrs.isEmpty() ? defaultersList : defaultersListForYrs;
     }
-    
+
     @ReadOnly
-    private DefaultersInfo getInstDmdInfo(PropertyMaterlizeView propView){
-        DefaultersInfo defaultersInfo = new DefaultersInfo();
+    private DefaultersInfo getInstDmdInfo(final PropertyMaterlizeView propView) {
+        final DefaultersInfo defaultersInfo = new DefaultersInfo();
 
         Iterator itr;
         InstDmdCollMaterializeView idc;
         if (!propView.getInstDmdColl().isEmpty()) {
             itr = propView.getInstDmdColl().iterator();
-            Installment minInstallment=null;
-            Installment maxInstallment=null;
+            Installment minInstallment = null;
+            Installment maxInstallment = null;
             while (itr.hasNext()) {
                 BigDecimal dmdtot;
                 BigDecimal colltot;
                 idc = (InstDmdCollMaterializeView) itr.next();
-                 dmdtot= getGenTax(idc).add 
-                        (getEduCess(idc)).add 
-                        (getLibCess(idc)).add 
-                        (getPenaltyFines(idc)).add 
-                        (getPubSerCharge(idc)).add 
-                        (getSewTax(idc)).add 
-                        (getUnaPenalty(idc)).add 
-                        (getVacLandTax(idc));
-                     
-                 colltot= getGenTaxColl(idc).add 
-                                ( getEduCessColl(idc)).add 
-                                (getLibCessColl(idc)).add 
-                                ( getPenaltyFineColl(idc)).add 
-                                (getPubServiceColl(idc)).add 
-                                (getSewColl(idc)).add 
-                                (getUnauthPenColl(idc)).add 
-                                (getVacLColl(idc));
-               
-                minInstallment=getMinInstallment(minInstallment,idc,dmdtot,colltot);
-                maxInstallment=getMaxInstallment(maxInstallment,idc,dmdtot,colltot);
-                     
+                dmdtot = getGenTax(idc).add(getEduCess(idc)).add(getLibCess(idc)).add(getPenaltyFines(idc))
+                        .add(getPubSerCharge(idc)).add(getSewTax(idc)).add(getUnaPenalty(idc)).add(getVacLandTax(idc));
+
+                colltot = getGenTaxColl(idc).add(getEduCessColl(idc)).add(getLibCessColl(idc)).add(getPenaltyFineColl(idc))
+                        .add(getPubServiceColl(idc)).add(getSewColl(idc)).add(getUnauthPenColl(idc)).add(getVacLColl(idc));
+
+                minInstallment = getMinInstallment(minInstallment, idc, dmdtot, colltot);
+                maxInstallment = getMaxInstallment(maxInstallment, idc, dmdtot, colltot);
+
             }
-            if(minInstallment!=null){
-            defaultersInfo.setMinDate(minInstallment.getFromDate());
-            defaultersInfo.setArrearsFrmInstallment(minInstallment.getDescription());
+            if (minInstallment != null) {
+                defaultersInfo.setMinDate(minInstallment.getFromDate());
+                defaultersInfo.setArrearsFrmInstallment(minInstallment.getDescription());
             }
-            if(maxInstallment!=null){
-            defaultersInfo.setMaxDate(maxInstallment.getFromDate());
-            defaultersInfo.setArrearsToInstallment(maxInstallment.getDescription());
+            if (maxInstallment != null) {
+                defaultersInfo.setMaxDate(maxInstallment.getFromDate());
+                defaultersInfo.setArrearsToInstallment(maxInstallment.getDescription());
             }
         }
         return defaultersInfo;
     }
-    
+
     /**
      * @param zoneId
      * @param wardId
@@ -846,34 +821,36 @@ public class ReportService {
                 CriteriaSpecification.DISTINCT_ROOT_ENTITY).list();
         return propertyViewList;
     }
-    
+
     @SuppressWarnings("unchecked")
-	@ReadOnly
+    @ReadOnly
     public List<CollectionSummary> getCollectionSummaryList(final String fromDate, final String toDate,
             final String collMode, final String transMode, final String mode, final String boundaryId,
-            final String propTypeCategoryId, final Long zoneId, final Long wardId, final Long blockId){
-    	 try {
-             final Query query = propertyTaxUtil.prepareQueryforCollectionSummaryReport(fromDate, toDate, collMode, transMode, mode,
-                     boundaryId,
-                     propTypeCategoryId, zoneId, wardId, blockId);
-             return query.list();
-         } catch (final Exception e) {
-             throw new ApplicationRuntimeException("Error occured in Class : CollectionSummaryReportAction  Method : list "
-                     + e.getMessage());
-         }
+            final String propTypeCategoryId, final Long zoneId, final Long wardId, final Long blockId) {
+        try {
+            final Query query = propertyTaxUtil.prepareQueryforCollectionSummaryReport(fromDate, toDate, collMode, transMode,
+                    mode,
+                    boundaryId,
+                    propTypeCategoryId, zoneId, wardId, blockId);
+            return query.list();
+        } catch (final Exception e) {
+            throw new ApplicationRuntimeException("Error occured in Class : CollectionSummaryReportAction  Method : list "
+                    + e.getMessage());
+        }
     }
-    
-   	@SuppressWarnings("unchecked")
-	@ReadOnly
-    public List<PropertyMutation> getTitleTransferReportList(Query query){
-      	return query.list();
+
+    @SuppressWarnings("unchecked")
+    @ReadOnly
+    public List<PropertyMutation> getTitleTransferReportList(final Query query) {
+        return query.list();
     }
-   	
+
     @SuppressWarnings("unchecked")
     @ReadOnly
     public List<NatureOfUsageResult> getNatureOfUsageReportList(final HttpServletRequest request) {
         final StringBuilder query = new StringBuilder();
-        query.append("select distinct pi.upicno \"assessmentNumber\", pi.ownersname \"ownerName\", pi.mobileno \"mobileNumber\", pi.houseno \"doorNumber\", pi.address \"address\", cast(pi.AGGREGATE_CURRENT_FIRSTHALF_DEMAND as numeric) \"halfYearTax\" from egpt_mv_propertyInfo pi ")	;
+        query.append(
+                "select distinct pi.upicno \"assessmentNumber\", pi.ownersname \"ownerName\", pi.mobileno \"mobileNumber\", pi.houseno \"doorNumber\", pi.address \"address\", cast(pi.AGGREGATE_CURRENT_FIRSTHALF_DEMAND as numeric) \"halfYearTax\" from egpt_mv_propertyInfo pi ");
         final StringBuilder whereQuery = new StringBuilder(" where pi.upicno is not null and pi.isactive = true ");
         final String natureOfUsage = request.getParameter("natureOfUsage");
         final String ward = request.getParameter("ward");
@@ -900,7 +877,7 @@ public class ReportService {
             params.put(BLOCK, Long.valueOf(block));
         }
         final SQLQuery sqlQuery = propertyTaxCommonUtils.getSession().createSQLQuery(
-                        query.append(whereQuery).toString());
+                query.append(whereQuery).toString());
         for (final String key : params.keySet())
             sqlQuery.setParameter(key, params.get(key));
         sqlQuery.setResultTransformer(Transformers.aliasToBean(NatureOfUsageResult.class));
@@ -908,7 +885,7 @@ public class ReportService {
         srchCriteria.append(" are : " + results.size());
         return results;
     }
-   	
+
     private BigDecimal getAggCurrSecHalfPenColl(final PropertyMaterlizeView propView) {
         return propView.getAggrCurrSecondHalfPenalyColl() != null ? propView
                 .getAggrCurrSecondHalfPenalyColl() : ZERO;
@@ -935,11 +912,11 @@ public class ReportService {
 
     private String getOwerName(final PropertyMaterlizeView propView) {
         return propView.getOwnerName() != null ? propView.getOwnerName().contains(",") ? propView.getOwnerName().replace(",",
-                " & ") : propView.getOwnerName():"NA";
+                " & ") : propView.getOwnerName() : "NA";
     }
 
     private String getLocality(final PropertyMaterlizeView propView) {
-        return (propView.getLocality()) != null ? propView.getLocality().getName()
+        return propView.getLocality() != null ? propView.getLocality().getName()
                 : "NA";
     }
 
@@ -949,64 +926,70 @@ public class ReportService {
     }
 
     private boolean isNotMoreThanFiveYrs(final String noofyrs) {
-        return noofyrs !=null && !ABOVE_FIVE_YEARS.equalsIgnoreCase(noofyrs);
+        return noofyrs != null && !ABOVE_FIVE_YEARS.equalsIgnoreCase(noofyrs);
     }
 
-    private boolean isCountInLimit(final Integer limit, int count) {
-        return limit != null && limit != -1 && count-1==limit;
+    private boolean isCountInLimit(final Integer limit, final int count) {
+        return limit != null && limit != -1 && count - 1 == limit;
     }
 
-    public Installment getMinInstallment(Installment minInstallment,InstDmdCollMaterializeView idc,BigDecimal dmdtot,BigDecimal colltot){
-        Installment inst=null;
-        if(minInstallment==null){
+    public Installment getMinInstallment(final Installment minInstallment, final InstDmdCollMaterializeView idc,
+            final BigDecimal dmdtot, final BigDecimal colltot) {
+        Installment inst = null;
+        if (minInstallment == null)
             return idc.getInstallment();
-        }else if (dmdtot.compareTo(colltot)>0 && minInstallment.getFromDate().after(idc.getInstallment().getFromDate())){
-            inst=idc.getInstallment();
-        }
-        return inst==null?minInstallment:inst;
+        else if (dmdtot.compareTo(colltot) > 0 && minInstallment.getFromDate().after(idc.getInstallment().getFromDate()))
+            inst = idc.getInstallment();
+        return inst == null ? minInstallment : inst;
     }
-    public Installment getMaxInstallment(Installment maxInstallment,InstDmdCollMaterializeView idc,BigDecimal dmdtot,BigDecimal colltot){
-        Installment inst=null;
-        if(maxInstallment==null){
+
+    public Installment getMaxInstallment(final Installment maxInstallment, final InstDmdCollMaterializeView idc,
+            final BigDecimal dmdtot, final BigDecimal colltot) {
+        Installment inst = null;
+        if (maxInstallment == null)
             return idc.getInstallment();
-        }else if(maxInstallment.getFromDate().before(idc.getInstallment().getFromDate()) && dmdtot.compareTo(colltot)>0){
-            inst=idc.getInstallment();
-        }
-        return inst==null?maxInstallment:inst;
+        else if (maxInstallment.getFromDate().before(idc.getInstallment().getFromDate()) && dmdtot.compareTo(colltot) > 0)
+            inst = idc.getInstallment();
+        return inst == null ? maxInstallment : inst;
     }
 
     @SuppressWarnings("unchecked")
     @ReadOnly
-	public List<ApartmentDCBReportResult> prepareQueryForApartmentDCBReport(final Long boundaryId, final String mode, final Long apartmentId) {
+    public List<ApartmentDCBReportResult> prepareQueryForApartmentDCBReport(final Long boundaryId, final String mode,
+            final Long apartmentId) {
         final String PROPERTY = "property";
         final StringBuilder queryStr = new StringBuilder();
-        StringBuilder commonFromQry = new StringBuilder();
-        StringBuilder finalCommonQry = new StringBuilder();
-        StringBuilder finalSelectQry = new StringBuilder();
-        StringBuilder finalGrpQry = new StringBuilder();
-        StringBuilder boundaryQry = new StringBuilder();
-        StringBuilder whereQry = new StringBuilder();
+        final StringBuilder commonFromQry = new StringBuilder();
+        final StringBuilder finalCommonQry = new StringBuilder();
+        final StringBuilder finalSelectQry = new StringBuilder();
+        final StringBuilder finalGrpQry = new StringBuilder();
+        final StringBuilder boundaryQry = new StringBuilder();
+        final StringBuilder whereQry = new StringBuilder();
         whereQry.append(" where ");
-        whereQry.append(" pd.apartment=a.id and p.id=pd.id_property and pi.basicpropertyid=p.id_basic_property  and pi.isexempted=false and p.status in ('A','I')  and pi.isactive = true and pi.isexempted = false ");
+        whereQry.append(
+                " pd.apartment=a.id and p.id=pd.id_property and pi.basicpropertyid=p.id_basic_property  and pi.isexempted=false and p.status in ('A','I')  and pi.isactive = true and pi.isexempted = false ");
         commonFromQry.append(" from egpt_mv_propertyinfo pi , egpt_apartment a,egpt_property_detail pd,egpt_property p ");
-        if (boundaryId != -1 && boundaryId != null && boundaryId != 0){
-            boundaryQry.append(" and pi.wardid = "+boundaryId);
-        }
-        if (apartmentId != -1 && apartmentId != null && apartmentId !=0){
-        	whereQry.append(" and pd.apartment = "+apartmentId);
-        }
+        if (boundaryId != -1 && boundaryId != null && boundaryId != 0)
+            boundaryQry.append(" and pi.wardid = " + boundaryId);
+        if (apartmentId != -1 && apartmentId != null && apartmentId != 0)
+            whereQry.append(" and pd.apartment = " + apartmentId);
         finalCommonQry.append(" cast(COALESCE(sum(pi.ARREAR_DEMAND),0) as numeric) as \"dmndArrearPT\",");
-        finalCommonQry.append(" cast(COALESCE(sum(pi.pen_aggr_arrear_demand),0) AS numeric) as \"dmndArrearPFT\", cast(COALESCE(sum(pi.annualdemand),0) AS numeric) as \"dmndCurrentPT\", ");
-        finalCommonQry.append(" cast(COALESCE(sum(pi.pen_aggr_current_firsthalf_demand),0)+COALESCE(sum(pi.pen_aggr_current_secondhalf_demand),0) AS numeric) as \"dmndCurrentPFT\",");
-        finalCommonQry.append(" cast(COALESCE(sum(pi.ARREAR_COLLECTION),0) AS numeric) as \"clctnArrearPT\", cast(COALESCE(sum(pi.pen_aggr_arr_coll),0) AS numeric) as \"clctnArrearPFT\",");
+        finalCommonQry.append(
+                " cast(COALESCE(sum(pi.pen_aggr_arrear_demand),0) AS numeric) as \"dmndArrearPFT\", cast(COALESCE(sum(pi.annualdemand),0) AS numeric) as \"dmndCurrentPT\", ");
+        finalCommonQry.append(
+                " cast(COALESCE(sum(pi.pen_aggr_current_firsthalf_demand),0)+COALESCE(sum(pi.pen_aggr_current_secondhalf_demand),0) AS numeric) as \"dmndCurrentPFT\",");
+        finalCommonQry.append(
+                " cast(COALESCE(sum(pi.ARREAR_COLLECTION),0) AS numeric) as \"clctnArrearPT\", cast(COALESCE(sum(pi.pen_aggr_arr_coll),0) AS numeric) as \"clctnArrearPFT\",");
         finalCommonQry.append(" cast(COALESCE(sum(pi.annualcoll),0) AS numeric) as \"clctnCurrentPT\",");
-        finalCommonQry.append(" cast(COALESCE(sum(pi.pen_aggr_current_firsthalf_coll),0)+COALESCE(sum(pi.pen_aggr_current_secondhalf_coll),0) AS numeric) as \"clctnCurrentPFT\"  ");
+        finalCommonQry.append(
+                " cast(COALESCE(sum(pi.pen_aggr_current_firsthalf_coll),0)+COALESCE(sum(pi.pen_aggr_current_secondhalf_coll),0) AS numeric) as \"clctnCurrentPFT\"  ");
         if (!mode.equalsIgnoreCase(PROPERTY)) {
-            finalSelectQry.append( "select count(distinct pi.upicno) as \"assessmentCount\",cast(a.id as integer) as \"apartmentId\",a.name as \"apartmentName\", ");
+            finalSelectQry.append(
+                    "select count(distinct pi.upicno) as \"assessmentCount\",cast(a.id as integer) as \"apartmentId\",a.name as \"apartmentName\", ");
             finalGrpQry.append(" group by a.id,a.name order by a.name");
-        }
-        else if (mode.equalsIgnoreCase(PROPERTY)) {
-        	finalSelectQry.append( "select distinct pi.upicno as \"assessmentNo\", pi.houseno as \"houseNo\", pi.ownersname as \"ownerName\", ");
+        } else if (mode.equalsIgnoreCase(PROPERTY)) {
+            finalSelectQry.append(
+                    "select distinct pi.upicno as \"assessmentNo\", pi.houseno as \"houseNo\", pi.ownersname as \"ownerName\", ");
             finalGrpQry.append(" group by pi.upicno, pi.houseno, pi.ownersname order by pi.upicno ");
         }
         queryStr.append(finalSelectQry).append(finalCommonQry).append(commonFromQry).append(whereQry)
@@ -1015,70 +998,69 @@ public class ReportService {
         sqlQuery.setResultTransformer(new AliasToBeanResultTransformer(ApartmentDCBReportResult.class));
         return sqlQuery.list();
     }
-    
-    private BigDecimal getVacLandTax(InstDmdCollMaterializeView idc) {
+
+    private BigDecimal getVacLandTax(final InstDmdCollMaterializeView idc) {
         return idc.getVacantLandTax() != null ? idc.getVacantLandTax() : ZERO;
     }
 
-    private BigDecimal getUnaPenalty(InstDmdCollMaterializeView idc) {
+    private BigDecimal getUnaPenalty(final InstDmdCollMaterializeView idc) {
         return idc.getUnauthPenaltyTax() != null ? idc.getUnauthPenaltyTax() : ZERO;
     }
 
-    private BigDecimal getSewTax(InstDmdCollMaterializeView idc) {
+    private BigDecimal getSewTax(final InstDmdCollMaterializeView idc) {
         return idc.getSewTax() != null ? idc.getSewTax() : ZERO;
     }
 
-    private BigDecimal getPubSerCharge(InstDmdCollMaterializeView idc) {
+    private BigDecimal getPubSerCharge(final InstDmdCollMaterializeView idc) {
         return idc.getPubSerChrgTax() != null ? idc.getPubSerChrgTax() : ZERO;
     }
 
-    private BigDecimal getPenaltyFines(InstDmdCollMaterializeView idc) {
+    private BigDecimal getPenaltyFines(final InstDmdCollMaterializeView idc) {
         return idc.getPenaltyFinesTax() != null ? idc.getPenaltyFinesTax() : ZERO;
     }
 
-    private BigDecimal getLibCess(InstDmdCollMaterializeView idc) {
+    private BigDecimal getLibCess(final InstDmdCollMaterializeView idc) {
         return idc.getLibCessTax() != null ? idc.getLibCessTax() : ZERO;
     }
 
-    private BigDecimal getEduCess(InstDmdCollMaterializeView idc) {
+    private BigDecimal getEduCess(final InstDmdCollMaterializeView idc) {
         return idc.getEduCessTax() != null ? idc.getEduCessTax() : ZERO;
     }
 
-    private BigDecimal getGenTax(InstDmdCollMaterializeView idc) {
+    private BigDecimal getGenTax(final InstDmdCollMaterializeView idc) {
         return idc.getGeneralTax() != null ? idc.getGeneralTax() : ZERO;
     }
 
-    private BigDecimal getVacLColl(InstDmdCollMaterializeView idc) {
+    private BigDecimal getVacLColl(final InstDmdCollMaterializeView idc) {
         return idc.getVacantLandTaxColl() != null ? idc.getVacantLandTaxColl() : ZERO;
     }
 
-    private BigDecimal getUnauthPenColl(InstDmdCollMaterializeView idc) {
+    private BigDecimal getUnauthPenColl(final InstDmdCollMaterializeView idc) {
         return idc.getUnauthPenaltyTaxColl() != null ? idc.getUnauthPenaltyTaxColl() : ZERO;
     }
 
-    private BigDecimal getSewColl(InstDmdCollMaterializeView idc) {
+    private BigDecimal getSewColl(final InstDmdCollMaterializeView idc) {
         return idc.getSewTaxColl() != null ? idc.getSewTaxColl() : ZERO;
     }
 
-    private BigDecimal getPubServiceColl(InstDmdCollMaterializeView idc) {
+    private BigDecimal getPubServiceColl(final InstDmdCollMaterializeView idc) {
         return idc.getPubSerChrgTaxColl() != null ? idc.getPubSerChrgTaxColl() : ZERO;
     }
 
-    private BigDecimal getPenaltyFineColl(InstDmdCollMaterializeView idc) {
-        return idc.getPenaltyFinesTaxColl() != null ?  idc.getPenaltyFinesTaxColl() : ZERO;
+    private BigDecimal getPenaltyFineColl(final InstDmdCollMaterializeView idc) {
+        return idc.getPenaltyFinesTaxColl() != null ? idc.getPenaltyFinesTaxColl() : ZERO;
     }
 
-    private BigDecimal getLibCessColl(InstDmdCollMaterializeView idc) {
+    private BigDecimal getLibCessColl(final InstDmdCollMaterializeView idc) {
         return idc.getLibCessTaxColl() != null ? idc.getLibCessTaxColl() : ZERO;
     }
 
-    private BigDecimal getEduCessColl(InstDmdCollMaterializeView idc) {
-        return idc.getEduCessTaxColl() != null ?  idc.getEduCessTaxColl() : ZERO;
+    private BigDecimal getEduCessColl(final InstDmdCollMaterializeView idc) {
+        return idc.getEduCessTaxColl() != null ? idc.getEduCessTaxColl() : ZERO;
     }
 
-    private BigDecimal getGenTaxColl(InstDmdCollMaterializeView idc) {
+    private BigDecimal getGenTaxColl(final InstDmdCollMaterializeView idc) {
         return idc.getGeneralTaxColl() != null ? idc.getGeneralTaxColl() : ZERO;
     }
-    
-    
+
 }
