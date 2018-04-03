@@ -79,6 +79,7 @@ import static java.lang.System.lineSeparator;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.egov.infra.config.core.LocalizationSettings.currencySymbolUtf8;
 import static org.egov.infra.security.utils.SecureCodeUtils.generatePDF417Code;
+import static org.egov.infra.utils.ApplicationConstant.UNDERSCORE;
 import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
 import static org.egov.infra.utils.StringUtils.appendTimestamp;
 import static org.egov.tl.utils.Constants.CLOSURE_NATUREOFTASK;
@@ -663,9 +664,11 @@ public class License extends StateAware<Position> {
     }
 
     public String generateCertificateFileName() {
-        return appendTimestamp((isBlank(this.getLicenseNumber())
-                ? this.getApplicationNumber()
-                : this.getLicenseNumber()).replaceAll("[/-]", "_"));
+        return new StringBuilder()
+                .append(licenseAppType.getName().toLowerCase())
+                .append(UNDERSCORE).append(appendTimestamp((isBlank(this.getLicenseNumber())
+                        ? this.getApplicationNumber()
+                        : this.getLicenseNumber()).replaceAll("[/-]", UNDERSCORE))).toString();
     }
 
     public File qrCode(String installmentYear, BigDecimal licenseFeePaid) {

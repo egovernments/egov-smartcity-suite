@@ -60,12 +60,8 @@ import org.egov.eis.service.PositionMasterService;
 import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.persistence.entity.enums.UserType;
-import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.NumberUtil;
@@ -88,19 +84,13 @@ import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.service.AbstractLicenseService;
 import org.egov.tl.service.FeeTypeService;
 import org.egov.tl.service.LicenseApplicationService;
-import org.egov.tl.service.LicenseCategoryService;
-import org.egov.tl.service.LicenseSubCategoryService;
 import org.egov.tl.service.ProcessOwnerReassignmentService;
 import org.egov.tl.service.TradeLicenseService;
-import org.egov.tl.service.TradeLicenseSmsAndEmailService;
-import org.egov.tl.service.UnitOfMeasurementService;
 import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -135,10 +125,14 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     protected transient List<String> buildingTypeList;
     protected transient String roleName;
     protected transient String reportId;
-    protected transient List<HashMap<String, Object>> licenseHistory = new ArrayList<>();
+    protected transient String fileStoreIds;
+    protected transient String ulbCode;
+    protected transient String signedFileStoreId;
+    protected transient Long feeTypeId;
     protected transient boolean showAgreementDtl;
     protected transient String applicationNo;
-    protected List<LicenseDocument> licenseDocument = new ArrayList<>();
+    protected transient List<LicenseDocument> licenseDocument = new ArrayList<>();
+    protected transient List<HashMap<String, Object>> licenseHistory = new ArrayList<>();
 
     @Autowired
     protected transient LicenseUtils licenseUtils;
@@ -149,37 +143,16 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     @Autowired
     protected transient AssignmentService assignmentService;
     @Autowired
-    protected transient BoundaryService boundaryService;
-    @Autowired
-    @Qualifier("licenseCategoryService")
-    protected transient LicenseCategoryService licenseCategoryService;
-    @Autowired
-    @Qualifier("licenseSubCategoryService")
-    protected transient LicenseSubCategoryService licenseSubCategoryService;
-    @Autowired
-    @Qualifier("unitOfMeasurementService")
-    protected transient UnitOfMeasurementService unitOfMeasurementService;
-    @Autowired
-    @Qualifier("fileStoreService")
-    protected transient FileStoreService fileStoreService;
-    @Autowired
     protected transient ReportViewerUtil reportViewerUtil;
-    protected transient String fileStoreIds;
-    protected transient String ulbCode;
-    private transient String signedFileStoreId;
-    private transient Long feeTypeId;
-    private transient boolean hasCscOperatorRole;
-    private transient TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
     @Autowired
-    private transient TradeLicenseService tradeLicenseService;
+    protected transient TradeLicenseService tradeLicenseService;
     @Autowired
     @Qualifier("feeTypeService")
-    private transient FeeTypeService feeTypeService;
-
+    protected transient FeeTypeService feeTypeService;
     @Autowired
-    private transient ProcessOwnerReassignmentService processOwnerReassignmentService;
+    protected transient ProcessOwnerReassignmentService processOwnerReassignmentService;
     @Autowired
-    private LicenseApplicationService licenseApplicationService;
+    protected LicenseApplicationService licenseApplicationService;
 
     public BaseLicenseAction() {
         this.addRelatedEntity("boundary", Boundary.class);
@@ -263,17 +236,11 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     }
 
     private String digitalSignRedirection() {
-        ReportOutput reportOutput = tradeLicenseService.generateLicenseCertificate(license(), false);
-        if (reportOutput != null) {
-            String fileName = SIGNED_DOCUMENT_PREFIX + license().getApplicationNumber() + ".pdf";
-            final InputStream fileStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
-            final FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, "application/pdf", FILESTORE_MODULECODE);
-            license().setDigiSignedCertFileStoreId(fileStore.getFileStoreId());
-            tradeLicenseService.save(license());
-            fileStoreIds = fileStore.getFileStoreId();
-            ulbCode = ApplicationThreadLocals.getCityCode();
-            applicationNo = license().getApplicationNumber();
-        }
+        tradeLicenseService.generateAndStoreCertificate(license());
+        tradeLicenseService.save(license());
+        fileStoreIds = license().getCertificateFileId();
+        ulbCode = ApplicationThreadLocals.getCityCode();
+        applicationNo = license().getApplicationNumber();
         return "digitalSignatureRedirection";
     }
 
@@ -526,14 +493,6 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         this.signedFileStoreId = signedFileStoreId;
     }
 
-    public TradeLicenseSmsAndEmailService getTradeLicenseSmsAndEmailService() {
-        return tradeLicenseSmsAndEmailService;
-    }
-
-    public void setTradeLicenseSmsAndEmailService(final TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService) {
-        this.tradeLicenseSmsAndEmailService = tradeLicenseSmsAndEmailService;
-    }
-
     public String getApplicationNo() {
         return applicationNo;
     }
@@ -544,10 +503,6 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
 
     public boolean isHasCscOperatorRole() {
         return securityUtils.getCurrentUser().hasRole(CSCOPERATOR);
-    }
-
-    public void setHasCscOperatorRole(boolean hasCscOperatorRole) {
-        this.hasCscOperatorRole = hasCscOperatorRole;
     }
 
     public List<HashMap<String, Object>> getLicenseHistory() {

@@ -153,8 +153,9 @@ public class UpdateLicenseClosureController extends LicenseClosureProcessflowCon
         model.addAttribute("ulbCode", ApplicationThreadLocals.getCityCode());
         return licenseUtils.isDigitalSignEnabled()
                 ? "closure-endorsement-digisign"
-                : "redirect:/license/closure/digisign-transition?applicationNumbers=" + license.getApplicationNumber() +
-                "&fileStoreIds=" + license.getDigiSignedCertFileStoreId();
+                : new StringBuilder(80).append("redirect:/license/closure/digisign-transition?applicationNumbers=")
+                .append(license.getApplicationNumber()).append("&fileStoreIds=")
+                .append(license.getDigiSignedCertFileStoreId()).toString();
     }
 
 }

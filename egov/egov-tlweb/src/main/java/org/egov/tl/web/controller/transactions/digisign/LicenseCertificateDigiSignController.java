@@ -68,7 +68,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.egov.tl.utils.Constants.FILESTORE_MODULECODE;
+import static org.egov.tl.utils.Constants.TL_FILE_STORE_DIR;
 import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 
 @Controller
@@ -103,7 +103,7 @@ public class LicenseCertificateDigiSignController {
     @ResponseBody
     public ResponseEntity<InputStreamResource> downloadSignedLicenseCertificate(@RequestParam String file,
                                                                                 @RequestParam String applnum) {
-        return fileStoreUtils.fileAsPDFResponse(file, applnum, FILESTORE_MODULECODE);
+        return fileStoreUtils.fileAsPDFResponse(file, applnum, TL_FILE_STORE_DIR);
     }
 
     @GetMapping("/bulk-digisign")

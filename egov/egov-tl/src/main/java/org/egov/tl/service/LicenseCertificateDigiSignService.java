@@ -65,7 +65,7 @@ import java.util.List;
 
 import static org.egov.infra.reporting.engine.ReportFormat.PDF;
 import static org.egov.infra.reporting.util.ReportUtil.CONTENT_TYPES;
-import static org.egov.tl.utils.Constants.FILESTORE_MODULECODE;
+import static org.egov.tl.utils.Constants.TL_FILE_STORE_DIR;
 import static org.egov.tl.utils.Constants.WF_ACTION_DIGI_PENDING;
 
 @Service
@@ -114,13 +114,11 @@ public class LicenseCertificateDigiSignService {
         for (Long licenseId : licenseIds) {
             License license = tradeLicenseService.getLicenseById(licenseId);
             ReportOutput reportOutput = tradeLicenseService.generateLicenseCertificate(license, false);
-            if (reportOutput != null) {
-                FileStoreMapper fileStore = fileStoreService.store(reportOutput.getReportOutputData(),
-                        license.generateCertificateFileName() + ".pdf", CONTENT_TYPES.get(PDF), FILESTORE_MODULECODE);
-                license.setDigiSignedCertFileStoreId(fileStore.getFileStoreId());
-                tradeLicenseService.save(license);
-                licenses.add(license);
-            }
+            FileStoreMapper fileStore = fileStoreService.store(reportOutput.getReportOutputData(),
+                    license.generateCertificateFileName() + ".pdf", CONTENT_TYPES.get(PDF), TL_FILE_STORE_DIR);
+            license.setDigiSignedCertFileStoreId(fileStore.getFileStoreId());
+            tradeLicenseService.save(license);
+            licenses.add(license);
         }
         return licenses;
     }

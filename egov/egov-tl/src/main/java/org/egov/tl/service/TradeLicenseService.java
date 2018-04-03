@@ -321,26 +321,28 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     @ReadOnly
     public List<String> getTradeLicenseForGivenParam(final String paramValue, final String paramType) {
         List<String> licenseList = new ArrayList<>();
-        if (SEARCH_BY_APPNO.equals(paramType))
-            licenseList = licenseRepository.findAllApplicationNumberLike(paramValue);
+        if (isNotBlank(paramValue) && isNotBlank(paramType)) {
+            if (SEARCH_BY_APPNO.equals(paramType))
+                licenseList = licenseRepository.findAllApplicationNumberLike(paramValue);
 
-        else if (SEARCH_BY_LICENSENO.equals(paramType))
-            licenseList = licenseRepository.findAllLicenseNumberLike(paramValue);
+            else if (SEARCH_BY_LICENSENO.equals(paramType))
+                licenseList = licenseRepository.findAllLicenseNumberLike(paramValue);
 
-        else if (SEARCH_BY_OLDLICENSENO.equals(paramType))
-            licenseList = licenseRepository.findAllOldLicenseNumberLike(paramValue);
+            else if (SEARCH_BY_OLDLICENSENO.equals(paramType))
+                licenseList = licenseRepository.findAllOldLicenseNumberLike(paramValue);
 
-        else if (SEARCH_BY_TRADETITLE.equals(paramType))
-            licenseList = licenseRepository.findAllNameOfEstablishmentLike(paramValue);
+            else if (SEARCH_BY_TRADETITLE.equals(paramType))
+                licenseList = licenseRepository.findAllNameOfEstablishmentLike(paramValue);
 
-        else if (SEARCH_BY_TRADEOWNERNAME.equals(paramType))
-            licenseList = licenseRepository.findAllApplicantNameLike(paramValue);
+            else if (SEARCH_BY_TRADEOWNERNAME.equals(paramType))
+                licenseList = licenseRepository.findAllApplicantNameLike(paramValue);
 
-        else if (SEARCH_BY_PROPERTYASSESSMENTNO.equals(paramType))
-            licenseList = licenseRepository.findAllAssessmentNoLike(paramValue);
+            else if (SEARCH_BY_PROPERTYASSESSMENTNO.equals(paramType))
+                licenseList = licenseRepository.findAllAssessmentNoLike(paramValue);
 
-        else if (SEARCH_BY_MOBILENO.equals(paramType))
-            licenseList = licenseRepository.findAllMobilePhoneNumberLike(paramValue);
+            else if (SEARCH_BY_MOBILENO.equals(paramType))
+                licenseList = licenseRepository.findAllMobilePhoneNumberLike(paramValue);
+        }
 
         return licenseList;
     }
@@ -573,13 +575,10 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         return reportOutput;
     }
 
-    public void generateAndStoreCertificate(TradeLicense license) {
-        ReportOutput reportOutput = generateLicenseCertificate(license, false);
-        if (reportOutput != null) {
-            FileStoreMapper fileStore = fileStoreService.store(reportOutput.getReportOutputData(),
-                    license.generateCertificateFileName() + ".pdf", CONTENT_TYPES.get(PDF), FILESTORE_MODULECODE);
-            license.setCertificateFileId(fileStore.getFileStoreId());
-        }
+    public void generateAndStoreCertificate(License license) {
+        FileStoreMapper fileStore = fileStoreService.store(generateLicenseCertificate(license, false).getReportOutputData(),
+                license.generateCertificateFileName() + ".pdf", CONTENT_TYPES.get(PDF), TL_FILE_STORE_DIR);
+        license.setCertificateFileId(fileStore.getFileStoreId());
     }
 
 }

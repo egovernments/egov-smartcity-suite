@@ -74,8 +74,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.egov.infra.reporting.engine.ReportFormat.PDF;
+import static org.egov.infra.reporting.util.ReportUtil.CONTENT_TYPES;
 import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
-import static org.egov.tl.utils.Constants.*;
+import static org.egov.tl.utils.Constants.AUTO;
+import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
+import static org.egov.tl.utils.Constants.CLOSURE_LIC_APPTYPE;
+import static org.egov.tl.utils.Constants.LICENSE_STATUS_ACKNOWLEDGED;
+import static org.egov.tl.utils.Constants.LICENSE_STATUS_ACTIVE;
+import static org.egov.tl.utils.Constants.LICENSE_STATUS_CANCELLED;
+import static org.egov.tl.utils.Constants.LICENSE_STATUS_UNDERWORKFLOW;
+import static org.egov.tl.utils.Constants.STATUS_REJECTED;
+import static org.egov.tl.utils.Constants.TL_FILE_STORE_DIR;
 
 @Service
 @Transactional(readOnly = true)
@@ -126,15 +136,12 @@ public class LicenseClosureService extends LicenseService {
     @Transactional
     public License generateClosureEndorsement(TradeLicense license) {
         ReportOutput reportOutput = generateClosureEndorsementNotice(license);
-        if (reportOutput != null) {
-            InputStream fileStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
-            FileStoreMapper fileStore = fileStoreService.store(fileStream,
-                    SIGNED_DOCUMENT_PREFIX + license.getApplicationNumber() + ".pdf",
-                    "application/pdf", FILESTORE_MODULECODE);
-            license.setDigiSignedCertFileStoreId(fileStore.getFileStoreId());
-            processSupportDocuments(license);
-            update(license);
-        }
+        InputStream fileStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
+        FileStoreMapper fileStore = fileStoreService
+                .store(fileStream, license.generateCertificateFileName() + ".pdf", CONTENT_TYPES.get(PDF), TL_FILE_STORE_DIR);
+        license.setDigiSignedCertFileStoreId(fileStore.getFileStoreId());
+        processSupportDocuments(license);
+        update(license);
         return license;
     }
 
