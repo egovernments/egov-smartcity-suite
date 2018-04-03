@@ -90,7 +90,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class SurveyDashboardService {
-    private static final String FUNCTIONARY = "functionary";
+    private static final String FUNCTIONARY = "functionaryName";
     private static final String AGGREGATIONWISE = "aggregationwise";
     private static final String SENT_TO_THIRD_PARTY = "sentToThirdParty";
     private static final String PROPERTYSURVEYDETAILS_INDEX = "propertysurveydetails";
