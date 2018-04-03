@@ -55,6 +55,8 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.eis.entity.Assignment;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
@@ -65,6 +67,7 @@ import org.egov.tl.service.LicenseClosureService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.web.actions.BaseLicenseAction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -72,6 +75,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.egov.infra.reporting.engine.ReportFormat.PDF;
+import static org.egov.infra.reporting.util.ReportUtil.CONTENT_TYPES;
 import static org.egov.infra.utils.ApplicationConstant.CITIZEN_ROLE_NAME;
 import static org.egov.infra.utils.ApplicationConstant.PUBLIC_ROLE_NAME;
 import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
@@ -82,6 +87,7 @@ import static org.egov.tl.utils.Constants.MEESEVAOPERATOR;
 import static org.egov.tl.utils.Constants.MEESEVA_RESULT_ACK;
 import static org.egov.tl.utils.Constants.MESSAGE;
 import static org.egov.tl.utils.Constants.REPORT_PAGE;
+import static org.egov.tl.utils.Constants.TL_FILE_STORE_DIR;
 
 @ParentPackage("egov")
 @Results({@Result(name = REPORT_PAGE, location = "viewTradeLicense-report.jsp"),
@@ -107,6 +113,10 @@ ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
 
     @Autowired
     private transient LicenseClosureService licenseClosureService;
+
+    @Autowired
+    @Qualifier("fileStoreService")
+    private transient FileStoreService fileStoreService;
 
     @Override
     public TradeLicense getModel() {
@@ -259,7 +269,11 @@ ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     }
 
     private String approveClosureWithDigiSign(TradeLicense license) {
-        licenseClosureService.generateClosureEndorsement(license);
+        FileStoreMapper fileStore = fileStoreService
+                .store(licenseClosureService.generateClosureEndorsementNotice(license).asInputStream(),
+                        license.generateCertificateFileName() + ".pdf", CONTENT_TYPES.get(PDF), TL_FILE_STORE_DIR);
+        license.setDigiSignedCertFileStoreId(fileStore.getFileStoreId());
+        licenseClosureService.update(license);
         fileStoreIds = license.getDigiSignedCertFileStoreId();
         ulbCode = ApplicationThreadLocals.getCityCode();
         applicationNo = license.getApplicationNumber();

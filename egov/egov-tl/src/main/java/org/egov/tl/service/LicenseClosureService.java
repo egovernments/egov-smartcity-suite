@@ -66,9 +66,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -135,10 +133,9 @@ public class LicenseClosureService extends LicenseService {
 
     @Transactional
     public License generateClosureEndorsement(TradeLicense license) {
-        ReportOutput reportOutput = generateClosureEndorsementNotice(license);
-        InputStream fileStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
         FileStoreMapper fileStore = fileStoreService
-                .store(fileStream, license.generateCertificateFileName() + ".pdf", CONTENT_TYPES.get(PDF), TL_FILE_STORE_DIR);
+                .store(generateClosureEndorsementNotice(license).asInputStream(),
+                        license.generateCertificateFileName() + ".pdf", CONTENT_TYPES.get(PDF), TL_FILE_STORE_DIR);
         license.setDigiSignedCertFileStoreId(fileStore.getFileStoreId());
         processSupportDocuments(license);
         update(license);

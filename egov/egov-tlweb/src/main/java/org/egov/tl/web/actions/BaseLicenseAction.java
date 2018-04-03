@@ -237,6 +237,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
 
     private String digitalSignRedirection() {
         tradeLicenseService.generateAndStoreCertificate(license());
+        license().setDigiSignedCertFileStoreId(license().getCertificateFileId());
         tradeLicenseService.save(license());
         fileStoreIds = license().getCertificateFileId();
         ulbCode = ApplicationThreadLocals.getCityCode();
