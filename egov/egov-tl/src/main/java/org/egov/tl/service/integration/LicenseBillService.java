@@ -409,7 +409,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
             licenseObj.transition().progressWithStateCopy().withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
                     .withComments(WF_SECOND_LVL_FEECOLLECTED)
                     .withStateValue(DIGI_ENABLED_WF_SECOND_LVL_FEECOLLECTED).withDateInfo(currentDate.toDate())
-                    .withOwner(licenseUtils.getCommissionerAssignment().getPosition()).withNextAction(WF_ACTION_DIGI_PENDING);
+                    .withNextAction(WF_ACTION_DIGI_PENDING);
 
         } else {
             licenseObj.setStatus(licenseStatusService.getLicenseStatusByCode(STATUS_UNDERWORKFLOW));
