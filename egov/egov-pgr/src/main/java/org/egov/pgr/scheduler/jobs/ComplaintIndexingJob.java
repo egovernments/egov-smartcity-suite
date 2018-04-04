@@ -50,18 +50,26 @@ package org.egov.pgr.scheduler.jobs;
 import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
 import org.egov.pgr.elasticsearch.service.ComplaintIndexService;
 import org.quartz.DisallowConcurrentExecution;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @DisallowConcurrentExecution
 public class ComplaintIndexingJob extends AbstractQuartzJob {
 
     private static final long serialVersionUID = 6375563786654750608L;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ComplaintIndexingJob.class);
 
     @Autowired
     private ComplaintIndexService complaintIndexService;
 
     @Override
     public void executeJob() {
-        complaintIndexService.updateAllOpenComplaintIndex();
+        try {
+            complaintIndexService.updateAllOpenComplaintIndex();
+        } catch (RuntimeException e) {
+            //Ignoring exception to avoid quartz to continue with other cities
+            LOGGER.error("Error occurred while updating open complaint index", e);
+        }
     }
 }
