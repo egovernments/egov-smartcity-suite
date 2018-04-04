@@ -82,18 +82,7 @@ import static org.egov.infra.security.utils.SecureCodeUtils.generatePDF417Code;
 import static org.egov.infra.utils.ApplicationConstant.UNDERSCORE;
 import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
 import static org.egov.infra.utils.StringUtils.appendTimestamp;
-import static org.egov.tl.utils.Constants.CLOSURE_NATUREOFTASK;
-import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
-import static org.egov.tl.utils.Constants.LICENSE_STATUS_CANCELLED;
-import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
-import static org.egov.tl.utils.Constants.PERMANENT_NATUREOFBUSINESS;
-import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
-import static org.egov.tl.utils.Constants.STATUS_ACKNOWLEDGED;
-import static org.egov.tl.utils.Constants.STATUS_ACTIVE;
-import static org.egov.tl.utils.Constants.STATUS_COLLECTIONPENDING;
-import static org.egov.tl.utils.Constants.TEMP_NATUREOFBUSINESS;
-import static org.egov.tl.utils.Constants.WF_STATE_COMMISSIONER_APPROVED_STR;
-import static org.egov.tl.utils.Constants.WORKFLOW_STATE_REJECTED;
+import static org.egov.tl.utils.Constants.*;
 
 @Entity
 @Table(name = "EGTL_LICENSE")
@@ -269,6 +258,9 @@ public class License extends StateAware<Position> {
     private boolean collectionPending;
 
     private boolean closed;
+
+    @SafeHtml
+    private String applicationSource;
 
     @Override
     public Long getId() {
@@ -661,6 +653,14 @@ public class License extends StateAware<Position> {
 
     public void setCertificateFileId(String certificateFileId) {
         this.certificateFileId = certificateFileId;
+    }
+
+    public String getApplicationSource() {
+        return applicationSource;
+    }
+
+    public void setApplicationSource(String applicationSource) {
+        this.applicationSource = applicationSource;
     }
 
     public String generateCertificateFileName() {

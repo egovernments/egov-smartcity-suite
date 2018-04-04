@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -66,6 +66,7 @@ import java.util.Optional;
 
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.egov.commons.entity.Source.CSC;
 import static org.egov.commons.entity.Source.SYSTEM;
 import static org.egov.infra.elasticsearch.entity.enums.ApprovalStatus.INPROGRESS;
@@ -117,7 +118,7 @@ public class LicenseApplicationIndexService {
                 .withUrl(format(APPLICATION_VIEW_URL, license.getApplicationNumber()))
                 .withApplicantAddress(license.getAddress()).withOwnername(user.isPresent() ?
                         user.get().getUsername() + DELIMITER_COLON + user.get().getName() : NA)
-                .withChannel(getChannel())
+                .withChannel(isNotBlank(license.getApplicationSource()) ? license.getApplicationSource() : getChannel())
                 .withMobileNumber(license.getLicensee().getMobilePhoneNumber())
                 .withAadharNumber(license.getLicensee().getUid()).withClosed(NO).withApproved(INPROGRESS)
                 .withSla(slaConfig != null ? slaConfig : 0)
