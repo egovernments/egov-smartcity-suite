@@ -96,7 +96,7 @@ public class PropertySurveyService {
     protected AssignmentService assignmentService;
     @Autowired
     private PropertyService propService;
-    
+
     private static final String RI_APPROVED = "UD Revenue Inspector Approved";
     private static final String ASSISTANT_APPROVED = "Assistant Approved";
 
@@ -121,10 +121,10 @@ public class PropertySurveyService {
 
     @Transactional
     public PTGISIndex createPropertySurveyindex(final String applicationType, final SurveyBean surveyBean) {
-        PTGISIndex ptGisIndex;
+        PTGISIndex ptGisIndex = new PTGISIndex();
         Double taxVar;
         final String state;
-        taxVar = calculatetaxvariance(applicationType, surveyBean);
+        taxVar = calculatetaxvariance(applicationType, surveyBean, ptGisIndex);
         state = surveyBean.getProperty().getState().getValue();
         final Date applicationDate = surveyBean.getProperty().getCreatedDate() == null ? new Date()
                 : surveyBean.getProperty().getCreatedDate();
@@ -138,8 +138,9 @@ public class PropertySurveyService {
         final PropertyID propId = surveyBean.getProperty().getBasicProperty().getPropertyID();
         final BasicPropertyImpl basicProp = (BasicPropertyImpl) surveyBean.getProperty().getBasicProperty();
         final boolean isApproved = state.contains(WF_STATE_COMMISSIONER_APPROVED) ? true : false;
-        final boolean isCancelled = (state.contains(WF_STATE_REJECTED) && surveyBean.getProperty().getStatus().equals(STATUS_CANCELLED)) ? true : false;
-        
+        final boolean isCancelled = (state.contains(WF_STATE_REJECTED)
+                && surveyBean.getProperty().getStatus().equals(STATUS_CANCELLED)) ? true : false;
+
         ptGisIndex = PTGISIndex.builder().withApplicationNo(surveyBean.getProperty().getApplicationNo())
                 .withApplicationdate(applicationDate)
                 .withApplicationStatus(state).withApplicationType(applicationType)
@@ -149,7 +150,7 @@ public class PropertySurveyService {
                 .withGisTax(surveyBean.getGisTax().doubleValue()).withApplicationTax(surveyBean.getApplicationTax().doubleValue())
                 .withSystemTax(surveyBean.getSystemTax().doubleValue()).withApprovedTax(surveyBean.getApprovedTax().doubleValue())
                 .withTaxVariance(taxVar)
-                .withAgeOfCompletion(surveyBean.getAgeOfCompletion()).withTaxVariance(0.0)
+                .withAgeOfCompletion(surveyBean.getAgeOfCompletion())
                 .withCompletionDate(completionDate)
                 .withIsApproved(isApproved)
                 .withIsCancelled(isCancelled)
@@ -177,12 +178,14 @@ public class PropertySurveyService {
         return functionary.getUsername().concat("::").concat(functionary.getName());
     }
 
-    private Double calculatetaxvariance(final String applicationType, final SurveyBean surveyBean) {
+    private Double calculatetaxvariance(final String applicationType, final SurveyBean surveyBean, final PTGISIndex index) {
         Double taxVar;
+        BigDecimal sysTax = index.getSystemTax() == null ? surveyBean.getSystemTax() : new BigDecimal(index.getSystemTax());
+
         if (applicationType.equalsIgnoreCase(PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT)
-                && surveyBean.getSystemTax().compareTo(BigDecimal.ZERO) > 0)
-            taxVar = ((surveyBean.getApprovedTax().subtract(surveyBean.getSystemTax())).multiply(BigDecimal.valueOf(100.0)))
-                    .divide(surveyBean.getSystemTax(), BigDecimal.ROUND_HALF_UP).doubleValue();
+                && sysTax.compareTo(BigDecimal.ZERO) > 0)
+            taxVar = ((surveyBean.getApprovedTax().subtract(sysTax)).multiply(BigDecimal.valueOf(100.0)))
+                    .divide(sysTax, BigDecimal.ROUND_HALF_UP).doubleValue();
         else
             taxVar = Double.valueOf(100);
         return taxVar;
@@ -195,7 +198,7 @@ public class PropertySurveyService {
         Double taxVar;
         String stateValue = surveyBean.getProperty().getState().getValue();
 
-        taxVar = calculateVariance(ptGisIndex.getApplicationType(), surveyBean, ptGisIndex);
+        taxVar = calculatetaxvariance(ptGisIndex.getApplicationType(), surveyBean, ptGisIndex);
 
         String riName = stateValue.endsWith(PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVED)
                 ? surveyBean.getProperty().getState().getLastModifiedBy().getName() : ptGisIndex.getRiName();
@@ -206,18 +209,6 @@ public class PropertySurveyService {
         ptGisIndex.setAssistantName(assistantName);
         ptGisIndex.setRiName(riName);
         return updatePTGISIndex(ptGisIndex);
-    }
-
-    private Double calculateVariance(final String applicationType, final SurveyBean surveyBean, final PTGISIndex ptGisIndex) {
-        Double taxVar;
-        if (applicationType.equalsIgnoreCase(PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT)
-                && ptGisIndex.getSystemTax() != 0)
-
-            taxVar = ((surveyBean.getApprovedTax().doubleValue() - (ptGisIndex.getSystemTax())) * 100)
-                    / ptGisIndex.getSystemTax();
-        else
-            taxVar = Double.valueOf(100);
-        return taxVar;
     }
 
     private void updateApplicationDetails(final SurveyBean surveyBean, final PTGISIndex ptGisIndex,
@@ -236,24 +227,24 @@ public class PropertySurveyService {
             ptGisIndex.setIsApproved(true);
         }
 
-        if (stateValue.endsWith(WF_STATE_CLOSED)&& propertyImpl.getStatus().equals(STATUS_DEMAND_INACTIVE)) {
+        if (stateValue.endsWith(WF_STATE_CLOSED) && propertyImpl.getStatus().equals(STATUS_DEMAND_INACTIVE)) {
             ptGisIndex.setCompletionDate(propertyImpl.getState().getLastModifiedDate());
             ptGisIndex.setIsApproved(true);
         }
-        
+
         ptGisIndex.setApplicationStatus(stateValue);
         ptGisIndex.setAssessmentNo(StringUtils.isBlank(basicProperty.getUpicNo())
                 ? StringUtils.EMPTY
                 : basicProperty.getUpicNo());
 
-        ptGisIndex.setIsCancelled((stateValue.contains(WF_STATE_CLOSED) && propertyImpl.getStatus().equals(STATUS_CANCELLED)) ? true : false);
+        ptGisIndex.setIsCancelled(
+                (stateValue.contains(WF_STATE_CLOSED) && propertyImpl.getStatus().equals(STATUS_CANCELLED)) ? true : false);
         ptGisIndex.setThirdPrtyFlag(propertyImpl.isThirdPartyVerified());
         ptGisIndex.setDoorNo(doorNo == null ? ptGisIndex.getDoorNo() : doorNo);
         ptGisIndex.setSentToThirdParty(propertyImpl.isSentToThirdParty());
         ptGisIndex.setTaxVariance(taxVar);
         ptGisIndex.setFunctionaryName(getFunctionaryDetail(surveyBean));
     }
-
 
     @Transactional
     public PTGISIndex createPTGISIndex(PTGISIndex surveyIndex) {
