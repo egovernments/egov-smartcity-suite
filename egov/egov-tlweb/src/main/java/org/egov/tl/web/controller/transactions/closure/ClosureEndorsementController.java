@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -63,6 +63,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.egov.infra.reporting.util.ReportUtil.reportAsResponseEntity;
 import static org.egov.tl.utils.Constants.TL_FILE_STORE_DIR;
 import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
@@ -93,9 +94,14 @@ public class ClosureEndorsementController {
     @ResponseBody
     public ResponseEntity<InputStreamResource> closureEndorsementNotice(@PathVariable Long licenseId) {
         License license = tradeLicenseService.getLicenseById(licenseId);
-        ReportOutput reportOutput = licenseClosureService.generateClosureEndorsementNotice(license);
-        reportOutput.setReportName(license.generateCertificateFileName());
-        return reportAsResponseEntity(reportOutput);
+        if (isBlank(license.getDigiSignedCertFileStoreId())) {
+            ReportOutput reportOutput = licenseClosureService.generateClosureEndorsementNotice(license);
+            reportOutput.setReportName(license.generateCertificateFileName());
+            return reportAsResponseEntity(reportOutput);
+        } else {
+            return fileStoreUtils.fileAsPDFResponse(license.getDigiSignedCertFileStoreId(),
+                    license.generateCertificateFileName(), TL_FILE_STORE_DIR);
+        }
     }
 
     @GetMapping(value = "/download-endorsementnotice", produces = APPLICATION_PDF_VALUE)
