@@ -849,20 +849,12 @@ public abstract class AbstractLicenseService<T extends License> {
             final DateTime currentDate = new DateTime();
             license.setEgwStatus(egwStatusHibernateDAO
                     .getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_APPROVED_CODE));
-            WorkFlowMatrix wfmatrix;
-            if (license.isReNewApplication())
-                wfmatrix = this.licenseWorkflowService.getWfMatrix(TRADELICENSE, null, null,
-                        RENEW_ADDITIONAL_RULE,
-                        WF_DIGI_SIGNED, null);
-            else
-                wfmatrix = this.licenseWorkflowService.getWfMatrix(TRADELICENSE, null, null,
-                        NEW_ADDITIONAL_RULE,
-                        WF_DIGI_SIGNED, null);
-
             license.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
-                    .withComments(WF_DIGI_SIGNED).withStateValue(wfmatrix.getCurrentState())
-                    .withDateInfo(currentDate.toDate()).withOwner(license.getCurrentState().getInitiatorPosition())
-                    .withNextAction(wfmatrix.getCurrentStatus());
+                    .withComments(WF_DIGI_SIGNED)
+                    .withStateValue(WF_DIGI_SIGNED)
+                    .withDateInfo(currentDate.toDate())
+                    .withOwner(license.getCurrentState().getInitiatorPosition())
+                    .withNextAction("");
             license.setCertificateFileId(license.getDigiSignedCertFileStoreId());
             licenseRepository.save(license);
             tradeLicenseSmsAndEmailService.sendSMsAndEmailOnDigitalSign(license);

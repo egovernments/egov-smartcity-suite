@@ -51,6 +51,7 @@ package org.egov.tl.service;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
+import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.State;
@@ -220,22 +221,21 @@ public class LicenseClosureProcessflowService {
     }
 
     public WorkFlowMatrix getWorkFlowMatrix(TradeLicense tradeLicense) {
-        String additionalRule = BUTTONREJECT.equals(tradeLicense.getWorkflowContainer().getWorkFlowAction())
-                ? CLOSURE_LICENSE_REJECT : tradeLicense.getWorkflowContainer().getAdditionalRule();
+        WorkflowContainer workflowContainer = tradeLicense.getWorkflowContainer();
+        String additionalRule = BUTTONREJECT.equals(workflowContainer.getWorkFlowAction())
+                ? CLOSURE_LICENSE_REJECT : workflowContainer.getAdditionalRule();
         WorkFlowMatrix workflowMatrix;
         if (tradeLicense.transitionInprogress()) {
             State<Position> state = tradeLicense.getState();
             workflowMatrix = this.licenseWorkflowService.getWfMatrix(
                     tradeLicense.getStateType(), "ANY", null, additionalRule,
-                    tradeLicense.getWorkflowContainer().getCurrentState() == null ? state.getValue() : tradeLicense
-                            .getWorkflowContainer().getCurrentState(), null, new Date(),
-                    tradeLicense.getWorkflowContainer().getCurrentDesignation() == null
+                    workflowContainer.getCurrentState() == null ? state.getValue() : workflowContainer.getCurrentState(),
+                    null, new Date(), workflowContainer.getCurrentDesignation() == null
                             ? "%" + state.getOwnerPosition().getDeptDesig().getDesignation().getName() + "%" :
-                            tradeLicense.getWorkflowContainer().getCurrentDesignation());
+                            workflowContainer.getCurrentDesignation());
         } else {
             workflowMatrix = this.licenseWorkflowService.getWfMatrix(tradeLicense.getStateType(), null,
-                    null, tradeLicense.getWorkflowContainer().getAdditionalRule(),
-                    "Start", null, new Date(), null);
+                    null, workflowContainer.getAdditionalRule(), "Start", null, new Date(), null);
         }
         return workflowMatrix;
     }
