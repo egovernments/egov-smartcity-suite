@@ -420,7 +420,7 @@
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-3 control-label"><spring:message
-                                        code="lbl.city.google.api.key"/></label>
+                                        code="lbl.city.google.api.key"/><span class="mandatory"></span></label>
                                 <c:set var="helptext">
                                     <spring:message code="help.city.google.api.key"/>
                                 </c:set>
