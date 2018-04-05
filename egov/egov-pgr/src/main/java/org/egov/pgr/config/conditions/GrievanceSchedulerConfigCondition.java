@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -46,33 +46,21 @@
  *
  */
 
-package org.egov.pgr.config.properties;
+package org.egov.pgr.config.conditions;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
+import org.springframework.context.annotation.ConditionContext;
+import org.springframework.context.annotation.ConfigurationCondition;
+import org.springframework.core.type.AnnotatedTypeMetadata;
 
-@Configuration
-@PropertySource(name = "grievanceApplicationSettings", value = {
-        "classpath:config/pgr-application-config.properties",
-        "classpath:dashboard/pgr-dashboard-sql.properties",
-        "classpath:config/application-config-${client.id}.properties",
-        "classpath:config/pgr-override.properties"}, ignoreResourceNotFound = true)
-public class GrievanceApplicationSettings {
+public class GrievanceSchedulerConfigCondition implements ConfigurationCondition {
 
-    @Autowired
-    private Environment environment;
-
-    public String getValue(String key) {
-        return environment.getProperty(key);
+    @Override
+    public ConfigurationPhase getConfigurationPhase() {
+        return ConfigurationPhase.REGISTER_BEAN;
     }
 
-    public boolean escalationSchedulerEnabled() {
-        return environment.getProperty("pgr.escalation.job.enabled", Boolean.class);
-    }
-
-    public boolean indexingSchedulerEnabled() {
-        return environment.getProperty("pgr.indexing.job.enabled", Boolean.class);
+    @Override
+    public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+        return context.getEnvironment().getProperty("pgr.scheduler.enabled", Boolean.class);
     }
 }

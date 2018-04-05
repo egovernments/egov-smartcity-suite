@@ -406,14 +406,14 @@ public class ComplaintIndexService {
     public void updateOpenComplaintIndex(final Complaint complaint) {
         // fetch the complaint from index and then update the new fields
         ComplaintIndex complaintIndex = complaintIndexRepository.findByCrnAndCityCode(complaint.getCrn(), getCityCode());
-        beanMapperConfiguration.map(complaint, complaintIndex);
-
-        complaintIndex = updateComplaintLevelIndexFields(complaintIndex);
-        complaintIndex = updateEscalationLevelIndexFields(complaintIndex);
-        // update status related fields in index
-        complaintIndex = updateComplaintIndexStatusRelatedFields(complaintIndex);
-
-        complaintIndexRepository.save(complaintIndex);
+        if (complaintIndex != null) {
+            beanMapperConfiguration.map(complaint, complaintIndex);
+            complaintIndex = updateComplaintLevelIndexFields(complaintIndex);
+            complaintIndex = updateEscalationLevelIndexFields(complaintIndex);
+            // update status related fields in index
+            complaintIndex = updateComplaintIndexStatusRelatedFields(complaintIndex);
+            complaintIndexRepository.save(complaintIndex);
+        }
     }
 
     public ComplaintIndex updateComplaintLevelIndexFields(final ComplaintIndex complaintIndex) {
