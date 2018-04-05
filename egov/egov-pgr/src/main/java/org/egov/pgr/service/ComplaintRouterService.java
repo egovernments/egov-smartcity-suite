@@ -63,6 +63,8 @@ import org.egov.pgr.entity.contract.ComplaintRouterSearchRequest;
 import org.egov.pgr.repository.ComplaintRouterRepository;
 import org.egov.pgr.repository.specs.ComplaintRouterSpec;
 import org.egov.pims.commons.Position;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -72,9 +74,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+
 @Service
 @Transactional(readOnly = true)
 public class ComplaintRouterService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ComplaintRouterService.class);
 
     @Autowired
     private ComplaintRouterRepository complaintRouterRepository;
@@ -87,10 +93,16 @@ public class ComplaintRouterService {
 
     public Position getComplaintAssignee(Complaint complaint) {
         ComplaintRouter complaintRouter = getComplaintRouter(complaint);
-        if (complaintRouter == null)
+        if (complaintRouter == null) {
+            if (LOGGER.isWarnEnabled()) {
+                String complaintLocation = complaint.getLocation() == null ? EMPTY : complaint.getLocation().getName();
+                String complaintType = complaint.getComplaintType().getName();
+                LOGGER.warn("There is no routing defined for Complaint Type : {}, Location : {}", complaintType, complaintLocation);
+            }
             throw new ApplicationValidationException("PGR.001");
-        else
+        } else {
             return complaintRouter.getPosition();
+        }
     }
 
     @Transactional
