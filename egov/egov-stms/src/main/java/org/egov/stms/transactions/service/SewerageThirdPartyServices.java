@@ -148,11 +148,13 @@ public class SewerageThirdPartyServices {
     private SewerageBillServiceImpl sewerageBillServiceImpl;
     private String currentDemand = "currentDemand";
     private static final String WTMS_TAXDUE_RESTURL = "%s/wtms/rest/watertax/due/byptno/%s";
+    private static final String PTIS_DETAILS_RESTURL = "%s/ptis/rest/property/%s";
+
 
     public AssessmentDetails getPropertyDetails(final String assessmentNumber, final HttpServletRequest request) {
         final RestTemplate restTemplate = new RestTemplate();
-        final String url = "http://" + request.getServerName() + ":" + request.getServerPort()
-                + "/ptis/rest/property/{assessmentNumber}";
+        final String url = String.format(PTIS_DETAILS_RESTURL, WebUtils.extractRequestDomainURL(request, false),
+                assessmentNumber);
         return restTemplate.getForObject(url, AssessmentDetails.class,
                 assessmentNumber);
 
