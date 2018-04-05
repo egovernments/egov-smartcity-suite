@@ -58,7 +58,7 @@ import org.springframework.core.env.Environment;
         "classpath:config/pgr-application-config.properties",
         "classpath:dashboard/pgr-dashboard-sql.properties",
         "classpath:config/application-config-${client.id}.properties",
-        "classpath:config/pgr-override.properties"}, ignoreResourceNotFound = true)
+        "classpath:config/pgr-override-${env}.properties"}, ignoreResourceNotFound = true)
 public class GrievanceApplicationSettings {
 
     @Autowired
