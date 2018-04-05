@@ -61,6 +61,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.Locale;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+
 public abstract class ApiController {
 
     public static final String EMAIL_ID_FIELD = "emailId";
@@ -78,7 +80,7 @@ public abstract class ApiController {
     private MessageSource messageSource;
 
     public String getMessage(String key) {
-        return this.messageSource.getMessage(key, null, Locale.getDefault());
+        return this.messageSource.getMessage(key, null, "Unable to process your request now.", Locale.getDefault());
     }
 
     public ApiResponse getResponseHandler() {
@@ -87,21 +89,21 @@ public abstract class ApiController {
 
     @ExceptionHandler({HttpMessageNotReadableException.class})
     public ResponseEntity<String> apiExceptionHandler(HttpMessageNotReadableException ex) {
-        return getResponseHandler().error(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        return getResponseHandler().error(ex.getMessage(), BAD_REQUEST);
     }
 
     @ExceptionHandler({MissingServletRequestParameterException.class})
     public ResponseEntity<String> apiExceptionHandler(MissingServletRequestParameterException ex) {
-        return getResponseHandler().error(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        return getResponseHandler().error(ex.getMessage(), BAD_REQUEST);
     }
 
     @ExceptionHandler({Exception.class})
     public ResponseEntity<String> apiExceptionHandler(Exception ex) {
-        return getResponseHandler().error(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        return getResponseHandler().error(ex.getMessage(), BAD_REQUEST);
     }
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
     public ResponseEntity<String> apiExceptionHandler(MethodArgumentNotValidException ex) {
-        return getResponseHandler().error(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        return getResponseHandler().error(ex.getMessage(), BAD_REQUEST);
     }
 }
