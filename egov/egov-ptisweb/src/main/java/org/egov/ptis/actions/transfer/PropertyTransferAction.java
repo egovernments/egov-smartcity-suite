@@ -351,7 +351,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
         buildSMS(propertyMutation);
         buildEmail(propertyMutation);
-        mutationEventPublisher.publishEvent(propertyMutation);
+        mutationEventPublisher.publishEvent(propertyMutation,false);
         setAckMessage("Transfer of ownership data saved successfully in the system and forwarded to : ");
         setAssessmentNoMessage(WITH_ASSESSMENT_NUMBER);
 
@@ -515,6 +515,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             approverName = "";
             List<Assignment> assignment;
             if (WF_STATE_CLOSED.equals(propertyMutation.getState().getValue())) {
+                mutationEventPublisher.publishEvent(propertyMutation, true);
                 final List<StateHistory<Position>> history = propertyMutation.getStateHistory();
                 Collections.reverse(history);
                 assignment = assignmentService.getAssignmentByPositionAndUserAsOnDate(history.get(0).getOwnerPosition().getId(),
@@ -558,7 +559,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             propertyTaxUtil.makeTheEgBillAsHistory(basicproperty);
         buildSMS(propertyMutation);
         buildEmail(propertyMutation);
-        mutationEventPublisher.publishEvent(propertyMutation);
+        mutationEventPublisher.publishEvent(propertyMutation, false);
         setAckMessage("Transfer of ownership is created successfully in the system and forwarded to : ");
         setAssessmentNoMessage(" for Digital Signature for the property : ");
         return ACK;
