@@ -69,6 +69,7 @@ import java.util.Date;
 import java.util.List;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.egov.tl.utils.Constants.CSCOPERATORNEWLICENSE;
 
 @Service
 @Transactional(readOnly = true)
@@ -130,6 +131,8 @@ public class LicenseCreateAPIService {
         tradeLicense.setBoundary(childBoundary);
         tradeLicense.setCategory(licenseCategoryRepository.findByCodeIgnoreCase(license.getCategory()));
         tradeLicense.setTradeName(licenseSubCategoryRepository.findByCode(license.getSubCategory()));
-        return licenseApplicationService.create(tradeLicense, new WorkflowBean());
+        WorkflowBean workflowBean = new WorkflowBean();
+        workflowBean.setAdditionaRule(CSCOPERATORNEWLICENSE);
+        return licenseApplicationService.create(tradeLicense, workflowBean);
     }
 }
