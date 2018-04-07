@@ -53,6 +53,8 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.restapi.service.LicenseCreateAPIService;
 import org.egov.restapi.web.contracts.tradelicense.LicenseCreateRequest;
 import org.egov.restapi.web.contracts.tradelicense.LicenseCreateResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -67,8 +69,14 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+
 @RestController
 public class LicenseCreateAPIController {
+
+    @Autowired
+    private static final Logger LOGGER = LoggerFactory.getLogger(LicenseCreateAPIController.class);
 
     @Autowired
     private LicenseCreateAPIService licenseCreateAPIService;
@@ -85,7 +93,7 @@ public class LicenseCreateAPIController {
                     .stream()
                     .map(FieldError::getDefaultMessage)
                     .collect(Collectors.toList());
-            return new LicenseCreateResponse(false, HttpStatus.BAD_REQUEST.toString(), licenseResponses.toString());
+            return new LicenseCreateResponse(false, BAD_REQUEST.toString(), licenseResponses.toString());
         } else {
             return new LicenseCreateResponse(true, licenseCreateAPIService
                     .createLicense(licenseCreateRequest).getApplicationNumber(),
@@ -97,13 +105,14 @@ public class LicenseCreateAPIController {
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<Object> validationErrors(ValidationException exception) {
         List<String> errors = exception.getErrors().stream().map(ValidationError::getMessage).collect(Collectors.toList());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new LicenseCreateResponse(false, HttpStatus.BAD_REQUEST.toString(), errors.toString()));
+        return ResponseEntity.status(BAD_REQUEST)
+                .body(new LicenseCreateResponse(false, BAD_REQUEST.toString(), errors.toString()));
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> restErrors() {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new LicenseCreateResponse(false, HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Server Error"));
+    public ResponseEntity<Object> globalErrors(Exception e) {
+        LOGGER.error("Error occurred while creating License via API", e);
+        return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                .body(new LicenseCreateResponse(false, INTERNAL_SERVER_ERROR.toString(), "Server Error"));
     }
 }
