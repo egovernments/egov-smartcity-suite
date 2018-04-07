@@ -54,6 +54,7 @@ import org.egov.ptis.scheduler.BulkBillGenerationJob;
 import org.egov.ptis.scheduler.CollectionAchievementsJob;
 import org.egov.ptis.scheduler.DemandActivationJob;
 import org.egov.ptis.scheduler.RecoveryNoticesJob;
+import org.quartz.DisallowConcurrentExecution;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
@@ -185,6 +186,7 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
         return collectionAchievementsCron;
     }
 
+    
     @Bean("bulkBillGenerationJob0")
     public BulkBillGenerationJob bulkBillGenerationJob0() {
         BulkBillGenerationJob bulkBillGenerationJob = new BulkBillGenerationJob();
@@ -297,7 +299,7 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
         bulkBillGenerationCron.setJobDetail(jobDetail.getObject());
         bulkBillGenerationCron.setGroup("PTIS_TRIGGER_GROUP");
         bulkBillGenerationCron.setName("PTIS_BULK_BILL_GEN_" + modulo + "_TRIGGER");
-        bulkBillGenerationCron.setCronExpression("0 */10 * * * ?");
+        bulkBillGenerationCron.setCronExpression("0 */2 * * * ?");
         bulkBillGenerationCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
         return bulkBillGenerationCron;
     }
