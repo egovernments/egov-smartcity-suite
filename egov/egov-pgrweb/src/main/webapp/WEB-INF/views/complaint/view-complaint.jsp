@@ -53,7 +53,11 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
-
+<style>
+    .symbol-filled {
+        color: gold;
+    }
+</style>
 <c:if test="${not empty message}">
     <div class="alert alert-success" role="alert">${message}</div>
 </c:if>
@@ -203,6 +207,32 @@
         </div>
     </div>
 </div>
+<c:if test="${complaint.completed()}">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel-group">
+                <div class="panel panel-primary">
+                    <div class="panel-heading slide-history-menu">
+                        <div class="panel-title">
+                            <strong><spring:message code="lbl.hdr.feedback"/></strong>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row add-border">
+                            <div class="col-md-3 col-xs-6 add-margin">
+                                <spring:message code="lbl.rating"/>
+                            </div>
+                            <div class="col-md-3 col-xs-6 add-margin">
+                                <input disabled="disabled" id="citizenRating" type="hidden" class="rating" data-filled="fa fa-star fa-2x symbol-filled"
+                                       data-empty="fa fa-star-o fa-2x" name="citizenRating" value="${complaint.citizenFeedback.ordinal()}"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</c:if>
 <div class="row">
     <div class="col-md-12">
         <div class="panel-group">
@@ -330,6 +360,7 @@
 <link rel="stylesheet" href="<cdn:url  value='/resources/global/js/image-gallery/css/blueimp-gallery.min.css' context='/egi'/>">
 <script src="<cdn:url  value='/resources/global/js/image-gallery/js/jquery.blueimp-gallery.min.js' context='/egi'/>"></script>
 <script src="<cdn:url  value='/resources/global/js/image-gallery/js/bootstrap-image-gallery.js' context='/egi'/>"></script>
+<script src="<cdn:url  value='/resources/global/js/bootstrap/bootstrap-rating.min.js' context='/egi'/>"></script>
 <script src="<cdn:url  value='/resources/js/app/complaintview.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url  value='/resources/js/app/complaintviewmap.js?rnd=${app_release_no}'/>"></script>
 <script>
