@@ -107,7 +107,7 @@ public class Complaint extends StateAware<Position> {
     @JoinColumn(name = "complainant", nullable = false)
     private Complainant complainant = new Complainant();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "assignee")
     private Position assignee;
 
