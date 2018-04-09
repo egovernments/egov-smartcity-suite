@@ -373,10 +373,11 @@ public class SurveyDashboardService {
             surveyResponse.setUlbName(cityInfoMap.get(name) == null ? StringUtils.EMPTY : cityInfoMap.get(name));
         } else if (REVENUE_WARD.equals(aggregationField)) {
             getWardWiseBillCollector(surveyRequest, wardWiseBillCollectors, surveyResponse, name);
-        } else if (APPLICATION_TYPE.equalsIgnoreCase(aggregationField))
+        } else if (APPLICATION_TYPE.equalsIgnoreCase(aggregationField)) {
             surveyResponse.setServiceName(name);
-        else if (FUNCTIONARY_NAME.equalsIgnoreCase(aggregationField))
+        } else if (FUNCTIONARY_NAME.equalsIgnoreCase(aggregationField)) {
             surveyResponse.setFunctionaryName(name);
+        }
     }
 
     private void getWardWiseBillCollector(SurveyRequest surveyRequest, Map<String, BillCollectorIndex> wardWiseBillCollectors,
