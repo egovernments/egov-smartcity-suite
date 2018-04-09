@@ -107,6 +107,7 @@
 		<defaultValueExpression><![CDATA["All Services"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="EGOV_CREATED_BY_NAME" class="java.lang.String"/>
+	<parameter name="CITY_LOGO_PATH" class="java.io.InputStream"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -131,7 +132,7 @@
 			</staticText>
 			<image>
 				<reportElement x="49" y="10" width="91" height="92" uuid="5625d836-f679-4b56-8597-bceac0503b33"/>
-				<imageExpression><![CDATA[ReportUtil.logoBasePath()]]></imageExpression>
+				<imageExpression><![CDATA[$P{CITY_LOGO_PATH}]]></imageExpression>
 			</image>
 			<staticText>
 				<reportElement x="51" y="114" width="79" height="20" uuid="d1b20b0b-bbf6-4128-a0d7-2eb2f118c752"/>
@@ -403,7 +404,7 @@
 			</staticText>
 			<image>
 				<reportElement x="129" y="9" width="60" height="60" uuid="e12a847e-650f-4ff9-b523-5f71a0bc1a7f"/>
-				<imageExpression><![CDATA[ReportUtil.logoBasePath()]]></imageExpression>
+				<imageExpression><![CDATA[$P{CITY_LOGO_PATH}]]></imageExpression>
 			</image>
 			<staticText>
 				<reportElement x="198" y="10" width="414" height="33" uuid="a6e93dbf-7732-42cc-803c-bcf9f5793d31"/>
