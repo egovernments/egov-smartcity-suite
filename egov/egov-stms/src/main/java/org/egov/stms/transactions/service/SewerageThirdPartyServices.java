@@ -47,6 +47,7 @@
  */
 package org.egov.stms.transactions.service;
 
+import org.apache.log4j.Logger;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillAccountDetails;
@@ -148,13 +149,18 @@ public class SewerageThirdPartyServices {
     private SewerageBillServiceImpl sewerageBillServiceImpl;
     private String currentDemand = "currentDemand";
     private static final String WTMS_TAXDUE_RESTURL = "%s/wtms/rest/watertax/due/byptno/%s";
+    
+    private static final Logger LOGGER = Logger.getLogger(SewerageThirdPartyServices.class);
 
 
     public AssessmentDetails getPropertyDetails(final String assessmentNumber, final HttpServletRequest request) {
         final RestTemplate restTemplate = new RestTemplate();
         final String url = request.getProtocol().substring(0, request.getProtocol().indexOf('/')).toLowerCase() + "://"
-                + request.getServerName() + ":" + request.getServerPort()
+                + request.getServerName()
                 + "/ptis/rest/property/{assessmentNumber}";
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("PROPERTYTAX REST URL FOR SEWERAGETAX : "+url);
+        }
         return restTemplate.getForObject(url, AssessmentDetails.class,
                 assessmentNumber);
 
