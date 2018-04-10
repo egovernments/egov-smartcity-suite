@@ -103,10 +103,11 @@
 											<s:property value="%{fileName}" />
 										</a> 
 										</s:if>
-										<else> <a
+										<s:else>
+										 <a
 											href="javascript:viewDocument('<s:property value="fileStoreId"/>')">
 											<s:property value="%{fileName}" />
-										</a> </else>
+										</a> </s:else>
 									</s:iterator>
 								</s:elseif> <s:else>
 								<s:hidden name="documentsProxy[%{#status.index}].type.id"></s:hidden>
