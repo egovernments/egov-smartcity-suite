@@ -1600,6 +1600,22 @@ public class PropertyService {
         LOGGER.debug("completionDate: " + completionDate + "\nExiting from getLowestDtOfCompFloorWise");
         return completionDate;
     }
+    
+    public Date getLowestDtOfConstFloorWise(final List<Floor> floorList) {
+        Date constructionDate = null;
+        for (final Floor floor : floorList) {
+            Date floorDate;
+            if (floor != null) {
+                floorDate = floor.getConstructionDate();
+                if (floorDate != null)
+                    if (constructionDate == null)
+                        constructionDate = floorDate;
+                    else if (constructionDate.after(floorDate))
+                        constructionDate = floorDate;
+            }
+        }
+        return constructionDate;
+    }
 
     /**
      * Creates amalgamation property status values
@@ -3077,15 +3093,15 @@ public class PropertyService {
         final String from = FROM_PROPERTY_MATERLIZE_VIEW_PMV;
         final StringBuilder where = new StringBuilder(WHERE_PMV_IS_ACTIVE_TRUE);
 
-        if (oldMuncipalNum != null && !oldMuncipalNum.trim().isEmpty()) {
+        if (StringUtils.isNotBlank(oldMuncipalNum)) {
             where.append(" and pmv.oldMuncipalNum = ? ");
             params.add(oldMuncipalNum);
         }
-        if (ownerName != null && !ownerName.trim().isEmpty()) {
+        if (StringUtils.isNotBlank(ownerName)) {
             where.append(" and upper(trim(pmv.ownerName)) like ? ");
             params.add(ownerName.toUpperCase() + "%");
         }
-        if (doorNo != null && !doorNo.trim().isEmpty()) {
+        if (StringUtils.isNotBlank(doorNo)) {
             where.append(AND_PMV_HOUSE_NO_LIKE);
             params.add(doorNo + "%");
         }

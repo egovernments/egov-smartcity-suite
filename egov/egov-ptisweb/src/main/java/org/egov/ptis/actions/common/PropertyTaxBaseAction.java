@@ -291,9 +291,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 } else if (null == ((PropertyImpl) property).getId() && TRUE.equals(propertyDetail.isAppurtenantLandChecked())) {
                     validateVacantProperty(propertyDetail, eastBoundary, westBoundary, southBoundary, northBoundary,
                             modifyRsn, propCompletionDate, vacantLandPlotAreaId, layoutApprovalAuthorityId, property);
-                    validateBuiltUpProperty(propertyDetail, floorTypeId, roofTypeId, areaOfPlot, regDocDate, modifyRsn);
+                    validateBuiltUpProperty(propertyDetail, areaOfPlot, regDocDate, modifyRsn);
                 } else
-                    validateBuiltUpProperty(propertyDetail, floorTypeId, roofTypeId, areaOfPlot, regDocDate, modifyRsn);
+                    validateBuiltUpProperty(propertyDetail, areaOfPlot, regDocDate, modifyRsn);
                 validateFloor(propTypeMstr, property.getPropertyDetail().getFloorDetailsProxy(), property, areaOfPlot,
                         regDocDate, modifyRsn, propCompletionDate);
             }
@@ -358,10 +358,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
     }
 
-    public void validateBuiltUpProperty(final PropertyDetail propertyDetail, final Long floorTypeId,
-            final Long roofTypeId, final String areaOfPlot, final Date regDocDate, final String modifyRsn) {
+    public void validateBuiltUpProperty(final PropertyDetail propertyDetail, final String areaOfPlot, final Date regDocDate, final String modifyRsn) {
     	
-    	final Date propCompletionDate = propertyService.getLowestDtOfCompFloorWise(propertyDetail.getFloorDetailsProxy());
+    	final Date propCompletionDate = propertyService.getLowestDtOfConstFloorWise(propertyDetail.getFloorDetailsProxy());
         
     	if (logger.isDebugEnabled())
             logger.debug("Eneterd into validateBuiltUpProperty");
