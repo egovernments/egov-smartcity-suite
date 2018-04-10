@@ -61,6 +61,7 @@
 		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
 	</parameter>
 	<parameter name="EGOV_COMMON" class="org.egov.egf.commons.EgovCommon" isForPrompting="false"/>
+	<parameter name="CITY_LOGO_PATH" class="java.io.InputStream"/>
 	<field name="instrumentDetails" class="java.util.Collection"/>
 	<field name="accountDetails" class="java.util.Collection"/>
 	<field name="totalAmount" class="java.math.BigDecimal"/>
@@ -86,6 +87,9 @@
 				<subreportParameter name="EGOV_COPY">
 					<subreportParameterExpression><![CDATA["Original Copy"]]></subreportParameterExpression>
 				</subreportParameter>
+				<subreportParameter name="CITY_LOGO_PATH">
+					<subreportParameterExpression><![CDATA[$P{CITY_LOGO_PATH}]]></subreportParameterExpression>
+				</subreportParameter>
 				<dataSourceExpression><![CDATA[new JRBeanCollectionDataSource($P{REPORT_DATA_SOURCE}.getData(), false)]]></dataSourceExpression>
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("collection_receipt_single.jasper")]]></subreportExpression>
 			</subreport>
@@ -99,6 +103,9 @@
 				</subreportParameter>
 				<subreportParameter name="EGOV_COPY">
 					<subreportParameterExpression><![CDATA["Duplicate Copy"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="CITY_LOGO_PATH">
+				   <subreportParameterExpression><![CDATA[$P{CITY_LOGO_PATH}]]></subreportParameterExpression>
 				</subreportParameter>
 				<dataSourceExpression><![CDATA[new JRBeanCollectionDataSource($P{REPORT_DATA_SOURCE}.getData(), false)]]></dataSourceExpression>
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("collection_receipt_single.jasper")]]></subreportExpression>
@@ -121,6 +128,9 @@
 				</subreportParameter>
 				<subreportParameter name="EGOV_COPY">
 					<subreportParameterExpression><![CDATA["Triplicate Copy"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="CITY_LOGO_PATH">
+					<subreportParameterExpression><![CDATA[$P{CITY_LOGO_PATH}]]></subreportParameterExpression>
 				</subreportParameter>
 				<dataSourceExpression><![CDATA[new JRBeanCollectionDataSource($P{REPORT_DATA_SOURCE}.getData(), false)]]></dataSourceExpression>
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("collection_receipt_single.jasper")]]></subreportExpression>
