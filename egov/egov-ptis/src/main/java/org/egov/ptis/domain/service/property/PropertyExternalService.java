@@ -3035,7 +3035,7 @@ public class PropertyExternalService {
                     WebUtils.extractRequestDomainURL(request, false), basicProperty.getUpicNo());
             Map<String, Object> taxDetails = simpleRestClient.getRESTResponseAsMap(restURL);
             if (!taxDetails.isEmpty()) {
-                assessmentDetails.setWaterTaxDue(BigDecimal.valueOf((double) taxDetails.get("totalTaxDue")));
+                assessmentDetails.setWaterTaxDue(BigDecimal.valueOf((double) taxDetails.get(WATER_TAX_DUES)));
                 assessmentDetails.setConnectionCount(Double.valueOf(taxDetails.get("connectionCount").toString()).intValue());
             }
             restURL = format(PropertyTaxConstants.STMS_TAXDUE_RESTURL,

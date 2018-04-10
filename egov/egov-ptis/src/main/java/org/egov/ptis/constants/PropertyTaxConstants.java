@@ -1752,7 +1752,7 @@ public interface PropertyTaxConstants {
     
     public static final String APPURTENANT_PROPERTY = "AppurTenantProperty";
     public static final String ANONYMOUS_USER= "Anonymous";
-    public static final String WATER_TAX_DUES = "totalTaxDue";
+    public static final String WATER_TAX_DUES = "currentInstDue";
     public static final String UNDER_WTMS_WF = "isInWorkFlow";
     
     public static final String SUPER_STRUCTURE = "Super Structure";
@@ -1764,7 +1764,7 @@ public interface PropertyTaxConstants {
             DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_EDUCATIONAL_TAX);
     
     public static final List<String> PROPERTY_TYPE_SERVICE_CODES = ImmutableList.of("PT","VLT");
-    public static final List<String> SERVICE_TYPES=ImmutableList.of("New_Assessment","Alter_Assessment","General_Revision_Petition","Revision_Petition");
+    public static final List<String> SERVICE_TYPES=ImmutableList.of(APPLICATION_TYPE_NEW_ASSESSENT,APPLICATION_TYPE_ALTER_ASSESSENT,APPLICATION_TYPE_GRP,APPLICATION_TYPE_REVISION_PETITION);
 
     public static final String NOTARY_DOCUMENT_OWNER = "The Holder Of The Premises";
             
