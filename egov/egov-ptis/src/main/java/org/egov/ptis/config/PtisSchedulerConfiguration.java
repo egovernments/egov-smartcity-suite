@@ -48,16 +48,6 @@
 
 package org.egov.ptis.config;
 
-import static org.quartz.CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.sql.DataSource;
-
-import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.config.scheduling.QuartzSchedulerConfiguration;
 import org.egov.infra.config.scheduling.SchedulerConfigCondition;
 import org.egov.ptis.scheduler.BulkBillGenerationJob;
@@ -73,12 +63,15 @@ import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
+import javax.sql.DataSource;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.quartz.CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING;
+
 @Configuration
 @Conditional(SchedulerConfigCondition.class)
 public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
-    
-    @PersistenceContext
-    private EntityManager entityManager;
 
     @Bean(destroyMethod = "destroy")
     public SchedulerFactoryBean ptisScheduler(DataSource dataSource) {
@@ -192,12 +185,11 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
         return collectionAchievementsCron;
     }
 
-    
     @Bean("bulkBillGenerationJob0")
     public BulkBillGenerationJob bulkBillGenerationJob0() {
         BulkBillGenerationJob bulkBillGenerationJob = new BulkBillGenerationJob();
         bulkBillGenerationJob.setModulo(0);
-        bulkBillGenerationJob.setBillsCount(100);
+        bulkBillGenerationJob.setBillsCount(50);
         return bulkBillGenerationJob;
     }
 
@@ -205,7 +197,7 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
     public BulkBillGenerationJob bulkBillGenerationJob1() {
         BulkBillGenerationJob bulkBillGenerationJob = new BulkBillGenerationJob();
         bulkBillGenerationJob.setModulo(1);
-        bulkBillGenerationJob.setBillsCount(100);
+        bulkBillGenerationJob.setBillsCount(50);
         return bulkBillGenerationJob;
     }
 
@@ -213,7 +205,7 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
     public BulkBillGenerationJob bulkBillGenerationJob2() {
         BulkBillGenerationJob bulkBillGenerationJob = new BulkBillGenerationJob();
         bulkBillGenerationJob.setModulo(2);
-        bulkBillGenerationJob.setBillsCount(100);
+        bulkBillGenerationJob.setBillsCount(50);
         return bulkBillGenerationJob;
     }
 
@@ -221,7 +213,7 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
     public BulkBillGenerationJob bulkBillGenerationJob3() {
         BulkBillGenerationJob bulkBillGenerationJob = new BulkBillGenerationJob();
         bulkBillGenerationJob.setModulo(3);
-        bulkBillGenerationJob.setBillsCount(100);
+        bulkBillGenerationJob.setBillsCount(50);
         return bulkBillGenerationJob;
     }
 
@@ -229,7 +221,7 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
     public BulkBillGenerationJob bulkBillGenerationJob4() {
         BulkBillGenerationJob bulkBillGenerationJob = new BulkBillGenerationJob();
         bulkBillGenerationJob.setModulo(4);
-        bulkBillGenerationJob.setBillsCount(100);
+        bulkBillGenerationJob.setBillsCount(50);
         return bulkBillGenerationJob;
     }
 
@@ -285,10 +277,9 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
     }
 
     private JobDetailFactoryBean createJobDetailFactory(int modulo) {
-        final City city = (City) entityManager.createQuery("from City").getSingleResult();
         JobDetailFactoryBean ptisBulkBillGenerationJobDetail = new JobDetailFactoryBean();
         ptisBulkBillGenerationJobDetail.setGroup("PTIS_JOB_GROUP");
-        ptisBulkBillGenerationJobDetail.setName("PTIS_BULK_BILL_GEN_" + modulo + "_JOB_" + city.getCode());
+        ptisBulkBillGenerationJobDetail.setName("PTIS_BULK_BILL_GEN_" + modulo + "_JOB");
         ptisBulkBillGenerationJobDetail.setDurability(true);
         ptisBulkBillGenerationJobDetail.setJobClass(BulkBillGenerationJob.class);
         ptisBulkBillGenerationJobDetail.setRequestsRecovery(true);
@@ -302,11 +293,10 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
     }
 
     private CronTriggerFactoryBean createCronTrigger(JobDetailFactoryBean jobDetail, int modulo) {
-        final City city = (City) entityManager.createQuery("from City").getSingleResult();
         CronTriggerFactoryBean bulkBillGenerationCron = new CronTriggerFactoryBean();
         bulkBillGenerationCron.setJobDetail(jobDetail.getObject());
         bulkBillGenerationCron.setGroup("PTIS_TRIGGER_GROUP");
-        bulkBillGenerationCron.setName("PTIS_BULK_BILL_GEN_" + modulo + "_TRIGGER_" + city.getCode());
+        bulkBillGenerationCron.setName("PTIS_BULK_BILL_GEN_" + modulo + "_TRIGGER");
         bulkBillGenerationCron.setCronExpression("0 */2 * * * ?");
         bulkBillGenerationCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
         return bulkBillGenerationCron;

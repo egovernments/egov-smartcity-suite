@@ -50,12 +50,10 @@ package org.egov.ptis.scheduler;
 import org.apache.log4j.Logger;
 import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
 import org.egov.ptis.service.DemandBill.DemandBillService;
-import org.quartz.DisallowConcurrentExecution;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
-@DisallowConcurrentExecution
 public class BulkBillGenerationJob extends AbstractQuartzJob {
 
     private static final long serialVersionUID = 8529011650151018147L;
@@ -66,7 +64,7 @@ public class BulkBillGenerationJob extends AbstractQuartzJob {
     private Integer modulo;
 
     @Autowired
-    private ApplicationContext beanProvider;
+    private transient ApplicationContext beanProvider;
 
     @Override
     public void executeJob() {
@@ -75,7 +73,7 @@ public class BulkBillGenerationJob extends AbstractQuartzJob {
         try {
             demandBillService = beanProvider.getBean("demandBillService", DemandBillService.class);
         } catch (NoSuchBeanDefinitionException e) {
-            LOGGER.warn("DemandBillService implementation not found");
+            LOGGER.warn("DemandBillService implementation not found " + e);
         }
         if (demandBillService != null)
             demandBillService.bulkBillGeneration(modulo, billsCount);
