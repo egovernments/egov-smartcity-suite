@@ -47,21 +47,7 @@
  */
 package org.egov.stms.transactions.service;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillAccountDetails;
 import org.egov.collection.integration.models.BillAccountDetails.PURPOSE;
@@ -116,12 +102,20 @@ import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.http.MediaType;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)
@@ -154,23 +148,12 @@ public class SewerageThirdPartyServices {
     private SewerageBillServiceImpl sewerageBillServiceImpl;
     private String currentDemand = "currentDemand";
     private static final String WTMS_TAXDUE_RESTURL = "%s/wtms/rest/watertax/due/byptno/%s";
-    
-    private static final Logger LOGGER = Logger.getLogger(SewerageThirdPartyServices.class);
+    private static final String PTIS_DETAILS_RESTURL = "%s/ptis/rest/property/{assessmentNumber}";
 
 
     public AssessmentDetails getPropertyDetails(final String assessmentNumber, final HttpServletRequest request) {
         final RestTemplate restTemplate = new RestTemplate();
-        List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();        
-        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-        converter.setSupportedMediaTypes(Arrays.asList(MediaType.ALL));         
-        messageConverters.add(converter);  
-        restTemplate.setMessageConverters(messageConverters);
-        final String url = request.getProtocol().substring(0, request.getProtocol().indexOf('/')).toLowerCase() + "://"
-                + request.getServerName()+":"+request.getServerPort()
-                + "/ptis/rest/property/{assessmentNumber}";
-        if (LOGGER.isInfoEnabled()) {
-            LOGGER.info("PROPERTYTAX REST URL FOR SEWERAGETAX : "+url);
-        }
+        final String url = String.format(PTIS_DETAILS_RESTURL, WebUtils.extractRequestDomainURL(request, false));
         return restTemplate.getForObject(url, AssessmentDetails.class,
                 assessmentNumber);
 
