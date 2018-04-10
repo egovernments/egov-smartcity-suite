@@ -82,7 +82,7 @@
 		<band height="40">
 			<image>
 				<reportElement x="10" y="0" width="40" height="40" uuid="a7e55e08-a858-4dbc-a0fb-af92b2efd2e0"/>
-				<imageExpression><![CDATA[$P{CITY_LOGO_PATH}]]></imageExpression>
+				<imageExpression><![CDATA[ReportUtil.logoBasePath()]]></imageExpression>
 			</image>
 			<staticText>
 				<reportElement x="203" y="20" width="136" height="20" uuid="de6a23dd-4c47-4f66-8d8a-0d2511c8036e"/>
