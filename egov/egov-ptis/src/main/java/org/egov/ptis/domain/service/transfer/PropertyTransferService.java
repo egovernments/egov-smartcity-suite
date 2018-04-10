@@ -73,8 +73,6 @@ import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.DateUtils;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
@@ -132,6 +130,7 @@ import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
@@ -224,9 +223,9 @@ public class PropertyTransferService {
 
     @PersistenceContext
     private EntityManager entityManager;
-
+    
     @Transactional
-    public void initiatePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
+    public void initiatePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation, final String oldTransferReason) {
         propertyMutation.setBasicProperty(basicProperty);
         propertyMutation.setProperty(basicProperty.getActiveProperty());
         defineDocumentValue(propertyMutation);
@@ -238,7 +237,7 @@ public class PropertyTransferService {
         createUserIfNotExist(propertyMutation, propertyMutation.getTransfereeInfosProxy());
         basicProperty.getPropertyMutations().add(propertyMutation);
         basicProperty.setUnderWorkflow(true);
-        processAndStoreDocument(propertyMutation.getDocuments());
+        processAndStoreDocument(propertyMutation, null);
 
         propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
         mutationRegistrationService.persist(propertyMutation.getMutationRegistrationDetails());
@@ -267,9 +266,8 @@ public class PropertyTransferService {
     }
 
     @Transactional
-    public void updatePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
-        processAndStoreDocument(propertyMutation.getDocuments());
-        checkAllMandatoryDocumentsAttached(propertyMutation);
+    public void updatePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation, final String oldTransferReason) {
+        processAndStoreDocument(propertyMutation, oldTransferReason);
         updateMutationFee(propertyMutation);
         defineDocumentValue(propertyMutation);
         createUserIfNotExist(propertyMutation, propertyMutation.getTransfereeInfosProxy());
@@ -318,7 +316,7 @@ public class PropertyTransferService {
     }
 
     public PropertyImpl getActiveProperty(final String upicNo) {
-        final javax.persistence.Query qry = entityManager.createNamedQuery("ACTIVE_PROPERTY_BYUPICNO");
+        Query qry = entityManager.createNamedQuery("ACTIVE_PROPERTY_BYUPICNO");
         qry.setParameter("upicNo", upicNo);
         qry.setParameter("status", STATUS_ISACTIVE);
         return (PropertyImpl) qry.getSingleResult();
@@ -329,13 +327,13 @@ public class PropertyTransferService {
     }
 
     public List<DocumentType> getPropertyTransferDocumentTypes() {
-        final javax.persistence.Query qry = entityManager.createNamedQuery(DocumentType.DOCUMENTTYPE_BY_TRANSACTION_TYPE);
+        Query qry = entityManager.createNamedQuery(DocumentType.DOCUMENTTYPE_BY_TRANSACTION_TYPE);
         qry.setParameter("transactionType", TransactionType.TRANSFER);
         return qry.getResultList();
     }
 
     public List<DocumentType> getSuccessionDouments() {
-        final javax.persistence.Query qry = entityManager.createNamedQuery(DocumentType.DOCUMENTTYPE_BY_TRANSACTION_TYPE);
+        Query qry = entityManager.createNamedQuery(DocumentType.DOCUMENTTYPE_BY_TRANSACTION_TYPE);
         qry.setParameter("transactionType", TransactionType.SUCCESSION_TRANSFER);
         return qry.getResultList();
     }
@@ -349,7 +347,7 @@ public class PropertyTransferService {
     }
 
     public PropertyMutation getPropertyMutationByApplicationNo(final String applicationNo) {
-        final javax.persistence.Query qry = entityManager.createNamedQuery("BY_APPLICATION_NO");
+        Query qry = entityManager.createNamedQuery("BY_APPLICATION_NO");
         qry.setParameter("applicationNo", applicationNo);
         return (PropertyMutation) qry.getSingleResult();
     }
@@ -359,7 +357,6 @@ public class PropertyTransferService {
         final BasicProperty basicProperty = getBasicPropertyByUpicNo(assessmentNo);
         if (null != basicProperty)
             for (final PropertyMutation propertyMutation : basicProperty.getPropertyMutations())
-                // Checking for mutation object which is in workflow
                 if (!propertyMutation.getState().getValue().equals(WF_STATE_CLOSED)) {
                     currentPropertyMutation = propertyMutation;
                     break;
@@ -502,13 +499,6 @@ public class PropertyTransferService {
         return reportOutput;
     }
 
-    private void checkAllMandatoryDocumentsAttached(final PropertyMutation propertyMutation) {
-        for (final Document document : propertyMutation.getDocuments())
-            if ((document.getType().isMandatory() || document.isEnclosed()) && document.getFiles().isEmpty())
-                throw new ValidationException(new ValidationError("documents",
-                        "Please attach mandatory/marked enclosed documents."));
-    }
-
     private void createUserIfNotExist(final PropertyMutation propertyMutation,
                                       final List<PropertyMutationTransferee> transferees) {
         propertyMutation.getTransfereeInfos().clear();
@@ -529,7 +519,7 @@ public class PropertyTransferService {
                                     userList.get(i).getName().equalsIgnoreCase(transferee.getTransferee().getName()))
                                 user = userList.get(i);
                 } else {
-                    final javax.persistence.Query qry = entityManager.createNamedQuery("USER_BY_NAMEANDMOBILENO");
+                    Query qry = entityManager.createNamedQuery("USER_BY_NAMEANDMOBILENO");
                     qry.setParameter("name", transferee.getTransferee().getName());
                     qry.setParameter("mobileNumber", transferee.getTransferee().getMobileNumber());
                     qry.setParameter("gender", transferee.getTransferee().getGender());
@@ -569,7 +559,32 @@ public class PropertyTransferService {
         }
     }
 
-    private void processAndStoreDocument(final List<Document> documents) {
+    private void processAndStoreDocument(final PropertyMutation propertyMutation, final String oldTransferReason) {
+        if (StringUtils.isNotBlank(oldTransferReason)
+                && !oldTransferReason.equals(propertyMutation.getMutationReason().getId().toString()))
+            propertyMutation.getDocuments().clear();
+        if (propertyMutation.getDocuments().isEmpty() && !propertyMutation.getDocumentsProxy().isEmpty())
+            propertyMutation.setDocuments(propertyMutation.getDocumentsProxy());
+        else
+            updateDocuments(propertyMutation);
+        saveDocuments(propertyMutation.getDocuments());
+    }
+
+    private void updateDocuments(final PropertyMutation propertyMutation) {
+        for (Document document : propertyMutation.getDocuments())
+            for (Document applicationDocument : propertyMutation.getDocumentsProxy())
+                if (applicationDocument.getType().getId() == document.getType().getId()
+                        && !applicationDocument.getUploadsFileName().isEmpty()) {
+                    if (!document.getFiles().isEmpty())
+                        document.getFiles().clear();
+                    final FileStoreMapper fileStore = fileStoreService.store(applicationDocument.getUploads().get(0),
+                            applicationDocument.getUploadsFileName().get(0),
+                            applicationDocument.getUploadsContentType().get(1), FILESTORE_MODULE_NAME);
+                    document.getFiles().add(fileStore);
+                }
+    }
+
+    private void saveDocuments(final List<Document> documents) {
         documents.forEach(document -> {
             if (!document.getUploads().isEmpty()) {
                 int fileCount = 0;
@@ -582,7 +597,7 @@ public class PropertyTransferService {
                     document.getFiles().add(fileStore);
                 }
             }
-            if (document.getId() == null || document.getType() == null)
+            if (document.getType() != null)
                 document.setType(entityManager.find(DocumentType.class, document.getType().getId()));
         });
     }
@@ -625,9 +640,9 @@ public class PropertyTransferService {
         return propertyTaxUtil.getDesignationForUser(ApplicationThreadLocals.getUserId());
     }
 
-    public PropertyMutation initiatePropertyTransfer(final BasicProperty basicproperty, final PropertyMutation propertyMutation,
+    public PropertyMutation initiatePropertyTransfer(final BasicProperty basicproperty, final PropertyMutation propertyMutation, final String oldMutationReason,
                                                      final HashMap<String, String> meesevaParams) {
-        initiatePropertyTransfer(basicproperty, propertyMutation);
+        initiatePropertyTransfer(basicproperty, propertyMutation, null);
         return propertyMutation;
     }
 
@@ -741,7 +756,6 @@ public class PropertyTransferService {
      */
     public BigDecimal calculateMutationFee(final BigDecimal partyValue, final BigDecimal departmentValue) {
         BigDecimal mutationFee = BigDecimal.ZERO;
-        // Maximum among partyValue and departmentValue will be considered as the documentValue
         BigDecimal documentValue = partyValue.compareTo(departmentValue) > 0 ? partyValue : departmentValue;
 
         if (documentValue.compareTo(BigDecimal.ZERO) > 0) {

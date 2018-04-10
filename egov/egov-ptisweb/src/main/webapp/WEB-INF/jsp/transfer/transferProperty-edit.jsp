@@ -91,6 +91,13 @@
 			document.forms[0].action = '/ptis/property/transfer/reject.action';
 		}
 		document.forms[0].submit;
+			
+		var obj = document.getElementById("transRsnId");
+			var selectedValue = obj.options[obj.selectedIndex].text;
+			if (selectedValue == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_SUCCESSION}" />')
+				jQuery('#otherReasons').remove();
+			else
+				jQuery('#succession').remove();
 		return true;
 	}
 </script>
@@ -258,6 +265,7 @@
 									listValue="mutationName" headerKey="-1"
 									headerValue="%{getText('default.select')}"
 									value="%{mutationReason.id}" onchange="enableBlock();" /></td>
+									<s:hidden id="oldTransferReason" name="oldTransferReason" value="%{mutationReason.id}"/>
 									<td class="bluebox decreeDetailsRow"><s:text name="decreeNum" /><span
 								class="mandatory1">*</span> :</td>
 							<td class="bluebox decreeDetailsRow"><s:textfield name="decreeNumber" id="decreeNum"
@@ -343,13 +351,16 @@
 					</s:else>
 					</table>
 				</table>
-				<s:if
-					test="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_SUCCESSION.equalsIgnoreCase(mutationReason.mutationName) && !successionDocs.isEmpty()}">
-					<%@ include file="succession-documents.jsp"%>
-				</s:if>
-				<s:elseif test="%{!documentTypes.isEmpty()}">
-						<%@ include file="../common/DocumentUploadForm.jsp"%>
-				</s:elseif>
+				<div class="panel-body custom-form" id="otherReasons">
+						<s:if test="%{!documentTypes.isEmpty()}">
+							<jsp:include page="transfer-documentform.jsp" />
+						</s:if>
+					</div>
+					<div class="panel-body custom-form" id="succession">
+						<s:if test="%{!successionDocs.isEmpty() && !(@org.egov.ptis.constants.PropertyTaxConstants@ADDTIONAL_RULE_FULL_TRANSFER.equalsIgnoreCase(type))}">
+							<jsp:include page="succession-documentform.jsp" />
+						</s:if>
+					</div>
 				<s:if test="%{state != null}">
 					<tr>
 						<%@ include file="../common/workflowHistoryView.jsp"%>
@@ -390,8 +401,31 @@
 					jQuery("td.deedDetailsRow").show();
 				}
 			}
+			if (selectedValue == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_SUCCESSION}" />') {
+				jQuery('#succession').show();
+				jQuery('#otherReasons').hide();
+			}
+			else {
+				jQuery('#succession').hide();
+				jQuery('#otherReasons').show();
+			} 
 		}
-
+		jQuery('#transRsnId').change(function() {
+			var transferReason = jQuery('#transRsnId :selected').text();
+			attachmentToggle(transferReason);
+		});
+		
+		 function attachmentToggle(transferReason){
+				if(transferReason=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_SUCCESSION}" />'){
+					jQuery('#succession').show();
+					jQuery('#otherReasons').hide();
+				}
+				else {
+					jQuery('#succession').hide();
+					jQuery('#otherReasons').show();
+					}
+			}
+		
 		function deleteTranferee(obj) {
 			if (jQuery('#nameTable tr').length > 2) {
 				var transfereeId = jQuery(obj).data('server');

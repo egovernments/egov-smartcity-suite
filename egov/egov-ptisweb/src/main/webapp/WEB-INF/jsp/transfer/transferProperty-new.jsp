@@ -310,12 +310,12 @@
 					</table>
 					<div class="panel-body custom-form" id="otherReasons">
 						<s:if test="%{!documentTypes.isEmpty()}">
-							<jsp:include page="../common/DocumentUploadForm.jsp" />
+							<jsp:include page="transfer-documentform.jsp" />
 						</s:if>
 					</div>
 					<div class="panel-body custom-form" id="succession">
 						<s:if test="%{!successionDocs.isEmpty() && !(@org.egov.ptis.constants.PropertyTaxConstants@ADDTIONAL_RULE_FULL_TRANSFER.equalsIgnoreCase(type))}">
-							<jsp:include page="succession-documents.jsp" />
+							<jsp:include page="succession-documentform.jsp" />
 						</s:if>
 					</div>
 					<s:if test="%{!(@org.egov.ptis.constants.PropertyTaxConstants@ADDTIONAL_RULE_FULL_TRANSFER.equalsIgnoreCase(type) 
@@ -376,7 +376,6 @@
 				jQuery("td.deedDetailsRow").show();
 				 }
 			}
-			var detachObj=jQuery('#otherReasons');
 			if (selectedValue == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_SUCCESSION}" />') {
 				jQuery('#succession').show();
 				jQuery('#otherReasons').hide();

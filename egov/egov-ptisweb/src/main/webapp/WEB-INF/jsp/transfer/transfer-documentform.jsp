@@ -60,7 +60,7 @@
 
 	<tr>
 		<td colspan="5">
-			<table class="tablebottom successiondoctable" id="successionTable" width="100%"
+			<table class="tablebottom doctable" id="transferTable" width="100%"
 				border="0" cellpadding="0" cellspacing="0">
 				<tbody>
 					<tr>
@@ -68,67 +68,53 @@
 						<th class="bluebgheadtd"><s:text name="doctable.doctype" /></th>
 						<th class="bluebgheadtd"><s:text name="upload.file" /></th>
 					</tr>
-					<s:iterator value="successionDocs" status="status"
+					<s:iterator value="documentTypes" status="status"
 						var="documentType">
 						<tr>
 							<td class="blueborderfortd" style="text-align: left"><span
 								class="bold"><s:property value="#status.index + 1" /></span></td>
 							<td class="blueborderfortd" style="text-align: left"><s:property
-									value="name" />
-								<s:if test="mandatory">
+									value="name" /> <s:if test="mandatory">
 									<span class="mandatory1">*</span>
 								</s:if></td>
 							<td class="blueborderfortd" style="text-align: left"><s:if
-									test="%{documents.isEmpty()}">
-									<s:hidden name="documents[%{#status.index}].type.id"
-										value="%{id}"></s:hidden>
+									test="%{otherDocuments.isEmpty()}">
+									<s:hidden name="documentsProxy[%{#status.index}].type.id" value="%{id}"></s:hidden>
 									<s:if test="mandatory">
-										<s:file name="documents[%{#status.index}].uploads"
-											value="%{documents[#status.index].uploads}"
+										<s:file name="documentsProxy[%{#status.index}].uploads"
+											value="%{documentsProxy[#status.index].uploads}"
 											cssClass="button validateDocs" required="true" />
 									</s:if>
 									<s:else>
-										<s:file name="documents[%{#status.index}].uploads"
-											value="%{documents[#status.index].uploads}" cssClass="button" />
+										<s:file name="documentsProxy[%{#status.index}].uploads"
+											value="%{documentsProxy[#status.index].uploads}"
+											cssClass="button" />
 									</s:else>
-								</s:if> <s:elseif test="%{documents[#status.index].files.isEmpty()}">
-									<s:if
-										test="%{documents[#status.index].id == null || documents[#status.index].type == null}">
-										<s:hidden name="documents[%{#status.index}].type.id"
-											value="%{id}"></s:hidden>
-									</s:if>
-									<s:hidden name="documents[%{#status.index}].id" />
-									<s:if test="mandatory">
-										<s:file name="documents[%{#status.index}].uploads"
-											value="%{documents[#status.index].uploads}"
-											cssClass="button validateDocs" required="true" />
-									</s:if>
-									<s:else>
-										<s:file name="documents[%{#status.index}].uploads"
-											value="%{documents[#status.index].uploads}" cssClass="button" />
-									</s:else>
-								</s:elseif> <s:else>
-									<s:iterator value="%{documents[#status.index].files}">
-										<s:hidden name="documents[%{#status.index}].id" />
+								</s:if> <s:elseif
+									test="%{!otherDocuments[#status.index].files.isEmpty()}">
+									<s:iterator value="%{documentsProxy[#status.index].files}">
+										<s:hidden name="documentsProxy[%{#status.index}].type.id"></s:hidden>
 										<s:if test="%{allowEditDocument}">
-											<s:file name="documents[%{#status.index}].uploads"
-												value="%{documents[#status.index].uploads}"
-												cssClass="button" />
-											<a
-												href="javascript:viewDocument('<s:property value="fileStoreId"/>')">
-												<s:property value="%{fileName}" />
-											</a>
+										<s:file name="documentsProxy[%{#status.index}].uploads"
+											value="%{documentsProxy[#status.index].uploads}"
+											cssClass="button" />
+									<a
+											href="javascript:viewDocument('<s:property value="fileStoreId"/>')">
+											<s:property value="%{fileName}" />
+										</a> 
 										</s:if>
-										<s:else>
-											<a
-												href="javascript:viewDocument('<s:property value="fileStoreId"/>')">
-												<s:property value="%{fileName}" />
-											</a>
-										</s:else>
+										<else> <a
+											href="javascript:viewDocument('<s:property value="fileStoreId"/>')">
+											<s:property value="%{fileName}" />
+										</a> </else>
 									</s:iterator>
+								</s:elseif> <s:else>
+								<s:hidden name="documentsProxy[%{#status.index}].type.id"></s:hidden>
+									<s:file name="documentsProxy[%{#status.index}].uploads"
+										value="%{documentsProxy[#status.index].uploads}"
+										cssClass="button" />
 								</s:else></td>
 						</tr>
-						<s:set value="%{#status.index + 1}" var="OldMaxIndex" />
 					</s:iterator>
 				</tbody>
 			</table>
@@ -143,7 +129,7 @@
 				'scrollbars=yes,resizable=no,height=400,width=400,status=yes');
 	}
 
-	jQuery(".successiondoctable input:file")
+	jQuery(".doctable input:file")
 			.change(
 					function() {
 						var fileName = jQuery(this).val();

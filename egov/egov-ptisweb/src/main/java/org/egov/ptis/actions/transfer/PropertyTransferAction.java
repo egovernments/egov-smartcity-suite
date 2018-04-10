@@ -197,7 +197,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private transient PositionMasterService positionMasterService;
     
     @PersistenceContext
-    private EntityManager entityManager;
+    private transient EntityManager entityManager;
 
     // Model and View data
     private Long mutationId;
@@ -255,6 +255,10 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private Boolean endorsementRequired = Boolean.FALSE;
     private String assessmentNumber;
     private String applicationNumber;
+    private String oldTransferReason;
+    private List<Document> successionDocuments = new ArrayList<>();
+    private List<Document> otherDocuments = new ArrayList<>();
+    
 
 
     public PropertyTransferAction() {
@@ -341,12 +345,12 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 				ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())));
         loggedUserIsMeesevaUser = propertyService.isMeesevaUser(transferOwnerService.getLoggedInUser());
         if (!loggedUserIsMeesevaUser)
-            transferOwnerService.initiatePropertyTransfer(basicproperty, propertyMutation);
+            transferOwnerService.initiatePropertyTransfer(basicproperty, propertyMutation, oldTransferReason);
         else {
             final HashMap<String, String> meesevaParams = new HashMap<>();
             meesevaParams.put("APPLICATIONNUMBER", propertyMutation.getMeesevaApplicationNumber());
             propertyMutation.setApplicationNo(propertyMutation.getMeesevaApplicationNumber());
-            transferOwnerService.initiatePropertyTransfer(basicproperty, propertyMutation, meesevaParams);
+            transferOwnerService.initiatePropertyTransfer(basicproperty, propertyMutation, oldTransferReason, meesevaParams);
         }
 
         buildSMS(propertyMutation);
@@ -382,6 +386,12 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         isReassignEnabled = reassignmentservice.isReassignEnabled();
         stateAwareId = propertyMutation.getId();
         transactionType = APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
+        if(!propertyMutation.getDocuments().isEmpty())
+            propertyMutation.setDocumentsProxy(propertyMutation.getDocuments());
+         if(propertyMutation.getMutationReason().getMutationName().equals(MUTATIONRS_SUCCESSION))
+             setSuccessionDocuments(propertyMutation.getDocumentsProxy());
+         else 
+             setOtherDocuments(propertyMutation.getDocumentsProxy());
         if (propertyMutation.getState() != null) {
             ownersName = propertyMutation.getBasicProperty().getFullOwnerName();
             applicationNumber = propertyMutation.getApplicationNo();
@@ -457,7 +467,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 return EDIT;
             }
             transitionWorkFlow(propertyMutation);
-            transferOwnerService.updatePropertyTransfer(basicproperty, propertyMutation);
+            transferOwnerService.updatePropertyTransfer(basicproperty, propertyMutation, oldTransferReason);
         } else {
             transitionWorkFlow(propertyMutation);
             transferOwnerService.viewPropertyTransfer(basicproperty, propertyMutation);
@@ -641,7 +651,6 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         if (!(actionInvoked.equals(SEARCH) || actionInvoked.equals("collectFee"))) {
             if (StringUtils.isNotBlank(assessmentNo) && mutationId == null)
                 basicproperty = transferOwnerService.getBasicPropertyByUpicNo(assessmentNo);
-
             if (mutationId != null) {
                 final javax.persistence.Query qry = entityManager.createNamedQuery("BY_MUTATION_ID");
                 qry.setParameter("id", mutationId);
@@ -704,22 +713,6 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             addActionError(getText("mandatory.party.value"));
         if (propertyMutation.getDepartmentValue() == null)
             addActionError(getText("mandatory.department.value"));
-        boolean anyDocIsMandatory = false;
-        for (final DocumentType docTypes : documentTypes)
-            if (docTypes.isMandatory()) {
-                anyDocIsMandatory = true;
-                break;
-            }
-
-        if (anyDocIsMandatory)
-            if (propertyMutation.getDocuments().isEmpty())
-                addActionError("Please attach the mandatory documents.");
-            else
-                for (final Document document : propertyMutation.getDocuments())
-                    if (document.isEnclosed() && document.getFiles().isEmpty())
-                        addActionError(document.getType()
-                                + " document marked as enclosed, please add the relavent documents.");
-        // To set proxy list at approval stage
         if (propertyMutation.getState() != null && propertyMutation.getState().getValue() != null
                 && (propertyMutation.getState().getValue().equalsIgnoreCase(WF_STATE_REVENUE_OFFICER_APPROVED)
                 || propertyMutation.getState().getValue().equalsIgnoreCase(WF_STATE_REGISTRATION_COMPLETED)
@@ -1438,5 +1431,29 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
     public void setSuccessionDocs(List<DocumentType> successionDocs) {
         this.successionDocs = successionDocs;
+    }
+
+    public String getOldTransferReason() {
+        return oldTransferReason;
+    }
+
+    public void setOldTransferReason(String oldTransferReason) {
+        this.oldTransferReason = oldTransferReason;
+    }
+
+    public List<Document> getSuccessionDocuments() {
+        return successionDocuments;
+    }
+
+    public void setSuccessionDocuments(List<Document> successionDocuments) {
+        this.successionDocuments = successionDocuments;
+    }
+
+    public List<Document> getOtherDocuments() {
+        return otherDocuments;
+    }
+
+    public void setOtherDocuments(List<Document> otherDocuments) {
+        this.otherDocuments = otherDocuments;
     }
 }
