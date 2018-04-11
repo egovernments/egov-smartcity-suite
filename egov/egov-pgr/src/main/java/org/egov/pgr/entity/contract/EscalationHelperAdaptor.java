@@ -61,12 +61,11 @@ public class EscalationHelperAdaptor implements JsonSerializer<EscalationHelper>
     public JsonElement serialize(EscalationHelper escalationHelper, Type type, JsonSerializationContext jsc) {
         JsonObject jsonObject = new JsonObject();
         if (escalationHelper != null) {
-            jsonObject.addProperty("positionFrom", null != escalationHelper.getFromPosition() ? escalationHelper
-                    .getFromPosition().getName() : "NA");
-            jsonObject.addProperty("grievanceType", null != escalationHelper.getComplaintType() ? escalationHelper.getComplaintType().getName() : "");
-            jsonObject.addProperty("positionTo", null != escalationHelper.getToPosition() ? escalationHelper
-                    .getToPosition().getName() : "");
-
+            jsonObject.addProperty("positionFrom", escalationHelper.getFromPosition() == null ? "NA" : escalationHelper
+                    .getFromPosition().getName());
+            jsonObject.addProperty("grievanceType", escalationHelper.getComplaintType() == null ? "" : escalationHelper.getComplaintType().getName());
+            jsonObject.addProperty("positionTo", escalationHelper.getToPosition() == null ? "" : escalationHelper
+                    .getToPosition().getName());
         }
         return jsonObject;
     }

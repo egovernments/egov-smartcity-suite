@@ -294,9 +294,8 @@ public class ComplaintEscalationService {
         if (compType != null && escalationForm.getEscalationList() != null && !escalationForm.getEscalationList().isEmpty())
             for (Escalation escalation : escalationForm.getEscalationList()) {
                 if (escalation.getDesignation() != null) {
-                    Designation desig = designationService.getDesignationById(escalation.getDesignation().getId());
                     escalation.setComplaintType(compType);
-                    escalation.setDesignation(desig);
+                    escalation.setDesignation(designationService.getDesignationById(escalation.getDesignation().getId()));
                     escalation.setNoOfHrs(escalation.getNoOfHrs());
                     create(escalation);
                 }
@@ -306,8 +305,8 @@ public class ComplaintEscalationService {
     public List<EscalationHelper> viewEscalation(Long positionId, Long complaintId) {
         List<ComplaintType> activeComplaintTypes = complaintTypeService.findActiveComplaintTypes();
         List<EscalationHierarchy> escalationHierarchies = escalationHierarchyService
-                .getHeirarchiesByFromPositionAndGrievanceType(positionId, complaintId)
-                .stream()
+                .getHeirarchiesByFromPositionAndGrievanceType(positionId, complaintId);
+        escalationHierarchies.stream()
                 .filter(posHir -> activeComplaintTypes.contains(posHir.getGrievanceType()))
                 .collect(Collectors.toList());
         return getEscalationDetailByEscalationHierarchy(escalationHierarchies);

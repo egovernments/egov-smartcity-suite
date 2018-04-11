@@ -56,7 +56,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -65,9 +64,6 @@ public class EscalationHierarchyService {
 
     @Autowired
     private EscalationHierarchyRepository escalationHierarchyRepository;
-
-    @Autowired
-    private ComplaintTypeService complaintTypeService;
 
     @Transactional
     public void save(final EscalationHierarchy escalationHierarchy) {
@@ -92,18 +88,18 @@ public class EscalationHierarchyService {
     }
 
     public List<EscalationHierarchy> getHeirarchiesByFromPositionAndGrievanceType(Long fromPositionId, Long grievanceTypeId) {
-        if (fromPositionId != 0 && grievanceTypeId != 0) {
+        if (fromPositionId > 0 && grievanceTypeId > 0) {
             List<EscalationHierarchy> escalationHierarchy = new ArrayList<>();
-            escalationHierarchy.add(escalationHierarchyRepository.findByFromPositionIdAndGrievanceTypeId(fromPositionId, grievanceTypeId));
+            EscalationHierarchy hierarchy = escalationHierarchyRepository.findByFromPositionIdAndGrievanceTypeId(fromPositionId, grievanceTypeId);
+            if (hierarchy != null)
+                escalationHierarchy.add(hierarchy);
             return escalationHierarchy;
-        } else if (fromPositionId == 0 && grievanceTypeId != 0)
+        } else if (grievanceTypeId > 0)
             return escalationHierarchyRepository.findByGrievanceTypeId(grievanceTypeId);
-        else if (fromPositionId != 0 && grievanceTypeId == 0)
+        else if (fromPositionId > 0)
             return escalationHierarchyRepository.findByFromPositionIdOrderByGrievanceTypeId(fromPositionId);
-        else if (fromPositionId == 0 && grievanceTypeId == 0)
-            return escalationHierarchyRepository.findAll();
         else
-            return Collections.emptyList();
+            return escalationHierarchyRepository.findAll();
     }
 
     public List<EscalationHierarchy> getHeirarchiesByFromPositionAndGrievanceTypes(final List<ComplaintType> grievanceTypes,
