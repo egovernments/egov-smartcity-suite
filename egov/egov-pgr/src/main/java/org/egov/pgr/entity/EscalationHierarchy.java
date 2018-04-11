@@ -45,46 +45,78 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
+package org.egov.pgr.entity;
 
-package org.egov.pgr.web.controller.masters.escalation;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.pims.commons.Position;
 
-import org.egov.pgr.entity.EscalationHierarchy;
-import org.egov.pgr.entity.contract.EscalationHelper;
-import org.egov.pgr.entity.contract.EscalationHelperAdaptor;
-import org.egov.pgr.service.ComplaintEscalationService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.GeneratedValue;
+import javax.persistence.ManyToOne;
+import javax.persistence.JoinColumn;
+import javax.persistence.FetchType;
+import javax.persistence.GenerationType;
+import javax.validation.constraints.NotNull;
 
-import static org.egov.infra.utils.JsonUtils.toJSON;
+import static org.egov.pgr.entity.EscalationHierarchy.SEQ_ESCALATIONHIERARCHY;
 
-@Controller
-@RequestMapping("/complaint/escalation/view")
-public class ViewEscalationController {
+@Entity
+@Table(name = "egpgr_escalationhierarchy")
+@SequenceGenerator(name = SEQ_ESCALATIONHIERARCHY, sequenceName = SEQ_ESCALATIONHIERARCHY, allocationSize = 1)
+public class EscalationHierarchy extends AbstractAuditable {
+    public static final String SEQ_ESCALATIONHIERARCHY = "SEQ_EGPGR_ESCALATIONHIERARCHY";
+    private static final long serialVersionUID = -6097906596110329202L;
+    @Id
+    @GeneratedValue(generator = SEQ_ESCALATIONHIERARCHY, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-    @Autowired
-    private ComplaintEscalationService complaintEscalationService;
+    @NotNull
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "fromposition")
+    private Position fromPosition;
 
-    @ModelAttribute
-    public EscalationHierarchy escalationHierarchy() {
-        return new EscalationHierarchy();
+    @NotNull
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "toposition")
+    private Position toPosition;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "grievancetype")
+    private ComplaintType grievanceType;
+
+    public Long getId() {
+        return id;
     }
 
-    @GetMapping
-    public String viewEscalationForm() {
-        return "escalation-view";
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    @GetMapping(value = "/", produces = MediaType.TEXT_PLAIN_VALUE)
-    @ResponseBody
-    public String viewEscalation(@RequestParam Long positionId,
-                                 @RequestParam Long complaintId) {
-        return new StringBuilder("{ \"data\":").append(toJSON(complaintEscalationService.viewEscalation(positionId, complaintId),
-                EscalationHelper.class, EscalationHelperAdaptor.class)).append("}").toString();
+    public Position getFromPosition() {
+        return fromPosition;
+    }
+
+    public void setFromPosition(Position fromPosition) {
+        this.fromPosition = fromPosition;
+    }
+
+    public Position getToPosition() {
+        return toPosition;
+    }
+
+    public void setToPosition(Position toPosition) {
+        this.toPosition = toPosition;
+    }
+
+    public ComplaintType getGrievanceType() {
+        return grievanceType;
+    }
+
+    public void setGrievanceType(ComplaintType grievanceType) {
+        this.grievanceType = grievanceType;
     }
 }

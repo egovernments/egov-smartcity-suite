@@ -49,13 +49,9 @@
 package org.egov.pgr.service;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.egov.commons.ObjectType;
-import org.egov.commons.service.ObjectTypeService;
 import org.egov.eis.entity.Assignment;
-import org.egov.eis.entity.PositionHierarchy;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
-import org.egov.eis.service.PositionHierarchyService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
@@ -64,6 +60,7 @@ import org.egov.pgr.elasticsearch.service.ComplaintIndexService;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.Escalation;
+import org.egov.pgr.entity.EscalationHierarchy;
 import org.egov.pgr.entity.contract.BulkEscalationGenerator;
 import org.egov.pgr.entity.contract.EscalationForm;
 import org.egov.pgr.entity.contract.EscalationHelper;
@@ -91,10 +88,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -103,7 +98,6 @@ import static org.egov.pgr.entity.enums.ComplaintStatus.FORWARDED;
 import static org.egov.pgr.entity.enums.ComplaintStatus.PROCESSING;
 import static org.egov.pgr.entity.enums.ComplaintStatus.REGISTERED;
 import static org.egov.pgr.entity.enums.ComplaintStatus.REOPENED;
-import static org.egov.pgr.utils.constants.PGRConstants.EG_OBJECT_TYPE_COMPLAINT;
 import static org.egov.pgr.utils.constants.PGRConstants.MODULE_NAME;
 
 @Service
@@ -122,16 +116,13 @@ public class ComplaintEscalationService {
     private AppConfigValueService appConfigValuesService;
 
     @Autowired
-    private ObjectTypeService objectTypeService;
-
-    @Autowired
     private ComplaintRepository complaintRepository;
 
     @Autowired
     private ConfigurationService configurationService;
 
     @Autowired
-    private PositionHierarchyService positionHierarchyService;
+    private EscalationHierarchyService escalationHierarchyService;
 
     @Autowired
     private AssignmentService assignmentService;
@@ -175,28 +166,22 @@ public class ComplaintEscalationService {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void escalateComplaint() {
-        ObjectType objectType = objectTypeService.getObjectTypeByName(EG_OBJECT_TYPE_COMPLAINT);
-        if (objectType == null) {
-            LOG.warn("Escalation can't be done, Object Type {} not found", EG_OBJECT_TYPE_COMPLAINT);
-            return;
-        }
-
         boolean sendMessage = "YES".equalsIgnoreCase(appConfigValuesService
                 .getConfigValuesByModuleAndKey(MODULE_NAME, "SENDEMAILFORESCALATION").get(0).getValue());
 
         getComplaintsEligibleForEscalation()
                 .stream()
                 .filter(Complaint::transitionInprogress)
-                .forEach(complaint -> findNextOwnerAndEscalate(complaint, objectType, sendMessage));
+                .forEach(complaint -> findNextOwnerAndEscalate(complaint, sendMessage));
 
     }
 
-    private void findNextOwnerAndEscalate(Complaint complaint, ObjectType objectType, boolean sendMessage) {
-        PositionHierarchy positionHierarchy = positionHierarchyService.getPosHirByPosAndObjectTypeAndObjectSubType(
-                complaint.getAssignee().getId(), objectType.getId(), complaint.getComplaintType().getCode());
+    private void findNextOwnerAndEscalate(Complaint complaint, boolean sendMessage) {
+        EscalationHierarchy escalationHierarchy = escalationHierarchyService.getHierarchyByFromPositionAndGrievanceType(
+                complaint.getAssignee().getId(), complaint.getComplaintType().getId());
         Position nextAssignee = null;
         User nextOwner = null;
-        if (positionHierarchy == null) {
+        if (escalationHierarchy == null) {
             Set<User> users = userService.getUsersByRoleName(PGRConstants.GRO_ROLE_NAME);
             if (!users.isEmpty())
                 nextOwner = users.iterator().next();
@@ -210,7 +195,7 @@ public class ComplaintEscalationService {
                 LOG.warn("Could not escalate, no user defined for Grievance Officer role");
             }
         } else {
-            nextAssignee = positionHierarchy.getToPosition();
+            nextAssignee = escalationHierarchy.getToPosition();
             List<Assignment> superiorAssignments = assignmentService.getAssignmentsForPosition(nextAssignee.getId(), new Date());
             nextOwner = superiorAssignments.isEmpty() ? null : superiorAssignments.get(0).getEmployee();
         }
@@ -263,23 +248,17 @@ public class ComplaintEscalationService {
                 pageable);
     }
 
-    public List<PositionHierarchy> getEscalationObjByComplaintTypeFromPosition(List<ComplaintType> complaintTypes,
-                                                                               Position fromPosition) {
-        List<String> compTypeCodes = complaintTypes.parallelStream()
-                .map(ComplaintType::getCode)
-                .collect(Collectors.toList());
-        ObjectType objectType = objectTypeService.getObjectTypeByName(EG_OBJECT_TYPE_COMPLAINT);
-        return positionHierarchyService.getListOfPositionHeirarchyByPositionObjectTypeSubType(objectType.getId(), compTypeCodes,
-                fromPosition);
+    public List<EscalationHierarchy> getEscalationObjByComplaintTypeFromPosition(List<ComplaintType> complaintTypes,
+                                                                                 Position fromPosition) {
+        return escalationHierarchyService.getHeirarchiesByFromPositionAndGrievanceTypes(complaintTypes, fromPosition);
     }
 
-    public PositionHierarchy getExistingEscalation(PositionHierarchy positionHierarchy) {
-        PositionHierarchy existingPosHierarchy = null;
-        if (null != positionHierarchy.getObjectSubType() && null != positionHierarchy.getFromPosition()
-                && null != positionHierarchy.getToPosition())
-            existingPosHierarchy = positionHierarchyService.getPosHirByPosAndObjectTypeAndObjectSubType(
-                    positionHierarchy.getFromPosition().getId(), positionHierarchy.getObjectType().getId(),
-                    positionHierarchy.getObjectSubType());
+    public EscalationHierarchy getExistingEscalation(EscalationHierarchy escalationHierarchy) {
+        EscalationHierarchy existingPosHierarchy = null;
+        if (null != escalationHierarchy.getGrievanceType() && null != escalationHierarchy.getFromPosition()
+                && null != escalationHierarchy.getToPosition())
+            existingPosHierarchy = escalationHierarchyService.getHierarchyByFromPositionAndGrievanceType(
+                    escalationHierarchy.getFromPosition().getId(), escalationHierarchy.getGrievanceType().getId());
 
         return existingPosHierarchy != null ? existingPosHierarchy : null;
     }
@@ -324,31 +303,22 @@ public class ComplaintEscalationService {
             }
     }
 
-    public List<EscalationHelper> viewEscalation(Optional<Long> positionId, Optional<Long> complaintId) {
-        ObjectType objectType = objectTypeService.getObjectTypeByName(EG_OBJECT_TYPE_COMPLAINT);
-        if (objectType == null) {
-            return Collections.emptyList();
-        } else {
-            ComplaintType complaintType = complaintId.isPresent() ? complaintTypeService.findBy(complaintId.get()) : null;
-            List<String> activeComplaintTypeCodes = complaintTypeService.getActiveComplaintTypeCode();
-            List<PositionHierarchy> positionHierarchies = new ArrayList<>();
-            if (positionId.isPresent())
-                positionHierarchies = positionHierarchyService
-                        .getListOfPositionHeirarchyByFromPositionAndObjectTypeAndSubType(positionId.get(), objectType.getId(),
-                                complaintType != null ? complaintType.getCode() : null)
-                        .stream()
-                        .filter(posHir -> activeComplaintTypeCodes.contains(posHir.getObjectSubType()))
-                        .collect(Collectors.toList());
-            return getEscalationDetailByPositionHierarchy(positionHierarchies);
-        }
+    public List<EscalationHelper> viewEscalation(Long positionId, Long complaintId) {
+        List<ComplaintType> activeComplaintTypes = complaintTypeService.findActiveComplaintTypes();
+        List<EscalationHierarchy> escalationHierarchies = escalationHierarchyService
+                .getHeirarchiesByFromPositionAndGrievanceType(positionId, complaintId)
+                .stream()
+                .filter(posHir -> activeComplaintTypes.contains(posHir.getGrievanceType()))
+                .collect(Collectors.toList());
+        return getEscalationDetailByEscalationHierarchy(escalationHierarchies);
     }
 
-    public List<EscalationHelper> getEscalationDetailByPositionHierarchy(List<PositionHierarchy> positionHierarchies) {
+    public List<EscalationHelper> getEscalationDetailByEscalationHierarchy(List<EscalationHierarchy> escalationHierarchies) {
         List<EscalationHelper> escalationHelpers = new ArrayList<>();
-        for (PositionHierarchy posHir : positionHierarchies) {
+        for (EscalationHierarchy posHir : escalationHierarchies) {
             EscalationHelper escalationHelper = new EscalationHelper();
-            if (posHir.getObjectSubType() != null)
-                escalationHelper.setComplaintType(complaintTypeService.findByCode(posHir.getObjectSubType()));
+            if (posHir.getGrievanceType() != null)
+                escalationHelper.setComplaintType(posHir.getGrievanceType());
             escalationHelper.setFromPosition(posHir.getFromPosition());
             escalationHelper.setToPosition(posHir.getToPosition());
             escalationHelpers.add(escalationHelper);
@@ -359,37 +329,33 @@ public class ComplaintEscalationService {
     @Transactional
     public void updateBulkEscalation(BulkEscalationGenerator bulkEscalationGenerator) {
         for (ComplaintType complaintType : bulkEscalationGenerator.getComplaintTypes()) {
-            ObjectType objectType = objectTypeService.getObjectTypeByName(PGRConstants.EG_OBJECT_TYPE_COMPLAINT);
-            PositionHierarchy positionHierarchy = new PositionHierarchy();
-            positionHierarchy.setObjectType(objectType);
-            positionHierarchy.setObjectSubType(complaintType.getCode());
-            positionHierarchy.setFromPosition(bulkEscalationGenerator.getFromPosition());
-            positionHierarchy.setToPosition(bulkEscalationGenerator.getToPosition());
-            PositionHierarchy existingPosHierarchy = getExistingEscalation(positionHierarchy);
+            EscalationHierarchy escalationHierarchy = new EscalationHierarchy();
+            escalationHierarchy.setGrievanceType(complaintType);
+            escalationHierarchy.setFromPosition(bulkEscalationGenerator.getFromPosition());
+            escalationHierarchy.setToPosition(bulkEscalationGenerator.getToPosition());
+            EscalationHierarchy existingPosHierarchy = getExistingEscalation(escalationHierarchy);
             if (existingPosHierarchy != null) {
                 existingPosHierarchy.setToPosition(bulkEscalationGenerator.getToPosition());
-                positionHierarchyService.updatePositionHierarchy(existingPosHierarchy);
+                escalationHierarchyService.save(existingPosHierarchy);
             } else
-                positionHierarchyService.createPositionHierarchy(positionHierarchy);
+                escalationHierarchyService.save(escalationHierarchy);
         }
     }
 
     @Transactional
     public void updateEscalation(Long id, EscalationForm escalationForm) {
 
-        ObjectType objectType = objectTypeService.getObjectTypeByName(PGRConstants.EG_OBJECT_TYPE_COMPLAINT);
-        List<PositionHierarchy> existingPosHierarchy = positionHierarchyService
-                .getPositionHeirarchyByFromPositionAndObjectType(id, objectType.getId());
+        List<EscalationHierarchy> existingPosHierarchy = escalationHierarchyService
+                .getHeirarchyByFromPosition(id);
         if (!existingPosHierarchy.isEmpty())
-            positionHierarchyService.deleteAllInBatch(existingPosHierarchy);
+            escalationHierarchyService.deleteAllInBatch(existingPosHierarchy);
 
-        for (PositionHierarchy posHierarchy : escalationForm.getPositionHierarchyList())
-            if (posHierarchy.getFromPosition() != null && posHierarchy.getToPosition() != null) {
-                posHierarchy.setFromPosition(positionMasterService.getPositionById(posHierarchy.getFromPosition().getId()));
-                posHierarchy.setToPosition(positionMasterService.getPositionById(posHierarchy.getToPosition().getId()));
-                posHierarchy.setObjectType(objectType);
-                posHierarchy.setObjectSubType(posHierarchy.getObjectSubType());
-                positionHierarchyService.createPositionHierarchy(posHierarchy);
+        for (EscalationHierarchy escalationHierarchy : escalationForm.getEscalationHierarchyList())
+            if (escalationHierarchy.getFromPosition() != null && escalationHierarchy.getToPosition() != null) {
+                escalationHierarchy.setFromPosition(positionMasterService.getPositionById(escalationHierarchy.getFromPosition().getId()));
+                escalationHierarchy.setToPosition(positionMasterService.getPositionById(escalationHierarchy.getToPosition().getId()));
+                escalationHierarchy.setGrievanceType(escalationHierarchy.getGrievanceType());
+                escalationHierarchyService.save(escalationHierarchy);
             }
     }
 }

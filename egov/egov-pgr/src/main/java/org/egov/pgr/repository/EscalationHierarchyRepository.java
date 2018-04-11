@@ -45,46 +45,26 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
+package org.egov.pgr.repository;
 
-package org.egov.pgr.web.controller.masters.escalation;
-
+import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.EscalationHierarchy;
-import org.egov.pgr.entity.contract.EscalationHelper;
-import org.egov.pgr.entity.contract.EscalationHelperAdaptor;
-import org.egov.pgr.service.ComplaintEscalationService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.egov.pims.commons.Position;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import static org.egov.infra.utils.JsonUtils.toJSON;
+import java.util.List;
 
-@Controller
-@RequestMapping("/complaint/escalation/view")
-public class ViewEscalationController {
+@Repository
+public interface EscalationHierarchyRepository extends JpaRepository<EscalationHierarchy, Long> {
 
-    @Autowired
-    private ComplaintEscalationService complaintEscalationService;
+    EscalationHierarchy findByFromPositionId(Long fromPosition);
 
-    @ModelAttribute
-    public EscalationHierarchy escalationHierarchy() {
-        return new EscalationHierarchy();
-    }
+    EscalationHierarchy findByFromPositionIdAndGrievanceTypeId(Long fromPosition, Long grievanceTypeId);
 
-    @GetMapping
-    public String viewEscalationForm() {
-        return "escalation-view";
-    }
+    List<EscalationHierarchy> findByGrievanceTypeId(Long grievanceTypeId);
 
-    @GetMapping(value = "/", produces = MediaType.TEXT_PLAIN_VALUE)
-    @ResponseBody
-    public String viewEscalation(@RequestParam Long positionId,
-                                 @RequestParam Long complaintId) {
-        return new StringBuilder("{ \"data\":").append(toJSON(complaintEscalationService.viewEscalation(positionId, complaintId),
-                EscalationHelper.class, EscalationHelperAdaptor.class)).append("}").toString();
-    }
+    List<EscalationHierarchy> findByFromPositionIdOrderByGrievanceTypeId(Long fromPosition);
+
+    List<EscalationHierarchy> findByGrievanceTypeInAndFromPosition(List<ComplaintType> grievanceTypes, Position fromPosition);
 }

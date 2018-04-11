@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -48,8 +48,8 @@
 
 package org.egov.pgr.web.controller.masters.escalation;
 
-import org.egov.eis.entity.PositionHierarchy;
 import org.egov.pgr.entity.ComplaintType;
+import org.egov.pgr.entity.EscalationHierarchy;
 import org.egov.pgr.entity.contract.BulkEscalationGenerator;
 import org.egov.pgr.entity.contract.EscalationHelper;
 import org.egov.pgr.entity.contract.EscalationHelperAdaptor;
@@ -75,10 +75,7 @@ import static org.egov.infra.utils.JsonUtils.toJSON;
 @Controller
 @RequestMapping("/complaint/bulkescalation")
 public class BulkEscalationController {
-
-    @Autowired
-    private ComplaintEscalationService escalationService;
-
+    private static final String BULKESCALATION = "bulkescalation";
     @Autowired
     private ComplaintTypeService complaintTypeService;
 
@@ -97,15 +94,15 @@ public class BulkEscalationController {
 
     @GetMapping
     public String bulkEscalationForm() {
-        return "bulkescalation";
+        return BULKESCALATION;
     }
 
     @GetMapping(value = "/", produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String searchBulkEscalation(BulkEscalationGenerator bulkEscalationGenerator) {
-        List<PositionHierarchy> positionHierarchies = escalationService.getEscalationObjByComplaintTypeFromPosition(
+        List<EscalationHierarchy> escalationHierarchies = complaintEscalationService.getEscalationObjByComplaintTypeFromPosition(
                 bulkEscalationGenerator.getComplaintTypes(), bulkEscalationGenerator.getFromPosition());
-        return new StringBuilder("{ \"data\":").append(toJSON(complaintEscalationService.getEscalationDetailByPositionHierarchy(positionHierarchies),
+        return new StringBuilder("{ \"data\":").append(toJSON(complaintEscalationService.getEscalationDetailByEscalationHierarchy(escalationHierarchies),
                 EscalationHelper.class, EscalationHelperAdaptor.class)).append("}").toString();
     }
 
@@ -114,8 +111,12 @@ public class BulkEscalationController {
                                        BindingResult errors, RedirectAttributes redirectAttrs, Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("message", "bulkescalation.unble.to.save");
-            return "bulkescalation";
+            return BULKESCALATION;
         } else {
+            if (bulkEscalationGenerator.getFromPosition().equals(bulkEscalationGenerator.getToPosition())) {
+                model.addAttribute("warning", "escalation.hierarchy.from.to.position.same");
+                return BULKESCALATION;
+            }
             complaintEscalationService.updateBulkEscalation(bulkEscalationGenerator);
             redirectAttrs.addFlashAttribute("message", "msg.bulkescalation.success");
             return "redirect:/complaint/bulkescalation";
