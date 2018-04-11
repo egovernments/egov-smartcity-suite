@@ -1068,7 +1068,7 @@ public interface PropertyTaxConstants {
     public static final String EDIT_OWNER_AUDIT_ACTION = "Edit Owner";
 
     public static final String APPCONFIG_KEY_BULKBILL_WARD = "WardNum";
-    public static final Integer QUARTZ_BULKBILL_JOBS = 5;
+    public static final Integer QUARTZ_BULKBILL_JOBS = 10;
 
     public static final List<String> ORDERED_DEMAND_RSNS_LIST = ImmutableList.of(DEMANDRSN_CODE_PENALTY_FINES,
             DEMANDRSN_CODE_GENERAL_TAX, DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_SCAVENGE_TAX,
