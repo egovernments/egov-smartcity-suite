@@ -46,9 +46,8 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
   -->
-
-<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-05-24T16:32:18 -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2018-04-11T10:31:32 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_receipt_challan" language="groovy" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="10" bottomMargin="10" resourceBundle="custom" uuid="1fd0c026-6f9d-417e-b936-3ab1dd76cfd4">
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
@@ -61,7 +60,7 @@
 		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
 	</parameter>
 	<parameter name="EGOV_COMMON" class="org.egov.egf.commons.EgovCommon" isForPrompting="false"/>
-	<parameter name="CITY_LOGO_PATH" class="java.io.InputStream"/>
+	<parameter name="CITY_LOGO_PATH" class="java.lang.Object"/>
 	<field name="instrumentDetails" class="java.util.Collection"/>
 	<field name="accountDetails" class="java.util.Collection"/>
 	<field name="totalAmount" class="java.math.BigDecimal"/>
@@ -105,7 +104,7 @@
 					<subreportParameterExpression><![CDATA["Duplicate Copy"]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="CITY_LOGO_PATH">
-				   <subreportParameterExpression><![CDATA[$P{CITY_LOGO_PATH}]]></subreportParameterExpression>
+					<subreportParameterExpression><![CDATA[$P{CITY_LOGO_PATH}]]></subreportParameterExpression>
 				</subreportParameter>
 				<dataSourceExpression><![CDATA[new JRBeanCollectionDataSource($P{REPORT_DATA_SOURCE}.getData(), false)]]></dataSourceExpression>
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("collection_receipt_single.jasper")]]></subreportExpression>

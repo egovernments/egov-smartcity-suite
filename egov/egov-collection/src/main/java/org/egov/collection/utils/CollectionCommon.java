@@ -345,10 +345,9 @@ public class CollectionCommon {
         final List<BillReceiptInfo> receiptList = new ArrayList<>(0);
 
         final String templateName = collectionsUtil.getReceiptTemplateName(receiptType, serviceCode);
-        LOGGER.info(" template name : " + templateName);
+        LOGGER.info(" template name : " + templateName);  
         final Map<String, Object> reportParams = new HashMap<>(0);
         reportParams.put(CollectionConstants.REPORT_PARAM_COLLECTIONS_UTIL, collectionsUtil);
-        reportParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoAsStream());
         if (receiptType == CollectionConstants.RECEIPT_TYPE_CHALLAN) {
             reportParams.put(CollectionConstants.REPORT_PARAM_EGOV_COMMON, egovCommon);
             for (final ReceiptHeader receiptHeader : receipts) {
@@ -372,6 +371,11 @@ public class CollectionCommon {
                     receiptList.add(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO,
                             persistenceService, null));
             }
+        
+        if (receiptType == CollectionConstants.RECEIPT_TYPE_ADHOC)
+            reportParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoAsBytes());
+        else    
+            reportParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoAsStream());
         final ReportRequest reportInput = new ReportRequest(templateName, receiptList, reportParams);
 
         // Set the flag so that print dialog box is automatically opened
