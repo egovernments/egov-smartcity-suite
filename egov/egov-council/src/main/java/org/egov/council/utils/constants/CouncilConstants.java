@@ -75,6 +75,7 @@ public class CouncilConstants {
     public static final String PREAMBLEUSEDINAGENDA = "PREAMBLE USED IN AGENDA";
     public static final String AGENDAUSEDINMEETING = "AGENDA USED IN MEETING";
     public static final String MEETINGUSEDINRMOM = "MOM CREATED";
+    public static final String MEETINGCANCELLED = "CANCELLED";
     public static final String MOM_STATUS_APPROVED = "APPROVED";
     public static final String RESOLUTION_STATUS_APPROVED = "APPROVED";
     public static final String RESOLUTION_STATUS_ADJURNED = "ADJOURNED";

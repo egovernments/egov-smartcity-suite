@@ -49,14 +49,16 @@ package org.egov.council.web.controller;
 
 import static org.egov.council.utils.constants.CouncilConstants.AGENDAUSEDINMEETING;
 import static org.egov.council.utils.constants.CouncilConstants.AGENDA_MODULENAME;
+import static org.egov.council.utils.constants.CouncilConstants.AGENDA_STATUS_APPROVED;
 import static org.egov.council.utils.constants.CouncilConstants.APPROVED;
 import static org.egov.council.utils.constants.CouncilConstants.ATTENDANCEFINALIZED;
 import static org.egov.council.utils.constants.CouncilConstants.COUNCILMEETING;
+import static org.egov.council.utils.constants.CouncilConstants.MEETINGCANCELLED;
 import static org.egov.council.utils.constants.CouncilConstants.MEETINGRESOLUTIONFILENAME;
 import static org.egov.council.utils.constants.CouncilConstants.MEETING_MODULENAME;
-import static org.egov.council.utils.constants.CouncilConstants.getMeetingTimings;
 import static org.egov.council.utils.constants.CouncilConstants.MODULE_NAME;
 import static org.egov.council.utils.constants.CouncilConstants.MOM_FINALISED;
+import static org.egov.council.utils.constants.CouncilConstants.getMeetingTimings;
 import static org.egov.infra.utils.JsonUtils.toJSON;
 
 import java.util.ArrayList;
@@ -118,6 +120,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/councilmeeting")
 public class CouncilMeetingController {
 
+    private static final String REDIRECT_COUNCILMEETING_RESULT = "redirect:/councilmeeting/result/";
     private static final String MEETING_NUMBER_AUTO = "MEETING_NUMBER_AUTO";
     private static final String APPLICATION_RTF = "application/rtf";
     private static final String DATA = "{ \"data\":";
@@ -253,7 +256,7 @@ public class CouncilMeetingController {
         councilSmsAndEmailService.sendEmail(councilMeeting, null,
                 councilReportService.generatePDFForAgendaDetails(councilMeeting));
         redirectAttrs.addFlashAttribute(MESSAGE, messageSource.getMessage("msg.councilMeeting.success", null, null));
-        return "redirect:/councilmeeting/result/" + councilMeeting.getId();
+        return REDIRECT_COUNCILMEETING_RESULT + councilMeeting.getId();
     }
 
     private void validateCouncilMeeting(BindingResult errors) {
@@ -281,7 +284,25 @@ public class CouncilMeetingController {
         }
         councilMeetingService.update(councilMeeting);
         redirectAttrs.addFlashAttribute(MESSAGE, messageSource.getMessage("msg.councilMeeting.success", null, null));
-        return "redirect:/councilmeeting/result/" + councilMeeting.getId();
+        return REDIRECT_COUNCILMEETING_RESULT + councilMeeting.getId();
+    }
+    
+    @RequestMapping(value = "/update", params = "cancel", method = RequestMethod.POST)
+    public String cancelMeeting(@Valid @ModelAttribute final CouncilMeeting councilMeeting, final BindingResult errors,
+            final Model model, final RedirectAttributes redirectAttrs) {
+        if (errors.hasErrors()) {
+            return COUNCILMEETING_EDIT;
+        }
+        councilMeeting.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(MEETING_MODULENAME, MEETINGCANCELLED));
+        if (!councilMeeting.getMeetingMOMs().isEmpty()) {
+            councilMeeting.getMeetingMOMs().get(0).getAgenda().setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(
+                    AGENDA_MODULENAME, AGENDA_STATUS_APPROVED));
+        }
+        councilMeetingService.update(councilMeeting);
+        councilMeetingService.deleteMeetingMoms(councilMeeting.getMeetingMOMs());
+
+        redirectAttrs.addFlashAttribute(MESSAGE, messageSource.getMessage("msg.councilMeeting.cancel", null, null));
+        return REDIRECT_COUNCILMEETING_RESULT + councilMeeting.getId();
     }
 
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
