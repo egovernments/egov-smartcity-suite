@@ -61,7 +61,7 @@
 		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
 	</parameter>
 	<parameter name="EGOV_COMMON" class="org.egov.egf.commons.EgovCommon" isForPrompting="false"/>
-	<parameter name="CITY_LOGO_PATH" class="java.io.InputStream"/>
+	<parameter name="CITY_LOGO_PATH" class="java.lang.Object"/>
 	<field name="instrumentDetails" class="java.util.Collection"/>
 	<field name="accountDetails" class="java.util.Collection"/>
 	<field name="totalAmount" class="java.math.BigDecimal"/>
@@ -88,7 +88,7 @@
 					<subreportParameterExpression><![CDATA["Original Copy"]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="CITY_LOGO_PATH">
-				   <subreportParameterExpression><![CDATA[$P{CITY_LOGO_PATH}]]></subreportParameterExpression>
+					<subreportParameterExpression><![CDATA[$P{CITY_LOGO_PATH}]]></subreportParameterExpression>
 				</subreportParameter>
 				<dataSourceExpression><![CDATA[new JRBeanCollectionDataSource($P{REPORT_DATA_SOURCE}.getData(), false)]]></dataSourceExpression>
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("collection_receipt_challan_single.jasper")]]></subreportExpression>
