@@ -693,12 +693,16 @@ public class WaterConnectionDetailsService {
 
     public void applicationStatusChange(final WaterConnectionDetails waterConnectionDetails,
             final String workFlowAction, final String mode) {
-        if (waterConnectionDetails != null && waterConnectionDetails.getStatus() != null
-                && waterConnectionDetails.getStatus().getCode() != null)
+        if (waterConnectionDetails == null)
+            throw new ValidationException("err.application.not.exist");
+        else if (NEWCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) ||
+                CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) ||
+                ADDNLCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) ||
+                REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
             applicationStatusUpdate(waterConnectionDetails, workFlowAction);
-        else if (!"Reject".equals(workFlowAction) && !"reconnectioneredit".equals(mode))
+        else if (RECONNECTIONCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
             reconnectionStatusUpdate(waterConnectionDetails, workFlowAction);
-        else if (!"Reject".equals(workFlowAction))
+        else if (CLOSINGCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
             closureStatusUpdate(waterConnectionDetails, workFlowAction, mode);
 
     }
@@ -725,16 +729,16 @@ public class WaterConnectionDetailsService {
                 .getCode().equals(APPLICATION_STATUS_DIGITALSIGNPENDING))
             waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                     APPLICATION_STATUS_APPROVED, MODULETYPE));
-        else if (APPLICATION_STATUS_SANCTIONED
-                .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
-                && waterConnectionDetails.getCloseConnectionType() != null)
-            waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
-                    APPLICATION_STATUS_CLOSERINITIATED, MODULETYPE));
     }
 
     public void closureStatusUpdate(final WaterConnectionDetails waterConnectionDetails, final String workFlowAction,
             final String mode) {
-        if (!"closeredit".equals(mode)
+        if (APPLICATION_STATUS_SANCTIONED
+                .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
+                && waterConnectionDetails.getCloseConnectionType() != null)
+            waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
+                    APPLICATION_STATUS_CLOSERINITIATED, MODULETYPE));
+        else if (!"closeredit".equals(mode)
                 && APPLICATION_STATUS_CLOSERINITIATED
                         .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
                 && waterConnectionDetails.getCloseConnectionType() != null)
@@ -752,17 +756,17 @@ public class WaterConnectionDetailsService {
                 && waterConnectionDetails.getCloseConnectionType() != null)
             waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                     APPLICATION_STATUS_CLOSERSANCTIONED, MODULETYPE));
-        else if (APPLICATION_STATUS_CLOSERSANCTIONED
+    }
+
+    public void reconnectionStatusUpdate(final WaterConnectionDetails waterConnectionDetails, final String workFlowAction) {
+        if (APPLICATION_STATUS_CLOSERSANCTIONED
                 .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
                 && waterConnectionDetails.getCloseConnectionType() != null
                 && waterConnectionDetails.getCloseConnectionType()
                         .equals(TEMPERARYCLOSECODE))
             waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                     WORKFLOW_RECONNCTIONINITIATED, MODULETYPE));
-    }
-
-    public void reconnectionStatusUpdate(final WaterConnectionDetails waterConnectionDetails, final String workFlowAction) {
-        if (WORKFLOW_RECONNCTIONINITIATED
+        else if (WORKFLOW_RECONNCTIONINITIATED
                 .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
                 && waterConnectionDetails.getCloseConnectionType()
                         .equals(TEMPERARYCLOSECODE))
