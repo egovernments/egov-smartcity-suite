@@ -72,11 +72,12 @@
 	<parameter name="roadCuttingCharges" class="java.lang.Double"/>
 	<parameter name="superVisionCharges" class="java.lang.Double"/>
 	<parameter name="waterCharges" class="java.math.BigDecimal"/>
+	<parameter name="applicationStatus" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<detail>
-		<band height="196">
+		<band height="190">
 			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
 			<staticText>
 				<reportElement x="51" y="5" width="379" height="23" uuid="6c2a69db-56d8-477c-896b-50a72259bc7f"/>
@@ -342,13 +343,6 @@
 					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{donationCharges}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="-1" y="160" width="541" height="30" uuid="b0b72916-d36f-4abc-903b-169cf06324be"/>
-				<textElement textAlignment="Justified">
-					<font fontName="Times New Roman" size="10"/>
-				</textElement>
-				<textFieldExpression><![CDATA["(Note:  If paid through DD, two separate DDs shall be drawn – One DD for charges from Sl. No. 1 to 3 and second DD for Sl. No. 4)"]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

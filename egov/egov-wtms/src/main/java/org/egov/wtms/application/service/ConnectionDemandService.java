@@ -837,7 +837,7 @@ public class ConnectionDemandService {
         return currYearInstMap;
     }
 
-    public void getWaterTaxDue(final WaterConnectionDetails waterConnectionDetails, final BindingResult resultBinder,
+    public BindingResult getWaterTaxDue(final WaterConnectionDetails waterConnectionDetails, final BindingResult resultBinder,
             final String mode) {
         if (ADD_DEMAND.equalsIgnoreCase(mode) && !checkWaterChargesCurrentDemand(waterConnectionDetails))
             resultBinder.reject("err.watercharge.demand.not.present", null);
@@ -848,6 +848,7 @@ public class ConnectionDemandService {
             if (waterChargesDue.compareTo(BigDecimal.ZERO) > 0)
                 resultBinder.reject("err.water.charges.due", new Double[] { waterChargesDue.doubleValue() }, null);
         }
+        return resultBinder;
     }
 
     public boolean checkWaterChargesCurrentDemand(final WaterConnectionDetails waterConnectionDetails) {

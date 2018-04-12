@@ -259,7 +259,7 @@ public class UpdateConnectionController extends GenericConnectionController {
             final AppConfig appConfig = appConfigService.getAppConfigByKeyName(WCMS_SERVICE_CHARGES);
             final BigDecimal serviceCharges = BigDecimal.valueOf(Long.valueOf(appConfig.getConfValues().get(0).getValue()));
             model.addAttribute("serviceCharges", serviceCharges);
-            model.addAttribute(DONATION_AMOUNT, donationAmount);
+            model.addAttribute(DONATION_AMOUNT, donationAmount.longValue());
             model.addAttribute(PENALTY_AMOUNT, donationAmount);
             model.addAttribute("currentDemand", waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand());
         }
@@ -440,8 +440,8 @@ public class UpdateConnectionController extends GenericConnectionController {
                 additionalRule = WORKFLOW_CLOSUREADDITIONALRULE;
             else if (waterConnectionDetails.getStatus().getCode().equals(WORKFLOW_RECONNCTIONINITIATED))
                 additionalRule = RECONNECTIONCONNECTION;
-            if (NEWCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
-                additionalRule = NEWCONNECTION;
+            else if (!CLOSINGCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
+                additionalRule = waterConnectionDetails.getApplicationType().getCode();
             model.addAttribute(MODE, FIELDINSPECTION);
             model.addAttribute(APPROVALPOSITIONEXIST,
                     waterConnectionDetailsService.getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l,
@@ -536,7 +536,8 @@ public class UpdateConnectionController extends GenericConnectionController {
                     .setStatus(waterTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_FEEPAID, MODULETYPE));
 
         // For Submit Button
-        if (APPLICATION_STATUS_CREATED.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
+        if ((APPLICATION_STATUS_CREATED.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()) ||
+                APPLICATION_STATUS_ESTIMATENOTICEGEN.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()))
                 && (EDIT_DEMAND.equals(mode) || ADD_DEMAND.equalsIgnoreCase(mode) || FIELDINSPECTION.equalsIgnoreCase(mode)))
             if (SUBMITWORKFLOWACTION.equalsIgnoreCase(workFlowAction) || FORWARDWORKFLOWACTION.equalsIgnoreCase(workFlowAction)
                     || SAVE.equalsIgnoreCase(workFlowAction)) {
@@ -567,12 +568,12 @@ public class UpdateConnectionController extends GenericConnectionController {
                         waterConnectionDetails.setFileStore(fsIterator.next());
                 }
                 if (REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) &&
-                        APPLICATION_STATUS_CREATED.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())) {
-                    if (!FIELDINSPECTION.equals(mode)) {
-                        connectionDemandService.getWaterTaxDue(waterConnectionDetails, resultBinder, mode);
-                        if (resultBinder.hasErrors())
-                            return loadViewData(model, request, waterConnectionDetails);
-                    }
+                        (APPLICATION_STATUS_CREATED.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()) ||
+                                APPLICATION_STATUS_ESTIMATENOTICEGEN
+                                        .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()))) {
+                    if (!FIELDINSPECTION.equals(mode) &&
+                            connectionDemandService.getWaterTaxDue(waterConnectionDetails, resultBinder, mode).hasErrors())
+                        return loadViewData(model, request, waterConnectionDetails);
                     if (waterConnectionDetails.getConnection().getConsumerCode() == null) {
                         connectionDemandService.createDemandDetailForPenaltyAndServiceCharges(waterConnectionDetails);
                         waterConnectionDetails.getConnection().setConsumerCode(waterTaxNumberGenerator.getNextConsumerNumber());
