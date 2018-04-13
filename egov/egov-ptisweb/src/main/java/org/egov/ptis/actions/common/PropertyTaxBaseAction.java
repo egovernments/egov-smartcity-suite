@@ -47,6 +47,21 @@
  */
 package org.egov.ptis.actions.common;
 
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+import static java.math.BigDecimal.ZERO;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.egov.ptis.constants.PropertyTaxConstants.*;
+import java.io.File;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
@@ -97,22 +112,6 @@ import org.hibernate.Query;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
-import java.io.File;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.TRUE;
-import static java.math.BigDecimal.ZERO;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
@@ -374,56 +373,56 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                     + (floorList != null ? floorList : ZERO));
 
         if (!propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND) && !floorList.isEmpty())
-                for (final Floor floor : floorList) {
-                    List<String> msgParams;
-                    if (floor != null) {
-                        buildingPlanNoValidationAdded = false;
-                        buildingPlanDateValidationAdded = false;
-                        buildingPlanPlinthAreaValidationAdded = false;
-                        msgParams = new ArrayList<>();
-                        if (floor.getFloorNo() == null || floor.getFloorNo().equals(-10))
-                            addActionError(getText("mandatory.floorNO"));
-                        msgParams.add(floor.getFloorNo() != null ? FLOOR_MAP.get(floor.getFloorNo()) : "N/A");
+            for (final Floor floor : floorList) {
+                List<String> msgParams;
+                if (floor != null) {
+                    buildingPlanNoValidationAdded = false;
+                    buildingPlanDateValidationAdded = false;
+                    buildingPlanPlinthAreaValidationAdded = false;
+                    msgParams = new ArrayList<>();
+                    if (floor.getFloorNo() == null || floor.getFloorNo().equals(-10))
+                        addActionError(getText("mandatory.floorNO"));
+                    msgParams.add(floor.getFloorNo() != null ? FLOOR_MAP.get(floor.getFloorNo()) : "N/A");
 
-                        if (floor.getStructureClassification() == null
-                                || floor.getStructureClassification().getId() == null
-                                || "-1".equals(floor.getStructureClassification().getId().toString()))
-                            addActionError(getText("mandatory.constType", msgParams));
-                        
-                        if (!floor.getUnstructuredLand()) {
-                            if (floor.getBuiltUpArea() == null || floor.getBuiltUpArea().getLength() == null)
-                                addActionError(getText("mandatory.assbleLength", msgParams));
-                            if (floor.getBuiltUpArea() == null || floor.getBuiltUpArea().getBreadth() == null)
-                                addActionError(getText("mandatory.assbleWidth", msgParams));
-                        }
-                        if (floor.getPropertyUsage() == null || null == floor.getPropertyUsage().getId()
-                                || "-1".equals(floor.getPropertyUsage().getId().toString()))
-                            addActionError(getText("mandatory.floor.usage", msgParams));
+                    if (floor.getStructureClassification() == null
+                            || floor.getStructureClassification().getId() == null
+                            || "-1".equals(floor.getStructureClassification().getId().toString()))
+                        addActionError(getText("mandatory.constType", msgParams));
 
-                        if (StringUtils.isNotBlank(floor.getBuildingPermissionNo())) {
-                            if (floor.getBuildingPermissionDate() == null) {
-                                addActionError(getText("mandatory.floor.buildingplan.date", msgParams));
-                                buildingPlanDateValidationAdded = true;
-                            }
-                            if (floor.getBuildingPlanPlinthArea().getArea() == null) {
-                                addActionError(getText("mandatory.floor.buildingplan.plintharea", msgParams));
-                                buildingPlanPlinthAreaValidationAdded = true;
-                            }
+                    if (!floor.getUnstructuredLand()) {
+                        if (floor.getBuiltUpArea() == null || floor.getBuiltUpArea().getLength() == null)
+                            addActionError(getText("mandatory.assbleLength", msgParams));
+                        if (floor.getBuiltUpArea() == null || floor.getBuiltUpArea().getBreadth() == null)
+                            addActionError(getText("mandatory.assbleWidth", msgParams));
+                    }
+                    if (floor.getPropertyUsage() == null || null == floor.getPropertyUsage().getId()
+                            || "-1".equals(floor.getPropertyUsage().getId().toString()))
+                        addActionError(getText("mandatory.floor.usage", msgParams));
+
+                    if (StringUtils.isNotBlank(floor.getBuildingPermissionNo())) {
+                        if (floor.getBuildingPermissionDate() == null) {
+                            addActionError(getText("mandatory.floor.buildingplan.date", msgParams));
+                            buildingPlanDateValidationAdded = true;
                         }
-                        if (floor.getBuildingPermissionDate() != null) {
-                            if (StringUtils.isBlank(floor.getBuildingPermissionNo())) {
-                                addActionError(getText("mandatory.floor.buildingplan.number", msgParams));
-                                buildingPlanNoValidationAdded = true;
-                            }
+                        if (floor.getBuildingPlanPlinthArea().getArea() == null) {
+                            addActionError(getText("mandatory.floor.buildingplan.plintharea", msgParams));
+                            buildingPlanPlinthAreaValidationAdded = true;
+                        }
+                    }
+                    if (floor.getBuildingPermissionDate() != null) {
+                        if (StringUtils.isBlank(floor.getBuildingPermissionNo())) {
+                            addActionError(getText("mandatory.floor.buildingplan.number", msgParams));
+                            buildingPlanNoValidationAdded = true;
+                        }
                         if (floor.getBuildingPlanPlinthArea().getArea() == null && !buildingPlanPlinthAreaValidationAdded)
                             addActionError(getText("mandatory.floor.buildingplan.plintharea", msgParams));
-                        }
-                        if (floor.getBuildingPlanPlinthArea().getArea() != null) {
+                    }
+                    if (floor.getBuildingPlanPlinthArea().getArea() != null) {
                         if (floor.getBuildingPermissionDate() == null && !buildingPlanDateValidationAdded)
                             addActionError(getText("mandatory.floor.buildingplan.date", msgParams));
                         if (StringUtils.isBlank(floor.getBuildingPermissionNo()) && !buildingPlanNoValidationAdded)
                             addActionError(getText("mandatory.floor.buildingplan.number", msgParams));
-                        }
+                    }
 
                     if (StringUtils.isNotBlank(floor.getFirmName()) && floor.getPropertyUsage() != null
                             && null != floor.getPropertyUsage().getId()
@@ -434,32 +433,32 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                             addActionError(getText("mandatory.floor.firmName", msgParams));
                     }
 
-                        if (floor.getPropertyOccupation() == null || null == floor.getPropertyOccupation().getId()
-                                || "-1".equals(floor.getPropertyOccupation().getId().toString()))
-                            addActionError(getText("mandatory.floor.occ"));
+                    if (floor.getPropertyOccupation() == null || null == floor.getPropertyOccupation().getId()
+                            || "-1".equals(floor.getPropertyOccupation().getId().toString()))
+                        addActionError(getText("mandatory.floor.occ"));
 
-                        if (floor.getConstructionDate() == null)
-                            addActionError(getText("mandatory.floor.constrDate"));
+                    if (floor.getConstructionDate() == null)
+                        addActionError(getText("mandatory.floor.constrDate"));
 
-                        final Date effDate = propertyTaxUtil.getEffectiveDateForProperty(property);
-                        if (floor.getOccupancyDate() == null)
-                            addActionError(getText("mandatory.floor.docOcc"));
-                        if (floor.getOccupancyDate() != null) {
-                            if (floor.getOccupancyDate().after(new Date()))
-                                addActionError(getText("mandatory.dtFlrBeforeCurr"));
-                            if (floor.getOccupancyDate().before(effDate))
-                                addActionError(getText("constrDate.before.6inst", msgParams));
-                        }
+                    final Date effDate = propertyTaxUtil.getEffectiveDateForProperty(property);
+                    if (floor.getOccupancyDate() == null)
+                        addActionError(getText("mandatory.floor.docOcc"));
+                    if (floor.getOccupancyDate() != null) {
+                        if (floor.getOccupancyDate().after(new Date()))
+                            addActionError(getText("mandatory.dtFlrBeforeCurr"));
+                        if (floor.getOccupancyDate().before(effDate))
+                            addActionError(getText("constrDate.before.6inst", msgParams));
+                    }
 
-                        if (floor.getOccupancyDate() != null && floor.getConstructionDate() != null
-                                && floor.getOccupancyDate().before(floor.getConstructionDate()))
-                            addActionError(getText("effectiveDate.before.constrDate.error"));
+                    if (floor.getOccupancyDate() != null && floor.getConstructionDate() != null
+                            && floor.getOccupancyDate().before(floor.getConstructionDate()))
+                        addActionError(getText("effectiveDate.before.constrDate.error"));
 
-                        if (floor.getBuiltUpArea() == null || floor.getBuiltUpArea().getArea() == null)
-                            addActionError(getText("mandatory.assbleArea"));
-                        else if (StringUtils.isNotBlank(areaOfPlot)
-                                && floor.getBuiltUpArea().getArea() > Double.valueOf(areaOfPlot))
-                            addActionError(getText("assbleArea.notgreaterthan.extentsite"));
+                    if (floor.getBuiltUpArea() == null || floor.getBuiltUpArea().getArea() == null)
+                        addActionError(getText("mandatory.assbleArea"));
+                    else if (StringUtils.isNotBlank(areaOfPlot)
+                            && floor.getBuiltUpArea().getArea() > Double.valueOf(areaOfPlot))
+                        addActionError(getText("assbleArea.notgreaterthan.extentsite"));
 
                     if (modifyRsn == null
                             || modifyRsn != null && !modifyRsn.equals(PROPERTY_MODIFY_REASON_ADD_OR_ALTER) && !modifyRsn
@@ -471,8 +470,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                             && !DateUtils.compareDates(floor.getOccupancyDate(), propCompletionDate))
                         addActionError(getText("modify.builtup.occDate.validate", msgParams));
 
-                    }
                 }
+            }
         if (logger.isDebugEnabled())
             logger.debug("Exiting from validate");
     }
@@ -994,7 +993,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 || PropertyTaxConstants.DOCUMENT_NAME_UNREGD_WILL_DOCUMENT.equals(documentTypeDetails.getDocumentName());
     }
 
-    public void populateUsages(String propertyCategory) {
+    public void populateUsages(final String propertyCategory) {
         List<PropertyUsage> usageList = propertyUsageService.getAllActiveMixedPropertyUsages();
         // Loading property usages based on property category
         if (StringUtils.isNoneBlank(propertyCategory))
@@ -1012,7 +1011,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         return TARGET_WORKFLOW_ERROR;
     }
 
-    public Boolean multipleSubmitCondition(PropertyImpl property, Long approverPositionId) {
+    public Boolean multipleSubmitCondition(final PropertyImpl property, final Long approverPositionId) {
         if (property.getId() != null) {
             if (null == approverPositionId && !property.getStatus().equals(PropertyTaxConstants.STATUS_WORKFLOW))
                 return Boolean.TRUE;
@@ -1022,24 +1021,22 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             return Boolean.FALSE;
     }
 
-    public void enableActionsForGIS(PropertyImpl property, List<DocumentType> documentTypes) {
+    public void enableActionsForGIS(final PropertyImpl property, final List<DocumentType> documentTypes) {
         if (property.getState().getNextAction().endsWith(WF_STATE_COMMISSIONER_APPROVAL_PENDING)
-                && property.getSurveyVariance().compareTo(BigDecimal.TEN) > 0) {
+                && property.getSurveyVariance().compareTo(BigDecimal.TEN) > 0)
             showCheckboxForGIS = true;
-        }
         if (property.isThirdPartyVerified()
                 && property.getState().getValue().endsWith(":".concat(WF_STATE_REJECTED))
                 && WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING
                         .equalsIgnoreCase(property.getState().getNextAction())) {
             showCheckboxForGIS = true;
-            for (DocumentType docType : documentTypes) {
+            for (final DocumentType docType : documentTypes)
                 if (DOCUMENT_TYPE_THIRD_PARTY_SURVEY.equalsIgnoreCase(docType.getName()))
                     docType.setMandatory(true);
-            }
         }
     }
 
-    public void validateOwnerDetails(PropertyImpl property) {
+    public void validateOwnerDetails(final PropertyImpl property) {
         for (final PropertyOwnerInfo owner : property.getBasicProperty().getPropertyOwnerInfoProxy())
             if (owner != null) {
                 if (StringUtils.isBlank(owner.getOwner().getName()))
@@ -1215,7 +1212,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         return isReassignEnabled;
     }
 
-    public void setIsReassignEnabled(Boolean isReassignEnabled) {
+    public void setIsReassignEnabled(final Boolean isReassignEnabled) {
         this.isReassignEnabled = isReassignEnabled;
     }
 
@@ -1223,7 +1220,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         return stateAwareId;
     }
 
-    public void setStateAwareId(Long stateAwareId) {
+    public void setStateAwareId(final Long stateAwareId) {
         this.stateAwareId = stateAwareId;
     }
 
@@ -1231,7 +1228,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         return transactionType;
     }
 
-    public void setTransactionType(String transactionType) {
+    public void setTransactionType(final String transactionType) {
         this.transactionType = transactionType;
     }
 
@@ -1239,7 +1236,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         return endorsementRequired;
     }
 
-    public void setEndorsementRequired(Boolean endorsementRequired) {
+    public void setEndorsementRequired(final Boolean endorsementRequired) {
         this.endorsementRequired = endorsementRequired;
     }
 
@@ -1247,7 +1244,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         return ownersName;
     }
 
-    public void setOwnersName(String ownersName) {
+    public void setOwnersName(final String ownersName) {
         this.ownersName = ownersName;
     }
 
@@ -1255,7 +1252,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         return endorsementNotices;
     }
 
-    public void setEndorsementNotices(List<PtNotice> endorsementNotices) {
+    public void setEndorsementNotices(final List<PtNotice> endorsementNotices) {
         this.endorsementNotices = endorsementNotices;
     }
 
@@ -1263,7 +1260,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         return applicationNumber;
     }
 
-    public void setApplicationNumber(String applicationNumber) {
+    public void setApplicationNumber(final String applicationNumber) {
         this.applicationNumber = applicationNumber;
     }
 
@@ -1271,7 +1268,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         return assessmentNumber;
     }
 
-    public void setAssessmentNumber(String assessmentNumber) {
+    public void setAssessmentNumber(final String assessmentNumber) {
         this.assessmentNumber = assessmentNumber;
     }
 
@@ -1279,7 +1276,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         return showCheckboxForGIS;
     }
 
-    public void setShowCheckboxForGIS(boolean showCheckboxForGIS) {
+    public void setShowCheckboxForGIS(final boolean showCheckboxForGIS) {
         this.showCheckboxForGIS = showCheckboxForGIS;
     }
 
