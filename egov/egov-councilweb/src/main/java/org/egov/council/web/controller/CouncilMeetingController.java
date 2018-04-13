@@ -300,9 +300,8 @@ public class CouncilMeetingController {
         }
         councilMeetingService.update(councilMeeting);
         councilMeetingService.deleteMeetingMoms(councilMeeting.getMeetingMOMs());
-
-        redirectAttrs.addFlashAttribute(MESSAGE, messageSource.getMessage("msg.councilMeeting.cancel", null, null));
-        return REDIRECT_COUNCILMEETING_RESULT + councilMeeting.getId();
+        model.addAttribute(MESSAGE, "msg.councilMeeting.cancel");
+        return COMMONERRORPAGE;
     }
 
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
