@@ -345,12 +345,12 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 				ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())));
         loggedUserIsMeesevaUser = propertyService.isMeesevaUser(transferOwnerService.getLoggedInUser());
         if (!loggedUserIsMeesevaUser)
-            transferOwnerService.initiatePropertyTransfer(basicproperty, propertyMutation, oldTransferReason);
+            transferOwnerService.initiatePropertyTransfer(basicproperty, propertyMutation);
         else {
             final HashMap<String, String> meesevaParams = new HashMap<>();
             meesevaParams.put("APPLICATIONNUMBER", propertyMutation.getMeesevaApplicationNumber());
             propertyMutation.setApplicationNo(propertyMutation.getMeesevaApplicationNumber());
-            transferOwnerService.initiatePropertyTransfer(basicproperty, propertyMutation, oldTransferReason, meesevaParams);
+            transferOwnerService.initiatePropertyTransfer(basicproperty, propertyMutation, meesevaParams);
         }
 
         buildSMS(propertyMutation);

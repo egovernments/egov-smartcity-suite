@@ -1442,9 +1442,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         if (electionWardId == null || electionWardId == -1)
             addActionError(getText("mandatory.election.ward"));
         validateOwnerDetails(property);
-        validateProperty(property, areaOfPlot, dateOfCompletion, eastBoundary, westBoundary, southBoundary,
-                northBoundary, propTypeId, null != zoneId && zoneId != -1 ? String.valueOf(zoneId) : "", propOccId,
-                floorTypeId, roofTypeId, wallTypeId, woodTypeId, null, null, vacantLandPlotAreaId,
+        validateProperty(property, areaOfPlot, eastBoundary, westBoundary, southBoundary,
+                northBoundary, propTypeId,
+                null, null, vacantLandPlotAreaId,
                 layoutApprovalAuthorityId, getDocumentTypeDetails());
 
         if (isBlank(pinCode))

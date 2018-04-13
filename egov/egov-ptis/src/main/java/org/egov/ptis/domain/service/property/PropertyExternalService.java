@@ -485,15 +485,15 @@ public class PropertyExternalService {
         BasicProperty basicProperty = null;
         List<BasicProperty> basicProperties = new ArrayList<>();
         final ErrorDetails errorDetails = new ErrorDetails();
-        if (org.egov.infra.utils.StringUtils.isNotBlank(assessmentNo))
+        if (StringUtils.isNotBlank(assessmentNo))
             basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
-        else if (org.egov.infra.utils.StringUtils.isNotBlank(oldAssessmentNo)) {
+        else if (StringUtils.isNotBlank(oldAssessmentNo)) {
             basicProperties = (List<BasicProperty>) basicPropertyDAO.getBasicPropertyByOldMunipalNo(oldAssessmentNo);
             if (basicProperties.size() == 1)
                 basicProperty = basicProperties.get(0);
         }
 
-        if (basicProperties.size() > 1) {
+        if (!basicProperties.isEmpty()) {
             propertyTaxDetails = new PropertyTaxDetails();
             errorDetails.setErrorCode(PROPERTY_DUPLICATE_ERR_CODE);
             errorDetails.setErrorMessage(PROPERTY_DUPLICATE_ERR_MSG + oldAssessmentNo);
@@ -694,9 +694,9 @@ public class PropertyExternalService {
             Set<Installment> keySet = calculatedPenalty.keySet();
 
             // for all years data
-            Outer: for (RestPropertyTaxDetails details : propertyTaxDetails.getTaxDetails()) {
+            for (RestPropertyTaxDetails details : propertyTaxDetails.getTaxDetails()) {
                 // loop trough the penalty
-                Inner: for (Installment inst : keySet) {
+                for (Installment inst : keySet) {
                     if (inst.getDescription().equalsIgnoreCase(details.getInstallment())) {
                         details.setPenalty(calculatedPenalty.get(inst).getPenalty());
                         details.setRebate(calculatedPenalty.get(inst).getRebate());
@@ -704,8 +704,7 @@ public class PropertyExternalService {
                         if (details.getRebate() != null) {
                             details.setTotalAmount(details.getTotalAmount().subtract(details.getRebate()));
                         }
-
-                        break Inner;
+                        break;
                     }
                 }
 

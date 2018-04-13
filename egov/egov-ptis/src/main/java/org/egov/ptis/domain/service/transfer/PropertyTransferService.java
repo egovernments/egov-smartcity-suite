@@ -225,7 +225,7 @@ public class PropertyTransferService {
     private EntityManager entityManager;
     
     @Transactional
-    public void initiatePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation, final String oldTransferReason) {
+    public void initiatePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
         propertyMutation.setBasicProperty(basicProperty);
         propertyMutation.setProperty(basicProperty.getActiveProperty());
         defineDocumentValue(propertyMutation);
@@ -640,9 +640,9 @@ public class PropertyTransferService {
         return propertyTaxUtil.getDesignationForUser(ApplicationThreadLocals.getUserId());
     }
 
-    public PropertyMutation initiatePropertyTransfer(final BasicProperty basicproperty, final PropertyMutation propertyMutation, final String oldMutationReason,
-                                                     final HashMap<String, String> meesevaParams) {
-        initiatePropertyTransfer(basicproperty, propertyMutation, null);
+    public PropertyMutation initiatePropertyTransfer(final BasicProperty basicproperty, final PropertyMutation propertyMutation,
+            final HashMap<String, String> meesevaParams) {
+        initiatePropertyTransfer(basicproperty, propertyMutation);
         return propertyMutation;
     }
 

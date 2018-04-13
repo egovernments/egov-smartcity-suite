@@ -443,7 +443,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         RevisionPetition odlObjection;
         if (logger.isDebugEnabled())
             logger.debug("Entered into newForm");
-        final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByIndexNumAndParcelID(propertyId, null);
+        final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(propertyId);
         if (basicProperty.getProperty().getStatus().equals(PropertyTaxConstants.STATUS_ISACTIVE)
                 && !wfType.equalsIgnoreCase(PropertyTaxConstants.PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION)) {
             addActionError(getText("revPetition.demandActive"));
@@ -1383,22 +1383,12 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     public void vaidatePropertyDetails() {
         if (reasonForModify == null || reasonForModify.equals("-1"))
             addActionError(getText("mandatory.rsnForMdfy"));
-        validateProperty(objection.getProperty(), getAreaOfPlot() != null ? getAreaOfPlot() : "", null, eastBoundary,
-                westBoundary, southBoundary, northBoundary, propTypeObjId != null ? propTypeObjId : null, ownerName,
-                ownerName,
-                objection.getProperty().getPropertyDetail().getFloorType() != null
-                        ? objection.getProperty().getPropertyDetail().getFloorType().getId() : null,
-                objection.getProperty().getPropertyDetail().getRoofType() != null
-                        ? objection.getProperty().getPropertyDetail().getRoofType().getId() : null,
-                objection.getProperty().getPropertyDetail().getWallType() != null
-                        ? objection.getProperty().getPropertyDetail().getWallType().getId() : null,
-                objection.getProperty().getPropertyDetail().getWoodType() != null
-                        ? objection.getProperty().getPropertyDetail().getWoodType().getId() : null,
+        validateProperty(objection.getProperty(), getAreaOfPlot() != null ? getAreaOfPlot() : "", eastBoundary,
+                westBoundary, southBoundary, northBoundary, propTypeObjId != null ? propTypeObjId : null,
                 null,
                 objection.getProperty().getPropertyDetail().getDateOfCompletion() != null
                         ? objection.getProperty().getPropertyDetail().getDateOfCompletion() : null,
                 getVacantLandPlotAreaId(), getLayoutApprovalAuthorityId(), null);
-
     }
 
     private void populatePropertyTypeCategory() {

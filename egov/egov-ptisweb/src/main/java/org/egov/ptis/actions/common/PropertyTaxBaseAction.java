@@ -258,15 +258,11 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             logger.debug("Exiting from setupWorkflowDetails | End");
     }
 
-    protected void validateProperty(final Property property, final String areaOfPlot, final String dateOfCompletion,
+    protected void validateProperty(final Property property, final String areaOfPlot,
             final String eastBoundary, final String westBoundary, final String southBoundary,
-            final String northBoundary, final String propTypeId, final String zoneId, final String propOccId,
-            final Long floorTypeId, final Long roofTypeId, final Long wallTypeId, final Long woodTypeId,
+            final String northBoundary, final String propTypeId,
             final String modifyRsn, final Date propCompletionDate, final Long vacantLandPlotAreaId,
             final Long layoutApprovalAuthorityId, final DocumentTypeDetails documentTypeDetails) {
-
-        if (logger.isDebugEnabled())
-            logger.debug("Entered into validateProperty");
 
         if (propTypeId == null || "-1".equals(propTypeId))
             addActionError(getText("mandatory.propType"));
@@ -287,28 +283,28 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 if (propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
                     if (null != propertyDetail)
                         validateVacantProperty(propertyDetail, eastBoundary, westBoundary, southBoundary,
-                                northBoundary, modifyRsn, propCompletionDate, vacantLandPlotAreaId, layoutApprovalAuthorityId, property);
+                                northBoundary, modifyRsn, propCompletionDate, vacantLandPlotAreaId, layoutApprovalAuthorityId,
+                                property);
                 } else if (null == ((PropertyImpl) property).getId() && TRUE.equals(propertyDetail.isAppurtenantLandChecked())) {
                     validateVacantProperty(propertyDetail, eastBoundary, westBoundary, southBoundary, northBoundary,
                             modifyRsn, propCompletionDate, vacantLandPlotAreaId, layoutApprovalAuthorityId, property);
-                    validateBuiltUpProperty(propertyDetail, areaOfPlot, regDocDate, modifyRsn);
-                } else
-                    validateBuiltUpProperty(propertyDetail, areaOfPlot, regDocDate, modifyRsn);
-                validateFloor(propTypeMstr, property.getPropertyDetail().getFloorDetailsProxy(), property, areaOfPlot,
-                        regDocDate, modifyRsn, propCompletionDate);
+                    validateBuiltUpProperty(propertyDetail, areaOfPlot);
+                    validateFloor(propTypeMstr, property.getPropertyDetail().getFloorDetailsProxy(), property, areaOfPlot,
+                            regDocDate, modifyRsn, propCompletionDate);
+                } else {
+                    validateBuiltUpProperty(propertyDetail, areaOfPlot);
+                    validateFloor(propTypeMstr, property.getPropertyDetail().getFloorDetailsProxy(), property, areaOfPlot,
+                            regDocDate, modifyRsn, propCompletionDate);
+                }
             }
         }
-
-        if (logger.isDebugEnabled())
-            logger.debug("Exiting from validateProperty");
     }
 
     public void validateVacantProperty(final PropertyDetail propertyDetail, final String eastBoundary,
             final String westBoundary, final String southBoundary, final String northBoundary, final String modifyRsn,
-            final Date propCompletionDate, final Long vacantLandPlotAreaId, final Long layoutApprovalAuthorityId, final Property property) {
+            final Date propCompletionDate, final Long vacantLandPlotAreaId, final Long layoutApprovalAuthorityId,
+            final Property property) {
 
-        if (logger.isDebugEnabled())
-            logger.debug("Entered into validateVacantProperty");
         if (isBlank(propertyDetail.getSurveyNumber()))
             addActionError(getText("mandatory.surveyNo"));
         if (isBlank(propertyDetail.getPattaNumber()))
@@ -316,7 +312,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         if (null == propertyDetail.getSitalArea().getArea())
             addActionError(getText("mandatory.vacantLandArea"));
         final Date effDate = propertyTaxUtil.getEffectiveDateForProperty(property);
-        if (null == propertyDetail.getDateOfCompletion() || "".equals(propertyDetail.getDateOfCompletion()))
+        if (null == propertyDetail.getDateOfCompletion())
             addActionError(getText("mandatory.dtOfCmpln"));
         else if (propertyDetail.getDateOfCompletion().before(effDate))
             addActionError(getText("vacant.effectiveDate.before.6inst"));
@@ -348,23 +344,13 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             if (propertyDetail.getLayoutPermitDate() == null)
                 addActionError(getText("mandatory.layout.permitdate"));
         }
-        if (null != modifyRsn && null != propCompletionDate)
-            if (null != propCompletionDate && propertyDetail.getDateOfCompletion() != null)
-                if (!DateUtils.compareDates(propertyDetail.getDateOfCompletion(), propCompletionDate))
-                    addActionError(getText("modify.vacant.completiondate.validate"));
-
-        if (logger.isDebugEnabled())
-            logger.debug("Exiting from validateVacantProperty");
-
+        if (null != modifyRsn && null != propCompletionDate && propertyDetail.getDateOfCompletion() != null
+                && !DateUtils.compareDates(propertyDetail.getDateOfCompletion(), propCompletionDate))
+            addActionError(getText("modify.vacant.completiondate.validate"));
     }
 
-    public void validateBuiltUpProperty(final PropertyDetail propertyDetail, final String areaOfPlot, final Date regDocDate, final String modifyRsn) {
-    	
-    	final Date propCompletionDate = propertyService.getLowestDtOfConstFloorWise(propertyDetail.getFloorDetailsProxy());
-        
-    	if (logger.isDebugEnabled())
-            logger.debug("Eneterd into validateBuiltUpProperty");
-
+    public void validateBuiltUpProperty(final PropertyDetail propertyDetail, final String areaOfPlot) {
+        final Date propCompletionDate = propertyService.getLowestDtOfConstFloorWise(propertyDetail.getFloorDetailsProxy());
         if (TRUE.equals(propertyDetail.isAppurtenantLandChecked()) && null == propertyDetail.getExtentAppartenauntLand())
             addActionError(getText("mandatory.extentAppartnant"));
         else if (FALSE.equals(propertyDetail.isAppurtenantLandChecked()) && isBlank(areaOfPlot))
@@ -375,9 +361,6 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         if (propertyDetail.getOccupancyCertificationDate() != null && propCompletionDate != null
                 && propertyDetail.getOccupancyCertificationDate().before(propCompletionDate))
             addActionError(getText("occupancydate.before.constrDate.error"));
-
-        if (logger.isDebugEnabled())
-            logger.debug("Exiting from validateBuiltUpProperty");
     }
 
     public void validateFloor(final PropertyTypeMaster propTypeMstr, final List<Floor> floorList,
@@ -390,8 +373,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             logger.debug("Entered into validateFloor \nPropertyTypeMaster:" + propTypeMstr + ", No of floors: "
                     + (floorList != null ? floorList : ZERO));
 
-        if (!propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
-            if (floorList != null && !floorList.isEmpty())
+        if (!propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND) && !floorList.isEmpty())
                 for (final Floor floor : floorList) {
                     List<String> msgParams;
                     if (floor != null) {
@@ -409,14 +391,11 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                             addActionError(getText("mandatory.constType", msgParams));
                         
                         if (!floor.getUnstructuredLand()) {
-                            if (floor.getBuiltUpArea() == null || floor.getBuiltUpArea().getLength() == null
-                                    || "".equals(floor.getBuiltUpArea().getLength()))
+                            if (floor.getBuiltUpArea() == null || floor.getBuiltUpArea().getLength() == null)
                                 addActionError(getText("mandatory.assbleLength", msgParams));
-                            if (floor.getBuiltUpArea() == null || floor.getBuiltUpArea().getBreadth() == null
-                                    || "".equals(floor.getBuiltUpArea().getBreadth()))
+                            if (floor.getBuiltUpArea() == null || floor.getBuiltUpArea().getBreadth() == null)
                                 addActionError(getText("mandatory.assbleWidth", msgParams));
                         }
-
                         if (floor.getPropertyUsage() == null || null == floor.getPropertyUsage().getId()
                                 || "-1".equals(floor.getPropertyUsage().getId().toString()))
                             addActionError(getText("mandatory.floor.usage", msgParams));
@@ -436,40 +415,36 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                                 addActionError(getText("mandatory.floor.buildingplan.number", msgParams));
                                 buildingPlanNoValidationAdded = true;
                             }
-                            if (floor.getBuildingPlanPlinthArea().getArea() == null)
-                                if (!buildingPlanPlinthAreaValidationAdded)
-                                    addActionError(getText("mandatory.floor.buildingplan.plintharea", msgParams));
+                        if (floor.getBuildingPlanPlinthArea().getArea() == null && !buildingPlanPlinthAreaValidationAdded)
+                            addActionError(getText("mandatory.floor.buildingplan.plintharea", msgParams));
                         }
                         if (floor.getBuildingPlanPlinthArea().getArea() != null) {
-                            if (floor.getBuildingPermissionDate() == null)
-                                if (!buildingPlanDateValidationAdded)
-                                    addActionError(getText("mandatory.floor.buildingplan.date", msgParams));
-                            if (StringUtils.isBlank(floor.getBuildingPermissionNo()))
-                                if (!buildingPlanNoValidationAdded)
-                                    addActionError(getText("mandatory.floor.buildingplan.number", msgParams));
+                        if (floor.getBuildingPermissionDate() == null && !buildingPlanDateValidationAdded)
+                            addActionError(getText("mandatory.floor.buildingplan.date", msgParams));
+                        if (StringUtils.isBlank(floor.getBuildingPermissionNo()) && !buildingPlanNoValidationAdded)
+                            addActionError(getText("mandatory.floor.buildingplan.number", msgParams));
                         }
 
-                        if (floor.getFirmName() == null || floor.getFirmName().isEmpty()
-                                || "".equals(floor.getFirmName()))
-                            if (floor.getPropertyUsage() != null && null != floor.getPropertyUsage().getId()
-                                    && !"-1".equals(floor.getPropertyUsage().getId().toString())) {
-                                final PropertyUsage pu = propertyUsageService.findById(Long.valueOf(floor
-                                        .getPropertyUsage().getId()));
-                                if (pu != null && !pu.getUsageName().equalsIgnoreCase(NATURE_OF_USAGE_RESIDENCE))
-                                    addActionError(getText("mandatory.floor.firmName", msgParams));
-                            }
+                    if (StringUtils.isNotBlank(floor.getFirmName()) && floor.getPropertyUsage() != null
+                            && null != floor.getPropertyUsage().getId()
+                            && !"-1".equals(floor.getPropertyUsage().getId().toString())) {
+                        final PropertyUsage pu = propertyUsageService.findById(Long.valueOf(floor
+                                .getPropertyUsage().getId()));
+                        if (pu != null && !pu.getUsageName().equalsIgnoreCase(NATURE_OF_USAGE_RESIDENCE))
+                            addActionError(getText("mandatory.floor.firmName", msgParams));
+                    }
 
                         if (floor.getPropertyOccupation() == null || null == floor.getPropertyOccupation().getId()
                                 || "-1".equals(floor.getPropertyOccupation().getId().toString()))
                             addActionError(getText("mandatory.floor.occ"));
 
-                        if (floor.getConstructionDate() == null || "".equals(floor.getConstructionDate()))
+                        if (floor.getConstructionDate() == null)
                             addActionError(getText("mandatory.floor.constrDate"));
 
                         final Date effDate = propertyTaxUtil.getEffectiveDateForProperty(property);
-                        if (floor.getOccupancyDate() == null || "".equals(floor.getOccupancyDate()))
+                        if (floor.getOccupancyDate() == null)
                             addActionError(getText("mandatory.floor.docOcc"));
-                        if (floor.getOccupancyDate() != null && !"".equals(floor.getOccupancyDate())) {
+                        if (floor.getOccupancyDate() != null) {
                             if (floor.getOccupancyDate().after(new Date()))
                                 addActionError(getText("mandatory.dtFlrBeforeCurr"));
                             if (floor.getOccupancyDate().before(effDate))
@@ -480,25 +455,21 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                                 && floor.getOccupancyDate().before(floor.getConstructionDate()))
                             addActionError(getText("effectiveDate.before.constrDate.error"));
 
-                        if (floor.getBuiltUpArea() == null || floor.getBuiltUpArea().getArea() == null
-                                || "".equals(floor.getBuiltUpArea().getArea()))
+                        if (floor.getBuiltUpArea() == null || floor.getBuiltUpArea().getArea() == null)
                             addActionError(getText("mandatory.assbleArea"));
                         else if (StringUtils.isNotBlank(areaOfPlot)
                                 && floor.getBuiltUpArea().getArea() > Double.valueOf(areaOfPlot))
                             addActionError(getText("assbleArea.notgreaterthan.extentsite"));
 
-                        if (modifyRsn == null
-                                || modifyRsn != null && !modifyRsn.equals(PROPERTY_MODIFY_REASON_ADD_OR_ALTER) && !modifyRsn
-                                        .equals(PROPERTY_MODIFY_REASON_BIFURCATE))
-                            if (null != regDocDate && null != floor.getOccupancyDate()
-                                    && !"".equals(floor.getOccupancyDate()))
-                                if (DateUtils.compareDates(regDocDate, floor.getOccupancyDate()))
-                                    addActionError(getText("regDate.notgreaterthan.occDate", msgParams));
-                        if (null != modifyRsn && null != propCompletionDate)
-                            if (null != propCompletionDate && floor.getOccupancyDate() != null
-                                    && !"".equals(floor.getOccupancyDate()))
-                                if (!DateUtils.compareDates(floor.getOccupancyDate(), propCompletionDate))
-                                    addActionError(getText("modify.builtup.occDate.validate", msgParams));
+                    if (modifyRsn == null
+                            || modifyRsn != null && !modifyRsn.equals(PROPERTY_MODIFY_REASON_ADD_OR_ALTER) && !modifyRsn
+                                    .equals(PROPERTY_MODIFY_REASON_BIFURCATE) && null != regDocDate
+                                    && null != floor.getOccupancyDate()
+                                    && DateUtils.compareDates(regDocDate, floor.getOccupancyDate()))
+                        addActionError(getText("regDate.notgreaterthan.occDate", msgParams));
+                    if (null != modifyRsn && null != propCompletionDate && floor.getOccupancyDate() != null
+                            && !DateUtils.compareDates(floor.getOccupancyDate(), propCompletionDate))
+                        addActionError(getText("modify.builtup.occDate.validate", msgParams));
 
                     }
                 }
@@ -520,8 +491,6 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                         "from BasicPropertyImpl bp where bp.address.houseNoBldgApt = :houseNo and bp.boundary.id = :wardId and bp.active = 'Y'");
         qry.setParameter("houseNo", houseNo);
         qry.setParameter("wardId", wardId);
-        // this condition is reqd bcoz, after rejection the validation shouldn't
-        // happen for the same houseNo
         if (!qry.list().isEmpty()
                 && (basicProperty == null || !basicProperty.getAddress().getHouseNoBldgApt().equals(houseNo)))
             addActionError(getText("houseNo.unique"));
@@ -932,10 +901,10 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         BigDecimal totalTax;
         if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
             propertyTaxDetailsMap.put("generalTax",
-                    demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX) == null ? ZERO : propertyTaxCommonUtils.
-                            getAggregateGenralTax(demandCollMap));
-            totalTax = (demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX) == null ? ZERO : propertyTaxCommonUtils.
-                getAggregateGenralTax(demandCollMap))
+                    demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX) == null ? ZERO
+                            : propertyTaxCommonUtils.getAggregateGenralTax(demandCollMap));
+            totalTax = (demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX) == null ? ZERO
+                    : propertyTaxCommonUtils.getAggregateGenralTax(demandCollMap))
                             .add(demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_TAX) == null ? ZERO : demandCollMap
                                     .get(DEMANDRSN_STR_EDUCATIONAL_TAX))
                             .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? ZERO : demandCollMap
@@ -1024,20 +993,20 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         return PropertyTaxConstants.DOCUMENT_NAME_REGD_WILL_DOCUMENT.equals(documentTypeDetails.getDocumentName())
                 || PropertyTaxConstants.DOCUMENT_NAME_UNREGD_WILL_DOCUMENT.equals(documentTypeDetails.getDocumentName());
     }
-    
+
     public void populateUsages(String propertyCategory) {
         List<PropertyUsage> usageList = propertyUsageService.getAllActiveMixedPropertyUsages();
         // Loading property usages based on property category
         if (StringUtils.isNoneBlank(propertyCategory))
-                if (propertyCategory.equals(CATEGORY_MIXED))
-                        usageList = propertyUsageService.getAllActiveMixedPropertyUsages();
-                else if (propertyCategory.equals(CATEGORY_RESIDENTIAL))
-                        usageList = propertyUsageService.getResidentialPropertyUsages();
-                else if (propertyCategory.equals(CATEGORY_NON_RESIDENTIAL))
-                        usageList = propertyUsageService.getNonResidentialPropertyUsages();
+            if (propertyCategory.equals(CATEGORY_MIXED))
+                usageList = propertyUsageService.getAllActiveMixedPropertyUsages();
+            else if (propertyCategory.equals(CATEGORY_RESIDENTIAL))
+                usageList = propertyUsageService.getResidentialPropertyUsages();
+            else if (propertyCategory.equals(CATEGORY_NON_RESIDENTIAL))
+                usageList = propertyUsageService.getNonResidentialPropertyUsages();
         addDropdownData("UsageList", usageList);
     }
-    
+
     public String multipleSubmitRedirect() {
         setWfErrorMsg(getText("error.multiple.submit"));
         return TARGET_WORKFLOW_ERROR;
@@ -1052,7 +1021,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         } else
             return Boolean.FALSE;
     }
-    
+
     public void enableActionsForGIS(PropertyImpl property, List<DocumentType> documentTypes) {
         if (property.getState().getNextAction().endsWith(WF_STATE_COMMISSIONER_APPROVAL_PENDING)
                 && property.getSurveyVariance().compareTo(BigDecimal.TEN) > 0) {
@@ -1069,8 +1038,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             }
         }
     }
-    
-    public void validateOwnerDetails(PropertyImpl property){
+
+    public void validateOwnerDetails(PropertyImpl property) {
         for (final PropertyOwnerInfo owner : property.getBasicProperty().getPropertyOwnerInfoProxy())
             if (owner != null) {
                 if (StringUtils.isBlank(owner.getOwner().getName()))
@@ -1092,9 +1061,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 for (int j = i + 1; j <= count - 1; j++) {
                     final PropertyOwnerInfo owner1 = property.getBasicProperty().getPropertyOwnerInfoProxy().get(j);
                     if (owner1 != null && owner.getOwner().getMobileNumber().equalsIgnoreCase(owner1.getOwner().getMobileNumber())
-                                && owner.getOwner().getName().equalsIgnoreCase(owner1.getOwner().getName()))
-                            addActionError(getText("error.owner.duplicateMobileNo", "",
-                                    owner.getOwner().getMobileNumber().concat(",").concat(owner.getOwner().getName())));
+                            && owner.getOwner().getName().equalsIgnoreCase(owner1.getOwner().getName()))
+                        addActionError(getText("error.owner.duplicateMobileNo", "",
+                                owner.getOwner().getMobileNumber().concat(",").concat(owner.getOwner().getName())));
                 }
         }
     }

@@ -1584,34 +1584,26 @@ public class PropertyService {
      * @return
      */
     public Date getLowestDtOfCompFloorWise(final List<Floor> floorList) {
-        LOGGER.debug("Entered into getLowestDtOfCompFloorWise, floorList: " + floorList);
         Date completionDate = null;
+        Date floorDate;
         for (final Floor floor : floorList) {
-            Date floorDate;
             if (floor != null) {
                 floorDate = floor.getOccupancyDate();
-                if (floorDate != null)
-                    if (completionDate == null)
-                        completionDate = floorDate;
-                    else if (completionDate.after(floorDate))
-                        completionDate = floorDate;
+                if (floorDate != null && (completionDate == null || completionDate.after(floorDate)))
+                    completionDate = floorDate;
             }
         }
-        LOGGER.debug("completionDate: " + completionDate + "\nExiting from getLowestDtOfCompFloorWise");
         return completionDate;
     }
-    
+
     public Date getLowestDtOfConstFloorWise(final List<Floor> floorList) {
         Date constructionDate = null;
+        Date floorConstDate;
         for (final Floor floor : floorList) {
-            Date floorDate;
             if (floor != null) {
-                floorDate = floor.getConstructionDate();
-                if (floorDate != null)
-                    if (constructionDate == null)
-                        constructionDate = floorDate;
-                    else if (constructionDate.after(floorDate))
-                        constructionDate = floorDate;
+                floorConstDate = floor.getConstructionDate();
+                if (floorConstDate != null && (constructionDate == null || constructionDate.after(floorConstDate)))
+                    constructionDate = floorConstDate;
             }
         }
         return constructionDate;
@@ -2141,7 +2133,7 @@ public class PropertyService {
                                 documentTypePersistenceService.load(document.getType().getId(), DocumentType.class));
                 }
             }
-            if (document.getId() == null || document.getType() == null)
+            if (document.getType() != null)
                 document.setType(documentTypePersistenceService.load(document.getType().getId(), DocumentType.class));
         });
     }

@@ -540,7 +540,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
             qry.setDate("fromYear", currentFinancialYear.getStartingDate());
             qry.setDate("toYear", currentFinancialYear.getStartingDate());
             final List<Ptdemand> ptDemandResult = qry.list();
-            if (ptDemandResult != null && ptDemandResult.size() > 0)
+            if (!ptDemandResult.isEmpty())
                 egptPtdemand = ptDemandResult.get(0);
         }
         return egptPtdemand;

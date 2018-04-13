@@ -670,7 +670,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
                 validateVacantProperty(propertyDetail, eastBoundary, westBoundary, southBoundary,
                         northBoundary, modifyRsn, propCompletionDate, vacantLandPlotAreaId, layoutApprovalAuthorityId, propertyModel);
         } else {
-            validateBuiltUpProperty(propertyDetail, areaOfPlot, regDocDate, modifyRsn);
+            validateBuiltUpProperty(propertyDetail, areaOfPlot);
             validateFloor(propTypeMstr, propertyModel.getPropertyDetail().getFloorDetailsProxy(), propertyModel, areaOfPlot,
                     regDocDate, modifyRsn, propCompletionDate);
         }
