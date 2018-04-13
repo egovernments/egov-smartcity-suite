@@ -70,35 +70,37 @@ public class PropertyCourtCase extends AbstractAuditable {
     public static final String SEQ_EGPT_COURTCASES = "SEQ_EGPT_COURTCASES";
 
     @Column(name = "ASSESSMENTNO")
-    private String assessmentno;
+    private String assessmentNo;
 
     @Column(name = "CASENO")
-    private String caseno;
+    private String caseNo;
     
     @Id
     @GeneratedValue(generator = SEQ_EGPT_COURTCASES, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-	public String getAssessmentno() {
-		return assessmentno;
+	public String getAssessmentNo() {
+		return assessmentNo;
 	}
 
-	public void setAssessmentno(String assessmentno) {
-		this.assessmentno = assessmentno;
+	public void setAssessmentNo(String assessmentNo) {
+		this.assessmentNo = assessmentNo;
 	}
 
-	public String getCaseno() {
-		return caseno;
+	public String getCaseNo() {
+		return caseNo;
 	}
 
-	public void setCaseno(String caseno) {
-		this.caseno = caseno;
+	public void setCaseNo(String caseNo) {
+		this.caseNo = caseNo;
 	}
 
+	@Override
 	public Long getId() {
 		return id;
 	}
 
+	@Override
 	public void setId(Long id) {
 		this.id = id;
 	}

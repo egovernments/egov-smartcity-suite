@@ -85,7 +85,7 @@ public class MarkAsCourtCaseController {
             @PathVariable String assessmentNo) {
         BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
         propertyCourtcaseService.addModelAttributes(model, basicProperty);
-        propertyCourtCase.setAssessmentno(assessmentNo);
+        propertyCourtCase.setAssessmentNo(assessmentNo);
         model.addAttribute("propertyCourtCase", propertyCourtCase);
         model.addAttribute(ERROR_MSG, "");
         return MARKASCOURTCASE_FROM;
@@ -94,8 +94,8 @@ public class MarkAsCourtCaseController {
     @RequestMapping(method = RequestMethod.POST)
     public String updateOwnerDetails(@ModelAttribute final PropertyCourtCase propertyCourtCase,
             final RedirectAttributes redirectAttrs, final BindingResult errors, final Model model,
-            final HttpServletRequest request, @RequestParam String caseno) {
-            propertyCourtCase.setCaseno(caseno);      
+            final HttpServletRequest request, @RequestParam String caseNo) {
+            propertyCourtCase.setCaseNo(caseNo);      
         	propertyCourtcaseService.save(propertyCourtCase);
             return MARKASCOURTCASE_SUCCESS;
         

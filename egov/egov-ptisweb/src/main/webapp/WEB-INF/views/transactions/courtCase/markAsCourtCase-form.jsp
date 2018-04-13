@@ -61,15 +61,16 @@ body {
 
 <c:if test="${errorMsg != ''}">
 	<div class="panel-heading" style="text-align: center">
-				<div class="add-margin error-msg" style="text-align: center;">
-					<spring:message code="${errorMsg}" />
-				</div>
+		<div class="add-margin error-msg" style="text-align: center;">
+			<spring:message code="${errorMsg}" />
+		</div>
 	</div>
 </c:if>
+
 <div class="row">
 	<div class="col-md-12">
-		<form:form class="form-horizontal form-groups-bordered" method="post"
-			name="ownerDetailsForm" id="ownerDetailsForm" action=""
+			<form:form class="form-horizontal form-groups-bordered" method="post"
+			name="markAscourtCaseForm" id="markAscourtCaseForm" action=""
 			modelAttribute="propertyCourtCase">
 			<div class="panel panel-primary" data-collapsed="0"
 				style="text-align: left">
@@ -78,8 +79,14 @@ body {
 						<div class="panel panel-primary" data-collapsed="0"
 							style="text-align: left">
 							<div class="panel-heading">
+			               <div class="panel-title" style="text-align: center" >
+				            <spring:message code="lbl.courtcase.title" />
+			               </div>
+		                    </div>
+		                    
+							<div class="panel-heading">
 								<div class="panel-title">
-									<spring:message code="lbl.hdr.propertydetails" />
+									<spring:message code="lbl.hdr.propertydetails"  />
 								</div>
 							</div>
 							<div class="panel-body">
@@ -88,8 +95,9 @@ body {
 										<spring:message code="lbl.assmtno" />
 									</div>
 									<div class="col-xs-3 add-margin view-content">
-									<form:hidden path="assessmentno" value="${propertyCourtCase.assessmentno}"/>
-										<c:out value="${propertyCourtCase.assessmentno}">
+										<form:hidden path="assessmentNo"
+											value="${propertyCourtCase.assessmentNo}" />
+										<c:out value="${propertyCourtCase.assessmentNo}">
 										</c:out>
 									</div>
 									<div class="col-sm-3 add-margin">
@@ -98,7 +106,7 @@ body {
 									</div>
 									<div class="col-sm-3 add-margin view-content">
 										<c:out value="${doorNumber}" default="N/A" />
-										
+
 									</div>
 								</div>
 								<div class="row add-border">
@@ -116,7 +124,7 @@ body {
 										<c:out value="${address}" />
 									</div>
 								</div>
-								
+
 								<div class="row add-border">
 									<div class="col-xs-3 add-margin">
 										<spring:message code="lbl.propertytype" />
@@ -124,16 +132,15 @@ body {
 									<div class="col-xs-3 add-margin view-content">
 										<c:out value="${category}"></c:out>
 									</div>
-								
-								    <div class="col-xs-3 add-margin">
+
+									<div class="col-xs-3 add-margin">
 										<spring:message code="lbl.category.ownership" />
 									</div>
 									<div class="col-xs-3 add-margin view-content">
-										<c:out default="N/A"
-											value="${propertytype}"></c:out>
+										<c:out default="N/A" value="${propertytype}"></c:out>
 									</div>
-							    </div>
-                                <div class="row add-border">
+								</div>
+								<div class="row add-border">
 									<div class="col-xs-3 add-margin">
 										<spring:message code="lbl.totaltax.due" />
 									</div>
@@ -141,7 +148,7 @@ body {
 										<c:out value="${taxDues}">
 										</c:out>
 									</div>
-								
+
 									<div class="col-xs-3 add-margin">
 										<spring:message code="lbl.yearly.tax" />
 									</div>
@@ -153,71 +160,78 @@ body {
 
 								<div class="row add-border">
 									<div class="col-sm-3 add-margin">
-										<spring:message code="lbl.legal.case.no" /><span class="mandatory1">*</span>
+										<spring:message code="lbl.legal.case.no" />
+										<span class="mandatory1">*</span>
 									</div>
 									<div class="col-sm-3 add-margin">
-										<form:input path="caseno" id="caseno" name="caseno"
-											onBlur="getCaseDetails(this);"
+										<form:input path="caseNo" id="caseno" name="caseno"
 											cssClass="form-control patternvalidation" />
 									</div>
-								
+
 									<div class="col-sm-3 add-margin">
 										<div id="caseNodiv"></div>
 									</div>
 								</div>
 
 								<div class="caseDetails">
-								<div class="row add-border">
-									<div class="col-sm-3 add-margin">
-										<spring:message code="lbl.case.type" />
+									<div class="row add-border">
+										<div class="col-sm-3 add-margin">
+											<spring:message code="lbl.case.type" />
+										</div>
+										<div class="col-sm-3 add-margin view-content">
+											<form:textarea id="caseType" path="" cssClass="form-control"
+												disabled="true" value="${caseType}" default="N/A" />
+										</div>
+										<div class="col-sm-3 add-margin">
+											<spring:message code="lbl.case.title" />
+										</div>
+										<div class="col-sm-3 add-margin view-content">
+											<form:textarea id="caseTitle" path="" cssClass="form-control"
+												disabled="true" value="${caseTitle}" default="N/A" />
+										</div>
 									</div>
-									<div class="col-sm-3 add-margin view-content" >
-									<form:textarea id="caseType" path="" cssClass="form-control" disabled="true" value="${caseType}" default="N/A" />
+									<div class="row add-border">
+										<div class="col-xs-3 add-margin">
+											<spring:message code="lbl.case.status" />
+										</div>
+										<div class="col-xs-3 add-margin view-content">
+											<form:input id="caseStatus" path="" disabled="true"
+												cssClass="form-control" value="${caseStatus}" default="N/A" />
+										</div>
+										<div class="col-xs-3 add-margin">
+											<spring:message code="lbl.judgment.type" />
+										</div>
+										<div class="col-xs-3 add-margin view-content">
+											<form:textarea id="judgementType" path=""
+												cssClass="form-control" disabled="true"
+												value="${judgementType}" default="N/A" />
+										</div>
 									</div>
-									<div class="col-sm-3 add-margin">
-										<spring:message code="lbl.case.title" />
-									</div>
-									<div class="col-sm-3 add-margin view-content" >
-									<form:textarea id="caseTitle" path="" cssClass="form-control" disabled="true" value="${caseTitle}" default="N/A" />
+									<div class="row add-border">
+										<div class="col-xs-3 add-margin">
+											<spring:message code="lbl.judgment.desc" />
+										</div>
+										<div class="col-xs-3 add-margin view-content">
+											<form:textarea id="judgementDesc" path=""
+												cssClass="form-control" disabled="true"
+												value="${judgementDesc}" default="N/A" />
+										</div>
 									</div>
 								</div>
-								<div class="row add-border">
-								<div class="col-xs-3 add-margin">
-										<spring:message code="lbl.case.status" />
-									</div>
-									<div class="col-xs-3 add-margin view-content">
-									<form:input id="caseStatus" path="" disabled="true" cssClass="form-control" value="${caseStatus}" default="N/A" />
-									</div>
-									<div class="col-xs-3 add-margin">
-										<spring:message code="lbl.judgment.type" />
-									</div>
-									<div class="col-xs-3 add-margin view-content">
-									<form:input id="judgementType" path="" cssClass="form-control" disabled="true" value="${judgementType}" default="N/A" />
-									</div>
-								</div>	
-								<div class="row add-border">
-									<div class="col-xs-3 add-margin">
-										<spring:message code="lbl.judgment.desc" />
-									</div>
-									<div class="col-xs-3 add-margin view-content">
-									<form:input id="judgementDesc" path="" cssClass="form-control" disabled="true" value="${judgementDesc}" default="N/A" />
-									</div>
-								</div>
-								</div>
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-			<div class="row">
-				<div class="text-center">
-					<button type="submit" class="btn btn-primary add-margin"
-						id="submitform">
-						<spring:message code="lbl.submit" />
-					</button>
-					<a href="javascript:void(0)" class="btn btn-default"
-						onclick="self.close()"><spring:message code="lbl.close" /></a>
+				<div class="row">
+					<div class="text-center">
+						<button type="submit" class="btn btn-primary add-margin"
+							id="submitform" disabled="disabled">
+							<spring:message code="lbl.submit" />
+						</button>
+						<a href="javascript:void(0)" class="btn btn-default"
+							onclick="self.close()"><spring:message code="lbl.close" /></a>
+					</div>
 				</div>
-			</div>
 			</div>
 		</form:form>
 	</div>
@@ -225,78 +239,92 @@ body {
 <script
 	src="<cdn:url value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>">
 	
-	</script>
+</script>
 
 <script type="text/javascript">
+	var caseno = new Bloodhound({
+		datumTokenizer : function(datum) {
+			return Bloodhound.tokenizers.whitespace(datum.value);
+		},
+		queryTokenizer : Bloodhound.tokenizers.whitespace,
+		remote : {
+			url : "/lcms/legalcase/ajax-caseNumber?caseNumber=%QUERY",
+			filter : function(data) {
+				return $.map(data, function(ct) {
+					return {
+						name : ct.Value
+					};
+				});
+			}
+		}
+	});
 
- var caseno = new Bloodhound({
-    datumTokenizer: function (datum) {
-        return Bloodhound.tokenizers.whitespace(datum.value);
-    },
-    queryTokenizer: Bloodhound.tokenizers.whitespace,
-    remote: {
-        url: "/lcms/legalcase/ajax-caseNumber?caseNumber=%QUERY",
-        filter: function (data) {
-            return $.map(data, function (ct) {
-                return {
-                    name: ct.Value
-                };
-            });
-        }
-    }
-});
+	caseno.initialize();
+	var caseno_typeahead = $('#caseno').typeahead({
+		hint : true,
+		highlight : true,
+		minLength : 2
+	}, {
+		displayKey : 'name',
+		source : caseno.ttAdapter()
+	}).on("typeahead:selected", function(obj, datum, name) {
+		getCaseDetails(this);
+	}).on("blur", function(obj, datum, name) {
+		getCaseDetails(this);
+	});
 
-caseno.initialize();
-var workIdNumber_typeahead = $('#caseno').typeahead({
-	hint : true,
-	highlight : true,
-	minLength : 2
-}, {
-	displayKey : 'name',
-	source : caseno.ttAdapter()
-}); 
+	function getCaseDetails(obj) {
+		jQuery
+				.ajax({
+					url : "/lcms/legalcase/ajax-caseDetailsByCaseNumber?caseNumber="
+							+ jQuery(obj).val(),
+					type : "GET",
+					success : function(response) {
+						if (response.caseType) {
+							jQuery('.caseDetails').show();
+							jQuery('#caseNodiv').show();
+							jQuery('#caseNodiv')
+									.html(
+											'<a href='+response.viewLegalCase+' target="_blank">View Legal Case Details</a>');
+							jQuery('#caseType').val(response.caseType);
+							jQuery('#caseTitle').val(response.caseTitle);
+							jQuery('#caseStatus').val(response.caseStatus);
+							if (response.judgmentDescription != "")
+								jQuery('#judgementDesc').val(
+										response.judgmentDescription);
+							else
+								jQuery('#judgementDesc').val('N/A');
+							if (response.judgmentType != "")
+								jQuery('#judgementType').val(
+										response.judgmentType);
+							else
+								jQuery('#judgementType').val('N/A');
+							jQuery('#submitform').removeAttr('disabled');
+						} else {
+							jQuery('.caseDetails').hide();
+							jQuery('#caseNodiv').hide();
+							jQuery('#caseType').val('');
+							jQuery('#caseTitle').val('');
+							jQuery('#caseStatus').val('');
+							jQuery('#judgementDesc').val('');
+							jQuery('#judgementType').val('');
+							jQuery('#submitform').attr('disabled', 'disabled');
+							bootbox.alert("Case Number doesnot exist!");
+							return false;
+						}
 
+					},
+					complete : function() {
+						jQuery('.loader-class').modal('hide');
+					},
+					error : function() {
+						return false;
+					}
+				});
 
+	}
 
-function getCaseDetails(obj){
-	jQuery.ajax({
-	    	url: "/lcms/legalcase/ajax-caseDetailsByCaseNumber?caseNumber="+jQuery(obj).val(),
-	        type: "GET",
-	        beforeSend:function()
-	        {
-	        	jQuery('.loader-class').modal('show', {backdrop: 'static'});
-	        },
-	        success: function(response){
-
-	        	jQuery('.caseDetails').show();
-	        	jQuery('#caseNodiv').html('<a href='+response.viewLegalCase+' target="_blank">View Legal Case Details</a>');
-				jQuery('#caseType').val(response.caseType);
-	        	jQuery('#caseTitle').val(response.caseTitle);
-	        	jQuery('#caseStatus').val(response.caseStatus);
-	        	if(response.judgmentDescription!="")
-	        	jQuery('#judgementDesc').val(response.judgmentDescription);
-	        	else
-	        		jQuery('#judgementDesc').val('N/A');
-	        	if(response.judgmentType!="")
-	        	jQuery('#judgementType').val(response.judgmentType);
-	        	else
-	        		jQuery('#judgementType').val('N/A');
-	        	
-	        },
-	        complete:function()
-	        {
-	        	jQuery('.loader-class').modal('hide');
-	        },
-	        error:function()
-	        {
-	        	return false;
-	        }
-	    });
-}
-
-
-jQuery(document).ready(function() {
-	jQuery('.caseDetails').hide();
-});
-
-	       </script>
+	jQuery(document).ready(function() {
+		jQuery('.caseDetails').hide();
+	});
+</script>

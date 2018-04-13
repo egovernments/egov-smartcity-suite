@@ -86,7 +86,7 @@ public class PropertyCourtCaseService {
     
     @ReadOnly
     public List<PropertyCourtCase> findByAssessmentNo(String assessmentNo) {
-        return propertyCourtCaseRepository.findByAssessmentno(assessmentNo);
+        return propertyCourtCaseRepository.findByAssessmentNo(assessmentNo);
     }
     
     public void addModelAttributes(final Model model, BasicProperty basicProperty) {

@@ -56,6 +56,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PropertyCourtCaseRepository extends JpaRepository<PropertyCourtCase, Long> {
 
-	public List<PropertyCourtCase> findByAssessmentno(String assessmentNo);
+	public List<PropertyCourtCase> findByAssessmentNo(String assessmentNo);
 	
 }
