@@ -75,18 +75,28 @@
     </definition>
 
     <definition name="event-view" extends="base_layout">
-        <put-attribute name="page-title" value="title.event.view" cascade="true"/>
+        <put-attribute name="page-title" value="title.event.view.all" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/event/eventView.jsp"/>
     </definition>
     
     <definition name="event-create" extends="base_layout">
-        <put-attribute name="page-title" value="title.event.view" cascade="true"/>
+        <put-attribute name="page-title" value="title.event.new" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/event/eventNew.jsp"/>
     </definition>
     
     <definition name="event-update" extends="base_layout">
         <put-attribute name="page-title" value="title.event.view" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/event/eventUpdate.jsp"/>
+    </definition>
+    
+    <definition name="event-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.event.new" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/event/event-success.jsp"/>
+    </definition>
+    
+    <definition name="event-view-result" extends="base_layout">
+        <put-attribute name="page-title" value="title.event.view" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/event/event-view-result.jsp"/>
     </definition>
 
     

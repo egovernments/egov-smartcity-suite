@@ -1,27 +1,36 @@
 package org.egov.eventnotification.utils;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 @Service
 public class EventnotificationUtil {
 	
-	public static Map<Integer, Integer> getAllHour() {
-		final Map<Integer, Integer> hoursMap = new HashMap<>();
+	public static List<String> getAllHour() {
+		final List<String> hoursList = new ArrayList<>();
 		for(int i=0;i<24;i++) {
-			hoursMap.put(i, i);
+			if(i < 10) {
+				hoursList.add("0"+i);
+			}else {
+				hoursList.add(String.valueOf(i));
+			}
+			
 		}
-        return hoursMap;
+        return hoursList;
     }
 	
-	public static Map<Integer, Integer> getAllMinute() {
-		final Map<Integer, Integer> minutesMap = new HashMap<>();
+	public static List<String> getAllMinute() {
+		final List<String> minutesList = new ArrayList<>();
 		for(int i=0;i<60;i++) {
-			minutesMap.put(i, i);
+			if(i < 10) {
+				minutesList.add("0"+i);
+			}else {
+				minutesList.add(String.valueOf(i));
+			}
 		}
-        return minutesMap;
+        return minutesList;
     }
 
 }

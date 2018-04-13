@@ -135,5 +135,10 @@ public class ApiUrl {
 
 	public final static String EMPLOYEE_GET_ROUTED_COMPLAINT = "/employee/routedcomplaints/{page}/{pageSize}";
 	public final static String EMPLOYEE_GET_ROUTED_COMPLAINT_COUNT = "/employee/routedcomplaintcount";
-
+	
+	/**
+	 * Event
+	 */
+	public final static String GET_ALL_EVENT = "/events";
+	public final static String GET_EVENT = "/event";
 }

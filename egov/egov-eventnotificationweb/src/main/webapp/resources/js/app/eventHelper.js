@@ -47,8 +47,18 @@
  */
 var tableContainer;
 $(document).ready(function(){
-
-	tableContainer = $('#eventViewTable');
+	
+	$('#eventViewTable').DataTable({
+		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-md-3 col-xs-6 text-right'p>>",
+		"aLengthMenu" : [[10,25,50,-1 ],[10,25,50,"All" ] ],
+		"order": [[ 0, "desc" ]],
+		sort: true,
+		"autoWidth" : false
+	});
+	
+	$('#eventViewTable tbody').on('click', 'tr', function () {
+		window.open("/eventnotification/event/view/"+$(this).children('td:first-child').text(),'_blank', "width=800, height=700, scrollbars=yes")
+    } );
 
 });
 

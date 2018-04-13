@@ -49,7 +49,7 @@
 <%@ include file="/includes/taglibs.jsp"%>
 
 <div class="row report-section">
-	<div class="col-md-12 table-header text-left"><spring:message code="title.event.view" /></div>
+	<div class="col-md-12 table-header text-left"><spring:message code="title.event.view.all" /></div>
 	<div class="col-md-12 form-group report-table-container">
 		<table class="table table-bordered table-hover multiheadertbl"
 			id="eventViewTable">
@@ -67,6 +67,35 @@
 					<th><spring:message code="lbl.event.address" /></th>
 				</tr>
 			</thead>
+			<tbody>
+			<c:if test="${not empty eventList}">
+				<c:forEach var="listVar" items="${eventList}">
+	    			<tr>
+	    				<td><c:out value="${listVar.id}"/></td>
+	    				<td><c:out value="${listVar.name}"/></td>
+	    				<td><c:out value="${listVar.description}"/></td>
+	    				<td>
+	    					<fmt:formatDate pattern="dd/MM/yyyy" value="${listVar.startDate}" var="startDate" />
+							<c:out value="${startDate}" />
+	    				</td>
+	    				<td><c:out value="${listVar.startTime}"/></td>
+	    				<td>
+	    					<fmt:formatDate pattern="dd/MM/yyyy" value="${listVar.endDate}" var="endDate" />
+							<c:out value="${endDate}" />
+	    				</td>
+	    				<td><c:out value="${listVar.endTime}"/></td>
+	    				<td><c:out value="${listVar.eventhost}"/></td>
+	    				<td><c:out value="${listVar.eventlocation}"/></td>
+	    				<td><c:out value="${listVar.address}"/></td>
+	    			</tr>
+				</c:forEach>
+			</c:if>
+			<c:if test="${empty eventList}">
+				<tr class="odd">
+					<td colspan="10" class="dataTables_empty" valign="top">No data available in table</td>
+				</tr>
+			</c:if>
+			</tbody>
 		</table>
 	</div>
 </div>
