@@ -356,7 +356,7 @@ public class SearchPropertyAction extends SearchFormAction {
     @ValidationErrorPage(value = COMMON_FORM)
     @Action(value = "/search/searchProperty-commonSearch")
     public String commonSearch() {
-        final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByIndexNumAndParcelID(assessmentNum, null);
+        final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNum);
         if (basicProperty == null) {
             addActionError(getText("validation.property.doesnot.exists"));
             return COMMON_FORM;
