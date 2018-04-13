@@ -368,10 +368,6 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         boolean buildingPlanNoValidationAdded;
         boolean buildingPlanDateValidationAdded;
         boolean buildingPlanPlinthAreaValidationAdded;
-        if (logger.isDebugEnabled())
-            logger.debug("Entered into validateFloor \nPropertyTypeMaster:" + propTypeMstr + ", No of floors: "
-                    + (floorList != null ? floorList : ZERO));
-
         if (!propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND) && !floorList.isEmpty())
             for (final Floor floor : floorList) {
                 List<String> msgParams;
@@ -423,7 +419,6 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                         if (isBlank(floor.getBuildingPermissionNo()) && !buildingPlanNoValidationAdded)
                             addActionError(getText("mandatory.floor.buildingplan.number", msgParams));
                     }
-
                     if (StringUtils.isNotBlank(floor.getFirmName()) && floor.getPropertyUsage() != null
                             && null != floor.getPropertyUsage().getId()
                             && !"-1".equals(floor.getPropertyUsage().getId().toString())) {
@@ -432,7 +427,6 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                         if (pu != null && !pu.getUsageName().equalsIgnoreCase(NATURE_OF_USAGE_RESIDENCE))
                             addActionError(getText("mandatory.floor.firmName", msgParams));
                     }
-
                     if (floor.getPropertyOccupation() == null || null == floor.getPropertyOccupation().getId()
                             || "-1".equals(floor.getPropertyOccupation().getId().toString()))
                         addActionError(getText("mandatory.floor.occ"));
@@ -449,7 +443,6 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                         if (floor.getOccupancyDate().before(effDate))
                             addActionError(getText("constrDate.before.6inst", msgParams));
                     }
-
                     if (floor.getOccupancyDate() != null && floor.getConstructionDate() != null
                             && floor.getOccupancyDate().before(floor.getConstructionDate()))
                         addActionError(getText("effectiveDate.before.constrDate.error"));
@@ -459,12 +452,12 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                     else if (StringUtils.isNotBlank(areaOfPlot)
                             && floor.getBuiltUpArea().getArea() > Double.valueOf(areaOfPlot))
                         addActionError(getText("assbleArea.notgreaterthan.extentsite"));
-
-                    if (modifyRsn == null
+                    if ((modifyRsn == null
                             || modifyRsn != null && !modifyRsn.equals(PROPERTY_MODIFY_REASON_ADD_OR_ALTER) && !modifyRsn
-                                    .equals(PROPERTY_MODIFY_REASON_BIFURCATE) && null != regDocDate
-                                    && null != floor.getOccupancyDate()
-                                    && DateUtils.compareDates(regDocDate, floor.getOccupancyDate()))
+                                    .equals(PROPERTY_MODIFY_REASON_BIFURCATE))
+                            && null != regDocDate
+                            && null != floor.getOccupancyDate()
+                            && DateUtils.compareDates(regDocDate, floor.getOccupancyDate()))
                         addActionError(getText("regDate.notgreaterthan.occDate", msgParams));
                     if (null != modifyRsn && null != propCompletionDate && floor.getOccupancyDate() != null
                             && !DateUtils.compareDates(floor.getOccupancyDate(), propCompletionDate))
@@ -472,8 +465,6 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
                 }
             }
-        if (logger.isDebugEnabled())
-            logger.debug("Exiting from validate");
     }
 
     /**
