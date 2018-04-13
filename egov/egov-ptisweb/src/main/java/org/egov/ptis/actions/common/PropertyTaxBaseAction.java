@@ -410,7 +410,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                         }
                     }
                     if (floor.getBuildingPermissionDate() != null) {
-                        if (StringUtils.isBlank(floor.getBuildingPermissionNo())) {
+                        if (isBlank(floor.getBuildingPermissionNo())) {
                             addActionError(getText("mandatory.floor.buildingplan.number", msgParams));
                             buildingPlanNoValidationAdded = true;
                         }
@@ -420,7 +420,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                     if (floor.getBuildingPlanPlinthArea().getArea() != null) {
                         if (floor.getBuildingPermissionDate() == null && !buildingPlanDateValidationAdded)
                             addActionError(getText("mandatory.floor.buildingplan.date", msgParams));
-                        if (StringUtils.isBlank(floor.getBuildingPermissionNo()) && !buildingPlanNoValidationAdded)
+                        if (isBlank(floor.getBuildingPermissionNo()) && !buildingPlanNoValidationAdded)
                             addActionError(getText("mandatory.floor.buildingplan.number", msgParams));
                     }
 
@@ -1039,15 +1039,15 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     public void validateOwnerDetails(final PropertyImpl property) {
         for (final PropertyOwnerInfo owner : property.getBasicProperty().getPropertyOwnerInfoProxy())
             if (owner != null) {
-                if (StringUtils.isBlank(owner.getOwner().getName()))
+                if (isBlank(owner.getOwner().getName()))
                     addActionError(getText("mandatory.ownerName"));
                 if (null == owner.getOwner().getGender())
                     addActionError(getText("mandatory.gender"));
-                if (StringUtils.isBlank(owner.getOwner().getMobileNumber()))
+                if (isBlank(owner.getOwner().getMobileNumber()))
                     addActionError(getText("mandatory.mobilenumber"));
-                if (StringUtils.isBlank(owner.getOwner().getGuardianRelation()))
+                if (isBlank(owner.getOwner().getGuardianRelation()))
                     addActionError(getText("mandatory.guardianrelation"));
-                if (StringUtils.isBlank(owner.getOwner().getGuardian()))
+                if (isBlank(owner.getOwner().getGuardian()))
                     addActionError(getText("mandatory.guardian"));
             }
 
