@@ -80,6 +80,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.egov.tl.utils.Constants.*;
 
 @Service
@@ -138,8 +139,10 @@ public class LicenseProcessWorkflowService {
                     .withStateValue(workFlowMatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(wfInitiator)
                     .withNextAction(workFlowMatrix.getNextAction()).withInitiator(wfInitiator).withExtraInfo(licenseStateInfo);
         } else if (BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction()) && userPositions.contains(tradeLicense.getCurrentState().getInitiatorPosition())) {
-            tradeLicense.transition().end().withStateValue(LICENSE_STATUS_CANCELLED).withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
+            tradeLicense.transition().end().withStateValue(LICENSE_STATUS_CANCELLED)
+                    .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
                     .withComments(workflowBean.getApproverComments())
+                    .withNextAction(EMPTY)
                     .withDateInfo(currentDate.toDate());
             updateCancelStatus(tradeLicense);
         } else if (SIGNWORKFLOWACTION.equals(workflowBean.getWorkFlowAction())) {
@@ -193,15 +196,17 @@ public class LicenseProcessWorkflowService {
             tradeLicense.setApprovedBy(currentUser);
 
         if (!licenseUtils.isDigitalSignEnabled() && BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction()) && !tradeLicense.isCollectionPending()) {
-            tradeLicense.transition().end().withStateValue(workFlowMatrix.getNextState()).withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
-                    .withComments(workflowBean.getApproverComments()).withStateValue(workFlowMatrix.getNextState())
+            tradeLicense.transition().end().withStateValue(workFlowMatrix.getNextState())
+                    .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
+                    .withComments(workflowBean.getApproverComments())
                     .withDateInfo(currentDate.toDate());
             updateActiveStatus(tradeLicense);
         } else {
             tradeLicense.transition().progressWithStateCopy().withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
                     .withComments(workflowBean.getApproverComments())
                     .withStateValue(workFlowMatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(owner)
-                    .withNextAction(BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction()) ? workFlowMatrix.getNextAction() : StringUtils.EMPTY).withExtraInfo(licenseStateInfo);
+                    .withNextAction(BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction()) ? workFlowMatrix.getNextAction() : EMPTY)
+                    .withExtraInfo(licenseStateInfo);
             if (BUTTONAPPROVE.equals(workflowBean.getWorkFlowAction()) && tradeLicense.isCollectionPending())
                 tradeLicense.setStatus(licenseStatusService.getLicenseStatusByCode(STATUS_COLLECTIONPENDING));
             else
@@ -266,8 +271,10 @@ public class LicenseProcessWorkflowService {
                     tradeLicense.setStatus(licenseStatusService.getLicenseStatusByCode(STATUS_UNDERWORKFLOW));
                 } else {
                     tradeLicense.transition().end().withSenderName(collectionOperator)
-                            .withComments(workFlowMatrix.getNextState()).withStateValue(workFlowMatrix.getNextState())
-                            .withDateInfo(currentDate.toDate());
+                            .withComments(workFlowMatrix.getNextState())
+                            .withStateValue(workFlowMatrix.getNextState())
+                            .withDateInfo(currentDate.toDate())
+                            .withNextAction(EMPTY);
                     updateActiveStatus(tradeLicense);
                 }
             }
