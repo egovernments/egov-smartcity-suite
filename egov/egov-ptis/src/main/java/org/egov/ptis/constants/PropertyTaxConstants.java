@@ -1783,4 +1783,6 @@ public interface PropertyTaxConstants {
     public static final List<String> ASSESSMENT_DOCUMENT_NAMES_RP = ImmutableList.of("Patta Certificate (Issued by Revenue Department)",
             "Registered Will Document", "Un-registered Will Document", "Decree by Civil Court", "Registered Document");
     
+    public static final List<String> APPLICATION_TYPES=ImmutableList.of("New_Assessment","Alter_Assessment");
+    public static final List<String> APPLICATION_STATUS=ImmutableList.of("Open","Closed","Approved","Cancelled");
 }

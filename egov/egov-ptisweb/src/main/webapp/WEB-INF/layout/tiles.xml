@@ -578,4 +578,9 @@
         <put-attribute name="page-title" value="lbl.propertytax" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/transactions/courtCase/markascourtcase-success.jsp"/>
     </definition>
+    <definition name="searchSurveyApplication-form" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.search.survey.application" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/es/searchSurveyApplication-form.jsp"/>
+    </definition>
+    
 </tiles-definitions> 
