@@ -388,7 +388,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         transactionType = APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
         if(!propertyMutation.getDocuments().isEmpty())
             propertyMutation.setDocumentsProxy(propertyMutation.getDocuments());
-         if(propertyMutation.getMutationReason().getMutationName().equals(MUTATIONRS_SUCCESSION))
+        if (propertyMutation.getMutationReason() != null
+                && propertyMutation.getMutationReason().getMutationName().equals(MUTATIONRS_SUCCESSION))
              setSuccessionDocuments(propertyMutation.getDocumentsProxy());
          else 
              setOtherDocuments(propertyMutation.getDocumentsProxy());
