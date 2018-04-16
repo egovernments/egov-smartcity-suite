@@ -51,11 +51,7 @@ package org.egov.infra.web.support.ui.menu;
 import java.util.List;
 
 public class Menu {
-    public static final String APP_MENU_TITLE = "Applications";
-    public static final String FAV_MENU_TITLE = "Favourites";
-    public static final String SELFSERVICE_MENU_TITLE = "Self Service";
     public static final String NAVIGATION_NONE = "javascript:void(0);";
-    public static final String SELFSERVICE_MODULE = "EmployeeSelfService";
     public static final String APP_MENU_MAIN_ICON = "fa fa-reply-all";
     public static final String APP_MENU_ICON = "fa fa-th floatLeft";
     public static final String FAV_MENU_ICON = "fa fa-star floatLeft";
@@ -116,4 +112,49 @@ public class Menu {
         this.items = items;
     }
 
+    public static final class MenuBuilder {
+        private Menu menu;
+
+        private MenuBuilder() {
+            menu = new Menu();
+        }
+
+        public static MenuBuilder aMenu() {
+            return new MenuBuilder();
+        }
+
+        public MenuBuilder withId(String id) {
+            menu.setId(id);
+            return this;
+        }
+
+        public MenuBuilder withTitle(String title) {
+            menu.setTitle(title);
+            return this;
+        }
+
+        public MenuBuilder withName(String name) {
+            menu.setName(name);
+            return this;
+        }
+
+        public MenuBuilder withLink(String link) {
+            menu.setLink(link);
+            return this;
+        }
+
+        public MenuBuilder withIcon(String icon) {
+            menu.setIcon(icon);
+            return this;
+        }
+
+        public MenuBuilder withItems(List<Menu> items) {
+            menu.setItems(items);
+            return this;
+        }
+
+        public Menu build() {
+            return menu;
+        }
+    }
 }
