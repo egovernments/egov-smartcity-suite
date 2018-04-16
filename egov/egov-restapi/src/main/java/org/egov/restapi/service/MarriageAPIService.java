@@ -205,8 +205,8 @@ public class MarriageAPIService {
             applicantDocument.setDocument(marriageDocumentService.get(husbandDocument.getKey()));
             applicantDocument.setFileStoreMapper(marriageRegistrationService.addToFileStore(husbandDocument.getValue()));
             husband.addApplicantDocument(applicantDocument);
-                IdentityProof identityProof = husband.getProofsAttached() != null ? husband.getProofsAttached()
-                        : new IdentityProof();
+                IdentityProof identityProof = husband.getProofsAttached() == null ? new IdentityProof()
+                        : husband.getProofsAttached();     
             husband.setProofsAttached(identityProof);
             marriageApplicantService.setApplicantDocumentsFalg(wife, marriageDocumentService.get(husbandDocument.getKey()),
                     identityProof);
@@ -220,7 +220,7 @@ public class MarriageAPIService {
             applicantDocument.setDocument(marriageDocumentService.get(wifeDocument.getKey()));
             applicantDocument.setFileStoreMapper(marriageRegistrationService.addToFileStore(wifeDocument.getValue()));
             wife.addApplicantDocument(applicantDocument);
-                IdentityProof identityProof = wife.getProofsAttached() != null ? wife.getProofsAttached() : new IdentityProof();
+                IdentityProof identityProof = wife.getProofsAttached() == null ? new IdentityProof() : wife.getProofsAttached();
             wife.setProofsAttached(identityProof);
             marriageApplicantService.setApplicantDocumentsFalg(wife, marriageDocumentService.get(wifeDocument.getKey()),
                     identityProof);
