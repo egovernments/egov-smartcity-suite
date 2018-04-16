@@ -2,10 +2,15 @@ package org.egov.eventnotification.web.controller.event;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.List;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.eventnotification.constants.EventnotificationConstant;
 import org.egov.eventnotification.entity.Event;
 import org.egov.eventnotification.service.EventService;
 import org.egov.eventnotification.utils.EventnotificationUtil;
@@ -49,6 +54,8 @@ public class EventController {
 		model.addAttribute("event", event);
 		model.addAttribute("hourList", EventnotificationUtil.getAllHour());
 		model.addAttribute("minuteList", EventnotificationUtil.getAllMinute());
+		List eventList = new ArrayList<>(Arrays.asList(EventnotificationConstant.EVENT_TYPE.values()));
+		model.addAttribute("eventList",eventList);
 		model.addAttribute("mode", "create");
         return "event-create";
 	}
@@ -56,7 +63,6 @@ public class EventController {
 	@RequestMapping(value = "create/", method = RequestMethod.POST)
     public String create(@ModelAttribute("event") Event event, @RequestParam("file") MultipartFile[] files, Model model,
     		RedirectAttributes redirectAttrs, HttpServletRequest request,BindingResult errors) throws IOException, ParseException {
-		System.out.println("name===>>>"+request.getAttribute("name"));
 		event.setStartTime(event.getStartHH()+":"+event.getStartMM());
 		event.setEndTime(event.getEndHH()+":"+event.getEndMM());
 		
@@ -66,6 +72,39 @@ public class EventController {
 		model.addAttribute("message", "Event created successfully.");
         model.addAttribute("mode", "view");
         return "event-success";
+	}
+	
+	@RequestMapping(value = "update/{id}", method = RequestMethod.GET)
+    public String viewUpdate(@ModelAttribute Event event,Model model,@PathVariable("id") Long id) {
+		Event eventObj = eventService.findById(id);
+		String []st = eventObj.getStartTime().split(":");
+		eventObj.setStartHH(st[0]);
+		eventObj.setStartMM(st[1]);
+		String []et = eventObj.getEndTime().split(":");
+		eventObj.setEndHH(et[0]);
+		eventObj.setEndMM(et[1]);
+		model.addAttribute("event", eventObj);
+        model.addAttribute("hourList", EventnotificationUtil.getAllHour());
+		model.addAttribute("minuteList", EventnotificationUtil.getAllMinute());
+		List eventList = new ArrayList<>(Arrays.asList(EventnotificationConstant.EVENT_TYPE.values()));
+		model.addAttribute("eventList",eventList);
+		model.addAttribute("mode", "update");
+        return "event-update";
+	}
+	
+	@RequestMapping(value = "update/{id}", method = RequestMethod.POST)
+    public String update(@ModelAttribute("event") Event event, @RequestParam("file") MultipartFile[] files, Model model,
+    		RedirectAttributes redirectAttrs, HttpServletRequest request,BindingResult errors,@PathVariable("id") Long id) throws IOException, ParseException {
+		event.setId(id);
+		event.setStartTime(event.getStartHH()+":"+event.getStartMM());
+		event.setEndTime(event.getEndHH()+":"+event.getEndMM());
+		
+		eventService.update(event, files);
+		
+		redirectAttrs.addFlashAttribute("event", event);
+		model.addAttribute("message", "Event updated successfully.");
+        model.addAttribute("mode", "view");
+        return "event-update-success";
 	}
 
 }

@@ -47,13 +47,13 @@
   --%>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<form:form method="post" action="create"
+<%@ include file="/includes/taglibs.jsp"%>
+
+<form:form method="post" action=""
 	class="form-horizontal form-groups-bordered" modelAttribute="event"
 	id="eventForm">
 	<input type="hidden" name="mode" value="${mode}" />
+	<input type="hidden" name="eventId" id="eventId" value="${event.id}" />
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
@@ -67,6 +67,21 @@
 						</div>
 					</div>
 					<div class="panel-body">
+						<div class="row add-border">
+							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.event.eventType" />
+							</div>
+							<div class="col-xs-3 add-margin view-content">
+								<c:out value="${event.eventType}" />
+							</div>
+
+							<div class="col-xs-3 add-margin">
+								
+							</div>
+							<div class="col-xs-3 add-margin view-content">
+								
+							</div>
+						</div>
 						<div class="row add-border">
 							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.event.name" />
@@ -159,6 +174,9 @@
 			</div>
 			<div class="form-group">
 				<div class="text-center">
+					<button type='button' class='btn btn-primary' id="buttonSubmit">
+						<spring:message code='lbl.update.button' />
+					</button>
 					<a href="javascript:void(0)" class="btn btn-default"
 						onclick="self.close()"><spring:message code="lbl.close" /></a>
 				</div>
@@ -166,3 +184,13 @@
 		</div>
 	</div>
 </form:form>
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>" />
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
+<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/js/app/eventViewResult.js?rnd=${app_release_no}'/>"></script>

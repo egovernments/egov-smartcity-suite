@@ -85,7 +85,7 @@
     </definition>
     
     <definition name="event-update" extends="base_layout">
-        <put-attribute name="page-title" value="title.event.view" cascade="true"/>
+        <put-attribute name="page-title" value="lbl.event.update" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/event/eventUpdate.jsp"/>
     </definition>
     
@@ -97,6 +97,11 @@
     <definition name="event-view-result" extends="base_layout">
         <put-attribute name="page-title" value="title.event.view" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/event/event-view-result.jsp"/>
+    </definition>
+    
+    <definition name="event-update-success" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.event.update" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/event/event-update-success.jsp"/>
     </definition>
 
     

@@ -65,6 +65,7 @@
 					<th><spring:message code="lbl.event.host" /></th>
 					<th><spring:message code="lbl.event.location" /></th>
 					<th><spring:message code="lbl.event.address" /></th>
+					<th><spring:message code="lbl.event.eventType" /></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -87,12 +88,13 @@
 	    				<td><c:out value="${listVar.eventhost}"/></td>
 	    				<td><c:out value="${listVar.eventlocation}"/></td>
 	    				<td><c:out value="${listVar.address}"/></td>
+	    				<td><c:out value="${listVar.eventType}"/></td>
 	    			</tr>
 				</c:forEach>
 			</c:if>
 			<c:if test="${empty eventList}">
 				<tr class="odd">
-					<td colspan="10" class="dataTables_empty" valign="top">No data available in table</td>
+					<td colspan="11" class="dataTables_empty" valign="top">No data available in table</td>
 				</tr>
 			</c:if>
 			</tbody>

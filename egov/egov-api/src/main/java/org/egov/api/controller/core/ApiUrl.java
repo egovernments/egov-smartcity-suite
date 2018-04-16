@@ -141,4 +141,5 @@ public class ApiUrl {
 	 */
 	public final static String GET_ALL_EVENT = "/events";
 	public final static String GET_EVENT = "/event";
+	public final static String SEARCH_EVENT = "/event/search";
 }

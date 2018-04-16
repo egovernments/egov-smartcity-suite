@@ -94,6 +94,11 @@ public class Event extends AbstractAuditable{
     @Transient
     private String endMM;
     
+    @NotNull
+    @Length(max = 50)
+    @Column(name="event_type")
+    private String eventType;
+    
     
 
 	public Long getId() {
@@ -230,6 +235,14 @@ public class Event extends AbstractAuditable{
 
 	public void setEndMM(String endMM) {
 		this.endMM = endMM;
+	}
+
+	public String getEventType() {
+		return eventType;
+	}
+
+	public void setEventType(String eventType) {
+		this.eventType = eventType;
 	}
 	
 	
