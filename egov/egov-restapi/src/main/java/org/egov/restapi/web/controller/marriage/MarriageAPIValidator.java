@@ -115,28 +115,7 @@ public class MarriageAPIValidator implements Validator {
         }
         if (marriageDocumentUpload.getWifePhotoFile() == null) {
             errors.rejectValue("wifePhotoFile", "Provide wife Photo", "Provide wife Photo");
-        }
-        if (marriageDocumentUpload.getHusbandBirthCertificate() == null) {
-            errors.rejectValue("husbandBirthCertificate", "Provide husband Birth Certificate",
-                    "Provide husband Birth Certificate");
-        }
-        if (marriageDocumentUpload.getHusbandRationCard() == null) {
-            errors.rejectValue("husbandRationCard", "Provide husband Ration card", "Provide husband Ration card");
-        }
-        if (marriageDocumentUpload.getHusbandAadhar() == null) {
-            errors.rejectValue("husbandAadhar", "Provide husband Aadhar", "Provide husband Aadhar");
-        }
-
-        if (marriageDocumentUpload.getWifeBirthCertificate() == null) {
-            errors.rejectValue("wifeBirthCertificate", "Provide wife Birth Certificate", "Provide wife Birth Certificate");
-        }
-        if (marriageDocumentUpload.getWifeRationCard() == null) {
-            errors.rejectValue("wifeRationCard", "Provide wife Ration card", "Provide wife Ration card");
-        }
-        if (marriageDocumentUpload.getWifeAadhar() == null) {
-            errors.rejectValue("wifeAadhar", "Provide wife Aadhar", "Provide wife Aadhar");
-        }
-
+        }      
     }
 
 }

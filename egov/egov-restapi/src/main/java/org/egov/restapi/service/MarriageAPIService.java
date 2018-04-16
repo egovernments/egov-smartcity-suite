@@ -197,37 +197,34 @@ public class MarriageAPIService {
         wifeDocuments.put(BIRTH_CERTIFICATE, wifeBirthCertificate);
         wifeDocuments.put(RATION_CARD, wifeRationCard);
         wifeDocuments.put(AADHAR, wifeAadhar);
-
+        
         for (Map.Entry<String, MultipartFile> husbandDocument : husbandDocuments.entrySet()) {
+            if (husbandDocument.getValue() != null && !husbandDocument.getValue().isEmpty()) {
             MrApplicantDocument applicantDocument = new MrApplicantDocument();
             applicantDocument.setApplicant(husband);
             applicantDocument.setDocument(marriageDocumentService.get(husbandDocument.getKey()));
             applicantDocument.setFileStoreMapper(marriageRegistrationService.addToFileStore(husbandDocument.getValue()));
             husband.addApplicantDocument(applicantDocument);
-            IdentityProof identityProof;
-            if (husband.getProofsAttached() != null)
-                identityProof = husband.getProofsAttached();
-            else
-                identityProof = new IdentityProof();
+                IdentityProof identityProof = husband.getProofsAttached() != null ? husband.getProofsAttached()
+                        : new IdentityProof();
             husband.setProofsAttached(identityProof);
             marriageApplicantService.setApplicantDocumentsFalg(wife, marriageDocumentService.get(husbandDocument.getKey()),
                     identityProof);
+            }
         }
 
         for (Map.Entry<String, MultipartFile> wifeDocument : wifeDocuments.entrySet()) {
+            if (wifeDocument.getValue() != null && !wifeDocument.getValue().isEmpty()) {
             MrApplicantDocument applicantDocument = new MrApplicantDocument();
             applicantDocument.setApplicant(wife);
             applicantDocument.setDocument(marriageDocumentService.get(wifeDocument.getKey()));
             applicantDocument.setFileStoreMapper(marriageRegistrationService.addToFileStore(wifeDocument.getValue()));
             wife.addApplicantDocument(applicantDocument);
-            IdentityProof identityProof;
-            if (wife.getProofsAttached() != null)
-                identityProof = wife.getProofsAttached();
-            else
-                identityProof = new IdentityProof();
+                IdentityProof identityProof = wife.getProofsAttached() != null ? wife.getProofsAttached() : new IdentityProof();
             wife.setProofsAttached(identityProof);
             marriageApplicantService.setApplicantDocumentsFalg(wife, marriageDocumentService.get(wifeDocument.getKey()),
                     identityProof);
+            }
         }
     }
 

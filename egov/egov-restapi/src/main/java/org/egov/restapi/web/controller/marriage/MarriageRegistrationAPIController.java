@@ -123,7 +123,9 @@ public class MarriageRegistrationAPIController {
 
         marriageAPIService.uploadApplicantPhoto(marriageDocumentUpload.getMarriagePhotoFile(),
                 marriageDocumentUpload.getHusbandPhotoFile(), marriageDocumentUpload.getWifePhotoFile(), marriageRegistration);
-        marriageAPIService.uploadMarriageDocument(marriageDocumentUpload.getMemorandumOfMarriage(), marriageRegistration);
+        if (marriageDocumentUpload.getMemorandumOfMarriage() != null) {
+            marriageAPIService.uploadMarriageDocument(marriageDocumentUpload.getMemorandumOfMarriage(), marriageRegistration);
+        }
         marriageAPIService.uploadApplicantDocuments(marriageDocumentUpload.getHusbandBirthCertificate(),
                 marriageDocumentUpload.getHusbandRationCard(),
                 marriageDocumentUpload.getHusbandAadhar(), marriageDocumentUpload.getWifeBirthCertificate(),
