@@ -61,7 +61,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.CacheControl;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -80,11 +79,15 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.egov.infra.utils.ApplicationConstant.CONTENT_DISPOSITION;
 import static org.egov.infra.utils.ApplicationConstant.CONTENT_DISPOSITION_ATTACH;
 import static org.egov.infra.utils.ApplicationConstant.CONTENT_DISPOSITION_INLINE;
+import static org.egov.infra.utils.ImageUtils.JPG_MIME_TYPE;
 import static org.egov.infra.utils.ImageUtils.compressImage;
 import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
+import static org.springframework.http.MediaType.parseMediaType;
 
 @Service
 public class FileStoreUtils {
@@ -111,9 +114,11 @@ public class FileStoreUtils {
             if (fileStoreMapper.isPresent()) {
                 Path file = getFileAsPath(fileStoreId, moduleName);
                 byte[] fileBytes = Files.readAllBytes(file);
+                String contentType = isBlank(fileStoreMapper.get().getContentType()) ? Files.probeContentType(file)
+                        : fileStoreMapper.get().getContentType();
                 return ResponseEntity
                         .ok()
-                        .contentType(MediaType.parseMediaType(fileStoreMapper.get().getContentType()))
+                        .contentType(parseMediaType(defaultIfBlank(contentType, JPG_MIME_TYPE)))
                         .cacheControl(CacheControl.noCache())
                         .contentLength(fileBytes.length)
                         .header(CONTENT_DISPOSITION, format(toSave ? CONTENT_DISPOSITION_ATTACH : CONTENT_DISPOSITION_INLINE,
@@ -154,7 +159,7 @@ public class FileStoreUtils {
                         try {
                             if (compressImage && file.getContentType().contains("image"))
                                 return this.fileStoreService.store(compressImage(file),
-                                        file.getOriginalFilename(), "image/jpeg", moduleName);
+                                        file.getOriginalFilename(), JPG_MIME_TYPE, moduleName);
                             else
                                 return this.fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
                                         file.getContentType(), moduleName);
@@ -195,7 +200,7 @@ public class FileStoreUtils {
             byte[] fileBytes = FileUtils.readFileToByteArray(file);
             return ResponseEntity
                     .ok()
-                    .contentType(MediaType.parseMediaType(APPLICATION_PDF_VALUE))
+                    .contentType(parseMediaType(APPLICATION_PDF_VALUE))
                     .cacheControl(CacheControl.noCache())
                     .contentLength(fileBytes.length)
                     .header(CONTENT_DISPOSITION, format(CONTENT_DISPOSITION_INLINE, fileName + ".pdf"))
