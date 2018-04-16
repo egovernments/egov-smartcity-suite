@@ -130,6 +130,12 @@
             padding-right: 10px;
             margin-bottom: 0px;
         }
+
+        li[id^='fav-'], li[id^='id-'] {
+            text-align: left;
+            font-size: 1pt;
+            padding: 5px 0px 5px 0px;
+        }
     </style>
 </head>
 <body class="page-body">

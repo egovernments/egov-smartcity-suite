@@ -176,6 +176,14 @@ public class User extends AbstractAuditable {
 
     private boolean accountLocked;
 
+    public User() {
+        //Default constructor
+    }
+
+    public User(UserType type) {
+        this.type = type;
+    }
+
     @Override
     public Long getId() {
         return id;
@@ -341,7 +349,7 @@ public class User extends AbstractAuditable {
         return type;
     }
 
-    public void setType(final UserType userType) {
+    protected void setType(final UserType userType) {
         type = userType;
     }
 

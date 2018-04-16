@@ -730,7 +730,7 @@ public class PropertyTransferService {
         final List<PropertyMutationTransferee> transfereeInfoList = new ArrayList<>();
         for (final OwnerDetails ownerDetais : ownerDetailsList) {
             final PropertyMutationTransferee transfereeInfo = new PropertyMutationTransferee();
-            final User owner = new User();
+            final User owner = new User(UserType.CITIZEN);
             owner.setAadhaarNumber(ownerDetais.getAadhaarNo());
             owner.setSalutation(ownerDetais.getSalutationCode());
             owner.setName(ownerDetais.getName());
@@ -739,7 +739,6 @@ public class PropertyTransferService {
             owner.setEmailId(ownerDetais.getEmailId());
             owner.setGuardianRelation(ownerDetais.getGuardianRelation());
             owner.setGuardian(ownerDetais.getGuardian());
-            owner.setType(UserType.CITIZEN);
             transfereeInfo.setTransferee(owner);
             transfereeInfo.setPropertyMutation(propertyMutation);
             transfereeInfoList.add(transfereeInfo);
