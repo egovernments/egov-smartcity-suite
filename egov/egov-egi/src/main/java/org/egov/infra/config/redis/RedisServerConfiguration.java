@@ -57,8 +57,12 @@ import org.springframework.data.redis.connection.RedisSentinelConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.JedisShardInfo;
 
+import java.time.Duration;
 import java.util.List;
+
+import static org.egov.infra.utils.ApplicationConstant.COLON;
 
 @Configuration
 public class RedisServerConfiguration {
@@ -75,6 +79,12 @@ public class RedisServerConfiguration {
     @Value("${redis.host.port}")
     private Integer redisPort;
 
+    @Value("${redis.max.pool.size}")
+    private Integer maxPoolSize;
+
+    @Value("${redis.min.pool.size}")
+    private Integer minPoolSize;
+
     @Value("${redis.sentinel.master.name}")
     private String sentinelMasterName;
 
@@ -89,40 +99,44 @@ public class RedisServerConfiguration {
 
     @Bean
     public JedisConnectionFactory redisConnectionFactory() {
-
-        if (!usingEmbeddedRedis && sentinelEnabled) {
+        JedisConnectionFactory redisConnectionFactory;
+        if (sentinelEnabled && !usingEmbeddedRedis) {
             RedisSentinelConfiguration sentinelConfig = new RedisSentinelConfiguration();
             sentinelConfig.master(sentinelMasterName);
             for (String host : sentinelHosts) {
-                String[] hostConfig = host.split(":");
+                String[] hostConfig = host.split(COLON);
                 sentinelConfig.sentinel(hostConfig[0].trim(), Integer.valueOf(hostConfig[1].trim()));
             }
-            return new JedisConnectionFactory(sentinelConfig, redisPoolConfig());
+            redisConnectionFactory = new JedisConnectionFactory(sentinelConfig, redisPoolConfig());
         } else {
-            final JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory(redisPoolConfig());
-            jedisConnectionFactory.setHostName(redisHost);
-            jedisConnectionFactory.setPort(redisPort);
-            return jedisConnectionFactory;
+            redisConnectionFactory = new JedisConnectionFactory(redisPoolConfig());
+            redisConnectionFactory.setShardInfo(new JedisShardInfo(redisHost, redisPort, 15000));
         }
+        return redisConnectionFactory;
     }
 
     @Bean
     public JedisPoolConfig redisPoolConfig() {
-        final JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
-        jedisPoolConfig.setTestOnBorrow(true);
-        jedisPoolConfig.setMinEvictableIdleTimeMillis(60000);
-        jedisPoolConfig.setSoftMinEvictableIdleTimeMillis(1800000);
-        jedisPoolConfig.setNumTestsPerEvictionRun(-1);
-        jedisPoolConfig.setTestOnReturn(false);
-        jedisPoolConfig.setTestWhileIdle(true);
-        jedisPoolConfig.setTimeBetweenEvictionRunsMillis(30000);
-        return jedisPoolConfig;
+        JedisPoolConfig poolConfig = new JedisPoolConfig();
+        poolConfig.setMaxTotal(maxPoolSize);
+        poolConfig.setMaxIdle(maxPoolSize);
+        poolConfig.setMinIdle(minPoolSize);
+        poolConfig.setTestOnBorrow(true);
+        poolConfig.setTestOnReturn(true);
+        poolConfig.setTestWhileIdle(true);
+        poolConfig.setBlockWhenExhausted(true);
+        poolConfig.setMaxWaitMillis(Duration.ofSeconds(20).toMillis());
+        poolConfig.setMinEvictableIdleTimeMillis(Duration.ofSeconds(60).toMillis());
+        poolConfig.setTimeBetweenEvictionRunsMillis(Duration.ofSeconds(30).toMillis());
+        poolConfig.setSoftMinEvictableIdleTimeMillis(Duration.ofMinutes(30).toMillis());
+        poolConfig.setNumTestsPerEvictionRun(-1);
+        return poolConfig;
     }
 
     @Bean(name = "redisTemplate")
-    public RedisTemplate<Object, Object> redisTemplate(final RedisConnectionFactory cf) {
-        final RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(cf);
+    public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(redisConnectionFactory);
         return redisTemplate;
     }
 }
