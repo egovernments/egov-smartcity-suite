@@ -148,7 +148,7 @@ public class MarriageAPIService {
         Boundary childBoundary = boundaryRepository.findByBoundaryTypeAndBoundaryNum(locality,
                 marriageRegistrationRequest.getLocality());
         marriageRegistration.setLocality(childBoundary);
-        marriageRegistration.setDateOfMarriage(marriageRegistrationRequest.getDateOfMarriage());
+        marriageRegistration.setDateOfMarriage(DateUtils.startOfDay(marriageRegistrationRequest.getDateOfMarriage()));
         marriageRegistration.setVenue(marriageRegistrationRequest.getVenue());
         marriageRegistration.setPlaceOfMarriage(marriageRegistrationRequest.getPlaceOfMarriage());
         marriageRegistration.setHusband(husband);
