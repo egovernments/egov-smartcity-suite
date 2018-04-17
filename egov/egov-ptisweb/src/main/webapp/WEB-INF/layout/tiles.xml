@@ -582,5 +582,10 @@
         <put-attribute name="page-title" value="lbl.search.survey.application" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/es/searchSurveyApplication-form.jsp"/>
     </definition>
+    <definition name="surveyApplication-form" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.search.survey.application" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/survey/surveyApplication-form.jsp"/>
+    </definition>
+    
     
 </tiles-definitions> 

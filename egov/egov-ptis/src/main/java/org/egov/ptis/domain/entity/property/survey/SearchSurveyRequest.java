@@ -54,6 +54,8 @@ public class SearchSurveyRequest {
     private String fromDate;
     private String toDate;
     private String applicationStatus;
+    private String ward;
+    private String locality;
 
     public String getApplicationType() {
         return applicationType;
@@ -101,6 +103,22 @@ public class SearchSurveyRequest {
 
     public void setAppStatus(String applicationStatus) {
         this.applicationStatus = applicationStatus;
+    }
+
+    public String getWard() {
+        return ward;
+    }
+
+    public void setWard(String ward) {
+        this.ward = ward;
+    }
+
+    public String getLocality() {
+        return locality;
+    }
+
+    public void setLocality(String locality) {
+        this.locality = locality;
     }
 
 }
