@@ -70,8 +70,6 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.service.dashboard.PropTaxDashboardService;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -99,9 +97,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WEEK;
 @RestController
 @RequestMapping(value = { "/public/dashboard", "/dashboard" })
 public class CMDashboardController {
-    private static final String MILLISECS = " (millisecs)";
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(CMDashboardController.class);
 
     @Autowired
     private PropTaxDashboardService propTaxDashboardService;
@@ -115,13 +110,8 @@ public class CMDashboardController {
      * @throws JsonGenerationException
      */
     @RequestMapping(value = "/statecityinfo", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<StateCityInfo> getStateCityInformation() throws IOException {
-        Long startTime = System.currentTimeMillis();
-        final List<StateCityInfo> stateDetails = propTaxDashboardService.getStateCityDetails();
-        Long timeTaken = System.currentTimeMillis() - startTime;
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Time taken to serve statecityinfo is : " + timeTaken + MILLISECS);
-        return stateDetails;
+    public List<StateCityInfo> getStateCityInformation() {
+        return propTaxDashboardService.getStateCityDetails();
     }
 
     /**
@@ -132,13 +122,8 @@ public class CMDashboardController {
      * @throws IOException
      */
     @RequestMapping(value = "/collectionstats", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public TotalCollectionStats getConsolidatedCollDetails(final HttpServletRequest request) throws IOException {
-        Long startTime = System.currentTimeMillis();
-        TotalCollectionStats consolidatedCollectionDetails = propTaxDashboardService.getTotalCollectionStats(request);
-        Long timeTaken = System.currentTimeMillis() - startTime;
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Time taken to serve collectionstats is : " + timeTaken + MILLISECS);
-        return consolidatedCollectionDetails;
+    public TotalCollectionStats getConsolidatedCollDetails(final HttpServletRequest request) {
+        return propTaxDashboardService.getTotalCollectionStats(request);
 
     }
 
@@ -149,21 +134,9 @@ public class CMDashboardController {
      * @throws IOException
      */
     @RequestMapping(value = "/collectiondashboard", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public CollectionDetails getCollectionDetails(@RequestBody CollectionDetailsRequest collectionDetailsRequest)
-            throws IOException {
-        Long startTime = System.currentTimeMillis();
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("CollectionDetailsRequest input : regionName = " + collectionDetailsRequest.getRegionName()
-                + ", districtName = " + collectionDetailsRequest.getDistrictName() + ", ulbGrade = "
-                + collectionDetailsRequest.getUlbGrade() + ", ulbCode = " + collectionDetailsRequest.getUlbCode()
-                + ", fromDate = " + collectionDetailsRequest.getFromDate() + ", toDate = "
-                + collectionDetailsRequest.getToDate() + ", type = " + collectionDetailsRequest.getType());
-        CollectionDetails collectionDetails = propTaxDashboardService
+    public CollectionDetails getCollectionDetails(@RequestBody CollectionDetailsRequest collectionDetailsRequest) {
+        return propTaxDashboardService
                 .getCollectionIndexDetails(collectionDetailsRequest, false);
-        Long timeTaken = System.currentTimeMillis() - startTime;
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Time taken to serve collectiondashboard is : " + timeTaken + MILLISECS);
-        return collectionDetails;
     }
 
     /**
@@ -173,20 +146,8 @@ public class CMDashboardController {
      * @return CollReceiptDetails
      */
     @RequestMapping(value = "/receipttransactions", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public CollReceiptDetails getReceiptTransactions(@RequestBody CollectionDetailsRequest collectionDetailsRequest)
-            throws IOException {
-        Long startTime = System.currentTimeMillis();
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("CollectionDetailsRequest input : regionName = " + collectionDetailsRequest.getRegionName()
-                + ", districtName = " + collectionDetailsRequest.getDistrictName() + ", ulbGrade = "
-                + collectionDetailsRequest.getUlbGrade() + ", ulbCode = " + collectionDetailsRequest.getUlbCode()
-                + ", fromDate = " + collectionDetailsRequest.getFromDate() + ", toDate = "
-                + collectionDetailsRequest.getToDate() + ", type = " + collectionDetailsRequest.getType());
-        CollReceiptDetails collReceiptDetails = propTaxDashboardService.getReceiptDetails(collectionDetailsRequest);
-        Long timeTaken = System.currentTimeMillis() - startTime;
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Time taken to serve receipttransactions is : " + timeTaken + MILLISECS);
-        return collReceiptDetails;
+    public CollReceiptDetails getReceiptTransactions(@RequestBody CollectionDetailsRequest collectionDetailsRequest) {
+        return propTaxDashboardService.getReceiptDetails(collectionDetailsRequest);
     }
 
     /**
@@ -197,21 +158,9 @@ public class CMDashboardController {
      * @throws IOException
      */
     @RequestMapping(value = "/toptentaxers", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public TaxPayerResponseDetails getTopTenTaxProducers(@RequestBody CollectionDetailsRequest collectionDetailsRequest)
-            throws IOException {
-        Long startTime = System.currentTimeMillis();
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("CollectionDetailsRequest input : regionName = " + collectionDetailsRequest.getRegionName()
-                + ", districtName = " + collectionDetailsRequest.getDistrictName() + ", ulbGrade = "
-                + collectionDetailsRequest.getUlbGrade() + ", ulbCode = " + collectionDetailsRequest.getUlbCode()
-                + ", fromDate = " + collectionDetailsRequest.getFromDate() + ", toDate = "
-                + collectionDetailsRequest.getToDate() + ", type = " + collectionDetailsRequest.getType());
-        TaxPayerResponseDetails taxPayerDetails = propTaxDashboardService
+    public TaxPayerResponseDetails getTopTenTaxProducers(@RequestBody CollectionDetailsRequest collectionDetailsRequest) {
+        return propTaxDashboardService
                 .getTopTenTaxProducers(collectionDetailsRequest);
-        Long timeTaken = System.currentTimeMillis() - startTime;
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Time taken to serve toptentaxers is : " + timeTaken + MILLISECS);
-        return taxPayerDetails;
     }
     
     /**
@@ -223,36 +172,15 @@ public class CMDashboardController {
      */
     @RequestMapping(value = "/bottomtentaxers", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public TaxPayerResponseDetails getBottomTenTaxProducers(
-            @RequestBody CollectionDetailsRequest collectionDetailsRequest) throws IOException {
-        Long startTime = System.currentTimeMillis();
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("CollectionDetailsRequest input : regionName = " + collectionDetailsRequest.getRegionName()
-                + ", districtName = " + collectionDetailsRequest.getDistrictName() + ", ulbGrade = "
-                + collectionDetailsRequest.getUlbGrade() + ", ulbCode = " + collectionDetailsRequest.getUlbCode()
-                + ", fromDate = " + collectionDetailsRequest.getFromDate() + ", toDate = "
-                + collectionDetailsRequest.getToDate() + ", type = " + collectionDetailsRequest.getType());
-        TaxPayerResponseDetails taxPayerDetails = propTaxDashboardService
+            @RequestBody CollectionDetailsRequest collectionDetailsRequest) {
+        return propTaxDashboardService
                 .getBottomTenTaxProducers(collectionDetailsRequest);
-        Long timeTaken = System.currentTimeMillis() - startTime;
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Time taken to serve bottomtentaxers is : " + timeTaken + MILLISECS);
-        return taxPayerDetails;
     }
 
     @RequestMapping(value = "/topdefaulters", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TaxDefaulters> getTopTaxDefaulters(
-            @RequestBody PropertyTaxDefaultersRequest propertyTaxDefaultersRequest) throws IOException {
-        Long startTime = System.currentTimeMillis();
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("PropertyTaxDefaultersRequest input : regionName = " + propertyTaxDefaultersRequest.getRegionName()
-                + ", districtName = " + propertyTaxDefaultersRequest.getDistrictName() + ", type = "
-                + propertyTaxDefaultersRequest.getType() + ", ulbCode = " + propertyTaxDefaultersRequest.getUlbCode()
-                + ", wardName = " + propertyTaxDefaultersRequest.getWardName());
-        List<TaxDefaulters> taxDefaulters = propTaxDashboardService.getTaxDefaulters(propertyTaxDefaultersRequest);
-        Long timeTaken = System.currentTimeMillis() - startTime;
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Time taken to serve topdefaulters is : " + timeTaken + MILLISECS);
-        return taxDefaulters;
+            @RequestBody PropertyTaxDefaultersRequest propertyTaxDefaultersRequest) {
+        return propTaxDashboardService.getTaxDefaulters(propertyTaxDefaultersRequest);
     }
     
     /**
@@ -262,21 +190,10 @@ public class CMDashboardController {
      * @throws IOException
      */
     @RequestMapping(value = "/targetmis", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody public CollectionDetails getCollectionDetailsForTargetMIS(CollectionDetailsRequest collectionDetailsRequest)
-            throws IOException {
-        Long startTime = System.currentTimeMillis();
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("CollectionDetailsRequest input : regionName = " + collectionDetailsRequest.getRegionName()
-                + ", districtName = " + collectionDetailsRequest.getDistrictName() + ", ulbGrade = "
-                + collectionDetailsRequest.getUlbGrade() + ", ulbCode = " + collectionDetailsRequest.getUlbCode()
-                + ", fromDate = " + collectionDetailsRequest.getFromDate() + ", toDate = "
-                + collectionDetailsRequest.getToDate() + ", type = " + collectionDetailsRequest.getType());
-        CollectionDetails collectionDetails = propTaxDashboardService
+    @ResponseBody
+    public CollectionDetails getCollectionDetailsForTargetMIS(CollectionDetailsRequest collectionDetailsRequest) {
+        return propTaxDashboardService
                 .getCollectionIndexDetails(collectionDetailsRequest, true);
-        Long timeTaken = System.currentTimeMillis() - startTime;
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Time taken to serve targetmis is : " + timeTaken + MILLISECS);
-        return collectionDetails;
     }
     
     /**
@@ -286,21 +203,20 @@ public class CMDashboardController {
      */
     @RequestMapping(value = "/citywisedcb", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public MISDCBDetails getDCBDetailsForMIS(CollectionDetailsRequest collectionDetailsRequest)
-            throws IOException {
+    public MISDCBDetails getDCBDetailsForMIS(CollectionDetailsRequest collectionDetailsRequest) {
         MISDCBDetails misDCBDetails = new MISDCBDetails();
         List<WeeklyDCB> weekwiseDCBDetails;
         List<MonthlyDCB> monthwiseDCBDetails;
-        Long startTime = System.currentTimeMillis();
         if (StringUtils.isBlank(collectionDetailsRequest.getIntervalType()))
             misDCBDetails.setDcbDetails(propTaxDashboardService.getDCBDetails(collectionDetailsRequest));
-        else{ 
+        else {
             String startDate;
             String endDate;
-            if (WEEK.equalsIgnoreCase(collectionDetailsRequest.getIntervalType())){
-                String monthStartDateStr = collectionDetailsRequest.getYear().concat("-").concat(collectionDetailsRequest.getMonth()).concat("-").concat("01");
+            if (WEEK.equalsIgnoreCase(collectionDetailsRequest.getIntervalType())) {
+                String monthStartDateStr = collectionDetailsRequest.getYear().concat("-")
+                        .concat(collectionDetailsRequest.getMonth()).concat("-").concat("01");
                 LocalDate monthStDate = new LocalDate(monthStartDateStr);
-                //Fetch the start date of the 1st week of the month and the last day of the month
+                // Fetch the start date of the 1st week of the month and the last day of the month
                 LocalDate weekStart = monthStDate.dayOfWeek().withMinimumValue();
                 LocalDate endOfMonth = monthStDate.dayOfMonth().withMaximumValue();
                 startDate = weekStart.toString(PropertyTaxConstants.DATE_FORMAT_YYYYMMDD);
@@ -309,8 +225,7 @@ public class CMDashboardController {
                 collectionDetailsRequest.setToDate(endDate);
             }
         }
-        
-        if(WEEK.equalsIgnoreCase(collectionDetailsRequest.getIntervalType())){
+        if (WEEK.equalsIgnoreCase(collectionDetailsRequest.getIntervalType())) {
             weekwiseDCBDetails = propTaxDashboardService.getWeekwiseDCBDetails(collectionDetailsRequest,
                     collectionDetailsRequest.getIntervalType());
             misDCBDetails.setWeeklyDCBDetails(weekwiseDCBDetails);
@@ -319,10 +234,6 @@ public class CMDashboardController {
                     collectionDetailsRequest.getIntervalType());
             misDCBDetails.setMonthlyDCBDetails(monthwiseDCBDetails);
         }
-    
-        Long timeTaken = System.currentTimeMillis() - startTime;
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Time taken to serve citywisedcb is : " + timeTaken + MILLISECS);
         return misDCBDetails;
     }
     
@@ -332,23 +243,22 @@ public class CMDashboardController {
      * @throws IOException
      */
     @RequestMapping(value = "/collectionanalysis", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody public CollectionAnalysis getCollectionAnalysisForMIS(CollectionDetailsRequest collectionDetailsRequest) 
-                    throws IOException {
-        if(StringUtils.isNotBlank(collectionDetailsRequest.getIntervalType())){
-            String startDate=StringUtils.EMPTY;
-            String endDate=StringUtils.EMPTY;
-            if(WEEK.equalsIgnoreCase(collectionDetailsRequest.getIntervalType())){
-                //Prepare the start date based on the month number and year
+    @ResponseBody public CollectionAnalysis getCollectionAnalysisForMIS(CollectionDetailsRequest collectionDetailsRequest) {
+        if (StringUtils.isNotBlank(collectionDetailsRequest.getIntervalType())) {
+            String startDate = StringUtils.EMPTY;
+            String endDate = StringUtils.EMPTY;
+            if (WEEK.equalsIgnoreCase(collectionDetailsRequest.getIntervalType())) {
+                // Prepare the start date based on the month number and year
                 String monthStartDateStr = collectionDetailsRequest.getYear().concat("-")
                         .concat(collectionDetailsRequest.getMonth()).concat("-").concat("01");
                 LocalDate monthStDate = new LocalDate(monthStartDateStr);
-                //Fetch the start date of the 1st week of the month and the last day of the month
+                // Fetch the start date of the 1st week of the month and the last day of the month
                 LocalDate weekStart = monthStDate.dayOfWeek().withMinimumValue();
                 LocalDate endOfMonth = monthStDate.dayOfMonth().withMaximumValue();
                 startDate = weekStart.toString(PropertyTaxConstants.DATE_FORMAT_YYYYMMDD);
                 endDate = endOfMonth.toString(PropertyTaxConstants.DATE_FORMAT_YYYYMMDD);
-            } else if(DAY.equalsIgnoreCase(collectionDetailsRequest.getIntervalType())){
-                //Prepare the first and last days of the week based on the month, year and week of month values
+            } else if (DAY.equalsIgnoreCase(collectionDetailsRequest.getIntervalType())) {
+                // Prepare the first and last days of the week based on the month, year and week of month values
                 DateTime date = new DateTime().withYear(Integer.parseInt(collectionDetailsRequest.getYear()))
                         .withMonthOfYear(Integer.parseInt(collectionDetailsRequest.getMonth()));
                 Calendar cal = date.toCalendar(Locale.getDefault());
@@ -359,20 +269,14 @@ public class CMDashboardController {
                 Date weekEndDate = DateUtils.addDays(weekStartDate.toDate(), 6);
                 endDate = PropertyTaxConstants.DATEFORMATTER_YYYY_MM_DD.format(weekEndDate);
             }
-            if(WEEK.equalsIgnoreCase(collectionDetailsRequest.getIntervalType()) 
-                    || DAY.equalsIgnoreCase(collectionDetailsRequest.getIntervalType())){
+            if (WEEK.equalsIgnoreCase(collectionDetailsRequest.getIntervalType())
+                    || DAY.equalsIgnoreCase(collectionDetailsRequest.getIntervalType())) {
                 collectionDetailsRequest.setFromDate(startDate);
                 collectionDetailsRequest.setToDate(endDate);
             }
         }
-
-        Long startTime = System.currentTimeMillis();
-        CollectionAnalysis collectionAnalysis = propTaxDashboardService.getCollectionAnalysisData(collectionDetailsRequest,
+        return propTaxDashboardService.getCollectionAnalysisData(collectionDetailsRequest,
                 collectionDetailsRequest.getIntervalType());
-        Long timeTaken = System.currentTimeMillis() - startTime;
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Time taken to serve collectionanalysis is : " + timeTaken + MILLISECS);
-        return collectionAnalysis;
     }
     
     /**
@@ -381,14 +285,8 @@ public class CMDashboardController {
      * @return CollectionDetails
      */
     @RequestMapping(value = "/dailytarget", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public CollectionDetails getDailyTargetDetails(CollectionDetailsRequest collectionDetailsRequest)
-            throws IOException {
-        Long startTime = System.currentTimeMillis();
-        CollectionDetails collectionDetails= propTaxDashboardService.getDailyTarget(collectionDetailsRequest);
-        Long timeTaken = System.currentTimeMillis() - startTime;
-        if(LOGGER.isDebugEnabled())
-            LOGGER.debug("Time taken to serve dailytarget is : " + timeTaken + MILLISECS);
-        return collectionDetails;
+    public CollectionDetails getDailyTargetDetails(CollectionDetailsRequest collectionDetailsRequest) {
+        return propTaxDashboardService.getDailyTarget(collectionDetailsRequest);
     }
 
     @RequestMapping(value = "/demanddetails", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

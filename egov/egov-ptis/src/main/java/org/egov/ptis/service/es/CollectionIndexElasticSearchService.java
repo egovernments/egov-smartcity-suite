@@ -81,8 +81,6 @@ import org.elasticsearch.search.aggregations.metrics.sum.Sum;
 import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
@@ -107,6 +105,13 @@ import static org.egov.ptis.constants.PropertyTaxConstants.*;
 @Service
 public class CollectionIndexElasticSearchService {
 
+    private static final String CURRENT_TOTAL = "current_total";
+    private static final String ADVANCE = "advance";
+    private static final String REBATE = "rebate";
+    private static final String CURR_INTEREST_DMD = "curr_interest_dmd";
+    private static final String ARREAR_INTEREST_DMD = "arrear_interest_dmd";
+    private static final String CURR_DMD = "curr_dmd";
+    private static final String ARREARDMD = "arrear_dmd";
     private static final String DECEMBER = "December";
     private static final String NOVEMBER = "November";
     private static final String OCTOBER = "October";
@@ -156,7 +161,6 @@ public class CollectionIndexElasticSearchService {
     private static final String RECEIPT_COUNT = "receipt_count";
     private static final String DATE_AGG = "date_agg";
     private static final String BY_CITY = "by_city";
-    private static final String MILLISECS = " (millisecs) ";
     private static final String REVENUE_WARD = "revenueWard";
     private static final String CITY_NAME = "cityName";
     private static final String CITY_CODE = "cityCode";
@@ -170,7 +174,6 @@ public class CollectionIndexElasticSearchService {
     private static final String CANCELLED = "Cancelled";
     private static final String STATUS = "status";
     private static final String RECEIPT_DATE = "receiptDate";
-    private static final Logger LOGGER = LoggerFactory.getLogger(CollectionIndexElasticSearchService.class);
 
     @Autowired
     private CFinancialYearService cFinancialYearService;
@@ -331,7 +334,6 @@ public class CollectionIndexElasticSearchService {
         BigDecimal todayColl;
         BigDecimal tillDateColl;
         final CFinancialYear financialYear = cFinancialYearService.getFinancialYearByDate(new Date());
-        Long startTime = System.currentTimeMillis();
         /**
          * As per Elastic Search functionality, to get the total collections between 2 dates, add a day to the endDate and fetch
          * the results For Current day's collection if dates are sent in the request, consider the toDate, else take date range
@@ -382,8 +384,6 @@ public class CollectionIndexElasticSearchService {
         tillDateColl = getCollectionBetweenDates(collectionDetailsRequest, DateUtils.addYears(fromDate, -1),
                 DateUtils.addYears(toDate, -1), null, null, TOTAL_AMOUNT);
         collectionIndexDetails.setLytdColl(tillDateColl);
-        Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken by getCompleteCollectionIndexDetails() is : " + timeTaken + MILLISECS);
     }
 
     /**
@@ -411,7 +411,6 @@ public class CollectionIndexElasticSearchService {
      */
     public BigDecimal getCollectionBetweenDates(CollectionDetailsRequest collectionDetailsRequest, Date fromDate,
             Date toDate, String cityName, String wardName, String fieldName) {
-        Long startTime = System.currentTimeMillis();
         BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, COLLECTION_INDEX_NAME);
         boolQuery = boolQuery
                 .filter(QueryBuilders.rangeQuery(RECEIPT_DATE).gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate))
@@ -428,10 +427,7 @@ public class CollectionIndexElasticSearchService {
 
         Aggregations collAggr = elasticsearchTemplate.query(searchQueryColl,
                 response -> response.getAggregations());
-
         Sum aggr = collAggr.get(COLLECTIONTOTAL);
-        Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken by getCollectionBetweenDates() is : " + timeTaken + MILLISECS);
         return BigDecimal.valueOf(aggr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
     }
     
@@ -479,9 +475,6 @@ public class CollectionIndexElasticSearchService {
             fromDate = new Date();
             toDate = DateUtils.addDays(new Date(), 1);
         }
-
-        Long startTime = System.currentTimeMillis();
-        Long timeTaken;
         int noOfMonths;
         // For total demand
         Map<String, BigDecimal> totalDemandMap = getCollectionAndDemandValues(collectionDetailsRequest, fromDate,
@@ -554,11 +547,6 @@ public class CollectionIndexElasticSearchService {
         // Fetch ward wise Bill Collector details for ward based grouping
         if (DASHBOARD_GROUPING_WARDWISE.equalsIgnoreCase(collectionDetailsRequest.getType()))
             wardWiseBillCollectors = getWardWiseBillCollectors(collectionDetailsRequest);
-
-        timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken by getCollectionAndDemandValues() is : " + timeTaken + MILLISECS);
-
-        startTime = System.currentTimeMillis();
         if(StringUtils.isBlank(collectionDetailsRequest.getPropertyType()))
             setDataForCollectionTab(collectionDetailsRequest, tableDataMap, aggregationField, wardWiseBillCollectors,
                     currYrTillDateCollDivisionMap, lastYrTillDateCollDivisionMap, lastFinYrCollDivisionMap, noOfMonths,
@@ -585,9 +573,6 @@ public class CollectionIndexElasticSearchService {
         } else
             for (Map.Entry<String, CollTableData> entry : tableDataMap.entrySet())
                 collIndDataList.add(entry.getValue());
-        
-        timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken for setting values in getResponseTableData() is : " + timeTaken + MILLISECS);
         return collIndDataList;
     }
 
@@ -1035,10 +1020,10 @@ public class CollectionIndexElasticSearchService {
         if (individualDmdDetails != null) {
             for (Terms.Bucket entry : individualDmdDetails.getBuckets()) {
                 individualDmdMap = new HashMap<>();
-                arrearDmd = entry.getAggregations().get("arrear_dmd");
-                currentDmd = entry.getAggregations().get("curr_dmd");
-                arrearInterestDmd = entry.getAggregations().get("arrear_interest_dmd");
-                currentInterestDmd = entry.getAggregations().get("curr_interest_dmd");      
+                arrearDmd = entry.getAggregations().get(ARREARDMD);
+                currentDmd = entry.getAggregations().get(CURR_DMD);
+                arrearInterestDmd = entry.getAggregations().get(ARREAR_INTEREST_DMD);
+                currentInterestDmd = entry.getAggregations().get(CURR_INTEREST_DMD);      
 
                 individualDmdMap.put(ARREAR_DMD,
                         BigDecimal.valueOf(arrearDmd.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
@@ -1106,14 +1091,14 @@ public class CollectionIndexElasticSearchService {
         for (Terms.Bucket entry : collBreakup.getBuckets()) {
             individualCollMap = new HashMap<>();
             
-            arrearAmt = entry.getAggregations().get("arrear_amount");
-            currentAmt = entry.getAggregations().get("curr_amount");
-            arrearCess = entry.getAggregations().get("arrear_cess");
-            currentCess = entry.getAggregations().get("curr_cess");
+            arrearAmt = entry.getAggregations().get(ARREAR_AMOUNT_CONST);
+            currentAmt = entry.getAggregations().get(CURR_AMOUNT);
+            arrearCess = entry.getAggregations().get(ARREAR_CESS_CONST);
+            currentCess = entry.getAggregations().get(CURR_CESS);
             penaltyAmt = entry.getAggregations().get("penalty");
             latePaymentPenaltyAmt = entry.getAggregations().get("latePaymentPenalty");
-            rebate = entry.getAggregations().get("rebate");
-            advance = entry.getAggregations().get("advance");
+            rebate = entry.getAggregations().get(REBATE);
+            advance = entry.getAggregations().get(ADVANCE);
 
             individualCollMap.put(arrearAmtKey,
                     BigDecimal.valueOf(arrearAmt.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
@@ -1211,8 +1196,8 @@ public class CollectionIndexElasticSearchService {
                     .subAggregation(AggregationBuilders.sum(CURR_CESS).field(CURRENT_CESS))
                     .subAggregation(AggregationBuilders.sum("penalty").field("penaltyAmount"))
                     .subAggregation(AggregationBuilders.sum("latePaymentPenalty").field(LATE_PAYMENT_CHARGES))
-                    .subAggregation(AggregationBuilders.sum("rebate").field("reductionAmount"))
-                    .subAggregation(AggregationBuilders.sum("advance").field("advanceAmount"));
+                    .subAggregation(AggregationBuilders.sum(REBATE).field("reductionAmount"))
+                    .subAggregation(AggregationBuilders.sum(ADVANCE).field("advanceAmount"));
         SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(indexName).withQuery(boolQuery)
                 .addAggregation(aggregation).build();
 
@@ -1238,25 +1223,25 @@ public class CollectionIndexElasticSearchService {
         
         if(isForMis)
             aggregation = AggregationBuilders.terms(BY_CITY).field(aggregationField).size(120)
-                    .subAggregation(AggregationBuilders.sum("arrear_dmd").field("arrearDemand"))
-                    .subAggregation(AggregationBuilders.sum("curr_dmd").field("annualDemand"))
-                    .subAggregation(AggregationBuilders.sum("arrear_interest_dmd").field("arrearInterestDemand"))
-                    .subAggregation(AggregationBuilders.sum("curr_interest_dmd").field("currentInterestDemand"))
-                    .subAggregation(AggregationBuilders.sum("total_dmd").field("totalDemand"))
+                    .subAggregation(AggregationBuilders.sum(ARREARDMD).field("arrearDemand"))
+                    .subAggregation(AggregationBuilders.sum(CURR_DMD).field("annualDemand"))
+                    .subAggregation(AggregationBuilders.sum(ARREAR_INTEREST_DMD).field("arrearInterestDemand"))
+                    .subAggregation(AggregationBuilders.sum(CURR_INTEREST_DMD).field("currentInterestDemand"))
+                    .subAggregation(AggregationBuilders.sum("total_dmd").field(TOTAL_DEMAND))
                     .subAggregation(AggregationBuilders.sum("adjustment").field("adjustment"))
                     .subAggregation(AggregationBuilders.sum("arrear_coll").field("arrearCollection"))
                     .subAggregation(AggregationBuilders.sum("curr_coll").field("annualCollection"))
                     .subAggregation(AggregationBuilders.sum("arrear_interest_coll").field("arrearInterestCollection"))
                     .subAggregation(AggregationBuilders.sum("curr_interest_coll").field("currentInterestCollection"))
-                    .subAggregation(AggregationBuilders.sum("advance").field("advance"))
-                    .subAggregation(AggregationBuilders.sum("rebate").field("rebate"))
+                    .subAggregation(AggregationBuilders.sum(ADVANCE).field(ADVANCE))
+                    .subAggregation(AggregationBuilders.sum(REBATE).field(REBATE))
                     .subAggregation(AggregationBuilders.sum("total_coll").field("totalCollection"));
         else
             aggregation = AggregationBuilders.terms(BY_CITY).field(aggregationField).size(120)
-                    .subAggregation(AggregationBuilders.sum("arrear_dmd").field("arrearDemand"))
-                    .subAggregation(AggregationBuilders.sum("curr_dmd").field("annualDemand"))
-                    .subAggregation(AggregationBuilders.sum("arrear_interest_dmd").field("arrearInterestDemand"))
-                    .subAggregation(AggregationBuilders.sum("curr_interest_dmd").field("currentInterestDemand"));
+                    .subAggregation(AggregationBuilders.sum(ARREARDMD).field("arrearDemand"))
+                    .subAggregation(AggregationBuilders.sum(CURR_DMD).field("annualDemand"))
+                    .subAggregation(AggregationBuilders.sum(ARREAR_INTEREST_DMD).field("arrearInterestDemand"))
+                    .subAggregation(AggregationBuilders.sum(CURR_INTEREST_DMD).field("currentInterestDemand"));
 
         SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(indexName).withQuery(boolQuery)
                 .addAggregation(aggregation).build();
@@ -1312,7 +1297,6 @@ public class CollectionIndexElasticSearchService {
 
         Date finYearStartDate = financialYear.getStartingDate();
         Date finYearEndDate = financialYear.getEndingDate();
-        Long startTime = System.currentTimeMillis();
         for (int count = 0; count <= 2; count++) {
             monthwiseColl = new LinkedHashMap<>();
             Aggregations collAggr = getMonthwiseCollectionsForConsecutiveYears(collectionDetailsRequest, fromDate,
@@ -1324,7 +1308,7 @@ public class CollectionIndexElasticSearchService {
                 dateForMonth = DateUtils.getDate(dateArr[0], DATE_FORMAT_YYYYMMDD);
                 month = Integer.valueOf(dateArr[0].split("-", 3)[1]);
                 monthName = monthValuesMap.get(month);
-                aggregateSum = entry.getAggregations().get("current_total");
+                aggregateSum = entry.getAggregations().get(CURRENT_TOTAL);
                 // If the total amount is greater than 0 and the month belongs
                 // to respective financial year, add values to the map
                 if (DateUtils.between(dateForMonth, finYearStartDate, finYearEndDate)
@@ -1349,15 +1333,8 @@ public class CollectionIndexElasticSearchService {
             finYearStartDate = DateUtils.addYears(finYearStartDate, -1);
             finYearEndDate = DateUtils.addYears(finYearEndDate, -1);
         }
-        Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken by getMonthwiseCollectionsForConsecutiveYears() for 3 consecutive years is : "
-                + timeTaken + MILLISECS);
 
-        startTime = System.currentTimeMillis();
         populateCollTrends(collectionDetailsRequest, collTrendsList, yearwiseMonthlyCollList);
-        timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug(
-                "Time taken setting values in getMonthwiseCollectionDetails() is : " + timeTaken + MILLISECS);
         return collTrendsList;
     }
 
@@ -1433,12 +1410,12 @@ public class CollectionIndexElasticSearchService {
             aggregationBuilder = AggregationBuilders.terms(BY_CITY).field(aggregationField).size(120)
                     .subAggregation(AggregationBuilders.dateHistogram(DATE_AGG).field(RECEIPT_DATE)
                     .interval(interval)
-                    .subAggregation(AggregationBuilders.sum("current_total").field(TOTAL_AMOUNT)));
+                    .subAggregation(AggregationBuilders.sum(CURRENT_TOTAL).field(TOTAL_AMOUNT)));
         }
         else
             aggregationBuilder = AggregationBuilders.dateHistogram(DATE_AGG).field(RECEIPT_DATE)
                 .interval(DateHistogramInterval.MONTH)
-                .subAggregation(AggregationBuilders.sum("current_total").field(TOTAL_AMOUNT));
+                .subAggregation(AggregationBuilders.sum(CURRENT_TOTAL).field(TOTAL_AMOUNT));
 
         SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(COLLECTION_INDEX_NAME)
                 .withQuery(boolQuery)
@@ -1475,7 +1452,6 @@ public class CollectionIndexElasticSearchService {
             fromDate =new Date();
             toDate = DateUtils.addDays(new Date(), 1);
         }
-        Long startTime = System.currentTimeMillis();
         // Today’s receipts count
         Long receiptsCount = getTotalReceiptCountsForDates(collectionDetailsRequest, fromDate, toDate);
         receiptDetails.setTodayRcptsCount(receiptsCount);
@@ -1501,8 +1477,6 @@ public class CollectionIndexElasticSearchService {
         receiptsCount = getTotalReceiptCountsForDates(collectionDetailsRequest, DateUtils.addYears(fromDate, -1),
                 DateUtils.addYears(toDate, -1));
         receiptDetails.setLytdRcptsCount(receiptsCount);
-        Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken by getTotalReceiptCountsForDates() for all dates is : " + timeTaken + MILLISECS);
     }
 
     /**
@@ -1571,8 +1545,6 @@ public class CollectionIndexElasticSearchService {
             fromDate = DateUtils.startOfDay(financialYear.getStartingDate());
             toDate = DateUtils.addDays(new Date(), 1);
         }
-
-        Long startTime = System.currentTimeMillis();
         for (int count = 0; count <= 2; count++) {
             monthwiseCount = new LinkedHashMap<>();
             Aggregations collAggregation = getReceiptsCountForConsecutiveYears(collectionDetailsRequest, fromDate,
@@ -1607,11 +1579,6 @@ public class CollectionIndexElasticSearchService {
             finYearEndDate = DateUtils.addYears(finYearEndDate, -1);
         }
 
-        Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken by getReceiptsCountForConsecutiveYears() for 3 consecutive years is : " + timeTaken
-                + MILLISECS);
-
-        startTime = System.currentTimeMillis();
         /**
          * If dates are passed in request, get result for the date range, else get results for all 12 months
          */
@@ -1640,9 +1607,6 @@ public class CollectionIndexElasticSearchService {
                 rcptTrendsList.add(rcptsTrend);
             }
         }
-        timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug(
-                "Time taken foro setting values in getMonthwiseReceiptsTrend() is : " + timeTaken + MILLISECS);
         return rcptTrendsList;
     }
 
@@ -1668,14 +1632,12 @@ public class CollectionIndexElasticSearchService {
                                 .lte(DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false)))
                 .addAggregation(monthAggregation).build();
 
-        Aggregations collCountAggr = elasticsearchTemplate.query(searchQueryColl, new ResultsExtractor<Aggregations>() {
+        return  elasticsearchTemplate.query(searchQueryColl, new ResultsExtractor<Aggregations>() {
             @Override
             public Aggregations extract(SearchResponse response) {
                 return response.getAggregations();
             }
         });
-
-        return collCountAggr;
     }
 
     /**
@@ -1690,7 +1652,7 @@ public class CollectionIndexElasticSearchService {
         Date fromDate;
         Date toDate;
         String name;
-        BigDecimal variance = BigDecimal.ZERO;
+        BigDecimal variance;
         String aggregationField = REGION_NAME;
         final CFinancialYear financialYear = cFinancialYearService.getFinancialYearByDate(new Date());
 
@@ -1723,7 +1685,6 @@ public class CollectionIndexElasticSearchService {
             fromDate = new Date();
             toDate = DateUtils.addDays(new Date(), 1);
         }
-        Long startTime = System.currentTimeMillis();
         Map<String, BigDecimal> currDayCollMap = getCollectionAndDemandCountResults(collectionDetailsRequest, fromDate,
                 toDate, COLLECTION_INDEX_NAME, CONSUMER_CODE, aggregationField);
         /**
@@ -1746,10 +1707,6 @@ public class CollectionIndexElasticSearchService {
         Map<String, BigDecimal> lytdCollMap = getCollectionAndDemandCountResults(collectionDetailsRequest,
                 DateUtils.addYears(fromDate, -1), DateUtils.addYears(toDate, -1), COLLECTION_INDEX_NAME, CONSUMER_CODE,
                 aggregationField);
-        Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken by getCollectionAndDemandCountResults() is : " + timeTaken + MILLISECS);
-
-        startTime = System.currentTimeMillis();
         for (Map.Entry<String, BigDecimal> entry : cytdCollMap.entrySet()) {
             receiptData = new ReceiptTableData();
             name = entry.getKey();
@@ -1782,8 +1739,6 @@ public class CollectionIndexElasticSearchService {
             receiptData.setLyVar(variance);
             receiptDataList.add(receiptData);
         }
-        timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken for setting values in getReceiptTableData() is : " + timeTaken + MILLISECS);
         return receiptDataList;
     }
 
@@ -2045,7 +2000,7 @@ public class CollectionIndexElasticSearchService {
      * @param collectionDetailsRequest
      * @return assessments count
      */
-    public Long getTotalAssessmentsCount(CollectionDetailsRequest collectionDetailsRequest, String aggregationField) {
+    public Long getTotalAssessmentsCount(CollectionDetailsRequest collectionDetailsRequest) {
         BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, PROPERTY_TAX_INDEX_NAME)
                 .filter(QueryBuilders.matchQuery(IS_ACTIVE, true))
                 .filter(QueryBuilders.matchQuery(IS_EXEMPTED, false));
@@ -2089,7 +2044,6 @@ public class CollectionIndexElasticSearchService {
         }
         
         CFinancialYear financialYear = cFinancialYearService.getFinancialYearByDate(fromDate);
-        Long startTime = System.currentTimeMillis();
         Aggregations collAggr = getMonthwiseCollectionsForConsecutiveYears(collectionDetailsRequest, fromDate,
                 toDate, true, intervalType, aggregationField);
         StringTerms cityaggr = collAggr.get(BY_CITY);
@@ -2104,11 +2058,6 @@ public class CollectionIndexElasticSearchService {
             prepareDailyCollMap(intervalwiseCollMap, cityaggr, fromDate);
             setCollectionsForDays(intervalwiseCollMap, collectionAnalysis);
         }
-        
-        Long timeTaken = System.currentTimeMillis() - startTime;
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug(
-                    "Time taken setting values in getCollectionsForInterval() is : " + timeTaken + MILLISECS);
         return collectionAnalysis;
     }
 
@@ -2137,7 +2086,7 @@ public class CollectionIndexElasticSearchService {
                 dateForMonth = DateUtils.getDate(dateArr[0], DATE_FORMAT_YYYYMMDD);
                 month = Integer.valueOf(dateArr[0].split("-", 3)[1]);
                 monthName = monthValuesMap.get(month);
-                aggregateSum = entry.getAggregations().get("current_total");
+                aggregateSum = entry.getAggregations().get(CURRENT_TOTAL);
                 // If the total amount is greater than 0 and the month belongs
                 // to respective financial year, add values to the map
                 if (DateUtils.between(dateForMonth, finYearStartDate, finYearEndDate)
@@ -2171,7 +2120,7 @@ public class CollectionIndexElasticSearchService {
                 if (noOfWeeks == 0)
                     noOfWeeks = 1;
                 weekName = "Week " + noOfWeeks;
-                aggregateSum = entry.getAggregations().get("current_total");
+                aggregateSum = entry.getAggregations().get(CURRENT_TOTAL);
                 if (BigDecimal.valueOf(aggregateSum.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP)
                         .compareTo(BigDecimal.ZERO) > 0) {
                     weekwiseColl.put(weekName, BigDecimal.valueOf(aggregateSum.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
@@ -2211,7 +2160,7 @@ public class CollectionIndexElasticSearchService {
             Histogram dateaggs = cityDetailsentry.getAggregations().get(DATE_AGG);
             for (Histogram.Bucket entry : dateaggs.getBuckets()) {
                 resultDateStr = entry.getKeyAsString().split("T")[0];
-                aggregateSum = entry.getAggregations().get("current_total");
+                aggregateSum = entry.getAggregations().get(CURRENT_TOTAL);
                 if (BigDecimal.valueOf(aggregateSum.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP)
                         .compareTo(BigDecimal.ZERO) > 0)
                     dayWiseCollFromResult.put(resultDateStr,
@@ -2288,7 +2237,7 @@ public class CollectionIndexElasticSearchService {
                     weeklyDemand = totalDemand.divide(BigDecimal.valueOf(52), BigDecimal.ROUND_HALF_UP)
                         .multiply(BigDecimal.valueOf(noOfWeeks));
                 weekName = "Week " + noOfWeeks;
-                aggregateSum = entry.getAggregations().get("current_total");
+                aggregateSum = entry.getAggregations().get(CURRENT_TOTAL);
                 if (BigDecimal.valueOf(aggregateSum.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP)
                         .compareTo(BigDecimal.ZERO) > 0) {
                     demandCollValues[0] = BigDecimal.valueOf(aggregateSum.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
@@ -2403,7 +2352,7 @@ public class CollectionIndexElasticSearchService {
                 monthName = monthValuesMap.get(month);
                 monthlyDemand = totalDemand.divide(BigDecimal.valueOf(12), BigDecimal.ROUND_HALF_UP)
                         .multiply(BigDecimal.valueOf(noOfMonths));
-                aggregateSum = entry.getAggregations().get("current_total");
+                aggregateSum = entry.getAggregations().get(CURRENT_TOTAL);
                
                 if (BigDecimal.valueOf(aggregateSum.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP)
                         .compareTo(BigDecimal.ZERO) > 0) {

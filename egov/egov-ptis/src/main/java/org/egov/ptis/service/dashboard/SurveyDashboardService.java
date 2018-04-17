@@ -50,7 +50,6 @@ package org.egov.ptis.service.dashboard;
 import static java.lang.String.format;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_DISTRICTWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_FUNCTIONARYWISE;
-import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_REGIONWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_SERVICEWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_ULBWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_WARDWISE;
@@ -90,6 +89,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class SurveyDashboardService {
+    private static final String THIRD_PRTY_FLAG = "thirdPrtyFlag";
     private static final String AGGREGATIONWISE = "aggregationwise";
     private static final String SENT_TO_THIRD_PARTY = "sentToThirdParty";
     private static final String PROPERTYSURVEYDETAILS_INDEX = "propertysurveydetails";
@@ -100,7 +100,7 @@ public class SurveyDashboardService {
     private static final String REVENUE_WARD = "revenueWard";
     private static final String APPLICATION_TYPE = "applicationType";
     private static final String APP_VIEW_URL = "/ptis/view/viewProperty-viewForm.action?applicationNo=%s&applicationType=%s";
-    private static final String THIRD_PARTY_FLAG = "thirdPrtyFlag";
+    private static final String THIRD_PARTY_FLAG = THIRD_PRTY_FLAG;
     private static final String FUNCTIONARY_NAME = "functionaryName";
     private static final String APPLICATION_STATUS = "applicationStatus";
     private static final String WF_STATUS_CANCELLED = "Cancelled";
@@ -267,7 +267,7 @@ public class SurveyDashboardService {
         SearchResponse response = elasticsearchTemplate.getClient().prepareSearch(PROPERTYSURVEYDETAILS_INDEX).setSize(0)
                 .setQuery(prepareQuery(surveyRequest))
                 .addAggregation(aggregationBuilder
-                        .subAggregation(getCountWithGrouping("verificationDone", "thirdPrtyFlag", 2))
+                        .subAggregation(getCountWithGrouping("verificationDone", THIRD_PRTY_FLAG, 2))
                         .subAggregation(getCountWithGrouping("sentForReference", SENT_TO_THIRD_PARTY, 2))
                         .subAggregation(AggregationBuilders.sum("gisTotal").field(GIS_TAX))
                         .subAggregation(AggregationBuilders.sum("systemTotal").field(SYSTEM_TAX))

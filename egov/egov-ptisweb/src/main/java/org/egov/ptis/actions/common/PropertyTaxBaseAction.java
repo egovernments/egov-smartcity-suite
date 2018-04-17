@@ -419,7 +419,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                         if (isBlank(floor.getBuildingPermissionNo()) && !buildingPlanNoValidationAdded)
                             addActionError(getText("mandatory.floor.buildingplan.number", msgParams));
                     }
-                    if (StringUtils.isNotBlank(floor.getFirmName()) && floor.getPropertyUsage() != null
+                    if (floor.getPropertyUsage() != null && StringUtils.isBlank(floor.getFirmName())
                             && null != floor.getPropertyUsage().getId()
                             && !"-1".equals(floor.getPropertyUsage().getId().toString())) {
                         final PropertyUsage pu = propertyUsageService.findById(Long.valueOf(floor

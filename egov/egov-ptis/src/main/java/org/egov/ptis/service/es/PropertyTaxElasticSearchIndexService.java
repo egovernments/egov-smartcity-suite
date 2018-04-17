@@ -101,8 +101,6 @@ import org.elasticsearch.search.aggregations.bucket.terms.TermsBuilder;
 import org.elasticsearch.search.aggregations.metrics.sum.Sum;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -144,7 +142,6 @@ public class PropertyTaxElasticSearchIndexService {
     private static final String CITY_NAME = "cityName";
     private static final String REVENUE_WARD = "revenueWard";
     private static final String TOTAL_COLLECTION = "total_collection";
-    private static final String MILLISECS = " (millisecs) ";
     private static final String TOTAL_DEMAND = "totalDemand";
     private static final String ARREAR_DEMAND = "arrearDemand";
     private static final String CURRENT_DEMAND = "currentDemand";
@@ -158,9 +155,6 @@ public class PropertyTaxElasticSearchIndexService {
     private static final String PT_NEW_ASSMNT = "New_Assessment";
     private static final String PT_ALTER_ASSMNT = "Alter_Assessment";
     
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(PropertyTaxElasticSearchIndexService.class);
-
     private final PropertyTaxIndexRepository propertyTaxIndexRepository;
 
     @Autowired
@@ -226,12 +220,7 @@ public class PropertyTaxElasticSearchIndexService {
             fromDate = DateUtils.startOfDay(currFinYear.getStartingDate());
             toDate = new Date();
         }
-        Long startTime = System.currentTimeMillis();
         final BigDecimal totalDemand = getTotalDemandBasedOnInputFilters(collectionDetailsRequest);
-        Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken by getTotalDemandBasedOnInputFilters() is : " + timeTaken + MILLISECS);
-
-        startTime = System.currentTimeMillis();
         final int noOfMonths = DateUtils.noOfMonthsBetween(fromDate, toDate) + 1;
         collectionIndexDetails.setTotalDmd(totalDemand);
 
@@ -241,7 +230,7 @@ public class PropertyTaxElasticSearchIndexService {
         collectionIndexDetails.setCytdDmd(proportionalDemand.setScale(0, BigDecimal.ROUND_HALF_UP));
 
         collectionIndexDetails.setTotalAssessments(
-                collectionIndexElasticSearchService.getTotalAssessmentsCount(collectionDetailsRequest, null));
+                collectionIndexElasticSearchService.getTotalAssessmentsCount(collectionDetailsRequest));
 
         if (proportionalDemand.compareTo(BigDecimal.ZERO) > 0)
             // performance = (current year tilldate collection * 100)/(proportional demand)
@@ -257,9 +246,6 @@ public class PropertyTaxElasticSearchIndexService {
                     .multiply(BIGDECIMAL_100).divide(collectionIndexDetails.getLytdColl(), 1,
                             BigDecimal.ROUND_HALF_UP);
         collectionIndexDetails.setLyVar(variation);
-        timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug(
-                "Time taken for setting values in getConsolidatedDemandInfo() is : " + timeTaken + MILLISECS);
     }
 
     /**
@@ -314,8 +300,6 @@ public class PropertyTaxElasticSearchIndexService {
             taxPayerDetails.setUlbName(city.getName());
             taxPayerDetails.setUlbCode(city.getCitycode());
         }
-        LOGGER.info("City ------ "+city.getName()+" ----- Type ------- " + collectionDetailsRequest.getType() + " ------- TaxPayerDetails size ------- "
-                + userWiseTaxPayerDetails.size());
         return userWiseTaxPayerDetails;
     }
     
@@ -534,7 +518,6 @@ public class PropertyTaxElasticSearchIndexService {
         else
             groupingField = CITY_NAME;
 
-        Long startTime = System.currentTimeMillis();
         AggregationBuilder aggregation;
         SearchQuery searchQueryColl;
         // Apply the ordering and max results size only if the type is not
@@ -561,15 +544,10 @@ public class PropertyTaxElasticSearchIndexService {
         if (DASHBOARD_GROUPING_WARDWISE.equalsIgnoreCase(collectionDetailsRequest.getType()))
             wardWiseBillCollectors = collectionIndexElasticSearchService.getWardWiseBillCollectors(collectionDetailsRequest);
 
-        Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken by ulbWiseAggregations is : " + timeTaken + MILLISECS);
-
         TaxPayerDetails taxDetail;
-        startTime = System.currentTimeMillis();
         final StringTerms totalAmountAggr = collAggr.get(BY_AGGREGATION_FIELD);
         BigDecimal lastYearCollection;
         for (final Terms.Bucket entry : totalAmountAggr.getBuckets()) {
-            variation = BigDecimal.ZERO;
             taxDetail = new TaxPayerDetails();
             taxDetail.setRegionName(collectionDetailsRequest.getRegionName());
             taxDetail.setDistrictName(collectionDetailsRequest.getDistrictName());
@@ -659,9 +637,6 @@ public class PropertyTaxElasticSearchIndexService {
             taxDetail.setLyVar(variation);
             taxPayers.add(taxDetail);
         }
-        timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken for setting values in returnUlbWiseAggregationResults() is : " + timeTaken
-                + MILLISECS);
         // If for Bill Collector, then fetch details for all wards, else limit
         // the results size
         if (isBillCollectorWise)
@@ -703,7 +678,6 @@ public class PropertyTaxElasticSearchIndexService {
      * @return
      */
     public List<TaxDefaulters> getTopDefaulters(final PropertyTaxDefaultersRequest propertyTaxDefaultersRequest) {
-        Long startTime = System.currentTimeMillis();
         BoolQueryBuilder boolQuery = filterBasedOnRequest(propertyTaxDefaultersRequest);
         boolQuery = boolQuery.mustNot(QueryBuilders.matchQuery(CITY_NAME, "Guntur"))
                 .mustNot(QueryBuilders.matchQuery(CITY_NAME, "Vijayawada"))
@@ -717,12 +691,9 @@ public class PropertyTaxElasticSearchIndexService {
 
         final Page<PropertyTaxIndex> propertyTaxRecords = elasticsearchTemplate.queryForPage(searchQuery,
                 PropertyTaxIndex.class);
-        Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken by defaulters aggregation is : " + timeTaken + MILLISECS);
 
         final List<TaxDefaulters> taxDefaulters = new ArrayList<>();
         TaxDefaulters taxDefaulter;
-        startTime = System.currentTimeMillis();
         for (final PropertyTaxIndex property : propertyTaxRecords) {
             taxDefaulter = new TaxDefaulters();
             taxDefaulter.setOwnerName(property.getConsumerName());
@@ -732,8 +703,6 @@ public class PropertyTaxElasticSearchIndexService {
             taxDefaulter.setPeriod(StringUtils.isBlank(property.getDuePeriod()) ? StringUtils.EMPTY : property.getDuePeriod());
             taxDefaulters.add(taxDefaulter);
         }
-        timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken for setting values in getTopDefaulters() is : " + timeTaken + MILLISECS);
         return taxDefaulters;
     }
 
@@ -994,10 +963,10 @@ public class PropertyTaxElasticSearchIndexService {
         if (individualDmdDetails != null)
             for (final Terms.Bucket entry : individualDmdDetails.getBuckets()) {
                 individualDmdMap = new HashMap<>();
-                arrearDmd = entry.getAggregations().get("arrear_dmd");
-                currentDmd = entry.getAggregations().get("curr_dmd");
-                arrearInterestDmd = entry.getAggregations().get("arrear_interest_dmd");
-                currentInterestDmd = entry.getAggregations().get("curr_interest_dmd");
+                arrearDmd = entry.getAggregations().get(ARREAR_DMD_STR);
+                currentDmd = entry.getAggregations().get(CURR_DMD);
+                arrearInterestDmd = entry.getAggregations().get(ARREAR_INTEREST_DMD);
+                currentInterestDmd = entry.getAggregations().get(CURR_INTEREST_DMD);
                 totalDmd = entry.getAggregations().get("total_dmd");
                 adjustment = entry.getAggregations().get("adjustment");
                 arrearColl = entry.getAggregations().get("arrear_coll");
@@ -1005,7 +974,7 @@ public class PropertyTaxElasticSearchIndexService {
                 arrearInterestColl = entry.getAggregations().get("arrear_interest_coll");
                 currentInterestColl = entry.getAggregations().get("curr_interest_coll");
                 advanceColl = entry.getAggregations().get("advance");
-                rebate = entry.getAggregations().get("rebate");
+                rebate = entry.getAggregations().get(REBATE_STR);
                 totalColl = entry.getAggregations().get("total_coll");
 
                 individualDmdMap.put(ARREAR_DMD,

@@ -84,8 +84,6 @@ import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.domain.service.property.CollectionAchievementsService;
 import org.egov.ptis.service.es.CollectionIndexElasticSearchService;
 import org.egov.ptis.service.es.PropertyTaxElasticSearchIndexService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -95,10 +93,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PropTaxDashboardService {
-
-    private static final String MILLISECS = " (millisecs) ";
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(PropTaxDashboardService.class);
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -150,32 +144,24 @@ public class PropTaxDashboardService {
     public TotalCollectionStats getTotalCollectionStats(final HttpServletRequest request) {
         TotalCollectionStats consolidatedCollectionDetails = new TotalCollectionStats();
         // For Property Tax collections
-        Long startTime = System.currentTimeMillis();
         CollectionStats consolidatedData = new CollectionStats();
         Map<String, BigDecimal> consolidatedColl = collectionIndexElasticSearchService
                 .getFinYearsCollByService(COLLECION_BILLING_SERVICE_PT);
-        Long timeTaken = System.currentTimeMillis() - startTime;
         CFinancialYear currFinYear = getCurrentFinancialYear();
 
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Time taken by getFinYearsCollByService() for Property Tax is : " + timeTaken + MILLISECS);
         if (!consolidatedColl.isEmpty()) {
             consolidatedData.setCytdColl(consolidatedColl.get("cytdColln"));
             consolidatedData.setLytdColl(consolidatedColl.get("lytdColln"));
         }
-        startTime = System.currentTimeMillis();
         BigDecimal totalDmd = propertyTaxElasticSearchIndexService.getTotalDemand();
-        timeTaken = System.currentTimeMillis() - startTime;
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Time taken by Property Tax getTotalDemand() is : " + timeTaken + MILLISECS);
         int noOfMonths = DateUtils
                 .noOfMonthsBetween(DateUtils.startOfDay(currFinYear.getStartingDate()), new Date()) + 1;
         consolidatedData.setTotalDmd(totalDmd.divide(BigDecimal.valueOf(12), BigDecimal.ROUND_HALF_UP)
                 .multiply(BigDecimal.valueOf(noOfMonths)));
-        if(consolidatedData.getTotalDmd().compareTo(BigDecimal.ZERO) > 0)
+        if (consolidatedData.getTotalDmd().compareTo(BigDecimal.ZERO) > 0)
             consolidatedData.setPerformance(consolidatedData.getCytdColl().multiply(BIGDECIMAL_100)
                     .divide(consolidatedData.getTotalDmd(), 1, BigDecimal.ROUND_HALF_UP));
-        if(consolidatedData.getLytdColl().compareTo(BigDecimal.ZERO) > 0)
+        if (consolidatedData.getLytdColl().compareTo(BigDecimal.ZERO) > 0)
             consolidatedData.setLyVar(
                     (consolidatedData.getCytdColl().subtract(consolidatedData.getLytdColl()).multiply(BIGDECIMAL_100))
                             .divide(consolidatedData.getLytdColl(), 1, BigDecimal.ROUND_HALF_UP));
@@ -183,27 +169,19 @@ public class PropTaxDashboardService {
 
         // For Water Tax collections
         consolidatedData = new CollectionStats();
-        startTime = System.currentTimeMillis();
         consolidatedColl = collectionIndexElasticSearchService.getFinYearsCollByService(COLLECION_BILLING_SERVICE_WTMS);
-        timeTaken = System.currentTimeMillis() - startTime;
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Time taken by getFinYearsCollByService() for Water Tax is : " + timeTaken + MILLISECS);
         if (!consolidatedColl.isEmpty()) {
             consolidatedData.setCytdColl(consolidatedColl.get("cytdColln"));
             consolidatedData.setLytdColl(consolidatedColl.get("lytdColln"));
         }
-        startTime = System.currentTimeMillis();
         BigDecimal totalDemandValue = getWaterChargeTotalDemand(request);
         int numberOfMonths = DateUtils.noOfMonthsBetween(DateUtils.startOfDay(currFinYear.getStartingDate()), new Date()) + 1;
         consolidatedData.setTotalDmd(totalDemandValue.divide(BigDecimal.valueOf(12), BigDecimal.ROUND_HALF_UP)
                 .multiply(BigDecimal.valueOf(numberOfMonths)));
-        timeTaken = System.currentTimeMillis() - startTime;
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Time taken by Water Tax getTotalDemand() is : " + timeTaken + MILLISECS);
-        if(consolidatedData.getTotalDmd().compareTo(BigDecimal.ZERO) > 0)
+        if (consolidatedData.getTotalDmd().compareTo(BigDecimal.ZERO) > 0)
             consolidatedData.setPerformance(consolidatedData.getCytdColl().multiply(BIGDECIMAL_100)
                     .divide(consolidatedData.getTotalDmd(), 1, BigDecimal.ROUND_HALF_UP));
-        if(consolidatedData.getLytdColl().compareTo(BigDecimal.ZERO) > 0)
+        if (consolidatedData.getLytdColl().compareTo(BigDecimal.ZERO) > 0)
             consolidatedData.setLyVar(
                     (consolidatedData.getCytdColl().subtract(consolidatedData.getLytdColl()).multiply(BIGDECIMAL_100))
                             .divide(consolidatedData.getLytdColl(), 1, BigDecimal.ROUND_HALF_UP));
@@ -397,12 +375,9 @@ public class PropTaxDashboardService {
      * @param currFinYear
      */
     public void pushAchievements() {
-        Long startTime = System.currentTimeMillis();
         List<TaxPayerDetails> taxPayersList = prepareDataToLoadAchievementsIndex();
         for (TaxPayerDetails taxPayerDetails : taxPayersList)
             collectionAchievementsService.createAchievementsIndex(taxPayerDetails);
-        Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.info("Time taken by pushAchievements() is : " + timeTaken + MILLISECS);
     }
     
     /**
