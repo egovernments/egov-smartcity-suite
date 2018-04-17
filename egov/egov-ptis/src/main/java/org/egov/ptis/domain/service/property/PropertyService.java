@@ -3875,7 +3875,6 @@ public class PropertyService {
             return Collections.emptySet();
     }
 
-    @ReadOnly
     public BigDecimal getTotalPropertyTaxDueIncludingPenalty(final BasicProperty basicProperty) {
         final Map<String, BigDecimal> propertyTaxDetails = ptDemandDAO
                 .getDemandIncludingPenaltyCollMap(basicProperty.getProperty());
