@@ -46,7 +46,7 @@
  *
  */
 
-package org.egov.ptis.service.es;
+package org.egov.ptis.domain.service.survey;
 
 import static java.lang.Math.toIntExact;
 import static java.lang.String.format;

@@ -45,7 +45,7 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.ptis.web.controller.masters.search;
+package org.egov.ptis.web.controller.transactions.survey;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_STATUS;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPES;
@@ -54,7 +54,7 @@ import java.util.List;
 
 import org.egov.ptis.domain.entity.property.survey.SearchSurveyRequest;
 import org.egov.ptis.domain.entity.property.survey.SearchSurveyResponse;
-import org.egov.ptis.service.es.SurveyApplicationSearchService;
+import org.egov.ptis.domain.service.survey.SurveyApplicationSearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
