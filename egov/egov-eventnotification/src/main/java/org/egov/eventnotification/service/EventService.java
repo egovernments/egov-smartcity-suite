@@ -61,12 +61,28 @@ public class EventService {
     }
 	
 	@Transactional
-    public Event update(final Event event, final MultipartFile[] files)
+    public Event update(Event event, MultipartFile[] files)
             throws IOException, ParseException {
+		Event existingEvent = findById(event.getId());
+		if(existingEvent != null) {
+			existingEvent.setAddress(event.getAddress());
+			existingEvent.setCost(event.getCost());
+			existingEvent.setDescription(event.getDescription());
+			existingEvent.setEndDate(event.getEndDate());
+			existingEvent.setEndTime(event.getEndTime());
+			existingEvent.setEventhost(event.getEventhost());
+			existingEvent.setEventlocation(event.getEventlocation());
+			existingEvent.setEventType(event.getEventType());
+			existingEvent.setIspaid(event.getIspaid());
+			existingEvent.setName(event.getName());
+			existingEvent.setStartDate(event.getStartDate());
+			existingEvent.setStartTime(event.getStartTime());
+			existingEvent.setWallpaper(event.getWallpaper());
+			existingEvent.setVersion((existingEvent.getVersion()+1));
+			//eventRepository.save(existingEvent);
+		}
         
-        Event savedEvent = (Event) getCurrentSession().merge(event);
-        
-        return savedEvent;
+        return existingEvent;
     }
 	
 	public List<Event> searchEvent(String eventType,String eventName,String eventHost){

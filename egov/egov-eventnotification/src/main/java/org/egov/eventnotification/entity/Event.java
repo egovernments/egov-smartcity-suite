@@ -99,7 +99,17 @@ public class Event extends AbstractAuditable{
     @Column(name="event_type")
     private String eventType;
     
+    private Long version;
     
+    
+
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
+	}
 
 	public Long getId() {
 		return id;

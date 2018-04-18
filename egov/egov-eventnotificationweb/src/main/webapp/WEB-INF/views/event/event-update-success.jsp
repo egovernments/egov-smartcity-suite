@@ -63,7 +63,7 @@
 					</c:if>
 					<div class="panel-heading">
 						<div class="panel-title">
-							<spring:message code="title.event.new" />
+							<spring:message code="lbl.event.update" />
 						</div>
 					</div>
 					<div class="panel-body">

@@ -1,10 +1,10 @@
 $(document).ready(function(){
-		
-	$("#eventType").val($("#eventTypeHid").val);
-	$("#startHHHid").val($("#startHHH").val);
-	$("#startMMHid").val($("#startMMH").val);
-	$("#endHHHid").val($("#endHHH").val);
-	$("#endMMHid").val($("#endMMH").val);
+			
+	if($("#ispaidHid").val() == "true"){
+		$('#ispaid')[0].checked = true;
+		$("#costLabel").show();
+    	$("#costDiv").show();
+	}
 	
 	$('#ispaid').on('change', function(event) { 
 		//alert(($(this).is(':checked')));

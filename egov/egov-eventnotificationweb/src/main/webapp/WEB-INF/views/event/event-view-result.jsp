@@ -175,7 +175,7 @@
 			<div class="form-group">
 				<div class="text-center">
 					<button type='button' class='btn btn-primary' id="buttonSubmit">
-						<spring:message code='lbl.update.button' />
+						<spring:message code='lbl.edit.button' />
 					</button>
 					<a href="javascript:void(0)" class="btn btn-default"
 						onclick="self.close()"><spring:message code="lbl.close" /></a>

@@ -62,6 +62,7 @@
 				<input type="hidden" id="startMMHid" value="${event.startMM}" />
 				<input type="hidden" id="endHHHid" value="${event.endHH}" />
 				<input type="hidden" id="endMMHid" value="${event.endMM}" />
+				<input type="hidden" id="ispaidHid" value="${event.ispaid}" />
 				<div class="panel-body">
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.eventType" />:<span class="mandatory"></span></label>
@@ -176,7 +177,7 @@
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.ispaid" />:</label>
 						<div class="col-sm-3 add-margin">
-							<form:checkbox path="ispaid" id="ispaid" name="ispaid" value="${event.ispaid}"/>
+							<form:checkbox path="ispaid" id="ispaid" name="ispaid"/>
 							<form:errors path="ispaid" cssClass="error-msg" />
 						</div>
 						<label id="costLabel" class="col-sm-2 control-label text-right" style="display:none;"><spring:message code="lbl.event.cost" />:</label>
