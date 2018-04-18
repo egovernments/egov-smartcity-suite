@@ -93,7 +93,6 @@ public class MarriageRegistrationRequest {
     @NotNull(message = "Provide marital status of bridegroom")
     private MaritalStatus husbandMaritalStatus;
 
-    @NotNull(message = "Provide occupation of bridegroom")
     private String husbandOccupation;
 
     @NotNull(message = "Provide Aadhaar No. of bridegroom")
@@ -136,7 +135,6 @@ public class MarriageRegistrationRequest {
     @NotNull(message = "Provide bride's Marital status")
     private MaritalStatus wifeMaritalStatus;
 
-    @NotNull(message = "Provide bride's occupation")
     private String wifeOccupation;
 
     @NotNull(message = "Provide bride's Locality")

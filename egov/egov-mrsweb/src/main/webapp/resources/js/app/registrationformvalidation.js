@@ -282,6 +282,9 @@ $('.age-field').blur( function () {
   if($('#source').val()=='API'){
 	  $('#select-registrationunit').removeAttr("required");
 	  $('#txt-zone').removeAttr("required");
+	  $('[id="husband.occupation"]').removeAttr("required");
+	  $('[id="wife.occupation"]').removeAttr("required");
+	  $('.occupation').find("span").removeClass( "mandatory" );
 	  $('[id="husband.contactInfo.officeAddress"]').removeAttr("required");
 	  $('[id="wife.contactInfo.officeAddress"]').removeAttr("required");
 	  $('.witness').removeAttr("required");
