@@ -54,8 +54,6 @@
     <![CDATA[from PropertyImpl p where p.basicProperty.upicNo=? and p.basicProperty.active='Y' and p.state.value!='END' and p.isDefaultProperty='Y']]></query>
     <query name="getBasicPropertyByUpicNo">
     <![CDATA[from BasicPropertyImpl bp where bp.upicNo=? and bp.active='Y']]></query>
-    <query name="getDepartmentsByDeptCode">
-    <![CDATA[from Department dept where dept.code=?]]></query>
     <query name="getPropertyTypes" >
     <![CDATA[from PropertyTypeMaster]]></query>
     <query name="getPropertyByUpicNoAndStatus">

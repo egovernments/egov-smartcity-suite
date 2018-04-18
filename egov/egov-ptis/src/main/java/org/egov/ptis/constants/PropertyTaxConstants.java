@@ -415,7 +415,6 @@ public interface PropertyTaxConstants {
     public static final String QUERY_DEMANDREASONBY_CODE_AND_INSTALLMENTID = "DEMANDREASONBY_CODE_AND_INSTALLMENTID";
     public static final String QUERY_DEMANDREASONDETAILS_BY_DEMANDREASONID_DATE = "DEMANDREASONDETAILS_BY_DEMANDREASONID_DATE";
     public static final String QUERY_BASERENT_BY_BOUNDARY_FOR_OPENPLOT = "QUERY_BASERENT_BY_BOUNDARY_FOR_OPENPLOT";
-    public static final String QUERY_DEPARTMENTS_BY_DEPTCODE = "getDepartmentsByDeptCode";
     public static final String QUERY_LATEST_BILL_FOR_PROPERTY = "getLatestBillsForProperty";
     public static final String QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE = "getPropStatValByUpicNoAndStatCodeAndISActive";
     public static final String QUERY_BILLRECEIPT_FOR_BILL = "getBillRcptGForBill";
@@ -1102,7 +1101,6 @@ public interface PropertyTaxConstants {
     public static final String UNIT_IDENTIFIER_SEQ_STR = "PT_UNIT_IDENTIFIER";
 
     public static final String NOT_AVAILABLE = "N/A";
-    public static final DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_DDMMYYY);
 
     public static final String PATTERN_BEGINS_WITH_1TO9 = "^[1-9][0-9]*";
 
@@ -1152,7 +1150,6 @@ public interface PropertyTaxConstants {
     public static final BigDecimal PENALTY_PERCENTAGE = new BigDecimal(2);
     public static final String STATUS_CODE_ASSESSED = "ASSESSED";
     public static final BigDecimal BIGDECIMAL_100 = new BigDecimal("100");
-    public static final SimpleDateFormat DATEFORMATTER_DDMMYYYY = new SimpleDateFormat("dd/MM/yyyy");
     public static final String BEANNAME_PROPERTY_TAX_BILLABLE = "propertyTaxBillable";
 
     // PDF Report constants

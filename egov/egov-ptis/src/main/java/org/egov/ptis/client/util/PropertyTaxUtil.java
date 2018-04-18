@@ -94,7 +94,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASO
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_DATA_ENTRY;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_DEMANDREASONBY_CODE_AND_INSTALLMENTID;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_DEPARTMENTS_BY_DEPTCODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_FINANCIALYYEAR;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_FINANCIALYYEAR_DESC;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR;
@@ -112,8 +111,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_CRE
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_DEACTIVATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_MODIFY;
 
-import java.io.IOException;
-import java.io.StringReader;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -129,7 +126,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -166,6 +162,7 @@ import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -231,7 +228,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -303,6 +299,8 @@ public class PropertyTaxUtil {
     private RebateService rebateService;
     @Autowired
     private TaxRatesService taxRatesService;
+    @Autowired
+    DepartmentService departmentService;
     
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -431,7 +429,7 @@ public class PropertyTaxUtil {
 
     public Map<String, Map<String, BigDecimal>> getDemandDues(final String propertyId) {
         final Map<String, Map<String, BigDecimal>> demandDues = new HashMap<String, Map<String, BigDecimal>>();
-        List list = new ArrayList();
+        List list = new ArrayList<>();
         final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(propertyId);
         final EgDemand egDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(basicProperty.getProperty());
         final Module module = moduleService.getModuleByName(PropertyTaxConstants.PTMODULENAME);
@@ -591,8 +589,7 @@ public class PropertyTaxUtil {
      */
     public List<Department> getDepartmentsForLoggedInUser(final User user) {
         final Department dept = getDepartmentOfUser(user);
-        final List<Department> departments = persistenceService.findAllByNamedQuery(QUERY_DEPARTMENTS_BY_DEPTCODE,
-                dept.getCode());
+        final List<Department> departments = Arrays.asList(departmentService.getDepartmentByCode(dept.getCode()));
         return departments;
     }
 
@@ -1407,9 +1404,9 @@ public class PropertyTaxUtil {
             return null;
         else if (result.get(0) == null)
             return null;
-
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         try {
-            earliestModificationDate = PropertyTaxConstants.DATEFORMATTER_DDMMYYYY.parse((String) result.get(0));
+            earliestModificationDate = dateFormat.parse((String) result.get(0));
         } catch (final ParseException e) {
             LOGGER.error("Error while parsing effective date", e);
             throw new ApplicationRuntimeException("Error while parsing effective date", e);
@@ -1425,16 +1422,13 @@ public class PropertyTaxUtil {
      */
     public static Date getWaterTaxEffectiveDateForPenalty() {
         Date waterTaxEffectiveDate = null;
-        final org.slf4j.Logger LOG = LoggerFactory.getLogger(PropertyTaxUtil.class);
-
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         try {
-            waterTaxEffectiveDate = PropertyTaxConstants.DATEFORMATTER_DDMMYYYY.parse(PENALTY_WATERTAX_EFFECTIVE_DATE);
+            waterTaxEffectiveDate = dateFormat.parse(PENALTY_WATERTAX_EFFECTIVE_DATE);
         } catch (final ParseException pe) {
             throw new ApplicationRuntimeException(
                     "Error while parsing Water Tax Effective Date for Penalty Calculation", pe);
         }
-
-        LOG.debug("getWaterTaxEffectiveDateForPenalty - waterTaxEffectiveDate = {} ", waterTaxEffectiveDate);
         return waterTaxEffectiveDate;
     }
 
