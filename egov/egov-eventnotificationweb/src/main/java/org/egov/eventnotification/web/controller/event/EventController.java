@@ -26,6 +26,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+/**
+ * This is the EventController class. Which is basically used to create, view and update the event.
+ * @author somvit
+ *
+ */
 @Controller
 @RequestMapping(value = "/event/")
 public class EventController {
@@ -33,6 +38,12 @@ public class EventController {
 	@Autowired
 	private EventService eventService;
 	
+	/**
+	 * This method is used for view all event and view event by id.
+	 * @param model
+	 * @param id
+	 * @return tiles view
+	 */
 	@RequestMapping(value = {"view/","view/{id}"}, method = RequestMethod.GET)
     public String view(final Model model,@PathVariable("id") Optional<Long> id) {
 		if(!id.isPresent()) {
@@ -48,7 +59,13 @@ public class EventController {
 		
 		
 	}
-		
+	
+	/**
+	 * This method is used for show the create event page. It will take fetch all the hours, minutes and event type.
+	 * @param event
+	 * @param model
+	 * @return tiles view
+	 */
 	@RequestMapping(value = "create/", method = RequestMethod.GET)
     public String newEvent(@ModelAttribute Event event,Model model) {
 		model.addAttribute("event", event);
@@ -60,6 +77,18 @@ public class EventController {
         return "event-create";
 	}
 	
+	/**
+	 * This method is used for create event page.
+	 * @param event
+	 * @param files
+	 * @param model
+	 * @param redirectAttrs
+	 * @param request
+	 * @param errors
+	 * @return tiles view
+	 * @throws IOException
+	 * @throws ParseException
+	 */
 	@RequestMapping(value = "create/", method = RequestMethod.POST)
     public String create(@ModelAttribute("event") Event event, @RequestParam("file") MultipartFile[] files, Model model,
     		RedirectAttributes redirectAttrs, HttpServletRequest request,BindingResult errors) throws IOException, ParseException {
@@ -74,6 +103,13 @@ public class EventController {
         return "event-success";
 	}
 	
+	/**
+	 * This method is used for show the event update page based on the event id.
+	 * @param event
+	 * @param model
+	 * @param id
+	 * @return tiles view
+	 */
 	@RequestMapping(value = "update/{id}", method = RequestMethod.GET)
     public String viewUpdate(@ModelAttribute Event event,Model model,@PathVariable("id") Long id) {
 		Event eventObj = eventService.findById(id);
@@ -92,6 +128,19 @@ public class EventController {
         return "event-update";
 	}
 	
+	/**
+	 * This method is used for update the event.
+	 * @param event
+	 * @param files
+	 * @param model
+	 * @param redirectAttrs
+	 * @param request
+	 * @param errors
+	 * @param id
+	 * @return tiles view
+	 * @throws IOException
+	 * @throws ParseException
+	 */
 	@RequestMapping(value = "update/{id}", method = RequestMethod.POST)
     public String update(@ModelAttribute("event") Event event, @RequestParam("file") MultipartFile[] files, Model model,
     		RedirectAttributes redirectAttrs, HttpServletRequest request,BindingResult errors,@PathVariable("id") Long id) throws IOException, ParseException {

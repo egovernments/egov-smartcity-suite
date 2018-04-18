@@ -18,12 +18,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+/**
+ * This is a Event rest controller. This is used for expose the rest API of event.
+ * @author somvit
+ *
+ */
 @org.springframework.web.bind.annotation.RestController
 public class RestEventController {
 	
 	@Autowired
 	private EventService eventService;
 	
+	/**
+	 * This method is used for fetch all events
+	 * @return json string
+	 */
 	@RequestMapping(value = ApiUrl.GET_ALL_EVENT, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public String getAllEvent() {
 		ApiResponse res = ApiResponse.newInstance();
@@ -56,7 +65,12 @@ public class RestEventController {
 		return jsonArrayEvent.toString();
 	}
 	
-	@RequestMapping(value = ApiUrl.GET_EVENT+"/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	/**
+	 * This method is used for fetch event by id.
+	 * @param id
+	 * @return json string
+	 */
+	@RequestMapping(value = ApiUrl.GET_EVENT+ApiUrl.EVENT_ID, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public String getEvent(@PathVariable long id) {
 		ApiResponse res = ApiResponse.newInstance();
 		Event event = eventService.findById(id);
@@ -85,6 +99,13 @@ public class RestEventController {
 		return jsonObjectEvent.toString();
 	}
 	
+	/**
+	 * This method is used for search event.
+	 * @param eventType
+	 * @param eventName
+	 * @param eventHost
+	 * @return json string
+	 */
 	@RequestMapping(value = ApiUrl.SEARCH_EVENT, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public String searchEvent(@RequestParam(required = false, value = "eventType") String eventType,
 			@RequestParam(required = false, value = "eventName") String eventName,
