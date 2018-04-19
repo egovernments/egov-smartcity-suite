@@ -193,7 +193,7 @@ public final class Constants {
     public static final String AUTO = "Auto";
     public static final String PROCESS_OWNER_FORMAT = "%s [%s]";
     public static final String RENEW_WITHOUT_FEE = "RENEWALWITHOUTFEE";
-    public static final String COMPLETED = "COMPLETED";
+    public static final String COMPLETED = "Completed";
     public static final Map<String, String> OWNERSHIP_TYPE = new ImmutableMap.Builder<String, String>()
             .put(OWNERSHIP_TYPE_OWN, OWNERSHIP_TYPE_OWN).put(OWNERSHIP_TYPE_RENTED, OWNERSHIP_TYPE_RENTED)
             .put(OWNERSHIP_TYPE_ULB, OWNERSHIP_TYPE_ULB).put(OWNERSHIP_TYPE_STATEGOVERNMENT, OWNERSHIP_TYPE_STATEGOVERNMENT)
