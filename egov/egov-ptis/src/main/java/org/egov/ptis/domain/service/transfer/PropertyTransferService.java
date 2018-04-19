@@ -529,23 +529,21 @@ public class PropertyTransferService {
                         user = null;
                 }
                 if (user == null) {
-                    if (UserType.CITIZEN.equals(transferee.getTransferee().getType())) {
-                        final Citizen newOwner = new Citizen();
-                        newOwner.setAadhaarNumber(transferee.getTransferee().getAadhaarNumber());
-                        newOwner.setEmailId(transferee.getTransferee().getEmailId());
-                        newOwner.setMobileNumber(transferee.getTransferee().getMobileNumber());
-                        newOwner.setGender(transferee.getTransferee().getGender());
-                        newOwner.setGuardian(transferee.getTransferee().getGuardian());
-                        newOwner.setGuardianRelation(transferee.getTransferee().getGuardianRelation());
-                        newOwner.setSalutation(transferee.getTransferee().getSalutation());
-                        newOwner.setName(transferee.getTransferee().getName());
-                        newOwner.setPassword("NOTSET");
-                        newOwner.setUsername(propertyTaxUtil.generateUserName(transferee.getTransferee().getName()));
-                        userService.createUser(newOwner);
-                        transferee.setTransferee(newOwner);
-                        transferee.setPropertyMutation(propertyMutation);
-
-                    }
+                    final Citizen newOwner = new Citizen();
+                    newOwner.setAadhaarNumber(transferee.getTransferee().getAadhaarNumber());
+                    newOwner.setEmailId(transferee.getTransferee().getEmailId());
+                    newOwner.setMobileNumber(transferee.getTransferee().getMobileNumber());
+                    newOwner.setGender(transferee.getTransferee().getGender());
+                    newOwner.setGuardian(transferee.getTransferee().getGuardian());
+                    newOwner.setGuardianRelation(transferee.getTransferee().getGuardianRelation());
+                    newOwner.setSalutation(transferee.getTransferee().getSalutation());
+                    newOwner.setName(transferee.getTransferee().getName());
+                    newOwner.setPassword("NOTSET");
+                    newOwner.setUsername(propertyTaxUtil.generateUserName(transferee.getTransferee().getName()));
+                    userService.createUser(newOwner);
+                    transferee.setTransferee(newOwner);
+                    transferee.setPropertyMutation(propertyMutation);
+                    transferee.setOwnerType(UserType.CITIZEN);
                 } else {
                     user.setEmailId(transferee.getTransferee().getEmailId());
                     user.setGuardian(transferee.getTransferee().getGuardian());
