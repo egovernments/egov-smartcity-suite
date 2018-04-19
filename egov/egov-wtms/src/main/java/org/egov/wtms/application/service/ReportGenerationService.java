@@ -114,6 +114,8 @@ import org.egov.wtms.autonumber.EstimationNumberGenerator;
 import org.egov.wtms.masters.service.ApplicationProcessTimeService;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -124,7 +126,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ReportGenerationService {
-
+    private static final Logger LOG = LoggerFactory.getLogger(ReportGenerationService.class);
     private static final String APPLICATIONTYPE = "applicationtype";
     private static final String DISTRICT = "district";
     private static final String USER_ID = "userId";
@@ -269,7 +271,7 @@ public class ReportGenerationService {
             reportParams.put(CONSUMERNUMBER, connectionDetails.getConnection().getConsumerCode());
             reportParams.put(APPLICANT_NAME, WordUtils.capitalize(ownerName));
             reportParams.put(ADDRESS, propAddress);
-            reportParams.put(DOORNO, doorno != null ? doorno[0] : "");
+            reportParams.put(DOORNO, doorno == null ? "" : doorno[0]);
             reportParams.put("userSignature", securityUtils.getCurrentUser().getSignature() != null
                     ? new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()) : null);
             reportParams.put(APPLICATION_DATE, toDefaultDateFormat(connectionDetails.getApplicationDate()));
@@ -359,7 +361,7 @@ public class ReportGenerationService {
             reportOutput.setReportOutputData(FileUtils.readFileToByteArray(file));
             reportOutput.setReportFormat(ReportFormat.PDF);
         } catch (final IOException e) {
-            throw new ApplicationRuntimeException(RECONN_ACK_GENERATE_EXCEPTION + e);
+            LOG.error(RECONN_ACK_GENERATE_EXCEPTION, e);
         }
         return reportOutput;
     }
@@ -415,7 +417,7 @@ public class ReportGenerationService {
             reportOutput.setReportFormat(ReportFormat.PDF);
             reportOutput.setReportName(waterConnectionDetails.getApplicationNumber() + "-ClosureACK");
         } catch (final IOException e) {
-            throw new ApplicationRuntimeException(CLOSURE_ACK_GENERATE_EXCEPTION + e);
+            LOG.error(CLOSURE_ACK_GENERATE_EXCEPTION, e);
         }
         return reportOutput;
     }
@@ -618,7 +620,7 @@ public class ReportGenerationService {
             reportOutput.setReportName(waterConnectionDetails.getWorkOrderNumber());
             reportOutput.setReportFormat(ReportFormat.PDF);
         } catch (final IOException e) {
-            throw new ApplicationRuntimeException(WORKORDER_GENERATE_EXCEPTION + e);
+            LOG.error(WORKORDER_GENERATE_EXCEPTION, e);
         }
         return reportOutput;
     }

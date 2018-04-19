@@ -790,7 +790,7 @@ public class UpdateConnectionController extends GenericConnectionController {
                 asignList.add(assignObj);
             } else if (assignObj == null && approvalPosition != null)
                 asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
-            nextDesign = asignList != null && !asignList.isEmpty() ? asignList.get(0).getDesignation().getName() : "";
+            nextDesign = asignList == null || asignList.isEmpty() ? "" : asignList.get(0).getDesignation().getName();
 
             final String pathVars = waterConnectionDetails.getApplicationNumber() + ","
                     + waterTaxUtils.getApproverName(approvalPosition) + ","
