@@ -142,7 +142,7 @@ public class LicenseProcessWorkflowService {
             tradeLicense.transition().end().withStateValue(LICENSE_STATUS_CANCELLED)
                     .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
                     .withComments(workflowBean.getApproverComments())
-                    .withNextAction(EMPTY)
+                    .withNextAction(COMPLETED)
                     .withDateInfo(currentDate.toDate());
             updateCancelStatus(tradeLicense);
         } else if (SIGNWORKFLOWACTION.equals(workflowBean.getWorkFlowAction())) {
@@ -199,7 +199,8 @@ public class LicenseProcessWorkflowService {
             tradeLicense.transition().end().withStateValue(workFlowMatrix.getNextState())
                     .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
                     .withComments(workflowBean.getApproverComments())
-                    .withDateInfo(currentDate.toDate());
+                    .withDateInfo(currentDate.toDate())
+                    .withNextAction(COMPLETED);
             updateActiveStatus(tradeLicense);
         } else {
             tradeLicense.transition().progressWithStateCopy().withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
@@ -274,7 +275,7 @@ public class LicenseProcessWorkflowService {
                             .withComments(workFlowMatrix.getNextState())
                             .withStateValue(workFlowMatrix.getNextState())
                             .withDateInfo(currentDate.toDate())
-                            .withNextAction(EMPTY);
+                            .withNextAction(COMPLETED);
                     updateActiveStatus(tradeLicense);
                 }
             }

@@ -69,12 +69,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.List;
 
-import static org.egov.infra.utils.StringUtils.EMPTY;
 import static org.egov.tl.utils.Constants.BUTTONREJECT;
 import static org.egov.tl.utils.Constants.CLOSURE_ADDITIONAL_RULE;
 import static org.egov.tl.utils.Constants.CLOSURE_LICENSE_REJECT;
 import static org.egov.tl.utils.Constants.CLOSURE_NATUREOFTASK;
 import static org.egov.tl.utils.Constants.DELIMITER_COLON;
+import static org.egov.tl.utils.Constants.COMPLETED;
 import static org.egov.tl.utils.Constants.WF_DIGI_SIGNED;
 
 @Service
@@ -170,7 +170,7 @@ public class LicenseClosureProcessflowService {
                 .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
                 .withComments(license.getWorkflowContainer().getApproverComments())
                 .withDateInfo(new Date())
-                .withNextAction(EMPTY);
+                .withNextAction(COMPLETED);
     }
 
     public void processApproval(TradeLicense license) {
@@ -182,7 +182,7 @@ public class LicenseClosureProcessflowService {
                 .withComments(licenseUtils.isDigitalSignEnabled() ? WF_DIGI_SIGNED : "Approved")
                 .withDateInfo(new Date())
                 .withStateValue(workflowMatrix.getNextState())
-                .withNextAction(workflowMatrix.getNextAction());
+                .withNextAction(COMPLETED);
         license.setApprovedBy(currentUser);
     }
 
