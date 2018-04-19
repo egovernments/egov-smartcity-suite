@@ -76,6 +76,7 @@ import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
+
 @Service
 public class SurveyApplicationSearchService {
     private static final String CITY_CODE = "cityCode";
@@ -96,7 +97,7 @@ public class SurveyApplicationSearchService {
         Date fromDate;
         Date toDate;
         if (StringUtils.isNotBlank(searchSurveyRequest.getFromDate()))
-            fromDate = DateUtils.getDate(searchSurveyRequest.getFromDate(),DATE_FORMAT_YYYYMMDD);
+            fromDate = DateUtils.getDate(searchSurveyRequest.getFromDate(), DATE_FORMAT_YYYYMMDD);
         else
             fromDate = new Date(2018 - 01 - 01);
         if (StringUtils.isNotBlank(searchSurveyRequest.getToDate()))
@@ -120,14 +121,15 @@ public class SurveyApplicationSearchService {
             surveyResponse.setApplicationType(index.getApplicationType());
             surveyResponse.setApplicationNo(index.getApplicationNo());
             surveyResponse.setApplicationDate(DateUtils.getFormattedDate(index.getApplicationDate(), "dd/MM/yyyy"));
-            surveyResponse.setAssessmentNo(index.getAssessmentNo().equals(StringUtils.EMPTY) ? "NA" : index.getAssessmentNo());
+            surveyResponse.setAssessmentNo(StringUtils.isBlank(index.getAssessmentNo()) ? "NA" : index.getAssessmentNo());
             surveyResponse.setAddress(index.getDoorNo().concat(",").concat(index.getLocalityName()).concat(",")
                     .concat(index.getBlockName().concat(",")).concat(index.getElectionWard()).concat(",")
                     .concat(index.getRevenueWard()).concat(",").concat(index.getCityName()));
             surveyResponse.setApplicationStatus(index.getApplicationStatus());
             surveyResponse
                     .setAppViewUrl(format(APP_VIEW_URL, surveyResponse.getApplicationNo(), surveyResponse.getApplicationType()));
-            surveyResponse.setFunctionaryName(index.getFunctionaryName() == null ? "NA" : index.getFunctionaryName());
+            surveyResponse
+                    .setFunctionaryName(StringUtils.isBlank(index.getFunctionaryName()) ? "NA" : index.getFunctionaryName());
             responselist.add(surveyResponse);
         }
         return responselist;
@@ -146,11 +148,11 @@ public class SurveyApplicationSearchService {
                 boolQuery = boolQuery
                         .filter(QueryBuilders.matchQuery(APPLICATION_STATUS, searchSurveyRequest.getApplicationStatus()));
             else if (searchSurveyRequest.getApplicationStatus().equals(STATUS_APPROVED))
-                boolQuery = boolQuery.filter(QueryBuilders.matchQuery(ISAPPROVED, true));
+                boolQuery = boolQuery.filter(QueryBuilders.matchQuery(ISAPPROVED, true)).mustNot(QueryBuilders.matchQuery(APPLICATION_STATUS, WF_STATE_CLOSED));
             else if (searchSurveyRequest.getApplicationStatus().equals(STATUS_CANCELLED))
                 boolQuery = boolQuery.filter(QueryBuilders.matchQuery(ISCANCELLED, true));
             else
-                boolQuery = boolQuery.mustNot(QueryBuilders.matchQuery(APPLICATION_STATUS,WF_STATE_CLOSED))
+                boolQuery = boolQuery.mustNot(QueryBuilders.matchQuery(APPLICATION_STATUS, WF_STATE_CLOSED))
                         .must(QueryBuilders.matchQuery(ISAPPROVED, false)).must(QueryBuilders.matchQuery(ISCANCELLED, false));
         }
         if (StringUtils.isNotBlank(searchSurveyRequest.getAssessmentNo()))
