@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -62,12 +62,13 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.Date;
 
+import static java.lang.String.format;
 import static org.egov.tl.utils.Constants.TRADE_LICENSE;
 
 
 @Service
 public class LicenseCitizenPortalService {
-    private static final String APPLICATION_VIEW_URL = "/tl/viewtradelicense/viewTradeLicense-view.action?applicationNo=%s";
+    private static final String APPLICATION_VIEW_URL = "/tl/license/view/%d";
     @Autowired
     private ModuleService moduleService;
     @Autowired
@@ -83,7 +84,7 @@ public class LicenseCitizenPortalService {
                 tradeLicense.getState().getNatureOfTask(),
                 tradeLicense.getApplicationNumber(), tradeLicense.getLicenseNumber() != null ? tradeLicense.getLicenseNumber() : tradeLicense.getApplicationNumber(),
                 tradeLicense.getId(), tradeLicense.getStateType(), getDetailedMessage(tradeLicense),
-                String.format(APPLICATION_VIEW_URL, tradeLicense.getApplicationNumber()),
+                format(APPLICATION_VIEW_URL, tradeLicense.getId()),
                 tradeLicense.transitionCompleted(), tradeLicense.getStatus().getName(),
                 DateUtils.addHours(new Date(), licenseUtils.getSlaForAppType(tradeLicense.getLicenseAppType())), tradeLicense.getState(),
                 Arrays.asList(securityUtils.getCurrentUser()));
@@ -102,6 +103,6 @@ public class LicenseCitizenPortalService {
         portalInboxService.updateInboxMessage(tradeLicense.getApplicationNumber(), moduleService.getModuleByName(TRADE_LICENSE).getId(),
                 tradeLicense.getStatus().getName(), tradeLicense.transitionCompleted(), null, tradeLicense.getState(), tradeLicense.getCreatedBy(),
                 tradeLicense.getLicenseNumber() != null ? tradeLicense.getLicenseNumber() : tradeLicense.getApplicationNumber(),
-                String.format(APPLICATION_VIEW_URL, tradeLicense.getApplicationNumber()));
+                format(APPLICATION_VIEW_URL, tradeLicense.getId()));
     }
 }

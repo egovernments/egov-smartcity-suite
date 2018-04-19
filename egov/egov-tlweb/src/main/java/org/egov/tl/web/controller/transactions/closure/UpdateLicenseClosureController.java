@@ -70,7 +70,7 @@ import static org.egov.tl.utils.Constants.MESSAGE;
 public class UpdateLicenseClosureController extends LicenseClosureProcessflowController {
 
     private static final String LICENSECLOSURE = "license-closure";
-    private static final String REDIRECT_TO_VIEW = "redirect:/license/view/";
+    private static final String REDIRECT_TO_VIEW = "redirect:/license/success/";
 
     @Autowired
     private LicenseUtils licenseUtils;

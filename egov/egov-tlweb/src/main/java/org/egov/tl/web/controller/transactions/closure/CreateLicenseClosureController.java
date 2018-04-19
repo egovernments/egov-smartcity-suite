@@ -67,7 +67,7 @@ import static org.egov.tl.utils.Constants.MESSAGE;
 @RequestMapping(value = "/license/closure/{licenseId}")
 public class CreateLicenseClosureController extends LicenseClosureProcessflowController {
 
-    private static final String REDIRECT_TO_VIEW = "redirect:/license/view/";
+    private static final String REDIRECT_TO_VIEW = "redirect:/license/success/";
     private static final String LICENSECLOSURE = "license-closure";
 
     @Autowired

@@ -48,6 +48,7 @@
 package org.egov.tl.web.controller.transactions;
 
 import org.egov.tl.entity.LicenseDocument;
+import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.service.TradeLicenseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -85,9 +86,22 @@ public class LicenseController {
         return reportAsResponseEntity(tradeLicenseService.generateAcknowledgment(licenseId));
     }
 
-    @GetMapping("view/{licenseId}")
+    @GetMapping("success/{licenseId}")
     public String successView(@PathVariable Long licenseId, Model model) {
         model.addAttribute("tradeLicense", tradeLicenseService.getLicenseById(licenseId));
         return "license-success-view";
+    }
+
+    @GetMapping("view/{licenseId}")
+    public String licenseView(@PathVariable Long licenseId, Model model) {
+        TradeLicense license = tradeLicenseService.getLicenseById(licenseId);
+        if (license == null) {
+            model.addAttribute("message", "msg.license.notfound");
+        } else {
+            model.addAttribute("outstandingFee", tradeLicenseService.getOutstandingFee(license));
+            model.addAttribute("licenseHistory", tradeLicenseService.populateHistory(license));
+            model.addAttribute("tradeLicense", license);
+        }
+        return "view-tradelicense";
     }
 }
