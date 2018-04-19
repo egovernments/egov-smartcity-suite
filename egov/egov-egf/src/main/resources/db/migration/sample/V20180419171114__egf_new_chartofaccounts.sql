@@ -1,0 +1,2 @@
+insert into chartofaccounts  VALUES (nextval('seq_chartofaccounts'),'3503088','Library Cess Payable Control A/c (Cr)',null,true,(select id from chartofaccounts where glcode = '35030'), null, 'A', 'L', null, 4, false, false, (select id from schedulemapping where schedule = 'B-09'),
+null, null,null, null, '350', null,null, now(), 1, now(), 1, 0);
