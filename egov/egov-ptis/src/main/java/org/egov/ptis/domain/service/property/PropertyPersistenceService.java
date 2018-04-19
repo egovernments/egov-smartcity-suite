@@ -221,7 +221,7 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
         ackBean.setApprovedDate(new SimpleDateFormat("dd/MM/yyyy").format(property.getState().getCreatedDate()));
         final Date tempNoticeDate = DateUtils.add(property.getState().getCreatedDate(), Calendar.DAY_OF_MONTH, 15);
         ackBean.setNoticeDueDate(tempNoticeDate);
-        reportParams.put("logoPath", cityService.getCityLogoURL());
+        reportParams.put("logoPath", cityService.getCityLogoAsBytes());
         reportParams.put("cityName", cityService.getMunicipalityName());
         if (Arrays.asList(UserType.BUSINESS, UserType.EMPLOYEE)
                 .contains(userService.getUserById(ApplicationThreadLocals.getUserId()).getType()))
@@ -251,8 +251,9 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
                             user.getId());
                     errorMesg.append("With entered aadhar number - ").append(ownerInfo.getOwner().getAadhaarNumber())
                             .append(" there is already owner present with owner name: ")
-                            .append(user.getName()).append(" for assessment number : ")
-                            .append(basicProp.getUpicNo());
+                            .append(user.getName());
+                    if (basicProp != null)
+                        errorMesg.append(" for assessment number : ").append(basicProp.getUpicNo());
                     break;
                 }
             }

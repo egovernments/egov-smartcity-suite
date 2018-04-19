@@ -1692,7 +1692,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         final Date noticeDueDate = DateUtils.add(propWF.getState().getCreatedDate(), Calendar.DAY_OF_MONTH, 15);
         reportParams.put("noticeDueDate", dateFormatter.format(noticeDueDate));
         reportParams.put("creationReason", modifyRsn);
-        reportParams.put("logoPath", cityService.getCityLogoURL());
+        reportParams.put("logoPath", cityService.getCityLogoAsBytes());
         reportParams.put("cityName", cityService.getMunicipalityName());
         reportParams.put("loggedInUsername", securityUtils.getCurrentUser().getName());
         ReportRequest reportInput;
