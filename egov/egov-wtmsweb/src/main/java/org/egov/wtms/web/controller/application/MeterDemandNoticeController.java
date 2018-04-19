@@ -48,6 +48,7 @@
 package org.egov.wtms.web.controller.application;
 
 import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
+import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 
 import java.math.BigDecimal;
 import java.text.Format;
@@ -60,6 +61,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.validation.ValidationException;
 
 import org.apache.commons.lang.WordUtils;
 import org.egov.commons.Installment;
@@ -67,9 +69,11 @@ import org.egov.demand.dao.DemandGenericDao;
 import org.egov.demand.model.EgBill;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
@@ -85,14 +89,12 @@ import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -122,20 +124,22 @@ public class MeterDemandNoticeController {
     @Autowired
     private WaterTaxUtils waterTaxUtils;
 
-    @RequestMapping(value = "/meterdemandnotice", method = RequestMethod.GET)
+    @GetMapping(value = "/meterdemandnotice", produces = APPLICATION_PDF_VALUE)
     @ResponseBody
-    public ResponseEntity<byte[]> generateEstimationNotice(final HttpServletRequest request,
+    public ResponseEntity<InputStreamResource> generateEstimationNotice(final HttpServletRequest request,
             final HttpSession session) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByConsumerCodeAndConnectionStatus(request.getParameter("pathVar"), ConnectionStatus.ACTIVE);
         return generateReport(waterConnectionDetails, session);
     }
 
-    private ResponseEntity<byte[]> generateReport(final WaterConnectionDetails waterConnectionDetails,
+    private ResponseEntity<InputStreamResource> generateReport(final WaterConnectionDetails waterConnectionDetails,
             final HttpSession session) {
         ReportRequest reportInput = null;
         ReportOutput reportOutput;
-        if (waterConnectionDetails != null) {
+        if (waterConnectionDetails == null)
+            throw new ValidationException("err.application.not.exist");
+        else {
             Map<String, Object> reportParams;
             final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                     waterConnectionDetails.getConnection().getPropertyIdentifier(),
@@ -180,12 +184,12 @@ public class MeterDemandNoticeController {
             reportInput = new ReportRequest(METERDEMAND_NOTICE, waterConnectionDetails,
                     reportParams);
             reportInput.setPrintDialogOnOpenReport(true);
+            reportOutput = reportService.createReport(reportInput);
+            reportOutput.setReportFormat(ReportFormat.PDF);
+            reportOutput.setReportName(waterConnectionDetails.getApplicationNumber() + "-MeterDemandNote");
         }
-        final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        headers.add("content-disposition", "inline;filename=DemandNotice.pdf");
-        reportOutput = reportService.createReport(reportInput);
-        return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+
+        return ReportUtil.reportAsResponseEntity(reportOutput);
     }
 
     /**
@@ -244,7 +248,7 @@ public class MeterDemandNoticeController {
             reportParams.put("previousReadingDate", "");
         else
             reportParams.put("previousReadingDate", toDefaultDateFormat(meterReadingPreviousObj.getCurrentReadingDate()));
-            
+
         reportParams.put("currentReading", waterConnectionDetails.getMeterConnection().get(0).getCurrentReading());
         reportParams.put("currrentReadingDate",
                 toDefaultDateFormat(waterConnectionDetails.getMeterConnection().get(0).getCurrentReadingDate()));
@@ -286,9 +290,9 @@ public class MeterDemandNoticeController {
         return currentAmount;
     }
 
-    @RequestMapping(value = "/meterdemandnotice/view/{applicationNumber}", method = RequestMethod.GET)
+    @GetMapping(value = "/meterdemandnotice/view/{applicationNumber}", produces = APPLICATION_PDF_VALUE)
     @ResponseBody
-    public ResponseEntity<byte[]> viewEstimationNotice(@PathVariable final String applicationNumber,
+    public ResponseEntity<InputStreamResource> viewEstimationNotice(@PathVariable final String applicationNumber,
             final HttpSession session) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByApplicationNumber(applicationNumber);

@@ -130,7 +130,7 @@ public class DigitalSignatureConnectionController {
         final String approvalComent = (String) session.getAttribute(WaterTaxConstants.APPROVAL_COMMENT);
         final Map<String, String> appNoFileStoreIdsMap = (Map<String, String>) session
                 .getAttribute(WaterTaxConstants.FILE_STORE_ID_APPLICATION_NUMBER);
-        WaterConnectionDetails waterConnectionDetails=null;
+        WaterConnectionDetails waterConnectionDetails = null;
         for (final String fileStoreId : fileStoreIdArr) {
             final String applicationNumber = appNoFileStoreIdsMap.get(fileStoreId);
             if (null != applicationNumber && !applicationNumber.isEmpty()) {
@@ -149,7 +149,8 @@ public class DigitalSignatureConnectionController {
             }
         }
         model.addAttribute("successMessage", "Digitally Signed Successfully");
-        model.addAttribute("workOrderNumber",waterConnectionDetails==null?null:waterConnectionDetails.getWorkOrderNumber());
+        model.addAttribute("workOrderNumber",
+                waterConnectionDetails == null ? null : waterConnectionDetails.getWorkOrderNumber());
         model.addAttribute("fileStoreId", fileStoreIdArr.length == 1 ? fileStoreIdArr[0] : "");
         return "digitalSignature-success";
     }
@@ -157,7 +158,7 @@ public class DigitalSignatureConnectionController {
     @RequestMapping(value = "/waterTax/downloadSignedWorkOrderConnection")
     public ResponseEntity<InputStreamResource> downloadSignedWorkOrderConnection(@RequestParam final String signedFileStoreId,
             @RequestParam final String workOrderNumber) {
-        return fileStoreUtils.fileAsPDFResponse(signedFileStoreId,workOrderNumber, WaterTaxConstants.FILESTORE_MODULECODE);
+        return fileStoreUtils.fileAsResponseEntity(signedFileStoreId, WaterTaxConstants.FILESTORE_MODULECODE, true);
     }
 
     @RequestMapping(value = "/digitalSignaturePending-form", method = RequestMethod.GET)
@@ -193,8 +194,6 @@ public class DigitalSignatureConnectionController {
                 appNumberConTypePair = applicationNoStatePair.split(",");
             for (int i = 0; i < applicationNumbers.length; i++) {
                 waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumber(applicationNumbers[i]);
-                final String cityMunicipalityName = (String) request.getSession().getAttribute("citymunicipalityname");
-                final String districtName = (String) request.getSession().getAttribute(CITY_DIST_NAME_KEY);
                 waterConnectionDetails.setWorkOrderDate(new Date());
                 waterConnectionDetails.setWorkOrderNumber(workOrderGen.generateWorkOrderNumber());
                 ReportOutput reportOutput;
@@ -206,17 +205,17 @@ public class DigitalSignatureConnectionController {
                     }
                 if (currentState.equalsIgnoreCase(WaterTaxConstants.CLOSECONNECTION)) {
                     reportOutput = reportGenerationService.generateClosureConnectionReport(waterConnectionDetails,
-                            WaterTaxConstants.SIGNWORKFLOWACTION, cityMunicipalityName, districtName);
+                            WaterTaxConstants.SIGNWORKFLOWACTION);
                     fileName = WaterTaxConstants.SIGNED_DOCUMENT_PREFIX + waterConnectionDetails.getApplicationNumber()
                             + ".pdf";
                 } else if (currentState.equalsIgnoreCase(WaterTaxConstants.RECONNECTIONCONNECTION)) {
                     reportOutput = reportGenerationService.generateReconnectionReport(waterConnectionDetails,
-                            WaterTaxConstants.SIGNWORKFLOWACTION, cityMunicipalityName, districtName);
+                            WaterTaxConstants.SIGNWORKFLOWACTION);
                     fileName = WaterTaxConstants.SIGNED_DOCUMENT_PREFIX + waterConnectionDetails.getApplicationNumber()
                             + ".pdf";
                 } else {
                     reportOutput = reportGenerationService.getReportOutput(waterConnectionDetails,
-                            WaterTaxConstants.SIGNWORKFLOWACTION, cityMunicipalityName, districtName);
+                            WaterTaxConstants.SIGNWORKFLOWACTION);
                     fileName = WaterTaxConstants.SIGNED_DOCUMENT_PREFIX + waterConnectionDetails.getWorkOrderNumber()
                             + ".pdf";
                 }

@@ -181,6 +181,8 @@ public class UpdateConnectionController extends GenericConnectionController {
     private static final String MODE = "mode";
     private static final String APP_DOCUMENT_LIST = "appforDocumentList";
     private static final String DONATION_AMOUNT = "donationCharges";
+    private static final String ROAD_CATEGORY_LIST = "roadCategoryList";
+    private static final String REJECTED = "Rejected";
 
     private final DepartmentService departmentService;
 
@@ -446,7 +448,7 @@ public class UpdateConnectionController extends GenericConnectionController {
             model.addAttribute(APPROVALPOSITIONEXIST,
                     waterConnectionDetailsService.getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l,
                             additionalRule, FIELDINSPECTION, ""));
-            model.addAttribute("roadCategoryList", roadCategoryService.getAllRoadCategory());
+            model.addAttribute(ROAD_CATEGORY_LIST, roadCategoryService.getAllRoadCategory());
 
         } else if (REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) &&
                 (APPLICATION_STATUS_CREATED.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()) ||
@@ -459,18 +461,18 @@ public class UpdateConnectionController extends GenericConnectionController {
                 model.addAttribute(MODE, EDIT_DEMAND);
             else
                 model.addAttribute(MODE, ADD_DEMAND);
-            model.addAttribute("roadCategoryList", roadCategoryService.getAllRoadCategory());
+            model.addAttribute(ROAD_CATEGORY_LIST, roadCategoryService.getAllRoadCategory());
         } else if (REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) &&
                 waterConnectionDetails.getExecutionDate() == null && recordCreatedBYNonEmployee) {
             model.addAttribute(MODE, FIELDINSPECTION);
-            model.addAttribute("roadCategoryList", roadCategoryService.getAllRoadCategory());
+            model.addAttribute(ROAD_CATEGORY_LIST, roadCategoryService.getAllRoadCategory());
         } else if (!recordCreatedBYNonEmployee && waterConnectionDetails.getStatus() != null
                 && waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_CREATED)) {
             model.addAttribute(MODE, FIELDINSPECTION);
             model.addAttribute(APPROVALPOSITIONEXIST,
                     waterConnectionDetailsService.getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l,
                             waterConnectionDetails.getApplicationType().getCode(), FIELDINSPECTION, ""));
-            model.addAttribute("roadCategoryList", roadCategoryService.getAllRoadCategory());
+            model.addAttribute(ROAD_CATEGORY_LIST, roadCategoryService.getAllRoadCategory());
 
         } else if (waterConnectionDetails.getCloseConnectionType() != null
                 && waterConnectionDetails.getReConnectionReason() == null)
@@ -486,7 +488,7 @@ public class UpdateConnectionController extends GenericConnectionController {
             model.addAttribute(APPROVALPOSITIONEXIST,
                     waterConnectionDetailsService.getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l,
                             waterConnectionDetails.getApplicationType().getCode(), "", ""));
-        if (waterConnectionDetails.getCurrentState().getValue().equals("Rejected"))
+        if (waterConnectionDetails.getCurrentState().getValue().equals(REJECTED))
             model.addAttribute(MODE, "");
 
         if (waterConnectionDetails.getCloseConnectionType() != null
@@ -497,10 +499,10 @@ public class UpdateConnectionController extends GenericConnectionController {
                 || waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_CLOSERINITIATED))
                 && waterConnectionDetails.getReConnectionReason() == null
                 && waterConnectionDetails.getCloseConnectionType() != null
-                && waterConnectionDetails.getState().getValue().equals("Rejected"))
+                && waterConnectionDetails.getState().getValue().equals(REJECTED))
             model.addAttribute(MODE, "closeredit");
         if (waterConnectionDetails.getReConnectionReason() != null
-                && waterConnectionDetails.getState().getValue().equals("Rejected")
+                && waterConnectionDetails.getState().getValue().equals(REJECTED)
                 && waterConnectionDetails.getStatus().getCode().equals(WORKFLOW_RECONNCTIONINITIATED))
             model.addAttribute(MODE, "reconnectioneredit");
         if (waterConnectionDetails.getReConnectionReason() != null
@@ -580,7 +582,7 @@ public class UpdateConnectionController extends GenericConnectionController {
                     }
 
                     waterConnectionDetailsService.save(waterConnectionDetails);
-                    model.addAttribute("mode", "editDemand");
+                    model.addAttribute("mode", EDIT_DEMAND);
                     return loadViewData(model, request, waterConnectionDetails);
                 }
 
@@ -662,12 +664,8 @@ public class UpdateConnectionController extends GenericConnectionController {
                             waterConnectionDetails.setWorkOrderDate(new Date());
                             waterConnectionDetails.setWorkOrderNumber(workOrderGen.generateWorkOrderNumber());
                         }
-                        final String cityMunicipalityName = (String) request.getSession()
-                                .getAttribute("citymunicipalityname");
-                        final String districtName = (String) request.getSession().getAttribute("districtName");
                         ReportOutput reportOutput;
-                        reportOutput = getReportOutputObject(waterConnectionDetails, workFlowAction,
-                                cityMunicipalityName, districtName);
+                        reportOutput = getReportOutputObject(waterConnectionDetails, workFlowAction);
 
                         // Setting FileStoreMap object while Commissioner Signs
                         // the document
@@ -792,7 +790,7 @@ public class UpdateConnectionController extends GenericConnectionController {
                 asignList.add(assignObj);
             } else if (assignObj == null && approvalPosition != null)
                 asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
-            nextDesign = !asignList.isEmpty() ? asignList.get(0).getDesignation().getName() : "";
+            nextDesign = asignList != null && !asignList.isEmpty() ? asignList.get(0).getDesignation().getName() : "";
 
             final String pathVars = waterConnectionDetails.getApplicationNumber() + ","
                     + waterTaxUtils.getApproverName(approvalPosition) + ","
@@ -807,19 +805,17 @@ public class UpdateConnectionController extends GenericConnectionController {
     }
 
     private ReportOutput getReportOutputObject(final WaterConnectionDetails waterConnectionDetails,
-            final String workFlowAction, final String cityMunicipalityName, final String districtName) {
+            final String workFlowAction) {
         ReportOutput reportOutput;
         if (waterConnectionDetails.getApplicationType().getCode().equals(CLOSINGCONNECTION))
             reportOutput = reportGenerationService.generateClosureConnectionReport(waterConnectionDetails,
-                    workFlowAction, cityMunicipalityName, districtName);
+                    workFlowAction);
         else if (waterConnectionDetails.getApplicationType().getCode().equals(RECONNECTIONCONNECTION))
-            reportOutput = reportGenerationService.generateReconnectionReport(waterConnectionDetails, workFlowAction,
-                    cityMunicipalityName, districtName);
+            reportOutput = reportGenerationService.generateReconnectionReport(waterConnectionDetails, workFlowAction);
         else if (REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
             reportOutput = reportGenerationService.generateRegulariseConnProceedings(waterConnectionDetails);
         else
-            reportOutput = reportGenerationService.getReportOutput(waterConnectionDetails, workFlowAction,
-                    cityMunicipalityName, districtName);
+            reportOutput = reportGenerationService.getReportOutput(waterConnectionDetails, workFlowAction);
 
         return reportOutput;
     }
