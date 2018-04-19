@@ -361,8 +361,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                     + ", Wardid: " + wardId + ", BlockId: " + blockId + ", AreaOfPlot: " + areaOfPlot
                     + ", DateOfCompletion: " + dateOfCompletion + ", PropTypeId: " + propTypeId + ", PropUsageId: "
                     + propUsageId + ", PropOccId: " + propOccId);
-        final long startTimeMillis = System.currentTimeMillis();
-
         if (loggedUserIsMeesevaUser && property.getMeesevaApplicationNumber() != null) {
             property.setApplicationNo(property.getMeesevaApplicationNumber());
             property.setSource(PropertyTaxConstants.SOURCE_MEESEVA);
@@ -405,6 +403,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         if (!loggedUserIsMeesevaUser)
             basicPropertyService.persist(basicProperty);
         else {
+            // TODO : Meeseva params are not used while persisting? 
             final HashMap<String, String> meesevaParams = new HashMap<>();
             meesevaParams.put("ADMISSIONFEE", "0");
             meesevaParams.put("APPLICATIONNUMBER", property.getMeesevaApplicationNumber());
@@ -417,9 +416,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         propService.saveDocumentTypeDetails(basicProperty, getDocumentTypeDetails());
         setAckMessage("Property Data Saved Successfully in the System and forwarded to : ");
         setApplicationNoMessage(" with application number : ");
-        final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
-        if (logger.isInfoEnabled())
-            logger.info("create: Property created successfully in system" + "; Time taken(ms) = " + elapsedTimeMillis);
         if (logger.isDebugEnabled())
             logger.debug("create: Property creation ended");
         if (!loggedUserIsMeesevaUser)
@@ -834,12 +830,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         basicPropertyService.persist(basicProp);
         if (logger.isDebugEnabled())
             logger.debug("forward: Property forward started " + property);
-        final long startTimeMillis = System.currentTimeMillis();
         setDocNumber(getDocNumber());
         setApplicationNoMessage(" with application number : ");
-        final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
         if (logger.isDebugEnabled()) {
-            logger.debug("forward: Time taken(ms) = " + elapsedTimeMillis);
             logger.debug("forward: Property forward ended");
         }
         return RESULT_ACK;
@@ -1603,7 +1596,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             addActionError(getText("mandatory.doorNo"));
             return RESULT_DATAENTRY;
         }
-        final long startTimeMillis = System.currentTimeMillis();
         final BasicProperty basicProperty = createBasicProp(PropertyTaxConstants.STATUS_ISACTIVE);
         basicProperty.setUnderWorkflow(false);
         basicProperty.setSource(PropertyTaxConstants.SOURCEOFDATA_DATAENTRY);
@@ -1627,9 +1619,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         setBasicProp(basicProperty);
         setAckMessage("Property data entry saved in the system successfully and created with Assessment No "
                 + basicProperty.getUpicNo());
-        final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
         if (logger.isDebugEnabled()) {
-            logger.info("create: Property created successfully in system" + "; Time taken(ms) = " + elapsedTimeMillis);
             logger.debug("create: Property creation ended");
         }
         return "dataEntry-ack";
