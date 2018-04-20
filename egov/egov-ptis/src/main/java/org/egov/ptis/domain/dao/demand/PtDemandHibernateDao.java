@@ -86,10 +86,10 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HA
 
 @Repository(value = "ptDemandDAO")
 public class PtDemandHibernateDao implements PtDemandDao {
-    private static final String AND_DD_AMOUNT_DD_AMT_COLLECTED = " and dd.amount > dd.amt_collected  ";
-    private static final String AND_DD_ID_DEMAND_REASON_DR_ID_AND_DRM_ID_DR_ID_DEMAND_REASON_MASTER = " and dd.id_demand_reason = dr.id and drm.id = dr.id_demand_reason_master ";
+    private static final String DEMAND_COMPARISION = " and dd.amount > dd.amt_collected  ";
+    private static final String DEMAND_REASON_QUERY = " and dd.id_demand_reason = dr.id and drm.id = dr.id_demand_reason_master ";
     private static final String AND_D_ID_DD_ID_DEMAND = " and d.id = dd.id_demand ";
-    private static final String SELECT_DRM_CODE_INST_DESCRIPTION_DD_AMOUNT_DD_AMT_COLLECTED = " select drm.code, inst.description, dd.amount, dd.amt_collected ";
+    private static final String SELECT_QUERY = " select drm.code, inst.description, dd.amount, dd.amt_collected ";
     private static final String BILLID_PARAM = "billid";
     private static final String PROPERTY = "property";
     @SuppressWarnings("rawtypes")
@@ -581,14 +581,14 @@ public class PtDemandHibernateDao implements PtDemandDao {
     public List<Object> getPropertyTaxDetails(final String assessmentNo) {
         List<Object> list;
         final CFinancialYear currentFinancialYear = financialYearDAO.getFinancialYearByDate(new Date());
-        String selectQuery = SELECT_DRM_CODE_INST_DESCRIPTION_DD_AMOUNT_DD_AMT_COLLECTED
+        String selectQuery = SELECT_QUERY
                 + " from egpt_basic_property bp, egpt_property prop, egpt_ptdemand ptd, eg_demand d, eg_demand_details dd, eg_demand_reason dr, eg_demand_reason_master drm, eg_installment_master inst "
                 + " where bp.id = prop.id_basic_property and prop.status  in ('A','I') "
                 + " and prop.id = ptd.id_property and ptd.id_demand = d.id "
                 + AND_D_ID_DD_ID_DEMAND
-                + AND_DD_ID_DEMAND_REASON_DR_ID_AND_DRM_ID_DR_ID_DEMAND_REASON_MASTER
+                + DEMAND_REASON_QUERY
                 + " and dr.id_installment = inst.id and bp.propertyid =:assessmentNo"
-                + AND_DD_AMOUNT_DD_AMT_COLLECTED
+                + DEMAND_COMPARISION
                 + " and d.id_installment =(select id from eg_installment_master "
                 + " where start_date <= :fromYear and end_date >=:toYear and id_module=(select id from eg_module where name='Property Tax' ))  ";
         selectQuery = selectQuery + " order by inst.description desc ";
@@ -606,25 +606,25 @@ public class PtDemandHibernateDao implements PtDemandDao {
         List<Object> list;
         String selectQuery = "";
         if (connectionType.equals("METERED"))
-            selectQuery = SELECT_DRM_CODE_INST_DESCRIPTION_DD_AMOUNT_DD_AMT_COLLECTED
+            selectQuery = SELECT_QUERY
                     + " from  egwtr_connection conn,egwtr_connectiondetails bp, egwtr_demand_connection demconn ,eg_demand d, eg_demand_details dd, eg_demand_reason dr, eg_demand_reason_master drm, eg_installment_master inst "
                     + " where conn.id =bp.connection "
                     + " and demconn.connectiondetails = bp.id "
                     + " and demconn.demand = d.id "
                     + AND_D_ID_DD_ID_DEMAND
-                    + AND_DD_ID_DEMAND_REASON_DR_ID_AND_DRM_ID_DR_ID_DEMAND_REASON_MASTER
+                    + DEMAND_REASON_QUERY
                     + " and dr.id_installment = inst.id and conn.consumercode =:consumerNo"
-                    + AND_DD_AMOUNT_DD_AMT_COLLECTED
+                    + DEMAND_COMPARISION
                     + " and d.id_installment =(select id from eg_installment_master where now() between start_date and end_date and id_module=(select id from eg_module where name='Water Tax Management' ) and installment_type='Monthly' )  ";
         else
-            selectQuery = SELECT_DRM_CODE_INST_DESCRIPTION_DD_AMOUNT_DD_AMT_COLLECTED
+            selectQuery = SELECT_QUERY
                     + " from  egwtr_connection conn,egwtr_connectiondetails bp,egwtr_demand_connection demconn , eg_demand d, eg_demand_details dd, eg_demand_reason dr, eg_demand_reason_master drm, eg_installment_master inst "
                     + " where conn.id =bp.connection " + " and demconn.connectiondetails = bp.id " + " and demconn.demand = d.id "
                     + AND_D_ID_DD_ID_DEMAND
-                    + AND_DD_ID_DEMAND_REASON_DR_ID_AND_DRM_ID_DR_ID_DEMAND_REASON_MASTER
+                    + DEMAND_REASON_QUERY
                     + " and d.is_history='N' "
                     + " and dr.id_installment = inst.id and conn.consumercode =:consumerNo"
-                    + AND_DD_AMOUNT_DD_AMT_COLLECTED;
+                    + DEMAND_COMPARISION;
         selectQuery = selectQuery + " order by inst.description desc ";
 
         final Query qry = getCurrentSession().createSQLQuery(selectQuery).setString("consumerNo", consumerNo);
@@ -641,7 +641,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
                 + " where bp.id = prop.id_basic_property and prop.status = 'A' "
                 + " and prop.id = ptd.id_property and ptd.id_demand = d.id "
                 + AND_D_ID_DD_ID_DEMAND
-                + AND_DD_ID_DEMAND_REASON_DR_ID_AND_DRM_ID_DR_ID_DEMAND_REASON_MASTER
+                + DEMAND_REASON_QUERY
                 + " and dr.id_installment = inst.id and bp.propertyid =:assessmentNo "
                 + " and d.id_installment =(select id from eg_installment_master where now() between start_date and end_date and id_module=(select id from eg_module where name='Property Tax' )) order by inst.start_date ";
         final Query qry = getCurrentSession().createSQLQuery(selectQuery).setString("assessmentNo", assessmentNo);

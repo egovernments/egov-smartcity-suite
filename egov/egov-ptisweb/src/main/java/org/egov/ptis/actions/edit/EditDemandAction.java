@@ -47,7 +47,6 @@
  */
 package org.egov.ptis.actions.edit;
 
-import static java.math.BigDecimal.ZERO;
 import static org.egov.ptis.constants.PropertyTaxConstants.BUILTUP_PROPERTY_DMDRSN_CODE_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
@@ -547,7 +546,7 @@ public class EditDemandAction extends BaseFormAction {
         dcbDispInfo.setReasonMasterCodes(reasonList);
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("DCB Display Info : " + dcbDispInfo);
-            LOGGER.debug("Number of Demand Reasons : " + (!reasonList.isEmpty() ? reasonList.size() : ZERO));
+            LOGGER.debug("Number of Demand Reasons : " + (!reasonList.isEmpty() ? reasonList.size() : BigDecimal.ZERO));
             LOGGER.debug("Exit from method prepareDisplayInfo");
         }
     }
@@ -731,21 +730,21 @@ public class EditDemandAction extends BaseFormAction {
 
     public Map<Installment, Set<EgDemandDetails>> getEgDemandDetailsSetByInstallment(
             final List<EgDemandDetails> demandDtls) {
-        final Map<Installment, Set<EgDemandDetails>> newEgDemandDetailsSetByInstallment = new HashMap<>();
+        final Map<Installment, Set<EgDemandDetails>> newDemandDetailsByInstallment = new HashMap<>();
 
         for (final EgDemandDetails dd : demandDtls) {
 
             if (dd.getAmtCollected() == null)
-                dd.setAmtCollected(ZERO);
+                dd.setAmtCollected(BigDecimal.ZERO);
 
-            if (newEgDemandDetailsSetByInstallment.get(dd.getEgDemandReason().getEgInstallmentMaster()) == null) {
+            if (newDemandDetailsByInstallment.get(dd.getEgDemandReason().getEgInstallmentMaster()) == null) {
                 final Set<EgDemandDetails> ddSet = new HashSet<>();
                 ddSet.add(dd);
-                newEgDemandDetailsSetByInstallment.put(dd.getEgDemandReason().getEgInstallmentMaster(), ddSet);
+                newDemandDetailsByInstallment.put(dd.getEgDemandReason().getEgInstallmentMaster(), ddSet);
             } else
-                newEgDemandDetailsSetByInstallment.get(dd.getEgDemandReason().getEgInstallmentMaster()).add(dd);
+                newDemandDetailsByInstallment.get(dd.getEgDemandReason().getEgInstallmentMaster()).add(dd);
         }
-        return newEgDemandDetailsSetByInstallment;
+        return newDemandDetailsByInstallment;
     }
 
     private void logAudit(final DemandDetail dmdDetail) {

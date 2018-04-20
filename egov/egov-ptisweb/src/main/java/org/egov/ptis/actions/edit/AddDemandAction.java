@@ -47,7 +47,6 @@
  */
 package org.egov.ptis.actions.edit;
 
-import static java.math.BigDecimal.ZERO;
 import static org.egov.ptis.constants.PropertyTaxConstants.BUILTUP_PROPERTY_DMDRSN_CODE_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
@@ -632,7 +631,7 @@ public class AddDemandAction extends BaseFormAction {
         for (final EgDemandDetails dd : demandDtls) {
 
             if (dd.getAmtCollected() == null)
-                dd.setAmtCollected(ZERO);
+                dd.setAmtCollected(BigDecimal.ZERO);
 
             if (newEgDemandDetailsSetByInstallment.get(dd.getEgDemandReason().getEgInstallmentMaster()) == null) {
                 final Set<EgDemandDetails> ddSet = new HashSet<>();

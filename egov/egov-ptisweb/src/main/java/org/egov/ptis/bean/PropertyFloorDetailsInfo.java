@@ -127,9 +127,7 @@ public class PropertyFloorDetailsInfo implements Comparable<PropertyFloorDetails
 	}
 	
 	private void findTaxChange() {
-		LOGGER.debug("Entered into findTaxChange unitCalcDetail=" + unitCalcDetail);
-		
-        if (unitCalcDetail.getFromDate() != null) {
+        if (null != unitCalcDetail.getFromDate()) {
 			hasSewerageTaxChanged =  unitCalcDetail.getFromDate().equals(unitCalcDetail.getSewerageTaxFromDate()) ? true : false;
 			hasGenTaxChanged = unitCalcDetail.getFromDate().equals(unitCalcDetail.getGeneralTaxFromDate()) ? true : false;
 			hasWaterTaxChanged = unitCalcDetail.getFromDate().equals(unitCalcDetail.getWaterTaxFromDate()) ? true : false;
@@ -149,8 +147,6 @@ public class PropertyFloorDetailsInfo implements Comparable<PropertyFloorDetails
 			hasSewerageTaxChanged = hasGenTaxChanged = hasWaterTaxChanged = hasFireTaxChanged = hasLightTaxChanged = hasResdEduCessChanged = hasNonResdEduCessChanged = hasEgCessChanged = false;
 			hasALVChanged = true;
 		}
-		
-		LOGGER.debug("Exiting from findTaxChange");
 	}
 	
 	public Integer getUnitNum() {
