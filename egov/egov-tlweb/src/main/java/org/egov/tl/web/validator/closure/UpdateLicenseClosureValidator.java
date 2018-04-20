@@ -46,63 +46,62 @@
  *
  */
 
-package org.egov.tl.web.controller.transactions.legacy;
+package org.egov.tl.web.validator.closure;
 
-import org.egov.tl.entity.LicenseDocument;
-import org.egov.tl.entity.LicenseDocumentType;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.tl.entity.TradeLicense;
-import org.egov.tl.entity.enums.ApplicationType;
+import org.egov.tl.service.LicenseClosureProcessflowService;
+import org.egov.tl.service.LicenseService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
+import static org.egov.tl.utils.Constants.MESSAGE;
 
 @Component
-public class ModifyLegacyLicenseValidator extends LegacyLicenseValidator {
+public class UpdateLicenseClosureValidator extends LicenseClosureValidator {
 
-    @Override
-    public boolean supports(Class<?> clazz) {
-        return TradeLicense.class.equals(clazz);
-    }
+    @Autowired
+    private LicenseClosureProcessflowService licenseClosureProcessflowService;
+
+    @Autowired
+    private AssignmentService assignmentService;
+
+    @Autowired
+    private LicenseService licenseService;
 
     @Override
     public void validate(Object target, Errors errors) {
         super.validate(target, errors);
         TradeLicense license = (TradeLicense) target;
 
-        List<LicenseDocument> supportDocs = license.getLicenseDocuments()
-                .stream()
-                .filter(licenseDocument -> licenseDocument.getType().isMandatory())
-                .collect(Collectors.toList());
-
-        List<LicenseDocument> existingDocs = new ArrayList<>();
-        if (license.getDocuments().stream().anyMatch(licenseDocument -> !licenseDocument.getFiles().isEmpty())) {
-            existingDocs.addAll(license.getDocuments()
-                    .stream()
-                    .filter(licenseDocument -> licenseDocument.getType().getApplicationType().equals(ApplicationType.RENEW)
-                            && licenseDocument.getId() != null)
-                    .collect(Collectors.toList()));
-        }
-
-        List<String> supportDocType = supportDocs.stream().map(LicenseDocument::getType).map(LicenseDocumentType::getName)
-                .collect(Collectors.toList());
-
-        List<String> existingDocsType = existingDocs.stream().map(LicenseDocument::getType).map(LicenseDocumentType::getName)
-                .collect(Collectors.toList());
-
-        if (!supportDocs.isEmpty()
-                && supportDocs.stream().anyMatch(licenseDocument -> licenseDocument.getMultipartFiles().stream().anyMatch(MultipartFile::isEmpty))
-                && (existingDocs.isEmpty() || !supportDocType.stream().filter(
-                licenseDocumentType -> !existingDocsType.contains(licenseDocumentType)).collect(Collectors.toList()).isEmpty())) {
+        if (licenseService.validateMandatoryDocument(license)) {
             errors.reject("validate.supportDocs");
         }
+    }
 
-        if (license.getCurrentState() != null)
-            errors.rejectValue("id", "validate.legacy.license.modify", new Object[]{license.getLicenseAppType().getName()}, "");
+    public boolean closureInProgress(TradeLicense license, RedirectAttributes redirectAttributes) {
 
+        List<Assignment> assignments = assignmentService.getAllAssignmentsByEmpId(getUserId());
+        WorkFlowMatrix workFlowMatrix = licenseClosureProcessflowService.getWorkFlowMatrix(license);
+        if (workFlowMatrix != null && !license.getCurrentState().getValue()
+                .equals(workFlowMatrix.getCurrentState())) {
+            redirectAttributes.addFlashAttribute(MESSAGE, "msg.license.process");
+            return true;
+        } else if (!assignments
+                .stream()
+                .anyMatch(assignment -> license.getCurrentState().getOwnerPosition().equals(assignment.getPosition()))) {
+            redirectAttributes.addFlashAttribute(MESSAGE, "msg.reassigned");
+            redirectAttributes.addFlashAttribute("ownerPosition", license.getCurrentState().getOwnerPosition().getName());
+            return true;
+        }
+        return false;
     }
 
 }

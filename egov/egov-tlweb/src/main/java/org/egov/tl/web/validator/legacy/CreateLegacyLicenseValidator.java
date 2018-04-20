@@ -46,65 +46,27 @@
  *
  */
 
-package org.egov.tl.web.controller.transactions.closure;
+package org.egov.tl.web.validator.legacy;
 
-import org.egov.eis.entity.Assignment;
-import org.egov.eis.service.AssignmentService;
-import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.tl.entity.TradeLicense;
-import org.egov.tl.service.LicenseClosureProcessflowService;
-import org.egov.tl.service.LicenseProcessWorkflowService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
-import java.util.Optional;
 
 @Component
-public class CreateLicenseClosureValidator extends LicenseClosureValidator {
+public class CreateLegacyLicenseValidator extends LegacyLicenseValidator {
 
-    @Autowired
-    private LicenseProcessWorkflowService licenseProcessWorkflowService;
-
-    @Autowired
-    private LicenseClosureProcessflowService licenseClosureProcessflowService;
-
-    @Autowired
-    private SecurityUtils securityUtils;
-
-    @Autowired
-    private AssignmentService assignmentService;
+    @Override
+    public boolean supports(Class<?> clazz) {
+        return TradeLicense.class.equals(clazz);
+    }
 
     @Override
     public void validate(Object target, Errors errors) {
         super.validate(target, errors);
         TradeLicense license = (TradeLicense) target;
 
-        if (!securityUtils.currentUserIsEmployee()) {
-            WorkFlowMatrix workflowMatrix = licenseClosureProcessflowService.getWorkFlowMatrix(license);
-            List<Assignment> assignmentList = licenseProcessWorkflowService.getAssignments(workflowMatrix);
-            if (assignmentList.isEmpty())
-                errors.reject("validate.initiator.not.defined");
-        } else {
-
-            List<Assignment> assignments = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(securityUtils.getCurrentUser().getId());
-            if (assignments.isEmpty()) {
-                errors.reject("validate.assignee");
-            } else {
-                String designation = licenseClosureProcessflowService.getWorkFlowMatrix(license).getCurrentDesignation();
-                Optional<Assignment> empAssignment = assignments
-                        .stream()
-                        .filter(assignment -> designation.contains(assignment.getDesignation().getName())).findAny();
-                if (!empAssignment.isPresent())
-                    errors.reject("validate.assignee");
-            }
-        }
-
-        if (license.getLicenseDocuments().stream().anyMatch(licenseDocument -> licenseDocument.getType().isMandatory()
-                && licenseDocument.getMultipartFiles().stream().anyMatch(MultipartFile::isEmpty)))
+        if (license.anyMandatoryDocumentMissing())
             errors.reject("validate.supportDocs");
     }
+
 }

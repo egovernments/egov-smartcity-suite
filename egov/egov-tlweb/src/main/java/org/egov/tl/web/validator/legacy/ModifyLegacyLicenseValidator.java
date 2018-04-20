@@ -46,18 +46,19 @@
  *
  */
 
-package org.egov.tl.web.controller.transactions.closure;
+package org.egov.tl.web.validator.legacy;
 
 import org.egov.tl.entity.TradeLicense;
+import org.egov.tl.service.LicenseService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
-
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.egov.tl.utils.Constants.BUTTONFORWARD;
 
 @Component
-public class LicenseClosureValidator implements Validator {
+public class ModifyLegacyLicenseValidator extends LegacyLicenseValidator {
+
+    @Autowired
+    private LicenseService licenseService;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -66,18 +67,15 @@ public class LicenseClosureValidator implements Validator {
 
     @Override
     public void validate(Object target, Errors errors) {
+        super.validate(target, errors);
         TradeLicense license = (TradeLicense) target;
 
-        if (BUTTONFORWARD.equals(license.getWorkflowContainer().getWorkFlowAction())) {
-            if (license.getWorkflowContainer().getApproverPositionId() == null)
-                errors.rejectValue("workflowContainer.approverPositionId", "validate.approver.position");
-
-            if (isBlank(license.getWorkflowContainer().getApproverDesignation()))
-                errors.rejectValue("workflowContainer.approverDesignation", "validate.approver.designation");
+        if (licenseService.validateMandatoryDocument(license)) {
+            errors.reject("validate.supportDocs");
         }
 
-        if (isBlank(license.getWorkflowContainer().getApproverComments()))
-            errors.rejectValue("workflowContainer.approverComments", "validate.remark");
+        if (license.getCurrentState() != null)
+            errors.rejectValue("id", "validate.legacy.license.modify", new Object[]{license.getLicenseAppType().getName()}, "");
 
     }
 

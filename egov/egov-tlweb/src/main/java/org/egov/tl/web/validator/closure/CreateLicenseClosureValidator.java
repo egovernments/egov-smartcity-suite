@@ -46,33 +46,33 @@
  *
  */
 
-package org.egov.tl.web.controller.transactions.closure;
+package org.egov.tl.web.validator.closure;
 
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
-import org.egov.tl.entity.LicenseDocument;
-import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.TradeLicense;
-import org.egov.tl.entity.enums.ApplicationType;
 import org.egov.tl.service.LicenseClosureProcessflowService;
+import org.egov.tl.service.LicenseProcessWorkflowService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
-import static org.egov.tl.utils.Constants.MESSAGE;
+import java.util.Optional;
 
 @Component
-public class UpdateLicenseClosureValidator extends LicenseClosureValidator {
+public class CreateLicenseClosureValidator extends LicenseClosureValidator {
+
+    @Autowired
+    private LicenseProcessWorkflowService licenseProcessWorkflowService;
 
     @Autowired
     private LicenseClosureProcessflowService licenseClosureProcessflowService;
+
+    @Autowired
+    private SecurityUtils securityUtils;
 
     @Autowired
     private AssignmentService assignmentService;
@@ -82,49 +82,27 @@ public class UpdateLicenseClosureValidator extends LicenseClosureValidator {
         super.validate(target, errors);
         TradeLicense license = (TradeLicense) target;
 
-        List<LicenseDocument> supportDocs = license.getLicenseDocuments()
-                .stream()
-                .filter(licenseDocument -> licenseDocument.getType().isMandatory()
-                        && licenseDocument.getMultipartFiles().stream().anyMatch(MultipartFile::isEmpty))
-                .collect(Collectors.toList());
+        if (!securityUtils.currentUserIsEmployee()) {
+            WorkFlowMatrix workflowMatrix = licenseClosureProcessflowService.getWorkFlowMatrix(license);
+            List<Assignment> assignmentList = licenseProcessWorkflowService.getAssignments(workflowMatrix);
+            if (assignmentList.isEmpty())
+                errors.reject("validate.initiator.not.defined");
+        } else {
 
-        List<LicenseDocument> existingDocs = license.getDocuments()
-                .stream()
-                .filter(licenseDocument -> licenseDocument.getType().getApplicationType().equals(ApplicationType.CLOSURE))
-                .collect(Collectors.toList());
+            List<Assignment> assignments = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(securityUtils.getCurrentUser().getId());
+            if (assignments.isEmpty()) {
+                errors.reject("validate.assignee");
+            } else {
+                String designation = licenseClosureProcessflowService.getWorkFlowMatrix(license).getCurrentDesignation();
+                Optional<Assignment> empAssignment = assignments
+                        .stream()
+                        .filter(assignment -> designation.contains(assignment.getDesignation().getName())).findAny();
+                if (!empAssignment.isPresent())
+                    errors.reject("validate.assignee");
+            }
+        }
 
-
-        List<Long> supportDocType = supportDocs.stream().map(LicenseDocument::getType).map(LicenseDocumentType::getId)
-                .collect(Collectors.toList());
-
-        List<Long> existingDocsType = existingDocs.stream().map(LicenseDocument::getType).map(LicenseDocumentType::getId)
-                .collect(Collectors.toList());
-
-        if (!supportDocs.isEmpty()
-                && supportDocs.stream().anyMatch(
-                licenseDocument -> licenseDocument.getMultipartFiles().stream().anyMatch(MultipartFile::isEmpty))
-                && (existingDocs.isEmpty() || !supportDocType.stream().filter(
-                licenseDocumentType -> !existingDocsType.contains(licenseDocumentType)).collect(Collectors.toList()).isEmpty())) {
+        if (license.anyMandatoryDocumentMissing())
             errors.reject("validate.supportDocs");
-        }
     }
-
-    public boolean closureInProgress(TradeLicense license, RedirectAttributes redirectAttributes) {
-
-        List<Assignment> assignments = assignmentService.getAllAssignmentsByEmpId(getUserId());
-        WorkFlowMatrix workFlowMatrix = licenseClosureProcessflowService.getWorkFlowMatrix(license);
-        if (workFlowMatrix != null && !license.getCurrentState().getValue()
-                .equals(workFlowMatrix.getCurrentState())) {
-            redirectAttributes.addFlashAttribute(MESSAGE, "msg.license.process");
-            return true;
-        } else if (!assignments
-                .stream()
-                .anyMatch(assignment -> license.getCurrentState().getOwnerPosition().equals(assignment.getPosition()))) {
-            redirectAttributes.addFlashAttribute(MESSAGE, "msg.reassigned");
-            redirectAttributes.addFlashAttribute("ownerPosition", license.getCurrentState().getOwnerPosition().getName());
-            return true;
-        }
-        return false;
-    }
-
 }

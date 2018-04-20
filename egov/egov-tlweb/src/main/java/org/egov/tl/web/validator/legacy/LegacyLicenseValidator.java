@@ -46,7 +46,7 @@
  *
  */
 
-package org.egov.tl.web.controller.transactions.legacy;
+package org.egov.tl.web.validator.legacy;
 
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.service.ValidityService;

@@ -51,6 +51,7 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.utils.LicenseUtils;
+import org.egov.tl.web.validator.closure.UpdateLicenseClosureValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

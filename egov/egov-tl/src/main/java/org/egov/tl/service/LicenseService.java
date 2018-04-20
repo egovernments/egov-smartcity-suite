@@ -49,11 +49,19 @@
 package org.egov.tl.service;
 
 import org.egov.tl.entity.License;
+import org.egov.tl.entity.LicenseDocument;
+import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.TradeLicense;
+import org.egov.tl.entity.enums.ApplicationType;
 import org.egov.tl.repository.LicenseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -77,5 +85,35 @@ public class LicenseService {
 
     public License getLicenseByOldLicenseNumber(String oldLicenseNumber) {
         return licenseRepository.findByOldLicenseNumber(oldLicenseNumber);
+    }
+
+    public boolean validateMandatoryDocument(TradeLicense license) {
+
+        List<LicenseDocument> supportDocs = license.getLicenseDocuments()
+                .stream()
+                .filter(licenseDocument -> licenseDocument.getType().isMandatory()
+                        && licenseDocument.getMultipartFiles().stream().anyMatch(MultipartFile::isEmpty))
+                .collect(Collectors.toList());
+
+        List<LicenseDocument> existingDocs = new ArrayList<>();
+        if (license.getDocuments().stream().anyMatch(licenseDocument -> !licenseDocument.getFiles().isEmpty())) {
+            existingDocs.addAll(license.getDocuments()
+                    .stream()
+                    .filter(licenseDocument -> licenseDocument.getType().getApplicationType().equals
+                            (ApplicationType.valueOf(license.getLicenseAppType().getName().toUpperCase())) && licenseDocument.getId() != null)
+                    .collect(Collectors.toList()));
+        }
+
+        List<String> supportDocType = supportDocs
+                .stream().map(LicenseDocument::getType).map(LicenseDocumentType::getName).collect(Collectors.toList());
+
+        List<String> existingDocsType = existingDocs
+                .stream().map(LicenseDocument::getType).map(LicenseDocumentType::getName).collect(Collectors.toList());
+
+        return !supportDocs.isEmpty() &&
+                supportDocs.stream()
+                        .anyMatch(licenseDocument -> licenseDocument.getMultipartFiles().stream().anyMatch(MultipartFile::isEmpty))
+                && (existingDocs.isEmpty() || !supportDocType.stream().filter(
+                licenseDocumentType -> !existingDocsType.contains(licenseDocumentType)).collect(Collectors.toList()).isEmpty());
     }
 }
