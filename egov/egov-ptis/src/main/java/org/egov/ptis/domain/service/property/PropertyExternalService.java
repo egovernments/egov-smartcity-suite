@@ -2007,7 +2007,8 @@ public class PropertyExternalService {
         Property property = basicProperty.getProperty();
         assessmentInfo.setOldAssessmentNumber(basicProperty.getOldMuncipalNum());
         assessmentInfo.setAssessmentNumber(basicProperty.getUpicNo());
-        assessmentInfo.setCategory(basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster().getType());
+        assessmentInfo.setCategory(basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster() != null
+                ? basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster().getType() : "");
         PropertyID propertyID = basicProperty.getPropertyID();
         if (property != null) {
             PropertyDetail propertyDetail = property.getPropertyDetail();

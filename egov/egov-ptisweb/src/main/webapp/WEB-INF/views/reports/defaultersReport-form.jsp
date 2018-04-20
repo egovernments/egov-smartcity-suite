@@ -104,7 +104,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="" name="fromAmount" id="fromAmount"
 								cssClass="form-control patternvalidation" data-pattern="number"
-								value="${fromAmount}"
+								value="${fromAmount}" maxlength="12" 
 								cssErrorClass="form-control error" />
 						</div>
 						<label for="field-1" class="col-sm-2 control-label"><spring:message
@@ -112,7 +112,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="" name="toAmount" id="toAmount"
 								cssClass="form-control patternvalidation" data-pattern="number"
-								value="${toAmount}"
+								value="${toAmount}" maxlength="12"
 								cssErrorClass="form-control error" />
 						</div>
 

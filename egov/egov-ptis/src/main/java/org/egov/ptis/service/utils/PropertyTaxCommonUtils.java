@@ -193,69 +193,64 @@ public class PropertyTaxCommonUtils {
      * @return Map<String, Object>
      */
     public Map<String, Object> getTaxDetailsForWorkflowProperty(final BasicProperty basicProperty) {
-        Map<String, Map<String, BigDecimal>> demandCollMap = new TreeMap<String, Map<String, BigDecimal>>();
-        final Map<String, Object> wfPropTaxDetailsMap = new HashMap<String, Object>();
+        Map<String, Map<String, BigDecimal>> demandCollMap = new TreeMap<>();
+        final Map<String, Object> wfPropTaxDetailsMap = new HashMap<>();
         final Property property = basicProperty.getWFProperty();
-        try {
-            demandCollMap = propertyTaxUtil.prepareDemandDetForView(property, getCurrentInstallment());
-            if (!demandCollMap.isEmpty())
-                for (final Entry<String, Map<String, BigDecimal>> entry : demandCollMap.entrySet()) {
-                    final String key = entry.getKey();
-                    final Map<String, BigDecimal> reasonDmd = entry.getValue();
-                    if (key.equals(CURRENTYEAR_FIRST_HALF)) {
-                        wfPropTaxDetailsMap.put("firstHalf", CURRENTYEAR_FIRST_HALF);
-                        wfPropTaxDetailsMap.put("firstHalfGT",
-                                reasonDmd.get(DEMANDRSN_STR_GENERAL_TAX) != null
-                                        ? getAggregateGenralTax(reasonDmd)
-                                        : demandCollMap.get(DEMANDRSN_STR_VACANT_TAX));
-                        wfPropTaxDetailsMap.put("firstHalfEC", reasonDmd.get(DEMANDRSN_STR_EDUCATIONAL_TAX) != null
-                                ? reasonDmd.get(DEMANDRSN_STR_EDUCATIONAL_TAX) : BigDecimal.ZERO);
-                        wfPropTaxDetailsMap.put("firstHalfLC", reasonDmd.get(DEMANDRSN_STR_LIBRARY_CESS));
-                        wfPropTaxDetailsMap.put("firstHalfUAP",
-                                reasonDmd.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) != null
-                                        ? reasonDmd.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) : BigDecimal.ZERO);
-                        wfPropTaxDetailsMap.put("firstHalfTotal", reasonDmd.get(CURR_FIRSTHALF_DMD_STR) != null
-                                ? reasonDmd.get(CURR_FIRSTHALF_DMD_STR) : BigDecimal.ZERO);
-                        wfPropTaxDetailsMap
-                                .put("firstHalfTaxDue",
-                                        (reasonDmd.get(CURR_FIRSTHALF_DMD_STR) != null
-                                                ? reasonDmd.get(CURR_FIRSTHALF_DMD_STR) : BigDecimal.ZERO)
-                                                .subtract(reasonDmd.get(CURR_FIRSTHALF_COLL_STR)));
+        demandCollMap = propertyTaxUtil.prepareDemandDetForView(property, getCurrentInstallment());
+        if (!demandCollMap.isEmpty())
+            for (final Entry<String, Map<String, BigDecimal>> entry : demandCollMap.entrySet()) {
+                final String key = entry.getKey();
+                final Map<String, BigDecimal> reasonDmd = entry.getValue();
+                if (key.equals(CURRENTYEAR_FIRST_HALF)) {
+                    wfPropTaxDetailsMap.put("firstHalf", CURRENTYEAR_FIRST_HALF);
+                    wfPropTaxDetailsMap.put("firstHalfGT",
+                            reasonDmd.get(DEMANDRSN_STR_GENERAL_TAX) != null
+                                    ? getAggregateGenralTax(reasonDmd)
+                                    : demandCollMap.get(DEMANDRSN_STR_VACANT_TAX));
+                    wfPropTaxDetailsMap.put("firstHalfEC", reasonDmd.get(DEMANDRSN_STR_EDUCATIONAL_TAX) != null
+                            ? reasonDmd.get(DEMANDRSN_STR_EDUCATIONAL_TAX) : BigDecimal.ZERO);
+                    wfPropTaxDetailsMap.put("firstHalfLC", reasonDmd.get(DEMANDRSN_STR_LIBRARY_CESS));
+                    wfPropTaxDetailsMap.put("firstHalfUAP",
+                            reasonDmd.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) != null
+                                    ? reasonDmd.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) : BigDecimal.ZERO);
+                    wfPropTaxDetailsMap.put("firstHalfTotal", reasonDmd.get(CURR_FIRSTHALF_DMD_STR) != null
+                            ? reasonDmd.get(CURR_FIRSTHALF_DMD_STR) : BigDecimal.ZERO);
+                    wfPropTaxDetailsMap
+                            .put("firstHalfTaxDue",
+                                    (reasonDmd.get(CURR_FIRSTHALF_DMD_STR) != null
+                                            ? reasonDmd.get(CURR_FIRSTHALF_DMD_STR) : BigDecimal.ZERO)
+                                                    .subtract(reasonDmd.get(CURR_FIRSTHALF_COLL_STR)));
 
-                    } else if (key.equals(CURRENTYEAR_SECOND_HALF)) {
-                        wfPropTaxDetailsMap.put("secondHalf", CURRENTYEAR_SECOND_HALF);
-                        wfPropTaxDetailsMap.put("secondHalfGT",
-                                reasonDmd.get(DEMANDRSN_STR_GENERAL_TAX) != null
-                                        ? getAggregateGenralTax(reasonDmd)
-                                        : demandCollMap.get(DEMANDRSN_STR_VACANT_TAX));
-                        wfPropTaxDetailsMap.put("secondHalfEC", reasonDmd.get(DEMANDRSN_STR_EDUCATIONAL_TAX) != null
-                                ? reasonDmd.get(DEMANDRSN_STR_EDUCATIONAL_TAX) : BigDecimal.ZERO);
-                        wfPropTaxDetailsMap.put("secondHalfLC", reasonDmd.get(DEMANDRSN_STR_LIBRARY_CESS));
-                        wfPropTaxDetailsMap.put("secondHalfUAP",
-                                reasonDmd.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) != null
-                                        ? reasonDmd.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) : BigDecimal.ZERO);
-                        wfPropTaxDetailsMap
-                                .put("secondHalfTotal",
-                                        reasonDmd.get(CURR_SECONDHALF_DMD_STR) != null
-                                                ? reasonDmd.get(CURR_SECONDHALF_DMD_STR) : BigDecimal.ZERO);
-                        wfPropTaxDetailsMap.put("secondHalfTaxDue",
-                                (reasonDmd.get(CURR_SECONDHALF_DMD_STR) != null
-                                        ? reasonDmd.get(CURR_SECONDHALF_DMD_STR) : BigDecimal.ZERO)
-                                        .subtract(reasonDmd.get(CURR_SECONDHALF_COLL_STR)));
+                } else if (key.equals(CURRENTYEAR_SECOND_HALF)) {
+                    wfPropTaxDetailsMap.put("secondHalf", CURRENTYEAR_SECOND_HALF);
+                    wfPropTaxDetailsMap.put("secondHalfGT",
+                            reasonDmd.get(DEMANDRSN_STR_GENERAL_TAX) != null
+                                    ? getAggregateGenralTax(reasonDmd)
+                                    : demandCollMap.get(DEMANDRSN_STR_VACANT_TAX));
+                    wfPropTaxDetailsMap.put("secondHalfEC", reasonDmd.get(DEMANDRSN_STR_EDUCATIONAL_TAX) != null
+                            ? reasonDmd.get(DEMANDRSN_STR_EDUCATIONAL_TAX) : BigDecimal.ZERO);
+                    wfPropTaxDetailsMap.put("secondHalfLC", reasonDmd.get(DEMANDRSN_STR_LIBRARY_CESS));
+                    wfPropTaxDetailsMap.put("secondHalfUAP",
+                            reasonDmd.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) != null
+                                    ? reasonDmd.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) : BigDecimal.ZERO);
+                    wfPropTaxDetailsMap
+                            .put("secondHalfTotal",
+                                    reasonDmd.get(CURR_SECONDHALF_DMD_STR) != null
+                                            ? reasonDmd.get(CURR_SECONDHALF_DMD_STR) : BigDecimal.ZERO);
+                    wfPropTaxDetailsMap.put("secondHalfTaxDue",
+                            (reasonDmd.get(CURR_SECONDHALF_DMD_STR) != null
+                                    ? reasonDmd.get(CURR_SECONDHALF_DMD_STR) : BigDecimal.ZERO)
+                                            .subtract(reasonDmd.get(CURR_SECONDHALF_COLL_STR)));
 
-                    } else {
-                        wfPropTaxDetailsMap.put("arrears", ARREARS);
-                        wfPropTaxDetailsMap.put("arrearTax",
-                                reasonDmd.get(ARR_DMD_STR) != null ? reasonDmd.get(ARR_DMD_STR) : BigDecimal.ZERO);
-                        wfPropTaxDetailsMap.put("totalArrDue",
-                                (reasonDmd.get(ARR_DMD_STR) != null ? reasonDmd.get(ARR_DMD_STR) : BigDecimal.ZERO)
-                                        .subtract(reasonDmd.get(ARR_COLL_STR)));
-                    }
+                } else {
+                    wfPropTaxDetailsMap.put("arrears", ARREARS);
+                    wfPropTaxDetailsMap.put("arrearTax",
+                            reasonDmd.get(ARR_DMD_STR) != null ? reasonDmd.get(ARR_DMD_STR) : BigDecimal.ZERO);
+                    wfPropTaxDetailsMap.put("totalArrDue",
+                            (reasonDmd.get(ARR_DMD_STR) != null ? reasonDmd.get(ARR_DMD_STR) : BigDecimal.ZERO)
+                                    .subtract(reasonDmd.get(ARR_COLL_STR)));
                 }
-        } catch (final ParseException e) {
-            LOGGER.error("Exception in getTaxDetailsForWorkflowProperty: ", e);
-            throw new ApplicationRuntimeException("Exception in getTaxDetailsForWorkflowProperty : " + e);
-        }
+            }
         return wfPropTaxDetailsMap;
     }
 

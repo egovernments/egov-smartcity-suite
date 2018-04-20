@@ -48,8 +48,6 @@
 package org.egov.ptis.actions.edit;
 
 import static java.math.BigDecimal.ZERO;
-import static org.egov.ptis.client.util.PropertyTaxUtil.isNull;
-import static org.egov.ptis.client.util.PropertyTaxUtil.isZero;
 import static org.egov.ptis.constants.PropertyTaxConstants.BUILTUP_PROPERTY_DMDRSN_CODE_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
@@ -148,6 +146,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
         @Result(name = AddDemandAction.RESULT_ACK, location = "edit/addDemand-ack.jsp") })
 public class AddDemandAction extends BaseFormAction {
 
+    private static final String INSTALLMENT2 = "installment";
     /**
      *
      */
@@ -290,8 +289,8 @@ public class AddDemandAction extends BaseFormAction {
             } else {
                 newInstallments.add(dd.getInstallment());
 
-                if (null != dd.getRevisedAmount() && isZero(dd.getRevisedAmount())
-                        && dd.getActualCollection().compareTo(BigDecimal.ZERO) > 0 && isNull(dd.getRevisedCollection())) {
+                if (null != dd.getRevisedAmount() && dd.getRevisedAmount().compareTo(BigDecimal.ZERO) == 0
+                        && dd.getActualCollection().compareTo(BigDecimal.ZERO) > 0 && dd.getRevisedCollection() == null) {
                     errorParams = new ArrayList<>();
                     errorParams.add(dd.getReasonMaster());
                     errorParams.add(dd.getInstallment().getDescription());
@@ -356,9 +355,13 @@ public class AddDemandAction extends BaseFormAction {
                 && !basicProperty.getSource().equals(PropertyTaxConstants.SOURCEOFDATA_MIGRATION)) {
             setErrorMessage(MSG_ERROR_NOT_MIGRATED_PROPERTY);
             resultPage = RESULT_ERROR;
-        } else {
+        } else if (basicProperty != null){
             ownerName = basicProperty.getFullOwnerName();
             propertyAddress = basicProperty.getAddress().toString();
+            final Query qry = entityManager.createNamedQuery("QUERY_DEMAND_DETAILS_FOR_CURRINST");
+            qry.setParameter(BASIC_PROPERTY, basicProperty);
+            qry.setParameter(INSTALLMENT2, propertyTaxCommonUtils.getCurrentInstallment());
+            demandDetails = qry.getResultList();
             if (!demandDetails.isEmpty())
                 Collections.sort(demandDetails, (o1, o2) -> o1.getEgDemandReason().getEgInstallmentMaster()
                         .compareTo(o2.getEgDemandReason().getEgInstallmentMaster()));
@@ -555,7 +558,7 @@ public class AddDemandAction extends BaseFormAction {
             demandAuditService.saveDetails(demandAudit);
         final Query query = entityManager.createNamedQuery("QUERY_DEMAND_DETAILS_FOR_CURRINST");
         query.setParameter(BASIC_PROPERTY, basicProperty);
-        query.setParameter("installment", propertyTaxCommonUtils.getCurrentInstallment());
+        query.setParameter(INSTALLMENT2, propertyTaxCommonUtils.getCurrentInstallment());
         final List<EgDemandDetails> currentInstdemandDetailsFromDB = query.getResultList();
 
         final Map<Installment, Set<EgDemandDetails>> demandDetailsSetByInstallment = getEgDemandDetailsSetByInstallment(
@@ -591,7 +594,7 @@ public class AddDemandAction extends BaseFormAction {
                 demandDetailsToBeSaved.addAll(new HashSet<EgDemandDetails>(entry.getValue()));
         final Query query1 = entityManager.createNamedQuery("QUERY_CURRENT_PTDEMAND");
         query1.setParameter(BASIC_PROPERTY, basicProperty);
-        query1.setParameter("installment", propertyTaxCommonUtils.getCurrentInstallment());
+        query1.setParameter(INSTALLMENT2, propertyTaxCommonUtils.getCurrentInstallment());
         final List<Ptdemand> currPtdemand = query1.getResultList();
         if (currPtdemand.isEmpty()) {
             final Ptdemand ptDemand = new Ptdemand();

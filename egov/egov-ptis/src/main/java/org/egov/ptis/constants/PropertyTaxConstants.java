@@ -330,7 +330,6 @@ public interface PropertyTaxConstants {
     public static final String REPORT_TEMPLATENAME_NOTICE134 = "notice134";
     public static final String REPORT_TEMPLATENAME_NOTICE125 = "notice125";
     public static final String REPORT_TEMPLATENAME_NOTICE_PRATIVRUTTA = "Notice_Prativrutta";
-    public static final String REPORT_TEMPLATENAME_DEMAND_CALSHEET = "IndCalculationSheet";
     public static final String WARRANT_APPLICATION = "Warrant-application";
     public static final String REPORT_TEMPLATENAME_EGS_EDU_CESS_COLLECTION = "Egs_EduCess_CollectionInfo";
     public static final String REPORT_TEMPLATENAME_CALSHEET_FOR_GOVT_PROPS = "IndCalSheetForGovtProperties";
