@@ -564,7 +564,7 @@ public class ComplaintIndexService {
         final Position position = complaint.getAssignee();
         final Designation designation = position.getDeptDesig().getDesignation();
         final Escalation complaintEscalation = escalationService
-                .getEscalationBycomplaintTypeAndDesignation(complaint.getComplaintType().getId(), designation.getId());
+                .getEscalationByComplaintTypeAndDesignation(complaint.getComplaintType().getId(), designation.getId());
         if (complaintEscalation != null)
             return complaintEscalation.getNoOfHrs();
         else
