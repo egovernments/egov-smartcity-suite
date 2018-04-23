@@ -1,12 +1,14 @@
 package org.egov.eventnotification.web.controller.event;
 
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.EnumSet;
+import java.util.Date;
 import java.util.List;
-import java.util.Optional;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -15,6 +17,7 @@ import org.egov.eventnotification.entity.Event;
 import org.egov.eventnotification.service.EventService;
 import org.egov.eventnotification.utils.EventnotificationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -32,128 +35,173 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  *
  */
 @Controller
-@RequestMapping(value = "/event/")
-public class EventController {
-	
-	@Autowired
-	private EventService eventService;
-	
-	/**
-	 * This method is used for view all event and view event by id.
-	 * @param model
-	 * @param id
-	 * @return tiles view
-	 */
-	@RequestMapping(value = {"view/","view/{id}"}, method = RequestMethod.GET)
-    public String view(final Model model,@PathVariable("id") Optional<Long> id) {
-		if(!id.isPresent()) {
-			model.addAttribute("eventList", eventService.findAll());
-	        model.addAttribute("mode", "view");
-	        return "event-view";
-		}else {
-			Event event = eventService.findById(id.get());
-			model.addAttribute("event", event);
-	        model.addAttribute("mode", "view");
-	        return "event-view-result";
-		}
-		
-		
-	}
-	
-	/**
-	 * This method is used for show the create event page. It will take fetch all the hours, minutes and event type.
-	 * @param event
-	 * @param model
-	 * @return tiles view
-	 */
-	@RequestMapping(value = "create/", method = RequestMethod.GET)
-    public String newEvent(@ModelAttribute Event event,Model model) {
-		model.addAttribute("event", event);
-		model.addAttribute("hourList", EventnotificationUtil.getAllHour());
-		model.addAttribute("minuteList", EventnotificationUtil.getAllMinute());
-		List eventList = new ArrayList<>(Arrays.asList(EventnotificationConstant.EVENT_TYPE.values()));
-		model.addAttribute("eventList",eventList);
-		model.addAttribute("mode", "create");
-        return "event-create";
-	}
-	
-	/**
-	 * This method is used for create event page.
-	 * @param event
-	 * @param files
-	 * @param model
-	 * @param redirectAttrs
-	 * @param request
-	 * @param errors
-	 * @return tiles view
-	 * @throws IOException
-	 * @throws ParseException
-	 */
-	@RequestMapping(value = "create/", method = RequestMethod.POST)
-    public String create(@ModelAttribute("event") Event event, @RequestParam("file") MultipartFile[] files, Model model,
-    		RedirectAttributes redirectAttrs, HttpServletRequest request,BindingResult errors) throws IOException, ParseException {
-		event.setStartTime(event.getStartHH()+":"+event.getStartMM());
-		event.setEndTime(event.getEndHH()+":"+event.getEndMM());
-		
-		eventService.persist(event, files);
-		
-		redirectAttrs.addFlashAttribute("event", event);
-		model.addAttribute("message", "Event created successfully.");
-        model.addAttribute("mode", "view");
-        return "event-success";
-	}
-	
-	/**
-	 * This method is used for show the event update page based on the event id.
-	 * @param event
-	 * @param model
-	 * @param id
-	 * @return tiles view
-	 */
-	@RequestMapping(value = "update/{id}", method = RequestMethod.GET)
-    public String viewUpdate(@ModelAttribute Event event,Model model,@PathVariable("id") Long id) {
-		Event eventObj = eventService.findById(id);
-		String []st = eventObj.getStartTime().split(":");
-		eventObj.setStartHH(st[0]);
-		eventObj.setStartMM(st[1]);
-		String []et = eventObj.getEndTime().split(":");
-		eventObj.setEndHH(et[0]);
-		eventObj.setEndMM(et[1]);
-		model.addAttribute("event", eventObj);
-        model.addAttribute("hourList", EventnotificationUtil.getAllHour());
-		model.addAttribute("minuteList", EventnotificationUtil.getAllMinute());
-		List eventList = new ArrayList<>(Arrays.asList(EventnotificationConstant.EVENT_TYPE.values()));
-		model.addAttribute("eventList",eventList);
-		model.addAttribute("mode", "update");
-        return "event-update";
-	}
-	
-	/**
-	 * This method is used for update the event.
-	 * @param event
-	 * @param files
-	 * @param model
-	 * @param redirectAttrs
-	 * @param request
-	 * @param errors
-	 * @param id
-	 * @return tiles view
-	 * @throws IOException
-	 * @throws ParseException
-	 */
-	@RequestMapping(value = "update/{id}", method = RequestMethod.POST)
-    public String update(@ModelAttribute("event") Event event, @RequestParam("file") MultipartFile[] files, Model model,
-    		RedirectAttributes redirectAttrs, HttpServletRequest request,BindingResult errors,@PathVariable("id") Long id) throws IOException, ParseException {
-		event.setId(id);
-		event.setStartTime(event.getStartHH()+":"+event.getStartMM());
-		event.setEndTime(event.getEndHH()+":"+event.getEndMM());
-		
-		eventService.update(event, files);
-		
-		redirectAttrs.addFlashAttribute("event", event);
-		model.addAttribute("message", "Event updated successfully.");
-        model.addAttribute("mode", "view");
-        return "event-update-success";
-	}
+@RequestMapping(value = EventnotificationConstant.API_EVENT)
+public class EventController implements EventnotificationConstant {
+
+    @Autowired
+    private EventService eventService;
+
+    @Autowired
+    private MessageSource messageSource;
+
+    /**
+     * This method is used for view all event and view event by id.
+     * @param model
+     * @param id
+     * @return tiles view
+     */
+    @RequestMapping(value = { API_VIEW }, method = RequestMethod.GET)
+    public String view(final Model model) {
+        model.addAttribute(EVENT_LIST, eventService.findAll(new Date()));
+        model.addAttribute(MODE, MODE_VIEW);
+        return VIEW_EVENTVIEW;
+    }
+
+    /**
+     * This method is used for view all event and view event by id.
+     * @param model
+     * @param id
+     * @return tiles view
+     */
+    @RequestMapping(value = { API_VIEW_ID }, method = RequestMethod.GET)
+    public String viewById(final Model model, @PathVariable(EVENT_ID) Long id) {
+        DateFormat formatter = new SimpleDateFormat(DDMMYYYY);
+        Event event = eventService.findById(id);
+        
+        try {
+            Date sd=new Date(event.getStartDate());
+            event.setStartDt(formatter.parse(formatter.format(sd)));
+            Date ed=new Date(event.getEndDate());
+            event.setEndDt(formatter.parse(formatter.format(ed)));
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        model.addAttribute(EVENT, event);
+        model.addAttribute(MODE, MODE_VIEW);
+        return VIEW_EVENTVIEWRESULT;
+    }
+
+    /**
+     * This method is used for show the create event page. It will take fetch all the hours, minutes and event type.
+     * @param event
+     * @param model
+     * @return tiles view
+     */
+    @RequestMapping(value = API_CREATE, method = RequestMethod.GET)
+    public String newEvent(@ModelAttribute Event event, Model model) {
+        model.addAttribute(EVENT, event);
+        model.addAttribute(HOUR_LIST, EventnotificationUtil.getAllHour());
+        model.addAttribute(MINUTE_LIST, EventnotificationUtil.getAllMinute());
+        List eventList = new ArrayList<>(Arrays.asList(EVENT_TYPE.values()));
+        model.addAttribute(EVENT_LIST, eventList);
+        model.addAttribute(MODE, MODE_CREATE);
+        return VIEW_EVENTCREATE;
+    }
+
+    /**
+     * This method is used for create event page.
+     * @param event
+     * @param files
+     * @param model
+     * @param redirectAttrs
+     * @param request
+     * @param errors
+     * @return tiles view
+     * @throws IOException
+     * @throws ParseException
+     */
+    @RequestMapping(value = API_CREATE, method = RequestMethod.POST)
+    public String create(@ModelAttribute(EVENT) Event event, @RequestParam(FILE) MultipartFile[] files, Model model,
+            RedirectAttributes redirectAttrs, HttpServletRequest request, BindingResult errors)
+            throws IOException, ParseException {
+
+        if (errors.hasErrors()) {
+            model.addAttribute("mode", "create");
+            model.addAttribute(HOUR_LIST, EventnotificationUtil.getAllHour());
+            model.addAttribute(MINUTE_LIST, EventnotificationUtil.getAllMinute());
+            List eventList = new ArrayList<>(Arrays.asList(EVENT_TYPE.values()));
+            model.addAttribute(EVENT_LIST, eventList);
+            return VIEW_EVENTCREATE;
+        }
+        event.setStartDate(event.getStartDt().getTime());
+        event.setEndDate(event.getEndDt().getTime());
+        event.setStartTime(event.getStartHH() + ":" + event.getStartMM());
+        event.setEndTime(event.getEndHH() + ":" + event.getEndMM());
+
+        event = eventService.persist(event, files);
+
+        redirectAttrs.addFlashAttribute(EVENT, event);
+        model.addAttribute(MESSAGE, messageSource.getMessage(MSG_EVENT_CREATE_SUCCESS, null, Locale.ENGLISH));
+        model.addAttribute(MODE, MODE_VIEW);
+        return VIEW_EVENTSUCCESS;
+    }
+
+    /**
+     * This method is used for show the event update page based on the event id.
+     * @param event
+     * @param model
+     * @param id
+     * @return tiles view
+     */
+    @RequestMapping(value = API_UPDATE_ID, method = RequestMethod.GET)
+    public String viewUpdate(@ModelAttribute Event event, Model model, @PathVariable(EVENT_ID) Long id) {
+        Event eventObj = eventService.findById(id);
+        DateFormat formatter = new SimpleDateFormat(DDMMYYYY);
+        try {
+            Date sd=new Date(eventObj.getStartDate());
+            eventObj.setStartDt(formatter.parse(formatter.format(sd)));
+            Date ed=new Date(eventObj.getEndDate());
+            eventObj.setEndDt(formatter.parse(formatter.format(ed)));
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        String[] st = eventObj.getStartTime().split(":");
+        eventObj.setStartHH(st[0]);
+        eventObj.setStartMM(st[1]);
+        String[] et = eventObj.getEndTime().split(":");
+        eventObj.setEndHH(et[0]);
+        eventObj.setEndMM(et[1]);
+        model.addAttribute(EVENT, eventObj);
+        model.addAttribute(HOUR_LIST, EventnotificationUtil.getAllHour());
+        model.addAttribute(MINUTE_LIST, EventnotificationUtil.getAllMinute());
+        List eventList = new ArrayList<>(Arrays.asList(EVENT_TYPE.values()));
+        model.addAttribute(EVENT_LIST, eventList);
+        model.addAttribute(MODE, MODE_UPDATE);
+        return VIEW_EVENTUPDATE;
+    }
+
+    /**
+     * This method is used for update the event.
+     * @param event
+     * @param files
+     * @param model
+     * @param redirectAttrs
+     * @param request
+     * @param errors
+     * @param id
+     * @return tiles view
+     * @throws IOException
+     * @throws ParseException
+     */
+    @RequestMapping(value = API_UPDATE_ID, method = RequestMethod.POST)
+    public String update(@ModelAttribute(EVENT) Event event, @RequestParam(FILE) MultipartFile[] files, Model model,
+            RedirectAttributes redirectAttrs, HttpServletRequest request, BindingResult errors, @PathVariable(EVENT_ID) Long id)
+            throws IOException, ParseException {
+        event.setId(id);
+        event.setStartDate(event.getStartDt().getTime());
+        event.setEndDate(event.getEndDt().getTime());
+        event.setStartTime(event.getStartHH() + ":" + event.getStartMM());
+        event.setEndTime(event.getEndHH() + ":" + event.getEndMM());
+
+        event = eventService.update(event, files);
+
+        redirectAttrs.addFlashAttribute(EVENT, event);
+        model.addAttribute(MESSAGE, messageSource.getMessage(MSG_EVENT_UPDATE_SUCCESS, null, Locale.ENGLISH));
+        model.addAttribute(MODE, MODE_VIEW);
+        return VIEW_EVENTUPDATESUCCESS;
+    }
 
 }

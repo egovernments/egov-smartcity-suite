@@ -95,11 +95,11 @@
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.startdate" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin text-center">
-							<fmt:formatDate pattern="dd/MM/yyyy" value="${event.startDate}" var="startDate" />
-							<form:input path="startDate" id="startDate" name="startDate" 
+							<fmt:formatDate pattern="dd/MM/yyyy" value="${event.startDt}" var="startDate" />
+							<form:input path="startDt" id="startDt" name="startDt" 
 								class="form-control datepicker" title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}" 
 								data-inputmask="'mask': 'd/m/y'" required="required" data-date-start-date="0d" value="<c:out value='${startDate}' />"/>
-							<form:errors path="startDate" cssClass="error-msg" />
+							<form:errors path="startDt" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.starttime" />:<span class="mandatory"></span></label>
 						<div class="col-sm-2 add-margin text-center">
@@ -123,11 +123,11 @@
 				<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.enddate" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin text-center">
-							<fmt:formatDate pattern="dd/MM/yyyy" value="${event.endDate}" var="endDate" />
-							<form:input path="endDate" id="endDate" name="endDate" 
+							<fmt:formatDate pattern="dd/MM/yyyy" value="${event.endDt}" var="endDate" />
+							<form:input path="endDt" id="endDt" name="endDt" 
 								class="form-control datepicker" title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}" 
 								data-inputmask="'mask': 'd/m/y'" required="required" data-date-start-date="0d" value="<c:out value='${endDate}' />"/>
-							<form:errors path="endDate" cssClass="error-msg" />
+							<form:errors path="endDt" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.endtime" />:<span class="mandatory"></span></label>
 						<div class="col-sm-2 add-margin text-center">

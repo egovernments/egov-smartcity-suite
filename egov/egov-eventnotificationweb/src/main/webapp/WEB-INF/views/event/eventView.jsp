@@ -49,7 +49,12 @@
 <%@ include file="/includes/taglibs.jsp"%>
 
 <div class="row report-section">
-	<div class="col-md-12 table-header text-left"><spring:message code="title.event.view.all" /></div>
+	<div class="col-md-12 table-header text-left">
+		<spring:message code="title.event.view.all" />
+		<button type='button' class='btn btn-primary' id="buttonSubmit" style="float: right;">
+			<spring:message code='lbl.add.button' />
+		</button>
+	</div>
 	<div class="col-md-12 form-group report-table-container">
 		<table class="table table-bordered table-hover multiheadertbl"
 			id="eventViewTable">
@@ -66,6 +71,8 @@
 					<th><spring:message code="lbl.event.location" /></th>
 					<th><spring:message code="lbl.event.address" /></th>
 					<th><spring:message code="lbl.event.eventType" /></th>
+					<th><spring:message code="lbl.event.ispaid" /></th>
+					<th><spring:message code="lbl.event.cost" /></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -76,12 +83,12 @@
 	    				<td><c:out value="${listVar.name}"/></td>
 	    				<td><c:out value="${listVar.description}"/></td>
 	    				<td>
-	    					<fmt:formatDate pattern="dd/MM/yyyy" value="${listVar.startDate}" var="startDate" />
+	    					<fmt:formatDate pattern="dd/MM/yyyy" value="${listVar.startDt}" var="startDate" />
 							<c:out value="${startDate}" />
 	    				</td>
 	    				<td><c:out value="${listVar.startTime}"/></td>
 	    				<td>
-	    					<fmt:formatDate pattern="dd/MM/yyyy" value="${listVar.endDate}" var="endDate" />
+	    					<fmt:formatDate pattern="dd/MM/yyyy" value="${listVar.endDt}" var="endDate" />
 							<c:out value="${endDate}" />
 	    				</td>
 	    				<td><c:out value="${listVar.endTime}"/></td>
@@ -89,12 +96,23 @@
 	    				<td><c:out value="${listVar.eventlocation}"/></td>
 	    				<td><c:out value="${listVar.address}"/></td>
 	    				<td><c:out value="${listVar.eventType}"/></td>
+	    				<td>
+	    				<c:choose>
+	    					<c:when test="${listVar.ispaid == true}">
+	    						<spring:message code="lbl.event.yes" />
+	    					</c:when>
+	    					<c:otherwise>
+	    						<spring:message code="lbl.event.no" />
+	    					</c:otherwise>
+	    				</c:choose>
+	    				</td>
+	    				<td><c:out value="${listVar.cost}"/></td>
 	    			</tr>
 				</c:forEach>
 			</c:if>
 			<c:if test="${empty eventList}">
 				<tr class="odd">
-					<td colspan="11" class="dataTables_empty" valign="top">No data available in table</td>
+					<td colspan="13" class="dataTables_empty" valign="top">No data available in table</td>
 				</tr>
 			</c:if>
 			</tbody>

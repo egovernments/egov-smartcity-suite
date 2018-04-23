@@ -102,7 +102,7 @@
 								<spring:message code="lbl.event.startdate" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
-								<fmt:formatDate pattern="dd/MM/yyyy" value="${event.startDate}" var="startDate" />
+								<fmt:formatDate pattern="dd/MM/yyyy" value="${event.startDt}" var="startDate" />
 								<c:out value="${startDate}" />
 							</div>
 							<div class="col-xs-3 add-margin">
@@ -117,7 +117,7 @@
 								<spring:message code="lbl.event.enddate" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
-								<fmt:formatDate pattern="dd/MM/yyyy" value="${event.endDate}" var="endDate" />
+								<fmt:formatDate pattern="dd/MM/yyyy" value="${event.endDt}" var="endDate" />
 								<c:out value="${endDate}" />
 							</div>
 							<div class="col-xs-3 add-margin">
@@ -152,7 +152,14 @@
 								<spring:message code="lbl.event.Wallpaper" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
-								
+								<c:choose>
+								    <c:when test="${empty event.filestore}">
+								        
+								    </c:when>
+								    <c:otherwise>
+								        <a href="/egi/downloadfile?fileStoreId=${event.filestore.fileStoreId}&moduleName=Eventnotification">${event.filestore.fileName }</a><br />
+								    </c:otherwise>
+								</c:choose>
 							</div>
 						</div>
 						<div class="row add-border">
@@ -160,7 +167,14 @@
 								<spring:message code="lbl.event.ispaid" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
-								<c:out value="${event.ispaid}" />
+								<c:choose>
+									<c:when test="${event.ispaid == true}">
+		    							<spring:message code="lbl.event.yes" />
+				    				</c:when>
+				    				<c:otherwise>
+				    					<spring:message code="lbl.event.no" />
+				    				</c:otherwise>
+			    				</c:choose>
 							</div>
 							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.event.cost" />

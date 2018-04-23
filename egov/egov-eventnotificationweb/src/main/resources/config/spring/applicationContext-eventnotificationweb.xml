@@ -67,5 +67,13 @@
         <property name="maxUploadSize" value="${max.file.upload.size}"/>
         <property name="maxInMemorySize" value="${max.file.inmemory.size}"/>
     </bean>
+    
+    <bean class="org.springframework.context.support.ResourceBundleMessageSource" id="messageSource">
+	 <property name="basenames">
+	  <list>
+	      <value>*.properties</value>
+	  </list>
+	 </property>
+	</bean>
 
 </beans>

@@ -84,3 +84,7 @@ $('#btnclose').click(function(){
 	});
 	
 });
+
+$(".btn-primary").click(function(event){
+	window.open("/eventnotification/event/create/",'_blank', "width=800, height=700, scrollbars=yes");
+});

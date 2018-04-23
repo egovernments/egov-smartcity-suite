@@ -1,26 +1,24 @@
--- Table: eg_event
-
--- DROP TABLE eg_event;
-
 CREATE TABLE eg_event
 (
   id bigint NOT NULL,
   name character varying(100) NOT NULL,
   description character varying(200) NOT NULL,
-  start_date timestamp without time zone NOT NULL,
   start_time character varying(20) NOT NULL,
-  end_date timestamp without time zone NOT NULL,
   end_time character varying(20) NOT NULL,
   eventhost character varying(100) NOT NULL,
   eventlocation character varying(100) NOT NULL,
   address character varying(200) NOT NULL,
-  wallpaper character varying(50),
   ispaid boolean NOT NULL,
-  fees double precision,
+  cost double precision,
   createddate timestamp without time zone NOT NULL,
   lastmodifieddate timestamp without time zone NOT NULL,
   createdby bigint NOT NULL,
   lastmodifiedby bigint NOT NULL,
+  version bigint DEFAULT 0,
+  event_type character varying(50) NOT NULL,
+  filestore bigint,
+  start_date bigint NOT NULL,
+  end_date bigint NOT NULL,
   CONSTRAINT eg_event_pkey PRIMARY KEY (id)
 )
 WITH (

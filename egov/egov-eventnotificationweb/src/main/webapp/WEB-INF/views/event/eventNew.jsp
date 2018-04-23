@@ -47,6 +47,7 @@
   --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
+<link rel="stylesheet" href="<cdn:url  value='/resources/global/css/egov/map-autocomplete.css?rnd=${app_release_no}' context='/egi'/>">
 <form:form method="post" action="" modelAttribute="event" id="createEventform" cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<div class="row">
@@ -88,10 +89,10 @@
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.startdate" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin text-center">
-							<form:input path="startDate" id="startDate" name="startDate" 
+							<form:input path="startDt" id="startDt" name="startDt" 
 								class="form-control datepicker" title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}" 
 								data-inputmask="'mask': 'd/m/y'" required="required" data-date-start-date="0d"/>
-							<form:errors path="startDate" cssClass="error-msg" />
+							<form:errors path="startDt" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.starttime" />:<span class="mandatory"></span></label>
 						<div class="col-sm-2 add-margin text-center">
@@ -115,10 +116,10 @@
 				<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.enddate" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin text-center">
-							<form:input path="endDate" id="endDate" name="endDate" 
+							<form:input path="endDt" id="endDt" name="endDt" 
 								class="form-control datepicker" title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}" 
 								data-inputmask="'mask': 'd/m/y'" required="required" data-date-start-date="0d"/>
-							<form:errors path="endDate" cssClass="error-msg" />
+							<form:errors path="endDt" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.endtime" />:<span class="mandatory"></span></label>
 						<div class="col-sm-2 add-margin text-center">
@@ -148,16 +149,24 @@
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.location" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="eventlocation" id="eventlocation" name="eventlocation"
-								class="form-control text-left patternvalidation" maxlength="20" required="required"/>
-							<form:errors path="eventlocation" cssClass="error-msg" />
+							<div class="input-group">
+								<form:input path="eventlocation" id="eventlocation" name="eventlocation" class="form-control text-left patternvalidation" maxlength="20" autocomplete="off" required="required"/>
+								<span class="input-group-addon map-class btn-secondary" title="See on map" onclick="jQuery('#modal-6').modal('show', {backdrop: 'static'});"><i class="fa fa-map-marker specific"></i></span>
+								<form:hidden path="eventlocation" id="eventlocation"/>
+                                <form:hidden path="crossHierarchyId" id="crosshierarchyId"/>
+                                <form:hidden path="lat" id="lat"/>
+                                <form:hidden path="lng" id="lng"/>
+                                
+								<form:errors path="eventlocation" cssClass="error-msg" />
+							</div>
 						</div>
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.address" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="address" id="address" name="address" 
-								class="form-control text-left patternvalidation" maxlength="256" required="required"/>
+							<form:textarea path="address" id="address" name="address"
+								class="form-control text-left patternvalidation"
+								maxlength="256" required="required"/>
 							<form:errors path="address" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.Wallpaper" />:</label>
@@ -193,24 +202,55 @@
 		</div>
 	</div>
 </form:form>
+<div class="modal fade" id="modal-6">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-primary" data-collapsed="0"><!-- to apply shadow add class "panel-shadow" -->
+                            <!-- panel head -->
+                            <div class="panel-heading">
+                                <div class="panel-title"><spring:message code="lbl.complaintLoc"/></div>
+                            </div>
+
+                            <!-- panel body -->
+                            <div class="panel-body no-padding">
+                                <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=${sessionScope.googleApiKey}&libraries=places"></script>
+                                <script type="text/javascript" src="<cdn:url  value='/resources/global/js/geolocation/geolocationmarker-compiled.js' context='/egi'/>"></script>
+                                <div id="normal" class="img-prop"></div>
+                                <input id="pac-input" class="controls" type="text" placeholder="Enter a location">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info btn-save-location" data-dismiss="modal"><spring:message code="lbl.ok"/></button>
+                <button type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="lbl.close"/></button>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
-	$('#buttonSubmit').click(function(e) {
-		if(!checkPanNumber())
-			return false;
+	/* $('#buttonSubmit').click(function(e) {
 		if ($('form').valid()) {
 		} else {
 			e.preventDefault();
 		}
-	});
+	}); */
 </script>
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>" />
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
+
 <script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 <script	type="text/javascript" src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<cdn:url  value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<cdn:url value='/resources/js/app/eventNewHelper.js?rnd=${app_release_no}'/>"></script>
