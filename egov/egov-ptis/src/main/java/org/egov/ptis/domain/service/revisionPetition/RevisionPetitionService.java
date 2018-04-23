@@ -544,12 +544,13 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
             reportParams.put("wardNumber", objection.getBasicProperty().getBoundary() != null
                     ? objection.getBasicProperty().getBoundary().getName() : "");
             reportParams.put("HalfYearPropertyTaxTo",
-                    currentDemand.get(CURR_SECONDHALF_DMD_STR).divide(BigDecimal.valueOf(2)).setScale(2));
+                    currentDemand.get(CURR_SECONDHALF_DMD_STR).setScale(2));
             reportParams.put("HalfYearPropertyTaxFrom",
-                    earlierDemand.get(CURR_SECONDHALF_DMD_STR).divide(BigDecimal.valueOf(2)).setScale(2));
-            reportParams.put("AnnualPropertyTaxTo", currentDemand.get(CURR_SECONDHALF_DMD_STR).setScale(2).toString());
+                    earlierDemand.get(CURR_SECONDHALF_DMD_STR).setScale(2));
+            reportParams.put("AnnualPropertyTaxTo",
+                    currentDemand.get(CURR_SECONDHALF_DMD_STR).multiply(BigDecimal.valueOf(2)).setScale(2).toString());
             reportParams.put("AnnualPropertyTaxFrom",
-                    earlierDemand.get(CURR_SECONDHALF_DMD_STR).setScale(2).toString());
+                    earlierDemand.get(CURR_SECONDHALF_DMD_STR).multiply(BigDecimal.valueOf(2)).setScale(2).toString());
 
             reportRequest = new ReportRequest(PropertyTaxConstants.REPORT_TEMPLATENAME_REVISIONPETITION_ENDORSEMENT,
                     objection, reportParams);
