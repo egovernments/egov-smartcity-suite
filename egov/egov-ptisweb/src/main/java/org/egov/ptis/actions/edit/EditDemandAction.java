@@ -546,7 +546,7 @@ public class EditDemandAction extends BaseFormAction {
         dcbDispInfo.setReasonMasterCodes(reasonList);
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("DCB Display Info : " + dcbDispInfo);
-            LOGGER.debug("Number of Demand Reasons : " + (!reasonList.isEmpty() ? reasonList.size() : BigDecimal.ZERO));
+            LOGGER.debug("Number of Demand Reasons : " + (reasonList.isEmpty() ? BigDecimal.ZERO : reasonList.size()));
             LOGGER.debug("Exit from method prepareDisplayInfo");
         }
     }
