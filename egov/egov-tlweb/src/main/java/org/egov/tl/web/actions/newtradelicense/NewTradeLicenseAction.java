@@ -56,10 +56,6 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.reporting.engine.ReportOutput;
-import org.egov.infra.reporting.engine.ReportRequest;
-import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -73,26 +69,19 @@ import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.entity.enums.ApplicationType;
 import org.egov.tl.service.AbstractLicenseService;
 import org.egov.tl.service.LicenseCategoryService;
+import org.egov.tl.service.LicenseService;
 import org.egov.tl.service.LicenseSubCategoryService;
-import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.service.UnitOfMeasurementService;
 import org.egov.tl.web.actions.BaseLicenseAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.MessageSource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import static org.egov.tl.utils.Constants.*;
@@ -128,15 +117,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     private transient UnitOfMeasurementService unitOfMeasurementService;
 
     @Autowired
-    @Qualifier("tradeLicenseService")
-    private transient TradeLicenseService tradeLicenseService;
-
-    @Autowired
-    @Qualifier("parentMessageSource")
-    private transient MessageSource licenseMessageSource;
-
-    @Autowired
-    private transient ReportService reportService;
+    private transient LicenseService licenseService;
 
     public NewTradeLicenseAction() {
         tradeLicense.setLicensee(new Licensee());
@@ -162,54 +143,8 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @Action(value = "/newtradelicense/newtradelicense-printAck")
     public String printAck() {
         reportId = reportViewerUtil.addReportToTempCache(
-                getReportParamsForAcknowdgement(tradeLicenseService.getLicenseById(tradeLicense.getId())));
+                licenseService.generateAcknowledgement(tradeLicenseService.getLicenseById(tradeLicense.getId())));
         return PRINTACK;
-    }
-
-    public ReportOutput getReportParamsForAcknowdgement(final TradeLicense license) {
-        final HttpServletRequest request = ServletActionContext.getRequest();
-        final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
-        final String city = request.getSession().getAttribute("cityname").toString();
-        final Map<String, Object> reportParams = new HashMap<>();
-        reportParams.put("municipality", cityName);
-        reportParams.put("cityname", city);
-        reportParams.put("wardName", license.getParentBoundary().getName());
-        reportParams.put("applicantName", license.getLicensee().getApplicantName());
-        reportParams.put("acknowledgementNo", license.getApplicationNumber());
-        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        reportParams.put("currentDate", formatter.format(new Date()));
-        reportParams.put("licenceAddress", license.getAddress());
-        reportParams.put("dueDate", formatter.format(calculateDueDate(license)));
-        reportParams.put("Party's Copy", "Party's Copy");
-        reportParams.put("Office's Copy", "Office's Copy");
-        reportParams.put("ApplicationCentre", licenseMessageSource.getMessage("msg.application.centre",
-                new String[]{license.getApplicationNumber()}, Locale.getDefault()));
-        reportParams.put("appType", license.getLicenseAppType() != null
-                ? NEW_LIC_APPTYPE.equals(license.getLicenseAppType().getName()) ? "New Trade" : "Renewal of Trade"
-                : "New");
-
-        final ReportRequest reportInput = new ReportRequest("tl_acknowledgement", license, reportParams);
-
-        final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        headers.add("content-disposition", "inline;filename=Acknowledgement.pdf");
-        return reportService.createReport(reportInput);
-
-    }
-
-    public Date calculateDueDate(TradeLicense license) {
-        Date dueDate;
-        Date currentDate = new Date();
-        String slaNewTradeLicense = licenseMessageSource.getMessage("msg.newTradeLicense.sla",
-                new String[]{license.getApplicationNumber()}, Locale.getDefault());
-        String slaRenewTradeLicense = licenseMessageSource.getMessage("msg.renewTradeLicense.sla",
-                new String[]{license.getApplicationNumber()}, Locale.getDefault());
-        if (license.isNewApplication())
-            dueDate = DateUtils.addDays(currentDate, Integer.parseInt(slaNewTradeLicense));
-        else
-            dueDate = DateUtils.addDays(currentDate, Integer.parseInt(slaRenewTradeLicense));
-        return dueDate;
-
     }
 
     @Override

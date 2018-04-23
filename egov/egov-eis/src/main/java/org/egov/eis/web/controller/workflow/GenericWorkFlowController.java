@@ -103,14 +103,14 @@ public abstract class GenericWorkFlowController {
 
         WorkFlowMatrix wfMatrix = null;
         if (model != null && model.getId() != null)
-            if (model.getCurrentState() != null)
-                wfMatrix = customizedWorkFlowService.getWfMatrix(model.getStateType(),
-                        container.getWorkFlowDepartment(), container.getAmountRule(), container.getAdditionalRule(),
-                        model.getCurrentState().getValue(), container.getPendingActions(), model.getCreatedDate(), container.getCurrentDesignation());
-            else
+            if (model.getCurrentState() == null)
                 wfMatrix = customizedWorkFlowService.getWfMatrix(model.getStateType(),
                         container.getWorkFlowDepartment(), container.getAmountRule(), container.getAdditionalRule(),
                         State.DEFAULT_STATE_VALUE_CREATED, container.getPendingActions(), model.getCreatedDate(), container.getCurrentDesignation());
+            else
+                wfMatrix = customizedWorkFlowService.getWfMatrix(model.getStateType(),
+                        container.getWorkFlowDepartment(), container.getAmountRule(), container.getAdditionalRule(),
+                        model.getCurrentState().getValue(), container.getPendingActions(), model.getCreatedDate(), container.getCurrentDesignation());
         return wfMatrix == null ? "" : wfMatrix.getNextAction();
     }
 
