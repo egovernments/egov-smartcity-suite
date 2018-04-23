@@ -176,6 +176,7 @@ public class WaterTaxConstants {
     public static final String WF_STATE_EE_FORWARD_PENDING = "Executive Engineer forward pending";
     public static final String WF_STATE_SE_FORWARD_PENDING = "Superintending Engineer forward pending";
     public static final String WF_STATE_ME_FORWARD_PENDING = "Municipal Engineer forward pending";
+    public static final String WF_STATE_AE_APPROVAL_PENDING="Pending approval by Assistant Engineer";
 
     public static final String APPROVEWORKFLOWACTION = "Approve";
     public static final String FORWARDWORKFLOWACTION = "Forward";

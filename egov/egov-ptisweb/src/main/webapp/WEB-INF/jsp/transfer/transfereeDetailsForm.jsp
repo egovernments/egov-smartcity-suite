@@ -85,7 +85,7 @@
 								        		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
 								        </td>
 								        <td class="blueborderfortd" align="center">
-								        	<s:select id="gender" name="transfereeInfosProxy[0].transferee.gender" value="%{transfereeInfosProxy[0].transferee.gender}"
+								        	<s:select class="transfereeGender" id="gender" name="transfereeInfosProxy[0].transferee.gender" value="%{transfereeInfosProxy[0].transferee.gender}"
 								        	  headerValue="Choose" headerKey="" list="@org.egov.infra.persistence.entity.enums.Gender@values()"></s:select>
 								        </td>
 								        <td class="blueborderfortd" align="center">
@@ -132,8 +132,8 @@
 								        		value="%{transfereeInfosProxy[#status.index].transferee.name}" onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
 								        </td>
 								        <td class="blueborderfortd" align="center">
-								        	<s:select id="gender" name="transfereeInfosProxy[%{#status.index}].transferee.gender" value="%{transfereeInfosProxy[#status.index].transferee.gender}"
-								        	 headerValue="Choose" headerKey="" list="@org.egov.infra.persistence.entity.enums.Gender@values()"></s:select>
+								        	<s:select class="transfereeGender" id="gender" name="transfereeInfosProxy[%{#status.index}].transferee.gender" value="%{transfereeInfosProxy[#status.index].transferee.gender}"
+								        	  headerValue="Choose" headerKey="" list="@org.egov.infra.persistence.entity.enums.Gender@values()"></s:select>
 								        </td>  
 								      
 								        <td class="blueborderfortd" align="center">

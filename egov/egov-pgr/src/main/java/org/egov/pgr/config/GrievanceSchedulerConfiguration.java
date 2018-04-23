@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -50,8 +50,12 @@ package org.egov.pgr.config;
 
 import org.egov.infra.config.scheduling.QuartzSchedulerConfiguration;
 import org.egov.infra.config.scheduling.SchedulerConfigCondition;
+import org.egov.pgr.config.conditions.GrievanceSchedulerConfigCondition;
+import org.egov.pgr.config.properties.GrievanceApplicationSettings;
 import org.egov.pgr.scheduler.jobs.ComplaintEscalationJob;
 import org.egov.pgr.scheduler.jobs.ComplaintIndexingJob;
+import org.quartz.Trigger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
@@ -60,22 +64,31 @@ import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
 import javax.sql.DataSource;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Configuration
 @Conditional(SchedulerConfigCondition.class)
 public class GrievanceSchedulerConfiguration extends QuartzSchedulerConfiguration {
 
+    @Autowired
+    private GrievanceApplicationSettings grievanceApplicationSettings;
+
     @Bean(destroyMethod = "destroy")
+    @Conditional(GrievanceSchedulerConfigCondition.class)
     public SchedulerFactoryBean pgrScheduler(DataSource dataSource) {
         SchedulerFactoryBean pgrScheduler = createScheduler(dataSource);
         pgrScheduler.setSchedulerName("pgr-scheduler");
         pgrScheduler.setAutoStartup(true);
         pgrScheduler.setOverwriteExistingJobs(true);
-        pgrScheduler.setTriggers(
-                complaintEscalationCronTrigger().getObject(),
-                complaintIndexingCronTrigger().getObject());
+        List<Trigger> triggers = new ArrayList<>();
+        if (grievanceApplicationSettings.escalationSchedulerEnabled())
+            triggers.add(complaintEscalationCronTrigger().getObject());
+        if (grievanceApplicationSettings.indexingSchedulerEnabled())
+            triggers.add(complaintIndexingCronTrigger().getObject());
+        pgrScheduler.setTriggers(triggers.toArray(new Trigger[triggers.size()]));
         return pgrScheduler;
     }
 
@@ -107,7 +120,7 @@ public class GrievanceSchedulerConfiguration extends QuartzSchedulerConfiguratio
         escalationCron.setJobDetail(complaintEscalationJobDetail().getObject());
         escalationCron.setGroup("PGR_TRIGGER_GROUP");
         escalationCron.setName("PGR_ESCALATION_TRIGGER");
-        escalationCron.setCronExpression("0 */52 * * * ?");
+        escalationCron.setCronExpression(grievanceApplicationSettings.getValue("pgr.escalation.job.cron"));
         return escalationCron;
     }
 
@@ -139,7 +152,7 @@ public class GrievanceSchedulerConfiguration extends QuartzSchedulerConfiguratio
         escalationCron.setJobDetail(complaintIndexingJobDetail().getObject());
         escalationCron.setGroup("PGR_TRIGGER_GROUP");
         escalationCron.setName("PGR_INDEX_TRIGGER");
-        escalationCron.setCronExpression("0 0 2 * * ?");
+        escalationCron.setCronExpression(grievanceApplicationSettings.getValue("pgr.indexing.job.cron"));
         return escalationCron;
     }
 }

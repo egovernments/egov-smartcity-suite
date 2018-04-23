@@ -95,6 +95,8 @@ public class SchedularService {
     public void reconcileAXIS() {
 
         LOGGER.debug("Inside reconcileAXIS");
+        final Calendar threeDaysBackCalender = Calendar.getInstance();
+        threeDaysBackCalender.add(Calendar.DATE, -3);
         final Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MINUTE, -30);
         final Query qry = persistenceService
@@ -126,7 +128,17 @@ public class SchedularService {
 
                         if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(paymentResponse.getAuthStatus()))
                             reconciliationService.processSuccessMsg(onlinePaymentReceiptHeader, paymentResponse);
-                        else
+                        else if ((DateUtils.compareDates(onlinePaymentReceiptHeader.getCreatedDate(),
+                                threeDaysBackCalender.getTime()))
+                                &&
+                                (onlinePaymentReceiptHeader.getOnlinePayment().getService().getCode()
+                                        .equals(CollectionConstants.SERVICECODE_AXIS) &&
+                                        CollectionConstants.AXIS_AUTHORISATION_CODES_WAITINGFOR_PAY_GATEWAY_RESPONSE
+                                                .contains(paymentResponse.getAuthStatus()))) {
+                            onlinePaymentReceiptHeader.getOnlinePayment().setAuthorisationStatusCode(
+                                    paymentResponse.getAuthStatus());
+                            onlinePaymentReceiptHeader.getOnlinePayment().setRemarks(paymentResponse.getErrorDescription());
+                        } else
                             reconciliationService.processFailureMsg(onlinePaymentReceiptHeader, paymentResponse);
 
                         final long elapsedTimeInMillis = System.currentTimeMillis() - startTimeInMilis;
@@ -156,7 +168,7 @@ public class SchedularService {
                 .createQuery(
                         "select receipt from org.egov.collection.entity.OnlinePayment as receipt where receipt.status.code=:onlinestatuscode"
                                 + " and receipt.service.code=:paymentservicecode and receipt.createdDate<:thirtyminslesssysdate order by receipt.id asc")
-                .setMaxResults(50);
+                .setMaxResults(100);
         qry.setString("onlinestatuscode", CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
         qry.setString("paymentservicecode", CollectionConstants.SERVICECODE_ATOM);
         qry.setParameter("thirtyminslesssysdate", new Date(cal.getTimeInMillis()));

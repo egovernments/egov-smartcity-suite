@@ -205,7 +205,7 @@ public class ComplaintUpdationController {
 
     @GetMapping(COMPLAINT_UPDATE_SUCCESS)
     public ModelAndView successView(@ModelAttribute Complaint complaint) {
-        return new ModelAndView("complaint/reg-success", COMPLAINT_ATTRIB, complaint);
+        return new ModelAndView("update-success", COMPLAINT_ATTRIB, complaint);
     }
 
 }

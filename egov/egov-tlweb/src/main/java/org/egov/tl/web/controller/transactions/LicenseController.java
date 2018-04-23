@@ -47,8 +47,6 @@
  */
 package org.egov.tl.web.controller.transactions;
 
-import org.egov.infra.reporting.engine.ReportDisposition;
-import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.tl.entity.LicenseDocument;
 import org.egov.tl.service.TradeLicenseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,6 +64,7 @@ import java.util.Map;
 
 import static org.egov.infra.reporting.util.ReportUtil.reportAsResponseEntity;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 
 @Controller
 @RequestMapping(value = "/license")
@@ -80,12 +79,10 @@ public class LicenseController {
         return tradeLicenseService.getAttachedDocument(licenseId);
     }
 
-    @GetMapping("/acknowledgement/{licenseId}")
+    @GetMapping(value = "/acknowledgement/{licenseId}", produces = APPLICATION_PDF_VALUE)
     @ResponseBody
     public ResponseEntity<InputStreamResource> acknowledgment(@PathVariable Long licenseId) {
-        ReportOutput reportOutput = tradeLicenseService.generateAcknowledgment(licenseId);
-        reportOutput.setReportDisposition(ReportDisposition.ATTACHMENT);
-        return reportAsResponseEntity(reportOutput);
+        return reportAsResponseEntity(tradeLicenseService.generateAcknowledgment(licenseId));
     }
 
     @GetMapping("view/{licenseId}")

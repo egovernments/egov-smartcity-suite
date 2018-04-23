@@ -84,7 +84,6 @@ public class CityPreferences extends AbstractAuditable {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "municipalityLogo")
-    @NotNull
     @Fetch(FetchMode.JOIN)
     private FileStoreMapper municipalityLogo;
 

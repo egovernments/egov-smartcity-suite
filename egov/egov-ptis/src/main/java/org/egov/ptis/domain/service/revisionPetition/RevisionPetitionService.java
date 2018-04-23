@@ -47,6 +47,52 @@
  */
 package org.egov.ptis.domain.service.revisionPetition;
 
+import static java.lang.String.format;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
+import static org.egov.ptis.constants.PropertyTaxConstants.ADDITIONAL_COMMISSIONER_DESIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_COMMISSIONER_DESIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.DATE_FORMAT_DDMMYYY;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEPUTY_COMMISSIONER_DESIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.GENERAL_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.GRP_APP_STATUS_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_GENERAL_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_WORK_RP;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.OBJECTION_RECORD_INSPECTIONDETAILS;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.RP_APP_STATUS_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SAVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
+import static org.egov.ptis.domain.service.property.PropertyService.APPLICATION_VIEW_URL;
+
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
@@ -57,6 +103,7 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EisCommonService;
+import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.UserService;
@@ -72,12 +119,16 @@ import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.DateUtils;
+import org.egov.infra.utils.StringUtils;
+import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
+import org.egov.portal.entity.PortalInbox;
 import org.egov.ptis.bean.PropertyNoticeInfo;
+import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.PropertyStatusDAO;
@@ -94,32 +145,10 @@ import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.servlet.http.HttpServletRequest;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static java.lang.String.format;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
-import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.DATE_FORMAT_DDMMYYY;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_GENERAL_REVISION_PETITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_WORK_RP;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_REVISION_PETITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.domain.service.property.PropertyService.APPLICATION_VIEW_URL;
 
 public class RevisionPetitionService extends PersistenceService<RevisionPetition, Long> {
     private static final String REVISION_PETITION_CREATED = "CREATED";
@@ -142,9 +171,21 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
     private EisCommonService eisCommonService;
     @Autowired
     private ApplicationIndexService applicationIndexService;
+
     private static final String CURRENT = "current";
     private static final String HISTORY = "history";
-    
+    private static final Logger logger = Logger.getLogger(RevisionPetitionService.class);
+    private static final String REJECT_INSPECTION_STR = "Reject Inspection";
+    private static final String FORWARD_TO_APPROVER = "forward to approver";
+    private static final String CANCEL_UNCONSIDERED = "cancel unconsidered";
+    private static final String PRINT_ENDORESEMENT = "Print Endoresement";
+    private static final String REJECT = "reject";
+    private static final String CHOOSE = "----Choose----";
+    public static final String OBJECTION_FORWARD = "objection.forward";
+    public static final String REJECT_INSPECTION = "objection.inspection.rejection";
+    private static final String APPROVE = "Approve";
+    private static final String REJECTED = "Rejected";
+
     @Autowired
     private NotificationService notificationService;
     private SMSEmailService sMSEmailService;
@@ -166,7 +207,13 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
 
     @Autowired
     private CityService cityService;
-    
+
+    @Autowired
+    private PositionMasterService positionMasterService;
+
+    @Autowired
+    private PropertyTaxUtil propertyTaxUtil;
+
     public RevisionPetitionService() {
         super(RevisionPetition.class);
     }
@@ -203,7 +250,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
     @Transactional
     public RevisionPetition createRevisionPetitionForRest(RevisionPetition objection) {
         Position position = null;
-        WorkFlowMatrix wfmatrix = null;
+        WorkFlowMatrix wfmatrix;
         User user = null;
         if (objection.getId() == null) {
             if (objection.getObjectionNumber() == null)
@@ -284,7 +331,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
      * @param status
      */
     private void updateRevisionPetitionStatus(final WorkFlowMatrix wfmatrix, final RevisionPetition objection,
-                                              final String status) {
+            final String status) {
 
         EgwStatus egwStatus = null;
         if (isNotBlank(status))
@@ -380,7 +427,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
     }
 
     public RevisionPetition createRevisionPetition(final RevisionPetition objection,
-                                                   final HashMap<String, String> meesevaParams) {
+            final Map<String, String> meesevaParams) {
         createRevisionPetition(objection);
         return objection;
     }
@@ -423,7 +470,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
      * @return ReportOutput
      */
     public ReportOutput createHearingNoticeReport(ReportOutput reportOutput, final RevisionPetition objection,
-                                                  final String noticeNo) {
+            final String noticeNo) {
         reportOutput.setReportFormat(ReportFormat.PDF);
         final HashMap<String, Object> reportParams = new HashMap<>();
         String natureOfWork;
@@ -433,7 +480,8 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
             final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
             final String cityGrade = request.getSession().getAttribute("cityGrade") != null
                     ? request.getSession().getAttribute("cityGrade").toString() : null;
-            Boolean isCorporation = isNotBlank(cityGrade) && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION);
+            final Boolean isCorporation = isNotBlank(cityGrade)
+                    && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION);
             if (NATURE_OF_WORK_RP.equalsIgnoreCase(objection.getType()))
                 natureOfWork = NATURE_REVISION_PETITION;
             else
@@ -445,7 +493,8 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
 
             if (objection.getHearings() != null && !objection.getHearings().isEmpty()
                     && objection.getHearings().get(objection.getHearings().size() - 1).getPlannedHearingDt() != null)
-                reportParams.put("hearingNoticeDate", toDefaultDateFormat(objection.getHearings().get(objection.getHearings().size() - 1).getPlannedHearingDt()));
+                reportParams.put("hearingNoticeDate", toDefaultDateFormat(
+                        objection.getHearings().get(objection.getHearings().size() - 1).getPlannedHearingDt()));
             else
                 reportParams.put("hearingNoticeDate", "");
             reportParams.put("currentDate", toDefaultDateFormat(new Date()));
@@ -561,8 +610,8 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
         infoBean.setApplicationDate(DateUtils.getFormattedDate(objection.getCreatedDate(), DATE_FORMAT_DDMMYYY));
         infoBean.setHearingDate(
                 DateUtils.getFormattedDate(objection.getHearings().get(0).getPlannedHearingDt(), DATE_FORMAT_DDMMYYY));
-		infoBean.setActualHearingDate(
-				DateUtils.getFormattedDate(objection.getHearings().get(0).getActualHearingDt(), DATE_FORMAT_DDMMYYY));
+        infoBean.setActualHearingDate(
+                DateUtils.getFormattedDate(objection.getHearings().get(0).getActualHearingDt(), DATE_FORMAT_DDMMYYY));
         final User approver = userService.getUserById(ApplicationThreadLocals.getUserId());
         infoBean.setApproverName(approver.getName());
         final BigDecimal revTax = currDemand.getBaseDemand();
@@ -587,8 +636,8 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
                     propertyTax = propertyTax.add(demandDetail.getAmount());
                 setLibraryCess(infoBean, propertyType, demandDetail);
 
-                        if(PropertyTaxConstants.NON_VACANT_TAX_DEMAND_CODES
-                                .contains(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode())
+                if (PropertyTaxConstants.NON_VACANT_TAX_DEMAND_CODES
+                        .contains(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode())
                         || demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
                                 .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX))
                     propertyTax = propertyTax.add(demandDetail.getAmount());
@@ -597,7 +646,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
         setTotalTax(infoBean, totalTax, propertyTax, propertyType);
     }
 
-    private void setTotalTax(final PropertyAckNoticeInfo infoBean, BigDecimal totalTax, BigDecimal propertyTax,
+    private void setTotalTax(final PropertyAckNoticeInfo infoBean, final BigDecimal totalTax, final BigDecimal propertyTax,
             final String propertyType) {
         if (propertyType.equalsIgnoreCase(CURRENT)) {
             infoBean.setRevTotalTax(totalTax);
@@ -633,27 +682,420 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
 
     public Boolean validateDemand(final RevisionPetition objection) {
         Boolean demandIncerased = false;
-        Set<Ptdemand> newDemandSet = objection.getProperty().getPtDemandSet();
-        List<Ptdemand> ptDemandList = new ArrayList<>();
+        final Set<Ptdemand> newDemandSet = objection.getProperty().getPtDemandSet();
+        final List<Ptdemand> ptDemandList = new ArrayList<>();
         ptDemandList.addAll(newDemandSet);
 
-        BigDecimal oldDemand = getDemandforCurrenttInst(propertyService.getInstallmentWiseDemand(
+        final BigDecimal oldDemand = getDemandforCurrenttInst(propertyService.getInstallmentWiseDemand(
                 ptDemandDAO.getNonHistoryCurrDmdForProperty(objection.getBasicProperty().getProperty())));
-        BigDecimal newDemand = getDemandforCurrenttInst(propertyService.getInstallmentWiseDemand(ptDemandList.get(0)));
-        if (newDemand.compareTo(oldDemand) > 0) 
-            demandIncerased= true;
+        final BigDecimal newDemand = getDemandforCurrenttInst(propertyService.getInstallmentWiseDemand(ptDemandList.get(0)));
+        if (newDemand.compareTo(oldDemand) > 0)
+            demandIncerased = true;
         return demandIncerased;
     }
 
-    private BigDecimal getDemandforCurrenttInst(Map<Installment, BigDecimal> instWiseDemand) {
+    private BigDecimal getDemandforCurrenttInst(final Map<Installment, BigDecimal> instWiseDemand) {
         BigDecimal demand = BigDecimal.ZERO;
-        Installment currentInstall = propertyTaxCommonUtils.getCurrentPeriodInstallment();
-        for (Map.Entry<Installment, BigDecimal> entry : instWiseDemand.entrySet()){
-            if(entry.getKey().equals(currentInstall))
-                demand= entry.getValue();
-        }
+        final Installment currentInstall = propertyTaxCommonUtils.getCurrentPeriodInstallment();
+        for (final Map.Entry<Installment, BigDecimal> entry : instWiseDemand.entrySet())
+            if (entry.getKey().equals(currentInstall))
+                demand = entry.getValue();
         return demand;
     }
 
+    public Map<String, String[]> updateStateAndStatus(final RevisionPetition objection, final Long approverPositionId,
+            final String workFlowAction, final String approverComments, final String approverName) {
+        if (logger.isDebugEnabled())
+            logger.debug("ObjectionAction | updateStateAndStatus | Start");
+        Position position = null;
+        WorkFlowMatrix wfmatrix;
+        Assignment wfInitiator;
+        List<Assignment> loggedInUserAssign;
+        String loggedInUserDesignation = "";
+        String pendingAction;
+        User user = securityUtils.getCurrentUser();
+        final Map<String, String[]> actionMessages = new HashMap<>();
+        final Boolean loggedUserIsEmployee = propertyService.isEmployee(user)
+                && !ANONYMOUS_USER.equalsIgnoreCase(user.getName());
+        final Boolean citizenPortalUser = propertyService.isCitizenPortalUser(user);
+        if (objection.getState() != null) {
+            loggedInUserAssign = assignmentService.getAssignmentByPositionAndUserAsOnDate(
+                    objection.getCurrentState().getOwnerPosition().getId(), user.getId(), new Date());
+            loggedInUserDesignation = !loggedInUserAssign.isEmpty()
+                    ? loggedInUserAssign.get(0).getDesignation().getName() : null;
+        }
+
+        if (loggedInUserDesignation != null && (JUNIOR_ASSISTANT.equals(loggedInUserDesignation)
+                || SENIOR_ASSISTANT.equals(loggedInUserDesignation)))
+            loggedInUserDesignation = null;
+
+        if (objection.getId() != null)
+            wfInitiator = getWorkflowInitiator(objection);
+        else
+            wfInitiator = propertyTaxCommonUtils.getWorkflowInitiatorAssignment(user.getId());
+
+        if (approverPositionId != null && approverPositionId != -1)
+            position = positionMasterService.getPositionById(approverPositionId);
+        if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction) && loggedInUserDesignation != null
+                && loggedInUserDesignation.endsWith(COMMISSIONER_DESGN))
+            pendingAction = new StringBuilder().append(loggedInUserDesignation).append(" ").append("Approval Pending")
+                    .toString();
+        else
+            pendingAction = getPendingActions(objection);
+
+        if (null == objection.getState()) {
+            if (!citizenPortalUser && loggedUserIsEmployee && !ANONYMOUS_USER.equalsIgnoreCase(user.getName()))
+                wfmatrix = revisionPetitionWorkFlowService.getWfMatrix(objection.getStateType(), null, null,
+                        getAdditionalRule(objection), null, null, null);
+            else
+                wfmatrix = revisionPetitionWorkFlowService.getWfMatrix(objection.getStateType(), null, null,
+                        getAdditionalRule(objection), "Created", null, null);
+        } else if (objection.getCurrentState().getValue().equalsIgnoreCase(PropertyTaxConstants.RP_INSPECTION_COMPLETE)
+                || objection.getCurrentState().getValue()
+                        .equalsIgnoreCase(PropertyTaxConstants.GRP_INSPECTION_COMPLETE))
+            wfmatrix = revisionPetitionWorkFlowService.getWfMatrix(objection.getStateType(), null, null,
+                    getAdditionalRule(objection), objection.getCurrentState().getValue(),
+                    objection.getCurrentState().getNextAction(), null, loggedInUserDesignation);
+        else if (!PropertyTaxConstants.OBJECTION_CREATED.equalsIgnoreCase(objection.getEgwStatus().getCode())
+                && loggedInUserDesignation != null && loggedInUserDesignation.endsWith("Commissioner")
+                && (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction)
+                        || WFLOW_ACTION_STEP_FORWARD.equalsIgnoreCase(workFlowAction)))
+            wfmatrix = revisionPetitionWorkFlowService.getWfMatrix(objection.getStateType(), null, null,
+                    getAdditionalRule(objection), objection.getCurrentState().getValue(), pendingAction, null,
+                    loggedInUserDesignation);
+        else
+            wfmatrix = revisionPetitionWorkFlowService.getWfMatrix(objection.getStateType(), null, null,
+                    getAdditionalRule(objection), objection.getCurrentState().getValue(),
+                    pendingAction != null ? pendingAction : null, null, null);
+        if (objection.getState() == null) {
+            if (position == null && (approverPositionId == null || approverPositionId != -1)) {
+                Assignment assignment;
+                if (propertyService.isCscOperator(user))
+                    assignment = propertyService.getMappedAssignmentForCscOperator(objection.getBasicProperty());
+                else
+                    assignment = propertyService.getUserPositionByZone(objection.getBasicProperty(), false);
+                if (assignment != null)
+                    position = assignment.getPosition();
+            }
+            updateRevisionPetitionStatus(wfmatrix, objection, PropertyTaxConstants.OBJECTION_CREATED);
+
+            if (position != null)
+                user = eisCommonService.getUserForPosition(position.getId(), new Date());
+
+            objection.transition().start().withNextAction(wfmatrix.getPendingActions())
+                    .withStateValue(wfmatrix.getNextState()).withDateInfo(new DateTime().toDate()).withOwner(position)
+                    .withSenderName(
+                            user.getUsername() + "::" + user.getName())
+                    .withOwner(user)
+                    .withComments(approverComments).withNextAction(wfmatrix.getNextAction())
+                    .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null)
+                    .withNatureOfTask(NATURE_OF_WORK_RP.equalsIgnoreCase(objection.getType()) ? NATURE_REVISION_PETITION
+                            : NATURE_GENERAL_REVISION_PETITION);
+
+            if (loggedUserIsEmployee && user != null)
+                actionMessages.put(OBJECTION_FORWARD,
+                        new String[] { user.getName().concat("~").concat(position.getName()) });
+            if (objection.getType().equalsIgnoreCase(NATURE_OF_WORK_RP))
+                propertyService.updateIndexes(objection, APPLICATION_TYPE_REVISION_PETITION);
+            else
+                propertyService.updateIndexes(objection, APPLICATION_TYPE_GRP);
+            if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(objection.getSource())) {
+                final PortalInbox portalInbox = propertyService.getPortalInbox(objection.getObjectionNumber());
+                if (portalInbox != null)
+                    propertyService.updatePortal(objection, "RP".equalsIgnoreCase(objection.getType())
+                            ? PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION : APPLICATION_TYPE_GRP);
+            }
+
+        } else if (workFlowAction != null && !"".equals(workFlowAction)
+                && !WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(workFlowAction)) {
+
+            if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)
+                    || workFlowAction.equalsIgnoreCase(CANCEL_UNCONSIDERED)) {
+
+                wfmatrix = revisionPetitionWorkFlowService.getPreviousStateFromWfMatrix(objection.getStateType(), null,
+                        null, getAdditionalRule(objection), objection.getCurrentState().getValue(),
+                        objection.getCurrentState().getNextAction());
+                if (approverPositionId == null || approverPositionId != -1)
+                    position = objection.getCurrentState().getOwnerPosition();
+            }
+            if (PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(workFlowAction)) {
+                if (propertyService.isEmployee(objection.getCreatedBy()))
+                    position = assignmentService.getPrimaryAssignmentForUser(objection.getCreatedBy().getId())
+                            .getPosition();
+                else if (!objection.getStateHistory().isEmpty())
+                    position = assignmentService.getPrimaryAssignmentForPositon(
+                            objection.getStateHistory().get(0).getOwnerPosition().getId()).getPosition();
+                else
+                    position = objection.getState().getOwnerPosition();
+            } else if (position == null)
+                position = positionMasterService.getPositionByUserId(user.getId());
+
+            if (wfmatrix != null)
+                actionMessages.putAll(workFlowTransition(objection, workFlowAction, approverComments, wfmatrix, position, approverPositionId,
+                        approverName));
+            // Update elastic search index on each workflow.
+            if (objection.getType().equalsIgnoreCase(NATURE_OF_WORK_RP))
+                propertyService.updateIndexes(objection, APPLICATION_TYPE_REVISION_PETITION);
+            else
+                propertyService.updateIndexes(objection, APPLICATION_TYPE_GRP);
+            if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(objection.getSource())) {
+                final PortalInbox portalInbox = propertyService.getPortalInbox(objection.getObjectionNumber());
+                if (portalInbox != null)
+                    propertyService.updatePortal(objection, "RP".equalsIgnoreCase(objection.getType())
+                            ? PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION : APPLICATION_TYPE_GRP);
+            }
+
+        } else if (!StringUtils.isBlank(workFlowAction)
+                && WFLOW_ACTION_STEP_SAVE.equalsIgnoreCase(workFlowAction))
+            actionMessages.put("file.save", new String[] {});
+        return actionMessages;
+
+    }
+
+    /**
+     * @param objection
+     * @param workFlowAction
+     * @param comments
+     * @param wfmatrix
+     * @param position
+     * @param user
+     */
+    public Map<String, String[]> workFlowTransition(final RevisionPetition objection, final String workFlowAction, final String approverComments,
+            final WorkFlowMatrix wfmatrix, Position position, final Long approverPositionId, final String approverName) {
+        boolean positionFoundInHistory = false;
+        Assignment nextAssignment;
+        String loggedInUserDesignation;
+        String nextAction = null;
+        final String nextState = null;
+        User user;
+        List<Assignment> loggedInUserAssign;
+        if (logger.isDebugEnabled())
+            logger.debug("revisionpetitionaction ||Starting workFlowTransition method for objection");
+        user = securityUtils.getCurrentUser();
+        final Map<String, String[]> actionMessages = new HashMap<>();
+        loggedInUserAssign = assignmentService.getAssignmentByPositionAndUserAsOnDate(
+                objection.getCurrentState().getOwnerPosition().getId(), user.getId(), new Date());
+        loggedInUserDesignation = !loggedInUserAssign.isEmpty() ? loggedInUserAssign.get(0).getDesignation().getName()
+                : null;
+        final Assignment wfInitiator = getWorkflowInitiator(objection);
+        if (WFLOW_ACTION_STEP_FORWARD.equalsIgnoreCase(workFlowAction)
+                || workFlowAction.equalsIgnoreCase("approve objection")
+                || workFlowAction.equalsIgnoreCase(FORWARD_TO_APPROVER)) {
+
+            if (wfmatrix != null && (wfmatrix.getNextStatus() != null
+                    && wfmatrix.getNextStatus().equalsIgnoreCase(PropertyTaxConstants.OBJECTION_HEARING_FIXED)
+                    || wfmatrix.getCurrentState().equalsIgnoreCase(PropertyTaxConstants.RP_INSPECTIONVERIFIED)
+                    || wfmatrix.getCurrentState().equalsIgnoreCase(PropertyTaxConstants.RP_WF_REGISTERED)
+                    || objection.getState().getValue().equalsIgnoreCase(PropertyTaxConstants.GRP_WF_REGISTERED))) {
+                for (final StateHistory<Position> stateHistoryObj : objection.getState().getHistory()) {
+                    if (stateHistoryObj.getValue().equalsIgnoreCase(PropertyTaxConstants.RP_CREATED)) {
+                        position = stateHistoryObj.getOwnerPosition();
+                        final User sender = eisCommonService.getUserForPosition(position.getId(), new Date());
+                        if (sender != null)
+                            actionMessages.put(OBJECTION_FORWARD,
+                                    new String[] { sender.getName().concat("~").concat(position.getName()) });
+
+                        positionFoundInHistory = true;
+                        break;
+                    }
+                    if (stateHistoryObj.getValue().equalsIgnoreCase(PropertyTaxConstants.RP_WF_REGISTERED)
+                            && !loggedInUserDesignation.endsWith(COMMISSIONER_DESGN)) {
+                        position = wfInitiator.getPosition();
+                        actionMessages.put(OBJECTION_FORWARD, new String[] { wfInitiator.getEmployee().getName()
+                                .concat("~").concat(wfInitiator.getPosition().getName()) });
+
+                        // First time when commisioner forwarding record from
+                        // Ulb operator, then only we need to change status.
+                        if (objection.getEgwStatus() != null && objection.getEgwStatus().getCode()
+                                .equalsIgnoreCase(PropertyTaxConstants.OBJECTION_CREATED))
+                            updateRevisionPetitionStatus(wfmatrix, objection,
+                                    PropertyTaxConstants.OBJECTION_HEARING_FIXED);
+
+                        positionFoundInHistory = true;
+                        break;
+                    }
+                }
+                if (!positionFoundInHistory && objection.getState() != null)
+                    if (objection.getState().getValue().equalsIgnoreCase(PropertyTaxConstants.RP_CREATED)
+                            || objection.getState().getValue().equalsIgnoreCase(PropertyTaxConstants.RP_WF_REGISTERED)
+                            || objection.getState().getValue().equalsIgnoreCase(PropertyTaxConstants.GRP_CREATED)
+                            || objection.getState().getValue()
+                                    .equalsIgnoreCase(PropertyTaxConstants.GRP_WF_REGISTERED)) {
+                        positionFoundInHistory = true;
+                        updateRevisionPetitionStatus(wfmatrix, objection, PropertyTaxConstants.OBJECTION_HEARING_FIXED);
+                        position = objection.getState().getInitiatorPosition() != null
+                                ? objection.getState().getInitiatorPosition() : wfInitiator.getPosition();
+                        actionMessages.put(OBJECTION_FORWARD, new String[] { wfInitiator.getEmployee().getName()
+                                .concat("~").concat(wfInitiator.getPosition().getName()) });
+                    }
+            }
+            if (approverPositionId != null && approverPositionId != -1
+                    && workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_FORWARD)
+                    && (loggedInUserDesignation.equalsIgnoreCase(ASSISTANT_COMMISSIONER_DESIGN)
+                            || loggedInUserDesignation.equalsIgnoreCase(DEPUTY_COMMISSIONER_DESIGN)
+                            || loggedInUserDesignation.equalsIgnoreCase(ADDITIONAL_COMMISSIONER_DESIGN)
+                            || loggedInUserDesignation.equalsIgnoreCase(ZONAL_COMMISSIONER_DESIGN)
+                            || loggedInUserDesignation.equalsIgnoreCase(PropertyTaxConstants.REVENUE_OFFICER_DESGN)))
+                if (objection.getState().getNextAction()
+                        .equalsIgnoreCase(PropertyTaxConstants.OBJECTION_PRINT_ENDORSEMENT)
+                        || objection.getState().getNextAction()
+                                .equalsIgnoreCase(PropertyTaxConstants.WF_STATE_DIGITAL_SIGNATURE_PENDING))
+                    nextAction = objection.getState().getNextAction();
+                else {
+                    nextAssignment = assignmentService.getAssignmentsForPosition(approverPositionId, new Date()).get(0);
+                    final String nextDesignation = nextAssignment.getDesignation().getName();
+                    position = positionMasterService.getPositionById(approverPositionId);
+                    final String designation = nextDesignation.split(" ")[0];
+                    nextAction = nextDesignation.equalsIgnoreCase(COMMISSIONER_DESGN)
+                            ? WF_STATE_COMMISSIONER_APPROVAL_PENDING
+                            : new StringBuilder().append(designation).append(" ")
+                                    .append(WF_STATE_COMMISSIONER_APPROVAL_PENDING).toString();
+
+                }
+
+            objection.transition().progressWithStateCopy()
+                    .withStateValue(nextState != null ? nextState : wfmatrix.getNextState()).withOwner(position)
+                    .withSenderName(
+                            user.getUsername() + "::" + user.getName())
+                    .withDateInfo(new DateTime().toDate())
+                    .withNextAction(nextAction != null ? nextAction : wfmatrix.getNextAction())
+                    .withComments(approverComments);
+
+            if (wfmatrix.getNextAction() != null && wfmatrix.getNextAction().equalsIgnoreCase("END"))
+                objection.transition().end().withStateValue(wfmatrix.getNextState())
+                        .withOwner(objection.getCurrentState().getOwnerPosition())
+                        .withSenderName(
+                                user.getUsername() + "::" + user.getName())
+                        .withNextAction(wfmatrix.getNextAction()).withDateInfo(new DateTime().toDate())
+                        .withComments(approverComments).withNextAction(null)
+                        .withOwner(objection.getCurrentState().getOwnerPosition());
+
+            if (wfmatrix.getNextStatus() != null)
+                updateRevisionPetitionStatus(wfmatrix, objection, null);
+            if (approverName != null && !approverName.isEmpty() && !approverName.equalsIgnoreCase(CHOOSE))
+                actionMessages.put(OBJECTION_FORWARD,
+                        new String[] { approverName.concat("~").concat(position.getName()) });
+            else if (user != null && !positionFoundInHistory)
+                actionMessages.put(OBJECTION_FORWARD,
+                        new String[] { user.getName().concat("~").concat(position.getName()) });
+
+        } else if (workFlowAction.equalsIgnoreCase(REJECT_INSPECTION_STR)) {
+            final List<StateHistory<Position>> stateHistoryList = objection.getStateHistory();
+            Assignment wfInit = null;
+            for (final StateHistory<Position> stateHistoryObj : stateHistoryList)
+                if (stateHistoryObj.getValue().equalsIgnoreCase(PropertyTaxConstants.RP_HEARINGCOMPLETED)
+                        || stateHistoryObj.getValue().equalsIgnoreCase(PropertyTaxConstants.GRP_HEARINGCOMPLETED)) {
+                    position = stateHistoryObj.getOwnerPosition();
+                    wfInit = propertyService.getUserOnRejection(objection);
+                    break;
+                }
+            if (wfInit != null) {
+                objection.setEgwStatus(egwStatusDAO.getStatusByModuleAndCode(PropertyTaxConstants.OBJECTION_MODULE,
+                        PropertyTaxConstants.OBJECTION_HEARING_COMPLETED));
+
+                if (position != null) {
+                    objection.transition().progressWithStateCopy().withNextAction(OBJECTION_RECORD_INSPECTIONDETAILS)
+                            .withStateValue(
+                                    PROPERTY_MODIFY_REASON_REVISION_PETITION.equalsIgnoreCase(objection.getType())
+                                            ? RP_APP_STATUS_REJECTED : GRP_APP_STATUS_REJECTED)
+                            .withOwner(position)
+                            .withSenderName(user.getUsername() + "::"
+                                    + user.getName())
+                            .withDateInfo(new DateTime().toDate()).withComments(approverComments);
+                    final String actionMessage = propertyTaxUtil.getApproverUserName(position.getId());
+                    if (actionMessage != null)
+                        actionMessages.put(OBJECTION_FORWARD, new String[] { actionMessage });
+                }
+            } else
+                actionMessages.put(REJECT_INSPECTION, new String[] { objection.getBasicProperty().getUpicNo() });
+
+        } else if (workFlowAction.equalsIgnoreCase(REJECT)) {
+            final List<StateHistory<Position>> stateHistoryList = objection.getStateHistory();
+            for (final StateHistory<Position> stateHistoryObj : stateHistoryList)
+                if (stateHistoryObj.getValue().equalsIgnoreCase(objection.getCurrentState().getValue())) {
+                    position = stateHistoryObj.getOwnerPosition();
+                    break;
+                }
+            if (objection.getCurrentState() != null
+                    && (objection.getCurrentState().getValue().equalsIgnoreCase(REJECTED) || objection.getCurrentState()
+                            .getValue().equalsIgnoreCase(PropertyTaxConstants.RP_CREATED))) {
+                objection.transition().end().withStateValue(wfmatrix.getNextState()).withOwner(position)
+                        .withSenderName(
+                                user.getUsername() + "::" + user.getName())
+                        .withNextAction(wfmatrix.getNextAction()).withDateInfo(new DateTime().toDate())
+                        .withComments(approverComments).withNextAction(null)
+                        .withOwner(objection.getCurrentState().getOwnerPosition());
+
+                updateRevisionPetitionStatus(wfmatrix, objection, REJECTED);
+
+            } else {// ASSUMPTION HERE IS WE ALREADY HAVE PREVIOUS WF MATRIX
+                    // DATA.
+                objection.transition().progressWithStateCopy().withStateValue(wfmatrix.getCurrentState())
+                        .withOwner(position).withSenderName(
+                                user.getUsername() + "::" + user.getName())
+                        .withDateInfo(new DateTime().toDate()).withNextAction(wfmatrix.getPendingActions())
+                        .withComments(approverComments);
+
+                if (workFlowAction.equalsIgnoreCase(REJECT))
+                    updateRevisionPetitionStatus(wfmatrix, objection, null);
+            }
+
+            if (approverName != null && !approverName.isEmpty() && !approverName.equalsIgnoreCase(CHOOSE))
+                actionMessages.put(OBJECTION_FORWARD,
+                        new String[] { approverName.concat("~").concat(position.getName()) });
+            else if (user != null)
+                actionMessages.put(OBJECTION_FORWARD,
+                        new String[] { user.getName().concat("~").concat(position.getName()) });
+        } else if (workFlowAction.equalsIgnoreCase(PRINT_ENDORESEMENT)) {
+            position = objection.getState().getOwnerPosition();
+            objection.transition().progressWithStateCopy().withStateValue(wfmatrix.getCurrentState())
+                    .withOwner(position).withSenderName(
+                            user.getUsername() + "::" + user.getName())
+                    .withDateInfo(new DateTime().toDate()).withNextAction(wfmatrix.getNextAction())
+                    .withComments(approverComments);
+            if (logger.isDebugEnabled())
+                logger.debug("revisionpetitionaction ||ended  workflow for objection");
+
+        } else if (WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(workFlowAction))
+            objection.transition().progressWithStateCopy().withStateValue(wfmatrix.getCurrentState())
+                    .withOwner(position).withSenderName(
+                            user.getUsername() + "::" + user.getName())
+                    .withDateInfo(new DateTime().toDate()).withNextAction(wfmatrix.getNextAction())
+                    .withComments(approverComments);
+        else if (workFlowAction.equalsIgnoreCase(APPROVE)) {
+            position = objection.getState().getOwnerPosition();
+            objection.transition().progressWithStateCopy().withStateValue(wfmatrix.getNextState()).withOwner(position)
+                    .withSenderName(
+                            user.getUsername() + "::" + user.getName())
+                    .withDateInfo(new DateTime().toDate()).withNextAction(wfmatrix.getNextAction())
+                    .withComments(approverComments);
+        }
+        applyAuditing(objection.getState());
+        return actionMessages;
+    }
+
+    public String getPendingActions(final RevisionPetition objection) {
+        if (objection != null && objection.getId() != null) {
+            if (PropertyTaxConstants.RP_INSPECTIONVERIFIED.equalsIgnoreCase(objection.getCurrentState().getValue())
+                    || PropertyTaxConstants.GRP_INSPECTIONVERIFIED
+                            .equalsIgnoreCase(objection.getCurrentState().getValue())
+                    || objection.getCurrentState().getValue().endsWith("Forwarded")
+                    || objection.getCurrentState().getValue().endsWith("Approved"))
+                return objection.getCurrentState().getNextAction();
+            else
+                return null;
+        } else
+            return null;
+
+    }
+
+    public String getAdditionalRule(final RevisionPetition objection) {
+        String addittionalRule;
+        if (PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION.equals(objection.getType()))
+            addittionalRule = GENERAL_REVISION_PETITION;
+        else
+            addittionalRule = REVISION_PETITION;
+        return addittionalRule;
+    }
 
 }

@@ -209,6 +209,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private String southBoundary;
     private String eastBoundary;
     private String westBoundary;
+    private String sitalArea;
 
     private Long mutationId;
 
@@ -760,7 +761,10 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                         Arrays.asList(JUNIOR_ASSISTANT + "/" + SENIOR_ASSISTANT)));
             return mode.equalsIgnoreCase(EDIT) ? RESULT_NEW : RESULT_VIEW;
         }
-        if (mode.equalsIgnoreCase(EDIT)) {
+        if (multipleSubmitCondition(property, approverPositionId)) {
+            return multipleSubmitRedirect();
+        }
+        if (mode.equalsIgnoreCase(EDIT) && !WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
             validate();
             if (hasErrors() && (StringUtils.containsIgnoreCase(userDesignationList, REVENUE_INSPECTOR_DESGN)
                     || StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT)
@@ -782,9 +786,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             validateApproverDetails();
             if (hasErrors())
                 return RESULT_VIEW;
-        }
-        if (multipleSubmitCondition(property, approverPositionId)) {
-            return multipleSubmitRedirect();
         }
         if (!WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction))
             transitionWorkFlow(property);
@@ -826,8 +827,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             }
             propertySurveyService.updateSurveyIndex(APPLICATION_TYPE_NEW_ASSESSENT, surveyBean);
         }
-        
-        basicProp.addProperty(property);
+            basicProp.addProperty(property);
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
         if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(property.getSource()))
             propService.updatePortal(property, APPLICATION_TYPE_NEW_ASSESSENT);
@@ -980,6 +980,11 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         if (logger.isDebugEnabled())
             logger.debug("reject: Property rejection started");
         basicPropertyService.applyAuditing(property.getState());
+        if (StringUtils.isNotBlank(sitalArea)) {
+            final Area area = new Area();
+            area.setArea(new Float(sitalArea));
+            property.getPropertyDetail().setSitalArea(area);
+        }
         if (property.getStatus().equals(PropertyTaxConstants.STATUS_CANCELLED))
             basicProp.setUnderWorkflow(false);
         else
@@ -2353,5 +2358,13 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
     public void setCitizenPortalUser(boolean citizenPortalUser) {
         this.citizenPortalUser = citizenPortalUser;
+    }
+
+    public String getSitalArea() {
+        return sitalArea;
+    }
+
+    public void setSitalArea(String sitalArea) {
+        this.sitalArea = sitalArea;
     }
 }

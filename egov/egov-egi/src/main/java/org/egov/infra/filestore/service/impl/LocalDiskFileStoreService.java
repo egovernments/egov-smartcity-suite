@@ -76,6 +76,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class LocalDiskFileStoreService implements FileStoreService {
 
     private static final Logger LOG = getLogger(LocalDiskFileStoreService.class);
+    private static final String FILE_STORE_ERROR = "Error occurred while storing files at %s/%s/%s";
 
     private String fileStoreBaseDir;
 
@@ -98,6 +99,19 @@ public class LocalDiskFileStoreService implements FileStoreService {
     }
 
     @Override
+    public FileStoreMapper store(byte[] fileBytes, String fileName, String mimeType, String moduleName) {
+        try {
+            FileStoreMapper fileMapper = new FileStoreMapper(randomUUID().toString(), fileName);
+            fileMapper.setContentType(mimeType);
+            Path newFilePath = this.createNewFilePath(fileMapper, moduleName);
+            Files.write(newFilePath, fileBytes);
+            return fileMapper;
+        } catch (IOException e) {
+            throw new ApplicationRuntimeException(String.format(FILE_STORE_ERROR, fileStoreBaseDir, getCityCode(), moduleName), e);
+        }
+    }
+
+    @Override
     public FileStoreMapper store(File file, String fileName, String mimeType, String moduleName, boolean deleteFile) {
         try {
             FileStoreMapper fileMapper = new FileStoreMapper(randomUUID().toString(),
@@ -105,11 +119,11 @@ public class LocalDiskFileStoreService implements FileStoreService {
             Path newFilePath = this.createNewFilePath(fileMapper, moduleName);
             Files.copy(file.toPath(), newFilePath);
             fileMapper.setContentType(mimeType);
-            if (deleteFile && file.delete())
+            if (deleteFile && Files.deleteIfExists(file.toPath()))
                 LOG.info("File store source file deleted");
             return fileMapper;
         } catch (IOException e) {
-            throw new ApplicationRuntimeException(String.format("Error occurred while storing files at %s/%s/%s",
+            throw new ApplicationRuntimeException(String.format(FILE_STORE_ERROR,
                     this.fileStoreBaseDir, getCityCode(), moduleName), e);
         }
     }
@@ -125,7 +139,7 @@ public class LocalDiskFileStoreService implements FileStoreService {
                 fileStream.close();
             return fileMapper;
         } catch (IOException e) {
-            throw new ApplicationRuntimeException(String.format("Error occurred while storing files at %s/%s/%s",
+            throw new ApplicationRuntimeException(String.format(FILE_STORE_ERROR,
                     this.fileStoreBaseDir, getCityCode(), moduleName), e);
         }
     }

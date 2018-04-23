@@ -86,7 +86,7 @@ $('#approvaldesignation').change(function () {
         dataType: "json",
         success: function (response) {
             $.each(response, function (index, value) {
-                $('#approverPositionId').append($('<option>').text(value.userName + '~' + value.positionName).attr('value', value.positionId));
+                $('#approverPositionId').append($('<option>').text(value.userName + ' [' + value.positionName +'] ').attr('value', value.positionId));
             });
         }
     });

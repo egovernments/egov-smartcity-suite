@@ -565,7 +565,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
     }
     
     private BigDecimal getTaxPercentage(final String applicableTax){
-        return taxRatesService.getTaxRateByInstallmentAndDemandReasonCode(applicableTax);
+        return taxRatesService.getTaxRateByDemandReasonCode(applicableTax);
     }
     
     private BigDecimal getYearTax(final BigDecimal annualTax,final BigDecimal taxRatePerc){

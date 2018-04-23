@@ -107,7 +107,7 @@ public class Complaint extends StateAware<Position> {
     @JoinColumn(name = "complainant", nullable = false)
     private Complainant complainant = new Complainant();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "assignee")
     private Position assignee;
 
@@ -174,6 +174,9 @@ public class Complaint extends StateAware<Position> {
     private Boundary childLocation;
 
     private boolean notifyComplainant = true;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date completionDate;
 
     @Transient
     private String latlngAddress;
@@ -376,6 +379,14 @@ public class Complaint extends StateAware<Position> {
 
     public void setNotifyComplainant(boolean notifyComplainant) {
         this.notifyComplainant = notifyComplainant;
+    }
+
+    public Date getCompletionDate() {
+        return completionDate;
+    }
+
+    public void setCompletionDate(Date completionDate) {
+        this.completionDate = completionDate;
     }
 
     public Long getCrossHierarchyId() {

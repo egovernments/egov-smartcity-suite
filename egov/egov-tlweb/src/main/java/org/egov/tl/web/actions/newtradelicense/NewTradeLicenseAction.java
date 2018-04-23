@@ -55,6 +55,7 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -71,7 +72,10 @@ import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.entity.enums.ApplicationType;
 import org.egov.tl.service.AbstractLicenseService;
+import org.egov.tl.service.LicenseCategoryService;
+import org.egov.tl.service.LicenseSubCategoryService;
 import org.egov.tl.service.TradeLicenseService;
+import org.egov.tl.service.UnitOfMeasurementService;
 import org.egov.tl.web.actions.BaseLicenseAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -110,6 +114,18 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     private String mode;
     private String message;
     private String renewAppType;
+
+    @Autowired
+    private transient BoundaryService boundaryService;
+    @Autowired
+    @Qualifier("licenseCategoryService")
+    private transient LicenseCategoryService licenseCategoryService;
+    @Autowired
+    @Qualifier("licenseSubCategoryService")
+    private transient LicenseSubCategoryService licenseSubCategoryService;
+    @Autowired
+    @Qualifier("unitOfMeasurementService")
+    private transient UnitOfMeasurementService unitOfMeasurementService;
 
     @Autowired
     @Qualifier("tradeLicenseService")
@@ -225,7 +241,8 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
                     || license().getState().getValue().equals(WF_ACTION_DIGI_SIGN_COMMISSION_NO_COLLECTION))
                 mode = DISABLE_APPROVER_MODE;
         }
-        if (STATUS_COLLECTIONPENDING.equals(license().getStatus().getStatusCode()) || STATUS_ACKNOWLEDGED.equals(license().getStatus().getStatusCode()))
+        if ((STATUS_COLLECTIONPENDING.equals(license().getStatus().getStatusCode())
+                || STATUS_ACKNOWLEDGED.equals(license().getStatus().getStatusCode())) && !license().isPaid())
             message = PENDING_COLLECTION_MSG;
         List<Position> positionList = positionMasterService
                 .getPositionsForEmployee(securityUtils.getCurrentUser().getId(), new Date());
@@ -253,6 +270,8 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
             final ValidationError vr = new ValidationError("license.fee.notcollected", "license.fee.notcollected");
             throw new ValidationException(Arrays.asList(vr));
         }
+        if (SIGNWORKFLOWACTION.equals(workFlowAction) && !licenseUtils.isDigitalSignEnabled())
+            throw new ValidationException("error.digisign.disabled", "error.digisign.disabled");
         return super.approve();
     }
 
@@ -302,7 +321,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         if (license() != null && license().getId() != null)
             tradeLicense = tradeLicenseService.getLicenseById(license().getId());
         documentTypes = tradeLicenseService.getDocumentTypesByApplicationType(ApplicationType.NEW);
-        setOwnerShipTypeMap(getOwnershipTypes());
+        setOwnerShipTypeMap(OWNERSHIP_TYPE);
         final List<Boundary> localityList = boundaryService
                 .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(LOCALITY, LOCATION_HIERARCHY_TYPE);
         addDropdownData("localityList", localityList);

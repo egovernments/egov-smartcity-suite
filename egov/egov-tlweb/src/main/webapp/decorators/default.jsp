@@ -80,6 +80,14 @@
     <script src="<cdn:url  value='/resources/global/js/egov/custom.js?rnd=${app_release_no}' context='/egi'/>"></script>
 
     <decorator:head/>
+    <style>
+        table tbody tr td {
+            font-size: 14px;
+        }
+        table thead tr th {
+            font-size: 14px;
+        }
+    </style>
 </head>
 
 <body <decorator:getProperty property="body.id" writeEntireProperty="yes"/><decorator:getProperty property="body.class" writeEntireProperty="true"/> <decorator:getProperty property="body.onload" writeEntireProperty="true"/>  >

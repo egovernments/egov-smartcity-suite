@@ -46,36 +46,38 @@
   ~
   --%>
 
-<%@ taglib prefix="s" uri="/WEB-INF/taglib/struts-tags.tld"%>
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
-<%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt"%>
+<%@ taglib prefix="s" uri="/WEB-INF/taglib/struts-tags.tld" %>
+<%@ taglib prefix="egov" tagdir="/WEB-INF/tags" %>
+<%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
 
 <html>
-	<head>
-		<title>
-		</title>
+<head>
+    <title>
+        Report
+    </title>
 
-	</head>
-	<body>
-		<s:form name="certificateform" action="viewTradeLicense" theme="simple">
-	
-			<%-- <s:if test="%{hasActionMessages()}">
-				<div class="messagestyle">
-					<s:actionmessage theme="simple" />
-				</div>
-			</s:if> --%>
-			
-			<iframe src="/tl/reportViewer?reportId=<s:property value='reportId'/>" width="98%"
-		height="70%">
-	<p>Your browser does not support iframes.</p>
-	
-			<br />
-			<div class="buttonbottom">
-				<input name="buttonClose" type="button" class="button"
-					id="buttonClose" value="Close" onclick="window.close()" />
-				&nbsp;
+</head>
+<body>
+<s:form name="certificateform" action="viewTradeLicense" theme="simple">
 
-			</div>
-		</s:form>
-	</body>
+<s:if test="%{hasErrors()}">
+    <div class="error-msg">
+        <s:actionerror/>
+        <s:fielderror/>
+    </div>
+</s:if>
+
+<iframe src="/tl/reportViewer?reportId=<s:property value='reportId'/>" width="98%"
+        height="70%">
+    <p>Your browser does not support iframes.</p>
+
+    <br/>
+    <div class="buttonbottom">
+        <input name="buttonClose" type="button" class="button"
+               id="buttonClose" value="Close" onclick="window.close()"/>
+        &nbsp;
+
+    </div>
+    </s:form>
+</body>
 </html>

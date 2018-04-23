@@ -239,7 +239,6 @@ public class ConnectionDemandService {
             final Set<EgDemandDetails> dmdDetailSet = new HashSet<>();
             for (final String demandReason : feeDetails.keySet())
                 dmdDetailSet.add(createDemandDetails((Double) feeDetails.get(demandReason), demandReason, installment));
-
             egDemand = new EgDemand();
             egDemand.setEgInstallmentMaster(installment);
             egDemand.getEgDemandDetails().addAll(dmdDetailSet);
@@ -466,23 +465,35 @@ public class ConnectionDemandService {
      */
     @Transactional
     public WaterConnectionDetails updateDemandForMeteredConnection(final WaterConnectionDetails waterConnectionDetails,
-            final BigDecimal billAmount, final Date currentDate, final Date previousDate, final int noofmonths) {
+            final BigDecimal billAmount, final Date currentDate, final Date previousDate, final int noofmonths,
+            final Boolean currentMonthIncluded) {
         Installment installment;
         List<Installment> installmentList = new ArrayList<>();
-        if (noofmonths > 1 && !waterConnectionDetails.getMeterConnection().get(0).isMeterDamaged())
-            installmentList = installmentDao.getInstallmentsByModuleForGivenDateAndInstallmentType(
+        if (!waterConnectionDetails.getMeterConnection().get(0).isMeterDamaged())
+            installmentList = installmentDao.getInstallmentsByModuleAndFromDateAndInstallmentType(
                     moduleService.getModuleByName(WaterTaxConstants.MODULE_NAME),
-                    previousDate, WaterTaxConstants.MONTHLY);
+                    previousDate, currentDate, WaterTaxConstants.MONTHLY);
 
         installment = getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME,
                 WaterTaxConstants.MONTHLY, currentDate);
 
-        if (installmentList.isEmpty() || !installmentList.contains(installment))
-            installmentList.add(installment);
+        if (!currentMonthIncluded && installmentList.size() > 1 && installmentList.contains(installment))
+            installmentList.remove(installment);
 
-        final EgDemand demandObj = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
-        if (demandObj == null && waterConnectionDetails.getLegacy())
-            throw new ApplicationRuntimeException("err.legacy.demand.not.present");
+        EgDemand demandObj = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+        if (demandObj == null && waterConnectionDetails.getLegacy()) {
+            EgDemand demand = new EgDemand();
+            demand.setEgInstallmentMaster(installment);
+            demand.setIsHistory("N");
+            demand.setCreateDate(new Date());
+            demand.setModifiedDate(new Date());
+            demandObj = demand;
+            WaterDemandConnection waterDemandConnection = new WaterDemandConnection();
+            waterDemandConnection.setDemand(demandObj);
+            waterDemandConnection.setWaterConnectionDetails(waterConnectionDetails);
+            waterConnectionDetails.addWaterDemandConnection(waterDemandConnection);
+            waterDemandConnectionService.createWaterDemandConnection(waterDemandConnection);
+        }
         if (!installmentList.isEmpty()) {
             for (final Installment installmentVal : installmentList)
                 createMeteredDemandDetails(demandObj, waterConnectionDetails, billAmount, installmentVal);
@@ -495,14 +506,13 @@ public class ConnectionDemandService {
                 egBillDAO.create(billObj);
             }
             generateBillForMeterAndMonthly(waterConnectionDetails.getConnection().getConsumerCode());
-        }
-
-        else
+        } else
             throw new ValidationException("err.water.meteredinstallment.not.found");
         waterConnectionDetails.getWaterDemandConnection().get(0).setDemand(demandObj);
         return waterConnectionDetails;
     }
 
+    @Transactional
     public void createMeteredDemandDetails(final EgDemand demandObj, final WaterConnectionDetails waterConnectionDetails,
             final BigDecimal billAmount, final Installment installment) {
         Boolean demandDetailExists = false;

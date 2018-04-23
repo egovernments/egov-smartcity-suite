@@ -47,7 +47,7 @@
   ~
   -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-12-18T15:27:16 -->
+<!-- 2018-03-12T13:12:50 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="remittance_voucher_report" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="822" leftMargin="10" rightMargin="10" topMargin="20" bottomMargin="20" uuid="b76bdff0-f9b9-4afd-886d-d310a7b060b2">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="java.lang.*"/>
@@ -871,14 +871,14 @@ ORDER BY
 				<text><![CDATA[No data found!]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Title" x="241" y="-8" width="329" height="38" uuid="98777fb9-57fd-44a1-89ba-4d8ad5ec61c7"/>
+				<reportElement style="Title" x="241" y="4" width="329" height="38" uuid="98777fb9-57fd-44a1-89ba-4d8ad5ec61c7"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Remittance Voucher Report]]></text>
 			</staticText>
 			<image>
-				<reportElement x="163" y="0" width="60" height="60" uuid="7656e2d9-ac25-4067-82e2-674dd7225153"/>
+				<reportElement x="163" y="6" width="60" height="60" uuid="7656e2d9-ac25-4067-82e2-674dd7225153"/>
 				<imageExpression><![CDATA[$P{CITY_LOGO_PATH}]]></imageExpression>
 			</image>
 			<staticText>
@@ -1090,10 +1090,6 @@ ORDER BY
 				</textElement>
 				<textFieldExpression><![CDATA[($P{EGOV_REMITTANCE_NUMBER} == null || $P{EGOV_REMITTANCE_NUMBER} == "") ? "NA" : $P{EGOV_REMITTANCE_NUMBER}]]></textFieldExpression>
 			</textField>
-			<image>
-				<reportElement x="163" y="0" width="60" height="60" uuid="7656e2d9-ac25-4067-82e2-674dd7225153"/>
-				<imageExpression><![CDATA[$P{CITY_LOGO_PATH}]]></imageExpression>
-			</image>
 		</band>
 	</noData>
 </jasperReport>

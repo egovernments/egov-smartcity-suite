@@ -56,6 +56,7 @@
 	<div class="col-md-12">
 		<div class="panel" data-collapsed="0">
 		<div class="panel-body">
+		<input type="hidden" id="workOrderNumber" value="${workOrderNumber}" />
 		<form:form  method ="post" class="form-horizontal form-groups-bordered" id="DigitalSignatureAckForm" >
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading" align="center">

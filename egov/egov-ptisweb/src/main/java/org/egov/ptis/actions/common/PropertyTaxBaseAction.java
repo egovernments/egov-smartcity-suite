@@ -125,11 +125,11 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     private static final String UNAUTHORISED_PENALTY = "unauthorisedPenalty";
     private static final String TOTAL_TAX = "totalTax";
     public static final String MEESEVA_RESULT_ACK = "meesevaAck";
-    protected Boolean isReassignEnabled = Boolean.FALSE;
+    protected Boolean isReassignEnabled = FALSE;
     protected Long stateAwareId;
     protected String transactionType;
 
-    protected Boolean isApprPageReq = Boolean.TRUE;
+    protected Boolean isApprPageReq = TRUE;
 
     protected String indexNumber;
     protected String modelId;
@@ -920,26 +920,26 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         if (null != ptDemand && ptDemand.getDmdCalculations() != null && ptDemand.getDmdCalculations().getAlv() != null)
             propertyTaxDetailsMap.put("ARV", ptDemand.getDmdCalculations().getAlv());
         else
-            propertyTaxDetailsMap.put("ARV", BigDecimal.ZERO);
+            propertyTaxDetailsMap.put("ARV", ZERO);
 
         propertyTaxDetailsMap.put(
                 "eduCess",
-                demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_TAX) == null ? BigDecimal.ZERO : demandCollMap
+                demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_TAX) == null ? ZERO : demandCollMap
                         .get(DEMANDRSN_STR_EDUCATIONAL_TAX));
         propertyTaxDetailsMap.put(
                 "libraryCess",
-                demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap
+                demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? ZERO : demandCollMap
                         .get(DEMANDRSN_STR_LIBRARY_CESS));
         BigDecimal totalTax;
         if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
             propertyTaxDetailsMap.put("generalTax",
-                    demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX) == null ? BigDecimal.ZERO : propertyTaxCommonUtils.
+                    demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX) == null ? ZERO : propertyTaxCommonUtils.
                             getAggregateGenralTax(demandCollMap));
-            totalTax = (demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX) == null ? BigDecimal.ZERO : propertyTaxCommonUtils.
+            totalTax = (demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX) == null ? ZERO : propertyTaxCommonUtils.
                 getAggregateGenralTax(demandCollMap))
-                            .add(demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_TAX) == null ? BigDecimal.ZERO : demandCollMap
+                            .add(demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_TAX) == null ? ZERO : demandCollMap
                                     .get(DEMANDRSN_STR_EDUCATIONAL_TAX))
-                            .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap
+                            .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? ZERO : demandCollMap
                                     .get(DEMANDRSN_STR_LIBRARY_CESS));
             // If unauthorized property, then add unauthorized penalty
             if (demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) != null) {
@@ -951,11 +951,11 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
         } else {
             propertyTaxDetailsMap.put("vacantLandTax",
-                    demandCollMap.get(DEMANDRSN_STR_VACANT_TAX) == null ? BigDecimal.ZERO
+                    demandCollMap.get(DEMANDRSN_STR_VACANT_TAX) == null ? ZERO
                             : demandCollMap.get(DEMANDRSN_STR_VACANT_TAX));
-            totalTax = (demandCollMap.get(DEMANDRSN_STR_VACANT_TAX) == null ? BigDecimal.ZERO : demandCollMap
+            totalTax = (demandCollMap.get(DEMANDRSN_STR_VACANT_TAX) == null ? ZERO : demandCollMap
                     .get(DEMANDRSN_STR_VACANT_TAX)).add(
-                            demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap
+                            demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? ZERO : demandCollMap
                                     .get(DEMANDRSN_STR_LIBRARY_CESS));
             if (demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) != null) {
                 propertyTaxDetailsMap.put(UNAUTHORISED_PENALTY, demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY));

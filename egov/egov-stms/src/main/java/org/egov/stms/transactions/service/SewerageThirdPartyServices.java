@@ -149,9 +149,11 @@ public class SewerageThirdPartyServices {
     private String currentDemand = "currentDemand";
     private static final String WTMS_TAXDUE_RESTURL = "%s/wtms/rest/watertax/due/byptno/%s";
 
+
     public AssessmentDetails getPropertyDetails(final String assessmentNumber, final HttpServletRequest request) {
         final RestTemplate restTemplate = new RestTemplate();
-        final String url = "http://" + request.getServerName() + ":" + request.getServerPort()
+        final String url = request.getProtocol().substring(0, request.getProtocol().indexOf('/')).toLowerCase() + "://"
+                + request.getServerName() + ":" + request.getServerPort()
                 + "/ptis/rest/property/{assessmentNumber}";
         return restTemplate.getForObject(url, AssessmentDetails.class,
                 assessmentNumber);

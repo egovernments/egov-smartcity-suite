@@ -128,7 +128,7 @@
 				                    <li class="report-li"><a href="/ptis/reports/collectionSummaryReport-localityWise.action" class="open-popup">Locality wise collection report</a></li>
 				                    <li class="report-li hide"><a href="/ptis/reports/collectionSummaryReport-zoneWise.action" class="open-popup">Zone wise collection report</a></li>
 				                    <li class="report-li hide"><a href="/ptis/reports/collectionSummaryReport-blockWise.action#no-back-button" class="open-popup">Block wise collection report</a></li>
-				                    <li class="report-li hide"><a href="/ptis/reports/defaultersReport-search.action#no-back-button" class="open-popup">Defaulters Report<span class="lock"> <i class="fa fa-lock"></i></span></a></li>
+				                    <li class="report-li hide"><a href="/ptis/report/defaultersReportPT" class="open-popup">Defaulters Report<span class="lock"> <i class="fa fa-lock"></i></span></a></li>
 				                    <li class="report-li hide"><a href="/ptis/reports/dCBReport-search.action#no-back-button" class="open-popup">DCB Report</a></li>
 				                    <li class="report-li hide"><a href="/ptis/report/baseRegister" class="open-popup">Base Register<span class="lock"> <i class="fa fa-lock"></i></span></a></li>
 				                    <li class="report-li hide"><a href="/ptis/report/dailyCollection" class="open-popup">Daily collection report</a></li>
@@ -147,7 +147,7 @@
 									<span class="more"><a href="javascript:void(0)" class="accordion" data-collapse="more">More <i class="fa fa-angle-down" aria-hidden="true"></i></a></span>
 									<li class="report-li"><a href="/wtms/reports/dCBReport/wardWise" class="open-popup">DCB Report revenue ward wise<span class="lock"> <i class="fa fa-lock"></i></span></a></li>
 				                    <li class="report-li"><a href="/wtms/report/defaultersWTReport/search" class="open-popup">Defaulters Report<span class="lock"> <i class="fa fa-lock"></i></span></a></li>
-				                    <li class="report-li hide"><a href="/wtms/report/dailyWTCollectionReport/search" class="open-popup">Daily collection report</a></li>
+				                    <li class="report-li hide"><a href="/wtms/report/dailyWTCollectionReport/search/" class="open-popup">Daily collection report</a></li>
 				                    <li class="report-li hide"><a href="/wtms/reports/dCBReport/localityWise" class="open-popup">DCB Report locality wise</a></li>
 				                    <li class="report-li hide"><a href="/wtms/reports/coonectionReport/wardWise" class="open-popup">Number of connections</a></li>
 				                    <li class="report-li hide"><a href="/wtms/report/baseRegister" class="open-popup">Base Register report<span class="lock"> <i class="fa fa-lock"></i></span></a></li>
@@ -205,8 +205,8 @@
        		        				Trade License
        		        			</div>
 								<div class="panel-body">
-									<li class="report-li"><a href="/tl/public/report/dcbreport/licensenumberwise#no-back" class="open-popup">DCB Report by Trade</a></li>
-				                    <li class="report-li"><a href="/tl/search/searchTrade-newForm.action#no-back" class="open-popup">View/Search Trade licenses<span class="lock"> <i class="fa fa-lock"></i></span></a></li>
+									<li class="report-li"><a href="/tl/report/dcb/search#no-back" class="open-popup">DCB Report by Trade</a></li>
+				                    <li class="report-li"><a href="/tl/search/license#no-back" class="open-popup">View/Search Trade licenses<span class="lock"> <i class="fa fa-lock"></i></span></a></li>
 								</div>
        						</div>
 				        </div>

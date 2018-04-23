@@ -70,7 +70,16 @@ import java.util.List;
 @Service
 public class CaptchaUtils {
 
+    public static final String CITY_CAPTCHA_PRIV_KEY = "siteSecret";
+    public static final String CITY_CAPTCHA_PUB_KEY = "siteKey";
+    public static final String J_CAPTCHA_RESPONSE = "j_captcha_response";
+    public static final String RECAPTCHA_RESPONSE = "g-recaptcha-response";
+
     private static final Logger LOG = LoggerFactory.getLogger(CaptchaUtils.class);
+    private static final String J_CAPTCHA_KEY = "j_captcha_key";
+    private static final String RECAPTCH_SECRET_KEY = "secret";
+    private static final String RECAPTCHA_REMOTEIP_KEY = "remoteip";
+    private static final String RECAPTCHA_RESPONSE_KEY = "response";
 
     @Value("${captcha.verification.url}")
     private String captchaVerificationUrl;
@@ -84,21 +93,23 @@ public class CaptchaUtils {
     public boolean captchaIsValid(HttpServletRequest request) {
         try {
             if (highlySecure) {
-                HttpPost post = new HttpPost(captchaVerificationUrl);
                 List<NameValuePair> urlParameters = new ArrayList<>();
-                urlParameters.add(new BasicNameValuePair("secret", (String) request.getSession().getAttribute("siteSecret")));
-                urlParameters.add(new BasicNameValuePair("response", request.getParameter("g-recaptcha-response")));
-                urlParameters.add(new BasicNameValuePair("remoteip", request.getRemoteAddr()));
+                urlParameters.add(new BasicNameValuePair(RECAPTCH_SECRET_KEY, (String) request.getSession()
+                        .getAttribute(CITY_CAPTCHA_PRIV_KEY)));
+                urlParameters.add(new BasicNameValuePair(RECAPTCHA_RESPONSE_KEY, request.getParameter(RECAPTCHA_RESPONSE)));
+                urlParameters.add(new BasicNameValuePair(RECAPTCHA_REMOTEIP_KEY, request.getRemoteAddr()));
+                HttpPost post = new HttpPost(captchaVerificationUrl);
                 post.setEntity(new UrlEncodedFormEntity(urlParameters));
-                String responseJson = IOUtils.toString(HttpClientBuilder.create().build().execute(post).getEntity().getContent(), Charset.defaultCharset());
+                String responseJson = IOUtils.toString(HttpClientBuilder.create().build()
+                        .execute(post).getEntity().getContent(), Charset.defaultCharset());
                 return Boolean.valueOf(new GsonBuilder().create().fromJson(responseJson, HashMap.class).get("success").toString());
             } else {
-                String captchaId = request.getParameter("j_captcha_key");
-                String response = request.getParameter("j_captcha_response");
+                String captchaId = request.getParameter(J_CAPTCHA_KEY);
+                String response = request.getParameter(J_CAPTCHA_RESPONSE);
                 return captchaService.validateResponseForID(captchaId, response);
             }
         } catch (Exception e) {
-            LOG.error("Recaptcha verification failed", e);
+            LOG.warn("Captcha verification failed", e);
             return false;
         }
     }

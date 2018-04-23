@@ -62,6 +62,7 @@ import org.egov.ptis.bean.dashboard.MonthlyDCB;
 import org.egov.ptis.bean.dashboard.PropertyTaxDefaultersRequest;
 import org.egov.ptis.bean.dashboard.StateCityInfo;
 import org.egov.ptis.bean.dashboard.TaxDefaulters;
+import org.egov.ptis.bean.dashboard.TaxPayerDetails;
 import org.egov.ptis.bean.dashboard.TaxPayerResponseDetails;
 import org.egov.ptis.bean.dashboard.TotalCollectionStats;
 import org.egov.ptis.bean.dashboard.WeeklyDCB;
@@ -85,6 +86,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.DAY;
 import static org.egov.ptis.constants.PropertyTaxConstants.MONTH;
@@ -211,7 +213,7 @@ public class CMDashboardController {
             LOGGER.debug("Time taken to serve toptentaxers is : " + timeTaken + MILLISECS);
         return taxPayerDetails;
     }
-
+    
     /**
      * Returns Bottom Ten Tax Payers Across all ULB's
      * 
@@ -394,4 +396,16 @@ public class CMDashboardController {
         return propTaxDashboardService.getDemandVariationDetails(collectionDetailsRequest);
 
     }
+    
+    /**
+     * API to fetch top and bottom 10 achievers based on the type - billcollector/revenueinspector/revenueofficer
+     * @param collectionDetailsRequest
+     * @return map of top and bottom 10 achievers
+     */
+    @RequestMapping(value = "/ptcollectionranking", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, List<TaxPayerDetails>> getRankings(CollectionDetailsRequest collectionDetailsRequest){
+        return propTaxDashboardService.getCollectionRankings(collectionDetailsRequest);
+    }
+    
+    
 }

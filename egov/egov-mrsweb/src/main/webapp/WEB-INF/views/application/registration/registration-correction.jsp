@@ -60,7 +60,7 @@
 			id="updateMarriageRegistrationForm"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
-			<input type="hidden" id="marriageRegistration"
+			<input type="hidden" name="marriageRegistration" id="marriageRegistration"
 				value="${marriageRegistration.id}" />
 			<input type="hidden" id="registrationStatus"
 				value="${marriageRegistration.status.code}" />
@@ -74,6 +74,7 @@
 			<input type="hidden" id="employeeAssgnNotValid" value="${employeeAssgnNotValid}" />
 			<input type="hidden" id="feeCollected"
 				value="${marriageRegistration.feeCollected}" />
+			<input type="hidden" id="source" value="${source}"/>
 			<c:if
 				test="${marriageRegistration.status.code eq 'CREATED' && !marriageRegistration.feeCollected && nextActn ne 'Junior/Senior Assistance approval pending'  && nextActn ne 'Revenue Clerk Approval Pending'}">
 				<div data-collapsed="0">
@@ -96,8 +97,10 @@
 			<ul class="nav nav-tabs" id="settingstab">
 				<li class="active"><a data-toggle="tab" href="#applicant-info"
 					data-tabidx=0>Applicant's Information</a></li>
+					<c:if test="${source ne 'API'}">
 				<li><a data-toggle="tab" href="#witness-info" data-tabidx=1>Witnesses
 						Information</a></li>
+						</c:if>
 				<li><a data-toggle="tab" href="#checklist-info" data-tabidx=2>Checklist</a></li>
 			</ul>
 			<div class="tab-content">
@@ -108,6 +111,7 @@
 						</div>
 					</div>
 				</div>
+				<c:if test="${source ne 'API'}">
 				<div id="witness-info" class="tab-pane fade">
 					<div class="panel panel-primary" data-collapsed="0">
 						<div class="panel-body custom-form ">
@@ -151,6 +155,7 @@
 						</div>
 					</div>
 				</div>
+				</c:if>
 				<div id="checklist-info" class="tab-pane fade">
 					<div class="panel panel-primary" data-collapsed="0">
 						<div class="panel-body custom-form ">

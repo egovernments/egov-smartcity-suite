@@ -347,12 +347,12 @@ public class CollectionIndexElasticSearchService {
             toDate = DateUtils.addDays(new Date(), 1);
         }
         // Today’s collection
-        todayColl = getCollectionBetweenDates(collectionDetailsRequest, fromDate, toDate, null, TOTAL_AMOUNT);
+        todayColl = getCollectionBetweenDates(collectionDetailsRequest, fromDate, toDate, null, null, TOTAL_AMOUNT);
         collectionIndexDetails.setTodayColl(todayColl);
 
         // Last year Today’s day collection
         todayColl = getCollectionBetweenDates(collectionDetailsRequest, DateUtils.addYears(fromDate, -1),
-                DateUtils.addYears(toDate, -1), null, TOTAL_AMOUNT);
+                DateUtils.addYears(toDate, -1), null, null, TOTAL_AMOUNT);
         collectionIndexDetails.setLyTodayColl(todayColl);
 
         /**
@@ -369,18 +369,18 @@ public class CollectionIndexElasticSearchService {
             toDate = DateUtils.addDays(new Date(), 1);
         }
         // Current Year till today collection
-        tillDateColl = getCollectionBetweenDates(collectionDetailsRequest, fromDate, toDate, null, TOTAL_AMOUNT);
+        tillDateColl = getCollectionBetweenDates(collectionDetailsRequest, fromDate, toDate, null, null, TOTAL_AMOUNT);
         collectionIndexDetails.setCytdColl(tillDateColl);
 
         BigDecimal demandColl = calculateDemandCollection(collectionDetailsRequest, fromDate, toDate);
         collectionIndexDetails.setDmdColl(demandColl);
 
         collectionIndexDetails.setPntlyColl(getCollectionBetweenDates(collectionDetailsRequest, fromDate,
-                toDate, null, LATE_PAYMENT_CHARGES));
+                toDate, null, null, LATE_PAYMENT_CHARGES));
 
         // Last year till same date of today’s date collection
         tillDateColl = getCollectionBetweenDates(collectionDetailsRequest, DateUtils.addYears(fromDate, -1),
-                DateUtils.addYears(toDate, -1), null, TOTAL_AMOUNT);
+                DateUtils.addYears(toDate, -1), null, null, TOTAL_AMOUNT);
         collectionIndexDetails.setLytdColl(tillDateColl);
         Long timeTaken = System.currentTimeMillis() - startTime;
         LOGGER.debug("Time taken by getCompleteCollectionIndexDetails() is : " + timeTaken + MILLISECS);
@@ -394,10 +394,10 @@ public class CollectionIndexElasticSearchService {
      * @return BigDecimal
      */
     private BigDecimal calculateDemandCollection(CollectionDetailsRequest collectionDetailsRequest, Date fromDate, Date toDate) {
-        return getCollectionBetweenDates(collectionDetailsRequest, fromDate, toDate, null, ARREAR_AMOUNT)
-                .add(getCollectionBetweenDates(collectionDetailsRequest, fromDate, toDate, null, CURRENT_AMOUNT))
-                .add(getCollectionBetweenDates(collectionDetailsRequest, fromDate, toDate, null, ARREAR_CESS))
-                .add(getCollectionBetweenDates(collectionDetailsRequest, fromDate, toDate, null, CURRENT_CESS));
+        return getCollectionBetweenDates(collectionDetailsRequest, fromDate, toDate, null, null, ARREAR_AMOUNT)
+                .add(getCollectionBetweenDates(collectionDetailsRequest, fromDate, toDate, null, null, CURRENT_AMOUNT))
+                .add(getCollectionBetweenDates(collectionDetailsRequest, fromDate, toDate, null, null, ARREAR_CESS))
+                .add(getCollectionBetweenDates(collectionDetailsRequest, fromDate, toDate, null, null, CURRENT_CESS));
     }
 
     /**
@@ -410,7 +410,7 @@ public class CollectionIndexElasticSearchService {
      * @return BigDecimal
      */
     public BigDecimal getCollectionBetweenDates(CollectionDetailsRequest collectionDetailsRequest, Date fromDate,
-            Date toDate, String cityName, String fieldName) {
+            Date toDate, String cityName, String wardName, String fieldName) {
         Long startTime = System.currentTimeMillis();
         BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, COLLECTION_INDEX_NAME);
         boolQuery = boolQuery
@@ -419,6 +419,8 @@ public class CollectionIndexElasticSearchService {
                 .mustNot(QueryBuilders.matchQuery(STATUS, CANCELLED));
         if (StringUtils.isNotBlank(cityName))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(CITY_NAME, cityName));
+        else if (StringUtils.isNotBlank(wardName))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(REVENUE_WARD, wardName));
         
         SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(COLLECTION_INDEX_NAME)
                 .withQuery(boolQuery).addAggregation(AggregationBuilders.sum(COLLECTIONTOTAL).field(fieldName))
@@ -985,8 +987,16 @@ public class CollectionIndexElasticSearchService {
                     && !wardWiseBillCollectors.isEmpty()) {
                 collIndData.setBillCollector(wardWiseBillCollectors.get(name) == null ? StringUtils.EMPTY
                         : wardWiseBillCollectors.get(name).getBillCollector());
-                collIndData.setMobileNumber(wardWiseBillCollectors.get(name) == null ? StringUtils.EMPTY
-                        : wardWiseBillCollectors.get(name).getMobileNumber());
+                collIndData.setBillCollMobNo(wardWiseBillCollectors.get(name) == null ? StringUtils.EMPTY
+                        : wardWiseBillCollectors.get(name).getBillCollectorMobileNo());
+                collIndData.setRevenueInspector(wardWiseBillCollectors.get(name) == null ? StringUtils.EMPTY
+                        : wardWiseBillCollectors.get(name).getRevenueInspector());
+                collIndData.setRevInspectorMobNo(wardWiseBillCollectors.get(name) == null ? StringUtils.EMPTY
+                        : wardWiseBillCollectors.get(name).getRevenueInspectorMobileNo());
+                collIndData.setRevenueOfficer(wardWiseBillCollectors.get(name) == null ? StringUtils.EMPTY
+                        : wardWiseBillCollectors.get(name).getRevenueOfficer());
+                collIndData.setRevOfficerMobNo(wardWiseBillCollectors.get(name) == null ? StringUtils.EMPTY
+                        : wardWiseBillCollectors.get(name).getRevenueOfficerMobileNo());
             }
         }
         collIndData.setBoundaryName(name);
@@ -1003,7 +1013,9 @@ public class CollectionIndexElasticSearchService {
         else if (collectionDetailsRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_GRADEWISE))
             aggregationField = CITY_GRADE;
         else if (collectionDetailsRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_WARDWISE)
-                || collectionDetailsRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_BILLCOLLECTORWISE))
+                || collectionDetailsRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_BILLCOLLECTORWISE)
+                || DASHBOARD_GROUPING_REVENUEINSPECTORWISE.equalsIgnoreCase(collectionDetailsRequest.getType()) 
+                || DASHBOARD_GROUPING_REVENUEOFFICERWISE.equalsIgnoreCase(collectionDetailsRequest.getType()))
             aggregationField = REVENUE_WARD;
         return aggregationField;
     }
@@ -1822,7 +1834,7 @@ public class CollectionIndexElasticSearchService {
         List<CollTableData> collDetails = new ArrayList<>();
         List<CollTableData> billCollectorWiseTableData = new ArrayList<>();
         CollTableData collTableData;
-        String billCollectorNameNumber;
+        String userNameAndNumber = StringUtils.EMPTY;
         /**
          * Fetch the Ward-wise data
          */
@@ -1838,19 +1850,30 @@ public class CollectionIndexElasticSearchService {
         for (BillCollectorIndex billCollIndex : billCollectorsList) {
             if (wardReceiptDetails.get(billCollIndex.getRevenueWard()) != null
                     && StringUtils.isNotBlank(billCollIndex.getRevenueWard())) {
-                billCollectorNameNumber = billCollIndex.getBillCollector().concat("~")
-                        .concat(StringUtils.isBlank(billCollIndex.getMobileNumber()) ? StringUtils.EMPTY
-                                : billCollIndex.getMobileNumber());
+                if (DASHBOARD_GROUPING_BILLCOLLECTORWISE.equalsIgnoreCase(collectionDetailsRequest.getType()))
+                    userNameAndNumber = billCollIndex.getBillCollector().concat("~")
+                            .concat(StringUtils.isBlank(billCollIndex.getBillCollectorMobileNo()) ? StringUtils.EMPTY
+                                    : billCollIndex.getBillCollectorMobileNo());
+                else if (DASHBOARD_GROUPING_REVENUEINSPECTORWISE.equalsIgnoreCase(collectionDetailsRequest.getType()))
+                    userNameAndNumber = (StringUtils.isBlank(billCollIndex.getRevenueInspector()) ? StringUtils.EMPTY
+                            : billCollIndex.getRevenueInspector()).concat("~")
+                                    .concat(StringUtils.isBlank(billCollIndex.getRevenueInspectorMobileNo()) ? StringUtils.EMPTY
+                                            : billCollIndex.getRevenueInspectorMobileNo());
+                else if (DASHBOARD_GROUPING_REVENUEOFFICERWISE.equalsIgnoreCase(collectionDetailsRequest.getType()))
+                    userNameAndNumber = (StringUtils.isBlank(billCollIndex.getRevenueOfficer()) ? StringUtils.EMPTY
+                            : billCollIndex.getRevenueOfficer()).concat("~")
+                                    .concat(StringUtils.isBlank(billCollIndex.getRevenueOfficerMobileNo()) ? StringUtils.EMPTY
+                                            : billCollIndex.getRevenueOfficerMobileNo());
                 if (billCollectorWiseMap.isEmpty()) {
                     collDetails.add(wardReceiptDetails.get(billCollIndex.getRevenueWard()));
-                    billCollectorWiseMap.put(billCollectorNameNumber, collDetails);
+                    billCollectorWiseMap.put(userNameAndNumber, collDetails);
                 } else {
-                    if (!billCollectorWiseMap.containsKey(billCollectorNameNumber)) {
+                    if (!billCollectorWiseMap.containsKey(userNameAndNumber)) {
                         collDetails = new ArrayList<>();
                         collDetails.add(wardReceiptDetails.get(billCollIndex.getRevenueWard()));
-                        billCollectorWiseMap.put(billCollectorNameNumber, collDetails);
+                        billCollectorWiseMap.put(userNameAndNumber, collDetails);
                     } else {
-                        billCollectorWiseMap.get(billCollectorNameNumber)
+                        billCollectorWiseMap.get(userNameAndNumber)
                                 .add(wardReceiptDetails.get(billCollIndex.getRevenueWard()));
                     }
                 }
@@ -1859,13 +1882,13 @@ public class CollectionIndexElasticSearchService {
 
         for (Entry<String, List<CollTableData>> entry : billCollectorWiseMap.entrySet()) {
             collTableData = new CollTableData();
-            setTableValuesForBillCollector(collTableData, entry);
+            setTableValuesForBillCollector(collTableData, entry, collectionDetailsRequest.getType());
             billCollectorWiseTableData.add(collTableData);
         }
         return billCollectorWiseTableData;
     }
 
-    private void setTableValuesForBillCollector(CollTableData collTableData, Entry<String, List<CollTableData>> entry) {
+    private void setTableValuesForBillCollector(CollTableData collTableData, Entry<String, List<CollTableData>> entry, String aggregationLevel) {
         BigDecimal currDayColl = BigDecimal.ZERO;
         BigDecimal cytdColl = BigDecimal.ZERO;
         BigDecimal lytdColl = BigDecimal.ZERO;
@@ -1899,7 +1922,7 @@ public class CollectionIndexElasticSearchService {
         BigDecimal lyTotalAdvance = BigDecimal.ZERO;
         BigDecimal lyTotalColl = BigDecimal.ZERO;
         
-        String[] billCollectorNameNumberArr = entry.getKey().split("~");
+        String[] userNameNumberArr = entry.getKey().split("~");
         for (CollTableData tableData : entry.getValue()) {
             currDayColl = currDayColl
                     .add(tableData.getTodayColl() == null ? BigDecimal.ZERO : tableData.getTodayColl());
@@ -1938,9 +1961,16 @@ public class CollectionIndexElasticSearchService {
             currentInterestDemand = currentInterestDemand.add(tableData.getCurrentInterestDemand() == null ? BigDecimal.ZERO : tableData.getCurrentInterestDemand());
             
         }
-        collTableData.setBillCollector(billCollectorNameNumberArr[0]);
-        collTableData
-                .setMobileNumber(billCollectorNameNumberArr.length > 1 ? billCollectorNameNumberArr[1] : StringUtils.EMPTY);
+        if (DASHBOARD_GROUPING_BILLCOLLECTORWISE.equalsIgnoreCase(aggregationLevel)) {
+            collTableData.setBillCollector(userNameNumberArr[0]);
+            collTableData.setBillCollMobNo(userNameNumberArr.length > 1 ? userNameNumberArr[1] : StringUtils.EMPTY);
+        } else if (DASHBOARD_GROUPING_REVENUEINSPECTORWISE.equalsIgnoreCase(aggregationLevel)) {
+            collTableData.setRevenueInspector(userNameNumberArr[0]);
+            collTableData.setRevInspectorMobNo(userNameNumberArr.length > 1 ? userNameNumberArr[1] : StringUtils.EMPTY);
+        } else if (DASHBOARD_GROUPING_REVENUEOFFICERWISE.equalsIgnoreCase(aggregationLevel)) {
+            collTableData.setRevenueOfficer(userNameNumberArr[0]);
+            collTableData.setRevOfficerMobNo(userNameNumberArr.length > 1 ? userNameNumberArr[1] : StringUtils.EMPTY);
+        }
         collTableData.setTodayColl(currDayColl);
         collTableData.setCytdColl(cytdColl);
         collTableData.setCytdDmd(cytdDmd);
@@ -1980,16 +2010,20 @@ public class CollectionIndexElasticSearchService {
      * @return List
      */
     public List<BillCollectorIndex> getBillCollectorDetails(CollectionDetailsRequest collectionDetailsRequest) {
+        String sortField = REVENUE_WARD;
+        if(DASHBOARD_GROUPING_BILLCOLLECTORWISE.equalsIgnoreCase(collectionDetailsRequest.getType()))
+            sortField = "billCollector";
+        else if(DASHBOARD_GROUPING_REVENUEINSPECTORWISE.equalsIgnoreCase(collectionDetailsRequest.getType()))
+            sortField = "revenueInspector";
+        else if(DASHBOARD_GROUPING_REVENUEOFFICERWISE.equalsIgnoreCase(collectionDetailsRequest.getType()))
+            sortField = "revenueOfficer";
         SearchQuery searchQueryColl = new NativeSearchQueryBuilder()
                 .withIndices(PropertyTaxConstants.BILL_COLLECTOR_INDEX_NAME)
-                .withFields("billCollector", "mobileNumber", REVENUE_WARD)
                 .withQuery(QueryBuilders.boolQuery()
                         .filter(QueryBuilders.matchQuery(CITY_CODE, collectionDetailsRequest.getUlbCode())))
-                .withSort(new FieldSortBuilder("billCollector").order(SortOrder.ASC))
+                .withSort(new FieldSortBuilder(sortField).order(SortOrder.ASC))
                 .withPageable(new PageRequest(0, 250)).build();
-        List<BillCollectorIndex> billCollectorsList = elasticsearchTemplate.queryForList(searchQueryColl,
-                BillCollectorIndex.class);
-        return billCollectorsList;
+        return elasticsearchTemplate.queryForList(searchQueryColl, BillCollectorIndex.class);
     }
 
     /**

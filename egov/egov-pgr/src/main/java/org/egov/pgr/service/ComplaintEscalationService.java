@@ -78,7 +78,6 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Restrictions;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,6 +85,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -173,27 +173,22 @@ public class ComplaintEscalationService {
         return escalationRepository.findEscalationByComplaintTypeId(complaintTypeId);
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void escalateComplaint() {
-        try {
-
-            ObjectType objectType = objectTypeService.getObjectTypeByName(EG_OBJECT_TYPE_COMPLAINT);
-
-            if (objectType == null) {
-                LOG.warn("Escalation can't be done, Object Type {} not found", EG_OBJECT_TYPE_COMPLAINT);
-                return;
-            }
-
-            boolean sendMessage = "YES".equalsIgnoreCase(appConfigValuesService
-                    .getConfigValuesByModuleAndKey(MODULE_NAME, "SENDEMAILFORESCALATION").get(0).getValue());
-
-            getComplaintsEligibleForEscalation()
-                    .forEach(complaint -> findNextOwnerAndEscalate(complaint, objectType, sendMessage));
-
-        } catch (RuntimeException e) {
-            // Ignoring and logging exception since exception will cause multi city scheduler to fail for all remaining cities.
-            LOG.error("An error occurred, escalation can't be completed ", e);
+        ObjectType objectType = objectTypeService.getObjectTypeByName(EG_OBJECT_TYPE_COMPLAINT);
+        if (objectType == null) {
+            LOG.warn("Escalation can't be done, Object Type {} not found", EG_OBJECT_TYPE_COMPLAINT);
+            return;
         }
+
+        boolean sendMessage = "YES".equalsIgnoreCase(appConfigValuesService
+                .getConfigValuesByModuleAndKey(MODULE_NAME, "SENDEMAILFORESCALATION").get(0).getValue());
+
+        getComplaintsEligibleForEscalation()
+                .stream()
+                .filter(Complaint::transitionInprogress)
+                .forEach(complaint -> findNextOwnerAndEscalate(complaint, objectType, sendMessage));
+
     }
 
     private void findNextOwnerAndEscalate(Complaint complaint, ObjectType objectType, boolean sendMessage) {
@@ -201,30 +196,29 @@ public class ComplaintEscalationService {
                 complaint.getAssignee().getId(), objectType.getId(), complaint.getComplaintType().getCode());
         Position nextAssignee = null;
         User nextOwner = null;
-        if (positionHierarchy != null) {
-            nextAssignee = positionHierarchy.getToPosition();
-            List<Assignment> superiorAssignments = assignmentService.getAssignmentsForPosition(nextAssignee.getId(),
-                    new Date());
-            nextOwner = !superiorAssignments.isEmpty() ? superiorAssignments.get(0).getEmployee() : null;
-        } else {
+        if (positionHierarchy == null) {
             Set<User> users = userService.getUsersByRoleName(PGRConstants.GRO_ROLE_NAME);
             if (!users.isEmpty())
                 nextOwner = users.iterator().next();
             if (nextOwner != null) {
-                List<Position> positionList = positionMasterService.getPositionsForEmployee(nextOwner.getId(), new Date());
-                if (!positionList.isEmpty())
-                    nextAssignee = positionList.iterator().next();
-                else
+                List<Position> assigneePositions = positionMasterService.getPositionsForEmployee(nextOwner.getId(), new Date());
+                if (assigneePositions.isEmpty())
                     LOG.warn("Could not escalate, no position defined for Grievance Officer role");
-            } else
+                else
+                    nextAssignee = assigneePositions.iterator().next();
+            } else {
                 LOG.warn("Could not escalate, no user defined for Grievance Officer role");
+            }
+        } else {
+            nextAssignee = positionHierarchy.getToPosition();
+            List<Assignment> superiorAssignments = assignmentService.getAssignmentsForPosition(nextAssignee.getId(), new Date());
+            nextOwner = superiorAssignments.isEmpty() ? null : superiorAssignments.get(0).getEmployee();
         }
 
         updateComplaintEscalation(complaint, nextAssignee, nextOwner, sendMessage);
     }
 
-    private void updateComplaintEscalation(Complaint complaint, Position nextAssignee, User nextOwner,
-                                           boolean sendMessage) {
+    private void updateComplaintEscalation(Complaint complaint, Position nextAssignee, User nextOwner, boolean sendMessage) {
         if (nextAssignee != null && nextOwner != null && !nextAssignee.equals(complaint.getAssignee())) {
             Position previousAssignee = complaint.getAssignee();
             complaint.setEscalationDate(getExpiryDate(complaint));
@@ -298,11 +292,12 @@ public class ComplaintEscalationService {
         Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Complaint.class, "complaint")
                 .createAlias("complaint.status", "complaintStatus");
 
-        criteria.add(Restrictions.disjunction().add(Restrictions.eq(COMPLAINT_STATUS_NAME, REOPENED.name()))
+        criteria.add(Restrictions.disjunction()
+                .add(Restrictions.eq(COMPLAINT_STATUS_NAME, REOPENED.name()))
                 .add(Restrictions.eq(COMPLAINT_STATUS_NAME, FORWARDED.name()))
                 .add(Restrictions.eq(COMPLAINT_STATUS_NAME, PROCESSING.name()))
                 .add(Restrictions.eq(COMPLAINT_STATUS_NAME, REGISTERED.name())))
-                .add(Restrictions.lt("complaint.escalationDate", new DateTime().toDate()))
+                .add(Restrictions.lt("complaint.escalationDate", new Date()))
                 .setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 
         return criteria.list();

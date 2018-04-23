@@ -54,17 +54,14 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.Validity;
 import org.egov.tl.repository.ValidityRepository;
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -112,40 +109,34 @@ public class ValidityService {
                         license.getNatureOfBusiness().getId()));
     }
 
-
     public void applyLicenseValidity(License license) {
         Validity validity = getApplicableLicenseValidity(license);
         if (validity == null)
             throw new ValidationException("TL-010", "License validity not defined.");
-        if (license.isLegacy()) {
-            applyValidityToLegacyLicense(license, validity);
-        } else {
-            applyValidityToLicense(license, validity);
+        if (validity.isBasedOnFinancialYear())
+            applyLicenseExpiryBasedOnFinancialYear(license);
+        else
+            applyLicenseExpiryBasedOnCustomValidity(license, validity);
+
+        if (license.getDateOfExpiry() == null && license.isLegacy()) {
+            license.getCurrentDemand().getEgDemandDetails().stream()
+                    .filter(demandDetail -> demandDetail.getAmount().doubleValue() > 0)
+                    .min(Comparator.comparing(EgDemandDetails::getInstallmentEndDate))
+                    .ifPresent(demandDetail ->
+                            license.setDateOfExpiry(new DateTime(demandDetail.getInstallmentEndDate()).minusYears(1).toDate())
+                    );
         }
     }
 
-    private void applyValidityToLicense(License license, Validity validity) {
-        if (validity.isBasedOnFinancialYear()) {
-            license.setDateOfExpiry(license.getCurrentDemand().getEgInstallmentMaster().getToDate());
-        } else {
-            applyLicenseValidityBasedOnCustomValidity(license, validity);
-        }
+    private void applyLicenseExpiryBasedOnFinancialYear(License license) {
+        license.getCurrentDemand().getEgDemandDetails().stream()
+                .filter(demandDetail -> demandDetail.getAmount().doubleValue() > 0
+                        && demandDetail.getAmount().subtract(demandDetail.getAmtCollected()).doubleValue() <= 0)
+                .max(Comparator.comparing(EgDemandDetails::getInstallmentEndDate))
+                .ifPresent(demandDetail -> license.setDateOfExpiry(demandDetail.getInstallmentEndDate()));
     }
 
-    private void applyValidityToLegacyLicense(License license, Validity validity) {
-        license.getCurrentDemand().getEgDemandDetails().stream().
-                filter(demandDetail -> demandDetail.getAmount().subtract(demandDetail.getAmtCollected()).doubleValue() <= 0).
-                max(Comparator.comparing(EgDemandDetails::getInstallmentEndDate)).
-                ifPresent(demandDetail -> {
-                            if (validity.isBasedOnFinancialYear())
-                                license.setDateOfExpiry(demandDetail.getInstallmentEndDate());
-                            else
-                                applyLicenseValidityBasedOnCustomValidity(license, validity);
-                        }
-                );
-    }
-
-    private void applyLicenseValidityBasedOnCustomValidity(License license, Validity validity) {
+    private void applyLicenseExpiryBasedOnCustomValidity(License license, Validity validity) {
         LocalDate nextExpiryDate = new LocalDate(license.isNewApplication() ? license.getCommencementDate() :
                 license.getCurrentDemand().getEgInstallmentMaster().getFromDate());
         if (validity.getYear() != null && validity.getYear() > 0)

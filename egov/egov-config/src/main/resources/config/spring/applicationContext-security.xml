@@ -54,7 +54,7 @@
 	   http://www.springframework.org/schema/security
 	   http://www.springframework.org/schema/security/spring-security.xsd" default-lazy-init="true">
 
-    <security:global-method-security secured-annotations="disabled"
+    <security:global-method-security secured-annotations="enabled"
                                      access-decision-manager-ref="accessDecisionManager"/>
 
     <bean id="concurrentSessionFilter" class="org.springframework.security.web.session.ConcurrentSessionFilter">
@@ -228,5 +228,12 @@
     </bean>
 
     <bean id="applicationAuthorizationMetadataSource"
-          class="org.egov.infra.config.security.authorization.ApplicationAuthorizationMetadataSource"/>
+          class="org.egov.infra.config.security.authorization.ApplicationAuthorizationMetadataSource">
+        <property name="excludePatterns">
+            <list>
+                <value>/login</value>
+                <value>/public</value>
+            </list>
+        </property>
+    </bean>
 </beans>

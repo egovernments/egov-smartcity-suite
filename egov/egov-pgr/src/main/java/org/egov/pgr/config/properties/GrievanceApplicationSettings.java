@@ -54,9 +54,11 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 
 @Configuration
-@PropertySource(value = {
+@PropertySource(name = "grievanceApplicationSettings", value = {
         "classpath:config/pgr-application-config.properties",
-        "classpath:dashboard/pgr-dashboard-sql.properties"}, ignoreResourceNotFound = true)
+        "classpath:dashboard/pgr-dashboard-sql.properties",
+        "classpath:config/application-config-${client.id}.properties",
+        "classpath:config/pgr-override-${env}.properties"}, ignoreResourceNotFound = true)
 public class GrievanceApplicationSettings {
 
     @Autowired
@@ -66,4 +68,11 @@ public class GrievanceApplicationSettings {
         return environment.getProperty(key);
     }
 
+    public boolean escalationSchedulerEnabled() {
+        return environment.getProperty("pgr.escalation.job.enabled", Boolean.class);
+    }
+
+    public boolean indexingSchedulerEnabled() {
+        return environment.getProperty("pgr.indexing.job.enabled", Boolean.class);
+    }
 }

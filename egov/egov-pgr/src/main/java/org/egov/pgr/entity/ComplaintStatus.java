@@ -58,6 +58,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import static org.apache.commons.lang3.StringUtils.capitalize;
 import static org.egov.pgr.entity.ComplaintStatus.SEQ_COMPLAINTSTATUS;
 
 @Entity
@@ -89,6 +90,10 @@ public class ComplaintStatus extends AbstractPersistable<Long> {
 
     public void setName(final String name) {
         this.name = name;
+    }
+
+    public String displayName() {
+        return capitalize(this.name.toLowerCase());
     }
 
 }

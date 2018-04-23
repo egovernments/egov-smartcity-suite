@@ -570,4 +570,12 @@
         <put-attribute name="page-title" value="lbl.title.apartmentDCBReport.report" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/apartmentdcbreport-form.jsp"/>
     </definition>
+     <definition name="markAsCourtCase-form" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.courtcase.title" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/courtCase/markAsCourtCase-form.jsp"/>
+    </definition>
+    <definition name="markascourtcase-success" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.courtcase.title" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/courtCase/markascourtcase-success.jsp"/>
+    </definition>
 </tiles-definitions> 

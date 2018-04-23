@@ -54,100 +54,100 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <div class="row">
     <div class="col-md-12">
-        <form:form class="form-horizontal form-groups-bordered" action=""
-                   id="dcbreportform" modelAttribute="dCBReportResult" method="get">
-            <div class="panel panel-primary" data-collapsed="0">
-                <div class="panel-heading">
-                    <div class="panel-title">
-                        <strong><spring:message code="title.licensewisedcbreport"/></strong>
-                    </div>
-                </div>
-                <div class="panel-body"></div>
-                <div class="form-group">
-                    <label class="col-sm-3 control-label text-right"> License
-                        Number</label>
-                    <div class="col-sm-6 add-margin">
-                        <input type="text" name="licensenumber" id="licensenumber"
-                               class="form-control patternvalidation" maxlength="15"/>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-sm-3 control-label text-right">Status</label>
-                    <div class="col-sm-6 add-margin">
-                        <select name="active" id="activeLicense" class="form-control">
-                            <option value="0">All</option>
-                            <option value="1">Active</option>
-                            <option value="2">Inactive</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-sm-3 control-label text-right"> <spring:message code='baseregister.ward'/></label>
-                    <div class="col-sm-6 add-margin">
-                        <form:select multiple="true" path="wardid" id="ward" cssClass="form-control">
-                            <form:options items="${wardList}" itemLabel="name" itemValue="id"/>
-                        </form:select>
-                    </div>
+        <div class="panel panel-primary" data-collapsed="0">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    <strong><spring:message code="title.dcbreport"/></strong>
                 </div>
             </div>
-            <div class="row">
-                <div class="text-center">
-                    <button type="button" id="btnsearch" class="btn btn-primary">
-                        <spring:message code="lbl.search"/>
-                    </button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal"
-                            onclick="window.close();">
-                        <spring:message code="lbl.close"/>
-                    </button>
-                </div>
-            </div>
-        </form:form>
-    </div>
-</div>
+            <div class="panel-body">
+                <form:form class="form-horizontal form-groups-bordered" action=""
+                           id="dcbreportform" modelAttribute="dCBReportResult" method="get">
 
-<div class="row display-hide report-section">
-    <div class="col-md-12 table-header text-left"><spring:message code="lbl.drill.report"/></div>
-    <div class="col-md-12 form-group report-table-container">
-        <table
-                class="table table-bordered datatable dt-responsive table-hover multiheadertbl"
-                id="tbldcbdrilldown">
-            <thead>
-            <tr>
-                <th rowspan="2"></th>
-                <th rowspan="2"></th>
-                <th rowspan="2"></th>
-                <th colspan="3"><spring:message code="lbl.demand"/></th>
-                <th colspan="3"><spring:message code="lbl.collection"/></th>
-                <th colspan="3"><spring:message code="lbl.balance"/></th>
-            </tr>
-            <tr>
-                <th><spring:message code="lbl.arrear"/></th>
-                <th><spring:message code="lbl.current"/></th>
-                <th><spring:message code="lbl.total"/></th>
-                <th><spring:message code="lbl.arrear"/></th>
-                <th><spring:message code="lbl.current"/></th>
-                <th><spring:message code="lbl.total"/></th>
-                <th><spring:message code="lbl.arrear"/></th>
-                <th><spring:message code="lbl.current"/></th>
-                <th><spring:message code="lbl.total"/></th>
-            </tr>
-            </thead>
-            <tfoot id="report-footer">
-            <tr>
-                <td colspan="3"><spring:message
-                        code="lbl.total"/></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            </tfoot>
-        </table>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label text-right">
+                            <spring:message code="lbl.license.no"/>
+                        </label>
+                        <div class="col-sm-6 add-margin">
+                            <input type="text" name="licensenumber" id="licensenumber"
+                                   class="form-control patternvalidation" maxlength="15"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label text-right">
+                            <spring:message code="lbl.license.status"/>
+                        </label>
+                        <div class="col-sm-6 add-margin">
+                            <select name="active" id="activeLicense" class="form-control">
+                                <option value="0"><spring:message code="lbl.default.all"/></option>
+                                <option value="1"><spring:message code="lbl.isactive"/></option>
+                                <option value="2"><spring:message code="lbl.inactive"/></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label text-right"> <spring:message code='baseregister.ward'/></label>
+                        <div class="col-sm-6 add-margin">
+                            <form:select multiple="true" path="wardid" id="ward" cssClass="form-control">
+                                <form:options items="${wardList}" itemLabel="name" itemValue="id"/>
+                            </form:select>
+                        </div>
+                    </div>
+                    <div class="form-group add-margin">
+                        <div class="text-center">
+                            <button type="button" id="btnsearch" class="btn btn-primary">
+                                <spring:message code="lbl.search"/>
+                            </button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal"
+                                    onclick="window.close();">
+                                <spring:message code="lbl.close"/>
+                            </button>
+                        </div>
+                    </div>
+                </form:form>
+                <div class="row display-hide report-section add-margin">
+                    <table class="table table-bordered datatable dt-responsive table-hover multiheadertbl" id="tbldcbdrilldown"
+                           style="overflow-x: auto;max-width: 100%;min-width: 100%">
+                        <thead>
+                        <tr>
+                            <th rowspan="2"></th>
+                            <th rowspan="2"></th>
+                            <th rowspan="2"></th>
+                            <th rowspan="2"></th>
+                            <th colspan="3"><spring:message code="lbl.demand"/></th>
+                            <th colspan="3"><spring:message code="lbl.collection"/></th>
+                            <th colspan="3"><spring:message code="lbl.balance"/></th>
+                        </tr>
+                        <tr>
+                            <th><spring:message code="lbl.arrear"/></th>
+                            <th><spring:message code="lbl.current"/></th>
+                            <th><spring:message code="lbl.total"/></th>
+                            <th><spring:message code="lbl.arrear"/></th>
+                            <th><spring:message code="lbl.current"/></th>
+                            <th><spring:message code="lbl.total"/></th>
+                            <th><spring:message code="lbl.arrear"/></th>
+                            <th><spring:message code="lbl.current"/></th>
+                            <th><spring:message code="lbl.total"/></th>
+                        </tr>
+                        </thead>
+                        <tfoot id="report-footer">
+                        <tr>
+                            <td colspan="4"><spring:message code="lbl.total"/></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <link rel="stylesheet"
