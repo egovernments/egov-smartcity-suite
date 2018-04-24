@@ -177,9 +177,10 @@ public class LicenseApplicationService extends TradeLicenseService {
             licenseProcessWorkflowService.createNewLicenseWorkflowTransition(license, workflowBean);
 
         if (BUTTONAPPROVE.equals(workflowBean.getWorkFlowAction())) {
-            generateAndStoreCertificate(license);
-            if (isEmpty(license.getLicenseNumber()) && license.isNewApplication())
+            if (isEmpty(license.getLicenseNumber()) && license.isNewApplication()) {
                 license.setLicenseNumber(licenseNumberUtils.generateLicenseNumber());
+            }
+            generateAndStoreCertificate(license);
         }
 
         licenseRepository.save(license);
