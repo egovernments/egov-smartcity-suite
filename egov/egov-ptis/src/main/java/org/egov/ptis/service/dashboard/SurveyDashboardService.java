@@ -111,6 +111,7 @@ public class SurveyDashboardService {
     private static final String APPROVED_TAX = "approvedTax";
     private static final String SYSTEM_TAX = "systemTax";
     private static final String GIS_TAX = "gisTax";
+    private static final String NA = "N/A";
 
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
@@ -145,7 +146,7 @@ public class SurveyDashboardService {
             String applicationType = sourceAsMap.get(APPLICATION_TYPE).toString();
             surveyResponse.setApplicationNo(applicationNo);
             surveyResponse.setAssessmentNo(
-                    sourceAsMap.get("assessmentNo") == null ? "N/A" : sourceAsMap.get("assessmentNo").toString());
+                    sourceAsMap.get("assessmentNo") == null ? NA : sourceAsMap.get("assessmentNo").toString());
             surveyResponse.setDoorNo(sourceAsMap.get("doorNo").toString());
             surveyResponse.setRevenueWard(sourceAsMap.get(REVENUE_WARD).toString());
             surveyResponse.setRevenueBlock(sourceAsMap.get("blockName").toString());
@@ -156,8 +157,8 @@ public class SurveyDashboardService {
             surveyResponse.setApplicationTax((double) sourceAsMap.get(APPLICATION_TAX));
             surveyResponse.setAppStatus(sourceAsMap.get(APPLICATION_STATUS).toString());
             surveyResponse.setAssistantName(
-                    sourceAsMap.get("assistantName") == null ? "N/A" : sourceAsMap.get("assistantName").toString());
-            surveyResponse.setRiName(sourceAsMap.get("riName") == null ? "N/A" : sourceAsMap.get("riName").toString());
+                    sourceAsMap.get("assistantName") == null ? NA : sourceAsMap.get("assistantName").toString());
+            surveyResponse.setRiName(sourceAsMap.get("riName") == null ? NA : sourceAsMap.get("riName").toString());
             surveyResponse.setIsreffered((boolean) sourceAsMap.get(SENT_TO_THIRD_PARTY));
             surveyResponse.setIsVarified((boolean) sourceAsMap.get(THIRD_PARTY_FLAG));
             surveyResponse.setServiceName(applicationType);
@@ -165,8 +166,8 @@ public class SurveyDashboardService {
             surveyResponse.setUlbCode(sourceAsMap.get(CITY_CODE).toString());
             Date applictionDate = DateUtils.getDate(sourceAsMap.get("applicationDate").toString(), "yyyy-MM-dd");
             surveyResponse.setAgeing(DateUtils.daysBetween(applictionDate, DateUtils.now()));
-            surveyResponse.setFunctionaryName(sourceAsMap.get(FUNCTIONARY_NAME).equals(StringUtils.EMPTY) ? "N/A"
-                    : sourceAsMap.get(FUNCTIONARY_NAME).toString());
+            surveyResponse.setFunctionaryName(
+                    sourceAsMap.get(FUNCTIONARY_NAME) == null ? NA : sourceAsMap.get(FUNCTIONARY_NAME).toString());
             surveyResponse.setWfStatus(fetchWorkflowStatus(sourceAsMap));
             surveyList.add(surveyResponse);
         }
@@ -293,9 +294,9 @@ public class SurveyDashboardService {
         Sum totalApprovedAggr;
         BigDecimal totalApprovedSysTax;
         BigDecimal totalApprovedTax;
-        String aggName=StringUtils.EMPTY;
+        String aggName = StringUtils.EMPTY;
         for (Bucket appBucket : approvedAggr.getBuckets()) {
-            aggName=appBucket.getKeyAsString();
+            aggName = appBucket.getKeyAsString();
             approvedSystemSumAggr = appBucket.getAggregations().get("approvedSystemTotal");
             totalApprovedSysTax = BigDecimal.valueOf(approvedSystemSumAggr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
             totalApprovedAggr = appBucket.getAggregations().get("approvedTotal");
@@ -402,7 +403,7 @@ public class SurveyDashboardService {
         BigDecimal totalGisTax;
         BigDecimal totalSystemTax;
         BigDecimal totalApplicationTax;
-        BigDecimal approvedSysTax; 
+        BigDecimal approvedSysTax;
         BigDecimal approvedTotalTax;
         gisSumAggr = bucket.getAggregations().get("gisTotal");
         totalGisTax = BigDecimal.valueOf(gisSumAggr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
@@ -420,6 +421,6 @@ public class SurveyDashboardService {
             approvedTotalTax = approvedTotalMap.get(name).get(1).get("totalApprovedTax");
             surveyResponse.setActlIncr(approvedTotalTax.subtract(approvedSysTax).doubleValue());
         }
-        surveyResponse.setDifference(surveyResponse.getExptdIncr()-surveyResponse.getActlIncr());
+        surveyResponse.setDifference(surveyResponse.getExptdIncr() - surveyResponse.getActlIncr());
     }
 }
