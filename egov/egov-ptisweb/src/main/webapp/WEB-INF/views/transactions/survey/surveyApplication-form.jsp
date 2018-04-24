@@ -60,15 +60,21 @@
 			</div>
 		</c:if>
 		<form:form class="form-horizontal form-groups-bordered"
-			id="searchSurveyApplication-form" modelAttribute="surveyApplication"
+			id="surveyApplication-form" modelAttribute="surveyApplication"
 			method="get">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
-						<input type="hidden"
-							value="${sessionScope.citymunicipalityname}, ${sessionScope.districtName} "
-							id="pdfTitle" />
 						<spring:message code="lbl.search.survey.application" />
+					</div>
+				</div>
+				<div class="panel-body custom-form">
+					<div class="form-group">
+						<label for="field-1" class="col-sm-2 control-label"><spring:message
+								code="lbl.assessmentNo" /></label>
+						<div class="col-sm-3 add-margin">
+							<input type="text" name="assessmentNo" class="form-control low-width" id="assessmentNo" />
+						</div>
 					</div>
 				</div>
 				<div class="panel-body custom-form">
@@ -85,24 +91,18 @@
 								<form:options items="${applicationTypes}" />
 							</form:select>
 						</div>
-						<%-- <label for="field-1" class="col-sm-2 control-label"><spring:message
-								code="lbl.status" /></label>
+						<label for="field-1" class="col-sm-2 control-label"><spring:message
+								code="lbl.applicationNo" /></label>
 						<div class="col-sm-3 add-margin">
-							<form:select id="applicationStatus"
-								path="applicationStatus" cssClass="form-control"
-								cssErrorClass="form-control error">
-								<form:option value="">
-									<spring:message code="lbl.option.select" />
-								</form:option>
-								<form:options items="${applicationStatus}" />
-							</form:select>
-						</div> --%>
+							<input type="text" name="applicationNo" class="form-control low-width" id="applicationNo" />
+						</div>
 					</div>
 				</div>
-				<div class="panel-body custom-form">
+				<input type="hidden" id="applicationNumbersArray" value="">
+				<div class="panel-body custom-form"> 
 					<div class="form-group">
 						<label for="field-1" class="col-sm-2 control-label"><spring:message
-								code="lbl.applicationType" /></label>
+								code="lbl.ward" /><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<form:select id="ward" 
 								path="ward" cssClass="form-control"
@@ -110,11 +110,11 @@
 								<form:option value="">
 									<spring:message code="lbl.option.select" />
 								</form:option>
-								<form:options items="${wardlist}" />
+								<form:options items="${wardlist}" itemValue="id" itemLabel="name"/>
 							</form:select>
 						</div>
 						<label for="field-1" class="col-sm-2 control-label"><spring:message
-								code="lbl.status" /></label>
+								code="lbl.locality" /></label>
 						<div class="col-sm-3 add-margin">
 							<form:select id="locality"
 								path="locality" cssClass="form-control"
@@ -122,32 +122,16 @@
 								<form:option value="">
 									<spring:message code="lbl.option.select" />
 								</form:option>
-								<form:options items="${localitylist}" />
+								<form:options items="${localitylist}" itemValue="id" itemLabel="name"/>
 							</form:select>
 						</div> 
 					</div>
 				</div>
 
-				<div class="panel-body custom-form">
-					<div class="form-group">
-						<label for="field-1" class="col-sm-2 control-label"><spring:message
-								code="lbl.applicationNo" /></label>
-						<div class="col-sm-3 add-margin">
-							<input type="text" name="applicationNo" class="form-control low-width" id="applicationNo"/>
-						</div>
-						<label for="field-1" class="col-sm-2 control-label"><spring:message
-								code="lbl.assessmentNo" /></label>
-						<div class="col-sm-3 add-margin">
-							<input type="text" name="assessmentNo" class="form-control low-width" id="assessmentNo" />
-						</div>
-					</div>
-				</div>
-
-
 				<div class="row">
 					<div class="text-center">
 						<button type="button" class="btn btn-primary"
-							id="searchSurveyApplication">
+							id="search">
 							<spring:message code="lbl.search" />
 						</button>
 						<a href="javascript:void(0)" class="btn btn-default"
@@ -156,27 +140,38 @@
 					</div>
 				</div>
 				<br>
+				<div>
+		<div class="panel-body">
+			<table
+				class="table table-bordered datatable dt-responsive table-hover"
+				id="resulttable">
+				<thead>
+					<tr>
+						<th align="center" class="bluebgheadtd">select</th>
+						<th align="center" class="bluebgheadtd">Application Number</th>
+						<th align="center" class="bluebgheadtd" >Assessment Number</th>
+						<th align="center" class="bluebgheadtd" ><spring:message
+								code="lbl.ward" /></th>
+					    <th align="center" class="bluebgheadtd" >Status</th>
+						<th align="center" class="bluebgheadtd">Nature Of Work</th>
+						<th align="center" class="bluebgheadtd" >Sender</th>
+					    
+					</tr>
+				</thead>
+			</table>
+			<div class="row">
+				<div class="text-center">
+					<button type="button" class="btn btn-primary add-margin"
+						id="updateBtn">
+						<spring:message code="lbl.update" />
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
 		</form:form>
 	</div>
-	<%-- <div class="col-md-15" id="searchResultDiv">
-		<table class="table table-bordered datatable dt-responsive "
-			id="search-table" width="220%">
-			<thead>
-				<tr>
-					<th>Application Number</th>
-					<th>Application Type</th>
-					<th>Assessment No</th>
-					<th>Application Date</th>
-					<th>Address</th>
-					<th>Status</th>
-					<th>Functionary Name</th>
-				</tr>
-			</thead>
-
-		</table>
-	</div>
-</div>
-
+	
+</div> 
 <script type="text/javascript"
-	src="<cdn:url value='/resources/js/app/searchSurveyApplication.js?rnd=${app_release_no}'/>"></script>
- --%>
+	src="<cdn:url value='/resources/js/app/surveyapplication.js?rnd=${app_release_no}'/>"></script>

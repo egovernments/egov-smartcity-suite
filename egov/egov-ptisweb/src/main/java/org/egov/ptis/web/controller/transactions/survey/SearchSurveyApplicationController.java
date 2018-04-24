@@ -54,7 +54,7 @@ import java.util.List;
 
 import org.egov.ptis.domain.entity.property.survey.SearchSurveyRequest;
 import org.egov.ptis.domain.entity.property.survey.SearchSurveyResponse;
-import org.egov.ptis.domain.service.survey.SurveyApplicationSearchService;
+import org.egov.ptis.domain.service.survey.SurveyApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -69,7 +69,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value = "/survey/appSearch")
 public class SearchSurveyApplicationController {
     @Autowired
-    private SurveyApplicationSearchService appService;
+    private SurveyApplicationService appService;
 
     @RequestMapping(value = "/applicationdetails", method = RequestMethod.GET)
     public String searchSurveyApplication(final Model model) {

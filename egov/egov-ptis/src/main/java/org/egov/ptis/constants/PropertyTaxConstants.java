@@ -1781,4 +1781,13 @@ public interface PropertyTaxConstants {
     
     public static final List<String> APPLICATION_TYPES=ImmutableList.of("New_Assessment","Alter_Assessment");
     public static final List<String> APPLICATION_STATUS=ImmutableList.of("Open","Closed","Approved","Cancelled");
+    
+    public static final TreeMap<String, String> SURVEY_APPLICATION_TYPES = new TreeMap<String, String>() {
+
+        {
+            put(PROP_CREATE_RSN, "New Property");
+            put(PROPERTY_MODIFY_REASON_ADD_OR_ALTER, "Addition/Alteration");
+
+        }
+    };
 }
