@@ -590,8 +590,9 @@ public class PropertyTaxElasticSearchIndexService {
             taxDetail.setTotalDmd(totalDemandValue);
             taxDetail.setCytdColl(totalCollections);
             taxDetail.setCytdDmd(proportionalDemand);
-            taxDetail.setAchievement(
-                    totalCollections.multiply(BIGDECIMAL_100).divide(proportionalDemand, 1, BigDecimal.ROUND_HALF_UP));
+            if(proportionalDemand.compareTo(BigDecimal.ZERO) > 0)
+                taxDetail.setAchievement(
+                        totalCollections.multiply(BIGDECIMAL_100).divide(proportionalDemand, 1, BigDecimal.ROUND_HALF_UP));
             taxDetail.setCytdBalDmd(proportionalDemand.subtract(totalCollections));
             if (StringUtils.isNotBlank(taxDetail.getUlbName()))
                 lastYearCollection = collectionIndexElasticSearchService
@@ -926,8 +927,9 @@ public class PropertyTaxElasticSearchIndexService {
             taxPayerDetails.setCytdBalDmd(cytdDmd.subtract(cytdColl));
             taxPayerDetails.setTotalDmd(totalDmd);
             taxPayerDetails.setLytdColl(lytdColl);
-            taxPayerDetails
-                    .setAchievement(cytdColl.multiply(BIGDECIMAL_100).divide(cytdDmd, 1, BigDecimal.ROUND_HALF_UP));
+            if(cytdDmd.compareTo(BigDecimal.ZERO) > 0)
+                taxPayerDetails
+                        .setAchievement(cytdColl.multiply(BIGDECIMAL_100).divide(cytdDmd, 1, BigDecimal.ROUND_HALF_UP));
             if (lytdColl.compareTo(BigDecimal.ZERO) == 0) 
                 taxPayerDetails.setLyVar(BIGDECIMAL_100);
             else
