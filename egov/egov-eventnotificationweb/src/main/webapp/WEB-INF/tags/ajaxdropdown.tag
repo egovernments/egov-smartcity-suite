@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<%--
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -45,79 +44,58 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
-  -->
+  --%>
 
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>egov-erp</artifactId>
-        <groupId>org.egov</groupId>
-        <version>3.0.0-SNAPSHOT</version>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
+<%@ tag body-content="empty" dynamic-attributes="true" isELIgnored="false" %>
+<%@ attribute name="id" required="true" %>
+<%@ attribute name="fields" required="true"%>
+<%@ attribute name="dropdownId" required="true"%>
+<%@ attribute name="url" required="true"%>
+<%@ attribute name="optionAttributes" required="false"%>
+<%@ attribute name="selectedValue" required="false" %>
+<%@ attribute name="afterSuccess" required="false" %>
+<%@ attribute name="contextToBeUsed" required="false" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<script>
+<%
+String[] optionAttributeList=new String[0];
+if(optionAttributes!=null && !"".equals(optionAttributes.trim())){
+    optionAttributeList=optionAttributes.split(",");
+    for(int i=0;i<optionAttributeList.length;i++){
+        optionAttributeList[i]=optionAttributeList[i].trim();
+    }
+}
+%>
+${id}SuccessHandler=function(req,res){
+  ${id}Dropdown=dom.get("${dropdownId}");
+  var resLength =res.results.length+1;
+  var dropDownLength = ${id}Dropdown.length;
+  for(i=0;i<res.results.length;i++){
+    ${id}Dropdown.options[i+1]=new Option(res.results[i].Text,res.results[i].Value);
+    if(res.results[i].Value=='<%=selectedValue%>')   ${id}.Dropdown.selectedIndex = i;
+    <%for(int i=0;i<optionAttributeList.length;i++){%>
+    ${id}Dropdown.options[i+1].<%=optionAttributeList[i]%>=res.results[i].<%=optionAttributeList[i]%>;
+    <%}%>
+  }
+ while(dropDownLength>resLength)
+ {
+     ${id}Dropdown.options[res.results.length+1] = null;
+      dropDownLength=dropDownLength-1;
+ }
+  <% if(afterSuccess!=null && !afterSuccess.trim().equals("")){%>
+     ${afterSuccess}(req,res)
+  <%}%>
+}
+${id}FailureHandler=function(){
+  alert('Unable to load ${dropdownId}');
+}
 
-    <name>e-governments api</name>
-    <artifactId>egov-api</artifactId>
-    <packaging>war</packaging>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.egov</groupId>
-            <artifactId>egov-pgr</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.egov</groupId>
-            <artifactId>egov-egi</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
-            <classifier>tests</classifier>
-            <scope>test</scope>
-        </dependency>
-        
-         <dependency>
-            <groupId>org.egov</groupId>
-            <artifactId>egov-eventnotification</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <!-- VIEWS RELATED END -->
-        <dependency>
-            <groupId>org.apache.tiles</groupId>
-            <artifactId>tiles-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tiles</groupId>
-            <artifactId>tiles-jsp</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jsoup</groupId>
-            <artifactId>jsoup</artifactId>
-        </dependency>
-        <!-- VIEWS RELATED END -->
-
-        <!-- HIBERNATE START -->
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.validation</groupId>
-            <artifactId>validation-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator</artifactId>
-        </dependency>
-        <!-- HIBERNATE END -->
-
-        <!-- IMAGE PROCESSING API START-->
-        <dependency>
-            <groupId>net.coobird</groupId>
-            <artifactId>thumbnailator</artifactId>
-        </dependency>
-        <!-- IMAGE PROCESSING API END -->
-
-    </dependencies>
-
-</project>
+function populate${dropdownId}(params){
+   <% if(contextToBeUsed!=null && !contextToBeUsed.trim().equals("")){%>
+   		<c:set var="contextRoot" value="${contextToBeUsed}" />
+   <% } else  {%>
+   		<c:set var="contextRoot" value="${pageContext.request.contextPath}" />
+   <% } %>
+   makeJSONCall(${fields},'${contextRoot}/${url}',params,${id}SuccessHandler,${id}FailureHandler) ;
+}
+</script>
