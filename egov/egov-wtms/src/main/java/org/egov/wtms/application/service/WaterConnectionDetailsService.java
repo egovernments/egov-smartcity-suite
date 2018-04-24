@@ -1403,7 +1403,7 @@ public class WaterConnectionDetailsService {
         StringBuilder queryString = new StringBuilder();
         queryString.append(
                 "select conndetails.applicationnumber, conn.consumercode, mvp.ownersname, apptype.name, status.description,  ")
-                .append(" conndetails.applicationdate, boundary.localname, conndetails.id, mvp.address from  egwtr_connection conn ")
+                .append(" conndetails.approvaldate, boundary.localname, conndetails.id, mvp.address from  egwtr_connection conn ")
                 .append(" INNER JOIN egwtr_connectiondetails conndetails ON conn.id=conndetails.connection ")
                 .append(" INNER JOIN egpt_mv_propertyinfo mvp ON  conn.propertyidentifier=mvp.upicno ")
                 .append(" INNER JOIN eg_boundary boundary ON mvp.wardid=boundary.id ")
@@ -1439,7 +1439,7 @@ public class WaterConnectionDetailsService {
         StringBuilder queryString = new StringBuilder();
         queryString.append(
                 "select conndetails.applicationnumber, conn.consumercode, mvp.ownersname, apptype.name, status.description,  ")
-                .append(" conndetails.applicationdate, boundary.localname, conndetails.id, mvp.address from  egwtr_connection conn ")
+                .append(" conndetails.approvaldate, boundary.localname, conndetails.id, mvp.address from  egwtr_connection conn ")
                 .append(" INNER JOIN egwtr_connectiondetails conndetails ON conn.id=conndetails.connection ")
                 .append(" INNER JOIN egpt_mv_propertyinfo mvp ON  conn.propertyidentifier=mvp.upicno ")
                 .append(" INNER JOIN eg_boundary boundary ON mvp.wardid=boundary.id ")
@@ -1482,7 +1482,7 @@ public class WaterConnectionDetailsService {
                             .setExecutionDate(DateUtils.toDateUsingDefaultPattern(jsonObj.getString(EXECUTION_DATE)));
                     if (connectionDetails.getExecutionDate() != null
                             && connectionDetails.getExecutionDate().compareTo(DateUtils.toDateUsingDefaultPattern(
-                                    DateUtils.getDefaultFormattedDate(connectionDetails.getApplicationDate()))) < 0)
+                                    DateUtils.getDefaultFormattedDate(connectionDetails.getApprovalDate()))) < 0)
                         status = DATE_VALIDATION_FAILED;
                     else
                         connectionDetailsList.add(connectionDetails);
