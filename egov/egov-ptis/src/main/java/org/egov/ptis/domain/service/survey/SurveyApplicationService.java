@@ -198,7 +198,7 @@ public class SurveyApplicationService {
         final Query qry = entityManager.createQuery(queryStr.toString());
 
         if (StringUtils.isNotBlank(searchSurveyRequest.getAssessmentNo()))
-            qry.setParameter("assessmentNo", searchSurveyRequest.getAssessmentNo());
+            qry.setParameter("assessmentNumber", searchSurveyRequest.getAssessmentNo());
 
         if (StringUtils.isNotBlank(searchSurveyRequest.getApplicationNo()))
             qry.setParameter("applicationNo", searchSurveyRequest.getApplicationNo());
@@ -218,22 +218,22 @@ public class SurveyApplicationService {
     private void buildWhereClause(SearchSurveyRequest searchSurveyRequest, StringBuilder queryStr) {
 
         queryStr.append(
-                "select property from PropertyImpl property where property.source = 'SURVEY' and property.status != 'G' and state.ownerPosition = null and state.value in('Create:NEW', 'Alter:NEW') ");
+                "select property from PropertyImpl property where property.source = 'SURVEY' and property.status not in ('G','C') and state.ownerPosition = null and state.value in('Create:NEW', 'Alter:NEW') ");
 
         if (StringUtils.isNotBlank(searchSurveyRequest.getAssessmentNo()))
-            queryStr.append("and property.basicProperty.upicNo=:assessmentNumber");
+            queryStr.append(" and property.basicProperty.upicNo=:assessmentNumber");
 
         if (StringUtils.isNotBlank(searchSurveyRequest.getApplicationNo()))
-            queryStr.append("and property.applicationNo=:applicationNo");
+            queryStr.append(" and property.applicationNo=:applicationNo");
 
         if (StringUtils.isNotBlank(searchSurveyRequest.getApplicationType()))
-            queryStr.append("and basicProperty.propertyModifyReason=:applicationtype");
+            queryStr.append(" and property.propertyModifyReason=:applicationtype");
 
-        if (searchSurveyRequest.getWard() != null)
-            queryStr.append("and basicProperty.propertyID.ward.id=:ward");
+        if (searchSurveyRequest.getWard() != null) 
+            queryStr.append(" and property.basicProperty.propertyID.ward.id=:ward");
 
         if (searchSurveyRequest.getLocality() != null)
-            queryStr.append("and basicProperty.propertyID.locality.id=:locality");
+            queryStr.append(" and property.basicProperty.propertyID.locality.id=:locality");
 
     }
 
@@ -242,13 +242,14 @@ public class SurveyApplicationService {
     public boolean updateWorkflow(String applicationNo, User user) {
         try {
             List<Assignment> assignments = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(user.getId());
-            if (!assignments.isEmpty()) {
+            if (assignments.isEmpty()) {
+                return false;
+            } else {
                 SQLQuery sqlQuery = entityManager.unwrap(Session.class).createSQLQuery("update eg_wf_states set owner_pos =:ownerpos where id in(select state_id from egpt_property where applicationNo=:applicationNo)");
                 sqlQuery.setParameter("applicationNo", applicationNo);
                 sqlQuery.setParameter("ownerpos", assignments.get(0).getPosition().getId());
                 sqlQuery.executeUpdate();
-            } else
-                return false;
+            }
         } catch (Exception e) {
             throw new ApplicationRuntimeException("Error occured while updating survey property application: " + e.getMessage(), e);
         }
