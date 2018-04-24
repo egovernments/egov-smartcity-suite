@@ -72,17 +72,15 @@ public class SurveyPropertyController {
     @ResponseBody
     public String searchSurveyApplications(@ModelAttribute final SearchSurveyRequest searchSurveyRequest) {
         List<PropertyImpl> propList = surveyApplicationService.searchSurveyProperties(searchSurveyRequest);
-        final String result = new StringBuilder("{ \"data\":").append(toSearchPropertyeJson(propList))
+        return new StringBuilder("{ \"data\":").append(toSearchPropertyeJson(propList))
                 .append("}").toString();
-        return result;
 
     }
 
     public Object toSearchPropertyeJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.registerTypeAdapter(PropertyImpl.class, searchSurveyPropertyAdaptor).create();
-        final String json = gson.toJson(object);
-        return json;
+        return gson.toJson(object);
     }
 
     @RequestMapping(value = "/updateworkflow", method = RequestMethod.POST)
