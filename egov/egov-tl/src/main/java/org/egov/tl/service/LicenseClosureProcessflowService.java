@@ -51,6 +51,7 @@ package org.egov.tl.service;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
+import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.State;
@@ -73,6 +74,7 @@ import static org.egov.tl.utils.Constants.CLOSURE_ADDITIONAL_RULE;
 import static org.egov.tl.utils.Constants.CLOSURE_LICENSE_REJECT;
 import static org.egov.tl.utils.Constants.CLOSURE_NATUREOFTASK;
 import static org.egov.tl.utils.Constants.DELIMITER_COLON;
+import static org.egov.tl.utils.Constants.COMPLETED;
 import static org.egov.tl.utils.Constants.WF_DIGI_SIGNED;
 
 @Service
@@ -167,7 +169,8 @@ public class LicenseClosureProcessflowService {
         license.transition().end()
                 .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
                 .withComments(license.getWorkflowContainer().getApproverComments())
-                .withDateInfo(new Date());
+                .withDateInfo(new Date())
+                .withNextAction(COMPLETED);
     }
 
     public void processApproval(TradeLicense license) {
@@ -178,7 +181,8 @@ public class LicenseClosureProcessflowService {
                 .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
                 .withComments(licenseUtils.isDigitalSignEnabled() ? WF_DIGI_SIGNED : "Approved")
                 .withDateInfo(new Date())
-                .withStateValue(workflowMatrix.getNextState());
+                .withStateValue(workflowMatrix.getNextState())
+                .withNextAction(COMPLETED);
         license.setApprovedBy(currentUser);
     }
 
@@ -220,22 +224,21 @@ public class LicenseClosureProcessflowService {
     }
 
     public WorkFlowMatrix getWorkFlowMatrix(TradeLicense tradeLicense) {
-        String additionalRule = BUTTONREJECT.equals(tradeLicense.getWorkflowContainer().getWorkFlowAction())
-                ? CLOSURE_LICENSE_REJECT : tradeLicense.getWorkflowContainer().getAdditionalRule();
+        WorkflowContainer workflowContainer = tradeLicense.getWorkflowContainer();
+        String additionalRule = BUTTONREJECT.equals(workflowContainer.getWorkFlowAction())
+                ? CLOSURE_LICENSE_REJECT : workflowContainer.getAdditionalRule();
         WorkFlowMatrix workflowMatrix;
         if (tradeLicense.transitionInprogress()) {
             State<Position> state = tradeLicense.getState();
             workflowMatrix = this.licenseWorkflowService.getWfMatrix(
                     tradeLicense.getStateType(), "ANY", null, additionalRule,
-                    tradeLicense.getWorkflowContainer().getCurrentState() == null ? state.getValue() : tradeLicense
-                            .getWorkflowContainer().getCurrentState(), null, new Date(),
-                    tradeLicense.getWorkflowContainer().getCurrentDesignation() == null
+                    workflowContainer.getCurrentState() == null ? state.getValue() : workflowContainer.getCurrentState(),
+                    null, new Date(), workflowContainer.getCurrentDesignation() == null
                             ? "%" + state.getOwnerPosition().getDeptDesig().getDesignation().getName() + "%" :
-                            tradeLicense.getWorkflowContainer().getCurrentDesignation());
+                            workflowContainer.getCurrentDesignation());
         } else {
             workflowMatrix = this.licenseWorkflowService.getWfMatrix(tradeLicense.getStateType(), null,
-                    null, tradeLicense.getWorkflowContainer().getAdditionalRule(),
-                    "Start", null, new Date(), null);
+                    null, workflowContainer.getAdditionalRule(), "Start", null, new Date(), null);
         }
         return workflowMatrix;
     }

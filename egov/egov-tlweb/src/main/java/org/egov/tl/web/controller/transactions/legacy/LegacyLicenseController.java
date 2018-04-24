@@ -54,13 +54,11 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.tl.entity.LicenseCategory;
 import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.NatureOfBusiness;
-import org.egov.tl.entity.enums.ApplicationType;
 import org.egov.tl.service.DocumentTypeService;
 import org.egov.tl.service.FeeTypeService;
 import org.egov.tl.service.LegacyLicenseService;
 import org.egov.tl.service.LicenseCategoryService;
 import org.egov.tl.service.NatureOfBusinessService;
-import org.egov.tl.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -69,8 +67,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static org.egov.tl.entity.enums.ApplicationType.RENEW;
+import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
 import static org.egov.tl.utils.Constants.LOCALITY;
 import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
+import static org.egov.tl.utils.Constants.OWNERSHIP_TYPE;
 
 @Controller
 public class LegacyLicenseController extends GenericWorkFlowController {
@@ -95,13 +96,12 @@ public class LegacyLicenseController extends GenericWorkFlowController {
 
     @ModelAttribute("boundary")
     public List<Boundary> boundaries() {
-        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
-                LOCALITY, LOCATION_HIERARCHY_TYPE);
+        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(LOCALITY, LOCATION_HIERARCHY_TYPE);
     }
 
     @ModelAttribute("ownershipType")
     public Map<String, String> ownership() {
-        return Constants.getOwnershipTypes();
+        return OWNERSHIP_TYPE;
     }
 
     @ModelAttribute("natureOfBusiness")
@@ -116,12 +116,12 @@ public class LegacyLicenseController extends GenericWorkFlowController {
 
     @ModelAttribute("documentTypes")
     public List<LicenseDocumentType> documentsList() {
-        return documentTypeService.getDocumentTypesByApplicationType(ApplicationType.NEW);
+        return documentTypeService.getDocumentTypesByApplicationType(RENEW);
     }
 
     @ModelAttribute("feeTypeId")
     public Long feeType() {
-        return feeTypeService.findByName(Constants.LICENSE_FEE_TYPE).getId();
+        return feeTypeService.findByName(LICENSE_FEE_TYPE).getId();
     }
 
 }

@@ -57,9 +57,17 @@ public class TaxPayerDetails implements Comparable<TaxPayerDetails> {
     private String districtName = StringUtils.EMPTY;
     private String ulbGrade = StringUtils.EMPTY;
     private String ulbName = StringUtils.EMPTY;
+    private String ulbCode = StringUtils.EMPTY;
     private String wardName = StringUtils.EMPTY;
     private String billCollector = StringUtils.EMPTY;
-    private String mobileNumber = StringUtils.EMPTY;
+    private String billCollectorCode = StringUtils.EMPTY;
+    private String billCollMobNo = StringUtils.EMPTY;
+    private String revenueInspector = StringUtils.EMPTY;
+    private String revenueInspectorCode = StringUtils.EMPTY;
+    private String revInspectorMobNo = StringUtils.EMPTY;
+    private String revenueOfficer = StringUtils.EMPTY;
+    private String revenueOfficerCode = StringUtils.EMPTY;
+    private String revOfficerMobNo = StringUtils.EMPTY;
     private BigDecimal totalDmd = BigDecimal.ZERO;
     private BigDecimal cytdDmd = BigDecimal.ZERO;
     private BigDecimal cytdColl = BigDecimal.ZERO;
@@ -109,6 +117,14 @@ public class TaxPayerDetails implements Comparable<TaxPayerDetails> {
         this.ulbName = ulbName;
     }
 
+    public String getUlbCode() {
+        return ulbCode;
+    }
+
+    public void setUlbCode(String ulbCode) {
+        this.ulbCode = ulbCode;
+    }
+
     public String getWardName() {
         return wardName;
     }
@@ -123,6 +139,46 @@ public class TaxPayerDetails implements Comparable<TaxPayerDetails> {
 
     public void setBillCollector(String billCollector) {
         this.billCollector = billCollector;
+    }
+
+    public String getBillCollMobNo() {
+        return billCollMobNo;
+    }
+
+    public void setBillCollMobNo(String billCollMobNo) {
+        this.billCollMobNo = billCollMobNo;
+    }
+
+    public String getRevenueInspector() {
+        return revenueInspector;
+    }
+
+    public void setRevenueInspector(String revenueInspector) {
+        this.revenueInspector = revenueInspector;
+    }
+
+    public String getRevInspectorMobNo() {
+        return revInspectorMobNo;
+    }
+
+    public void setRevInspectorMobNo(String revInspectorMobNo) {
+        this.revInspectorMobNo = revInspectorMobNo;
+    }
+
+    public String getRevenueOfficer() {
+        return revenueOfficer;
+    }
+
+    public void setRevenueOfficer(String revenueOfficer) {
+        this.revenueOfficer = revenueOfficer;
+    }
+
+    public String getRevOfficerMobNo() {
+        return revOfficerMobNo;
+    }
+
+    public void setRevOfficerMobNo(String revOfficerMobNo) {
+        this.revOfficerMobNo = revOfficerMobNo;
     }
 
     public BigDecimal getTotalDmd() {
@@ -277,14 +333,6 @@ public class TaxPayerDetails implements Comparable<TaxPayerDetails> {
         return true;
     }
 
-    public String getMobileNumber() {
-        return mobileNumber;
-    }
-
-    public void setMobileNumber(String mobileNumber) {
-        this.mobileNumber = mobileNumber;
-    }
-
     public BigDecimal getArrearColl() {
         return arrearColl;
     }
@@ -355,6 +403,30 @@ public class TaxPayerDetails implements Comparable<TaxPayerDetails> {
 
     public void setCurrentInterestDemand(BigDecimal currentInterestDemand) {
         this.currentInterestDemand = currentInterestDemand;
+    }
+
+    public String getBillCollectorCode() {
+        return billCollectorCode;
+    }
+
+    public void setBillCollectorCode(String billCollectorCode) {
+        this.billCollectorCode = billCollectorCode;
+    }
+
+    public String getRevenueInspectorCode() {
+        return revenueInspectorCode;
+    }
+
+    public void setRevenueInspectorCode(String revenueInspectorCode) {
+        this.revenueInspectorCode = revenueInspectorCode;
+    }
+
+    public String getRevenueOfficerCode() {
+        return revenueOfficerCode;
+    }
+
+    public void setRevenueOfficerCode(String revenueOfficerCode) {
+        this.revenueOfficerCode = revenueOfficerCode;
     }
 
 }

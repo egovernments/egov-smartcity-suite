@@ -48,6 +48,7 @@
 package org.egov.tl.web.controller.transactions.closure;
 
 import org.egov.tl.entity.TradeLicense;
+import org.egov.tl.web.validator.closure.CreateLicenseClosureValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -67,7 +68,7 @@ import static org.egov.tl.utils.Constants.MESSAGE;
 @RequestMapping(value = "/license/closure/{licenseId}")
 public class CreateLicenseClosureController extends LicenseClosureProcessflowController {
 
-    private static final String REDIRECT_TO_VIEW = "redirect:/license/view/";
+    private static final String REDIRECT_TO_VIEW = "redirect:/license/success/";
     private static final String LICENSECLOSURE = "license-closure";
 
     @Autowired

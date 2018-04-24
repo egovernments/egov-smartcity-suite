@@ -108,7 +108,8 @@ public class MarriageRegistrationIndexService {
             registrationSearch.setApplicationCreatedBy(
                     registration.getCreatedBy().getName() != null ? registration.getCreatedBy().getName() : "");
             registrationSearch
-                    .setZone(registration.getZone().getName() != null ? registration.getZone().getName() : "");
+                    .setZone(registration.getZone() != null && registration.getZone().getName() != null
+                            ? registration.getZone().getName() : "");
             registrationSearch.setMarriageAct(registration.getMarriageAct() != null
                     && registration.getMarriageAct().getDescription() != null
                             ? registration.getMarriageAct().getDescription() : "");

@@ -51,6 +51,7 @@
 <html>
 <head>
     <title>
+        Report
     </title>
 
 </head>
@@ -58,7 +59,7 @@
 <body>
 <s:form name="certificateform" action="newTradeLicense" theme="simple">
 <s:if test="%{hasErrors()}">
-    <div class="errorstyle">
+    <div class="error-msg">
         <s:actionerror/>
         <s:fielderror/>
     </div>

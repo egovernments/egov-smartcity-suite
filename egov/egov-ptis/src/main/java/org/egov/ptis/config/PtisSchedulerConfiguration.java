@@ -51,6 +51,7 @@ package org.egov.ptis.config;
 import org.egov.infra.config.scheduling.QuartzSchedulerConfiguration;
 import org.egov.infra.config.scheduling.SchedulerConfigCondition;
 import org.egov.ptis.scheduler.BulkBillGenerationJob;
+import org.egov.ptis.scheduler.CollectionAchievementsJob;
 import org.egov.ptis.scheduler.DemandActivationJob;
 import org.egov.ptis.scheduler.RecoveryNoticesJob;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -84,7 +85,13 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
                 ptisBulkBillGenerationCronTrigger2().getObject(),
                 ptisBulkBillGenerationCronTrigger3().getObject(),
                 ptisBulkBillGenerationCronTrigger4().getObject(),
-                demandActivationCronTrigger().getObject()
+                ptisBulkBillGenerationCronTrigger5().getObject(),
+                ptisBulkBillGenerationCronTrigger6().getObject(),
+                ptisBulkBillGenerationCronTrigger7().getObject(),
+                ptisBulkBillGenerationCronTrigger8().getObject(),
+                ptisBulkBillGenerationCronTrigger9().getObject(),
+                demandActivationCronTrigger().getObject(),
+                collectionAchievementsCronTrigger().getObject()
         );
         return ptisScheduler;
     }
@@ -116,7 +123,7 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
         recoveryNoticeJobDetail.setJobDataAsMap(jobDetailMap);
         return recoveryNoticeJobDetail;
     }
-
+    
     @Bean("demandActivationJob")
     public DemandActivationJob demandActivationJob() {
         return new DemandActivationJob();
@@ -148,6 +155,39 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
         demandActivationCron.setCronExpression("0 15 0 * * ?");
         demandActivationCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
         return demandActivationCron;
+    }
+    
+    @Bean("collectionAchievementsJob")
+    public CollectionAchievementsJob collectionAchievementsJob() {
+        return new CollectionAchievementsJob();
+    }
+
+    @Bean
+    public JobDetailFactoryBean collectionAchievementsJobDetail() {
+        JobDetailFactoryBean collectionAchievementsJobDetail = new JobDetailFactoryBean();
+        collectionAchievementsJobDetail.setGroup("PTIS_JOB_GROUP");
+        collectionAchievementsJobDetail.setName("PTIS_COLLECTION_ACHIEVEMENTS_JOB");
+        collectionAchievementsJobDetail.setDurability(true);
+        collectionAchievementsJobDetail.setJobClass(CollectionAchievementsJob.class);
+        collectionAchievementsJobDetail.setRequestsRecovery(true);
+        Map<String, String> jobDetailMap = new HashMap<>();
+        jobDetailMap.put("jobBeanName", "collectionAchievementsJob");
+        jobDetailMap.put("userName", "system");
+        jobDetailMap.put("cityDataRequired", "false");
+        jobDetailMap.put("moduleName", "ptis");
+        collectionAchievementsJobDetail.setJobDataAsMap(jobDetailMap);
+        return collectionAchievementsJobDetail;
+    }
+
+    @Bean
+    public CronTriggerFactoryBean collectionAchievementsCronTrigger() {
+        CronTriggerFactoryBean collectionAchievementsCron = new CronTriggerFactoryBean();
+        collectionAchievementsCron.setJobDetail(collectionAchievementsJobDetail().getObject());
+        collectionAchievementsCron.setGroup("PTIS_TRIGGER_GROUP");
+        collectionAchievementsCron.setName("PTIS_COLLECTION_ACHIEVEMENTS_TRIGGER");
+        collectionAchievementsCron.setCronExpression("0 */30 * * * ?");
+        collectionAchievementsCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
+        return collectionAchievementsCron;
     }
 
     @Bean("bulkBillGenerationJob0")
@@ -189,6 +229,46 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
         bulkBillGenerationJob.setBillsCount(50);
         return bulkBillGenerationJob;
     }
+    
+    @Bean("bulkBillGenerationJob5")
+    public BulkBillGenerationJob bulkBillGenerationJob5() {
+        BulkBillGenerationJob bulkBillGenerationJob = new BulkBillGenerationJob();
+        bulkBillGenerationJob.setModulo(5);
+        bulkBillGenerationJob.setBillsCount(50);
+        return bulkBillGenerationJob;
+    }
+    
+    @Bean("bulkBillGenerationJob6")
+    public BulkBillGenerationJob bulkBillGenerationJob6() {
+        BulkBillGenerationJob bulkBillGenerationJob = new BulkBillGenerationJob();
+        bulkBillGenerationJob.setModulo(6);
+        bulkBillGenerationJob.setBillsCount(50);
+        return bulkBillGenerationJob;
+    }
+    
+    @Bean("bulkBillGenerationJob7")
+    public BulkBillGenerationJob bulkBillGenerationJob7() {
+        BulkBillGenerationJob bulkBillGenerationJob = new BulkBillGenerationJob();
+        bulkBillGenerationJob.setModulo(7);
+        bulkBillGenerationJob.setBillsCount(50);
+        return bulkBillGenerationJob;
+    }
+    
+    @Bean("bulkBillGenerationJob8")
+    public BulkBillGenerationJob bulkBillGenerationJob8() {
+        BulkBillGenerationJob bulkBillGenerationJob = new BulkBillGenerationJob();
+        bulkBillGenerationJob.setModulo(8);
+        bulkBillGenerationJob.setBillsCount(50);
+        return bulkBillGenerationJob;
+    }
+    
+    @Bean("bulkBillGenerationJob9")
+    public BulkBillGenerationJob bulkBillGenerationJob9() {
+        BulkBillGenerationJob bulkBillGenerationJob = new BulkBillGenerationJob();
+        bulkBillGenerationJob.setModulo(9);
+        bulkBillGenerationJob.setBillsCount(50);
+        return bulkBillGenerationJob;
+    }
 
 
     @Bean
@@ -215,6 +295,31 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
     public JobDetailFactoryBean ptisBulkBillGenerationJobDetail4() {
         return createJobDetailFactory(4);
     }
+    
+    @Bean
+    public JobDetailFactoryBean ptisBulkBillGenerationJobDetail5() {
+        return createJobDetailFactory(5);
+    }
+    
+    @Bean
+    public JobDetailFactoryBean ptisBulkBillGenerationJobDetail6() {
+        return createJobDetailFactory(6);
+    }
+    
+    @Bean
+    public JobDetailFactoryBean ptisBulkBillGenerationJobDetail7() {
+        return createJobDetailFactory(7);
+    }
+    
+    @Bean
+    public JobDetailFactoryBean ptisBulkBillGenerationJobDetail8() {
+        return createJobDetailFactory(8);
+    }
+    
+    @Bean
+    public JobDetailFactoryBean ptisBulkBillGenerationJobDetail9() {
+        return createJobDetailFactory(9);
+    }
 
     @Bean
     public CronTriggerFactoryBean ptisBulkBillGenerationCronTrigger0() {
@@ -240,6 +345,31 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
     public CronTriggerFactoryBean ptisBulkBillGenerationCronTrigger4() {
         return createCronTrigger(ptisBulkBillGenerationJobDetail4(), 4);
     }
+    
+    @Bean
+    public CronTriggerFactoryBean ptisBulkBillGenerationCronTrigger5() {
+        return createCronTrigger(ptisBulkBillGenerationJobDetail5(), 5);
+    }
+    
+    @Bean
+    public CronTriggerFactoryBean ptisBulkBillGenerationCronTrigger6() {
+        return createCronTrigger(ptisBulkBillGenerationJobDetail6(), 6);
+    }
+    
+    @Bean
+    public CronTriggerFactoryBean ptisBulkBillGenerationCronTrigger7() {
+        return createCronTrigger(ptisBulkBillGenerationJobDetail7(), 7);
+    }
+    
+    @Bean
+    public CronTriggerFactoryBean ptisBulkBillGenerationCronTrigger8() {
+        return createCronTrigger(ptisBulkBillGenerationJobDetail8(), 8);
+    }
+    
+    @Bean
+    public CronTriggerFactoryBean ptisBulkBillGenerationCronTrigger9() {
+        return createCronTrigger(ptisBulkBillGenerationJobDetail9(), 9);
+    }
 
     private JobDetailFactoryBean createJobDetailFactory(int modulo) {
         JobDetailFactoryBean ptisBulkBillGenerationJobDetail = new JobDetailFactoryBean();
@@ -262,7 +392,7 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
         bulkBillGenerationCron.setJobDetail(jobDetail.getObject());
         bulkBillGenerationCron.setGroup("PTIS_TRIGGER_GROUP");
         bulkBillGenerationCron.setName("PTIS_BULK_BILL_GEN_" + modulo + "_TRIGGER");
-        bulkBillGenerationCron.setCronExpression("0 0 12 * * ?");
+        bulkBillGenerationCron.setCronExpression("0 */5 * * * ?");
         bulkBillGenerationCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
         return bulkBillGenerationCron;
     }

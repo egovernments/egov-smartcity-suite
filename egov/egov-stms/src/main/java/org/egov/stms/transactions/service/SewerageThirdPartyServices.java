@@ -47,6 +47,7 @@
  */
 package org.egov.stms.transactions.service;
 
+import org.apache.log4j.Logger;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillAccountDetails;
@@ -148,11 +149,24 @@ public class SewerageThirdPartyServices {
     private SewerageBillServiceImpl sewerageBillServiceImpl;
     private String currentDemand = "currentDemand";
     private static final String WTMS_TAXDUE_RESTURL = "%s/wtms/rest/watertax/due/byptno/%s";
+    private static final String PTIS_DETAILS_RESTURL = "%s/ptis/rest/property/{assessmentNumber}";
+
+    private static final Logger LOGGER = Logger.getLogger(SewerageThirdPartyServices.class);
+
 
     public AssessmentDetails getPropertyDetails(final String assessmentNumber, final HttpServletRequest request) {
         final RestTemplate restTemplate = new RestTemplate();
-        final String url = "http://" + request.getServerName() + ":" + request.getServerPort()
-                + "/ptis/rest/property/{assessmentNumber}";
+
+        final String url = String.format(PTIS_DETAILS_RESTURL, WebUtils.extractRequestDomainURL(request, false));
+
+        if (LOGGER.isInfoEnabled()) {
+
+            LOGGER.info("Request URL : " + request.getRequestURL());
+            LOGGER.info("Extract DOMAIN URL : " + WebUtils.extractRequestDomainURL(request, false));
+
+            LOGGER.info("Response : " + restTemplate.getForObject(url, AssessmentDetails.class,
+                    assessmentNumber));
+        }
         return restTemplate.getForObject(url, AssessmentDetails.class,
                 assessmentNumber);
 

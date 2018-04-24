@@ -52,6 +52,8 @@ import ma.glasnost.orika.Converter;
 import ma.glasnost.orika.Mapper;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.ConfigurableMapper;
+import ma.glasnost.orika.impl.DefaultMapperFactory;
+import ma.glasnost.orika.unenhance.HibernateUnenhanceStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -76,6 +78,15 @@ public class BeanMapperConfiguration extends ConfigurableMapper {
         registerBeanMappers();
     }
 
+    protected void configureFactoryBuilder(DefaultMapperFactory.Builder factoryBuilder) {
+        factoryBuilder.unenhanceStrategy(new HibernateUnenhanceStrategy());
+    }
+
+    private void registerBeanMappers() {
+        applicationContext.getBeansOfType(Mapper.class).values().parallelStream().forEach(this::addMapper);
+        applicationContext.getBeansOfType(Converter.class).values().parallelStream().forEach(this::addConverter);
+    }
+
     private void addMapper(Mapper<?, ?> mapper) {
         factory.classMap(mapper.getAType(), mapper.getBType())
                 .byDefault()
@@ -85,11 +96,6 @@ public class BeanMapperConfiguration extends ConfigurableMapper {
 
     private void addConverter(Converter<?, ?> converter) {
         factory.getConverterFactory().registerConverter(converter);
-    }
-
-    private void registerBeanMappers() {
-        applicationContext.getBeansOfType(Mapper.class).values().parallelStream().forEach(this::addMapper);
-        applicationContext.getBeansOfType(Converter.class).values().parallelStream().forEach(this::addConverter);
     }
 
     @PostConstruct

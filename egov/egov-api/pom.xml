@@ -75,6 +75,12 @@
             <scope>test</scope>
         </dependency>
 
+	 <dependency>
+            <groupId>org.egov</groupId>
+            <artifactId>egov-eventnotification</artifactId>
+            <version>3.0.0-SNAPSHOT</version>
+        </dependency>
+
         <!-- VIEWS RELATED END -->
         <dependency>
             <groupId>org.apache.tiles</groupId>

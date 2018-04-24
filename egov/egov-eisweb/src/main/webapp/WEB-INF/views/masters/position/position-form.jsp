@@ -138,11 +138,11 @@
 							</label>
 
 							<div class="col-sm-1 col-xs-12 add-margin">
-								<form:radiobutton path="isPostOutsourced" id="position_loc_yes" value="yes" />
+								<form:radiobutton path="postOutsourced" id="position_loc_yes" value="yes" />
 								<label>Yes</label>
 							</div>
 							<div class="col-sm-1 col-xs-12 add-margin">
-								<form:radiobutton path="isPostOutsourced" id="position_loc_yno" value="no" checked="true"/>
+								<form:radiobutton path="postOutsourced" id="position_loc_yno" value="no" checked="true"/>
 								<label>No</label>
 							</div>
 						</div>

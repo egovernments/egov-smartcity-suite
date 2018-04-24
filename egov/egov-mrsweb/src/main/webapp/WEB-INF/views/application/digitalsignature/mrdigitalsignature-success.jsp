@@ -69,10 +69,10 @@
 					<c:if test='${fileStoreId != null && fileStoreId != ""}'>
 						<c:choose>
 							<c:when test='${objectType != null && objectType != "" && objectType == "REGISTRATION" }'>
-								<button type="button" id="previewButn" onclick="downloadSignedNotice('${fileStoreId}')" class="btn btn-primary">Download</button>
+								<button type="button" id="previewButn" onclick="downloadSignedRegCertificate('${fileStoreId}','${registrationNo}')" class="btn btn-primary">Download</button>
 							</c:when>
 							<c:otherwise>
-								<button type="button" id="previewButn" onclick="downloadSignedReIssueNotice('${fileStoreId}')" class="btn btn-primary">Download</button>
+								<button type="button" id="previewButn" onclick="downloadSignedReIssueCertificate('${fileStoreId}','${registrationNo}')" class="btn btn-primary">Download</button>
 							</c:otherwise>
 						</c:choose>
 					</c:if>

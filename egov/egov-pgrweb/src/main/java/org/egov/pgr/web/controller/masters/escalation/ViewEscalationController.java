@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -48,21 +48,18 @@
 
 package org.egov.pgr.web.controller.masters.escalation;
 
-import org.egov.eis.entity.PositionHierarchy;
+import org.egov.pgr.entity.EscalationHierarchy;
 import org.egov.pgr.entity.contract.EscalationHelper;
 import org.egov.pgr.entity.contract.EscalationHelperAdaptor;
 import org.egov.pgr.service.ComplaintEscalationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.util.Optional;
 
 import static org.egov.infra.utils.JsonUtils.toJSON;
 
@@ -74,8 +71,8 @@ public class ViewEscalationController {
     private ComplaintEscalationService complaintEscalationService;
 
     @ModelAttribute
-    public PositionHierarchy positionHierarchy() {
-        return new PositionHierarchy();
+    public EscalationHierarchy escalationHierarchy() {
+        return new EscalationHierarchy();
     }
 
     @GetMapping
@@ -83,14 +80,11 @@ public class ViewEscalationController {
         return "escalation-view";
     }
 
-    @ExceptionHandler(Exception.class)
     @GetMapping(value = "/", produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String viewEscalation(@RequestParam Optional<Long> positionId,
-                                 @RequestParam Optional<Long> complaintId) {
-
-        return new StringBuilder("{ \"data\":").append(toJSON(complaintEscalationService
-                        .viewEscalation(positionId, complaintId),
+    public String viewEscalation(@RequestParam Long positionId,
+                                 @RequestParam Long complaintId) {
+        return new StringBuilder("{ \"data\":").append(toJSON(complaintEscalationService.viewEscalation(positionId, complaintId),
                 EscalationHelper.class, EscalationHelperAdaptor.class)).append("}").toString();
     }
 }

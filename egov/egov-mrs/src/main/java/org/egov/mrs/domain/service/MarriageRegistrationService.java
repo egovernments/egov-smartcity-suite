@@ -48,6 +48,32 @@
 
 package org.egov.mrs.domain.service;
 
+import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
+import static org.egov.infra.utils.DateUtils.toDateUsingDefaultPattern;
+import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
+import static org.egov.mrs.application.MarriageConstants.AFFIDAVIT;
+import static org.egov.mrs.application.MarriageConstants.CF_STAMP;
+import static org.egov.mrs.application.MarriageConstants.MIC;
+import static org.egov.mrs.application.MarriageConstants.MOM;
+import static org.egov.mrs.application.MarriageConstants.SOURCE_API;
+
+import java.io.File;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.log4j.Logger;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.entity.Source;
@@ -101,30 +127,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.io.File;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
-import static org.egov.infra.utils.DateUtils.toDateUsingDefaultPattern;
-import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
-import static org.egov.mrs.application.MarriageConstants.AFFIDAVIT;
-import static org.egov.mrs.application.MarriageConstants.CF_STAMP;
-import static org.egov.mrs.application.MarriageConstants.MIC;
-import static org.egov.mrs.application.MarriageConstants.MOM;
 
 @Service
 @Transactional(readOnly = true)
@@ -311,6 +313,23 @@ public class MarriageRegistrationService {
         return registration;
     }
 
+    
+    @Transactional
+    public MarriageRegistration createRegistrationAPI(final MarriageRegistration marriageRegistration) {
+
+        marriageRegistration.setApplicationNo(marriageRegistrationApplicationNumberGenerator
+                .getNextApplicationNumberForMarriageRegistration(marriageRegistration));
+        marriageRegistration.setStatus(
+                marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.CREATED.toString(),
+                        MarriageConstants.MODULE_NAME));
+        marriageRegistration.setDemand(marriageRegistrationDemandService.createDemand(new BigDecimal(0)));
+        marriageRegistration.setSource(SOURCE_API);
+        create(marriageRegistration);
+        workflowService.onCreateRegistrationAPI(marriageRegistration);
+        return marriageRegistration;
+    }
+    
+    
     @Transactional
     public MarriageRegistration createMeesevaRegistration(final MarriageRegistration registration,
                                                           final WorkflowContainer workflowContainer, final boolean loggedUserIsMeesevaUser, final boolean citizenPortalUser) {
@@ -418,7 +437,7 @@ public class MarriageRegistrationService {
                 .forEach(doc -> registration.addRegistrationDocument(doc));
     }
 
-    private void setCommonDocumentsFalg(final MarriageRegistration registration, final MarriageDocument document) {
+    public void setCommonDocumentsFalg(final MarriageRegistration registration, final MarriageDocument document) {
         final MarriageDocument marriageDocument = marriageDocumentService.get(document.getId());
         if (marriageDocument.getCode().equals(MOM))
             registration.setMemorandumOfMarriage(true);
@@ -554,7 +573,7 @@ public class MarriageRegistrationService {
         return registrationRepository.findAll();
     }
 
-    private FileStoreMapper addToFileStore(final MultipartFile file) {
+    public FileStoreMapper addToFileStore(final MultipartFile file) {
         FileStoreMapper fileStoreMapper = null;
         try {
             fileStoreMapper = fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),

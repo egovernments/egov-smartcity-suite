@@ -112,39 +112,29 @@
                                                     <th><spring:message code="lbl.category"/></th>
                                                     <th><spring:message code="lbl.subcategory"/></th>
                                                     <th><spring:message code="lbl.license.fee"/></th>
-                                                    <th style="text-align: center"><input type="checkbox"
-                                                                                          id="selectAll"/><spring:message
+                                                    <th><spring:message code="lbl.view"/></th>
+                                                    <th style="text-align: center">
+                                                        <input type="checkbox" id="selectAll"/><spring:message
                                                             code="lbl.digitalSignature.select"/></th>
                                                 </tr>
                                                 </thead>
 
-                                                <c:forEach items="${licenses}" var="license"
-                                                           varStatus="counter">
+                                                <c:forEach items="${licenses}" var="license" varStatus="counter">
                                                     <tr>
-                                                        <td class="col-md-2" style="cursor: pointer"
-                                                            onclick=openLicenseForDigitalSign(${license.id})>
-                                                            <c:out value="${license.state.natureOfTask}"/>
-                                                        </td>
-                                                        <td style="cursor: pointer"
-                                                            onclick=openLicenseForDigitalSign(${license.id})>
-                                                            <c:out value="${license.licenseNumber}"/>
-                                                        </td>
-                                                        <td style="cursor: pointer"
-                                                            onclick=openLicenseForDigitalSign(${license.id})>
-                                                            <c:out value="${license.applicationNumber}"/>
+                                                        <td class="col-md-2">${license.state.natureOfTask}</td>
+                                                        <td>${license.licenseNumber}</td>
+                                                        <td>${license.applicationNumber}</td>
+                                                        <td>${license.category.name}</td>
+                                                        <td> ${license.tradeName.name}</td>
+                                                        <td> ${license.getLatestAmountPaid()}</td>
+                                                        <td>
+                                                            <a name="view" class="btn btn-secondary"
+                                                               onclick="openLicenseForDigitalSign('${license.id}')">
+                                                                <spring:message code='lbl.view'/><i
+                                                                    class="fa fa-eye"></i>
+                                                            </a>
                                                         </td>
                                                         <td>
-                                                            <c:out value="${license.category.name}"/>
-                                                        </td>
-                                                        <td style="cursor: pointer"
-                                                            onclick=openLicenseForDigitalSign(${license.id})>
-                                                            <c:out value="${license.tradeName.name}"/>
-                                                        </td>
-                                                        <td style="cursor: pointer"
-                                                            onclick=openLicenseForDigitalSign(${license.id})>
-                                                            <c:out value="${license.getLatestAmountPaid()}"/>
-                                                        </td>
-                                                        <td style="text-align: center">
                                                             <input type="checkbox" class="check-box"
                                                                    id="${license.id}" name="rowCheckBox"/>
                                                         </td>
@@ -153,7 +143,6 @@
 
                                             </table>
                                             <div class="text-center">
-
                                                 <button type="submit" onclick="return submitform();"
                                                         class="btn btn-primary"
                                                         id="submitButton">

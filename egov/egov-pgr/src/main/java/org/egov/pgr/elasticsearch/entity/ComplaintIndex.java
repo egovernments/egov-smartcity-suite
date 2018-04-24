@@ -80,6 +80,10 @@ public class ComplaintIndex {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT, timezone = DEFAULT_TIMEZONE)
     @Field(type = FieldType.Date, index = not_analyzed, format = date_optional_time, pattern = ES_DATE_FORMAT)
+    private Date completionDate;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT, timezone = DEFAULT_TIMEZONE)
+    @Field(type = FieldType.Date, index = not_analyzed, format = date_optional_time, pattern = ES_DATE_FORMAT)
     private Date escalationDate;
 
     @Field(type = FieldType.String, index = not_analyzed)
@@ -362,6 +366,14 @@ public class ComplaintIndex {
 
     public void setCreatedDate(final Date createdDate) {
         this.createdDate = createdDate;
+    }
+
+    public Date getCompletionDate() {
+        return completionDate;
+    }
+
+    public void setCompletionDate(final Date completionDate) {
+        this.completionDate = completionDate;
     }
 
     public Date getEscalationDate() {

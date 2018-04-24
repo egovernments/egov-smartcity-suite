@@ -570,4 +570,22 @@
         <put-attribute name="page-title" value="lbl.title.apartmentDCBReport.report" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/apartmentdcbreport-form.jsp"/>
     </definition>
+     <definition name="markAsCourtCase-form" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.propertytax" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/courtCase/markAsCourtCase-form.jsp"/>
+    </definition>
+    <definition name="markascourtcase-success" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.propertytax" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/courtCase/markascourtcase-success.jsp"/>
+    </definition>
+    <definition name="searchSurveyApplication-form" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.search.survey.application" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/survey/searchSurveyApplication-form.jsp"/>
+    </definition>
+    <definition name="surveyApplication-form" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.search.survey.application" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/survey/surveyApplication-form.jsp"/>
+    </definition>
+    
+    
 </tiles-definitions> 

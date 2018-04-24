@@ -93,7 +93,7 @@
 								     	     <input type="text" class="form-control table-input text-right patternvalidation" data-pattern="number" id="feesDetail${counter.index}amount" name="connectionFees[${counter.index}].amount" value="<fmt:formatNumber type="number" pattern="0" maxFractionDigits="0" value="${fm.amount}" />" readonly="true" /> 
 									</c:when>
 									<c:when test="${sewerageApplicationDetails.connectionFees[counter.index].feesDetail.code == 'DONATIONCHARGE' }">
-								     	     <input type="text" class="form-control table-input text-right patternvalidation" data-pattern="number" id="feesDetail${counter.index}amount" name="connectionFees[${counter.index}].amount" value="<fmt:formatNumber type="number" pattern="0" maxFractionDigits="0" value="${fm.amount}" />" readonly="true" /> 
+								     	     <input type="text" class="form-control table-input text-right patternvalidation" data-pattern="number" id="feesDetail${counter.index}amount" name="connectionFees[${counter.index}].amount" value="<fmt:formatNumber type="number" pattern="0" maxFractionDigits="0" value="${fm.amount}" />"/> 
 									</c:when>
 						          	<c:otherwise>  
 						          	   <c:choose> 

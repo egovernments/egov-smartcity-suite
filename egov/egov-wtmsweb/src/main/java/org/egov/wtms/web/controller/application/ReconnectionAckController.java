@@ -47,23 +47,24 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ReportGenerationService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping(value = "/application")
@@ -73,35 +74,24 @@ public class ReconnectionAckController {
 
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
-    
+
     @Autowired
     private ReportGenerationService reportGenerationService;
 
-    @RequestMapping(value = "/ReconnacknowlgementNotice", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<byte[]> generateEstimationNotice(final HttpServletRequest request,
-            final HttpSession session) {
+    @GetMapping(value = "/ReconnacknowlgementNotice", produces = APPLICATION_PDF_VALUE)
+    public @ResponseBody ResponseEntity<InputStreamResource> generateEstimationNotice(final HttpServletRequest request) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByApplicationNumber(request.getParameter("pathVar"));
-        String cityMaunicipalityName = (String)session.getAttribute("citymunicipalityname");
-        String districtName = (String)session.getAttribute("districtName");
-        final ReportOutput reportOutput = reportGenerationService.generateReconnectionReport(waterConnectionDetails, null, cityMaunicipalityName, districtName);
-        final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        headers.add("content-disposition", "inline;filename=Re-ConnectionAcknowledgement.pdf");
-        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED); 
+        final ReportOutput reportOutput = reportGenerationService.generateReconnectionReport(waterConnectionDetails, null);
+        return ReportUtil.reportAsResponseEntity(reportOutput);
     }
 
-    @RequestMapping(value = "/ReconnacknowlgementNotice/view/{applicationNumber}", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<byte[]> viewEstimationNotice(@PathVariable final String applicationNumber,
+    @GetMapping(value = "/ReconnacknowlgementNotice/view/{applicationNumber}", produces = APPLICATION_PDF_VALUE)
+    public @ResponseBody ResponseEntity<InputStreamResource> viewEstimationNotice(@PathVariable final String applicationNumber,
             final HttpSession session) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByApplicationNumber(applicationNumber);
-        String cityMaunicipalityName = (String)session.getAttribute("citymunicipalityname");
-        String districtName = (String)session.getAttribute("districtName");
-        final ReportOutput reportOutput = reportGenerationService.generateReconnectionReport(waterConnectionDetails, null, cityMaunicipalityName, districtName);
-        final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        headers.add("content-disposition", "inline;filename=Re-ConnectionAcknowledgement.pdf");
-        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED); 
+        final ReportOutput reportOutput = reportGenerationService.generateReconnectionReport(waterConnectionDetails, null);
+        return ReportUtil.reportAsResponseEntity(reportOutput);
     }
 }

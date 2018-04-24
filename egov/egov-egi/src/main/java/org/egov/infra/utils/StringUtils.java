@@ -50,11 +50,15 @@ package org.egov.infra.utils;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.text.RandomStringGenerator;
+import org.egov.infra.exception.ApplicationRuntimeException;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.lang3.StringUtils.toEncodedString;
 import static org.egov.infra.utils.ApplicationConstant.NA;
 import static org.egov.infra.utils.ApplicationConstant.NO;
@@ -123,5 +127,13 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
 
     public static String uniqueString(int codePoint) {
         return UNIQUE_STRING_GENERATOR.generate(codePoint);
+    }
+
+    public static String encodeURL(String value) {
+        try {
+            return URLEncoder.encode(value, UTF_8.toString());
+        } catch (UnsupportedEncodingException e) {
+            throw new ApplicationRuntimeException("Error occurred while encoding URL value", e);
+        }
     }
 }

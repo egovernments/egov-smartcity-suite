@@ -47,6 +47,21 @@
  */
 package org.egov.lcms.web.controller.ajax;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.lcms.masters.entity.AdvocateMaster;
@@ -56,6 +71,10 @@ import org.egov.lcms.masters.service.AdvocateMasterService;
 import org.egov.lcms.masters.service.CourtMasterService;
 import org.egov.lcms.masters.service.CourtTypeMasterService;
 import org.egov.lcms.masters.service.PetitionTypeMasterService;
+import org.egov.lcms.transactions.entity.LegalCase;
+import org.egov.lcms.transactions.service.LegalCaseService;
+import org.egov.lcms.utils.constants.LcmsConstants;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -64,10 +83,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 @Controller
 @RequestMapping(value = "/legalcase/")
@@ -88,6 +105,16 @@ public class AjaxLegalCaseController {
     @Autowired
     private CourtMasterService courtMasterService;
 
+    @Autowired
+    private LegalCaseService legalCaseService;
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
+
     @RequestMapping(value = "ajax/departments", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Department> getAllDepartmentsByNameLike(
             @ModelAttribute("legalcase") @RequestParam final String departmentName) {
@@ -105,21 +132,15 @@ public class AjaxLegalCaseController {
     }
 
     /*
-     * @RequestMapping(value = "ajax/positions", method = GET, produces =
-     * MediaType.APPLICATION_JSON_VALUE) public @ResponseBody Map<Long, String>
-     * getAllPositionsByDeptAndNameLike(
+     * @RequestMapping(value = "ajax/positions", method = GET, produces = MediaType.APPLICATION_JSON_VALUE) public @ResponseBody
+     * Map<Long, String> getAllPositionsByDeptAndNameLike(
      * @ModelAttribute("legalcase") @RequestParam final String departmentName,
-     * @RequestParam final String positionName) { final Map<Long, String>
-     * positionEmployeeMap = new HashMap<Long, String>(); String posEmpName;
-     * final Department deptObj =
-     * departmentService.getDepartmentByName(departmentName); final
-     * List<Assignment> assignList = assignmentService
-     * .getAllPositionsByDepartmentAndPositionNameForGivenRange(deptObj.getId(),
-     * positionName.toUpperCase()); if (!assignList.isEmpty()) for (final
-     * Assignment assign : assignList) { posEmpName =
-     * assign.getPosition().getName().concat("@").concat(assign.getEmployee().
-     * getUsername()); positionEmployeeMap.put(assign.getEmployee().getId(),
-     * posEmpName); } return positionEmployeeMap; }
+     * @RequestParam final String positionName) { final Map<Long, String> positionEmployeeMap = new HashMap<Long, String>();
+     * String posEmpName; final Department deptObj = departmentService.getDepartmentByName(departmentName); final List<Assignment>
+     * assignList = assignmentService .getAllPositionsByDepartmentAndPositionNameForGivenRange(deptObj.getId(),
+     * positionName.toUpperCase()); if (!assignList.isEmpty()) for (final Assignment assign : assignList) { posEmpName =
+     * assign.getPosition().getName().concat("@").concat(assign.getEmployee(). getUsername());
+     * positionEmployeeMap.put(assign.getEmployee().getId(), posEmpName); } return positionEmployeeMap; }
      */
 
     @RequestMapping(value = "/ajax-petitionTypeByCourtType", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -143,4 +164,47 @@ public class AjaxLegalCaseController {
         return courtNameList;
     }
 
+    @RequestMapping(value = "ajax-caseNumber", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public void getAllLegalcaseByCaseNumberLike(@RequestParam final String caseNumber, HttpServletResponse response)
+            throws IOException {
+        List<LegalCase> legalCaseList = legalCaseService.getLegalCaseByCaseNumberLike(caseNumber);
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        IOUtils.write(buildLegalCase(legalCaseList), response.getWriter());
+    }
+
+    private String buildLegalCase(List<LegalCase> legalCaseList) {
+        final JsonArray jsonArray = new JsonArray();
+        for (final LegalCase legalCase : legalCaseList) {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("Key", legalCase.getId());
+            jsonObject.addProperty("Value", legalCase.getCaseNumber());
+            jsonArray.add(jsonObject);
+        }
+        return jsonArray.toString();
+    }
+
+    @RequestMapping(value = "ajax-caseDetailsByCaseNumber", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody LinkedHashMap<String, String> getCaseDetailsByCaseNumber(@RequestParam final String caseNumber,
+            HttpServletResponse response) throws JsonGenerationException, JsonMappingException, IOException {
+        LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
+
+        if (StringUtils.isNotBlank(caseNumber)) {
+            LegalCase legalCase = legalCaseService.getLegalCaseByCaseNumber(caseNumber);
+            if (legalCase != null) {
+                map.put("caseStatus", legalCase.getStatus().getDescription());
+                map.put("caseTitle", legalCase.getCaseTitle());
+                map.put("caseType", legalCase.getCaseTypeMaster().getCaseType());
+                map.put("viewLegalCase", LcmsConstants.VIEW_LEGALCASE_LINK + legalCase.getLcNumber());
+                if (!legalCase.getJudgment().isEmpty()) {
+                    map.put("judgmentType", legalCase.getJudgment().get(0).getJudgmentType().getName());
+                    map.put("judgmentDescription",
+                            legalCase.getJudgment().get(0).getJudgmentType().getDescription());
+                } else {
+                    map.put("judgmentType", "");
+                    map.put("judgmentDescription", "");
+                }
+            }
+        }
+        return map;
+    }
 }

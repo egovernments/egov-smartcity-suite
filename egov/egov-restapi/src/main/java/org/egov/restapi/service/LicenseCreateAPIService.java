@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -69,6 +69,7 @@ import java.util.Date;
 import java.util.List;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.egov.tl.utils.Constants.CSCOPERATORNEWLICENSE;
 
 @Service
 @Transactional(readOnly = true)
@@ -108,6 +109,7 @@ public class LicenseCreateAPIService {
         tradeLicense.setCommencementDate(license.getCommencementDate());
         tradeLicense.setNameOfEstablishment(license.getApplicantName());
         tradeLicense.setOwnershipType(license.getOwnershipType());
+        tradeLicense.setApplicationSource(license.getSource());
         if (isNotBlank(license.getAssessmentNo()))
             tradeLicense.setAssessmentNo(license.getAssessmentNo());
         if (isNotBlank(license.getRemarks()))
@@ -129,6 +131,8 @@ public class LicenseCreateAPIService {
         tradeLicense.setBoundary(childBoundary);
         tradeLicense.setCategory(licenseCategoryRepository.findByCodeIgnoreCase(license.getCategory()));
         tradeLicense.setTradeName(licenseSubCategoryRepository.findByCode(license.getSubCategory()));
-        return licenseApplicationService.create(tradeLicense, new WorkflowBean());
+        WorkflowBean workflowBean = new WorkflowBean();
+        workflowBean.setAdditionaRule(CSCOPERATORNEWLICENSE);
+        return licenseApplicationService.create(tradeLicense, workflowBean);
     }
 }

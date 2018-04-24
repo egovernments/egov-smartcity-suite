@@ -53,6 +53,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Position;
@@ -66,6 +67,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -73,6 +75,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static java.lang.System.lineSeparator;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.egov.infra.config.core.LocalizationSettings.currencySymbolUtf8;
+import static org.egov.infra.security.utils.SecureCodeUtils.generatePDF417Code;
+import static org.egov.infra.utils.ApplicationConstant.UNDERSCORE;
+import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
+import static org.egov.infra.utils.StringUtils.appendTimestamp;
 import static org.egov.tl.utils.Constants.CLOSURE_NATUREOFTASK;
 import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
 import static org.egov.tl.utils.Constants.LICENSE_STATUS_CANCELLED;
@@ -246,6 +255,10 @@ public class License extends StateAware<Position> {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "license")
     protected List<LicenseDocument> documents = new ArrayList<>();
 
+    @SafeHtml
+    @Length(max = 40)
+    protected String certificateFileId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "approvedBy")
     private User approvedBy;
@@ -256,6 +269,9 @@ public class License extends StateAware<Position> {
     private boolean collectionPending;
 
     private boolean closed;
+
+    @SafeHtml
+    private String applicationSource;
 
     @Override
     public Long getId() {
@@ -565,7 +581,9 @@ public class License extends StateAware<Position> {
     }
 
     public boolean isReadyForRenewal() {
-        return isActiveAndPermanent() && !isPaid() && (transitionCompleted() || isLegacyWithNoState());
+        return isActiveAndPermanent()
+                && getDateOfExpiry().before(getCurrentDemand().getEgInstallmentMaster().getToDate())
+                && (transitionCompleted() || isLegacyWithNoState());
     }
 
     public boolean isActiveAndPermanent() {
@@ -619,8 +637,9 @@ public class License extends StateAware<Position> {
     }
 
     public boolean canCollectLicenseFee() {
-        return this.isNewWorkflow() && !isNatureOfTaskClosure() &&
-                (STATUS_ACKNOWLEDGED.equals(this.getStatus().getStatusCode()) || STATUS_COLLECTIONPENDING.equals(this.getStatus().getStatusCode()));
+        return this.isNewWorkflow() && !isNatureOfTaskClosure() && !isPaid() &&
+                (STATUS_ACKNOWLEDGED.equals(this.getStatus().getStatusCode())
+                        || STATUS_COLLECTIONPENDING.equals(this.getStatus().getStatusCode()));
     }
 
     public Boundary getAdminWard() {
@@ -637,5 +656,42 @@ public class License extends StateAware<Position> {
 
     public void setApprovedBy(User approvedBy) {
         this.approvedBy = approvedBy;
+    }
+
+    public String getCertificateFileId() {
+        return certificateFileId;
+    }
+
+    public void setCertificateFileId(String certificateFileId) {
+        this.certificateFileId = certificateFileId;
+    }
+
+    public String getApplicationSource() {
+        return applicationSource;
+    }
+
+    public void setApplicationSource(String applicationSource) {
+        this.applicationSource = applicationSource;
+    }
+
+    public String generateCertificateFileName() {
+        return new StringBuilder()
+                .append(licenseAppType.getName().toLowerCase())
+                .append(UNDERSCORE).append(appendTimestamp((isBlank(this.getLicenseNumber())
+                        ? this.getApplicationNumber()
+                        : this.getLicenseNumber()).replaceAll("[/-]", UNDERSCORE))).toString();
+    }
+
+    public File qrCode(String installmentYear, BigDecimal licenseFeePaid) {
+        StringBuilder qrCodeContent = new StringBuilder(170);
+        qrCodeContent.append("License Number : ").append(getLicenseNumber()).append(lineSeparator());
+        qrCodeContent.append("Trade Title : ").append(getNameOfEstablishment()).append(lineSeparator());
+        qrCodeContent.append("Owner Name : ").append(getLicensee().getApplicantName()).append(lineSeparator());
+        qrCodeContent.append("Valid Till : ").append(toDefaultDateTimeFormat(getDateOfExpiry())).append(lineSeparator());
+        qrCodeContent.append("Installment Year : ").append(installmentYear).append(lineSeparator());
+        qrCodeContent.append("Paid Amount : ").append(currencySymbolUtf8()).append(licenseFeePaid).append(lineSeparator());
+        qrCodeContent.append("More : ").append(ApplicationThreadLocals.getDomainURL())
+                .append("/tl/viewtradelicense/viewTradeLicense-view.action?id=").append(getId());
+        return generatePDF417Code(qrCodeContent.toString());
     }
 }

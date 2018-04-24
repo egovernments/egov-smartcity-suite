@@ -68,6 +68,11 @@
 		if (selectedStatus == 'P' || selectedStatus == 'B' ) {
 			dom.get('serviceType').disabled = true;
 		}
+		if(document.getElementById("isVoucherOnReceiptAndStatusDisplay").value == "false")
+		{
+			dom.get('isVoucherApproved').disabled =true;
+			
+		}
 	}
 
 	function EnableVoucherDetails(obj) {

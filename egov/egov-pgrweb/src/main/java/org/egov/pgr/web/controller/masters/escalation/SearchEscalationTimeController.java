@@ -84,12 +84,14 @@ public class SearchEscalationTimeController {
     @PostMapping
     public String searchEscalationTimeForm(EscalationForm escalationForm, Model model) {
 
-        List<Escalation> escalationList = escalationService.findAllBycomplaintTypeId(escalationForm.getComplaintType().getId());
-        if (!escalationList.isEmpty() && escalationList != null) {
+        List<Escalation> escalationList = escalationService.getAllEscalationByComplaintTypeId(escalationForm.getComplaintType().getId());
+        if (escalationList.isEmpty()) {
+            model.addAttribute("mode", "noDataFound");
+        } else {
             escalationForm.setEscalationList((escalationList));
             model.addAttribute("mode", "dataFound");
-        } else
-            model.addAttribute("mode", "noDataFound");
+        }
+
         return ESCALATION_TIME_SEARCH;
     }
 

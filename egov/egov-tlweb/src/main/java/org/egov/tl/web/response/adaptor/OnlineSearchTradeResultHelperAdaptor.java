@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -57,27 +57,29 @@ import org.egov.tl.entity.contracts.OnlineSearchForm;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
+import static org.egov.infra.utils.StringUtils.defaultIfBlank;
+
 public class OnlineSearchTradeResultHelperAdaptor implements JsonSerializer<OnlineSearchForm> {
 
     @Override
-    public JsonElement serialize(final OnlineSearchForm searchFormObj, final Type type,
-                                 final JsonSerializationContext jsc) {
-        final JsonObject searchResult = new JsonObject();
+    public JsonElement serialize(OnlineSearchForm searchFormObj, Type type,
+                                 JsonSerializationContext jsc) {
+        JsonObject searchResult = new JsonObject();
         if (searchFormObj != null) {
             searchResult.addProperty("licenseId", searchFormObj.getLicenseId());
             searchResult.addProperty("applicationNumber", searchFormObj.getApplicationNumber());
-            searchResult.addProperty("tlNumber", searchFormObj.getLicenseNumber());
+            searchResult.addProperty("tlNumber", defaultIfBlank(searchFormObj.getLicenseNumber()));
             searchResult.addProperty("tradeOwner", searchFormObj.getTradeOwnerName());
             searchResult.addProperty("mobileNumber", searchFormObj.getMobileNo());
             searchResult.addProperty("status", searchFormObj.getStatus());
-            searchResult.addProperty("propertyAssmntNo", searchFormObj.getPropertyAssessmentNo());
+            searchResult.addProperty("propertyAssmntNo", defaultIfBlank(searchFormObj.getPropertyAssessmentNo()));
             searchResult.addProperty("arrDmd", searchFormObj.getArrDmd());
             searchResult.addProperty("currDmd", searchFormObj.getCurrDmd());
             searchResult.addProperty("totColl", searchFormObj.getTotColl());
-            final Gson gson = new Gson();
-            final ArrayList<JsonObject> actions = new ArrayList<>();
+            Gson gson = new Gson();
+            ArrayList<JsonObject> actions = new ArrayList<>();
             searchFormObj.getActions().forEach(action -> {
-                final JsonObject actionItem = new JsonObject();
+                JsonObject actionItem = new JsonObject();
                 actionItem.addProperty("key", action);
                 actions.add(actionItem);
             });

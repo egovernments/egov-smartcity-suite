@@ -177,14 +177,12 @@ public class FirmService {
     }
 
     private User createUser(final FirmUser firmUser) {
-        User user;
-        user = new User();
+        User user = new User(UserType.BUSINESS);
         user.setUsername(firmUser.getEmailId());
         user.setName(firmUser.getName());
         user.setMobileNumber(firmUser.getMobileNumber());
         user.setPassword(passwordEncoder.encode(firmUser.getMobileNumber()));
         user.setEmailId(firmUser.getEmailId());
-        user.setType(UserType.BUSINESS);
         user.setActive(true);
         user.setPwdExpiryDate(DateTime.now().plusMonths(6).toDate());
         user.addRole(roleService.getRoleByName(ROLE_BUSINESS_USER));

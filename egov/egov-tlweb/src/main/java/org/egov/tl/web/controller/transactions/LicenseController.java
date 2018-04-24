@@ -47,9 +47,8 @@
  */
 package org.egov.tl.web.controller.transactions;
 
-import org.egov.infra.reporting.engine.ReportDisposition;
-import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.tl.entity.LicenseDocument;
+import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.service.TradeLicenseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -66,6 +65,7 @@ import java.util.Map;
 
 import static org.egov.infra.reporting.util.ReportUtil.reportAsResponseEntity;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 
 @Controller
 @RequestMapping(value = "/license")
@@ -80,17 +80,28 @@ public class LicenseController {
         return tradeLicenseService.getAttachedDocument(licenseId);
     }
 
-    @GetMapping("/acknowledgement/{licenseId}")
+    @GetMapping(value = "/acknowledgement/{licenseId}", produces = APPLICATION_PDF_VALUE)
     @ResponseBody
     public ResponseEntity<InputStreamResource> acknowledgment(@PathVariable Long licenseId) {
-        ReportOutput reportOutput = tradeLicenseService.generateAcknowledgment(licenseId);
-        reportOutput.setReportDisposition(ReportDisposition.ATTACHMENT);
-        return reportAsResponseEntity(reportOutput);
+        return reportAsResponseEntity(tradeLicenseService.generateAcknowledgment(licenseId));
     }
 
-    @GetMapping("view/{licenseId}")
+    @GetMapping("success/{licenseId}")
     public String successView(@PathVariable Long licenseId, Model model) {
         model.addAttribute("tradeLicense", tradeLicenseService.getLicenseById(licenseId));
         return "license-success-view";
+    }
+
+    @GetMapping("view/{licenseId}")
+    public String licenseView(@PathVariable Long licenseId, Model model) {
+        TradeLicense license = tradeLicenseService.getLicenseById(licenseId);
+        if (license == null) {
+            model.addAttribute("message", "msg.license.notfound");
+        } else {
+            model.addAttribute("outstandingFee", tradeLicenseService.getOutstandingFee(license));
+            model.addAttribute("licenseHistory", tradeLicenseService.populateHistory(license));
+            model.addAttribute("tradeLicense", license);
+        }
+        return "view-tradelicense";
     }
 }

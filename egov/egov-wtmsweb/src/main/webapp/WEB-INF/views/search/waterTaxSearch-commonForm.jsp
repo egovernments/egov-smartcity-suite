@@ -72,7 +72,7 @@
 					<div class="form-group">
 					<label for="field-1" class="col-md-4 control-label"><spring:message code='lbl1.consumer.number'/></label>
 						<div class="col-md-4 add-margin">
-							<form:input type="text" path="consumerCode" name="consumerCode" class="form-control patternvalidation" data-pattern="number" maxlength="15" id="app-appcodo" required="required"/>
+							<form:input type="text" path="consumerCode" name="consumerCode" class="form-control patternvalidation" data-pattern="number" maxlength="15" id="consumerCode" required="required"/>
 						</div>
 						<form:errors path="consumerCode" cssClass="add-margin error-msg" />
 					</div>
@@ -82,7 +82,7 @@
 							<button type="submit" class="btn btn-primary" id="submitButtonId">
 								<spring:message code="lbl.submit" />
 							</button>
-							<button class="btn btn-danger" type="reset"><spring:message code='lbl.reset'/></button>
+							<input type="button" class="btn btn-default" onclick="customReset();" value="Reset"/>
 							<a href="javascript:void(0);" id="closeComplaints"
 								class="btn btn-default" onclick="self.close()"><spring:message code='lbl.close' /></a>
 						</div>
@@ -92,7 +92,11 @@
 		</div>
 	</div>
 </div>
-
+<script>
+	function customReset() {
+		$("#consumerCode").val('');
+	}
+</script>
 <script src="<cdn:url value='/resources/js/app/connectionCommonsearch.js?rnd=${app_release_no}'/>"
 	type="text/javascript"></script>
 	

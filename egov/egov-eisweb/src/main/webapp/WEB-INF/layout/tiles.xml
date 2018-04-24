@@ -140,4 +140,56 @@
         <put-attribute name="page-title" value="title.searchemployeeposition" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/employeePositionReport-form.jsp"/>
     </definition>
+    
+    <definition name="employeegrievance-new" extends="base_layout">
+	   <put-attribute name="page-title" value="title.employeegrievance.new" cascade="true"/>
+	   <put-attribute name="body" value="/WEB-INF/views/employeegrievance/employeegrievance-new.jsp"/>
+	</definition>
+
+	<definition name="employeegrievance-view" extends="base_layout">
+	  <put-attribute name="page-title" value="title.employeegrievance.view" cascade="true"/>
+	  <put-attribute name="body" value="/WEB-INF/views/employeegrievance/employeegrievance-view.jsp"/>
+	</definition>
+
+	<definition name="employeegrievance-edit" extends="base_layout">
+	  <put-attribute name="page-title" value="title.employeegrievance" cascade="true"/>
+	  <put-attribute name="body" value="/WEB-INF/views/employeegrievance/employeegrievance-edit.jsp"/>
+	</definition>
+
+	<definition name="employeegrievance-result" extends="base_layout">
+	  <put-attribute name="page-title" value="title.employeegrievance.result" cascade="true"/>
+	  <put-attribute name="body" value="/WEB-INF/views/employeegrievance/employeegrievance-result.jsp"/>
+	</definition>
+	
+	<definition name="employeegrievance-search" extends="base_layout">
+	  <put-attribute name="page-title" value="title.employeegrievance.search" cascade="true"/>
+	  <put-attribute name="body" value="/WEB-INF/views/employeegrievance/employeegrievance-search.jsp"/>
+	</definition>
+	
+	<definition name="employeegrievancetype-new" extends="base_layout">
+	  <put-attribute name="page-title" value="title.employeegrievancetype.new" cascade="true"/>
+	  <put-attribute name="body" value="/WEB-INF/views/employeegrievancetype/employeegrievancetype-new.jsp"/>
+	</definition>
+	
+	<definition name="employeegrievancetype-view" extends="base_layout">
+	  <put-attribute name="page-title" value="title.employeegrievancetype.view" cascade="true"/>
+	  <put-attribute name="body" value="/WEB-INF/views/employeegrievancetype/employeegrievancetype-view.jsp"/>
+	</definition>
+	
+	<definition name="employeegrievancetype-edit" extends="base_layout">
+	  <put-attribute name="page-title" value="title.employeegrievancetype.edit" cascade="true"/>
+	  <put-attribute name="body" value="/WEB-INF/views/employeegrievancetype/employeegrievancetype-edit.jsp"/>
+	</definition>
+	
+	<definition name="employeegrievancetype-result" extends="base_layout">
+	  <put-attribute name="page-title" value="title.employeegrievancetype.result" cascade="true"/>
+	  <put-attribute name="body" value="/WEB-INF/views/employeegrievancetype/employeegrievancetype-result.jsp"/>
+	</definition>
+	
+	<definition name="employeegrievancetype-search" extends="base_layout">
+	  <put-attribute name="page-title" value="title.employeegrievancetype.search" cascade="true"/>
+	  <put-attribute name="body" value="/WEB-INF/views/employeegrievancetype/employeegrievancetype-search.jsp"/>
+	</definition>
+
+
 </tiles-definitions>

@@ -112,6 +112,9 @@ public class CouncilAgendaService {
     public CouncilAgenda findByAgendaNumber(String agendaNumber) {
         return councilAgendaRepository.findByAgendaNumber(agendaNumber);
     }
+    public List<CouncilAgenda> findByAgendaNo(String agendaNumber) {
+        return councilAgendaRepository.findByAgendaNo(agendaNumber);
+    }
 
     public CouncilAgenda findOne(Long id) {
         return councilAgendaRepository.findById(id);

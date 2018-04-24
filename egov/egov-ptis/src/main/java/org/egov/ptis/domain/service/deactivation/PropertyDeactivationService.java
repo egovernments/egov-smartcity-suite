@@ -116,16 +116,8 @@ public class PropertyDeactivationService {
     }
 
     private BigDecimal getCurrentPTTaxDue(BasicProperty basicproperty) {
-        BigDecimal currentPropertyTaxDue;
-        BigDecimal arrearPropertyTaxDue;
-        final Map<String, BigDecimal> propertyTaxDetails = propertyService
-                .getCurrentPropertyTaxDetails(basicproperty.getActiveProperty());
-        Map<String, BigDecimal> currentTaxAndDue = propertyService.getCurrentTaxAndBalance(propertyTaxDetails,
-                new Date());
-        currentPropertyTaxDue = currentTaxAndDue.get(CURR_BAL_STR);
-        arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(propertyTaxDetails.get(ARR_COLL_STR));
-
-        return currentPropertyTaxDue.add(arrearPropertyTaxDue);
+        return propertyService
+                .getTotalPropertyTaxDueIncludingPenalty(basicproperty);
     }
 
     public boolean checkActiveWC(List<Map<String, Object>> wcDetails) {

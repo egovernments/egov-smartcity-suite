@@ -48,12 +48,15 @@
 package org.egov.wtms.web.controller.application;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.validation.ValidationException;
 
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ReportGenerationService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
@@ -61,14 +64,12 @@ import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -89,9 +90,9 @@ public class WorkOrderController {
     @Autowired
     private ReportGenerationService reportGenerationService;
 
-    @RequestMapping(value = "/workorder", method = RequestMethod.GET)
+    @GetMapping(value = "/workorder", produces = APPLICATION_PDF_VALUE)
     @ResponseBody
-    public ResponseEntity<byte[]> createWorkOrderReport(final HttpServletRequest request,
+    public ResponseEntity<InputStreamResource> createWorkOrderReport(final HttpServletRequest request,
             final HttpSession session) {
         String workFlowAction;
         String errorMessage = "";
@@ -105,12 +106,9 @@ public class WorkOrderController {
                 && workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_WORKORDER_BUTTON))
             errorMessage = validateWorkOrder(connectionDetails, true);
         if (!errorMessage.isEmpty())
-            return redirect(errorMessage);
+            throw new ValidationException(errorMessage);
         final ReportOutput reportOutput = reportGenerationService.generateWorkOrderNotice(connectionDetails, workFlowAction);
-        final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        headers.add("content-disposition", "inline;filename=Work Order.pdf");
-        return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+        return ReportUtil.reportAsResponseEntity(reportOutput);
     }
 
     public String validateWorkOrder(final WaterConnectionDetails connectionDetails, final Boolean isView) {
@@ -128,25 +126,16 @@ public class WorkOrderController {
         return errorMessage;
     }
 
-    @RequestMapping(value = "/workorder/view/{applicationNumber}", method = RequestMethod.GET)
+    @GetMapping(value = "/workorder/view/{applicationNumber}", produces = APPLICATION_PDF_VALUE)
     @ResponseBody
-    public ResponseEntity<byte[]> viewReport(@PathVariable final String applicationNumber,
+    public ResponseEntity<InputStreamResource> viewReport(@PathVariable final String applicationNumber,
             final HttpSession session) {
         final WaterConnectionDetails connectionDetails = waterConnectionDetailsService.findByApplicationNumber(applicationNumber);
         final String errorMessage = validateWorkOrder(connectionDetails, true);
         if (!errorMessage.isEmpty())
-            return redirect(errorMessage);
+            throw new ValidationException(errorMessage);
         final ReportOutput reportOutput = reportGenerationService.generateWorkOrderNotice(connectionDetails, null);
-        final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        headers.add("content-disposition", "inline;filename=Work Order.pdf");
-        return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+        return ReportUtil.reportAsResponseEntity(reportOutput);
     }
 
-    private ResponseEntity<byte[]> redirect(final String errorMessage) {
-        final String formattedErrorMsg = "<html><body><p style='color:red;border:1px solid gray;padding:15px;'>" + errorMessage
-                + "</p></body></html>";
-        final byte[] byteData = formattedErrorMsg.getBytes();
-        return new ResponseEntity<>(byteData, HttpStatus.CREATED);
-    }
 }

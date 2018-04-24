@@ -74,4 +74,8 @@ public class CityIndexService {
 	public CityIndex findByDistrictCode(String districtCode){
 		return cityIndexRepository.findOneByDistrictCode(districtCode);
 	}
+	
+	public Iterable<CityIndex> findByRegionName(String regionName){
+	    return cityIndexRepository.findByRegionname(regionName);
+	}
 }

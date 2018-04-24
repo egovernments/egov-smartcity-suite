@@ -59,5 +59,5 @@ public interface LicenseStatusRepository extends JpaRepository<LicenseStatus, Lo
 
     LicenseStatus findByStatusCode(String code);
 
-    List<LicenseStatus> findAllByOrderByIdAsc();
+    List<LicenseStatus> findAllByOrderByNameAsc();
 }

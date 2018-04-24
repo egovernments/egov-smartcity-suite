@@ -716,7 +716,7 @@ public class SearchNoticesAction extends SearchFormAction {
         searchQuery.append(noticeType.equals(NOTICE_TYPE_BILL) ? BILL_FROM_CLAUSE
                 : (NOTICE_TYPE_SURVEY_COMPARISON.equalsIgnoreCase(noticeType) ? COMPARISON_REPORT_FROM_CLAUSE : FROM_CLAUSE));
         searchQuery.append(criteria);
-        searchQuery.append(noticeType.equals(NOTICE_TYPE_BILL) ? BILL_ORDER_BY : ORDER_BY);
+        searchQuery.append(noticeType.equals(PropertyTaxConstants.INTEGRATED_BILL) ? BILL_ORDER_BY : ORDER_BY);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Search Query : " + searchQuery);
 

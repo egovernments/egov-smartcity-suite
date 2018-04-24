@@ -68,7 +68,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.egov.tl.utils.Constants.FILESTORE_MODULECODE;
+import static org.egov.tl.utils.Constants.TL_FILE_STORE_DIR;
+import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 
 @Controller
 @RequestMapping(value = "/tradelicense")
@@ -98,14 +99,14 @@ public class LicenseCertificateDigiSignController {
         return "digitalSignature-success";
     }
 
-    @GetMapping("/download/digisign-certificate")
+    @GetMapping(value = "/download/digisign-certificate", produces = APPLICATION_PDF_VALUE)
     @ResponseBody
     public ResponseEntity<InputStreamResource> downloadSignedLicenseCertificate(@RequestParam String file,
                                                                                 @RequestParam String applnum) {
-        return fileStoreUtils.fileAsPDFResponse(file, applnum, FILESTORE_MODULECODE);
+        return fileStoreUtils.fileAsPDFResponse(file, applnum, TL_FILE_STORE_DIR);
     }
 
-    @GetMapping(value = "/bulk-digisign")
+    @GetMapping("/bulk-digisign")
     public String showLicenseBulkDigiSignForm(Model model) {
         if (licenseUtils.isDigitalSignEnabled())
             model.addAttribute("applicationType", licenseAppTypeService.findByDisplayTrue());
@@ -114,14 +115,14 @@ public class LicenseCertificateDigiSignController {
         return "license-bulk-digisign-form";
     }
 
-    @GetMapping(value = "/bulk-digisign/")
+    @GetMapping("/bulk-digisign/")
     public String getLicenseForDigiSign(@RequestParam Long licenseAppTypeId, Model model) {
         model.addAttribute("licenses", licenseCertificateDigiSignService.getLicensePendingForDigiSign(licenseAppTypeId));
         model.addAttribute("applicationType", licenseAppTypeService.findByDisplayTrue());
         return "license-bulk-digisign-form";
     }
 
-    @PostMapping(value = "/bulk-digisign")
+    @PostMapping("/bulk-digisign")
     public String bulkDigitalSignature(@RequestParam List<Long> licenseIds, Model model) {
 
         List<License> licenses = licenseCertificateDigiSignService.generateLicenseCertificateForDigiSign(licenseIds);

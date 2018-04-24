@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -47,7 +47,6 @@
  */
 package org.egov.tl.web.controller.transactions.closure;
 
-import org.egov.infra.reporting.engine.ReportDisposition;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.utils.FileStoreUtils;
 import org.egov.tl.entity.License;
@@ -64,8 +63,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.egov.infra.reporting.util.ReportUtil.reportAsResponseEntity;
-import static org.egov.tl.utils.Constants.FILESTORE_MODULECODE;
+import static org.egov.tl.utils.Constants.TL_FILE_STORE_DIR;
+import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 
 @Controller
 @RequestMapping(value = "/license/closure")
@@ -81,8 +82,7 @@ public class ClosureEndorsementController {
     private TradeLicenseService tradeLicenseService;
 
     @GetMapping("/digisign-transition")
-    public String approvedClosureWithDigiSign(@RequestParam String fileStoreIds,
-                                              @RequestParam String applicationNumbers,
+    public String approvedClosureWithDigiSign(@RequestParam String fileStoreIds, @RequestParam String applicationNumbers,
                                               Model model) {
         License license = licenseClosureService.approveClosure(applicationNumbers);
         model.addAttribute("fileStoreId", fileStoreIds);
@@ -90,20 +90,25 @@ public class ClosureEndorsementController {
         return "closure-endorsement-success";
     }
 
-    @GetMapping("/endorsementnotice/{licenseId}")
+    @GetMapping(value = "/endorsementnotice/{licenseId}", produces = APPLICATION_PDF_VALUE)
     @ResponseBody
     public ResponseEntity<InputStreamResource> closureEndorsementNotice(@PathVariable Long licenseId) {
         License license = tradeLicenseService.getLicenseById(licenseId);
-        ReportOutput reportOutput = licenseClosureService.generateClosureEndorsementNotice(license);
-        reportOutput.setReportDisposition(ReportDisposition.ATTACHMENT);
-        reportOutput.setReportName("Closure_Endorsement_Notice");
-        return reportAsResponseEntity(reportOutput);
+        if (isBlank(license.getDigiSignedCertFileStoreId())) {
+            ReportOutput reportOutput = licenseClosureService.generateClosureEndorsementNotice(license);
+            reportOutput.setReportName(license.generateCertificateFileName());
+            return reportAsResponseEntity(reportOutput);
+        } else {
+            return fileStoreUtils.fileAsPDFResponse(license.getDigiSignedCertFileStoreId(),
+                    license.generateCertificateFileName(), TL_FILE_STORE_DIR);
+        }
     }
 
-    @GetMapping("/download-endorsementnotice")
+    @GetMapping(value = "/download-endorsementnotice", produces = APPLICATION_PDF_VALUE)
     @ResponseBody
     public ResponseEntity<InputStreamResource> downloadSignedEndorsementNotice(@RequestParam String fileStoreId,
                                                                                @RequestParam String applicationNumber) {
-        return fileStoreUtils.fileAsPDFResponse(fileStoreId, applicationNumber, FILESTORE_MODULECODE);
+        License license = tradeLicenseService.getLicenseByApplicationNumber(applicationNumber);
+        return fileStoreUtils.fileAsPDFResponse(fileStoreId, license.generateCertificateFileName(), TL_FILE_STORE_DIR);
     }
 }

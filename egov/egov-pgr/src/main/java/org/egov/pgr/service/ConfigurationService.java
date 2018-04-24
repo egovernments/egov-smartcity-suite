@@ -63,6 +63,7 @@ public class ConfigurationService {
     private static final String DEFAULT_COMPLAINT_PRIORITY = "DEFAULT_COMPLAINT_PRIORITY";
     private static final String USE_AUTO_COMPLETE_FOR_COMPLAINT_TYPE = "USE_AUTO_COMPLETE_FOR_COMPLAINT_TYPE";
     private static final String ASSIGN_REOPENED_COMPLAINT_BASEDON_ROUTER_POSITION = "ASSIGN_REOPENED_COMPLAINT_BASEDON_ROUTER_POSITION";
+    private static final String SEND_MESSAGE_ON_ESCALATION = "SEND_MESSAGE_ON_ESCALATION";
 
     @Autowired
     private ConfigurationRepository configurationRepository;
@@ -84,6 +85,10 @@ public class ConfigurationService {
 
     public boolean assignReopenedComplaintBasedOnRouterPosition() {
         return Boolean.valueOf(getValueByKey(ASSIGN_REOPENED_COMPLAINT_BASEDON_ROUTER_POSITION));
+    }
+
+    public boolean sendMessageOnEscalation() {
+        return Boolean.valueOf(getValueByKey(SEND_MESSAGE_ON_ESCALATION));
     }
 
     public String getValueByKey(String key) {

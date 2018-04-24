@@ -71,4 +71,15 @@ public abstract class OwnerGroup extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = SEQ_EG_OWNERGROUP, strategy = GenerationType.SEQUENCE)
     private Long id;
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
 }
