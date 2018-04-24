@@ -206,8 +206,8 @@ public class SurveyApplicationService {
         if (StringUtils.isNotBlank(searchSurveyRequest.getApplicationType()))
             qry.setParameter("applicationtype", searchSurveyRequest.getApplicationType());
 
-        if (searchSurveyRequest.getWard() != null)
-            qry.setParameter("ward", searchSurveyRequest.getWard());
+        if (searchSurveyRequest.getElectionWard() != null)
+            qry.setParameter("electionward", searchSurveyRequest.getElectionWard());
 
         if (searchSurveyRequest.getLocality() != null)
             qry.setParameter("locality", searchSurveyRequest.getLocality());
@@ -229,8 +229,8 @@ public class SurveyApplicationService {
         if (StringUtils.isNotBlank(searchSurveyRequest.getApplicationType()))
             queryStr.append(" and property.propertyModifyReason=:applicationtype");
 
-        if (searchSurveyRequest.getWard() != null) 
-            queryStr.append(" and property.basicProperty.propertyID.ward.id=:ward");
+        if (searchSurveyRequest.getElectionWard() != null) 
+            queryStr.append(" and property.basicProperty.propertyID.electionBoundary.id=:electionward");
 
         if (searchSurveyRequest.getLocality() != null)
             queryStr.append(" and property.basicProperty.propertyID.locality.id=:locality");

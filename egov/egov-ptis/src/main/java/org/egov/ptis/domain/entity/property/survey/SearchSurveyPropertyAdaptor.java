@@ -79,9 +79,9 @@ public class SearchSurveyPropertyAdaptor implements JsonSerializer<PropertyImpl>
                     jsonObject.addProperty("assessmentNo", "");
             
             if(property.getBasicProperty().getPropertyID() == null)
-                jsonObject.addProperty("ward", "");
+                jsonObject.addProperty("electionWard", "");
             else
-                jsonObject.addProperty("ward", property.getBasicProperty().getPropertyID().getWard().getName());
+                jsonObject.addProperty("electionWard", property.getBasicProperty().getPropertyID().getElectionBoundary().getName());
                 
             
             jsonObject.addProperty("status", property.getState().getValue());

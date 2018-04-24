@@ -102,15 +102,15 @@
 				<div class="panel-body custom-form"> 
 					<div class="form-group">
 						<label for="field-1" class="col-sm-2 control-label"><spring:message
-								code="lbl.ward" /><span class="mandatory"></span></label>
+								code="lbl.election.ward" /><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<form:select id="ward" 
-								path="ward" cssClass="form-control"
+							<form:select id="electionWard" 
+								path="electionWard" cssClass="form-control"
 								cssErrorClass="form-control error">
 								<form:option value="">
 									<spring:message code="lbl.option.select" />
 								</form:option>
-								<form:options items="${wardlist}" itemValue="id" itemLabel="name"/>
+								<form:options items="${electionwardlist}" itemValue="id" itemLabel="name"/>
 							</form:select>
 						</div>
 						<label for="field-1" class="col-sm-2 control-label"><spring:message

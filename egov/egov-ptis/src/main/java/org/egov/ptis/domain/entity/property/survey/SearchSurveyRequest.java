@@ -54,7 +54,7 @@ public class SearchSurveyRequest {
     private String fromDate;
     private String toDate;
     private String applicationStatus;
-    private Long ward;
+    private Long electionWard;
     private Long locality;
 
     public String getApplicationType() {
@@ -105,14 +105,6 @@ public class SearchSurveyRequest {
         this.applicationStatus = applicationStatus;
     }
 
-    public Long getWard() {
-        return ward;
-    }
-
-    public void setWard(Long ward) {
-        this.ward = ward;
-    }
-
     public Long getLocality() {
         return locality;
     }
@@ -121,4 +113,12 @@ public class SearchSurveyRequest {
         this.locality = locality;
     }
 
+    public Long getElectionWard() {
+        return electionWard;
+    }
+
+    public void setElectionWard(Long electionWard) {
+        this.electionWard = electionWard;
+    }
+    
 }

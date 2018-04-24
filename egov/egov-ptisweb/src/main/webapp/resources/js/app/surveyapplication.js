@@ -54,13 +54,13 @@ jQuery(document).ready(function() {
 						var assessmentNo=$("#assessmentNo").val();
 						var applicationNo=$("#applicationNo").val();
 						var applicationType=$("#applicationType").val();
-						var ward=$("#ward").val();
-						if(ward == '') {
-							bootbox.alert("Please select ward");
+						var electionWard=$("#electionWard").val();
+						if(electionWard == '') {
+							bootbox.alert("Please select election ward");
 							return false;  
 						}
 						$("#updateBtn").show();
-						$("#resulttable").show();  
+						$("#resulttable").show();   
 						var locality=$("#locality").val();
 										var oTable = jQuery('#resulttable');
 										oTable
@@ -72,7 +72,7 @@ jQuery(document).ready(function() {
 														data : function(args) {
 															return {
 																"args" : JSON.stringify(args),
-																"ward" : ward,
+																"electionWard" : electionWard,
 																"locality" : locality,
 																"applicationNo" : applicationNo,
 																"assessmentNo":assessmentNo,
@@ -110,7 +110,7 @@ jQuery(document).ready(function() {
 															"data" : "assessmentNo",
 														},
 														{
-															"data" : "ward",
+															"data" : "electionWard",
 														},
 														{
 															"data" : "status",

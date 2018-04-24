@@ -73,5 +73,8 @@ public class EisConstants {
     public static final String WORKFLOW_STATE_CANCELLED = "Cancelled";
     public static final String WORKFLOW_STATE_INPROCESS = "In process";
     public static final String EMPLOYEE_GRIEVANCE ="Employee Grievance";
+    
+    public static final String WARD = "Ward";
+    public static final String REVENUE_HIERARCHY_TYPE = "REVENUE";
 
 }

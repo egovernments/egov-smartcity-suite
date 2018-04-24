@@ -9,6 +9,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
 import java.util.List;
 import java.util.Map;
 
+import org.egov.eis.service.JurisdictionService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
@@ -46,6 +47,9 @@ public class SurveyPropertyController {
 
     @Autowired
     private SecurityUtils securityUtils;
+    
+    @Autowired
+    private JurisdictionService JurisdictionService;
 
     @ModelAttribute("applicationTypes")
     public Map<String, String> getApplicationTypes() {
@@ -57,9 +61,9 @@ public class SurveyPropertyController {
         return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(LOCALITY, LOCATION_HIERARCHY_TYPE);
     }
 
-    @ModelAttribute("wardlist")
-    public List<Boundary> wards() {
-        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD, REVENUE_HIERARCHY_TYPE);
+    @ModelAttribute("electionwardlist")
+    public List<Boundary> electionWards() {
+        return JurisdictionService.getEmployeeJuridictions(securityUtils.getCurrentUser().getId());
     }
 
     @RequestMapping(value = "/searchform", method = RequestMethod.GET)
