@@ -81,7 +81,6 @@ import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.entity.NatureOfBusiness;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
-import org.egov.tl.service.AbstractLicenseService;
 import org.egov.tl.service.FeeTypeService;
 import org.egov.tl.service.LicenseApplicationService;
 import org.egov.tl.service.ProcessOwnerReassignmentService;
@@ -120,6 +119,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     private static final String WF_ITEM_PROCESSED = "wf.item.processed";
     private static final String MESSAGE = "message";
     private static final String VALIDATE_SUPPORT_DOCUMENT = "error.support.docs";
+    private static final String LICENSE_REJECT = "license.rejected";
 
     protected transient WorkflowBean workflowBean = new WorkflowBean();
     protected transient List<String> buildingTypeList;
@@ -165,8 +165,6 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     }
 
     protected abstract T license();
-
-    protected abstract AbstractLicenseService<T> licenseService();
 
     @ValidationErrorPage(NEW)
     public String create(final T license) {
@@ -325,7 +323,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
      */
     public void processWorkflow() {
         // Both New And Renew Workflow handling in same API(transitionWorkFlow)
-        licenseService().transitionWorkFlow(license(), workflowBean);
+        tradeLicenseService.transitionWorkFlow((TradeLicense) license(), workflowBean);
         successMessage();
 
     }
@@ -342,7 +340,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         } else if (BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
             rejectActionMessage();
         else if (BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
-            addActionMessage(this.getText("license.rejected") + license().getApplicationNumber());
+            addActionMessage(this.getText(LICENSE_REJECT) + license().getApplicationNumber());
         else if (BUTTONGENERATEDCERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
             addActionMessage(this.getText("license.certifiacte.print.complete.recorded"));
     }
@@ -360,7 +358,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
                         + (user != null ? user.getName() : ""));
 
             } else
-                addActionMessage(this.getText("license.rejected") + license().getApplicationNumber());
+                addActionMessage(this.getText(LICENSE_REJECT) + license().getApplicationNumber());
         } else {
             if (BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
                 Position currentOwner = license().currentAssignee();
@@ -369,7 +367,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
                 final String userName = !assignments.isEmpty() ? assignments.get(0).getEmployee().getName() : "";
                 addActionMessage(this.getText("license.rejectedfirst") + " " + (designation.getName() + " - ") + userName);
             } else
-                addActionMessage(this.getText("license.rejected") + license().getApplicationNumber());
+                addActionMessage(this.getText(LICENSE_REJECT) + license().getApplicationNumber());
         }
     }
 
@@ -443,7 +441,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     }
 
     public Map<String, Map<String, BigDecimal>> getOutstandingFee() {
-        return this.licenseService().getOutstandingFee(this.license());
+        return tradeLicenseService.getOutstandingFee((TradeLicense) license());
     }
 
     public boolean isCitizen() {

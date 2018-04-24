@@ -67,7 +67,6 @@ import org.egov.tl.entity.Licensee;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.entity.enums.ApplicationType;
-import org.egov.tl.service.AbstractLicenseService;
 import org.egov.tl.service.LicenseCategoryService;
 import org.egov.tl.service.LicenseService;
 import org.egov.tl.service.LicenseSubCategoryService;
@@ -285,11 +284,6 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @Override
     protected TradeLicense license() {
         return tradeLicense;
-    }
-
-    @Override
-    protected AbstractLicenseService<TradeLicense> licenseService() {
-        return tradeLicenseService;
     }
 
     public List<LicenseDocumentType> getDocumentTypes() {

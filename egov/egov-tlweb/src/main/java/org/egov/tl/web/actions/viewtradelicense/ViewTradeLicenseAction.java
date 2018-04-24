@@ -62,7 +62,6 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
-import org.egov.tl.service.AbstractLicenseService;
 import org.egov.tl.service.LicenseClosureService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.web.actions.BaseLicenseAction;
@@ -99,8 +98,7 @@ import static org.egov.tl.utils.Constants.TL_FILE_STORE_DIR;
                 params = {"fileStoreIds", "${fileStoreIds}", "applicationNumbers", "${applicationNo}"}),
         @Result(name = "closureEndorsementDigiSign", location = "closure-endorsementnotice-digitalsigned.jsp")
 })
-public class
-ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
+public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     private static final long serialVersionUID = 1L;
     private static final String MODEL_ID = "model.id";
 
@@ -127,11 +125,6 @@ ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @Override
     protected TradeLicense license() {
         return tradeLicense;
-    }
-
-    @Override
-    protected AbstractLicenseService<TradeLicense> licenseService() {
-        return tradeLicenseService;
     }
 
     @Override

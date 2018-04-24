@@ -70,10 +70,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static org.egov.infra.config.core.ApplicationThreadLocals.getCityName;
@@ -171,7 +171,7 @@ public class LicenseService {
     }
 
     public ReportOutput generateAcknowledgement(License license) {
-        Map<String, Object> reportParams = new HashMap<>();
+        Map<String, Object> reportParams = new ConcurrentHashMap<>();
         reportParams.put("municipality", getMunicipalityName());
         reportParams.put("cityname", getCityName());
         reportParams.put("license", license);
