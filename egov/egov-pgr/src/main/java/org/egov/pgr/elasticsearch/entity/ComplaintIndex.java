@@ -59,6 +59,7 @@ import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 import java.util.Date;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.egov.infra.utils.ApplicationConstant.DEFAULT_TIMEZONE;
 import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
 import static org.egov.pgr.utils.constants.PGRConstants.PGR_INDEX_NAME;
@@ -343,6 +344,21 @@ public class ComplaintIndex {
 
     @Field(type = FieldType.String, index = not_analyzed)
     private String initialFunctionaryMobileNumber;
+
+    @Field(type = FieldType.Integer)
+    private int rating;
+
+    @Field(type = FieldType.Integer)
+    private int feedbackRating;
+
+    @Field(type = FieldType.Integer)
+    private int noOfFeedbackTaken;
+
+    @Field(type = FieldType.String, index = not_analyzed)
+    private int noOfFeedbackReviews;
+
+    @Field(type = FieldType.String, index = not_analyzed)
+    private String feedbackReason = EMPTY;
 
     public String getId() {
         return id;
@@ -1064,5 +1080,45 @@ public class ComplaintIndex {
 
     public void setInitialFunctionaryMobileNumber(String initialFunctionaryMobileNumber) {
         this.initialFunctionaryMobileNumber = initialFunctionaryMobileNumber;
+    }
+
+    public int getRating() {
+        return rating;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
+    }
+
+    public int getFeedbackRating() {
+        return feedbackRating;
+    }
+
+    public void setFeedbackRating(int feedbackRating) {
+        this.feedbackRating = feedbackRating;
+    }
+
+    public int getNoOfFeedbackTaken() {
+        return noOfFeedbackTaken;
+    }
+
+    public void setNoOfFeedbackTaken(int noOfFeedbackTaken) {
+        this.noOfFeedbackTaken = noOfFeedbackTaken;
+    }
+
+    public int getNoOfFeedbackReviews() {
+        return noOfFeedbackReviews;
+    }
+
+    public void setNoOfFeedbackReviews(final int noOfFeedbackReviews) {
+        this.noOfFeedbackReviews = noOfFeedbackReviews;
+    }
+
+    public String getFeedbackReason() {
+        return feedbackReason;
+    }
+
+    public void setFeedbackReason(String feedbackReason) {
+        this.feedbackReason = feedbackReason;
     }
 }

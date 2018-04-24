@@ -46,36 +46,18 @@
  *
  */
 
-package org.egov.restapi.web.controller.pgr;
+package org.egov.restapi.web.contracts.pgr;
 
-import org.egov.pgr.elasticsearch.entity.ComplaintIndex;
-import org.egov.pgr.elasticsearch.service.ComplaintIndexService;
-import org.egov.restapi.web.contracts.pgr.CompletedGrievanceRequest;
-import org.egov.restapi.web.contracts.pgr.CompletedGrievanceResponse;
-import org.egov.restapi.web.contracts.pgr.FeedbackTakenGrievanceRequest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.egov.pgr.elasticsearch.entity.contract.ComplaintSearchRequest;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 
-import static org.egov.infra.utils.JsonUtils.toJSON;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 
-@RestController
-@RequestMapping("complaint/")
-public class GrievanceDetailsController {
+public class FeedbackTakenGrievanceRequest extends ComplaintSearchRequest {
 
-    @Autowired
-    private ComplaintIndexService complaintIndexService;
-
-    @GetMapping(value = "completed", produces = APPLICATION_JSON_VALUE)
-    public String completedComplaints(CompletedGrievanceRequest searchRequest) {
-        return toJSON(complaintIndexService.searchComplaintIndex(searchRequest.query()).getContent(), ComplaintIndex.class,
-                CompletedGrievanceResponse.class);
-    }
-
-    @GetMapping(value = "feedback-taken", produces = APPLICATION_JSON_VALUE)
-    public Iterable<ComplaintIndex> feedbackTakenComplaints(FeedbackTakenGrievanceRequest searchRequest) {
-        return complaintIndexService.searchComplaintIndex(searchRequest);
+    public BoolQueryBuilder query() {
+        BoolQueryBuilder searchQueryBuilder = super.query();
+        searchQueryBuilder.must(rangeQuery("noOfFeedbackTaken").gt(0));
+        return searchQueryBuilder;
     }
 }

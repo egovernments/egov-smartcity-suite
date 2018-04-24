@@ -46,36 +46,41 @@
  *
  */
 
-package org.egov.restapi.web.controller.pgr;
+package org.egov.pgr.elasticsearch.service;
 
 import org.egov.pgr.elasticsearch.entity.ComplaintIndex;
-import org.egov.pgr.elasticsearch.service.ComplaintIndexService;
-import org.egov.restapi.web.contracts.pgr.CompletedGrievanceRequest;
-import org.egov.restapi.web.contracts.pgr.CompletedGrievanceResponse;
-import org.egov.restapi.web.contracts.pgr.FeedbackTakenGrievanceRequest;
+import org.egov.pgr.elasticsearch.repository.ComplaintIndexRepository;
+import org.egov.pgr.integration.ivrs.entity.IVRSFeedback;
+import org.egov.pgr.integration.ivrs.entity.IVRSFeedbackReview;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import static org.egov.infra.utils.JsonUtils.toJSON;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
 
-@RestController
-@RequestMapping("complaint/")
-public class GrievanceDetailsController {
+@Service
+@Transactional(readOnly = true)
+public class ComplaintIndexUpdateService {
 
     @Autowired
-    private ComplaintIndexService complaintIndexService;
+    private ComplaintIndexRepository complaintIndexRepository;
 
-    @GetMapping(value = "completed", produces = APPLICATION_JSON_VALUE)
-    public String completedComplaints(CompletedGrievanceRequest searchRequest) {
-        return toJSON(complaintIndexService.searchComplaintIndex(searchRequest.query()).getContent(), ComplaintIndex.class,
-                CompletedGrievanceResponse.class);
+    public void updateIndexOnFeedbackReview(IVRSFeedbackReview review) {
+        ComplaintIndex complaintIndex = getComplaintIndexByCRN(review.getComplaint().getCrn());
+        complaintIndex.setFeedbackReason(review.getFeedbackReason().getName());
+        complaintIndex.setNoOfFeedbackReviews(review.getReviewCount());
+        complaintIndexRepository.save(complaintIndex);
     }
 
-    @GetMapping(value = "feedback-taken", produces = APPLICATION_JSON_VALUE)
-    public Iterable<ComplaintIndex> feedbackTakenComplaints(FeedbackTakenGrievanceRequest searchRequest) {
-        return complaintIndexService.searchComplaintIndex(searchRequest);
+    public void updateIndexOnFeedback(IVRSFeedback feedback) {
+        ComplaintIndex complaintIndex = getComplaintIndexByCRN(feedback.getComplaint().getCrn());
+        complaintIndex.setFeedbackRating(Integer.valueOf(feedback.getIvrsRating().getName()));
+        complaintIndex.setNoOfFeedbackTaken(complaintIndex.getNoOfFeedbackTaken() + 1);
+        complaintIndexRepository.save(complaintIndex);
+    }
+
+
+    public ComplaintIndex getComplaintIndexByCRN(String crn) {
+        return complaintIndexRepository.findByCrnAndCityCode(crn, getCityCode());
     }
 }

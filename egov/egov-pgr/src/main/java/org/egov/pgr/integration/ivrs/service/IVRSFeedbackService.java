@@ -50,6 +50,7 @@ package org.egov.pgr.integration.ivrs.service;
 
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.pgr.elasticsearch.service.ComplaintIndexService;
+import org.egov.pgr.elasticsearch.service.ComplaintIndexUpdateService;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.enums.CitizenFeedback;
 import org.egov.pgr.integration.ivrs.entity.IVRSFeedback;
@@ -84,6 +85,9 @@ public class IVRSFeedbackService {
     @Autowired
     private ComplaintIndexService complaintIndexService;
 
+    @Autowired
+    private ComplaintIndexUpdateService complaintIndexUpdateService;
+
     @Transactional
     public IVRSFeedback createFeedback(IVRSFeedbackUpdateRequest request) {
         Complaint complaint = complaintRepository.findByCrn(request.getCrn());
@@ -98,6 +102,7 @@ public class IVRSFeedbackService {
         complaint.setCitizenFeedback(CitizenFeedback.value(rating.getWeight()));
         complaintRepository.saveAndFlush(complaint);
         complaintIndexService.updateComplaintIndex(complaint);
+        complaintIndexUpdateService.updateIndexOnFeedback(ivrsFeedback);
         return ivrsFeedback;
     }
 

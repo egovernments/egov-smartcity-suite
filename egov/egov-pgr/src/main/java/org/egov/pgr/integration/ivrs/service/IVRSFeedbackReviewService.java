@@ -48,6 +48,7 @@
 
 package org.egov.pgr.integration.ivrs.service;
 
+import org.egov.pgr.elasticsearch.service.ComplaintIndexUpdateService;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.integration.ivrs.entity.IVRSFeedbackReason;
 import org.egov.pgr.integration.ivrs.entity.IVRSFeedbackReview;
@@ -70,6 +71,9 @@ import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_REOPENED;
 @Transactional(readOnly = true)
 public class IVRSFeedbackReviewService {
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @Autowired
     private ComplaintService complaintService;
 
@@ -82,8 +86,8 @@ public class IVRSFeedbackReviewService {
     @Autowired
     private IVRSFeedbackReviewRepository ivrsFeedbackReviewRepository;
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    @Autowired
+    private ComplaintIndexUpdateService complaintIndexUpdateService;
 
     @Transactional
     public void createFeedbackReview(IVRSFeedbackReview feedbackReview) {
@@ -96,6 +100,7 @@ public class IVRSFeedbackReviewService {
         }
         feedbackReview.setReviewCount(1);
         ivrsFeedbackReviewRepository.save(feedbackReview);
+        complaintIndexUpdateService.updateIndexOnFeedbackReview(feedbackReview);
     }
 
     @Transactional
@@ -121,6 +126,7 @@ public class IVRSFeedbackReviewService {
             currentReview.setReopenCount(currentReview.getReopenCount() + 1);
         }
         ivrsFeedbackReviewRepository.saveAndFlush(currentReview);
+        complaintIndexUpdateService.updateIndexOnFeedbackReview(feedbackReview);
     }
 
     public Optional<IVRSFeedbackReview> getExistingFeedbackReviewByCRN(String crn) {

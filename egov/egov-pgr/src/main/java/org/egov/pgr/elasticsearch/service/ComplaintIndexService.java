@@ -61,6 +61,7 @@ import org.egov.infra.config.mapper.BeanMapperConfiguration;
 import org.egov.pgr.elasticsearch.entity.ComplaintIndex;
 import org.egov.pgr.elasticsearch.entity.contract.ComplaintDashBoardRequest;
 import org.egov.pgr.elasticsearch.entity.contract.ComplaintDashBoardResponse;
+import org.egov.pgr.elasticsearch.entity.contract.ComplaintSearchRequest;
 import org.egov.pgr.elasticsearch.entity.contract.ComplaintSourceResponse;
 import org.egov.pgr.elasticsearch.repository.ComplaintIndexAggregationBuilder;
 import org.egov.pgr.elasticsearch.repository.ComplaintIndexRepository;
@@ -1309,7 +1310,11 @@ public class ComplaintIndexService {
         return responseDetailsList;
     }
 
-    public Page<ComplaintIndex> searchComplaintIndex(final BoolQueryBuilder searchQuery) {
+    public Page<ComplaintIndex> searchComplaintIndex(ComplaintSearchRequest searchRequest) {
+        return complaintIndexRepository.search(searchRequest.query(), searchRequest.getPageRequest());
+    }
+
+    public Page<ComplaintIndex> searchComplaintIndex(BoolQueryBuilder searchQuery) {
         return (Page<ComplaintIndex>) complaintIndexRepository.search(searchQuery);
     }
 
