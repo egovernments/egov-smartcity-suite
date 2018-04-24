@@ -354,7 +354,7 @@ public class ComplaintIndex {
     @Field(type = FieldType.Integer)
     private int noOfFeedbackTaken;
 
-    @Field(type = FieldType.String, index = not_analyzed)
+    @Field(type = FieldType.Integer)
     private int noOfFeedbackReviews;
 
     @Field(type = FieldType.String, index = not_analyzed)
