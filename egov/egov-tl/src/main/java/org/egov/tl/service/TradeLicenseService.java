@@ -60,7 +60,6 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -466,10 +465,10 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         final List<HashMap<String, Object>> processHistoryDetails = new ArrayList<>();
         if (tradeLicense.hasState()) {
             State<Position> state = tradeLicense.getCurrentState();
-            User lastModifiedUser = state.getLastModifiedBy();
             final HashMap<String, Object> currentStateDetail = new HashMap<>();
             currentStateDetail.put("date", state.getLastModifiedDate());
-            currentStateDetail.put("updatedBy", lastModifiedUser.getType() == UserType.CITIZEN ? tradeLicense.getLicensee().getApplicantName() : lastModifiedUser.getName());
+            currentStateDetail.put("updatedBy", state.getSenderName().contains(DELIMITER_COLON)
+                    ? state.getSenderName().split(DELIMITER_COLON)[1] : state.getSenderName());
             currentStateDetail.put("status", "END".equals(state.getValue()) ? "Completed" : state.getValue());
             currentStateDetail.put("comments", defaultString(state.getComments()));
             User ownerUser = state.getOwnerUser();
@@ -482,16 +481,16 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
             processHistoryDetails.add(currentStateDetail);
             state.getHistory().stream().sorted(Comparator.comparing(StateHistory<Position>::getLastModifiedDate).reversed()).
-                    forEach(sh -> processHistoryDetails.add(constructHistory(sh, tradeLicense)));
+                    forEach(sh -> processHistoryDetails.add(constructHistory(sh)));
         }
         return processHistoryDetails;
     }
 
-    private HashMap<String, Object> constructHistory(StateHistory<Position> stateHistory, TradeLicense tradeLicense) {
+    private HashMap<String, Object> constructHistory(StateHistory<Position> stateHistory) {
         final HashMap<String, Object> processHistory = new HashMap<>();
-        User lastModifiedUser = stateHistory.getLastModifiedBy();
         processHistory.put("date", stateHistory.getLastModifiedDate());
-        processHistory.put("updatedBy", lastModifiedUser.getType() == UserType.CITIZEN ? tradeLicense.getLicensee().getApplicantName() : lastModifiedUser.getName());
+        processHistory.put("updatedBy", stateHistory.getSenderName().contains(DELIMITER_COLON)
+                ? stateHistory.getSenderName().split(DELIMITER_COLON)[1] : stateHistory.getSenderName());
         processHistory.put("status", "END".equals(stateHistory.getValue()) ? "Completed" : stateHistory.getValue());
         processHistory.put("comments", defaultString(stateHistory.getComments()));
         Position ownerPosition = stateHistory.getOwnerPosition();

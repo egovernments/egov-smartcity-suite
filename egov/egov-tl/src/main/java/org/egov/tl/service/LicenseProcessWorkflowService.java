@@ -259,7 +259,9 @@ public class LicenseProcessWorkflowService {
     public void collectionWorkflowTransition(TradeLicense tradeLicense) {
         final DateTime currentDate = new DateTime();
         final User currentUser = securityUtils.getCurrentUser();
-        final String collectionOperator = currentUser.getUsername() + DELIMITER_COLON + currentUser.getName();
+        final String collectionOperator = licenseUtils.getApplicationSenderName(currentUser.getType()
+                , currentUser.getUsername() + DELIMITER_COLON + currentUser.getName()
+                , tradeLicense.getLicensee().getApplicantName());
         LicenseStateInfo licenseStateInfo = tradeLicense.extraInfo();
         if (!StringUtils.isEmpty(tradeLicense.getState().getExtraInfo())) {
             WorkFlowMatrix workFlowMatrix = workFlowMatrixService.getWorkFlowObjectbyId(licenseStateInfo.getWfMatrixRef());
@@ -297,6 +299,7 @@ public class LicenseProcessWorkflowService {
         if (!assignmentList.isEmpty()) {
             String additionalRule = license.isNewApplication() ? NEWLICENSE : RENEWLICENSE;
             final Assignment wfAssignment = assignmentList.get(0);
+            User currentUser = securityUtils.getCurrentUser();
             WorkFlowMatrix nextWorkFlowMatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), "ANY",
                     null, additionalRule, workFlowMatrix.getNextState(), workFlowMatrix.getNextAction(),
                     new Date(), "%" + wfAssignment.getDesignation().getName() + "%");
@@ -304,7 +307,8 @@ public class LicenseProcessWorkflowService {
             if (nextWorkFlowMatrix != null)
                 licenseStateInfo.setWfMatrixRef(nextWorkFlowMatrix.getId());
             initiateWfTransition(license);
-            license.transition().withSenderName(securityUtils.getCurrentUser().getName())
+            license.transition().withSenderName(licenseUtils.getApplicationSenderName(currentUser.getType()
+                    , currentUser.getName(), license.getLicensee().getApplicantName()))
                     .withComments(workflowBean.getApproverComments())
                     .withNatureOfTask(license.isReNewApplication() ? RENEWAL_NATUREOFWORK : NEW_NATUREOFWORK)
                     .withStateValue(workFlowMatrix.getNextState()).withDateInfo(new Date())

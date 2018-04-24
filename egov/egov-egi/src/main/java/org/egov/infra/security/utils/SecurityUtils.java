@@ -101,4 +101,8 @@ public class SecurityUtils {
         return currentUserType().equals(UserType.EMPLOYEE);
     }
 
+    public static boolean currentUserIsAnonymous() {
+        return userAnonymouslyAuthenticated();
+    }
+
 }

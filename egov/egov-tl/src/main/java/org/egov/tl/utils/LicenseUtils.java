@@ -59,6 +59,8 @@ import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.persistence.entity.enums.UserType;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.tl.config.properties.TlApplicationProperties;
 import org.egov.tl.entity.LicenseAppType;
@@ -143,5 +145,11 @@ public class LicenseUtils {
             return tlApplicationProperties.getValue("sla.renew.apptype");
         else
             return tlApplicationProperties.getValue("sla.closure.apptype");
+    }
+
+    public String getApplicationSenderName(UserType userType, String userName, String applicantName) {
+        return (SecurityUtils.currentUserIsAnonymous()
+                || UserType.CITIZEN == userType) ? applicantName
+                : userName;
     }
 }
