@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<%--
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -45,79 +44,56 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
-  -->
+  --%>
 
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>egov-erp</artifactId>
-        <groupId>org.egov</groupId>
-        <version>3.0.0-SNAPSHOT</version>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <name>e-governments api</name>
-    <artifactId>egov-api</artifactId>
-    <packaging>war</packaging>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="description" content="eGov Urban Portal"/>
+    <meta name="author" content=""/>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.egov</groupId>
-            <artifactId>egov-pgr</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
-        </dependency>
+    <title>eGov Urban Portal</title>
 
-        <dependency>
-            <groupId>org.egov</groupId>
-            <artifactId>egov-egi</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
-            <classifier>tests</classifier>
-            <scope>test</scope>
-        </dependency>
+    <link rel="icon" href="<cdn:url  value='/resources/global/images/favicon.png' context='/egi'/>" sizes="32x32">
+    <link rel="stylesheet" href="<cdn:url  value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
+    <link rel="stylesheet" href="<cdn:url  value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
+    <link rel="stylesheet" href="<cdn:url  value='/resources/global/css/egov/custom.css?rnd=${app_release_no}' context='/egi'/>">
 
-	 <dependency>
-            <groupId>org.egov</groupId>
-            <artifactId>egov-eventnotification</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
-        </dependency>
+    <script src="<cdn:url  value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="<cdn:url  value='/resources/global/js/ie8/html5shiv.min.js' context='/egi'/>"></script>
+    <script src="<cdn:url  value='/resources/global/js/ie8/respond.min.js' context='/egi'/>"></script>
+    <![endif]-->
 
-        <!-- VIEWS RELATED END -->
-        <dependency>
-            <groupId>org.apache.tiles</groupId>
-            <artifactId>tiles-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tiles</groupId>
-            <artifactId>tiles-jsp</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jsoup</groupId>
-            <artifactId>jsoup</artifactId>
-        </dependency>
-        <!-- VIEWS RELATED END -->
 
-        <!-- HIBERNATE START -->
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.validation</groupId>
-            <artifactId>validation-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator</artifactId>
-        </dependency>
-        <!-- HIBERNATE END -->
-
-        <!-- IMAGE PROCESSING API START-->
-        <dependency>
-            <groupId>net.coobird</groupId>
-            <artifactId>thumbnailator</artifactId>
-        </dependency>
-        <!-- IMAGE PROCESSING API END -->
-
-    </dependencies>
-
-</project>
+</head>
+<body class="page-body">
+<div class="page-container">
+    <tiles:insertAttribute name="header"/>
+    <div class="main-content">
+        <div class="page-error-404">
+            <div class="error-text">
+                <tiles:insertAttribute name="body"/>
+            </div>
+            <div class="row display-hide" id="close">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"
+                        onclick="window.close();">Close
+                </button>
+            </div>
+        </div>
+    </div>
+    <tiles:insertAttribute name="footer"/>
+</div>
+<script>
+    if (window.opener && window.opener !== window)
+        $("#close").show();
+</script>
+</body>
+</html>

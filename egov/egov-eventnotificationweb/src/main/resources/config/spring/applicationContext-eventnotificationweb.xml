@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!--
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
@@ -46,78 +47,33 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
   -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>egov-erp</artifactId>
-        <groupId>org.egov</groupId>
-        <version>3.0.0-SNAPSHOT</version>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
 
-    <name>e-governments api</name>
-    <artifactId>egov-api</artifactId>
-    <packaging>war</packaging>
+    <import resource="applicationSecurityContext-eventnotification.xml"/>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.egov</groupId>
-            <artifactId>egov-pgr</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
-        </dependency>
+    <context:property-placeholder/>
 
-        <dependency>
-            <groupId>org.egov</groupId>
-            <artifactId>egov-egi</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
-            <classifier>tests</classifier>
-            <scope>test</scope>
-        </dependency>
+    <context:component-scan base-package="org.egov.eventnotification.web">
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+    
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize" value="${max.file.upload.size}"/>
+        <property name="maxInMemorySize" value="${max.file.inmemory.size}"/>
+    </bean>
+    
+    <bean class="org.springframework.context.support.ResourceBundleMessageSource" id="messageSource">
+	 <property name="basenames">
+	  <list>
+	      <value>*.properties</value>
+	  </list>
+	 </property>
+	</bean>
 
-	 <dependency>
-            <groupId>org.egov</groupId>
-            <artifactId>egov-eventnotification</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <!-- VIEWS RELATED END -->
-        <dependency>
-            <groupId>org.apache.tiles</groupId>
-            <artifactId>tiles-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tiles</groupId>
-            <artifactId>tiles-jsp</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jsoup</groupId>
-            <artifactId>jsoup</artifactId>
-        </dependency>
-        <!-- VIEWS RELATED END -->
-
-        <!-- HIBERNATE START -->
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.validation</groupId>
-            <artifactId>validation-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator</artifactId>
-        </dependency>
-        <!-- HIBERNATE END -->
-
-        <!-- IMAGE PROCESSING API START-->
-        <dependency>
-            <groupId>net.coobird</groupId>
-            <artifactId>thumbnailator</artifactId>
-        </dependency>
-        <!-- IMAGE PROCESSING API END -->
-
-    </dependencies>
-
-</project>
+</beans>
