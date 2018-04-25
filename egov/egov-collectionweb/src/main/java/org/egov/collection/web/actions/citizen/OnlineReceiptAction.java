@@ -479,7 +479,7 @@ public class OnlineReceiptAction extends BaseFormAction {
                         CollectionConstants.SERVICE_TYPE_PAYMENT));
         constructServiceDetailsList();
         // Fetching pending transaction by consumer code. If transaction is in pending status display message
-/*        if (null != receiptHeader && null != receiptHeader.getConsumerCode() && !"".equals(receiptHeader.getConsumerCode())
+        if (null != receiptHeader && null != receiptHeader.getConsumerCode() && !"".equals(receiptHeader.getConsumerCode())
                 && receiptHeader.getService().getCode() != null && !receiptHeader.getService().getCode().isEmpty()) {
             final List<ReceiptHeader> pendingOnlinePayments = getPersistenceService().findAllByNamedQuery(
                     CollectionConstants.QUERY_ONLINE_PENDING_RECEIPTS_BY_CONSUMERCODE_AND_SERVICECODE,
@@ -491,7 +491,7 @@ public class OnlineReceiptAction extends BaseFormAction {
                         new String[] { pendingOnlinePayments.get(0).getConsumerCode(),
                                 pendingOnlinePayments.get(0).getId().toString() }));
             }
-        }*/
+        }
     }
 
     private String decodeBillXML() {
