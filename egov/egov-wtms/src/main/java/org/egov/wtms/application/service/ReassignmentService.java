@@ -48,10 +48,18 @@
 
 package org.egov.wtms.application.service;
 
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ENGINEERING_CODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.JUNIOR_ASSISTANT_DESIGN_CODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.SENIOR_ASSISTANT_DESIGN_CODE;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
-import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.pims.commons.Position;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -59,22 +67,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static org.egov.wtms.utils.constants.WaterTaxConstants.ENGINEERING_CODE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.JUNIOR_ASSISTANT_DESIGN_CODE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.SENIOR_ASSISTANT_DESIGN_CODE;
-
 @Service
 public class ReassignmentService {
-
-    private static final String REASSIGNMENT = "REASSIGNMENT";
-
-    @Autowired
-    private AppConfigValueService appConfigValuesService;
 
     @Autowired
     private PositionMasterService positionMasterService;
@@ -89,10 +83,7 @@ public class ReassignmentService {
         final List<Assignment> assignmentsList = assignmentService.findByDepartmentCodeAndDesignationCode(
                 ENGINEERING_CODE,
                 Arrays.asList(JUNIOR_ASSISTANT_DESIGN_CODE, SENIOR_ASSISTANT_DESIGN_CODE));
-
-        final Long positionId = positionMasterService.getCurrentPositionForUser(ApplicationThreadLocals.getUserId()).getId();
-        assignmentsList.removeIf(assignment -> assignment.getPosition().getId().equals(positionId));
-
+        assignmentsList.removeAll(assignmentService.getAllAssignmentsByEmpId(ApplicationThreadLocals.getUserId()));
         return assignmentsList
                 .stream()
                 .collect(Collectors.toMap(assignment -> assignment.getPosition().getId().toString(),
