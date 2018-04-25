@@ -89,6 +89,7 @@ public class MarriageConstants {
     public static final String WFSTATE_CMOH_APPROVED="Chief Medical Officer of Health Approved";
     public static final String WFSTATE_MARRIAGEAPI_NEW ="MarriageAPI NEW";
     public static final String COMMISSIONER ="Commissioner";
+    public static final String MARRIAGE_REGISTRAR = "Marriage Registrar";
     
 
     public static final String APPROVED = "APPROVED";

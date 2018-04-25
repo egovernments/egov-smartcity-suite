@@ -64,11 +64,13 @@ import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_APP
 import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_CMO_APPRVLPENDING;
 import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_MHO_APPRVLPENDING;
 import static org.egov.mrs.application.MarriageConstants.WFSTATE_APPROVER_REJECTED;
+import static org.egov.mrs.application.MarriageConstants.MARRIAGE_REGISTRAR;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
@@ -82,6 +84,7 @@ import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.StateAware;
@@ -133,6 +136,8 @@ public class RegistrationWorkflowService {
     private DesignationService designationService;
     @Autowired
     private DepartmentService departmentService;
+    @Autowired
+    private UserService userService;
 
     private enum WorkflowType {
         MarriageRegistration, ReIssue
@@ -571,16 +576,30 @@ public class RegistrationWorkflowService {
     }
 
     public void onCreateRegistrationAPI(MarriageRegistration marriageRegistration) {
-
-        WorkFlowMatrix wfmatrix = marriageRegistrationWorkflowService.getWfMatrix(marriageRegistration.getStateType(), null, null,
+        Position assignee = null;
+        WorkFlowMatrix wfmatrix = null;
+        User nextOwner = null;
+        wfmatrix = marriageRegistrationWorkflowService.getWfMatrix(marriageRegistration.getStateType(), null, null,
                 null,
                 MarriageConstants.WFSTATE_MARRIAGEAPI_NEW, null);
-        Designation des = designationService.getDesignationByName(COMMISSIONER);
-        List<Assignment> assignment = assignmentService.getAllActiveAssignments(des.getId());
-        if (assignment.isEmpty())
-            throw new ApplicationRuntimeException(
-                    "No Commisioner is configured to receive Marriage regitration");
-        Position assignee = assignment.get(0).getPosition();
+        Set<User> users = userService.getUsersByRoleName(MARRIAGE_REGISTRAR);
+        if (users.isEmpty()) {
+            Designation des = designationService.getDesignationByName(COMMISSIONER);
+            List<Assignment> assignment = assignmentService.getAllActiveAssignments(des.getId());
+            if (assignment.isEmpty())
+                throw new ApplicationRuntimeException(
+                        "No Commisioner is configured to receive Marriage regitration");
+            assignee = assignment.get(0).getPosition();
+        } else {
+            nextOwner = users.iterator().next();
+            if (nextOwner != null) {
+                List<Position> assigneePositions = positionMasterService.getPositionsForEmployee(nextOwner.getId(), new Date());
+                if (assigneePositions.isEmpty())
+                    throw new ApplicationRuntimeException("No position defined for Marriage Registrar role");
+                else
+                    assignee = assigneePositions.iterator().next();
+            }
+        }
         marriageRegistration.transition()
                 .start()
                 .withStateValue(MarriageConstants.WFSTATE_REV_CLRK_APPROVED)
