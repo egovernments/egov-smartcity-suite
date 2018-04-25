@@ -210,7 +210,7 @@ public class CollectionSchedulerConfiguration extends QuartzSchedulerConfigurati
         atomReconciliationCron.setJobDetail(jobDetail.getObject());
         atomReconciliationCron.setGroup(COLLECTION_TRIGGER_GROUP);
         atomReconciliationCron.setName(String.format("COLLECTION_ATOM_RECON_%d_TRIGGER", modulo));
-        atomReconciliationCron.setCronExpression("0 */2 * * * ?");
+        atomReconciliationCron.setCronExpression("0 */30 * * * ?");
         atomReconciliationCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
         return atomReconciliationCron;
     }
