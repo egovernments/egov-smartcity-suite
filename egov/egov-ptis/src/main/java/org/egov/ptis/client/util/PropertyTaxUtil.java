@@ -1296,8 +1296,13 @@ public class PropertyTaxUtil {
                 + WHERE_BP_ACTIVE_TRUE + "and (p.status = 'W' or p.status = 'I' or p.status = 'A') "
                 + AND_P_PROPERTY + AND_PTD_EG_INSTALLMENT_MASTER_INSTALLMENT;
 
-        final Ptdemand ptDemand = (Ptdemand) entityManager.unwrap(Session.class).createQuery(query)
-                .setEntity(PROPERTY, property).setEntity(INSTALLMENT, dmdInstallment).list().get(0);
+        List<Ptdemand> ptDemandList = new ArrayList<>();
+		ptDemandList = entityManager.unwrap(Session.class).createQuery(query).setEntity("property", property)
+				.setEntity("installment", dmdInstallment).list();
+        Ptdemand ptDemand=new Ptdemand();
+        if(!ptDemandList.isEmpty()){
+        	ptDemand=ptDemandList.get(0);
+        }
 
         for (final EgDemandDetails dmdDet : ptDemand.getEgDemandDetails()) {
 
