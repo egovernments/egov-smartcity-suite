@@ -71,9 +71,9 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 @Conditional(SchedulerConfigCondition.class)
 public class CollectionSchedulerConfiguration extends QuartzSchedulerConfiguration {
 
-    private static final String INSTRUMENT_TYPE_CHEQUE = "cheque";
     private static final String INSTRUMENT_TYPE_CASH = "cash";
-    private static final String INSTRUMENT_TYPE_DD = "dd";
+    private static final String COLLECTION_JOB_GROUP = "COLLECTION_JOB_GROUP";
+    private static final String COLLECTION_TRIGGER_GROUP = "COLLECTION_TRIGGER_GROUP";
 
     @Bean(destroyMethod = "destroy")
     public SchedulerFactoryBean collectionScheduler(DataSource dataSource) {
@@ -83,25 +83,34 @@ public class CollectionSchedulerConfiguration extends QuartzSchedulerConfigurati
         collectionScheduler.setOverwriteExistingJobs(true);
         collectionScheduler.setTriggers(
                 axisReconciliationCronTrigger().getObject(),
-                atomReconciliationCronTrigger().getObject(),
+                atomReconciliationCronTrigger0().getObject(),
+                atomReconciliationCronTrigger1().getObject(),
+                atomReconciliationCronTrigger2().getObject(),
+                atomReconciliationCronTrigger3().getObject(),
+                atomReconciliationCronTrigger4().getObject(),
                 remittanceCashInstrumentCronTrigger0().getObject(),
                 remittanceCashInstrumentCronTrigger1().getObject());
         return collectionScheduler;
     }
 
+    private Map<String, String> prepareJobDetailMap() {
+        Map<String, String> jobDetailMap = new HashMap<>();
+        jobDetailMap.put("userName", "system");
+        jobDetailMap.put("cityDataRequired", "true");
+        jobDetailMap.put("moduleName", "collection");
+        return jobDetailMap;
+    }
+
     @Bean
     public JobDetailFactoryBean axisReconciliationJobDetail() {
         JobDetailFactoryBean axisReconciliationJobDetail = new JobDetailFactoryBean();
-        axisReconciliationJobDetail.setGroup("COLLECTION_JOB_GROUP");
+        axisReconciliationJobDetail.setGroup(COLLECTION_JOB_GROUP);
         axisReconciliationJobDetail.setName("COLLECTION_AXIS_RECON_JOB");
         axisReconciliationJobDetail.setDurability(true);
         axisReconciliationJobDetail.setJobClass(AxisReconciliationJob.class);
         axisReconciliationJobDetail.setRequestsRecovery(true);
-        Map<String, String> jobDetailMap = new HashMap<>();
+        Map<String, String> jobDetailMap = prepareJobDetailMap();
         jobDetailMap.put("jobBeanName", "axisReconciliationJob");
-        jobDetailMap.put("userName", "system");
-        jobDetailMap.put("cityDataRequired", "true");
-        jobDetailMap.put("moduleName", "collection");
         axisReconciliationJobDetail.setJobDataAsMap(jobDetailMap);
         return axisReconciliationJobDetail;
     }
@@ -110,7 +119,7 @@ public class CollectionSchedulerConfiguration extends QuartzSchedulerConfigurati
     public CronTriggerFactoryBean axisReconciliationCronTrigger() {
         CronTriggerFactoryBean axisReconciliationCron = new CronTriggerFactoryBean();
         axisReconciliationCron.setJobDetail(axisReconciliationJobDetail().getObject());
-        axisReconciliationCron.setGroup("COLLECTION_TRIGGER_GROUP");
+        axisReconciliationCron.setGroup(COLLECTION_TRIGGER_GROUP);
         axisReconciliationCron.setName("COLLECTION_AXIS_RECON_TRIGGER");
         axisReconciliationCron.setCronExpression("0 */30 * * * ?");
         axisReconciliationCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
@@ -162,16 +171,13 @@ public class CollectionSchedulerConfiguration extends QuartzSchedulerConfigurati
 
     private JobDetailFactoryBean createJobDetailFactory(String instrumentType, int modulo) {
         JobDetailFactoryBean remittanceInstrumentJobDetail = new JobDetailFactoryBean();
-        remittanceInstrumentJobDetail.setGroup("COLLECTION_JOB_GROUP");
+        remittanceInstrumentJobDetail.setGroup(COLLECTION_JOB_GROUP);
         remittanceInstrumentJobDetail.setName(String.format("COLLECTION_REMIT_INSTRMNT_%s%d_JOB", instrumentType, modulo));
         remittanceInstrumentJobDetail.setDurability(true);
         remittanceInstrumentJobDetail.setJobClass(RemittanceInstrumentJob.class);
         remittanceInstrumentJobDetail.setRequestsRecovery(true);
-        Map<String, String> jobDetailMap = new HashMap<>();
+        Map<String, String> jobDetailMap = prepareJobDetailMap();
         jobDetailMap.put("jobBeanName", String.format("remittance%sInstrumentJob%d", instrumentType, modulo));
-        jobDetailMap.put("userName", "system");
-        jobDetailMap.put("cityDataRequired", "true");
-        jobDetailMap.put("moduleName", "collection");
         remittanceInstrumentJobDetail.setJobDataAsMap(jobDetailMap);
         return remittanceInstrumentJobDetail;
     }
@@ -179,43 +185,118 @@ public class CollectionSchedulerConfiguration extends QuartzSchedulerConfigurati
     private CronTriggerFactoryBean createCronTrigger(JobDetailFactoryBean jobDetail, String instrumentType, int modulo) {
         CronTriggerFactoryBean remittanceCron = new CronTriggerFactoryBean();
         remittanceCron.setJobDetail(jobDetail.getObject());
-        remittanceCron.setGroup("COLLECTION_TRIGGER_GROUP");
+        remittanceCron.setGroup(COLLECTION_TRIGGER_GROUP);
         remittanceCron.setName(String.format("COLLECTION_REMIT_INSTRMNT_%s%d_TRIGGER", instrumentType, modulo));
         remittanceCron.setCronExpression("0 */30 * * * ?");
         remittanceCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
         return remittanceCron;
     }
 
-    @Bean
-    public JobDetailFactoryBean atomReconciliationJobDetail() {
+    public JobDetailFactoryBean createAtomJobDetailFactory(int modulo) {
         JobDetailFactoryBean atomReconciliationJobDetail = new JobDetailFactoryBean();
-        atomReconciliationJobDetail.setGroup("COLLECTION_JOB_GROUP");
-        atomReconciliationJobDetail.setName("COLLECTION_ATOM_RECON_JOB");
+        atomReconciliationJobDetail.setGroup(COLLECTION_JOB_GROUP);
+        atomReconciliationJobDetail.setName(String.format("COLLECTION_ATOM_RECON_%d_JOB", modulo));
         atomReconciliationJobDetail.setDurability(true);
         atomReconciliationJobDetail.setJobClass(AtomReconciliationJob.class);
         atomReconciliationJobDetail.setRequestsRecovery(true);
-        Map<String, String> jobDetailMap = new HashMap<>();
-        jobDetailMap.put("jobBeanName", "atomReconciliationJob");
-        jobDetailMap.put("userName", "system");
-        jobDetailMap.put("cityDataRequired", "true");
-        jobDetailMap.put("moduleName", "collection");
+        Map<String, String> jobDetailMap = prepareJobDetailMap();
+        jobDetailMap.put("jobBeanName", String.format("atomReconciliationJob%d", modulo));
         atomReconciliationJobDetail.setJobDataAsMap(jobDetailMap);
         return atomReconciliationJobDetail;
     }
 
-    @Bean
-    public CronTriggerFactoryBean atomReconciliationCronTrigger() {
+    public CronTriggerFactoryBean createAtomCronTrigger(JobDetailFactoryBean jobDetail, int modulo) {
         CronTriggerFactoryBean atomReconciliationCron = new CronTriggerFactoryBean();
-        atomReconciliationCron.setJobDetail(atomReconciliationJobDetail().getObject());
-        atomReconciliationCron.setGroup("COLLECTION_TRIGGER_GROUP");
-        atomReconciliationCron.setName("COLLECTION_ATOM_RECON_TRIGGER");
-        atomReconciliationCron.setCronExpression("0 */30 * * * ?");
+        atomReconciliationCron.setJobDetail(jobDetail.getObject());
+        atomReconciliationCron.setGroup(COLLECTION_TRIGGER_GROUP);
+        atomReconciliationCron.setName(String.format("COLLECTION_ATOM_RECON_%d_TRIGGER", modulo));
+        atomReconciliationCron.setCronExpression("0 */2 * * * ?");
         atomReconciliationCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
         return atomReconciliationCron;
     }
 
-    @Bean("atomReconciliationJob")
-    public AtomReconciliationJob atomReconciliationJob() {
-        return new AtomReconciliationJob();
+    @Bean
+    public JobDetailFactoryBean atomReconciliationJobDetail0() {
+        return createAtomJobDetailFactory(0);
+    }
+
+    @Bean
+    public CronTriggerFactoryBean atomReconciliationCronTrigger0() {
+        return createAtomCronTrigger(atomReconciliationJobDetail0(), 0);
+    }
+
+    @Bean("atomReconciliationJob0")
+    public AtomReconciliationJob atomReconciliationJob0() {
+        AtomReconciliationJob atomReconciliationJob = new AtomReconciliationJob();
+        atomReconciliationJob.setModulo(0);
+        return atomReconciliationJob;
+    }
+
+    @Bean
+    public JobDetailFactoryBean atomReconciliationJobDetail1() {
+        return createAtomJobDetailFactory(1);
+    }
+
+    @Bean
+    public CronTriggerFactoryBean atomReconciliationCronTrigger1() {
+        return createAtomCronTrigger(atomReconciliationJobDetail1(), 1);
+    }
+
+    @Bean("atomReconciliationJob1")
+    public AtomReconciliationJob atomReconciliationJob1() {
+        AtomReconciliationJob atomReconciliationJob = new AtomReconciliationJob();
+        atomReconciliationJob.setModulo(1);
+        return atomReconciliationJob;
+    }
+
+    @Bean
+    public JobDetailFactoryBean atomReconciliationJobDetail2() {
+        return createAtomJobDetailFactory(2);
+    }
+
+    @Bean
+    public CronTriggerFactoryBean atomReconciliationCronTrigger2() {
+        return createAtomCronTrigger(atomReconciliationJobDetail2(), 2);
+    }
+
+    @Bean("atomReconciliationJob2")
+    public AtomReconciliationJob atomReconciliationJob2() {
+        AtomReconciliationJob atomReconciliationJob = new AtomReconciliationJob();
+        atomReconciliationJob.setModulo(2);
+        return atomReconciliationJob;
+    }
+
+    @Bean
+    public JobDetailFactoryBean atomReconciliationJobDetail3() {
+        return createAtomJobDetailFactory(3);
+    }
+
+    @Bean
+    public CronTriggerFactoryBean atomReconciliationCronTrigger3() {
+        return createAtomCronTrigger(atomReconciliationJobDetail3(), 3);
+    }
+
+    @Bean("atomReconciliationJob3")
+    public AtomReconciliationJob atomReconciliationJob3() {
+        AtomReconciliationJob atomReconciliationJob = new AtomReconciliationJob();
+        atomReconciliationJob.setModulo(3);
+        return atomReconciliationJob;
+    }
+
+    @Bean
+    public JobDetailFactoryBean atomReconciliationJobDetail4() {
+        return createAtomJobDetailFactory(4);
+    }
+
+    @Bean
+    public CronTriggerFactoryBean atomReconciliationCronTrigger4() {
+        return createAtomCronTrigger(atomReconciliationJobDetail4(), 4);
+    }
+
+    @Bean("atomReconciliationJob4")
+    public AtomReconciliationJob atomReconciliationJob4() {
+        AtomReconciliationJob atomReconciliationJob = new AtomReconciliationJob();
+        atomReconciliationJob.setModulo(4);
+        return atomReconciliationJob;
     }
 }

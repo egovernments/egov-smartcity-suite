@@ -200,6 +200,8 @@ public final class CollectionConstants {
     public static final String QUERY_SERVICE_CATEGORY_BY_CODE = "SERVICE_CATEGORY_BY_CODE";
     public static final String QUERY_SERVICE_BY_CATEGORY_FOR_TYPE = "SERVICE_BY_CATEGORY_FOR_TYPE";
     public static final String QUERY_RECEIPT_BY_ID_AND_STATUSNOTCANCELLED = "RECEIPT_BY_ID_AND_STATUSNOTCANCELLED";
+    public static final String QUERY_PENDING_RECEIPT_BY_ID_AND_CONSUMERCODE = "QUERY_PENDING_RECEIPT_BY_ID_AND_CONSUMERCODE";
+    public static final String QUERY_PENDING_RECEIPT_BY_ID_AND_CITYCODE = "QUERY_PENDING_RECEIPT_BY_ID_AND_CITYCODE";
 
     // named queries (other modules)
     public static final String QUERY_ACTIVE_COUNTERS = "getAllActiveCounters";
@@ -631,6 +633,7 @@ public final class CollectionConstants {
     public static final char[] REVENUEHEADS = new char[] { 'I', 'A', 'L' };
     public static final Integer DEFAULT_PAGE_SIZE = 30;
     public static final Integer QUARTZ_BULKBILL_JOBS = 2;
+    public static final Integer QUARTZ_ATOM_RECONCILE_BULK_JOBS = 5;
 
     public static final String DATE_FORMAT_YYYYMMDD = "yyyy-MM-dd";
     public static final SimpleDateFormat DATEFORMATTER_YYYY_MM_DD = new SimpleDateFormat(DATE_FORMAT_YYYYMMDD);
@@ -693,6 +696,6 @@ public final class CollectionConstants {
             add("6");
             add("D");
             add("P");
-        } 
+        }
     };
 }

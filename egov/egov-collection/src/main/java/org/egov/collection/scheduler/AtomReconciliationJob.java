@@ -56,12 +56,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class AtomReconciliationJob extends AbstractQuartzJob {
 
     private static final long serialVersionUID = -8293830861860894611L;
+    private Integer modulo;
 
     @Autowired
     private transient SchedularService schedularService;
 
     @Override
     public void executeJob() {
-        schedularService.reconcileATOM();
+        schedularService.reconcileATOM(modulo);
+    }
+
+    public Integer getModulo() {
+        return modulo;
+    }
+
+    public void setModulo(Integer modulo) {
+        this.modulo = modulo;
     }
 }

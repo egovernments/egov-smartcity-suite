@@ -277,4 +277,15 @@
     <![CDATA[select distinct rh.service from org.egov.collection.entity.ReceiptHeader rh where rh.status.code<>'CANCELLED']]>
     </query> 
     
+    <query name="QUERY_PENDING_RECEIPT_BY_ID_AND_CONSUMERCODE">
+	<![CDATA[
+	select rh from org.egov.collection.entity.ReceiptHeader rh where rh.status='PENDING' and rh.id = ? and replace(replace(rh.consumerCode,'-',''),'/','') = ?
+	]]>
+	</query>
+	
+	<query name="QUERY_PENDING_RECEIPT_BY_ID_AND_CITYCODE">
+	<![CDATA[
+	select rh from org.egov.collection.entity.ReceiptHeader rh, org.egov.infra.admin.master.entity.City city where rh.status='PENDING' and rh.id = ? and city.code = ?
+	]]>
+	</query>
 </hibernate-mapping>
