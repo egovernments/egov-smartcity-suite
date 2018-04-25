@@ -49,6 +49,8 @@
 package org.egov.pgr.integration.ivrs.service;
 
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
+import org.egov.pgr.elasticsearch.service.ComplaintIndexService;
+import org.egov.pgr.elasticsearch.service.ComplaintIndexUpdateService;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.enums.CitizenFeedback;
 import org.egov.pgr.integration.ivrs.entity.IVRSFeedback;
@@ -58,7 +60,7 @@ import org.egov.pgr.integration.ivrs.entity.contract.IVRSFeedbackUpdateRequest;
 import org.egov.pgr.integration.ivrs.repository.IVRSFeedbackRepository;
 import org.egov.pgr.integration.ivrs.repository.IVRSRatingRepository;
 import org.egov.pgr.integration.ivrs.repository.specs.IVRSFeedbackReviewSearchSpec;
-import org.egov.pgr.service.ComplaintService;
+import org.egov.pgr.repository.ComplaintRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -72,17 +74,23 @@ import java.util.Optional;
 public class IVRSFeedbackService {
 
     @Autowired
-    private ComplaintService complaintService;
-
-    @Autowired
     private IVRSRatingRepository ivrsRatingRepository;
 
     @Autowired
     private IVRSFeedbackRepository ivrsFeedbackRepository;
 
+    @Autowired
+    private ComplaintRepository complaintRepository;
+
+    @Autowired
+    private ComplaintIndexService complaintIndexService;
+
+    @Autowired
+    private ComplaintIndexUpdateService complaintIndexUpdateService;
+
     @Transactional
     public IVRSFeedback createFeedback(IVRSFeedbackUpdateRequest request) {
-        Complaint complaint = complaintService.getComplaintByCRN(request.getCrn());
+        Complaint complaint = complaintRepository.findByCrn(request.getCrn());
         IVRSFeedback ivrsFeedback = Optional
                 .ofNullable(ivrsFeedbackRepository.findByComplaintCrn(complaint.getCrn()))
                 .orElse(new IVRSFeedback());
@@ -90,10 +98,12 @@ public class IVRSFeedbackService {
             ivrsFeedback.setComplaint(complaint);
         IVRSRating rating = ivrsRatingRepository.findByName(request.getRating());
         ivrsFeedback.setIvrsRating(rating);
+        ivrsFeedback = ivrsFeedbackRepository.saveAndFlush(ivrsFeedback);
         complaint.setCitizenFeedback(CitizenFeedback.value(rating.getWeight()));
-        complaintService.updateComplaint(complaint);
-
-        return ivrsFeedbackRepository.save(ivrsFeedback);
+        complaintRepository.saveAndFlush(complaint);
+        complaintIndexService.updateComplaintIndex(complaint);
+        complaintIndexUpdateService.updateIndexOnFeedback(ivrsFeedback);
+        return ivrsFeedback;
     }
 
     public IVRSFeedback getComplaintByCRN(String crn) {

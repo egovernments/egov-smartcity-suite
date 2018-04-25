@@ -485,15 +485,15 @@ public class PropertyExternalService {
         BasicProperty basicProperty = null;
         List<BasicProperty> basicProperties = new ArrayList<>();
         final ErrorDetails errorDetails = new ErrorDetails();
-        if (org.egov.infra.utils.StringUtils.isNotBlank(assessmentNo))
+        if (StringUtils.isNotBlank(assessmentNo))
             basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
-        else if (org.egov.infra.utils.StringUtils.isNotBlank(oldAssessmentNo)) {
+        else if (StringUtils.isNotBlank(oldAssessmentNo)) {
             basicProperties = (List<BasicProperty>) basicPropertyDAO.getBasicPropertyByOldMunipalNo(oldAssessmentNo);
             if (basicProperties.size() == 1)
                 basicProperty = basicProperties.get(0);
         }
 
-        if (basicProperties.size() > 1) {
+        if (!basicProperties.isEmpty()) {
             propertyTaxDetails = new PropertyTaxDetails();
             errorDetails.setErrorCode(PROPERTY_DUPLICATE_ERR_CODE);
             errorDetails.setErrorMessage(PROPERTY_DUPLICATE_ERR_MSG + oldAssessmentNo);
@@ -694,9 +694,9 @@ public class PropertyExternalService {
             Set<Installment> keySet = calculatedPenalty.keySet();
 
             // for all years data
-            Outer: for (RestPropertyTaxDetails details : propertyTaxDetails.getTaxDetails()) {
+            for (RestPropertyTaxDetails details : propertyTaxDetails.getTaxDetails()) {
                 // loop trough the penalty
-                Inner: for (Installment inst : keySet) {
+                for (Installment inst : keySet) {
                     if (inst.getDescription().equalsIgnoreCase(details.getInstallment())) {
                         details.setPenalty(calculatedPenalty.get(inst).getPenalty());
                         details.setRebate(calculatedPenalty.get(inst).getRebate());
@@ -704,8 +704,7 @@ public class PropertyExternalService {
                         if (details.getRebate() != null) {
                             details.setTotalAmount(details.getTotalAmount().subtract(details.getRebate()));
                         }
-
-                        break Inner;
+                        break;
                     }
                 }
 
@@ -1685,8 +1684,8 @@ public class PropertyExternalService {
             additionalRule = ADDTIONAL_RULE_ALTER_ASSESSMENT;
             natureOftask = NATURE_ALTERATION;
         }
-        final Assignment assignment = propService.getUserPositionByZone(property.getBasicProperty(), false);
-        final Position pos = assignment.getPosition();
+        final Assignment assignment = getAssignment(property, propService);
+        Position pos = assignment.getPosition();
         final WorkFlowMatrix wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null, null,
                 additionalRule, currentState, null);
         property.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
@@ -1695,6 +1694,10 @@ public class PropertyExternalService {
                 .withNatureOfTask(natureOftask).withInitiator(assignment != null ? assignment.getPosition() : null);
 
         return property;
+    }
+
+    public Assignment getAssignment(PropertyImpl property, PropertyService propService) {
+        return propService.getMappedAssignmentForCscOperator(property.getBasicProperty());
     }
 
     @SuppressWarnings("unchecked")
@@ -2004,7 +2007,8 @@ public class PropertyExternalService {
         Property property = basicProperty.getProperty();
         assessmentInfo.setOldAssessmentNumber(basicProperty.getOldMuncipalNum());
         assessmentInfo.setAssessmentNumber(basicProperty.getUpicNo());
-        assessmentInfo.setCategory(basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster().getType());
+        assessmentInfo.setCategory(basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster() != null
+                ? basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster().getType() : "");
         PropertyID propertyID = basicProperty.getPropertyID();
         if (property != null) {
             PropertyDetail propertyDetail = property.getPropertyDetail();
@@ -3031,7 +3035,7 @@ public class PropertyExternalService {
                     WebUtils.extractRequestDomainURL(request, false), basicProperty.getUpicNo());
             Map<String, Object> taxDetails = simpleRestClient.getRESTResponseAsMap(restURL);
             if (!taxDetails.isEmpty()) {
-                assessmentDetails.setWaterTaxDue(BigDecimal.valueOf((double) taxDetails.get("totalTaxDue")));
+                assessmentDetails.setWaterTaxDue(BigDecimal.valueOf((double) taxDetails.get(WATER_TAX_DUES)));
                 assessmentDetails.setConnectionCount(Double.valueOf(taxDetails.get("connectionCount").toString()).intValue());
             }
             restURL = format(PropertyTaxConstants.STMS_TAXDUE_RESTURL,

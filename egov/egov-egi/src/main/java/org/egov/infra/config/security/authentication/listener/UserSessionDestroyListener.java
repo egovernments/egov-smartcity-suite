@@ -95,7 +95,7 @@ public class UserSessionDestroyListener implements HttpSessionListener {
     }
 
     private void auditUserLogin(final HttpSession session) {
-        if (session.getAttribute(LOGIN_TIME) != null) {
+        if (session != null && session.getAttribute(LOGIN_TIME) != null) {
             try {
                 ApplicationThreadLocals.setTenantID((String) session.getAttribute(TENANTID_KEY));
                 LoginAudit loginAudit = new LoginAudit();

@@ -71,6 +71,7 @@ import static org.egov.tl.utils.Constants.NEWLICENSE;
 import static org.egov.tl.utils.Constants.NEWLICENSEREJECT;
 import static org.egov.tl.utils.Constants.RENEWLICENSE;
 import static org.egov.tl.utils.Constants.RENEWLICENSEREJECT;
+import static org.egov.tl.utils.Constants.RENEW_WITHOUT_FEE;
 import static org.egov.tl.utils.Constants.SIGNWORKFLOWACTION;
 
 @Service
@@ -99,7 +100,8 @@ public class LicenseApplicationService extends TradeLicenseService {
                 .getFromDate();
         final Date toRange = installmentDao
                 .getInsatllmentByModuleForGivenDate(this.getModuleName(), new DateTime().plusYears(1).toDate()).getToDate();
-        if (license.getCommencementDate().before(fromRange) || license.getCommencementDate().after(toRange))
+        if (license.getCommencementDate() == null || license.getCommencementDate().before(fromRange)
+                || license.getCommencementDate().after(toRange))
             throw new ValidationException("TL-009", "TL-009");
         license.setLicenseAppType(getLicenseApplicationType());
         raiseNewDemand(license);
@@ -127,13 +129,18 @@ public class LicenseApplicationService extends TradeLicenseService {
         license.setLicenseAppType(this.getLicenseApplicationTypeForRenew());
         if (!currentUserIsMeeseva())
             license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
-        recalculateDemand(this.feeMatrixService.getLicenseFeeDetails(license,
-                license.getLicenseDemand().getEgInstallmentMaster().getFromDate()), license);
+        final BigDecimal currentDemandAmount = recalculateLicenseFee(license.getCurrentDemand());
+        final BigDecimal feematrixDmdAmt = calculateFeeAmount(license);
+        if (feematrixDmdAmt.compareTo(currentDemandAmount) >= 0)
+            recalculateDemand(this.feeMatrixService.getLicenseFeeDetails(license,
+                    license.getLicenseDemand().getEgInstallmentMaster().getFromDate()), license);
         license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
         processAndStoreDocument(license);
+        if (license.isPaid())
+            workflowBean.setAdditionaRule(RENEW_WITHOUT_FEE);
+
         if (securityUtils.currentUserIsEmployee())
             licenseProcessWorkflowService.createNewLicenseWorkflowTransition(license, workflowBean);
-
         else
             licenseProcessWorkflowService.getWfWithThirdPartyOp(license, workflowBean);
         this.licenseRepository.save(license);
@@ -143,7 +150,6 @@ public class LicenseApplicationService extends TradeLicenseService {
         licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
         return license;
     }
-
 
     @Transactional
     public License save(final TradeLicense license) {
@@ -170,8 +176,12 @@ public class LicenseApplicationService extends TradeLicenseService {
         else
             licenseProcessWorkflowService.createNewLicenseWorkflowTransition(license, workflowBean);
 
-        if (BUTTONAPPROVE.equals(workflowBean.getWorkFlowAction()) && isEmpty(license.getLicenseNumber()) && license.isNewApplication())
-            license.setLicenseNumber(licenseNumberUtils.generateLicenseNumber());
+        if (BUTTONAPPROVE.equals(workflowBean.getWorkFlowAction())) {
+            if (isEmpty(license.getLicenseNumber()) && license.isNewApplication()) {
+                license.setLicenseNumber(licenseNumberUtils.generateLicenseNumber());
+            }
+            generateAndStoreCertificate(license);
+        }
 
         licenseRepository.save(license);
         licenseCitizenPortalService.onUpdate(license);
@@ -179,12 +189,13 @@ public class LicenseApplicationService extends TradeLicenseService {
         licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
     }
 
-    public void digitalSignature(String applicationNumber) {
+    public void processDigitalSignature(String applicationNumber) {
         if (isNotBlank(applicationNumber)) {
             License license = licenseRepository.findByApplicationNumber(applicationNumber);
             WorkflowBean workflowBean = new WorkflowBean();
             workflowBean.setWorkFlowAction(SIGNWORKFLOWACTION);
             workflowBean.setAdditionaRule(license.isNewApplication() ? NEWLICENSE : RENEWLICENSE);
+            license.setCertificateFileId(license.getDigiSignedCertFileStoreId());
             licenseProcessWorkflowService.createNewLicenseWorkflowTransition((TradeLicense) license, workflowBean);
             licenseRepository.save(license);
             licenseCitizenPortalService.onUpdate((TradeLicense) license);

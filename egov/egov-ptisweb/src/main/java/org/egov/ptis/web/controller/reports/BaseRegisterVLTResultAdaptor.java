@@ -68,24 +68,21 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 @Component
 public class BaseRegisterVLTResultAdaptor implements DataTableJsonAdapter<PropertyMVInfo> {
 	public static final String CURRENTYEAR_FIRST_HALF = "Current 1st Half";
 	public static final String CURRENTYEAR_SECOND_HALF = "Current 2nd Half";
-
-	private Properties taxRateProps = null;
-
+	
 	private static PropertyTaxUtil propertyTaxUtil;
 
 	public BaseRegisterVLTResultAdaptor() {
 	}
-
+	
 	@Autowired
-	public BaseRegisterVLTResultAdaptor(final PropertyTaxUtil propertyTaxUtil) {
-		BaseRegisterVLTResultAdaptor.propertyTaxUtil = propertyTaxUtil;
-	}
+        public BaseRegisterVLTResultAdaptor(final PropertyTaxUtil propertyTaxUtil) {
+                BaseRegisterVLTResultAdaptor.propertyTaxUtil = propertyTaxUtil;
+        }
 
 	@Override
 	public JsonElement serialize(final DataTable<PropertyMVInfo> baseRegisterResponse, final Type type,
@@ -95,7 +92,7 @@ public class BaseRegisterVLTResultAdaptor implements DataTableJsonAdapter<Proper
 		baseRegisterResult.forEach(baseRegisterResultObj -> {
 			final JsonObject jsonObject = new JsonObject();
 
-			final BigDecimal taxRate = getTaxRate("VAC_LAND_TAX");
+			final BigDecimal taxRate = propertyTaxUtil.getTaxRates();
 			final Map<String, BigDecimal> valuesMap = getTaxDetails(baseRegisterResultObj);
 
 			final BigDecimal marketValue = baseRegisterResultObj.getMarketValue() != null
@@ -179,14 +176,6 @@ public class BaseRegisterVLTResultAdaptor implements DataTableJsonAdapter<Proper
 			baseRegisterResultData.add(jsonObject);
 		});
 		return enhance(baseRegisterResultData, baseRegisterResponse);
-	}
-
-	private BigDecimal getTaxRate(final String taxHead) {
-		taxRateProps = propertyTaxUtil.loadTaxRates();
-		BigDecimal taxRate = BigDecimal.ZERO;
-		if (taxRateProps != null)
-			taxRate = new BigDecimal(taxRateProps.getProperty(taxHead));
-		return taxRate;
 	}
 
 	private Map<String, BigDecimal> getTaxDetails(final PropertyMVInfo propMatView) {

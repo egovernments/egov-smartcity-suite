@@ -61,8 +61,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.egov.infra.security.utils.SecurityConstants.LOGIN_URI;
-import static org.egov.infra.security.utils.SecurityConstants.PUBLIC_URI;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.egov.infra.utils.ApplicationConstant.NO_ROLE_NAME;
+import static org.egov.infra.utils.ApplicationConstant.SLASH;
 
 public class ApplicationAuthorizationMetadataSource implements FilterInvocationSecurityMetadataSource {
 
@@ -78,7 +79,7 @@ public class ApplicationAuthorizationMetadataSource implements FilterInvocationS
     @Override
     public Collection<ConfigAttribute> getAttributes(Object object) {
         FilterInvocation invocation = (FilterInvocation) object;
-        String contextRoot = invocation.getHttpRequest().getContextPath().replace("/", "");
+        String contextRoot = invocation.getHttpRequest().getContextPath().replace(SLASH, EMPTY);
         return lookupAttributes(contextRoot, invocation.getRequestUrl());
     }
 
@@ -93,25 +94,22 @@ public class ApplicationAuthorizationMetadataSource implements FilterInvocationS
     }
 
     private Collection<ConfigAttribute> lookupAttributes(String contextRoot, String url) {
-        if (url.startsWith(LOGIN_URI) || url.startsWith(PUBLIC_URI) || isPatternExcluded(url))
-            return Collections.emptyList();
-        else {
+        List<ConfigAttribute> configAttributes = new ArrayList<>();
+        if (!urlExcluded(url)) {
             Action action = actionService.getActionByUrlAndContextRoot(url, contextRoot);
             if (action != null) {
-                List<ConfigAttribute> configAttributes = new ArrayList<>();
-                action.getRoles().forEach(role ->
-                        configAttributes.add(new SecurityConfig(role.getName()))
-                );
-                return configAttributes;
+                action.getRoles().forEach(role -> configAttributes.add(new SecurityConfig(role.getName())));
             }
         }
-        return Collections.emptyList();
+        if (configAttributes.isEmpty())
+            configAttributes.add(new SecurityConfig(NO_ROLE_NAME));
+        return configAttributes;
     }
 
-    private Boolean isPatternExcluded(String pattern) {
+    private Boolean urlExcluded(String url) {
         return excludePatterns
-                .parallelStream()
-                .anyMatch(excludePattern -> pattern.startsWith(excludePattern.trim()));
+                .stream()
+                .anyMatch(url::startsWith);
     }
 
 }

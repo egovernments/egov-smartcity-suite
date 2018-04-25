@@ -47,15 +47,14 @@
  */
 package org.egov.wtms.application.entity;
 
-import org.jboss.logging.Logger;
-
 import javax.validation.ValidationException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 public class DailyWTCollectionReportSearch {
-    private static final Logger logger = Logger.getLogger(DailyWTCollectionReportSearch.class);
     private String fromDate;
     private String toDate;
     private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
@@ -67,17 +66,14 @@ public class DailyWTCollectionReportSearch {
     private String status;
     private String ulbName;
     private String receiptnumber;
-   
-    
+
     public String getFromDate() {
         return fromDate;
     }
 
     public void setFromDate(final String fromDate) {
-        if (null != fromDate)
+        if (isNotBlank(fromDate))
             try {
-                if (logger.isDebugEnabled())
-                    logger.debug("Date Range From start.. :" + ft.format(dtft.parse(fromDate)));
                 this.fromDate = ft.format(dtft.parse(fromDate));
             } catch (final ParseException e) {
                 throw new ValidationException(e.getMessage());
@@ -89,20 +85,20 @@ public class DailyWTCollectionReportSearch {
     }
 
     public void setToDate(final String toDate) {
-        final Calendar cal = Calendar.getInstance();
-        if (null != toDate)
+
+        if (isNotBlank(toDate)) {
             try {
-                cal.setTime(dtft.parse(toDate));
-                cal.set(Calendar.HOUR_OF_DAY, 23);
-                cal.set(Calendar.MINUTE, 59);
-                cal.set(Calendar.SECOND, 59);
-                cal.set(Calendar.MILLISECOND, 999);
-                if (logger.isDebugEnabled())
-                    logger.debug("Date Range Till .. :" + ft.format(cal.getTime()));
-                this.toDate = ft.format(cal.getTime());
-            } catch (final ParseException e) {
+                Calendar endOfToDate = Calendar.getInstance();
+                endOfToDate.setTime(dtft.parse(toDate));
+                endOfToDate.set(Calendar.HOUR_OF_DAY, 23);
+                endOfToDate.set(Calendar.MINUTE, 59);
+                endOfToDate.set(Calendar.SECOND, 59);
+                endOfToDate.set(Calendar.MILLISECOND, 999);
+                this.toDate = ft.format(endOfToDate.getTime());
+            } catch (ParseException e) {
                 throw new ValidationException(e.getMessage());
             }
+        }
     }
 
     public String getCollectionMode() {
@@ -164,7 +160,6 @@ public class DailyWTCollectionReportSearch {
     public void setReceiptnumber(String receiptnumber) {
         this.receiptnumber = receiptnumber;
     }
-   
 
-  
+
 }

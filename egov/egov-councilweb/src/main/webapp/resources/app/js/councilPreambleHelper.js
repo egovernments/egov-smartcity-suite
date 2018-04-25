@@ -333,7 +333,10 @@ $("#resultTable,#preambleResultTable").on('click','tbody tr td button.details',f
 });
 
 $("#preambleNumber").on('blur',function(event) {
-	validatePreambleNumber($(this));
+	var mode = $('#mode').val();
+	if(mode === undefined)
+		validatePreambleNumber($(this));
+
 });
 
 

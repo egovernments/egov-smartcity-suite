@@ -53,7 +53,7 @@ import org.egov.eis.entity.PositionBuilder;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.exception.ApplicationValidationException;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintBuilder;
 import org.egov.pgr.entity.ComplaintRouter;
@@ -163,7 +163,7 @@ public class ComplaintRouterServiceTest {
 
     }
 
-    @Test(expected = ApplicationRuntimeException.class)
+    @Test(expected = ApplicationValidationException.class)
     public void testGetAssigneeByGoWithoutGoInsertion() {
         // this will create a new boundary which is not mapped
         complaintType = new ComplaintTypeBuilder().withDbDefaults().build();

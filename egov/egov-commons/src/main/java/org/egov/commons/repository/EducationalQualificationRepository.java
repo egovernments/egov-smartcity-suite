@@ -60,5 +60,7 @@ public interface EducationalQualificationRepository extends JpaRepository<Educat
     public EducationalQualification findByName(String name);
 
     public List<EducationalQualification> findByisActive(Boolean isActive);
+    
+    public EducationalQualification findByCode(String code);
 
 }

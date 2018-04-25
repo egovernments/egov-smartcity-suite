@@ -51,13 +51,12 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <c:choose>
-<c:when test="${!documentNamesList.isEmpty()}">
+<c:when test="${not empty documentNamesList}">
 <div class="panel-heading custom_form_panel_heading">
 	<div class="panel-title">
 	<spring:message code="lbl.encloseddocuments"/> - <spring:message code="lbl.checklist"/>
 	</div>
 </div>
-
 
 <div class="form-group view-content header-color hidden-xs">
 	<div class="col-sm-3 text-center"><spring:message code="lbl.documentname"/></div>											

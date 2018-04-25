@@ -48,6 +48,25 @@
 
 package org.egov.council.service;
 
+import static org.egov.council.utils.constants.CouncilConstants.ADJOURNED;
+import static org.egov.council.utils.constants.CouncilConstants.ATTENDANCEFINALIZED;
+import static org.egov.council.utils.constants.CouncilConstants.MEETINGCANCELLED;
+import static org.egov.council.utils.constants.CouncilConstants.MEETINGSTATUSAPPROVED;
+import static org.egov.council.utils.constants.CouncilConstants.MEETINGUSEDINRMOM;
+import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_MODULENAME;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.council.entity.CouncilAgendaDetails;
@@ -73,23 +92,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static org.egov.council.utils.constants.CouncilConstants.ADJOURNED;
-import static org.egov.council.utils.constants.CouncilConstants.ATTENDANCEFINALIZED;
-import static org.egov.council.utils.constants.CouncilConstants.MEETINGSTATUSAPPROVED;
-import static org.egov.council.utils.constants.CouncilConstants.MEETINGUSEDINRMOM;
-import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_MODULENAME;
 
 @Service
 @Transactional(readOnly = true)
@@ -136,6 +138,11 @@ public class CouncilMeetingService {
     public List<MeetingMOM> createDataEntry(final List<MeetingMOM> meetingMOM) {
         return councilMoMRepository.save(meetingMOM);
     }
+    
+    @Transactional
+    public void deleteMeetingMoms(final List<MeetingMOM> meetingMOM) {
+        councilMoMRepository.deleteInBatch(meetingMOM);
+    }
 
     public List<CouncilMeeting> findAll() {
         return councilMeetingRepository.findAll(new Sort(Sort.Direction.DESC, "meetingDate"));
@@ -175,7 +182,7 @@ public class CouncilMeetingService {
 
     @SuppressWarnings("unchecked")
     public List<CouncilMeeting> searchMeeting(CouncilMeeting councilMeeting) {
-        return buildSearchCriteria(councilMeeting).list();
+        return buildSearchCriteria(councilMeeting).add(Restrictions.ne(STATUS_DOT_CODE, MEETINGCANCELLED)).list();
     }
     
     @SuppressWarnings("unchecked")

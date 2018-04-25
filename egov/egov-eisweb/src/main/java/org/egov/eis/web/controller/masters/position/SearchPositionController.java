@@ -82,17 +82,17 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 @RequestMapping(value = "/position")
 public class SearchPositionController {
 
+    private static final String WARNING = "warning";
+    private static final String POSITION_NOT_PRESENT = "There is no position added for the selected department and designation.";
     private final DepartmentService departmentService;
     private final DesignationService designationService;
     private final DeptDesigService deptDesigService;
     private final PositionMasterService positionMasterService;
-    private static final String WARNING = "warning";
-    private static final String POSITION_NOT_PRESENT = "There is no position added for the selected department and designation.";
 
     @Autowired
     private SearchPositionController(final PositionMasterService positionMasterService,
-            final DepartmentService departmentService, final DesignationService designationMasterService,
-            final DeptDesigService deptDesigService) {
+                                     final DepartmentService departmentService, final DesignationService designationMasterService,
+                                     final DeptDesigService deptDesigService) {
         this.departmentService = departmentService;
         designationService = designationMasterService;
         this.deptDesigService = deptDesigService;
@@ -121,8 +121,9 @@ public class SearchPositionController {
     }
 
     @RequestMapping(value = "position-getTotalPositionCount", method = RequestMethod.GET)
-    public @ResponseBody String searchSanctionedAndOutSourcePositions(@RequestParam final String departmentId,
-            @RequestParam final String designationId) {
+    public @ResponseBody
+    String searchSanctionedAndOutSourcePositions(@RequestParam final String departmentId,
+                                                 @RequestParam final String designationId) {
         Long deptid = Long.valueOf(0), desigid = Long.valueOf(0);
         Integer outsourcedPost = 0, sanctionedPost = 0;
 
@@ -138,9 +139,10 @@ public class SearchPositionController {
     }
 
     @RequestMapping(value = "position-update", method = RequestMethod.GET)
-    public @ResponseBody String changePosition(@RequestParam final String desigName,
-            @RequestParam final String positionName, @RequestParam final String deptName,
-            @RequestParam final String isoutsourced, @RequestParam final String positionId) {
+    public @ResponseBody
+    String changePosition(@RequestParam final String desigName,
+                          @RequestParam final String positionName, @RequestParam final String deptName,
+                          @RequestParam final String isoutsourced, @RequestParam final String positionId) {
 
         if (positionId != null) {
             final Position positionObj = positionMasterService.getPositionById(Long.valueOf(positionId));
@@ -155,18 +157,18 @@ public class SearchPositionController {
 
             if (isoutsourced != null && isoutsourced.equalsIgnoreCase("TRUE")) {
                 // Current position outsource is true.
-                if (!positionObj.getIsPostOutsourced()) {
-                    positionObj.setIsPostOutsourced(true);
+                if (!positionObj.isPostOutsourced()) {
+                    positionObj.setPostOutsourced(true);
                     positionObj.getDeptDesig()
                             .setOutsourcedPosts(positionObj.getDeptDesig().getOutsourcedPosts() != null
                                     ? positionObj.getDeptDesig().getOutsourcedPosts() + 1 : 1);
                 }
             } else // If outsourced is false.
-                if (positionObj.getIsPostOutsourced()) {
-                positionObj.setIsPostOutsourced(false);
-                positionObj.getDeptDesig().setOutsourcedPosts(positionObj.getDeptDesig().getOutsourcedPosts() != null
-                        ? positionObj.getDeptDesig().getOutsourcedPosts() - 1 : 0);
-            }
+                if (positionObj.isPostOutsourced()) {
+                    positionObj.setPostOutsourced(false);
+                    positionObj.getDeptDesig().setOutsourcedPosts(positionObj.getDeptDesig().getOutsourcedPosts() != null
+                            ? positionObj.getDeptDesig().getOutsourcedPosts() - 1 : 0);
+                }
 
             positionMasterService.updatePosition(positionObj);
             return "SUCCESS";
@@ -177,8 +179,9 @@ public class SearchPositionController {
     }
 
     @RequestMapping(value = "resultList-update", method = RequestMethod.GET)
-    public @ResponseBody void springPaginationDataTablesUpdate(final HttpServletRequest request,
-            final HttpServletResponse response) throws IOException {
+    public @ResponseBody
+    void springPaginationDataTablesUpdate(final HttpServletRequest request,
+                                          final HttpServletResponse response) throws IOException {
         Long departmentId = Long.valueOf(0), designationId = Long.valueOf(0);
 
         if (request.getParameter("departmentId") != null && !"".equals(request.getParameter("departmentId")))
@@ -200,7 +203,7 @@ public class SearchPositionController {
 
     @RequestMapping(value = "search", method = RequestMethod.POST)
     public String searchPosition(@Valid @ModelAttribute final DeptDesig deptDesig, final BindingResult errors,
-            final RedirectAttributes redirectAttrs, final Model model) {
+                                 final RedirectAttributes redirectAttrs, final Model model) {
         if (errors.hasErrors())
             return "position-search";
 

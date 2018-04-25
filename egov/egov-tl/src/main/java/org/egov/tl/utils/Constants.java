@@ -48,14 +48,14 @@
 
 package org.egov.tl.utils;
 
+import com.google.common.collect.ImmutableMap;
+
 import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 public final class Constants {
 
-    public static final String FILESTORE_MODULECODE = "TL";
+    public static final String TL_FILE_STORE_DIR = "TL";
     public static final String NEW = "new";
     public static final String VIEW = "view";
     public static final String ROLE_BILLCOLLECTOR = "Collection Operator";
@@ -112,7 +112,6 @@ public final class Constants {
     public static final String APPLICATION_STATUS_APPROVED_CODE = "APPROVED";
     public static final String APPLICATION_STATUS_SECONDCOLLECTION_CODE = "SECONDLVLCOLLECTIONPENDING";
     public static final String APPLICATION_STATUS_FIRSTCOLLECTIONDONE_CODE = "FIRSTLVLCOLLECTIONDONE";
-    public static final String APPLICATION_STATUS_DIGUPDATE_CODE = "DIGITALSIGNPENDING";
     public static final String APPLICATION_STATUS_GENECERT_CODE = "CERTIFICATEGENERATED";
     public static final String APPLICATION_STATUS_REJECTED = "REJECTED";
     public static final String APPLICATION_STATUS_CANCELLED = "CANCELLED";
@@ -131,8 +130,6 @@ public final class Constants {
     public static final String SIGNWORKFLOWACTION = "Sign";
     public static final String WF_PREVIEW_BUTTON = "Preview";
     public static final String DIGITALSIGNINCLUDEINWORKFLOW = "DIGITALSIGNINCLUDEINWORKFLOW";
-    public static final String SIGNED_DOCUMENT_PREFIX = "SN/";
-    public static final String ROLE_COMMISSIONERDEPARTEMNT = "Health";
     public static final String PERMANENT_NATUREOFBUSINESS = "Permanent";
     public static final String TEMP_NATUREOFBUSINESS = "Temporary";
     public static final String RENEWAL_NATUREOFWORK = "Renewal of Trade License";
@@ -166,7 +163,6 @@ public final class Constants {
     public static final String TL_LICENSE_ACT_DEFAULT = "Trade license Act Muncipalities";
     public static final String CSCOPERATOR = "CSC Operator";
     public static final String PRINTACK = "printAck";
-    public static final String PUBLIC_HEALTH_DEPT = "PUBLIC HEALTH AND SANITATION";
     public static final String PUBLIC_HEALTH_DEPT_CODE = "PHS";
     public static final String JA_DESIGNATION = "Junior Assistant";
     public static final String RC_DESIGNATION = "Revenue Clerk";
@@ -178,13 +174,9 @@ public final class Constants {
     public static final String TRADE_LICENSE = "Trade License";
     public static final String TL_SERVICE_CODE = "TL";
     public static final String CLOSURE_LIC_APPTYPE = "Closure";
-    public static final String DMD_GENERATION_DATA = "demandgenerationdata";
-    public static final String DMD_GEN_INSTALLMENT = "installmentYear";
-    public static final String DMD_GEN_RETRY = "retry";
     public static final String COMMISSIONER_DESGN = "Commissioner";
     public static final String MEESEVA_RESULT_ACK = "meesevaAck";
     public static final String MEESEVAOPERATOR = "MeeSeva Operator";
-    public static final Map<String, String> OWNERSHIP_TYPE = new HashMap<>();
     public static final String NEWLICENSECOLLECTION = "NEWLICENSECOLLECTION";
     public static final String RENEWLICENSECOLLECTION = "RENEWLICENSECOLLECTION";
     public static final String NEWLICENSE = "NEWLICENSE";
@@ -195,25 +187,19 @@ public final class Constants {
     public static final String RENEWLICENSEREJECT = "RENEWLICENSEREJECT";
     public static final String GENERATE_PROVISIONAL_CERTIFICATE = "Generate Provisional Certificate";
     public static final String REPORT_PAGE = "report";
-    public static final String STATUS_COLLECTIONPENDING="COLLECTIONPENDING";
-    public static final String EXTERNAL_CLOSURE_LICENSE="EXTERNALCLOSUREAPPLICATION";
-    public static final String CLOSURE_LICENSE_REJECT="CLOSURELICENSEREJECT";
+    public static final String STATUS_COLLECTIONPENDING = "COLLECTIONPENDING";
+    public static final String EXTERNAL_CLOSURE_LICENSE = "EXTERNALCLOSUREAPPLICATION";
+    public static final String CLOSURE_LICENSE_REJECT = "CLOSURELICENSEREJECT";
     public static final String AUTO = "Auto";
-    static {
-
-        OWNERSHIP_TYPE.put(OWNERSHIP_TYPE_OWN, OWNERSHIP_TYPE_OWN);
-        OWNERSHIP_TYPE.put(OWNERSHIP_TYPE_RENTED, OWNERSHIP_TYPE_RENTED);
-        OWNERSHIP_TYPE.put(OWNERSHIP_TYPE_ULB, OWNERSHIP_TYPE_ULB);
-        OWNERSHIP_TYPE.put(OWNERSHIP_TYPE_STATEGOVERNMENT, OWNERSHIP_TYPE_STATEGOVERNMENT);
-        OWNERSHIP_TYPE.put(OWNERSHIP_TYPE_CENTRALGOVERNMENT, OWNERSHIP_TYPE_CENTRALGOVERNMENT);
-
-    }
+    public static final String PROCESS_OWNER_FORMAT = "%s [%s]";
+    public static final String RENEW_WITHOUT_FEE = "RENEWALWITHOUTFEE";
+    public static final String COMPLETED = "Completed";
+    public static final Map<String, String> OWNERSHIP_TYPE = new ImmutableMap.Builder<String, String>()
+            .put(OWNERSHIP_TYPE_OWN, OWNERSHIP_TYPE_OWN).put(OWNERSHIP_TYPE_RENTED, OWNERSHIP_TYPE_RENTED)
+            .put(OWNERSHIP_TYPE_ULB, OWNERSHIP_TYPE_ULB).put(OWNERSHIP_TYPE_STATEGOVERNMENT, OWNERSHIP_TYPE_STATEGOVERNMENT)
+            .put(OWNERSHIP_TYPE_CENTRALGOVERNMENT, OWNERSHIP_TYPE_CENTRALGOVERNMENT).build();
 
     private Constants() {
         // only invariants
-    }
-
-    public static Map<String, String> getOwnershipTypes() {
-        return Collections.unmodifiableMap(OWNERSHIP_TYPE);
     }
 }

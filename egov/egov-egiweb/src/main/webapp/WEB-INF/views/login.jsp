@@ -169,7 +169,7 @@
                                 </div>
                                 <input type="text" class="form-control style-form"
                                        name="j_username" id="j_username"
-                                       placeholder="Mobile Number / Login ID" autocomplete="off"
+                                       placeholder="Username" autocomplete="off"
                                        required="required" autofocus="autofocus"/>
                                 <label id="j_username-error" class="error pull-right" for="j_username"></label>
                             </div>
@@ -306,7 +306,7 @@
                             </div>
                             <input type="text" class="form-control style-form"
                                    name="identity" id="emailOrMobileNum"
-                                   required="required" placeholder="Mobile Number / Login ID"
+                                   required="required" placeholder="Enter your Username"
                                    autocomplete="off"/>
                             <input type="hidden" name="originURL" id="originURL">
                             <input type="hidden" name="byOTP" id="byOtp">

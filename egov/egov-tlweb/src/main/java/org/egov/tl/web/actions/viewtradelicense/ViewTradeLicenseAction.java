@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -56,61 +56,80 @@ import org.apache.struts2.convention.annotation.Results;
 import org.egov.eis.entity.Assignment;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
-import org.egov.tl.repository.LicenseRepository;
-import org.egov.tl.service.AbstractLicenseService;
 import org.egov.tl.service.LicenseClosureService;
-import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.web.actions.BaseLicenseAction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.egov.infra.reporting.engine.ReportFormat.PDF;
+import static org.egov.infra.reporting.util.ReportUtil.CONTENT_TYPES;
 import static org.egov.infra.utils.ApplicationConstant.CITIZEN_ROLE_NAME;
 import static org.egov.infra.utils.ApplicationConstant.PUBLIC_ROLE_NAME;
-import static org.egov.tl.utils.Constants.*;
+import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
+import static org.egov.tl.utils.Constants.BUTTONFORWARD;
+import static org.egov.tl.utils.Constants.BUTTONREJECT;
+import static org.egov.tl.utils.Constants.CSCOPERATOR;
+import static org.egov.tl.utils.Constants.MEESEVAOPERATOR;
+import static org.egov.tl.utils.Constants.MEESEVA_RESULT_ACK;
+import static org.egov.tl.utils.Constants.MESSAGE;
+import static org.egov.tl.utils.Constants.REPORT_PAGE;
+import static org.egov.tl.utils.Constants.TL_FILE_STORE_DIR;
 
 @ParentPackage("egov")
 @Results({@Result(name = REPORT_PAGE, location = "viewTradeLicense-report.jsp"),
         @Result(name = MESSAGE, location = "viewTradeLicense-message.jsp"),
         @Result(name = "closure", location = "viewTradeLicense-closure.jsp"),
-        @Result(name = "digisigncertificate", type = "redirect", location = "/tradelicense/download/digisign-certificate", params = {"file", "${digiSignedFile}", "applnum", "${applNum}"}),
-        @Result(name = "closureEndorsementNotice", type = "redirect", location = "/license/closure/digisign-transition", params = {"fileStoreIds", "${fileStoreIds}", "applicationNumbers", "${applicationNo}"}),
+        @Result(name = "digisigncertificate", type = "redirect", location = "/tradelicense/download/digisign-certificate",
+                params = {"file", "${digiSignedFile}", "applnum", "${applNum}"}),
+        @Result(name = "closureEndorsementNotice", type = "redirect", location = "/license/closure/digisign-transition",
+                params = {"fileStoreIds", "${fileStoreIds}", "applicationNumbers", "${applicationNo}"}),
         @Result(name = "closureEndorsementDigiSign", location = "closure-endorsementnotice-digitalsigned.jsp")
 })
-public class
-ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
+public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     private static final long serialVersionUID = 1L;
     private static final String MODEL_ID = "model.id";
-    protected TradeLicense tradeLicense = new TradeLicense();
-    @Autowired
-    protected transient LicenseRepository licenseRepository;
+
+    private TradeLicense tradeLicense = new TradeLicense();
     private Long licenseid;
     private String url;
     private Boolean enableState;
     private String digiSignedFile;
     private String applNum;
-    @Autowired
-    private transient TradeLicenseService tradeLicenseService;
 
     @Autowired
     private transient LicenseClosureService licenseClosureService;
+
+    @Autowired
+    @Qualifier("fileStoreService")
+    private transient FileStoreService fileStoreService;
 
     @Override
     public TradeLicense getModel() {
         return tradeLicense;
 
+    }
+
+    @Override
+    protected TradeLicense license() {
+        return tradeLicense;
+    }
+
+    @Override
+    public String getReportId() {
+        return reportId;
     }
 
     @Override
@@ -135,8 +154,8 @@ ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     public String generateCertificate() {
         setLicenseIdIfServletRedirect();
         tradeLicense = tradeLicenseService.getLicenseById(license().getId());
-        if (tradeLicense.getDigiSignedCertFileStoreId() != null) {
-            setDigiSignedFile(license().getDigiSignedCertFileStoreId());
+        if (isNotBlank(tradeLicense.getCertificateFileId())) {
+            setDigiSignedFile(license().getCertificateFileId());
             setApplNum(license().getApplicationNumber());
             return "digisigncertificate";
         } else {
@@ -157,32 +176,9 @@ ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
 
     private void setLicenseIdIfServletRedirect() {
         if (tradeLicense.getId() == null && getSession().get(MODEL_ID) != null) {
-            tradeLicense.setId(Long.valueOf((Long) getSession().get(MODEL_ID)));
+            tradeLicense.setId((Long) getSession().get(MODEL_ID));
             getSession().remove(MODEL_ID);
         }
-    }
-
-    @Override
-    protected TradeLicense license() {
-        return tradeLicense;
-    }
-
-    @Override
-    protected AbstractLicenseService<TradeLicense> licenseService() {
-        return tradeLicenseService;
-    }
-
-    public WorkflowBean getWorkflowBean() {
-        return workflowBean;
-    }
-
-    public void setWorkflowBean(final WorkflowBean workflowBean) {
-        this.workflowBean = workflowBean;
-    }
-
-    @Override
-    public String getReportId() {
-        return reportId;
     }
 
     @Action(value = "/viewtradelicense/showclosureform")
@@ -266,23 +262,28 @@ ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     }
 
     private String approveClosureWithDigiSign(TradeLicense license) {
-        ReportOutput reportOutput = licenseClosureService.generateClosureEndorsementNotice(license);
-        if (reportOutput != null) {
-            String fileName = SIGNED_DOCUMENT_PREFIX + license.getApplicationNumber() + ".pdf";
-            InputStream fileStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
-            FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, "application/pdf", FILESTORE_MODULECODE);
-            license.setDigiSignedCertFileStoreId(fileStore.getFileStoreId());
-            licenseRepository.save(license);
-            fileStoreIds = fileStore.getFileStoreId();
-            ulbCode = ApplicationThreadLocals.getCityCode();
-            applicationNo = license.getApplicationNumber();
-        }
+        FileStoreMapper fileStore = fileStoreService
+                .store(licenseClosureService.generateClosureEndorsementNotice(license).asInputStream(),
+                        license.generateCertificateFileName() + ".pdf", CONTENT_TYPES.get(PDF), TL_FILE_STORE_DIR);
+        license.setDigiSignedCertFileStoreId(fileStore.getFileStoreId());
+        licenseClosureService.update(license);
+        fileStoreIds = license.getDigiSignedCertFileStoreId();
+        ulbCode = ApplicationThreadLocals.getCityCode();
+        applicationNo = license.getApplicationNumber();
         return licenseUtils.isDigitalSignEnabled() ? "closureEndorsementDigiSign" : "closureEndorsementNotice";
     }
 
     @Override
     public String getAdditionalRule() {
         return Constants.CLOSURE_ADDITIONAL_RULE;
+    }
+
+    public WorkflowBean getWorkflowBean() {
+        return workflowBean;
+    }
+
+    public void setWorkflowBean(final WorkflowBean workflowBean) {
+        this.workflowBean = workflowBean;
     }
 
     public Long getLicenseid() {

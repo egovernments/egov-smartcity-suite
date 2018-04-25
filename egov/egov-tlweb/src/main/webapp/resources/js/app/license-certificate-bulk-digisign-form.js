@@ -52,8 +52,8 @@ $('#selectAll').click(function (e) {
     $('td input:checkbox', table).prop('checked', e.target.checked);
 });
 
-function openLicenseForDigitalSign(licenseid) {
-    window.open("/tl/newtradelicense/newTradeLicense-showForApproval.action?model.id=" + licenseid, "_self");
+function openLicenseForDigitalSign(id) {
+    window.open("/tl/license/view/" + id, id, "width=860,height=680");
 }
 
 function submitform() {

@@ -48,19 +48,55 @@
 
 package org.egov.tl.service;
 
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
 import org.egov.tl.entity.License;
+import org.egov.tl.entity.LicenseDocument;
+import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.TradeLicense;
+import org.egov.tl.entity.enums.ApplicationType;
 import org.egov.tl.repository.LicenseRepository;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+
+import static org.egov.infra.config.core.ApplicationThreadLocals.getCityName;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getMunicipalityName;
+import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
+import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
 
 @Service
 @Transactional(readOnly = true)
 public class LicenseService {
 
     @Autowired
+    private ReportService reportService;
+
+    @Autowired
     private LicenseRepository licenseRepository;
+
+    @Autowired
+    private FileStoreService fileStoreService;
+
+    @Autowired
+    @Qualifier("parentMessageSource")
+    private MessageSource licenseMessageSource;
 
     @Transactional
     public void update(TradeLicense license) {
@@ -78,4 +114,80 @@ public class LicenseService {
     public License getLicenseByOldLicenseNumber(String oldLicenseNumber) {
         return licenseRepository.findByOldLicenseNumber(oldLicenseNumber);
     }
+
+    public boolean validateMandatoryDocument(TradeLicense license) {
+
+        List<LicenseDocument> supportDocs = license.getLicenseDocuments()
+                .stream()
+                .filter(licenseDocument -> licenseDocument.getType().isMandatory()
+                        && licenseDocument.getMultipartFiles().stream().anyMatch(MultipartFile::isEmpty))
+                .collect(Collectors.toList());
+
+        List<LicenseDocument> existingDocs = new ArrayList<>();
+        if (license.getDocuments().stream().anyMatch(licenseDocument -> !licenseDocument.getFiles().isEmpty())) {
+            existingDocs.addAll(license.getDocuments()
+                    .stream()
+                    .filter(licenseDocument -> licenseDocument.getType().getApplicationType().equals
+                            (ApplicationType.valueOf(license.getLicenseAppType().getName().toUpperCase())) && licenseDocument.getId() != null)
+                    .collect(Collectors.toList()));
+        }
+
+        List<String> supportDocType = supportDocs
+                .stream().map(LicenseDocument::getType).map(LicenseDocumentType::getName).collect(Collectors.toList());
+
+        List<String> existingDocsType = existingDocs
+                .stream().map(LicenseDocument::getType).map(LicenseDocumentType::getName).collect(Collectors.toList());
+
+        return !supportDocs.isEmpty() &&
+                supportDocs.stream()
+                        .anyMatch(licenseDocument -> licenseDocument.getMultipartFiles().stream().anyMatch(MultipartFile::isEmpty))
+                && (existingDocs.isEmpty() || !supportDocType.stream().filter(
+                licenseDocumentType -> !existingDocsType.contains(licenseDocumentType)).collect(Collectors.toList()).isEmpty());
+    }
+
+    public void processSupportDocuments(TradeLicense license) {
+        List<LicenseDocument> documents = license.getLicenseDocuments();
+        for (LicenseDocument document : documents) {
+            List<MultipartFile> files = document.getMultipartFiles();
+            for (MultipartFile file : files) {
+                try {
+                    if (!file.isEmpty()) {
+                        document.getFiles()
+                                .add(fileStoreService.store(
+                                        file.getInputStream(),
+                                        file.getOriginalFilename(),
+                                        file.getContentType(), "EGTL"));
+                        document.setEnclosed(true);
+                        document.setDocDate(license.getApplicationDate());
+                    }
+                } catch (IOException exp) {
+                    throw new ApplicationRuntimeException("Error occurred while storing files ", exp);
+                }
+                document.setLicense(license);
+            }
+        }
+        documents.removeIf(licenseDocument -> licenseDocument.getFiles().isEmpty());
+        license.getDocuments().addAll(documents);
+    }
+
+    public ReportOutput generateAcknowledgement(License license) {
+        Map<String, Object> reportParams = new ConcurrentHashMap<>();
+        reportParams.put("municipality", getMunicipalityName());
+        reportParams.put("cityname", getCityName());
+        reportParams.put("license", license);
+        reportParams.put("currentDate", currentDateToDefaultDateFormat());
+        reportParams.put("dueDate", toDefaultDateFormat(calculateDueDate(license)));
+        ReportRequest reportRequest = new ReportRequest("tl_acknowledgement", license, reportParams);
+        return reportService.createReport(reportRequest);
+    }
+
+    public Date calculateDueDate(License license) {
+        String slaDate = license.isNewApplication()
+                ? licenseMessageSource.getMessage("msg.newTradeLicense.sla",
+                new String[]{license.getApplicationNumber()}, Locale.getDefault())
+                : licenseMessageSource.getMessage("msg.renewTradeLicense.sla",
+                new String[]{license.getApplicationNumber()}, Locale.getDefault());
+        return new DateTime().plusDays(Integer.valueOf(slaDate)).toDate();
+    }
+
 }

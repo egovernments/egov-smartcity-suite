@@ -51,8 +51,8 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
 <div class="row">
 	<div class="col-md-12">
@@ -104,22 +104,25 @@
 				</div>
 			</div>
 			<div class="panel-body custom">
-				<p>The length of the companies collection is :
-					${fn:length(councilMeeting.meetingMOMs)}</p>
+				<div class="view-content">
+					The length of the companies collection is :
+					${fn:length(councilMeeting.meetingMOMs)}<br> Agenda Number :
+					${councilMeeting.meetingMOMs[0].agenda.agendaNumber}
+				</div>
 
 				<table class="table table-bordered" id="agendaTable">
 					<thead>
 						<tr>
 							<th align="center"><spring:message code="lbl.serial.no" /></th>
 							<th><spring:message code="lbl.department" /></th>
-							<th width="30%"><spring:message code="lbl.gistofpreamble" /></th>
-							<th width="7%"><spring:message code="lbl.agenda.number" /></th>
+							<th width="25%"><spring:message code="lbl.gistofpreamble" /></th>
+							<th width="20%"><spring:message code="lbl.bidders" /></th>
 							<th><spring:message code="lbl.preamble.number" /></th>
 							<th width="12%"><spring:message code="lbl.resolution" /><span
 								class="mandatory"></span></th>
 							<c:if test="${!autoResolutionNoGenEnabled}">
 								<th><spring:message code="lbl.resolutionNumber" /><span
-								class="mandatory"></span></th>
+									class="mandatory"></span></th>
 							</c:if>
 							<th width="24%"><spring:message code="lbl.comments" /><span
 								class="mandatory"></span></th>
@@ -131,7 +134,7 @@
 								<c:forEach items="${councilMeeting.meetingMOMs}" var="mom"
 									varStatus="counter">
 									<tr>
-										<td align="center">${mom.itemNumber} <input type="hidden"
+										<td align="center">${mom.itemNumber}<input type="hidden"
 											name="meetingMOMs[${counter.index}].preamable.id"
 											value="${mom.preamble.id}" /> <input type="hidden"
 											name="meetingMOMs[${counter.index}].itemNumber"
@@ -139,8 +142,47 @@
 										</td>
 										<td><c:out value="${mom.preamble.department.name}" /></td>
 										<td><span class="more"><c:out
-													value="${mom.preamble.gistOfPreamble}" /></span></td>
-										<td><c:out value="${mom.agenda.agendaNumber}" /></td>
+													value="${mom.preamble.gistOfPreamble}"/><br>
+													<c:out value="${mom.preamble.addtionalGistOfPreamble}"></c:out>
+													</span></td>
+
+
+										<td>
+											<c:if test="${!mom.preamble.bidderDetails.isEmpty()}">
+											<div class=" add-margin ">
+												<select name="mom.preamble.bidderDetails" multiple
+													id="bidderDetails" size="4"
+													class="form-control bidder tick-indicator">
+													<option value="">All</option>
+													<c:forEach items="${mom.preamble.bidderDetails}"
+														var="bidderDetail" varStatus="item">
+
+														<option value="${bidderDetail.id}"
+															title="${bidderDetail.bidder.name}" 
+															<c:if test="${bidderDetail.isAwarded}"> 
+															selected="selected" </c:if>>${bidderDetail.bidder.name}
+															<%-- <c:if test="${fn:contains(mom.preamble.bidderDetails, bidderDetail)}"> --%>
+															</option>
+                                                    
+                                                     
+													 
+													</c:forEach>
+
+
+												</select>
+												
+												  <input type="hidden" name="councilBidderHdn"
+													id="councilBidderHdn" class="councilbidderchk">
+													
+													  <input type="hidden" name="councilBidderHdnunchecked"
+													id="councilBidderHdnunchecked" class="councilbidderchk">
+											</div>
+											</c:if>
+											<c:if test="${mom.preamble.bidderDetails.isEmpty()}">
+												<c:out value="N/A"></c:out>
+											</c:if>
+										</td>
+
 										<td><c:out value="${mom.preamble.preambleNumber}" /></td>
 										<td><form:select
 												path="meetingMOMs[${counter.index}].resolutionStatus"
@@ -195,7 +237,8 @@
 </div>
 
 <input type="hidden" name="councilMeeting" value="${councilMeeting.id}" />
-<input type="hidden" id="autoResolutionNoGenEnabled" value="${autoResolutionNoGenEnabled}" />
+<input type="hidden" id="autoResolutionNoGenEnabled"
+	value="${autoResolutionNoGenEnabled}" />
 
 <%@ include file="upload-meeting-documents.jsp"%>
 
@@ -225,7 +268,7 @@
 								class="mandatory"></span></th>
 							<c:if test="${!autoResolutionNoGenEnabled}">
 								<th><spring:message code="lbl.resolutionNumber" /><span
-								class="mandatory"></span></th>
+									class="mandatory"></span></th>
 							</c:if>
 							<th width="27%"><spring:message code="lbl.comments" /><span
 								class="mandatory"></span></th>
@@ -267,10 +310,14 @@
 	</div>
 </div>
 
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/app/css/council-style.css?rnd=${app_release_no}'/>" />
 <script type="text/javascript"
 	src="<cdn:url value='/resources/app/js/councilMom.js?rnd=${app_release_no}'/>"></script>
 <script
 	src="<cdn:url value='/resources/app/js/showMoreorLessContent.js?rnd=${app_release_no}'/>"></script>
+	<script type="text/javascript"
+	src="<cdn:url value='/resources/app/js/councilbidder.js?rnd=${app_release_no}'/>"></script>
 <style>
 .morecontent span {
 	display: none;

@@ -47,22 +47,19 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
+
 import javax.servlet.http.HttpServletRequest;
 
-import org.egov.infra.reporting.engine.ReportOutput;
-import org.egov.infra.reporting.engine.ReportRequest;
-import org.egov.infra.reporting.engine.ReportService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ReportGenerationService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -70,32 +67,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class CitizenAcknowledgementController {
 
     @Autowired
-    private ReportService reportService;
-
-    @Autowired
     private ReportGenerationService reportGenerationService;
 
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
 
-    @RequestMapping(value = "/citizeenAcknowledgement", method = RequestMethod.GET)
+    @GetMapping(value = "/citizeenAcknowledgement", produces = APPLICATION_PDF_VALUE)
     @ResponseBody
-    public ResponseEntity<byte[]> generateEstimationNotice(final HttpServletRequest request) {
-
+    public ResponseEntity<InputStreamResource> generateEstimationNotice(final HttpServletRequest request) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByApplicationNumber(request.getParameter("pathVars"));
-        return generateReport(waterConnectionDetails);
+        return reportGenerationService.generateReport(waterConnectionDetails);
     }
-
-    private ResponseEntity<byte[]> generateReport(final WaterConnectionDetails waterConnectionDetails) {
-        ReportRequest reportInput = null;
-        ReportOutput reportOutput;
-        reportInput = reportGenerationService.generateCitizenAckReport(waterConnectionDetails);
-        final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        headers.add("content-disposition", "inline;filename=EstimationNotice.pdf");
-        reportOutput = reportService.createReport(reportInput);
-        return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
-    }
-
 }

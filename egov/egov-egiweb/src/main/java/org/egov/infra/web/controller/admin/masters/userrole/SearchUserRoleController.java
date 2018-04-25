@@ -65,7 +65,7 @@ public class SearchUserRoleController {
 
     @GetMapping(params = {"userId"})
     public String searchUserRole(@RequestParam Long userId, Model model) {
-        if (userId < 1) {
+        if (userId == null || userId < 1) {
             model.addAttribute("error", "invalid.user.entered");
             return "userrole-search";
         }

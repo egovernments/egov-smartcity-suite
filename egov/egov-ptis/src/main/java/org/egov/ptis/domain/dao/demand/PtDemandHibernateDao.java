@@ -86,6 +86,10 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HA
 
 @Repository(value = "ptDemandDAO")
 public class PtDemandHibernateDao implements PtDemandDao {
+    private static final String DEMAND_COMPARISION = " and dd.amount > dd.amt_collected  ";
+    private static final String DEMAND_REASON_QUERY = " and dd.id_demand_reason = dr.id and drm.id = dr.id_demand_reason_master ";
+    private static final String AND_D_ID_DD_ID_DEMAND = " and d.id = dd.id_demand ";
+    private static final String SELECT_QUERY = " select drm.code, inst.description, dd.amount, dd.amt_collected ";
     private static final String BILLID_PARAM = "billid";
     private static final String PROPERTY = "property";
     @SuppressWarnings("rawtypes")
@@ -226,7 +230,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
     public List getDmdDetailsByPropertyIdBoundary(final BasicProperty basicProperty, final Boundary divBoundary) {
         String divStatus = "N";
         List list = new ArrayList();
-        final StringBuffer qry = new StringBuffer(50);
+        final StringBuilder qry = new StringBuilder(50);
         if (basicProperty != null) {
             // should check for active
             qry.append(" select demdet From EgptPtdemand ptdem left join ptdem.egDemandDetails demdet left join "
@@ -285,7 +289,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
         List<EgDemandDetails> demandDetailsList;
         BigDecimal amount = BigDecimal.ZERO;
         demandDetailsList = getDmdDetailsByPropertyIdBoundary(basicProperty, divBoundary);
-        final Map<EgDemandReason, BigDecimal> dmdMap = new HashMap<EgDemandReason, BigDecimal>();
+        final Map<EgDemandReason, BigDecimal> dmdMap = new HashMap<>();
         final Iterator iter = demandDetailsList.iterator();
         while (iter.hasNext()) {
             final EgDemandDetails egDemandDetails = (EgDemandDetails) iter.next();
@@ -321,7 +325,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
         final Query query = getCurrentSession().createSQLQuery(sb.toString());
         query.setLong(BILLID_PARAM, billId);
         final Object[] results = (Object[]) query.uniqueResult();
-        final List<BigDecimal> amounts = new ArrayList<BigDecimal>();
+        final List<BigDecimal> amounts = new ArrayList<>();
         amounts.add((BigDecimal) results[0]); // demand
         amounts.add((BigDecimal) results[1]); // collection
         amounts.add((BigDecimal) results[2]); // rebate
@@ -341,9 +345,9 @@ public class PtDemandHibernateDao implements PtDemandDao {
         BigDecimal currFirstHalfCollection = BigDecimal.ZERO;
         BigDecimal currSecondHalfCollection = BigDecimal.ZERO;
         BigDecimal arrColelection = BigDecimal.ZERO;
-        BigDecimal demand = BigDecimal.ZERO;
-        BigDecimal collection = BigDecimal.ZERO;
-        final Map<String, BigDecimal> retMap = new HashMap<String, BigDecimal>();
+        BigDecimal demand;
+        BigDecimal collection;
+        final Map<String, BigDecimal> retMap = new HashMap<>();
 
         if (currDemand != null)
             dmdCollList = propertyDAO.getDmdCollAmtInstWise(currDemand);
@@ -358,16 +362,16 @@ public class PtDemandHibernateDao implements PtDemandDao {
 
             installment = installmentDao.findById(instId, false);
             if (currYearInstMap.get(CURRENTYEAR_FIRST_HALF).equals(installment)) {
-                if (collection.compareTo(BigDecimal.ZERO) == 1)
+                if (collection.compareTo(BigDecimal.ZERO) > 0)
                     currFirstHalfCollection = currFirstHalfCollection.add(collection);
                 currFirstHalfDmd = currFirstHalfDmd.add(demand);
             } else if (currYearInstMap.get(CURRENTYEAR_SECOND_HALF).equals(installment)) {
-                if (collection.compareTo(BigDecimal.ZERO) == 1)
+                if (collection.compareTo(BigDecimal.ZERO) > 0)
                     currSecondHalfCollection = currSecondHalfCollection.add(collection);
                 currSecondHalfDmd = currSecondHalfDmd.add(demand);
             } else {
                 arrDmd = arrDmd.add(demand);
-                if (collection.compareTo(BigDecimal.ZERO) == 1)
+                if (collection.compareTo(BigDecimal.ZERO) > 0)
                     arrColelection = arrColelection.add(collection);
             }
         }
@@ -486,7 +490,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
         BigDecimal arrPenalty = BigDecimal.ZERO;
         BigDecimal currPenaltyColl = BigDecimal.ZERO;
         BigDecimal arrPenaltyColl = BigDecimal.ZERO;
-        final Map<String, BigDecimal> retMap = new HashMap<String, BigDecimal>();
+        final Map<String, BigDecimal> retMap = new HashMap<>();
 
         if (currDemand != null)
             penaltyDmdCollList = propertyDAO.getPenaltyDmdCollAmtInstWise(currDemand);
@@ -540,7 +544,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
             qry.setDate("fromYear", currentFinancialYear.getStartingDate());
             qry.setDate("toYear", currentFinancialYear.getStartingDate());
             final List<Ptdemand> ptDemandResult = qry.list();
-            if (ptDemandResult != null && ptDemandResult.size() > 0)
+            if (!ptDemandResult.isEmpty())
                 egptPtdemand = ptDemandResult.get(0);
         }
         return egptPtdemand;
@@ -575,16 +579,16 @@ public class PtDemandHibernateDao implements PtDemandDao {
     @Override
     @SuppressWarnings("unchecked")
     public List<Object> getPropertyTaxDetails(final String assessmentNo) {
-        List<Object> list = new ArrayList<Object>();
+        List<Object> list;
         final CFinancialYear currentFinancialYear = financialYearDAO.getFinancialYearByDate(new Date());
-        String selectQuery = " select drm.code, inst.description, dd.amount, dd.amt_collected "
+        String selectQuery = SELECT_QUERY
                 + " from egpt_basic_property bp, egpt_property prop, egpt_ptdemand ptd, eg_demand d, eg_demand_details dd, eg_demand_reason dr, eg_demand_reason_master drm, eg_installment_master inst "
                 + " where bp.id = prop.id_basic_property and prop.status  in ('A','I') "
                 + " and prop.id = ptd.id_property and ptd.id_demand = d.id "
-                + " and d.id = dd.id_demand "
-                + " and dd.id_demand_reason = dr.id and drm.id = dr.id_demand_reason_master "
+                + AND_D_ID_DD_ID_DEMAND
+                + DEMAND_REASON_QUERY
                 + " and dr.id_installment = inst.id and bp.propertyid =:assessmentNo"
-                + " and dd.amount > dd.amt_collected  "
+                + DEMAND_COMPARISION
                 + " and d.id_installment =(select id from eg_installment_master "
                 + " where start_date <= :fromYear and end_date >=:toYear and id_module=(select id from eg_module where name='Property Tax' ))  ";
         selectQuery = selectQuery + " order by inst.description desc ";
@@ -599,31 +603,28 @@ public class PtDemandHibernateDao implements PtDemandDao {
     @Override
     @SuppressWarnings("unchecked")
     public List<Object> getTaxDetailsForWaterConnection(final String consumerNo, final String connectionType) {
-        List<Object> list = new ArrayList<Object>();
+        List<Object> list;
         String selectQuery = "";
         if (connectionType.equals("METERED"))
-            selectQuery = " select drm.code, inst.description, dd.amount, dd.amt_collected "
+            selectQuery = SELECT_QUERY
                     + " from  egwtr_connection conn,egwtr_connectiondetails bp, egwtr_demand_connection demconn ,eg_demand d, eg_demand_details dd, eg_demand_reason dr, eg_demand_reason_master drm, eg_installment_master inst "
                     + " where conn.id =bp.connection "
                     + " and demconn.connectiondetails = bp.id "
                     + " and demconn.demand = d.id "
-                    + " and d.id = dd.id_demand "
-                    + " and dd.id_demand_reason = dr.id and drm.id = dr.id_demand_reason_master "
+                    + AND_D_ID_DD_ID_DEMAND
+                    + DEMAND_REASON_QUERY
                     + " and dr.id_installment = inst.id and conn.consumercode =:consumerNo"
-                    + " and dd.amount > dd.amt_collected  "
+                    + DEMAND_COMPARISION
                     + " and d.id_installment =(select id from eg_installment_master where now() between start_date and end_date and id_module=(select id from eg_module where name='Water Tax Management' ) and installment_type='Monthly' )  ";
         else
-            selectQuery = " select drm.code, inst.description, dd.amount, dd.amt_collected "
+            selectQuery = SELECT_QUERY
                     + " from  egwtr_connection conn,egwtr_connectiondetails bp,egwtr_demand_connection demconn , eg_demand d, eg_demand_details dd, eg_demand_reason dr, eg_demand_reason_master drm, eg_installment_master inst "
                     + " where conn.id =bp.connection " + " and demconn.connectiondetails = bp.id " + " and demconn.demand = d.id "
-                    + " and d.id = dd.id_demand "
-                    + " and dd.id_demand_reason = dr.id and drm.id = dr.id_demand_reason_master "
+                    + AND_D_ID_DD_ID_DEMAND
+                    + DEMAND_REASON_QUERY
                     + " and d.is_history='N' "
                     + " and dr.id_installment = inst.id and conn.consumercode =:consumerNo"
-                    + " and dd.amount > dd.amt_collected  ";
-        // +
-        // " and d.id_installment =(select id from eg_installment_master where now() between start_date and end_date and
-        // id_module=(select id from eg_module where name='Property Tax' ) ) ";
+                    + DEMAND_COMPARISION;
         selectQuery = selectQuery + " order by inst.description desc ";
 
         final Query qry = getCurrentSession().createSQLQuery(selectQuery).setString("consumerNo", consumerNo);
@@ -634,13 +635,13 @@ public class PtDemandHibernateDao implements PtDemandDao {
     @Override
     @Deprecated
     public Set<String> getDemandYears(final String assessmentNo) {
-        final Set<String> demandYears = new LinkedHashSet<String>();
+        final Set<String> demandYears = new LinkedHashSet<>();
         final String selectQuery = " select inst.description "
                 + " from egpt_basic_property bp, egpt_property prop, egpt_ptdemand ptd, eg_demand d, eg_demand_details dd, eg_demand_reason dr, eg_demand_reason_master drm, eg_installment_master inst "
                 + " where bp.id = prop.id_basic_property and prop.status = 'A' "
                 + " and prop.id = ptd.id_property and ptd.id_demand = d.id "
-                + " and d.id = dd.id_demand "
-                + " and dd.id_demand_reason = dr.id and drm.id = dr.id_demand_reason_master "
+                + AND_D_ID_DD_ID_DEMAND
+                + DEMAND_REASON_QUERY
                 + " and dr.id_installment = inst.id and bp.propertyid =:assessmentNo "
                 + " and d.id_installment =(select id from eg_installment_master where now() between start_date and end_date and id_module=(select id from eg_module where name='Property Tax' )) order by inst.start_date ";
         final Query qry = getCurrentSession().createSQLQuery(selectQuery).setString("assessmentNo", assessmentNo);
@@ -661,9 +662,9 @@ public class PtDemandHibernateDao implements PtDemandDao {
         BigDecimal currFirstHalfCollection = BigDecimal.ZERO;
         BigDecimal currSecondHalfCollection = BigDecimal.ZERO;
         BigDecimal arrColelection = BigDecimal.ZERO;
-        BigDecimal demand = BigDecimal.ZERO;
-        BigDecimal collection = BigDecimal.ZERO;
-        final Map<String, BigDecimal> retMap = new HashMap<String, BigDecimal>();
+        BigDecimal demand;
+        BigDecimal collection;
+        final Map<String, BigDecimal> retMap = new HashMap<>();
 
         if (currDemand != null)
             dmdCollList = propertyDAO.getTotalDemandDetailsIncludingPenalty(currDemand);
@@ -678,16 +679,16 @@ public class PtDemandHibernateDao implements PtDemandDao {
 
             installment = installmentDao.findById(instId, false);
             if (currYearInstMap.get(CURRENTYEAR_FIRST_HALF).equals(installment)) {
-                if (collection.compareTo(BigDecimal.ZERO) == 1)
+                if (collection.compareTo(BigDecimal.ZERO) > 0)
                     currFirstHalfCollection = currFirstHalfCollection.add(collection);
                 currFirstHalfDmd = currFirstHalfDmd.add(demand);
             } else if (currYearInstMap.get(CURRENTYEAR_SECOND_HALF).equals(installment)) {
-                if (collection.compareTo(BigDecimal.ZERO) == 1)
+                if (collection.compareTo(BigDecimal.ZERO) > 0)
                     currSecondHalfCollection = currSecondHalfCollection.add(collection);
                 currSecondHalfDmd = currSecondHalfDmd.add(demand);
             } else {
                 arrDmd = arrDmd.add(demand);
-                if (collection.compareTo(BigDecimal.ZERO) == 1)
+                if (collection.compareTo(BigDecimal.ZERO) > 0)
                     arrColelection = arrColelection.add(collection);
             }
         }

@@ -1389,11 +1389,9 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             setOldProperty((PropertyImpl) getBasicProp().getProperty());
             propCompletionDate = propertyTaxUtil.getLowestInstallmentForProperty(oldProperty);
         }
-        validateProperty(propertyModel, areaOfPlot, dateOfCompletion, eastBoundary, westBoundary, southBoundary,
+        validateProperty(propertyModel, areaOfPlot, eastBoundary, westBoundary, southBoundary,
                 northBoundary, propTypeId,
-                null != basicProp.getPropertyID() && null != basicProp.getPropertyID().getZone()
-                        ? String.valueOf(basicProp.getPropertyID().getZone().getId()) : String.valueOf(zoneId),
-                propOccId, floorTypeId, roofTypeId, wallTypeId, woodTypeId, modifyRsn, propCompletionDate,
+                modifyRsn, propCompletionDate,
                 vacantLandPlotAreaId, layoutApprovalAuthorityId, null);
         validateBoundaries();
         validateApproverDetails();
@@ -1694,7 +1692,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         final Date noticeDueDate = DateUtils.add(propWF.getState().getCreatedDate(), Calendar.DAY_OF_MONTH, 15);
         reportParams.put("noticeDueDate", dateFormatter.format(noticeDueDate));
         reportParams.put("creationReason", modifyRsn);
-        reportParams.put("logoPath", cityService.getCityLogoURL());
+        reportParams.put("logoPath", cityService.getCityLogoAsBytes());
         reportParams.put("cityName", cityService.getMunicipalityName());
         reportParams.put("loggedInUsername", securityUtils.getCurrentUser().getName());
         ReportRequest reportInput;

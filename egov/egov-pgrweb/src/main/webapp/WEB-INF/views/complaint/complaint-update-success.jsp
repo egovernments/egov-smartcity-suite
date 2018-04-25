@@ -55,7 +55,7 @@
             <div class="panel panel-primary" data-collapsed="0">
                 <div class="panel-heading">
                     <div class="panel-title text-center no-float">
-                        <strong><spring:message code="msg.complaint.reg.success"/> : <strong>${complaint.crn}</strong> </strong>
+                        <strong><spring:message code="msg.complaint.update.success" arguments="${complaint.crn}"/></strong>
                     </div>
                 </div>
                 <div class="panel-body">
@@ -63,32 +63,36 @@
                         <div class="col-md-3 col-xs-6 add-margin">
                             <spring:message code="lbl.complaintDate"/>
                         </div>
-                        <div class="col-md-3 col-xs-6 add-margin view-content" id="ct-date">
-                            <fmt:formatDate value="${complaint.createdDate}" pattern="dd-MM-yyyy hh:mm:ss" var="complaintDate"/>
+                        <div class="col-md-3 col-xs-6 add-margin view-content">
+                            <fmt:formatDate value="${complaint.createdDate}" pattern="dd MMM yyyy hh:mm:ss a" var="complaintDate"/>
                             ${complaintDate}
                         </div>
+                    </div>
+                    <div class="row add-border">
+                        <div class="col-md-3 col-xs-6 add-margin">
+                            <spring:message code="lbl.complaint.status"/>
+                        </div>
+                        <div class="col-md-3 col-xs-6 add-margin view-content">
+                            ${complaint.status.displayName()}
+                        </div>
+                    </div>
+                    <div class="row add-border">
                         <div class="col-md-3 col-xs-6 add-margin">
                             <spring:message code="lbl.complainant.name"/>
                         </div>
                         <div class="col-md-3 col-xs-6 add-margin view-content" id="ct-name">
-                            <c:choose>
-                                <c:when test="${not empty complaint.complainant.name}">
-                                    ${complaint.complainant.name}
-                                </c:when>
-                                <c:otherwise>
-                                    ${complaint.complainant.userDetail.name}
-                                </c:otherwise>
-                            </c:choose>
-
+                            ${complaint.complainant.name}
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row add-border">
                         <div class="col-md-3 col-xs-6 add-margin">
                             <spring:message code="lbl.phoneNumber"/>
                         </div>
                         <div class="col-md-3 col-xs-6 add-margin view-content" id="ct-mobno">
                             ${complaint.complainant.mobile}
                         </div>
+                    </div>
+                    <div class="row add-border">
                         <div class="col-md-3 col-xs-6 add-margin">
                             <spring:message code="lbl.email"/>
                         </div>
@@ -112,6 +116,8 @@
                         <div class="col-md-3 col-xs-6 add-margin view-content" id="ct-type">
                             ${complaint.complaintType.name}
                         </div>
+                    </div>
+                    <div class="row add-border">
                         <div class="col-md-3 col-xs-6 add-margin">
                             <spring:message code="lbl.compDetails"/>
                         </div>
@@ -127,6 +133,8 @@
                             <span class="map-tool-class btn-secondary" data-toggle="tooltip" title="Locate on map" data-work="Locate on map" onclick="jQuery('#complaint-locate').modal('show', {backdrop: 'static'});"><i class="fa fa-map-marker"></i></span>
                             <span id="address_locate">${complaint.childLocation.name} - ${complaint.location.name}</span>
                         </div>
+                    </div>
+                    <div class="row add-border">
                         <div class="col-md-3 col-xs-6 add-margin">
                             <spring:message code="lbl.landmark"/>
                         </div>

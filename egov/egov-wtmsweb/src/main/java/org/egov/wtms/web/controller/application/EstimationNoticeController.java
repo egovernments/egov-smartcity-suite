@@ -47,8 +47,10 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import static org.egov.infra.reporting.util.ReportUtil.reportAsResponseEntity;
 import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.FILESTORE_MODULECODE;
+import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 
 import java.io.File;
 import java.io.IOException;
@@ -76,11 +78,10 @@ import org.egov.wtms.application.service.ReportGenerationService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -106,17 +107,17 @@ public class EstimationNoticeController {
     @Autowired
     private FileStoreService fileStoreService;
 
-    @RequestMapping(value = "/estimationNotice", method = RequestMethod.GET)
+    @GetMapping(value = "/estimationNotice", produces = APPLICATION_PDF_VALUE)
     @ResponseBody
-    public ResponseEntity<byte[]> generateEstimationNotice(final HttpServletRequest request,
+    public ResponseEntity<InputStreamResource> generateEstimationNotice(final HttpServletRequest request,
             final HttpSession session) {
 
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByApplicationNumber(request.getParameter("pathVar"));
-        return generateReport(waterConnectionDetails, session);
+        return generateEstimationReport(waterConnectionDetails, session);
     }
 
-    private ResponseEntity<byte[]> generateReport(final WaterConnectionDetails waterConnectionDetails,
+    private ResponseEntity<InputStreamResource> generateEstimationReport(final WaterConnectionDetails waterConnectionDetails,
             final HttpSession session) {
         ReportRequest reportInput = null;
         ReportOutput reportOutput = new ReportOutput();
@@ -126,6 +127,7 @@ public class EstimationNoticeController {
                 final File file = fileStoreService.fetch(fmp, FILESTORE_MODULECODE);
                 reportOutput = new ReportOutput();
                 try {
+                    reportOutput.setReportName(waterConnectionDetails.getEstimationNumber());
                     reportOutput.setReportOutputData(FileUtils.readFileToByteArray(file));
                     reportOutput.setReportFormat(ReportFormat.PDF);
                 } catch (final IOException e) {
@@ -173,21 +175,19 @@ public class EstimationNoticeController {
                         waterConnectionDetails.getFieldInspectionDetails().getSupervisionCharges());
                 reportInput = new ReportRequest(ESTIMATION_NOTICE, waterConnectionDetails, reportParams);
                 reportOutput = reportService.createReport(reportInput);
+                reportOutput.setReportFormat(ReportFormat.PDF);
+                reportOutput.setReportName(waterConnectionDetails.getEstimationNumber());
             }
-        final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        headers.add("content-disposition", "inline;filename=EstimationNotice.pdf");
-
-        return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+        return reportAsResponseEntity(reportOutput);
     }
 
-    @RequestMapping(value = "/estimationNotice/view/{applicationNumber}", method = RequestMethod.GET)
+    @GetMapping(value = "/estimationNotice/view/{applicationNumber}", produces = APPLICATION_PDF_VALUE)
     @ResponseBody
-    public ResponseEntity<byte[]> viewEstimationNotice(@PathVariable final String applicationNumber,
+    public ResponseEntity<InputStreamResource> viewEstimationNotice(@PathVariable final String applicationNumber,
             final HttpSession session) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByApplicationNumber(applicationNumber);
-        return generateReport(waterConnectionDetails, session);
+        return generateEstimationReport(waterConnectionDetails, session);
     }
 
 }

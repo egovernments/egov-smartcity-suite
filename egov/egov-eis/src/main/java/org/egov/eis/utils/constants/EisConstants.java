@@ -69,6 +69,12 @@ public class EisConstants {
     public static final String ULBCODE = "ulbcode";
     public static final String REGNAME = "regname";
     public static final String DEPARTMENT_NAME = "department";
-
+    public static final String WORKFLOW_STATE_REDRESSED = "Created";
+    public static final String WORKFLOW_STATE_CANCELLED = "Cancelled";
+    public static final String WORKFLOW_STATE_INPROCESS = "In process";
+    public static final String EMPLOYEE_GRIEVANCE ="Employee Grievance";
+    
+    public static final String WARD = "Ward";
+    public static final String REVENUE_HIERARCHY_TYPE = "REVENUE";
 
 }

@@ -87,5 +87,7 @@ public interface MutationFeeRepository extends JpaRepository<MutationFeeDetails,
 
     @Query("select mfd3 from MutationFeeDetails mfd3 order by mfd3.lowLimit asc")
     List<MutationFeeDetails> selectAllOrderBySlabName();
-
+    
+    @Query("select mfd4 from MutationFeeDetails mfd4 where mfd4.lowLimit <= :documentValue and (mfd4.highLimit is null OR mfd4.highLimit >= :documentValue)")
+    List<MutationFeeDetails> getMutationFee(@Param("documentValue") BigDecimal documentValue);
 }

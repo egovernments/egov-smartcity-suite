@@ -153,7 +153,7 @@ public class DefaultersReportController {
             @RequestParam final String noofyr,
             @RequestParam final String proptype,
             final HttpServletRequest request,
-            final HttpServletResponse response) throws IOException {
+            final HttpServletResponse response) {
         Query query = propertyTaxUtil.prepareQueryforDefaultersReport(Long.valueOf(wardId), fromAmount, toAmount,
                 StringUtils.isBlank(limit) ? null : Integer.valueOf(limit), category,proptype);
         List<DefaultersInfo> defaultersList = reportService.getDefaultersInformation(query,noofyr,StringUtils.isBlank(limit) ? null : Integer.valueOf(limit));

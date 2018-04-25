@@ -47,8 +47,6 @@
  */
 package org.egov.restapi.model;
 
-import org.jboss.logging.Logger;
-
 public class WaterConnectionSearchRequest {
 
     private String searchText;
@@ -56,8 +54,6 @@ public class WaterConnectionSearchRequest {
     private String applicantname;
     private String locality;
     private String mobilenumber;
-
-    private static final Logger logger = Logger.getLogger(WaterConnectionSearchRequest.class);
 
     public String getHscnumber() {
         return hscnumber;
@@ -98,17 +94,6 @@ public class WaterConnectionSearchRequest {
     public void setSearchText(final String searchText) {
         this.searchText = searchText;
     }
-
-    /*public Filters searchFilters() {
-        final List<Filter> andFilters = new ArrayList<>();
-        andFilters.add(queryStringFilter("searchable.consumername", applicantname));
-        andFilters.add(queryStringFilter("clauses.consumercode", hscnumber));
-        andFilters.add(queryStringFilter("searchable.locality", locality));
-        andFilters.add(queryStringFilter("clauses.mobilenumber", mobilenumber));
-        if (logger.isDebugEnabled())
-            logger.debug("finished filters");
-        return Filters.withAndFilters(andFilters);
-    }*/
 
     public String searchQuery() {
         return searchText;

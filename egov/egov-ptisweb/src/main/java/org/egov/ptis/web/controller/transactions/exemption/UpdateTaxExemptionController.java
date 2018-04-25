@@ -240,8 +240,8 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
             model.addAttribute("state", property.getState());
         }
         model.addAttribute("property", property);
-        if (currState.endsWith(WF_STATE_REJECTED) || nextAction.equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING)
-                || currState.endsWith(WFLOW_ACTION_NEW)) {
+        if (currState.endsWith(WF_STATE_REJECTED) || currState.endsWith(WFLOW_ACTION_NEW)
+                || nextAction != null && nextAction.equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING)) {
             model.addAttribute("mode", EDIT);
             return TAX_EXEMPTION_FORM;
         } else {

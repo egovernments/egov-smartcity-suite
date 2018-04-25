@@ -72,6 +72,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.emptyList;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 @Service
 @Transactional(readOnly = true)
 public class ComplaintTypeService {
@@ -106,7 +109,7 @@ public class ComplaintTypeService {
     }
 
     public List<ComplaintType> findAllActiveByNameLike(String name) {
-        return complaintTypeRepository.findByIsActiveTrueAndNameContainingIgnoreCase(name);
+        return isBlank(name) ? emptyList() : complaintTypeRepository.findByIsActiveTrueAndNameContainingIgnoreCase(name);
     }
 
     public List<ComplaintType> findActiveComplaintTypesByCategory(Long categoryId) {

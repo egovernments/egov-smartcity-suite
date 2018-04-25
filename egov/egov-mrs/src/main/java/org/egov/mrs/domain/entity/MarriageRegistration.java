@@ -161,13 +161,11 @@ public class MarriageRegistration extends StateAware<Position> {
     @NotNull
     private Double feePaid;
 
-    @NotNull
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "zone")
     private Boundary zone;
 
-    @NotNull
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "registrationUnit")
     private MarriageRegistrationUnit marriageRegistrationUnit;
 

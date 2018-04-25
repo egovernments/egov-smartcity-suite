@@ -209,6 +209,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private String southBoundary;
     private String eastBoundary;
     private String westBoundary;
+    private String sitalArea;
 
     private Long mutationId;
 
@@ -360,8 +361,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                     + ", Wardid: " + wardId + ", BlockId: " + blockId + ", AreaOfPlot: " + areaOfPlot
                     + ", DateOfCompletion: " + dateOfCompletion + ", PropTypeId: " + propTypeId + ", PropUsageId: "
                     + propUsageId + ", PropOccId: " + propOccId);
-        final long startTimeMillis = System.currentTimeMillis();
-
         if (loggedUserIsMeesevaUser && property.getMeesevaApplicationNumber() != null) {
             property.setApplicationNo(property.getMeesevaApplicationNumber());
             property.setSource(PropertyTaxConstants.SOURCE_MEESEVA);
@@ -404,6 +403,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         if (!loggedUserIsMeesevaUser)
             basicPropertyService.persist(basicProperty);
         else {
+            // TODO : Meeseva params are not used while persisting? 
             final HashMap<String, String> meesevaParams = new HashMap<>();
             meesevaParams.put("ADMISSIONFEE", "0");
             meesevaParams.put("APPLICATIONNUMBER", property.getMeesevaApplicationNumber());
@@ -416,9 +416,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         propService.saveDocumentTypeDetails(basicProperty, getDocumentTypeDetails());
         setAckMessage("Property Data Saved Successfully in the System and forwarded to : ");
         setApplicationNoMessage(" with application number : ");
-        final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
-        if (logger.isInfoEnabled())
-            logger.info("create: Property created successfully in system" + "; Time taken(ms) = " + elapsedTimeMillis);
         if (logger.isDebugEnabled())
             logger.debug("create: Property creation ended");
         if (!loggedUserIsMeesevaUser)
@@ -760,7 +757,10 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                         Arrays.asList(JUNIOR_ASSISTANT + "/" + SENIOR_ASSISTANT)));
             return mode.equalsIgnoreCase(EDIT) ? RESULT_NEW : RESULT_VIEW;
         }
-        if (mode.equalsIgnoreCase(EDIT)) {
+        if (multipleSubmitCondition(property, approverPositionId)) {
+            return multipleSubmitRedirect();
+        }
+        if (mode.equalsIgnoreCase(EDIT) && !WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
             validate();
             if (hasErrors() && (StringUtils.containsIgnoreCase(userDesignationList, REVENUE_INSPECTOR_DESGN)
                     || StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT)
@@ -782,9 +782,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             validateApproverDetails();
             if (hasErrors())
                 return RESULT_VIEW;
-        }
-        if (multipleSubmitCondition(property, approverPositionId)) {
-            return multipleSubmitRedirect();
         }
         if (!WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction))
             transitionWorkFlow(property);
@@ -826,20 +823,16 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             }
             propertySurveyService.updateSurveyIndex(APPLICATION_TYPE_NEW_ASSESSENT, surveyBean);
         }
-        
-        basicProp.addProperty(property);
+            basicProp.addProperty(property);
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
         if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(property.getSource()))
             propService.updatePortal(property, APPLICATION_TYPE_NEW_ASSESSENT);
         basicPropertyService.persist(basicProp);
         if (logger.isDebugEnabled())
             logger.debug("forward: Property forward started " + property);
-        final long startTimeMillis = System.currentTimeMillis();
         setDocNumber(getDocNumber());
         setApplicationNoMessage(" with application number : ");
-        final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
         if (logger.isDebugEnabled()) {
-            logger.debug("forward: Time taken(ms) = " + elapsedTimeMillis);
             logger.debug("forward: Property forward ended");
         }
         return RESULT_ACK;
@@ -980,6 +973,11 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         if (logger.isDebugEnabled())
             logger.debug("reject: Property rejection started");
         basicPropertyService.applyAuditing(property.getState());
+        if (StringUtils.isNotBlank(sitalArea)) {
+            final Area area = new Area();
+            area.setArea(new Float(sitalArea));
+            property.getPropertyDetail().setSitalArea(area);
+        }
         if (property.getStatus().equals(PropertyTaxConstants.STATUS_CANCELLED))
             basicProp.setUnderWorkflow(false);
         else
@@ -1437,9 +1435,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         if (electionWardId == null || electionWardId == -1)
             addActionError(getText("mandatory.election.ward"));
         validateOwnerDetails(property);
-        validateProperty(property, areaOfPlot, dateOfCompletion, eastBoundary, westBoundary, southBoundary,
-                northBoundary, propTypeId, null != zoneId && zoneId != -1 ? String.valueOf(zoneId) : "", propOccId,
-                floorTypeId, roofTypeId, wallTypeId, woodTypeId, null, null, vacantLandPlotAreaId,
+        validateProperty(property, areaOfPlot, eastBoundary, westBoundary, southBoundary,
+                northBoundary, propTypeId,
+                null, null, vacantLandPlotAreaId,
                 layoutApprovalAuthorityId, getDocumentTypeDetails());
 
         if (isBlank(pinCode))
@@ -1598,7 +1596,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             addActionError(getText("mandatory.doorNo"));
             return RESULT_DATAENTRY;
         }
-        final long startTimeMillis = System.currentTimeMillis();
         final BasicProperty basicProperty = createBasicProp(PropertyTaxConstants.STATUS_ISACTIVE);
         basicProperty.setUnderWorkflow(false);
         basicProperty.setSource(PropertyTaxConstants.SOURCEOFDATA_DATAENTRY);
@@ -1622,9 +1619,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         setBasicProp(basicProperty);
         setAckMessage("Property data entry saved in the system successfully and created with Assessment No "
                 + basicProperty.getUpicNo());
-        final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
         if (logger.isDebugEnabled()) {
-            logger.info("create: Property created successfully in system" + "; Time taken(ms) = " + elapsedTimeMillis);
             logger.debug("create: Property creation ended");
         }
         return "dataEntry-ack";
@@ -2353,5 +2348,13 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
     public void setCitizenPortalUser(boolean citizenPortalUser) {
         this.citizenPortalUser = citizenPortalUser;
+    }
+
+    public String getSitalArea() {
+        return sitalArea;
+    }
+
+    public void setSitalArea(String sitalArea) {
+        this.sitalArea = sitalArea;
     }
 }

@@ -53,13 +53,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.HttpRequestHandler;
 
 import javax.imageio.ImageIO;
-import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+
+import static org.egov.infra.utils.ImageUtils.JPG_MIME_TYPE;
 
 @Component("jcaptcha")
 public class CaptchaServlet implements HttpRequestHandler {
@@ -68,7 +69,7 @@ public class CaptchaServlet implements HttpRequestHandler {
     private DefaultCaptchaService defaultCaptchaService;
 
     @Override
-    public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try (ByteArrayOutputStream jpegOutputStream = new ByteArrayOutputStream()) {
             String captchaId = request.getParameter("key");
             BufferedImage challenge = defaultCaptchaService.getImageChallengeForID(captchaId, response.getLocale());
@@ -76,7 +77,7 @@ public class CaptchaServlet implements HttpRequestHandler {
             response.setHeader("Cache-Control", "no-store");
             response.setHeader("Pragma", "no-cache");
             response.setDateHeader("Expires", 0);
-            response.setContentType("image/jpeg");
+            response.setContentType(JPG_MIME_TYPE);
             ServletOutputStream responseStream = response.getOutputStream();
             responseStream.write(jpegOutputStream.toByteArray());
             responseStream.flush();

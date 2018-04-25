@@ -85,14 +85,12 @@
 								        		onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
 								        </td>
 								        <td class="blueborderfortd" align="center">
-								        	<s:select id="gender" name="transfereeInfosProxy[0].transferee.gender" value="%{transfereeInfosProxy[0].transferee.gender}"
+								        	<s:select class="transfereeGender" id="gender" name="transfereeInfosProxy[0].transferee.gender" value="%{transfereeInfosProxy[0].transferee.gender}"
 								        	  headerValue="Choose" headerKey="" list="@org.egov.infra.persistence.entity.enums.Gender@values()"></s:select>
 								        </td>
 								        <td class="blueborderfortd" align="center">
 								        	<s:textfield name="transfereeInfosProxy[0].transferee.emailId" maxlength="64" size="20" id="emailId"  value="" 
 								        		onblur="trim(this,this.value);validateEmail(this);"/>
-								        	<!-- This hidden field can become dropdown later when transferee become non citizen -->
-								        	<s:hidden name="transfereeInfosProxy[0].transferee.type" value="CITIZEN" data-static="true"/>
 								        </td>
 								        <td class="blueborderfortd" align="center">
 								        		 <s:select id="guardianRelation" name="transfereeInfosProxy[0].transferee.guardianRelation" value="%{transfereeInfosProxy[0].transferee.guardianRelation}"
@@ -132,15 +130,13 @@
 								        		value="%{transfereeInfosProxy[#status.index].transferee.name}" onblur="trim(this,this.value);checkSpecialCharForName(this);"/>
 								        </td>
 								        <td class="blueborderfortd" align="center">
-								        	<s:select id="gender" name="transfereeInfosProxy[%{#status.index}].transferee.gender" value="%{transfereeInfosProxy[#status.index].transferee.gender}"
-								        	 headerValue="Choose" headerKey="" list="@org.egov.infra.persistence.entity.enums.Gender@values()"></s:select>
+								        	<s:select class="transfereeGender" id="gender" name="transfereeInfosProxy[%{#status.index}].transferee.gender" value="%{transfereeInfosProxy[#status.index].transferee.gender}"
+								        	  headerValue="Choose" headerKey="" list="@org.egov.infra.persistence.entity.enums.Gender@values()"></s:select>
 								        </td>  
 								      
 								        <td class="blueborderfortd" align="center">
 								        	<s:textfield name="transfereeInfosProxy[%{#status.index}].transferee.emailId" maxlength="64" size="20" 
 								        		value="%{transfereeInfosProxy[#status.index].transferee.emailId}" onblur="trim(this,this.value);validateEmail(this);"/>
-								        		<!-- This hidden field can become dropdown later when transferee become non citizen -->
-								        	<s:hidden name="transfereeInfosProxy[%{#status.index}].transferee.type" value="CITIZEN" data-static="true"/>
 								        </td>
 								        <td class="blueborderfortd" align="center">
 								         <s:select id="guardianRelation" name="transfereeInfosProxy[%{#status.index}].transferee.guardianRelation" value="%{transfereeInfosProxy[#status.index].transferee.guardianRelation}"

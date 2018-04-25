@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -64,13 +64,14 @@ import org.egov.tl.entity.LicenseStatus;
 import org.egov.tl.entity.PenaltyRates;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.contracts.DemandNoticeForm;
+import org.egov.tl.entity.contracts.LicenseDemandDetail;
+import org.egov.tl.service.LicenseAppTypeService;
 import org.egov.tl.service.LicenseCategoryService;
 import org.egov.tl.service.LicenseStatusService;
 import org.egov.tl.service.PenaltyRatesService;
 import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
-import org.egov.tl.utils.TradeLicenseDemandBillHelper;
 import org.egov.tl.web.response.adaptor.DemandNoticeAdaptor;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -106,6 +107,8 @@ import static org.egov.infra.utils.PdfUtils.appendFiles;
 import static org.egov.tl.utils.Constants.CITY_GRADE_CORPORATION;
 import static org.egov.tl.utils.Constants.LOCALITY;
 import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
+import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
+import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.STATUS_CANCELLED;
 import static org.egov.tl.utils.Constants.TL_LICENSE_ACT_CORPORATION;
 import static org.egov.tl.utils.Constants.TL_LICENSE_ACT_DEFAULT;
@@ -148,6 +151,9 @@ public class DemandNoticeController {
 
     @Autowired
     private LicenseCategoryService licenseCategoryService;
+
+    @Autowired
+    private LicenseAppTypeService licenseAppTypeService;
 
     @GetMapping("search")
     public String searchFormforNotice(final Model model) {
@@ -253,7 +259,7 @@ public class DemandNoticeController {
             }
 
             BigDecimal totalAmount = currLicenseFee.add(arrLicenseFee).add(arrLicensePenalty);
-            List<TradeLicenseDemandBillHelper> monthWiseDemandDetails = new LinkedList<>();
+            List<LicenseDemandDetail> monthWiseDemandDetails = new LinkedList<>();
             getMonthWiseLatePenaltyFeeDetails(license, currentInstallment, currLicenseFee, arrLicenseFee,
                     arrLicensePenalty, monthWiseDemandDetails);
 
@@ -262,7 +268,12 @@ public class DemandNoticeController {
             reportParams.put("penaltyFee", arrLicensePenalty);
             reportParams.put("arrearLicenseFee", arrLicenseFee);
             reportParams.put("totalLicenseFee", totalAmount.setScale(0, BigDecimal.ROUND_HALF_UP));
-            List<PenaltyRates> penaltyRates = penaltyRatesService.search(license.getLicenseAppType().getId());
+            Long licenseAppId;
+            if (license.getIsActive())
+                licenseAppId = licenseAppTypeService.getLicenseAppTypeByName(RENEWAL_LIC_APPTYPE).getId();
+            else
+                licenseAppId = licenseAppTypeService.getLicenseAppTypeByName(NEW_LIC_APPTYPE).getId();
+            List<PenaltyRates> penaltyRates = penaltyRatesService.search(licenseAppId);
             reportParams.put("penaltyCalculationMessage", getPenaltyRateDetails(penaltyRates, currentInstallment));
             reportParams.put("currentYear", toYearFormat(currentInstallment.getFromDate()));
 
@@ -291,17 +302,15 @@ public class DemandNoticeController {
 
     private void getMonthWiseLatePenaltyFeeDetails(TradeLicense license, Installment currentInstallment,
                                                    BigDecimal currLicenseFee, BigDecimal arrLicenseFee, BigDecimal arrLicensePenalty,
-                                                   List<TradeLicenseDemandBillHelper> monthWiseDemandDetails) {
+                                                   List<LicenseDemandDetail> monthWiseDemandDetails) {
 
-        Date previousInstallmentEndDate = new DateTime(currentInstallment.getFromDate()).withMonthOfYear(3)
-                .withDayOfMonth(31).toDate();
         String installmentYear = toYearFormat(currentInstallment.getFromDate());
 
         // GET LICENSE FEE TYPES AND DECIDE PENALTY. Monthwise, show penalty
         // details
         Map<Integer, String> monthMap = DateUtils.getAllMonths();
         for (int i = 1; i <= 12; i++) {
-            TradeLicenseDemandBillHelper demandBillDtl = new TradeLicenseDemandBillHelper();
+            LicenseDemandDetail demandBillDtl = new LicenseDemandDetail();
 
             DateTime financialYearDate = new DateTime(currentInstallment.getFromDate()).withMonthOfYear(i);
             Date monthEndDate = new DateTime(financialYearDate)
@@ -310,7 +319,7 @@ public class DemandNoticeController {
             // Eg: 31/03/2016 vs 31/01/2016 days penalty 0%
             // 31/03/2016 vs 29/02/2016 days penalty 0%
             // 31/03/2016 vs 31/03/2016 days penalty 25%
-            BigDecimal penaltyAmt = penaltyRatesService.calculatePenalty(license, previousInstallmentEndDate,
+            BigDecimal penaltyAmt = penaltyRatesService.calculatePenalty(license, currentInstallment.getFromDate(),
                     monthEndDate, currLicenseFee);
 
             demandBillDtl.setMonth(monthMap.get(i).concat(", ").concat(installmentYear));
@@ -326,7 +335,8 @@ public class DemandNoticeController {
     public String getPenaltyRateDetails(List<PenaltyRates> penaltyRates, Installment currentInstallment) {
         StringBuilder penaltylist = new StringBuilder();
         for (PenaltyRates penaltyRate : penaltyRates) {
-            LocalDate currentinstStartdate = LocalDate.fromDateFields(currentInstallment.getFromDate());
+            LocalDate currentinstStartdate = LocalDate.fromDateFields(currentInstallment.getFromDate()).plusDays(1);
+            LocalDate currentStartDate = LocalDate.fromDateFields(currentInstallment.getFromDate());
             if (penaltyRate.getRate() <= 0) {
                 penaltylist.append("Before ")
                         .append(getDefaultFormattedDate(
@@ -337,7 +347,7 @@ public class DemandNoticeController {
             if (penaltyRate.getRate() > 0) {
                 if (penaltyRate.getToRange() >= 999) {
                     penaltylist.append("    After ").append(getDefaultFormattedDate(
-                            currentinstStartdate.plusDays(penaltyRate.getFromRange().intValue()).toDate())).append(WITH)
+                            currentStartDate.plusDays(penaltyRate.getFromRange().intValue()).toDate())).append(WITH)
                             .append(penaltyRate.getRate().intValue()).append("% penalty");
                 } else if (penaltyRate.getFromRange() <= -999) {
                     penaltylist.append("Before ")
@@ -348,7 +358,7 @@ public class DemandNoticeController {
                 } else {
                     penaltylist.append("    From ").append(getDefaultFormattedDate(currentinstStartdate
                             .plusDays(penaltyRate.getFromRange().intValue()).toDate())).append(" to ")
-                            .append(getDefaultFormattedDate(currentinstStartdate
+                            .append(getDefaultFormattedDate(currentStartDate
                                     .plusDays(penaltyRate.getToRange().intValue()).toDate()))
                             .append(WITH).append(penaltyRate.getRate().intValue()).append("% penalty\n");
 

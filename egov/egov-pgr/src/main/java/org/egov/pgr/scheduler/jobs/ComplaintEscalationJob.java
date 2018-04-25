@@ -51,19 +51,27 @@ package org.egov.pgr.scheduler.jobs;
 import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
 import org.egov.pgr.service.ComplaintEscalationService;
 import org.quartz.DisallowConcurrentExecution;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @DisallowConcurrentExecution
 public class ComplaintEscalationJob extends AbstractQuartzJob {
 
     private static final long serialVersionUID = -5428952585539260293L;
+    private static final Logger LOG = LoggerFactory.getLogger(ComplaintEscalationJob.class);
 
     @Autowired
     private ComplaintEscalationService escalationService;
 
     @Override
     public void executeJob() {
-        escalationService.escalateComplaint();
+        try {
+            escalationService.escalateComplaint();
+        } catch (Exception e) {
+            // Ignoring and logging exception since exception will cause multi city scheduler to fail for all remaining cities.
+            LOG.error("Escalation can't be completed ", e);
+        }
     }
 
 }

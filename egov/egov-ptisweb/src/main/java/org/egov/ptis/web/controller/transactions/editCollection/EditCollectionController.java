@@ -47,7 +47,6 @@
  */
 package org.egov.ptis.web.controller.transactions.editCollection;
 
-import static org.egov.ptis.client.util.PropertyTaxUtil.isZero;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_PENALTY_FINES;
 import static org.egov.ptis.constants.PropertyTaxConstants.EDIT_COLL_FOR_CURRYEAR;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
@@ -122,7 +121,7 @@ public class EditCollectionController {
 	@RequestMapping(value = "/editForm/{assessmentNo}", method = RequestMethod.GET)
 	public String form(@ModelAttribute("demandDetailBeansForm") final DemandDetailBeansForm demandDetailBeansForm,
 			@PathVariable final String assessmentNo, final Model model) {
-		final List<DemandDetail> demandDetailBeans = new ArrayList<DemandDetail>();
+		final List<DemandDetail> demandDetailBeans = new ArrayList<>();
 		final BasicPropertyImpl basicProperty = (BasicPropertyImpl) basicPropertyDAO
 				.getBasicPropertyByPropertyID(assessmentNo);
 		if (!basicProperty.isEligible())
@@ -276,7 +275,7 @@ public class EditCollectionController {
 					totalRevisedCollection = totalRevisedCollection.add(dd.getRevisedCollection());
 					totalActualCollection = totalActualCollection.add(dd.getActualCollection());
 				}
-			} else if (null != dd.getRevisedCollection() && !isZero(dd.getRevisedCollection())) {
+            } else if (null != dd.getRevisedCollection() && dd.getRevisedCollection().compareTo(BigDecimal.ZERO) != 0) {
 				if (dd.getRevisedCollection().compareTo(dd.getActualAmount()) > 0)
 					errors.rejectValue(String.format(REVISED_COLLECTION_FIELD, i),
 							"revised.collection.greater.than.actualdemand");

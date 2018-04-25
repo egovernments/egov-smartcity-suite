@@ -48,6 +48,9 @@
 
 package org.egov.pgr.elasticsearch.entity.contract;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ComplaintDashBoardRequest {
 
     private String regionName;

@@ -51,15 +51,15 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<%@ include file="/includes/taglibs.jsp" %>
-<script src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
-<div class="row">
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<div class="row printable">
     <div class="col-md-12">
         <c:if test="${not empty message}">
             <div class="alert alert-success" role="alert">
                 <spring:message code="${message}"
                                 arguments="${tradeLicense.licenseAppType.name},${approverName}
-                                ,${initiatorPosition},${ownerPosition},${tradeLicense.licenseNumber}"/></div>
+                                ,${initiatorPosition},${ownerPosition},${tradeLicense.licenseNumber}
+                                ,${tradeLicense.applicationNumber}"/></div>
         </c:if>
         <form:form action="" modelAttribute="tradeLicense" theme="simple">
             <div class="panel panel-primary" data-collapsed="0">
@@ -83,12 +83,14 @@
                             <spring:message code="license.applicationnumber"/>
                         </div>
                         <div class="col-xs-3 add-margin view-content">
-                            <c:out value="${tradeLicense.applicationNumber}"/>
+                                ${tradeLicense.applicationNumber}
                         </div>
                         <div class="col-xs-3 add-margin" style="font-size: 14px;">
                             <spring:message code="dateofapplication.lbl"/></div>
                         <div class="col-xs-3 add-margin view-content">
-                            <c:out value="${tradeLicense.applicationDate}"/>
+                            <fmt:formatDate pattern="dd/MM/yyyy" type="date" value="${tradeLicense.applicationDate}"
+                                            var="applicationDate"/>
+                                ${applicationDate}
                         </div>
                     </div>
 
@@ -97,13 +99,13 @@
                             <spring:message code='license.licensenumber'/>
                         </div>
                         <div class="col-xs-3 add-margin view-content">
-                            <c:out value="${tradeLicense.licenseNumber}"/>
+                            <c:out value="${tradeLicense.licenseNumber}" default="N/A"/>
                         </div>
                         <div class="col-xs-3 add-margin">
                             <spring:message code='licensee.applicantname'/>
                         </div>
                         <div class="col-xs-3 add-margin view-content">
-                            <c:out value="${tradeLicense.licensee.applicantName}"/>
+                                ${tradeLicense.licensee.applicantName}
                         </div>
                     </div>
 
@@ -112,38 +114,32 @@
                             <spring:message code='licensee.address'/>
                         </div>
                         <div class="col-xs-3 add-margin view-content">
-                            <c:out value="${tradeLicense.licensee.address}"/>
+                                ${tradeLicense.licensee.address}
                         </div>
                         <div class="col-xs-3 add-margin">
                             <spring:message code='search.license.establishmentname'/>
                         </div>
                         <div class="col-xs-3 add-margin view-content">
-                            <c:out value="${tradeLicense.nameOfEstablishment}"/>
+                                ${tradeLicense.nameOfEstablishment}
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="text-center">
-                    <c:choose>
-                        <c:when test="${tradeLicense.status.statusCode eq 'ACK'}">
-                            <button type="button" id="btnprint" class="btn btn-default">
-                                <spring:message code="lbl.print"/>
-                            </button>
-                        </c:when>
-                    </c:choose>
-                    <button type="button" id="btnclose" class="btn btn-default" onclick="window.close();">
-                        <spring:message code="lbl.close"/>
-                    </button>
-                </div>
-            </div>
+
         </form:form>
     </div>
 </div>
-<script>
-    $("#btnprint").click(function () {
-        $(".btn").hide();
-        window.print();
-        $(".btn").show();
-    })
-</script>
+<div class="row">
+    <div class="text-center">
+        <c:choose>
+            <c:when test="${tradeLicense.status.statusCode eq 'ACK'}">
+                <button type="submit" class="btn btn-default printbtn"><spring:message code="lbl.print"/></button>
+            </c:when>
+        </c:choose>
+        <button type="button" id="btnclose" class="btn btn-default printbtn" onclick="window.close();">
+            <spring:message code="lbl.close"/>
+        </button>
+    </div>
+</div>
+<script src="<cdn:url  value='/resources/global/js/jquery/plugins/jQuery.print.js' context='/egi'/>"></script>
+<script src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>

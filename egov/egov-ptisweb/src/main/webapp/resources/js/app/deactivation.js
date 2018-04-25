@@ -65,7 +65,7 @@ jQuery(document)
 										} else if (jQuery("#originalAssessment")
 												.val() == ''
 												&& jQuery("#reasonMaster")
-														.val() != 'Bogus Property') {
+														.val() != 'Untraced Property') {
 											bootbox
 													.alert("Original Assessment number required");
 											return false;
@@ -100,7 +100,7 @@ jQuery(document)
 													"#originalAssessment")
 													.val() == ''
 													&& jQuery("#reasonMaster")
-															.val() != 'Bogus Property') {
+															.val() != 'Untraced Property') {
 												bootbox
 														.alert("Original Assessment number required");
 												return false;
@@ -138,25 +138,28 @@ jQuery(document)
 
 					jQuery(window).load(function() {
 						var reason = jQuery("#reasonMaster").val();
-
 						if (reason) {
 							jQuery("#reasonMaster option").filter(function() {
 								return this.text == reason;
 							}).attr('selected', true);
 							hideOnReason(reason);
 						}
+						if(jQuery('#showNote').val() === 'No') {
+							jQuery('#notelabel').hide();
+							jQuery('#note').hide(); 
+						}
+						
 
 					});
 
-					function hideOnReason(reason) {
-						if (reason === 'Bogus Property') {
-							jQuery('#originalAssessment').val('');
+					function hideOnReason(reason) { 
+						if (reason === 'Untraced Property') {
+							jQuery('#originalAssessment').val(''); 
 							jQuery('#orgnlAssmnt').addClass('display-hide');
-
 						} else {
-							jQuery('#orgnlAssmnt').removeClass('display-hide');
+							jQuery('#orgnlAssmnt').removeClass('display-hide'); 
 						}
-
+						
 					}
 
 					jQuery(".dateval")
