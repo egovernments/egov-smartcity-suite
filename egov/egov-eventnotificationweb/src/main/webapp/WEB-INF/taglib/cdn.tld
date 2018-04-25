@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
+
 <!--
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
@@ -46,78 +47,67 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
   -->
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
+        version="2.0">
 
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>egov-erp</artifactId>
-        <groupId>org.egov</groupId>
-        <version>3.0.0-SNAPSHOT</version>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
+    <description>CDN url tag library, its an extension for jstl core url tag</description>
+    <display-name>CDN url</display-name>
+    <tlib-version>1.1</tlib-version>
+    <short-name>cdn</short-name>
+    <uri></uri>
 
-    <name>e-governments api</name>
-    <artifactId>egov-api</artifactId>
-    <packaging>war</packaging>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.egov</groupId>
-            <artifactId>egov-pgr</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.egov</groupId>
-            <artifactId>egov-egi</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
-            <classifier>tests</classifier>
-            <scope>test</scope>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.egov</groupId>
-            <artifactId>egov-eventnotification</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <!-- VIEWS RELATED END -->
-        <dependency>
-            <groupId>org.apache.tiles</groupId>
-            <artifactId>tiles-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tiles</groupId>
-            <artifactId>tiles-jsp</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jsoup</groupId>
-            <artifactId>jsoup</artifactId>
-        </dependency>
-        <!-- VIEWS RELATED END -->
-
-        <!-- HIBERNATE START -->
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.validation</groupId>
-            <artifactId>validation-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator</artifactId>
-        </dependency>
-        <!-- HIBERNATE END -->
-
-        <!-- IMAGE PROCESSING API START-->
-        <dependency>
-            <groupId>net.coobird</groupId>
-            <artifactId>thumbnailator</artifactId>
-        </dependency>
-        <!-- IMAGE PROCESSING API END -->
-
-    </dependencies>
-
-</project>
+    <validator>
+        <description>
+            Provides core validation features for CDN tags.
+        </description>
+        <validator-class>
+            org.apache.taglibs.standard.tlv.JstlCoreTLV
+        </validator-class>
+    </validator>
+    <tag>
+        <description>
+            Extension for core url tag, with an additional property called cdn,
+            should be used only for static resources.
+        </description>
+        <name>url</name>
+        <tag-class>org.egov.infra.web.taglib.CDNTag</tag-class>
+        <body-content>JSP</body-content>
+        <attribute>
+            <description>
+                Name of the exported scoped variable for the
+                processed url. The type of the scoped variable is
+                String.
+            </description>
+            <name>var</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+        </attribute>
+        <attribute>
+            <description>
+                Scope for var.
+            </description>
+            <name>scope</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+        </attribute>
+        <attribute>
+            <description>
+                URL to be processed.
+            </description>
+            <name>value</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <description>
+                Name of the context when specifying a relative URL
+                resource that belongs to a foreign context.
+            </description>
+            <name>context</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+</taglib>

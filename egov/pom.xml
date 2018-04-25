@@ -295,6 +295,8 @@
         <module>egov-mrs</module>
         <module>egov-mrsweb</module>
         <module>egov-services</module>
+        <module>egov-eventnotification</module>
+        <module>egov-eventnotificationweb</module>
     </modules>
 
     <dependencyManagement>

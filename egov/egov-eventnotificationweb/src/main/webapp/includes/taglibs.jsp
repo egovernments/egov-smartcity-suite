@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<%--
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -45,79 +44,19 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
-  -->
+  --%>
 
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>egov-erp</artifactId>
-        <groupId>org.egov</groupId>
-        <version>3.0.0-SNAPSHOT</version>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
+<%@ taglib uri="http://displaytag.sf.net" prefix="display" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>  
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql" %>
+<%@ taglib uri="/WEB-INF/tags/sitemesh-decorator.tld" prefix="decorator"%>
+<%@ taglib uri="/WEB-INF/tags/sitemesh-page.tld" prefix="page"%>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="egovtags"%>
+<%@ taglib uri="/WEB-INF/tags/struts-tags.tld" prefix="s" %>
+<%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
-    <name>e-governments api</name>
-    <artifactId>egov-api</artifactId>
-    <packaging>war</packaging>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.egov</groupId>
-            <artifactId>egov-pgr</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.egov</groupId>
-            <artifactId>egov-egi</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
-            <classifier>tests</classifier>
-            <scope>test</scope>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.egov</groupId>
-            <artifactId>egov-eventnotification</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <!-- VIEWS RELATED END -->
-        <dependency>
-            <groupId>org.apache.tiles</groupId>
-            <artifactId>tiles-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tiles</groupId>
-            <artifactId>tiles-jsp</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jsoup</groupId>
-            <artifactId>jsoup</artifactId>
-        </dependency>
-        <!-- VIEWS RELATED END -->
-
-        <!-- HIBERNATE START -->
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.validation</groupId>
-            <artifactId>validation-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator</artifactId>
-        </dependency>
-        <!-- HIBERNATE END -->
-
-        <!-- IMAGE PROCESSING API START-->
-        <dependency>
-            <groupId>net.coobird</groupId>
-            <artifactId>thumbnailator</artifactId>
-        </dependency>
-        <!-- IMAGE PROCESSING API END -->
-
-    </dependencies>
-
-</project>

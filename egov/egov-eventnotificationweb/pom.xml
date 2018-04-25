@@ -1,0 +1,62 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.egov</groupId>
+    <artifactId>egov-erp</artifactId>
+    <version>3.0.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>egov-eventnotificationweb</artifactId>
+  <packaging>war</packaging>
+  <name>e-governments event notification web</name>
+  <dependencies>
+
+        <dependency>
+            <groupId>org.egov</groupId>
+            <artifactId>egov-egi</artifactId>
+            <version>3.0.0-SNAPSHOT</version>
+            <classifier>tests</classifier>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.egov</groupId>
+            <artifactId>egov-config</artifactId>
+            <version>3.0.0-SNAPSHOT</version>
+            <classifier>tests</classifier>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.egov</groupId>
+            <artifactId>egov-eventnotification</artifactId>
+            <version>3.0.0-SNAPSHOT</version>
+        </dependency>
+        <!-- VIEWS RELATED END -->
+        <dependency>
+            <groupId>org.apache.tiles</groupId>
+            <artifactId>tiles-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tiles</groupId>
+            <artifactId>tiles-jsp</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+        </dependency>
+        <!-- VIEWS RELATED END -->
+
+        <!-- HIBERNATE START -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+        </dependency>
+        <!-- HIBERNATE END -->
+    </dependencies>
+</project>

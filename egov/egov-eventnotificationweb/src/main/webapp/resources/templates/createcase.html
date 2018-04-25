@@ -1,0 +1,352 @@
+<!--
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) 2017  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
+  -->
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<meta name="description" content="Neon Admin Panel" />
+		<meta name="author" content="" />
+		
+		<title>eGov Urban Portal</title>
+		
+		<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/bootstrap/bootstrap.css">
+		<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/egov/custom.css">
+		<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css">
+		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/jquery.js"></script>
+		
+		<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
+		
+		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+		
+		
+	</head>
+	<body class="page-body">
+		<div class="page-container" id="page-container">
+			<header class="navbar navbar-fixed-top"><!-- set fixed position by adding class "navbar-fixed-top" -->
+				
+				<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+					<div class="container-fluid">
+						<div class="navbar-header col-md-10 col-xs-10">
+							<a class="navbar-brand" href="javascript:void(0);">
+								<img src="../../../../../../egov-egiweb/src/main/webapp/resources/global/images/chennai_logo.jpg" height="60">
+								<div>
+									
+									<span class="title2">Create Case</span>
+								</div>
+							</a>
+						</div>
+						
+						<div class="nav-right-menu col-md-2 col-xs-2">
+							<ul class="hr-menu text-right">
+								<li class="ico-menu">
+									<a href="javascript:void(0);">
+										<img src="../../../../../../egov-egiweb/src/main/webapp/resources/global/images/logo@2x.png" title="Powered by eGovernments" height="20px">
+									</a>
+								</li>
+								
+							</ul>
+						</div>
+						
+					</div>
+				</nav>
+				
+			</header>
+			<div class="main-content">
+				<div class="row">
+
+						<div class="col-md-12">
+							<div class="panel panel-primary" data-collapsed="0">
+								<div class="panel-heading">
+									<div class="panel-title">
+										Legal Information
+									</div>
+									
+								</div>
+								<div class="panel-body custom-form">
+									<form role="form" class="form-horizontal form-groups-bordered">
+										<div class="form-group">
+                                            <label class="col-sm-3 control-label text-right">Type of Court<span class="mandatory"></span></label>
+                                            <div class="col-sm-3 add-margin">
+                                                <Select class="form-control" id="applicantname" > <option>select from below</option></Select>
+                                            </div>
+                                            <label class="col-sm-2 control-label text-right">Petition Type<span class="mandatory"></span></label>
+                                            <div class="col-sm-3 add-margin">
+                                                <Select class="form-control" id="applicantname" > <option>select from below</option></Select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label text-right">Case Number<span class="mandatory"></span></label>
+                                            <div class="col-sm-3 add-margin">
+                                                <Select class="form-control" id="applicantname" > <option>select from below</option></Select>
+                                            </div>
+                                            <label class="col-sm-2 control-label text-right">Date of Filing Case<span class="mandatory"></span></label>
+                                            <div class="col-sm-3 add-margin">
+                                                <input type="text" class="form-control datepicker" id="email" >
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label text-right">Court Name<span class="mandatory"></span></label>
+                                            <div class="col-sm-3 add-margin">
+                                                <Select class="form-control" id="applicantname" > <option>select from below</option></Select>
+                                            </div>	
+                                            <label class="col-sm-2 control-label text-right">Case Category<span class="mandatory"></span></label>
+                                            <div class="col-sm-3 add-margin">
+                                                <Select class="form-control" id="applicantname" > <option>select from below</option></Select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">	
+                                            <label class="col-sm-3 control-label text-right">LC Number<span class="mandatory"></span></label>
+                                            <div class="col-sm-3 add-margin">
+                                                <Select class="form-control" id="applicantname" > <option>select from below</option></Select>
+                                            </div>
+                                            <label class="col-sm-2 control-label text-right">Section<span class="mandatory"></span></label>
+                                            <div class="col-sm-3 add-margin">
+                                                <Select class="form-control" id="applicantname" > <option>select from below</option></Select>
+                                            </div>
+                                        </div>
+										<div class="form-group">	
+                                            <label class="col-sm-3 control-label text-right">Case Belongs To<span class="mandatory"></span></label>
+                                            <div class="col-sm-3 add-margin">
+                                                <Select class="form-control" id="applicantname" > <option>select from below</option></Select>
+                                            </div>
+                                            <label class="col-sm-2 control-label text-right">Previous Case Number<span class="mandatory"></span></label>
+                                            <div class="col-sm-3 add-margin">
+                                                <input type="text" class="form-control" placeholder="In case of appeal, review petition" name="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label text-right">Title<span class="mandatory"></span></label>
+                                            <div class="col-sm-3 add-margin">
+                                                <textarea class="form-control"></textarea>
+                                            </div>
+                                            <label class="col-sm-2 control-label text-right">Prayer<span class="mandatory"></span></label>
+                                            <div class="col-sm-3 add-margin">
+                                                <textarea class="form-control"></textarea>
+                                            </div>	
+                                        </div>
+									</form>
+								</div>
+							</div>	
+						</div>
+
+		
+						<div class="col-md-12">
+							<div class="panel panel-primary" data-collapsed="0">
+								<div class="panel-body custom-form">
+									<form role="form" class="form-horizontal form-groups-bordered">
+
+										<div class="panel-heading">
+											<div class="panel-title">Officials Info
+											</div>
+										</div>
+										<!-- <hr style="margin:0;"> -->
+										<div class="panel-body custom-form">
+											<div class="form-group">
+	                                            <label class="col-sm-3 control-label text-right">Government as<span class="mandatory"></span></label>
+	                                            <div class="col-sm-3 add-margin">
+	                                                <label class="radio-inline"><input type="radio" name="optradio">Petitioners</label>
+													<label class="radio-inline"><input type="radio" name="optradio">Respondents</label>
+	                                            </div>
+	                                        </div>
+											<div class="panel-heading custom_form_panel_heading">
+												<div class="panel-title">Petitioners
+												</div>
+											</div>
+                                        
+                                        <div class="">
+											<table class="table table-bordered">
+												<thead>
+												<tr>
+	                                        		<th>Name</th>
+	                                        		<th>Address</th>
+	                                        		<th>Contact Phone</th>
+	                                        		<th>Email</th>
+	                                        		<th>Actions</th>
+                                        		</tr>
+	                                        	</thead>
+	                                        	<tbody>
+	                                        	<tr>
+	                                        		<td><input type="text" class="form-control"></td>
+													<td><input type="text" class="form-control"></td>
+													<td><input type="text" class="form-control"></td>
+													<td><input type="text" class="form-control"></td>
+													<td><span class="add-padding"><i id="edit_row" class="fa fa-plus-square"></i></span><span class="add-padding"><i id="delete_row" class="fa fa-trash"></i></span></td>
+	                                        	</tr>
+	                                        	</tbody>
+											</table>
+                                        </div>
+
+                                        <div class="panel-heading custom_form_panel_heading">
+											<div class="panel-title">Respondents
+											</div>
+										</div>
+
+										<div class="">
+											<table class="table table-bordered">
+												<thead>
+	                                        		<th>Name</th>
+	                                        		<th>Address</th>
+	                                        		<th>Contact Phone</th>
+	                                        		<th>Email</th>
+	                                        		<th>Actions</th>
+	                                        	</thead>
+	                                        	<tbody>
+													<td><input type="text" class="form-control"></td>
+													<td><input type="text" class="form-control"></td>
+													<td><input type="text" class="form-control"></td>
+													<td><input type="text" class="form-control"></td>
+													<td><span class="add-padding"><i id="edit_row" class="fa fa-plus-square"></i></span><span class="add-padding"><i id="delete_row" class="fa fa-trash"></i></span></td>
+	                                        	</tbody>
+											</table>
+                                        </div>
+
+                                        <div class="panel-heading custom_form_panel_heading">
+											<div class="panel-title">Assigned Department
+											</div>
+										</div>
+
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label text-right">Department</label>
+                                            <div class="col-sm-3 add-margin">
+                                                <input type="text" class="form-control text-right" id="propertytax" > 
+                                            </div>
+                                            <label class="col-sm-2 control-label text-right">Assigned To</label>
+                                            <div class="col-sm-3 add-margin">
+                                                <input type="text" class="form-control text-right" id="propertytax" > 
+                                            </div>	
+                                        </div>
+										
+									</form>
+								</div>
+							</div>	
+						</div>
+
+						<div class="col-md-12">
+							<div class="panel panel-primary" data-collapsed="0">
+								<div class="panel-heading">
+									<div class="panel-title">
+									</div>
+								</div>
+								<div class="panel-body custom-form">
+									<form role="form" class="form-horizontal form-groups-bordered">
+										<div class="form-group">
+                                            <label class="col-sm-3 control-label text-right">Petitioner Advocate<span class="mandatory"></span></label>
+                                            <div class="col-sm-3 add-margin">
+                                                <input type="text" class="form-control" id="nooffloors" >
+                                            </div>
+                                            <label class="col-sm-2 control-label text-right">Remarks<span class="mandatory"></span></label>
+                                            <div class="col-sm-3 add-margin">
+                                                <textarea class="form-control"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label text-right">Upload</label>
+                                            <div class="col-sm-3 add-margin">
+												<input type="file">
+                                            </div>	
+                                        </div>
+									</form>
+							</div>
+						</div>
+
+						<div class="col-md-12">
+                                <div class="text-center">
+                                    <!--a href="newconnectionack.html" class="btn btn-primary">Create Application</a-->
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                    <button class="btn btn-primary">Close</button>
+                                </div>
+                        </div>
+
+                            <!-- <div class="panel panel-primary" data-collapsed="0">				
+                                <div class="panel-heading">
+                                    <div class="panel-title">
+                                        Approval Details
+                                    </div>					
+                                </div>
+                                <div class="panel-body">
+                            			
+                            	                            </div>
+                            				                            
+                            										</div> -->
+								</div>
+
+				
+
+			</div>
+			<footer class="main">
+					
+					Powered by <a href="http://eGovernments.org" target="_blank">eGovernments Foundation</a>
+					
+			</footer> 
+		</div>
+	<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/bootstrap/bootstrap-datepicker.css">
+	<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global//js/bootstrap/bootstrap.js"></script>
+		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/bootstrap/bootstrap-datepicker.js"></script>
+	<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/egov/custom.js"></script>
+	<style>
+	.table thead:first-child > tr:first-child th {
+	    background: #fff;
+	    color: #000;
+	    font-weight: normal;
+	}
+	.table thead:first-child > tr:first-child th:first-child {
+	    border-left: 0;
+	    border-top-left-radius: 5px;
+	}
+	</style>
+	</body>
+</html>
+
+
+
