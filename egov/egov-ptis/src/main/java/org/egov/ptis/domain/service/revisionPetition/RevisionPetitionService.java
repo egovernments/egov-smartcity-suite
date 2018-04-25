@@ -616,7 +616,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
         final User approver = userService.getUserById(ApplicationThreadLocals.getUserId());
         infoBean.setApproverName(approver.getName());
         final BigDecimal revTax = currDemand.getBaseDemand();
-        infoBean.setNewTotalTax(revTax);
+        infoBean.setNewTotalTax(revTax.setScale(2, BigDecimal.ROUND_UP));
         if (property.getSource().equals(PropertyTaxConstants.SOURCE_MEESEVA))
             infoBean.setMeesevaNo(property.getApplicationNo());
         propertyNotice.setOwnerInfo(infoBean);
