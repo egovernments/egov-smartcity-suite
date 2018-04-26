@@ -35,11 +35,25 @@ public class UsereventService {
      */
     @Transactional
     public Userevent persistUserevent(String userid, String eventid) {
-        Event event = eventRepository.findOne(Long.parseLong(eventid));
-        User user = userRepository.findOne(Long.parseLong(userid));
-        Userevent userevent = new Userevent();
-        userevent.setUserid(user);
-        userevent.setEventid(event);
-        return usereventRepository.save(userevent);
+        Userevent existingUserEvent = usereventRepository.getUsereventByEventAndUser(Long.parseLong(eventid),Long.parseLong(userid));
+        if(null == existingUserEvent) {
+            return null;
+        }else {
+            Event event = eventRepository.findOne(Long.parseLong(eventid));
+            User user = userRepository.findOne(Long.parseLong(userid));
+            Userevent userevent = new Userevent();
+            userevent.setUserid(user);
+            userevent.setEventid(event);
+            return usereventRepository.save(userevent);
+        }
+    }
+    
+    /**
+     * This method fetch couynt of the event by id
+     * @param id
+     * @return Long
+     */
+    public Long countUsereventByEventId(Long id) {
+        return usereventRepository.countUsereventByEventId(id);
     }
 }

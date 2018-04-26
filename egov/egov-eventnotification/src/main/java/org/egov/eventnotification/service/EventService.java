@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -150,8 +151,23 @@ public class EventService {
      * @param eventHost
      * @return List<Event>
      */
-    public List<Event> searchEvent(String eventType, String eventName, String eventHost, Date startDate, String status) {
+    public List<Event> searchEvent(String eventType, String eventName, String eventHost, String status,String eventDateType) {
         DateFormat formatter = new SimpleDateFormat(EventnotificationConstant.DDMMYYYY);
+        Calendar calendar = Calendar.getInstance();
+        Calendar calendarEndDate = Calendar.getInstance();
+        Date startDate;
+        Date endDate;
+        if(eventDateType.equalsIgnoreCase(EventnotificationConstant.UPCOMING)) {
+            calendar.add(Calendar.DAY_OF_MONTH, 7);
+            startDate = calendar.getTime();
+            calendarEndDate.setTime(startDate);
+            calendarEndDate.add(Calendar.DAY_OF_MONTH, 7);
+            endDate = calendarEndDate.getTime();
+        }else {
+            startDate = calendar.getTime();
+            calendar.add(Calendar.DAY_OF_MONTH, 7);
+            endDate = calendar.getTime();
+        }
         Criteria criteria = getCurrentSession().createCriteria(Event.class);
         if (eventType != null)
             criteria.add(Restrictions.ilike(EventnotificationConstant.EVENT_EVENTTYPE, eventType + "%"));
@@ -164,7 +180,7 @@ public class EventService {
             criteria.add(Restrictions.ge(EventnotificationConstant.EVENT_STARTDATE,
                     formatter.parse(formatter.format(startDate)).getTime()));
             criteria.add(Restrictions.ge(EventnotificationConstant.EVENT_ENDDATE,
-                    formatter.parse(formatter.format(startDate)).getTime()));
+                    formatter.parse(formatter.format(endDate)).getTime()));
             criteria.add(Restrictions.eq(EventnotificationConstant.STATUS_COLUMN, status));
         } catch (ParseException e) {
             LOGGER.error(e.getMessage(), e);
