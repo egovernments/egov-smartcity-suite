@@ -27,9 +27,13 @@ $(document).ready(function(){
 	        //$(this).trigger("change");
 	        $("#costLabel").show();
 	    	$("#costDiv").show();
+	    	$("#urllabel").show();
+	    	$("#urldiv").show();
 	    }else{
 	    	$("#costLabel").hide();
 	    	$("#costDiv").hide();
+	    	$("#urllabel").hide();
+	    	$("#urldiv").hide();
 	    }
 	    event.preventDefault();
 	});

@@ -1,7 +1,5 @@
 package org.egov.eventnotification.entity;
 
-import java.util.Date;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,7 +18,6 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.web.multipart.MultipartFile;
 
 @Entity
 @Table(name = "eg_event")
@@ -80,18 +77,6 @@ public class Event extends AbstractAuditable {
 
     private Double cost;
 
-    @Transient
-    private String startHH;
-
-    @Transient
-    private String startMM;
-
-    @Transient
-    private String endHH;
-
-    @Transient
-    private String endMM;
-
     @NotNull
     @Length(max = 50)
     @Column(name = "event_type")
@@ -99,28 +84,32 @@ public class Event extends AbstractAuditable {
 
     private Long version;
 
-    @Transient
-    private double lng;
-
-    @Transient
-    private double lat;
-
-    @Transient
-    private Long crossHierarchyId;
-
-    @Transient
-    private Date startDt;
-
-    @Transient
-    private Date endDt;
-
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "filestore")
     private FileStoreMapper filestore;
-    
+
+    @NotNull
+    @Length(max = 200)
+    private String message;
+
+    @NotNull
+    @Length(max = 200)
+    private String url;
+
+    @NotNull
+    @Length(max = 20)
+    private String status;
+
     @Transient
-    private transient MultipartFile[] file;
-    
+    private EventDetails eventDetails;
+
+    public EventDetails getEventDetails() {
+        return eventDetails;
+    }
+
+    public void setEventDetails(EventDetails eventDetails) {
+        this.eventDetails = eventDetails;
+    }
 
     public FileStoreMapper getFilestore() {
         return filestore;
@@ -221,68 +210,12 @@ public class Event extends AbstractAuditable {
         this.cost = cost;
     }
 
-    public String getStartHH() {
-        return startHH;
-    }
-
-    public void setStartHH(String startHH) {
-        this.startHH = startHH;
-    }
-
-    public String getStartMM() {
-        return startMM;
-    }
-
-    public void setStartMM(String startMM) {
-        this.startMM = startMM;
-    }
-
-    public String getEndHH() {
-        return endHH;
-    }
-
-    public void setEndHH(String endHH) {
-        this.endHH = endHH;
-    }
-
-    public String getEndMM() {
-        return endMM;
-    }
-
-    public void setEndMM(String endMM) {
-        this.endMM = endMM;
-    }
-
     public String getEventType() {
         return eventType;
     }
 
     public void setEventType(String eventType) {
         this.eventType = eventType;
-    }
-
-    public double getLng() {
-        return lng;
-    }
-
-    public void setLng(double lng) {
-        this.lng = lng;
-    }
-
-    public double getLat() {
-        return lat;
-    }
-
-    public void setLat(double lat) {
-        this.lat = lat;
-    }
-
-    public Long getCrossHierarchyId() {
-        return crossHierarchyId;
-    }
-
-    public void setCrossHierarchyId(Long crossHierarchyId) {
-        this.crossHierarchyId = crossHierarchyId;
     }
 
     public Long getStartDate() {
@@ -301,28 +234,28 @@ public class Event extends AbstractAuditable {
         this.endDate = endDate;
     }
 
-    public Date getStartDt() {
-        return startDt;
+    public String getMessage() {
+        return message;
     }
 
-    public void setStartDt(Date startDt) {
-        this.startDt = startDt;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
-    public Date getEndDt() {
-        return endDt;
+    public String getUrl() {
+        return url;
     }
 
-    public void setEndDt(Date endDt) {
-        this.endDt = endDt;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
-    public MultipartFile[] getFile() {
-        return file;
+    public String getStatus() {
+        return status;
     }
 
-    public void setFile(MultipartFile[] file) {
-        this.file = file;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
 }

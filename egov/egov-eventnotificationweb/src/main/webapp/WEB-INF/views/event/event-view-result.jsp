@@ -86,15 +86,24 @@
 							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.event.name" />
 							</div>
-							<div class="col-xs-3 add-margin view-content">
+							<div class="col-xs-9 add-margin view-content">
 								<c:out value="${event.name}" />
 							</div>
-
+						</div>
+						<div class="row add-border">
 							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.event.description" />
 							</div>
-							<div class="col-xs-3 add-margin view-content">
+							<div class="col-xs-9 add-margin view-content">
 								<c:out value="${event.description}" />
+							</div>
+						</div>
+						<div class="row add-border">
+							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.event.message" />
+							</div>
+							<div class="col-xs-9 add-margin view-content">
+								<c:out value="${event.message}" />
 							</div>
 						</div>
 						<div class="row add-border">
@@ -102,7 +111,7 @@
 								<spring:message code="lbl.event.startdate" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
-								<fmt:formatDate pattern="dd/MM/yyyy" value="${event.startDt}" var="startDate" />
+								<fmt:formatDate pattern="dd/MM/yyyy" value="${event.eventDetails.startDt}" var="startDate" />
 								<c:out value="${startDate}" />
 							</div>
 							<div class="col-xs-3 add-margin">
@@ -117,7 +126,7 @@
 								<spring:message code="lbl.event.enddate" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
-								<fmt:formatDate pattern="dd/MM/yyyy" value="${event.endDt}" var="endDate" />
+								<fmt:formatDate pattern="dd/MM/yyyy" value="${event.eventDetails.endDt}" var="endDate" />
 								<c:out value="${endDate}" />
 							</div>
 							<div class="col-xs-3 add-margin">
@@ -164,16 +173,39 @@
 						</div>
 						<div class="row add-border">
 							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.event.status" />
+							</div>
+							<div class="col-sm-3 add-margin view-content">
+								<c:out value="${event.status}" />
+							</div>
+						</div>
+						<div class="row add-border">
+							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.event.ispaid" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
-								<c:out value="${event.ispaid}" />
+								<c:choose>
+									<c:when test="${event.ispaid == true}">
+		    							<spring:message code="lbl.event.yes" />
+				    				</c:when>
+				    				<c:otherwise>
+				    					<spring:message code="lbl.event.no" />
+				    				</c:otherwise>
+			    				</c:choose>
 							</div>
 							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.event.cost" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
 								<c:out value="${event.cost}" />
+							</div>
+						</div>
+						<div class="row add-border">
+							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.event.url" />
+							</div>
+							<div class="col-sm-9 add-margin view-content">
+								<c:out value="${event.url}" />
 							</div>
 						</div>
 					</div>

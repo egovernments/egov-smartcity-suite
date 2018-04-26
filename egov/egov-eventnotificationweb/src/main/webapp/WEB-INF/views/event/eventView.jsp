@@ -126,12 +126,12 @@
 	    				<td><c:out value="${listVar.name}"/></td>
 	    				<td><c:out value="${listVar.description}"/></td>
 	    				<td>
-	    					<fmt:formatDate pattern="dd/MM/yyyy" value="${listVar.startDt}" var="startDate" />
+	    					<fmt:formatDate pattern="dd/MM/yyyy" value="${listVar.eventDetails.startDt}" var="startDate" />
 							<c:out value="${startDate}" />
 	    				</td>
 	    				<td><c:out value="${listVar.startTime}"/></td>
 	    				<td>
-	    					<fmt:formatDate pattern="dd/MM/yyyy" value="${listVar.endDt}" var="endDate" />
+	    					<fmt:formatDate pattern="dd/MM/yyyy" value="${listVar.eventDetails.endDt}" var="endDate" />
 							<c:out value="${endDate}" />
 	    				</td>
 	    				<td><c:out value="${listVar.endTime}"/></td>

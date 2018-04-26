@@ -60,7 +60,21 @@ public class EventnotificationConstant {
     public static final String SIZE = "size";
     public static final String TOTAL_PAGES = "totalPages";
 
+    public static final String ACTIVE = "Active";
+    public static final String INACTIVE = "Inactive";
+    public static final String EVENT_STATUS_LIST = "eventStatusList";
+    public static final String STATUS = "Status";
+    public static final String USERID = "userid";
+    public static final String EVENTID = "eventid";
+    public static final String SUCCESS = "success";
+    public static final String FAIL = "fail";
+    public static final String STATUS_COLUMN = "status";
+
     public static enum EVENT_TYPE {
         Business, Exhibition, Cultural, Drama
+    };
+
+    public static enum EVENT_STATUS {
+        Active, Inactive
     };
 }
