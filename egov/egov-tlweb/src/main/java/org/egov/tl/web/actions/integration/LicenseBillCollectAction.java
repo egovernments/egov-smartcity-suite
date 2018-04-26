@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -88,6 +88,12 @@ public class LicenseBillCollectAction extends BaseFormAction {
     @Override
     public String execute() throws IOException {
         final License license = tradeLicenseService.getLicenseById(licenseId);
+        if (license.isPaid()) {
+            ServletActionContext.getResponse().setContentType("text/html");
+            ServletActionContext.getResponse().getWriter()
+                    .write("<center style='color:red;font-weight:bolder'>License Fee already collected !</center>");
+            return null;
+        }
         setOutstandingFee(licenseBillService.getPaymentFee(license));
         setLicenseId(licenseId);
         return "showfees";
@@ -96,12 +102,6 @@ public class LicenseBillCollectAction extends BaseFormAction {
     @Action(value = "/integration/licenseBillCollect-collectfees")
     public String payFee() throws IOException {
         final License license = tradeLicenseService.getLicenseById(licenseId);
-        if (license.isPaid()) {
-            ServletActionContext.getResponse().setContentType("text/html");
-            ServletActionContext.getResponse().getWriter()
-                    .write("<center style='color:red;font-weight:bolder'>License Fee already collected !</center>");
-            return null;
-        }
         collectXML = URLEncoder.encode(licenseBillService.createLicenseBillXML(license), "UTF-8");
         return SUCCESS;
     }
