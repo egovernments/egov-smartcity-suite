@@ -86,23 +86,33 @@
 							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.event.name" />
 							</div>
-							<div class="col-xs-3 add-margin view-content">
+							<div class="col-xs-9 add-margin view-content">
 								<c:out value="${event.name}" />
 							</div>
-
+						</div>
+						<div class="row add-border">
 							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.event.description" />
 							</div>
-							<div class="col-xs-3 add-margin view-content">
+							<div class="col-xs-9 add-margin view-content">
 								<c:out value="${event.description}" />
 							</div>
+						</div>
+						<div class="row add-border">
+							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.event.message" />
+							</div>
+							<div class="col-xs-10 add-margin view-content">
+								<c:out value="${event.message}" />
+							</div>
+
 						</div>
 						<div class="row add-border">
 							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.event.startdate" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
-								<fmt:formatDate pattern="dd/MM/yyyy" value="${event.startDt}" var="startDate" />
+								<fmt:formatDate pattern="dd/MM/yyyy" value="${event.eventDetails.startDt}" var="startDate" />
 								<c:out value="${startDate}" />
 							</div>
 							<div class="col-xs-3 add-margin">
@@ -117,7 +127,7 @@
 								<spring:message code="lbl.event.enddate" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
-								<fmt:formatDate pattern="dd/MM/yyyy" value="${event.endDt}" var="endDate" />
+								<fmt:formatDate pattern="dd/MM/yyyy" value="${event.eventDetails.endDt}" var="endDate" />
 								<c:out value="${endDate}" />
 							</div>
 							<div class="col-xs-3 add-margin">
@@ -181,6 +191,21 @@
 							</div>
 							<div class="col-sm-3 add-margin view-content">
 								<c:out value="${event.cost}" />
+							</div>
+						</div>
+						<div class="row add-border">
+							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.event.url" />
+							</div>
+							<div class="col-xs-3 add-margin view-content">
+								<c:out value="${event.url}" />
+							</div>
+
+							<div class="col-xs-3 add-margin">
+								
+							</div>
+							<div class="col-xs-3 add-margin view-content">
+								
 							</div>
 						</div>
 					</div>

@@ -44,6 +44,8 @@ $(document).ready(function(){
 		$("#ispaid")[0].checked = true;
 		$("#costLabel").show();
     	$("#costDiv").show();
+    	$("#urllabel").show();
+    	$("#urldiv").show();
 	}
 	
 	$("#ispaid").on("change", function(event) { 
@@ -52,9 +54,13 @@ $(document).ready(function(){
 	        //$(this).trigger("change");
 	        $("#costLabel").show();
 	    	$("#costDiv").show();
+	    	$("#urllabel").show();
+	    	$("#urldiv").show();
 	    }else{
 	    	$("#costLabel").hide();
 	    	$("#costDiv").hide();
+	    	$("#urllabel").hide();
+	    	$("#urldiv").hide();
 	    }
 	    event.preventDefault();
 	});

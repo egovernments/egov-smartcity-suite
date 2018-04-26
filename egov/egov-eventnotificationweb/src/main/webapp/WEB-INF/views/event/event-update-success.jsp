@@ -102,7 +102,7 @@
 								<spring:message code="lbl.event.startdate" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
-								<fmt:formatDate pattern="dd/MM/yyyy" value="${event.startDt}" var="startDate" />
+								<fmt:formatDate pattern="dd/MM/yyyy" value="${event.eventDetails.startDt}" var="startDate" />
 								<c:out value="${startDate}" />
 							</div>
 							<div class="col-xs-3 add-margin">
@@ -117,7 +117,7 @@
 								<spring:message code="lbl.event.enddate" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
-								<fmt:formatDate pattern="dd/MM/yyyy" value="${event.endDt}" var="endDate" />
+								<fmt:formatDate pattern="dd/MM/yyyy" value="${event.eventDetails.endDt}" var="endDate" />
 								<c:out value="${endDate}" />
 							</div>
 							<div class="col-xs-3 add-margin">
@@ -160,6 +160,14 @@
 								        <a href="/egi/downloadfile?fileStoreId=${event.filestore.fileStoreId}&moduleName=Eventnotification">${event.filestore.fileName }</a><br />
 								    </c:otherwise>
 								</c:choose>
+							</div>
+						</div>
+						<div class="row add-border">
+							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.event.status" />
+							</div>
+							<div class="col-sm-3 add-margin view-content">
+								<c:out value="${event.status}" />
 							</div>
 						</div>
 						<div class="row add-border">

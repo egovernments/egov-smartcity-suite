@@ -50,99 +50,98 @@ package org.egov.api.controller.core;
 
 public class ApiUrl {
 
-	public final static String API_V1_0 = "/api/v1.0";
+    public final static String API_V1_0 = "/api/v1.0";
 
-	/**
-	 * Complaint
-	 */
-	public final static String COMPLAINT_GET_TYPES = "/complaint/getAllTypes";
-	
-	public final static String COMPLAINT_TYPES_BY_CATEGORIES = "/complaint/getComplaintCategories";
+    /**
+     * Complaint
+     */
+    public final static String COMPLAINT_GET_TYPES = "/complaint/getAllTypes";
 
-	public final static String COMPLAINT_GET_FREQUENTLY_FILED_TYPES = "/complaint/getFrequentlyFiledTypes";
+    public final static String COMPLAINT_TYPES_BY_CATEGORIES = "/complaint/getComplaintCategories";
 
-	public final static String COMPLAINT_CREATE = "/complaint/create";
+    public final static String COMPLAINT_GET_FREQUENTLY_FILED_TYPES = "/complaint/getFrequentlyFiledTypes";
 
-	public final static String COMPLAINT_UPLOAD_SUPPORT_DOCUMENT = "/complaint/{complaintNo}/uploadSupportDocument";
-	
-	public final static String COMPLAINT_DOWNLOAD_SUPPORT_DOCUMENT = "/complaint/{complaintNo}/downloadSupportDocument";
-	
-	public final static String COMPLAINT_DOWNLOAD_SUPPORT_DOCUMENT_BY_ID = "/complaint/downloadfile/{fileStoreId}";
-	
-	public final static String COMPLAINT_GET_LOCATION = "/complaint/getLocation";
+    public final static String COMPLAINT_CREATE = "/complaint/create";
 
-	public final static String COMPLAINT_LATEST = "/complaint/latest/{page}/{pageSize}";
+    public final static String COMPLAINT_UPLOAD_SUPPORT_DOCUMENT = "/complaint/{complaintNo}/uploadSupportDocument";
 
-	public final static String COMPLAINT_NEARBY = "/complaint/nearby/{page}/{pageSize}";
+    public final static String COMPLAINT_DOWNLOAD_SUPPORT_DOCUMENT = "/complaint/{complaintNo}/downloadSupportDocument";
 
-	public final static String COMPLAINT_SEARCH = "/complaint/search";
+    public final static String COMPLAINT_DOWNLOAD_SUPPORT_DOCUMENT_BY_ID = "/complaint/downloadfile/{fileStoreId}";
 
-	public final static String COMPLAINT_DETAIL = "/complaint/{complaintNo}/detail";
+    public final static String COMPLAINT_GET_LOCATION = "/complaint/getLocation";
 
-	public final static String COMPLAINT_STATUS = "/complaint/{complaintNo}/status";
-	
-	public final static String COMPLAINT_UPDATE_STATUS = "/complaint/{complaintNo}/updateStatus";
-	
-	public final static String COMPLAINT_HISTORY = "/complaint/{complaintNo}/complaintHistory";
-	
-	public final static String COMPLAINT_RESOLVED_UNRESOLVED_COUNT = "/complaint/count";
-	
-	/*
-	 * User log
-	 */
-	public final static String USER_DEVICE_LOG = "/addDeviceLog";
+    public final static String COMPLAINT_LATEST = "/complaint/latest/{page}/{pageSize}";
 
+    public final static String COMPLAINT_NEARBY = "/complaint/nearby/{page}/{pageSize}";
 
-	/**
-	 * Citizen
-	 */
-	public final static String CITIZEN_REGISTER = "/createCitizen";
+    public final static String COMPLAINT_SEARCH = "/complaint/search";
 
-	public final static String CITIZEN_ACTIVATE = "/activateCitizen";
+    public final static String COMPLAINT_DETAIL = "/complaint/{complaintNo}/detail";
 
-	public final static String CITIZEN_LOGIN = "/citizen/login";
+    public final static String COMPLAINT_STATUS = "/complaint/{complaintNo}/status";
 
-	public final static String CITIZEN_PASSWORD_RECOVER = "/recoverPassword";
+    public final static String COMPLAINT_UPDATE_STATUS = "/complaint/{complaintNo}/updateStatus";
 
-	public final static String CITIZEN_GET_PROFILE = "/citizen/getProfile";
+    public final static String COMPLAINT_HISTORY = "/complaint/{complaintNo}/complaintHistory";
 
-	public final static String CITIZEN_UPDATE_PROFILE = "/citizen/updateProfile";
+    public final static String COMPLAINT_RESOLVED_UNRESOLVED_COUNT = "/complaint/count";
 
-	public final static String CITIZEN_LOGOUT = "/citizen/logout";
+    /*
+     * User log
+     */
+    public final static String USER_DEVICE_LOG = "/addDeviceLog";
 
-	public final static String CITIZEN_GET_MY_COMPLAINT = "/citizen/getMyComplaint/{page}/{pageSize}";
-	
-	public final static String CITIZEN_COMPLAINT_COUNT = "/citizen/getMyComplaint/count";
-	
-	public final static String CITIZEN_SEND_OTP = "/sendOTP";
-		
-	/*
-	 * Employee
-	 */
-	public final static String EMPLOYEE_INBOX_LIST_WFT_COUNT = "/employee/inbox";
-	
-	public final static String EMPLOYEE_INBOX_LIST_FILTER_BY_WFT = "/employee/inbox/{workFlowType}/{resultsFrom}/{resultsTo}";
-	
-	public final static String EMPLOYEE_COMPLAINT_ACTIONS = "/employee/complaint/{complaintNo}/complaintActions";
-	
-	public final static String EMPLOYEE_FORWARD_DEPT_DESIGNATION_USER = "/employee/forwardDetails";
-	
-	public final static String EMPLOYEE_UPDATE_COMPLAINT = "/employee/complaint/update/{complaintNo}";
-	
-	public final static String EMPLOYEE_SEARCH_INBOX = "/employee/inbox/search/{pageno}/{limit}";
-	
-	public final static String EMPLOYEE_LOGOUT = "/employee/logout";
+    /**
+     * Citizen
+     */
+    public final static String CITIZEN_REGISTER = "/createCitizen";
 
-	public final static String EMPLOYEE_GET_ROUTED_COMPLAINT = "/employee/routedcomplaints/{page}/{pageSize}";
-	public final static String EMPLOYEE_GET_ROUTED_COMPLAINT_COUNT = "/employee/routedcomplaintcount";
-	
-	/**
-         * Event
-         */
-        public final static String GET_ALL_EVENT = "/events";
-        public final static String GET_EVENT = "/event";
-        public final static String SEARCH_EVENT = "/event/search";
-        public final static String EVENT_ID = "/{id}";
+    public final static String CITIZEN_ACTIVATE = "/activateCitizen";
 
+    public final static String CITIZEN_LOGIN = "/citizen/login";
+
+    public final static String CITIZEN_PASSWORD_RECOVER = "/recoverPassword";
+
+    public final static String CITIZEN_GET_PROFILE = "/citizen/getProfile";
+
+    public final static String CITIZEN_UPDATE_PROFILE = "/citizen/updateProfile";
+
+    public final static String CITIZEN_LOGOUT = "/citizen/logout";
+
+    public final static String CITIZEN_GET_MY_COMPLAINT = "/citizen/getMyComplaint/{page}/{pageSize}";
+
+    public final static String CITIZEN_COMPLAINT_COUNT = "/citizen/getMyComplaint/count";
+
+    public final static String CITIZEN_SEND_OTP = "/sendOTP";
+
+    /*
+     * Employee
+     */
+    public final static String EMPLOYEE_INBOX_LIST_WFT_COUNT = "/employee/inbox";
+
+    public final static String EMPLOYEE_INBOX_LIST_FILTER_BY_WFT = "/employee/inbox/{workFlowType}/{resultsFrom}/{resultsTo}";
+
+    public final static String EMPLOYEE_COMPLAINT_ACTIONS = "/employee/complaint/{complaintNo}/complaintActions";
+
+    public final static String EMPLOYEE_FORWARD_DEPT_DESIGNATION_USER = "/employee/forwardDetails";
+
+    public final static String EMPLOYEE_UPDATE_COMPLAINT = "/employee/complaint/update/{complaintNo}";
+
+    public final static String EMPLOYEE_SEARCH_INBOX = "/employee/inbox/search/{pageno}/{limit}";
+
+    public final static String EMPLOYEE_LOGOUT = "/employee/logout";
+
+    public final static String EMPLOYEE_GET_ROUTED_COMPLAINT = "/employee/routedcomplaints/{page}/{pageSize}";
+    public final static String EMPLOYEE_GET_ROUTED_COMPLAINT_COUNT = "/employee/routedcomplaintcount";
+
+    /**
+     * Event
+     */
+    public final static String GET_ALL_EVENT = "/events";
+    public final static String GET_EVENT = "/event";
+    public final static String SEARCH_EVENT = "/event/search";
+    public final static String EVENT_ID = "/{id}";
+    public final static String INTERESTED = "/intrested";
 
 }

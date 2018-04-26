@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.egov.eventnotification.constants.EventnotificationConstant;
 import org.egov.eventnotification.entity.Event;
+import org.egov.eventnotification.entity.EventDetails;
 import org.egov.eventnotification.service.EventService;
 import org.egov.eventnotification.utils.EventnotificationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +27,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
@@ -46,6 +45,9 @@ public class EventController {
     @Autowired
     private MessageSource messageSource;
 
+    @Autowired
+    private EventnotificationUtil eventnotificationUtil;
+
     /**
      * This method is used for view all event and view event by id.
      * @param model
@@ -54,7 +56,8 @@ public class EventController {
      */
     @RequestMapping(value = { EventnotificationConstant.API_VIEW }, method = RequestMethod.GET)
     public String view(final Model model) {
-        model.addAttribute(EventnotificationConstant.EVENT_LIST, eventService.findAll(new Date()));
+        model.addAttribute(EventnotificationConstant.EVENT_LIST,
+                eventService.findAll(new Date(), EventnotificationConstant.ACTIVE));
         model.addAttribute(EventnotificationConstant.MODE, EventnotificationConstant.MODE_VIEW);
         List eventList = new ArrayList<>(Arrays.asList(EventnotificationConstant.EVENT_TYPE.values()));
         model.addAttribute(EventnotificationConstant.EVENT_TYPE_LIST, eventList);
@@ -73,10 +76,12 @@ public class EventController {
         Event event = eventService.findById(id);
 
         try {
+            EventDetails eventDetails = new EventDetails();
             Date sd = new Date(event.getStartDate());
-            event.setStartDt(formatter.parse(formatter.format(sd)));
+            eventDetails.setStartDt(formatter.parse(formatter.format(sd)));
             Date ed = new Date(event.getEndDate());
-            event.setEndDt(formatter.parse(formatter.format(ed)));
+            eventDetails.setEndDt(formatter.parse(formatter.format(ed)));
+            event.setEventDetails(eventDetails);
         } catch (ParseException e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -95,8 +100,8 @@ public class EventController {
     @RequestMapping(value = EventnotificationConstant.API_CREATE, method = RequestMethod.GET)
     public String newEvent(@ModelAttribute Event event, Model model) {
         model.addAttribute(EventnotificationConstant.EVENT, event);
-        model.addAttribute(EventnotificationConstant.HOUR_LIST, EventnotificationUtil.getAllHour());
-        model.addAttribute(EventnotificationConstant.MINUTE_LIST, EventnotificationUtil.getAllMinute());
+        model.addAttribute(EventnotificationConstant.HOUR_LIST, eventnotificationUtil.getAllHour());
+        model.addAttribute(EventnotificationConstant.MINUTE_LIST, eventnotificationUtil.getAllMinute());
         List eventList = new ArrayList<>(Arrays.asList(EventnotificationConstant.EVENT_TYPE.values()));
         model.addAttribute(EventnotificationConstant.EVENT_LIST, eventList);
         model.addAttribute(EventnotificationConstant.MODE, EventnotificationConstant.MODE_CREATE);
@@ -123,17 +128,18 @@ public class EventController {
 
         if (errors.hasErrors()) {
             model.addAttribute(EventnotificationConstant.MODE, EventnotificationConstant.MODE_CREATE);
-            model.addAttribute(EventnotificationConstant.HOUR_LIST, EventnotificationUtil.getAllHour());
-            model.addAttribute(EventnotificationConstant.MINUTE_LIST, EventnotificationUtil.getAllMinute());
+            model.addAttribute(EventnotificationConstant.HOUR_LIST, eventnotificationUtil.getAllHour());
+            model.addAttribute(EventnotificationConstant.MINUTE_LIST, eventnotificationUtil.getAllMinute());
             List eventList = new ArrayList<>(Arrays.asList(EventnotificationConstant.EVENT_TYPE.values()));
             model.addAttribute(EventnotificationConstant.EVENT_LIST, eventList);
             return EventnotificationConstant.VIEW_EVENTCREATE;
         }
-        event.setStartDate(event.getStartDt().getTime());
-        event.setEndDate(event.getEndDt().getTime());
-        event.setStartTime(event.getStartHH() + ":" + event.getStartMM());
-        event.setEndTime(event.getEndHH() + ":" + event.getEndMM());
 
+        event.setStartDate(event.getEventDetails().getStartDt().getTime());
+        event.setEndDate(event.getEventDetails().getEndDt().getTime());
+        event.setStartTime(event.getEventDetails().getStartHH() + ":" + event.getEventDetails().getStartMM());
+        event.setEndTime(event.getEventDetails().getEndHH() + ":" + event.getEventDetails().getEndMM());
+        event.setStatus(EventnotificationConstant.ACTIVE);
         eventService.persist(event);
 
         redirectAttrs.addFlashAttribute(EventnotificationConstant.EVENT, event);
@@ -156,25 +162,31 @@ public class EventController {
         Event eventObj = eventService.findById(id);
         DateFormat formatter = new SimpleDateFormat(EventnotificationConstant.DDMMYYYY);
         try {
+
+            EventDetails eventDetails = new EventDetails();
             Date sd = new Date(eventObj.getStartDate());
-            eventObj.setStartDt(formatter.parse(formatter.format(sd)));
+            eventDetails.setStartDt(formatter.parse(formatter.format(sd)));
             Date ed = new Date(eventObj.getEndDate());
-            eventObj.setEndDt(formatter.parse(formatter.format(ed)));
+            eventDetails.setEndDt(formatter.parse(formatter.format(ed)));
+            eventObj.setEventDetails(eventDetails);
+
         } catch (ParseException e) {
             LOGGER.error(e.getMessage(), e);
         }
         String[] st = eventObj.getStartTime().split(":");
-        eventObj.setStartHH(st[0]);
-        eventObj.setStartMM(st[1]);
+        eventObj.getEventDetails().setStartHH(st[0]);
+        eventObj.getEventDetails().setStartMM(st[1]);
         String[] et = eventObj.getEndTime().split(":");
-        eventObj.setEndHH(et[0]);
-        eventObj.setEndMM(et[1]);
+        eventObj.getEventDetails().setEndHH(et[0]);
+        eventObj.getEventDetails().setEndMM(et[1]);
         model.addAttribute(EventnotificationConstant.EVENT, eventObj);
-        model.addAttribute(EventnotificationConstant.HOUR_LIST, EventnotificationUtil.getAllHour());
-        model.addAttribute(EventnotificationConstant.MINUTE_LIST, EventnotificationUtil.getAllMinute());
+        model.addAttribute(EventnotificationConstant.HOUR_LIST, eventnotificationUtil.getAllHour());
+        model.addAttribute(EventnotificationConstant.MINUTE_LIST, eventnotificationUtil.getAllMinute());
         List eventList = new ArrayList<>(Arrays.asList(EventnotificationConstant.EVENT_TYPE.values()));
         model.addAttribute(EventnotificationConstant.EVENT_LIST, eventList);
         model.addAttribute(EventnotificationConstant.MODE, EventnotificationConstant.MODE_UPDATE);
+        List eventStatusList = new ArrayList<>(Arrays.asList(EventnotificationConstant.EVENT_STATUS.values()));
+        model.addAttribute(EventnotificationConstant.EVENT_STATUS_LIST, eventStatusList);
         return EventnotificationConstant.VIEW_EVENTUPDATE;
     }
 
@@ -198,10 +210,10 @@ public class EventController {
             @PathVariable(EventnotificationConstant.EVENT_ID) Long id)
             throws IOException, ParseException {
         event.setId(id);
-        event.setStartDate(event.getStartDt().getTime());
-        event.setEndDate(event.getEndDt().getTime());
-        event.setStartTime(event.getStartHH() + ":" + event.getStartMM());
-        event.setEndTime(event.getEndHH() + ":" + event.getEndMM());
+        event.setStartDate(event.getEventDetails().getStartDt().getTime());
+        event.setEndDate(event.getEventDetails().getEndDt().getTime());
+        event.setStartTime(event.getEventDetails().getStartHH() + ":" + event.getEventDetails().getStartMM());
+        event.setEndTime(event.getEventDetails().getEndHH() + ":" + event.getEventDetails().getEndMM());
 
         eventService.update(event);
 
