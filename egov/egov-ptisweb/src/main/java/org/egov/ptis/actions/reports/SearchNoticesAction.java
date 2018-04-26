@@ -127,14 +127,14 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
         @Result(name = SearchNoticesAction.CITIZEN_SEARCH, location = "reports/citizen-searchnotice.jsp"),
         @Result(name = SearchNoticesAction.INDEX, location = "reports/searchNotices.jsp") })
 public class SearchNoticesAction extends SearchFormAction {
+    private static final String EXCEPTION_IN_ADD_FILES_TO_ZIP = "Exception in addFilesToZip : ";
+    private static final String ERROR1 = "error";
+    private static final String WARD_LIST = "wardList";
+    private static final String NUMBER_OF_NOTICES = "Number of notices : ";
+    private static final String PROPERTY_ID = ", propertyId: ";
     private static final Logger LOGGER = Logger.getLogger(SearchNoticesAction.class);
     private static final long serialVersionUID = 1L;
     protected static final String SUCCESS = "success";
-    private static final String FROM_CLAUSE = " from PtNotice notice left join notice.basicProperty bp,PropertyMaterlizeView pmv";
-    private static final String BILL_FROM_CLAUSE = " from DemandBill bill, PtNotice notice left join notice.basicProperty bp, PropertyMaterlizeView pmv";
-    private static final String COMPARISON_REPORT_FROM_CLAUSE = " from PtNotice notice left join notice.basicProperty bp ";
-    private static final String ORDER_BY = " order by notice.noticeDate desc";
-    private static final String BILL_ORDER_BY = " order by notice.basicProperty.address.houseNoBldgApt asc";
     protected static final String CITIZEN_SEARCH = "citizen_search";
     private String ownerName;
     private Long zoneId;
@@ -191,15 +191,6 @@ public class SearchNoticesAction extends SearchFormAction {
     @Action(value = "/searchNotices-search")
     public String search() {
 
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Entered into search method");
-            LOGGER.debug("Owner name : " + ownerName + ", " + "Notice Type : " + noticeType + ", " + "Zone Id : "
-                    + zoneId + ", " + "Ward Id : " + wardId + ", " + "Property type :" + propertyType + ", "
-                    + "Notice Number : " + noticeNumber + ", " + "Notice FromDate : " + noticeFromDate + ", "
-                    + "noticeToDate : " + noticeToDate + ", " + "Property Id : " + indexNumber + ", "
-                    + "House Number : " + houseNumber);
-        }
-
         if (noticeType != "-1") {
             reportHeader = reportHeader + ", NoticeType: " + noticeType;
         }
@@ -225,7 +216,7 @@ public class SearchNoticesAction extends SearchFormAction {
             reportHeader = reportHeader + ", noticeDateTo: " + noticeToDate;
         }
         if (!indexNumber.isEmpty()) {
-            reportHeader = reportHeader + ", propertyId: " + indexNumber;
+            reportHeader = reportHeader + PROPERTY_ID + indexNumber;
         }
         if (!houseNumber.isEmpty()) {
             reportHeader = reportHeader + ", HouseNo: " + houseNumber;
@@ -233,12 +224,6 @@ public class SearchNoticesAction extends SearchFormAction {
         target = "searchresult";
         super.search();
         noticeList = searchResult.getList();
-
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Number of notices : " + noticeList.size());
-            LOGGER.debug("Exit from search method");
-        }
-
         return INDEX;
     }
 
@@ -248,17 +233,13 @@ public class SearchNoticesAction extends SearchFormAction {
         return NEW;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.egov.infra.web.struts.actions.SearchFormAction#search()
-     */
     @SkipValidation
     @ValidationErrorPage(value = NEW)
     @Action(value = "/searchNotices-citizenSearch")
     public String searchNotice() {
 
         if (!indexNumber.isEmpty()) {
-            reportHeader = reportHeader + ", propertyId: " + indexNumber;
+            reportHeader = reportHeader + PROPERTY_ID + indexNumber;
             setIndexNumber(indexNumber);
 
             mutationList = getMutationsList(indexNumber);
@@ -270,7 +251,6 @@ public class SearchNoticesAction extends SearchFormAction {
     }
 
     private List<CitizenMutationInfo> getMutationsList(String indexNumber) {
-
         List<PropertyMutation> mutations = noticeService.getListofMutations(indexNumber);
         List<CitizenMutationInfo> citizenMutationInfo = new LinkedList<>();
         for (PropertyMutation mt : mutations) {
@@ -286,9 +266,7 @@ public class SearchNoticesAction extends SearchFormAction {
             citizenMutationBean.setAddress(mt.getBasicProperty().getAddress().toString());
             citizenMutationInfo.add(citizenMutationBean);
         }
-
         return citizenMutationInfo;
-
     }
 
     /**
@@ -297,16 +275,13 @@ public class SearchNoticesAction extends SearchFormAction {
      */
     @ValidationErrorPage(value = INDEX)
     @Action(value = "/searchNotices-mergeAndDownload")
-    public String mergeAndDownload() throws ValidationException {
+    public String mergeAndDownload() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Entered into mergeAndDownload method");
-        final long startTime = System.currentTimeMillis();
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("mergeAndDownload : Start Time : " + startTime);
         final List<PtNotice> noticeList = getNoticeBySearchParameter();
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Number of notices : " + (noticeList != null ? noticeList.size() : ZERO));
-        if (null == noticeList || noticeList.size() <= 0) {
+            LOGGER.debug(NUMBER_OF_NOTICES + (noticeList != null ? noticeList.size() : ZERO));
+        if (noticeList.isEmpty()) {
             addActionError(getText("notice.file.merge.unavailable"));
             return INDEX;
         }
@@ -338,12 +313,9 @@ public class SearchNoticesAction extends SearchFormAction {
 
         } catch (final IOException e) {
             LOGGER.error("Exception in Merge and Download : ", e);
-            throw new ValidationException(Arrays.asList(new ValidationError("error", e.getMessage())));
+            throw new ValidationException(Arrays.asList(new ValidationError(ERROR1, e.getMessage())));
         }
-        final long endTime = System.currentTimeMillis();
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("mergeAndDownload : End Time : " + endTime);
-            LOGGER.debug("SearchNoticesAction | mergeAndDownload | Time taken(ms) " + (endTime - startTime));
             LOGGER.debug("Exit from mergeAndDownload method");
         }
         return null;
@@ -358,16 +330,13 @@ public class SearchNoticesAction extends SearchFormAction {
     public String zipAndDownload() throws ValidationException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Entered into zipAndDownload method");
-        final long startTime = System.currentTimeMillis();
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("zipAndDownload : Start Time : " + startTime);
         final HttpServletResponse response = ServletActionContext.getResponse();
         final List<PtNotice> noticeList = getNoticeBySearchParameter();
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Number of notices : " + (noticeList != null ? noticeList.size() : ZERO));
+            LOGGER.debug(NUMBER_OF_NOTICES + (noticeList != null ? noticeList.size() : ZERO));
         try {
             ZipOutputStream zipOutputStream;
-            if (null == noticeList || noticeList.size() <= 0) {
+            if (noticeList.isEmpty()) {
                 addActionError(getText("notice.file.zip.unavailable"));
                 return INDEX;
             } else {
@@ -375,7 +344,6 @@ public class SearchNoticesAction extends SearchFormAction {
                 response.setHeader("Content-disposition", "attachment;filename=" + "notice_" + noticeType + ".zip");
                 response.setContentType("application/zip");
             }
-
             for (final PtNotice ptNotice : noticeList)
                 try {
                     if (ptNotice != null && ptNotice.getFileStore() != null) {
@@ -392,16 +360,12 @@ public class SearchNoticesAction extends SearchFormAction {
 
             zipOutputStream.closeEntry();
             zipOutputStream.close();
-
         } catch (final IOException e) {
             LOGGER.error("Exception in Zip and Download : ", e);
 
-            throw new ValidationException(Arrays.asList(new ValidationError("error", e.getMessage())));
+            throw new ValidationException(Arrays.asList(new ValidationError(ERROR1, e.getMessage())));
         }
-        final long endTime = System.currentTimeMillis();
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("zipAndDownload : End Time : " + endTime);
-            LOGGER.debug("SearchNoticesAction | zipAndDownload | Time taken(ms) " + (endTime - startTime));
             LOGGER.debug("Exit from zipAndDownload method");
         }
         return null;
@@ -423,7 +387,7 @@ public class SearchNoticesAction extends SearchFormAction {
             return INDEX;
         }
 
-        if (ptNotice != null && ptNotice.getFileStore() != null) {
+        if (ptNotice.getFileStore() != null) {
             final FileStoreMapper fsm = ptNotice.getFileStore();
             final File file = fileStoreService.fetch(fsm, FILESTORE_MODULE_NAME);
             final byte[] bFile = FileUtils.readFileToByteArray(file);
@@ -449,11 +413,6 @@ public class SearchNoticesAction extends SearchFormAction {
     @SkipValidation
     @Action(value = "/searchNotices-reset")
     public String reset() {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("reset : Before reset values : ownerName : " + ownerName + " zoneId : " + zoneId + " wardId : "
-                    + wardId + " propertyType : " + propertyType + " noticeType : " + noticeType + " noticeNumber : "
-                    + noticeNumber + " noticeFromDate : " + noticeFromDate + " noticeToDate : " + noticeToDate
-                    + " indexNumber : " + indexNumber + " houseNumber : " + houseNumber);
         ownerName = "";
         zoneId = -1l;
         wardId = -1l;
@@ -464,15 +423,11 @@ public class SearchNoticesAction extends SearchFormAction {
         noticeToDate = null;
         indexNumber = "";
         houseNumber = "";
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Exit from reset method");
         return INDEX;
     }
 
     @Override
     public void prepare() {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Entered into prepare method");
         super.prepare();
         municipal = getSession().get("citymunicipalityname").toString();
         district = getSession().get("districtName").toString();
@@ -484,35 +439,19 @@ public class SearchNoticesAction extends SearchFormAction {
                 REVENUE_HIERARCHY_TYPE);
         final List<PropertyTypeMaster> propTypeList = propertyTypeMasterDAO.findAll();
         addDropdownData("Zone", zoneList);
-        addDropdownData("wardList", wardList);
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Zone id : " + zoneId + ", " + "Ward id : " + wardId);
-        // prepareWardDropDownData(zoneId != null, wardId != null);
-
+        addDropdownData(WARD_LIST, wardList);
         addDropdownData("PropTypeMaster", propTypeList);
         setNoticeTypeMap(CommonServices.getNoticeTypeMstr());
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Zone List : " + (zoneList != null ? zoneList : ZERO));
-            LOGGER.debug("Property type List : " + (propTypeList != null ? propTypeList : ZERO));
-            LOGGER.debug("Notice type map size : " + (noticeTypeMap != null ? noticeTypeMap.size() : ZERO));
-            LOGGER.debug("Exit from prepare method");
-        }
     }
 
     @SuppressWarnings({ "unused" })
     private void prepareWardDropDownData(final boolean zoneExists, final boolean wardExists) {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Entered into prepareWardDropDownData method");
-            LOGGER.debug("Zone Exists ? : " + zoneExists + ", " + "Ward Exists ? : " + wardExists);
-        }
         if (zoneExists && wardExists) {
-            List<Boundary> wardNewList = new ArrayList<>();
+            List<Boundary> wardNewList;
             wardNewList = boundaryService.getActiveChildBoundariesByBoundaryId(getZoneId());
-            addDropdownData("wardList", wardNewList);
+            addDropdownData(WARD_LIST, wardNewList);
         } else
-            addDropdownData("wardList", Collections.emptyList());
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Exit from prepareWardDropDownData method");
+            addDropdownData(WARD_LIST, Collections.emptyList());
     }
 
     /**
@@ -520,18 +459,10 @@ public class SearchNoticesAction extends SearchFormAction {
      * @return boundary name for a given boundary id
      */
     public String getBoundary(final Long boundaryId) {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Entered into getBoundary method");
-            LOGGER.debug("Boundary Id : " + boundaryId);
-        }
-        Boundary bndry = null;
-        if (boundaryId != null && !boundaryId.equals(-1))
-            bndry = boundaryService.getBoundaryById(boundaryId);
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Boundary : " + bndry);
-            LOGGER.debug("Exit from getBoundary method");
-        }
-        return bndry.getName();
+        Boundary boundary = null;
+        if (boundaryId != null && boundaryId != -1)
+            boundary = boundaryService.getBoundaryById(boundaryId);
+        return boundary.getName();
     }
 
     /**
@@ -539,15 +470,7 @@ public class SearchNoticesAction extends SearchFormAction {
      * @return
      */
     public String getPropType(final String propertyType) {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Entered into getPropType method");
-            LOGGER.debug("Property type id : " + propertyType);
-        }
         final PropertyTypeMaster propTypeMstr = propertyTypeMasterDAO.findById(Integer.valueOf(propertyType), false);
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Property type : " + propTypeMstr);
-            LOGGER.debug("Exit from getPropType method");
-        }
         return propTypeMstr.getType();
     }
 
@@ -556,14 +479,7 @@ public class SearchNoticesAction extends SearchFormAction {
      * @return
      */
     public String getNonHistoryOwnerName(final BasicProperty basicProperty) {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Entered into getNonHistoryOwnerName method Basic Property " + basicProperty);
-        final String NonHistoryOwnerName = basicProperty.getFullOwnerName();
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("getNonHistoryOwnerName : Non-History Owner Name : " + NonHistoryOwnerName);
-            LOGGER.debug("Exit from getNonHistoryOwnerName method");
-        }
-        return NonHistoryOwnerName;
+        return basicProperty.getFullOwnerName();
     }
 
     /*
@@ -575,32 +491,16 @@ public class SearchNoticesAction extends SearchFormAction {
     @SuppressWarnings("unchecked")
     @Override
     public SearchQuery prepareQuery(final String sortField, final String sortDir) {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Entered into prepareQuery method");
-            LOGGER.debug("Sort Field : " + sortField + ", " + "Sort Dir : " + sortDir);
-        }
-
         final Map<String, Object> map = getCriteriaString();
-
         return new SearchQueryHQL(prepareSearchQuery(map.get("criteriaString")),
                 prepareCountQuery(map.get("criteriaString")), (ArrayList<Object>) map.get("params"));
     }
 
-    /**
-     * @return
-     */
     private Map<String, Object> getCriteriaString() {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Entered into getCriteriaString method");
-            LOGGER.debug("Notice Type : " + noticeType + ", " + "Zone Id : " + zoneId + ", " + "Ward Id : " + wardId
-                    + ", " + "Notice Number : " + noticeNumber + ", " + "Notice FromDate : " + noticeFromDate + ", "
-                    + "noticeToDate : " + noticeToDate + ", " + "Property Id : " + indexNumber + ", "
-                    + "House Number : " + houseNumber);
-        }
-        final Map<String, Object> map = new HashMap<String, Object>();
-        final ArrayList<Object> params = new ArrayList<Object>();
+        final Map<String, Object> map = new HashMap<>();
+        final ArrayList<Object> params = new ArrayList<>();
 
-        StringBuilder criteriaString = new StringBuilder();
+        StringBuilder criteriaString;
         criteriaString = new StringBuilder(" where notice.noticeType = ?");
         params.add(noticeType);
 
@@ -612,7 +512,7 @@ public class SearchNoticesAction extends SearchFormAction {
             criteriaString = criteriaString.append(" and notice.basicProperty.id=bp.id ");
         else
             criteriaString = criteriaString.append(" and bp.upicNo=pmv.propertyId");
-        if (ownerName != null && !ownerName.equals("")) {
+        if (StringUtils.isNotBlank(ownerName)) {
             criteriaString.append(" and pmv.ownerName like ?");
             params.add("%" + ownerName + "%");
         }
@@ -628,35 +528,31 @@ public class SearchNoticesAction extends SearchFormAction {
             criteriaString.append(" and pmv.propTypeMstrID.id = ?");
             params.add(Long.parseLong(propertyType));
         }
-        if (noticeNumber != null && !noticeNumber.equals("")) {
+        if (StringUtils.isNotBlank(noticeNumber)) {
             criteriaString.append(" and notice.noticeNo = ?");
             params.add(noticeNumber);
         }
-        if (noticeFromDate != null && !noticeFromDate.equals("DD/MM/YYYY")) {
+        if (noticeFromDate != null) {
             criteriaString.append(" and notice.noticeDate >= ?");
             params.add(noticeFromDate);
         }
-        if (noticeToDate != null && !noticeToDate.equals("DD/MM/YYYY")) {
+        if (noticeToDate != null) {
             final Calendar nextDate = Calendar.getInstance();
             nextDate.setTime(noticeToDate);
             nextDate.add(Calendar.DATE, 1);
             criteriaString.append(" and notice.noticeDate <= ?");
             params.add(nextDate.getTime());
         }
-        if (indexNumber != null && !indexNumber.equals("")) {
+        if (StringUtils.isNotBlank(indexNumber)) {
             criteriaString.append(" and pmv.propertyId = ?");
             params.add(indexNumber);
         }
-        if (houseNumber != null && !houseNumber.equals("")) {
+        if (StringUtils.isNotBlank(houseNumber)) {
             criteriaString.append(" and bp.address.houseNoBldgApt like ?");
             params.add(houseNumber);
         }
         map.put("criteriaString", criteriaString);
         map.put("params", params);
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Criteria String : " + criteriaString);
-            LOGGER.debug("Exit from getCriteriaString method");
-        }
         return map;
     }
 
@@ -670,18 +566,15 @@ public class SearchNoticesAction extends SearchFormAction {
 
         if (noticeType == null || noticeType.equals("-1"))
             addActionError(getText("mandatory.noticeType"));
-        if (noticeFromDate != null && !noticeFromDate.equals("DD/MM/YYYY")
-                && (noticeToDate == null || noticeToDate.equals("DD/MM/YYYY")))
+        if (noticeFromDate == null)
             addActionError(getText("mandatory.noticeTodt"));
-        if (noticeToDate != null && !noticeToDate.equals("DD/MM/YYYY")
-                && (noticeFromDate == null || noticeFromDate.equals("DD/MM/YYYY")))
+        if (noticeFromDate == null)
             addActionError(getText("mandatory.noticeFromdt"));
-        if (noticeFromDate != null && !noticeFromDate.equals("DD/MM/YYYY") && noticeFromDate.after(new Date()))
+        if (noticeFromDate != null && noticeFromDate.after(new Date()))
             addActionError(getText("mandatory.noticeFromdtBeforeCurr"));
-        if (noticeToDate != null && !noticeToDate.equals("DD/MM/YYYY") && noticeToDate.after(new Date()))
+        if (noticeToDate != null && noticeToDate.after(new Date()))
             addActionError(getText("mandatory.noticeTodtBeforeCurr"));
-        if (noticeFromDate != null && !noticeFromDate.equals("DD/MM/YYYY") && noticeToDate != null
-                && !noticeToDate.equals("DD/MM/YYYY") && noticeToDate.before(noticeFromDate))
+        if (noticeFromDate != null && noticeToDate != null && noticeToDate.before(noticeFromDate))
             addActionError(getText("mandatory.noticeTodtgtoreqCurr"));
     }
 
@@ -690,18 +583,9 @@ public class SearchNoticesAction extends SearchFormAction {
      */
     @SuppressWarnings("unchecked")
     private List<PtNotice> getNoticeBySearchParameter() {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Entered into getNoticeBySearchParameter method");
-
         final Map<String, Object> map = getCriteriaString();
-
-        final List<PtNotice> noticeList = this.persistenceService.findAllBy(
+        return this.persistenceService.findAllBy(
                 prepareSearchQuery(map.get("criteriaString")), ((ArrayList<Object>) map.get("params")).toArray());
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Number of notices : " + (noticeList != null ? noticeList.size() : ZERO));
-            LOGGER.debug("Exit from getNoticeBySearchParameter method");
-        }
-        return noticeList;
     }
 
     /**
@@ -709,17 +593,11 @@ public class SearchNoticesAction extends SearchFormAction {
      * @return query string
      */
     private String prepareSearchQuery(final Object criteria) {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Entered into Search Query, criteria=" + criteria);
-
         final StringBuilder searchQuery = new StringBuilder("select notice");
-        searchQuery.append(noticeType.equals(NOTICE_TYPE_BILL) ? BILL_FROM_CLAUSE
-                : (NOTICE_TYPE_SURVEY_COMPARISON.equalsIgnoreCase(noticeType) ? COMPARISON_REPORT_FROM_CLAUSE : FROM_CLAUSE));
+        searchQuery.append(noticeType.equals(NOTICE_TYPE_BILL) ? " from DemandBill bill, PtNotice notice left join notice.basicProperty bp, PropertyMaterlizeView pmv"
+                : (NOTICE_TYPE_SURVEY_COMPARISON.equalsIgnoreCase(noticeType) ? " from PtNotice notice left join notice.basicProperty bp " : " from PtNotice notice left join notice.basicProperty bp,PropertyMaterlizeView pmv"));
         searchQuery.append(criteria);
-        searchQuery.append(noticeType.equals(PropertyTaxConstants.INTEGRATED_BILL) ? BILL_ORDER_BY : ORDER_BY);
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Search Query : " + searchQuery);
-
+        searchQuery.append(noticeType.equals(PropertyTaxConstants.INTEGRATED_BILL) ? " order by notice.basicProperty.address.houseNoBldgApt asc" : " order by notice.noticeDate desc");
         return searchQuery.toString();
     }
 
@@ -728,16 +606,10 @@ public class SearchNoticesAction extends SearchFormAction {
      * @return count query
      */
     private String prepareCountQuery(final Object criteria) {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Entered into prepareCountQuery , criteria=" + criteria);
-
         final StringBuilder countQuery = new StringBuilder("select count(notice)");
-        countQuery.append(noticeType.equals(NOTICE_TYPE_BILL) ? BILL_FROM_CLAUSE
-                : (NOTICE_TYPE_SURVEY_COMPARISON.equalsIgnoreCase(noticeType) ? COMPARISON_REPORT_FROM_CLAUSE : FROM_CLAUSE));
+        countQuery.append(noticeType.equals(NOTICE_TYPE_BILL) ? " from DemandBill bill, PtNotice notice left join notice.basicProperty bp, PropertyMaterlizeView pmv"
+                : (NOTICE_TYPE_SURVEY_COMPARISON.equalsIgnoreCase(noticeType) ? " from PtNotice notice left join notice.basicProperty bp " : " from PtNotice notice left join notice.basicProperty bp,PropertyMaterlizeView pmv"));
         countQuery.append(criteria);
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Count Query : " + countQuery);
-
         return countQuery.toString();
     }
 
@@ -752,7 +624,7 @@ public class SearchNoticesAction extends SearchFormAction {
         Document document = null;
         try {
             final List<InputStream> pdfs = streamOfPDFFiles;
-            final List<PdfReader> readers = new ArrayList<PdfReader>();
+            final List<PdfReader> readers = new ArrayList<>();
             final Iterator<InputStream> iteratorPDFs = pdfs.iterator();
 
             // Create Readers for the pdfs.
@@ -834,14 +706,14 @@ public class SearchNoticesAction extends SearchFormAction {
             inputStream.close();
 
         } catch (final IllegalArgumentException iae) {
-            LOGGER.error("Exception in addFilesToZip : ", iae);
-            throw new ValidationException(Arrays.asList(new ValidationError("error", iae.getMessage())));
+            LOGGER.error(EXCEPTION_IN_ADD_FILES_TO_ZIP, iae);
+            throw new ValidationException(Arrays.asList(new ValidationError(ERROR1, iae.getMessage())));
         } catch (final FileNotFoundException fnfe) {
-            LOGGER.error("Exception in addFilesToZip : ", fnfe);
-            throw new ValidationException(Arrays.asList(new ValidationError("error", fnfe.getMessage())));
+            LOGGER.error(EXCEPTION_IN_ADD_FILES_TO_ZIP, fnfe);
+            throw new ValidationException(Arrays.asList(new ValidationError(ERROR1, fnfe.getMessage())));
         } catch (final IOException ioe) {
-            LOGGER.error("Exception in addFilesToZip : ", ioe);
-            throw new ValidationException(Arrays.asList(new ValidationError("error", ioe.getMessage())));
+            LOGGER.error(EXCEPTION_IN_ADD_FILES_TO_ZIP, ioe);
+            throw new ValidationException(Arrays.asList(new ValidationError(ERROR1, ioe.getMessage())));
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Exit from addFilesToZip method");
@@ -853,17 +725,9 @@ public class SearchNoticesAction extends SearchFormAction {
      * @return
      */
     public String getFormattedBndryStr(final Boundary boundary) {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Entered into getFormattedBndryStr method");
-            LOGGER.debug("boundary : " + boundary);
-        }
         final StringBuilder formattedStr = new StringBuilder();
         if (boundary != null)
             formattedStr.append(boundary.getBoundaryNum().toString()).append("-").append(boundary.getName());
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("formattedStr : " + formattedStr.toString());
-            LOGGER.debug("Exit from getFormattedBndryStr method");
-        }
         return formattedStr.toString();
     }
     
@@ -879,7 +743,7 @@ public class SearchNoticesAction extends SearchFormAction {
     public String getNotices() {
 
         if (!indexNumber.isEmpty()) {
-            reportHeader = reportHeader + ", propertyId: " + indexNumber;
+            reportHeader = reportHeader + PROPERTY_ID + indexNumber;
             setIndexNumber(indexNumber);
 
             citizenNotices = getAllNoticesByAssessmentNo(indexNumber);

@@ -47,7 +47,6 @@
  */
 package org.egov.ptis.client.util;
 
-import static java.math.BigDecimal.ROUND_HALF_UP;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADVANCE_COLLECTION_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.AMP_ACTUAL_STR;
@@ -83,33 +82,19 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_UNAUTH
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_REASONS_FOR_REBATE_CALCULATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_REASON_ORDER_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.GENERAL_REVISION_PETETION_APPTYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.MAX_ADVANCES_ALLOWED;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_CENTRAL_GOVT;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_COURT_CASE;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_PRIVATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_STATE_GOVT;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PENALTY_WATERTAX_EFFECTIVE_DATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_ADD_OR_ALTER;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_DATA_ENTRY;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_DEMANDREASONBY_CODE_AND_INSTALLMENTID;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_FINANCIALYYEAR;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_FINANCIALYYEAR_DESC;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVISION_PETETION;
-import static org.egov.ptis.constants.PropertyTaxConstants.SESSION_VAR_LOGIN_USER_NAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.STR_MIGRATED;
-import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_NON_RESD;
-import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_OPENPLOT;
-import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_RESD;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANCY_REMISSION;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_AMALGAMATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_BIFURCATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_CHANGEADDRESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_CREATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_DEACTIVATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_MODIFY;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -118,11 +103,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -147,7 +130,6 @@ import org.egov.demand.model.EgBillType;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
-import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.service.AssignmentService;
@@ -155,7 +137,6 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.EmployeeService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Module;
@@ -172,40 +153,25 @@ import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.utils.DateUtils;
-import org.egov.infra.utils.MoneyUtils;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentType;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.handler.TaxCalculationInfoXmlHandler;
 import org.egov.ptis.client.model.PenaltyAndRebate;
-import org.egov.ptis.client.model.PropertyArrearBean;
 import org.egov.ptis.client.model.calculator.APMiscellaneousTax;
 import org.egov.ptis.client.model.calculator.APMiscellaneousTaxDetail;
-import org.egov.ptis.client.model.calculator.APTaxCalculationInfo;
 import org.egov.ptis.client.model.calculator.APUnitTaxCalculationInfo;
-import org.egov.ptis.client.model.calculator.DemandNoticeDetailsInfo;
-import org.egov.ptis.client.workflow.ActionAmalgmate;
-import org.egov.ptis.client.workflow.ActionBifurcate;
-import org.egov.ptis.client.workflow.ActionChangeAddress;
-import org.egov.ptis.client.workflow.ActionCreate;
-import org.egov.ptis.client.workflow.ActionDeactivate;
-import org.egov.ptis.client.workflow.ActionModify;
-import org.egov.ptis.client.workflow.ActionNameTransfer;
-import org.egov.ptis.client.workflow.WorkflowDetails;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.BoundaryCategoryDao;
 import org.egov.ptis.domain.dao.property.PropertyDAO;
-import org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations;
 import org.egov.ptis.domain.entity.demand.PTDemandCalculations;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
-import org.egov.ptis.domain.entity.property.Category;
 import org.egov.ptis.domain.entity.property.Property;
-import org.egov.ptis.domain.entity.property.PropertyArrear;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
@@ -213,7 +179,6 @@ import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.entity.property.PtApplicationType;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.egov.ptis.domain.entity.property.VacancyRemissionDetails;
-import org.egov.ptis.domain.entity.property.WorkflowBean;
 import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
 import org.egov.ptis.domain.model.calculator.MiscellaneousTaxDetail;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
@@ -221,8 +186,6 @@ import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
 import org.egov.ptis.domain.service.property.RebateService;
 import org.egov.ptis.master.service.TaxRatesService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
-import org.egov.ptis.wtms.ConsumerConsumption;
-import org.egov.ptis.wtms.PropertyWiseConsumptions;
 import org.egov.ptis.wtms.WaterChargesIntegrationService;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -235,15 +198,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
  * @author malathi
  */
 public class PropertyTaxUtil {
-    private static final String AND_PTD_EG_INSTALLMENT_MASTER_INSTALLMENT = "and ptd.egInstallmentMaster = :installment";
-    private static final String WHERE_BP_ACTIVE_TRUE = "where bp.active = true ";
-    private static final String AND_P_PROPERTY = "and p = :property ";
-    private static final String INNER_JOIN_FETCH_P_BASIC_PROPERTY_BP = "inner join fetch p.basicProperty bp ";
-    private static final String INNER_JOIN_FETCH_PTD_EGPT_PROPERTY_P = "inner join fetch ptd.egptProperty p ";
-    private static final String INNER_JOIN_FETCH_DR_EG_DEMAND_REASON_MASTER_DRM = "inner join fetch dr.egDemandReasonMaster drm ";
-    private static final String INNER_JOIN_FETCH_DD_EG_DEMAND_REASON_DR = "inner join fetch dd.egDemandReason dr ";
-    private static final String INNER_JOIN_FETCH_PTD_EG_DEMAND_DETAILS_DD = "inner join fetch ptd.egDemandDetails dd ";
-    private static final String SELECT_PTD_FROM_PTDEMAND_PTD = "select ptd from Ptdemand ptd ";
     private static final String DD_MM_YYYY = "dd/MM/yyyy";
     private static final String INSTALLMENT = "installment";
     private static final String PROPERTY = "property";
@@ -571,7 +525,6 @@ public class PropertyTaxUtil {
     }
 
     public UnitTaxCalculationInfo getUnitTaxCalculationInfoClone(final UnitTaxCalculationInfo unit) {
-        LOGGER.debug("Entered into getUnitTaxCalculationInfoClone");
         final UnitTaxCalculationInfo clone = new APUnitTaxCalculationInfo();
         clone.setFloorNumber(unit.getFloorNumber());
         clone.setUnitOccupation(unit.getUnitOccupation());
@@ -587,7 +540,6 @@ public class PropertyTaxUtil {
         clone.setUnitOccupier(unit.getUnitOccupier());
         clone.setPropertyCreatedDate(unit.getPropertyCreatedDate());
         addMiscellaneousTaxesClone(unit, clone);
-        LOGGER.debug("Exiting from getUnitTaxCalculationInfoClone");
         return clone;
     }
 
@@ -598,7 +550,6 @@ public class PropertyTaxUtil {
      * @param clone
      */
     public void addMiscellaneousTaxesClone(final UnitTaxCalculationInfo unit, final UnitTaxCalculationInfo clone) {
-        LOGGER.debug("Entered into addMiscellaneousTaxesClone");
         for (final MiscellaneousTax miscTax : unit.getMiscellaneousTaxes()) {
             final MiscellaneousTax newMiscTax = new APMiscellaneousTax();
             newMiscTax.setTaxName(miscTax.getTaxName());
@@ -620,7 +571,6 @@ public class PropertyTaxUtil {
             }
             clone.addMiscellaneousTaxes(newMiscTax);
         }
-        LOGGER.debug("Exiting from addMiscellaneousTaxesClone");
     }
 
     /**
@@ -660,7 +610,6 @@ public class PropertyTaxUtil {
      * @return
      */
     public static int getMonthsBetweenDates(final Date fromDate, final Date toDate) {
-        LOGGER.debug("Entered into getMonthsBetweenDates - fromDate: " + fromDate + ", toDate: " + toDate);
         final Calendar fromDateCalendar = Calendar.getInstance();
         final Calendar toDateCalendar = Calendar.getInstance();
         fromDateCalendar.setTime(fromDate);
@@ -668,7 +617,6 @@ public class PropertyTaxUtil {
         final int yearDiff = toDateCalendar.get(Calendar.YEAR) - fromDateCalendar.get(Calendar.YEAR);
         int noOfMonths = yearDiff * 12 + toDateCalendar.get(Calendar.MONTH) - fromDateCalendar.get(Calendar.MONTH);
         noOfMonths += 1;
-        LOGGER.debug("Exiting from getMonthsBetweenDates - noOfMonths: " + noOfMonths);
         return noOfMonths;
     }
 
@@ -689,7 +637,6 @@ public class PropertyTaxUtil {
      * @return Map<String, BigDecimal>
      */
     public Map<String, BigDecimal> getDemandAndCollection(final Property property) {
-        LOGGER.debug("Entered into getDemandAndCollection");
         final Map<String, BigDecimal> demandCollMap = new HashMap<>();
         Installment installment = null;
         Integer instId = null;
@@ -734,8 +681,6 @@ public class PropertyTaxUtil {
         demandCollMap.put(ARREAR_REBATE_STR, arrearRebate);
         demandCollMap.put(CURR_SECONDHALF_DMD_STR, secondHalfTax);
         demandCollMap.put(ADVANCE_COLLECTION_STR, advanceCollection);
-        LOGGER.debug("getDemandAndCollection - demandCollMap = " + demandCollMap);
-        LOGGER.debug("Exiting from getDemandAndCollection");
         return demandCollMap;
     }
 
@@ -849,11 +794,8 @@ public class PropertyTaxUtil {
     }
 
 
-    @SuppressWarnings("unchecked")
     public Map<String, Map<Installment, BigDecimal>> prepareReasonWiseDenandAndCollection(final Property property,
             final Installment currentInstallment) {
-        LOGGER.debug("Entered into prepareReasonWiseDenandAndCollection, property=" + property);
-
         final Map<Installment, BigDecimal> installmentWiseDemand = new TreeMap<>();
         final Map<Installment, BigDecimal> installmentWiseCollection = new TreeMap<>();
         final Map<String, Map<Installment, BigDecimal>> demandAndCollection = new HashMap<>();
@@ -864,11 +806,11 @@ public class PropertyTaxUtil {
         final List<String> demandReasonExcludeList = Arrays
                 .asList(DEMANDRSN_CODE_PENALTY_FINES, DEMANDRSN_CODE_ADVANCE);
 
-        final String query = SELECT_PTD_FROM_PTDEMAND_PTD + INNER_JOIN_FETCH_PTD_EG_DEMAND_DETAILS_DD
-                + INNER_JOIN_FETCH_DD_EG_DEMAND_REASON_DR + INNER_JOIN_FETCH_DR_EG_DEMAND_REASON_MASTER_DRM
-                + INNER_JOIN_FETCH_PTD_EGPT_PROPERTY_P + INNER_JOIN_FETCH_P_BASIC_PROPERTY_BP
-                + WHERE_BP_ACTIVE_TRUE + "and (p.status = 'A' or p.status = 'I') " + AND_P_PROPERTY
-                + AND_PTD_EG_INSTALLMENT_MASTER_INSTALLMENT;
+        final String query = "select ptd from Ptdemand ptd " + "inner join fetch ptd.egDemandDetails dd "
+                + "inner join fetch dd.egDemandReason dr " + "inner join fetch dr.egDemandReasonMaster drm "
+                + "inner join fetch ptd.egptProperty p " + "inner join fetch p.basicProperty bp "
+                + "where bp.active = true " + "and (p.status = 'A' or p.status = 'I') " + "and p = :property "
+                + "and ptd.egInstallmentMaster = :installment";
 
         final Ptdemand ptDemand = (Ptdemand) entityManager.unwrap(Session.class).createQuery(query)
                 .setEntity(PROPERTY, property).setEntity(INSTALLMENT, currentInstallment).list().get(0);
@@ -893,12 +835,8 @@ public class PropertyTaxUtil {
                             installmentWiseCollection.get(installment).add(dmdDet.getAmtCollected()));
             }
         }
-
         demandAndCollection.put("DEMAND", installmentWiseDemand);
         demandAndCollection.put("COLLECTION", installmentWiseCollection);
-
-        LOGGER.debug("prepareReasonWiseDenandAndCollection - demandAndCollection=" + demandAndCollection);
-        LOGGER.debug("Exiting from prepareReasonWiseDenandAndCollection");
         return demandAndCollection;
     }
 
@@ -925,20 +863,18 @@ public class PropertyTaxUtil {
         final List<String> demandReasonExcludeList = Arrays
                 .asList(DEMANDRSN_CODE_PENALTY_FINES, DEMANDRSN_CODE_ADVANCE);
 
-        final String query = SELECT_PTD_FROM_PTDEMAND_PTD + INNER_JOIN_FETCH_PTD_EG_DEMAND_DETAILS_DD
-                + INNER_JOIN_FETCH_DD_EG_DEMAND_REASON_DR + INNER_JOIN_FETCH_DR_EG_DEMAND_REASON_MASTER_DRM
-                + INNER_JOIN_FETCH_PTD_EGPT_PROPERTY_P + INNER_JOIN_FETCH_P_BASIC_PROPERTY_BP
-                + WHERE_BP_ACTIVE_TRUE + "and (p.status = 'A' or p.status = 'I' or p.status = 'W') "
-                + AND_P_PROPERTY + AND_PTD_EG_INSTALLMENT_MASTER_INSTALLMENT;
+        final String query = "select ptd from Ptdemand ptd " + "inner join fetch ptd.egDemandDetails dd "
+                + "inner join fetch dd.egDemandReason dr " + "inner join fetch dr.egDemandReasonMaster drm "
+                + "inner join fetch ptd.egptProperty p " + "inner join fetch p.basicProperty bp "
+                + "where bp.active = true " + "and (p.status = 'A' or p.status = 'I' or p.status = 'W') "
+                + "and p = :property " + "and ptd.egInstallmentMaster = :installment";
 
         final List<Ptdemand> ptDemandList = entityManager.unwrap(Session.class).createQuery(query)
                 .setEntity(PROPERTY, property).setEntity(INSTALLMENT, currentInstallment).list();
         if (!ptDemandList.isEmpty()) {
             final Ptdemand ptDemand = ptDemandList.get(0);
             for (final EgDemandDetails dmdDet : ptDemand.getEgDemandDetails()) {
-
                 demandReason = dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode();
-
                 if (!demandReasonExcludeList.contains(demandReason)) {
                     installment = dmdDet.getEgDemandReason().getEgInstallmentMaster();
                     if (installment.equals(currYearInstMap.get(CURRENTYEAR_FIRST_HALF))) {
@@ -964,28 +900,20 @@ public class PropertyTaxUtil {
         firstHalfReasonDemandDetails.put(CURR_FIRSTHALF_COLL_STR, totalCurrentCollection);
         secondHalfReasonDemandDetails.put(CURR_SECONDHALF_DMD_STR, totalNextInstDemand);
         secondHalfReasonDemandDetails.put(CURR_SECONDHALF_COLL_STR, totalNextInstCollection);
-
         DCBDetails.put(CURRENTYEAR_FIRST_HALF, firstHalfReasonDemandDetails);
         DCBDetails.put(CURRENTYEAR_SECOND_HALF, secondHalfReasonDemandDetails);
         DCBDetails.put(ARREARS, arrearDemandDetails);
-
-        LOGGER.debug("prepareDemandDetForView - demands=" + DCBDetails);
-        LOGGER.debug("Exiting from prepareDemandDetForView");
         return DCBDetails;
     }
 
     @SuppressWarnings("unchecked")
     public Map<Date, Property> getPropertiesForPenlatyCalculation(final BasicProperty basicProperty) {
-
-        final String query = "select p from PropertyImpl p " + INNER_JOIN_FETCH_P_BASIC_PROPERTY_BP
+        final String query = "select p from PropertyImpl p " + "inner join fetch p.basicProperty bp "
                 + "where bp.upicNo = ? and bp.active = true " + "and (p.remarks = null or p.remarks <> ?) "
                 + "order by p.createdDate";
-
         final List<Property> allProperties = entityManager.unwrap(Session.class).createQuery(query)
                 .setString(0, basicProperty.getUpicNo()).setString(1, PropertyTaxConstants.STR_MIGRATED_REMARKS).list();
-
         new ArrayList<Property>();
-
         final List<String> mutationsCodes = Arrays.asList("NEW", "MODIFY");
         Property property = null;
         Property prevProperty = null;
@@ -993,14 +921,11 @@ public class PropertyTaxUtil {
         String nextMutationCode = null;
         String prevMutationCode = null;
         final int noOfProperties = allProperties.size();
-
         final Map<Date, Property> propertyAndEffectiveDate = new TreeMap<>();
         Date firstDataEntryEffectiveDate = null;
-
         for (int i = 0; i < noOfProperties; i++) {
             property = allProperties.get(i);
             prevProperty = i > 0 ? allProperties.get(i - 1) : null;
-
             prevMutationCode = prevProperty != null ? prevProperty.getPropertyDetail().getPropertyMutationMaster()
                     .getCode() : null;
             mutationCode = property.getPropertyDetail().getPropertyMutationMaster().getCode();
@@ -1011,7 +936,6 @@ public class PropertyTaxUtil {
                 if (mutationsCodes.contains(mutationCode))
                     propertyAndEffectiveDate.put(getPropertyOccupancyDate(property), property);
                 else {
-
                     if (isFirstDataEntry(prevMutationCode, mutationCode, prevProperty))
                         firstDataEntryEffectiveDate = getPropertyOccupancyDate(property);
 
@@ -1019,7 +943,6 @@ public class PropertyTaxUtil {
                         propertyAndEffectiveDate.put(firstDataEntryEffectiveDate, property);
                 }
         }
-
         final Map<Date, Property> propertyByOccupancyDate = new TreeMap<>();
 
         for (final Map.Entry<Date, Property> entry : propertyAndEffectiveDate.entrySet())
@@ -1200,8 +1123,6 @@ public class PropertyTaxUtil {
             srchQryStr = baseQry + srchQryStr + orderbyQry;
 
         } catch (final Exception e) {
-
-            LOGGER.error("Error occured in Class : CollectionSummaryReportAction  Method : list", e);
             throw new ApplicationRuntimeException(
                     "Error occured in Class : CollectionSummaryReportAction  Method : list " + e.getMessage());
         }
@@ -1279,8 +1200,6 @@ public class PropertyTaxUtil {
 
     public Map<String, BigDecimal> prepareDemandDetForWorkflowProperty(final Property property,
             final Installment dmdInstallment, final Installment dmdDetInstallment) {
-        LOGGER.debug("Entered into prepareDemandDetForWorkflowProperty, property=" + property);
-
         final Map<String, BigDecimal> dCBDetails = new HashMap<>();
         String demandReason = "";
         Installment installment = null;
@@ -1290,11 +1209,11 @@ public class PropertyTaxUtil {
         final List<String> demandReasonExcludeList = Arrays
                 .asList(DEMANDRSN_CODE_PENALTY_FINES, DEMANDRSN_CODE_ADVANCE);
 
-        final String query = SELECT_PTD_FROM_PTDEMAND_PTD + INNER_JOIN_FETCH_PTD_EG_DEMAND_DETAILS_DD
-                + INNER_JOIN_FETCH_DD_EG_DEMAND_REASON_DR + INNER_JOIN_FETCH_DR_EG_DEMAND_REASON_MASTER_DRM
-                + INNER_JOIN_FETCH_PTD_EGPT_PROPERTY_P + INNER_JOIN_FETCH_P_BASIC_PROPERTY_BP
-                + WHERE_BP_ACTIVE_TRUE + "and (p.status = 'W' or p.status = 'I' or p.status = 'A') "
-                + AND_P_PROPERTY + AND_PTD_EG_INSTALLMENT_MASTER_INSTALLMENT;
+        final String query = "select ptd from Ptdemand ptd " + "inner join fetch ptd.egDemandDetails dd "
+                + "inner join fetch dd.egDemandReason dr " + "inner join fetch dr.egDemandReasonMaster drm "
+                + "inner join fetch ptd.egptProperty p " + "inner join fetch p.basicProperty bp "
+                + "where bp.active = true " + "and (p.status = 'W' or p.status = 'I' or p.status = 'A') "
+                + "and p = :property " + "and ptd.egInstallmentMaster = :installment";
 
         List<Ptdemand> ptDemandList = new ArrayList<>();
 		ptDemandList = entityManager.unwrap(Session.class).createQuery(query).setEntity("property", property)
@@ -1318,8 +1237,6 @@ public class PropertyTaxUtil {
                 }
             }
         }
-        LOGGER.debug("prepareDemandDetForWorkflowProperty - demands=" + dCBDetails);
-        LOGGER.debug("Exiting from prepareDemandDetForWorkflowProperty");
         return dCBDetails;
     }
 
@@ -1535,7 +1452,6 @@ public class PropertyTaxUtil {
         return isOwnerShipType(fromDemand) && StringUtils.isBlank(toDemand);
     }
 
-    @SuppressWarnings("unchecked")
     public List<Installment> getInstallments(final PropertyImpl property) {
         final EgDemand egDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
         return persistenceService
@@ -1580,11 +1496,11 @@ public class PropertyTaxUtil {
     public Map<String, BigDecimal> getTaxDetailsForInstallment(final Property property, final Installment effectiveInstallment,
             final Installment demandInstallment) {
         final Map<String, BigDecimal> taxDetailsMap = new HashMap<>();
-        final String query = SELECT_PTD_FROM_PTDEMAND_PTD + INNER_JOIN_FETCH_PTD_EG_DEMAND_DETAILS_DD
-                + INNER_JOIN_FETCH_DD_EG_DEMAND_REASON_DR + INNER_JOIN_FETCH_DR_EG_DEMAND_REASON_MASTER_DRM
-                + INNER_JOIN_FETCH_PTD_EGPT_PROPERTY_P + INNER_JOIN_FETCH_P_BASIC_PROPERTY_BP
-                + WHERE_BP_ACTIVE_TRUE + "and (p.status = 'A' or p.status = 'I' or p.status = 'W') "
-                + AND_P_PROPERTY + "and ptd.egInstallmentMaster = :demandInstallment ";
+        final String query = "select ptd from Ptdemand ptd " + "inner join fetch ptd.egDemandDetails dd "
+                + "inner join fetch dd.egDemandReason dr " + "inner join fetch dr.egDemandReasonMaster drm "
+                + "inner join fetch ptd.egptProperty p " + "inner join fetch p.basicProperty bp "
+                + "where bp.active = true " + "and (p.status = 'A' or p.status = 'I' or p.status = 'W') "
+                + "and p = :property " + "and ptd.egInstallmentMaster = :demandInstallment ";
 
         final Ptdemand ptDemand = (Ptdemand) entityManager.unwrap(Session.class).createQuery(query)
                 .setEntity(PROPERTY, property).setEntity("demandInstallment", demandInstallment).list().get(0);
@@ -1684,7 +1600,6 @@ public class PropertyTaxUtil {
         return reportService.createReport(reportInput);
     }
 
-    @SuppressWarnings("unchecked")
     public BigDecimal getRebateAmount(EgDemand currentDemand) {
         Object rebateAmt;
         Map<String, Installment> currInstallments = getInstallmentsForCurrYear(new Date());

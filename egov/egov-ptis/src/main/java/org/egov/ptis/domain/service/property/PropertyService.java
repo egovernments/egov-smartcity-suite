@@ -3993,7 +3993,7 @@ public class PropertyService {
                 "from BasicPropertyImpl bp where bp.address.houseNoBldgApt = :houseNo  and bp.active = 'Y'");
         qry.setParameter("houseNo", houseNo);
         return !qry.list().isEmpty()
-                && (basicProperty == null || !basicProperty.getAddress().getHouseNoBldgApt().equals(houseNo));
+                && (!houseNo.equals(basicProperty.getAddress().getHouseNoBldgApt()));
     }
 
     public Map<Installment, Map<String, BigDecimal>> getExcessCollAmtMap() {
