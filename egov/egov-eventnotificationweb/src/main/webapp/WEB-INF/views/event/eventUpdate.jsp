@@ -171,7 +171,7 @@
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.location" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<div class="input-group">
-								<form:input path="eventlocation" id="eventlocation" name="eventlocation" class="form-control text-left patternvalidation" maxlength="20" required="required" value="${event.eventlocation}"/>
+								<form:input path="eventlocation" id="eventlocation" name="eventlocation" class="form-control text-left patternvalidation" maxlength="100" required="required" value="${event.eventlocation}"/>
 								<span class="input-group-addon map-class btn-secondary" title="See on map" onclick="jQuery('#modal-6').modal('show', {backdrop: 'static'});"><i class="fa fa-map-marker specific"></i></span>
 								<form:hidden path="eventDetails.crossHierarchyId" id="crosshierarchyId"/>
 	                            <form:hidden path="eventDetails.lat" id="lat"/>

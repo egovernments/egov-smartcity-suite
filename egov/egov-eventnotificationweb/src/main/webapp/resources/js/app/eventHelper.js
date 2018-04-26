@@ -64,7 +64,7 @@ $(document).ready(function(){
 		$("#eventViewTable").DataTable().clear().draw();
 		$.ajax({
 		      type: "GET",
-		      url: "/api/event/search?"+$("#searcheventForm").serialize(),
+		      url: "/api/event/search?"+$("#searcheventForm").serialize()+"&eventDateType=ongoing",
 		      contentType: "application/json; charset=utf-8",
 		      dataType: 'json',
 		      success: function (data) {

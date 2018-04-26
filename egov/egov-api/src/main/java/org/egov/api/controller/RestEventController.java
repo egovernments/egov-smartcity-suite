@@ -65,6 +65,7 @@ public class RestEventController {
             jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_ADDRESS, event.getAddress());
             jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_ISPAID, event.getIspaid());
             jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_EVENTTYPE, event.getEventType());
+            jsonObjectEvent.addProperty(EventnotificationConstant.INTERESTED_COUNT, "");
             if (event.getFilestore() == null) {
                 jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_FILESTOREID, "");
                 jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_FILENAME, "");
@@ -77,6 +78,11 @@ public class RestEventController {
                 jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_COST, 0.0);
             else
                 jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_COST, event.getCost());
+            
+            if (event.getUrl() == null)
+                jsonObjectEvent.addProperty(EventnotificationConstant.URL, "");
+            else
+                jsonObjectEvent.addProperty(EventnotificationConstant.URL, event.getUrl());
 
             jsonArrayEvent.add(jsonObjectEvent);
 
@@ -109,6 +115,7 @@ public class RestEventController {
         jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_ADDRESS, event.getAddress());
         jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_ISPAID, event.getIspaid());
         jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_EVENTTYPE, event.getEventType());
+        jsonObjectEvent.addProperty(EventnotificationConstant.INTERESTED_COUNT, usereventService.countUsereventByEventId(event.getId()));
         if (event.getFilestore() == null) {
             jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_FILESTOREID, "");
             jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_FILENAME, "");
@@ -120,6 +127,11 @@ public class RestEventController {
             jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_COST, 0.0);
         else
             jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_COST, event.getCost());
+        
+        if (event.getUrl() == null)
+            jsonObjectEvent.addProperty(EventnotificationConstant.URL, "");
+        else
+            jsonObjectEvent.addProperty(EventnotificationConstant.URL, event.getUrl());
 
         return jsonObjectEvent.toString();
     }
@@ -133,12 +145,13 @@ public class RestEventController {
      */
     @RequestMapping(value = ApiUrl.SEARCH_EVENT, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String searchEvent(@RequestParam(required = false, value = EventnotificationConstant.EVENT_EVENTTYPE) String eventType,
-            @RequestParam(required = false, value = EventnotificationConstant.EVENT_EVENTNAME) String eventName,
+            @RequestParam(required = false, value = EventnotificationConstant.EVENT_NAME) String name,
             @RequestParam(required = false, value = EventnotificationConstant.EVENT_EVENTHOST) String eventHost,
-            @RequestParam(required = false, value = EventnotificationConstant.STATUS) String status) {
+            @RequestParam(required = false, value = EventnotificationConstant.STATUS) String status,
+            @RequestParam(required = true, value = EventnotificationConstant.EVENT_DATE_TYPE) String eventDateType) {
         if (status == null)
             status = EventnotificationConstant.ACTIVE;
-        List<Event> eventList = eventService.searchEvent(eventType, eventName, eventHost, new Date(), status);
+        List<Event> eventList = eventService.searchEvent(eventType, name, eventHost, status,eventDateType);
         JsonArray jsonArrayEvent = new JsonArray();
         for (Event event : eventList) {
             JsonObject jsonObjectEvent = new JsonObject();
@@ -154,6 +167,7 @@ public class RestEventController {
             jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_ADDRESS, event.getAddress());
             jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_ISPAID, event.getIspaid());
             jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_EVENTTYPE, event.getEventType());
+            jsonObjectEvent.addProperty(EventnotificationConstant.INTERESTED_COUNT, "");
             if (event.getFilestore() == null) {
                 jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_FILESTOREID, "");
                 jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_FILENAME, "");
@@ -165,6 +179,11 @@ public class RestEventController {
                 jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_COST, 0.0);
             else
                 jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_COST, event.getCost());
+            
+            if (event.getUrl() == null)
+                jsonObjectEvent.addProperty(EventnotificationConstant.URL, "");
+            else
+                jsonObjectEvent.addProperty(EventnotificationConstant.URL, event.getUrl());
 
             jsonArrayEvent.add(jsonObjectEvent);
 
@@ -196,6 +215,7 @@ public class RestEventController {
             else
                 responseObject.put(EventnotificationConstant.SUCCESS,
                         messageSource.getMessage("msg.event.success", null, "Success.", Locale.getDefault()));
+            responseObject.put(EventnotificationConstant.SUCCESS,usereventService.countUsereventByEventId(userevent.getEventid().getId()));
         }
         return responseObject.toJSONString();
     }

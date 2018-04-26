@@ -102,7 +102,7 @@
 							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.event.message" />
 							</div>
-							<div class="col-xs-10 add-margin view-content">
+							<div class="col-xs-9 add-margin view-content">
 								<c:out value="${event.message}" />
 							</div>
 
