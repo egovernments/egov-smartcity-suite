@@ -47,6 +47,8 @@
  */
 package org.egov.collection.web.actions.citizen;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -62,7 +64,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
@@ -431,7 +432,7 @@ public class OnlineReceiptAction extends BaseFormAction {
     public void prepare() {
         super.prepare();
         // populates model when request is from the billing system
-        if (StringUtils.isNotBlank(getCollectXML())) {
+        if (isNotBlank(getCollectXML())) {
             final String decodedCollectXml = decodeBillXML();
             try {
                 collDetails = BillInfoMarshaller.toObject(decodedCollectXml);
@@ -479,8 +480,8 @@ public class OnlineReceiptAction extends BaseFormAction {
                         CollectionConstants.SERVICE_TYPE_PAYMENT));
         constructServiceDetailsList();
         // Fetching pending transaction by consumer code. If transaction is in pending status display message
-        if (null != receiptHeader && null != receiptHeader.getConsumerCode() && !"".equals(receiptHeader.getConsumerCode())
-                && receiptHeader.getService().getCode() != null && !receiptHeader.getService().getCode().isEmpty()) {
+        if (null != receiptHeader && isNotBlank(receiptHeader.getConsumerCode())
+                && isNotBlank(receiptHeader.getService().getCode())) {
             final List<ReceiptHeader> pendingOnlinePayments = getPersistenceService().findAllByNamedQuery(
                     CollectionConstants.QUERY_ONLINE_PENDING_RECEIPTS_BY_CONSUMERCODE_AND_SERVICECODE,
                     receiptHeader.getService().getCode(),
@@ -696,7 +697,7 @@ public class OnlineReceiptAction extends BaseFormAction {
             while (paramNames.hasMoreElements()) {
                 final String paramName = paramNames.nextElement();
                 final String paramValue = httpRequest.getParameter(paramName);
-                if (null != paramValue && !"".equals(paramValue))
+                if (isNotBlank(paramValue))
                     responseMap.put(paramName, paramValue);
             }
             responseMsg = responseMap.toString();
