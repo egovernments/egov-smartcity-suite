@@ -120,7 +120,6 @@ import org.apache.commons.text.RandomStringGenerator;
 import org.apache.log4j.Logger;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
-import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.demand.dao.DemandGenericHibDao;
 import org.egov.demand.dao.EgBillDao;
@@ -166,7 +165,6 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
-import org.egov.ptis.domain.dao.property.BoundaryCategoryDao;
 import org.egov.ptis.domain.dao.property.PropertyDAO;
 import org.egov.ptis.domain.entity.demand.PTDemandCalculations;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
@@ -185,8 +183,6 @@ import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
 import org.egov.ptis.domain.service.property.RebateService;
 import org.egov.ptis.master.service.TaxRatesService;
-import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
-import org.egov.ptis.wtms.WaterChargesIntegrationService;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
@@ -232,11 +228,7 @@ public class PropertyTaxUtil {
     @Autowired
     private PtDemandDao ptDemandDAO;
     @Autowired
-    private BoundaryCategoryDao boundaryCategoryDAO;
-
-    @Autowired
     private DemandGenericHibDao demandGenericDAO;
-
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
     @Autowired
@@ -246,14 +238,7 @@ public class PropertyTaxUtil {
     @Autowired
     private PositionMasterService positionMasterService;
     @Autowired
-    private FinancialYearDAO financialYearDAO;
-    @Autowired
-    @Qualifier("waterChargesIntegrationServiceImpl")
-    private WaterChargesIntegrationService waterChargesIntegrationService;
-    @Autowired
     private ModuleService moduleDao;
-    @Autowired
-    private PropertyTaxCommonUtils propertyTaxCommonUtils;
     @Autowired
     @Qualifier("ptaxApplicationTypeService")
     private PersistenceService<PtApplicationType, Long> ptaxApplicationTypeService;

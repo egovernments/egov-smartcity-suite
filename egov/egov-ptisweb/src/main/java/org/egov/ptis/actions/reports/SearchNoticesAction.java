@@ -280,7 +280,7 @@ public class SearchNoticesAction extends SearchFormAction {
             LOGGER.debug("Entered into mergeAndDownload method");
         final List<PtNotice> noticeList = getNoticeBySearchParameter();
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug(NUMBER_OF_NOTICES + (noticeList != null ? noticeList.size() : ZERO));
+            LOGGER.debug(NUMBER_OF_NOTICES + (noticeList.size()));
         if (noticeList.isEmpty()) {
             addActionError(getText("notice.file.merge.unavailable"));
             return INDEX;
@@ -595,7 +595,7 @@ public class SearchNoticesAction extends SearchFormAction {
     private String prepareSearchQuery(final Object criteria) {
         final StringBuilder searchQuery = new StringBuilder("select notice");
         searchQuery.append(noticeType.equals(NOTICE_TYPE_BILL) ? " from DemandBill bill, PtNotice notice left join notice.basicProperty bp, PropertyMaterlizeView pmv"
-                : (NOTICE_TYPE_SURVEY_COMPARISON.equalsIgnoreCase(noticeType) ? " from PtNotice notice left join notice.basicProperty bp " : " from PtNotice notice left join notice.basicProperty bp,PropertyMaterlizeView pmv"));
+                : NOTICE_TYPE_SURVEY_COMPARISON.equalsIgnoreCase(noticeType) ? " from PtNotice notice left join notice.basicProperty bp " : " from PtNotice notice left join notice.basicProperty bp,PropertyMaterlizeView pmv");
         searchQuery.append(criteria);
         searchQuery.append(noticeType.equals(PropertyTaxConstants.INTEGRATED_BILL) ? " order by notice.basicProperty.address.houseNoBldgApt asc" : " order by notice.noticeDate desc");
         return searchQuery.toString();
