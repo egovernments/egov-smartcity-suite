@@ -160,12 +160,18 @@
 		var amount = document.getElementsByName("amount");
 		var len = amount.length;
 		var totalAmount = 0;
+		var debitAmount=0;
+		var creditAmount=0;
 		for (i = 0; i < len; i++) {
-			totalAmount = Number(totalAmount) + Number(amount[i].value);
+			debitAmount = Number(receiptDebitAmount[i].innerHTML);
+			creditAmount = Number(receiptCreditAmount[i].innerHTML);
+			if (debitAmount > 0) 
+				totalAmount = Number(totalAmount) + Number(amount[i].value);
+			else
+				totalAmount = Number(totalAmount) - Number(amount[i].value);
 		}
 		var total = dom.get("totalAmount");
 		total.value = totalAmount;
-
 	}
 
 	function showGlEntry() {
@@ -216,8 +222,8 @@
 				amount[i].value = debitAmount;
 				totalAmount = totalAmount + debitAmount;
 			} else {
-				amount[i].value = creditAmount;
-				totalAmount = totalAmount + creditAmount;
+				amount[i].value = -creditAmount;
+				totalAmount = totalAmount - creditAmount;
 			}
 		}
 		var total = dom.get("totalAmount");
