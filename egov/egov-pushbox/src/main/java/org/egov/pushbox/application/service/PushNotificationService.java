@@ -69,110 +69,107 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.gson.Gson;
 
-
 /**
- * 
+ *
  * @author Darshan Nagesh
  *
  */
 @Service
 @Transactional(readOnly = true)
-public class PushNotificationService  {
-	private static final Logger LOGGER = Logger.getLogger(PushNotificationService.class);
-	private static final String FCM_APP_BDURL = "https://ap-megov.firebaseio.com"; 
-	private final PushNotificationRepository pushNotificationRepo;
+public class PushNotificationService {
+    private static final Logger LOGGER = Logger.getLogger(PushNotificationService.class);
+    private static final String FCM_APP_BDURL = "https://ap-megov.firebaseio.com";
+    private final PushNotificationRepository pushNotificationRepo;
 
-	@Autowired
-	public PushNotificationService(final PushNotificationRepository pushNotificationRepo) {
-		this.pushNotificationRepo = pushNotificationRepo;
-	}
+    @Autowired
+    public PushNotificationService(final PushNotificationRepository pushNotificationRepo) {
+        this.pushNotificationRepo = pushNotificationRepo;
+    }
 
-	@Transactional
-	public UserDevice persist(final UserDevice userDevice) {
-		LOGGER.info("Persisting the User Device Details : " + userDevice);
-		UserDevice existingRecord = pushNotificationRepo.findOne(userDevice.getUserId()); 
-		if(null != existingRecord) {
-			existingRecord.setUserId(userDevice.getUserId());
-			existingRecord.setUserDeviceToken(userDevice.getUserDeviceToken());
-			return existingRecord; 
-		}
-		return pushNotificationRepo.save(userDevice);
-	}
+    @Transactional
+    public UserDevice persist(final UserDevice userDevice) {
+        LOGGER.info("Persisting the User Device Details : " + userDevice);
+        UserDevice existingRecord = pushNotificationRepo.findOne(userDevice.getUserId());
+        if (null != existingRecord) {
+            existingRecord.setUserId(userDevice.getUserId());
+            existingRecord.setUserDeviceToken(userDevice.getUserDeviceToken());
+            return existingRecord;
+        }
+        return pushNotificationRepo.save(userDevice);
+    }
 
-	public List<UserDevice> findAll() {
-		return pushNotificationRepo.findAll();
-	}
+    public List<UserDevice> findAll() {
+        return pushNotificationRepo.findAll();
+    }
 
-	public UserDevice findOne(final Long id) {
-		return pushNotificationRepo.findOne(id);
-	}
-	
-	public UserDevice findUserDeviceByUserId(final Long userId) { 
-		return pushNotificationRepo.findDeviceTokenByUserId(userId); 
-	}
+    public UserDevice findOne(final Long id) {
+        return pushNotificationRepo.findOne(id);
+    }
 
-	public void sendNotifications(MessageContent messageContent) {
-		LOGGER.info("##PushBoxFox## : Received the Message Content at SendNotifications Method");
-		List<UserDevice> userDeviceList = new ArrayList<>();
-		if(messageContent.getSendAll()) { 
-			userDeviceList = getAllUserDeviceList();   
-		} else { 
-			userDeviceList = getUserDeviceList(messageContent);
-		}
-    	LOGGER.info("##PushBoxFox## : List of Devices Obtained : Size is : " + userDeviceList.size());
-    	setUpFirebaseApp(); 
-    	LOGGER.info("##PushBoxFox## : Sending Messages to the Devices ");
-    	sendMessagesToDevices(userDeviceList, messageContent);
-	}
-	
-	private List<UserDevice> getUserDeviceList(MessageContent messageContent) {
-		List<UserDevice> userDeviceList = new ArrayList<>();
-		for (Long userId : messageContent.getUserIdList()) {
-			LOGGER.info("#PushBoxFox## : Getting the Device Token for the User ID : " + userId);
-			UserDevice device = findUserDeviceByUserId(userId);
-			if (null != device) {
-				userDeviceList.add(device);
-			}
-		}
-		return userDeviceList; 
-	}
-	
-	private List<UserDevice> getAllUserDeviceList() {
-		return pushNotificationRepo.findAll(); 
-	}
-	
-	private void setUpFirebaseApp() { 
-		if (FirebaseApp.getApps().size() == 0) {
-			FileInputStream serviceAccount;
-			try {
-				serviceAccount = new FileInputStream("private.json");
-				FirebaseOptions options = new FirebaseOptions.Builder()
-						.setCredentials(GoogleCredentials.fromStream(serviceAccount))
-						.setDatabaseUrl(FCM_APP_BDURL).build();
+    public UserDevice findUserDeviceByUserId(final Long userId) {
+        return pushNotificationRepo.findDeviceTokenByUserId(userId);
+    }
 
-				FirebaseApp.initializeApp(options);
-				LOGGER.info("##PushBoxFox## : Firebase App Initialized");
-			} catch (FileNotFoundException e) {
-				System.out.println(e.getMessage());
-			} catch (IOException e) {
-				System.out.println(e.getMessage());
-			}
-		}	
-	}
-	
-	private void sendMessagesToDevices(List<UserDevice> userDeviceList, MessageContent messageContent) { 
-		for(UserDevice userDevice : userDeviceList) { 
-    		try {
-    			Message message = Message.builder()
-    					.putData("content", new Gson().toJson(messageContent))
-    					.setToken(userDevice.getUserDeviceToken()).build();
-    			String response = FirebaseMessaging.getInstance().sendAsync(message).get();
-    			LOGGER.info("##PushBoxFox## : Message Send Status : " + response);
-    		} catch (Exception ex) {
-    			LOGGER.error("##PushBoxFox## : Error : Encountered an exception while sending the message : " + ex.getMessage() );
-    		}
-    	}
-	}
-	
+    public void sendNotifications(MessageContent messageContent) {
+        LOGGER.info("##PushBoxFox## : Received the Message Content at SendNotifications Method");
+        List<UserDevice> userDeviceList = new ArrayList<>();
+        if (messageContent.getSendAll())
+            userDeviceList = getAllUserDeviceList();
+        else
+            userDeviceList = getUserDeviceList(messageContent);
+        LOGGER.info("##PushBoxFox## : List of Devices Obtained : Size is : " + userDeviceList.size());
+        setUpFirebaseApp();
+        LOGGER.info("##PushBoxFox## : Sending Messages to the Devices ");
+        sendMessagesToDevices(userDeviceList, messageContent);
+    }
+
+    private List<UserDevice> getUserDeviceList(MessageContent messageContent) {
+        List<UserDevice> userDeviceList = new ArrayList<>();
+        for (Long userId : messageContent.getUserIdList()) {
+            LOGGER.info("#PushBoxFox## : Getting the Device Token for the User ID : " + userId);
+            UserDevice device = findUserDeviceByUserId(userId);
+            if (null != device)
+                userDeviceList.add(device);
+        }
+        return userDeviceList;
+    }
+
+    private List<UserDevice> getAllUserDeviceList() {
+        return pushNotificationRepo.findAll();
+    }
+
+    private void setUpFirebaseApp() {
+        if (FirebaseApp.getApps().size() == 0) {
+            FileInputStream serviceAccount;
+            try {
+
+                serviceAccount = new FileInputStream(
+                        PushNotificationService.class.getClassLoader().getResource("private.json").getFile());
+                FirebaseOptions options = new FirebaseOptions.Builder()
+                        .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                        .setDatabaseUrl(FCM_APP_BDURL).build();
+
+                FirebaseApp.initializeApp(options);
+                LOGGER.info("##PushBoxFox## : Firebase App Initialized");
+            } catch (FileNotFoundException e) {
+                System.out.println(e.getMessage());
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
+    private void sendMessagesToDevices(List<UserDevice> userDeviceList, MessageContent messageContent) {
+        for (UserDevice userDevice : userDeviceList)
+            try {
+                Message message = Message.builder()
+                        .putData("content", new Gson().toJson(messageContent))
+                        .setToken(userDevice.getUserDeviceToken()).build();
+                String response = FirebaseMessaging.getInstance().sendAsync(message).get();
+                LOGGER.info("##PushBoxFox## : Message Send Status : " + response);
+            } catch (Exception ex) {
+                LOGGER.error("##PushBoxFox## : Error : Encountered an exception while sending the message : " + ex.getMessage());
+            }
+    }
 
 }

@@ -155,7 +155,7 @@
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.host" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="eventhost" id="eventhost" name="eventhost" 
-								class="form-control text-left patternvalidation" maxlength="20" required="required"/>
+								class="form-control text-left patternvalidation" maxlength="100" required="required"/>
 							<form:errors path="eventhost" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.location" />:<span class="mandatory"></span></label>
@@ -191,7 +191,7 @@
 							<form:checkbox path="ispaid" id="ispaid" name="ispaid"/>
 							<form:errors path="ispaid" cssClass="error-msg" />
 						</div>
-						<label id="costLabel" class="col-sm-2 control-label text-right" style="display:none;"><spring:message code="lbl.event.cost" />:</label>
+						<label id="costLabel" class="col-sm-2 control-label text-right" style="display:none;"><spring:message code="lbl.event.cost" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin" style="display:none;" id="costDiv">
 							<form:input path="cost" id="cost" name="cost" 
 								class="form-control text-left patternvalidation" maxlength="20" />
@@ -205,7 +205,7 @@
 						<div class="col-sm-10 add-margin" id="urldiv" style="display:none;">
 							<form:input path="url" id="url" name="url"
 								class="form-control text-left patternvalidation"
-								maxlength="200" required="required"/>
+								maxlength="200"/>
 							<form:errors path="url" cssClass="error-msg" />
 						</div>
 					</div>

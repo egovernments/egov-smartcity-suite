@@ -53,6 +53,12 @@
             <classifier>tests</classifier>
             <scope>test</scope>
         </dependency>
+        
+        <dependency>
+            <groupId>org.egov</groupId>
+            <artifactId>egov-pushbox</artifactId>
+            <version>3.0.0-SNAPSHOT</version>
+        </dependency>
 
         <dependency>
             <groupId>org.hibernate</groupId>

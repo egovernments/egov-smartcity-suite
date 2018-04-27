@@ -1,6 +1,52 @@
+/*
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) 2017  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
+ */
 package org.egov.api.controller;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -48,7 +94,7 @@ public class RestEventController {
      */
     @RequestMapping(value = ApiUrl.GET_ALL_EVENT, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getAllEvent() {
-        List<Event> eventList = eventService.findAll(new Date(), EventnotificationConstant.ACTIVE);
+        List<Event> eventList = eventService.findAllOngoingEvent(EventnotificationConstant.ACTIVE);
 
         JsonArray jsonArrayEvent = new JsonArray();
         for (Event event : eventList) {
@@ -78,7 +124,7 @@ public class RestEventController {
                 jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_COST, 0.0);
             else
                 jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_COST, event.getCost());
-            
+
             if (event.getUrl() == null)
                 jsonObjectEvent.addProperty(EventnotificationConstant.URL, "");
             else
@@ -115,7 +161,8 @@ public class RestEventController {
         jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_ADDRESS, event.getAddress());
         jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_ISPAID, event.getIspaid());
         jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_EVENTTYPE, event.getEventType());
-        jsonObjectEvent.addProperty(EventnotificationConstant.INTERESTED_COUNT, usereventService.countUsereventByEventId(event.getId()));
+        jsonObjectEvent.addProperty(EventnotificationConstant.INTERESTED_COUNT,
+                usereventService.countUsereventByEventId(event.getId()));
         if (event.getFilestore() == null) {
             jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_FILESTOREID, "");
             jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_FILENAME, "");
@@ -127,7 +174,7 @@ public class RestEventController {
             jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_COST, 0.0);
         else
             jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_COST, event.getCost());
-        
+
         if (event.getUrl() == null)
             jsonObjectEvent.addProperty(EventnotificationConstant.URL, "");
         else
@@ -147,11 +194,13 @@ public class RestEventController {
     public String searchEvent(@RequestParam(required = false, value = EventnotificationConstant.EVENT_EVENTTYPE) String eventType,
             @RequestParam(required = false, value = EventnotificationConstant.EVENT_NAME) String name,
             @RequestParam(required = false, value = EventnotificationConstant.EVENT_EVENTHOST) String eventHost,
-            @RequestParam(required = false, value = EventnotificationConstant.STATUS) String status,
             @RequestParam(required = true, value = EventnotificationConstant.EVENT_DATE_TYPE) String eventDateType) {
-        if (status == null)
-            status = EventnotificationConstant.ACTIVE;
-        List<Event> eventList = eventService.searchEvent(eventType, name, eventHost, status,eventDateType);
+
+        Event eventObj = new Event();
+        eventObj.setEventType(eventType);
+        eventObj.setName(name);
+        eventObj.setEventhost(eventHost);
+        List<Event> eventList = eventService.searchEvent(eventObj, eventDateType);
         JsonArray jsonArrayEvent = new JsonArray();
         for (Event event : eventList) {
             JsonObject jsonObjectEvent = new JsonObject();
@@ -179,7 +228,7 @@ public class RestEventController {
                 jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_COST, 0.0);
             else
                 jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_COST, event.getCost());
-            
+
             if (event.getUrl() == null)
                 jsonObjectEvent.addProperty(EventnotificationConstant.URL, "");
             else
@@ -201,22 +250,30 @@ public class RestEventController {
     public String saveUserEvent(@RequestBody String jsonData) {
         JSONObject requestObject = (JSONObject) JSONValue.parse(jsonData);
         JSONObject responseObject = new JSONObject();
-        if (!requestObject.containsKey(EventnotificationConstant.USERID)
-                && !requestObject.containsKey(EventnotificationConstant.EVENTID))
-            responseObject.put(EventnotificationConstant.FAIL, messageSource.getMessage("error.fail.event", null,
-                    "Unable to process your request now.", Locale.getDefault()));
-        else {
+        if (requestObject.containsKey(EventnotificationConstant.USERID)
+                && requestObject.containsKey(EventnotificationConstant.EVENTID)) {
             Userevent userevent = usereventService.persistUserevent(
                     requestObject.get(EventnotificationConstant.USERID).toString(),
                     requestObject.get(EventnotificationConstant.EVENTID).toString());
             if (userevent == null)
                 responseObject.put(EventnotificationConstant.FAIL, messageSource.getMessage("error.fail.event", null,
                         "Unable to process your request now.", Locale.getDefault()));
-            else
+            else {
                 responseObject.put(EventnotificationConstant.SUCCESS,
                         messageSource.getMessage("msg.event.success", null, "Success.", Locale.getDefault()));
-            responseObject.put(EventnotificationConstant.SUCCESS,usereventService.countUsereventByEventId(userevent.getEventid().getId()));
-        }
+                Long interestedCount = usereventService
+                        .countUsereventByEventId(Long.parseLong(requestObject.get(EventnotificationConstant.EVENTID).toString()));
+                if (null == interestedCount)
+                    responseObject.put(EventnotificationConstant.INTERESTED_COUNT, 0);
+                else
+                    responseObject.put(EventnotificationConstant.INTERESTED_COUNT,
+                            usereventService.countUsereventByEventId(userevent.getEventid().getId()));
+            }
+
+        } else
+            responseObject.put(EventnotificationConstant.FAIL, messageSource.getMessage("error.fail.event", null,
+                    "Unable to process your request now.", Locale.getDefault()));
+
         return responseObject.toJSONString();
     }
 
