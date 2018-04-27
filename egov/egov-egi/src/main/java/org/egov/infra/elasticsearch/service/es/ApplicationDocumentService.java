@@ -190,6 +190,7 @@ public class ApplicationDocumentService {
 
     private static final String REJECTED = "REJECTED";
     private static final String APPROVED = "APPROVED";
+    private static final String COLUMN_APPROVED="approved";
     private final ApplicationDocumentRepository applicationDocumentRepository;
 
     @Autowired
@@ -572,7 +573,7 @@ public class ApplicationDocumentService {
             if (StringUtils.isNotBlank(applicationIndexRequest.getApproved())) {
                 if (REJECTED.equalsIgnoreCase(applicationIndexRequest.getApproved()))
                     boolQuery = boolQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 1))
-                            .filter(QueryBuilders.matchQuery("approved", REJECTED));
+                            .filter(QueryBuilders.matchQuery(COLUMN_APPROVED, REJECTED));
             }
             if (StringUtils.isNotBlank(applicationIndexRequest.getBeyondSLA()))
                 boolQuery = filterBasedOnSLAForFunctionary(applicationIndexRequest, boolQuery);
@@ -997,10 +998,10 @@ public class ApplicationDocumentService {
             appStatusQuery = appStatusQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 0));
         else if (CLOSED_WITHIN_SLA.equalsIgnoreCase(applicationStatus))
             appStatusQuery = appStatusQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 1))
-                    .must(QueryBuilders.rangeQuery(SLA_GAP).lte(0)).must(QueryBuilders.matchQuery("approved", APPROVED));
+                    .must(QueryBuilders.rangeQuery(SLA_GAP).lte(0)).must(QueryBuilders.matchQuery(COLUMN_APPROVED, APPROVED));
         else if (CLOSED_BEYOND_SLA.equalsIgnoreCase(applicationStatus))
             appStatusQuery = appStatusQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 1))
-                    .must(QueryBuilders.rangeQuery(SLA_GAP).gt(0)).must(QueryBuilders.matchQuery("approved", APPROVED));
+                    .must(QueryBuilders.rangeQuery(SLA_GAP).gt(0)).must(QueryBuilders.matchQuery(COLUMN_APPROVED, APPROVED));
         else if (TOTAL_BEYOND_SLA.equalsIgnoreCase(applicationStatus))
             appStatusQuery = appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).gt(0));
         else if (TOTAL_WITHIN_SLA.equalsIgnoreCase(applicationStatus))
@@ -1031,10 +1032,10 @@ public class ApplicationDocumentService {
             appStatusQuery = appStatusQuery.mustNot(
                     QueryBuilders.termsQuery(CHANNEL, Arrays.asList(SOURCE_CSC, SOURCE_MEESEVA, SOURCE_ONLINE, SOURCE_SYSTEM)));
         else if ("approvedClosed".equalsIgnoreCase(applicationStatus))
-            appStatusQuery = appStatusQuery.must(QueryBuilders.matchQuery("approved", APPROVED))
+            appStatusQuery = appStatusQuery.must(QueryBuilders.matchQuery(COLUMN_APPROVED, APPROVED))
                     .filter(QueryBuilders.matchQuery(IS_CLOSED, 1));
         else if ("rejectedClosed".equalsIgnoreCase(applicationStatus))
-            appStatusQuery = appStatusQuery.must(QueryBuilders.matchQuery("approved", REJECTED))
+            appStatusQuery = appStatusQuery.must(QueryBuilders.matchQuery(COLUMN_APPROVED, REJECTED))
                     .filter(QueryBuilders.matchQuery(IS_CLOSED, 1));
         return appStatusQuery;
     }
