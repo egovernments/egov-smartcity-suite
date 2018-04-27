@@ -188,6 +188,8 @@ public class ApplicationDocumentService {
     
     private static final String SLA = "sla";
 
+    private static final String REJECTED = "REJECTED";
+    private static final String APPROVED = "APPROVED";
     private final ApplicationDocumentRepository applicationDocumentRepository;
 
     @Autowired
@@ -567,6 +569,11 @@ public class ApplicationDocumentService {
                     boolQuery = boolQuery
                             .filter(QueryBuilders.matchQuery(IS_CLOSED, 0));
             }
+            if (StringUtils.isNotBlank(applicationIndexRequest.getApproved())) {
+                if (REJECTED.equalsIgnoreCase(applicationIndexRequest.getApproved()))
+                    boolQuery = boolQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 1))
+                            .filter(QueryBuilders.matchQuery("approved", REJECTED));
+            }
             if (StringUtils.isNotBlank(applicationIndexRequest.getBeyondSLA()))
                 boolQuery = filterBasedOnSLAForFunctionary(applicationIndexRequest, boolQuery);
         }
@@ -649,6 +656,10 @@ public class ApplicationDocumentService {
                 "totalReceived", RECEIVED, aggregationField, size);
         Map<String, Long> totalClosedApplications = getAggregationWiseApplicationCounts(applicationIndexRequest, fromDate, toDate,
                 "totalClosed", CLOSED, aggregationField, size);
+        Map<String, Long> totalRejectedClosedApplications = getAggregationWiseApplicationCounts(applicationIndexRequest, fromDate,
+                toDate, "totalRejectedClosed", "rejectedClosed", aggregationField, size);
+        Map<String, Long> totalApprovedClosedApplications = getAggregationWiseApplicationCounts(applicationIndexRequest, fromDate,
+                toDate, "totalApprovedClosed", "approvedClosed", aggregationField, size);
         Map<String, Long> totalOpenApplications = getAggregationWiseApplicationCounts(applicationIndexRequest, fromDate, toDate,
                 "totalOpen", OPEN, aggregationField, size);
         Map<String, Long> closedWithinSLAApplications = getAggregationWiseApplicationCounts(applicationIndexRequest, fromDate,
@@ -740,6 +751,11 @@ public class ApplicationDocumentService {
             applicationDetails.setTotalReceived(entry.getValue());
             applicationDetails.setTotalClosed(totalClosedApplications.get(name) == null ? 0 : totalClosedApplications.get(name));
             applicationDetails.setTotalOpen(totalOpenApplications.get(name) == null ? 0 : totalOpenApplications.get(name));
+            applicationDetails
+                    .setTotalRejectedClosed(
+                            totalRejectedClosedApplications.get(name) == null ? 0 : totalRejectedClosedApplications.get(name));
+            applicationDetails.setTotalApprovedClosed(
+                    totalApprovedClosedApplications.get(name) == null ? 0 : totalApprovedClosedApplications.get(name));
             applicationDetails.setClosedWithinSLA(
                     closedWithinSLAApplications.get(name) == null ? 0 : closedWithinSLAApplications.get(name));
             applicationDetails.setClosedBeyondSLA(
@@ -981,10 +997,10 @@ public class ApplicationDocumentService {
             appStatusQuery = appStatusQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 0));
         else if (CLOSED_WITHIN_SLA.equalsIgnoreCase(applicationStatus))
             appStatusQuery = appStatusQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 1))
-                    .must(QueryBuilders.rangeQuery(SLA_GAP).lte(0));
+                    .must(QueryBuilders.rangeQuery(SLA_GAP).lte(0)).must(QueryBuilders.matchQuery("approved", APPROVED));
         else if (CLOSED_BEYOND_SLA.equalsIgnoreCase(applicationStatus))
             appStatusQuery = appStatusQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 1))
-                    .must(QueryBuilders.rangeQuery(SLA_GAP).gt(0));
+                    .must(QueryBuilders.rangeQuery(SLA_GAP).gt(0)).must(QueryBuilders.matchQuery("approved", APPROVED));
         else if (TOTAL_BEYOND_SLA.equalsIgnoreCase(applicationStatus))
             appStatusQuery = appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).gt(0));
         else if (TOTAL_WITHIN_SLA.equalsIgnoreCase(applicationStatus))
@@ -1014,6 +1030,12 @@ public class ApplicationDocumentService {
         else if (OTHERS_TOTAL.equalsIgnoreCase(applicationStatus))
             appStatusQuery = appStatusQuery.mustNot(
                     QueryBuilders.termsQuery(CHANNEL, Arrays.asList(SOURCE_CSC, SOURCE_MEESEVA, SOURCE_ONLINE, SOURCE_SYSTEM)));
+        else if ("approvedClosed".equalsIgnoreCase(applicationStatus))
+            appStatusQuery = appStatusQuery.must(QueryBuilders.matchQuery("approved", APPROVED))
+                    .filter(QueryBuilders.matchQuery(IS_CLOSED, 1));
+        else if ("rejectedClosed".equalsIgnoreCase(applicationStatus))
+            appStatusQuery = appStatusQuery.must(QueryBuilders.matchQuery("approved", REJECTED))
+                    .filter(QueryBuilders.matchQuery(IS_CLOSED, 1));
         return appStatusQuery;
     }
 
