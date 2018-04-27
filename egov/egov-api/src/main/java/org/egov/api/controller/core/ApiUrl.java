@@ -143,5 +143,12 @@ public class ApiUrl {
     public final static String SEARCH_EVENT = "/event/search";
     public final static String EVENT_ID = "/{id}";
     public final static String INTERESTED = "/intrested";
+    
+    /**
+	 * PushBox URLs
+	 */
+	
+	public final static String UPDATE_USER_TOKEN = "/pushbox/updateToken";
+	public final static String SEND_NOTIFICATIONS = "/pushbox/sendNotifications";
 
 }
