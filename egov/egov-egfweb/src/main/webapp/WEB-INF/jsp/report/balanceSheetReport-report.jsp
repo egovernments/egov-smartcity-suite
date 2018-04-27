@@ -63,10 +63,12 @@ function disableAsOnDate(){
 	if(document.getElementById('period').value != "Date"){
 		document.getElementById('asOndate').disabled = true;
 		document.getElementById('financialYear').disabled = false;
-	}else{
+        document.getElementById('asOndate').value= '';
+    }else{
 		document.getElementById('financialYear').disabled = true;
 		document.getElementById('asOndate').disabled = false;
-	}
+        document.getElementById("financialYear").selectedIndex = 0;
+    }
 }
 
 function validateMandatoryFields(){
@@ -81,7 +83,7 @@ function validateMandatoryFields(){
 			return false;
 		}
 	}
-	
+
 	if(document.getElementById('period').value=="Date" && document.getElementById('asOndate').value==""){
 		bootbox.alert('Please enter As On Date');
 		return false;
@@ -89,14 +91,14 @@ function validateMandatoryFields(){
 	return true;
 }
 	function balanceSheetReportSubmit()
-	{ 
+	{
 		if(validateMandatoryFields()){
 	document.balanceSheetReport.action='/EGF/report/balanceSheetReport-printBalanceSheetReport.action';
 	document.balanceSheetReport.submit();
 	return true;
 		}
 		return false;
-	
+
 }
 
 function showAllSchedules(){
@@ -121,12 +123,12 @@ function showAllSchedulesDetailed(){
 /* 		var field=document.getElementById('field').value;
 		var functionary=document.getElementById('functionary').value;
  */		var asOndate=document.getElementById('asOndate').value;
-				
-		
+
+
 
 	document.balanceSheetReport.action="/EGF/report/balanceSheetReport-generateScheduleReportDetailed.action?showDropDown=false&model.period="+period+"&model.currency="+currency+"&model.financialYear.id="+financialYear+"&model.department.id="+department+"&model.fund.id="+fund+"&model.function.id="+functionId+"&model.asOndate="+asOndate;
 
-	document.balanceSheetReport.submit();  
+	document.balanceSheetReport.submit();
 	return true;
     }
 	return false;
@@ -203,13 +205,13 @@ th.bluebgheadtd {
 				</tr>
 				<tr>
 					<td class="greybox">&nbsp;</td>
-					
+
 					<td class="greybox"><s:text name="report.function" />:</td>
 					<td class="greybox"><s:select name="function" id="function"
 							list="dropdownData.functionList" listKey="id" listValue="name"
 							headerKey="0" headerValue="----Select----"
 							value="model.function.id" /></td>
-							
+
 							<%-- <td class="greybox"><s:text name="report.functionary" />:</td>
 					<td class="greybox"><s:select name="functionary"
 							id="functionary" list="dropdownData.functionaryList" listKey="id"
@@ -246,9 +248,9 @@ th.bluebgheadtd {
 					type="Submit" value="View All Minor Schedules" class="buttonsubmit" method="generateScheduleReport"
 					onclick="return showAllSchedules()" /> &nbsp;&nbsp; <input
 					type="Submit" value="View All Schedules" class="buttonsubmit" method="generateScheduleReportDetailed"
-					onclick="return showAllSchedulesDetailed()" /> &nbsp;&nbsp; 
-					
-					
+					onclick="return showAllSchedulesDetailed()" /> &nbsp;&nbsp;
+
+
 			</div>
 			<div align="left" class="extracontent">
 				To print the report, please ensure the following settings:<br /> 1.
