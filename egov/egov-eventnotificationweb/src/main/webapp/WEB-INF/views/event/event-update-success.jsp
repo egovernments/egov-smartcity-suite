@@ -89,7 +89,8 @@
 							<div class="col-xs-3 add-margin view-content">
 								<c:out value="${event.name}" />
 							</div>
-
+						</div>
+						<div class="row add-border">
 							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.event.description" />
 							</div>
@@ -189,6 +190,14 @@
 							</div>
 							<div class="col-sm-3 add-margin view-content">
 								<c:out value="${event.cost}" />
+							</div>
+						</div>
+						<div class="row add-border">
+							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.event.url" />
+							</div>
+							<div class="col-xs-9 add-margin view-content">
+								<c:out value="${event.url}" />
 							</div>
 						</div>
 					</div>
