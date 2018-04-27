@@ -61,9 +61,9 @@ body {
 
 <c:if test="${errorMsg != ''}">
 	<div class="panel-heading" style="text-align: center">
-				<div class="add-margin error-msg" style="text-align: center;">
-					<spring:message code="${errorMsg}" />
-				</div>
+		<div class="add-margin error-msg" style="text-align: center;">
+			<spring:message code="${errorMsg}" />
+		</div>
 	</div>
 </c:if>
 <div class="row">
@@ -150,9 +150,6 @@ body {
 									</c:choose>
 								</div>
 								<div class="row add-border">
-									
-									</div>
-								<div class="row add-border">
 									<div class="col-xs-3 add-margin">
 										<spring:message code="lbl.registrationDoc.no" />
 									</div>
@@ -182,7 +179,7 @@ body {
 						</div>
 					</div>
 				</div>
-			<div class="row">
+				<div class="row">
 					<div class="col-md-12">
 						<div class="panel panel-primary" data-collapsed="0"
 							style="text-align: left">
@@ -280,8 +277,8 @@ body {
 						</div>
 					</div>
 
-					 <table width="100%" border="0" cellspacing="0" cellpadding="0"
-						class="table table-bordered" id="vacantLandTable">
+					<table width="100%" border="0" cellspacing="0" cellpadding="0"
+						class="table table-bordered" id="ownerDetailsTable">
 
 						<tbody>
 							<tr>
@@ -305,103 +302,105 @@ body {
 										items="${propertyOwner.property.basicProperty.propertyOwnerInfo}"
 										varStatus="status">
 										<tr id="ownerDetailsRow">
-										<form:hidden path="ownerAudit[${status.index}].basicproperty" />
-						                <form:hidden path="ownerAudit[${status.index}].doorNo" />
-						                <form:hidden path="ownerAudit[${status.index}].userId" />
-										
+											<form:hidden path="ownerAudit[${status.index}].basicproperty" />
+											<form:hidden path="ownerAudit[${status.index}].doorNo" />
+											<form:hidden path="ownerAudit[${status.index}].userId" />
+
 											<form:hidden
 												path="propertyOwnerInfo[${status.index}].owner.id" />
 											<form:hidden
 												path="propertyOwnerInfo[${status.index}].owner.username" />
 											<form:hidden
 												path="propertyOwnerInfo[${status.index}].owner.password" />
-												<c:choose>
-											<c:when test="${propertyOwner.property.basicProperty.propertyOwnerInfo[status.index].owner.aadhaarNumber!=null ||  not empty propertyOwner.property.basicProperty.propertyOwnerInfo[status.index].owner.aadhaarNumber}" >
+											<c:choose>
+												<c:when
+													test="${propertyOwner.property.basicProperty.propertyOwnerInfo[status.index].owner.aadhaarNumber!=null &&  not empty propertyOwner.property.basicProperty.propertyOwnerInfo[status.index].owner.aadhaarNumber}">
 													<td class="blueborderfortd" align="center"><form:input
 															path="propertyOwnerInfo[${status.index}].owner.aadhaarNumber"
-															onblur="getOwnerByAadharDetails(this);" id="aadharNumber"
-															maxlength="12" cssClass="form-control" readonly="false" />
-														<form:hidden path="ownerAudit[${status.index}].aadhaarNo" />
-													</td>	
+															cssClass="form-control patternvalidation"
+															data-pattern="number" id="aadharNumber"
+															onblur="getOwnerByAadharDetails(this);" 
+															maxlength="12" readonly="false" /> <form:hidden
+															path="ownerAudit[${status.index}].aadhaarNo" /></td>
 													<td class="blueborderfortd" align="center"><form:input
-													path="propertyOwnerInfo[${status.index}].owner.mobileNumber"
-													id="mobileNumber" maxlength="10" cssClass="form-control" readonly="true"/>
-													<form:hidden path="ownerAudit[${status.index}].mobileNo" /> 
-											</td>
-											<td class="blueborderfortd" align="center"><form:input
-													path="propertyOwnerInfo[${status.index}].owner.name"
-													id="name" maxlength="74" cssClass="form-control" readonly="true"/>
-													<form:hidden path="ownerAudit[${status.index}].ownerName" />
-													</td> 
+															path="propertyOwnerInfo[${status.index}].owner.mobileNumber"
+															id="mobileNumber" maxlength="10"
+															cssClass="form-control patternvalidation"
+															data-pattern="number" readonly="true" /> <form:hidden
+															path="ownerAudit[${status.index}].mobileNo" /></td>
+													<td class="blueborderfortd" align="center"><form:input
+															path="propertyOwnerInfo[${status.index}].owner.name"
+															id="name" maxlength="74" cssClass="form-control"
+															readonly="true" /> <form:hidden
+															path="ownerAudit[${status.index}].ownerName" /></td>
 
-											<td class="blueborderfortd" align="center"><form:input
-													path="propertyOwnerInfo[${status.index}].owner.gender"
-													id="sgender" name="gender" data-first-option="false"
-													cssClass="form-control" readonly="true" />
-													<form:hidden path="ownerAudit[${status.index}].gender" />
+													<td class="blueborderfortd" align="center"><form:input
+															path="propertyOwnerInfo[${status.index}].owner.gender"
+															id="sgender" name="gender" data-first-option="false"
+															cssClass="form-control" readonly="true" /> <form:hidden
+															path="ownerAudit[${status.index}].gender" /></td>
+													<td class="blueborderfortd" align="center"><form:input
+															path="propertyOwnerInfo[${status.index}].owner.emailId"
+															id="emailId" maxlength="32" cssClass="form-control"
+															readonly="true" /> <form:hidden
+															path="ownerAudit[${status.index}].emailId" /></td>
+													<td class="blueborderfortd" align="center"><form:input
+															path="propertyOwnerInfo[${status.index}].owner.guardianRelation"
+															id="guardianRelation" name="guardianRelation"
+															data-first-option="false" cssClass="form-control"
+															readonly="true" /> <form:hidden
+															path="ownerAudit[${status.index}].guardianRelation" /></td>
+													<td class="blueborderfortd" align="center"><form:input
+															path="propertyOwnerInfo[${status.index}].owner.guardian"
+															id="guardianName" maxlength="32" cssClass="form-control"
+															readonly="true" /> <form:hidden
+															path="ownerAudit[${status.index}].guardianName" /></td>
+												</c:when>
+												<c:otherwise>
+													<td class="blueborderfortd" align="center"><form:input
+															path="propertyOwnerInfo[${status.index}].owner.aadhaarNumber"
+															id="aadharNumber" maxlength="12"
+															cssClass="form-control patternvalidation"
+															data-pattern="number" data-idx="0"
+															onblur="getOwnerByAadharDetails(this);" /> <form:hidden
+															path="ownerAudit[${status.index}].aadhaarNo" /></td>
+													<td class="blueborderfortd" align="center"><form:input
+															path="propertyOwnerInfo[${status.index}].owner.mobileNumber"
+															cssClass="form-control patternvalidation"
+															data-pattern="number" id="mobileNumber" maxlength="10" />
+														<form:hidden path="ownerAudit[${status.index}].mobileNo" />
 													</td>
-											<td class="blueborderfortd" align="center"><form:input
-													path="propertyOwnerInfo[${status.index}].owner.emailId"
-													id="emailId" maxlength="32" cssClass="form-control" readonly="true"/>
-													<form:hidden path="ownerAudit[${status.index}].emailId" />
-													</td>
-											<td class="blueborderfortd" align="center"><form:input
-													path="propertyOwnerInfo[${status.index}].owner.guardianRelation"
-													id="guardianRelation" name="guardianRelation"
-													data-first-option="false" cssClass="form-control" readonly="true"/>
-													<form:hidden path="ownerAudit[${status.index}].guardianRelation" />
-													</td>
-											<td class="blueborderfortd" align="center"><form:input
-													path="propertyOwnerInfo[${status.index}].owner.guardian"
-													id="guardianName" maxlength="32" cssClass="form-control" readonly="true"/>
-													 <form:hidden path="ownerAudit[${status.index}].guardianName" /> 
-											</td> 
-											</c:when>
-											<c:otherwise>
-											<td class="blueborderfortd" align="center"><form:input
-													path="propertyOwnerInfo[${status.index}].owner.aadhaarNumber"
-													id="aadharNumber" maxlength="12" cssClass="form-control" data-idx="0" onblur="getOwnerByAadharDetails(this);"/>
-											<form:hidden path="ownerAudit[${status.index}].aadhaarNo" />
-											</td>
-											<td class="blueborderfortd" align="center"><form:input
-													path="propertyOwnerInfo[${status.index}].owner.mobileNumber"
-													id="mobileNumber" maxlength="10" cssClass="form-control" />
-													<form:hidden path="ownerAudit[${status.index}].mobileNo" /> 
-											</td>
-											 <td class="blueborderfortd" align="center"><form:input
-													path="propertyOwnerInfo[${status.index}].owner.name"
-													id="name" maxlength="74" cssClass="form-control" />
-													 <form:hidden path="ownerAudit[${status.index}].ownerName" />
-											</td>
+													<td class="blueborderfortd" align="center"><form:input
+															path="propertyOwnerInfo[${status.index}].owner.name"
+															id="name" maxlength="74" cssClass="form-control" /> <form:hidden
+															path="ownerAudit[${status.index}].ownerName" /></td>
 
-											<td class="blueborderfortd" align="center"><form:select
-													path="propertyOwnerInfo[${status.index}].owner.gender"
-													id="sgender" name="gender" data-first-option="false"
-													cssClass="form-control">
-													<option value="">--select--</option>
-													<form:options items="${gender}" />
-												</form:select>
-												<form:hidden path="ownerAudit[${status.index}].gender" />
-												</td>
-											<td class="blueborderfortd" align="center"><form:input
-													path="propertyOwnerInfo[${status.index}].owner.emailId"
-													id="emailId" maxlength="32" cssClass="form-control" />
-													<form:hidden path="ownerAudit[${status.index}].emailId" />
+													<td class="blueborderfortd" align="center"><form:select
+															path="propertyOwnerInfo[${status.index}].owner.gender"
+															id="sgender" name="gender" data-first-option="false"
+															cssClass="form-control">
+															<option value="">--select--</option>
+															<form:options items="${gender}" />
+														</form:select> <form:hidden path="ownerAudit[${status.index}].gender" />
 													</td>
-											<td class="blueborderfortd" align="center"><form:select
-													path="propertyOwnerInfo[${status.index}].owner.guardianRelation"
-													id="guardianRelation" name="guardianRelation"
-													data-first-option="false" cssClass="form-control">
-													<option value="">--select--</option>
-													<form:options items="${guardianRelations}" />
-												</form:select>
-												<form:hidden path="ownerAudit[${status.index}].guardianRelation" /></td>
-											<td class="blueborderfortd" align="center"><form:input
-													path="propertyOwnerInfo[${status.index}].owner.guardian"
-													id="guardianName" maxlength="32" cssClass="form-control" />
-												 <form:hidden path="ownerAudit[${status.index}].guardianName" />
-											</td>
-											</c:otherwise>
+													<td class="blueborderfortd" align="center"><form:input
+															path="propertyOwnerInfo[${status.index}].owner.emailId"
+															id="emailId" maxlength="32" cssClass="form-control" /> <form:hidden
+															path="ownerAudit[${status.index}].emailId" /></td>
+													<td class="blueborderfortd" align="center"><form:select
+															path="propertyOwnerInfo[${status.index}].owner.guardianRelation"
+															id="guardianRelation" name="guardianRelation"
+															data-first-option="false" cssClass="form-control">
+															<option value="">--select--</option>
+															<form:options items="${guardianRelations}" />
+														</form:select> <form:hidden
+															path="ownerAudit[${status.index}].guardianRelation" /></td>
+													<td class="blueborderfortd" align="center"><form:input
+															path="propertyOwnerInfo[${status.index}].owner.guardian"
+															id="guardianName" maxlength="32" cssClass="form-control" />
+														<form:hidden
+															path="ownerAudit[${status.index}].guardianName" /></td>
+												</c:otherwise>
 											</c:choose>
 
 										</tr>
@@ -428,80 +427,180 @@ body {
 <script
 	src="<cdn:url value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script>
-	jQuery('#submitform').click(function(e) {
-		
-		if (!jQuery('#doorNumber').val()) {
-			bootbox.alert('Door number is mandatory');
-			return false;
-		}
-		else if (!jQuery('#mobileNumber').val()) {
-			bootbox.alert('Mobile Number is mandatory');
-			return false;
-		}
-		else if (!jQuery('#name').val()) {
-			bootbox.alert('Owner Name is mandatory');
-			return false;
-		}
-		else if (!jQuery('#sgender').val()) {
-			bootbox.alert('Gender is mandatory');
-			return false;
-		}
-		else if (!jQuery('#guardianRelation').val()) {
-			bootbox.alert('Guardian Relation is mandatory');
-			return false;
-		}
-		else if (!jQuery('#guardianName').val()) {
-			bootbox.alert('Guardian Name is mandatory');
-			return false;
-		}		
-		
+	jQuery('#submitform')
+			.click(
+					function(e) {
 
-		return true;
-		
-	})
-	
+						if (!jQuery('#doorNumber').val()) {
+							bootbox.alert('Door number is mandatory');
+							return false;
+						}
+						var mandatoryAlert;
+						$('#ownerDetailsTable tbody tr')
+								.find('td select')
+								.each(
+										function(index) {
+											if ($(this).attr('id') === 'guardianRelation'
+													&& this.value.trim() == '') {
+												mandatoryAlert = "Guardian relation is mandatory";
+												return false;
+											} else if ($(this).attr('id') === 'sgender'
+													&& this.value.trim() == '') {
+												mandatoryAlert = "Gender is mandatory";
+												return false;
+											}
+										});
+						$('#ownerDetailsTable tbody tr')
+								.find('td input')
+								.each(
+										function(index) {
+											if ($(this).attr('id') === 'name'
+													&& this.value.trim() == '') {
+												mandatoryAlert = "Owners Name is mandatory";
+												return false;
+											} else if ($(this).attr('id') === 'guardianName'
+													&& this.value.trim() == '') {
+												mandatoryAlert = "Guardian Name is mandatory";
+												return false;
+											} else if ($(this).attr('id') === 'mobileNumber'
+													&& this.value.trim() == '') {
+												mandatoryAlert = "Mobile Number is mandatory";
+												return false;
+											}
+
+										});
+
+						if (mandatoryAlert != '') {
+							bootbox.alert(mandatoryAlert);
+							return false;
+						}
+
+						return true;
+
+					})
+
 	function getOwnerByAadharDetails(obj) {
-    	   var aadharNo = jQuery(obj).val();
-    	   var rowidx= jQuery(obj).data('idx');
-    	   jQuery.ajax({
-				type: "GET",
-				url: "/egi/aadhaar/"+aadharNo,
-				cache: true
-			}).done(function(value) {
-				console.log('response received!')
-				var userInfoObj = jQuery.parseJSON(value);
-				if(userInfoObj.uid == aadharNo) {
-					jQuery("input[name='propertyOwnerInfo["+ rowidx +"].owner.name']").val(userInfoObj.name);
-					jQuery("input[name='propertyOwnerInfo["+ rowidx +"].owner.name']").attr('readonly', true);
-					if(userInfoObj.gender == 'M' || userInfoObj.gender == 'Male') {
-						jQuery("select[name='propertyOwnerInfo["+ rowidx +"].owner.gender']").val("MALE");
-					} else if (userInfoObj.gender == 'F' || userInfoObj.gender == 'Female') {
-						jQuery("select[name='propertyOwnerInfo["+ rowidx +"].owner.gender']").val("FEMALE");
-					} else {
-						jQuery("select[name='propertyOwnerInfo["+ rowidx +"].owner.gender']").val("OTHERS");
-					} 
-					jQuery("select[name='propertyOwnerInfo["+ rowidx +"].owner.gender']").attr('disabled','disabled');
-					jQuery("input[name='propertyOwnerInfo["+ rowidx +"].owner.mobileNumber']").val(userInfoObj.phone);
-					jQuery("input[name='propertyOwnerInfo["+ rowidx +"].owner.mobileNumber']").attr('readonly', true);
-					jQuery("input[name='propertyOwnerInfo["+ rowidx +"].owner.emailId']").attr('readonly', true);
-					jQuery("select[name='propertyOwnerInfo["+ rowidx +"].owner.guardianRelation']").removeAttr('disabled');
-					jQuery("input[name='propertyOwnerInfo["+ rowidx +"].owner.guardian']").val(userInfoObj.careof);
-					jQuery("input[name='propertyOwnerInfo["+ rowidx +"].owner.guardian']").attr('readonly', true);
-				} else {
-					jQuery("input[name='propertyOwnerInfo["+ rowidx +"].owner.aadhaarNumber']").val("");
-					jQuery("input[name='propertyOwnerInfo["+ rowidx +"].owner.name']").val("");
-					jQuery("input[name='propertyOwnerInfo["+ rowidx +"].owner.name']").attr('readonly', false);
-					jQuery("select[name='propertyOwnerInfo["+ rowidx +"].owner.gender']").removeAttr('disabled');
-					jQuery("select[name='propertyOwnerInfo["+ rowidx +"].owner.gender']").val("");
-					jQuery("input[name='propertyOwnerInfo["+ rowidx +"].owner.mobileNumber']").val("").attr('readonly', false);
-					jQuery("input[name='propertyOwnerInfo["+ rowidx +"].owner.emailId']").attr('readonly', false);
-					jQuery("select[name='propertyOwnerInfo["+ rowidx +"].owner.guardianRelation']").removeAttr('disabled');
-					jQuery("input[name='propertyOwnerInfo["+ rowidx +"].owner.guardian']").val("");
-					jQuery("input[name='propertyOwnerInfo["+ rowidx +"].owner.guardian']").attr('readonly', false);
-					if(aadharNo != "NaN") {
-					bootbox.alert("Aadhar number is not valid");
-					}
-			   }
-			});
-       }
+		var aadharNo = jQuery(obj).val();
+		var rowidx = jQuery(obj).data('idx');
+		jQuery
+				.ajax({
+					type : "GET",
+					url : "/egi/aadhaar/" + aadharNo,
+					cache : true
+				})
+				.done(
+						function(value) {
+							console.log('response received!')
+							var userInfoObj = jQuery.parseJSON(value);
+							if (userInfoObj.uid == aadharNo) {
+								jQuery(
+										"input[name='propertyOwnerInfo["
+												+ rowidx + "].owner.name']")
+										.val(userInfoObj.name);
+								jQuery(
+										"input[name='propertyOwnerInfo["
+												+ rowidx + "].owner.name']")
+										.attr('readonly', true);
+								if (userInfoObj.gender == 'M'
+										|| userInfoObj.gender == 'Male') {
+									jQuery(
+											"select[name='propertyOwnerInfo["
+													+ rowidx
+													+ "].owner.gender']").val(
+											"MALE");
+								} else if (userInfoObj.gender == 'F'
+										|| userInfoObj.gender == 'Female') {
+									jQuery(
+											"select[name='propertyOwnerInfo["
+													+ rowidx
+													+ "].owner.gender']").val(
+											"FEMALE");
+								} else {
+									jQuery(
+											"select[name='propertyOwnerInfo["
+													+ rowidx
+													+ "].owner.gender']").val(
+											"OTHERS");
+								}
+								jQuery(
+										"select[name='propertyOwnerInfo["
+												+ rowidx + "].owner.gender']")
+										.attr('disabled', 'disabled');
+								jQuery(
+										"input[name='propertyOwnerInfo["
+												+ rowidx
+												+ "].owner.mobileNumber']")
+										.val(userInfoObj.phone);
+								jQuery(
+										"input[name='propertyOwnerInfo["
+												+ rowidx
+												+ "].owner.mobileNumber']")
+										.attr('readonly', true);
+								jQuery(
+										"input[name='propertyOwnerInfo["
+												+ rowidx + "].owner.emailId']")
+										.attr('readonly', true);
+								jQuery(
+										"select[name='propertyOwnerInfo["
+												+ rowidx
+												+ "].owner.guardianRelation']")
+										.removeAttr('disabled');
+								jQuery(
+										"input[name='propertyOwnerInfo["
+												+ rowidx + "].owner.guardian']")
+										.val(userInfoObj.careof);
+								jQuery(
+										"input[name='propertyOwnerInfo["
+												+ rowidx + "].owner.guardian']")
+										.attr('readonly', true);
+							} else {
+								jQuery(
+										"input[name='propertyOwnerInfo["
+												+ rowidx
+												+ "].owner.aadhaarNumber']")
+										.val("");
+								jQuery(
+										"input[name='propertyOwnerInfo["
+												+ rowidx + "].owner.name']")
+										.val("");
+								jQuery(
+										"input[name='propertyOwnerInfo["
+												+ rowidx + "].owner.name']")
+										.attr('readonly', false);
+								jQuery(
+										"select[name='propertyOwnerInfo["
+												+ rowidx + "].owner.gender']")
+										.removeAttr('disabled');
+								jQuery(
+										"select[name='propertyOwnerInfo["
+												+ rowidx + "].owner.gender']")
+										.val("");
+								jQuery(
+										"input[name='propertyOwnerInfo["
+												+ rowidx
+												+ "].owner.mobileNumber']")
+										.val("").attr('readonly', false);
+								jQuery(
+										"input[name='propertyOwnerInfo["
+												+ rowidx + "].owner.emailId']")
+										.attr('readonly', false);
+								jQuery(
+										"select[name='propertyOwnerInfo["
+												+ rowidx
+												+ "].owner.guardianRelation']")
+										.removeAttr('disabled');
+								jQuery(
+										"input[name='propertyOwnerInfo["
+												+ rowidx + "].owner.guardian']")
+										.val("");
+								jQuery(
+										"input[name='propertyOwnerInfo["
+												+ rowidx + "].owner.guardian']")
+										.attr('readonly', false);
+								if (aadharNo != "NaN") {
+									bootbox.alert("Aadhar number is not valid");
+								}
+							}
+						});
+	}
 </script>
