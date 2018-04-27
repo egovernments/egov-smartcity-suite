@@ -71,7 +71,7 @@ body
 	<div class="col-md-12">
 		<form:form class="form-horizontal form-groups-bordered" method="post"
 			name="taxExemptionForm" id="taxExemptionForm" action=""
-			modelAttribute="property" onsubmit="validate()" enctype="multipart/form-data">
+			modelAttribute="property" enctype="multipart/form-data">
 			<div class="panel panel-primary" data-collapsed="0"
 				style="text-align: left">
 				<jsp:include page="../../common/commonPropertyDetailsView.jsp"></jsp:include>
@@ -157,10 +157,8 @@ body
 <script language="javascript">
 
 function loadOnStartUp(exempted) {
-	var isAlert = ${isAlert};
 	var isExempted = exempted;
-	var citizenPortalUser = ${citizenPortalUser};
-	if(isExempted && isAlert){
+	if(isExempted){
 		bootbox.dialog({
 		    title: 'Property Tax Exemption',
 		    closeButton: false,

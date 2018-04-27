@@ -119,7 +119,7 @@ public class TaxExemptionController extends GenericWorkFlowController {
     private static final String NGO_DOC = "ngoDocs";
     private static final String WORSHIP_DOC = "worshipDocs";
     private static final String EXSERVICE_DOC = "exserviceDocs";
-    private boolean citizenPortalUser;
+    private boolean citizenPortalUser= false;
     
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
@@ -263,7 +263,6 @@ public class TaxExemptionController extends GenericWorkFlowController {
         model.addAttribute("additionalRule", EXEMPTION);
         model.addAttribute("isExempted", isExempted);
         model.addAttribute(APPLICATION_SOURCE, applicationSource);
-        model.addAttribute("isAlert", true);
         model.addAttribute(CHOULTRY_DOC, "");
         model.addAttribute(WORSHIP_DOC, "");
         model.addAttribute(EDUINST_DOC, "");
@@ -296,6 +295,8 @@ public class TaxExemptionController extends GenericWorkFlowController {
         if ((!propertyByEmployee || loggedUserIsMeesevaUser) && assignment == null
                 && propertyService.getUserPositionByZone(property.getBasicProperty(), false) == null) {
             model.addAttribute(ERROR_MSG, "No Senior or Junior assistants exists,Please check");
+            model.addAttribute("property", property);
+            model.addAttribute("isExempted", oldProperty.getIsExemptedFromTax());
             model.addAttribute("stateType", property.getClass().getSimpleName());
             taxExemptionService.addModelAttributes(model, property.getBasicProperty());
             prepareWorkflow(model, property, new WorkflowContainer());
