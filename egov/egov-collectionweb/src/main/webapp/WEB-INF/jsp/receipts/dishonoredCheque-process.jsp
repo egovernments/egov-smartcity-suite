@@ -86,12 +86,19 @@
 		//jQuery(showGlTable).removeClass("display-hide");
 		var amount = document.getElementsByName("amount");
 		var showGlDebitAmount = document.getElementsByName("showGlDebitAmount");
+		var showGlCreditAmount = document.getElementsByName("showGlCreditAmount");
 		var len = amount.length;
-		var totalAmount = 0;
+		var totalAmount = 0;  
 		for (i = 0; i < len; i++) {
 			showGlTotalAmount = Number(showGlTotalAmount)
 					+ Number(amount[i].value);
-			showGlDebitAmount[i].innerHTML = amount[i].value;
+			if(showGlCreditAmount[i].innerHTML >0 )
+			{
+				showGlCreditAmount[i].innerHTML = amount[i].value;
+				showGlDebitAmount[i].innerHTML = 0;
+			}
+		   else
+			  showGlDebitAmount[i].innerHTML = amount[i].value;
 		}
 		dom.get("showGlDebitTotalAmount").innerHTML = showGlTotalAmount;
 		dom.get("showGlCreditTotalAmount").innerHTML = dom
@@ -192,9 +199,15 @@
 			var totalAmount = 0;
 			for (i = 0; i < len; i++) {
 				showGlTotalAmount = Number(showGlTotalAmount)
-						+ Number(amount[i].value);
-				showGlDebitAmount[i].innerHTML = amount[i].value;
-			}
+						+ Number(amount[i].value);  
+				if(showGlCreditAmount[i].innerHTML >0 )
+					{
+					showGlCreditAmount[i].innerHTML = amount[i].value;
+					showGlDebitAmount[i].innerHTML = 0;
+					}
+				else
+					showGlDebitAmount[i].innerHTML = amount[i].value;
+			}   
 			dom.get("showGlDebitTotalAmount").innerHTML = showGlTotalAmount;
 			dom.get("showGlCreditTotalAmount").innerHTML = dom
 					.get("showRemittanceGlCreditAmount").innerHTML;
@@ -222,7 +235,7 @@
 				amount[i].value = debitAmount;
 				totalAmount = totalAmount + debitAmount;
 			} else {
-				amount[i].value = -creditAmount;
+				amount[i].value = creditAmount;
 				totalAmount = totalAmount - creditAmount;
 			}
 		}

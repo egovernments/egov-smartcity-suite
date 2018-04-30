@@ -47,6 +47,17 @@
  */
 package org.egov.collection.web.actions.receipts;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -69,17 +80,6 @@ import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQuerySQL;
 import org.egov.model.instrument.InstrumentType;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Results({ @Result(name = DishonoredChequeAction.SEARCH, location = "dishonoredCheque-search.jsp"),
         @Result(name = DishonoredChequeAction.SUCCESS, location = "dishonoredCheque-success.jsp"),
@@ -266,9 +266,8 @@ public class DishonoredChequeAction extends SearchFormAction {
     }
 
     /**
-     * Populates all the glcodes for which reversal rd entries have to be made
-     * fetches all glcodes with creditamount > 0 for receipt and fetches all
-     * glcodes with debitamount > 0 for all others(payment,contra)
+     * Populates all the glcodes for which reversal rd entries have to be made fetches all glcodes with creditamount > 0 for
+     * receipt and fetches all glcodes with debitamount > 0 for all others(payment,contra)
      */
     @SuppressWarnings("unchecked")
     public void getReversalGlCodes() {
@@ -279,14 +278,16 @@ public class DishonoredChequeAction extends SearchFormAction {
         reversalAmount = (BigDecimal) persistenceService
                 .find("select sum(instrumentAmount) from InstrumentHeader where id in (" + instHeaderIds + ")");
         glCodescredit = persistenceService
-                .findAllBy("select rh.id ,accounthead.id, accounthead.glcode,accounthead.name, sum(rd.cramount),sum(rd.dramount),function.id from ReceiptDetail rd  inner join rd.accounthead as accounthead inner join rd.receiptHeader as rh inner join rd.function as function where rh.id in("
-                        + receiptHeaderIds
-                        + ") and rd.dramount<>0 and rd.cramount=0 and accounthead.glcode not in (select glcode from CChartOfAccounts where purposeId in (select id from AccountCodePurpose where name='Cheque In Hand')) group by rh.id ,accounthead.id,accounthead.glcode,accounthead.name,function.id order by accounthead");
+                .findAllBy(
+                        "select rh.id ,accounthead.id, accounthead.glcode,accounthead.name, sum(rd.cramount),sum(rd.dramount),function.id from ReceiptDetail rd  inner join rd.accounthead as accounthead inner join rd.receiptHeader as rh inner join rd.function as function where rh.id in("
+                                + receiptHeaderIds
+                                + ") and rd.dramount<>0 and rd.cramount=0 and accounthead.glcode not in (select glcode from CChartOfAccounts where purposeId in (select id from AccountCodePurpose where name='Cheque In Hand')) group by rh.id ,accounthead.id,accounthead.glcode,accounthead.name,function.id order by accounthead");
 
         glCodes = persistenceService
-                .findAllBy("select rh.id ,accounthead.id, accounthead.glcode,accounthead.name, sum(rd.cramount),sum(rd.dramount),function.id from ReceiptDetail rd  inner join rd.accounthead as accounthead inner join rd.receiptHeader as rh inner join rd.function as function where rh.id in("
-                        + receiptHeaderIds
-                        + ") and rd.cramount<>0 and rd.dramount=0  group by rh.id ,accounthead.id,accounthead.glcode,accounthead.name,function.id order by accounthead");
+                .findAllBy(
+                        "select rh.id ,accounthead.id, accounthead.glcode,accounthead.name, sum(rd.cramount),sum(rd.dramount),function.id from ReceiptDetail rd  inner join rd.accounthead as accounthead inner join rd.receiptHeader as rh inner join rd.function as function where rh.id in("
+                                + receiptHeaderIds
+                                + ") and rd.cramount<>0 and rd.dramount=0  group by rh.id ,accounthead.id,accounthead.glcode,accounthead.name,function.id order by accounthead");
         glCodes.addAll(glCodescredit);
 
         String reversalGlCodesStr = "";
@@ -310,9 +311,12 @@ public class DishonoredChequeAction extends SearchFormAction {
                 reversalGlCodesStr = reversalGlCodesStr + "," + "'" + getStringValue(rd[2]) + "'";
         }
         remittanceDetailsCredit = persistenceService
-                .findAllBy("select rh.id ,accounthead.id, accounthead.glcode,accounthead.name, sum(rd.cramount),sum(rd.dramount),function.id from ReceiptDetail rd  inner join rd.accounthead as accounthead inner join rd.receiptHeader as rh inner join rd.function as function inner join rh.receiptInstrument ri where ri.id in ("
-                        + instHeaderIds
-                        + ") and rd.dramount<>0 and rd.cramount=0  group by rh.id ,accounthead.id,accounthead.glcode,accounthead.name,function.id order by accounthead");
+                .findAllBy(
+                        "select rh.id ,accounthead.id, accounthead.glcode,accounthead.name, sum(rd.cramount),sum(rd.dramount),function.id from ReceiptDetail rd  inner join rd.accounthead as accounthead inner join rd.receiptHeader as rh inner join rd.function as function inner join rh.receiptInstrument ri where ri.id in ("
+                                + instHeaderIds
+                                + ") and rd.dramount<>0 and rd.cramount=0   "
+                                + " and accounthead.glcode in (select glcode from CChartOfAccounts where purposeId in (select id from AccountCodePurpose where name='Cheque In Hand')) "
+                                + " group by rh.id ,accounthead.id,accounthead.glcode,accounthead.name,function.id order by accounthead");
         for (final Object[] rd : remittanceDetailsCredit) {
             final DishonoredChequeBean detail = new DishonoredChequeBean();
             final ReceiptVoucher receiptVoucher = (ReceiptVoucher) persistenceService.findByNamedQuery(
@@ -335,7 +339,8 @@ public class DishonoredChequeAction extends SearchFormAction {
                                 + "ih.instrumentdate as instrumentdate,ih.instrumentamount as instrumentamount,b.name as bankname,ba.accountnumber as accountnumber,ih.payto as payto,status.description as description from egcl_collectionheader rpt,egcl_collectioninstrument ci,egf_instrumentheader ih,egw_status status,bank b,"
                                 + "bankbranch bb,bankaccount ba where rpt.id = ci.collectionheader AND ci.instrumentheader = ih.id AND status.id = ih.id_status "
                                 + "AND b.id = bb.bankid AND bb.id = ba.branchid AND ba.id = ih.bankaccountid and ih.id in  ("
-                                + instHeaderIds + ")").list();
+                                + instHeaderIds + ")")
+                .list();
         dishonoredChequeDisplayList = populateDishonorChequeBean(instrumentDetails);
     }
 
