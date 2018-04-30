@@ -1790,4 +1790,6 @@ public interface PropertyTaxConstants {
 
         }
     };
+    
+    public static final String APPCONFIG_GIS_THIRDPARTY_CHECKBOX_REQUIRED = "PTIS_GIS_THIRDPARTY_CHECKBOX_REQUIRED";
 }

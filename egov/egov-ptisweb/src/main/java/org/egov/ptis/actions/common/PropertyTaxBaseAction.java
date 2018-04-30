@@ -1013,17 +1013,22 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     }
 
     public void enableActionsForGIS(final PropertyImpl property, final List<DocumentType> documentTypes) {
-        if (property.getState().getNextAction().endsWith(WF_STATE_COMMISSIONER_APPROVAL_PENDING)
-                && property.getSurveyVariance().compareTo(BigDecimal.TEN) > 0)
-            showCheckboxForGIS = true;
-        if (property.isThirdPartyVerified()
-                && property.getState().getValue().endsWith(":".concat(WF_STATE_REJECTED))
-                && WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING
-                        .equalsIgnoreCase(property.getState().getNextAction())) {
-            showCheckboxForGIS = true;
-            for (final DocumentType docType : documentTypes)
-                if (DOCUMENT_TYPE_THIRD_PARTY_SURVEY.equalsIgnoreCase(docType.getName()))
-                    docType.setMandatory(true);
+        String appConfigValue = propertyTaxCommonUtils.getAppConfigValue(APPCONFIG_GIS_THIRDPARTY_CHECKBOX_REQUIRED, PTMODULENAME);
+        if("N".equalsIgnoreCase(appConfigValue))
+            showCheckboxForGIS = false;
+        else {
+            if (property.getState().getNextAction().endsWith(WF_STATE_COMMISSIONER_APPROVAL_PENDING)
+                    && property.getSurveyVariance().compareTo(BigDecimal.TEN) > 0)
+                showCheckboxForGIS = true;
+            if (property.isThirdPartyVerified()
+                    && property.getState().getValue().endsWith(":".concat(WF_STATE_REJECTED))
+                    && WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING
+                            .equalsIgnoreCase(property.getState().getNextAction())) {
+                showCheckboxForGIS = true;
+                for (final DocumentType docType : documentTypes)
+                    if (DOCUMENT_TYPE_THIRD_PARTY_SURVEY.equalsIgnoreCase(docType.getName()))
+                        docType.setMandatory(true);
+            }
         }
     }
 
