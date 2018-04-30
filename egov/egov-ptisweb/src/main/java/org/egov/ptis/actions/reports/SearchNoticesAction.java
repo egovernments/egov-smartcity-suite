@@ -563,12 +563,11 @@ public class SearchNoticesAction extends SearchFormAction {
 
     @Override
     public void validate() {
-
         if (noticeType == null || noticeType.equals("-1"))
             addActionError(getText("mandatory.noticeType"));
-        if (noticeFromDate == null)
+        if (noticeFromDate != null && noticeToDate == null)
             addActionError(getText("mandatory.noticeTodt"));
-        if (noticeFromDate == null)
+        if (noticeToDate != null && noticeFromDate == null)
             addActionError(getText("mandatory.noticeFromdt"));
         if (noticeFromDate != null && noticeFromDate.after(new Date()))
             addActionError(getText("mandatory.noticeFromdtBeforeCurr"));
