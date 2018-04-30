@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -74,6 +74,7 @@ import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.egov.tl.utils.Constants.COMMISSIONER_DESGN;
+import static org.egov.tl.utils.Constants.ENABLE_SMS_EMAIL_FOR_DEMANDGENERATION;
 import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.TRADE_LICENSE;
@@ -148,8 +149,12 @@ public class LicenseUtils {
     }
 
     public String getApplicationSenderName(UserType userType, String userName, String applicantName) {
-        return (SecurityUtils.currentUserIsAnonymous()
-                || UserType.CITIZEN == userType) ? applicantName
-                : userName;
+        return SecurityUtils.currentUserIsAnonymous() || UserType.CITIZEN == userType ? applicantName : userName;
+    }
+
+    public boolean isNotificationsEnabled() {
+        final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+                TRADE_LICENSE, ENABLE_SMS_EMAIL_FOR_DEMANDGENERATION).get(0);
+        return "YES".equals(appConfigValue.getValue());
     }
 }

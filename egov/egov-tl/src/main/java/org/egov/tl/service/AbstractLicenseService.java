@@ -437,6 +437,11 @@ public abstract class AbstractLicenseService<T extends License> {
                 licenseDemandDetail.setAmount(tradeAmt);
             if (license.getCurrentDemand().getEgInstallmentMaster().getInstallmentYear().before(installment.getInstallmentYear()))
                 license.getLicenseDemand().setEgInstallmentMaster(installment);
+
+            if (licenseUtils.isNotificationsEnabled()) {
+                Date penaltyDate = penaltyRatesService.getPenaltyDate(license, installment);
+                tradeLicenseSmsAndEmailService.sendNotificationOnDemandGeneration(license, tradeAmt, installment, penaltyDate);
+            }
         }
         license.getLicenseDemand().recalculateBaseDemand();
         licenseRepository.save(license);

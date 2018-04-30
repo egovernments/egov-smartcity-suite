@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -47,12 +47,14 @@
  */
 package org.egov.tl.service;
 
+import org.egov.commons.Installment;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.utils.DateUtils;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.PenaltyRates;
 import org.egov.tl.repository.PenaltyRatesRepository;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,6 +62,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+
+import static java.math.BigDecimal.ZERO;
 
 @Service
 @Transactional(readOnly = true)
@@ -103,5 +108,16 @@ public class PenaltyRatesService {
             return amount.multiply(BigDecimal.valueOf(penaltyRates.getRate() / 100));
         }
         return BigDecimal.ZERO;
+    }
+
+    public Date getPenaltyDate(License license, Installment installment) {
+        Optional<PenaltyRates> penaltyRates = search(license.getLicenseAppType().getId())
+                .stream()
+                .filter(penaltyRate -> penaltyRate.getRate().doubleValue() <= ZERO.doubleValue())
+                .findFirst();
+
+        return LocalDate.fromDateFields(installment.getFromDate())
+                .plusDays(penaltyRates.isPresent() ? penaltyRates.get().getToRange().intValue() : ZERO.intValue())
+                .toDate();
     }
 }

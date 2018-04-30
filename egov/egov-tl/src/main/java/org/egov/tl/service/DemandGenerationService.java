@@ -51,9 +51,7 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.commons.service.CFinancialYearService;
-import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Module;
-import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.EnvironmentSettings;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -79,7 +77,6 @@ import java.util.List;
 import static org.egov.infra.persistence.utils.PersistenceUtils.flushBatchUpdate;
 import static org.egov.tl.entity.enums.ProcessStatus.COMPLETED;
 import static org.egov.tl.entity.enums.ProcessStatus.INCOMPLETE;
-import static org.egov.tl.utils.Constants.ENABLE_SMS_EMAIL_FOR_DEMANDGENERATION;
 import static org.egov.tl.utils.Constants.TRADE_LICENSE;
 
 @Service
@@ -108,12 +105,6 @@ public class DemandGenerationService {
     @Autowired
     @Qualifier("tradeLicenseService")
     private AbstractLicenseService licenseService;
-
-    @Autowired
-    private AppConfigValueService appConfigValuesService;
-
-    @Autowired
-    private TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
 
     private int batchSize;
 
@@ -169,8 +160,6 @@ public class DemandGenerationService {
                     if (!installment.equals(license.getCurrentDemand().getEgInstallmentMaster())) {
                         licenseService.raiseDemand(license, module, installment);
                         demandGenerationLogDetail.setDetail(SUCCESSFUL);
-                        if (isNotificationsEnabled())
-                            tradeLicenseSmsAndEmailService.sendNotificationOnDemandGeneration(license, module, installment);
                     }
                     demandGenerationLogDetail.setStatus(COMPLETED);
                 } catch (RuntimeException e) {
@@ -209,10 +198,5 @@ public class DemandGenerationService {
         return currentDate.isAfter(startOfCalenderDate) && currentDate.isBefore(endOfCalenderDate);
     }
 
-    private Boolean isNotificationsEnabled() {
-        final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
-                TRADE_LICENSE, ENABLE_SMS_EMAIL_FOR_DEMANDGENERATION).get(0);
-        return "YES".equals(appConfigValue.getValue());
-    }
 
 }

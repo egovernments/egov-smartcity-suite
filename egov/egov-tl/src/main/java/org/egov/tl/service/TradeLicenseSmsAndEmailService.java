@@ -49,15 +49,10 @@ package org.egov.tl.service;
 
 import org.egov.commons.Installment;
 import org.egov.commons.service.CFinancialYearService;
-import org.egov.demand.dao.DemandGenericDao;
 import org.egov.demand.model.EgDemandDetails;
-import org.egov.demand.model.EgDemandReason;
-import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.notification.service.NotificationService;
 import org.egov.tl.entity.License;
-import org.egov.tl.entity.PenaltyRates;
 import org.egov.tl.utils.LicenseUtils;
-import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -66,7 +61,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Optional;
 
 import static java.math.BigDecimal.ZERO;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getCityName;
@@ -77,7 +71,6 @@ import static org.egov.infra.utils.DateUtils.today;
 import static org.egov.tl.utils.Constants.APPLICATION_STATUS_FIRSTCOLLECTIONDONE_CODE;
 import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
 import static org.egov.tl.utils.Constants.BUTTONFORWARD;
-import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
 import static org.egov.tl.utils.Constants.STATUS_CANCELLED;
 import static org.egov.tl.utils.Constants.STATUS_UNDERWORKFLOW;
 
@@ -110,12 +103,6 @@ public class TradeLicenseSmsAndEmailService {
 
     @Autowired
     private CFinancialYearService cFinancialYearService;
-
-    @Autowired
-    private DemandGenericDao demandGenericDao;
-
-    @Autowired
-    private PenaltyRatesService penaltyRatesService;
 
     public void sendSMSOnLicense(final String mobileNumber, final String smsBody) {
         notificationService.sendSMS(mobileNumber, smsBody);
@@ -383,50 +370,36 @@ public class TradeLicenseSmsAndEmailService {
         sendEmailOnLicense(license.getLicensee().getEmailId(), emailBody, emailSubject);
     }
 
-    public void sendNotificationOnDemandGeneration(License license, Module module, Installment installment) {
+    public void sendNotificationOnDemandGeneration(License license, BigDecimal tradeAmt,
+                                                   Installment installment, Date penaltyDate) {
 
         Locale locale = Locale.getDefault();
-        EgDemandReason reason = demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(
-                demandGenericDao.getDemandReasonMasterByCode(LICENSE_FEE_TYPE, module), installment, module);
+        String emailSubject = licenseMessageSource.getMessage("msg.demand.generation.email.subject",
+                new String[]{getMunicipalityName()}, locale);
 
-        Optional<EgDemandDetails> demandDetails = license.getLicenseDemand().getEgDemandDetails()
-                .stream()
-                .filter(egDemandDetails -> egDemandDetails.getEgDemandReason().equals(reason))
-                .findFirst();
-
-        if (demandDetails.isPresent()) {
-
-            String emailSubject = licenseMessageSource.getMessage("msg.demand.generation.email.subject",
-                    new String[]{getMunicipalityName()}, locale);
-
-            Optional<PenaltyRates> penaltyRates = penaltyRatesService.search(license.getLicenseAppType().getId())
-                    .stream()
-                    .filter(penaltyRate -> penaltyRate.getRate().doubleValue() <= ZERO.doubleValue())
-                    .findFirst();
-
-            Date penaltyDate = LocalDate.fromDateFields(installment.getFromDate())
-                    .plusDays(penaltyRates.isPresent() ? penaltyRates.get().getToRange().intValue() : ZERO.intValue()).toDate();
-
-            String penaltyMessage = "";
-            if (penaltyDate.after(today())) {
-                penaltyMessage = licenseMessageSource.getMessage("msg.demand.generation.penalty.email.body",
-                        new String[]{getDefaultFormattedDate(penaltyDate)}, locale);
-            }
-
-            String installmentYear = cFinancialYearService.getFinancialYearByDate(installment.getFromDate()).getFinYearRange();
-
-            String messageBody = licenseMessageSource.getMessage("msg.demand.generation.email.body",
+        String messageBody = "";
+        String installmentYear = cFinancialYearService.getFinancialYearByDate(installment.getFromDate()).getFinYearRange();
+        if (penaltyDate.after(today())) {
+            messageBody = licenseMessageSource.getMessage("msg.demand.generation.penalty.email.body",
                     new String[]{license.getLicensee().getApplicantName(),
                             license.getNameOfEstablishment(),
                             license.getLicenseNumber(),
                             installmentYear,
-                            demandDetails.get().getAmount().toString(),
-                            penaltyMessage,
+                            tradeAmt.toString(),
+                            getDefaultFormattedDate(penaltyDate),
                             getMunicipalityName()},
                     locale);
-
-            sendSMSOnLicense(license.getLicensee().getMobilePhoneNumber(), messageBody);
-            sendEmailOnLicense(license.getLicensee().getEmailId(), messageBody, emailSubject);
+        } else {
+            messageBody = licenseMessageSource.getMessage("msg.demand.generation.email.body",
+                    new String[]{license.getLicensee().getApplicantName(),
+                            license.getNameOfEstablishment(),
+                            license.getLicenseNumber(),
+                            installmentYear,
+                            tradeAmt.toString(),
+                            getMunicipalityName()},
+                    locale);
         }
+        sendSMSOnLicense(license.getLicensee().getMobilePhoneNumber(), messageBody);
+        sendEmailOnLicense(license.getLicensee().getEmailId(), messageBody, emailSubject);
     }
 }
