@@ -278,7 +278,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             addActionError(getText("error.msg.demandInactive"));
             return COMMON_FORM;
         }
-        if (basicproperty.isUnderWorkflow()) {
+		if (basicproperty.isUnderWorkflow() && !Arrays.asList(PROPERTY_MODIFY_REASON_ADD_OR_ALTER, DEMOLITION)
+				.contains(basicproperty.getWFProperty().getPropertyModifyReason())) {
             final List<String> msgParams = new ArrayList<>();
             msgParams.add("Transfer of Ownership");
             wfErrorMsg = getText("wf.pending.msg", msgParams);
