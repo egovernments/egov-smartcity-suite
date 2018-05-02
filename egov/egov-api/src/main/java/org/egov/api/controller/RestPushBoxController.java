@@ -108,9 +108,9 @@ public class RestPushBoxController extends ApiController {
         		return res.error(getMessage("userdevice.user.useridunavailable"));	
         	}
         	
-        	if(null == userService.getUserById(userDevice.getUserId())) { 
+        	/*if(null == userService.getUserById(userDevice.getUserId())) { 
         		return res.error(getMessage("userdevice.user.userunavailable"));
-        	}
+        	}*/
         	LOGGER.info("##PushBoxFox### : Update Token Method passed the Request Received : " + userDevice );
         	UserDevice responseObject = notificationService.persist(userDevice);
         	return res.setDataAdapter(new UserAdapter()).success(responseObject, this.getMessage("msg.userdevice.update.success"));
