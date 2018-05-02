@@ -390,9 +390,16 @@
 						.append('<span class="mandatory1">*</span>');
 				jQuery('#transferTable tbody tr:eq(5)').find('input').prop('required',true);
 			}
-			if (selectedValue == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_UNREG_WILL}" />') {
+			else {
+				jQuery('#transferTable tbody tr:eq(5)').find('td:eq(1)').find('span').remove();
+				jQuery('#transferTable tbody tr:eq(5)').find('input').prop('required',false);
+			}
+			if (selectedValue == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_UNREG_WILL}" />')
 					jQuery('.documentDetRow').find('span').remove();
-				}
+			else if(jQuery('.documentDetRow').find('span').text() == ''){
+				jQuery('.documentDetRow').find('td:eq(1)').append('<span class="mandatory1">*</span>');
+				jQuery('.documentDetRow').find('td:eq(3)').append('<span class="mandatory1">*</span>');
+			}
 		}
 		
 		function onSubmit() {
