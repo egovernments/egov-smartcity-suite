@@ -75,7 +75,6 @@ import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.entity.property.DocumentType;
@@ -274,7 +273,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @SkipValidation
     @Action(value = "/new")
     public String showNewTransferForm() {
-        if (basicproperty.getProperty().getStatus().equals(PropertyTaxConstants.STATUS_DEMAND_INACTIVE)) {
+        if (basicproperty.getProperty().getStatus().equals(STATUS_DEMAND_INACTIVE)) {
             addActionError(getText("error.msg.demandInactive"));
             return COMMON_FORM;
         }
@@ -596,7 +595,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         final String cityGrade = cityService.getCityGrade();
         Boolean isCorporation;
         if (cityGrade != null && cityGrade != ""
-                && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION))
+                && cityGrade.equalsIgnoreCase(CITY_GRADE_CORPORATION))
             isCorporation = true;
         else
             isCorporation = false;
@@ -696,14 +695,14 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     
     @Override
     public void validate() {
-        if (PropertyTaxConstants.MUTATION_TYPE_REGISTERED_TRANSFER.equalsIgnoreCase(propertyMutation.getType())) {
+        if (MUTATION_TYPE_REGISTERED_TRANSFER.equalsIgnoreCase(propertyMutation.getType())) {
             if (propertyMutation.getMutationReason() == null || propertyMutation.getMutationReason().getId() == -1)
                 addActionError(getText("mandatory.trRsnId"));
-            else if (PropertyTaxConstants.MUTATIONRS_DECREE_BY_CIVIL_COURT
+            else if (MUTATIONRS_DECREE_BY_CIVIL_COURT
                     .equals(propertyMutation.getMutationReason().getMutationName())) {
                 validateDecreeDetails();
             }
-            if (!Arrays.asList(PropertyTaxConstants.MUTATIONRS_DECREE_BY_CIVIL_COURT, PropertyTaxConstants.MUTATIONRS_UNREG_WILL)
+            if (!Arrays.asList(MUTATIONRS_DECREE_BY_CIVIL_COURT,MUTATIONRS_UNREG_WILL)
                     .contains(propertyMutation.getMutationReason().getMutationName())) {
                 if (propertyMutation.getDeedDate() == null)
                     addActionError("Registration Document Date should not be empty");
@@ -719,7 +718,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 && (propertyMutation.getState().getValue().equalsIgnoreCase(WF_STATE_REVENUE_OFFICER_APPROVED)
                 || propertyMutation.getState().getValue().equalsIgnoreCase(WF_STATE_REGISTRATION_COMPLETED)
                 || propertyMutation.getState().getNextAction().toLowerCase()
-                .endsWith(PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVAL_PENDING.toLowerCase())))
+                .endsWith(WF_STATE_COMMISSIONER_APPROVAL_PENDING.toLowerCase())))
             propertyMutation.getTransfereeInfosProxy().addAll(propertyMutation.getTransfereeInfos());
 
         if (propertyMutation.getTransfereeInfosProxy().isEmpty())
@@ -1011,7 +1010,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 ? NATURE_REGISTERED_TRANSFER
                 : ADDTIONAL_RULE_FULL_TRANSFER.equals(getAdditionalRule())
                 ? NATURE_FULL_TRANSFER
-                : PropertyTaxConstants.ADDTIONAL_RULE_PARTIAL_TRANSFER
+                : ADDTIONAL_RULE_PARTIAL_TRANSFER
                 .equals(getAdditionalRule())
                 ? NATURE_PARTIAL_TRANSFER
                 : "PropertyMutation";
@@ -1035,10 +1034,10 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     }
 
     private Boolean isUnderWtmsWF() {
-        return propertyService.getWaterTaxDues(assessmentNo).get(PropertyTaxConstants.UNDER_WTMS_WF) == null
+        return propertyService.getWaterTaxDues(assessmentNo).get(UNDER_WTMS_WF) == null
                 ? Boolean.FALSE
                 : Boolean.valueOf((Boolean) propertyService.getWaterTaxDues(assessmentNo)
-                .get(PropertyTaxConstants.UNDER_WTMS_WF));
+                .get(UNDER_WTMS_WF));
     }
 
     public BigDecimal getCurrentPropertyTax() {
