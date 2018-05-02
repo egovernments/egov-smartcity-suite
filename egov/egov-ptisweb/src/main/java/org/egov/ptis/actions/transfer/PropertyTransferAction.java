@@ -703,8 +703,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                     .equals(propertyMutation.getMutationReason().getMutationName())) {
                 validateDecreeDetails();
             }
-            if (!PropertyTaxConstants.MUTATIONRS_DECREE_BY_CIVIL_COURT
-                    .equals(propertyMutation.getMutationReason().getMutationName())) {
+            if (!Arrays.asList(PropertyTaxConstants.MUTATIONRS_DECREE_BY_CIVIL_COURT, PropertyTaxConstants.MUTATIONRS_UNREG_WILL)
+                    .contains(propertyMutation.getMutationReason().getMutationName())) {
                 if (propertyMutation.getDeedDate() == null)
                     addActionError("Registration Document Date should not be empty");
                 if (StringUtils.isBlank(propertyMutation.getDeedNo()))

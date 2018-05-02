@@ -409,6 +409,13 @@
 				jQuery('#succession').hide();
 				jQuery('#otherReasons').show();
 			} 
+			if (selectedValue == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_UNREG_WILL}" />'
+					|| selectedValue == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_REG_WILL}" />'){
+				jQuery('#transferTable tbody tr:eq(5)').find('td:eq(1)').append('<span class="mandatory1">*</span>');
+			}
+			if (selectedValue == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_UNREG_WILL}" />') {
+					jQuery('.documentDetRow').find('span').remove();
+				}
 		}
 		jQuery('#transRsnId').change(function() {
 			var transferReason = jQuery('#transRsnId :selected').text();
