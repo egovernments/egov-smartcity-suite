@@ -64,6 +64,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.GRP_NEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.GRP_STATUS_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.GRP_WF_REGISTERED;
 import static org.egov.ptis.constants.PropertyTaxConstants.HEARING_TIMINGS;
+import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_GENERAL_REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_WORK_RP;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_REVISION_PETITION;
@@ -74,15 +75,14 @@ import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_RPPROCEED
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_ADD_OR_ALTER;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_MODIFY;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_REVISION_PETITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVISIONPETITION_STATUS_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.RP_NEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.RP_WF_REGISTERED;
+import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_ONLINE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
@@ -986,10 +986,16 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             objection.transition().end().withStateValue(PropertyTaxConstants.WFLOW_ACTION_END).withNextAction(null)
                     .withOwner((Position) null)
                     .withOwner(securityUtils.getCurrentUser()).withComments(approverComments);
-        } else
-            addAllActionMessages(revisionPetitionService.updateStateAndStatus(objection, approverPositionId, workFlowAction,
-                    approverComments, approverName));
-
+		} else {
+			if (assignmentService.getAssignmentsForPosition(
+					objection.getStateHistory().get(0).getOwnerPosition().getId(), new Date()).isEmpty()) {
+				addActionError(getText(REJECT_ERROR_INITIATOR_INACTIVE,
+						Arrays.asList(JUNIOR_ASSISTANT + "/" + SENIOR_ASSISTANT)));
+				return "view";
+			}
+			addAllActionMessages(revisionPetitionService.updateStateAndStatus(objection, approverPositionId,
+					workFlowAction, approverComments, approverName));
+		}
         reportOutput = revisionPetitionService.createEndoresement(reportOutput, objection);
         if (reportOutput != null && reportOutput.getReportOutputData() != null)
             endoresementPdf = new ByteArrayInputStream(reportOutput.getReportOutputData());
