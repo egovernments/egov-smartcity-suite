@@ -2881,7 +2881,7 @@ public class PropertyService {
         if (houseNo != null && !houseNo.trim().isEmpty())
             query.setString(HOUSE_NO, houseNo + "%");
         if (ownerName != null && !ownerName.trim().isEmpty())
-            query.setString(OWNER_NAME, ownerName.toUpperCase() + "%");
+            query.setString(OWNER_NAME, "%" + ownerName.toUpperCase() + "%");
 
         return (List<PropertyMaterlizeView>) query.list();
     }
@@ -2919,7 +2919,7 @@ public class PropertyService {
         if (houseNum != null && !houseNum.trim().isEmpty())
             query.setString(HOUSE_NO, houseNum + "%");
         if (ownerName != null && !ownerName.trim().isEmpty())
-            query.setString(OWNER_NAME, ownerName.toUpperCase() + "%");
+            query.setString(OWNER_NAME, "%" + ownerName.toUpperCase() + "%");
 
         return (List<PropertyMaterlizeView>) query.list();
     }
@@ -3022,7 +3022,7 @@ public class PropertyService {
         }
         if (ownerName != null && !ownerName.trim().isEmpty()) {
             where.append(" and upper(trim(pmv.ownerName)) like ?");
-            params.add(ownerName.toUpperCase() + "%");
+            params.add("%" + ownerName.toUpperCase() + "%");
         }
 
         map.put(SEARCH, search.append(from).append(where).toString());
@@ -3050,7 +3050,7 @@ public class PropertyService {
         }
         if (ownerName != null && !ownerName.trim().isEmpty()) {
             where.append(" and upper(trim(pmv.ownerName)) like ?");
-            params.add(ownerName.toUpperCase() + "%");
+            params.add("%" + ownerName.toUpperCase() + "%");
         }
 
         map.put(SEARCH, search.append(from).append(where).toString());
@@ -3091,7 +3091,7 @@ public class PropertyService {
         }
         if (StringUtils.isNotBlank(ownerName)) {
             where.append(" and upper(trim(pmv.ownerName)) like ? ");
-            params.add(ownerName.toUpperCase() + "%");
+            params.add("%" + ownerName.toUpperCase() + "%");
         }
         if (StringUtils.isNotBlank(doorNo)) {
             where.append(AND_PMV_HOUSE_NO_LIKE);
