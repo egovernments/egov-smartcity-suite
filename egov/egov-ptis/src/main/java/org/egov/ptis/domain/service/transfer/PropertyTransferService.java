@@ -123,6 +123,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -559,7 +560,11 @@ public class PropertyTransferService {
 
     private void processAndStoreDocument(final PropertyMutation propertyMutation, final String oldTransferReason) {
         if (StringUtils.isNotBlank(oldTransferReason)
-                && !oldTransferReason.equals(propertyMutation.getMutationReason().getId().toString()))
+                && Arrays
+                        .asList(propertyMutation.getMutationReason().getCode(),
+                                propertyMutationMasterDAO.getPropertyMutationMasterByCode(oldTransferReason).getCode())
+                        .contains("SUCCESSION")
+                && !oldTransferReason.equals(propertyMutation.getMutationReason().getCode()))
             propertyMutation.getDocuments().clear();
         if (propertyMutation.getDocuments().isEmpty() && !propertyMutation.getDocumentsProxy().isEmpty())
             propertyMutation.setDocuments(propertyMutation.getDocumentsProxy());
