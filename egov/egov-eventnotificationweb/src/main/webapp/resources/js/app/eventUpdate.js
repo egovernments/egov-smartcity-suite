@@ -47,122 +47,185 @@
  */
 var _URL = window.URL || window.webkitURL;
 $(document).ready(function(){
-	var loclatlang = ($("#eventlocation").val()).split(":");
-	var locationOption = {
-			zoom: 11,
-			mapTypeId : "roadmap", 
-			streetViewControl: true,
-			center: new google.maps.LatLng(loclatlang[0],loclatlang[1]),
-			panControl: true,
-			zoomControl: true,
-			//disableDefaultUI: true,
-	        scrollwheel: true,
-	        draggable: true,
-	        //styles: mapStyle,
-			mapTypeControlOptions: {
-				style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
-			},
-			zoomControlOptions: {
-				style: google.maps.ZoomControlStyle.SMALL
-			}
-	 };
-	
-	var map = new google.maps.Map(document.getElementById("normal"), locationOption);
-	
+		
 	var latLang = ($("#eventlocation").val()).split(":");
 	
-	var marker = new google.maps.Marker({
-        position: new google.maps.LatLng(latLang[0],latLang[1]),
-		color:"0000aa",
-        map: map,
-        animation: google.maps.Animation.DROP,
-        //icon: marker_image,
-        //title: data.zone
+	var map, geocoder, geolocate, marker, mapProp;
+    var lat, lng, address;
+    myCenter = new google.maps.LatLng(latLang[0], latLang[1]);
 
-      });
-	
-	var input = $("#pac-input");
-	var searchBox = new google.maps.places.SearchBox(input);
-	map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-	
-	// Bias the SearchBox results towards current map's viewport.
-    map.addListener('bounds_changed', function() {
-      searchBox.setBounds(map.getBounds());
+    function initialize() {
+
+        //marker=new google.maps.Marker();
+
+        //mapprop();
+        var latLng, mapOptions = {
+            zoom: 10,
+            timeout: 500,
+            mapTypeControl: false,
+            navigationControl: false,
+        };
+
+        var userLocationFound = function (position) {
+            latLng = {
+                lat: latLang[0],
+                lng: latLang[1]
+            };
+            //Set current locaion to map
+            var userLatLng = new google.maps.LatLng(latLng.lat, latLng.lng);
+            lat = latLng.lat;
+            lng = latLng.lng;
+
+            getAddress(lat, lng);
+
+            map.setCenter(userLatLng);
+
+            mapcenterchangeevent();
+
+        }
+
+        var userLocationNotFound = function () {
+
+            //Assign static point to map
+            if (!citylat || !citylng) {
+                citylat = 20.5937;
+                citylng = 78.9629;
+            }
+
+            latLng = {
+                lat: citylat, // fallback lat
+                lng: citylng  // fallback lng
+            };
+            setlatlong(citylat, citylng);
+            mapcenterchangeevent();
+
+        }
+
+
+        geocoder = new google.maps.Geocoder();
+        map = new google.maps.Map(document.getElementById("normal"), mapOptions);
+
+        var GeoMarker = new GeolocationMarker(map);
+        $('<div/>').addClass('centerMarker').appendTo(map.getDiv());
+
+        navigator.geolocation.getCurrentPosition(userLocationFound, userLocationNotFound, mapOptions);
+
+        setTimeout(function () {
+            if (!latLng) {
+                userLocationNotFound();
+            }
+        }, mapOptions.timeout + 500); // Wait extra second
+
+        searchBar(map);
+
+    };
+
+    function searchBar(map) {
+
+        var input = (
+            document.getElementById('pac-input'));
+
+        var autocomplete = new google.maps.places.Autocomplete(input);
+        autocomplete.bindTo('bounds', map);
+
+        autocomplete.addListener('place_changed', function () {
+            var place = autocomplete.getPlace();
+            if (!place.geometry) {
+                window.alert("Autocomplete's returned place contains no geometry");
+                return;
+            }
+
+            // If the place has a geometry, then present it on a map.
+            if (place.geometry.viewport) {
+                map.fitBounds(place.geometry.viewport);
+            } else {
+                map.setCenter(place.geometry.location);
+                map.setZoom(17);  // Why 17? Because it looks good.
+            }
+
+            var address = '';
+            if (place.address_components) {
+                address = [
+                    (place.address_components[0] && place.address_components[0].short_name || ''),
+                    (place.address_components[1] && place.address_components[1].short_name || ''),
+                    (place.address_components[2] && place.address_components[2].short_name || '')
+                ].join(' ');
+            }
+
+        });
+
+    };
+
+    function mapcenterchangeevent() {
+        google.maps.event.addListener(map, 'center_changed', function () {
+            var location = map.getCenter();
+            getAddress(location.lat(), location.lng());
+        });
+    }
+
+    function setlatlong(citylat, citylng) {
+        var userLatLng = new google.maps.LatLng(citylat, citylng);
+        lat = citylat;
+        lng = citylng;
+
+        getAddress(lat, lng);
+
+        map.setCenter(userLatLng);
+    }
+
+    function getAddress(lat, lng) {
+        var geocoder = new google.maps.Geocoder;
+        geocoder.geocode({'location': {lat: lat, lng: lng}}, function (results, status) {
+            if (status === 'OK') {
+                if (results[0]) {
+                    address = results[0].formatted_address;
+                }
+            }
+        });
+    }
+
+    google.maps.event.addDomListener(window, 'load', initialize);
+
+    google.maps.event.addDomListener(window, "resize", resizingMap());
+
+    $('#modal-6').on('show.bs.modal', function () {
+        //Must wait until the render of the modal appear, thats why we use the resizeMap and NOT resizingMap!! ;-)
+        //complaint registration map
+        resizeMap();
     });
 
-    var markers = [];
-    // Listen for the event fired when the user selects a prediction and retrieve
-    // more details for that place.
-    searchBox.addListener('places_changed', function() {
-        var places = searchBox.getPlaces();
+    function resizeMap() {
+        if (typeof map == "undefined") return;
+        setTimeout(function () {
+            resizingMap();
+        }, 400);
+    }
 
-        if (places.length == 0) {
-          return;
-        }
-
-        // Clear out the old markers.
-        markers.forEach(function(marker) {
-          marker.setMap(null);
+    function resizingMap() {
+        if (typeof map == "undefined") return;
+        var center = map.getCenter();
+        google.maps.event.trigger(map, "resize");
+        map.setCenter(center);
+    }
+	    
+    $('.btn-save-location').click(function () {
+        var location = map.getCenter();
+        lat = location.lat();
+        lng = location.lng();
+        var geocoder = new google.maps.Geocoder;
+        geocoder.geocode({'location': {lat: lat, lng: lng}}, function (results, status) {
+            if (status === 'OK') {
+                if (results[0]) {
+                    address = results[0].formatted_address;
+                    //$('#location').typeahead('val', address);
+                    //$('#latlngaddress').val(address);
+                }
+            }
         });
-        markers = [];
-
-        // For each place, get the icon, name and location.
-        var bounds = new google.maps.LatLngBounds();
-        places.forEach(function(place) {
-          if (!place.geometry) {
-            console.log("Returned place contains no geometry");
-            return;
-          }
-          var icon = {
-            url: place.icon,
-            size: new google.maps.Size(71, 71),
-            origin: new google.maps.Point(0, 0),
-            anchor: new google.maps.Point(17, 34),
-            scaledSize: new google.maps.Size(25, 25)
-          };
-
-          // Create a marker for each place.
-          markers.push(new google.maps.Marker({
-            map: map,
-            icon: icon,
-            title: place.name,
-            position: place.geometry.location
-          }));
-
-          if (place.geometry.viewport) {
-            // Only geocodes have viewport.
-            bounds.union(place.geometry.viewport);
-          } else {
-            bounds.extend(place.geometry.location);
-          }
-        });
-        map.fitBounds(bounds);
-      });
-	
-    google.maps.event.addListener(map, "click", function(event) {
-		//Get the location that the user clicked.
-        var clickedLocation = event.latLng;
-        console.log("clickedLocation=="+clickedLocation);
-        //If the marker hasn't been added.
-        if(marker === false){
-            //Create the marker.
-            marker = new google.maps.Marker({
-                position: clickedLocation,
-                map: map,
-                draggable: true //make it draggable
-            });
-            //Listen for drag events!
-            google.maps.event.addListener(marker, 'dragend', function(event){
-                markerLocation();
-            });
-        } else{
-            //Marker has already been added, so just change its location.
-            marker.setPosition(clickedLocation);
-        }
-        //Get the marker's location.
-        markerLocation();
-		   
-	});
+        $("#lat").val(lat);
+        $("#lng").val(lng);
+        $("#eventlocation").val(lat + ':' + lng);
+    });
 			
 	if($("#ispaidHid").val() === "true"){
 		$("#ispaid")[0].checked = true;
