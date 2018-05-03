@@ -277,16 +277,12 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             addActionError(getText("error.msg.demandInactive"));
             return COMMON_FORM;
         }
-		if (basicproperty.isUnderWorkflow()) {
-			if (basicproperty.getWFProperty() != null && Arrays.asList(PROPERTY_MODIFY_REASON_ADD_OR_ALTER, DEMOLITION)
-					.contains(basicproperty.getWFProperty().getPropertyModifyReason())) {
-				return NEW;
-			}
-			final List<String> msgParams = new ArrayList<>();
-			msgParams.add("Transfer of Ownership");
-			wfErrorMsg = getText("wf.pending.msg", msgParams);
-			return TARGET_WORKFLOW_ERROR;
-		} else {
+        if (basicproperty.isUnderWorkflow()) {
+            final List<String> msgParams = new ArrayList<>();
+            msgParams.add("Transfer of Ownership");
+            wfErrorMsg = getText("wf.pending.msg", msgParams);
+            return TARGET_WORKFLOW_ERROR;
+        } else {
             final PropertyTaxUtil propertyTaxUtil = new PropertyTaxUtil();
             propertyTaxUtil.setPersistenceService(persistenceService);
             final boolean hasChildPropertyUnderWorkflow = propertyTaxUtil.checkForParentUsedInBifurcation(basicproperty
