@@ -561,8 +561,7 @@ public class PropertyTransferService {
     private void processAndStoreDocument(final PropertyMutation propertyMutation, final String oldTransferReason) {
         if (StringUtils.isNotBlank(oldTransferReason)
                 && Arrays
-                        .asList(propertyMutation.getMutationReason().getCode(),
-                                propertyMutationMasterDAO.getPropertyMutationMasterByCode(oldTransferReason).getCode())
+                        .asList(propertyMutation.getMutationReason().getCode(), oldTransferReason)
                         .contains("SUCCESSION")
                 && !oldTransferReason.equals(propertyMutation.getMutationReason().getCode()))
             propertyMutation.getDocuments().clear();

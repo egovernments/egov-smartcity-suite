@@ -265,7 +265,7 @@
 									listValue="mutationName" headerKey="-1"
 									headerValue="%{getText('default.select')}"
 									value="%{mutationReason.id}" onchange="enableBlock();" /></td>
-									<s:hidden id="oldTransferReason" name="oldTransferReason" value="%{mutationReason.id}"/>
+									<s:hidden id="oldTransferReason" name="oldTransferReason" value="%{mutationReason.code}"/>
 									<td class="bluebox decreeDetailsRow"><s:text name="decreeNum" /><span
 								class="mandatory1">*</span> :</td>
 							<td class="bluebox decreeDetailsRow"><s:textfield name="decreeNumber" id="decreeNum"
