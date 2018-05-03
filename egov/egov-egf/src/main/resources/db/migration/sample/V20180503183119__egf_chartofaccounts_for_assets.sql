@@ -4,7 +4,7 @@ insert into chartofaccounts  VALUES (nextval('seq_chartofaccounts'),'2711001','L
 
 update chartofaccounts  set purposeid = (select id from egf_accountcode_purpose  where  name ='Revaluation Reserve Account') where glcode='3126001';
 
-update egf_chartofaccount  set purposeid = (select id from egf_accountcode_purpose where name ='Depreciation Expense Account') where glcode='2722000';
+update chartofaccounts  set purposeid = (select id from egf_accountcode_purpose where name ='Depreciation Expense Account') where glcode='2722000';
 
 update chartofaccounts  set purposeid = (select id from egf_accountcode_purpose where name ='Accumulated Depreciation') where glcode in ('4112001','4112008','4112003','4112002','4112014','4112004','4112009','4112010','4112006','4112005','4112099','4112001','4112013',
 '4112099','4112015','4112020');
