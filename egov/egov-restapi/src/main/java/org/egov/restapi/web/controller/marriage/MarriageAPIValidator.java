@@ -59,6 +59,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
+import static org.egov.mrs.application.MarriageConstants.getMarriageVenues;
 
 @Component
 public class MarriageAPIValidator implements Validator {
@@ -107,6 +108,11 @@ public class MarriageAPIValidator implements Validator {
                 educationalQualificationService.findByCode(marriageRegistrationRequest.getWifeQualification()) == null) {
             errors.rejectValue("wifeQualification", "Invalid bride's education qualification",
                     "Invalid bride's education qualification");
+        }
+        if (marriageRegistrationRequest.getVenue() != null
+                && !getMarriageVenues().contains(marriageRegistrationRequest.getVenue())) {
+            errors.rejectValue("venue", "Invalid Venue Type",
+                    "venue should be in [Residence,Function Hall,Worship Place,Others ");
         }
 
     }
