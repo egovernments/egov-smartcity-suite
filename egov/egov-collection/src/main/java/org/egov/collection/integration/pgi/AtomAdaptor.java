@@ -47,6 +47,25 @@
  */
 package org.egov.collection.integration.pgi;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -70,24 +89,6 @@ import org.egov.infstr.models.ServiceDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 /**
  * The PaymentRequestAdaptor class frames the request object for the payment service.
@@ -199,8 +200,6 @@ public class AtomAdaptor implements PaymentGatewayAdaptor {
                 ? CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS : responseMap.get(CollectionConstants.ATOM_F_CODE));
         atomResponse.setErrorDescription(responseMap.get(CollectionConstants.ATOM_F_CODE));
         atomResponse.setReceiptId(responseMap.get(CollectionConstants.ATOM_MER_TXN));
-        atomResponse.setTxnAmount(new BigDecimal(responseMap.get(CollectionConstants.ATOM_AMT)));
-        atomResponse.setTxnReferenceNo(responseMap.get(CollectionConstants.ATOM_MMP_TXN));
         if (responseMap.get(CollectionConstants.ATOM_UDF9) != null) {
             String[] udf9 = responseMap.get(CollectionConstants.ATOM_UDF9).split("\\|");
             atomResponse.setAdditionalInfo6(udf9[1]);
@@ -216,18 +215,22 @@ public class AtomAdaptor implements PaymentGatewayAdaptor {
             atomResponse.setAdditionalInfo6(receiptHeader.getConsumerCode().replace("-", "").replace("/", ""));
             atomResponse.setAdditionalInfo2(ulbCode);
         }
-        SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.getDefault());
-        Date transactionDate = null;
-        try {
-            transactionDate = sdf.parse(responseMap.get(CollectionConstants.ATOM_DATE));
-            atomResponse.setTxnDate(transactionDate);
-        } catch (ParseException e) {
-            LOGGER.error("Error occured in parsing the transaction date [" + transactionDate + "]", e);
+
+        if (atomResponse.getAuthStatus().equals(CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS)) {
+            atomResponse.setTxnAmount(new BigDecimal(responseMap.get(CollectionConstants.ATOM_AMT)));
+            atomResponse.setTxnReferenceNo(responseMap.get(CollectionConstants.ATOM_MMP_TXN));
+            SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.getDefault());
+            Date transactionDate = null;
             try {
-                throw new ApplicationException(".transactiondate.parse.error", e);
-            } catch (ApplicationException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
+                transactionDate = sdf.parse(responseMap.get(CollectionConstants.ATOM_DATE));
+                atomResponse.setTxnDate(transactionDate);
+            } catch (ParseException e) {
+                LOGGER.error("Error occured in parsing the transaction date [" + transactionDate + "]", e);
+                try {
+                    throw new ApplicationException(".transactiondate.parse.error", e);
+                } catch (ApplicationException e1) {
+                    e1.printStackTrace();
+                }
             }
         }
         return atomResponse;
