@@ -441,8 +441,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     @Actions({ @Action(value = "/revPetition-newForm"), @Action(value = "/genRevPetition-newForm") })
     public String newForm() {
         RevisionPetition odlObjection;
-        if (logger.isDebugEnabled())
-            logger.debug("Entered into newForm");
         final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(propertyId);
         if (basicProperty.getProperty().getStatus().equals(PropertyTaxConstants.STATUS_ISACTIVE)
                 && !wfType.equalsIgnoreCase(PropertyTaxConstants.PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION)) {
@@ -492,21 +490,17 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
      */
     @Action(value = "/revPetition")
     public String create() {
-        if (logger.isDebugEnabled())
-            logger.debug("ObjectionAction | Create | start " + objection);
         validateInitiator();
         if (hasActionErrors()) {
             getPropertyView(objection.getBasicProperty().getUpicNo());
             return NEW;
         }
-
         if (objection != null && objection.getBasicProperty() != null && objection.getState() == null
                 && objection.getBasicProperty().isUnderWorkflow()) {
             addActionMessage(
                     getText("property.state.objected", new String[] { objection.getBasicProperty().getUpicNo() }));
             return STRUTS_RESULT_MESSAGE;
         }
-
         if (objection.getRecievedOn() == null) {
             addActionMessage(getText("mandatory.fieldvalue.receivedOn"));
             return NEW;
@@ -552,8 +546,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         currentStatus = REVISION_PETITION_CREATED;
         sendEmailandSms(objection, REVISION_PETITION_CREATED);
         applicationNumber = objection.getObjectionNumber();
-        if (logger.isDebugEnabled())
-            logger.debug("ObjectionAction | Create | End " + objection);
         return isMeesevaUser ? MEESEVA_RESULT_ACK : STRUTS_RESULT_MESSAGE;
     }
 
@@ -587,8 +579,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
      */
     @Action(value = "/revPetition-addHearingDate")
     public String addHearingDate() {
-        if (logger.isDebugEnabled())
-            logger.debug("ObjectionAction | addHearingDate | start " + objection);
         validateInitiator();
         if (hasActionErrors()) {
             getPropertyView(objection.getBasicProperty().getUpicNo());
@@ -609,8 +599,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                                                                                                                 // Notice
         revisionPetitionService.updateRevisionPetition(objection);
         sendEmailandSms(objection, REVISION_PETITION_HEARINGNOTICEGENERATED);
-        if (logger.isDebugEnabled())
-            logger.debug("ObjectionAction | addHearingDate | End " + objection);
         return STRUTS_RESULT_MESSAGE;
     }
 
@@ -662,15 +650,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     @ValidationErrorPage(value = "view")
     @Action(value = "/revPetition-recordHearingDetails")
     public String recordHearingDetails() throws TaxCalculatorExeption {
-
-        if (logger.isDebugEnabled())
-            logger.debug("ObjectionAction | recordHearingDetails | start "
-                    + objection.getHearings().get(objection.getHearings().size() - 1));
         vaidatePropertyDetails();
-
         if (hasErrors())
             return "view";
-
         // set the auto generated hearing number
         if (null == objection.getHearings().get(objection.getHearings().size() - 1).getHearingNumber()) {
             final String hearingNumber = applicationNumberGenerator.generate();
@@ -683,9 +665,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         modifyBasicProp();
         propertyImplService.merge(objection.getProperty());
         revisionPetitionService.updateRevisionPetition(objection);
-        if (logger.isDebugEnabled())
-            logger.debug("ObjectionAction | recordHearingDetails | End "
-                    + objection.getHearings().get(objection.getHearings().size() - 1));
         return STRUTS_RESULT_MESSAGE;
 
     }
@@ -698,9 +677,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     @ValidationErrorPage(value = "view")
     @Action(value = "/revPetition-recordInspectionDetails")
     public String recordInspectionDetails() {
-        if (logger.isDebugEnabled())
-            logger.debug("ObjectionAction | recordInspectionDetails | start "
-                    + objection.getInspections().get(objection.getInspections().size() - 1));
         vaidatePropertyDetails();
         if (superStructureRP(objection)) {
             validateOwnerDetails(objection.getProperty());
@@ -741,9 +717,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         }
         addAllActionMessages(revisionPetitionService.updateStateAndStatus(objection, approverPositionId, workFlowAction,
                 approverComments, approverName));
-        if (logger.isDebugEnabled())
-            logger.debug("ObjectionAction | recordInspectionDetails | End "
-                    + objection.getInspections().get(objection.getInspections().size() - 1));
         if (superStructureRP(objection))
             basicPropertyService.update(objection.getBasicProperty());
         propertyImplService.merge(objection.getProperty());
@@ -793,9 +766,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     @ValidationErrorPage(value = "view")
     @Action(value = "/revPetition-recordObjectionOutcome")
     public String recordObjectionOutcome() {
-        if (logger.isDebugEnabled())
-            logger.debug("ObjectionAction | recordObjectionOutcome | start " + objection);
-
         if (hasErrors())
             return "view";
 
@@ -824,8 +794,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction))
             addActionMessage(NATURE_OF_WORK_RP.equalsIgnoreCase(wfType) ? getText("objection.outcome.success")
                     : getText("objection.grp.outcome.success"));
-        if (logger.isDebugEnabled())
-            logger.debug("ObjectionAction | recordObjectionOutcome | End " + objection);
         return STRUTS_RESULT_MESSAGE;
     }
 
@@ -1009,9 +977,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             addActionMessage(getText("objection.endoresementNotice.success"));
         else
             addActionMessage(getText("objection.grp.endoresementNotice.success"));
-        if (logger.isDebugEnabled())
-            logger.debug("ObjectionAction | generateEnodresementNotice | End " + objection);
-
         if (objection != null && objection.getObjectionNumber() != null) {
             final PtNotice ptNotice = noticeService.getPtNoticeByNoticeNumberAndNoticeType(
                     objection.getObjectionNumber()
@@ -1158,27 +1123,19 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
      * @param property
      */
     private void setFloorDetails(final Property property) {
-        if (logger.isDebugEnabled())
-            logger.debug("Entered into setFloorDetails, Property: " + property);
-
         final List<Floor> floors = property.getPropertyDetail().getFloorDetails();
         objection.getBasicProperty().getProperty().getPropertyDetail().setFloorDetails(floors);
         if (null != objection.getProperty())
             objection.getProperty().getPropertyDetail().setFloorDetailsProxy(floors);
-
         int i = 0;
         for (final Floor flr : floors) {
             floorNoStr[i] = FLOOR_MAP.get(flr.getFloorNo());
             i++;
         }
-        if (logger.isDebugEnabled())
-            logger.debug("Exiting from setFloorDetails: ");
     }
 
     @Action(value = "/revPetition-view")
     public String view() {
-        if (logger.isDebugEnabled())
-            logger.debug("ObjectionAction | view | Start");
         getPropertyView(objection.getBasicProperty().getUpicNo());
         if (superStructureRP(objection))
             objection.getBasicProperty().setPropertyOwnerInfoProxy(objection.getBasicProperty().getPropertyOwnerInfo());
@@ -1220,6 +1177,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         setOwnerName(objection.getBasicProperty().getProperty());
         setPropertyAddress(objection.getBasicProperty().getAddress());
         setWfType(objection.getType());
+        if(objection.getType().equals(NATURE_OF_WORK_RP) && objection.getProperty().getPropertyDetail().isStructure())
         try {
             final Query query = entityManager.createNamedQuery("DOCUMENT_TYPE_DETAILS_BY_ID");
             query.setParameter(1, objection.getBasicProperty().getId());
@@ -1227,8 +1185,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         } catch (final Exception e) {
             logger.error("No Document type details present for Basicproperty " + e);
         }
-        if (logger.isDebugEnabled())
-            logger.debug("ObjectionAction | view | End");
         return "view";
     }
 
@@ -1242,14 +1198,10 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     }
 
     public String viewObjectionDetails() {
-        if (logger.isDebugEnabled())
-            logger.debug("ObjectionAction | viewObjectionDetails | Start");
         objection = revisionPetitionService.find("from Objection where objectionNumber like ?",
                 objection.getObjectionNumber());
         setOwnerName(objection.getBasicProperty().getProperty());
         setPropertyAddress(objection.getBasicProperty().getAddress());
-        if (logger.isDebugEnabled())
-            logger.debug("ObjectionAction | viewObjectionDetails | End");
         return "viewDetails";
     }
 
@@ -1360,8 +1312,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
      * @param propertyId
      */
     private void getPropertyView(final String propertyId) {
-        if (logger.isDebugEnabled())
-            logger.debug("ObjectionAction | getPropertyView | Start");
         viewPropertyAction.setPersistenceService(persistenceService);
         viewPropertyAction.setBasicPropertyDAO(basicPropertyDAO);
         viewPropertyAction.setPtDemandDAO(ptDemandDAO);
@@ -1382,8 +1332,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                         .equalsIgnoreCase(PropertyTaxConstants.OBJECTION_INSPECTION_VERIFY)))
             wfPropTaxDetailsMap = propertyTaxCommonUtils
                     .getTaxDetailsForWorkflowProperty(viewPropertyAction.getBasicProperty());
-        if (logger.isDebugEnabled())
-            logger.debug("ObjectionAction | getPropertyView | End");
     }
 
     public void vaidatePropertyDetails() {

@@ -103,19 +103,6 @@
 		<td class="bluebox" width="25%"></td>
 		<td class="bluebox"></td>
 	</tr>
-
-	<%-- <tr class="superStructureRow">
-		<td class="bluebox">&nbsp;</td>
-		<td class="bluebox"><s:text name="superstructure"></s:text> :</td>
-		<td class="bluebox">
-			<span class="bold"><s:checkbox name="property.propertyDetail.structure" disabled="true"/></span>
-		</td>
-		<td class="bluebox siteowner"><s:text name="siteowner"></s:text>:</td>
-		<td class="bluebox siteowner">
-			<span class="bold"><s:property value="%{property.propertyDetail.siteOwner}" default="N/A"/></span>
-		</td>
-	</tr> --%>
-
 	<tr>
 		<td class="bluebox">&nbsp;</td>
 		<td class="bluebox" width="25%"><s:text name="ModifyReason"></s:text>
