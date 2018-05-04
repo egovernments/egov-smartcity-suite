@@ -2,9 +2,7 @@ package org.egov.ptis.web.controller.transactions.survey;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCALITY;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.SURVEY_APPLICATION_TYPES;
-import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
 
 import java.util.List;
 import java.util.Map;
@@ -35,7 +33,9 @@ import com.google.gson.GsonBuilder;
 @Controller
 @RequestMapping(value = "/survey/properties")
 public class SurveyPropertyController {
-
+	
+	private static final String NOTEXISTS_POSITION = "notexists.position";
+	
     @Autowired
     private BoundaryService boundaryService;
 
@@ -49,7 +49,7 @@ public class SurveyPropertyController {
     private SecurityUtils securityUtils;
     
     @Autowired
-    private JurisdictionService JurisdictionService;
+    private JurisdictionService jurisdictionService;
 
     @ModelAttribute("applicationTypes")
     public Map<String, String> getApplicationTypes() {
@@ -63,7 +63,7 @@ public class SurveyPropertyController {
 
     @ModelAttribute("electionwardlist")
     public List<Boundary> electionWards() {
-        return JurisdictionService.getEmployeeJuridictions(securityUtils.getCurrentUser().getId());
+        return jurisdictionService.getEmployeeJuridictions(securityUtils.getCurrentUser().getId());
     }
 
     @RequestMapping(value = "/searchform", method = RequestMethod.GET)
@@ -92,10 +92,15 @@ public class SurveyPropertyController {
         try {
             User user = securityUtils.getCurrentUser();
             for (String applicationNo : applicationNumbersArray) {
-                if (surveyApplicationService.updateWorkflow(applicationNo, user))
+                if (surveyApplicationService.updateWorkflow(applicationNo, user)){
                     model.addAttribute("successMessage",
                             "Property workflow updated and application : " + applicationNo + " is moved to user : "
                                     + user.getName() + " inbox");
+                    
+                }else{
+            	  model.addAttribute("errorMessage", NOTEXISTS_POSITION);
+                  return "surveyApplication-form";
+                }
             }
 
         } catch (Exception e) {

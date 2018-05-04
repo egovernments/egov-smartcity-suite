@@ -53,8 +53,11 @@ import static java.lang.String.format;
 import static org.egov.ptis.constants.PropertyTaxConstants.DATE_FORMAT_YYYYMMDD;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_OR_SENIOR_ASSISTANT_DESIGN;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -101,6 +104,7 @@ public class SurveyApplicationService {
     private static final String APPLICATION_STATUS = "applicationStatus";
     private static final String ISAPPROVED = "isApproved";
     private static final String ISCANCELLED = "isCancelled";
+    
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
 
@@ -190,7 +194,6 @@ public class SurveyApplicationService {
         final Query query = setSearchParameter(searchSurveyRequest, queryStr);
         query.setMaxResults(20);
         return query.getResultList();
-
     }
 
     private Query setSearchParameter(SearchSurveyRequest searchSurveyRequest, StringBuilder queryStr) {
@@ -201,7 +204,7 @@ public class SurveyApplicationService {
             qry.setParameter("assessmentNumber", searchSurveyRequest.getAssessmentNo());
 
         if (StringUtils.isNotBlank(searchSurveyRequest.getApplicationNo()))
-            qry.setParameter("applicationNo", searchSurveyRequest.getApplicationNo());
+            qry.setParameter(APP_NO, searchSurveyRequest.getApplicationNo());
 
         if (StringUtils.isNotBlank(searchSurveyRequest.getApplicationType()))
             qry.setParameter("applicationtype", searchSurveyRequest.getApplicationType());
@@ -237,23 +240,31 @@ public class SurveyApplicationService {
 
     }
 
-    @SuppressWarnings("deprecation")
     @Transactional
     public boolean updateWorkflow(String applicationNo, User user) {
         try {
             List<Assignment> assignments = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(user.getId());
-            if (assignments.isEmpty()) {
-                return false;
-            } else {
-                SQLQuery sqlQuery = entityManager.unwrap(Session.class).createSQLQuery("update eg_wf_states set owner_pos =:ownerpos where id in(select state_id from egpt_property where applicationNo=:applicationNo)");
-                sqlQuery.setParameter("applicationNo", applicationNo);
-                sqlQuery.setParameter("ownerpos", assignments.get(0).getPosition().getId());
-                sqlQuery.executeUpdate();
+            boolean isRevAssistantExist = false;
+            if (!assignments.isEmpty()) {
+               for(Assignment assignment:assignments){
+            	   if(assignment.getDepartment().getName().equals(REVENUE_HIERARCHY_TYPE) 
+            			   && Arrays.asList(JUNIOR_OR_SENIOR_ASSISTANT_DESIGN).contains(assignment.getDesignation().getCode())){
+            		         			isRevAssistantExist = true;
+            			break;
+            		}
+            	}
+              }
+            if(isRevAssistantExist){
+	                SQLQuery sqlQuery = entityManager.unwrap(Session.class).createSQLQuery("update eg_wf_states set owner_pos =:ownerpos where id in(select state_id from egpt_property where applicationNo=:applicationNo)");
+	                sqlQuery.setParameter(APP_NO, applicationNo);
+	                sqlQuery.setParameter("ownerpos", assignments.get(0).getPosition().getId());
+	                sqlQuery.executeUpdate();
+	                return true;
             }
         } catch (Exception e) {
             throw new ApplicationRuntimeException("Error occured while updating survey property application: " + e.getMessage(), e);
         }
-        return true;
+        return false;
 
     }
 

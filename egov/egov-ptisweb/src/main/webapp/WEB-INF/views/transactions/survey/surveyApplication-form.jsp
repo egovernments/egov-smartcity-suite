@@ -59,6 +59,11 @@
 				<spring:message code="${message}" />
 			</div>
 		</c:if>
+		<c:if test="${not empty errorMessage}">
+			<div class="panel-title" style="text-align:center;">
+			   <strong>${errorMessage}</strong>
+			</div>
+		</c:if>
 		<form:form class="form-horizontal form-groups-bordered"
 			id="surveyApplication-form" modelAttribute="surveyApplication"
 			method="get">
