@@ -241,31 +241,32 @@ public class SurveyApplicationService {
     }
 
     @Transactional
-    public boolean updateWorkflow(String applicationNo, User user) {
-        try {
-            List<Assignment> assignments = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(user.getId());
-            boolean isRevAssistantExist = false;
-            if (!assignments.isEmpty()) {
-               for(Assignment assignment:assignments){
-            	   if(assignment.getDepartment().getName().equals(REVENUE_HIERARCHY_TYPE) 
-            			   && Arrays.asList(JUNIOR_OR_SENIOR_ASSISTANT_DESIGN).contains(assignment.getDesignation().getCode())){
-            		         			isRevAssistantExist = true;
-            			break;
-            		}
-            	}
-              }
-            if(isRevAssistantExist){
-	                SQLQuery sqlQuery = entityManager.unwrap(Session.class).createSQLQuery("update eg_wf_states set owner_pos =:ownerpos where id in(select state_id from egpt_property where applicationNo=:applicationNo)");
-	                sqlQuery.setParameter(APP_NO, applicationNo);
-	                sqlQuery.setParameter("ownerpos", assignments.get(0).getPosition().getId());
-	                sqlQuery.executeUpdate();
-	                return true;
-            }
-        } catch (Exception e) {
-            throw new ApplicationRuntimeException("Error occured while updating survey property application: " + e.getMessage(), e);
-        }
-        return false;
-
-    }
-
+	public boolean updateWorkflow(String applicationNo, User user) {
+		try {
+			List<Assignment> assignments = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(user.getId());
+			boolean isRevAssistantExist = false;
+			if (!assignments.isEmpty()) {
+				for (Assignment assignment : assignments) {
+					if (REVENUE_HIERARCHY_TYPE.equalsIgnoreCase(assignment.getDepartment().getName())
+							&& Arrays.asList(JUNIOR_OR_SENIOR_ASSISTANT_DESIGN)
+									.contains(assignment.getDesignation().getCode())) {
+						isRevAssistantExist = true;
+						break;
+					}
+				}
+			}
+			if (isRevAssistantExist) {
+				SQLQuery sqlQuery = entityManager.unwrap(Session.class).createSQLQuery(
+						"update eg_wf_states set owner_pos =:ownerpos where id in(select state_id from egpt_property where applicationNo=:applicationNo)");
+				sqlQuery.setParameter(APP_NO, applicationNo);
+				sqlQuery.setParameter("ownerpos", assignments.get(0).getPosition().getId());
+				sqlQuery.executeUpdate();
+				return true;
+			}
+		} catch (Exception e) {
+			throw new ApplicationRuntimeException(
+					"Error occured while updating survey property application: " + e.getMessage(), e);
+		}
+		return false;
+	}
 }
