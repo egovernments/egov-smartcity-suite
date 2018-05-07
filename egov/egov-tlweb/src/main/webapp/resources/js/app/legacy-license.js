@@ -180,12 +180,6 @@ $('#boundary').change(function () {
             dataType: "json",
             data: {'locality': this.value}
         }).done(function (response) {
-            if (response.results.boundaries.length < 1) {
-                bootbox.alert("Could not find ward for Locality : " +
-                    $('#boundary').find(":selected").text());
-                $('#boundary').val('');
-                return;
-            }
             $.each(response, function (key, boundary) {
                 $('#adminWard').append('<option '
                     + (boundary.wardId === $('#adminWard').data('selected-id') ? 'selected="selected"' : "")
