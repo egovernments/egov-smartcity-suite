@@ -321,7 +321,6 @@ public class RestEventController {
             IOUtils.write(FileUtils.readFileToByteArray(downloadFile), out);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
-            throw new IOException();
         }
     }
 
