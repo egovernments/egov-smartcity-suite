@@ -48,9 +48,12 @@
 
 package org.egov.pushbox.application.service;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,9 +62,12 @@ import org.egov.pushbox.application.entity.MessageContent;
 import org.egov.pushbox.application.entity.UserDevice;
 import org.egov.pushbox.application.repository.PushNotificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
@@ -142,7 +148,11 @@ public class PushNotificationService {
         if (FirebaseApp.getApps().size() == 0) {
             FileInputStream serviceAccount;
             try {
-                serviceAccount = (FileInputStream) Thread.currentThread().getContextClassLoader().getResourceAsStream("private.json");
+            	// Fetch the service account key JSON file contents
+                File file = new ClassPathResource("private.json").getFile();
+                serviceAccount = new FileInputStream(file);
+            	
+                /*serviceAccount = (FileInputStream) Thread.currentThread().getContextClassLoader().getResourceAsStream("private.json");*/
                 FirebaseOptions options = new FirebaseOptions.Builder()
                         .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                         .setDatabaseUrl(FCM_APP_BDURL).build();
