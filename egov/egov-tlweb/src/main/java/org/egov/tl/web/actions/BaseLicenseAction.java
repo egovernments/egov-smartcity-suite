@@ -620,4 +620,8 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     public String getPendingActions() {
         return getModel() != null && getModel().getCurrentState() != null ? getModel().getState().getNextAction() : null;
     }
+
+    public boolean currentUserIsCitizenOrAnonymous() {
+        return securityUtils.currentUserIsCitizen() || SecurityUtils.currentUserIsAnonymous();
+    }
 }

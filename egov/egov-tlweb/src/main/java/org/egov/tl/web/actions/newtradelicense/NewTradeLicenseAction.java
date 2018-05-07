@@ -90,8 +90,7 @@ import static org.egov.tl.utils.Constants.*;
         @Result(name = ACKNOWLEDGEMENT, location = "newTradeLicense-acknowledgement.jsp"),
         @Result(name = MESSAGE, location = "newTradeLicense-message.jsp"),
         @Result(name = BEFORE_RENEWAL, location = "newTradeLicense-beforeRenew.jsp"),
-        @Result(name = PRINTACK, location = "newTradeLicense-printAck.jsp"),
-        @Result(name = ACKNOWLEDGEMENT_RENEW, location = "newTradeLicense-acknowledgement_renew.jsp")})
+        @Result(name = PRINTACK, location = "newTradeLicense-printAck.jsp")})
 public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
 
     private static final long serialVersionUID = 1L;

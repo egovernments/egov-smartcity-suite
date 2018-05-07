@@ -92,7 +92,6 @@ public final class Constants {
     public static final String TRADELICENSEMODULE = "TRADELICENSE";
     public static final String WARD = "WARD";
     public static final String BEFORE_RENEWAL = "beforeRenew";
-    public static final String ACKNOWLEDGEMENT_RENEW = "acknowledgement_renew";
     public static final BigDecimal CHQ_BOUNCE_PENALTY = BigDecimal.valueOf(1000);
     public static final String DEMANDRSN_STR_CHQ_BOUNCE_PENALTY = "CHEQUE BOUNCE PENALTY";
     public static final Character DMD_STATUS_CHEQUE_BOUNCED = 'B';
