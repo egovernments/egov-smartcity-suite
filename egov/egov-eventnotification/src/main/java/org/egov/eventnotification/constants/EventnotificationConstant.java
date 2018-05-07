@@ -122,6 +122,15 @@ public class EventnotificationConstant {
     public static final String UPCOMING = "upcoming";
     public static final String ONGOING = "ongoing";
     public static final String NOTIFICATION_TYPE_EVENT = "Event";
+    
+    public static final String SCHEDULE_LIST = "scheduleList";
+    public static final String DRAFT_LIST = "draftList";
+    public static final String SCHEDULE_VIEW = "schedule-view";
+    public static final String SCHEDULED_STATUS = "scheduled";
+    public static final String SCHEDULE_MONTH = "month";
+    public static final String SCHEDULE_DAY = "day";
+    public static final String SCHEDULE_YEAR= "year";
+    public static final String NOTIFICATION_JOB = "notificationJob";
 
     public static enum EVENT_TYPE {
         Business, Exhibition, Cultural, Drama
@@ -129,5 +138,9 @@ public class EventnotificationConstant {
 
     public static enum EVENT_STATUS {
         Active, Inactive
+    };
+    
+    public static enum SCHEDULER_REPEAT {
+        Month, Day, Year
     };
 }

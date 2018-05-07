@@ -220,8 +220,8 @@
 						<div class="col-sm-3 add-margin"></div>
 					</div>
 					<div class="form-group">
-						<label id="urllabel" class="col-sm-2 control-label text-right" style="display:none;"><spring:message code="lbl.event.url" />:<span class="mandatory"></span></label>
-						<div id="urldiv" class="col-sm-10 add-margin" style="display:none;">
+						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.url" />:</label>
+						<div class="col-sm-10 add-margin">
 							<form:input path="url" id="url" name="url"
 								class="form-control text-left patternvalidation"
 								maxlength="200" value="${event.url}"/>

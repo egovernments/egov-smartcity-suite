@@ -233,13 +233,9 @@ $(document).ready(function(){
 	        //$(this).trigger("change");
 	        $("#costLabel").show();
 	    	$("#costDiv").show();
-	    	$("#urllabel").show();
-	    	$("#urldiv").show();
 	    }else{
 	    	$("#costLabel").hide();
 	    	$("#costDiv").hide();
-	    	$("#urllabel").hide();
-	    	$("#urldiv").hide();
 	    }
 	    event.preventDefault();
 	});
@@ -275,12 +271,6 @@ $(document).ready(function(){
 					if($("#cost").val() == ""){
 						bootbox.alert("Please provide cost!");
 						$("#cost").val("");
-						return false;
-					}
-					
-					if($("#url").val() == ""){
-						bootbox.alert("Please provide payment URL!");
-						$("#url").val("");
 						return false;
 					}
 				}
