@@ -142,7 +142,7 @@ public class PushNotificationService {
         if (FirebaseApp.getApps().size() == 0) {
             FileInputStream serviceAccount;
             try {
-                serviceAccount = new FileInputStream(Thread.currentThread().getContextClassLoader().getResource("private.json").getFile());
+                serviceAccount = (FileInputStream) Thread.currentThread().getContextClassLoader().getResourceAsStream("private.json");
                 FirebaseOptions options = new FirebaseOptions.Builder()
                         .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                         .setDatabaseUrl(FCM_APP_BDURL).build();
