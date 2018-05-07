@@ -47,9 +47,20 @@
  */
 package org.egov.api.controller;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Locale;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
 import org.egov.api.controller.core.ApiResponse;
 import org.egov.api.controller.core.ApiUrl;
 import org.egov.eventnotification.constants.EventnotificationConstant;
@@ -57,9 +68,11 @@ import org.egov.eventnotification.entity.Event;
 import org.egov.eventnotification.entity.Userevent;
 import org.egov.eventnotification.service.EventService;
 import org.egov.eventnotification.service.UsereventService;
+import org.egov.infra.filestore.service.FileStoreService;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -78,7 +91,7 @@ import com.google.gson.JsonObject;
  */
 @org.springframework.web.bind.annotation.RestController
 public class RestEventController {
-
+    private static final Logger LOGGER = Logger.getLogger(RestEventController.class);
     @Autowired
     private EventService eventService;
 
@@ -87,6 +100,10 @@ public class RestEventController {
 
     @Autowired
     private MessageSource messageSource;
+
+    @Autowired
+    @Qualifier("fileStoreService")
+    protected FileStoreService fileStoreService;
 
     /**
      * This method is used for fetch all events
@@ -275,6 +292,37 @@ public class RestEventController {
                     "Unable to process your request now.", Locale.getDefault()));
 
         return responseObject.toJSONString();
+    }
+
+    /**
+     * This will download the support document of the complaint.
+     *
+     * @param complaintNo
+     * @param fileNo
+     * @param isThumbnail
+     * @return file
+     */
+
+    @RequestMapping(value = "/event/{id}/download/{fileStoreId}", method = GET)
+    public void downloadEventImage(@PathVariable final Long id, @PathVariable final String fileStoreId,
+            final HttpServletResponse response) throws IOException {
+        try {
+            Event event = eventService.findById(id);
+            File downloadFile = fileStoreService.fetch(fileStoreId, EventnotificationConstant.MODULE_NAME);
+            long contentLength = downloadFile.length();
+
+            response.setHeader("Content-Length", String.valueOf(contentLength));
+            if (event.getFilestore() == null)
+                response.setHeader("Content-Disposition", "attachment;filename=index.jpeg");
+            else
+                response.setHeader("Content-Disposition", "attachment;filename=" + event.getFilestore().getFileName());
+            response.setContentType(Files.probeContentType(downloadFile.toPath()));
+            final OutputStream out = response.getOutputStream();
+            IOUtils.write(FileUtils.readFileToByteArray(downloadFile), out);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new IOException();
+        }
     }
 
 }
