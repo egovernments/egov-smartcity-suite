@@ -94,9 +94,8 @@ public class UserDevice {
     @GeneratedValue(generator = SEQ_EG_USERFCMDEVICE, strategy = GenerationType.SEQUENCE)
     private Long id;
 	
-	@Temporal(TemporalType.TIMESTAMP)
     @Column(name="createddate")
-    private Date createdDate;
+    private Long createdDate;
 
 		public Long getUserId() {
 		return userId;
@@ -114,11 +113,11 @@ public class UserDevice {
 		this.id = id;
 	}
 
-	public Date getCreatedDate() {
+	public Long getCreatedDate() {
 		return createdDate;
 	}
 
-	public void setCreatedDate(Date createdDate) {
+	public void setCreatedDate(Long createdDate) {
 		this.createdDate = createdDate;
 	}
 
