@@ -86,17 +86,17 @@ public class EISDashBoardUtils {
     }
 
     public static BoolQueryBuilder prepareWhereClauseForEmployees(final EmployeeDetailRequest employeesDetailRequest) {
+        Date date = new Date();
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
         boolQuery = prepareWhereClause(employeesDetailRequest, boolQuery);
-        if (StringUtils.isNotBlank(employeesDetailRequest.getDepartmentName())) {
-            boolQuery
-                    .filter(QueryBuilders.matchQuery(DEPARTMENT, employeesDetailRequest.getDepartmentName()));
-        }
+        boolQuery.must(QueryBuilders.matchQuery("primaryassignment", true))
+                .must(QueryBuilders.rangeQuery("fromdate").lte(getFormattedDate(date, ASSIGN_DATE_FORMAT)).includeUpper(false))
+                .must(QueryBuilders.rangeQuery("todate").gte(getFormattedDate(date, ASSIGN_DATE_FORMAT)).includeUpper(false));
+
         return boolQuery;
     }
 
     public static BoolQueryBuilder prepareWhereClause(EmployeeDetailRequest employeesDetailRequest, BoolQueryBuilder boolQuery) {
-        Date date = new Date();
         if (StringUtils.isNotBlank(employeesDetailRequest.getUlbCode()))
             boolQuery
                     .filter(QueryBuilders.matchQuery(ULBCODE, employeesDetailRequest.getUlbCode()));
@@ -109,10 +109,10 @@ public class EISDashBoardUtils {
         if (StringUtils.isNotBlank(employeesDetailRequest.getGrade()))
             boolQuery
                     .filter(QueryBuilders.matchQuery(GRADE, employeesDetailRequest.getGrade()));
-        boolQuery.must(QueryBuilders.matchQuery("primaryassignment", true))
-                .must(QueryBuilders.rangeQuery("fromdate").lte(getFormattedDate(date, ASSIGN_DATE_FORMAT)).includeUpper(false))
-                .must(QueryBuilders.rangeQuery("todate").gte(getFormattedDate(date, ASSIGN_DATE_FORMAT)).includeUpper(false));
-
+        if (StringUtils.isNotBlank(employeesDetailRequest.getDepartmentName())) {
+            boolQuery
+                    .filter(QueryBuilders.matchQuery(DEPARTMENT, employeesDetailRequest.getDepartmentName()));
+        }
         return boolQuery;
     }
 }

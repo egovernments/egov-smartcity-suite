@@ -60,16 +60,14 @@ import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
+import org.elasticsearch.search.aggregations.metrics.sum.Sum;
 import org.elasticsearch.search.aggregations.metrics.tophits.TopHits;
 import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class EmployeeStatisticsDashboardService {
@@ -94,6 +92,10 @@ public class EmployeeStatisticsDashboardService {
     private static final String DEPUTATION = "Deputation";
     private static final String TEMPORARY = "Temporary";
     private static final String OUTSOURCED = "Outsourced";
+    private static final String SANCTIONED = "sanctioned";
+    private static final String WORKING = "working";
+    private static final String VACANT = "vacant";
+
     private static final String EMPLOYEERECORDS = "employeerecords";
     private static final String MALE = "Male";
     private static final String FEMALE = "Female";
@@ -126,6 +128,9 @@ public class EmployeeStatisticsDashboardService {
         StringTerms aggrOutsourceEmp = empSearchResponse.get(TOTALOUTSOURCEDEMPLOYEE).getAggregations().get(AGGRFIELD);
         StringTerms aggrOutsourceMale = empSearchResponse.get(TOTALOUTSOURCEDMALE).getAggregations().get(AGGRFIELD);
         StringTerms aggrOutsourceFemale = empSearchResponse.get(TOTALOUTSOURCEDFEMALE).getAggregations().get(AGGRFIELD);
+
+        StringTerms aggrSanctionedPosts = empSearchResponse.get(SANCTIONED).getAggregations().get(AGGRFIELD);
+
         employeeCountRes = empCountRes;
 
         for (final Terms.Bucket entry : aggrEmp.getBuckets()) {
@@ -146,6 +151,8 @@ public class EmployeeStatisticsDashboardService {
             empCountResponse.setTotalContractEmployee(getTotalCountForAggrField(aggrTempEmp, keyName) + getTotalCountForAggrField(aggrOutsourceEmp, keyName));
             empCountResponse.setTotalContractMale(getTotalCountForAggrField(aggrTempMale, keyName) + getTotalCountForAggrField(aggrOutsourceMale, keyName));
             empCountResponse.setTotalContractFemale(getTotalCountForAggrField(aggrTempFemale, keyName) + getTotalCountForAggrField(aggrOutsourceFemale, keyName));
+            setTotalSumForAggrField(empCountResponse, aggrSanctionedPosts, keyName);
+
             setValues(employeesDetailRequest, empCountResponse, topHits, aggrField, keyName);
             empCountRes.put(keyName, empCountResponse);
         }
@@ -165,6 +172,23 @@ public class EmployeeStatisticsDashboardService {
             }
         }
         return count;
+    }
+
+    private void setTotalSumForAggrField(EmployeeCountResponse empCountResponse, StringTerms aggrSanctionedPosts, String keyName) {
+
+        for (final Terms.Bucket entry : aggrSanctionedPosts.getBuckets()) {
+            if (keyName.equalsIgnoreCase(entry.getKeyAsString())) {
+
+                final Sum aggrSanction = entry.getAggregations().get(SANCTIONED);
+                final Sum aggrWorking = entry.getAggregations().get(WORKING);
+                final Sum aggrVacant = entry.getAggregations().get(VACANT);
+
+                empCountResponse.setTotalSanctioned(Double.valueOf(aggrSanction.getValue()).longValue());
+                empCountResponse.setTotalWorking(Double.valueOf(aggrWorking.getValue()).longValue());
+                empCountResponse.setTotalVacant(Double.valueOf(aggrVacant.getValue()).longValue());
+
+            }
+        }
     }
 
 
@@ -199,8 +223,14 @@ public class EmployeeStatisticsDashboardService {
         getDeputationTypeResonse(employeeDetailRequest, empSearchResponse, aggrField);
         getTemporaryTypeResonse(employeeDetailRequest, empSearchResponse, aggrField);
         getOutsourcedTypeResonse(employeeDetailRequest, empSearchResponse, aggrField);
+        getSanctionedPostsResponse(employeeDetailRequest, empSearchResponse, aggrField);
 
         return empSearchResponse;
+    }
+
+    private void getSanctionedPostsResponse(EmployeeDetailRequest employeeDetailRequest, Map<String, SearchResponse> empSearchResponse, String aggrField) {
+        BoolQueryBuilder filterPostsQuery = EISDashBoardUtils.prepareWhereClause(employeeDetailRequest, QueryBuilders.boolQuery());
+        empSearchResponse.put(SANCTIONED, getResponseFromIndexForSanctionedPosts(filterPostsQuery, aggrField));
     }
 
     private void getDeputationTypeResonse(EmployeeDetailRequest employeeDetailRequest, Map<String, SearchResponse> empSearchResponse, String aggrField) {
@@ -254,6 +284,24 @@ public class EmployeeStatisticsDashboardService {
                 .addAggregation(AggregationBuilders.terms(AGGRFIELD).field(aggrField).size(5000)
                         .subAggregation(
                                 AggregationBuilders.count(EisConstants.EMPLOYEE_CODE).field(EisConstants.EMPLOYEE_CODE))
+                        .subAggregation(AggregationBuilders.topHits(EMPLOYEERECORDS).addField(EisConstants.DISTNAME)
+                                .addField(EisConstants.ULBNAME)
+                                .addField(EisConstants.ULBGRADE).addField(EisConstants.REGNAME)
+                                .addField(EisConstants.DEPARTMENT_NAME.toLowerCase())
+                                .setSize(1)))
+                .execute().actionGet();
+    }
+
+    private SearchResponse getResponseFromIndexForSanctionedPosts(BoolQueryBuilder boolQuery, String aggrField) {
+        return elasticsearchTemplate.getClient()
+                .prepareSearch(EisConstants.EMPLOYEE_SANCTIONEDPOSTS_INDEX_NAME).setQuery(boolQuery)
+                .addAggregation(AggregationBuilders.terms(AGGRFIELD).field(aggrField).size(5000)
+                        .subAggregation(
+                                AggregationBuilders.sum(SANCTIONED).field(SANCTIONED))
+                        .subAggregation(
+                                AggregationBuilders.sum(WORKING).field(WORKING))
+                        .subAggregation(
+                                AggregationBuilders.sum(VACANT).field(VACANT))
                         .subAggregation(AggregationBuilders.topHits(EMPLOYEERECORDS).addField(EisConstants.DISTNAME)
                                 .addField(EisConstants.ULBNAME)
                                 .addField(EisConstants.ULBGRADE).addField(EisConstants.REGNAME)

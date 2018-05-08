@@ -67,6 +67,9 @@ public class EmployeeCountResponse {
     private Long totalContractMale = 0L;
     private Long totalContractFemale = 0L;
     private Long totalContractEmployee = 0L;
+    private Long totalSanctioned = 0L;
+    private Long totalWorking = 0L;
+    private Long totalVacant = 0L;
 
     public String getRegion() {
         return region;
@@ -186,6 +189,30 @@ public class EmployeeCountResponse {
 
     public void setTotalContractEmployee(Long totalContractEmployee) {
         this.totalContractEmployee = totalContractEmployee;
+    }
+
+    public Long getTotalSanctioned() {
+        return totalSanctioned;
+    }
+
+    public void setTotalSanctioned(Long totalSanctioned) {
+        this.totalSanctioned = totalSanctioned;
+    }
+
+    public Long getTotalWorking() {
+        return totalWorking;
+    }
+
+    public void setTotalWorking(Long totalWorking) {
+        this.totalWorking = totalWorking;
+    }
+
+    public Long getTotalVacant() {
+        return totalVacant;
+    }
+
+    public void setTotalVacant(Long totalVacant) {
+        this.totalVacant = totalVacant;
     }
 
 }

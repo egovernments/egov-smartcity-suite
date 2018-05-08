@@ -59,6 +59,7 @@ public class EisConstants {
     public static final String HIERARCHY_TYPE_ADMIN = "ADMINISTRATION";
     public static final Boolean IS_PRIMARY_TRUE = true;
     public static final String EMPLOYEE_INDEX_NAME = "employeemaster";
+    public static final String EMPLOYEE_SANCTIONEDPOSTS_INDEX_NAME = "hrsanctionedposts";
     public static final String GENDER = "gender";
     public static final String EMPLOYEE_TYPE = "employeetype";
     public static final String EMPLOYEE_CODE = "code";
@@ -72,8 +73,8 @@ public class EisConstants {
     public static final String WORKFLOW_STATE_REDRESSED = "Created";
     public static final String WORKFLOW_STATE_CANCELLED = "Cancelled";
     public static final String WORKFLOW_STATE_INPROCESS = "In process";
-    public static final String EMPLOYEE_GRIEVANCE ="Employee Grievance";
-    
+    public static final String EMPLOYEE_GRIEVANCE = "Employee Grievance";
+
     public static final String WARD = "Ward";
     public static final String REVENUE_HIERARCHY_TYPE = "REVENUE";
 
