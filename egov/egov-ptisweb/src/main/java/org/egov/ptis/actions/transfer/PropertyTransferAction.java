@@ -150,6 +150,9 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private static final String PROPERTY_TRANSFER = "property transfer";
     private static final long serialVersionUID = 1L;
     private static final String PROPERTY_MODIFY_REJECT_FAILURE = "property.modify.reject.failure";
+    public static final String TAXDUE = "taxdue";
+    public static final String STRUCTURED = "structured";
+        
     @Autowired
     protected transient AssignmentService assignmentService;
     // Form Binding Model
@@ -257,7 +260,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private String oldTransferReason;
     private List<Document> successionDocuments = new ArrayList<>();
     private List<Document> otherDocuments = new ArrayList<>();
-    
+    private String taxDueOrStruc = "no";
 
 
     public PropertyTransferAction() {
@@ -278,6 +281,14 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             return COMMON_FORM;
         }
         if (basicproperty.isUnderWorkflow()) {
+            setFormProperties();
+            if (taxDueOrStruc.equals(TAXDUE))
+                return REJECT_ON_TAXDUE;
+            if (taxDueOrStruc.equals(STRUCTURED))
+                return COMMON_FORM;
+            if (basicproperty.getWFProperty() != null && Arrays.asList(PROPERTY_MODIFY_REASON_ADD_OR_ALTER, DEMOLITION)
+                    .contains(basicproperty.getWFProperty().getPropertyModifyReason()))
+                return NEW;
             final List<String> msgParams = new ArrayList<>();
             msgParams.add("Transfer of Ownership");
             wfErrorMsg = getText("wf.pending.msg", msgParams);
@@ -285,8 +296,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         } else {
             final PropertyTaxUtil propertyTaxUtil = new PropertyTaxUtil();
             propertyTaxUtil.setPersistenceService(persistenceService);
-            final boolean hasChildPropertyUnderWorkflow = propertyTaxUtil.checkForParentUsedInBifurcation(basicproperty
-                    .getUpicNo());
+            final boolean hasChildPropertyUnderWorkflow = propertyTaxUtil
+                    .checkForParentUsedInBifurcation(basicproperty.getUpicNo());
             if (hasChildPropertyUnderWorkflow) {
                 wfErrorMsg = getText("error.msg.child.underworkflow");
                 return TARGET_WORKFLOW_ERROR;
@@ -295,28 +306,16 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 wfErrorMsg = getText("msg.under.wtms.wf.ttp");
                 return TARGET_WORKFLOW_ERROR;
             }
-            final Map<String, BigDecimal> propertyTaxDetails = propertyService
-                    .getCurrentPropertyTaxDetailsIncludingPenalty(basicproperty.getActiveProperty());
-            final Map<String, BigDecimal> currentTaxAndDue = propertyService.getCurrentTaxAndBalanceIncludingPenalty(propertyTaxDetails,
-                    new Date());
-            currentPropertyTax = currentTaxAndDue.get(CURR_DMD_STR);
-            propertyOwner = basicproperty.getFullOwnerName();
-            houseNo = basicproperty.getAddress().getHouseNoBldgApt();
-            currentPropertyTaxDue = currentTaxAndDue.get(CURR_BAL_STR);
-            arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(propertyTaxDetails.get(ARR_COLL_STR));
-            currentWaterTaxDue = getWaterTaxDues();
 
-            if (currentWaterTaxDue.add(currentPropertyTaxDue).add(arrearPropertyTaxDue).longValue() > 0) {
-                setTaxDueErrorMsg(getText("taxdues.error.msg", new String[]{PROPERTY_TRANSFER}));
+            setFormProperties();
+            if (taxDueOrStruc.equals(TAXDUE))
                 return REJECT_ON_TAXDUE;
-            }
-            if (basicproperty.getActiveProperty().getPropertyDetail().isStructure()) {
-                addActionError(getText("error.superstruc.prop.notallowed"));
+            if (taxDueOrStruc.equals(STRUCTURED))
                 return COMMON_FORM;
-            }
-            checkForMandatoryDocuments();
-            if(!ADDTIONAL_RULE_FULL_TRANSFER.equalsIgnoreCase(propertyMutation.getType())){
-                if (StringUtils.isBlank(applicationSource) && propertyService.isEmployee(transferOwnerService.getLoggedInUser())
+
+            if (!ADDTIONAL_RULE_FULL_TRANSFER.equalsIgnoreCase(propertyMutation.getType())) {
+                if (StringUtils.isBlank(applicationSource)
+                        && propertyService.isEmployee(transferOwnerService.getLoggedInUser())
                         && !propertyTaxCommonUtils.isEligibleInitiator(transferOwnerService.getLoggedInUser().getId())
                         && !propertyService.isCitizenPortalUser(transferOwnerService.getLoggedInUser())) {
                     addActionError(getText("initiator.noteligible"));
@@ -333,6 +332,28 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 }
             } else
                 return NEW;
+        }
+    }
+
+    public void setFormProperties() {
+        final Map<String, BigDecimal> propertyTaxDetails = propertyService
+                .getCurrentPropertyTaxDetailsIncludingPenalty(basicproperty.getActiveProperty());
+        final Map<String, BigDecimal> currentTaxAndDue = propertyService
+                .getCurrentTaxAndBalanceIncludingPenalty(propertyTaxDetails, new Date());
+        currentPropertyTax = currentTaxAndDue.get(CURR_DMD_STR);
+        propertyOwner = basicproperty.getFullOwnerName();
+        houseNo = basicproperty.getAddress().getHouseNoBldgApt();
+        currentPropertyTaxDue = currentTaxAndDue.get(CURR_BAL_STR);
+        arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(propertyTaxDetails.get(ARR_COLL_STR));
+        currentWaterTaxDue = getWaterTaxDues();
+        checkForMandatoryDocuments();
+        if (currentWaterTaxDue.add(currentPropertyTaxDue).add(arrearPropertyTaxDue).longValue() > 0) {
+            setTaxDueErrorMsg(getText("taxdues.error.msg", new String[] { PROPERTY_TRANSFER }));
+            taxDueOrStruc = TAXDUE;
+        }
+        if (basicproperty.getActiveProperty() != null && basicproperty.getActiveProperty().getPropertyDetail().isStructure()) {
+            addActionError(getText("error.superstruc.prop.notallowed"));
+            taxDueOrStruc = STRUCTURED;
         }
     }
 
