@@ -260,7 +260,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private String oldTransferReason;
     private List<Document> successionDocuments = new ArrayList<>();
     private List<Document> otherDocuments = new ArrayList<>();
-    private String taxDueOrStruc = "no";
+    private String taxDueOrStruc;
 
 
     public PropertyTransferAction() {
@@ -1056,8 +1056,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private Boolean isUnderWtmsWF() {
         return propertyService.getWaterTaxDues(assessmentNo).get(UNDER_WTMS_WF) == null
                 ? Boolean.FALSE
-                : Boolean.valueOf((Boolean) propertyService.getWaterTaxDues(assessmentNo)
-                .get(UNDER_WTMS_WF));
+                : (Boolean) propertyService.getWaterTaxDues(assessmentNo)
+                .get(UNDER_WTMS_WF);
     }
 
     public BigDecimal getCurrentPropertyTax() {
