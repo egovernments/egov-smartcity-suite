@@ -403,7 +403,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         if (!loggedUserIsMeesevaUser)
             basicPropertyService.persist(basicProperty);
         else {
-            // TODO : Meeseva params are not used while persisting? 
             final HashMap<String, String> meesevaParams = new HashMap<>();
             meesevaParams.put("ADMISSIONFEE", "0");
             meesevaParams.put("APPLICATIONNUMBER", property.getMeesevaApplicationNumber());
