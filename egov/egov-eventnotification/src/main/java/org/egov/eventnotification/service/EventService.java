@@ -348,6 +348,7 @@ public class EventService {
         else
             messageContent.setImageUrl(event.getFilestore().getFileStoreId());
         messageContent.setMessageBody(event.getMessage());
+        messageContent.setMessageId(event.getId());
         messageContent.setModuleName(event.getName());
         messageContent.setNotificationDateTime(new Date().getTime());
         messageContent.setNotificationType(EventnotificationConstant.NOTIFICATION_TYPE_EVENT);
