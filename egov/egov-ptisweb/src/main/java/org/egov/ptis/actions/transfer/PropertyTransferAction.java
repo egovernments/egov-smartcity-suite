@@ -282,9 +282,9 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         }
         if (basicproperty.isUnderWorkflow()) {
             setFormProperties();
-            if (taxDueOrStruc.equals(TAXDUE))
+            if (TAXDUE.equals(taxDueOrStruc))
                 return REJECT_ON_TAXDUE;
-            if (taxDueOrStruc.equals(STRUCTURED))
+            if (STRUCTURED.equals(taxDueOrStruc))
                 return COMMON_FORM;
             if (basicproperty.getWFProperty() != null && Arrays.asList(PROPERTY_MODIFY_REASON_ADD_OR_ALTER, DEMOLITION)
                     .contains(basicproperty.getWFProperty().getPropertyModifyReason()))
@@ -308,9 +308,9 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             }
 
             setFormProperties();
-            if (taxDueOrStruc.equals(TAXDUE))
+            if (TAXDUE.equals(taxDueOrStruc))
                 return REJECT_ON_TAXDUE;
-            if (taxDueOrStruc.equals(STRUCTURED))
+            if (STRUCTURED.equals(taxDueOrStruc))
                 return COMMON_FORM;
 
             if (!ADDTIONAL_RULE_FULL_TRANSFER.equalsIgnoreCase(propertyMutation.getType())) {
