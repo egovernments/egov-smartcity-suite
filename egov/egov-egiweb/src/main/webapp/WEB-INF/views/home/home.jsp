@@ -136,6 +136,14 @@
             font-size: 1pt;
             padding: 5px 0px 5px 0px;
         }
+
+        table.dataTable tbody {
+            font-size: 12px;
+        }
+
+        table.dataTable thead {
+            font-size: 12px;
+        }
     </style>
 </head>
 <body class="page-body">
@@ -276,6 +284,7 @@
                             <th><spring:message code="lbl.natureoftask"/></th>
                             <th><spring:message code="lbl.status"/></th>
                             <th><spring:message code="lbl.details"/></th>
+                            <th><spring:message code="lbl.elapsed.days"/></th>
                             <th></th>
                         </tr>
                         </thead>
@@ -303,6 +312,7 @@
                             <th><spring:message code="lbl.natureoftask"/></th>
                             <th><spring:message code="lbl.status"/></th>
                             <th><spring:message code="lbl.details"/></th>
+                            <th><spring:message code="lbl.elapsed.days"/></th>
                         </tr>
                         </thead>
                     </table>

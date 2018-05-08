@@ -144,7 +144,7 @@ $(document).ready(function () {
                 "sInfo": ""
             },
             "ajax": {
-                "url": "inbox/history?stateId=" + tableContainer1.dataTable().fnGetData($(this).parent().parent(), 6),
+                "url": "inbox/history?stateId=" + tableContainer1.dataTable().fnGetData($(this).parent().parent(), 7),
                 "dataSrc": ""
             },
             "columns": [
@@ -186,18 +186,18 @@ $(document).ready(function () {
     });
 
     $("#official_inbox").on('click', 'tbody tr', function (event) {
-        if (tableContainer1.dataTable().fnGetData(this, 7) != undefined) {
-            var windowObjectReference = window.open(tableContainer1.dataTable().fnGetData(this, 7),
-                tableContainer1.dataTable().fnGetData(this, 6) + '', 'width=900, height=700, top=300, left=150,scrollbars=yes');
+        if (tableContainer1.dataTable().fnGetData(this, 8) != undefined) {
+            var windowObjectReference = window.open(tableContainer1.dataTable().fnGetData(this, 8),
+                tableContainer1.dataTable().fnGetData(this, 7) + '', 'width=900, height=700, top=300, left=150,scrollbars=yes');
             openedWindows.push(windowObjectReference);
             windowObjectReference.focus();
         }
     });
 
     $("#official_drafts").on('click', 'tbody tr', function (event) {
-        if (tableContainer1.dataTable().fnGetData(this, 6) != undefined) {
-            var windowObjectReference = window.open(tableContainer1.dataTable().fnGetData(this, 6),
-                tableContainer1.dataTable().fnGetData(this, 5) + '', 'width=900, height=700, top=300, left=150,scrollbars=yes');
+        if (tableContainer1.dataTable().fnGetData(this, 7) != undefined) {
+            var windowObjectReference = window.open(tableContainer1.dataTable().fnGetData(this, 7),
+                tableContainer1.dataTable().fnGetData(this, 6) + '', 'width=900, height=700, top=300, left=150,scrollbars=yes');
             openedWindows.push(windowObjectReference);
             windowObjectReference.focus();
         }
@@ -451,14 +451,17 @@ function worklist() {
         },
         "deferRender": true,
         "columns": [
-            {"data": "date", "width": "16%"},
+            {"data": "date", "width": "15%"},
             {"data": "sender", "width": "15%"},
-            {"data": "task", "width": "20%"},
-            {"data": "status", "width": "24%"},
+            {"data": "task", "width": "15%"},
+            {"data": "status", "width": "20%"},
             {"data": "details", "width": "20%"},
+            {"data": "elapsed", "className": "text-center", "width": "12%"},
             {
                 "data": null,
+                "width": "0%",
                 "target": -1,
+                "sortable": false,
                 "defaultContent": '<i class="fa fa-history inbox-history history-size" class="tooltip-secondary" data-toggle="tooltip" title="History"></i>'
             },
             {"data": "id", "visible": false, "searchable": false},
@@ -561,11 +564,12 @@ function drafts() {
         },
         "deferRender": true,
         "columns": [
-            {"data": "date", "width": "16%"},
-            {"data": "sender", "width": "15%"},
-            {"data": "task", "width": "20%"},
-            {"data": "status", "width": "24%"},
+            {"data": "date"},
+            {"data": "sender"},
+            {"data": "task"},
+            {"data": "status"},
             {"data": "details", "width": "20%"},
+            {"data": "elapsed"},
             {"data": "id", "visible": false, "searchable": false},
             {"data": "link", "visible": false, "searchable": false}
         ],
@@ -607,14 +611,17 @@ function worklistwrtnow(json) {
         "autoWidth": false,
         "data": json,
         "columns": [
-            {"data": "date", "width": "16%"},
+            {"data": "date", "width": "15%"},
             {"data": "sender", "width": "15%"},
-            {"data": "task", "width": "20%"},
-            {"data": "status", "width": "24%"},
+            {"data": "task", "width": "15%"},
+            {"data": "status", "width": "20%"},
             {"data": "details", "width": "20%"},
+            {"data": "elapsed", "className": "text-center", "width": "12%"},
             {
                 "data": null,
+                "width": "0%",
                 "target": -1,
+                "sortable": false,
                 "defaultContent": '<i class="fa fa-history inbox-history history-size" class="tooltip-secondary" data-toggle="tooltip" title="History"></i>'
             },
             {"data": "id", "visible": false, "searchable": false},
