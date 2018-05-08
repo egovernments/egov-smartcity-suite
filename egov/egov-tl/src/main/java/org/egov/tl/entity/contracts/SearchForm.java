@@ -64,6 +64,7 @@ import static org.egov.tl.utils.Constants.CLOSURE_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.ROLE_BILLCOLLECTOR;
 import static org.egov.tl.utils.Constants.TL_APPROVER_ROLENAME;
 import static org.egov.tl.utils.Constants.TL_CREATOR_ROLENAME;
+import static org.egov.tl.utils.Constants.CSCOPERATOR;
 
 public class SearchForm extends DataTableSearchRequest {
     private Long licenseId;
@@ -122,6 +123,8 @@ public class SearchForm extends DataTableSearchRequest {
             licenseActions.add("Closure");
         if (license.isClosed())
             licenseActions.add("Closure Endorsement Notice");
+        if (user.hasRole(CSCOPERATOR))
+            addPrintCertificatesOptions(license, licenseActions);
         if (user.getType().equals(UserType.EMPLOYEE)) {
             if (license.getIsActive())
                 licenseActions.add("Generate Demand Notice");
@@ -139,11 +142,7 @@ public class SearchForm extends DataTableSearchRequest {
         if (user.hasRole(ROLE_BILLCOLLECTOR) && (license.canCollectLicenseFee() || license.canCollectFee())) {
             licenseActions.add("Collect Fees");
         } else if (user.hasAnyRole(TL_CREATOR_ROLENAME, TL_APPROVER_ROLENAME)) {
-            if (license.isStatusActive() && !license.isLegacy())
-                licenseActions.add("Print Certificate");
-            if (!CLOSURE_LIC_APPTYPE.equals(license.getLicenseAppType().getName())
-                    && license.getStatus().getStatusCode().equals(Constants.STATUS_UNDERWORKFLOW))
-                licenseActions.add("Print Provisional Certificate");
+            addPrintCertificatesOptions(license, licenseActions);
             if (license.isReadyForRenewal())
                 licenseActions.add("Renew License");
             Date fromRange = new DateTime().withMonthOfYear(1).withDayOfMonth(1).toDate();
@@ -152,6 +151,14 @@ public class SearchForm extends DataTableSearchRequest {
             if (currentDate.after(fromRange) && currentDate.before(toRange))
                 demandGenerationOption(licenseActions, license);
         }
+    }
+
+    private void addPrintCertificatesOptions(License license, List<String> licenseActions) {
+        if (license.isStatusActive() && !license.isLegacy())
+            licenseActions.add("Print Certificate");
+        if (!CLOSURE_LIC_APPTYPE.equals(license.getLicenseAppType().getName())
+                && license.getStatus().getStatusCode().equals(Constants.STATUS_UNDERWORKFLOW))
+            licenseActions.add("Print Provisional Certificate");
     }
 
     private void demandGenerationOption(List<String> licenseActions, License license) {
