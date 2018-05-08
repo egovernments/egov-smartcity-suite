@@ -146,6 +146,8 @@ public class RestEventController {
                 jsonObjectEvent.addProperty(EventnotificationConstant.URL, "");
             else
                 jsonObjectEvent.addProperty(EventnotificationConstant.URL, event.getUrl());
+            
+            jsonObjectEvent.addProperty(EventnotificationConstant.USER_INTERESTED,EventnotificationConstant.NO);
 
             jsonArrayEvent.add(jsonObjectEvent);
 
@@ -161,7 +163,7 @@ public class RestEventController {
      */
     @RequestMapping(value = ApiUrl.GET_EVENT
             + ApiUrl.EVENT_ID, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String getEvent(@PathVariable long id) {
+    public String getEvent(@PathVariable long id,@RequestParam(required = false, value = EventnotificationConstant.USERID) Long userId) {
         ApiResponse.newInstance();
         Event event = eventService.findById(id);
 
@@ -196,7 +198,13 @@ public class RestEventController {
             jsonObjectEvent.addProperty(EventnotificationConstant.URL, "");
         else
             jsonObjectEvent.addProperty(EventnotificationConstant.URL, event.getUrl());
-
+        
+        Userevent userevent = usereventService.getUsereventByEventAndUser(event.getId(),userId);
+        if(null == userevent)
+            jsonObjectEvent.addProperty(EventnotificationConstant.USER_INTERESTED,EventnotificationConstant.NO);
+        else
+            jsonObjectEvent.addProperty(EventnotificationConstant.USER_INTERESTED,EventnotificationConstant.YES);
+        
         return jsonObjectEvent.toString();
     }
 
@@ -250,6 +258,8 @@ public class RestEventController {
                 jsonObjectEvent.addProperty(EventnotificationConstant.URL, "");
             else
                 jsonObjectEvent.addProperty(EventnotificationConstant.URL, event.getUrl());
+            
+            jsonObjectEvent.addProperty(EventnotificationConstant.USER_INTERESTED,EventnotificationConstant.NO);
 
             jsonArrayEvent.add(jsonObjectEvent);
 

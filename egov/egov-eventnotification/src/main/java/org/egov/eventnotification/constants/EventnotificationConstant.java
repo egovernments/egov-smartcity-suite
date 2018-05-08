@@ -122,6 +122,7 @@ public class EventnotificationConstant {
     public static final String UPCOMING = "upcoming";
     public static final String ONGOING = "ongoing";
     public static final String NOTIFICATION_TYPE_EVENT = "Event";
+    public static final String USER_INTERESTED = "userInterested";
     
     public static final String SCHEDULE_LIST = "scheduleList";
     public static final String DRAFT_LIST = "draftList";
@@ -131,6 +132,18 @@ public class EventnotificationConstant {
     public static final String SCHEDULE_DAY = "day";
     public static final String SCHEDULE_YEAR= "year";
     public static final String NOTIFICATION_JOB = "notificationJob";
+    public static final String TO_BE_SCHEDULED = "To be Scheduled";
+    public static final String SCHEDULE = "Schedule";
+    public static final String NOTIFICATION_SCHEDULE = "notificationSchedule";
+    public static final String SCHEDULE_CREATE_VIEW = "schedule-create-view";
+    public static final String SCHEDULER_REPEAT_LIST = "repeatList";
+    public static final String SCHEDULE_CREATE_SUCCESS = "schedule-create-success";
+    public static final String USER = "user";
+    public static final String SCHEDULEID = "scheduleId";
+    public static final String NO = "No";
+    public static final String YES = "Yes";
+    
+    public static final String MSG_NOTIFICATION_SCHEDULED_SUCCESS = "msg.notification.schedule.success";
 
     public static enum EVENT_TYPE {
         Business, Exhibition, Cultural, Drama
