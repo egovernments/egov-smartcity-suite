@@ -174,7 +174,6 @@ public class EventService {
     /**
      * This method create the event.
      * @param event
-     * @param files
      * @return Event
      * @throws IOException
      * @throws ParseException
@@ -355,6 +354,10 @@ public class EventService {
         messageContent.setSenderId(user.getId());
         messageContent.setSenderName(user.getName());
         messageContent.setSendAll(Boolean.TRUE);
+        if(null == event.getUrl())
+            messageContent.setUrl("");
+        else
+            messageContent.setUrl(event.getUrl());
 
         pushNotificationService.sendNotifications(messageContent);
     }

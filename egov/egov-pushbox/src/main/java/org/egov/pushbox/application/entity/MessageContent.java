@@ -50,120 +50,158 @@ package org.egov.pushbox.application.entity;
 import java.util.List;
 
 public class MessageContent {
-	private Long id; 
-	private Long messageId;
-	private String notificationType;
-	private String moduleName;
-	private Long notificationDateTime; 
-	private String messageBody; 
-	private String imageUrl; 
-	private Long createdDateTime;
-	private Long eventDateTime; 
-	private String eventLocation; 
-	private String eventAddress; 
-	private Long senderId; 
-	private String senderName;
-	private Long expiryDate; 
-	private List<Long> userIdList; 
-	private Boolean sendAll;
-	
-	public Boolean getSendAll() {
-		return sendAll;
-	}
-	public void setSendAll(Boolean sendAll) {
-		this.sendAll = sendAll;
-	}
-	public List<Long> getUserIdList() {
-		return userIdList;
-	}
-	public void setUserIdList(List<Long> userIdList) {
-		this.userIdList = userIdList;
-	}
-	public Long getMessageId() {
-		return messageId;
-	}
-	public void setMessageId(Long messageId) {
-		this.messageId = messageId;
-	}
-	public Long getExpiryDate() {
-		return expiryDate;
-	}
-	public void setExpiryDate(Long expiryDate) {
-		this.expiryDate = expiryDate;
-	}
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
-	public String getNotificationType() {
-		return notificationType;
-	}
-	public void setNotificationType(String notificationType) {
-		this.notificationType = notificationType;
-	}
-	public String getModuleName() {
-		return moduleName;
-	}
-	public void setModuleName(String moduleName) {
-		this.moduleName = moduleName;
-	}
-	public String getMessageBody() {
-		return messageBody;
-	}
-	public void setMessageBody(String messageBody) {
-		this.messageBody = messageBody;
-	}
-	public String getImageUrl() {
-		return imageUrl;
-	}
-	public void setImageUrl(String imageUrl) {
-		this.imageUrl = imageUrl;
-	}
-	public Long getNotificationDateTime() {
-		return notificationDateTime;
-	}
-	public void setNotificationDateTime(Long notificationDateTime) {
-		this.notificationDateTime = notificationDateTime;
-	}
-	public Long getCreatedDateTime() {
-		return createdDateTime;
-	}
-	public void setCreatedDateTime(Long createdDateTime) {
-		this.createdDateTime = createdDateTime;
-	}
-	public Long getEventDateTime() {
-		return eventDateTime;
-	}
-	public void setEventDateTime(Long eventDateTime) {
-		this.eventDateTime = eventDateTime;
-	}
-	public String getEventLocation() {
-		return eventLocation;
-	}
-	public void setEventLocation(String eventLocation) {
-		this.eventLocation = eventLocation;
-	}
-	public String getEventAddress() {
-		return eventAddress;
-	}
-	public void setEventAddress(String eventAddress) {
-		this.eventAddress = eventAddress;
-	}
-	public Long getSenderId() {
-		return senderId;
-	}
-	public void setSenderId(Long senderId) {
-		this.senderId = senderId;
-	}
-	public String getSenderName() {
-		return senderName;
-	}
-	public void setSenderName(String senderName) {
-		this.senderName = senderName;
-	}
-	
-	
+    private Long id;
+    private Long messageId;
+    private String notificationType;
+    private String moduleName;
+    private Long notificationDateTime;
+    private String messageBody;
+    private String imageUrl;
+    private Long createdDateTime;
+    private Long eventDateTime;
+    private String eventLocation;
+    private String eventAddress;
+    private Long senderId;
+    private String senderName;
+    private Long expiryDate;
+    private List<Long> userIdList;
+    private Boolean sendAll;
+    private String url;
+
+    public Boolean getSendAll() {
+        return sendAll;
+    }
+
+    public void setSendAll(Boolean sendAll) {
+        this.sendAll = sendAll;
+    }
+
+    public List<Long> getUserIdList() {
+        return userIdList;
+    }
+
+    public void setUserIdList(List<Long> userIdList) {
+        this.userIdList = userIdList;
+    }
+
+    public Long getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(Long messageId) {
+        this.messageId = messageId;
+    }
+
+    public Long getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(Long expiryDate) {
+        this.expiryDate = expiryDate;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getNotificationType() {
+        return notificationType;
+    }
+
+    public void setNotificationType(String notificationType) {
+        this.notificationType = notificationType;
+    }
+
+    public String getModuleName() {
+        return moduleName;
+    }
+
+    public void setModuleName(String moduleName) {
+        this.moduleName = moduleName;
+    }
+
+    public String getMessageBody() {
+        return messageBody;
+    }
+
+    public void setMessageBody(String messageBody) {
+        this.messageBody = messageBody;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public Long getNotificationDateTime() {
+        return notificationDateTime;
+    }
+
+    public void setNotificationDateTime(Long notificationDateTime) {
+        this.notificationDateTime = notificationDateTime;
+    }
+
+    public Long getCreatedDateTime() {
+        return createdDateTime;
+    }
+
+    public void setCreatedDateTime(Long createdDateTime) {
+        this.createdDateTime = createdDateTime;
+    }
+
+    public Long getEventDateTime() {
+        return eventDateTime;
+    }
+
+    public void setEventDateTime(Long eventDateTime) {
+        this.eventDateTime = eventDateTime;
+    }
+
+    public String getEventLocation() {
+        return eventLocation;
+    }
+
+    public void setEventLocation(String eventLocation) {
+        this.eventLocation = eventLocation;
+    }
+
+    public String getEventAddress() {
+        return eventAddress;
+    }
+
+    public void setEventAddress(String eventAddress) {
+        this.eventAddress = eventAddress;
+    }
+
+    public Long getSenderId() {
+        return senderId;
+    }
+
+    public void setSenderId(Long senderId) {
+        this.senderId = senderId;
+    }
+
+    public String getSenderName() {
+        return senderName;
+    }
+
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
 }
