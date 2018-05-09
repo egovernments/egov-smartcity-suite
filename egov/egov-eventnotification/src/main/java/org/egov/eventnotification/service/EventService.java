@@ -241,7 +241,7 @@ public class EventService {
         Date startDate;
         Date endDate;
         if (eventDateType.equalsIgnoreCase(EventnotificationConstant.UPCOMING)) {
-            calendar.add(Calendar.DAY_OF_MONTH, 7);
+            calendar.add(Calendar.DAY_OF_MONTH, 8);
             startDate = calendar.getTime();
             calendarEndDate.setTime(startDate);
             calendarEndDate.add(Calendar.DAY_OF_MONTH, 7);
