@@ -475,7 +475,7 @@ public class ReportGenerationService {
         return NumberToWordConverter.amountInWordsWithCircumfix(BigDecimal.valueOf(totalCharges));
     }
 
-    public ReportRequest generateCitizenAckReport(final WaterConnectionDetails waterConnectionDetails) {
+    public ReportRequest generateCitizenAckReport(final WaterConnectionDetails waterConnectionDetails,final String sewApplicationNum) {
         ReportRequest reportInput = null;
         final Map<String, Object> reportParams = new HashMap<>();
         if (waterConnectionDetails != null) {
@@ -493,6 +493,8 @@ public class ReportGenerationService {
             reportParams.put(APPLICANT_NAME, ownerName);
             final Integer appProcessTime = applicationProcessTimeService.getApplicationProcessTime(
                     waterConnectionDetails.getApplicationType(), waterConnectionDetails.getCategory());
+                reportParams.put("sewerageApplicationNo", sewApplicationNum);   
+
             if (appProcessTime == null)
                 reportParams.put("applicationDueDate", null);
             else
@@ -799,8 +801,8 @@ public class ReportGenerationService {
         }
     }
 
-    public ResponseEntity<InputStreamResource> generateReport(final WaterConnectionDetails waterConnectionDetails) {
-        ReportOutput reportOutput = reportService.createReport(generateCitizenAckReport(waterConnectionDetails));
+    public ResponseEntity<InputStreamResource> generateReport(final WaterConnectionDetails waterConnectionDetails,final String sewerageApplicationNum ) {
+        ReportOutput reportOutput = reportService.createReport(generateCitizenAckReport(waterConnectionDetails,sewerageApplicationNum));
         reportOutput.setReportFormat(ReportFormat.PDF);
         reportOutput.setReportName(waterConnectionDetails.getApplicationNumber());
         return reportAsResponseEntity(reportOutput);

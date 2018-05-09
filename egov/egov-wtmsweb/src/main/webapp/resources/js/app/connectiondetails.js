@@ -47,13 +47,67 @@
  */
 $(document).ready(function(){
 	
-	
-	
+	$('#sewpropertyType option').each(function() {
+	    var $this = $(this);
+	    $this.text($this.text().replace(/_/g, ' '));
+	});
+	$('#propertyType option').each(function() {
+	    var $this = $(this);
+	    $this.text($this.text().replace(/_/g, ' '));
+	});
 	$('#propertyType').change(function(){
 		 loadPropertyCategories();
 		 loadPropertyUsageTypes();
 		 loadPropertyPipeTypes();
 	});
+	
+	$('#sewpropertyType').change(function(){
+		var propertyType = $(this).val();
+		if(propertyType == '') {
+			$('#lblResidential').hide();
+			$('#lblNonResidential').hide();
+			$('#valResidential').hide();
+			$('#valNonResidential').hide();
+			
+			$('#noOfClosetsResidential').val('');
+			$('#noOfClosetsNonResidential').val('');
+		} else if(propertyType == 'RESIDENTIAL') {
+			
+			$('#lblResidential').show();
+			$('#lblNonResidential').hide();
+			$('#valResidential').show();
+			$('#valNonResidential').hide();
+			
+			$('#noOfClosetsNonResidential').val('');
+			
+			$('#valResidential input').attr('required','required');
+			$('#valNonResidential input').removeAttr("required");
+		} else if(propertyType == 'NON_RESIDENTIAL') {
+			$('#lblNonResidential').removeClass('col-sm-3');
+			$('#lblNonResidential').addClass('col-sm-2');
+			
+			$('#lblResidential').hide();
+			$('#lblNonResidential').show();
+			$('#valResidential').hide();
+			$('#valNonResidential').show();
+			
+			$('#noOfClosetsResidential').val('');
+			
+			$('#valNonResidential input').attr('required','required');
+			$('#valResidential input').removeAttr("required");
+		} else if(propertyType == 'MIXED') {
+			$('#lblNonResidential').removeClass('col-sm-2');
+			$('#lblNonResidential').addClass('col-sm-3');
+			
+			$('#lblResidential').show();
+			$('#lblNonResidential').show();
+			$('#valResidential').show();
+			$('#valNonResidential').show();
+			
+			$('#valResidential input').attr('required','required');
+			$('#valNonResidential input').attr('required','required');
+		}
+ });
 	
 	$('#connectionType').change(function(){
 		

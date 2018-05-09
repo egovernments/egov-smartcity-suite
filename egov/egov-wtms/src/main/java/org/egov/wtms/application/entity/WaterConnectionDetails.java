@@ -53,6 +53,7 @@ import org.egov.commons.entity.Source;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Position;
+import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.wtms.masters.entity.ApplicationType;
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.PipeSize;
@@ -260,6 +261,9 @@ public class WaterConnectionDetails extends StateAware<Position> {
     @Enumerated(EnumType.STRING)
     private Source source;
 
+    @Transient
+    private SewerageApplicationDetails sewerageApplicationDetails;
+    
     @Transient
     private Long approvalDepartment;
 
@@ -753,5 +757,11 @@ public class WaterConnectionDetails extends StateAware<Position> {
     public enum WorkFlowState {
         CREATED, CHECKED, APPROVED, REJECTED, CANCELLED;
     }
+    public SewerageApplicationDetails getSewerageApplicationDetails() {
+        return sewerageApplicationDetails;
+    }
 
+    public void setSewerageApplicationDetails(SewerageApplicationDetails sewerageApplicationDetails) {
+        this.sewerageApplicationDetails = sewerageApplicationDetails;
+    }
 }

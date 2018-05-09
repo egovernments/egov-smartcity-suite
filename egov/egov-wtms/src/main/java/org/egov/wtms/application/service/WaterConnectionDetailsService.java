@@ -172,6 +172,14 @@ import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
+import org.egov.stms.masters.entity.SewerageApplicationType;
+import org.egov.stms.masters.entity.enums.SewerageConnectionStatus;
+import org.egov.stms.masters.service.FeesDetailMasterService;
+import org.egov.stms.masters.service.SewerageApplicationTypeService;
+import org.egov.stms.transactions.entity.SewerageApplicationDetails;
+import org.egov.stms.transactions.entity.SewerageConnection;
+import org.egov.stms.utils.SewerageTaxUtils;
+import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.WaterConnExecutionDetails;
 import org.egov.wtms.application.entity.WaterConnection;
@@ -211,6 +219,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -242,6 +251,8 @@ public class WaterConnectionDetailsService {
     private static final String REQ_INITIAL_READING = "InitialReadingRequired";
     private static final String REQ_METER_SERIAL_NUMBER = "MeterSerialNumberRequired";
     private static final String ERR_WATER_RATES_NOT_DEFINED = "WaterRatesNotDefined";
+
+    private static final String INSPECTIONFEEREQUIRED = "inspectionFeesCollectionRequired";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -313,7 +324,13 @@ public class WaterConnectionDetailsService {
 
     @Autowired
     private FinancialYearDAO financialYearDAO;
-
+    
+    @Autowired
+    private SewerageTaxUtils sewerageTaxUtils;
+    @Autowired
+    private SewerageApplicationTypeService sewerageApplicationTypeService;
+    @Autowired
+    private FeesDetailMasterService feesDetailMasterService;
     @Autowired
     public WaterConnectionDetailsService(final WaterConnectionDetailsRepository waterConnectionDetailsRepository) {
         this.waterConnectionDetailsRepository = waterConnectionDetailsRepository;
@@ -1660,5 +1677,20 @@ public class WaterConnectionDetailsService {
             else if (MUNICIPAL_ENGINEER_DESIGN.equalsIgnoreCase(loggedInUserDesignation))
                 return WF_STATE_ME_FORWARD_PENDING;
         return waterConnectionDetails.getState().getNextAction();
+    }
+    
+    //water and sewerage integration    
+    public void prepareNewForm( SewerageApplicationDetails sewerageApplicationDetails,
+            final Model model) {
+        final SewerageConnection connection = new SewerageConnection();
+        sewerageApplicationDetails.setApplicationDate(new Date());
+        connection.setStatus(SewerageConnectionStatus.INPROGRESS);
+        sewerageApplicationDetails.setConnection(connection);
+        final SewerageApplicationType applicationType = sewerageApplicationTypeService
+                .findByCode(SewerageTaxConstants.NEWSEWERAGECONNECTION);
+        sewerageApplicationDetails.setApplicationType(applicationType);
+        model.addAttribute("sewerageallowIfPTDueExists", sewerageTaxUtils.isNewConnectionAllowedIfPTDuePresent());      
+        model.addAttribute("seweragetypeOfConnection", SewerageTaxConstants.NEWSEWERAGECONNECTION);
+
     }
 }

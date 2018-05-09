@@ -48,10 +48,16 @@
 
 package org.egov.stms.transactions.service.collection;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.demand.dao.EgBillDao;
-import org.egov.demand.dao.EgDemandDao;
 import org.egov.demand.interfaces.Billable;
 import org.egov.demand.model.AbstractBillable;
 import org.egov.demand.model.EgBillType;
@@ -66,22 +72,13 @@ import org.egov.ptis.domain.model.BoundaryDetails;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.stms.masters.entity.enums.SewerageConnectionStatus;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
-import org.egov.stms.utils.SewerageTaxUtils;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
-import org.egov.wtms.utils.WaterTaxUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -104,14 +101,6 @@ public class SewerageBillable extends AbstractBillable implements Billable {
 
     @Autowired
     private EgBillDao egBillDAO;
-    @Autowired
-    private EgDemandDao egDemandDAO;
-   
-    @Autowired
-    private WaterTaxUtils waterTaxUtils;
-    
-    @Autowired
-    private SewerageTaxUtils sewerageTaxUtils;
     
     @Override
     public String getBillPayee() {

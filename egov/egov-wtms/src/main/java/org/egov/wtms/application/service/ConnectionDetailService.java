@@ -172,7 +172,9 @@ public class ConnectionDetailService {
                     if (waterConnectionDetails != null) {
                         waterTaxDue = getDueInfo(waterConnectionDetails);
                         waterTaxDue.setPropertyID(propertyIdentifier);
-                        consumerCodes.add(connection.getConsumerCode());
+                        if(connection.getConsumerCode()!=null && waterConnectionDetailsService.getCurrentDue(waterConnectionDetails).compareTo(BigDecimal.ZERO) > 0){
+                                consumerCodes.add(connection.getConsumerCode());
+                        }
                         arrDmd = arrDmd.add(waterTaxDue.getArrearDemand());
                         arrColl = arrColl.add(waterTaxDue.getArrearCollection());
                         currDmd = currDmd.add(waterTaxDue.getCurrentDemand());
