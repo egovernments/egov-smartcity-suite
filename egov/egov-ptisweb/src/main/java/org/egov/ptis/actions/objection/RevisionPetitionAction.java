@@ -1277,27 +1277,19 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         final Property modProperty = propService.modifyDemand(objection.getProperty(), (PropertyImpl) objection.getBasicProperty().getProperty());
         if(objection.getProperty().getPropertyModifyReason().equalsIgnoreCase(PROPERTY_MODIFY_REASON_REVISION_PETITION) &&
                 objection.getBasicProperty().getProperty().getPropertyModifyReason().equalsIgnoreCase(PROPERTY_MODIFY_REASON_ADD_OR_ALTER)) {
-            Property historyProperty = propService.getHistoryPropertyByUpinNo(objection.getBasicProperty());
             final Installment currInstall = propertyTaxCommonUtils.getCurrentInstallment();
             Ptdemand currPtDmd = null;
             for (final Ptdemand demand : modProperty.getPtDemandSet())
-                if ("N".equalsIgnoreCase(demand.getIsHistory()))
-                    if (demand.getEgInstallmentMaster().equals(currInstall)) {
-                        currPtDmd = demand;
-                        break;
-                    }
-            Ptdemand oldCurrPtDmd = null;
-            for (final Ptdemand ptDmd : historyProperty.getPtDemandSet())
-                if ("N".equalsIgnoreCase(ptDmd.getIsHistory()))
-                    if (ptDmd.getEgInstallmentMaster().equals(currInstall)) {
-                        oldCurrPtDmd = ptDmd;
-                        break;
-                    }
-
+                if ("N".equalsIgnoreCase(demand.getIsHistory()) && demand.getEgInstallmentMaster().equals(currInstall)){
+                    currPtDmd = demand;
+                    break;
+                }
+            Ptdemand latestHistoryDemand = propService
+                    .getLatestDemandforHistoryProp(propService.getHistoryPropertyByUpinNo(objection.getBasicProperty()));
             Installment effectiveInstall;
             final Module module = moduleDao.getModuleByName(PTMODULENAME);
             effectiveInstall = installmentDao.getInsatllmentByModuleForGivenDate(module, propCompletionDate);
-            propService.addArrDmdDetToCurrentDmd(oldCurrPtDmd, currPtDmd, effectiveInstall, false);
+            propService.addArrDmdDetToCurrentDmd(latestHistoryDemand, currPtDmd, effectiveInstall, false);
         }
 
         if (objection.getProperty().getPropertyDetail().getLayoutApprovalAuthority() != null && "No Approval"

@@ -1694,21 +1694,21 @@ public class PropertyService {
      */
     public void addArrDmdDetToCurrentDmd(final Ptdemand ptDmd, final Ptdemand currPtDmd,
             final Installment effectiveInstall, final boolean isDemolition) {
-        LOGGER.debug("Entered into addArrDmdDetToCurrentDmd. ptDmd: " + ptDmd + ", currPtDmd: " + currPtDmd);
         /*
          * For create/modify/GRP/Bifurcation arrear penalty demand details will be added before, other demand details will be
          * added below In case of demolition, arrear penalty also needs to be added along with other demand details This check is
          * done using isDemolition flag
          */
-        for (final EgDemandDetails dmdDet : ptDmd.getEgDemandDetails())
-            if (dmdDet.getInstallmentStartDate().before(effectiveInstall.getFromDate()))
-                if (!isDemolition) {
-                    if (!dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                            .equalsIgnoreCase(DEMANDRSN_CODE_PENALTY_FINES))
+        if (ptDmd != null) {
+            for (final EgDemandDetails dmdDet : ptDmd.getEgDemandDetails())
+                if (dmdDet.getInstallmentStartDate().before(effectiveInstall.getFromDate()))
+                    if (!isDemolition) {
+                        if (!dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                                .equalsIgnoreCase(DEMANDRSN_CODE_PENALTY_FINES))
+                            currPtDmd.addEgDemandDetails((EgDemandDetails) dmdDet.clone());
+                    } else
                         currPtDmd.addEgDemandDetails((EgDemandDetails) dmdDet.clone());
-                } else
-                    currPtDmd.addEgDemandDetails((EgDemandDetails) dmdDet.clone());
-        LOGGER.debug("Exiting from addArrDmdDetToCurrentDmd");
+        }
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -4373,6 +4373,10 @@ public class PropertyService {
     
     public Property getHistoryPropertyByUpinNo(BasicProperty basicProperty) {
         return propertyHibernateDAO.getHistoryPropertyForBasicProperty(basicProperty);
+    }
+    
+    public Ptdemand getLatestDemandforHistoryProp(Property oldProperty){
+        return propertyHibernateDAO.getLatestDemand(oldProperty);
     }
 
 }
