@@ -89,6 +89,7 @@ public class EventnotificationConstant {
     public static final String MODE_VIEW = "view";
     public static final String MODE_UPDATE = "update";
     public static final String MODE_CREATE = "create";
+    public static final String MODE_DELETE = "delete";
 
     public static final String EVENT = "event";
     public static final String NOTIFICATION_DRAFT = "NotificationDraft";
@@ -166,9 +167,19 @@ public class EventnotificationConstant {
     public static final String SCHEDULEID = "scheduleId";
     public static final String NO = "No";
     public static final String YES = "Yes";
+    public static final String SCHEDULE_DELETE = "Delete";
     
-    public static final String MSG_NOTIFICATION_SCHEDULED_SUCCESS = "msg.notification.schedule.success";
-
+    public static final String MSG_SCHEDULED_SUCCESS = "msg.notification.schedule.success";
+    public static final String MSG_SCHEDULED_DELETE_SUCCESS = "msg.notification.schedule.delete.success";
+    public static final String MSG_SCHEDULED_UPDATE_SUCCESS = "msg.notification.schedule.update.success";
+    public static final String SCHEDULE_DELETE_SUCCESS = "success";
+    public static final String SCHEDULE_DETAILS_VIEW = "schedule-details-view";
+    public static final String SCHEDULE_UPDATE_VIEW = "schedule-update-view";
+    public static final String SCHEDULE_UPDATE_SUCCESS = "schedule-update-success";
+    public static final String NOTIFICATION_TYPE = "notice";
+    public static final String JOB = "job";
+    public static final String TRIGGER = "trigger";
+    
     public static enum EVENT_TYPE {
         Business, Exhibition, Cultural, Drama
     };

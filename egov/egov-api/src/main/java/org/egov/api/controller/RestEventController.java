@@ -391,7 +391,7 @@ public class RestEventController {
      * @return file
      */
 
-    @RequestMapping(value = "/event/{id}/download/{fileStoreId}", method = GET)
+    @RequestMapping(value = ApiUrl.EVENT_IMAGE_DOWNLOAD, method = GET)
     public void downloadEventImage(@PathVariable final Long id, @PathVariable final String fileStoreId,
             final HttpServletResponse response) throws IOException {
         try {
