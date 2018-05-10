@@ -114,4 +114,7 @@
 	<query name="USER_BY_NAMEANDMOBILENO">
 		<![CDATA[From User where name = :name and mobileNumber = :mobileNumber and gender = :gender ]]>
 	</query>
+	<query name="UNDER_WF_MUTATION_BY_UPICNO">
+	<![CDATA[from PropertyMutation p where p.basicProperty.upicNo = :upicNo and p.state.status<>2 order by p.mutationDate desc]]>
+	</query>
 </hibernate-mapping>

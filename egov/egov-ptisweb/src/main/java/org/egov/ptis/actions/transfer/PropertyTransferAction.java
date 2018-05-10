@@ -276,6 +276,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @SkipValidation
     @Action(value = "/new")
     public String showNewTransferForm() {
+
         if (basicproperty.getProperty().getStatus().equals(STATUS_DEMAND_INACTIVE)) {
             addActionError(getText("error.msg.demandInactive"));
             return COMMON_FORM;
@@ -287,8 +288,21 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             if (STRUCTURED.equals(taxDueOrStruc))
                 return COMMON_FORM;
             if (basicproperty.getWFProperty() != null && Arrays.asList(PROPERTY_MODIFY_REASON_ADD_OR_ALTER, DEMOLITION)
-                    .contains(basicproperty.getWFProperty().getPropertyModifyReason()))
+                    .contains(basicproperty.getWFProperty().getPropertyModifyReason()) && isLatestPropertyMutationClosed()){
+                if(!isEligibleLoggedUser()){
+                    addActionError(getText("initiator.noteligible"));
+                    return COMMON_FORM;
+                } else {
+                    loggedUserIsMeesevaUser = propertyService.isMeesevaUser(transferOwnerService.getLoggedInUser());
+                    if (loggedUserIsMeesevaUser)
+                        if (getMeesevaApplicationNumber() == null) {
+                            addActionMessage(getText("MEESEVA.005"));
+                            return ERROR;
+                        } else
+                            propertyMutation.setMeesevaApplicationNumber(getMeesevaApplicationNumber());
+                }
                 return NEW;
+            }
             final List<String> msgParams = new ArrayList<>();
             msgParams.add("Transfer of Ownership");
             wfErrorMsg = getText("wf.pending.msg", msgParams);
@@ -314,10 +328,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 return COMMON_FORM;
 
             if (!ADDTIONAL_RULE_FULL_TRANSFER.equalsIgnoreCase(propertyMutation.getType())) {
-                if (StringUtils.isBlank(applicationSource)
-                        && propertyService.isEmployee(transferOwnerService.getLoggedInUser())
-                        && !propertyTaxCommonUtils.isEligibleInitiator(transferOwnerService.getLoggedInUser().getId())
-                        && !propertyService.isCitizenPortalUser(transferOwnerService.getLoggedInUser())) {
+                if(!isEligibleLoggedUser()){
                     addActionError(getText("initiator.noteligible"));
                     return COMMON_FORM;
                 } else {
@@ -334,7 +345,14 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 return NEW;
         }
     }
-
+    
+    public boolean isEligibleLoggedUser() {
+        return (StringUtils.isBlank(applicationSource)
+                && propertyService.isEmployee(transferOwnerService.getLoggedInUser())
+                && !propertyTaxCommonUtils.isEligibleInitiator(transferOwnerService.getLoggedInUser().getId())
+                && !propertyService.isCitizenPortalUser(transferOwnerService.getLoggedInUser())) ? false : true;
+    }
+    
     public void setFormProperties() {
         final Map<String, BigDecimal> propertyTaxDetails = propertyService
                 .getCurrentPropertyTaxDetailsIncludingPenalty(basicproperty.getActiveProperty());
@@ -1477,4 +1495,15 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     public void setOtherDocuments(List<Document> otherDocuments) {
         this.otherDocuments = otherDocuments;
     }
+    
+    public boolean isLatestPropertyMutationClosed(){
+        boolean closed = true;
+        final javax.persistence.Query qry = entityManager.createNamedQuery("UNDER_WF_MUTATION_BY_UPICNO");
+        qry.setParameter("upicNo", basicproperty.getUpicNo());
+        qry.setMaxResults(1);
+        if(!qry.getResultList().isEmpty())
+            closed = false;
+        return closed;
+    }
+    
 }
