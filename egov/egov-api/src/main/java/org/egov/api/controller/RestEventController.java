@@ -60,12 +60,17 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.api.controller.core.ApiResponse;
 import org.egov.api.controller.core.ApiUrl;
 import org.egov.eventnotification.constants.EventnotificationConstant;
+import org.egov.eventnotification.entity.CategoryParameters;
 import org.egov.eventnotification.entity.Event;
+import org.egov.eventnotification.entity.ModuleCategory;
+import org.egov.eventnotification.entity.NotificationDrafts;
 import org.egov.eventnotification.entity.Userevent;
+import org.egov.eventnotification.service.DraftService;
 import org.egov.eventnotification.service.EventService;
 import org.egov.eventnotification.service.UsereventService;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -94,6 +99,9 @@ public class RestEventController {
     private static final Logger LOGGER = Logger.getLogger(RestEventController.class);
     @Autowired
     private EventService eventService;
+    
+    @Autowired
+    private DraftService draftService; 
 
     @Autowired
     private UsereventService usereventService;
@@ -263,6 +271,74 @@ public class RestEventController {
 
             jsonArrayEvent.add(jsonObjectEvent);
 
+        }
+        return jsonArrayEvent.toString();
+    }
+    
+    @RequestMapping(value = ApiUrl.SEARCH_DRAFT, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String searchDraft(@RequestParam(required = false, value = EventnotificationConstant.DRAFT_NOTIFICATION_TYPE) String type,
+            @RequestParam(required = false, value = EventnotificationConstant.DRAFT_NAME) String name,
+            @RequestParam(required = false, value = EventnotificationConstant.MODULE_NAME) Long module) {
+
+    	NotificationDrafts draftObj = new NotificationDrafts(); 
+    	draftObj.setType(type);
+    	draftObj.setName(name);
+    	List<NotificationDrafts> draftList = draftService.searchDraft(draftObj);
+
+        JsonArray jsonArrayEvent = new JsonArray();
+        for (NotificationDrafts draft : draftList) {
+            JsonObject jsonObjectDraft = new JsonObject();
+            jsonObjectDraft.addProperty(EventnotificationConstant.DRAFT_ID, draft.getId());
+            jsonObjectDraft.addProperty(EventnotificationConstant.DRAFT_NAME, draft.getName());
+            jsonObjectDraft.addProperty(EventnotificationConstant.DRAFT_NOTIFICATION_TYPE, draft.getType());
+            
+            if(null != draft.getModule()) {
+            	JsonObject jsonObjectModule = new JsonObject();
+            	if(StringUtils.isNotBlank(draft.getModule().getName()))
+            		jsonObjectModule.addProperty("name", draft.getModule().getName());
+            	if(null != draft.getModule().getId()) 
+            		jsonObjectModule.addProperty("id", draft.getModule().getId());
+            	jsonObjectDraft.add("module", jsonObjectModule);
+            }
+            
+            if(null != draft.getCategory()) {
+            	JsonObject jsonObjectCategory = new JsonObject();
+            	if(StringUtils.isNotBlank(draft.getCategory().getName()))
+            		jsonObjectCategory.addProperty("name", draft.getCategory().getName());
+            	if(null != draft.getCategory().getId()) 
+            		jsonObjectCategory.addProperty("id", draft.getCategory().getId());
+            	jsonObjectDraft.add("category", jsonObjectCategory);
+            }
+            jsonObjectDraft.addProperty("message", draft.getMessage());
+            jsonArrayEvent.add(jsonObjectDraft);
+        }
+        return jsonArrayEvent.toString();
+    }
+    
+    @RequestMapping(value = ApiUrl.GET_CATEGORY_FOR_MODULE
+            + ApiUrl.MODULE_ID, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getCategoriesForModule(@PathVariable long moduleId) {
+        List<ModuleCategory> categoryList = draftService.getCategoriesForModule(moduleId); 
+        JsonArray jsonArrayEvent = new JsonArray();
+        for (ModuleCategory category : categoryList) {
+            JsonObject jsonObjectEvent = new JsonObject();
+            jsonObjectEvent.addProperty(EventnotificationConstant.CATEGORY_ID, category.getId());
+            jsonObjectEvent.addProperty(EventnotificationConstant.CATEGORY_NAME, category.getName());
+            jsonArrayEvent.add(jsonObjectEvent);
+        }
+        return jsonArrayEvent.toString();
+    }
+    
+    @RequestMapping(value = ApiUrl.GET_PARAMETERS_FOR_CATEGORY
+            + ApiUrl.CATEGORY_ID, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getParametersForCategory(@PathVariable long categoryId) {
+        List<CategoryParameters> parametersList = draftService.getParametersForCategory(categoryId); 
+        JsonArray jsonArrayEvent = new JsonArray();
+        for (CategoryParameters parameter : parametersList) {
+            JsonObject jsonObjectEvent = new JsonObject();
+            jsonObjectEvent.addProperty(EventnotificationConstant.PARAMETER_ID, parameter.getId());
+            jsonObjectEvent.addProperty(EventnotificationConstant.PARAMETER_NAME, parameter.getName());
+            jsonArrayEvent.add(jsonObjectEvent);
         }
         return jsonArrayEvent.toString();
     }

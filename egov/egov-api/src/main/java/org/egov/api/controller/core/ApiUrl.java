@@ -145,6 +145,16 @@ public class ApiUrl {
     public final static String INTERESTED = "/interested";
 
     /**
+     * Drafts
+     */
+    
+    public final static String GET_CATEGORY_FOR_MODULE = "/draft/getCategoriesForModule";
+    public final static String GET_PARAMETERS_FOR_CATEGORY = "/draft/getParametersForCategory";
+    public final static String MODULE_ID = "/{moduleId}";
+    public final static String CATEGORY_ID = "/{categoryId}";
+    public final static String SEARCH_DRAFT = "/draft/search";
+    
+    /**
      * PushBox URLs
      */
 
