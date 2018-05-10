@@ -108,23 +108,21 @@ public class YearlyNotificationSchedulerJob implements Job {
         calendarEnd.set(Calendar.HOUR, hours1 + 1);
         calendarEnd.set(Calendar.MINUTE, minutes1);
 
-        if (notificationSchedule.getNotificationType().equalsIgnoreCase(EventnotificationConstant.NOTIFICATION_TYPE)) {
-            // Todo Need Json or Sql to fetch all the user information to create notice type message
-        } else {
-            MessageContent messageContent = new MessageContent();
-            messageContent.setCreatedDateTime(new Date().getTime());
-            messageContent.setEventDateTime(calendar.getTimeInMillis());
-            messageContent.setExpiryDate(calendarEnd.getTimeInMillis());
-            messageContent.setMessageBody(notificationSchedule.getMessageTemplate());
-            messageContent.setModuleName(notificationSchedule.getTemplatename());
-            messageContent.setNotificationDateTime(new Date().getTime());
-            messageContent.setNotificationType(notificationSchedule.getNotificationType());
-            messageContent.setSendAll(Boolean.TRUE);
+        // Todo: Need Json or Sql to fetch all the user information to create notice type message
+        
+        MessageContent messageContent = new MessageContent();
+        messageContent.setCreatedDateTime(new Date().getTime());
+        messageContent.setEventDateTime(calendar.getTimeInMillis());
+        messageContent.setExpiryDate(calendarEnd.getTimeInMillis());
+        messageContent.setMessageBody(notificationSchedule.getMessageTemplate());
+        messageContent.setModuleName(notificationSchedule.getTemplatename());
+        messageContent.setNotificationDateTime(new Date().getTime());
+        messageContent.setNotificationType(notificationSchedule.getNotificationType());
+        messageContent.setSendAll(Boolean.TRUE);
 
-            messageContent.setSenderId(user.getId());
-            messageContent.setSenderName(user.getName());
+        messageContent.setSenderId(user.getId());
+        messageContent.setSenderName(user.getName());
 
-            pushNotificationService.sendNotifications(messageContent);
-        }
+        pushNotificationService.sendNotifications(messageContent);
     }
 }

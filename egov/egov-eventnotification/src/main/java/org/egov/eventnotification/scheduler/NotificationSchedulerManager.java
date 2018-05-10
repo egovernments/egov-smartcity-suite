@@ -73,6 +73,10 @@ import org.quartz.impl.StdSchedulerFactory;
 public class NotificationSchedulerManager {
 
     private static final Logger LOGGER = Logger.getLogger(NotificationSchedulerManager.class);
+    
+    private NotificationSchedulerManager() {
+        
+    }
 
     private static Scheduler scheduler;
 

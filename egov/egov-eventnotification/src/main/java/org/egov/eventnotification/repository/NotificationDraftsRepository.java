@@ -47,12 +47,8 @@
  */
 package org.egov.eventnotification.repository;
 
-import java.util.List;
-
 import org.egov.eventnotification.entity.NotificationDrafts;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 public interface NotificationDraftsRepository extends JpaRepository<NotificationDrafts,Long>{
     
