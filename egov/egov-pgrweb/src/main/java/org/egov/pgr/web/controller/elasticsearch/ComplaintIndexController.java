@@ -55,6 +55,7 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.pgr.elasticsearch.entity.ComplaintIndex;
 import org.egov.pgr.elasticsearch.entity.contract.ComplaintDashBoardRequest;
+import org.egov.pgr.elasticsearch.entity.contract.IVRSFeedBackResponse;
 import org.egov.pgr.elasticsearch.service.ComplaintIndexService;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.ComplaintTypeCategory;
@@ -245,5 +246,10 @@ public class ComplaintIndexController {
             complaintRequest.setSize(10000);
         return complaintIndexService.getFilteredComplaints(complaintRequest, fieldName, StringUtils.EMPTY, lowerLimit,
                 upperLimit);
+    }
+    @RequestMapping(value="/ivrsFeedback",method=RequestMethod.POST,produces=MediaType.APPLICATION_JSON_VALUE)
+    public List<IVRSFeedBackResponse> getFeedBackDetails(@RequestBody final ComplaintDashBoardRequest ivrsRequest){
+        
+        return complaintIndexService.getDetailsBasedOnFeedBack(ivrsRequest);
     }
 }

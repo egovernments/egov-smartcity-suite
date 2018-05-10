@@ -805,4 +805,22 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
         return tableResponse;
 
     }
+
+    @Override
+    public SearchResponse findFeedBackRatingDetails(ComplaintDashBoardRequest ivrsFeedBackRequest, BoolQueryBuilder feedBackQuery,
+            String aggregationField) {
+        return elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
+                .setQuery(feedBackQuery).addAggregation(AggregationBuilders.terms("typeAggr").field(aggregationField).size(130)
+                        .subAggregation(AggregationBuilders.terms("countAggr").field("feedbackRating")))
+                .execute().actionGet();
+    }
+
+    @Override
+    public SearchResponse findAllUpperLevelFields(BoolQueryBuilder boolQuery, String[] requiredFields) {
+        return elasticsearchTemplate.getClient()
+                .prepareSearch(PGR_INDEX_NAME)
+                .setQuery(boolQuery).setSize(1)
+                .setFetchSource(requiredFields, null)
+                .execute().actionGet();
+    }
 }
