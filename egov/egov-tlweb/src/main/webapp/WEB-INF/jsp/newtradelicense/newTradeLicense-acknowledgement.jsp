@@ -151,7 +151,7 @@
                                             , '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');" >Print</button>
                         </s:if>
                         <s:else>
-                            <button type="button" id="print" class="btn btn-default">Print</button>
+                            <button type="button" id="print" class="btn btn-default" onclick="window.print();">Print</button>
                         </s:else>
                         <button type="button" id="closebn" class="btn btn-default" onclick="window.close();">Close</button>
                     </div>
