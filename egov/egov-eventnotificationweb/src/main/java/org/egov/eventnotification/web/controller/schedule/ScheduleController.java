@@ -106,18 +106,16 @@ public class ScheduleController {
             schedule.setCreatedDate(new Date().getTime());
             schedule.setUpdatedby(user);
             schedule.setUpdatedDate(new Date().getTime());
-            schedule = scheduleService.persist(schedule);
+            scheduleService.persist(schedule);
 
             NotificationSchedulerManager.schedule(schedule, user);
             model.addAttribute(EventnotificationConstant.MESSAGE,
                     messageSource.getMessage(EventnotificationConstant.MSG_SCHEDULED_SUCCESS, null, Locale.ENGLISH));
             model.addAttribute(EventnotificationConstant.MODE, EventnotificationConstant.MODE_VIEW);
             redirectAttrs.addFlashAttribute(EventnotificationConstant.NOTIFICATION_SCHEDULE, schedule);
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             LOGGER.error(e.getMessage(), e);
-        } catch (ParseException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
+        } 
         return EventnotificationConstant.SCHEDULE_CREATE_SUCCESS;
     }
 
