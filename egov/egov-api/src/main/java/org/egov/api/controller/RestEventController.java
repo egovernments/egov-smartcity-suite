@@ -48,6 +48,8 @@
 package org.egov.api.controller;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import java.io.File;
 import java.io.IOException;
@@ -117,7 +119,7 @@ public class RestEventController {
      * This method is used for fetch all events
      * @return json string
      */
-    @RequestMapping(value = ApiUrl.GET_ALL_EVENT, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = ApiUrl.GET_ALL_EVENT, method = GET, produces = APPLICATION_JSON_VALUE)
     public String getAllEvent() {
         List<Event> eventList = eventService.findAllOngoingEvent(EventnotificationConstant.ACTIVE);
 
@@ -170,7 +172,7 @@ public class RestEventController {
      * @return json string
      */
     @RequestMapping(value = ApiUrl.GET_EVENT
-            + ApiUrl.EVENT_ID, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+            + ApiUrl.EVENT_ID, method = GET, produces = APPLICATION_JSON_VALUE)
     public String getEvent(@PathVariable long id,@RequestParam(required = false, value = EventnotificationConstant.USERID) Long userId) {
         ApiResponse.newInstance();
         Event event = eventService.findById(id);
@@ -223,7 +225,7 @@ public class RestEventController {
      * @param eventHost
      * @return json string
      */
-    @RequestMapping(value = ApiUrl.SEARCH_EVENT, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = ApiUrl.SEARCH_EVENT, method = GET, produces = APPLICATION_JSON_VALUE)
     public String searchEvent(@RequestParam(required = false, value = EventnotificationConstant.EVENT_EVENTTYPE) String eventType,
             @RequestParam(required = false, value = EventnotificationConstant.EVENT_NAME) String name,
             @RequestParam(required = false, value = EventnotificationConstant.EVENT_EVENTHOST) String eventHost,
@@ -275,7 +277,7 @@ public class RestEventController {
         return jsonArrayEvent.toString();
     }
     
-    @RequestMapping(value = ApiUrl.SEARCH_DRAFT, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = ApiUrl.SEARCH_DRAFT, method = GET, produces = APPLICATION_JSON_VALUE)
     public String searchDraft(@RequestParam(required = false, value = EventnotificationConstant.DRAFT_NOTIFICATION_TYPE) String type,
             @RequestParam(required = false, value = EventnotificationConstant.DRAFT_NAME) String name,
             @RequestParam(required = false, value = EventnotificationConstant.MODULE_NAME) Long module) {
@@ -316,7 +318,7 @@ public class RestEventController {
     }
     
     @RequestMapping(value = ApiUrl.GET_CATEGORY_FOR_MODULE
-            + ApiUrl.MODULE_ID, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+            + ApiUrl.MODULE_ID, method = GET, produces = APPLICATION_JSON_VALUE)
     public String getCategoriesForModule(@PathVariable long moduleId) {
         List<ModuleCategory> categoryList = draftService.getCategoriesForModule(moduleId); 
         JsonArray jsonArrayEvent = new JsonArray();
@@ -330,7 +332,7 @@ public class RestEventController {
     }
     
     @RequestMapping(value = ApiUrl.GET_PARAMETERS_FOR_CATEGORY
-            + ApiUrl.CATEGORY_ID, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+            + ApiUrl.CATEGORY_ID, method = GET, produces = APPLICATION_JSON_VALUE)
     public String getParametersForCategory(@PathVariable long categoryId) {
         List<CategoryParameters> parametersList = draftService.getParametersForCategory(categoryId); 
         JsonArray jsonArrayEvent = new JsonArray();
@@ -349,7 +351,7 @@ public class RestEventController {
      * @return json string
      */
     @RequestMapping(value = ApiUrl.GET_EVENT
-            + ApiUrl.INTERESTED, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+            + ApiUrl.INTERESTED, method = POST, produces = APPLICATION_JSON_VALUE)
     public String saveUserEvent(@RequestBody String jsonData) {
         JSONObject requestObject = (JSONObject) JSONValue.parse(jsonData);
         JSONObject responseObject = new JSONObject();

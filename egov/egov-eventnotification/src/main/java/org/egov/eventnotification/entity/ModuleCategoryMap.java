@@ -14,13 +14,13 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "egevntnotification_module_category_map")
-@SequenceGenerator(name = ModuleCategoryMap.SEQ_EGEVNTNOTIFICATION_MODULE_CATEGORY, sequenceName = ModuleCategoryMap.SEQ_EGEVNTNOTIFICATION_MODULE_CATEGORY, allocationSize = 1)
+@SequenceGenerator(name = ModuleCategoryMap.SEQ_EGEN_MODULE_CATEGORY, sequenceName = ModuleCategoryMap.SEQ_EGEN_MODULE_CATEGORY, allocationSize = 1)
 public class ModuleCategoryMap {
 	private static final long serialVersionUID = 1L;
-    public static final String SEQ_EGEVNTNOTIFICATION_MODULE_CATEGORY = "seq_egevntnotification_module_category_map";
+    public static final String SEQ_EGEN_MODULE_CATEGORY = "seq_egevntnotification_module_category_map";
     
     @Id
-    @GeneratedValue(generator = SEQ_EGEVNTNOTIFICATION_MODULE_CATEGORY, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_EGEN_MODULE_CATEGORY, strategy = GenerationType.SEQUENCE)
     private Long id;
     
 
