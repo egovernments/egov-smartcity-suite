@@ -131,7 +131,7 @@
 	</div>
 </form:form>
 <script>
-	/* $('#buttonSubmit').click(function(e) {
+	/*$('#buttonSubmit').click(function(e) {
 		if ($('form').valid()) {
 		} else {
 			e.preventDefault();
