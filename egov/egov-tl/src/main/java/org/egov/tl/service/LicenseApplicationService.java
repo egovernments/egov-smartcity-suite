@@ -112,7 +112,6 @@ public class LicenseApplicationService extends TradeLicenseService {
         processAndStoreDocument(license);
         if (securityUtils.currentUserIsEmployee())
             licenseProcessWorkflowService.createNewLicenseWorkflowTransition(license, workflowBean);
-
         else
             licenseProcessWorkflowService.getWfWithThirdPartyOp(license, workflowBean);
         licenseRepository.save(license);

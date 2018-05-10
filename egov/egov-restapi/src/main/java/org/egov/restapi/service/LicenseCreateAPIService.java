@@ -77,16 +77,22 @@ public class LicenseCreateAPIService {
 
     @Autowired
     private LicenseApplicationService licenseApplicationService;
+
     @Autowired
     private BoundaryRepository boundaryRepository;
+
     @Autowired
     private LicenseCategoryRepository licenseCategoryRepository;
+
     @Autowired
     private LicenseSubCategoryRepository licenseSubCategoryRepository;
+
     @Autowired
     private NatureOfBusinessRepository natureOfBusinessRepository;
+
     @Autowired
     private BoundaryTypeRepository boundaryTypeRepository;
+
     @Autowired
     private CrossHierarchyService crossHierarchyService;
 
@@ -123,7 +129,8 @@ public class LicenseCreateAPIService {
         BoundaryType locality = boundaryTypeRepository.findByNameAndHierarchyTypeName("Locality", "LOCATION");
         Boundary childBoundary = boundaryRepository.findByBoundaryTypeAndBoundaryNum(locality, license.getBoundary());
         BoundaryType blockType = boundaryTypeRepository.findByNameAndHierarchyTypeName("Block", "REVENUE");
-        List<Boundary> blocks = crossHierarchyService.getParentBoundaryByChildBoundaryAndParentBoundaryType(childBoundary.getId(), blockType.getId());
+        List<Boundary> blocks = crossHierarchyService
+                .getParentBoundaryByChildBoundaryAndParentBoundaryType(childBoundary.getId(), blockType.getId());
         blocks.stream().forEach(boundary -> {
             if (boundary.getParent().getBoundaryNum().equals(license.getParentBoundary()))
                 tradeLicense.setParentBoundary(boundary.getParent());

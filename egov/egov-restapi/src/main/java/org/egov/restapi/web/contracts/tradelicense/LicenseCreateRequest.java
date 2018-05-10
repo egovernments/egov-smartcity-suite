@@ -52,94 +52,109 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.SafeHtml;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import static org.egov.infra.validation.regex.Constants.ALPHABETS_WITHSPACE;
+import static org.egov.infra.validation.regex.Constants.EMAIL;
+import static org.egov.infra.validation.regex.Constants.NUMERIC;
+
 public class LicenseCreateRequest {
 
-    private static final String ALPHABETS = "^[A-Za-z]{1,256}$";
-    private static final String EMAIL = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";
-    private static final String ALPHANUMERIC_WITHLENGTH = "^[0-9a-zA-Z-& :,/.()@]{1,256}$";
-
-    @NotBlank(message = "ULB code must be present")
-    private String ulbCode;
-
-    @Pattern(regexp = ALPHABETS, message = "Invalid Applicant Name")
+    @Pattern(regexp = ALPHABETS_WITHSPACE, message = "Invalid Applicant Name")
+    @NotBlank(message = "Applicant Name is required")
+    @Length(max = 256, message = "Applicant Name accepts maximum 256 characters")
     private String applicantName;
 
-    @Pattern(regexp = ALPHABETS, message = "Invalid Father/Spouse Name")
+    @Pattern(regexp = ALPHABETS_WITHSPACE, message = "Invalid Father/Spouse Name")
+    @NotBlank(message = "Father/Spouse Name is required")
+    @Length(max = 256, message = "Father/Spouse Name accepts maximum 256 characters")
     private String fatherOrSpouseName;
 
-    @NotBlank(message = "Provide Mobile Number")
-    @Pattern(regexp = "^[0-9]{10,10}$", message = "Invalid Mobile Number")
+    @NotBlank(message = "Mobile Number is required")
+    @Pattern(regexp = NUMERIC, message = "Invalid Mobile Number")
     private String mobilePhoneNumber;
 
-    @Pattern(regexp = "^[0-9]{12,12}$", message = "Invalid Aadhaar Number")
+    @Pattern(regexp = NUMERIC, message = "Invalid Aadhaar Number")
+    @Length(max = 12, message = "Aadhaar Number must be 12 digit")
     private String aadhaarNumber;
 
-    @NotBlank(message = "Provide EmailId")
+    @NotBlank(message = "Email is required")
     @Email(regexp = EMAIL, message = "Invalid Email")
+    @Length(max = 64, message = "Email accepts maximum 64 characters")
     private String emailId;
 
-    @Pattern(regexp = ALPHANUMERIC_WITHLENGTH, message = "Invalid Trade Title")
+    @SafeHtml(message = "Invalid Trade Title")
+    @NotBlank(message = "Trade Title is required")
+    @Length(max = 256, message = "Trade Title accepts maximum 256 characters")
     private String tradeTitle;
 
-    @Pattern(regexp = "^[A-Za-z]{1,120}$", message = "Invalid Ownership Type")
+    @SafeHtml(message = "Invalid Ownership Type")
+    @NotBlank(message = "Ownership Type is required")
+    @Length(max = 256, message = "Ownership Type accepts maximum 120 characters")
     private String ownershipType;
 
-    @Pattern(regexp = "^[0-9]{0,64}$", message = "Invalid Assessment Number")
+    @SafeHtml(message = "Invalid Assessment Number")
+    @Length(max = 64, message = "Assessment Number accepts maximum 64 characters")
     private String assessmentNo;
 
-    @NotNull(message = "Invalid Commencement Date")
+    @NotNull(message = "Commencement Date is required")
     @JsonFormat(pattern = "dd-MM-yyyy", shape = JsonFormat.Shape.STRING)
     private Date commencementDate;
 
-    @NotNull(message = "Invalid Trade Measure")
+    @NotNull(message = "Trade Measure is required")
+    @Min(value = 1, message = "Trade Measure must be greater than or equals to 1")
     private BigDecimal tradeMeasure;
 
-    @NotNull(message = "Invalid Locality")
+    @NotNull(message = "Boundary is required")
+    @Min(value = 1, message = "Invalid Boundary")
     private Long boundary;
 
-    @NotNull(message = "Invalid Ward")
+    @NotNull(message = "Parent Boundary is required")
+    @Min(value = 1, message = "Invalid Parent Boundary")
     private Long parentBoundary;
 
-    @NotNull(message = "Invalid Nature Of Business")
+    @NotNull(message = "Nature Of Business is required")
+    @Min(value = 1, message = "Invalid Nature of Business")
     private Long natureOfBusiness;
 
-    @NotBlank(message = "Invalid Subcategory")
+    @NotBlank(message = "Subcategory is required")
+    @SafeHtml(message = "Invalid Subcategory")
     private String subCategory;
 
-    @NotBlank(message = "Invalid Category")
+    @NotBlank(message = "Category is required")
+    @SafeHtml(message = "Invalid Category")
     private String category;
 
-    @Length(min = 1, max = 256, message = "Invalid Trade Address")
+    @NotBlank(message = "Trade Address is required")
+    @SafeHtml(message = "Invalid Trade Address")
+    @Length(max = 250, message = "Trade Address accepts maximum 250 characters")
     private String tradeAddress;
 
-    @Length(min = 1, max = 256, message = "Invalid Licensee Address")
+    @NotBlank(message = "Licensee Address is required")
+    @SafeHtml(message = "Invalid Licensee Address")
+    @Length(max = 250, message = "Licensee Address accepts maximum 250 characters")
     private String licenseeAddress;
 
-    @Length(max = 512)
+    @Length(max = 512, message = "Remarks accepts maximum 512 characters")
+    @SafeHtml(message = "Invalid Remarks")
     private String remarks;
 
     @JsonFormat(pattern = "dd-MM-yyyy", shape = JsonFormat.Shape.STRING)
     private Date agreementDate;
 
-    @Length(max = 50, message = "Invalid Agreement Document No.")
+    @Length(max = 50, message = "Agreement Doc No. accepts maximum 50 characters")
+    @SafeHtml(message = "Invalid Agreement Doc No.")
     private String agreementDocNo;
 
-    @NotBlank(message = "Source is Mandatory")
+    @NotBlank(message = "Source is required")
+    @SafeHtml(message = "Invalid Source")
     private String source;
-
-    public String getUlbCode() {
-        return ulbCode;
-    }
-
-    public void setUlbCode(String ulbCode) {
-        this.ulbCode = ulbCode;
-    }
 
     public String getApplicantName() {
         return applicantName;

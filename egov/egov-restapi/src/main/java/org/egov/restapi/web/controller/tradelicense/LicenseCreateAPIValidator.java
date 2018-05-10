@@ -48,6 +48,11 @@
 
 package org.egov.restapi.web.controller.tradelicense;
 
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.BoundaryType;
+import org.egov.infra.admin.master.repository.BoundaryRepository;
+import org.egov.infra.admin.master.repository.BoundaryTypeRepository;
+import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.restapi.web.contracts.tradelicense.LicenseCreateRequest;
 import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.repository.LicenseCategoryRepository;
@@ -67,24 +72,37 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 @Component
 public class LicenseCreateAPIValidator implements Validator {
+
     @Autowired
     private LicenseCategoryRepository licenseCategoryRepository;
+
     @Autowired
     private LicenseSubCategoryRepository licenseSubCategoryRepository;
+
     @Autowired
     private NatureOfBusinessRepository natureOfBusinessRepository;
+
     @Autowired
     private ValidityRepository validityRepository;
 
+    @Autowired
+    private BoundaryTypeRepository boundaryTypeRepository;
+
+    @Autowired
+    private CrossHierarchyService crossHierarchyService;
+
+    @Autowired
+    private BoundaryRepository boundaryRepository;
+
     @Override
-    public boolean supports(final Class<?> clazz) {
+    public boolean supports(Class<?> clazz) {
         return LicenseCreateRequest.class.equals(clazz);
     }
 
     @Override
-    public void validate(final Object target, final Errors errors) {
+    public void validate(Object target, Errors errors) {
 
-        final LicenseCreateRequest license = (LicenseCreateRequest) target;
+        LicenseCreateRequest license = (LicenseCreateRequest) target;
 
         if ((license.getAgreementDate() == null && isNotBlank(license.getAgreementDocNo()))
                 || license.getAgreementDate() != null && isBlank(license.getAgreementDocNo()))
@@ -94,6 +112,11 @@ public class LicenseCreateAPIValidator implements Validator {
         if (natureOfBusinessRepository.findOne(license.getNatureOfBusiness()) == null)
             errors.rejectValue("natureOfBusiness", "Invalid Nature Of Business", "Invalid Nature Of Business");
 
+        validateLicenseCategory(license, errors);
+        validateLicenseLocalities(license, errors);
+    }
+
+    private void validateLicenseCategory(LicenseCreateRequest license, Errors errors) {
         Long categoryId = null;
         if (license.getCategory() != null && license.getCategory().length() < 6)
             categoryId = licenseCategoryRepository.findByCodeIgnoreCase(license.getCategory()).getId();
@@ -112,5 +135,20 @@ public class LicenseCreateAPIValidator implements Validator {
                 .orElse(validityRepository.findByNatureOfBusinessIdAndLicenseCategoryIsNull(license.getNatureOfBusiness())) == null)
             errors.rejectValue("category", "License validity not defined for this Category",
                     "License validity not defined for this Category");
+    }
+
+    private void validateLicenseLocalities(LicenseCreateRequest license, Errors errors) {
+        BoundaryType locality = boundaryTypeRepository.findByNameAndHierarchyTypeName("Locality", "LOCATION");
+        Boundary childBoundary = boundaryRepository.findByBoundaryTypeAndBoundaryNum(locality, license.getBoundary());
+        if (childBoundary == null)
+            errors.rejectValue("boundary", "Boundary does not exist", "Boundary does not exist");
+        else {
+            BoundaryType blockType = boundaryTypeRepository.findByNameAndHierarchyTypeName("Block", "REVENUE");
+            if (crossHierarchyService
+                    .getParentBoundaryByChildBoundaryAndParentBoundaryType(childBoundary.getId(), blockType.getId())
+                    .stream()
+                    .noneMatch(boundary -> boundary.getParent().getBoundaryNum().equals(license.getParentBoundary())))
+                errors.rejectValue("boundary", "Parent Boundary does not exist", "Parent Boundary does not exist");
+        }
     }
 }

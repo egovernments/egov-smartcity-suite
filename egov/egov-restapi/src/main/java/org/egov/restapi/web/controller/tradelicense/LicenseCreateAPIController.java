@@ -84,16 +84,14 @@ public class LicenseCreateAPIController {
     private LicenseCreateAPIValidator licenseCreateAPIValidator;
 
     @PostMapping("license/create")
-    public LicenseCreateResponse createLicense(@Valid @RequestBody LicenseCreateRequest licenseCreateRequest,
-                                               BindingResult binding) {
-        licenseCreateAPIValidator.validate(licenseCreateRequest, binding);
+    public LicenseCreateResponse createLicense(@Valid @RequestBody LicenseCreateRequest licenseCreateRequest, BindingResult binding) {
         if (binding.hasErrors()) {
-            List<String> licenseResponses = binding.getFieldErrors()
-                    .stream()
-                    .map(FieldError::getDefaultMessage)
-                    .collect(Collectors.toList());
-            return new LicenseCreateResponse(false, BAD_REQUEST.toString(), licenseResponses.toString());
+            return convertBindingErrorToResponse(binding);
         } else {
+            //Do business validation
+            licenseCreateAPIValidator.validate(licenseCreateRequest, binding);
+            if (binding.hasErrors())
+                return convertBindingErrorToResponse(binding);
             return new LicenseCreateResponse(true, licenseCreateAPIService
                     .createLicense(licenseCreateRequest).getApplicationNumber(),
                     HttpStatus.OK.toString(),
@@ -113,5 +111,13 @@ public class LicenseCreateAPIController {
         LOGGER.error("Error occurred while creating License via API", e);
         return ResponseEntity.status(INTERNAL_SERVER_ERROR)
                 .body(new LicenseCreateResponse(false, INTERNAL_SERVER_ERROR.toString(), "Server Error"));
+    }
+
+    private LicenseCreateResponse convertBindingErrorToResponse(BindingResult bindingResult) {
+        List<String> licenseResponses = bindingResult.getFieldErrors()
+                .stream()
+                .map(FieldError::getDefaultMessage)
+                .collect(Collectors.toList());
+        return new LicenseCreateResponse(false, BAD_REQUEST.toString(), licenseResponses.toString());
     }
 }
