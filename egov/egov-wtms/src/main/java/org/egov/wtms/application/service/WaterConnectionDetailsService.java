@@ -173,6 +173,7 @@ import org.egov.ptis.domain.model.OwnerName;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.stms.masters.entity.SewerageApplicationType;
+import org.egov.stms.masters.entity.enums.PropertyType;
 import org.egov.stms.masters.entity.enums.SewerageConnectionStatus;
 import org.egov.stms.masters.service.FeesDetailMasterService;
 import org.egov.stms.masters.service.SewerageApplicationTypeService;
@@ -252,8 +253,6 @@ public class WaterConnectionDetailsService {
     private static final String REQ_METER_SERIAL_NUMBER = "MeterSerialNumberRequired";
     private static final String ERR_WATER_RATES_NOT_DEFINED = "WaterRatesNotDefined";
 
-    private static final String INSPECTIONFEEREQUIRED = "inspectionFeesCollectionRequired";
-
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -329,8 +328,6 @@ public class WaterConnectionDetailsService {
     private SewerageTaxUtils sewerageTaxUtils;
     @Autowired
     private SewerageApplicationTypeService sewerageApplicationTypeService;
-    @Autowired
-    private FeesDetailMasterService feesDetailMasterService;
     @Autowired
     public WaterConnectionDetailsService(final WaterConnectionDetailsRepository waterConnectionDetailsRepository) {
         this.waterConnectionDetailsRepository = waterConnectionDetailsRepository;
@@ -1680,9 +1677,14 @@ public class WaterConnectionDetailsService {
     }
     
     //water and sewerage integration    
-    public void prepareNewForm( SewerageApplicationDetails sewerageApplicationDetails,
-            final Model model) {
+    public void prepareNewForm( final Model model, WaterConnectionDetails waterConnectionDetails) {
+        final SewerageApplicationDetails sewerageApplicationDetails=new SewerageApplicationDetails();
         final SewerageConnection connection = new SewerageConnection();
+        model.addAttribute("sewerageApplicationDetails",waterConnectionDetails.getSewerageApplicationDetails());
+        model.addAttribute("sewerageadditionalrule",sewerageApplicationTypeService
+                .findByCode(SewerageTaxConstants.NEWSEWERAGECONNECTION));
+        model.addAttribute("sewpropertyTypes", PropertyType.values());       
+        waterConnectionDetails.setSewerageApplicationDetails(sewerageApplicationDetails);
         sewerageApplicationDetails.setApplicationDate(new Date());
         connection.setStatus(SewerageConnectionStatus.INPROGRESS);
         sewerageApplicationDetails.setConnection(connection);

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2018-05-08T20:02:09 -->
+<!-- 2018-05-10T16:55:31 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReconnacknowlgementNotice" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e9770880-71cf-4aae-a82f-c57adc04545e">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -240,7 +240,7 @@
 				<textElement textAlignment="Center">
 					<font fontName="Times New Roman" size="11" isBold="true" pdfFontName="Times-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Receipt-cum-Acknowledgement No"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Receipt-cum-Acknowledgement"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="9" y="416" width="94" height="17" uuid="a927b8ec-a06c-4e6c-8ae3-3fa12adf2ea2"/>
@@ -271,7 +271,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10" isBold="false"/>
 				</textElement>
-				<text><![CDATA[Sewerage Connection Application  No:   :			                                            ]]></text>
+				<text><![CDATA[Sewerage Connection Application  No  :			                                            ]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="192" y="110" width="224" height="20" uuid="92ff0065-12d2-4557-be6e-8490c116c899">
@@ -298,7 +298,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10" isBold="false"/>
 				</textElement>
-				<text><![CDATA[Water Connection Application  No          :    ]]></text>
+				<text><![CDATA[Water Connection Application  No        :    ]]></text>
 			</staticText>
 		</band>
 	</title>

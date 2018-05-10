@@ -84,6 +84,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -493,7 +494,11 @@ public class ReportGenerationService {
             reportParams.put(APPLICANT_NAME, ownerName);
             final Integer appProcessTime = applicationProcessTimeService.getApplicationProcessTime(
                     waterConnectionDetails.getApplicationType(), waterConnectionDetails.getCategory());
-                reportParams.put("sewerageApplicationNo", sewApplicationNum);   
+            if (StringUtils.isBlank(sewApplicationNum)) {
+                reportParams.put("sewerageApplicationNo", null);
+            } else {
+                reportParams.put("sewerageApplicationNo", sewApplicationNum);
+            }
 
             if (appProcessTime == null)
                 reportParams.put("applicationDueDate", null);

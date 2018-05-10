@@ -114,7 +114,7 @@
 </div>
 <div class="form-group">
     <label class="col-sm-3 control-label text-right"><spring:message
-			code="lbl.propertytype" /><span class="mandatory"></span></label>
+			code="lbl.propertytype.water" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
 		<form:select path="propertyType" data-first-option="false" id="propertyType"
 			cssClass="form-control" required="required" >

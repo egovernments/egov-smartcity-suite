@@ -71,9 +71,7 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.pims.commons.Position;
-import org.egov.stms.masters.entity.DocumentTypeMaster;
 import org.egov.stms.masters.entity.SewerageApplicationType;
-import org.egov.stms.masters.entity.enums.PropertyType;
 import org.egov.stms.masters.service.DocumentTypeMasterService;
 import org.egov.stms.masters.service.SewerageApplicationTypeService;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
@@ -140,7 +138,7 @@ public class NewConnectionController extends GenericConnectionController {
     @Autowired
     private SewerageApplicationTypeService sewerageApplicationTypeService;
     @Autowired
-    private SewerageApplicationDetailsService sewerageApplicationDetailsService;
+    private SewerageApplicationDetailsService sewerageDetailsService;
     @Autowired
     private SewerageTaxUtils sewerageTaxUtils;
     @Autowired
@@ -166,31 +164,12 @@ public class NewConnectionController extends GenericConnectionController {
         waterConnectionDetails.setApplicationType(applicationTypeService.findByCode(WaterTaxConstants.NEWCONNECTION));
         return waterConnectionDtlsService.getAllActiveDocumentNames(waterConnectionDetails.getApplicationType());
     }
-    
-    @ModelAttribute("seweragedocumentNamesList")
-    public List<SewerageApplicationDetailsDocument> documentTypeMasterList(
-            @ModelAttribute final SewerageApplicationDetails sewerageApplicationDetails) {
-        final List<SewerageApplicationDetailsDocument> tempDocList = new ArrayList<>(
-                0);
-        final SewerageApplicationType applicationType = sewerageApplicationTypeService
-                .findByCode(SewerageTaxConstants.NEWSEWERAGECONNECTION);
-        final List<DocumentTypeMaster> documentTypeMasterList = documentTypeMasterService
-                .getAllActiveDocumentTypeMasterByApplicationType(applicationType);
-        if (sewerageApplicationDetails != null)
-            for (final DocumentTypeMaster dtm : documentTypeMasterList) {
-                final SewerageApplicationDetailsDocument sad = new SewerageApplicationDetailsDocument();
-                if (dtm != null) {
-                    sad.setDocumentTypeMaster(dtm);
-                    tempDocList.add(sad);
-                }
-            }
-        return tempDocList;
-    }
 
     @RequestMapping(value = "/newConnection-newform", method = GET)
     public String showNewApplicationForm(@ModelAttribute final WaterConnectionDetails waterConnectionDetails,
             final Model model, final HttpServletRequest request) {
         Boolean loggedUserIsMeesevaUser;
+        final Boolean isCSCOperator = waterTaxUtils.isCSCoperator(securityUtils.getCurrentUser());     
         waterConnectionDetails.setApplicationDate(new Date());
         waterConnectionDetails.setConnectionStatus(ConnectionStatus.INPROGRESS);
         model.addAttribute("allowIfPTDueExists", waterTaxUtils.isNewConnectionAllowedIfPTDuePresent());
@@ -202,17 +181,10 @@ public class NewConnectionController extends GenericConnectionController {
         model.addAttribute("sewerageTaxenabled",sewerageTaxenabled);
         //sewerage module integration
         if(sewerageTaxenabled){
-            SewerageApplicationDetails sewerageApplicationDetails=new SewerageApplicationDetails();
-        waterConnectionDtlsService.prepareNewForm(sewerageApplicationDetails,model);
-        model.addAttribute("sewerageApplicationDetails",waterConnectionDetails.getSewerageApplicationDetails());
-        model.addAttribute("sewerageadditionalrule",sewerageApplicationTypeService
-                .findByCode(SewerageTaxConstants.NEWSEWERAGECONNECTION));
-        model.addAttribute("sewpropertyTypes", PropertyType.values());       
-        waterConnectionDetails.setSewerageApplicationDetails(sewerageApplicationDetails);
+        waterConnectionDtlsService.prepareNewForm(model,waterConnectionDetails);
         }
         model.addAttribute(CURRENTUSER, waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
-        model.addAttribute(STATETYPE, waterConnectionDetails.getClass().getSimpleName());
-        final Boolean isCSCOperator = waterTaxUtils.isCSCoperator(securityUtils.getCurrentUser());     
+        model.addAttribute(STATETYPE, waterConnectionDetails.getClass().getSimpleName());       
         model.addAttribute("documentName", waterTaxUtils.documentRequiredForBPLCategory());
         model.addAttribute(TYPE_OF_CONNECTION, WaterTaxConstants.NEWCONNECTION);
         model.addAttribute("isCSCOperator", isCSCOperator);
@@ -261,7 +233,7 @@ public class NewConnectionController extends GenericConnectionController {
     public String createNewConnection(@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final Model model, @RequestParam String workFlowAction,
-            final BindingResult errors,@RequestParam("files") final MultipartFile[] files) {
+            final BindingResult errors,@RequestParam("files") final MultipartFile... files) {
         
         final Boolean loggedUserIsMeesevaUser = waterTaxUtils.isMeesevaUser(securityUtils.getCurrentUser());
         final Boolean isCSCOperator = waterTaxUtils.isCSCoperator(securityUtils.getCurrentUser());
@@ -276,7 +248,6 @@ public class NewConnectionController extends GenericConnectionController {
                 throw new ValidationException("err.creator.application");
         }
         String sourceChannel = request.getParameter("Source");
-        SewerageApplicationDetails sewerageDetails=new SewerageApplicationDetails();
 
         newConnectionService.validatePropertyID(waterConnectionDetails, resultBinder);
         if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType()))
@@ -299,6 +270,12 @@ public class NewConnectionController extends GenericConnectionController {
             LOG.debug("Model Level Validation occurs = " + resultBinder);
         if (resultBinder.hasErrors()) {
             waterConnectionDetails.setApplicationDate(new Date());
+            boolean sewerageTaxenabled=moduleService.getModuleByName(SEWERAGE_TAX_MANAGEMENT).isEnabled();
+            model.addAttribute("sewerageTaxenabled",sewerageTaxenabled);
+            //sewerage module integration
+            if(sewerageTaxenabled){
+                waterConnectionDtlsService.prepareNewForm(model,waterConnectionDetails);
+            }
             model.addAttribute(VALIDIFPTDUEEXISTS, waterTaxUtils.isNewConnectionAllowedIfPTDuePresent());
             final WorkflowContainer workflowContainer = new WorkflowContainer();
             workflowContainer.setAdditionalRule(waterConnectionDetails.getApplicationType().getCode());
@@ -311,7 +288,7 @@ public class NewConnectionController extends GenericConnectionController {
             model.addAttribute("documentName", waterTaxUtils.documentRequiredForBPLCategory());
             return NEWCONNECTION_FORM;
         }
-
+        SewerageApplicationDetails sewerageDetails=new SewerageApplicationDetails();
         waterConnectionDetails.getApplicationDocs().clear();
         waterConnectionDetails.setApplicationDocs(applicationDocs);
 
@@ -349,11 +326,6 @@ public class NewConnectionController extends GenericConnectionController {
             }
 
         }
-        
-        if(isCSCOperator){
-            sewerageDetails.setSource(CSC.toString());
-
-        }
         if (isAnonymousUser) {
             waterConnectionDetails.setSource(ONLINE);
             sourceChannel = SOURCECHANNEL_ONLINE;
@@ -371,6 +343,12 @@ public class NewConnectionController extends GenericConnectionController {
         boolean isSewerageChecked=request.getParameter("sewerageApplication")==null?false:true;
         //sewerage integration
         if (moduleService.getModuleByName(SEWERAGE_TAX_MANAGEMENT).isEnabled() && isSewerageChecked) {
+            if(isCSCOperator){
+                sewerageDetails.setSource(CSC.toString());
+            }
+            if(isAnonymousUser){
+                sewerageDetails.setSource(ONLINE.toString());
+            }
             sewerageIntegration(waterConnectionDetails, resultBinder, sewerageDetails);
             sewerageApplicationCreate(waterConnectionDetails, request, workFlowAction, files, sewerageDetails, approvalPosition,
                     approvalComent);
@@ -525,17 +503,17 @@ public class NewConnectionController extends GenericConnectionController {
 
         sewerageDetails.setApplicationType(sewerageType);
 
-        SewerageApplicationDetailsDocument sewerageApplicationDetailsDocument = new SewerageApplicationDetailsDocument();
+        SewerageApplicationDetailsDocument sewerageDocs = new SewerageApplicationDetailsDocument();
         final List<SewerageApplicationDetailsDocument> sewapplicationDocs = new ArrayList<>();
-        int j = 0;
+        int firstDoc = 0;
         if (!waterConnectionDetails.getApplicationDocs().isEmpty()) {
-            sewerageApplicationDetailsDocument.setDocumentDate(waterConnectionDetails.getApplicationDocs().get(0).getDocumentDate());
-            sewerageApplicationDetailsDocument
+            sewerageDocs.setDocumentDate(waterConnectionDetails.getApplicationDocs().get(0).getDocumentDate());
+            sewerageDocs
                     .setDocumentNumber(waterConnectionDetails.getApplicationDocs().get(0).getDocumentNumber());
-            sewerageApplicationDetailsDocument.setDocumentTypeMaster(documentTypeMasterService
+            sewerageDocs.setDocumentTypeMaster(documentTypeMasterService
                     .findByApplicationTypeAndDescription(sewerageDetails.getApplicationType(), "Others"));
-            sewerageApplicationDetailsDocument.setFiles(waterConnectionDetails.getApplicationDocs().get(0).getFiles());
-            sewerageConnectionService.validateDocuments(sewapplicationDocs, sewerageApplicationDetailsDocument, j, resultBinder);
+            sewerageDocs.setFiles(waterConnectionDetails.getApplicationDocs().get(0).getFiles());
+            sewerageConnectionService.validateDocuments(sewapplicationDocs, sewerageDocs, firstDoc, resultBinder);
         }
         sewerageDetails.setAppDetailsDocument(sewapplicationDocs);
         sewerageConnectionService.processAndStoreApplicationDocuments(sewerageDetails);
@@ -554,7 +532,7 @@ public class NewConnectionController extends GenericConnectionController {
                 .setStatus(waterConnectionDetails.getSewerageApplicationDetails().getConnection().getStatus());
         sewerageDetails.setCreatedBy(securityUtils.getCurrentUser());
         // sewerage application create
-        sewerageApplicationDetailsService
+        sewerageDetailsService
                 .createNewSewerageConnection(sewerageDetails, approvalPosition,
                         approvalComent,
                         sewerageDetails.getApplicationType().getCode(), files,

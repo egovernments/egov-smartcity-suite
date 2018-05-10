@@ -56,7 +56,7 @@
 </div>
 <div class="form-group">
     <label class="col-sm-3 control-label text-right"><spring:message
-			code="lbl.propertytype" /><span class="mandatory"></span></label>
+			code="lbl.propertytype.sewerage" /><span class="mandatory"></span></label>
 		<div class="col-sm-3 add-margin">		
 			<form:hidden path="sewerageApplicationDetails.connection.status" id="sewerageApplicationDetails.connection.status" value="${sewerageApplicationDetails.connection.status}"/>
 		
