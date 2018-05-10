@@ -15,13 +15,13 @@ import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "egevntnotification_parameters")
-@SequenceGenerator(name = CategoryParameters.SEQ_EGEVNTNOTIFICATION_PARAMETERS, sequenceName = CategoryParameters.SEQ_EGEVNTNOTIFICATION_PARAMETERS, allocationSize = 1)
+@SequenceGenerator(name = CategoryParameters.SEQ_EGEN_PARAMETERS, sequenceName = CategoryParameters.SEQ_EGEN_PARAMETERS, allocationSize = 1)
 public class CategoryParameters {
 	
-    public static final String SEQ_EGEVNTNOTIFICATION_PARAMETERS = "seq_egevntnotification_parameters";
+    public static final String SEQ_EGEN_PARAMETERS = "seq_egevntnotification_parameters";
     
     @Id
-    @GeneratedValue(generator = SEQ_EGEVNTNOTIFICATION_PARAMETERS, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_EGEN_PARAMETERS, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @NotNull
