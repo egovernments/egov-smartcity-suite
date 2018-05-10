@@ -65,6 +65,16 @@ public class EventnotificationConstant {
     public static final String EVENT_FILESTOREID = "fileStoreId";
     public static final String EVENT_FILENAME = "fileName";
     public static final String EVENT_COST = "cost";
+    
+    public static final String MODULE_ID = "moduleId";
+    public static final String CATEGORY_ID = "id";  
+    public static final String CATEGORY_NAME = "name";
+    public static final String PARAMETER_ID = "id"; 
+    public static final String PARAMETER_NAME = "name"; 
+    public static final String DRAFT_NOTIFICATION_TYPE = "type"; 
+    public static final String DRAFT_NAME ="name"; 
+    public static final String DRAFT_ID = "id"; 
+    
 
     public static final String DDMMYYYY = "dd/MM/yyyy";
 
@@ -74,13 +84,20 @@ public class EventnotificationConstant {
     public static final String EVENT_LIST = "eventList";
     public static final String EVENT_TYPE_LIST = "eventTypeList";
     public static final String MODE = "mode";
+    public static final String NOTIFICATION_MESSAGE = "message";
 
     public static final String MODE_VIEW = "view";
     public static final String MODE_UPDATE = "update";
     public static final String MODE_CREATE = "create";
 
     public static final String EVENT = "event";
+    public static final String NOTIFICATION_DRAFT = "NotificationDraft";
     public static final String FILE = "file";
+    public static final String DRAFT = "draft"; 
+    public static final String TEMPLATE_MODULE = "TemplateModule"; 
+    public static final String MODULE_CATEGORY = "ModuleCategory"; 
+    public static final String CATEGORY_PARAMETERS = "CategoryParameters" ; 
+    public static final String NOTIFICATION_DRAFT_LIST = "NotificationDrafts"; 
 
     public static final String HOUR_LIST = "hourList";
     public static final String MINUTE_LIST = "minuteList";
@@ -89,12 +106,19 @@ public class EventnotificationConstant {
 
     public static final String MSG_EVENT_CREATE_SUCCESS = "msg.event.create.success";
     public static final String MSG_EVENT_UPDATE_SUCCESS = "msg.event.update.success";
+    public static final String MSG_DRAFT_CREATE_SUCCESS = "msg.draft.create.success"; 
 
     public static final String API_UPDATE_ID = "update/{id}";
     public static final String API_CREATE = "create/";
     public static final String API_VIEW = "view/";
+    public static final String CATEGORY_FOR_MODULE = "getCategoriesForModule/"; 
     public static final String API_VIEW_ID = "view/{id}";
     public static final String API_EVENT = "/event/";
+    public static final String NOTIFICATION_DRAFTS_VIEW = "/drafts/";
+    
+    public static final String VIEW_DRAFTS_VIEW = "drafts-view"; 
+    public static final String VIEW_DRAFTS_CREATE = "drafts-create"; 
+    public static final String VIEW_DRAFTS_CREATE_SUCCESS = "draft-success";
 
     public static final String VIEW_EVENTVIEW = "event-view";
     public static final String VIEW_EVENTVIEWRESULT = "event-view-result";
@@ -147,6 +171,10 @@ public class EventnotificationConstant {
 
     public static enum EVENT_TYPE {
         Business, Exhibition, Cultural, Drama
+    };
+    
+    public static enum DRAFT_TYPE {
+        Event, General, Notice, Business
     };
 
     public static enum EVENT_STATUS {

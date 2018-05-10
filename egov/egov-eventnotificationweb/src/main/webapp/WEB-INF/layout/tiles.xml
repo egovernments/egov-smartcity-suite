@@ -103,6 +103,21 @@
         <put-attribute name="page-title" value="lbl.event.update" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/event/event-update-success.jsp"/>
     </definition>
+    
+    <definition name="drafts-view" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.draft.view" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/notificationdrafts/drafts-view.jsp"/>
+    </definition>
+    
+    <definition name="drafts-create" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.draft.create" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/notificationdrafts/drafts-create.jsp"/>
+    </definition>
+    
+    <definition name="draft-success" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.draft.view" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/notificationdrafts/drafts-success.jsp"/>
+    </definition>
 
     
 </tiles-definitions>
