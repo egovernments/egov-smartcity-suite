@@ -92,5 +92,22 @@ public class DraftService {
         criteria.addOrder(Order.desc(EventnotificationConstant.DRAFT_ID));
         return criteria.list();
     }
+    
+    /**
+     * Fetch all the draft
+     * @return List<Notificationschedule>
+     */
+    public List<NotificationDrafts> findAllDrafts() {
+        return draftRepository.findAll();
+    }
+
+    /**
+     * Fetch notification draft by id
+     * @param id
+     * @return NotificationDrafts
+     */
+    public NotificationDrafts findDraftById(Long id) {
+        return draftRepository.findOne(id);
+    }
 
 }

@@ -103,7 +103,7 @@ public class UsereventService {
     public Long countUsereventByEventId(Long id) {
         return usereventRepository.countUsereventByEventId(id);
     }
-    
+
     /**
      * This method fetch Userevent
      * @param eventid
@@ -111,6 +111,6 @@ public class UsereventService {
      * @return Userevent
      */
     public Userevent getUsereventByEventAndUser(Long eventid, Long userid) {
-        return usereventRepository.getUsereventByEventAndUser(eventid,userid);
+        return usereventRepository.getUsereventByEventAndUser(eventid, userid);
     }
 }

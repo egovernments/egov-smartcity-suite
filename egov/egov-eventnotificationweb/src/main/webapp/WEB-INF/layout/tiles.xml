@@ -117,7 +117,41 @@
     <definition name="draft-success" extends="base_layout">
         <put-attribute name="page-title" value="lbl.draft.view" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/notificationdrafts/drafts-success.jsp"/>
+	</definition>
+	
+    <definition name="schedule-view" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.schedule.view" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/schedule/schedule-view.jsp"/>
+    </definition>
+    
+    <definition name="schedule-create-view" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.schedule.notification" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/schedule/schedule-create.jsp"/>
+    </definition>
+    
+    <definition name="schedule-create-success" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.schedule.notification" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/schedule/schedule-create-success.jsp"/>
+    </definition>
+    
+    <definition name="schedule-details-view" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.schedule.notification.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/schedule/schedule-details-view.jsp"/>
+    </definition>
+    
+    <definition name="schedule-delete-success" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.schedule.notification.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/schedule/schedule-delete-success.jsp"/>
+    </definition>
+    
+    <definition name="schedule-update-view" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.schedule.notification.update" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/schedule/schedule-update-view.jsp"/>
+    </definition>
+    
+    <definition name="schedule-update-success" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.schedule.notification.update" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/schedule/schedule-update-success.jsp"/>
     </definition>
 
-    
 </tiles-definitions>

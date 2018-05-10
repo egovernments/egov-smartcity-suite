@@ -143,6 +143,7 @@ public class ApiUrl {
     public final static String SEARCH_EVENT = "/event/search";
     public final static String EVENT_ID = "/{id}";
     public final static String INTERESTED = "/interested";
+    public final static String EVENT_IMAGE_DOWNLOAD = "/event/{id}/download/{fileStoreId}";
 
     /**
      * Drafts
