@@ -127,7 +127,7 @@ public class LicenseCreateAPIValidator implements Validator {
         }
 
         List<LicenseSubCategory> subCategories = licenseSubCategoryRepository.findByCategoryIdOrderByNameAsc(categoryId);
-        if (!subCategories.stream().anyMatch(subCategory -> subCategory.getCode().equalsIgnoreCase(license.getSubCategory())))
+        if (subCategories.stream().noneMatch(subCategory -> subCategory.getCode().equalsIgnoreCase(license.getSubCategory())))
             errors.rejectValue("subCategory", "Invalid SubCategory", "Invalid SubCategory");
 
         if (Optional
@@ -139,7 +139,7 @@ public class LicenseCreateAPIValidator implements Validator {
 
     private void validateLicenseLocalities(LicenseCreateRequest license, Errors errors) {
         BoundaryType locality = boundaryTypeRepository.findByNameAndHierarchyTypeName("Locality", "LOCATION");
-        Boundary childBoundary = boundaryRepository.findByBoundaryTypeAndBoundaryNum(locality, license.getBoundary());
+        Boundary childBoundary = boundaryRepository.findByIdAndBoundaryType(license.getBoundary(), locality);
         if (childBoundary == null)
             errors.rejectValue("boundary", "Boundary does not exist", "Boundary does not exist");
         else {
@@ -147,7 +147,7 @@ public class LicenseCreateAPIValidator implements Validator {
             if (crossHierarchyService
                     .getParentBoundaryByChildBoundaryAndParentBoundaryType(childBoundary.getId(), blockType.getId())
                     .stream()
-                    .noneMatch(boundary -> boundary.getParent().getBoundaryNum().equals(license.getParentBoundary())))
+                    .noneMatch(boundary -> boundary.getParent().getId().equals(license.getParentBoundary())))
                 errors.rejectValue("boundary", "Parent Boundary does not exist", "Parent Boundary does not exist");
         }
     }

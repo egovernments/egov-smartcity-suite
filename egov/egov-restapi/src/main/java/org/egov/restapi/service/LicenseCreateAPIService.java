@@ -126,13 +126,12 @@ public class LicenseCreateAPIService {
         }
         tradeLicense.setNatureOfBusiness(natureOfBusinessRepository.findOne(license.getNatureOfBusiness()));
 
-        BoundaryType locality = boundaryTypeRepository.findByNameAndHierarchyTypeName("Locality", "LOCATION");
-        Boundary childBoundary = boundaryRepository.findByBoundaryTypeAndBoundaryNum(locality, license.getBoundary());
+        Boundary childBoundary = boundaryRepository.findOne(license.getBoundary());
         BoundaryType blockType = boundaryTypeRepository.findByNameAndHierarchyTypeName("Block", "REVENUE");
         List<Boundary> blocks = crossHierarchyService
                 .getParentBoundaryByChildBoundaryAndParentBoundaryType(childBoundary.getId(), blockType.getId());
         blocks.stream().forEach(boundary -> {
-            if (boundary.getParent().getBoundaryNum().equals(license.getParentBoundary()))
+            if (boundary.getParent().getId().equals(license.getParentBoundary()))
                 tradeLicense.setParentBoundary(boundary.getParent());
         });
         tradeLicense.setBoundary(childBoundary);
