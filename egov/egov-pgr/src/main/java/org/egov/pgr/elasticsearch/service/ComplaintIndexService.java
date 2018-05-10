@@ -84,9 +84,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.City;
@@ -1655,7 +1655,7 @@ public class ComplaintIndexService {
     public List<IVRSFeedBackResponse> getDetailsBasedOnFeedBack(final ComplaintDashBoardRequest ivrsRequest) {
         List<IVRSFeedBackResponse> feedbackResponseList = new ArrayList<>();
         String aggregationField = CITY_REGION_NAME;
-        if (StringUtils.isNotBlank(ivrsRequest.getType()))
+        if (isNotBlank(ivrsRequest.getType()))
             aggregationField = fetchAggregationField(ivrsRequest.getType());
         SearchResponse response = complaintIndexRepository.findFeedBackRatingDetails(ivrsRequest, prepareQuery(ivrsRequest),
                 aggregationField);
@@ -1744,7 +1744,7 @@ public class ComplaintIndexService {
 
     private Map getUpperLevelDetails(ComplaintDashBoardRequest ivrsRequest, String name) {
         String[] requiredFields = null;
-        Map upperLevelInfo = new HashMap<>();
+        Map upperLevelInfo = new ConcurrentHashMap<>();
         BoolQueryBuilder boolQuery = prepareQuery(ivrsRequest);
         if ("districtwise".equalsIgnoreCase(ivrsRequest.getType())) {
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(CITY_DISTRICT_NAME, name));
@@ -1808,26 +1808,26 @@ public class ComplaintIndexService {
     private BoolQueryBuilder prepareQuery(final ComplaintDashBoardRequest ivrsRequest) {
         BoolQueryBuilder boolQuery = new BoolQueryBuilder();
         boolQuery = boolQuery.must(QueryBuilders.existsQuery("feedbackRating"))
-                .mustNot(QueryBuilders.matchQuery("feedbackRating", 0));
+                .mustNot(matchQuery("feedbackRating", 0));
         if (isNotBlank(ivrsRequest.getFromDate()) && isNotBlank(ivrsRequest.getToDate())) {
             String fromDate = new DateTime(ivrsRequest.getFromDate()).withTimeAtStartOfDay().toString(PGR_INDEX_DATE_FORMAT);
             String toDate = new DateTime(ivrsRequest.getToDate()).plusDays(1).toString(PGR_INDEX_DATE_FORMAT);
             boolQuery = boolQuery.must(rangeQuery(CREATED_DATE).from(fromDate).to(toDate));
         }
         if (isNotBlank(ivrsRequest.getRegionName()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(CITY_REGION_NAME, ivrsRequest.getRegionName()));
+            boolQuery = boolQuery.filter(matchQuery(CITY_REGION_NAME, ivrsRequest.getRegionName()));
         if (isNotBlank(ivrsRequest.getDistrictName()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(CITY_DISTRICT_NAME, ivrsRequest.getDistrictName()));
+            boolQuery = boolQuery.filter(matchQuery(CITY_DISTRICT_NAME, ivrsRequest.getDistrictName()));
         if (isNotBlank(ivrsRequest.getWardNo()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(WARD_NUMBER, ivrsRequest.getWardNo()));
+            boolQuery = boolQuery.filter(matchQuery(WARD_NUMBER, ivrsRequest.getWardNo()));
         if (isNotBlank(ivrsRequest.getDepartmentCode()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(DEPARTMENT_CODE, ivrsRequest.getDepartmentCode()));
+            boolQuery = boolQuery.filter(matchQuery(DEPARTMENT_CODE, ivrsRequest.getDepartmentCode()));
         if (isNotBlank(ivrsRequest.getFunctionaryName()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(INITIAL_FUNCTIONARY_NAME, ivrsRequest.getFunctionaryName()));
+            boolQuery = boolQuery.filter(matchQuery(INITIAL_FUNCTIONARY_NAME, ivrsRequest.getFunctionaryName()));
         if (isNotBlank(ivrsRequest.getUlbGrade()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(CITY_GRADE, ivrsRequest.getUlbGrade()));
+            boolQuery = boolQuery.filter(matchQuery(CITY_GRADE, ivrsRequest.getUlbGrade()));
         if (isNotBlank(ivrsRequest.getUlbCode()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(CITY_CODE, ivrsRequest.getUlbCode()));
+            boolQuery = boolQuery.filter(matchQuery(CITY_CODE, ivrsRequest.getUlbCode()));
         return boolQuery;
     }
 
