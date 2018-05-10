@@ -56,6 +56,7 @@ import static org.egov.mrs.application.MarriageConstants.CF_STAMP;
 import static org.egov.mrs.application.MarriageConstants.MIC;
 import static org.egov.mrs.application.MarriageConstants.MOM;
 import static org.egov.mrs.application.MarriageConstants.SOURCE_API;
+import static org.egov.mrs.application.MarriageConstants.CPK_END_POINT_URL;
 
 import java.io.File;
 import java.io.IOException;
@@ -123,9 +124,16 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -512,6 +520,7 @@ public class MarriageRegistrationService {
     @Transactional
     public MarriageRegistration digiSignCertificate(final MarriageRegistration marriageRegistration,
                                                     final WorkflowContainer workflowContainer) {
+              
         marriageRegistration.setStatus(marriageUtils.getStatusByCodeAndModuleType(
                 MarriageRegistration.RegistrationStatus.REGISTERED.toString(), MarriageConstants.MODULE_NAME));
         workflowService.transition(marriageRegistration, workflowContainer, workflowContainer.getApproverComments());
@@ -520,6 +529,23 @@ public class MarriageRegistrationService {
                 && Source.CITIZENPORTAL.name().equalsIgnoreCase(marriageRegistration.getSource())
                 && getPortalInbox(marriageRegistration.getApplicationNo()) != null)
             updatePortalMessage(marriageRegistration);
+        if (marriageRegistration.getSource().equalsIgnoreCase(SOURCE_API)) {
+            MarriageCertificate marriageCertificate = marriageCertificateService.getGeneratedCertificate(marriageRegistration);
+            if (marriageCertificate != null) {
+                final RestTemplate restTemplate = new RestTemplate();
+                MultiValueMap<String, Object> requestObjectMap = new LinkedMultiValueMap<>();
+                HttpHeaders headers = new HttpHeaders();
+                File file = fileStoreService.fetch(marriageCertificate.getFileStore().getFileStoreId(),
+                        MarriageConstants.FILESTORE_MODULECODE);
+                requestObjectMap.add("certificate", new FileSystemResource(file));
+                requestObjectMap.add("ApplicationKey", marriageMessageSource.getMessage("mrs.cpk.apikey", null, null));
+                headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+                HttpEntity<MultiValueMap<String, Object>> requestObj = new HttpEntity<>(requestObjectMap, headers);
+                restTemplate.postForObject(CPK_END_POINT_URL +
+                        marriageRegistration.getApplicationNo(),
+                        requestObj, String.class);
+            }
+        }
         marriageSmsAndEmailService.sendSMS(marriageRegistration,
                 MarriageRegistration.RegistrationStatus.REGISTERED.toString());
         marriageSmsAndEmailService.sendEmail(marriageRegistration,

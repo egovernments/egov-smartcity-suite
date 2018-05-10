@@ -181,6 +181,12 @@ public class MarriageAPIService {
                     marriageDocumentService.get("Memorandum of Marriage"));
         }
     }
+    
+    public void uploadDataSheet(final MultipartFile dataSheet, final MarriageRegistration marriageRegistration) {
+        if (dataSheet.getSize() != 0) {
+            marriageRegistration.setDatasheetFileStore(marriageRegistrationService.addToFileStore(dataSheet));
+        }
+    }
 
     public void uploadApplicantDocuments(final MultipartFile husbandBirthCertificate, final MultipartFile husbandRationCard,
             final MultipartFile husbandAadhar, final MultipartFile wifeBirthCertificate, final MultipartFile wifeRationCard,

@@ -48,6 +48,15 @@
 
 package org.egov.mrs.web.controller.application.registration;
 
+import static org.egov.mrs.application.MarriageConstants.ANONYMOUS_USER;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
+import java.io.IOException;
+import java.util.Date;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
@@ -55,12 +64,14 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.FileStoreUtils;
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.application.service.MarriageFeeCalculator;
 import org.egov.mrs.application.service.workflow.RegistrationWorkflowService;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.masters.entity.MarriageRegistrationUnit;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -78,14 +89,6 @@ import org.springframework.web.servlet.FlashMap;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.servlet.view.RedirectView;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.util.Date;
-
-import static org.egov.mrs.application.MarriageConstants.ANONYMOUS_USER;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 /**
  * Handles the Marriage Registration
@@ -109,7 +112,8 @@ public class NewRegistrationController extends MarriageRegistrationController {
     private MarriageFormValidator marriageFormValidator;
     @Autowired
     private MarriageFeeCalculator marriageFeeCalculator;
-
+    @Autowired
+    protected FileStoreUtils fileStoreUtils;
     @Autowired
     private SecurityUtils securityUtils;
 
@@ -345,6 +349,13 @@ public class NewRegistrationController extends MarriageRegistrationController {
 
         return null;
 
+    }
+    
+    @RequestMapping(value = "/downloadMarriagefile/{fileStoreId}")
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> download(@PathVariable final String fileStoreId) {
+        return fileStoreUtils.fileAsResponseEntity(fileStoreId,
+                MarriageConstants.FILESTORE_MODULECODE, false);
     }
 
 }

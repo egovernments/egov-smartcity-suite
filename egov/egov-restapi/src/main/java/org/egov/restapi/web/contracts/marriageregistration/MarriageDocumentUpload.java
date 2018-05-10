@@ -71,6 +71,12 @@ public class MarriageDocumentUpload {
 
     private MultipartFile wifeAadhar;
 
+    private MultipartFile dataSheet;
+    
+    private MultipartFile marriageCertificate;
+    
+    private String ApplicationKey; 
+    
     public MultipartFile getMarriagePhotoFile() {
         return marriagePhotoFile;
     }
@@ -150,5 +156,31 @@ public class MarriageDocumentUpload {
     public void setWifeAadhar(final MultipartFile wifeAadhar) {
         this.wifeAadhar = wifeAadhar;
     }
+
+    public MultipartFile getDataSheet() {
+        return dataSheet;
+    }
+
+    public void setDataSheet(MultipartFile dataSheet) {
+        this.dataSheet = dataSheet;
+    }
+
+    public MultipartFile getMarriageCertificate() {
+        return marriageCertificate;
+    }
+
+    public void setMarriageCertificate(MultipartFile marriageCertificate) {
+        this.marriageCertificate = marriageCertificate;
+    }
+
+    public String getApplicationKey() {
+        return ApplicationKey;
+    }
+
+    public void setApplicationKey(String applicationKey) {
+        ApplicationKey = applicationKey;
+    }
+
+   
 
 }

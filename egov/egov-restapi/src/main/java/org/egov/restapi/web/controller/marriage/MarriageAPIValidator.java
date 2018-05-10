@@ -60,6 +60,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import static org.egov.mrs.application.MarriageConstants.getMarriageVenues;
+import static org.egov.mrs.application.MarriageConstants.MAX_SIZE;
 
 @Component
 public class MarriageAPIValidator implements Validator {
@@ -129,7 +130,10 @@ public class MarriageAPIValidator implements Validator {
         }
         if (marriageDocumentUpload.getWifePhotoFile() == null) {
             errors.rejectValue("wifePhotoFile", "Provide wife Photo", "Provide wife Photo");
-        }      
+        }   
+        if (marriageDocumentUpload.getDataSheet() != null && marriageDocumentUpload.getDataSheet().getSize() > MAX_SIZE) {
+            errors.rejectValue("dataSheet", "Max Upload size exceeded(2 MB)","Max Upload size exceeded(2 MB)");
+        }
     }
 
 }

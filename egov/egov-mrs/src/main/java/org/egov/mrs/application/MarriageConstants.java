@@ -64,6 +64,8 @@ public class MarriageConstants {
     public static final String REISSUE_FEECRITERIA = "Re-Issue Fee";
     public static final String ADDITIONAL_RULE_REGISTRATION = "MARRIAGE REGISTRATION";
     public static final String SOURCE_API= "API";
+    public static final double MAX_SIZE = 2097152;
+    public static final String CPK_END_POINT_URL = "http://www.chpk.ap.gov.in/CPKServices/MarriageCertificate/Create/";
 
     // validactions
     public static final String WFLOW_ACTION_STEP_REJECT = "Reject";
