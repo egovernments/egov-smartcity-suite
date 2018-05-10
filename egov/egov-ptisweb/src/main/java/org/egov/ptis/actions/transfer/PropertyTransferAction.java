@@ -288,11 +288,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             if (STRUCTURED.equals(taxDueOrStruc))
                 return COMMON_FORM;
             if (basicproperty.getWFProperty() != null && Arrays.asList(PROPERTY_MODIFY_REASON_ADD_OR_ALTER, DEMOLITION)
-                    .contains(basicproperty.getWFProperty().getPropertyModifyReason()) && isLatestPropertyMutationClosed()){
-                if(!isEligibleLoggedUser()){
-                    addActionError(getText("initiator.noteligible"));
-                    return COMMON_FORM;
-                } else {
+                    .contains(basicproperty.getWFProperty().getPropertyModifyReason()) && isLatestPropertyMutationClosed()) {
+                if (isEligibleLoggedUser()) {
                     loggedUserIsMeesevaUser = propertyService.isMeesevaUser(transferOwnerService.getLoggedInUser());
                     if (loggedUserIsMeesevaUser)
                         if (getMeesevaApplicationNumber() == null) {
@@ -300,6 +297,9 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                             return ERROR;
                         } else
                             propertyMutation.setMeesevaApplicationNumber(getMeesevaApplicationNumber());
+                } else {
+                    addActionError(getText("initiator.noteligible"));
+                    return COMMON_FORM;
                 }
                 return NEW;
             }
@@ -328,10 +328,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 return COMMON_FORM;
 
             if (!ADDTIONAL_RULE_FULL_TRANSFER.equalsIgnoreCase(propertyMutation.getType())) {
-                if(!isEligibleLoggedUser()){
-                    addActionError(getText("initiator.noteligible"));
-                    return COMMON_FORM;
-                } else {
+                if (isEligibleLoggedUser()) {
                     loggedUserIsMeesevaUser = propertyService.isMeesevaUser(transferOwnerService.getLoggedInUser());
                     if (loggedUserIsMeesevaUser)
                         if (getMeesevaApplicationNumber() == null) {
@@ -340,17 +337,20 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                         } else
                             propertyMutation.setMeesevaApplicationNumber(getMeesevaApplicationNumber());
                     return NEW;
+                } else {
+                    addActionError(getText("initiator.noteligible"));
+                    return COMMON_FORM;
                 }
             } else
                 return NEW;
         }
     }
-    
+
     public boolean isEligibleLoggedUser() {
-        return (StringUtils.isBlank(applicationSource)
+        return StringUtils.isBlank(applicationSource)
                 && propertyService.isEmployee(transferOwnerService.getLoggedInUser())
                 && !propertyTaxCommonUtils.isEligibleInitiator(transferOwnerService.getLoggedInUser().getId())
-                && !propertyService.isCitizenPortalUser(transferOwnerService.getLoggedInUser())) ? false : true;
+                && !propertyService.isCitizenPortalUser(transferOwnerService.getLoggedInUser()) ? false : true;
     }
     
     public void setFormProperties() {
