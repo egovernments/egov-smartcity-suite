@@ -1177,7 +1177,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         setOwnerName(objection.getBasicProperty().getProperty());
         setPropertyAddress(objection.getBasicProperty().getAddress());
         setWfType(objection.getType());
-        if(objection.getType().equals(NATURE_OF_WORK_RP) && objection.getProperty().getPropertyDetail().isStructure())
+        if(objection.getType().equals(NATURE_OF_WORK_RP) && objection.getBasicProperty().getProperty().getPropertyDetail().isStructure())
         try {
             final Query query = entityManager.createNamedQuery("DOCUMENT_TYPE_DETAILS_BY_ID");
             query.setParameter(1, objection.getBasicProperty().getId());
