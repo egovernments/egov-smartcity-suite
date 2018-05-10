@@ -102,9 +102,9 @@
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.draft.parameters" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin" id="dragdiv">
 							<ul id="allItems">
-							<li id="node">One</li>
-							<li id="node">Two</li>
-							<li id="node">Three</li>
+							<li class="li eachParameter" id="node">One</li>
+							<li class="li eachParameter" id="node">Two</li>
+							<li class="li eachParameter" id="node">Three</li>
                             </ul>
 						</div>
 					</div>
@@ -130,37 +130,7 @@
 	</div>
 	</div>
 </form:form>
-<div class="modal fade" id="modal-6">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="panel panel-primary" data-collapsed="0"><!-- to apply shadow add class "panel-shadow" -->
-                            <!-- panel head -->
-                            <div class="panel-heading">
-                                <div class="panel-title"><spring:message code="lbl.complaintLoc"/></div>
-                            </div>
-
-                            <!-- panel body -->
-                            <div class="panel-body no-padding">
-                                <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCqZ4MOdFCRQ_MZGwyCF5UxXjBWy6wnufA&libraries=places"></script>
-                                <script type="text/javascript" src="<cdn:url  value='/resources/global/js/geolocation/geolocationmarker-compiled.js' context='/egi'/>"></script>
-                                <div id="normal" class="img-prop"></div>
-                                <input id="pac-input" class="controls" type="text" placeholder="Enter a location">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-info btn-save-location" data-dismiss="modal"><spring:message code="lbl.ok"/></button>
-                <button type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="lbl.close"/></button>
-            </div>
-        </div>
-    </div>
-</div>
+<button class="button button1">2px</button>
 <script>
 	/* $('#buttonSubmit').click(function(e) {
 		if ($('form').valid()) {
@@ -173,6 +143,7 @@
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
+<link rel="stylesheet" href="<cdn:url value='/resources/css/draftCreate.css'/>" />
 
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>  
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js" ></script>
@@ -240,7 +211,7 @@ $(document).ready(function(){
                success: function(data) {
                	$('#allItems').empty(); // clear the current elements in select box
                    for (row in data) {
-                       $('#allItems').append($('<li id="node" runat="server">'+data[row].name+'</li>'));
+                       $('#allItems').append($('<li class="li eachParameter" id="node">'+data[row].name+'</li>'));
                    }
                    $("#dragdiv li").draggable({
                        helper: "clone",
