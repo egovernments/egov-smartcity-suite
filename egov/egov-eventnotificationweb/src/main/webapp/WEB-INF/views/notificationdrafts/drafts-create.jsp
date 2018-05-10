@@ -130,7 +130,6 @@
 	</div>
 	</div>
 </form:form>
-<button class="button button1">2px</button>
 <script>
 	/* $('#buttonSubmit').click(function(e) {
 		if ($('form').valid()) {
