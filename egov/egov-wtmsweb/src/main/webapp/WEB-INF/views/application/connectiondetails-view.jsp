@@ -61,6 +61,14 @@
 			</div>
 			<div class="panel-body">
 				<div class="row add-border">
+					<div class="col-xs-3 add-margin"><spring:message code="lbl.propertytype"/></div>
+					<div class="col-xs-3 add-margin view-content"><c:out value="${waterConnectionDetails.propertyType.name}" /></div>
+					<div class="col-xs-3 add-margin"><spring:message code="lbl.usagetype"/></div>
+					<div class="col-xs-3 add-margin view-content">
+						<c:out value="${waterConnectionDetails.usageType.name}" />
+					</div>
+				</div>
+				<div class="row add-border">
 					<div class="col-xs-3 add-margin"><spring:message code="lbl.category"/></div>
 					<div class="col-xs-3 add-margin view-content"><c:out value="${waterConnectionDetails.category.name}" /></div>
 					<div class="col-xs-3 add-margin"><spring:message code="lbl.watersourcetype"/></div>
