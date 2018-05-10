@@ -55,6 +55,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.portal.entity.Citizen;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
@@ -693,4 +694,15 @@ public class PropertyHibernateDAO implements PropertyDAO {
         qry.setMaxResults(1);
         return (Property) qry.uniqueResult();
     } 
+    
+    /**
+     * API gives the latest Demand for history property
+     */
+    public Ptdemand getLatestDemand(Property oldProperty) {
+        Query qry = getCurrentSession()
+                .createQuery("from Ptdemand where egptProperty =:oldProperty and isHistory='N' order by egInstallmentMaster.installmentYear desc");
+        qry.setEntity("oldProperty", oldProperty);
+        qry.setMaxResults(1);
+        return (Ptdemand)qry.uniqueResult();
+    }
 }

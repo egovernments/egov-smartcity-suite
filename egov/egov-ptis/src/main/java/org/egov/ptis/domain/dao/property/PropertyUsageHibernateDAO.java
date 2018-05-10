@@ -143,7 +143,7 @@ public class PropertyUsageHibernateDAO implements PropertyUsageDAO {
 
     @Override
     public PropertyUsage findById(Long id, boolean lock) {
-        return (PropertyUsage) getCurrentSession().createQuery("from PropertyUsage where id = :id").setParameter("id", id)
+        return (PropertyUsage) getCurrentSession().createQuery("from PropertyUsage where id = ?").setParameter(0, id)
                 .uniqueResult();
     }
 
