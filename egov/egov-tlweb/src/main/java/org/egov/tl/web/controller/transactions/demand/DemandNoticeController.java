@@ -112,6 +112,7 @@ import static org.egov.tl.utils.Constants.STATUS_CANCELLED;
 import static org.egov.tl.utils.Constants.TRADE_LICENSE;
 import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+import static org.apache.commons.lang.StringUtils.EMPTY;
 
 @Controller
 @RequestMapping("/demand-notice")
@@ -285,10 +286,10 @@ public class DemandNoticeController {
 
         if (CITY_GRADE_CORPORATION.equalsIgnoreCase(cityGrade)) {
             String corporationAct = licenseConfigurationService.getValueByKey(TL_CORPORATION_ACT);
-            reportParams.put("actDeclaration", corporationAct != null ? corporationAct : " ");
+            reportParams.put("actDeclaration", corporationAct == null ? EMPTY : corporationAct);
         } else {
             String defaultAct = licenseConfigurationService.getValueByKey(TL_DEFAULT_ACT);
-            reportParams.put("actDeclaration", defaultAct != null ? defaultAct : " ");
+            reportParams.put("actDeclaration", defaultAct == null ? EMPTY : defaultAct);
         }
     }
 
