@@ -497,6 +497,7 @@ public class ReportGenerationService {
             if (StringUtils.isBlank(sewApplicationNum)) {
                 reportParams.put("sewerageApplicationNo", null);
             } else {
+                reportParams.put(APPLICATION_TYPE, "Integrated Application for New Water & Sewerage Connection");
                 reportParams.put("sewerageApplicationNo", sewApplicationNum);
             }
 
@@ -518,8 +519,10 @@ public class ReportGenerationService {
         final String districtName = cityService.getDistrictName();
         reportParams.put("cityUrl", (cityService.findAll().isEmpty() ? districtName.toLowerCase()
                 : cityService.findAll().get(0).getName().toLowerCase()) + ".cdma.ap.gov.in");
-        reportParams.put(APPLICATION_TYPE,
-                WordUtils.capitalize(waterConnectionDetails.getApplicationType().getName()));
+        if (reportParams.get(APPLICATION_TYPE)==null) {
+            reportParams.put(APPLICATION_TYPE,
+                    WordUtils.capitalize(waterConnectionDetails.getApplicationType().getName()));
+        }
         reportParams.put(CITY_NAME, cityService.getMunicipalityName());
         reportParams.put(DISTRICT, districtName);
         reportParams.put("applicationNumber", waterConnectionDetails.getApplicationNumber());
