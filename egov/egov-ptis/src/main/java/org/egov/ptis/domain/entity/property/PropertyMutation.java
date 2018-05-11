@@ -119,7 +119,8 @@ public class PropertyMutation extends StateAware<Position> {
                 .append(getPrimaryTransferee().getName()).append(", ")
                 .append(PROPERTY_TYPE_CATEGORIES.get(getBasicProperty().getProperty().getPropertyDetail().getCategoryType()))
                 .append(", ")
-                .append(getBasicProperty().getPropertyID().getLocality().getName());
+                .append(getBasicProperty().getPropertyID().getLocality() == null ? ""
+                        : getBasicProperty().getPropertyID().getLocality().getName());
         return stateDetails.toString();
     }
 
