@@ -53,135 +53,82 @@ import java.util.Date;
 import org.apache.log4j.Logger;
 import org.egov.eventnotification.constants.EventnotificationConstant;
 import org.egov.eventnotification.entity.NotificationSchedule;
+import org.egov.eventnotification.utils.SchedulerUtil;
 import org.egov.infra.admin.master.entity.User;
-import org.quartz.CronScheduleBuilder;
-import org.quartz.CronTrigger;
-import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
-import org.quartz.JobDetail;
-import org.quartz.JobKey;
-import org.quartz.Scheduler;
-import org.quartz.SimpleScheduleBuilder;
-import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
+import org.quartz.SchedulerException;
 import org.quartz.TriggerKey;
-import org.quartz.impl.StdSchedulerFactory;
+import org.springframework.stereotype.Service;
 
 /**
  * this api will contains all scheduler , that will run for different-2 purpose.
  * @author somvit
  *
  */
+
+@Service
 public class NotificationSchedulerManager {
 
     private static final Logger LOGGER = Logger.getLogger(NotificationSchedulerManager.class);
 
-    private NotificationSchedulerManager() {
-
-    }
-
-    private static Scheduler scheduler;
-
     /**
      * all scheduler job will be configure here.
      */
-    public static void schedule(NotificationSchedule notificationschedule, User user) {
+    public void schedule(NotificationSchedule notificationschedule, User user) {
+        SchedulerUtil schedulerUtil = SchedulerUtil.getSchedulerUtilInstance();
+
+        schedulerUtil.setGroupName(EventnotificationConstant.NOTIFICATION_JOB);
+        schedulerUtil.setName(EventnotificationConstant.JOB + notificationschedule.getId());
+        schedulerUtil.setTriggerName(EventnotificationConstant.TRIGGER + notificationschedule.getId());
+        schedulerUtil.setRepeatCount(0);
+
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date(notificationschedule.getStartDate()));
         int hours = Integer.parseInt(notificationschedule.getStartTime().split(":")[0]);
         int minutes = Integer.parseInt(notificationschedule.getStartTime().split(":")[1]);
 
+        JobDataMap jobDataMap = new JobDataMap();
+        jobDataMap.put(EventnotificationConstant.USER, user);
+        jobDataMap.put(EventnotificationConstant.SCHEDULEID, notificationschedule.getId());
+
         // configure the scheduler time
         switch (notificationschedule.getRepeat().toLowerCase()) {
         case EventnotificationConstant.SCHEDULE_DAY:
-            JobDetail daylyJob = JobBuilder.newJob(NotificationSchedulerJob.class)
-                    .withIdentity(EventnotificationConstant.JOB + notificationschedule.getId(),
-                            EventnotificationConstant.NOTIFICATION_JOB)
-                    .build();
-            CronTrigger daylyTrigger = TriggerBuilder.newTrigger()
-                    .withIdentity(EventnotificationConstant.TRIGGER + notificationschedule.getId(),
-                            EventnotificationConstant.NOTIFICATION_JOB)
-                    .withSchedule(CronScheduleBuilder.cronSchedule("0 " + minutes + " " + hours + " ? * * *")).build();
-            JobDataMap jobDataMap = daylyJob.getJobDataMap();
-            jobDataMap.put(EventnotificationConstant.USER, user);
-            jobDataMap.put(EventnotificationConstant.SCHEDULEID, notificationschedule.getId());
-            try {
-                Scheduler scheduler = NotificationSchedulerManager.getScheduler();
-                scheduler.start();
+            String dailyCronExpression = "0 " + minutes + " " + hours + " ? * * *";
 
-                scheduler.scheduleJob(daylyJob, daylyTrigger);
-            } catch (Exception e) {
+            try {
+                schedulerUtil.addSchedule(NotificationSchedulerJob.class, dailyCronExpression, jobDataMap);
+            } catch (SchedulerException e) {
                 LOGGER.error(e.getMessage(), e);
             }
+
             break;
         case EventnotificationConstant.SCHEDULE_MONTH:
-            JobDetail monthlyJob = JobBuilder.newJob(MonthlyNotificationSchedulerJob.class)
-                    .withIdentity(EventnotificationConstant.JOB + notificationschedule.getId(),
-                            EventnotificationConstant.NOTIFICATION_JOB)
-                    .build();
-            CronTrigger monthlyTrigger = TriggerBuilder.newTrigger()
-                    .withIdentity(EventnotificationConstant.TRIGGER + notificationschedule.getId(),
-                            EventnotificationConstant.NOTIFICATION_JOB)
-                    .withSchedule(CronScheduleBuilder
-                            .cronSchedule("0 " + minutes + " " + hours + " " + calendar.get(Calendar.DAY_OF_MONTH) + " * ? *"))
-                    .build();
-            JobDataMap jobDataMap1 = monthlyJob.getJobDataMap();
-            jobDataMap1.put(EventnotificationConstant.USER, user);
-            jobDataMap1.put(EventnotificationConstant.SCHEDULEID, notificationschedule.getId());
-            try {
-                Scheduler scheduler = NotificationSchedulerManager.getScheduler();
-                scheduler.start();
+            String monthlyCronExpression = "0 " + minutes + " " + hours + " " + calendar.get(Calendar.DAY_OF_MONTH) + " * ? *";
 
-                scheduler.scheduleJob(monthlyJob, monthlyTrigger);
-            } catch (Exception e) {
+            try {
+                schedulerUtil.addSchedule(MonthlyNotificationSchedulerJob.class, monthlyCronExpression, jobDataMap);
+            } catch (SchedulerException e) {
                 LOGGER.error(e.getMessage(), e);
             }
+
             break;
         case EventnotificationConstant.SCHEDULE_YEAR:
-            JobDetail yearlyJob = JobBuilder.newJob(YearlyNotificationSchedulerJob.class)
-                    .withIdentity(EventnotificationConstant.JOB + notificationschedule.getId(),
-                            EventnotificationConstant.NOTIFICATION_JOB)
-                    .build();
-            CronTrigger yearlyTrigger = TriggerBuilder.newTrigger()
-                    .withIdentity(EventnotificationConstant.TRIGGER + notificationschedule.getId(),
-                            EventnotificationConstant.NOTIFICATION_JOB)
-                    .withSchedule(CronScheduleBuilder.cronSchedule("0 " + minutes + " " + hours + " "
-                            + calendar.get(Calendar.DAY_OF_MONTH) + " " + (calendar.get(Calendar.MONTH) + 1) + " ? *"))
-                    .build();
-            JobDataMap jobDataMap2 = yearlyJob.getJobDataMap();
-            jobDataMap2.put(EventnotificationConstant.USER, user);
-            jobDataMap2.put(EventnotificationConstant.SCHEDULEID, notificationschedule.getId());
-            try {
-                Scheduler scheduler = NotificationSchedulerManager.getScheduler();
-                scheduler.start();
+            String yearlyCronExpression = "0 " + minutes + " " + hours + " "
+                    + calendar.get(Calendar.DAY_OF_MONTH) + " " + (calendar.get(Calendar.MONTH) + 1) + " ? *";
 
-                scheduler.scheduleJob(yearlyJob, yearlyTrigger);
-            } catch (Exception e) {
+            try {
+                schedulerUtil.addSchedule(YearlyNotificationSchedulerJob.class, yearlyCronExpression, jobDataMap);
+            } catch (SchedulerException e) {
                 LOGGER.error(e.getMessage(), e);
             }
             break;
         default:
             calendar.set(Calendar.HOUR_OF_DAY, hours);
             calendar.set(Calendar.MINUTE, minutes);
-            JobDetail singleJob = JobBuilder.newJob(OneTimeNotificationSchedulerJob.class)
-                    .withIdentity(EventnotificationConstant.JOB + notificationschedule.getId(),
-                            EventnotificationConstant.NOTIFICATION_JOB)
-                    .build();
-            Trigger singleTrigger = TriggerBuilder.newTrigger()
-                    .withIdentity(EventnotificationConstant.TRIGGER + notificationschedule.getId(),
-                            EventnotificationConstant.NOTIFICATION_JOB)
-                    .startAt(calendar.getTime())
-                    .withSchedule(SimpleScheduleBuilder.simpleSchedule().withRepeatCount(0))
-                    .build();
-            JobDataMap jobDataMap3 = singleJob.getJobDataMap();
-            jobDataMap3.put(EventnotificationConstant.USER, user);
-            jobDataMap3.put(EventnotificationConstant.SCHEDULEID, notificationschedule.getId());
             try {
-                Scheduler scheduler = NotificationSchedulerManager.getScheduler();
-                scheduler.start();
-
-                scheduler.scheduleJob(singleJob, singleTrigger);
-            } catch (Exception e) {
+                schedulerUtil.addSchedule(calendar.getTime(), OneTimeNotificationSchedulerJob.class, jobDataMap);
+            } catch (SchedulerException e) {
                 LOGGER.error(e.getMessage(), e);
             }
             break;
@@ -191,36 +138,16 @@ public class NotificationSchedulerManager {
     /**
      * Delete the existing job.
      */
-    public static void removeJob(NotificationSchedule notificationschedule) {
-        String scheduleJob = null;
-        String scheduleTrigger = null;
-
-        // configure the scheduler time
-        switch (notificationschedule.getRepeat().toLowerCase()) {
-        case EventnotificationConstant.SCHEDULE_DAY:
-            scheduleJob = EventnotificationConstant.JOB + notificationschedule.getId();
-            scheduleTrigger = EventnotificationConstant.TRIGGER + notificationschedule.getId();
-            break;
-        case EventnotificationConstant.SCHEDULE_MONTH:
-            scheduleJob = EventnotificationConstant.JOB + notificationschedule.getId();
-            scheduleTrigger = EventnotificationConstant.TRIGGER + notificationschedule.getId();
-            break;
-        case EventnotificationConstant.SCHEDULE_YEAR:
-            scheduleJob = EventnotificationConstant.JOB + notificationschedule.getId();
-            scheduleTrigger = EventnotificationConstant.TRIGGER + notificationschedule.getId();
-            break;
-        default:
-            scheduleJob = EventnotificationConstant.JOB + notificationschedule.getId();
-            scheduleTrigger = EventnotificationConstant.TRIGGER + notificationschedule.getId();
-            break;
-        }
+    public void removeJob(NotificationSchedule notificationschedule) {
+        SchedulerUtil schedulerUtil = SchedulerUtil.getSchedulerUtilInstance();
 
         try {
-            Scheduler scheduler = NotificationSchedulerManager.getScheduler();
-            boolean isTrigger = scheduler
-                    .unscheduleJob(new TriggerKey(scheduleTrigger, EventnotificationConstant.NOTIFICATION_JOB));
-            scheduler.deleteJob(new JobKey(scheduleJob, EventnotificationConstant.NOTIFICATION_JOB));
-            LOGGER.info(scheduleJob + " is deleted with trigger status " + isTrigger);
+            schedulerUtil.setGroupName(EventnotificationConstant.NOTIFICATION_JOB);
+            schedulerUtil.setName(EventnotificationConstant.JOB + notificationschedule.getId());
+            schedulerUtil.setTriggerName(EventnotificationConstant.TRIGGER + notificationschedule.getId());
+            schedulerUtil.removeSchedule();
+
+            LOGGER.info("Schedule Job with name " + schedulerUtil.getName() + " is deleted");
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -229,124 +156,65 @@ public class NotificationSchedulerManager {
     /**
      * Modify the existing job.
      */
-    public static void updateJob(NotificationSchedule newSchedule, User user) {
-        String scheduleTrigger = null;
+    public void updateJob(NotificationSchedule newSchedule, User user) {
+        SchedulerUtil schedulerUtil = SchedulerUtil.getSchedulerUtilInstance();
+        String scheduleTrigger = EventnotificationConstant.TRIGGER + newSchedule.getId();
 
         Calendar newTime = Calendar.getInstance();
         newTime.setTime(new Date(newSchedule.getStartDate()));
         int newhours = Integer.parseInt(newSchedule.getStartTime().split(":")[0]);
         int newminutes = Integer.parseInt(newSchedule.getStartTime().split(":")[1]);
 
+        JobDataMap jobDataMap = new JobDataMap();
+        jobDataMap.put(EventnotificationConstant.USER, user);
+        jobDataMap.put(EventnotificationConstant.SCHEDULEID, newSchedule.getId());
+
         // configure the scheduler time
         switch (newSchedule.getRepeat().toLowerCase()) {
         case EventnotificationConstant.SCHEDULE_DAY:
-            scheduleTrigger = EventnotificationConstant.TRIGGER + newSchedule.getId();
-            JobDetail daylyJob = JobBuilder.newJob(NotificationSchedulerJob.class)
-                    .withIdentity(EventnotificationConstant.JOB + newSchedule.getId(), EventnotificationConstant.NOTIFICATION_JOB)
-                    .build();
-            CronTrigger daylyTrigger = TriggerBuilder.newTrigger()
-                    .withIdentity(EventnotificationConstant.TRIGGER + newSchedule.getId(),
-                            EventnotificationConstant.NOTIFICATION_JOB)
-                    .withSchedule(CronScheduleBuilder.cronSchedule("0 " + newminutes + " " + newhours + " ? * * *")).build();
-            JobDataMap jobDataMap = daylyJob.getJobDataMap();
-            jobDataMap.put(EventnotificationConstant.USER, user);
-            jobDataMap.put(EventnotificationConstant.SCHEDULEID, newSchedule.getId());
+            String dailyCronExpression = "0 " + newminutes + " " + newhours + " ? * * *";
+
             try {
-                Scheduler scheduler = NotificationSchedulerManager.getScheduler();
-                scheduler.start();
-                scheduler.addJob(daylyJob, true, true);
-                scheduler.rescheduleJob(new TriggerKey(scheduleTrigger, EventnotificationConstant.NOTIFICATION_JOB),
-                        daylyTrigger);
-            } catch (Exception e) {
+                TriggerKey triggerKey = new TriggerKey(scheduleTrigger, EventnotificationConstant.NOTIFICATION_JOB);
+                schedulerUtil.updateSchedule(NotificationSchedulerJob.class, dailyCronExpression, jobDataMap, triggerKey);
+            } catch (SchedulerException e) {
                 LOGGER.error(e.getMessage(), e);
             }
             break;
         case EventnotificationConstant.SCHEDULE_MONTH:
-            scheduleTrigger = EventnotificationConstant.TRIGGER + newSchedule.getId();
-            JobDetail monthlyJob = JobBuilder.newJob(MonthlyNotificationSchedulerJob.class)
-                    .withIdentity(EventnotificationConstant.JOB + newSchedule.getId(), EventnotificationConstant.NOTIFICATION_JOB)
-                    .build();
-            CronTrigger monthlyTrigger = TriggerBuilder.newTrigger()
-                    .withIdentity(EventnotificationConstant.TRIGGER + newSchedule.getId(),
-                            EventnotificationConstant.NOTIFICATION_JOB)
-                    .withSchedule(CronScheduleBuilder.cronSchedule(
-                            "0 " + newminutes + " " + newhours + " " + newTime.get(Calendar.DAY_OF_MONTH) + " * ? *"))
-                    .build();
-            JobDataMap jobDataMap1 = monthlyJob.getJobDataMap();
-            jobDataMap1.put(EventnotificationConstant.USER, user);
-            jobDataMap1.put(EventnotificationConstant.SCHEDULEID, newSchedule.getId());
-            try {
-                Scheduler scheduler = NotificationSchedulerManager.getScheduler();
-                scheduler.start();
+            String monthlyCronExpression = "0 " + newminutes + " " + newhours + " " + newTime.get(Calendar.DAY_OF_MONTH)
+                    + " * ? *";
 
-                scheduler.addJob(monthlyJob, true, true);
-                scheduler.rescheduleJob(new TriggerKey(scheduleTrigger, EventnotificationConstant.NOTIFICATION_JOB),
-                        monthlyTrigger);
-            } catch (Exception e) {
+            try {
+                TriggerKey triggerKey = new TriggerKey(scheduleTrigger, EventnotificationConstant.NOTIFICATION_JOB);
+                schedulerUtil.updateSchedule(MonthlyNotificationSchedulerJob.class, monthlyCronExpression, jobDataMap,
+                        triggerKey);
+            } catch (SchedulerException e) {
                 LOGGER.error(e.getMessage(), e);
             }
             break;
         case EventnotificationConstant.SCHEDULE_YEAR:
-            scheduleTrigger = EventnotificationConstant.TRIGGER + newSchedule.getId();
-            JobDetail yearlyJob = JobBuilder.newJob(YearlyNotificationSchedulerJob.class)
-                    .withIdentity(EventnotificationConstant.JOB + newSchedule.getId(), EventnotificationConstant.NOTIFICATION_JOB)
-                    .build();
-            CronTrigger yearlyTrigger = TriggerBuilder.newTrigger()
-                    .withIdentity(EventnotificationConstant.TRIGGER + newSchedule.getId(),
-                            EventnotificationConstant.NOTIFICATION_JOB)
-                    .withSchedule(CronScheduleBuilder.cronSchedule("0 " + newminutes + " " + newhours + " "
-                            + newTime.get(Calendar.DAY_OF_MONTH) + " " + (newTime.get(Calendar.MONTH) + 1) + " ? *"))
-                    .build();
-            JobDataMap jobDataMap2 = yearlyJob.getJobDataMap();
-            jobDataMap2.put(EventnotificationConstant.USER, user);
-            jobDataMap2.put(EventnotificationConstant.SCHEDULEID, newSchedule.getId());
-            try {
-                Scheduler scheduler = NotificationSchedulerManager.getScheduler();
-                scheduler.start();
+            String yearlyCronExpression = "0 " + newminutes + " " + newhours + " "
+                    + newTime.get(Calendar.DAY_OF_MONTH) + " " + (newTime.get(Calendar.MONTH) + 1) + " ? *";
 
-                scheduler.addJob(yearlyJob, true, true);
-                scheduler.rescheduleJob(new TriggerKey(scheduleTrigger, EventnotificationConstant.NOTIFICATION_JOB),
-                        yearlyTrigger);
-            } catch (Exception e) {
+            try {
+                TriggerKey triggerKey = new TriggerKey(scheduleTrigger, EventnotificationConstant.NOTIFICATION_JOB);
+                schedulerUtil.updateSchedule(YearlyNotificationSchedulerJob.class, yearlyCronExpression, jobDataMap, triggerKey);
+            } catch (SchedulerException e) {
                 LOGGER.error(e.getMessage(), e);
             }
             break;
         default:
             newTime.set(Calendar.HOUR_OF_DAY, newhours);
             newTime.set(Calendar.MINUTE, newminutes);
-            scheduleTrigger = EventnotificationConstant.TRIGGER + newSchedule.getId();
-            JobDetail singleJob = JobBuilder.newJob(OneTimeNotificationSchedulerJob.class)
-                    .withIdentity(EventnotificationConstant.JOB + newSchedule.getId(), EventnotificationConstant.NOTIFICATION_JOB)
-                    .build();
-            Trigger singleTrigger = TriggerBuilder.newTrigger()
-                    .withIdentity(EventnotificationConstant.TRIGGER + newSchedule.getId(),
-                            EventnotificationConstant.NOTIFICATION_JOB)
-                    .startAt(newTime.getTime())
-                    .withSchedule(SimpleScheduleBuilder.simpleSchedule().withRepeatCount(0))
-                    .build();
-            JobDataMap jobDataMap3 = singleJob.getJobDataMap();
-            jobDataMap3.put(EventnotificationConstant.USER, user);
-            jobDataMap3.put(EventnotificationConstant.SCHEDULEID, newSchedule.getId());
-            try {
-                Scheduler scheduler = NotificationSchedulerManager.getScheduler();
-                scheduler.start();
 
-                scheduler.addJob(singleJob, true, true);
-                scheduler.rescheduleJob(new TriggerKey(scheduleTrigger, EventnotificationConstant.NOTIFICATION_JOB),
-                        singleTrigger);
-            } catch (Exception e) {
+            try {
+                TriggerKey triggerKey = new TriggerKey(scheduleTrigger, EventnotificationConstant.NOTIFICATION_JOB);
+                schedulerUtil.updateSchedule(newTime.getTime(), OneTimeNotificationSchedulerJob.class, jobDataMap, triggerKey);
+            } catch (SchedulerException e) {
                 LOGGER.error(e.getMessage(), e);
             }
             break;
         }
-    }
-
-    public static Scheduler getScheduler() {
-        try {
-            scheduler = new StdSchedulerFactory().getScheduler();
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return scheduler;
     }
 }
