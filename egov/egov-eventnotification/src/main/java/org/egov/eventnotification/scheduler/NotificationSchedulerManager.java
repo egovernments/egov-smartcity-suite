@@ -58,6 +58,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.quartz.JobDataMap;
 import org.quartz.SchedulerException;
 import org.quartz.TriggerKey;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -71,12 +72,13 @@ public class NotificationSchedulerManager {
 
     private static final Logger LOGGER = Logger.getLogger(NotificationSchedulerManager.class);
 
+    @Autowired
+    private SchedulerUtil schedulerUtil;
+
     /**
      * all scheduler job will be configure here.
      */
     public void schedule(NotificationSchedule notificationschedule, User user) {
-        SchedulerUtil schedulerUtil = SchedulerUtil.getSchedulerUtilInstance();
-
         schedulerUtil.setGroupName(EventnotificationConstant.NOTIFICATION_JOB);
         schedulerUtil.setName(EventnotificationConstant.JOB + notificationschedule.getId());
         schedulerUtil.setTriggerName(EventnotificationConstant.TRIGGER + notificationschedule.getId());
@@ -139,8 +141,6 @@ public class NotificationSchedulerManager {
      * Delete the existing job.
      */
     public void removeJob(NotificationSchedule notificationschedule) {
-        SchedulerUtil schedulerUtil = SchedulerUtil.getSchedulerUtilInstance();
-
         try {
             schedulerUtil.setGroupName(EventnotificationConstant.NOTIFICATION_JOB);
             schedulerUtil.setName(EventnotificationConstant.JOB + notificationschedule.getId());
@@ -157,7 +157,6 @@ public class NotificationSchedulerManager {
      * Modify the existing job.
      */
     public void updateJob(NotificationSchedule newSchedule, User user) {
-        SchedulerUtil schedulerUtil = SchedulerUtil.getSchedulerUtilInstance();
         String scheduleTrigger = EventnotificationConstant.TRIGGER + newSchedule.getId();
 
         Calendar newTime = Calendar.getInstance();

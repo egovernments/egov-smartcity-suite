@@ -17,23 +17,16 @@ import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.TriggerKey;
 import org.quartz.impl.StdSchedulerFactory;
+import org.springframework.stereotype.Service;
 
+@Service
 public class SchedulerUtil {
     private static final Logger log = Logger.getLogger(SchedulerUtil.class);
-    private static SchedulerUtil INSTANCE = new SchedulerUtil();
-    private SchedulerFactory SF;
+    private SchedulerFactory schedulerFactory = new StdSchedulerFactory();
     private String name;
     private String triggerName;
     private String groupName;
     private int repeatCount;
-
-    public static SchedulerUtil getSchedulerUtilInstance() {
-        return INSTANCE;
-    }
-
-    private SchedulerUtil() {
-        SF = new StdSchedulerFactory();
-    }
 
     /**
      * Add a scheduling task
@@ -49,7 +42,7 @@ public class SchedulerUtil {
      */
     public Trigger addSchedule(Date triggerStartTime, Class<? extends Job> task, JobDataMap param)
             throws SchedulerException {
-        Scheduler sched = SF.getScheduler();
+        Scheduler sched = schedulerFactory.getScheduler();
         JobBuilder builder = JobBuilder.newJob(task);
         builder.withIdentity(name, groupName);
         if (param != null)
@@ -73,7 +66,7 @@ public class SchedulerUtil {
      */
     public Trigger addSchedule(Class<? extends Job> task, String cronExpression, JobDataMap param)
             throws SchedulerException {
-        Scheduler sched = SF.getScheduler();
+        Scheduler sched = schedulerFactory.getScheduler();
         JobBuilder builder = JobBuilder.newJob(task);
         builder.withIdentity(name, groupName);
         if (param != null)
@@ -97,7 +90,7 @@ public class SchedulerUtil {
      */
     public Trigger updateSchedule(Class<? extends Job> task, String cronExpression, JobDataMap param, TriggerKey triggerKey)
             throws SchedulerException {
-        Scheduler sched = SF.getScheduler();
+        Scheduler sched = schedulerFactory.getScheduler();
         JobBuilder builder = JobBuilder.newJob(task);
         builder.withIdentity(name, groupName);
         if (param != null)
@@ -125,7 +118,7 @@ public class SchedulerUtil {
      */
     public Trigger updateSchedule(Date triggerStartTime, Class<? extends Job> task, JobDataMap param, TriggerKey triggerKey)
             throws SchedulerException {
-        Scheduler sched = SF.getScheduler();
+        Scheduler sched = schedulerFactory.getScheduler();
         JobBuilder builder = JobBuilder.newJob(task);
         builder.withIdentity(name, groupName);
         if (param != null)
@@ -147,7 +140,7 @@ public class SchedulerUtil {
      * @throws SchedulerException
      */
     public boolean hasSchedule(String name, String groupName) throws SchedulerException {
-        Scheduler scheduler = SF.getScheduler();
+        Scheduler scheduler = schedulerFactory.getScheduler();
         if (scheduler == null)
             return false;
         return scheduler.checkExists(new JobKey(name, groupName));
@@ -160,7 +153,7 @@ public class SchedulerUtil {
      * @throws SchedulerException
      */
     public boolean removeSchedule() throws SchedulerException {
-        Scheduler scheduler = SF.getScheduler();
+        Scheduler scheduler = schedulerFactory.getScheduler();
         boolean isTrigger = scheduler.unscheduleJob(new TriggerKey(triggerName, groupName));
         scheduler.deleteJob(new JobKey(name, groupName));
         return isTrigger;
@@ -171,7 +164,7 @@ public class SchedulerUtil {
      */
     public void shutdown() {
         try {
-            Collection<Scheduler> allSchedulers = SF.getAllSchedulers();
+            Collection<Scheduler> allSchedulers = schedulerFactory.getAllSchedulers();
             for (Scheduler s : allSchedulers)
                 s.shutdown();
         } catch (SchedulerException e) {
