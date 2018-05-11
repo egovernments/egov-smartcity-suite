@@ -90,7 +90,6 @@ import org.egov.tl.repository.LicenseDocumentTypeRepository;
 import org.egov.tl.repository.LicenseRepository;
 import org.egov.tl.service.es.LicenseApplicationIndexService;
 import org.egov.tl.utils.LicenseNumberUtils;
-import org.egov.tl.utils.LicenseUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -185,9 +184,6 @@ public abstract class AbstractLicenseService<T extends License> {
     private PenaltyRatesService penaltyRatesService;
 
     @Autowired
-    private LicenseUtils licenseUtils;
-
-    @Autowired
     private DepartmentService departmentService;
 
     @Autowired
@@ -201,6 +197,9 @@ public abstract class AbstractLicenseService<T extends License> {
 
     @Autowired
     private LicenseCitizenPortalService licenseCitizenPortalService;
+
+    @Autowired
+    private LicenseConfigurationService licenseConfigurationService;
 
     protected abstract LicenseAppType getLicenseApplicationTypeForRenew();
 
@@ -438,7 +437,7 @@ public abstract class AbstractLicenseService<T extends License> {
             if (license.getCurrentDemand().getEgInstallmentMaster().getInstallmentYear().before(installment.getInstallmentYear()))
                 license.getLicenseDemand().setEgInstallmentMaster(installment);
 
-            if (licenseUtils.isNotificationsEnabled()) {
+            if (licenseConfigurationService.notifyOnDemandGeneration()) {
                 Date penaltyDate = penaltyRatesService.getPenaltyDate(license, installment);
                 tradeLicenseSmsAndEmailService.sendNotificationOnDemandGeneration(license, tradeAmt, installment, penaltyDate);
             }
@@ -504,7 +503,7 @@ public abstract class AbstractLicenseService<T extends License> {
             } else if (BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
                 Position commissioner = getCommissionerPosition();
                 if (APPLICATION_STATUS_APPROVED_CODE.equals(license.getEgwStatus().getCode())) {
-                    if (licenseUtils.isDigitalSignEnabled())
+                    if (licenseConfigurationService.digitalSignEnabled())
                         license.transition().progressWithStateCopy()
                                 .withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
                                 .withComments(workflowBean.getApproverComments())

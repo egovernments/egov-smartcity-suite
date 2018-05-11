@@ -145,7 +145,7 @@
                                             ,'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');" >
                                 Pay License Fee</button>
                         </s:if>
-                        <s:if test="%{hasCscOperatorRole == true}">
+                        <s:if test="%{hasCscOperatorRole()}">
                             <button type="button" name="PrintAck" id="PrintAck" class="btn btn-default"
                                     onclick="window.open('/tl/newtradelicense/newtradelicense-printAck.action?model.id=<s:property value="%{id}"/>'
                                             , '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');" >Print</button>

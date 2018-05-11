@@ -94,6 +94,7 @@ import org.egov.tl.service.LicenseCitizenPortalService;
 import org.egov.tl.service.LicenseStatusService;
 import org.egov.tl.service.PenaltyRatesService;
 import org.egov.tl.service.TradeLicenseSmsAndEmailService;
+import org.egov.tl.service.LicenseConfigurationService;
 import org.egov.tl.service.es.LicenseApplicationIndexService;
 import org.egov.tl.utils.LicenseNumberUtils;
 import org.egov.tl.utils.LicenseUtils;
@@ -188,6 +189,9 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     @Autowired
     protected EgwStatusHibernateDAO egwStatusHibernateDAO;
 
+    @Autowired
+    protected LicenseConfigurationService licenseConfigurationService;
+
     @Transactional
     public String createLicenseBillXML(License license) {
         LicenseBill licenseBill = new LicenseBill();
@@ -196,7 +200,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         licenseBill.setServiceCode(TL_SERVICE_CODE);
         licenseBill.setModule(licenseUtils.getModule(TRADE_LICENSE));
         licenseBill.setBillType(egBillDao.getBillTypeByCode(BILL_TYPE_AUTO));
-        licenseBill.setDepartmentCode(licenseUtils.getDepartmentCodeForBillGenerate());
+        licenseBill.setDepartmentCode(licenseConfigurationService.getDepartmentCodeForBillGenerate());
         licenseBill.setUserId(ApplicationThreadLocals.getUserId() == null ?
                 securityUtils.getCurrentUser().getId() : ApplicationThreadLocals.getUserId());
         licenseBill.setReferenceNumber(licenseNumberUtils.generateBillNumber());
@@ -399,11 +403,10 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     public void updateWorkflowState(final License licenseObj) {
         final DateTime currentDate = new DateTime();
         final User user = securityUtils.getCurrentUser();
-        final Boolean digitalSignEnabled = licenseUtils.isDigitalSignEnabled();
         WorkFlowMatrix wfmatrix = null;
         final String natureOfWork = licenseObj.isReNewApplication()
                 ? RENEWAL_NATUREOFWORK : NEW_NATUREOFWORK;
-        if (digitalSignEnabled && !licenseObj.getEgwStatus().getCode().equals(APPLICATION_STATUS_CREATED_CODE)) {
+        if (licenseConfigurationService.digitalSignEnabled() && !licenseObj.getEgwStatus().getCode().equals(APPLICATION_STATUS_CREATED_CODE)) {
             licenseObj.setEgwStatus(egwStatusHibernateDAO
                     .getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_APPROVED_CODE));
             licenseObj.transition().progressWithStateCopy().withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())

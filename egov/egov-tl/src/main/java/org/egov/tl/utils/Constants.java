@@ -158,8 +158,6 @@ public final class Constants {
     public static final String GENERATE_CERTIFICATE = "tl_generateCertificate";
     public static final String CLOSURE_ADDITIONAL_RULE = "CLOSURELICENSE";
     public static final String CITY_GRADE_CORPORATION = "Corp";
-    public static final String TL_LICENSE_ACT_CORPORATION = "Trade license Act corporation";
-    public static final String TL_LICENSE_ACT_DEFAULT = "Trade license Act Muncipalities";
     public static final String CSCOPERATOR = "CSC Operator";
     public static final String PRINTACK = "printAck";
     public static final String PUBLIC_HEALTH_DEPT_CODE = "PHS";

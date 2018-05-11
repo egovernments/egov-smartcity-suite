@@ -60,7 +60,6 @@ import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.contracts.LicenseStateInfo;
-import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -85,7 +84,7 @@ public class LicenseClosureProcessflowService {
     private SecurityUtils securityUtils;
 
     @Autowired
-    private LicenseUtils licenseUtils;
+    private LicenseConfigurationService licenseConfigurationService;
 
     @Autowired
     private AssignmentService assignmentService;
@@ -179,7 +178,7 @@ public class LicenseClosureProcessflowService {
         User currentUser = securityUtils.getCurrentUser();
         license.transition().end()
                 .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
-                .withComments(licenseUtils.isDigitalSignEnabled() ? WF_DIGI_SIGNED : "Approved")
+                .withComments(licenseConfigurationService.digitalSignEnabled() ? WF_DIGI_SIGNED : "Approved")
                 .withDateInfo(new Date())
                 .withStateValue(workflowMatrix.getNextState())
                 .withNextAction(COMPLETED);

@@ -52,8 +52,6 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.commons.Installment;
-import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
@@ -74,7 +72,6 @@ import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseCategory;
-import org.egov.tl.entity.LicenseDemand;
 import org.egov.tl.entity.LicenseDocument;
 import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.LicenseSubCategory;
@@ -85,6 +82,7 @@ import org.egov.tl.service.FeeTypeService;
 import org.egov.tl.service.LicenseApplicationService;
 import org.egov.tl.service.ProcessOwnerReassignmentService;
 import org.egov.tl.service.TradeLicenseService;
+import org.egov.tl.service.LicenseConfigurationService;
 import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -153,6 +151,8 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     protected transient ProcessOwnerReassignmentService processOwnerReassignmentService;
     @Autowired
     protected LicenseApplicationService licenseApplicationService;
+    @Autowired
+    protected LicenseConfigurationService licenseConfigurationService;
 
     public BaseLicenseAction() {
         this.addRelatedEntity("boundary", Boundary.class);
@@ -414,30 +414,8 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         workflowBean.setAppoverUserList(Collections.emptyList());
     }
 
-    public Boolean reassignEnabled() {
-        return processOwnerReassignmentService.reassignmentEnabled();
-    }
-
-    public LicenseDemand getCurrentYearDemand() {
-        return license().getLicenseDemand();
-    }
-
     public String getPayableAmountInWords() {
         return NumberUtil.amountInWords(license().getTotalBalance());
-    }
-
-    public String getCollectedDemandAmountInWords() {
-        return NumberUtil.amountInWords(license().getLicenseDemand().getAmtCollected());
-    }
-
-    public boolean isCurrent(final EgDemandDetails dd) {
-        boolean isCurrent = false;
-        final Installment currInstallment = licenseUtils
-                .getCurrInstallment(dd.getEgDemandReason().getEgDemandReasonMaster().getEgModule());
-        if (currInstallment.getId().intValue() == dd.getEgDemandReason().getEgInstallmentMaster().getId().intValue())
-            isCurrent = true;
-        return isCurrent;
-
     }
 
     public Map<String, Map<String, BigDecimal>> getOutstandingFee() {
@@ -500,7 +478,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         this.applicationNo = applicationNo;
     }
 
-    public boolean isHasCscOperatorRole() {
+    public boolean hasCscOperatorRole() {
         return securityUtils.getCurrentUser().hasRole(CSCOPERATOR);
     }
 
@@ -573,7 +551,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     }
 
     public boolean isDigitalSignatureEnabled() {
-        return licenseUtils.isDigitalSignEnabled();
+        return licenseConfigurationService.digitalSignEnabled();
     }
 
     public void supportDocumentsValidation() {

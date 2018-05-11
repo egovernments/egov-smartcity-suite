@@ -270,7 +270,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         fileStoreIds = license.getDigiSignedCertFileStoreId();
         ulbCode = ApplicationThreadLocals.getCityCode();
         applicationNo = license.getApplicationNumber();
-        return licenseUtils.isDigitalSignEnabled() ? "closureEndorsementDigiSign" : "closureEndorsementNotice";
+        return this.isDigitalSignatureEnabled() ? "closureEndorsementDigiSign" : "closureEndorsementNotice";
     }
 
     @Override

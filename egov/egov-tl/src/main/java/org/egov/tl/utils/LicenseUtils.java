@@ -48,36 +48,28 @@
 
 package org.egov.tl.utils;
 
-import org.egov.commons.Installment;
-import org.egov.commons.dao.InstallmentDao;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
-import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Module;
-import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationException;
-import org.egov.tl.config.properties.TlApplicationProperties;
 import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.LicenseSubCategory;
+import org.egov.tl.service.LicenseConfigurationService;
 import org.egov.tl.service.LicenseSubCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.egov.tl.utils.Constants.COMMISSIONER_DESGN;
-import static org.egov.tl.utils.Constants.ENABLE_SMS_EMAIL_FOR_DEMANDGENERATION;
 import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
-import static org.egov.tl.utils.Constants.TRADE_LICENSE;
 
 @Service
 public class LicenseUtils {
@@ -90,15 +82,10 @@ public class LicenseUtils {
     @Autowired
     private DesignationService designationService;
     @Autowired
-    private InstallmentDao installmentDao;
-    @Autowired
-    private AppConfigValueService appConfigValuesService;
-
-    @Autowired
     private LicenseSubCategoryService licenseSubCategoryService;
 
     @Autowired
-    private TlApplicationProperties tlApplicationProperties;
+    private LicenseConfigurationService licenseConfigurationService;
 
     public Module getModule(final String moduleName) {
         return moduleService.getModuleByName(moduleName);
@@ -110,22 +97,6 @@ public class LicenseUtils {
 
     public List<Department> getAllDepartments() {
         return departmentService.getAllDepartments();
-    }
-
-    public Installment getCurrInstallment(final Module module) {
-        return installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
-    }
-
-    public Boolean isDigitalSignEnabled() {
-        final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
-                TRADE_LICENSE, Constants.DIGITALSIGNINCLUDEINWORKFLOW).get(0);
-        return "YES".equalsIgnoreCase(appConfigValue.getValue());
-    }
-
-    public String getDepartmentCodeForBillGenerate() {
-        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
-                TRADE_LICENSE, "DEPARTMENTFORGENERATEBILL");
-        return appConfigValue.isEmpty() ? EMPTY : appConfigValue.get(0).getValue();
     }
 
     public Assignment getCommissionerAssignment() {
@@ -141,20 +112,14 @@ public class LicenseUtils {
 
     public Integer getSlaForAppType(LicenseAppType licenseAppType) {
         if (NEW_LIC_APPTYPE.equals(licenseAppType.getName()))
-            return tlApplicationProperties.getValue("sla.new.apptype");
+            return licenseConfigurationService.getNewAppTypeSla();
         else if (RENEWAL_LIC_APPTYPE.equals(licenseAppType.getName()))
-            return tlApplicationProperties.getValue("sla.renew.apptype");
+            return licenseConfigurationService.getRenewAppTypeSla();
         else
-            return tlApplicationProperties.getValue("sla.closure.apptype");
+            return licenseConfigurationService.getClosureAppTypeSla();
     }
 
     public String getApplicationSenderName(UserType userType, String userName, String applicantName) {
         return SecurityUtils.currentUserIsAnonymous() || UserType.CITIZEN == userType ? applicantName : userName;
-    }
-
-    public boolean isNotificationsEnabled() {
-        final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
-                TRADE_LICENSE, ENABLE_SMS_EMAIL_FOR_DEMANDGENERATION).get(0);
-        return "YES".equals(appConfigValue.getValue());
     }
 }

@@ -48,70 +48,54 @@
 
 package org.egov.tl.service;
 
-import org.egov.eis.entity.Assignment;
-import org.egov.eis.service.AssignmentService;
-import org.egov.eis.service.PositionMasterService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.pims.commons.Position;
-import org.egov.tl.entity.License;
-import org.egov.tl.repository.LicenseRepository;
-import org.egov.tl.service.es.LicenseApplicationIndexService;
+import org.egov.tl.entity.LicenseConfiguration;
+import org.egov.tl.repository.LicenseConfigurationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static org.egov.tl.utils.Constants.JA_DESIGNATION_CODE;
-import static org.egov.tl.utils.Constants.PUBLIC_HEALTH_DEPT_CODE;
-import static org.egov.tl.utils.Constants.SA_DESIGNATION_CODE;
 
 @Service
-@Transactional
-public class ProcessOwnerReassignmentService {
-
+@Transactional(readOnly = true)
+public class LicenseConfigurationService {
+    private static final String INCLUDE_DIGITAL_SIGN_KEY = "INCLUDE_DIGITAL_SIGN_WORKFLOW";
+    private static final String DEPARTMENT_FOR_GENERATEBILL = "DEPARTMENT_FOR_GENERATEBILL";
+    private static final String NOTIFY_ON_DEMAND_GENERATION = "NOTIFY_ON_DEMAND_GENERATION";
+    private static final String NEW_APPTYPE_DEFAULT_SLA = "NEW_APPTYPE_DEFAULT_SLA";
+    private static final String RENEW_APPTYPE_DEFAULT_SLA = "RENEW_APPTYPE_DEFAULT_SLA";
+    private static final String CLOSURE_APPTYPE_DEFAULT_SLA = "CLOSURE_APPTYPE_DEFAULT_SLA";
     @Autowired
-    private AssignmentService assignmentService;
+    private LicenseConfigurationRepository licenseConfigurationRepository;
 
-    @Autowired
-    private PositionMasterService positionMasterService;
-
-    @Autowired
-    private TradeLicenseService tradeLicenseService;
-
-    @Autowired
-    private LicenseRepository licenseRepository;
-
-    @Autowired
-    private LicenseApplicationIndexService licenseApplicationIndexService;
-
-    public Map<String, String> employeePositionMap() {
-
-        List<Assignment> assignments = assignmentService.findByDepartmentCodeAndDesignationCode(PUBLIC_HEALTH_DEPT_CODE
-                , Arrays.asList(JA_DESIGNATION_CODE, SA_DESIGNATION_CODE));
-        assignments.removeAll(assignmentService.getAllAssignmentsByEmpId(ApplicationThreadLocals.getUserId()));
-
-        return assignments
-                .stream()
-                .collect(Collectors.toMap(assignment -> assignment.getPosition().getId().toString(),
-                        assignment -> new StringBuffer().append(assignment.getEmployee().getName())
-                                .append("-").append(assignment.getPosition().getName()).toString()));
+    public boolean digitalSignEnabled() {
+        return Boolean.valueOf(getValueByKey(INCLUDE_DIGITAL_SIGN_KEY));
     }
 
-    @Transactional
-    public Boolean reassignLicenseProcessOwner(Long licenseId, Long approverPositionId) {
-        License license = tradeLicenseService.getLicenseById(licenseId);
-        if (license != null) {
-            Position position = positionMasterService.getPositionById(approverPositionId);
-            license.changeProcessOwner(position);
-            license.changeProcessInitiator(position);
-            licenseRepository.save(license);
-            licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
-            return true;
-        }
-        return false;
+    public boolean notifyOnDemandGeneration() {
+        return Boolean.valueOf(getValueByKey(NOTIFY_ON_DEMAND_GENERATION));
+    }
+
+    public String getDepartmentCodeForBillGenerate() {
+        return getValueByKey(DEPARTMENT_FOR_GENERATEBILL);
+    }
+
+    public Integer getNewAppTypeSla() {
+        return Integer.valueOf(getValueByKey(NEW_APPTYPE_DEFAULT_SLA));
+    }
+
+    public Integer getRenewAppTypeSla() {
+        return Integer.valueOf(getValueByKey(RENEW_APPTYPE_DEFAULT_SLA));
+    }
+
+    public Integer getClosureAppTypeSla() {
+        return Integer.valueOf(getValueByKey(CLOSURE_APPTYPE_DEFAULT_SLA));
+    }
+
+    public String getValueByKey(String key) {
+        return getConfigurationByKey(key).getValue();
+    }
+
+    public LicenseConfiguration getConfigurationByKey(String key) {
+        return licenseConfigurationRepository.findByKey(key);
     }
 }

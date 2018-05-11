@@ -49,8 +49,6 @@ package org.egov.tl.web.controller.transactions.demand;
 
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentHibDao;
-import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -70,6 +68,7 @@ import org.egov.tl.service.LicenseCategoryService;
 import org.egov.tl.service.LicenseStatusService;
 import org.egov.tl.service.PenaltyRatesService;
 import org.egov.tl.service.TradeLicenseService;
+import org.egov.tl.service.LicenseConfigurationService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
 import org.egov.tl.web.response.adaptor.DemandNoticeAdaptor;
@@ -110,8 +109,6 @@ import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.STATUS_CANCELLED;
-import static org.egov.tl.utils.Constants.TL_LICENSE_ACT_CORPORATION;
-import static org.egov.tl.utils.Constants.TL_LICENSE_ACT_DEFAULT;
 import static org.egov.tl.utils.Constants.TRADE_LICENSE;
 import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
@@ -119,9 +116,9 @@ import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 @Controller
 @RequestMapping("/demand-notice")
 public class DemandNoticeController {
-
     private static final String WITH = " with ";
-
+    private static final String TL_CORPORATION_ACT = "TL_CORPORATION_ACT";
+    private static final String TL_DEFAULT_ACT = "TL_MUNICIPALITY_ACT";
     @Autowired
     private TradeLicenseService tradeLicenseService;
 
@@ -138,7 +135,7 @@ public class DemandNoticeController {
     private CityService cityService;
 
     @Autowired
-    private AppConfigValueService appConfigValueService;
+    private LicenseConfigurationService licenseConfigurationService;
 
     @Autowired
     private ReportService reportService;
@@ -287,16 +284,11 @@ public class DemandNoticeController {
         String cityGrade = (String) cityService.cityDataForKey(CITY_CORP_GRADE_KEY);
 
         if (CITY_GRADE_CORPORATION.equalsIgnoreCase(cityGrade)) {
-            List<AppConfigValues> corporationAct = appConfigValueService
-                    .getConfigValuesByModuleAndKey(TRADE_LICENSE, TL_LICENSE_ACT_CORPORATION);
-            reportParams.put("actDeclaration",
-                    corporationAct != null && corporationAct.get(0) != null ? corporationAct.get(0).getValue() : " ");
+            String corporationAct = licenseConfigurationService.getValueByKey(TL_CORPORATION_ACT);
+            reportParams.put("actDeclaration", corporationAct != null ? corporationAct : " ");
         } else {
-            List<AppConfigValues> municipalityAct = appConfigValueService
-                    .getConfigValuesByModuleAndKey(TRADE_LICENSE, TL_LICENSE_ACT_DEFAULT);
-
-            reportParams.put("actDeclaration", municipalityAct != null && municipalityAct.get(0) != null
-                    ? municipalityAct.get(0).getValue() : " ");
+            String defaultAct = licenseConfigurationService.getValueByKey(TL_DEFAULT_ACT);
+            reportParams.put("actDeclaration", defaultAct != null ? defaultAct : " ");
         }
     }
 

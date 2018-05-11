@@ -52,7 +52,7 @@ import org.egov.infra.utils.FileStoreUtils;
 import org.egov.tl.entity.License;
 import org.egov.tl.service.LicenseAppTypeService;
 import org.egov.tl.service.LicenseCertificateDigiSignService;
-import org.egov.tl.utils.LicenseUtils;
+import org.egov.tl.service.LicenseConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
@@ -76,7 +76,7 @@ import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 public class LicenseCertificateDigiSignController {
 
     @Autowired
-    private LicenseUtils licenseUtils;
+    private LicenseConfigurationService licenseConfigurationService;
 
     @Autowired
     private FileStoreUtils fileStoreUtils;
@@ -108,7 +108,7 @@ public class LicenseCertificateDigiSignController {
 
     @GetMapping("/bulk-digisign")
     public String showLicenseBulkDigiSignForm(Model model) {
-        if (licenseUtils.isDigitalSignEnabled())
+        if (licenseConfigurationService.digitalSignEnabled())
             model.addAttribute("applicationType", licenseAppTypeService.findByDisplayTrue());
         else
             model.addAttribute("message", "msg.digisign.enabled");

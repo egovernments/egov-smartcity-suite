@@ -168,7 +168,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
                     || license().getEgwStatus().getCode().equals(APPLICATION_STATUS_APPROVED_CODE)
                     && license().getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED_STR))
                 mode = DISABLE_APPROVER_MODE;
-            else if (licenseUtils.isDigitalSignEnabled()
+            else if (this.isDigitalSignatureEnabled()
                     && license().getState().getValue().equals(DIGI_ENABLED_WF_SECOND_LVL_FEECOLLECTED)
                     || license().getState().getValue().equals(WF_DIGI_SIGNED)
                     || license().getState().getValue().equals(WF_ACTION_DIGI_SIGN_COMMISSION_NO_COLLECTION))
@@ -203,7 +203,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
             final ValidationError vr = new ValidationError("license.fee.notcollected", "license.fee.notcollected");
             throw new ValidationException(Arrays.asList(vr));
         }
-        if (SIGNWORKFLOWACTION.equals(workFlowAction) && !licenseUtils.isDigitalSignEnabled())
+        if (SIGNWORKFLOWACTION.equals(workFlowAction) && !this.isDigitalSignatureEnabled())
             throw new ValidationException("error.digisign.disabled", "error.digisign.disabled");
         return super.approve();
     }
