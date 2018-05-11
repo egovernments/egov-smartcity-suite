@@ -47,8 +47,6 @@
  */
 package org.egov.pushbox.application.entity;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -56,8 +54,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import org.egov.infra.persistence.validator.annotation.Unique;
 
@@ -83,6 +79,16 @@ public class UserDevice {
 	@Column(name="deviceid", nullable = false)
 	private String deviceId; 
 	
+	@Id
+    @GeneratedValue(generator = SEQ_EG_USERFCMDEVICE, strategy = GenerationType.SEQUENCE)
+    private Long id;
+	
+    @Column(name="createddate")
+    private Long createdDate;
+    
+    @Column(name="updateddate")
+    private Long updatedDate;
+	
 	public String getDeviceId() {
 		return deviceId;
 	}
@@ -101,16 +107,6 @@ public class UserDevice {
 	
 	public static final String SEQ_EG_USERFCMDEVICE = "SEQ_EG_USER_FCM_DEVICE";
 
-	@Id
-    @GeneratedValue(generator = SEQ_EG_USERFCMDEVICE, strategy = GenerationType.SEQUENCE)
-    private Long id;
-	
-    @Column(name="createddate")
-    private Long createdDate;
-    
-    @Column(name="updateddate")
-    private Long updatedDate;
-    
     public Long getUpdatedDate() {
 		return updatedDate;
 	}
