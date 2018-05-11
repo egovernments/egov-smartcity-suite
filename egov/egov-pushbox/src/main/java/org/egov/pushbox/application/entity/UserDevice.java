@@ -69,8 +69,8 @@ import org.egov.infra.persistence.validator.annotation.Unique;
 
 @Entity
 @Table(name = "eg_userfcmdevice")
-@Unique(id = "id", tableName = "eg_userfcmdevice", columnName = { "userid", "devicetoken"}, 
-fields = {"userId", "userDeviceToken"}, enableDfltMsg = true)
+@Unique(id = "id", tableName = "eg_userfcmdevice", columnName = { "userid", "devicetoken", "deviceid"}, 
+fields = {"userId", "userDeviceToken", "deviceid"}, enableDfltMsg = true)
 @SequenceGenerator(name = UserDevice.SEQ_EG_USERFCMDEVICE, sequenceName = UserDevice.SEQ_EG_USERFCMDEVICE, allocationSize = 1)
 public class UserDevice {
 	
@@ -79,7 +79,18 @@ public class UserDevice {
 	
 	@Column(name="devicetoken", nullable = false)
 	private String userDeviceToken; 
+
+	@Column(name="deviceid", nullable = false)
+	private String deviceId; 
 	
+	public String getDeviceId() {
+		return deviceId;
+	}
+
+	public void setDeviceId(String deviceId) {
+		this.deviceId = deviceId;
+	}
+
 	public String getUserDeviceToken() {
 		return userDeviceToken;
 	}
@@ -96,6 +107,17 @@ public class UserDevice {
 	
     @Column(name="createddate")
     private Long createdDate;
+    
+    @Column(name="updateddate")
+    private Long updatedDate;
+    
+    public Long getUpdatedDate() {
+		return updatedDate;
+	}
+
+	public void setUpdatedDate(Long updatedDate) {
+		this.updatedDate = updatedDate;
+	}
 
 		public Long getUserId() {
 		return userId;
