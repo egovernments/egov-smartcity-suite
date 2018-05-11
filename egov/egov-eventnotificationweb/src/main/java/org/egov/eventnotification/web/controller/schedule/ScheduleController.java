@@ -5,13 +5,13 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import org.apache.log4j.Logger;
 import org.egov.eventnotification.constants.EventnotificationConstant;
+import org.egov.eventnotification.constants.EventnotificationConstant.SCHEDULER_REPEAT;
 import org.egov.eventnotification.entity.EventDetails;
 import org.egov.eventnotification.entity.NotificationDrafts;
 import org.egov.eventnotification.entity.NotificationSchedule;
@@ -83,7 +83,9 @@ public class ScheduleController {
         model.addAttribute(EventnotificationConstant.NOTIFICATION_SCHEDULE, schedule);
         model.addAttribute(EventnotificationConstant.HOUR_LIST, eventnotificationUtil.getAllHour());
         model.addAttribute(EventnotificationConstant.MINUTE_LIST, eventnotificationUtil.getAllMinute());
-        List repeatList = new ArrayList<>(Arrays.asList(EventnotificationConstant.SCHEDULER_REPEAT.values()));
+        List<String> repeatList = new ArrayList<>();
+        for (SCHEDULER_REPEAT SCHEDULER_REPEAT : EventnotificationConstant.SCHEDULER_REPEAT.values())
+            repeatList.add(SCHEDULER_REPEAT.getName());
         model.addAttribute(EventnotificationConstant.SCHEDULER_REPEAT_LIST, repeatList);
         return EventnotificationConstant.SCHEDULE_CREATE_VIEW;
     }
@@ -115,7 +117,7 @@ public class ScheduleController {
             redirectAttrs.addFlashAttribute(EventnotificationConstant.NOTIFICATION_SCHEDULE, schedule);
         } catch (IOException | ParseException e) {
             LOGGER.error(e.getMessage(), e);
-        } 
+        }
         return EventnotificationConstant.SCHEDULE_CREATE_SUCCESS;
     }
 
@@ -182,7 +184,9 @@ public class ScheduleController {
         model.addAttribute(EventnotificationConstant.NOTIFICATION_SCHEDULE, notificationSchedule);
         model.addAttribute(EventnotificationConstant.HOUR_LIST, eventnotificationUtil.getAllHour());
         model.addAttribute(EventnotificationConstant.MINUTE_LIST, eventnotificationUtil.getAllMinute());
-        List repeatList = new ArrayList<>(Arrays.asList(EventnotificationConstant.SCHEDULER_REPEAT.values()));
+        List<String> repeatList = new ArrayList<>();
+        for (SCHEDULER_REPEAT SCHEDULER_REPEAT : EventnotificationConstant.SCHEDULER_REPEAT.values())
+            repeatList.add(SCHEDULER_REPEAT.getName());
         model.addAttribute(EventnotificationConstant.SCHEDULER_REPEAT_LIST, repeatList);
         model.addAttribute(EventnotificationConstant.MODE, EventnotificationConstant.MODE_VIEW);
 
