@@ -64,7 +64,6 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.JobKey;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -74,7 +73,6 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  * @author somvit
  *
  */
-@Service
 @DisallowConcurrentExecution
 public class NotificationSchedulerJob implements Job {
     private static final Logger LOGGER = Logger.getLogger(NotificationSchedulerJob.class);
@@ -115,7 +113,7 @@ public class NotificationSchedulerJob implements Job {
         calendarEnd.set(Calendar.MINUTE, minutes1);
 
         // Todo: Need Json or Sql to fetch all the user information to create notice type message
-        
+
         MessageContent messageContent = new MessageContent();
         messageContent.setCreatedDateTime(new Date().getTime());
         messageContent.setEventDateTime(calendar.getTimeInMillis());
@@ -130,5 +128,7 @@ public class NotificationSchedulerJob implements Job {
         messageContent.setSenderName(user.getName());
 
         pushNotificationService.sendNotifications(messageContent);
+        
+        LOGGER.info("Daily Job of Notification Scheduler with Job Key : " + jobKey + " finished at " + new Date());
     }
 }

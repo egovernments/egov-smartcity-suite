@@ -61,6 +61,8 @@ import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
+import org.quartz.SimpleScheduleBuilder;
+import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.TriggerKey;
 import org.quartz.impl.StdSchedulerFactory;
@@ -73,9 +75,9 @@ import org.quartz.impl.StdSchedulerFactory;
 public class NotificationSchedulerManager {
 
     private static final Logger LOGGER = Logger.getLogger(NotificationSchedulerManager.class);
-    
+
     private NotificationSchedulerManager() {
-        
+
     }
 
     private static Scheduler scheduler;
@@ -135,7 +137,7 @@ public class NotificationSchedulerManager {
                 LOGGER.error(e.getMessage(), e);
             }
             break;
-        default:
+        case EventnotificationConstant.SCHEDULE_YEAR:
             JobDetail yearlyJob = JobBuilder.newJob(YearlyNotificationSchedulerJob.class)
                     .withIdentity(EventnotificationConstant.JOB + notificationschedule.getId(),
                             EventnotificationConstant.NOTIFICATION_JOB)
@@ -154,6 +156,31 @@ public class NotificationSchedulerManager {
                 scheduler.start();
 
                 scheduler.scheduleJob(yearlyJob, yearlyTrigger);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+            break;
+        default:
+            calendar.set(Calendar.HOUR_OF_DAY, hours);
+            calendar.set(Calendar.MINUTE, minutes);
+            JobDetail singleJob = JobBuilder.newJob(OneTimeNotificationSchedulerJob.class)
+                    .withIdentity(EventnotificationConstant.JOB + notificationschedule.getId(),
+                            EventnotificationConstant.NOTIFICATION_JOB)
+                    .build();
+            Trigger singleTrigger = TriggerBuilder.newTrigger()
+                    .withIdentity(EventnotificationConstant.TRIGGER + notificationschedule.getId(),
+                            EventnotificationConstant.NOTIFICATION_JOB)
+                    .startAt(calendar.getTime())
+                    .withSchedule(SimpleScheduleBuilder.simpleSchedule().withRepeatCount(0))
+                    .build();
+            JobDataMap jobDataMap3 = singleJob.getJobDataMap();
+            jobDataMap3.put(EventnotificationConstant.USER, user);
+            jobDataMap3.put(EventnotificationConstant.SCHEDULEID, notificationschedule.getId());
+            try {
+                Scheduler scheduler = NotificationSchedulerManager.getScheduler();
+                scheduler.start();
+
+                scheduler.scheduleJob(singleJob, singleTrigger);
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }
@@ -178,6 +205,10 @@ public class NotificationSchedulerManager {
             scheduleJob = EventnotificationConstant.JOB + notificationschedule.getId();
             scheduleTrigger = EventnotificationConstant.TRIGGER + notificationschedule.getId();
             break;
+        case EventnotificationConstant.SCHEDULE_YEAR:
+            scheduleJob = EventnotificationConstant.JOB + notificationschedule.getId();
+            scheduleTrigger = EventnotificationConstant.TRIGGER + notificationschedule.getId();
+            break;
         default:
             scheduleJob = EventnotificationConstant.JOB + notificationschedule.getId();
             scheduleTrigger = EventnotificationConstant.TRIGGER + notificationschedule.getId();
@@ -188,8 +219,8 @@ public class NotificationSchedulerManager {
             Scheduler scheduler = NotificationSchedulerManager.getScheduler();
             boolean isTrigger = scheduler
                     .unscheduleJob(new TriggerKey(scheduleTrigger, EventnotificationConstant.NOTIFICATION_JOB));
-            boolean isdelete = scheduler.deleteJob(new JobKey(scheduleJob, EventnotificationConstant.NOTIFICATION_JOB));
-            System.out.println(scheduleJob + " is deleted " + isdelete + " is trigger " + isTrigger);
+            scheduler.deleteJob(new JobKey(scheduleJob, EventnotificationConstant.NOTIFICATION_JOB));
+            LOGGER.info(scheduleJob + " is deleted with trigger status " + isTrigger);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -255,7 +286,7 @@ public class NotificationSchedulerManager {
                 LOGGER.error(e.getMessage(), e);
             }
             break;
-        default:
+        case EventnotificationConstant.SCHEDULE_YEAR:
             scheduleTrigger = EventnotificationConstant.TRIGGER + newSchedule.getId();
             JobDetail yearlyJob = JobBuilder.newJob(YearlyNotificationSchedulerJob.class)
                     .withIdentity(EventnotificationConstant.JOB + newSchedule.getId(), EventnotificationConstant.NOTIFICATION_JOB)
@@ -276,6 +307,33 @@ public class NotificationSchedulerManager {
                 scheduler.addJob(yearlyJob, true, true);
                 scheduler.rescheduleJob(new TriggerKey(scheduleTrigger, EventnotificationConstant.NOTIFICATION_JOB),
                         yearlyTrigger);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+            break;
+        default:
+            newTime.set(Calendar.HOUR_OF_DAY, newhours);
+            newTime.set(Calendar.MINUTE, newminutes);
+            scheduleTrigger = EventnotificationConstant.TRIGGER + newSchedule.getId();
+            JobDetail singleJob = JobBuilder.newJob(OneTimeNotificationSchedulerJob.class)
+                    .withIdentity(EventnotificationConstant.JOB + newSchedule.getId(), EventnotificationConstant.NOTIFICATION_JOB)
+                    .build();
+            Trigger singleTrigger = TriggerBuilder.newTrigger()
+                    .withIdentity(EventnotificationConstant.TRIGGER + newSchedule.getId(),
+                            EventnotificationConstant.NOTIFICATION_JOB)
+                    .startAt(newTime.getTime())
+                    .withSchedule(SimpleScheduleBuilder.simpleSchedule().withRepeatCount(0))
+                    .build();
+            JobDataMap jobDataMap3 = singleJob.getJobDataMap();
+            jobDataMap3.put(EventnotificationConstant.USER, user);
+            jobDataMap3.put(EventnotificationConstant.SCHEDULEID, newSchedule.getId());
+            try {
+                Scheduler scheduler = NotificationSchedulerManager.getScheduler();
+                scheduler.start();
+
+                scheduler.addJob(singleJob, true, true);
+                scheduler.rescheduleJob(new TriggerKey(scheduleTrigger, EventnotificationConstant.NOTIFICATION_JOB),
+                        singleTrigger);
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }

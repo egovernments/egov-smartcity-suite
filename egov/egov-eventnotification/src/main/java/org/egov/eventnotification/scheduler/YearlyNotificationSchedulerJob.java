@@ -57,6 +57,7 @@ import org.egov.eventnotification.service.ScheduleService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.pushbox.application.entity.MessageContent;
 import org.egov.pushbox.application.service.PushNotificationService;
+import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
@@ -71,6 +72,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  * @author somvit
  *
  */
+@DisallowConcurrentExecution
 public class YearlyNotificationSchedulerJob implements Job {
     private static final Logger LOGGER = Logger.getLogger(NotificationSchedulerJob.class);
 
@@ -109,7 +111,7 @@ public class YearlyNotificationSchedulerJob implements Job {
         calendarEnd.set(Calendar.MINUTE, minutes1);
 
         // Todo: Need Json or Sql to fetch all the user information to create notice type message
-        
+
         MessageContent messageContent = new MessageContent();
         messageContent.setCreatedDateTime(new Date().getTime());
         messageContent.setEventDateTime(calendar.getTimeInMillis());
@@ -124,5 +126,7 @@ public class YearlyNotificationSchedulerJob implements Job {
         messageContent.setSenderName(user.getName());
 
         pushNotificationService.sendNotifications(messageContent);
+        
+        LOGGER.info("Yearly Job of Notification Scheduler with Job Key : " + jobKey + " finished at " + new Date());
     }
 }
