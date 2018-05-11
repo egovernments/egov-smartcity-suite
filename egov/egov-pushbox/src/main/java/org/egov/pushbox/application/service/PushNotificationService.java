@@ -53,6 +53,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -91,10 +92,12 @@ public class PushNotificationService {
     @Transactional
     public UserDevice persist(final UserDevice userDevice) {
         LOGGER.info("Persisting the User Device Details : " + userDevice);
-        UserDevice existingRecord = pushNotificationRepo.findOne(userDevice.getUserId());
+        UserDevice existingRecord = pushNotificationRepo.findByUserIdAndDeviceId(userDevice.getUserId(), userDevice.getDeviceId());
         if (null != existingRecord) {
             existingRecord.setUserId(userDevice.getUserId());
             existingRecord.setUserDeviceToken(userDevice.getUserDeviceToken());
+            existingRecord.setDeviceId(userDevice.getDeviceId());
+            existingRecord.setUpdatedDate(new Date().getTime());
             return existingRecord;
         }
         return pushNotificationRepo.save(userDevice);

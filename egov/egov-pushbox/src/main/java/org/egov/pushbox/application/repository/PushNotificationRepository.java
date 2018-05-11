@@ -64,5 +64,7 @@ public interface PushNotificationRepository extends JpaRepository<UserDevice, ja
 	
 	UserDevice findDeviceTokenByUserId(Long userId); 
 	
+	UserDevice findByUserIdAndDeviceId(Long userId, String deviceId); 
+	
 	
 }

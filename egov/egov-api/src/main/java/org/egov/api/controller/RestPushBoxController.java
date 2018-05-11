@@ -49,6 +49,7 @@
 package org.egov.api.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -81,6 +82,7 @@ public class RestPushBoxController extends ApiController {
 	public static final String USER_ID = "userId";
 	public static final String USER_TOKEN_ID = "userToken"; 
 	public static final String SEND_ALL = "sendAll";
+	public static final String USER_DEVICE_ID = "deviceId";
 	
 	private static final Logger LOGGER = Logger.getLogger(RestPushBoxController.class);
 	
@@ -99,6 +101,8 @@ public class RestPushBoxController extends ApiController {
         	UserDevice userDevice = new UserDevice(); 
         	userDevice.setUserDeviceToken(tokenUpdate.get(USER_TOKEN_ID).toString());
         	userDevice.setUserId(Long.valueOf(tokenUpdate.get(USER_ID).toString()));
+        	userDevice.setDeviceId(tokenUpdate.get(USER_DEVICE_ID).toString());
+        	userDevice.setCreatedDate(new Date().getTime());
         	
         	if(StringUtils.isBlank(userDevice.getUserDeviceToken())) { 
         		return res.error(getMessage("userdevice.device.tokenunavailable"));	
@@ -108,9 +112,9 @@ public class RestPushBoxController extends ApiController {
         		return res.error(getMessage("userdevice.user.useridunavailable"));	
         	}
         	
-        	/*if(null == userService.getUserById(userDevice.getUserId())) { 
-        		return res.error(getMessage("userdevice.user.userunavailable"));
-        	}*/
+        	if(StringUtils.isBlank(userDevice.getDeviceId())) { 
+        		return res.error(getMessage("userdevice.user.deviceidunavailable"));	
+        	}
         	LOGGER.info("##PushBoxFox### : Update Token Method passed the Request Received : " + userDevice );
         	UserDevice responseObject = notificationService.persist(userDevice);
         	return res.setDataAdapter(new UserAdapter()).success(responseObject, this.getMessage("msg.userdevice.update.success"));
