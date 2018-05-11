@@ -51,6 +51,9 @@ public class ScheduleController {
 
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private NotificationSchedulerManager schedulerManager;
 
     /**
      * This method is used for view all drafts and schedule.
@@ -110,7 +113,7 @@ public class ScheduleController {
             schedule.setUpdatedDate(new Date().getTime());
             scheduleService.persist(schedule);
 
-            NotificationSchedulerManager.schedule(schedule, user);
+            schedulerManager.schedule(schedule, user);
             model.addAttribute(EventnotificationConstant.MESSAGE,
                     messageSource.getMessage(EventnotificationConstant.MSG_SCHEDULED_SUCCESS, null, Locale.ENGLISH));
             model.addAttribute(EventnotificationConstant.MODE, EventnotificationConstant.MODE_VIEW);
@@ -155,7 +158,7 @@ public class ScheduleController {
     public String deleteSchedule(@PathVariable("id") Long id, Model model) {
         User user = userService.getCurrentUser();
         NotificationSchedule notificationSchedule = scheduleService.updateSchedule(id, user);
-        NotificationSchedulerManager.removeJob(notificationSchedule);
+        schedulerManager.removeJob(notificationSchedule);
         model.addAttribute(EventnotificationConstant.MESSAGE,
                 messageSource.getMessage(EventnotificationConstant.MSG_SCHEDULED_SUCCESS, null, Locale.ENGLISH));
         return EventnotificationConstant.SCHEDULE_DELETE_SUCCESS;
@@ -211,7 +214,7 @@ public class ScheduleController {
         schedule.setStatus(EventnotificationConstant.SCHEDULED_STATUS);
 
         NotificationSchedule notificationSchedule = scheduleService.updateScheduleDetails(schedule, user);
-        NotificationSchedulerManager.updateJob(notificationSchedule, user);
+        schedulerManager.updateJob(notificationSchedule, user);
 
         redirectAttrs.addFlashAttribute(EventnotificationConstant.NOTIFICATION_SCHEDULE, notificationSchedule);
         model.addAttribute(EventnotificationConstant.MESSAGE,
