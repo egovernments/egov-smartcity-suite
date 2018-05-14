@@ -1,12 +1,9 @@
 package org.egov.eventnotification.web.controller.notificationdraft;
 
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -16,7 +13,6 @@ import org.apache.log4j.Logger;
 import org.egov.eventnotification.constants.EventnotificationConstant;
 import org.egov.eventnotification.entity.CategoryParameters;
 import org.egov.eventnotification.entity.Event;
-import org.egov.eventnotification.entity.EventDetails;
 import org.egov.eventnotification.entity.ModuleCategory;
 import org.egov.eventnotification.entity.NotificationDrafts;
 import org.egov.eventnotification.entity.TemplateModule;
@@ -115,16 +111,17 @@ public class NotificationDraftController {
     @RequestMapping(value = EventnotificationConstant.API_UPDATE_ID, method = RequestMethod.GET)
     public String viewUpdate(@ModelAttribute NotificationDrafts updateDraft, Model model,
             @PathVariable(EventnotificationConstant.DRAFT_ID) Long id) {
-    	updateDraft = draftService.findDraftById(id);
-    	model.addAttribute(EventnotificationConstant.NOTIFICATION_DRAFT, updateDraft);
+    	NotificationDrafts draft = updateDraft;
+    	draft = draftService.findDraftById(id);
+    	model.addAttribute(EventnotificationConstant.NOTIFICATION_DRAFT, draft);
     	List<TemplateModule> templateModuleList = draftService.getAllModules();
     	List<ModuleCategory> moduleCategoryList = new ArrayList<>();
     	List<CategoryParameters> categoryParametersList = new ArrayList<>(); 
-    	if(null != updateDraft.getModule()) { 
-    		moduleCategoryList = draftService.getCategoriesForModule(updateDraft.getModule().getId());
+    	if(null != draft.getModule()) { 
+    		moduleCategoryList = draftService.getCategoriesForModule(draft.getModule().getId());
     	}
-    	if(null != updateDraft.getCategory()) { 
-    		categoryParametersList = draftService.getParametersForCategory(updateDraft.getCategory().getId());
+    	if(null != draft.getCategory()) { 
+    		categoryParametersList = draftService.getParametersForCategory(draft.getCategory().getId());
     	}
     	List draftList = new ArrayList<>(Arrays.asList(EventnotificationConstant.DRAFT_TYPE.values()));
         LOGGER.info("Obtained Module List, Category List and Parameter List with Draft Types");
