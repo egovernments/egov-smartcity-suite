@@ -108,6 +108,7 @@ public class EventnotificationConstant {
     public static final String MSG_EVENT_CREATE_SUCCESS = "msg.event.create.success";
     public static final String MSG_EVENT_UPDATE_SUCCESS = "msg.event.update.success";
     public static final String MSG_DRAFT_CREATE_SUCCESS = "msg.draft.create.success"; 
+    public static final String MSG_DRAFT_UPDATE_SUCCESS = "msg.draft.update.success"; 
 
     public static final String API_UPDATE_ID = "update/{id}";
     public static final String API_CREATE = "create/";
@@ -120,6 +121,8 @@ public class EventnotificationConstant {
     public static final String VIEW_DRAFTS_VIEW = "drafts-view"; 
     public static final String VIEW_DRAFTS_CREATE = "drafts-create"; 
     public static final String VIEW_DRAFTS_CREATE_SUCCESS = "draft-success";
+    public static final String VIEW_DRAFTVIEWRESULT = "draft-view-result";
+    public static final String VIEW_DRAFTUPDATE = "draft-update"; 
 
     public static final String VIEW_EVENTVIEW = "event-view";
     public static final String VIEW_EVENTVIEWRESULT = "event-view-result";

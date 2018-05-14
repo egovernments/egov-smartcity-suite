@@ -1,9 +1,12 @@
 package org.egov.eventnotification.web.controller.notificationdraft;
 
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -13,6 +16,7 @@ import org.apache.log4j.Logger;
 import org.egov.eventnotification.constants.EventnotificationConstant;
 import org.egov.eventnotification.entity.CategoryParameters;
 import org.egov.eventnotification.entity.Event;
+import org.egov.eventnotification.entity.EventDetails;
 import org.egov.eventnotification.entity.ModuleCategory;
 import org.egov.eventnotification.entity.NotificationDrafts;
 import org.egov.eventnotification.entity.TemplateModule;
@@ -24,6 +28,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -54,6 +59,16 @@ public class NotificationDraftController {
         return EventnotificationConstant.VIEW_DRAFTS_VIEW;
     }
     
+    @RequestMapping(value = { EventnotificationConstant.API_VIEW_ID }, method = RequestMethod.GET)
+    public String viewById(final Model model, @PathVariable(EventnotificationConstant.DRAFT_ID) Long id) {
+        NotificationDrafts draft = draftService.findDraftById(id);
+
+        model.addAttribute(EventnotificationConstant.NOTIFICATION_DRAFT, draft);
+        model.addAttribute(EventnotificationConstant.MODE, EventnotificationConstant.MODE_VIEW);
+    	
+        return EventnotificationConstant.VIEW_DRAFTVIEWRESULT;
+    }
+    
     @RequestMapping(value = { EventnotificationConstant.CATEGORY_FOR_MODULE }, method = RequestMethod.GET)
     public String getCategoriesForModule(final Model model, @ModelAttribute Long moduleId) {
         List<ModuleCategory> categoryList = draftService.getCategoriesForModule(moduleId);
@@ -74,11 +89,6 @@ public class NotificationDraftController {
         model.addAttribute(EventnotificationConstant.TEMPLATE_MODULE, templateModuleList);
         model.addAttribute(EventnotificationConstant.MODULE_CATEGORY, moduleCategoryList);
         model.addAttribute(EventnotificationConstant.CATEGORY_PARAMETERS, categoryParametersList);
-        model.addAttribute(EventnotificationConstant.EVENT, event);
-        model.addAttribute(EventnotificationConstant.HOUR_LIST, eventnotificationUtil.getAllHour());
-        model.addAttribute(EventnotificationConstant.MINUTE_LIST, eventnotificationUtil.getAllMinute());
-        List eventList = new ArrayList<>(Arrays.asList(EventnotificationConstant.EVENT_TYPE.values()));
-        model.addAttribute(EventnotificationConstant.EVENT_LIST, eventList);
         model.addAttribute(EventnotificationConstant.MODE, EventnotificationConstant.MODE_CREATE);
         return EventnotificationConstant.VIEW_DRAFTS_CREATE;
     }
@@ -100,6 +110,50 @@ public class NotificationDraftController {
                 messageSource.getMessage(EventnotificationConstant.MSG_DRAFT_CREATE_SUCCESS, null, Locale.ENGLISH));
         model.addAttribute(EventnotificationConstant.MODE, EventnotificationConstant.MODE_VIEW);
         return EventnotificationConstant.VIEW_DRAFTS_CREATE_SUCCESS;
+    }
+    
+    @RequestMapping(value = EventnotificationConstant.API_UPDATE_ID, method = RequestMethod.GET)
+    public String viewUpdate(@ModelAttribute NotificationDrafts updateDraft, Model model,
+            @PathVariable(EventnotificationConstant.DRAFT_ID) Long id) {
+    	updateDraft = draftService.findDraftById(id);
+    	model.addAttribute(EventnotificationConstant.NOTIFICATION_DRAFT, updateDraft);
+    	List<TemplateModule> templateModuleList = draftService.getAllModules();
+    	List<ModuleCategory> moduleCategoryList = new ArrayList<>();
+    	List<CategoryParameters> categoryParametersList = new ArrayList<>(); 
+    	if(null != updateDraft.getModule()) { 
+    		moduleCategoryList = draftService.getCategoriesForModule(updateDraft.getModule().getId());
+    	}
+    	if(null != updateDraft.getCategory()) { 
+    		categoryParametersList = draftService.getParametersForCategory(updateDraft.getCategory().getId());
+    	}
+    	List draftList = new ArrayList<>(Arrays.asList(EventnotificationConstant.DRAFT_TYPE.values()));
+        LOGGER.info("Obtained Module List, Category List and Parameter List with Draft Types");
+        model.addAttribute(EventnotificationConstant.DRAFT_LIST, draftList);
+        model.addAttribute(EventnotificationConstant.TEMPLATE_MODULE, templateModuleList);
+        model.addAttribute(EventnotificationConstant.MODULE_CATEGORY, moduleCategoryList);
+        model.addAttribute(EventnotificationConstant.CATEGORY_PARAMETERS, categoryParametersList);
+        
+        model.addAttribute(EventnotificationConstant.MODE, EventnotificationConstant.MODE_VIEW);
+    	
+        return EventnotificationConstant.VIEW_DRAFTUPDATE;
+    }
+    
+    @RequestMapping(value = EventnotificationConstant.API_UPDATE_ID, method = RequestMethod.POST)
+    public String update(@ModelAttribute(EventnotificationConstant.NOTIFICATION_DRAFT) NotificationDrafts draft,
+            Model model,
+            RedirectAttributes redirectAttrs, HttpServletRequest request, BindingResult errors,
+            @PathVariable(EventnotificationConstant.DRAFT_ID) Long id)
+            throws IOException, ParseException {
+    	
+    	LOGGER.info("Update Method initiated" );
+    	draft.setId(id);
+    	draftService.updateDraftById(id, draft);
+    	LOGGER.info("Draft has been updated");
+        redirectAttrs.addFlashAttribute(EventnotificationConstant.NOTIFICATION_DRAFT, draft);
+        model.addAttribute(EventnotificationConstant.MESSAGE,
+                messageSource.getMessage(EventnotificationConstant.MSG_DRAFT_UPDATE_SUCCESS, null, Locale.ENGLISH));
+        model.addAttribute(EventnotificationConstant.MODE, EventnotificationConstant.MODE_VIEW);
+        return EventnotificationConstant.VIEW_DRAFTVIEWRESULT;
     }
 
 }

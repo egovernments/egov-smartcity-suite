@@ -45,70 +45,12 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-var tableContainer;
 $(document).ready(function(){
-
-	$('#draftViewTable tbody').on('click', 'tr', function () {
-		window.open("/eventnotification/drafts/view/"+$(this).children('td:first-child').text(),'_blank', "width=800, height=700, scrollbars=yes")
-    } );
 	
-	$("#draftSearch").click(function() {
-		$("#draftViewTable").DataTable().clear().draw();
-		$.ajax({
-		      type: "GET",
-		      url: "/api/draft/search?"+$("#searchDraftForm").serialize(),
-		      contentType: "application/json; charset=utf-8",
-		      dataType: 'json',
-		      success: function (data) {
-		    	  var dataRsponse = data;
-		    	  for(var i = 0; i < dataRsponse.length; i++) {
-		    	      $("#draftViewTable").dataTable().fnAddData( [
-		    	    	  dataRsponse[i].id,
-		    	    	  dataRsponse[i].name,
-		    	    	  dataRsponse[i].type,
-		    	    	  dataRsponse[i].module.name,
-		    	    	  dataRsponse[i].category.name,
-		    	    	  dataRsponse[i].message
-		    	      ]);
-		    	    }
-		      },
-		      error: function (e) {
-		        console.log("There was an error with your request...");
-		        console.log("error: " + JSON.stringify(e));
-		      }
-		    });
-		
-	});
-
-	
-
-});
-
-
-$('#btnclose').click(function(){
-	bootbox.confirm({
-	    message: 'Information entered in this screen will be lost if you close this page ? Please confirm if you want to close. ',
-	    buttons: {
-	        'cancel': {
-	            label: 'No',
-	            className: 'btn-default pull-right'
-	        },
-	        'confirm': {
-	            label: 'Yes',
-	            className: 'btn-danger pull-right'
-	        }
-	    },
-	    callback: function(result) {
-	        if (result) {
-	             window.close();
-	        }
-	    }
+	$(".btn-primary").click(function(event){
+		document.getElementById("updateDraftForm").submit();
+		return true;
+		//event.preventDefault();
 	});
 	
 });
-
-$("#buttonSubmit").click(function(event){
-	window.open("/eventnotification/drafts/create/",'_blank', "width=800, height=700, scrollbars=yes");
-});
-
-

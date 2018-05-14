@@ -153,5 +153,20 @@
         <put-attribute name="page-title" value="lbl.schedule.notification.update" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/schedule/schedule-update-success.jsp"/>
     </definition>
+    
+    <definition name="draft-view-result" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.draft.view" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/notificationdrafts/drafts-view-individual.jsp"/>
+    </definition>
+    
+    <definition name="draft-update-success" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.draft.update" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/notificationdrafts/drafts-view-individual.jsp"/>
+    </definition>
+    
+    <definition name="draft-update" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.draft.update" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/notificationdrafts/draftUpdate.jsp"/>
+    </definition>
 
 </tiles-definitions>
