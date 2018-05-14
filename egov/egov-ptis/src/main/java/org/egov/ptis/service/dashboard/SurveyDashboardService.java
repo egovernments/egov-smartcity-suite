@@ -84,6 +84,7 @@ import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms.Bucket;
 import org.elasticsearch.search.aggregations.metrics.sum.Sum;
+import org.elasticsearch.search.aggregations.metrics.tophits.TopHits;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.stereotype.Service;
@@ -272,7 +273,10 @@ public class SurveyDashboardService {
                         .subAggregation(getCountWithGrouping("sentForReference", SENT_TO_THIRD_PARTY, 2))
                         .subAggregation(AggregationBuilders.sum("gisTotal").field(GIS_TAX))
                         .subAggregation(AggregationBuilders.sum("systemTotal").field(SYSTEM_TAX))
-                        .subAggregation(AggregationBuilders.sum(APPLICATION_TAX).field(APPLICATION_TAX)))
+                        .subAggregation(AggregationBuilders.sum(APPLICATION_TAX).field(APPLICATION_TAX))
+                        .subAggregation(AggregationBuilders.topHits("cityDetails")
+                                .addField(CITY_NAME)
+                                .addField(CITY_CODE)))
                 .execute().actionGet();
 
         SearchResponse completedResponse = elasticsearchTemplate.getClient().prepareSearch(PROPERTYSURVEYDETAILS_INDEX).setSize(0)
@@ -342,8 +346,7 @@ public class SurveyDashboardService {
 
         for (Bucket bucket : ulbTerms.getBuckets()) {
             surveyResponse = new SurveyResponse();
-            name = bucket.getKeyAsString();
-            getAggregationNames(surveyRequest, aggregationField, wardWiseBillCollectors, surveyResponse, name, cityInfoMap);
+            getAggregationNames(surveyRequest, aggregationField, wardWiseBillCollectors, surveyResponse, cityInfoMap,bucket);
             surveyResponse.setTotalReceived(bucket.getDocCount());
             verfTerms = bucket.getAggregations().get("verificationDone");
             for (Bucket verfBucket : verfTerms.getBuckets()) {
@@ -355,16 +358,18 @@ public class SurveyDashboardService {
                 if (refBucket.getKeyAsNumber().intValue() == 1)
                     surveyResponse.setVerifyPending(refBucket.getDocCount() - surveyResponse.getVerifyDone());
             }
-            getTaxDifferences(completedApplicationsMap, approvedTotalMap, surveyResponse, name, bucket);
+            getTaxDifferences(completedApplicationsMap, approvedTotalMap, surveyResponse, bucket);
             responseList.add(surveyResponse);
         }
         return responseList;
     }
 
     private void getAggregationNames(SurveyRequest surveyRequest, String aggregationField,
-            Map<String, BillCollectorIndex> wardWiseBillCollectors, SurveyResponse surveyResponse, String name,
-            Map<String, String> cityInfoMap) {
-
+            Map<String, BillCollectorIndex> wardWiseBillCollectors, SurveyResponse surveyResponse,
+            Map<String, String> cityInfoMap,Bucket bucket) {
+        final TopHits topHits = bucket.getAggregations().get("cityDetails");
+        final SearchHit[] hit = topHits.getHits().getHits();
+        String name=bucket.getKeyAsString();
         if (REGION_NAME.equals(aggregationField))
             surveyResponse.setRegionName(name);
         else if (DISTRICT_NAME.equals(aggregationField))
@@ -378,6 +383,7 @@ public class SurveyDashboardService {
             surveyResponse.setServiceName(name);
         } else if (FUNCTIONARY_NAME.equalsIgnoreCase(aggregationField)) {
             surveyResponse.setFunctionaryName(name);
+            surveyResponse.setUlbCode(hit[0].field(CITY_CODE).value());
         }
     }
 
@@ -395,7 +401,7 @@ public class SurveyDashboardService {
     }
 
     private void getTaxDifferences(Map<String, Long> completedApplicationsMap,
-            Map<String, List<Map<String, BigDecimal>>> approvedTotalMap, SurveyResponse surveyResponse, String name,
+            Map<String, List<Map<String, BigDecimal>>> approvedTotalMap, SurveyResponse surveyResponse,
             Bucket bucket) {
         Sum gisSumAggr;
         Sum systemSumAggr;
@@ -405,6 +411,7 @@ public class SurveyDashboardService {
         BigDecimal totalApplicationTax;
         BigDecimal approvedSysTax;
         BigDecimal approvedTotalTax;
+        String name=bucket.getKeyAsString();
         gisSumAggr = bucket.getAggregations().get("gisTotal");
         totalGisTax = BigDecimal.valueOf(gisSumAggr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
         systemSumAggr = bucket.getAggregations().get("systemTotal");
