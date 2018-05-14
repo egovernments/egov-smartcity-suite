@@ -52,7 +52,7 @@ import org.apache.commons.lang3.StringUtils;
 public enum Source {
 
     APONLINE, ESEVA, MEESEVA, SYSTEM, SOFTTECH, CARD, MOBILE, LEADWINNER, CSC, CITIZENPORTAL, SMARTVIZAG, ANYEMI,
-    ONLINE, PAYTM, BILLDESK, SURVEY, IVRS;
+    ONLINE, PAYTM, BILLDESK, SURVEY, IVRS, CPK;
 
     @Override
     public String toString() {
