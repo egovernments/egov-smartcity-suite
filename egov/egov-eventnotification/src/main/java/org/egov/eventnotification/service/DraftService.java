@@ -1,5 +1,6 @@
 package org.egov.eventnotification.service;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -108,6 +109,20 @@ public class DraftService {
      */
     public NotificationDrafts findDraftById(Long id) {
         return draftRepository.findOne(id);
+    }
+    
+    @Transactional
+    public NotificationDrafts updateDraftById(Long id, NotificationDrafts updatedDraft) { 
+    	NotificationDrafts existingDraft = draftRepository.findOne(id);
+    	if(null != existingDraft) { 
+    		existingDraft.setName(updatedDraft.getName());
+    		existingDraft.setType(updatedDraft.getType());
+    		existingDraft.setMessage(updatedDraft.getMessage());
+    		existingDraft.setModule(updatedDraft.getModule());
+    		existingDraft.setCategory(updatedDraft.getCategory());
+    		existingDraft.setUpdatedDate(new Date().getTime());
+    	}
+    	return existingDraft;
     }
 
 }
