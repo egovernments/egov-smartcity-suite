@@ -72,6 +72,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.DateUtils;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.es.PTGISIndex;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.survey.SearchSurveyRequest;
@@ -241,32 +242,33 @@ public class SurveyApplicationService {
     }
 
     @Transactional
-	public boolean updateWorkflow(String applicationNo, User user) {
-		try {
-			List<Assignment> assignments = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(user.getId());
-			boolean isRevAssistantExist = false;
-			if (!assignments.isEmpty()) {
-				for (Assignment assignment : assignments) {
-					if (REVENUE_HIERARCHY_TYPE.equalsIgnoreCase(assignment.getDepartment().getName())
-							&& Arrays.asList(JUNIOR_OR_SENIOR_ASSISTANT_DESIGN)
-									.contains(assignment.getDesignation().getCode())) {
-						isRevAssistantExist = true;
-						break;
-					}
-				}
-			}
-			if (isRevAssistantExist) {
-				SQLQuery sqlQuery = entityManager.unwrap(Session.class).createSQLQuery(
-						"update eg_wf_states set owner_pos =:ownerpos where id in(select state_id from egpt_property where applicationNo=:applicationNo)");
-				sqlQuery.setParameter(APP_NO, applicationNo);
-				sqlQuery.setParameter("ownerpos", assignments.get(0).getPosition().getId());
-				sqlQuery.executeUpdate();
-				return true;
-			}
-		} catch (Exception e) {
-			throw new ApplicationRuntimeException(
-					"Error occured while updating survey property application: " + e.getMessage(), e);
-		}
-		return false;
-	}
+    public boolean updateWorkflow(String applicationNo, User user) {
+        try {
+            List<Assignment> assignments = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(user.getId());
+            boolean isRevAssistantExist = false;
+            if (!assignments.isEmpty()) {
+                for (Assignment assignment : assignments) {
+                    if (REVENUE_HIERARCHY_TYPE.equalsIgnoreCase(assignment.getDepartment().getName())
+                            && (assignment.getDesignation().getName().equalsIgnoreCase(PropertyTaxConstants.JUNIOR_ASSISTANT)
+                                    || assignment.getDesignation().getName()
+                                            .equalsIgnoreCase(PropertyTaxConstants.SENIOR_ASSISTANT))) {
+                        isRevAssistantExist = true;
+                        break;
+                    }
+                }
+            }
+            if (isRevAssistantExist) {
+                SQLQuery sqlQuery = entityManager.unwrap(Session.class).createSQLQuery(
+                        "update eg_wf_states set owner_pos =:ownerpos where id in(select state_id from egpt_property where applicationNo=:applicationNo)");
+                sqlQuery.setParameter(APP_NO, applicationNo);
+                sqlQuery.setParameter("ownerpos", assignments.get(0).getPosition().getId());
+                sqlQuery.executeUpdate();
+                return true;
+            }
+        } catch (Exception e) {
+            throw new ApplicationRuntimeException(
+                    "Error occured while updating survey property application: " + e.getMessage(), e);
+        }
+        return false;
+    }
 }

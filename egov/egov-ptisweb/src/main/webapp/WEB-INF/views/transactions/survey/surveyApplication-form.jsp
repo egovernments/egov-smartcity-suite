@@ -54,14 +54,9 @@
 
 <div class="row" id="page-content">
 	<div class="col-md-12">
-		<c:if test="${not empty message}">
-			<div class="alert alert-success" role="alert">
-				<spring:message code="${message}" />
-			</div>
-		</c:if>
-		<c:if test="${not empty errorMessage}">
-			<div class="panel-title" style="text-align:center;">
-			   <strong>${errorMessage}</strong>
+		<c:if test="${not empty errorMsg}">
+			<div class="alert alert-danger" role="alert">
+			   <strong><c:out value="${errorMsg}"/></strong>
 			</div>
 		</c:if>
 		<form:form class="form-horizontal form-groups-bordered"

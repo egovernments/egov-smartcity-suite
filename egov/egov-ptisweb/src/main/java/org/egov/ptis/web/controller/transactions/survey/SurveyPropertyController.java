@@ -34,8 +34,6 @@ import com.google.gson.GsonBuilder;
 @RequestMapping(value = "/survey/properties")
 public class SurveyPropertyController {
 	
-	private static final String NOTEXISTS_POSITION = "notexists.position";
-	
     @Autowired
     private BoundaryService boundaryService;
 
@@ -92,14 +90,14 @@ public class SurveyPropertyController {
         try {
             User user = securityUtils.getCurrentUser();
             for (String applicationNo : applicationNumbersArray) {
-                if (surveyApplicationService.updateWorkflow(applicationNo, user)){
+                if (surveyApplicationService.updateWorkflow(applicationNo, user)) {
                     model.addAttribute("successMessage",
                             "Property workflow updated and application : " + applicationNo + " is moved to user : "
                                     + user.getName() + " inbox");
-                    
-                }else{
-            	  model.addAttribute("errorMessage", NOTEXISTS_POSITION);
-                  return "surveyApplication-form";
+                } else {
+                    model.addAttribute("surveyApplication", new SearchSurveyRequest());
+                    model.addAttribute("errorMsg", "No Senior or Junior assistants exists, So please check");
+                    return "surveyApplication-form";
                 }
             }
 
