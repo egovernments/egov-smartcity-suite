@@ -54,10 +54,10 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DATE_FORMAT_YYYYMMDD;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_OR_SENIOR_ASSISTANT_DESIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -72,7 +72,6 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.DateUtils;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.es.PTGISIndex;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.survey.SearchSurveyRequest;
@@ -249,9 +248,9 @@ public class SurveyApplicationService {
             if (!assignments.isEmpty()) {
                 for (Assignment assignment : assignments) {
                     if (REVENUE_HIERARCHY_TYPE.equalsIgnoreCase(assignment.getDepartment().getName())
-                            && (assignment.getDesignation().getName().equalsIgnoreCase(PropertyTaxConstants.JUNIOR_ASSISTANT)
+                            && (assignment.getDesignation().getName().equalsIgnoreCase(JUNIOR_ASSISTANT)
                                     || assignment.getDesignation().getName()
-                                            .equalsIgnoreCase(PropertyTaxConstants.SENIOR_ASSISTANT))) {
+                                            .equalsIgnoreCase(SENIOR_ASSISTANT))) {
                         isRevAssistantExist = true;
                         break;
                     }
