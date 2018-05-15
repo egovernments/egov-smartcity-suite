@@ -94,7 +94,6 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
-import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
@@ -193,9 +192,6 @@ public class ConnectionDemandService {
 
     @Autowired
     private WaterTaxUtils waterTaxUtils;
-
-    @Autowired
-    private PropertyTaxUtil propertyTaxUtil;
     
     @Autowired
     private AppConfigService appConfigService;
