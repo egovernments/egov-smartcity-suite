@@ -590,5 +590,8 @@
         <put-attribute name="page-title" value="lbl.survey.application.workflow" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/transactions/survey/surveyApplication-success.jsp"/>
     </definition>
-    
+    <definition name="yearwisedcb-form" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.yearwise.DCB" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/yearwisedcbreport-form.jsp"/>
+    </definition>    
 </tiles-definitions> 

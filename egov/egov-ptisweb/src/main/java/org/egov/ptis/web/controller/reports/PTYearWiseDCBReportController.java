@@ -45,57 +45,67 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.commons.dao;
 
-import org.egov.commons.CFinancialYear;
+package org.egov.ptis.web.controller.reports;
 
-import java.util.Date;
 import java.util.List;
 
-public interface FinancialYearDAO {
-    public String getCurrYearFiscalId();
+import org.egov.commons.CFinancialYear;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.entity.property.PTYearWiseDCBRequest;
+import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
+import org.egov.ptis.domain.entity.property.YearWiseDCBReportResponse;
+import org.egov.ptis.service.es.PTYearWiseDCBIndexService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-    public String getCurrYearStartDate();
+@Controller
+@RequestMapping(value = "/report/yearwisedcbreport")
+public class PTYearWiseDCBReportController {
 
-    public String getPrevYearFiscalId();
+    @Autowired
+    private BoundaryService boundaryService;
 
-    public String getFinancialYearId(String estDate);
+    @Autowired
+    private PTYearWiseDCBIndexService ptYearWiseDCBIndexService;
 
-    public CFinancialYear getFinancialYearByFinYearRange(String finYearRange);
+    @ModelAttribute("wards")
+    public List<Boundary> wardBoundaries() {
+        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
+                PropertyTaxConstants.WARD, PropertyTaxConstants.REVENUE_HIERARCHY_TYPE);
+    }
 
-    public List<CFinancialYear> getAllActiveFinancialYearList();
+    @ModelAttribute("propertyType")
+    public List<PropertyTypeMaster> categories() {
+        return ptYearWiseDCBIndexService.getPropertyTypes();
+    }
 
-    public List<CFinancialYear> getAllActivePostingFinancialYear();
+    @ModelAttribute("year")
+    public List<CFinancialYear> financialYeras() {
+        return ptYearWiseDCBIndexService.getFinancialYears();
+    }
 
-    public CFinancialYear getFinancialYearById(Long id);
+    @RequestMapping(method = RequestMethod.GET)
+    public String searchDcbForm(final Model model) {
+        model.addAttribute("YearWiseDCBReport", new PTYearWiseDCBRequest());
+        model.addAttribute("mode", "ward");
+        return "yearwisedcb-form";
+    }
 
-    public CFinancialYear getFinancialYearByDate(Date date);
+    @RequestMapping(value = "/result", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public YearWiseDCBReportResponse dcbReportSearchResult(
+            @RequestBody PTYearWiseDCBRequest ptYearwiseDCBRequest) {
+        return ptYearWiseDCBIndexService.getDetails(ptYearwiseDCBRequest);
+    }
 
-    public List<CFinancialYear> getAllNotClosedFinancialYears();
-
-    public CFinancialYear getFinYearByDate(Date date);
-
-    public boolean isSameFinancialYear(Date fromDate, Date toDate);
-
-    public CFinancialYear getPreviousFinancialYearByDate(Date date);
-
-    public boolean isFinancialYearActiveForPosting(Date fromDate, Date toDate);
-
-    public CFinancialYear getNextFinancialYearByDate(Date date);
-
-    CFinancialYear findById(Number id, boolean lock);
-
-    List<CFinancialYear> findAll();
-
-    CFinancialYear create(CFinancialYear entity);
-
-    CFinancialYear update(CFinancialYear entity);
-
-    void delete(CFinancialYear entity);
-    
-    public List<CFinancialYear> getAllPriorFinancialYears(Date date);
-    
-    public List<CFinancialYear> getAllActivePostingAndNotClosedFinancialYears();
-    
-    public List<CFinancialYear> getFinancialYearsAfterFromDate(Date fromDate);
 }

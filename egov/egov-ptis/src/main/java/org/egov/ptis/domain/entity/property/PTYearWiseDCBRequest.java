@@ -45,57 +45,62 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.commons.dao;
+package org.egov.ptis.domain.entity.property;
 
-import org.egov.commons.CFinancialYear;
+public class PTYearWiseDCBRequest {
+    private String yearIndex;
+    private String revenueWard;
+    private String block;
+    private String propertyUsage;
+    private String type;
+    private Boolean isCourtCase;
 
-import java.util.Date;
-import java.util.List;
+    public String getYearIndex() {
+        return yearIndex;
+    }
 
-public interface FinancialYearDAO {
-    public String getCurrYearFiscalId();
+    public void setYearIndex(String yearIndex) {
+        this.yearIndex = yearIndex;
+    }
 
-    public String getCurrYearStartDate();
+    public String getRevenueWard() {
+        return revenueWard;
+    }
 
-    public String getPrevYearFiscalId();
+    public void setRevenueWard(String revenueWard) {
+        this.revenueWard = revenueWard;
+    }
 
-    public String getFinancialYearId(String estDate);
+    public String getPropertyUsage() {
+        return propertyUsage;
+    }
 
-    public CFinancialYear getFinancialYearByFinYearRange(String finYearRange);
+    public void setPropertyUsage(String propertyUsage) {
+        this.propertyUsage = propertyUsage;
+    }
 
-    public List<CFinancialYear> getAllActiveFinancialYearList();
+    public String getType() {
+        return type;
+    }
 
-    public List<CFinancialYear> getAllActivePostingFinancialYear();
+    public void setType(String type) {
+        this.type = type;
+    }
 
-    public CFinancialYear getFinancialYearById(Long id);
+    public Boolean getIsCourtCase() {
+        return isCourtCase;
+    }
 
-    public CFinancialYear getFinancialYearByDate(Date date);
+    public void setIsCourtCase(Boolean isCourtCase) {
+        this.isCourtCase = isCourtCase;
+    }
 
-    public List<CFinancialYear> getAllNotClosedFinancialYears();
+    public String getBlock() {
+        return block;
+    }
 
-    public CFinancialYear getFinYearByDate(Date date);
+    public void setBlock(String block) {
+        this.block = block;
+    }
 
-    public boolean isSameFinancialYear(Date fromDate, Date toDate);
-
-    public CFinancialYear getPreviousFinancialYearByDate(Date date);
-
-    public boolean isFinancialYearActiveForPosting(Date fromDate, Date toDate);
-
-    public CFinancialYear getNextFinancialYearByDate(Date date);
-
-    CFinancialYear findById(Number id, boolean lock);
-
-    List<CFinancialYear> findAll();
-
-    CFinancialYear create(CFinancialYear entity);
-
-    CFinancialYear update(CFinancialYear entity);
-
-    void delete(CFinancialYear entity);
-    
-    public List<CFinancialYear> getAllPriorFinancialYears(Date date);
-    
-    public List<CFinancialYear> getAllActivePostingAndNotClosedFinancialYears();
-    
-    public List<CFinancialYear> getFinancialYearsAfterFromDate(Date fromDate);
 }

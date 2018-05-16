@@ -45,57 +45,20 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.commons.dao;
+package org.egov.ptis.domain.entity.property;
 
-import org.egov.commons.CFinancialYear;
-
-import java.util.Date;
 import java.util.List;
 
-public interface FinancialYearDAO {
-    public String getCurrYearFiscalId();
+public class YearWiseDCBReportResponse {
 
-    public String getCurrYearStartDate();
+    private List<YearWiseDCBReponse> yearWiseDCBResponse;
 
-    public String getPrevYearFiscalId();
+    public List<YearWiseDCBReponse> getYearWiseDCBResponse() {
+        return yearWiseDCBResponse;
+    }
 
-    public String getFinancialYearId(String estDate);
+    public void setYearWiseDCBResponse(List<YearWiseDCBReponse> yearWiseDCBResponse) {
+        this.yearWiseDCBResponse = yearWiseDCBResponse;
+    }
 
-    public CFinancialYear getFinancialYearByFinYearRange(String finYearRange);
-
-    public List<CFinancialYear> getAllActiveFinancialYearList();
-
-    public List<CFinancialYear> getAllActivePostingFinancialYear();
-
-    public CFinancialYear getFinancialYearById(Long id);
-
-    public CFinancialYear getFinancialYearByDate(Date date);
-
-    public List<CFinancialYear> getAllNotClosedFinancialYears();
-
-    public CFinancialYear getFinYearByDate(Date date);
-
-    public boolean isSameFinancialYear(Date fromDate, Date toDate);
-
-    public CFinancialYear getPreviousFinancialYearByDate(Date date);
-
-    public boolean isFinancialYearActiveForPosting(Date fromDate, Date toDate);
-
-    public CFinancialYear getNextFinancialYearByDate(Date date);
-
-    CFinancialYear findById(Number id, boolean lock);
-
-    List<CFinancialYear> findAll();
-
-    CFinancialYear create(CFinancialYear entity);
-
-    CFinancialYear update(CFinancialYear entity);
-
-    void delete(CFinancialYear entity);
-    
-    public List<CFinancialYear> getAllPriorFinancialYears(Date date);
-    
-    public List<CFinancialYear> getAllActivePostingAndNotClosedFinancialYears();
-    
-    public List<CFinancialYear> getFinancialYearsAfterFromDate(Date fromDate);
 }

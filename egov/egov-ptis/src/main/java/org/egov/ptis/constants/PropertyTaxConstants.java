@@ -1618,6 +1618,8 @@ public interface PropertyTaxConstants {
     public static final String WATER_TAX_INDEX_NAME = "waterchargeconsumer";
     public static final String BILL_COLLECTOR_INDEX_NAME = "billcollector";
     public static final String COLLECTION_ACHIEVEMENTS_INDEX_NAME = "collectionachievements";
+    public static final String PROPERTY_TAX_INDEX_PREFIX = "propertytaxdcb_";
+    public static final String PTYEARWISEDCBSTARTYEAR = "PTIS_YEAR_WISE_DCB_DATE";
 
     public static final String DATE_FORMAT_YYYYMMDD = "yyyy-MM-dd";
     public static final SimpleDateFormat DATEFORMATTER_YYYY_MM_DD = new SimpleDateFormat(DATE_FORMAT_YYYYMMDD);
