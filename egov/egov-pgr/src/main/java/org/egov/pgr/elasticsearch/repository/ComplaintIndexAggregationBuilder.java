@@ -48,16 +48,6 @@
 
 package org.egov.pgr.elasticsearch.repository;
 
-import org.apache.commons.lang3.StringUtils;
-import org.egov.pgr.elasticsearch.entity.contract.ComplaintDashBoardRequest;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.aggregations.AggregationBuilder;
-import org.elasticsearch.search.aggregations.AggregationBuilders;
-import org.elasticsearch.search.aggregations.bucket.terms.Terms;
-import org.elasticsearch.search.aggregations.bucket.terms.TermsBuilder;
-import org.elasticsearch.search.aggregations.metrics.MetricsAggregationBuilder;
-import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCountBuilder;
-
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_ALL_FUNCTIONARY;
 import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_ALL_LOCALITIES;
@@ -69,13 +59,26 @@ import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_DISTR
 import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_REGION;
 import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_ULBGRADE;
 import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_WARDWISE;
+import static org.egov.pgr.utils.constants.PGRConstants.WARD_NUMBER;
+
+import org.apache.commons.lang3.StringUtils;
+import org.egov.pgr.elasticsearch.entity.contract.ComplaintDashBoardRequest;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.aggregations.AggregationBuilder;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
+import org.elasticsearch.search.aggregations.bucket.terms.TermsBuilder;
+import org.elasticsearch.search.aggregations.metrics.MetricsAggregationBuilder;
+import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCountBuilder;
 
 public final class ComplaintIndexAggregationBuilder {
 
     private static final String INITIAL_FUNCTIONARY_NAME = "initialFunctionaryName";
     private static final String LOCALITY_NAME = "localityName";
     private static final String CITY_CODE = "cityCode";
-
+    private static final String CITY_REGION_NAME = "cityRegionName";
+    private static final String CITY_DISTRICT_NAME = "cityDistrictName";
+   
     private ComplaintIndexAggregationBuilder() {
         //Only static API's
     }
@@ -178,6 +181,26 @@ public final class ComplaintIndexAggregationBuilder {
         if (isNotBlank(complaintDashBoardRequest.getLocalityName()))
             aggregationField = INITIAL_FUNCTIONARY_NAME;
 
+        return aggregationField;
+    }
+    public static String fetchAggregationField(String aggregationType) {
+        String aggregationField = null;
+        if ("regionwise".equalsIgnoreCase(aggregationType))
+            aggregationField = CITY_REGION_NAME;
+        else if ("districtwise".equalsIgnoreCase(aggregationType))
+            aggregationField = CITY_DISTRICT_NAME;
+        else if ("ulbwise".equalsIgnoreCase(aggregationType))
+            aggregationField = "cityName";
+        else if ("gradewise".equalsIgnoreCase(aggregationType))
+            aggregationField = "cityGrade";
+        else if ("wardwise".equalsIgnoreCase(aggregationType))
+            aggregationField = WARD_NUMBER;
+        else if ("departmentwise".equalsIgnoreCase(aggregationType))
+            aggregationField = "departmentCode";
+        else if ("functionarywise".equalsIgnoreCase(aggregationType))
+            aggregationField = INITIAL_FUNCTIONARY_NAME;
+        else if("localitywise".equalsIgnoreCase(aggregationType))
+            aggregationField=LOCALITY_NAME;
         return aggregationField;
     }
 }

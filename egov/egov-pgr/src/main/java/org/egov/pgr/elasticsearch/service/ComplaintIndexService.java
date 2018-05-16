@@ -1656,16 +1656,13 @@ public class ComplaintIndexService {
         List<IVRSFeedBackResponse> feedbackResponseList = new ArrayList<>();
         String aggregationField = CITY_REGION_NAME;
         if (isNotBlank(ivrsRequest.getType()))
-            aggregationField = fetchAggregationField(ivrsRequest.getType());
+            aggregationField = ComplaintIndexAggregationBuilder.fetchAggregationField(ivrsRequest.getType());
         SearchResponse response = complaintIndexRepository.findFeedBackRatingDetails(ivrsRequest, prepareQuery(ivrsRequest),
                 aggregationField);
         Terms terms = response.getAggregations().get("typeAggr");
         for (Bucket termsBucket : terms.getBuckets()) {
             IVRSFeedBackResponse feedbackResponse = new IVRSFeedBackResponse();
-            String name = termsBucket.getKey().toString();
-            Map detailsForAggregationField = getUpperLevelDetails(ivrsRequest, name);
-            if (!detailsForAggregationField.isEmpty())
-                setUpperLevelValues(detailsForAggregationField, aggregationField, feedbackResponse, name);
+            setUpperLevelValues(aggregationField, feedbackResponse, termsBucket);
             termsBucket.getDocCount();
             feedbackResponse.setTotalComplaint(termsBucket.getDocCount());
             feedbackResponse.setTotalFeedback(termsBucket.getDocCount());
@@ -1682,127 +1679,61 @@ public class ComplaintIndexService {
         if ("1".equals(countBucket.getKey().toString())) {
             feedbackResponse.setGood(countBucket.getDocCount());
         } else if ("3".equals(countBucket.getKey().toString())) {
-            feedbackResponse.setAvarage(countBucket.getDocCount());
+            feedbackResponse.setAverage(countBucket.getDocCount());
         } else if ("2".equals(countBucket.getKey().toString())) {
             feedbackResponse.setBad(countBucket.getDocCount());
         }
     }
 
-    private void setUpperLevelValues(Map detailsForAggregationField, String aggregationField,
-            IVRSFeedBackResponse feedbackResponse, String name) {
+    private void setUpperLevelValues(String aggregationField,
+            IVRSFeedBackResponse feedbackResponse, Bucket termsBucket) {
+        String name = termsBucket.getKey().toString();
+        final TopHits topHits = termsBucket.getAggregations().get("paramDetails");
+        final SearchHit[] hit = topHits.getHits().getHits();
         if (CITY_REGION_NAME.equalsIgnoreCase(aggregationField)) {
             feedbackResponse.setRegion(name);
         } else if (CITY_DISTRICT_NAME.equalsIgnoreCase(aggregationField)) {
             feedbackResponse.setDistrict(name);
-            feedbackResponse.setDistrictCode(detailsForAggregationField.get(CITY_DISTRICT_CODE).toString());
-            feedbackResponse.setRegion(detailsForAggregationField.get(CITY_REGION_NAME).toString());
+            setResponse(hit, feedbackResponse);
         } else if (CITY_GRADE.equalsIgnoreCase(aggregationField)) {
             feedbackResponse.setUlbGrade(name);
-            feedbackResponse.setDistrict(detailsForAggregationField.get(CITY_DISTRICT_NAME).toString());
-            feedbackResponse.setDistrictCode(detailsForAggregationField.get(CITY_DISTRICT_CODE).toString());
-            feedbackResponse.setRegion(detailsForAggregationField.get(CITY_REGION_NAME).toString());
+            setResponse(hit, feedbackResponse);
         } else if (CITY_NAME.equalsIgnoreCase(aggregationField)) {
             feedbackResponse.setUlbName(name);
-            feedbackResponse.setUlbCode(detailsForAggregationField.get(CITY_CODE).toString());
-            feedbackResponse.setUlbGrade(detailsForAggregationField.get(CITY_GRADE).toString());
-            feedbackResponse.setDistrict(detailsForAggregationField.get(CITY_DISTRICT_NAME).toString());
-            feedbackResponse.setDistrictCode(detailsForAggregationField.get(CITY_DISTRICT_CODE).toString());
-            feedbackResponse.setRegion(detailsForAggregationField.get(CITY_REGION_NAME).toString());
+            setResponse(hit, feedbackResponse);
         } else if (WARD_NUMBER.equalsIgnoreCase(aggregationField)) {
             feedbackResponse.setWardCode(name);
-            feedbackResponse.setWardName(detailsForAggregationField.get(WARD_NAME).toString());
-            feedbackResponse.setUlbName(detailsForAggregationField.get(CITY_NAME).toString());
-            feedbackResponse.setUlbCode(detailsForAggregationField.get(CITY_CODE).toString());
-            feedbackResponse.setDistrict(detailsForAggregationField.get(CITY_DISTRICT_NAME).toString());
-            feedbackResponse.setDistrictCode(detailsForAggregationField.get(CITY_DISTRICT_CODE).toString());
-            feedbackResponse.setRegion(detailsForAggregationField.get(CITY_REGION_NAME).toString());
+            setResponse(hit, feedbackResponse);
         } else if (DEPARTMENT_CODE.equalsIgnoreCase(aggregationField)) {
             feedbackResponse.setDepartmentName(name);
-            feedbackResponse.setDepartmentCode(detailsForAggregationField.get(DEPARTMENT_CODE) == null ? NA
-                    : detailsForAggregationField.get(DEPARTMENT_CODE).toString());
-            feedbackResponse.setUlbName(detailsForAggregationField.get(CITY_NAME).toString());
-            feedbackResponse.setUlbCode(detailsForAggregationField.get(CITY_CODE).toString());
-            feedbackResponse.setDistrict(detailsForAggregationField.get(CITY_DISTRICT_NAME).toString());
-            feedbackResponse.setDistrictCode(detailsForAggregationField.get(CITY_DISTRICT_CODE).toString());
-            feedbackResponse.setRegion(detailsForAggregationField.get(CITY_REGION_NAME).toString());
+            setResponse(hit, feedbackResponse);
         } else if (INITIAL_FUNCTIONARY_NAME.equalsIgnoreCase(aggregationField)) {
             feedbackResponse.setFunctionaryName(name);
-            feedbackResponse
-                    .setFunctionaryMobileNo(detailsForAggregationField.get(INITIAL_FUNCTIONARY_MOBILE_NUMBER) == null
-                            ? NA : detailsForAggregationField.get(INITIAL_FUNCTIONARY_MOBILE_NUMBER).toString());
-            feedbackResponse.setDepartmentName(detailsForAggregationField.get(DEPARTMENT_NAME).toString());
-            feedbackResponse.setDepartmentCode(detailsForAggregationField.get(DEPARTMENT_CODE).toString());
-            feedbackResponse.setDistrict(detailsForAggregationField.get(CITY_DISTRICT_NAME).toString());
-            feedbackResponse.setDistrictCode(detailsForAggregationField.get(CITY_DISTRICT_CODE).toString());
-            feedbackResponse.setRegion(detailsForAggregationField.get(CITY_REGION_NAME).toString());
-            feedbackResponse.setUlbName(detailsForAggregationField.get(CITY_NAME).toString());
-            feedbackResponse.setUlbCode(detailsForAggregationField.get(CITY_CODE).toString());
-            feedbackResponse.setWardName(detailsForAggregationField.get(WARD_NAME).toString());
-            feedbackResponse.setWardCode(detailsForAggregationField.get(WARD_NUMBER).toString());
+            setResponse(hit, feedbackResponse);
+        } else if (LOCALITY_NAME.equalsIgnoreCase(aggregationField)) {
+            feedbackResponse.setLocalityName(name);
+            setResponse(hit, feedbackResponse);
         }
     }
 
-    private Map getUpperLevelDetails(ComplaintDashBoardRequest ivrsRequest, String name) {
-        String[] requiredFields = null;
-        Map upperLevelInfo = new ConcurrentHashMap<>();
-        BoolQueryBuilder boolQuery = prepareQuery(ivrsRequest);
-        if ("districtwise".equalsIgnoreCase(ivrsRequest.getType())) {
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(CITY_DISTRICT_NAME, name));
-            requiredFields = new String[2];
-            requiredFields[0] = CITY_DISTRICT_CODE;
-            requiredFields[1] = CITY_REGION_NAME;
-        } else if ("gradewise".equalsIgnoreCase(ivrsRequest.getType())) {
-            boolQuery.filter(QueryBuilders.matchQuery(CITY_GRADE, name));
-            requiredFields = new String[3];
-            requiredFields[0] = CITY_DISTRICT_CODE;
-            requiredFields[1] = CITY_DISTRICT_NAME;
-            requiredFields[2] = CITY_REGION_NAME;
-        } else if (ULBWISE.equalsIgnoreCase(ivrsRequest.getType())) {
-            boolQuery.filter(QueryBuilders.matchQuery(CITY_NAME, name));
-            requiredFields = new String[5];
-            requiredFields[0] = CITY_CODE;
-            requiredFields[1] = CITY_GRADE;
-            requiredFields[2] = CITY_DISTRICT_NAME;
-            requiredFields[3] = CITY_DISTRICT_CODE;
-            requiredFields[4] = CITY_REGION_NAME;
-        } else if (WARDWISE.equalsIgnoreCase(ivrsRequest.getType())) {
-            boolQuery.filter(QueryBuilders.matchQuery(WARD_NUMBER, name));
-            requiredFields = new String[7];
-            requiredFields[0] = WARD_NAME;
-            requiredFields[1] = CITY_NAME;
-            requiredFields[2] = CITY_CODE;
-            requiredFields[3] = CITY_GRADE;
-            requiredFields[4] = CITY_DISTRICT_NAME;
-            requiredFields[5] = CITY_DISTRICT_CODE;
-            requiredFields[6] = CITY_REGION_NAME;
-        } else if (DEPARTMENTWISE.equalsIgnoreCase(ivrsRequest.getType())) {
-            boolQuery.filter(QueryBuilders.matchQuery(DEPARTMENT_CODE, name));
-            requiredFields = new String[7];
-            requiredFields[0] = DEPARTMENT_NAME;
-            requiredFields[1] = CITY_NAME;
-            requiredFields[2] = CITY_CODE;
-            requiredFields[3] = CITY_GRADE;
-            requiredFields[4] = CITY_DISTRICT_NAME;
-            requiredFields[5] = CITY_DISTRICT_CODE;
-            requiredFields[6] = CITY_REGION_NAME;
-        } else if (FUNCTIONARYWISE.equalsIgnoreCase(ivrsRequest.getType())) {
-            boolQuery.filter(QueryBuilders.matchQuery(INITIAL_FUNCTIONARY_NAME, name));
-            requiredFields = new String[10];
-            requiredFields[0] = INITIAL_FUNCTIONARY_MOBILE_NUMBER;
-            requiredFields[1] = WARD_NAME;
-            requiredFields[2] = WARD_NUMBER;
-            requiredFields[3] = CITY_NAME;
-            requiredFields[4] = CITY_CODE;
-            requiredFields[5] = DEPARTMENT_NAME;
-            requiredFields[6] = DEPARTMENT_CODE;
-            requiredFields[7] = CITY_DISTRICT_NAME;
-            requiredFields[8] = CITY_DISTRICT_CODE;
-            requiredFields[9] = CITY_REGION_NAME;
-        }
-        SearchResponse response = complaintIndexRepository.findAllUpperLevelFields(boolQuery, requiredFields);
-        for (SearchHit hit : response.getHits())
-            upperLevelInfo = hit.sourceAsMap();
-        return upperLevelInfo;
+    private void setResponse(SearchHit[] hit, IVRSFeedBackResponse feedbackResponse) {
+        feedbackResponse.setRegion(hit[0].field(CITY_REGION_NAME).value());
+        feedbackResponse.setDistrict(hit[0].field(CITY_DISTRICT_NAME) == null ? EMPTY : hit[0].field(CITY_DISTRICT_NAME).value());
+        feedbackResponse
+                .setDistrictCode(hit[0].field(CITY_DISTRICT_CODE) == null ? EMPTY : hit[0].field(CITY_DISTRICT_CODE).value());
+        feedbackResponse.setUlbName(hit[0].field(CITY_NAME) == null ? EMPTY : hit[0].field(CITY_NAME).value());
+        feedbackResponse.setUlbCode(hit[0].field(CITY_CODE) == null ? EMPTY : hit[0].field(CITY_CODE).value());
+        feedbackResponse.setUlbGrade(hit[0].field(CITY_GRADE) == null ? EMPTY : hit[0].field(CITY_GRADE).value());
+        feedbackResponse.setLocalityName(hit[0].field(LOCALITY_NAME) == null ? EMPTY : hit[0].field(LOCALITY_NAME).value());
+        feedbackResponse.setWardName(hit[0].field(WARD_NAME) == null ? EMPTY : hit[0].field(WARD_NAME).value());
+        feedbackResponse.setWardCode(hit[0].field(WARD_NUMBER) == null ? EMPTY : hit[0].field(WARD_NUMBER).value());
+        feedbackResponse.setFunctionaryName(
+                hit[0].field(INITIAL_FUNCTIONARY_NAME) == null ? EMPTY : hit[0].field(INITIAL_FUNCTIONARY_NAME).value());
+        feedbackResponse
+                .setFunctionaryMobileNo(hit[0].field(INITIAL_FUNCTIONARY_MOBILE_NUMBER) == null
+                        ? EMPTY : hit[0].field(INITIAL_FUNCTIONARY_MOBILE_NUMBER).value());
+        feedbackResponse.setDepartmentName(hit[0].field(DEPARTMENT_NAME) == null ? EMPTY : hit[0].field(DEPARTMENT_NAME).value());
+        feedbackResponse.setDepartmentCode(hit[0].field(DEPARTMENT_CODE) == null ? EMPTY : hit[0].field(DEPARTMENT_CODE).value());
     }
 
     private BoolQueryBuilder prepareQuery(final ComplaintDashBoardRequest ivrsRequest) {
@@ -1828,25 +1759,9 @@ public class ComplaintIndexService {
             boolQuery = boolQuery.filter(matchQuery(CITY_GRADE, ivrsRequest.getUlbGrade()));
         if (isNotBlank(ivrsRequest.getUlbCode()))
             boolQuery = boolQuery.filter(matchQuery(CITY_CODE, ivrsRequest.getUlbCode()));
+        if (isNotBlank(ivrsRequest.getLocalityName()))
+            boolQuery = boolQuery.filter(matchQuery(LOCALITY_NAME, ivrsRequest.getLocalityName()));
         return boolQuery;
     }
 
-    private String fetchAggregationField(String aggregationType) {
-        String aggregationField = null;
-        if ("regionwise".equalsIgnoreCase(aggregationType))
-            aggregationField = CITY_REGION_NAME;
-        else if ("districtwise".equalsIgnoreCase(aggregationType))
-            aggregationField = CITY_DISTRICT_NAME;
-        else if (ULBWISE.equalsIgnoreCase(aggregationType))
-            aggregationField = CITY_NAME;
-        else if ("gradewise".equalsIgnoreCase(aggregationType))
-            aggregationField = CITY_GRADE;
-        else if (WARDWISE.equalsIgnoreCase(aggregationType))
-            aggregationField = WARD_NUMBER;
-        else if (DEPARTMENTWISE.equalsIgnoreCase(aggregationType))
-            aggregationField = DEPARTMENT_CODE;
-        else if (FUNCTIONARYWISE.equalsIgnoreCase(aggregationType))
-            aggregationField = INITIAL_FUNCTIONARY_NAME;
-        return aggregationField;
-    }
 }

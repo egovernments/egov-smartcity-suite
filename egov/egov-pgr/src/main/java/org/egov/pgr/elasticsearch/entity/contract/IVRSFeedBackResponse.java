@@ -3,23 +3,24 @@ package org.egov.pgr.elasticsearch.entity.contract;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 public class IVRSFeedBackResponse {
-    private String region=EMPTY;
-    private String district=EMPTY;
-    private String districtCode=EMPTY;
-    private String ulbName=EMPTY;
-    private String ulbCode=EMPTY;
-    private String ulbGrade=EMPTY;
-    private String wardName=EMPTY;
-    private String wardCode=EMPTY;
-    private String departmentName=EMPTY;
-    private String departmentCode=EMPTY;
-    private String functionaryName=EMPTY;
-    private String functionaryMobileNo=EMPTY;
-    private long totalComplaint=0;
-    private long totalFeedback=0;
-    private long good=0;
-    private long average=0;
-    private long bad=0;
+    private String region = EMPTY;
+    private String district = EMPTY;
+    private String districtCode = EMPTY;
+    private String ulbName = EMPTY;
+    private String ulbCode = EMPTY;
+    private String ulbGrade = EMPTY;
+    private String wardName = EMPTY;
+    private String wardCode = EMPTY;
+    private String localityName = EMPTY;
+    private String departmentName = EMPTY;
+    private String departmentCode = EMPTY;
+    private String functionaryName = EMPTY;
+    private String functionaryMobileNo = EMPTY;
+    private long totalComplaint = 0;
+    private long totalFeedback = 0;
+    private long good = 0;
+    private long average = 0;
+    private long bad = 0;
 
     public String getRegion() {
         return region;
@@ -85,6 +86,14 @@ public class IVRSFeedBackResponse {
         this.wardCode = wardCode;
     }
 
+    public String getLocalityName() {
+        return localityName;
+    }
+
+    public void setLocalityName(String localityName) {
+        this.localityName = localityName;
+    }
+
     public String getDepartmentName() {
         return departmentName;
     }
@@ -141,11 +150,11 @@ public class IVRSFeedBackResponse {
         this.good = good;
     }
 
-    public long getAvarage() {
+    public long getAverage() {
         return average;
     }
 
-    public void setAvarage(long avarage) {
+    public void setAverage(long avarage) {
         this.average = avarage;
     }
 
@@ -156,5 +165,4 @@ public class IVRSFeedBackResponse {
     public void setBad(long bad) {
         this.bad = bad;
     }
-
 }
