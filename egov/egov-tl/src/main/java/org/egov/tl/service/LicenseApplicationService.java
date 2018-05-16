@@ -73,6 +73,7 @@ import static org.egov.tl.utils.Constants.RENEWLICENSE;
 import static org.egov.tl.utils.Constants.RENEWLICENSEREJECT;
 import static org.egov.tl.utils.Constants.RENEW_WITHOUT_FEE;
 import static org.egov.tl.utils.Constants.SIGNWORKFLOWACTION;
+import static org.egov.tl.utils.Constants.STATUS_ACTIVE;
 
 @Service
 @Transactional(readOnly = true)
@@ -179,7 +180,9 @@ public class LicenseApplicationService extends TradeLicenseService {
             if (isEmpty(license.getLicenseNumber()) && license.isNewApplication()) {
                 license.setLicenseNumber(licenseNumberUtils.generateLicenseNumber());
             }
-            generateAndStoreCertificate(license);
+            if (!license.isCollectionPending()) {
+                generateAndStoreCertificate(license);
+            }
         }
 
         licenseRepository.save(license);
@@ -206,6 +209,9 @@ public class LicenseApplicationService extends TradeLicenseService {
 
     public void collectionTransition(TradeLicense tradeLicense) {
         licenseProcessWorkflowService.collectionWorkflowTransition(tradeLicense);
+        if (tradeLicense.getStatus().getStatusCode().equals(STATUS_ACTIVE)) {
+            generateAndStoreCertificate(tradeLicense);
+        }
     }
 
     public WorkFlowMatrix getWorkflowAPI(TradeLicense tradeLicense, WorkflowBean workflowBean) {
