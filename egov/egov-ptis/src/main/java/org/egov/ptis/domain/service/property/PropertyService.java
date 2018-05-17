@@ -3989,11 +3989,11 @@ public class PropertyService {
     }
 
     public boolean isDuplicateDoorNumber(final String houseNo, final BasicProperty basicProperty) {
-        final Query qry = propPerServ.getSession().createQuery(
-                "from BasicPropertyImpl bp where bp.address.houseNoBldgApt = :houseNo  and bp.active = 'Y'");
-        qry.setParameter("houseNo", houseNo);
+        final Query basicPropByDoorNo = propPerServ.getSession().createQuery(
+                "from BasicPropertyImpl bp where bp.address.houseNoBldgApt = :houseNo  and bp.active = 'Y' and bp.upicNo is not null");
+        basicPropByDoorNo.setParameter("houseNo", houseNo);
         // this condition is required because, after rejection the validation shouldn't happen for the same houseNo
-        return !qry.list().isEmpty()
+        return !basicPropByDoorNo.list().isEmpty()
                 && (basicProperty == null || !basicProperty.getAddress().getHouseNoBldgApt().equals(houseNo));
     }
 
