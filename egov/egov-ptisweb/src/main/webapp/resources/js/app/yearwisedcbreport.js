@@ -215,10 +215,10 @@ function callAjaxByBoundary() {
 							},
 							"sTitle" : "Name"
 						}, {
-							"data" : "houseNo",
+							"data" : "doorNo",
 							"sTitle" : "Door No"
 						}, {
-							"data" : "ownerName",
+							"data" : "ownersName",
 							"sTitle" : "Owner Name"
 						}, {
 							"data" : "count",
