@@ -183,24 +183,25 @@ public final class ComplaintIndexAggregationBuilder {
 
         return aggregationField;
     }
+
     public static String fetchAggregationField(String aggregationType) {
         String aggregationField = null;
-        if ("regionwise".equalsIgnoreCase(aggregationType))
+        if (DASHBOARD_GROUPING_REGION.equalsIgnoreCase(aggregationType))
             aggregationField = CITY_REGION_NAME;
-        else if ("districtwise".equalsIgnoreCase(aggregationType))
+        else if (DASHBOARD_GROUPING_DISTRICT.equalsIgnoreCase(aggregationType))
             aggregationField = CITY_DISTRICT_NAME;
-        else if ("ulbwise".equalsIgnoreCase(aggregationType))
+        else if (DASHBOARD_GROUPING_CITY.equalsIgnoreCase(aggregationType))
             aggregationField = "cityName";
-        else if ("gradewise".equalsIgnoreCase(aggregationType))
+        else if (DASHBOARD_GROUPING_ULBGRADE.equalsIgnoreCase(aggregationType))
             aggregationField = "cityGrade";
-        else if ("wardwise".equalsIgnoreCase(aggregationType))
+        else if (DASHBOARD_GROUPING_WARDWISE.equalsIgnoreCase(aggregationType))
             aggregationField = WARD_NUMBER;
-        else if ("departmentwise".equalsIgnoreCase(aggregationType))
+        else if (DASHBOARD_GROUPING_DEPARTMENTWISE.equalsIgnoreCase(aggregationType))
             aggregationField = "departmentCode";
-        else if ("functionarywise".equalsIgnoreCase(aggregationType))
+        else if ("functionary".equalsIgnoreCase(aggregationType))
             aggregationField = INITIAL_FUNCTIONARY_NAME;
-        else if("localitywise".equalsIgnoreCase(aggregationType))
-            aggregationField=LOCALITY_NAME;
+        else if ("locality".equalsIgnoreCase(aggregationType))
+            aggregationField = LOCALITY_NAME;
         return aggregationField;
     }
 }

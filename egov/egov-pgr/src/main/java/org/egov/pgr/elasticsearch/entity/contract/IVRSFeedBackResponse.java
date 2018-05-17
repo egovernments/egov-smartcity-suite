@@ -3,8 +3,8 @@ package org.egov.pgr.elasticsearch.entity.contract;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 public class IVRSFeedBackResponse {
-    private String region = EMPTY;
-    private String district = EMPTY;
+    private String regionName = EMPTY;
+    private String districtName = EMPTY;
     private String districtCode = EMPTY;
     private String ulbName = EMPTY;
     private String ulbCode = EMPTY;
@@ -22,20 +22,20 @@ public class IVRSFeedBackResponse {
     private long average = 0;
     private long bad = 0;
 
-    public String getRegion() {
-        return region;
+    public String getRegionName() {
+        return regionName;
     }
 
-    public void setRegion(String region) {
-        this.region = region;
+    public void setRegionName(String regionName) {
+        this.regionName = regionName;
     }
 
-    public String getDistrict() {
-        return district;
+    public String getDistrictName() {
+        return districtName;
     }
 
-    public void setDistrict(String district) {
-        this.district = district;
+    public void setDistrictName(String districtName) {
+        this.districtName = districtName;
     }
 
     public String getDistrictCode() {

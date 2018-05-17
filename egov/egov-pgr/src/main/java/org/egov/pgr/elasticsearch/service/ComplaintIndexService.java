@@ -84,8 +84,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.apache.commons.lang.time.DateUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -1691,9 +1689,9 @@ public class ComplaintIndexService {
         final TopHits topHits = termsBucket.getAggregations().get("paramDetails");
         final SearchHit[] hit = topHits.getHits().getHits();
         if (CITY_REGION_NAME.equalsIgnoreCase(aggregationField)) {
-            feedbackResponse.setRegion(name);
+            feedbackResponse.setRegionName(name);
         } else if (CITY_DISTRICT_NAME.equalsIgnoreCase(aggregationField)) {
-            feedbackResponse.setDistrict(name);
+            feedbackResponse.setDistrictName(name);
             setResponse(hit, feedbackResponse);
         } else if (CITY_GRADE.equalsIgnoreCase(aggregationField)) {
             feedbackResponse.setUlbGrade(name);
@@ -1717,8 +1715,8 @@ public class ComplaintIndexService {
     }
 
     private void setResponse(SearchHit[] hit, IVRSFeedBackResponse feedbackResponse) {
-        feedbackResponse.setRegion(hit[0].field(CITY_REGION_NAME).value());
-        feedbackResponse.setDistrict(hit[0].field(CITY_DISTRICT_NAME) == null ? EMPTY : hit[0].field(CITY_DISTRICT_NAME).value());
+        feedbackResponse.setRegionName(hit[0].field(CITY_REGION_NAME).value());
+        feedbackResponse.setDistrictName(hit[0].field(CITY_DISTRICT_NAME) == null ? EMPTY : hit[0].field(CITY_DISTRICT_NAME).value());
         feedbackResponse
                 .setDistrictCode(hit[0].field(CITY_DISTRICT_CODE) == null ? EMPTY : hit[0].field(CITY_DISTRICT_CODE).value());
         feedbackResponse.setUlbName(hit[0].field(CITY_NAME) == null ? EMPTY : hit[0].field(CITY_NAME).value());
