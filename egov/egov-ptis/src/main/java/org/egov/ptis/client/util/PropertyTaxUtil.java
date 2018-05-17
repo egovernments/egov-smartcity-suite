@@ -894,10 +894,10 @@ public class PropertyTaxUtil {
     @SuppressWarnings("unchecked")
     public Map<Date, Property> getPropertiesForPenlatyCalculation(final BasicProperty basicProperty) {
         final String query = "select p from PropertyImpl p " + "inner join fetch p.basicProperty bp "
-                + "where bp.upicNo = ? and bp.active = true " + "and (p.remarks = null or p.remarks <> ?) "
+                + "where bp.upicNo = :upicNo and bp.active = true " + "and (p.remarks = null or p.remarks <> :remarks) "
                 + "order by p.createdDate";
         final List<Property> allProperties = entityManager.unwrap(Session.class).createQuery(query)
-                .setString(0, basicProperty.getUpicNo()).setString(1, PropertyTaxConstants.STR_MIGRATED_REMARKS).list();
+                .setString("upicNo", basicProperty.getUpicNo()).setString("remarks", PropertyTaxConstants.STR_MIGRATED_REMARKS).list();
         new ArrayList<Property>();
         final List<String> mutationsCodes = Arrays.asList("NEW", "MODIFY");
         Property property = null;

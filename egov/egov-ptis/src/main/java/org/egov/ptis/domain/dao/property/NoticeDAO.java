@@ -70,7 +70,7 @@ import java.util.Locale;
 @Transactional(readOnly = true)
 public class NoticeDAO {
 
-	public final static Logger LOGGER = Logger.getLogger(NoticeDAO.class);
+	public static final  Logger LOGGER = Logger.getLogger(NoticeDAO.class);
 
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -85,9 +85,9 @@ public class NoticeDAO {
 			Query query = getCurrentSession()
 					.createSQLQuery(
 							"insert into EGPT_NOTICE (ID,ID_MODULE,NOTICETYPE,NOTICENO,NOTICEDATE,ID_USER) "
-									+ "values (SEQ_EGPT_NOTICE.nextval,?,?,?,sysdate,?")
-					.setParameter(0, notice.getModuleId()).setParameter(1, notice.getNoticeType())
-					.setParameter(2, notice.getNoticeNo()).setParameter(3, notice.getUserId());
+									+ "values (SEQ_EGPT_NOTICE.nextval,:moduleId,:noticeType,:noticeNo,sysdate,?")
+					.setParameter("moduleId", notice.getModuleId()).setParameter("noticeType", notice.getNoticeType())
+					.setParameter("noticeNo", notice.getNoticeNo()).setParameter(3, notice.getUserId());
 			query.executeUpdate();
 			isNoticeSaved = true;
 		} catch (Exception e) {
@@ -109,14 +109,14 @@ public class NoticeDAO {
 		try {
 			List results = getCurrentSession()
 					.createSQLQuery(
-							"select DOCUMENT,IS_BLOB,DOCUMENT1 from notice where NOTICENO = ? and OBJECTNO = ?")
-					.setParameter(0, noticeNo).setParameter(1, objectNo).list();
+							"select DOCUMENT,IS_BLOB,DOCUMENT1 from notice where NOTICENO = :noticeNo and OBJECTNO = :objectNo")
+					.setParameter("noticeNo", noticeNo).setParameter("objectNo", objectNo).list();
 			for (Object result : results) {
 				Object[] objects = (Object[]) result;
 				isBlob = (String) objects[1];
 				if (isBlob != null && isBlob.equals("Y")) {
 					istream = (InputStream) objects[2];
-				} else if ((isBlob == null) || (isBlob != null && isBlob.equals("N"))) {
+				} else if (isBlob == null || isBlob.equals("N")) {
 					istream = (InputStream) objects[0];
 				}
 			}
@@ -128,11 +128,11 @@ public class NoticeDAO {
 
 	@SuppressWarnings("unchecked")
 	public List<PtNotice> getNoticeDetails(SearchNoticeForm searchNoticeForm) {
-		StringBuffer queryStr = new StringBuffer(500);
+		StringBuilder queryStr = new StringBuilder(500);
 		List params = new ArrayList();
 		ResultSet resultSet = null;
 		PtNotice notice = null;
-		List<PtNotice> searchNoticeList = new ArrayList<PtNotice>();
+		List<PtNotice> searchNoticeList = new ArrayList<>();
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
 		try {
 

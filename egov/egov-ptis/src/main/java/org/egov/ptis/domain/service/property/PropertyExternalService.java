@@ -2087,7 +2087,7 @@ public class PropertyExternalService {
             getVacantLandDetails(assessmentInfo, propertyDetail, propertyID);
 
         final Query query = entityManager.createNamedQuery("DOCUMENT_TYPE_DETAILS_BY_ID");
-        query.setParameter(1, propertyID.getBasicProperty().getId());
+        query.setParameter("basicProperty", propertyID.getBasicProperty().getId());
         List<DocumentTypeDetails> docTypeDetailsList = query.getResultList();
         if (!docTypeDetailsList.isEmpty()) {
             DocumentTypeDetails docTypeDetails = docTypeDetailsList.get(0);

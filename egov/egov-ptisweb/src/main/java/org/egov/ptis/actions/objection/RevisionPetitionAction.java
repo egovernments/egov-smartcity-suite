@@ -1180,7 +1180,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         if(objection.getType().equals(NATURE_OF_WORK_RP) && objection.getBasicProperty().getProperty().getPropertyDetail().isStructure())
         try {
             final Query query = entityManager.createNamedQuery("DOCUMENT_TYPE_DETAILS_BY_ID");
-            query.setParameter(1, objection.getBasicProperty().getId());
+            query.setParameter("basicProperty", objection.getBasicProperty().getId());
             setDocumentTypeDetails((DocumentTypeDetails) query.getSingleResult());
         } catch (final Exception e) {
             logger.error("No Document type details present for Basicproperty " + e);

@@ -105,6 +105,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STRING_EMPTY;
 @Transactional(readOnly = true)
 public class BillService {
 
+    private static final String AND = " AND ";
     private static final Logger LOGGER = Logger.getLogger(BillService.class);
     private static final String STR_BILL_SHORTCUT = "B";
 
@@ -203,7 +204,7 @@ public class BillService {
     }
 
     private Map<String, Object> prepareReportParams(BasicProperty basicProperty) {
-        final Map<String, Object> reportParams = new HashMap<String, Object>();
+        final Map<String, Object> reportParams = new HashMap<>();
         City city = cityService.getCityByCode(cityService.getCityCode());
         String owner = basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster().getType();
         String ownerType = "";
@@ -234,11 +235,11 @@ public class BillService {
 
         final Long count = (Long) entityManager.unwrap(Session.class)
                 .createQuery(
-                        "SELECT COUNT (*) FROM EgBill WHERE module = ? "
-                                + "AND egBillType.code = ? AND consumerId = ? AND is_Cancelled = 'N' "
-                                + "AND issueDate between ? and ? ").setEntity(0, currentInstallment.getModule())
-                .setString(1, BILLTYPE_MANUAL).setString(2, basicProperty.getUpicNo())
-                .setDate(3, currentInstallment.getFromDate()).setDate(4, currentInstallment.getToDate()).list().get(0);
+                        "SELECT COUNT (*) FROM EgBill WHERE module = :module "
+                                + "AND egBillType.code = :billType AND consumerId = :consumerId AND is_Cancelled = 'N' "
+                                + "AND issueDate between :fromDate and :toDate ").setEntity("module", currentInstallment.getModule())
+                .setString("billType", BILLTYPE_MANUAL).setString("consumerId", basicProperty.getUpicNo())
+                .setDate("fromDate", currentInstallment.getFromDate()).setDate("toDate", currentInstallment.getToDate()).list().get(0);
         return count.intValue();
     }
 
@@ -347,21 +348,19 @@ public class BillService {
                     zoneParamString.append(bbg.getZone().getId()).append(", ");
                 count++;
             }
-            if (wardParamString != null)
-                if (wardParamString.charAt(wardParamString.length() - 2) == ',')
+            if (wardParamString != null && wardParamString.charAt(wardParamString.length() - 2) == ',')
                     wardParamString.setCharAt(wardParamString.length() - 2, ')');
-            if (zoneParamString != null)
-                if (zoneParamString.charAt(zoneParamString.length() - 2) == ',')
+            if (zoneParamString != null && zoneParamString.charAt(zoneParamString.length() - 2) == ',')
                     zoneParamString.setCharAt(zoneParamString.length() - 2, ')');
 
             if (wardParamString != null && zoneParamString == null)
-                queryString.append(" AND ").append("bp.propertyID.ward.parent.id||'-'||bp.propertyID.ward.id")
+                queryString.append(AND).append("bp.propertyID.ward.parent.id||'-'||bp.propertyID.ward.id")
                         .append(" IN ").append(wardParamString.toString());
             else if (zoneParamString != null && wardParamString == null)
-                queryString.append(" AND ").append("bp.propertyID.zone.id").append(" IN ")
+                queryString.append(AND).append("bp.propertyID.zone.id").append(" IN ")
                         .append(zoneParamString.toString());
             else if (wardParamString != null && zoneParamString != null)
-                queryString.append(" AND ").append("(bp.propertyID.ward.parent.id||'-'||bp.propertyID.ward.id")
+                queryString.append(AND).append("(bp.propertyID.ward.parent.id||'-'||bp.propertyID.ward.id")
                         .append(" IN ").append(wardParamString.toString()).append(" OR ")
                         .append("bp.propertyID.zone.id").append(" IN ").append(zoneParamString.toString()).append(')');
         }
@@ -399,9 +398,7 @@ public class BillService {
         query.setLong("installment", currentInstallment.getId());
         if (wardId != null && wardId != -1)
             query.setLong("wardid", wardId);
-
-        final List<BulkBillGeneration> bbgList = query.list();
-        return bbgList;
+        return (List<BulkBillGeneration>)query.list();
     }
 
     /**

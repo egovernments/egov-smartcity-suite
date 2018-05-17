@@ -100,7 +100,8 @@ public class AjaxCommonController {
         final AmalgamatedPropInfo amalgamatedProp = new AmalgamatedPropInfo();
         amalgamatedProp.setValidationMsg("");
         final BasicProperty basicProp = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
-        String amalgPropType = basicProp.getProperty().getPropertyDetail().getPropertyTypeMaster().getType();
+        String amalgPropType = basicProp.getProperty().getPropertyDetail().getPropertyTypeMaster() == null ? ""
+                : basicProp.getProperty().getPropertyDetail().getPropertyTypeMaster().getType();
         amalgamatedProp.setAssessmentNo(assessmentNo);
         final BasicProperty retainerBasicProp = basicPropertyDAO.getBasicPropertyByPropertyID(retainerAssessmentNo);
         String retainerPropType = retainerBasicProp.getProperty().getPropertyDetail().getPropertyTypeMaster().getType();

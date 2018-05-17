@@ -274,7 +274,7 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
     @SuppressWarnings("unchecked")
     public List<PtNotice> getNoticeByAssessmentNumner(final String assessementNumber) {
         final javax.persistence.Query qry = eManager.createNamedQuery("getAllNoticesByAssessmentNo");
-        qry.setParameter(1, assessementNumber);
+        qry.setParameter("upicNo", assessementNumber);
         return qry.getResultList();
     }
 

@@ -583,10 +583,11 @@ public class SearchNoticesAction extends SearchFormAction {
     @SuppressWarnings("unchecked")
     private List<PtNotice> getNoticeBySearchParameter() {
         final Map<String, Object> map = getCriteriaString();
-        return this.persistenceService.findAllBy(
+        final List<PtNotice> noticeList = this.persistenceService.findAllBy(
                 prepareSearchQuery(map.get("criteriaString")), ((ArrayList<Object>) map.get("params")).toArray());
+        return noticeList;
     }
-
+    
     /**
      * @param criteria
      * @return query string
