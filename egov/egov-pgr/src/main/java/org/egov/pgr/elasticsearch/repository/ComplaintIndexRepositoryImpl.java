@@ -145,6 +145,7 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
     private static final String REGION_NAME="cityRegionName";
     private static final String LOCALITY_NUMBER="localityNo";
     private static final String DISTRICT_CODE="cityDistrictCode";
+    private static final String FEEDBACK_RATING="feedbackRating";
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
 
@@ -816,7 +817,7 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
             String aggregationField) {
         return elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
                 .setQuery(feedBackQuery).addAggregation(AggregationBuilders.terms("typeAggr").field(aggregationField).size(130)
-                        .subAggregation(AggregationBuilders.terms("countAggr").field("feedbackRating"))
+                        .subAggregation(AggregationBuilders.terms("countAggr").field(FEEDBACK_RATING))
                         .subAggregation(addFieldBasedOnAggField(aggregationField)))
                 .execute().actionGet();
     }
@@ -869,5 +870,25 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                     .addField(DISTRICT_CODE).addField(REGION_NAME);
         }
         return field;
+    }
+    
+   
+    public SearchResponse findCategoryWiseFeedBackRatingDetails(ComplaintDashBoardRequest ivrsFeedBackRequest,
+            BoolQueryBuilder feedBackQuery) {
+        if (isNotBlank(ivrsFeedBackRequest.getCategoryId())||isNotBlank(ivrsFeedBackRequest.getCategoryName())) {
+            return elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
+                    .setQuery(feedBackQuery)
+                    .addAggregation(AggregationBuilders.terms("categoryAggr").field("categoryName").size(130)
+                            .subAggregation(AggregationBuilders.terms("complaintTypeAggr").field("complaintTypeName")
+                                    .subAggregation(AggregationBuilders.terms("countAggr").field(FEEDBACK_RATING))))
+                    .execute().actionGet();
+        } else {
+            return elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
+                    .setQuery(feedBackQuery)
+                    .addAggregation(AggregationBuilders.terms("categoryAggr").field("categoryName").size(130)
+                            .subAggregation(AggregationBuilders.terms("countAggr").field(FEEDBACK_RATING)))
+                    .execute().actionGet();
+        }
+
     }
 }

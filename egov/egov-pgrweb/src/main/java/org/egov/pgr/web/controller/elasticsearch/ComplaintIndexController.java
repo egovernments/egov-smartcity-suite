@@ -252,4 +252,9 @@ public class ComplaintIndexController {
         
         return complaintIndexService.getDetailsBasedOnFeedBack(ivrsRequest);
     }
+
+    @RequestMapping(value = "/categorywisefeedback", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<IVRSFeedBackResponse> getCategoryWiseFeedBack(@RequestBody final ComplaintDashBoardRequest ivrsRequest) {
+        return complaintIndexService.getCategoryWiseFeedBackDetails(ivrsRequest);
+}
 }

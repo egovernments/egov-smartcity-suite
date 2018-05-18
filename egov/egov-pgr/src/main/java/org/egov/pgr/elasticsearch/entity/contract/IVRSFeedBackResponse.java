@@ -21,6 +21,8 @@ public class IVRSFeedBackResponse {
     private long good = 0;
     private long average = 0;
     private long bad = 0;
+    private String compalintType = EMPTY;
+    private String complaintCategory = EMPTY;
 
     public String getRegionName() {
         return regionName;
@@ -164,5 +166,21 @@ public class IVRSFeedBackResponse {
 
     public void setBad(long bad) {
         this.bad = bad;
+    }
+
+    public String getCompalintType() {
+        return compalintType;
+    }
+
+    public void setCompalintType(String compalintType) {
+        this.compalintType = compalintType;
+    }
+
+    public String getComplaintCategory() {
+        return complaintCategory;
+    }
+
+    public void setComplaintCategory(String complaintCategory) {
+        this.complaintCategory = complaintCategory;
     }
 }

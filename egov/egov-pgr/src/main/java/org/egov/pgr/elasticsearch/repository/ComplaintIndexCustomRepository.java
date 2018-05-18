@@ -89,4 +89,7 @@ public interface ComplaintIndexCustomRepository {
 
     SearchResponse findFeedBackRatingDetails(ComplaintDashBoardRequest ivrsFeedBackRequest, BoolQueryBuilder query,
             String aggregationField);
+
+    SearchResponse findCategoryWiseFeedBackRatingDetails(ComplaintDashBoardRequest ivrsFeedBackRequest,
+            BoolQueryBuilder feedBackQuery);
 }

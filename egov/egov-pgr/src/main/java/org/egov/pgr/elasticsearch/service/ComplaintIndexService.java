@@ -1674,11 +1674,11 @@ public class ComplaintIndexService {
     }
 
     private void getDifferentRatingCounts(IVRSFeedBackResponse feedbackResponse, Bucket countBucket) {
-        if ("1".equals(countBucket.getKey().toString())) {
+        if ("1".equals(countBucket.getKeyAsString())) {
             feedbackResponse.setGood(countBucket.getDocCount());
-        } else if ("3".equals(countBucket.getKey().toString())) {
+        } else if ("3".equals(countBucket.getKeyAsString())) {
             feedbackResponse.setAverage(countBucket.getDocCount());
-        } else if ("2".equals(countBucket.getKey().toString())) {
+        } else if ("2".equals(countBucket.getKeyAsString())) {
             feedbackResponse.setBad(countBucket.getDocCount());
         }
     }
@@ -1759,7 +1759,52 @@ public class ComplaintIndexService {
             boolQuery = boolQuery.filter(matchQuery(CITY_CODE, ivrsRequest.getUlbCode()));
         if (isNotBlank(ivrsRequest.getLocalityName()))
             boolQuery = boolQuery.filter(matchQuery(LOCALITY_NAME, ivrsRequest.getLocalityName()));
+        if (isNotBlank(ivrsRequest.getCategoryName()))
+            boolQuery = boolQuery.filter(matchQuery("categoryName", ivrsRequest.getCategoryName()));
+        if (isNotBlank(ivrsRequest.getComplaintTypeName()))
+            boolQuery = boolQuery.filter(matchQuery("complaintTypeName", ivrsRequest.getComplaintTypeName()));
+        if (isNotBlank(ivrsRequest.getCategoryId()))
+            boolQuery = boolQuery.filter(matchQuery("categoryId", ivrsRequest.getCategoryId()));
+        if (isNotBlank(ivrsRequest.getComplaintTypeCode()))
+            boolQuery = boolQuery.filter(matchQuery("complaintTypeCode", ivrsRequest.getComplaintTypeCode()));
         return boolQuery;
     }
-
+    
+    public List<IVRSFeedBackResponse> getCategoryWiseFeedBackDetails(final ComplaintDashBoardRequest ivrsRequest) {
+        List<IVRSFeedBackResponse> feedbackResponseList = new ArrayList<>();
+        SearchResponse response = complaintIndexRepository.findCategoryWiseFeedBackRatingDetails(ivrsRequest,
+                prepareQuery(ivrsRequest));
+        if (isNotBlank(ivrsRequest.getCategoryName()) || isNotBlank(ivrsRequest.getCategoryId())) {
+            Terms terms = response.getAggregations().get("categoryAggr");
+            for (Bucket termsBucket : terms.getBuckets()) {
+                Terms complaintTypeTerms = termsBucket.getAggregations().get("complaintTypeAggr");
+                for (Bucket complaintTypeBucket : complaintTypeTerms.getBuckets()) {
+                    IVRSFeedBackResponse feedbackResponse = new IVRSFeedBackResponse();
+                    feedbackResponse.setCompalintType(complaintTypeBucket.getKeyAsString());
+                    feedbackResponse.setTotalComplaint(complaintTypeBucket.getDocCount());
+                    feedbackResponse.setTotalFeedback(complaintTypeBucket.getDocCount());
+                    getTypeWiseCount(complaintTypeBucket, feedbackResponse);
+                    feedbackResponseList.add(feedbackResponse);
+                }
+            }
+        } else {
+            Terms terms = response.getAggregations().get("categoryAggr");
+            for (Bucket termsBucket : terms.getBuckets()) {
+                IVRSFeedBackResponse feedbackResponse = new IVRSFeedBackResponse();
+                feedbackResponse.setComplaintCategory(termsBucket.getKeyAsString());
+                feedbackResponse.setTotalComplaint(termsBucket.getDocCount());
+                feedbackResponse.setTotalFeedback(termsBucket.getDocCount());
+                getTypeWiseCount(termsBucket, feedbackResponse);
+                feedbackResponseList.add(feedbackResponse);
+            }
+        }
+        return feedbackResponseList;
+    }
+    private void getTypeWiseCount(Bucket cateGoryBucket, IVRSFeedBackResponse feedbackResponse) {
+        final Terms countTerms = cateGoryBucket.getAggregations().get("countAggr");
+        for (Bucket countBucket : countTerms.getBuckets()) {
+            getDifferentRatingCounts(feedbackResponse, countBucket);
+        }
+    }
 }
+
