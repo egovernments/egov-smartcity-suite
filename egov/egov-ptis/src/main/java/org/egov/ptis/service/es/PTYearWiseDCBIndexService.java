@@ -162,7 +162,7 @@ public class PTYearWiseDCBIndexService {
             serviceWiseResponse.setArrearTotalDemand(new BigDecimal(responseFields.get(ARREARDEMAND).toString())
                     .add(new BigDecimal(responseFields.get(ARREAR_INTEREST_DMD).toString())));
             serviceWiseResponse.setCurrentDemand(new BigDecimal(responseFields.get(CURRENT_DMD).toString()));
-            serviceWiseResponse.setCurrentPenDemand(new BigDecimal(responseFields.get(CURRENT_DMD).toString()));
+            serviceWiseResponse.setCurrentPenDemand(new BigDecimal(responseFields.get(CURR_INTEREST_DMD).toString()));
             serviceWiseResponse.setCurrentTotalDemand(new BigDecimal(responseFields.get(CURRENT_DMD).toString())
                     .add(new BigDecimal(responseFields.get(CURR_INTEREST_DMD).toString())));
             serviceWiseResponse.setTotalDemand(new BigDecimal(responseFields.get(ARREAR_INTEREST_DMD).toString())
