@@ -296,6 +296,22 @@
 			<div class="col-xs-3 add-margin">EB Block</div>
 			<div class="col-xs-3 add-margin view-content">N/A</div>
 		</div>
+		<div class="row add-border">
+			<div class="col-xs-3 add-margin">
+				<s:text name="latitude"></s:text> 
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				<s:property default="N/A"
+					value="%{basicProperty.latitude}" />
+			</div>
+			<div class="col-xs-3 add-margin">
+				<s:text name="longitude"></s:text>
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				<s:property default="N/A"
+					value="%{basicProperty.longitude}" />
+			</div>
+		</div>
 	</div>
 </div>
 
