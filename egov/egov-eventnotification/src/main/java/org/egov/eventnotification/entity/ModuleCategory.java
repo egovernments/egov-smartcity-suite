@@ -19,7 +19,7 @@ import org.hibernate.validator.constraints.Length;
 public class ModuleCategory {
 
     public static final String SEQ_EGEVNTNOTIFICATION_CATEGORY = "seq_egevntnotification_category";
-    
+
     @Id
     @GeneratedValue(generator = SEQ_EGEVNTNOTIFICATION_CATEGORY, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -30,44 +30,42 @@ public class ModuleCategory {
 
     @NotNull
     private Boolean active;
-    
+
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "module_id")
     private TemplateModule module;
 
-	public TemplateModule getModule() {
-		return module;
-	}
+    public TemplateModule getModule() {
+        return module;
+    }
 
-	public void setModule(TemplateModule module) {
-		this.module = module;
-	}
+    public void setModule(TemplateModule module) {
+        this.module = module;
+    }
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public Boolean getActive() {
-		return active;
-	}
+    public Boolean getActive() {
+        return active;
+    }
 
-	public void setActive(Boolean active) {
-		this.active = active;
-	}
-    
-    
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
 }
-

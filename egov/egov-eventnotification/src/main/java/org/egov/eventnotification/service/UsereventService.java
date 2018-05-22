@@ -61,17 +61,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class UsereventService {
 
-    private final UsereventRepository usereventRepository;
-    private final EventRepository eventRepository;
-    private final UserRepository userRepository;
+    @Autowired
+    private UsereventRepository usereventRepository;
 
     @Autowired
-    public UsereventService(final UsereventRepository usereventRepository, final EventRepository eventRepository,
-            final UserRepository userRepository) {
-        this.usereventRepository = usereventRepository;
-        this.eventRepository = eventRepository;
-        this.userRepository = userRepository;
-    }
+    private EventRepository eventRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     /**
      * This method is used to save the user event mapping.
@@ -81,15 +78,14 @@ public class UsereventService {
      * @return List<Event>
      */
     @Transactional
-    public Userevent persistUserevent(String userid, String eventid) {
-        Userevent existingUserEvent = usereventRepository.getUsereventByEventAndUser(Long.parseLong(eventid),
-                Long.parseLong(userid));
-        if (null == existingUserEvent) {
-            Event event = eventRepository.findOne(Long.parseLong(eventid));
-            User user = userRepository.findOne(Long.parseLong(userid));
+    public Userevent save(Long userid, Long eventid) {
+        Userevent existingUserEvent = usereventRepository.findByEventIdAndUserId(eventid, userid);
+        if (existingUserEvent == null) {
+            Event event = eventRepository.findOne(eventid);
+            User user = userRepository.findOne(userid);
             Userevent userevent = new Userevent();
-            userevent.setUserid(user);
-            userevent.setEventid(event);
+            userevent.setUserId(user.getId());
+            userevent.setEventId(event.getId());
             return usereventRepository.save(userevent);
         } else
             return null;
@@ -101,7 +97,7 @@ public class UsereventService {
      * @return Long
      */
     public Long countUsereventByEventId(Long id) {
-        return usereventRepository.countUsereventByEventId(id);
+        return usereventRepository.countByEventId(id);
     }
 
     /**
@@ -111,6 +107,6 @@ public class UsereventService {
      * @return Userevent
      */
     public Userevent getUsereventByEventAndUser(Long eventid, Long userid) {
-        return usereventRepository.getUsereventByEventAndUser(eventid, userid);
+        return usereventRepository.findByEventIdAndUserId(eventid, userid);
     }
 }

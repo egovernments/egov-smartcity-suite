@@ -218,7 +218,7 @@ $(document).ready(function(){
                 if (results[0]) {
                     address = results[0].formatted_address;
                     //$('#location').typeahead('val', address);
-                    //$('#latlngaddress').val(address);
+                    $('#address').val(address);
                 }
             }
         });

@@ -47,21 +47,27 @@
  */
 package org.egov.eventnotification.scheduler;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.egov.eventnotification.constants.EventnotificationConstant;
+import org.egov.eventnotification.constants.Constants;
 import org.egov.eventnotification.entity.NotificationSchedule;
 import org.egov.eventnotification.service.ScheduleService;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.persistence.entity.enums.UserType;
+import org.egov.ptis.domain.entity.property.DefaultersInfo;
 import org.egov.pushbox.application.entity.MessageContent;
 import org.egov.pushbox.application.service.PushNotificationService;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 import org.quartz.JobKey;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.ContextLoader;
@@ -81,22 +87,32 @@ public class NotificationSchedulerJob implements Job {
      * This calls the push box api for to send push notification.
      */
     @Override
-    public void execute(JobExecutionContext context) throws JobExecutionException {
+    public void execute(JobExecutionContext context) {
         SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
         JobKey jobKey = context.getJobDetail().getKey();
-        LOGGER.info("Daily Job of Notification Scheduler with Job Key : " + jobKey + " executing at " + new Date());
+        LOGGER.info("Notification scheduler with job key " + jobKey + " executing at " + new Date());
 
         JobDataMap dataMap = context.getJobDetail().getJobDataMap();
 
         ApplicationContext springContext = WebApplicationContextUtils.getWebApplicationContext(
                 ContextLoader.getCurrentWebApplicationContext().getServletContext());
         ScheduleService notificationscheduleService = (ScheduleService) springContext.getBean("scheduleService");
-        PushNotificationService pushNotificationService = (PushNotificationService) springContext
-                .getBean("pushNotificationService");
-        User user = (User) dataMap.get(EventnotificationConstant.USER);
 
+        PushNotificationService pushNotificationService = (PushNotificationService) springContext
+                .getBean(Constants.PUSH_NOTIFICATION_SERVICE);
+
+        UserService userService = (UserService) springContext.getBean(Constants.USER_SERVICE);
+
+        User user = (User) dataMap.get(Constants.USER);
+        LOGGER.info("Scheduler id =====" + String.valueOf(dataMap.get(Constants.SCHEDULEID)));
+        LOGGER.info("User id===== " + user.getId());
         NotificationSchedule notificationSchedule = notificationscheduleService
-                .findOne(Long.parseLong(String.valueOf(dataMap.get(EventnotificationConstant.SCHEDULEID))));
+                .findOne(Long.parseLong(String.valueOf(dataMap.get(Constants.SCHEDULEID))));
+
+        /*
+         * notificationscheduleService.updateScheduleStatus(Long.parseLong(String.valueOf(dataMap.get(Constants.SCHEDULEID))),
+         * user, Constants.SCHEDULE_RUNNING);
+         */
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date(notificationSchedule.getStartDate()));
@@ -112,23 +128,91 @@ public class NotificationSchedulerJob implements Job {
         calendarEnd.set(Calendar.HOUR, hours1 + 1);
         calendarEnd.set(Calendar.MINUTE, minutes1);
 
-        // Todo: Need Json or Sql to fetch all the user information to create notice type message
+        DateFormat formatter = new SimpleDateFormat(Constants.DDMMYYYY);
 
-        MessageContent messageContent = new MessageContent();
-        messageContent.setCreatedDateTime(new Date().getTime());
-        messageContent.setEventDateTime(calendar.getTimeInMillis());
-        messageContent.setExpiryDate(calendarEnd.getTimeInMillis());
-        messageContent.setMessageBody(notificationSchedule.getMessageTemplate());
-        messageContent.setModuleName(notificationSchedule.getTemplatename());
-        messageContent.setNotificationDateTime(new Date().getTime());
-        messageContent.setNotificationType(notificationSchedule.getNotificationType());
-        messageContent.setSendAll(Boolean.TRUE);
+        if (notificationSchedule.getNotificationType().equalsIgnoreCase(Constants.NOTIFICATION_TYPE)) {
+            List<DefaultersInfo> defaultersList = (List<DefaultersInfo>) dataMap.get(Constants.DEFAULTERS_LIST);
+            if (null != defaultersList) {
+                LOGGER.info("List of User Obtained : " + defaultersList.size());
+                for (DefaultersInfo defaultersInfo : defaultersList) {
+                    MessageContent messageContent = new MessageContent();
 
-        messageContent.setSenderId(user.getId());
-        messageContent.setSenderName(user.getName());
+                    String message = notificationSchedule.getMessageTemplate();
+                    if (message.contains(Constants.MESSAGE_USERNAME))
+                        message = message.replace(Constants.MESSAGE_USERNAME, defaultersInfo.getOwnerName());
 
-        pushNotificationService.sendNotifications(messageContent);
-        
-        LOGGER.info("Daily Job of Notification Scheduler with Job Key : " + jobKey + " finished at " + new Date());
+                    if (message.contains(Constants.MESSAGE_PROPTNO))
+                        message = message.replace(Constants.MESSAGE_PROPTNO, defaultersInfo.getAssessmentNo());
+
+                    if (message.contains(Constants.MESSAGE_DUEDATE))
+                        message = message.replace(Constants.MESSAGE_DUEDATE,
+                                formatter.format(defaultersInfo.getMinDate()));
+
+                    if (message.contains(Constants.MESSAGE_ASMNTNO))
+                        message = message.replace(Constants.MESSAGE_ASMNTNO, defaultersInfo.getAssessmentNo());
+
+                    if (message.contains(Constants.MESSAGE_DUEAMT))
+                        message = message.replace(Constants.MESSAGE_DUEAMT,
+                                String.valueOf(defaultersInfo.getCurrentDue().doubleValue()));
+
+                    if (message.contains(Constants.MESSAGE_CONSNO))
+                        message = message.replace(Constants.MESSAGE_CONSNO, defaultersInfo.getAssessmentNo());
+
+                    if (message.contains(Constants.MESSAGE_BILLNO))
+                        message = message.replace(Constants.MESSAGE_BILLNO, defaultersInfo.getAssessmentNo());
+
+                    if (message.contains(Constants.MESSAGE_BILLAMT))
+                        message = message.replace(Constants.MESSAGE_BILLAMT,
+                                String.valueOf(defaultersInfo.getCurrentDue().doubleValue()));
+
+                    if (message.contains(Constants.MESSAGE_DISRPTDATE))
+                        message = message.replace(Constants.MESSAGE_DISRPTDATE, defaultersInfo.getAssessmentNo());
+
+                    List<User> userList = userService.findByMobileNumberAndType(defaultersInfo.getMobileNumber(),
+                            UserType.CITIZEN);
+                    List<Long> userIdList = new ArrayList<>();
+                    if (null != userList) {
+                        for (User userid : userList)
+                            userIdList.add(userid.getId());
+
+                        LOGGER.info("List of User mobile Obtained : " + userIdList.size());
+                    }
+
+                    messageContent.setCreatedDateTime(new Date().getTime());
+                    messageContent.setEventDateTime(calendar.getTimeInMillis());
+                    messageContent.setExpiryDate(calendarEnd.getTimeInMillis());
+                    messageContent.setMessageBody(message);
+                    messageContent.setModuleName(notificationSchedule.getTemplatename());
+                    messageContent.setNotificationDateTime(new Date().getTime());
+                    messageContent.setNotificationType(notificationSchedule.getNotificationType());
+                    messageContent.setSendAll(Boolean.FALSE);
+                    messageContent.setUserIdList(userIdList);
+                    messageContent.setSenderId(user.getId());
+                    messageContent.setSenderName(user.getName());
+
+                    pushNotificationService.sendNotifications(messageContent);
+                }
+            }
+        } else {
+            MessageContent messageContent = new MessageContent();
+            messageContent.setCreatedDateTime(new Date().getTime());
+            messageContent.setEventDateTime(calendar.getTimeInMillis());
+            messageContent.setExpiryDate(calendarEnd.getTimeInMillis());
+            messageContent.setMessageBody(notificationSchedule.getMessageTemplate());
+            messageContent.setModuleName(notificationSchedule.getTemplatename());
+            messageContent.setNotificationDateTime(new Date().getTime());
+            messageContent.setNotificationType(notificationSchedule.getNotificationType());
+            messageContent.setSendAll(Boolean.TRUE);
+
+            messageContent.setSenderId(user.getId());
+            messageContent.setSenderName(user.getName());
+
+            pushNotificationService.sendNotifications(messageContent);
+        }
+        /*
+         * notificationscheduleService.updateScheduleStatus(Long.parseLong(String.valueOf(dataMap.get(Constants.SCHEDULEID))),
+         * user, Constants.SCHEDULE_COMPLETE);
+         */
+        LOGGER.info("Notification scheduler with job key " + jobKey + " end at " + new Date());
     }
 }

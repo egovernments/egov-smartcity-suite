@@ -50,6 +50,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ include file="/includes/taglibs.jsp"%>
 <form:form method="post" action="create"
 	class="form-horizontal form-groups-bordered" modelAttribute="event"
 	id="eventForm">
@@ -213,10 +214,10 @@
 			</div>
 			<div class="form-group">
 				<div class="text-center">
-					<a href="javascript:void(0)" class="btn btn-default"
-						onclick="self.close()"><spring:message code="lbl.close" /></a>
+					<a href="javascript:void(0)" class="btn btn-default" id="buttonClose"><spring:message code="lbl.close" /></a>
 				</div>
 			</div>
 		</div>
 	</div>
 </form:form>
+<script type="text/javascript" src="<cdn:url value='/resources/js/app/event-success.js'/>"></script>

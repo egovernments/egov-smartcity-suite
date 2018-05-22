@@ -103,12 +103,32 @@
 	</div>
 	<div class="form-group">
 		<div class="text-center">
-			<button type='button' class='btn btn-primary' id="buttonEdit">
-				<spring:message code='lbl.edit.button' />
-			</button>
-			<button type='button' class='btn btn-primary' id="buttonDelete">
+			<c:choose>
+				<c:when test="${scheduleEditable == true}">
+					<button type='button' class='btn btn-primary' id="buttonEdit">
+						<spring:message code='lbl.edit.button' />
+					</button>				        
+				</c:when>
+				<c:otherwise>
+					<button type='button' class='btn btn-primary' id="buttonEdit" disabled="disabled">
+						<spring:message code='lbl.edit.button' />
+					</button>
+				</c:otherwise>
+			</c:choose>
+			
+			<c:choose>
+				<c:when test="${notificationSchedule.status == 'Disabled'}">
+					<button type='button' class='btn btn-primary' id="buttonDelete" disabled="disabled">
+				<spring:message code='lbl.schedule.delete.button' />
+			</button>			        
+				</c:when>
+				<c:otherwise>
+					<button type='button' class='btn btn-primary' id="buttonDelete">
 				<spring:message code='lbl.schedule.delete.button' />
 			</button>
+				</c:otherwise>
+			</c:choose>
+			
 			<a href='javascript:void(0)' class='btn btn-default'
 				onclick='self.close()'><spring:message code='lbl.close' /></a>
 		</div>

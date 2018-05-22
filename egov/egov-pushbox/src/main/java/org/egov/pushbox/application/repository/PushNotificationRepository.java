@@ -52,19 +52,17 @@ import org.egov.pushbox.application.entity.UserDevice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-
 /**
- * 
+ *
  * @author Darshan Nagesh
  *
  */
 
 @Repository
 public interface PushNotificationRepository extends JpaRepository<UserDevice, java.lang.Long> {
-	
-	UserDevice findDeviceTokenByUserId(Long userId); 
-	
-	UserDevice findByUserIdAndDeviceId(Long userId, String deviceId); 
-	
-	
+
+    UserDevice findDeviceTokenByUserId(Long userId);
+
+    UserDevice findByUserIdAndDeviceId(Long userId, String deviceId);
+
 }

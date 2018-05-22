@@ -53,13 +53,15 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.pushbox.application.entity.MessageContent;
+import org.egov.pushbox.application.entity.ScheduleLog;
 import org.egov.pushbox.application.entity.UserDevice;
 import org.egov.pushbox.application.repository.PushNotificationRepository;
+import org.egov.pushbox.application.repository.ScheduleLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
@@ -83,6 +85,13 @@ public class PushNotificationService {
     private static final Logger LOGGER = Logger.getLogger(PushNotificationService.class);
     private static final String FCM_APP_BDURL = "https://ap-megov.firebaseio.com";
     private final PushNotificationRepository pushNotificationRepo;
+    private static final String MODULE_NAME = "Eventnotification";
+
+    @Autowired
+    private FileStoreService fileStoreService;
+
+    @Autowired
+    private ScheduleLogRepository scheduleLogRepository;
 
     @Autowired
     public PushNotificationService(final PushNotificationRepository pushNotificationRepo) {
@@ -92,12 +101,12 @@ public class PushNotificationService {
     @Transactional
     public UserDevice persist(final UserDevice userDevice) {
         LOGGER.info("Persisting the User Device Details : " + userDevice);
-        UserDevice existingRecord = pushNotificationRepo.findByUserIdAndDeviceId(userDevice.getUserId(), userDevice.getDeviceId());
+        UserDevice existingRecord = pushNotificationRepo.findByUserIdAndDeviceId(userDevice.getUserId(),
+                userDevice.getDeviceId());
         if (null != existingRecord) {
             existingRecord.setUserId(userDevice.getUserId());
             existingRecord.setUserDeviceToken(userDevice.getUserDeviceToken());
             existingRecord.setDeviceId(userDevice.getDeviceId());
-            existingRecord.setUpdatedDate(new Date().getTime());
             return existingRecord;
         }
         return pushNotificationRepo.save(userDevice);
@@ -126,6 +135,9 @@ public class PushNotificationService {
         setUpFirebaseApp();
         LOGGER.info("##PushBoxFox## : Sending Messages to the Devices ");
         sendMessagesToDevices(userDeviceList, messageContent);
+        /*
+         * LOGGER.info("##PushBoxFox## : Writing Message Log "); logMessages(userDeviceList, messageContent);
+         */
     }
 
     private List<UserDevice> getUserDeviceList(MessageContent messageContent) {
@@ -147,11 +159,10 @@ public class PushNotificationService {
         if (FirebaseApp.getApps().size() == 0) {
             FileInputStream serviceAccount;
             try {
-            	// Fetch the service account key JSON file contents
+                // Fetch the service account key JSON file contents
                 File file = new ClassPathResource("private.json").getFile();
                 serviceAccount = new FileInputStream(file);
-            	
-                /*serviceAccount = (FileInputStream) Thread.currentThread().getContextClassLoader().getResourceAsStream("private.json");*/
+
                 FirebaseOptions options = new FirebaseOptions.Builder()
                         .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                         .setDatabaseUrl(FCM_APP_BDURL).build();
@@ -177,6 +188,30 @@ public class PushNotificationService {
             } catch (Exception ex) {
                 LOGGER.error("##PushBoxFox## : Error : Encountered an exception while sending the message : " + ex.getMessage());
             }
+    }
+
+    @Transactional
+    public ScheduleLog insertScheduleLog(File file) {
+        ScheduleLog scheduleLog = new ScheduleLog();
+        uploadScheduleLogFile(scheduleLog, file);
+        scheduleLog = scheduleLogRepository.save(scheduleLog);
+        scheduleLogRepository.flush();
+        return scheduleLog;
+    }
+
+    /**
+     * This method is used to upload the file into filestore
+     * @param event
+     * @throws IOException
+     */
+    private void uploadScheduleLogFile(ScheduleLog scheduleLog, File file) {
+        try {
+            scheduleLog.setFilestore(
+                    fileStoreService.store(new FileInputStream(file), file.getName(), "text/rtf", MODULE_NAME));
+        } catch (FileNotFoundException e) {
+            LOGGER.error("##PushBoxFox## : Error in upload schedule log file", e);
+        }
+
     }
 
 }

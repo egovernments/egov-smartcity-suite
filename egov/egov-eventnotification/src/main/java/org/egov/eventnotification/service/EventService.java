@@ -48,29 +48,22 @@
 package org.egov.eventnotification.service;
 
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.log4j.Logger;
-import org.egov.eventnotification.constants.EventnotificationConstant;
+import org.egov.eventnotification.constants.Constants;
 import org.egov.eventnotification.entity.Event;
 import org.egov.eventnotification.entity.EventDetails;
 import org.egov.eventnotification.repository.EventRepository;
+import org.egov.eventnotification.repository.EventRepositoryImpl;
+import org.egov.eventnotification.utils.DateFormatUtil;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.pushbox.application.entity.MessageContent;
 import org.egov.pushbox.application.service.PushNotificationService;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,43 +79,37 @@ import org.springframework.web.multipart.MultipartFile;
 public class EventService {
 
     private static final Logger LOGGER = Logger.getLogger(EventService.class);
-    private final EventRepository eventRepository;
+
+    @Autowired
+    private EventRepository eventRepository;
 
     @Autowired
     private FileStoreService fileStoreService;
-
-    @PersistenceContext
-    private EntityManager entityManager;
 
     @Autowired
     private PushNotificationService pushNotificationService;
 
     @Autowired
-    public EventService(final EventRepository eventRepository) {
-        this.eventRepository = eventRepository;
+    private EventRepositoryImpl eventRepositoryImpl;
 
-    }
-
-    public Session getCurrentSession() {
-        return entityManager.unwrap(Session.class);
-    }
+    @Autowired
+    private DateFormatUtil dateFormatUtil;
 
     /**
      * Fetch all the event in descending order
      * @return List<Event>
      */
-    public List<Event> findAll(String status) {
-        DateFormat formatter = new SimpleDateFormat(EventnotificationConstant.DDMMYYYY);
+    public List<Event> findAllByStatus(String status) {
         List<Event> eventList = null;
         try {
-            eventList = eventRepository.getAllEvents(status);
-            if (eventList != null)
+            eventList = eventRepository.findByStatusOrderByIdDesc(status);
+            if (!eventList.isEmpty())
                 for (Event event : eventList) {
                     EventDetails eventDetails = new EventDetails();
                     Date sd = new Date(event.getStartDate());
-                    eventDetails.setStartDt(formatter.parse(formatter.format(sd)));
+                    eventDetails.setStartDt(dateFormatUtil.getDateInDDMMYYYY(sd));
                     Date ed = new Date(event.getEndDate());
-                    eventDetails.setEndDt(formatter.parse(formatter.format(ed)));
+                    eventDetails.setEndDt(dateFormatUtil.getDateInDDMMYYYY(ed));
                     event.setEventDetails(eventDetails);
                 }
         } catch (ParseException e) {
@@ -136,7 +123,6 @@ public class EventService {
      * @return List<Event>
      */
     public List<Event> findAllOngoingEvent(String status) {
-        DateFormat formatter = new SimpleDateFormat(EventnotificationConstant.DDMMYYYY);
         List<Event> eventList = null;
         try {
             Calendar calendar = Calendar.getInstance();
@@ -145,15 +131,15 @@ public class EventService {
             startDate = calendar.getTime();
             calendar.add(Calendar.DAY_OF_MONTH, 7);
             endDate = calendar.getTime();
-            eventList = eventRepository.getAllEventsByDate(formatter.parse(formatter.format(startDate)).getTime(),
-                    formatter.parse(formatter.format(endDate)).getTime(), status);
-            if (eventList != null)
+            eventList = eventRepository.getAllEventsByDate(dateFormatUtil.getDateInDDMMYYYY(startDate).getTime(),
+                    dateFormatUtil.getDateInDDMMYYYY(endDate).getTime(), status);
+            if (!eventList.isEmpty())
                 for (Event event : eventList) {
                     EventDetails eventDetails = new EventDetails();
                     Date sd = new Date(event.getStartDate());
-                    eventDetails.setStartDt(formatter.parse(formatter.format(sd)));
+                    eventDetails.setStartDt(dateFormatUtil.getDateInDDMMYYYY(sd));
                     Date ed = new Date(event.getEndDate());
-                    eventDetails.setEndDt(formatter.parse(formatter.format(ed)));
+                    eventDetails.setEndDt(dateFormatUtil.getDateInDDMMYYYY(ed));
                     event.setEventDetails(eventDetails);
                 }
         } catch (ParseException e) {
@@ -167,8 +153,26 @@ public class EventService {
      * @param id
      * @return Event
      */
-    public Event findById(Long id) {
-        return eventRepository.findOne(id);
+    public Event findByEventId(Long id) {
+        Event event = eventRepository.findOne(id);
+        try {
+            EventDetails eventDetails = new EventDetails();
+            Date sd = new Date(event.getStartDate());
+            eventDetails.setStartDt(dateFormatUtil.getDateInDDMMYYYY(sd));
+            Date ed = new Date(event.getEndDate());
+            eventDetails.setEndDt(dateFormatUtil.getDateInDDMMYYYY(ed));
+
+            String[] st = event.getStartTime().split(":");
+            eventDetails.setStartHH(st[0]);
+            eventDetails.setStartMM(st[1]);
+            String[] et = event.getEndTime().split(":");
+            eventDetails.setEndHH(et[0]);
+            eventDetails.setEndMM(et[1]);
+            event.setEventDetails(eventDetails);
+        } catch (ParseException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return event;
     }
 
     /**
@@ -179,8 +183,13 @@ public class EventService {
      * @throws ParseException
      */
     @Transactional
-    public Event persist(Event event)
-            throws IOException, ParseException {
+    public Event save(Event event) throws IOException {
+        event.setStartDate(event.getEventDetails().getStartDt().getTime());
+        event.setEndDate(event.getEventDetails().getEndDt().getTime());
+        event.setStartTime(event.getEventDetails().getStartHH() + ":" + event.getEventDetails().getStartMM());
+        event.setEndTime(event.getEventDetails().getEndHH() + ":" + event.getEventDetails().getEndMM());
+        event.setStatus(Constants.ACTIVE.toUpperCase());
+
         if (event.getEventDetails().getFile() != null)
             eventUploadWallpaper(event);
 
@@ -196,35 +205,10 @@ public class EventService {
      * @throws ParseException
      */
     @Transactional
-    public Event update(Event event)
-            throws IOException, ParseException {
-        Event existingEvent = findById(event.getId());
-        if (existingEvent != null) {
-            existingEvent.setAddress(event.getAddress());
-            existingEvent.setCost(event.getCost());
-            existingEvent.setDescription(event.getDescription());
-            existingEvent.setEndDate(event.getEndDate());
-            existingEvent.setEndTime(event.getEndTime());
-            existingEvent.setEventhost(event.getEventhost());
-            existingEvent.setEventlocation(event.getEventlocation());
-            existingEvent.setEventType(event.getEventType());
-            existingEvent.setIspaid(event.getIspaid());
-            existingEvent.setName(event.getName());
-            existingEvent.setStartDate(event.getStartDate());
-            existingEvent.setStartTime(event.getStartTime());
-            existingEvent.setVersion(existingEvent.getVersion() + 1);
-            existingEvent.setStatus(event.getStatus());
-            existingEvent.setUrl(event.getUrl());
-            existingEvent.setMessage(event.getMessage());
-            if (event.getEventDetails().getFile() != null)
-                if (existingEvent.getFilestore() != null) {
-                    removeEventWallpaper(existingEvent);
-                    eventUploadWallpaper(existingEvent, event);
-                } else
-                    eventUploadWallpaper(existingEvent, event);
-        }
-
-        return existingEvent;
+    public Event update(Event updatedEvent) throws IOException {
+        if (updatedEvent.getEventDetails().getFile()[0].getSize() > 1)
+            eventUploadWallpaper(updatedEvent);
+        return eventRepository.save(updatedEvent);
     }
 
     /**
@@ -235,42 +219,7 @@ public class EventService {
      * @return List<Event>
      */
     public List<Event> searchEvent(Event eventObj, String eventDateType) {
-        DateFormat formatter = new SimpleDateFormat(EventnotificationConstant.DDMMYYYY);
-        Calendar calendar = Calendar.getInstance();
-        Calendar calendarEndDate = Calendar.getInstance();
-        Date startDate;
-        Date endDate;
-        if (eventDateType.equalsIgnoreCase(EventnotificationConstant.UPCOMING)) {
-            calendar.add(Calendar.DAY_OF_MONTH, 8);
-            startDate = calendar.getTime();
-            calendarEndDate.setTime(startDate);
-            calendarEndDate.add(Calendar.DAY_OF_MONTH, 7);
-            endDate = calendarEndDate.getTime();
-        } else {
-            startDate = calendar.getTime();
-            calendar.add(Calendar.DAY_OF_MONTH, 7);
-            endDate = calendar.getTime();
-        }
-
-        Criteria criteria = getCurrentSession().createCriteria(Event.class);
-        if (eventObj.getEventType() != null)
-            criteria.add(Restrictions.ilike(EventnotificationConstant.EVENT_EVENTTYPE, eventObj.getEventType() + "%"));
-        if (eventObj.getName() != null)
-            criteria.add(Restrictions.ilike(EventnotificationConstant.EVENT_NAME, eventObj.getName() + "%"));
-        if (eventObj.getEventhost() != null)
-            criteria.add(Restrictions.ilike(EventnotificationConstant.EVENT_HOST, eventObj.getEventhost() + "%"));
-
-        try {
-            criteria.add(Restrictions.between(EventnotificationConstant.EVENT_STARTDATE,
-                    formatter.parse(formatter.format(startDate)).getTime(),
-                    formatter.parse(formatter.format(endDate)).getTime()));
-            criteria.add(Restrictions.eq(EventnotificationConstant.STATUS_COLUMN, EventnotificationConstant.ACTIVE));
-        } catch (ParseException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-
-        criteria.addOrder(Order.desc(EventnotificationConstant.EVENT_ID));
-        return criteria.list();
+        return eventRepositoryImpl.searchEvent(eventObj, eventDateType);
     }
 
     /**
@@ -284,7 +233,7 @@ public class EventService {
             if (!multipartFile.isEmpty())
                 event.setFilestore(
                         fileStoreService.store(multipartFile.getInputStream(), multipartFile.getOriginalFilename(),
-                                multipartFile.getContentType(), EventnotificationConstant.MODULE_NAME));
+                                multipartFile.getContentType(), Constants.MODULE_NAME));
 
     }
 
@@ -300,7 +249,7 @@ public class EventService {
             if (!multipartFile.isEmpty())
                 existingEvent.setFilestore(
                         fileStoreService.store(multipartFile.getInputStream(), multipartFile.getOriginalFilename(),
-                                multipartFile.getContentType(), EventnotificationConstant.MODULE_NAME));
+                                multipartFile.getContentType(), Constants.MODULE_NAME));
 
     }
 
@@ -311,7 +260,7 @@ public class EventService {
      */
     public void removeEventWallpaper(Event event) throws IOException {
 
-        fileStoreService.delete(event.getFilestore().getFileStoreId(), EventnotificationConstant.MODULE_NAME);
+        fileStoreService.delete(String.valueOf(event.getFilestore()), Constants.MODULE_NAME);
 
     }
 
@@ -342,19 +291,19 @@ public class EventService {
         messageContent.setEventDateTime(calendar.getTimeInMillis());
         messageContent.setEventLocation(event.getEventlocation());
         messageContent.setExpiryDate(calendarEnd.getTimeInMillis());
-        if (null == event.getFilestore())
+        if (event.getFilestore() == null)
             messageContent.setImageUrl("");
         else
-            messageContent.setImageUrl(event.getFilestore().getFileStoreId());
+            messageContent.setImageUrl(String.valueOf(event.getFilestore()));
         messageContent.setMessageBody(event.getMessage());
         messageContent.setMessageId(event.getId());
         messageContent.setModuleName(event.getName());
         messageContent.setNotificationDateTime(new Date().getTime());
-        messageContent.setNotificationType(EventnotificationConstant.NOTIFICATION_TYPE_EVENT);
+        messageContent.setNotificationType(Constants.NOTIFICATION_TYPE_EVENT);
         messageContent.setSenderId(user.getId());
         messageContent.setSenderName(user.getName());
         messageContent.setSendAll(Boolean.TRUE);
-        if (null == event.getUrl())
+        if (event.getUrl() == null)
             messageContent.setUrl("");
         else
             messageContent.setUrl(event.getUrl());

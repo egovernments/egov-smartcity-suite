@@ -253,14 +253,6 @@
         </div>
     </div>
 </div>
-<script>
-	/* $('#buttonSubmit').click(function(e) {
-		if ($('form').valid()) {
-		} else {
-			e.preventDefault();
-		}
-	}); */
-</script>
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>" />
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">

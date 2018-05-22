@@ -48,17 +48,16 @@
 package org.egov.eventnotification.service;
 
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.egov.eventnotification.constants.EventnotificationConstant;
+import org.egov.eventnotification.constants.Constants;
 import org.egov.eventnotification.entity.EventDetails;
 import org.egov.eventnotification.entity.NotificationSchedule;
 import org.egov.eventnotification.repository.NotificationScheduleRepository;
+import org.egov.eventnotification.utils.DateFormatUtil;
 import org.egov.infra.admin.master.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -70,28 +69,25 @@ public class ScheduleService {
 
     private static final Logger LOGGER = Logger.getLogger(ScheduleService.class);
 
-    private final NotificationScheduleRepository notificationscheduleRepository;
+    @Autowired
+    private NotificationScheduleRepository notificationscheduleRepository;
 
     @Autowired
-    public ScheduleService(final NotificationScheduleRepository notificationscheduleRepository) {
-        this.notificationscheduleRepository = notificationscheduleRepository;
-
-    }
+    private DateFormatUtil dateFormatUtil;
 
     /**
      * Fetch all the schedule by status
      * @return List<Notificationschedule>
      */
-    public List<NotificationSchedule> findAllSchedule(String status) {
-        DateFormat formatter = new SimpleDateFormat(EventnotificationConstant.DDMMYYYY);
+    public List<NotificationSchedule> findAllSchedule() {
         List<NotificationSchedule> notificationScheduleList = null;
         try {
-            notificationScheduleList = notificationscheduleRepository.getAllNotificationScheduleByStatus(status);
-            if (null != notificationScheduleList)
+            notificationScheduleList = notificationscheduleRepository.findByOrderByIdDesc();
+            if (!notificationScheduleList.isEmpty())
                 for (NotificationSchedule notificationSchedule : notificationScheduleList) {
                     EventDetails eventDetails = new EventDetails();
                     Date sd = new Date(notificationSchedule.getStartDate());
-                    eventDetails.setStartDt(formatter.parse(formatter.format(sd)));
+                    eventDetails.setStartDt(dateFormatUtil.getDateInDDMMYYYY(sd));
                     notificationSchedule.setEventDetails(eventDetails);
                 }
         } catch (ParseException e) {
@@ -105,7 +101,18 @@ public class ScheduleService {
      * @return Notificationschedule
      */
     public NotificationSchedule findOne(Long id) {
-        return notificationscheduleRepository.findOne(id);
+        NotificationSchedule notificationSchedule = notificationscheduleRepository.findOne(id);
+        try {
+            EventDetails eventDetails = new EventDetails();
+            Date sd = new Date(notificationSchedule.getStartDate());
+            eventDetails.setStartDt(dateFormatUtil.getDateInDDMMYYYY(sd));
+            eventDetails.setStartHH(notificationSchedule.getStartTime().split(":")[0]);
+            eventDetails.setStartMM(notificationSchedule.getStartTime().split(":")[1]);
+            notificationSchedule.setEventDetails(eventDetails);
+        } catch (ParseException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return notificationSchedule;
     }
 
     /**
@@ -117,8 +124,11 @@ public class ScheduleService {
      * @throws ParseException
      */
     @Transactional
-    public NotificationSchedule persist(NotificationSchedule notificationSchedule)
-            throws IOException, ParseException {
+    public NotificationSchedule save(NotificationSchedule notificationSchedule, User user) {
+        notificationSchedule.setStartDate(notificationSchedule.getEventDetails().getStartDt().getTime());
+        notificationSchedule.setStartTime(
+                notificationSchedule.getEventDetails().getStartHH() + ":" + notificationSchedule.getEventDetails().getStartMM());
+        notificationSchedule.setStatus(Constants.SCHEDULED_STATUS);
         return notificationscheduleRepository.save(notificationSchedule);
     }
 
@@ -129,14 +139,12 @@ public class ScheduleService {
      * @return Notificationschedule
      */
     @Transactional
-    public NotificationSchedule updateSchedule(Long id, User user) {
+    public NotificationSchedule updateScheduleStatus(Long id, User user, String status) {
         NotificationSchedule notificationSchedule = notificationscheduleRepository.findOne(id);
-        if (null != notificationSchedule) {
-            notificationSchedule.setStatus(EventnotificationConstant.SCHEDULE_DELETE);
-            notificationSchedule.setUpdatedby(user);
-            notificationSchedule.setUpdatedDate(new Date().getTime());
-        }
-        return notificationSchedule;
+        if (notificationSchedule != null)
+            notificationSchedule.setStatus(status);
+        
+        return notificationscheduleRepository.save(notificationSchedule);
     }
 
     /**
@@ -146,19 +154,7 @@ public class ScheduleService {
      * @return Notificationschedule
      */
     @Transactional
-    public NotificationSchedule updateScheduleDetails(NotificationSchedule schedule, User user) {
-        NotificationSchedule notificationSchedule = notificationscheduleRepository.findOne(schedule.getId());
-        if (null != notificationSchedule) {
-            notificationSchedule.setMessageTemplate(schedule.getMessageTemplate());
-            notificationSchedule.setNotificationType(schedule.getNotificationType());
-            notificationSchedule.setRepeat(schedule.getRepeat());
-            notificationSchedule.setStartDate(schedule.getStartDate());
-            notificationSchedule.setStartTime(schedule.getStartTime());
-            notificationSchedule.setTemplatename(schedule.getTemplatename());
-            notificationSchedule.setStatus(EventnotificationConstant.SCHEDULED_STATUS);
-            notificationSchedule.setUpdatedby(user);
-            notificationSchedule.setUpdatedDate(new Date().getTime());
-        }
-        return notificationSchedule;
+    public NotificationSchedule update(NotificationSchedule schedule) {
+        return notificationscheduleRepository.save(schedule);
     }
 }
