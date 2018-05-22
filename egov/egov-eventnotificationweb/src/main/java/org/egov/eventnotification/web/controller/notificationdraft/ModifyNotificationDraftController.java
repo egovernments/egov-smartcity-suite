@@ -31,7 +31,7 @@ public class ModifyNotificationDraftController {
     private MessageSource messageSource;
 
     @ModelAttribute("notificationDrafts")
-    private NotificationDrafts getNotificationDrafts(@PathVariable("id") Long id) {
+    public NotificationDrafts getNotificationDrafts(@PathVariable("id") Long id) {
         return draftService.findDraftById(id);
     }
 
