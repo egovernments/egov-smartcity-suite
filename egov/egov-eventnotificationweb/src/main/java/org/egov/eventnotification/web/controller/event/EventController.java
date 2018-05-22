@@ -47,6 +47,28 @@
  */
 package org.egov.eventnotification.web.controller.event;
 
+import static org.egov.eventnotification.constants.Constants.ACTIVE;
+import static org.egov.eventnotification.constants.Constants.API_CREATE;
+import static org.egov.eventnotification.constants.Constants.API_EVENT;
+import static org.egov.eventnotification.constants.Constants.API_VIEW;
+import static org.egov.eventnotification.constants.Constants.API_VIEW_ID;
+import static org.egov.eventnotification.constants.Constants.EVENT;
+import static org.egov.eventnotification.constants.Constants.EVENT_ID;
+import static org.egov.eventnotification.constants.Constants.EVENT_LIST;
+import static org.egov.eventnotification.constants.Constants.EVENT_TYPE_LIST;
+import static org.egov.eventnotification.constants.Constants.HOUR_LIST;
+import static org.egov.eventnotification.constants.Constants.MESSAGE;
+import static org.egov.eventnotification.constants.Constants.MINUTE_LIST;
+import static org.egov.eventnotification.constants.Constants.MODE;
+import static org.egov.eventnotification.constants.Constants.MODE_CREATE;
+import static org.egov.eventnotification.constants.Constants.MODE_VIEW;
+import static org.egov.eventnotification.constants.Constants.MSG_EVENT_CREATE_ERROR;
+import static org.egov.eventnotification.constants.Constants.MSG_EVENT_CREATE_SUCCESS;
+import static org.egov.eventnotification.constants.Constants.VIEW_EVENTCREATE;
+import static org.egov.eventnotification.constants.Constants.VIEW_EVENTSUCCESS;
+import static org.egov.eventnotification.constants.Constants.VIEW_EVENTVIEW;
+import static org.egov.eventnotification.constants.Constants.VIEW_EVENTVIEWRESULT;
+
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -80,7 +102,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  *
  */
 @Controller
-@RequestMapping(value = Constants.API_EVENT)
+@RequestMapping(value = API_EVENT)
 public class EventController {
 
     @Autowired
@@ -101,13 +123,13 @@ public class EventController {
      * @param id
      * @return tiles view
      */
-    @GetMapping(Constants.API_VIEW)
+    @GetMapping(API_VIEW)
     public String view(final Model model) {
-        model.addAttribute(Constants.EVENT_LIST,
-                eventService.findAllByStatus(Constants.ACTIVE.toUpperCase()));
-        model.addAttribute(Constants.MODE, Constants.MODE_VIEW);
-        model.addAttribute(Constants.EVENT_TYPE_LIST, new ArrayList<>(Arrays.asList(EventType.values())));
-        return Constants.VIEW_EVENTVIEW;
+        model.addAttribute(EVENT_LIST,
+                eventService.findAllByStatus(ACTIVE.toUpperCase()));
+        model.addAttribute(MODE, MODE_VIEW);
+        model.addAttribute(EVENT_TYPE_LIST, new ArrayList<>(Arrays.asList(EventType.values())));
+        return VIEW_EVENTVIEW;
     }
 
     /**
@@ -116,11 +138,11 @@ public class EventController {
      * @param id
      * @return tiles view
      */
-    @GetMapping(Constants.API_VIEW_ID)
-    public String viewByEvent(final Model model, @PathVariable(Constants.EVENT_ID) Long id) {
-        model.addAttribute(Constants.EVENT, eventService.findByEventId(id));
-        model.addAttribute(Constants.MODE, Constants.MODE_VIEW);
-        return Constants.VIEW_EVENTVIEWRESULT;
+    @GetMapping(API_VIEW_ID)
+    public String viewByEvent(@PathVariable(EVENT_ID) Long id, final Model model) {
+        model.addAttribute(EVENT, eventService.findByEventId(id));
+        model.addAttribute(MODE, MODE_VIEW);
+        return VIEW_EVENTVIEWRESULT;
     }
 
     /**
@@ -129,14 +151,14 @@ public class EventController {
      * @param model
      * @return tiles view
      */
-    @GetMapping(Constants.API_CREATE)
+    @GetMapping(API_CREATE)
     public String save(@ModelAttribute Event event, Model model) {
-        model.addAttribute(Constants.EVENT, event);
-        model.addAttribute(Constants.HOUR_LIST, eventnotificationUtil.getAllHour());
-        model.addAttribute(Constants.MINUTE_LIST, eventnotificationUtil.getAllMinute());
-        model.addAttribute(Constants.EVENT_LIST, new ArrayList<>(Arrays.asList(EventType.values())));
-        model.addAttribute(Constants.MODE, Constants.MODE_CREATE);
-        return Constants.VIEW_EVENTCREATE;
+        model.addAttribute(EVENT, event);
+        model.addAttribute(HOUR_LIST, eventnotificationUtil.getAllHour());
+        model.addAttribute(MINUTE_LIST, eventnotificationUtil.getAllMinute());
+        model.addAttribute(EVENT_LIST, new ArrayList<>(Arrays.asList(EventType.values())));
+        model.addAttribute(MODE, MODE_CREATE);
+        return VIEW_EVENTCREATE;
     }
 
     /**
@@ -151,29 +173,29 @@ public class EventController {
      * @throws IOException
      * @throws ParseException
      */
-    @PostMapping(Constants.API_CREATE)
-    public String save(@ModelAttribute(Constants.EVENT) Event event,
+    @PostMapping(API_CREATE)
+    public String save(@ModelAttribute(EVENT) Event event,
             Model model,
             RedirectAttributes redirectAttrs, HttpServletRequest request, BindingResult errors)
             throws IOException {
 
         if (errors.hasErrors()) {
-            model.addAttribute(Constants.MODE, Constants.MODE_CREATE);
-            model.addAttribute(Constants.HOUR_LIST, eventnotificationUtil.getAllHour());
-            model.addAttribute(Constants.MINUTE_LIST, eventnotificationUtil.getAllMinute());
-            model.addAttribute(Constants.EVENT_LIST, new ArrayList<>(Arrays.asList(EventType.values())));
-            model.addAttribute(Constants.MESSAGE,
-                    messageSource.getMessage(Constants.MSG_EVENT_CREATE_ERROR, null, Locale.ENGLISH));
-            return Constants.VIEW_EVENTCREATE;
+            model.addAttribute(MODE, MODE_CREATE);
+            model.addAttribute(HOUR_LIST, eventnotificationUtil.getAllHour());
+            model.addAttribute(MINUTE_LIST, eventnotificationUtil.getAllMinute());
+            model.addAttribute(EVENT_LIST, new ArrayList<>(Arrays.asList(EventType.values())));
+            model.addAttribute(MESSAGE,
+                    messageSource.getMessage(MSG_EVENT_CREATE_ERROR, null, Locale.ENGLISH));
+            return VIEW_EVENTCREATE;
         }
 
         eventService.save(event);
         User user = userService.getCurrentUser();
         eventService.sendPushMessage(event, user);
-        redirectAttrs.addFlashAttribute(Constants.EVENT, event);
-        model.addAttribute(Constants.MESSAGE,
-                messageSource.getMessage(Constants.MSG_EVENT_CREATE_SUCCESS, null, Locale.ENGLISH));
-        model.addAttribute(Constants.MODE, Constants.MODE_VIEW);
-        return Constants.VIEW_EVENTSUCCESS;
+        redirectAttrs.addFlashAttribute(EVENT, event);
+        model.addAttribute(MESSAGE,
+                messageSource.getMessage(MSG_EVENT_CREATE_SUCCESS, null, Locale.ENGLISH));
+        model.addAttribute(Constants.MODE, MODE_VIEW);
+        return VIEW_EVENTSUCCESS;
     }
 }

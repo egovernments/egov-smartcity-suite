@@ -45,68 +45,60 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.eventnotification.service;
+package org.egov.eventnotification.entity;
 
-import org.egov.eventnotification.entity.Event;
-import org.egov.eventnotification.entity.Userevent;
-import org.egov.eventnotification.repository.EventRepository;
-import org.egov.eventnotification.repository.UsereventRepository;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
-@Service
-@Transactional(readOnly = true)
-public class UsereventService {
+import org.egov.infra.persistence.entity.AbstractAuditable;
 
-    @Autowired
-    private UsereventRepository usereventRepository;
-
-    @Autowired
-    private EventRepository eventRepository;
-
-    @Autowired
-    private UserRepository userRepository;
+@Entity
+@Table(name = "egevntnotification_userevent")
+@SequenceGenerator(name = UserEvent.SEQ_EG_USEREVENT, sequenceName = Event.SEQ_EG_EVENT, allocationSize = 1)
+public class UserEvent extends AbstractAuditable {
 
     /**
-     * This method is used to save the user event mapping.
-     * @param eventType
-     * @param eventName
-     * @param eventHost
-     * @return List<Event>
+     *
      */
-    @Transactional
-    public Userevent save(Long userid, Long eventid) {
-        Userevent existingUserEvent = usereventRepository.findByEventIdAndUserId(eventid, userid);
-        if (existingUserEvent == null) {
-            Event event = eventRepository.findOne(eventid);
-            User user = userRepository.findOne(userid);
-            Userevent userevent = new Userevent();
-            userevent.setUserId(user.getId());
-            userevent.setEventId(event.getId());
-            return usereventRepository.save(userevent);
-        } else
-            return null;
+    private static final long serialVersionUID = 1905507824693993872L;
+
+    public static final String SEQ_EG_USEREVENT = "SEQ_EGEVNTNOTIFICATION_USEREVENT";
+
+    @Id
+    @GeneratedValue(generator = SEQ_EG_USEREVENT, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    private Long userId;
+
+    private Long eventId;
+
+    @Override
+    public Long getId() {
+        return id;
     }
 
-    /**
-     * This method fetch couynt of the event by id
-     * @param id
-     * @return Long
-     */
-    public Long countUsereventByEventId(Long id) {
-        return usereventRepository.countByEventId(id);
+    @Override
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    /**
-     * This method fetch Userevent
-     * @param eventid
-     * @param userid
-     * @return Userevent
-     */
-    public Userevent getUsereventByEventAndUser(Long eventid, Long userid) {
-        return usereventRepository.findByEventIdAndUserId(eventid, userid);
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public Long getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(Long eventId) {
+        this.eventId = eventId;
     }
 }

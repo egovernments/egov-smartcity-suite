@@ -1,5 +1,6 @@
 package org.egov.eventnotification.entity;
 
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -12,6 +13,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egevntnotification_parameters")
@@ -26,14 +28,16 @@ public class CategoryParameters {
 
     @NotNull
     @Length(max = 100)
+    @SafeHtml
     private String name;
 
     @NotNull
-    private Boolean active;
+    private boolean active;
 
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")
+    @Embedded
     private ModuleCategory moduleCategory;
 
     public Long getId() {
@@ -52,11 +56,11 @@ public class CategoryParameters {
         this.name = name;
     }
 
-    public Boolean getActive() {
+    public boolean getActive() {
         return active;
     }
 
-    public void setActive(Boolean active) {
+    public void setActive(boolean active) {
         this.active = active;
     }
 

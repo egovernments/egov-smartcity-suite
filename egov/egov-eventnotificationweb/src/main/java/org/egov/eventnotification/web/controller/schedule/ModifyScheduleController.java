@@ -1,5 +1,18 @@
 package org.egov.eventnotification.web.controller.schedule;
 
+import static org.egov.eventnotification.constants.Constants.HOUR_LIST;
+import static org.egov.eventnotification.constants.Constants.MESSAGE;
+import static org.egov.eventnotification.constants.Constants.MINUTE_LIST;
+import static org.egov.eventnotification.constants.Constants.MODE;
+import static org.egov.eventnotification.constants.Constants.MODE_VIEW;
+import static org.egov.eventnotification.constants.Constants.MSG_SCHEDULED_UPDATE_ERROR;
+import static org.egov.eventnotification.constants.Constants.MSG_SCHEDULED_UPDATE_SUCCESS;
+import static org.egov.eventnotification.constants.Constants.NOTIFICATION_SCHEDULE;
+import static org.egov.eventnotification.constants.Constants.SCHEDULED_STATUS;
+import static org.egov.eventnotification.constants.Constants.SCHEDULER_REPEAT_LIST;
+import static org.egov.eventnotification.constants.Constants.SCHEDULE_UPDATE_SUCCESS;
+import static org.egov.eventnotification.constants.Constants.SCHEDULE_UPDATE_VIEW;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -53,16 +66,16 @@ public class ModifyScheduleController {
      */
     @GetMapping("/schedule/update/{id}")
     public String update(@ModelAttribute NotificationSchedule notificationSchedule, Model model) {
-        model.addAttribute(Constants.HOUR_LIST, eventnotificationUtil.getAllHour());
-        model.addAttribute(Constants.MINUTE_LIST, eventnotificationUtil.getAllMinute());
+        model.addAttribute(HOUR_LIST, eventnotificationUtil.getAllHour());
+        model.addAttribute(MINUTE_LIST, eventnotificationUtil.getAllMinute());
         List<String> repeatList = new ArrayList<>();
         for (SchedulerRepeat schedulerRepeat : SchedulerRepeat.values())
             repeatList.add(schedulerRepeat.getName());
 
-        model.addAttribute(Constants.SCHEDULER_REPEAT_LIST, repeatList);
-        model.addAttribute(Constants.MODE, Constants.MODE_VIEW);
+        model.addAttribute(SCHEDULER_REPEAT_LIST, repeatList);
+        model.addAttribute(MODE, MODE_VIEW);
 
-        return Constants.SCHEDULE_UPDATE_VIEW;
+        return SCHEDULE_UPDATE_VIEW;
     }
 
     /**
@@ -74,36 +87,36 @@ public class ModifyScheduleController {
      * @return tiles view
      */
     @PostMapping("/schedule/update/{id}")
-    public String update(@ModelAttribute NotificationSchedule notificationSchedule, @PathVariable("id") Long id,
+    public String update(@PathVariable("id") Long id, @ModelAttribute NotificationSchedule notificationSchedule,
             RedirectAttributes redirectAttrs, BindingResult errors, Model model) {
         if (errors.hasErrors()) {
-            model.addAttribute(Constants.HOUR_LIST, eventnotificationUtil.getAllHour());
-            model.addAttribute(Constants.MINUTE_LIST, eventnotificationUtil.getAllMinute());
+            model.addAttribute(HOUR_LIST, eventnotificationUtil.getAllHour());
+            model.addAttribute(MINUTE_LIST, eventnotificationUtil.getAllMinute());
             List<String> repeatList = new ArrayList<>();
             for (SchedulerRepeat schedulerRepeat : SchedulerRepeat.values())
                 repeatList.add(schedulerRepeat.getName());
 
-            model.addAttribute(Constants.SCHEDULER_REPEAT_LIST, repeatList);
-            model.addAttribute(Constants.MODE, Constants.MODE_VIEW);
+            model.addAttribute(SCHEDULER_REPEAT_LIST, repeatList);
+            model.addAttribute(MODE, MODE_VIEW);
             model.addAttribute(Constants.MESSAGE,
-                    messageSource.getMessage(Constants.MSG_SCHEDULED_UPDATE_ERROR, null, Locale.ENGLISH));
+                    messageSource.getMessage(MSG_SCHEDULED_UPDATE_ERROR, null, Locale.ENGLISH));
 
-            return Constants.SCHEDULE_UPDATE_VIEW;
+            return SCHEDULE_UPDATE_VIEW;
         }
         User user = userService.getCurrentUser();
         notificationSchedule.setId(id);
         notificationSchedule.setStartDate(notificationSchedule.getEventDetails().getStartDt().getTime());
         notificationSchedule.setStartTime(
                 notificationSchedule.getEventDetails().getStartHH() + ":" + notificationSchedule.getEventDetails().getStartMM());
-        notificationSchedule.setStatus(Constants.SCHEDULED_STATUS);
+        notificationSchedule.setStatus(SCHEDULED_STATUS);
 
         scheduleService.update(notificationSchedule);
 
         schedulerManager.updateJob(notificationSchedule, user);
 
-        redirectAttrs.addFlashAttribute(Constants.NOTIFICATION_SCHEDULE, notificationSchedule);
-        model.addAttribute(Constants.MESSAGE,
-                messageSource.getMessage(Constants.MSG_SCHEDULED_UPDATE_SUCCESS, null, Locale.ENGLISH));
-        return Constants.SCHEDULE_UPDATE_SUCCESS;
+        redirectAttrs.addFlashAttribute(NOTIFICATION_SCHEDULE, notificationSchedule);
+        model.addAttribute(MESSAGE,
+                messageSource.getMessage(MSG_SCHEDULED_UPDATE_SUCCESS, null, Locale.ENGLISH));
+        return SCHEDULE_UPDATE_SUCCESS;
     }
 }

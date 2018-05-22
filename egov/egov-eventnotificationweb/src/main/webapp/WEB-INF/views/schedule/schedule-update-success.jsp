@@ -73,7 +73,7 @@
 								<spring:message code="lbl.schedule.templatename" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
-								<c:out value="${notificationSchedule.templatename}" />
+								<c:out value="${notificationSchedule.templateName}" />
 							</div>
 
 							<div class="col-xs-3 add-margin">

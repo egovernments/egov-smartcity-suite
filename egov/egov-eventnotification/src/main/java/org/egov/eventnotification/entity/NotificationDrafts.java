@@ -23,8 +23,7 @@ public class NotificationDrafts extends AbstractAuditable {
     /**
      *
      */
-    private static final long serialVersionUID = 1L;
-
+    private static final long serialVersionUID = 6211626862831989672L;
     public static final String SEQ_EGEVENTNOTIFICATION_DRAFTS = "SEQ_EGEVENTNOTIFICATION_DRAFTS";
 
     @Id

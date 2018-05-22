@@ -1,5 +1,6 @@
 package org.egov.eventnotification.entity;
 
+import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -12,10 +13,12 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egevntnotification_category")
 @SequenceGenerator(name = ModuleCategory.SEQ_EGEVNTNOTIFICATION_CATEGORY, sequenceName = ModuleCategory.SEQ_EGEVNTNOTIFICATION_CATEGORY, allocationSize = 1)
+@Embeddable
 public class ModuleCategory {
 
     public static final String SEQ_EGEVNTNOTIFICATION_CATEGORY = "seq_egevntnotification_category";
@@ -25,11 +28,13 @@ public class ModuleCategory {
     private Long id;
 
     @NotNull
+    @SafeHtml
     @Length(max = 100)
     private String name;
 
     @NotNull
-    private Boolean active;
+    @SafeHtml
+    private boolean active;
 
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
@@ -60,11 +65,11 @@ public class ModuleCategory {
         this.name = name;
     }
 
-    public Boolean getActive() {
+    public boolean getActive() {
         return active;
     }
 
-    public void setActive(Boolean active) {
+    public void setActive(boolean active) {
         this.active = active;
     }
 

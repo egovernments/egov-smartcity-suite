@@ -63,7 +63,7 @@
 					<div class="form-group">
 						<label class="col-xs-3 control-label text-right"><spring:message code="lbl.schedule.templatename" />:</label>
 						<div class="col-xs-3 add-margin view-content">
-							<c:out value="${notificationSchedule.templatename}" />
+							<c:out value="${notificationSchedule.templateName}" />
 						</div>
 						<label class="col-xs-3 control-label text-right"><spring:message code="lbl.schedule.type" />:</label>
 						<div class="col-xs-3 add-margin view-content">

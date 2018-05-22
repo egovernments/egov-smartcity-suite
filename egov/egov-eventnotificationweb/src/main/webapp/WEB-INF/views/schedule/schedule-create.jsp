@@ -60,9 +60,9 @@
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.schedule.templatename" />:</label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="templatename" id="templatename" name="templatename" 
-								class="form-control text-left patternvalidation" maxlength="100" value="${templatename}" readonly="true"/>
-							<form:errors path="templatename" cssClass="error-msg" />
+							<form:input path="templateName" id="templateName" name="templateName" 
+								class="form-control text-left patternvalidation" maxlength="100" value="${templateName}" readonly="true"/>
+							<form:errors path="templateName" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.schedule.type" />:</label>
 						<div class="col-sm-3 add-margin">

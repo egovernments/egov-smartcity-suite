@@ -63,6 +63,7 @@ import javax.validation.constraints.NotNull;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egevntnotification_event")
@@ -72,7 +73,8 @@ public class Event extends AbstractAuditable {
     /**
      *
      */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -2576923299660723402L;
+
     public static final String SEQ_EG_EVENT = "SEQ_EGEVNTNOTIFICATION_EVENT";
 
     @Id
@@ -81,10 +83,12 @@ public class Event extends AbstractAuditable {
 
     @NotNull
     @Length(max = 100)
+    @SafeHtml
     private String name;
 
     @NotNull
     @Length(max = 200)
+    @SafeHtml
     private String description;
 
     @Column(name = "start_date")
@@ -92,6 +96,7 @@ public class Event extends AbstractAuditable {
 
     @NotNull
     @Length(max = 20)
+    @SafeHtml
     @Column(name = "start_time")
     private String startTime;
 
@@ -100,18 +105,22 @@ public class Event extends AbstractAuditable {
 
     @NotNull
     @Length(max = 20)
+    @SafeHtml
     @Column(name = "end_time")
     private String endTime;
 
     @NotNull
+    @SafeHtml
     @Length(max = 100)
     private String eventhost;
 
     @NotNull
+    @SafeHtml
     @Length(max = 100)
     private String eventlocation;
 
     @NotNull
+    @SafeHtml
     @Length(max = 200)
     private String address;
 
@@ -121,6 +130,7 @@ public class Event extends AbstractAuditable {
 
     @NotNull
     @Length(max = 50)
+    @SafeHtml
     @Column(name = "event_type")
     private String eventType;
 
@@ -129,14 +139,17 @@ public class Event extends AbstractAuditable {
     private FileStoreMapper filestore;
 
     @NotNull
+    @SafeHtml
     @Length(max = 200)
     private String message;
 
     @NotNull
+    @SafeHtml
     @Length(max = 200)
     private String url;
 
     @NotNull
+    @SafeHtml
     @Length(max = 20)
     private String status;
 
