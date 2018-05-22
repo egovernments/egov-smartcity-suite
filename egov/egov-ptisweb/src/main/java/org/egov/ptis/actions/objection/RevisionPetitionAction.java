@@ -77,6 +77,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASO
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVISIONPETITION_STATUS_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVISION_PETITION;
@@ -94,6 +95,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APP
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_PRINT_NOTICE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -131,8 +133,10 @@ import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
@@ -332,13 +336,15 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     private transient EntityManager entityManager;
     @Autowired
     private InstallmentDao installmentDao;
-
     @Autowired
     private ModuleService moduleDao;
+    @Autowired
+    private BoundaryService boundaryService;
 
     public RevisionPetitionAction() {
 
         addRelatedEntity("basicProperty", BasicPropertyImpl.class);
+        addRelatedEntity("basicProperty.propertyID", PropertyID.class);
         addRelatedEntity("property.propertyDetail.propertyTypeMaster", PropertyTypeMaster.class);
         addRelatedEntity("property.propertyDetail.sitalArea", Area.class);
 
@@ -407,6 +413,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         addDropdownData("floorType", getPersistenceService().findAllBy("from FloorType order by name"));
         addDropdownData("roofType", getPersistenceService().findAllBy("from RoofType order by name"));
         final List<String> apartmentsList = getPersistenceService().findAllBy("from Apartment order by name");
+        final List<Boundary> zones = boundaryService
+                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE, REVENUE_HIERARCHY_TYPE);
         final List<String> taxExemptionReasonList = getPersistenceService()
                 .findAllBy("from TaxExemptionReason where isActive = true order by name");
         addDropdownData("wallType", wallTypes);
@@ -418,6 +426,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         addDropdownData("StructureList", structureList);
         addDropdownData("AgeFactorList", ageFacList);
         addDropdownData("apartments", apartmentsList);
+        addDropdownData("zones", zones);
         addDropdownData("taxExemptionReasonList", taxExemptionReasonList);
         populatePropertyTypeCategory();
         setDeviationPercentageMap(DEVIATION_PERCENTAGE);

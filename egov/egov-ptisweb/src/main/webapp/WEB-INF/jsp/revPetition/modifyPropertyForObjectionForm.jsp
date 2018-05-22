@@ -100,7 +100,7 @@
 		</td>
 	</tr>
 	<tr>
-		<td class="bluebox" width="5%">&nbsp;</td>
+		<td class="bluebox" width="5%"></td>
 		<td class="bluebox" width="25%"><s:text name="reg.docno" /> :</td>
 		<td class="bluebox" width=""><span class="bold"><s:property
 					value="%{basicProperty.regdDocNo}" default="N/A" /></span></td>
@@ -110,7 +110,7 @@
 					value="%{#regDate}" default="N/A" /></span></td>
 	</tr>
 	<tr class="extentSite">
-		<td class="bluebox" width="5%">&nbsp;</td>
+		<td class="bluebox" width="5%"></td>
 		<td class="bluebox" width="25%"><s:text name="extent.site" /><span
 			class="mandatory1"> *</span> :</td>
 		<td class="bluebox" width=""><s:textfield name="areaOfPlot"
@@ -122,7 +122,7 @@
 	</tr>
 
 	<tr>
-		<td class="bluebox">&nbsp;</td>
+		<td class="bluebox"></td>
 		<td class="bluebox" width="25%"><s:text name="ModifyReason"></s:text>
 			<span class="mandatory1">*</span> :</td>
 		<td class="bluebox" width=""><s:select headerKey="-1"
@@ -134,7 +134,7 @@
 	</tr>
 
 	<tr>
-		<td class="bluebox" width="5%">&nbsp;</td>
+		<td class="bluebox" width="5%"></td>
 		<td class="bluebox" width="25%"><s:text name="ownership.type"></s:text>
 			<span class="mandatory1">*</span> :</td>
 		<td class="bluebox" width=""><s:hidden
@@ -164,7 +164,7 @@
 				onchange="populateUsages();" /></td>
 	</tr>
 	<tr id="apartmentRow">
-		<td class="bluebox">&nbsp;</td>
+		<td class="bluebox"></td>
 		<td class="bluebox apartmentRow"><s:text name="apartcomplex.name"></s:text>
 			:</td>
 		<td class="bluebox apartmentRow"><s:select headerKey=""
@@ -173,11 +173,17 @@
 				id="property.propertyDetail.apartment.id" listKey="id"
 				listValue="name" value="%{property.propertyDetail.apartment.id}"
 				list="dropdownData.apartments" cssClass="selectnew" /></td>
-		<td class="bluebox" colspan="2">&nbsp;</td>
+		<td class="bluebox"><s:text name="zone"></s:text> <span class="mandatory1">*</span> : </td>
+	    <td class="bluebox">
+	    	<s:select list="dropdownData.zones" name="basicProperty.propertyID.zone.id"
+				value="%{basicProperty.propertyID.zone.id}" headerKey="-1" id="basicProperty.propertyID.zone.id"
+				headerValue="%{getText('default.select')}" listKey="id"
+				listValue="name" />
+		</td>
 	</tr>
 
 	<tr class="occupancydetails">
-		<td class="bluebox">&nbsp;</td>
+		<td class="bluebox"></td>
 		<td class="bluebox"><s:text name="certificationNumber"></s:text>:</td>
 		<td class="bluebox"><s:textfield maxlength="64"
 				name="property.propertyDetail.occupancyCertificationNo"

@@ -120,7 +120,7 @@
 		<td class="bluebox" width=""><span class="bold"><s:property
 					value="%{property.propertyDetail.propertyTypeMaster.type}"
 					default="N/A" /></span></td>
-		<td class="bluebox" width="25%"><s:text name="property.type"></s:text></td>
+		<td class="bluebox" width="25%"><s:text name="property.type"></s:text> :</td>
 		<td class="bluebox"><span class="bold"><s:property
 					value="%{@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_TYPE_CATEGORIES.get(property.propertyDetail.categoryType)}"
 					default="N/A" /></span></td>
@@ -131,15 +131,19 @@
 		<td class="bluebox"><span class="bold"><s:property
 					value="%{property.propertyDetail.apartment.name}" default="N/A" /></span>
 		</td>
-		<td class="bluebox" colspan="2">&nbsp;</td>
+		<td class="bluebox" width="25%"><s:text name="zone"></s:text> :</td>
+		<td class="bluebox"><span class="bold"><s:property
+					value="%{basicProperty.propertyID.zone.name}" /></span></td>
 	</tr>
 
 	<tr class="appurtenant">
 		<td class="bluebox">&nbsp;</td>
 		<td class="bluebox"><s:text name="certificationNumber"></s:text>:</td>
 		<td class="bluebox"><span class="bold"><s:property
-					value="%{property.propertyDetail.occupancyCertificationNo}" /></span></td>
-		<td class="bluebox" colspan="2">&nbsp;</td>
+					value="%{property.propertyDetail.occupancyCertificationNo}" default="N/A" /></span></td>
+		<td class="bluebox"><s:text name="certificationDate"></s:text>:</td>
+		<td class="bluebox"><span class="bold"><s:property
+					value="%{property.propertyDetail.occupancyCertificationDate}" default="N/A" /></span></td>
 	</tr>
 
 	<!-- Amenities section -->
