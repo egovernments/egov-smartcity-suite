@@ -36,7 +36,7 @@ public class ModifyEventController {
     private EventnotificationUtil eventnotificationUtil;
 
     @ModelAttribute("event")
-    private Event getEvent(@PathVariable("id") Long id) {
+    public Event getEvent(@PathVariable("id") Long id) {
         return eventService.findByEventId(id);
     }
 

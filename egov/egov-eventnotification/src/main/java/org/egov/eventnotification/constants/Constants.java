@@ -217,4 +217,5 @@ public class Constants {
     public static final String MODULE = "module";
     public static final String CATEGORY = "category";
     public static final String SUCCESS1 = "Success";
+    public static final int MIN_NUMBER_OF_REQUESTS = 1;
 }

@@ -82,6 +82,9 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 @DisallowConcurrentExecution
 public class NotificationSchedulerJob implements Job {
     private static final Logger LOGGER = Logger.getLogger(NotificationSchedulerJob.class);
+    
+    private UserService userService;
+    private PushNotificationService pushNotificationService;
 
     /**
      * This calls the push box api for to send push notification.
@@ -98,14 +101,12 @@ public class NotificationSchedulerJob implements Job {
                 ContextLoader.getCurrentWebApplicationContext().getServletContext());
         ScheduleService notificationscheduleService = (ScheduleService) springContext.getBean("scheduleService");
 
-        PushNotificationService pushNotificationService = (PushNotificationService) springContext
+        pushNotificationService = (PushNotificationService) springContext
                 .getBean(Constants.PUSH_NOTIFICATION_SERVICE);
 
-        UserService userService = (UserService) springContext.getBean(Constants.USER_SERVICE);
+        userService = (UserService) springContext.getBean(Constants.USER_SERVICE);
 
         User user = (User) dataMap.get(Constants.USER);
-        LOGGER.info("Scheduler id =====" + String.valueOf(dataMap.get(Constants.SCHEDULEID)));
-        LOGGER.info("User id===== " + user.getId());
         NotificationSchedule notificationSchedule = notificationscheduleService
                 .findOne(Long.parseLong(String.valueOf(dataMap.get(Constants.SCHEDULEID))));
 
@@ -114,6 +115,15 @@ public class NotificationSchedulerJob implements Job {
          * user, Constants.SCHEDULE_RUNNING);
          */
 
+        executeBusiness(notificationSchedule,user,dataMap);
+        /*
+         * notificationscheduleService.updateScheduleStatus(Long.parseLong(String.valueOf(dataMap.get(Constants.SCHEDULEID))),
+         * user, Constants.SCHEDULE_COMPLETE);
+         */
+        LOGGER.info("Notification scheduler with job key " + jobKey + " end at " + new Date());
+    }
+    
+    private void executeBusiness(NotificationSchedule notificationSchedule,User user,JobDataMap dataMap) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date(notificationSchedule.getStartDate()));
         int hours = Integer.parseInt(notificationSchedule.getStartTime().split(":")[0]);
@@ -209,10 +219,5 @@ public class NotificationSchedulerJob implements Job {
 
             pushNotificationService.sendNotifications(messageContent);
         }
-        /*
-         * notificationscheduleService.updateScheduleStatus(Long.parseLong(String.valueOf(dataMap.get(Constants.SCHEDULEID))),
-         * user, Constants.SCHEDULE_COMPLETE);
-         */
-        LOGGER.info("Notification scheduler with job key " + jobKey + " end at " + new Date());
     }
 }

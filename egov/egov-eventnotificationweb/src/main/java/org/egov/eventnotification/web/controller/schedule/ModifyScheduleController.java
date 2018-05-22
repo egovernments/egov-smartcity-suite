@@ -41,7 +41,7 @@ public class ModifyScheduleController {
     private NotificationSchedulerManager schedulerManager;
 
     @ModelAttribute("notificationSchedule")
-    private NotificationSchedule getNotificationSchedule(@PathVariable("id") Long id) {
+    public NotificationSchedule getNotificationSchedule(@PathVariable("id") Long id) {
         return scheduleService.findOne(id);
     }
 
