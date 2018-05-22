@@ -51,11 +51,12 @@ import java.util.List;
 
 import org.egov.eventnotification.entity.NotificationSchedule;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
-public interface NotificationScheduleRepository extends JpaRepository<NotificationSchedule, Long>{
+@Repository
+public interface NotificationScheduleRepository extends JpaRepository<NotificationSchedule, Long> {
 
-    @Query("select ns from NotificationSchedule ns where ns.status = :status")
-    public List<NotificationSchedule> getAllNotificationScheduleByStatus(@Param("status") String status);
+    List<NotificationSchedule> findByStatus(String status);
+
+    List<NotificationSchedule> findByOrderByIdDesc();
 }

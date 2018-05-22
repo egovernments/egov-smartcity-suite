@@ -15,9 +15,9 @@ import org.hibernate.validator.constraints.Length;
 @SequenceGenerator(name = TemplateModule.SEQ_EGEVNTNOTIFICATION_MODULE, sequenceName = TemplateModule.SEQ_EGEVNTNOTIFICATION_MODULE, allocationSize = 1)
 public class TemplateModule {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
     public static final String SEQ_EGEVNTNOTIFICATION_MODULE = "seq_egevntnotification_module";
-    
+
     @Id
     @GeneratedValue(generator = SEQ_EGEVNTNOTIFICATION_MODULE, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -29,34 +29,32 @@ public class TemplateModule {
     @NotNull
     private Boolean active;
 
-    
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
+    public static long getSerialversionuid() {
+        return serialVersionUID;
+    }
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public Boolean getActive() {
-		return active;
-	}
+    public Boolean getActive() {
+        return active;
+    }
 
-	public void setActive(Boolean active) {
-		this.active = active;
-	}
-    
-    
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
 }

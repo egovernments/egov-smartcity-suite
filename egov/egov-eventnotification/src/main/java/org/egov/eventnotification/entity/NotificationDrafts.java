@@ -12,77 +12,51 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.egov.infra.admin.master.entity.User;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egevntnotification_drafts")
 @SequenceGenerator(name = NotificationDrafts.SEQ_EGEVENTNOTIFICATION_DRAFTS, sequenceName = NotificationDrafts.SEQ_EGEVENTNOTIFICATION_DRAFTS, allocationSize = 1)
-public class NotificationDrafts {
+public class NotificationDrafts extends AbstractAuditable {
+
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
 
     public static final String SEQ_EGEVENTNOTIFICATION_DRAFTS = "SEQ_EGEVENTNOTIFICATION_DRAFTS";
-    
+
     @Id
     @GeneratedValue(generator = SEQ_EGEVENTNOTIFICATION_DRAFTS, strategy = GenerationType.SEQUENCE)
     private Long id;
-    
+
+    @SafeHtml
     private String name;
 
+    @SafeHtml
     private String type;
-    
+
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "module_id")
     private TemplateModule module;
-    
+
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")
     private ModuleCategory category;
-    
+
     @Column(name = "notification_message")
+    @SafeHtml
     private String message;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "createdBy")
-    @CreatedBy
-    private User createdBy;
 
-    @CreatedDate
-    private Long createdDate;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "updatedby")
-    @LastModifiedBy
-    private User updatedby;
-
-    @LastModifiedDate
-    private Long updatedDate;
-
-    	
-	public Long getCreatedDate() {
-		return createdDate;
-	}
-
-	public void setCreatedDate(Long createdDate) {
-		this.createdDate = createdDate;
-	}
-
-	public Long getUpdatedDate() {
-		return updatedDate;
-	}
-
-	public void setUpdatedDate(Long updatedDate) {
-		this.updatedDate = updatedDate;
-	}
-
-	public Long getId() {
+    @Override
+    public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
@@ -125,21 +99,5 @@ public class NotificationDrafts {
 
     public void setMessage(String message) {
         this.message = message;
-    }
-
-    public User getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(User createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public User getUpdatedby() {
-        return updatedby;
-    }
-
-    public void setUpdatedby(User updatedby) {
-        this.updatedby = updatedby;
     }
 }

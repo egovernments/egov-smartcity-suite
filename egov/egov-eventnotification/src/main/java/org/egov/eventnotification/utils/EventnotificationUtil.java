@@ -84,7 +84,7 @@ public class EventnotificationUtil {
      */
     public List<String> getAllMinute() {
         final List<String> minutesList = new ArrayList<>();
-        for (int i = 0; i < MINUTES_MAX_NUMBER_OF_REQUESTS; i += 15)
+        for (int i = 0; i < MINUTES_MAX_NUMBER_OF_REQUESTS; i += 1)
             if (i < MAX_NUMBER_OF_REQUESTS)
                 minutesList.add("0" + i);
             else

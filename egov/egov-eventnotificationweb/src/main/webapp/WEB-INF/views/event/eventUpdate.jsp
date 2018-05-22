@@ -57,14 +57,8 @@
 					<div class="panel-title"><spring:message code="lbl.event.update" /></div>
 				</div>
 				<input type="hidden" id="mode" path="" value="${mode}" />
-				<input type="hidden" id="id" name="id" value="${event.id}" />
-				<input type="hidden" id="eventTypeHid" value="${event.eventType}" />
-				<input type="hidden" id="startHHHid" value="${event.eventDetails.startHH}" />
-				<input type="hidden" id="startMMHid" value="${event.eventDetails.startMM}" />
-				<input type="hidden" id="endHHHid" value="${event.eventDetails.endHH}" />
-				<input type="hidden" id="endMMHid" value="${event.eventDetails.endMM}" />
-				<input type="hidden" id="ispaidHid" value="${event.ispaid}" />
-				<input type="hidden" id="statusHid" value="${event.status}" />
+				<form:hidden path="id" id="id" value="${id}"/>
+				<form:hidden path="filestore" id="filestore" name="filestore" value="${filestore}" />
 				<div class="panel-body">
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.eventType" />:<span class="mandatory"></span></label>
@@ -72,7 +66,7 @@
 							<form:select path="eventType" id="eventType" name="eventType"
 								cssClass="form-control" cssErrorClass="form-control error"	required="required">
 								<form:option value=""><spring:message code="lbl.select" /></form:option>
-								<form:options items="${eventList}" />
+								<form:options items="${eventList}"/>
 							</form:select>
 							<form:errors path="eventType" cssClass="error-msg" />
 						</div>
@@ -83,7 +77,7 @@
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.name" />:<span class="mandatory"></span></label>
 						<div class="col-sm-10 add-margin">
 							<form:input path="name" id="name" name="name" 
-								class="form-control text-left patternvalidation" maxlength="100" required="required" value="${event.name}"/>
+								class="form-control text-left patternvalidation" maxlength="100" required="required" value="${name}"/>
 							<form:errors path="name" cssClass="error-msg" />
 						</div>
 					</div>
@@ -92,7 +86,7 @@
 						<div class="col-sm-10 add-margin">
 							<form:textarea path="description" id="description" name="description"
 								class="form-control text-left patternvalidation"
-								maxlength="200" required="required" value="${event.description}"/>
+								maxlength="200" required="required" value="${description}"/>
 							<form:errors path="description" cssClass="error-msg" />
 						</div>
 					</div>
@@ -101,17 +95,17 @@
 						<div class="col-sm-10 add-margin">
 							<form:textarea path="message" id="message" name="message"
 								class="form-control text-left patternvalidation"
-								maxlength="200" required="required" value="${event.message}"/>
+								maxlength="200" required="required" value="${message}"/>
 							<form:errors path="message" cssClass="error-msg" />
 						</div>
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.startdate" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin text-center">
-							<fmt:formatDate pattern="dd/MM/yyyy" value="${event.eventDetails.startDt}" var="startDate" />
+							<fmt:formatDate pattern="dd/MM/yyyy" value="${eventDetails.startDt}" var="stDt" />
 							<form:input path="eventDetails.startDt" id="startDt" name="eventDetails.startDt" 
 								class="form-control datepicker" title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}" 
-								data-inputmask="'mask': 'd/m/y'" required="required" data-date-start-date="0d" value="<c:out value='${startDate}' />"/>
+								data-inputmask="'mask': 'd/m/y'" required="required" data-date-start-date="0d" value="<c:out value='${stDt}' />"/>
 							<form:errors path="eventDetails.startDt" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.starttime" />:<span class="mandatory"></span></label>
@@ -136,10 +130,10 @@
 				<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.enddate" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin text-center">
-							<fmt:formatDate pattern="dd/MM/yyyy" value="${event.eventDetails.endDt}" var="endDate" />
+							<fmt:formatDate pattern="dd/MM/yyyy" value="${eventDetails.endDt}" var="edDt" />
 							<form:input path="eventDetails.endDt" id="endDt" name="eventDetails.endDt" 
 								class="form-control datepicker" title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}" 
-								data-inputmask="'mask': 'd/m/y'" required="required" data-date-start-date="0d" value="<c:out value='${endDate}' />"/>
+								data-inputmask="'mask': 'd/m/y'" required="required" data-date-start-date="0d" value="<c:out value='${edDt}' />"/>
 							<form:errors path="eventDetails.endDt" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.endtime" />:<span class="mandatory"></span></label>
@@ -165,7 +159,7 @@
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.host" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="eventhost" id="eventhost" name="eventhost" 
-								class="form-control text-left patternvalidation" maxlength="100" required="required" value="${event.eventhost}"/>
+								class="form-control text-left patternvalidation" maxlength="100" required="required" value="${eventhost}"/>
 							<form:errors path="eventhost" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.location" />:<span class="mandatory"></span></label>
@@ -184,7 +178,7 @@
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.address" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="address" id="address" name="address" 
-								class="form-control text-left patternvalidation" maxlength="256" required="required" value="${event.address}"/>
+								class="form-control text-left patternvalidation" maxlength="256" required="required" value="${address}"/>
 							<form:errors path="address" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.Wallpaper" />:</label>
@@ -213,7 +207,7 @@
 						<label id="costLabel" class="col-sm-2 control-label text-right" style="display:none;"><spring:message code="lbl.event.cost" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin" style="display:none;" id="costDiv">
 							<form:input path="cost" id="cost" name="cost" 
-								class="form-control text-left patternvalidation" maxlength="20" value="${event.cost}"/>
+								class="form-control text-left patternvalidation" maxlength="20" value="${cost}"/>
 							<form:errors path="cost" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"></label>
@@ -224,7 +218,7 @@
 						<div class="col-sm-10 add-margin">
 							<form:input path="url" id="url" name="url"
 								class="form-control text-left patternvalidation"
-								maxlength="200" value="${event.url}"/>
+								maxlength="200" value="${url}"/>
 							<form:errors path="url" cssClass="error-msg" />
 						</div>
 					</div>
@@ -272,14 +266,7 @@
         </div>
     </div>
 </div>
-<script>
-	$('#buttonSubmit').click(function(e) {
-		if ($('form').valid()) {
-		} else {
-			e.preventDefault();
-		}
-	});
-</script><link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>" />
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>" />
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />

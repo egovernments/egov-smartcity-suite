@@ -50,10 +50,8 @@ package org.egov.pushbox.application.entity;
 import org.apache.commons.lang3.StringUtils;
 
 public enum NotificationType {
-	EVENT("EVENT"),
-	BUSINESS("BUSINESS"),
-	GENERAL("GENERAL");
-    
+    EVENT("EVENT"), BUSINESS("BUSINESS"), GENERAL("GENERAL");
+
     private String name;
 
     private NotificationType(String name) {
@@ -63,14 +61,10 @@ public enum NotificationType {
     public String getName() {
         return name;
     }
-    
+
     @Override
     public String toString() {
         return StringUtils.capitalize(name());
     }
 
 }
-
-
-
-

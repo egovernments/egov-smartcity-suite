@@ -48,28 +48,32 @@
 package org.egov.pushbox.application.entity;
 
 public class SendMessagePrototype {
-	private Long messageId; 
-	private Long userId; 
-	private String deviceId;
-	public Long getMessageId() {
-		return messageId;
-	}
-	public void setMessageId(Long messageId) {
-		this.messageId = messageId;
-	}
-	public Long getUserId() {
-		return userId;
-	}
-	public void setUserId(Long userId) {
-		this.userId = userId;
-	}
-	public String getDeviceId() {
-		return deviceId;
-	}
-	public void setDeviceId(String deviceId) {
-		this.deviceId = deviceId;
-	} 
-	
-	
+    private Long messageId;
+    private Long userId;
+    private String deviceId;
+
+    public Long getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(Long messageId) {
+        this.messageId = messageId;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
+    }
 
 }

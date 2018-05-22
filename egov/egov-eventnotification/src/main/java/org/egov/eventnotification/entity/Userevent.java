@@ -48,43 +48,33 @@
 package org.egov.eventnotification.entity;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 
 @Entity
-@Table(name = "eg_userevent")
+@Table(name = "egevntnotification_userevent")
 @SequenceGenerator(name = Userevent.SEQ_EG_USEREVENT, sequenceName = Event.SEQ_EG_EVENT, allocationSize = 1)
-public class Userevent extends AbstractPersistable<Long> {
+public class Userevent extends AbstractAuditable {
 
     /**
      *
      */
     private static final long serialVersionUID = 1L;
 
-    public static final String SEQ_EG_USEREVENT = "SEQ_EG_USEREVENT";
+    public static final String SEQ_EG_USEREVENT = "SEQ_EGEVNTNOTIFICATION_USEREVENT";
 
     @Id
     @GeneratedValue(generator = SEQ_EG_USEREVENT, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userid")
-    private User userid;
+    private Long userId;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "eventid")
-    private Event eventid;
-
-    private Long version;
+    private Long eventId;
 
     @Override
     public Long getId() {
@@ -96,29 +86,19 @@ public class Userevent extends AbstractPersistable<Long> {
         this.id = id;
     }
 
-    public User getUserid() {
-        return userid;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setUserid(User userid) {
-        this.userid = userid;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
-    public Event getEventid() {
-        return eventid;
+    public Long getEventId() {
+        return eventId;
     }
 
-    public void setEventid(Event eventid) {
-        this.eventid = eventid;
+    public void setEventId(Long eventId) {
+        this.eventId = eventId;
     }
-
-    @Override
-    public Long getVersion() {
-        return version;
-    }
-
-    public void setVersion(Long version) {
-        this.version = version;
-    }
-
 }

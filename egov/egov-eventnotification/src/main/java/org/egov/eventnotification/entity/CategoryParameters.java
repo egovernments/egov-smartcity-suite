@@ -17,9 +17,9 @@ import org.hibernate.validator.constraints.Length;
 @Table(name = "egevntnotification_parameters")
 @SequenceGenerator(name = CategoryParameters.SEQ_EGEN_PARAMETERS, sequenceName = CategoryParameters.SEQ_EGEN_PARAMETERS, allocationSize = 1)
 public class CategoryParameters {
-	
+
     public static final String SEQ_EGEN_PARAMETERS = "seq_egevntnotification_parameters";
-    
+
     @Id
     @GeneratedValue(generator = SEQ_EGEN_PARAMETERS, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -30,42 +30,42 @@ public class CategoryParameters {
 
     @NotNull
     private Boolean active;
-    
+
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")
     private ModuleCategory moduleCategory;
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public Boolean getActive() {
-		return active;
-	}
+    public Boolean getActive() {
+        return active;
+    }
 
-	public void setActive(Boolean active) {
-		this.active = active;
-	}
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
 
-	public ModuleCategory getModuleCategory() {
-		return moduleCategory;
-	}
+    public ModuleCategory getModuleCategory() {
+        return moduleCategory;
+    }
 
-	public void setModuleCategory(ModuleCategory moduleCategory) {
-		this.moduleCategory = moduleCategory;
-	} 
-	
+    public void setModuleCategory(ModuleCategory moduleCategory) {
+        this.moduleCategory = moduleCategory;
+    }
+
 }

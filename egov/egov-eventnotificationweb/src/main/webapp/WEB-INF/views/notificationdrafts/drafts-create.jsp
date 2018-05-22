@@ -125,19 +125,11 @@
 				<spring:message code='lbl.create' />
 			</button>
 			<a href='javascript:void(0)' class='btn btn-default'
-				onclick='self.close()'><spring:message code='lbl.close' /></a>
+				id='buttonClose'><spring:message code='lbl.close' /></a>
 		</div>
 	</div>
 	</div>
 </form:form>
-<script>
-	/*$('#buttonSubmit').click(function(e) {
-		if ($('form').valid()) {
-		} else {
-			e.preventDefault();
-		}
-	}); */
-</script>
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>" />
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
@@ -154,76 +146,3 @@
 <script	type="text/javascript" src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<cdn:url  value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<cdn:url value='/resources/js/app/draftNewHelper.js?rnd=${app_release_no}'/>"></script>
-<script type="text/javascript">
-$(document).ready(function(){
-
-           $("#dragdiv li").draggable({
-             helper: "clone",
-             cursor: "move",
-             revert: "invalid"
-           });
-
-           initDroppable($("#message"));
-
-           function initDroppable($elements) {
-             $elements.droppable({
-               activeClass: "ui-state-default",
-               hoverClass: "ui-drop-hover",
-               accept: ":not(.ui-sortable-helper)",
-
-               over: function(event, ui) {
-                 var $this = $(this);
-               },
-               drop: function(event, ui) {
-                 var $this = $(this);
-                   $this.val($this.val() + "{{" + ui.draggable.text().trim() + "}}");
-               }
-             });
-           }
-
-           $('#module').change(function() {
-               alert("Inside on change method"); 
-               $.ajax({
-                   url: '/api/draft/getCategoriesForModule/'+ $('#module').val(),
-                   dataType: 'json',
-                   type: 'GET',
-                   // This is query string i.e. country_id=123
-                   success: function(data) {
-                       $('#category').empty(); // clear the current elements in select box
-                       $('#category').append($('<option value="">Select</option>'));
-                       for (row in data) {
-                           $('#category').append($('<option value="'+data[row].id+'">'+data[row].name+'</option>'));
-                       }
-                       
-                   },
-                   error: function(jqXHR, textStatus, errorThrown) {
-                       alert(errorThrown);
-                   }
-               });
-       });
-
-       $('#category').change(function() {
-           $.ajax({
-               url: '/api/draft/getParametersForCategory/'+ $('#category').val(),
-               dataType: 'json',
-               type: 'GET',
-               // This is query string i.e. country_id=123
-               success: function(data) {
-               	$('#allItems').empty(); // clear the current elements in select box
-                   for (row in data) {
-                       $('#allItems').append($('<li class="li eachParameter" id="node">'+data[row].name+'</li>'));
-                   }
-                   $("#dragdiv li").draggable({
-                       helper: "clone",
-                       cursor: "move",
-                       revert: "invalid"
-                     });
-               },
-               error: function(jqXHR, textStatus, errorThrown) {
-                   alert(errorThrown);
-               }
-           });
-       });
-});
-</script>
-

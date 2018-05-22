@@ -123,7 +123,7 @@
 						<spring:message code='lbl.edit.button' />
 					</button>
 					<a href="javascript:void(0)" class="btn btn-default"
-						onclick="self.close()"><spring:message code="lbl.close" /></a>
+						id='buttonClose'><spring:message code="lbl.close" /></a>
 				</div>
 			</div>
 		</div>

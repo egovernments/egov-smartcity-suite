@@ -47,9 +47,9 @@
  */
 package org.egov.api.controller;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import java.io.File;
 import java.io.IOException;
@@ -66,7 +66,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.api.controller.core.ApiResponse;
 import org.egov.api.controller.core.ApiUrl;
-import org.egov.eventnotification.constants.EventnotificationConstant;
+import org.egov.eventnotification.constants.Constants;
 import org.egov.eventnotification.entity.CategoryParameters;
 import org.egov.eventnotification.entity.Event;
 import org.egov.eventnotification.entity.ModuleCategory;
@@ -81,11 +81,9 @@ import org.json.simple.JSONValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.google.gson.JsonArray;
@@ -101,9 +99,9 @@ public class RestEventController {
     private static final Logger LOGGER = Logger.getLogger(RestEventController.class);
     @Autowired
     private EventService eventService;
-    
+
     @Autowired
-    private DraftService draftService; 
+    private DraftService draftService;
 
     @Autowired
     private UsereventService usereventService;
@@ -121,43 +119,43 @@ public class RestEventController {
      */
     @RequestMapping(value = ApiUrl.GET_ALL_EVENT, method = GET, produces = APPLICATION_JSON_VALUE)
     public String getAllEvent() {
-        List<Event> eventList = eventService.findAllOngoingEvent(EventnotificationConstant.ACTIVE);
+        List<Event> eventList = eventService.findAllOngoingEvent(Constants.ACTIVE);
 
         JsonArray jsonArrayEvent = new JsonArray();
         for (Event event : eventList) {
             JsonObject jsonObjectEvent = new JsonObject();
-            jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_ID, event.getId());
-            jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_NAME, event.getName());
-            jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_DESC, event.getDescription());
-            jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_STARTDATE, event.getStartDate());
-            jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_STARTTIME, event.getStartTime());
-            jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_ENDDATE, event.getEndDate());
-            jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_ENDTIME, event.getEndTime());
-            jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_HOST, event.getEventhost());
-            jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_LOCATION, event.getEventlocation());
-            jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_ADDRESS, event.getAddress());
-            jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_ISPAID, event.getIspaid());
-            jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_EVENTTYPE, event.getEventType());
-            jsonObjectEvent.addProperty(EventnotificationConstant.INTERESTED_COUNT, "");
+            jsonObjectEvent.addProperty(Constants.EVENT_ID, event.getId());
+            jsonObjectEvent.addProperty(Constants.EVENT_NAME, event.getName());
+            jsonObjectEvent.addProperty(Constants.EVENT_DESC, event.getDescription());
+            jsonObjectEvent.addProperty(Constants.EVENT_STARTDATE, event.getStartDate());
+            jsonObjectEvent.addProperty(Constants.EVENT_STARTTIME, event.getStartTime());
+            jsonObjectEvent.addProperty(Constants.EVENT_ENDDATE, event.getEndDate());
+            jsonObjectEvent.addProperty(Constants.EVENT_ENDTIME, event.getEndTime());
+            jsonObjectEvent.addProperty(Constants.EVENT_HOST, event.getEventhost());
+            jsonObjectEvent.addProperty(Constants.EVENT_LOCATION, event.getEventlocation());
+            jsonObjectEvent.addProperty(Constants.EVENT_ADDRESS, event.getAddress());
+            jsonObjectEvent.addProperty(Constants.EVENT_ISPAID, event.getIspaid());
+            jsonObjectEvent.addProperty(Constants.EVENT_EVENTTYPE, event.getEventType());
+            jsonObjectEvent.addProperty(Constants.INTERESTED_COUNT, "");
             if (event.getFilestore() == null) {
-                jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_FILESTOREID, "");
-                jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_FILENAME, "");
+                jsonObjectEvent.addProperty(Constants.EVENT_FILESTOREID, "");
+                jsonObjectEvent.addProperty(Constants.EVENT_FILENAME, "");
             } else {
-                jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_FILESTOREID, event.getFilestore().getFileStoreId());
-                jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_FILENAME, event.getFilestore().getFileName());
+                jsonObjectEvent.addProperty(Constants.EVENT_FILESTOREID, event.getFilestore().getId());
+                jsonObjectEvent.addProperty(Constants.EVENT_FILENAME, event.getFilestore().getFileName());
             }
 
             if (event.getCost() == null)
-                jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_COST, 0.0);
+                jsonObjectEvent.addProperty(Constants.EVENT_COST, 0.0);
             else
-                jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_COST, event.getCost());
+                jsonObjectEvent.addProperty(Constants.EVENT_COST, event.getCost());
 
             if (event.getUrl() == null)
-                jsonObjectEvent.addProperty(EventnotificationConstant.URL, "");
+                jsonObjectEvent.addProperty(Constants.URL, "");
             else
-                jsonObjectEvent.addProperty(EventnotificationConstant.URL, event.getUrl());
-            
-            jsonObjectEvent.addProperty(EventnotificationConstant.USER_INTERESTED,EventnotificationConstant.NO);
+                jsonObjectEvent.addProperty(Constants.URL, event.getUrl());
+
+            jsonObjectEvent.addProperty(Constants.USER_INTERESTED, Constants.NO);
 
             jsonArrayEvent.add(jsonObjectEvent);
 
@@ -173,48 +171,48 @@ public class RestEventController {
      */
     @RequestMapping(value = ApiUrl.GET_EVENT
             + ApiUrl.EVENT_ID, method = GET, produces = APPLICATION_JSON_VALUE)
-    public String getEvent(@PathVariable long id,@RequestParam(required = false, value = EventnotificationConstant.USERID) Long userId) {
+    public String getEvent(@PathVariable long id, @RequestParam(required = false, value = Constants.USERID) Long userId) {
         ApiResponse.newInstance();
-        Event event = eventService.findById(id);
+        Event event = eventService.findByEventId(id);
 
         JsonObject jsonObjectEvent = new JsonObject();
-        jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_ID, event.getId());
-        jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_NAME, event.getName());
-        jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_DESC, event.getDescription());
-        jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_STARTDATE, event.getStartDate());
-        jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_STARTTIME, event.getStartTime());
-        jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_ENDDATE, event.getEndDate());
-        jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_ENDTIME, event.getEndTime());
-        jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_HOST, event.getEventhost());
-        jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_LOCATION, event.getEventlocation());
-        jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_ADDRESS, event.getAddress());
-        jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_ISPAID, event.getIspaid());
-        jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_EVENTTYPE, event.getEventType());
-        jsonObjectEvent.addProperty(EventnotificationConstant.INTERESTED_COUNT,
+        jsonObjectEvent.addProperty(Constants.EVENT_ID, event.getId());
+        jsonObjectEvent.addProperty(Constants.EVENT_NAME, event.getName());
+        jsonObjectEvent.addProperty(Constants.EVENT_DESC, event.getDescription());
+        jsonObjectEvent.addProperty(Constants.EVENT_STARTDATE, event.getStartDate());
+        jsonObjectEvent.addProperty(Constants.EVENT_STARTTIME, event.getStartTime());
+        jsonObjectEvent.addProperty(Constants.EVENT_ENDDATE, event.getEndDate());
+        jsonObjectEvent.addProperty(Constants.EVENT_ENDTIME, event.getEndTime());
+        jsonObjectEvent.addProperty(Constants.EVENT_HOST, event.getEventhost());
+        jsonObjectEvent.addProperty(Constants.EVENT_LOCATION, event.getEventlocation());
+        jsonObjectEvent.addProperty(Constants.EVENT_ADDRESS, event.getAddress());
+        jsonObjectEvent.addProperty(Constants.EVENT_ISPAID, event.getIspaid());
+        jsonObjectEvent.addProperty(Constants.EVENT_EVENTTYPE, event.getEventType());
+        jsonObjectEvent.addProperty(Constants.INTERESTED_COUNT,
                 usereventService.countUsereventByEventId(event.getId()));
         if (event.getFilestore() == null) {
-            jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_FILESTOREID, "");
-            jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_FILENAME, "");
+            jsonObjectEvent.addProperty(Constants.EVENT_FILESTOREID, "");
+            jsonObjectEvent.addProperty(Constants.EVENT_FILENAME, "");
         } else {
-            jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_FILESTOREID, event.getFilestore().getFileStoreId());
-            jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_FILENAME, event.getFilestore().getFileName());
+            jsonObjectEvent.addProperty(Constants.EVENT_FILESTOREID, event.getFilestore().getId());
+            jsonObjectEvent.addProperty(Constants.EVENT_FILENAME, event.getFilestore().getFileName());
         }
         if (event.getCost() == null)
-            jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_COST, 0.0);
+            jsonObjectEvent.addProperty(Constants.EVENT_COST, 0.0);
         else
-            jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_COST, event.getCost());
+            jsonObjectEvent.addProperty(Constants.EVENT_COST, event.getCost());
 
         if (event.getUrl() == null)
-            jsonObjectEvent.addProperty(EventnotificationConstant.URL, "");
+            jsonObjectEvent.addProperty(Constants.URL, "");
         else
-            jsonObjectEvent.addProperty(EventnotificationConstant.URL, event.getUrl());
-        
-        Userevent userevent = usereventService.getUsereventByEventAndUser(event.getId(),userId);
-        if(null == userevent)
-            jsonObjectEvent.addProperty(EventnotificationConstant.USER_INTERESTED,EventnotificationConstant.NO);
+            jsonObjectEvent.addProperty(Constants.URL, event.getUrl());
+
+        Userevent userevent = usereventService.getUsereventByEventAndUser(event.getId(), userId);
+        if (null == userevent)
+            jsonObjectEvent.addProperty(Constants.USER_INTERESTED, Constants.NO);
         else
-            jsonObjectEvent.addProperty(EventnotificationConstant.USER_INTERESTED,EventnotificationConstant.YES);
-        
+            jsonObjectEvent.addProperty(Constants.USER_INTERESTED, Constants.YES);
+
         return jsonObjectEvent.toString();
     }
 
@@ -226,10 +224,10 @@ public class RestEventController {
      * @return json string
      */
     @RequestMapping(value = ApiUrl.SEARCH_EVENT, method = GET, produces = APPLICATION_JSON_VALUE)
-    public String searchEvent(@RequestParam(required = false, value = EventnotificationConstant.EVENT_EVENTTYPE) String eventType,
-            @RequestParam(required = false, value = EventnotificationConstant.EVENT_NAME) String name,
-            @RequestParam(required = false, value = EventnotificationConstant.EVENT_EVENTHOST) String eventHost,
-            @RequestParam(required = true, value = EventnotificationConstant.EVENT_DATE_TYPE) String eventDateType) {
+    public String searchEvent(@RequestParam(required = false, value = Constants.EVENT_EVENTTYPE) String eventType,
+            @RequestParam(required = false, value = Constants.EVENT_NAME) String name,
+            @RequestParam(required = false, value = Constants.EVENT_EVENTHOST) String eventHost,
+            @RequestParam(required = true, value = Constants.EVENT_DATE_TYPE) String eventDateType) {
 
         Event eventObj = new Event();
         eventObj.setEventType(eventType);
@@ -239,107 +237,107 @@ public class RestEventController {
         JsonArray jsonArrayEvent = new JsonArray();
         for (Event event : eventList) {
             JsonObject jsonObjectEvent = new JsonObject();
-            jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_ID, event.getId());
-            jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_NAME, event.getName());
-            jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_DESC, event.getDescription());
-            jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_STARTDATE, event.getStartDate());
-            jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_STARTTIME, event.getStartTime());
-            jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_ENDDATE, event.getEndDate());
-            jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_ENDTIME, event.getEndTime());
-            jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_HOST, event.getEventhost());
-            jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_LOCATION, event.getEventlocation());
-            jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_ADDRESS, event.getAddress());
-            jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_ISPAID, event.getIspaid());
-            jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_EVENTTYPE, event.getEventType());
-            jsonObjectEvent.addProperty(EventnotificationConstant.INTERESTED_COUNT, "");
+            jsonObjectEvent.addProperty(Constants.EVENT_ID, event.getId());
+            jsonObjectEvent.addProperty(Constants.EVENT_NAME, event.getName());
+            jsonObjectEvent.addProperty(Constants.EVENT_DESC, event.getDescription());
+            jsonObjectEvent.addProperty(Constants.EVENT_STARTDATE, event.getStartDate());
+            jsonObjectEvent.addProperty(Constants.EVENT_STARTTIME, event.getStartTime());
+            jsonObjectEvent.addProperty(Constants.EVENT_ENDDATE, event.getEndDate());
+            jsonObjectEvent.addProperty(Constants.EVENT_ENDTIME, event.getEndTime());
+            jsonObjectEvent.addProperty(Constants.EVENT_HOST, event.getEventhost());
+            jsonObjectEvent.addProperty(Constants.EVENT_LOCATION, event.getEventlocation());
+            jsonObjectEvent.addProperty(Constants.EVENT_ADDRESS, event.getAddress());
+            jsonObjectEvent.addProperty(Constants.EVENT_ISPAID, event.getIspaid());
+            jsonObjectEvent.addProperty(Constants.EVENT_EVENTTYPE, event.getEventType());
+            jsonObjectEvent.addProperty(Constants.INTERESTED_COUNT, "");
             if (event.getFilestore() == null) {
-                jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_FILESTOREID, "");
-                jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_FILENAME, "");
+                jsonObjectEvent.addProperty(Constants.EVENT_FILESTOREID, "");
+                jsonObjectEvent.addProperty(Constants.EVENT_FILENAME, "");
             } else {
-                jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_FILESTOREID, event.getFilestore().getFileStoreId());
-                jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_FILENAME, event.getFilestore().getFileName());
+                jsonObjectEvent.addProperty(Constants.EVENT_FILESTOREID, event.getFilestore().getId());
+                jsonObjectEvent.addProperty(Constants.EVENT_FILENAME, event.getFilestore().getFileName());
             }
             if (event.getCost() == null)
-                jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_COST, 0.0);
+                jsonObjectEvent.addProperty(Constants.EVENT_COST, 0.0);
             else
-                jsonObjectEvent.addProperty(EventnotificationConstant.EVENT_COST, event.getCost());
+                jsonObjectEvent.addProperty(Constants.EVENT_COST, event.getCost());
 
             if (event.getUrl() == null)
-                jsonObjectEvent.addProperty(EventnotificationConstant.URL, "");
+                jsonObjectEvent.addProperty(Constants.URL, "");
             else
-                jsonObjectEvent.addProperty(EventnotificationConstant.URL, event.getUrl());
-            
-            jsonObjectEvent.addProperty(EventnotificationConstant.USER_INTERESTED,EventnotificationConstant.NO);
+                jsonObjectEvent.addProperty(Constants.URL, event.getUrl());
+
+            jsonObjectEvent.addProperty(Constants.USER_INTERESTED, Constants.NO);
 
             jsonArrayEvent.add(jsonObjectEvent);
 
         }
         return jsonArrayEvent.toString();
     }
-    
-    @RequestMapping(value = ApiUrl.SEARCH_DRAFT, method = GET, produces = APPLICATION_JSON_VALUE)
-    public String searchDraft(@RequestParam(required = false, value = EventnotificationConstant.DRAFT_NOTIFICATION_TYPE) String type,
-            @RequestParam(required = false, value = EventnotificationConstant.DRAFT_NAME) String name,
-            @RequestParam(required = false, value = EventnotificationConstant.MODULE_NAME) Long module) {
 
-    	NotificationDrafts draftObj = new NotificationDrafts(); 
-    	draftObj.setType(type);
-    	draftObj.setName(name);
-    	List<NotificationDrafts> draftList = draftService.searchDraft(draftObj);
+    @RequestMapping(value = ApiUrl.SEARCH_DRAFT, method = GET, produces = APPLICATION_JSON_VALUE)
+    public String searchDraft(@RequestParam(required = false, value = Constants.DRAFT_NOTIFICATION_TYPE) String type,
+            @RequestParam(required = false, value = Constants.DRAFT_NAME) String name,
+            @RequestParam(required = false, value = Constants.MODULE_NAME) Long module) {
+
+        NotificationDrafts draftObj = new NotificationDrafts();
+        draftObj.setType(type);
+        draftObj.setName(name);
+        List<NotificationDrafts> draftList = draftService.searchDraft(draftObj);
 
         JsonArray jsonArrayEvent = new JsonArray();
         for (NotificationDrafts draft : draftList) {
             JsonObject jsonObjectDraft = new JsonObject();
-            jsonObjectDraft.addProperty(EventnotificationConstant.DRAFT_ID, draft.getId());
-            jsonObjectDraft.addProperty(EventnotificationConstant.DRAFT_NAME, draft.getName());
-            jsonObjectDraft.addProperty(EventnotificationConstant.DRAFT_NOTIFICATION_TYPE, draft.getType());
-            
-            if(null != draft.getModule()) {
-            	JsonObject jsonObjectModule = new JsonObject();
-            	if(StringUtils.isNotBlank(draft.getModule().getName()))
-            		jsonObjectModule.addProperty("name", draft.getModule().getName());
-            	if(null != draft.getModule().getId()) 
-            		jsonObjectModule.addProperty("id", draft.getModule().getId());
-            	jsonObjectDraft.add("module", jsonObjectModule);
+            jsonObjectDraft.addProperty(Constants.DRAFT_ID, draft.getId());
+            jsonObjectDraft.addProperty(Constants.DRAFT_NAME, draft.getName());
+            jsonObjectDraft.addProperty(Constants.DRAFT_NOTIFICATION_TYPE, draft.getType());
+
+            if (null != draft.getModule()) {
+                JsonObject jsonObjectModule = new JsonObject();
+                if (StringUtils.isNotBlank(draft.getModule().getName()))
+                    jsonObjectModule.addProperty(Constants.EVENT_NAME, draft.getModule().getName());
+                if (null != draft.getModule().getId())
+                    jsonObjectModule.addProperty(Constants.EVENT_ID, draft.getModule().getId());
+                jsonObjectDraft.add(Constants.MODULE, jsonObjectModule);
             }
-            
-            if(null != draft.getCategory()) {
-            	JsonObject jsonObjectCategory = new JsonObject();
-            	if(StringUtils.isNotBlank(draft.getCategory().getName()))
-            		jsonObjectCategory.addProperty("name", draft.getCategory().getName());
-            	if(null != draft.getCategory().getId()) 
-            		jsonObjectCategory.addProperty("id", draft.getCategory().getId());
-            	jsonObjectDraft.add("category", jsonObjectCategory);
+
+            if (null != draft.getCategory()) {
+                JsonObject jsonObjectCategory = new JsonObject();
+                if (StringUtils.isNotBlank(draft.getCategory().getName()))
+                    jsonObjectCategory.addProperty(Constants.EVENT_NAME, draft.getCategory().getName());
+                if (null != draft.getCategory().getId())
+                    jsonObjectCategory.addProperty(Constants.EVENT_ID, draft.getCategory().getId());
+                jsonObjectDraft.add(Constants.CATEGORY, jsonObjectCategory);
             }
-            jsonObjectDraft.addProperty("message", draft.getMessage());
+            jsonObjectDraft.addProperty(Constants.NOTIFICATION_MESSAGE, draft.getMessage());
             jsonArrayEvent.add(jsonObjectDraft);
         }
         return jsonArrayEvent.toString();
     }
-    
+
     @RequestMapping(value = ApiUrl.GET_CATEGORY_FOR_MODULE
             + ApiUrl.MODULE_ID, method = GET, produces = APPLICATION_JSON_VALUE)
     public String getCategoriesForModule(@PathVariable long moduleId) {
-        List<ModuleCategory> categoryList = draftService.getCategoriesForModule(moduleId); 
+        List<ModuleCategory> categoryList = draftService.getCategoriesForModule(moduleId);
         JsonArray jsonArrayEvent = new JsonArray();
         for (ModuleCategory category : categoryList) {
             JsonObject jsonObjectEvent = new JsonObject();
-            jsonObjectEvent.addProperty(EventnotificationConstant.CATEGORY_ID, category.getId());
-            jsonObjectEvent.addProperty(EventnotificationConstant.CATEGORY_NAME, category.getName());
+            jsonObjectEvent.addProperty(Constants.CATEGORY_ID, category.getId());
+            jsonObjectEvent.addProperty(Constants.CATEGORY_NAME, category.getName());
             jsonArrayEvent.add(jsonObjectEvent);
         }
         return jsonArrayEvent.toString();
     }
-    
+
     @RequestMapping(value = ApiUrl.GET_PARAMETERS_FOR_CATEGORY
             + ApiUrl.CATEGORY_ID, method = GET, produces = APPLICATION_JSON_VALUE)
     public String getParametersForCategory(@PathVariable long categoryId) {
-        List<CategoryParameters> parametersList = draftService.getParametersForCategory(categoryId); 
+        List<CategoryParameters> parametersList = draftService.getParametersForCategory(categoryId);
         JsonArray jsonArrayEvent = new JsonArray();
         for (CategoryParameters parameter : parametersList) {
             JsonObject jsonObjectEvent = new JsonObject();
-            jsonObjectEvent.addProperty(EventnotificationConstant.PARAMETER_ID, parameter.getId());
-            jsonObjectEvent.addProperty(EventnotificationConstant.PARAMETER_NAME, parameter.getName());
+            jsonObjectEvent.addProperty(Constants.PARAMETER_ID, parameter.getId());
+            jsonObjectEvent.addProperty(Constants.PARAMETER_NAME, parameter.getName());
             jsonArrayEvent.add(jsonObjectEvent);
         }
         return jsonArrayEvent.toString();
@@ -355,29 +353,29 @@ public class RestEventController {
     public String saveUserEvent(@RequestBody String jsonData) {
         JSONObject requestObject = (JSONObject) JSONValue.parse(jsonData);
         JSONObject responseObject = new JSONObject();
-        if (requestObject.containsKey(EventnotificationConstant.USERID)
-                && requestObject.containsKey(EventnotificationConstant.EVENTID)) {
-            Userevent userevent = usereventService.persistUserevent(
-                    requestObject.get(EventnotificationConstant.USERID).toString(),
-                    requestObject.get(EventnotificationConstant.EVENTID).toString());
+        if (requestObject.containsKey(Constants.USERID)
+                && requestObject.containsKey(Constants.EVENTID)) {
+            Userevent userevent = usereventService.save(
+                    Long.parseLong(requestObject.get(Constants.USERID).toString()),
+                    Long.parseLong(requestObject.get(Constants.EVENTID).toString()));
             if (userevent == null)
-                responseObject.put(EventnotificationConstant.FAIL, messageSource.getMessage("error.fail.event", null,
-                        "Unable to process your request now.", Locale.getDefault()));
+                responseObject.put(Constants.FAIL, messageSource.getMessage(Constants.ERROR_FAIL_EVENT, null,
+                        Constants.ERROR, Locale.getDefault()));
             else {
-                responseObject.put(EventnotificationConstant.SUCCESS,
-                        messageSource.getMessage("msg.event.success", null, "Success.", Locale.getDefault()));
+                responseObject.put(Constants.SUCCESS,
+                        messageSource.getMessage(Constants.MSG_EVENT_SUCCESS, null, Constants.SUCCESS1, Locale.getDefault()));
                 Long interestedCount = usereventService
-                        .countUsereventByEventId(Long.parseLong(requestObject.get(EventnotificationConstant.EVENTID).toString()));
+                        .countUsereventByEventId(Long.parseLong(requestObject.get(Constants.EVENTID).toString()));
                 if (null == interestedCount)
-                    responseObject.put(EventnotificationConstant.INTERESTED_COUNT, 0);
+                    responseObject.put(Constants.INTERESTED_COUNT, 0);
                 else
-                    responseObject.put(EventnotificationConstant.INTERESTED_COUNT,
-                            usereventService.countUsereventByEventId(userevent.getEventid().getId()));
+                    responseObject.put(Constants.INTERESTED_COUNT,
+                            usereventService.countUsereventByEventId(userevent.getEventId()));
             }
 
         } else
-            responseObject.put(EventnotificationConstant.FAIL, messageSource.getMessage("error.fail.event", null,
-                    "Unable to process your request now.", Locale.getDefault()));
+            responseObject.put(Constants.FAIL, messageSource.getMessage(Constants.ERROR_FAIL_EVENTUSER, null,
+                    Constants.ERROR, Locale.getDefault()));
 
         return responseObject.toJSONString();
     }
@@ -395,8 +393,8 @@ public class RestEventController {
     public void downloadEventImage(@PathVariable final Long id, @PathVariable final String fileStoreId,
             final HttpServletResponse response) throws IOException {
         try {
-            Event event = eventService.findById(id);
-            File downloadFile = fileStoreService.fetch(fileStoreId, EventnotificationConstant.MODULE_NAME);
+            Event event = eventService.findByEventId(id);
+            File downloadFile = fileStoreService.fetch(fileStoreId, Constants.MODULE_NAME);
             long contentLength = downloadFile.length();
 
             response.setHeader("Content-Length", String.valueOf(contentLength));

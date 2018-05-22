@@ -50,17 +50,15 @@ package org.egov.pushbox.application.entity;
 import java.util.List;
 
 public class SendMessageList {
-	
-	private List<SendMessagePrototype> messagePrototypeList;
 
-	public List<SendMessagePrototype> getMessagePrototypeList() {
-		return messagePrototypeList;
-	}
+    private List<SendMessagePrototype> messagePrototypeList;
 
-	public void setMessagePrototypeList(List<SendMessagePrototype> messagePrototypeList) {
-		this.messagePrototypeList = messagePrototypeList;
-	} 
-	
-	
+    public List<SendMessagePrototype> getMessagePrototypeList() {
+        return messagePrototypeList;
+    }
+
+    public void setMessagePrototypeList(List<SendMessagePrototype> messagePrototypeList) {
+        this.messagePrototypeList = messagePrototypeList;
+    }
 
 }

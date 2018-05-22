@@ -126,7 +126,7 @@
 			</c:if>
 			<c:if test="${empty scheduleList}">
 				<tr class="odd">
-					<td colspan="13" class="dataTables_empty" valign="top"><spring:message code="lbl.norecords" /></td>
+					<td colspan="8" class="dataTables_empty" valign="top"><spring:message code="lbl.norecords" /></td>
 				</tr>
 			</c:if>
 			</tbody>

@@ -50,12 +50,12 @@ $(document).ready(function(){
 		bootbox.confirm($("#scheduleDelConfirm").val(), function(result) {
 			if(result === true)
 			{
-				deleteSchedule();
+				disableSchedule();
 			}
 		}); 
 	});
 	
-	function deleteSchedule(){
+	function disableSchedule(){
 		$.ajax({
 		      type: "GET",
 		      url: "/eventnotification/schedule/delete/"+$("#id").val(),

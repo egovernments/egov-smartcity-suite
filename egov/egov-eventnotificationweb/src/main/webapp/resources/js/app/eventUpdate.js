@@ -218,7 +218,7 @@ $(document).ready(function(){
                 if (results[0]) {
                     address = results[0].formatted_address;
                     //$('#location').typeahead('val', address);
-                    //$('#latlngaddress').val(address);
+                    $('#address').val(address);
                 }
             }
         });
@@ -227,7 +227,7 @@ $(document).ready(function(){
         $("#eventlocation").val(lat + ':' + lng);
     });
 			
-	if($("#ispaidHid").val() === "true"){
+	if($("#ispaid").val() === "true"){
 		$("#ispaid")[0].checked = true;
 		$("#costLabel").show();
     	$("#costDiv").show();
@@ -248,42 +248,45 @@ $(document).ready(function(){
 	
 	$(".btn-primary").click(function(event){
 		
-		if($("#mode").val()==="update"){
-			var start = $("#startDt").val();
-			var end = $("#endDt").val();
-			var stsplit = start.split("/");
-			var ensplit = end.split("/");
-			
-			start = stsplit[1] + "/" + stsplit[0] + "/" + stsplit[2];
-			end = ensplit[1] + "/" + ensplit[0] + "/" + ensplit[2];
-			if(!validateStartDateAndEndDate(start,end))
-			{
-				return false;
-			}
-			var startHH = $("#startHH").val();
-			var startMM = $("#startMM").val();
-			var endHH = $("#endHH").val();
-			var endMM = $("#endMM").val();
-			if(validateEqualStartDateAndEndDate(start,end) && startHH === endHH &&  startMM === endMM)
-			{
-				bootbox.alert("Invalid date time range. Start Date, Start Time cannot be equal to End Date, End Time!");
-				$("#endHH").val("");
-				$("#endMM").val("");
-				return false;
-			}
-			
-			if(jQuery("#ispaid").is(":checked")){
-				if($("#cost").val() == ""){
-					bootbox.alert("Please provide cost!");
-					$("#cost").val("");
+		if ($("form").valid()) {
+			if($("#mode").val()==="update"){
+				var start = $("#startDt").val();
+				var end = $("#endDt").val();
+				var stsplit = start.split("/");
+				var ensplit = end.split("/");
+				
+				start = stsplit[1] + "/" + stsplit[0] + "/" + stsplit[2];
+				end = ensplit[1] + "/" + ensplit[0] + "/" + ensplit[2];
+				if(!validateStartDateAndEndDate(start,end))
+				{
 					return false;
 				}
+				var startHH = $("#startHH").val();
+				var startMM = $("#startMM").val();
+				var endHH = $("#endHH").val();
+				var endMM = $("#endMM").val();
+				if(validateEqualStartDateAndEndDate(start,end) && startHH === endHH &&  startMM === endMM)
+				{
+					bootbox.alert("Invalid date time range. Start Date, Start Time cannot be equal to End Date, End Time!");
+					$("#endHH").val("");
+					$("#endMM").val("");
+					return false;
+				}
+				
+				if(jQuery("#ispaid").is(":checked")){
+					if($("#cost").val() == ""){
+						bootbox.alert("Please provide cost!");
+						$("#cost").val("");
+						return false;
+					}
+				}
 			}
+			
+			document.getElementById("updateEventform").submit();
+		} else {
+			event.preventDefault();
 		}
-		
-		document.getElementById("updateEventform").submit();
 		return true;
-		//event.preventDefault();
 	});
 	
 	$("input[type=file]").change(function () {

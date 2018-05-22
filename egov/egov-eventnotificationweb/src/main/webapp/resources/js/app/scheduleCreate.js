@@ -47,9 +47,19 @@
  */
 $(document).ready(function(){
 		
-	$(".btn-primary").click(function(event){
+	$("#buttonSubmit").click(function(event){
 		
 		if ($("form").valid()) {
+			var startDt = ($("#startDt").val()).split("/");
+			var myDate = new Date(parseInt(startDt[2]),parseInt(startDt[1])-1,parseInt(startDt[0]),parseInt($("#startHH").val()),parseInt($("#startMM").val()),0,0);
+	        var today = new Date();
+	        
+			if(myDate <= today){
+				bootbox.alert("Invalid schedule date and time. Please provide future schedule Date and time!");
+				$("#startHH").val("");
+				$("#startMM").val("");
+				return false;
+			}
 			document.getElementById("createScheduleform").submit(); 
 		} else {
 			event.preventDefault();

@@ -62,22 +62,18 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.envers.AuditOverride;
-import org.hibernate.envers.AuditOverrides;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
-@Table(name = "eg_event")
+@Table(name = "egevntnotification_event")
 @SequenceGenerator(name = Event.SEQ_EG_EVENT, sequenceName = Event.SEQ_EG_EVENT, allocationSize = 1)
-@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
-        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 public class Event extends AbstractAuditable {
 
     /**
      *
      */
     private static final long serialVersionUID = 1L;
-    public static final String SEQ_EG_EVENT = "SEQ_EG_EVENT";
+    public static final String SEQ_EG_EVENT = "SEQ_EGEVNTNOTIFICATION_EVENT";
 
     @Id
     @GeneratedValue(generator = SEQ_EG_EVENT, strategy = GenerationType.SEQUENCE)
@@ -119,8 +115,7 @@ public class Event extends AbstractAuditable {
     @Length(max = 200)
     private String address;
 
-    @NotNull
-    private Boolean ispaid;
+    private boolean ispaid;
 
     private Double cost;
 
@@ -128,8 +123,6 @@ public class Event extends AbstractAuditable {
     @Length(max = 50)
     @Column(name = "event_type")
     private String eventType;
-
-    private Long version;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "filestore")
@@ -164,15 +157,6 @@ public class Event extends AbstractAuditable {
 
     public void setFilestore(FileStoreMapper filestore) {
         this.filestore = filestore;
-    }
-
-    @Override
-    public Long getVersion() {
-        return version;
-    }
-
-    public void setVersion(Long version) {
-        this.version = version;
     }
 
     @Override

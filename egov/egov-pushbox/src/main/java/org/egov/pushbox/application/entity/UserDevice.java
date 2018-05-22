@@ -55,94 +55,70 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 
 /**
- * 
+ *
  * @author Darshan Nagesh
  *
  */
 
 @Entity
-@Table(name = "eg_userfcmdevice")
-@Unique(id = "id", tableName = "eg_userfcmdevice", columnName = { "userid", "devicetoken", "deviceid"}, 
-fields = {"userId", "userDeviceToken", "deviceid"}, enableDfltMsg = true)
+@Table(name = "egevntnotification_userfcmdevice")
+@Unique(id = "id", tableName = "eg_userfcmdevice", columnName = { "userid", "devicetoken", "deviceid" }, fields = { "userId",
+        "userDeviceToken", "deviceid" }, enableDfltMsg = true)
 @SequenceGenerator(name = UserDevice.SEQ_EG_USERFCMDEVICE, sequenceName = UserDevice.SEQ_EG_USERFCMDEVICE, allocationSize = 1)
-public class UserDevice {
-	
-	@Column(name="userid", nullable = false)
-	private Long userId;
-	
-	@Column(name="devicetoken", nullable = false)
-	private String userDeviceToken; 
+public class UserDevice extends AbstractAuditable {
 
-	@Column(name="deviceid", nullable = false)
-	private String deviceId; 
-	
-	@Id
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
+    public static final String SEQ_EG_USERFCMDEVICE = "SEQ_EGEVNTNOTIFICATION_USERFCMDEVICE";
+
+    @Id
     @GeneratedValue(generator = SEQ_EG_USERFCMDEVICE, strategy = GenerationType.SEQUENCE)
     private Long id;
-	
-    @Column(name="createddate")
-    private Long createdDate;
-    
-    @Column(name="updateddate")
-    private Long updatedDate;
-	
-	public String getDeviceId() {
-		return deviceId;
-	}
 
-	public void setDeviceId(String deviceId) {
-		this.deviceId = deviceId;
-	}
+    private Long userId;
 
-	public String getUserDeviceToken() {
-		return userDeviceToken;
-	}
+    @Column(name = "devicetoken", nullable = false)
+    private String userDeviceToken;
 
-	public void setUserDeviceToken(String userDeviceToken) {
-		this.userDeviceToken = userDeviceToken;
-	}
-	
-	public static final String SEQ_EG_USERFCMDEVICE = "SEQ_EG_USER_FCM_DEVICE";
+    private String deviceId;
 
-    public Long getUpdatedDate() {
-		return updatedDate;
-	}
+    public String getDeviceId() {
+        return deviceId;
+    }
 
-	public void setUpdatedDate(Long updatedDate) {
-		this.updatedDate = updatedDate;
-	}
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
+    }
 
-		public Long getUserId() {
-		return userId;
-	}
+    public String getUserDeviceToken() {
+        return userDeviceToken;
+    }
 
-	public void setUserId(Long userId) {
-		this.userId = userId;
-	}
+    public void setUserDeviceToken(String userDeviceToken) {
+        this.userDeviceToken = userDeviceToken;
+    }
 
-	public Long getId() {
-		return id;
-	}
+    public Long getUserId() {
+        return userId;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 
-	public Long getCreatedDate() {
-		return createdDate;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	public void setCreatedDate(Long createdDate) {
-		this.createdDate = createdDate;
-	}
-
-	public static String getSeqEgUserdevice() {
-		return SEQ_EG_USERFCMDEVICE;
-	}
-	
-	
-
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 }
