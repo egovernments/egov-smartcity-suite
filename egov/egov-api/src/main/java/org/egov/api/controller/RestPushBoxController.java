@@ -48,15 +48,19 @@
 
 package org.egov.api.controller;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.api.controller.core.ApiUrl.SEND_NOTIFICATIONS;
+import static org.egov.api.controller.core.ApiUrl.UPDATE_USER_TOKEN;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.api.adapter.UserAdapter;
 import org.egov.api.controller.core.ApiController;
 import org.egov.api.controller.core.ApiResponse;
-import org.egov.api.controller.core.ApiUrl;
 import org.egov.pushbox.application.entity.MessageContent;
 import org.egov.pushbox.application.entity.UserDevice;
 import org.egov.pushbox.application.service.PushNotificationService;
@@ -64,9 +68,8 @@ import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
@@ -87,9 +90,8 @@ public class RestPushBoxController extends ApiController {
     @Autowired
     private PushNotificationService notificationService;
 
-    @RequestMapping(value = ApiUrl.UPDATE_USER_TOKEN, method = RequestMethod.POST, consumes = { "application/json" })
+    @PostMapping(path = UPDATE_USER_TOKEN, consumes = APPLICATION_JSON_VALUE)
     public @ResponseBody ResponseEntity<String> updateToken(@RequestBody JSONObject tokenUpdate) {
-        LOGGER.info("##PushBoxFox### : Update Token Method Request Received");
         ApiResponse res = ApiResponse.newInstance();
         try {
             UserDevice userDevice = new UserDevice();
@@ -97,15 +99,14 @@ public class RestPushBoxController extends ApiController {
             userDevice.setUserId(Long.valueOf(tokenUpdate.get(USER_ID).toString()));
             userDevice.setDeviceId(tokenUpdate.get(USER_DEVICE_ID).toString());
 
-            if (StringUtils.isBlank(userDevice.getUserDeviceToken()))
+            if (isBlank(userDevice.getUserDeviceToken()))
                 return res.error(getMessage("userdevice.device.tokenunavailable"));
 
-            if (null == userDevice.getUserId())
+            if (userDevice.getUserId() == null)
                 return res.error(getMessage("userdevice.user.useridunavailable"));
 
-            if (StringUtils.isBlank(userDevice.getDeviceId()))
+            if (isBlank(userDevice.getDeviceId()))
                 return res.error(getMessage("userdevice.user.deviceidunavailable"));
-            LOGGER.info("##PushBoxFox### : Update Token Method passed the Request Received : " + userDevice);
             UserDevice responseObject = notificationService.persist(userDevice);
             return res.setDataAdapter(new UserAdapter()).success(responseObject, getMessage("msg.userdevice.update.success"));
         } catch (Exception e) {
@@ -114,9 +115,8 @@ public class RestPushBoxController extends ApiController {
         }
     }
 
-    @RequestMapping(value = ApiUrl.SEND_NOTIFICATIONS, method = RequestMethod.POST, consumes = { "application/json" })
+    @PostMapping(path = SEND_NOTIFICATIONS, consumes = APPLICATION_JSON_VALUE)
     public @ResponseBody ResponseEntity<String> sendNotification(@RequestBody JSONObject content) {
-        LOGGER.info("##PushBoxFox## : Received the Message Content at Pushbox");
         Boolean sendAll = (Boolean) content.get(SEND_ALL);
         ApiResponse res = ApiResponse.newInstance();
         try {
@@ -125,11 +125,10 @@ public class RestPushBoxController extends ApiController {
                 JSONArray jsonArray = new JSONArray(content.get("userIdList"));
                 List<Long> userIdList = new ArrayList<>();
                 for (int i = 0; i < jsonArray.length(); i++)
-                    userIdList.add(Long.valueOf(StringUtils.isNotBlank(jsonArray.getString(i)) ? jsonArray.getString(i) : "0"));
+                    userIdList.add(Long.valueOf(isNotBlank(jsonArray.getString(i)) ? jsonArray.getString(i) : "0"));
                 message.setUserIdList(userIdList);
             } else
                 message.setSendAll(Boolean.TRUE);
-            LOGGER.info("##PushBoxFox## : Sending the Message to Send Notifications Method : " + message);
             notificationService.sendNotifications(message);
 
             UserDevice responseObject = new UserDevice();

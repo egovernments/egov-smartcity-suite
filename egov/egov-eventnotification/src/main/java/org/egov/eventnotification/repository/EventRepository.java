@@ -51,8 +51,6 @@ import java.util.List;
 
 import org.egov.eventnotification.entity.Event;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -63,9 +61,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long> {
 
-    @Query("select e from Event e where e.startDate between :startDate and :endDate and e.status = :status order by e.id desc ")
-    List<Event> getAllEventsByDate(@Param("startDate") Long startDate, @Param("endDate") Long endDate,
-            @Param("status") String status);
+    List<Event> findByStatusAndStartDateIsBetweenOrderByIdDesc(String status, Long startDate, Long endDate);
 
     List<Event> findByStatusOrderByIdDesc(String status);
 }

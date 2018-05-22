@@ -45,16 +45,13 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.eventnotification.repository;
+package org.egov.eventnotification.repository.custom;
 
-import org.egov.eventnotification.entity.Userevent;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
-@Repository
-public interface UsereventRepository extends JpaRepository<Userevent, Long> {
+import org.egov.eventnotification.entity.Event;
 
-    Long countByEventId(Long eventId);
+public interface EventRepositoryCustom {
 
-    Userevent findByEventIdAndUserId(Long eventId, Long userId);
+    List<Event> searchEvent(Event event, String eventDateType);
 }

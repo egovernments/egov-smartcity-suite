@@ -141,7 +141,7 @@ public class ApiUrl {
     public final static String GET_ALL_EVENT = "/events";
     public final static String GET_EVENT = "/event";
     public final static String SEARCH_EVENT = "/event/search";
-    public final static String EVENT_ID = "/{id}";
+    public final static String EVENT_ID_PATH_PARAM = "/{id}";
     public final static String INTERESTED = "/interested";
     public final static String EVENT_IMAGE_DOWNLOAD = "/event/{id}/download/{fileStoreId}";
 
@@ -151,9 +151,9 @@ public class ApiUrl {
     
     public final static String GET_CATEGORY_FOR_MODULE = "/draft/getCategoriesForModule";
     public final static String GET_PARAMETERS_FOR_CATEGORY = "/draft/getParametersForCategory";
-    public final static String MODULE_ID = "/{moduleId}";
-    public final static String CATEGORY_ID = "/{categoryId}";
-    public final static String SEARCH_DRAFT = "/draft/search";
+    public final static String MODULE_ID_PATH_PARAM = "/{moduleId}";
+    public final static String CATEGORY_ID_PATH_PARAM = "/{categoryId}";
+    public final static String SEARCH_DRAFT_PATH_PARAM = "/draft/search";
     
     /**
      * PushBox URLs

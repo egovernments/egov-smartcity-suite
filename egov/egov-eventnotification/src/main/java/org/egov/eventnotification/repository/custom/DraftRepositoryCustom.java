@@ -45,60 +45,12 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.eventnotification.entity;
+package org.egov.eventnotification.repository.custom;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import java.util.List;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.eventnotification.entity.NotificationDrafts;
 
-@Entity
-@Table(name = "egevntnotification_userevent")
-@SequenceGenerator(name = Userevent.SEQ_EG_USEREVENT, sequenceName = Event.SEQ_EG_EVENT, allocationSize = 1)
-public class Userevent extends AbstractAuditable {
-
-    /**
-     *
-     */
-    private static final long serialVersionUID = 1L;
-
-    public static final String SEQ_EG_USEREVENT = "SEQ_EGEVNTNOTIFICATION_USEREVENT";
-
-    @Id
-    @GeneratedValue(generator = SEQ_EG_USEREVENT, strategy = GenerationType.SEQUENCE)
-    private Long id;
-
-    private Long userId;
-
-    private Long eventId;
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public Long getEventId() {
-        return eventId;
-    }
-
-    public void setEventId(Long eventId) {
-        this.eventId = eventId;
-    }
+public interface DraftRepositoryCustom {
+    List<NotificationDrafts> searchDraft(NotificationDrafts notificationDrafts);
 }

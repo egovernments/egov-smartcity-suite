@@ -47,6 +47,23 @@
  */
 package org.egov.eventnotification.scheduler;
 
+import static org.egov.eventnotification.constants.Constants.DDMMYYYY;
+import static org.egov.eventnotification.constants.Constants.DEFAULTERS_LIST;
+import static org.egov.eventnotification.constants.Constants.MESSAGE_ASMNTNO;
+import static org.egov.eventnotification.constants.Constants.MESSAGE_BILLAMT;
+import static org.egov.eventnotification.constants.Constants.MESSAGE_BILLNO;
+import static org.egov.eventnotification.constants.Constants.MESSAGE_CONSNO;
+import static org.egov.eventnotification.constants.Constants.MESSAGE_DISRPTDATE;
+import static org.egov.eventnotification.constants.Constants.MESSAGE_DUEAMT;
+import static org.egov.eventnotification.constants.Constants.MESSAGE_DUEDATE;
+import static org.egov.eventnotification.constants.Constants.MESSAGE_PROPTNO;
+import static org.egov.eventnotification.constants.Constants.MESSAGE_USERNAME;
+import static org.egov.eventnotification.constants.Constants.NOTIFICATION_TYPE;
+import static org.egov.eventnotification.constants.Constants.PUSH_NOTIFICATION_SERVICE;
+import static org.egov.eventnotification.constants.Constants.SCHEDULEID;
+import static org.egov.eventnotification.constants.Constants.USER;
+import static org.egov.eventnotification.constants.Constants.USER_SERVICE;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -55,7 +72,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.egov.eventnotification.constants.Constants;
 import org.egov.eventnotification.entity.NotificationSchedule;
 import org.egov.eventnotification.service.ScheduleService;
 import org.egov.infra.admin.master.entity.User;
@@ -82,7 +98,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 @DisallowConcurrentExecution
 public class NotificationSchedulerJob implements Job {
     private static final Logger LOGGER = Logger.getLogger(NotificationSchedulerJob.class);
-    
+
     private UserService userService;
     private PushNotificationService pushNotificationService;
 
@@ -102,28 +118,28 @@ public class NotificationSchedulerJob implements Job {
         ScheduleService notificationscheduleService = (ScheduleService) springContext.getBean("scheduleService");
 
         pushNotificationService = (PushNotificationService) springContext
-                .getBean(Constants.PUSH_NOTIFICATION_SERVICE);
+                .getBean(PUSH_NOTIFICATION_SERVICE);
 
-        userService = (UserService) springContext.getBean(Constants.USER_SERVICE);
+        userService = (UserService) springContext.getBean(USER_SERVICE);
 
-        User user = (User) dataMap.get(Constants.USER);
+        User user = (User) dataMap.get(USER);
         NotificationSchedule notificationSchedule = notificationscheduleService
-                .findOne(Long.parseLong(String.valueOf(dataMap.get(Constants.SCHEDULEID))));
+                .findOne(Long.parseLong(String.valueOf(dataMap.get(SCHEDULEID))));
 
         /*
          * notificationscheduleService.updateScheduleStatus(Long.parseLong(String.valueOf(dataMap.get(Constants.SCHEDULEID))),
          * user, Constants.SCHEDULE_RUNNING);
          */
 
-        executeBusiness(notificationSchedule,user,dataMap);
+        executeBusiness(notificationSchedule, user, dataMap);
         /*
          * notificationscheduleService.updateScheduleStatus(Long.parseLong(String.valueOf(dataMap.get(Constants.SCHEDULEID))),
          * user, Constants.SCHEDULE_COMPLETE);
          */
         LOGGER.info("Notification scheduler with job key " + jobKey + " end at " + new Date());
     }
-    
-    private void executeBusiness(NotificationSchedule notificationSchedule,User user,JobDataMap dataMap) {
+
+    private void executeBusiness(NotificationSchedule notificationSchedule, User user, JobDataMap dataMap) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date(notificationSchedule.getStartDate()));
         int hours = Integer.parseInt(notificationSchedule.getStartTime().split(":")[0]);
@@ -138,50 +154,50 @@ public class NotificationSchedulerJob implements Job {
         calendarEnd.set(Calendar.HOUR, hours1 + 1);
         calendarEnd.set(Calendar.MINUTE, minutes1);
 
-        DateFormat formatter = new SimpleDateFormat(Constants.DDMMYYYY);
+        DateFormat formatter = new SimpleDateFormat(DDMMYYYY);
 
-        if (notificationSchedule.getNotificationType().equalsIgnoreCase(Constants.NOTIFICATION_TYPE)) {
-            List<DefaultersInfo> defaultersList = (List<DefaultersInfo>) dataMap.get(Constants.DEFAULTERS_LIST);
+        if (notificationSchedule.getNotificationType().equalsIgnoreCase(NOTIFICATION_TYPE)) {
+            List<DefaultersInfo> defaultersList = (List<DefaultersInfo>) dataMap.get(DEFAULTERS_LIST);
             if (null != defaultersList) {
                 LOGGER.info("List of User Obtained : " + defaultersList.size());
                 for (DefaultersInfo defaultersInfo : defaultersList) {
                     MessageContent messageContent = new MessageContent();
 
                     String message = notificationSchedule.getMessageTemplate();
-                    if (message.contains(Constants.MESSAGE_USERNAME))
-                        message = message.replace(Constants.MESSAGE_USERNAME, defaultersInfo.getOwnerName());
+                    if (message.contains(MESSAGE_USERNAME))
+                        message = message.replace(MESSAGE_USERNAME, defaultersInfo.getOwnerName());
 
-                    if (message.contains(Constants.MESSAGE_PROPTNO))
-                        message = message.replace(Constants.MESSAGE_PROPTNO, defaultersInfo.getAssessmentNo());
+                    if (message.contains(MESSAGE_PROPTNO))
+                        message = message.replace(MESSAGE_PROPTNO, defaultersInfo.getAssessmentNo());
 
-                    if (message.contains(Constants.MESSAGE_DUEDATE))
-                        message = message.replace(Constants.MESSAGE_DUEDATE,
+                    if (message.contains(MESSAGE_DUEDATE))
+                        message = message.replace(MESSAGE_DUEDATE,
                                 formatter.format(defaultersInfo.getMinDate()));
 
-                    if (message.contains(Constants.MESSAGE_ASMNTNO))
-                        message = message.replace(Constants.MESSAGE_ASMNTNO, defaultersInfo.getAssessmentNo());
+                    if (message.contains(MESSAGE_ASMNTNO))
+                        message = message.replace(MESSAGE_ASMNTNO, defaultersInfo.getAssessmentNo());
 
-                    if (message.contains(Constants.MESSAGE_DUEAMT))
-                        message = message.replace(Constants.MESSAGE_DUEAMT,
+                    if (message.contains(MESSAGE_DUEAMT))
+                        message = message.replace(MESSAGE_DUEAMT,
                                 String.valueOf(defaultersInfo.getCurrentDue().doubleValue()));
 
-                    if (message.contains(Constants.MESSAGE_CONSNO))
-                        message = message.replace(Constants.MESSAGE_CONSNO, defaultersInfo.getAssessmentNo());
+                    if (message.contains(MESSAGE_CONSNO))
+                        message = message.replace(MESSAGE_CONSNO, defaultersInfo.getAssessmentNo());
 
-                    if (message.contains(Constants.MESSAGE_BILLNO))
-                        message = message.replace(Constants.MESSAGE_BILLNO, defaultersInfo.getAssessmentNo());
+                    if (message.contains(MESSAGE_BILLNO))
+                        message = message.replace(MESSAGE_BILLNO, defaultersInfo.getAssessmentNo());
 
-                    if (message.contains(Constants.MESSAGE_BILLAMT))
-                        message = message.replace(Constants.MESSAGE_BILLAMT,
+                    if (message.contains(MESSAGE_BILLAMT))
+                        message = message.replace(MESSAGE_BILLAMT,
                                 String.valueOf(defaultersInfo.getCurrentDue().doubleValue()));
 
-                    if (message.contains(Constants.MESSAGE_DISRPTDATE))
-                        message = message.replace(Constants.MESSAGE_DISRPTDATE, defaultersInfo.getAssessmentNo());
+                    if (message.contains(MESSAGE_DISRPTDATE))
+                        message = message.replace(MESSAGE_DISRPTDATE, defaultersInfo.getAssessmentNo());
 
                     List<User> userList = userService.findByMobileNumberAndType(defaultersInfo.getMobileNumber(),
                             UserType.CITIZEN);
                     List<Long> userIdList = new ArrayList<>();
-                    if (null != userList) {
+                    if (userList != null) {
                         for (User userid : userList)
                             userIdList.add(userid.getId());
 
@@ -192,7 +208,7 @@ public class NotificationSchedulerJob implements Job {
                     messageContent.setEventDateTime(calendar.getTimeInMillis());
                     messageContent.setExpiryDate(calendarEnd.getTimeInMillis());
                     messageContent.setMessageBody(message);
-                    messageContent.setModuleName(notificationSchedule.getTemplatename());
+                    messageContent.setModuleName(notificationSchedule.getTemplateName());
                     messageContent.setNotificationDateTime(new Date().getTime());
                     messageContent.setNotificationType(notificationSchedule.getNotificationType());
                     messageContent.setSendAll(Boolean.FALSE);
@@ -209,7 +225,7 @@ public class NotificationSchedulerJob implements Job {
             messageContent.setEventDateTime(calendar.getTimeInMillis());
             messageContent.setExpiryDate(calendarEnd.getTimeInMillis());
             messageContent.setMessageBody(notificationSchedule.getMessageTemplate());
-            messageContent.setModuleName(notificationSchedule.getTemplatename());
+            messageContent.setModuleName(notificationSchedule.getTemplateName());
             messageContent.setNotificationDateTime(new Date().getTime());
             messageContent.setNotificationType(notificationSchedule.getNotificationType());
             messageContent.setSendAll(Boolean.TRUE);

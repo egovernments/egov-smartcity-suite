@@ -9,13 +9,13 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egevntnotification_module")
 @SequenceGenerator(name = TemplateModule.SEQ_EGEVNTNOTIFICATION_MODULE, sequenceName = TemplateModule.SEQ_EGEVNTNOTIFICATION_MODULE, allocationSize = 1)
 public class TemplateModule {
 
-    private static final long serialVersionUID = 1L;
     public static final String SEQ_EGEVNTNOTIFICATION_MODULE = "seq_egevntnotification_module";
 
     @Id
@@ -23,15 +23,12 @@ public class TemplateModule {
     private Long id;
 
     @NotNull
+    @SafeHtml
     @Length(max = 100)
     private String name;
 
     @NotNull
-    private Boolean active;
-
-    public static long getSerialversionuid() {
-        return serialVersionUID;
-    }
+    private boolean active;
 
     public Long getId() {
         return id;
@@ -49,12 +46,11 @@ public class TemplateModule {
         this.name = name;
     }
 
-    public Boolean getActive() {
+    public boolean getActive() {
         return active;
     }
 
-    public void setActive(Boolean active) {
+    public void setActive(boolean active) {
         this.active = active;
     }
-
 }

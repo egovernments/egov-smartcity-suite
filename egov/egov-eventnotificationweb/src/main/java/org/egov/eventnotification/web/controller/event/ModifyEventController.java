@@ -1,5 +1,19 @@
 package org.egov.eventnotification.web.controller.event;
 
+import static org.egov.eventnotification.constants.Constants.EVENT;
+import static org.egov.eventnotification.constants.Constants.EVENT_LIST;
+import static org.egov.eventnotification.constants.Constants.EVENT_STATUS_LIST;
+import static org.egov.eventnotification.constants.Constants.HOUR_LIST;
+import static org.egov.eventnotification.constants.Constants.MESSAGE;
+import static org.egov.eventnotification.constants.Constants.MINUTE_LIST;
+import static org.egov.eventnotification.constants.Constants.MODE;
+import static org.egov.eventnotification.constants.Constants.MODE_UPDATE;
+import static org.egov.eventnotification.constants.Constants.MODE_VIEW;
+import static org.egov.eventnotification.constants.Constants.MSG_EVENT_UPDATE_ERROR;
+import static org.egov.eventnotification.constants.Constants.MSG_EVENT_UPDATE_SUCCESS;
+import static org.egov.eventnotification.constants.Constants.VIEW_EVENTUPDATE;
+import static org.egov.eventnotification.constants.Constants.VIEW_EVENTUPDATESUCCESS;
+
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -49,11 +63,11 @@ public class ModifyEventController {
      */
     @GetMapping("/event/update/{id}")
     public String update(@ModelAttribute Event event, Model model) {
-        model.addAttribute(Constants.HOUR_LIST, eventnotificationUtil.getAllHour());
-        model.addAttribute(Constants.MINUTE_LIST, eventnotificationUtil.getAllMinute());
-        model.addAttribute(Constants.EVENT_LIST, new ArrayList<>(Arrays.asList(EventType.values())));
-        model.addAttribute(Constants.MODE, Constants.MODE_UPDATE);
-        model.addAttribute(Constants.EVENT_STATUS_LIST, new ArrayList<>(Arrays.asList(EventStatus.values())));
+        model.addAttribute(HOUR_LIST, eventnotificationUtil.getAllHour());
+        model.addAttribute(MINUTE_LIST, eventnotificationUtil.getAllMinute());
+        model.addAttribute(EVENT_LIST, new ArrayList<>(Arrays.asList(EventType.values())));
+        model.addAttribute(MODE, MODE_UPDATE);
+        model.addAttribute(EVENT_STATUS_LIST, new ArrayList<>(Arrays.asList(EventStatus.values())));
         return Constants.VIEW_EVENTUPDATE;
     }
 
@@ -71,19 +85,19 @@ public class ModifyEventController {
      * @throws ParseException
      */
     @PostMapping("/event/update/{id}")
-    public String update(@ModelAttribute Event event, @PathVariable("id") Long id,
+    public String update(@PathVariable("id") Long id, @ModelAttribute Event event,
             RedirectAttributes redirectAttrs,
             BindingResult errors, Model model) throws IOException {
 
         if (errors.hasErrors()) {
-            model.addAttribute(Constants.HOUR_LIST, eventnotificationUtil.getAllHour());
-            model.addAttribute(Constants.MINUTE_LIST, eventnotificationUtil.getAllMinute());
-            model.addAttribute(Constants.EVENT_LIST, new ArrayList<>(Arrays.asList(EventType.values())));
-            model.addAttribute(Constants.MODE, Constants.MODE_UPDATE);
-            model.addAttribute(Constants.EVENT_STATUS_LIST, new ArrayList<>(Arrays.asList(EventStatus.values())));
-            model.addAttribute(Constants.MESSAGE,
-                    messageSource.getMessage(Constants.MSG_EVENT_UPDATE_ERROR, null, Locale.ENGLISH));
-            return Constants.VIEW_EVENTUPDATE;
+            model.addAttribute(HOUR_LIST, eventnotificationUtil.getAllHour());
+            model.addAttribute(MINUTE_LIST, eventnotificationUtil.getAllMinute());
+            model.addAttribute(EVENT_LIST, new ArrayList<>(Arrays.asList(EventType.values())));
+            model.addAttribute(MODE, MODE_UPDATE);
+            model.addAttribute(EVENT_STATUS_LIST, new ArrayList<>(Arrays.asList(EventStatus.values())));
+            model.addAttribute(MESSAGE,
+                    messageSource.getMessage(MSG_EVENT_UPDATE_ERROR, null, Locale.ENGLISH));
+            return VIEW_EVENTUPDATE;
         }
         event.setId(id);
         event.setEndDate(event.getEventDetails().getEndDt().getTime());
@@ -92,10 +106,10 @@ public class ModifyEventController {
         event.setStartTime(event.getEventDetails().getStartHH() + ":" + event.getEventDetails().getStartMM());
         eventService.update(event);
 
-        redirectAttrs.addFlashAttribute(Constants.EVENT, event);
-        model.addAttribute(Constants.MESSAGE,
-                messageSource.getMessage(Constants.MSG_EVENT_UPDATE_SUCCESS, null, Locale.ENGLISH));
-        model.addAttribute(Constants.MODE, Constants.MODE_VIEW);
-        return Constants.VIEW_EVENTUPDATESUCCESS;
+        redirectAttrs.addFlashAttribute(EVENT, event);
+        model.addAttribute(MESSAGE,
+                messageSource.getMessage(MSG_EVENT_UPDATE_SUCCESS, null, Locale.ENGLISH));
+        model.addAttribute(MODE, MODE_VIEW);
+        return VIEW_EVENTUPDATESUCCESS;
     }
 }

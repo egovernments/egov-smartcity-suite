@@ -111,7 +111,7 @@
 				<c:forEach var="listVar" items="${scheduleList}">
 	    			<tr>
 	    				<td><c:out value="${listVar.id}"/></td>
-	    				<td><c:out value="${listVar.templatename}"/></td>
+	    				<td><c:out value="${listVar.templateName}"/></td>
 	    				<td><c:out value="${listVar.notificationType}"/></td>
 	    				<td><c:out value="${listVar.status}"/></td>
 	    				<td>

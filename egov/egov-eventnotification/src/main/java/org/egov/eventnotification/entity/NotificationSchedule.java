@@ -22,7 +22,7 @@ public class NotificationSchedule extends AbstractAuditable {
     /**
      *
      */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 3093610095876757549L;
 
     public static final String SEQ_EGEVENTNOTIFICATION_SCHEDULE = "seq_egevntnotification_schedule";
 
@@ -32,7 +32,7 @@ public class NotificationSchedule extends AbstractAuditable {
 
     @NotNull
     @SafeHtml
-    private String templatename;
+    private String templateName;
 
     @NotNull
     @Length(max = 200)
@@ -74,12 +74,12 @@ public class NotificationSchedule extends AbstractAuditable {
         this.id = id;
     }
 
-    public String getTemplatename() {
-        return templatename;
+    public String getTemplateName() {
+        return templateName;
     }
 
-    public void setTemplatename(String templatename) {
-        this.templatename = templatename;
+    public void setTemplateName(String templateName) {
+        this.templateName = templateName;
     }
 
     public String getNotificationType() {

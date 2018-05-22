@@ -47,6 +47,11 @@
  */
 package org.egov.eventnotification.service;
 
+import static org.egov.eventnotification.constants.Constants.ACTIVE;
+import static org.egov.eventnotification.constants.Constants.MIN_NUMBER_OF_REQUESTS;
+import static org.egov.eventnotification.constants.Constants.MODULE_NAME;
+import static org.egov.eventnotification.constants.Constants.NOTIFICATION_TYPE_EVENT;
+
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Calendar;
@@ -54,7 +59,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.egov.eventnotification.constants.Constants;
 import org.egov.eventnotification.entity.Event;
 import org.egov.eventnotification.entity.EventDetails;
 import org.egov.eventnotification.repository.EventRepository;
@@ -131,8 +135,9 @@ public class EventService {
             startDate = calendar.getTime();
             calendar.add(Calendar.DAY_OF_MONTH, 7);
             endDate = calendar.getTime();
-            eventList = eventRepository.getAllEventsByDate(dateFormatUtil.getDateInDDMMYYYY(startDate).getTime(),
-                    dateFormatUtil.getDateInDDMMYYYY(endDate).getTime(), status);
+            eventList = eventRepository.findByStatusAndStartDateIsBetweenOrderByIdDesc(status,
+                    dateFormatUtil.getDateInDDMMYYYY(startDate).getTime(),
+                    dateFormatUtil.getDateInDDMMYYYY(endDate).getTime());
             if (!eventList.isEmpty())
                 for (Event event : eventList) {
                     EventDetails eventDetails = new EventDetails();
@@ -188,7 +193,7 @@ public class EventService {
         event.setEndDate(event.getEventDetails().getEndDt().getTime());
         event.setStartTime(event.getEventDetails().getStartHH() + ":" + event.getEventDetails().getStartMM());
         event.setEndTime(event.getEventDetails().getEndHH() + ":" + event.getEventDetails().getEndMM());
-        event.setStatus(Constants.ACTIVE.toUpperCase());
+        event.setStatus(ACTIVE.toUpperCase());
 
         if (event.getEventDetails().getFile() != null)
             eventUploadWallpaper(event);
@@ -206,7 +211,7 @@ public class EventService {
      */
     @Transactional
     public Event update(Event updatedEvent) throws IOException {
-        if (updatedEvent.getEventDetails().getFile()[0].getSize() > 1)
+        if (updatedEvent.getEventDetails().getFile()[0].getSize() > MIN_NUMBER_OF_REQUESTS)
             eventUploadWallpaper(updatedEvent);
         return eventRepository.save(updatedEvent);
     }
@@ -233,7 +238,7 @@ public class EventService {
             if (!multipartFile.isEmpty())
                 event.setFilestore(
                         fileStoreService.store(multipartFile.getInputStream(), multipartFile.getOriginalFilename(),
-                                multipartFile.getContentType(), Constants.MODULE_NAME));
+                                multipartFile.getContentType(), MODULE_NAME));
 
     }
 
@@ -249,7 +254,7 @@ public class EventService {
             if (!multipartFile.isEmpty())
                 existingEvent.setFilestore(
                         fileStoreService.store(multipartFile.getInputStream(), multipartFile.getOriginalFilename(),
-                                multipartFile.getContentType(), Constants.MODULE_NAME));
+                                multipartFile.getContentType(), MODULE_NAME));
 
     }
 
@@ -258,9 +263,9 @@ public class EventService {
      * @param event
      * @throws IOException
      */
-    public void removeEventWallpaper(Event event) throws IOException {
+    public void removeEventWallpaper(Event event) {
 
-        fileStoreService.delete(String.valueOf(event.getFilestore()), Constants.MODULE_NAME);
+        fileStoreService.delete(String.valueOf(event.getFilestore()), MODULE_NAME);
 
     }
 
@@ -299,7 +304,7 @@ public class EventService {
         messageContent.setMessageId(event.getId());
         messageContent.setModuleName(event.getName());
         messageContent.setNotificationDateTime(new Date().getTime());
-        messageContent.setNotificationType(Constants.NOTIFICATION_TYPE_EVENT);
+        messageContent.setNotificationType(NOTIFICATION_TYPE_EVENT);
         messageContent.setSenderId(user.getId());
         messageContent.setSenderName(user.getName());
         messageContent.setSendAll(Boolean.TRUE);

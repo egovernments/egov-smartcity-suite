@@ -47,13 +47,14 @@
  */
 package org.egov.eventnotification.service;
 
+import static org.egov.eventnotification.constants.Constants.SCHEDULED_STATUS;
+
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.egov.eventnotification.constants.Constants;
 import org.egov.eventnotification.entity.EventDetails;
 import org.egov.eventnotification.entity.NotificationSchedule;
 import org.egov.eventnotification.repository.NotificationScheduleRepository;
@@ -128,7 +129,7 @@ public class ScheduleService {
         notificationSchedule.setStartDate(notificationSchedule.getEventDetails().getStartDt().getTime());
         notificationSchedule.setStartTime(
                 notificationSchedule.getEventDetails().getStartHH() + ":" + notificationSchedule.getEventDetails().getStartMM());
-        notificationSchedule.setStatus(Constants.SCHEDULED_STATUS);
+        notificationSchedule.setStatus(SCHEDULED_STATUS);
         return notificationscheduleRepository.save(notificationSchedule);
     }
 
@@ -143,7 +144,7 @@ public class ScheduleService {
         NotificationSchedule notificationSchedule = notificationscheduleRepository.findOne(id);
         if (notificationSchedule != null)
             notificationSchedule.setStatus(status);
-        
+
         return notificationscheduleRepository.save(notificationSchedule);
     }
 

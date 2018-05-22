@@ -1,11 +1,25 @@
 package org.egov.eventnotification.web.controller.notificationdraft;
 
+import static org.egov.eventnotification.constants.Constants.CATEGORY_PARAMETERS;
+import static org.egov.eventnotification.constants.Constants.DRAFT_LIST;
+import static org.egov.eventnotification.constants.Constants.MESSAGE;
+import static org.egov.eventnotification.constants.Constants.MODE;
+import static org.egov.eventnotification.constants.Constants.MODE_CREATE;
+import static org.egov.eventnotification.constants.Constants.MODE_VIEW;
+import static org.egov.eventnotification.constants.Constants.MODULE_CATEGORY;
+import static org.egov.eventnotification.constants.Constants.MSG_DRAFT_UPDATE_ERROR;
+import static org.egov.eventnotification.constants.Constants.MSG_DRAFT_UPDATE_SUCCESS;
+import static org.egov.eventnotification.constants.Constants.NOTIFICATION_DRAFT;
+import static org.egov.eventnotification.constants.Constants.TEMPLATE_MODULE;
+import static org.egov.eventnotification.constants.Constants.VIEW_DRAFTUPDATE;
+import static org.egov.eventnotification.constants.Constants.VIEW_DRAFTVIEWRESULT;
+import static org.egov.eventnotification.constants.Constants.VIEW_EVENTCREATE;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import org.egov.eventnotification.constants.Constants;
 import org.egov.eventnotification.entity.CategoryParameters;
 import org.egov.eventnotification.entity.DraftType;
 import org.egov.eventnotification.entity.ModuleCategory;
@@ -43,32 +57,31 @@ public class ModifyNotificationDraftController {
             moduleCategoryList = draftService.getCategoriesForModule(notificationDrafts.getModule().getId());
         if (null != notificationDrafts.getCategory())
             categoryParametersList = draftService.getParametersForCategory(notificationDrafts.getCategory().getId());
-        model.addAttribute(Constants.DRAFT_LIST, new ArrayList<>(Arrays.asList(DraftType.values())));
-        model.addAttribute(Constants.TEMPLATE_MODULE, draftService.getAllModules());
-        model.addAttribute(Constants.MODULE_CATEGORY, moduleCategoryList);
-        model.addAttribute(Constants.CATEGORY_PARAMETERS, categoryParametersList);
+        model.addAttribute(DRAFT_LIST, new ArrayList<>(Arrays.asList(DraftType.values())));
+        model.addAttribute(TEMPLATE_MODULE, draftService.getAllModules());
+        model.addAttribute(MODULE_CATEGORY, moduleCategoryList);
+        model.addAttribute(CATEGORY_PARAMETERS, categoryParametersList);
 
-        model.addAttribute(Constants.MODE, Constants.MODE_VIEW);
+        model.addAttribute(MODE, MODE_VIEW);
 
-        return Constants.VIEW_DRAFTUPDATE;
+        return VIEW_DRAFTUPDATE;
     }
 
     @PostMapping("/drafts/update/{id}")
-    public String update(@ModelAttribute NotificationDrafts notificationDrafts,
-            @PathVariable("id") Long id,
+    public String update(@PathVariable("id") Long id, @ModelAttribute NotificationDrafts notificationDrafts,
             RedirectAttributes redirectAttrs, BindingResult errors, Model model) {
         if (errors.hasErrors()) {
-            model.addAttribute(Constants.MESSAGE,
-                    messageSource.getMessage(Constants.MSG_DRAFT_UPDATE_ERROR, null, Locale.ENGLISH));
-            model.addAttribute(Constants.MODE, Constants.MODE_CREATE);
-            return Constants.VIEW_EVENTCREATE;
+            model.addAttribute(MESSAGE,
+                    messageSource.getMessage(MSG_DRAFT_UPDATE_ERROR, null, Locale.ENGLISH));
+            model.addAttribute(MODE, MODE_CREATE);
+            return VIEW_EVENTCREATE;
         }
         notificationDrafts.setId(id);
         draftService.updateDraft(notificationDrafts);
-        redirectAttrs.addFlashAttribute(Constants.NOTIFICATION_DRAFT, notificationDrafts);
-        model.addAttribute(Constants.MESSAGE,
-                messageSource.getMessage(Constants.MSG_DRAFT_UPDATE_SUCCESS, null, Locale.ENGLISH));
-        model.addAttribute(Constants.MODE, Constants.MODE_VIEW);
-        return Constants.VIEW_DRAFTVIEWRESULT;
+        redirectAttrs.addFlashAttribute(NOTIFICATION_DRAFT, notificationDrafts);
+        model.addAttribute(MESSAGE,
+                messageSource.getMessage(MSG_DRAFT_UPDATE_SUCCESS, null, Locale.ENGLISH));
+        model.addAttribute(MODE, MODE_VIEW);
+        return VIEW_DRAFTVIEWRESULT;
     }
 }

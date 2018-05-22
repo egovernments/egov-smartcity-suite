@@ -1,5 +1,25 @@
 package org.egov.eventnotification.web.controller.schedule;
 
+import static org.egov.eventnotification.constants.Constants.DRAFT_LIST;
+import static org.egov.eventnotification.constants.Constants.HOUR_LIST;
+import static org.egov.eventnotification.constants.Constants.MESSAGE;
+import static org.egov.eventnotification.constants.Constants.MINUTE_LIST;
+import static org.egov.eventnotification.constants.Constants.MODE;
+import static org.egov.eventnotification.constants.Constants.MODE_DELETE;
+import static org.egov.eventnotification.constants.Constants.MODE_VIEW;
+import static org.egov.eventnotification.constants.Constants.MSG_SCHEDULED_ERROR;
+import static org.egov.eventnotification.constants.Constants.MSG_SCHEDULED_SUCCESS;
+import static org.egov.eventnotification.constants.Constants.NOTIFICATION_SCHEDULE;
+import static org.egov.eventnotification.constants.Constants.SCHEDULER_REPEAT_LIST;
+import static org.egov.eventnotification.constants.Constants.SCHEDULE_CREATE_SUCCESS;
+import static org.egov.eventnotification.constants.Constants.SCHEDULE_CREATE_VIEW;
+import static org.egov.eventnotification.constants.Constants.SCHEDULE_DELETE_SUCCESS;
+import static org.egov.eventnotification.constants.Constants.SCHEDULE_DETAILS_VIEW;
+import static org.egov.eventnotification.constants.Constants.SCHEDULE_DISABLED;
+import static org.egov.eventnotification.constants.Constants.SCHEDULE_EDITABLE;
+import static org.egov.eventnotification.constants.Constants.SCHEDULE_LIST;
+import static org.egov.eventnotification.constants.Constants.TO_BE_SCHEDULED;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -57,8 +77,8 @@ public class ScheduleController {
      */
     @GetMapping("/schedule/view/")
     public String view(Model model) {
-        model.addAttribute(Constants.DRAFT_LIST, draftService.findAllDrafts());
-        model.addAttribute(Constants.SCHEDULE_LIST,
+        model.addAttribute(DRAFT_LIST, draftService.findAllDrafts());
+        model.addAttribute(SCHEDULE_LIST,
                 scheduleService.findAllSchedule());
         return Constants.SCHEDULE_VIEW;
     }
@@ -71,23 +91,23 @@ public class ScheduleController {
      * @return tiles view
      */
     @GetMapping("/schedule/create/{id}")
-    public String save(@ModelAttribute NotificationSchedule schedule, @PathVariable("id") Long id, Model model) {
+    public String save(@PathVariable("id") Long id, @ModelAttribute NotificationSchedule schedule, Model model) {
         NotificationDrafts notificationDrafts = draftService.findDraftById(id);
-        schedule.setStatus(Constants.TO_BE_SCHEDULED);
+        schedule.setStatus(TO_BE_SCHEDULED);
         schedule.setMessageTemplate(notificationDrafts.getMessage());
-        schedule.setTemplatename(notificationDrafts.getName());
+        schedule.setTemplateName(notificationDrafts.getName());
         schedule.setNotificationType(notificationDrafts.getType());
 
-        model.addAttribute(Constants.NOTIFICATION_SCHEDULE, schedule);
-        model.addAttribute(Constants.HOUR_LIST, eventnotificationUtil.getAllHour());
-        model.addAttribute(Constants.MINUTE_LIST, eventnotificationUtil.getAllMinute());
+        model.addAttribute(NOTIFICATION_SCHEDULE, schedule);
+        model.addAttribute(HOUR_LIST, eventnotificationUtil.getAllHour());
+        model.addAttribute(MINUTE_LIST, eventnotificationUtil.getAllMinute());
         List<String> repeatList = new ArrayList<>();
         for (SchedulerRepeat schedulerRepeat : SchedulerRepeat.values())
             repeatList.add(schedulerRepeat.getName());
 
-        model.addAttribute(Constants.SCHEDULER_REPEAT_LIST, repeatList);
+        model.addAttribute(SCHEDULER_REPEAT_LIST, repeatList);
 
-        return Constants.SCHEDULE_CREATE_VIEW;
+        return SCHEDULE_CREATE_VIEW;
     }
 
     /**
@@ -102,28 +122,28 @@ public class ScheduleController {
             BindingResult errors) {
 
         if (errors.hasErrors()) {
-            model.addAttribute(Constants.NOTIFICATION_SCHEDULE, schedule);
-            model.addAttribute(Constants.HOUR_LIST, eventnotificationUtil.getAllHour());
-            model.addAttribute(Constants.MINUTE_LIST, eventnotificationUtil.getAllMinute());
+            model.addAttribute(NOTIFICATION_SCHEDULE, schedule);
+            model.addAttribute(HOUR_LIST, eventnotificationUtil.getAllHour());
+            model.addAttribute(MINUTE_LIST, eventnotificationUtil.getAllMinute());
             List<String> repeatList = new ArrayList<>();
             for (SchedulerRepeat schedulerRepeat : SchedulerRepeat.values())
                 repeatList.add(schedulerRepeat.getName());
 
-            model.addAttribute(Constants.SCHEDULER_REPEAT_LIST, repeatList);
-            model.addAttribute(Constants.MESSAGE,
-                    messageSource.getMessage(Constants.MSG_SCHEDULED_ERROR, null, Locale.ENGLISH));
-            return Constants.SCHEDULE_CREATE_VIEW;
+            model.addAttribute(SCHEDULER_REPEAT_LIST, repeatList);
+            model.addAttribute(MESSAGE,
+                    messageSource.getMessage(MSG_SCHEDULED_ERROR, null, Locale.ENGLISH));
+            return SCHEDULE_CREATE_VIEW;
         }
 
         User user = userService.getCurrentUser();
         scheduleService.save(schedule, user);
 
         schedulerManager.schedule(schedule, user);
-        model.addAttribute(Constants.MESSAGE,
-                messageSource.getMessage(Constants.MSG_SCHEDULED_SUCCESS, null, Locale.ENGLISH));
-        model.addAttribute(Constants.MODE, Constants.MODE_VIEW);
-        redirectAttrs.addFlashAttribute(Constants.NOTIFICATION_SCHEDULE, schedule);
-        return Constants.SCHEDULE_CREATE_SUCCESS;
+        model.addAttribute(MESSAGE,
+                messageSource.getMessage(MSG_SCHEDULED_SUCCESS, null, Locale.ENGLISH));
+        model.addAttribute(MODE, MODE_VIEW);
+        redirectAttrs.addFlashAttribute(NOTIFICATION_SCHEDULE, schedule);
+        return SCHEDULE_CREATE_SUCCESS;
     }
 
     /**
@@ -141,12 +161,12 @@ public class ScheduleController {
         calendar.set(Calendar.MINUTE, Integer.parseInt(notificationSchedule.getStartTime().split(":")[1]));
 
         if (calendar.getTime().before(new Date()))
-            model.addAttribute(Constants.SCHEDULE_EDITABLE, false);
+            model.addAttribute(SCHEDULE_EDITABLE, false);
         else
-            model.addAttribute(Constants.SCHEDULE_EDITABLE, true);
-        model.addAttribute(Constants.NOTIFICATION_SCHEDULE, notificationSchedule);
-        model.addAttribute(Constants.MODE, Constants.MODE_DELETE);
-        return Constants.SCHEDULE_DETAILS_VIEW;
+            model.addAttribute(SCHEDULE_EDITABLE, true);
+        model.addAttribute(NOTIFICATION_SCHEDULE, notificationSchedule);
+        model.addAttribute(MODE, MODE_DELETE);
+        return SCHEDULE_DETAILS_VIEW;
     }
 
     /**
@@ -159,10 +179,10 @@ public class ScheduleController {
     @ResponseBody
     public String deleteSchedule(@PathVariable("id") Long id, Model model) {
         User user = userService.getCurrentUser();
-        NotificationSchedule notificationSchedule = scheduleService.updateScheduleStatus(id, user, Constants.SCHEDULE_DISABLED);
+        NotificationSchedule notificationSchedule = scheduleService.updateScheduleStatus(id, user, SCHEDULE_DISABLED);
         schedulerManager.removeJob(notificationSchedule);
-        model.addAttribute(Constants.MESSAGE,
-                messageSource.getMessage(Constants.MSG_SCHEDULED_SUCCESS, null, Locale.ENGLISH));
-        return Constants.SCHEDULE_DELETE_SUCCESS;
+        model.addAttribute(MESSAGE,
+                messageSource.getMessage(MSG_SCHEDULED_SUCCESS, null, Locale.ENGLISH));
+        return SCHEDULE_DELETE_SUCCESS;
     }
 }
