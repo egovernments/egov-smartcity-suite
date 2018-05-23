@@ -53,6 +53,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -102,6 +103,8 @@ public class PTYearWiseDCBIndexService {
     private static final String OWNERS_NAME = "ownersName";
     private static final String DOOR_NO = "doorNo";
     private static final String IS_UNDER_COURT = "isUnderCourtcase";
+    private static final String VLT_CODE = "Vacant Land";
+    private static final String EWHS_CODE = "EWSHS";
 
     @Autowired
     private AppConfigValueService appConfigValuesService;
@@ -333,6 +336,7 @@ public class PTYearWiseDCBIndexService {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
                 .filter(QueryBuilders.matchQuery(CITY_CODE, ApplicationThreadLocals.getCityCode()));
         boolQuery = boolQuery.filter(QueryBuilders.matchQuery(IS_UNDER_COURT, serviceRequest.getIsCourtCase()));
+        boolQuery = boolQuery.mustNot(QueryBuilders.termsQuery(CATEGORY, Arrays.asList(EWHS_CODE, VLT_CODE)));
         if (StringUtils.isNotBlank(serviceRequest.getPropertyUsage()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(CATEGORY, serviceRequest.getPropertyUsage()));
         if (GROUP_TYPE_PROPERTY.equalsIgnoreCase(serviceRequest.getType()) && StringUtils.isNotBlank(serviceRequest.getBlock()))
