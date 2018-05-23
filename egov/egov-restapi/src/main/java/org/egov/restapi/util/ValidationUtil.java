@@ -1050,6 +1050,11 @@ public class ValidationUtil {
                 errorDetails.setErrorMessage(NON_VACANT_TO_VACANT_MSG);
                 return errorDetails;
             }
+            if (bp.getActiveProperty().getIsExemptedFromTax()){
+                errorDetails.setErrorCode(EXEMPTED_PROPERTY);
+                errorDetails.setErrorMessage(EXEMPTED_PROPERTY_ERROR_MSG);
+                return errorDetails;
+            }
         }
         return errorDetails;
 

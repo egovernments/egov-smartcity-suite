@@ -680,4 +680,7 @@ public class RestApiConstants {
     
     public static final String ASSIGNMENT_NULL_ERROR_CODE="125";
     public static final String ASSIGNMENT_NULL_ERROR_MSG="No Senior or Junior assistants exist with valid assignment,so please check";
+    
+    public static final String EXEMPTED_PROPERTY="126";
+    public static final String EXEMPTED_PROPERTY_ERROR_MSG="Cannot do Addition/Alteration on Exempted property";
 }
