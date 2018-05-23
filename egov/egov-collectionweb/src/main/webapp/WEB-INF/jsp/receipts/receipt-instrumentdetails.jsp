@@ -612,7 +612,7 @@ function validateTransactionNumber()
 									name="billreceipt.payment.bankchallano" /><span
 								class="mandatory1">*</span></td>
 							<td class="bluebox"><s:textfield label="transactionNumber"
-									id="instrHeaderBank.transactionNumber" maxlength="6"
+									id="instrHeaderBank.transactionNumber" maxlength="16"
 									name="instrHeaderBank.transactionNumber"
 									value="%{instrHeaderBank.transactionNumber}" size="18" /></td>
 							<td class="bluebox"><s:text
