@@ -175,10 +175,10 @@
 				list="dropdownData.apartments" cssClass="selectnew" /></td>
 		<td class="bluebox"><s:text name="zone"></s:text> <span class="mandatory1">*</span> : </td>
 	    <td class="bluebox">
-	    	<s:select list="dropdownData.zones" name="basicProperty.propertyID.zone.id"
-				value="%{basicProperty.propertyID.zone.id}" headerKey="-1" id="basicProperty.propertyID.zone.id"
-				headerValue="%{getText('default.select')}" listKey="id"
-				listValue="name" />
+	    	<s:select list="dropdownData.zones"
+				name="zoneId"
+				value="%{basicProperty.propertyID.zone.id}"
+				id="zoneId" listKey="id" listValue="name" />
 		</td>
 	</tr>
 

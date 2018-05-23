@@ -266,6 +266,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     private String southBoundary;
     private String eastBoundary;
     private String westBoundary;
+    private Long zoneId;
     private Map<String, String> propTypeCategoryMap;
     private String reportId;
     private Long taxExemptedReason;
@@ -344,7 +345,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     public RevisionPetitionAction() {
 
         addRelatedEntity("basicProperty", BasicPropertyImpl.class);
-        addRelatedEntity("basicProperty.propertyID", PropertyID.class);
         addRelatedEntity("property.propertyDetail.propertyTypeMaster", PropertyTypeMaster.class);
         addRelatedEntity("property.propertyDetail.sitalArea", Area.class);
 
@@ -1273,6 +1273,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 getVacantLandPlotAreaId(), getLayoutApprovalAuthorityId(), Boolean.FALSE);
 
         updatePropertyID(objection.getBasicProperty());
+        objection.getBasicProperty().getPropertyID().setZone(boundaryService.getBoundaryById(getZoneId()));
         final PropertyTypeMaster propTypeMstr = (PropertyTypeMaster) getPersistenceService()
                 .find("from PropertyTypeMaster ptm where ptm.code = ?", OWNERSHIP_TYPE_VAC_LAND);
 
@@ -1641,6 +1642,14 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
     public void setWestBoundary(final String westBoundary) {
         this.westBoundary = westBoundary;
+    }
+
+    public Long getZoneId() {
+        return zoneId;
+    }
+
+    public void setZoneId(Long zoneId) {
+        this.zoneId = zoneId;
     }
 
     public SimpleWorkflowService<RevisionPetition> getRevisionPetitionWorkFlowService() {
