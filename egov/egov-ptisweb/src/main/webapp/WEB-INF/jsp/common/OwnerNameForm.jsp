@@ -212,10 +212,12 @@
     	        }
     	    });
        }
-
+	debugger;
        function getUserDetailsForMobileNo(obj) {
     	   var mobileNo = jQuery(obj).val();
     	   var rowidx= jQuery(obj).data('idx');
+    	   var docTypeName= jQuery('#assessmentDocumentNames :selected').text();
+    	   if(docTypeName != 'Un-registered Document / Notary document'){
     	   jQuery.ajax({
 				type: "GET",
 				url: "/ptis/common/ajaxCommon-getUserByMobileNo.action",
@@ -232,5 +234,6 @@
 					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.guardian']").val(response.guardian);
 			    }
            });
+       }
       }
       </script>
