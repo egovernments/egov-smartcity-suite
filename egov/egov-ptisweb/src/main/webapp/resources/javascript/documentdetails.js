@@ -140,9 +140,7 @@ function documentTypeToggle(dropdownvalue) {
 		jQuery('#Photo_of_Property_With_Holder').show();
 		jQuery('#Registered_Document').hide();
 		jQuery("#aadharNo").attr('readonly', true);
-		jQuery("#mobileNumber").attr('readonly', true);
 		jQuery("#emailId").attr('readonly', true);
-		jQuery(".mobilecheckbox").hide();
 		document.getElementById("corrAddressDiff").value=false;
 		jQuery("#CorrAddressDiv").find('input:text').val('');
 		jQuery("#CorrAddressDiv").hide();
@@ -159,15 +157,6 @@ var populateDefaultCitizenSuccess = function(req, res) {
 		jQuery(
 				"input[name='basicProperty.propertyOwnerInfoProxy[" + rowidx
 						+ "].owner.name']").attr("readonly", true);
-		jQuery(
-				"select[name='basicProperty.propertyOwnerInfoProxy[" + rowidx
-						+ "].owner.gender']").val(results[0].gender);
-		jQuery(
-				"select[name='basicProperty.propertyOwnerInfoProxy[" + rowidx
-						+ "].owner.gender']:not(:selected)").attr('disabled', true);
-		jQuery(
-				"input[name='basicProperty.propertyOwnerInfoProxy[" + rowidx
-						+ "].owner.mobileNumber']").val(results[0].mobileNo);
 		jQuery(
 				"select[name='basicProperty.propertyOwnerInfoProxy[" + rowidx
 						+ "].owner.guardianRelation']").val(results[0].guardianRelation);
@@ -210,7 +199,7 @@ function populateDefaultCitizen() {
 	var assessmentDocumentType = jQuery('#assessmentDocumentNames :selected')
 			.text();
 	if (assessmentDocumentType.indexOf('Notary document') != -1) {
-		makeJSONCall([ "name", "gender", "mobileNo", "guardian",
+		makeJSONCall([ "name", "guardian",
 				"guardianRelation" ],
 				'/ptis/common/ajaxcommon-defaultcitizen-fordoctype.action', {
 					assessmentDocumentType : assessmentDocumentType
