@@ -199,7 +199,7 @@ public abstract class AbstractLicenseService<T extends License> {
     private LicenseCitizenPortalService licenseCitizenPortalService;
 
     @Autowired
-    private LicenseConfigurationService licenseConfigurationService;
+    protected LicenseConfigurationService licenseConfigurationService;
 
     protected abstract LicenseAppType getLicenseApplicationTypeForRenew();
 

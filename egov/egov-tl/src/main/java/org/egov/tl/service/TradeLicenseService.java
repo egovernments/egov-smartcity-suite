@@ -354,7 +354,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         Page<License> licenses = searchTradeRepository.findAll(SearchTradeSpec.searchTrade(searchForm), pageable);
         List<SearchForm> searchResults = new ArrayList<>();
         licenses.forEach(license ->
-                searchResults.add(new SearchForm(license, currentUser, getOwnerName(license)))
+                searchResults.add(new SearchForm(license, currentUser, getOwnerName(license), licenseConfigurationService.getFeeCollectorRoles()))
         );
         return new PageImpl<>(searchResults, pageable, licenses.getTotalElements());
     }

@@ -1,0 +1,1 @@
+INSERT INTO egtl_configuration values (nextval('seq_egtl_configuration'), 'FEE_COLLECTOR_ROLES', 'Collection Operator','Trade license fee collector roles',(select id from eg_user where username='system' and type='SYSTEM'),now(),(select id from eg_user where username='system' and type='SYSTEM'),now(),0);

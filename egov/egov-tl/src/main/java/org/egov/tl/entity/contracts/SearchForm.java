@@ -61,7 +61,6 @@ import java.util.List;
 
 import static org.egov.infra.utils.StringUtils.toYesOrNo;
 import static org.egov.tl.utils.Constants.CLOSURE_LIC_APPTYPE;
-import static org.egov.tl.utils.Constants.ROLE_BILLCOLLECTOR;
 import static org.egov.tl.utils.Constants.TL_APPROVER_ROLENAME;
 import static org.egov.tl.utils.Constants.TL_CREATOR_ROLENAME;
 import static org.egov.tl.utils.Constants.CSCOPERATOR;
@@ -94,7 +93,7 @@ public class SearchForm extends DataTableSearchRequest {
         // For form binding
     }
 
-    public SearchForm(License license, User user, String ownerName) {
+    public SearchForm(License license, User user, String ownerName, String[] feeCollectorRoles) {
         setLicenseId(license.getId());
         setApplicationNumber(license.getApplicationNumber());
         setLicenseNumber(license.getLicenseNumber());
@@ -110,10 +109,10 @@ public class SearchForm extends DataTableSearchRequest {
         setOwnerName(ownerName);
         setApplicationTypeId(license.getLicenseAppType().getId());
         setNatureOfBusinessId(license.getNatureOfBusiness().getId());
-        addActions(license, user);
+        addActions(license, user, feeCollectorRoles);
     }
 
-    private void addActions(License license, User user) {
+    private void addActions(License license, User user, String[] feeCollectorRoles) {
         List<String> licenseActions = new ArrayList<>();
         licenseActions.add("View Trade");
         licenseActions.add("View DCB");
@@ -131,15 +130,15 @@ public class SearchForm extends DataTableSearchRequest {
             if (license.isLegacyWithNoState())
                 licenseActions.add("Modify Legacy License");
             if (license.getStatus() != null)
-                addRoleSpecificActions(license, user, licenseActions);
+                addRoleSpecificActions(license, user, licenseActions, feeCollectorRoles);
         } else if (license.isReadyForRenewal()) {
             licenseActions.add("Renew License");
         }
         setActions(licenseActions);
     }
 
-    private void addRoleSpecificActions(License license, User user, List<String> licenseActions) {
-        if (user.hasRole(ROLE_BILLCOLLECTOR) && (license.canCollectLicenseFee() || license.canCollectFee())) {
+    private void addRoleSpecificActions(License license, User user, List<String> licenseActions, String[] feeCollectorRoles) {
+        if (user.hasAnyRole(feeCollectorRoles) && (license.canCollectLicenseFee() || license.canCollectFee())) {
             licenseActions.add("Collect Fees");
         } else if (user.hasAnyRole(TL_CREATOR_ROLENAME, TL_APPROVER_ROLENAME)) {
             addPrintCertificatesOptions(license, licenseActions);

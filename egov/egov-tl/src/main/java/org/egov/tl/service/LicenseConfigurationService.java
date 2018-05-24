@@ -64,6 +64,8 @@ public class LicenseConfigurationService {
     private static final String NEW_APPTYPE_DEFAULT_SLA = "NEW_APPTYPE_DEFAULT_SLA";
     private static final String RENEW_APPTYPE_DEFAULT_SLA = "RENEW_APPTYPE_DEFAULT_SLA";
     private static final String CLOSURE_APPTYPE_DEFAULT_SLA = "CLOSURE_APPTYPE_DEFAULT_SLA";
+    private static final String FEE_COLLECTOR_ROLES = "FEE_COLLECTOR_ROLES";
+
     @Autowired
     private LicenseConfigurationRepository licenseConfigurationRepository;
 
@@ -89,6 +91,10 @@ public class LicenseConfigurationService {
 
     public Integer getClosureAppTypeSla() {
         return Integer.valueOf(getValueByKey(CLOSURE_APPTYPE_DEFAULT_SLA));
+    }
+
+    public String[] getFeeCollectorRoles() {
+        return getValueByKey(FEE_COLLECTOR_ROLES).split(",");
     }
 
     public String getValueByKey(String key) {
