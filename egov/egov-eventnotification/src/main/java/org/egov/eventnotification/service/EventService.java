@@ -55,6 +55,8 @@ import static org.egov.eventnotification.constants.Constants.MIN_NUMBER_OF_REQUE
 import static org.egov.eventnotification.constants.Constants.MODULE_NAME;
 import static org.egov.eventnotification.constants.Constants.NOTIFICATION_TYPE_EVENT;
 import static org.egov.eventnotification.constants.Constants.ZERO;
+import static org.egov.eventnotification.constants.Constants.YES;
+import static org.egov.eventnotification.constants.Constants.NO;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -156,6 +158,11 @@ public class EventService {
             eventDetails.setEndMM(ZERO + String.valueOf(ed.getMinuteOfHour()));
         else
             eventDetails.setEndMM(String.valueOf(ed.getMinuteOfHour()));
+        
+        if(event.isIspaid())
+            eventDetails.setPaid(YES);
+        else
+            eventDetails.setPaid(NO);
         event.setEventDetails(eventDetails);
     }
 

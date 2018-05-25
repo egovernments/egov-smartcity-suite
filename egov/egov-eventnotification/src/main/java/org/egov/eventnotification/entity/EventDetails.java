@@ -84,6 +84,9 @@ public class EventDetails {
 
     @Transient
     private MultipartFile[] file;
+    
+    @Transient
+    private String paid;
 
     public String getStartHH() {
         return startHH;
@@ -165,4 +168,11 @@ public class EventDetails {
         file = files;
     }
 
+    public String getPaid() {
+        return paid;
+    }
+
+    public void setPaid(String paid) {
+        this.paid = paid;
+    }
 }

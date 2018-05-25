@@ -59,6 +59,7 @@
 				<input type="hidden" id="mode" path="" value="${mode}" />
 				<form:hidden path="id" id="id" value="${id}"/>
 				<form:hidden path="filestore" id="filestore" name="filestore" value="${filestore}" />
+				<input type="hidden" id="paidHid" path="" value="${event.eventDetails.paid}" />
 				<div class="panel-body">
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.eventType" />:<span class="mandatory"></span></label>
@@ -199,7 +200,7 @@
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.ispaid" />:</label>
 						<div class="col-sm-3 add-margin">
-							<form:checkbox path="ispaid" id="ispaid" name="ispaid"/>
+							<form:checkbox path="ispaid" id="ispaid" name="ispaid" value="${ispaid}"/>
 							<form:errors path="ispaid" cssClass="error-msg" />
 						</div>
 						<label id="costLabel" class="col-sm-2 control-label text-right" style="display:none;"><spring:message code="lbl.event.cost" />:<span class="mandatory"></span></label>

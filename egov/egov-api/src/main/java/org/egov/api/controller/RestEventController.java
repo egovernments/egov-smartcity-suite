@@ -82,9 +82,12 @@ import static org.egov.eventnotification.constants.Constants.FAIL;
 import static org.egov.eventnotification.constants.Constants.INTERESTED_COUNT;
 import static org.egov.eventnotification.constants.Constants.MAX_TEN;
 import static org.egov.eventnotification.constants.Constants.MODULE_NAME;
+import static org.egov.eventnotification.constants.Constants.NO;
 import static org.egov.eventnotification.constants.Constants.SUCCESS;
 import static org.egov.eventnotification.constants.Constants.SUCCESS1;
 import static org.egov.eventnotification.constants.Constants.URL;
+import static org.egov.eventnotification.constants.Constants.USER_INTERESTED;
+import static org.egov.eventnotification.constants.Constants.YES;
 import static org.egov.eventnotification.constants.Constants.ZERO;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -159,21 +162,16 @@ public class RestEventController extends ApiController {
             jsonObjectEvent.addProperty(EVENT_ID, event.getId());
             jsonObjectEvent.addProperty(EVENT_NAME, event.getName());
             jsonObjectEvent.addProperty(EVENT_DESC, event.getDescription());
-            DateTime sd = new DateTime(event.getStartDate());
+
             jsonObjectEvent.addProperty(EVENT_STARTDATE,
                     DateUtils.getDate(DateUtils.getDefaultFormattedDate(event.getStartDate()), DDMMYYYY).getTime());
-            if (sd.getHourOfDay() < MAX_TEN && sd.getMinuteOfHour() < MAX_TEN)
-                jsonObjectEvent.addProperty(EVENT_STARTTIME, ZERO + sd.getHourOfDay() + ":" + ZERO + sd.getMinuteOfHour());
-            else
-                jsonObjectEvent.addProperty(EVENT_STARTTIME, sd.getHourOfDay() + ":" + sd.getMinuteOfHour());
+            jsonObjectEvent.addProperty(EVENT_STARTTIME,
+                    event.getEventDetails().getStartHH() + ":" + event.getEventDetails().getStartMM());
 
-            DateTime ed = new DateTime(event.getEndDate());
             jsonObjectEvent.addProperty(EVENT_ENDDATE,
                     DateUtils.getDate(DateUtils.getDefaultFormattedDate(event.getEndDate()), DDMMYYYY).getTime());
-            if (ed.getHourOfDay() < MAX_TEN && ed.getMinuteOfHour() < MAX_TEN)
-                jsonObjectEvent.addProperty(EVENT_ENDTIME, ZERO + ed.getHourOfDay() + ":" + ZERO + ed.getMinuteOfHour());
-            else
-                jsonObjectEvent.addProperty(EVENT_ENDTIME, ed.getHourOfDay() + ":" + ed.getMinuteOfHour());
+            jsonObjectEvent.addProperty(EVENT_ENDTIME,
+                    event.getEventDetails().getEndHH() + ":" + event.getEventDetails().getEndMM());
 
             jsonObjectEvent.addProperty(EVENT_HOST, event.getEventhost());
             jsonObjectEvent.addProperty(EVENT_LOCATION, event.getEventlocation());
@@ -197,6 +195,8 @@ public class RestEventController extends ApiController {
             else
                 jsonObjectEvent.addProperty(URL, event.getUrl());
 
+            jsonObjectEvent.addProperty(USER_INTERESTED, NO);
+
             jsonArrayEvent.add(jsonObjectEvent);
 
         }
@@ -216,21 +216,15 @@ public class RestEventController extends ApiController {
         jsonObjectEvent.addProperty(EVENT_ID, event.getId());
         jsonObjectEvent.addProperty(EVENT_NAME, event.getName());
         jsonObjectEvent.addProperty(EVENT_DESC, event.getDescription());
-        DateTime sd = new DateTime(event.getStartDate());
+
         jsonObjectEvent.addProperty(EVENT_STARTDATE,
                 DateUtils.getDate(DateUtils.getDefaultFormattedDate(event.getStartDate()), DDMMYYYY).getTime());
-        if (sd.getHourOfDay() < MAX_TEN && sd.getMinuteOfHour() < MAX_TEN)
-            jsonObjectEvent.addProperty(EVENT_STARTTIME, ZERO + sd.getHourOfDay() + ":" + ZERO + sd.getMinuteOfHour());
-        else
-            jsonObjectEvent.addProperty(EVENT_STARTTIME, sd.getHourOfDay() + ":" + sd.getMinuteOfHour());
+        jsonObjectEvent.addProperty(EVENT_STARTTIME,
+                event.getEventDetails().getStartHH() + ":" + event.getEventDetails().getStartMM());
 
-        DateTime ed = new DateTime(event.getEndDate());
         jsonObjectEvent.addProperty(EVENT_ENDDATE,
                 DateUtils.getDate(DateUtils.getDefaultFormattedDate(event.getEndDate()), DDMMYYYY).getTime());
-        if (ed.getHourOfDay() < MAX_TEN && ed.getMinuteOfHour() < MAX_TEN)
-            jsonObjectEvent.addProperty(EVENT_ENDTIME, ZERO + ed.getHourOfDay() + ":" + ZERO + ed.getMinuteOfHour());
-        else
-            jsonObjectEvent.addProperty(EVENT_ENDTIME, ed.getHourOfDay() + ":" + ed.getMinuteOfHour());
+        jsonObjectEvent.addProperty(EVENT_ENDTIME, event.getEventDetails().getEndHH() + ":" + event.getEventDetails().getEndMM());
 
         jsonObjectEvent.addProperty(EVENT_HOST, event.getEventhost());
         jsonObjectEvent.addProperty(EVENT_LOCATION, event.getEventlocation());
@@ -253,6 +247,14 @@ public class RestEventController extends ApiController {
             jsonObjectEvent.addProperty(URL, EMPTY);
         else
             jsonObjectEvent.addProperty(URL, event.getUrl());
+        if (userId != null) {
+            UserEvent userEvent = usereventService.getUsereventByEventAndUser(id, userId);
+            if (userEvent == null)
+                jsonObjectEvent.addProperty(USER_INTERESTED, NO);
+            else
+                jsonObjectEvent.addProperty(USER_INTERESTED, YES);
+        } else
+            jsonObjectEvent.addProperty(USER_INTERESTED, NO);
 
         return jsonObjectEvent.toString();
     }
@@ -282,21 +284,38 @@ public class RestEventController extends ApiController {
             jsonObjectEvent.addProperty(EVENT_ID, event.getId());
             jsonObjectEvent.addProperty(EVENT_NAME, event.getName());
             jsonObjectEvent.addProperty(EVENT_DESC, event.getDescription());
+
             DateTime sd = new DateTime(event.getStartDate());
             jsonObjectEvent.addProperty(EVENT_STARTDATE,
                     DateUtils.getDate(DateUtils.getDefaultFormattedDate(event.getStartDate()), DDMMYYYY).getTime());
-            if (sd.getHourOfDay() < MAX_TEN && sd.getMinuteOfHour() < MAX_TEN)
-                jsonObjectEvent.addProperty(EVENT_STARTTIME, ZERO + sd.getHourOfDay() + ":" + ZERO + sd.getMinuteOfHour());
+            String startHH = null;
+            String startMM = null;
+            if (sd.getHourOfDay() < MAX_TEN)
+                startHH = ZERO + String.valueOf(sd.getHourOfDay());
             else
-                jsonObjectEvent.addProperty(EVENT_STARTTIME, sd.getHourOfDay() + ":" + sd.getMinuteOfHour());
+                startHH = String.valueOf(sd.getHourOfDay());
+
+            if (sd.getMinuteOfHour() < MAX_TEN)
+                startMM = ZERO + String.valueOf(sd.getMinuteOfHour());
+            else
+                startMM = String.valueOf(sd.getMinuteOfHour());
+
+            jsonObjectEvent.addProperty(EVENT_STARTTIME, startHH + ":" + startMM);
 
             DateTime ed = new DateTime(event.getEndDate());
-            jsonObjectEvent.addProperty(EVENT_ENDDATE,
-                    DateUtils.getDate(DateUtils.getDefaultFormattedDate(event.getEndDate()), DDMMYYYY).getTime());
-            if (ed.getHourOfDay() < MAX_TEN && ed.getMinuteOfHour() < MAX_TEN)
-                jsonObjectEvent.addProperty(EVENT_ENDTIME, ZERO + ed.getHourOfDay() + ":" + ZERO + ed.getMinuteOfHour());
+            String endHH = null;
+            String endMM = null;
+            if (ed.getHourOfDay() < MAX_TEN)
+                endHH = ZERO + String.valueOf(ed.getHourOfDay());
             else
-                jsonObjectEvent.addProperty(EVENT_ENDTIME, ed.getHourOfDay() + ":" + ed.getMinuteOfHour());
+                endHH = String.valueOf(ed.getHourOfDay());
+
+            if (ed.getMinuteOfHour() < MAX_TEN)
+                endMM = ZERO + String.valueOf(ed.getMinuteOfHour());
+            else
+                endMM = String.valueOf(ed.getMinuteOfHour());
+
+            jsonObjectEvent.addProperty(EVENT_ENDTIME, endHH + ":" + endMM);
 
             jsonObjectEvent.addProperty(EVENT_HOST, event.getEventhost());
             jsonObjectEvent.addProperty(EVENT_LOCATION, event.getEventlocation());
@@ -319,6 +338,8 @@ public class RestEventController extends ApiController {
                 jsonObjectEvent.addProperty(URL, EMPTY);
             else
                 jsonObjectEvent.addProperty(URL, event.getUrl());
+
+            jsonObjectEvent.addProperty(USER_INTERESTED, NO);
 
             jsonArrayEvent.add(jsonObjectEvent);
 

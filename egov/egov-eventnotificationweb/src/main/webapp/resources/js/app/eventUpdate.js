@@ -227,10 +227,12 @@ $(document).ready(function(){
         $("#eventlocation").val(lat + ':' + lng);
     });
 			
-	if($("#ispaid").val() === "true"){
+	if($("#paidHid").val() === "Yes"){
 		$("#ispaid")[0].checked = true;
 		$("#costLabel").show();
     	$("#costDiv").show();
+	}else{
+		$("#ispaid")[0].checked = false;
 	}
 	
 	$("#ispaid").on("change", function(event) { 
