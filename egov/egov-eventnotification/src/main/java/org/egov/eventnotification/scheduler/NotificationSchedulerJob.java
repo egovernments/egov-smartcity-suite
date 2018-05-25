@@ -126,15 +126,7 @@ public class NotificationSchedulerJob implements Job {
         NotificationSchedule notificationSchedule = notificationscheduleService
                 .getSchedule(Long.parseLong(String.valueOf(dataMap.get(SCHEDULEID))));
 
-        /*
-         * notificationSchedule.setStatus(SCHEDULE_RUNNING); notificationscheduleService.updateSchedule(notificationSchedule);
-         */
-
         executeBusiness(notificationSchedule, user, dataMap);
-
-        /*
-         * notificationSchedule.setStatus(SCHEDULE_COMPLETE); notificationscheduleService.updateSchedule(notificationSchedule);
-         */
 
         LOGGER.info("Notification scheduler with job key " + jobKey + " end at " + new Date());
     }
