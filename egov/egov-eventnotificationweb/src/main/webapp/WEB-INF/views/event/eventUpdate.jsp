@@ -102,10 +102,9 @@
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.startdate" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin text-center">
-							<fmt:formatDate pattern="dd/MM/yyyy" value="${eventDetails.startDt}" var="stDt" />
 							<form:input path="eventDetails.startDt" id="startDt" name="eventDetails.startDt" 
 								class="form-control datepicker" title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}" 
-								data-inputmask="'mask': 'd/m/y'" required="required" data-date-start-date="0d" value="<c:out value='${stDt}' />"/>
+								data-inputmask="'mask': 'd/m/y'" required="required" data-date-start-date="0d" value="${eventDetails.startDt}"/>
 							<form:errors path="eventDetails.startDt" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.starttime" />:<span class="mandatory"></span></label>
@@ -130,10 +129,9 @@
 				<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.enddate" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin text-center">
-							<fmt:formatDate pattern="dd/MM/yyyy" value="${eventDetails.endDt}" var="edDt" />
 							<form:input path="eventDetails.endDt" id="endDt" name="eventDetails.endDt" 
 								class="form-control datepicker" title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}" 
-								data-inputmask="'mask': 'd/m/y'" required="required" data-date-start-date="0d" value="<c:out value='${edDt}' />"/>
+								data-inputmask="'mask': 'd/m/y'" required="required" data-date-start-date="0d" value="${eventDetails.endDt}"/>
 							<form:errors path="eventDetails.endDt" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.endtime" />:<span class="mandatory"></span></label>

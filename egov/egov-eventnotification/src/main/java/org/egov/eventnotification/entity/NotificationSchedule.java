@@ -1,5 +1,7 @@
 package org.egov.eventnotification.entity;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -7,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
@@ -44,13 +48,8 @@ public class NotificationSchedule extends AbstractAuditable {
     private String status;
 
     @Column(name = "start_date")
-    private Long startDate;
-
-    @NotNull
-    @Length(max = 20)
-    @Column(name = "start_time")
-    @SafeHtml
-    private String startTime;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date startDate;
 
     @SafeHtml
     private String repeat;
@@ -98,20 +97,12 @@ public class NotificationSchedule extends AbstractAuditable {
         this.status = status;
     }
 
-    public Long getStartDate() {
+    public Date getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Long startDate) {
+    public void setStartDate(Date startDate) {
         this.startDate = startDate;
-    }
-
-    public String getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(String startTime) {
-        this.startTime = startTime;
     }
 
     public String getRepeat() {

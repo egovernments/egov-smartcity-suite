@@ -1,5 +1,7 @@
 package org.egov.eventnotification.entity;
 
+import java.io.Serializable;
+
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,7 +21,12 @@ import org.hibernate.validator.constraints.SafeHtml;
 @Table(name = "egevntnotification_category")
 @SequenceGenerator(name = ModuleCategory.SEQ_EGEVNTNOTIFICATION_CATEGORY, sequenceName = ModuleCategory.SEQ_EGEVNTNOTIFICATION_CATEGORY, allocationSize = 1)
 @Embeddable
-public class ModuleCategory {
+public class ModuleCategory implements Serializable{
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -3869160080779728227L;
 
     public static final String SEQ_EGEVNTNOTIFICATION_CATEGORY = "seq_egevntnotification_category";
 
@@ -65,7 +72,7 @@ public class ModuleCategory {
         this.name = name;
     }
 
-    public boolean getActive() {
+    public boolean isActive() {
         return active;
     }
 

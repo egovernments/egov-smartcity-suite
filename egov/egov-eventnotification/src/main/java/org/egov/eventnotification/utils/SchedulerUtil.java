@@ -43,6 +43,7 @@ public class SchedulerUtil {
     public Trigger addSchedule(Date triggerStartTime, Class<? extends Job> task, JobDataMap param)
             throws SchedulerException {
         Scheduler sched = schedulerFactory.getScheduler();
+        log.info("IS clusterd" + schedulerFactory.getScheduler().getMetaData().isJobStoreClustered());
         JobBuilder builder = JobBuilder.newJob(task);
         builder.withIdentity(name, groupName);
         if (param != null)

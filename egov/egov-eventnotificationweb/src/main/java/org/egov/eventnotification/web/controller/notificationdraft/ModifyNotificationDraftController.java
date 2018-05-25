@@ -7,8 +7,6 @@ import static org.egov.eventnotification.constants.Constants.MODE;
 import static org.egov.eventnotification.constants.Constants.MODE_CREATE;
 import static org.egov.eventnotification.constants.Constants.MODE_VIEW;
 import static org.egov.eventnotification.constants.Constants.MODULE_CATEGORY;
-import static org.egov.eventnotification.constants.Constants.MSG_DRAFT_UPDATE_ERROR;
-import static org.egov.eventnotification.constants.Constants.MSG_DRAFT_UPDATE_SUCCESS;
 import static org.egov.eventnotification.constants.Constants.NOTIFICATION_DRAFT;
 import static org.egov.eventnotification.constants.Constants.TEMPLATE_MODULE;
 import static org.egov.eventnotification.constants.Constants.VIEW_DRAFTUPDATE;
@@ -19,6 +17,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+
+import javax.validation.Valid;
 
 import org.egov.eventnotification.entity.CategoryParameters;
 import org.egov.eventnotification.entity.DraftType;
@@ -34,7 +34,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class ModifyNotificationDraftController {
@@ -68,19 +67,19 @@ public class ModifyNotificationDraftController {
     }
 
     @PostMapping("/drafts/update/{id}")
-    public String update(@PathVariable("id") Long id, @ModelAttribute NotificationDrafts notificationDrafts,
-            RedirectAttributes redirectAttrs, BindingResult errors, Model model) {
+    public String update(@PathVariable("id") Long id, @Valid @ModelAttribute NotificationDrafts notificationDrafts,
+            BindingResult errors, Model model) {
         if (errors.hasErrors()) {
             model.addAttribute(MESSAGE,
-                    messageSource.getMessage(MSG_DRAFT_UPDATE_ERROR, null, Locale.ENGLISH));
+                    messageSource.getMessage("msg.draft.update.error", null, Locale.ENGLISH));
             model.addAttribute(MODE, MODE_CREATE);
             return VIEW_EVENTCREATE;
         }
         notificationDrafts.setId(id);
-        draftService.updateDraft(notificationDrafts);
-        redirectAttrs.addFlashAttribute(NOTIFICATION_DRAFT, notificationDrafts);
+        notificationDrafts = draftService.updateDraft(notificationDrafts);
+        model.addAttribute(NOTIFICATION_DRAFT, notificationDrafts);
         model.addAttribute(MESSAGE,
-                messageSource.getMessage(MSG_DRAFT_UPDATE_SUCCESS, null, Locale.ENGLISH));
+                messageSource.getMessage("msg.draft.update.success", null, Locale.ENGLISH));
         model.addAttribute(MODE, MODE_VIEW);
         return VIEW_DRAFTVIEWRESULT;
     }

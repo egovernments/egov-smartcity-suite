@@ -62,8 +62,6 @@ import static org.egov.eventnotification.constants.Constants.TRIGGER;
 import static org.egov.eventnotification.constants.Constants.USER;
 import static org.egov.eventnotification.constants.Constants.YEARLY_JOB_TYPE;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -74,6 +72,7 @@ import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.DefaultersInfo;
 import org.egov.ptis.domain.service.report.ReportService;
 import org.hibernate.Query;
+import org.joda.time.DateTime;
 import org.quartz.JobDataMap;
 import org.quartz.SchedulerException;
 import org.quartz.TriggerKey;
@@ -105,23 +104,24 @@ public class NotificationSchedulerManager {
      */
     public void schedule(NotificationSchedule notificationschedule, User user) {
 
-        Query query = propertyTaxUtil.prepareQueryforDefaultersReport(-1l, "1", "100000", 10000, "PRIVATE", "PT");
+        Query query = propertyTaxUtil.prepareQueryforDefaultersReport(-1l, "1", "100000", 100000, "PRIVATE", "PT");
         List<DefaultersInfo> defaultersList = reportService.getDefaultersInformation(query, "1 Year", 10);
-
+        LOGGER.info("defaultersList : " + defaultersList.isEmpty());
+        LOGGER.info("defaultersList size : " + defaultersList.size());
         schedulerUtil.setGroupName(NOTIFICATION_JOB);
         schedulerUtil.setName(JOB + notificationschedule.getId());
         schedulerUtil.setTriggerName(TRIGGER + notificationschedule.getId());
         schedulerUtil.setRepeatCount(0);
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date(notificationschedule.getStartDate()));
-        int hours = Integer.parseInt(notificationschedule.getStartTime().split(":")[0]);
-        int minutes = Integer.parseInt(notificationschedule.getStartTime().split(":")[1]);
+        DateTime calendar = new DateTime(notificationschedule.getStartDate());
+        int hours = calendar.getHourOfDay();
+        int minutes = calendar.getMinuteOfHour();
 
         JobDataMap jobDataMap = new JobDataMap();
         jobDataMap.put(USER, user);
         jobDataMap.put(SCHEDULEID, notificationschedule.getId());
         jobDataMap.put(DEFAULTERS_LIST, defaultersList);
+
         // configure the scheduler time
         switch (notificationschedule.getRepeat().toLowerCase()) {
         case SCHEDULE_DAY:
@@ -136,7 +136,7 @@ public class NotificationSchedulerManager {
 
             break;
         case SCHEDULE_MONTH:
-            String monthlyCronExpression = "0 " + minutes + " " + hours + " " + calendar.get(Calendar.DAY_OF_MONTH) + " * ? *";
+            String monthlyCronExpression = "0 " + minutes + " " + hours + " " + calendar.getDayOfMonth() + " * ? *";
 
             try {
                 jobDataMap.put(JOB_TYPE, MONTHLY_JOB_TYPE);
@@ -148,7 +148,7 @@ public class NotificationSchedulerManager {
             break;
         case SCHEDULE_YEAR:
             String yearlyCronExpression = "0 " + minutes + " " + hours + " "
-                    + calendar.get(Calendar.DAY_OF_MONTH) + " " + (calendar.get(Calendar.MONTH) + 1) + " ? *";
+                    + calendar.getDayOfMonth() + " " + calendar.getMonthOfYear() + " ? *";
 
             try {
                 jobDataMap.put(JOB_TYPE, YEARLY_JOB_TYPE);
@@ -158,11 +158,11 @@ public class NotificationSchedulerManager {
             }
             break;
         default:
-            calendar.set(Calendar.HOUR_OF_DAY, hours);
-            calendar.set(Calendar.MINUTE, minutes);
+            calendar = calendar.withHourOfDay(hours);
+            calendar = calendar.withMinuteOfHour(minutes);
             try {
                 jobDataMap.put(JOB_TYPE, ONETIME_JOB_TYPE);
-                schedulerUtil.addSchedule(calendar.getTime(), NotificationSchedulerJob.class, jobDataMap);
+                schedulerUtil.addSchedule(calendar.toDate(), NotificationSchedulerJob.class, jobDataMap);
             } catch (SchedulerException e) {
                 LOGGER.error(e.getMessage(), e);
             }
@@ -192,10 +192,9 @@ public class NotificationSchedulerManager {
     public void updateJob(NotificationSchedule newSchedule, User user) {
         String scheduleTrigger = TRIGGER + newSchedule.getId();
 
-        Calendar newTime = Calendar.getInstance();
-        newTime.setTime(new Date(newSchedule.getStartDate()));
-        int newhours = Integer.parseInt(newSchedule.getStartTime().split(":")[0]);
-        int newminutes = Integer.parseInt(newSchedule.getStartTime().split(":")[1]);
+        DateTime newTime = new DateTime(newSchedule.getStartDate());
+        int newhours = newTime.getHourOfDay();
+        int newminutes = newTime.getMinuteOfHour();
 
         JobDataMap jobDataMap = new JobDataMap();
         jobDataMap.put(USER, user);
@@ -218,7 +217,7 @@ public class NotificationSchedulerManager {
             }
             break;
         case SCHEDULE_MONTH:
-            String monthlyCronExpression = "0 " + newminutes + " " + newhours + " " + newTime.get(Calendar.DAY_OF_MONTH)
+            String monthlyCronExpression = "0 " + newminutes + " " + newhours + " " + newTime.getDayOfMonth()
                     + " * ? *";
 
             try {
@@ -232,7 +231,7 @@ public class NotificationSchedulerManager {
             break;
         case SCHEDULE_YEAR:
             String yearlyCronExpression = "0 " + newminutes + " " + newhours + " "
-                    + newTime.get(Calendar.DAY_OF_MONTH) + " " + (newTime.get(Calendar.MONTH) + 1) + " ? *";
+                    + newTime.getDayOfMonth() + " " + newTime.getMonthOfYear() + " ? *";
 
             try {
                 jobDataMap.put(JOB_TYPE, YEARLY_JOB_TYPE);
@@ -243,13 +242,13 @@ public class NotificationSchedulerManager {
             }
             break;
         default:
-            newTime.set(Calendar.HOUR_OF_DAY, newhours);
-            newTime.set(Calendar.MINUTE, newminutes);
+            newTime = newTime.withHourOfDay(newhours);
+            newTime = newTime.withMinuteOfHour(newminutes);
 
             try {
                 jobDataMap.put(JOB_TYPE, ONETIME_JOB_TYPE);
                 TriggerKey triggerKey = new TriggerKey(scheduleTrigger, NOTIFICATION_JOB);
-                schedulerUtil.updateSchedule(newTime.getTime(), NotificationSchedulerJob.class, jobDataMap, triggerKey);
+                schedulerUtil.updateSchedule(newTime.toDate(), NotificationSchedulerJob.class, jobDataMap, triggerKey);
             } catch (SchedulerException e) {
                 LOGGER.error(e.getMessage(), e);
             }

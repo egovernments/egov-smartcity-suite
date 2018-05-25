@@ -7,8 +7,6 @@ import static org.egov.eventnotification.constants.Constants.MINUTE_LIST;
 import static org.egov.eventnotification.constants.Constants.MODE;
 import static org.egov.eventnotification.constants.Constants.MODE_DELETE;
 import static org.egov.eventnotification.constants.Constants.MODE_VIEW;
-import static org.egov.eventnotification.constants.Constants.MSG_SCHEDULED_ERROR;
-import static org.egov.eventnotification.constants.Constants.MSG_SCHEDULED_SUCCESS;
 import static org.egov.eventnotification.constants.Constants.NOTIFICATION_SCHEDULE;
 import static org.egov.eventnotification.constants.Constants.SCHEDULER_REPEAT_LIST;
 import static org.egov.eventnotification.constants.Constants.SCHEDULE_CREATE_SUCCESS;
@@ -21,10 +19,10 @@ import static org.egov.eventnotification.constants.Constants.SCHEDULE_LIST;
 import static org.egov.eventnotification.constants.Constants.TO_BE_SCHEDULED;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import javax.validation.Valid;
 
 import org.egov.eventnotification.constants.Constants;
 import org.egov.eventnotification.entity.NotificationDrafts;
@@ -36,6 +34,7 @@ import org.egov.eventnotification.service.ScheduleService;
 import org.egov.eventnotification.utils.EventnotificationUtil;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
@@ -47,7 +46,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class ScheduleController {
@@ -118,8 +116,7 @@ public class ScheduleController {
      * @return tiles view
      */
     @PostMapping("/schedule/create/")
-    public String save(@ModelAttribute NotificationSchedule schedule, Model model, RedirectAttributes redirectAttrs,
-            BindingResult errors) {
+    public String save(@Valid @ModelAttribute NotificationSchedule schedule, BindingResult errors, Model model) {
 
         if (errors.hasErrors()) {
             model.addAttribute(NOTIFICATION_SCHEDULE, schedule);
@@ -131,18 +128,18 @@ public class ScheduleController {
 
             model.addAttribute(SCHEDULER_REPEAT_LIST, repeatList);
             model.addAttribute(MESSAGE,
-                    messageSource.getMessage(MSG_SCHEDULED_ERROR, null, Locale.ENGLISH));
+                    messageSource.getMessage("msg.notification.schedule.error", null, Locale.ENGLISH));
             return SCHEDULE_CREATE_VIEW;
         }
 
         User user = userService.getCurrentUser();
-        scheduleService.save(schedule, user);
+        scheduleService.saveSchedule(schedule, user);
 
         schedulerManager.schedule(schedule, user);
         model.addAttribute(MESSAGE,
-                messageSource.getMessage(MSG_SCHEDULED_SUCCESS, null, Locale.ENGLISH));
+                messageSource.getMessage("msg.notification.schedule.success", null, Locale.ENGLISH));
         model.addAttribute(MODE, MODE_VIEW);
-        redirectAttrs.addFlashAttribute(NOTIFICATION_SCHEDULE, schedule);
+        model.addAttribute(NOTIFICATION_SCHEDULE, schedule);
         return SCHEDULE_CREATE_SUCCESS;
     }
 
@@ -154,13 +151,10 @@ public class ScheduleController {
      */
     @GetMapping("/schedule/view/{id}")
     public String viewBySchedule(@PathVariable("id") Long id, Model model) {
-        NotificationSchedule notificationSchedule = scheduleService.findOne(id);
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(notificationSchedule.getEventDetails().getStartDt());
-        calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(notificationSchedule.getStartTime().split(":")[0]));
-        calendar.set(Calendar.MINUTE, Integer.parseInt(notificationSchedule.getStartTime().split(":")[1]));
+        NotificationSchedule notificationSchedule = scheduleService.getSchedule(id);
+        DateTime sd = new DateTime(notificationSchedule.getStartDate());
 
-        if (calendar.getTime().before(new Date()))
+        if (sd.isBeforeNow())
             model.addAttribute(SCHEDULE_EDITABLE, false);
         else
             model.addAttribute(SCHEDULE_EDITABLE, true);
@@ -177,12 +171,14 @@ public class ScheduleController {
      */
     @GetMapping(path = { "/schedule/delete/{id}" }, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public String deleteSchedule(@PathVariable("id") Long id, Model model) {
-        User user = userService.getCurrentUser();
-        NotificationSchedule notificationSchedule = scheduleService.updateScheduleStatus(id, user, SCHEDULE_DISABLED);
+    public String deleteSchedule(@PathVariable Long id, Model model) {
+        NotificationSchedule notificationSchedule = scheduleService.getSchedule(id);
+        notificationSchedule.setStatus(SCHEDULE_DISABLED);
+
+        notificationSchedule = scheduleService.updateSchedule(notificationSchedule);
         schedulerManager.removeJob(notificationSchedule);
         model.addAttribute(MESSAGE,
-                messageSource.getMessage(MSG_SCHEDULED_SUCCESS, null, Locale.ENGLISH));
+                messageSource.getMessage("msg.notification.schedule.delete.success", null, Locale.ENGLISH));
         return SCHEDULE_DELETE_SUCCESS;
     }
 }

@@ -99,7 +99,7 @@ public class PushNotificationService {
     }
 
     @Transactional
-    public UserDevice persist(final UserDevice userDevice) {
+    public UserDevice saveUserDevice(final UserDevice userDevice) {
         LOGGER.info("Persisting the User Device Details : " + userDevice);
         UserDevice existingRecord = pushNotificationRepo.findByUserIdAndDeviceId(userDevice.getUserId(),
                 userDevice.getDeviceId());
@@ -126,8 +126,8 @@ public class PushNotificationService {
 
     public void sendNotifications(MessageContent messageContent) {
         LOGGER.info("##PushBoxFox## : Received the Message Content at SendNotifications Method");
-        List<UserDevice> userDeviceList = new ArrayList<>();
-        if (messageContent.getSendAll())
+        List<UserDevice> userDeviceList = null;
+        if (messageContent.isSendAll())
             userDeviceList = getAllUserDeviceList();
         else
             userDeviceList = getUserDeviceList(messageContent);
@@ -156,8 +156,8 @@ public class PushNotificationService {
     }
 
     private void setUpFirebaseApp() {
-        if (FirebaseApp.getApps().size() == 0) {
-            FileInputStream serviceAccount;
+        if (FirebaseApp.getApps().isEmpty()) {
+            FileInputStream serviceAccount = null;
             try {
                 // Fetch the service account key JSON file contents
                 File file = new ClassPathResource("private.json").getFile();
@@ -169,10 +169,15 @@ public class PushNotificationService {
 
                 FirebaseApp.initializeApp(options);
                 LOGGER.info("##PushBoxFox## : Firebase App Initialized");
-            } catch (FileNotFoundException e) {
-                System.out.println(e.getMessage());
             } catch (IOException e) {
-                System.out.println(e.getMessage());
+                LOGGER.error("##PushBoxFox## : Error in setup firebase app", e);
+            } finally {
+                if (serviceAccount != null)
+                    try {
+                        serviceAccount.close();
+                    } catch (IOException e) {
+                        LOGGER.error("##PushBoxFox## : Error in setup firebase app", e);
+                    }
             }
         }
     }

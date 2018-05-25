@@ -95,7 +95,7 @@
 								<spring:message code="lbl.event.starttime" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
-								<c:out value="${notificationSchedule.startTime}" />
+								<c:out value="${notificationSchedule.eventDetails.startHH}" />:<c:out value="${notificationSchedule.eventDetails.startMM}" />
 							</div>
 						</div>
 						<div class="row add-border">
@@ -131,4 +131,4 @@
 		</div>
 	</div>
 </form:form>
-<script type="text/javascript" src="<cdn:url value='/resources/js/app/schedule-create-success.js'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/js/app/common.js' />"></script>

@@ -9,8 +9,6 @@ import static org.egov.eventnotification.constants.Constants.MINUTE_LIST;
 import static org.egov.eventnotification.constants.Constants.MODE;
 import static org.egov.eventnotification.constants.Constants.MODE_UPDATE;
 import static org.egov.eventnotification.constants.Constants.MODE_VIEW;
-import static org.egov.eventnotification.constants.Constants.MSG_EVENT_UPDATE_ERROR;
-import static org.egov.eventnotification.constants.Constants.MSG_EVENT_UPDATE_SUCCESS;
 import static org.egov.eventnotification.constants.Constants.VIEW_EVENTUPDATE;
 import static org.egov.eventnotification.constants.Constants.VIEW_EVENTUPDATESUCCESS;
 
@@ -20,12 +18,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
 
+import javax.validation.Valid;
+
 import org.egov.eventnotification.constants.Constants;
 import org.egov.eventnotification.entity.Event;
 import org.egov.eventnotification.entity.EventStatus;
 import org.egov.eventnotification.entity.EventType;
 import org.egov.eventnotification.service.EventService;
 import org.egov.eventnotification.utils.EventnotificationUtil;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -35,7 +36,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class ModifyEventController {
@@ -85,8 +85,7 @@ public class ModifyEventController {
      * @throws ParseException
      */
     @PostMapping("/event/update/{id}")
-    public String update(@PathVariable("id") Long id, @ModelAttribute Event event,
-            RedirectAttributes redirectAttrs,
+    public String update(@PathVariable("id") Long id, @Valid @ModelAttribute Event event,
             BindingResult errors, Model model) throws IOException {
 
         if (errors.hasErrors()) {
@@ -96,19 +95,26 @@ public class ModifyEventController {
             model.addAttribute(MODE, MODE_UPDATE);
             model.addAttribute(EVENT_STATUS_LIST, new ArrayList<>(Arrays.asList(EventStatus.values())));
             model.addAttribute(MESSAGE,
-                    messageSource.getMessage(MSG_EVENT_UPDATE_ERROR, null, Locale.ENGLISH));
+                    messageSource.getMessage("msg.event.update.error", null, Locale.ENGLISH));
             return VIEW_EVENTUPDATE;
         }
         event.setId(id);
-        event.setEndDate(event.getEventDetails().getEndDt().getTime());
-        event.setEndTime(event.getEventDetails().getEndHH() + ":" + event.getEventDetails().getEndMM());
-        event.setStartDate(event.getEventDetails().getStartDt().getTime());
-        event.setStartTime(event.getEventDetails().getStartHH() + ":" + event.getEventDetails().getStartMM());
-        eventService.update(event);
+        DateTime sd = new DateTime(event.getEventDetails().getStartDt());
+        sd = sd.withHourOfDay(Integer.parseInt(event.getEventDetails().getStartHH()));
+        sd = sd.withMinuteOfHour(Integer.parseInt(event.getEventDetails().getStartMM()));
+        sd = sd.withSecondOfMinute(00);
+        event.setStartDate(sd.toDate());
 
-        redirectAttrs.addFlashAttribute(EVENT, event);
+        DateTime ed = new DateTime(event.getEventDetails().getEndDt());
+        ed = ed.withHourOfDay(Integer.parseInt(event.getEventDetails().getEndHH()));
+        ed = ed.withMinuteOfHour(Integer.parseInt(event.getEventDetails().getEndMM()));
+        ed = ed.withSecondOfMinute(00);
+        event.setEndDate(ed.toDate());
+        eventService.updateEvent(event);
+
+        model.addAttribute(EVENT, event);
         model.addAttribute(MESSAGE,
-                messageSource.getMessage(MSG_EVENT_UPDATE_SUCCESS, null, Locale.ENGLISH));
+                messageSource.getMessage("msg.event.update.success", null, Locale.ENGLISH));
         model.addAttribute(MODE, MODE_VIEW);
         return VIEW_EVENTUPDATESUCCESS;
     }

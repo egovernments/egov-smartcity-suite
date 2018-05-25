@@ -5,7 +5,6 @@ import static org.egov.eventnotification.constants.Constants.API_VIEW;
 import static org.egov.eventnotification.constants.Constants.API_VIEW_ID;
 import static org.egov.eventnotification.constants.Constants.CATEGORY_FOR_MODULE;
 import static org.egov.eventnotification.constants.Constants.CATEGORY_PARAMETERS;
-import static org.egov.eventnotification.constants.Constants.DRAFT;
 import static org.egov.eventnotification.constants.Constants.DRAFT_ID;
 import static org.egov.eventnotification.constants.Constants.DRAFT_LIST;
 import static org.egov.eventnotification.constants.Constants.MESSAGE;
@@ -13,8 +12,6 @@ import static org.egov.eventnotification.constants.Constants.MODE;
 import static org.egov.eventnotification.constants.Constants.MODE_CREATE;
 import static org.egov.eventnotification.constants.Constants.MODE_VIEW;
 import static org.egov.eventnotification.constants.Constants.MODULE_CATEGORY;
-import static org.egov.eventnotification.constants.Constants.MSG_DRAFT_CREATE_ERROR;
-import static org.egov.eventnotification.constants.Constants.MSG_DRAFT_CREATE_SUCCESS;
 import static org.egov.eventnotification.constants.Constants.NOTIFICATION_DRAFT;
 import static org.egov.eventnotification.constants.Constants.NOTIFICATION_DRAFTS_VIEW;
 import static org.egov.eventnotification.constants.Constants.NOTIFICATION_DRAFT_LIST;
@@ -28,9 +25,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
 
+import javax.validation.Valid;
+
 import org.egov.eventnotification.constants.Constants;
 import org.egov.eventnotification.entity.DraftType;
-import org.egov.eventnotification.entity.Event;
 import org.egov.eventnotification.entity.NotificationDrafts;
 import org.egov.eventnotification.service.DraftService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +41,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = NOTIFICATION_DRAFTS_VIEW)
@@ -77,9 +74,9 @@ public class NotificationDraftController {
     }
 
     @GetMapping(API_CREATE)
-    public String create(@ModelAttribute NotificationDrafts draft, @ModelAttribute Event event, Model model) {
+    public String create(@ModelAttribute NotificationDrafts notificationDraft, Model model) {
         model.addAttribute(DRAFT_LIST, new ArrayList<>(Arrays.asList(DraftType.values())));
-        model.addAttribute(NOTIFICATION_DRAFT, draft);
+        model.addAttribute(NOTIFICATION_DRAFT, notificationDraft);
         model.addAttribute(TEMPLATE_MODULE, draftService.getAllModules());
         model.addAttribute(MODULE_CATEGORY, draftService.getAllCategories());
         model.addAttribute(CATEGORY_PARAMETERS, draftService.getAllCategories());
@@ -88,19 +85,18 @@ public class NotificationDraftController {
     }
 
     @PostMapping(API_CREATE)
-    public String create(@ModelAttribute(DRAFT) NotificationDrafts notificationDraft,
-            Model model,
-            RedirectAttributes redirectAttrs, BindingResult errors) {
+    public String create(@Valid @ModelAttribute NotificationDrafts notificationDraft,
+            BindingResult errors, Model model) {
         if (errors.hasErrors()) {
             model.addAttribute(MESSAGE,
-                    messageSource.getMessage(MSG_DRAFT_CREATE_ERROR, null, Locale.ENGLISH));
+                    messageSource.getMessage("msg.draft.create.error", null, Locale.ENGLISH));
             model.addAttribute(MODE, MODE_CREATE);
             return Constants.VIEW_EVENTCREATE;
         }
-        draftService.save(notificationDraft);
-        redirectAttrs.addFlashAttribute(NOTIFICATION_DRAFT, notificationDraft);
+        notificationDraft = draftService.saveDraft(notificationDraft);
+        model.addAttribute(NOTIFICATION_DRAFT, notificationDraft);
         model.addAttribute(MESSAGE,
-                messageSource.getMessage(MSG_DRAFT_CREATE_SUCCESS, null, Locale.ENGLISH));
+                messageSource.getMessage("msg.draft.create.success", null, Locale.ENGLISH));
         model.addAttribute(MODE, MODE_VIEW);
         return VIEW_DRAFTS_CREATE_SUCCESS;
     }

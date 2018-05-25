@@ -50,10 +50,10 @@
 <%@ include file="/includes/taglibs.jsp"%>
 
 <form:form method="post" action=""
-	class="form-horizontal form-groups-bordered" modelAttribute="NotificationDraft"
+	class="form-horizontal form-groups-bordered" modelAttribute="notificationDraft"
 	id="draftForm">
 	<input type="hidden" name="mode" value="${mode}" />
-	<input type="hidden" name="draftId" id="draftId" value="${NotificationDraft.id}" />
+	<input type="hidden" name="draftId" id="draftId" value="${notificationDraft.id}" />
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
@@ -72,7 +72,7 @@
 								<spring:message code="lbl.draft.name" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
-								<c:out value="${NotificationDraft.name}" />
+								<c:out value="${notificationDraft.name}" />
 							</div>
 
 							<div class="col-xs-3 add-margin">
@@ -87,7 +87,7 @@
 								<spring:message code="lbl.draft.type" />
 							</div>
 							<div class="col-xs-9 add-margin view-content">
-								<c:out value="${NotificationDraft.type}" />
+								<c:out value="${notificationDraft.type}" />
 							</div>
 						</div>
 						<div class="row add-border">
@@ -95,7 +95,7 @@
 								<spring:message code="lbl.draft.module" />
 							</div>
 							<div class="col-xs-9 add-margin view-content">
-								<c:out value="${NotificationDraft.module.name}" />
+								<c:out value="${notificationDraft.module.name}" />
 							</div>
 						</div>
 						<div class="row add-border">
@@ -103,7 +103,7 @@
 								<spring:message code="lbl.draft.category" />
 							</div>
 							<div class="col-xs-9 add-margin view-content">
-								<c:out value="${NotificationDraft.category.name}" />
+								<c:out value="${notificationDraft.category.name}" />
 							</div>
 						</div>
 						<div class="row add-border">
@@ -111,7 +111,7 @@
 								<spring:message code="lbl.draft.notificationMessage" />
 							</div>
 							<div class="col-xs-9 add-margin view-content">
-								<c:out value="${NotificationDraft.message}" />
+								<c:out value="${notificationDraft.message}" />
 							</div>
 						</div>
 					</div>
@@ -139,3 +139,4 @@
 <script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<cdn:url value='/resources/js/app/draftViewResult.js?rnd=${app_release_no}' />"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/js/app/common.js?rnd=${app_release_no}' />"></script>

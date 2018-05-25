@@ -1,7 +1,6 @@
 package org.egov.eventnotification.repository;
 
 import static org.egov.eventnotification.constants.Constants.ACTIVE;
-import static org.egov.eventnotification.constants.Constants.DDMMYYYY;
 import static org.egov.eventnotification.constants.Constants.EVENT_EVENTTYPE;
 import static org.egov.eventnotification.constants.Constants.EVENT_HOST;
 import static org.egov.eventnotification.constants.Constants.EVENT_ID;
@@ -10,16 +9,12 @@ import static org.egov.eventnotification.constants.Constants.EVENT_STARTDATE;
 import static org.egov.eventnotification.constants.Constants.STATUS_COLUMN;
 import static org.egov.eventnotification.constants.Constants.UPCOMING;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.apache.log4j.Logger;
 import org.egov.eventnotification.entity.Event;
 import org.egov.eventnotification.repository.custom.EventRepositoryCustom;
 import org.hibernate.Criteria;
@@ -31,27 +26,33 @@ import org.joda.time.DateTime;
 
 public class EventRepositoryImpl implements EventRepositoryCustom {
 
-    private static final Logger LOGGER = Logger.getLogger(EventRepositoryImpl.class);
-
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
     public List<Event> searchEvent(Event eventObj, String eventDateType) {
-        DateFormat formatter = new SimpleDateFormat(DDMMYYYY);
         DateTime calendar = new DateTime();
         DateTime calendarEndDate = null;
         Date startDate;
         Date endDate;
         if (eventDateType.equalsIgnoreCase(UPCOMING)) {
-            calendar.plusDays(8);
+            calendar = calendar.plusDays(8);
+            calendar = calendar.withHourOfDay(0);
+            calendar = calendar.withMinuteOfHour(0);
+            calendar = calendar.withSecondOfMinute(0);
             startDate = calendar.toDate();
-            calendarEndDate = new DateTime(calendar.getYear(), calendar.getMonthOfYear(), calendar.getDayOfMonth(), 0, 0, 0, 0);
-            calendarEndDate.plusDays(7);
+            calendarEndDate = new DateTime(startDate);
+            calendarEndDate = calendarEndDate.plusDays(7);
+            calendarEndDate = calendarEndDate.withHourOfDay(0);
+            calendarEndDate = calendarEndDate.withMinuteOfHour(0);
+            calendarEndDate = calendarEndDate.withSecondOfMinute(0);
             endDate = calendarEndDate.toDate();
         } else {
+            calendar = calendar.withHourOfDay(0);
+            calendar = calendar.withMinuteOfHour(0);
+            calendar = calendar.withSecondOfMinute(0);
             startDate = calendar.toDate();
-            calendar.plusDays(7);
+            calendar = calendar.plusDays(7);
             endDate = calendar.toDate();
         }
 
@@ -64,14 +65,8 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
         if (eventObj.getEventhost() != null)
             criteria.add(Restrictions.ilike(EVENT_HOST, eventObj.getEventhost(), MatchMode.ANYWHERE));
 
-        try {
-            criteria.add(Restrictions.between(EVENT_STARTDATE,
-                    formatter.parse(formatter.format(startDate)).getTime(),
-                    formatter.parse(formatter.format(endDate)).getTime()));
-            criteria.add(Restrictions.eq(STATUS_COLUMN, ACTIVE.toUpperCase()));
-        } catch (ParseException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
+        criteria.add(Restrictions.between(EVENT_STARTDATE, startDate, endDate));
+        criteria.add(Restrictions.eq(STATUS_COLUMN, ACTIVE.toUpperCase()));
 
         criteria.addOrder(Order.desc(EVENT_ID));
         return criteria.list();

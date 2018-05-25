@@ -50,9 +50,9 @@ $(document).ready(function(){
 		
 	var latLang = ($("#eventlocation").val()).split(":");
 	
-	var map, geocoder, geolocate, marker, mapProp;
+	var map, geocoder;
     var lat, lng, address;
-    myCenter = new google.maps.LatLng(latLang[0], latLang[1]);
+    var myCenter = new google.maps.LatLng(latLang[0], latLang[1]);
 
     function initialize() {
 
@@ -85,7 +85,7 @@ $(document).ready(function(){
         }
 
         var userLocationNotFound = function () {
-
+        	var citylat,citylng;
             //Assign static point to map
             if (!citylat || !citylng) {
                 citylat = 20.5937;
@@ -118,7 +118,7 @@ $(document).ready(function(){
 
         searchBar(map);
 
-    };
+    }
 
     function searchBar(map) {
 
@@ -154,7 +154,7 @@ $(document).ready(function(){
 
         });
 
-    };
+    }
 
     function mapcenterchangeevent() {
         google.maps.event.addListener(map, 'center_changed', function () {
@@ -316,10 +316,9 @@ function validateStartDateAndEndDate(start, end) {
     	bootbox.alert("Invalid date range. Start Date cannot be after End Date!");
 		$("#endDate").val("");
 		return false;
-		} else {
+	} else {
 		return true;
 	}
-    return true;
 }
 
 function validateEqualStartDateAndEndDate(start, end) {
@@ -327,10 +326,9 @@ function validateEqualStartDateAndEndDate(start, end) {
     var endDate = Date.parse(end);
     if (startDate === endDate) {
 		return true;
-		} else {
+	} else {
 		return false;
 	}
-    return true;
 }
 
 function checkcreateform(){

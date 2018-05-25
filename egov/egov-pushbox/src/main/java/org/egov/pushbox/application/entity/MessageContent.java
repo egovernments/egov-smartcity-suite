@@ -65,14 +65,14 @@ public class MessageContent {
     private String senderName;
     private Long expiryDate;
     private List<Long> userIdList;
-    private Boolean sendAll;
+    private boolean sendAll;
     private String url;
 
-    public Boolean getSendAll() {
+    public boolean isSendAll() {
         return sendAll;
     }
 
-    public void setSendAll(Boolean sendAll) {
+    public void setSendAll(boolean sendAll) {
         this.sendAll = sendAll;
     }
 

@@ -67,7 +67,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egevntnotification_userfcmdevice")
-@Unique(id = "id", tableName = "eg_userfcmdevice", columnName = { "userid", "devicetoken", "deviceid" }, fields = { "userId",
+@Unique(id = "id", tableName = "egevntnotification_userfcmdevice", columnName = { "userid", "devicetoken", "deviceid" }, fields = { "userId",
         "userDeviceToken", "deviceid" }, enableDfltMsg = true)
 @SequenceGenerator(name = UserDevice.SEQ_EG_USERFCMDEVICE, sequenceName = UserDevice.SEQ_EG_USERFCMDEVICE, allocationSize = 1)
 public class UserDevice extends AbstractAuditable {

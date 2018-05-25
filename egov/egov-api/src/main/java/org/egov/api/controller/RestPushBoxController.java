@@ -64,13 +64,16 @@ import org.egov.api.controller.core.ApiResponse;
 import org.egov.pushbox.application.entity.MessageContent;
 import org.egov.pushbox.application.entity.UserDevice;
 import org.egov.pushbox.application.service.PushNotificationService;
-import org.json.JSONArray;
-import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 /**
  *
@@ -91,14 +94,9 @@ public class RestPushBoxController extends ApiController {
     private PushNotificationService notificationService;
 
     @PostMapping(path = UPDATE_USER_TOKEN, consumes = APPLICATION_JSON_VALUE)
-    public @ResponseBody ResponseEntity<String> updateToken(@RequestBody JSONObject tokenUpdate) {
+    public @ResponseBody ResponseEntity<String> updateToken(@RequestBody UserDevice userDevice) {
         ApiResponse res = ApiResponse.newInstance();
         try {
-            UserDevice userDevice = new UserDevice();
-            userDevice.setUserDeviceToken(tokenUpdate.get(USER_TOKEN_ID).toString());
-            userDevice.setUserId(Long.valueOf(tokenUpdate.get(USER_ID).toString()));
-            userDevice.setDeviceId(tokenUpdate.get(USER_DEVICE_ID).toString());
-
             if (isBlank(userDevice.getUserDeviceToken()))
                 return res.error(getMessage("userdevice.device.tokenunavailable"));
 
@@ -107,7 +105,7 @@ public class RestPushBoxController extends ApiController {
 
             if (isBlank(userDevice.getDeviceId()))
                 return res.error(getMessage("userdevice.user.deviceidunavailable"));
-            UserDevice responseObject = notificationService.persist(userDevice);
+            UserDevice responseObject = notificationService.saveUserDevice(userDevice);
             return res.setDataAdapter(new UserAdapter()).success(responseObject, getMessage("msg.userdevice.update.success"));
         } catch (Exception e) {
             LOGGER.error(EGOV_API_ERROR, e);
@@ -116,19 +114,23 @@ public class RestPushBoxController extends ApiController {
     }
 
     @PostMapping(path = SEND_NOTIFICATIONS, consumes = APPLICATION_JSON_VALUE)
-    public @ResponseBody ResponseEntity<String> sendNotification(@RequestBody JSONObject content) {
-        Boolean sendAll = (Boolean) content.get(SEND_ALL);
+    public @ResponseBody ResponseEntity<String> sendNotification(@RequestBody String content) {
+        Gson gson = new Gson();
+        JsonObject jsonObject = gson.fromJson(content, JsonObject.class);
+        JsonElement jsonElement = jsonObject.get(SEND_ALL);
+        boolean sendAll = jsonElement.getAsBoolean();
         ApiResponse res = ApiResponse.newInstance();
         try {
-            MessageContent message = createMessageContentFromRequest(content);
+            MessageContent message = createMessageContentFromRequest(jsonObject);
             if (!sendAll) {
-                JSONArray jsonArray = new JSONArray(content.get("userIdList"));
+                JsonElement userIdElement = jsonObject.get("userIdList");
+                JsonArray jsonArray = userIdElement.getAsJsonArray();
                 List<Long> userIdList = new ArrayList<>();
-                for (int i = 0; i < jsonArray.length(); i++)
-                    userIdList.add(Long.valueOf(isNotBlank(jsonArray.getString(i)) ? jsonArray.getString(i) : "0"));
+                for (JsonElement element : jsonArray)
+                    userIdList.add(Long.valueOf(isNotBlank(element.getAsString()) ? element.getAsString() : "0"));
                 message.setUserIdList(userIdList);
             } else
-                message.setSendAll(Boolean.TRUE);
+                message.setSendAll(true);
             notificationService.sendNotifications(message);
 
             UserDevice responseObject = new UserDevice();
@@ -139,21 +141,21 @@ public class RestPushBoxController extends ApiController {
         }
     }
 
-    private MessageContent createMessageContentFromRequest(JSONObject content) {
+    private MessageContent createMessageContentFromRequest(JsonObject content) {
         MessageContent message = new MessageContent();
-        message.setMessageId(Long.valueOf(content.get("messageId").toString()));
-        message.setCreatedDateTime(Long.valueOf(content.get("createdDate").toString()));
-        message.setEventAddress(content.get("eventAddress").toString());
-        message.setEventDateTime(Long.valueOf(content.get("eventDateTime").toString()));
-        message.setEventLocation(content.get("eventLocation").toString());
-        message.setExpiryDate(Long.valueOf(content.get("expiryDate").toString()));
-        message.setImageUrl(content.get("imageUrl").toString());
-        message.setMessageBody(content.get("messageBody").toString());
-        message.setModuleName(content.get("moduleName").toString());
-        message.setNotificationDateTime(Long.valueOf(content.get("notificationDateTime").toString()));
-        message.setNotificationType(content.get("notificationType").toString());
-        message.setSenderId(Long.valueOf(content.get("senderId").toString()));
-        message.setSenderName(content.get("senderName").toString());
+        message.setMessageId(content.get("messageId").getAsLong());
+        message.setCreatedDateTime(content.get("createdDate").getAsLong());
+        message.setEventAddress(content.get("eventAddress").getAsString());
+        message.setEventDateTime(content.get("eventDateTime").getAsLong());
+        message.setEventLocation(content.get("eventLocation").getAsString());
+        message.setExpiryDate(content.get("expiryDate").getAsLong());
+        message.setImageUrl(content.get("imageUrl").getAsString());
+        message.setMessageBody(content.get("messageBody").getAsString());
+        message.setModuleName(content.get("moduleName").getAsString());
+        message.setNotificationDateTime(content.get("notificationDateTime").getAsLong());
+        message.setNotificationType(content.get("notificationType").getAsString());
+        message.setSenderId(content.get("senderId").getAsLong());
+        message.setSenderName(content.get("senderName").getAsString());
         return message;
     }
 

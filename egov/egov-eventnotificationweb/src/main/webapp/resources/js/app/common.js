@@ -45,70 +45,8 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-var tableContainer;
-$(document).ready(function(){
-
-	$('#draftViewTable tbody').on('click', 'tr', function () {
-		window.open("/eventnotification/drafts/view/"+$(this).children('td:first-child').text(),'_blank', "width=800, height=700, scrollbars=yes")
-    } );
-	
-	$("#draftSearch").click(function() {
-		$("#draftViewTable").DataTable().clear().draw();
-		$.ajax({
-		      type: "GET",
-		      url: "/api/draft/search?"+$("#searchDraftForm").serialize(),
-		      contentType: "application/json; charset=utf-8",
-		      dataType: 'json',
-		      success: function (data) {
-		    	  var dataRsponse = data;
-		    	  $.each(data.result, function(i, obj) {
-		    		  $("#draftViewTable").dataTable().fnAddData( [
-		    			  obj.id,
-		    			  obj.name,
-		    			  obj.type,
-		    			  obj.module.name,
-		    			  obj.category.name,
-		    			  obj.message
-		    	      ]);
-		    	  });
-		      },
-		      error: function (e) {
-		        console.log("There was an error with your request...");
-		        console.log("error: " + JSON.stringify(e));
-		      }
-		    });
-		
-	});
-
-	
-
+$("#buttonClose").click(function(event){
+		window.opener.location.reload();
+		self.close();
+		return true;
 });
-
-
-$('#btnclose').click(function(){
-	bootbox.confirm({
-	    message: 'Information entered in this screen will be lost if you close this page ? Please confirm if you want to close. ',
-	    buttons: {
-	        'cancel': {
-	            label: 'No',
-	            className: 'btn-default pull-right'
-	        },
-	        'confirm': {
-	            label: 'Yes',
-	            className: 'btn-danger pull-right'
-	        }
-	    },
-	    callback: function(result) {
-	        if (result) {
-	             window.close();
-	        }
-	    }
-	});
-	
-});
-
-$("#buttonSubmit").click(function(event){
-	window.open("/eventnotification/drafts/create/",'_blank', "width=800, height=700, scrollbars=yes");
-});
-
-

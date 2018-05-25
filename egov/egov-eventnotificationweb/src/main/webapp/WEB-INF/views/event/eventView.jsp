@@ -129,12 +129,16 @@
 	    					<fmt:formatDate pattern="dd/MM/yyyy" value="${listVar.eventDetails.startDt}" var="startDate" />
 							<c:out value="${startDate}" />
 	    				</td>
-	    				<td><c:out value="${listVar.startTime}"/></td>
+	    				<td>
+	    					<c:out value="${listVar.eventDetails.startHH}" />:<c:out value="${listVar.eventDetails.startMM}" />
+	    				</td>
 	    				<td>
 	    					<fmt:formatDate pattern="dd/MM/yyyy" value="${listVar.eventDetails.endDt}" var="endDate" />
 							<c:out value="${endDate}" />
 	    				</td>
-	    				<td><c:out value="${listVar.endTime}"/></td>
+	    				<td>
+	    					<c:out value="${listVar.eventDetails.endHH}" />:<c:out value="${listVar.eventDetails.endMM}" />
+	    				</td>
 	    				<td><c:out value="${listVar.eventhost}"/></td>
 	    				<td><c:out value="${listVar.eventlocation}"/></td>
 	    				<td><c:out value="${listVar.address}"/></td>

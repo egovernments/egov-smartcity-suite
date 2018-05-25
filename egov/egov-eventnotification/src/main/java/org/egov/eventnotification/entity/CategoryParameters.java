@@ -56,20 +56,20 @@ public class CategoryParameters {
         this.name = name;
     }
 
-    public boolean getActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
     public ModuleCategory getModuleCategory() {
         return moduleCategory;
     }
 
     public void setModuleCategory(ModuleCategory moduleCategory) {
         this.moduleCategory = moduleCategory;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
 }
