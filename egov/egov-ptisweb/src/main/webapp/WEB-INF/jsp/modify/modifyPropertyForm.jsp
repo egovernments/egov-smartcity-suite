@@ -162,13 +162,6 @@
 	</tr>
 	<tr>
 		<td class="greybox">&nbsp;</td>
-	    <td class="greybox"><s:text name="longitude"/> : </td>
-	    <td class="greybox"><span class="bold"><s:property default="N/A" value="%{basicProperty.longitude}" /> </span></td>
-	    <td class="greybox"><s:text name="latitude"/> : </td>
-	    <td class="greybox"><span class="bold"><s:property default="N/A" value="%{basicProperty.latitude}" /> </span></td>
-	</tr>
-	<tr>
-		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="zone"></s:text> <span
 			class="mandatory1">*</span> :</td>
 		<s:if test="%{basicProperty.propertyID.zone !=null && isZoneActive()}">
