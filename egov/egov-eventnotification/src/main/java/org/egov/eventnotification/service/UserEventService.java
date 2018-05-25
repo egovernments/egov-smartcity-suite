@@ -78,7 +78,7 @@ public class UserEventService {
      * @return List<Event>
      */
     @Transactional
-    public UserEvent save(Long userid, Long eventid) {
+    public UserEvent saveUserEvent(Long userid, Long eventid) {
         UserEvent existingUserEvent = usereventRepository.findByEventIdAndUserId(eventid, userid);
         if (existingUserEvent == null) {
             Event event = eventRepository.findOne(eventid);

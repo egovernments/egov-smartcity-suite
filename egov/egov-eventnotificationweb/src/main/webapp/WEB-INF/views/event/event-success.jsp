@@ -120,7 +120,7 @@
 								<spring:message code="lbl.event.starttime" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
-								<c:out value="${event.startTime}" />
+								<c:out value="${event.eventDetails.startHH}" />:<c:out value="${event.eventDetails.startMM}" />
 							</div>
 						</div>
 						<div class="row add-border">
@@ -135,7 +135,7 @@
 								<spring:message code="lbl.event.endtime" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
-								<c:out value="${event.endTime}" />
+								<c:out value="${event.eventDetails.endHH}" />:<c:out value="${event.eventDetails.endMM}" />
 							</div>
 						</div>
 						<div class="row add-border">
@@ -220,4 +220,4 @@
 		</div>
 	</div>
 </form:form>
-<script type="text/javascript" src="<cdn:url value='/resources/js/app/event-success.js'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/js/app/common.js' />"></script>

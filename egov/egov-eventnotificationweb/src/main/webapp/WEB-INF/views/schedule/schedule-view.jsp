@@ -118,7 +118,9 @@
 	    					<fmt:formatDate pattern="dd/MM/yyyy" value="${listVar.eventDetails.startDt}" var="startDate" />
 							<c:out value="${startDate}" />
 	    				</td>
-	    				<td><c:out value="${listVar.startTime}"/></td>
+	    				<td>
+	    					<c:out value="${listVar.eventDetails.startHH}" />:<c:out value="${listVar.eventDetails.startMM}" />
+	    				</td>
 	    				<td><c:out value="${listVar.repeat}"/></td>
 	    				<td><c:out value="${listVar.messageTemplate}"/></td>
 	    			</tr>

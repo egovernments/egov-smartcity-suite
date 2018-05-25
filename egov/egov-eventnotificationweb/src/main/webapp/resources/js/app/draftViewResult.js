@@ -49,10 +49,4 @@ $(document).ready(function(){
 	$(".btn-primary").click(function(event){
 		window.open("/eventnotification/drafts/update/"+$("#draftId").val(),"_blank", "width=800, height=700, scrollbars=yes");
 	});
-	
-	$("#buttonClose").click(function(event){
-		window.opener.location.reload();
-		self.close();
-		return true;
-	});
 });

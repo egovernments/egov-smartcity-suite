@@ -48,6 +48,11 @@
 package org.egov.eventnotification.constants;
 
 public class Constants {
+
+    private Constants() {
+
+    }
+
     public static final String MODULE_NAME = "Eventnotification";
 
     public static final String EVENT_ID = "id";
@@ -91,7 +96,7 @@ public class Constants {
     public static final String MODE_DELETE = "delete";
 
     public static final String EVENT = "event";
-    public static final String NOTIFICATION_DRAFT = "NotificationDraft";
+    public static final String NOTIFICATION_DRAFT = "notificationDraft";
     public static final String FILE = "file";
     public static final String DRAFT = "draft";
     public static final String TEMPLATE_MODULE = "TemplateModule";
@@ -101,17 +106,7 @@ public class Constants {
 
     public static final String HOUR_LIST = "hourList";
     public static final String MINUTE_LIST = "minuteList";
-
     public static final String MESSAGE = "message";
-
-    public static final String MSG_EVENT_CREATE_SUCCESS = "msg.event.create.success";
-    public static final String MSG_EVENT_UPDATE_SUCCESS = "msg.event.update.success";
-    public static final String MSG_DRAFT_CREATE_SUCCESS = "msg.draft.create.success";
-    public static final String MSG_DRAFT_UPDATE_SUCCESS = "msg.draft.update.success";
-    public static final String MSG_EVENT_UPDATE_ERROR = "msg.event.update.error";
-    public static final String MSG_EVENT_CREATE_ERROR = "msg.event.create.error";
-    public static final String MSG_DRAFT_CREATE_ERROR = "msg.draft.create.error";
-    public static final String MSG_DRAFT_UPDATE_ERROR = "msg.draft.update.error";
 
     public static final String API_UPDATE_ID = "update/{id}";
     public static final String API_CREATE = "create/";
@@ -177,17 +172,13 @@ public class Constants {
     public static final String SCHEDULE_RUNNING = "Running";
     public static final String SCHEDULE_COMPLETE = "Complete";
 
-    public static final String MSG_SCHEDULED_SUCCESS = "msg.notification.schedule.success";
-    public static final String MSG_SCHEDULED_DELETE_SUCCESS = "msg.notification.schedule.delete.success";
-    public static final String MSG_SCHEDULED_UPDATE_SUCCESS = "msg.notification.schedule.update.success";
-    public static final String MSG_SCHEDULED_ERROR = "msg.notification.schedule.error";
     public static final String MSG_SCHEDULED_DELETE_ERROR = "msg.notification.schedule.delete.error";
-    public static final String MSG_SCHEDULED_UPDATE_ERROR = "msg.notification.schedule.update.error";
     public static final String SCHEDULE_DELETE_SUCCESS = "success";
     public static final String SCHEDULE_DETAILS_VIEW = "schedule-details-view";
     public static final String SCHEDULE_UPDATE_VIEW = "schedule-update-view";
     public static final String SCHEDULE_UPDATE_SUCCESS = "schedule-update-success";
     public static final String NOTIFICATION_TYPE = "notice";
+    public static final String BUSINESS_NOTIFICATION_TYPE = "BUSINESS";
     public static final String JOB = "job";
     public static final String TRIGGER = "trigger";
     public static final String DEFAULTERS_LIST = "defaultersList";
@@ -209,13 +200,14 @@ public class Constants {
     public static final String MESSAGE_BILLAMT = "{{billAmount}}";
     public static final String MESSAGE_DISRPTDATE = "{{disruptionDate}}";
     public static final String SCHEDULE_EDITABLE = "scheduleEditable";
-    public static final String ERROR_FAIL_EVENT = "error.fail.event";
     public static final String ERROR_PROCESS_REQUEST = "error.process.request";
-    public static final String MSG_EVENT_SUCCESS = "msg.event.success";
-    public static final String ERROR_FAIL_EVENTUSER = "error.fail.eventuser";
     public static final String ERROR = "Error";
     public static final String MODULE = "module";
     public static final String CATEGORY = "category";
     public static final String SUCCESS1 = "Success";
     public static final int MIN_NUMBER_OF_REQUESTS = 1;
+    public static final String EMPTY = "";
+    public static final double DOUBLE_DEFAULT = 0.0;
+    public static final int ZERO = 0;
+    public static final int MAX_TEN = 10;
 }

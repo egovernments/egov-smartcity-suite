@@ -62,7 +62,6 @@ $(document).ready(function(){
           accept: ":not(.ui-sortable-helper)",
 
           over: function(event, ui) {
-            var $this = $(this);
           },
           drop: function(event, ui) {
             var $this = $(this);
@@ -80,10 +79,9 @@ $(document).ready(function(){
               success: function(data) {
                   $('#category').empty(); // clear the current elements in select box
                   $('#category').append($('<option value="">Select</option>'));
-                  for (row in data) {
-                      $('#category').append($('<option value="'+data[row].id+'">'+data[row].name+'</option>'));
-                  }
-                  
+                  $.each(data.result, function(i, obj) {
+                	  $('#category').append($('<option value="'+obj.id+'">'+obj.name+'</option>'));
+                	});
               },
               error: function(jqXHR, textStatus, errorThrown) {
                   //alert(errorThrown);
@@ -99,9 +97,10 @@ $(document).ready(function(){
           // This is query string i.e. country_id=123
           success: function(data) {
           	$('#allItems').empty(); // clear the current elements in select box
-              for (row in data) {
-                  $('#allItems').append($('<li class="li eachParameter" id="node">'+data[row].name+'</li>'));
-              }
+          	$.each(data.result, function(i, obj) {
+          		$('#allItems').append($('<li class="li eachParameter" id="node">'+obj.name+'</li>'));
+          	});
+              
               $("#dragdiv li").draggable({
                   helper: "clone",
                   cursor: "move",
@@ -124,13 +123,4 @@ $(document).ready(function(){
 		
 		return true;
 	});
-	
-	$("#buttonClose").click(function(event){
-		window.opener.location.reload();
-		self.close();
-		return true;
-	});
-	
-	
 });
-

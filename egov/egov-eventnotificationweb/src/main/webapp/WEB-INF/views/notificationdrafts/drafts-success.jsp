@@ -51,7 +51,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<form:form method="post" action="create" class="form-horizontal form-groups-bordered" modelAttribute="draft" id="draftsForm">
+<form:form method="post" action="create" class="form-horizontal form-groups-bordered" modelAttribute="notificationDraft" id="draftsForm">
 	<input type="hidden" name="mode" value="${mode}" />
 	<div class="row">
 		<div class="col-md-12">
@@ -71,7 +71,7 @@
 								<spring:message code="lbl.draft.name" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
-								<c:out value="${draft.name}" />
+								<c:out value="${notificationDraft.name}" />
 							</div>
 
 							<div class="col-xs-3 add-margin">
@@ -86,7 +86,7 @@
 								<spring:message code="lbl.draft.type" />
 							</div>
 							<div class="col-xs-9 add-margin view-content">
-								<c:out value="${draft.type}" />
+								<c:out value="${notificationDraft.type}" />
 							</div>
 						</div>
 						<div class="row add-border">
@@ -94,7 +94,7 @@
 								<spring:message code="lbl.draft.module" />
 							</div>
 							<div class="col-xs-9 add-margin view-content">
-								<c:out value="${draft.module.name}" />
+								<c:out value="${notificationDraft.module.name}" />
 							</div>
 						</div>
 						<div class="row add-border">
@@ -102,7 +102,7 @@
 								<spring:message code="lbl.draft.category" />
 							</div>
 							<div class="col-xs-9 add-margin view-content">
-								<c:out value="${draft.category.name}" />
+								<c:out value="${notificationDraft.category.name}" />
 							</div>
 
 						</div>
@@ -111,7 +111,7 @@
 								<spring:message code="lbl.draft.notificationMessage" />
 							</div>
 							<div class="col-xs-9 add-margin view-content">
-								<c:out value="${draft.message}" />
+								<c:out value="${notificationDraft.message}" />
 							</div>
 
 						</div>
@@ -127,4 +127,4 @@
 		</div>
 	</div>
 </form:form>
-<script type="text/javascript" src="<cdn:url value='/resources/js/app/draft-success.js'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/js/app/common.js' />"></script>

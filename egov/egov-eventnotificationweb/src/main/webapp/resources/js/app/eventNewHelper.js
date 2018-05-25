@@ -50,9 +50,9 @@ var map;
 var marker = false; ////Has the user plotted their location marker? 
 $(document).ready(function(){
 	
-	var map, geocoder, geolocate, marker, mapProp;
+	var map, geocoder;
     var lat, lng, address;
-    myCenter = new google.maps.LatLng(13.081604, 80.275183);
+    var myCenter = new google.maps.LatLng(13.081604, 80.275183);
 
     function initialize() {
 
@@ -85,7 +85,7 @@ $(document).ready(function(){
         }
 
         var userLocationNotFound = function () {
-
+        	var citylat,citylng;
             //Assign static point to map
             if (!citylat || !citylng) {
                 citylat = 20.5937;
@@ -105,7 +105,7 @@ $(document).ready(function(){
         geocoder = new google.maps.Geocoder();
         map = new google.maps.Map(document.getElementById("normal"), mapOptions);
 
-        var GeoMarker = new GeolocationMarker(map);
+        new GeolocationMarker(map);
         $('<div/>').addClass('centerMarker').appendTo(map.getDiv());
 
         navigator.geolocation.getCurrentPosition(userLocationFound, userLocationNotFound, mapOptions);
@@ -118,7 +118,7 @@ $(document).ready(function(){
 
         searchBar(map);
 
-    };
+    }
 
     function searchBar(map) {
 
@@ -154,7 +154,7 @@ $(document).ready(function(){
 
         });
 
-    };
+    }
 
     function mapcenterchangeevent() {
         google.maps.event.addListener(map, 'center_changed', function () {
@@ -310,10 +310,9 @@ function validateStartDateAndEndDate(start, end) {
     	bootbox.alert("Invalid date range. Start Date cannot be after End Date!");
 		$("#endDate").val("");
 		return false;
-		} else {
+	} else {
 		return true;
 	}
-    return true;
 }
 
 function validateEqualStartDateAndEndDate(start, end) {
@@ -321,10 +320,9 @@ function validateEqualStartDateAndEndDate(start, end) {
     var endDate = Date.parse(end);
     if (startDate == endDate) {
 		return true;
-		} else {
+	} else {
 		return false;
 	}
-    return true;
 }
 
 function checkcreateform(){

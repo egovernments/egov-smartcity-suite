@@ -62,8 +62,6 @@ import static org.egov.eventnotification.constants.Constants.MINUTE_LIST;
 import static org.egov.eventnotification.constants.Constants.MODE;
 import static org.egov.eventnotification.constants.Constants.MODE_CREATE;
 import static org.egov.eventnotification.constants.Constants.MODE_VIEW;
-import static org.egov.eventnotification.constants.Constants.MSG_EVENT_CREATE_ERROR;
-import static org.egov.eventnotification.constants.Constants.MSG_EVENT_CREATE_SUCCESS;
 import static org.egov.eventnotification.constants.Constants.VIEW_EVENTCREATE;
 import static org.egov.eventnotification.constants.Constants.VIEW_EVENTSUCCESS;
 import static org.egov.eventnotification.constants.Constants.VIEW_EVENTVIEW;
@@ -75,9 +73,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
-import org.egov.eventnotification.constants.Constants;
 import org.egov.eventnotification.entity.Event;
 import org.egov.eventnotification.entity.EventType;
 import org.egov.eventnotification.service.EventService;
@@ -94,7 +91,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * This is the EventController class. Which is basically used to create, view and update the event.
@@ -126,7 +122,7 @@ public class EventController {
     @GetMapping(API_VIEW)
     public String view(final Model model) {
         model.addAttribute(EVENT_LIST,
-                eventService.findAllByStatus(ACTIVE.toUpperCase()));
+                eventService.findAllEventByStatus(ACTIVE.toUpperCase()));
         model.addAttribute(MODE, MODE_VIEW);
         model.addAttribute(EVENT_TYPE_LIST, new ArrayList<>(Arrays.asList(EventType.values())));
         return VIEW_EVENTVIEW;
@@ -174,9 +170,8 @@ public class EventController {
      * @throws ParseException
      */
     @PostMapping(API_CREATE)
-    public String save(@ModelAttribute(EVENT) Event event,
-            Model model,
-            RedirectAttributes redirectAttrs, HttpServletRequest request, BindingResult errors)
+    public String save(@Valid @ModelAttribute Event event,
+            BindingResult errors, Model model)
             throws IOException {
 
         if (errors.hasErrors()) {
@@ -185,17 +180,17 @@ public class EventController {
             model.addAttribute(MINUTE_LIST, eventnotificationUtil.getAllMinute());
             model.addAttribute(EVENT_LIST, new ArrayList<>(Arrays.asList(EventType.values())));
             model.addAttribute(MESSAGE,
-                    messageSource.getMessage(MSG_EVENT_CREATE_ERROR, null, Locale.ENGLISH));
+                    messageSource.getMessage("msg.event.create.error", null, Locale.ENGLISH));
             return VIEW_EVENTCREATE;
         }
 
-        eventService.save(event);
+        eventService.saveEvent(event);
         User user = userService.getCurrentUser();
         eventService.sendPushMessage(event, user);
-        redirectAttrs.addFlashAttribute(EVENT, event);
+        model.addAttribute(EVENT, event);
         model.addAttribute(MESSAGE,
-                messageSource.getMessage(MSG_EVENT_CREATE_SUCCESS, null, Locale.ENGLISH));
-        model.addAttribute(Constants.MODE, MODE_VIEW);
+                messageSource.getMessage("msg.event.create.success", null, Locale.ENGLISH));
+        model.addAttribute(MODE, MODE_VIEW);
         return VIEW_EVENTSUCCESS;
     }
 }

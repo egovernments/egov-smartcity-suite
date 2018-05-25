@@ -47,6 +47,8 @@
  */
 package org.egov.eventnotification.entity;
 
+import java.util.Date;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -57,6 +59,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
@@ -92,22 +96,12 @@ public class Event extends AbstractAuditable {
     private String description;
 
     @Column(name = "start_date")
-    private Long startDate;
-
-    @NotNull
-    @Length(max = 20)
-    @SafeHtml
-    @Column(name = "start_time")
-    private String startTime;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date startDate;
 
     @Column(name = "end_date")
-    private Long endDate;
-
-    @NotNull
-    @Length(max = 20)
-    @SafeHtml
-    @Column(name = "end_time")
-    private String endTime;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date endDate;
 
     @NotNull
     @SafeHtml
@@ -143,12 +137,10 @@ public class Event extends AbstractAuditable {
     @Length(max = 200)
     private String message;
 
-    @NotNull
     @SafeHtml
     @Length(max = 200)
     private String url;
 
-    @NotNull
     @SafeHtml
     @Length(max = 20)
     private String status;
@@ -198,22 +190,6 @@ public class Event extends AbstractAuditable {
         this.description = description;
     }
 
-    public String getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(String startTime) {
-        this.startTime = startTime;
-    }
-
-    public String getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(String endTime) {
-        this.endTime = endTime;
-    }
-
     public String getEventhost() {
         return eventhost;
     }
@@ -238,14 +214,6 @@ public class Event extends AbstractAuditable {
         this.address = address;
     }
 
-    public Boolean getIspaid() {
-        return ispaid;
-    }
-
-    public void setIspaid(Boolean ispaid) {
-        this.ispaid = ispaid;
-    }
-
     public Double getCost() {
         return cost;
     }
@@ -260,22 +228,6 @@ public class Event extends AbstractAuditable {
 
     public void setEventType(String eventType) {
         this.eventType = eventType;
-    }
-
-    public Long getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(Long startDate) {
-        this.startDate = startDate;
-    }
-
-    public Long getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(Long endDate) {
-        this.endDate = endDate;
     }
 
     public String getMessage() {
@@ -302,4 +254,27 @@ public class Event extends AbstractAuditable {
         this.status = status;
     }
 
+    public boolean isIspaid() {
+        return ispaid;
+    }
+
+    public void setIspaid(boolean ispaid) {
+        this.ispaid = ispaid;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
 }

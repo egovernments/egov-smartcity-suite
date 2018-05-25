@@ -47,19 +47,21 @@
  */
 package org.egov.eventnotification.service;
 
+import static org.egov.eventnotification.constants.Constants.DDMMYYYY;
+import static org.egov.eventnotification.constants.Constants.MAX_TEN;
 import static org.egov.eventnotification.constants.Constants.SCHEDULED_STATUS;
+import static org.egov.eventnotification.constants.Constants.ZERO;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.egov.eventnotification.entity.EventDetails;
 import org.egov.eventnotification.entity.NotificationSchedule;
 import org.egov.eventnotification.repository.NotificationScheduleRepository;
-import org.egov.eventnotification.utils.DateFormatUtil;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.utils.DateUtils;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,13 +70,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ScheduleService {
 
-    private static final Logger LOGGER = Logger.getLogger(ScheduleService.class);
-
     @Autowired
     private NotificationScheduleRepository notificationscheduleRepository;
-
-    @Autowired
-    private DateFormatUtil dateFormatUtil;
 
     /**
      * Fetch all the schedule by status
@@ -82,18 +79,23 @@ public class ScheduleService {
      */
     public List<NotificationSchedule> findAllSchedule() {
         List<NotificationSchedule> notificationScheduleList = null;
-        try {
-            notificationScheduleList = notificationscheduleRepository.findByOrderByIdDesc();
-            if (!notificationScheduleList.isEmpty())
-                for (NotificationSchedule notificationSchedule : notificationScheduleList) {
-                    EventDetails eventDetails = new EventDetails();
-                    Date sd = new Date(notificationSchedule.getStartDate());
-                    eventDetails.setStartDt(dateFormatUtil.getDateInDDMMYYYY(sd));
-                    notificationSchedule.setEventDetails(eventDetails);
-                }
-        } catch (ParseException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
+        notificationScheduleList = notificationscheduleRepository.findByOrderByIdDesc();
+        if (!notificationScheduleList.isEmpty())
+            for (NotificationSchedule notificationSchedule : notificationScheduleList) {
+                EventDetails eventDetails = new EventDetails();
+                DateTime sd = new DateTime(notificationSchedule.getStartDate());
+                eventDetails.setStartDt(
+                        DateUtils.getDate(DateUtils.getDefaultFormattedDate(notificationSchedule.getStartDate()), DDMMYYYY));
+                if (sd.getHourOfDay() < MAX_TEN)
+                    eventDetails.setStartHH(ZERO + String.valueOf(sd.getHourOfDay()));
+                else
+                    eventDetails.setStartHH(String.valueOf(sd.getHourOfDay()));
+                if (sd.getMinuteOfHour() < MAX_TEN)
+                    eventDetails.setStartMM(ZERO + String.valueOf(sd.getMinuteOfHour()));
+                else
+                    eventDetails.setStartMM(String.valueOf(sd.getMinuteOfHour()));
+                notificationSchedule.setEventDetails(eventDetails);
+            }
         return notificationScheduleList;
     }
 
@@ -101,18 +103,21 @@ public class ScheduleService {
      * Fetch schedule by id
      * @return Notificationschedule
      */
-    public NotificationSchedule findOne(Long id) {
+    public NotificationSchedule getSchedule(Long id) {
         NotificationSchedule notificationSchedule = notificationscheduleRepository.findOne(id);
-        try {
-            EventDetails eventDetails = new EventDetails();
-            Date sd = new Date(notificationSchedule.getStartDate());
-            eventDetails.setStartDt(dateFormatUtil.getDateInDDMMYYYY(sd));
-            eventDetails.setStartHH(notificationSchedule.getStartTime().split(":")[0]);
-            eventDetails.setStartMM(notificationSchedule.getStartTime().split(":")[1]);
-            notificationSchedule.setEventDetails(eventDetails);
-        } catch (ParseException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
+        EventDetails eventDetails = new EventDetails();
+        DateTime sd = new DateTime(notificationSchedule.getStartDate());
+        eventDetails
+                .setStartDt(DateUtils.getDate(DateUtils.getDefaultFormattedDate(notificationSchedule.getStartDate()), DDMMYYYY));
+        if (sd.getHourOfDay() < MAX_TEN)
+            eventDetails.setStartHH(ZERO + String.valueOf(sd.getHourOfDay()));
+        else
+            eventDetails.setStartHH(String.valueOf(sd.getHourOfDay()));
+        if (sd.getMinuteOfHour() < MAX_TEN)
+            eventDetails.setStartMM(ZERO + String.valueOf(sd.getMinuteOfHour()));
+        else
+            eventDetails.setStartMM(String.valueOf(sd.getMinuteOfHour()));
+        notificationSchedule.setEventDetails(eventDetails);
         return notificationSchedule;
     }
 
@@ -125,10 +130,12 @@ public class ScheduleService {
      * @throws ParseException
      */
     @Transactional
-    public NotificationSchedule save(NotificationSchedule notificationSchedule, User user) {
-        notificationSchedule.setStartDate(notificationSchedule.getEventDetails().getStartDt().getTime());
-        notificationSchedule.setStartTime(
-                notificationSchedule.getEventDetails().getStartHH() + ":" + notificationSchedule.getEventDetails().getStartMM());
+    public NotificationSchedule saveSchedule(NotificationSchedule notificationSchedule, User user) {
+        DateTime sd = new DateTime(notificationSchedule.getEventDetails().getStartDt());
+        sd = sd.withHourOfDay(Integer.parseInt(notificationSchedule.getEventDetails().getStartHH()));
+        sd = sd.withMinuteOfHour(Integer.parseInt(notificationSchedule.getEventDetails().getStartMM()));
+        sd = sd.withSecondOfMinute(00);
+        notificationSchedule.setStartDate(sd.toDate());
         notificationSchedule.setStatus(SCHEDULED_STATUS);
         return notificationscheduleRepository.save(notificationSchedule);
     }
@@ -140,22 +147,7 @@ public class ScheduleService {
      * @return Notificationschedule
      */
     @Transactional
-    public NotificationSchedule updateScheduleStatus(Long id, User user, String status) {
-        NotificationSchedule notificationSchedule = notificationscheduleRepository.findOne(id);
-        if (notificationSchedule != null)
-            notificationSchedule.setStatus(status);
-
-        return notificationscheduleRepository.save(notificationSchedule);
-    }
-
-    /**
-     * Soft delete of schedule notification
-     * @param id
-     * @param user
-     * @return Notificationschedule
-     */
-    @Transactional
-    public NotificationSchedule update(NotificationSchedule schedule) {
+    public NotificationSchedule updateSchedule(NotificationSchedule schedule) {
         return notificationscheduleRepository.save(schedule);
     }
 }

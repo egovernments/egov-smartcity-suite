@@ -47,6 +47,7 @@
  */
 package org.egov.eventnotification.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import org.egov.eventnotification.entity.Event;
@@ -61,7 +62,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long> {
 
-    List<Event> findByStatusAndStartDateIsBetweenOrderByIdDesc(String status, Long startDate, Long endDate);
+    List<Event> findByStatusAndStartDateIsBetweenOrderByIdDesc(String status, Date startDate, Date endDate);
 
     List<Event> findByStatusOrderByIdDesc(String status);
 }

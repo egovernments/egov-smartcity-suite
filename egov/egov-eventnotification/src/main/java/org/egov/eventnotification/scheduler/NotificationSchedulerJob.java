@@ -47,6 +47,7 @@
  */
 package org.egov.eventnotification.scheduler;
 
+import static org.egov.eventnotification.constants.Constants.BUSINESS_NOTIFICATION_TYPE;
 import static org.egov.eventnotification.constants.Constants.DDMMYYYY;
 import static org.egov.eventnotification.constants.Constants.DEFAULTERS_LIST;
 import static org.egov.eventnotification.constants.Constants.MESSAGE_ASMNTNO;
@@ -58,7 +59,6 @@ import static org.egov.eventnotification.constants.Constants.MESSAGE_DUEAMT;
 import static org.egov.eventnotification.constants.Constants.MESSAGE_DUEDATE;
 import static org.egov.eventnotification.constants.Constants.MESSAGE_PROPTNO;
 import static org.egov.eventnotification.constants.Constants.MESSAGE_USERNAME;
-import static org.egov.eventnotification.constants.Constants.NOTIFICATION_TYPE;
 import static org.egov.eventnotification.constants.Constants.PUSH_NOTIFICATION_SERVICE;
 import static org.egov.eventnotification.constants.Constants.SCHEDULEID;
 import static org.egov.eventnotification.constants.Constants.USER;
@@ -67,7 +67,6 @@ import static org.egov.eventnotification.constants.Constants.USER_SERVICE;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -80,6 +79,7 @@ import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.ptis.domain.entity.property.DefaultersInfo;
 import org.egov.pushbox.application.entity.MessageContent;
 import org.egov.pushbox.application.service.PushNotificationService;
+import org.joda.time.DateTime;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
@@ -124,116 +124,112 @@ public class NotificationSchedulerJob implements Job {
 
         User user = (User) dataMap.get(USER);
         NotificationSchedule notificationSchedule = notificationscheduleService
-                .findOne(Long.parseLong(String.valueOf(dataMap.get(SCHEDULEID))));
+                .getSchedule(Long.parseLong(String.valueOf(dataMap.get(SCHEDULEID))));
 
         /*
-         * notificationscheduleService.updateScheduleStatus(Long.parseLong(String.valueOf(dataMap.get(Constants.SCHEDULEID))),
-         * user, Constants.SCHEDULE_RUNNING);
+         * notificationSchedule.setStatus(SCHEDULE_RUNNING); notificationscheduleService.updateSchedule(notificationSchedule);
          */
 
         executeBusiness(notificationSchedule, user, dataMap);
+
         /*
-         * notificationscheduleService.updateScheduleStatus(Long.parseLong(String.valueOf(dataMap.get(Constants.SCHEDULEID))),
-         * user, Constants.SCHEDULE_COMPLETE);
+         * notificationSchedule.setStatus(SCHEDULE_COMPLETE); notificationscheduleService.updateSchedule(notificationSchedule);
          */
+
         LOGGER.info("Notification scheduler with job key " + jobKey + " end at " + new Date());
     }
 
     private void executeBusiness(NotificationSchedule notificationSchedule, User user, JobDataMap dataMap) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date(notificationSchedule.getStartDate()));
-        int hours = Integer.parseInt(notificationSchedule.getStartTime().split(":")[0]);
-        int minutes = Integer.parseInt(notificationSchedule.getStartTime().split(":")[1]);
-        calendar.set(Calendar.HOUR, hours);
-        calendar.set(Calendar.MINUTE, minutes);
+        DateTime calendar = new DateTime(notificationSchedule.getStartDate());
+        int hours = calendar.getHourOfDay();
+        int minutes = calendar.getMinuteOfHour();
+        calendar.plusHours(hours);
+        calendar.plusMinutes(minutes);
 
-        Calendar calendarEnd = Calendar.getInstance();
-        calendarEnd.setTime(new Date(notificationSchedule.getStartDate()));
-        int hours1 = Integer.parseInt(notificationSchedule.getStartTime().split(":")[0]);
-        int minutes1 = Integer.parseInt(notificationSchedule.getStartTime().split(":")[1]);
-        calendarEnd.set(Calendar.HOUR, hours1 + 1);
-        calendarEnd.set(Calendar.MINUTE, minutes1);
+        DateTime calendarEnd = new DateTime(notificationSchedule.getStartDate());
+        int hours1 = calendarEnd.getHourOfDay();
+        int minutes1 = calendarEnd.getMinuteOfHour();
+        calendarEnd.plusHours(hours1 + 1);
+        calendarEnd.plusMinutes(minutes1);
 
-        DateFormat formatter = new SimpleDateFormat(DDMMYYYY);
-
-        if (notificationSchedule.getNotificationType().equalsIgnoreCase(NOTIFICATION_TYPE)) {
+        if (notificationSchedule.getNotificationType().equalsIgnoreCase(BUSINESS_NOTIFICATION_TYPE)) {
             List<DefaultersInfo> defaultersList = (List<DefaultersInfo>) dataMap.get(DEFAULTERS_LIST);
-            if (null != defaultersList) {
+            LOGGER.info("defaultersList : " + defaultersList.isEmpty());
+            if (!defaultersList.isEmpty()) {
                 LOGGER.info("List of User Obtained : " + defaultersList.size());
                 for (DefaultersInfo defaultersInfo : defaultersList) {
-                    MessageContent messageContent = new MessageContent();
 
-                    String message = notificationSchedule.getMessageTemplate();
-                    if (message.contains(MESSAGE_USERNAME))
-                        message = message.replace(MESSAGE_USERNAME, defaultersInfo.getOwnerName());
-
-                    if (message.contains(MESSAGE_PROPTNO))
-                        message = message.replace(MESSAGE_PROPTNO, defaultersInfo.getAssessmentNo());
-
-                    if (message.contains(MESSAGE_DUEDATE))
-                        message = message.replace(MESSAGE_DUEDATE,
-                                formatter.format(defaultersInfo.getMinDate()));
-
-                    if (message.contains(MESSAGE_ASMNTNO))
-                        message = message.replace(MESSAGE_ASMNTNO, defaultersInfo.getAssessmentNo());
-
-                    if (message.contains(MESSAGE_DUEAMT))
-                        message = message.replace(MESSAGE_DUEAMT,
-                                String.valueOf(defaultersInfo.getCurrentDue().doubleValue()));
-
-                    if (message.contains(MESSAGE_CONSNO))
-                        message = message.replace(MESSAGE_CONSNO, defaultersInfo.getAssessmentNo());
-
-                    if (message.contains(MESSAGE_BILLNO))
-                        message = message.replace(MESSAGE_BILLNO, defaultersInfo.getAssessmentNo());
-
-                    if (message.contains(MESSAGE_BILLAMT))
-                        message = message.replace(MESSAGE_BILLAMT,
-                                String.valueOf(defaultersInfo.getCurrentDue().doubleValue()));
-
-                    if (message.contains(MESSAGE_DISRPTDATE))
-                        message = message.replace(MESSAGE_DISRPTDATE, defaultersInfo.getAssessmentNo());
-
+                    String message = buildMessage(defaultersInfo, notificationSchedule.getMessageTemplate());
+                    notificationSchedule.setMessageTemplate(message);
                     List<User> userList = userService.findByMobileNumberAndType(defaultersInfo.getMobileNumber(),
                             UserType.CITIZEN);
                     List<Long> userIdList = new ArrayList<>();
                     if (userList != null) {
-                        for (User userid : userList)
+                        for (User userid : userList) {
                             userIdList.add(userid.getId());
+                            LOGGER.info("User id Obtained : " + userid.getId());
+                        }
 
                         LOGGER.info("List of User mobile Obtained : " + userIdList.size());
                     }
 
-                    messageContent.setCreatedDateTime(new Date().getTime());
-                    messageContent.setEventDateTime(calendar.getTimeInMillis());
-                    messageContent.setExpiryDate(calendarEnd.getTimeInMillis());
-                    messageContent.setMessageBody(message);
-                    messageContent.setModuleName(notificationSchedule.getTemplateName());
-                    messageContent.setNotificationDateTime(new Date().getTime());
-                    messageContent.setNotificationType(notificationSchedule.getNotificationType());
-                    messageContent.setSendAll(Boolean.FALSE);
-                    messageContent.setUserIdList(userIdList);
-                    messageContent.setSenderId(user.getId());
-                    messageContent.setSenderName(user.getName());
-
-                    pushNotificationService.sendNotifications(messageContent);
+                    buildAndSendNotifications(notificationSchedule, calendar, calendarEnd, Boolean.FALSE, user, userIdList);
                 }
             }
-        } else {
-            MessageContent messageContent = new MessageContent();
-            messageContent.setCreatedDateTime(new Date().getTime());
-            messageContent.setEventDateTime(calendar.getTimeInMillis());
-            messageContent.setExpiryDate(calendarEnd.getTimeInMillis());
-            messageContent.setMessageBody(notificationSchedule.getMessageTemplate());
-            messageContent.setModuleName(notificationSchedule.getTemplateName());
-            messageContent.setNotificationDateTime(new Date().getTime());
-            messageContent.setNotificationType(notificationSchedule.getNotificationType());
-            messageContent.setSendAll(Boolean.TRUE);
+        } else
+            buildAndSendNotifications(notificationSchedule, calendar, calendarEnd, Boolean.TRUE, user, null);
+    }
 
-            messageContent.setSenderId(user.getId());
-            messageContent.setSenderName(user.getName());
+    private String buildMessage(DefaultersInfo defaultersInfo, String message) {
+        DateFormat formatter = new SimpleDateFormat(DDMMYYYY);
+        if (message.contains(MESSAGE_USERNAME))
+            message = message.replace(MESSAGE_USERNAME, defaultersInfo.getOwnerName());
 
-            pushNotificationService.sendNotifications(messageContent);
-        }
+        if (message.contains(MESSAGE_PROPTNO))
+            message = message.replace(MESSAGE_PROPTNO, defaultersInfo.getAssessmentNo());
+
+        if (message.contains(MESSAGE_DUEDATE))
+            message = message.replace(MESSAGE_DUEDATE,
+                    formatter.format(defaultersInfo.getMinDate()));
+
+        if (message.contains(MESSAGE_ASMNTNO))
+            message = message.replace(MESSAGE_ASMNTNO, defaultersInfo.getAssessmentNo());
+
+        if (message.contains(MESSAGE_DUEAMT))
+            message = message.replace(MESSAGE_DUEAMT,
+                    String.valueOf(defaultersInfo.getCurrentDue().doubleValue()));
+
+        if (message.contains(MESSAGE_CONSNO))
+            message = message.replace(MESSAGE_CONSNO, defaultersInfo.getAssessmentNo());
+
+        if (message.contains(MESSAGE_BILLNO))
+            message = message.replace(MESSAGE_BILLNO, defaultersInfo.getAssessmentNo());
+
+        if (message.contains(MESSAGE_BILLAMT))
+            message = message.replace(MESSAGE_BILLAMT,
+                    String.valueOf(defaultersInfo.getCurrentDue().doubleValue()));
+
+        if (message.contains(MESSAGE_DISRPTDATE))
+            message = message.replace(MESSAGE_DISRPTDATE, defaultersInfo.getAssessmentNo());
+        return message;
+    }
+
+    private void buildAndSendNotifications(NotificationSchedule notificationSchedule, DateTime calendar, DateTime calendarEnd,
+            Boolean seandAll, User user, List<Long> userIdList) {
+        MessageContent messageContent = new MessageContent();
+        messageContent.setCreatedDateTime(new Date().getTime());
+        messageContent.setEventDateTime(calendar.getMillis());
+        messageContent.setExpiryDate(calendarEnd.getMillis());
+        messageContent.setMessageBody(notificationSchedule.getMessageTemplate());
+        messageContent.setModuleName(notificationSchedule.getTemplateName());
+        messageContent.setNotificationDateTime(new Date().getTime());
+        messageContent.setNotificationType(notificationSchedule.getNotificationType());
+        messageContent.setSendAll(seandAll);
+        if (userIdList != null)
+            messageContent.setUserIdList(userIdList);
+        messageContent.setSenderId(user.getId());
+        messageContent.setSenderName(user.getName());
+
+        pushNotificationService.sendNotifications(messageContent);
     }
 }

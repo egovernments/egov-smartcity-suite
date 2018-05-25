@@ -56,7 +56,7 @@ public class DraftService {
     }
 
     @Transactional
-    public NotificationDrafts save(NotificationDrafts draft) {
+    public NotificationDrafts saveDraft(NotificationDrafts draft) {
         return draftRepository.save(draft);
     }
 

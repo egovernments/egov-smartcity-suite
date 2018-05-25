@@ -48,26 +48,29 @@
 package org.egov.eventnotification.service;
 
 import static org.egov.eventnotification.constants.Constants.ACTIVE;
+import static org.egov.eventnotification.constants.Constants.DDMMYYYY;
+import static org.egov.eventnotification.constants.Constants.EMPTY;
+import static org.egov.eventnotification.constants.Constants.MAX_TEN;
 import static org.egov.eventnotification.constants.Constants.MIN_NUMBER_OF_REQUESTS;
 import static org.egov.eventnotification.constants.Constants.MODULE_NAME;
 import static org.egov.eventnotification.constants.Constants.NOTIFICATION_TYPE_EVENT;
+import static org.egov.eventnotification.constants.Constants.ZERO;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.egov.eventnotification.entity.Event;
 import org.egov.eventnotification.entity.EventDetails;
 import org.egov.eventnotification.repository.EventRepository;
 import org.egov.eventnotification.repository.EventRepositoryImpl;
-import org.egov.eventnotification.utils.DateFormatUtil;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.utils.DateUtils;
 import org.egov.pushbox.application.entity.MessageContent;
 import org.egov.pushbox.application.service.PushNotificationService;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -82,8 +85,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional(readOnly = true)
 public class EventService {
 
-    private static final Logger LOGGER = Logger.getLogger(EventService.class);
-
     @Autowired
     private EventRepository eventRepository;
 
@@ -96,29 +97,16 @@ public class EventService {
     @Autowired
     private EventRepositoryImpl eventRepositoryImpl;
 
-    @Autowired
-    private DateFormatUtil dateFormatUtil;
-
     /**
      * Fetch all the event in descending order
      * @return List<Event>
      */
-    public List<Event> findAllByStatus(String status) {
+    public List<Event> findAllEventByStatus(String status) {
         List<Event> eventList = null;
-        try {
-            eventList = eventRepository.findByStatusOrderByIdDesc(status);
-            if (!eventList.isEmpty())
-                for (Event event : eventList) {
-                    EventDetails eventDetails = new EventDetails();
-                    Date sd = new Date(event.getStartDate());
-                    eventDetails.setStartDt(dateFormatUtil.getDateInDDMMYYYY(sd));
-                    Date ed = new Date(event.getEndDate());
-                    eventDetails.setEndDt(dateFormatUtil.getDateInDDMMYYYY(ed));
-                    event.setEventDetails(eventDetails);
-                }
-        } catch (ParseException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
+        eventList = eventRepository.findByStatusOrderByIdDesc(status);
+        if (!eventList.isEmpty())
+            for (Event event : eventList)
+                populateEventDetails(event);
         return eventList;
     }
 
@@ -128,29 +116,47 @@ public class EventService {
      */
     public List<Event> findAllOngoingEvent(String status) {
         List<Event> eventList = null;
-        try {
-            Calendar calendar = Calendar.getInstance();
-            Date startDate;
-            Date endDate;
-            startDate = calendar.getTime();
-            calendar.add(Calendar.DAY_OF_MONTH, 7);
-            endDate = calendar.getTime();
-            eventList = eventRepository.findByStatusAndStartDateIsBetweenOrderByIdDesc(status,
-                    dateFormatUtil.getDateInDDMMYYYY(startDate).getTime(),
-                    dateFormatUtil.getDateInDDMMYYYY(endDate).getTime());
-            if (!eventList.isEmpty())
-                for (Event event : eventList) {
-                    EventDetails eventDetails = new EventDetails();
-                    Date sd = new Date(event.getStartDate());
-                    eventDetails.setStartDt(dateFormatUtil.getDateInDDMMYYYY(sd));
-                    Date ed = new Date(event.getEndDate());
-                    eventDetails.setEndDt(dateFormatUtil.getDateInDDMMYYYY(ed));
-                    event.setEventDetails(eventDetails);
-                }
-        } catch (ParseException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
+        DateTime calendar = new DateTime();
+        Date startDate;
+        Date endDate;
+        calendar = calendar.withHourOfDay(0);
+        calendar = calendar.withMinuteOfHour(0);
+        calendar = calendar.withSecondOfMinute(0);
+        startDate = calendar.toDate();
+        calendar = calendar.plusDays(7);
+        endDate = calendar.toDate();
+        eventList = eventRepository.findByStatusAndStartDateIsBetweenOrderByIdDesc(status,
+                startDate, endDate);
+        if (!eventList.isEmpty())
+            for (Event event : eventList)
+                populateEventDetails(event);
         return eventList;
+    }
+
+    private void populateEventDetails(Event event) {
+        EventDetails eventDetails = new EventDetails();
+        DateTime sd = new DateTime(event.getStartDate());
+        eventDetails.setStartDt(DateUtils.getDate(DateUtils.getDefaultFormattedDate(event.getStartDate()), DDMMYYYY));
+        if (sd.getHourOfDay() < MAX_TEN)
+            eventDetails.setStartHH(ZERO + String.valueOf(sd.getHourOfDay()));
+        else
+            eventDetails.setStartHH(String.valueOf(sd.getHourOfDay()));
+        if (sd.getMinuteOfHour() < MAX_TEN)
+            eventDetails.setStartMM(ZERO + String.valueOf(sd.getMinuteOfHour()));
+        else
+            eventDetails.setStartMM(String.valueOf(sd.getMinuteOfHour()));
+
+        DateTime ed = new DateTime(event.getEndDate());
+        eventDetails.setEndDt(DateUtils.getDate(DateUtils.getDefaultFormattedDate(event.getEndDate()), DDMMYYYY));
+        if (ed.getHourOfDay() < MAX_TEN)
+            eventDetails.setEndHH(ZERO + String.valueOf(ed.getHourOfDay()));
+        else
+            eventDetails.setEndHH(String.valueOf(ed.getHourOfDay()));
+        if (ed.getMinuteOfHour() < MAX_TEN)
+            eventDetails.setEndMM(ZERO + String.valueOf(ed.getMinuteOfHour()));
+        else
+            eventDetails.setEndMM(String.valueOf(ed.getMinuteOfHour()));
+        event.setEventDetails(eventDetails);
     }
 
     /**
@@ -160,23 +166,7 @@ public class EventService {
      */
     public Event findByEventId(Long id) {
         Event event = eventRepository.findOne(id);
-        try {
-            EventDetails eventDetails = new EventDetails();
-            Date sd = new Date(event.getStartDate());
-            eventDetails.setStartDt(dateFormatUtil.getDateInDDMMYYYY(sd));
-            Date ed = new Date(event.getEndDate());
-            eventDetails.setEndDt(dateFormatUtil.getDateInDDMMYYYY(ed));
-
-            String[] st = event.getStartTime().split(":");
-            eventDetails.setStartHH(st[0]);
-            eventDetails.setStartMM(st[1]);
-            String[] et = event.getEndTime().split(":");
-            eventDetails.setEndHH(et[0]);
-            eventDetails.setEndMM(et[1]);
-            event.setEventDetails(eventDetails);
-        } catch (ParseException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
+        populateEventDetails(event);
         return event;
     }
 
@@ -188,11 +178,18 @@ public class EventService {
      * @throws ParseException
      */
     @Transactional
-    public Event save(Event event) throws IOException {
-        event.setStartDate(event.getEventDetails().getStartDt().getTime());
-        event.setEndDate(event.getEventDetails().getEndDt().getTime());
-        event.setStartTime(event.getEventDetails().getStartHH() + ":" + event.getEventDetails().getStartMM());
-        event.setEndTime(event.getEventDetails().getEndHH() + ":" + event.getEventDetails().getEndMM());
+    public Event saveEvent(Event event) throws IOException {
+        DateTime sd = new DateTime(event.getEventDetails().getStartDt());
+        sd = sd.withHourOfDay(Integer.parseInt(event.getEventDetails().getStartHH()));
+        sd = sd.withMinuteOfHour(Integer.parseInt(event.getEventDetails().getStartMM()));
+        sd = sd.withSecondOfMinute(00);
+        event.setStartDate(sd.toDate());
+
+        DateTime ed = new DateTime(event.getEventDetails().getEndDt());
+        ed = ed.withHourOfDay(Integer.parseInt(event.getEventDetails().getEndHH()));
+        ed = ed.withMinuteOfHour(Integer.parseInt(event.getEventDetails().getEndMM()));
+        ed = ed.withSecondOfMinute(00);
+        event.setEndDate(ed.toDate());
         event.setStatus(ACTIVE.toUpperCase());
 
         if (event.getEventDetails().getFile() != null)
@@ -210,7 +207,7 @@ public class EventService {
      * @throws ParseException
      */
     @Transactional
-    public Event update(Event updatedEvent) throws IOException {
+    public Event updateEvent(Event updatedEvent) throws IOException {
         if (updatedEvent.getEventDetails().getFile()[0].getSize() > MIN_NUMBER_OF_REQUESTS)
             eventUploadWallpaper(updatedEvent);
         return eventRepository.save(updatedEvent);
@@ -276,28 +273,17 @@ public class EventService {
      */
     public void sendPushMessage(Event event, User user) {
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date(event.getStartDate()));
-        int hours = Integer.parseInt(event.getStartTime().split(":")[0]);
-        int minutes = Integer.parseInt(event.getStartTime().split(":")[1]);
-        calendar.set(Calendar.HOUR, hours);
-        calendar.set(Calendar.MINUTE, minutes);
-
-        Calendar calendarEnd = Calendar.getInstance();
-        calendarEnd.setTime(new Date(event.getEndDate()));
-        int hoursEnd = Integer.parseInt(event.getEndTime().split(":")[0]);
-        int minutesEnd = Integer.parseInt(event.getEndTime().split(":")[1]);
-        calendarEnd.set(Calendar.HOUR, hoursEnd);
-        calendarEnd.set(Calendar.MINUTE, minutesEnd);
+        DateTime calendar = new DateTime(event.getStartDate());
+        DateTime calendarEnd = new DateTime(event.getEndDate());
 
         MessageContent messageContent = new MessageContent();
         messageContent.setCreatedDateTime(new Date().getTime());
         messageContent.setEventAddress(event.getAddress());
-        messageContent.setEventDateTime(calendar.getTimeInMillis());
+        messageContent.setEventDateTime(calendar.getMillis());
         messageContent.setEventLocation(event.getEventlocation());
-        messageContent.setExpiryDate(calendarEnd.getTimeInMillis());
+        messageContent.setExpiryDate(calendarEnd.getMillis());
         if (event.getFilestore() == null)
-            messageContent.setImageUrl("");
+            messageContent.setImageUrl(EMPTY);
         else
             messageContent.setImageUrl(String.valueOf(event.getFilestore()));
         messageContent.setMessageBody(event.getMessage());

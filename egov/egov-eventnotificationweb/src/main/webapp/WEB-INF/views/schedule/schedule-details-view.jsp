@@ -78,7 +78,7 @@
 						</div>
 						<label class="col-xs-3 control-label text-right"><spring:message code="lbl.event.starttime" />:</label>
 						<div class="col-xs-3 add-margin view-content">
-							<c:out value="${notificationSchedule.startTime}"/>
+							<c:out value="${notificationSchedule.eventDetails.startHH}" />:<c:out value="${notificationSchedule.eventDetails.startMM}" />
 						</div>
 					</div>
 					<div class="form-group">

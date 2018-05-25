@@ -48,7 +48,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <link rel="stylesheet" href="<cdn:url  value='/resources/global/css/egov/map-autocomplete.css?rnd=${app_release_no}' context='/egi'/>"> 
-<form:form method="post" action="" modelAttribute="NotificationDraft" id="createDraftForm" cssClass="form-horizontal form-groups-bordered"
+<form:form method="post" action="" modelAttribute="notificationDraft" id="createDraftForm" cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<div class="row">
 		<div class="col-md-12">
@@ -146,3 +146,4 @@
 <script	type="text/javascript" src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<cdn:url  value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<cdn:url value='/resources/js/app/draftNewHelper.js?rnd=${app_release_no}'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/js/app/common.js' />"></script>
