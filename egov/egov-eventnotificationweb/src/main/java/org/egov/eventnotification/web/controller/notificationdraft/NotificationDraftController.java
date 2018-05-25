@@ -5,7 +5,6 @@ import static org.egov.eventnotification.constants.Constants.API_VIEW;
 import static org.egov.eventnotification.constants.Constants.API_VIEW_ID;
 import static org.egov.eventnotification.constants.Constants.CATEGORY_FOR_MODULE;
 import static org.egov.eventnotification.constants.Constants.CATEGORY_PARAMETERS;
-import static org.egov.eventnotification.constants.Constants.DRAFT_ID;
 import static org.egov.eventnotification.constants.Constants.DRAFT_LIST;
 import static org.egov.eventnotification.constants.Constants.MESSAGE;
 import static org.egov.eventnotification.constants.Constants.MODE;
@@ -60,7 +59,7 @@ public class NotificationDraftController {
     }
 
     @GetMapping(API_VIEW_ID)
-    public String viewByDraft(@PathVariable(DRAFT_ID) Long id, final Model model) {
+    public String viewByDraft(@PathVariable Long id, final Model model) {
         model.addAttribute(NOTIFICATION_DRAFT, draftService.findDraftById(id));
         model.addAttribute(MODE, MODE_VIEW);
 
@@ -93,7 +92,7 @@ public class NotificationDraftController {
             model.addAttribute(MODE, MODE_CREATE);
             return Constants.VIEW_EVENTCREATE;
         }
-        notificationDraft = draftService.saveDraft(notificationDraft);
+        draftService.saveDraft(notificationDraft);
         model.addAttribute(NOTIFICATION_DRAFT, notificationDraft);
         model.addAttribute(MESSAGE,
                 messageSource.getMessage("msg.draft.create.success", null, Locale.ENGLISH));

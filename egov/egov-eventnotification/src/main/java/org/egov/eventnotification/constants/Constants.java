@@ -49,10 +49,6 @@ package org.egov.eventnotification.constants;
 
 public class Constants {
 
-    private Constants() {
-
-    }
-
     public static final String MODULE_NAME = "Eventnotification";
 
     public static final String EVENT_ID = "id";
@@ -210,4 +206,8 @@ public class Constants {
     public static final double DOUBLE_DEFAULT = 0.0;
     public static final int ZERO = 0;
     public static final int MAX_TEN = 10;
+
+    private Constants() {
+
+    }
 }
