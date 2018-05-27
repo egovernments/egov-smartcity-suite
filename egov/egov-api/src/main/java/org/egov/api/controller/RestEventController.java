@@ -90,6 +90,8 @@ import static org.egov.eventnotification.constants.Constants.USER_INTERESTED;
 import static org.egov.eventnotification.constants.Constants.YES;
 import static org.egov.eventnotification.constants.Constants.ZERO;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.egov.eventnotification.constants.Constants.USERID;
+import static org.egov.eventnotification.constants.Constants.EVENTID;
 
 import java.io.File;
 import java.io.IOException;
@@ -116,6 +118,7 @@ import org.egov.eventnotification.service.UserEventService;
 import org.egov.infra.utils.DateUtils;
 import org.joda.time.DateTime;
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
@@ -397,10 +400,12 @@ public class RestEventController extends ApiController {
      * @return json string
      */
     @PostMapping(path = GET_EVENT + INTERESTED, produces = APPLICATION_JSON_VALUE)
-    public String saveUserEvent(@RequestBody UserEvent userEvent) {
+    public String saveUserEvent(@RequestBody String jsonData) {
+        JSONObject requestObject = (JSONObject) JSONValue.parse(jsonData);
         JSONObject responseObject = new JSONObject();
-        if (userEvent != null) {
-            userEvent = usereventService.saveUserEvent(userEvent.getUserId(), userEvent.getEventId());
+        if (requestObject.containsKey(USERID)
+               && requestObject.containsKey(EVENTID)) {
+            UserEvent userEvent = usereventService.saveUserEvent(Long.parseLong(requestObject.get(USERID).toString()), Long.parseLong(requestObject.get(EVENTID).toString()));
             if (userEvent == null)
                 responseObject.put(FAIL, messageSource.getMessage("error.fail.event", null,
                         ERROR, Locale.getDefault()));
@@ -409,7 +414,7 @@ public class RestEventController extends ApiController {
                         messageSource.getMessage("msg.event.success", null, SUCCESS1, Locale.getDefault()));
                 Long interestedCount = usereventService.countUsereventByEventId(userEvent.getEventId());
                 if (interestedCount == null)
-                    responseObject.put(INTERESTED_COUNT, 0);
+                    responseObject.put(INTERESTED_COUNT, ZERO);
                 else
                     responseObject.put(INTERESTED_COUNT,
                             usereventService.countUsereventByEventId(userEvent.getEventId()));
