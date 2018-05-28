@@ -202,9 +202,9 @@
 		</s:if>
 		<s:else>
 			<td class="bluebox"><s:select list="dropdownData.blocks"
-					name="blockId" value="%{blockId}" headerKey="-1" id="blockId"
+					name="blockId" value="%{blockId}" headerKey="" id="blockId"
 					headerValue="%{getText('default.select')}" listKey="id"
-					listValue="name" /></td>
+					listValue="name" cssClass="selectnew"/></td>
 		</s:else>
 	</tr>
 	<tr>
@@ -422,15 +422,12 @@
 				jQuery.each(response.results.streets, function (j, street) {
 					jQuery('#streetId').append("<option value='"+street.streetId+"'>"+street.streetName+"</option>");
 				});
-				<s:if test="%{wardId != null}">
+				if(wardId != null)
 					jQuery('#wardId').val('<s:property value="%{wardId}"/>');
-				</s:if>
-				<s:if test="%{blockId != null}">
+				if(blockId != null)
 					jQuery('#blockId').val('<s:property value="%{blockId}"/>');
-				</s:if>
-				<s:if test="%{streetId != null}">
+				if(streetId != null)
 					jQuery('#streetId').val('<s:property value="%{streetId}"/>');
-				</s:if>
 			}, 
 			error: function (response) {
 				jQuery('#wardId').html("");
@@ -456,9 +453,8 @@
 				jQuery.each(response, function (j, block) {
 					jQuery('#blockId').append("<option value='"+block.blockId+"'>"+block.blockName+"</option>");
 				});
-				<s:if test="%{blockId != null}">
+				if(blockId != null)
 					jQuery('#blockId').val('<s:property value="%{blockId}"/>');
-				</s:if>
 			}, 
 			error: function (response) {
 				jQuery('#blockId').html("");

@@ -1291,7 +1291,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             addActionError(getText("mandatory.zone"));
         if ((wardId == null || wardId == -1) && !basicProp.getPropertyID().getWard().isActive())
             addActionError(getText("mandatory.ward"));
-        if ((blockId == null || blockId == -1) && !basicProp.getPropertyID().getArea().isActive())
+        if ((blockId == null || blockId == -1) || !basicProp.getPropertyID().getArea().isActive())
             addActionError(getText("mandatory.block"));
         if ((electionWardId == null || electionWardId == -1) && !basicProp.getPropertyID().getElectionBoundary().isActive())
             addActionError(getText("mandatory.election.ward"));
