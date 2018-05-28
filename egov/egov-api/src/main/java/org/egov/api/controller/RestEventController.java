@@ -319,6 +319,8 @@ public class RestEventController extends ApiController {
             jsonObjectEvent.addProperty(EVENT_STARTTIME, startHH + ":" + startMM);
 
             DateTime ed = new DateTime(event.getEndDate());
+            jsonObjectEvent.addProperty(EVENT_ENDDATE,
+                    DateUtils.getDate(DateUtils.getDefaultFormattedDate(event.getEndDate()), DDMMYYYY).getTime());
             String endHH = null;
             String endMM = null;
             if (ed.getHourOfDay() < MAX_TEN)
