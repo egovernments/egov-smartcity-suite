@@ -108,18 +108,6 @@
 		<td class="greybox" width="25%"></td>
 		<td class="greybox"></td>
 	</tr>
-	<%-- <tr class="superStructureRow">
-		<td class="greybox">&nbsp;</td>
-		<td class="bluebox"><s:text name="superstructure"></s:text> :</td>
-		<td class="bluebox"><s:checkbox name="propertyDetail.structure"
-				id="propertyDetail.structure" value="%{propertyDetail.structure}"
-				onclick="enableOrDisableSiteOwnerDetails(this);" /></td>
-		<td class="greybox siteowner"><s:text name="siteowner"></s:text><span
-			class="mandatory1"> *</span> :</td>
-		<td class="greybox siteowner"><s:textfield maxlength="64"
-				value="%{propertyDetail.siteOwner}" name="propertyDetail.siteOwner"
-				id="siteOwner"></s:textfield></td>
-	</tr> --%>
 	<tr>
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="ownership.type"></s:text>
@@ -192,6 +180,19 @@
 	
 	<tr>
 		<td class="greybox">&nbsp;</td>
+		<td class="greybox"><s:text name="revwardno"></s:text> <span
+			class="mandatory1">*</span> :</td>
+		<s:if
+			test="%{basicProperty.propertyID.ward !=null && isWardActive() && isLocalityActive()}">
+			<td class="greybox"><s:textfield name="ward" id="ward"
+					value="%{basicProperty.propertyID.ward.name}" /></td>
+		</s:if>
+		<s:else>
+			<td class="bluebox"><s:select list="dropdownData.wards"
+					name="wardId" value="%{wardId}" headerKey="-1" id="wardId"
+					headerValue="%{getText('default.select')}" listKey="id"
+					listValue="name" onchange="populateBlock(this.value);" /></td>
+		</s:else>
 		<td class="greybox"><s:text name="blockno"></s:text> <span
 			class="mandatory1">*</span> :</td>
 		<s:if
@@ -204,19 +205,6 @@
 					name="blockId" value="%{blockId}" headerKey="-1" id="blockId"
 					headerValue="%{getText('default.select')}" listKey="id"
 					listValue="name" /></td>
-		</s:else>
-		<td class="greybox"><s:text name="revwardno"></s:text> <span
-			class="mandatory1">*</span> :</td>
-		<s:if
-			test="%{basicProperty.propertyID.ward !=null && isWardActive() && isLocalityActive()}">
-			<td class="greybox"><s:textfield name="ward" id="ward"
-					value="%{basicProperty.propertyID.ward.name}" /></td>
-		</s:if>
-		<s:else>
-			<td class="bluebox"><s:select list="dropdownData.wards"
-					name="wardId" value="%{wardId}" headerKey="-1" id="wardId"
-					headerValue="%{getText('default.select')}" listKey="id"
-					listValue="name" onchange="populateBlock();" /></td>
 		</s:else>
 	</tr>
 	<tr>
@@ -371,6 +359,8 @@
 		}
 		var propType = jQuery('#propTypeId :selected').text();
 		var doorno = jQuery("#houseNo").val() != '';
+		var wardId = '<s:property value="%{basicProperty.propertyID.ward.id}"/>';
+		populateBlock(wardId);
 		if(doorno && propType=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND_STR}"/>'){
 			jQuery("#houseNo").prop("readonly", true);
 		}
@@ -395,17 +385,8 @@
 		jQuery('#localityId').change(function() {
 			 populateBoundaries();
 		 });
-		var blocks = jQuery('#blockId').children('option').length;
-		var wards = jQuery('#wardId').children('option').length;
-		if(blocks < 2 && !'<s:property value="%{isBlockActive()}"/>'){
-			bootbox.alert("No block details mapped for ward.");
-			return false;
-		}
-		if(wards < 2 && !'<s:property value="%{isWardActive()}"/>'){
-			bootbox.alert("No ward details mapped for locality.");
-			return false;
-		}
 	});
+	
 	jQuery(function() {
 		jQuery("#propTypeId").change(function(){
 			var propType = jQuery('#propTypeId :selected').text();
@@ -461,12 +442,12 @@
 
 	}
 
-	function populateBlock() {
+	function populateBlock(wardId) {
 		jQuery.ajax({
 			url: "/egi/boundary/ajaxBoundary-blockByWard.action",
 			type: "GET",
 			data: {
-				wardId : jQuery('#wardId').val()
+				wardId : wardId
 			},
 			cache: false,
 			dataType: "json",
