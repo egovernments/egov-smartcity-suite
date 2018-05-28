@@ -64,6 +64,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.admin.master.entity.es.CityIndex;
 import org.egov.infra.admin.master.service.es.CityIndexService;
@@ -149,15 +150,8 @@ public class SurveyDashboardService {
             surveyResponse.setApplicationNo(applicationNo);
             surveyResponse.setAssessmentNo(
                     sourceAsMap.get("assessmentNo") == null ? NA : sourceAsMap.get("assessmentNo").toString());
-            surveyResponse.setDoorNo(sourceAsMap.get("doorNo").toString());
-            surveyResponse.setRevenueWard(sourceAsMap.get(REVENUE_WARD).toString());
-            surveyResponse.setRevenueBlock(sourceAsMap.get("blockName") == null ? NA : sourceAsMap.get("blockName").toString());
-            surveyResponse.setLocality(sourceAsMap.get(LOCALITY_NAME) == null ? NA : sourceAsMap.get(LOCALITY_NAME).toString());
-            surveyResponse
-                    .setElectionWard(sourceAsMap.get("electionWard") == null ? NA : sourceAsMap.get("electionWard").toString());
-            surveyResponse.setSystemTax((double) sourceAsMap.get(SYSTEM_TAX));
-            surveyResponse.setGisTax(sourceAsMap.get(GIS_TAX) == null ? (double) 0 : (double) sourceAsMap.get(GIS_TAX));
-            surveyResponse.setApplicationTax((double) sourceAsMap.get(APPLICATION_TAX));
+            setApplicationAddress(surveyResponse, sourceAsMap);
+            setTaxes(surveyResponse, sourceAsMap);
             surveyResponse.setAppStatus(sourceAsMap.get(APPLICATION_STATUS).toString());
             surveyResponse.setAssistantName(
                     sourceAsMap.get("assistantName") == null ? NA : sourceAsMap.get("assistantName").toString());
@@ -174,6 +168,22 @@ public class SurveyDashboardService {
             surveyResponse.setWfStatus(fetchWorkflowStatus(sourceAsMap));
             surveyList.add(surveyResponse);
         }
+    }
+
+    private void setApplicationAddress(SurveyDashboardResponse surveyResponse, Map<String, Object> sourceAsMap) {
+        surveyResponse.setDoorNo(sourceAsMap.get("doorNo") == null ? NA : sourceAsMap.get("doorNo").toString());
+        surveyResponse.setRevenueWard(sourceAsMap.get(REVENUE_WARD) == null ? NA : sourceAsMap.get(REVENUE_WARD).toString());
+        surveyResponse.setRevenueBlock(sourceAsMap.get("blockName") == null ? NA : sourceAsMap.get("blockName").toString());
+        surveyResponse.setLocality(sourceAsMap.get(LOCALITY_NAME) == null ? NA : sourceAsMap.get(LOCALITY_NAME).toString());
+        surveyResponse
+                .setElectionWard(sourceAsMap.get("electionWard") == null ? NA : sourceAsMap.get("electionWard").toString());
+    }
+
+    private void setTaxes(SurveyDashboardResponse surveyResponse, Map<String, Object> sourceAsMap) {
+        surveyResponse.setSystemTax(sourceAsMap.get(SYSTEM_TAX) == null ? (double) 0 : (double) sourceAsMap.get(SYSTEM_TAX));
+        surveyResponse.setGisTax(sourceAsMap.get(GIS_TAX) == null ? (double) 0 : (double) sourceAsMap.get(GIS_TAX));
+        surveyResponse.setApplicationTax(
+                sourceAsMap.get(APPLICATION_TAX) == null ? (double) 0 : (double) sourceAsMap.get(APPLICATION_TAX));
     }
 
     private String fetchWorkflowStatus(Map<String, Object> sourceAsMap) {
@@ -319,13 +329,13 @@ public class SurveyDashboardService {
         totalMap.put(aggName, list);
 
         Terms completedAggr = completedResponse.getAggregations().get(AGGREGATIONWISE);
-        Map<String, Long> completedApplicationsMap = new HashMap<>();
+        Map<String, Long> completedApplicationsMap = new ConcurrentHashMap<>();
         Map<String, BillCollectorIndex> wardWiseBillCollectors = new HashMap<>();
         for (Bucket bucket : completedAggr.getBuckets())
             completedApplicationsMap.put(bucket.getKeyAsString(), bucket.getDocCount());
         
         Terms cancelledAggr = cancelledResponse.getAggregations().get(AGGREGATIONWISE);
-        Map<String, Long> cancelledApplicationsMap = new HashMap<>();
+        Map<String, Long> cancelledApplicationsMap = new ConcurrentHashMap<>();
         for (Bucket bucket : cancelledAggr.getBuckets())
             cancelledApplicationsMap.put(bucket.getKeyAsString(), bucket.getDocCount());
 
