@@ -72,6 +72,7 @@ public class SurveyResponse {
     private double actlIncr = 0;
     private double diffFromSurveytax = 0;
     private double difference = 0;
+    private long totalCancelled=0;
 
     public String getRegionName() {
         return regionName;
@@ -240,5 +241,13 @@ public class SurveyResponse {
     public void setDiffFromSurveytax(double diffFromSurveytax) {
         this.diffFromSurveytax = diffFromSurveytax;
     }
+    public long getTotalCancelled() {
+        return totalCancelled;
+    }
+
+    public void setTotalCancelled(long totalCancelled) {
+        this.totalCancelled = totalCancelled;
+    }
+
 
 }
