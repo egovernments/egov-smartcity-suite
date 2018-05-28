@@ -213,7 +213,7 @@ public class RestEventController extends ApiController {
      * @return json string
      */
     @GetMapping(path = GET_EVENT + EVENT_ID_PATH_PARAM, produces = APPLICATION_JSON_VALUE)
-    public String getEvent(@PathVariable long id, @RequestParam(required = false) Long userId) {
+    public String getEvent(@PathVariable long id, @RequestParam(required = false) Long userid) {
         Event event = eventService.findByEventId(id);
         JsonObject jsonObjectEvent = new JsonObject();
         jsonObjectEvent.addProperty(EVENT_ID, event.getId());
@@ -250,8 +250,9 @@ public class RestEventController extends ApiController {
             jsonObjectEvent.addProperty(URL, EMPTY);
         else
             jsonObjectEvent.addProperty(URL, event.getUrl());
-        if (userId != null) {
-            UserEvent userEvent = usereventService.getUsereventByEventAndUser(id, userId);
+        
+        if (userid != null) {
+            UserEvent userEvent = usereventService.getUsereventByEventAndUser(id, userid);
             if (userEvent == null)
                 jsonObjectEvent.addProperty(USER_INTERESTED, NO);
             else
