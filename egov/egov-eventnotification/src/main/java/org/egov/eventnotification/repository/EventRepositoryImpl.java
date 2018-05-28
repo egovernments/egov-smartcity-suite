@@ -36,15 +36,15 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
         Date startDate;
         Date endDate;
         if (eventDateType.equalsIgnoreCase(UPCOMING)) {
-            calendar = calendar.plusDays(8);
+            calendar = calendar.plusDays(7);
             calendar = calendar.withHourOfDay(0);
             calendar = calendar.withMinuteOfHour(0);
             calendar = calendar.withSecondOfMinute(0);
             startDate = calendar.toDate();
             calendarEndDate = new DateTime(startDate);
-            calendarEndDate = calendarEndDate.plusDays(7);
-            calendarEndDate = calendarEndDate.withHourOfDay(0);
-            calendarEndDate = calendarEndDate.withMinuteOfHour(0);
+            calendarEndDate = calendarEndDate.plusDays(6);
+            calendarEndDate = calendarEndDate.withHourOfDay(23);
+            calendarEndDate = calendarEndDate.withMinuteOfHour(59);
             calendarEndDate = calendarEndDate.withSecondOfMinute(0);
             endDate = calendarEndDate.toDate();
         } else {
@@ -52,8 +52,12 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
             calendar = calendar.withMinuteOfHour(0);
             calendar = calendar.withSecondOfMinute(0);
             startDate = calendar.toDate();
-            calendar = calendar.plusDays(7);
-            endDate = calendar.toDate();
+            calendarEndDate = new DateTime(startDate);
+            calendarEndDate = calendarEndDate.plusDays(6);
+            calendarEndDate = calendarEndDate.withHourOfDay(23);
+            calendarEndDate = calendarEndDate.withMinuteOfHour(59);
+            calendarEndDate = calendarEndDate.withSecondOfMinute(0);
+            endDate = calendarEndDate.toDate();
         }
 
         Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Event.class);

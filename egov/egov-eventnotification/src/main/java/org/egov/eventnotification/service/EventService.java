@@ -119,14 +119,19 @@ public class EventService {
     public List<Event> findAllOngoingEvent(String status) {
         List<Event> eventList = null;
         DateTime calendar = new DateTime();
+        DateTime calendarEndDate = null;
         Date startDate;
         Date endDate;
         calendar = calendar.withHourOfDay(0);
         calendar = calendar.withMinuteOfHour(0);
         calendar = calendar.withSecondOfMinute(0);
         startDate = calendar.toDate();
-        calendar = calendar.plusDays(7);
-        endDate = calendar.toDate();
+        calendarEndDate = new DateTime(startDate);
+        calendarEndDate = calendarEndDate.plusDays(6);
+        calendarEndDate = calendarEndDate.withHourOfDay(23);
+        calendarEndDate = calendarEndDate.withMinuteOfHour(59);
+        calendarEndDate = calendarEndDate.withSecondOfMinute(0);
+        endDate = calendarEndDate.toDate();
         eventList = eventRepository.findByStatusAndStartDateIsBetweenOrderByIdDesc(status,
                 startDate, endDate);
         if (!eventList.isEmpty())
