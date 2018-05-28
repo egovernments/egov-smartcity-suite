@@ -104,7 +104,7 @@ public class NotificationSchedulerManager {
      */
     public void schedule(NotificationSchedule notificationschedule, User user) {
 
-        Query query = propertyTaxUtil.prepareQueryforDefaultersReport(-1l, "1", "100000", 100000, "PRIVATE", "PT");
+        Query query = propertyTaxUtil.prepareQueryforDefaultersReport(-1l, "1", "100000", 120000, "PRIVATE", "PT");
         List<DefaultersInfo> defaultersList = reportService.getDefaultersInformation(query, "1 Year", 10);
         LOGGER.info("defaultersList : " + defaultersList.isEmpty());
         LOGGER.info("defaultersList size : " + defaultersList.size());
