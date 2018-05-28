@@ -199,6 +199,12 @@ public class RestEventController extends ApiController {
                 jsonObjectEvent.addProperty(URL, event.getUrl());
 
             jsonObjectEvent.addProperty(USER_INTERESTED, NO);
+            
+            Long interestedCount = usereventService.countUsereventByEventId(event.getId());
+            if (interestedCount == null)
+                jsonObjectEvent.addProperty(INTERESTED_COUNT, ZERO);
+            else
+                jsonObjectEvent.addProperty(INTERESTED_COUNT,String.valueOf(interestedCount));
 
             jsonArrayEvent.add(jsonObjectEvent);
 
@@ -259,6 +265,12 @@ public class RestEventController extends ApiController {
                 jsonObjectEvent.addProperty(USER_INTERESTED, YES);
         } else
             jsonObjectEvent.addProperty(USER_INTERESTED, NO);
+        
+        Long interestedCount = usereventService.countUsereventByEventId(event.getId());
+        if (interestedCount == null)
+            jsonObjectEvent.addProperty(INTERESTED_COUNT, ZERO);
+        else
+            jsonObjectEvent.addProperty(INTERESTED_COUNT,String.valueOf(interestedCount));
 
         return jsonObjectEvent.toString();
     }
@@ -344,6 +356,12 @@ public class RestEventController extends ApiController {
                 jsonObjectEvent.addProperty(URL, event.getUrl());
 
             jsonObjectEvent.addProperty(USER_INTERESTED, NO);
+            
+            Long interestedCount = usereventService.countUsereventByEventId(event.getId());
+            if (interestedCount == null)
+                jsonObjectEvent.addProperty(INTERESTED_COUNT, ZERO);
+            else
+                jsonObjectEvent.addProperty(INTERESTED_COUNT,String.valueOf(interestedCount));
 
             jsonArrayEvent.add(jsonObjectEvent);
 
@@ -417,8 +435,7 @@ public class RestEventController extends ApiController {
                 if (interestedCount == null)
                     responseObject.put(INTERESTED_COUNT, ZERO);
                 else
-                    responseObject.put(INTERESTED_COUNT,
-                            usereventService.countUsereventByEventId(userEvent.getEventId()));
+                    responseObject.put(INTERESTED_COUNT,String.valueOf(interestedCount));
             }
 
         } else
