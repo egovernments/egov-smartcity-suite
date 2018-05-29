@@ -245,12 +245,14 @@ public class SurveyApplicationService {
         try {
             List<Assignment> assignments = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(user.getId());
             boolean isRevAssistantExist = false;
+            Long assistPos = null;
             if (!assignments.isEmpty()) {
                 for (Assignment assignment : assignments) {
                     if (REVENUE_HIERARCHY_TYPE.equalsIgnoreCase(assignment.getDepartment().getName())
                             && (assignment.getDesignation().getName().equalsIgnoreCase(JUNIOR_ASSISTANT)
                                     || assignment.getDesignation().getName()
                                             .equalsIgnoreCase(SENIOR_ASSISTANT))) {
+                        assistPos = assignment.getPosition().getId();
                         isRevAssistantExist = true;
                         break;
                     }
@@ -260,7 +262,7 @@ public class SurveyApplicationService {
                 SQLQuery sqlQuery = entityManager.unwrap(Session.class).createSQLQuery(
                         "update eg_wf_states set owner_pos =:ownerpos where id in(select state_id from egpt_property where applicationNo=:applicationNo)");
                 sqlQuery.setParameter(APP_NO, applicationNo);
-                sqlQuery.setParameter("ownerpos", assignments.get(0).getPosition().getId());
+                sqlQuery.setParameter("ownerpos", assistPos);
                 sqlQuery.executeUpdate();
                 return true;
             }
