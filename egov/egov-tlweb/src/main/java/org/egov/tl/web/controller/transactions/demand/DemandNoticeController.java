@@ -47,34 +47,15 @@
  */
 package org.egov.tl.web.controller.transactions.demand;
 
-import org.egov.commons.Installment;
-import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.admin.master.service.CityService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.reporting.engine.ReportFormat;
-import org.egov.infra.reporting.engine.ReportOutput;
-import org.egov.infra.reporting.engine.ReportRequest;
-import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.util.ReportUtil;
-import org.egov.infra.utils.DateUtils;
 import org.egov.tl.entity.LicenseStatus;
-import org.egov.tl.entity.PenaltyRates;
-import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.contracts.DemandNoticeForm;
-import org.egov.tl.entity.contracts.LicenseDemandDetail;
-import org.egov.tl.service.LicenseAppTypeService;
+import org.egov.tl.service.DemandNoticeService;
 import org.egov.tl.service.LicenseCategoryService;
 import org.egov.tl.service.LicenseStatusService;
-import org.egov.tl.service.PenaltyRatesService;
 import org.egov.tl.service.TradeLicenseService;
-import org.egov.tl.service.LicenseConfigurationService;
-import org.egov.tl.utils.Constants;
-import org.egov.tl.utils.LicenseUtils;
 import org.egov.tl.web.response.adaptor.DemandNoticeAdaptor;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
@@ -87,59 +68,27 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
-import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_GRADE_KEY;
-import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
-import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
-import static org.egov.infra.utils.DateUtils.toYearFormat;
 import static org.egov.infra.utils.JsonUtils.toJSON;
-import static org.egov.infra.utils.PdfUtils.appendFiles;
-import static org.egov.tl.utils.Constants.CITY_GRADE_CORPORATION;
 import static org.egov.tl.utils.Constants.LOCALITY;
 import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
-import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
-import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
+import static org.egov.tl.utils.Constants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.tl.utils.Constants.REVENUE_WARD;
 import static org.egov.tl.utils.Constants.STATUS_CANCELLED;
-import static org.egov.tl.utils.Constants.TRADE_LICENSE;
 import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
-import static org.apache.commons.lang.StringUtils.EMPTY;
 
 @Controller
 @RequestMapping("/demand-notice")
 public class DemandNoticeController {
-    private static final String WITH = " with ";
-    private static final String TL_CORPORATION_ACT = "TL_CORPORATION_ACT";
-    private static final String TL_DEFAULT_ACT = "TL_MUNICIPALITY_ACT";
+
     @Autowired
     private TradeLicenseService tradeLicenseService;
 
     @Autowired
-    private LicenseUtils licenseUtils;
-
-    @Autowired
-    private InstallmentHibDao installmentDao;
-
-    @Autowired
-    private PenaltyRatesService penaltyRatesService;
-
-    @Autowired
-    private CityService cityService;
-
-    @Autowired
-    private LicenseConfigurationService licenseConfigurationService;
-
-    @Autowired
-    private ReportService reportService;
+    private DemandNoticeService demandNoticeService;
 
     @Autowired
     private LicenseStatusService licenseStatusService;
@@ -150,215 +99,38 @@ public class DemandNoticeController {
     @Autowired
     private LicenseCategoryService licenseCategoryService;
 
-    @Autowired
-    private LicenseAppTypeService licenseAppTypeService;
-
     @GetMapping("search")
-    public String searchFormforNotice(final Model model) {
+    public String searchFormforNotice(Model model) {
         model.addAttribute("demandnoticesearchForm", new DemandNoticeForm());
         model.addAttribute("categoryList", licenseCategoryService.getCategories());
         model.addAttribute("subCategoryList", Collections.emptyList());
-        final List<LicenseStatus> statuslist = licenseStatusService.findAll();
-        statuslist.remove(licenseStatusService.getLicenseStatusByCode(STATUS_CANCELLED));
-        model.addAttribute("statusList", statuslist);
         model.addAttribute("localityList", boundaryService
                 .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(LOCALITY, LOCATION_HIERARCHY_TYPE));
-        model.addAttribute("wardList", boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(
-                Constants.REVENUE_WARD, Constants.REVENUE_HIERARCHY_TYPE));
+        model.addAttribute("wardList", boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(REVENUE_WARD,
+                REVENUE_HIERARCHY_TYPE));
+        List<LicenseStatus> status = licenseStatusService.findAll();
+        status.remove(licenseStatusService.getLicenseStatusByCode(STATUS_CANCELLED));
+        model.addAttribute("statusList", status);
         return "search-demandnotice";
     }
 
     @PostMapping(value = "search", produces = TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String searchResult(@ModelAttribute final DemandNoticeForm demandnoticeForm) {
+    public String searchResult(@ModelAttribute DemandNoticeForm demandnoticeForm) {
         return new StringBuilder("{ \"data\":")
                 .append(toJSON(tradeLicenseService.getLicenseDemandNotices(demandnoticeForm),
-                        DemandNoticeForm.class, DemandNoticeAdaptor.class))
-                .append("}").toString();
+                        DemandNoticeForm.class, DemandNoticeAdaptor.class)).append("}").toString();
     }
 
     @GetMapping(value = "generate/{licenseId}", produces = APPLICATION_PDF_VALUE)
     @ResponseBody
     public ResponseEntity<InputStreamResource> generateDemandNotice(@PathVariable Long licenseId) {
-        return ReportUtil.reportAsResponseEntity(generateReport(tradeLicenseService.getLicenseById(licenseId)));
+        return ReportUtil.reportAsResponseEntity(demandNoticeService.generateReport(licenseId));
     }
 
     @GetMapping(value = "generate", produces = APPLICATION_PDF_VALUE)
     @ResponseBody
     public ResponseEntity<InputStreamResource> mergeAndDownload(@ModelAttribute DemandNoticeForm searchRequest) {
-        List<DemandNoticeForm> demandNotices = tradeLicenseService.getLicenseDemandNotices(searchRequest);
-        ReportOutput reportOutput = new ReportOutput();
-        reportOutput.setReportName("demand_notices");
-        reportOutput.setReportFormat(ReportFormat.PDF);
-        if (demandNotices.isEmpty()) {
-            reportOutput.setReportOutputData("No Data".getBytes());
-        } else {
-            List<InputStream> demandNoticePDFStreams = new ArrayList<>();
-            for (DemandNoticeForm tlNotice : demandNotices) {
-                demandNoticePDFStreams.add(generateReport(tradeLicenseService.getLicenseById(tlNotice.getLicenseId())).asInputStream());
-            }
-            reportOutput.setReportOutputData(appendFiles(demandNoticePDFStreams));
-        }
-        return ReportUtil.reportAsResponseEntity(reportOutput);
-    }
-
-    private ReportOutput generateReport(TradeLicense license) {
-        Map<String, Object> reportParams = new HashMap<>();
-
-        // Get current installment by using demand.
-        Installment currentInstallment = license.getCurrentDemand().getEgInstallmentMaster();
-        reportParams.put("cityName", ApplicationThreadLocals.getMunicipalityName());
-        reportParams.put("licenseNumber", license.getLicenseNumber());
-        reportParams.put("ownerName", license.getLicensee().getApplicantName());
-        reportParams.put("tradeNature", license.getTradeName().getName());
-        reportParams.put("tradeName", license.getNameOfEstablishment());
-        reportParams.put("tradeAddress", license.getAddress());
-        reportParams.put("cityUrl", ApplicationThreadLocals.getDomainURL());
-        getActDeclarationDetailBasedOnCityGrade(reportParams);
-
-        reportParams.put("installmentYear", toYearFormat(currentInstallment.getFromDate()) + "-"
-                + toYearFormat(currentInstallment.getToDate()));
-        reportParams.put("currentDate", currentDateToDefaultDateFormat());
-
-        // GET PREVIOUS INSTALLMENTS BASED ON CURRENT INSTALLMENT.
-        List<Installment> previousInstallment = installmentDao
-                .fetchPreviousInstallmentsInDescendingOrderByModuleAndDate(licenseUtils.getModule(TRADE_LICENSE),
-                        currentInstallment.getToDate(), 1);
-
-        if (!previousInstallment.isEmpty()) {
-            reportParams.put("lastyear", toYearFormat(previousInstallment.get(0).getFromDate()) + "-"
-                    + DateTimeFormat.forPattern("yy").print(new LocalDate(previousInstallment.get(0).getToDate())));
-            // 31-december-financialyear will be considered as last date for
-            // renewal.
-            Date endDateOfPreviousFinancialYear = new DateTime(previousInstallment.get(0).getFromDate())
-                    .withMonthOfYear(12).withDayOfMonth(31).toDate();
-
-            reportParams.put("endDateOfPreviousFinancialYear",
-                    getDefaultFormattedDate(endDateOfPreviousFinancialYear));
-
-            BigDecimal currLicenseFee;
-            BigDecimal arrLicenseFee;
-            BigDecimal arrLicensePenalty;
-
-            Map<String, Map<String, BigDecimal>> outstandingFees = tradeLicenseService
-                    .getOutstandingFeeForDemandNotice(license, currentInstallment, previousInstallment.get(0));
-            Map<String, BigDecimal> licenseFees = outstandingFees.get("License Fee");
-            if (licenseFees != null) {
-                currLicenseFee = licenseFees.get("current") == null ? BigDecimal.ZERO
-                        : licenseFees.get("current").setScale(0, BigDecimal.ROUND_HALF_UP);
-                arrLicenseFee = licenseFees.get("arrear") == null ? BigDecimal.ZERO
-                        : licenseFees.get("arrear").setScale(0, BigDecimal.ROUND_HALF_UP);
-                arrLicensePenalty = licenseFees.get("penalty") == null ? BigDecimal.ZERO
-                        : licenseFees.get("penalty").setScale(0, BigDecimal.ROUND_HALF_UP);
-            } else {
-                currLicenseFee = BigDecimal.ZERO;
-                arrLicenseFee = BigDecimal.ZERO;
-                arrLicensePenalty = BigDecimal.ZERO;
-            }
-
-            BigDecimal totalAmount = currLicenseFee.add(arrLicenseFee).add(arrLicensePenalty);
-            List<LicenseDemandDetail> monthWiseDemandDetails = new LinkedList<>();
-            getMonthWiseLatePenaltyFeeDetails(license, currentInstallment, currLicenseFee, arrLicenseFee,
-                    arrLicensePenalty, monthWiseDemandDetails);
-
-            reportParams.put("monthWiseDemandDetails", monthWiseDemandDetails);
-            reportParams.put("licenseFee", currLicenseFee);
-            reportParams.put("penaltyFee", arrLicensePenalty);
-            reportParams.put("arrearLicenseFee", arrLicenseFee);
-            reportParams.put("totalLicenseFee", totalAmount.setScale(0, BigDecimal.ROUND_HALF_UP));
-            Long licenseAppId;
-            if (license.getIsActive())
-                licenseAppId = licenseAppTypeService.getLicenseAppTypeByName(RENEWAL_LIC_APPTYPE).getId();
-            else
-                licenseAppId = licenseAppTypeService.getLicenseAppTypeByName(NEW_LIC_APPTYPE).getId();
-            List<PenaltyRates> penaltyRates = penaltyRatesService.search(licenseAppId);
-            reportParams.put("penaltyCalculationMessage", getPenaltyRateDetails(penaltyRates, currentInstallment));
-            reportParams.put("currentYear", toYearFormat(currentInstallment.getFromDate()));
-
-        }
-
-        return reportService.createReport(new ReportRequest("tl_demand_notice", license, reportParams));
-    }
-
-    private void getActDeclarationDetailBasedOnCityGrade(Map<String, Object> reportParams) {
-
-        String cityGrade = (String) cityService.cityDataForKey(CITY_CORP_GRADE_KEY);
-
-        if (CITY_GRADE_CORPORATION.equalsIgnoreCase(cityGrade)) {
-            String corporationAct = licenseConfigurationService.getValueByKey(TL_CORPORATION_ACT);
-            reportParams.put("actDeclaration", corporationAct == null ? EMPTY : corporationAct);
-        } else {
-            String defaultAct = licenseConfigurationService.getValueByKey(TL_DEFAULT_ACT);
-            reportParams.put("actDeclaration", defaultAct == null ? EMPTY : defaultAct);
-        }
-    }
-
-    private void getMonthWiseLatePenaltyFeeDetails(TradeLicense license, Installment currentInstallment,
-                                                   BigDecimal currLicenseFee, BigDecimal arrLicenseFee, BigDecimal arrLicensePenalty,
-                                                   List<LicenseDemandDetail> monthWiseDemandDetails) {
-
-        String installmentYear = toYearFormat(currentInstallment.getFromDate());
-
-        // GET LICENSE FEE TYPES AND DECIDE PENALTY. Monthwise, show penalty
-        // details
-        Map<Integer, String> monthMap = DateUtils.getAllMonths();
-        for (int i = 1; i <= 12; i++) {
-            LicenseDemandDetail demandBillDtl = new LicenseDemandDetail();
-
-            DateTime financialYearDate = new DateTime(currentInstallment.getFromDate()).withMonthOfYear(i);
-            Date monthEndDate = new DateTime(financialYearDate)
-                    .withDayOfMonth(financialYearDate.dayOfMonth().getMaximumValue()).toDate();
-
-            // Eg: 31/03/2016 vs 31/01/2016 days penalty 0%
-            // 31/03/2016 vs 29/02/2016 days penalty 0%
-            // 31/03/2016 vs 31/03/2016 days penalty 25%
-            BigDecimal penaltyAmt = penaltyRatesService.calculatePenalty(license, currentInstallment.getFromDate(),
-                    monthEndDate, currLicenseFee);
-
-            demandBillDtl.setMonth(monthMap.get(i).concat(", ").concat(installmentYear));
-            demandBillDtl.setArrersWithPenalty(arrLicenseFee.add(arrLicensePenalty));
-            demandBillDtl.setLicenseFee(currLicenseFee);
-            demandBillDtl.setPenalty(penaltyAmt.setScale(0, BigDecimal.ROUND_HALF_UP));
-            demandBillDtl.setTotalDues((arrLicenseFee.add(arrLicensePenalty).add(currLicenseFee).add(penaltyAmt))
-                    .setScale(0, BigDecimal.ROUND_HALF_UP));
-            monthWiseDemandDetails.add(demandBillDtl);
-        }
-    }
-
-    public String getPenaltyRateDetails(List<PenaltyRates> penaltyRates, Installment currentInstallment) {
-        StringBuilder penaltylist = new StringBuilder();
-        for (PenaltyRates penaltyRate : penaltyRates) {
-            LocalDate currentinstStartdate = LocalDate.fromDateFields(currentInstallment.getFromDate()).plusDays(1);
-            LocalDate currentStartDate = LocalDate.fromDateFields(currentInstallment.getFromDate());
-            if (penaltyRate.getRate() <= 0) {
-                penaltylist.append("Before ")
-                        .append(getDefaultFormattedDate(
-                                currentinstStartdate.plusDays(penaltyRate.getToRange().intValue()).toDate()))
-                        .append(" without penalty\n");
-
-            }
-            if (penaltyRate.getRate() > 0) {
-                if (penaltyRate.getToRange() >= 999) {
-                    penaltylist.append("    After ").append(getDefaultFormattedDate(
-                            currentStartDate.plusDays(penaltyRate.getFromRange().intValue()).toDate())).append(WITH)
-                            .append(penaltyRate.getRate().intValue()).append("% penalty");
-                } else if (penaltyRate.getFromRange() <= -999) {
-                    penaltylist.append("Before ")
-                            .append(getDefaultFormattedDate(
-                                    currentinstStartdate.plusDays(penaltyRate.getToRange().intValue()).toDate()))
-                            .append(WITH)
-                            .append(penaltyRate.getRate().intValue()).append("% penalty\n");
-                } else {
-                    penaltylist.append("    From ").append(getDefaultFormattedDate(currentinstStartdate
-                            .plusDays(penaltyRate.getFromRange().intValue()).toDate())).append(" to ")
-                            .append(getDefaultFormattedDate(currentStartDate
-                                    .plusDays(penaltyRate.getToRange().intValue()).toDate()))
-                            .append(WITH).append(penaltyRate.getRate().intValue()).append("% penalty\n");
-
-                }
-            }
-        }
-        return penaltylist.toString();
-
+        return ReportUtil.reportAsResponseEntity(demandNoticeService.generateBulkDemandNotice(searchRequest));
     }
 }

@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -55,6 +55,8 @@ import org.egov.tl.entity.contracts.DemandNoticeForm;
 
 import java.lang.reflect.Type;
 
+import static org.egov.infra.utils.StringUtils.defaultIfBlank;
+
 public class DemandNoticeAdaptor implements JsonSerializer<DemandNoticeForm> {
     @Override
     public JsonElement serialize(final DemandNoticeForm searchFormObj, final Type type,
@@ -65,7 +67,7 @@ public class DemandNoticeAdaptor implements JsonSerializer<DemandNoticeForm> {
             jsonObject.addProperty("applicationNumber", searchFormObj.getApplicationNumber());
             jsonObject.addProperty("licenseId", searchFormObj.getLicenseId());
             jsonObject.addProperty("tlNumber", searchFormObj.getLicenseNumber());
-            jsonObject.addProperty("oldTLNumber", searchFormObj.getOldLicenseNumber());
+            jsonObject.addProperty("oldTLNumber", defaultIfBlank(searchFormObj.getOldLicenseNumber()));
             jsonObject.addProperty("category", searchFormObj.getCategoryName());
             jsonObject.addProperty("subCategory", searchFormObj.getSubCategoryName());
             jsonObject.addProperty("tradeTitle", searchFormObj.getTradeTitle());
@@ -75,7 +77,7 @@ public class DemandNoticeAdaptor implements JsonSerializer<DemandNoticeForm> {
             jsonObject.addProperty("tlArrearPenalty", searchFormObj.getTlArrearPenalty());
             jsonObject.addProperty("status", searchFormObj.getStatus());
             jsonObject.addProperty("ownerName", searchFormObj.getOwnerName());
-            jsonObject.addProperty("wardname", searchFormObj.getWarName());
+            jsonObject.addProperty("wardName", searchFormObj.getWarName());
 
         }
         return jsonObject;
