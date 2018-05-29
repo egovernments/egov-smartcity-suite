@@ -86,6 +86,7 @@ import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
+import org.egov.ptis.client.util.FinancialUtil;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
@@ -183,6 +184,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     protected String applicationType;
     protected String initiator;
     protected boolean showCheckboxForGIS = false;
+    
+    @Autowired
+    protected FinancialUtil financialUtil;
 
     @Autowired
     transient LayoutApprovalAuthorityRepository layoutApprovalAuthorityRepo;
@@ -1059,6 +1063,10 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                                 owner.getOwner().getMobileNumber().concat(",").concat(owner.getOwner().getName())));
                 }
         }
+    }
+    
+    public String getDemandVoucherAppConfigValue(){
+        return propertyTaxCommonUtils.getAppConfigValue(APPCONFIG_DEMAND_VOUCHER_GENERATION_REQUIRED, PTMODULENAME);
     }
 
     public WorkflowBean getWorkflowBean() {

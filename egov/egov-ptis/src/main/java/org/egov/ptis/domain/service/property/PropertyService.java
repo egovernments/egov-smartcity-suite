@@ -51,6 +51,7 @@ import static java.lang.Boolean.FALSE;
 import static java.lang.String.format;
 import static java.math.BigDecimal.ZERO;
 import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_PT_DEMAND_VOUCHER_GLCODES;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_AMALGAMATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
@@ -280,6 +281,10 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @Transactional(readOnly = true)
 public class PropertyService {
+	private static final String IS_INCREASED = "isIncreased";
+	private static final String AMOUNT = "amount";
+	private static final String ARREAR_TAX = "ARREAR_TAX";
+	private static final String CURR_TAX = "CURR_TAX";
     private static final String AND_PMV_HOUSE_NO_LIKE = " and pmv.houseNo like ? ";
     private static final String WHERE_PMV_IS_ACTIVE_TRUE = "where pmv.isActive = true ";
     private static final String SELECT_COUNT_DISTINCT_PMV = "select count(distinct pmv) ";
@@ -4379,5 +4384,212 @@ public class PropertyService {
     public Ptdemand getLatestDemandforHistoryProp(Property oldProperty){
         return propertyHibernateDAO.getLatestDemand(oldProperty);
     }
+    
+	public Map<String, Map<String, Object>> prepareDemandVoucherData(Property currProperty, Property existingProperty,
+			boolean forCreate) {
+		BigDecimal existingPropTax = BigDecimal.ZERO;
+		Map<String, BigDecimal> currPropTaxDetails = getDCBDetailsForProperty(currProperty);
+		BigDecimal currentPropTax = currPropTaxDetails.get(PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR)
+				.add(currPropTaxDetails.get(PropertyTaxConstants.CURR_SECONDHALF_DMD_STR))
+				.add(currPropTaxDetails.get(PropertyTaxConstants.ARR_DMD_STR));
+
+		if (!forCreate) {
+			Map<String, BigDecimal> existingPropTaxDetails = getDCBDetailsForProperty(existingProperty);
+			existingPropTax = existingPropTaxDetails.get(PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR)
+					.add(existingPropTaxDetails.get(PropertyTaxConstants.CURR_SECONDHALF_DMD_STR))
+					.add(existingPropTaxDetails.get(PropertyTaxConstants.ARR_DMD_STR));
+		}
+
+		boolean demandIncreased = currentPropTax.compareTo(existingPropTax) > 0 ? true : false;
+
+		return prepareDataForDemandVoucher(currProperty, existingProperty, demandIncreased, forCreate);
+	}
+
+	private Map<String, BigDecimal> getDCBDetailsForProperty(Property property) {
+		return ptDemandDAO.getDemandCollMap(property);
+	}
+
+	public Map<String, String> getGlCodesForTaxes() {
+		Map<String, String> glCodeMap = new HashMap<>();
+		List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(PTMODULENAME,
+				APPCONFIG_PT_DEMAND_VOUCHER_GLCODES);
+		String[] taxHeads;
+		String[] value;
+		for (AppConfigValues appConfig : appConfigValues) {
+			taxHeads = appConfig.getValue().split("~");
+			for (String taxHead : taxHeads) {
+				value = taxHead.split("=");
+				glCodeMap.put(value[0], value[1]);
+			}
+		}
+		return glCodeMap;
+	}
+
+	private Map<String, Map<String, Object>> prepareDataForDemandVoucher(Property currProperty, Property oldProperty,
+			boolean demandIncreased, boolean forCreate) {
+		Map<String, Map<String, Object>> voucherDetails = new HashMap<>();
+		currentInstall = propertyTaxCommonUtils.getCurrentInstallment();
+		Map<String, String> glCodeMap = getGlCodesForTaxes();
+		Module module = moduleDao.getModuleByName(PTMODULENAME);
+		Date effectiveDate;
+		if (forCreate) {
+			if (!currProperty.getPropertyDetail().getPropertyTypeMaster().getCode()
+					.equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
+				effectiveDate = getLowestDtOfCompFloorWise(currProperty.getPropertyDetail().getFloorDetails());
+			else
+				effectiveDate = currProperty.getPropertyDetail().getDateOfCompletion();
+		} else
+			effectiveDate = currProperty.getEffectiveDate();
+		Installment effectiveInstall = installmentDao.getInsatllmentByModuleForGivenDate(module, effectiveDate);
+		Map<String, Object> values;
+		Map<String, Installment> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
+		Installment currFirstHalf = currYearInstMap.get(PropertyTaxConstants.CURRENTYEAR_FIRST_HALF);
+		Installment currSecondHalf = currYearInstMap.get(PropertyTaxConstants.CURRENTYEAR_SECOND_HALF);
+		/*
+		 * if demandIncreased, yearwise current and arrear tax details go as
+		 * debit and headwise taxes go as credit, else yearwise current and
+		 * arrear tax details go as credit and headwise taxes go as debit
+		 */
+		Ptdemand ptDemand = currProperty.getPtDemandSet().iterator().next();
+		Ptdemand oldPtDemand;
+		Map<String, BigDecimal> oldPropertyTaxMap = new LinkedHashMap<>();
+		Map<String, BigDecimal> currPropertyTaxMap = fetchHeadwiseDetailsForDemandVoucher(effectiveInstall,
+				currFirstHalf, currSecondHalf, ptDemand);
+		if (oldProperty != null) {
+			oldPtDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(oldProperty);
+			oldPropertyTaxMap = fetchHeadwiseDetailsForDemandVoucher(effectiveInstall, currFirstHalf, currSecondHalf,
+					oldPtDemand);
+		}
+		if (!currPropertyTaxMap.isEmpty()) {
+			BigDecimal advance = (currPropertyTaxMap.get(PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE) == null
+					? BigDecimal.ZERO : currPropertyTaxMap.get(PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE)).subtract(
+							oldPropertyTaxMap.get(PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE) == null ? BigDecimal.ZERO
+									: oldPropertyTaxMap.get(PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE));
+			BigDecimal generaltax = (currPropertyTaxMap.get(PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX) == null
+					? BigDecimal.ZERO : currPropertyTaxMap.get(PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX))
+							.subtract(oldPropertyTaxMap.get(PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX) == null
+									? BigDecimal.ZERO
+									: oldPropertyTaxMap.get(PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX));
+			BigDecimal vacantTax = (currPropertyTaxMap.get(PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX) == null
+					? BigDecimal.ZERO : currPropertyTaxMap.get(PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX))
+							.subtract(oldPropertyTaxMap.get(PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX) == null
+									? BigDecimal.ZERO
+									: oldPropertyTaxMap.get(PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX));
+			BigDecimal libCess = (currPropertyTaxMap.get(PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS) == null
+					? BigDecimal.ZERO : currPropertyTaxMap.get(PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS))
+							.subtract(oldPropertyTaxMap.get(PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS) == null
+									? BigDecimal.ZERO
+									: oldPropertyTaxMap.get(PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS));
+
+			BigDecimal currTax = (currPropertyTaxMap.get(CURR_TAX) == null ? BigDecimal.ZERO
+					: currPropertyTaxMap.get(CURR_TAX))
+							.subtract(oldPropertyTaxMap.get(CURR_TAX) == null ? BigDecimal.ZERO
+									: oldPropertyTaxMap.get(CURR_TAX));
+			BigDecimal arrearTax = (currPropertyTaxMap.get(ARREAR_TAX) == null ? BigDecimal.ZERO
+					: currPropertyTaxMap.get(ARREAR_TAX))
+							.subtract(oldPropertyTaxMap.get(ARREAR_TAX) == null ? BigDecimal.ZERO
+									: oldPropertyTaxMap.get(ARREAR_TAX));
+
+			if (advance.compareTo(BigDecimal.ZERO) != 0) {
+				values = new HashMap<>();
+				values.put(AMOUNT, advance);
+				values.put(IS_INCREASED, advance.compareTo(BigDecimal.ZERO) < 0 ? false : true);
+				voucherDetails.put(glCodeMap.get(PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE), values);
+			}
+			if (generaltax.compareTo(BigDecimal.ZERO) != 0) {
+				values = new HashMap<>();
+				values.put(AMOUNT, generaltax);
+				values.put(IS_INCREASED, generaltax.compareTo(BigDecimal.ZERO) < 0 ? false : true);
+				voucherDetails.put(glCodeMap.get(PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX), values);
+			}
+			if (vacantTax.compareTo(BigDecimal.ZERO) != 0) {
+				values = new HashMap<>();
+				values.put(AMOUNT, vacantTax);
+				values.put(IS_INCREASED, vacantTax.compareTo(BigDecimal.ZERO) < 0 ? false : true);
+				voucherDetails.put(glCodeMap.get(PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX), values);
+			}
+			if (libCess.compareTo(BigDecimal.ZERO) != 0) {
+				values = new HashMap<>();
+				values.put(AMOUNT, libCess);
+				values.put(IS_INCREASED, libCess.compareTo(BigDecimal.ZERO) < 0 ? false : true);
+				voucherDetails.put(glCodeMap.get(PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS), values);
+			}
+			if (currTax.compareTo(BigDecimal.ZERO) != 0) {
+				values = new HashMap<>();
+				values.put(AMOUNT, currTax);
+				values.put(IS_INCREASED, currTax.compareTo(BigDecimal.ZERO) < 0 ? false : true);
+				voucherDetails.put(PropertyTaxConstants.CURRENT_DEMANDRSN_GLCODE, values);
+			}
+			if (arrearTax.compareTo(BigDecimal.ZERO) != 0) {
+				values = new HashMap<>();
+				values.put(AMOUNT, arrearTax);
+				values.put(IS_INCREASED, arrearTax.compareTo(BigDecimal.ZERO) < 0 ? false : true);
+				voucherDetails.put(PropertyTaxConstants.ARREAR_DEMANDRSN_GLCODE, values);
+			}
+
+		}
+		values = new HashMap<>();
+		values.put(IS_INCREASED, demandIncreased ? true : false);
+		voucherDetails.put("demandIncreased", values);
+		return voucherDetails;
+	}
+
+	private Map<String, BigDecimal> fetchHeadwiseDetailsForDemandVoucher(Installment effectiveInstall,
+			Installment currFirstHalf, Installment currSecondHalf, Ptdemand ptDemand) {
+		String taxHead;
+		BigDecimal advance = BigDecimal.ZERO;
+		BigDecimal generalTax = BigDecimal.ZERO;
+		BigDecimal vacantLandTax = BigDecimal.ZERO;
+		BigDecimal libCess = BigDecimal.ZERO;
+		BigDecimal currTax = BigDecimal.ZERO;
+		BigDecimal arrearTax = BigDecimal.ZERO;
+		BigDecimal currTaxDue;
+		BigDecimal arrearTaxDue;
+		Map<String, BigDecimal> currPropertyTaxMap = new LinkedHashMap<>();
+		for (EgDemandDetails demandDetails : ptDemand.getEgDemandDetails()) {
+			if (!demandDetails.getInstallmentStartDate().before(effectiveInstall.getFromDate())) {
+				taxHead = demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode();
+				if (PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE.equalsIgnoreCase(taxHead)) {
+					advance = advance.add(demandDetails.getAmtCollected());
+				}
+				if (PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX.equalsIgnoreCase(taxHead)
+						|| PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_TAX.equalsIgnoreCase(taxHead)
+						|| PropertyTaxConstants.DEMANDRSN_CODE_WATER_TAX.equalsIgnoreCase(taxHead)
+						|| PropertyTaxConstants.DEMANDRSN_CODE_DRAINAGE_TAX.equalsIgnoreCase(taxHead)
+						|| PropertyTaxConstants.DEMANDRSN_CODE_SCAVENGE_TAX.equalsIgnoreCase(taxHead)
+						|| PropertyTaxConstants.DEMANDRSN_CODE_LIGHT_TAX.equalsIgnoreCase(taxHead)
+						|| PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY.equalsIgnoreCase(taxHead))
+					generalTax = generalTax.add(demandDetails.getAmount());
+
+				if (PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX.equalsIgnoreCase(taxHead))
+					vacantLandTax = vacantLandTax.add(demandDetails.getAmount());
+				if (PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS.equalsIgnoreCase(taxHead))
+					libCess = libCess.add(demandDetails.getAmount());
+
+				if (demandDetails.getInstallmentStartDate().equals(currFirstHalf.getFromDate())
+						|| demandDetails.getInstallmentStartDate().equals(currSecondHalf.getFromDate())) {
+					currTaxDue = demandDetails.getAmount().subtract(demandDetails.getAmtCollected());
+					currTax = currTax.add(currTaxDue);
+				} else {
+					arrearTaxDue = demandDetails.getAmount().subtract(demandDetails.getAmtCollected());
+					arrearTax = arrearTax.add(arrearTaxDue);
+				}
+			}
+		}
+		if (advance.compareTo(BigDecimal.ZERO) > 0)
+			currPropertyTaxMap.put(PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE, advance);
+		if (generalTax.compareTo(BigDecimal.ZERO) > 0)
+			currPropertyTaxMap.put(PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX, generalTax);
+		if (vacantLandTax.compareTo(BigDecimal.ZERO) > 0)
+			currPropertyTaxMap.put(PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX, vacantLandTax);
+		if (libCess.compareTo(BigDecimal.ZERO) > 0)
+			currPropertyTaxMap.put(PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS, libCess);
+		if (currTax.compareTo(BigDecimal.ZERO) > 0)
+			currPropertyTaxMap.put(CURR_TAX, currTax);
+		if (arrearTax.compareTo(BigDecimal.ZERO) > 0)
+			currPropertyTaxMap.put(ARREAR_TAX, arrearTax);
+
+		return currPropertyTaxMap;
+	}
 
 }

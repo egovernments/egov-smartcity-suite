@@ -904,6 +904,11 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         approved = true;
         setWardId(basicProp.getPropertyID().getWard().getId());
         basicPropertyService.applyAuditing(property.getState());
+        String appConfigValue = getDemandVoucherAppConfigValue();
+        if("Y".equalsIgnoreCase(appConfigValue)){
+            Map<String, Map<String, Object>> voucherData = propService.prepareDemandVoucherData(property, null, true);
+            financialUtil.createVoucher(basicProp.getUpicNo(), voucherData, APPLICATION_TYPE_NEW_ASSESSENT);
+        }
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
         if (SOURCE_SURVEY.equalsIgnoreCase(property.getSource())) {
             SurveyBean surveyBean = new SurveyBean();

@@ -83,7 +83,6 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.portal.entity.PortalInbox;
 import org.egov.ptis.actions.common.PropertyTaxBaseAction;
 import org.egov.ptis.client.service.calculator.APTaxCalculator;
-import org.egov.ptis.client.util.FinancialUtil;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -212,7 +211,6 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT_DDMMYYY);
     private transient PropertyImpl propWF;
     private transient Map<String, String> propTypeCategoryMap;
-    FinancialUtil financialUtil = new FinancialUtil();
     private String docNumber;
     private boolean isfloorDetailsRequired;
     private boolean updateData;
@@ -776,6 +774,13 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 || PROPERTY_MODIFY_REASON_AMALG.equals(modifyRsn)
                 || PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION.equals(modifyRsn))
             updateAddress();
+        
+        String appConfigValue = getDemandVoucherAppConfigValue();
+        if("Y".equalsIgnoreCase(appConfigValue)){
+            Map<String, Map<String, Object>> voucherData = propService.prepareDemandVoucherData(propertyModel, oldProperty, false);
+            financialUtil.createVoucher(basicProp.getUpicNo(), voucherData, APPLICATION_TYPE_ALTER_ASSESSENT);
+        }
+        
         propService.updateIndexes(propertyModel, getApplicationType());
         if (SOURCE_SURVEY.equalsIgnoreCase(propertyModel.getSource())) {
             SurveyBean surveyBean = new SurveyBean();

@@ -102,6 +102,7 @@ import org.springframework.context.ApplicationContext;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -836,4 +837,13 @@ public class PropertyTaxCommonUtils {
         return value != null ? value : BigDecimal.ZERO;
     }
 
+    public BigInteger getModuleIdByName(){
+    	BigInteger id = BigInteger.ZERO ;
+    	String selectQuery = " select id from eg_modules where name =:name ";
+        final Query qry = getSession().createSQLQuery(selectQuery).setString("name", PropertyTaxConstants.FILESTORE_MODULE_NAME);
+        List<Object> list = qry.list();
+        	if(!list.isEmpty())
+        		id = (BigInteger) list.get(0);
+    	return id;
+    }
 }
