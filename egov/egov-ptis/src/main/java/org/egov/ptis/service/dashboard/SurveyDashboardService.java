@@ -65,7 +65,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import org.apache.commons.lang3.StringUtils;
+
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+
+import org.apache.commons.lang.StringUtils;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import org.egov.infra.admin.master.entity.es.CityIndex;
 import org.egov.infra.admin.master.service.es.CityIndexService;
 import org.egov.infra.utils.DateUtils;
@@ -202,11 +206,11 @@ public class SurveyDashboardService {
 
     private BoolQueryBuilder prepareQuery(final SurveyRequest surveyRequest) {
         BoolQueryBuilder boolQuery = new BoolQueryBuilder();
-        if (StringUtils.isNotBlank(surveyRequest.getRegionName()))
+        if (isNotBlank(surveyRequest.getRegionName()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(REGION_NAME, surveyRequest.getRegionName()));
-        if (StringUtils.isNotBlank(surveyRequest.getDistrictName()))
+        if (isNotBlank(surveyRequest.getDistrictName()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(DISTRICT_NAME, surveyRequest.getDistrictName()));
-        if (StringUtils.isNotBlank(surveyRequest.getUlbName()))
+        if (isNotBlank(surveyRequest.getUlbName()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(CITY_NAME, surveyRequest.getUlbName()));
         if (surveyRequest.getThirdParty() != null) {
             if (surveyRequest.getThirdParty() == 'Y')
@@ -214,16 +218,16 @@ public class SurveyDashboardService {
             else
                 boolQuery = boolQuery.filter(QueryBuilders.matchQuery(SENT_TO_THIRD_PARTY, false));
         }
-        if (StringUtils.isNotBlank(surveyRequest.getUlbCode())) {
+        if (isNotBlank(surveyRequest.getUlbCode())) {
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(CITY_CODE, surveyRequest.getUlbCode()));
         }
-        if (StringUtils.isNotBlank(surveyRequest.getWardName())) {
+        if (isNotBlank(surveyRequest.getWardName())) {
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(REVENUE_WARD, surveyRequest.getWardName()));
         }
-        if (StringUtils.isNotBlank(surveyRequest.getLocalityName())) {
+        if (isNotBlank(surveyRequest.getLocalityName())) {
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(LOCALITY_NAME, surveyRequest.getLocalityName()));
         }
-        if (StringUtils.isNotBlank(surveyRequest.getFunctionaryName()))
+        if (isNotBlank(surveyRequest.getFunctionaryName()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery(FUNCTIONARY_NAME, surveyRequest.getFunctionaryName()));
 
         boolQuery = prepareApplicationStatusQuery(surveyRequest, boolQuery);
@@ -233,19 +237,19 @@ public class SurveyDashboardService {
 
     private BoolQueryBuilder prepareApplicationStatusQuery(final SurveyRequest surveyRequest, BoolQueryBuilder boolQuery) {
         BoolQueryBuilder statusQuery = boolQuery;
-        if (StringUtils.isNotBlank(surveyRequest.getServiceName()))
+        if (isNotBlank(surveyRequest.getServiceName()))
             statusQuery = statusQuery.filter(QueryBuilders.matchQuery(APPLICATION_TYPE, surveyRequest.getServiceName()));
-        if (StringUtils.isNotBlank(surveyRequest.getApproved()))
+        if (isNotBlank(surveyRequest.getApproved()))
             statusQuery = statusQuery.filter(QueryBuilders.matchQuery(STATUS_IS_APPROVED, surveyRequest.getApproved()));
 
-        if (StringUtils.isNotBlank(surveyRequest.getCancelled()))
+        if (isNotBlank(surveyRequest.getCancelled()))
             statusQuery = statusQuery.filter(QueryBuilders.matchQuery(STATUS_IS_CANCELLED, surveyRequest.getCancelled()));
 
-        if (StringUtils.isNotBlank(surveyRequest.getThirdPartyReffered()))
+        if (isNotBlank(surveyRequest.getThirdPartyReffered()))
             statusQuery = statusQuery
                     .filter(QueryBuilders.matchQuery(SENT_TO_THIRD_PARTY, surveyRequest.getThirdPartyReffered()));
 
-        if (StringUtils.isNotBlank(surveyRequest.getVerified()))
+        if (isNotBlank(surveyRequest.getVerified()))
             statusQuery = statusQuery.filter(QueryBuilders.matchQuery(THIRD_PARTY_FLAG, surveyRequest.getVerified()));
         return statusQuery;
     }
@@ -272,9 +276,8 @@ public class SurveyDashboardService {
     }
 
     public List<SurveyResponse> getAggregatedSurveyDetails(SurveyRequest surveyRequest) {
-        List<SurveyResponse> responseList;
         String aggregationField = REGION_NAME;
-        if (StringUtils.isNotBlank(surveyRequest.getAggregationLevel()))
+        if (isNotBlank(surveyRequest.getAggregationLevel()))
             aggregationField = getAggregrationField(surveyRequest);
 
         AggregationBuilder aggregationBuilder = AggregationBuilders.terms(AGGREGATIONWISE).field(aggregationField).size(100);
@@ -283,16 +286,14 @@ public class SurveyDashboardService {
                 .addAggregation(aggregationBuilder
                         .subAggregation(getCountWithGrouping("verificationDone", THIRD_PARTY_FLAG, 2))
                         .subAggregation(getCountWithGrouping("sentForReference", SENT_TO_THIRD_PARTY, 2))
-                        .subAggregation(AggregationBuilders.sum("gisTotal").field(GIS_TAX))
-                        .subAggregation(AggregationBuilders.sum("systemTotal").field(SYSTEM_TAX))
-                        .subAggregation(AggregationBuilders.sum(APPLICATION_TAX).field(APPLICATION_TAX))
                         .subAggregation(AggregationBuilders.topHits("cityDetails")
                                 .addField(CITY_NAME)
                                 .addField(CITY_CODE)))
                 .execute().actionGet();
 
         SearchResponse completedResponse = elasticsearchTemplate.getClient().prepareSearch(PROPERTYSURVEYDETAILS_INDEX).setSize(0)
-                .setQuery(prepareQuery(surveyRequest).filter(QueryBuilders.matchQuery(APPLICATION_STATUS, "Closed")).filter(QueryBuilders.matchQuery(STATUS_IS_APPROVED,true)))
+                .setQuery(prepareQuery(surveyRequest).filter(QueryBuilders.matchQuery(APPLICATION_STATUS, "Closed"))
+                        .filter(QueryBuilders.matchQuery(STATUS_IS_APPROVED, true)))
                 .addAggregation(aggregationBuilder).execute().actionGet();
 
         SearchResponse approvedResponse = elasticsearchTemplate.getClient().prepareSearch(PROPERTYSURVEYDETAILS_INDEX).setSize(0)
@@ -302,21 +303,81 @@ public class SurveyDashboardService {
                         .subAggregation(AggregationBuilders.sum("approvedTotal").field(APPROVED_TAX)))
                 .execute().actionGet();
         SearchResponse cancelledResponse = elasticsearchTemplate.getClient().prepareSearch(PROPERTYSURVEYDETAILS_INDEX).setSize(0)
-                .setQuery(prepareQuery(surveyRequest).filter(QueryBuilders.matchQuery(APPLICATION_STATUS, "Closed")).filter(QueryBuilders.matchQuery(STATUS_IS_CANCELLED,true)))
+                .setQuery(prepareQuery(surveyRequest).filter(QueryBuilders.matchQuery(APPLICATION_STATUS, "Closed"))
+                        .filter(QueryBuilders.matchQuery(STATUS_IS_CANCELLED, true)))
                 .addAggregation(aggregationBuilder).execute().actionGet();
-        
+
+        SearchResponse taxDetails = elasticsearchTemplate.getClient().prepareSearch(PROPERTYSURVEYDETAILS_INDEX).setSize(0)
+                .setQuery(prepareQuery(surveyRequest).must(QueryBuilders.matchQuery(STATUS_IS_CANCELLED, false)))
+                .addAggregation(aggregationBuilder.subAggregation(AggregationBuilders.sum("gisTotal").field(GIS_TAX))
+                        .subAggregation(AggregationBuilders.sum("systemTotal").field(SYSTEM_TAX))
+                        .subAggregation(AggregationBuilders.sum(APPLICATION_TAX).field(APPLICATION_TAX)))
+                .execute().actionGet();
+
+        return prepareResponseList(surveyRequest, aggregationField, response, completedResponse, approvedResponse, cancelledResponse,
+                taxDetails);
+    }
+
+    private List<SurveyResponse> prepareResponseList(SurveyRequest surveyRequest, String aggregationField,
+            SearchResponse response,
+            SearchResponse completedResponse, SearchResponse approvedResponse, SearchResponse cancelledResponse,
+            SearchResponse taxDetails) {
+        List<SurveyResponse> responseList = new ArrayList<>();
+        Map<String, BillCollectorIndex> wardWiseBillCollectors = new HashMap<>();
+        List<BigDecimal> taxList = new ArrayList<>();
         Terms approvedAggr = approvedResponse.getAggregations().get(AGGREGATIONWISE);
-        Map<String, BigDecimal> approvedSystemMap = new HashMap<>();
-        Map<String, BigDecimal> approvedTotalMap = new HashMap<>();
-        List<Map<String, BigDecimal>> list = new ArrayList<>();
-        Map<String, List<Map<String, BigDecimal>>> totalMap = new HashMap<>();
+        Map<String, List<Map<String, BigDecimal>>> approvedTotalMap = getApprovedTotal(approvedAggr);
+
+        Terms completedAggr = completedResponse.getAggregations().get(AGGREGATIONWISE);
+        Map<String, Long> completedApplicationsMap = new ConcurrentHashMap<>();
+        for (Bucket bucket : completedAggr.getBuckets())
+            completedApplicationsMap.put(bucket.getKeyAsString(), bucket.getDocCount());
+
+        Terms cancelledAggr = cancelledResponse.getAggregations().get(AGGREGATIONWISE);
+        Map<String, Long> cancelledApplicationsMap = new ConcurrentHashMap<>();
+        for (Bucket bucket : cancelledAggr.getBuckets())
+            cancelledApplicationsMap.put(bucket.getKeyAsString(), bucket.getDocCount());
+
+        prepareTaxLists(taxDetails, taxList);
+
+        if (DASHBOARD_GROUPING_WARDWISE.equalsIgnoreCase(surveyRequest.getAggregationLevel())) {
+            CollectionDetailsRequest collectionDetailsRequest = new CollectionDetailsRequest();
+            collectionDetailsRequest.setUlbCode(surveyRequest.getUlbCode());
+            wardWiseBillCollectors = collectionIndexElasticSearchService.getWardWiseBillCollectors(collectionDetailsRequest);
+        }
+
+        Terms ulbTerms = response.getAggregations().get(AGGREGATIONWISE);
+        String name;
+        Map<String, String> cityInfoMap = new HashMap<>();
+        Iterable<CityIndex> cities = cityIndexService.findAll();
+        for (CityIndex city : cities)
+            cityInfoMap.put(city.getCitycode(), city.getName());
+        for (Bucket bucket : ulbTerms.getBuckets()) {
+            name = bucket.getKeyAsString();
+            SurveyResponse surveyResponse = new SurveyResponse();
+            getAggregationNames(surveyRequest, aggregationField, wardWiseBillCollectors, surveyResponse, cityInfoMap, bucket);
+            surveyResponse.setTotalReceived(bucket.getDocCount());
+            if (cancelledApplicationsMap.get(name) != null)
+                surveyResponse.setTotalCancelled(cancelledApplicationsMap.get(name));
+            setThirdPartyVerifiedApplications(bucket, surveyResponse);
+            setApprovedTaxes(approvedTotalMap, taxList, completedApplicationsMap, name, surveyResponse);
+            responseList.add(surveyResponse);
+        }
+        return responseList;
+    }
+
+    private Map<String, List<Map<String, BigDecimal>>> getApprovedTotal(Terms approvedAggr) {
+        Map<String, BigDecimal> approvedTotalMap = new ConcurrentHashMap<>();
+        Map<String, BigDecimal> approvedSystemMap = new ConcurrentHashMap<>();
+        Map<String, List<Map<String, BigDecimal>>> totalMap = new ConcurrentHashMap<>();
         Sum approvedSystemSumAggr;
+        String aggrName = EMPTY;
         Sum totalApprovedAggr;
         BigDecimal totalApprovedSysTax;
         BigDecimal totalApprovedTax;
-        String aggName = StringUtils.EMPTY;
+        List<Map<String, BigDecimal>> list = new ArrayList<>();
         for (Bucket appBucket : approvedAggr.getBuckets()) {
-            aggName = appBucket.getKeyAsString();
+            aggrName = appBucket.getKeyAsString();
             approvedSystemSumAggr = appBucket.getAggregations().get("approvedSystemTotal");
             totalApprovedSysTax = BigDecimal.valueOf(approvedSystemSumAggr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
             totalApprovedAggr = appBucket.getAggregations().get("approvedTotal");
@@ -326,80 +387,76 @@ public class SurveyDashboardService {
             list.add(approvedSystemMap);
             list.add(approvedTotalMap);
         }
-        totalMap.put(aggName, list);
-
-        Terms completedAggr = completedResponse.getAggregations().get(AGGREGATIONWISE);
-        Map<String, Long> completedApplicationsMap = new ConcurrentHashMap<>();
-        Map<String, BillCollectorIndex> wardWiseBillCollectors = new HashMap<>();
-        for (Bucket bucket : completedAggr.getBuckets())
-            completedApplicationsMap.put(bucket.getKeyAsString(), bucket.getDocCount());
-        
-        Terms cancelledAggr = cancelledResponse.getAggregations().get(AGGREGATIONWISE);
-        Map<String, Long> cancelledApplicationsMap = new ConcurrentHashMap<>();
-        for (Bucket bucket : cancelledAggr.getBuckets())
-            cancelledApplicationsMap.put(bucket.getKeyAsString(), bucket.getDocCount());
-
-        if (DASHBOARD_GROUPING_WARDWISE.equalsIgnoreCase(surveyRequest.getAggregationLevel())) {
-            CollectionDetailsRequest collectionDetailsRequest = new CollectionDetailsRequest();
-            collectionDetailsRequest.setUlbCode(surveyRequest.getUlbCode());
-            wardWiseBillCollectors = collectionIndexElasticSearchService.getWardWiseBillCollectors(collectionDetailsRequest);
-        }
-
-        responseList = setSurveyResponse(surveyRequest, aggregationField, response, completedApplicationsMap, totalMap,
-                wardWiseBillCollectors,cancelledApplicationsMap);
-        return responseList;
+        totalMap.put(aggrName, list);
+        return totalMap;
     }
 
-    private List<SurveyResponse> setSurveyResponse(SurveyRequest surveyRequest, String aggregationField,
-            SearchResponse response, Map<String, Long> completedApplicationsMap,
-            Map<String, List<Map<String, BigDecimal>>> approvedTotalMap,
-            Map<String, BillCollectorIndex> wardWiseBillCollectors,Map<String, Long> cancelledApplicationsMap) {
-        SurveyResponse surveyResponse;
-        List<SurveyResponse> responseList = new ArrayList<>();
-        Terms ulbTerms = response.getAggregations().get(AGGREGATIONWISE);
-        Terms verfTerms;
-        Terms sentForRefTerms;
-        String name;
-        Map<String, String> cityInfoMap = new HashMap<>();
-        Iterable<CityIndex> cities = cityIndexService.findAll();
-        for (CityIndex city : cities)
-            cityInfoMap.put(city.getCitycode(), city.getName());
-
-        for (Bucket bucket : ulbTerms.getBuckets()) {
-            surveyResponse = new SurveyResponse();
-            getAggregationNames(surveyRequest, aggregationField, wardWiseBillCollectors, surveyResponse, cityInfoMap,bucket);
-            surveyResponse.setTotalReceived(bucket.getDocCount());
-            if(cancelledApplicationsMap.get(bucket.getKeyAsString())!=null)
-                surveyResponse.setTotalCancelled(cancelledApplicationsMap.get(bucket.getKeyAsString()));
-            verfTerms = bucket.getAggregations().get("verificationDone");
-            for (Bucket verfBucket : verfTerms.getBuckets()) {
-                if (verfBucket.getKeyAsNumber().intValue() == 1)
-                    surveyResponse.setVerifyDone(verfBucket.getDocCount());
-            }
-            sentForRefTerms = bucket.getAggregations().get("sentForReference");
-            for (Bucket refBucket : sentForRefTerms.getBuckets()) {
-                if (refBucket.getKeyAsNumber().intValue() == 1)
-                    surveyResponse.setVerifyPending(refBucket.getDocCount() - surveyResponse.getVerifyDone());
-            }
-            getTaxDifferences(completedApplicationsMap, approvedTotalMap, surveyResponse, bucket);
-            responseList.add(surveyResponse);
+    private void setThirdPartyVerifiedApplications(Bucket bucket, SurveyResponse surveyResponse) {
+        Terms verfTerms = bucket.getAggregations().get("verificationDone");
+        for (Bucket verfBucket : verfTerms.getBuckets()) {
+            if (verfBucket.getKeyAsNumber().intValue() == 1)
+                surveyResponse.setVerifyDone(verfBucket.getDocCount());
         }
-        return responseList;
+        Terms sentForRefTerms = bucket.getAggregations().get("sentForReference");
+        for (Bucket refBucket : sentForRefTerms.getBuckets()) {
+            if (refBucket.getKeyAsNumber().intValue() == 1)
+                surveyResponse.setVerifyPending(refBucket.getDocCount() - surveyResponse.getVerifyDone());
+        }
+    }
+
+    private void prepareTaxLists(SearchResponse taxDetails, List<BigDecimal> taxList) {
+        Sum gisSumAggr;
+        Sum systemSumAggr;
+        Sum appTaxSumAggr;
+        BigDecimal totalGisTax;
+        BigDecimal totalSystemTax;
+        BigDecimal totalApplicationTax;
+        Terms taxAggr = taxDetails.getAggregations().get(AGGREGATIONWISE);
+        for (Bucket taxBucket : taxAggr.getBuckets()) {
+            gisSumAggr = taxBucket.getAggregations().get("gisTotal");
+            totalGisTax = BigDecimal.valueOf(gisSumAggr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
+            taxList.add(totalGisTax);
+            systemSumAggr = taxBucket.getAggregations().get("systemTotal");
+            totalSystemTax = BigDecimal.valueOf(systemSumAggr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
+            taxList.add(totalSystemTax);
+            appTaxSumAggr = taxBucket.getAggregations().get(APPLICATION_TAX);
+            totalApplicationTax = BigDecimal.valueOf(appTaxSumAggr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
+            taxList.add(totalApplicationTax);
+        }
+    }
+
+    private void setApprovedTaxes(Map<String, List<Map<String, BigDecimal>>> approvedTotalMap,
+            List<BigDecimal> taxList, Map<String, Long> completedApplicationsMap, String name,
+            SurveyResponse surveyResponse) {
+        BigDecimal approvedSysTax;
+        BigDecimal approvedTotalTax;
+        surveyResponse.setExptdIncr((taxList.get(0).subtract(taxList.get(1))).doubleValue());
+        surveyResponse.setDiffFromSurveytax(taxList.get(0).subtract(taxList.get(2)).doubleValue());
+        if (completedApplicationsMap.get(name) != null)
+            surveyResponse.setTotalCompleted(completedApplicationsMap.get(name));
+        surveyResponse.setTotalPending(
+                surveyResponse.getTotalReceived() - surveyResponse.getTotalCompleted() - surveyResponse.getTotalCancelled());
+        if (approvedTotalMap.containsKey(name)) {
+            approvedSysTax = approvedTotalMap.get(name).get(0).get("approvedSystemTax");
+            approvedTotalTax = approvedTotalMap.get(name).get(1).get("totalApprovedTax");
+            surveyResponse.setActlIncr(approvedTotalTax.subtract(approvedSysTax).doubleValue());
+        }
+        surveyResponse.setDifference(surveyResponse.getExptdIncr() - surveyResponse.getActlIncr());
     }
 
     private void getAggregationNames(SurveyRequest surveyRequest, String aggregationField,
             Map<String, BillCollectorIndex> wardWiseBillCollectors, SurveyResponse surveyResponse,
-            Map<String, String> cityInfoMap,Bucket bucket) {
+            Map<String, String> cityInfoMap, Bucket bucket) {
         final TopHits topHits = bucket.getAggregations().get("cityDetails");
         final SearchHit[] hit = topHits.getHits().getHits();
-        String name=bucket.getKeyAsString();
+        String name = bucket.getKeyAsString();
         if (REGION_NAME.equals(aggregationField))
             surveyResponse.setRegionName(name);
         else if (DISTRICT_NAME.equals(aggregationField))
             surveyResponse.setDistrictName(name);
         else if (CITY_CODE.equals(aggregationField)) {
             surveyResponse.setUlbCode(name);
-            surveyResponse.setUlbName(cityInfoMap.get(name) == null ? StringUtils.EMPTY : cityInfoMap.get(name));
+            surveyResponse.setUlbName(cityInfoMap.get(name) == null ? EMPTY : cityInfoMap.get(name));
         } else if (REVENUE_WARD.equals(aggregationField)) {
             getWardWiseBillCollector(surveyRequest, wardWiseBillCollectors, surveyResponse, name);
         } else if (APPLICATION_TYPE.equalsIgnoreCase(aggregationField)) {
@@ -418,39 +475,8 @@ public class SurveyDashboardService {
                 && !wardWiseBillCollectors.isEmpty()) {
             surveyResponse.setBillCollector(wardWiseBillCollectors.get(name) == null ? StringUtils.EMPTY
                     : wardWiseBillCollectors.get(name).getBillCollector());
-            surveyResponse.setBillCollMobile(wardWiseBillCollectors.get(name) == null ? StringUtils.EMPTY
+            surveyResponse.setBillCollMobile(wardWiseBillCollectors.get(name) == null ? EMPTY
                     : wardWiseBillCollectors.get(name).getBillCollectorMobileNo());
         }
-    }
-
-    private void getTaxDifferences(Map<String, Long> completedApplicationsMap,
-            Map<String, List<Map<String, BigDecimal>>> approvedTotalMap, SurveyResponse surveyResponse,
-            Bucket bucket) {
-        Sum gisSumAggr;
-        Sum systemSumAggr;
-        Sum appTaxSumAggr;
-        BigDecimal totalGisTax;
-        BigDecimal totalSystemTax;
-        BigDecimal totalApplicationTax;
-        BigDecimal approvedSysTax;
-        BigDecimal approvedTotalTax;
-        String name=bucket.getKeyAsString();
-        gisSumAggr = bucket.getAggregations().get("gisTotal");
-        totalGisTax = BigDecimal.valueOf(gisSumAggr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
-        systemSumAggr = bucket.getAggregations().get("systemTotal");
-        totalSystemTax = BigDecimal.valueOf(systemSumAggr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
-        appTaxSumAggr = bucket.getAggregations().get(APPLICATION_TAX);
-        totalApplicationTax = BigDecimal.valueOf(appTaxSumAggr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
-        surveyResponse.setExptdIncr((totalGisTax.subtract(totalSystemTax)).doubleValue());
-        surveyResponse.setDiffFromSurveytax((totalGisTax.subtract(totalApplicationTax)).doubleValue());
-        if (completedApplicationsMap.get(name) != null)
-            surveyResponse.setTotalCompleted(completedApplicationsMap.get(name));
-        surveyResponse.setTotalPending(surveyResponse.getTotalReceived() - surveyResponse.getTotalCompleted()-surveyResponse.getTotalCancelled());
-        if (approvedTotalMap.containsKey(name)) {
-            approvedSysTax = approvedTotalMap.get(name).get(0).get("approvedSystemTax");
-            approvedTotalTax = approvedTotalMap.get(name).get(1).get("totalApprovedTax");
-            surveyResponse.setActlIncr(approvedTotalTax.subtract(approvedSysTax).doubleValue());
-        }
-        surveyResponse.setDifference(surveyResponse.getExptdIncr() - surveyResponse.getActlIncr());
     }
 }
