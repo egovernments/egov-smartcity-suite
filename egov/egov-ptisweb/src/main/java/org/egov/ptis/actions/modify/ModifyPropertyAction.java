@@ -548,8 +548,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 
     private void isEligibleForDocEdit() {
         final String nextAction = propertyModel.getState().getNextAction();
-        if (WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING.equals(nextAction)
-                || WF_STATE_ASSISTANT_APPROVAL_PENDING.equals(nextAction))
+        if (WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING.equalsIgnoreCase(nextAction)
+                || WF_STATE_ASSISTANT_APPROVAL_PENDING.equalsIgnoreCase(nextAction))
             setAllowEditDocument(Boolean.TRUE);
     }
 
@@ -1296,7 +1296,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             addActionError(getText("mandatory.zone"));
         if ((wardId == null || wardId == -1) && !basicProp.getPropertyID().getWard().isActive())
             addActionError(getText("mandatory.ward"));
-        if ((blockId == null || blockId == -1) || !basicProp.getPropertyID().getArea().isActive())
+        if ((blockId == null || blockId == -1) && !basicProp.getPropertyID().getArea().isActive())
             addActionError(getText("mandatory.block"));
         if ((electionWardId == null || electionWardId == -1) && !basicProp.getPropertyID().getElectionBoundary().isActive())
             addActionError(getText("mandatory.election.ward"));
