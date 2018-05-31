@@ -363,6 +363,7 @@
 		populateBlock(wardId);
 		if(doorno && propType=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND_STR}"/>'){
 			jQuery("#houseNo").prop("readonly", true);
+			jQuery("#dateOfCompletion").datepicker();
 		}
 		else{
 			jQuery("#houseNo").prop("readonly", false);
@@ -453,8 +454,6 @@
 				jQuery.each(response, function (j, block) {
 					jQuery('#blockId').append("<option value='"+block.blockId+"'>"+block.blockName+"</option>");
 				});
-				if(blockId != null)
-					jQuery('#blockId').val('<s:property value="%{blockId}"/>');
 			}, 
 			error: function (response) {
 				jQuery('#blockId').html("");

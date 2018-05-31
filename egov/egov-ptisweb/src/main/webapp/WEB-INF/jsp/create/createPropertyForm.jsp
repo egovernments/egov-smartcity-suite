@@ -321,9 +321,8 @@
 		});
 	}
  	function setEffectiveDate() {
- 		debugger;
  		var propertyType = jQuery('#propTypeId :selected').text();
- 		if(propertyType == 'Vacant Land'){
+ 		if(propertyType == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND_STR}"/>'){
  			var today = new Date();
  			var curMonth = today.getMonth()+1;
  			var currYear = today.getFullYear();
@@ -342,6 +341,7 @@
  				effectiveDate = baseDate.getDate().toString()+"/"+baseDate.getMonth().toString()+"/"+(baseDate.getFullYear()-2).toString()
  			}
  			jQuery('#dateOfCompletion').val(effectiveDate);
+ 			jQuery('#dateOfCompletion').attr('readonly', true);
  		}
  	} 
     
