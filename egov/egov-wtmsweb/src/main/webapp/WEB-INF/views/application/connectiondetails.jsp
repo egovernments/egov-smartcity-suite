@@ -216,18 +216,7 @@
 </div>
 <c:if test="${waterConnectionDetails.applicationType.code=='REGLZNCONNECTION' && waterConnectionDetails.status.code=='CREATED' && currentState != 'NEW'}">
 	<div class="form-group">
-		<label class="col-sm-3 control-label text-right">
-				<spring:message code="lbl.service.charges"/>
-			</label>
-			<div class="col-sm-3 add-margin">
-				<input class="form-control" id="serviceCharges" disabled="true" value="${serviceCharges}"/> 
-			</div>
-		<label class="col-sm-2 control-label text-right">
-			<spring:message code="lbl.penalty.amount"/>
-		</label>
-		<div class="col-sm-3 add-margin">
-			<input class="form-control" id="penaltyAmount" value="${penaltyAmount}" disabled="true"/>
-		</div>
+		
 	</div>
 </c:if>
 	<div class="form-group display-hide showfields" id="donationChargesDiv" style="display:none">
@@ -243,6 +232,13 @@
 				<form:input path="executionDate" title="Please enter a valid date" class="form-control datepicker" pattern="\d{1,2}/\d{1,2}/\d{4}" 
 					data-date-end-date="-1d" id="executionDate" data-inputmask="'mask': 'd/m/y'" required="required" />
 				<form:errors path="executionDate" cssClass="add-margin error-msg" />
+			</div>
+			
+			<label class="col-sm-2 control-label text-right">
+				<spring:message code="lbl.penalty.amount"/>
+			</label>
+			<div class="col-sm-3 add-margin">
+				<input class="form-control" id="penaltyAmount" value="${penaltyAmount}" disabled="true"/>
 			</div>
 		</div>
 	</c:if>
@@ -268,9 +264,9 @@
 </c:if>	
 
 <script>
-
+	$("#penaltyAmount").val($("#donationChargesInput").val()/2);
 	$("#donationChargesInput").on('change', function() {
-		$("#penaltyAmount").val($("#donationChargesInput").val());
+		$("#penaltyAmount").val($("#donationChargesInput").val()/2);
 	});
 	
 	if($("#connectionType").val()=='METERED'){

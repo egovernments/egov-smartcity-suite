@@ -52,9 +52,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.METERED_CHARGES_RE
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PENALTYCHARGES;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PROPERTY_MODULE_NAME;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.SERVICECHARGES;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAXREASONCODE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WCMS_SERVICE_CHARGES;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.YEARLY;
 
 import java.io.UnsupportedEncodingException;
@@ -87,8 +85,6 @@ import org.egov.demand.model.EgBillType;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
-import org.egov.infra.admin.master.entity.AppConfig;
-import org.egov.infra.admin.master.service.AppConfigService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -192,9 +188,6 @@ public class ConnectionDemandService {
 
     @Autowired
     private WaterTaxUtils waterTaxUtils;
-    
-    @Autowired
-    private AppConfigService appConfigService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -862,16 +855,12 @@ public class ConnectionDemandService {
         Installment installment = null;
         installment = installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(
                 moduleService.getModuleByName(MODULE_NAME), waterConnectionDetails.getExecutionDate(), YEARLY);
-        AppConfig appConfig = appConfigService.getAppConfigByModuleNameAndKeyName(MODULE_NAME, WCMS_SERVICE_CHARGES);
-        waterConnectionDetails.getWaterDemandConnection().get(0).getDemand().addEgDemandDetails(
-                createDemandDetailsrForDataEntry(appConfig == null ? BigDecimal.ZERO
-                        : BigDecimal.valueOf(Long.parseLong(appConfig.getConfValues().get(0).getValue())), BigDecimal.ZERO,
-                        SERVICECHARGES, installment == null ? null : installment.getDescription(), new DemandDetail(),
-                        waterConnectionDetails, FIELD_INSPECTION));
 
         waterConnectionDetails.getWaterDemandConnection().get(0).getDemand().addEgDemandDetails(
-                createDemandDetailsrForDataEntry(BigDecimal.valueOf(waterConnectionDetails.getDonationCharges()), BigDecimal.ZERO,
-                        PENALTYCHARGES, installment == null ? null : installment.getDescription(), new DemandDetail(),
+                createDemandDetailsrForDataEntry(
+                        BigDecimal.valueOf(waterConnectionDetails.getDonationCharges()).divide(new BigDecimal(2)),
+                        BigDecimal.ZERO, PENALTYCHARGES, installment == null ? null : installment.getDescription(),
+                        new DemandDetail(),
                         waterConnectionDetails, FIELD_INSPECTION));
     }
 

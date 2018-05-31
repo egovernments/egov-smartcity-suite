@@ -53,6 +53,7 @@ import static org.apache.commons.lang.StringUtils.EMPTY;
 import java.util.Iterator;
 
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
@@ -89,7 +90,9 @@ public class ConnectionAddressService {
                 waterConnectionDetails.getConnection().getPropertyIdentifier(), PropertyExternalService.FLAG_FULL_DETAILS,
                 BasicPropertyStatus.ALL);
 
-        if (assessmentDetails != null) {
+        if (assessmentDetails == null)
+            throw new ApplicationRuntimeException("err.assessment.details.not.present");
+        else {
             ConnectionAddress connectionAddress = new ConnectionAddress();
             connectionAddress.setZone(boundaryService.getBoundaryById(assessmentDetails.getBoundaryDetails().getZoneId()));
             connectionAddress.setRevenueWard(boundaryService.getBoundaryById(assessmentDetails.getBoundaryDetails().getWardId()));
@@ -105,11 +108,12 @@ public class ConnectionAddressService {
                     connectionAddress.setOwnerName(
                             primaryOwner == null || primaryOwner.getOwnerName() == null ? EMPTY : primaryOwner.getOwnerName());
                 }
+
+                connectionAddress.setDoorNumber(assessmentDetails.getHouseNo());
+                connectionAddress.setAddress(assessmentDetails.getPropertyAddress());
+                connectionAddress.setWaterConnectionDetails(waterConnectionDetails);
+                save(connectionAddress);
             }
-            connectionAddress.setDoorNumber(assessmentDetails.getHouseNo());
-            connectionAddress.setAddress(assessmentDetails.getPropertyAddress());
-            connectionAddress.setWaterConnectionDetails(waterConnectionDetails);
-            save(connectionAddress);
         }
     }
 }

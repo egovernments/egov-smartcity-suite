@@ -62,7 +62,6 @@
 	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
 	<style name="Detail" fontName="Arial" fontSize="12"/>
 	<parameter name="donationCharges" class="java.math.BigDecimal"/>
-	<parameter name="serviceCharges" class="java.math.BigDecimal"/>
 	<parameter name="penaltyCharges" class="java.math.BigDecimal"/>
 	<parameter name="fromInstallment" class="java.lang.String"/>
 	<parameter name="toInstallment" class="java.lang.String"/>
@@ -177,7 +176,7 @@
 				<text><![CDATA[Penalty]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="68" width="51" height="20" uuid="71641b9d-7791-4bbe-9e5d-028d2457fdc6"/>
+				<reportElement x="0" y="68" width="51" height="20" uuid="3e60a1b2-eddd-431f-894a-f7ff7ed4b54c"/>
 				<box topPadding="1" leftPadding="4" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -191,21 +190,7 @@
 				<text><![CDATA[03]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="51" y="68" width="379" height="20" uuid="f9ddb147-27a5-499d-b264-eedb9c25be75"/>
-				<box topPadding="1" leftPadding="4" bottomPadding="1" rightPadding="1">
-					<pen lineWidth="1.0"/>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="12"/>
-				</textElement>
-				<text><![CDATA[Service Charges]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="0" y="88" width="51" height="20" uuid="3e60a1b2-eddd-431f-894a-f7ff7ed4b54c"/>
+				<reportElement x="0" y="88" width="51" height="20" uuid="33d9e572-f2fc-477a-a1f4-844fcf359a84"/>
 				<box topPadding="1" leftPadding="4" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -219,21 +204,7 @@
 				<text><![CDATA[04]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="108" width="51" height="20" uuid="33d9e572-f2fc-477a-a1f4-844fcf359a84"/>
-				<box topPadding="1" leftPadding="4" bottomPadding="1" rightPadding="1">
-					<pen lineWidth="1.0"/>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="12"/>
-				</textElement>
-				<text><![CDATA[05]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="51" y="108" width="379" height="20" uuid="5f8421b1-c893-45de-bb74-b36a368b7b23"/>
+				<reportElement x="51" y="88" width="379" height="20" uuid="5f8421b1-c893-45de-bb74-b36a368b7b23"/>
 				<box topPadding="1" leftPadding="4" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -247,7 +218,7 @@
 				<text><![CDATA[Grand Total]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="0" y="128" width="530" height="28" uuid="d7838bd2-b5cd-4b2f-bea2-c6b456d90267"/>
+				<reportElement x="0" y="108" width="530" height="28" uuid="d7838bd2-b5cd-4b2f-bea2-c6b456d90267"/>
 				<box topPadding="1" leftPadding="4" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -261,7 +232,7 @@
 				<textFieldExpression><![CDATA["(Amount In Words) : <style isBold=\"true\"> "+$P{amountInWords}+"</style>"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="51" y="88" width="379" height="20" uuid="90345fa6-b05a-4040-b041-b1bba559673f"/>
+				<reportElement x="51" y="68" width="379" height="20" uuid="90345fa6-b05a-4040-b041-b1bba559673f"/>
 				<box topPadding="1" leftPadding="4" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -288,21 +259,7 @@
 				<textFieldExpression><![CDATA[$P{penaltyCharges}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="430" y="68" width="100" height="20" uuid="abc27981-11bc-4965-8da4-41811e007530"/>
-				<box topPadding="1" leftPadding="4" bottomPadding="1" rightPadding="4">
-					<pen lineWidth="1.0"/>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{serviceCharges}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="430" y="88" width="100" height="20" uuid="1d85b540-c1df-4847-b597-930981b9564b"/>
+				<reportElement x="430" y="68" width="100" height="20" uuid="1d85b540-c1df-4847-b597-930981b9564b"/>
 				<box topPadding="1" leftPadding="4" bottomPadding="1" rightPadding="4">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -316,7 +273,7 @@
 				<textFieldExpression><![CDATA[$P{waterCharges}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="430" y="108" width="100" height="20" uuid="eb4ae3d1-8676-4f4d-af85-4d9c0822fbeb"/>
+				<reportElement x="430" y="88" width="100" height="20" uuid="eb4ae3d1-8676-4f4d-af85-4d9c0822fbeb"/>
 				<box topPadding="1" leftPadding="4" bottomPadding="1" rightPadding="4">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -344,11 +301,11 @@
 				<textFieldExpression><![CDATA[$P{donationCharges}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="-1" y="160" width="541" height="30" uuid="b0b72916-d36f-4abc-903b-169cf06324be"/>
+				<reportElement stretchType="RelativeToBandHeight" x="-1" y="140" width="541" height="30" uuid="b0b72916-d36f-4abc-903b-169cf06324be"/>
 				<textElement textAlignment="Justified">
 					<font fontName="Times New Roman" size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA["(Note:  If paid through DD, two separate DDs shall be drawn – One DD for charges from Sl. No. 1 to 3 and second DD for Sl. No. 4)"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["(Note:  If paid through DD, two separate DDs shall be drawn – One DD for charges from Sl. No. 1 to 2 and second DD for Sl. No. 3)"]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

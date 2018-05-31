@@ -60,7 +60,6 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.CONNECTION_WORK_OR
 import static org.egov.wtms.utils.constants.WaterTaxConstants.DESG_COMM_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.FILESTORE_MODULECODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULETYPE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PERMENENTCLOSE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTIONWITHSLASH;
@@ -68,7 +67,6 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTION_ESTIM
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SIGNED_DOCUMENT_PREFIX;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.TEMPERARYCLOSE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WCMS_SERVICE_CHARGES;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_SIGN_BUTTON;
 
 import java.io.ByteArrayInputStream;
@@ -89,9 +87,7 @@ import org.apache.commons.lang.WordUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
-import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.AppConfigService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -201,9 +197,6 @@ public class ReportGenerationService {
 
     @Autowired
     private DesignationService designationService;
-
-    @Autowired
-    private AppConfigService appConfigService;
 
     @Autowired
     private ConnectionDemandService connectionDemandService;
@@ -476,7 +469,8 @@ public class ReportGenerationService {
         return NumberToWordConverter.amountInWordsWithCircumfix(BigDecimal.valueOf(totalCharges));
     }
 
-    public ReportRequest generateCitizenAckReport(final WaterConnectionDetails waterConnectionDetails,final String sewApplicationNum) {
+    public ReportRequest generateCitizenAckReport(final WaterConnectionDetails waterConnectionDetails,
+            final String sewApplicationNum) {
         ReportRequest reportInput = null;
         final Map<String, Object> reportParams = new HashMap<>();
         if (waterConnectionDetails != null) {
@@ -494,9 +488,9 @@ public class ReportGenerationService {
             reportParams.put(APPLICANT_NAME, ownerName);
             final Integer appProcessTime = applicationProcessTimeService.getApplicationProcessTime(
                     waterConnectionDetails.getApplicationType(), waterConnectionDetails.getCategory());
-            if (StringUtils.isBlank(sewApplicationNum)) {
+            if (StringUtils.isBlank(sewApplicationNum))
                 reportParams.put("sewerageApplicationNo", null);
-            } else {
+            else {
                 reportParams.put(APPLICATION_TYPE, "Integrated Application for New Water & Sewerage Connection");
                 reportParams.put("sewerageApplicationNo", sewApplicationNum);
             }
@@ -519,10 +513,9 @@ public class ReportGenerationService {
         final String districtName = cityService.getDistrictName();
         reportParams.put("cityUrl", (cityService.findAll().isEmpty() ? districtName.toLowerCase()
                 : cityService.findAll().get(0).getName().toLowerCase()) + ".cdma.ap.gov.in");
-        if (reportParams.get(APPLICATION_TYPE)==null) {
+        if (reportParams.get(APPLICATION_TYPE) == null)
             reportParams.put(APPLICATION_TYPE,
                     WordUtils.capitalize(waterConnectionDetails.getApplicationType().getName()));
-        }
         reportParams.put(CITY_NAME, cityService.getMunicipalityName());
         reportParams.put(DISTRICT, districtName);
         reportParams.put("applicationNumber", waterConnectionDetails.getApplicationNumber());
@@ -723,14 +716,11 @@ public class ReportGenerationService {
         reportParams.put("waterCharges", waterCharges);
         reportParams.put(FROM_INSTALLMENT, resultMap.get(FROM_INSTALLMENT));
         reportParams.put(TO_INSTALLMENT, resultMap.get(TO_INSTALLMENT));
-        reportParams.put("penaltyCharges", BigDecimal.valueOf(waterConnectionDetails.getDonationCharges()));
-        AppConfig appConfig = appConfigService.getAppConfigByModuleNameAndKeyName(MODULE_NAME, WCMS_SERVICE_CHARGES);
-        BigDecimal serviceCharges = appConfig.getConfValues().isEmpty() ? BigDecimal.ZERO
-                : BigDecimal.valueOf(Long.parseLong(appConfig.getConfValues().get(0).getValue()));
-        reportParams.put("serviceCharges", serviceCharges);
+        reportParams.put("penaltyCharges",
+                BigDecimal.valueOf(waterConnectionDetails.getDonationCharges()).divide(new BigDecimal(2)));
+
         BigDecimal totalCharges = BigDecimal.valueOf(waterConnectionDetails.getDonationCharges())
-                .add(BigDecimal.valueOf(waterConnectionDetails.getDonationCharges()))
-                .add(serviceCharges)
+                .add(BigDecimal.valueOf(waterConnectionDetails.getDonationCharges()).divide(new BigDecimal(2)))
                 .add(waterCharges);
         reportParams.put("totalCharges", totalCharges);
         reportParams.put("amountInWords", getTotalAmntInWords(totalCharges.doubleValue()));
@@ -809,8 +799,10 @@ public class ReportGenerationService {
         }
     }
 
-    public ResponseEntity<InputStreamResource> generateReport(final WaterConnectionDetails waterConnectionDetails,final String sewerageApplicationNum ) {
-        ReportOutput reportOutput = reportService.createReport(generateCitizenAckReport(waterConnectionDetails,sewerageApplicationNum));
+    public ResponseEntity<InputStreamResource> generateReport(final WaterConnectionDetails waterConnectionDetails,
+            final String sewerageApplicationNum) {
+        ReportOutput reportOutput = reportService
+                .createReport(generateCitizenAckReport(waterConnectionDetails, sewerageApplicationNum));
         reportOutput.setReportFormat(ReportFormat.PDF);
         reportOutput.setReportName(waterConnectionDetails.getApplicationNumber());
         return reportAsResponseEntity(reportOutput);

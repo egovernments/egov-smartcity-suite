@@ -176,7 +176,7 @@ public class WaterTaxConstants {
     public static final String WF_STATE_EE_FORWARD_PENDING = "Executive Engineer forward pending";
     public static final String WF_STATE_SE_FORWARD_PENDING = "Superintending Engineer forward pending";
     public static final String WF_STATE_ME_FORWARD_PENDING = "Municipal Engineer forward pending";
-    public static final String WF_STATE_AE_APPROVAL_PENDING="Pending approval by Assistant Engineer";
+    public static final String WF_STATE_AE_APPROVAL_PENDING = "Pending approval by Assistant Engineer";
 
     public static final String APPROVEWORKFLOWACTION = "Approve";
     public static final String FORWARDWORKFLOWACTION = "Forward";
@@ -433,6 +433,7 @@ public class WaterTaxConstants {
     public static final String MIGRATED_CONNECTION = "Migrated Connection";
 
     public static final String WCMS_SERVICE_CHARGES = "WCMS_SERVICE_CHARGES";
+    public static final String WCMS_PENALTY_CHARGES_PERCENTAGE = "WCMS_PENALTY_CHARGES_PERCENTAGE";
     public static final String SERVICECHARGES = "SERVICECHARGES";
     public static final String PENALTYCHARGES = "PENALTYCHARGES";
 }

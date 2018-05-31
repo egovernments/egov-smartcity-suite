@@ -90,7 +90,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.SIGNWORKFLOWACTION
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SUBMITWORKFLOWACTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SUPERIENTEND_ENGINEER_DESIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SUPERINTENDING_ENGINEER_DESIGNATION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WCMS_SERVICE_CHARGES;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WCMS_PENALTY_CHARGES_PERCENTAGE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_ESTIMATION_NOTICE_BUTTON;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_RECONNECTIONACKNOWLDGEENT_BUTTON;
@@ -258,11 +258,14 @@ public class UpdateConnectionController extends GenericConnectionController {
             final DonationDetails donationDetails = connectionDemandService.getDonationDetails(waterConnectionDetails);
             final Double donationAmount = donationDetails == null ? 0d
                     : connectionDemandService.getDonationDetails(waterConnectionDetails).getAmount();
-            final AppConfig appConfig = appConfigService.getAppConfigByKeyName(WCMS_SERVICE_CHARGES);
-            final BigDecimal serviceCharges = BigDecimal.valueOf(Long.valueOf(appConfig.getConfValues().get(0).getValue()));
-            model.addAttribute("serviceCharges", serviceCharges);
+            BigDecimal penaltyPercent = BigDecimal.ZERO;
+            final AppConfig appConfig = appConfigService.getAppConfigByModuleNameAndKeyName(MODULE_NAME,
+                    WCMS_PENALTY_CHARGES_PERCENTAGE);
+            if (appConfig != null && !appConfig.getConfValues().isEmpty())
+                penaltyPercent = BigDecimal.valueOf(Long.valueOf(appConfig.getConfValues().get(0).getValue()));
             model.addAttribute(DONATION_AMOUNT, donationAmount.longValue());
-            model.addAttribute(PENALTY_AMOUNT, donationAmount);
+            model.addAttribute(PENALTY_AMOUNT,
+                    BigDecimal.valueOf(donationAmount).multiply(penaltyPercent).divide(new BigDecimal(100)));
             model.addAttribute("currentDemand", waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand());
         }
 

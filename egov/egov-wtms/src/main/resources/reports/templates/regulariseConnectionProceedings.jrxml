@@ -106,7 +106,6 @@
 	<parameter name="roadCuttingCharges" class="java.lang.Double"/>
 	<parameter name="superVisionCharges" class="java.lang.Double"/>
 	<parameter name="penaltyCharges" class="java.math.BigDecimal"/>
-	<parameter name="serviceCharges" class="java.math.BigDecimal"/>
 	<parameter name="waterCharges" class="java.math.BigDecimal"/>
 	<parameter name="fromInstallment" class="java.lang.String"/>
 	<parameter name="toInstallment" class="java.lang.String"/>
@@ -239,9 +238,6 @@
 				</subreportParameter>
 				<subreportParameter name="waterCharges">
 					<subreportParameterExpression><![CDATA[$P{waterCharges}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="serviceCharges">
-					<subreportParameterExpression><![CDATA[$P{serviceCharges}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="totalCharges">
 					<subreportParameterExpression><![CDATA[$P{totalCharges}]]></subreportParameterExpression>
