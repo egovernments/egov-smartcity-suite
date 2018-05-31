@@ -190,6 +190,10 @@ public class ComplaintIndexService {
     private static final String FUNCTIONARYWISE = "functionarywise";
     private static final String CREATED_DATE = "createdDate";
     private static final String FEEDBACK_RATING = "feedbackRating";
+    private static final int GOOD_RATING = 1;
+    private static final int BAD_RATING = 2;
+    private static final int AVG_RATING = 3;
+
     @Autowired
     private CityService cityService;
 
@@ -1526,13 +1530,13 @@ public class ComplaintIndexService {
 
     private void getFeedbackInWords(List<ComplaintIndex> complaints) {
         for (ComplaintIndex complaint : complaints)
-            if (complaint.getFeedbackRating() == 1) {
+            if (complaint.getFeedbackRating() == GOOD_RATING)
                 complaint.setFeedbackInWords("Good");
-            } else if (complaint.getFeedbackRating() == 3) {
+            else if (complaint.getFeedbackRating() == AVG_RATING)
                 complaint.setFeedbackInWords("Average");
-            } else if (complaint.getFeedbackRating() == 2) {
+            else if (complaint.getFeedbackRating() == BAD_RATING)
                 complaint.setFeedbackInWords("Bad");
-            }
+
     }
 
     public Map<String, Object> getAvrgRating(final ComplaintDashBoardRequest complaintDashBoardRequest) {
