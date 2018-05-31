@@ -184,7 +184,7 @@ function populateBlock() {
 	    <td class="greybox"><s:text name="PinCode"/><span class="mandatory1">*</span> : </td>
 	    <td class="greybox"><s:textfield name="pinCode" value="%{pinCode}" onchange="trim(this,this.value);" maxlength="6" onblur = "validNumber(this);checkZero(this);"  /></td>
 	</tr>
-	<tr>
+	<tr style="display: none;">
 		<td class="greybox">&nbsp;</td>
 	    <td class="greybox"><s:text name="longitude"/> : </td>
 	    <td class="greybox"><span class="bold"><s:property default="N/A" value="%{basicProperty.longitude}" /> </span></td>
