@@ -175,7 +175,6 @@ import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.stms.masters.entity.SewerageApplicationType;
 import org.egov.stms.masters.entity.enums.PropertyType;
 import org.egov.stms.masters.entity.enums.SewerageConnectionStatus;
-import org.egov.stms.masters.service.FeesDetailMasterService;
 import org.egov.stms.masters.service.SewerageApplicationTypeService;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.entity.SewerageConnection;
@@ -186,6 +185,7 @@ import org.egov.wtms.application.entity.WaterConnExecutionDetails;
 import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.entity.WaterConnectionExecutionResponse;
+import org.egov.wtms.application.service.ConnectionAddressService;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.application.workflow.ApplicationWorkflowCustomDefaultImpl;
 import org.egov.wtms.entity.es.WaterChargeDocument;
@@ -323,11 +323,16 @@ public class WaterConnectionDetailsService {
 
     @Autowired
     private FinancialYearDAO financialYearDAO;
-    
+
     @Autowired
     private SewerageTaxUtils sewerageTaxUtils;
+
     @Autowired
     private SewerageApplicationTypeService sewerageApplicationTypeService;
+
+    @Autowired
+    private ConnectionAddressService connectionAddressService;
+
     @Autowired
     public WaterConnectionDetailsService(final WaterConnectionDetailsRepository waterConnectionDetailsRepository) {
         this.waterConnectionDetailsRepository = waterConnectionDetailsRepository;
@@ -374,6 +379,7 @@ public class WaterConnectionDetailsService {
             waterConnectionDetails.setDisposalDate(getDisposalDate(waterConnectionDetails, appProcessTime));
         final WaterConnectionDetails savedWaterConnectionDetails = waterConnectionDetailsRepository
                 .save(waterConnectionDetails);
+        connectionAddressService.createConnectionAddress(savedWaterConnectionDetails);
         final User meesevaUser = userService.getUserById(waterConnectionDetails.getCreatedBy().getId());
         if (meesevaUser.getUsername().equals(USERNAME_MEESEVA)) {
             ApplicationThreadLocals.setUserId(meesevaUser.getId());
@@ -1675,15 +1681,15 @@ public class WaterConnectionDetailsService {
                 return WF_STATE_ME_FORWARD_PENDING;
         return waterConnectionDetails.getState().getNextAction();
     }
-    
-    //water and sewerage integration    
-    public void prepareNewForm( final Model model, WaterConnectionDetails waterConnectionDetails) {
-        final SewerageApplicationDetails sewerageApplicationDetails=new SewerageApplicationDetails();
+
+    // water and sewerage integration
+    public void prepareNewForm(final Model model, WaterConnectionDetails waterConnectionDetails) {
+        final SewerageApplicationDetails sewerageApplicationDetails = new SewerageApplicationDetails();
         final SewerageConnection connection = new SewerageConnection();
-        model.addAttribute("sewerageApplicationDetails",waterConnectionDetails.getSewerageApplicationDetails());
-        model.addAttribute("sewerageadditionalrule",sewerageApplicationTypeService
+        model.addAttribute("sewerageApplicationDetails", waterConnectionDetails.getSewerageApplicationDetails());
+        model.addAttribute("sewerageadditionalrule", sewerageApplicationTypeService
                 .findByCode(SewerageTaxConstants.NEWSEWERAGECONNECTION));
-        model.addAttribute("sewpropertyTypes", PropertyType.values());       
+        model.addAttribute("sewpropertyTypes", PropertyType.values());
         waterConnectionDetails.setSewerageApplicationDetails(sewerageApplicationDetails);
         sewerageApplicationDetails.setApplicationDate(new Date());
         connection.setStatus(SewerageConnectionStatus.INPROGRESS);
@@ -1691,7 +1697,7 @@ public class WaterConnectionDetailsService {
         final SewerageApplicationType applicationType = sewerageApplicationTypeService
                 .findByCode(SewerageTaxConstants.NEWSEWERAGECONNECTION);
         sewerageApplicationDetails.setApplicationType(applicationType);
-        model.addAttribute("sewerageallowIfPTDueExists", sewerageTaxUtils.isNewConnectionAllowedIfPTDuePresent());      
+        model.addAttribute("sewerageallowIfPTDueExists", sewerageTaxUtils.isNewConnectionAllowedIfPTDuePresent());
         model.addAttribute("seweragetypeOfConnection", SewerageTaxConstants.NEWSEWERAGECONNECTION);
 
     }
