@@ -79,6 +79,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 @RestController
 @RequestMapping(value = "/complaint/aggregate")
 public class ComplaintIndexController {
+    private static final String CREATED_DATE = "createdDate";
     @Autowired
     private ComplaintIndexService complaintIndexService;
 
@@ -216,7 +217,7 @@ public class ComplaintIndexController {
     public List<ComplaintIndex> getFilteredComplaints(@RequestBody final ComplaintDashBoardRequest complaintRequest,
                                                       @RequestParam final String fieldName, @RequestParam final String fieldValue) {
         if (StringUtils.isEmpty(complaintRequest.getSortField()))
-            complaintRequest.setSortField("createdDate");
+            complaintRequest.setSortField(CREATED_DATE);
         if (StringUtils.isEmpty(complaintRequest.getSortDirection()))
             complaintRequest.setSortDirection("DESC");
         if (complaintRequest.getSize() == 0)
@@ -239,7 +240,7 @@ public class ComplaintIndexController {
                                                                  @RequestParam final String fieldName, @RequestParam final Integer lowerLimit,
                                                                  @RequestParam final Integer upperLimit) {
         if (StringUtils.isEmpty(complaintRequest.getSortField()))
-            complaintRequest.setSortField("createdDate");
+            complaintRequest.setSortField(CREATED_DATE);
         if (StringUtils.isEmpty(complaintRequest.getSortDirection()))
             complaintRequest.setSortDirection("DESC");
         if (complaintRequest.getSize() == 0)
@@ -247,14 +248,27 @@ public class ComplaintIndexController {
         return complaintIndexService.getFilteredComplaints(complaintRequest, fieldName, StringUtils.EMPTY, lowerLimit,
                 upperLimit);
     }
-    @RequestMapping(value="/ivrsFeedback",method=RequestMethod.POST,produces=MediaType.APPLICATION_JSON_VALUE)
-    public List<IVRSFeedBackResponse> getFeedBackDetails(@RequestBody final ComplaintDashBoardRequest ivrsRequest){
-        
+
+    @RequestMapping(value = "/ivrsFeedback", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<IVRSFeedBackResponse> getFeedBackDetails(@RequestBody final ComplaintDashBoardRequest ivrsRequest) {
+
         return complaintIndexService.getDetailsBasedOnFeedBack(ivrsRequest);
     }
 
     @RequestMapping(value = "/categorywisefeedback", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<IVRSFeedBackResponse> getCategoryWiseFeedBack(@RequestBody final ComplaintDashBoardRequest ivrsRequest) {
         return complaintIndexService.getCategoryWiseFeedBackDetails(ivrsRequest);
-}
+    }
+
+    @RequestMapping(value = "/feedbackcomplaints", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<ComplaintIndex> getFeedbackComplaints(@RequestBody final ComplaintDashBoardRequest complaintRequest,
+                                                      @RequestParam final String fieldName, @RequestParam final String fieldValue) {
+        if (StringUtils.isEmpty(complaintRequest.getSortField()))
+            complaintRequest.setSortField(CREATED_DATE);
+        if (StringUtils.isEmpty(complaintRequest.getSortDirection()))
+            complaintRequest.setSortDirection("DESC");
+        if (complaintRequest.getSize() == 0)
+            complaintRequest.setSize(10000);
+        return complaintIndexService.getFeedbackComplaints(complaintRequest, fieldName, fieldValue);
+    }
 }

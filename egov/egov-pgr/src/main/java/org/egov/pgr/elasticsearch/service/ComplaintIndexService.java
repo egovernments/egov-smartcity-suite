@@ -84,6 +84,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
 import org.apache.commons.lang.time.DateUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -188,6 +189,7 @@ public class ComplaintIndexService {
     private static final String DEPARTMENT_CODE = "departmentCode";
     private static final String FUNCTIONARYWISE = "functionarywise";
     private static final String CREATED_DATE = "createdDate";
+    private static final String FEEDBACK_RATING = "feedbackRating";
     @Autowired
     private CityService cityService;
 
@@ -1373,12 +1375,12 @@ public class ComplaintIndexService {
             boolQuery = boolQuery.filter(matchQuery("wardNo", complaintDashBoardRequest.getWardNo()));
         if (isNotBlank(complaintDashBoardRequest.getDepartmentCode()))
             boolQuery = boolQuery
-                    .filter(matchQuery("departmentCode", complaintDashBoardRequest.getDepartmentCode()));
+                    .filter(matchQuery(DEPARTMENT_CODE, complaintDashBoardRequest.getDepartmentCode()));
         if (isNotBlank(complaintDashBoardRequest.getComplaintTypeCode()))
             boolQuery = boolQuery.filter(matchQuery("complaintTypeCode",
                     complaintDashBoardRequest.getComplaintTypeCode()));
         if (isNotBlank(complaintDashBoardRequest.getLocalityName()))
-            boolQuery = boolQuery.filter(matchQuery("localityName",
+            boolQuery = boolQuery.filter(matchQuery(LOCALITY_NAME,
                     complaintDashBoardRequest.getLocalityName()));
         if (isNotBlank(complaintDashBoardRequest.getFunctionaryName()))
             boolQuery = boolQuery.filter(matchQuery(INITIAL_FUNCTIONARY_NAME,
@@ -1507,6 +1509,31 @@ public class ComplaintIndexService {
             }
     }
 
+    public List<ComplaintIndex> getFeedbackComplaints(final ComplaintDashBoardRequest complaintDashBoardRequest,
+                                                      final String fieldName, final String fieldValue) {
+        BoolQueryBuilder boolQuery = getFilterQuery(complaintDashBoardRequest);
+        if (isNotBlank(fieldValue))
+            boolQuery.filter(matchQuery(fieldName, fieldValue)).filter(rangeQuery(fieldName));
+        else
+            boolQuery = boolQuery.must(QueryBuilders.existsQuery(FEEDBACK_RATING))
+                    .mustNot(matchQuery(FEEDBACK_RATING, 0)).filter(rangeQuery(fieldName));
+        final List<ComplaintIndex> complaints = complaintIndexRepository.findAllComplaintsByField(complaintDashBoardRequest,
+                boolQuery);
+        setComplaintViewURL(complaints);
+        getFeedbackInWords(complaints);
+        return complaints;
+    }
+
+    private void getFeedbackInWords(List<ComplaintIndex> complaints) {
+        for (ComplaintIndex complaint : complaints)
+            if (complaint.getFeedbackRating() == 1) {
+                complaint.setFeedbackInWords("Good");
+            } else if (complaint.getFeedbackRating() == 3) {
+                complaint.setFeedbackInWords("Average");
+            } else if (complaint.getFeedbackRating() == 2) {
+                complaint.setFeedbackInWords("Bad");
+            }
+    }
 
     public Map<String, Object> getAvrgRating(final ComplaintDashBoardRequest complaintDashBoardRequest) {
         final String groupByField = ComplaintIndexAggregationBuilder.getAggregationGroupingField(complaintDashBoardRequest);
@@ -1684,7 +1711,7 @@ public class ComplaintIndexService {
     }
 
     private void setUpperLevelValues(String aggregationField,
-            IVRSFeedBackResponse feedbackResponse, Bucket termsBucket) {
+                                     IVRSFeedBackResponse feedbackResponse, Bucket termsBucket) {
         String name = termsBucket.getKey().toString();
         final TopHits topHits = termsBucket.getAggregations().get("paramDetails");
         final SearchHit[] hit = topHits.getHits().getHits();
@@ -1736,8 +1763,8 @@ public class ComplaintIndexService {
 
     private BoolQueryBuilder prepareQuery(final ComplaintDashBoardRequest ivrsRequest) {
         BoolQueryBuilder boolQuery = new BoolQueryBuilder();
-        boolQuery = boolQuery.must(QueryBuilders.existsQuery("feedbackRating"))
-                .mustNot(matchQuery("feedbackRating", 0));
+        boolQuery = boolQuery.must(QueryBuilders.existsQuery(FEEDBACK_RATING))
+                .mustNot(matchQuery(FEEDBACK_RATING, 0));
         if (isNotBlank(ivrsRequest.getFromDate()) && isNotBlank(ivrsRequest.getToDate())) {
             String fromDate = new DateTime(ivrsRequest.getFromDate()).withTimeAtStartOfDay().toString(PGR_INDEX_DATE_FORMAT);
             String toDate = new DateTime(ivrsRequest.getToDate()).plusDays(1).toString(PGR_INDEX_DATE_FORMAT);
@@ -1769,7 +1796,7 @@ public class ComplaintIndexService {
             boolQuery = boolQuery.filter(matchQuery("complaintTypeCode", ivrsRequest.getComplaintTypeCode()));
         return boolQuery;
     }
-    
+
     public List<IVRSFeedBackResponse> getCategoryWiseFeedBackDetails(final ComplaintDashBoardRequest ivrsRequest) {
         List<IVRSFeedBackResponse> feedbackResponseList = new ArrayList<>();
         SearchResponse response = complaintIndexRepository.findCategoryWiseFeedBackRatingDetails(ivrsRequest,
@@ -1800,6 +1827,7 @@ public class ComplaintIndexService {
         }
         return feedbackResponseList;
     }
+
     private void getTypeWiseCount(Bucket cateGoryBucket, IVRSFeedBackResponse feedbackResponse) {
         final Terms countTerms = cateGoryBucket.getAggregations().get("countAggr");
         for (Bucket countBucket : countTerms.getBuckets()) {

@@ -360,6 +360,8 @@ public class ComplaintIndex {
     @Field(type = FieldType.String, index = not_analyzed)
     private String feedbackReason = EMPTY;
 
+    private String feedbackInWords = EMPTY;
+
     public String getId() {
         return id;
     }
@@ -1120,5 +1122,13 @@ public class ComplaintIndex {
 
     public void setFeedbackReason(String feedbackReason) {
         this.feedbackReason = feedbackReason;
+    }
+
+    public String getFeedbackInWords() {
+        return feedbackInWords;
+    }
+
+    public void setFeedbackInWords(String feedbackInWords) {
+        this.feedbackInWords = feedbackInWords;
     }
 }
