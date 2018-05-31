@@ -329,7 +329,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 if (request.getParameter(MEESEVA_SERVICE_CODE).equalsIgnoreCase(MEESEVA_SERVICE_CODE_NEWPROPERTY))
                     getMutationListByCode(PROP_CREATE_RSN_NEWPROPERTY_CODE);
                 else if (request.getParameter(MEESEVA_SERVICE_CODE).equalsIgnoreCase(MEESEVA_SERVICE_CODE_SUBDIVISION))
-                    getMutationListByCode(PROP_CREATE_RSN_NEWPROPERTY_BIFURCATION_CODE);
+                    getMutationListByCode(PROP_CREATE_RSN_BIFUR);
                 property.setMeesevaApplicationNumber(request.getParameter("applicationNo"));
                 property.setMeesevaServiceCode(request.getParameter(MEESEVA_SERVICE_CODE));
             }
@@ -1044,7 +1044,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             if (property.getMeesevaServiceCode().equalsIgnoreCase(MEESEVA_SERVICE_CODE_NEWPROPERTY))
                 getMutationListByCode(PROP_CREATE_RSN_NEWPROPERTY_CODE);
             if (property.getMeesevaServiceCode().equalsIgnoreCase(MEESEVA_SERVICE_CODE_SUBDIVISION))
-                getMutationListByCode(PROP_CREATE_RSN_NEWPROPERTY_BIFURCATION_CODE);
+                getMutationListByCode(PROP_CREATE_RSN_BIFUR);
         }
         final List<String> ageFacList = getPersistenceService().findAllBy("from DepreciationMaster");
         final List<String> structureList = getPersistenceService()
@@ -1312,7 +1312,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             if (property.getMeesevaServiceCode().equalsIgnoreCase(MEESEVA_SERVICE_CODE_NEWPROPERTY))
                 getMutationListByCode(PROP_CREATE_RSN_NEWPROPERTY_CODE);
             if (property.getMeesevaServiceCode().equalsIgnoreCase(MEESEVA_SERVICE_CODE_SUBDIVISION))
-                getMutationListByCode(PROP_CREATE_RSN_NEWPROPERTY_BIFURCATION_CODE);
+                getMutationListByCode(PROP_CREATE_RSN_BIFUR);
         }
         if (locality == null || locality == -1)
             addActionError(getText("mandatory.localityId"));

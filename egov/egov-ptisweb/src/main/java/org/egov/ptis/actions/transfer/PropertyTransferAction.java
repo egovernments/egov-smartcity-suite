@@ -935,7 +935,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         String smsMsgForTransferee = "";
         if (null != propertyMutation && null != propertyMutation.getState()) {
             final State mutationState = propertyMutation.getState();
-            if (mutationState.getValue().equals(WF_STATE_ASSISTANT_APPROVED)) {
+            if (mutationState.getValue().equalsIgnoreCase(WF_STATE_ASSISTANT_APPROVED)) {
                 argsForTransferor.add(propertyMutation.getFullTranferorName());
                 argsForTransferor.add(propertyMutation.getBasicProperty().getUpicNo());
                 argsForTransferee.add(propertyMutation.getFullTranfereeName());
@@ -987,7 +987,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         final List<String> argsForTransferee = new ArrayList<>();
         if (null != propertyMutation && null != propertyMutation.getState()) {
             final State mutationState = propertyMutation.getState();
-            if (mutationState.getValue().equals(WF_STATE_ASSISTANT_APPROVED)) {
+            if (mutationState.getValue().equalsIgnoreCase(WF_STATE_ASSISTANT_APPROVED)) {
                 subject = getText("subject.createtransferproperty", new String[]{propertyMutation.getBasicProperty()
                         .getUpicNo()});
                 argsForTransferor.add(propertyMutation.getFullTranferorName());

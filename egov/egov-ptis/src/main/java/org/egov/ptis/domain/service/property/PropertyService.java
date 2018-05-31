@@ -110,7 +110,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASO
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_BIFURCATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_DATA_ENTRY;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_REVISION_PETITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_MARK_DEACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.MARK_DEACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_BIFUR;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_SOURCE;
@@ -1639,7 +1639,7 @@ public class PropertyService {
                         .findByNamedQuery(PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO, amalgId);
                 final PropertyStatusValues amalgPropStatVal = new PropertyStatusValues();
                 final PropertyStatus propertyStatus = (PropertyStatus) getPropPerServ()
-                        .find("from PropertyStatus where statusCode=?", PROPERTY_STATUS_MARK_DEACTIVE);
+                        .find("from PropertyStatus where statusCode=?", MARK_DEACTIVE);
                 amalgPropStatVal.setIsActive("Y");
                 amalgPropStatVal.setPropertyStatus(propertyStatus);
                 amalgPropStatVal.setReferenceDate(new Date());

@@ -80,7 +80,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TY
 import static org.egov.ptis.constants.PropertyTaxConstants.MUTATION_TYPE_REGISTERED_TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_WORK_GRP;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOT_AVAILABLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_MARK_DEACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.MARK_DEACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
 import static org.egov.ptis.constants.PropertyTaxConstants.SOURCEOFDATA_DATAENTRY;
@@ -971,7 +971,7 @@ public class SearchPropertyAction extends SearchFormAction {
         }
         Set<PropertyStatusValues> propStatusValSet = basicProperty.getPropertyStatusValuesSet();
         for (final PropertyStatusValues propStatusVal : propStatusValSet) {
-            if (propStatusVal.getPropertyStatus().getStatusCode().equals(PROPERTY_STATUS_MARK_DEACTIVE))
+            if (propStatusVal.getPropertyStatus().getStatusCode().equals(MARK_DEACTIVE))
                 markedForDeactive = "Y";
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Property Status Values : " + propStatusVal);

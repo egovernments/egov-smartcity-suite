@@ -340,11 +340,11 @@ public class PropertyTransferService {
     }
 
     public List<PropertyMutationMaster> getPropertyTransferReasons() {
-        return propertyMutationMasterDAO.getAllActiveReasonsByType(TRANSFER);
+        return propertyMutationMasterDAO.getAllActiveReasonsByType(PROP_MUTATION_RSN);
     }
 
     public PropertyMutationMaster getPropertyTransferReasonsByCode(final String mutationCode) {
-        return propertyMutationMasterDAO.getPropertyMutationMasterByCodeAndType(mutationCode, TRANSFER);
+        return propertyMutationMasterDAO.getPropertyMutationMasterByCodeAndType(mutationCode, PROP_MUTATION_RSN);
     }
 
     public PropertyMutation getPropertyMutationByApplicationNo(final String applicationNo) {

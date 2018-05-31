@@ -287,10 +287,10 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
                     && currentStatusCode.equals(PropertyTaxConstants.OBJECTION_HEARING_COMPLETED))
                 designationMasterList.add(designationService.getDesignationByName(REVENUE_OFFICER_DESGN));
             else if (currentStatusCode != null && !"".equals(currentStatusCode)
-                    && currentStatusCode.equals(PropertyTaxConstants.OBJECTION_INSPECTION_COMPLETED))
+                    && currentStatusCode.equalsIgnoreCase(PropertyTaxConstants.OBJECTION_INSPECTION_COMPLETED))
                 designationMasterList.add(designationService.getDesignationByName(COMMISSIONER_DESGN));
             else if (currentStatusCode != null && !"".equals(currentStatusCode)
-                    && currentStatusCode.equals(PropertyTaxConstants.OBJECTION_INSPECTION_VERIFY))
+                    && currentStatusCode.equalsIgnoreCase(PropertyTaxConstants.OBJECTION_INSPECTION_VERIFY))
                 designationMasterList.add(designationService.getDesignationByName(ASSISTANT_DESGN));
             else if (designation.getName().equals(ASSISTANT_DESGN))
                 designationMasterList.add(designationService.getDesignationByName(REVENUE_OFFICER_DESGN));

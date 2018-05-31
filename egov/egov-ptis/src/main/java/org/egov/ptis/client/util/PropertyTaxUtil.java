@@ -1603,7 +1603,7 @@ public class PropertyTaxUtil {
                 .setParameterList("codelist", Arrays.asList(DEMANDRSN_CODE_GENERAL_TAX,
                         PropertyTaxConstants.DEMANDRSN_CODE_DRAINAGE_TAX, PropertyTaxConstants.DEMANDRSN_CODE_LIGHT_TAX,
                         PropertyTaxConstants.DEMANDRSN_CODE_SCAVENGE_TAX, PropertyTaxConstants.DEMANDRSN_CODE_WATER_TAX,
-                        PropertyTaxConstants.VAC_LAND_TAX));
+                        PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX));
         rebateAmt = qry.uniqueResult();
         return rebateAmt != null ? new BigDecimal((Double) rebateAmt) : BigDecimal.ZERO;
     }

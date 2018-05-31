@@ -76,7 +76,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_BIF
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_DEMOLITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_EXEMPTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_GRP;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_CREATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_CREATE;
 
 public class PropertyImpl extends StateAware<Position> implements Property {
 
@@ -650,7 +650,7 @@ public class PropertyImpl extends StateAware<Position> implements Property {
                 || getState().getValue().startsWith(WFLOW_ACTION_NAME_GRP)))
             url = "/ptis/modify/modifyProperty-view.action?modelId=" + getId();
         else if (getState() != null && getState().getValue() != null
-                && getState().getValue().startsWith(WFLOW_ACTION_STEP_CREATE))
+                && getState().getValue().startsWith(WFLOW_ACTION_NAME_CREATE))
             url = "/ptis/create/createProperty-view.action" + "?modelId=" + getId();
         else if (getState() != null && getState().getValue() != null
                 && getState().getValue().startsWith(WFLOW_ACTION_NAME_DEMOLITION))
