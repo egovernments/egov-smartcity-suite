@@ -65,10 +65,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-
-import org.apache.commons.lang.StringUtils;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import org.egov.infra.admin.master.entity.es.CityIndex;
 import org.egov.infra.admin.master.service.es.CityIndexService;
@@ -259,7 +256,7 @@ public class SurveyDashboardService {
     }
 
     public String getAggregrationField(SurveyRequest surveyRequest) {
-        String aggregationField = REGION_NAME;
+        String aggregationField = EMPTY;
         if (DASHBOARD_GROUPING_REGIONWISE.equalsIgnoreCase(surveyRequest.getAggregationLevel()))
             aggregationField = REGION_NAME;
         else if (DASHBOARD_GROUPING_DISTRICTWISE.equalsIgnoreCase(surveyRequest.getAggregationLevel()))
@@ -430,7 +427,7 @@ public class SurveyDashboardService {
             SurveyResponse surveyResponse) {
         BigDecimal approvedSysTax;
         BigDecimal approvedTotalTax;
-        surveyResponse.setExptdIncr((taxList.get(0).subtract(taxList.get(1))).doubleValue());
+        surveyResponse.setExptdIncr(taxList.get(0).subtract(taxList.get(1)).doubleValue());
         surveyResponse.setDiffFromSurveytax(taxList.get(0).subtract(taxList.get(2)).doubleValue());
         if (completedApplicationsMap.get(name) != null)
             surveyResponse.setTotalCompleted(completedApplicationsMap.get(name));
@@ -473,7 +470,7 @@ public class SurveyDashboardService {
         surveyResponse.setUlbCode(surveyRequest.getUlbCode());
         if (DASHBOARD_GROUPING_WARDWISE.equalsIgnoreCase(surveyRequest.getAggregationLevel())
                 && !wardWiseBillCollectors.isEmpty()) {
-            surveyResponse.setBillCollector(wardWiseBillCollectors.get(name) == null ? StringUtils.EMPTY
+            surveyResponse.setBillCollector(wardWiseBillCollectors.get(name) == null ? EMPTY
                     : wardWiseBillCollectors.get(name).getBillCollector());
             surveyResponse.setBillCollMobile(wardWiseBillCollectors.get(name) == null ? EMPTY
                     : wardWiseBillCollectors.get(name).getBillCollectorMobileNo());
