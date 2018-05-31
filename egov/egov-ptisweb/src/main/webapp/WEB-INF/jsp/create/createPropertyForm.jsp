@@ -64,7 +64,7 @@
 			<span class="mandatory1">*</span> :</td>
 		<td class="greybox" width=""><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="propTypeId"
 				id="propTypeId" listKey="id" listValue="type" list="dropdownData.PropTypeMaster" value="%{propTypeId}"
-				cssClass="selectnew" onchange="populatePropTypeCategory();toggleFloorDetails();enableFieldsForPropType();populatePropDepartment();" title="Type of ownership"/></td>
+				cssClass="selectnew" onchange="populatePropTypeCategory();toggleFloorDetails();enableFieldsForPropType();populatePropDepartment();setEffectiveDate();" title="Type of ownership"/></td>
 				
 		<td class="greybox" width="25%"><s:text name="property.type"></s:text>
 			<span class="mandatory1" id="prntMandatory">*</span> :</td>
@@ -191,20 +191,6 @@
  	<s:hidden id="appurtenantLandChecked" name="propertyDetail.appurtenantLandChecked" value="%{propertyDetail.appurtenantLandChecked}"/>
  	<s:hidden id="extentAppartenauntLand" name="propertyDetail.extentAppartenauntLand" value="%{propertyDetail.extentAppartenauntLand}"/>
  	<s:hidden id="sitalArea" name="sitalArea" value="%{areaOfPlot}"/>
-	
-	<%-- <tr class="superStructureRow">
-		<td class="greybox">&nbsp;</td>
-		<td class="bluebox"><s:text name="superstructure"></s:text> :</td>
-		<td class="bluebox">
-		 <s:checkbox name="propertyDetail.structure" title="Select if property is super structure" id="propertyDetail.structure"
-			value="%{propertyDetail.structure}" onclick="enableOrDisableSiteOwnerDetails(this);" />
-		</td>
-		<td class="greybox siteowner"><s:text name="siteowner"></s:text>
-			<span class="mandatory1">*</span>:
-		</td>
-		<td class="greybox siteowner"><s:textfield maxlength="32" value="%{propertyDetail.siteOwner}"
-				name="propertyDetail.siteOwner" id="siteOwner"></s:textfield></td>
-	</tr> --%>
 	
 	<s:if test="%{!basicProperty.regdDocNo.isEmpty()}">
 	<tr>
@@ -334,5 +320,29 @@
 			propTypeId : document.getElementById("propTypeId").value
 		});
 	}
+ 	function setEffectiveDate() {
+ 		debugger;
+ 		var propertyType = jQuery('#propTypeId :selected').text();
+ 		if(propertyType == 'Vacant Land'){
+ 			var today = new Date();
+ 			var curMonth = today.getMonth()+1;
+ 			var currYear = today.getFullYear();
+ 			var baseDate;
+ 			var effectiveDate;
+ 			if(curMonth < 4){
+ 				baseDate = new Date(currYear,4,1);
+ 				effectiveDate = baseDate.getDate().toString()+"/"+baseDate.getMonth().toString()+"/"+(baseDate.getFullYear()-3).toString();
+ 			}
+ 			else if(curMonth > 3 && curMonth <10){
+ 				baseDate = new Date(currYear,10,1);
+ 				effectiveDate = baseDate.getDate().toString()+"/"+baseDate.getMonth().toString()+"/"+(baseDate.getFullYear()-3).toString();
+ 			}
+ 			else if(curMonth > 9){
+ 				baseDate = new Date(currYear,4,1);
+ 				effectiveDate = baseDate.getDate().toString()+"/"+baseDate.getMonth().toString()+"/"+(baseDate.getFullYear()-2).toString()
+ 			}
+ 			jQuery('#dateOfCompletion').val(effectiveDate);
+ 		}
+ 	} 
     
 </script>

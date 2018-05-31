@@ -212,7 +212,6 @@
     	        }
     	    });
        }
-	debugger;
        function getUserDetailsForMobileNo(obj) {
     	   var mobileNo = jQuery(obj).val();
     	   var rowidx= jQuery(obj).data('idx');

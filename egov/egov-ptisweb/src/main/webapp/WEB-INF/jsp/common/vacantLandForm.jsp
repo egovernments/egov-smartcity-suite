@@ -131,9 +131,8 @@
 					name="%{propertyDetail.dateOfCompletion}" var="occupationDate"
 					format="dd/MM/yyyy" /> <s:textfield
 					name="propertyDetail.dateOfCompletion"
-					id="propertyDetail.dateOfCompletion" value="%{#occupationDate}"
-					autocomplete="off" cssClass="datepicker" data-date-end-date="0d"
-					maxlength="10"></s:textfield></td>
+					id="dateOfCompletion" value="%{#occupationDate}"
+					maxlength="10" readonly="true"></s:textfield></td>
 			<td class="greybox"><s:select headerKey="-1"
 					headerValue="%{getText('default.select')}"
 					name="vacantLandPlotAreaId" id="vacantLandPlotAreaId" listKey="id"
