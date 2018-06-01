@@ -274,7 +274,10 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
         }
         egBillregister = (EgBillregister) getPersistenceService().find(" from EgBillregister where id=?",
                 Long.valueOf(parameters.get(BILLID)[0]));
-        voucherHeader = egBillregister.getEgBillregistermis().getVoucherHeader();
+        if(egBillregister.getEgBillregistermis().getVoucherHeader() != null && egBillregister.getEgBillregistermis().getVoucherHeader().getStatus() != 4)
+            voucherHeader = egBillregister.getEgBillregistermis().getVoucherHeader();
+        else
+            voucherHeader = null;
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("egBillregister==" + egBillregister);
         final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",

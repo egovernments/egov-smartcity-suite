@@ -460,8 +460,17 @@ public class ExpenseBillPrintAction extends BaseFormAction {
                 final CChartOfAccounts coa = (CChartOfAccounts) persistenceService.find("from CChartOfAccounts where id=?",
                         Long.valueOf(glcodeid.toString()));
                 if (budgetcheck && coa.getBudgetCheckReq() != null && coa.getBudgetCheckReq()) {
-                    budgetApprDetails = getBudgetDetails(coa, detail, functionById.getName());
-                    budget.add(budgetApprDetails);
+                    final List<BudgetGroup> budgetHeadListByGlcode = budgetDetailsDAO.getBudgetHeadByGlcode(coa);
+
+                    if (isBudgetCheckingRequiredForType("debit",
+                            budgetHeadListByGlcode.get(0).getBudgetingType().toString())) {
+                        if (LOGGER.isDebugEnabled())
+                            LOGGER.debug("No need to check budget for :" + coa.getGlcode() + " as the transaction type is debit "
+                                    + "so skipping budget check");
+                        budgetApprDetails = getBudgetDetails(coa, detail, functionById.getName());
+                        budget.add(budgetApprDetails);
+                    }
+                   
                 }
                 vd.setGlcodeDetail(coa.getGlcode());
                 vd.setGlcodeIdDetail(coa.getId());
@@ -518,8 +527,20 @@ public class ExpenseBillPrintAction extends BaseFormAction {
                 final CChartOfAccounts coa = (CChartOfAccounts) persistenceService.find("from CChartOfAccounts where id=?",
                         Long.valueOf(glcodeid.toString()));
                 if (budgetcheck && coa.getBudgetCheckReq() != null && coa.getBudgetCheckReq()) {
-                    budgetApprDetails = getBudgetDetails(coa, detail, functionName);
-                    budget.add(budgetApprDetails);
+                    if (budgetcheck && coa.getBudgetCheckReq() != null && coa.getBudgetCheckReq()) {
+                        final List<BudgetGroup> budgetHeadListByGlcode = budgetDetailsDAO.getBudgetHeadByGlcode(coa);
+
+                        if (isBudgetCheckingRequiredForType("credit",
+                                budgetHeadListByGlcode.get(0).getBudgetingType().toString())) {
+                            if (LOGGER.isDebugEnabled())
+                                LOGGER.debug("No need to check budget for :" + coa.getGlcode() + " as the transaction type is credit "
+                                        + "so skipping budget check");
+                            budgetApprDetails = getBudgetDetails(coa, detail, functionName);
+                            budget.add(budgetApprDetails);
+                        }
+                       
+                    }
+                
                 }
                 vd.setGlcodeDetail(coa.getGlcode());
                 vd.setGlcodeIdDetail(coa.getId());
@@ -562,6 +583,24 @@ public class ExpenseBillPrintAction extends BaseFormAction {
             }
         paramMap.put("budgetDetail", budget);
 
+    }
+    
+    /**
+     * to check the budget checking is required or not
+     * 
+     * @param txnType
+     * @param budgetingType
+     * @return
+     */
+    private boolean isBudgetCheckingRequiredForType(final String txnType, final String budgetingType) {
+        if ("debit".equalsIgnoreCase(budgetingType) && "debit".equals(txnType))
+            return true;
+        else if ("credit".equalsIgnoreCase(budgetingType) && "credit".equals(txnType))
+            return true;
+        else if ("all".equalsIgnoreCase(budgetingType))
+            return true;
+        else
+            return false;
     }
 
     public AppConfigValueService getAppConfigValuesService() {
