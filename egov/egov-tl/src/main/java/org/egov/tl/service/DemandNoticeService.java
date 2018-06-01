@@ -54,6 +54,7 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
+import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.PenaltyRates;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.contracts.DemandNoticeForm;
@@ -69,10 +70,10 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static java.math.BigDecimal.ROUND_HALF_UP;
 import static java.math.BigDecimal.ZERO;
@@ -128,7 +129,7 @@ public class DemandNoticeService {
     private LicenseConfigurationService licenseConfigurationService;
 
     public ReportOutput generateReport(Long licenseId) {
-        Map<String, Object> reportParams = new HashMap<>();
+        Map<String, Object> reportParams = new ConcurrentHashMap<>();
         TradeLicense license = tradeLicenseService.getLicenseById(licenseId);
         reportParams.put("license", license);
         reportParams.put("cityUrl", getDomainURL());
@@ -175,10 +176,10 @@ public class DemandNoticeService {
             reportParams.put("arrearLicenseFee", arrLicenseFee);
             reportParams.put("totalLicenseFee", currLicenseFee.add(arrLicenseFee).add(arrLicensePenalty).setScale(0, ROUND_HALF_UP));
             reportParams.put("currentYear", toYearFormat(currentInstallment.getFromDate()));
-            Long licenseAppId = licenseAppTypeService.getLicenseAppTypeByName(license.getIsActive()
-                    ? RENEWAL_LIC_APPTYPE : license.getLicenseAppType().getName()).getId();
+            LicenseAppType licenseAppType = licenseAppTypeService.getLicenseAppTypeByName(license.getIsActive()
+                    ? RENEWAL_LIC_APPTYPE : license.getLicenseAppType().getName());
             reportParams.put("penaltyCalculationMessage",
-                    getPenaltyRateDetails(penaltyRatesService.search(licenseAppId), currentInstallment));
+                    getPenaltyRateDetails(penaltyRatesService.search(licenseAppType), currentInstallment, licenseAppType));
         }
         return reportService.createReport(new ReportRequest("tl_demand_notice", license, reportParams));
     }
@@ -189,9 +190,8 @@ public class DemandNoticeService {
 
         String currentInstallmentYear = toYearFormat(currentInstallment.getFromDate());
 
-        Map<Integer, String> monthMap = getAllMonths();
-        for (Integer month : monthMap.keySet()) {
-            DateTime financialYearDate = new DateTime(currentInstallment.getFromDate()).withMonthOfYear(month);
+        for (Map.Entry<Integer, String> month : getAllMonths().entrySet()) {
+            DateTime financialYearDate = new DateTime(currentInstallment.getFromDate()).withMonthOfYear(month.getKey());
             Date monthEndDate = new DateTime(financialYearDate).withDayOfMonth(financialYearDate.dayOfMonth().getMaximumValue()).toDate();
             BigDecimal penaltyAmt = penaltyRatesService
                     .calculatePenalty(license, currentInstallment.getFromDate(), monthEndDate, currLicenseFee);
@@ -200,28 +200,32 @@ public class DemandNoticeService {
             demandBillDtl.setLicenseFee(currLicenseFee);
             demandBillDtl.setPenalty(penaltyAmt.setScale(0, ROUND_HALF_UP));
             demandBillDtl.setArrersWithPenalty(arrLicenseFee.add(arrLicensePenalty));
-            demandBillDtl.setMonth(monthMap.get(month).concat(", ").concat(currentInstallmentYear));
-            demandBillDtl.setTotalDues((arrLicenseFee.add(arrLicensePenalty).add(currLicenseFee).add(penaltyAmt)).setScale(0, ROUND_HALF_UP));
+            demandBillDtl.setMonth(month.getValue().concat(", ").concat(currentInstallmentYear));
+            demandBillDtl.setTotalDues(arrLicenseFee.add(arrLicensePenalty).add(currLicenseFee).add(penaltyAmt).setScale(0, ROUND_HALF_UP));
             monthWiseDemandDetails.add(demandBillDtl);
         }
     }
 
-    private String getPenaltyRateDetails(List<PenaltyRates> penaltyRates, Installment currentInstallment) {
+    private String getPenaltyRateDetails(List<PenaltyRates> penaltyRates, Installment currentInstallment, LicenseAppType licenseAppType) {
         StringBuilder penaltylist = new StringBuilder();
+
+        Long fromRange = penaltyRatesService.getMinFromRange(licenseAppType);
+        Long toRange = penaltyRatesService.getMaxToRange(licenseAppType);
+
         for (PenaltyRates penaltyRate : penaltyRates) {
             LocalDate currentInstallmentStartDate = LocalDate.fromDateFields(currentInstallment.getFromDate()).plusDays(1);
             LocalDate currentStartDate = LocalDate.fromDateFields(currentInstallment.getFromDate());
-            if (penaltyRate.getRate() <= 0) {
+            if (penaltyRate.getRate() <= ZERO.doubleValue()) {
                 penaltylist.append("Before ")
                         .append(getDefaultFormattedDate(currentInstallmentStartDate.plusDays(penaltyRate.getToRange().intValue()).toDate()))
                         .append(" without penalty\n");
             }
-            if (penaltyRate.getRate() > 0) {
-                if (penaltyRate.getToRange() >= 999) {
+            if (penaltyRate.getRate() > ZERO.doubleValue()) {
+                if (penaltyRate.getToRange() >= toRange) {
                     penaltylist.append("    After ")
                             .append(getDefaultFormattedDate(currentStartDate.plusDays(penaltyRate.getFromRange().intValue()).toDate()))
                             .append(WITH).append(penaltyRate.getRate().intValue()).append("% penalty");
-                } else if (penaltyRate.getFromRange() <= -999) {
+                } else if (penaltyRate.getFromRange() <= fromRange) {
                     penaltylist.append("Before ")
                             .append(getDefaultFormattedDate(currentInstallmentStartDate.plusDays(penaltyRate.getToRange().intValue()).toDate()))
                             .append(WITH).append(penaltyRate.getRate().intValue()).append("% penalty\n");

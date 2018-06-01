@@ -81,15 +81,31 @@ public class PenaltyRatesService {
         return penaltyRatesRepository.findOne(id);
     }
 
+    /**
+     * @param licenseAppType
+     * @return To get Min fromRange from penalty master for the given LicenseAppType.
+     */
+    public Long getMinFromRange(LicenseAppType licenseAppType) {
+        return penaltyRatesRepository.findTopByLicenseAppTypeOrderByFromRangeAsc(licenseAppType).getFromRange();
+    }
+
+    /**
+     * @param licenseAppType
+     * @return To get Max toRange from penalty master for the given LicenseAppType.
+     */
+    public Long getMaxToRange(LicenseAppType licenseAppType) {
+        return penaltyRatesRepository.findTopByLicenseAppTypeOrderByToRangeDesc(licenseAppType).getToRange();
+    }
+
     @Transactional
     public List<PenaltyRates> create(List<PenaltyRates> penaltyRates) {
         return penaltyRatesRepository.save(penaltyRates);
     }
 
     @ReadOnly
-    public List<PenaltyRates> search(Long licenseAppType) {
+    public List<PenaltyRates> search(LicenseAppType licenseAppType) {
         return licenseAppType != null ?
-                penaltyRatesRepository.findByLicenseAppTypeIdOrderByIdAsc(licenseAppType) : penaltyRatesRepository.findAll();
+                penaltyRatesRepository.findByLicenseAppTypeOrderByIdAsc(licenseAppType) : penaltyRatesRepository.findAll();
     }
 
     @Transactional
@@ -111,7 +127,7 @@ public class PenaltyRatesService {
     }
 
     public Date getPenaltyDate(License license, Installment installment) {
-        Optional<PenaltyRates> penaltyRates = search(license.getLicenseAppType().getId())
+        Optional<PenaltyRates> penaltyRates = search(license.getLicenseAppType())
                 .stream()
                 .filter(penaltyRate -> penaltyRate.getRate().doubleValue() <= ZERO.doubleValue())
                 .findFirst();
