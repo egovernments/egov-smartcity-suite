@@ -705,4 +705,11 @@ public class PropertyHibernateDAO implements PropertyDAO {
         qry.setMaxResults(1);
         return (Ptdemand)qry.uniqueResult();
     }
+    
+    public Property getPropertyByApplicationNo(String applicationNo){
+    	Query qry = getCurrentSession()
+                .createQuery("from PropertyImpl where applicationNo =:applicationNo ");
+        qry.setString("applicationNo", applicationNo);
+        return (Property) qry.uniqueResult();
+    }
 }

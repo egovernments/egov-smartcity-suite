@@ -45,27 +45,20 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.restapi.model;
+package org.egov.ptis.domain.model;
 
-import org.egov.ptis.domain.entity.property.Document;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.io.Serializable;
+public class DocumentDetailsRequest {
+	
+	private MultipartFile[] photoFile;
 
-@SuppressWarnings("serial")
-public class DocumentDetailsRequest implements Serializable {
-
-	private Document document;
-
-	public Document getDocument() {
-		return document;
+	public MultipartFile[] getPhotoFile() {
+		return photoFile;
 	}
 
-	public void setDocument(Document document) {
-		this.document = document;
+	public void setPhotoFile(MultipartFile[] photoFile) {
+		this.photoFile = photoFile;
 	}
 
-	@Override
-	public String toString() {
-		return "DocumentDetailsRequest [document=" + document + "]";
-	}
 }

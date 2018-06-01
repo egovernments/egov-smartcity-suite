@@ -683,4 +683,7 @@ public class RestApiConstants {
     
     public static final String EXEMPTED_PROPERTY="126";
     public static final String EXEMPTED_PROPERTY_ERROR_MSG="Cannot do Addition/Alteration on Exempted property";
+    
+    public static final String APPLICATION_NO_INVALID_CODE = "127";
+    public static final String APPLICATION_NO_INVALID_MSG = "Application Number is invalid";
 }

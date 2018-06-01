@@ -122,15 +122,18 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
+import org.egov.ptis.domain.dao.property.PropertyHibernateDAO;
 import org.egov.ptis.domain.dao.property.PropertyMutationDAO;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.document.DocumentTypeDetails;
+import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.property.Apartment;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.BoundaryCategory;
 import org.egov.ptis.domain.entity.property.BuiltUpProperty;
+import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.FloorType;
@@ -158,6 +161,7 @@ import org.egov.ptis.domain.entity.property.WoodType;
 import org.egov.ptis.domain.entity.property.view.SurveyBean;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.BoundaryDetails;
+import org.egov.ptis.domain.model.DocumentDetailsRequest;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.domain.model.FloorDetails;
 import org.egov.ptis.domain.model.LocalityDetails;
@@ -176,6 +180,7 @@ import org.egov.ptis.domain.model.TaxCalculatorRequest;
 import org.egov.ptis.domain.model.TaxCalculatorResponse;
 import org.egov.ptis.domain.model.ViewPropertyDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
+import org.egov.ptis.domain.repository.vacancyremission.VacancyRemissionRepository;
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.ptis.master.service.FloorTypeService;
@@ -278,7 +283,9 @@ public class PropertyExternalService {
     private PersistenceService<DocumentTypeDetails, Long> documentTypeDetailsService;
     @Autowired
     private PropertySurveyService surveyService ;
-
+    @Autowired
+    private PropertyHibernateDAO propertyHibernateDAO;
+    
     private PropertyImpl propty = new PropertyImpl();
 
     public PropertyImpl getPropty() {
@@ -3138,5 +3145,35 @@ public class PropertyExternalService {
                 basicProperty = basicProperties.get(0);
         }
         return basicProperty;
+    }
+    
+    public Property getPropertyByApplicationNo(String applicationNo){
+    	return propertyHibernateDAO.getPropertyByApplicationNo(applicationNo);
+    }
+    
+    public NewPropertyDetails saveDocument(DocumentDetailsRequest documentDetails, String applicationNo){
+    	Property property = getPropertyByApplicationNo(applicationNo);
+    	NewPropertyDetails newPropertyDetails = new NewPropertyDetails();
+    	PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
+    	VacancyRemissionRepository vacancyRemissionRepository = beanProvider.getBean("vacancyRemissionRepository", VacancyRemissionRepository.class);
+    	Document document;
+    	List<Document> docs = new ArrayList<>();
+    	List<DocumentType> documentTypes = propService.getDocumentTypesForTransactionType(TransactionType.CREATE);
+    	for(DocumentType documentType : documentTypes){
+    		document = new Document();
+    		document.setType(vacancyRemissionRepository.findDocumentTypeByNameAndTransactionType(
+    				documentType.getName(), TransactionType.CREATE));
+    		if(DOCUMENT_TYPE_PHOTO_OF_ASSESSMENT.equalsIgnoreCase(documentType.getName()))
+    			document.setFiles(propService.addToFileStore(documentDetails.getPhotoFile()));
+        	docs.add(document);
+    	}
+    	property.setDocuments(docs);
+    	basicPropertyService.update(property.getBasicProperty());
+    	newPropertyDetails.setApplicationNo(applicationNo);
+        ErrorDetails errorDetails = new ErrorDetails();
+        errorDetails.setErrorCode(THIRD_PARTY_DOCS_UPLOAD_SUCCESS_CODE);
+        errorDetails.setErrorMessage(THIRD_PARTY_DOCS_UPLOAD_SUCCESS_MSG);
+        newPropertyDetails.setErrorDetails(errorDetails);
+    	return newPropertyDetails;
     }
 }

@@ -81,6 +81,7 @@ import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyID;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
+import org.egov.ptis.domain.model.DocumentDetailsRequest;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.domain.model.FloorDetails;
 import org.egov.ptis.domain.model.OwnerInformation;
@@ -1244,6 +1245,22 @@ public class ValidationUtil {
             }
         }
         return errorDetails;
+    }
+    
+    public ErrorDetails validateDocumentUploadRequest(DocumentDetailsRequest documentDetail, String applicationNo){
+    	ErrorDetails errorDetails = new ErrorDetails();
+    	Property property = propertyExternalService.getPropertyByApplicationNo(applicationNo);
+    	if(property == null){
+    		errorDetails.setErrorCode(APPLICATION_NO_INVALID_CODE);
+            errorDetails.setErrorMessage(APPLICATION_NO_INVALID_MSG);
+            return errorDetails;
+    	}
+    	if(documentDetail.getPhotoFile() == null){
+    		errorDetails.setErrorCode(DOCUMENT_TYPE_DETAILS_REQ_CODE);
+            errorDetails.setErrorMessage(DOCUMENT_TYPE_DETAILS_REQ_MSG);
+            return errorDetails;
+    	}
+    	return errorDetails;
     }
 
 }

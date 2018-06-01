@@ -1255,6 +1255,9 @@ public interface PropertyTaxConstants {
     
     public static final String THIRD_PARTY_AMOUNT_HAVING_DECIMALS_CODE = "PTIS-REST-47";
     public static final String THIRD_PARTY_AMOUNT_HAVING_DECIMALS_MSG= "Paid amount in decimal is not accepted.";
+    
+    public static final String THIRD_PARTY_DOCS_UPLOAD_SUCCESS_CODE = "PTIS-REST-48";
+    public static final String THIRD_PARTY_DOCS_UPLOAD_SUCCESS_MSG= "Document(s) uploaded successfully.";
 
     public static final String TOTAL_AMOUNT = "amount";
     public final static String PAID_BY = "paidBy";
@@ -1744,4 +1747,6 @@ public interface PropertyTaxConstants {
     public static final String APPCONFIG_GIS_THIRDPARTY_CHECKBOX_REQUIRED = "PTIS_GIS_THIRDPARTY_CHECKBOX_REQUIRED";
     public static final String APPCONFIG_DEMAND_VOUCHER_GENERATION_REQUIRED = "PTIS_DEMAND_VOUCHER_GENERATION_REQUIRED";
     public static final String APPCONFIG_PT_DEMAND_VOUCHER_GLCODES = "PT_DEMAND_VOUCHER_GLCODES";
+    
+    public static final String DOCUMENT_TYPE_PHOTO_OF_ASSESSMENT = "Photo Of Assessment";
 }
