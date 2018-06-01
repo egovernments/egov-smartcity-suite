@@ -64,7 +64,7 @@
 			<span class="mandatory1">*</span> :</td>
 		<td class="greybox" width=""><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="propTypeId"
 				id="propTypeId" listKey="id" listValue="type" list="dropdownData.PropTypeMaster" value="%{propTypeId}"
-				cssClass="selectnew" onchange="populatePropTypeCategory();toggleFloorDetails();enableFieldsForPropType();populatePropDepartment();setEffectiveDate();" title="Type of ownership"/></td>
+				cssClass="selectnew" onchange="populatePropTypeCategory();toggleFloorDetails();enableFieldsForPropType();populatePropDepartment();" title="Type of ownership"/></td>
 				
 		<td class="greybox" width="25%"><s:text name="property.type"></s:text>
 			<span class="mandatory1" id="prntMandatory">*</span> :</td>
@@ -320,29 +320,31 @@
 			propTypeId : document.getElementById("propTypeId").value
 		});
 	}
- 	function setEffectiveDate() {
- 		var propertyType = jQuery('#propTypeId :selected').text();
- 		if(propertyType == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND_STR}"/>'){
- 			var today = new Date();
- 			var curMonth = today.getMonth()+1;
- 			var currYear = today.getFullYear();
- 			var baseDate;
- 			var effectiveDate;
- 			if(curMonth < 4){
- 				baseDate = new Date(currYear,4,1);
- 				effectiveDate = baseDate.getDate().toString()+"/"+baseDate.getMonth().toString()+"/"+(baseDate.getFullYear()-3).toString();
- 			}
- 			else if(curMonth > 3 && curMonth <10){
- 				baseDate = new Date(currYear,10,1);
- 				effectiveDate = baseDate.getDate().toString()+"/"+baseDate.getMonth().toString()+"/"+(baseDate.getFullYear()-3).toString();
- 			}
- 			else if(curMonth > 9){
- 				baseDate = new Date(currYear,4,1);
- 				effectiveDate = baseDate.getDate().toString()+"/"+baseDate.getMonth().toString()+"/"+(baseDate.getFullYear()-2).toString()
- 			}
- 			jQuery('#dateOfCompletion').val(effectiveDate);
- 			jQuery('#dateOfCompletion').attr('readonly', true);
- 		}
- 	} 
-    
+  	jQuery(document).ready(function() {
+ 		jQuery('#propTypeId').change(function() {
+ 			var propertyType = jQuery('#propTypeId :selected').text();
+ 	 		if(propertyType == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND_STR}"/>'){
+ 	 			var today = new Date();
+ 	 			var curMonth = today.getMonth()+1;
+ 	 			var currYear = today.getFullYear();
+ 	 			var baseDate;
+ 	 			var effectiveDate;
+ 	 			if(curMonth < 4){
+ 	 				baseDate = new Date(currYear,4,1);
+ 	 				effectiveDate = baseDate.getDate().toString()+"/"+baseDate.getMonth().toString()+"/"+(baseDate.getFullYear()-3).toString();
+ 	 			}
+ 	 			else if(curMonth > 3 && curMonth <10){
+ 	 				baseDate = new Date(currYear,10,1);
+ 	 				effectiveDate = baseDate.getDate().toString()+"/"+baseDate.getMonth().toString()+"/"+(baseDate.getFullYear()-3).toString();
+ 	 			}
+ 	 			else if(curMonth > 9){
+ 	 				baseDate = new Date(currYear,4,1);
+ 	 				effectiveDate = baseDate.getDate().toString()+"/"+baseDate.getMonth().toString()+"/"+(baseDate.getFullYear()-2).toString()
+ 	 			}
+ 	 			jQuery('#dateOfCompletion').val(effectiveDate);
+ 	 		}
+		 });
+ 		jQuery('#dateOfCompletion').attr('readonly', true);
+ 	});
+ 
 </script>
