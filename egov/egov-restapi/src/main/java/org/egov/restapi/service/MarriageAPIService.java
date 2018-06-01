@@ -117,7 +117,7 @@ public class MarriageAPIService {
         husband.setStreet(marriageRegistrationRequest.getHusbandStreet());
         husband.setLocality(marriageRegistrationRequest.getHusbandLocality());
         husband.setQualification(
-                educationalQualificationService.findByCode(marriageRegistrationRequest.getHusbandQualification()));
+                educationalQualificationService.findByName(marriageRegistrationRequest.getHusbandQualification()));
         husband.setHandicapped(marriageRegistrationRequest.isHusbandHandicapped());
         husband.setMaritalStatus(marriageRegistrationRequest.getHusbandMaritalStatus());
         husband.setNationality(nationalityRepository.findByName(INDAIN_NATIONALITY).get(0));
@@ -134,7 +134,7 @@ public class MarriageAPIService {
         wife.setCity(marriageRegistrationRequest.getWifeCity());
         wife.setStreet(marriageRegistrationRequest.getWifeStreet());
         wife.setLocality(marriageRegistrationRequest.getWifeLocality());
-        wife.setQualification(educationalQualificationService.findByCode(marriageRegistrationRequest.getWifeQualification()));
+        wife.setQualification(educationalQualificationService.findByName(marriageRegistrationRequest.getWifeQualification()));
         wife.setMaritalStatus(marriageRegistrationRequest.getWifeMaritalStatus());
         wife.setHandicapped(marriageRegistrationRequest.isWifeHandicapped());
         wife.setNationality(nationalityRepository.findByName(INDAIN_NATIONALITY).get(0));
