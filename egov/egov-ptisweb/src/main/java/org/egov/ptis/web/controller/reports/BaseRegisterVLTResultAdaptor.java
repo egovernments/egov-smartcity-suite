@@ -56,6 +56,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.Installment;
 import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
 import org.egov.infra.web.support.ui.DataTable;
@@ -99,10 +100,10 @@ public class BaseRegisterVLTResultAdaptor implements DataTableJsonAdapter<Proper
             final BigDecimal taxRate = propertyTaxUtil.getTaxRates();
             final Map<String, BigDecimal> valuesMap = getTaxDetails(baseRegisterResultObj);
 
-            final BigDecimal marketValue = baseRegisterResultObj.getMarketValue() != null
-                    ? baseRegisterResultObj.getMarketValue() : BigDecimal.ZERO;
-            final BigDecimal capitalValue = baseRegisterResultObj.getCapitalValue() != null
-                    ? baseRegisterResultObj.getCapitalValue() : BigDecimal.ZERO;
+            final BigDecimal marketValue = baseRegisterResultObj.getMarketValue() == null
+                    ? BigDecimal.ZERO : baseRegisterResultObj.getMarketValue();
+            final BigDecimal capitalValue = baseRegisterResultObj.getCapitalValue() == null
+                    ? BigDecimal.ZERO : baseRegisterResultObj.getCapitalValue();
 
             final BigDecimal higherValueForImposedTax = marketValue.compareTo(capitalValue) > 0
                     ? marketValue.setScale(2, BigDecimal.ROUND_HALF_UP)
@@ -114,47 +115,46 @@ public class BaseRegisterVLTResultAdaptor implements DataTableJsonAdapter<Proper
             if (baseRegisterResultObj.getAggrCurrSecondHalfPenaly() != null)
                 currPenaltyFine = currPenaltyFine.add(baseRegisterResultObj.getAggrCurrSecondHalfPenaly());
 
-            final BigDecimal currentColl = baseRegisterResultObj.getAggrCurrFirstHalfColl() != null
-                    ? baseRegisterResultObj.getAggrCurrFirstHalfColl()
-                    : BigDecimal.ZERO.add(baseRegisterResultObj.getAggrCurrSecondHalfColl() != null
-                            ? baseRegisterResultObj.getAggrCurrSecondHalfColl() : BigDecimal.ZERO);
+            final BigDecimal currentColl = baseRegisterResultObj.getAggrCurrFirstHalfColl() == null
+                    ? BigDecimal.ZERO.add(baseRegisterResultObj.getAggrCurrSecondHalfColl() == null
+                            ? BigDecimal.ZERO : baseRegisterResultObj.getAggrCurrSecondHalfColl())
+                    : baseRegisterResultObj.getAggrCurrFirstHalfColl();
 
             final BigDecimal arrColl = baseRegisterResultObj.getAggrArrColl() != null
                     ? baseRegisterResultObj.getAggrArrColl() : BigDecimal.ZERO;
             final BigDecimal totalColl = arrColl.add(currentColl);
-            final BigDecimal currTotal = baseRegisterResultObj.getAggrCurrFirstHalfDmd() != null
-                    ? baseRegisterResultObj.getAggrCurrFirstHalfDmd()
-                    : BigDecimal.ZERO.add(baseRegisterResultObj.getAggrCurrSecondHalfDmd() != null
-                            ? baseRegisterResultObj.getAggrCurrSecondHalfDmd() : BigDecimal.ZERO);
+            final BigDecimal currTotal = baseRegisterResultObj.getAggrCurrFirstHalfDmd() == null
+                    ? BigDecimal.ZERO.add(baseRegisterResultObj.getAggrCurrSecondHalfDmd() == null
+                            ? BigDecimal.ZERO : baseRegisterResultObj.getAggrCurrSecondHalfDmd())
+                    : baseRegisterResultObj.getAggrCurrFirstHalfDmd();
             jsonObject.addProperty("assessmentNo", baseRegisterResultObj.getPropertyId());
             jsonObject.addProperty("oldAssessmentNo",
-                    baseRegisterResultObj.getOldMuncipalNum() != null
-                            && org.apache.commons.lang.StringUtils.isNotBlank(baseRegisterResultObj.getOldMuncipalNum())
-                                    ? baseRegisterResultObj.getOldMuncipalNum() : "NA");
+                    StringUtils.isNotBlank(baseRegisterResultObj.getOldMuncipalNum())
+                            ? baseRegisterResultObj.getOldMuncipalNum() : "NA");
             jsonObject.addProperty("sitalArea", baseRegisterResultObj.getSitalArea().setScale(2, BigDecimal.ROUND_HALF_UP));
             jsonObject.addProperty("ward", baseRegisterResultObj.getWard().getBoundaryNum());
             jsonObject.addProperty("ownerName", baseRegisterResultObj.getOwnerName());
-            jsonObject.addProperty("surveyNo", baseRegisterResultObj.getSurveyNo() != null
+            jsonObject.addProperty("surveyNo", StringUtils.isNotBlank(baseRegisterResultObj.getSurveyNo())
                     ? baseRegisterResultObj.getSurveyNo() : "NA");
             jsonObject.addProperty("taxationRate", taxRate);
             jsonObject.addProperty("marketValue", marketValue.toString());
             jsonObject.addProperty("documentValue", capitalValue.toString());
             jsonObject.addProperty("higherValueForImposedtax", higherValueForImposedTax.toString());
             jsonObject.addProperty("isExempted", baseRegisterResultObj.getIsExempted() ? "Yes" : "No");
-            jsonObject.addProperty("propertyTaxFirstHlf", baseRegisterResultObj.getAggrCurrFirstHalfDmd() != null
-                    ? baseRegisterResultObj.getAggrCurrFirstHalfDmd() : BigDecimal.ZERO);
+            jsonObject.addProperty("propertyTaxFirstHlf", baseRegisterResultObj.getAggrCurrFirstHalfDmd() == null
+                    ? BigDecimal.ZERO : baseRegisterResultObj.getAggrCurrFirstHalfDmd());
 
             if (!valuesMap.isEmpty()) {
-                jsonObject.addProperty("libraryCessTaxFirstHlf", valuesMap.get(CURR_FIRST_HALF_LIB_CESS) != null
-                        ? valuesMap.get(CURR_FIRST_HALF_LIB_CESS) : BigDecimal.ZERO);
-                jsonObject.addProperty("libraryCessTaxSecondHlf", valuesMap.get(CURR_SECOND_HALF_LIB_CESS) != null
-                        ? valuesMap.get(CURR_SECOND_HALF_LIB_CESS) : BigDecimal.ZERO);
+                jsonObject.addProperty("libraryCessTaxFirstHlf", valuesMap.get(CURR_FIRST_HALF_LIB_CESS) == null
+                        ? BigDecimal.ZERO : valuesMap.get(CURR_FIRST_HALF_LIB_CESS));
+                jsonObject.addProperty("libraryCessTaxSecondHlf", valuesMap.get(CURR_SECOND_HALF_LIB_CESS) == null
+                        ? BigDecimal.ZERO : valuesMap.get(CURR_SECOND_HALF_LIB_CESS));
                 jsonObject.addProperty("arrearLibraryTax",
-                        valuesMap.get(ARR_LIB_CESS) != null ? valuesMap.get(ARR_LIB_CESS) : BigDecimal.ZERO);
+                        valuesMap.get(ARR_LIB_CESS) == null ? BigDecimal.ZERO : valuesMap.get(ARR_LIB_CESS));
             }
 
-            jsonObject.addProperty("propertyTaxSecondHlf", baseRegisterResultObj.getAggrCurrSecondHalfDmd() != null
-                    ? baseRegisterResultObj.getAggrCurrSecondHalfDmd() : BigDecimal.ZERO);
+            jsonObject.addProperty("propertyTaxSecondHlf", baseRegisterResultObj.getAggrCurrSecondHalfDmd() == null
+                    ? BigDecimal.ZERO : baseRegisterResultObj.getAggrCurrSecondHalfDmd());
 
             jsonObject.addProperty("currTotal", currTotal);
 
@@ -167,12 +167,12 @@ public class BaseRegisterVLTResultAdaptor implements DataTableJsonAdapter<Proper
                     baseRegisterResultObj.getAggrArrDmd() != null
                             && baseRegisterResultObj.getAggrArrDmd().compareTo(BigDecimal.ZERO) >= 1
                                     ? baseRegisterResultObj.getAggrArrDmd().subtract(
-                                            valuesMap != null ? valuesMap.get(ARR_LIB_CESS) : BigDecimal.ZERO)
+                                            valuesMap == null ? BigDecimal.ZERO : valuesMap.get(ARR_LIB_CESS))
                                     : BigDecimal.ZERO);
-            jsonObject.addProperty("arrearPenaltyFines", baseRegisterResultObj.getAggrArrearPenaly() != null
-                    ? baseRegisterResultObj.getAggrArrearPenaly() : BigDecimal.ZERO);
-            jsonObject.addProperty("arrearTotal", baseRegisterResultObj.getAggrArrDmd() != null
-                    ? baseRegisterResultObj.getAggrArrDmd() : BigDecimal.ZERO);
+            jsonObject.addProperty("arrearPenaltyFines", baseRegisterResultObj.getAggrArrearPenaly() == null
+                    ? BigDecimal.ZERO : baseRegisterResultObj.getAggrArrearPenaly());
+            jsonObject.addProperty("arrearTotal", baseRegisterResultObj.getAggrArrDmd() == null
+                    ? BigDecimal.ZERO : baseRegisterResultObj.getAggrArrDmd());
             jsonObject.addProperty("arrearColl", arrColl);
 
             jsonObject.addProperty("currentColl", currentColl);
@@ -189,13 +189,13 @@ public class BaseRegisterVLTResultAdaptor implements DataTableJsonAdapter<Proper
         for (final InstDmdCollInfo instDmdCollObj : instDemandCollList)
             if (instDmdCollObj.getInstallment().equals(currYearInstMap.get(CURRENTYEAR_FIRST_HALF).getId()))
                 values.put(CURR_FIRST_HALF_LIB_CESS,
-                        instDmdCollObj.getLibCessTax() != null ? instDmdCollObj.getLibCessTax() : BigDecimal.ZERO);
+                        instDmdCollObj.getLibCessTax() == null ? BigDecimal.ZERO : instDmdCollObj.getLibCessTax());
             else if (instDmdCollObj.getInstallment().equals(currYearInstMap.get(CURRENTYEAR_SECOND_HALF).getId()))
                 values.put(CURR_SECOND_HALF_LIB_CESS,
-                        instDmdCollObj.getLibCessTax() != null ? instDmdCollObj.getLibCessTax() : BigDecimal.ZERO);
+                        instDmdCollObj.getLibCessTax() == null ? BigDecimal.ZERO : instDmdCollObj.getLibCessTax());
             else
                 values.put(ARR_LIB_CESS,
-                        instDmdCollObj.getLibCessTax() != null ? instDmdCollObj.getLibCessTax() : BigDecimal.ZERO);
+                        instDmdCollObj.getLibCessTax() == null ? BigDecimal.ZERO : instDmdCollObj.getLibCessTax());
         return values;
 
     }
