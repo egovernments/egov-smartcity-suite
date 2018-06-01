@@ -274,7 +274,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
         }
         egBillregister = (EgBillregister) getPersistenceService().find(" from EgBillregister where id=?",
                 Long.valueOf(parameters.get(BILLID)[0]));
-        if(egBillregister.getEgBillregistermis().getVoucherHeader() != null && egBillregister.getEgBillregistermis().getVoucherHeader().getStatus() != 4)
+        if(egBillregister.getEgBillregistermis().getVoucherHeader() != null && egBillregister.getEgBillregistermis().getVoucherHeader().getStatus() != FinancialConstants.CANCELLEDVOUCHERSTATUS)
             voucherHeader = egBillregister.getEgBillregistermis().getVoucherHeader();
         else
             voucherHeader = null;

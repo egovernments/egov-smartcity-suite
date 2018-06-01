@@ -48,7 +48,21 @@
 package org.egov.egf.web.actions.bill;
 
 
-import net.sf.jasperreports.engine.JRException;
+import static org.egov.utils.FinancialConstants.BUDGETTYPE_ALL;
+import static org.egov.utils.FinancialConstants.BUDGETTYPE_CREDIT;
+import static org.egov.utils.FinancialConstants.BUDGETTYPE_DEBIT;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
@@ -85,16 +99,7 @@ import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import net.sf.jasperreports.engine.JRException;
 
 @Results(value = {
 
@@ -527,7 +532,6 @@ public class ExpenseBillPrintAction extends BaseFormAction {
                 final CChartOfAccounts coa = (CChartOfAccounts) persistenceService.find("from CChartOfAccounts where id=?",
                         Long.valueOf(glcodeid.toString()));
                 if (budgetcheck && coa.getBudgetCheckReq() != null && coa.getBudgetCheckReq()) {
-                    if (budgetcheck && coa.getBudgetCheckReq() != null && coa.getBudgetCheckReq()) {
                         final List<BudgetGroup> budgetHeadListByGlcode = budgetDetailsDAO.getBudgetHeadByGlcode(coa);
 
                         if (isBudgetCheckingRequiredForType("credit",
@@ -538,8 +542,6 @@ public class ExpenseBillPrintAction extends BaseFormAction {
                             budgetApprDetails = getBudgetDetails(coa, detail, functionName);
                             budget.add(budgetApprDetails);
                         }
-                       
-                    }
                 
                 }
                 vd.setGlcodeDetail(coa.getGlcode());
@@ -593,11 +595,11 @@ public class ExpenseBillPrintAction extends BaseFormAction {
      * @return
      */
     private boolean isBudgetCheckingRequiredForType(final String txnType, final String budgetingType) {
-        if ("debit".equalsIgnoreCase(budgetingType) && "debit".equals(txnType))
+        if (BUDGETTYPE_DEBIT.equalsIgnoreCase(budgetingType) && BUDGETTYPE_DEBIT.equals(txnType))
             return true;
-        else if ("credit".equalsIgnoreCase(budgetingType) && "credit".equals(txnType))
+        else if (BUDGETTYPE_CREDIT.equalsIgnoreCase(budgetingType) && BUDGETTYPE_CREDIT.equals(txnType))
             return true;
-        else if ("all".equalsIgnoreCase(budgetingType))
+        else if (BUDGETTYPE_ALL.equalsIgnoreCase(budgetingType))
             return true;
         else
             return false;
