@@ -101,12 +101,12 @@ public class MarriageAPIValidator implements Validator {
             errors.rejectValue("wifereligion", "Invalid bride's religion", "Invalid bride's religion");
         }
         if (marriageRegistrationRequest.getHusbandQualification() != null &&
-                educationalQualificationService.findByCode(marriageRegistrationRequest.getHusbandQualification()) == null) {
+                educationalQualificationService.findByName(marriageRegistrationRequest.getHusbandQualification()) == null) {
             errors.rejectValue("husbandQualification", "Invalid bridegroom's education qualification",
                     "Invalid bridegroom's education qualification");
         }
         if (marriageRegistrationRequest.getWifeQualification() != null &&
-                educationalQualificationService.findByCode(marriageRegistrationRequest.getWifeQualification()) == null) {
+                educationalQualificationService.findByName(marriageRegistrationRequest.getWifeQualification()) == null) {
             errors.rejectValue("wifeQualification", "Invalid bride's education qualification",
                     "Invalid bride's education qualification");
         }
