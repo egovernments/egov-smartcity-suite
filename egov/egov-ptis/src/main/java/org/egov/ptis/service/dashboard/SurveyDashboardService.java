@@ -319,7 +319,7 @@ public class SurveyDashboardService {
 
         Terms completedAggr = completedResponse.getAggregations().get(AGGREGATIONWISE);
         Map<String, Long> completedApplicationsMap = new ConcurrentHashMap<>();
-        Map<String, BillCollectorIndex> wardWiseBillCollectors = new HashMap<>();
+        Map<String, BillCollectorIndex> wardWiseBillCollectors = new ConcurrentHashMap<>();
         for (Bucket bucket : completedAggr.getBuckets())
             completedApplicationsMap.put(bucket.getKeyAsString(), bucket.getDocCount());
 
@@ -343,11 +343,11 @@ public class SurveyDashboardService {
 
     private Map<String, List<Map<String, BigDecimal>>> getApprovedTaxes(SearchResponse approvedResponse) {
         Terms approvedAggr = approvedResponse.getAggregations().get(AGGREGATIONWISE);
-        Map<String, List<Map<String, BigDecimal>>> totalMap = new HashMap<>();
+        Map<String, List<Map<String, BigDecimal>>> totalMap = new ConcurrentHashMap<>();
         for (Bucket appBucket : approvedAggr.getBuckets()) {
             List<Map<String, BigDecimal>> list = new ArrayList<>();
-            Map<String, BigDecimal> approvedSystemMap = new HashMap<>();
-            Map<String, BigDecimal> approvedTotalMap = new HashMap<>();
+            Map<String, BigDecimal> approvedSystemMap = new ConcurrentHashMap<>();
+            Map<String, BigDecimal> approvedTotalMap = new ConcurrentHashMap<>();
             Sum approvedSystemSumAggr = appBucket.getAggregations().get("approvedSystemTotal");
             BigDecimal totalApprovedSysTax = BigDecimal.valueOf(approvedSystemSumAggr.getValue()).setScale(0,
                     BigDecimal.ROUND_HALF_UP);
@@ -397,7 +397,6 @@ public class SurveyDashboardService {
         Terms ulbTerms = response.getAggregations().get(AGGREGATIONWISE);
         Terms verfTerms;
         Terms sentForRefTerms;
-        String name;
         Map<String, String> cityInfoMap = new HashMap<>();
         Iterable<CityIndex> cities = cityIndexService.findAll();
         for (CityIndex city : cities)
@@ -468,7 +467,7 @@ public class SurveyDashboardService {
         BigDecimal approvedTotalTax;
         String name = bucket.getKeyAsString();
         if (taxMap.containsKey(name)) {
-            surveyResponse.setExptdIncr((taxMap.get(name).get(0).subtract(taxMap.get(name).get(1))).doubleValue());
+            surveyResponse.setExptdIncr(taxMap.get(name).get(0).subtract(taxMap.get(name).get(1)).doubleValue());
             surveyResponse.setDiffFromSurveytax(taxMap.get(name).get(0).subtract(taxMap.get(name).get(2)).doubleValue());
         }
         if (completedApplicationsMap.get(name) != null)
