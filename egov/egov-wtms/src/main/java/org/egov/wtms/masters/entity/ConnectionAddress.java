@@ -110,11 +110,11 @@ public class ConnectionAddress extends AbstractAuditable {
     @JoinColumn(name = "locality")
     private Boundary locality;
 
-    @Length(min = 1, max = 50)
+    @Length(min = 1, max = 150)
     @Audited
     private String ownerName;
 
-    @Length(min = 1, max = 150)
+    @Length(min = 1, max = 250)
     @Audited
     private String address;
 
