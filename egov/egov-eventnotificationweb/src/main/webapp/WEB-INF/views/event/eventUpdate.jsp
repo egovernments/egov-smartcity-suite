@@ -64,12 +64,12 @@
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.eventType" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<form:select path="eventType" id="eventType" name="eventType"
+							<form:select path="eventType.id" id="eventType" name="eventType.id"
 								cssClass="form-control" cssErrorClass="form-control error"	required="required">
 								<form:option value=""><spring:message code="lbl.select" /></form:option>
-								<form:options items="${eventList}"/>
+								<form:options items="${eventList}" itemLabel="name" itemValue="id"/>
 							</form:select>
-							<form:errors path="eventType" cssClass="error-msg" />
+							<form:errors path="eventType.id" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"></label>
 						<div class="col-sm-3 add-margin"></div>
@@ -161,6 +161,14 @@
 								class="form-control text-left patternvalidation" maxlength="100" required="required" value="${eventhost}"/>
 							<form:errors path="eventhost" cssClass="error-msg" />
 						</div>
+						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.contactno" />:<span class="mandatory"></span></label>
+						<div class="col-sm-3 add-margin">
+							<form:input path="contactNumber" id="contactNumber" name="contactNumber" 
+								class="form-control text-left patternvalidation" maxlength="100" required="required"/>
+							<form:errors path="contactNumber" cssClass="error-msg" />
+						</div>
+					</div>
+					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.location" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<div class="input-group">
@@ -172,16 +180,16 @@
 								<form:errors path="eventlocation" cssClass="error-msg" />
 							</div>
 						</div>
-					</div>
-					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.address" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="address" id="address" name="address" 
-								class="form-control text-left patternvalidation" maxlength="256" required="required" value="${address}"/>
+							<form:textarea path="address" id="address" name="address" 
+								class="form-control text-left patternvalidation" maxlength="256" required="required" value="${address}" readonly="true"/>
 							<form:errors path="address" cssClass="error-msg" />
 						</div>
+					</div>
+					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.Wallpaper" />:</label>
-						<div class="col-sm-3 add-margin">
+						<div class="col-sm-5 add-margin">
 							<input type="file" id="file" name="eventDetails.file">
 							<label>Note: Minimum image dimension is 100*100 and it support jpg, jpeg, bmp, gif and png file type. </label>
 						</div>
@@ -200,8 +208,8 @@
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.ispaid" />:</label>
 						<div class="col-sm-3 add-margin">
-							<form:checkbox path="ispaid" id="ispaid" name="ispaid" value="${ispaid}"/>
-							<form:errors path="ispaid" cssClass="error-msg" />
+							<form:checkbox path="paid" id="paid" name="paid" value="${paid}"/>
+							<form:errors path="paid" cssClass="error-msg" />
 						</div>
 						<label id="costLabel" class="col-sm-2 control-label text-right" style="display:none;"><spring:message code="lbl.event.cost" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin" style="display:none;" id="costDiv">
@@ -227,7 +235,7 @@
 	<div class="form-group">
 		<div class="text-center">
 			<button type='submit' class='btn btn-primary' id="buttonSubmit">
-				<spring:message code='lbl.update.button' />
+				<spring:message code='lbl.update' />
 			</button>
 			<a href='javascript:void(0)' class='btn btn-default'
 				onclick='self.close()'><spring:message code='lbl.close' /></a>
@@ -243,7 +251,7 @@
                         <div class="panel panel-primary" data-collapsed="0"><!-- to apply shadow add class "panel-shadow" -->
                             <!-- panel head -->
                             <div class="panel-heading">
-                                <div class="panel-title"><spring:message code="lbl.complaintLoc"/></div>
+                                <div class="panel-title"><spring:message code="lbl.eventLoc"/></div>
                             </div>
 
                             <!-- panel body -->

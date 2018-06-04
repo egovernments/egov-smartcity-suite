@@ -69,12 +69,12 @@
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.draft.type" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<form:select path="type" id="type" name="type"
+							<form:select path="draftType" id="draftType" name="draftType"
 								cssClass="form-control" cssErrorClass="form-control error"	required="required">
 								<form:option value=""><spring:message code="lbl.select" /></form:option>
-								<form:options items="${draftList}" />
+								<form:options items="${draftList}" itemLabel="name" itemValue="id"/>
 							</form:select>
-							<form:errors path="type" cssClass="error-msg" />
+							<form:errors path="draftType" cssClass="error-msg" />
 						</div>
 					</div>
 					<div class="form-group">

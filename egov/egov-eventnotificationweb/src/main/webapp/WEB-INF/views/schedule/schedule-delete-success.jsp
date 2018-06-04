@@ -59,7 +59,7 @@
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-body custom-form ">
 					<c:if test="${not empty message}">
-						<div role="alert">${message}</div>
+						<div role="alert"><spring:message code="${message}"/></div>
 					</c:if>
 					
 				</div>

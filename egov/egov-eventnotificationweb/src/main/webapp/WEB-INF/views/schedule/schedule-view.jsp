@@ -71,7 +71,7 @@
 	    			<tr>
 	    				<td><c:out value="${listVar.id}"/></td>
 	    				<td><c:out value="${listVar.name}"/></td>
-	    				<td><c:out value="${listVar.type}"/></td>
+	    				<td><c:out value="${listVar.draftType.name}"/></td>
 	    				<td><c:out value="${listVar.module.name}"/></td>
 	    				<td><c:out value="${listVar.category.name}"/></td>
 	    				<td><c:out value="${listVar.message}"/></td>
@@ -112,7 +112,7 @@
 	    			<tr>
 	    				<td><c:out value="${listVar.id}"/></td>
 	    				<td><c:out value="${listVar.templateName}"/></td>
-	    				<td><c:out value="${listVar.notificationType}"/></td>
+	    				<td><c:out value="${listVar.draftType.name}"/></td>
 	    				<td><c:out value="${listVar.status}"/></td>
 	    				<td>
 	    					<fmt:formatDate pattern="dd/MM/yyyy" value="${listVar.eventDetails.startDt}" var="startDate" />
@@ -121,7 +121,7 @@
 	    				<td>
 	    					<c:out value="${listVar.eventDetails.startHH}" />:<c:out value="${listVar.eventDetails.startMM}" />
 	    				</td>
-	    				<td><c:out value="${listVar.repeat}"/></td>
+	    				<td><c:out value="${listVar.scheduleRepeat.name}"/></td>
 	    				<td><c:out value="${listVar.messageTemplate}"/></td>
 	    			</tr>
 				</c:forEach>

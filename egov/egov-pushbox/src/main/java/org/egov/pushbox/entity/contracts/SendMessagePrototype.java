@@ -45,7 +45,7 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.pushbox.application.entity;
+package org.egov.pushbox.entity.contracts;
 
 public class SendMessagePrototype {
     private Long messageId;

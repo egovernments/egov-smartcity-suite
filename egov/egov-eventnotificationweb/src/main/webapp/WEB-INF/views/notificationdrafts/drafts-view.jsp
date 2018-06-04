@@ -62,7 +62,7 @@
 							<select id="type" name="type" class="form-control">
 								<option value=""><spring:message code="lbl.select" /></option>
 								<c:forEach var="item" items="${draftList}">
-									<option value="${item}">${item}</option>
+									<option value="${item.id}">${item.name}</option>
 								</c:forEach>
 							</select>
 						</div>
@@ -86,7 +86,7 @@
 	<div class="col-md-12 table-header text-left">
 		<spring:message code="title.event.view.all" />
 		<button type='button' class='btn btn-primary' id="buttonSubmit" style="float: right;">
-			<spring:message code='lbl.add.button' />
+			<spring:message code='lbl.add' />
 		</button>
 	</div>
 	<div class="col-md-12 form-group report-table-container">
@@ -108,7 +108,7 @@
 	    			<tr>
 	    				<td><c:out value="${listVar.id}"/></td>
 	    				<td><c:out value="${listVar.name}"/></td>
-	    				<td><c:out value="${listVar.type}"/></td>
+	    				<td><c:out value="${listVar.draftType.name}"/></td>
 	    				<td><c:out value="${listVar.module.name}"/></td>
 	    				<td><c:out value="${listVar.category.name}"/></td>
 	    				<td><c:out value="${listVar.message}"/></td>

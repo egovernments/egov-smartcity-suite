@@ -45,134 +45,24 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.eventnotification.entity;
 
-import java.util.Date;
+package org.egov.pushbox.repository;
 
-import javax.persistence.Transient;
+import org.egov.pushbox.entity.UserFcmDevice;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import org.springframework.web.multipart.MultipartFile;
+/**
+ *
+ * @author Darshan Nagesh
+ *
+ */
 
-public class EventDetails {
+@Repository
+public interface UserFcmDeviceRepository extends JpaRepository<UserFcmDevice, java.lang.Long> {
 
-    @Transient
-    private String startHH;
+    UserFcmDevice findByUserId(Long id);
 
-    @Transient
-    private String startMM;
+    UserFcmDevice findByUserIdAndDeviceId(Long userId, String deviceId);
 
-    @Transient
-    private String endHH;
-
-    @Transient
-    private String endMM;
-
-    @Transient
-    private double lng;
-
-    @Transient
-    private double lat;
-
-    @Transient
-    private Long crossHierarchyId;
-
-    @Transient
-    private Date startDt;
-
-    @Transient
-    private Date endDt;
-
-    @Transient
-    private MultipartFile[] file;
-    
-    @Transient
-    private String paid;
-
-    public String getStartHH() {
-        return startHH;
-    }
-
-    public void setStartHH(String startHH) {
-        this.startHH = startHH;
-    }
-
-    public String getStartMM() {
-        return startMM;
-    }
-
-    public void setStartMM(String startMM) {
-        this.startMM = startMM;
-    }
-
-    public String getEndHH() {
-        return endHH;
-    }
-
-    public void setEndHH(String endHH) {
-        this.endHH = endHH;
-    }
-
-    public String getEndMM() {
-        return endMM;
-    }
-
-    public void setEndMM(String endMM) {
-        this.endMM = endMM;
-    }
-
-    public double getLng() {
-        return lng;
-    }
-
-    public void setLng(double lng) {
-        this.lng = lng;
-    }
-
-    public double getLat() {
-        return lat;
-    }
-
-    public void setLat(double lat) {
-        this.lat = lat;
-    }
-
-    public Long getCrossHierarchyId() {
-        return crossHierarchyId;
-    }
-
-    public void setCrossHierarchyId(Long crossHierarchyId) {
-        this.crossHierarchyId = crossHierarchyId;
-    }
-
-    public Date getStartDt() {
-        return startDt;
-    }
-
-    public void setStartDt(Date startDt) {
-        this.startDt = startDt;
-    }
-
-    public Date getEndDt() {
-        return endDt;
-    }
-
-    public void setEndDt(Date endDt) {
-        this.endDt = endDt;
-    }
-
-    public MultipartFile[] getFile() {
-        return file;
-    }
-
-    public void setFile(MultipartFile... files) {
-        file = files;
-    }
-
-    public String getPaid() {
-        return paid;
-    }
-
-    public void setPaid(String paid) {
-        this.paid = paid;
-    }
 }

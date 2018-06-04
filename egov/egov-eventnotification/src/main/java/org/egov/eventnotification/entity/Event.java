@@ -52,6 +52,7 @@ import java.util.Date;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -62,8 +63,10 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.egov.eventnotification.entity.contracts.EventDetails;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
@@ -118,18 +121,18 @@ public class Event extends AbstractAuditable {
     @Length(max = 200)
     private String address;
 
-    private boolean ispaid;
+    private boolean paid;
 
     private Double cost;
 
-    @NotNull
-    @Length(max = 50)
-    @SafeHtml
-    @Column(name = "event_type")
-    private String eventType;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "eventtype")
+    @Valid
+    private EventType eventType;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "filestore")
+    @Valid
     private FileStoreMapper filestore;
 
     @NotNull
@@ -144,6 +147,9 @@ public class Event extends AbstractAuditable {
     @SafeHtml
     @Length(max = 20)
     private String status;
+
+    @SafeHtml
+    private String contactNumber;
 
     @Transient
     private EventDetails eventDetails;
@@ -222,11 +228,11 @@ public class Event extends AbstractAuditable {
         this.cost = cost;
     }
 
-    public String getEventType() {
+    public EventType getEventType() {
         return eventType;
     }
 
-    public void setEventType(String eventType) {
+    public void setEventType(EventType eventType) {
         this.eventType = eventType;
     }
 
@@ -254,12 +260,12 @@ public class Event extends AbstractAuditable {
         this.status = status;
     }
 
-    public boolean isIspaid() {
-        return ispaid;
+    public boolean isPaid() {
+        return paid;
     }
 
-    public void setIspaid(boolean ispaid) {
-        this.ispaid = ispaid;
+    public void setPaid(boolean paid) {
+        this.paid = paid;
     }
 
     public Date getStartDate() {
@@ -276,5 +282,13 @@ public class Event extends AbstractAuditable {
 
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
+    }
+
+    public String getContactNumber() {
+        return contactNumber;
+    }
+
+    public void setContactNumber(String contactNumber) {
+        this.contactNumber = contactNumber;
     }
 }

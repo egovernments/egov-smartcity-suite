@@ -59,13 +59,12 @@ import static org.egov.eventnotification.constants.Constants.SCHEDULE_DAY;
 import static org.egov.eventnotification.constants.Constants.SCHEDULE_MONTH;
 import static org.egov.eventnotification.constants.Constants.SCHEDULE_YEAR;
 import static org.egov.eventnotification.constants.Constants.TRIGGER;
-import static org.egov.eventnotification.constants.Constants.USER;
 import static org.egov.eventnotification.constants.Constants.YEARLY_JOB_TYPE;
 
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.egov.eventnotification.entity.NotificationSchedule;
+import org.egov.eventnotification.entity.Schedule;
 import org.egov.eventnotification.utils.SchedulerUtil;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.ptis.client.util.PropertyTaxUtil;
@@ -80,7 +79,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * this api will contains all scheduler , that will run for different-2 purpose.
  * @author somvit
  *
  */
@@ -99,15 +97,10 @@ public class NotificationSchedulerManager {
     @Autowired
     private ReportService reportService;
 
-    /**
-     * all scheduler job will be configure here.
-     */
-    public void schedule(NotificationSchedule notificationschedule, User user) {
-
+    public void schedule(Schedule notificationschedule, User user) {
         Query query = propertyTaxUtil.prepareQueryforDefaultersReport(-1l, "1", "100000", 120000, "PRIVATE", "PT");
         List<DefaultersInfo> defaultersList = reportService.getDefaultersInformation(query, "1 Year", 10);
-        LOGGER.info("defaultersList : " + defaultersList.isEmpty());
-        LOGGER.info("defaultersList size : " + defaultersList.size());
+
         schedulerUtil.setGroupName(NOTIFICATION_JOB);
         schedulerUtil.setName(JOB + notificationschedule.getId());
         schedulerUtil.setTriggerName(TRIGGER + notificationschedule.getId());
@@ -118,12 +111,17 @@ public class NotificationSchedulerManager {
         int minutes = calendar.getMinuteOfHour();
 
         JobDataMap jobDataMap = new JobDataMap();
-        jobDataMap.put(USER, user);
-        jobDataMap.put(SCHEDULEID, notificationschedule.getId());
-        jobDataMap.put(DEFAULTERS_LIST, defaultersList);
+        jobDataMap.put(SCHEDULEID, notificationschedule.getId().toString());
+        jobDataMap.put("userid", user.getId().toString());
+        jobDataMap.put("username", user.getName());
+        try {
+            schedulerUtil.getScheduler().getContext().put(DEFAULTERS_LIST, defaultersList);
+        } catch (SchedulerException e1) {
+            LOGGER.error(e1.getMessage());
+        }
 
         // configure the scheduler time
-        switch (notificationschedule.getRepeat().toLowerCase()) {
+        switch (notificationschedule.getScheduleRepeat().getName().toLowerCase()) {
         case SCHEDULE_DAY:
             String dailyCronExpression = "0 " + minutes + " " + hours + " ? * * *";
 
@@ -170,26 +168,23 @@ public class NotificationSchedulerManager {
         }
     }
 
-    /**
-     * Delete the existing job.
-     */
-    public void removeJob(NotificationSchedule notificationschedule) {
+    public void removeJob(Schedule notificationschedule) {
         try {
             schedulerUtil.setGroupName(NOTIFICATION_JOB);
             schedulerUtil.setName(JOB + notificationschedule.getId());
             schedulerUtil.setTriggerName(TRIGGER + notificationschedule.getId());
             schedulerUtil.removeSchedule();
-
-            LOGGER.info("Schedule Job with name " + schedulerUtil.getName() + " is deleted");
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
     }
 
-    /**
-     * Modify the existing job.
-     */
-    public void updateJob(NotificationSchedule newSchedule, User user) {
+    public void updateJob(Schedule newSchedule, User user) {
+        schedulerUtil.setGroupName(NOTIFICATION_JOB);
+        schedulerUtil.setName(JOB + newSchedule.getId());
+        schedulerUtil.setTriggerName(TRIGGER + newSchedule.getId());
+        schedulerUtil.setRepeatCount(0);
+
         String scheduleTrigger = TRIGGER + newSchedule.getId();
 
         DateTime newTime = new DateTime(newSchedule.getStartDate());
@@ -197,14 +192,19 @@ public class NotificationSchedulerManager {
         int newminutes = newTime.getMinuteOfHour();
 
         JobDataMap jobDataMap = new JobDataMap();
-        jobDataMap.put(USER, user);
-        jobDataMap.put(SCHEDULEID, newSchedule.getId());
+        jobDataMap.put(SCHEDULEID, newSchedule.getId().toString());
+        jobDataMap.put("userid", user.getId().toString());
+        jobDataMap.put("username", user.getName());
 
         Query query = propertyTaxUtil.prepareQueryforDefaultersReport(-1l, "1", "100000", 10000, "PRIVATE", "PT");
         List<DefaultersInfo> defaultersList = reportService.getDefaultersInformation(query, "1 Year", 10);
-        jobDataMap.put(DEFAULTERS_LIST, defaultersList);
+        try {
+            schedulerUtil.getScheduler().getContext().put(DEFAULTERS_LIST, defaultersList);
+        } catch (SchedulerException e1) {
+            LOGGER.error(e1.getMessage());
+        }
         // configure the scheduler time
-        switch (newSchedule.getRepeat().toLowerCase()) {
+        switch (newSchedule.getScheduleRepeat().getName().toLowerCase()) {
         case SCHEDULE_DAY:
             String dailyCronExpression = "0 " + newminutes + " " + newhours + " ? * * *";
 

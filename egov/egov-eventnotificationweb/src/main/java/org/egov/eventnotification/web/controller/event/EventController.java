@@ -68,21 +68,16 @@ import static org.egov.eventnotification.constants.Constants.VIEW_EVENTVIEW;
 import static org.egov.eventnotification.constants.Constants.VIEW_EVENTVIEWRESULT;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Locale;
 
 import javax.validation.Valid;
 
 import org.egov.eventnotification.entity.Event;
-import org.egov.eventnotification.entity.EventType;
 import org.egov.eventnotification.service.EventService;
+import org.egov.eventnotification.service.EventTypeService;
 import org.egov.eventnotification.utils.EventnotificationUtil;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -93,7 +88,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
- * This is the EventController class. Which is basically used to create, view and update the event.
  * @author somvit
  *
  */
@@ -105,70 +99,40 @@ public class EventController {
     private EventService eventService;
 
     @Autowired
-    private MessageSource messageSource;
-
-    @Autowired
     private EventnotificationUtil eventnotificationUtil;
 
     @Autowired
     private UserService userService;
 
-    /**
-     * This method is used for view all event and view event by id.
-     * @param model
-     * @param id
-     * @return tiles view
-     */
+    @Autowired
+    private EventTypeService eventTypeService;
+
     @GetMapping(API_VIEW)
-    public String view(final Model model) {
+    public String view(@ModelAttribute Event event, final Model model) {
         model.addAttribute(EVENT_LIST,
-                eventService.findAllEventByStatus(ACTIVE.toUpperCase()));
+                eventService.getAllEventByStatus(ACTIVE.toUpperCase()));
         model.addAttribute(MODE, MODE_VIEW);
-        model.addAttribute(EVENT_TYPE_LIST, new ArrayList<>(Arrays.asList(EventType.values())));
+        model.addAttribute(EVENT_TYPE_LIST, eventTypeService.getAllEventType());
         return VIEW_EVENTVIEW;
     }
 
-    /**
-     * This method is used for view all event and view event by id.
-     * @param model
-     * @param id
-     * @return tiles view
-     */
     @GetMapping(API_VIEW_ID)
     public String viewByEvent(@PathVariable(EVENT_ID) Long id, final Model model) {
-        model.addAttribute(EVENT, eventService.findByEventId(id));
+        model.addAttribute(EVENT, eventService.getEventById(id));
         model.addAttribute(MODE, MODE_VIEW);
         return VIEW_EVENTVIEWRESULT;
     }
 
-    /**
-     * This method is used for show the create event page. It will take fetch all the hours, minutes and event type.
-     * @param event
-     * @param model
-     * @return tiles view
-     */
     @GetMapping(API_CREATE)
     public String save(@ModelAttribute Event event, Model model) {
         model.addAttribute(EVENT, event);
         model.addAttribute(HOUR_LIST, eventnotificationUtil.getAllHour());
         model.addAttribute(MINUTE_LIST, eventnotificationUtil.getAllMinute());
-        model.addAttribute(EVENT_LIST, new ArrayList<>(Arrays.asList(EventType.values())));
+        model.addAttribute(EVENT_LIST, eventTypeService.getAllEventType());
         model.addAttribute(MODE, MODE_CREATE);
         return VIEW_EVENTCREATE;
     }
 
-    /**
-     * This method is used for create event page.
-     * @param event
-     * @param files
-     * @param model
-     * @param redirectAttrs
-     * @param request
-     * @param errors
-     * @return tiles view
-     * @throws IOException
-     * @throws ParseException
-     */
     @PostMapping(API_CREATE)
     public String save(@Valid @ModelAttribute Event event,
             BindingResult errors, Model model)
@@ -178,9 +142,8 @@ public class EventController {
             model.addAttribute(MODE, MODE_CREATE);
             model.addAttribute(HOUR_LIST, eventnotificationUtil.getAllHour());
             model.addAttribute(MINUTE_LIST, eventnotificationUtil.getAllMinute());
-            model.addAttribute(EVENT_LIST, new ArrayList<>(Arrays.asList(EventType.values())));
-            model.addAttribute(MESSAGE,
-                    messageSource.getMessage("msg.event.create.error", null, Locale.ENGLISH));
+            model.addAttribute(EVENT_LIST, eventTypeService.getAllEventType());
+            model.addAttribute(MESSAGE, "msg.event.create.error");
             return VIEW_EVENTCREATE;
         }
 
@@ -188,8 +151,7 @@ public class EventController {
         User user = userService.getCurrentUser();
         eventService.sendPushMessage(event, user);
         model.addAttribute(EVENT, event);
-        model.addAttribute(MESSAGE,
-                messageSource.getMessage("msg.event.create.success", null, Locale.ENGLISH));
+        model.addAttribute(MESSAGE, "msg.event.create.success");
         model.addAttribute(MODE, MODE_VIEW);
         return VIEW_EVENTSUCCESS;
     }

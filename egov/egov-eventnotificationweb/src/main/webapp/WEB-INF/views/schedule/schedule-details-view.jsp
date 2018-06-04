@@ -67,7 +67,7 @@
 						</div>
 						<label class="col-xs-3 control-label text-right"><spring:message code="lbl.schedule.type" />:</label>
 						<div class="col-xs-3 add-margin view-content">
-							<c:out value="${notificationSchedule.notificationType}"/>
+							<c:out value="${notificationSchedule.draftType.name}"/>
 						</div>
 					</div>
 					<div class="form-group">
@@ -88,7 +88,7 @@
 						</div>
 						<label class="col-xs-3 control-label text-right"><spring:message code="lbl.schedule.repeatevery" />:</label>
 						<div class="col-xs-3 add-margin view-content">
-							<c:out value="${notificationSchedule.repeat}"/>
+							<c:out value="${notificationSchedule.scheduleRepeat.name}"/>
 						</div>
 					</div>
 					
@@ -106,12 +106,12 @@
 			<c:choose>
 				<c:when test="${scheduleEditable == true}">
 					<button type='button' class='btn btn-primary' id="buttonEdit">
-						<spring:message code='lbl.edit.button' />
+						<spring:message code='lbl.edit' />
 					</button>				        
 				</c:when>
 				<c:otherwise>
 					<button type='button' class='btn btn-primary' id="buttonEdit" disabled="disabled">
-						<spring:message code='lbl.edit.button' />
+						<spring:message code='lbl.edit' />
 					</button>
 				</c:otherwise>
 			</c:choose>

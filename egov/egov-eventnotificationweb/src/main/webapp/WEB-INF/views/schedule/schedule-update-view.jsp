@@ -47,7 +47,7 @@
   --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<form:form method="post" action="" modelAttribute="notificationSchedule" id="updateScheduleform" cssClass="form-horizontal form-groups-bordered"
+<form:form method="post" action="" modelAttribute="schedule" id="updateScheduleform" cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<div class="row">
 		<div class="col-md-12">
@@ -69,9 +69,12 @@
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.schedule.type" />:</label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="notificationType" id="notificationType" name="notificationType" 
-								class="form-control text-left patternvalidation" maxlength="100" readonly="true" value="${notificationType}"/>
-							<form:errors path="notificationType" cssClass="error-msg" />
+							<form:select path="draftType" id="draftType" name="draftType"
+								cssClass="form-control" cssErrorClass="form-control error"	required="required" readonly="true">
+								<form:option value=""><spring:message code="lbl.select" /></form:option>
+								<form:options items="${draftList}" itemLabel="name" itemValue="id"/>
+							</form:select>
+							<form:errors path="draftType" cssClass="error-msg" />
 						</div>
 					</div>
 					<div class="form-group">
@@ -111,12 +114,12 @@
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.schedule.repeatevery" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin text-center">
-							<form:select path="repeat" id="repeat" name="repeat"
+							<form:select path="scheduleRepeat" id="scheduleRepeat" name="scheduleRepeat"
 								cssClass="form-control" cssErrorClass="form-control error"	required="required">
 								<form:option value=""><spring:message code="lbl.select" /></form:option>
-								<form:options items="${repeatList}" />
+								<form:options items="${repeatList}" itemLabel="name" itemValue="id"/>
 							</form:select>
-							<form:errors path="repeat" cssClass="error-msg" />
+							<form:errors path="scheduleRepeat" cssClass="error-msg" />
 						</div>
 					</div>
 					
@@ -135,7 +138,7 @@
 	<div class="form-group">
 		<div class="text-center">
 			<button type='submit' class='btn btn-primary' id="buttonSubmit">
-				<spring:message code='lbl.update.button' />
+				<spring:message code='lbl.update' />
 			</button>
 			<a href='javascript:void(0)' class='btn btn-default'
 				onclick='self.close()'><spring:message code='lbl.close' /></a>

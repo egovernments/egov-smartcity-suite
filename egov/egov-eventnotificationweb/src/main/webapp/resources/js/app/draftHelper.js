@@ -47,20 +47,32 @@
  */
 var tableContainer;
 $(document).ready(function(){
-
+	$('#draftViewTable').DataTable({
+		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-md-3 col-xs-6 text-right'p>>",
+		"aLengthMenu" : [[10,25,50,-1 ],[10,25,50,"All" ] ],
+		"order": [[ 0, "desc" ]],
+		sort: true,
+		"autoWidth" : false
+	});
+	
 	$('#draftViewTable tbody').on('click', 'tr', function () {
 		window.open("/eventnotification/drafts/view/"+$(this).children('td:first-child').text(),'_blank', "width=800, height=700, scrollbars=yes")
     } );
 	
 	$("#draftSearch").click(function() {
 		$("#draftViewTable").DataTable().clear().draw();
+		var typeVal;
+		if($("#type option:selected").text() === "Select"){
+			typeVal = "";
+		}else{
+			typeVal = $("#type option:selected").text();
+		}
 		$.ajax({
 		      type: "GET",
-		      url: "/api/draft/search?"+$("#searchDraftForm").serialize(),
+		      url: "/api/draft/search?type="+typeVal+"&name="+$("#name").val(),
 		      contentType: "application/json; charset=utf-8",
 		      dataType: 'json',
 		      success: function (data) {
-		    	  var dataRsponse = data;
 		    	  $.each(data.result, function(i, obj) {
 		    		  $("#draftViewTable").dataTable().fnAddData( [
 		    			  obj.id,

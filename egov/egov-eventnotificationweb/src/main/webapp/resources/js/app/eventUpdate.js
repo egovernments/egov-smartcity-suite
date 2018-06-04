@@ -228,14 +228,14 @@ $(document).ready(function(){
     });
 			
 	if($("#paidHid").val() === "Yes"){
-		$("#ispaid")[0].checked = true;
+		$("#paid")[0].checked = true;
 		$("#costLabel").show();
     	$("#costDiv").show();
 	}else{
-		$("#ispaid")[0].checked = false;
+		$("#paid")[0].checked = false;
 	}
 	
-	$("#ispaid").on("change", function(event) { 
+	$("#paid").on("change", function(event) { 
 		//alert(($(this).is(':checked')));
 	    if ($(this).is(':checked')) {
 	        //$(this).trigger("change");
@@ -275,7 +275,7 @@ $(document).ready(function(){
 					return false;
 				}
 				
-				if(jQuery("#ispaid").is(":checked")){
+				if(jQuery("#paid").is(":checked")){
 					if($("#cost").val() == ""){
 						bootbox.alert("Please provide cost!");
 						$("#cost").val("");

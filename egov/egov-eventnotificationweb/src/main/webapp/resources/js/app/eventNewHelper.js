@@ -227,7 +227,7 @@ $(document).ready(function(){
         $("#eventlocation").val(lat + ':' + lng);
     });
 		
-	$("#ispaid").on("change", function(event) { 
+	$("#paid").on("change", function(event) { 
 		//alert(($(this).is(':checked')));
 	    if ($(this).is(":checked")) {
 	        //$(this).trigger("change");
@@ -266,8 +266,13 @@ $(document).ready(function(){
 					$("#endMM").val("");
 					return false;
 				}
+				if($("#file")[0].files[0] === undefined)
+				{
+					bootbox.alert("Please provide image!");
+					return false;
+				}
 				
-				if(jQuery("#ispaid").is(":checked")){
+				if(jQuery("#paid").is(":checked")){
 					if($("#cost").val() == ""){
 						bootbox.alert("Please provide cost!");
 						$("#cost").val("");
@@ -289,7 +294,7 @@ $(document).ready(function(){
 
         if (!(regex.test(val))) {
             $(this).val("");
-            bootbox.alert("Sorry, " + $(this).val() + " is invalid, allowed extensions are: jpg, jpeg, bmp, gif or png");
+            bootbox.alert("Sorry, Selected file is invalid, allowed extensions are: jpg, jpeg, bmp, gif or png");
         }
         var img = new Image();
 	    img.src = _URL.createObjectURL($(this)[0].files[0]);

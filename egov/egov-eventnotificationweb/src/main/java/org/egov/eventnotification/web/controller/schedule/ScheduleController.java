@@ -1,3 +1,50 @@
+/*
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) 2017  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
+ */
 package org.egov.eventnotification.web.controller.schedule;
 
 import static org.egov.eventnotification.constants.Constants.DRAFT_LIST;
@@ -18,25 +65,21 @@ import static org.egov.eventnotification.constants.Constants.SCHEDULE_EDITABLE;
 import static org.egov.eventnotification.constants.Constants.SCHEDULE_LIST;
 import static org.egov.eventnotification.constants.Constants.TO_BE_SCHEDULED;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
 import javax.validation.Valid;
 
 import org.egov.eventnotification.constants.Constants;
-import org.egov.eventnotification.entity.NotificationDrafts;
-import org.egov.eventnotification.entity.NotificationSchedule;
-import org.egov.eventnotification.entity.SchedulerRepeat;
+import org.egov.eventnotification.entity.Drafts;
+import org.egov.eventnotification.entity.Schedule;
 import org.egov.eventnotification.scheduler.NotificationSchedulerManager;
 import org.egov.eventnotification.service.DraftService;
+import org.egov.eventnotification.service.DraftTypeService;
+import org.egov.eventnotification.service.ScheduleRepeatService;
 import org.egov.eventnotification.service.ScheduleService;
 import org.egov.eventnotification.utils.EventnotificationUtil;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -60,75 +103,52 @@ public class ScheduleController {
     private EventnotificationUtil eventnotificationUtil;
 
     @Autowired
-    private MessageSource messageSource;
-
-    @Autowired
     private UserService userService;
 
     @Autowired
     private NotificationSchedulerManager schedulerManager;
 
-    /**
-     * This method is used for view all drafts and schedule.
-     * @param model
-     * @return tiles view
-     */
+    @Autowired
+    private ScheduleRepeatService scheduleRepeatService;
+
+    @Autowired
+    private DraftTypeService draftTypeService;
+
     @GetMapping("/schedule/view/")
     public String view(Model model) {
-        model.addAttribute(DRAFT_LIST, draftService.findAllDrafts());
+        model.addAttribute(DRAFT_LIST, draftService.getAllDrafts());
         model.addAttribute(SCHEDULE_LIST,
-                scheduleService.findAllSchedule());
+                scheduleService.getAllSchedule());
         return Constants.SCHEDULE_VIEW;
     }
 
-    /**
-     * This method is used for load the create schedule page.
-     * @param model
-     * @param id
-     * @param schedule
-     * @return tiles view
-     */
     @GetMapping("/schedule/create/{id}")
-    public String save(@PathVariable("id") Long id, @ModelAttribute NotificationSchedule schedule, Model model) {
-        NotificationDrafts notificationDrafts = draftService.findDraftById(id);
+    public String save(@PathVariable("id") Long id, @ModelAttribute Schedule schedule, Model model) {
+        Drafts notificationDrafts = draftService.getDraftById(id);
         schedule.setStatus(TO_BE_SCHEDULED);
         schedule.setMessageTemplate(notificationDrafts.getMessage());
         schedule.setTemplateName(notificationDrafts.getName());
-        schedule.setNotificationType(notificationDrafts.getType());
+        schedule.setDraftType(notificationDrafts.getDraftType());
 
         model.addAttribute(NOTIFICATION_SCHEDULE, schedule);
         model.addAttribute(HOUR_LIST, eventnotificationUtil.getAllHour());
         model.addAttribute(MINUTE_LIST, eventnotificationUtil.getAllMinute());
-        List<String> repeatList = new ArrayList<>();
-        for (SchedulerRepeat schedulerRepeat : SchedulerRepeat.values())
-            repeatList.add(schedulerRepeat.getName());
+        model.addAttribute(DRAFT_LIST, draftTypeService.getAllDraftType());
 
-        model.addAttribute(SCHEDULER_REPEAT_LIST, repeatList);
+        model.addAttribute(SCHEDULER_REPEAT_LIST, scheduleRepeatService.getAllScheduleRepeat());
 
         return SCHEDULE_CREATE_VIEW;
     }
 
-    /**
-     * This method is used for create new schedule.
-     * @param model
-     * @param schedule
-     * @param redirectAttrs
-     * @return tiles view
-     */
     @PostMapping("/schedule/create/")
-    public String save(@Valid @ModelAttribute NotificationSchedule schedule, BindingResult errors, Model model) {
+    public String save(@Valid @ModelAttribute Schedule schedule, BindingResult errors, Model model) {
 
         if (errors.hasErrors()) {
             model.addAttribute(NOTIFICATION_SCHEDULE, schedule);
             model.addAttribute(HOUR_LIST, eventnotificationUtil.getAllHour());
             model.addAttribute(MINUTE_LIST, eventnotificationUtil.getAllMinute());
-            List<String> repeatList = new ArrayList<>();
-            for (SchedulerRepeat schedulerRepeat : SchedulerRepeat.values())
-                repeatList.add(schedulerRepeat.getName());
-
-            model.addAttribute(SCHEDULER_REPEAT_LIST, repeatList);
-            model.addAttribute(MESSAGE,
-                    messageSource.getMessage("msg.notification.schedule.error", null, Locale.ENGLISH));
+            model.addAttribute(SCHEDULER_REPEAT_LIST, scheduleRepeatService.getAllScheduleRepeat());
+            model.addAttribute(MESSAGE, "msg.notification.schedule.error");
             return SCHEDULE_CREATE_VIEW;
         }
 
@@ -136,22 +156,15 @@ public class ScheduleController {
         scheduleService.saveSchedule(schedule, user);
 
         schedulerManager.schedule(schedule, user);
-        model.addAttribute(MESSAGE,
-                messageSource.getMessage("msg.notification.schedule.success", null, Locale.ENGLISH));
+        model.addAttribute(MESSAGE, "msg.notification.schedule.success");
         model.addAttribute(MODE, MODE_VIEW);
         model.addAttribute(NOTIFICATION_SCHEDULE, schedule);
         return SCHEDULE_CREATE_SUCCESS;
     }
 
-    /**
-     * This method is used for view schedule details.
-     * @param model
-     * @param id
-     * @return tiles view
-     */
     @GetMapping("/schedule/view/{id}")
     public String viewBySchedule(@PathVariable("id") Long id, Model model) {
-        NotificationSchedule notificationSchedule = scheduleService.getSchedule(id);
+        Schedule notificationSchedule = scheduleService.getScheduleById(id);
         DateTime sd = new DateTime(notificationSchedule.getStartDate());
 
         if (sd.isBeforeNow())
@@ -163,22 +176,15 @@ public class ScheduleController {
         return SCHEDULE_DETAILS_VIEW;
     }
 
-    /**
-     * This method is used for soft delete of schedule.
-     * @param model
-     * @param schedule
-     * @return success
-     */
     @GetMapping(path = { "/schedule/delete/{id}" }, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String deleteSchedule(@PathVariable Long id, Model model) {
-        NotificationSchedule notificationSchedule = scheduleService.getSchedule(id);
+        Schedule notificationSchedule = scheduleService.getScheduleById(id);
         notificationSchedule.setStatus(SCHEDULE_DISABLED);
 
         notificationSchedule = scheduleService.updateSchedule(notificationSchedule);
         schedulerManager.removeJob(notificationSchedule);
-        model.addAttribute(MESSAGE,
-                messageSource.getMessage("msg.notification.schedule.delete.success", null, Locale.ENGLISH));
+        model.addAttribute(MESSAGE, "msg.notification.schedule.delete.success");
         return SCHEDULE_DELETE_SUCCESS;
     }
 }

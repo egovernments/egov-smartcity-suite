@@ -46,27 +46,28 @@
  *
  */
 
-package org.egov.pushbox.application.service;
+package org.egov.pushbox.service;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.pushbox.application.entity.MessageContent;
-import org.egov.pushbox.application.entity.ScheduleLog;
-import org.egov.pushbox.application.entity.UserDevice;
-import org.egov.pushbox.application.repository.PushNotificationRepository;
-import org.egov.pushbox.application.repository.ScheduleLogRepository;
+import org.egov.pushbox.entity.UserFcmDevice;
+import org.egov.pushbox.entity.config.PushboxConfiguration;
+import org.egov.pushbox.entity.contracts.MessageContent;
+import org.egov.pushbox.entity.contracts.PushboxProperties;
+import org.egov.pushbox.repository.UserFcmDeviceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.api.client.googleapis.util.Utils;
+import com.google.api.client.json.JsonFactory;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
@@ -83,28 +84,20 @@ import com.google.gson.Gson;
 @Transactional(readOnly = true)
 public class PushNotificationService {
     private static final Logger LOGGER = Logger.getLogger(PushNotificationService.class);
-    private static final String FCM_APP_BDURL = "https://ap-megov.firebaseio.com";
-    private final PushNotificationRepository pushNotificationRepo;
-    private static final String MODULE_NAME = "Eventnotification";
 
     @Autowired
-    private FileStoreService fileStoreService;
-
+    private UserFcmDeviceRepository pushNotificationRepo;
+    
     @Autowired
-    private ScheduleLogRepository scheduleLogRepository;
-
-    @Autowired
-    public PushNotificationService(final PushNotificationRepository pushNotificationRepo) {
-        this.pushNotificationRepo = pushNotificationRepo;
-    }
+    private PushboxConfiguration pushboxConfiguration;
 
     @Transactional
-    public UserDevice saveUserDevice(final UserDevice userDevice) {
+    public UserFcmDevice saveUserDevice(final UserFcmDevice userDevice) {
         LOGGER.info("Persisting the User Device Details : " + userDevice);
-        UserDevice existingRecord = pushNotificationRepo.findByUserIdAndDeviceId(userDevice.getUserId(),
+        UserFcmDevice existingRecord = pushNotificationRepo.findByUserIdAndDeviceId(userDevice.getUser().getId(),
                 userDevice.getDeviceId());
         if (null != existingRecord) {
-            existingRecord.setUserId(userDevice.getUserId());
+            existingRecord.setUser(userDevice.getUser());
             existingRecord.setUserDeviceToken(userDevice.getUserDeviceToken());
             existingRecord.setDeviceId(userDevice.getDeviceId());
             return existingRecord;
@@ -112,21 +105,21 @@ public class PushNotificationService {
         return pushNotificationRepo.save(userDevice);
     }
 
-    public List<UserDevice> findAll() {
+    public List<UserFcmDevice> getAllUserFcmDevice() {
         return pushNotificationRepo.findAll();
     }
 
-    public UserDevice findOne(final Long id) {
+    public UserFcmDevice getUserFcmDevice(final Long id) {
         return pushNotificationRepo.findOne(id);
     }
 
-    public UserDevice findUserDeviceByUserId(final Long userId) {
-        return pushNotificationRepo.findDeviceTokenByUserId(userId);
+    public UserFcmDevice getUserDeviceByUser(final Long userId) {
+        return pushNotificationRepo.findByUserId(userId);
     }
 
     public void sendNotifications(MessageContent messageContent) {
         LOGGER.info("##PushBoxFox## : Received the Message Content at SendNotifications Method");
-        List<UserDevice> userDeviceList = null;
+        List<UserFcmDevice> userDeviceList = null;
         if (messageContent.isSendAll())
             userDeviceList = getAllUserDeviceList();
         else
@@ -135,55 +128,66 @@ public class PushNotificationService {
         setUpFirebaseApp();
         LOGGER.info("##PushBoxFox## : Sending Messages to the Devices ");
         sendMessagesToDevices(userDeviceList, messageContent);
-        /*
-         * LOGGER.info("##PushBoxFox## : Writing Message Log "); logMessages(userDeviceList, messageContent);
-         */
     }
 
-    private List<UserDevice> getUserDeviceList(MessageContent messageContent) {
-        List<UserDevice> userDeviceList = new ArrayList<>();
+    private List<UserFcmDevice> getUserDeviceList(MessageContent messageContent) {
+        List<UserFcmDevice> userDeviceList = new ArrayList<>();
         for (Long userId : messageContent.getUserIdList()) {
             LOGGER.info("#PushBoxFox## : Getting the Device Token for the User ID : " + userId);
-            UserDevice device = findUserDeviceByUserId(userId);
+            UserFcmDevice device = getUserDeviceByUser(userId);
             if (null != device)
                 userDeviceList.add(device);
         }
         return userDeviceList;
     }
 
-    private List<UserDevice> getAllUserDeviceList() {
+    private List<UserFcmDevice> getAllUserDeviceList() {
         return pushNotificationRepo.findAll();
     }
 
     private void setUpFirebaseApp() {
         if (FirebaseApp.getApps().isEmpty()) {
-            FileInputStream serviceAccount = null;
+            InputStream refreshTokenStream = null;
             try {
-                // Fetch the service account key JSON file contents
-                File file = new ClassPathResource("private.json").getFile();
-                serviceAccount = new FileInputStream(file);
-
+                PushboxProperties pushboxProperties = pushboxConfiguration.initPushBoxProperties();
+                                
+                JsonFactory JSON_FACTORY = Utils.getDefaultJsonFactory();
+                Map<String, Object> secretJson = new HashMap<>();
+                secretJson.put("type", pushboxProperties.getType());
+                secretJson.put("project_id", pushboxProperties.getProjectId());
+                secretJson.put("private_key_id", pushboxProperties.getPrivateKeyId());
+                secretJson.put("private_key", pushboxProperties.getPrivateKey());
+                secretJson.put("client_email", pushboxProperties.getClientEmail());
+                secretJson.put("client_id", pushboxProperties.getClientId());
+                secretJson.put("auth_uri", pushboxProperties.getAuthUri());
+                secretJson.put("token_uri", pushboxProperties.getTokenUri());
+                secretJson.put("auth_provider_x509_cert_url", pushboxProperties.getAuthProviderCertUrl());
+                secretJson.put("client_x509_cert_url", pushboxProperties.getClientCertUrl());
+                
+                refreshTokenStream =
+                    new ByteArrayInputStream(JSON_FACTORY.toByteArray(secretJson));
+                
                 FirebaseOptions options = new FirebaseOptions.Builder()
-                        .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                        .setDatabaseUrl(FCM_APP_BDURL).build();
+                        .setCredentials(GoogleCredentials.fromStream(refreshTokenStream))
+                        .setDatabaseUrl(pushboxProperties.getDatabaseUrl()).build();
 
                 FirebaseApp.initializeApp(options);
                 LOGGER.info("##PushBoxFox## : Firebase App Initialized");
             } catch (IOException e) {
                 LOGGER.error("##PushBoxFox## : Error in setup firebase app", e);
             } finally {
-                if (serviceAccount != null)
+                if (refreshTokenStream != null)
                     try {
-                        serviceAccount.close();
+                        refreshTokenStream.close();
                     } catch (IOException e) {
                         LOGGER.error("##PushBoxFox## : Error in setup firebase app", e);
                     }
             }
         }
     }
-
-    private void sendMessagesToDevices(List<UserDevice> userDeviceList, MessageContent messageContent) {
-        for (UserDevice userDevice : userDeviceList)
+    
+    private void sendMessagesToDevices(List<UserFcmDevice> userDeviceList, MessageContent messageContent) {
+        for (UserFcmDevice userDevice : userDeviceList)
             try {
                 Message message = Message.builder()
                         .putData("content", new Gson().toJson(messageContent))
@@ -194,29 +198,4 @@ public class PushNotificationService {
                 LOGGER.error("##PushBoxFox## : Error : Encountered an exception while sending the message : " + ex.getMessage());
             }
     }
-
-    @Transactional
-    public ScheduleLog insertScheduleLog(File file) {
-        ScheduleLog scheduleLog = new ScheduleLog();
-        uploadScheduleLogFile(scheduleLog, file);
-        scheduleLog = scheduleLogRepository.save(scheduleLog);
-        scheduleLogRepository.flush();
-        return scheduleLog;
-    }
-
-    /**
-     * This method is used to upload the file into filestore
-     * @param event
-     * @throws IOException
-     */
-    private void uploadScheduleLogFile(ScheduleLog scheduleLog, File file) {
-        try {
-            scheduleLog.setFilestore(
-                    fileStoreService.store(new FileInputStream(file), file.getName(), "text/rtf", MODULE_NAME));
-        } catch (FileNotFoundException e) {
-            LOGGER.error("##PushBoxFox## : Error in upload schedule log file", e);
-        }
-
-    }
-
 }

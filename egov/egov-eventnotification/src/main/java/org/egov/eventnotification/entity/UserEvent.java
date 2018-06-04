@@ -47,13 +47,19 @@
  */
 package org.egov.eventnotification.entity;
 
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 
 @Entity
@@ -72,9 +78,17 @@ public class UserEvent extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_EG_USEREVENT, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    private Long userId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "userid")
+    @Valid
+    @Embedded
+    private User user;
 
-    private Long eventId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "event")
+    @Valid
+    @Embedded
+    private Event event;
 
     @Override
     public Long getId() {
@@ -86,19 +100,19 @@ public class UserEvent extends AbstractAuditable {
         this.id = id;
     }
 
-    public Long getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public Long getEventId() {
-        return eventId;
+    public Event getEvent() {
+        return event;
     }
 
-    public void setEventId(Long eventId) {
-        this.eventId = eventId;
+    public void setEvent(Event event) {
+        this.event = event;
     }
 }

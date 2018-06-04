@@ -62,9 +62,11 @@ import org.egov.api.adapter.UserAdapter;
 import org.egov.api.adapter.UserDeviceAdapter;
 import org.egov.api.controller.core.ApiController;
 import org.egov.api.controller.core.ApiResponse;
-import org.egov.pushbox.application.entity.MessageContent;
-import org.egov.pushbox.application.entity.UserDevice;
-import org.egov.pushbox.application.service.PushNotificationService;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
+import org.egov.pushbox.entity.UserFcmDevice;
+import org.egov.pushbox.entity.contracts.MessageContent;
+import org.egov.pushbox.service.PushNotificationService;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -95,25 +97,29 @@ public class RestPushBoxController extends ApiController {
     @Autowired
     private PushNotificationService notificationService;
 
+    @Autowired
+    private UserService userService;
+
     @PostMapping(path = UPDATE_USER_TOKEN, consumes = APPLICATION_JSON_VALUE)
     public @ResponseBody ResponseEntity<String> updateToken(@RequestBody JSONObject tokenUpdate) {
         ApiResponse res = ApiResponse.newInstance();
         try {
 
-            UserDevice userDevice = new UserDevice();
+            UserFcmDevice userDevice = new UserFcmDevice();
             userDevice.setUserDeviceToken(tokenUpdate.get(USER_TOKEN_ID).toString());
-            userDevice.setUserId(Long.valueOf(tokenUpdate.get(USER_ID).toString()));
+            User user = userService.getUserById(Long.valueOf(tokenUpdate.get(USER_ID).toString()));
+            userDevice.setUser(user);
             userDevice.setDeviceId(tokenUpdate.get(USER_DEVICE_ID).toString());
 
             if (isBlank(userDevice.getUserDeviceToken()))
                 return res.error(getMessage("userdevice.device.tokenunavailable"));
 
-            if (userDevice.getUserId() == null)
+            if (userDevice.getUser() == null)
                 return res.error(getMessage("userdevice.user.useridunavailable"));
 
             if (isBlank(userDevice.getDeviceId()))
                 return res.error(getMessage("userdevice.user.deviceidunavailable"));
-            UserDevice responseObject = notificationService.saveUserDevice(userDevice);
+            UserFcmDevice responseObject = notificationService.saveUserDevice(userDevice);
             return res.setDataAdapter(new UserDeviceAdapter()).success(responseObject,
                     getMessage("msg.userdevice.update.success"));
         } catch (Exception e) {
@@ -142,7 +148,7 @@ public class RestPushBoxController extends ApiController {
                 message.setSendAll(true);
             notificationService.sendNotifications(message);
 
-            UserDevice responseObject = new UserDevice();
+            UserFcmDevice responseObject = new UserFcmDevice();
             return res.setDataAdapter(new UserAdapter()).success(responseObject, getMessage("msg.userdevice.update.success"));
         } catch (Exception e) {
             LOGGER.error(EGOV_API_ERROR, e);

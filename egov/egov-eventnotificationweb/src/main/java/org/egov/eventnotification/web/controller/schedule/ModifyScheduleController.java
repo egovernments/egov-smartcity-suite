@@ -1,5 +1,53 @@
+/*
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) 2017  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
+ */
 package org.egov.eventnotification.web.controller.schedule;
 
+import static org.egov.eventnotification.constants.Constants.DRAFT_LIST;
 import static org.egov.eventnotification.constants.Constants.HOUR_LIST;
 import static org.egov.eventnotification.constants.Constants.MESSAGE;
 import static org.egov.eventnotification.constants.Constants.MINUTE_LIST;
@@ -11,23 +59,19 @@ import static org.egov.eventnotification.constants.Constants.SCHEDULER_REPEAT_LI
 import static org.egov.eventnotification.constants.Constants.SCHEDULE_UPDATE_SUCCESS;
 import static org.egov.eventnotification.constants.Constants.SCHEDULE_UPDATE_VIEW;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
 import javax.validation.Valid;
 
 import org.egov.eventnotification.constants.Constants;
-import org.egov.eventnotification.entity.NotificationSchedule;
-import org.egov.eventnotification.entity.SchedulerRepeat;
+import org.egov.eventnotification.entity.Schedule;
 import org.egov.eventnotification.scheduler.NotificationSchedulerManager;
+import org.egov.eventnotification.service.DraftTypeService;
+import org.egov.eventnotification.service.ScheduleRepeatService;
 import org.egov.eventnotification.service.ScheduleService;
 import org.egov.eventnotification.utils.EventnotificationUtil;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -45,80 +89,60 @@ public class ModifyScheduleController {
     private EventnotificationUtil eventnotificationUtil;
 
     @Autowired
-    private MessageSource messageSource;
-
-    @Autowired
     private UserService userService;
 
     @Autowired
     private NotificationSchedulerManager schedulerManager;
 
-    @ModelAttribute("notificationSchedule")
-    public NotificationSchedule getNotificationSchedule(@PathVariable("id") Long id) {
-        return scheduleService.getSchedule(id);
+    @Autowired
+    private ScheduleRepeatService scheduleRepeatService;
+
+    @Autowired
+    private DraftTypeService draftTypeService;
+
+    @ModelAttribute("schedule")
+    public Schedule getNotificationSchedule(@PathVariable("id") Long id) {
+        return scheduleService.getScheduleById(id);
     }
 
-    /**
-     * This method is used for view the update schedule page.
-     * @param model
-     * @param id
-     * @return tiles view
-     */
     @GetMapping("/schedule/update/{id}")
-    public String update(@ModelAttribute NotificationSchedule notificationSchedule, Model model) {
+    public String update(@ModelAttribute Schedule schedule, Model model) {
         model.addAttribute(HOUR_LIST, eventnotificationUtil.getAllHour());
         model.addAttribute(MINUTE_LIST, eventnotificationUtil.getAllMinute());
-        List<String> repeatList = new ArrayList<>();
-        for (SchedulerRepeat schedulerRepeat : SchedulerRepeat.values())
-            repeatList.add(schedulerRepeat.getName());
-
-        model.addAttribute(SCHEDULER_REPEAT_LIST, repeatList);
+        model.addAttribute(SCHEDULER_REPEAT_LIST, scheduleRepeatService.getAllScheduleRepeat());
         model.addAttribute(MODE, MODE_VIEW);
+        model.addAttribute(DRAFT_LIST, draftTypeService.getAllDraftType());
 
         return SCHEDULE_UPDATE_VIEW;
     }
 
-    /**
-     * This method is used for update schedule.
-     * @param model
-     * @param schedule
-     * @param id
-     * @param redirectAttrs
-     * @return tiles view
-     */
     @PostMapping("/schedule/update/{id}")
-    public String update(@PathVariable("id") Long id, @Valid @ModelAttribute NotificationSchedule notificationSchedule,
+    public String update(@PathVariable("id") Long id, @Valid @ModelAttribute Schedule schedule,
             BindingResult errors, Model model) {
         if (errors.hasErrors()) {
             model.addAttribute(HOUR_LIST, eventnotificationUtil.getAllHour());
             model.addAttribute(MINUTE_LIST, eventnotificationUtil.getAllMinute());
-            List<String> repeatList = new ArrayList<>();
-            for (SchedulerRepeat schedulerRepeat : SchedulerRepeat.values())
-                repeatList.add(schedulerRepeat.getName());
-
-            model.addAttribute(SCHEDULER_REPEAT_LIST, repeatList);
+            model.addAttribute(SCHEDULER_REPEAT_LIST, scheduleRepeatService.getAllScheduleRepeat());
             model.addAttribute(MODE, MODE_VIEW);
-            model.addAttribute(Constants.MESSAGE,
-                    messageSource.getMessage("msg.notification.schedule.update.error", null, Locale.ENGLISH));
+            model.addAttribute(Constants.MESSAGE, "msg.notification.schedule.update.error");
 
             return SCHEDULE_UPDATE_VIEW;
         }
         User user = userService.getCurrentUser();
-        notificationSchedule.setId(id);
-        DateTime sd = new DateTime(notificationSchedule.getEventDetails().getStartDt());
-        sd = sd.withHourOfDay(Integer.parseInt(notificationSchedule.getEventDetails().getStartHH()));
-        sd = sd.withMinuteOfHour(Integer.parseInt(notificationSchedule.getEventDetails().getStartMM()));
+        schedule.setId(id);
+        DateTime sd = new DateTime(schedule.getEventDetails().getStartDt());
+        sd = sd.withHourOfDay(Integer.parseInt(schedule.getEventDetails().getStartHH()));
+        sd = sd.withMinuteOfHour(Integer.parseInt(schedule.getEventDetails().getStartMM()));
         sd = sd.withSecondOfMinute(00);
-        notificationSchedule.setStartDate(sd.toDate());
-        notificationSchedule.setStatus(SCHEDULED_STATUS);
+        schedule.setStartDate(sd.toDate());
+        schedule.setStatus(SCHEDULED_STATUS);
 
-        scheduleService.updateSchedule(notificationSchedule);
+        scheduleService.updateSchedule(schedule);
 
-        schedulerManager.updateJob(notificationSchedule, user);
+        schedulerManager.updateJob(schedule, user);
 
-        model.addAttribute(NOTIFICATION_SCHEDULE, notificationSchedule);
-        model.addAttribute(MESSAGE,
-                messageSource.getMessage("msg.notification.schedule.update.success", null, Locale.ENGLISH));
+        model.addAttribute(NOTIFICATION_SCHEDULE, schedule);
+        model.addAttribute(MESSAGE, "msg.notification.schedule.update.success");
         return SCHEDULE_UPDATE_SUCCESS;
     }
 }

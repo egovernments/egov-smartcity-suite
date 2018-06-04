@@ -53,25 +53,24 @@ import static org.egov.eventnotification.constants.Constants.EMPTY;
 import static org.egov.eventnotification.constants.Constants.MAX_TEN;
 import static org.egov.eventnotification.constants.Constants.MIN_NUMBER_OF_REQUESTS;
 import static org.egov.eventnotification.constants.Constants.MODULE_NAME;
-import static org.egov.eventnotification.constants.Constants.NOTIFICATION_TYPE_EVENT;
-import static org.egov.eventnotification.constants.Constants.ZERO;
-import static org.egov.eventnotification.constants.Constants.YES;
 import static org.egov.eventnotification.constants.Constants.NO;
+import static org.egov.eventnotification.constants.Constants.NOTIFICATION_TYPE_EVENT;
+import static org.egov.eventnotification.constants.Constants.YES;
+import static org.egov.eventnotification.constants.Constants.ZERO;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
 import org.egov.eventnotification.entity.Event;
-import org.egov.eventnotification.entity.EventDetails;
+import org.egov.eventnotification.entity.contracts.EventDetails;
 import org.egov.eventnotification.repository.EventRepository;
-import org.egov.eventnotification.repository.EventRepositoryImpl;
+import org.egov.eventnotification.repository.custom.EventRepositoryCustom;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.utils.DateUtils;
-import org.egov.pushbox.application.entity.MessageContent;
-import org.egov.pushbox.application.service.PushNotificationService;
+import org.egov.pushbox.entity.contracts.MessageContent;
+import org.egov.pushbox.service.PushNotificationService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -79,7 +78,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * This is a service class. It is used for event related business logic like fetch the event using entity manager etc.
  * @author somvit
  *
  */
@@ -97,26 +95,18 @@ public class EventService {
     private PushNotificationService pushNotificationService;
 
     @Autowired
-    private EventRepositoryImpl eventRepositoryImpl;
+    private EventRepositoryCustom eventRepositoryCustom;
 
-    /**
-     * Fetch all the event in descending order
-     * @return List<Event>
-     */
-    public List<Event> findAllEventByStatus(String status) {
+    public List<Event> getAllEventByStatus(String status) {
         List<Event> eventList = null;
-        eventList = eventRepository.findByStatusOrderByIdDesc(status);
+        eventList = eventRepository.findByStatusAndEndDateGreaterThanOrderByIdDesc(status, DateUtils.today());
         if (!eventList.isEmpty())
             for (Event event : eventList)
                 populateEventDetails(event);
         return eventList;
     }
 
-    /**
-     * Fetch all the event in descending order
-     * @return List<Event>
-     */
-    public List<Event> findAllOngoingEvent(String status) {
+    public List<Event> getAllOngoingEvent(String status) {
         List<Event> eventList = null;
         DateTime calendar = new DateTime();
         DateTime calendarEndDate = null;
@@ -132,8 +122,8 @@ public class EventService {
         calendarEndDate = calendarEndDate.withMinuteOfHour(59);
         calendarEndDate = calendarEndDate.withSecondOfMinute(0);
         endDate = calendarEndDate.toDate();
-        eventList = eventRepository.findByStatusAndStartDateIsBetweenOrderByIdDesc(status,
-                startDate, endDate);
+        eventList = eventRepository.findByStatusAndStartDateIsBetweenAndEndDateGreaterThanOrderByIdDesc(status,
+                startDate, endDate, DateUtils.today());
         if (!eventList.isEmpty())
             for (Event event : eventList)
                 populateEventDetails(event);
@@ -163,32 +153,20 @@ public class EventService {
             eventDetails.setEndMM(ZERO + String.valueOf(ed.getMinuteOfHour()));
         else
             eventDetails.setEndMM(String.valueOf(ed.getMinuteOfHour()));
-        
-        if(event.isIspaid())
+
+        if (event.isPaid())
             eventDetails.setPaid(YES);
         else
             eventDetails.setPaid(NO);
         event.setEventDetails(eventDetails);
     }
 
-    /**
-     * This method fetch the event by id
-     * @param id
-     * @return Event
-     */
-    public Event findByEventId(Long id) {
+    public Event getEventById(Long id) {
         Event event = eventRepository.findOne(id);
         populateEventDetails(event);
         return event;
     }
 
-    /**
-     * This method create the event.
-     * @param event
-     * @return Event
-     * @throws IOException
-     * @throws ParseException
-     */
     @Transactional
     public Event saveEvent(Event event) throws IOException {
         DateTime sd = new DateTime(event.getEventDetails().getStartDt());
@@ -210,14 +188,6 @@ public class EventService {
         return eventRepository.save(event);
     }
 
-    /**
-     * This method is used to update the event
-     * @param event
-     * @param files
-     * @return Event
-     * @throws IOException
-     * @throws ParseException
-     */
     @Transactional
     public Event updateEvent(Event updatedEvent) throws IOException {
         if (updatedEvent.getEventDetails().getFile()[0].getSize() > MIN_NUMBER_OF_REQUESTS)
@@ -225,22 +195,10 @@ public class EventService {
         return eventRepository.save(updatedEvent);
     }
 
-    /**
-     * This method is used to search the event.
-     * @param eventType
-     * @param eventName
-     * @param eventHost
-     * @return List<Event>
-     */
     public List<Event> searchEvent(Event eventObj, String eventDateType) {
-        return eventRepositoryImpl.searchEvent(eventObj, eventDateType);
+        return eventRepositoryCustom.searchEvent(eventObj, eventDateType);
     }
 
-    /**
-     * This method is used to upload the file into filestore
-     * @param event
-     * @throws IOException
-     */
     public void eventUploadWallpaper(Event event) throws IOException {
 
         for (MultipartFile multipartFile : event.getEventDetails().getFile())
@@ -251,12 +209,6 @@ public class EventService {
 
     }
 
-    /**
-     * This method is used to upload the file into filestore
-     * @param event
-     * @param existingEvent
-     * @throws IOException
-     */
     public void eventUploadWallpaper(Event existingEvent, Event event) throws IOException {
 
         for (MultipartFile multipartFile : event.getEventDetails().getFile())
@@ -267,22 +219,10 @@ public class EventService {
 
     }
 
-    /**
-     * Remove the file into filestore
-     * @param event
-     * @throws IOException
-     */
     public void removeEventWallpaper(Event event) {
-
         fileStoreService.delete(String.valueOf(event.getFilestore()), MODULE_NAME);
-
     }
 
-    /**
-     * Create a push message and sent it to pushbox
-     * @param event
-     * @param user
-     */
     public void sendPushMessage(Event event, User user) {
 
         DateTime calendar = new DateTime(event.getStartDate());

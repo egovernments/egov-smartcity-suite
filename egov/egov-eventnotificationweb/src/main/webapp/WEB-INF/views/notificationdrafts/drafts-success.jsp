@@ -58,7 +58,7 @@
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-body custom-form ">
 					<c:if test="${not empty message}">
-						<div role="alert">${message}</div>
+						<div role="alert"><spring:message code="${message}"/></div>
 					</c:if>
 					<div class="panel-heading">
 						<div class="panel-title">
@@ -86,7 +86,7 @@
 								<spring:message code="lbl.draft.type" />
 							</div>
 							<div class="col-xs-9 add-margin view-content">
-								<c:out value="${notificationDraft.type}" />
+								<c:out value="${notificationDraft.draftType.name}" />
 							</div>
 						</div>
 						<div class="row add-border">

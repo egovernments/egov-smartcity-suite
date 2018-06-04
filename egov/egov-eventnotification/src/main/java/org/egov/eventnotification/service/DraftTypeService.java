@@ -45,20 +45,28 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.pushbox.application.entity;
+package org.egov.eventnotification.service;
 
 import java.util.List;
 
-public class SendMessageList {
+import org.egov.eventnotification.entity.DraftType;
+import org.egov.eventnotification.repository.DraftTypeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-    private List<SendMessagePrototype> messagePrototypeList;
+@Service
+@Transactional(readOnly = true)
+public class DraftTypeService {
 
-    public List<SendMessagePrototype> getMessagePrototypeList() {
-        return messagePrototypeList;
+    @Autowired
+    private DraftTypeRepository draftTypeRepository;
+
+    public List<DraftType> getAllDraftType() {
+        return draftTypeRepository.findAll();
     }
 
-    public void setMessagePrototypeList(List<SendMessagePrototype> messagePrototypeList) {
-        this.messagePrototypeList = messagePrototypeList;
+    public DraftType getDraftType(Long id) {
+        return draftTypeRepository.findOne(id);
     }
-
 }

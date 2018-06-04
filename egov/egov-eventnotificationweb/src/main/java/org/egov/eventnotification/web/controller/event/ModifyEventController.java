@@ -1,3 +1,50 @@
+/*
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) 2017  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
+ */
 package org.egov.eventnotification.web.controller.event;
 
 import static org.egov.eventnotification.constants.Constants.EVENT;
@@ -13,22 +60,19 @@ import static org.egov.eventnotification.constants.Constants.VIEW_EVENTUPDATE;
 import static org.egov.eventnotification.constants.Constants.VIEW_EVENTUPDATESUCCESS;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Locale;
 
 import javax.validation.Valid;
 
 import org.egov.eventnotification.constants.Constants;
 import org.egov.eventnotification.entity.Event;
-import org.egov.eventnotification.entity.EventStatus;
-import org.egov.eventnotification.entity.EventType;
+import org.egov.eventnotification.entity.enums.EventStatus;
 import org.egov.eventnotification.service.EventService;
+import org.egov.eventnotification.service.EventTypeService;
 import org.egov.eventnotification.utils.EventnotificationUtil;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -44,46 +88,26 @@ public class ModifyEventController {
     private EventService eventService;
 
     @Autowired
-    private MessageSource messageSource;
+    private EventnotificationUtil eventnotificationUtil;
 
     @Autowired
-    private EventnotificationUtil eventnotificationUtil;
+    private EventTypeService eventTypeService;
 
     @ModelAttribute("event")
     public Event getEvent(@PathVariable("id") Long id) {
-        return eventService.findByEventId(id);
+        return eventService.getEventById(id);
     }
 
-    /**
-     * This method is used for show the event update page based on the event id.
-     * @param event
-     * @param model
-     * @param id
-     * @return tiles view
-     */
     @GetMapping("/event/update/{id}")
     public String update(@ModelAttribute Event event, Model model) {
         model.addAttribute(HOUR_LIST, eventnotificationUtil.getAllHour());
         model.addAttribute(MINUTE_LIST, eventnotificationUtil.getAllMinute());
-        model.addAttribute(EVENT_LIST, new ArrayList<>(Arrays.asList(EventType.values())));
+        model.addAttribute(EVENT_LIST, eventTypeService.getAllEventType());
         model.addAttribute(MODE, MODE_UPDATE);
         model.addAttribute(EVENT_STATUS_LIST, new ArrayList<>(Arrays.asList(EventStatus.values())));
         return Constants.VIEW_EVENTUPDATE;
     }
 
-    /**
-     * This method is used for update the event.
-     * @param event
-     * @param files
-     * @param model
-     * @param redirectAttrs
-     * @param request
-     * @param errors
-     * @param id
-     * @return tiles view
-     * @throws IOException
-     * @throws ParseException
-     */
     @PostMapping("/event/update/{id}")
     public String update(@PathVariable("id") Long id, @Valid @ModelAttribute Event event,
             BindingResult errors, Model model) throws IOException {
@@ -91,11 +115,10 @@ public class ModifyEventController {
         if (errors.hasErrors()) {
             model.addAttribute(HOUR_LIST, eventnotificationUtil.getAllHour());
             model.addAttribute(MINUTE_LIST, eventnotificationUtil.getAllMinute());
-            model.addAttribute(EVENT_LIST, new ArrayList<>(Arrays.asList(EventType.values())));
+            model.addAttribute(EVENT_LIST, eventTypeService.getAllEventType());
             model.addAttribute(MODE, MODE_UPDATE);
             model.addAttribute(EVENT_STATUS_LIST, new ArrayList<>(Arrays.asList(EventStatus.values())));
-            model.addAttribute(MESSAGE,
-                    messageSource.getMessage("msg.event.update.error", null, Locale.ENGLISH));
+            model.addAttribute(MESSAGE, "msg.event.update.error");
             return VIEW_EVENTUPDATE;
         }
         event.setId(id);
@@ -113,8 +136,7 @@ public class ModifyEventController {
         eventService.updateEvent(event);
 
         model.addAttribute(EVENT, event);
-        model.addAttribute(MESSAGE,
-                messageSource.getMessage("msg.event.update.success", null, Locale.ENGLISH));
+        model.addAttribute(MESSAGE, "msg.event.update.success");
         model.addAttribute(MODE, MODE_VIEW);
         return VIEW_EVENTUPDATESUCCESS;
     }

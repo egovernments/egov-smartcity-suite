@@ -59,12 +59,10 @@
 				<div class="form-group">
 					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.eventType" />:</label>
 						<div class="col-sm-3 add-margin">
-							<select id="eventType" name="eventType" class="form-control">
-								<option value=""><spring:message code="lbl.select" /></option>
-								<c:forEach var="item" items="${eventTypeList}">
-									<option value="${item}">${item}</option>
-								</c:forEach>
-							</select>
+							<form:select path="eventType" id="eventType" name="eventType" class="form-control">
+								<form:option value=""><spring:message code="lbl.select" /></form:option>
+								<form:options items="${eventTypeList}" itemLabel="name" itemValue="id"/>
+							</form:select>
 						</div>
 					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.name" />:</label>
 						<div class="col-sm-3 add-margin">
@@ -95,7 +93,7 @@
 	<div class="col-md-12 table-header text-left">
 		<spring:message code="title.event.view.all" />
 		<button type='button' class='btn btn-primary' id="buttonSubmit" style="float: right;">
-			<spring:message code='lbl.add.button' />
+			<spring:message code='lbl.add' />
 		</button>
 	</div>
 	<div class="col-md-12 form-group report-table-container">
@@ -142,10 +140,10 @@
 	    				<td><c:out value="${listVar.eventhost}"/></td>
 	    				<td><c:out value="${listVar.eventlocation}"/></td>
 	    				<td><c:out value="${listVar.address}"/></td>
-	    				<td><c:out value="${listVar.eventType}"/></td>
+	    				<td><c:out value="${listVar.eventType.name}"/></td>
 	    				<td>
 	    				<c:choose>
-	    					<c:when test="${listVar.ispaid == true}">
+	    					<c:when test="${listVar.paid == true}">
 	    						<spring:message code="lbl.event.yes" />
 	    					</c:when>
 	    					<c:otherwise>

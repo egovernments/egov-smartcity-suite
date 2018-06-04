@@ -60,7 +60,7 @@
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-body custom-form ">
 					<c:if test="${not empty message}">
-						<div role="alert">${message}</div>
+						<div role="alert"><spring:message code="${message}"/></div>
 					</c:if>
 					<div class="panel-heading">
 						<div class="panel-title">
@@ -73,7 +73,7 @@
 								<spring:message code="lbl.event.eventType" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
-								<c:out value="${event.eventType}" />
+								<c:out value="${event.eventType.name}" />
 							</div>
 
 							<div class="col-xs-3 add-margin">
@@ -146,23 +146,31 @@
 								<c:out value="${event.eventhost}" />
 							</div>
 							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.event.contactno" />
+							</div>
+							<div class="col-xs-3 add-margin view-content">
+								<c:out value="${event.contactNumber}" />
+							</div>
+						</div>
+						<div class="row add-border">
+							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.event.location" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
 								<c:out value="${event.eventlocation}" />
 							</div>
-						</div>
-						<div class="row add-border">
 							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.event.address" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
 								<c:out value="${event.address}" />
 							</div>
+						</div>
+						<div class="row add-border">
 							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.event.Wallpaper" />
 							</div>
-							<div class="col-xs-3 add-margin view-content">
+							<div class="col-xs-5 add-margin view-content">
 								<c:choose>
 								    <c:when test="${empty event.filestore}">
 								        
@@ -179,7 +187,7 @@
 							</div>
 							<div class="col-sm-3 add-margin view-content">
 								<c:choose>
-									<c:when test="${event.ispaid == true}">
+									<c:when test="${event.paid == true}">
 		    							<spring:message code="lbl.event.yes" />
 				    				</c:when>
 				    				<c:otherwise>

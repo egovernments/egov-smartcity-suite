@@ -49,8 +49,8 @@ package org.egov.eventnotification.repository.custom;
 
 import java.util.List;
 
-import org.egov.eventnotification.entity.NotificationDrafts;
+import org.egov.eventnotification.entity.Drafts;
 
 public interface DraftRepositoryCustom {
-    List<NotificationDrafts> searchDraft(NotificationDrafts notificationDrafts);
+    List<Drafts> searchDraft(Drafts notificationDrafts);
 }
