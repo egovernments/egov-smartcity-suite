@@ -151,6 +151,7 @@ function checkcancelforselectedrecord()
 	{
 		var cnt=document.getElementsByName('selectedReceipts');
 		var receiptstatus=document.getElementsByName('receiptstatus');
+		var instrumenttype=document.getElementsByName('instrumenttype');
 		var j=0;
 		for (m = 0; m < cnt.length; m++)
 		{
@@ -163,9 +164,22 @@ function checkcancelforselectedrecord()
 					return false;
 				}
 
-				if(receiptstatus[m].value=="Instrument Bounced")
+				else if(receiptstatus[m].value=="Instrument Bounced")
 				{
 					dom.get("instrumentbouncedreceiptcancellationerror").style.display="block";
+					window.scroll(0,0);
+					return false;
+				}
+				else if(receiptstatus[m].value=="Remitted")
+				{
+					dom.get("remittedreceiptcancellationerror").style.display="block";
+					window.scroll(0,0);
+					return false;
+				}
+
+				if(instrumenttype[m].value=="online")
+				{
+					dom.get("onlinereceiptcancellationerror").style.display="block";
 					window.scroll(0,0);
 					return false;
 				}
@@ -326,6 +340,16 @@ function onChangeServiceClass(obj)
      <font size="2" color="red"><b><s:text name="error.instrumentbouncedreceipt.cancellation"/></b></font>
   </li>
 </span>
+<span align="center" style="display: none" id="remittedreceiptcancellationerror">
+  <li>
+     <font size="2" color="red"><b><s:text name="error.remittedreceipt.cancellation"/></b></font>
+  </li>
+</span>
+<span align="center" style="display: none" id="onlinereceiptcancellationerror">
+  <li>
+     <font size="2" color="red"><b><s:text name="error.onlinereceipt.cancellation"/></b></font>
+  </li>
+</span>
 <span align="center" style="display: none" id="selectprinterror">
   <li>
      <font size="2" color="red"><b><s:text name="error.print.nomultipleprintreceipts"/>  </b></font>
@@ -477,13 +501,16 @@ function onChangeServiceClass(obj)
 <display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Amount (Rs.)" property="totalAmount" style="width:8%; text-align: right" format="{0, number, #,##0.00}" />
 <display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Mode of Payment" style="width:8%" >
 <div align="center">
+<s:set var="instrtype" value="" />
 <s:iterator status="stat1" value="#attr.currentRow.receiptInstrument">
 <s:if test="instrumentType.type!=null">
 <s:property value="instrumentType.type"/>
+<s:set var="instrtype" value="%{instrumentType.type}" />
 </s:if>
 <s:if test="!#stat1.last">, </s:if>
 </s:iterator>&nbsp;
 </div>
+<input type="hidden" name="instrumenttype" id="instrumenttype" value="${instrtype}" />
 </display:column>
 <display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Status" style="width:8%;text-align:center" property="status.description"></display:column>
 <display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Owner" style="width:8%;text-align:center" property="workflowUserName"></display:column>
