@@ -72,6 +72,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static org.egov.infra.persistence.utils.PersistenceUtils.flushBatchUpdate;
@@ -143,11 +144,11 @@ public class DemandGenerationService {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, timeout = 7200)
-    public List<DemandGenerationLogDetail> generateDemand(DemandGenerationRequest demandGenerationRequest) {
+    public Collection<DemandGenerationLogDetail> generateDemand(DemandGenerationRequest demandGenerationRequest) {
         DemandGenerationLog demandGenerationLog = demandGenerationLogService
                 .getDemandGenerationLogByInstallmentYear(demandGenerationRequest.getInstallmentYear());
         List<DemandGenerationLogDetail> demandGenerationLogDetails = new ArrayList<>();
-        if (demandGenerationLog != null) {
+        if (demandGenerationLog != null && !demandGenerationRequest.getLicenseIds().isEmpty()) {
             Module module = moduleService.getModuleByName(TRADE_LICENSE);
             CFinancialYear financialYear = financialYearService.getFinacialYearByYearRange(demandGenerationRequest.getInstallmentYear());
             Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(module, financialYear.getStartingDate());
@@ -197,6 +198,4 @@ public class DemandGenerationService {
                 withMaximumValue().millisOfDay().withMaximumValue();
         return currentDate.isAfter(startOfCalenderDate) && currentDate.isBefore(endOfCalenderDate);
     }
-
-
 }

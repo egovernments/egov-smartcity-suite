@@ -107,12 +107,25 @@ $(document).ready(function () {
         $('.progress-bar').attr('aria-valuemax', licenseCount);
         var batch = licenseIds.splice(0, batchSize);
         if (batch.length == 0) {
-            $('.progress-bar-title').text(licenseCount + ' of ' + licenseCount + ' processed');
-            $('.progress-bar').css("width", '100%').attr('aria-valuenow', 100);
-            setTimeout(function () {
-                $('.progress-div').hide();
-            }, 500);
-            logDetails = tbl.rows().data();
+            $.post('generate',
+                {
+                    installmentYear: $("#installmentYear").val(),
+                    licenseIds: batch.join(',')
+                }
+            ).done(function (data) {
+                    tbl.clear();
+                    tbl.rows.add(data).draw();
+                    logDetails = tbl.rows().data();
+                    $('.progress-bar-title').text(licenseCount + ' of ' + licenseCount + ' processed');
+                    $('.progress-bar').css("width", '100%').attr('aria-valuenow', 100);
+                    setTimeout(function () {
+                        $('.progress').hide();
+                        $('#progress-footer').hide();
+                        $('#progress-status').html("Demand generation is completed !<br\/> " +
+                            "Check the 'Details' in the table for any failed demand generation.");
+                    }, 2000);
+                }
+            );
             return $.Deferred().resolve().promise();
         }
         return $.post('generate',
@@ -120,16 +133,14 @@ $(document).ready(function () {
                 installmentYear: $("#installmentYear").val(),
                 licenseIds: batch.join(',')
             })
-            .done(function (serverData) {
+            .done(function (data) {
                 processed += batchSize;
                 $('.progress-bar-title')
                     .text(processed + ' of ' + licenseCount);
                 $('.progress-bar')
                     .css("width", ((processed / licenseCount) * 100) + '%')
                     .attr('aria-valuenow', batch.length);
-                tbl.rows
-                    .add($.parseJSON(serverData))
-                    .draw();
+                tbl.rows.add(data).draw();
             })
             .fail(function (e) {
                 //do nothing
