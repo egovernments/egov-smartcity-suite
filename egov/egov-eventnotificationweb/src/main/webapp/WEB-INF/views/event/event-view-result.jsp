@@ -72,7 +72,7 @@
 								<spring:message code="lbl.event.eventType" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
-								<c:out value="${event.eventType}" />
+								<c:out value="${event.eventType.name}" />
 							</div>
 
 							<div class="col-xs-3 add-margin">
@@ -144,23 +144,31 @@
 								<c:out value="${event.eventhost}" />
 							</div>
 							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.event.contactno" />
+							</div>
+							<div class="col-xs-3 add-margin view-content">
+								<c:out value="${event.contactNumber}" />
+							</div>
+						</div>
+						<div class="row add-border">
+							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.event.location" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
 								<c:out value="${event.eventlocation}" />
 							</div>
-						</div>
-						<div class="row add-border">
 							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.event.address" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
 								<c:out value="${event.address}" />
 							</div>
+						</div>
+						<div class="row add-border">
 							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.event.Wallpaper" />
 							</div>
-							<div class="col-xs-3 add-margin view-content">
+							<div class="col-xs-5 add-margin view-content">
 								<c:choose>
 								    <c:when test="${empty event.filestore}">
 								        
@@ -185,7 +193,7 @@
 							</div>
 							<div class="col-sm-3 add-margin view-content">
 								<c:choose>
-									<c:when test="${event.ispaid == true}">
+									<c:when test="${event.paid == true}">
 		    							<spring:message code="lbl.event.yes" />
 				    				</c:when>
 				    				<c:otherwise>
@@ -214,7 +222,7 @@
 			<div class="form-group">
 				<div class="text-center">
 					<button type='button' class='btn btn-primary' id="buttonSubmit">
-						<spring:message code='lbl.edit.button' />
+						<spring:message code='lbl.edit' />
 					</button>
 					<a href="javascript:void(0)" class="btn btn-default"
 						id="buttonClose"><spring:message code="lbl.close" /></a>

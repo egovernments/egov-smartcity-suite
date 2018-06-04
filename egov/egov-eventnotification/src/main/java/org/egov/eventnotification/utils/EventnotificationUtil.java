@@ -52,11 +52,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-/**
- * This is util class for common task like generate list of values
- * @author somvit
- *
- */
 @Service
 public class EventnotificationUtil {
 
@@ -64,10 +59,6 @@ public class EventnotificationUtil {
     private static final int MINUTES_MAX_NUMBER_OF_REQUESTS = 60;
     private static final int MAX_NUMBER_OF_REQUESTS = 10;
 
-    /**
-     * This method generate the hours list
-     * @return List<String>
-     */
     public List<String> getAllHour() {
         final List<String> hoursList = new ArrayList<>();
         for (int i = 0; i < HOURS_MAX_NUMBER_OF_REQUESTS; i++)
@@ -78,13 +69,9 @@ public class EventnotificationUtil {
         return hoursList;
     }
 
-    /**
-     * This method generate the minute list
-     * @return
-     */
     public List<String> getAllMinute() {
         final List<String> minutesList = new ArrayList<>();
-        for (int i = 0; i < MINUTES_MAX_NUMBER_OF_REQUESTS; i += 1)
+        for (int i = 0; i < MINUTES_MAX_NUMBER_OF_REQUESTS; i += 15)
             if (i < MAX_NUMBER_OF_REQUESTS)
                 minutesList.add("0" + i);
             else

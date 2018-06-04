@@ -49,10 +49,9 @@ package org.egov.eventnotification.service;
 
 import org.egov.eventnotification.entity.Event;
 import org.egov.eventnotification.entity.UserEvent;
-import org.egov.eventnotification.repository.EventRepository;
 import org.egov.eventnotification.repository.UserEventRepository;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.repository.UserRepository;
+import org.egov.infra.admin.master.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,10 +64,10 @@ public class UserEventService {
     private UserEventRepository usereventRepository;
 
     @Autowired
-    private EventRepository eventRepository;
+    private EventService eventService;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     /**
      * This method is used to save the user event mapping.
@@ -81,11 +80,11 @@ public class UserEventService {
     public UserEvent saveUserEvent(Long userid, Long eventid) {
         UserEvent existingUserEvent = usereventRepository.findByEventIdAndUserId(eventid, userid);
         if (existingUserEvent == null) {
-            Event event = eventRepository.findOne(eventid);
-            User user = userRepository.findOne(userid);
+            Event event = eventService.getEventById(eventid);
+            User user = userService.getUserById(userid);
             UserEvent userevent = new UserEvent();
-            userevent.setUserId(user.getId());
-            userevent.setEventId(event.getId());
+            userevent.setUser(user);
+            userevent.setEvent(event);
             return usereventRepository.save(userevent);
         } else
             return null;

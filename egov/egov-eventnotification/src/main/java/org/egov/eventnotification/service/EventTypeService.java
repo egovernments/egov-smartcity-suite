@@ -45,24 +45,28 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
+package org.egov.eventnotification.service;
 
-package org.egov.pushbox.application.repository;
+import java.util.List;
 
-import org.egov.pushbox.application.entity.UserDevice;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.egov.eventnotification.entity.EventType;
+import org.egov.eventnotification.repository.EventTypeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-/**
- *
- * @author Darshan Nagesh
- *
- */
+@Service
+@Transactional(readOnly = true)
+public class EventTypeService {
 
-@Repository
-public interface PushNotificationRepository extends JpaRepository<UserDevice, java.lang.Long> {
+    @Autowired
+    private EventTypeRepository eventTypeRepository;
 
-    UserDevice findDeviceTokenByUserId(Long userId);
+    public List<EventType> getAllEventType() {
+        return eventTypeRepository.findAll();
+    }
 
-    UserDevice findByUserIdAndDeviceId(Long userId, String deviceId);
-
+    public EventType getEventType(Long id) {
+        return eventTypeRepository.findOne(id);
+    }
 }

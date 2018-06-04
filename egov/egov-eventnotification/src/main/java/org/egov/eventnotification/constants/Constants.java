@@ -66,13 +66,14 @@ public class Constants {
     public static final String EVENT_FILESTOREID = "fileStoreId";
     public static final String EVENT_FILENAME = "fileName";
     public static final String EVENT_COST = "cost";
+    public static final String EVENT_CONTACTNO = "contactnumber";
 
     public static final String MODULE_ID = "moduleId";
     public static final String CATEGORY_ID = "id";
     public static final String CATEGORY_NAME = "name";
     public static final String PARAMETER_ID = "id";
     public static final String PARAMETER_NAME = "name";
-    public static final String DRAFT_NOTIFICATION_TYPE = "type";
+    public static final String DRAFT_NOTIFICATION_TYPE = "draftType";
     public static final String DRAFT_NAME = "name";
     public static final String DRAFT_ID = "id";
 

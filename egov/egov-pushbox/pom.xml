@@ -21,14 +21,6 @@
 		</dependency>
         
         <dependency>
-            <groupId>org.egov</groupId>
-            <artifactId>egov-eis</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
-            <classifier>tests</classifier>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
         </dependency>
@@ -63,41 +55,6 @@
             <artifactId>jackson-datatype-hibernate5</artifactId>
         </dependency>
         <!-- JSON END -->
-
-        <!-- SECURITY START -->
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-acl</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-config</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.owasp.antisamy</groupId>
-            <artifactId>antisamy</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xercesImpl</artifactId>
-        </dependency>
-
-        <!-- SECURITY END -->
-
-        <!-- DISPLAYTAG START -->
-        <dependency>
-            <groupId>displaytag</groupId>
-            <artifactId>displaytag</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>displaytag</groupId>
-            <artifactId>displaytag-export-poi</artifactId>
-        </dependency>
-        <!-- DISPLAYTAG END -->
      
         <!-- COMMONS START -->
         <dependency>

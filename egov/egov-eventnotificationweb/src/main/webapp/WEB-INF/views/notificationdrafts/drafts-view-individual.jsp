@@ -50,7 +50,7 @@
 <%@ include file="/includes/taglibs.jsp"%>
 
 <form:form method="post" action=""
-	class="form-horizontal form-groups-bordered" modelAttribute="notificationDraft"
+	class="form-horizontal form-groups-bordered" modelAttribute="drafts"
 	id="draftForm">
 	<input type="hidden" name="mode" value="${mode}" />
 	<input type="hidden" name="draftId" id="draftId" value="${notificationDraft.id}" />
@@ -59,7 +59,7 @@
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-body custom-form ">
 					<c:if test="${not empty message}">
-						<div role="alert"><c:out value="${message}"/></div>
+						<div role="alert"><spring:message code="${message}"/></div>
 					</c:if>
 					<div class="panel-heading">
 						<div class="panel-title">
@@ -87,7 +87,7 @@
 								<spring:message code="lbl.draft.type" />
 							</div>
 							<div class="col-xs-9 add-margin view-content">
-								<c:out value="${notificationDraft.type}" />
+								<c:out value="${notificationDraft.draftType.name}" />
 							</div>
 						</div>
 						<div class="row add-border">
@@ -120,7 +120,7 @@
 			<div class="form-group">
 				<div class="text-center">
 					<button type='button' class='btn btn-primary' id="buttonSubmit">
-						<spring:message code='lbl.edit.button' />
+						<spring:message code='lbl.edit' />
 					</button>
 					<a href="javascript:void(0)" class="btn btn-default"
 						id='buttonClose'><spring:message code="lbl.close" /></a>

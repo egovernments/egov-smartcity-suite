@@ -1,3 +1,50 @@
+/*
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) 2017  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
+ */
 package org.egov.eventnotification.web.controller.notificationdraft;
 
 import static org.egov.eventnotification.constants.Constants.CATEGORY_PARAMETERS;
@@ -14,19 +61,19 @@ import static org.egov.eventnotification.constants.Constants.VIEW_DRAFTVIEWRESUL
 import static org.egov.eventnotification.constants.Constants.VIEW_EVENTCREATE;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 import javax.validation.Valid;
 
 import org.egov.eventnotification.entity.CategoryParameters;
-import org.egov.eventnotification.entity.DraftType;
+import org.egov.eventnotification.entity.Drafts;
 import org.egov.eventnotification.entity.ModuleCategory;
-import org.egov.eventnotification.entity.NotificationDrafts;
+import org.egov.eventnotification.service.CategoryParametersService;
 import org.egov.eventnotification.service.DraftService;
+import org.egov.eventnotification.service.DraftTypeService;
+import org.egov.eventnotification.service.ModuleCategoryService;
+import org.egov.eventnotification.service.TemplateModuleService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -41,23 +88,32 @@ public class ModifyNotificationDraftController {
     private DraftService draftService;
 
     @Autowired
-    private MessageSource messageSource;
+    private CategoryParametersService categoryParametersService;
 
-    @ModelAttribute("notificationDrafts")
-    public NotificationDrafts getNotificationDrafts(@PathVariable("id") Long id) {
-        return draftService.findDraftById(id);
+    @Autowired
+    private ModuleCategoryService moduleCategoryService;
+
+    @Autowired
+    private TemplateModuleService templateModuleService;
+
+    @Autowired
+    private DraftTypeService draftTypeService;
+
+    @ModelAttribute("drafts")
+    public Drafts getNotificationDrafts(@PathVariable("id") Long id) {
+        return draftService.getDraftById(id);
     }
 
     @GetMapping("/drafts/update/{id}")
-    public String update(@ModelAttribute NotificationDrafts notificationDrafts, Model model) {
+    public String update(@ModelAttribute Drafts drafts, Model model) {
         List<ModuleCategory> moduleCategoryList = new ArrayList<>();
         List<CategoryParameters> categoryParametersList = new ArrayList<>();
-        if (null != notificationDrafts.getModule())
-            moduleCategoryList = draftService.getCategoriesForModule(notificationDrafts.getModule().getId());
-        if (null != notificationDrafts.getCategory())
-            categoryParametersList = draftService.getParametersForCategory(notificationDrafts.getCategory().getId());
-        model.addAttribute(DRAFT_LIST, new ArrayList<>(Arrays.asList(DraftType.values())));
-        model.addAttribute(TEMPLATE_MODULE, draftService.getAllModules());
+        if (null != drafts.getModule())
+            moduleCategoryList = moduleCategoryService.getCategoriesForModule(drafts.getModule().getId());
+        if (null != drafts.getCategory())
+            categoryParametersList = categoryParametersService.getParametersForCategory(drafts.getCategory().getId());
+        model.addAttribute(DRAFT_LIST, draftTypeService.getAllDraftType());
+        model.addAttribute(TEMPLATE_MODULE, templateModuleService.getAllModules());
         model.addAttribute(MODULE_CATEGORY, moduleCategoryList);
         model.addAttribute(CATEGORY_PARAMETERS, categoryParametersList);
 
@@ -67,19 +123,17 @@ public class ModifyNotificationDraftController {
     }
 
     @PostMapping("/drafts/update/{id}")
-    public String update(@PathVariable("id") Long id, @Valid @ModelAttribute NotificationDrafts notificationDrafts,
+    public String update(@PathVariable("id") Long id, @Valid @ModelAttribute Drafts drafts,
             BindingResult errors, Model model) {
         if (errors.hasErrors()) {
-            model.addAttribute(MESSAGE,
-                    messageSource.getMessage("msg.draft.update.error", null, Locale.ENGLISH));
+            model.addAttribute(MESSAGE, "msg.draft.update.error");
             model.addAttribute(MODE, MODE_CREATE);
             return VIEW_EVENTCREATE;
         }
-        notificationDrafts.setId(id);
-        notificationDrafts = draftService.updateDraft(notificationDrafts);
-        model.addAttribute(NOTIFICATION_DRAFT, notificationDrafts);
-        model.addAttribute(MESSAGE,
-                messageSource.getMessage("msg.draft.update.success", null, Locale.ENGLISH));
+        drafts.setId(id);
+        drafts = draftService.updateDraft(drafts);
+        model.addAttribute(NOTIFICATION_DRAFT, drafts);
+        model.addAttribute(MESSAGE, "msg.draft.update.success");
         model.addAttribute(MODE, MODE_VIEW);
         return VIEW_DRAFTVIEWRESULT;
     }

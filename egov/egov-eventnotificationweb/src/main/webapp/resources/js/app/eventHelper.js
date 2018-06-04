@@ -62,51 +62,56 @@ $(document).ready(function(){
 	
 	$("#eventSearch").click(function() {
 		$("#eventViewTable").DataTable().clear().draw();
+		var eventTypeData;
+		if($("#eventType option:selected").text()==="Select"){
+			eventTypeData = "";
+		}else{
+			eventTypeData = $("#eventType option:selected").text();
+		}
 		$.ajax({
 		      type: "GET",
-		      url: "/api/event/search?"+$("#searcheventForm").serialize()+"&eventDateType=ongoing",
+		      url: "/api/event/search?eventType="+eventTypeData+"&name="+$("#name").val()+"&eventHost="+$("#eventhost").val()+"&eventDateType=ongoing",
 		      contentType: "application/json; charset=utf-8",
 		      dataType: 'json',
 		      success: function (data) {
-		    	  var dataRsponse = data;
-		    	  for(var i = 0; i < dataRsponse.length; i++) {
-		    		  var startDate = new Date(dataRsponse[i].startDate);
+		    	  $.each(data.result, function(i, obj) {
+		    		  var startDate = new Date(obj.startDate);
 		    		  var month = parseInt(startDate.getMonth())+1;
 		    		  if(month < 10){
 		    			  month="0"+month;
 		    		  }
 		    		  var sd = startDate.getDate()+"/"+month+"/"+startDate.getFullYear();
-		    		  var endDate = new Date(dataRsponse[i].endDate);
+		    		  var endDate = new Date(obj.endDate);
 		    		  var month1 = parseInt(endDate.getMonth())+1;
 		    		  if(month1 < 10){
 		    			  month1="0"+month1;
 		    		  }
 		    		  var ed = endDate.getDate()+"/"+month1+"/"+endDate.getFullYear()
 		    		  var ispaid,cost;
-		    		  if(dataRsponse[i].ispaid === "true"){
+		    		  if(obj.ispaid === "true"){
 		    			  ispaid = "Yes";
-		    			  cost = dataRsponse[i].cost;
+		    			  cost = obj.cost;
 		    		  }else{
 		    			  ispaid = "No";
 		    			  cost = "";
 		    		  }
 		    	      // You could also use an ajax property on the data table initialization
 		    	      $("#eventViewTable").dataTable().fnAddData( [
-		    	    	  dataRsponse[i].id,
-		    	    	  dataRsponse[i].name,
-		    	    	  dataRsponse[i].description,
+		    	    	  obj.id,
+		    	    	  obj.name,
+		    	    	  obj.description,
 		    	    	  sd,
-		    	    	  dataRsponse[i].startTime,
+		    	    	  obj.startTime,
 		    	    	  ed,
-		    	    	  dataRsponse[i].endTime,
-		    	    	  dataRsponse[i].eventhost,
-		    	    	  dataRsponse[i].eventlocation,
-		    	    	  dataRsponse[i].address,
-		    	    	  dataRsponse[i].eventType,
+		    	    	  obj.endTime,
+		    	    	  obj.eventhost,
+		    	    	  obj.eventlocation,
+		    	    	  obj.address,
+		    	    	  obj.eventType,
 		    	    	  ispaid,
 		    	    	  cost
 		    	      ]);
-		    	    }
+		    	    });
 		      },
 		      error: function (e) {
 		        console.log("There was an error with your request...");

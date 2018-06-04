@@ -45,18 +45,54 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.eventnotification.repository;
+package org.egov.eventnotification.entity;
 
-import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
-import org.egov.eventnotification.entity.NotificationSchedule;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.hibernate.validator.constraints.SafeHtml;
 
-@Repository
-public interface NotificationScheduleRepository extends JpaRepository<NotificationSchedule, Long> {
+@Entity
+@Table(name = "egevntnotification_schedulerepeat")
+@SequenceGenerator(name = ScheduleRepeat.SEQ_EG_ESCHEDULEREPEAT, sequenceName = ScheduleRepeat.SEQ_EG_ESCHEDULEREPEAT, allocationSize = 1)
+public class ScheduleRepeat extends AbstractPersistable<Long> {
 
-    List<NotificationSchedule> findByStatus(String status);
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1297735596140759994L;
 
-    List<NotificationSchedule> findByOrderByIdDesc();
+    public static final String SEQ_EG_ESCHEDULEREPEAT = "seq_egevntnotification_schedulerepeat";
+
+    @Id
+    @GeneratedValue(generator = SEQ_EG_ESCHEDULEREPEAT, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @NotNull
+    @SafeHtml
+    private String name;
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }

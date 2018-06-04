@@ -1,11 +1,11 @@
 package org.egov.eventnotification.entity;
 
-public enum EventStatus {
-    ACTIVE("Active"), INACTIVE("Inactive");
+public enum EventType {
+    BUSINESS("Business"), EXHIBITION("Exhibition"), CULTURAL("Cultural"), DRAMA("Drama");
 
     private String name;
 
-    private EventStatus(String name) {
+    private EventType(String name) {
         this.name = name;
     }
 
