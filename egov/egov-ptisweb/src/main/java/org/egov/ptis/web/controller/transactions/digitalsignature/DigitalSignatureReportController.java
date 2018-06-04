@@ -64,6 +64,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITAL_SIGNATURE_PENDING;
 
 @Controller
 @RequestMapping(value = "/digitalSignature")
@@ -93,7 +94,7 @@ public class DigitalSignatureReportController {
             HashMap<String, Object> tempMap;
             for (final StateAware record : stateAwareList)
                 if (record != null && record.getState() != null && record.getState().getNextAction() != null &&
-                        record.getState().getNextAction().equalsIgnoreCase(PropertyTaxConstants.DIGITAL_SIGNATURE_PENDING)) {
+                        record.getState().getNextAction().equalsIgnoreCase(WF_STATE_DIGITAL_SIGNATURE_PENDING)) {
                     tempMap = new HashMap<>();
                     WorkflowTypes workflowTypes = workflowTypeService.getEnabledWorkflowTypeByType(record.getStateType());
                     if (PTMODULENAME.equalsIgnoreCase(workflowTypes.getModule().getName())) {

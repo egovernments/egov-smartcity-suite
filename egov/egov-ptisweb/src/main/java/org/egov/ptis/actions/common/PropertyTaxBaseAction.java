@@ -725,9 +725,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         natureOfTasks.put(NEW_ASSESSMENT, NATURE_NEW_ASSESSMENT);
         natureOfTasks.put(ADDTIONAL_RULE_ALTER_ASSESSMENT, NATURE_ALTERATION);
         natureOfTasks.put(ADDTIONAL_RULE_BIFURCATE_ASSESSMENT, NATURE_BIFURCATION);
-        natureOfTasks.put(DEMOLITION, NATURE_DEMOLITION);
+        natureOfTasks.put(DEMOLITION, APPLICATION_TYPE_DEMOLITION);
         natureOfTasks.put(EXEMPTION, NATURE_TAX_EXEMPTION);
-        natureOfTasks.put(AMALGAMATION, NATURE_AMALGAMATION);
+        natureOfTasks.put(AMALGAMATION, APPLICATION_TYPE_AMALGAMATION);
         return natureOfTasks;
     }
 

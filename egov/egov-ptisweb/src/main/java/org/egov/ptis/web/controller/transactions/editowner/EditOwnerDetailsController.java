@@ -48,6 +48,13 @@
 
 package org.egov.ptis.web.controller.transactions.editowner;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.DOORNO_EDIT_MODE;
+
+import java.util.Arrays;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.enums.Gender;
@@ -72,11 +79,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-
-import java.util.Arrays;
-import java.util.List;
-
 @Controller
 @RequestMapping(value = "/editowner/{assessmentNo}")
 public class EditOwnerDetailsController {
@@ -90,17 +92,17 @@ public class EditOwnerDetailsController {
 
     @Autowired
     private PropertyPersistenceService basicPropertyService;
-    
+
     @Autowired
     private OwnerAuditService ownerAuditService;
 
     @Autowired
     private PropertyService propertyService;
-    
+
     @ModelAttribute
     public PropertyOwner getPropertyOwner(@PathVariable final String assessmentNo) {
-        PropertyOwner propertyOwner = new PropertyOwner();
-        BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
+        final PropertyOwner propertyOwner = new PropertyOwner();
+        final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
         PropertyImpl property;
         if (null != basicProperty) {
             property = (PropertyImpl) basicProperty.getProperty();
@@ -109,22 +111,21 @@ public class EditOwnerDetailsController {
         }
         return propertyOwner;
     }
-    
 
     @RequestMapping(method = RequestMethod.GET)
     public String newForm(@ModelAttribute final PropertyOwner propertyOwner, final Model model,
-            @PathVariable String assessmentNo) {
-        BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
+            @PathVariable final String assessmentNo, @RequestParam final String mode) {
+        final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
         List<OwnerAudit> ownerAuditList;
-		model.addAttribute("guardianRelations", Arrays.asList(GuardianRelation.values()));
+        model.addAttribute("guardianRelations", Arrays.asList(GuardianRelation.values()));
         model.addAttribute("gender", Gender.values());
-        for (PropertyOwnerInfo ownerInfo : basicProperty.getPropertyOwnerInfo()) {
-            for (Address address : ownerInfo.getOwner().getAddress()) {
+        for (final PropertyOwnerInfo ownerInfo : basicProperty.getPropertyOwnerInfo())
+            for (final Address address : ownerInfo.getOwner().getAddress()) {
+                model.addAttribute("mode", mode);
                 model.addAttribute("doorNumber", address.getHouseNoBldgApt());
                 model.addAttribute("existingDoorNumber", address.getHouseNoBldgApt());
                 model.addAttribute("pinCode", address.getPinCode());
             }
-        }
         ownerAuditList = ownerAuditService.setOwnerAuditDetails(basicProperty);
         propertyOwner.setOwnerAudit(ownerAuditList);
         model.addAttribute("propertyOwner", propertyOwner);
@@ -135,15 +136,15 @@ public class EditOwnerDetailsController {
     @RequestMapping(method = RequestMethod.POST)
     public String updateOwnerDetails(@ModelAttribute final PropertyOwner propertyOwner,
             final RedirectAttributes redirectAttrs, final BindingResult errors, final Model model,
-            final HttpServletRequest request, @RequestParam String doorNumber) {
-        String errMsg ;
+            final HttpServletRequest request, @RequestParam final String doorNumber, @RequestParam final String mode) {
+        String errMsg;
         model.addAttribute("doorNumber", doorNumber);
-		model.addAttribute("guardianRelations", Arrays.asList(GuardianRelation.values()));
-        for (PropertyOwnerInfo ownerInfo : propertyOwner.getPropertyOwnerInfo())
-            for (Address address : ownerInfo.getOwner().getAddress())
+        model.addAttribute("guardianRelations", Arrays.asList(GuardianRelation.values()));
+        for (final PropertyOwnerInfo ownerInfo : propertyOwner.getPropertyOwnerInfo())
+            for (final Address address : ownerInfo.getOwner().getAddress())
                 model.addAttribute("existingDoorNumber", address.getHouseNoBldgApt());
-        if ((!StringUtils.isBlank(doorNumber))
-                && (propertyService.isDuplicateDoorNumber(doorNumber, propertyOwner.getProperty().getBasicProperty())))
+        if (!StringUtils.isBlank(doorNumber) && mode.equalsIgnoreCase(DOORNO_EDIT_MODE)
+                && propertyService.isDuplicateDoorNumber(doorNumber, propertyOwner.getProperty().getBasicProperty()))
             errMsg = "error.accept";
         else
             errMsg = basicPropertyService.updateOwners(propertyOwner.getProperty(),

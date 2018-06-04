@@ -264,7 +264,7 @@ body {
 				</div>
 
 				<div class="panel panel-primary">
-					<div class="panel-body custom-form">
+					<div class="panel-body custom-form" id="editDoorDiv">
 						<div class="form-group">
 							<label class="col-sm-3 control-label"><spring:message
 									code="lbl.doorNumber" /><span class="mandatory1">*</span> </label>
@@ -315,6 +315,18 @@ body {
 											<c:choose>
 												<c:when
 													test="${propertyOwner.property.basicProperty.propertyOwnerInfo[status.index].owner.aadhaarNumber!=null &&  not empty propertyOwner.property.basicProperty.propertyOwnerInfo[status.index].owner.aadhaarNumber}">
+													<c:choose>
+													<c:when
+													test="${mode=='editMobileNo'}">
+													<td class="blueborderfortd" align="center"><form:input
+															path="propertyOwnerInfo[${status.index}].owner.aadhaarNumber"
+															cssClass="form-control patternvalidation"
+															data-pattern="number" id="aadharNumber"
+															onblur="getOwnerByAadharDetails(this);" 
+															maxlength="12" readonly="true" /> <form:hidden
+															path="ownerAudit[${status.index}].aadhaarNo" /></td>
+															</c:when>
+													<c:otherwise>
 													<td class="blueborderfortd" align="center"><form:input
 															path="propertyOwnerInfo[${status.index}].owner.aadhaarNumber"
 															cssClass="form-control patternvalidation"
@@ -322,11 +334,56 @@ body {
 															onblur="getOwnerByAadharDetails(this);" 
 															maxlength="12" readonly="false" /> <form:hidden
 															path="ownerAudit[${status.index}].aadhaarNo" /></td>
+													</c:otherwise>
+													</c:choose>
 													<td class="blueborderfortd" align="center"><form:input
 															path="propertyOwnerInfo[${status.index}].owner.mobileNumber"
 															id="mobileNumber" maxlength="10"
 															cssClass="form-control patternvalidation"
 															data-pattern="number" readonly="true" /> <form:hidden
+															path="ownerAudit[${status.index}].mobileNo" /></td>
+													<td class="blueborderfortd" align="center"><form:input
+															path="propertyOwnerInfo[${status.index}].owner.name"
+															id="name" maxlength="74" cssClass="form-control"
+															readonly="true" /> <form:hidden
+															path="ownerAudit[${status.index}].ownerName" /></td>
+
+													<td class="blueborderfortd" align="center"><form:input
+															path="propertyOwnerInfo[${status.index}].owner.gender"
+															id="sgender" name="gender" data-first-option="false"
+															cssClass="form-control" readonly="true" /> <form:hidden
+															path="ownerAudit[${status.index}].gender" /></td>
+													<td class="blueborderfortd" align="center"><form:input
+															path="propertyOwnerInfo[${status.index}].owner.emailId"
+															id="emailId" maxlength="32" cssClass="form-control"
+															readonly="true" /> <form:hidden
+															path="ownerAudit[${status.index}].emailId" /></td>
+													<td class="blueborderfortd" align="center"><form:input
+															path="propertyOwnerInfo[${status.index}].owner.guardianRelation"
+															id="guardianRelation" name="guardianRelation"
+															data-first-option="false" cssClass="form-control"
+															readonly="true" /> <form:hidden
+															path="ownerAudit[${status.index}].guardianRelation" /></td>
+													<td class="blueborderfortd" align="center"><form:input
+															path="propertyOwnerInfo[${status.index}].owner.guardian"
+															id="guardianName" maxlength="32" cssClass="form-control"
+															readonly="true" /> <form:hidden
+															path="ownerAudit[${status.index}].guardianName" /></td>
+												</c:when>
+												<c:when
+													test="${mode=='editMobileNo'}">
+													<td class="blueborderfortd" align="center"><form:input
+															path="propertyOwnerInfo[${status.index}].owner.aadhaarNumber"
+															cssClass="form-control patternvalidation"
+															data-pattern="number" id="aadharNumber"
+															onblur="getOwnerByAadharDetails(this);" 
+															maxlength="12" readonly="true" /> <form:hidden
+															path="ownerAudit[${status.index}].aadhaarNo" /></td>
+													<td class="blueborderfortd" align="center"><form:input
+															path="propertyOwnerInfo[${status.index}].owner.mobileNumber"
+															id="mobileNumber" maxlength="10"
+															cssClass="form-control patternvalidation"
+															data-pattern="number" readonly="false" /> <form:hidden
 															path="ownerAudit[${status.index}].mobileNo" /></td>
 													<td class="blueborderfortd" align="center"><form:input
 															path="propertyOwnerInfo[${status.index}].owner.name"
@@ -413,8 +470,8 @@ body {
 			</div>
 			<div class="row">
 				<div class="text-center">
-					<button type="submit" class="btn btn-primary add-margin"
-						id="submitform">
+					<button type="button" class="btn btn-primary add-margin"
+						id="submitform" onclick="validateDetails();">
 						<spring:message code="lbl.submit" />
 					</button>
 					<a href="javascript:void(0)" class="btn btn-default"
@@ -427,57 +484,66 @@ body {
 <script
 	src="<cdn:url value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script>
-	jQuery('#submitform')
-			.click(
-					function(e) {
-
-						if (!jQuery('#doorNumber').val()) {
-							bootbox.alert('Door number is mandatory');
+	jQuery(document).ready(function() {
+		if('${mode}' != 'editDoorNo')
+			jQuery("#editDoorDiv").hide();
+		else
+			jQuery("#ownerDetailsTable").hide();
+		});
+	function validateDetails(){
+		if (!jQuery('#doorNumber').val() && '${mode}' == 'editDoorNo') {
+			bootbox.alert('Door number is mandatory');
+			return false;
+		}
+		var mandatoryAlert=null;
+		if('${mode}' != 'editDoorNo'){
+		$('#ownerDetailsTable tbody tr')
+				.find('td input')
+				.each(
+						function(index) {
+							if ($(this).attr('id') === 'mobileNumber'
+									&& this.value.trim() == '') {
+								mandatoryAlert = "Mobile Number is mandatory";
+								return false;
+							} 
+						});
+		}
+		if('${mode}' == 'editOwnerDetails') {
+			$('#ownerDetailsTable tbody tr')
+				.find('td input')
+					.each(
+							function(index) {
+								if ($(this).attr('id') === 'name'
+										&& this.value.trim() == '') {
+									mandatoryAlert = "Owners Name is mandatory";
+									return false;
+								} else if ($(this).attr('id') === 'guardianName'
+										&& this.value.trim() == '') {
+									mandatoryAlert = "Guardian Name is mandatory";
+									return false;
+								}
+						});
+			$('#ownerDetailsTable tbody tr')
+			.find('td select')
+				.each(
+						function(index) {
+						if ($(this).attr('id') === 'guardianRelation'
+								&& this.value.trim() == '') {
+							mandatoryAlert = "Guardian Relation is mandatory";
+							return false;
+						}else if ($(this).attr('id') === 'sgender'
+								&& this.value.trim() == '') {
+							mandatoryAlert = "Gender is mandatory";
 							return false;
 						}
-						var mandatoryAlert;
-						$('#ownerDetailsTable tbody tr')
-								.find('td select')
-								.each(
-										function(index) {
-											if ($(this).attr('id') === 'guardianRelation'
-													&& this.value.trim() == '') {
-												mandatoryAlert = "Guardian relation is mandatory";
-												return false;
-											} else if ($(this).attr('id') === 'sgender'
-													&& this.value.trim() == '') {
-												mandatoryAlert = "Gender is mandatory";
-												return false;
-											}
-										});
-						$('#ownerDetailsTable tbody tr')
-								.find('td input')
-								.each(
-										function(index) {
-											if ($(this).attr('id') === 'name'
-													&& this.value.trim() == '') {
-												mandatoryAlert = "Owners Name is mandatory";
-												return false;
-											} else if ($(this).attr('id') === 'guardianName'
-													&& this.value.trim() == '') {
-												mandatoryAlert = "Guardian Name is mandatory";
-												return false;
-											} else if ($(this).attr('id') === 'mobileNumber'
-													&& this.value.trim() == '') {
-												mandatoryAlert = "Mobile Number is mandatory";
-												return false;
-											}
-
-										});
-
-						if (mandatoryAlert != '') {
-							bootbox.alert(mandatoryAlert);
-							return false;
-						}
-
-						return true;
-
-					})
+				});
+		}
+		if (mandatoryAlert != null && mandatoryAlert !='') {
+			bootbox.alert(mandatoryAlert);
+			return false;
+		}else
+			$('#ownerDetailsForm').submit();
+	}
 
 	function getOwnerByAadharDetails(obj) {
 		var aadharNo = jQuery(obj).val();

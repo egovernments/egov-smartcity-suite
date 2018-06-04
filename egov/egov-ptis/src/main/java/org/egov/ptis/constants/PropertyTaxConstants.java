@@ -602,7 +602,6 @@ public interface PropertyTaxConstants {
     public static final String WFLOW_ACTION_NAME_MODIFY = "Modify";
     public static final String WFLOW_ACTION_NAME_ALTER = "Alter";
     public static final String WFLOW_ACTION_NAME_NEW = "New";
-    public static final String WFLOW_ACTION_NAME_AMALGAMATE = "Amalgamation";
     public static final String WFLOW_ACTION_NAME_BIFURCATE = "Bifurcate";
     public static final String WFLOW_ACTION_NAME_GENERATE_NOTICE = "NoticeGeneration";
     public static final String WFLOW_ACTION_END = "END";
@@ -1315,12 +1314,17 @@ public interface PropertyTaxConstants {
     public static final String APPLICATION_TYPE_EDIT_DEMAND = "Edit_demand";
     public static final String APPLICATION_TYPE_ADD_DEMAND = "Add_demand";
     public static final String APPLICATION_TYPE_EDIT_OWNER = "Edit_owner";
+    public static final String APPLICATION_TYPE_EDIT_MOBILE_NO = "Edit_mobileno";
+    public static final String APPLICATION_TYPE_EDIT_DOOR_NO = "Edit_doorno";
     public static final String APPLICATION_TYPE_EDIT_COLLECTION = "Edit_Collection";
     public static final String APPLICATION_TYPE_MODIFY_DATA_ENTRY = "Edit_Data_Entry";
     public static final String APPLICATION_TYPE_MEESEVA_GRP = "Meeseva_General_Revision_Petition";
     public static final String APPLICATION_TYPE_MEESEVA_RP = "Meeseva_Revision_Petition";
     public static final String APPLICATION_TYPE_AMALGAMATION = "Amalgamation";
     public static final String APPLICATION_TYPE_MARKASCOURTCASE = "Mark_As_Court_Case";
+    public static final String DOORNO_EDIT_MODE= "editDoorNo";
+    public static final String MOBILENO_EDIT_MODE= "editMobileNo";
+    public static final String OWNERDETAILS_EDIT_MODE=  "editOwnerDetails";
 
     // AppConfig values
     public static final String PROPERTYTAX_WORKFLOWDEPARTEMENT = "PROPERTYTAXDEPARTMENTFORWORKFLOW";
@@ -1400,8 +1404,6 @@ public interface PropertyTaxConstants {
     public static final String STATUS_OPEN = "Open";
     public static final String MEESEVA_REDIRECT_URL = "/meeseva/generatereceipt?transactionServiceNumber=";
 
-    public static final String DIGITAL_SIGNATURE_PENDING = "Digital Signature Pending";
-
     public static final String SEARCH_RESULT_COUNT = "500";
 
     // Nature of task
@@ -1410,7 +1412,6 @@ public interface PropertyTaxConstants {
     public static final String NATURE_BIFURCATION = "Bifurcation";
     public static final String NATURE_TITLE_TRANSFER = "Title Transfer";
     public static final String NATURE_REVISION_PETITION = "Revision Petition";
-    public static final String NATURE_DEMOLITION = "Demolition";
     public static final String NATURE_TAX_EXEMPTION = "Tax Exemption";
     public static final String NATURE_VACANCY_REMISSION = "Vacany Remission";
     public static final String NATURE_VACANCY_REMISSION_APPROVAL = "Vacancy Remission Approval";
@@ -1418,7 +1419,6 @@ public interface PropertyTaxConstants {
     public static final String NATURE_REGISTERED_TRANSFER = "Registered Transfer";
     public static final String NATURE_FULL_TRANSFER = "Full Transfer";
     public static final String NATURE_PARTIAL_TRANSFER = "Partial Transfer";
-    public static final String NATURE_AMALGAMATION = "Amalgamation";
     public static final String CITY_GRADE_CORPORATION = "Corp";
     public static final String VACANTLAND_MIN_CUR_CAPITALVALUE = "500";
     public static final String WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING = "UD Revenue Inspector Approval Pending";
@@ -1468,7 +1468,6 @@ public interface PropertyTaxConstants {
 
     public static final String GUARDIAN_RELATION_WIFE = "WIFE";
 
-    public static final String WRITEOFF_REASON_DEMOLITION = "Demolition";
     public static final String WRITEOFF_REASON_ROAD_WIDENING = "Road widening";
     public static final String WRITEOFF_REASON_DOUBLE_ASSESSMENT = "Double Assessment";
     public static final String WRITEOFF_REASON_NOT_TRACED = "Not traced";
@@ -1477,7 +1476,7 @@ public interface PropertyTaxConstants {
     @SuppressWarnings("serial")
     public static final List<String> WRITEOFF_REASONS = new ArrayList<String>() {
         {
-            add(WRITEOFF_REASON_DEMOLITION);
+            add(APPLICATION_TYPE_DEMOLITION);
             add(WRITEOFF_REASON_ROAD_WIDENING);
             add(WRITEOFF_REASON_DOUBLE_ASSESSMENT);
             add(WRITEOFF_REASON_NOT_TRACED);

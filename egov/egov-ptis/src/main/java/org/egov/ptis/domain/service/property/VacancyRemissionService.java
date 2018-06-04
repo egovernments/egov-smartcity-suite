@@ -579,7 +579,7 @@ public class VacancyRemissionService {
                 || approverDesignation.equalsIgnoreCase(ZONAL_COMMISSIONER_DESIGN) ||
                 approverDesignation.equalsIgnoreCase(COMMISSIONER_DESGN)))
             if (vacancyRemissionApproval.getStatus().equals(VR_STATUS_APPROVED))
-                nextAction = DIGITAL_SIGNATURE_PENDING;
+                nextAction = WF_STATE_DIGITAL_SIGNATURE_PENDING;
             else {
                 final String designation = approverDesignation.split(" ")[0];
                 nextAction = getApprovalAsNextAction(designation);

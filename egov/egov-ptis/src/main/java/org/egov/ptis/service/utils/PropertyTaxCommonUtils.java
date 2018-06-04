@@ -625,9 +625,9 @@ public class PropertyTaxCommonUtils {
         else if (modifyReason.equalsIgnoreCase(PROPERTY_MODIFY_REASON_BIFURCATE))
             transactionType = NATURE_BIFURCATION;
         else if (modifyReason.equalsIgnoreCase(APPLICATION_TYPE_DEMOLITION))
-            transactionType = NATURE_DEMOLITION;
+            transactionType = APPLICATION_TYPE_DEMOLITION;
         else if (modifyReason.equalsIgnoreCase(PROPERTY_MODIFY_REASON_AMALG))
-            transactionType = NATURE_AMALGAMATION;
+            transactionType = APPLICATION_TYPE_AMALGAMATION;
         else
             transactionType = NATURE_TAX_EXEMPTION;
         for (final PropertyOwnerInfo ownerInfo : property.getBasicProperty().getPropertyOwnerInfo())
