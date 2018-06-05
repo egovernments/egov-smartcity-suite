@@ -53,6 +53,7 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.egov.commons.entity.Source.MEESEVA;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ADDNLCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATIONSTATUSCLOSED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_APPROVED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CANCELLED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CLOSERAPRROVED;
@@ -185,7 +186,6 @@ import org.egov.wtms.application.entity.WaterConnExecutionDetails;
 import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.entity.WaterConnectionExecutionResponse;
-import org.egov.wtms.application.service.ConnectionAddressService;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.application.workflow.ApplicationWorkflowCustomDefaultImpl;
 import org.egov.wtms.entity.es.WaterChargeDocument;
@@ -936,6 +936,7 @@ public class WaterConnectionDetailsService {
 
     }
 
+    @Transactional
     public void updateIndexes(final WaterConnectionDetails waterConnectionDetails, final String sourceChannel) {
 
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
@@ -1042,7 +1043,7 @@ public class WaterConnectionDetailsService {
                             .equals(APPLICATION_STATUS_SANCTIONED)
                     || waterConnectionDetails.getStatus().getCode()
                             .equals(APPLICATION_STATUS_CLOSERSANCTIONED)) {
-                applicationIndex.setStatus(waterConnectionDetails.getStatus().getDescription());
+                applicationIndex.setStatus(APPLICATIONSTATUSCLOSED);
                 applicationIndex.setApproved(ApprovalStatus.APPROVED);
                 applicationIndex.setClosed(ClosureStatus.YES);
                 applicationIndex.setOwnerName(user != null ? user.getUsername() + "::" + user.getName() : "");
@@ -1050,6 +1051,7 @@ public class WaterConnectionDetailsService {
             }
             if (waterConnectionDetails.getStatus().getCode()
                     .equals(APPLICATION_STATUS_CANCELLED)) {
+                applicationIndex.setStatus(APPLICATIONSTATUSCLOSED);
                 applicationIndex.setApproved(ApprovalStatus.REJECTED);
                 applicationIndex.setClosed(ClosureStatus.YES);
             }
