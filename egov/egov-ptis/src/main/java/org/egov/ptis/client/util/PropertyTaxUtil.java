@@ -1646,7 +1646,7 @@ public class PropertyTaxUtil {
             Ptdemand gisPtdemand = gisProperty.getPtDemandSet().iterator().next();
             if (gisPtdemand != null) {
                 for (EgDemandDetails demandDetails : gisPtdemand.getEgDemandDetails()) {
-                    if (currYearInstMap.get(CURRENTYEAR_SECOND_HALF).getFromDate().equals(demandDetails.getInstallmentStartDate())
+                    if (gisPtdemand.getEgInstallmentMaster().getFromDate().equals(demandDetails.getInstallmentStartDate())
                             &&
                             !PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY
                                     .equalsIgnoreCase(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()))
