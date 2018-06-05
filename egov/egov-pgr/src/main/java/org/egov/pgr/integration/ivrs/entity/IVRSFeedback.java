@@ -62,6 +62,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 import static org.egov.pgr.integration.ivrs.entity.IVRSFeedback.SEQ_IVRSFEEDBACK;
 
@@ -89,6 +90,9 @@ public class IVRSFeedback extends AbstractAuditable {
     @JoinColumn(name = "ivrsRating")
     private IVRSRating ivrsRating;
 
+    @NotNull
+    private Date feedbackDate;
+
     @Override
     public Long getId() {
         return id;
@@ -113,6 +117,14 @@ public class IVRSFeedback extends AbstractAuditable {
 
     public void setIvrsRating(IVRSRating ivrsRating) {
         this.ivrsRating = ivrsRating;
+    }
+
+    public Date getFeedbackDate() {
+        return feedbackDate;
+    }
+
+    public void setFeedbackDate(Date feedbackDate) {
+        this.feedbackDate = feedbackDate;
     }
 }
 

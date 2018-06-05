@@ -50,6 +50,9 @@ package org.egov.pgr.integration.ivrs.entity.contract;
 
 import org.hibernate.validator.constraints.SafeHtml;
 
+import javax.validation.constraints.NotNull;
+import java.util.Date;
+
 public class IVRSFeedbackUpdateRequest {
 
     @SafeHtml
@@ -57,6 +60,9 @@ public class IVRSFeedbackUpdateRequest {
 
     @SafeHtml
     private String rating;
+
+    @NotNull
+    private Date feedbackDate;
 
     public String getCrn() {
         return crn;
@@ -73,5 +79,14 @@ public class IVRSFeedbackUpdateRequest {
     public void setRating(String rating) {
         this.rating = rating;
     }
+
+    public Date getFeedbackDate() {
+        return feedbackDate;
+    }
+
+    public void setFeedbackDate(Date feedbackDate) {
+        this.feedbackDate = feedbackDate;
+    }
+
 }
 

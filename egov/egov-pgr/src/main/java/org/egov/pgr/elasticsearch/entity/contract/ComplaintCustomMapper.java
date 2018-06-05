@@ -55,13 +55,15 @@ import org.egov.pgr.entity.Complaint;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import org.springframework.stereotype.Component;
 
-import java.util.Objects;
+import java.util.Date;
+
+import static java.util.Objects.nonNull;
 
 @Component
 public class ComplaintCustomMapper extends CustomMapper<Complaint, ComplaintIndex> {
 
     @Override
-    public void mapAtoB(final Complaint complaint, final ComplaintIndex complaintIndex, final MappingContext context) {
+    public void mapAtoB(Complaint complaint, ComplaintIndex complaintIndex, MappingContext context) {
         complaintIndex.setComplainantName(complaint.getComplainant().getName());
         complaintIndex.setComplainantMobile(complaint.getComplainant().getMobile());
         complaintIndex.setComplainantEmail(complaint.getComplainant().getEmail());
@@ -75,26 +77,34 @@ public class ComplaintCustomMapper extends CustomMapper<Complaint, ComplaintInde
         complaintIndex.setDepartmentName(complaint.getDepartment().getName());
         complaintIndex.setDepartmentCode(complaint.getDepartment().getCode());
         complaintIndex.setReceivingMode(complaint.getReceivingMode().getCode());
-        complaintIndex.setRating(complaint.getCitizenFeedback() == null ? 0 : complaint.getCitizenFeedback().ordinal());
-        if (Objects.nonNull(complaint.getChildLocation())) {
+        if (nonNull(complaint.getCitizenFeedback())) {
+            if (complaint.getCitizenFeedback().ordinal() != 0
+                    && complaintIndex.getRating() != complaint.getCitizenFeedback().ordinal())
+                complaintIndex.setFeedbackDate(new Date());
+            complaintIndex.setRating(complaint.getCitizenFeedback().ordinal());
+            complaintIndex.setSatisfactionIndex(complaint.getCitizenFeedback().ordinal());
+        }
+        setGrievanceLocationInfo(complaint, complaintIndex);
+    }
+
+    private void setGrievanceLocationInfo(Complaint complaint, ComplaintIndex complaintIndex) {
+        if (nonNull(complaint.getLat()) && nonNull(complaint.getLng()))
+            complaintIndex.setComplaintGeo(new GeoPoint(complaint.getLat(), complaint.getLng()));
+        if (nonNull(complaint.getChildLocation())) {
             complaintIndex.setLocalityName(complaint.getChildLocation().getName());
             complaintIndex.setLocalityNo(complaint.getChildLocation().getBoundaryNum().toString());
-            if (Objects.nonNull(complaint.getChildLocation().getLongitude()) &&
-                    Objects.nonNull(complaint.getChildLocation().getLatitude()))
+            if (nonNull(complaint.getChildLocation().getLongitude()) &&
+                    nonNull(complaint.getChildLocation().getLatitude()))
                 complaintIndex.setLocalityGeo(new GeoPoint(complaint.getChildLocation().getLatitude(),
                         complaint.getChildLocation().getLongitude()));
         }
-        if (Objects.nonNull(complaint.getLocation())) {
+        if (nonNull(complaint.getLocation())) {
             complaintIndex.setWardName(complaint.getLocation().getName());
             complaintIndex.setWardNo(complaint.getLocation().getBoundaryNum().toString());
-            if (Objects.nonNull(complaint.getLocation().getLongitude()) &&
-                    Objects.nonNull(complaint.getLocation().getLatitude()))
+            if (nonNull(complaint.getLocation().getLongitude()) &&
+                    nonNull(complaint.getLocation().getLatitude()))
                 complaintIndex.setWardGeo(new GeoPoint(complaint.getLocation().getLatitude(),
                         complaint.getLocation().getLongitude()));
         }
-        if (Objects.nonNull(complaint.getCitizenFeedback()))
-            complaintIndex.setSatisfactionIndex(complaint.getCitizenFeedback().ordinal());
-        if (Objects.nonNull(complaint.getLat()) && Objects.nonNull(complaint.getLng()))
-            complaintIndex.setComplaintGeo(new GeoPoint(complaint.getLat(), complaint.getLng()));
     }
 }

@@ -76,6 +76,7 @@ public class ComplaintIndexUpdateService {
         ComplaintIndex complaintIndex = getComplaintIndexByCRN(feedback.getComplaint().getCrn());
         complaintIndex.setFeedbackRating(Integer.valueOf(feedback.getIvrsRating().getName()));
         complaintIndex.setNoOfFeedbackTaken(complaintIndex.getNoOfFeedbackTaken() + 1);
+        complaintIndex.setFeedbackDate(feedback.getFeedbackDate());
         complaintIndexRepository.save(complaintIndex);
     }
 
