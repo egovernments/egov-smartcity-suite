@@ -49,6 +49,7 @@
 package org.egov.ptis.web.controller.transactions.editowner;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.DOORNO_EDIT_MODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.MOBILENO_EDIT_MODE;
 
 import java.util.Arrays;
 import java.util.List;
@@ -83,6 +84,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/editowner/{assessmentNo}")
 public class EditOwnerDetailsController {
 
+    private static final String SUCCESS_MESSAGE = "successMessage";
     protected static final String OWNERDETAILS_FROM = "ownerdetails-form";
     protected static final String OWNERDETAILS_SUCCESS = "ownerdetails-success";
     private static final String ERROR_MSG = "errorMsg";
@@ -117,6 +119,8 @@ public class EditOwnerDetailsController {
             @PathVariable final String assessmentNo, @RequestParam final String mode) {
         final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
         List<OwnerAudit> ownerAuditList;
+        String pageTitle = setPageTitle(mode);
+        model.addAttribute("pageTitle", pageTitle);
         model.addAttribute("guardianRelations", Arrays.asList(GuardianRelation.values()));
         model.addAttribute("gender", Gender.values());
         for (final PropertyOwnerInfo ownerInfo : basicProperty.getPropertyOwnerInfo())
@@ -138,6 +142,8 @@ public class EditOwnerDetailsController {
             final RedirectAttributes redirectAttrs, final BindingResult errors, final Model model,
             final HttpServletRequest request, @RequestParam final String doorNumber, @RequestParam final String mode) {
         String errMsg;
+        String pageTitle = setPageTitle(mode);
+        model.addAttribute("pageTitle", pageTitle);
         model.addAttribute("doorNumber", doorNumber);
         model.addAttribute("guardianRelations", Arrays.asList(GuardianRelation.values()));
         for (final PropertyOwnerInfo ownerInfo : propertyOwner.getPropertyOwnerInfo())
@@ -154,8 +160,25 @@ public class EditOwnerDetailsController {
             return OWNERDETAILS_FROM;
         } else {
             ownerAuditService.saveOwnerDetails(propertyOwner.getOwnerAudit());
+            if (mode.equals(DOORNO_EDIT_MODE))
+                model.addAttribute(SUCCESS_MESSAGE, "Door Number Updated Successfully!");
+            else if (mode.equals(MOBILENO_EDIT_MODE))
+                model.addAttribute(SUCCESS_MESSAGE, "Mobile Number Updated Successfully!");
+            else
+                model.addAttribute(SUCCESS_MESSAGE, "Owner Details Updated Successfully!");
             return OWNERDETAILS_SUCCESS;
         }
+    }
+
+    private String setPageTitle(final String mode) {
+        String pageTitle;
+        if (mode.equals(DOORNO_EDIT_MODE))
+            pageTitle = "Edit Door Number";
+        else if (mode.equals(MOBILENO_EDIT_MODE))
+            pageTitle = "Edit Mobile Number";
+        else
+            pageTitle = "Edit Owner Details";
+        return pageTitle;
     }
 
 }
