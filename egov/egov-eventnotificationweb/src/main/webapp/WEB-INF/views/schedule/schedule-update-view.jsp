@@ -128,7 +128,7 @@
 						<div class="col-sm-10 add-margin">
 							<form:textarea path="messageTemplate" id="messageTemplate" name="messageTemplate"
 								class="form-control text-left patternvalidation"
-								maxlength="500" required="required" value="${messageTemplate}" />
+								maxlength="500" required="required" value="${messageTemplate}" readonly="true"/>
 							<form:errors path="messageTemplate" cssClass="error-msg" />
 						</div>
 					</div>

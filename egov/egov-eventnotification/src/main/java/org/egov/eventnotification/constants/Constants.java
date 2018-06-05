@@ -176,8 +176,8 @@ public class Constants {
     public static final String SCHEDULE_UPDATE_SUCCESS = "schedule-update-success";
     public static final String NOTIFICATION_TYPE = "notice";
     public static final String BUSINESS_NOTIFICATION_TYPE = "BUSINESS";
-    public static final String JOB = "job";
-    public static final String TRIGGER = "trigger";
+    public static final String JOB = "eventNotificationJob";
+    public static final String TRIGGER = "eventNotificationTrigger";
     public static final String DEFAULTERS_LIST = "defaultersList";
     public static final String JOB_TYPE = "jobType";
     public static final String DAILY_JOB_TYPE = "Daily Job";
@@ -207,6 +207,7 @@ public class Constants {
     public static final double DOUBLE_DEFAULT = 0.0;
     public static final int ZERO = 0;
     public static final int MAX_TEN = 10;
+    public static final String EVENT_NOTIFICATION_GROUP = "EVENT_NOTIFICATION_GROUP";
 
     private Constants() {
 

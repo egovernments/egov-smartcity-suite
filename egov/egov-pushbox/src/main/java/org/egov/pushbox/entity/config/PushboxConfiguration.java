@@ -57,7 +57,7 @@ import org.springframework.core.env.Environment;
 public class PushboxConfiguration {
     @Autowired
     private Environment env;
-    
+
     @Bean
     public PushboxProperties initPushBoxProperties() {
         PushboxProperties pushboxProperties = new PushboxProperties();

@@ -87,13 +87,12 @@ public class PushNotificationService {
 
     @Autowired
     private UserFcmDeviceRepository pushNotificationRepo;
-    
+
     @Autowired
     private PushboxConfiguration pushboxConfiguration;
 
     @Transactional
     public UserFcmDevice saveUserDevice(final UserFcmDevice userDevice) {
-        LOGGER.info("Persisting the User Device Details : " + userDevice);
         UserFcmDevice existingRecord = pushNotificationRepo.findByUserIdAndDeviceId(userDevice.getUser().getId(),
                 userDevice.getDeviceId());
         if (null != existingRecord) {
@@ -124,7 +123,6 @@ public class PushNotificationService {
             userDeviceList = getAllUserDeviceList();
         else
             userDeviceList = getUserDeviceList(messageContent);
-        LOGGER.info("##PushBoxFox## : List of Devices Obtained : Size is : " + userDeviceList.size());
         setUpFirebaseApp();
         LOGGER.info("##PushBoxFox## : Sending Messages to the Devices ");
         sendMessagesToDevices(userDeviceList, messageContent);
@@ -133,7 +131,6 @@ public class PushNotificationService {
     private List<UserFcmDevice> getUserDeviceList(MessageContent messageContent) {
         List<UserFcmDevice> userDeviceList = new ArrayList<>();
         for (Long userId : messageContent.getUserIdList()) {
-            LOGGER.info("#PushBoxFox## : Getting the Device Token for the User ID : " + userId);
             UserFcmDevice device = getUserDeviceByUser(userId);
             if (null != device)
                 userDeviceList.add(device);
@@ -147,26 +144,23 @@ public class PushNotificationService {
 
     private void setUpFirebaseApp() {
         if (FirebaseApp.getApps().isEmpty()) {
-            InputStream refreshTokenStream = null;
-            try {
-                PushboxProperties pushboxProperties = pushboxConfiguration.initPushBoxProperties();
-                                
-                JsonFactory JSON_FACTORY = Utils.getDefaultJsonFactory();
-                Map<String, Object> secretJson = new HashMap<>();
-                secretJson.put("type", pushboxProperties.getType());
-                secretJson.put("project_id", pushboxProperties.getProjectId());
-                secretJson.put("private_key_id", pushboxProperties.getPrivateKeyId());
-                secretJson.put("private_key", pushboxProperties.getPrivateKey());
-                secretJson.put("client_email", pushboxProperties.getClientEmail());
-                secretJson.put("client_id", pushboxProperties.getClientId());
-                secretJson.put("auth_uri", pushboxProperties.getAuthUri());
-                secretJson.put("token_uri", pushboxProperties.getTokenUri());
-                secretJson.put("auth_provider_x509_cert_url", pushboxProperties.getAuthProviderCertUrl());
-                secretJson.put("client_x509_cert_url", pushboxProperties.getClientCertUrl());
-                
-                refreshTokenStream =
-                    new ByteArrayInputStream(JSON_FACTORY.toByteArray(secretJson));
-                
+            PushboxProperties pushboxProperties = pushboxConfiguration.initPushBoxProperties();
+
+            JsonFactory JSON_FACTORY = Utils.getDefaultJsonFactory();
+            Map<String, Object> secretJson = new HashMap<>();
+            secretJson.put("type", pushboxProperties.getType());
+            secretJson.put("project_id", pushboxProperties.getProjectId());
+            secretJson.put("private_key_id", pushboxProperties.getPrivateKeyId());
+            secretJson.put("private_key", pushboxProperties.getPrivateKey());
+            secretJson.put("client_email", pushboxProperties.getClientEmail());
+            secretJson.put("client_id", pushboxProperties.getClientId());
+            secretJson.put("auth_uri", pushboxProperties.getAuthUri());
+            secretJson.put("token_uri", pushboxProperties.getTokenUri());
+            secretJson.put("auth_provider_x509_cert_url", pushboxProperties.getAuthProviderCertUrl());
+            secretJson.put("client_x509_cert_url", pushboxProperties.getClientCertUrl());
+
+            try (InputStream refreshTokenStream = new ByteArrayInputStream(JSON_FACTORY.toByteArray(secretJson))) {
+
                 FirebaseOptions options = new FirebaseOptions.Builder()
                         .setCredentials(GoogleCredentials.fromStream(refreshTokenStream))
                         .setDatabaseUrl(pushboxProperties.getDatabaseUrl()).build();
@@ -175,17 +169,10 @@ public class PushNotificationService {
                 LOGGER.info("##PushBoxFox## : Firebase App Initialized");
             } catch (IOException e) {
                 LOGGER.error("##PushBoxFox## : Error in setup firebase app", e);
-            } finally {
-                if (refreshTokenStream != null)
-                    try {
-                        refreshTokenStream.close();
-                    } catch (IOException e) {
-                        LOGGER.error("##PushBoxFox## : Error in setup firebase app", e);
-                    }
             }
         }
     }
-    
+
     private void sendMessagesToDevices(List<UserFcmDevice> userDeviceList, MessageContent messageContent) {
         for (UserFcmDevice userDevice : userDeviceList)
             try {
