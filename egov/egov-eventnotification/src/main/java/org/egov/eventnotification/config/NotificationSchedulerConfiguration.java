@@ -47,102 +47,79 @@
  */
 package org.egov.eventnotification.config;
 
-import static org.quartz.impl.StdSchedulerFactory.AUTO_GENERATE_INSTANCE_ID;
-import static org.quartz.impl.StdSchedulerFactory.PROP_SCHED_BATCH_TIME_WINDOW;
-import static org.quartz.impl.StdSchedulerFactory.PROP_SCHED_INSTANCE_ID;
-import static org.quartz.impl.StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME;
-import static org.quartz.impl.StdSchedulerFactory.PROP_SCHED_MAX_BATCH_SIZE;
-import static org.quartz.impl.StdSchedulerFactory.PROP_SCHED_SCHEDULER_THREADS_INHERIT_CONTEXT_CLASS_LOADER_OF_INITIALIZING_THREAD;
-import static org.quartz.impl.StdSchedulerFactory.PROP_SCHED_WRAP_JOB_IN_USER_TX;
+import static org.quartz.CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING;
 
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.apache.log4j.Logger;
-import org.egov.eventnotification.utils.SchedulerUtil;
+import javax.sql.DataSource;
+
+import org.egov.eventnotification.scheduler.NotificationSchedulerJob;
+import org.egov.infra.config.scheduling.QuartzSchedulerConfiguration;
 import org.egov.infra.config.scheduling.SchedulerConfigCondition;
-import org.quartz.SchedulerException;
-import org.quartz.SchedulerFactory;
-import org.quartz.impl.StdSchedulerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
+import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
+import org.springframework.scheduling.quartz.JobDetailFactoryBean;
+import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
 @Configuration
 @Conditional(SchedulerConfigCondition.class)
-public class NotificationSchedulerConfiguration {
-    private static final Logger log = Logger.getLogger(SchedulerUtil.class);
-    private static final String APP_SCHEDULER_NAME = "ERP_APP_SCHEDULER";
-    private static final String FALSE = "false";
-    private static final String TRUE = "true";
+public class NotificationSchedulerConfiguration extends QuartzSchedulerConfiguration {
 
-    @Autowired
-    private Environment env;
+    @Bean(destroyMethod = "destroy")
+    public SchedulerFactoryBean notificationScheduler(DataSource dataSource) {
+        SchedulerFactoryBean ptisScheduler = createScheduler(dataSource);
+        ptisScheduler.setSchedulerName("eventnotification-scheduler");
+        ptisScheduler.setAutoStartup(true);
+        ptisScheduler.setOverwriteExistingJobs(true);
+        ptisScheduler.setTriggers(
+                eventnotificationCronTrigger().getObject());
+        return ptisScheduler;
+    }
+
+    @Bean(name = "eventnotificationScheduler", destroyMethod = "destroy")
+    public SchedulerFactoryBean eventnotificationScheduler(DataSource dataSource) {
+        SchedulerFactoryBean recoveryNoticeScheduler = createScheduler(dataSource);
+        recoveryNoticeScheduler.setSchedulerName("notification-scheduler");
+        recoveryNoticeScheduler.setAutoStartup(true);
+        recoveryNoticeScheduler.setOverwriteExistingJobs(true);
+        recoveryNoticeScheduler.setStartupDelay(1500);
+        return recoveryNoticeScheduler;
+    }
 
     @Bean
-    public SchedulerFactory springBeanSchedulerFactory() {
-        SchedulerFactory schedulerFactory = null;
-        try {
-            schedulerFactory = new StdSchedulerFactory(quartzProperties());
-        } catch (SchedulerException e) {
-            log.error("Error in initialize scheduler ", e);
-        }
-        return schedulerFactory;
+    public CronTriggerFactoryBean eventnotificationCronTrigger() {
+        CronTriggerFactoryBean demandActivationCron = new CronTriggerFactoryBean();
+        demandActivationCron.setJobDetail(eventnotificationJobDetail().getObject());
+        demandActivationCron.setGroup("EVENT_NOTIFICATION_TRIGGER_GROUP");
+        demandActivationCron.setName("EVENT_NOTIFICATION_TRIGGER");
+        demandActivationCron.setCronExpression("0 15 0 * * ?");
+        demandActivationCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
+        return demandActivationCron;
     }
 
-    private Properties quartzProperties() {
-        Properties quartzProps = new Properties();
-
-        // Scheduler config
-        quartzProps.put(PROP_SCHED_INSTANCE_ID, AUTO_GENERATE_INSTANCE_ID);
-        quartzProps.put(PROP_SCHED_INSTANCE_NAME, APP_SCHEDULER_NAME);
-        quartzProps.put(PROP_SCHED_WRAP_JOB_IN_USER_TX, FALSE);
-        quartzProps.put(PROP_SCHED_MAX_BATCH_SIZE, 10);
-        quartzProps.put(PROP_SCHED_BATCH_TIME_WINDOW, 1000);
-        quartzProps.put(PROP_SCHED_SCHEDULER_THREADS_INHERIT_CONTEXT_CLASS_LOADER_OF_INITIALIZING_THREAD, TRUE);
-        quartzProps.put("org.quartz.threadPool.threadCount", "10");
-        quartzProps.put("org.quartz.threadPool.class", "org.quartz.simpl.SimpleThreadPool");
-        quartzProps.put("org.quartz.threadPool.threadPriority", "5");
-        quartzProps.put("org.quartz.threadPool.threadsInheritContextClassLoaderOfInitializingThread", TRUE);
-
-        // Cluster job store config
-        quartzProps.put("org.quartz.jobStore.isClustered", env.getProperty("scheduler.clustered"));
-        quartzProps.put("org.quartz.jobStore.clusterCheckinInterval", "60000");
-        quartzProps.put("org.quartz.jobStore.acquireTriggersWithinLock", FALSE);
-        quartzProps.put("org.quartz.jobStore.driverDelegateClass", "org.quartz.impl.jdbcjobstore.PostgreSQLDelegate");
-        quartzProps.put("org.quartz.jobStore.useProperties", TRUE);
-        quartzProps.put("org.quartz.jobStore.dataSource", "quartzDS");
-        quartzProps.put("org.quartz.jobStore.nonManagedTXDataSource", "quartzNoTXDS");
-        quartzProps.put("org.quartz.jobStore.tablePrefix", env.getProperty("scheduler.default.table.prefix"));
-        quartzProps.put("org.quartz.jobStore.class", "org.quartz.impl.jdbcjobstore.JobStoreCMT");
-        quartzProps.put("org.quartz.jobStore.dontSetNonManagedTXConnectionAutoCommitFalse", FALSE);
-        quartzProps.put("org.quartz.jobStore.dontSetAutoCommitFalse", TRUE);
-
-        // Datasource config
-        quartzProps.put("org.quartz.dataSource.quartzDS.jndiURL", env.getProperty("default.jdbc.jndi.datasource"));
-        quartzProps.put("org.quartz.dataSource.quartzNoTXDS.jndiURL", env.getProperty("scheduler.datasource.jndi.url"));
-
-        // Logging plugin config
-        quartzProps.put("org.quartz.plugin.jobHistory.class", "org.quartz.plugins.history.LoggingJobHistoryPlugin");
-        quartzProps.put("org.quartz.plugin.jobHistory.jobToBeFiredMessage",
-                "Job [{1}.{0}] to be fired by trigger [{4}.{3}], re-fire: {7}");
-        quartzProps.put("org.quartz.plugin.jobHistory.jobSuccessMessage", "Job [{1}.{0}] execution complete and reports: {8}");
-        quartzProps.put("org.quartz.plugin.jobHistory.jobFailedMessage", "Job [{1}.{0}] execution failed with exception: {8}");
-        quartzProps.put("org.quartz.plugin.jobHistory.jobWasVetoedMessage",
-                "Job [{1}.{0}] was vetoed. It was to be fired by trigger [{4}.{3}] at: {2, date, dd-MM-yyyy HH:mm:ss.SSS}");
-        quartzProps.put("org.quartz.plugin.triggerHistory.class", "org.quartz.plugins.history.LoggingTriggerHistoryPlugin");
-        quartzProps.put("org.quartz.plugin.triggerHistory.triggerFiredMessage",
-                "Trigger [{1}.{0}] fired job [{6}.{5}] scheduled at: {2, date, dd-MM-yyyy HH:mm:ss.SSS}, next scheduled at: {3, date, dd-MM-yyyy HH:mm:ss.SSS}");
-        quartzProps.put("org.quartz.plugin.triggerHistory.triggerCompleteMessage",
-                "Trigger [{1}.{0}] completed firing job [{6}.{5}] with resulting trigger instruction code: {9}. Next scheduled at: {3, date, dd-MM-yyyy HH:mm:ss.SSS}");
-        quartzProps.put("org.quartz.plugin.triggerHistory.triggerMisfiredMessage",
-                "Trigger [{1}.{0}] misfired job [{6}.{5}]. Should have fired at: {3, date, dd-MM-yyyy HH:mm:ss.SSS}");
-
-        // Shutdown plugin config
-        quartzProps.put("org.quartz.plugin.shutdownHook.class", "org.quartz.plugins.management.ShutdownHookPlugin");
-        quartzProps.put("org.quartz.plugin.shutdownHook.cleanShutdown", TRUE);
-
-        return quartzProps;
+    @Bean(name = "eventnotificationJobDetail")
+    public JobDetailFactoryBean eventnotificationJobDetail() {
+        JobDetailFactoryBean notificationJobDetail = new JobDetailFactoryBean();
+        notificationJobDetail.setGroup("EVENT_NOTIFICATION_JOB_GROUP");
+        notificationJobDetail.setName("EVENT_NOTIFICATION_JOB");
+        notificationJobDetail.setDurability(true);
+        notificationJobDetail.setJobClass(NotificationSchedulerJob.class);
+        notificationJobDetail.setRequestsRecovery(true);
+        Map<String, String> jobDetailMap = new HashMap<>();
+        jobDetailMap.put("jobBeanName", "notificationJob");
+        jobDetailMap.put("userName", "system");
+        jobDetailMap.put("cityDataRequired", "true");
+        jobDetailMap.put("moduleName", "eventnotification");
+        notificationJobDetail.setJobDataAsMap(jobDetailMap);
+        return notificationJobDetail;
     }
+
+    @Bean("notificationJob")
+    public NotificationSchedulerJob notificationJob() {
+        return new NotificationSchedulerJob();
+    }
+
 }

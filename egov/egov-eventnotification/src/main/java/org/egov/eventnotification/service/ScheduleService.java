@@ -50,6 +50,9 @@ package org.egov.eventnotification.service;
 import static org.egov.eventnotification.constants.Constants.DDMMYYYY;
 import static org.egov.eventnotification.constants.Constants.MAX_TEN;
 import static org.egov.eventnotification.constants.Constants.SCHEDULED_STATUS;
+import static org.egov.eventnotification.constants.Constants.SCHEDULE_DAY;
+import static org.egov.eventnotification.constants.Constants.SCHEDULE_MONTH;
+import static org.egov.eventnotification.constants.Constants.SCHEDULE_YEAR;
 import static org.egov.eventnotification.constants.Constants.ZERO;
 
 import java.util.List;
@@ -59,6 +62,10 @@ import org.egov.eventnotification.entity.contracts.EventDetails;
 import org.egov.eventnotification.repository.ScheduleRepository;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.utils.DateUtils;
+import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.domain.entity.property.DefaultersInfo;
+import org.egov.ptis.domain.service.report.ReportService;
+import org.hibernate.Query;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -70,6 +77,12 @@ public class ScheduleService {
 
     @Autowired
     private ScheduleRepository notificationscheduleRepository;
+
+    @Autowired
+    private PropertyTaxUtil propertyTaxUtil;
+
+    @Autowired
+    private ReportService reportService;
 
     public List<Schedule> getAllSchedule() {
         List<Schedule> notificationScheduleList = null;
@@ -130,5 +143,33 @@ public class ScheduleService {
     @Transactional
     public synchronized Schedule updateScheduleStatus(Schedule schedule) {
         return notificationscheduleRepository.saveAndFlush(schedule);
+    }
+
+    public String getCronExpression(Schedule notificationschedule) {
+        String cronExpression = null;
+        DateTime calendar = new DateTime(notificationschedule.getStartDate());
+        int hours = calendar.getHourOfDay();
+        int minutes = calendar.getMinuteOfHour();
+
+        switch (notificationschedule.getScheduleRepeat().getName().toLowerCase()) {
+        case SCHEDULE_DAY:
+            cronExpression = "0 " + minutes + " " + hours + " ? * * *";
+            break;
+        case SCHEDULE_MONTH:
+            cronExpression = "0 " + minutes + " " + hours + " " + calendar.getDayOfMonth() + " * ? *";
+            break;
+        case SCHEDULE_YEAR:
+            cronExpression = "0 " + minutes + " " + hours + " "
+                    + calendar.getDayOfMonth() + " " + calendar.getMonthOfYear() + " ? *";
+            break;
+        default:
+            break;
+        }
+        return cronExpression;
+    }
+
+    public List<DefaultersInfo> getDefaultersInformationList() {
+        Query query = propertyTaxUtil.prepareQueryforDefaultersReport(-1l, "1", "100000", 120000, "PRIVATE", "PT");
+        return reportService.getDefaultersInformation(query, "1 Year", 10);
     }
 }

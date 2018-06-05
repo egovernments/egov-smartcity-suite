@@ -139,13 +139,14 @@ public class EventSearchAdapter extends DataAdapter<Event> {
         jsonObjectEvent.addProperty(EVENT_CONTACTNO, event.getContactNumber());
         jsonObjectEvent.addProperty(EVENT_ISPAID, event.isPaid());
         jsonObjectEvent.addProperty(EVENT_EVENTTYPE, event.getEventType().getName());
-        if (event.getFilestore() != null) {
-            jsonObjectEvent.addProperty(EVENT_FILESTOREID, event.getFilestore().getFileStoreId());
-            jsonObjectEvent.addProperty(EVENT_FILENAME, event.getFilestore().getFileName());
-        } else {
+        if (event.getFilestore() == null) {
             jsonObjectEvent.addProperty(EVENT_FILESTOREID, EMPTY);
             jsonObjectEvent.addProperty(EVENT_FILENAME, EMPTY);
+        } else {
+            jsonObjectEvent.addProperty(EVENT_FILESTOREID, event.getFilestore().getFileStoreId());
+            jsonObjectEvent.addProperty(EVENT_FILENAME, event.getFilestore().getFileName());
         }
+
         if (event.getCost() == null)
             jsonObjectEvent.addProperty(EVENT_COST, DOUBLE_DEFAULT);
         else

@@ -49,7 +49,6 @@ package org.egov.eventnotification.scheduler;
 
 import static org.egov.eventnotification.constants.Constants.BUSINESS_NOTIFICATION_TYPE;
 import static org.egov.eventnotification.constants.Constants.DDMMYYYY;
-import static org.egov.eventnotification.constants.Constants.DEFAULTERS_LIST;
 import static org.egov.eventnotification.constants.Constants.MESSAGE_ASMNTNO;
 import static org.egov.eventnotification.constants.Constants.MESSAGE_BILLAMT;
 import static org.egov.eventnotification.constants.Constants.MESSAGE_BILLNO;
@@ -59,10 +58,8 @@ import static org.egov.eventnotification.constants.Constants.MESSAGE_DUEAMT;
 import static org.egov.eventnotification.constants.Constants.MESSAGE_DUEDATE;
 import static org.egov.eventnotification.constants.Constants.MESSAGE_PROPTNO;
 import static org.egov.eventnotification.constants.Constants.MESSAGE_USERNAME;
-import static org.egov.eventnotification.constants.Constants.PUSH_NOTIFICATION_SERVICE;
 import static org.egov.eventnotification.constants.Constants.SCHEDULEID;
 import static org.egov.eventnotification.constants.Constants.SCHEDULE_COMPLETE;
-import static org.egov.eventnotification.constants.Constants.USER_SERVICE;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -81,50 +78,34 @@ import org.egov.pushbox.entity.contracts.MessageContent;
 import org.egov.pushbox.service.PushNotificationService;
 import org.joda.time.DateTime;
 import org.quartz.DisallowConcurrentExecution;
-import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
-import org.quartz.JobKey;
 import org.quartz.SchedulerContext;
 import org.quartz.SchedulerException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.web.context.ContextLoader;
-import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.quartz.QuartzJobBean;
 
 /**
  * @author somvit
  *
  */
-@Service
 @DisallowConcurrentExecution
-public class NotificationSchedulerJob implements Job {
+public class NotificationSchedulerJob extends QuartzJobBean {
     private static final Logger LOGGER = Logger.getLogger(NotificationSchedulerJob.class);
 
+    @Autowired
     private UserService userService;
+
+    @Autowired
     private PushNotificationService pushNotificationService;
-    private SchedulerContext schedulerContext = null;
+
+    @Autowired
+    private ScheduleService notificationscheduleService;
 
     @Override
-    public void execute(JobExecutionContext context) {
-        JobKey jobKey = context.getJobDetail().getKey();
-        LOGGER.info("Notification scheduler with job key " + jobKey + " executing at " + new Date());
-
-        try {
-            schedulerContext = context.getScheduler().getContext();
-        } catch (SchedulerException e1) {
-            LOGGER.error(e1.getMessage());
-        }
+    protected void executeInternal(final JobExecutionContext context) {
 
         JobDataMap dataMap = context.getJobDetail().getJobDataMap();
-
-        ApplicationContext springContext = WebApplicationContextUtils.getWebApplicationContext(
-                ContextLoader.getCurrentWebApplicationContext().getServletContext());
-        ScheduleService notificationscheduleService = (ScheduleService) springContext.getBean("scheduleService");
-        pushNotificationService = (PushNotificationService) springContext
-                .getBean(PUSH_NOTIFICATION_SERVICE);
-
-        userService = (UserService) springContext.getBean(USER_SERVICE);
 
         Schedule notificationSchedule = notificationscheduleService
                 .getScheduleById(Long.parseLong(String.valueOf(dataMap.get(SCHEDULEID))));
@@ -134,8 +115,6 @@ public class NotificationSchedulerJob implements Job {
 
         notificationSchedule.setStatus(SCHEDULE_COMPLETE);
         notificationscheduleService.updateScheduleStatus(notificationSchedule);
-
-        LOGGER.info("Notification scheduler with job key " + jobKey + " end at " + new Date());
     }
 
     private void executeBusiness(Schedule notificationSchedule, Long usrid, String username) {
@@ -153,8 +132,8 @@ public class NotificationSchedulerJob implements Job {
 
         if (notificationSchedule.getDraftType().getName().equalsIgnoreCase(BUSINESS_NOTIFICATION_TYPE)) {
 
-            List<DefaultersInfo> defaultersList = (List<DefaultersInfo>) schedulerContext.get(DEFAULTERS_LIST);
-            if (!defaultersList.isEmpty()) {
+            List<DefaultersInfo> defaultersList = notificationscheduleService.getDefaultersInformationList();
+            if (!defaultersList.isEmpty())
                 for (DefaultersInfo defaultersInfo : defaultersList) {
 
                     String message = buildMessage(defaultersInfo, notificationSchedule.getMessageTemplate());
@@ -162,18 +141,13 @@ public class NotificationSchedulerJob implements Job {
                     List<User> userList = userService.findByMobileNumberAndType(defaultersInfo.getMobileNumber(),
                             UserType.CITIZEN);
                     List<Long> userIdList = new ArrayList<>();
-                    if (userList != null) {
-                        for (User userid : userList) {
+                    if (userList != null)
+                        for (User userid : userList)
                             userIdList.add(userid.getId());
-                        }
-
-                        LOGGER.info("List of User mobile Obtained : " + userIdList.size());
-                    }
 
                     buildAndSendNotifications(notificationSchedule, calendar, calendarEnd, Boolean.FALSE, userIdList, usrid,
                             username);
                 }
-            }
         } else
             buildAndSendNotifications(notificationSchedule, calendar, calendarEnd, Boolean.TRUE, null, usrid, username);
     }

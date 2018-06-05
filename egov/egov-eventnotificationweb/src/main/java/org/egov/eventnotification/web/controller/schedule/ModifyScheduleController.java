@@ -48,6 +48,7 @@
 package org.egov.eventnotification.web.controller.schedule;
 
 import static org.egov.eventnotification.constants.Constants.DRAFT_LIST;
+import static org.egov.eventnotification.constants.Constants.EVENT_NOTIFICATION_GROUP;
 import static org.egov.eventnotification.constants.Constants.HOUR_LIST;
 import static org.egov.eventnotification.constants.Constants.MESSAGE;
 import static org.egov.eventnotification.constants.Constants.MINUTE_LIST;
@@ -58,20 +59,29 @@ import static org.egov.eventnotification.constants.Constants.SCHEDULED_STATUS;
 import static org.egov.eventnotification.constants.Constants.SCHEDULER_REPEAT_LIST;
 import static org.egov.eventnotification.constants.Constants.SCHEDULE_UPDATE_SUCCESS;
 import static org.egov.eventnotification.constants.Constants.SCHEDULE_UPDATE_VIEW;
+import static org.egov.eventnotification.constants.Constants.TRIGGER;
+
+import java.util.Date;
 
 import javax.validation.Valid;
 
-import org.egov.eventnotification.constants.Constants;
 import org.egov.eventnotification.entity.Schedule;
-import org.egov.eventnotification.scheduler.NotificationSchedulerManager;
 import org.egov.eventnotification.service.DraftTypeService;
 import org.egov.eventnotification.service.ScheduleRepeatService;
 import org.egov.eventnotification.service.ScheduleService;
 import org.egov.eventnotification.utils.EventnotificationUtil;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.joda.time.DateTime;
+import org.quartz.CronScheduleBuilder;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.SimpleTrigger;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
+import org.quartz.TriggerKey;
+import org.quartz.impl.triggers.SimpleTriggerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -89,16 +99,13 @@ public class ModifyScheduleController {
     private EventnotificationUtil eventnotificationUtil;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
-    private NotificationSchedulerManager schedulerManager;
-
-    @Autowired
     private ScheduleRepeatService scheduleRepeatService;
 
     @Autowired
     private DraftTypeService draftTypeService;
+
+    @Autowired
+    private ApplicationContext beanProvider;
 
     @ModelAttribute("schedule")
     public Schedule getNotificationSchedule(@PathVariable("id") Long id) {
@@ -124,11 +131,10 @@ public class ModifyScheduleController {
             model.addAttribute(MINUTE_LIST, eventnotificationUtil.getAllMinute());
             model.addAttribute(SCHEDULER_REPEAT_LIST, scheduleRepeatService.getAllScheduleRepeat());
             model.addAttribute(MODE, MODE_VIEW);
-            model.addAttribute(Constants.MESSAGE, "msg.notification.schedule.update.error");
+            model.addAttribute(MESSAGE, "msg.notification.schedule.update.error");
 
             return SCHEDULE_UPDATE_VIEW;
         }
-        User user = userService.getCurrentUser();
         schedule.setId(id);
         DateTime sd = new DateTime(schedule.getEventDetails().getStartDt());
         sd = sd.withHourOfDay(Integer.parseInt(schedule.getEventDetails().getStartHH()));
@@ -139,7 +145,34 @@ public class ModifyScheduleController {
 
         scheduleService.updateSchedule(schedule);
 
-        schedulerManager.updateJob(schedule, user);
+        String cronExpression = scheduleService.getCronExpression(schedule);
+        final Scheduler scheduler = (Scheduler) beanProvider.getBean("eventnotificationScheduler");
+        try {
+
+            if (cronExpression == null) {
+                TriggerKey triggerKey = new TriggerKey(TRIGGER.concat(String.valueOf(schedule.getId())),
+                        EVENT_NOTIFICATION_GROUP);
+                final SimpleTriggerImpl trigger = new SimpleTriggerImpl();
+                trigger.setName(TRIGGER.concat(String.valueOf(schedule.getId())));
+                trigger.setStartTime(new Date(System.currentTimeMillis() + 100000));
+                trigger.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_FIRE_NOW);
+                scheduler.rescheduleJob(triggerKey, trigger);
+                if (!scheduler.isShutdown())
+                    scheduler.start();
+            } else {
+                TriggerKey triggerKey = new TriggerKey(TRIGGER.concat(String.valueOf(schedule.getId())),
+                        EVENT_NOTIFICATION_GROUP);
+                final Trigger trigger = TriggerBuilder.newTrigger()
+                        .withIdentity(TRIGGER.concat(String.valueOf(schedule.getId())), EVENT_NOTIFICATION_GROUP)
+                        .withSchedule(CronScheduleBuilder.cronSchedule(cronExpression)).build();
+                scheduler.rescheduleJob(triggerKey, trigger);
+                if (!scheduler.isShutdown())
+                    scheduler.start();
+            }
+
+        } catch (final SchedulerException e) {
+            throw new ApplicationRuntimeException(e.getMessage(), e);
+        }
 
         model.addAttribute(NOTIFICATION_SCHEDULE, schedule);
         model.addAttribute(MESSAGE, "msg.notification.schedule.update.success");

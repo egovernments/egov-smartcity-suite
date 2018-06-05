@@ -59,72 +59,93 @@ public class PushboxProperties {
     private String authProviderCertUrl;
     private String clientCertUrl;
     private String databaseUrl;
+
     public String getType() {
         return type;
     }
+
     public void setType(String type) {
         this.type = type;
     }
+
     public String getProjectId() {
         return projectId;
     }
+
     public void setProjectId(String projectId) {
         this.projectId = projectId;
     }
+
     public String getPrivateKeyId() {
         return privateKeyId;
     }
+
     public void setPrivateKeyId(String privateKeyId) {
         this.privateKeyId = privateKeyId;
     }
+
     public String getPrivateKey() {
         return privateKey;
     }
+
     public void setPrivateKey(String privateKey) {
         this.privateKey = privateKey;
     }
+
     public String getClientEmail() {
         return clientEmail;
     }
+
     public void setClientEmail(String clientEmail) {
         this.clientEmail = clientEmail;
     }
+
     public String getClientId() {
         return clientId;
     }
+
     public void setClientId(String clientId) {
         this.clientId = clientId;
     }
+
     public String getAuthUri() {
         return authUri;
     }
+
     public void setAuthUri(String authUri) {
         this.authUri = authUri;
     }
+
     public String getTokenUri() {
         return tokenUri;
     }
+
     public void setTokenUri(String tokenUri) {
         this.tokenUri = tokenUri;
     }
+
     public String getAuthProviderCertUrl() {
         return authProviderCertUrl;
     }
+
     public void setAuthProviderCertUrl(String authProviderCertUrl) {
         this.authProviderCertUrl = authProviderCertUrl;
     }
+
     public String getClientCertUrl() {
         return clientCertUrl;
     }
+
     public void setClientCertUrl(String clientCertUrl) {
         this.clientCertUrl = clientCertUrl;
     }
+
     public String getDatabaseUrl() {
         return databaseUrl;
     }
+
     public void setDatabaseUrl(String databaseUrl) {
         this.databaseUrl = databaseUrl;
     }
-    
-    
+
 }
