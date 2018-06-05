@@ -170,7 +170,7 @@ function checkcancelforselectedrecord()
 					window.scroll(0,0);
 					return false;
 				}
-				else if(receiptstatus[m].value=="Remitted")
+				else if(receiptstatus[m].value=="Remitted" || receiptstatus[m].value=="Partial Remitted")
 				{
 					dom.get("remittedreceiptcancellationerror").style.display="block";
 					window.scroll(0,0);
