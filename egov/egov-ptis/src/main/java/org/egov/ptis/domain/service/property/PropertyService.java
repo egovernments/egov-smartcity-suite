@@ -4482,13 +4482,9 @@ public class PropertyService {
 									: oldPropertyTaxMap.get(PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS));
 
 			BigDecimal currTax = (currPropertyTaxMap.get(CURR_TAX) == null ? BigDecimal.ZERO
-					: currPropertyTaxMap.get(CURR_TAX))
-							.subtract(oldPropertyTaxMap.get(CURR_TAX) == null ? BigDecimal.ZERO
-									: oldPropertyTaxMap.get(CURR_TAX));
+					: currPropertyTaxMap.get(CURR_TAX));
 			BigDecimal arrearTax = (currPropertyTaxMap.get(ARREAR_TAX) == null ? BigDecimal.ZERO
-					: currPropertyTaxMap.get(ARREAR_TAX))
-							.subtract(oldPropertyTaxMap.get(ARREAR_TAX) == null ? BigDecimal.ZERO
-									: oldPropertyTaxMap.get(ARREAR_TAX));
+					: currPropertyTaxMap.get(ARREAR_TAX));
 
 			if (advance.compareTo(BigDecimal.ZERO) != 0) {
 				values = new HashMap<>();
