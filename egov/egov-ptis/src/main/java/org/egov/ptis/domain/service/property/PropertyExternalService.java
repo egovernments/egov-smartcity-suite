@@ -90,6 +90,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.CrossHierarchy;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
@@ -804,13 +805,13 @@ public class PropertyExternalService {
                         paidTo = rcptAcctInfo.getDescription().split("-", 2);
                     }
                 }
-
+                Module module = moduleService.getModuleByName(PropertyTaxConstants.PTMODULENAME);
                 if (paidFrom != null)
                     fromInstallment = installmentDao.getInsatllmentByModuleAndDescription(
-                            moduleService.getModuleByName(PropertyTaxConstants.PTMODULENAME), paidFrom[1]);
+                            module, paidFrom[1]);
                 if (paidTo != null)
                     toInstallment = installmentDao.getInsatllmentByModuleAndDescription(
-                            moduleService.getModuleByName(PropertyTaxConstants.PTMODULENAME), paidTo[1]);
+                            module, paidTo[1]);
             }
             /**
              * If collection is done for complete current financial year only, todate shown is last date of current financial year
