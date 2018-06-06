@@ -66,11 +66,11 @@ public class FeatureService {
     private FeatureRepository featureRepository;
 
     public List<Feature> getAllFeatures() {
-        return featureRepository.findAllByEnabledIsTrue();
+        return featureRepository.findAllByEnabledIsTrueOrderByNameAsc();
     }
 
     public List<Feature> getAllFeaturesByModuleId(Long moduleId) {
-        return featureRepository.findByModuleIdAndEnabledIsTrue(moduleId);
+        return featureRepository.findByModuleIdAndEnabledIsTrueOrderByNameAsc(moduleId);
     }
 
     public Feature getFeatureById(Long id) {

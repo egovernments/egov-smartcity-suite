@@ -62,7 +62,7 @@ public interface FeatureRepository extends JpaRepository<Feature, Long>, Revisio
 
     Long countByRolesInAndActionsIn(Role role, Action action);
 
-    List<Feature> findByModuleIdAndEnabledIsTrue(Long moduleId);
+    List<Feature> findByModuleIdAndEnabledIsTrueOrderByNameAsc(Long moduleId);
 
-    List<Feature> findAllByEnabledIsTrue();
+    List<Feature> findAllByEnabledIsTrueOrderByNameAsc();
 }
