@@ -55,10 +55,10 @@ import java.util.Date;
 
 public class IVRSFeedbackUpdateRequest {
 
-    @SafeHtml
+    @SafeHtml(message = "CRN contains insecure characters")
     private String crn;
 
-    @SafeHtml
+    @SafeHtml(message = "Rating contains insecure characters")
     private String rating;
 
     @NotNull

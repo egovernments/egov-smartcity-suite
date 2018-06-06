@@ -59,7 +59,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -79,10 +81,13 @@ public class IVRSFeedbackUpdateAPIController {
     @Autowired
     private IVRSFeedbackUpdateAPIValidator ivrsFeedbackUpdateAPIValidator;
 
+    @InitBinder
+    protected void initBinder(WebDataBinder binder) {
+        binder.addValidators(ivrsFeedbackUpdateAPIValidator);
+    }
+
     @PostMapping("complaint/ivrs/feedback/update")
-    public IVRSFeedbackUpdateResponse updateComplaint(@Valid @RequestBody IVRSFeedbackUpdateRequest updateRequest,
-                                                      BindingResult binding) {
-        ivrsFeedbackUpdateAPIValidator.validate(updateRequest, binding);
+    public IVRSFeedbackUpdateResponse updateComplaint(@Valid @RequestBody IVRSFeedbackUpdateRequest updateRequest, BindingResult binding) {
         if (binding.hasErrors()) {
             List<String> complaintResponse = binding.getFieldErrors()
                     .stream()
