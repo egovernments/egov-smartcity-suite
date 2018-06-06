@@ -47,22 +47,36 @@
  */
 package org.egov.wtms.application.service;
 
-import org.apache.log4j.Logger;
-import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
-import org.egov.wtms.application.entity.SearchNoticeDetails;
-import org.egov.wtms.masters.entity.enums.ConnectionStatus;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.transform.AliasToBeanResultTransformer;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARISATION_DEMAND_NOTE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
+
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.math.BigInteger;
-import java.util.List;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import org.apache.log4j.Logger;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
+import org.egov.ptis.domain.model.AssessmentDetails;
+import org.egov.ptis.domain.model.OwnerName;
+import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
+import org.egov.ptis.domain.service.property.PropertyExternalService;
+import org.egov.wtms.application.entity.SearchNoticeDetails;
+import org.egov.wtms.application.entity.WaterConnectionDetails;
+import org.egov.wtms.masters.entity.enums.ConnectionStatus;
+import org.egov.wtms.utils.PropertyExtnUtils;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
@@ -76,18 +90,21 @@ public class SearchNoticeService {
     private static final String CONNECTION_TYPE = "connectionType";
     private static final String APPLICATION_TYPE = "applicationType";
     private static final String PROPERTY_TYPE = "propertyType";
+    private static final String INACTIVE = "INACTIVE";
+    private static final String FORMATTED_FROM_DATE = "formattedFromDate";
+    private static final String FORMATTED_TO_DATE = "formattedToDate";
 
     @PersistenceContext
     private EntityManager entityManager;
 
+    @Autowired
+    private PropertyExtnUtils propertyExtnUtils;
+
     private static final Logger LOGGER = Logger.getLogger(SearchNoticeService.class);
 
     @ReadOnly
-    public List<SearchNoticeDetails> getBillReportDetails(final SearchNoticeDetails searchNoticeDetails,
-            final String zone, final String ward,
-            final String propertyType, final String applicationType, final String connectionType,
-            final String consumerCode, final String houseNumber, final String assessmentNumber,
-            final String fromDate, final String toDate) {
+    @SuppressWarnings("unchecked")
+    public List<SearchNoticeDetails> getBillReportDetails(final SearchNoticeDetails searchNoticeDetails) {
         final long startTime = System.currentTimeMillis();
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append(
@@ -105,41 +122,25 @@ public class SearchNoticeService {
         queryStr.append(" and bill.module_id = (select id from eg_module where name ='Water Tax Management')");
         queryStr.append(" and bill.id_bill_type = (select id from eg_bill_type  where code ='MANUAL')");
         queryStr.append(" and bill.is_cancelled ='N' ");
-        if (ward != null && !ward.isEmpty())
+        if (isNotBlank(searchNoticeDetails.getRevenueWard()))
             queryStr.append(" and wardboundary.name =:ward");
-        if (zone != null && !zone.isEmpty())
+        if (isNotBlank(searchNoticeDetails.getZone()))
             queryStr.append(" and zoneboundary.name =:zone");
-        if (consumerCode != null && !consumerCode.isEmpty())
+        if (isNotBlank(searchNoticeDetails.getHscNo()))
             queryStr.append(" and dcbinfo.hscno =:consumerCode");
-        if (assessmentNumber != null && !assessmentNumber.isEmpty())
+        if (isNotBlank(searchNoticeDetails.getAssessmentNo()))
             queryStr.append(" and dcbinfo.propertyid =:assessmentNumber");
-        if (houseNumber != null && !houseNumber.isEmpty())
+        if (isNotBlank(searchNoticeDetails.getHouseNumber()))
             queryStr.append(" and dcbinfo.houseno =:houseNumber");
-        if (connectionType != null && !connectionType.isEmpty())
+        if (isNotBlank(searchNoticeDetails.getConnectionType()))
             queryStr.append(" and dcbinfo.connectiontype =:connectionType");
-        if (applicationType != null && !applicationType.isEmpty())
+        if (isNotBlank(searchNoticeDetails.getApplicationType()))
             queryStr.append(" and dcbinfo.applicationtype =:applicationType");
-        if (propertyType != null && !propertyType.isEmpty())
+        if (isNotBlank(searchNoticeDetails.getPropertyType()))
             queryStr.append(" and dcbinfo.propertytype =:propertyType");
 
         final Query query = entityManager.unwrap(Session.class).createSQLQuery(queryStr.toString());
-        if (isNotBlank(ward))
-            query.setParameter(WARD, ward);
-        if (isNotBlank(zone))
-            query.setParameter(ZONE, zone);
-        if (isNotBlank(consumerCode))
-            query.setParameter(CONSUMERCODE, consumerCode);
-        if (isNotBlank(assessmentNumber))
-            query.setParameter(HOUSENUMBER, houseNumber);
-        if (isNotBlank(assessmentNumber))
-            query.setParameter(ASSESSMENT_NUMBER, assessmentNumber);
-        if (isNotBlank(connectionType))
-            query.setParameter(CONNECTION_TYPE, connectionType);
-        if (isNotBlank(applicationType))
-            query.setParameter(APPLICATION_TYPE, applicationType);
-        if (isNotBlank(propertyType))
-            query.setParameter(PROPERTY_TYPE, propertyType);
-
+        setSearchQueryParameters(searchNoticeDetails, null, null, query);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("GenerateConnectionBill -- Search Result " + queryStr.toString());
         query.setResultTransformer(new AliasToBeanResultTransformer(SearchNoticeDetails.class));
@@ -153,105 +154,189 @@ public class SearchNoticeService {
     }
 
     @ReadOnly
-    public List<SearchNoticeDetails> getSanctionOrderDetails(final SearchNoticeDetails searchNoticeDetails,
-            final String zone, final String ward, final String propertyType,
-            final String applicationType, final String connectionType, final String consumerCode, final String houseNumber,
-            final String assessmentNumber, final String fromDate, final String toDate) {
+    @SuppressWarnings("unchecked")
+    public List<SearchNoticeDetails> getSearchResultList(final SearchNoticeDetails searchNoticeDetails) {
+        StringBuilder selectQuery = new StringBuilder(1000);
+        StringBuilder fromQuery = new StringBuilder(1000);
+        StringBuilder whereQuery = new StringBuilder(600);
+
+        selectQuery.append("select propertytype.name as propertyType, applicationtype.name as applicationType, ")
+                .append("connection.consumercode as hscNo, connectionaddress.ownername as ownerName, connection.propertyIdentifier as assessmentNo, ")
+                .append("conndetails.workordernumber as workOrderNumber, conndetails.workorderdate as workOrderDate, connectionaddress.doornumber as houseNumber, ")
+                .append(" connectionaddress.locality as locality, conndetails.connectiontype as connectiontype, ")
+                .append(" conndetails.estimationnumber as estimationNumber, conndetails.estimationnoticedate as estimationDate");
+
+        fromQuery.append(" from egwtr_connection connection INNER JOIN egwtr_connectiondetails conndetails on ")
+                .append("connection.id=conndetails.connection INNER JOIN egwtr_connection_address connectionaddress on ")
+                .append("connectionaddress.connectiondetailsid=conndetails.id INNER JOIN ")
+                .append("egwtr_property_type propertytype on conndetails.propertytype=propertytype.id INNER JOIN ")
+                .append("egwtr_application_type applicationtype on conndetails.applicationtype=applicationtype.id ");
+        whereQuery.append(" where ");
+        if (isNotBlank(searchNoticeDetails.getRevenueWard()) && isNotBlank(searchNoticeDetails.getZone())) {
+            fromQuery.append(" INNER JOIN eg_boundary wardboundary on connectionaddress.revenueward=wardboundary.id ");
+            fromQuery.append(" INNER JOIN eg_boundary zoneboundary on connectionaddress.zone=zoneboundary.id ");
+            selectQuery.append(" ,wardboundary.name as revenueWard , zoneboundary.name as zone ");
+            whereQuery.append(" wardboundary.name=:ward and zoneboundary.name=:zone and ");
+        } else if (isNotBlank(searchNoticeDetails.getRevenueWard())) {
+            fromQuery.append(" INNER JOIN eg_boundary boundary on connectionaddress.revenueward=boundary.id ");
+            selectQuery.append(" ,boundary.name as revenueWard ");
+            whereQuery.append(" boundary.name=:ward and ");
+        } else if (isNotBlank(searchNoticeDetails.getZone())) {
+            fromQuery.append(" INNER JOIN eg_boundary boundary on connectionaddress.zone=boundary.id ");
+            selectQuery.append(" ,boundary.name as zone ");
+            whereQuery.append(" boundary.name=:zone and ");
+        }
+
+        if (isNotBlank(searchNoticeDetails.getHouseNumber()))
+            whereQuery.append(" connectionaddress.doornumber=:houseNumber and ");
+
+        if (isNotBlank(searchNoticeDetails.getPropertyType()))
+            whereQuery.append(" propertytype.name=:propertyType and ");
+
         String formattedFromDate = null;
         String formattedToDate = null;
-        String[] arr = null;
-        if (isNotBlank(fromDate)) {
-            arr = fromDate.split("/");
-            formattedFromDate = arr[2] + "-" + arr[1] + "-" + arr[0];
+        String[] dateArray = null;
+        if (isNotBlank(searchNoticeDetails.getFromDate())) {
+            dateArray = searchNoticeDetails.getFromDate().split("/");
+            formattedFromDate = dateArray[2] + "-" + dateArray[1] + "-" + dateArray[0];
+            whereQuery.append(" conndetails.workorderdate >=(cast(:formattedFromDate as date)) and ");
         }
-        if (isNotBlank(toDate)) {
-            arr = toDate.split("/");
-            formattedToDate = arr[2] + "-" + arr[1] + "-" + arr[0];
+        if (isNotBlank(searchNoticeDetails.getToDate())) {
+            dateArray = searchNoticeDetails.getToDate().split("/");
+            formattedToDate = dateArray[2] + "-" + dateArray[1] + "-" + dateArray[0];
+            whereQuery.append(" conndetails.workorderdate <=(cast(:formattedToDate as date)) and ");
         }
 
-        final StringBuilder queryString = new StringBuilder();
-        queryString.append(
-                "select distinct dcbinfo.hscno as \"hscNo\", dcbinfo.username as \"ownerName\", dcbinfo.propertyid as \"assessmentNo\", ");
-        queryString.append(
-                "dcbinfo.houseno as \"houseNumber\", localboundary.localname as \"locality\", dcbinfo.applicationtype as \"applicationType\" , ");
-        queryString.append("dcbinfo.workorderdate as \"workOrderDate\", dcbinfo.workordernumber as \"workOrderNumber\", ");
-        queryString.append("dcbinfo.connectiontype as \"connectionType\" from egwtr_mv_conn_view dcbinfo ");
-        queryString.append("INNER JOIN eg_boundary zoneboundary on dcbinfo.zoneid=zoneboundary.id ");
-        queryString.append(
-                " INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary on dcbinfo.locality = localboundary.id");
+        if (isNotBlank(searchNoticeDetails.getApplicationType()))
+            whereQuery.append(" applicationtype.name=:applicationType and ");
 
-        if (ward != null && !ward.isEmpty())
-            queryString.append(" and wardboundary.name =:ward");
-        if (zone != null && !zone.isEmpty())
-            queryString.append(" and zoneboundary.name =:zone");
-        if (consumerCode != null && !consumerCode.isEmpty())
-            queryString.append(" and dcbinfo.hscno =:consumerCode");
-        if (assessmentNumber != null && !assessmentNumber.isEmpty())
-            queryString.append(" and dcbinfo.propertyid =:assessmentNumber");
-        if (houseNumber != null && !houseNumber.isEmpty())
-            queryString.append(" and dcbinfo.houseno =:houseNumber");
-        if (connectionType != null && !connectionType.isEmpty())
-            queryString.append(" and dcbinfo.connectiontype =:connectionType");
-        if (applicationType != null && !applicationType.isEmpty())
-            queryString.append(" and dcbinfo.applicationtype =:applicationType");
-        if (propertyType != null && !propertyType.isEmpty())
-            queryString.append(" and dcbinfo.propertytype =:propertyType");
-        if (formattedFromDate != null && !formattedFromDate.isEmpty())
-            queryString.append(" and dcbinfo.workorderdate >=(cast(:formattedFromDate as date))");
-        if (formattedToDate != null && !formattedToDate.isEmpty())
-            queryString.append(" and dcbinfo.workorderdate <=(cast(:formattedToDate as date))");
+        if (isNotBlank(searchNoticeDetails.getConnectionType()))
+            whereQuery.append(" conndetails.connectiontype=:connectionType and ");
 
-        final Query query = entityManager.unwrap(Session.class).createSQLQuery(queryString.toString());
-        if (isNotBlank(ward))
-            query.setParameter(WARD, ward);
-        if (isNotBlank(zone))
-            query.setParameter(ZONE, zone);
-        if (isNotBlank(consumerCode))
-            query.setParameter(CONSUMERCODE, consumerCode);
-        if (isNotBlank(assessmentNumber))
-            query.setParameter(ASSESSMENT_NUMBER, assessmentNumber);
-        if (isNotBlank(houseNumber))
-            query.setParameter(HOUSENUMBER, houseNumber);
-        if (isNotBlank(connectionType))
-            query.setParameter(CONNECTION_TYPE, connectionType);
-        if (isNotBlank(applicationType))
-            query.setParameter(APPLICATION_TYPE, applicationType);
-        if (isNotBlank(propertyType))
-            query.setParameter(PROPERTY_TYPE, propertyType);
-        if (isNotBlank(formattedFromDate))
-            query.setParameter("formattedFromDate", formattedFromDate);
-        if (isNotBlank(formattedToDate))
-            query.setParameter("formattedToDate", formattedToDate);
+        if (REGULARISATION_DEMAND_NOTE.equalsIgnoreCase(searchNoticeDetails.getNoticeType()))
+            whereQuery.append(" applicationtype.code=:reglnApplicationType and ");
+        else
+            whereQuery.append(" applicationtype.code!=:reglnApplicationType and ");
 
-        query.setResultTransformer(new AliasToBeanResultTransformer(SearchNoticeDetails.class));
-        return query.list();
+        if (isNotBlank(searchNoticeDetails.getHscNo()))
+            whereQuery.append(" connection.consumercode=:consumerCode and ");
+
+        if (isNotBlank(searchNoticeDetails.getAssessmentNo()))
+            whereQuery.append(" connection.propertyIdentifier=:assessmentNumber and ");
+        whereQuery.append("conndetails.connectionstatus!=:connectionStatus");
+        Query query = entityManager.unwrap(Session.class)
+                .createSQLQuery(selectQuery.append(fromQuery).append(whereQuery).toString());
+        setSearchQueryParameters(searchNoticeDetails, formattedFromDate, formattedToDate, query);
+        query.setParameter("reglnApplicationType", REGULARIZE_CONNECTION);
+        query.setParameter("connectionStatus", INACTIVE);
+        List<Object[]> objectList = query.list();
+        return getSearchNoticeList(objectList);
     }
 
+    private Query setSearchQueryParameters(final SearchNoticeDetails searchNoticeDetails, String formattedFromDate,
+            String formattedToDate, Query query) {
+        if (isNotBlank(searchNoticeDetails.getZone()))
+            query.setParameter(ZONE, searchNoticeDetails.getZone());
+        if (isNotBlank(searchNoticeDetails.getRevenueWard()))
+            query.setParameter(WARD, searchNoticeDetails.getRevenueWard());
+        if (isNotBlank(searchNoticeDetails.getPropertyType()))
+            query.setParameter(PROPERTY_TYPE, searchNoticeDetails.getPropertyType());
+        if (isNotBlank(searchNoticeDetails.getApplicationType()))
+            query.setParameter(APPLICATION_TYPE, searchNoticeDetails.getApplicationType());
+        if (isNotBlank(searchNoticeDetails.getFromDate()))
+            query.setParameter(FORMATTED_FROM_DATE, formattedFromDate);
+        if (isNotBlank(searchNoticeDetails.getToDate()))
+            query.setParameter(FORMATTED_TO_DATE, formattedToDate);
+        if (isNotBlank(searchNoticeDetails.getConnectionType()))
+            query.setParameter(CONNECTION_TYPE, searchNoticeDetails.getConnectionType());
+        if (isNotBlank(searchNoticeDetails.getHscNo()))
+            query.setParameter(CONSUMERCODE, searchNoticeDetails.getHscNo());
+        if (isNotBlank(searchNoticeDetails.getHouseNumber()))
+            query.setParameter(HOUSENUMBER, searchNoticeDetails.getHouseNumber());
+        if (isNotBlank(searchNoticeDetails.getAssessmentNo()))
+            query.setParameter(ASSESSMENT_NUMBER, searchNoticeDetails.getAssessmentNo());
+        return query;
+    }
+
+    public List<SearchNoticeDetails> getSearchNoticeList(final List<Object[]> objectList) {
+        List<SearchNoticeDetails> noticeDetailList = new ArrayList<>();
+        for (Object[] object : objectList) {
+            SearchNoticeDetails searchNoticeDetails = setNoticeObjectFields(object);
+            noticeDetailList.add(searchNoticeDetails);
+        }
+        return noticeDetailList;
+    }
+
+    private SearchNoticeDetails setNoticeObjectFields(Object[] object) {
+        SearchNoticeDetails searchNoticeDetails = new SearchNoticeDetails();
+        searchNoticeDetails.setPropertyType(object[0] == null ? EMPTY : object[0].toString());
+        searchNoticeDetails.setApplicationType(object[1] == null ? EMPTY : object[1].toString());
+        searchNoticeDetails.setHscNo(object[2] == null ? EMPTY : object[2].toString());
+        searchNoticeDetails.setOwnerName(object[3] == null ? EMPTY : object[3].toString());
+        searchNoticeDetails.setAssessmentNo(object[4] == null ? EMPTY : object[4].toString());
+        searchNoticeDetails.setWorkOrderNumber(object[5] == null ? EMPTY : object[5].toString());
+        searchNoticeDetails.setWorkOrderDate(object[6] == null ? EMPTY : object[6].toString());
+        searchNoticeDetails.setHouseNumber(object[7] == null ? EMPTY : object[7].toString());
+        searchNoticeDetails.setLocality(object[8] == null ? EMPTY : object[8].toString());
+        searchNoticeDetails.setConnectionType(object[9] == null ? EMPTY : object[9].toString());
+        searchNoticeDetails.setEstimationNumber(object[10] == null ? EMPTY : object[10].toString());
+        searchNoticeDetails.setEstimationDate(object[11] == null ? EMPTY : object[11].toString());
+        return searchNoticeDetails;
+    }
+
+    public List<SearchNoticeDetails> buildSearchNoticeDetails(final List<WaterConnectionDetails> waterConnectionDetailsList) {
+        List<SearchNoticeDetails> noticeDetailList = new ArrayList<>();
+        for (WaterConnectionDetails connectionDetails : waterConnectionDetailsList) {
+            AssessmentDetails assessmentDetails = null;
+            if (connectionDetails.getConnection().getPropertyIdentifier() != null)
+                assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
+                        connectionDetails.getConnection().getPropertyIdentifier(),
+                        PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
+            if (assessmentDetails != null) {
+                SearchNoticeDetails noticeDetails = new SearchNoticeDetails();
+                noticeDetails.setAssessmentNo(connectionDetails.getConnection().getPropertyIdentifier());
+                noticeDetails.setHscNo(connectionDetails.getConnection().getConsumerCode());
+                noticeDetails.setWorkOrderDate(toDefaultDateTimeFormat(connectionDetails.getWorkOrderDate()));
+                noticeDetails.setWorkOrderNumber(connectionDetails.getWorkOrderNumber());
+                noticeDetails.setConnectionType(connectionDetails.getConnectionType().name());
+                noticeDetails.setFileStoreID(connectionDetails.getFileStore().getFileStoreId());
+                noticeDetails.setHouseNumber(assessmentDetails.getHouseNo());
+
+                Iterator<OwnerName> nameIterator = assessmentDetails.getOwnerNames().iterator();
+                OwnerName ownerName = null;
+                if (nameIterator != null && nameIterator.hasNext())
+                    ownerName = nameIterator.next();
+                noticeDetails.setOwnerName(ownerName == null ? "N/A" : ownerName.getOwnerName());
+
+                noticeDetails.setLocality(assessmentDetails.getBoundaryDetails().getLocalityName());
+                // noticeDetails.
+            }
+        }
+        return noticeDetailList;
+    }
+
+    @SuppressWarnings("unchecked")
     public List<Long> getDocuments(final String consumerCode, final String applicationType) {
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append(
-                "select filestore.filestoreid from eg_filestoremap filestore,egwtr_documents conndoc,egwtr_application_documents appD,egwtr_connectiondetails conndet,egwtr_connection  "
-                        + "conn , egwtr_demand_connection demcon ,eg_demand dem,eg_bill bill, eg_bill_type billtype"
-                        + ",egwtr_document_names docName where filestore.id=conndoc.filestoreid and conndet.connection=conn.id and conndet.id=appD.connectiondetailsid and appD.documentnamesid=docName.id and "
-                        + " bill.id_demand =demcon.demand and billtype.id = bill.id_bill_type and bill.service_code='WT' and conndoc.applicationdocumentsid=appD.id  "
-                        + " and  demcon.connectiondetails=conndet.id and demcon.demand = dem.id and appD.documentnumber=bill.bill_no and bill.is_cancelled='N' and billtype.code='MANUAL' and dem.is_history ='N' and  docName.documentname='DemandBill' "
-                        + " ");
-        queryStr.append(" and conn.consumercode=:consumerCode");
-        queryStr.append(" and docName.applicationtype in(select id from egwtr_application_type where name =:applicationType)");
-        queryStr.append(" order by appD.id desc ");
+                "select filestore.filestoreid from eg_filestoremap filestore,egwtr_documents conndoc,egwtr_application_documents appD,egwtr_connectiondetails conndet,egwtr_connection  ")
+                .append("conn , egwtr_demand_connection demcon ,eg_demand dem,eg_bill bill, eg_bill_type billtype")
+                .append(",egwtr_document_names docName where filestore.id=conndoc.filestoreid and conndet.connection=conn.id and conndet.id=appD.connectiondetailsid and appD.documentnamesid=docName.id and ")
+                .append(" bill.id_demand =demcon.demand and billtype.id = bill.id_bill_type and bill.service_code='WT' and conndoc.applicationdocumentsid=appD.id  ")
+                .append(" and  demcon.connectiondetails=conndet.id and demcon.demand = dem.id and appD.documentnumber=bill.bill_no and bill.is_cancelled='N' and billtype.code='MANUAL' and dem.is_history ='N' and  docName.documentname='DemandBill' ")
+                .append(" and conn.consumercode=:consumerCode")
+                .append(" and docName.applicationtype in(select id from egwtr_application_type where name =:applicationType)")
+                .append(" order by appD.id desc ");
 
         final Query query = entityManager.unwrap(Session.class).createSQLQuery(queryStr.toString());
         if (isNotBlank(consumerCode))
             query.setParameter(CONSUMERCODE, consumerCode);
         if (isNotBlank(applicationType))
             query.setParameter(APPLICATION_TYPE, applicationType);
-        final List<Long> waterChargesDocumentsList = query.list();
-        return waterChargesDocumentsList;
+        return query.list();
     }
 
-    public long getTotalCountofBills(final String zone, final String ward, final String propertyType,
-            final String applicationType, final String connectionType, final String consumerCode,
-            final String houseNumber, final String assessmentNumber) {
+    public long getTotalCountofBills(final SearchNoticeDetails searchNoticeDetails) {
 
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append("select count(distinct dcbinfo.hscno)  from egwtr_mv_bill_view dcbinfo"
@@ -262,39 +347,24 @@ public class SearchNoticeService {
         queryStr.append(" and bill.module_id = (select id from eg_module where name ='Water Tax Management')");
         queryStr.append(" and bill.id_bill_type = (select id from eg_bill_type  where code ='MANUAL')");
         queryStr.append(" and bill.is_cancelled ='N' ");
-        if (ward != null && !ward.isEmpty())
+        if (isNotBlank(searchNoticeDetails.getRevenueWard()))
             queryStr.append(" and wardboundary.name =:ward");
-        if (zone != null && !zone.isEmpty())
+        if (isNotBlank(searchNoticeDetails.getZone()))
             queryStr.append(" and zoneboundary.name =:zone");
-        if (consumerCode != null && !consumerCode.isEmpty())
+        if (isNotBlank(searchNoticeDetails.getHscNo()))
             queryStr.append(" and dcbinfo.hscno =:consumerCode");
-        if (assessmentNumber != null && !assessmentNumber.isEmpty())
+        if (isNotBlank(searchNoticeDetails.getAssessmentNo()))
             queryStr.append(" and dcbinfo.propertyid =:assessmentNumber");
-        if (houseNumber != null && !houseNumber.isEmpty())
+        if (isNotBlank(searchNoticeDetails.getHouseNumber()))
             queryStr.append(" and dcbinfo.houseno =:houseNumber");
-        if (connectionType != null && !connectionType.isEmpty())
+        if (isNotBlank(searchNoticeDetails.getConnectionType()))
             queryStr.append(" and dcbinfo.connectiontype =:connectionType");
-        if (applicationType != null && !applicationType.isEmpty())
+        if (isNotBlank(searchNoticeDetails.getApplicationType()))
             queryStr.append(" and dcbinfo.applicationtype =:applicationType");
-        if (propertyType != null && !propertyType.isEmpty())
+        if (isNotBlank(searchNoticeDetails.getPropertyType()))
             queryStr.append(" and dcbinfo.propertytype =:propertyType");
-        final Query query = entityManager.unwrap(Session.class).createSQLQuery(queryStr.toString());
-        if (isNotBlank(ward))
-            query.setParameter(WARD, ward);
-        if (isNotBlank(zone))
-            query.setParameter(ZONE, zone);
-        if (isNotBlank(consumerCode))
-            query.setParameter(CONSUMERCODE, consumerCode);
-        if (isNotBlank(assessmentNumber))
-            query.setParameter(ASSESSMENT_NUMBER, assessmentNumber);
-        if (isNotBlank(houseNumber))
-            query.setParameter(HOUSENUMBER, houseNumber);
-        if (isNotBlank(connectionType))
-            query.setParameter(CONNECTION_TYPE, connectionType);
-        if (isNotBlank(applicationType))
-            query.setParameter(APPLICATION_TYPE, applicationType);
-        if (isNotBlank(propertyType))
-            query.setParameter(PROPERTY_TYPE, propertyType);
+        Query query = entityManager.unwrap(Session.class).createSQLQuery(queryStr.toString());
+        setSearchQueryParameters(searchNoticeDetails, null, null, query);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("GenerateConnectionBill -- count Result " + queryStr.toString());
         return ((BigInteger) query.uniqueResult()).longValue();

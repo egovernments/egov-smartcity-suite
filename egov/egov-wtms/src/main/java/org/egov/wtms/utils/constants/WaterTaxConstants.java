@@ -436,4 +436,5 @@ public class WaterTaxConstants {
     public static final String WCMS_PENALTY_CHARGES_PERCENTAGE = "WCMS_PENALTY_CHARGES_PERCENTAGE";
     public static final String SERVICECHARGES = "SERVICECHARGES";
     public static final String PENALTYCHARGES = "PENALTYCHARGES";
+    public static final String REGULARISATION_DEMAND_NOTE = "Regularisation Demand Note";
 }

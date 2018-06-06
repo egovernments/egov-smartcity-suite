@@ -47,13 +47,14 @@
  */
 package org.egov.wtms.reports.entity;
 
+import java.lang.reflect.Type;
+
+import org.egov.wtms.application.entity.SearchNoticeDetails;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import org.egov.wtms.application.entity.SearchNoticeDetails;
-
-import java.lang.reflect.Type;
 
 public class SearchNoticeAdaptor implements JsonSerializer<SearchNoticeDetails> {
 
@@ -75,6 +76,10 @@ public class SearchNoticeAdaptor implements JsonSerializer<SearchNoticeDetails> 
             jsonObject.addProperty("workOrderDate", searchNoticeDetails.getWorkOrderDate().toString());
         if (searchNoticeDetails.getWorkOrderNumber() != null)
             jsonObject.addProperty("workOrderNumber", searchNoticeDetails.getWorkOrderNumber());
+        if (searchNoticeDetails.getEstimationNumber() != null)
+            jsonObject.addProperty("estimationNumber", searchNoticeDetails.getEstimationNumber());
+        if (searchNoticeDetails.getEstimationDate() != null)
+            jsonObject.addProperty("estimationDate", searchNoticeDetails.getEstimationDate());
         return jsonObject;
     }
 

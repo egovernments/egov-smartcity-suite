@@ -54,6 +54,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -134,6 +135,7 @@ public class EditDemandForDataEntryController {
             allInstallments = waterTaxUtils.getInstallmentsForCurrYear(waterConnectionDetails.getExecutionDate());
             demandReasonMap = NON_METERED_DMDRSN_CODE_MAP.entrySet();
         }
+        Collections.sort(allInstallments);
         DemandDetail dmdDtl = null;
         for (final Map.Entry<String, String> entry : demandReasonMap)
             for (final Installment installObj : allInstallments) {

@@ -115,9 +115,9 @@ function merge()
 			'propertyType' :$("#propertyType").val(),
 			'applicationType': $("#applicationType").val(),
 			'connectionType': $("#connectionType").val(),
-			'consumerCode': $("#consumerCode").val(),
+			'hscNo': $("#consumerCode").val(),
 			'houseNumber': $("#houseNumber").val(),
-			'assessmentNumber': $("#assessmentNumber").val(),
+			'assessmentNo': $("#assessmentNumber").val(),
 			'noticeType' : $("#noticetype").val(),
 			'fromDate' : $("#fromDate").val(),
 			'toDate' : $('#toDate').val(),
@@ -149,9 +149,9 @@ var params={
 			'propertyType' :$("#propertyType").val(),
 			'applicationType': $("#applicationType").val(),
 			'connectionType': $("#connectionType").val(),
-			'consumerCode': $("#consumerCode").val(),
+			'hscNo': $("#consumerCode").val(),
 			'houseNumber': $("#houseNumber").val(),
-			'assessmentNumber': $("#assessmentNumber").val(),
+			'assessmentNo': $("#assessmentNumber").val(),
 			'noticeType' : $("#noticetype").val(),
 			'fromDate' : $("#fromDate").val(),
 			'toDate' : $('#toDate').val(),
@@ -264,7 +264,7 @@ function loadingReport(e)
 							  { "data" : getNumberData(), "title": getColumnTitleForNumber() },
 							  { "data" : getDateData(),
 								  render: function (data, type, full) {
-	        						if(data != undefined) {
+	        						if(data != undefined && data!="") {
 	        							var regDateSplit = data.split("-");		
 	        							return regDateSplit[2].substring(0,2) + "/" + regDateSplit[1] + "/" + regDateSplit[0];
 	        						}
@@ -306,37 +306,46 @@ function loadingReport(e)
 function getColumnTitleForNumber() {
 	if($('#noticetype').val()==="Demand Bill")
 		return "Bill Number";
-	else
+	else if($('#noticetype').val()==="Sanction Order")
 		return "Sanction Order Number";
+	else if($('#noticetype').val()==="Regularisation Demand Note")
+		return "Notice Number";
 }
 
 function getColumnTitleForDate() {
 	if($("#noticetype").val()==="Demand Bill")
 		return "Bill Date";
-	else
+	else if($('#noticetype').val()==="Sanction Order")
 		return "Sanction Order Date";
+	else if($('#noticetype').val()==="Regularisation Demand Note")
+		return "Notice Date";
 }
 
 function getNumberData() {
 	if($("#noticetype").val()==="Demand Bill")
 		return "billNo";
-	else
+	else if($('#noticetype').val()==="Sanction Order")
 		return "workOrderNumber";
+	else if($('#noticetype').val()==="Regularisation Demand Note")
+		return "estimationNumber";
 }
 
 function getName() {
 	if($("#noticetype").val()==="Demand Bill")
 		return "billNo";
-	else
+	else if($('#noticetype').val()==="Sanction Order")
 		return "workOrderNumber";
+	else if($('#noticetype').val()==="Regularisation Demand Note")
+		return "estimationNumber";
 }
 
 function getDateData() {
-	if($("#noticetype").val()==="Demand Bill") {
+	if($("#noticetype").val()==="Demand Bill")
 		return "billDate";
-	}
-	else
+	else if($('#noticetype').val()==="Sanction Order")
 		return "workOrderDate";
+	else if($('#noticetype').val()==="Regularisation Demand Note")
+		return "estimationDate";
 }
 
 function formatNumberInr(x) {
