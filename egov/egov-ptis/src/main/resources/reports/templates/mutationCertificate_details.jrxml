@@ -448,7 +448,7 @@
 					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement textAlignment="Left">
+				<textElement textAlignment="Left" markup="styled">
 					<font size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Sri / Smt "+JRStringUtil.xmlEncode($P{newOwnerName})]]></textFieldExpression>
@@ -462,7 +462,7 @@
 					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement textAlignment="Left">
+				<textElement textAlignment="Left" markup="styled">
 					<font size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[JRStringUtil.xmlEncode($P{ownerAddress})]]></textFieldExpression>
