@@ -52,7 +52,7 @@
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="219"/>
 	<import value="org.egov.infra.reporting.util.*"/>
-	<import value="org.egov.infstr.utils.*"/>
+	<import value="org.egov.infra.utils.*"/>
 	<import value="net.sf.jasperreports.engine.util.JRStringUtil"/>
 	<parameter name="municipalityName" class="java.lang.String"/>
 	<parameter name="approvedDate" class="java.lang.String"/>
@@ -138,7 +138,7 @@
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="100" y="121" width="444" height="40" uuid="c3a0c63f-290f-4873-8fa6-dd5812dac316"/>
-				<textElement textAlignment="Justified" markup="none">
+				<textElement textAlignment="Justified" markup="styled">
 					<font size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["TAXATION - "+$P{municipalityName}+" - Transfer of the title on the building bearing, H. No. "+JRStringUtil.xmlEncode($P{doorNo})+" situated at "+JRStringUtil.xmlEncode($P{localityName})+" area within the Municipality limits – Orders – Issued."]]></textFieldExpression>
@@ -159,7 +159,7 @@
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" isPrintRepeatedValues="false" x="100" y="162" width="444" height="19" uuid="f43e2610-b073-4bf8-b6b8-a582fb4cbec3"/>
-				<textElement textAlignment="Left" markup="none">
+				<textElement textAlignment="Left" markup="styled">
 					<font size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["1. Application of Sri / Smt. "+JRStringUtil.xmlEncode($P{newOwnerName})]]></textFieldExpression>
@@ -214,7 +214,7 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Left" markup="none">
+				<textElement textAlignment="Left" markup="styled">
 					<font size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[JRStringUtil.xmlEncode($P{doorNo})+",\n"+$P{assessmentNo}]]></textFieldExpression>
@@ -241,7 +241,7 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Left" markup="none">
+				<textElement textAlignment="Left" markup="styled">
 					<font size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[JRStringUtil.xmlEncode($P{oldOwnerGuardianRelation})]]></textFieldExpression>
@@ -295,7 +295,7 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Left" markup="none">
+				<textElement textAlignment="Left" markup="styled">
 					<font size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[JRStringUtil.xmlEncode($P{newOwnerGuardianRelation})]]></textFieldExpression>
