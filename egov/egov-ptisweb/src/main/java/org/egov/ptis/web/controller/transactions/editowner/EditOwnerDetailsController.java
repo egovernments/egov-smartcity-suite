@@ -157,6 +157,7 @@ public class EditOwnerDetailsController {
                     propertyOwner.getProperty().getBasicProperty(), doorNumber, errors);
         if (!errMsg.isEmpty()) {
             model.addAttribute(ERROR_MSG, errMsg);
+            model.addAttribute("mode", mode);
             return OWNERDETAILS_FROM;
         } else {
             ownerAuditService.saveOwnerDetails(propertyOwner.getOwnerAudit());
