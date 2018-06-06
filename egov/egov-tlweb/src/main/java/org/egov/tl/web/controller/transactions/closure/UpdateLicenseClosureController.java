@@ -99,7 +99,7 @@ public class UpdateLicenseClosureController extends LicenseClosureProcessflowCon
             return REDIRECT_TO_VIEW + tradeLicense.getId();
         } else {
             licenseClosureService.forwardClosure(tradeLicense);
-            redirectAttributes.addFlashAttribute(MESSAGE, "msg.closure.forward");
+            redirectAttributes.addFlashAttribute(MESSAGE, "msg.application.forward");
             redirectAttributes.addFlashAttribute("approverName", tradeLicense.getWorkflowContainer().getApproverName());
             return REDIRECT_TO_VIEW + tradeLicense.getId();
         }
@@ -116,7 +116,7 @@ public class UpdateLicenseClosureController extends LicenseClosureProcessflowCon
             return REDIRECT_TO_VIEW + tradeLicense.getId();
         } else {
             licenseClosureService.rejectClosure(tradeLicense);
-            redirectAttributes.addFlashAttribute(MESSAGE, "msg.closure.rejected");
+            redirectAttributes.addFlashAttribute(MESSAGE, "msg.application.rejected");
             redirectAttributes.addFlashAttribute("initiatorPosition",
                     tradeLicense.getCurrentState().getOwnerPosition().getDeptDesig().getDesignation().getName());
             return REDIRECT_TO_VIEW + tradeLicense.getId();

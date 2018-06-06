@@ -55,6 +55,7 @@ import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.License;
+import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.repository.LicenseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -65,6 +66,7 @@ import java.util.List;
 
 import static org.egov.infra.reporting.engine.ReportFormat.PDF;
 import static org.egov.infra.reporting.util.ReportUtil.CONTENT_TYPES;
+import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.TL_FILE_STORE_DIR;
 import static org.egov.tl.utils.Constants.WF_ACTION_DIGI_PENDING;
 
@@ -86,14 +88,21 @@ public class LicenseCertificateDigiSignService {
     @Autowired
     private LicenseApplicationService licenseApplicationService;
 
+    @Autowired
+    private LicenseNewApplicationService licenseNewApplicationService;
+
     @Transactional
     public void digitalSignTransition(List<String> applicationNumbers) {
         for (String applicationNumber : applicationNumbers) {
             License license = tradeLicenseService.getLicenseByApplicationNumber(applicationNumber);
-            if (!license.isNewWorkflow())
+            if (!license.isNewWorkflow()) {
                 tradeLicenseService.digitalSignTransition(applicationNumber);
-            else
-                licenseApplicationService.processDigitalSignature(applicationNumber);
+            } else {
+                if (NEW_LIC_APPTYPE.equals(license.getLicenseAppType().getName()))
+                    licenseNewApplicationService.digiSignTransition((TradeLicense) license);
+                else
+                    licenseApplicationService.processDigitalSignature(applicationNumber);
+            }
         }
     }
 

@@ -203,7 +203,8 @@ $(document).ready(function () {
                                 $.each(JSON.parse(row.actions), function (key, value) {
                                     option += "<option>" + value.key + "</option>";
                                 });
-                                return ('<select class="dropchange" id="recordActions" onchange="goToAction(this,' + row.licenseId + ')" >' + option + '</select>');
+                                return ('<select class="dropchange" id="recordActions" onchange="goToAction(this,' + row.licenseId + ',' +
+                                    "'" + row.applicationNumber + "'" + ')" >' + option + '</select>');
                             }
                         }]
                     });
@@ -221,9 +222,9 @@ function goToView(id) {
     window.open("/tl/viewtradelicense/viewTradeLicense-view.action?id=" + id, '', 'scrollbars=yes,width=1000,height=700,status=yes');
 }
 
-function goToAction(obj, id) {
+function goToAction(obj, id, applicationNumber) {
     if (obj.options[obj.selectedIndex].innerHTML == 'Payment')
-        window.open("/tl/pay/online/" + id);
+        window.open("/tl/pay/online/" + applicationNumber);
     else if (obj.options[obj.selectedIndex].innerHTML == 'View DCB')
         window.open("/tl/dcb/view/" + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Renew License')
@@ -231,9 +232,9 @@ function goToAction(obj, id) {
     else if (obj.options[obj.selectedIndex].innerHTML == 'Closure')
         window.open("/tl/license/closure/" + id, id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Print Certificate')
-        window.open("/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id=" + id);
+        window.open("/tl/license/certificate/original/" + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Print Provisional Certificate')
-        window.open("/tl/viewtradelicense/generate-provisional-certificate.action?model.id=" + id);
+        window.open("/tl/license/certificate/provisional/" + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Closure Endorsement Notice')
         window.open("/tl/license/closure/endorsementnotice/" + id, 'cen' + id);
 

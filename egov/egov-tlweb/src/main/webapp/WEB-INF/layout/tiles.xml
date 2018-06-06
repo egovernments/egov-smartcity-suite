@@ -315,4 +315,24 @@
         <put-attribute name="body" value="/WEB-INF/views/viewlicense/view-tradelicense.jsp"/>
     </definition>
 
+    <definition name="license-create" extends="base_layout">
+        <put-attribute name="page-title" value="title.document.new" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/newlicense/license-create.jsp"/>
+    </definition>
+
+    <definition name="license-ack" extends="base_layout">
+        <put-attribute name="page-title" value="page.title.viewtrade" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/newlicense/license-ack.jsp"/>
+    </definition>
+
+    <definition name="license-fee-verification" extends="base_layout">
+        <put-attribute name="page-title" value="title.document.new" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/payment/license-fee-verification.jsp"/>
+    </definition>
+
+    <definition name="license-payment" extends="base_layout">
+        <put-attribute name="page-title" value="title.document.new" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/payment/license-payment.jsp"/>
+    </definition>
+
 </tiles-definitions>

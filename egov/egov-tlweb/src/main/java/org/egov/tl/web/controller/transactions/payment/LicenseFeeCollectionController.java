@@ -45,65 +45,47 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
+
 package org.egov.tl.web.controller.transactions.payment;
 
 import org.egov.tl.entity.License;
-import org.egov.tl.entity.contracts.OnlineSearchForm;
-import org.egov.tl.service.TradeLicenseService;
+import org.egov.tl.service.LicenseService;
 import org.egov.tl.service.integration.LicenseBillService;
-import org.egov.tl.web.response.adaptor.OnlineSearchTradeResultHelperAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.io.IOException;
-import java.net.URLEncoder;
-
-import static org.egov.infra.utils.JsonUtils.toJSON;
-import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+import static org.egov.infra.utils.StringUtils.encodeURL;
 
 @Controller
-@RequestMapping("/pay/online")
-public class LicenseBillOnlinePaymentController {
+@RequestMapping("/license/fee")
+public class LicenseFeeCollectionController {
 
     @Autowired
     private LicenseBillService licenseBillService;
 
     @Autowired
-    private TradeLicenseService tradeLicenseService;
+    private LicenseService licenseService;
 
-    @ModelAttribute("onlineSearchForm")
-    public OnlineSearchForm onlineSearchForm() {
-        return new OnlineSearchForm();
-    }
-
-    @GetMapping("{applicationNumber}")
-    public String showPaymentForm(@PathVariable String applicationNumber, Model model) throws IOException {
-        License license = tradeLicenseService.getLicenseByApplicationNumber(applicationNumber);
+    @GetMapping("verification/{applicationNumber}")
+    public String showVerificationForm(@PathVariable String applicationNumber, Model model) {
+        License license = licenseService.getLicenseByApplicationNumber(applicationNumber);
         if (license.isPaid()) {
-            model.addAttribute("paymentdone", "License Fee already collected");
-            return "license-onlinepayment";
+            model.addAttribute("paymentdone", "msg.paymentdone");
+        } else {
+            model.addAttribute("outstandingFee", licenseBillService.getPaymentFee(license));
+            model.addAttribute("applicationNumber", applicationNumber);
         }
-
-        model.addAttribute("collectXML", URLEncoder.encode(licenseBillService.createLicenseBillXML(license), "UTF-8"));
-        return "license-onlinepayment";
+        return "license-fee-verification";
     }
 
-    @GetMapping
-    public String searchForPayment() {
-        return "searchtrade-licenseforpay";
-    }
-
-    @PostMapping(produces = TEXT_PLAIN_VALUE)
-    @ResponseBody
-    public String searchLicense(OnlineSearchForm searchForm) {
-        return new StringBuilder("{ \"data\":").append(toJSON(tradeLicenseService.onlineSearchTradeLicense(searchForm),
-                OnlineSearchForm.class, OnlineSearchTradeResultHelperAdaptor.class)).append("}").toString();
+    @GetMapping("collection/{applicationNumber}")
+    public String showPaymentForm(@PathVariable String applicationNumber, Model model) {
+        License license = licenseService.getLicenseByApplicationNumber(applicationNumber);
+        model.addAttribute("collectXML", encodeURL(licenseBillService.createLicenseBillXML(license)));
+        return "license-payment";
     }
 }

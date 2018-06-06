@@ -296,8 +296,7 @@ public class LicenseProcessWorkflowService {
 
     public void getWfWithThirdPartyOp(final TradeLicense license, final WorkflowBean workflowBean) {
         WorkFlowMatrix workFlowMatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
-                null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(),
-                null, new Date(), null);
+                null, workflowBean.getAdditionaRule(), "Start", null, new Date(), null);
         List<Assignment> assignmentList = getAssignments(workFlowMatrix);
         if (!assignmentList.isEmpty()) {
             String additionalRule = license.isNewApplication() ? NEWLICENSE : RENEWLICENSE;

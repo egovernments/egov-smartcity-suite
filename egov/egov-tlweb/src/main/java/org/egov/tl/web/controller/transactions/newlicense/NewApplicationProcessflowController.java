@@ -45,65 +45,96 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.tl.web.controller.transactions.payment;
 
-import org.egov.tl.entity.License;
-import org.egov.tl.entity.contracts.OnlineSearchForm;
+package org.egov.tl.web.controller.transactions.newlicense;
+
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.workflow.matrix.service.CustomizedWorkFlowService;
+import org.egov.tl.entity.LicenseCategory;
+import org.egov.tl.entity.NatureOfBusiness;
+import org.egov.tl.service.FeeTypeService;
+import org.egov.tl.service.LicenseCategoryService;
+import org.egov.tl.service.LicenseNewApplicationProcessflowService;
+import org.egov.tl.service.LicenseNewApplicationService;
+import org.egov.tl.service.LicenseService;
+import org.egov.tl.service.NatureOfBusinessService;
 import org.egov.tl.service.TradeLicenseService;
-import org.egov.tl.service.integration.LicenseBillService;
-import org.egov.tl.web.response.adaptor.OnlineSearchTradeResultHelperAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.io.IOException;
-import java.net.URLEncoder;
+import java.util.List;
+import java.util.Map;
 
-import static org.egov.infra.utils.JsonUtils.toJSON;
-import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
+import static org.egov.tl.utils.Constants.LOCALITY;
+import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
+import static org.egov.tl.utils.Constants.OWNERSHIP_TYPE;
 
 @Controller
-@RequestMapping("/pay/online")
-public class LicenseBillOnlinePaymentController {
+public abstract class NewApplicationProcessflowController {
 
     @Autowired
-    private LicenseBillService licenseBillService;
+    protected TradeLicenseService tradeLicenseService;
 
     @Autowired
-    private TradeLicenseService tradeLicenseService;
+    protected LicenseService licenseService;
 
-    @ModelAttribute("onlineSearchForm")
-    public OnlineSearchForm onlineSearchForm() {
-        return new OnlineSearchForm();
+    @Autowired
+    protected FeeTypeService feeTypeService;
+
+    @Autowired
+    protected BoundaryService boundaryService;
+
+    @Autowired
+    protected LicenseCategoryService licenseCategoryService;
+
+    @Autowired
+    protected NatureOfBusinessService natureOfBusinessService;
+
+    @Autowired
+    protected DepartmentService departmentService;
+
+    @Autowired
+    protected CustomizedWorkFlowService customizedWorkFlowService;
+
+    @Autowired
+    protected LicenseNewApplicationService licenseNewApplicationService;
+
+    @Autowired
+    protected LicenseNewApplicationProcessflowService licenseNewApplicationProcessflowService;
+
+    @ModelAttribute("boundary")
+    public List<Boundary> boundaries() {
+        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(LOCALITY, LOCATION_HIERARCHY_TYPE);
     }
 
-    @GetMapping("{applicationNumber}")
-    public String showPaymentForm(@PathVariable String applicationNumber, Model model) throws IOException {
-        License license = tradeLicenseService.getLicenseByApplicationNumber(applicationNumber);
-        if (license.isPaid()) {
-            model.addAttribute("paymentdone", "License Fee already collected");
-            return "license-onlinepayment";
-        }
-
-        model.addAttribute("collectXML", URLEncoder.encode(licenseBillService.createLicenseBillXML(license), "UTF-8"));
-        return "license-onlinepayment";
+    @ModelAttribute("ownershipType")
+    public Map<String, String> ownership() {
+        return OWNERSHIP_TYPE;
     }
 
-    @GetMapping
-    public String searchForPayment() {
-        return "searchtrade-licenseforpay";
+    @ModelAttribute("natureOfBusiness")
+    public List<NatureOfBusiness> natureOfBusiness() {
+        return natureOfBusinessService.getNatureOfBusinesses();
     }
 
-    @PostMapping(produces = TEXT_PLAIN_VALUE)
-    @ResponseBody
-    public String searchLicense(OnlineSearchForm searchForm) {
-        return new StringBuilder("{ \"data\":").append(toJSON(tradeLicenseService.onlineSearchTradeLicense(searchForm),
-                OnlineSearchForm.class, OnlineSearchTradeResultHelperAdaptor.class)).append("}").toString();
+    @ModelAttribute("category")
+    public List<LicenseCategory> category() {
+        return licenseCategoryService.getCategories();
     }
+
+    @ModelAttribute("feeTypeId")
+    public Long feeType() {
+        return feeTypeService.findByName(LICENSE_FEE_TYPE).getId();
+    }
+
+    @ModelAttribute(value = "approvalDepartmentList")
+    public List<Department> addAllDepartments() {
+        return departmentService.getAllDepartments();
+    }
+
 }

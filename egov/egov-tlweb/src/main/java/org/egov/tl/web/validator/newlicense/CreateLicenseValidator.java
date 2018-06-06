@@ -45,65 +45,40 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.tl.web.controller.transactions.payment;
 
-import org.egov.tl.entity.License;
-import org.egov.tl.entity.contracts.OnlineSearchForm;
-import org.egov.tl.service.TradeLicenseService;
-import org.egov.tl.service.integration.LicenseBillService;
-import org.egov.tl.web.response.adaptor.OnlineSearchTradeResultHelperAdaptor;
+package org.egov.tl.web.validator.newlicense;
+
+import org.egov.tl.entity.TradeLicense;
+import org.egov.tl.service.LicenseNewApplicationProcessflowService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.Errors;
 
-import java.io.IOException;
-import java.net.URLEncoder;
-
-import static org.egov.infra.utils.JsonUtils.toJSON;
-import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
-
-@Controller
-@RequestMapping("/pay/online")
-public class LicenseBillOnlinePaymentController {
+@Component
+public class CreateLicenseValidator extends NewLicenseValidator {
 
     @Autowired
-    private LicenseBillService licenseBillService;
+    private LicenseNewApplicationProcessflowService licenseNewApplicationProcessflowService;
 
-    @Autowired
-    private TradeLicenseService tradeLicenseService;
+    @Override
+    public void validate(Object target, Errors errors) {
+        super.validate(target, errors);
+        TradeLicense license = (TradeLicense) target;
 
-    @ModelAttribute("onlineSearchForm")
-    public OnlineSearchForm onlineSearchForm() {
-        return new OnlineSearchForm();
-    }
-
-    @GetMapping("{applicationNumber}")
-    public String showPaymentForm(@PathVariable String applicationNumber, Model model) throws IOException {
-        License license = tradeLicenseService.getLicenseByApplicationNumber(applicationNumber);
-        if (license.isPaid()) {
-            model.addAttribute("paymentdone", "License Fee already collected");
-            return "license-onlinepayment";
+        if (license.anyMandatoryDocumentMissing()) {
+            errors.reject("validate.supportDocs");
         }
 
-        model.addAttribute("collectXML", URLEncoder.encode(licenseBillService.createLicenseBillXML(license), "UTF-8"));
-        return "license-onlinepayment";
-    }
+        if (license.getCategory().getId() == null || license.getTradeName().getId() == null) {
+            errors.rejectValue("category", "validate.license.category");
+        }
 
-    @GetMapping
-    public String searchForPayment() {
-        return "searchtrade-licenseforpay";
-    }
+        if (license.getTradeName().getLicenseSubCategoryDetails().get(0).getUom().getId() == null) {
+            errors.rejectValue("tradeName", "validate.uom");
+        }
 
-    @PostMapping(produces = TEXT_PLAIN_VALUE)
-    @ResponseBody
-    public String searchLicense(OnlineSearchForm searchForm) {
-        return new StringBuilder("{ \"data\":").append(toJSON(tradeLicenseService.onlineSearchTradeLicense(searchForm),
-                OnlineSearchForm.class, OnlineSearchTradeResultHelperAdaptor.class)).append("}").toString();
+        if (licenseNewApplicationProcessflowService.validateAssignee(license)) {
+            errors.reject("validate.assignee");
+        }
     }
 }

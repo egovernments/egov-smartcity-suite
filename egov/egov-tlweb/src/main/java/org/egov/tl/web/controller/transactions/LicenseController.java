@@ -47,8 +47,13 @@
  */
 package org.egov.tl.web.controller.transactions;
 
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.FileStoreUtils;
+import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseDocument;
 import org.egov.tl.entity.TradeLicense;
+import org.egov.tl.service.LicenseService;
 import org.egov.tl.service.TradeLicenseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -63,13 +68,28 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 import java.util.Map;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.egov.infra.reporting.util.ReportUtil.reportAsResponseEntity;
+import static org.egov.infra.utils.NumberUtil.amountInWords;
+import static org.egov.tl.utils.Constants.CSCOPERATOR;
+import static org.egov.tl.utils.Constants.TL_FILE_STORE_DIR;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 
 @Controller
 @RequestMapping(value = "/license")
 public class LicenseController {
+
+    public static final String TRADELICENSE = "tradeLicense";
+
+    @Autowired
+    private FileStoreUtils fileStoreUtils;
+
+    @Autowired
+    private LicenseService licenseService;
+
+    @Autowired
+    private SecurityUtils securityUtils;
 
     @Autowired
     private TradeLicenseService tradeLicenseService;
@@ -88,7 +108,7 @@ public class LicenseController {
 
     @GetMapping("success/{licenseId}")
     public String successView(@PathVariable Long licenseId, Model model) {
-        model.addAttribute("tradeLicense", tradeLicenseService.getLicenseById(licenseId));
+        model.addAttribute(TRADELICENSE, tradeLicenseService.getLicenseById(licenseId));
         return "license-success-view";
     }
 
@@ -100,8 +120,48 @@ public class LicenseController {
         } else {
             model.addAttribute("outstandingFee", tradeLicenseService.getOutstandingFee(license));
             model.addAttribute("licenseHistory", tradeLicenseService.populateHistory(license));
-            model.addAttribute("tradeLicense", license);
+            model.addAttribute(TRADELICENSE, license);
         }
         return "view-tradelicense";
+    }
+
+    @GetMapping("/certificate/original/{licenseId}")
+    public ResponseEntity<InputStreamResource> generateFinalCertificate(@PathVariable Long licenseId) {
+        License license = licenseService.getLicenseById(licenseId);
+        if (isBlank(license.getCertificateFileId())) {
+            ReportOutput reportOutput = tradeLicenseService.generateLicenseCertificate(license, true);
+            reportOutput.setReportName(license.generateCertificateFileName());
+            return reportAsResponseEntity(reportOutput);
+        } else {
+            return fileStoreUtils.fileAsPDFResponse(license.getCertificateFileId(),
+                    license.generateCertificateFileName(), TL_FILE_STORE_DIR);
+        }
+    }
+
+    @GetMapping("/certificate/provisional/{licenseId}")
+    public ResponseEntity<InputStreamResource> generateProvisionalCertificate(@PathVariable Long licenseId) {
+        License license = licenseService.getLicenseById(licenseId);
+        ReportOutput reportOutput = tradeLicenseService.generateLicenseCertificate(license, true);
+        reportOutput.setReportName(license.generateCertificateFileName());
+        return reportAsResponseEntity(reportOutput);
+    }
+
+    @GetMapping("/success/acknowledgement/{licenseId}")
+    public String acknowledgment(@PathVariable Long licenseId, Model model) {
+        License tradeLicense = licenseService.getLicenseById(licenseId);
+        model.addAttribute(TRADELICENSE, tradeLicense);
+        model.addAttribute("onlinePaymentEnabled", (securityUtils.currentUserIsCitizen() || SecurityUtils.currentUserIsAnonymous())
+                && !tradeLicense.isPaid());
+        model.addAttribute("printackenabled", securityUtils.getCurrentUser().hasRole(CSCOPERATOR));
+        model.addAttribute("totalAmount", amountInWords(tradeLicense.getTotalBalance()));
+        return "license-ack";
+    }
+
+    @GetMapping("/print/ack/{licenseId}")
+    public ResponseEntity<InputStreamResource> printAck(@PathVariable Long licenseId) {
+        License license = licenseService.getLicenseById(licenseId);
+        ReportOutput reportOutput = licenseService.generateAcknowledgement(license);
+        reportOutput.setReportName(license.generateCertificateFileName());
+        return reportAsResponseEntity(reportOutput);
     }
 }
