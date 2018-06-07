@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2018  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -141,7 +141,7 @@
                     <div class="text-center">
                         <s:if test="%{currentUserIsCitizenOrAnonymous() && !isPaid()}">
                             <button type="button" id="collectfee" class="btn btn-primary"
-                                    onclick="window.open('/tl/pay/online/<s:property value="%{applicationNumber}"/>', '_blank'
+                                    onclick="window.open('/tl/pay/online/<s:property value="%{id}"/>', '_blank'
                                             ,'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');" >
                                 Pay License Fee</button>
                         </s:if>

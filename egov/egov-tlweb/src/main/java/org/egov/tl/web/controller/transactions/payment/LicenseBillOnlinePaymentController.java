@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2018  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -83,9 +83,9 @@ public class LicenseBillOnlinePaymentController {
         return new OnlineSearchForm();
     }
 
-    @GetMapping("{applicationNumber}")
-    public String showPaymentForm(@PathVariable String applicationNumber, Model model) throws IOException {
-        License license = tradeLicenseService.getLicenseByApplicationNumber(applicationNumber);
+    @GetMapping("{id}")
+    public String showPaymentForm(@PathVariable final Long id, Model model) throws IOException {
+        final License license = tradeLicenseService.getLicenseById(id);
         if (license.isPaid()) {
             model.addAttribute("paymentdone", "License Fee already collected");
             return "license-onlinepayment";
@@ -102,7 +102,7 @@ public class LicenseBillOnlinePaymentController {
 
     @PostMapping(produces = TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String searchLicense(OnlineSearchForm searchForm) {
+    public String searchLicense(final OnlineSearchForm searchForm) {
         return new StringBuilder("{ \"data\":").append(toJSON(tradeLicenseService.onlineSearchTradeLicense(searchForm),
                 OnlineSearchForm.class, OnlineSearchTradeResultHelperAdaptor.class)).append("}").toString();
     }

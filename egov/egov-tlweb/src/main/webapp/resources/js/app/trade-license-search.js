@@ -26,12 +26,12 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
- *            Further, all user interfaces, including but not limited to citizen facing interfaces, 
- *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any 
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
  *            derived works should carry eGovernments Foundation logo on the top right corner.
  *
  *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
- *            For any further queries on attribution, including queries on brand guidelines, 
+ *            For any further queries on attribution, including queries on brand guidelines,
  *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
@@ -432,8 +432,7 @@ $(document).ready(function () {
                                     $.each(JSON.parse(row.actions), function (key, value) {
                                         option += "<option>" + value.key + "</option>";
                                     });
-                                    return ('<select class="form-control" style="width:200px;font-size: small" id="recordActions" onchange="goToAction(this,' + row.licenseId + ',' +
-                                        '' + "'" + row.applicationNumber + "'" + ')" >' + option + '</select>');
+                                    return ('<select class="form-control" style="width:200px;font-size: small" id="recordActions" onchange="goToAction(this,' + row.licenseId + ')" >' + option + '</select>');
                                 },
                                 "sortable": false,
                                 "orderable": false
@@ -494,7 +493,7 @@ function goToView(id) {
     openWindow("/tl/viewtradelicense/viewTradeLicense-view.action?id=" + id, 'vt' + id);
 }
 
-function goToAction(obj, id, applicationNumber) {
+function goToAction(obj, id) {
     if (obj.options[obj.selectedIndex].innerHTML == 'View Trade')
         openWindow("/tl/viewtradelicense/viewTradeLicense-view.action?id=" + id, 'vt' + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'View DCB')
@@ -502,11 +501,11 @@ function goToAction(obj, id, applicationNumber) {
     else if (obj.options[obj.selectedIndex].innerHTML == 'Modify Legacy License')
         openWindow("/tl/legacylicense/update/" + id, 'mll' + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Collect Fees')
-        openWindow("/tl/license/fee/verification/" + applicationNumber, 'cf' + applicationNumber);
+        openWindow("/tl/integration/licenseBillCollect.action?licenseId=" + id, 'cf' + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Print Certificate')
-        openWindow("/tl/license/certificate/original/" + id, 'pc' + id);
+        openWindow("/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id=" + id, 'pc' + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Print Provisional Certificate')
-        openWindow("/tl/license/certificate/provisional/" + id, 'ppc' + id);
+        openWindow("/tl/viewtradelicense/generate-provisional-certificate.action?model.id=" + id, 'ppc' + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Renew License')
         openWindow("/tl/newtradelicense/newTradeLicense-beforeRenew.action?model.id=" + id, 'rl' + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Generate Demand Notice')

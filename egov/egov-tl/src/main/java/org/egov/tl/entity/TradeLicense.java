@@ -63,7 +63,6 @@ import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
 import static org.egov.tl.utils.Constants.CLOSURE_NATUREOFTASK;
-import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
 
 @Entity
 @Table(name = "egtl_trade_license")
@@ -74,8 +73,6 @@ public class TradeLicense extends License {
     private static final String CLOSURE_APPROVAL_URL = "/tl/viewtradelicense/viewTradeLicense-closure.action?model.id=%d";
     private static final String CLOSURE_UPDATE_URL = "/tl/license/closure/update/%d";
     private static final String NEW_RENEW_APPROVAL_URL = "/tl/newtradelicense/newTradeLicense-showForApproval.action?model.id=%d";
-    private static final String NEW_APPLICATION_UPDATE_URL = "/tl/license/update/%d";
-
     @Transient
     private transient MultipartFile[] files;
     @Transient
@@ -108,12 +105,8 @@ public class TradeLicense extends License {
                 return format(CLOSURE_UPDATE_URL, id);
             else
                 return format(CLOSURE_APPROVAL_URL, id);
-        else {
-            if (NEW_LIC_APPTYPE.equals(licenseAppType.getName()) && isNewWorkflow())
-                return format(NEW_APPLICATION_UPDATE_URL, id);
-            else
-                return format(NEW_RENEW_APPROVAL_URL, id);
-        }
+        else
+            return format(NEW_RENEW_APPROVAL_URL, id);
     }
 
     public List<Integer> getFinancialyear() {

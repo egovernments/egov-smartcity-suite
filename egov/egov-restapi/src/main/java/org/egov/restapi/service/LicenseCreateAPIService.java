@@ -56,10 +56,11 @@ import org.egov.restapi.web.contracts.tradelicense.LicenseCreateRequest;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.Licensee;
 import org.egov.tl.entity.TradeLicense;
+import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.repository.LicenseCategoryRepository;
 import org.egov.tl.repository.LicenseSubCategoryRepository;
 import org.egov.tl.repository.NatureOfBusinessRepository;
-import org.egov.tl.service.LicenseNewApplicationService;
+import org.egov.tl.service.LicenseApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,7 +69,6 @@ import java.util.Date;
 import java.util.List;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.egov.tl.utils.Constants.AUTO;
 import static org.egov.tl.utils.Constants.CSCOPERATORNEWLICENSE;
 
 @Service
@@ -76,7 +76,7 @@ import static org.egov.tl.utils.Constants.CSCOPERATORNEWLICENSE;
 public class LicenseCreateAPIService {
 
     @Autowired
-    private LicenseNewApplicationService licenseNewApplicationService;
+    private LicenseApplicationService licenseApplicationService;
 
     @Autowired
     private BoundaryRepository boundaryRepository;
@@ -116,7 +116,6 @@ public class LicenseCreateAPIService {
         tradeLicense.setNameOfEstablishment(license.getApplicantName());
         tradeLicense.setOwnershipType(license.getOwnershipType());
         tradeLicense.setApplicationSource(license.getSource());
-        tradeLicense.setApplicationNumber(AUTO);
         if (isNotBlank(license.getAssessmentNo()))
             tradeLicense.setAssessmentNo(license.getAssessmentNo());
         if (isNotBlank(license.getRemarks()))
@@ -138,7 +137,8 @@ public class LicenseCreateAPIService {
         tradeLicense.setBoundary(childBoundary);
         tradeLicense.setCategory(licenseCategoryRepository.findByCodeIgnoreCase(license.getCategory()));
         tradeLicense.setTradeName(licenseSubCategoryRepository.findByCode(license.getSubCategory()));
-        tradeLicense.getWorkflowContainer().setAdditionalRule(CSCOPERATORNEWLICENSE);
-        return licenseNewApplicationService.create(tradeLicense);
+        WorkflowBean workflowBean = new WorkflowBean();
+        workflowBean.setAdditionaRule(CSCOPERATORNEWLICENSE);
+        return licenseApplicationService.create(tradeLicense, workflowBean);
     }
 }
