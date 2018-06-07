@@ -133,7 +133,7 @@ public class SurveyDashboardService {
         SearchResponse response = elasticsearchTemplate.getClient()
                 .prepareSearch(PROPERTYSURVEYDETAILS_INDEX)
                 .setQuery(prepareQuery(surveyDashboardRequest))
-                .addAggregation(aggregationBuilder).setSize(10000)
+                .addAggregation(aggregationBuilder).setSize(50000)
                 .execute().actionGet();
         getPropertySurveyList(surveyList, response);
         return surveyList;

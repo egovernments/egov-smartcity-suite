@@ -4586,4 +4586,16 @@ public class PropertyService {
 		return currPropertyTaxMap;
 	}
 
+    public BigDecimal getTaxes(Property property, List<Installment> installmentList) {
+        BigDecimal totalTax = BigDecimal.ZERO;
+            Date firstInstStartDate = installmentList.get(0).getFromDate();
+            Date secondInstStartDate = installmentList.get(1).getFromDate();
+            for (EgDemandDetails demandDetail : property.getPtDemandSet().iterator().next().getEgDemandDetails()) {
+                if (firstInstStartDate.equals(demandDetail.getInstallmentStartDate())
+                        || secondInstStartDate.equals(demandDetail.getInstallmentStartDate()))
+                    totalTax = totalTax.add(demandDetail.getAmount());
+            }
+        return totalTax;
+    }
+
 }

@@ -772,13 +772,12 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         basicPropertyService.applyAuditing(property.getState());
         if (SOURCE_SURVEY.equalsIgnoreCase(property.getSource())) {
             SurveyBean surveyBean = new SurveyBean();
-            BigDecimal totalTax = BigDecimal.ZERO;
             surveyBean.setProperty(property);
             if (StringUtils.containsIgnoreCase(userDesignationList, REVENUE_INSPECTOR_DESGN)
                     || StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT)
                     || StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT)) {
-                for (EgDemandDetails demandDetail : property.getPtDemandSet().iterator().next().getEgDemandDetails())
-                    totalTax = totalTax.add(demandDetail.getAmount());
+                List<Installment> installmentList = propertyTaxUtil.getInstallmentListByStartDateToCurrFinYearDesc(new Date());
+                BigDecimal totalTax = propService.getTaxes(property, installmentList);
                 surveyBean.setApplicationTax(totalTax);
                 GisDetails gisDetails = property.getGisDetails();
                 if(gisDetails != null){
@@ -912,10 +911,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
         if (SOURCE_SURVEY.equalsIgnoreCase(property.getSource())) {
             SurveyBean surveyBean = new SurveyBean();
-            BigDecimal totalTax = BigDecimal.ZERO;
-            surveyBean.setProperty(property);
-            for (EgDemandDetails demandDetail : property.getPtDemandSet().iterator().next().getEgDemandDetails())
-                totalTax = totalTax.add(demandDetail.getAmount());
+            List<Installment> installmentList=  propertyTaxUtil.getInstallmentListByStartDateToCurrFinYearDesc(new Date());
+            BigDecimal totalTax=propService.getTaxes(property,installmentList);
             surveyBean.setApprovedTax(totalTax);
             surveyBean.setSystemTax(totalTax);
             propertySurveyService.updateSurveyIndex(APPLICATION_TYPE_NEW_ASSESSENT, surveyBean);

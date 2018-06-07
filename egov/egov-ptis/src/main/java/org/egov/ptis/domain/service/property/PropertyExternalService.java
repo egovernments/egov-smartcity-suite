@@ -1209,6 +1209,7 @@ public class PropertyExternalService {
         PropertyImpl gisProperty = (PropertyImpl) property.createPropertyclone();
         Ptdemand ptdemand = property.getPtDemandSet().iterator().next();
         Ptdemand gisPtdemand = gisProperty.getPtDemandSet().iterator().next();
+        List<Installment> instList=new ArrayList<>();
         if(gisPtdemand != null)
             gisPtdemand.getDmdCalculations().setAlv(ptdemand.getDmdCalculations().getAlv());
         if(!gisProperty.getPropertyDetail().getFloorDetails().isEmpty()){
@@ -1217,10 +1218,10 @@ public class PropertyExternalService {
         }
         gisProperty.setStatus('G');
         gisProperty.setSource(SOURCE_SURVEY);
-        BigDecimal gisTax = BigDecimal.ZERO;
-        for (EgDemandDetails demandDetail : gisPtdemand.getEgDemandDetails())
-            gisTax = gisTax.add(demandDetail.getAmount());
-        
+        if (gisPtdemand != null)
+            instList = propertyTaxUtil.getInstallmentListByStartDateToCurrFinYearDesc(gisPtdemand.getEgInstallmentMaster().getFromDate());
+        BigDecimal gisTax = propService.getTaxes(gisProperty, instList);
+ 
         GisDetails gisDetails = new GisDetails();
         gisDetails.setGisProperty(gisProperty);
         gisDetails.setApplicationProperty(property);
@@ -2385,18 +2386,15 @@ public class PropertyExternalService {
             gisPtdemand.getDmdCalculations().setAlv(ptdemand.getDmdCalculations().getAlv());
         basicProperty.addProperty(gisProperty);
         
-        Ptdemand gisPtDemand = gisProperty.getPtDemandSet().iterator().next();
-        basicPropertyService.applyAuditing(gisPtDemand.getDmdCalculations());
+        basicPropertyService.applyAuditing(gisPtdemand.getDmdCalculations());
        
         transitionWorkFlow(property, propService, PROPERTY_MODE_MODIFY);
         basicPropertyService.applyAuditing(property.getState());
         propService.updateIndexes(property, PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT);
         if (SOURCE_SURVEY.equalsIgnoreCase(property.getSource())) {
             SurveyBean surveyBean = new SurveyBean();
-            BigDecimal totalTax = BigDecimal.ZERO;
-            
-            for (EgDemandDetails demandDetail : property.getPtDemandSet().iterator().next().getEgDemandDetails())
-                totalTax = totalTax.add(demandDetail.getAmount());
+            List<Installment> instList=propertyTaxUtil.getInstallmentListByStartDateToCurrFinYearDesc(gisPtdemand.getEgInstallmentMaster().getFromDate());
+            BigDecimal totalTax = propService.getTaxes(gisProperty, instList);
             surveyBean.setProperty(property);
             surveyBean.setGisTax(totalTax);
             surveyBean.setApplicationTax(totalTax);
