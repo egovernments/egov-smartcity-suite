@@ -264,7 +264,7 @@
 				<textElement textAlignment="Justified" verticalAlignment="Justified">
 					<font fontName="Times New Roman" size="12" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["        Therefore,  in terms of Govt. Memo NO. 3264/A1/87-A, MA, dated 20.04.1988 of MA & UD Department and Water Supply Bye-laws, the unauthorized tap connection, in premises bearing PT Assessment No "+$P{assessmentNumber}+" and D.No."+$P{doorno}+" situated at "+$P{locality}+" (Locality) is hereby regularized by allotting Consumer Number "+$P{consumerNumber}+" on flat Rate of monthly water charges /Meter Rate."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["        Therefore,  in terms of GO MS No. 159, dated 17-05-2018 of MA & UD Department and Water Supply Bye-laws, the unauthorized tap connection, in premises bearing PT Assessment No "+$P{assessmentNumber}+" and D.No."+$P{doorno}+" situated at "+$P{locality}+" (Locality) is hereby regularized by allotting Consumer Number "+$P{consumerNumber}+" on flat Rate of monthly water charges /Meter Rate."]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement isPrintRepeatedValues="false" x="4" y="28" width="40" height="15" uuid="5a6b5d2c-355a-42a8-8b35-f14cb06f21c6"/>

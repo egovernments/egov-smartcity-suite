@@ -146,7 +146,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" isBold="false" pdfFontName="Times-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA["(Issued in terms of Govt. Memo NO. 3264/A1/87-A, MA, dated 20.04.1988 of MA & UD Department)"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["(GO MS No. 159, dated 17-05-2018 of MA & UD Department)"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="1" y="93" width="59" height="15" uuid="6f21f68e-1905-4880-b23e-80f269476d67"/>
