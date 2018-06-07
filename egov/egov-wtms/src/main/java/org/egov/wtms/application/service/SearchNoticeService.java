@@ -267,7 +267,7 @@ public class SearchNoticeService {
         return noticeDetailList;
     }
 
-    private SearchNoticeDetails setNoticeObjectFields(Object[] object) {
+    private SearchNoticeDetails setNoticeObjectFields(Object... object) {
         SearchNoticeDetails searchNoticeDetails = new SearchNoticeDetails();
         searchNoticeDetails.setPropertyType(object[0] == null ? EMPTY : object[0].toString());
         searchNoticeDetails.setApplicationType(object[1] == null ? EMPTY : object[1].toString());
