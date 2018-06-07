@@ -167,9 +167,8 @@ INSERT INTO EG_ROLEACTION (actionid,roleid) VALUES ((SELECT id FROM eg_action WH
 (select id FROM eg_role  where name='CSC Operator'));
 
 --feature for new license
-INSERT INTO EG_FEATURE (id,name,description,module,version,enabled) VALUES
-(nextval('SEQ_EG_FEATURE'),'Create License Application','Create License Application',
-(select id from eg_module where name='Trade License'),0,true);
+INSERT INTO EG_FEATURE (id,name,description,module,version) VALUES 
+(nextval('SEQ_EG_FEATURE'),'Create License Application','Create License Application',(select id from eg_module where name='Trade License'),0);
  
 INSERT INTO EG_FEATURE_ACTION (feature,action) select(select id FROM EG_FEATURE WHERE name  ='Create License Application'),
 id FROM eg_action WHERE name in('Create New License Application','License Application Success Acknowledgment','Load Block By Locality',
@@ -177,9 +176,9 @@ id FROM eg_action WHERE name in('Create New License Application','License Applic
 
 --feature for license approval
 
-INSERT INTO EG_FEATURE (id,name,description,module,version,enabled) VALUES
+INSERT INTO EG_FEATURE (id,name,description,module,version) VALUES 
 (nextval('SEQ_EG_FEATURE'),'New License Application Approval','New License Application Approval',
-(select id from eg_module where name='Trade License'),0,true);
+(select id from eg_module where name='Trade License'),0);
  
 INSERT INTO EG_FEATURE_ACTION (feature,action) select(select id FROM EG_FEATURE WHERE name  ='New License Application Approval'),
 id FROM eg_action WHERE name in('Show License Application for Approver','Forward New License Application',
