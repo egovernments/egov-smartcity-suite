@@ -686,4 +686,8 @@ public class RestApiConstants {
     
     public static final String APPLICATION_NO_INVALID_CODE = "127";
     public static final String APPLICATION_NO_INVALID_MSG = "Application Number is invalid";
+    
+    public static final String BIFURCATION_ERROR_CODE = "128";
+    public static final String BIFURCATION_ERROR_MSG = "As child property is created on this assessment number, please Bifurcate the property before performing anything else on this property";
+
 }

@@ -53,6 +53,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.BLOCK;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCALITY_BNDRY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_USAGE_RESIDENCE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_ADD_OR_ALTER;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
@@ -1051,14 +1052,21 @@ public class ValidationUtil {
                 errorDetails.setErrorMessage(NON_VACANT_TO_VACANT_MSG);
                 return errorDetails;
             }
-            if (bp.getActiveProperty().getIsExemptedFromTax()){
+            if (bp.getActiveProperty().getIsExemptedFromTax()) {
                 errorDetails.setErrorCode(EXEMPTED_PROPERTY);
                 errorDetails.setErrorMessage(EXEMPTED_PROPERTY_ERROR_MSG);
                 return errorDetails;
             }
+            PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
+            String errorMessage = propService.validationForBifurcation(null, bp,
+                    PROPERTY_MODIFY_REASON_ADD_OR_ALTER);
+            if (StringUtils.isNotBlank(errorMessage)){
+                errorDetails.setErrorCode(BIFURCATION_ERROR_CODE);
+                errorDetails.setErrorMessage(BIFURCATION_ERROR_MSG);
+                return errorDetails;
+            }
         }
         return errorDetails;
-
     }
 
     public ErrorDetails validateBoundaries(final PropertyAddressDetails propertyAddressDetails,
