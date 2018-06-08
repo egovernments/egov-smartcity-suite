@@ -207,23 +207,23 @@ public class License extends StateAware<Position> {
     @JoinColumn(name = "EGWSTATUSID")
     protected EgwStatus egwStatus;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_ADM_BNDRY")
     protected Boundary boundary;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_PARENT_BNDRY")
     protected Boundary parentBoundary;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "adminward")
     protected Boundary adminWard;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "NATUREOFBUSINESS")
     protected NatureOfBusiness natureOfBusiness;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_demand")
     protected LicenseDemand licenseDemand;
 
@@ -231,28 +231,28 @@ public class License extends StateAware<Position> {
     @OneToOne(mappedBy = "license", cascade = CascadeType.ALL)
     protected Licensee licensee;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_STATUS")
     protected LicenseStatus status;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_SUB_CATEGORY")
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     protected LicenseSubCategory tradeName;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "licenseAppType")
     protected LicenseAppType licenseAppType;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_CATEGORY")
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     protected LicenseCategory category;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "license")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "license")
     protected List<LicenseDocument> documents = new ArrayList<>();
 
     @SafeHtml
