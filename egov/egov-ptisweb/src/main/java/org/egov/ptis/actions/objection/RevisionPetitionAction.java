@@ -51,6 +51,7 @@
 package org.egov.ptis.actions.objection;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_DESGN;
@@ -781,8 +782,16 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction)) {
             objection.setEgwStatus(egwStatusDAO.getStatusByModuleAndCode(PropertyTaxConstants.OBJECTION_MODULE,
                     PropertyTaxConstants.OBJECTION_ACCEPTED));
+        	Property oldProperty = objection.getBasicProperty().getProperty();
             objection.getBasicProperty().getProperty().setStatus(STATUS_ISHISTORY);
             objection.getProperty().setStatus(STATUS_ISACTIVE);
+            
+            String appConfigValue = getDemandVoucherAppConfigValue();
+            if("Y".equalsIgnoreCase(appConfigValue)){
+            	Map<String, Map<String, Object>> voucherData = propService.prepareDemandVoucherData(objection.getProperty(), oldProperty, false);
+                financialUtil.createVoucher(objection.getBasicProperty().getUpicNo(), voucherData, APPLICATION_TYPE_REVISION_PETITION);
+            }
+                
             if (NATURE_OF_WORK_RP.equalsIgnoreCase(wfType))
                 objection.getBasicProperty().addPropertyStatusValues(propService.createPropStatVal(
                         objection.getBasicProperty(), REVISIONPETITION_STATUS_CODE, null, null, null, null, null));
@@ -791,7 +800,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                         objection.getBasicProperty(), GRP_STATUS_CODE, null, null, null, null, null));
             propService.setWFPropStatValActive(objection.getBasicProperty());
         }
-
+        
         addAllActionMessages(revisionPetitionService.updateStateAndStatus(objection, approverPositionId, workFlowAction,
                 approverComments, approverName));
         revisionPetitionService.updateRevisionPetition(objection);
