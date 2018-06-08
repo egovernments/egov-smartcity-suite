@@ -1218,10 +1218,10 @@ public class PropertyExternalService {
         }
         gisProperty.setStatus('G');
         gisProperty.setSource(SOURCE_SURVEY);
-        if (gisPtdemand != null)
-            instList = propertyTaxUtil.getInstallmentListByStartDateToCurrFinYearDesc(gisPtdemand.getEgInstallmentMaster().getFromDate());
-        BigDecimal gisTax = propService.getTaxes(gisProperty, instList);
- 
+        BigDecimal gisTax = BigDecimal.ZERO;
+        if (gisPtdemand != null) {
+            gisTax = propService.getSurveyTax(gisProperty, gisPtdemand.getEgInstallmentMaster().getFromDate());
+        }
         GisDetails gisDetails = new GisDetails();
         gisDetails.setGisProperty(gisProperty);
         gisDetails.setApplicationProperty(property);
@@ -1237,8 +1237,8 @@ public class PropertyExternalService {
         transitionWorkFlow(property, propService, PROPERTY_MODE_CREATE);
         basicPropertyService.applyAuditing(property.getState());
         SurveyBean surveyBean = new SurveyBean();
-        surveyBean.setGisTax(gisTax);
         surveyBean.setProperty(property);
+        surveyBean.setGisTax(gisTax);
         surveyBean.setApplicationTax(gisTax);
         surveyBean.setAgeOfCompletion(propService.getSlaValue(APPLICATION_TYPE_NEW_ASSESSENT));
         surveyService.updateSurveyIndex(APPLICATION_TYPE_NEW_ASSESSENT, surveyBean);
@@ -2393,9 +2393,8 @@ public class PropertyExternalService {
         propService.updateIndexes(property, PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT);
         if (SOURCE_SURVEY.equalsIgnoreCase(property.getSource())) {
             SurveyBean surveyBean = new SurveyBean();
-            List<Installment> instList=propertyTaxUtil.getInstallmentListByStartDateToCurrFinYearDesc(gisPtdemand.getEgInstallmentMaster().getFromDate());
-            BigDecimal totalTax = propService.getTaxes(gisProperty, instList);
             surveyBean.setProperty(property);
+            BigDecimal totalTax = propService.getSurveyTax(gisProperty, gisPtdemand.getEgInstallmentMaster().getFromDate());
             surveyBean.setGisTax(totalTax);
             surveyBean.setApplicationTax(totalTax);
             surveyBean.setAgeOfCompletion(propService.getSlaValue(APPLICATION_TYPE_ALTER_ASSESSENT));

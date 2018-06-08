@@ -776,8 +776,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             if (StringUtils.containsIgnoreCase(userDesignationList, REVENUE_INSPECTOR_DESGN)
                     || StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT)
                     || StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT)) {
-                List<Installment> installmentList = propertyTaxUtil.getInstallmentListByStartDateToCurrFinYearDesc(new Date());
-                BigDecimal totalTax = propService.getTaxes(property, installmentList);
+                BigDecimal totalTax = propService.getSurveyTax(property, new Date());
                 surveyBean.setApplicationTax(totalTax);
                 GisDetails gisDetails = property.getGisDetails();
                 if(gisDetails != null){
@@ -911,8 +910,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
         if (SOURCE_SURVEY.equalsIgnoreCase(property.getSource())) {
             SurveyBean surveyBean = new SurveyBean();
-            List<Installment> installmentList=  propertyTaxUtil.getInstallmentListByStartDateToCurrFinYearDesc(new Date());
-            BigDecimal totalTax=propService.getTaxes(property,installmentList);
+            surveyBean.setProperty(property);
+            BigDecimal totalTax=propService.getSurveyTax(property,new Date());
             surveyBean.setApprovedTax(totalTax);
             surveyBean.setSystemTax(totalTax);
             propertySurveyService.updateSurveyIndex(APPLICATION_TYPE_NEW_ASSESSENT, surveyBean);

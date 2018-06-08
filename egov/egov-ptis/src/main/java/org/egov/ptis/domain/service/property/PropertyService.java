@@ -4586,15 +4586,16 @@ public class PropertyService {
 		return currPropertyTaxMap;
 	}
 
-    public BigDecimal getTaxes(Property property, List<Installment> installmentList) {
+    public BigDecimal getSurveyTax(Property property, Date fromDate) {
         BigDecimal totalTax = BigDecimal.ZERO;
-            Date firstInstStartDate = installmentList.get(0).getFromDate();
-            Date secondInstStartDate = installmentList.get(1).getFromDate();
-            for (EgDemandDetails demandDetail : property.getPtDemandSet().iterator().next().getEgDemandDetails()) {
-                if (firstInstStartDate.equals(demandDetail.getInstallmentStartDate())
-                        || secondInstStartDate.equals(demandDetail.getInstallmentStartDate()))
-                    totalTax = totalTax.add(demandDetail.getAmount());
-            }
+        Map<String, Installment> yearwiseInstMap = propertyTaxUtil.getInstallmentsForCurrYear(fromDate);
+        Date firstInstStartDate = yearwiseInstMap.get(PropertyTaxConstants.CURRENTYEAR_FIRST_HALF).getFromDate();
+        Date secondInstStartDate = yearwiseInstMap.get(PropertyTaxConstants.CURRENTYEAR_SECOND_HALF).getFromDate();
+        for (EgDemandDetails demandDetail : property.getPtDemandSet().iterator().next().getEgDemandDetails()) {
+            if (firstInstStartDate.equals(demandDetail.getInstallmentStartDate())
+                    || secondInstStartDate.equals(demandDetail.getInstallmentStartDate()))
+                totalTax = totalTax.add(demandDetail.getAmount());
+        }
         return totalTax;
     }
 

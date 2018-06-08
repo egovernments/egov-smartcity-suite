@@ -627,13 +627,12 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         propService.updateIndexes(propertyModel, getApplicationType());
         if (SOURCE_SURVEY.equalsIgnoreCase(propertyModel.getSource())) {
             SurveyBean surveyBean = new SurveyBean();
-            List<Installment>instmList=propertyTaxUtil.getInstallmentListByStartDateToCurrFinYearDesc(new Date());
+            surveyBean.setProperty(propertyModel);
             BigDecimal totalTax = BigDecimal.ZERO;
             if (StringUtils.containsIgnoreCase(userDesignationList, REVENUE_INSPECTOR_DESGN)
                     || StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT)
                     || StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT))
-                totalTax = propService.getTaxes(propertyModel, instmList);
-            surveyBean.setProperty(propertyModel);
+                totalTax = propService.getSurveyTax(propertyModel, new Date());
             surveyBean.setApplicationTax(totalTax);
             propertySurveyService.updateSurveyIndex(APPLICATION_TYPE_ALTER_ASSESSENT, surveyBean);
         }
@@ -783,10 +782,9 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         propService.updateIndexes(propertyModel, getApplicationType());
         if (SOURCE_SURVEY.equalsIgnoreCase(propertyModel.getSource())) {
             SurveyBean surveyBean = new SurveyBean();
-            List<Installment> instList=propertyTaxUtil.getInstallmentListByStartDateToCurrFinYearDesc(new Date());
-            BigDecimal totalTax = propService.getTaxes(propertyModel, instList);
-            surveyBean.setApprovedTax(totalTax);
             surveyBean.setProperty(propertyModel);
+            BigDecimal totalTax = propService.getSurveyTax(propertyModel, new Date());
+            surveyBean.setApprovedTax(totalTax);
             propertySurveyService.updateSurveyIndex(getApplicationType(), surveyBean);
         }
         basicPropertyService.update(basicProp);
