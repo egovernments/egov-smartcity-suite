@@ -212,7 +212,7 @@
 					</label>
 					<div class="col-sm-3 add-margin">
 						<input type="text" name="caseToDate" path=""
-							class="form-control datepicker today" data-date-end-date="0d"
+							class="form-control datepicker" data-date-end-date="0d"
 							id="caseToDate" data-inputmask="'mask': 'd/m/y'" />
 					</div>
 				</div>
