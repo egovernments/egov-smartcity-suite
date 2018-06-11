@@ -47,25 +47,13 @@
  */
 package org.egov.wtms.application.service;
 
-import static org.egov.wtms.utils.constants.WaterTaxConstants.INPROGRESS;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.demand.model.EgDemand;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.wtms.application.entity.ApplicationDocuments;
+import org.egov.wtms.application.entity.SearchWaterTaxBillDetail;
 import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
@@ -78,10 +66,24 @@ import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
+import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.wtms.utils.constants.WaterTaxConstants.INPROGRESS;
 
 @Service
 @Transactional(readOnly = true)
@@ -475,5 +477,17 @@ public class ConnectionDetailService {
     public boolean validApplicationDocument(final ApplicationDocuments applicationDocument) {
         return !applicationDocument.getDocumentNames().isRequired() && applicationDocument.getDocumentNumber() == null
                 && applicationDocument.getDocumentDate() == null ? false : true;
+    }
+
+    public List<SearchWaterTaxBillDetail> getValueByModuleType(final String moduleType) {
+        final StringBuilder queryStr = new StringBuilder();
+        queryStr.append("select  bill.consumer_id as \"consumerNumber\", bill.user_id as \"userId\",bill.bill_no as \"billNo\",dcbview.curr_balance as  \"due_amount\"  " +
+                "from eg_bill bill, egwtr_mv_dcb_view dcbview, egevntnotification_userfcmdevice event " +
+                "where dcbview.hscno= bill.consumer_id " +
+                "AND  event.userId = bill.user_id " +
+                "AND bill.module_id =(select id from eg_module where name = 'Water Tax Management') order By bill.consumer_id");
+        final Query query = entityManager.unwrap(Session.class).createSQLQuery(queryStr.toString());
+        query.setResultTransformer(new AliasToBeanResultTransformer(SearchWaterTaxBillDetail.class));
+        return query.list();
     }
 }
