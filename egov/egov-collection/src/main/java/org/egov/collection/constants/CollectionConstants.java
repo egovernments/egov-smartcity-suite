@@ -562,7 +562,7 @@ public final class CollectionConstants {
     public static final String SBIMOPS_UAMOUNT = "uamount";
 
     public static final String SBIMOPS_DC = "DC";
-    public static final String SBIMOPS_DTID = "DTId";
+    public static final String SBIMOPS_DTID = "DTID";
     public static final String SBIMOPS_RN = "RN";
     public static final String SBIMOPS_RID = "RID";
     public static final String SBIMOPS_TA = "TA";
