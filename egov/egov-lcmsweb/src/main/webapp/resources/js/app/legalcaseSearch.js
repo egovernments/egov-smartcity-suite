@@ -146,18 +146,18 @@ function submitForm() {
 							title : 'Actions',
 							"className" : "text-right",
 							render : function(data, type, full) {
-								if(full.isLCMSVIEWACCESSROLE==true)
+								if(full.legalViewAccess)
 									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="4">View legalCase</option></select>');
 
 
 								if (full.casestatus == 'LCCREATED'
-										|| full.casestatus == 'HEARING' || full.casestatus == 'INTERIM_STAY' && full.isLCMSVIEWACCESSROLE==false) {
+										|| full.casestatus == 'HEARING' || full.casestatus == 'INTERIM_STAY' && !full.legalViewAccess) {
 									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="1">Judgment</option><option value="2">Add/Edit Standing Counsel</option><option value="10">Add/Edit Counter Affidavit Details</option><option value="3">Edit legalCase</option><option value="4">View legalCase</option><option value="6">Hearings</option><option value="7">Interim Order</option><option value="8">Close Case</option></select>');
-								} else if (full.casestatus == 'JUDGMENT' && full.isLCMSVIEWACCESSROLE==false) {
+								} else if (full.casestatus == 'JUDGMENT' && !full.legalViewAccess) {
 									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="4">View legalCase</option><option value="5">Edit Judgment</option><option value="8">Close Case</option><option value="11">Judgment Implementation</option></select>');
-								} else if (full.casestatus == 'CLOSED' && full.isLCMSVIEWACCESSROLE==false) {
+								} else if (full.casestatus == 'CLOSED' && !full.legalViewAccess) {
 									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="9">Edit Close Case</option></select>');
-								} else if (full.casestatus == 'JUDGEMENT_IMPL' && full.isLCMSVIEWACCESSROLE==false) {
+								} else if (full.casestatus == 'JUDGEMENT_IMPL' && !full.legalViewAccess) {
 									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="12">Edit Judgment Implementation</option><option value="8">Close Case</option></select>');
 								}
 							}

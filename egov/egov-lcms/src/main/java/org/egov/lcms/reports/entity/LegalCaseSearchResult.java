@@ -78,7 +78,7 @@ public class LegalCaseSearchResult {
     private String reportStatus;
     private String fromDate;
     private String toDate;
-    private Boolean isLCMSVIEWACCESSROLE=false;
+    private Boolean legalViewAccess=false;
 
     public String getFromDate() {
         return fromDate;
@@ -288,11 +288,13 @@ public class LegalCaseSearchResult {
         this.reportStatus = reportStatus;
     }
 
-    public Boolean getIsLCMSVIEWACCESSROLE() {
-        return isLCMSVIEWACCESSROLE;
+    public Boolean getLegalViewAccess() {
+        return legalViewAccess;
     }
 
-    public void setIsLCMSVIEWACCESSROLE(Boolean isLCMSVIEWACCESSROLE) {
-        this.isLCMSVIEWACCESSROLE = isLCMSVIEWACCESSROLE;
+    public void setLegalViewAccess(Boolean legalViewAccess) {
+        this.legalViewAccess = legalViewAccess;
     }
+
+   
 }

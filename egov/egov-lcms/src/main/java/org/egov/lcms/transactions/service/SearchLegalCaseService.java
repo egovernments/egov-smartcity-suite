@@ -86,7 +86,7 @@ public class SearchLegalCaseService {
     }
 
     public List<LegalCaseSearchResult> getLegalCaseReport(final LegalCaseSearchResult legalCaseSearchResultObj) {
-        final Boolean loggedUserIsLCMSVIEWACCESSROLE = checkLoggedUser(securityUtils.getCurrentUser());
+        final Boolean loggedInUserViewAccess = checkLoggedInUser(securityUtils.getCurrentUser());
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append("select distinct legalObj  as  legalCase ,courtmaster.name  as  courtName ,");
         queryStr.append(" egwStatus.code  as  caseStatus ");
@@ -103,9 +103,9 @@ public class SearchLegalCaseService {
         Query queryResult = getCurrentSession().createQuery(queryStr.toString());
         queryResult = setParametersToQuery(legalCaseSearchResultObj, queryResult);
         final List<LegalCaseSearchResult> legalcaseSearchList = queryResult.list();
-        if (loggedUserIsLCMSVIEWACCESSROLE)
+        if (loggedInUserViewAccess)
             for (final LegalCaseSearchResult searchResults : legalcaseSearchList)
-                searchResults.setIsLCMSVIEWACCESSROLE(loggedUserIsLCMSVIEWACCESSROLE);
+                searchResults.setLegalViewAccess(loggedInUserViewAccess);
         return legalcaseSearchList;
 
     }
@@ -177,7 +177,7 @@ public class SearchLegalCaseService {
         return reportStatusList;
     }
 
-    public Boolean checkLoggedUser(final User user) {
+    public Boolean checkLoggedInUser(final User user) {
         for (final Role role : user.getRoles())
             if (role != null && role.getName().equalsIgnoreCase(LcmsConstants.LCMS_VIEW_ACCESS_ROLE))
                 return true;
