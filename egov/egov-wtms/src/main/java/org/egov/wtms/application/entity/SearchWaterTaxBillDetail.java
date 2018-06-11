@@ -54,7 +54,7 @@ public class    SearchWaterTaxBillDetail {
     private String consumerNumber;
     private BigInteger userId;
     private String billNo;
-    private Double due_amount;
+    private Double dueAmount;
 
     public BigInteger getUserId() {
         return userId;
@@ -72,12 +72,12 @@ public class    SearchWaterTaxBillDetail {
         this.billNo = billNo;
     }
 
-    public Double getDue_amount() {
-        return due_amount;
+    public Double getDueAmount() {
+        return dueAmount;
     }
 
-    public void setDue_amount(Double due_amount) {
-        this.due_amount = due_amount;
+    public void setDueAmount(Double dueAmount) {
+        this.dueAmount = dueAmount;
     }
 
     public String getConsumerNumber() {

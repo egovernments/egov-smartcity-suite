@@ -141,7 +141,6 @@ public class RestWaterTaxController {
     @RequestMapping(value = "rest/watertax/{moduleType}", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     public List<SearchWaterTaxBillDetail> getValueByModule(@PathVariable final String moduleType)
             throws JsonGenerationException, JsonMappingException, IOException {
-        List<SearchWaterTaxBillDetail> waterChargesBillDetail = connectionDetailService.getValueByModuleType(moduleType);
-        return waterChargesBillDetail;
+       return connectionDetailService.getValueByModuleType(moduleType);
     }
 }
