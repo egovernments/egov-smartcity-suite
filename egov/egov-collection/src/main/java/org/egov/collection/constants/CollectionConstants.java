@@ -567,11 +567,9 @@ public final class CollectionConstants {
     public static final String SBIMOPS_RID = "RID";
     public static final String SBIMOPS_TA = "TA";
     public static final String SBIMOPS_CH = "Ch";
-    public static final String SBIMOPS_OTH = "Oth";
     public static final String SBIMOPS_RURL = "RUrl";
     public static final String SBIMOPS_CFMS_TRID = "CFMS_TRID";
     public static final String SBIMOPS_BANKTIME_STAMP = "BankTimeStamp";
-    public static final String SBIMOPS_BANK_TRANSID = "BankTransID";
     public static final String SBIMOPS_STATUS = "Status";
 
     public static final String MESSAGEKEY_SBIMOPS_DC = "sbimops.department.code";

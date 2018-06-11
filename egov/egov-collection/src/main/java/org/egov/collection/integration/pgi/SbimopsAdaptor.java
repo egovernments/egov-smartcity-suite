@@ -117,7 +117,6 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
                 + "|" +
                 CollectionConstants.SBIMOPS_CH + "=" + requestParameters.get(CollectionConstants.SBIMOPS_CH)
                 + "|" +
-                CollectionConstants.SBIMOPS_OTH + "=" + requestParameters.get(CollectionConstants.SBIMOPS_OTH) + "|" +
                 CollectionConstants.SBIMOPS_RURL + "=" + requestParameters.get(CollectionConstants.SBIMOPS_RURL) + "|" +
                 CollectionConstants.ONLINEPAYMENT_INVOKE_URL + "="
                 + requestParameters.get(CollectionConstants.ONLINEPAYMENT_INVOKE_URL));
