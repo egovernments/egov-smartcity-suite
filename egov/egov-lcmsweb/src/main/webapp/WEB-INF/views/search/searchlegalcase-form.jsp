@@ -58,7 +58,7 @@
 			name="searchlegalcaseForm" id="searchlegalcaseForm"
 			class="form-horizontal form-groups-bordered">
 			<div class="panel panel-primary" data-collapsed="0">
-
+	<input type="hidden" value="${loggedUserIsLCMSVIEWACCESSROLE}" id="loggedUserIsLCMSVIEWACCESSROLE" />
 				<div class="panel-heading">
 					<div class="panel-title">Search Legal Case</div>
 				</div>

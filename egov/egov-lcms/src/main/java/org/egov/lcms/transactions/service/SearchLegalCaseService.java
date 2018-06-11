@@ -47,7 +47,16 @@
  */
 package org.egov.lcms.transactions.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang.StringUtils;
+import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.lcms.reports.entity.LegalCaseSearchResult;
 import org.egov.lcms.transactions.entity.ReportStatus;
 import org.egov.lcms.transactions.repository.ReportStatusRepository;
@@ -59,17 +68,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.List;
-
 @Service
 @Transactional(readOnly = true)
 public class SearchLegalCaseService {
 
     @Autowired
     private ReportStatusRepository reportStatusRepository;
+
+    @Autowired
+    private SecurityUtils securityUtils;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -79,6 +86,7 @@ public class SearchLegalCaseService {
     }
 
     public List<LegalCaseSearchResult> getLegalCaseReport(final LegalCaseSearchResult legalCaseSearchResultObj) {
+        final Boolean loggedUserIsLCMSVIEWACCESSROLE = checkLoggedUser(securityUtils.getCurrentUser());
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append("select distinct legalObj  as  legalCase ,courtmaster.name  as  courtName ,");
         queryStr.append(" egwStatus.code  as  caseStatus ");
@@ -95,6 +103,9 @@ public class SearchLegalCaseService {
         Query queryResult = getCurrentSession().createQuery(queryStr.toString());
         queryResult = setParametersToQuery(legalCaseSearchResultObj, queryResult);
         final List<LegalCaseSearchResult> legalcaseSearchList = queryResult.list();
+        if (loggedUserIsLCMSVIEWACCESSROLE)
+            for (final LegalCaseSearchResult searchResults : legalcaseSearchList)
+                searchResults.setIsLCMSVIEWACCESSROLE(loggedUserIsLCMSVIEWACCESSROLE);
         return legalcaseSearchList;
 
     }
@@ -125,7 +136,7 @@ public class SearchLegalCaseService {
         if (legalCaseSearchResultObj.getReportStatusId() != null)
             queryResult.setInteger("reportStatus", legalCaseSearchResultObj.getReportStatusId());
         if (legalCaseSearchResultObj.getIsStatusExcluded() != null) {
-            final List<String> statusCodeList = new ArrayList<String>();
+            final List<String> statusCodeList = new ArrayList<>();
             statusCodeList.add(LcmsConstants.LEGALCASE_STATUS_CLOSED);
             statusCodeList.add(LcmsConstants.LEGALCASE_STATUS_JUDGMENT_IMPLIMENTED);
             queryResult.setParameterList("statusCodeList", statusCodeList);
@@ -164,6 +175,13 @@ public class SearchLegalCaseService {
     public List<ReportStatus> getReportStatus() {
         final List<ReportStatus> reportStatusList = reportStatusRepository.findAll();
         return reportStatusList;
+    }
+
+    public Boolean checkLoggedUser(final User user) {
+        for (final Role role : user.getRoles())
+            if (role != null && role.getName().equalsIgnoreCase(LcmsConstants.LCMS_VIEW_ACCESS_ROLE))
+                return true;
+        return false;
     }
 
 }
