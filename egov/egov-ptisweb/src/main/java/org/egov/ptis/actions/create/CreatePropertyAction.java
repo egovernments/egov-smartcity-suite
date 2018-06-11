@@ -140,6 +140,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.*;
         @Result(name = TARGET_WORKFLOW_ERROR, location = "workflow/workflow-error.jsp")})
 public class CreatePropertyAction extends PropertyTaxBaseAction {
 
+    private static final String REJECT_ERROR_INITIATOR_INACTIVE = "reject.error.initiator.inactive";
     private static final long serialVersionUID = -2329719786287615451L;
     private static final String RESULT_ACK = "ack";
     private static final String RESULT_NEW = "new";
@@ -727,10 +728,15 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         final Assignment wfInitiator = getWorkflowInitiator(loggedInUserDesignation);
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction) && wfInitiator == null) {
             if (propertyTaxCommonUtils.isRoOrCommissioner(loggedInUserDesignation))
-                addActionError(getText("reject.error.initiator.inactive", Arrays.asList(REVENUE_INSPECTOR_DESGN)));
-            else
-                addActionError(getText("reject.error.initiator.inactive",
+                addActionError(getText(REJECT_ERROR_INITIATOR_INACTIVE, Arrays.asList(REVENUE_INSPECTOR_DESGN)));
+            else 
+                addActionError(getText(REJECT_ERROR_INITIATOR_INACTIVE,
                         Arrays.asList(JUNIOR_ASSISTANT + "/" + SENIOR_ASSISTANT)));
+            return mode.equalsIgnoreCase(EDIT) ? RESULT_NEW : RESULT_VIEW;
+        }
+        else if (propService.getWorkflowInitiator(property) == null) {
+            addActionError(getText(REJECT_ERROR_INITIATOR_INACTIVE,
+                    Arrays.asList(JUNIOR_ASSISTANT + "/" + SENIOR_ASSISTANT)));
             return mode.equalsIgnoreCase(EDIT) ? RESULT_NEW : RESULT_VIEW;
         }
         if (multipleSubmitCondition(property, approverPositionId)) {
