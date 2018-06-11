@@ -4461,8 +4461,8 @@ public class PropertyService {
 					oldPtDemand);
 		}
 		if (!currPropertyTaxMap.isEmpty()) {
-			BigDecimal advance = currPropertyTaxMap.get(PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE) == null
-					? BigDecimal.ZERO : currPropertyTaxMap.get(PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE);
+			BigDecimal advance = (currPropertyTaxMap.get(PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE) == null
+					? BigDecimal.ZERO : currPropertyTaxMap.get(PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE));
 			BigDecimal generaltax = (currPropertyTaxMap.get(PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX) == null
 					? BigDecimal.ZERO : currPropertyTaxMap.get(PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX))
 							.subtract(oldPropertyTaxMap.get(PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX) == null
@@ -4479,10 +4479,10 @@ public class PropertyService {
 									? BigDecimal.ZERO
 									: oldPropertyTaxMap.get(PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS));
 
-			BigDecimal currTax = currPropertyTaxMap.get(CURR_TAX) == null ? BigDecimal.ZERO
-					: currPropertyTaxMap.get(CURR_TAX);
-			BigDecimal arrearTax = currPropertyTaxMap.get(ARREAR_TAX) == null ? BigDecimal.ZERO
-					: currPropertyTaxMap.get(ARREAR_TAX);
+			BigDecimal currTax = (currPropertyTaxMap.get(CURR_TAX) == null ? BigDecimal.ZERO
+					: currPropertyTaxMap.get(CURR_TAX));
+			BigDecimal arrearTax = (currPropertyTaxMap.get(ARREAR_TAX) == null ? BigDecimal.ZERO
+					: currPropertyTaxMap.get(ARREAR_TAX));
 
 			if (advance.compareTo(BigDecimal.ZERO) != 0) {
 				values = new HashMap<>();
@@ -4560,13 +4560,16 @@ public class PropertyService {
 				if (PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS.equalsIgnoreCase(taxHead))
 					libCess = libCess.add(demandDetails.getAmount());
 
-				if (demandDetails.getInstallmentStartDate().equals(currFirstHalf.getFromDate())
-						|| demandDetails.getInstallmentStartDate().equals(currSecondHalf.getFromDate())) {
-					currTaxDue = demandDetails.getAmount().subtract(demandDetails.getAmtCollected());
-					currTax = currTax.add(currTaxDue);
-				} else {
-					arrearTaxDue = demandDetails.getAmount().subtract(demandDetails.getAmtCollected());
-					arrearTax = arrearTax.add(arrearTaxDue);
+				if(!PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES.equalsIgnoreCase(taxHead) 
+						&& !PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY.equalsIgnoreCase(taxHead)){
+					if (demandDetails.getInstallmentStartDate().equals(currFirstHalf.getFromDate())
+							|| demandDetails.getInstallmentStartDate().equals(currSecondHalf.getFromDate())) {
+						currTaxDue = demandDetails.getAmount().subtract(demandDetails.getAmtCollected());
+						currTax = currTax.add(currTaxDue);
+					} else {
+						arrearTaxDue = demandDetails.getAmount().subtract(demandDetails.getAmtCollected());
+						arrearTax = arrearTax.add(arrearTaxDue);
+					}
 				}
 			}
 		}
