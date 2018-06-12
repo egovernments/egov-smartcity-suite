@@ -760,24 +760,27 @@ public class PropertyTransferService {
         BigDecimal documentValue = partyValue.compareTo(departmentValue) > 0 ? partyValue : departmentValue;
 
         if (documentValue.compareTo(BigDecimal.ZERO) > 0) {
-            final MutationFeeDetails mutationFeeDetails = (MutationFeeDetails) mutationFeeRepository.getMutationFee(documentValue);
-            if (mutationFeeDetails != null) {
-                if (mutationFeeDetails.getFlatAmount() != null
-                        && mutationFeeDetails.getFlatAmount().compareTo(BigDecimal.ZERO) > 0)
-                    if (mutationFeeDetails.getIsRecursive().toString().equalsIgnoreCase("N"))
-                        mutationFee = mutationFeeDetails.getFlatAmount();
-                    else {
-                        BigDecimal excessDocValue = documentValue.subtract(mutationFeeDetails.getLowLimit()).add(BigDecimal.ONE);
-                        BigDecimal multiplicationFactor = excessDocValue.divide(mutationFeeDetails.getRecursiveFactor(),
-                                BigDecimal.ROUND_CEILING);
-                        mutationFee = mutationFeeDetails.getFlatAmount()
-                                .add(multiplicationFactor.multiply(mutationFeeDetails.getRecursiveAmount()));
-                    }
-                if (mutationFeeDetails.getPercentage() != null
-                        && mutationFeeDetails.getPercentage().compareTo(BigDecimal.ZERO) > 0
-                        && mutationFeeDetails.getIsRecursive().toString().equalsIgnoreCase("N"))
-                        mutationFee = documentValue.multiply(mutationFeeDetails.getPercentage())
-                                .divide(PropertyTaxConstants.BIGDECIMAL_100);
+            List<MutationFeeDetails> mutationFeeDetailsList = mutationFeeRepository.getMutationFee(documentValue);
+            if (!mutationFeeDetailsList.isEmpty()) {
+            	MutationFeeDetails mutationFeeDetails = mutationFeeDetailsList.get(0);
+            	if(mutationFeeDetails != null){
+            		if (mutationFeeDetails.getFlatAmount() != null
+                            && mutationFeeDetails.getFlatAmount().compareTo(BigDecimal.ZERO) > 0)
+                        if ("N".equalsIgnoreCase(mutationFeeDetails.getIsRecursive().toString()))
+                            mutationFee = mutationFeeDetails.getFlatAmount();
+                        else {
+                            BigDecimal excessDocValue = documentValue.subtract(mutationFeeDetails.getLowLimit()).add(BigDecimal.ONE);
+                            BigDecimal multiplicationFactor = excessDocValue.divide(mutationFeeDetails.getRecursiveFactor(),
+                                    BigDecimal.ROUND_CEILING);
+                            mutationFee = mutationFeeDetails.getFlatAmount()
+                                    .add(multiplicationFactor.multiply(mutationFeeDetails.getRecursiveAmount()));
+                        }
+                    if (mutationFeeDetails.getPercentage() != null
+                            && mutationFeeDetails.getPercentage().compareTo(BigDecimal.ZERO) > 0
+                            && mutationFeeDetails.getIsRecursive().toString().equalsIgnoreCase("N"))
+                            mutationFee = documentValue.multiply(mutationFeeDetails.getPercentage())
+                                    .divide(PropertyTaxConstants.BIGDECIMAL_100);
+            	}
             }
         }
         return mutationFee.setScale(0, BigDecimal.ROUND_HALF_UP);
