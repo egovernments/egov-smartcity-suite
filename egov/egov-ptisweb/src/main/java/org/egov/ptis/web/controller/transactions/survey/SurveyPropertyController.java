@@ -7,15 +7,22 @@ import static org.egov.ptis.constants.PropertyTaxConstants.SURVEY_APPLICATION_TY
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
 import org.egov.eis.service.JurisdictionService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.ptis.domain.entity.es.PTGISIndex;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.survey.SearchSurveyPropertyAdaptor;
 import org.egov.ptis.domain.entity.property.survey.SearchSurveyRequest;
+import org.egov.ptis.domain.entity.property.view.SurveyBean;
+import org.egov.ptis.domain.service.property.PropertySurveyService;
 import org.egov.ptis.domain.service.survey.SurveyApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -48,6 +55,12 @@ public class SurveyPropertyController {
     
     @Autowired
     private JurisdictionService jurisdictionService;
+    
+    @Autowired
+    private PropertySurveyService propertySurveyService;
+    
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @ModelAttribute("applicationTypes")
     public Map<String, String> getApplicationTypes() {
@@ -87,9 +100,13 @@ public class SurveyPropertyController {
 
     @RequestMapping(value = "/updateworkflow", method = RequestMethod.POST)
     public String update(@RequestParam String[] applicationNumbersArray, final Model model) {
+        PropertyImpl property;
         try {
             User user = securityUtils.getCurrentUser();
             for (String applicationNo : applicationNumbersArray) {
+                final Query query = entityManager.createNamedQuery("PROPERTYIMPL_BY_APPLICATIONNO");
+                query.setParameter("applicatiNo", applicationNo);
+                property = (PropertyImpl) query.getSingleResult();
                 if (surveyApplicationService.updateWorkflow(applicationNo, user)) {
                     model.addAttribute("successMessage",
                             "Property workflow updated and application : " + applicationNo + " is moved to user : "
@@ -99,8 +116,11 @@ public class SurveyPropertyController {
                     model.addAttribute("errorMsg", "No Senior or Junior assistants exists, So please check");
                     return "surveyApplication-form";
                 }
+                PTGISIndex ptGisIndex = propertySurveyService.findByApplicationNo(applicationNo);
+                SurveyBean surveyBean = new SurveyBean();
+                surveyBean.setProperty(property);
+                propertySurveyService.updatePropertySurveyIndex(surveyBean, ptGisIndex);
             }
-
         } catch (Exception e) {
             throw new ApplicationRuntimeException("Error occured while updating survey property application:" + e.getMessage(), e);
         }
