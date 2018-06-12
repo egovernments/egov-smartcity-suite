@@ -48,6 +48,7 @@
 
 package org.egov.ptis.domain.repository.master.mutationfee;
 
+import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.model.MutationFeeDetails;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -88,6 +89,6 @@ public interface MutationFeeRepository extends JpaRepository<MutationFeeDetails,
     @Query("select mfd3 from MutationFeeDetails mfd3 order by mfd3.lowLimit asc")
     List<MutationFeeDetails> selectAllOrderBySlabName();
     
-    @Query("select mfd4 from MutationFeeDetails mfd4 where mfd4.lowLimit <= :documentValue and (mfd4.highLimit is null OR mfd4.highLimit >= :documentValue)")
+    @Query("select mfd4 from MutationFeeDetails mfd4 where mfd4.lowLimit <= :documentValue and (mfd4.highLimit is null OR mfd4.highLimit >= :documentValue) and current_date between mfd4.fromDate and mfd4.toDate")
     List<MutationFeeDetails> getMutationFee(@Param("documentValue") BigDecimal documentValue);
 }
