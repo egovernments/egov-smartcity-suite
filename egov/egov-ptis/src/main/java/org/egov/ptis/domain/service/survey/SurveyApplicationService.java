@@ -125,11 +125,11 @@ public class SurveyApplicationService {
         if (StringUtils.isNotBlank(searchSurveyRequest.getFromDate()))
             fromDate = DateUtils.getDate(searchSurveyRequest.getFromDate(), DATE_FORMAT_YYYYMMDD);
         else
-            fromDate = new Date(2018 - 01 - 01);
+            fromDate = DateUtils.getDate("2018-01-01", "yyyy-MM-dd");
         if (StringUtils.isNotBlank(searchSurveyRequest.getToDate()))
             toDate = DateUtils.getDate(searchSurveyRequest.getToDate(), DATE_FORMAT_YYYYMMDD);
         else
-            toDate = new Date();
+            toDate = DateUtils.addDays(new Date(), 1);
         NativeSearchQuery search = new NativeSearchQueryBuilder()
                 .addAggregation(AggregationBuilders.count(APP_COUNT).field(APP_NO))
                 .withIndices(SURVEY_INDEX).withQuery(prepareQuery(searchSurveyRequest, fromDate, toDate))
@@ -163,7 +163,7 @@ public class SurveyApplicationService {
 
     private BoolQueryBuilder prepareQuery(SearchSurveyRequest searchSurveyRequest, Date fromDate, Date toDate) {
         BoolQueryBuilder boolQuery = new BoolQueryBuilder();
-        boolQuery = boolQuery.filter(QueryBuilders.rangeQuery(APP_DATE).gte(fromDate).lte(toDate))
+        boolQuery = boolQuery.filter(QueryBuilders.rangeQuery(APP_DATE).gte(fromDate).lt(toDate))
                 .filter(QueryBuilders.matchQuery(CITY_CODE, ApplicationThreadLocals.getCityCode()));
         if (StringUtils.isNotBlank(searchSurveyRequest.getApplicationType()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("applicationType", searchSurveyRequest.getApplicationType()));
