@@ -70,6 +70,7 @@ import org.egov.eventnotification.service.DraftTypeService;
 import org.egov.eventnotification.service.ScheduleRepeatService;
 import org.egov.eventnotification.service.ScheduleService;
 import org.egov.eventnotification.utils.EventnotificationUtil;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.joda.time.DateTime;
 import org.quartz.CronScheduleBuilder;
@@ -150,7 +151,8 @@ public class ModifyScheduleController {
         try {
 
             if (cronExpression == null) {
-                TriggerKey triggerKey = new TriggerKey(TRIGGER.concat(String.valueOf(schedule.getId())),
+                TriggerKey triggerKey = new TriggerKey(ApplicationThreadLocals.getTenantID().concat("_")
+                        .concat(TRIGGER.concat(String.valueOf(schedule.getId()))),
                         EVENT_NOTIFICATION_GROUP);
                 final SimpleTriggerImpl trigger = new SimpleTriggerImpl();
                 trigger.setName(TRIGGER.concat(String.valueOf(schedule.getId())));
@@ -160,7 +162,8 @@ public class ModifyScheduleController {
                 if (!scheduler.isShutdown())
                     scheduler.start();
             } else {
-                TriggerKey triggerKey = new TriggerKey(TRIGGER.concat(String.valueOf(schedule.getId())),
+                TriggerKey triggerKey = new TriggerKey(ApplicationThreadLocals.getTenantID().concat("_")
+                        .concat(TRIGGER.concat(String.valueOf(schedule.getId()))),
                         EVENT_NOTIFICATION_GROUP);
                 final Trigger trigger = TriggerBuilder.newTrigger()
                         .withIdentity(TRIGGER.concat(String.valueOf(schedule.getId())), EVENT_NOTIFICATION_GROUP)

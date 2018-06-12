@@ -115,9 +115,13 @@ public class PushNotificationService {
     public UserFcmDevice getUserDeviceByUser(final Long userId) {
         return pushNotificationRepo.findByUserId(userId);
     }
+    
+    public List<UserFcmDevice> getAllUserDeviceByUser(List<Long> ids) {
+        return pushNotificationRepo.findByUserIdIn(ids);
+    }
 
     public void sendNotifications(MessageContent messageContent) {
-        LOGGER.info("##PushBoxFox## : Received the Message Content at SendNotifications Method");
+        //LOGGER.info("##PushBoxFox## : Received the Message Content at SendNotifications Method");
         List<UserFcmDevice> userDeviceList = null;
         if (messageContent.isSendAll())
             userDeviceList = getAllUserDeviceList();
@@ -129,13 +133,14 @@ public class PushNotificationService {
     }
 
     private List<UserFcmDevice> getUserDeviceList(MessageContent messageContent) {
-        List<UserFcmDevice> userDeviceList = new ArrayList<>();
+        /*List<UserFcmDevice> userDeviceList = new ArrayList<>();
         for (Long userId : messageContent.getUserIdList()) {
             UserFcmDevice device = getUserDeviceByUser(userId);
             if (null != device)
                 userDeviceList.add(device);
         }
-        return userDeviceList;
+        return userDeviceList;*/
+        return getAllUserDeviceByUser(messageContent.getUserIdList());
     }
 
     private List<UserFcmDevice> getAllUserDeviceList() {

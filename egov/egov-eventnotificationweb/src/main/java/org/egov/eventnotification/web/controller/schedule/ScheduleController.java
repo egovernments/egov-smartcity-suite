@@ -71,8 +71,10 @@ import static org.egov.eventnotification.constants.Constants.TRIGGER;
 
 import java.util.Date;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.apache.commons.lang.StringUtils;
 import org.egov.eventnotification.constants.Constants;
 import org.egov.eventnotification.entity.Drafts;
 import org.egov.eventnotification.entity.Schedule;
@@ -83,6 +85,7 @@ import org.egov.eventnotification.service.ScheduleService;
 import org.egov.eventnotification.utils.EventnotificationUtil;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.joda.time.DateTime;
 import org.quartz.CronScheduleBuilder;
@@ -146,6 +149,7 @@ public class ScheduleController {
         schedule.setMessageTemplate(notificationDrafts.getMessage());
         schedule.setTemplateName(notificationDrafts.getName());
         schedule.setDraftType(notificationDrafts.getDraftType());
+        schedule.setModule(notificationDrafts.getModule());
 
         model.addAttribute(NOTIFICATION_SCHEDULE, schedule);
         model.addAttribute(HOUR_LIST, eventnotificationUtil.getAllHour());
@@ -158,7 +162,7 @@ public class ScheduleController {
     }
 
     @PostMapping("/schedule/create/")
-    public String save(@Valid @ModelAttribute Schedule schedule, BindingResult errors, Model model) {
+    public String save(@Valid @ModelAttribute Schedule schedule, BindingResult errors, HttpServletRequest request, Model model) {
 
         if (errors.hasErrors()) {
             model.addAttribute(NOTIFICATION_SCHEDULE, schedule);
@@ -176,21 +180,24 @@ public class ScheduleController {
         final JobDetailImpl jobDetail = (JobDetailImpl) beanProvider.getBean("eventnotificationJobDetail");
         final Scheduler scheduler = (Scheduler) beanProvider.getBean("eventnotificationScheduler");
         try {
-            jobDetail.setName(JOB.concat(String.valueOf(schedule.getId())));
+            jobDetail.setName(ApplicationThreadLocals.getTenantID().concat("_")
+                    .concat(JOB.concat(String.valueOf(schedule.getId()))));
             jobDetail.getJobDataMap().put(SCHEDULEID, String.valueOf(schedule.getId()));
-            jobDetail.getJobDataMap().put("userid", String.valueOf(user.getId()));
-            jobDetail.getJobDataMap().put("username", user.getName());
+            String fullURL = request.getRequestURL().toString();
+            jobDetail.getJobDataMap().put("contextURL", fullURL.substring(0, StringUtils.ordinalIndexOf(fullURL, "/", 3)));
 
             if (cronExpression == null) {
                 final SimpleTriggerImpl trigger = new SimpleTriggerImpl();
-                trigger.setName(TRIGGER.concat(String.valueOf(schedule.getId())));
+                trigger.setName(ApplicationThreadLocals.getTenantID().concat("_")
+                        .concat(TRIGGER.concat(String.valueOf(schedule.getId()))));
                 trigger.setStartTime(new Date(System.currentTimeMillis() + 100000));
                 trigger.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_FIRE_NOW);
                 scheduler.start();
                 scheduler.scheduleJob(jobDetail, trigger);
             } else {
                 final Trigger trigger = TriggerBuilder.newTrigger()
-                        .withIdentity(TRIGGER.concat(String.valueOf(schedule.getId())), EVENT_NOTIFICATION_GROUP)
+                        .withIdentity(ApplicationThreadLocals.getTenantID().concat("_")
+                                .concat(TRIGGER.concat(String.valueOf(schedule.getId()))), EVENT_NOTIFICATION_GROUP)
                         .withSchedule(CronScheduleBuilder.cronSchedule(cronExpression)).build();
                 scheduler.start();
                 scheduler.scheduleJob(jobDetail, trigger);
@@ -228,7 +235,8 @@ public class ScheduleController {
         notificationSchedule = scheduleService.updateSchedule(notificationSchedule);
         final Scheduler scheduler = (Scheduler) beanProvider.getBean("eventnotificationScheduler");
         try {
-            scheduler.unscheduleJob(new TriggerKey(TRIGGER + notificationSchedule.getId(), EVENT_NOTIFICATION_GROUP));
+            scheduler.unscheduleJob(new TriggerKey(ApplicationThreadLocals.getTenantID().concat("_")
+                    .concat(TRIGGER.concat(String.valueOf(notificationSchedule.getId()))), EVENT_NOTIFICATION_GROUP));
             scheduler.deleteJob(new JobKey(JOB.concat(String.valueOf(notificationSchedule.getId()))));
         } catch (final SchedulerException e) {
             throw new ApplicationRuntimeException(e.getMessage(), e);

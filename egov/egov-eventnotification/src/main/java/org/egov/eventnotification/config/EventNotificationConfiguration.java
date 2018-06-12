@@ -45,28 +45,16 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
+package org.egov.eventnotification.config;
 
-package org.egov.pushbox.repository;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
-
-import org.egov.pushbox.entity.UserFcmDevice;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
-/**
- *
- * @author Darshan Nagesh
- *
- */
-
-@Repository
-public interface UserFcmDeviceRepository extends JpaRepository<UserFcmDevice, java.lang.Long> {
-
-    UserFcmDevice findByUserId(Long id);
-
-    UserFcmDevice findByUserIdAndDeviceId(Long userId, String deviceId);
-    
-    List<UserFcmDevice> findByUserIdIn(List<Long> ids);
-
+@Configuration
+public class EventNotificationConfiguration {
+    @Bean
+    public RestTemplate getRestTemplate() {
+        return new RestTemplate();
+    }
 }

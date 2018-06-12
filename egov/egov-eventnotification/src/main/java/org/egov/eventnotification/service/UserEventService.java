@@ -69,13 +69,6 @@ public class UserEventService {
     @Autowired
     private UserService userService;
 
-    /**
-     * This method is used to save the user event mapping.
-     * @param eventType
-     * @param eventName
-     * @param eventHost
-     * @return List<Event>
-     */
     @Transactional
     public UserEvent saveUserEvent(Long userid, Long eventid) {
         UserEvent existingUserEvent = usereventRepository.findByEventIdAndUserId(eventid, userid);
@@ -90,21 +83,10 @@ public class UserEventService {
             return null;
     }
 
-    /**
-     * This method fetch couynt of the event by id
-     * @param id
-     * @return Long
-     */
     public Long countUsereventByEventId(Long id) {
         return usereventRepository.countByEventId(id);
     }
 
-    /**
-     * This method fetch Userevent
-     * @param eventid
-     * @param userid
-     * @return Userevent
-     */
     public UserEvent getUsereventByEventAndUser(Long eventid, Long userid) {
         return usereventRepository.findByEventIdAndUserId(eventid, userid);
     }

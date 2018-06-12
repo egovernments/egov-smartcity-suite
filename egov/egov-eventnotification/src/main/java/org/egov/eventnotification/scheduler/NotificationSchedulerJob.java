@@ -53,13 +53,14 @@ import static org.egov.eventnotification.constants.Constants.MESSAGE_ASMNTNO;
 import static org.egov.eventnotification.constants.Constants.MESSAGE_BILLAMT;
 import static org.egov.eventnotification.constants.Constants.MESSAGE_BILLNO;
 import static org.egov.eventnotification.constants.Constants.MESSAGE_CONSNO;
-import static org.egov.eventnotification.constants.Constants.MESSAGE_DISRPTDATE;
 import static org.egov.eventnotification.constants.Constants.MESSAGE_DUEAMT;
 import static org.egov.eventnotification.constants.Constants.MESSAGE_DUEDATE;
 import static org.egov.eventnotification.constants.Constants.MESSAGE_PROPTNO;
 import static org.egov.eventnotification.constants.Constants.MESSAGE_USERNAME;
+import static org.egov.eventnotification.constants.Constants.PROPERTY_MODULE;
 import static org.egov.eventnotification.constants.Constants.SCHEDULEID;
 import static org.egov.eventnotification.constants.Constants.SCHEDULE_COMPLETE;
+import static org.egov.eventnotification.constants.Constants.WATER_CHARGES_MODULE;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -68,56 +69,133 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.egov.eventnotification.config.properties.EventnotificationApplicationProperties;
 import org.egov.eventnotification.entity.Schedule;
+import org.egov.eventnotification.entity.contracts.UserTaxInformation;
 import org.egov.eventnotification.service.ScheduleService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.persistence.entity.enums.UserType;
-import org.egov.ptis.domain.entity.property.DefaultersInfo;
+import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
 import org.egov.pushbox.entity.contracts.MessageContent;
 import org.egov.pushbox.service.PushNotificationService;
 import org.joda.time.DateTime;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
-import org.quartz.SchedulerContext;
-import org.quartz.SchedulerException;
+import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.quartz.QuartzJobBean;
 
 /**
  * @author somvit
  *
  */
 @DisallowConcurrentExecution
-public class NotificationSchedulerJob extends QuartzJobBean {
+public class NotificationSchedulerJob extends AbstractQuartzJob {
+
+    /**
+     *
+     */
+    private static final long serialVersionUID = -7038270977924187739L;
+
     private static final Logger LOGGER = Logger.getLogger(NotificationSchedulerJob.class);
 
     @Autowired
-    private UserService userService;
+    private transient UserService userService;
 
     @Autowired
-    private PushNotificationService pushNotificationService;
+    private transient PushNotificationService pushNotificationService;
 
     @Autowired
-    private ScheduleService notificationscheduleService;
+    private transient ScheduleService scheduleService;
+
+    @Autowired
+    private transient EventnotificationApplicationProperties appProperties;
+
+    private Long scheduleId = null;
+    private String contextURL = null;
 
     @Override
     protected void executeInternal(final JobExecutionContext context) {
-
         JobDataMap dataMap = context.getJobDetail().getJobDataMap();
-
-        Schedule notificationSchedule = notificationscheduleService
-                .getScheduleById(Long.parseLong(String.valueOf(dataMap.get(SCHEDULEID))));
-
-        executeBusiness(notificationSchedule, Long.parseLong(String.valueOf(dataMap.get("userid"))),
-                String.valueOf(dataMap.get("username")));
-
-        notificationSchedule.setStatus(SCHEDULE_COMPLETE);
-        notificationscheduleService.updateScheduleStatus(notificationSchedule);
+        scheduleId = Long.parseLong(String.valueOf(dataMap.get(SCHEDULEID)));
+        contextURL = String.valueOf(dataMap.get("contextURL"));
+        try {
+            super.executeInternal(context);
+        } catch (JobExecutionException e) {
+            LOGGER.error("Unable to complete execution Scheduler ", e);
+        }
     }
 
-    private void executeBusiness(Schedule notificationSchedule, Long usrid, String username) {
+    @Override
+    public void executeJob() {
+        try {
+            Schedule notificationSchedule = scheduleService.getScheduleById(scheduleId);
+
+            executeBusiness(notificationSchedule);
+
+            notificationSchedule.setStatus(SCHEDULE_COMPLETE);
+            scheduleService.updateScheduleStatus(notificationSchedule);
+        } catch (RuntimeException e) {
+            // Ignoring exception to avoid quartz to continue with other cities
+            LOGGER.error("Error occurred while executing event notification schedule job.", e);
+        }
+    }
+
+    private void executeBusiness(Schedule notificationSchedule) {
+
+        if (notificationSchedule.getDraftType().getName().equalsIgnoreCase(BUSINESS_NOTIFICATION_TYPE)) {
+            List<UserTaxInformation> userTaxInfoList = null;
+            if (notificationSchedule.getModule().getName().equalsIgnoreCase(PROPERTY_MODULE))
+                userTaxInfoList = scheduleService.getDefaulterUserList(contextURL, appProperties.getPropertytaxRestApi());
+            else if (notificationSchedule.getModule().getName().equalsIgnoreCase(WATER_CHARGES_MODULE))
+                userTaxInfoList = scheduleService.getDefaulterUserList(contextURL,
+                        appProperties.getWatertaxRestApi().concat("Water Tax Management"));
+            if (userTaxInfoList != null)
+                for (UserTaxInformation userTaxInformation : userTaxInfoList) {
+                    String message = buildMessage(userTaxInformation, notificationSchedule.getMessageTemplate());
+
+                    List<Long> userIdList = new ArrayList<>();
+                    userIdList.add(Long.parseLong(userTaxInformation.getUserId()));
+
+                    buildAndSendNotifications(notificationSchedule, message, Boolean.FALSE, userIdList);
+                }
+        } else
+            buildAndSendNotifications(notificationSchedule, null, Boolean.TRUE, null);
+    }
+
+    private String buildMessage(UserTaxInformation userTaxInformation, String message) {
+        DateFormat formatter = new SimpleDateFormat(DDMMYYYY);
+        User user = userService.getUserById(Long.parseLong(userTaxInformation.getUserId()));
+        if (message.contains(MESSAGE_USERNAME))
+            message = message.replace(MESSAGE_USERNAME, user.getName());
+
+        if (message.contains(MESSAGE_PROPTNO))
+            message = message.replace(MESSAGE_PROPTNO, userTaxInformation.getConsumerNumber());
+
+        if (message.contains(MESSAGE_DUEDATE))
+            message = message.replace(MESSAGE_DUEDATE, formatter.format(userTaxInformation.getDueDate()));
+
+        if (message.contains(MESSAGE_ASMNTNO))
+            message = message.replace(MESSAGE_ASMNTNO, userTaxInformation.getConsumerNumber());
+
+        if (message.contains(MESSAGE_DUEAMT))
+            message = message.replace(MESSAGE_DUEAMT, userTaxInformation.getDueAmount());
+
+        if (message.contains(MESSAGE_CONSNO))
+            message = message.replace(MESSAGE_CONSNO, userTaxInformation.getConsumerNumber());
+
+        if (message.contains(MESSAGE_BILLNO))
+            message = message.replace(MESSAGE_BILLNO, userTaxInformation.getBillNo());
+
+        if (message.contains(MESSAGE_BILLAMT))
+            message = message.replace(MESSAGE_BILLAMT, userTaxInformation.getDueAmount());
+
+        return message;
+    }
+
+    private void buildAndSendNotifications(Schedule notificationSchedule, String messageBody, Boolean seandAll,
+            List<Long> userIdList) {
+        User user = userService.getCurrentUser();
         DateTime calendar = new DateTime(notificationSchedule.getStartDate());
         int hours = calendar.getHourOfDay();
         int minutes = calendar.getMinuteOfHour();
@@ -130,77 +208,22 @@ public class NotificationSchedulerJob extends QuartzJobBean {
         calendarEnd.plusHours(hours1 + 1);
         calendarEnd.plusMinutes(minutes1);
 
-        if (notificationSchedule.getDraftType().getName().equalsIgnoreCase(BUSINESS_NOTIFICATION_TYPE)) {
-
-            List<DefaultersInfo> defaultersList = notificationscheduleService.getDefaultersInformationList();
-            if (!defaultersList.isEmpty())
-                for (DefaultersInfo defaultersInfo : defaultersList) {
-
-                    String message = buildMessage(defaultersInfo, notificationSchedule.getMessageTemplate());
-                    notificationSchedule.setMessageTemplate(message);
-                    List<User> userList = userService.findByMobileNumberAndType(defaultersInfo.getMobileNumber(),
-                            UserType.CITIZEN);
-                    List<Long> userIdList = new ArrayList<>();
-                    if (userList != null)
-                        for (User userid : userList)
-                            userIdList.add(userid.getId());
-
-                    buildAndSendNotifications(notificationSchedule, calendar, calendarEnd, Boolean.FALSE, userIdList, usrid,
-                            username);
-                }
-        } else
-            buildAndSendNotifications(notificationSchedule, calendar, calendarEnd, Boolean.TRUE, null, usrid, username);
-    }
-
-    private String buildMessage(DefaultersInfo defaultersInfo, String message) {
-        DateFormat formatter = new SimpleDateFormat(DDMMYYYY);
-        if (message.contains(MESSAGE_USERNAME))
-            message = message.replace(MESSAGE_USERNAME, defaultersInfo.getOwnerName());
-
-        if (message.contains(MESSAGE_PROPTNO))
-            message = message.replace(MESSAGE_PROPTNO, defaultersInfo.getAssessmentNo());
-
-        if (message.contains(MESSAGE_DUEDATE))
-            message = message.replace(MESSAGE_DUEDATE,
-                    formatter.format(defaultersInfo.getMinDate()));
-
-        if (message.contains(MESSAGE_ASMNTNO))
-            message = message.replace(MESSAGE_ASMNTNO, defaultersInfo.getAssessmentNo());
-
-        if (message.contains(MESSAGE_DUEAMT))
-            message = message.replace(MESSAGE_DUEAMT,
-                    String.valueOf(defaultersInfo.getCurrentDue().doubleValue()));
-
-        if (message.contains(MESSAGE_CONSNO))
-            message = message.replace(MESSAGE_CONSNO, defaultersInfo.getAssessmentNo());
-
-        if (message.contains(MESSAGE_BILLNO))
-            message = message.replace(MESSAGE_BILLNO, defaultersInfo.getAssessmentNo());
-
-        if (message.contains(MESSAGE_BILLAMT))
-            message = message.replace(MESSAGE_BILLAMT,
-                    String.valueOf(defaultersInfo.getCurrentDue().doubleValue()));
-
-        if (message.contains(MESSAGE_DISRPTDATE))
-            message = message.replace(MESSAGE_DISRPTDATE, defaultersInfo.getAssessmentNo());
-        return message;
-    }
-
-    private void buildAndSendNotifications(Schedule notificationSchedule, DateTime calendar, DateTime calendarEnd,
-            Boolean seandAll, List<Long> userIdList, Long userid, String username) {
         MessageContent messageContent = new MessageContent();
         messageContent.setCreatedDateTime(new Date().getTime());
         messageContent.setEventDateTime(calendar.getMillis());
         messageContent.setExpiryDate(calendarEnd.getMillis());
-        messageContent.setMessageBody(notificationSchedule.getMessageTemplate());
+        if (messageBody == null)
+            messageContent.setMessageBody(notificationSchedule.getMessageTemplate());
+        else
+            messageContent.setMessageBody(messageBody);
         messageContent.setModuleName(notificationSchedule.getTemplateName());
         messageContent.setNotificationDateTime(new Date().getTime());
         messageContent.setNotificationType(notificationSchedule.getDraftType().getName());
         messageContent.setSendAll(seandAll);
         if (userIdList != null)
             messageContent.setUserIdList(userIdList);
-        messageContent.setSenderId(userid);
-        messageContent.setSenderName(username);
+        messageContent.setSenderId(user.getId());
+        messageContent.setSenderName(user.getName());
 
         pushNotificationService.sendNotifications(messageContent);
     }

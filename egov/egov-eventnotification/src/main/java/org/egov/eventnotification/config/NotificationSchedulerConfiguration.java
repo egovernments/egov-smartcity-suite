@@ -70,34 +70,34 @@ public class NotificationSchedulerConfiguration extends QuartzSchedulerConfigura
 
     @Bean(destroyMethod = "destroy")
     public SchedulerFactoryBean notificationScheduler(DataSource dataSource) {
-        SchedulerFactoryBean ptisScheduler = createScheduler(dataSource);
-        ptisScheduler.setSchedulerName("eventnotification-scheduler");
-        ptisScheduler.setAutoStartup(true);
-        ptisScheduler.setOverwriteExistingJobs(true);
-        ptisScheduler.setTriggers(
+        SchedulerFactoryBean evntnotifScheduler = createScheduler(dataSource);
+        evntnotifScheduler.setSchedulerName("eventnotification-scheduler");
+        evntnotifScheduler.setAutoStartup(true);
+        evntnotifScheduler.setOverwriteExistingJobs(true);
+        evntnotifScheduler.setTriggers(
                 eventnotificationCronTrigger().getObject());
-        return ptisScheduler;
+        return evntnotifScheduler;
     }
 
     @Bean(name = "eventnotificationScheduler", destroyMethod = "destroy")
     public SchedulerFactoryBean eventnotificationScheduler(DataSource dataSource) {
-        SchedulerFactoryBean recoveryNoticeScheduler = createScheduler(dataSource);
-        recoveryNoticeScheduler.setSchedulerName("notification-scheduler");
-        recoveryNoticeScheduler.setAutoStartup(true);
-        recoveryNoticeScheduler.setOverwriteExistingJobs(true);
-        recoveryNoticeScheduler.setStartupDelay(1500);
-        return recoveryNoticeScheduler;
+        SchedulerFactoryBean notifScheduler = createScheduler(dataSource);
+        notifScheduler.setSchedulerName("notification-scheduler");
+        notifScheduler.setAutoStartup(true);
+        notifScheduler.setOverwriteExistingJobs(true);
+        notifScheduler.setStartupDelay(1500);
+        return notifScheduler;
     }
 
     @Bean
     public CronTriggerFactoryBean eventnotificationCronTrigger() {
-        CronTriggerFactoryBean demandActivationCron = new CronTriggerFactoryBean();
-        demandActivationCron.setJobDetail(eventnotificationJobDetail().getObject());
-        demandActivationCron.setGroup("EVENT_NOTIFICATION_TRIGGER_GROUP");
-        demandActivationCron.setName("EVENT_NOTIFICATION_TRIGGER");
-        demandActivationCron.setCronExpression("0 15 0 * * ?");
-        demandActivationCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
-        return demandActivationCron;
+        CronTriggerFactoryBean evntnotifCron = new CronTriggerFactoryBean();
+        evntnotifCron.setJobDetail(eventnotificationJobDetail().getObject());
+        evntnotifCron.setGroup("EVENT_NOTIFICATION_TRIGGER_GROUP");
+        evntnotifCron.setName("EVENT_NOTIFICATION_TRIGGER");
+        evntnotifCron.setCronExpression("0 15 0 * * ?");
+        evntnotifCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
+        return evntnotifCron;
     }
 
     @Bean(name = "eventnotificationJobDetail")

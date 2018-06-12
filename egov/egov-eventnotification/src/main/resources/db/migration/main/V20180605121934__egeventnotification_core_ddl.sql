@@ -66,11 +66,11 @@ DROP SEQUENCE IF EXISTS seq_egevntnotification_category;
 DROP TABLE IF EXISTS egevntnotification_parameters;
 DROP SEQUENCE IF EXISTS seq_egevntnotification_parameters;
 
-DROP TABLE egevntnotification_event;
-DROP SEQUENCE seq_egevntnotification_event;
+DROP TABLE IF EXISTS egevntnotification_event;
+DROP SEQUENCE IF EXISTS seq_egevntnotification_event;
 
-DROP TABLE egevntnotification_eventtype;
-DROP SEQUENCE seq_egevntnotification_eventtype;
+DROP TABLE IF EXISTS egevntnotification_eventtype;
+DROP SEQUENCE IF EXISTS seq_egevntnotification_eventtype;
 
 CREATE SEQUENCE seq_egevntnotification_eventtype; 
 CREATE TABLE egevntnotification_eventtype
@@ -111,8 +111,8 @@ CREATE TABLE egevntnotification_event
       ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
-DROP TABLE egevntnotification_userevent;
-DROP SEQUENCE seq_egevntnotification_userevent;
+DROP TABLE IF EXISTS egevntnotification_userevent;
+DROP SEQUENCE IF EXISTS seq_egevntnotification_userevent;
 
 CREATE SEQUENCE seq_egevntnotification_userevent;
 CREATE TABLE egevntnotification_userevent
@@ -128,8 +128,8 @@ CREATE TABLE egevntnotification_userevent
   CONSTRAINT egevntnotification_userevent_pkey PRIMARY KEY (id)
 );
 
-DROP TABLE egevntnotification_userfcmdevice;
-DROP SEQUENCE seq_egevntnotification_userfcmdevice;
+DROP TABLE IF EXISTS egevntnotification_userfcmdevice;
+DROP SEQUENCE IF EXISTS seq_egevntnotification_userfcmdevice;
 
 CREATE SEQUENCE seq_egevntnotification_userfcmdevice;
 CREATE TABLE egevntnotification_userfcmdevice
@@ -146,14 +146,14 @@ CREATE TABLE egevntnotification_userfcmdevice
   CONSTRAINT pk_eg_userfcmdevice_pkey PRIMARY KEY (id),
   CONSTRAINT unq_eg_user_devicetoken UNIQUE (userid, devicetoken)
 );
-DROP TABLE egevntnotification_schedule;
-DROP SEQUENCE seq_egevntnotification_schedule;
+DROP TABLE IF EXISTS egevntnotification_schedule;
+DROP SEQUENCE IF EXISTS seq_egevntnotification_schedule;
 
-DROP TABLE egevntnotification_drafts;
-DROP SEQUENCE seq_egeventnotification_drafts;
+DROP TABLE IF EXISTS egevntnotification_drafts;
+DROP SEQUENCE IF EXISTS seq_egeventnotification_drafts;
 
-DROP TABLE egevntnotification_drafttype;
-DROP SEQUENCE seq_egevntnotification_drafttype;
+DROP TABLE IF EXISTS egevntnotification_drafttype;
+DROP SEQUENCE IF EXISTS seq_egevntnotification_drafttype;
 
 CREATE SEQUENCE seq_egevntnotification_drafttype; 
 CREATE TABLE egevntnotification_drafttype
@@ -163,8 +163,8 @@ CREATE TABLE egevntnotification_drafttype
   version bigint DEFAULT 0,
   CONSTRAINT egevntnotification_drafttype_pkey PRIMARY KEY (id)
 );
-DROP TABLE egevntnotification_schedulerepeat;
-DROP SEQUENCE seq_egevntnotification_schedulerepeat;
+DROP TABLE IF EXISTS egevntnotification_schedulerepeat;
+DROP SEQUENCE IF EXISTS seq_egevntnotification_schedulerepeat;
 
 CREATE SEQUENCE seq_egevntnotification_schedulerepeat; 
 CREATE TABLE egevntnotification_schedulerepeat
@@ -184,6 +184,7 @@ CREATE TABLE egevntnotification_schedule
   message_template character varying(500) NOT NULL,
   drafttype bigint,
   schedulerepeat bigint,
+  module bigint,
   version bigint DEFAULT 0,
   CONSTRAINT egevntnotification_schedule_pkey PRIMARY KEY (id),
   CONSTRAINT fk_drafttype_schedule_ref FOREIGN KEY (drafttype)
@@ -194,12 +195,12 @@ CREATE TABLE egevntnotification_schedule
       ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
-DROP TABLE egevntnotification_category_parameters;
-DROP SEQUENCE seq_egevntnotification_category_parameters;
-DROP TABLE egevntnotification_module_category;
-DROP SEQUENCE seq_egevntnotification_module_category;
-DROP TABLE egevntnotification_template_module;
-DROP SEQUENCE seq_egevntnotification_template_module;
+DROP TABLE IF EXISTS egevntnotification_category_parameters;
+DROP SEQUENCE IF EXISTS seq_egevntnotification_category_parameters;
+DROP TABLE IF EXISTS egevntnotification_module_category;
+DROP SEQUENCE IF EXISTS seq_egevntnotification_module_category;
+DROP TABLE IF EXISTS egevntnotification_template_module;
+DROP SEQUENCE IF EXISTS seq_egevntnotification_template_module;
 
 CREATE SEQUENCE seq_egevntnotification_template_module; 
 CREATE TABLE egevntnotification_template_module
@@ -267,8 +268,8 @@ CREATE TABLE egevntnotification_drafts
       ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
-DROP TABLE egevntnotification_schedule_log;
-DROP SEQUENCE seq_egevntnotification_schedule_log;
+DROP TABLE IF EXISTS egevntnotification_schedule_log;
+DROP SEQUENCE IF EXISTS seq_egevntnotification_schedule_log;
 
 CREATE SEQUENCE seq_egevntnotification_schedule_log;
 CREATE TABLE egevntnotification_schedule_log

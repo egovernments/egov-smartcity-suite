@@ -247,7 +247,7 @@ public class EventService {
         messageContent.setSenderName(user.getName());
         messageContent.setSendAll(Boolean.TRUE);
         if (event.getUrl() == null)
-            messageContent.setUrl("");
+            messageContent.setUrl(EMPTY);
         else
             messageContent.setUrl(event.getUrl());
 
