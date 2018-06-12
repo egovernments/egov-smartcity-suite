@@ -80,11 +80,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.egov.commons.Area;
 import org.egov.commons.Installment;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.ptis.bean.FloorDetails;
 import org.egov.ptis.client.handler.TaxCalculationInfoXmlHandler;
 import org.egov.ptis.client.model.calculator.APMiscellaneousTax;
 import org.egov.ptis.client.model.calculator.APTaxCalculationInfo;
@@ -95,11 +97,15 @@ import org.egov.ptis.domain.entity.property.BoundaryCategory;
 import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyID;
+import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
 import org.egov.ptis.domain.service.calculator.PropertyTaxCalculator;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
+import org.egov.ptis.master.service.PropertyOccupationService;
+import org.egov.ptis.master.service.PropertyUsageService;
+import org.egov.ptis.master.service.StructureClassificationService;
 import org.egov.ptis.master.service.TaxRatesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -135,7 +141,15 @@ public class APTaxCalculator implements PropertyTaxCalculator {
 
     @Autowired
     private TaxRatesService taxRatesService;
+    
+    @Autowired
+    private PropertyUsageService propertyUsageService;
+    
+    @Autowired
+    private StructureClassificationService structureClassificationService;
 
+    @Autowired
+    private PropertyOccupationService propertyOccupationService;
     /**
      * @param property Property Object
      * @param applicableTaxes List of Applicable Taxes
@@ -572,5 +586,127 @@ public class APTaxCalculator implements PropertyTaxCalculator {
         return annualTax.multiply(taxRatePerc.divide(BigDecimal.valueOf(100))).setScale(
                 2, BigDecimal.ROUND_HALF_UP);
     }
+    
+    public Map<Installment, TaxCalculationInfo> calculatePropertyTax(final Boundary zone,final List<FloorDetails> floorDetails,final PropertyTypeMaster propertyTypeMaster,
+            final Date occupationDate) throws TaxCalculatorExeption {
+        BigDecimal totalNetArv;
+        BoundaryCategory boundaryCategory;
+        isCorporation = CITY_GRADE_CORPORATION.equalsIgnoreCase(cityService.getCityGrade());
+        isSeaShoreULB = propertyTaxUtil.isSeaShoreULB();
+        if (isCorporation) {
+            isPrimaryServiceChrApplicable = propertyTaxUtil.isPrimaryServiceApplicable();
+            unAuthPenaltyStartDate = "28/02/1994";
+        } else
+            unAuthPenaltyStartDate = "08/03/1999";
+
+        final List<String> applicableTaxes = prepareApplicableTaxes(propertyTypeMaster.getCode());
+        final List<Installment> taxInstallments = propertyTaxUtil.getInstallmentsListByEffectiveDate(occupationDate);
+
+        for (final Installment installment : taxInstallments) {
+            BigDecimal totalTaxPayable = BigDecimal.ZERO;
+            totalNetArv = BigDecimal.ZERO;
+            final APTaxCalculationInfo taxCalculationInfo = addPropertyInfo(zone.getName(), propertyTypeMaster.getType());
+            if (betweenOrBefore(occupationDate, installment.getFromDate(), installment.getToDate())) {
+                for (final FloorDetails floorDetail : floorDetails){
+                    final Area builtUpArea = new Area();
+                    builtUpArea.setArea(floorDetail.getConstructedPlinthArea());
+                    final Area buildingPlanPlinthArea = new Area();
+                    buildingPlanPlinthArea.setArea(floorDetail.getPlinthAreaInBuildingPlan());
+                    Floor floorInfo = new Floor();
+                    floorInfo.setOccupancyDate(occupationDate);
+                    floorInfo.setBuiltUpArea(builtUpArea);
+                    floorInfo.setBuildingPlanPlinthArea(buildingPlanPlinthArea);
+                    floorInfo.setFloorNo(Integer.valueOf(floorDetail.getFloorId()));
+                    floorInfo.setConstructionDate(floorDetail.getConstructionDate());
+                    floorInfo.setPropertyUsage(propertyUsageService.findById(floorDetail.getUsageId()));
+                    floorInfo.setStructureClassification(structureClassificationService.findOne(floorDetail.getClassificationId()));
+                    floorInfo.setPropertyOccupation(propertyOccupationService.getPropertyOccupationByID(floorDetail.getOccupancyId()));
+                    floorInfo.setDepreciationMaster(propertyTaxUtil.getDepreciationByDate(floorDetail.getConstructionDate(),
+                            occupationDate));
+                    
+                    if (betweenOrBefore(floorInfo.getOccupancyDate(), installment.getFromDate(), installment.getToDate())) {
+                        boundaryCategory = getBoundaryCategory(zone, installment, floorInfo.getPropertyUsage()
+                                .getId(), occupationDate, floorInfo.getStructureClassification().getId());
+                        final APUnitTaxCalculationInfo unitTaxCalculationInfo = calculateNonVacantTax(propertyTypeMaster.getCode(),
+                                floorInfo, boundaryCategory, applicableTaxes, installment);
+                        totalNetArv = totalNetArv.add(unitTaxCalculationInfo.getNetARV());
+
+                        totalTaxPayable = totalTaxPayable.add(unitTaxCalculationInfo.getTotalTaxPayable());
+                        taxCalculationInfo.addUnitTaxCalculationInfo(unitTaxCalculationInfo);
+                    }
+                }
+                taxCalculationInfo.setTotalNetARV(totalNetArv);
+                taxCalculationInfo.setTotalTaxPayable(totalTaxPayable);
+                taxCalculationInfo.setTaxCalculationInfoXML(generateTaxCalculationXML(taxCalculationInfo));
+                taxCalculationMap.put(installment, taxCalculationInfo);
+            }
+        }
+        return taxCalculationMap;
+    }
+    
+    private List<String> prepareApplicableTaxes(final String propertyTypeMasterCode) {
+        final List<String> applicableTaxes = new ArrayList<>();
+        if (!propertyTypeMasterCode.equals(OWNERSHIP_TYPE_VAC_LAND)) {
+            applicableTaxes.add(DEMANDRSN_CODE_GENERAL_TAX);
+            applicableTaxes.add(DEMANDRSN_CODE_DRAINAGE_TAX);
+            applicableTaxes.add(DEMANDRSN_CODE_LIGHT_TAX);
+            applicableTaxes.add(DEMANDRSN_CODE_SCAVENGE_TAX);
+            applicableTaxes.add(DEMANDRSN_CODE_WATER_TAX);
+            applicableTaxes.add(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY);
+            applicableTaxes.add(DEMANDRSN_CODE_EDUCATIONAL_TAX);
+            
+        } else
+            applicableTaxes.add(DEMANDRSN_CODE_VACANT_TAX);
+        applicableTaxes.add(DEMANDRSN_CODE_LIBRARY_CESS);
+        if (isCorporation)
+            applicableTaxes.add(DEMANDRSN_CODE_SEWERAGE_TAX);
+        if (isPrimaryServiceChrApplicable)
+            applicableTaxes.add(DEMANDRSN_CODE_PRIMARY_SERVICE_CHARGES);
+        return applicableTaxes;
+    }
+    
+    private APTaxCalculationInfo addPropertyInfo(final String zoneName,final String propertyTypeMasterType) {
+        final APTaxCalculationInfo taxCalculationInfo = new APTaxCalculationInfo();
+        taxCalculationInfo.setZone(zoneName);
+        taxCalculationInfo.setPropertyType(propertyTypeMasterType);
+        return taxCalculationInfo;
+    }
+    
+    private APUnitTaxCalculationInfo calculateNonVacantTax(final String propTypeCode, final Floor floor,
+            final BoundaryCategory boundaryCategory, final List<String> applicableTaxes, final Installment installment) {
+        final APUnitTaxCalculationInfo unitTaxCalculationInfo = new APUnitTaxCalculationInfo();
+        BigDecimal builtUpArea;
+        BigDecimal floorMrv;
+        BigDecimal floorBuildingValue;
+        BigDecimal floorSiteValue;
+        BigDecimal floorGrossArv;
+        BigDecimal floorDepreciation;
+        BigDecimal floorNetArv;
+
+        builtUpArea = BigDecimal.valueOf(floor.getBuiltUpArea().getArea());
+        floorMrv = calculateFloorMrv(builtUpArea, boundaryCategory);
+        floorBuildingValue = calculateFloorBuildingValue(floorMrv);
+        floorSiteValue = calculateFloorSiteValue(floorMrv);
+        floorGrossArv = floorBuildingValue.multiply(new BigDecimal(12));
+        floorDepreciation = calculateFloorDepreciation(floorGrossArv, floor);
+        floorNetArv = floorSiteValue.multiply(new BigDecimal(12)).add(floorGrossArv.subtract(floorDepreciation));
+        unitTaxCalculationInfo.setFloorNumber(FLOOR_MAP.get(floor.getFloorNo()));
+        unitTaxCalculationInfo.setFloorArea(builtUpArea);
+        unitTaxCalculationInfo.setBaseRateEffectiveDate(boundaryCategory.getFromDate());
+        unitTaxCalculationInfo.setBaseRate(BigDecimal.valueOf(boundaryCategory.getCategory().getCategoryAmount()));
+        unitTaxCalculationInfo.setMrv(floorMrv);
+        unitTaxCalculationInfo.setBuildingValue(floorBuildingValue);
+        unitTaxCalculationInfo.setSiteValue(floorSiteValue);
+        unitTaxCalculationInfo.setGrossARV(floorGrossArv);
+        unitTaxCalculationInfo.setDepreciation(floorDepreciation);
+        unitTaxCalculationInfo.setUnitUsage(floor.getPropertyUsage().getUsageCode());
+        unitTaxCalculationInfo.setUnitOccupation(floor.getPropertyOccupation().getOccupancyCode());
+        unitTaxCalculationInfo.setUnitStructure(floor.getStructureClassification().getConstrTypeCode());
+        unitTaxCalculationInfo.setNetARV(floorNetArv.setScale(0, BigDecimal.ROUND_HALF_UP));
+        final BigDecimal unAuthDeviationPerc = getUnAuthDeviationPerc(floor);
+        calculateApplicableTaxes(applicableTaxes, unitTaxCalculationInfo, installment, propTypeCode, floor, unAuthDeviationPerc);
+        return unitTaxCalculationInfo;
+    }
+
 
 }

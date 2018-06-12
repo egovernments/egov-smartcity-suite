@@ -45,32 +45,93 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.ptis.master.service;
+package org.egov.ptis.bean;
 
-import org.egov.ptis.domain.entity.property.PropertyOccupation;
-import org.egov.ptis.domain.repository.master.occupation.PropertyOccupationRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-@Service
-@Transactional(readOnly = true)
-public class PropertyOccupationService {
+public class FloorDetails {
 
-    private final PropertyOccupationRepository propertyOccupationRepository;
+    private Long zoneId;
+    private Long classificationId;
+    private Long usageId;
+    private Long occupancyId;
+    private String floorId;
+    private Date constructionDate;
+    private Float constructedPlinthArea;
+    private Float plinthAreaInBuildingPlan;
+    private List<FloorDetails> floorTemp = new ArrayList<>();
 
-    @Autowired
-    public PropertyOccupationService(final PropertyOccupationRepository propertyOccupationRepository) {
-        this.propertyOccupationRepository = propertyOccupationRepository;
+    public Date getConstructionDate() {
+        return constructionDate;
     }
 
-    public List<PropertyOccupation> getAllPropertyOccupations() {
-        return propertyOccupationRepository.findAll();
+    public void setConstructionDate(Date constructionDate) {
+        this.constructionDate = constructionDate;
     }
-    
-    public PropertyOccupation getPropertyOccupationByID(final Long id) {
-        return propertyOccupationRepository.findOne(id);
+
+    public Float getConstructedPlinthArea() {
+        return constructedPlinthArea;
+    }
+
+    public void setConstructedPlinthArea(Float constructedPlinthArea) {
+        this.constructedPlinthArea = constructedPlinthArea;
+    }
+
+    public Float getPlinthAreaInBuildingPlan() {
+        return plinthAreaInBuildingPlan;
+    }
+
+    public void setPlinthAreaInBuildingPlan(Float plinthAreaInBuildingPlan) {
+        this.plinthAreaInBuildingPlan = plinthAreaInBuildingPlan;
+    }
+
+    public List<FloorDetails> getFloorTemp() {
+        return floorTemp;
+    }
+
+    public void setFloorTemp(List<FloorDetails> floorTemp) {
+        this.floorTemp = floorTemp;
+    }
+
+    public Long getZoneId() {
+        return zoneId;
+    }
+
+    public void setZoneId(Long zoneId) {
+        this.zoneId = zoneId;
+    }
+
+    public Long getClassificationId() {
+        return classificationId;
+    }
+
+    public void setClassificationId(Long classificationId) {
+        this.classificationId = classificationId;
+    }
+
+    public Long getUsageId() {
+        return usageId;
+    }
+
+    public void setUsageId(Long usageId) {
+        this.usageId = usageId;
+    }
+
+    public Long getOccupancyId() {
+        return occupancyId;
+    }
+
+    public void setOccupancyId(Long occupancyId) {
+        this.occupancyId = occupancyId;
+    }
+
+    public String getFloorId() {
+        return floorId;
+    }
+
+    public void setFloorId(String floorId) {
+        this.floorId = floorId;
     }
 }

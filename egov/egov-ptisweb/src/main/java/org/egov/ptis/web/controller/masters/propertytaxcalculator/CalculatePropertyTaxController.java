@@ -45,32 +45,45 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.ptis.master.service;
 
-import org.egov.ptis.domain.entity.property.PropertyOccupation;
-import org.egov.ptis.domain.repository.master.occupation.PropertyOccupationRepository;
+package org.egov.ptis.web.controller.masters.propertytaxcalculator;
+
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
+import org.egov.ptis.bean.FloorDetails;
+import org.egov.ptis.exceptions.TaxCalculatorExeption;
+import org.egov.ptis.master.service.CalculatePropertyTaxService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-
-@Service
-@Transactional(readOnly = true)
-public class PropertyOccupationService {
-
-    private final PropertyOccupationRepository propertyOccupationRepository;
-
-    @Autowired
-    public PropertyOccupationService(final PropertyOccupationRepository propertyOccupationRepository) {
-        this.propertyOccupationRepository = propertyOccupationRepository;
-    }
-
-    public List<PropertyOccupation> getAllPropertyOccupations() {
-        return propertyOccupationRepository.findAll();
-    }
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+@Controller
+@RequestMapping(value = "/calculatepropertytax")
+public class CalculatePropertyTaxController {
     
-    public PropertyOccupation getPropertyOccupationByID(final Long id) {
-        return propertyOccupationRepository.findOne(id);
+    @Autowired
+    private CalculatePropertyTaxService calculatePropertyTaxService;
+    
+    @RequestMapping(method = RequestMethod.GET)
+    public String getPropertyTaxCalculateForm(final Model model) {
+        calculatePropertyTaxService.addModelAttributes(model);
+        return "propertytaxcalculator-form";
     }
+
+    @RequestMapping(method = RequestMethod.POST)
+    @ResponseBody
+    public  Map<String, String> propertyTaxCalculatorResult(@ModelAttribute("propertyTaxCalculator") final FloorDetails floorDetails, final Model model,
+            @Valid final BindingResult errors, final HttpServletRequest request) throws TaxCalculatorExeption {
+        final Map<String, String> resultString = calculatePropertyTaxService.calculateTaxes(floorDetails);
+        model.addAttribute("resultString", resultString);
+        return resultString;
+    }
+  
 }

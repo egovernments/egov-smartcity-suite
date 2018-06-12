@@ -593,5 +593,9 @@
     <definition name="yearwisedcb-form" extends="base_layout">
         <put-attribute name="page-title" value="lbl.yearwise.DCB" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/yearwisedcbreport-form.jsp"/>
-    </definition>    
+    </definition> 
+     <definition name="propertytaxcalculator-form" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.property.tax.calculate" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/propertytaxcalculator/propertytaxcalculator-form.jsp"/>
+    </definition>  
 </tiles-definitions> 
