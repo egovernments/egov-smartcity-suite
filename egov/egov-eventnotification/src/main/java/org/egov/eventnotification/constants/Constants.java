@@ -208,6 +208,13 @@ public class Constants {
     public static final int ZERO = 0;
     public static final int MAX_TEN = 10;
     public static final String EVENT_NOTIFICATION_GROUP = "EVENT_NOTIFICATION_GROUP";
+    public static final String MINUTES_CRON = "{minutes}";
+    public static final String HOURS_CRON = "{hours}";
+    public static final String DAY_CRON = "{day}";
+    public static final String MONTH_CRON = "{month}";
+
+    public static final String PROPERTY_MODULE = "Property";
+    public static final String WATER_CHARGES_MODULE = "Water Charges";
 
     private Constants() {
 

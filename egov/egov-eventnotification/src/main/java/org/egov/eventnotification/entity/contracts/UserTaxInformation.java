@@ -45,28 +45,54 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
+package org.egov.eventnotification.entity.contracts;
 
-package org.egov.pushbox.repository;
+public class UserTaxInformation {
 
-import java.util.List;
+    private String consumerNumber;
+    private String userId;
+    private String dueAmount;
+    private String dueDate;
+    private String billNo;
 
-import org.egov.pushbox.entity.UserFcmDevice;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+    public String getConsumerNumber() {
+        return consumerNumber;
+    }
 
-/**
- *
- * @author Darshan Nagesh
- *
- */
+    public void setConsumerNumber(String consumerNumber) {
+        this.consumerNumber = consumerNumber;
+    }
 
-@Repository
-public interface UserFcmDeviceRepository extends JpaRepository<UserFcmDevice, java.lang.Long> {
+    public String getUserId() {
+        return userId;
+    }
 
-    UserFcmDevice findByUserId(Long id);
+    public String getDueAmount() {
+        return dueAmount;
+    }
 
-    UserFcmDevice findByUserIdAndDeviceId(Long userId, String deviceId);
-    
-    List<UserFcmDevice> findByUserIdIn(List<Long> ids);
+    public void setDueAmount(String dueAmount) {
+        this.dueAmount = dueAmount;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(String dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public String getBillNo() {
+        return billNo;
+    }
+
+    public void setBillNo(String billNo) {
+        this.billNo = billNo;
+    }
 
 }

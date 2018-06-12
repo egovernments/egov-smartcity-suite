@@ -108,9 +108,9 @@ public class ModifyNotificationDraftController {
     public String update(@ModelAttribute Drafts drafts, Model model) {
         List<ModuleCategory> moduleCategoryList = new ArrayList<>();
         List<CategoryParameters> categoryParametersList = new ArrayList<>();
-        if (null != drafts.getModule())
+        if (drafts.getModule() != null)
             moduleCategoryList = moduleCategoryService.getCategoriesForModule(drafts.getModule().getId());
-        if (null != drafts.getCategory())
+        if (drafts.getCategory() != null)
             categoryParametersList = categoryParametersService.getParametersForCategory(drafts.getCategory().getId());
         model.addAttribute(DRAFT_LIST, draftTypeService.getAllDraftType());
         model.addAttribute(TEMPLATE_MODULE, templateModuleService.getAllModules());

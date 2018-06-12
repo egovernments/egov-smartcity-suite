@@ -47,27 +47,32 @@
  */
 package org.egov.eventnotification.service;
 
+import static org.egov.eventnotification.constants.Constants.DAY_CRON;
 import static org.egov.eventnotification.constants.Constants.DDMMYYYY;
+import static org.egov.eventnotification.constants.Constants.HOURS_CRON;
 import static org.egov.eventnotification.constants.Constants.MAX_TEN;
+import static org.egov.eventnotification.constants.Constants.MINUTES_CRON;
+import static org.egov.eventnotification.constants.Constants.MONTH_CRON;
 import static org.egov.eventnotification.constants.Constants.SCHEDULED_STATUS;
 import static org.egov.eventnotification.constants.Constants.SCHEDULE_DAY;
 import static org.egov.eventnotification.constants.Constants.SCHEDULE_MONTH;
 import static org.egov.eventnotification.constants.Constants.SCHEDULE_YEAR;
 import static org.egov.eventnotification.constants.Constants.ZERO;
 
+import java.util.Arrays;
 import java.util.List;
 
+import org.egov.eventnotification.config.EventNotificationConfiguration;
+import org.egov.eventnotification.config.properties.EventnotificationApplicationProperties;
 import org.egov.eventnotification.entity.Schedule;
 import org.egov.eventnotification.entity.contracts.EventDetails;
+import org.egov.eventnotification.entity.contracts.UserTaxInformation;
 import org.egov.eventnotification.repository.ScheduleRepository;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.utils.DateUtils;
-import org.egov.ptis.client.util.PropertyTaxUtil;
-import org.egov.ptis.domain.entity.property.DefaultersInfo;
-import org.egov.ptis.domain.service.report.ReportService;
-import org.hibernate.Query;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -79,10 +84,10 @@ public class ScheduleService {
     private ScheduleRepository notificationscheduleRepository;
 
     @Autowired
-    private PropertyTaxUtil propertyTaxUtil;
+    private EventnotificationApplicationProperties appProperties;
 
     @Autowired
-    private ReportService reportService;
+    private EventNotificationConfiguration notificationConfiguration;
 
     public List<Schedule> getAllSchedule() {
         List<Schedule> notificationScheduleList = null;
@@ -153,14 +158,19 @@ public class ScheduleService {
 
         switch (notificationschedule.getScheduleRepeat().getName().toLowerCase()) {
         case SCHEDULE_DAY:
-            cronExpression = "0 " + minutes + " " + hours + " ? * * *";
+            cronExpression = appProperties.getDailyJobCron().replace(MINUTES_CRON, String.valueOf(minutes));
+            cronExpression = cronExpression.replace(HOURS_CRON, String.valueOf(hours));
             break;
         case SCHEDULE_MONTH:
-            cronExpression = "0 " + minutes + " " + hours + " " + calendar.getDayOfMonth() + " * ? *";
+            cronExpression = appProperties.getMonthlyJobCron().replace(MINUTES_CRON, String.valueOf(minutes));
+            cronExpression = cronExpression.replace(HOURS_CRON, String.valueOf(hours));
+            cronExpression = cronExpression.replace(DAY_CRON, String.valueOf(calendar.getDayOfMonth()));
             break;
         case SCHEDULE_YEAR:
-            cronExpression = "0 " + minutes + " " + hours + " "
-                    + calendar.getDayOfMonth() + " " + calendar.getMonthOfYear() + " ? *";
+            cronExpression = appProperties.getYearlyJobCron().replace(MINUTES_CRON, String.valueOf(minutes));
+            cronExpression = cronExpression.replace(HOURS_CRON, String.valueOf(hours));
+            cronExpression = cronExpression.replace(DAY_CRON, String.valueOf(calendar.getDayOfMonth()));
+            cronExpression = cronExpression.replace(MONTH_CRON, String.valueOf(calendar.getMonthOfYear()));
             break;
         default:
             break;
@@ -168,8 +178,10 @@ public class ScheduleService {
         return cronExpression;
     }
 
-    public List<DefaultersInfo> getDefaultersInformationList() {
-        Query query = propertyTaxUtil.prepareQueryforDefaultersReport(-1l, "1", "100000", 120000, "PRIVATE", "PT");
-        return reportService.getDefaultersInformation(query, "1 Year", 10);
+    public List<UserTaxInformation> getDefaulterUserList(String contextURL, String urlPath) {
+        final String uri = contextURL.concat(urlPath);
+        ResponseEntity<UserTaxInformation[]> results = notificationConfiguration.getRestTemplate().getForEntity(uri,
+                UserTaxInformation[].class);
+        return Arrays.asList(results.getBody());
     }
 }

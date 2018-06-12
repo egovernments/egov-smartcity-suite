@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -45,28 +45,38 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
+package org.egov.eventnotification.config.properties;
 
-package org.egov.pushbox.repository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 
-import java.util.List;
+@Configuration
+@PropertySource(name = "eventnotificationApplicationProperties", value = {
+        "classpath:config/eventnotification-application-config.properties",
+        "classpath:config/firebase-application-config.properties" }, ignoreResourceNotFound = true)
+public class EventnotificationApplicationProperties {
+    @Autowired
+    private Environment environment;
 
-import org.egov.pushbox.entity.UserFcmDevice;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+    public String getDailyJobCron() {
+        return environment.getProperty("eventnotification.daily.job.cron");
+    }
 
-/**
- *
- * @author Darshan Nagesh
- *
- */
+    public String getMonthlyJobCron() {
+        return environment.getProperty("eventnotification.monthly.job.cron");
+    }
 
-@Repository
-public interface UserFcmDeviceRepository extends JpaRepository<UserFcmDevice, java.lang.Long> {
+    public String getYearlyJobCron() {
+        return environment.getProperty("eventnotification.yearly.job.cron");
+    }
 
-    UserFcmDevice findByUserId(Long id);
+    public String getWatertaxRestApi() {
+        return environment.getProperty("eventnotification.watertax.rest");
+    }
 
-    UserFcmDevice findByUserIdAndDeviceId(Long userId, String deviceId);
-    
-    List<UserFcmDevice> findByUserIdIn(List<Long> ids);
-
+    public String getPropertytaxRestApi() {
+        return environment.getProperty("eventnotification.propertytax.rest");
+    }
 }

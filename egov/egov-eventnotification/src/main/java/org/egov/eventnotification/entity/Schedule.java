@@ -117,6 +117,12 @@ public class Schedule extends AbstractPersistable<Long> {
     @Column(name = "message_template")
     private String messageTemplate;
 
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "module", nullable = false)
+    @Valid
+    @Embedded
+    private TemplateModule module;
+
     @Transient
     private EventDetails eventDetails;
 
@@ -186,4 +192,11 @@ public class Schedule extends AbstractPersistable<Long> {
         this.eventDetails = eventDetails;
     }
 
+    public TemplateModule getModule() {
+        return module;
+    }
+
+    public void setModule(TemplateModule module) {
+        this.module = module;
+    }
 }

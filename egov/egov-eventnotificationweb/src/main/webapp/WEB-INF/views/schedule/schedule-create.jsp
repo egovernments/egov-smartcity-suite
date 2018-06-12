@@ -56,6 +56,7 @@
 					<div class="panel-title"><spring:message code="lbl.schedule.notification" /></div>
 				</div>
 				<form:hidden id="mode" path="" value="${mode}" />
+				<form:hidden id="module" name="module" path="module" value="${notificationSchedule.module.id}" />
 				<div class="panel-body">
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.schedule.templatename" />:</label>
