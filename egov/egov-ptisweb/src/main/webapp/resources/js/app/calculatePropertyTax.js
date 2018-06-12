@@ -66,7 +66,7 @@ $(document)
 					$('#addFloorRow')
 							.click(
 									function() {
-										if (validateFloorOnAdd()) {
+										if (validateFloorOnAdd("Please enter or select all values of existing rows before adding. Values cannot empty.")) {
 
 											var idx = $(tbody).find('tr').length;
 											// Add row
@@ -105,7 +105,7 @@ $(document)
 						}
 					}());
 
-					function validateFloorOnAdd() {
+					function validateFloorOnAdd(message) {
 						var isValid = true;
 						$('#floorDetails tbody tr')
 								.each(
@@ -131,20 +131,14 @@ $(document)
 													.find(
 															'*[name$="constructedPlinthArea"]')
 													.val();
-											var plinthAreaInBuildingPlan = $(
-													this)
-													.find(
-															'*[name$="plinthAreaInBuildingPlan"]')
-													.val();
 											if ( !classificationId
 													|| !usageId
 													|| !floorId
 													|| !constructionDate
-													|| !plinthAreaInBuildingPlan
 													|| !constructedPlinthArea
 													|| !occupancyId) {
 												bootbox
-														.alert("Please enter or select all values of existing rows before adding. Values cannot empty.");
+														.alert(message);
 												isValid = false;
 												return false;
 											}
@@ -229,6 +223,8 @@ $(document)
 					$('#calculateTax').click(
 									function(e) {
 										var arv = 0;
+										if(!validateFloorOnAdd("Please enter or select all values of existing rows before clicking on Calculate Tax button"))
+											return false;
 										$.ajax({
 													url : "/ptis/calculatepropertytax",
 													type : "POST",
