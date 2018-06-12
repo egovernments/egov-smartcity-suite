@@ -48,7 +48,6 @@
 
 package org.egov.ptis.domain.repository.master.mutationfee;
 
-import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.model.MutationFeeDetails;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
