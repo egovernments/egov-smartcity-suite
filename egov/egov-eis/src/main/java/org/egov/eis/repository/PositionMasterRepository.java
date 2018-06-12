@@ -82,17 +82,17 @@ public interface PositionMasterRepository extends JpaRepository<Position, Long> 
     
     List<Position> findByDeptDesig_Department_IdAndDeptDesig_Designation_IdAndNameContainingIgnoreCase(Long deptId,Long desigId,String name);
 
-    @Query("select count(*)  from Position cr where cr.deptDesig.department.id=:departmentId and cr.deptDesig.designation.id=:designationId and cr.isPostOutsourced is true")
+    @Query("select count(*)  from Position cr where cr.deptDesig.department.id=:departmentId and cr.deptDesig.designation.id=:designationId and cr.postOutsourced is true")
     Integer getTotalOutSourcedPostsByDepartmentAndDesignation(@Param("departmentId") Long departmentId,
             @Param("designationId") Long designationId);
 
-    @Query("select count(*)  from Position cr where cr.deptDesig.department.id=:departmentId and cr.isPostOutsourced is true ")
+    @Query("select count(*)  from Position cr where cr.deptDesig.department.id=:departmentId and cr.postOutsourced is true ")
     Integer getTotalOutSourcedPostsByDepartment(@Param("departmentId") Long departmentId);
 
-    @Query("select count(*)  from Position cr where  cr.deptDesig.designation.id=:designationId and cr.isPostOutsourced is true")
+    @Query("select count(*)  from Position cr where  cr.deptDesig.designation.id=:designationId and cr.postOutsourced is true")
     Integer getTotalOutSourcedPostsByDesignation(@Param("designationId") Long designationId);
 
-    @Query("select count(*)  from Position cr where cr.isPostOutsourced is true")
+    @Query("select count(*)  from Position cr where cr.postOutsourced is true")
     Integer getTotalOutSourcedPosts();
 
     @Query("select count(*)  from Position cr where cr.deptDesig.department.id=:departmentId and cr.deptDesig.designation.id=:designationId ")

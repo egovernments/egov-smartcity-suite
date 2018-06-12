@@ -52,9 +52,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.METERED_CHARGES_RE
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PENALTYCHARGES;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PROPERTY_MODULE_NAME;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.SERVICECHARGES;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAXREASONCODE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WCMS_SERVICE_CHARGES;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.YEARLY;
 
 import java.io.UnsupportedEncodingException;
@@ -87,14 +85,11 @@ import org.egov.demand.model.EgBillType;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
-import org.egov.infra.admin.master.entity.AppConfig;
-import org.egov.infra.admin.master.service.AppConfigService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
-import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
@@ -194,12 +189,6 @@ public class ConnectionDemandService {
     @Autowired
     private WaterTaxUtils waterTaxUtils;
 
-    @Autowired
-    private PropertyTaxUtil propertyTaxUtil;
-    
-    @Autowired
-    private AppConfigService appConfigService;
-
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -239,7 +228,6 @@ public class ConnectionDemandService {
             final Set<EgDemandDetails> dmdDetailSet = new HashSet<>();
             for (final String demandReason : feeDetails.keySet())
                 dmdDetailSet.add(createDemandDetails((Double) feeDetails.get(demandReason), demandReason, installment));
-
             egDemand = new EgDemand();
             egDemand.setEgInstallmentMaster(installment);
             egDemand.getEgDemandDetails().addAll(dmdDetailSet);
@@ -466,23 +454,35 @@ public class ConnectionDemandService {
      */
     @Transactional
     public WaterConnectionDetails updateDemandForMeteredConnection(final WaterConnectionDetails waterConnectionDetails,
-            final BigDecimal billAmount, final Date currentDate, final Date previousDate, final int noofmonths) {
+            final BigDecimal billAmount, final Date currentDate, final Date previousDate, final int noofmonths,
+            final Boolean currentMonthIncluded) {
         Installment installment;
         List<Installment> installmentList = new ArrayList<>();
-        if (noofmonths > 1 && !waterConnectionDetails.getMeterConnection().get(0).isMeterDamaged())
-            installmentList = installmentDao.getInstallmentsByModuleForGivenDateAndInstallmentType(
+        if (!waterConnectionDetails.getMeterConnection().get(0).isMeterDamaged())
+            installmentList = installmentDao.getInstallmentsByModuleAndFromDateAndInstallmentType(
                     moduleService.getModuleByName(WaterTaxConstants.MODULE_NAME),
-                    previousDate, WaterTaxConstants.MONTHLY);
+                    previousDate, currentDate, WaterTaxConstants.MONTHLY);
 
         installment = getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME,
                 WaterTaxConstants.MONTHLY, currentDate);
 
-        if (installmentList.isEmpty() || !installmentList.contains(installment))
-            installmentList.add(installment);
+        if (!currentMonthIncluded && installmentList.size() > 1 && installmentList.contains(installment))
+            installmentList.remove(installment);
 
-        final EgDemand demandObj = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
-        if (demandObj == null && waterConnectionDetails.getLegacy())
-            throw new ApplicationRuntimeException("err.legacy.demand.not.present");
+        EgDemand demandObj = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+        if (demandObj == null && waterConnectionDetails.getLegacy()) {
+            EgDemand demand = new EgDemand();
+            demand.setEgInstallmentMaster(installment);
+            demand.setIsHistory("N");
+            demand.setCreateDate(new Date());
+            demand.setModifiedDate(new Date());
+            demandObj = demand;
+            WaterDemandConnection waterDemandConnection = new WaterDemandConnection();
+            waterDemandConnection.setDemand(demandObj);
+            waterDemandConnection.setWaterConnectionDetails(waterConnectionDetails);
+            waterConnectionDetails.addWaterDemandConnection(waterDemandConnection);
+            waterDemandConnectionService.createWaterDemandConnection(waterDemandConnection);
+        }
         if (!installmentList.isEmpty()) {
             for (final Installment installmentVal : installmentList)
                 createMeteredDemandDetails(demandObj, waterConnectionDetails, billAmount, installmentVal);
@@ -495,14 +495,13 @@ public class ConnectionDemandService {
                 egBillDAO.create(billObj);
             }
             generateBillForMeterAndMonthly(waterConnectionDetails.getConnection().getConsumerCode());
-        }
-
-        else
+        } else
             throw new ValidationException("err.water.meteredinstallment.not.found");
         waterConnectionDetails.getWaterDemandConnection().get(0).setDemand(demandObj);
         return waterConnectionDetails;
     }
 
+    @Transactional
     public void createMeteredDemandDetails(final EgDemand demandObj, final WaterConnectionDetails waterConnectionDetails,
             final BigDecimal billAmount, final Installment installment) {
         Boolean demandDetailExists = false;
@@ -827,7 +826,7 @@ public class ConnectionDemandService {
         return currYearInstMap;
     }
 
-    public void getWaterTaxDue(final WaterConnectionDetails waterConnectionDetails, final BindingResult resultBinder,
+    public BindingResult getWaterTaxDue(final WaterConnectionDetails waterConnectionDetails, final BindingResult resultBinder,
             final String mode) {
         if (ADD_DEMAND.equalsIgnoreCase(mode) && !checkWaterChargesCurrentDemand(waterConnectionDetails))
             resultBinder.reject("err.watercharge.demand.not.present", null);
@@ -838,6 +837,7 @@ public class ConnectionDemandService {
             if (waterChargesDue.compareTo(BigDecimal.ZERO) > 0)
                 resultBinder.reject("err.water.charges.due", new Double[] { waterChargesDue.doubleValue() }, null);
         }
+        return resultBinder;
     }
 
     public boolean checkWaterChargesCurrentDemand(final WaterConnectionDetails waterConnectionDetails) {
@@ -855,16 +855,12 @@ public class ConnectionDemandService {
         Installment installment = null;
         installment = installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(
                 moduleService.getModuleByName(MODULE_NAME), waterConnectionDetails.getExecutionDate(), YEARLY);
-        AppConfig appConfig = appConfigService.getAppConfigByModuleNameAndKeyName(MODULE_NAME, WCMS_SERVICE_CHARGES);
-        waterConnectionDetails.getWaterDemandConnection().get(0).getDemand().addEgDemandDetails(
-                createDemandDetailsrForDataEntry(appConfig == null ? BigDecimal.ZERO
-                        : BigDecimal.valueOf(Long.parseLong(appConfig.getConfValues().get(0).getValue())), BigDecimal.ZERO,
-                        SERVICECHARGES, installment == null ? null : installment.getDescription(), new DemandDetail(),
-                        waterConnectionDetails, FIELD_INSPECTION));
 
         waterConnectionDetails.getWaterDemandConnection().get(0).getDemand().addEgDemandDetails(
-                createDemandDetailsrForDataEntry(BigDecimal.valueOf(waterConnectionDetails.getDonationCharges()), BigDecimal.ZERO,
-                        PENALTYCHARGES, installment == null ? null : installment.getDescription(), new DemandDetail(),
+                createDemandDetailsrForDataEntry(
+                        BigDecimal.valueOf(waterConnectionDetails.getDonationCharges()).divide(new BigDecimal(2)),
+                        BigDecimal.ZERO, PENALTYCHARGES, installment == null ? null : installment.getDescription(),
+                        new DemandDetail(),
                         waterConnectionDetails, FIELD_INSPECTION));
     }
 

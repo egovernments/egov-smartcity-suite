@@ -548,12 +548,6 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
                     sewerageApplicationDetails).doubleValue());
             connectionFee.setApplicationDetails(sewerageApplicationDetails);
             sewerageApplicationDetails.getConnectionFees().add(connectionFee);
-        } else {
-            for (SewerageConnectionFee connectionFees : sewerageApplicationDetails.getConnectionFees()) {
-                if (connectionFees.getFeesDetail().equals(donationCharge))
-                    connectionFees.setAmount(sewerageChargeCalculationService.calculateDonationCharges(
-                            sewerageApplicationDetails).doubleValue());
-            }
         }
 
         final FeesDetailMaster sewerageTax = feesDetailMasterService.findByCodeAndIsActive(

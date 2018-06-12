@@ -62,7 +62,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static org.egov.ptis.client.util.PropertyTaxUtil.isNotNull;
 import static org.egov.ptis.constants.PropertyTaxConstants.STYLE_TAG_BEGIN;
 import static org.egov.ptis.constants.PropertyTaxConstants.STYLE_TAG_END;
 
@@ -128,9 +127,7 @@ public class PropertyFloorDetailsInfo implements Comparable<PropertyFloorDetails
 	}
 	
 	private void findTaxChange() {
-		LOGGER.debug("Entered into findTaxChange unitCalcDetail=" + unitCalcDetail);
-		
-		if (isNotNull(unitCalcDetail.getFromDate())) {
+        if (null != unitCalcDetail.getFromDate()) {
 			hasSewerageTaxChanged =  unitCalcDetail.getFromDate().equals(unitCalcDetail.getSewerageTaxFromDate()) ? true : false;
 			hasGenTaxChanged = unitCalcDetail.getFromDate().equals(unitCalcDetail.getGeneralTaxFromDate()) ? true : false;
 			hasWaterTaxChanged = unitCalcDetail.getFromDate().equals(unitCalcDetail.getWaterTaxFromDate()) ? true : false;
@@ -150,141 +147,14 @@ public class PropertyFloorDetailsInfo implements Comparable<PropertyFloorDetails
 			hasSewerageTaxChanged = hasGenTaxChanged = hasWaterTaxChanged = hasFireTaxChanged = hasLightTaxChanged = hasResdEduCessChanged = hasNonResdEduCessChanged = hasEgCessChanged = false;
 			hasALVChanged = true;
 		}
-		
-		LOGGER.debug("Exiting from findTaxChange");
 	}
 	
-	
-	/*public PropertyFloorDetailsInfo(UnitTaxCalculationInfo unit, String propType, Installment installment, Map<String, Date> taxAndMinEffDate) {
-		this.unitCalcDetail = unit;
-		//this.installment = installment;
-		BigDecimal totalActualTaxAmt = BigDecimal.ZERO;
-		BigDecimal totalTaxAmt = BigDecimal.ZERO;		
-		DateFormat dateformatter = new SimpleDateFormat(PropertyTaxConstants.DATE_FORMAT_DDMMYYY);		
-		Date unitTaxDate = null;
-		
-		try {
-			unitTaxDate = dateformatter.parse(unit.getInstDate());			
-		} catch (ParseException pe) {
-			throw new ApplicationRuntimeException("Error while parsing unit effective date", pe);
-		}
-		
-		for (MiscellaneousTax miscTax : unitDetail.getMiscellaneousTaxes()) {
-			String reasonCode = miscTax.getTaxName();
-			BigDecimal actualTaxAmt = BigDecimal.ZERO;
-			BigDecimal taxAmt = BigDecimal.ZERO;
-
-			if (propType != null && PROPTYPE_CENTGOVT_STR.equals(propType)) {
-				actualTaxAmt = miscTax.getTotalActualTax(); // Tax after applying service charges of amenities
-				taxAmt = miscTax.getTotalCalculatedTax(); // Tax before applying service charges of amenities
-				actualTaxAmt = miscTax.getTaxDetails().get(0).getActualTaxValue();
-				actualTaxAmt.setScale(0, ROUND_HALF_UP);
-				taxAmt = miscTax.getTaxDetails().get(0).getCalculatedTaxValue();
-				//taxAmt.setScale(0, ROUND_HALF_UP);
-			} else {
-				taxAmt = miscTax.getTotalCalculatedTax();
-				//taxAmt = miscTax.getTaxDetails().get(0).getCalculatedTaxValue();
-				//taxAmt.setScale(0, ROUND_HALF_UP);
-			}
-
-			if (DEMANDRSN_CODE_FIRE_SERVICE_TAX.equals(reasonCode)) {
-				
-				if (!taxAndMinEffDate.get(DEMANDRSN_CODE_FIRE_SERVICE_TAX).after(unitTaxDate)) {
-					this.hasFireTaxChanged = (miscTax.getHasChanged() == null || miscTax.getHasChanged() == false) ? false
-							: true;
-
-					if (taxAmt.compareTo(ZERO) > 0) {
-						totalTaxAmt = totalTaxAmt.add(taxAmt);
-					}
-					if (propType != null && PROPTYPE_CENTGOVT_STR.equals(propType)) {
-						totalActualTaxAmt = totalActualTaxAmt.add(actualTaxAmt);
-						this.fireServiceTax = actualTaxAmt;
-					} else {
-						this.fireServiceTax = taxAmt;
-					}
-				}
-			} else if (DEMANDRSN_CODE_LIGHTINGTAX.equals(reasonCode)) {
-				
-				if (!taxAndMinEffDate.get(DEMANDRSN_CODE_LIGHTINGTAX).after(unitTaxDate)) {
-					this.hasLightTaxChanged = (miscTax.getHasChanged() == null || miscTax.getHasChanged() == false) ? false
-							: true;
-					if (taxAmt.compareTo(ZERO) > 0) {
-						totalTaxAmt = totalTaxAmt.add(taxAmt);
-					}
-					if (propType != null && PROPTYPE_CENTGOVT_STR.equals(propType)) {
-						totalActualTaxAmt = totalActualTaxAmt.add(actualTaxAmt);
-						this.lightTax = actualTaxAmt;
-					} else {
-						this.lightTax = taxAmt;
-					}
-				}
-			} else 	if (DEMANDRSN_CODE_SEWERAGE_TAX.equals(reasonCode)) {
-				this.hasSewerageTaxChanged = (miscTax.getHasChanged() == null || miscTax.getHasChanged() == false) ? false : true;
-				if (taxAmt.compareTo(ZERO) > 0) {
-					totalTaxAmt = totalTaxAmt.add(taxAmt);
-				}
-				if (propType != null && PROPTYPE_CENTGOVT_STR.equals(propType)) {
-					totalActualTaxAmt = totalActualTaxAmt.add(actualTaxAmt);
-					this.sewerageTax = actualTaxAmt;
-				} else {
-					this.sewerageTax = taxAmt;
-				}
-			} else if (DEMANDRSN_CODE_GENERAL_TAX.equals(reasonCode)) {
-				this.hasGenTaxChanged = (miscTax.getHasChanged() == null ||	miscTax.getHasChanged() == false) ? false : true;
-				if (taxAmt.compareTo(ZERO) > 0) {
-					totalTaxAmt = totalTaxAmt.add(taxAmt);
-				}
-				if (propType != null && PROPTYPE_CENTGOVT_STR.equals(propType)) {
-					totalActualTaxAmt = totalActualTaxAmt.add(actualTaxAmt);
-					this.genTax = actualTaxAmt;
-				} else {
-					this.genTax = taxAmt;
-				}
-			} else if (DEMANDRSN_CODE_GENERAL_WATER_TAX.equals(reasonCode)) {
-				this.hasWaterTaxChanged = (miscTax.getHasChanged() == null || miscTax.getHasChanged() == false) ? false : true;
-				if (taxAmt.compareTo(ZERO) > 0) {
-					totalTaxAmt = totalTaxAmt.add(taxAmt);
-				}
-				if (propType != null && PROPTYPE_CENTGOVT_STR.equals(propType)) {
-					totalActualTaxAmt = totalActualTaxAmt.add(actualTaxAmt);
-					this.waterTax = actualTaxAmt;
-				} else {
-					this.waterTax = taxAmt;
-				}
-			} else if (DEMANDRSN_CODE_EDUCATIONAL_CESS_RESD.equals(reasonCode)) {
-				this.hasResdEduCessChanged = (miscTax.getHasChanged() == null || miscTax.getHasChanged() == false) ? false : true;
-				this.eduCessResd = this.eduCessResd.add(taxAmt);
-			}  else if (DEMANDRSN_CODE_EDUCATIONAL_CESS_NONRESD.equals(reasonCode)) {
-				this.hasNonResdEduCessChanged = (miscTax.getHasChanged() == null || miscTax.getHasChanged() == false) ? false : true;
-				this.eduCessNonResd = this.eduCessNonResd.add(taxAmt);
-			}  else if (DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX.equals(reasonCode)) {
-				if (!taxAndMinEffDate.get(DEMANDRSN_CODE_BIG_RESIDENTIAL_BLDG_TAX).after(unitTaxDate)) {
-					this.hasBigResdTaxtChanged = (miscTax.getHasChanged() == null || miscTax.getHasChanged() == false) ? false
-							: true;
-					this.bigResBldgTax = taxAmt;
-				}
-			}  else if (DEMANDRSN_CODE_EMPLOYEE_GUARANTEE_TAX.equals(reasonCode)) {
-				this.hasEgCessChanged = (miscTax.getHasChanged() == null || miscTax.getHasChanged() == false) ? false : true;
-				this.empGrnteTax = taxAmt;
-			}
-		}
-
-		totalActualTaxAmt = totalActualTaxAmt.setScale(2, BigDecimal.ROUND_HALF_UP);
-		totalTaxAmt = totalTaxAmt.setScale(0, BigDecimal.ROUND_HALF_UP);
-		totalTax = totalTaxAmt.toString();
-		if (propType != null && PROPTYPE_CENTGOVT_STR.equals(propType)) {
-			totalServChrg = totalActualTaxAmt.toString();
-		} else {
-			totalServChrg = "N/A";
-		}
-	}*/
-
 	public Integer getUnitNum() {
 		return unitCalcDetail.getUnitNumber();
 	}
 
 	public String getOccupantName() {
-		return "N/A"; //unitCalcDetail.getUnitOccupier();
+		return NOTAVAIL; 
 	}
 
 	public String getOccupant() {
@@ -506,7 +376,7 @@ public class PropertyFloorDetailsInfo implements Comparable<PropertyFloorDetails
 	}
 
 	public String getInstDate() {
-		if (PropertyTaxUtil.isNotNull(unitCalcDetail.getFromDate())) {
+        if (unitCalcDetail.getFromDate() != null) {
 			return dateFormat.format(unitCalcDetail.getFromDate());
 		}
 		

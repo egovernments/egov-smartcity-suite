@@ -47,10 +47,8 @@
  */
 package org.egov.stms.masters.entity;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.wtms.masters.entity.ApplicationType;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -65,8 +63,10 @@ import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egswtax_fees_master")
@@ -87,7 +87,7 @@ public class FeesMaster extends AbstractAuditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "applicationtype", nullable = false)
-    private ApplicationType applicationType;
+    private SewerageApplicationType applicationType;
 
     @NotNull
     @SafeHtml
@@ -113,11 +113,11 @@ public class FeesMaster extends AbstractAuditable {
         this.id = id;
     }
 
-    public ApplicationType getApplicationType() {
+    public SewerageApplicationType getApplicationType() {
         return applicationType;
     }
 
-    public void setApplicationType(final ApplicationType applicationType) {
+    public void setApplicationType(final SewerageApplicationType applicationType) {
         this.applicationType = applicationType;
     }
 

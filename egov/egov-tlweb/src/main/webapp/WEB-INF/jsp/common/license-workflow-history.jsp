@@ -47,18 +47,19 @@
   --%>
 
 <%@ include file="/includes/taglibs.jsp" %>
-<s:if test="%{!licenseHistory.isEmpty}">
-    <div class="panel-heading  custom_form_panel_heading subheadnew">
-        <div class="panel-title"><s:text name='lbl.licensehistory'/></div>
-    </div>
+
+<div class="panel-heading  custom_form_panel_heading subheadnew">
+    <div class="panel-title"><s:text name='lbl.licensehistory'/></div>
+</div>
+<div class="panel-body">
     <table class="table table-bordered" style="width:97%;margin:0 auto;">
         <thead>
         <tr>
-            <th class="bluebgheadtd"><s:text name="lbl.wf.date"/></th>
-            <th class="bluebgheadtd"><s:text name="lbl.wf.updatedby"/></th>
-            <th class="bluebgheadtd"><s:text name="lbl.wf.currentowner"/></th>
-            <th class="bluebgheadtd"><s:text name="lbl.wf.status"/></th>
-            <th class="bluebgheadtd"><s:text name="lbl.wf.comments"/></th>
+            <th><s:text name="lbl.wf.date"/></th>
+            <th><s:text name="lbl.wf.updatedby"/></th>
+            <th><s:text name="lbl.wf.currentowner"/></th>
+            <th><s:text name="lbl.wf.status"/></th>
+            <th><s:text name="lbl.wf.comments"/></th>
         </tr>
         </thead>
         <tbody>
@@ -79,7 +80,7 @@
                         value="%{#history.comments}"/></td>
             </tr>
         </s:iterator>
-
         </tbody>
     </table>
-</s:if>
+</div>
+

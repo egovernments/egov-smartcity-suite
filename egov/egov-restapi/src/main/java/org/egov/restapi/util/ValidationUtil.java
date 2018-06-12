@@ -53,6 +53,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.BLOCK;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCALITY_BNDRY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_USAGE_RESIDENCE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_ADD_OR_ALTER;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
@@ -68,6 +69,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.collection.integration.models.BillReceiptInfo;
+import org.egov.eis.entity.Assignment;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.ptis.client.service.calculator.APTaxCalculator;
@@ -75,8 +77,12 @@ import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.Property;
+import org.egov.ptis.domain.entity.property.PropertyID;
+import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
+import org.egov.ptis.domain.model.DocumentDetailsRequest;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.domain.model.FloorDetails;
 import org.egov.ptis.domain.model.OwnerInformation;
@@ -85,6 +91,7 @@ import org.egov.ptis.domain.model.TaxCalculatorRequest;
 import org.egov.ptis.domain.repository.master.vacantland.LayoutApprovalAuthorityRepository;
 import org.egov.ptis.domain.repository.master.vacantland.VacantLandPlotAreaRepository;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
+import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.master.service.PropertyUsageService;
 import org.egov.ptis.master.service.StructureClassificationService;
 import org.egov.restapi.model.AssessmentRequest;
@@ -96,6 +103,7 @@ import org.egov.restapi.model.PropertyTransferDetails;
 import org.egov.restapi.model.SurroundingBoundaryDetails;
 import org.egov.restapi.model.VacantLandDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -125,6 +133,9 @@ public class ValidationUtil {
 
     @Autowired
     private VacantLandPlotAreaRepository vacantLandPlotAreaRepository;
+    
+    @Autowired
+    private ApplicationContext beanProvider;
 
     private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
             + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
@@ -167,22 +178,6 @@ public class ValidationUtil {
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(MUTATION_REASON_INVALID_CODE_REQ_CODE);
             errorDetails.setErrorMessage(MUTATION_REASON_INVALID_CODE_REQ_MSG);
-            return errorDetails;
-        }
-
-        if (mutationReasonCode.equalsIgnoreCase(PropertyTaxConstants.MUTATION_REASON_CODE_SALE)
-                && StringUtils.isBlank(propertyTransferDetails.getSaleDetails())) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(SALE_DETAILS_REQ_CODE);
-            errorDetails.setErrorMessage(SALE_DETAILS_REQ_MSG);
-            return errorDetails;
-        }
-
-        if (!mutationReasonCode.equalsIgnoreCase(PropertyTaxConstants.MUTATION_REASON_CODE_SALE)
-                && StringUtils.isNotBlank(propertyTransferDetails.getSaleDetails())) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(OTHER_MUTATION_CODES_SALE_DETAILS_VALIDATION_CODE);
-            errorDetails.setErrorMessage(OTHER_MUTATION_CODES_SALE_DETAILS_VALIDATION_MSG);
             return errorDetails;
         }
 
@@ -337,6 +332,7 @@ public class ValidationUtil {
             }
         }
 
+        Boundary electionWard = null;
         // Property Address validations
         final PropertyAddressDetails propertyAddressDetails = createPropDetails.getPropertyAddressDetails();
         if (!mode.equals(PropertyTaxConstants.PROPERTY_MODE_MODIFY))
@@ -358,6 +354,9 @@ public class ValidationUtil {
                     final Boundary ward = propertyExternalService.getBoundarybyboundaryNumberTypeHierarchy(
                             propertyAddressDetails.getWardNum(),
                             propertyExternalService.getBoundaryTypeByNameandHierarchy(WARD, REVENUE_HIERARCHY_TYPE));
+                    electionWard = propertyExternalService.getBoundarybyboundaryNumberTypeHierarchy(
+                            propertyAddressDetails.getElectionWardNum(),
+                            propertyExternalService.getBoundaryTypeByNameandHierarchy(WARD, ADMIN_HIERARCHY_TYPE));
                     errorDetails = validateCrossHierarchyMapping(locality, ward, block, errorDetails);
                     if (errorDetails != null && errorDetails.getErrorCode() != null)
                         return errorDetails;
@@ -603,9 +602,32 @@ public class ValidationUtil {
                     }
             }
         }
+        
+        if(electionWard != null){
+            PropertyID propertyID = new PropertyID();
+            propertyID.setElectionBoundary(electionWard);
+            PropertyImpl property = new PropertyImpl();
+            BasicProperty basicProperty = new BasicPropertyImpl();
+            basicProperty.setPropertyID(propertyID);
+            property.setBasicProperty(basicProperty);
+            errorDetails = validateAssignment(property);
+            if (StringUtils.isNotBlank(errorDetails.getErrorCode()))
+                return errorDetails;
+        }
         return errorDetails;
     }
 
+    private ErrorDetails validateAssignment(PropertyImpl property){
+        ErrorDetails errorDetails = new ErrorDetails();
+        PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
+        Assignment assignment = propertyExternalService.getAssignment(property, propService);
+        if(assignment == null){
+            errorDetails.setErrorCode(ASSIGNMENT_NULL_ERROR_CODE);
+            errorDetails.setErrorMessage(ASSIGNMENT_NULL_ERROR_MSG);
+        }
+        return errorDetails;
+        
+    }
     public Date convertStringToDate(final String dateInString) throws ParseException {
         final SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
         return sdf.parse(dateInString);
@@ -1018,6 +1040,9 @@ public class ValidationUtil {
                     if (errorDetails != null && errorDetails.getErrorCode() != null)
                         return errorDetails;
                 }
+                errorDetails = validateAssignment((PropertyImpl) prop);
+                if (StringUtils.isNotBlank(errorDetails.getErrorCode()))
+                    return errorDetails;
             }
             if (!bp.getActiveProperty().getPropertyDetail().getCategoryType()
                     .equals(PropertyTaxConstants.CATEGORY_VACANT_LAND)
@@ -1027,9 +1052,21 @@ public class ValidationUtil {
                 errorDetails.setErrorMessage(NON_VACANT_TO_VACANT_MSG);
                 return errorDetails;
             }
+            if (bp.getActiveProperty().getIsExemptedFromTax()) {
+                errorDetails.setErrorCode(EXEMPTED_PROPERTY);
+                errorDetails.setErrorMessage(EXEMPTED_PROPERTY_ERROR_MSG);
+                return errorDetails;
+            }
+            PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
+            String errorMessage = propService.validationForBifurcation(null, bp,
+                    PROPERTY_MODIFY_REASON_ADD_OR_ALTER);
+            if (StringUtils.isNotBlank(errorMessage)){
+                errorDetails.setErrorCode(BIFURCATION_ERROR_CODE);
+                errorDetails.setErrorMessage(BIFURCATION_ERROR_MSG);
+                return errorDetails;
+            }
         }
         return errorDetails;
-
     }
 
     public ErrorDetails validateBoundaries(final PropertyAddressDetails propertyAddressDetails,
@@ -1216,6 +1253,22 @@ public class ValidationUtil {
             }
         }
         return errorDetails;
+    }
+    
+    public ErrorDetails validateDocumentUploadRequest(DocumentDetailsRequest documentDetail, String applicationNo){
+    	ErrorDetails errorDetails = new ErrorDetails();
+    	Property property = propertyExternalService.getPropertyByApplicationNo(applicationNo);
+    	if(property == null){
+    		errorDetails.setErrorCode(APPLICATION_NO_INVALID_CODE);
+            errorDetails.setErrorMessage(APPLICATION_NO_INVALID_MSG);
+            return errorDetails;
+    	}
+    	if(documentDetail.getPhotoFile() == null){
+    		errorDetails.setErrorCode(DOCUMENT_TYPE_DETAILS_REQ_CODE);
+            errorDetails.setErrorMessage(DOCUMENT_TYPE_DETAILS_REQ_MSG);
+            return errorDetails;
+    	}
+    	return errorDetails;
     }
 
 }

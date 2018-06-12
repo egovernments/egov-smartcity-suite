@@ -174,25 +174,6 @@
 					value="%{basicProperty.property.propertyDetail.propertyDepartment.name}" />
 			</div>
 		</div>
-		<%-- <div class="row add-border">
-			<div class="col-xs-3 add-margin">
-				<s:text name="superstructure"></s:text>
-			</div>
-			<div class="col-xs-3 add-margin view-content">
-				<s:if test="propertyDetail.structure == true">
-					<span class="bold">Yes</span>
-				</s:if>
-				<s:else>
-					<span class="bold">No</span>
-				</s:else>
-			</div>
-			<div class="col-xs-3 add-margin">
-				<s:text name="siteowner"></s:text>
-			</div>
-			<div class="col-xs-3 add-margin view-content">
-				<s:property default="N/A" value="%{propertyDetail.siteOwner}" />
-			</div>
-		</div> --%>
 		<div class="row add-border">
 			<div class="col-xs-3 add-margin">
 				<s:text name="reg.docno"></s:text>
@@ -315,6 +296,22 @@
 			<div class="col-xs-3 add-margin">EB Block</div>
 			<div class="col-xs-3 add-margin view-content">N/A</div>
 		</div>
+		<div class="row add-border">
+			<div class="col-xs-3 add-margin">
+				<s:text name="latitude"></s:text> 
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				<s:property default="N/A"
+					value="%{basicProperty.latitude}" />
+			</div>
+			<div class="col-xs-3 add-margin">
+				<s:text name="longitude"></s:text>
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				<s:property default="N/A"
+					value="%{basicProperty.longitude}" />
+			</div>
+		</div>
 	</div>
 </div>
 
@@ -358,8 +355,6 @@
 							name="toilets"></s:text></th>
 					<th class="bluebgheadtd" width="11.1111111111%"><s:text
 							name="watertap"></s:text></th>
-					<%-- <th class="bluebgheadtd" width="11.1111111111%"><s:text
-							name="superstructure"></s:text></th> --%>
 					<th class="bluebgheadtd" width="11.1111111111%"><s:text
 							name="electricity"></s:text></th>
 					<th class="bluebgheadtd" width="11.1111111111%"><s:text
@@ -380,9 +375,6 @@
                         <td class="blueborderfortd"><s:if
                                 test="#prop.propertyDetail.waterTap">Yes</s:if>
                             <s:else>No</s:else></td>
-                        <%-- <td class="blueborderfortd"><s:if
-                                test="%{basicProperty.property.propertyDetail.structure}">Yes</s:if>
-                            <s:else>No</s:else></td> --%>
                         <td class="blueborderfortd"><s:if
                                 test="#prop.propertyDetail.electricity">Yes</s:if>
                             <s:else>No</s:else></td>

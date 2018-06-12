@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -48,10 +48,10 @@
 
 package org.egov.pgr.entity.contract;
 
-import org.egov.eis.entity.PositionHierarchy;
 import org.egov.pgr.entity.ComplaintRouter;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.Escalation;
+import org.egov.pgr.entity.EscalationHierarchy;
 import org.egov.pims.commons.Position;
 
 import java.util.ArrayList;
@@ -59,12 +59,12 @@ import java.util.List;
 
 public class EscalationForm {
     private ComplaintType complaintType;
-    private List<Escalation> escalationList = new ArrayList<Escalation>();
-    private List<PositionHierarchy> positionHierarchyList = new ArrayList<PositionHierarchy>();
+    private List<Escalation> escalationList = new ArrayList<>();
+    private List<EscalationHierarchy> escalationHierarchyList = new ArrayList<>();
     private ComplaintRouter complaintRouter;
-    private Position  position;
-    
-    
+    private Position position;
+
+
     public Position getPosition() {
         return position;
     }
@@ -74,7 +74,7 @@ public class EscalationForm {
     }
 
     public ComplaintRouter getComplaintRouter() {
-        return complaintRouter;  
+        return complaintRouter;
     }
 
     public void setComplaintRouter(final ComplaintRouter complaintRouter) {
@@ -101,14 +101,16 @@ public class EscalationForm {
         escalationList.add(escalationObj);
     }
 
-    public List<PositionHierarchy> getPositionHierarchyList() {
-        return positionHierarchyList;
+    public List<EscalationHierarchy> getEscalationHierarchyList() {
+        return escalationHierarchyList;
     }
-    public void  addPositionHierarchyList(final PositionHierarchy positionHierarchyObj) {
-        positionHierarchyList.add(positionHierarchyObj);
+
+    public void addEscalationHierarchyList(final EscalationHierarchy escalationHierarchyObj) {
+        escalationHierarchyList.add(escalationHierarchyObj);
     }
-    public void setPositionHierarchyList(final List<PositionHierarchy> positionHierarchyList) {
-        this.positionHierarchyList = positionHierarchyList;
+
+    public void setEscalationHierarchyList(final List<EscalationHierarchy> escalationHierarchyList) {
+        this.escalationHierarchyList = escalationHierarchyList;
     }
 
 }

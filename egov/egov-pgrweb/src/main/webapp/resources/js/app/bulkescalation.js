@@ -127,7 +127,7 @@ $(document).ready(function()
                     url: "/pgr/complaint/bulkescalation/?" + $("#bulkEscalation").serialize(),
                 },
 				"columns" : [
-				  { "mData" : "objectSubType",
+				  { "mData" : "grievanceType",
 					"sTitle" : "Grievance Type"
 				  },
 				  { "mData" : "positionFrom",

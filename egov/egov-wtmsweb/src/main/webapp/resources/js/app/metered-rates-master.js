@@ -51,9 +51,9 @@ jQuery(document).ready(function($){
 	var toVolume = $('#toVolume').val();
 	for(var i = 0 ; i<=(rowLength-2); i++){
 		if(toVolume!="" && toVolume!=undefined) {
-			$('#ratesDetail\\['+(i)+'\\]\\.recursive').attr('disabled', true);
-			$('#ratesDetail\\['+(i)+'\\]\\.recursiveFactor').attr('disabled', true);
-			$('#ratesDetail\\['+(i)+'\\]\\.recursiveAmount').attr('disabled', true);
+			$('#ratesDetail\\['+(i)+'\\]\\.recursive').attr('disabled', false);
+			$('#ratesDetail\\['+(i)+'\\]\\.recursiveFactor').attr('disabled', false);
+			$('#ratesDetail\\['+(i)+'\\]\\.recursiveAmount').attr('disabled', false);
 		}
 	}
 		
@@ -74,7 +74,15 @@ jQuery(document).ready(function($){
 		for(var i = 0 ; i<=(rowLength-2); i++){
 			var rateAmt = $('#ratesDetail\\['+(i)+'\\]\\.rateAmount').val();
 			var flatAmt = $('#ratesDetail\\['+(i)+'\\]\\.flatAmount').val();
-			var recursive = $('#ratesDetail\\['+(i)+'\\]\\.recursive').val();
+			var recursive;
+			if($('#ratesDetail\\['+(i)+'\\]\\.recursive').is(':checked')) {
+				recursive=true;
+				$('#ratesDetail\\['+(i)+'\\]\\.recursive').val(true);
+			}
+			else {
+				recursive=false;
+				$('#ratesDetail\\['+(i)+'\\]\\.recursive').val(false);
+			}
 			var recursiveFactor = $('#ratesDetail\\['+(i)+'\\]\\.recursiveFactor').val();
 			var recursiveAmt = $('#ratesDetail\\['+(i)+'\\]\\.recursiveAmount').val();
 			var fromDate = $('#ratesDetail\\['+(i)+'\\]\\.fromDate').val();
@@ -101,19 +109,19 @@ jQuery(document).ready(function($){
 					return false;
 				}
 				
-				if(recursive==="true" && (recursiveFactor==="" && recursiveAmt==="") ){
+				if(recursive==true && (recursiveFactor==="" && recursiveAmt==="") ){
 					bootbox.alert("Please Enter Recursive Factor and Recursive Amount for the row with from date "+fromDate);
 					return false;
 				}
-				else if (recursive==="true" && recursiveFactor===""){
+				else if (recursive==true && recursiveFactor===""){
 					bootbox.alert("Please enter recursive factor for the row with from date "+fromDate);
 					return false;
 				}
-				else if(recursive==="true" && recursiveAmt===""){
+				else if(recursive==true && recursiveAmt===""){
 					bootbox.alert("Please enter recursive amount for the row with from date "+fromDate);
 					return false;
 				}	
-				else if ((recursive==="false" && recursiveAmt!="") || (recursive==="false" && recursiveFactor!="")){
+				else if ((recursive==false && recursiveAmt!="") || (recursive==false && recursiveFactor!="")){
 					bootbox.alert("Please check the recursive checkbox for the row with from date "+fromDate);
 					return false;
 				}
@@ -190,7 +198,15 @@ function addNewRowValue(obj){
 	for(var i = 0 ; i<=(rowLength-2); i++){
 		var rateAmt = $('#ratesDetail\\['+(i)+'\\]\\.rateAmount').val();
 		var flatAmt = $('#ratesDetail\\['+(i)+'\\]\\.flatAmount').val();
-		var recursive = $('#ratesDetail\\['+(i)+'\\]\\.recursive').val();
+		var recursive;
+		if($('#ratesDetail\\['+(i)+'\\]\\.recursive').is(':checked')) {
+			recursive=true;
+			$('#ratesDetail\\['+(i)+'\\]\\.recursive').val(true);
+		}
+		else {
+			recursive=false;
+			$('#ratesDetail\\['+(i)+'\\]\\.recursive').val(false);
+		}
 		var recursiveFactor = $('#ratesDetail\\['+(i)+'\\]\\.recursiveFactor').val();
 		var recursiveAmt = $('#ratesDetail\\['+(i)+'\\]\\.recursiveAmount').val();
 		var fromDate = $('#ratesDetail\\['+(i)+'\\]\\.fromDate').val();
@@ -218,23 +234,19 @@ function addNewRowValue(obj){
 				return false;
 			}
 			
-			if(recursive==="true" && (recursiveFactor==="" && recursiveAmt==="") ){
+			if(recursive==true && (recursiveFactor==="" && recursiveAmt==="") ){
 				bootbox.alert("Please Enter Recursive Amount and Recursive Factor for the row with from date "+fromDate);
 				return false;
 			}
-			else if (recursive==="true" && recursiveFactor===""){
+			else if (recursive==true && recursiveFactor===""){
 				bootbox.alert("Please enter recursive factor for the row with from date "+fromDate);
 				return false;
 			}
-			else if(recursive==="true" && recursiveAmt===""){
+			else if(recursive==true && recursiveAmt===""){
 				bootbox.alert("Please enter recursive amount for the row with from date "+fromDate);
 				return false;
 			}	
-			else if (recursive==="false" && recursiveAmt!=""){
-				bootbox.alert("Please check the recursive checkbox for the row with from date "+fromDate);
-				return false;
-			}
-			else if (recursive==="false" && recursiveFactor!=""){
+			else if (recursive==false && (recursiveAmt!="" || recursiveFactor!="")){
 				bootbox.alert("Please check the recursive checkbox for the row with from date "+fromDate);
 				return false;
 			}
@@ -333,13 +345,14 @@ function addNewRowValue(obj){
 			$("#new\\-row\\-table").find('tr td:last').append($('<button type="button" id="deleteRow" class="btn btn-primary delete-button" onclick="removeRow(this);">Delete Row</button>'));
 			
 			if($(this).attr('checked')){
-				$('#ratesDetail\\['+nextIdx+'\\]\\.recursive').val(true);
-				$(this).data('checked',true);
+				$('#ratesDetail\\['+nextIdx+'\\]\\.recursive').prop('checked',true);
 			}
 			else{
-				$('#ratesDetail\\['+nextIdx+'\\]\\.recursive').val(false);
+				$('#ratesDetail\\['+nextIdx+'\\]\\.recursive').prop('checked',false);
 			}
-			
+			$('#ratesDetail\\['+nextIdx+'\\]\\.recursiveFactor').attr('readonly', false);
+			$('#ratesDetail\\['+nextIdx+'\\]\\.recursiveAmount').attr('readonly', false);
+			$('#ratesDetail\\['+nextIdx+'\\]\\.recursive').addClass('isrecursive');
 			if(fromDate!="" && toDate==""){
 				var date=new Date();
 				var currentDate = date.getDate() + "/" + (date.getMonth()+1) +"/"+ date.getFullYear();
@@ -362,12 +375,7 @@ function addNewRowValue(obj){
 					
 			}
 		
-			if(toVolume!="" && toVolume!=undefined) {
-				$('#ratesDetail\\['+(i)+'\\]\\.recursive').attr('disabled', true);
-				$('#ratesDetail\\['+(i)+'\\]\\.recursiveFactor').attr('disabled', true);
-				$('#ratesDetail\\['+(i)+'\\]\\.recursiveAmount').attr('disabled', true);
-			}
-						
+			
 			//reinitialise datepicker fields
 			jQuery(".datepicker").datepicker({
 				format : 'dd/mm/yyyy',
@@ -470,6 +478,16 @@ function changeRecursive(obj){
 		$('#ratesDetail\\['+(obj.dataset.idx)+'\\]\\.recursive').val(false);
 }
 
+$('.isrecursive').on('change', function(){
+	$('.isrecursive').val($(this).is(':checked')? true : false);
+	if($(this).is(':checked')) {
+		$(this).closest('td').next('td').find('input').attr('readonly',false);
+		$(this).closest('td').next('td').next('td').find('input').attr('readonly',false);
+	} else {
+		$(this).closest('td').next('td').find('input').attr('readonly',true);
+		$(this).closest('td').next('td').next('td').find('input').attr('readonly',true);
+	}
+});
 
 $('#search').on('click', function(){
 	if($("form").valid()){

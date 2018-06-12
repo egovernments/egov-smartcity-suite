@@ -48,7 +48,6 @@
 package org.egov.ptis.web.controller.transactions.writeOff;
 
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
-import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
@@ -58,7 +57,6 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -67,6 +65,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.math.BigDecimal;
 import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
@@ -94,9 +95,9 @@ public class WriteOffController extends GenericWorkFlowController {
     private PtDemandDao ptDemandDAO;
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
-    @Autowired
-    @Qualifier("documentTypePersistenceService")
-    private PersistenceService<DocumentType, Long> documentTypePersistenceService;
+    
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @RequestMapping(value = "/form/{assessmentNo}", method = RequestMethod.GET)
     public String form(@PathVariable("assessmentNo") String assessmentNo, Model model) {
@@ -104,7 +105,7 @@ public class WriteOffController extends GenericWorkFlowController {
         BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
         if (basicProperty != null) {
             propertyImpl = basicProperty.getActiveProperty();
-            if (null != basicProperty && basicProperty.isUnderWorkflow()) {
+            if (basicProperty.isUnderWorkflow()) {
                 model.addAttribute("wfPendingMsg", "Could not do Write Off now, property is undergoing some work flow.");
                 return TARGET_WORKFLOW_ERROR;
             }
@@ -120,7 +121,9 @@ public class WriteOffController extends GenericWorkFlowController {
                     penaltyDetails.get(CURR_PENALTY_COLL_STR));
             final BigDecimal arrearPenaltyDue = penaltyDetails.get(ARR_PENALTY_DMD_STR).subtract(
                     penaltyDetails.get(ARR_PENALTY_COLL_STR));
-
+            final javax.persistence.Query qry = entityManager.createNamedQuery(DocumentType.DOCUMENTTYPE_BY_TRANSACTION_TYPE);
+            qry.setParameter("transactionType", TransactionType.WRITEOFF); 
+            
             model.addAttribute("property", propertyImpl);
             model.addAttribute("basicProperty", basicProperty);
             model.addAttribute("currTaxDue", currTaxDue);
@@ -130,9 +133,7 @@ public class WriteOffController extends GenericWorkFlowController {
             model.addAttribute("isCorporation", propertyTaxUtil.isCorporation());
             model.addAttribute("writeOffReasons", PropertyTaxConstants.WRITEOFF_REASONS);
             model.addAttribute("installments", propertyTaxUtil.getInstallments(propertyImpl));
-            model.addAttribute("documentTypes",
-                    documentTypePersistenceService.findAllByNamedQuery(DocumentType.DOCUMENTTYPE_BY_TRANSACTION_TYPE,
-                            TransactionType.WRITEOFF));
+            model.addAttribute("documentTypes", qry.getResultList());
         }
         return WRITE_OFF_FORM;
     }

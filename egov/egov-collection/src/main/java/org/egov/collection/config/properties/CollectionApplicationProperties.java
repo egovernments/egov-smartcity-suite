@@ -124,6 +124,14 @@ public class CollectionApplicationProperties {
         return environment.getProperty(cityCode.concat(".sbimops.ddocode"));
     }
 
+    public String sbimopsServiceCode(final String serviceCode) {
+        return environment.getProperty(serviceCode.concat(".sbimops.serviceCode"));
+    }
+
+    public String sbimopsDepartmentcode(final String key) {
+        return environment.getProperty(key);
+    }
+
     public String sbimopsHoa(final String cityCode) {
         return environment.getProperty(cityCode.concat(".sbimops.hoa"));
     }

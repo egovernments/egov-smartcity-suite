@@ -53,8 +53,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSerializer;
 import org.egov.infra.exception.ApplicationRuntimeException;
 
-import java.util.Collection;
-
 import static org.egov.infra.web.support.json.adapter.HibernateProxyTypeAdapter.FACTORY;
 
 public final class JsonUtils {
@@ -63,13 +61,13 @@ public final class JsonUtils {
         //only static methods
     }
 
-    public static <T> String toJSON(Collection<T> objects, Class<? extends T> objectClazz, JsonSerializer<T> adapter) {
+    public static <T> String toJSON(Iterable<T> objects, Class<? extends T> objectClazz, JsonSerializer<T> adapter) {
         return new GsonBuilder().
                 registerTypeAdapterFactory(FACTORY).
                 registerTypeAdapter(objectClazz, adapter).create().toJson(objects);
     }
 
-    public static <T> String toJSON(Collection<T> objects, Class<? extends T> objectClazz, Class<? extends JsonSerializer<T>> adapterClazz) {
+    public static <T> String toJSON(Iterable<T> objects, Class<? extends T> objectClazz, Class<? extends JsonSerializer<T>> adapterClazz) {
         try {
             return toJSON(objects, objectClazz, adapterClazz.newInstance());
         } catch (InstantiationException | IllegalAccessException e) {

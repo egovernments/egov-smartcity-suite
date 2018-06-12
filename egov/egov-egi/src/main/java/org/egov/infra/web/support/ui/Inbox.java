@@ -48,6 +48,7 @@
 
 package org.egov.infra.web.support.ui;
 
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.StateHistory;
@@ -56,6 +57,7 @@ import org.egov.infra.workflow.entity.WorkflowTypes;
 import java.util.Date;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
 import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
@@ -79,29 +81,28 @@ public class Inbox {
 
     private Inbox(StateAware stateAware, WorkflowTypes workflowTypes, String nextAction) {
         State state = stateAware.getCurrentState();
-        setId(workflowTypes.isGrouped() ? EMPTY : state.getId() + "#" + workflowTypes.getId());
-        setDate(toDefaultDateTimeFormat(state.getCreatedDate()));
-        setSender(state.getSenderName());
-        setTask(isBlank(state.getNatureOfTask()) ? workflowTypes.getDisplayName() : state.getNatureOfTask());
-        setStatus(state.getValue() + (isBlank(nextAction) ? EMPTY : " - " + nextAction));
-        setDetails(isBlank(stateAware.getStateDetails()) ? EMPTY : stateAware.getStateDetails());
-        setLink(workflowTypes.getLink().replace(":ID", stateAware.myLinkId()));
-        setModuleName(workflowTypes.getModule().getDisplayName());
-        setCreatedDate(state.getCreatedDate());
-        setDraft(state.isNew() && state.getCreatedBy().getId().equals(getUserId()));
+        this.id = workflowTypes.isGrouped() ? EMPTY : new StringBuilder(5).append(state.getId()).append("#")
+                .append(workflowTypes.getId()).toString();
+        this.date = toDefaultDateTimeFormat(state.getCreatedDate());
+        this.sender = state.getSenderName();
+        this.task = defaultIfBlank(state.getNatureOfTask(), workflowTypes.getDisplayName());
+        this.status = state.getValue() + (isBlank(nextAction) ? EMPTY : " - " + nextAction);
+        this.details = defaultIfBlank(stateAware.getStateDetails(), EMPTY);
+        this.link = workflowTypes.getLink().replace(":ID", stateAware.myLinkId());
+        this.moduleName = workflowTypes.getModule().getDisplayName();
+        this.createdDate = state.getCreatedDate();
+        this.draft = state.isNew() && state.getCreatedBy().getId().equals(getUserId());
     }
 
     private Inbox(StateHistory stateHistory, WorkflowTypes workflowTypes) {
-        setId(stateHistory.getState().getId().toString());
-        setDate(toDefaultDateTimeFormat(stateHistory.getLastModifiedDate()));
-        setSender(stateHistory.getSenderName());
-        setTask(isBlank(stateHistory.getNatureOfTask()) ? workflowTypes.getDisplayName()
-                : stateHistory.getNatureOfTask());
-        setStatus(stateHistory.getValue()
-                + (isBlank(stateHistory.getNextAction()) ? EMPTY : " - " + stateHistory.getNextAction()));
-        setDetails(
-                isBlank(stateHistory.getComments()) ? EMPTY : escapeSpecialChars(stateHistory.getComments()));
-        setLink(EMPTY);
+        this.id = stateHistory.getState().getId().toString();
+        this.date = toDefaultDateTimeFormat(stateHistory.getLastModifiedDate());
+        this.sender = stateHistory.getSenderName();
+        this.task = defaultIfBlank(stateHistory.getNatureOfTask(), workflowTypes.getDisplayName());
+        this.status = stateHistory.getValue()
+                + (isBlank(stateHistory.getNextAction()) ? EMPTY : " - " + stateHistory.getNextAction());
+        this.details = isBlank(stateHistory.getComments()) ? EMPTY : escapeSpecialChars(stateHistory.getComments());
+        this.link = EMPTY;
     }
 
     public static Inbox build(StateAware stateAware, WorkflowTypes workflowType, String nextAction) {
@@ -174,6 +175,10 @@ public class Inbox {
 
     public void setModuleName(final String moduleName) {
         this.moduleName = moduleName;
+    }
+
+    public int getElapsed() {
+        return DateUtils.daysBetween(createdDate, new Date());
     }
 
     public Date getCreatedDate() {

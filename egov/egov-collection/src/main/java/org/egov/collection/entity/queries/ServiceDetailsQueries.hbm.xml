@@ -155,11 +155,11 @@
     <![CDATA[from ContraJournalVoucher cjv where cjv.voucherHeaderId.id=? and cjv.instrumentHeaderId.id=?]]></query>
     
     <query name="getActiveServiceByType">
-	<![CDATA[select s from ServiceDetails s where s.serviceCategory.isActive = true and s.serviceType = ? order by s.orderNumber]]>
+	<![CDATA[select s from ServiceDetails s where s.isEnabled = true and s.serviceType = ? order by s.orderNumber]]>
 	</query>
 	
     <query name="getActiveServiceByCodes">
-	<![CDATA[select s from ServiceDetails s where s.serviceCategory.isActive = true and s.serviceType = ? and s.code in(:param_1) order by s.orderNumber]]>
+	<![CDATA[select s from ServiceDetails s where s.isEnabled = true and s.serviceType = ? and s.code in(:param_1) order by s.orderNumber]]>
 	</query>
 
 	<query name="getAllLocations">

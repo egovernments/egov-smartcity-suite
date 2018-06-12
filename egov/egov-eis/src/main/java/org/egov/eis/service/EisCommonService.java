@@ -110,7 +110,7 @@ public class EisCommonService {
      */
     @Deprecated
     public Position getSuperiorPositionByObjectAndObjectSubTypeAndPositionFrom(final Integer objectId,
-            final String objectSubType, final Long posId) {
+                                                                               final String objectSubType, final Long posId) {
         return positionHierarchyService.getPosHirByPosAndObjectTypeAndObjectSubType(posId, objectId, objectSubType)
                 .getToPosition();
     }
@@ -124,11 +124,10 @@ public class EisCommonService {
      */
     public User getUserForPosition(final Long posId, final Date givenDate) {
         try {
-            return assignmentService.getAssignmentsForPosition(posId, givenDate).get(0).getEmployee();
-        } catch (final NullPointerException e) {
-            throw new ApplicationRuntimeException("User Not Found");
+            List<Assignment> assignments = assignmentService.getAssignmentsForPosition(posId, givenDate);
+            return assignments.isEmpty() ? null : assignments.get(0).getEmployee();
         } catch (final Exception e) {
-            throw new ApplicationRuntimeException(e.getMessage());
+            throw new ApplicationRuntimeException("User Not Found", e);
         }
     }
 
@@ -189,7 +188,8 @@ public class EisCommonService {
 
     public Assignment getLatestAssignmentForEmployeeByDate(final Long empId, final Date toDate) {
         return assignmentService.findByEmployeeAndGivenDate(empId, toDate).get(0);
-     }
+    }
+
     /**
      * Refer to Position master service for the same API
      *
@@ -254,11 +254,11 @@ public class EisCommonService {
      * @return List of active users
      */
     public List<User> getAllActiveUsersByGivenDesig(final Long designationId) {
-        final Set<User> users = new HashSet<User>();
+        final Set<User> users = new HashSet<>();
         final List<Assignment> assignments = assignmentService.getAllActiveAssignments(designationId);
         for (final Assignment assign : assignments)
             users.add(assign.getEmployee());
-        return new ArrayList<User>(users);
+        return new ArrayList<>(users);
     }
 
 }

@@ -48,6 +48,8 @@
 package org.egov.ptis.actions.citizen.search;
 
 import com.opensymphony.xwork2.validator.annotations.Validations;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -173,7 +175,7 @@ public class SearchAction extends SearchFormAction implements ServletRequestAwar
     @Action(value = "/citizen/search/search-srchByAssessmentAndOwnerDetail")
     public String srchByAssessmentAndOwnerDetail() {
         try {
-            if (assessmentNum != null && !"".equals(assessmentNum)) {
+            if (StringUtils.isNotBlank(assessmentNum)) {
                 setQueryMap(propertyService.getAssessmentNumQuery(assessmentNum));
                 super.search();
                 for (final BasicProperty basicProperty : (List<BasicProperty>) searchResult.getList()) {
@@ -182,12 +184,11 @@ public class SearchAction extends SearchFormAction implements ServletRequestAwar
                 ((EgovPaginatedList) searchResult).setList(searchList);
 
                 setSearchValue("Assessment Num : " + assessmentNum);
-            } else {
+            } 
+            else {
                 setQueryMap(propertyService.getAssessmentAndOwnerDetailsQuery(oldMuncipalNum, ownerName, doorNo));
                 super.search();
                 for (final PropertyMaterlizeView propMatview : (List<PropertyMaterlizeView>) searchResult.getList()) {
-                    if (LOGGER.isDebugEnabled())
-                        LOGGER.debug("srchByAssessmentAndOwner : Property : " + propMatview);
                     setSearchResultList(getResultsFromMv(propMatview));
                 }
                 ((EgovPaginatedList) searchResult).setList(searchList);
@@ -205,8 +206,6 @@ public class SearchAction extends SearchFormAction implements ServletRequestAwar
             LOGGER.warn("Exception in Search Property By Door number ", e);
             throw new ApplicationRuntimeException("Exception : ", e);
         }
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Exit from srchByAssessmentAndOwenrDetails method ");
         return TARGET;
     }
 
@@ -259,7 +258,7 @@ public class SearchAction extends SearchFormAction implements ServletRequestAwar
         final Property property = basicProperty.getProperty();
         final Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMapIncludingPenaltyAndAdvance(property);
 
-        final Map<String, String> searchResultMap = new HashMap<String, String>();
+        final Map<String, String> searchResultMap = new HashMap<>();
         searchResultMap.put("assessmentNum", basicProperty.getUpicNo());
         searchResultMap.put("ownerName", basicProperty.getFullOwnerName());
         searchResultMap.put("address", basicProperty.getAddress().toString());
@@ -299,7 +298,7 @@ public class SearchAction extends SearchFormAction implements ServletRequestAwar
         }
         searchList.add(searchResultMap);
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Search list : " + (searchList != null ? searchList : ZERO));
+            LOGGER.debug("Search list : " + searchList);
             LOGGER.debug("Exit from getSearchResults method");
         }
 
@@ -307,7 +306,7 @@ public class SearchAction extends SearchFormAction implements ServletRequestAwar
     }
 
     public Map<String, String> getDemandDetailsForExemptedProperty() {
-        final Map<String, String> searchMap = new HashMap<String, String>();
+        final Map<String, String> searchMap = new HashMap<>();
         searchMap.put(CURRENT_FIRST_HALF_DEMAND, "0");
         searchMap.put(CURRENT_SECOND_HALF_DEMAND, "0");
         searchMap.put(CURRENT_FIRST_HALF_DEMAND_DUE, "0");
@@ -341,9 +340,8 @@ public class SearchAction extends SearchFormAction implements ServletRequestAwar
         final Property property = basicProperty.getProperty();
         if (basicProperty != null)
             checkIsDemandActive(basicProperty.getProperty());
-        if (pmv.getPropertyId() != null || org.apache.commons.lang.StringUtils.isNotEmpty(pmv.getPropertyId()))
-            if (pmv != null) {
-                final Map<String, String> searchResultMap = new HashMap<String, String>();
+        if (StringUtils.isNotBlank(pmv.getPropertyId())) {
+                final Map<String, String> searchResultMap = new HashMap<>();
                 searchResultMap.put("assessmentNum", pmv.getPropertyId());
                 searchResultMap.put("ownerName", pmv.getOwnerName());
                 searchResultMap.put("parcelId", pmv.getGisRefNo());

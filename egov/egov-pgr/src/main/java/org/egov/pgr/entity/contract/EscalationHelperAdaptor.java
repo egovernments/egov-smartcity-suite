@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -61,16 +61,12 @@ public class EscalationHelperAdaptor implements JsonSerializer<EscalationHelper>
     public JsonElement serialize(EscalationHelper escalationHelper, Type type, JsonSerializationContext jsc) {
         JsonObject jsonObject = new JsonObject();
         if (escalationHelper != null) {
-        //    jsonObject.addProperty("id", escalationHelper.getId());
-            jsonObject.addProperty("positionFrom", null != escalationHelper.getFromPosition() ? escalationHelper
-                    .getFromPosition().getName() : "NA");
-            jsonObject.addProperty("objectSubType", null!= escalationHelper.getComplaintType()?escalationHelper.getComplaintType().getName():"");
-         //   jsonObject.addProperty("objectType", escalationHelper.getObjectType().getDescription());
-            jsonObject.addProperty("positionTo", null != escalationHelper.getToPosition() ? escalationHelper
-                    .getToPosition().getName() : "");
-
+            jsonObject.addProperty("positionFrom", escalationHelper.getFromPosition() == null ? "NA" : escalationHelper
+                    .getFromPosition().getName());
+            jsonObject.addProperty("grievanceType", escalationHelper.getComplaintType() == null ? "" : escalationHelper.getComplaintType().getName());
+            jsonObject.addProperty("positionTo", escalationHelper.getToPosition() == null ? "" : escalationHelper
+                    .getToPosition().getName());
         }
         return jsonObject;
     }
-
 }

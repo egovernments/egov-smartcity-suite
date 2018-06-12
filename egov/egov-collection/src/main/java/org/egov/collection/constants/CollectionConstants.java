@@ -166,6 +166,7 @@ public final class CollectionConstants {
     public static final String APPCONFIG_VALUE_COLLECTIONSOURCEDEBITACCOUNTHEAD = "COLLECTIONSOURCEDEBITACCOUNTHEAD";
     public static final String APPCONFIG_VALUE_ROLES_CREATERECEIPT_APPROVEDSTATUS = "ROLES_CREATERECEIPT_APPROVEDSTATUS";
     public static final String APPCONFIG_VALUE_COLLECTIONCREATORRECEIPTCANCELROLE = "COLLECTIONCREATORRECEIPTCANCELROLE";
+    public static final String APPCONFIG_VALUE_ISVOUCHERCREATIONONRECEIPTANDSTATUSDISPLAY = "ISVOUCHERCREATIONONRECEIPTANDSTATUSDISPLAY";
 
     // named queries (collections)
     public static final String QUERY_RECEIPTS_FOR_VOUCHERS = "RECEIPTS_FOR_VOUCHERS";
@@ -199,6 +200,8 @@ public final class CollectionConstants {
     public static final String QUERY_SERVICE_CATEGORY_BY_CODE = "SERVICE_CATEGORY_BY_CODE";
     public static final String QUERY_SERVICE_BY_CATEGORY_FOR_TYPE = "SERVICE_BY_CATEGORY_FOR_TYPE";
     public static final String QUERY_RECEIPT_BY_ID_AND_STATUSNOTCANCELLED = "RECEIPT_BY_ID_AND_STATUSNOTCANCELLED";
+    public static final String QUERY_PENDING_RECEIPT_BY_ID_AND_CONSUMERCODE = "QUERY_PENDING_RECEIPT_BY_ID_AND_CONSUMERCODE";
+    public static final String QUERY_PENDING_RECEIPT_BY_ID_AND_CITYCODE = "QUERY_PENDING_RECEIPT_BY_ID_AND_CITYCODE";
 
     // named queries (other modules)
     public static final String QUERY_ACTIVE_COUNTERS = "getAllActiveCounters";
@@ -297,6 +300,7 @@ public final class CollectionConstants {
     // Separators
     public static final String SEPARATOR_HYPHEN = "-";
     public static final String SEPARATOR_UNDERSCORE = "_";
+    public static final String SEPARATOR_COMMA = ",";
     public static final String ZERO_INT = "0";
     public static final String ZERO_DOUBLE = "0.0";
 
@@ -557,6 +561,19 @@ public final class CollectionConstants {
     public static final String SBIMOPS_BANK_NAME = "bankname";
     public static final String SBIMOPS_UAMOUNT = "uamount";
 
+    public static final String SBIMOPS_DC = "DC";
+    public static final String SBIMOPS_DTID = "DTID";
+    public static final String SBIMOPS_RN = "RN";
+    public static final String SBIMOPS_RID = "RID";
+    public static final String SBIMOPS_TA = "TA";
+    public static final String SBIMOPS_CH = "Ch";
+    public static final String SBIMOPS_RURL = "RUrl";
+    public static final String SBIMOPS_CFMS_TRID = "CFMS_TRID";
+    public static final String SBIMOPS_BANKTIME_STAMP = "BankTimeStamp";
+    public static final String SBIMOPS_STATUS = "Status";
+
+    public static final String MESSAGEKEY_SBIMOPS_DC = "sbimops.department.code";
+
     // This is an array for creating hex chars
     public static final char[] AXIS_HEX_TABLE = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A',
             'B', 'C', 'D', 'E', 'F' };
@@ -614,6 +631,7 @@ public final class CollectionConstants {
     public static final char[] REVENUEHEADS = new char[] { 'I', 'A', 'L' };
     public static final Integer DEFAULT_PAGE_SIZE = 30;
     public static final Integer QUARTZ_BULKBILL_JOBS = 2;
+    public static final Integer QUARTZ_ATOM_RECONCILE_BULK_JOBS = 5;
 
     public static final String DATE_FORMAT_YYYYMMDD = "yyyy-MM-dd";
     public static final SimpleDateFormat DATEFORMATTER_YYYY_MM_DD = new SimpleDateFormat(DATE_FORMAT_YYYYMMDD);
@@ -667,8 +685,15 @@ public final class CollectionConstants {
             add("Failure");
             add("INITIALIZED");
             add("F");
-            add("C"); 
-        } 
+            add("C");
+        }
     };
-
+    public static final String ATOM_AUTHORISATION_CODE_REFUNDED = "AUTO REVERSAL";
+    public static final ArrayList<String> AXIS_AUTHORISATION_CODES_WAITINGFOR_PAY_GATEWAY_RESPONSE = new ArrayList<String>() {
+        {
+            add("6");
+            add("D");
+            add("P");
+        }
+    };
 }

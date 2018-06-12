@@ -150,7 +150,7 @@ function loadSelectDataForChartOfacounts(url,sourceobj,destobj)
 				} else{
 					nodeurl = actionurl[i];
 				}*/
-				var menuItem =  { label: name[i], id: id[i], url: actionurl[i] } ;
+				var menuItem =  { label: actionurl[i]+'-'+name[i], id: id[i], url: actionurl[i] } ;
 				var tempNode = new YAHOO.widget.TextNode(menuItem, menuObj, false);
 				tempNode.onLabelClick = onLabelClick
 				
@@ -262,7 +262,7 @@ function loadNodeData(node, fnLoadComplete){
 				}
 				if ((name[i] != null) && (name[i].length > 0)){
 				
-					var menuItem =  { label: name[i], id: id[i], url: nodeurl } ;
+					var menuItem =  { label: actionurl[i]+'-'+name[i], id: id[i], url: nodeurl } ;
 					////bootbox.alert('node url '+nodeurl);
 					var tempNode = new YAHOO.widget.TextNode(menuItem, node, false);
 					tempNode.onLabelClick = onLabelClick

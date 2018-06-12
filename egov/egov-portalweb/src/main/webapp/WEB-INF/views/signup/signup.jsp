@@ -106,7 +106,18 @@
     <div class="main-content">
         <div class="login-content login-content-margin signup-section">
             <c:if test="${not empty message}">
-                <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
+                <div class="alert alert-success" role="alert">
+                    <spring:message code="${message}"/> <br/>
+                </div>
+                <script>
+                    setTimeout(function () {
+                        if (window.opener && window.opener.document.getElementById("j_username")) {
+                            window.opener.document.getElementById("j_username").value = '${mobileNo}';
+                        }
+                        window.close();
+                    }, 5000)
+
+                </script>
             </c:if>
             <div class="login-body">
                 <form:form method="post" role="form" id="signupform" modelAttribute="citizen" autocomplete="off">
@@ -188,7 +199,7 @@
                             <div class="input-group-addon style-label">
                                 <i class="fa fa-key fa-fw theme-color style-color"></i>
                             </div>
-                            <form:password path="activationCode" id="activationcode" cssClass="form-control style-form" placeholder="OTP" minlength="5" maxlength="5" autocomplete="off" required="required"/>
+                            <form:password path="activationCode" id="activationcode" cssClass="form-control style-form" placeholder="Enter OTP" minlength="5" maxlength="5" autocomplete="off" required="required"/>
                             <span class="mandatory set-mandatory"></span>
                             <div class="input-group-addon" style="background:#fff;border:none;border-bottom:1px solid #D0D2D7;cursor:default;">
                                 <i class="fa fa-eye show otp-view" data-view="show" aria-hidden="true"></i>

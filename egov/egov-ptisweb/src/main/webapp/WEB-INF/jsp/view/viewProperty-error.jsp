@@ -49,14 +49,17 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <html>
 	<head>
+	<title><s:text name="viewPropertyError" /></title>
 	</head>
 	<body>
-		<table width="320">
-			<tr>
-				<td align="center">
-					<span> <s:text name="noRecFound"></s:text> </span>
-				</td>
-			</tr>
+		 <table width="320">
+			<div class="formmainbox">
+				<div style="font-size: 15px;padding:10px;text-align:center;"><s:text name="application.notfound"/></div>
+				<br/>
+			</div>
+			<div class="buttonbottom" align="center">
+		       <input type="button" name="button2" id="button2" value="Close" class="button" onclick="window.close();" />
+			</div>
 		</table>
 	</body>
 </html>

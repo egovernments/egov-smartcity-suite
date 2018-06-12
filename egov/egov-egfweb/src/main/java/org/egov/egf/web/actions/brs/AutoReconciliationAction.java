@@ -63,7 +63,6 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.model.brs.AutoReconcileBean;
 import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
-import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
@@ -92,8 +91,6 @@ public class AutoReconciliationAction extends BaseFormAction {
 
    
     private static final long serialVersionUID = -4207341983597707193L;
-    private static final Logger LOGGER = Logger.getLogger(AutoReconciliationAction.class);
-   
     private List<Bankbranch> branchList = Collections.EMPTY_LIST;
     private final List<Bankaccount> accountList = Collections.EMPTY_LIST;
     private Integer accountId;

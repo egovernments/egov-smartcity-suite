@@ -227,7 +227,14 @@ function enableUrl(obj) {
 		<tr>
 		    <td></td>
 			<td class="bluebox"> <s:text name="service.master.isvouchertobecreated"></s:text> </td>
-			<td class="bluebox" ><s:checkbox name="voucherCreation" id="voucherCreation" onchange="return EnableVoucherDetails(this)"/></td>
+			<td class="bluebox" >
+			<s:if test="%{isVoucherOnReceiptAndStatusDisplay}">
+			<s:checkbox name="voucherCreation" id="voucherCreation" onclick="return EnableVoucherDetails(this)"/>
+			</s:if> 
+			<s:else>
+			   <s:checkbox name="voucherCreation" id="voucherCreation" onclick ="return false;" />
+			</s:else>
+			</td>
 		</tr>
 		<tr id="voucherApprovedDetails">
 		<td></td>
@@ -334,6 +341,7 @@ function enableUrl(obj) {
 		<s:hidden name="serviceCategory.id" id="serviceCategory.id"></s:hidden>
 		<s:hidden name="id"></s:hidden>
 		<s:hidden name="serviceCategory.name" id="serviceCategory.name"></s:hidden>
+		<s:hidden name="isVoucherOnReceiptAndStatusDisplay" id="isVoucherOnReceiptAndStatusDisplay"></s:hidden>
 	</table>
 	<jsp:include page="finAccountsTable.jsp"/>
 

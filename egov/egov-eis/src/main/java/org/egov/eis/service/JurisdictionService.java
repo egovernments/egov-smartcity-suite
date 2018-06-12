@@ -47,9 +47,16 @@
  */
 package org.egov.eis.service;
 
+import static org.egov.eis.utils.constants.EisConstants.BOUNDARY_TYPE_CITY;
+import static org.egov.eis.utils.constants.EisConstants.HIERARCHY_TYPE_ADMIN;
+import static org.egov.eis.utils.constants.EisConstants.WARD;
+
+import java.util.List;
+
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.Jurisdiction;
 import org.egov.eis.repository.JurisdictionRepository;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -92,4 +99,12 @@ public class JurisdictionService {
          }
          return employee;
      }
+    
+    public List<Boundary> getEmployeeJuridictions(Long employeeId) {
+        List<Boundary> wardBoundaries = jurisdictionRepository.getEmployeeBoundaries(employeeId, WARD, HIERARCHY_TYPE_ADMIN);
+        if(wardBoundaries.isEmpty())
+            wardBoundaries = jurisdictionRepository.getEmployeeBoundaries(employeeId, BOUNDARY_TYPE_CITY, HIERARCHY_TYPE_ADMIN);
+        return wardBoundaries;
+        
+    }
 }

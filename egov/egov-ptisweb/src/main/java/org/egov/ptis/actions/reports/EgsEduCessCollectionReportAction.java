@@ -84,7 +84,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_EGS_CESS_C
 import static org.egov.ptis.constants.PropertyTaxConstants.MONTHS_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_START_DATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_EGS_EDU_CESS_COLLECTION;
-import static org.egov.ptis.constants.PropertyTaxConstants.STR_EDU_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.STR_EGS_CESS;
 
 /**
@@ -236,7 +236,7 @@ public class EgsEduCessCollectionReportAction extends BaseFormAction {
 		DemandCollInfo dmdCollInfoEgs = new DemandCollInfo();
 		dmdCollInfoEgs.setTaxType(STR_EGS_CESS);
 		DemandCollInfo dmdCollInfoEdu = new DemandCollInfo();
-		dmdCollInfoEdu.setTaxType(STR_EDU_CESS);
+		dmdCollInfoEdu.setTaxType(DEMANDRSN_STR_EDUCATIONAL_TAX);
 		for (Object[] obj : list) {
 			if (obj[0].equals(GLCODE_FOR_EGS_CESS_ARREARS)) {
 				dmdCollInfoEgs.setArrColl(new BigDecimal(obj[1].toString()));

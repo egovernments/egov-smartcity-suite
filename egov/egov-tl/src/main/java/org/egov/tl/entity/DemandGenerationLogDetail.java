@@ -48,6 +48,8 @@
 
 package org.egov.tl.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.tl.entity.enums.ProcessStatus;
 
@@ -67,6 +69,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "egtl_demandgenerationlogdetail")
 @SequenceGenerator(name = DemandGenerationLogDetail.SEQ, sequenceName = DemandGenerationLogDetail.SEQ, allocationSize = 1)
+@JsonIgnoreProperties({"createdBy", "lastModifiedBy"})
 public class DemandGenerationLogDetail extends AbstractPersistable<Long> {
 
     public static final String SEQ = "seq_egtl_demandgenerationlogdetail";
@@ -87,6 +90,7 @@ public class DemandGenerationLogDetail extends AbstractPersistable<Long> {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "demandGenerationLog", nullable = false)
+    @JsonIgnore
     private DemandGenerationLog demandGenerationLog;
 
     @Override

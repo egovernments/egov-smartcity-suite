@@ -53,6 +53,11 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
+<style>
+    .DTFC_LeftBodyLiner{
+        overflow-x: hidden;
+    }
+</style>
 <div class="row">
     <div class="col-md-12">
         <form:form class="form-horizontal form-groups-bordered" action="" id="searchForm" modelAttribute="searchForm"
@@ -93,78 +98,6 @@
                         </form:select>
                     </div>
                     <label class="col-sm-2 control-label text-right"> <spring:message
-                            code='lbl.tradetype'/></label>
-                    <div class="col-sm-3 add-margin">
-                        <form:select path="natureOfBusinessId" id="natureOfBusiness" cssClass="form-control"
-                                     cssErrorClass="form-control error">
-                            <form:option value="">
-                                <spring:message code="lbl.select"/>
-                            </form:option>
-                            <form:options items="${natureOfBusiness}" itemValue="id" itemLabel="name"/>
-                        </form:select>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-sm-3 control-label text-right"> <spring:message
-                            code='search.license.category'/></label>
-                    <div class="col-sm-3 add-margin">
-                        <form:select path="categoryId" id="category" cssClass="form-control"
-                                     cssErrorClass="form-control error">
-                            <form:option value="">
-                                <spring:message code="lbl.category.select"/>
-                            </form:option>
-                            <form:options items="${categoryList}" itemValue="id" itemLabel="name"/>
-                        </form:select>
-                    </div>
-                    <label class="col-sm-2 control-label text-right"> <spring:message
-                            code='search.license.subCategory'/></label>
-                    <div class="col-sm-3 add-margin">
-                        <select id="subCategory" class="form-control select2" required>
-                        </select> <label id="subCategory-error" class="error display-hide"
-                                         for="subCategory">Required</label>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-sm-3 control-label text-right"> <spring:message
-                            code='license.oldlicensenum'/></label>
-                    <div class="col-sm-3 add-margin">
-                        <input type="text" id="oldLicenseNumber" class="form-control typeahead" placeholder=""
-                               autocomplete="off"/>
-                        <form:hidden path="oldLicenseNumber" id="oldLicenseNumber"/>
-                    </div>
-                    <label class="col-sm-2 control-label text-right"> <spring:message
-                            code='search.license.establishmentname'/></label>
-                    <div class="col-sm-3 add-margin">
-                        <input type="text" id="tradeTitle" class="form-control typeahead" placeholder=""
-                               autocomplete="off"/>
-                        <form:hidden path="tradeTitle" id="tradeTitle"/>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-sm-3 control-label text-right"> <spring:message
-                            code='licensee.applicantname'/></label>
-                    <div class="col-sm-3 add-margin">
-                        <input type="text" id="tradeOwnerName" class="form-control typeahead" placeholder=""
-                               autocomplete="off"/>
-                        <form:hidden path="tradeOwnerName" id="tradeOwnerName"/>
-                    </div>
-                    <label class="col-sm-2 control-label text-right"> <spring:message
-                            code='search.license.propertyNo'/></label>
-                    <div class="col-sm-3 add-margin">
-                        <input type="text" id="propertyAssessmentNo" class="form-control typeahead" placeholder=""
-                               autocomplete="off"/>
-                        <form:hidden path="propertyAssessmentNo" id="propertyAssessmentNo"/>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-sm-3 control-label text-right"> <spring:message
-                            code='search.licensee.mobileNo'/></label>
-                    <div class="col-sm-3 add-margin">
-                        <input type="text" id="mobileNo" class="form-control patternvalidation typeahead" placeholder=""
-                               autocomplete="off" maxlength="10" data-pattern="number"/>
-                        <form:hidden path="mobileNo" id="mobileNo"/>
-                    </div>
-                    <label class="col-sm-2 control-label text-right"> <spring:message
                             code='search.license.status'/></label>
                     <div class="col-sm-3 add-margin">
                         <form:select path="statusId" id="status" cssClass="form-control"
@@ -177,10 +110,90 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-3 control-label text-right"> <spring:message
-                            code='search.license.inactive'/></label>
-                    <div class="col-sm-3 add-margin">
-                        <form:checkbox path="inactive" id="inactive"/>
+                    <div class="col-md-3 add-margin" style="margin-left: 10%">
+                        <a href="javascript:void(0);" id="toggle-searchmore"
+                           class="btn btn-secondary"><spring:message code='lbl.more' />..</a>
+                    </div>
+                </div>
+                <div class="form-group show-search-more display-hide">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label text-right"> <spring:message
+                                code='search.license.category'/></label>
+                        <div class="col-sm-3 add-margin">
+                            <form:select path="categoryId" id="category" cssClass="form-control"
+                                         cssErrorClass="form-control error">
+                                <form:option value="">
+                                    <spring:message code="lbl.category.select"/>
+                                </form:option>
+                                <form:options items="${categoryList}" itemValue="id" itemLabel="name"/>
+                            </form:select>
+                        </div>
+                        <label class="col-sm-2 control-label text-right"> <spring:message
+                                code='search.license.subCategory'/></label>
+                        <div class="col-sm-3 add-margin">
+                            <select id="subCategory" class="form-control select2" required>
+                            </select> <label id="subCategory-error" class="error display-hide"
+                                             for="subCategory">Required</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label text-right"> <spring:message
+                                code='lbl.tradetype'/></label>
+                        <div class="col-sm-3 add-margin">
+                            <form:select path="natureOfBusinessId" id="natureOfBusiness" cssClass="form-control"
+                                         cssErrorClass="form-control error">
+                                <form:option value="">
+                                    <spring:message code="lbl.select"/>
+                                </form:option>
+                                <form:options items="${natureOfBusiness}" itemValue="id" itemLabel="name"/>
+                            </form:select>
+                        </div>
+                        <label class="col-sm-2 control-label text-right"> <spring:message
+                                code='license.oldlicensenum'/></label>
+                        <div class="col-sm-3 add-margin">
+                            <input type="text" id="oldLicenseNumber" class="form-control typeahead" placeholder=""
+                                   autocomplete="off"/>
+                            <form:hidden path="oldLicenseNumber" id="oldLicenseNumber"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label text-right"> <spring:message
+                                code='search.license.establishmentname'/></label>
+                        <div class="col-sm-3 add-margin">
+                            <input type="text" id="tradeTitle" class="form-control typeahead" placeholder=""
+                                   autocomplete="off"/>
+                            <form:hidden path="tradeTitle" id="tradeTitle"/>
+                        </div>
+                        <label class="col-sm-2 control-label text-right"> <spring:message
+                                code='licensee.applicantname'/></label>
+                        <div class="col-sm-3 add-margin">
+                            <input type="text" id="tradeOwnerName" class="form-control typeahead" placeholder=""
+                                   autocomplete="off"/>
+                            <form:hidden path="tradeOwnerName" id="tradeOwnerName"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label text-right"> <spring:message
+                                code='search.license.propertyNo'/></label>
+                        <div class="col-sm-3 add-margin">
+                            <input type="text" id="propertyAssessmentNo" class="form-control typeahead" placeholder=""
+                                   autocomplete="off"/>
+                            <form:hidden path="propertyAssessmentNo" id="propertyAssessmentNo"/>
+                        </div>
+                        <label class="col-sm-2 control-label text-right"> <spring:message
+                                code='search.licensee.mobileNo'/></label>
+                        <div class="col-sm-3 add-margin">
+                            <input type="text" id="mobileNo" class="form-control patternvalidation typeahead" placeholder=""
+                                   autocomplete="off" maxlength="10" data-pattern="number"/>
+                            <form:hidden path="mobileNo" id="mobileNo"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label text-right"> <spring:message
+                                code='search.license.inactive'/></label>
+                        <div class="col-sm-3 add-margin">
+                            <form:checkbox path="inactive" id="inactive"/>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -198,27 +211,26 @@
         </form:form>
     </div>
 </div>
-
+<br/>
+<br/>
 <div class="row display-hide report-section">
-    <div class="col-md-12 table-header text-left">Search Result</div>
     <div class="col-md-12 report-table-container">
         <table class="table table-bordered table-hover multiheadertbl" id="tblSearchTrade">
             <thead>
             <tr>
-                <th>Application Number</th>
-                <th>TL Number</th>
-                <th>Old TL Number</th>
-                <th>Category</th>
-                <th>Sub Category</th>
-                <th>Title of Trade</th>
-                <th>Trade Owner</th>
-                <th>Mobile Number</th>
-                <th>Property Assessment Number</th>
-                <th>Financial Year</th>
-                <th>Application Status</th>
-                <th>License Active</th>
-                <th>Owner Name</th>
-                <th>Actions</th>
+                <th><spring:message code="lbl.action"/></th>
+                <th><spring:message code="license.applicationnumber"/></th>
+                <th><spring:message code="lbl.license.no"/></th>
+                <th><spring:message code="license.oldlicensenum"/></th>
+                <th><spring:message code="search.license.status"/></th>
+                <th><spring:message code="lbl.active"/></th>
+                <th><spring:message code="lbl.expiry.date"/></th>
+                <th><spring:message code="lbl.wf.process.owner"/></th>
+                <th><spring:message code="search.license.establishmentname"/></th>
+                <th><spring:message code="lbl.trade.owner"/></th>
+                <th><spring:message code="lbl.licensecategory"/></th>
+                <th><spring:message code="lbl.subcategory"/></th>
+                <th><spring:message code="search.licensee.mobileNo"/></th>
             </tr>
             </thead>
         </table>

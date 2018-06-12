@@ -53,7 +53,15 @@
 <script type="text/javascript">
 function onBodyLoad()
 {
-	document.getElementById("voucherApprovedDetails").style.display="none";
+	if(document.getElementById("isVoucherOnReceiptAndStatusDisplay").value == "true")
+	 {
+		document.getElementById("voucherApprovedDetails").style.display="none";
+	 }
+	else
+		{
+			document.getElementById("voucherApprovedDetails").style.display = "";
+			dom.get('isVoucherApproved').disabled =true;
+		}
 	document.getElementById("urlDetails").style.display = "none";
 }
 

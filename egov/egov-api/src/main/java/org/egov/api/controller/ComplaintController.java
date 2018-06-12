@@ -69,6 +69,7 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.exception.ApplicationValidationException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -122,7 +123,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -246,37 +246,34 @@ public class ComplaintController extends ApiController {
         }
     }
 
-    // --------------------------------------------------------------------------------//
-
     /**
      * This will returns all complaint types
      *
      * @return ComplaintType
      */
-    @RequestMapping(value = {ApiUrl.COMPLAINT_GET_TYPES}, method = GET, produces = {TEXT_PLAIN_VALUE})
+    @RequestMapping(value = ApiUrl.COMPLAINT_GET_TYPES, method = GET, produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getAllTypes() {
         try {
-            final List<ComplaintType> complaintTypes = complaintTypeService.findActiveComplaintTypes();
-            return getResponseHandler().setDataAdapter(new ComplaintTypeAdapter()).success(complaintTypes);
+            return getResponseHandler()
+                    .setDataAdapter(new ComplaintTypeAdapter())
+                    .success(complaintTypeService.findActiveComplaintTypes());
         } catch (final Exception e) {
             LOGGER.error(EGOV_API_ERROR, e);
             return getResponseHandler().error(getMessage(SERVER_ERROR));
         }
     }
 
-    // --------------------------------------------------------------------------------//
-
     /**
      * This will returns complaint types which is frequently filed.
      *
      * @return ComplaintType
      */
-    @RequestMapping(value = {ApiUrl.COMPLAINT_GET_FREQUENTLY_FILED_TYPES}, method = GET, produces = {
-            TEXT_PLAIN_VALUE})
+    @RequestMapping(value = ApiUrl.COMPLAINT_GET_FREQUENTLY_FILED_TYPES, method = GET, produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getFrequentTypes() {
         try {
-            final List<ComplaintType> complaintTypes = complaintTypeService.getFrequentlyFiledComplaints();
-            return getResponseHandler().setDataAdapter(new ComplaintTypeAdapter()).success(complaintTypes);
+            return getResponseHandler()
+                    .setDataAdapter(new ComplaintTypeAdapter())
+                    .success(complaintTypeService.getFrequentlyFiledComplaints());
         } catch (final Exception e) {
             LOGGER.error(EGOV_API_ERROR, e);
             return getResponseHandler().error(getMessage(SERVER_ERROR));
@@ -373,8 +370,8 @@ public class ComplaintController extends ApiController {
             complaintService.createComplaint(complaint);
             return getResponseHandler().setDataAdapter(new ComplaintAdapter()).success(complaint,
                     getMessage("msg.complaint.reg.success"));
-        } catch (final ValidationException e) {
-            LOGGER.error(EGOV_API_ERROR, e);
+        } catch (ValidationException | ApplicationValidationException e) {
+            LOGGER.warn(EGOV_API_ERROR, e);
             return getResponseHandler().error(getMessage(e.getMessage()));
         } catch (final Exception e) {
             LOGGER.error(EGOV_API_ERROR, e);
@@ -382,7 +379,7 @@ public class ComplaintController extends ApiController {
         }
     }
 
-    protected Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
+    private Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
         if (ArrayUtils.isNotEmpty(files))
             return Arrays.asList(files).stream().filter(file -> !file.isEmpty()).map(file -> {
                 try {
@@ -396,8 +393,6 @@ public class ComplaintController extends ApiController {
             return Collections.emptySet();
     }
 
-    // --------------------------------------------------------------------------------//
-
     /**
      * This will upload complaint support document
      *
@@ -405,7 +400,7 @@ public class ComplaintController extends ApiController {
      * @param file
      * @return
      */
-    @RequestMapping(value = {ApiUrl.COMPLAINT_UPLOAD_SUPPORT_DOCUMENT}, method = RequestMethod.POST)
+    @RequestMapping(value = ApiUrl.COMPLAINT_UPLOAD_SUPPORT_DOCUMENT, method = RequestMethod.POST)
     public ResponseEntity<String> uploadSupportDocs(@PathVariable final String complaintNo,
                                                     @RequestParam("files") final MultipartFile file) {
         try {
@@ -425,8 +420,6 @@ public class ComplaintController extends ApiController {
             return getResponseHandler().error(getMessage(SERVER_ERROR));
         }
     }
-
-    // --------------------------------------------------------------------------------//
 
     /**
      * This will display the detail of the complaint
@@ -457,15 +450,13 @@ public class ComplaintController extends ApiController {
         }
     }
 
-    // --------------------------------------------------------------------------------//
-
     /**
      * This will display the status history of the complaint( status : REGISTERED, FORWARDED..).
      *
      * @param complaintNo
      * @return Complaint
      */
-    @RequestMapping(value = {ApiUrl.COMPLAINT_STATUS}, method = GET, produces = TEXT_PLAIN_VALUE)
+    @RequestMapping(value = ApiUrl.COMPLAINT_STATUS, method = GET, produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getStatus(@PathVariable final String complaintNo) {
         try {
             if (complaintNo == null)
@@ -484,8 +475,6 @@ public class ComplaintController extends ApiController {
         }
     }
 
-    // --------------------------------------------------------------------------------//
-
     /**
      * This will display the latest complaint except current user.
      *
@@ -494,8 +483,8 @@ public class ComplaintController extends ApiController {
      * @return Complaint
      */
 
-    @RequestMapping(value = {ApiUrl.COMPLAINT_LATEST}, method = GET, produces = TEXT_PLAIN_VALUE)
-    public ResponseEntity<String> getLatest(@PathVariable("page") final int page, @PathVariable("pageSize") final int pageSize) {
+    @RequestMapping(value = ApiUrl.COMPLAINT_LATEST, method = GET, produces = TEXT_PLAIN_VALUE)
+    public ResponseEntity<String> getLatest(@PathVariable("page") int page, @PathVariable("pageSize") int pageSize) {
 
         if (page < 1)
             return getResponseHandler().error(INVALID_PAGE_NUMBER_ERROR);
@@ -511,8 +500,6 @@ public class ComplaintController extends ApiController {
 
     }
 
-    // --------------------------------------------------------------------------------//
-
     /**
      * This will returns the location(name, address) based on given characters.
      *
@@ -523,17 +510,14 @@ public class ComplaintController extends ApiController {
             method = GET, produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getLocation(@RequestParam("locationName") final String locationName) {
         try {
-            if (locationName == null || locationName.isEmpty() || locationName.length() < 3)
+            if (isBlank(locationName) || locationName.length() < 3)
                 return getResponseHandler().error(getMessage("location.search.invalid"));
-            final List<Map<String, Object>> list = boundaryService.getBoundaryDataByNameLike(locationName);
-            return getResponseHandler().success(list);
+            return getResponseHandler().success(boundaryService.getBoundaryDataByNameLike(locationName));
         } catch (final Exception e) {
             LOGGER.error(EGOV_API_ERROR, e);
             return getResponseHandler().error(getMessage(SERVER_ERROR));
         }
     }
-
-    // --------------------------------------------------------------------------------//
 
     /**
      * This will returns resolved and unresolved complaints count in the city.
@@ -551,8 +535,6 @@ public class ComplaintController extends ApiController {
             return getResponseHandler().error(getMessage(SERVER_ERROR));
         }
     }
-
-    // --------------------------------------------------------------------------------//
 
     /**
      * This will returns complaints count by status of current user.
@@ -580,8 +562,6 @@ public class ComplaintController extends ApiController {
         }
     }
 
-    // --------------------------------------------------------------------------------//
-
     /**
      * This will returns complaint list of current user.
      *
@@ -590,11 +570,10 @@ public class ComplaintController extends ApiController {
      * @return Complaint
      */
 
-    @RequestMapping(value = {
-            ApiUrl.CITIZEN_GET_MY_COMPLAINT}, method = GET, produces = TEXT_PLAIN_VALUE)
+    @RequestMapping(value = ApiUrl.CITIZEN_GET_MY_COMPLAINT, method = GET, produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getMyComplaint(@PathVariable("page") final int page,
                                                  @PathVariable("pageSize") final int pageSize,
-                                                 @RequestParam(value = "complaintStatus", required = false) final String complaintStatus) {
+                                                 @RequestParam(required = false) String complaintStatus) {
 
         if (page < 1)
             return getResponseHandler().error(INVALID_PAGE_NUMBER_ERROR);
@@ -617,11 +596,11 @@ public class ComplaintController extends ApiController {
                 hasNextPage = pagelist.getTotalElements() > page * pageSize;
             }
 
-            if (pagelist != null)
+            if (pagelist == null)
+                return getResponseHandler().error("Invalid Complaint Status!");
+            else
                 return getResponseHandler().putStatusAttribute(HAS_NEXT_PAGE, String.valueOf(hasNextPage))
                         .setDataAdapter(new ComplaintAdapter()).success(pagelist.getContent());
-            else
-                return getResponseHandler().error("Invalid Complaint Status!");
 
         } catch (final Exception e) {
             LOGGER.error(EGOV_API_ERROR, e);
@@ -629,8 +608,6 @@ public class ComplaintController extends ApiController {
         }
 
     }
-
-    // --------------------------------------------------------------------------------//
 
     /**
      * This will returns nearest user complaint list.
@@ -643,8 +620,8 @@ public class ComplaintController extends ApiController {
      * @return Complaint
      */
     @RequestMapping(value = ApiUrl.COMPLAINT_NEARBY, method = GET, produces = TEXT_PLAIN_VALUE)
-    public ResponseEntity<String> getNearByComplaint(@PathVariable("page") final int page, @RequestParam("lat") final float lat,
-                                                     @RequestParam("lng") final float lng, @RequestParam("distance") final long distance,
+    public ResponseEntity<String> getNearByComplaint(@PathVariable("page") final int page, @RequestParam float lat,
+                                                     @RequestParam("lng") final float lng, @RequestParam long distance,
                                                      @PathVariable("pageSize") final int pageSize) {
 
         if (page < 1)
@@ -663,8 +640,6 @@ public class ComplaintController extends ApiController {
             return getResponseHandler().error(getMessage(SERVER_ERROR));
         }
     }
-
-    // ------------------------------------------
 
     /**
      * This will download the support document of the complaint.
@@ -734,8 +709,7 @@ public class ComplaintController extends ApiController {
      */
 
     @RequestMapping(value = ApiUrl.COMPLAINT_UPDATE_STATUS, method = RequestMethod.PUT, produces = TEXT_PLAIN_VALUE)
-    public ResponseEntity<String> updateComplaintStatus(
-            @PathVariable final String complaintNo, @RequestBody final JSONObject jsonData) {
+    public ResponseEntity<String> updateComplaintStatus(@PathVariable String complaintNo, @RequestBody JSONObject jsonData) {
 
         try {
             final Complaint complaint = complaintService.getComplaintByCRN(complaintNo);
@@ -850,14 +824,17 @@ public class ComplaintController extends ApiController {
                 hasNextPage = true;
                 list.remove(pageSize);
             }
-            if (!list.isEmpty()) {
+            if (list.isEmpty()) {
+                return getResponseHandler().error("No Response Found");
+
+            } else {
                 for (final StateAware stateAware : list)
                     inboxItems.add(new JsonParser().parse(stateAware.getStateInfoJson()).getAsJsonObject());
                 final ApiResponse res = ApiResponse.newInstance();
                 return res.setDataAdapter(new ComplaintAdapter()).putStatusAttribute(HAS_NEXT_PAGE, String.valueOf(hasNextPage))
                         .success(inboxItems);
-            } else
-                return getResponseHandler().error("No Response Found");
+            }
+
         } catch (final Exception e) {
             LOGGER.error(EGOV_API_ERROR, e);
             return getResponseHandler().error(getMessage(SERVER_ERROR));

@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -59,7 +59,7 @@
             </c:if>
             <form:form id="searchEscalationForm" method="post"
                        class="form-horizontal form-groups-bordered"
-                       modelAttribute="positionHierarchy">
+                       modelAttribute="escalationHierarchy">
                 <div class="panel panel-primary" data-collapsed="0">
                     <div class="panel-heading ">
                         <div class="panel-title">
@@ -73,8 +73,8 @@
                             <div class="col-sm-6">
                                 <input id="com_subtype" type="text" class="form-control typeahead is_valid_alphabet"
                                        placeholder="" autocomplete="off"/>
-                                <form:hidden path="objectSubType" id="objectSubType"/>
-                                <form:errors path="objectSubType" cssClass="add-margin error-msg"/>
+                                <form:hidden path="grievanceType" id="grievanceType"/>
+                                <form:errors path="grievanceType" cssClass="add-margin error-msg"/>
                                 <div class="error-msg subtypeerror all-errors display-hide"></div>
                             </div>
                         </div>

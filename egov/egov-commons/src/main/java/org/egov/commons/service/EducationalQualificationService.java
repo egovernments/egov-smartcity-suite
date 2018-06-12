@@ -102,10 +102,17 @@ public class EducationalQualificationService {
         return qualificationRepository.findOne(id);
     }
 
+    public EducationalQualification findByCode(String code){
+        return qualificationRepository.findByCode(code);
+    }
     public List<EducationalQualification> getActiveQualifications() {
         return qualificationRepository.findByisActive(true);
     }
 
+    public EducationalQualification findByName(String name) {
+        return qualificationRepository.findByName(name);
+    }
+    
     @SuppressWarnings("unchecked")
     public List<EducationalQualification> search(
             EducationalQualification qualification) {

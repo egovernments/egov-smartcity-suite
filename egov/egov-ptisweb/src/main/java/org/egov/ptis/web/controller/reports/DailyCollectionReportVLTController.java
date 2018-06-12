@@ -69,7 +69,6 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
-import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
@@ -96,7 +95,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DATE_FORMAT_YYYYMMDD;
 public class DailyCollectionReportVLTController {
 
     private static final String DAILY_COLLECTION_FORM = "dailyCollectionVLT-form";
-    private static final Logger LOGGER = Logger.getLogger(DailyCollectionReportVLTController.class);
     @Autowired
     private ReportService reportService;
 

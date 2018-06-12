@@ -95,7 +95,11 @@ public class AgeingReportView {
     }
 
     public AgeingReportView(final Long count) {
+        //Constructor used by JPA criteria build
+    }
 
+    public AgeingReportView() {
+        //Default constructor to avoid hib warning
     }
 
     public Long getId() {

@@ -47,8 +47,6 @@
  */
 package org.egov.ptis.domain.entity.property;
 
-import org.jboss.logging.Logger;
-
 import javax.validation.ValidationException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -58,7 +56,6 @@ import java.util.List;
 
 public class DailyCollectionReportSearch {
 
-    private static final Logger logger = Logger.getLogger(DailyCollectionReportSearch.class);
     private String fromDate;
     private String toDate;
     private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
@@ -78,8 +75,6 @@ public class DailyCollectionReportSearch {
     public void setFromDate(final String fromDate) {
         if (null != fromDate)
             try {
-                if (logger.isDebugEnabled())
-                    logger.debug("Date Range From start.. :" + ft.format(dtft.parse(fromDate)));
                 this.fromDate = ft.format(dtft.parse(fromDate));
             } catch (final ParseException e) {
                 throw new ValidationException(e.getMessage());
@@ -99,8 +94,6 @@ public class DailyCollectionReportSearch {
                 cal.set(Calendar.MINUTE, 59);
                 cal.set(Calendar.SECOND, 59);
                 cal.set(Calendar.MILLISECOND, 999);
-                if (logger.isDebugEnabled())
-                    logger.debug("Date Range Till .. :" + ft.format(cal.getTime()));
                 this.toDate = ft.format(cal.getTime());
             } catch (final ParseException e) {
                 throw new ValidationException(e.getMessage());
@@ -162,32 +155,6 @@ public class DailyCollectionReportSearch {
     public void setUlbName(String ulbName) {
         this.ulbName = ulbName;
     }
-
-    /*public Filters searchCollectionFilters() {
-        final List<Filter> andFilters = new ArrayList<>(0);
-        andFilters.add(termsStringFilter("clauses.cityname", ulbName));
-        andFilters.add(termsStringFilter("clauses.channel", collectionMode));
-        andFilters.add(termsStringFilter("clauses.status", status));
-        andFilters.add(termsStringFilter("clauses.receiptcreator", collectionOperator));
-        andFilters.add(termsStringFilter("clauses.billingservice", PropertyTaxConstants.INDEX_COLLECTION_CLAUSES_BILLINGSERVICE_NON_VACANT_LAND));
-        if (!consumerCode.isEmpty()) {
-            String[] consumerCodes = consumerCode.toArray(new String[consumerCode.size()]);
-            andFilters.add(termsStringFilter("common.consumercode", consumerCodes));
-        }
-        andFilters.add(rangeFilter("searchable.receiptdate", fromDate, toDate));
-        if (logger.isDebugEnabled())
-            logger.debug("finished filters");
-        return Filters.withAndFilters(andFilters);
-    }
-
-    public Filters searchProperyForWardFilters() {
-        final List<Filter> andFilters = new ArrayList<>(0);
-        andFilters.add(termsStringFilter("clauses.cityname", ulbName));
-        andFilters.add(termsStringFilter("clauses.revwardname", revenueWard));
-        if (logger.isDebugEnabled())
-            logger.debug("finished property tax filters");
-        return Filters.withAndFilters(andFilters);
-    }*/
 
     public String searchQuery() {
         return searchText;

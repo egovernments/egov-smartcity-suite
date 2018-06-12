@@ -55,6 +55,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.portal.entity.Citizen;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
@@ -473,7 +474,7 @@ public class PropertyHibernateDAO implements PropertyDAO {
                         + "','"
                         + PropertyTaxConstants.PENALTY_DMD_RSN_CODE
                         + "','"
-                        + PropertyTaxConstants.LPPAY_PENALTY_DMDRSNCODE
+                        + PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES
                         + "') " + "group by dmdRes.id_installment, inst.start_date " + "order by inst.start_date ");
         final Query qry = getCurrentSession().createSQLQuery(strBuf.toString()).setLong("dmdId", egDemand.getId());
         return qry.list();
@@ -493,7 +494,7 @@ public class PropertyHibernateDAO implements PropertyDAO {
                         + "and dmdresmas.code = :dmdRsnCode "
                         + "group by dmdRes.id_installment, inst.start_date " + "order by inst.start_date ");
         final Query qry = getCurrentSession().createSQLQuery(strBuf.toString()).setLong("dmdId", egDemand.getId())
-                .setString("dmdRsnCode", PropertyTaxConstants.LPPAY_PENALTY_DMDRSNCODE);
+                .setString("dmdRsnCode", PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES);
         return qry.list();
     }
 
@@ -679,6 +680,36 @@ public class PropertyHibernateDAO implements PropertyDAO {
                 .createQuery("from PropertyImpl where basicProperty =:basicProperty and status = 'G' order by id desc ");
         qry.setEntity("basicProperty", basicProperty);
         qry.setMaxResults(1);
+        return (Property) qry.uniqueResult();
+    }
+    
+    /**
+     * API gives the history property for the basicproperty
+     */
+    @Override
+    public Property getHistoryPropertyForBasicProperty(BasicProperty basicProperty) {
+        Query qry = getCurrentSession()
+                .createQuery("from PropertyImpl where basicProperty =:basicProperty and status = 'H' order by id desc ");
+        qry.setEntity("basicProperty", basicProperty);
+        qry.setMaxResults(1);
+        return (Property) qry.uniqueResult();
+    } 
+    
+    /**
+     * API gives the latest Demand for history property
+     */
+    public Ptdemand getLatestDemand(Property oldProperty) {
+        Query qry = getCurrentSession()
+                .createQuery("from Ptdemand where egptProperty =:oldProperty and isHistory='N' order by egInstallmentMaster.installmentYear desc");
+        qry.setEntity("oldProperty", oldProperty);
+        qry.setMaxResults(1);
+        return (Ptdemand)qry.uniqueResult();
+    }
+    
+    public Property getPropertyByApplicationNo(String applicationNo){
+    	Query qry = getCurrentSession()
+                .createQuery("from PropertyImpl where applicationNo =:applicationNo ");
+        qry.setString("applicationNo", applicationNo);
         return (Property) qry.uniqueResult();
     }
 }

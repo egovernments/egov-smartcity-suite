@@ -111,12 +111,14 @@ public class ComplaintProcessFlowService {
     public void onUpdation(Complaint complaint) {
 
         User currentUser = securityUtils.getCurrentUser();
+        Date currentDate = new Date();
         String userName;
         if (securityUtils.currentUserIsCitizen())
             userName = currentUser.getName();
         else
             userName = currentUser.getUsername() + DELIMITER_COLON + currentUser.getName();
         if (!complaint.transitionCompleted() && complaint.completed()) {
+            complaint.setCompletionDate(currentDate);
             if (securityUtils.currentUserIsEmployee())
                 complaint.setCurrentOwner(currentUser);
             if (!currentUser.hasRole(GO_ROLE_NAME)) {
@@ -124,38 +126,39 @@ public class ComplaintProcessFlowService {
                         .withComments(complaint.approverComment())
                         .withStateValue(complaint.getStatus().getName())
                         .withSenderName(userName)
-                        .withDateInfo(new Date());
+                        .withDateInfo(currentDate);
             } else {
                 complaint.transition().end()
                         .withComments(complaint.approverComment())
                         .withStateValue(complaint.getStatus().getName())
                         .withSenderName(userName)
-                        .withDateInfo(new Date())
+                        .withDateInfo(currentDate)
                         .withOwner(complaint.getState().getOwnerPosition());
             }
         } else if (complaint.hasNextOwner()) {
             Position owner = positionMasterService.getPositionById(complaint.nextOwnerId());
             complaint.setAssignee(owner);
             complaint.transition().progressWithStateCopy().withOwner(owner).withComments(complaint.approverComment()).withSenderName(userName)
-                    .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date());
+                    .withStateValue(complaint.getStatus().getName()).withDateInfo(currentDate);
         } else if (complaint.sendToPreviousOwner() && canSendToPreviousAssignee(complaint)) {
             Position nextAssignee = complaint.previousAssignee();
             complaint.setDepartment(nextAssignee.getDeptDesig().getDepartment());
             complaint.setAssignee(nextAssignee);
             assignCurrentOwner(complaint);
             complaint.transition().progressWithStateCopy().withComments(complaint.approverComment()).withSenderName(userName)
-                    .withStateValue(complaint.getStatus().getName()).withOwner(nextAssignee).withDateInfo(new Date());
+                    .withStateValue(complaint.getStatus().getName()).withOwner(nextAssignee).withDateInfo(currentDate);
 
         } else if (complaint.reopened()) {
             Position nextAssignee = complaint.getState().getOwnerPosition();
+            complaint.setCompletionDate(null);
             if (configurationService.assignReopenedComplaintBasedOnRouterPosition())
                 nextAssignee = complaintRouterService.getComplaintAssignee(complaint);
             complaint.transition().reopen().withComments(complaint.approverComment())
                     .withSenderName(userName).withOwner(nextAssignee)
-                    .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date());
+                    .withStateValue(complaint.getStatus().getName()).withDateInfo(currentDate);
         } else if (complaint.inprogress()) {
             complaint.transition().progressWithStateCopy().withComments(complaint.approverComment()).withSenderName(userName)
-                    .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date());
+                    .withStateValue(complaint.getStatus().getName()).withDateInfo(currentDate);
         }
 
     }

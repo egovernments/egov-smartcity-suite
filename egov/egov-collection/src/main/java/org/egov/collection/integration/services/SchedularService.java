@@ -95,6 +95,8 @@ public class SchedularService {
     public void reconcileAXIS() {
 
         LOGGER.debug("Inside reconcileAXIS");
+        final Calendar threeDaysBackCalender = Calendar.getInstance();
+        threeDaysBackCalender.add(Calendar.DATE, -3);
         final Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MINUTE, -30);
         final Query qry = persistenceService
@@ -120,13 +122,23 @@ public class SchedularService {
                         LOGGER.info("paymentResponse.getAdditionalInfo6():" + paymentResponse.getAdditionalInfo6());
                         LOGGER.info("paymentResponse.getAuthStatus():" + paymentResponse.getAuthStatus());
                         ReceiptHeader onlinePaymentReceiptHeader = (ReceiptHeader) persistenceService.findByNamedQuery(
-                                CollectionConstants.QUERY_RECEIPT_BY_ID_AND_CITYCODE,
+                                CollectionConstants.QUERY_PENDING_RECEIPT_BY_ID_AND_CITYCODE,
                                 Long.valueOf(paymentResponse.getReceiptId()),
                                 ApplicationThreadLocals.getCityCode());
 
                         if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(paymentResponse.getAuthStatus()))
                             reconciliationService.processSuccessMsg(onlinePaymentReceiptHeader, paymentResponse);
-                        else
+                        else if ((DateUtils.compareDates(onlinePaymentReceiptHeader.getCreatedDate(),
+                                threeDaysBackCalender.getTime()))
+                                &&
+                                (onlinePaymentReceiptHeader.getOnlinePayment().getService().getCode()
+                                        .equals(CollectionConstants.SERVICECODE_AXIS) &&
+                                        CollectionConstants.AXIS_AUTHORISATION_CODES_WAITINGFOR_PAY_GATEWAY_RESPONSE
+                                                .contains(paymentResponse.getAuthStatus()))) {
+                            onlinePaymentReceiptHeader.getOnlinePayment().setAuthorisationStatusCode(
+                                    paymentResponse.getAuthStatus());
+                            onlinePaymentReceiptHeader.getOnlinePayment().setRemarks(paymentResponse.getErrorDescription());
+                        } else
                             reconciliationService.processFailureMsg(onlinePaymentReceiptHeader, paymentResponse);
 
                         final long elapsedTimeInMillis = System.currentTimeMillis() - startTimeInMilis;
@@ -145,22 +157,27 @@ public class SchedularService {
     }
 
     @Transactional
-    public void reconcileATOM() {
+    public void reconcileATOM(Integer modulo) {
         LOGGER.debug("Inside reconcileATOM");
         final Calendar fiveDaysBackCalender = Calendar.getInstance();
         fiveDaysBackCalender.add(Calendar.DATE, -5);
         final Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MINUTE, -30);
-        final Query qry = persistenceService
+        StringBuilder queryString = new StringBuilder(200);
+        queryString.append(
+                "select receipt from org.egov.collection.entity.OnlinePayment as receipt where receipt.status.code=:onlinestatuscode")
+                .append(" and receipt.service.code=:paymentservicecode and receipt.createdDate<:thirtyminslesssysdate  and MOD(receipt.id, ")
+                .append(CollectionConstants.QUARTZ_ATOM_RECONCILE_BULK_JOBS)
+                .append(") = :modulo  order by receipt.id asc");
+        final Query query = persistenceService
                 .getSession()
-                .createQuery(
-                        "select receipt from org.egov.collection.entity.OnlinePayment as receipt where receipt.status.code=:onlinestatuscode"
-                                + " and receipt.service.code=:paymentservicecode and receipt.createdDate<:thirtyminslesssysdate order by receipt.id asc")
+                .createQuery(queryString.toString())
                 .setMaxResults(50);
-        qry.setString("onlinestatuscode", CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
-        qry.setString("paymentservicecode", CollectionConstants.SERVICECODE_ATOM);
-        qry.setParameter("thirtyminslesssysdate", new Date(cal.getTimeInMillis()));
-        final List<OnlinePayment> reconcileList = qry.list();
+        query.setString("onlinestatuscode", CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
+        query.setString("paymentservicecode", CollectionConstants.SERVICECODE_ATOM);
+        query.setParameter("thirtyminslesssysdate", new Date(cal.getTimeInMillis()));
+        query.setParameter("modulo", modulo);
+        final List<OnlinePayment> reconcileList = query.list();
         LOGGER.debug("Thread ID = " + Thread.currentThread().getId() + ": got " + reconcileList.size() + " results.");
         if (!reconcileList.isEmpty()) {
             try {
@@ -173,10 +190,10 @@ public class SchedularService {
                         LOGGER.info("paymentResponse.getAdditionalInfo6():" + paymentResponse.getAdditionalInfo6());
                         LOGGER.info("paymentResponse.getAuthStatus():" + paymentResponse.getAuthStatus());
                         ReceiptHeader onlinePaymentReceiptHeader = null;
-                        if (paymentResponse.getAdditionalInfo2() != null && !paymentResponse.getAdditionalInfo2().isEmpty()) {
+                        if (isNotBlank(paymentResponse.getAdditionalInfo2())) {
                             if (paymentResponse.getAdditionalInfo2().equals(ApplicationThreadLocals.getCityCode()))
                                 onlinePaymentReceiptHeader = (ReceiptHeader) persistenceService.findByNamedQuery(
-                                        CollectionConstants.QUERY_RECEIPT_BY_ID_AND_CITYCODE,
+                                        CollectionConstants.QUERY_PENDING_RECEIPT_BY_ID_AND_CITYCODE,
                                         Long.valueOf(paymentResponse.getReceiptId()),
                                         paymentResponse.getAdditionalInfo2());
                             else {
@@ -186,7 +203,7 @@ public class SchedularService {
                             }
                         } else
                             onlinePaymentReceiptHeader = (ReceiptHeader) persistenceService.findByNamedQuery(
-                                    CollectionConstants.QUERY_RECEIPT_BY_ID_AND_CITYCODE,
+                                    CollectionConstants.QUERY_PENDING_RECEIPT_BY_ID_AND_CITYCODE,
                                     Long.valueOf(paymentResponse.getReceiptId()),
                                     ApplicationThreadLocals.getCityCode());
                         if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(paymentResponse.getAuthStatus()))

@@ -171,8 +171,6 @@ public abstract class WorkflowDetails {
 
 		String step = workflowBean.getActionName().split(":")[1];
 		String action = workflowBean.getActionName().split(":")[0];
-		Property oldProperty = PropertyTaxUtil.getLatestProperty(propertyModel.getBasicProperty(),
-				PropertyTaxConstants.STATUS_ISHISTORY);
 
 		LOGGER.debug("getNextStateUserId - workflow step=" + step);
 

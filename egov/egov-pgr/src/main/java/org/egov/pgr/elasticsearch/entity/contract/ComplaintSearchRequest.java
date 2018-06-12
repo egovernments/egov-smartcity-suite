@@ -48,12 +48,13 @@
 
 package org.egov.pgr.elasticsearch.entity.contract;
 
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.joda.time.DateTime;
+import org.springframework.data.domain.PageRequest;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
 import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
 import static org.egov.infra.utils.DateUtils.endOfGivenDate;
 import static org.egov.infra.utils.DateUtils.startOfGivenDate;
@@ -62,9 +63,13 @@ import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 
 public class ComplaintSearchRequest {
+    private static final int MAX_RESULT_SIZE = 10000;
+    private static final int MIN_PAGE_SIZE = 0;
     private String fromDate;
     private String toDate;
-
+    private boolean singleULB = true;
+    private int page = MIN_PAGE_SIZE;
+    private int size = MAX_RESULT_SIZE;
     private BoolQueryBuilder searchQueryBuilder;
 
     public ComplaintSearchRequest() {
@@ -76,7 +81,7 @@ public class ComplaintSearchRequest {
             searchQueryBuilder.filter(matchQuery("crn", complaintNumber));
     }
 
-    public void setComplaintStatus(final String complaintStatus) {
+    public void setComplaintStatus(String complaintStatus) {
         if (isNotBlank(complaintStatus))
             searchQueryBuilder.filter(matchQuery("complaintStatusName", complaintStatus));
     }
@@ -86,48 +91,64 @@ public class ComplaintSearchRequest {
             searchQueryBuilder.filter(matchQuery("complainantName", complainantName));
     }
 
-    public void setLocation(final String location) {
+    public void setLocation(String location) {
         if (isNotBlank(location))
             searchQueryBuilder.filter(matchQuery("wardName", location));
     }
 
-    public void setComplainantPhoneNumber(final String phoneNumber) {
+    public void setComplainantPhoneNumber(String phoneNumber) {
         if (isNotBlank(phoneNumber))
             searchQueryBuilder.filter(matchQuery("complainantMobile", phoneNumber));
     }
 
-    public void setComplainantEmail(final String email) {
+    public void setComplainantEmail(String email) {
         if (isNotBlank(email))
             searchQueryBuilder.filter(matchQuery("complainantEmail", email));
     }
 
-    public void setReceivingMode(final String receivingMode) {
+    public void setReceivingMode(String receivingMode) {
         if (isNotBlank(receivingMode))
             searchQueryBuilder.filter(matchQuery("receivingMode", receivingMode));
     }
 
-    public void setComplaintType(final String complaintType) {
+    public void setComplaintType(String complaintType) {
         if (isNotBlank(complaintType))
             searchQueryBuilder.filter(matchQuery("complaintTypeName", complaintType));
     }
 
-    public void setFromDate(final String fromDate) {
+    public void setFromDate(String fromDate) {
         if (fromDate != null)
             this.fromDate = startOfGivenDate(toDateTimeUsingDefaultPattern(fromDate)).toString(ES_DATE_FORMAT);
     }
 
-    public void setToDate(final String toDate) {
+    public void setToDate(String toDate) {
         if (toDate != null)
             this.toDate = endOfGivenDate(toDateTimeUsingDefaultPattern(toDate)).toString(ES_DATE_FORMAT);
     }
 
-    public void setComplaintDepartment(final String complaintDepartment) {
+    public void setComplaintDepartment(String complaintDepartment) {
         if (isNotBlank(complaintDepartment))
             searchQueryBuilder.filter(matchQuery("departmentName", complaintDepartment));
     }
 
-    public void setComplaintDate(final String complaintDate) {
-        if (null != complaintDate) {
+    public void setSingleULB(boolean singleULB) {
+        this.singleULB = singleULB;
+    }
+
+    public void setPage(int page) {
+        this.page = page < MIN_PAGE_SIZE ? MIN_PAGE_SIZE : page;
+    }
+
+    public void setSize(int size) {
+        this.size = size > MAX_RESULT_SIZE ? MAX_RESULT_SIZE : size;
+    }
+
+    public PageRequest getPageRequest() {
+        return new PageRequest(page, size);
+    }
+
+    public void setComplaintDate(String complaintDate) {
+        if (complaintDate != null) {
             DateTime currentDate = new DateTime();
             this.toDate = endOfGivenDate(currentDate).toString(ES_DATE_FORMAT);
             if ("today".equalsIgnoreCase(complaintDate)) {
@@ -147,7 +168,8 @@ public class ComplaintSearchRequest {
     }
 
     public BoolQueryBuilder query() {
-        searchQueryBuilder.filter(matchQuery("cityCode", ApplicationThreadLocals.getCityCode()));
+        if (singleULB)
+            searchQueryBuilder.filter(matchQuery("cityCode", getCityCode()));
         if (isNotBlank(this.fromDate) || isNotBlank(this.toDate))
             searchQueryBuilder.must(rangeQuery("createdDate")
                     .from(this.fromDate).to(this.toDate));

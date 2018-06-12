@@ -46,14 +46,12 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
   -->
-
-<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-02-08T16:54:40 -->
+<!-- Created with Jaspersoft Studio version 6.4.0.final using JasperReports Library version 6.4.1  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="mainCreatePropertyAck" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryNewPage="true" uuid="485838f8-f590-40d5-9fb8-61d36cabb58b">
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infra.utils.*"/>
 	<import value="net.sf.jasperreports.engine.util.JRStringUtil"/>
-	<parameter name="logoPath" class="java.lang.String"/>
+	<parameter name="logoPath" class="java.lang.Object"/>
 	<parameter name="loggedInUsername" class="java.lang.String"/>
 	<parameter name="cityName" class="java.lang.String"/>
 	<field name="ownerName" class="java.lang.String"/>

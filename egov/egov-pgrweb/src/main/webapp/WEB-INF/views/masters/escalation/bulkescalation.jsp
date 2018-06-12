@@ -56,6 +56,9 @@
 		<c:if test="${not empty message}">
 			<div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
 		</c:if>
+		<c:if test="${not empty warning}">
+			<div class="alert alert-danger" role="alert"><spring:message code="${warning}"/></div>
+		</c:if>
 		<form:form id="bulkEscalation" name="bulkEscalation" method="post" class="form-horizontal form-groups-bordered"
                    modelAttribute="bulkEscalationGenerator" action="bulkescalation/update">
 			<div class="panel panel-primary" data-collapsed="0">

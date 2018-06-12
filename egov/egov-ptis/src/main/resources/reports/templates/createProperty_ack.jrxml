@@ -56,7 +56,7 @@
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infra.utils.*"/>
 	<import value="net.sf.jasperreports.engine.util.JRStringUtil"/>
-	<parameter name="logoPath" class="java.lang.String"/>
+	<parameter name="logoPath" class="java.lang.Object"/>
 	<parameter name="loggedInUsername" class="java.lang.String"/>
 	<parameter name="cityName" class="java.lang.String"/>
 	<parameter name="ackType" class="java.lang.String"/>
@@ -109,7 +109,7 @@
 			</textField>
 			<image hAlign="Center" vAlign="Middle" onErrorType="Blank">
 				<reportElement x="41" y="36" width="60" height="60" uuid="771b8be2-e2c5-4158-8968-ef55dc437c0f"/>
-				<imageExpression><![CDATA[$P{logoPath}]]></imageExpression>
+				<imageExpression><![CDATA[net.sf.jasperreports.engine.util.JRImageLoader.loadImage((byte[])$P{logoPath})]]></imageExpression>
 			</image>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="0" y="0" width="100" height="20" uuid="87f893c8-0ba7-4b3b-abc1-44e2ab88cdae"/>

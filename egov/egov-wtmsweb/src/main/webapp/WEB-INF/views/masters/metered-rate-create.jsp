@@ -168,8 +168,7 @@
 							<form:input class="form-control" path="ratesDetail[0].flatAmount" id="ratesDetail[0].flatAmount" value="${ratesDetail[0].flatAmount}" />
 						</td>
 						<td>
-							<form:hidden path="ratesDetail[0].recursive" value="${ratesDetail[0].recursive}" id="ratesDetail[0].recursive" class="row text-right" />
-							<input type="checkbox" value="${ratesDetail[0].recursive}" onchange="changeRecursive(this);" id="ratesDetail[0].recursive" class="row text-right" />
+							<input type="checkbox" value="${ratesDetail[0].recursive}" name="ratesDetail[0].recursive" id="ratesDetail[0].recursive" class="row text-right isrecursive" />
 						</td>
 						<td>
 							<form:input path="ratesDetail[0].recursiveFactor" class="form-control patternvalidation" data-pattern="decimalvalue" id="ratesDetail[0].recursiveFactor"/>
@@ -197,13 +196,13 @@
 								<form:input class="form-control" path="ratesDetail[${counter.index}].flatAmount" id="ratesDetail[${counter.index}].flatAmount" value="${ratesDetailValue.flatAmount}" readonly="true"/>
 							</td>
 							<td>
-								<form:hidden path="ratesDetail[${counter.index}].recursive" value="${ratesDetailValue.recursive}" id="ratesDetail[${counter.index}].recursive" class=" row text-right" />
+								<form:hidden path="ratesDetail[${counter.index}].recursive" value="${ratesDetailValue.recursive}" id="ratesDetail[${counter.index}].recursive" />
 								<c:choose>
 									<c:when test="${ratesDetailValue.recursive=='true'}">
-										<input type="checkbox" name="ratesDetail[${counter.index}].recursive" value="${ratesDetailValue.recursive}" onchange="changeRecursive(this);" id="ratesDetail[${counter.index}].recursive" disabled="true" checked="checked" class="row text-right" />
+										<input type="checkbox" name="ratesDetail[${counter.index}].recursive" value="${ratesDetailValue.recursive}" id="ratesDetail[${counter.index}].recursive"  checked="checked" class="row text-right" />
 									</c:when>
 									<c:otherwise>
-										<input type="checkbox" name="ratesDetail[${counter.index}].recursive" value="${ratesDetailValue.recursive}" onchange="changeRecursive(this);" id="ratesDetail[${counter.index}].recursive" disabled="true" class="row text-right" />
+										<input type="checkbox" name="ratesDetail[${counter.index}].recursive" value="${ratesDetailValue.recursive}" id="ratesDetail[${counter.index}].recursive" class="row text-right"/>
 									</c:otherwise>
 								</c:choose>
 							</td>

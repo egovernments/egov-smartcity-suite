@@ -145,12 +145,20 @@ public class PreambleWorkflowCustomImpl implements PreambleWorkflowCustom {
                             .withOwner(pos).withNextAction(wfmatrix.getNextAction())
                             .withNatureOfTask(CouncilConstants.NATURE_OF_WORK);
                 }
-            } else {
+            } 
+            // IF REJECTED APPLICATION GOT CANCELLED THEN TRANSITION OCCUR HERE
+            else if (CouncilConstants.CANCEL
+                    .equalsIgnoreCase(workFlowAction)) {
+                cancelworkflow(councilPreamble, approvalComent, user, currentDate);
+            }
+            
+            else {
 
-                wfmatrix = councilPreambleWorkflowService.getWfMatrix(councilPreamble.getStateType(), null, null, null,
+                wfmatrix = councilPreambleWorkflowService.getWfMatrix(councilPreamble.getStateType(), null, null, "CouncilCommonWorkflow",
                         CouncilConstants.WF_NEW_STATE, null);
                 councilPreamble.setStatus(getStatusByPassingModuleAndCode(wfmatrix));
-                if (null == councilPreamble.getState() || CouncilConstants.REJECTED.equalsIgnoreCase(councilPreamble.getStatus().getCode())) {
+                if (null == councilPreamble.getState()
+                        || CouncilConstants.REJECTED.equalsIgnoreCase(councilPreamble.getStatus().getCode())) {
                     councilPreamble.transition().start()
                             .withSenderName(user.getUsername() + CouncilConstants.COLON_CONCATE + user.getName())
                             .withComments(approvalComent).withStateValue(wfmatrix.getNextState()).withDateInfo(new Date())
@@ -169,22 +177,13 @@ public class PreambleWorkflowCustomImpl implements PreambleWorkflowCustom {
             councilPreamble.setStatus(getStatusByPassingStatusCode("REJECTED"));
             rejectionWorkflowTransition(councilPreamble, approvalComent, user, currentDate, wfInitiator);
         }
-        // IF REJECTED APPLICATION GOT CANCELLED THEN TRANSITION OCCUR HERE
-        else if (CouncilConstants.CANCEL
-                .equalsIgnoreCase(workFlowAction)) {
-            councilPreamble.transition().end()
-                    .withSenderName(user.getUsername() + CouncilConstants.COLON_CONCATE + user.getName())
-                    .withComments(approvalComent).withDateInfo(currentDate.toDate())
-                    .withNatureOfTask(CouncilConstants.NATURE_OF_WORK);
-        } else if (CouncilConstants.WF_APPROVE_BUTTON.equalsIgnoreCase(workFlowAction)) {
+
+        else if (CouncilConstants.WF_APPROVE_BUTTON.equalsIgnoreCase(workFlowAction)) {
             wfmatrix = councilPreambleWorkflowService.getWfMatrix(councilPreamble.getStateType(), null, null, null,
                     councilPreamble.getCurrentState().getValue(), councilPreamble.getCurrentState().getNextAction());
             councilPreamble.setStatus(getStatusByPassingModuleAndCode(wfmatrix));
             if ("END".equalsIgnoreCase(wfmatrix.getNextAction())) {
-                councilPreamble.transition().end()
-                        .withSenderName(user.getUsername() + CouncilConstants.COLON_CONCATE + user.getName())
-                        .withComments(approvalComent).withDateInfo(currentDate.toDate())
-                        .withNatureOfTask(CouncilConstants.NATURE_OF_WORK);
+                cancelworkflow(councilPreamble, approvalComent, user, currentDate);
             } else {
                 councilPreamble.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
@@ -195,10 +194,7 @@ public class PreambleWorkflowCustomImpl implements PreambleWorkflowCustom {
             if (ApplicationThreadLocals.getUserId().equals(
                     wfInitiator != null && wfInitiator.getEmployee() != null ? wfInitiator.getEmployee().getId() : 0)) {
                 councilPreamble.setStatus(getStatusByPassingStatusCode("REJECTED"));
-                councilPreamble.transition().end()
-                        .withSenderName(user.getUsername() + CouncilConstants.COLON_CONCATE + user.getName())
-                        .withComments(approvalComent).withDateInfo(currentDate.toDate())
-                        .withNatureOfTask(CouncilConstants.NATURE_OF_WORK);
+                cancelworkflow(councilPreamble, approvalComent, user, currentDate);
             } else {
                 rejectionWorkflowTransition(councilPreamble, approvalComent, user, currentDate, wfInitiator);
             }
@@ -248,6 +244,15 @@ public class PreambleWorkflowCustomImpl implements PreambleWorkflowCustom {
         }
     }
 
+    private void cancelworkflow(CouncilPreamble councilPreamble, String approvalComent, final User user,
+            final DateTime currentDate) {
+        councilPreamble.transition().end()
+                .withSenderName(user.getUsername() + CouncilConstants.COLON_CONCATE + user.getName())
+                .withComments(approvalComent).withDateInfo(currentDate.toDate())
+                .withNatureOfTask(CouncilConstants.NATURE_OF_WORK)
+                .withNextAction("END");
+    }
+
     private void rejectionWorkflowTransition(CouncilPreamble councilPreamble, String approvalComent, final User user,
             final DateTime currentDate, Assignment wfInitiator) {
         WorkFlowMatrix wfmatrix;
@@ -262,7 +267,7 @@ public class PreambleWorkflowCustomImpl implements PreambleWorkflowCustom {
                     .withOwner(wfInitiator != null ? wfInitiator.getPosition() : null)
                     .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(CouncilConstants.NATURE_OF_WORK);
         } else {
-            wfmatrix = councilPreambleWorkflowService.getWfMatrix(councilPreamble.getStateType(), null, null, null,
+            wfmatrix = councilPreambleWorkflowService.getWfMatrix(councilPreamble.getStateType(), null, null, "CouncilCommonWorkflow",
                     CouncilConstants.WF_REJECT_STATE, null);
             councilPreamble.transition().progressWithStateCopy()
                     .withSenderName(user.getUsername() + CouncilConstants.COLON_CONCATE + user.getName())

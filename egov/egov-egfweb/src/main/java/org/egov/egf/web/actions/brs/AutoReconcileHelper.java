@@ -78,7 +78,8 @@ import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.LongType;
-import org.jboss.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -105,8 +106,7 @@ import java.util.List;
 public class AutoReconcileHelper {
 
     private static final String DID_NOT_FIND_MATCH_IN_BANKBOOK = "did not find match in Bank Book  (InstrumentHeader)";
-    private static final long serialVersionUID = -4207341983597707193L;
-    private static final Logger LOGGER = Logger.getLogger(AutoReconciliationAction.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AutoReconciliationAction.class);
     private static final int ACCOUNTNUMBER_ROW_INDEX = 2;
     private static final int STARTOF_DETAIL_ROW_INDEX = 8;
     private static final int TXNDT_INDEX = 1;
@@ -255,7 +255,7 @@ public class AutoReconcileHelper {
                         detailRow = sheet.getRow(rowIndex);
                         if (rowIndex >= 9290)
                             if (LOGGER.isDebugEnabled())
-                                LOGGER.debug(detailRow.getRowNum());
+                                LOGGER.debug(String.valueOf(detailRow.getRowNum()));
                         dateStr = getStrValue(detailRow.getCell(TXNDT_INDEX));
                         if (alreadyUploaded(dateStr)) {
                             file_already_uploaded = file_already_uploaded.replace("#name", bankStatmentInXlsFileName);

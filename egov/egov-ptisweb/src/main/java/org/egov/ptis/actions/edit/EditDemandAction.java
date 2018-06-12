@@ -47,9 +47,6 @@
  */
 package org.egov.ptis.actions.edit;
 
-import static java.math.BigDecimal.ZERO;
-import static org.egov.ptis.client.util.PropertyTaxUtil.isNull;
-import static org.egov.ptis.client.util.PropertyTaxUtil.isZero;
 import static org.egov.ptis.constants.PropertyTaxConstants.BUILTUP_PROPERTY_DMDRSN_CODE_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
@@ -165,7 +162,7 @@ public class EditDemandAction extends BaseFormAction {
             + "LEFT JOIN ptd.egDemandDetails dd " + "LEFT JOIN ptd.egptProperty p " + "LEFT JOIN  p.basicProperty bp "
             + "WHERE bp = ? " + "AND bp.active = true " + "AND p.status = 'A' ";
 
-    private static final String queryInstallmentPTDemand = "select ptd from Ptdemand ptd inner join fetch ptd.egDemandDetails dd "
+    private static final String QUERYINSTPTDEMAND = "select ptd from Ptdemand ptd inner join fetch ptd.egDemandDetails dd "
             + "inner join fetch dd.egDemandReason dr inner join fetch dr.egDemandReasonMaster drm "
             + "inner join fetch ptd.egptProperty p inner join fetch p.basicProperty bp "
             + "where bp.active = true and (p.status = 'A' or p.status = 'I' or p.status = 'W') "
@@ -173,7 +170,7 @@ public class EditDemandAction extends BaseFormAction {
 
     private static final String QUERY_NONZERO_DEMAND_DETAILS = QUERY_DEMAND_DETAILS + " AND dd.amount >= 0 ";
 
-    private static final String queryInstallmentDemandDetails = QUERY_NONZERO_DEMAND_DETAILS
+    private static final String QUERYINSTDD = QUERY_NONZERO_DEMAND_DETAILS
             + " AND ptd.egInstallmentMaster = ? ";
 
     private static final String EDIT_DEMAND = "Edit Demand";
@@ -209,12 +206,12 @@ public class EditDemandAction extends BaseFormAction {
     private PersistenceService propertyImplService;
     private final DemandAudit demandAudit = new DemandAudit();
 
-    private List<EgDemandDetails> demandDetails = new ArrayList<EgDemandDetails>();
-    private List<DemandDetail> demandDetailBeanList = new ArrayList<DemandDetail>();
-    private List<Installment> allInstallments = new ArrayList<Installment>();
-    private final Set<Installment> propertyInstallments = new TreeSet<Installment>();
-    private Map<Installment, Map<String, Boolean>> collectionDetails = new HashMap<Installment, Map<String, Boolean>>();
-    private Map<String, String> demandReasonMap = new HashMap<String, String>();
+    private List<EgDemandDetails> demandDetails = new ArrayList<>();
+    private List<DemandDetail> demandDetailBeanList = new ArrayList<>();
+    private List<Installment> allInstallments = new ArrayList<>();
+    private final Set<Installment> propertyInstallments = new TreeSet<>();
+    private Map<Installment, Map<String, Boolean>> collectionDetails = new HashMap<>();
+    private Map<String, String> demandReasonMap = new HashMap<>();
 
     @Override
     public Object getModel() {
@@ -265,16 +262,16 @@ public class EditDemandAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Entered into validate");
 
-        final Set<Installment> newInstallments = new TreeSet<Installment>();
-        final Set<String> installmentsChqPenalty = new TreeSet<String>();
-        final Set<String> instDmdRsnMaster = new HashSet<String>();
+        final Set<Installment> newInstallments = new TreeSet<>();
+        final Set<String> installmentsChqPenalty = new TreeSet<>();
+        final Set<String> instDmdRsnMaster = new HashSet<>();
         List<String> instString;
-        final Set<String> actAmtInstallments = new TreeSet<String>();
+        final Set<String> actAmtInstallments = new TreeSet<>();
         List<String> errorParams = null;
 
         for (final DemandDetail dd : demandDetailBeanList)
             if (dd.getIsNew() != null && dd.getIsNew()) {
-                instString = new ArrayList<String>();
+                instString = new ArrayList<>();
                 instString.add(dd.getReasonMaster());
                 if ((PropertyTaxConstants.NON_VACANT_TAX_DEMAND_CODES.contains(dd.getReasonMaster())
                         || dd.getReasonMaster().equalsIgnoreCase(DEMANDRSN_STR_VACANT_TAX))
@@ -309,9 +306,9 @@ public class EditDemandAction extends BaseFormAction {
             } else {
                 newInstallments.add(dd.getInstallment());
 
-                if (null != dd.getRevisedAmount() && isZero(dd.getRevisedAmount())
-                        && dd.getActualCollection().compareTo(BigDecimal.ZERO) > 0 && isNull(dd.getRevisedCollection())) {
-                    errorParams = new ArrayList<String>();
+                if (null != dd.getRevisedAmount() && dd.getRevisedAmount().compareTo(BigDecimal.ZERO) == 0
+                        && dd.getActualCollection().compareTo(BigDecimal.ZERO) > 0 && dd.getRevisedCollection() == null) {
+                    errorParams = new ArrayList<>();
                     errorParams.add(dd.getReasonMaster());
                     errorParams.add(dd.getInstallment().getDescription());
                     addActionError(getText("error.editDemand.collectionForUpdatedDemand", errorParams));
@@ -326,13 +323,8 @@ public class EditDemandAction extends BaseFormAction {
 
         if (!actAmtInstallments.isEmpty()) {
             final String inst = actAmtInstallments.toString().replace('[', ' ').replace(']', ' ');
-            final List<String> instStrings = new ArrayList<String>() {
-                private static final long serialVersionUID = 475636030882352813L;
-
-                {
-                    add(inst);
-                }
-            };
+            List<String> instStrings = new ArrayList<>();
+            instStrings.add(inst);
             addActionError(getText("error.editDemand.actualAmount", instStrings));
         }
 
@@ -359,7 +351,7 @@ public class EditDemandAction extends BaseFormAction {
 
         if (!installmentsChqPenalty.isEmpty()) {
             final String inst = installmentsChqPenalty.toString().replace('[', ' ').replace(']', ' ');
-            final List<String> instStrings = new ArrayList<String>();
+            final List<String> instStrings = new ArrayList<>();
             instStrings.add(inst);
             addActionError(getText("error.editDemand.chqBouncePenaltyIsZero", instStrings));
         }
@@ -398,7 +390,7 @@ public class EditDemandAction extends BaseFormAction {
         ownerName = basicProperty.getFullOwnerName();
         mobileNumber = basicProperty.getMobileNumber();
         propertyAddress = basicProperty.getAddress().toString();
-        demandDetails = getPersistenceService().findAllBy(queryInstallmentDemandDetails, basicProperty,
+        demandDetails = getPersistenceService().findAllBy(QUERYINSTDD, basicProperty,
                 propertyTaxCommonUtils.getCurrentInstallment());
         if (!demandDetails.isEmpty())
             Collections.sort(demandDetails, (o1, o2) -> o1.getEgDemandReason().getEgInstallmentMaster()
@@ -466,14 +458,14 @@ public class EditDemandAction extends BaseFormAction {
                 for (final Installment inst : newDDMap.keySet())
                     if (!newDDMap.get(inst).contains(rsn))
                         if (newMap.get(inst) == null) {
-                            final Map<String, Object> dtls = new HashMap<String, Object>();
+                            final Map<String, Object> dtls = new HashMap<>();
                             dtls.put(AMOUNT, BigDecimal.ZERO);
                             dtls.put(COLLECTION, BigDecimal.ZERO);
                             dtls.put(IS_NEW, true);
                             rsnList.put(rsn, dtls);
                             newMap.put(inst, rsnList);
                         } else if (newMap.get(inst) != null) {
-                            final Map<String, Object> dtls = new HashMap<String, Object>();
+                            final Map<String, Object> dtls = new HashMap<>();
                             dtls.put(AMOUNT, BigDecimal.ZERO);
                             dtls.put(COLLECTION, BigDecimal.ZERO);
                             dtls.put(IS_NEW, true);
@@ -549,12 +541,12 @@ public class EditDemandAction extends BaseFormAction {
             LOGGER.debug("Entered into method prepareDisplayInfo");
         dcbDispInfo = new DCBDisplayInfo();
         dcbDispInfo.setReasonCategoryCodes(Collections.<String> emptyList());
-        final List<String> reasonList = new ArrayList<String>();
+        final List<String> reasonList = new ArrayList<>();
         reasonList.addAll(DEMAND_REASON_ORDER_MAP.keySet());
         dcbDispInfo.setReasonMasterCodes(reasonList);
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("DCB Display Info : " + dcbDispInfo);
-            LOGGER.debug("Number of Demand Reasons : " + (!reasonList.isEmpty() ? reasonList.size() : ZERO));
+            LOGGER.debug("Number of Demand Reasons : " + (reasonList.isEmpty() ? BigDecimal.ZERO : reasonList.size()));
             LOGGER.debug("Exit from method prepareDisplayInfo");
         }
     }
@@ -568,13 +560,13 @@ public class EditDemandAction extends BaseFormAction {
         final List<EgDemandDetails> demandDetailsFromDB = getPersistenceService()
                 .findAllBy(QUERY_NONZERO_DEMAND_DETAILS, basicProperty);
         final Installment currentInstallment = propertyTaxCommonUtils.getCurrentInstallment();
-        final Map<Installment, List<EgDemandDetails>> demandDetails = new TreeMap<Installment, List<EgDemandDetails>>();
+        final Map<Installment, List<EgDemandDetails>> demandDetails = new TreeMap<>();
 
         final String queryZeroDemandDetails = QUERY_DEMAND_DETAILS + " AND dd.amount = 0";
 
         final List<EgDemandDetails> dmdDtlsWithZeroAmt = getPersistenceService().findAllBy(queryZeroDemandDetails,
                 basicProperty);
-        final Set<Installment> zeroInstallments = new TreeSet<Installment>();
+        final Set<Installment> zeroInstallments = new TreeSet<>();
 
         BigDecimal totalDmd = BigDecimal.ZERO;
         EgDemandDetails egDemandDtls = null;
@@ -616,7 +608,7 @@ public class EditDemandAction extends BaseFormAction {
 
                 }
                 logAudit(dmdDetail);
-                final List<EgDemandDetails> dmdDtl = new ArrayList<EgDemandDetails>();
+                final List<EgDemandDetails> dmdDtl = new ArrayList<>();
                 if (demandDetails.get(dmdDetail.getInstallment()) == null) {
 
                     dmdDtl.add(egDemandDtls);
@@ -665,19 +657,19 @@ public class EditDemandAction extends BaseFormAction {
                         break;
                     }
                 }
-        if (demandAudit.getDemandAuditDetails() != null && demandAudit.getDemandAuditDetails().size() > 0)
+        if (!demandAudit.getDemandAuditDetails().isEmpty())
             demandAuditService.saveDetails(demandAudit);
 
         final List<EgDemandDetails> currentInstdemandDetailsFromDB = getPersistenceService().findAllBy(
-                queryInstallmentDemandDetails, basicProperty, propertyTaxCommonUtils.getCurrentInstallment());
+                QUERYINSTDD, basicProperty, propertyTaxCommonUtils.getCurrentInstallment());
 
         final Map<Installment, Set<EgDemandDetails>> demandDetailsSetByInstallment = getEgDemandDetailsSetByInstallment(
                 currentInstdemandDetailsFromDB);
-        final List<Installment> installments = new ArrayList<Installment>(demandDetailsSetByInstallment.keySet());
+        final List<Installment> installments = new ArrayList<>(demandDetailsSetByInstallment.keySet());
         Collections.sort(installments);
 
         for (final Installment inst : installments) {
-            final Map<String, BigDecimal> dmdRsnAmt = new LinkedHashMap<String, BigDecimal>();
+            final Map<String, BigDecimal> dmdRsnAmt = new LinkedHashMap<>();
             for (final String rsn : DEMAND_RSNS_LIST) {
                 final EgDemandDetails newDmndDtls = propService
                         .getEgDemandDetailsForReason(demandDetailsSetByInstallment.get(inst), rsn);
@@ -698,12 +690,12 @@ public class EditDemandAction extends BaseFormAction {
 
         LOGGER.info("Excess Collection - " + propService.getExcessCollAmtMap());
 
-        final Set<EgDemandDetails> demandDetailsToBeSaved = new HashSet<EgDemandDetails>();
+        final Set<EgDemandDetails> demandDetailsToBeSaved = new HashSet<>();
         for (final Map.Entry<Installment, List<EgDemandDetails>> entry : demandDetails.entrySet())
             if (!entry.getValue().get(0).getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
                     .equalsIgnoreCase(DEMANDRSN_STR_CHQ_BOUNCE_PENALTY))
                 demandDetailsToBeSaved.addAll(new HashSet<EgDemandDetails>(entry.getValue()));
-        final List<Ptdemand> currPtdemand = getPersistenceService().findAllBy(queryInstallmentPTDemand, basicProperty,
+        final List<Ptdemand> currPtdemand = getPersistenceService().findAllBy(QUERYINSTPTDEMAND, basicProperty,
                 propertyTaxCommonUtils.getCurrentInstallment());
 
         if (currPtdemand != null && currPtdemand.isEmpty()) {
@@ -722,7 +714,7 @@ public class EditDemandAction extends BaseFormAction {
             getPersistenceService().applyAuditing(ptDmdCalc);
             basicProperty.getProperty().getPtDemandSet().add(ptDemand);
 
-        } else {
+        } else if (currPtdemand != null) {
             final Ptdemand ptdemand = currPtdemand.get(0);
             ptdemand.getBaseDemand().add(totalDmd);
             ptdemand.getEgDemandDetails().addAll(demandDetailsToBeSaved);
@@ -738,21 +730,21 @@ public class EditDemandAction extends BaseFormAction {
 
     public Map<Installment, Set<EgDemandDetails>> getEgDemandDetailsSetByInstallment(
             final List<EgDemandDetails> demandDtls) {
-        final Map<Installment, Set<EgDemandDetails>> newEgDemandDetailsSetByInstallment = new HashMap<Installment, Set<EgDemandDetails>>();
+        final Map<Installment, Set<EgDemandDetails>> newDemandDetailsByInstallment = new HashMap<>();
 
         for (final EgDemandDetails dd : demandDtls) {
 
             if (dd.getAmtCollected() == null)
-                dd.setAmtCollected(ZERO);
+                dd.setAmtCollected(BigDecimal.ZERO);
 
-            if (newEgDemandDetailsSetByInstallment.get(dd.getEgDemandReason().getEgInstallmentMaster()) == null) {
-                final Set<EgDemandDetails> ddSet = new HashSet<EgDemandDetails>();
+            if (newDemandDetailsByInstallment.get(dd.getEgDemandReason().getEgInstallmentMaster()) == null) {
+                final Set<EgDemandDetails> ddSet = new HashSet<>();
                 ddSet.add(dd);
-                newEgDemandDetailsSetByInstallment.put(dd.getEgDemandReason().getEgInstallmentMaster(), ddSet);
+                newDemandDetailsByInstallment.put(dd.getEgDemandReason().getEgInstallmentMaster(), ddSet);
             } else
-                newEgDemandDetailsSetByInstallment.get(dd.getEgDemandReason().getEgInstallmentMaster()).add(dd);
+                newDemandDetailsByInstallment.get(dd.getEgDemandReason().getEgInstallmentMaster()).add(dd);
         }
-        return newEgDemandDetailsSetByInstallment;
+        return newDemandDetailsByInstallment;
     }
 
     private void logAudit(final DemandDetail dmdDetail) {

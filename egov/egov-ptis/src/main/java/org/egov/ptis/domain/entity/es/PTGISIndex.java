@@ -126,6 +126,8 @@ public class PTGISIndex {
     private Date completionDate;
     @Field(type = FieldType.Integer)
     private Integer ageOfCompletion;
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String functionaryName;
 
     public static Builder builder() {
         return new Builder();
@@ -330,6 +332,7 @@ public class PTGISIndex {
     public void setIsCancelled(Boolean isCancelled) {
         this.isCancelled = isCancelled;
     }
+
     public Boolean getSentToThirdParty() {
         return sentToThirdParty;
     }
@@ -354,7 +357,14 @@ public class PTGISIndex {
         this.ageOfCompletion = ageOfCompletion;
     }
 
-    
+    public String getFunctionaryName() {
+        return functionaryName;
+    }
+
+    public void setFunctionaryName(String functionaryName) {
+        this.functionaryName = functionaryName;
+    }
+
     public String getId() {
         return id;
     }
@@ -388,6 +398,7 @@ public class PTGISIndex {
         private String assistantName;
         private String riName;
         private Boolean sentToThirdParty;
+        private String functionaryName;
 
         private Builder() {
 
@@ -507,9 +518,14 @@ public class PTGISIndex {
             this.riName = riName;
             return this;
         }
-        
+
         public Builder withSentToThirdParty(final Boolean sentToThirdParty) {
             this.sentToThirdParty = sentToThirdParty;
+            return this;
+        }
+
+        public Builder withFunctionaryName(final String functionaryName) {
+            this.functionaryName = functionaryName;
             return this;
         }
 
@@ -540,6 +556,7 @@ public class PTGISIndex {
             ptGisIndex.setAssistantName(assistantName);
             ptGisIndex.setRiName(riName);
             ptGisIndex.setSentToThirdParty(sentToThirdParty);
+            ptGisIndex.setFunctionaryName(functionaryName);
 
             return ptGisIndex;
         }
@@ -558,5 +575,5 @@ public class PTGISIndex {
                 + applicationStatus + ", isApproved=" + isApproved + ", isCancelled=" + isCancelled + ", sentToThirdParty="
                 + sentToThirdParty + ", completionDate=" + completionDate + ", ageOfCompletion=" + ageOfCompletion + "]";
     }
-    
+
 }

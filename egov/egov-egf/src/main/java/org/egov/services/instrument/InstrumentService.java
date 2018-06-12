@@ -67,7 +67,8 @@ import org.egov.model.instrument.InstrumentVoucher;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
-import org.jboss.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
@@ -116,8 +117,7 @@ public class InstrumentService {
 
     public static final String TRANSACTION_NUMBER = "Transaction number";
     public static final String TRANSACTION_DATE = "Transaction date";
-    private static final Logger LOGGER = Logger
-            .getLogger(InstrumentService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(InstrumentService.class);
     @Autowired
     @Qualifier("instrumentHeaderService")
     private InstrumentHeaderService instrumentHeaderService;

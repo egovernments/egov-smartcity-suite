@@ -69,13 +69,13 @@ import static org.egov.infra.utils.JsonUtils.toJSON;
 
 import java.lang.reflect.Type;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.lang.StringUtils;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.council.autonumber.MOMResolutionNumberGenerator;
@@ -84,7 +84,9 @@ import org.egov.council.entity.CouncilDataResponse;
 import org.egov.council.entity.CouncilDataUpdateRequest;
 import org.egov.council.entity.CouncilMeeting;
 import org.egov.council.entity.CouncilMeetingType;
+import org.egov.council.entity.CouncilPreambleBidderDetails;
 import org.egov.council.entity.MeetingMOM;
+import org.egov.council.service.BidderService;
 import org.egov.council.service.CommitteeTypeService;
 import org.egov.council.service.CouncilMeetingService;
 import org.egov.council.service.CouncilMeetingTypeService;
@@ -101,6 +103,7 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.FileUtils;
+import org.egov.infra.utils.StringUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.web.support.json.adapter.BoundaryAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -162,6 +165,8 @@ public class CouncilMomController {
 
     @Autowired
     private CouncilPreambleService councilPreambleService;
+    @Autowired
+    private BidderService bidderService;
 
     @Autowired
     private CouncilReportService councilReportService;
@@ -230,10 +235,34 @@ public class CouncilMomController {
     public String update(
             @Valid @ModelAttribute final CouncilMeeting councilMeeting,
             final BindingResult errors, final Model model,
-            final RedirectAttributes redirectAttrs) {
+            final RedirectAttributes redirectAttrs,final HttpServletRequest request) {
         if (errors.hasErrors()) {
             return COUNCILMEETING_EDIT;
         }
+        String biddersId = request.getParameter("councilBidderHdn");
+        if (StringUtils.isNotEmpty(biddersId)) {
+        String[] bidderId = biddersId.split(",");
+
+        ArrayList<CouncilPreambleBidderDetails> bidderlist = new ArrayList<>();
+        ArrayList<CouncilPreambleBidderDetails> existingBidderlist = new ArrayList<>();
+        for (String bidder : bidderId) {
+            if (bidder != null && !bidder.isEmpty())
+                bidderlist.add(bidderService.getBidderDetailsbyId(Long.valueOf(bidder)));
+        }
+        for (MeetingMOM mom : councilMeeting.getMeetingMOMs()) {
+            for (CouncilPreambleBidderDetails bidders : mom.getPreamble().getBidderDetails()) {
+                existingBidderlist.add(bidders);
+            }
+        }
+        existingBidderlist.removeAll(bidderlist);
+        for (CouncilPreambleBidderDetails selectedBidder : bidderlist) {
+            selectedBidder.setIsAwarded(true);
+        }
+        for (CouncilPreambleBidderDetails rejectedBidder : existingBidderlist) {
+            rejectedBidder.setIsAwarded(false);
+        }
+        }
+        
         EgwStatus preambleResolutionApprovedStatus = egwStatusHibernateDAO.getStatusByModuleAndCode(PREAMBLE_MODULENAME,
                 RESOLUTION_APPROVED_PREAMBLE);
         Long itemNumber = Long.valueOf(0);
@@ -419,7 +448,7 @@ public class CouncilMomController {
         councilMeeting.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(MEETING_MODULENAME, MOM_FINALISED));
         for (MeetingMOM meetingMOM : councilMeeting.getMeetingMOMs()) {
             if (meetingMOM.getPreamble().getId() != null && meetingMOM.getPreamble().getReferenceNumber() != null
-                    && null == meetingMOM.getPreamble().getStatusMessage()) {
+                    && null == meetingMOM.getPreamble().getStatusMessage() &&  meetingMOM.getPreamble().getTypeOfPreamble().ordinal()==0) {
                 CouncilDataUpdateRequest councilDataUpdateRequest = new CouncilDataUpdateRequest();
                 councilDataUpdateRequest.setReferenceNo(meetingMOM.getPreamble().getReferenceNumber());
                 councilDataUpdateRequest.setPreambleNo(meetingMOM.getPreamble().getPreambleNumber());

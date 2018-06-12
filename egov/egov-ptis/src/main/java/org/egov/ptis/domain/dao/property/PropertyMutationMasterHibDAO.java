@@ -78,6 +78,13 @@ public class PropertyMutationMasterHibDAO implements PropertyMutationMasterDAO {
 		qry.setString("type", type.toUpperCase());
 		return qry.list();
 	}
+	
+	public List<PropertyMutationMaster> getAllActiveReasonsByType(String type) {
+            Query qry = getCurrentSession().createQuery(
+                            "from PropertyMutationMaster PM where upper(PM.type) = :type and active = true order by PM.orderId");
+            qry.setString("type", type.toUpperCase());
+            return qry.list();
+    }
 
 	// this method returns ProperyMutationMaster object based on code which is
 	// passed as a parameter

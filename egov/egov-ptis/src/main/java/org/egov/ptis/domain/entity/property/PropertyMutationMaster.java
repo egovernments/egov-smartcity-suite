@@ -60,6 +60,7 @@ public class PropertyMutationMaster implements Serializable {
     private String type = null;
     private String code = null;
     private String orderId = null;
+    private Boolean active = false;
 
     /**
      * @return Returns the idMutation.
@@ -143,6 +144,14 @@ public class PropertyMutationMaster implements Serializable {
      */
     public void setOrderId(String orderId) {
         this.orderId = orderId;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
 }

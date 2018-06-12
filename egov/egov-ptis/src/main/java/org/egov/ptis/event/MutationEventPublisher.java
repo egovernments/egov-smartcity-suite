@@ -71,7 +71,7 @@ public class MutationEventPublisher {
     @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
 
-    public void publishEvent(PropertyMutation propertyMutation) {
+    public void publishEvent(PropertyMutation propertyMutation, Boolean isCancelled) {
         MutationEvent event = new MutationEvent(this, propertyMutation);
         BasicProperty basicProperty = propertyMutation.getBasicProperty();
         event.setCityCode(getCityCode());
@@ -80,14 +80,12 @@ public class MutationEventPublisher {
         event.setAadharNumber(basicProperty.getAadharNumber());
         event.setMobileNumber(basicProperty.getMobileNumber());
         event.setSurveyNumber(basicProperty.getActiveProperty().getPropertyDetail().getSurveyNumber());
-        // Hard coded values to be removed once get the clarification
-        event.setDistrictCode("510");
-        event.setCityCode("251744");
         event.setWard(String.valueOf(basicProperty.getPropertyID().getWard().getBoundaryNum()));
         event.setBlock(String.valueOf(basicProperty.getPropertyID().getArea().getBoundaryNum()));
         event.setDoorNumber(basicProperty.getAddress().getHouseNoBldgApt());
         event.setLayoutNumber(basicProperty.getActiveProperty().getPropertyDetail().getLayoutPermitNo());
         event.setRandom(new BigInteger(32, new Random()));
+        event.setCancelled(isCancelled);
         applicationEventPublisher.publishEvent(event);
     }
 }

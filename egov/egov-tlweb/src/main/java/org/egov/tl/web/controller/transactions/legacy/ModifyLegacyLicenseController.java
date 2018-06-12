@@ -50,6 +50,7 @@ package org.egov.tl.web.controller.transactions.legacy;
 
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.TradeLicense;
+import org.egov.tl.web.validator.legacy.ModifyLegacyLicenseValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

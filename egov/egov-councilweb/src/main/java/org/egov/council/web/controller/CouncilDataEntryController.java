@@ -64,6 +64,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.council.autonumber.PreambleNumberGenerator;
 import org.egov.council.entity.CommitteeType;
@@ -98,7 +99,7 @@ public class CouncilDataEntryController {
     private static final String COUNCIL_MEETING = "councilMeeting";
     private static final String COUNCILMOM_DATAENTRY = "councilMom-dataentry";
     private static final String COUNCILMOM_VIEW = "councilmom-view";
-    private static final String MEETING_MOM = "MeetingMOM";
+    private static final String MEETING_MOM = "meetingMOM";
     private static final String PREAMBLE_NUMBER_AUTO = "PREAMBLE_NUMBER_AUTO";
 
 
@@ -142,7 +143,7 @@ public class CouncilDataEntryController {
     public String showCouncilForm(final Model model) {
         MeetingMOM meetingMOM = new MeetingMOM();
         model.addAttribute(MEETING_MOM, meetingMOM);
-        model.addAttribute("autoPreambleNoGenEnabled", true);            
+        model.addAttribute("autoPreambleNoGenEnabled", isAutoPreambleNoGenEnabled());            
         return COUNCILMOM_DATAENTRY;
     }
 
@@ -151,12 +152,19 @@ public class CouncilDataEntryController {
             @ModelAttribute final MeetingMOM meetingMOM,
             final BindingResult errors, final Model model,
             final RedirectAttributes redirectAttrs) throws ParseException {
-        if (errors.hasErrors()) {
-            return COUNCILMOM_DATAENTRY;
-        }
 
         List<MeetingMOM> meetingMOMList = new ArrayList<>();
         List<CouncilAgendaDetails> preambleList = new ArrayList<>();
+
+        if (StringUtils.isNotBlank(meetingMOM.getAgenda().getAgendaNumber())
+                && (!councilAgendaService.findByAgendaNo(meetingMOM.getAgenda().getAgendaNumber()).isEmpty())) {
+            errors.rejectValue("agenda.agendaNumber", "err.agenda.alreadyexists");
+        }
+        if (errors.hasErrors()) {
+            model.addAttribute(MEETING_MOM, meetingMOM);
+            model.addAttribute("autoPreambleNoGenEnabled", isAutoPreambleNoGenEnabled());  
+            return COUNCILMOM_DATAENTRY;
+        }
         for (MeetingMOM meetingMoMs : meetingMOM.getMeeting().getMeetingMOMs()) {
             meetingMoMs.getPreamble().setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(
                     PREAMBLE_MODULENAME, RESOLUTION_APPROVED_PREAMBLE));
@@ -184,6 +192,7 @@ public class CouncilDataEntryController {
         if (meetingMOM.getMeeting().getFiles() != null && meetingMOM.getMeeting().getFiles().length > 0) {
             meetingMOM.getMeeting().setSupportDocs(councilMeetingService.addToFileStore(meetingMOM.getMeeting().getFiles()));
         }
+
         meetingMOM.getAgenda().setAgendaDetails(preambleList);
         councilMeetingService.createDataEntry(meetingMOMList);
         CouncilMeeting councilMeeting = councilMeetingService.findOne(meetingMOM.getMeeting().getId());
@@ -232,8 +241,13 @@ public class CouncilDataEntryController {
     @RequestMapping(value = "/checkUnique-agendaNo", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public boolean uniqueAgendaNumber(@RequestParam final String agendaNumber) {
-        return councilAgendaService.findByAgendaNumber(agendaNumber) != null ? false : true;
+        if(agendaNumber.isEmpty()){
+            return true;
+        }
+        else
+        return councilAgendaService.findByAgendaNo(agendaNumber).isEmpty();
     }
+    
     public Boolean isAutoPreambleNoGenEnabled() {
         return councilPreambleService.autoGenerationModeEnabled(
                 MODULE_FULLNAME, PREAMBLE_NUMBER_AUTO);

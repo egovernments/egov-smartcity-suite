@@ -64,10 +64,12 @@ public class DCBReportResult implements Serializable {
 
     private static final long serialVersionUID = 1188596286215178643L;
 
-    private String licensenumber;
-
     @Id
     private Integer licenseid;
+
+    private String licensenumber;
+
+    private String oldLicenseNumber;
 
     private String username;
 
@@ -105,6 +107,14 @@ public class DCBReportResult implements Serializable {
 
     public void setLicensenumber(String licensenumber) {
         this.licensenumber = licensenumber;
+    }
+
+    public String getOldLicenseNumber() {
+        return oldLicenseNumber;
+    }
+
+    public void setOldLicenseNumber(final String oldLicenseNumber) {
+        this.oldLicenseNumber = oldLicenseNumber;
     }
 
     public String getUsername() {

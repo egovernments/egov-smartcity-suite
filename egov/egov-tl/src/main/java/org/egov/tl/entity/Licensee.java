@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -78,18 +78,20 @@ public class Licensee extends AbstractAuditable {
     private Long id;
 
     @NotBlank(message = "licensee.name.err.required")
-    @Length(min = 1, max = 256, message = "licensee.name.err.maxlength")
+    @Length(max = 256, message = "licensee.name.err.maxlength")
     @SafeHtml
     @Column(name = "APPLICANT_NAME")
     private String applicantName;
 
+    @NotBlank
     @SafeHtml
     @Length(max = 256)
     @Column(name = "FATHER_SPOUSE_NAME")
     private String fatherOrSpouseName;
 
+    @NotBlank
     @SafeHtml
-    @Length(max = 16)
+    @Length(min = 10 , max = 10)
     @Column(name = "MOBILE_PHONENUMBER")
     @Pattern(regexp = Constants.MOBILE_NUM)
     private String mobilePhoneNumber;
@@ -99,6 +101,7 @@ public class Licensee extends AbstractAuditable {
     @Column(name = "UNIQUEID")
     private String uid;
 
+    @NotBlank
     @SafeHtml
     @Length(max = 64)
     @Column(name = "EMAIL_ID")
@@ -106,7 +109,7 @@ public class Licensee extends AbstractAuditable {
     private String emailId;
 
     @NotBlank
-    @Length(min = 1, max = 250)
+    @Length(max = 250)
     @SafeHtml
     @Column(name = "ADDRESS")
     private String address;

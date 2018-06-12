@@ -48,13 +48,18 @@
 
 package org.egov.api.model;
 
-import org.jboss.logging.Logger;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Calendar;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.utils.DateUtils.formatter;
+
 public class ComplaintSearchRequest {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ComplaintSearchRequest.class);
+    private static final String INPUT_DATE_FORMAT = "yyyy-MM-dd";
+    private static final String OUTPUT_DATE_FORMAT = "dd/MM/yyyy";
     private String searchText;
     private String complaintNumber;
     private String complainantName;
@@ -70,11 +75,6 @@ public class ComplaintSearchRequest {
     private String complaintDepartment;
     private String location;
     private String currentUlb;
-
-    DateTimeFormatter ft = DateTimeFormat.forPattern("yyyy-MM-dd");
-    DateTimeFormatter dtft = DateTimeFormat.forPattern("dd/MM/yyyy");
-    
-    private static final Logger logger = Logger.getLogger(ComplaintSearchRequest.class);
 
     public void setSearchText(final String searchText) {
         this.searchText = searchText;
@@ -117,23 +117,21 @@ public class ComplaintSearchRequest {
     }
 
     public void setFromDate(final String fromDate) {
-        if (null != fromDate)
+        if (isNotBlank(fromDate))
             try {
-                if (logger.isDebugEnabled())
-                    logger.debug("Date Range From start.. :" + ft.print(dtft.parseDateTime(fromDate)));
-                this.fromDate = ft.print(dtft.parseDateTime(fromDate));
-                
+                this.fromDate = formatter(INPUT_DATE_FORMAT).print(formatter(OUTPUT_DATE_FORMAT).parseDateTime(fromDate));
+
             } catch (final Exception e) {
+                LOGGER.warn("Invalid Date Format", e);
             }
     }
 
     public void setToDate(final String toDate) {
         if (null != toDate)
             try {
-                if (logger.isDebugEnabled())
-                    logger.debug("Date Range Till .. :" + ft.print(dtft.parseDateTime(toDate)));
-                this.toDate = ft.print(dtft.parseDateTime(toDate));
+                this.toDate = formatter(INPUT_DATE_FORMAT).print(formatter(OUTPUT_DATE_FORMAT).parseDateTime(toDate));
             } catch (final Exception e) {
+                LOGGER.warn("Invalid Date Format", e);
             }
     }
 
@@ -144,29 +142,20 @@ public class ComplaintSearchRequest {
     public void setComplaintDate(final String complaintDate) {
         if (null != complaintDate) {
             final Calendar cal = Calendar.getInstance();
-            if (logger.isDebugEnabled())
-                logger.debug("String today date... " + ft.print(cal.getTimeInMillis()));
-            complaintDateTo = ft.print(cal.getTimeInMillis());
+            complaintDateTo = formatter(INPUT_DATE_FORMAT).print(cal.getTimeInMillis());
 
             if (complaintDate.equalsIgnoreCase("today")) {
-                if (logger.isDebugEnabled())
-                    logger.debug("This is today selection");
                 complaintDateFrom = complaintDateTo;
-            } else if (complaintDate.equalsIgnoreCase("all")) {
-                complaintDateFrom = null;
-                complaintDateTo = null;
             } else if (complaintDate.equalsIgnoreCase("lastsevendays")) {
                 cal.add(Calendar.DATE, -6);
-                complaintDateFrom = ft.print(cal.getTimeInMillis());
+                complaintDateFrom = formatter(INPUT_DATE_FORMAT).print(cal.getTimeInMillis());
             } else if (complaintDate.equalsIgnoreCase("lastthirtydays")) {
                 cal.add(Calendar.DATE, -29);
-                complaintDateFrom = ft.print(cal.getTimeInMillis());
+                complaintDateFrom = formatter(INPUT_DATE_FORMAT).print(cal.getTimeInMillis());
             } else if (complaintDate.equalsIgnoreCase("lastninetydays")) {
                 cal.add(Calendar.DATE, -89);
-                complaintDateFrom = ft.print(cal.getTimeInMillis());
+                complaintDateFrom = formatter(INPUT_DATE_FORMAT).print(cal.getTimeInMillis());
             } else {
-                if (logger.isDebugEnabled())
-                    logger.debug("Else section in date range");
                 complaintDateFrom = null;
                 complaintDateTo = null;
             }
@@ -174,25 +163,6 @@ public class ComplaintSearchRequest {
 
     }
 
-    /* public Filters searchFilters() {
-         final List<Filter> andFilters = new ArrayList<>();
-         andFilters.add(termsStringFilter("clauses.ulb", currentUlb));
-         andFilters.add(termsStringFilter("clauses.crn", complaintNumber));
-         andFilters.add(queryStringFilter("common.citizen.name", complainantName));
-         andFilters.add(queryStringFilter("common.citizen.mobile", complainantPhoneNumber));
-         andFilters.add(queryStringFilter("common.citizen.email", complainantEmail));
-         andFilters.add(queryStringFilter("clauses.status.name", complaintStatus));
-         andFilters.add(queryStringFilter("clauses.receivingMode", receivingCenter));
-         andFilters.add(queryStringFilter("searchable.complaintType.name", complaintType));
-         andFilters.add(rangeFilter("common.createdDate", complaintDateFrom, complaintDateTo));
-         andFilters.add(rangeFilter("common.createdDate", fromDate, toDate));
-         andFilters.add(queryStringFilter("searchable.complaintType.department.name", complaintDepartment));
-         andFilters.add(queryStringFilter("common.boundary.name", location));
-         if (logger.isDebugEnabled())
-             logger.debug("finished filters");
-         return Filters.withAndFilters(andFilters);
-     }
- */
     public String searchQuery() {
         return searchText;
     }

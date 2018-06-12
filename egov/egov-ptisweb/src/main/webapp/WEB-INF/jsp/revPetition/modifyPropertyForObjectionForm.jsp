@@ -100,7 +100,7 @@
 		</td>
 	</tr>
 	<tr>
-		<td class="bluebox" width="5%">&nbsp;</td>
+		<td class="bluebox" width="5%"></td>
 		<td class="bluebox" width="25%"><s:text name="reg.docno" /> :</td>
 		<td class="bluebox" width=""><span class="bold"><s:property
 					value="%{basicProperty.regdDocNo}" default="N/A" /></span></td>
@@ -110,7 +110,7 @@
 					value="%{#regDate}" default="N/A" /></span></td>
 	</tr>
 	<tr class="extentSite">
-		<td class="bluebox" width="5%">&nbsp;</td>
+		<td class="bluebox" width="5%"></td>
 		<td class="bluebox" width="25%"><s:text name="extent.site" /><span
 			class="mandatory1"> *</span> :</td>
 		<td class="bluebox" width=""><s:textfield name="areaOfPlot"
@@ -121,21 +121,8 @@
 		<td class="bluebox"></td>
 	</tr>
 
-	<%-- <tr class="superStructureRow">
-		<td class="bluebox">&nbsp;</td>
-		<td class="bluebox"><s:text name="superstructure"></s:text> :</td>
-		<td class="bluebox">
-			<s:checkbox name="property.propertyDetail.structure" id="property.propertyDetail.structure"
-				value="%{property.propertyDetail.structure}" onclick="enableOrDisableSiteOwnerDetails(this);" />
-				
-		</td>
-	<td class="greybox siteowner"><s:text name="siteowner"></s:text><span class="mandatory1"> *</span> :</td>
-		<td class="greybox siteowner"><s:textfield maxlength="64" value="%{property.propertyDetail.siteOwner}"
-				name="property.propertyDetail.siteOwner" id="siteOwner"></s:textfield></td>
-	</tr> --%>
-
 	<tr>
-		<td class="bluebox">&nbsp;</td>
+		<td class="bluebox"></td>
 		<td class="bluebox" width="25%"><s:text name="ModifyReason"></s:text>
 			<span class="mandatory1">*</span> :</td>
 		<td class="bluebox" width=""><s:select headerKey="-1"
@@ -147,10 +134,10 @@
 	</tr>
 
 	<tr>
-		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="25%"><s:text name="ownership.type"></s:text>
+		<td class="bluebox" width="5%"></td>
+		<td class="bluebox" width="25%"><s:text name="ownership.type"></s:text>
 			<span class="mandatory1">*</span> :</td>
-		<td class="greybox" width=""><s:hidden
+		<td class="bluebox" width=""><s:hidden
 				id="property.propertyDetail.id" name="property.propertyDetail.id"
 				value="%{property.propertyDetail.id}" /> <s:hidden id="property.id"
 				name="property.id" value="%{property.id}" /> <s:select
@@ -164,12 +151,12 @@
 		<s:hidden id="propTypeObjId" name="propTypeObjId"
 			value="%{property.propertyDetail.propertyTypeMaster.id}" />
 
-		<td class="greybox" width="25%"><s:text name="property.type"></s:text>
+		<td class="bluebox"><s:text name="property.type"></s:text>
 			<span class="mandatory1" id="prntMandatory">*</span> :</td>
 		<egov:ajaxdropdown id="propTypeCategoryId" fields="['Text','Value']"
 			dropdownId="propTypeCategoryId"
 			url="/common/ajaxCommon-propTypeCategoryByPropType.action" />
-		<td class="greybox"><s:select headerKey="-1"
+		<td class="bluebox"><s:select headerKey="-1"
 				headerValue="%{getText('default.select')}"
 				name="property.propertyDetail.categoryType" id="propTypeCategoryId"
 				listKey="key" listValue="value" list="propTypeCategoryMap"
@@ -177,26 +164,38 @@
 				onchange="populateUsages();" /></td>
 	</tr>
 	<tr id="apartmentRow">
-		<td class="greybox">&nbsp;</td>
-		<td class="greybox apartmentRow"><s:text name="apartcomplex.name"></s:text>
+		<td class="bluebox"></td>
+		<td class="bluebox apartmentRow"><s:text name="apartcomplex.name"></s:text>
 			:</td>
-		<td class="greybox apartmentRow"><s:select headerKey=""
+		<td class="bluebox apartmentRow"><s:select headerKey=""
 				headerValue="%{getText('default.select')}"
 				name="property.propertyDetail.apartment"
 				id="property.propertyDetail.apartment.id" listKey="id"
 				listValue="name" value="%{property.propertyDetail.apartment.id}"
 				list="dropdownData.apartments" cssClass="selectnew" /></td>
-		<td class="greybox" colspan="2">&nbsp;</td>
+		<td class="bluebox"><s:text name="zone"></s:text> <span class="mandatory1">*</span> : </td>
+	    <td class="bluebox">
+	    	<s:select list="dropdownData.zones"
+				name="zoneId"
+				value="%{basicProperty.propertyID.zone.id}"
+				id="zoneId" listKey="id" listValue="name" />
+		</td>
 	</tr>
 
-	<tr class="appurtenant">
-		<td class="bluebox">&nbsp;</td>
+	<tr class="occupancydetails">
+		<td class="bluebox"></td>
 		<td class="bluebox"><s:text name="certificationNumber"></s:text>:</td>
 		<td class="bluebox"><s:textfield maxlength="64"
 				name="property.propertyDetail.occupancyCertificationNo"
 				id="certificationNumber"
-				value="%{property.propertyDetail.occupancyCertificationNo}" /></td>
-		<td class="greybox" colspan="2">&nbsp;</td>
+				value="%{property.propertyDetail.occupancyCertificationNo}" readOnly="true"/></td>
+		<td class="bluebox"><s:text name="certificationDate"></s:text>:</td>
+		<td class="bluebox"><s:date
+				name="property.propertyDetail.occupancyCertificationDate"
+				var="certificationDate" format="dd/MM/yyyy" /> <s:textfield
+				name="property.propertyDetail.occupancyCertificationDate"
+				id="certificationDate"
+				value="%{#certificationDate}" size="12" readOnly="true"></s:textfield></td>
 	</tr>
 	<!-- Amenities section -->
 

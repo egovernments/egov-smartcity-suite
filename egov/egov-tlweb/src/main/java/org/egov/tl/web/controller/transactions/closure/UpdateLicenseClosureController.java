@@ -50,7 +50,8 @@ package org.egov.tl.web.controller.transactions.closure;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.TradeLicense;
-import org.egov.tl.utils.LicenseUtils;
+import org.egov.tl.service.LicenseConfigurationService;
+import org.egov.tl.web.validator.closure.UpdateLicenseClosureValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -70,10 +71,10 @@ import static org.egov.tl.utils.Constants.MESSAGE;
 public class UpdateLicenseClosureController extends LicenseClosureProcessflowController {
 
     private static final String LICENSECLOSURE = "license-closure";
-    private static final String REDIRECT_TO_VIEW = "redirect:/license/view/";
+    private static final String REDIRECT_TO_VIEW = "redirect:/license/success/";
 
     @Autowired
-    private LicenseUtils licenseUtils;
+    private LicenseConfigurationService licenseConfigurationService;
 
     @Autowired
     private UpdateLicenseClosureValidator updateLicenseClosureValidator;
@@ -151,10 +152,11 @@ public class UpdateLicenseClosureController extends LicenseClosureProcessflowCon
         model.addAttribute("fileStoreIds", license.getDigiSignedCertFileStoreId());
         model.addAttribute("applicationNo", license.getApplicationNumber());
         model.addAttribute("ulbCode", ApplicationThreadLocals.getCityCode());
-        return licenseUtils.isDigitalSignEnabled()
+        return licenseConfigurationService.digitalSignEnabled()
                 ? "closure-endorsement-digisign"
-                : "redirect:/license/closure/digisign-transition?applicationNumbers=" + license.getApplicationNumber() +
-                "&fileStoreIds=" + license.getDigiSignedCertFileStoreId();
+                : new StringBuilder(80).append("redirect:/license/closure/digisign-transition?applicationNumbers=")
+                .append(license.getApplicationNumber()).append("&fileStoreIds=")
+                .append(license.getDigiSignedCertFileStoreId()).toString();
     }
 
 }

@@ -54,6 +54,7 @@ import java.util.List;
 public interface PropertyMutationMasterDAO {
 	
 	public List<PropertyMutationMaster> getAllPropertyMutationMastersByType(String type);
+	public List<PropertyMutationMaster> getAllActiveReasonsByType(String type);
 
 	public PropertyMutationMaster getPropertyMutationMasterByCode(String code);
 	public PropertyMutationMaster getPropertyMutationMasterByCodeAndType(String code,String type);

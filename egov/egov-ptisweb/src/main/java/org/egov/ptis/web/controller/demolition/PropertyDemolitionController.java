@@ -105,6 +105,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR
 @RequestMapping(value = {"/property/demolition"})
 public class PropertyDemolitionController extends GenericWorkFlowController {
 
+    private static final String APPROVAL_POSITION = "approvalPosition";
     protected static final String COMMON_FORM = "commonForm";
     protected static final String DEMOLITION_FORM = "demolition-form";
     protected static final String DEMOLITION_SUCCESS = "demolition-success";
@@ -229,13 +230,13 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
 				approvalComent = request.getParameter("approvalComent");
 			if (request.getParameter("workFlowAction") != null)
 				workFlowAction = request.getParameter("workFlowAction");
-			if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
-				approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+			if (request.getParameter(APPROVAL_POSITION) != null && !request.getParameter(APPROVAL_POSITION).isEmpty())
+				approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
 			if (propertyService.isMeesevaUser(loggedInUser)) {
 				final HashMap<String, String> meesevaParams = new HashMap<>();
-				meesevaParams.put("APPLICATIONNUMBER", ((PropertyImpl) property).getMeesevaApplicationNumber());
+				meesevaParams.put("APPLICATIONNUMBER", property.getMeesevaApplicationNumber());
 				if (StringUtils.isBlank(property.getApplicationNo())) {
-					property.setApplicationNo(((PropertyImpl) property).getMeesevaApplicationNumber());
+					property.setApplicationNo(property.getMeesevaApplicationNumber());
 					property.setSource(PropertyTaxConstants.SOURCE_MEESEVA);
 				}
 				propertyDemolitionService.saveProperty(property.getBasicProperty().getActiveProperty(), property,
@@ -258,8 +259,8 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
 							+ property.getApplicationNo());
 			if (propertyService.isMeesevaUser(loggedInUser))
 				target = "redirect:/property/demolition/generate-meesevareceipt/"
-						+ ((PropertyImpl) property).getBasicProperty().getUpicNo() + "?transactionServiceNumber="
-						+ ((PropertyImpl) property).getApplicationNo();
+						+ property.getBasicProperty().getUpicNo() + "?transactionServiceNumber="
+						+ property.getApplicationNo();
 			else
 				target = DEMOLITION_SUCCESS;
 			return target;

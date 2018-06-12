@@ -121,10 +121,8 @@
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </div>
 <div class="row display-hide report-section">
-    <div class="col-md-12 table-header text-left">
+    <div class="col-md-12 table-header">
         <spring:message code="lbl.drill.report"/>
-    </div>
-    <div class="col-md-12 form-group report-table-container">
         <table
                 class="table table-bordered datatable dt-responsive table-hover multiheadertbl"
                 id="tbldcbdrilldown">
@@ -166,13 +164,10 @@
             </tfoot>
         </table>
     </div>
-    <div class="col-md-12 table-header text-left">
+    <div class="col-md-12 table-header">
+        <br/>
         <spring:message code="lbl.installmentwise.dcb.detail"/>
-    </div>
-    <div class="col-md-12 form-group report-table-container">
-        <table
-                class="table table-bordered datatable dt-responsive table-hover multiheadertbl"
-                id="tblinstallmentdcb">
+        <table class="table table-bordered datatable dt-responsive table-hover multiheadertbl" id="tblinstallmentdcb">
             <thead>
             <tr>
                 <th><spring:message code="lbl.demand.reason"/></th>
@@ -192,9 +187,10 @@
         </table>
     </div>
     <c:if test="${not empty receipts}">
-        <div class="col-md-12 table-header text-left">
+        <div class="col-md-12 table-header">
+            <br/>
             <spring:message code="lbl.receipt.details"/>
-            <table class="table table-bordered" style="width:97%;margin:0 auto;">
+            <table class="table table-bordered">
                 <thead>
                 <tr>
                     <th class="bluebgheadtd"><spring:message code="lbl.receipt.number"/></th>
@@ -229,8 +225,9 @@
             </table>
         </div>
     </c:if>
-    </br></br>
-    <div class="text-center">
+    <div class="col-md-12 form-group text-center">
+        <br/>
+        <br/>
         <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();">
             <spring:message code="lbl.close"/>
         </button>

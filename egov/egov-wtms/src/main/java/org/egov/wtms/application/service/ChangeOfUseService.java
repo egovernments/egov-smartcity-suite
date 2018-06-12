@@ -57,6 +57,7 @@ import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.application.workflow.ApplicationWorkflowCustomDefaultImpl;
+import org.egov.wtms.application.service.ConnectionAddressService;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.service.ApplicationProcessTimeService;
 import org.egov.wtms.utils.PropertyExtnUtils;
@@ -98,6 +99,9 @@ public class ChangeOfUseService {
 
     @Autowired
     private WaterConnectionSmsAndEmailService waterConnectionSmsAndEmailService;
+
+    @Autowired
+    private ConnectionAddressService connectionAddressService;
 
     public static final String CHANGEOFUSEALLOWEDIFWTDUE = "CHANGEOFUSEALLOWEDIFWTDUE";
 
@@ -147,27 +151,27 @@ public class ChangeOfUseService {
      * "CHNAGEOFUSE"
      */
     @Transactional
-    public WaterConnectionDetails createChangeOfUseApplication(final WaterConnectionDetails changeOfUse,
+    public WaterConnectionDetails createChangeOfUseApplication(final WaterConnectionDetails connectionDetails,
             final Long approvalPosition, final String approvalComent, final String additionalRule,
             final String workFlowAction, final String sourceChannel) {
-        if (changeOfUse.getApplicationNumber() == null)
-            changeOfUse.setApplicationNumber(applicationNumberGenerator.generate());
+        if (connectionDetails.getApplicationNumber() == null)
+            connectionDetails.setApplicationNumber(applicationNumberGenerator.generate());
 
         final Integer appProcessTime = applicationProcessTimeService
-                .getApplicationProcessTime(changeOfUse.getApplicationType(), changeOfUse.getCategory());
+                .getApplicationProcessTime(connectionDetails.getApplicationType(), connectionDetails.getCategory());
         if (appProcessTime != null)
-            changeOfUse.setDisposalDate(waterConnectionDetailsService.getDisposalDate(changeOfUse, appProcessTime));
-        final WaterConnectionDetails savedChangeOfUse = waterConnectionDetailsRepository.save(changeOfUse);
-
+            connectionDetails.setDisposalDate(waterConnectionDetailsService.getDisposalDate(connectionDetails, appProcessTime));
+        final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsRepository.save(connectionDetails);
+        connectionAddressService.createConnectionAddress(waterConnectionDetails);
         final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = waterConnectionDetailsService
                 .getInitialisedWorkFlowBean();
-        applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(savedChangeOfUse, approvalPosition,
+        applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(waterConnectionDetails, approvalPosition,
                 approvalComent, additionalRule, workFlowAction);
-        if (waterTaxUtils.isCitizenPortalUser(userService.getUserById(savedChangeOfUse.getCreatedBy().getId())))
-            waterConnectionDetailsService.pushPortalMessage(savedChangeOfUse);
-        waterConnectionDetailsService.updateIndexes(savedChangeOfUse, sourceChannel);
-        waterConnectionSmsAndEmailService.sendSmsAndEmail(changeOfUse, workFlowAction);
-        return savedChangeOfUse;
+        if (waterTaxUtils.isCitizenPortalUser(userService.getUserById(waterConnectionDetails.getCreatedBy().getId())))
+            waterConnectionDetailsService.pushPortalMessage(waterConnectionDetails);
+        waterConnectionDetailsService.updateIndexes(waterConnectionDetails, sourceChannel);
+        waterConnectionSmsAndEmailService.sendSmsAndEmail(waterConnectionDetails, workFlowAction);
+        return waterConnectionDetails;
     }
 
     public String validateChangeOfApplicationDue(final WaterConnectionDetails parentWaterConnectionDetail) {

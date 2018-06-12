@@ -47,7 +47,20 @@
  */
 package org.egov.stms.transactions.service;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillAccountDetails;
 import org.egov.collection.integration.models.BillAccountDetails.PURPOSE;
@@ -92,6 +105,7 @@ import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
+import org.egov.ptis.wtms.PropertyIntegrationService;
 import org.egov.stms.entity.PaySewerageTaxDetails;
 import org.egov.stms.entity.SewerageReceiptDetails;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
@@ -99,23 +113,12 @@ import org.egov.stms.transactions.service.collection.SewerageBillServiceImpl;
 import org.egov.stms.transactions.service.collection.SewerageBillable;
 import org.egov.stms.transactions.service.collection.SewerageTaxCollection;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
-import org.egov.wtms.utils.PropertyExtnUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)
@@ -142,17 +145,31 @@ public class SewerageThirdPartyServices {
     private FinancialYearDAO financialYearDAO;
 
     @Autowired
-    private PropertyExtnUtils propertyExtnUtils;
+    @Qualifier("propertyIntegrationServiceImpl")
+    private PropertyIntegrationService propertyIntegrationService;
 
     @Autowired
     private SewerageBillServiceImpl sewerageBillServiceImpl;
     private String currentDemand = "currentDemand";
     private static final String WTMS_TAXDUE_RESTURL = "%s/wtms/rest/watertax/due/byptno/%s";
+    private static final String PTIS_DETAILS_RESTURL = "%s/ptis/rest/property/{assessmentNumber}";
+
+    private static final Logger LOGGER = Logger.getLogger(SewerageThirdPartyServices.class);
+
 
     public AssessmentDetails getPropertyDetails(final String assessmentNumber, final HttpServletRequest request) {
         final RestTemplate restTemplate = new RestTemplate();
-        final String url = "http://" + request.getServerName() + ":" + request.getServerPort()
-                + "/ptis/rest/property/{assessmentNumber}";
+
+        final String url = String.format(PTIS_DETAILS_RESTURL, WebUtils.extractRequestDomainURL(request, false));
+
+        if (LOGGER.isInfoEnabled()) {
+
+            LOGGER.info("Request URL : " + request.getRequestURL());
+            LOGGER.info("Extract DOMAIN URL : " + WebUtils.extractRequestDomainURL(request, false));
+
+            LOGGER.info("Response : " + restTemplate.getForObject(url, AssessmentDetails.class,
+                    assessmentNumber));
+        }
         return restTemplate.getForObject(url, AssessmentDetails.class,
                 assessmentNumber);
 
@@ -296,7 +313,7 @@ public class SewerageThirdPartyServices {
             final HttpServletRequest request, SewerageApplicationDetails sewerageApplicationDetails) {
         final SewerageBillable sewerageBillable = (SewerageBillable) context
                 .getBean("sewerageBillable");
-        final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
+        final AssessmentDetails assessmentDetails = propertyIntegrationService.getAssessmentDetailsForFlag(
                 sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier(),
                 PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
         sewerageBillable.setSewerageApplicationDetails(sewerageApplicationDetails);

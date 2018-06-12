@@ -117,13 +117,12 @@ public class PropertyTitleTransferService {
         } else {
         	String assessmentNo = propertyTransferDetails.getAssessmentNo();
         	String mutationReasonCode = propertyTransferDetails.getMutationReasonCode();
-        	String saleDetails = propertyTransferDetails.getSaleDetails();
         	String deedNo = propertyTransferDetails.getDeedNo();
         	String deedDate = propertyTransferDetails.getDeedDate();
         	List<OwnerDetails> ownerDetailsList = getOwnerDetails(propertyTransferDetails.getOwnerDetails());
 
         	NewPropertyDetails newPropertyDetails = transferOwnerService.createPropertyMutation(assessmentNo, mutationReasonCode,
-        			saleDetails, deedNo, deedDate, ownerDetailsList);
+        			deedNo, deedDate, ownerDetailsList);
         	
         	responseJson = JsonConvertor.convert(newPropertyDetails);
         }

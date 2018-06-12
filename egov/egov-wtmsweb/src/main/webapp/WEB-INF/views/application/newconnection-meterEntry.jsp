@@ -55,12 +55,21 @@
 
 <div class="row">
 	<div class="col-md-12">
-		<div class="panel panel-primary" data-collapsed="0">
+		
 
 			<form:form method="post"
 				modelAttribute="waterConnectionDetails"
 				id="editmeterWaterConnectionform"
 				cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
+				
+				<div class="container-fluid">
+					<spring:hasBindErrors name="waterConnectionDetails">
+						<div class="alert alert-danger col-md-12 col-md-offset-0">
+							<form:errors path="*"/>
+						</div>
+					</spring:hasBindErrors>
+				</div>
+				<div class="panel panel-primary" data-collapsed="0">
 				<div class="page-container" id="page-container">
 					<form:hidden id="mode" path="" name="mode" value="${mode}" />
 					<form:hidden id="meterReadingpriviousObj" path=""
@@ -122,7 +131,6 @@
 										id="metercurrentReading" name="metercurrentReading" onmouseout="currentReadingChange();"
 										path="${meterReadingCurrentObj.currentReading}" min="3"
 										maxlength="12" data-pattern="number"/>
-									<form:errors path="" cssClass="add-margin error-msg" />
 								</div>
 								<label class="col-sm-2 control-label text-right"><spring:message
 										code="lbl.meterread.currentReadingdate" /><span class="mandatory"></span></label>
@@ -132,7 +140,6 @@
 										name="metercurrentReadingDate"
 										path="${meterReadingCurrentObj.currentReadingDate}"
 										required="required" />
-									<form:errors path="" cssClass="add-margin error-msg" />
 								</div>
 								<label class="col-sm-3 control-label text-right"><spring:message
 										code="lbl.ismeterdamaged" /></label>

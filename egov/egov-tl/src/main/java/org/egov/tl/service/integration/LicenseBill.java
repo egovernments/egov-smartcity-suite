@@ -48,24 +48,19 @@
 
 package org.egov.tl.service.integration;
 
-import org.egov.commons.Installment;
 import org.egov.demand.interfaces.LatePayPenaltyCalculator;
 import org.egov.demand.model.AbstractBillable;
 import org.egov.demand.model.EgBillType;
 import org.egov.demand.model.EgDemand;
-import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.tl.entity.License;
-import org.egov.tl.service.PenaltyRatesService;
-import org.egov.tl.utils.Constants;
 import org.joda.time.LocalDate;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
+
 import java.util.List;
-import java.util.Map;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.defaultIfBlank;
@@ -84,7 +79,6 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
     private Long userId;
     private Module module;
     private EgBillType billType;
-    private PenaltyRatesService penaltyRatesService;
     private String transanctionReferenceNumber;
 
     public License getLicense() {
@@ -93,10 +87,6 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
 
     public void setLicense(License license) {
         this.license = license;
-    }
-
-    public void setPenaltyRatesService(PenaltyRatesService penaltyRatesService) {
-        this.penaltyRatesService = penaltyRatesService;
     }
 
     public void setModuleName(String moduleName) {
@@ -293,7 +283,7 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
 
     @Override
     public BigDecimal calculatePenalty(Date commencementDate, Date collectionDate, BigDecimal amount) {
-        return penaltyRatesService.calculatePenalty(license, commencementDate, collectionDate, amount);
+        return null;
     }
 
     @Override
@@ -314,19 +304,4 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
         this.transanctionReferenceNumber = transanctionReferenceNumber;
     }
 
-    public Map<Installment, BigDecimal> getCalculatedPenalty(Date fromDate, Date collectionDate,
-                                                             EgDemand demand) {
-        final Map<Installment, BigDecimal> installmentPenalty = new HashMap<>();
-        for (final EgDemandDetails demandDetails : demand.getEgDemandDetails())
-            if (!demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(Constants.PENALTY_DMD_REASON_CODE)
-                    && demandDetails.getAmount().subtract(demandDetails.getAmtCollected()).signum() == 1)
-                if (fromDate != null)
-                    installmentPenalty.put(demandDetails.getEgDemandReason().getEgInstallmentMaster(),
-                            calculatePenalty(fromDate, collectionDate, demandDetails.getAmount()));
-                else
-                    installmentPenalty.put(demandDetails.getEgDemandReason().getEgInstallmentMaster(),
-                            calculatePenalty(demandDetails.getEgDemandReason().getEgInstallmentMaster().getFromDate(),
-                                    collectionDate, demandDetails.getAmount()));
-        return installmentPenalty;
-    }
 }

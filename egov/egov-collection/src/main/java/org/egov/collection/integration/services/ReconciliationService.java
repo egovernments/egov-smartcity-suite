@@ -168,9 +168,14 @@ public class ReconciliationService {
         receiptHeader.setStatus(collectionsUtil
                 .getReceiptStatusForCode(CollectionConstants.RECEIPT_STATUS_CODE_FAILED));
         EgwStatus paymentStatus;
-        if (CollectionConstants.AXIS_ABORTED_STATUS_CODE.equals(paymentResponse.getAuthStatus()))
+        if (receiptHeader.getOnlinePayment().getService().getCode().equals(CollectionConstants.SERVICECODE_AXIS) 
+                && CollectionConstants.AXIS_ABORTED_STATUS_CODE.equals(paymentResponse.getAuthStatus()))
             paymentStatus = collectionsUtil.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
                     CollectionConstants.ONLINEPAYMENT_STATUS_CODE_ABORTED);
+        else if (receiptHeader.getOnlinePayment().getService().getCode().equals(CollectionConstants.SERVICECODE_ATOM) 
+                && CollectionConstants.ATOM_AUTHORISATION_CODE_REFUNDED.equals(paymentResponse.getAuthStatus()))
+            paymentStatus = collectionsUtil.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
+                    CollectionConstants.ONLINEPAYMENT_STATUS_CODE_REFUNDED);
         else
             paymentStatus = collectionsUtil.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
                     CollectionConstants.ONLINEPAYMENT_STATUS_CODE_FAILURE);

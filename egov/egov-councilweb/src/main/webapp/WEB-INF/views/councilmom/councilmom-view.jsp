@@ -135,7 +135,10 @@
 												value="${mom.resolutionStatus.code}" /></td>
 										<td><c:out value="${mom.resolutionNumber}"></c:out></td>
 										<td width="30%"><span class="more"><c:out
-													value="${mom.preamble.gistOfPreamble}" /></span></td>
+													value="${mom.preamble.gistOfPreamble}" />
+													<br>
+													<c:out value="${mom.preamble.addtionalGistOfPreamble}"></c:out>
+													</span></td>
 									</tr>
 								</c:forEach>
 							</c:when>

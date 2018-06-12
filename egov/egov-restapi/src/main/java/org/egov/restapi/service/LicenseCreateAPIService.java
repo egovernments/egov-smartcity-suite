@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -69,6 +69,7 @@ import java.util.Date;
 import java.util.List;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.egov.tl.utils.Constants.CSCOPERATORNEWLICENSE;
 
 @Service
 @Transactional(readOnly = true)
@@ -76,16 +77,22 @@ public class LicenseCreateAPIService {
 
     @Autowired
     private LicenseApplicationService licenseApplicationService;
+
     @Autowired
     private BoundaryRepository boundaryRepository;
+
     @Autowired
     private LicenseCategoryRepository licenseCategoryRepository;
+
     @Autowired
     private LicenseSubCategoryRepository licenseSubCategoryRepository;
+
     @Autowired
     private NatureOfBusinessRepository natureOfBusinessRepository;
+
     @Autowired
     private BoundaryTypeRepository boundaryTypeRepository;
+
     @Autowired
     private CrossHierarchyService crossHierarchyService;
 
@@ -108,6 +115,7 @@ public class LicenseCreateAPIService {
         tradeLicense.setCommencementDate(license.getCommencementDate());
         tradeLicense.setNameOfEstablishment(license.getApplicantName());
         tradeLicense.setOwnershipType(license.getOwnershipType());
+        tradeLicense.setApplicationSource(license.getSource());
         if (isNotBlank(license.getAssessmentNo()))
             tradeLicense.setAssessmentNo(license.getAssessmentNo());
         if (isNotBlank(license.getRemarks()))
@@ -118,17 +126,19 @@ public class LicenseCreateAPIService {
         }
         tradeLicense.setNatureOfBusiness(natureOfBusinessRepository.findOne(license.getNatureOfBusiness()));
 
-        BoundaryType locality = boundaryTypeRepository.findByNameAndHierarchyTypeName("Locality", "LOCATION");
-        Boundary childBoundary = boundaryRepository.findByBoundaryTypeAndBoundaryNum(locality, license.getBoundary());
+        Boundary childBoundary = boundaryRepository.findOne(license.getBoundary());
         BoundaryType blockType = boundaryTypeRepository.findByNameAndHierarchyTypeName("Block", "REVENUE");
-        List<Boundary> blocks = crossHierarchyService.getParentBoundaryByChildBoundaryAndParentBoundaryType(childBoundary.getId(), blockType.getId());
+        List<Boundary> blocks = crossHierarchyService
+                .getParentBoundaryByChildBoundaryAndParentBoundaryType(childBoundary.getId(), blockType.getId());
         blocks.stream().forEach(boundary -> {
-            if (boundary.getParent().getBoundaryNum().equals(license.getParentBoundary()))
+            if (boundary.getParent().getId().equals(license.getParentBoundary()))
                 tradeLicense.setParentBoundary(boundary.getParent());
         });
         tradeLicense.setBoundary(childBoundary);
         tradeLicense.setCategory(licenseCategoryRepository.findByCodeIgnoreCase(license.getCategory()));
         tradeLicense.setTradeName(licenseSubCategoryRepository.findByCode(license.getSubCategory()));
-        return licenseApplicationService.create(tradeLicense, new WorkflowBean());
+        WorkflowBean workflowBean = new WorkflowBean();
+        workflowBean.setAdditionaRule(CSCOPERATORNEWLICENSE);
+        return licenseApplicationService.create(tradeLicense, workflowBean);
     }
 }

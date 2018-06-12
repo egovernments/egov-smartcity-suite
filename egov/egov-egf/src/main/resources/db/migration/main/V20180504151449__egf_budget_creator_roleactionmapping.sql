@@ -1,0 +1,1 @@
+INSERT INTO eg_roleaction (roleid, actionid) VALUES ((select id from eg_role where name='Budget Creator'),(select id from eg_action where name='File Download'));

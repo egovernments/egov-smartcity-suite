@@ -93,7 +93,8 @@ import org.egov.services.voucher.VoucherService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.HibernateException;
-import org.jboss.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -123,11 +124,10 @@ import java.util.Map;
 })
 public class ContraBTBAction extends BaseVoucherAction {
     private static final String DD_MMM_YYYY = "dd-MMM-yyyy";
+    private final static Logger LOGGER = LoggerFactory.getLogger(ContraBTBAction.class);
     private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Constants.LOCALE);
     private SimpleDateFormat sqlformat = new SimpleDateFormat("dd-MMM-yyyy");
     private static final String EXCEPTION_WHILE_SAVING_DATA = "Exception while saving Data";
-    private final static Logger LOGGER = Logger
-            .getLogger(ContraBTBAction.class);
     private static final String MDC_CHEQUE = "cheque";
     private static final String MDC_OTHER = "RTGS/NEFT";
     private static final String REVERSE = "reverse";
@@ -170,12 +170,11 @@ public class ContraBTBAction extends BaseVoucherAction {
     @Qualifier("fundFlowService")
     private FundFlowService fundFlowService;
     private CGeneralLedger generalled;
-    
+
     private CChartOfAccounts chartofAccountsList;
     private List<CGeneralLedger> generalLedgerDesList = new ArrayList<CGeneralLedger>();
     private List<CGeneralLedger> generalLedgerSrcList = new ArrayList<CGeneralLedger>();
     private Vouchermis vouchermis = new Vouchermis();
-    private static Logger logger = Logger.getLogger(ContraBTBAction.class);
     private String toAccnumnar;
     private CVoucherHeader voucherHeader2;
     private CVoucherHeader voucherHeaderDes;
@@ -565,7 +564,7 @@ public class ContraBTBAction extends BaseVoucherAction {
         return button;
     }
 
-   
+
     public ContraJournalVoucher getContraVoucher() {
         return contraVoucher;
     }
@@ -688,7 +687,7 @@ public class ContraBTBAction extends BaseVoucherAction {
         this.button = button;
     }
 
-    
+
     public void setContraBean(final ContraBean contraBean) {
         this.contraBean = contraBean;
     }
@@ -1544,7 +1543,7 @@ public class ContraBTBAction extends BaseVoucherAction {
                 && !contraBean.getToBankId().equals("-1")) {
             final String toBankId = contraBean.getToBankId();
             if (LOGGER.isInfoEnabled())
-                LOGGER.info(contraBean.getFromFundId());
+                LOGGER.info(String.valueOf(contraBean.getFromFundId()));
             final String[] split = toBankId.split("-");
             if (split[1] != null && !split[1].isEmpty())
                 addDropdownData("toAccNumList", getAccountNumbers(Integer
@@ -1576,7 +1575,7 @@ public class ContraBTBAction extends BaseVoucherAction {
         if (contraVoucher != null
                 && contraVoucher.getFromBankAccountId() != null) {
             if (LOGGER.isInfoEnabled())
-                LOGGER.info(voucherHeader.getVoucherDate());
+                LOGGER.info(String.valueOf(voucherHeader.getVoucherDate()));
             BigDecimal fromBalance;
             try {
                 fromBalance = egovCommon.getAccountBalance(voucherHeader

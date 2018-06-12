@@ -65,12 +65,12 @@
 </div>
 <div class="form-group">
 	<div class="col-sm-6">
-		<label class="col-sm-6 text-right"> <spring:message
+		<label class="col-sm-6 text-right witness-madatory"> <spring:message
 				code="lbl.fullname" /><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-6">
 			<form:input path="${witness}.name.firstName" type="text"
-				class="form-control is_valid_alphabet inline-elem" maxlength="30"
+				class="form-control is_valid_alphabet inline-elem witness" maxlength="30"
 				placeholder="First Name" autocomplete="off" required="required"
 				style="width: 33%" />
 			<form:input path="${witness}.name.middleName" type="text"
@@ -87,19 +87,19 @@
 				cssClass="add-margin error-msg" />
 		</div>
 
-		<label class="col-sm-6 text-right"> <spring:message
+		<label class="col-sm-6 text-right witness-madatory"> <spring:message
 				code="lbl.witness.info" /><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-6">
 			<form:select path="${witness}.witnessRelation"
-				id="${witness}.witnessRelation" class="form-control inline-elem"
+				id="${witness}.witnessRelation" class="form-control inline-elem witness"
 				style="width: 30%" cssErrorClass="form-control error"
 				required="required">
 				<form:options items="${witnessRelation}" />
 			</form:select>
 			<form:input path="${witness}.relativeName"
 				id="${witness}.relativeName" type="text"
-				class="form-control is_valid_alphabet inline-elem" maxlength="70"
+				class="form-control is_valid_alphabet inline-elem witness" maxlength="70"
 				style="width: 65%" placeholder="" autocomplete="off"
 				required="required" />
 
@@ -142,13 +142,13 @@
 			<form:errors path="${witness}.relationshipWithApplicant"
 				cssClass="add-margin error-msg" />
 		</div>
-		<label class="col-sm-6 text-right"> <spring:message
+		<label class="col-sm-6 text-right witness-madatory"> <spring:message
 				code="lbl.age" /><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-6">
 			<form:input path="${witness}.age" id="${witness}.age" type="text"
 				data-names="witness"
-				class="form-control patternvalidation age-field" maxlength="2"
+				class="form-control patternvalidation age-field witness" maxlength="2"
 				data-pattern="number" placeholder="" autocomplete="off"
 				required="required" />
 			<form:errors path="${witness}.age" cssClass="add-margin error-msg" />
@@ -184,13 +184,13 @@
 	</div>
 </div>
 <div class="form-group">
-	<label class="col-sm-3 text-right"> <spring:message
+	<label class="col-sm-3 text-right witness-madatory"> <spring:message
 			code="lbl.residence.address" /><span class="mandatory"></span>
 	</label>
 	<div class="col-sm-3">
 		<form:textarea path="${witness}.contactInfo.residenceAddress"
 			id="${witness}.contactInfo.residenceAddress" type="text"
-			class="form-control low-width patternvalidation"
+			class="form-control low-width patternvalidation witness"
 			data-pattern="regexp_alphabetspecialcharacters" maxlength="250"
 			placeholder="" autocomplete="off" required="required" />
 		<form:errors path="${witness}.contactInfo.residenceAddress"

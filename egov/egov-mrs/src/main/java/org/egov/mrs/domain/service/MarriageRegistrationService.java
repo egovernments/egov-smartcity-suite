@@ -48,6 +48,33 @@
 
 package org.egov.mrs.domain.service;
 
+import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
+import static org.egov.infra.utils.DateUtils.toDateUsingDefaultPattern;
+import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
+import static org.egov.mrs.application.MarriageConstants.AFFIDAVIT;
+import static org.egov.mrs.application.MarriageConstants.CF_STAMP;
+import static org.egov.mrs.application.MarriageConstants.MIC;
+import static org.egov.mrs.application.MarriageConstants.MOM;
+import static org.egov.mrs.application.MarriageConstants.SOURCE_API;
+import static org.egov.mrs.application.MarriageConstants.CPK_END_POINT_URL;
+
+import java.io.File;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.log4j.Logger;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.entity.Source;
@@ -97,34 +124,17 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.io.File;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
-import static org.egov.infra.utils.DateUtils.toDateUsingDefaultPattern;
-import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
-import static org.egov.mrs.application.MarriageConstants.AFFIDAVIT;
-import static org.egov.mrs.application.MarriageConstants.CF_STAMP;
-import static org.egov.mrs.application.MarriageConstants.MIC;
-import static org.egov.mrs.application.MarriageConstants.MOM;
 
 @Service
 @Transactional(readOnly = true)
@@ -311,6 +321,23 @@ public class MarriageRegistrationService {
         return registration;
     }
 
+    
+    @Transactional
+    public MarriageRegistration createRegistrationAPI(final MarriageRegistration marriageRegistration) {
+
+        marriageRegistration.setApplicationNo(marriageRegistrationApplicationNumberGenerator
+                .getNextApplicationNumberForMarriageRegistration(marriageRegistration));
+        marriageRegistration.setStatus(
+                marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.CREATED.toString(),
+                        MarriageConstants.MODULE_NAME));
+        marriageRegistration.setDemand(marriageRegistrationDemandService.createDemand(new BigDecimal(0)));
+        marriageRegistration.setSource(SOURCE_API);
+        create(marriageRegistration);
+        workflowService.onCreateRegistrationAPI(marriageRegistration);
+        return marriageRegistration;
+    }
+    
+    
     @Transactional
     public MarriageRegistration createMeesevaRegistration(final MarriageRegistration registration,
                                                           final WorkflowContainer workflowContainer, final boolean loggedUserIsMeesevaUser, final boolean citizenPortalUser) {
@@ -418,7 +445,7 @@ public class MarriageRegistrationService {
                 .forEach(doc -> registration.addRegistrationDocument(doc));
     }
 
-    private void setCommonDocumentsFalg(final MarriageRegistration registration, final MarriageDocument document) {
+    public void setCommonDocumentsFalg(final MarriageRegistration registration, final MarriageDocument document) {
         final MarriageDocument marriageDocument = marriageDocumentService.get(document.getId());
         if (marriageDocument.getCode().equals(MOM))
             registration.setMemorandumOfMarriage(true);
@@ -493,6 +520,7 @@ public class MarriageRegistrationService {
     @Transactional
     public MarriageRegistration digiSignCertificate(final MarriageRegistration marriageRegistration,
                                                     final WorkflowContainer workflowContainer) {
+              
         marriageRegistration.setStatus(marriageUtils.getStatusByCodeAndModuleType(
                 MarriageRegistration.RegistrationStatus.REGISTERED.toString(), MarriageConstants.MODULE_NAME));
         workflowService.transition(marriageRegistration, workflowContainer, workflowContainer.getApproverComments());
@@ -501,12 +529,33 @@ public class MarriageRegistrationService {
                 && Source.CITIZENPORTAL.name().equalsIgnoreCase(marriageRegistration.getSource())
                 && getPortalInbox(marriageRegistration.getApplicationNo()) != null)
             updatePortalMessage(marriageRegistration);
+        if (marriageRegistration.getSource().equalsIgnoreCase(SOURCE_API)) {
+            sendMarriageCertificate(marriageRegistration);
+        }
         marriageSmsAndEmailService.sendSMS(marriageRegistration,
                 MarriageRegistration.RegistrationStatus.REGISTERED.toString());
         marriageSmsAndEmailService.sendEmail(marriageRegistration,
                 MarriageRegistration.RegistrationStatus.REGISTERED.toString());
 
         return marriageRegistration;
+    }
+
+    private void sendMarriageCertificate(final MarriageRegistration marriageRegistration) {
+        MarriageCertificate marriageCertificate = marriageCertificateService.getGeneratedCertificate(marriageRegistration);
+        if (marriageCertificate != null) {
+            final RestTemplate restTemplate = new RestTemplate();
+            MultiValueMap<String, Object> requestObjectMap = new LinkedMultiValueMap<>();
+            HttpHeaders headers = new HttpHeaders();
+            File file = fileStoreService.fetch(marriageCertificate.getFileStore().getFileStoreId(),
+                    MarriageConstants.FILESTORE_MODULECODE);
+            requestObjectMap.add("certificate", new FileSystemResource(file));
+            requestObjectMap.add("ApplicationKey", marriageMessageSource.getMessage("mrs.cpk.apikey", null, null));
+            headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+            HttpEntity<MultiValueMap<String, Object>> requestObj = new HttpEntity<>(requestObjectMap, headers);
+            restTemplate.postForObject(CPK_END_POINT_URL +
+                    marriageRegistration.getApplicationNo(),
+                    requestObj, String.class);
+        }
     }
 
     @Transactional
@@ -526,6 +575,9 @@ public class MarriageRegistrationService {
                 && Source.CITIZENPORTAL.name().equalsIgnoreCase(marriageRegistration.getSource())
                 && getPortalInbox(marriageRegistration.getApplicationNo()) != null)
             updatePortalMessage(marriageRegistration);
+        if (marriageRegistration.getSource().equalsIgnoreCase(SOURCE_API)) {
+            sendMarriageCertificate(marriageRegistration);
+        }
         return marriageRegistration;
     }
 
@@ -554,7 +606,7 @@ public class MarriageRegistrationService {
         return registrationRepository.findAll();
     }
 
-    private FileStoreMapper addToFileStore(final MultipartFile file) {
+    public FileStoreMapper addToFileStore(final MultipartFile file) {
         FileStoreMapper fileStoreMapper = null;
         try {
             fileStoreMapper = fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),

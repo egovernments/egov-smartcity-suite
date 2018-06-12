@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -60,7 +60,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -85,8 +84,7 @@ public abstract class GenericWorkFlowController {
     /**
      * @param prepareModel
      * @param model
-     * @param container
-     *            This method we are calling In GET Method..
+     * @param container    This method we are calling In GET Method..
      */
     protected void prepareWorkflow(final Model prepareModel, final StateAware model, final WorkflowContainer container) {
         prepareModel.addAttribute("approverDepartmentList", addAllDepartments());
@@ -99,20 +97,20 @@ public abstract class GenericWorkFlowController {
      * @param model
      * @param container
      * @return NextAction From Matrix With Parameters
-     *         Type,CurrentState,CreatedDate
+     * Type,CurrentState,CreatedDate
      */
     public String getNextAction(final StateAware model, final WorkflowContainer container) {
 
         WorkFlowMatrix wfMatrix = null;
-        if (null != model && null != model.getId())
-            if (null != model.getCurrentState())
+        if (model != null && model.getId() != null)
+            if (model.getCurrentState() == null)
                 wfMatrix = customizedWorkFlowService.getWfMatrix(model.getStateType(),
                         container.getWorkFlowDepartment(), container.getAmountRule(), container.getAdditionalRule(),
-                        model.getCurrentState().getValue(), container.getPendingActions(), model.getCreatedDate(),container.getCurrentDesignation());
+                        State.DEFAULT_STATE_VALUE_CREATED, container.getPendingActions(), model.getCreatedDate(), container.getCurrentDesignation());
             else
                 wfMatrix = customizedWorkFlowService.getWfMatrix(model.getStateType(),
                         container.getWorkFlowDepartment(), container.getAmountRule(), container.getAdditionalRule(),
-                        State.DEFAULT_STATE_VALUE_CREATED, container.getPendingActions(), model.getCreatedDate(),container.getCurrentDesignation());
+                        model.getCurrentState().getValue(), container.getPendingActions(), model.getCreatedDate(), container.getCurrentDesignation());
         return wfMatrix == null ? "" : wfMatrix.getNextAction();
     }
 
@@ -120,25 +118,21 @@ public abstract class GenericWorkFlowController {
      * @param model
      * @param container
      * @return List of WorkFlow Buttons From Matrix By Passing parametres
-     *         Type,CurrentState,CreatedDate
+     * Type,CurrentState,CreatedDate
      */
     public List<String> getValidActions(final StateAware model, final WorkflowContainer container) {
-        List<String> validActions = Collections.emptyList();
-        if (null == model
-                || null == model.getId() || (model.getCurrentState()==null) 
-                || (model != null && model.getCurrentState() != null ? model.getCurrentState().getValue()
-                        .equals("Closed")
-                        || model.getCurrentState().getValue().equals("END") : false))
+        List<String> validActions;
+        if (model == null || model.getId() == null || model.getCurrentState() == null
+                || model.getCurrentState().getValue().equals("Closed") || model.getCurrentState().getValue().equals("END"))
             validActions = Arrays.asList("Forward");
-        else if (null != model.getCurrentState())
+        else if (model.getCurrentState() != null)
             validActions = customizedWorkFlowService.getNextValidActions(model.getStateType(), container
                     .getWorkFlowDepartment(), container.getAmountRule(), container.getAdditionalRule(), model
-                    .getCurrentState().getValue(), container.getPendingActions(), model.getCreatedDate(),container.getCurrentDesignation());
+                    .getCurrentState().getValue(), container.getPendingActions(), model.getCreatedDate(), container.getCurrentDesignation());
         else
-            // FIXME This May not work
             validActions = customizedWorkFlowService.getNextValidActions(model.getStateType(),
                     container.getWorkFlowDepartment(), container.getAmountRule(), container.getAdditionalRule(),
-                    State.DEFAULT_STATE_VALUE_CREATED, container.getPendingActions(), model.getCreatedDate(),container.getCurrentDesignation());
+                    State.DEFAULT_STATE_VALUE_CREATED, container.getPendingActions(), model.getCreatedDate(), container.getCurrentDesignation());
         return validActions;
     }
 

@@ -150,7 +150,7 @@ public class ReIssueBillable extends AbstractBillable implements Billable {
 
     @Override
     public Long getBoundaryNum() {
-        return reIssue.getRegistration().getZone().getBoundaryNum();
+        return reIssue.getZone().getBoundaryNum();
     }
 
     @Override

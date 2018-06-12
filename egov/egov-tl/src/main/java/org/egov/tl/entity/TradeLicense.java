@@ -156,4 +156,12 @@ public class TradeLicense extends License {
     public void setLicenseDocuments(List<LicenseDocument> licenseDocuments) {
         this.licenseDocuments = licenseDocuments;
     }
+
+    public boolean anyMandatoryDocumentMissing() {
+        return getLicenseDocuments()
+                .stream()
+                .filter(licenseDocument -> licenseDocument.getType().isMandatory())
+                .filter(licenseDocument -> licenseDocument.getMultipartFiles().stream().anyMatch(MultipartFile::isEmpty))
+                .findAny().isPresent();
+    }
 }

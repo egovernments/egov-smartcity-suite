@@ -76,7 +76,8 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.model.budget.BudgetUpload;
 import org.egov.services.budget.BudgetDetailService;
 import org.egov.utils.FinancialConstants;
-import org.jboss.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.multipart.MultipartFile;
@@ -104,7 +105,7 @@ import java.util.Map;
 public class BudgetLoadAction extends BaseFormAction {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger LOGGER = Logger.getLogger(BudgetLoadAction.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BudgetLoadAction.class);
     private File budgetInXls;
     private String budgetInXlsFileName;
     private String budgetInXlsContentType;

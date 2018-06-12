@@ -78,10 +78,6 @@
 							<td colspan="5"
 								style="background-color: #FDF7F0; font-size: 15px;"
 								align="center">
-								<s:if test="@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REVENUE_CLERK_APPROVED.equalsIgnoreCase(model.state.value)">
-								    <td colspan="5" style="font-size: 15px;" align="center"><s:property value="%{ackMessage}"/><span class="bold"><s:property value="%{approverName}"/></span><s:property value="%{assessmentNoMessage}"/><span class="bold"><s:property value="%{basicProperty.upicNo}" /></span></td>
-								</s:if>
-								<s:else>
 								<td colspan="5" style="font-size: 15px;" align="center">
 								<s:if test="%{initiatorIsActive}">
 							      <s:property value="%{ackMessage}" /><span class="bold"><s:property value="%{approverName}"/><s:property value="%{mutationInitiatedBy}"/></span><s:property value="%{assessmentNoMessage}"/><span class="bold"><s:property value="%{basicProperty.upicNo}" /></span></td> 
@@ -89,7 +85,6 @@
 								<s:else>
 								  <s:text name = "inactiveuserrejecterror"/><span class="bold"><s:property value="%{mutationInitiatedBy}"/></span>&nbsp;<s:text name = "inactiveusererror"/>
 								</s:else>
-								</s:else>	
 							</td>
 						</tr>
 					</table>

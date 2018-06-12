@@ -60,6 +60,7 @@ public class SurveyResponse {
     private String billCollector = StringUtils.EMPTY;
     private String billCollMobile = StringUtils.EMPTY;
     private String serviceName = StringUtils.EMPTY;
+    private String functionaryName = StringUtils.EMPTY;
     private long totalReceived = 0;
     private long totalCompleted = 0;
     private long totalPending = 0;
@@ -69,7 +70,9 @@ public class SurveyResponse {
     private long verifyDone;
     private double exptdIncr = 0;
     private double actlIncr = 0;
+    private double diffFromSurveytax = 0;
     private double difference = 0;
+    private long totalCancelled=0;
 
     public String getRegionName() {
         return regionName;
@@ -222,5 +225,29 @@ public class SurveyResponse {
     public void setDifference(double difference) {
         this.difference = difference;
     }
+
+    public String getFunctionaryName() {
+        return functionaryName;
+    }
+
+    public void setFunctionaryName(String functionaryName) {
+        this.functionaryName = functionaryName;
+    }
+
+    public double getDiffFromSurveytax() {
+        return diffFromSurveytax;
+    }
+
+    public void setDiffFromSurveytax(double diffFromSurveytax) {
+        this.diffFromSurveytax = diffFromSurveytax;
+    }
+    public long getTotalCancelled() {
+        return totalCancelled;
+    }
+
+    public void setTotalCancelled(long totalCancelled) {
+        this.totalCancelled = totalCancelled;
+    }
+
 
 }

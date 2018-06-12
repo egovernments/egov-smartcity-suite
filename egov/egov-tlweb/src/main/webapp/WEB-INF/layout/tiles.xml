@@ -290,7 +290,8 @@
     </definition>
     <definition name="closure-endorsement-success" extends="base_layout">
         <put-attribute name="page-title" value="title.closure.completed" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/transactions/closurenotice/closure-endorsementnotice-digisign-success.jsp"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/transactions/closurenotice/closure-endorsementnotice-digisign-success.jsp"/>
     </definition>
 
 
@@ -307,6 +308,11 @@
     <definition name="closure-endorsement-digisign" extends="base_layout">
         <put-attribute name="page-title" value="page.title.viewtrade" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/jsp/viewtradelicense/closure-endorsementnotice-digitalsigned.jsp"/>
+    </definition>
+
+    <definition name="view-tradelicense" extends="base_layout">
+        <put-attribute name="page-title" value="title.document.new" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/viewlicense/view-tradelicense.jsp"/>
     </definition>
 
 </tiles-definitions>

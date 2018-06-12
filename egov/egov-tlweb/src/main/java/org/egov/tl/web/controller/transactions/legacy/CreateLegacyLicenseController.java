@@ -50,6 +50,7 @@ package org.egov.tl.web.controller.transactions.legacy;
 
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.service.LicenseAppTypeService;
+import org.egov.tl.web.validator.legacy.CreateLegacyLicenseValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -65,7 +66,9 @@ import javax.validation.Valid;
 import java.util.Date;
 import java.util.Map;
 
-import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.tl.utils.Constants.AUTO;
+import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Controller
@@ -83,9 +86,9 @@ public class CreateLegacyLicenseController extends LegacyLicenseController {
     @ModelAttribute("tradeLicense")
     public TradeLicense tradeLicense() {
         TradeLicense license = new TradeLicense();
-        license.setLicenseAppType(licenseAppTypeService.getLicenseAppTypeByName(NEW_LIC_APPTYPE));
+        license.setLicenseAppType(licenseAppTypeService.getLicenseAppTypeByName(RENEWAL_LIC_APPTYPE));
         license.setApplicationDate(new Date());
-        license.setApplicationNumber("AC-123");
+        license.setApplicationNumber(AUTO);
         return license;
     }
 
@@ -119,6 +122,6 @@ public class CreateLegacyLicenseController extends LegacyLicenseController {
     @GetMapping(value = "/old-licenseno-is-unique", produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public Boolean checkOldLicenseNumber(@RequestParam String oldLicenseNumber) {
-        return legacyService.getLicenseByOldLicenseNumber(oldLicenseNumber) != null;
+        return isNotBlank(oldLicenseNumber) && legacyService.getLicenseByOldLicenseNumber(oldLicenseNumber) != null;
     }
 }

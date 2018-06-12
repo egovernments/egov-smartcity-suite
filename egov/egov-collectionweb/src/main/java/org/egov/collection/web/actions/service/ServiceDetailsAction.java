@@ -48,6 +48,16 @@
 
 package org.egov.collection.web.actions.service;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -81,16 +91,6 @@ import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 @ParentPackage("egov")
 @Results({ @Result(name = ServiceDetailsAction.NEW, location = "serviceDetails-new.jsp"),
@@ -132,6 +132,7 @@ public class ServiceDetailsAction extends BaseFormAction {
     private SortedMap<String, String> serviceTypeMap = new TreeMap<>();
     private String deptId;
     private EgovCommon egovCommon;
+    private Boolean isVoucherOnReceiptAndStatusDisplay = Boolean.FALSE;
 
     public ServiceDetailsAction() {
         addRelatedEntity("serviceCategory", ServiceCategory.class);
@@ -218,12 +219,19 @@ public class ServiceDetailsAction extends BaseFormAction {
         serviceTypeMap.remove(CollectionConstants.SERVICE_TYPE_BILLING);
         setHeaderFields(headerFields);
         setMandatoryFields(mandatoryFields);
+        if (collectionsUtil.getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                CollectionConstants.APPCONFIG_VALUE_ISVOUCHERCREATIONONRECEIPTANDSTATUSDISPLAY).equals(CollectionConstants.YES))
+            isVoucherOnReceiptAndStatusDisplay = Boolean.TRUE;
     }
 
     @Action(value = "/service/serviceDetails-beforeCreate")
     public String beforeCreate() {
         accountDetails.add(new ServiceAccountDetails());
         subledgerDetails.add(new ServiceSubledgerInfo());
+        if (!isVoucherOnReceiptAndStatusDisplay) {
+            serviceDetails.setVoucherCreation(Boolean.TRUE);
+            serviceDetails.setIsVoucherApproved(Boolean.TRUE);
+        }
         return BEFORECREATE;
     }
 
@@ -552,5 +560,13 @@ public class ServiceDetailsAction extends BaseFormAction {
 
     public void setEgovCommon(final EgovCommon egovCommon) {
         this.egovCommon = egovCommon;
+    }
+
+    public Boolean getIsVoucherOnReceiptAndStatusDisplay() {
+        return isVoucherOnReceiptAndStatusDisplay;
+    }
+
+    public void setIsVoucherOnReceiptAndStatusDisplay(Boolean isVoucherOnReceiptAndStatusDisplay) {
+        this.isVoucherOnReceiptAndStatusDisplay = isVoucherOnReceiptAndStatusDisplay;
     }
 }

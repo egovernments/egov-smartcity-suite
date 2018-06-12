@@ -57,9 +57,20 @@
 				<spring:message code="lbl.common.docs"/>
 		</div>
 	</div>
+	<c:if test="${source eq 'API' && marriageRegistration.datasheetFileStore!=null}">
 	
+	<label class="col-sm-4 add-margin text-right">
+		<spring:message code="lbl.datasheet"/>
+	</label>
+	<div class="col-sm-2 add-margin text-center">
+		<a onclick="window.open('/mrs/registration/downloadMarriagefile/${marriageRegistration.datasheetFileStore.fileStoreId}', 
+             'newwindow','width=800,height=600,scrollbars=yes'); "data-gallery> ${marriageRegistration.datasheetFileStore.fileName}</a>
+	</div>
+	
+	</c:if>
+
 	<div class="form-group">
-		<label class="col-sm-offset-6 view-content">
+		<label class="col-sm-offset-5 view-content">
 			<spring:message code="lbl.submitted.by.couple"/>
 		</label>
 	</div>

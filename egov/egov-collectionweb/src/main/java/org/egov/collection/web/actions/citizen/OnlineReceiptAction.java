@@ -47,6 +47,8 @@
  */
 package org.egov.collection.web.actions.citizen;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -62,7 +64,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
@@ -70,7 +71,6 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.constants.CollectionConstants;
-import org.egov.collection.entity.OnlinePayment;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.handler.BillInfoMarshaller;
@@ -151,8 +151,7 @@ public class OnlineReceiptAction extends BaseFormAction {
     private List<ServiceDetails> serviceDetailsList = new ArrayList<>(0);
     @Autowired
     private FundHibernateDAO fundDAO;
-    private List<OnlinePayment> lastThreeOnlinePayments = new ArrayList<>(0);
-    private Boolean onlinePayPending = Boolean.FALSE;
+    private Boolean isTransactionPending = Boolean.FALSE;
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
     private String[] transactionId;
@@ -198,7 +197,6 @@ public class OnlineReceiptAction extends BaseFormAction {
 
         System.currentTimeMillis();
         LOGGER.info("responseMsg:	" + responseMsg);
-
         ServiceDetails paymentService;
         if (null != paymentServiceId && paymentServiceId > 0)
             paymentService = (ServiceDetails) getPersistenceService().findByNamedQuery(
@@ -214,17 +212,23 @@ public class OnlineReceiptAction extends BaseFormAction {
         }
 
         onlinePaymentReceiptHeader = receiptHeaderService.findByNamedQuery(
-                CollectionConstants.QUERY_RECEIPT_BY_ID_AND_CONSUMERCODE, Long.valueOf(paymentResponse.getReceiptId()),
+                CollectionConstants.QUERY_PENDING_RECEIPT_BY_ID_AND_CONSUMERCODE, Long.valueOf(paymentResponse.getReceiptId()),
                 paymentResponse.getAdditionalInfo6());
 
         if (onlinePaymentReceiptHeader != null) {
             if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(paymentResponse.getAuthStatus()))
                 processSuccessMsg();
-            else if ((onlinePaymentReceiptHeader.getOnlinePayment().getService().getCode().equals(CollectionConstants.SERVICECODE_PGI_BILLDESK)
+            else if ((onlinePaymentReceiptHeader.getOnlinePayment().getService().getCode()
+                    .equals(CollectionConstants.SERVICECODE_PGI_BILLDESK)
                     && CollectionConstants.PGI_AUTHORISATION_CODE_WAITINGFOR_PAY_GATEWAY_RESPONSE
                             .equals(paymentResponse.getAuthStatus()))
-                    || (onlinePaymentReceiptHeader.getOnlinePayment().getService().getCode().equals(CollectionConstants.SERVICECODE_ATOM) &&
+                    || (onlinePaymentReceiptHeader.getOnlinePayment().getService().getCode()
+                            .equals(CollectionConstants.SERVICECODE_ATOM) &&
                             CollectionConstants.ATOM_AUTHORISATION_CODES_WAITINGFOR_PAY_GATEWAY_RESPONSE
+                                    .contains(paymentResponse.getAuthStatus()))
+                    || (onlinePaymentReceiptHeader.getOnlinePayment().getService().getCode()
+                            .equals(CollectionConstants.SERVICECODE_AXIS) &&
+                            CollectionConstants.AXIS_AUTHORISATION_CODES_WAITINGFOR_PAY_GATEWAY_RESPONSE
                                     .contains(paymentResponse.getAuthStatus()))) {
                 final EgwStatus paymentStatus = collectionsUtil.getStatusForModuleAndCode(
                         CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
@@ -428,7 +432,7 @@ public class OnlineReceiptAction extends BaseFormAction {
     public void prepare() {
         super.prepare();
         // populates model when request is from the billing system
-        if (StringUtils.isNotBlank(getCollectXML())) {
+        if (isNotBlank(getCollectXML())) {
             final String decodedCollectXml = decodeBillXML();
             try {
                 collDetails = BillInfoMarshaller.toObject(decodedCollectXml);
@@ -475,12 +479,20 @@ public class OnlineReceiptAction extends BaseFormAction {
                 getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_SERVICES_BY_TYPE,
                         CollectionConstants.SERVICE_TYPE_PAYMENT));
         constructServiceDetailsList();
-        // Fetching Last three online transaction for the Consumer Code
-        if (null != consumerCode && !"".equals(consumerCode))
-            lastThreeOnlinePayments = collectionsUtil.getOnlineTransactionHistory(consumerCode);
-        for (final OnlinePayment onlinePay : lastThreeOnlinePayments)
-            if (onlinePay.getStatus().getCode().equals(CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING))
-                onlinePayPending = Boolean.TRUE;
+        // Fetching pending transaction by consumer code. If transaction is in pending status display message
+        if (null != receiptHeader && isNotBlank(receiptHeader.getConsumerCode())
+                && isNotBlank(receiptHeader.getService().getCode())) {
+            final List<ReceiptHeader> pendingOnlinePayments = getPersistenceService().findAllByNamedQuery(
+                    CollectionConstants.QUERY_ONLINE_PENDING_RECEIPTS_BY_CONSUMERCODE_AND_SERVICECODE,
+                    receiptHeader.getService().getCode(),
+                    receiptHeader.getConsumerCode(), CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
+            if (!pendingOnlinePayments.isEmpty()) {
+                isTransactionPending = Boolean.TRUE;
+                addActionMessage(getText("onlineReceipts.pending.validate",
+                        new String[] { pendingOnlinePayments.get(0).getConsumerCode(),
+                                pendingOnlinePayments.get(0).getId().toString() }));
+            }
+        }
     }
 
     private String decodeBillXML() {
@@ -685,7 +697,7 @@ public class OnlineReceiptAction extends BaseFormAction {
             while (paramNames.hasMoreElements()) {
                 final String paramName = paramNames.nextElement();
                 final String paramValue = httpRequest.getParameter(paramName);
-                if (null != paramValue && !"".equals(paramValue))
+                if (isNotBlank(paramValue))
                     responseMap.put(paramName, paramValue);
             }
             responseMsg = responseMap.toString();
@@ -877,23 +889,16 @@ public class OnlineReceiptAction extends BaseFormAction {
         this.refNumber = refNumber;
     }
 
-    public List<OnlinePayment> getLastThreeOnlinePayments() {
-        return lastThreeOnlinePayments;
-    }
-
-    public void setLastThreeOnlinePayments(final List<OnlinePayment> lastThreeOnlinePayments) {
-        this.lastThreeOnlinePayments = lastThreeOnlinePayments;
-    }
-
-    public Boolean getOnlinePayPending() {
-        return onlinePayPending;
-    }
-
-    public void setOnlinePayPending(final Boolean onlinePayPending) {
-        this.onlinePayPending = onlinePayPending;
-    }
-
     public void setCollectionService(final CollectionService collectionService) {
         this.collectionService = collectionService;
     }
+
+    public Boolean getIsTransactionPending() {
+        return isTransactionPending;
+    }
+
+    public void setIsTransactionPending(Boolean isTransactionPending) {
+        this.isTransactionPending = isTransactionPending;
+    }
+
 }

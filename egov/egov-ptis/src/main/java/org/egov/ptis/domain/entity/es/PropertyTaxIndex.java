@@ -86,6 +86,9 @@ public class PropertyTaxIndex {
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String revenueWard;
+    
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String cityWard;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String revZoneName;
@@ -286,7 +289,15 @@ public class PropertyTaxIndex {
         this.revenueWard = revenueWard;
     }
 
-    public String getRevZoneName() {
+    public String getCityWard() {
+		return cityWard;
+	}
+
+	public void setCityWard(String cityWard) {
+		this.cityWard = cityWard;
+	}
+
+	public String getRevZoneName() {
         return revZoneName;
     }
 

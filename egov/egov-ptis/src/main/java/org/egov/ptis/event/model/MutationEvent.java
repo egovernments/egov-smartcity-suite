@@ -78,6 +78,7 @@ public class MutationEvent extends ApplicationEvent {
     private String ward;
     private String block;
     private String layoutNumber;
+    private boolean cancelled;
     private String doorNumber;
 
     public MutationEvent(final Object source, final PropertyMutation propertyMutation) {
@@ -185,4 +186,13 @@ public class MutationEvent extends ApplicationEvent {
         this.random = random;
     }
 
+	public boolean isCancelled() {
+		return cancelled;
+	}
+
+	public void setCancelled(boolean rejected) {
+		this.cancelled = rejected;
+	}
+
+    
 }

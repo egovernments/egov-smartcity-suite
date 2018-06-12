@@ -55,6 +55,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.METERED_CHARGES_RE
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULETYPE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAXREASONCODE;
+import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -71,6 +72,7 @@ import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.pims.commons.Position;
 import org.egov.wtms.application.entity.ApplicationDocuments;
@@ -84,9 +86,7 @@ import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -108,8 +108,6 @@ public class RegularisedConnectionController extends GenericConnectionController
     private static final String VALIDIFPTDUEEXISTS = "validateIfPTDueExists";
     private static final String APPROVALPOSITION = "approvalPosition";
     private static final String CONNECTION_PROPERTYID = "connection.propertyIdentifier";
-    private static final String CURRENT_DEMAND_REQUIRED = "Please add the current demand for this application using Add/Edit button";
-
     @Autowired
     private SecurityUtils securityUtils;
 
@@ -299,9 +297,10 @@ public class RegularisedConnectionController extends GenericConnectionController
         return "regulariseconnection-form";
     }
 
-    @GetMapping(value = "/regulariseconnection/demandnote-view/{applicationNumber}")
+    @GetMapping(value = "/regulariseconnection/demandnote-view/{applicationNumber}", produces = APPLICATION_PDF_VALUE)
     @ResponseBody
-    public ResponseEntity<byte[]> viewDemandNote(@PathVariable final String applicationNumber, final HttpSession session) {
+    public ResponseEntity<InputStreamResource> viewDemandNote(@PathVariable final String applicationNumber,
+            final HttpSession session) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByApplicationNumber(applicationNumber);
         if (waterConnectionDetails == null)
@@ -313,34 +312,22 @@ public class RegularisedConnectionController extends GenericConnectionController
                     METERED_CHARGES_REASON_CODE
                             .equalsIgnoreCase(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()))
                 isDemandPresent = true;
-        if (!isDemandPresent) {
-            String errorMessage = "";
-            errorMessage = "<html><body><p style='color:red;border:1px solid gray;padding:15x;'>" + CURRENT_DEMAND_REQUIRED
-                    + "</p></body></html>";
-            final byte[] byteData = errorMessage.getBytes();
-            return new ResponseEntity<>(byteData, HttpStatus.CREATED);
-        }
+        if (!isDemandPresent)
+            throw new ValidationException("err.demand.not.present");
         final ReportOutput reportOutput = reportGenerationService.generateRegulariseConnDemandNote(waterConnectionDetails);
-        final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        headers.add("content-disposition", "inline:filename=" + waterConnectionDetails.getEstimationNumber() + ".pdf");
-        return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+        return ReportUtil.reportAsResponseEntity(reportOutput);
     }
 
-    @GetMapping(value = "/regulariseconnection/proceedings-view/{applicationNumber}")
+    @GetMapping(value = "/regulariseconnection/proceedings-view/{applicationNumber}", produces = APPLICATION_PDF_VALUE)
     @ResponseBody
-    public ResponseEntity<byte[]> viewProceedings(@PathVariable("applicationNumber") final String applicationNumber) {
+    public ResponseEntity<InputStreamResource> viewProceedings(
+            @PathVariable("applicationNumber") final String applicationNumber) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByApplicationNumber(applicationNumber);
-        ReportOutput reportOutput = null;
         if (waterConnectionDetails == null)
             throw new ApplicationRuntimeException("err.application.not.exist");
-        else
-            reportOutput = reportGenerationService.generateRegulariseConnProceedings(waterConnectionDetails);
-        final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        headers.add("content-disposition", "inline:filename=" + waterConnectionDetails.getWorkOrderNumber() + ".pdf");
-        return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+        final ReportOutput reportOutput = reportGenerationService.generateRegulariseConnProceedings(waterConnectionDetails);
+        return ReportUtil.reportAsResponseEntity(reportOutput);
     }
 
 }

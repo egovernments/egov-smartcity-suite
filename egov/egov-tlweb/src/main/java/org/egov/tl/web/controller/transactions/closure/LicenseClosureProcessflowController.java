@@ -54,6 +54,7 @@ import org.egov.infra.utils.StringUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.enums.ApplicationType;
+import org.egov.tl.service.LicenseClosureProcessflowService;
 import org.egov.tl.service.LicenseClosureService;
 import org.egov.tl.service.TradeLicenseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,6 +85,9 @@ public class LicenseClosureProcessflowController extends GenericWorkFlowControll
     @Autowired
     private SecurityUtils securityUtils;
 
+    @Autowired
+    private LicenseClosureProcessflowService licenseClosureProcessflowService;
+
     @ModelAttribute("tradeLicense")
     public TradeLicense getTradeLicense(@PathVariable Long licenseId, Model model) {
         TradeLicense license = tradeLicenseService.getLicenseById(licenseId);
@@ -99,6 +103,8 @@ public class LicenseClosureProcessflowController extends GenericWorkFlowControll
         model.addAttribute("licenseHistory", tradeLicenseService.populateHistory(license));
         model.addAttribute("isEmployee", isEmployee);
         model.addAttribute("documentTypes", tradeLicenseService.getDocumentTypesByApplicationType(ApplicationType.CLOSURE));
+        model.addAttribute("forwardEnabled", licenseClosureProcessflowService.getWorkFlowMatrix(license) == null ? "false" :
+                licenseClosureProcessflowService.getWorkFlowMatrix(license).isForwardEnabled());
         return license;
     }
 

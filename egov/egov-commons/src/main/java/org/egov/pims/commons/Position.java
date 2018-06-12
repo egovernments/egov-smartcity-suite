@@ -54,79 +54,55 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import static org.egov.pims.commons.Position.SEQ_POSITION;
 
 @Entity
 @Table(name = "eg_position")
-@SequenceGenerator(name = SEQ_POSITION, sequenceName = SEQ_POSITION, allocationSize = 1)
 public class Position extends OwnerGroup {
-    public static final String SEQ_POSITION = "SEQ_EG_POSITION";
     private static final long serialVersionUID = -7237503685614187960L;
-    @Id
-    @GeneratedValue(generator = SEQ_POSITION, strategy = GenerationType.SEQUENCE)
-    private Long id;
 
     @Column(name = "name", unique = true)
     private String name;
+
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "deptDesig")
     private DeptDesig deptDesig;
-    private boolean isPostOutsourced;
 
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
-    }
+    @Column(name = "ispostoutsourced")
+    private boolean postOutsourced;
 
     public String getName() {
         return name;
     }
 
-    public void setName(final String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
     public boolean isPostOutsourced() {
-        return isPostOutsourced;
+        return postOutsourced;
     }
 
-    public void setPostOutsourced(final boolean isPostOutsourced) {
-        this.isPostOutsourced = isPostOutsourced;
-    }
-
-    public boolean getIsPostOutsourced() {
-        return isPostOutsourced;
-    }
-
-    public void setIsPostOutsourced(final boolean isPostOutsourced) {
-        this.isPostOutsourced = isPostOutsourced;
+    public void setPostOutsourced(boolean postOutsourced) {
+        this.postOutsourced = postOutsourced;
     }
 
     public DeptDesig getDeptDesig() {
         return deptDesig;
     }
 
-    public void setDeptDesig(final DeptDesig deptDesig) {
+    public void setDeptDesig(DeptDesig deptDesig) {
         this.deptDesig = deptDesig;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Position)) return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof Position))
+            return false;
         Position position = (Position) o;
         return this.getName().equals(position.getName());
     }

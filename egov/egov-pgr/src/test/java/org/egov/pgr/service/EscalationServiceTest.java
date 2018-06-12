@@ -99,7 +99,7 @@ public class EscalationServiceTest {
     @Test
     public void getNoOfHrs() {
         when(escalationRepository.findByDesignationAndComplaintType(designation.getId(), compType.getId())).thenReturn((escalation));
-        Integer hrsToResolve = escalationService.getHrsToResolve(designation.getId(), compType.getId());
+        Integer hrsToResolve = escalationService.getResolutionSLAHrs(designation.getId(), compType.getId());
         assertEquals(Integer.valueOf(23), hrsToResolve);
     }
 

@@ -47,6 +47,8 @@
  */
 package org.egov.lcms.transactions.repository;
 
+import java.util.List;
+
 import org.egov.lcms.transactions.entity.BipartisanDetails;
 import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.entity.LegalCaseUploadDocuments;
@@ -55,8 +57,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public interface LegalCaseRepository extends JpaRepository<LegalCase, Long> {
@@ -76,5 +76,7 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, Long> {
 
     @Query("select lcd from BipartisanDetails lcd where lcd.legalCase.id=:legalcaseId and lcd.isRepondent=true order by lcd.id desc")
     List<BipartisanDetails> getRespondantBipartitionDetList(@Param("legalcaseId") Long legalcaseId);
+
+    List<LegalCase> findByCaseNumberContainingIgnoreCase(String caseNumber);
 
 }

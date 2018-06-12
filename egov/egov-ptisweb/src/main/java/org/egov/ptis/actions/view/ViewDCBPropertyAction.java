@@ -47,6 +47,27 @@
  */
 package org.egov.ptis.actions.view;
 
+import static java.math.BigDecimal.ZERO;
+import static org.egov.demand.model.EgdmCollectedReceipt.RCPT_CANCEL_STATUS;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.BEANNAME_PROPERTY_TAX_BILLABLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.CANCELLED_RECEIPT_STATUS;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.SERVICE_CODE_PROPERTYTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.SERVICE_CODE_VACANTLANDTAX;
+
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -78,33 +99,11 @@ import org.egov.ptis.exceptions.PropertyNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
-import javax.servlet.http.HttpSession;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import static java.math.BigDecimal.ZERO;
-import static org.egov.demand.model.EgdmCollectedReceipt.RCPT_CANCEL_STATUS;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.BEANNAME_PROPERTY_TAX_BILLABLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.CANCELLED_RECEIPT_STATUS;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.SERVICE_CODE_PROPERTYTAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.SERVICE_CODE_VACANTLANDTAX;
-
 @SuppressWarnings("serial")
 @ParentPackage("egov")
-@Results({@Result(name = ViewDCBPropertyAction.VIEW, location = "viewDCBProperty-view.jsp"),
+@Results({ @Result(name = ViewDCBPropertyAction.VIEW, location = "viewDCBProperty-view.jsp"),
         @Result(name = ViewDCBPropertyAction.HEADWISE_DCB, location = "viewDCBProperty-headwiseDcb.jsp"),
-        @Result(name = ViewDCBPropertyAction.RESULT_MIGDATA, location = "viewDCBProperty-viewMigData.jsp")})
+        @Result(name = ViewDCBPropertyAction.RESULT_MIGDATA, location = "viewDCBProperty-viewMigData.jsp") })
 public class ViewDCBPropertyAction extends BaseFormAction {
     public static final String HEADWISE_DCB = "headwiseDcb";
     public static final String VIEW = "view";
@@ -117,7 +116,6 @@ public class ViewDCBPropertyAction extends BaseFormAction {
     private String propertyId;
     private BasicProperty basicProperty;
     private DCBDisplayInfo dcbDispInfo;
-    private HttpSession session = null;
     private Boolean isCitizen = Boolean.FALSE;
     private List<PropertyReceipt> propReceiptList = new ArrayList<PropertyReceipt>();
     private List<Receipt> cancelRcpt = new ArrayList<Receipt>();
@@ -130,7 +128,6 @@ public class ViewDCBPropertyAction extends BaseFormAction {
     private String serviceCode;
     private Map<String, Object> viewMap;
     private String searchUrl;
-
 
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
@@ -156,7 +153,8 @@ public class ViewDCBPropertyAction extends BaseFormAction {
     @Override
     public void prepare() {
         setBasicProperty(basicPropertyDAO.getBasicPropertyByPropertyID(propertyId));
-        if (OWNERSHIP_TYPE_VAC_LAND.equals(basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster().getCode())) {
+        if (OWNERSHIP_TYPE_VAC_LAND.equals(basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster()
+                .getCode())) {
             serviceCode = SERVICE_CODE_VACANTLANDTAX;
         } else {
             serviceCode = SERVICE_CODE_PROPERTYTAX;
@@ -222,17 +220,17 @@ public class ViewDCBPropertyAction extends BaseFormAction {
                     // Display name transfer receipts
                     populateMutationReceipts();
                 } else {
-                    viewMap.put("currTaxAmount", BigDecimal.ZERO);
-                    viewMap.put("currTaxDue", BigDecimal.ZERO);
-                    viewMap.put("totalArrDue", BigDecimal.ZERO);
-                    dcbReport.setTotalDmdTax(BigDecimal.ZERO);
-                    dcbReport.setTotalLpayPnlty(BigDecimal.ZERO);
-                    dcbReport.setTotalDmdPnlty(BigDecimal.ZERO);
-                    dcbReport.setTotalColTax(BigDecimal.ZERO);
-                    dcbReport.setTotalColPnlty(BigDecimal.ZERO);
-                    dcbReport.setTotalColLpayPnlty(BigDecimal.ZERO);
-                    dcbReport.setTotalRebate(BigDecimal.ZERO);
-                    dcbReport.setTotalBalance(BigDecimal.ZERO);
+                    viewMap.put("currTaxAmount", ZERO);
+                    viewMap.put("currTaxDue", ZERO);
+                    viewMap.put("totalArrDue", ZERO);
+                    dcbReport.setTotalDmdTax(ZERO);
+                    dcbReport.setTotalLpayPnlty(ZERO);
+                    dcbReport.setTotalDmdPnlty(ZERO);
+                    dcbReport.setTotalColTax(ZERO);
+                    dcbReport.setTotalColPnlty(ZERO);
+                    dcbReport.setTotalColLpayPnlty(ZERO);
+                    dcbReport.setTotalRebate(ZERO);
+                    dcbReport.setTotalBalance(ZERO);
                 }
 
             }
@@ -429,7 +427,6 @@ public class ViewDCBPropertyAction extends BaseFormAction {
         this.propertyArrearsMap = propertyArrearsMap;
     }
 
-
     public List<PropertyArrearBean> getPropertyArrearsList() {
         return propertyArrearsList;
     }
@@ -533,6 +530,5 @@ public class ViewDCBPropertyAction extends BaseFormAction {
     public void setSearchUrl(String searchUrl) {
         this.searchUrl = searchUrl;
     }
-
 
 }

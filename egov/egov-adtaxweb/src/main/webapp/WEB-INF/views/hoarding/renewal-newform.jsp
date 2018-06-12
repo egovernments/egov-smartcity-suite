@@ -178,7 +178,7 @@
 								</div>
 								<c:choose>
 									<c:when
-										test="${renewalPermitDetail.advertisement.legacy eq false}">
+										test="${renewalPermitDetail.advertisement.legacy eq true}">
 										<label class="col-sm-2 control-label text-right"> <spring:message
 												code="lbl.application.date" /> <span class="mandatory"></span>
 										</label>

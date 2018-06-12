@@ -92,7 +92,7 @@ public class DailyAbstractRecoveryReportAction extends BaseFormAction {
 		List<RecoveryInfo> resultList = new ArrayList<RecoveryInfo>();
 		StringBuffer qryString = new StringBuffer("select CREATED_DATE, ")
 				.append("SUM(decode(glcode, '")
-				.append(GLCODE_FOR_GENERAL_TAX_ARREARS)
+				.append(CURRENT_DEMANDRSN_GLCODE)
 				.append("', amount,'")
 				.append(GLCODE_FOR_GENERAL_TAX_CURRENT)
 				.append("', amount, 0)) as GeneralTax, ")

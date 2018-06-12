@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -133,6 +133,12 @@
                     }
                 }
                 var button = $(this);
+                if (name == "Sign") {
+                    <s:if test="%{!isDigitalSignatureEnabled()}">
+                    bootbox.alert("Digital signature is not enabled, please enabled and try again.");
+                    return false;
+                    </s:if>
+                }
                 bootbox.confirm({
                     message: 'Please confirm, if you wish to ' + name + ' this application.',
                     buttons: {

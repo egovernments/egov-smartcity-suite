@@ -72,8 +72,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.validation.regex.Constants.EMAIL;
 
 @org.springframework.web.bind.annotation.RestController
 @RequestMapping("/v1.0")
@@ -93,20 +95,16 @@ public class CitizenController extends ApiController {
     @Autowired
     private TokenStore tokenStore;
 
-    // --------------------------------------------------------------------------------//
-
     /**
      * It will return user information belongs to identity Identity may be the user email or mobile number.
      *
      * @param request
      * @return User
-     *
      * @since version 1.0
-     * 
      */
 
     @RequestMapping(value = ApiUrl.CITIZEN_GET_PROFILE, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity<String> getProfle(final HttpServletRequest request) {
+    public ResponseEntity<String> getProfle() {
         final ApiResponse res = ApiResponse.newInstance();
         try {
             final User user = userService.getUserByUsername(securityUtils.getCurrentUser().getUsername());
@@ -114,12 +112,11 @@ public class CitizenController extends ApiController {
                 return res.error(getMessage("user.not.found"));
             return res.setDataAdapter(new UserAdapter()).success(user);
         } catch (final Exception ex) {
-            LOGGER.error("EGOV-API ERROR ", ex);
-            return res.error(getMessage("server.error"));
+            LOGGER.error(EGOV_API_ERROR, ex);
+            return res.error(getMessage(SERVER_ERROR_KEY));
         }
     }
 
-    // --------------------------------------------------------------------------------//
     /**
      * Clear the session
      *
@@ -127,29 +124,27 @@ public class CitizenController extends ApiController {
      * @return
      */
     @RequestMapping(value = ApiUrl.CITIZEN_LOGOUT, method = RequestMethod.POST)
-    public ResponseEntity<String> logout(final HttpServletRequest request, final OAuth2Authentication authentication) {
+    public ResponseEntity<String> logout(OAuth2Authentication authentication) {
         try {
-            final OAuth2AccessToken token = tokenStore.getAccessToken(authentication);
+            OAuth2AccessToken token = tokenStore.getAccessToken(authentication);
             if (token == null)
                 return ApiResponse.newInstance().error(getMessage("msg.logout.unknown"));
 
             tokenStore.removeAccessToken(token);
             return ApiResponse.newInstance().success("", getMessage("msg.logout.success"));
         } catch (final Exception ex) {
-            LOGGER.error("EGOV-API ERROR ", ex);
-            return ApiResponse.newInstance().error(getMessage("server.error"));
+            LOGGER.error(EGOV_API_ERROR, ex);
+            return ApiResponse.newInstance().error(getMessage(SERVER_ERROR_KEY));
         }
     }
 
-    // --------------------------------------------------------------------------------//
     /**
      * This will update the profile of login user
-     *
      *
      * @param citizen - As json Object
      * @return Citizen
      */
-    @RequestMapping(value = ApiUrl.CITIZEN_UPDATE_PROFILE, method = RequestMethod.PUT, consumes = { "application/json" })
+    @RequestMapping(value = ApiUrl.CITIZEN_UPDATE_PROFILE, method = RequestMethod.PUT, consumes = {"application/json"})
     public ResponseEntity<String> updateProfile(@RequestBody final JSONObject citizen) {
 
         final ApiResponse res = ApiResponse.newInstance();
@@ -157,13 +152,13 @@ public class CitizenController extends ApiController {
             final Citizen citizenUpdate = citizenService.getCitizenByUserName(citizen.get("userName").toString());
             citizenUpdate.setName(citizen.get("name").toString());
             citizenUpdate.setGender(Gender.valueOf(citizen.get("gender").toString()));
-            /* citizenUpdate.setMobileNumber(citizen.get("mobileNumber").toString()); */
+            if (citizen.get(EMAIL_ID_FIELD) != null
+                    && isNotBlank(citizen.get(EMAIL_ID_FIELD).toString())
+                    && citizen.get(EMAIL_ID_FIELD).toString().matches(EMAIL))
+                citizenUpdate.setEmailId(citizen.get(EMAIL_ID_FIELD).toString());
 
-            if (citizen.get("emailId") != null)
-                citizenUpdate.setEmailId(citizen.get("emailId").toString());
-
-            if (citizen.get("altContactNumber") != null)
-                citizenUpdate.setAltContactNumber(citizen.get("altContactNumber").toString());
+            if (citizen.get(ALT_CONTACT_NUMBER_FIELD) != null && isNotBlank(citizen.get(ALT_CONTACT_NUMBER_FIELD).toString()))
+                citizenUpdate.setAltContactNumber(citizen.get(ALT_CONTACT_NUMBER_FIELD).toString());
 
             final DateTimeFormatter ft = DateTimeFormat.forPattern("yyyy-MM-dd");
             final Date dt = ft.parseDateTime(citizen.get("dob").toString()).toDate();
@@ -179,8 +174,8 @@ public class CitizenController extends ApiController {
             return res.setDataAdapter(new UserAdapter()).success(citizen, getMessage("msg.citizen.update.success"));
 
         } catch (final Exception e) {
-            LOGGER.error("EGOV-API ERROR ", e);
-            return ApiResponse.newInstance().error(getMessage("server.error"));
+            LOGGER.error(EGOV_API_ERROR, e);
+            return ApiResponse.newInstance().error(getMessage(SERVER_ERROR_KEY));
         }
 
     }

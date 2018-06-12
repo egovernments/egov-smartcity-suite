@@ -82,7 +82,7 @@ function getSumOfRecords(wardid) {
             'wardId': wardid
         },
         type: 'GET',
-        async: false,
+        async: true,
         success: function (data) {
             recordTotal = [];
             for (var i = 0; i < data.length; i++) {
@@ -91,6 +91,7 @@ function getSumOfRecords(wardid) {
         }
     })
 }
+
 function openTradeLicense(obj) {
     window.open("/tl/viewtradelicense/viewTradeLicense-view.action?id="
         + $(obj).data('eleval'), '',
@@ -107,22 +108,29 @@ function jasonParam(obj) {
     return "?" + parts.join('&');
 }
 
+$.fn.dataTable.ext.errMode = function () {
+    $('.loader-class').modal('hide');
+};
+
 function searchDCBReport(wardid) {
-    $('.report-section').removeClass('display-hide');
-    $('#report-footer').show();
-    $("#tbldcbdrilldown").dataTable().fnDestroy();
-    reportdatatable = drillDowntableContainer
-        .on('preXhr.dt', function (e, settings, data) {
-            param = data;
-        }).dataTable({
+    try {
+        $('.loader-class').modal('show', {backdrop: 'static'});
+        $('.report-section').removeClass('display-hide');
+        $('#report-footer').show();
+        $("#tbldcbdrilldown").dataTable().fnDestroy();
+        reportdatatable = drillDowntableContainer
+            .on('preXhr.dt', function (e, settings, data) {
+                param = data;
+            }).dataTable({
             processing: true,
             serverSide: true,
             sort: true,
             filter: true,
             "searching": false,
             dom: "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-2 col-xs-6 text-right'B><'col-md-5 col-xs-6 text-right'p>>",
-            "autoWidth": false,
+            "autoWidth": true,
             "bDestroy": true,
+            scrollX: true,
             buttons: [
                 {
                     text: 'PDF',
@@ -168,6 +176,11 @@ function searchDCBReport(wardid) {
                     },
                     "sTitle": "License No.",
                     "name": "licensenumber",
+                    "width": 10
+                }, {
+                    "data": "oldLicenseNo",
+                    "name": "oldLicenseNumber",
+                    "sTitle": "Old License No.",
                     "width": 10
                 }, {
                     "data": "ward",
@@ -227,7 +240,6 @@ function searchDCBReport(wardid) {
                     $('#report-footer').show();
                 }
                 if (data.length > 0) {
-                    updateTotalFooter(3, api, true);
                     updateTotalFooter(4, api, true);
                     updateTotalFooter(5, api, true);
                     updateTotalFooter(6, api, true);
@@ -236,23 +248,33 @@ function searchDCBReport(wardid) {
                     updateTotalFooter(9, api, true);
                     updateTotalFooter(10, api, true);
                     updateTotalFooter(11, api, true);
+                    updateTotalFooter(12, api, true);
                 }
             },
+            "initComplete": function (settings, json) {
+                $('.loader-class').modal('hide');
+            },
             "aoColumnDefs": [{
-                "aTargets": [3, 4, 5, 6, 7, 8, 9, 10, 11],
+                "aTargets": [4, 5, 6, 7, 8, 9, 10, 11, 12],
                 "mRender": function (data, type, full) {
                     return formatNumberInr(data);
-                }
+                },
+                className: "dt-right"
             }]
         });
-    $('.loader-class').modal('hide');
 
-    if ($('#mode').val() == 'property') {
-        reportdatatable.fnSetColumnVis(1, false);
-    } else {
-        reportdatatable.fnSetColumnVis(1, true);
+
+        if ($('#mode').val() == 'property') {
+            reportdatatable.fnSetColumnVis(1, false);
+        } else {
+            reportdatatable.fnSetColumnVis(1, true);
+        }
+    } catch (e) {
+        $('.loader-class').modal('hide');
+        console.log(e);
     }
 }
+
 function updateTotalFooter(colidx, api, isServerSide) {
     // Remove the formatting to get integer data for summation
     var intVal = function (i) {
@@ -262,7 +284,7 @@ function updateTotalFooter(colidx, api, isServerSide) {
 
     // Total over all pages
     if (isServerSide && recordTotal != null)
-        total = recordTotal[colidx - 3];
+        total = recordTotal[colidx - 4];
     else
         total = api.column(colidx).data().reduce(function (a, b) {
             return intVal(a) + intVal(b);

@@ -143,7 +143,6 @@ public class Assignment extends AbstractAuditable {
     private Employee employee;
     @OneToMany(mappedBy = "assignment", orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<HeadOfDepartments> deptSet = new ArrayList<>(0);
-
     @Transient
     private List<HeadOfDepartments> hodList = new ArrayList<>(0);
 
@@ -261,6 +260,10 @@ public class Assignment extends AbstractAuditable {
         this.deptSet.clear();
         if (deptSet != null)
             this.deptSet.addAll(deptSet);
+    }
+
+    public boolean isExpired() {
+        return toDate.before(new Date());
     }
 
     @Override

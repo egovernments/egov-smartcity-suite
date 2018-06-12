@@ -102,11 +102,11 @@ $('#metercurrentReadingDate').on('change', function(){
 		var currentReading = $('#metercurrentReading').val();
 		var currentMeterDate = $('#metercurrentReadingDate').val();
 		var previousMeterDate = $('#previousreadingDate').val();
-		if ($('#metercurrentReading').val() === '' && isMeterDamaged==="false") {
+		if (currentReading === '' && isMeterDamaged==="false") {
 			bootbox.alert('Either Current Meter Reading or isMeterDamaged value is required');
 			return false;
 		}
-		else if (isMeterDamaged!="false" && currentReading!="" && (currentReading - previousReading) < 0) {
+		else if (currentReading!="" && (currentReading - previousReading) < 0) {
 			bootbox.alert('Current Meter Reading should not be less than Previous Meter Reading');
 			$('#metercurrentReading').val('');
 			return false;
@@ -117,7 +117,7 @@ $('#metercurrentReadingDate').on('change', function(){
 
 		}
 		if (currentMeterDate != undefined && previousMeterDate != undefined && !validateCurrentAndExecutionDateRange(previousMeterDate, currentMeterDate)) {
-			bootbox.alert("Current Meter Reading Date should not be less than Previous Meter Reading Date");
+			bootbox.alert("Current Meter Reading Date should not be less than Previous Meter Reading Date "+previousMeterDate);
 			$('#metercurrentReadingDate').val('');
 			return false;
 		}

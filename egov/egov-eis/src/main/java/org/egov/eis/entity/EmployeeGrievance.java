@@ -111,7 +111,7 @@ public class EmployeeGrievance extends StateAware<Position> {
     private Employee employee = new Employee();
 
     @NotNull
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
     @JoinColumn(name = "status")
     private EmployeeGrievanceStatus status;
 
@@ -152,7 +152,7 @@ public class EmployeeGrievance extends StateAware<Position> {
 
     @Override
     public String myLinkId() {
-        return grievanceNumber;
+        return id.toString();
     }
 
     public String getGrievanceNumber() {

@@ -70,6 +70,8 @@ import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.security.utils.SecurityConstants.LOGIN_PASS_FIELD;
 import static org.egov.infra.security.utils.SecurityConstants.MAX_LOGIN_ATTEMPT_ALLOWED;
+import static org.egov.infra.security.utils.captcha.CaptchaUtils.J_CAPTCHA_RESPONSE;
+import static org.egov.infra.security.utils.captcha.CaptchaUtils.RECAPTCHA_RESPONSE;
 
 public class ApplicationAuthenticationProvider extends DaoAuthenticationProvider {
 
@@ -79,8 +81,7 @@ public class ApplicationAuthenticationProvider extends DaoAuthenticationProvider
     private static final String ACCOUNT_LOCKED_DEFAULT_MSG = "User account is locked";
     private static final String TOO_MANY_ATTEMPTS_MSG_FORMAT = "Too many attempts [%d]";
     private static final String INVALID_CAPTCHA_MSG_FORMAT = "%s - Recaptcha Invalid";
-    private static final String CAPTCHA_FIELD = "j_captcha_response";
-    private static final String RECAPTCHA_FIELD = "g-recaptcha-response";
+
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -106,7 +107,7 @@ public class ApplicationAuthenticationProvider extends DaoAuthenticationProvider
     private Authentication unlockAccount(Authentication authentication, LockedException le) {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
-        if (isNotBlank(request.getParameter(RECAPTCHA_FIELD)) || isNotBlank(request.getParameter(CAPTCHA_FIELD))) {
+        if (isNotBlank(request.getParameter(RECAPTCHA_RESPONSE)) || isNotBlank(request.getParameter(J_CAPTCHA_RESPONSE))) {
             if (recaptchaUtils.captchaIsValid(request)) {
                 loginAttemptService.resetFailedAttempt(authentication.getName());
                 return super.authenticate(authentication);

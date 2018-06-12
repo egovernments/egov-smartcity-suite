@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -110,7 +110,7 @@ public class PenaltyRatesController {
     public String search(@ModelAttribute PenaltyForm penaltyForm, BindingResult errors, Model model) {
         if (errors.hasErrors())
             return PENALTYRATE_RESULT;
-        penaltyForm.setPenaltyRatesList(penaltyRatesService.search(penaltyForm.getLicenseAppType().getId()));
+        penaltyForm.setPenaltyRatesList(penaltyRatesService.search(penaltyForm.getLicenseAppType()));
         model.addAttribute("penaltyForm", penaltyForm);
         return PENALTYRATE_RESULT;
     }
@@ -119,7 +119,7 @@ public class PenaltyRatesController {
     public String searchview(@ModelAttribute PenaltyForm penaltyForm, BindingResult errors, Model model) {
         if (errors.hasErrors())
             return "penaltyRates-search";
-        penaltyForm.setPenaltyRatesList(penaltyRatesService.search(penaltyForm.getLicenseAppType().getId()));
+        penaltyForm.setPenaltyRatesList(penaltyRatesService.search(penaltyForm.getLicenseAppType()));
         model.addAttribute("penaltyForm", penaltyForm);
 
         return "penaltyRates-viewResult";

@@ -47,21 +47,21 @@
  */
 
 //This function is used to show the report which is digitally signed.
-function downloadSignedNotice(signedFileStoreId) {
+function downloadSignedRegCertificate(signedFileStoreId,registrationNo) {
 	var params = [
 		'height='+screen.height, 
 	    'width='+screen.width,
 	    'fullscreen=yes' 
 	].join(',');
-	window.open('/mrs/registration/downloadSignedCertificate/?signedFileStoreId='+signedFileStoreId, "MRCertificateWindow", params);
+	window.open('/mrs/registration/downloadSignedCertificate/?signedFileStoreId='+signedFileStoreId+'&registrationNo='+registrationNo, "MRCertificateWindow", params);
 }
 
 //This function is used to show reissue report which is digitally signed.
-function downloadSignedReIssueNotice(signedFileStoreId) {
+function downloadSignedReIssueCertificate(signedFileStoreId,registrationNo) {
 	var params = [
 		'height='+screen.height, 
 	    'width='+screen.width,
 	    'fullscreen=yes' 
 	].join(',');
-	window.open('/mrs/reissue/downloadSignedCertificate/?signedFileStoreId='+signedFileStoreId, "ReIssueCertificateWindow", params);
+	window.open('/mrs/reissue/downloadSignedCertificate/?signedFileStoreId='+signedFileStoreId+'&registrationNo='+registrationNo, "ReIssueCertificateWindow", params);
 }

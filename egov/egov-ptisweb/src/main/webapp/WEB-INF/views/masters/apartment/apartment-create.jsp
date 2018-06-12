@@ -121,34 +121,9 @@
 
 						<div class="col-sm-6 add-margin">
 							<form:input id="totalFloors" path="totalFloors" type="text"
-								placeholder="Excluding Ground Floor"
 								cssClass="form-control is_valid_number" autocomplete="off"
 								required="required" />
 							<form:errors path="totalFloors" cssClass="error-msg" />
-						</div>
-					</div>
-					<div class="form-group">
-						<label for="Field-1" class="col-sm-3 control-label"><spring:message
-								code="lbl.builtUpArea" /></label>
-
-						<div class="col-sm-6 add-margin">
-							<form:input id="builtUpArea" path="builtUpArea" type="text"
-								placeholder="In Square Feet"
-								cssClass="form-control patternvalidation"
-								data-pattern="decimalvalue" autocomplete="off" />
-							<form:errors path="builtUpArea" cssClass="error-msg" />
-						</div>
-					</div>
-					<div class="form-group">
-						<label for="Field-1" class="col-sm-3 control-label"><spring:message
-								code="lbl.openSpaceArea" /></label>
-
-						<div class="col-sm-6 add-margin">
-							<form:input id="openSpaceArea" path="openSpaceArea" type="text"
-								placeholder="In Square Feet"
-								cssClass="form-control patternvalidation"
-								data-pattern="decimalvalue" autocomplete="off" />
-							<form:errors path="openSpaceArea" cssClass="error-msg" />
 						</div>
 					</div>
 					<div class="form-group">

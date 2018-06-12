@@ -58,30 +58,11 @@
 					<param name="sequence_name">SEQ_EGPT_MUTATION_MASTER</param>
 			</generator>
 		</id>
-		<property
-			name="mutationName"
-			column="MUTATION_NAME"
-			type="string"
-		/>
-		<property
-			name="mutationDesc"
-			column="MUTATION_DESC"
-			type="string"
-		/>
-		<property
-			name="type"
-			column="TYPE"
-			type="string"
-		/>
-	
-		<property
-			name="code"
-			column="CODE"
-		/>
-		
-		<property
-			name="orderId"
-			column="ORDER_ID"
-		/>
+		<property name="mutationName" column="MUTATION_NAME" type="string" />
+		<property name="mutationDesc" column="MUTATION_DESC" type="string" />
+		<property name="type" column="TYPE" type="string" />
+		<property name="code" column="CODE" />
+		<property name="orderId" column="ORDER_ID" />
+		<property name="active" column="ACTIVE" />
 	</class>
 </hibernate-mapping>

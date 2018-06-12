@@ -56,6 +56,7 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.metrics.tophits.TopHitsBuilder;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.joda.time.DateTime;
@@ -72,7 +73,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.utils.StringUtils.defaultIfBlank;
 import static org.egov.pgr.elasticsearch.repository.ComplaintIndexAggregationBuilder.getAverageWithExclusion;
 import static org.egov.pgr.elasticsearch.repository.ComplaintIndexAggregationBuilder.getAverageWithFilter;
 import static org.egov.pgr.elasticsearch.repository.ComplaintIndexAggregationBuilder.getCount;
@@ -138,6 +141,11 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
     private static final String SATISFACTION_INDEX = "satisfactionIndex";
     private static final String SATISFACTION_AVERAGE = "satisfactionAverage";
     private static final String COMPLAINT_AGEINGDAYS_FROM_DUE = "complaintAgeingdaysFromDue";
+    private static final String CITY_GRADE="cityGrade";
+    private static final String REGION_NAME="cityRegionName";
+    private static final String LOCALITY_NUMBER="localityNo";
+    private static final String DISTRICT_CODE="cityDistrictCode";
+    private static final String FEEDBACK_RATING="feedbackRating";
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
 
@@ -183,7 +191,7 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                 .addAggregation(getAverageWithExclusion(SATISFACTION_AVERAGE, SATISFACTION_INDEX))
                 .addAggregation(getCountBetweenSpecifiedDates("currentYear", "createdDate",
                         currentYearFromDate.toString(formatter),
-                        new DateTime().toString(formatter)))
+                        new DateTime().plusDays(1).toString(formatter)))
                 .addAggregation(getCountBetweenSpecifiedDates("todaysComplaintCount", "createdDate",
                         new DateTime().toString(formatter), new DateTime().plusDays(1).toString(formatter)))
                 .execute().actionGet();
@@ -593,8 +601,9 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                 .execute().actionGet();
 
         Iterator<SearchHit> searchHits = response.getHits().iterator();
-        return searchHits.hasNext() ? searchHits.next().getSource().get(INITIAL_FUNCTIONARY_MOBILE_NUMBER).toString()
-                : StringUtils.EMPTY;
+
+        return searchHits.hasNext() ?
+                defaultIfBlank((String) searchHits.next().getSource().get(INITIAL_FUNCTIONARY_MOBILE_NUMBER)) : EMPTY;
     }
 
     @Override
@@ -800,6 +809,86 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                                     .subAggregation(getAverageWithExclusion(SATISFACTION_AVERAGE, SATISFACTION_INDEX)))).
                             execute().actionGet();
         return tableResponse;
+
+    }
+
+    @Override
+    public SearchResponse findFeedBackRatingDetails(ComplaintDashBoardRequest ivrsFeedBackRequest, BoolQueryBuilder feedBackQuery,
+            String aggregationField) {
+        return elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
+                .setQuery(feedBackQuery).addAggregation(AggregationBuilders.terms("typeAggr").field(aggregationField).size(130)
+                        .subAggregation(AggregationBuilders.terms("countAggr").field(FEEDBACK_RATING))
+                        .subAggregation(addFieldBasedOnAggField(aggregationField)))
+                .execute().actionGet();
+    }
+
+    private TopHitsBuilder addFieldBasedOnAggField(String aggregationField) {
+        TopHitsBuilder field = AggregationBuilders.topHits("paramDetails");
+        if (REGION_NAME.equalsIgnoreCase(aggregationField)) {
+            field.addField(REGION_NAME);
+        } else if (DISTRICT_NAME.equalsIgnoreCase(aggregationField)) {
+            field.addField(DISTRICT_NAME)
+                    .addField(DISTRICT_CODE)
+                    .addField(REGION_NAME);
+        } else if (CITY_GRADE.equalsIgnoreCase(aggregationField)) {
+            field.addField(CITY_GRADE)
+                    .addField(DISTRICT_CODE)
+                    .addField(DISTRICT_NAME)
+                    .addField(REGION_NAME);
+        } else if (CITY_NAME.equalsIgnoreCase(aggregationField)) {
+            field.addField(CITY_NAME)
+                    .addField(CITY_CODE)
+                    .addField(CITY_GRADE)
+                    .addField(DISTRICT_CODE)
+                    .addField(DISTRICT_NAME)
+                    .addField(REGION_NAME);
+        } else if (LOCALITY_NAME.equalsIgnoreCase(aggregationField)) {
+            field.addField(LOCALITY_NAME)
+                    .addField(LOCALITY_NUMBER)
+                    .addField(CITY_NAME)
+                    .addField(CITY_CODE)
+                    .addField(CITY_GRADE)
+                    .addField(DISTRICT_CODE)
+                    .addField(DISTRICT_NAME)
+                    .addField(REGION_NAME);
+        } else if (WARD_NUMBER.equalsIgnoreCase(aggregationField)) {
+            field.addField(WARD_NUMBER).addField(WARD_NAME).addField(CITY_NAME)
+                    .addField(CITY_CODE).addField(CITY_GRADE).addField(LOCALITY_NAME)
+                    .addField(LOCALITY_NUMBER).addField(DISTRICT_NAME)
+                    .addField(DISTRICT_CODE).addField(REGION_NAME);
+        } else if (DEPARTMENT_CODE.equalsIgnoreCase(aggregationField)) {
+            field.addField(DEPARTMENT_CODE).addField(DEPARTMENT_NAME).addField(CITY_NAME)
+                    .addField(CITY_CODE).addField(CITY_GRADE).addField(LOCALITY_NAME)
+                    .addField(LOCALITY_NUMBER).addField(DISTRICT_NAME)
+                    .addField(DISTRICT_CODE).addField(REGION_NAME);
+        } else if (INITIAL_FUNCTIONARY_NAME.equalsIgnoreCase(aggregationField)) {
+            field.addField(INITIAL_FUNCTIONARY_NAME).addField(INITIAL_FUNCTIONARY_MOBILE_NUMBER)
+                    .addField(WARD_NAME).addField(WARD_NUMBER)
+                    .addField(DEPARTMENT_NAME).addField(DEPARTMENT_CODE).addField(CITY_NAME)
+                    .addField(CITY_CODE).addField(CITY_GRADE).addField(LOCALITY_NAME)
+                    .addField(LOCALITY_NUMBER).addField(DISTRICT_NAME)
+                    .addField(DISTRICT_CODE).addField(REGION_NAME);
+        }
+        return field;
+    }
+    
+   
+    public SearchResponse findCategoryWiseFeedBackRatingDetails(ComplaintDashBoardRequest ivrsFeedBackRequest,
+            BoolQueryBuilder feedBackQuery) {
+        if (isNotBlank(ivrsFeedBackRequest.getCategoryId())||isNotBlank(ivrsFeedBackRequest.getCategoryName())) {
+            return elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
+                    .setQuery(feedBackQuery)
+                    .addAggregation(AggregationBuilders.terms("categoryAggr").field("categoryName").size(130)
+                            .subAggregation(AggregationBuilders.terms("complaintTypeAggr").field("complaintTypeName")
+                                    .subAggregation(AggregationBuilders.terms("countAggr").field(FEEDBACK_RATING))))
+                    .execute().actionGet();
+        } else {
+            return elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
+                    .setQuery(feedBackQuery)
+                    .addAggregation(AggregationBuilders.terms("categoryAggr").field("categoryName").size(130)
+                            .subAggregation(AggregationBuilders.terms("countAggr").field(FEEDBACK_RATING)))
+                    .execute().actionGet();
+        }
 
     }
 }

@@ -76,6 +76,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LA
 @Repository(value = "basicPropertyDAO")
 @Transactional(readOnly = true)
 public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
+    private static final String PROPERTY_ID = "propertyId";
+
     private final static Logger LOGGER = Logger.getLogger(BasicPropertyHibernateDAO.class);
 
     @PersistenceContext
@@ -118,7 +120,6 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
                         + "left join fetch arrDmd.exemptions "
                         + "where BP.regNum =:RegNum and BP.active='Y' ");
         qry.setString("RegNum", RegNum);
-        // qry.setMaxResults(1);
         return (BasicProperty) qry.uniqueResult();
     }
 
@@ -130,10 +131,10 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
     public BasicProperty getBasicPropertyByPropertyID(String propertyId) {
         Query qry = null;
         BasicProperty basicProperty = null;
-        if (propertyId != null && !propertyId.equals("")) {
+        if (StringUtils.isNotBlank(propertyId)) {
             qry = getCurrentSession().createQuery(
                     "from BasicPropertyImpl BP where BP.upicNo =:propertyId and BP.active='Y' ");
-            qry.setString("propertyId", propertyId);
+            qry.setString(PROPERTY_ID, propertyId);
             basicProperty = (BasicProperty) qry.uniqueResult();
         }
         return basicProperty;
@@ -149,7 +150,7 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
         if (propertyId != null && !propertyId.equals("")) {
             qry = getCurrentSession().createQuery(
                     "from BasicPropertyImpl BP where BP.upicNo =:propertyId");
-            qry.setString("propertyId", propertyId);
+            qry.setString(PROPERTY_ID, propertyId);
             basicProperty = (BasicProperty) qry.uniqueResult();
         }
         return basicProperty;
@@ -164,11 +165,6 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
         return (BasicProperty) qry.uniqueResult();
     }
 
-    /*
-     * public BasicProperty getBasicPropertyByID(String ID) { Query qry = getSession().createQuery("from BasicProperty BP where
-     * bp.ID =: ID and BP.active='Y' "); qry.setString("ID", ID); return (BasicProperty)qry.uniqueResult(); }
-     */
-
     @Override
     public BasicProperty getInActiveBasicPropertyByPropertyID(String propertyId) {
         Query qry = null;
@@ -176,7 +172,7 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
         if (propertyId != null && !propertyId.equals("")) {
             qry = getCurrentSession().createQuery(
                     "from BasicPropertyImpl BP where BP.upicNo =:propertyId and BP.active='N' ");
-            qry.setString("propertyId", propertyId);
+            qry.setString(PROPERTY_ID, propertyId);
             basicProperty = (BasicProperty) qry.uniqueResult();
         }
         return basicProperty;
@@ -568,7 +564,7 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
         BasicProperty basicProperty;
         String queryStr = "select prop.basicProperty from PropertyImpl prop where prop.id=:propertyId ";
         Query query = getCurrentSession().createQuery(queryStr);
-        query.setLong("propertyId", propertyId);
+        query.setLong(PROPERTY_ID, propertyId);
         basicProperty = (BasicProperty) query.uniqueResult();
         return basicProperty;
     }

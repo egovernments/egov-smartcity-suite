@@ -102,7 +102,7 @@ public class RegistrationCertificate {
     }
 
     public String getZoneName() {
-        return registration.getZone().getName();
+        return registration.getZone()==null?"":registration.getZone().getName();
     }
 
     public String getHusbandName() {

@@ -66,7 +66,52 @@ public class SearchNoticeDetails {
     private String locality;
     private String fileStoreID;
     private String workOrderNumber;
-    private Date workOrderDate;
+    private String workOrderDate;
+    private String fromDate;
+    private String toDate;
+    private String estimationNumber;
+    private String estimationDate;
+    private String noticeType;
+    
+    public String getNoticeType() {
+        return noticeType;
+    }
+
+    public void setNoticeType(String noticeType) {
+        this.noticeType = noticeType;
+    }
+
+    public String getEstimationNumber() {
+        return estimationNumber;
+    }
+
+    public void setEstimationNumber(String estimationNumber) {
+        this.estimationNumber = estimationNumber;
+    }
+
+    public String getEstimationDate() {
+        return estimationDate;
+    }
+
+    public void setEstimationDate(String estimationDate) {
+        this.estimationDate = estimationDate;
+    }
+
+    public String getFromDate() {
+        return fromDate;
+    }
+
+    public void setFromDate(String fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public String getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(String toDate) {
+        this.toDate = toDate;
+    }
 
     public String getWorkOrderNumber() {
         return workOrderNumber;
@@ -76,11 +121,11 @@ public class SearchNoticeDetails {
         this.workOrderNumber = workOrderNumber;
     }
 
-    public Date getWorkOrderDate() {
+    public String getWorkOrderDate() {
         return workOrderDate;
     }
 
-    public void setWorkOrderDate(final Date workOrderDate) {
+    public void setWorkOrderDate(String workOrderDate) {
         this.workOrderDate = workOrderDate;
     }
 

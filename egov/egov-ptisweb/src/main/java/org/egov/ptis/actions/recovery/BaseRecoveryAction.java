@@ -292,7 +292,7 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 		voucherDemandMap.put(PropertyTaxConstants.DEMANDRSN_CODE_RECOVERY_FEE, totalDemandAmt);
 		amounts.put(currentDemand.getEgInstallmentMaster(), voucherDemandMap);
 
-		financialUtil.createVoucher(recovery.getBasicProperty().getUpicNo(), amounts, "Recovery Fees");
+		//financialUtil.createVoucher(recovery.getBasicProperty().getUpicNo(), amounts, "Recovery Fees");
 
 	}
 

@@ -68,8 +68,6 @@
 		</iframe>
 	<br />
 	<div class="buttonbottom">
-		<!-- <input name="closeButton" type="button" class="button"
-			id="buttonClose" value="Close" onclick="window.close()" /> &nbsp; -->
 			<input type="button" name="button2" id="button2"
 					value="Close" class="button" onclick="window.close();
 	</div>

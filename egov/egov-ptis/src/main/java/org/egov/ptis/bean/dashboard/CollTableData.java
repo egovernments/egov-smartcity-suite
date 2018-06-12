@@ -61,7 +61,11 @@ public class CollTableData {
     private String ulbName = StringUtils.EMPTY;
     private String wardName = StringUtils.EMPTY;
     private String billCollector = StringUtils.EMPTY;
-    private String mobileNumber = StringUtils.EMPTY;
+    private String billCollMobNo = StringUtils.EMPTY;
+    private String revenueInspector = StringUtils.EMPTY;
+    private String revInspectorMobNo = StringUtils.EMPTY;
+    private String revenueOfficer = StringUtils.EMPTY;
+    private String revOfficerMobNo = StringUtils.EMPTY;
     private BigDecimal todayColl = BigDecimal.ZERO;
     private BigDecimal totalDmd = BigDecimal.ZERO;
     private BigDecimal cytdDmd = BigDecimal.ZERO;
@@ -218,14 +222,6 @@ public class CollTableData {
 
     public void setTodayColl(BigDecimal todayColl) {
         this.todayColl = todayColl;
-    }
-
-    public String getMobileNumber() {
-        return mobileNumber;
-    }
-
-    public void setMobileNumber(String mobileNumber) {
-        this.mobileNumber = mobileNumber;
     }
 
     public BigDecimal getArrearDemand() {
@@ -458,6 +454,46 @@ public class CollTableData {
 
     public void setCyCurrentPenaltyColl(BigDecimal cyCurrentPenaltyColl) {
         this.cyCurrentPenaltyColl = cyCurrentPenaltyColl;
+    }
+
+    public String getBillCollMobNo() {
+        return billCollMobNo;
+    }
+
+    public void setBillCollMobNo(String billCollMobNo) {
+        this.billCollMobNo = billCollMobNo;
+    }
+
+    public String getRevenueInspector() {
+        return revenueInspector;
+    }
+
+    public void setRevenueInspector(String revenueInspector) {
+        this.revenueInspector = revenueInspector;
+    }
+
+    public String getRevInspectorMobNo() {
+        return revInspectorMobNo;
+    }
+
+    public void setRevInspectorMobNo(String revInspectorMobNo) {
+        this.revInspectorMobNo = revInspectorMobNo;
+    }
+
+    public String getRevenueOfficer() {
+        return revenueOfficer;
+    }
+
+    public void setRevenueOfficer(String revenueOfficer) {
+        this.revenueOfficer = revenueOfficer;
+    }
+
+    public String getRevOfficerMobNo() {
+        return revOfficerMobNo;
+    }
+
+    public void setRevOfficerMobNo(String revOfficerMobNo) {
+        this.revOfficerMobNo = revOfficerMobNo;
     }
 
 }

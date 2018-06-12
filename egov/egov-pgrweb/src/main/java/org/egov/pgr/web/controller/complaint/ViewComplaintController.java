@@ -48,7 +48,7 @@
 
 package org.egov.pgr.web.controller.complaint;
 
-import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.exception.ApplicationValidationException;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.service.ComplaintHistoryService;
 import org.egov.pgr.service.ComplaintService;
@@ -74,7 +74,7 @@ public class ViewComplaintController {
     public String viewComplaints(@PathVariable String crnNo, Model model) {
         Complaint complaint = complaintService.getComplaintByCRN(crnNo);
         if (complaint == null)
-            throw new ApplicationRuntimeException("PGR.002");
+            throw new ApplicationValidationException("PGR.002");
         List<HashMap<String, Object>> historyTable = complaintHistoryService.getHistory(complaint);
         model.addAttribute("complaintHistory", historyTable);
         model.addAttribute("complaint", complaint);

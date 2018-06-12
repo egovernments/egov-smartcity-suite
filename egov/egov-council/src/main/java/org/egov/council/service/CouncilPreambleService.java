@@ -52,6 +52,7 @@ import static org.egov.council.utils.constants.CouncilConstants.APPROVED;
 import static org.egov.council.utils.constants.CouncilConstants.IMPLEMENTATION_STATUS_FINISHED;
 import static org.egov.council.utils.constants.CouncilConstants.REJECTED;
 import static org.egov.council.utils.constants.CouncilConstants.RESOLUTION_APPROVED_PREAMBLE;
+import static org.egov.infra.utils.ApplicationConstant.ANONYMOUS_USERNAME;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,6 +73,7 @@ import org.egov.council.utils.constants.CouncilConstants;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.StringUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
@@ -103,6 +105,8 @@ public class CouncilPreambleService {
     
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
+    @Autowired
+    private UserService userService;
 
     @Autowired
     public CouncilPreambleService(final CouncilPreambleRepository councilPreambleRepository) {
@@ -139,6 +143,7 @@ public class CouncilPreambleService {
                 .getStatusByModuleAndCode(CouncilConstants.PREAMBLE_MODULENAME,
                         CouncilConstants.PREAMBLE_STATUS_CREATED));
         councilPreamble.setType(PreambleType.GENERAL);
+        councilPreamble.setCreatedBy(userService.getUserByUsername(ANONYMOUS_USERNAME)) ;
         preambleWorkflowCustomImpl.onCreatePreambleAPI(councilPreamble);
         councilPreambleRepository.save(councilPreamble);
         return councilPreamble;

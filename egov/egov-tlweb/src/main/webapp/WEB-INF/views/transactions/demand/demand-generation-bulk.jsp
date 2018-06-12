@@ -98,14 +98,14 @@
                     <div class="progress-div text-center form-group display-hide">
 
                         <div class="alert alert-info" role="alert">
-                            <spring:message code="lbl.generate.demand.wait"/>
+                            <div id="progress-status"><spring:message code="lbl.generate.demand.wait"/></div>
                             <div class="progress center-block" style="width:300px">
                                 <div class="progress-bar progress-bar-striped active" role="progressbar"
                                      aria-valuenow="0" aria-valuemin="0" aria-valuemax="${licenseIds.size()}">
                                     <div class="progress-bar-title"></div>
                                 </div>
                             </div>
-                            <spring:message code="lbl.generate.demand.info"/>
+                            <div id="progress-footer"><spring:message code="lbl.generate.demand.info"/></div>
                         </div>
                     </div>
                     <div class="col-md-12form-group report-table-container display-hide">

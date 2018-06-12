@@ -198,4 +198,6 @@
     <query name="EXEMPTIOREASON_BYID">
         <![CDATA[From TaxExemptionReason where id = :id]]></query> 
         
+    <query name="ACTIVE_PROPERTY_BYUPICNO">
+        <![CDATA[from PropertyImpl p where p.basicProperty.upicNo= upicNo and p.basicProperty.active='Y' and p.status= :status and p.isDefaultProperty='Y']]></query>     
 </hibernate-mapping>

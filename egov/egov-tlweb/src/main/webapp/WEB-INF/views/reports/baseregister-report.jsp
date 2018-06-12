@@ -53,115 +53,100 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <div class="row">
     <div class="col-md-12">
-        <form:form class="form-horizontal form-groups-bordered" action=""
-                   id="baseregisterform" modelAttribute="baseRegister" method="post">
-            <div class="panel panel-primary" data-collapsed="0">
-                <div class="panel-heading">
-                    <div class="panel-title">
-                        <strong><spring:message code='title.baseregister'/></strong>
-                    </div>
+        <div class="panel panel-primary" data-collapsed="0">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    <strong><spring:message code='title.baseregister'/></strong>
                 </div>
-                <div class="panel-body"></div>
-                <div class="form-group">
-                    <label class="col-sm-3 control-label text-right"> <spring:message
-                            code='search.license.category'/></label>
-                    <div class="col-sm-3 add-margin">
-                        <form:select path="categoryId" id="category" cssClass="form-control"
-                                     cssErrorClass="form-control error">
-                            <form:option value="">
-                                <spring:message code="lbl.category.select"/>
-                            </form:option>
-                            <form:options items="${categories}" itemValue="id" itemLabel="name"/>
-                        </form:select>
+            </div>
+            <div class="panel-body">
+                <form:form class="form-horizontal form-groups-bordered" action=""
+                           id="baseregisterform" modelAttribute="baseRegister" method="post">
+
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label text-right"> <spring:message
+                                code='search.license.category'/></label>
+                        <div class="col-sm-3 add-margin">
+                            <form:select path="categoryId" id="category" cssClass="form-control"
+                                         cssErrorClass="form-control error">
+                                <form:option value="">
+                                    <spring:message code="lbl.category.select"/>
+                                </form:option>
+                                <form:options items="${categories}" itemValue="id" itemLabel="name"/>
+                            </form:select>
+                        </div>
+                        <label class="col-sm-2 control-label text-right"> <spring:message
+                                code='search.license.subCategory'/></label>
+                        <div class="col-sm-3 add-margin">
+                            <select id="subCategory" name="subCategoryId" class="form-control select2"
+                                    required>
+                            </select>
+                        </div>
                     </div>
-                    <label class="col-sm-2 control-label text-right"> <spring:message
-                            code='search.license.subCategory'/></label>
-                    <div class="col-sm-3 add-margin">
-                        <select id="subCategory" name="subCategoryId" class="form-control select2"
-                                required>
-                        </select>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label text-right"> <spring:message
+                                code='search.license.status'/></label>
+                        <div class="col-sm-3 add-margin">
+                            <form:select path="statusId" id="status" cssClass="form-control"
+                                         cssErrorClass="form-control error">
+                                <form:option value="">
+                                    <spring:message code="lbl.category.select"/>
+                                </form:option>
+                                <form:options items="${statusList}" itemValue="id" itemLabel="name"/>
+                            </form:select>
+                        </div>
+                        <label class="col-sm-2 control-label text-right"> <spring:message code='baseregister.ward'/></label>
+                        <div class="col-sm-3 add-margin">
+                            <form:select path="wardId" id="ward" cssClass="form-control" cssErrorClass="form-control error">
+                                <form:option value="">
+                                    <spring:message code="lbl.select"/>
+                                </form:option>
+                                <form:options items="${wardList}" itemValue="id" itemLabel="name"/>
+                            </form:select>
+                        </div>
                     </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.options"/></label>
+                        <div class="col-sm-3 add-margin">
+                            <form:select path="filterName" id="filter" items="${filters}" cssClass="form-control"
+                                         cssErrorClass="form-control error"/>
+                        </div>
+                    </div>
+                    <div class="form-group add-margin">
+                        <div class="text-center">
+                            <button type="submit" id="btnsearch" class="btn btn-primary">
+                                <spring:message code="lbl.search"/>
+                            </button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();">
+                                <spring:message code="lbl.close"/>
+                            </button>
+                        </div>
+                    </div>
+                </form:form>
+                <div class="row display-hide report-section add-margin">
+                    <br/>
+                    <table class="table table-bordered datatable dt-responsive table-hover multiheadertbl" id="baseregistertbl"
+                           style="overflow-x: auto;max-width: 100%;min-width: 100%">
+                        <tfoot id="report-footer">
+                        <tr>
+                            <td colspan="16">Total</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        </tfoot>
+                    </table>
                 </div>
-                <div class="form-group">
-                    <label class="col-sm-3 control-label text-right"> <spring:message
-                            code='search.license.status'/></label>
-                    <div class="col-sm-3 add-margin">
-                        <form:select path="statusId" id="status" cssClass="form-control"
-                                     cssErrorClass="form-control error">
-                            <form:option value="">
-                                <spring:message code="lbl.category.select"/>
-                            </form:option>
-                            <form:options items="${statusList}" itemValue="id" itemLabel="name"/>
-                        </form:select>
-                    </div>
-                    <label class="col-sm-2 control-label text-right"> <spring:message code='baseregister.ward'/></label>
-                    <div class="col-sm-3 add-margin">
-                        <form:select path="wardId" id="ward" cssClass="form-control" cssErrorClass="form-control error">
-                            <form:option value="">
-                                <spring:message code="lbl.select"/>
-                            </form:option>
-                            <form:options items="${wardList}" itemValue="id" itemLabel="name"/>
-                        </form:select>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-sm-3 control-label text-right"><spring:message code="lbl.options"/></label>
-                    <div class="col-sm-3 add-margin">
-                        <form:select path="filterName" id="filter" items="${filters}" cssClass="form-control"
-                                     cssErrorClass="form-control error"/>
-                    </div>
-                </div>
-                <br/>
+            </div>
+            <div class="panel-footer">
                 <spring:message code="baseregister.report.note.text"/>
-                <br/>
             </div>
-            <div class="row">
-                <div class="text-center">
-                    <button type="submit" id="btnsearch" class="btn btn-primary">
-                        <spring:message code="lbl.search"/>
-                    </button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();">
-                        <spring:message code="lbl.close"/>
-                    </button>
-                </div>
-            </div>
-        </form:form>
+        </div>
     </div>
 </div>
 
-<div class="row display-hide report-section">
-    <div class="col-md-12 table-header text-left"><spring:message code="lbl.baseregister.result"/></div>
-    <div class="col-md-12 form-group report-table-container">
-        <table class="table table-bordered datatable dt-responsive table-hover multiheadertbl"
-               id="baseregistertbl">
-            <tbody>
-            <tfoot id="report-footer">
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td>Total</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            </tfoot>
-            </tbody>
-        </table>
-    </div>
-</div>
 <link rel="stylesheet"
       href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
 <link rel="stylesheet"

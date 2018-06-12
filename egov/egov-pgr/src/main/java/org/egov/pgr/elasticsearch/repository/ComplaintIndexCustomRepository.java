@@ -86,4 +86,10 @@ public interface ComplaintIndexCustomRepository {
     List<ComplaintIndex> findAllComplaintsByField(ComplaintDashBoardRequest complaintDashBoardRequest, BoolQueryBuilder query);
 
     SearchResponse findRatingByGroupByField(ComplaintDashBoardRequest complaintDashBoardRequest, BoolQueryBuilder query, String grouByField);
+
+    SearchResponse findFeedBackRatingDetails(ComplaintDashBoardRequest ivrsFeedBackRequest, BoolQueryBuilder query,
+            String aggregationField);
+
+    SearchResponse findCategoryWiseFeedBackRatingDetails(ComplaintDashBoardRequest ivrsFeedBackRequest,
+            BoolQueryBuilder feedBackQuery);
 }

@@ -71,6 +71,7 @@ public class BaseRegisterResponseAdaptor implements DataTableJsonAdapter<BaseReg
             final JsonObject baseRegisterJson = new JsonObject();
             baseRegisterJson.addProperty("tinno", defaultIfBlank(baseForm.getLicensenumber()));
             baseRegisterJson.addProperty("licenseId", baseForm.getLicenseid());
+            baseRegisterJson.addProperty("oldLicenseNo", defaultIfBlank(baseForm.getOldLicenseNumber()));
             baseRegisterJson.addProperty("tradetitle", baseForm.getTradetitle());
             baseRegisterJson.addProperty("category", baseForm.getCategoryname());
             baseRegisterJson.addProperty("subcategory", baseForm.getSubcategoryname());

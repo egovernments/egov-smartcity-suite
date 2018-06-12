@@ -65,7 +65,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "egpt_document_type")
 @SequenceGenerator(name = DocumentType.EQ_DOCUMENT_TYPE, sequenceName = DocumentType.EQ_DOCUMENT_TYPE, allocationSize = 1)
-@NamedQuery(name = DocumentType.DOCUMENTTYPE_BY_TRANSACTION_TYPE, query = "Select doctypes from DocumentType doctypes WHERE transactionType=?")
+@NamedQuery(name = DocumentType.DOCUMENTTYPE_BY_TRANSACTION_TYPE, query = "Select doctypes from DocumentType doctypes WHERE transactionType= :transactionType")
 public class DocumentType extends AbstractPersistable<Long> {
     public static final String EQ_DOCUMENT_TYPE = "SEQ_EGPT_DOCUMENT_TYPE";
     public static final String DOCUMENTTYPE_BY_TRANSACTION_TYPE = "DOCUMENTTYPE_BY_TRANSACTION_TYPE";

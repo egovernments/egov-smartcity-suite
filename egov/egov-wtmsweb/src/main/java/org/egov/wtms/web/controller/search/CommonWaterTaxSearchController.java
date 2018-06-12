@@ -372,10 +372,10 @@ public class CommonWaterTaxSearchController {
 
         }
         if (applicationType != null && applicationType.equals(EDITCOLLECTION))
-            if (waterConnectionDetails.getApplicationType().getCode().equals(NEWCONNECTION)
-                    || waterConnectionDetails.getApplicationType().getCode().equals(ADDNLCONNECTION)
-                            && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE)
-                            && waterConnectionDetails.getLegacy())
+            if ((waterConnectionDetails.getApplicationType().getCode().equals(NEWCONNECTION)
+                    || waterConnectionDetails.getApplicationType().getCode().equals(ADDNLCONNECTION))
+                    && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE)
+                    && waterConnectionDetails.getLegacy())
                 return "redirect:/application/editCollection/"
                         + waterConnectionDetails.getConnection().getConsumerCode();
             else {

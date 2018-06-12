@@ -329,7 +329,7 @@ function validateChecklists() {
 	// Passport is assumed to be common proof for both age and residence
 	// If passport is not attached then validate for other age and residence
 	// proof documents
-	if ($('#registrationStatus').val() == "") {
+	if ($('#registrationStatus').val() == "" ||$('#source').val()=='API') {
 		var ageAddrProofAttached = false;
 		if ($('input[id^="indvcommonhusbandPassport"]').val() == "") {
 			$('input[type="file"][id^="ageproofhusband"]').toArray().map(

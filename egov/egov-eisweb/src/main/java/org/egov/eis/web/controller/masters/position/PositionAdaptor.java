@@ -56,17 +56,19 @@ import org.egov.pims.commons.Position;
 
 import java.lang.reflect.Type;
 
+import static org.egov.infra.utils.StringUtils.defaultIfBlank;
+import static org.egov.infra.utils.StringUtils.toYesOrNo;
+
 public class PositionAdaptor implements JsonSerializer<Position> {
-	@Override
-    public JsonElement serialize(final Position position, final Type type,
-            final JsonSerializationContext jsc) {
+    @Override
+    public JsonElement serialize(Position position, Type type, JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("name", null != position.getName() ? position.getName() : "NA");
-        jsonObject.addProperty("outSourcedPost", position.getIsPostOutsourced()?"Yes":"No");
+        jsonObject.addProperty("name", defaultIfBlank(position.getName()));
+        jsonObject.addProperty("outSourcedPost", toYesOrNo(position.isPostOutsourced()));
         jsonObject.addProperty("positionId", position.getId());
         jsonObject.addProperty("departmentName", position.getDeptDesig().getDepartment().getName());
         jsonObject.addProperty("designationName", position.getDeptDesig().getDesignation().getName());
-        jsonObject.addProperty("isOutSourced", (position.isPostOutsourced()?1:0));
+        jsonObject.addProperty("isOutSourced", (position.isPostOutsourced() ? 1 : 0));
         jsonObject.addProperty("outSourcedPostCount", position.getDeptDesig().getOutsourcedPosts());
         jsonObject.addProperty("sanctionedPostCount", position.getDeptDesig().getSanctionedPosts());
         return jsonObject;

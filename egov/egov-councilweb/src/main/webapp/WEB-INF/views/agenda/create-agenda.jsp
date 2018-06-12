@@ -69,7 +69,7 @@
 		</table>
 	</div>
 </div>
-<form:form role="form" action="create" modelAttribute="councilAgenda"
+<form:form role="agendaform" action="create" modelAttribute="councilAgenda"
 	id="councilAgendaform" cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 <input type="hidden" id="autoAgendaNoGenEnabled" value="${autoAgendaNoGenEnabled}" />
@@ -89,7 +89,7 @@
 								code="lbl.agendaNumber" /> <span class="mandatory"></span> </label>
 						<div class="col-md-5 col-sm-5 ">
 							<form:input path="agendaNumber" id="agendaNumber" type="text"
-								class="form-control" maxlength="20" placeholder=""
+								class="form-control patternvalidation" maxlength="20" placeholder=""
 								autocomplete="off" />
 							<form:errors path="agendaNumber" cssClass="error-msg" />
 						</div>
@@ -161,7 +161,7 @@
 
 		<div class="form-group">
 			<div class="text-center">
-				<input type="submit" class='btn btn-primary validate' value='Create'
+				<input type="button" class='btn btn-primary validate' value='Create'
 					id="btnsave"> <a href='javascript:void(0)'
 					class='btn btn-default' onclick='self.close()'><spring:message
 						code='lbl.close' /></a>

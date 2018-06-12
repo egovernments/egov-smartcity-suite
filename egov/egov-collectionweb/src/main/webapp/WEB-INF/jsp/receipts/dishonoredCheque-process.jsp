@@ -86,12 +86,19 @@
 		//jQuery(showGlTable).removeClass("display-hide");
 		var amount = document.getElementsByName("amount");
 		var showGlDebitAmount = document.getElementsByName("showGlDebitAmount");
+		var showGlCreditAmount = document.getElementsByName("showGlCreditAmount");
 		var len = amount.length;
-		var totalAmount = 0;
+		var totalAmount = 0;  
 		for (i = 0; i < len; i++) {
 			showGlTotalAmount = Number(showGlTotalAmount)
 					+ Number(amount[i].value);
-			showGlDebitAmount[i].innerHTML = amount[i].value;
+			if(showGlCreditAmount[i].innerHTML >0 )
+			{
+				showGlCreditAmount[i].innerHTML = amount[i].value;
+				showGlDebitAmount[i].innerHTML = 0;
+			}
+		   else
+			  showGlDebitAmount[i].innerHTML = amount[i].value;
 		}
 		dom.get("showGlDebitTotalAmount").innerHTML = showGlTotalAmount;
 		dom.get("showGlCreditTotalAmount").innerHTML = dom
@@ -160,12 +167,18 @@
 		var amount = document.getElementsByName("amount");
 		var len = amount.length;
 		var totalAmount = 0;
+		var debitAmount=0;
+		var creditAmount=0;
 		for (i = 0; i < len; i++) {
-			totalAmount = Number(totalAmount) + Number(amount[i].value);
+			debitAmount = Number(receiptDebitAmount[i].innerHTML);
+			creditAmount = Number(receiptCreditAmount[i].innerHTML);
+			if (debitAmount > 0) 
+				totalAmount = Number(totalAmount) + Number(amount[i].value);
+			else
+				totalAmount = Number(totalAmount) - Number(amount[i].value);
 		}
 		var total = dom.get("totalAmount");
 		total.value = totalAmount;
-
 	}
 
 	function showGlEntry() {
@@ -186,9 +199,15 @@
 			var totalAmount = 0;
 			for (i = 0; i < len; i++) {
 				showGlTotalAmount = Number(showGlTotalAmount)
-						+ Number(amount[i].value);
-				showGlDebitAmount[i].innerHTML = amount[i].value;
-			}
+						+ Number(amount[i].value);  
+				if(showGlCreditAmount[i].innerHTML >0 )
+					{
+					showGlCreditAmount[i].innerHTML = amount[i].value;
+					showGlDebitAmount[i].innerHTML = 0;
+					}
+				else
+					showGlDebitAmount[i].innerHTML = amount[i].value;
+			}   
 			dom.get("showGlDebitTotalAmount").innerHTML = showGlTotalAmount;
 			dom.get("showGlCreditTotalAmount").innerHTML = dom
 					.get("showRemittanceGlCreditAmount").innerHTML;
@@ -217,7 +236,7 @@
 				totalAmount = totalAmount + debitAmount;
 			} else {
 				amount[i].value = creditAmount;
-				totalAmount = totalAmount + creditAmount;
+				totalAmount = totalAmount - creditAmount;
 			}
 		}
 		var total = dom.get("totalAmount");

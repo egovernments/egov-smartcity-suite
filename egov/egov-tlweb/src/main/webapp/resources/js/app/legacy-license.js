@@ -127,24 +127,26 @@ function applicationdate() {
 }
 
 function checkOldLicenseNumberUnique() {
-    $.ajax({
-        url: "../legacylicense/old-licenseno-is-unique",
-        type: "GET",
-        data: {
-            oldLicenseNumber: $('#oldLicenseNumber').val(),
-        },
-        cache: false,
-        dataType: "json",
-        success: function (response) {
-            if (response) {
-                bootbox.alert("Old License Number is Existing");
-                $('#oldLicenseNumber').val('');
-                return false;
+    if ($('#oldLicenseNumber').val() != '') {
+        $.ajax({
+            url: "../legacylicense/old-licenseno-is-unique",
+            type: "GET",
+            data: {
+                oldLicenseNumber: $('#oldLicenseNumber').val(),
+            },
+            cache: false,
+            dataType: "json",
+            success: function (response) {
+                if (response) {
+                    bootbox.alert("A license already exist with the same Old License Number!");
+                    $('#oldLicenseNumber').val('');
+                    return false;
+                }
+                else
+                    return true;
             }
-            else
-                return true;
-        }
-    });
+        });
+    }
 }
 
 $('#boundary').change(function () {
@@ -178,12 +180,6 @@ $('#boundary').change(function () {
             dataType: "json",
             data: {'locality': this.value}
         }).done(function (response) {
-            if (response.results.boundaries.length < 1) {
-                bootbox.alert("Could not find ward for Locality : " +
-                    $('#boundary').find(":selected").text());
-                $('#boundary').val('');
-                return;
-            }
             $.each(response, function (key, boundary) {
                 $('#adminWard').append('<option '
                     + (boundary.wardId === $('#adminWard').data('selected-id') ? 'selected="selected"' : "")

@@ -106,7 +106,7 @@ public class StmsSchedulerConfiguration extends QuartzSchedulerConfiguration {
         demandGenerationCron.setJobDetail(stmsDemandGenerationJobDetail().getObject());
         demandGenerationCron.setGroup("STMS_TRIGGER_GROUP");
         demandGenerationCron.setName("STMS_DEMAND_GENERATION_TRIGGER");
-        demandGenerationCron.setCronExpression("0 */30 * * * ?");
+        demandGenerationCron.setCronExpression("0 */2 * * * ?");
         demandGenerationCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
         return demandGenerationCron;
     }

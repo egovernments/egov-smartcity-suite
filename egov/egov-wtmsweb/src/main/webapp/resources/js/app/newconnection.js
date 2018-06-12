@@ -46,12 +46,85 @@
  *
  */
 $(document).ready(function(){
-	
+	//sewerage validation 
+	$('.sewerageDetails').hide();
+		$('#propertyIdentifier').val($('#ptAssessmentNo').val());
+
+		$('#addSewerageAppln').change(function(){
+				if ($('#addSewerageAppln').is(":checked")) {
+			$('.sewerageDetails').show();
+				}
+				else
+					$('.sewerageDetails').hide();
+
+			
+	$('#propertyIdentifier').blur(function(){
+		validateSewerageConnection();
+	});
+				
+		});
 	loadPropertyDetails();
 	
 	if($("#connectionType").val()=="METERED"){
 		$(".showfields").show();
 	}
+	$('#noOfClosetsResidential').blur(function(){
+		
+		var propertyType = $('#sewpropertyType').val()
+		var noOfClosetsResidential = $('#noOfClosetsResidential').val()
+		if(noOfClosetsResidential==="0" ){
+			bootbox.alert("Please enter number of closets value more than 0");
+		}
+		else if(noOfClosetsResidential != ''){
+			validateClosets(propertyType , noOfClosetsResidential,true);
+		} else{
+			bootbox.alert("Please Enter Closets For Property Type Residential");
+		}
+	});
+	
+	$('#noOfClosetsNonResidential').blur(function(){
+		var propertyType = $('#sewpropertyType').val()
+		var noOfClosetsNonResidential = $('#noOfClosetsNonResidential').val()
+		if(noOfClosetsNonResidential==="0" ){
+			bootbox.alert("Please enter number of closets value more than 0");
+		}
+		else if(noOfClosetsNonResidential != ''){
+			validateClosets(propertyType , noOfClosetsNonResidential,false);
+		} else{
+			bootbox.alert("Please Enter Closets For Property Type Non Residential");
+		}
+	});
+
+	function validateClosets(propertyType,noOfClosets,flag)
+	{
+		console.log("propertytax :"+propertyType+"noOfClosets:"+noOfClosets);
+			$.ajax({
+				url: "/stms/ajaxconnection/check-closets-exists",      
+				type: "GET",
+				data: {
+					propertyType : propertyType , 
+					noOfClosets : noOfClosets,
+					flag : flag
+				},
+				dataType: "json",
+				success: function (response) { 
+					if(response != '') {
+						bootbox.alert(response);
+						resetClosetDetails();
+					} 
+				}, 
+				error: function (response) {
+					
+					bootbox.alert("Oops Something wrong!!");
+				}
+			});
+	}
+	
+	function resetClosetDetails() {
+		$('#noOfClosetsResidential').val('');
+		$('#noOfClosetsNonResidential').val('');
+	}
+	
 	
 	if($('#noJAORSAMessage') && $('#noJAORSAMessage').val())
 		bootbox.alert($('#noJAORSAMessage').val());
@@ -331,6 +404,34 @@ function loadPropertyDetails() {
 	}		
 }
 
+function validateSewerageConnection() {
+	var propertyID=$('#propertyIdentifier').val();
+	if(propertyID != '') {
+		$.ajax({
+			url: "/stms/ajaxconnection/check-connection-exists",      
+			type: "GET",
+			data: {
+				propertyID : propertyID  
+			},
+			dataType: "json",
+			success: function (response) { 
+				if(response != '') {
+						resetPropertyDetails();
+						bootbox.alert(response);
+				}
+				else {
+					loadPropertyDetails();
+				}
+			}, 
+			error: function (response) {
+				resetPropertyDetails();
+				bootbox.alert("connection validation failed");
+			}
+		});
+	} else {
+		resetPropertyDetails();
+		}
+}
 function resetPropertyDetails() {
 	$('#propertyIdentifier').val('');
 	$('#applicantname').val('');

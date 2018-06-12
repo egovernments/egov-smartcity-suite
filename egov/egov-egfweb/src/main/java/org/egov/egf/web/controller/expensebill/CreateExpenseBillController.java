@@ -213,7 +213,7 @@ public class CreateExpenseBillController extends BaseBillController {
             final String approverDetails = financialUtils.getApproverDetails(workFlowAction,
                     savedEgBillregister.getState(), savedEgBillregister.getId(), approvalPosition);
 
-            return "redirect:/expensebill/success?approverDetails= " + approverDetails + "&billNumber="
+            return "redirect:/expensebill/success?approverDetails=" + approverDetails + "&billNumber="
                     + savedEgBillregister.getBillnumber();
 
         }

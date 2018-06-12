@@ -279,6 +279,29 @@ $('.age-field').blur( function () {
 	}
 	});
 
+  if($('#source').val()=='API'){
+	  $('#select-registrationunit').removeAttr("required");
+	  $('#txt-zone').removeAttr("required");
+	  $('[id="husband.occupation"]').removeAttr("required");
+	  $('[id="wife.occupation"]').removeAttr("required");
+	  $('.occupation').find("span").removeClass( "mandatory" );
+	  $('[id="husband.contactInfo.officeAddress"]').removeAttr("required");
+	  $('[id="wife.contactInfo.officeAddress"]').removeAttr("required");
+	  $('.witness').removeAttr("required");
+	  $('.witness-madatory').find("span").removeClass( "mandatory" );
+	  $("#select-registrationunit").attr("disabled", "disabled");
+	  
+  }
+  
+  if($('#source').val()=='API'){
+	  	if($('#marriagePhotoFileStore').val()==''|| $('[id="husband.photoFileStore"]').val()==''
+	  		|| $('[id="wife.photoFileStore"]').val()==''){
+	       $('#Approve').hide(); 
+	       $('#Reject').hide();
+	  	}	
+	 }
+  
 })
 	
+
 	

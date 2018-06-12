@@ -54,85 +54,99 @@
 </head>
 <body>
 <div id="content" class="printable">
-    <s:form action="viewTradeLicense-cancelLicense" theme="simple" name="viewForm" method="POST">
-        <div class="formmainbox panel-primary">
-        <div class="subheadnew text-center" id="headingdiv">
-            <s:text name="page.title.closuretrade"/>
-        </div>
-        <table>
-            <tr>
-                <td align="left" style="color: #FF0000">
-                    <s:actionerror cssStyle="color: #FF0000"/>
-                    <s:fielderror/>
-                    <s:actionmessage/>
-                </td>
-            </tr>
-        </table>
+    <div class="row">
+        <div class="col-md-12">
+            <s:form action="viewTradeLicense-cancelLicense" theme="simple" name="viewForm" method="POST">
+            <table>
+                <tr>
+                    <td align="left" style="color: #FF0000">
+                        <s:actionerror cssStyle="color: #FF0000"/>
+                        <s:fielderror/>
+                        <s:actionmessage/>
+                    </td>
+                </tr>
+            </table>
 
-        <s:push value="model">
-            <s:if test="%{enableState}">
-                <s:hidden name="currentState" value="%{state.value}"/>
-            </s:if>
-            <s:hidden name="actionName" value="create"/>
-            <s:hidden name="licenseid" id="licenseId" value="%{id}"/>
-            <s:hidden id="detailChanged" name="detailChanged"></s:hidden>
-            <s:hidden id="url" name="url" value="%{url}"></s:hidden>
-            <input type="hidden" name="applicationNo" value="${param.applicationNo}" id="applicationNo"/>
-            <c:set var="trclass" value="greybox"/>
-            <div class="text-right error-msg" style="font-size:14px;">
-                <s:text name="dateofapplication.lbl"/> : <s:date name="applicationDate"
-                                                                 format="dd/MM/yyyy"/></div>
-            <s:if test="%{applicationNumber!=null}">
+            <s:push value="model">
+                <s:if test="%{enableState}">
+                    <s:hidden name="currentState" value="%{state.value}"/>
+                </s:if>
+                <s:hidden name="actionName" value="create"/>
+                <s:hidden name="licenseid" id="licenseId" value="%{id}"/>
+                <s:hidden id="detailChanged" name="detailChanged"></s:hidden>
+                <s:hidden id="url" name="url" value="%{url}"></s:hidden>
+                <input type="hidden" name="applicationNo" value="${param.applicationNo}" id="applicationNo"/>
+                <c:set var="trclass" value="greybox"/>
                 <div class="text-right error-msg" style="font-size:14px;">
-                    <s:text name="application.num"/> : <s:property value="%{applicationNumber}"/>
-                </div>
-            </s:if>
-            <ul class="nav nav-tabs" id="settingstab">
-                <li class="active"><a data-toggle="tab" href="#tradedetails" data-tabidx="0"
-                                      aria-expanded="true"><s:text name="license.tradedetail"/></a></li>
-                <li class=""><a data-toggle="tab" href="#tradeattachments" id="getdocuments" data-tabidx="1"
-                                aria-expanded="false"><s:text name="license.support.docs"/></a></li>
-            </ul>
-            <div class="panel-body">
-                <div class="tab-content">
-                    <div class="tab-pane fade active in" id="tradedetails">
-                        <%@ include file='../common/license-detail-view.jsp' %>
+                    <s:text name="dateofapplication.lbl"/> : <s:date name="applicationDate"
+                                                                     format="dd/MM/yyyy"/></div>
+                <s:if test="%{applicationNumber!=null}">
+                    <div class="text-right error-msg" style="font-size:14px;">
+                        <s:text name="application.num"/> : <s:property value="%{applicationNumber}"/>
                     </div>
-                    <div class="tab-pane fade" id="tradeattachments">
-                        <br/><br/>
-                        <%@include file="../common/supportdocs-view.jsp" %>
+                </s:if>
+                <div class="panel panel-primary" data-collapsed="0">
+                    <div class="panel-heading">
+                        <div class="subheadnew text-center" id="headingdiv">
+                            <s:text name="page.title.closuretrade"/>
+                        </div>
+                        <ul class="nav nav-tabs" id="settingstab">
+                            <li class="active"><a data-toggle="tab" href="#tradedetails" data-tabidx="0"
+                                                  aria-expanded="true"><s:text name="license.tradedetail"/></a></li>
+                            <li class=""><a data-toggle="tab" href="#tradeattachments" id="getdocuments" data-tabidx="1"
+                                            aria-expanded="false"><s:text name="license.support.docs"/></a></li>
+                        </ul>
                     </div>
-                </div>
-            </div>
-            </div>
-            <s:if test="!hasCSCPublicRole()">
-                <div class="panel panel-primary" id="workflowDiv">
-                    <%@ include file='../common/license-workflow-dropdown.jsp' %>
-                    <%@ include file='../common/license-workflow-button.jsp' %>
-                </div>
-            </s:if>
-            <s:else>
-                <s:hidden id="additionalRule" name="additionalRule" value="%{additionalRule}"/>
-                <div class="row"/>
-                <div class="row">
-                    <div class="text-center">
-                        <button type="submit" id="btnsave" class="btn btn-primary" onclick="return onSubmit();">
-                            Save
-                        </button>
-                        <button type="button" id="btnclose" class="btn btn-default" onclick="window.close();">
-                            Close
-                        </button>
+                    <div class="panel-body">
+                        <div class="tab-content">
+                            <div class="tab-pane fade active in" id="tradedetails">
+                                <%@ include file='../common/license-detail-view.jsp' %>
+                            </div>
+                            <div class="tab-pane fade" id="tradeattachments">
+                                <br/><br/>
+                                <%@include file="../common/supportdocs-view.jsp" %>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </s:else>
-        </s:push>
-    </s:form>
+                <%@ include file='../common/license-fee-detail-view.jsp' %>
+                <s:if test="%{!licenseHistory.isEmpty}">
+                    <div class="panel panel-primary">
+                        <%@ include file='../common/license-workflow-history.jsp' %>
+                    </div>
+                </s:if>
+                <s:if test="!hasCSCPublicRole()">
+                    <div class="panel panel-primary" id="workflowDiv">
+                        <%@ include file='../common/license-workflow-dropdown.jsp' %>
+                        <%@ include file='../common/license-workflow-button.jsp' %>
+                    </div>
+                </s:if>
+                <s:else>
+                    <s:hidden id="additionalRule" name="additionalRule" value="%{additionalRule}"/>
+                    <div class="row"/>
+                    <div class="row">
+                        <div class="text-center">
+                            <button type="submit" id="btnsave" class="btn btn-primary" onclick="return onSubmit();">
+                                Save
+                            </button>
+                            <button type="button" id="btnclose" class="btn btn-default" onclick="window.close();">
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </s:else>
+            </s:push>
+        </div>
+        </s:form>
+    </div>
 </div>
+
 <jsp:include page="../common/process-owner-reassignment.jsp"/>
 <script>
     function onSubmitValidations() {
         return true;
     }
+
     function onSubmit() {
         var licid = $('#licenseId').val();
         var url = $('#url').val();

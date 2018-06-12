@@ -49,5 +49,5 @@
 package org.egov.eis.entity.enums;
 
 public enum EmployeeGrievanceStatus {
-    REGISTERED, CLOSED, REJECTED, READDRESSED;
+    REGISTERED, REJECTED, REDRESSED,INPROCESS;
 }

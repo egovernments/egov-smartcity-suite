@@ -320,10 +320,36 @@ function callAjaxSearch() {
 				     	          ]			
 			});
 			}
-
+function validateAgendaNumber(agendaNumber){
+	var agendaresponse=false;
+	if(agendaNumber != '') {
+		$.ajax({
+			url: "/council/councilmom/checkUnique-agendaNo",      
+			type: "GET",
+			data: {
+				agendaNumber : agendaNumber,  
+			},
+			dataType: "json",
+			success: function (response) { 
+				if(!response) {
+						$('#agendaNumber').val('');
+						bootbox.alert("Entered Agenda Number already exists. Please Enter Unique Number.");
+						$("#agendaNumber").prop('required', true) ;	
+						agendaresponse=true;
+				}
+			}, 
+			error: function (response) {
+				$('#agendaNumber').val('');
+				bootbox.alert("Please Enter Unique Number.");
+				$("#agendaNumber").prop('required', true) ;	
+				agendaresponse=true;
+			}
+		});
+	}	
+	return agendaresponse;
+}
 
 $(document).ready(function() {
-	
 	$("#resultTable").on('click','tbody tr td button.details',function(e) {
 		if($(this).parent().find('span').text().length==500){
 			$(this).parent().find('span').text(unescape($(this).data('text')));	
@@ -357,29 +383,47 @@ $(document).ready(function() {
 		}
 	});
 	
-	$( "#btnsave" ).click(function(e){
+	$('#btnsave').click(function(e){
 		if ($('#committeeType').val()=="") {
 			bootbox.alert("Please select committe type");
 			e.preventDefault();
 		} 
-		
 		if($('#autoAgendaNoGenEnabled').val() == "false"){
-			
-		    if($("#agendaNumber").val()==''){
-				bootbox.alert("Please enter Agenda Number");
-		    	$("#agendaNumber").attr('required', true) ;	
-		    	e.preventDefault();
-		    }
+			if($('#agendaNumber').val()==""){
+				bootbox.alert("Please enter agenda number");
+				$("#agendaNumber").attr('required', true) ;	
+				e.preventDefault();
+			}
+			 if($('#agendaNumber').val()!=""){
+				var nonUniqueAgenda=validateAgendaNumber($('#agendaNumber').val());
+				alert("validating agenda number...");
+				if(nonUniqueAgenda){
+				$("#agendaNumber").prop('required', required) ;	
+			    e.preventDefault();	
+				}
+			 
+			else if($('#emptyRow').length){
+				emptyRowAlert();
+			}
+			else if ($('#councilAgendaform').valid() && !nonUniqueAgenda) {
+					$('#councilAgendaform').submit();			
+			} else {
+				e.preventDefault();
+			}
+			 }
 		}
-		if($('#emptyRow').length){
-			bootbox.alert("Atleast one preamble item should be added into agenda");
+		else if($('#emptyRow').length){
+			emptyRowAlert();
+		}else if ($('#councilAgendaform').valid() && !nonUniqueAgenda) {
+			 var action = '/council/agenda/create' ;
+				$('#councilAgendaform').attr('method', 'post');
+				$('#councilAgendaform').attr('action', action); 
+				$('#councilAgendaform').submit();			
+		} else {
 			e.preventDefault();
-		}else{
-			// form submit happen
 		}
 		
 	});
-	
 	$( "#buttonSubmit" ).click(function(e){
 		
 		if ($('#committeeType').val()=="") {
@@ -387,18 +431,12 @@ $(document).ready(function() {
 			e.preventDefault();
 			} 
 		if($('#emptyRow').length){
-			bootbox.alert("Atleast one preamble item should be added into agenda");
-			e.preventDefault();
+			emptyRowAlert()
 		}else{
-			// form submit happen
+			//form submit
 		}
 
 	});
-	
-	$("#agendaNumber").on('blur',function(event) {
-		validateAgendaNumber($(this));
-	});
-
 	
 	// changing order of preambles while creating and upating agenda.
     $('.sorted_table').sortable({
@@ -415,26 +453,7 @@ $(document).ready(function() {
 		   
 });
 
-function validateAgendaNumber(agendaNumber){
-	var agendaNo= agendaNumber.val();	
-	if(agendaNo !='') {
-		$.ajax({
-			url: "/council/councilmom/checkUnique-agendaNo",      
-			type: "GET",
-			data: {
-				agendaNumber : agendaNo, 
-			},
-			dataType: "json",
-			success: function (response) { 
-				if(!response) {
-						$(agendaNumber).val('');
-						bootbox.alert("Entered Agenda Number already exists. Please Enter Unique Number.");
-				}
-			}, 
-			error: function (response) {
-				$(agendaNumber).val('');
-				bootbox.alert("connection validation failed");
-			}
-		});
-	}	
+function  emptyRowAlert(e){
+	bootbox.alert("Atleast one preamble item should be added into agenda");
+	e.preventDefault();
 }

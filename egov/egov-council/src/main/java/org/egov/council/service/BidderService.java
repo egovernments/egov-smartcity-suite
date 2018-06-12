@@ -79,5 +79,9 @@ public class BidderService {
     public List<CouncilPreambleBidderDetails> getBidderDetails(Long id) {
         return bidderRepository.findByPreambleId(id);
     }
+    
+    public CouncilPreambleBidderDetails getBidderDetailsbyId(Long id) {
+        return bidderRepository.findById(id);
+    }
 
 }

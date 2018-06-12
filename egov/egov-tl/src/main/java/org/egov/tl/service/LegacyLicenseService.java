@@ -109,21 +109,11 @@ public class LegacyLicenseService extends LicenseService {
     @Autowired
     private FileStoreService fileStoreService;
 
-    private static <K extends Comparable<? super K>, V> Map<K, V> sortByKey(Map<K, V> map) {
-
-        Map<K, V> result = new LinkedHashMap<>();
-        Stream<Map.Entry<K, V>> mapInStream = map.entrySet().stream();
-
-        mapInStream.sorted(Map.Entry.comparingByKey())
-                .forEachOrdered(x -> result.put(x.getKey(), x.getValue()));
-
-        return result;
-
-    }
+    @Autowired
+    private ValidityService validityService;
 
     @Transactional
     public void createLegacy(TradeLicense license) {
-
         storeDocument(license);
         addLegacyDemand(license);
         license.getLicensee().setLicense(license);
@@ -132,14 +122,15 @@ public class LegacyLicenseService extends LicenseService {
         license.setLegacy(true);
         license.setActive(true);
         license.setLicenseNumber(licenseNumberUtils.generateLicenseNumber());
+        validityService.applyLicenseValidity(license);
         update(license);
     }
 
     @Transactional
     public void updateLegacy(TradeLicense license) {
-
         storeDocument(license);
         updateLegacyDemand(license);
+        validityService.applyLicenseValidity(license);
         update(license);
     }
 
@@ -220,92 +211,6 @@ public class LegacyLicenseService extends LicenseService {
         return legacyFeePayStatus;
     }
 
-    private void addLegacyDemand(final TradeLicense license) {
-        final Map<Integer, Integer> legacyInstallmentwiseFees = legacyInstallmentfee(license);
-        final Map<Integer, Boolean> legacyFeePayStatus = legacyFeeStatus(license);
-        final LicenseDemand licenseDemand = new LicenseDemand();
-        licenseDemand.setIsHistory("N");
-        licenseDemand.setCreateDate(new Date());
-        licenseDemand.setModifiedDate(new Date());
-        licenseDemand.setLicense(license);
-        licenseDemand.setIsLateRenewal('0');
-        final Module module = moduleService.getModuleByName(TRADE_LICENSE);
-        for (final Entry<Integer, Integer> legacyInstallmentwiseFee : legacyInstallmentwiseFees.entrySet())
-            if (legacyInstallmentwiseFee.getValue() != null && legacyInstallmentwiseFee.getValue() > 0) {
-                final Installment installment = installmentDao.fetchInstallmentByModuleAndInstallmentNumber(module,
-                        legacyInstallmentwiseFee.getKey());
-
-                licenseDemand.setEgInstallmentMaster(installment);
-                final BigDecimal demandAmount = BigDecimal.valueOf(legacyInstallmentwiseFee.getValue()).setScale(0,
-                        RoundingMode.HALF_UP);
-                final BigDecimal amtCollected = legacyFeePayStatus.get(legacyInstallmentwiseFee.getKey()) == null
-                        || !legacyFeePayStatus.get(legacyInstallmentwiseFee.getKey()) ? ZERO : demandAmount;
-                licenseDemand.getEgDemandDetails().add(
-                        EgDemandDetails.fromReasonAndAmounts(demandAmount,
-                                demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(
-                                        demandGenericDao.getDemandReasonMasterByCode("License Fee", module),
-                                        installment, module),
-                                amtCollected));
-                licenseDemand.setBaseDemand(demandAmount.add(licenseDemand.getBaseDemand()).setScale(0, RoundingMode.HALF_UP));
-                licenseDemand
-                        .setAmtCollected(amtCollected.add(licenseDemand.getAmtCollected()).setScale(0, RoundingMode.HALF_UP));
-            }
-        license.setLicenseDemand(licenseDemand);
-
-    }
-
-    private void updateLegacyDemand(final TradeLicense license) {
-        final Map<Integer, Integer> updatedInstallmentFees = legacyInstallmentfee(license);
-        final Map<Integer, Boolean> legacyFeePayStatus = legacyFeeStatus(license);
-        final LicenseDemand licenseDemand = license.getCurrentDemand();
-
-        // Update existing demand details
-        final Iterator<EgDemandDetails> demandDetails = licenseDemand.getEgDemandDetails().iterator();
-        while (demandDetails.hasNext()) {
-            final EgDemandDetails demandDetail = demandDetails.next();
-            final Integer installmentNumber = demandDetail.getEgDemandReason().getEgInstallmentMaster()
-                    .getInstallmentNumber();
-            final Integer updatedFee = updatedInstallmentFees.get(installmentNumber);
-            final Boolean feePaymentStatus = legacyFeePayStatus.get(installmentNumber);
-            if (updatedFee != null) {
-                final BigDecimal updatedDemandAmt = BigDecimal.valueOf(updatedFee).setScale(0, RoundingMode.HALF_UP);
-                demandDetail.setAmount(updatedDemandAmt);
-                if (feePaymentStatus != null && feePaymentStatus)
-                    demandDetail.setAmtCollected(updatedDemandAmt);
-                else
-                    demandDetail.setAmtCollected(ZERO);
-
-            } else
-                demandDetails.remove();
-            updatedInstallmentFees.put(installmentNumber, 0);
-        }
-        // Create demand details which is newly entered
-        updateNewLegacyDemand(updatedInstallmentFees, legacyFeePayStatus, licenseDemand);
-    }
-
-    private void updateNewLegacyDemand(final Map<Integer, Integer> updatedInstallmentFees,
-                                       final Map<Integer, Boolean> legacyFeePayStatus, final LicenseDemand licenseDemand) {
-
-        final Module module = moduleService.getModuleByName(TRADE_LICENSE);
-        for (final Entry<Integer, Integer> updatedInstallmentFee : updatedInstallmentFees.entrySet())
-            if (updatedInstallmentFee.getValue() != null && updatedInstallmentFee.getValue() > 0) {
-
-                final Installment installment = installmentDao.fetchInstallmentByModuleAndInstallmentNumber(module,
-                        updatedInstallmentFee.getKey());
-                final BigDecimal demandAmount = BigDecimal.valueOf(updatedInstallmentFee.getValue()).setScale(0,
-                        RoundingMode.HALF_UP);
-                final BigDecimal amtCollected = legacyFeePayStatus.get(updatedInstallmentFee.getKey()) == null
-                        || !legacyFeePayStatus.get(updatedInstallmentFee.getKey()) ? ZERO : demandAmount;
-                licenseDemand.getEgDemandDetails().add(EgDemandDetails.fromReasonAndAmounts(demandAmount,
-                        demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(
-                                demandGenericDao.getDemandReasonMasterByCode("License Fee", module),
-                                installment, module),
-                        amtCollected));
-            }
-        // Recalculating BasedDemand
-        licenseDemand.recalculateBaseDemand();
-    }
-
     public void storeDocument(TradeLicense license) {
         List<LicenseDocument> documents = license.getDocuments();
         for (LicenseDocument document : documents) {
@@ -334,13 +239,6 @@ public class LegacyLicenseService extends LicenseService {
         license.getDocuments().addAll(documents);
     }
 
-    private List<Installment> getLastFiveYearInstallmentsForLicense() {
-        List<Installment> installmentList = installmentDao.fetchInstallments(
-                moduleService.getModuleByName(TRADE_LICENSE), new Date(), 6);
-        Collections.reverse(installmentList);
-        return installmentList;
-    }
-
     public Map<String, Map<String, BigDecimal>> getOutstandingFee(TradeLicense license) {
         Map<String, Map<String, BigDecimal>> outstandingFee = new HashMap<>();
         LicenseDemand licenseDemand = license.getCurrentDemand();
@@ -363,5 +261,106 @@ public class LegacyLicenseService extends LicenseService {
             outstandingFee.put(demandReason, feeByTypes);
         }
         return outstandingFee;
+    }
+
+    private void addLegacyDemand(final TradeLicense license) {
+        final Map<Integer, Integer> legacyInstallmentwiseFees = legacyInstallmentfee(license);
+        final Map<Integer, Boolean> legacyFeePayStatus = legacyFeeStatus(license);
+        final LicenseDemand licenseDemand = new LicenseDemand();
+        licenseDemand.setIsHistory("N");
+        licenseDemand.setCreateDate(new Date());
+        licenseDemand.setModifiedDate(new Date());
+        licenseDemand.setLicense(license);
+        licenseDemand.setIsLateRenewal('0');
+        Module module = moduleService.getModuleByName(TRADE_LICENSE);
+        for (Entry<Integer, Integer> legacyInstallmentwiseFee : legacyInstallmentwiseFees.entrySet())
+            if (legacyInstallmentwiseFee.getValue() != null && legacyInstallmentwiseFee.getValue() > 0) {
+                Installment installment = installmentDao.fetchInstallmentByModuleAndInstallmentNumber(module,
+                        legacyInstallmentwiseFee.getKey());
+
+                licenseDemand.setEgInstallmentMaster(installment);
+                BigDecimal demandAmount = BigDecimal.valueOf(legacyInstallmentwiseFee.getValue()).setScale(0,
+                        RoundingMode.HALF_UP);
+                BigDecimal amtCollected = legacyFeePayStatus.get(legacyInstallmentwiseFee.getKey()) == null
+                        || !legacyFeePayStatus.get(legacyInstallmentwiseFee.getKey()) ? ZERO : demandAmount;
+                licenseDemand.getEgDemandDetails().add(
+                        EgDemandDetails.fromReasonAndAmounts(demandAmount,
+                                demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(
+                                        demandGenericDao.getDemandReasonMasterByCode("License Fee", module),
+                                        installment, module),
+                                amtCollected));
+                licenseDemand.setBaseDemand(demandAmount.add(licenseDemand.getBaseDemand()).setScale(0, RoundingMode.HALF_UP));
+                licenseDemand.setAmtCollected(amtCollected.add(licenseDemand.getAmtCollected()).setScale(0, RoundingMode.HALF_UP));
+            }
+        license.setLicenseDemand(licenseDemand);
+
+    }
+
+    private void updateLegacyDemand(TradeLicense license) {
+        Map<Integer, Integer> updatedInstallmentFees = legacyInstallmentfee(license);
+        Map<Integer, Boolean> legacyFeePayStatus = legacyFeeStatus(license);
+        LicenseDemand licenseDemand = license.getCurrentDemand();
+
+        // Update existing demand details
+        Iterator<EgDemandDetails> demandDetails = licenseDemand.getEgDemandDetails().iterator();
+        while (demandDetails.hasNext()) {
+            EgDemandDetails demandDetail = demandDetails.next();
+            Integer installmentNumber = demandDetail.getEgDemandReason().getEgInstallmentMaster().getInstallmentNumber();
+            Integer updatedFee = updatedInstallmentFees.get(installmentNumber);
+            Boolean feePaymentStatus = legacyFeePayStatus.get(installmentNumber);
+            if (updatedFee == null) {
+                demandDetails.remove();
+            } else {
+                BigDecimal updatedDemandAmt = BigDecimal.valueOf(updatedFee).setScale(0, RoundingMode.HALF_UP);
+                demandDetail.setAmount(updatedDemandAmt);
+                if (feePaymentStatus != null && feePaymentStatus)
+                    demandDetail.setAmtCollected(updatedDemandAmt);
+                else
+                    demandDetail.setAmtCollected(ZERO);
+            }
+            updatedInstallmentFees.put(installmentNumber, 0);
+        }
+        // Create demand details which is newly entered
+        updateNewLegacyDemand(updatedInstallmentFees, legacyFeePayStatus, licenseDemand);
+    }
+
+    private void updateNewLegacyDemand(Map<Integer, Integer> updatedInstallmentFees,
+                                       Map<Integer, Boolean> legacyFeePayStatus, LicenseDemand licenseDemand) {
+
+        Module module = moduleService.getModuleByName(TRADE_LICENSE);
+        for (Entry<Integer, Integer> updatedInstallmentFee : updatedInstallmentFees.entrySet())
+            if (updatedInstallmentFee.getValue() != null && updatedInstallmentFee.getValue() > 0) {
+
+                Installment installment = installmentDao.fetchInstallmentByModuleAndInstallmentNumber(module,
+                        updatedInstallmentFee.getKey());
+                BigDecimal demandAmount = BigDecimal.valueOf(updatedInstallmentFee.getValue()).setScale(0, RoundingMode.HALF_UP);
+                BigDecimal amtCollected = legacyFeePayStatus.get(updatedInstallmentFee.getKey()) == null
+                        || !legacyFeePayStatus.get(updatedInstallmentFee.getKey()) ? ZERO : demandAmount;
+                licenseDemand.getEgDemandDetails().add(EgDemandDetails.fromReasonAndAmounts(demandAmount,
+                        demandGenericDao.getDmdReasonByDmdReasonMsterInstallAndMod(
+                                demandGenericDao.getDemandReasonMasterByCode("License Fee", module),
+                                installment, module),
+                        amtCollected));
+            }
+        // Recalculating BasedDemand
+        licenseDemand.recalculateBaseDemand();
+    }
+
+    private List<Installment> getLastFiveYearInstallmentsForLicense() {
+        List<Installment> installmentList = installmentDao
+                .fetchInstallments(moduleService.getModuleByName(TRADE_LICENSE), new Date(), 6);
+        Collections.reverse(installmentList);
+        return installmentList;
+    }
+
+    private <K extends Comparable<? super K>, V> Map<K, V> sortByKey(Map<K, V> map) {
+
+        Map<K, V> result = new LinkedHashMap<>();
+        Stream<Map.Entry<K, V>> mapInStream = map.entrySet().stream();
+
+        mapInStream.sorted(Map.Entry.comparingByKey())
+                .forEachOrdered(x -> result.put(x.getKey(), x.getValue()));
+
+        return result;
     }
 }

@@ -242,7 +242,10 @@ $('#update').on('click', function(){
 			contentType : "application/json ; charset=utf-8",
 			success : function(response) {
 				if(response=="Success") {
-					bootbox.alert("The water connection applications executed successfully");
+					bootbox.alert(
+						"The water connection applications executed successfully", function(){
+							$("#search").trigger('click');
+						});
 					return false;
 				}
 				else if (response == "EmptyList") {

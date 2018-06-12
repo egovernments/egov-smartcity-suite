@@ -64,7 +64,7 @@
 	<br />
 	<spring:message code="reports.note.text" />
 	<input type="hidden" value="${sessionScope.citymunicipalityname}, ${sessionScope.districtName} District" id="pdfTitle" />
-	<div class="col-md-12 table-header text-left"><spring:message code="lbl.title.dcbreportdetails" /></div> 
+	<div class="col-md-12 table-header text-left"><spring:message code="lbl.common.title.dcbreportdetails" /></div> 
 	<div class="col-md-12 form-group report-table-container">
 		<table class="table table-bordered table-hover multiheadertbl"
 			id="tbldcbdrilldown">

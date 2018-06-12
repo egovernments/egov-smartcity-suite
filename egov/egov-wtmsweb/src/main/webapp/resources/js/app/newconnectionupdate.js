@@ -233,6 +233,16 @@ $(document)
 											document.forms[0].submit();
 											}
 										}
+										if (isSanctionedDetailEnable == 'true' && action == 'Forward') {
+											$('#approvalNumber').removeAttr('required');
+											$('#approvalDate').removeAttr('required');
+										} else if (isSanctionedDetailEnable == 'true' && action == 'Approve') {
+											if ($('#approvalNumber').val() == '') {
+												bootbox.alert("Please enter Sanction Number!");
+												$('#approvalNumber').focus();
+												return false;
+											}
+										}
 										
 										if ((action == 'Forward' && status == 'CLOSERINITIATED')) {
 											document.getElementById("mode").value = mode;
@@ -256,21 +266,6 @@ $(document)
 											$('#approvalPosition').val('');
 											document.getElementById("mode").value = mode;
 											document.forms[0].submit();
-										}
-										if (isSanctionedDetailEnable == 'true'
-												&& action == 'Forward') {
-											$('#approvalNumber').removeAttr(
-													'required');
-											$('#approvalDate').removeAttr(
-													'required');
-										} else if (isSanctionedDetailEnable == 'true'
-												&& action == 'Approve') {
-											if ($('#approvalNumber').val() == '') {
-												bootbox
-														.alert("Please enter approval Number!");
-												$('#approvalNumber').focus();
-												return false;
-											}
 										}
 
 										if (status == 'CLOSERINITIATED'

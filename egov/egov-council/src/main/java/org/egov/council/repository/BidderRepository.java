@@ -58,4 +58,6 @@ public interface BidderRepository extends JpaRepository<CouncilPreambleBidderDet
 
     List<CouncilPreambleBidderDetails> findByPreambleId(Long id);
 
+    CouncilPreambleBidderDetails findById(Long id);
+
 }

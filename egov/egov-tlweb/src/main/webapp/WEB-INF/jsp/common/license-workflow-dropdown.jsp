@@ -226,7 +226,7 @@
         </s:if>
     </s:else>
 </s:if>
-<div id="workflowCommentsDiv" align="center">
+<div id="workflowCommentsDiv" align="center" class="row">
     <div class="form-group">
         <label class="col-sm-3 add-margin text-right">
             <s:text name="wf.approver.remarks"/>

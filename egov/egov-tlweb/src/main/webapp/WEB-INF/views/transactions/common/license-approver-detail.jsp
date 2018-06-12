@@ -71,7 +71,7 @@
                 </c:choose>
                 <input type="hidden" id="currentDesignation" name="workflowContainer.currentDesignation"
                        value="${tradeLicense.workflowContainer.currentDesignation}"/>
-                <c:if test="${nextAction !='END'}">
+                <c:if test="${forwardEnabled}">
                     <input type="hidden" id="stateType" value="${tradeLicense.stateType}"/>
                     <input type="hidden" id="amountRule" name="workflowContainer.amountRule"
                            value="${tradeLicense.workflowContainer.amountRule}"/>
@@ -83,7 +83,7 @@
                                 code='lbl.approverdepartment'/><span class="mandatory"/></label>
                         <div class="col-sm-3 add-margin">
                             <form:select path="workflowContainer.approverDepartment" id="approvalDepartment"
-                                         Class="form-control select2" required="true">
+                                         Class="form-control">
                                 <form:option value="">
                                     <spring:message code="lbl.select"/>
                                 </form:option>
@@ -94,12 +94,13 @@
                                 code='lbl.approverdesignation'/><span class="mandatory"/></label>
                         <div class="col-sm-3 add-margin">
                             <form:select path="workflowContainer.approverDesignation" id="approvaldesignation"
-                                         class="form-control select2" required="true">
+                                         class="form-control">
                                 <form:option value="">
                                     <spring:message code="lbl.select"/>
                                 </form:option>
                             </form:select>
-                            <form:errors path="workflowContainer.approverDesignation" cssClass="add-margin error-msg"/>
+                            <form:errors path="workflowContainer.approverDesignation"
+                                         cssClass="add-margin error-msg"/>
                         </div>
                     </div>
                     <div class="form-group">
@@ -107,12 +108,13 @@
                                 code="lbl.approver"/><span class="mandatory"/></label>
                         <div class="col-sm-3 add-margin">
                             <form:select path="workflowContainer.approverPositionId" data-first-option="false"
-                                         id="approverPositionId" cssClass="form-control select2" required="required">
+                                         id="approverPositionId" cssClass="form-control">
                                 <form:option value="">
                                     <spring:message code="lbl.select"/>
                                 </form:option>
                             </form:select>
-                            <form:errors path="workflowContainer.approverPositionId" cssClass="add-margin error-msg"/>
+                            <form:errors path="workflowContainer.approverPositionId"
+                                         cssClass="add-margin error-msg"/>
                         </div>
                     </div>
                 </c:if>

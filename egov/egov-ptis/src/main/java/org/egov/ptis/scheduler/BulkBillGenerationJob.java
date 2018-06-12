@@ -64,7 +64,7 @@ public class BulkBillGenerationJob extends AbstractQuartzJob {
     private Integer modulo;
 
     @Autowired
-    private ApplicationContext beanProvider;
+    private transient ApplicationContext beanProvider;
 
     @Override
     public void executeJob() {
@@ -73,7 +73,7 @@ public class BulkBillGenerationJob extends AbstractQuartzJob {
         try {
             demandBillService = beanProvider.getBean("demandBillService", DemandBillService.class);
         } catch (NoSuchBeanDefinitionException e) {
-            LOGGER.warn("DemandBillService implementation not found");
+            LOGGER.warn("DemandBillService implementation not found " + e);
         }
         if (demandBillService != null)
             demandBillService.bulkBillGeneration(modulo, billsCount);

@@ -81,6 +81,7 @@ public final class ImageUtils {
     public static final String PNG_EXTN = ".png";
     public static final String PNG_FORMAT_NAME = "png";
     public static final String PNG_MIME_TYPE = "image/png";
+    public static final String JPG_MIME_TYPE = "image/jpeg";
 
     private static final Logger LOG = LoggerFactory.getLogger(ImageUtils.class);
 

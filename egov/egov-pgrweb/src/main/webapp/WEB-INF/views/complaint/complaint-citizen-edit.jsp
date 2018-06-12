@@ -117,11 +117,6 @@
         </div>
     </div>
 </c:if>
-<style>
-    .symbol-filled {
-        color: #f5861f;
-    }
-</style>
 <script>
     $(document).ready(function () {
         $("select").each(function () {
@@ -137,6 +132,4 @@
         });
     });
 </script>
-
-<script src="<cdn:url  value='/resources/global/js/bootstrap/bootstrap-rating.min.js' context='/egi'/>"></script>
 <script src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>

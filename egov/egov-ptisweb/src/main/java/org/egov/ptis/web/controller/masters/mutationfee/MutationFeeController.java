@@ -47,6 +47,13 @@
  */
 package org.egov.ptis.web.controller.masters.mutationfee;
 
+import java.math.BigDecimal;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.egov.ptis.domain.model.MutationFeeDetails;
 import org.egov.ptis.master.service.MutationFeeService;
 import org.joda.time.DateTimeComparator;
@@ -60,12 +67,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.servlet.http.HttpServletRequest;
-import java.math.BigDecimal;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
 @Controller
 @RequestMapping(value = "/mutationfee")
@@ -124,7 +125,7 @@ public class MutationFeeController {
     public String validateDateForSlabName(@ModelAttribute final MutationFeeDetails mutationFeeDetails,
             final BindingResult resultBinder, @RequestParam("fromDate") final Date fromDate,
             final RedirectAttributes redirectAttributes) {
-        if (fromDate.compareTo(mutationFeeService.getLatestToDateForSlabName(mutationFeeDetails.getSlabName())) >= 0) {
+        if (mutationFeeService.getLatestToDateForSlabName(mutationFeeDetails.getSlabName()).compareTo(fromDate) < 0) {
             mutationFeeService.createMutationFee(mutationFeeDetails);
             redirectAttributes.addFlashAttribute(MSG, "msg.mutationfee.create.success");
             return "redirect:/mutationfee/create";

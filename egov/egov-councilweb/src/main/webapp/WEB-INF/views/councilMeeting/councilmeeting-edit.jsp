@@ -109,8 +109,11 @@
 	</div>
 	<div class="form-group">
 		<div class="text-center">
-			<button type='submit' class='btn btn-primary' id="buttonSubmit">
+			<button type='submit' class='btn btn-primary' id="buttonSubmit" name="update">
 				<spring:message code='lbl.update' />
+			</button>
+			<button type='submit' class='btn btn-primary' id="buttonCancel" name="cancel">
+				<spring:message code='lbl.cancel' />
 			</button>
 			<a href='javascript:void(0)' class='btn btn-default'
 				onclick='self.close()'><spring:message code='lbl.close' /></a>

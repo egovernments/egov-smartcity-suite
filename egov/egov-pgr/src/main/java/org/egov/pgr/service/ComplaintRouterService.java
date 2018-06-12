@@ -51,7 +51,7 @@ package org.egov.pgr.service;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
-import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.exception.ApplicationValidationException;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -63,6 +63,8 @@ import org.egov.pgr.entity.contract.ComplaintRouterSearchRequest;
 import org.egov.pgr.repository.ComplaintRouterRepository;
 import org.egov.pgr.repository.specs.ComplaintRouterSpec;
 import org.egov.pims.commons.Position;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -72,9 +74,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+
 @Service
 @Transactional(readOnly = true)
 public class ComplaintRouterService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ComplaintRouterService.class);
 
     @Autowired
     private ComplaintRouterRepository complaintRouterRepository;
@@ -87,10 +93,16 @@ public class ComplaintRouterService {
 
     public Position getComplaintAssignee(Complaint complaint) {
         ComplaintRouter complaintRouter = getComplaintRouter(complaint);
-        if (complaintRouter == null)
-            throw new ApplicationRuntimeException("PGR.001");
-        else
+        if (complaintRouter == null) {
+            if (LOGGER.isWarnEnabled()) {
+                String complaintLocation = complaint.getLocation() == null ? EMPTY : complaint.getLocation().getName();
+                String complaintType = complaint.getComplaintType().getName();
+                LOGGER.warn("There is no routing defined for Complaint Type : {}, Location : {}", complaintType, complaintLocation);
+            }
+            throw new ApplicationValidationException("PGR.001");
+        } else {
             return complaintRouter.getPosition();
+        }
     }
 
     @Transactional

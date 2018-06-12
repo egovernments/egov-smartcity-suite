@@ -60,4 +60,6 @@ public interface CityIndexRepository extends ElasticsearchRepository<CityIndex, 
 	CityIndex findByCitycode(String code);
 	
 	List<CityIndex> findByDistrictcode(String districtCode);
+	
+	List<CityIndex> findByRegionname(String regionName);
 }

@@ -75,9 +75,9 @@ public class DCBUtils {
 		LOGGER.debug("Entered into method prepareDisplayInfo");
 		List<String> reasonCategoryCodes = new ArrayList<String>();
 		reasonCategoryCodes.add(PropertyTaxConstants.REASON_CATEGORY_CODE_TAX);
-		reasonCategoryCodes.add(PropertyTaxConstants.REASON_CATEGORY_CODE_PENALTY);
+		reasonCategoryCodes.add(PropertyTaxConstants.PENALTY_DMD_RSN_CODE);
 		reasonCategoryCodes.add(PropertyTaxConstants.REASON_CATEGORY_CODE_FINES);
-		reasonCategoryCodes.add(PropertyTaxConstants.REASON_CATEGORY_CODE_ADVANCE);
+		reasonCategoryCodes.add(PropertyTaxConstants.ADVANCE_DMD_RSN_CODE);
 
 		dcbDispInfo.setReasonCategoryCodes(reasonCategoryCodes);
 		List<String> reasonList = new ArrayList<String>();
@@ -96,7 +96,7 @@ public class DCBUtils {
 		LOGGER.debug("Entered into method prepareDisplayInfo");
 		DCBDisplayInfo dcbDispInfo = new DCBDisplayInfo();
 		List<String> reasonCategoryCodes = new ArrayList<String>();
-		reasonCategoryCodes.add(PropertyTaxConstants.REASON_CATEGORY_CODE_ADVANCE);
+		reasonCategoryCodes.add(PropertyTaxConstants.ADVANCE_DMD_RSN_CODE);
 		dcbDispInfo.setReasonCategoryCodes(reasonCategoryCodes);
 		List<String> reasonList = new ArrayList<String>();
 		reasonList.addAll(ORDERED_DEMAND_RSNS_LIST);

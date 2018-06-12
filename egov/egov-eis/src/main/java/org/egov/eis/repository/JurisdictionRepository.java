@@ -47,11 +47,19 @@
  */
 package org.egov.eis.repository;
 
+import java.util.List;
+
 import org.egov.eis.entity.Jurisdiction;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface JurisdictionRepository extends JpaRepository<Jurisdiction, Long> {
-
+    
+    @Query("select j.boundary from Jurisdiction j where j.boundaryType.name=:boundaryType and j.boundaryType.hierarchyType.name=:hierarchyType and j.employee.id=:employeeId")
+    List<Boundary> getEmployeeBoundaries(@Param("employeeId") final Long employeeId, @Param("boundaryType") final String boundaryType, @Param("hierarchyType") final String hierarchyType);
+   
 }

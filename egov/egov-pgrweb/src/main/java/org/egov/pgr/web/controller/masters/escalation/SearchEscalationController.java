@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -48,17 +48,14 @@
 
 package org.egov.pgr.web.controller.masters.escalation;
 
-import org.egov.commons.ObjectType;
-import org.egov.commons.service.ObjectTypeService;
-import org.egov.eis.entity.PositionHierarchy;
-import org.egov.eis.service.PositionHierarchyService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.pgr.entity.ComplaintType;
+import org.egov.pgr.entity.EscalationHierarchy;
 import org.egov.pgr.entity.contract.EscalationForm;
 import org.egov.pgr.service.ComplaintEscalationService;
 import org.egov.pgr.service.ComplaintTypeService;
-import org.egov.pgr.utils.constants.PGRConstants;
+import org.egov.pgr.service.EscalationHierarchyService;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -87,12 +84,10 @@ public class SearchEscalationController {
     private PositionMasterService positionMasterService;
 
     @Autowired
-    private ObjectTypeService objectTypeService;
-    @Autowired
     private DepartmentService departmentService;
 
     @Autowired
-    private PositionHierarchyService positionHierarchyService;
+    private EscalationHierarchyService escalationHierarchyService;
 
     @Autowired
     private ComplaintEscalationService complaintEscalationService;
@@ -121,20 +116,17 @@ public class SearchEscalationController {
     public String searchForm(EscalationForm escalationForm, Model model) {
 
         if (escalationForm.getPosition() != null) {
-            ObjectType objectType = objectTypeService.getObjectTypeByName(PGRConstants.EG_OBJECT_TYPE_COMPLAINT);
-            List<PositionHierarchy> positionHeirarchyList = positionHierarchyService
-                    .getPositionHeirarchyByFromPositionAndObjectType(escalationForm.getPosition().getId(), objectType.getId());
+            List<EscalationHierarchy> positionHeirarchyList = escalationHierarchyService
+                    .getHeirarchyByFromPosition(escalationForm.getPosition().getId());
             if (!positionHeirarchyList.isEmpty()) {
-                escalationForm.setPositionHierarchyList(positionHeirarchyList);
+                escalationForm.setEscalationHierarchyList(positionHeirarchyList);
                 model.addAttribute("mode", "dataFound");
             } else {
                 positionHeirarchyList = new ArrayList<>();
-                PositionHierarchy posHierarchy = new PositionHierarchy();
-                posHierarchy.setFromPosition(positionMasterService.getPositionById(escalationForm.getPosition().getId()));
-                posHierarchy.setObjectType(objectType);
-                posHierarchy.setObjectSubType("");
-                positionHeirarchyList.add(posHierarchy);
-                escalationForm.setPositionHierarchyList(positionHeirarchyList);
+                EscalationHierarchy escalationHierarchy = new EscalationHierarchy();
+                escalationHierarchy.setFromPosition(positionMasterService.getPositionById(escalationForm.getPosition().getId()));
+                positionHeirarchyList.add(escalationHierarchy);
+                escalationForm.setEscalationHierarchyList(positionHeirarchyList);
                 model.addAttribute("mode", "noDataFound");
             }
         }
@@ -146,7 +138,7 @@ public class SearchEscalationController {
     public String saveEscalationForm(@PathVariable Long id, EscalationForm escalationForm,
                                      Model model, RedirectAttributes redirectAttrs) {
         if (id == null) {
-            model.addAttribute(MESSAGE, "escalation.pos.required");
+            model.addAttribute("warning", "escalation.pos.required");
             return ESCALATIONSEARCHVIEW;
         } else {
             complaintEscalationService.updateEscalation(id, escalationForm);

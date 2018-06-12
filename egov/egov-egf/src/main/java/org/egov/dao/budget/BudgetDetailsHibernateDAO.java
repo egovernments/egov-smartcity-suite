@@ -107,6 +107,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.egov.utils.FinancialConstants.BUDGETTYPE_CREDIT;
+import static org.egov.utils.FinancialConstants.BUDGETTYPE_DEBIT;
+import static org.egov.utils.FinancialConstants.BUDGETTYPE_ALL;
+
 /**
  * @author Administrator TODO To change the template for this generated type
  *         comment go to Window - Preferences - Java - Code Style - Code
@@ -1896,11 +1900,11 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
      * @return
      */
     private boolean isBudgetCheckingRequiredForType(final String txnType, final String budgetingType) {
-        if ("debit".equalsIgnoreCase(budgetingType) && "debit".equals(txnType))
+        if (BUDGETTYPE_DEBIT.equalsIgnoreCase(budgetingType) && BUDGETTYPE_DEBIT.equals(txnType))
             return true;
-        else if ("credit".equalsIgnoreCase(budgetingType) && "credit".equals(txnType))
+        else if (BUDGETTYPE_CREDIT.equalsIgnoreCase(budgetingType) && BUDGETTYPE_CREDIT.equals(txnType))
             return true;
-        else if ("all".equalsIgnoreCase(budgetingType))
+        else if (BUDGETTYPE_ALL.equalsIgnoreCase(budgetingType))
             return true;
         else
             return false;

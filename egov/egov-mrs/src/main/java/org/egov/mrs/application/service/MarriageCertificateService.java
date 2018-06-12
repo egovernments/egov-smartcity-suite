@@ -178,7 +178,7 @@ public class MarriageCertificateService {
         reportParams.put("cityName", cityService.getMunicipalityName());
         reportParams.put(CERTIFICATE_DATE, new Date());
         reportParams.put("logoPath", cityService.getCityLogoURL());
-        reportParams.put("registrationcenter", registration.getMarriageRegistrationUnit().getName());
+        reportParams.put("registrationcenter", registration.getMarriageRegistrationUnit()==null?"":registration.getMarriageRegistrationUnit().getName());
         if (registration.getRegistrarName() != null && !"".equals(registration.getRegistrarName()))
             reportParams.put(REGISTRAR_NAME, registration.getRegistrarName());
         else

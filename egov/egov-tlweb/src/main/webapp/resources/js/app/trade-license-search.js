@@ -48,7 +48,19 @@
 
 var reportdatatable;
 var drillDowntableContainer = $("#tblSearchTrade");
+var searchwins = [];
 $(document).ready(function () {
+    $('#toggle-searchmore').click(function () {
+        if ($(this).html() == "More..") {
+            $(this).html('Less..');
+            $('.show-search-more').show();
+        } else {
+            $(this).html('More..');
+            $('.show-search-more').hide();
+        }
+
+    });
+
     // Instantiate the application number Bloodhound suggestion engine
     var applicationnoengine = new Bloodhound({
         datumTokenizer: function (datum) {
@@ -331,10 +343,16 @@ $(document).ready(function () {
         }
     });
 
+    $.fn.dataTable.ext.errMode = function () {
+        $('.loader-class').modal('hide');
+    };
 
     $("#btnsearch").click(
         function () {
-
+            $.each(searchwins, function (i, val) {
+                var window = val;
+                window.close();
+            });
             var valid = 0;
 
             $('form').find('input[type=text],input[type="checkbox"], select').each(function () {
@@ -348,6 +366,7 @@ $(document).ready(function () {
             });
 
             if (valid > 0) {
+                $('.loader-class').modal('show', {backdrop: 'static'});
                 $('.report-section').show();
                 var applicationNumber = $('#applicationNumber').val();
                 var licenseNumber = $('#licenseNumber').val();
@@ -372,7 +391,7 @@ $(document).ready(function () {
                         scrollX: true,
                         scrollCollapse: true,
                         fixedColumns: {
-                            leftColumns: 1
+                            leftColumns: 2
                         },
                         ajax: {
                             type: "POST",
@@ -392,85 +411,73 @@ $(document).ready(function () {
                                     statusId: status,
                                     expiryYear: expiryYear,
                                     inactive: inactive,
-                                    applicationTypeId:$('#appType').val(),
-                                    natureOfBusinessId:$('#natureOfBusiness').val()
+                                    applicationTypeId: $('#appType').val(),
+                                    natureOfBusinessId: $('#natureOfBusiness').val()
                                 }
                             }
                         },
+                        "initComplete": function (settings, json) {
+                            $('.loader-class').modal('hide');
+                        },
                         "bDestroy": true,
-                        "autoWidth": false,
-                        "order": [[1, 'asc']],
+                        "autoWidth": true,
+                        "order": [[2, 'asc']],
                         "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
                         aaSorting: [],
-                        columns: [{
-                            "data": function (row) {
-                                return {name: row.applicationNumber, id: row.licenseId};
-                            },
-                            "render": function (data, type, row) {
-                                return '<a href="javascript:void(0);" onclick="goToView(' + row.licenseId + ');" data-hiddenele="licenseId" data-eleval="'
-                                    + data.id + '">' + data.name + '</a>';
-                            },
-                            "sTitle": "Application No.",
-                            "name": "applicationNumber"
-                        }, {
-                            "data": "tlNumber",
-                            "name": "licenseNumber",
-                            "sTitle": "License No."
-                        }, {
-                            "data": "oldTLNumber",
-                            "name": "oldLicenseNumber",
-                            "sTitle": "Old License No."
-                        }, {
-                            "data": "category",
-                            "name": "categoryName",
-                            "sTitle": "Category"
-                        }, {
-                            "data": "subCategory",
-                            "name": "tradeName.name",
-                            "sTitle": "Subcategory"
-                        }, {
-                            "data": "tradeTitle",
-                            "name": "nameOfEstablishment",
-                            "sTitle": "Trade Title"
-                        }, {
-                            "data": "tradeOwner",
-                            "name": "licensee.applicantName",
-                            "sTitle": "Trade Owner"
-                        }, {
-                            "data": "mobileNumber",
-                            "name": "licensee.mobilePhoneNumber",
-                            "sTitle": "Mobile Number"
-                        }, {
-                            "data": "propertyAssmntNo",
-                            "name": "assessmentNo",
-                            "sTitle": "Property ID"
-                        }, {
-                            "data": "expiryYear",
-                            "name": "dateOfExpiry",
-                            "sTitle": "Financial Year"
-                        }, {
-                            "data": "status",
-                            "name": "status.id",
-                            "sTitle": "Application Status"
-                        }, {
-                            "data": "active",
-                            "name": "isActive",
-                            "sTitle": "License Active"
-                        }, {
-                            "data": "ownerName",
-                            "orderable": false,
-                            "sortable": false,
-                            "sTitle": "Process Owner"
-                        }, {
-                            "sTitle": "Actions",
-                            "render": function (data, type, row) {
-                                var option = "<option value=''>Select from Below</option>";
-                                $.each(JSON.parse(row.actions), function (key, value ) {
-                                    option += "<option>" + value.key + "</option>";
-                                });
-                                return ('<select class="dropchange" id="recordActions" onchange="goToAction(this,' + row.licenseId + ')" >' + option + '</select>');
-                            }
-                        }]
+                        columns: [
+                            {
+                                "data": null,
+                                "render": function (data, type, row) {
+                                    var option = "<option value=''>---- Select an Action----</option>";
+                                    $.each(JSON.parse(row.actions), function (key, value) {
+                                        option += "<option>" + value.key + "</option>";
+                                    });
+                                    return ('<select class="form-control" style="width:200px;font-size: small" id="recordActions" onchange="goToAction(this,' + row.licenseId + ')" >' + option + '</select>');
+                                },
+                                "sortable": false,
+                                "orderable": false
+                            }, {
+                                "data": function (row) {
+                                    return {name: row.applicationNumber, id: row.licenseId};
+                                },
+                                "render": function (data, type, row) {
+                                    return '<a href="javascript:void(0);" onclick="goToView(' + row.licenseId + ');" data-hiddenele="licenseId" data-eleval="'
+                                        + data.id + '">' + data.name + '</a>';
+                                },
+                                "name": "applicationNumber"
+                            }, {
+                                "data": "tlNumber",
+                                "name": "licenseNumber",
+                            }, {
+                                "data": "oldLicenseNumber",
+                                "name": "oldLicenseNumber",
+                            }, {
+                                "data": "status",
+                                "name": "status.id",
+                            }, {
+                                "data": "active",
+                                "name": "isActive",
+                            }, {
+                                "data": "expiryDate",
+                                "name": "dateOfExpiry",
+                            }, {
+                                "data": "ownerName"
+                            }, {
+                                "data": "tradeTitle",
+                                "name": "nameOfEstablishment",
+                            }, {
+                                "data": "tradeOwner",
+                                "name": "licensee.applicantName",
+                            }, {
+                                "data": "category",
+                                "name": "categoryName",
+                            }, {
+                                "data": "subCategory",
+                                "name": "tradeName.name",
+                            }, {
+                                "data": "mobileNumber",
+                                "name": "licensee.mobilePhoneNumber",
+                            }]
                     });
             } else {
                 $('.report-section').hide();
@@ -483,31 +490,39 @@ $(document).ready(function () {
 });
 
 function goToView(id) {
-    window.open("/tl/viewtradelicense/viewTradeLicense-view.action?id=" + id, '', 'scrollbars=yes,width=1000,height=700,status=yes');
+    openWindow("/tl/viewtradelicense/viewTradeLicense-view.action?id=" + id, 'vt' + id);
 }
 
 function goToAction(obj, id) {
     if (obj.options[obj.selectedIndex].innerHTML == 'View Trade')
-        window.open("/tl/viewtradelicense/viewTradeLicense-view.action?id=" + id, 'vt' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
+        openWindow("/tl/viewtradelicense/viewTradeLicense-view.action?id=" + id, 'vt' + id);
+    else if (obj.options[obj.selectedIndex].innerHTML == 'View DCB')
+        openWindow("/tl/dcb/view/" + id, 'vdcb' + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Modify Legacy License')
-        window.open("/tl/legacylicense/update/" + id, 'mll' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
+        openWindow("/tl/legacylicense/update/" + id, 'mll' + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Collect Fees')
-        window.open("/tl/integration/licenseBillCollect.action?licenseId=" + id, 'cf' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
+        openWindow("/tl/integration/licenseBillCollect.action?licenseId=" + id, 'cf' + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Print Certificate')
-        window.open("/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id=" + id);
+        openWindow("/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id=" + id, 'pc' + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Print Provisional Certificate')
-        window.open("/tl/viewtradelicense/generate-provisional-certificate.action?model.id=" + id);
+        openWindow("/tl/viewtradelicense/generate-provisional-certificate.action?model.id=" + id, 'ppc' + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Renew License')
-        window.open("/tl/newtradelicense/newTradeLicense-beforeRenew.action?model.id=" + id, 'rl' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
+        openWindow("/tl/newtradelicense/newTradeLicense-beforeRenew.action?model.id=" + id, 'rl' + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Generate Demand Notice')
-        window.open("/tl/demand-notice/generate/" + id, 'dn' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
+        openWindow("/tl/demand-notice/generate/" + id, 'gdn' + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Closure')
-        window.open("/tl/license/closure/" + id, id);
+        openWindow("/tl/license/closure/" + id, 'cl' + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Generate Demand')
-        window.open("/tl/demand/generate/" + id, 'gd' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
+        openWindow("/tl/demand/generate/" + id, 'gd' + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Print Acknowledgment')
-        window.open("/tl/license/acknowledgement/" + id );
-    else if (obj.options[obj.selectedIndex].innerHTML =='Closure Endorsement Notice')
-        window.open("/tl/license/closure/endorsementnotice/" + id);
+        openWindow("/tl/license/acknowledgement/" + id);
+    else if (obj.options[obj.selectedIndex].innerHTML == 'Closure Endorsement Notice')
+        openWindow("/tl/license/closure/endorsementnotice/" + id, 'cen' + id);
     $(obj).val('');
+}
+
+function openWindow(url, name) {
+    var windRef = window.open(url, name, 'scrollbars=yes,width=1000,height=700,status=yes');
+    searchwins.push(windRef);
+    windRef.focus()
 }

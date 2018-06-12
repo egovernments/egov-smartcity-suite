@@ -149,7 +149,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
      */
     @Override
     public List<EgBillDetails> getBilldetails(final Billable billObj) {
-        final List<EgBillDetails> billDetails = new ArrayList();
+        final List<EgBillDetails> billDetails = new ArrayList<>();
         LOGGER.debug("Entered method getBilldetails : " + billObj);
         EgBillDetails billdetail;
         final PropertyTaxBillable billable = (PropertyTaxBillable) billObj;

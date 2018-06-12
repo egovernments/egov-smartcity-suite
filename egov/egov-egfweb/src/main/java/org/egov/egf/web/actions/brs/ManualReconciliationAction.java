@@ -59,7 +59,6 @@ import org.egov.commons.dao.BankHibernateDAO;
 import org.egov.egf.model.ReconcileBean;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collections;
@@ -83,7 +82,6 @@ public class ManualReconciliationAction extends BaseFormAction {
 
 
 	private static final long serialVersionUID = -4207341983597707193L;
-	private static final Logger LOGGER = Logger.getLogger(ManualReconciliationAction.class);
 	private List<Bankbranch> branchList = Collections.EMPTY_LIST;
 	private final List<Bankaccount> accountList = Collections.EMPTY_LIST;
 	/* @Autowired

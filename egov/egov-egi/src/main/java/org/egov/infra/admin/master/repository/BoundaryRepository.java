@@ -80,6 +80,8 @@ public interface BoundaryRepository extends JpaRepository<Boundary, Long> {
 
     Boundary findByBoundaryTypeAndBoundaryNum(BoundaryType boundaryType, Long boundaryNum);
 
+    Boundary findByIdAndBoundaryType(Long boundaryId, BoundaryType boundaryType);
+
     @Query("select b from Boundary b where b.active=true AND b.boundaryType.id =:boundaryTypeId order by b.name")
     List<Boundary> findActiveBoundariesByBoundaryTypeId(@Param("boundaryTypeId") Long boundaryTypeId);
 

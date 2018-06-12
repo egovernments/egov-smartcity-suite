@@ -234,5 +234,7 @@ function goToAction(obj, id) {
         window.open("/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id=" + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Print Provisional Certificate')
         window.open("/tl/viewtradelicense/generate-provisional-certificate.action?model.id=" + id);
+    else if (obj.options[obj.selectedIndex].innerHTML == 'Closure Endorsement Notice')
+        window.open("/tl/license/closure/endorsementnotice/" + id, 'cen' + id);
 
 }

@@ -48,7 +48,8 @@
 
 package org.egov.tl.entity.contracts;
 
-import org.apache.commons.lang3.StringUtils;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.web.support.search.DataTableSearchRequest;
 import org.egov.tl.entity.License;
 import org.egov.tl.utils.Constants;
@@ -58,7 +59,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static org.egov.infra.utils.StringUtils.toYesOrNo;
 import static org.egov.tl.utils.Constants.CLOSURE_LIC_APPTYPE;
+import static org.egov.tl.utils.Constants.TL_APPROVER_ROLENAME;
+import static org.egov.tl.utils.Constants.TL_CREATOR_ROLENAME;
 import static org.egov.tl.utils.Constants.CSCOPERATOR;
 
 public class SearchForm extends DataTableSearchRequest {
@@ -78,79 +82,87 @@ public class SearchForm extends DataTableSearchRequest {
     private Long categoryId;
     private Long subCategoryId;
     private Long statusId;
-    private Date dateOfExpiry;
     private List<String> actions;
     private String active;
     private Boolean inactive;
     private Long applicationTypeId;
     private Long natureOfBusinessId;
+    private Date expiryDate;
 
     public SearchForm() {
         // For form binding
     }
 
-    public SearchForm(final License license, final String userRoles, final String ownerName, final String expiryYear) {
+    public SearchForm(License license, User user, String ownerName, String... feeCollectorRoles) {
         setLicenseId(license.getId());
         setApplicationNumber(license.getApplicationNumber());
         setLicenseNumber(license.getLicenseNumber());
-        setOldLicenseNumber(StringUtils.defaultIfEmpty(license.getOldLicenseNumber(), ""));
         setCategoryName(license.getCategory().getName());
         setSubCategoryName(license.getTradeName().getName());
         setTradeTitle(license.getNameOfEstablishment());
         setTradeOwnerName(license.getLicensee().getApplicantName());
         setMobileNo(license.getLicensee().getMobilePhoneNumber());
-        setPropertyAssessmentNo(license.getAssessmentNo() != null ? license.getAssessmentNo() : "");
         setStatus(license.getStatus().getName());
-        setActive(license.getIsActive() ? "YES" : "NO");
+        setActive(toYesOrNo(license.getIsActive()));
+        setOldLicenseNumber(license.getOldLicenseNumber());
+        setExpiryDate(license.getDateOfExpiry());
         setOwnerName(ownerName);
-        setExpiryYear(expiryYear);
-        setDateOfExpiry(license.getDateOfExpiry());
         setApplicationTypeId(license.getLicenseAppType().getId());
         setNatureOfBusinessId(license.getNatureOfBusiness().getId());
-        addActions(license, userRoles);
+        addActions(license, user, feeCollectorRoles);
     }
 
-    private void addActions(final License license, final String userRoles) {
-        final List<String> licenseActions = new ArrayList<>();
+    private void addActions(License license, User user, String... feeCollectorRoles) {
+        List<String> licenseActions = new ArrayList<>();
         licenseActions.add("View Trade");
+        licenseActions.add("View DCB");
         if (license.transitionInitialized())
             licenseActions.add("Print Acknowledgment");
         if (license.isClosureApplicable())
             licenseActions.add("Closure");
         if (license.isClosed())
             licenseActions.add("Closure Endorsement Notice");
-        if (!userRoles.contains(CSCOPERATOR)) {
-            licenseActions.add("Generate Demand Notice");
+        if (user.hasAnyRole(feeCollectorRoles) && (license.canCollectLicenseFee() || license.canCollectFee()))
+            licenseActions.add("Collect Fees");
+        if (user.hasRole(CSCOPERATOR))
+            addPrintCertificatesOptions(license, licenseActions);
+        if (user.getType().equals(UserType.EMPLOYEE)) {
+            if (license.getIsActive())
+                licenseActions.add("Generate Demand Notice");
             if (license.isLegacyWithNoState())
                 licenseActions.add("Modify Legacy License");
             if (license.getStatus() != null)
-                addRoleSpecificActions(license, userRoles, licenseActions);
-        } else if (license.isReadyForRenewal())
+                addRoleSpecificActions(license, user, licenseActions);
+        } else if (license.isReadyForRenewal()) {
             licenseActions.add("Renew License");
+        }
         setActions(licenseActions);
     }
 
-    private void addRoleSpecificActions(final License license, final String userRoles, final List<String> licenseActions) {
-        if (userRoles.contains(Constants.ROLE_BILLCOLLECTOR) && (license.canCollectLicenseFee() || license.canCollectFee()))
-            licenseActions.add("Collect Fees");
-        else if (userRoles.contains(Constants.TL_CREATOR_ROLENAME) || userRoles.contains(Constants.TL_APPROVER_ROLENAME)) {
-            if (license.isStatusActive() && !license.isLegacy())
-                licenseActions.add("Print Certificate");
-            if (!CLOSURE_LIC_APPTYPE.equals(license.getLicenseAppType().getName()) && license.getStatus().getStatusCode().equals(Constants.STATUS_UNDERWORKFLOW))
-                licenseActions.add("Print Provisional Certificate");
+    private void addRoleSpecificActions(License license, User user, List<String> licenseActions) {
+        if (user.hasAnyRole(TL_CREATOR_ROLENAME, TL_APPROVER_ROLENAME)) {
+            addPrintCertificatesOptions(license, licenseActions);
             if (license.isReadyForRenewal())
                 licenseActions.add("Renew License");
-            final Date fromRange = new DateTime().withMonthOfYear(1).withDayOfMonth(1).toDate();
-            final Date toRange = new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate();
-            final Date currentDate = new Date();
+            Date fromRange = new DateTime().withMonthOfYear(1).withDayOfMonth(1).toDate();
+            Date toRange = new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate();
+            Date currentDate = new Date();
             if (currentDate.after(fromRange) && currentDate.before(toRange))
                 demandGenerationOption(licenseActions, license);
         }
     }
 
-    private void demandGenerationOption(final List<String> licenseActions, final License license) {
-        final Date nextYearInstallment = new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate();
-        final Date currentYearInstallment = license.getLicenseDemand().getEgInstallmentMaster().getToDate();
+    private void addPrintCertificatesOptions(License license, List<String> licenseActions) {
+        if (license.isStatusActive() && !license.isLegacy())
+            licenseActions.add("Print Certificate");
+        if (!CLOSURE_LIC_APPTYPE.equals(license.getLicenseAppType().getName())
+                && license.getStatus().getStatusCode().equals(Constants.STATUS_UNDERWORKFLOW))
+            licenseActions.add("Print Provisional Certificate");
+    }
+
+    private void demandGenerationOption(List<String> licenseActions, License license) {
+        Date nextYearInstallment = new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate();
+        Date currentYearInstallment = license.getLicenseDemand().getEgInstallmentMaster().getToDate();
         if (license.isNewPermanentApplication() && !license.isLegacyWithNoState() && license.getIsActive()
                 && currentYearInstallment.before(nextYearInstallment))
             licenseActions.add("Generate Demand");
@@ -160,7 +172,7 @@ public class SearchForm extends DataTableSearchRequest {
         return applicationNumber;
     }
 
-    public void setApplicationNumber(final String applicationNumber) {
+    public void setApplicationNumber(String applicationNumber) {
         this.applicationNumber = applicationNumber;
     }
 
@@ -168,7 +180,7 @@ public class SearchForm extends DataTableSearchRequest {
         return licenseNumber;
     }
 
-    public void setLicenseNumber(final String licenseNumber) {
+    public void setLicenseNumber(String licenseNumber) {
         this.licenseNumber = licenseNumber;
     }
 
@@ -176,7 +188,7 @@ public class SearchForm extends DataTableSearchRequest {
         return oldLicenseNumber;
     }
 
-    public void setOldLicenseNumber(final String oldLicenseNumber) {
+    public void setOldLicenseNumber(String oldLicenseNumber) {
         this.oldLicenseNumber = oldLicenseNumber;
     }
 
@@ -184,7 +196,7 @@ public class SearchForm extends DataTableSearchRequest {
         return categoryName;
     }
 
-    public void setCategoryName(final String categoryName) {
+    public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
     }
 
@@ -192,7 +204,7 @@ public class SearchForm extends DataTableSearchRequest {
         return subCategoryName;
     }
 
-    public void setSubCategoryName(final String subCategoryName) {
+    public void setSubCategoryName(String subCategoryName) {
         this.subCategoryName = subCategoryName;
     }
 
@@ -200,7 +212,7 @@ public class SearchForm extends DataTableSearchRequest {
         return tradeTitle;
     }
 
-    public void setTradeTitle(final String tradeTitle) {
+    public void setTradeTitle(String tradeTitle) {
         this.tradeTitle = tradeTitle;
     }
 
@@ -208,7 +220,7 @@ public class SearchForm extends DataTableSearchRequest {
         return tradeOwnerName;
     }
 
-    public void setTradeOwnerName(final String tradeOwnerName) {
+    public void setTradeOwnerName(String tradeOwnerName) {
         this.tradeOwnerName = tradeOwnerName;
     }
 
@@ -216,7 +228,7 @@ public class SearchForm extends DataTableSearchRequest {
         return propertyAssessmentNo;
     }
 
-    public void setPropertyAssessmentNo(final String propertyAssessmentNo) {
+    public void setPropertyAssessmentNo(String propertyAssessmentNo) {
         this.propertyAssessmentNo = propertyAssessmentNo;
     }
 
@@ -224,7 +236,7 @@ public class SearchForm extends DataTableSearchRequest {
         return mobileNo;
     }
 
-    public void setMobileNo(final String mobileNo) {
+    public void setMobileNo(String mobileNo) {
         this.mobileNo = mobileNo;
     }
 
@@ -232,7 +244,7 @@ public class SearchForm extends DataTableSearchRequest {
         return licenseId;
     }
 
-    public void setLicenseId(final Long licenseId) {
+    public void setLicenseId(Long licenseId) {
         this.licenseId = licenseId;
     }
 
@@ -240,7 +252,7 @@ public class SearchForm extends DataTableSearchRequest {
         return actions;
     }
 
-    public void setActions(final List<String> actions) {
+    public void setActions(List<String> actions) {
         this.actions = actions;
     }
 
@@ -248,7 +260,7 @@ public class SearchForm extends DataTableSearchRequest {
         return status;
     }
 
-    public void setStatus(final String status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
@@ -256,7 +268,7 @@ public class SearchForm extends DataTableSearchRequest {
         return ownerName;
     }
 
-    public void setOwnerName(final String ownerName) {
+    public void setOwnerName(String ownerName) {
         this.ownerName = ownerName;
     }
 
@@ -264,7 +276,7 @@ public class SearchForm extends DataTableSearchRequest {
         return expiryYear;
     }
 
-    public void setExpiryYear(final String expiryYear) {
+    public void setExpiryYear(String expiryYear) {
         this.expiryYear = expiryYear;
     }
 
@@ -272,7 +284,7 @@ public class SearchForm extends DataTableSearchRequest {
         return statusId;
     }
 
-    public void setStatusId(final Long statusId) {
+    public void setStatusId(Long statusId) {
         this.statusId = statusId;
     }
 
@@ -280,7 +292,7 @@ public class SearchForm extends DataTableSearchRequest {
         return categoryId;
     }
 
-    public void setCategoryId(final Long categoryId) {
+    public void setCategoryId(Long categoryId) {
         this.categoryId = categoryId;
     }
 
@@ -288,23 +300,15 @@ public class SearchForm extends DataTableSearchRequest {
         return subCategoryId;
     }
 
-    public void setSubCategoryId(final Long subCategoryId) {
+    public void setSubCategoryId(Long subCategoryId) {
         this.subCategoryId = subCategoryId;
-    }
-
-    public Date getDateOfExpiry() {
-        return dateOfExpiry;
-    }
-
-    public void setDateOfExpiry(final Date dateOfExpiry) {
-        this.dateOfExpiry = dateOfExpiry;
     }
 
     public String getActive() {
         return active;
     }
 
-    public void setActive(final String active) {
+    public void setActive(String active) {
         this.active = active;
     }
 
@@ -312,7 +316,7 @@ public class SearchForm extends DataTableSearchRequest {
         return inactive;
     }
 
-    public void setInactive(final Boolean inactive) {
+    public void setInactive(Boolean inactive) {
         this.inactive = inactive;
     }
 
@@ -330,5 +334,13 @@ public class SearchForm extends DataTableSearchRequest {
 
     public void setNatureOfBusinessId(Long natureOfBusinessId) {
         this.natureOfBusinessId = natureOfBusinessId;
+    }
+
+    public Date getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(final Date expiryDate) {
+        this.expiryDate = expiryDate;
     }
 }

@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -62,5 +62,9 @@ public interface PenaltyRatesRepository extends JpaRepository<PenaltyRates, Long
     @Query("select pr from PenaltyRates pr where pr.fromRange < :days and pr.toRange >= :days and pr.licenseAppType = :licenseAppType ")
     PenaltyRates findByDaysAndLicenseAppType(@Param("days") Long days, @Param("licenseAppType") LicenseAppType licenseAppType);
 
-    List<PenaltyRates> findByLicenseAppTypeIdOrderByIdAsc(Long licenseAppTypeId);
+    List<PenaltyRates> findByLicenseAppTypeOrderByIdAsc(LicenseAppType licenseAppType);
+
+    PenaltyRates findTopByLicenseAppTypeOrderByFromRangeAsc(LicenseAppType licenseAppType);
+
+    PenaltyRates findTopByLicenseAppTypeOrderByToRangeDesc(LicenseAppType licenseAppType);
 }

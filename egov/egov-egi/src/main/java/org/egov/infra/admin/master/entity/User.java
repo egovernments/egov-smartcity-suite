@@ -75,6 +75,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 
 import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
@@ -174,6 +175,14 @@ public class User extends AbstractAuditable {
     private byte[] signature;
 
     private boolean accountLocked;
+
+    public User() {
+        //Default constructor
+    }
+
+    public User(UserType type) {
+        this.type = type;
+    }
 
     @Override
     public Long getId() {
@@ -340,7 +349,7 @@ public class User extends AbstractAuditable {
         return type;
     }
 
-    public void setType(final UserType userType) {
+    protected void setType(final UserType userType) {
         type = userType;
     }
 
@@ -389,8 +398,21 @@ public class User extends AbstractAuditable {
     public boolean hasAnyRole(String... roleName) {
         List<String> roleNames = Arrays.asList(roleName);
         return roles.parallelStream()
-                .filter(role -> roleNames.contains(role.getName()))
-                .findFirst()
-                .isPresent();
+                .anyMatch(role -> roleNames.contains(role.getName()));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof User))
+            return false;
+        User user = (User) o;
+        return Objects.equals(username, user.username);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(username);
     }
 }

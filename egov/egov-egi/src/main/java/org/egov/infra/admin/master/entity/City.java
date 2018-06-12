@@ -76,6 +76,8 @@ import java.util.Map;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.egov.infra.admin.master.entity.City.QUERY_CITY_BY_URL;
 import static org.egov.infra.admin.master.entity.City.SEQ_CITY;
+import static org.egov.infra.security.utils.captcha.CaptchaUtils.CITY_CAPTCHA_PRIV_KEY;
+import static org.egov.infra.security.utils.captcha.CaptchaUtils.CITY_CAPTCHA_PUB_KEY;
 import static org.egov.infra.utils.ApplicationConstant.*;
 
 @Entity

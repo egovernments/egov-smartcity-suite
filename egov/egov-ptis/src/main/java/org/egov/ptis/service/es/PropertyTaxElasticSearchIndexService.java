@@ -48,9 +48,33 @@
 
 package org.egov.ptis.service.es;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_BILLCOLLECTORWISE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_CITYWISE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_DISTRICTWISE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_GRADEWISE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_REGIONWISE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_REVENUEINSPECTORWISE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_REVENUEOFFICERWISE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_WARDWISE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DATEFORMATTER_YYYY_MM_DD;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TAX_INDEX_NAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.COLLECTION_ACHIEVEMENTS_INDEX_NAME;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.CFinancialYearService;
+import org.egov.infra.admin.master.entity.es.CityIndex;
 import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.bean.dashboard.CollectionDetails;
 import org.egov.ptis.bean.dashboard.CollectionDetailsRequest;
@@ -63,6 +87,7 @@ import org.egov.ptis.bean.dashboard.TaxPayerDetails;
 import org.egov.ptis.bean.dashboard.TaxPayerResponseDetails;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.es.BillCollectorIndex;
+import org.egov.ptis.domain.entity.es.CollectionAchievementsIndex;
 import org.egov.ptis.domain.entity.es.PropertyTaxIndex;
 import org.egov.ptis.repository.es.PropertyTaxIndexRepository;
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -76,8 +101,6 @@ import org.elasticsearch.search.aggregations.bucket.terms.TermsBuilder;
 import org.elasticsearch.search.aggregations.metrics.sum.Sum;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -85,26 +108,6 @@ import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
-import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_BILLCOLLECTORWISE;
-import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_CITYWISE;
-import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_DISTRICTWISE;
-import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_GRADEWISE;
-import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_REGIONWISE;
-import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_WARDWISE;
-import static org.egov.ptis.constants.PropertyTaxConstants.DATEFORMATTER_YYYY_MM_DD;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TAX_INDEX_NAME;
 
 @Service
 public class PropertyTaxElasticSearchIndexService {
@@ -139,7 +142,6 @@ public class PropertyTaxElasticSearchIndexService {
     private static final String CITY_NAME = "cityName";
     private static final String REVENUE_WARD = "revenueWard";
     private static final String TOTAL_COLLECTION = "total_collection";
-    private static final String MILLISECS = " (millisecs) ";
     private static final String TOTAL_DEMAND = "totalDemand";
     private static final String ARREAR_DEMAND = "arrearDemand";
     private static final String CURRENT_DEMAND = "currentDemand";
@@ -153,9 +155,6 @@ public class PropertyTaxElasticSearchIndexService {
     private static final String PT_NEW_ASSMNT = "New_Assessment";
     private static final String PT_ALTER_ASSMNT = "Alter_Assessment";
     
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(PropertyTaxElasticSearchIndexService.class);
-
     private final PropertyTaxIndexRepository propertyTaxIndexRepository;
 
     @Autowired
@@ -166,7 +165,7 @@ public class PropertyTaxElasticSearchIndexService {
 
     @Autowired
     private CollectionIndexElasticSearchService collectionIndexElasticSearchService;
-
+    
     @Autowired
     public PropertyTaxElasticSearchIndexService(final PropertyTaxIndexRepository propertyTaxIndexRepository) {
         this.propertyTaxIndexRepository = propertyTaxIndexRepository;
@@ -221,12 +220,7 @@ public class PropertyTaxElasticSearchIndexService {
             fromDate = DateUtils.startOfDay(currFinYear.getStartingDate());
             toDate = new Date();
         }
-        Long startTime = System.currentTimeMillis();
         final BigDecimal totalDemand = getTotalDemandBasedOnInputFilters(collectionDetailsRequest);
-        Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken by getTotalDemandBasedOnInputFilters() is : " + timeTaken + MILLISECS);
-
-        startTime = System.currentTimeMillis();
         final int noOfMonths = DateUtils.noOfMonthsBetween(fromDate, toDate) + 1;
         collectionIndexDetails.setTotalDmd(totalDemand);
 
@@ -236,7 +230,7 @@ public class PropertyTaxElasticSearchIndexService {
         collectionIndexDetails.setCytdDmd(proportionalDemand.setScale(0, BigDecimal.ROUND_HALF_UP));
 
         collectionIndexDetails.setTotalAssessments(
-                collectionIndexElasticSearchService.getTotalAssessmentsCount(collectionDetailsRequest, null));
+                collectionIndexElasticSearchService.getTotalAssessmentsCount(collectionDetailsRequest));
 
         if (proportionalDemand.compareTo(BigDecimal.ZERO) > 0)
             // performance = (current year tilldate collection * 100)/(proportional demand)
@@ -252,9 +246,6 @@ public class PropertyTaxElasticSearchIndexService {
                     .multiply(BIGDECIMAL_100).divide(collectionIndexDetails.getLytdColl(), 1,
                             BigDecimal.ROUND_HALF_UP);
         collectionIndexDetails.setLyVar(variation);
-        timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug(
-                "Time taken for setting values in getConsolidatedDemandInfo() is : " + timeTaken + MILLISECS);
     }
 
     /**
@@ -276,23 +267,139 @@ public class PropertyTaxElasticSearchIndexService {
         final Sum aggr = collAggr.get(TOTALDEMAND);
         return BigDecimal.valueOf(aggr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
     }
+    
+    /**
+     * API prepares the data to push into CollectionAchievements index
+     * @param collectionDetailsRequest
+     * @param currFinYear
+     * @param city
+     * @return list
+     */
+    public List<TaxPayerDetails> prepareDataForAchievementsIndex(CollectionDetailsRequest collectionDetailsRequest,
+            CFinancialYear currFinYear, CityIndex city) {
+        List<TaxPayerDetails> wardWiseTaxProducers;
+        Map<String, TaxPayerDetails> wardWiseTaxPayersDetails = new HashMap<>();
+        Map<String, List<TaxPayerDetails>> billCollectorWiseMap = new LinkedHashMap<>();
+        List<TaxPayerDetails> taxPayerDetailsList = new ArrayList<>();
+        List<TaxPayerDetails> userWiseTaxPayerDetails = new ArrayList<>();
 
+        wardWiseTaxProducers = returnUlbWiseAggregationResults(collectionDetailsRequest,
+                PROPERTY_TAX_INDEX_NAME, false, TOTAL_COLLECTION, 250, true, currFinYear);
+        // Get ward wise tax payers details
+        prepareWardWiseTaxPayerDetails(wardWiseTaxProducers, wardWiseTaxPayersDetails);
+        // Group the revenue ward details by bill collector
+        prepareBillCollectorWiseMapData(collectionDetailsRequest, wardWiseTaxPayersDetails, billCollectorWiseMap,
+                taxPayerDetailsList);
+        // Prepare Bill Collector wise tax payers details
+        prepareTaxersInfoForBillCollectors(collectionDetailsRequest, billCollectorWiseMap,
+                userWiseTaxPayerDetails);
+        for (TaxPayerDetails taxPayerDetails : userWiseTaxPayerDetails) {
+            taxPayerDetails.setRegionName(city.getRegionname());
+            taxPayerDetails.setDistrictName(city.getDistrictname());
+            taxPayerDetails.setUlbGrade(city.getCitygrade());
+            taxPayerDetails.setUlbName(city.getName());
+            taxPayerDetails.setUlbCode(city.getCitycode());
+        }
+        return userWiseTaxPayerDetails;
+    }
+    
+    public Map<String, List<TaxPayerDetails>> getCollectionRankings(CollectionDetailsRequest collectionDetailsRequest) {
+        Map<String, List<TaxPayerDetails>> rankingsMap = new LinkedHashMap<>();
+        List<TaxPayerDetails> taxPayerDetailsList = new ArrayList<>();
+        TaxPayerDetails taxPayerDetails;
+
+        String groupingField = StringUtils.EMPTY;
+
+        BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest);
+
+        if (DASHBOARD_GROUPING_BILLCOLLECTORWISE.equalsIgnoreCase(collectionDetailsRequest.getType())) 
+            groupingField = "billCollector";
+        else if (DASHBOARD_GROUPING_REVENUEINSPECTORWISE.equalsIgnoreCase(collectionDetailsRequest.getType())) 
+            groupingField = "revenueInspector";
+        else if (DASHBOARD_GROUPING_REVENUEOFFICERWISE.equalsIgnoreCase(collectionDetailsRequest.getType())) 
+            groupingField = "revenueOfficer";
+        
+        if (StringUtils.isNotBlank(groupingField))
+            boolQuery = boolQuery.mustNot(QueryBuilders.matchQuery(groupingField, StringUtils.EMPTY));
+        SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(COLLECTION_ACHIEVEMENTS_INDEX_NAME)
+                .withQuery(boolQuery)
+                .withSort(new FieldSortBuilder("achievement").order(SortOrder.DESC))
+                .withPageable(new PageRequest(0, 3000))
+                .addAggregation(AggregationBuilders.terms(BY_AGGREGATION_FIELD).field(groupingField).size(3000))
+                .build();
+
+        List<CollectionAchievementsIndex> achievementsList = elasticsearchTemplate.queryForList(searchQueryColl,
+                CollectionAchievementsIndex.class);
+
+        for (CollectionAchievementsIndex achievement : achievementsList) {
+            taxPayerDetails = new TaxPayerDetails();
+            setAchieversData(collectionDetailsRequest, taxPayerDetails, achievement);
+            taxPayerDetailsList.add(taxPayerDetails);
+        }
+
+        //Sort the final list based on the achievements, in desc and asc order to get the top 10 and bottom 10 achievers respectively
+        List<TaxPayerDetails> topTenList = new ArrayList(taxPayerDetailsList);
+        if (!topTenList.isEmpty())
+            Collections.sort(topTenList, (detail1, detail2) -> detail2.getAchievement().compareTo(detail1.getAchievement()));
+
+        rankingsMap.put("topTenRankings", topTenList.subList(0, topTenList.size() < 10 ? topTenList.size() : 10));
+
+        List<TaxPayerDetails> bottomTenList = new ArrayList(taxPayerDetailsList);
+        if (!bottomTenList.isEmpty())
+            Collections.sort(bottomTenList, (detail1, detail2) -> detail1.getAchievement().compareTo(detail2.getAchievement()));
+
+        rankingsMap.put("bottomTenRankings", bottomTenList.subList(0, bottomTenList.size() < 10 ? bottomTenList.size() : 10));
+        return rankingsMap;
+    }
+
+    private void setAchieversData(CollectionDetailsRequest collectionDetailsRequest, TaxPayerDetails taxPayerDetails,
+            CollectionAchievementsIndex achievement) {
+        taxPayerDetails.setRegionName(achievement.getRegionName());
+        taxPayerDetails.setDistrictName(achievement.getDistrictName());
+        taxPayerDetails.setUlbGrade(achievement.getCityGrade());
+        taxPayerDetails.setUlbName(achievement.getCityName());
+        taxPayerDetails.setUlbCode(achievement.getCityCode());
+        if (DASHBOARD_GROUPING_BILLCOLLECTORWISE.equalsIgnoreCase(collectionDetailsRequest.getType())) {
+            taxPayerDetails.setBillCollector(achievement.getBillCollector());
+            taxPayerDetails.setBillCollMobNo(achievement.getBillCollectorMobileNo());
+            taxPayerDetails.setBillCollectorCode(achievement.getBillCollectorCode());
+        } else if (DASHBOARD_GROUPING_REVENUEINSPECTORWISE.equalsIgnoreCase(collectionDetailsRequest.getType())) {
+            taxPayerDetails.setRevenueInspector(achievement.getRevenueInspector());
+            taxPayerDetails.setRevInspectorMobNo(achievement.getRevenueInspectorMobileNo());
+            taxPayerDetails.setRevenueInspectorCode(achievement.getRevenueInspectorCode());
+        } else if (DASHBOARD_GROUPING_REVENUEOFFICERWISE.equalsIgnoreCase(collectionDetailsRequest.getType())) {
+            taxPayerDetails.setRevenueOfficer(achievement.getRevenueOfficer());
+            taxPayerDetails.setRevOfficerMobNo(achievement.getRevenueOfficerMobileNo());
+            taxPayerDetails.setRevenueOfficerCode(achievement.getRevenueOfficerCode());
+        }
+        taxPayerDetails.setTotalDmd(BigDecimal.valueOf(achievement.getTotalDemand()));
+        taxPayerDetails.setCytdDmd(BigDecimal.valueOf(achievement.getCytdDemand()));
+        taxPayerDetails.setCytdColl(BigDecimal.valueOf(achievement.getCytdColl()));
+        taxPayerDetails.setCytdBalDmd(BigDecimal.valueOf(achievement.getCytdBalDemand()));
+        taxPayerDetails.setAchievement(BigDecimal.valueOf(achievement.getAchievement()));
+        taxPayerDetails.setLytdColl(BigDecimal.valueOf(achievement.getLytdColl()));
+        taxPayerDetails.setLyVar(BigDecimal.valueOf(achievement.getLyVar()));
+    }
+    
     /**
      * Returns List of Top Ten Tax Performers
      *
      * @param collectionDetailsRequest
      * @return
      */
-    public TaxPayerResponseDetails getTopTenTaxPerformers(final CollectionDetailsRequest collectionDetailsRequest) {
+    public TaxPayerResponseDetails getTopTenTaxPerformers(final CollectionDetailsRequest collectionDetailsRequest, 
+            CFinancialYear currFinYear, boolean isForRanking) {
 
         final TaxPayerResponseDetails topTaxPerformers = new TaxPayerResponseDetails();
         List<TaxPayerDetails> taxProducers;
         List<TaxPayerDetails> taxAchievers;
-        if (StringUtils.isNotBlank(collectionDetailsRequest.getType()) && collectionDetailsRequest.getType()
-                .equalsIgnoreCase(PropertyTaxConstants.DASHBOARD_GROUPING_BILLCOLLECTORWISE)) {
+        if (StringUtils.isNotBlank(collectionDetailsRequest.getType()) && (collectionDetailsRequest.getType()
+                .equalsIgnoreCase(PropertyTaxConstants.DASHBOARD_GROUPING_BILLCOLLECTORWISE)
+                || DASHBOARD_GROUPING_REVENUEINSPECTORWISE.equalsIgnoreCase(collectionDetailsRequest.getType())
+                || DASHBOARD_GROUPING_REVENUEOFFICERWISE.equalsIgnoreCase(collectionDetailsRequest.getType()))) {
             // Fetch the ward wise data for the filters
             final List<TaxPayerDetails> wardWiseTaxProducers = returnUlbWiseAggregationResults(collectionDetailsRequest,
-                    PROPERTY_TAX_INDEX_NAME, false, TOTAL_COLLECTION, 250, true);
+                    PROPERTY_TAX_INDEX_NAME, false, TOTAL_COLLECTION, 250, true, currFinYear);
             final Map<String, TaxPayerDetails> wardWiseTaxPayersDetails = new HashMap<>();
             final Map<String, List<TaxPayerDetails>> billCollectorWiseMap = new LinkedHashMap<>();
             final List<TaxPayerDetails> taxPayerDetailsList = new ArrayList<>();
@@ -306,14 +413,14 @@ public class PropertyTaxElasticSearchIndexService {
             prepareTaxersInfoForBillCollectors(collectionDetailsRequest, billCollectorWiseMap,
                     billCollectorWiseTaxPayerDetails);
             taxProducers = getTaxPayersForBillCollector(false,
-                    billCollectorWiseTaxPayerDetails, true);
+                    billCollectorWiseTaxPayerDetails, true, isForRanking);
             taxAchievers = getTaxPayersForBillCollector(false,
-                    billCollectorWiseTaxPayerDetails, false);
+                    billCollectorWiseTaxPayerDetails, false, isForRanking);
         } else {
             taxProducers = returnUlbWiseAggregationResults(collectionDetailsRequest, PROPERTY_TAX_INDEX_NAME, false,
-                    TOTAL_COLLECTION, 10, false);
+                    TOTAL_COLLECTION, 10, false, currFinYear);
             taxAchievers = returnUlbWiseAggregationResults(collectionDetailsRequest, PROPERTY_TAX_INDEX_NAME, false,
-                    TOTAL_COLLECTION, 120, false);
+                    TOTAL_COLLECTION, 120, false, currFinYear);
         }
 
         topTaxPerformers.setProducers(taxProducers);
@@ -328,14 +435,17 @@ public class PropertyTaxElasticSearchIndexService {
      * @param collectionDetailsRequest
      * @return
      */
-    public TaxPayerResponseDetails getBottomTenTaxPerformers(final CollectionDetailsRequest collectionDetailsRequest) {
+    public TaxPayerResponseDetails getBottomTenTaxPerformers(final CollectionDetailsRequest collectionDetailsRequest, 
+            CFinancialYear currFinYear, boolean isForRanking) {
         final TaxPayerResponseDetails topTaxPerformers = new TaxPayerResponseDetails();
         List<TaxPayerDetails> taxProducers;
         List<TaxPayerDetails> taxAchievers;
-        if (StringUtils.isNotBlank(collectionDetailsRequest.getType()) && collectionDetailsRequest.getType()
-                .equalsIgnoreCase(PropertyTaxConstants.DASHBOARD_GROUPING_BILLCOLLECTORWISE)) {
+        if (StringUtils.isNotBlank(collectionDetailsRequest.getType()) && (collectionDetailsRequest.getType()
+                .equalsIgnoreCase(PropertyTaxConstants.DASHBOARD_GROUPING_BILLCOLLECTORWISE)
+                || DASHBOARD_GROUPING_REVENUEINSPECTORWISE.equalsIgnoreCase(collectionDetailsRequest.getType())
+                || DASHBOARD_GROUPING_REVENUEOFFICERWISE.equalsIgnoreCase(collectionDetailsRequest.getType()))) {
             final List<TaxPayerDetails> wardWiseTaxProducers = returnUlbWiseAggregationResults(collectionDetailsRequest,
-                    PROPERTY_TAX_INDEX_NAME, false, TOTAL_COLLECTION, 250, true);
+                    PROPERTY_TAX_INDEX_NAME, false, TOTAL_COLLECTION, 250, true, currFinYear);
             final Map<String, TaxPayerDetails> wardWiseTaxPayersDetails = new HashMap<>();
             final Map<String, List<TaxPayerDetails>> billCollectorWiseMap = new LinkedHashMap<>();
             final List<TaxPayerDetails> taxPayerDetailsList = new ArrayList<>();
@@ -348,13 +458,13 @@ public class PropertyTaxElasticSearchIndexService {
             // Prepare Bill Collector wise tax payers details
             prepareTaxersInfoForBillCollectors(collectionDetailsRequest, billCollectorWiseMap,
                     billCollectorWiseTaxPayerDetails);
-            taxProducers = getTaxPayersForBillCollector(true, billCollectorWiseTaxPayerDetails, true);
-            taxAchievers = getTaxPayersForBillCollector(true, billCollectorWiseTaxPayerDetails, false);
+            taxProducers = getTaxPayersForBillCollector(true, billCollectorWiseTaxPayerDetails, true, isForRanking);
+            taxAchievers = getTaxPayersForBillCollector(true, billCollectorWiseTaxPayerDetails, false, isForRanking);
         } else {
             taxProducers = returnUlbWiseAggregationResults(collectionDetailsRequest, PROPERTY_TAX_INDEX_NAME, true,
-                    TOTAL_COLLECTION, 10, false);
+                    TOTAL_COLLECTION, 10, false, currFinYear);
             taxAchievers = returnUlbWiseAggregationResults(collectionDetailsRequest, PROPERTY_TAX_INDEX_NAME, true,
-                    TOTAL_COLLECTION, 120, false);
+                    TOTAL_COLLECTION, 120, false, currFinYear);
         }
         topTaxPerformers.setProducers(taxProducers);
         topTaxPerformers.setAchievers(taxAchievers);
@@ -373,7 +483,7 @@ public class PropertyTaxElasticSearchIndexService {
      */
     public List<TaxPayerDetails> returnUlbWiseAggregationResults(final CollectionDetailsRequest collectionDetailsRequest,
             final String indexName, final Boolean order, final String orderingAggregationName, final int size,
-            final boolean isBillCollectorWise) {
+            final boolean isBillCollectorWise, CFinancialYear currFinYear) {
         BigDecimal proportionalArrearDmd;
         BigDecimal proportionalCurrDmd;
         BigDecimal variation;
@@ -392,7 +502,6 @@ public class PropertyTaxElasticSearchIndexService {
         final BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest)
                 .filter(QueryBuilders.matchQuery(IS_ACTIVE, true))
                 .filter(QueryBuilders.matchQuery(IS_EXEMPTED, false));
-        final CFinancialYear currFinYear = cFinancialYearService.getFinancialYearByDate(new Date());
 
         // orderingAggregationName is the aggregation name by which we have to
         // order the results
@@ -401,13 +510,14 @@ public class PropertyTaxElasticSearchIndexService {
         String groupingField;
         if (StringUtils.isNotBlank(collectionDetailsRequest.getUlbCode())
                 || StringUtils.isNotBlank(collectionDetailsRequest.getType())
-                        && (collectionDetailsRequest.getType().equals(DASHBOARD_GROUPING_WARDWISE)
-                                || collectionDetailsRequest.getType().equals(DASHBOARD_GROUPING_BILLCOLLECTORWISE)))
+                        && (DASHBOARD_GROUPING_WARDWISE.equalsIgnoreCase(collectionDetailsRequest.getType())
+                                || DASHBOARD_GROUPING_BILLCOLLECTORWISE.equalsIgnoreCase(collectionDetailsRequest.getType())
+                                || DASHBOARD_GROUPING_REVENUEINSPECTORWISE.equalsIgnoreCase(collectionDetailsRequest.getType())
+                                || DASHBOARD_GROUPING_REVENUEOFFICERWISE.equalsIgnoreCase(collectionDetailsRequest.getType())))
             groupingField = REVENUE_WARD;
         else
             groupingField = CITY_NAME;
 
-        Long startTime = System.currentTimeMillis();
         AggregationBuilder aggregation;
         SearchQuery searchQueryColl;
         // Apply the ordering and max results size only if the type is not
@@ -434,14 +544,10 @@ public class PropertyTaxElasticSearchIndexService {
         if (DASHBOARD_GROUPING_WARDWISE.equalsIgnoreCase(collectionDetailsRequest.getType()))
             wardWiseBillCollectors = collectionIndexElasticSearchService.getWardWiseBillCollectors(collectionDetailsRequest);
 
-        Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken by ulbWiseAggregations is : " + timeTaken + MILLISECS);
-
         TaxPayerDetails taxDetail;
-        startTime = System.currentTimeMillis();
         final StringTerms totalAmountAggr = collAggr.get(BY_AGGREGATION_FIELD);
+        BigDecimal lastYearCollection;
         for (final Terms.Bucket entry : totalAmountAggr.getBuckets()) {
-            variation = BigDecimal.ZERO;
             taxDetail = new TaxPayerDetails();
             taxDetail.setRegionName(collectionDetailsRequest.getRegionName());
             taxDetail.setDistrictName(collectionDetailsRequest.getDistrictName());
@@ -454,8 +560,10 @@ public class PropertyTaxElasticSearchIndexService {
                         && !wardWiseBillCollectors.isEmpty()) {
                     taxDetail.setBillCollector(wardWiseBillCollectors.get(fieldName) == null ? StringUtils.EMPTY
                             : wardWiseBillCollectors.get(fieldName).getBillCollector());
-                    taxDetail.setMobileNumber(wardWiseBillCollectors.get(fieldName) == null ? StringUtils.EMPTY
-                            : wardWiseBillCollectors.get(fieldName).getMobileNumber());
+                    taxDetail.setBillCollMobNo(wardWiseBillCollectors.get(fieldName) == null ? StringUtils.EMPTY
+                            : wardWiseBillCollectors.get(fieldName).getBillCollectorMobileNo());
+                    taxDetail.setBillCollectorCode(wardWiseBillCollectors.get(fieldName) == null ? StringUtils.EMPTY
+                            : wardWiseBillCollectors.get(fieldName).getBillCollectorCode());
                 }
             } else
                 taxDetail.setUlbName(fieldName);
@@ -482,12 +590,18 @@ public class PropertyTaxElasticSearchIndexService {
             taxDetail.setTotalDmd(totalDemandValue);
             taxDetail.setCytdColl(totalCollections);
             taxDetail.setCytdDmd(proportionalDemand);
-            taxDetail.setAchievement(
-                    totalCollections.multiply(BIGDECIMAL_100).divide(proportionalDemand, 1, BigDecimal.ROUND_HALF_UP));
+            if(proportionalDemand.compareTo(BigDecimal.ZERO) > 0)
+                taxDetail.setAchievement(
+                        totalCollections.multiply(BIGDECIMAL_100).divide(proportionalDemand, 1, BigDecimal.ROUND_HALF_UP));
             taxDetail.setCytdBalDmd(proportionalDemand.subtract(totalCollections));
-            final BigDecimal lastYearCollection = collectionIndexElasticSearchService
-                    .getCollectionBetweenDates(collectionDetailsRequest, lastYearFromDate, lastYearToDate, fieldName,
-                            "totalAmount");
+            if (StringUtils.isNotBlank(taxDetail.getUlbName()))
+                lastYearCollection = collectionIndexElasticSearchService
+                        .getCollectionBetweenDates(collectionDetailsRequest, lastYearFromDate, lastYearToDate, fieldName, null,
+                                "totalAmount");
+            else
+                lastYearCollection = collectionIndexElasticSearchService
+                        .getCollectionBetweenDates(collectionDetailsRequest, lastYearFromDate, lastYearToDate, null, fieldName,
+                                "totalAmount");
             taxDetail.setLytdColl(lastYearCollection);
             taxDetail.setArrearColl(BigDecimal.valueOf(arrearCollAmt.getValue()).setScale(0,
                     BigDecimal.ROUND_HALF_UP));
@@ -524,9 +638,6 @@ public class PropertyTaxElasticSearchIndexService {
             taxDetail.setLyVar(variation);
             taxPayers.add(taxDetail);
         }
-        timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken for setting values in returnUlbWiseAggregationResults() is : " + timeTaken
-                + MILLISECS);
         // If for Bill Collector, then fetch details for all wards, else limit
         // the results size
         if (isBillCollectorWise)
@@ -568,7 +679,6 @@ public class PropertyTaxElasticSearchIndexService {
      * @return
      */
     public List<TaxDefaulters> getTopDefaulters(final PropertyTaxDefaultersRequest propertyTaxDefaultersRequest) {
-        Long startTime = System.currentTimeMillis();
         BoolQueryBuilder boolQuery = filterBasedOnRequest(propertyTaxDefaultersRequest);
         boolQuery = boolQuery.mustNot(QueryBuilders.matchQuery(CITY_NAME, "Guntur"))
                 .mustNot(QueryBuilders.matchQuery(CITY_NAME, "Vijayawada"))
@@ -582,12 +692,9 @@ public class PropertyTaxElasticSearchIndexService {
 
         final Page<PropertyTaxIndex> propertyTaxRecords = elasticsearchTemplate.queryForPage(searchQuery,
                 PropertyTaxIndex.class);
-        Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken by defaulters aggregation is : " + timeTaken + MILLISECS);
 
         final List<TaxDefaulters> taxDefaulters = new ArrayList<>();
         TaxDefaulters taxDefaulter;
-        startTime = System.currentTimeMillis();
         for (final PropertyTaxIndex property : propertyTaxRecords) {
             taxDefaulter = new TaxDefaulters();
             taxDefaulter.setOwnerName(property.getConsumerName());
@@ -597,8 +704,6 @@ public class PropertyTaxElasticSearchIndexService {
             taxDefaulter.setPeriod(StringUtils.isBlank(property.getDuePeriod()) ? StringUtils.EMPTY : property.getDuePeriod());
             taxDefaulters.add(taxDefaulter);
         }
-        timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken for setting values in getTopDefaulters() is : " + timeTaken + MILLISECS);
         return taxDefaulters;
     }
 
@@ -699,24 +804,33 @@ public class PropertyTaxElasticSearchIndexService {
             final Map<String, TaxPayerDetails> wardWiseTaxPayersDetails,
             final Map<String, List<TaxPayerDetails>> billCollectorWiseMap, List<TaxPayerDetails> taxPayerDetailsList) {
 
-        String billCollectorNameNumber;
+        String userNameAndNumber = StringUtils.EMPTY;
         final List<BillCollectorIndex> billCollectorsList = collectionIndexElasticSearchService
                 .getBillCollectorDetails(collectionDetailsRequest);
         for (final BillCollectorIndex billCollIndex : billCollectorsList)
             if (wardWiseTaxPayersDetails.get(billCollIndex.getRevenueWard()) != null
                     && StringUtils.isNotBlank(billCollIndex.getRevenueWard())) {
-                billCollectorNameNumber = billCollIndex.getBillCollector().concat("~")
-                        .concat(StringUtils.isBlank(billCollIndex.getMobileNumber()) ? StringUtils.EMPTY
-                                : billCollIndex.getMobileNumber());
+                if(DASHBOARD_GROUPING_BILLCOLLECTORWISE.equalsIgnoreCase(collectionDetailsRequest.getType()))
+                    userNameAndNumber = billCollIndex.getBillCollector().concat("~")
+                        .concat(StringUtils.isBlank(billCollIndex.getBillCollectorMobileNo()) ? StringUtils.EMPTY
+                                : billCollIndex.getBillCollectorMobileNo()).concat("~").concat(billCollIndex.getBillCollectorCode());
+                else if (DASHBOARD_GROUPING_REVENUEINSPECTORWISE.equalsIgnoreCase(collectionDetailsRequest.getType()))
+                    userNameAndNumber = billCollIndex.getRevenueInspector().concat("~")
+                        .concat(StringUtils.isBlank(billCollIndex.getRevenueInspectorMobileNo()) ? StringUtils.EMPTY
+                                : billCollIndex.getRevenueInspectorMobileNo()).concat("~").concat(billCollIndex.getRevenueInspectorCode());
+                else if (DASHBOARD_GROUPING_REVENUEOFFICERWISE.equalsIgnoreCase(collectionDetailsRequest.getType()))
+                    userNameAndNumber = billCollIndex.getRevenueOfficer().concat("~")
+                        .concat(StringUtils.isBlank(billCollIndex.getRevenueOfficerMobileNo()) ? StringUtils.EMPTY
+                                : billCollIndex.getRevenueOfficerMobileNo()).concat("~").concat(billCollIndex.getRevenueOfficerCode());
                 if (billCollectorWiseMap.isEmpty()) {
                     taxPayerDetailsList.add(wardWiseTaxPayersDetails.get(billCollIndex.getRevenueWard()));
-                    billCollectorWiseMap.put(billCollectorNameNumber, taxPayerDetailsList);
-                } else if (!billCollectorWiseMap.containsKey(billCollectorNameNumber)) {
+                    billCollectorWiseMap.put(userNameAndNumber, taxPayerDetailsList);
+                } else if (!billCollectorWiseMap.containsKey(userNameAndNumber)) {
                     taxPayerDetailsList = new ArrayList<>();
                     taxPayerDetailsList.add(wardWiseTaxPayersDetails.get(billCollIndex.getRevenueWard()));
-                    billCollectorWiseMap.put(billCollectorNameNumber, taxPayerDetailsList);
+                    billCollectorWiseMap.put(userNameAndNumber, taxPayerDetailsList);
                 } else
-                    billCollectorWiseMap.get(billCollectorNameNumber)
+                    billCollectorWiseMap.get(userNameAndNumber)
                             .add(wardWiseTaxPayersDetails.get(billCollIndex.getRevenueWard()));
             }
     }
@@ -731,7 +845,8 @@ public class PropertyTaxElasticSearchIndexService {
      * @param isForProducers
      * @return
      */
-    private List<TaxPayerDetails> getTaxPayersForBillCollector(final boolean order, final List<TaxPayerDetails> billCollectorWiseTaxPayerDetails, final boolean isForProducers) {
+    private List<TaxPayerDetails> getTaxPayersForBillCollector(final boolean order, final List<TaxPayerDetails> billCollectorWiseTaxPayerDetails, 
+            final boolean isForProducers, boolean isForRanking) {
         final Map<BigDecimal, TaxPayerDetails> sortedTaxersMap = new HashMap<>();
         // For propducers, prepare sorted list of totalCollection
         // For achievers, prepare sorted list of achievement
@@ -753,7 +868,7 @@ public class PropertyTaxElasticSearchIndexService {
         for (final BigDecimal amount : sortedList)
             taxersResult.add(sortedTaxersMap.get(amount));
 
-        if (taxersResult.size() > 10)
+        if (!isForRanking && taxersResult.size() > 10)
             return taxersResult.subList(0, taxersResult.size() < 10 ? taxersResult.size() : 10);
         else
             return taxersResult;
@@ -775,23 +890,35 @@ public class PropertyTaxElasticSearchIndexService {
         BigDecimal cytdDmd;
         BigDecimal totalDmd;
         TaxPayerDetails taxPayerDetails;
-        String[] billCollectorNameNumberArr;
+        String[] userNameNumberArr;
         for (final Entry<String, List<TaxPayerDetails>> entry : billCollectorWiseMap.entrySet()) {
             taxPayerDetails = new TaxPayerDetails();
             cytdColl = BigDecimal.ZERO;
             lytdColl = BigDecimal.ZERO;
             cytdDmd = BigDecimal.ZERO;
             totalDmd = BigDecimal.ZERO;
-            billCollectorNameNumberArr = entry.getKey().split("~");
+            userNameNumberArr = entry.getKey().split("~");
             for (final TaxPayerDetails taxPayer : entry.getValue()) {
                 totalDmd = totalDmd.add(taxPayer.getTotalDmd() == null ? BigDecimal.ZERO : taxPayer.getTotalDmd());
                 cytdColl = cytdColl.add(taxPayer.getCytdColl() == null ? BigDecimal.ZERO : taxPayer.getCytdColl());
                 cytdDmd = cytdDmd.add(taxPayer.getCytdDmd() == null ? BigDecimal.ZERO : taxPayer.getCytdDmd());
                 lytdColl = lytdColl.add(taxPayer.getLytdColl() == null ? BigDecimal.ZERO : taxPayer.getLytdColl());
             }
-            taxPayerDetails.setBillCollector(billCollectorNameNumberArr[0]);
-            taxPayerDetails
-                    .setMobileNumber(billCollectorNameNumberArr.length > 1 ? billCollectorNameNumberArr[1] : StringUtils.EMPTY);
+            
+            if (DASHBOARD_GROUPING_BILLCOLLECTORWISE.equalsIgnoreCase(collectionDetailsRequest.getType())) {
+                taxPayerDetails.setBillCollector(userNameNumberArr.length > 0 ? userNameNumberArr[0] : StringUtils.EMPTY);
+                taxPayerDetails.setBillCollMobNo(userNameNumberArr.length > 1 ? userNameNumberArr[1] : StringUtils.EMPTY);
+                taxPayerDetails.setBillCollectorCode(userNameNumberArr.length > 2 ? userNameNumberArr[2] : StringUtils.EMPTY);
+            } else if (DASHBOARD_GROUPING_REVENUEINSPECTORWISE.equalsIgnoreCase(collectionDetailsRequest.getType())) {
+                taxPayerDetails.setRevenueInspector(userNameNumberArr.length > 0 ? userNameNumberArr[0] : StringUtils.EMPTY);
+                taxPayerDetails.setRevInspectorMobNo(userNameNumberArr.length > 1 ? userNameNumberArr[1] : StringUtils.EMPTY);
+                taxPayerDetails.setRevenueInspectorCode(userNameNumberArr.length > 2 ? userNameNumberArr[2] : StringUtils.EMPTY);
+            } else if (DASHBOARD_GROUPING_REVENUEOFFICERWISE.equalsIgnoreCase(collectionDetailsRequest.getType())) {
+                taxPayerDetails.setRevenueOfficer(userNameNumberArr.length > 0 ? userNameNumberArr[0] : StringUtils.EMPTY);
+                taxPayerDetails.setRevOfficerMobNo(userNameNumberArr.length > 1 ? userNameNumberArr[1] : StringUtils.EMPTY);
+                taxPayerDetails.setRevenueOfficerCode(userNameNumberArr.length > 2 ? userNameNumberArr[2] : StringUtils.EMPTY);
+            }
+            
             taxPayerDetails.setRegionName(collectionDetailsRequest.getRegionName());
             taxPayerDetails.setDistrictName(collectionDetailsRequest.getDistrictName());
             taxPayerDetails.setUlbGrade(collectionDetailsRequest.getUlbGrade());
@@ -800,13 +927,15 @@ public class PropertyTaxElasticSearchIndexService {
             taxPayerDetails.setCytdBalDmd(cytdDmd.subtract(cytdColl));
             taxPayerDetails.setTotalDmd(totalDmd);
             taxPayerDetails.setLytdColl(lytdColl);
-            taxPayerDetails
-                    .setAchievement(cytdColl.multiply(BIGDECIMAL_100).divide(cytdDmd, 1, BigDecimal.ROUND_HALF_UP));
-            if (lytdColl.compareTo(BigDecimal.ZERO) == 0) {
-            } else
-                cytdColl.subtract(lytdColl).multiply(BIGDECIMAL_100)
-                        .divide(lytdColl, 1, BigDecimal.ROUND_HALF_UP);
-
+            if(cytdDmd.compareTo(BigDecimal.ZERO) > 0)
+                taxPayerDetails
+                        .setAchievement(cytdColl.multiply(BIGDECIMAL_100).divide(cytdDmd, 1, BigDecimal.ROUND_HALF_UP));
+            if (lytdColl.compareTo(BigDecimal.ZERO) == 0) 
+                taxPayerDetails.setLyVar(BIGDECIMAL_100);
+            else
+                taxPayerDetails.setLyVar(cytdColl.subtract(lytdColl).multiply(BIGDECIMAL_100)
+                        .divide(lytdColl, 1, BigDecimal.ROUND_HALF_UP));
+            
             billCollectorWiseTaxPayerDetails.add(taxPayerDetails);
         }
     }
@@ -836,10 +965,10 @@ public class PropertyTaxElasticSearchIndexService {
         if (individualDmdDetails != null)
             for (final Terms.Bucket entry : individualDmdDetails.getBuckets()) {
                 individualDmdMap = new HashMap<>();
-                arrearDmd = entry.getAggregations().get("arrear_dmd");
-                currentDmd = entry.getAggregations().get("curr_dmd");
-                arrearInterestDmd = entry.getAggregations().get("arrear_interest_dmd");
-                currentInterestDmd = entry.getAggregations().get("curr_interest_dmd");
+                arrearDmd = entry.getAggregations().get(ARREAR_DMD_STR);
+                currentDmd = entry.getAggregations().get(CURR_DMD);
+                arrearInterestDmd = entry.getAggregations().get(ARREAR_INTEREST_DMD);
+                currentInterestDmd = entry.getAggregations().get(CURR_INTEREST_DMD);
                 totalDmd = entry.getAggregations().get("total_dmd");
                 adjustment = entry.getAggregations().get("adjustment");
                 arrearColl = entry.getAggregations().get("arrear_coll");
@@ -847,7 +976,7 @@ public class PropertyTaxElasticSearchIndexService {
                 arrearInterestColl = entry.getAggregations().get("arrear_interest_coll");
                 currentInterestColl = entry.getAggregations().get("curr_interest_coll");
                 advanceColl = entry.getAggregations().get("advance");
-                rebate = entry.getAggregations().get("rebate");
+                rebate = entry.getAggregations().get(REBATE_STR);
                 totalColl = entry.getAggregations().get("total_coll");
 
                 individualDmdMap.put(ARREAR_DMD,

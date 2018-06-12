@@ -85,6 +85,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
 import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINTS_FILED;
 import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINTS_RESOLVED;
@@ -152,7 +153,8 @@ public class ComplaintService {
         User user = securityUtils.getCurrentUser();
         complaint.getComplainant().setUserDetail(user);
         if (securityUtils.currentUserIsCitizen()) {
-            complaint.getComplainant().setEmail(user.getEmailId());
+            if (isNotBlank(user.getEmailId()))
+                complaint.getComplainant().setEmail(user.getEmailId());
             complaint.getComplainant().setName(user.getName());
             complaint.getComplainant().setMobile(user.getMobileNumber());
         }

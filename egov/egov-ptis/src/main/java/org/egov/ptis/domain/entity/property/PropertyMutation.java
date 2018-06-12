@@ -89,7 +89,8 @@ public class PropertyMutation extends StateAware<Position> {
     private String documentNumber;
     private String saleDetail;
     private List<Document> documents = new ArrayList<>();
-    private String meesevaApplicationNumber;//Temporary number for meeseva integration.
+    private List<Document> documentsProxy = new ArrayList<>();
+    private String meesevaApplicationNumber;
     private String source;
     private BigDecimal partyValue;
     private BigDecimal departmentValue;
@@ -118,7 +119,8 @@ public class PropertyMutation extends StateAware<Position> {
                 .append(getPrimaryTransferee().getName()).append(", ")
                 .append(PROPERTY_TYPE_CATEGORIES.get(getBasicProperty().getProperty().getPropertyDetail().getCategoryType()))
                 .append(", ")
-                .append(getBasicProperty().getPropertyID().getLocality().getName());
+                .append(getBasicProperty().getPropertyID().getLocality() == null ? ""
+                        : getBasicProperty().getPropertyID().getLocality().getName());
         return stateDetails.toString();
     }
 
@@ -264,6 +266,14 @@ public class PropertyMutation extends StateAware<Position> {
 
     public void setDocuments(final List<Document> documents) {
         this.documents = documents;
+    }
+
+    public List<Document> getDocumentsProxy() {
+        return documentsProxy;
+    }
+
+    public void setDocumentsProxy(List<Document> documentsProxy) {
+        this.documentsProxy = documentsProxy;
     }
 
     public String getFullTranfereeName() {

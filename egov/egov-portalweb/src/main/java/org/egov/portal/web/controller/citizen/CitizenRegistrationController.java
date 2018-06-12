@@ -99,6 +99,7 @@ public class CitizenRegistrationController {
         if (errors.hasErrors())
             return "signup";
         citizenService.create(citizen);
+        redirectAttrib.addFlashAttribute("mobileNo", citizen.getMobileNumber());
         redirectAttrib.addFlashAttribute("message", "msg.reg.success");
         return "redirect:signup";
     }
