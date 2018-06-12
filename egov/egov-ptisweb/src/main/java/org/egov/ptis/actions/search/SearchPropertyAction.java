@@ -335,13 +335,15 @@ public class SearchPropertyAction extends SearchFormAction {
                 addActionError(getText("msg.no.tax"));
                 return COMMON_FORM;
             }
-            if (!applicationType.equalsIgnoreCase(APPLICATION_TYPE_BIFURCATE_ASSESSENT)) {
-                String errorMessage = propertyService.validationForBifurcation(null, basicProperty,
-                        PROPERTY_MODIFY_REASON_ADD_OR_ALTER);
-                if (StringUtils.isNotBlank(errorMessage)) {
-                    addActionError(getText(errorMessage));
-                    return COMMON_FORM;
-                }
+        }
+        if (Arrays.asList(APPLICATION_TYPE_ALTER_ASSESSENT, APPLICATION_TYPE_TAX_EXEMTION,
+                APPLICATION_TYPE_DEMOLITION, APPLICATION_TYPE_AMALGAMATION, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP,
+                APPLICATION_TYPE_VACANCY_REMISSION, APPLICATION_TYPE_GRP).contains(applicationType)) {
+            String errorMessage = propertyService.validationForBifurcation(null, basicProperty,
+                    PROPERTY_MODIFY_REASON_ADD_OR_ALTER);
+            if (StringUtils.isNotBlank(errorMessage)) {
+                addActionError(getText(errorMessage));
+                return COMMON_FORM;
             }
         }
         if (Arrays.asList(APPLICATION_TYPE_EDIT_OWNER, APPLICATION_TYPE_EDIT_MOBILE_NO, APPLICATION_TYPE_EDIT_DOOR_NO)
