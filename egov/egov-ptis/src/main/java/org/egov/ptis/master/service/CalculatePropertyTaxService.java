@@ -63,12 +63,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.egov.commons.Installment;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -110,9 +107,6 @@ public class CalculatePropertyTaxService {
     @Autowired
     PropertyTaxUtil propertyTaxUtil;
     
-    @PersistenceContext
-    private EntityManager entityManager;
-    
     @Autowired
     private APTaxCalculator apTaxCalculator;
 
@@ -127,10 +121,10 @@ public class CalculatePropertyTaxService {
                 REVENUE_HIERARCHY_TYPE);
         final List<StructureClassification> buildingClassifications = structureClassificationService.getAllActiveStructureTypes();
         final List<PropertyUsage> usageList = propertyUsageService.getAllActiveMixedPropertyUsages();
-        Map<Long,String> zones = new HashMap<>();
-        Map<Long,String> classifications = new HashMap<>();
-        Map<Long,String> usages = new HashMap<>();
-        Map<Long,String> occupations = new HashMap<>();
+        Map<Long,String> zones = new ConcurrentHashMap<>();
+        Map<Long,String> classifications = new ConcurrentHashMap<>();
+        Map<Long,String> usages = new ConcurrentHashMap<>();
+        Map<Long,String> occupations = new ConcurrentHashMap<>();
         for(Boundary zone: zoneList){
             zones.put(zone.getId(), zone.getName());
         }
@@ -161,7 +155,7 @@ public class CalculatePropertyTaxService {
     
     public Map<String, String> getCurrentHalfyearTaxRates(final Map<Installment, TaxCalculationInfo> instTaxMap,
             final PropertyTypeMaster propTypeMstr) {
-        final Map<String, String> taxDetails = new HashMap<>();
+        final Map<String, String> taxDetails = new ConcurrentHashMap<>();
         final Installment currentInstall = propertyTaxCommonUtils.getCurrentPeriodInstallment();
         final TaxCalculationInfo calculationInfo = instTaxMap.get(currentInstall);
         final BigDecimal annualValue = calculationInfo.getTotalNetARV();
@@ -189,7 +183,7 @@ public class CalculatePropertyTaxService {
                 else if (miscTax.getTaxName() == DEMANDRSN_CODE_PRIMARY_SERVICE_CHARGES)
                     serviceCharges = serviceCharges.add(miscTax.getTotalCalculatedTax());
 
-        BigDecimal totalTax = (genTax.setScale(0, RoundingMode.CEILING)).add(unAuthPenalty.setScale(0, RoundingMode.CEILING))
+        BigDecimal totalTax = genTax.setScale(0, RoundingMode.CEILING).add(unAuthPenalty.setScale(0, RoundingMode.CEILING))
                 .add(eduTax.setScale(0, RoundingMode.CEILING)).add(vacLandTax.setScale(0, RoundingMode.CEILING))
                 .add(libCess.setScale(0, RoundingMode.CEILING)).add(sewrageTax.setScale(0, RoundingMode.CEILING))
                 .add(serviceCharges.setScale(0, RoundingMode.CEILING));

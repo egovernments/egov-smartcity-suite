@@ -211,6 +211,14 @@ public class APTaxCalculator implements PropertyTaxCalculator {
 
     private APUnitTaxCalculationInfo calculateNonVacantTax(final Property property, final Floor floor,
             final BoundaryCategory boundaryCategory, final List<String> applicableTaxes, final Installment installment) {
+        final APUnitTaxCalculationInfo unitTaxCalculationInfo = getUnitTaxCalculationInfo(floor, boundaryCategory);
+        final BigDecimal unAuthDeviationPerc = getUnAuthDeviationPerc(floor);
+        calculateApplicableTaxes(applicableTaxes, unitTaxCalculationInfo, installment, property.getPropertyDetail()
+                .getPropertyTypeMaster().getCode(), floor, unAuthDeviationPerc);
+        return unitTaxCalculationInfo;
+    }
+
+    private APUnitTaxCalculationInfo getUnitTaxCalculationInfo(final Floor floor, final BoundaryCategory boundaryCategory) {
         final APUnitTaxCalculationInfo unitTaxCalculationInfo = new APUnitTaxCalculationInfo();
         BigDecimal builtUpArea;
         BigDecimal floorMrv;
@@ -240,10 +248,6 @@ public class APTaxCalculator implements PropertyTaxCalculator {
         unitTaxCalculationInfo.setUnitOccupation(floor.getPropertyOccupation().getOccupancyCode());
         unitTaxCalculationInfo.setUnitStructure(floor.getStructureClassification().getConstrTypeCode());
         unitTaxCalculationInfo.setNetARV(floorNetArv.setScale(0, BigDecimal.ROUND_HALF_UP));
-        final BigDecimal unAuthDeviationPerc = getUnAuthDeviationPerc(floor);
-        calculateApplicableTaxes(applicableTaxes, unitTaxCalculationInfo, installment, property.getPropertyDetail()
-                .getPropertyTypeMaster().getCode(), floor, unAuthDeviationPerc);
-
         return unitTaxCalculationInfo;
     }
 
@@ -627,8 +631,9 @@ public class APTaxCalculator implements PropertyTaxCalculator {
                     if (betweenOrBefore(floorInfo.getOccupancyDate(), installment.getFromDate(), installment.getToDate())) {
                         boundaryCategory = getBoundaryCategory(zone, installment, floorInfo.getPropertyUsage()
                                 .getId(), occupationDate, floorInfo.getStructureClassification().getId());
-                        final APUnitTaxCalculationInfo unitTaxCalculationInfo = calculateNonVacantTax(propertyTypeMaster.getCode(),
-                                floorInfo, boundaryCategory, applicableTaxes, installment);
+                        final APUnitTaxCalculationInfo unitTaxCalculationInfo = 
+                        calculateApplicableTaxes(applicableTaxes, getUnitTaxCalculationInfo(floorInfo, boundaryCategory), installment, propertyTypeMaster.getCode(), floorInfo, getUnAuthDeviationPerc(floorInfo));
+                        
                         totalNetArv = totalNetArv.add(unitTaxCalculationInfo.getNetARV());
 
                         totalTaxPayable = totalTaxPayable.add(unitTaxCalculationInfo.getTotalTaxPayable());
@@ -672,41 +677,4 @@ public class APTaxCalculator implements PropertyTaxCalculator {
         return taxCalculationInfo;
     }
     
-    private APUnitTaxCalculationInfo calculateNonVacantTax(final String propTypeCode, final Floor floor,
-            final BoundaryCategory boundaryCategory, final List<String> applicableTaxes, final Installment installment) {
-        final APUnitTaxCalculationInfo unitTaxCalculationInfo = new APUnitTaxCalculationInfo();
-        BigDecimal builtUpArea;
-        BigDecimal floorMrv;
-        BigDecimal floorBuildingValue;
-        BigDecimal floorSiteValue;
-        BigDecimal floorGrossArv;
-        BigDecimal floorDepreciation;
-        BigDecimal floorNetArv;
-
-        builtUpArea = BigDecimal.valueOf(floor.getBuiltUpArea().getArea());
-        floorMrv = calculateFloorMrv(builtUpArea, boundaryCategory);
-        floorBuildingValue = calculateFloorBuildingValue(floorMrv);
-        floorSiteValue = calculateFloorSiteValue(floorMrv);
-        floorGrossArv = floorBuildingValue.multiply(new BigDecimal(12));
-        floorDepreciation = calculateFloorDepreciation(floorGrossArv, floor);
-        floorNetArv = floorSiteValue.multiply(new BigDecimal(12)).add(floorGrossArv.subtract(floorDepreciation));
-        unitTaxCalculationInfo.setFloorNumber(FLOOR_MAP.get(floor.getFloorNo()));
-        unitTaxCalculationInfo.setFloorArea(builtUpArea);
-        unitTaxCalculationInfo.setBaseRateEffectiveDate(boundaryCategory.getFromDate());
-        unitTaxCalculationInfo.setBaseRate(BigDecimal.valueOf(boundaryCategory.getCategory().getCategoryAmount()));
-        unitTaxCalculationInfo.setMrv(floorMrv);
-        unitTaxCalculationInfo.setBuildingValue(floorBuildingValue);
-        unitTaxCalculationInfo.setSiteValue(floorSiteValue);
-        unitTaxCalculationInfo.setGrossARV(floorGrossArv);
-        unitTaxCalculationInfo.setDepreciation(floorDepreciation);
-        unitTaxCalculationInfo.setUnitUsage(floor.getPropertyUsage().getUsageCode());
-        unitTaxCalculationInfo.setUnitOccupation(floor.getPropertyOccupation().getOccupancyCode());
-        unitTaxCalculationInfo.setUnitStructure(floor.getStructureClassification().getConstrTypeCode());
-        unitTaxCalculationInfo.setNetARV(floorNetArv.setScale(0, BigDecimal.ROUND_HALF_UP));
-        final BigDecimal unAuthDeviationPerc = getUnAuthDeviationPerc(floor);
-        calculateApplicableTaxes(applicableTaxes, unitTaxCalculationInfo, installment, propTypeCode, floor, unAuthDeviationPerc);
-        return unitTaxCalculationInfo;
-    }
-
-
 }

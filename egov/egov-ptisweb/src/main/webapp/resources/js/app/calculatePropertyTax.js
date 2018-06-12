@@ -230,7 +230,7 @@ $(document)
 									function(e) {
 										var arv = 0;
 										$.ajax({
-													url : "/ptis/calculatePropertyTax",
+													url : "/ptis/calculatepropertytax",
 													type : "POST",
 													data : getFormData($('form')),
 													cache : false,
@@ -265,7 +265,7 @@ $(document)
 														$('#arv').html('');
 														$('#taxResult').addClass('display-hide');
 														$('#arv').append(
-																"<b>fail</b>");
+																"<b>Calculation Failed!</b>");
 													}
 												});
 
