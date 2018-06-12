@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -51,7 +51,6 @@ package org.egov.pushbox.service;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -115,13 +114,12 @@ public class PushNotificationService {
     public UserFcmDevice getUserDeviceByUser(final Long userId) {
         return pushNotificationRepo.findByUserId(userId);
     }
-    
+
     public List<UserFcmDevice> getAllUserDeviceByUser(List<Long> ids) {
         return pushNotificationRepo.findByUserIdIn(ids);
     }
 
     public void sendNotifications(MessageContent messageContent) {
-        //LOGGER.info("##PushBoxFox## : Received the Message Content at SendNotifications Method");
         List<UserFcmDevice> userDeviceList = null;
         if (messageContent.isSendAll())
             userDeviceList = getAllUserDeviceList();
@@ -133,13 +131,6 @@ public class PushNotificationService {
     }
 
     private List<UserFcmDevice> getUserDeviceList(MessageContent messageContent) {
-        /*List<UserFcmDevice> userDeviceList = new ArrayList<>();
-        for (Long userId : messageContent.getUserIdList()) {
-            UserFcmDevice device = getUserDeviceByUser(userId);
-            if (null != device)
-                userDeviceList.add(device);
-        }
-        return userDeviceList;*/
         return getAllUserDeviceByUser(messageContent.getUserIdList());
     }
 
