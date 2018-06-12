@@ -287,8 +287,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 return REJECT_ON_TAXDUE;
             if (STRUCTURED.equals(taxDueOrStruc))
                 return COMMON_FORM;
-            if (basicproperty.getWFProperty() != null && Arrays.asList(PROPERTY_MODIFY_REASON_ADD_OR_ALTER, DEMOLITION)
-                    .contains(basicproperty.getWFProperty().getPropertyModifyReason()) && isLatestPropertyMutationClosed()) {
+            if (isInAddAltDemolitionFlow() && isLatestPropertyMutationClosed()) {
                 if (isEligibleLoggedUser()) {
                     loggedUserIsMeesevaUser = propertyService.isMeesevaUser(transferOwnerService.getLoggedInUser());
                     if (loggedUserIsMeesevaUser)
@@ -344,6 +343,16 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             } else
                 return NEW;
         }
+    }
+    
+    public boolean isInAddAltDemolitionFlow(){
+        boolean isAddAltDem;
+        if(basicproperty.getWFProperty() != null){
+            isAddAltDem = Arrays.asList(PROPERTY_MODIFY_REASON_ADD_OR_ALTER, DEMOLITION).contains(basicproperty.getWFProperty().getPropertyModifyReason());
+        }else{
+            isAddAltDem = Arrays.asList(PROPERTY_MODIFY_REASON_ADD_OR_ALTER, DEMOLITION).contains(basicproperty.getProperty().getPropertyModifyReason());
+        }
+        return isAddAltDem;
     }
 
     public boolean isEligibleLoggedUser() {
