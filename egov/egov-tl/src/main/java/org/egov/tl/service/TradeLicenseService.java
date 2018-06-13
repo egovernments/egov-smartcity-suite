@@ -425,10 +425,10 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         if (demandNoticeForm.getLocalityId() != null)
             searchCriteria.createAlias("boundary", "locality")
                     .add(Restrictions.eq("locality.id", demandNoticeForm.getLocalityId()));
-        if (demandNoticeForm.getStatusId() != null)
-            searchCriteria.add(Restrictions.eq("status.id", demandNoticeForm.getStatusId()));
-        else
+        if (demandNoticeForm.getStatusId() == null)
             searchCriteria.add(Restrictions.ne("licstatus.statusCode", StringUtils.upperCase("CAN")));
+        else
+            searchCriteria.add(Restrictions.eq("status.id", demandNoticeForm.getStatusId()));
         searchCriteria
                 .add(Restrictions.eq("isActive", true))
                 .add(Restrictions.eq("nob.name", PERMANENT_NATUREOFBUSINESS))

@@ -68,7 +68,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import static org.egov.infra.utils.StringUtils.appendTimestamp;
 import static org.egov.infra.reporting.util.ReportUtil.reportAsResponseEntity;
-import static org.egov.tl.utils.Constants.*;
+import static org.egov.tl.utils.Constants.ADMIN_HIERARCHY;
+import static org.egov.tl.utils.Constants.ADMIN_WARD;
+import static org.egov.tl.utils.Constants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.tl.utils.Constants.REVENUE_WARD;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller

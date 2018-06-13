@@ -72,8 +72,6 @@ import java.util.Collections;
 
 import static org.egov.infra.utils.StringUtils.appendTimestamp;
 import static org.egov.infra.reporting.util.ReportUtil.reportAsResponseEntity;
-import static org.egov.tl.utils.Constants.LOCALITY;
-import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.tl.utils.Constants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.tl.utils.Constants.REVENUE_WARD;
 import static org.egov.tl.utils.Constants.ADMIN_HIERARCHY;
