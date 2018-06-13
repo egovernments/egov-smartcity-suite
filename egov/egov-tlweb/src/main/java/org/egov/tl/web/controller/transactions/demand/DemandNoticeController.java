@@ -77,6 +77,8 @@ import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.tl.utils.Constants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.tl.utils.Constants.REVENUE_WARD;
 import static org.egov.tl.utils.Constants.STATUS_CANCELLED;
+import static org.egov.tl.utils.Constants.ADMIN_HIERARCHY;
+import static org.egov.tl.utils.Constants.ADMIN_WARD;
 import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
@@ -106,8 +108,10 @@ public class DemandNoticeController {
         model.addAttribute("subCategoryList", Collections.emptyList());
         model.addAttribute("localityList", boundaryService
                 .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(LOCALITY, LOCATION_HIERARCHY_TYPE));
-        model.addAttribute("wardList", boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(REVENUE_WARD,
+        model.addAttribute("revenueWards", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(REVENUE_WARD,
                 REVENUE_HIERARCHY_TYPE));
+        model.addAttribute("adminWards", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ADMIN_WARD,
+                ADMIN_HIERARCHY));
         List<LicenseStatus> status = licenseStatusService.findAll();
         status.remove(licenseStatusService.getLicenseStatusByCode(STATUS_CANCELLED));
         model.addAttribute("statusList", status);

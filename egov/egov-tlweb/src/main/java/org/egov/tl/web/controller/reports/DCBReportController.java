@@ -53,7 +53,6 @@ import org.egov.infra.reporting.engine.ReportDisposition;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.web.support.ui.DataTable;
 import org.egov.tl.entity.contracts.DCBReportSearchRequest;
-import org.egov.tl.entity.view.DCBReportResult;
 import org.egov.tl.service.DCBReportService;
 import org.egov.tl.web.response.adaptor.DCBReportResponseAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,8 +68,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import static org.egov.infra.utils.StringUtils.appendTimestamp;
 import static org.egov.infra.reporting.util.ReportUtil.reportAsResponseEntity;
-import static org.egov.tl.utils.Constants.REVENUE_HIERARCHY_TYPE;
-import static org.egov.tl.utils.Constants.REVENUE_WARD;
+import static org.egov.tl.utils.Constants.*;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
@@ -86,17 +84,19 @@ public class DCBReportController {
     @Autowired
     private BoundaryService boundaryService;
 
-    @ModelAttribute("dCBReportResult")
-    public DCBReportResult dCBReportResultModel() {
-        return new DCBReportResult();
+    @ModelAttribute("dCBReportRequest")
+    public DCBReportSearchRequest dCBReportRequest() {
+        return new DCBReportSearchRequest();
     }
 
     @GetMapping("search")
     public String dcbSearchForm(final Model model) {
         model.addAttribute("mode", LICENSE);
         model.addAttribute(REPORT_TYPE_ATTRIB_NAME, LICENSE);
-        model.addAttribute("wardList", boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(REVENUE_WARD,
+        model.addAttribute("revenueWards", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(REVENUE_WARD,
                 REVENUE_HIERARCHY_TYPE));
+        model.addAttribute("electionWards", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ADMIN_WARD,
+                ADMIN_HIERARCHY));
         return "dCBReport-search";
     }
 

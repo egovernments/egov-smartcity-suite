@@ -62,14 +62,14 @@
             </div>
             <div class="panel-body">
                 <form:form class="form-horizontal form-groups-bordered" action=""
-                           id="dcbreportform" modelAttribute="dCBReportResult" method="get">
+                           id="dcbreportform" modelAttribute="dCBReportRequest" method="get">
 
                     <div class="form-group">
                         <label class="col-sm-3 control-label text-right">
                             <spring:message code="lbl.license.no"/>
                         </label>
                         <div class="col-sm-6 add-margin">
-                            <input type="text" name="licensenumber" id="licensenumber"
+                            <input type="text" name="licenseNumber" id="licensenumber"
                                    class="form-control patternvalidation" maxlength="15"/>
                         </div>
                     </div>
@@ -88,8 +88,16 @@
                     <div class="form-group">
                         <label class="col-sm-3 control-label text-right"> <spring:message code='baseregister.ward'/></label>
                         <div class="col-sm-6 add-margin">
-                            <form:select multiple="true" path="wardid" id="ward" cssClass="form-control">
-                                <form:options items="${wardList}" itemLabel="name" itemValue="id"/>
+                            <form:select multiple="true" path="" id="ward" cssClass="form-control">
+                                <form:options items="${revenueWards}" itemLabel="name" itemValue="id"/>
+                            </form:select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label text-right"> <spring:message code='lbl.election.ward'/></label>
+                        <div class="col-sm-6 add-margin">
+                            <form:select multiple="true" path="" id="adminward" cssClass="form-control">
+                                <form:options items="${electionWards}" itemLabel="name" itemValue="id"/>
                             </form:select>
                         </div>
                     </div>
@@ -114,6 +122,7 @@
                             <th rowspan="2"></th>
                             <th rowspan="2"></th>
                             <th rowspan="2"></th>
+                            <th rowspan="2"></th>
                             <th colspan="3"><spring:message code="lbl.demand"/></th>
                             <th colspan="3"><spring:message code="lbl.collection"/></th>
                             <th colspan="3"><spring:message code="lbl.balance"/></th>
@@ -133,6 +142,7 @@
                         <tfoot id="report-footer">
                         <tr>
                             <td colspan="4"><spring:message code="lbl.total"/></td>
+                            <td></td>
                             <td></td>
                             <td></td>
                             <td></td>

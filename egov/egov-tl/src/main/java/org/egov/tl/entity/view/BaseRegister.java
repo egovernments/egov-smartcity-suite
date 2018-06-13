@@ -69,7 +69,7 @@ public class BaseRegister implements Serializable {
     private static final long serialVersionUID = -5366096182840879108L;
 
     @Id
-    private BigInteger licenseid;
+    private BigInteger licenseId;
 
     @Column(name = "cat")
     private Long categoryId;
@@ -82,31 +82,32 @@ public class BaseRegister implements Serializable {
 
     @Column(name = "ward")
     private Long wardId;
-
-    private String licensenumber;
+    private Long adminWard;
+    private String adminWardName;
+    private String licenseNumber;
     private String oldLicenseNumber;
-    private String tradetitle;
+    private String tradeTitle;
     private String owner;
     private String mobile;
-    private String categoryname;
-    private String subcategoryname;
-    private String assessmentno;
-    private String wardname;
-    private String localityname;
-    private String tradeaddress;
-    private String commencementdate;
-    private String statusname;
-    private BigDecimal arrearlicensefee;
-    private BigDecimal arrearpenaltyfee;
-    private BigDecimal curlicensefee;
-    private BigDecimal curpenaltyfee;
-    private String unitofmeasure;
-    private BigInteger tradewt;
-    private BigDecimal rateval;
+    private String categoryName;
+    private String subCategoryName;
+    private String assessmentNo;
+    private String wardName;
+    private String localityName;
+    private String tradeAddress;
+    private String commencementDate;
+    private String statusName;
+    private BigDecimal arrearLicenseFee;
+    private BigDecimal arrearPenaltyFee;
+    private BigDecimal curLicenseFee;
+    private BigDecimal curPenaltyFee;
+    private String unitOfMeasure;
+    private BigInteger tradeWt;
+    private BigDecimal rateVal;
     private Long locality;
     private Long uom;
-    private Long apptype;
-    private Date appdate;
+    private Long appType;
+    private Date appDate;
 
     @Transient
     private String filterName;
@@ -143,12 +144,12 @@ public class BaseRegister implements Serializable {
         this.wardId = wardId;
     }
 
-    public String getLicensenumber() {
-        return licensenumber;
+    public String getLicenseNumber() {
+        return licenseNumber;
     }
 
-    public void setLicensenumber(String licensenumber) {
-        this.licensenumber = licensenumber;
+    public void setLicenseNumber(String licenseNumber) {
+        this.licenseNumber = licenseNumber;
     }
 
     public String getOldLicenseNumber() {
@@ -159,12 +160,12 @@ public class BaseRegister implements Serializable {
         this.oldLicenseNumber = oldLicenseNumber;
     }
 
-    public String getTradetitle() {
-        return tradetitle;
+    public String getTradeTitle() {
+        return tradeTitle;
     }
 
-    public void setTradetitle(String tradetitle) {
-        this.tradetitle = tradetitle;
+    public void setTradeTitle(String tradeTitle) {
+        this.tradeTitle = tradeTitle;
     }
 
     public String getOwner() {
@@ -183,136 +184,136 @@ public class BaseRegister implements Serializable {
         this.mobile = mobile;
     }
 
-    public String getCategoryname() {
-        return categoryname;
+    public String getCategoryName() {
+        return categoryName;
     }
 
-    public void setCategoryname(String categoryname) {
-        this.categoryname = categoryname;
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 
-    public String getSubcategoryname() {
-        return subcategoryname;
+    public String getSubCategoryName() {
+        return subCategoryName;
     }
 
-    public void setSubcategoryname(String subcategoryname) {
-        this.subcategoryname = subcategoryname;
+    public void setSubCategoryName(String subCategoryName) {
+        this.subCategoryName = subCategoryName;
     }
 
-    public String getAssessmentno() {
-        return assessmentno;
+    public String getAssessmentNo() {
+        return assessmentNo;
     }
 
-    public void setAssessmentno(String assessmentno) {
-        this.assessmentno = assessmentno;
+    public void setAssessmentNo(String assessmentNo) {
+        this.assessmentNo = assessmentNo;
     }
 
-    public String getWardname() {
-        return wardname;
+    public String getWardName() {
+        return wardName;
     }
 
-    public void setWardname(String wardname) {
-        this.wardname = wardname;
+    public void setWardName(String wardName) {
+        this.wardName = wardName;
     }
 
-    public String getLocalityname() {
-        return localityname;
+    public String getLocalityName() {
+        return localityName;
     }
 
-    public void setLocalityname(String localityname) {
-        this.localityname = localityname;
+    public void setLocalityName(String localityName) {
+        this.localityName = localityName;
     }
 
-    public String getTradeaddress() {
-        return tradeaddress;
+    public String getTradeAddress() {
+        return tradeAddress;
     }
 
-    public void setTradeaddress(String tradeaddress) {
-        this.tradeaddress = tradeaddress;
+    public void setTradeAddress(String tradeAddress) {
+        this.tradeAddress = tradeAddress;
     }
 
-    public String getCommencementdate() {
-        return commencementdate;
+    public String getCommencementDate() {
+        return commencementDate;
     }
 
-    public void setCommencementdate(final String commencementdate) {
-        this.commencementdate = commencementdate;
+    public void setCommencementDate(final String commencementDate) {
+        this.commencementDate = commencementDate;
     }
 
-    public void setCommencementdate(Date commencementdate) {
-        this.commencementdate = DateUtils.getDefaultFormattedDate(commencementdate);
+    public void setCommencementDate(Date commencementDate) {
+        this.commencementDate = DateUtils.getDefaultFormattedDate(commencementDate);
     }
 
-    public String getStatusname() {
-        return statusname;
+    public String getStatusName() {
+        return statusName;
     }
 
-    public void setStatusname(String statusname) {
-        this.statusname = statusname;
+    public void setStatusName(String statusName) {
+        this.statusName = statusName;
     }
 
-    public BigDecimal getArrearlicensefee() {
-        return arrearlicensefee;
+    public BigDecimal getArrearLicenseFee() {
+        return arrearLicenseFee;
     }
 
-    public void setArrearlicensefee(BigDecimal arrearlicensefee) {
-        this.arrearlicensefee = arrearlicensefee;
+    public void setArrearLicenseFee(BigDecimal arrearLicenseFee) {
+        this.arrearLicenseFee = arrearLicenseFee;
     }
 
-    public BigDecimal getArrearpenaltyfee() {
-        return arrearpenaltyfee;
+    public BigDecimal getArrearPenaltyFee() {
+        return arrearPenaltyFee;
     }
 
-    public void setArrearpenaltyfee(BigDecimal arrearpenaltyfee) {
-        this.arrearpenaltyfee = arrearpenaltyfee;
+    public void setArrearPenaltyFee(BigDecimal arrearPenaltyFee) {
+        this.arrearPenaltyFee = arrearPenaltyFee;
     }
 
-    public BigDecimal getCurlicensefee() {
-        return curlicensefee;
+    public BigDecimal getCurLicenseFee() {
+        return curLicenseFee;
     }
 
-    public void setCurlicensefee(BigDecimal curlicensefee) {
-        this.curlicensefee = curlicensefee;
+    public void setCurLicenseFee(BigDecimal curLicenseFee) {
+        this.curLicenseFee = curLicenseFee;
     }
 
-    public BigDecimal getCurpenaltyfee() {
-        return curpenaltyfee;
+    public BigDecimal getCurPenaltyFee() {
+        return curPenaltyFee;
     }
 
-    public void setCurpenaltyfee(BigDecimal curpenaltyfee) {
-        this.curpenaltyfee = curpenaltyfee;
+    public void setCurPenaltyFee(BigDecimal curPenaltyFee) {
+        this.curPenaltyFee = curPenaltyFee;
     }
 
-    public BigInteger getLicenseid() {
-        return licenseid;
+    public BigInteger getLicenseId() {
+        return licenseId;
     }
 
-    public void setLicenseid(BigInteger licenseid) {
-        this.licenseid = licenseid;
+    public void setLicenseId(BigInteger licenseId) {
+        this.licenseId = licenseId;
     }
 
-    public String getUnitofmeasure() {
-        return unitofmeasure;
+    public String getUnitOfMeasure() {
+        return unitOfMeasure;
     }
 
-    public void setUnitofmeasure(String unitofmeasure) {
-        this.unitofmeasure = unitofmeasure;
+    public void setUnitOfMeasure(String unitOfMeasure) {
+        this.unitOfMeasure = unitOfMeasure;
     }
 
-    public BigInteger getTradewt() {
-        return tradewt;
+    public BigInteger getTradeWt() {
+        return tradeWt;
     }
 
-    public void setTradewt(BigInteger tradewt) {
-        this.tradewt = tradewt;
+    public void setTradeWt(BigInteger tradeWt) {
+        this.tradeWt = tradeWt;
     }
 
-    public BigDecimal getRateval() {
-        return rateval;
+    public BigDecimal getRateVal() {
+        return rateVal;
     }
 
-    public void setRateval(BigDecimal rateval) {
-        this.rateval = rateval;
+    public void setRateVal(BigDecimal rateVal) {
+        this.rateVal = rateVal;
     }
 
     public Long getLocality() {
@@ -331,20 +332,20 @@ public class BaseRegister implements Serializable {
         this.uom = uom;
     }
 
-    public Long getApptype() {
-        return apptype;
+    public Long getAppType() {
+        return appType;
     }
 
-    public void setApptype(Long apptype) {
-        this.apptype = apptype;
+    public void setAppType(Long appType) {
+        this.appType = appType;
     }
 
-    public Date getAppdate() {
-        return appdate;
+    public Date getAppDate() {
+        return appDate;
     }
 
-    public void setAppdate(Date appdate) {
-        this.appdate = appdate;
+    public void setAppDate(Date appDate) {
+        this.appDate = appDate;
     }
 
     public String getFilterName() {
@@ -355,11 +356,27 @@ public class BaseRegister implements Serializable {
         this.filterName = filterName;
     }
 
+    public Long getAdminWard() {
+        return adminWard;
+    }
+
+    public void setAdminWard(Long adminWard) {
+        this.adminWard = adminWard;
+    }
+
+    public String getAdminWardName() {
+        return adminWardName;
+    }
+
+    public void setAdminWardName(String adminWardName) {
+        this.adminWardName = adminWardName;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (licenseid == null ? 0 : licenseid.hashCode());
+        result = prime * result + (licenseId == null ? 0 : licenseId.hashCode());
         return result;
     }
 
@@ -372,10 +389,10 @@ public class BaseRegister implements Serializable {
         if (getClass() != obj.getClass())
             return false;
         final BaseRegister other = (BaseRegister) obj;
-        if (licenseid == null) {
-            if (other.licenseid != null)
+        if (licenseId == null) {
+            if (other.licenseId != null)
                 return false;
-        } else if (!licenseid.equals(other.licenseid))
+        } else if (!licenseId.equals(other.licenseId))
             return false;
         return true;
     }

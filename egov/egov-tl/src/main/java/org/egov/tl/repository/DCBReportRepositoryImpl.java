@@ -74,23 +74,25 @@ public class DCBReportRepositoryImpl implements DCBReportRepositoryCustom {
         final CriteriaQuery<Object[]> criteriaQuery = criteriaBuilder.createQuery(Object[].class);
         final Root<DCBReportResult> root = criteriaQuery.from(DCBReportResult.class);
         final List<Predicate> predicates = new ArrayList<>();
-        if (isNotBlank(dCBReportSearchRequest.getLicensenumber()))
-            predicates.add(criteriaBuilder.equal(root.get("licensenumber"), dCBReportSearchRequest.getLicensenumber()));
+        if (isNotBlank(dCBReportSearchRequest.getLicenseNumber()))
+            predicates.add(criteriaBuilder.equal(root.get("licenseNumber"), dCBReportSearchRequest.getLicenseNumber()));
         if (dCBReportSearchRequest.getActiveLicense() > 0)
             predicates.add(criteriaBuilder.equal(root.get("active"), dCBReportSearchRequest.getActiveLicense() == 1));
         if (dCBReportSearchRequest.getWardId() != null && !dCBReportSearchRequest.getWardId().isEmpty())
-            predicates.add(root.get("wardid").in(dCBReportSearchRequest.getWardId()));
+            predicates.add(root.get("wardId").in(dCBReportSearchRequest.getWardId()));
+        if (dCBReportSearchRequest.getAdminWardId() != null && !dCBReportSearchRequest.getAdminWardId().isEmpty())
+            predicates.add(root.get("adminWard").in(dCBReportSearchRequest.getAdminWardId()));
 
-        criteriaQuery.multiselect(criteriaBuilder.sumAsLong(root.get("arreardemand")),
-                criteriaBuilder.sumAsLong(root.get("currentdemand")),
-                criteriaBuilder.sumAsLong(criteriaBuilder.sum(root.get("arreardemand"), root.get("currentdemand"))),
-                criteriaBuilder.sumAsLong(root.get("arrearcollection")),
-                criteriaBuilder.sumAsLong(root.get("currentcollection")),
+        criteriaQuery.multiselect(criteriaBuilder.sumAsLong(root.get("arrearDemand")),
+                criteriaBuilder.sumAsLong(root.get("currentDemand")),
+                criteriaBuilder.sumAsLong(criteriaBuilder.sum(root.get("arrearDemand"), root.get("currentDemand"))),
+                criteriaBuilder.sumAsLong(root.get("arrearCollection")),
+                criteriaBuilder.sumAsLong(root.get("currentCollection")),
                 criteriaBuilder
-                        .sumAsLong(criteriaBuilder.sum(root.get("arrearcollection"), root.get("currentcollection"))),
-                criteriaBuilder.sumAsLong(root.get("arrearbalance")),
-                criteriaBuilder.sumAsLong(root.get("currentbalance")),
-                criteriaBuilder.sumAsLong(criteriaBuilder.sum(root.get("arrearbalance"), root.get("currentbalance"))))
+                        .sumAsLong(criteriaBuilder.sum(root.get("arrearCollection"), root.get("currentCollection"))),
+                criteriaBuilder.sumAsLong(root.get("arrearBalance")),
+                criteriaBuilder.sumAsLong(root.get("currentBalance")),
+                criteriaBuilder.sumAsLong(criteriaBuilder.sum(root.get("arrearBalance"), root.get("currentBalance"))))
                 .where(predicates.toArray(new Predicate[]{}));
         return entityManager.createQuery(criteriaQuery).getSingleResult();
     }

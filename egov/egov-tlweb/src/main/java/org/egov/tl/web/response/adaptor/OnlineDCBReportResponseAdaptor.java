@@ -64,18 +64,18 @@ public class OnlineDCBReportResponseAdaptor implements JsonSerializer<DCBReportR
     public JsonElement serialize(final DCBReportResult dCBReportObj, final Type type, final JsonSerializationContext jsc) {
         final JsonObject dcbReportResponse = new JsonObject();
         if (dCBReportObj != null) {
-            dcbReportResponse.addProperty("licenseid", dCBReportObj.getLicenseid());
-            dcbReportResponse.addProperty("licensenumber", defaultIfBlank(dCBReportObj.getLicensenumber()));
-            dcbReportResponse.addProperty("username", dCBReportObj.getUsername());
-            dcbReportResponse.addProperty("curr_demand", dCBReportObj.getCurrentdemand());
-            dcbReportResponse.addProperty("arr_demand", dCBReportObj.getArreardemand());
-            dcbReportResponse.addProperty("total_demand", dCBReportObj.getTotaldemand());
-            dcbReportResponse.addProperty("curr_coll", dCBReportObj.getCurrentcollection());
-            dcbReportResponse.addProperty("arr_coll", dCBReportObj.getArrearcollection());
-            dcbReportResponse.addProperty("total_coll", dCBReportObj.getTotalcollection());
-            dcbReportResponse.addProperty("curr_balance", dCBReportObj.getCurrentbalance());
-            dcbReportResponse.addProperty("arr_balance", dCBReportObj.getArrearbalance());
-            dcbReportResponse.addProperty("total_balance", dCBReportObj.getTotalbalance());
+            dcbReportResponse.addProperty("licenseid", dCBReportObj.getLicenseId());
+            dcbReportResponse.addProperty("licensenumber", defaultIfBlank(dCBReportObj.getLicenseNumber()));
+            dcbReportResponse.addProperty("username", dCBReportObj.getUserName());
+            dcbReportResponse.addProperty("curr_demand", dCBReportObj.getCurrentDemand());
+            dcbReportResponse.addProperty("arr_demand", dCBReportObj.getArrearDemand());
+            dcbReportResponse.addProperty("total_demand", dCBReportObj.getTotalDemand());
+            dcbReportResponse.addProperty("curr_coll", dCBReportObj.getCurrentCollection());
+            dcbReportResponse.addProperty("arr_coll", dCBReportObj.getArrearCollection());
+            dcbReportResponse.addProperty("total_coll", dCBReportObj.getTotalCollection());
+            dcbReportResponse.addProperty("curr_balance", dCBReportObj.getCurrentBalance());
+            dcbReportResponse.addProperty("arr_balance", dCBReportObj.getArrearBalance());
+            dcbReportResponse.addProperty("total_balance", dCBReportObj.getTotalBalance());
 
         }
         return dcbReportResponse;

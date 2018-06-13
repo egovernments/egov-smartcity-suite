@@ -77,21 +77,23 @@ public class BaseRegisterReportRepositoryImpl implements BaseRegisterReportRepos
             predicates.add(criteriaBuilder.equal(root.get("subCategoryId"), baseRegisterRequest.getSubCategoryId()));
         if (baseRegisterRequest.getWardId() != null)
             predicates.add(criteriaBuilder.equal(root.get("wardId"), baseRegisterRequest.getWardId()));
+        if (baseRegisterRequest.getAdminWard() != null)
+            predicates.add(criteriaBuilder.equal(root.get("adminWard"), baseRegisterRequest.getAdminWard()));
         if ("Defaulters".equals(baseRegisterRequest.getFilterName()))
-            predicates.add(criteriaBuilder.or(criteriaBuilder.greaterThan(root.get("arrearlicensefee"), 0),
-                    criteriaBuilder.greaterThan(root.get("arrearpenaltyfee"), 0),
-                    criteriaBuilder.greaterThan(root.get("curlicensefee"), 0),
-                    criteriaBuilder.greaterThan(root.get("curpenaltyfee"), 0)));
+            predicates.add(criteriaBuilder.or(criteriaBuilder.greaterThan(root.get("arrearLicenseFee"), 0),
+                    criteriaBuilder.greaterThan(root.get("arrearPenaltyFee"), 0),
+                    criteriaBuilder.greaterThan(root.get("curLicenseFee"), 0),
+                    criteriaBuilder.greaterThan(root.get("curPenaltyFee"), 0)));
         if (baseRegisterRequest.getStatusId() != null)
             predicates.add(criteriaBuilder.equal(root.get("statusId"), baseRegisterRequest.getStatusId()));
         if (baseRegisterRequest.getStatusId() == null)
-            predicates.add(criteriaBuilder.and(criteriaBuilder.notLike(root.get("statusname"), "Cancelled"),
-                    criteriaBuilder.notLike(root.get("statusname"), "Suspended")));
+            predicates.add(criteriaBuilder.and(criteriaBuilder.notLike(root.get("statusName"), "Cancelled"),
+                    criteriaBuilder.notLike(root.get("statusName"), "Suspended")));
 
-        criteriaQuery.multiselect(criteriaBuilder.sumAsLong(root.get("arrearlicensefee")),
-                criteriaBuilder.sumAsLong(root.get("arrearpenaltyfee")),
-                criteriaBuilder.sumAsLong(root.get("curlicensefee")),
-                criteriaBuilder.sumAsLong(root.get("curpenaltyfee"))).where(predicates.toArray(new Predicate[]{}));
+        criteriaQuery.multiselect(criteriaBuilder.sumAsLong(root.get("arrearLicenseFee")),
+                criteriaBuilder.sumAsLong(root.get("arrearPenaltyFee")),
+                criteriaBuilder.sumAsLong(root.get("curLicenseFee")),
+                criteriaBuilder.sumAsLong(root.get("curPenaltyFee"))).where(predicates.toArray(new Predicate[]{}));
         return entityManager.createQuery(criteriaQuery).getSingleResult();
     }
 }

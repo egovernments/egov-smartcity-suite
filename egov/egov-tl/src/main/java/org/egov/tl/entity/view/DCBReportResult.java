@@ -65,48 +65,52 @@ public class DCBReportResult implements Serializable {
     private static final long serialVersionUID = 1188596286215178643L;
 
     @Id
-    private Integer licenseid;
+    private Integer licenseId;
 
-    private String licensenumber;
+    private String licenseNumber;
 
     private String oldLicenseNumber;
 
-    private String username;
+    private String userName;
 
     @Column(name = "curr_demand")
-    private BigDecimal currentdemand;
+    private BigDecimal currentDemand;
 
     @Column(name = "arr_demand")
-    private BigDecimal arreardemand;
+    private BigDecimal arrearDemand;
 
     @Column(name = "curr_coll")
-    private BigDecimal currentcollection;
+    private BigDecimal currentCollection;
 
     @Column(name = "arr_coll")
-    private BigDecimal arrearcollection;
+    private BigDecimal arrearCollection;
 
     @Column(name = "curr_balance")
-    private BigDecimal currentbalance;
+    private BigDecimal currentBalance;
 
     @Column(name = "arr_balance")
-    private BigDecimal arrearbalance;
+    private BigDecimal arrearBalance;
 
     private boolean active;
 
-    private String licaddress;
+    private String licAddress;
 
-    private Long wardid;
+    private Long wardId;
 
-    private String wardname;
+    private String wardName;
 
     private Long locality;
 
-    public String getLicensenumber() {
-        return licensenumber;
+    private Long adminWard;
+
+    private String adminWardName;
+
+    public String getLicenseNumber() {
+        return licenseNumber;
     }
 
-    public void setLicensenumber(String licensenumber) {
-        this.licensenumber = licensenumber;
+    public void setLicenseNumber(String licenseNumber) {
+        this.licenseNumber = licenseNumber;
     }
 
     public String getOldLicenseNumber() {
@@ -117,78 +121,78 @@ public class DCBReportResult implements Serializable {
         this.oldLicenseNumber = oldLicenseNumber;
     }
 
-    public String getUsername() {
-        return username;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
-    public BigDecimal getTotaldemand() {
-        return (currentdemand == null ? BigDecimal.ZERO : currentdemand).add(arreardemand == null ? BigDecimal.ZERO
-                : arreardemand);
+    public BigDecimal getTotalDemand() {
+        return (currentDemand == null ? BigDecimal.ZERO : currentDemand).add(arrearDemand == null ? BigDecimal.ZERO
+                : arrearDemand);
     }
 
-    public BigDecimal getTotalcollection() {
-        return (currentcollection == null ? BigDecimal.ZERO : currentcollection)
-                .add(arrearcollection == null ? BigDecimal.ZERO : arrearcollection);
+    public BigDecimal getTotalCollection() {
+        return (currentCollection == null ? BigDecimal.ZERO : currentCollection)
+                .add(arrearCollection == null ? BigDecimal.ZERO : arrearCollection);
     }
 
 
-    public BigDecimal getCurrentbalance() {
-        return (currentdemand == null ? BigDecimal.ZERO : currentdemand).subtract(currentcollection == null ? BigDecimal.ZERO
-                : currentcollection);
+    public BigDecimal getCurrentBalance() {
+        return (currentDemand == null ? BigDecimal.ZERO : currentDemand).subtract(currentCollection == null ? BigDecimal.ZERO
+                : currentCollection);
     }
 
-    public void setCurrentbalance(BigDecimal currentbalance) {
-        this.currentbalance = currentbalance;
+    public void setCurrentBalance(BigDecimal currentBalance) {
+        this.currentBalance = currentBalance;
     }
 
-    public BigDecimal getArrearbalance() {
-        return (arreardemand == null ? BigDecimal.ZERO : arreardemand).subtract(arrearcollection == null ? BigDecimal.ZERO
-                : arrearcollection);
+    public BigDecimal getArrearBalance() {
+        return (arrearDemand == null ? BigDecimal.ZERO : arrearDemand).subtract(arrearCollection == null ? BigDecimal.ZERO
+                : arrearCollection);
     }
 
-    public void setArrearbalance(BigDecimal arrearbalance) {
-        this.arrearbalance = arrearbalance;
+    public void setArrearBalance(BigDecimal arrearBalance) {
+        this.arrearBalance = arrearBalance;
     }
 
-    public BigDecimal getTotalbalance() {
-        return (currentbalance == null ? BigDecimal.ZERO : currentbalance).add(arrearbalance == null ? BigDecimal.ZERO
-                : arrearbalance);
+    public BigDecimal getTotalBalance() {
+        return (currentBalance == null ? BigDecimal.ZERO : currentBalance).add(arrearBalance == null ? BigDecimal.ZERO
+                : arrearBalance);
     }
 
-    public Integer getLicenseid() {
-        return licenseid;
+    public Integer getLicenseId() {
+        return licenseId;
     }
 
-    public void setLicenseid(Integer licenseid) {
-        this.licenseid = licenseid;
+    public void setLicenseId(Integer licenseId) {
+        this.licenseId = licenseId;
     }
 
-    public String getLicaddress() {
-        return licaddress;
+    public String getLicAddress() {
+        return licAddress;
     }
 
-    public void setLicaddress(String licaddress) {
-        this.licaddress = licaddress;
+    public void setLicAddress(String licAddress) {
+        this.licAddress = licAddress;
     }
 
-    public Long getWardid() {
-        return wardid;
+    public Long getWardId() {
+        return wardId;
     }
 
-    public void setWardid(Long wardid) {
-        this.wardid = wardid;
+    public void setWardId(Long wardId) {
+        this.wardId = wardId;
     }
 
-    public String getWardname() {
-        return wardname;
+    public String getWardName() {
+        return wardName;
     }
 
-    public void setWardname(String wardname) {
-        this.wardname = wardname;
+    public void setWardName(String wardName) {
+        this.wardName = wardName;
     }
 
     public Long getLocality() {
@@ -199,36 +203,36 @@ public class DCBReportResult implements Serializable {
         this.locality = locality;
     }
 
-    public BigDecimal getCurrentdemand() {
-        return currentdemand;
+    public BigDecimal getCurrentDemand() {
+        return currentDemand;
     }
 
-    public void setCurrentdemand(BigDecimal currentdemand) {
-        this.currentdemand = currentdemand;
+    public void setCurrentDemand(BigDecimal currentDemand) {
+        this.currentDemand = currentDemand;
     }
 
-    public BigDecimal getArreardemand() {
-        return arreardemand;
+    public BigDecimal getArrearDemand() {
+        return arrearDemand;
     }
 
-    public void setArreardemand(BigDecimal arreardemand) {
-        this.arreardemand = arreardemand;
+    public void setArrearDemand(BigDecimal arrearDemand) {
+        this.arrearDemand = arrearDemand;
     }
 
-    public BigDecimal getCurrentcollection() {
-        return currentcollection;
+    public BigDecimal getCurrentCollection() {
+        return currentCollection;
     }
 
-    public void setCurrentcollection(BigDecimal currentcollection) {
-        this.currentcollection = currentcollection;
+    public void setCurrentCollection(BigDecimal currentCollection) {
+        this.currentCollection = currentCollection;
     }
 
-    public BigDecimal getArrearcollection() {
-        return arrearcollection;
+    public BigDecimal getArrearCollection() {
+        return arrearCollection;
     }
 
-    public void setArrearcollection(BigDecimal arrearcollection) {
-        this.arrearcollection = arrearcollection;
+    public void setArrearCollection(BigDecimal arrearCollection) {
+        this.arrearCollection = arrearCollection;
     }
 
     public boolean isActive() {
@@ -237,5 +241,21 @@ public class DCBReportResult implements Serializable {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public Long getAdminWard() {
+        return adminWard;
+    }
+
+    public void setAdminWard(Long adminWard) {
+        this.adminWard = adminWard;
+    }
+
+    public String getAdminWardName() {
+        return adminWardName;
+    }
+
+    public void setAdminWardName(String adminWardName) {
+        this.adminWardName = adminWardName;
     }
 }

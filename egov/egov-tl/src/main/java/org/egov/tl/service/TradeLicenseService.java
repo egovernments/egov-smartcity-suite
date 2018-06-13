@@ -403,27 +403,30 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     }
 
     @ReadOnly
-    public List<DemandNoticeForm> getLicenseDemandNotices(final DemandNoticeForm demandnoticeForm) {
+    public List<DemandNoticeForm> getLicenseDemandNotices(final DemandNoticeForm demandNoticeForm) {
         final Criteria searchCriteria = entityQueryService.getSession().createCriteria(TradeLicense.class);
         searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat").createAlias("tradeName", "subcat")
                 .createAlias("status", "licstatus").createAlias("natureOfBusiness", "nob");
-        if (isNotBlank(demandnoticeForm.getLicenseNumber()))
-            searchCriteria.add(Restrictions.eq("licenseNumber", demandnoticeForm.getLicenseNumber()).ignoreCase());
-        if (isNotBlank(demandnoticeForm.getOldLicenseNumber()))
+        if (isNotBlank(demandNoticeForm.getLicenseNumber()))
+            searchCriteria.add(Restrictions.eq("licenseNumber", demandNoticeForm.getLicenseNumber()).ignoreCase());
+        if (isNotBlank(demandNoticeForm.getOldLicenseNumber()))
             searchCriteria
-                    .add(Restrictions.eq("oldLicenseNumber", demandnoticeForm.getOldLicenseNumber()).ignoreCase());
-        if (demandnoticeForm.getCategoryId() != null)
-            searchCriteria.add(Restrictions.eq("cat.id", demandnoticeForm.getCategoryId()));
-        if (demandnoticeForm.getSubCategoryId() != null)
-            searchCriteria.add(Restrictions.eq("subcat.id", demandnoticeForm.getSubCategoryId()));
-        if (demandnoticeForm.getWardId() != null)
+                    .add(Restrictions.eq("oldLicenseNumber", demandNoticeForm.getOldLicenseNumber()).ignoreCase());
+        if (demandNoticeForm.getCategoryId() != null)
+            searchCriteria.add(Restrictions.eq("cat.id", demandNoticeForm.getCategoryId()));
+        if (demandNoticeForm.getSubCategoryId() != null)
+            searchCriteria.add(Restrictions.eq("subcat.id", demandNoticeForm.getSubCategoryId()));
+        if (demandNoticeForm.getWardId() != null)
             searchCriteria.createAlias("parentBoundary", "wards")
-                    .add(Restrictions.eq("wards.id", demandnoticeForm.getWardId()));
-        if (demandnoticeForm.getLocalityId() != null)
+                    .add(Restrictions.eq("wards.id", demandNoticeForm.getWardId()));
+        if (demandNoticeForm.getElectionWard() != null)
+            searchCriteria.createAlias("adminWard", "electionWard")
+                    .add(Restrictions.eq("electionWard.id", demandNoticeForm.getElectionWard()));
+        if (demandNoticeForm.getLocalityId() != null)
             searchCriteria.createAlias("boundary", "locality")
-                    .add(Restrictions.eq("locality.id", demandnoticeForm.getLocalityId()));
-        if (demandnoticeForm.getStatusId() != null)
-            searchCriteria.add(Restrictions.eq("status.id", demandnoticeForm.getStatusId()));
+                    .add(Restrictions.eq("locality.id", demandNoticeForm.getLocalityId()));
+        if (demandNoticeForm.getStatusId() != null)
+            searchCriteria.add(Restrictions.eq("status.id", demandNoticeForm.getStatusId()));
         else
             searchCriteria.add(Restrictions.ne("licstatus.statusCode", StringUtils.upperCase("CAN")));
         searchCriteria

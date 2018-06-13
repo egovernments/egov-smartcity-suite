@@ -63,17 +63,17 @@
 					</div>
 				</div>
 				<div class="panel-body"></div>
-				
+
 				<div class="form-group">
 					<label class="col-sm-3 control-label text-right"> <spring:message code='search.licensee.no' /></label>
 					<div class="col-sm-3 add-margin">
 						<input type="text" id="licenseNumber"class="form-control typeahead" placeholder="" autocomplete="off"/>
-						<form:hidden path="licenseNumber" id="licenseNumber"/>				
+						<form:hidden path="licenseNumber" id="licenseNumber"/>
 					</div>
 					<label class="col-sm-2 control-label text-right"> <spring:message code='license.oldlicensenum' /></label>
 					<div class="col-sm-3 add-margin">
 						<input type="text" id="oldLicenseNumber" class="form-control typeahead" placeholder="" autocomplete="off" />
-					    <form:hidden path="oldLicenseNumber" id="oldLicenseNumber"/>				
+					    <form:hidden path="oldLicenseNumber" id="oldLicenseNumber"/>
 				  </div>
 				</div>
 				<div class="form-group">
@@ -100,22 +100,31 @@
                             <form:option value="">
                                 <spring:message code="lbl.select"/>
                             </form:option>
-                            <form:options items="${wardList}" itemValue="id" itemLabel="name"/>
+                            <form:options items="${revenueWards}" itemValue="id" itemLabel="name"/>
                         </form:select>
                     </div>
-                    
-                    <label class="col-sm-2 control-label text-right"> <spring:message code='lbl.locality'/></label>
+                    <label class="col-sm-2 control-label text-right"> <spring:message code='lbl.admin.ward'/></label>
                     <div class="col-sm-3 add-margin">
-                        <form:select path="localityId" id="localityId" cssClass="form-control" cssErrorClass="form-control error">
+                        <form:select path="electionWard" id="electionWard" cssClass="form-control" cssErrorClass="form-control error">
                             <form:option value="">
                                 <spring:message code="lbl.select"/>
                             </form:option>
-                            <form:options items="${localityList}" itemValue="id" itemLabel="name"/>
+                            <form:options items="${adminWards}" itemValue="id" itemLabel="name"/>
                         </form:select>
                     </div>
+
                     </div>
                     <div class="form-group">
-                    <label class="col-sm-3 control-label text-right"> <spring:message code='search.license.status' /></label>
+                        <label class="col-sm-3 control-label text-right"> <spring:message code='lbl.locality'/></label>
+                        <div class="col-sm-3 add-margin">
+                            <form:select path="localityId" id="localityId" cssClass="form-control" cssErrorClass="form-control error">
+                                <form:option value="">
+                                    <spring:message code="lbl.select"/>
+                                </form:option>
+                                <form:options items="${localityList}" itemValue="id" itemLabel="name"/>
+                            </form:select>
+                        </div>
+                    <label class="col-sm-2 control-label text-right"> <spring:message code='search.license.status' /></label>
                     <div class="col-sm-3 add-margin">
 						<form:select path="statusId" id="status" cssClass="form-control" cssErrorClass="form-control error">
 							<form:option value="">
@@ -124,7 +133,7 @@
 							<form:options items="${statusList}" itemValue="id" itemLabel="name" />
 						</form:select>
 					</div>
-                    
+
                     </div>
 			</div>
 			<div class="row">
@@ -156,7 +165,8 @@
 					<th>Subcategory</th>
 					<th>Trade Owner</th>
 					<th>Mobile Number</th>
-					<th>Ward No.</th>
+					<th>Revenue Ward</th>
+					<th>Election Ward</th>
 					<th>License Fee (Arrears)</th>
 					<th>License Penalty (Arrears )</th>
 					<th>License Fee (Current)</th>

@@ -55,9 +55,9 @@ import java.util.List;
 
 public class DCBReportSearchRequest extends DataTableSearchRequest {
 
-    private Long licenseid;
+    private Long licenseId;
 
-    private String licensenumber;
+    private String licenseNumber;
 
     private ReportFormat printFormat;
 
@@ -65,12 +65,14 @@ public class DCBReportSearchRequest extends DataTableSearchRequest {
 
     private List<Long> wardId;
 
-    public String getLicensenumber() {
-        return licensenumber;
+    private List<Long> adminWardId;
+
+    public String getLicenseNumber() {
+        return licenseNumber;
     }
 
-    public void setLicensenumber(final String licensenumber) {
-        this.licensenumber = licensenumber;
+    public void setLicenseNumber(final String licenseNumber) {
+        this.licenseNumber = licenseNumber;
     }
 
     public ReportFormat getPrintFormat() {
@@ -81,12 +83,12 @@ public class DCBReportSearchRequest extends DataTableSearchRequest {
         this.printFormat = printFormat;
     }
 
-    public Long getLicenseid() {
-        return licenseid;
+    public Long getLicenseId() {
+        return licenseId;
     }
 
-    public void setLicenseid(final Long licenseid) {
-        this.licenseid = licenseid;
+    public void setLicenseId(final Long licenseId) {
+        this.licenseId = licenseId;
     }
 
     public Integer getActiveLicense() {
@@ -103,5 +105,13 @@ public class DCBReportSearchRequest extends DataTableSearchRequest {
 
     public void setWardId(List<Long> wardId) {
         this.wardId = wardId;
+    }
+
+    public List<Long> getAdminWardId() {
+        return adminWardId;
+    }
+
+    public void setAdminWardId(List<Long> adminWardId) {
+        this.adminWardId = adminWardId;
     }
 }

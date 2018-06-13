@@ -81,7 +81,7 @@ public class ViewDCBController {
     @GetMapping("{id}")
     public String search(@PathVariable Long id, Model model, DCBReportSearchRequest searchRequest) {
         License licenseObj = tradeLicenseService.getLicenseById(id);
-        searchRequest.setLicenseid(licenseObj.getId());
+        searchRequest.setLicenseId(licenseObj.getId());
         model.addAttribute("license", licenseObj);
         model.addAttribute("dcbreport", toJSON(dCBReportService.getDCBRecords(searchRequest), DCBReportResult.class,
                 OnlineDCBReportResponseAdaptor.class));

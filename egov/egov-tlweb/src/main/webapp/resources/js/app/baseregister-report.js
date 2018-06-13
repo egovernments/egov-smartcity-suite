@@ -137,19 +137,13 @@ function onSubmitEvent(event) {
                     }
                 }],
             ajax: {
-                url: "search",
+                url: "search?" + $("#baseregisterform").serialize(),
                 type: 'POST',
                 data: function (args) {
                     return {
-                        "args": JSON.stringify(args),
-                        "categoryId": $("#category").val(),
-                        "subCategoryId": $("#subCategory").val(),
-                        "statusId": $("#status").val(),
-                        "wardId": $("#ward").val(),
-                        "filterName": $("#filter").val()
+                        "args": JSON.stringify(args)
                     };
                 }
-
             },
             columns: [
                 {
@@ -166,7 +160,7 @@ function onSubmitEvent(event) {
                             + data.name + '</a>';
                     },
                     "sTitle": "License No.",
-                    "name": "licensenumber"
+                    "name": "licenseNumber"
                 }, {
                     "data": "oldLicenseNo",
                     "name": "oldLicenseNumber",
@@ -196,9 +190,13 @@ function onSubmitEvent(event) {
                     "name": "assessmentno",
                     "sTitle": "Assessment No"
                 }, {
-                    "data": "wardname",
-                    "name": "wardname",
-                    "sTitle": "Ward No"
+                    "data": "revenueWard",
+                    "name": "revenueward",
+                    "sTitle": "Revenue Ward"
+                },{
+                    "data": "electionWard",
+                    "name": "electionward",
+                    "sTitle": "Election Ward"
                 }, {
                     "data": "localityname",
                     "name": "localityname",
