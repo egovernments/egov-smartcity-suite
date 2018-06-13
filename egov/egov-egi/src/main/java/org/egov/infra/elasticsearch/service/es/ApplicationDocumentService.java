@@ -574,6 +574,9 @@ public class ApplicationDocumentService {
                 if (REJECTED.equalsIgnoreCase(applicationIndexRequest.getApproved()))
                     boolQuery = boolQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 1))
                             .filter(QueryBuilders.matchQuery(COLUMN_APPROVED, REJECTED));
+                else
+                    boolQuery = boolQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 1))
+                            .filter(QueryBuilders.matchQuery(COLUMN_APPROVED, APPROVED));
             }
             if (StringUtils.isNotBlank(applicationIndexRequest.getBeyondSLA()))
                 boolQuery = filterBasedOnSLAForFunctionary(applicationIndexRequest, boolQuery);
