@@ -102,8 +102,8 @@ function submitForm() {
 							"sTitle" : "Legal Case Number",
 							"className" : "text-right",
 							"render" : function(data, type, full, meta) {
-								return '<a href="/lcms/application/view/?lcNumber='
-										+ data + '">' + data + '</div>';
+								return '<a href="javascript:void(0);" onclick="openLegalCase(\''+ data +'\')">' + data + '</a>';
+								
 							}
 						},
 						{
@@ -199,22 +199,22 @@ $("#legalCaseResults").on('change', 'tbody tr td .dropchange', function() {
 		var url = '/lcms/judgment/new/?lcNumber=' + lcNumber;
 		$('#searchlegalcaseForm1').attr('method', 'get');
 		$('#searchlegalcaseForm1').attr('action', url);
-		window.location = url;
-
-	}
+		window.open(url,"","height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
+		
+}
 
 	if (this.value == 2) {
 		var url = '/lcms/standingCouncil/create/?lcNumber=' + lcNumber;
 		$('#searchlegalcaseForm1').attr('method', 'get');
 		$('#searchlegalcaseForm1').attr('action', url);
-		window.location = url;
+		window.open(url,"","height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
 
 	}
 	if (this.value == 10) {
 		var url = '/lcms/counterAffidavit/create/?lcNumber=' + lcNumber;
 		$('#searchlegalcaseForm1').attr('method', 'get');
 		$('#searchlegalcaseForm1').attr('action', url);
-		window.location = url;
+		window.open(url,"","height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
 
 	}
 
@@ -222,64 +222,63 @@ $("#legalCaseResults").on('change', 'tbody tr td .dropchange', function() {
 		var url = '/lcms/judgment/edit/?lcNumber=' + lcNumber;
 		$('#searchlegalcaseForm1').attr('method', 'get');
 		$('#searchlegalcaseForm1').attr('action', url);
-		window.location = url;
+		window.open(url,"","height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
 
 	}
 	if (this.value == 4) {
 		var url = '/lcms/application/view/?lcNumber=' + lcNumber;
 		$('#searchlegalcaseForm1').attr('method', 'get');
 		$('#searchlegalcaseForm1').attr('action', url);
-		window.location = url;
+		window.open(url,"","height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
 
 	}
 	if (this.value == 3) {
 		var url = '/lcms/application/edit/?lcNumber=' + lcNumber;
 		$('#searchlegalcaseForm1').attr('method', 'get');
 		$('#searchlegalcaseForm1').attr('action', url);
-		window.location = url;
+		window.open(url,"","height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
 
 	}
 	if (this.value == 6) {
 		var url = '/lcms/hearing/list/?lcNumber=' + lcNumber;
 		$('#searchlegalcaseForm1').attr('method', 'get');
 		$('#searchlegalcaseForm1').attr('action', url);
-		window.location = url;
+		window.open(url,"","height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
 
 	}
 	if (this.value == 7) {
 		var url = '/lcms/lcinterimorder/list/?lcNumber=' + lcNumber;
 		$('#searchlegalcaseForm1').attr('method', 'get');
 		$('#searchlegalcaseForm1').attr('action', url);
-		window.location = url;
+		window.open(url,"","height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
 
 	}
 	if (this.value == 8) {
 		var url = '/lcms/legalcasedisposal/new/?lcNumber=' + lcNumber;
 		$('#searchlegalcaseForm1').attr('method', 'get');
 		$('#searchlegalcaseForm1').attr('action', url);
-		window.location = url;
+		window.open(url,"","height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
 
 	}
 	if (this.value == 9) {
 		var url = '/lcms/legalcasedisposal/edit/?lcNumber=' + lcNumber;
 		$('#searchlegalcaseForm1').attr('method', 'get');
 		$('#searchlegalcaseForm1').attr('action', url);
-		window.location = url;
+		window.open(url,"","height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
 
 	}
 	if (this.value == 11) {
 		var url = '/lcms/judgmentimpl/new/?lcNumber=' + lcNumber;
 		$('#searchlegalcaseForm1').attr('method', 'get');
 		$('#searchlegalcaseForm1').attr('action', url);
-		window.location = url;
+		window.open(url,"","height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
 
 	}
 	if (this.value == 12) {
 		var url = '/lcms/judgmentimpl/new/?lcNumber=' + lcNumber;
 		$('#searchlegalcaseForm1').attr('method', 'get');
 		$('#searchlegalcaseForm1').attr('action', url);
-		window.location = url;
-
+		window.open(url,"","height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
 	}
 });
 
@@ -290,4 +289,7 @@ function loadsubreportstatus(){
 	else
 		$("#reportstatus").hide();
 }
-		
+	
+function openLegalCase(data) {
+	window.open("/lcms/application/view/?lcNumber="+ data , "", "height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
+}
