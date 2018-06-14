@@ -232,11 +232,18 @@ $(document)
 													cache : false,
 													dataType : "json",
 													success : function(response) {
+														var exception;
 														$('#taxResult tbody').find('tr').remove();
 														$('#arv').html('');
 														$('#taxResult').removeClass('display-hide');
 														$.each(response,function(i,item) {
-																			if (i != 'Annual Rental Value') {
+																			if(i=='exceptionString'){
+																				$('#taxResult tbody').find('tr').remove();
+																				$('#taxResult').addClass('display-hide');
+																				$('#arv').append("<b>"+item+"</b>");
+																				exception = i;
+																			}
+																			else if (i != 'Annual Rental Value') {
 																				var row;
 																				if (i != 'Total Tax') {
 																					row = '<tr><td> '+ i + ' </td> <td class="text-right"> ' + item
@@ -253,7 +260,9 @@ $(document)
 																				arv = item;
 																			}
 																		});
-														$('#arv').append("<b>Annual Rental Value is Rs. </b><b>" + arv + "</b>");
+														if(exception!='exceptionString'){
+															$('#arv').append("<b>Annual Rental Value is Rs. </b><b>" + arv + "</b>");
+														}
 														
 													},
 													error : function(response) {

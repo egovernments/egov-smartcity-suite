@@ -49,6 +49,7 @@
 package org.egov.ptis.web.controller.masters.propertytaxcalculator;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -81,8 +82,14 @@ public class CalculatePropertyTaxController {
     @ResponseBody
     public  Map<String, String> propertyTaxCalculatorResult(@ModelAttribute("propertyTaxCalculator") final FloorDetails floorDetails, final Model model,
             @Valid final BindingResult errors, final HttpServletRequest request) throws TaxCalculatorExeption {
-        final Map<String, String> resultString = calculatePropertyTaxService.calculateTaxes(floorDetails);
-        model.addAttribute("resultString", resultString);
+        Map<String, String> resultString = new ConcurrentHashMap<>();
+        try{
+            resultString = calculatePropertyTaxService.calculateTaxes(floorDetails);
+        }
+        catch(final TaxCalculatorExeption taxCalculatorException){
+            resultString.put("exceptionString", taxCalculatorException.getMessage());
+        }
+        
         return resultString;
     }
   
