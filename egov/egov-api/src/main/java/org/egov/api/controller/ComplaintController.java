@@ -346,7 +346,7 @@ public class ComplaintController extends ApiController {
 
 
             String receivingModeKey = "receivingMode";
-            ReceivingMode receivingMode;
+            ReceivingMode receivingMode = null;
             String[] highPriorityComplaintSource = {"VMC", "TLC", "DRONE"};
 
             String priorityCode = "NORMAL";
@@ -357,13 +357,10 @@ public class ComplaintController extends ApiController {
                 if (Arrays.asList(highPriorityComplaintSource).contains(receivingModeVal))
                     priorityCode = "HIGH";
 
-            } else
+            }
+            if (receivingMode == null)
                 receivingMode = securityUtils.currentUserIsEmployee() ? getReceivingModeByCode(EMPLOYEE_APP_MODE)
                         : getReceivingModeByCode(CITIZEN_APP_MODE);
-
-            if (receivingMode == null)
-                return getResponseHandler().error(getMessage("msg.invalid.receiving.mode"));
-
             complaint.setPriority(priorityService.getPriorityByCode(priorityCode));
             complaint.setReceivingMode(receivingMode);
 
