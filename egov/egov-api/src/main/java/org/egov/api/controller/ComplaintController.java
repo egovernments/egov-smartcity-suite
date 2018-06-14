@@ -154,6 +154,8 @@ public class ComplaintController extends ApiController {
     private static final String LOCATION_ID = "locationId";
     private static final String INVALID_PAGE_NUMBER_ERROR = "Invalid Page Number";
     private static final String HAS_NEXT_PAGE = "hasNextPage";
+    private static final String[] HIGH_PRIORITY_SOURCE = {"VMC", "TLC", "DRONE"};
+
     @Autowired
     private ComplaintStatusService complaintStatusService;
 
@@ -344,23 +346,21 @@ public class ComplaintController extends ApiController {
                 complaint.setComplaintType(complaintType);
             }
 
-
-            String receivingModeKey = "receivingMode";
-            ReceivingMode receivingMode = null;
-            String[] highPriorityComplaintSource = {"VMC", "TLC", "DRONE"};
-
             String priorityCode = "NORMAL";
-
-            if (complaintRequest.get(receivingModeKey) != null && isNotBlank(complaintRequest.get(receivingModeKey).toString())) {
-                String receivingModeVal = complaintRequest.get(receivingModeKey).toString();
-                receivingMode = getReceivingModeByCode(receivingModeVal);
-                if (Arrays.asList(highPriorityComplaintSource).contains(receivingModeVal))
+            String receivingModeCode = (String) complaintRequest.get("receivingMode");
+            boolean highPrioritySource = false;
+            ReceivingMode receivingMode = null;
+            if (isNotBlank(receivingModeCode)) {
+                receivingMode = getReceivingModeByCode(receivingModeCode);
+                highPrioritySource = Arrays.asList(HIGH_PRIORITY_SOURCE).contains(receivingModeCode);
+                if (highPrioritySource)
                     priorityCode = "HIGH";
-
             }
-            if (receivingMode == null)
+
+            if (receivingMode == null || !highPrioritySource)
                 receivingMode = securityUtils.currentUserIsEmployee() ? getReceivingModeByCode(EMPLOYEE_APP_MODE)
                         : getReceivingModeByCode(CITIZEN_APP_MODE);
+
             complaint.setPriority(priorityService.getPriorityByCode(priorityCode));
             complaint.setReceivingMode(receivingMode);
 
