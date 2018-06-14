@@ -131,6 +131,8 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.egov.infra.validation.regex.Constants.EMAIL;
+import static org.egov.pgr.utils.constants.PGRConstants.CITIZEN_APP_MODE;
+import static org.egov.pgr.utils.constants.PGRConstants.EMPLOYEE_APP_MODE;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -351,13 +353,13 @@ public class ComplaintController extends ApiController {
 
             if (complaintRequest.get(receivingModeKey) != null && isNotBlank(complaintRequest.get(receivingModeKey).toString())) {
                 String receivingModeVal = complaintRequest.get(receivingModeKey).toString();
-                receivingMode = receivingModeService.getReceivingModeByCode(receivingModeVal);
-                if (Arrays.asList(highPriorityComplaintSource).contains(receivingModeVal)) {
+                receivingMode = getReceivingModeByCode(receivingModeVal);
+                if (Arrays.asList(highPriorityComplaintSource).contains(receivingModeVal))
                     priorityCode = "HIGH";
-                }
-            } else {
-                receivingMode = receivingModeService.getReceivingModeByCode("MOBILE");
-            }
+
+            } else
+                receivingMode = securityUtils.currentUserIsEmployee() ? getReceivingModeByCode(EMPLOYEE_APP_MODE)
+                        : getReceivingModeByCode(CITIZEN_APP_MODE);
 
             if (receivingMode == null)
                 return getResponseHandler().error(getMessage("msg.invalid.receiving.mode"));
@@ -377,6 +379,10 @@ public class ComplaintController extends ApiController {
             LOGGER.error(EGOV_API_ERROR, e);
             return getResponseHandler().error(getMessage(SERVER_ERROR));
         }
+    }
+
+    private ReceivingMode getReceivingModeByCode(String code) {
+        return receivingModeService.getReceivingModeByCode(code);
     }
 
     private Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
