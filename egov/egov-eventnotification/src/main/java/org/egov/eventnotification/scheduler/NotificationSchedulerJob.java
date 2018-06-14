@@ -146,7 +146,7 @@ public class NotificationSchedulerJob extends AbstractQuartzJob {
         if (notificationSchedule.getDraftType().getName().equalsIgnoreCase(BUSINESS_NOTIFICATION_TYPE)) {
             List<UserTaxInformation> userTaxInfoList = null;
             if (notificationSchedule.getModule().getName().equalsIgnoreCase(PROPERTY_MODULE))
-                userTaxInfoList = scheduleService.getDefaulterUserList(contextURL, appProperties.getPropertytaxRestApi());
+                userTaxInfoList = scheduleService.getDefaulterUserList(contextURL, appProperties.getPropertytaxRestApi().concat("Water Tax Management"));
             else if (notificationSchedule.getModule().getName().equalsIgnoreCase(WATER_CHARGES_MODULE))
                 userTaxInfoList = scheduleService.getDefaulterUserList(contextURL,
                         appProperties.getWatertaxRestApi().concat("Water Tax Management"));
@@ -172,7 +172,7 @@ public class NotificationSchedulerJob extends AbstractQuartzJob {
         if (message.contains(MESSAGE_PROPTNO))
             message = message.replace(MESSAGE_PROPTNO, userTaxInformation.getConsumerNumber());
 
-        if (message.contains(MESSAGE_DUEDATE))
+        if (message.contains(MESSAGE_DUEDATE) && userTaxInformation.getDueDate()!= null)
             message = message.replace(MESSAGE_DUEDATE, formatter.format(userTaxInformation.getDueDate()));
 
         if (message.contains(MESSAGE_ASMNTNO))
