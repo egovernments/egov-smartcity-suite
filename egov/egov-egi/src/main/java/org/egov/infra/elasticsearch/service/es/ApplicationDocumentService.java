@@ -1280,7 +1280,7 @@ public class ApplicationDocumentService {
                 appInfo.setSla(details.get(SLA) == null ? 0 : (int) details.get(SLA));
                 appInfo.setServiceGroup(details.get(MODULE_NAME).toString());
                 appInfo.setAge(details.get(SLA_GAP) == null ? 0 : (int) details.get(SLA_GAP));
-                appInfo.setPendingWith(details.get(OWNER_NAME).toString());
+                appInfo.setPendingWith(details.get(OWNER_NAME) == null ? "NA" : details.get(OWNER_NAME).toString());
                 appInfo.setUlbName(details.get(CITY_NAME).toString());
                 appInfo.setUrl(details.get("url").toString());
                 appInfo.setCityCode(details.get(CITY_CODE).toString());
