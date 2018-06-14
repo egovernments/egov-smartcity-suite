@@ -229,7 +229,7 @@ $("#legalCaseResults").on('change', 'tbody tr td .dropchange', function() {
 		var url = '/lcms/application/view/?lcNumber=' + lcNumber;
 		$('#searchlegalcaseForm1').attr('method', 'get');
 		$('#searchlegalcaseForm1').attr('action', url);
-		window.location = url;
+		window.open(url,"","height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
 
 	}
 	if (this.value == 3) {
