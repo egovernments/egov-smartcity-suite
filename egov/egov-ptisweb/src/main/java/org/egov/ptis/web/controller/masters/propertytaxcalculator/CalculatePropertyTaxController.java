@@ -87,7 +87,7 @@ public class CalculatePropertyTaxController {
             resultString = calculatePropertyTaxService.calculateTaxes(floorDetails);
         }
         catch(final TaxCalculatorExeption taxCalculatorException){
-            resultString.put("exceptionString", taxCalculatorException.getMessage());
+            resultString.put("exceptionString", "There are no Unit rates defined for chosen combinations.");
         }
         
         return resultString;
