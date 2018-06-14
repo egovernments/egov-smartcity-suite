@@ -552,9 +552,15 @@ public class ApplicationDocumentService {
         if (StringUtils.isNotBlank(applicationIndexRequest.getService()))
             boolQuery = boolQuery
                     .filter(QueryBuilders.matchQuery(APPLICATION_TYPE, applicationIndexRequest.getService()));
-        if (StringUtils.isNotBlank(applicationIndexRequest.getSource()))
-            boolQuery = boolQuery
-                    .filter(QueryBuilders.matchQuery(CHANNEL, applicationIndexRequest.getSource()));
+        if (StringUtils.isNotBlank(applicationIndexRequest.getSource())) {
+
+            if ("OTHERS".equalsIgnoreCase(applicationIndexRequest.getSource()))
+                boolQuery = boolQuery.mustNot(QueryBuilders.termsQuery(CHANNEL,
+                        Arrays.asList(SOURCE_CSC, SOURCE_MEESEVA, SOURCE_ONLINE, SOURCE_SYSTEM)));
+            else
+                boolQuery = boolQuery
+                        .filter(QueryBuilders.matchQuery(CHANNEL, applicationIndexRequest.getSource()));
+        }
         if (fromDate != null && toDate != null)
             boolQuery = boolQuery
                     .filter(QueryBuilders.rangeQuery(APPLICATION_DATE).gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate))
