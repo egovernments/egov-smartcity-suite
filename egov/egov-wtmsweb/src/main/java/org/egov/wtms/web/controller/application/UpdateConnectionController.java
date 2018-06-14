@@ -570,7 +570,7 @@ public class UpdateConnectionController extends GenericConnectionController {
                     if (fileStoreSet != null && !fileStoreSet.isEmpty())
                         fsIterator = fileStoreSet.iterator();
                     while (fsIterator != null && fsIterator.hasNext())
-                        waterConnectionDetails.setFileStore(fsIterator.next());
+                        waterConnectionDetails.getFieldInspectionDetails().setFileStore(fsIterator.next());
                 }
                 if (REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) &&
                         (APPLICATION_STATUS_CREATED.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()) ||
