@@ -47,23 +47,13 @@
  */
 package org.egov.eventnotification.scheduler;
 
+import static org.egov.eventnotification.constants.Constants.BUILDMESSAGEADAPTOR_INTERFACE_SUFFIX;
 import static org.egov.eventnotification.constants.Constants.BUSINESS_NOTIFICATION_TYPE;
-import static org.egov.eventnotification.constants.Constants.DDMMYYYY;
-import static org.egov.eventnotification.constants.Constants.MESSAGE_ASMNTNO;
-import static org.egov.eventnotification.constants.Constants.MESSAGE_BILLAMT;
-import static org.egov.eventnotification.constants.Constants.MESSAGE_BILLNO;
-import static org.egov.eventnotification.constants.Constants.MESSAGE_CONSNO;
-import static org.egov.eventnotification.constants.Constants.MESSAGE_DUEAMT;
-import static org.egov.eventnotification.constants.Constants.MESSAGE_DUEDATE;
-import static org.egov.eventnotification.constants.Constants.MESSAGE_PROPTNO;
-import static org.egov.eventnotification.constants.Constants.MESSAGE_USERNAME;
 import static org.egov.eventnotification.constants.Constants.PROPERTY_MODULE;
 import static org.egov.eventnotification.constants.Constants.SCHEDULEID;
 import static org.egov.eventnotification.constants.Constants.SCHEDULE_COMPLETE;
 import static org.egov.eventnotification.constants.Constants.WATER_CHARGES_MODULE;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -72,7 +62,9 @@ import org.apache.log4j.Logger;
 import org.egov.eventnotification.config.properties.EventnotificationApplicationProperties;
 import org.egov.eventnotification.entity.Schedule;
 import org.egov.eventnotification.entity.contracts.UserTaxInformation;
+import org.egov.eventnotification.integration.bmi.BuildMessageAdapter;
 import org.egov.eventnotification.service.ScheduleService;
+import org.egov.eventnotification.utils.EventnotificationUtil;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
@@ -110,6 +102,9 @@ public class NotificationSchedulerJob extends AbstractQuartzJob {
 
     @Autowired
     private transient EventnotificationApplicationProperties appProperties;
+    
+    @Autowired
+    private transient EventnotificationUtil eventnotificationUtil;
 
     private Long scheduleId = null;
     private String contextURL = null;
@@ -145,6 +140,8 @@ public class NotificationSchedulerJob extends AbstractQuartzJob {
 
         if (notificationSchedule.getDraftType().getName().equalsIgnoreCase(BUSINESS_NOTIFICATION_TYPE)) {
             List<UserTaxInformation> userTaxInfoList = null;
+            BuildMessageAdapter buildMessageAdapter = getBuildMessageAdapter(notificationSchedule.getModule().getCode());
+            
             if (notificationSchedule.getModule().getName().equalsIgnoreCase(PROPERTY_MODULE))
                 userTaxInfoList = scheduleService.getDefaulterUserList(contextURL, appProperties.getPropertytaxRestApi().concat("Water Tax Management"));
             else if (notificationSchedule.getModule().getName().equalsIgnoreCase(WATER_CHARGES_MODULE))
@@ -152,8 +149,7 @@ public class NotificationSchedulerJob extends AbstractQuartzJob {
                         appProperties.getWatertaxRestApi().concat("Water Tax Management"));
             if (userTaxInfoList != null)
                 for (UserTaxInformation userTaxInformation : userTaxInfoList) {
-                    String message = buildMessage(userTaxInformation, notificationSchedule.getMessageTemplate());
-
+                    String message = buildMessageAdapter.buildMessage(userTaxInformation, notificationSchedule.getMessageTemplate());
                     List<Long> userIdList = new ArrayList<>();
                     userIdList.add(Long.parseLong(userTaxInformation.getUserId()));
 
@@ -161,36 +157,6 @@ public class NotificationSchedulerJob extends AbstractQuartzJob {
                 }
         } else
             buildAndSendNotifications(notificationSchedule, null, Boolean.TRUE, null);
-    }
-
-    private String buildMessage(UserTaxInformation userTaxInformation, String message) {
-        DateFormat formatter = new SimpleDateFormat(DDMMYYYY);
-        User user = userService.getUserById(Long.parseLong(userTaxInformation.getUserId()));
-        if (message.contains(MESSAGE_USERNAME))
-            message = message.replace(MESSAGE_USERNAME, user.getName());
-
-        if (message.contains(MESSAGE_PROPTNO))
-            message = message.replace(MESSAGE_PROPTNO, userTaxInformation.getConsumerNumber());
-
-        if (message.contains(MESSAGE_DUEDATE) && userTaxInformation.getDueDate()!= null)
-            message = message.replace(MESSAGE_DUEDATE, formatter.format(userTaxInformation.getDueDate()));
-
-        if (message.contains(MESSAGE_ASMNTNO))
-            message = message.replace(MESSAGE_ASMNTNO, userTaxInformation.getConsumerNumber());
-
-        if (message.contains(MESSAGE_DUEAMT))
-            message = message.replace(MESSAGE_DUEAMT, userTaxInformation.getDueAmount());
-
-        if (message.contains(MESSAGE_CONSNO))
-            message = message.replace(MESSAGE_CONSNO, userTaxInformation.getConsumerNumber());
-
-        if (message.contains(MESSAGE_BILLNO))
-            message = message.replace(MESSAGE_BILLNO, userTaxInformation.getBillNo());
-
-        if (message.contains(MESSAGE_BILLAMT))
-            message = message.replace(MESSAGE_BILLAMT, userTaxInformation.getDueAmount());
-
-        return message;
     }
 
     private void buildAndSendNotifications(Schedule notificationSchedule, String messageBody, Boolean seandAll,
@@ -226,5 +192,10 @@ public class NotificationSchedulerJob extends AbstractQuartzJob {
         messageContent.setSenderName(user.getName());
 
         pushNotificationService.sendNotifications(messageContent);
+    }
+    
+    protected BuildMessageAdapter getBuildMessageAdapter(final String serviceCode) {
+        return (BuildMessageAdapter) eventnotificationUtil.getBean(serviceCode
+                + BUILDMESSAGEADAPTOR_INTERFACE_SUFFIX);
     }
 }

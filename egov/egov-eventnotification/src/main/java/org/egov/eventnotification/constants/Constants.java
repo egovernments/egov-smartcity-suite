@@ -215,6 +215,8 @@ public class Constants {
 
     public static final String PROPERTY_MODULE = "Property";
     public static final String WATER_CHARGES_MODULE = "Water Charges";
+    
+    public static final String BUILDMESSAGEADAPTOR_INTERFACE_SUFFIX = "BuildMessageAdapter";
 
     private Constants() {
 

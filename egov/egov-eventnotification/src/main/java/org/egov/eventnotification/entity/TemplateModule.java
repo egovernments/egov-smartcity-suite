@@ -81,6 +81,11 @@ public class TemplateModule extends AbstractPersistable<Long> {
     private String name;
 
     private boolean active;
+    
+    @NotNull
+    @SafeHtml
+    @Length(max = 100)
+    private String code;
 
     @Override
     public Long getId() {
@@ -106,6 +111,14 @@ public class TemplateModule extends AbstractPersistable<Long> {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
 }

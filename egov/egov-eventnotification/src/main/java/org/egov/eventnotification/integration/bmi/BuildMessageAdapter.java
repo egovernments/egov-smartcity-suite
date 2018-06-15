@@ -45,57 +45,10 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.eventnotification.utils;
+package org.egov.eventnotification.integration.bmi;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.egov.eventnotification.entity.contracts.UserTaxInformation;
 
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-
-@Service
-public class EventnotificationUtil {
-
-    private static final int HOURS_MAX_NUMBER_OF_REQUESTS = 24;
-    private static final int MINUTES_MAX_NUMBER_OF_REQUESTS = 60;
-    private static final int MAX_NUMBER_OF_REQUESTS = 10;
-    
-    @Autowired
-    private ApplicationContext context;
-
-    public List<String> getAllHour() {
-        final List<String> hoursList = new ArrayList<>();
-        for (int i = 0; i < HOURS_MAX_NUMBER_OF_REQUESTS; i++)
-            if (i < MAX_NUMBER_OF_REQUESTS)
-                hoursList.add("0" + i);
-            else
-                hoursList.add(String.valueOf(i));
-        return hoursList;
-    }
-
-    public List<String> getAllMinute() {
-        final List<String> minutesList = new ArrayList<>();
-        for (int i = 0; i < MINUTES_MAX_NUMBER_OF_REQUESTS; i += 15)
-            if (i < MAX_NUMBER_OF_REQUESTS)
-                minutesList.add("0" + i);
-            else
-                minutesList.add(String.valueOf(i));
-        return minutesList;
-    }
-    
-    public Object getBean(final String beanName) {
-
-        Object bean = null;
-        try {
-            bean = context.getBean(beanName);
-        } catch (final BeansException e) {
-            final String errorMsg = "Could not locate bean [" + beanName + "]";
-            throw new ApplicationRuntimeException(errorMsg, e);
-        }
-        return bean;
-    }
-
+public interface BuildMessageAdapter {
+    public String buildMessage(UserTaxInformation userTaxInformation, String message);
 }

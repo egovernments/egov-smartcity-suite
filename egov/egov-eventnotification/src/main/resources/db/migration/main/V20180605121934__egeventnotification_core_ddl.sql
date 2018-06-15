@@ -209,6 +209,7 @@ CREATE TABLE egevntnotification_template_module
   name character varying(100) NOT NULL,
   active boolean,
   version bigint DEFAULT 0,
+  code character varying(10),
   CONSTRAINT egevntnotification_module_pkey PRIMARY KEY (id),
   CONSTRAINT eg_evntnotification_module_unq UNIQUE (name)
 );
