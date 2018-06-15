@@ -45,57 +45,44 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.eventnotification.utils;
+package org.egov.ptis.client.integration.bmi;
 
-import java.util.ArrayList;
-import java.util.List;
+import static org.egov.eventnotification.constants.Constants.DDMMYYYY;
+import static org.egov.eventnotification.constants.Constants.MESSAGE_DUEAMT;
+import static org.egov.eventnotification.constants.Constants.MESSAGE_DUEDATE;
+import static org.egov.eventnotification.constants.Constants.MESSAGE_PROPTNO;
+import static org.egov.eventnotification.constants.Constants.MESSAGE_USERNAME;
 
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.springframework.beans.BeansException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
+import org.egov.eventnotification.entity.contracts.UserTaxInformation;
+import org.egov.eventnotification.integration.bmi.BuildMessageAdapter;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
 
-@Service
-public class EventnotificationUtil {
-
-    private static final int HOURS_MAX_NUMBER_OF_REQUESTS = 24;
-    private static final int MINUTES_MAX_NUMBER_OF_REQUESTS = 60;
-    private static final int MAX_NUMBER_OF_REQUESTS = 10;
-    
+public class PTBuildMessageAdapter implements BuildMessageAdapter {
     @Autowired
-    private ApplicationContext context;
+    private UserService userService;
 
-    public List<String> getAllHour() {
-        final List<String> hoursList = new ArrayList<>();
-        for (int i = 0; i < HOURS_MAX_NUMBER_OF_REQUESTS; i++)
-            if (i < MAX_NUMBER_OF_REQUESTS)
-                hoursList.add("0" + i);
-            else
-                hoursList.add(String.valueOf(i));
-        return hoursList;
-    }
+    @Override
+    public String buildMessage(UserTaxInformation userTaxInformation, String message) {
+        DateFormat formatter = new SimpleDateFormat(DDMMYYYY);
+        User user = userService.getUserById(Long.parseLong(userTaxInformation.getUserId()));
+        if (message.contains(MESSAGE_USERNAME))
+            message = message.replace(MESSAGE_USERNAME, user.getName());
 
-    public List<String> getAllMinute() {
-        final List<String> minutesList = new ArrayList<>();
-        for (int i = 0; i < MINUTES_MAX_NUMBER_OF_REQUESTS; i += 15)
-            if (i < MAX_NUMBER_OF_REQUESTS)
-                minutesList.add("0" + i);
-            else
-                minutesList.add(String.valueOf(i));
-        return minutesList;
-    }
-    
-    public Object getBean(final String beanName) {
+        if (message.contains(MESSAGE_PROPTNO))
+            message = message.replace(MESSAGE_PROPTNO, userTaxInformation.getConsumerNumber());
 
-        Object bean = null;
-        try {
-            bean = context.getBean(beanName);
-        } catch (final BeansException e) {
-            final String errorMsg = "Could not locate bean [" + beanName + "]";
-            throw new ApplicationRuntimeException(errorMsg, e);
-        }
-        return bean;
+        if (message.contains(MESSAGE_DUEDATE) && userTaxInformation.getDueDate() != null)
+            message = message.replace(MESSAGE_DUEDATE, formatter.format(userTaxInformation.getDueDate()));
+
+        if (message.contains(MESSAGE_DUEAMT))
+            message = message.replace(MESSAGE_DUEAMT, userTaxInformation.getDueAmount());
+
+        return message;
     }
 
 }
