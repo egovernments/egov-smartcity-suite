@@ -47,7 +47,7 @@
  */
 package org.egov.eventnotification.scheduler;
 
-import static org.egov.eventnotification.constants.Constants.BUILDMESSAGEADAPTOR_INTERFACE_SUFFIX;
+import static org.egov.eventnotification.constants.Constants.BMA_INTERFACE_SUFFIX;
 import static org.egov.eventnotification.constants.Constants.BUSINESS_NOTIFICATION_TYPE;
 import static org.egov.eventnotification.constants.Constants.PROPERTY_MODULE;
 import static org.egov.eventnotification.constants.Constants.SCHEDULEID;
@@ -196,6 +196,6 @@ public class NotificationSchedulerJob extends AbstractQuartzJob {
     
     protected BuildMessageAdapter getBuildMessageAdapter(final String serviceCode) {
         return (BuildMessageAdapter) eventnotificationUtil.getBean(serviceCode
-                + BUILDMESSAGEADAPTOR_INTERFACE_SUFFIX);
+                + BMA_INTERFACE_SUFFIX);
     }
 }
