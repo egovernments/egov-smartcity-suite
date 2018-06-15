@@ -47,13 +47,13 @@
  */
 package org.egov.wtms.application.service;
 
+import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.egov.infra.reporting.util.ReportUtil.reportAsResponseEntity;
 import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ADDNLCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CREATED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNPENDING;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.APPROVEWORKFLOWACTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSURECONN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSURE_ESTIMATION_NOTICE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CONNECTION_WORK_ORDER;
@@ -67,7 +67,6 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTION_ESTIM
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SIGNED_DOCUMENT_PREFIX;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.TEMPERARYCLOSE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_SIGN_BUTTON;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -241,12 +240,11 @@ public class ReportGenerationService {
             reportParams.put("municipality", cityService.getMunicipalityName());
             reportParams.put(DISTRICT, cityService.getDistrictName());
             reportParams.put("purpose", connectionDetails.getUsageType().getName());
-            if (workFlowAction != null)
-                if (workFlowAction.equalsIgnoreCase(APPROVEWORKFLOWACTION)) {
-                    reportParams.put(WORK_ORDER_DATE, toDefaultDateFormat(connectionDetails.getWorkOrderDate()));
-                    reportParams.put(WORK_ORDER_NO, connectionDetails.getWorkOrderNumber());
-                } else if (workFlowAction.equalsIgnoreCase(WF_SIGN_BUTTON))
-                    reportParams.put(USER_ID, securityUtils.getCurrentUser().getId());
+            reportParams.put(WORK_ORDER_DATE, connectionDetails.getWorkOrderDate() == null ? EMPTY
+                    : toDefaultDateFormat(connectionDetails.getWorkOrderDate()));
+            reportParams.put(WORK_ORDER_NO,
+                    connectionDetails.getWorkOrderNumber() == null ? EMPTY : connectionDetails.getWorkOrderNumber());
+            reportParams.put(USER_ID, securityUtils.getCurrentUser().getId());
 
             final User user = securityUtils.getCurrentUser();
             Assignment assignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
@@ -593,12 +591,11 @@ public class ReportGenerationService {
                 else
                     userDesignation = null;
                 reportParams.put("designation", userDesignation);
-                if (workFlowAction != null)
-                    if (workFlowAction.equalsIgnoreCase(APPROVEWORKFLOWACTION)) {
-                        reportParams.put(WORK_ORDER_DATE, toDefaultDateFormat(connectionDetails.getWorkOrderDate()));
-                        reportParams.put(WORK_ORDER_NO, connectionDetails.getWorkOrderNumber());
-                    } else if (workFlowAction.equalsIgnoreCase(WF_SIGN_BUTTON))
-                        reportParams.put(USER_ID, securityUtils.getCurrentUser().getId());
+                reportParams.put(WORK_ORDER_DATE, connectionDetails.getWorkOrderDate() == null ? EMPTY
+                        : toDefaultDateFormat(connectionDetails.getWorkOrderDate()));
+                reportParams.put(WORK_ORDER_NO,
+                        connectionDetails.getWorkOrderNumber() == null ? EMPTY : connectionDetails.getWorkOrderNumber());
+                reportParams.put(USER_ID, securityUtils.getCurrentUser().getId());
                 reportParams.put(WORK_FLOW_ACTION, workFlowAction);
                 reportParams.put(ADDRESS, assessmentDetails.getPropertyAddress());
                 reportParams.put(LOCALITY, assessmentDetails.getBoundaryDetails().getLocalityName());
