@@ -4462,7 +4462,9 @@ public class PropertyService {
 		}
 		if (!currPropertyTaxMap.isEmpty()) {
 			BigDecimal advance = (currPropertyTaxMap.get(PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE) == null
-					? BigDecimal.ZERO : currPropertyTaxMap.get(PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE));
+					? BigDecimal.ZERO : currPropertyTaxMap.get(PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE)).subtract(
+							oldPropertyTaxMap.get(PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE) == null ? BigDecimal.ZERO
+									: oldPropertyTaxMap.get(PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE));
 			BigDecimal generaltax = (currPropertyTaxMap.get(PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX) == null
 					? BigDecimal.ZERO : currPropertyTaxMap.get(PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX))
 							.subtract(oldPropertyTaxMap.get(PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX) == null
@@ -4478,11 +4480,14 @@ public class PropertyService {
 							.subtract(oldPropertyTaxMap.get(PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS) == null
 									? BigDecimal.ZERO
 									: oldPropertyTaxMap.get(PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS));
-
 			BigDecimal currTax = (currPropertyTaxMap.get(CURR_TAX) == null ? BigDecimal.ZERO
-					: currPropertyTaxMap.get(CURR_TAX));
+					: currPropertyTaxMap.get(CURR_TAX))
+							.subtract(oldPropertyTaxMap.get(CURR_TAX) == null ? BigDecimal.ZERO
+									: oldPropertyTaxMap.get(CURR_TAX));
 			BigDecimal arrearTax = (currPropertyTaxMap.get(ARREAR_TAX) == null ? BigDecimal.ZERO
-					: currPropertyTaxMap.get(ARREAR_TAX));
+					: currPropertyTaxMap.get(ARREAR_TAX))
+							.subtract(oldPropertyTaxMap.get(ARREAR_TAX) == null ? BigDecimal.ZERO
+									: oldPropertyTaxMap.get(ARREAR_TAX));
 
 			if (advance.compareTo(BigDecimal.ZERO) != 0) {
 				values = new HashMap<>();
