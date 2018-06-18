@@ -3056,6 +3056,8 @@ public class PropertyExternalService {
 
     public TaxCalculatorResponse calculateTaxes(TaxCalculatorRequest taxCalculatorRequest) throws ParseException {
         TaxCalculatorResponse taxCalculatorResponse = new TaxCalculatorResponse();
+        BigDecimal taxVariance;
+        BigDecimal arvVariance;
         final Map<String, Installment> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
         PropertyService propService = beanProvider.getBean(PROP_SERVICE, PropertyService.class);
         BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(taxCalculatorRequest.getAssessmentNo());
@@ -3080,20 +3082,24 @@ public class PropertyExternalService {
             } catch (TaxCalculatorExeption e) {
                 LOGGER.error("create : There are no Unit rates defined for chosen combinations", e);
             }
-            calculationsMap =getARVAndTaxDetails(propService, propertyImpl, currYearInstMap.get(CURRENTYEAR_SECOND_HALF), true);
+            calculationsMap = getARVAndTaxDetails(propService, propertyImpl, currYearInstMap.get(CURRENTYEAR_SECOND_HALF), true);
             taxCalculatorResponse.setCalculatedARV(calculationsMap.get(ARV));
             taxCalculatorResponse.setNewHalfYearlyTax(calculationsMap.get(HALF_YEARLY_TAX));
 
-            BigDecimal taxVariance = ((taxCalculatorResponse.getNewHalfYearlyTax()
+            if(taxCalculatorResponse.getExistingHalfYearlyTax().compareTo(ZERO) > 0)
+            	taxVariance = ((taxCalculatorResponse.getNewHalfYearlyTax()
                     .subtract(taxCalculatorResponse.getExistingHalfYearlyTax())).multiply(BIGDECIMAL_100))
                             .divide(taxCalculatorResponse.getExistingHalfYearlyTax(), 1, BigDecimal.ROUND_HALF_UP);
+            else
+            	taxVariance = BIGDECIMAL_100;
             taxCalculatorResponse.setTaxVariance(taxVariance);
             if (taxCalculatorResponse.getExistingARV().compareTo(ZERO) > 0) {
-                BigDecimal arvVariance = ((taxCalculatorResponse.getCalculatedARV()
+                arvVariance = ((taxCalculatorResponse.getCalculatedARV()
                         .subtract(taxCalculatorResponse.getExistingARV())).multiply(BIGDECIMAL_100))
                                 .divide(taxCalculatorResponse.getExistingARV(), 1, BigDecimal.ROUND_HALF_UP);
-                taxCalculatorResponse.setArvVariance(arvVariance);
-            }
+            } else
+            	arvVariance = BIGDECIMAL_100;
+            taxCalculatorResponse.setArvVariance(arvVariance);
         }
         return taxCalculatorResponse;
     }
