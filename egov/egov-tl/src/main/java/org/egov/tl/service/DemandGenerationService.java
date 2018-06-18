@@ -159,6 +159,7 @@ public class DemandGenerationService {
             CFinancialYear financialYear = financialYearService.getFinacialYearByYearRange(demandGenerationRequest.getInstallmentYear());
             Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(module, financialYear.getStartingDate());
             int batchUpdateCount = 0;
+            boolean notificationRequired = licenseConfigurationService.notifyOnDemandGeneration();
             for (Long licenseId : demandGenerationRequest.getLicenseIds()) {
                 License license = licenseService.getLicenseById(licenseId);
                 DemandGenerationLogDetail demandGenerationLogDetail = demandGenerationLogService.
@@ -167,7 +168,7 @@ public class DemandGenerationService {
                     if (!installment.equals(license.getCurrentDemand().getEgInstallmentMaster())) {
                         licenseService.raiseDemand(license, module, installment);
                         demandGenerationLogDetail.setDetail(SUCCESSFUL);
-                        if (licenseConfigurationService.notifyOnDemandGeneration()) {
+                        if (notificationRequired) {
                             tradeLicenseSmsAndEmailService.sendNotificationOnDemandGeneration(license, installment);
                         }
                     }

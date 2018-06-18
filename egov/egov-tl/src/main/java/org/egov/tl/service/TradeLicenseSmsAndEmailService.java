@@ -58,6 +58,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Locale;
 
 import static java.math.BigDecimal.ZERO;
@@ -378,10 +379,15 @@ public class TradeLicenseSmsAndEmailService {
 
         Locale locale = Locale.getDefault();
 
+        Date penaltyDate = penaltyRatesService.getPenaltyDate(license, installment);
         String smsBody = licenseMessageSource.getMessage("msg.demand.generation.sms.body",
                 new String[]{license.getLicensee().getApplicantName(),
                         license.getNameOfEstablishment(),
                         license.getLicenseNumber(),
+                        getDefaultFormattedDate(license.getDateOfExpiry()),
+                        getDefaultFormattedDate(penaltyDate),
+                        getDomainURL(),
+                        license.getId().toString(),
                         getMunicipalityName()},
                 locale);
 
@@ -395,7 +401,7 @@ public class TradeLicenseSmsAndEmailService {
                         license.getNameOfEstablishment(),
                         license.getLicenseNumber(),
                         getDefaultFormattedDate(license.getDateOfExpiry()),
-                        getDefaultFormattedDate(penaltyRatesService.getPenaltyDate(license, installment)),
+                        getDefaultFormattedDate(penaltyDate),
                         getDomainURL(),
                         license.getId().toString(),
                         getMunicipalityName()},
