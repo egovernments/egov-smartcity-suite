@@ -313,7 +313,7 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
         if (gisProperty != null) {
             Ptdemand gisPtdemand = gisProperty.getPtDemandSet().iterator().next();
             if (gisPtdemand != null) {
-                gisHalfYearlyTax = propService.getTotalTaxExcludingUACPenalty(currYearInstMap.get(CURRENTYEAR_SECOND_HALF),
+                gisHalfYearlyTax = propService.getTotalTaxExcludingUACPenalty(gisPtdemand.getEgInstallmentMaster(),
                         gisProperty.getPtDemandSet().iterator().next());
                 gisARV = gisPtdemand.getDmdCalculations().getAlv() == null ? ZERO
                         : gisPtdemand.getDmdCalculations().getAlv();
