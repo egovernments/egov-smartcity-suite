@@ -179,27 +179,20 @@ public abstract class AbstractLicenseService<T extends License> {
 
     @Autowired
     protected DesignationService designationService;
-
-    @Autowired
-    private PenaltyRatesService penaltyRatesService;
-
-    @Autowired
-    private DepartmentService departmentService;
-
-    @Autowired
-    private TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
-
-    @Autowired
-    private SubCategoryDetailsService subCategoryDetailsService;
-
-    @Autowired
-    private FeeTypeService feeTypeService;
-
-    @Autowired
-    private LicenseCitizenPortalService licenseCitizenPortalService;
-
     @Autowired
     protected LicenseConfigurationService licenseConfigurationService;
+    @Autowired
+    private PenaltyRatesService penaltyRatesService;
+    @Autowired
+    private DepartmentService departmentService;
+    @Autowired
+    private TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
+    @Autowired
+    private SubCategoryDetailsService subCategoryDetailsService;
+    @Autowired
+    private FeeTypeService feeTypeService;
+    @Autowired
+    private LicenseCitizenPortalService licenseCitizenPortalService;
 
     protected abstract LicenseAppType getLicenseApplicationTypeForRenew();
 
@@ -437,10 +430,6 @@ public abstract class AbstractLicenseService<T extends License> {
             if (license.getCurrentDemand().getEgInstallmentMaster().getInstallmentYear().before(installment.getInstallmentYear()))
                 license.getLicenseDemand().setEgInstallmentMaster(installment);
 
-            if (licenseConfigurationService.notifyOnDemandGeneration()) {
-                Date penaltyDate = penaltyRatesService.getPenaltyDate(license, installment);
-                tradeLicenseSmsAndEmailService.sendNotificationOnDemandGeneration(license, tradeAmt, installment, penaltyDate);
-            }
         }
         license.getLicenseDemand().recalculateBaseDemand();
         licenseRepository.save(license);

@@ -107,6 +107,12 @@ public class DemandGenerationService {
     @Qualifier("tradeLicenseService")
     private AbstractLicenseService licenseService;
 
+    @Autowired
+    private LicenseConfigurationService licenseConfigurationService;
+
+    @Autowired
+    private TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
+
     private int batchSize;
 
     @Autowired
@@ -161,6 +167,9 @@ public class DemandGenerationService {
                     if (!installment.equals(license.getCurrentDemand().getEgInstallmentMaster())) {
                         licenseService.raiseDemand(license, module, installment);
                         demandGenerationLogDetail.setDetail(SUCCESSFUL);
+                        if (licenseConfigurationService.notifyOnDemandGeneration()) {
+                            tradeLicenseSmsAndEmailService.sendNotificationOnDemandGeneration(license, installment);
+                        }
                     }
                     demandGenerationLogDetail.setStatus(COMPLETED);
                 } catch (RuntimeException e) {
@@ -180,9 +189,12 @@ public class DemandGenerationService {
         boolean generationSuccess = true;
         try {
             License license = licenseService.getLicenseById(licenseId);
-            licenseService.raiseDemand(license, licenseService.getModuleName(), installmentDao.
-                    getInsatllmentByModuleForGivenDate(licenseService.getModuleName(),
-                            new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate()));
+            Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(licenseService.getModuleName(),
+                    new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate());
+            licenseService.raiseDemand(license, licenseService.getModuleName(), installment);
+            if (licenseConfigurationService.notifyOnDemandGeneration()) {
+                tradeLicenseSmsAndEmailService.sendNotificationOnDemandGeneration(license , installment);
+            }
         } catch (ValidationException e) {
             LOGGER.warn(ERROR_MSG, e);
             generationSuccess = false;

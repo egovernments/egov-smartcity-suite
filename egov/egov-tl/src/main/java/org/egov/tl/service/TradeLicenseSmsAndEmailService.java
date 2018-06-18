@@ -58,7 +58,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.Locale;
 
 import static java.math.BigDecimal.ZERO;
@@ -66,7 +65,6 @@ import static org.egov.infra.config.core.ApplicationThreadLocals.getCityName;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getDomainURL;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getMunicipalityName;
 import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
-import static org.egov.infra.utils.DateUtils.today;
 import static org.egov.tl.utils.Constants.APPLICATION_STATUS_FIRSTCOLLECTIONDONE_CODE;
 import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
 import static org.egov.tl.utils.Constants.BUTTONFORWARD;
@@ -99,6 +97,12 @@ public class TradeLicenseSmsAndEmailService {
 
     @Autowired
     private LicenseConfigurationService licenseConfigurationService;
+
+    @Autowired
+    private DemandNoticeService demandNoticeService;
+
+    @Autowired
+    private PenaltyRatesService penaltyRatesService;
 
     @Autowired
     private CFinancialYearService cFinancialYearService;
@@ -370,36 +374,34 @@ public class TradeLicenseSmsAndEmailService {
         sendEmail(license.getLicensee().getEmailId(), emailBody, emailSubject);
     }
 
-    public void sendNotificationOnDemandGeneration(License license, BigDecimal tradeAmt,
-                                                   Installment installment, Date penaltyDate) {
+    public void sendNotificationOnDemandGeneration(License license, Installment installment) {
 
         Locale locale = Locale.getDefault();
-        String emailSubject = licenseMessageSource.getMessage("msg.demand.generation.email.subject",
-                new String[]{getMunicipalityName()}, locale);
 
-        String messageBody = "";
-        String installmentYear = cFinancialYearService.getFinancialYearByDate(installment.getFromDate()).getFinYearRange();
-        if (penaltyDate.after(today())) {
-            messageBody = licenseMessageSource.getMessage("msg.demand.generation.penalty.email.body",
-                    new String[]{license.getLicensee().getApplicantName(),
-                            license.getNameOfEstablishment(),
-                            license.getLicenseNumber(),
-                            installmentYear,
-                            tradeAmt.toString(),
-                            getDefaultFormattedDate(penaltyDate),
-                            getMunicipalityName()},
-                    locale);
-        } else {
-            messageBody = licenseMessageSource.getMessage("msg.demand.generation.email.body",
-                    new String[]{license.getLicensee().getApplicantName(),
-                            license.getNameOfEstablishment(),
-                            license.getLicenseNumber(),
-                            installmentYear,
-                            tradeAmt.toString(),
-                            getMunicipalityName()},
-                    locale);
-        }
-        sendSMS(license.getLicensee().getMobilePhoneNumber(), messageBody);
-        sendEmail(license.getLicensee().getEmailId(), messageBody, emailSubject);
+        String smsBody = licenseMessageSource.getMessage("msg.demand.generation.sms.body",
+                new String[]{license.getLicensee().getApplicantName(),
+                        license.getNameOfEstablishment(),
+                        license.getLicenseNumber(),
+                        getMunicipalityName()},
+                locale);
+
+        String emailSubject = licenseMessageSource.getMessage("msg.demand.generation.email.subject",
+                new String[]{cFinancialYearService.getFinancialYearByDate(installment.getFromDate()).getFinYearRange(),
+                        license.getLicenseNumber()},
+                locale);
+
+        String emailBody = licenseMessageSource.getMessage("msg.demand.generation.email.body",
+                new String[]{license.getLicensee().getApplicantName(),
+                        license.getNameOfEstablishment(),
+                        license.getLicenseNumber(),
+                        getDefaultFormattedDate(license.getDateOfExpiry()),
+                        getDefaultFormattedDate(penaltyRatesService.getPenaltyDate(license, installment)),
+                        getDomainURL(),
+                        license.getId().toString(),
+                        getMunicipalityName()},
+                locale);
+        notificationService.sendSMS(license.getLicensee().getMobilePhoneNumber(), smsBody);
+        notificationService.sendEmailWithAttachment(license.getLicensee().getEmailId(), emailSubject, emailBody,
+                "application/pdf", "demand_notice", demandNoticeService.generateReport(license.getId()).getReportOutputData());
     }
 }
