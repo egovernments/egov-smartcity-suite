@@ -598,15 +598,19 @@ public class ApplicationDocumentService {
             if (StringUtils.isNotBlank(applicationIndexRequest.getAgeing())) {
                 if ("0-1Wdays".equalsIgnoreCase(applicationIndexRequest.getAgeing()))
                     slaQuery = slaQuery
-                            .filter(QueryBuilders.rangeQuery(SLA_GAP).gte(1).lt(8));
+                            .filter(QueryBuilders.rangeQuery(SLA_GAP).gte(1).lt(8))
+                            .mustNot(QueryBuilders.matchQuery(COLUMN_APPROVED, REJECTED));
                 else if ("1W-1M".equalsIgnoreCase(applicationIndexRequest.getAgeing()))
                     slaQuery = slaQuery
-                            .filter(QueryBuilders.rangeQuery(SLA_GAP).gte(8).lt(31));
+                            .filter(QueryBuilders.rangeQuery(SLA_GAP).gte(8).lt(31))
+                            .mustNot(QueryBuilders.matchQuery(COLUMN_APPROVED, REJECTED));
                 else if ("1M-3M".equalsIgnoreCase(applicationIndexRequest.getAgeing()))
                     slaQuery = slaQuery
-                            .filter(QueryBuilders.rangeQuery(SLA_GAP).gte(31).lt(91));
+                            .filter(QueryBuilders.rangeQuery(SLA_GAP).gte(31).lt(91))
+                            .mustNot(QueryBuilders.matchQuery(COLUMN_APPROVED, REJECTED));
                 else
-                    slaQuery = slaQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).gte(91));
+                    slaQuery = slaQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).gte(91))
+                            .mustNot(QueryBuilders.matchQuery(COLUMN_APPROVED, REJECTED));
             } else
                 slaQuery = slaQuery
                         .filter(QueryBuilders.rangeQuery(SLA_GAP).gt(0));
@@ -1007,28 +1011,34 @@ public class ApplicationDocumentService {
             appStatusQuery = appStatusQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 0));
         else if (CLOSED_WITHIN_SLA.equalsIgnoreCase(applicationStatus))
             appStatusQuery = appStatusQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 1))
-                    .must(QueryBuilders.rangeQuery(SLA_GAP).lte(0)).must(QueryBuilders.matchQuery(COLUMN_APPROVED, APPROVED));
+                    .must(QueryBuilders.rangeQuery(SLA_GAP).lte(0)).mustNot(QueryBuilders.matchQuery(COLUMN_APPROVED, REJECTED));
         else if (CLOSED_BEYOND_SLA.equalsIgnoreCase(applicationStatus))
             appStatusQuery = appStatusQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 1))
-                    .must(QueryBuilders.rangeQuery(SLA_GAP).gt(0)).must(QueryBuilders.matchQuery(COLUMN_APPROVED, APPROVED));
+                    .must(QueryBuilders.rangeQuery(SLA_GAP).gt(0)).mustNot(QueryBuilders.matchQuery(COLUMN_APPROVED, REJECTED));
         else if (TOTAL_BEYOND_SLA.equalsIgnoreCase(applicationStatus))
-            appStatusQuery = appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).gt(0));
+            appStatusQuery = appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).gt(0))
+                    .mustNot(QueryBuilders.matchQuery(COLUMN_APPROVED, REJECTED));
         else if (TOTAL_WITHIN_SLA.equalsIgnoreCase(applicationStatus))
-            appStatusQuery = appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).lte(0));
+            appStatusQuery = appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).lte(0))
+                    .mustNot(QueryBuilders.matchQuery(COLUMN_APPROVED, REJECTED));
         else if (OPEN_WITHIN_SLA.equalsIgnoreCase(applicationStatus))
             appStatusQuery = appStatusQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 0))
-                    .must(QueryBuilders.rangeQuery(SLA_GAP).lte(0));
+                    .must(QueryBuilders.rangeQuery(SLA_GAP).lte(0)).mustNot(QueryBuilders.matchQuery(COLUMN_APPROVED, REJECTED));
         else if (OPEN_BEYOND_SLA.equalsIgnoreCase(applicationStatus))
             appStatusQuery = appStatusQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 0))
-                    .must(QueryBuilders.rangeQuery(SLA_GAP).gt(0));
+                    .must(QueryBuilders.rangeQuery(SLA_GAP).gt(0)).mustNot(QueryBuilders.matchQuery(COLUMN_APPROVED, REJECTED));
         else if (SLAB1BEYOND_SLA.equalsIgnoreCase(applicationStatus))
-            appStatusQuery = appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).gte(1).lt(8));
+            appStatusQuery = appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).gte(1).lt(8))
+                    .mustNot(QueryBuilders.matchQuery(COLUMN_APPROVED, REJECTED));
         else if (SLAB2BEYOND_SLA.equalsIgnoreCase(applicationStatus))
-            appStatusQuery = appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).gte(8).lt(31));
+            appStatusQuery = appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).gte(8).lt(31))
+                    .mustNot(QueryBuilders.matchQuery(COLUMN_APPROVED, REJECTED));
         else if (SLAB3BEYOND_SLA.equalsIgnoreCase(applicationStatus))
-            appStatusQuery = appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).gte(31).lt(91));
+            appStatusQuery = appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).gte(31).lt(91))
+                    .mustNot(QueryBuilders.matchQuery(COLUMN_APPROVED, REJECTED));
         else if (SLAB4BEYOND_SLA.equalsIgnoreCase(applicationStatus))
-            appStatusQuery = appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).gte(91));
+            appStatusQuery = appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).gte(91))
+                    .mustNot(QueryBuilders.matchQuery(COLUMN_APPROVED, REJECTED));
         else if (CSC_TOTAL.equalsIgnoreCase(applicationStatus))
             appStatusQuery = appStatusQuery.filter(QueryBuilders.matchQuery(CHANNEL, SOURCE_CSC));
         else if (MEESEVA_TOTAL.equalsIgnoreCase(applicationStatus))
