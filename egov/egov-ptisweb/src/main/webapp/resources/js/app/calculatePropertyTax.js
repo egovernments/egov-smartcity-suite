@@ -282,7 +282,7 @@ $(document)
 				    $(document).on('click',"#deleteFloorRow",function (){
 				    	 var rowIndex = $(this).closest('td').parent()[0].sectionRowIndex;
 				        var rowCount = $('#floorDetails tr').length-1;
-				        if(rowCount==0){
+				        if(rowCount==1){
 				        	bootbox.alert("This row cannot be deleted!");
 				        	return false;
 				        }
