@@ -1011,10 +1011,10 @@ public class ApplicationDocumentService {
             appStatusQuery = appStatusQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 0));
         else if (CLOSED_WITHIN_SLA.equalsIgnoreCase(applicationStatus))
             appStatusQuery = appStatusQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 1))
-                    .must(QueryBuilders.rangeQuery(SLA_GAP).lte(0)).mustNot(QueryBuilders.matchQuery(COLUMN_APPROVED, REJECTED));
+                    .must(QueryBuilders.rangeQuery(SLA_GAP).lte(0)).must(QueryBuilders.matchQuery(COLUMN_APPROVED, APPROVED));
         else if (CLOSED_BEYOND_SLA.equalsIgnoreCase(applicationStatus))
             appStatusQuery = appStatusQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 1))
-                    .must(QueryBuilders.rangeQuery(SLA_GAP).gt(0)).mustNot(QueryBuilders.matchQuery(COLUMN_APPROVED, REJECTED));
+                    .must(QueryBuilders.rangeQuery(SLA_GAP).gt(0)).must(QueryBuilders.matchQuery(COLUMN_APPROVED, APPROVED));
         else if (TOTAL_BEYOND_SLA.equalsIgnoreCase(applicationStatus))
             appStatusQuery = appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).gt(0))
                     .mustNot(QueryBuilders.matchQuery(COLUMN_APPROVED, REJECTED));
