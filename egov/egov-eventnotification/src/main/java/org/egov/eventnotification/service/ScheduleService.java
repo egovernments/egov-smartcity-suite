@@ -47,12 +47,12 @@
  */
 package org.egov.eventnotification.service;
 
+import static org.egov.eventnotification.constants.EventNotificationConstants.*;
 import java.util.Arrays;
 import java.util.List;
 
 import org.egov.eventnotification.config.EventNotificationConfiguration;
 import org.egov.eventnotification.config.properties.EventnotificationApplicationProperties;
-import org.egov.eventnotification.constants.Constants;
 import org.egov.eventnotification.entity.Schedule;
 import org.egov.eventnotification.entity.contracts.EventDetails;
 import org.egov.eventnotification.entity.contracts.UserTaxInformation;
@@ -87,13 +87,13 @@ public class ScheduleService {
                 DateTime sd = new DateTime(notificationSchedule.getStartDate());
                 eventDetails.setStartDt(
                         DateUtils.getDate(DateUtils.getDefaultFormattedDate(notificationSchedule.getStartDate()),
-                                Constants.DDMMYYYY));
-                if (sd.getHourOfDay() < Constants.MAX_TEN)
-                    eventDetails.setStartHH(Constants.ZERO + String.valueOf(sd.getHourOfDay()));
+                                DDMMYYYY));
+                if (sd.getHourOfDay() < MAX_TEN)
+                    eventDetails.setStartHH(ZERO + String.valueOf(sd.getHourOfDay()));
                 else
                     eventDetails.setStartHH(String.valueOf(sd.getHourOfDay()));
-                if (sd.getMinuteOfHour() < Constants.MAX_TEN)
-                    eventDetails.setStartMM(Constants.ZERO + String.valueOf(sd.getMinuteOfHour()));
+                if (sd.getMinuteOfHour() < MAX_TEN)
+                    eventDetails.setStartMM(ZERO + String.valueOf(sd.getMinuteOfHour()));
                 else
                     eventDetails.setStartMM(String.valueOf(sd.getMinuteOfHour()));
                 notificationSchedule.setEventDetails(eventDetails);
@@ -107,13 +107,13 @@ public class ScheduleService {
         DateTime sd = new DateTime(notificationSchedule.getStartDate());
         eventDetails
                 .setStartDt(DateUtils.getDate(DateUtils.getDefaultFormattedDate(notificationSchedule.getStartDate()),
-                        Constants.DDMMYYYY));
-        if (sd.getHourOfDay() < Constants.MAX_TEN)
-            eventDetails.setStartHH(Constants.ZERO + String.valueOf(sd.getHourOfDay()));
+                        DDMMYYYY));
+        if (sd.getHourOfDay() < MAX_TEN)
+            eventDetails.setStartHH(ZERO + String.valueOf(sd.getHourOfDay()));
         else
             eventDetails.setStartHH(String.valueOf(sd.getHourOfDay()));
-        if (sd.getMinuteOfHour() < Constants.MAX_TEN)
-            eventDetails.setStartMM(Constants.ZERO + String.valueOf(sd.getMinuteOfHour()));
+        if (sd.getMinuteOfHour() < MAX_TEN)
+            eventDetails.setStartMM(ZERO + String.valueOf(sd.getMinuteOfHour()));
         else
             eventDetails.setStartMM(String.valueOf(sd.getMinuteOfHour()));
         notificationSchedule.setEventDetails(eventDetails);
@@ -127,7 +127,7 @@ public class ScheduleService {
         sd = sd.withMinuteOfHour(Integer.parseInt(notificationSchedule.getEventDetails().getStartMM()));
         sd = sd.withSecondOfMinute(00);
         notificationSchedule.setStartDate(sd.toDate());
-        notificationSchedule.setStatus(Constants.SCHEDULED_STATUS);
+        notificationSchedule.setStatus(SCHEDULED_STATUS);
         return notificationscheduleRepository.save(notificationSchedule);
     }
 
@@ -148,20 +148,20 @@ public class ScheduleService {
         int minutes = calendar.getMinuteOfHour();
 
         switch (notificationschedule.getScheduleRepeat().getName().toLowerCase()) {
-        case Constants.SCHEDULE_DAY:
-            cronExpression = appProperties.getDailyJobCron().replace(Constants.MINUTES_CRON, String.valueOf(minutes));
-            cronExpression = cronExpression.replace(Constants.HOURS_CRON, String.valueOf(hours));
+        case SCHEDULE_DAY:
+            cronExpression = appProperties.getDailyJobCron().replace(MINUTES_CRON, String.valueOf(minutes));
+            cronExpression = cronExpression.replace(HOURS_CRON, String.valueOf(hours));
             break;
-        case Constants.SCHEDULE_MONTH:
-            cronExpression = appProperties.getMonthlyJobCron().replace(Constants.MINUTES_CRON, String.valueOf(minutes));
-            cronExpression = cronExpression.replace(Constants.HOURS_CRON, String.valueOf(hours));
-            cronExpression = cronExpression.replace(Constants.DAY_CRON, String.valueOf(calendar.getDayOfMonth()));
+        case SCHEDULE_MONTH:
+            cronExpression = appProperties.getMonthlyJobCron().replace(MINUTES_CRON, String.valueOf(minutes));
+            cronExpression = cronExpression.replace(HOURS_CRON, String.valueOf(hours));
+            cronExpression = cronExpression.replace(DAY_CRON, String.valueOf(calendar.getDayOfMonth()));
             break;
-        case Constants.SCHEDULE_YEAR:
-            cronExpression = appProperties.getYearlyJobCron().replace(Constants.MINUTES_CRON, String.valueOf(minutes));
-            cronExpression = cronExpression.replace(Constants.HOURS_CRON, String.valueOf(hours));
-            cronExpression = cronExpression.replace(Constants.DAY_CRON, String.valueOf(calendar.getDayOfMonth()));
-            cronExpression = cronExpression.replace(Constants.MONTH_CRON, String.valueOf(calendar.getMonthOfYear()));
+        case SCHEDULE_YEAR:
+            cronExpression = appProperties.getYearlyJobCron().replace(MINUTES_CRON, String.valueOf(minutes));
+            cronExpression = cronExpression.replace(HOURS_CRON, String.valueOf(hours));
+            cronExpression = cronExpression.replace(DAY_CRON, String.valueOf(calendar.getDayOfMonth()));
+            cronExpression = cronExpression.replace(MONTH_CRON, String.valueOf(calendar.getMonthOfYear()));
             break;
         default:
             break;

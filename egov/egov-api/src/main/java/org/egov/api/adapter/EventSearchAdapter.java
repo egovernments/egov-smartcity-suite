@@ -47,7 +47,7 @@
  */
 package org.egov.api.adapter;
 
-import org.egov.eventnotification.constants.Constants;
+import static org.egov.eventnotification.constants.EventNotificationConstants.*;
 
 import java.lang.reflect.Type;
 
@@ -71,75 +71,75 @@ public class EventSearchAdapter extends DataAdapter<Event> {
     @Override
     public JsonElement serialize(Event event, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject jsonObjectEvent = new JsonObject();
-        jsonObjectEvent.addProperty(Constants.EVENT_ID, event.getId());
-        jsonObjectEvent.addProperty(Constants.NAME, event.getName());
-        jsonObjectEvent.addProperty(Constants.EVENT_DESC, event.getDescription());
+        jsonObjectEvent.addProperty(EVENT_ID, event.getId());
+        jsonObjectEvent.addProperty(NAME, event.getName());
+        jsonObjectEvent.addProperty(EVENT_DESC, event.getDescription());
 
         DateTime sd = new DateTime(event.getStartDate());
-        jsonObjectEvent.addProperty(Constants.EVENT_STARTDATE,
-                DateUtils.getDate(DateUtils.getDefaultFormattedDate(event.getStartDate()), Constants.DDMMYYYY).getTime());
+        jsonObjectEvent.addProperty(EVENT_STARTDATE,
+                DateUtils.getDate(DateUtils.getDefaultFormattedDate(event.getStartDate()), DDMMYYYY).getTime());
         String startHH = null;
         String startMM = null;
-        if (sd.getHourOfDay() < Constants.MAX_TEN)
-            startHH = Constants.ZERO + String.valueOf(sd.getHourOfDay());
+        if (sd.getHourOfDay() < MAX_TEN)
+            startHH = ZERO + String.valueOf(sd.getHourOfDay());
         else
             startHH = String.valueOf(sd.getHourOfDay());
 
-        if (sd.getMinuteOfHour() < Constants.MAX_TEN)
-            startMM = Constants.ZERO + String.valueOf(sd.getMinuteOfHour());
+        if (sd.getMinuteOfHour() < MAX_TEN)
+            startMM = ZERO + String.valueOf(sd.getMinuteOfHour());
         else
             startMM = String.valueOf(sd.getMinuteOfHour());
 
-        jsonObjectEvent.addProperty(Constants.EVENT_STARTTIME, startHH + ":" + startMM);
+        jsonObjectEvent.addProperty(EVENT_STARTTIME, startHH + ":" + startMM);
 
         DateTime ed = new DateTime(event.getEndDate());
-        jsonObjectEvent.addProperty(Constants.EVENT_ENDDATE,
-                DateUtils.getDate(DateUtils.getDefaultFormattedDate(event.getEndDate()), Constants.DDMMYYYY).getTime());
+        jsonObjectEvent.addProperty(EVENT_ENDDATE,
+                DateUtils.getDate(DateUtils.getDefaultFormattedDate(event.getEndDate()), DDMMYYYY).getTime());
         String endHH = null;
         String endMM = null;
-        if (ed.getHourOfDay() < Constants.MAX_TEN)
-            endHH = Constants.ZERO + String.valueOf(ed.getHourOfDay());
+        if (ed.getHourOfDay() < MAX_TEN)
+            endHH = ZERO + String.valueOf(ed.getHourOfDay());
         else
             endHH = String.valueOf(ed.getHourOfDay());
 
-        if (ed.getMinuteOfHour() < Constants.MAX_TEN)
-            endMM = Constants.ZERO + String.valueOf(ed.getMinuteOfHour());
+        if (ed.getMinuteOfHour() < MAX_TEN)
+            endMM = ZERO + String.valueOf(ed.getMinuteOfHour());
         else
             endMM = String.valueOf(ed.getMinuteOfHour());
 
-        jsonObjectEvent.addProperty(Constants.EVENT_ENDTIME, endHH + ":" + endMM);
+        jsonObjectEvent.addProperty(EVENT_ENDTIME, endHH + ":" + endMM);
 
-        jsonObjectEvent.addProperty(Constants.EVENT_HOST, event.getEventhost());
-        jsonObjectEvent.addProperty(Constants.EVENT_LOCATION, event.getEventlocation());
-        jsonObjectEvent.addProperty(Constants.EVENT_ADDRESS, event.getAddress());
-        jsonObjectEvent.addProperty(Constants.EVENT_CONTACTNO, event.getContactNumber());
-        jsonObjectEvent.addProperty(Constants.EVENT_ISPAID, event.isPaid());
-        jsonObjectEvent.addProperty(Constants.EVENT_EVENTTYPE, event.getEventType().getName());
+        jsonObjectEvent.addProperty(EVENT_HOST, event.getEventhost());
+        jsonObjectEvent.addProperty(EVENT_LOCATION, event.getEventlocation());
+        jsonObjectEvent.addProperty(EVENT_ADDRESS, event.getAddress());
+        jsonObjectEvent.addProperty(EVENT_CONTACTNO, event.getContactNumber());
+        jsonObjectEvent.addProperty(EVENT_ISPAID, event.isPaid());
+        jsonObjectEvent.addProperty(EVENT_EVENTTYPE, event.getEventType().getName());
         if (event.getFilestore() == null) {
-            jsonObjectEvent.addProperty(Constants.EVENT_FILESTOREID, Constants.EMPTY);
-            jsonObjectEvent.addProperty(Constants.EVENT_FILENAME, Constants.EMPTY);
+            jsonObjectEvent.addProperty(EVENT_FILESTOREID, EMPTY);
+            jsonObjectEvent.addProperty(EVENT_FILENAME, EMPTY);
         } else {
-            jsonObjectEvent.addProperty(Constants.EVENT_FILESTOREID, event.getFilestore().getFileStoreId());
-            jsonObjectEvent.addProperty(Constants.EVENT_FILENAME, event.getFilestore().getFileName());
+            jsonObjectEvent.addProperty(EVENT_FILESTOREID, event.getFilestore().getFileStoreId());
+            jsonObjectEvent.addProperty(EVENT_FILENAME, event.getFilestore().getFileName());
         }
 
         if (event.getCost() == null)
-            jsonObjectEvent.addProperty(Constants.EVENT_COST, Constants.DOUBLE_DEFAULT);
+            jsonObjectEvent.addProperty(EVENT_COST, DOUBLE_DEFAULT);
         else
-            jsonObjectEvent.addProperty(Constants.EVENT_COST, event.getCost());
+            jsonObjectEvent.addProperty(EVENT_COST, event.getCost());
 
         if (event.getUrl() == null)
-            jsonObjectEvent.addProperty(Constants.URL, Constants.EMPTY);
+            jsonObjectEvent.addProperty(URL, EMPTY);
         else
-            jsonObjectEvent.addProperty(Constants.URL, event.getUrl());
+            jsonObjectEvent.addProperty(URL, event.getUrl());
 
-        jsonObjectEvent.addProperty(Constants.USER_INTERESTED, Constants.NO);
+        jsonObjectEvent.addProperty(USER_INTERESTED, NO);
 
         Long interestedCount = usereventService.countUsereventByEventId(event.getId());
         if (interestedCount == null)
-            jsonObjectEvent.addProperty(Constants.INTERESTED_COUNT, Constants.ZERO);
+            jsonObjectEvent.addProperty(INTERESTED_COUNT, ZERO);
         else
-            jsonObjectEvent.addProperty(Constants.INTERESTED_COUNT, String.valueOf(interestedCount));
+            jsonObjectEvent.addProperty(INTERESTED_COUNT, String.valueOf(interestedCount));
         return jsonObjectEvent;
     }
 }

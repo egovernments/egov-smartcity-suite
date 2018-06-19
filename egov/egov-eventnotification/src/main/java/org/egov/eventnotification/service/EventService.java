@@ -47,16 +47,16 @@
  */
 package org.egov.eventnotification.service;
 
-import static org.egov.eventnotification.constants.Constants.ACTIVE;
-import static org.egov.eventnotification.constants.Constants.DDMMYYYY;
-import static org.egov.eventnotification.constants.Constants.EMPTY;
-import static org.egov.eventnotification.constants.Constants.MAX_TEN;
-import static org.egov.eventnotification.constants.Constants.MIN_NUMBER_OF_REQUESTS;
-import static org.egov.eventnotification.constants.Constants.MODULE_NAME;
-import static org.egov.eventnotification.constants.Constants.NO;
-import static org.egov.eventnotification.constants.Constants.NOTIFICATION_TYPE_EVENT;
-import static org.egov.eventnotification.constants.Constants.YES;
-import static org.egov.eventnotification.constants.Constants.ZERO;
+import static org.egov.eventnotification.constants.EventNotificationConstants.ACTIVE;
+import static org.egov.eventnotification.constants.EventNotificationConstants.DDMMYYYY;
+import static org.egov.eventnotification.constants.EventNotificationConstants.EMPTY;
+import static org.egov.eventnotification.constants.EventNotificationConstants.MAX_TEN;
+import static org.egov.eventnotification.constants.EventNotificationConstants.MIN_NUMBER_OF_REQUESTS;
+import static org.egov.eventnotification.constants.EventNotificationConstants.MODULE_NAME;
+import static org.egov.eventnotification.constants.EventNotificationConstants.NO;
+import static org.egov.eventnotification.constants.EventNotificationConstants.NOTIFICATION_TYPE_EVENT;
+import static org.egov.eventnotification.constants.EventNotificationConstants.YES;
+import static org.egov.eventnotification.constants.EventNotificationConstants.ZERO;
 
 import java.io.IOException;
 import java.util.Date;

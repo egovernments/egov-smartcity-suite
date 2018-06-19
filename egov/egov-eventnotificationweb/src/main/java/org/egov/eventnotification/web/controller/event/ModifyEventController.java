@@ -47,13 +47,13 @@
  */
 package org.egov.eventnotification.web.controller.event;
 
+import static org.egov.eventnotification.constants.EventNotificationConstants.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.validation.Valid;
 
-import org.egov.eventnotification.constants.Constants;
 import org.egov.eventnotification.entity.Event;
 import org.egov.eventnotification.entity.enums.EventStatus;
 import org.egov.eventnotification.service.EventService;
@@ -88,12 +88,12 @@ public class ModifyEventController {
 
     @GetMapping("/event/update/{id}")
     public String update(@ModelAttribute Event event, Model model) {
-        model.addAttribute(Constants.HOUR_LIST, eventnotificationUtil.getAllHour());
-        model.addAttribute(Constants.MINUTE_LIST, eventnotificationUtil.getAllMinute());
-        model.addAttribute(Constants.EVENT_LIST, eventTypeService.getAllEventType());
-        model.addAttribute(Constants.MODE, Constants.MODE_UPDATE);
-        model.addAttribute(Constants.EVENT_STATUS_LIST, new ArrayList<>(Arrays.asList(EventStatus.values())));
-        return Constants.VIEW_EVENTUPDATE;
+        model.addAttribute(HOUR_LIST, eventnotificationUtil.getAllHour());
+        model.addAttribute(MINUTE_LIST, eventnotificationUtil.getAllMinute());
+        model.addAttribute(EVENT_LIST, eventTypeService.getAllEventType());
+        model.addAttribute(MODE, MODE_UPDATE);
+        model.addAttribute(EVENT_STATUS_LIST, new ArrayList<>(Arrays.asList(EventStatus.values())));
+        return VIEW_EVENTUPDATE;
     }
 
     @PostMapping("/event/update/{id}")
@@ -101,13 +101,13 @@ public class ModifyEventController {
             BindingResult errors, Model model) throws IOException {
 
         if (errors.hasErrors()) {
-            model.addAttribute(Constants.HOUR_LIST, eventnotificationUtil.getAllHour());
-            model.addAttribute(Constants.MINUTE_LIST, eventnotificationUtil.getAllMinute());
-            model.addAttribute(Constants.EVENT_LIST, eventTypeService.getAllEventType());
-            model.addAttribute(Constants.MODE, Constants.MODE_UPDATE);
-            model.addAttribute(Constants.EVENT_STATUS_LIST, new ArrayList<>(Arrays.asList(EventStatus.values())));
-            model.addAttribute(Constants.MESSAGE, "msg.event.update.error");
-            return Constants.VIEW_EVENTUPDATE;
+            model.addAttribute(HOUR_LIST, eventnotificationUtil.getAllHour());
+            model.addAttribute(MINUTE_LIST, eventnotificationUtil.getAllMinute());
+            model.addAttribute(EVENT_LIST, eventTypeService.getAllEventType());
+            model.addAttribute(MODE, MODE_UPDATE);
+            model.addAttribute(EVENT_STATUS_LIST, new ArrayList<>(Arrays.asList(EventStatus.values())));
+            model.addAttribute(MESSAGE, "msg.event.update.error");
+            return VIEW_EVENTUPDATE;
         }
         event.setId(id);
         DateTime sd = new DateTime(event.getEventDetails().getStartDt());
@@ -123,9 +123,9 @@ public class ModifyEventController {
         event.setEndDate(ed.toDate());
         eventService.updateEvent(event);
 
-        model.addAttribute(Constants.EVENT, event);
-        model.addAttribute(Constants.MESSAGE, "msg.event.update.success");
-        model.addAttribute(Constants.MODE, Constants.MODE_VIEW);
-        return Constants.VIEW_EVENTUPDATESUCCESS;
+        model.addAttribute(EVENT, event);
+        model.addAttribute(MESSAGE, "msg.event.update.success");
+        model.addAttribute(MODE, MODE_VIEW);
+        return VIEW_EVENTUPDATESUCCESS;
     }
 }
