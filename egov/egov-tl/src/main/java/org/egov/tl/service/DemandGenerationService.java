@@ -73,6 +73,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import static org.egov.infra.persistence.utils.PersistenceUtils.flushBatchUpdate;
@@ -112,6 +113,13 @@ public class DemandGenerationService {
 
     @Autowired
     private TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
+
+    @Autowired
+    private DemandNoticeService demandNoticeService;
+
+    @Autowired
+    private PenaltyRatesService penaltyRatesService;
+
 
     private int batchSize;
 
@@ -160,6 +168,7 @@ public class DemandGenerationService {
             Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(module, financialYear.getStartingDate());
             int batchUpdateCount = 0;
             boolean notificationRequired = licenseConfigurationService.notifyOnDemandGeneration();
+            Date penaltyDate = penaltyRatesService.getPenaltyDate(licenseService.getLicenseApplicationTypeForRenew(), installment);
             for (Long licenseId : demandGenerationRequest.getLicenseIds()) {
                 License license = licenseService.getLicenseById(licenseId);
                 DemandGenerationLogDetail demandGenerationLogDetail = demandGenerationLogService.
@@ -168,9 +177,9 @@ public class DemandGenerationService {
                     if (!installment.equals(license.getCurrentDemand().getEgInstallmentMaster())) {
                         licenseService.raiseDemand(license, module, installment);
                         demandGenerationLogDetail.setDetail(SUCCESSFUL);
-                        if (notificationRequired) {
-                            tradeLicenseSmsAndEmailService.sendNotificationOnDemandGeneration(license, installment);
-                        }
+                        if (notificationRequired)
+                            tradeLicenseSmsAndEmailService.sendNotificationOnDemandGeneration(license, installment,
+                                    demandNoticeService.generateReport(license.getId()), penaltyDate);
                     }
                     demandGenerationLogDetail.setStatus(COMPLETED);
                 } catch (RuntimeException e) {
@@ -194,7 +203,9 @@ public class DemandGenerationService {
                     new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate());
             licenseService.raiseDemand(license, licenseService.getModuleName(), installment);
             if (licenseConfigurationService.notifyOnDemandGeneration()) {
-                tradeLicenseSmsAndEmailService.sendNotificationOnDemandGeneration(license , installment);
+                tradeLicenseSmsAndEmailService.sendNotificationOnDemandGeneration(license, installment,
+                        demandNoticeService.generateReport(license.getId()),
+                        penaltyRatesService.getPenaltyDate(license.getLicenseAppType(), installment));
             }
         } catch (ValidationException e) {
             LOGGER.warn(ERROR_MSG, e);

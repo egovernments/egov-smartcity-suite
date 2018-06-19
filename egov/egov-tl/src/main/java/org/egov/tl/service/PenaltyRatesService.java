@@ -126,8 +126,8 @@ public class PenaltyRatesService {
         return BigDecimal.ZERO;
     }
 
-    public Date getPenaltyDate(License license, Installment installment) {
-        Optional<PenaltyRates> penaltyRates = search(license.getLicenseAppType())
+    public Date getPenaltyDate(LicenseAppType licenseAppType, Installment installment) {
+        Optional<PenaltyRates> penaltyRates = search(licenseAppType)
                 .stream()
                 .filter(penaltyRate -> penaltyRate.getRate().doubleValue() <= ZERO.doubleValue())
                 .findFirst();

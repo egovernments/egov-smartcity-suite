@@ -51,6 +51,7 @@ import org.egov.commons.Installment;
 import org.egov.commons.service.CFinancialYearService;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.notification.service.NotificationService;
+import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.tl.entity.License;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -98,12 +99,6 @@ public class TradeLicenseSmsAndEmailService {
 
     @Autowired
     private LicenseConfigurationService licenseConfigurationService;
-
-    @Autowired
-    private DemandNoticeService demandNoticeService;
-
-    @Autowired
-    private PenaltyRatesService penaltyRatesService;
 
     @Autowired
     private CFinancialYearService cFinancialYearService;
@@ -375,11 +370,11 @@ public class TradeLicenseSmsAndEmailService {
         sendEmail(license.getLicensee().getEmailId(), emailBody, emailSubject);
     }
 
-    public void sendNotificationOnDemandGeneration(License license, Installment installment) {
+    public void sendNotificationOnDemandGeneration(License license, Installment installment,
+                                                   ReportOutput reportOutput, Date penaltyDate) {
 
         Locale locale = Locale.getDefault();
 
-        Date penaltyDate = penaltyRatesService.getPenaltyDate(license, installment);
         String smsBody = licenseMessageSource.getMessage("msg.demand.generation.sms.body",
                 new String[]{license.getLicensee().getApplicantName(),
                         license.getNameOfEstablishment(),
@@ -408,6 +403,6 @@ public class TradeLicenseSmsAndEmailService {
                 locale);
         notificationService.sendSMS(license.getLicensee().getMobilePhoneNumber(), smsBody);
         notificationService.sendEmailWithAttachment(license.getLicensee().getEmailId(), emailSubject, emailBody,
-                "application/pdf", "demand_notice", demandNoticeService.generateReport(license.getId()).getReportOutputData());
+                "application/pdf", "demand_notice", reportOutput.getReportOutputData());
     }
 }
