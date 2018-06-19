@@ -137,14 +137,16 @@ public class RestPushBoxController extends ApiController {
         ApiResponse res = ApiResponse.newInstance();
         try {
             MessageContent message = createMessageContentFromRequest(jsonObject);
-            if (!sendAll) {
+            if (sendAll)
+                message.setSendAll(true);
+            else {
                 JsonElement userIdElement = jsonObject.get("userIdList");
                 JsonArray jsonArray = userIdElement.getAsJsonArray();
                 List<Long> userIdList = new ArrayList<>();
                 for (JsonElement element : jsonArray)
                     userIdList.add(Long.valueOf(isNotBlank(element.getAsString()) ? element.getAsString() : "0"));
                 message.setUserIdList(userIdList);
-            } else
+            }
                 message.setSendAll(true);
             notificationService.sendNotifications(message);
 

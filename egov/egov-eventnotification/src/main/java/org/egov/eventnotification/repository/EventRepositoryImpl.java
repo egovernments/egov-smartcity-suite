@@ -51,8 +51,8 @@ import static org.egov.eventnotification.constants.Constants.ACTIVE;
 import static org.egov.eventnotification.constants.Constants.EVENT_ENDDATE;
 import static org.egov.eventnotification.constants.Constants.EVENT_HOST;
 import static org.egov.eventnotification.constants.Constants.EVENT_ID;
-import static org.egov.eventnotification.constants.Constants.EVENT_NAME;
 import static org.egov.eventnotification.constants.Constants.EVENT_STARTDATE;
+import static org.egov.eventnotification.constants.Constants.NAME;
 import static org.egov.eventnotification.constants.Constants.STATUS_COLUMN;
 import static org.egov.eventnotification.constants.Constants.UPCOMING;
 
@@ -63,6 +63,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.eventnotification.entity.Event;
+import org.egov.eventnotification.entity.contracts.EventSearch;
 import org.egov.eventnotification.repository.custom.EventRepositoryCustom;
 import org.egov.infra.utils.DateUtils;
 import org.hibernate.Criteria;
@@ -78,12 +79,12 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
     private EntityManager entityManager;
 
     @Override
-    public List<Event> searchEvent(Event eventObj, String eventDateType) {
+    public List<Event> searchEvent(EventSearch eventSearch) {
         DateTime calendar = new DateTime();
         DateTime calendarEndDate = null;
         Date startDate;
         Date endDate;
-        if (eventDateType.equalsIgnoreCase(UPCOMING)) {
+        if (eventSearch.getEventDateType().equalsIgnoreCase(UPCOMING)) {
             calendar = calendar.plusDays(7);
             calendar = calendar.withHourOfDay(0);
             calendar = calendar.withMinuteOfHour(0);
@@ -110,13 +111,13 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
 
         Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Event.class, "evnt");
         criteria.createAlias("evnt.eventType", "eventType");
-        if (eventObj.getEventType().getName() != null)
+        if (eventSearch.getEventType() != null)
             criteria.add(
-                    Restrictions.ilike("eventType.name", eventObj.getEventType().getName(), MatchMode.ANYWHERE));
-        if (eventObj.getName() != null)
-            criteria.add(Restrictions.ilike(EVENT_NAME, eventObj.getName(), MatchMode.ANYWHERE));
-        if (eventObj.getEventhost() != null)
-            criteria.add(Restrictions.ilike(EVENT_HOST, eventObj.getEventhost(), MatchMode.ANYWHERE));
+                    Restrictions.ilike("eventType.name", eventSearch.getEventType(), MatchMode.ANYWHERE));
+        if (eventSearch.getName() != null)
+            criteria.add(Restrictions.ilike(NAME, eventSearch.getName(), MatchMode.ANYWHERE));
+        if (eventSearch.getEventHost() != null)
+            criteria.add(Restrictions.ilike(EVENT_HOST, eventSearch.getEventHost(), MatchMode.ANYWHERE));
 
         criteria.add(Restrictions.between(EVENT_STARTDATE, startDate, endDate));
         criteria.add(Restrictions.ge(EVENT_ENDDATE, DateUtils.today()));

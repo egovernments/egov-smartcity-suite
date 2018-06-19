@@ -81,7 +81,7 @@ public class TemplateModule extends AbstractPersistable<Long> {
     private String name;
 
     private boolean active;
-    
+
     @NotNull
     @SafeHtml
     @Length(max = 100)

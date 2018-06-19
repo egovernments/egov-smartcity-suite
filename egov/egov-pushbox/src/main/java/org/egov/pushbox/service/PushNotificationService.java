@@ -54,6 +54,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
 import org.egov.pushbox.entity.UserFcmDevice;
@@ -143,7 +144,7 @@ public class PushNotificationService {
             PushboxProperties pushboxProperties = pushboxConfiguration.initPushBoxProperties();
 
             JsonFactory JSON_FACTORY = Utils.getDefaultJsonFactory();
-            Map<String, Object> secretJson = new HashMap<>();
+            Map<String, Object> secretJson = new ConcurrentHashMap<String, Object>();
             secretJson.put("type", pushboxProperties.getType());
             secretJson.put("project_id", pushboxProperties.getProjectId());
             secretJson.put("private_key_id", pushboxProperties.getPrivateKeyId());

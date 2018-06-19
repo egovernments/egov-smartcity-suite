@@ -62,7 +62,7 @@ public class EventnotificationUtil {
     private static final int HOURS_MAX_NUMBER_OF_REQUESTS = 24;
     private static final int MINUTES_MAX_NUMBER_OF_REQUESTS = 60;
     private static final int MAX_NUMBER_OF_REQUESTS = 10;
-    
+
     @Autowired
     private ApplicationContext context;
 
@@ -85,7 +85,7 @@ public class EventnotificationUtil {
                 minutesList.add(String.valueOf(i));
         return minutesList;
     }
-    
+
     public Object getBean(final String beanName) {
 
         Object bean = null;

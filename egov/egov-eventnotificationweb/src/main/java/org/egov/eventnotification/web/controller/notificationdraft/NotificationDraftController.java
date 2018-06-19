@@ -47,26 +47,6 @@
  */
 package org.egov.eventnotification.web.controller.notificationdraft;
 
-import static org.egov.eventnotification.constants.Constants.API_CREATE;
-import static org.egov.eventnotification.constants.Constants.API_VIEW;
-import static org.egov.eventnotification.constants.Constants.API_VIEW_ID;
-import static org.egov.eventnotification.constants.Constants.CATEGORY_FOR_MODULE;
-import static org.egov.eventnotification.constants.Constants.CATEGORY_PARAMETERS;
-import static org.egov.eventnotification.constants.Constants.DRAFT_LIST;
-import static org.egov.eventnotification.constants.Constants.MESSAGE;
-import static org.egov.eventnotification.constants.Constants.MODE;
-import static org.egov.eventnotification.constants.Constants.MODE_CREATE;
-import static org.egov.eventnotification.constants.Constants.MODE_VIEW;
-import static org.egov.eventnotification.constants.Constants.MODULE_CATEGORY;
-import static org.egov.eventnotification.constants.Constants.NOTIFICATION_DRAFT;
-import static org.egov.eventnotification.constants.Constants.NOTIFICATION_DRAFTS_VIEW;
-import static org.egov.eventnotification.constants.Constants.NOTIFICATION_DRAFT_LIST;
-import static org.egov.eventnotification.constants.Constants.TEMPLATE_MODULE;
-import static org.egov.eventnotification.constants.Constants.VIEW_DRAFTS_CREATE;
-import static org.egov.eventnotification.constants.Constants.VIEW_DRAFTS_CREATE_SUCCESS;
-import static org.egov.eventnotification.constants.Constants.VIEW_DRAFTS_VIEW;
-import static org.egov.eventnotification.constants.Constants.VIEW_DRAFTVIEWRESULT;
-
 import javax.validation.Valid;
 
 import org.egov.eventnotification.constants.Constants;
@@ -87,7 +67,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping(value = NOTIFICATION_DRAFTS_VIEW)
+@RequestMapping(value = Constants.NOTIFICATION_DRAFTS_VIEW)
 public class NotificationDraftController {
 
     @Autowired
@@ -105,50 +85,50 @@ public class NotificationDraftController {
     @Autowired
     private DraftTypeService draftTypeService;
 
-    @GetMapping(API_VIEW)
+    @GetMapping(Constants.API_VIEW)
     public String view(final Model model) {
-        model.addAttribute(NOTIFICATION_DRAFT_LIST, draftService.getAllDrafts());
-        model.addAttribute(DRAFT_LIST, draftTypeService.getAllDraftType());
-        return VIEW_DRAFTS_VIEW;
+        model.addAttribute(Constants.NOTIFICATION_DRAFT_LIST, draftService.getAllDrafts());
+        model.addAttribute(Constants.DRAFT_LIST, draftTypeService.getAllDraftType());
+        return Constants.VIEW_DRAFTS_VIEW;
     }
 
-    @GetMapping(API_VIEW_ID)
+    @GetMapping(Constants.API_VIEW_ID)
     public String viewByDraft(@PathVariable Long id, final Model model) {
-        model.addAttribute(NOTIFICATION_DRAFT, draftService.getDraftById(id));
-        model.addAttribute(MODE, MODE_VIEW);
+        model.addAttribute(Constants.NOTIFICATION_DRAFT, draftService.getDraftById(id));
+        model.addAttribute(Constants.MODE, Constants.MODE_VIEW);
 
-        return VIEW_DRAFTVIEWRESULT;
+        return Constants.VIEW_DRAFTVIEWRESULT;
     }
 
-    @GetMapping(CATEGORY_FOR_MODULE)
+    @GetMapping(Constants.CATEGORY_FOR_MODULE)
     public String getCategoriesForModule(@ModelAttribute Long moduleId, final Model model) {
-        model.addAttribute(MODULE_CATEGORY, moduleCategoryService.getCategoriesForModule(moduleId));
+        model.addAttribute(Constants.MODULE_CATEGORY, moduleCategoryService.getCategoriesForModule(moduleId));
         return model.toString();
     }
 
-    @GetMapping(API_CREATE)
+    @GetMapping(Constants.API_CREATE)
     public String create(@ModelAttribute Drafts notificationDraft, Model model) {
-        model.addAttribute(DRAFT_LIST, draftTypeService.getAllDraftType());
-        model.addAttribute(NOTIFICATION_DRAFT, notificationDraft);
-        model.addAttribute(TEMPLATE_MODULE, templateModuleService.getAllModules());
-        model.addAttribute(MODULE_CATEGORY, moduleCategoryService.getAllCategories());
-        model.addAttribute(CATEGORY_PARAMETERS, categoryParametersService.getAllParameters());
-        model.addAttribute(MODE, MODE_CREATE);
-        return VIEW_DRAFTS_CREATE;
+        model.addAttribute(Constants.DRAFT_LIST, draftTypeService.getAllDraftType());
+        model.addAttribute(Constants.NOTIFICATION_DRAFT, notificationDraft);
+        model.addAttribute(Constants.TEMPLATE_MODULE, templateModuleService.getAllModules());
+        model.addAttribute(Constants.MODULE_CATEGORY, moduleCategoryService.getAllCategories());
+        model.addAttribute(Constants.CATEGORY_PARAMETERS, categoryParametersService.getAllParameters());
+        model.addAttribute(Constants.MODE, Constants.MODE_CREATE);
+        return Constants.VIEW_DRAFTS_CREATE;
     }
 
-    @PostMapping(API_CREATE)
+    @PostMapping(Constants.API_CREATE)
     public String create(@Valid @ModelAttribute Drafts notificationDraft,
             BindingResult errors, Model model) {
         if (errors.hasErrors()) {
-            model.addAttribute(MESSAGE, "msg.draft.create.error");
-            model.addAttribute(MODE, MODE_CREATE);
+            model.addAttribute(Constants.MESSAGE, "msg.draft.create.error");
+            model.addAttribute(Constants.MODE, Constants.MODE_CREATE);
             return Constants.VIEW_EVENTCREATE;
         }
         draftService.saveDraft(notificationDraft);
-        model.addAttribute(NOTIFICATION_DRAFT, notificationDraft);
-        model.addAttribute(MESSAGE, "msg.draft.create.success");
-        model.addAttribute(MODE, MODE_VIEW);
-        return VIEW_DRAFTS_CREATE_SUCCESS;
+        model.addAttribute(Constants.NOTIFICATION_DRAFT, notificationDraft);
+        model.addAttribute(Constants.MESSAGE, "msg.draft.create.success");
+        model.addAttribute(Constants.MODE, Constants.MODE_VIEW);
+        return Constants.VIEW_DRAFTS_CREATE_SUCCESS;
     }
 }
