@@ -218,7 +218,7 @@
 										<th class="bluebgheadtd"><s:text name="Guardian" /></th>
 									</tr>
 									<s:if
-						test="%{!@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED.equalsIgnoreCase(state.value)}">
+						test="%{#state.value.indexOf(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED) != -1}">
 									<s:iterator value="basicproperty.propertyOwnerInfo"
 										status="status">
 										<tr>
@@ -316,7 +316,7 @@
 										<th class="bluebgheadtd"><s:text name="Guardian" /></th>
 									</tr>
 									<s:if
-						test="%{!@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED.equalsIgnoreCase(state.value)}">
+						test="%{!#state.value.indexOf(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED) != -1}">
 									<s:iterator value="transfereeInfosProxy" status="ownerStatus">
 										<tr>
 											<td class="blueborderfortd" align="center"><span
