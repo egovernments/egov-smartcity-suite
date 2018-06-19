@@ -47,8 +47,25 @@
  */
 package org.egov.api.controller;
 
-import org.egov.api.controller.core.ApiUrl;
-import org.egov.eventnotification.constants.Constants;
+import static org.egov.api.controller.core.ApiUrl.CATEGORY_ID_PATH_PARAM;
+import static org.egov.api.controller.core.ApiUrl.EVENT_ID_PATH_PARAM;
+import static org.egov.api.controller.core.ApiUrl.EVENT_IMAGE_DOWNLOAD;
+import static org.egov.api.controller.core.ApiUrl.GET_ALL_EVENT;
+import static org.egov.api.controller.core.ApiUrl.GET_CATEGORY_FOR_MODULE;
+import static org.egov.api.controller.core.ApiUrl.GET_EVENT;
+import static org.egov.api.controller.core.ApiUrl.GET_PARAMETERS_FOR_CATEGORY;
+import static org.egov.api.controller.core.ApiUrl.INTERESTED;
+import static org.egov.api.controller.core.ApiUrl.MODULE_ID_PATH_PARAM;
+import static org.egov.api.controller.core.ApiUrl.SEARCH_DRAFT_PATH_PARAM;
+import static org.egov.api.controller.core.ApiUrl.SEARCH_EVENT;
+import static org.egov.eventnotification.constants.EventNotificationConstants.ACTIVE;
+import static org.egov.eventnotification.constants.EventNotificationConstants.EVENTID;
+import static org.egov.eventnotification.constants.EventNotificationConstants.FAIL;
+import static org.egov.eventnotification.constants.EventNotificationConstants.INTERESTED_COUNT;
+import static org.egov.eventnotification.constants.EventNotificationConstants.MODULE_NAME;
+import static org.egov.eventnotification.constants.EventNotificationConstants.SUCCESS;
+import static org.egov.eventnotification.constants.EventNotificationConstants.USERID;
+import static org.egov.eventnotification.constants.EventNotificationConstants.ZERO;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import java.io.File;
@@ -70,7 +87,6 @@ import org.egov.api.controller.core.ApiController;
 import org.egov.eventnotification.entity.DraftType;
 import org.egov.eventnotification.entity.Drafts;
 import org.egov.eventnotification.entity.Event;
-import org.egov.eventnotification.entity.EventType;
 import org.egov.eventnotification.entity.UserEvent;
 import org.egov.eventnotification.entity.contracts.EventSearch;
 import org.egov.eventnotification.service.CategoryParametersService;
@@ -110,19 +126,19 @@ public class RestEventController extends ApiController {
     @Autowired
     private CategoryParametersService categoryParametersService;
 
-    @GetMapping(path = ApiUrl.GET_ALL_EVENT, produces = APPLICATION_JSON_VALUE)
+    @GetMapping(path = GET_ALL_EVENT, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<String> getAllEvent() {
         try {
             return getResponseHandler()
                     .setDataAdapter(new EventAdapter(usereventService))
-                    .success(eventService.getAllOngoingEvent(Constants.ACTIVE.toUpperCase()));
+                    .success(eventService.getAllOngoingEvent(ACTIVE.toUpperCase()));
         } catch (final Exception e) {
             LOGGER.error(EGOV_API_ERROR, e);
             return getResponseHandler().error(getMessage(SERVER_ERROR_KEY));
         }
     }
 
-    @GetMapping(path = ApiUrl.GET_EVENT + ApiUrl.EVENT_ID_PATH_PARAM, produces = APPLICATION_JSON_VALUE)
+    @GetMapping(path = GET_EVENT + EVENT_ID_PATH_PARAM, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<String> getEvent(@PathVariable long id, @RequestParam(required = false) Long userid) {
         try {
             return getResponseHandler()
@@ -134,7 +150,7 @@ public class RestEventController extends ApiController {
         }
     }
 
-    @GetMapping(path = ApiUrl.SEARCH_EVENT, produces = APPLICATION_JSON_VALUE)
+    @GetMapping(path = SEARCH_EVENT, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<String> searchEvent(EventSearch eventSearch) {
         
         try {
@@ -147,7 +163,7 @@ public class RestEventController extends ApiController {
         }
     }
 
-    @GetMapping(path = ApiUrl.SEARCH_DRAFT_PATH_PARAM, produces = APPLICATION_JSON_VALUE)
+    @GetMapping(path = SEARCH_DRAFT_PATH_PARAM, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<String> searchDraft(@RequestParam(required = false) String type,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) Long module) {
@@ -168,7 +184,7 @@ public class RestEventController extends ApiController {
         }
     }
 
-    @GetMapping(path = ApiUrl.GET_CATEGORY_FOR_MODULE + ApiUrl.MODULE_ID_PATH_PARAM, produces = APPLICATION_JSON_VALUE)
+    @GetMapping(path = GET_CATEGORY_FOR_MODULE + MODULE_ID_PATH_PARAM, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<String> getCategoriesForModule(@PathVariable long moduleId) {
         try {
             return getResponseHandler()
@@ -180,7 +196,7 @@ public class RestEventController extends ApiController {
         }
     }
 
-    @GetMapping(path = ApiUrl.GET_PARAMETERS_FOR_CATEGORY + ApiUrl.CATEGORY_ID_PATH_PARAM, produces = APPLICATION_JSON_VALUE)
+    @GetMapping(path = GET_PARAMETERS_FOR_CATEGORY + CATEGORY_ID_PATH_PARAM, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<String> getParametersForCategory(@PathVariable long categoryId) {
         try {
             return getResponseHandler()
@@ -192,37 +208,37 @@ public class RestEventController extends ApiController {
         }
     }
 
-    @PostMapping(path = ApiUrl.GET_EVENT + ApiUrl.INTERESTED, produces = APPLICATION_JSON_VALUE)
+    @PostMapping(path = GET_EVENT + INTERESTED, produces = APPLICATION_JSON_VALUE)
     public String saveUserEvent(@RequestBody String jsonData) {
         JSONObject requestObject = (JSONObject) JSONValue.parse(jsonData);
         JSONObject responseObject = new JSONObject();
-        if (requestObject.containsKey(Constants.USERID)
-                && requestObject.containsKey(Constants.EVENTID)) {
-            UserEvent userEvent = usereventService.saveUserEvent(Long.parseLong(requestObject.get(Constants.USERID).toString()),
-                    Long.parseLong(requestObject.get(Constants.EVENTID).toString()));
+        if (requestObject.containsKey(USERID)
+                && requestObject.containsKey(EVENTID)) {
+            UserEvent userEvent = usereventService.saveUserEvent(Long.parseLong(requestObject.get(USERID).toString()),
+                    Long.parseLong(requestObject.get(EVENTID).toString()));
             if (userEvent == null)
-                responseObject.put(Constants.FAIL, getMessage("error.fail.event"));
+                responseObject.put(FAIL, getMessage("error.fail.event"));
             else {
-                responseObject.put(Constants.SUCCESS, getMessage("msg.event.success"));
+                responseObject.put(SUCCESS, getMessage("msg.event.success"));
                 Long interestedCount = usereventService.countUsereventByEventId(userEvent.getEvent().getId());
                 if (interestedCount == null)
-                    responseObject.put(Constants.INTERESTED_COUNT, Constants.ZERO);
+                    responseObject.put(INTERESTED_COUNT, ZERO);
                 else
-                    responseObject.put(Constants.INTERESTED_COUNT, String.valueOf(interestedCount));
+                    responseObject.put(INTERESTED_COUNT, String.valueOf(interestedCount));
             }
 
         } else
-            responseObject.put(Constants.FAIL, getMessage("error.fail.eventuser"));
+            responseObject.put(FAIL, getMessage("error.fail.eventuser"));
 
         return responseObject.toJSONString();
     }
 
-    @GetMapping(path = ApiUrl.EVENT_IMAGE_DOWNLOAD, produces = APPLICATION_JSON_VALUE)
+    @GetMapping(path = EVENT_IMAGE_DOWNLOAD, produces = APPLICATION_JSON_VALUE)
     public void downloadEventImage(@PathVariable final Long id, @PathVariable final String fileStoreId,
             final HttpServletResponse response) throws IOException {
         try {
             Event event = eventService.getEventById(id);
-            File downloadFile = fileStoreService.fetch(fileStoreId, Constants.MODULE_NAME);
+            File downloadFile = fileStoreService.fetch(fileStoreId, MODULE_NAME);
             long contentLength = downloadFile.length();
 
             response.setHeader("Content-Length", String.valueOf(contentLength));

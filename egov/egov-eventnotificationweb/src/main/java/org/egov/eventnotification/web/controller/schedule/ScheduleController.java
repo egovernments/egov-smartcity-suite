@@ -47,13 +47,13 @@
  */
 package org.egov.eventnotification.web.controller.schedule;
 
+import static org.egov.eventnotification.constants.EventNotificationConstants.*;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
-import org.egov.eventnotification.constants.Constants;
 import org.egov.eventnotification.entity.Drafts;
 import org.egov.eventnotification.entity.Schedule;
 import org.egov.eventnotification.service.DraftService;
@@ -114,41 +114,41 @@ public class ScheduleController {
 
     @GetMapping("/schedule/view/")
     public String view(Model model) {
-        model.addAttribute(Constants.DRAFT_LIST, draftService.getAllDrafts());
-        model.addAttribute(Constants.SCHEDULE_LIST,
+        model.addAttribute(DRAFT_LIST, draftService.getAllDrafts());
+        model.addAttribute(SCHEDULE_LIST,
                 scheduleService.getAllSchedule());
-        return Constants.SCHEDULE_VIEW;
+        return SCHEDULE_VIEW;
     }
 
     @GetMapping("/schedule/create/{id}")
     public String save(@PathVariable Long id, @ModelAttribute Schedule schedule, Model model) {
         Drafts notificationDrafts = draftService.getDraftById(id);
-        schedule.setStatus(Constants.TO_BE_SCHEDULED);
+        schedule.setStatus(TO_BE_SCHEDULED);
         schedule.setMessageTemplate(notificationDrafts.getMessage());
         schedule.setTemplateName(notificationDrafts.getName());
         schedule.setDraftType(notificationDrafts.getDraftType());
         schedule.setModule(notificationDrafts.getModule());
 
-        model.addAttribute(Constants.NOTIFICATION_SCHEDULE, schedule);
-        model.addAttribute(Constants.HOUR_LIST, eventnotificationUtil.getAllHour());
-        model.addAttribute(Constants.MINUTE_LIST, eventnotificationUtil.getAllMinute());
-        model.addAttribute(Constants.DRAFT_LIST, draftTypeService.getAllDraftType());
+        model.addAttribute(NOTIFICATION_SCHEDULE, schedule);
+        model.addAttribute(HOUR_LIST, eventnotificationUtil.getAllHour());
+        model.addAttribute(MINUTE_LIST, eventnotificationUtil.getAllMinute());
+        model.addAttribute(DRAFT_LIST, draftTypeService.getAllDraftType());
 
-        model.addAttribute(Constants.SCHEDULER_REPEAT_LIST, scheduleRepeatService.getAllScheduleRepeat());
+        model.addAttribute(SCHEDULER_REPEAT_LIST, scheduleRepeatService.getAllScheduleRepeat());
 
-        return Constants.SCHEDULE_CREATE_VIEW;
+        return SCHEDULE_CREATE_VIEW;
     }
 
     @PostMapping("/schedule/create/")
     public String save(@Valid @ModelAttribute Schedule schedule, BindingResult errors, HttpServletRequest request, Model model) {
 
         if (errors.hasErrors()) {
-            model.addAttribute(Constants.NOTIFICATION_SCHEDULE, schedule);
-            model.addAttribute(Constants.HOUR_LIST, eventnotificationUtil.getAllHour());
-            model.addAttribute(Constants.MINUTE_LIST, eventnotificationUtil.getAllMinute());
-            model.addAttribute(Constants.SCHEDULER_REPEAT_LIST, scheduleRepeatService.getAllScheduleRepeat());
-            model.addAttribute(Constants.MESSAGE, "msg.notification.schedule.error");
-            return Constants.SCHEDULE_CREATE_VIEW;
+            model.addAttribute(NOTIFICATION_SCHEDULE, schedule);
+            model.addAttribute(HOUR_LIST, eventnotificationUtil.getAllHour());
+            model.addAttribute(MINUTE_LIST, eventnotificationUtil.getAllMinute());
+            model.addAttribute(SCHEDULER_REPEAT_LIST, scheduleRepeatService.getAllScheduleRepeat());
+            model.addAttribute(MESSAGE, "msg.notification.schedule.error");
+            return SCHEDULE_CREATE_VIEW;
         }
 
         User user = userService.getCurrentUser();
@@ -159,15 +159,15 @@ public class ScheduleController {
         final Scheduler scheduler = (Scheduler) beanProvider.getBean("eventnotificationScheduler");
         try {
             jobDetail.setName(ApplicationThreadLocals.getTenantID().concat("_")
-                    .concat(Constants.JOB.concat(String.valueOf(schedule.getId()))));
-            jobDetail.getJobDataMap().put(Constants.SCHEDULEID, String.valueOf(schedule.getId()));
+                    .concat(JOB.concat(String.valueOf(schedule.getId()))));
+            jobDetail.getJobDataMap().put(SCHEDULEID, String.valueOf(schedule.getId()));
             String fullURL = request.getRequestURL().toString();
             jobDetail.getJobDataMap().put("contextURL", fullURL.substring(0, StringUtils.ordinalIndexOf(fullURL, "/", 3)));
 
             if (cronExpression == null) {
                 final SimpleTriggerImpl trigger = new SimpleTriggerImpl();
                 trigger.setName(ApplicationThreadLocals.getTenantID().concat("_")
-                        .concat(Constants.TRIGGER.concat(String.valueOf(schedule.getId()))));
+                        .concat(TRIGGER.concat(String.valueOf(schedule.getId()))));
                 trigger.setStartTime(new Date(System.currentTimeMillis() + 100000));
                 trigger.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_FIRE_NOW);
                 scheduler.start();
@@ -175,8 +175,8 @@ public class ScheduleController {
             } else {
                 final Trigger trigger = TriggerBuilder.newTrigger()
                         .withIdentity(ApplicationThreadLocals.getTenantID().concat("_")
-                                .concat(Constants.TRIGGER.concat(String.valueOf(schedule.getId()))),
-                                Constants.EVENT_NOTIFICATION_GROUP)
+                                .concat(TRIGGER.concat(String.valueOf(schedule.getId()))),
+                                EVENT_NOTIFICATION_GROUP)
                         .withSchedule(CronScheduleBuilder.cronSchedule(cronExpression)).build();
                 scheduler.start();
                 scheduler.scheduleJob(jobDetail, trigger);
@@ -185,10 +185,10 @@ public class ScheduleController {
         } catch (final SchedulerException e) {
             throw new ApplicationRuntimeException(e.getMessage(), e);
         }
-        model.addAttribute(Constants.MESSAGE, "msg.notification.schedule.success");
-        model.addAttribute(Constants.MODE, Constants.MODE_VIEW);
-        model.addAttribute(Constants.NOTIFICATION_SCHEDULE, schedule);
-        return Constants.SCHEDULE_CREATE_SUCCESS;
+        model.addAttribute(MESSAGE, "msg.notification.schedule.success");
+        model.addAttribute(MODE, MODE_VIEW);
+        model.addAttribute(NOTIFICATION_SCHEDULE, schedule);
+        return SCHEDULE_CREATE_SUCCESS;
     }
 
     @GetMapping("/schedule/view/{id}")
@@ -197,31 +197,31 @@ public class ScheduleController {
         DateTime sd = new DateTime(notificationSchedule.getStartDate());
 
         if (sd.isBeforeNow())
-            model.addAttribute(Constants.SCHEDULE_EDITABLE, false);
+            model.addAttribute(SCHEDULE_EDITABLE, false);
         else
-            model.addAttribute(Constants.SCHEDULE_EDITABLE, true);
-        model.addAttribute(Constants.NOTIFICATION_SCHEDULE, notificationSchedule);
-        model.addAttribute(Constants.MODE, Constants.MODE_DELETE);
-        return Constants.SCHEDULE_DETAILS_VIEW;
+            model.addAttribute(SCHEDULE_EDITABLE, true);
+        model.addAttribute(NOTIFICATION_SCHEDULE, notificationSchedule);
+        model.addAttribute(MODE, MODE_DELETE);
+        return SCHEDULE_DETAILS_VIEW;
     }
 
     @GetMapping(path = { "/schedule/delete/{id}" }, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String deleteSchedule(@PathVariable Long id, Model model) {
         Schedule notificationSchedule = scheduleService.getScheduleById(id);
-        notificationSchedule.setStatus(Constants.SCHEDULE_DISABLED);
+        notificationSchedule.setStatus(SCHEDULE_DISABLED);
 
         notificationSchedule = scheduleService.updateSchedule(notificationSchedule);
         final Scheduler scheduler = (Scheduler) beanProvider.getBean("eventnotificationScheduler");
         try {
             scheduler.unscheduleJob(new TriggerKey(ApplicationThreadLocals.getTenantID().concat("_")
-                    .concat(Constants.TRIGGER.concat(String.valueOf(notificationSchedule.getId()))),
-                    Constants.EVENT_NOTIFICATION_GROUP));
-            scheduler.deleteJob(new JobKey(Constants.JOB.concat(String.valueOf(notificationSchedule.getId()))));
+                    .concat(TRIGGER.concat(String.valueOf(notificationSchedule.getId()))),
+                    EVENT_NOTIFICATION_GROUP));
+            scheduler.deleteJob(new JobKey(JOB.concat(String.valueOf(notificationSchedule.getId()))));
         } catch (final SchedulerException e) {
             throw new ApplicationRuntimeException(e.getMessage(), e);
         }
-        model.addAttribute(Constants.MESSAGE, "msg.notification.schedule.delete.success");
-        return Constants.SCHEDULE_DELETE_SUCCESS;
+        model.addAttribute(MESSAGE, "msg.notification.schedule.delete.success");
+        return SCHEDULE_DELETE_SUCCESS;
     }
 }

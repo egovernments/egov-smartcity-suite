@@ -47,11 +47,11 @@
  */
 package org.egov.eventnotification.web.controller.event;
 
+import static org.egov.eventnotification.constants.EventNotificationConstants.*;
 import java.io.IOException;
 
 import javax.validation.Valid;
 
-import org.egov.eventnotification.constants.Constants;
 import org.egov.eventnotification.entity.Event;
 import org.egov.eventnotification.service.EventService;
 import org.egov.eventnotification.service.EventTypeService;
@@ -73,7 +73,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  *
  */
 @Controller
-@RequestMapping(value = Constants.API_EVENT)
+@RequestMapping(value = API_EVENT)
 public class EventController {
 
     @Autowired
@@ -88,52 +88,52 @@ public class EventController {
     @Autowired
     private EventTypeService eventTypeService;
 
-    @GetMapping(Constants.API_VIEW)
+    @GetMapping(API_VIEW)
     public String view(@ModelAttribute Event event, final Model model) {
-        model.addAttribute(Constants.EVENT_LIST,
-                eventService.getAllEventByStatus(Constants.ACTIVE.toUpperCase()));
-        model.addAttribute(Constants.MODE, Constants.MODE_VIEW);
-        model.addAttribute(Constants.EVENT_TYPE_LIST, eventTypeService.getAllEventType());
-        return Constants.VIEW_EVENTVIEW;
+        model.addAttribute(EVENT_LIST,
+                eventService.getAllEventByStatus(ACTIVE.toUpperCase()));
+        model.addAttribute(MODE, MODE_VIEW);
+        model.addAttribute(EVENT_TYPE_LIST, eventTypeService.getAllEventType());
+        return VIEW_EVENTVIEW;
     }
 
-    @GetMapping(Constants.API_VIEW_ID)
+    @GetMapping(API_VIEW_ID)
     public String viewByEvent(@PathVariable Long id, final Model model) {
-        model.addAttribute(Constants.EVENT, eventService.getEventById(id));
-        model.addAttribute(Constants.MODE, Constants.MODE_VIEW);
-        return Constants.VIEW_EVENTVIEWRESULT;
+        model.addAttribute(EVENT, eventService.getEventById(id));
+        model.addAttribute(MODE, MODE_VIEW);
+        return VIEW_EVENTVIEWRESULT;
     }
 
-    @GetMapping(Constants.API_CREATE)
+    @GetMapping(API_CREATE)
     public String save(@ModelAttribute Event event, Model model) {
-        model.addAttribute(Constants.EVENT, event);
-        model.addAttribute(Constants.HOUR_LIST, eventnotificationUtil.getAllHour());
-        model.addAttribute(Constants.MINUTE_LIST, eventnotificationUtil.getAllMinute());
-        model.addAttribute(Constants.EVENT_LIST, eventTypeService.getAllEventType());
-        model.addAttribute(Constants.MODE, Constants.MODE_CREATE);
-        return Constants.VIEW_EVENTCREATE;
+        model.addAttribute(EVENT, event);
+        model.addAttribute(HOUR_LIST, eventnotificationUtil.getAllHour());
+        model.addAttribute(MINUTE_LIST, eventnotificationUtil.getAllMinute());
+        model.addAttribute(EVENT_LIST, eventTypeService.getAllEventType());
+        model.addAttribute(MODE, MODE_CREATE);
+        return VIEW_EVENTCREATE;
     }
 
-    @PostMapping(Constants.API_CREATE)
+    @PostMapping(API_CREATE)
     public String save(@Valid @ModelAttribute Event event,
             BindingResult errors, Model model)
             throws IOException {
 
         if (errors.hasErrors()) {
-            model.addAttribute(Constants.MODE, Constants.MODE_CREATE);
-            model.addAttribute(Constants.HOUR_LIST, eventnotificationUtil.getAllHour());
-            model.addAttribute(Constants.MINUTE_LIST, eventnotificationUtil.getAllMinute());
-            model.addAttribute(Constants.EVENT_LIST, eventTypeService.getAllEventType());
-            model.addAttribute(Constants.MESSAGE, "msg.event.create.error");
-            return Constants.VIEW_EVENTCREATE;
+            model.addAttribute(MODE, MODE_CREATE);
+            model.addAttribute(HOUR_LIST, eventnotificationUtil.getAllHour());
+            model.addAttribute(MINUTE_LIST, eventnotificationUtil.getAllMinute());
+            model.addAttribute(EVENT_LIST, eventTypeService.getAllEventType());
+            model.addAttribute(MESSAGE, "msg.event.create.error");
+            return VIEW_EVENTCREATE;
         }
 
         eventService.saveEvent(event);
         User user = userService.getCurrentUser();
         eventService.sendPushMessage(event, user);
-        model.addAttribute(Constants.EVENT, event);
-        model.addAttribute(Constants.MESSAGE, "msg.event.create.success");
-        model.addAttribute(Constants.MODE, Constants.MODE_VIEW);
-        return Constants.VIEW_EVENTSUCCESS;
+        model.addAttribute(EVENT, event);
+        model.addAttribute(MESSAGE, "msg.event.create.success");
+        model.addAttribute(MODE, MODE_VIEW);
+        return VIEW_EVENTSUCCESS;
     }
 }
