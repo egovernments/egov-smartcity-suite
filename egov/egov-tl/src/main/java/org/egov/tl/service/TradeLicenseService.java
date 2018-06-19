@@ -406,7 +406,8 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     public List<DemandNoticeForm> getLicenseDemandNotices(final DemandNoticeForm demandNoticeForm) {
         final Criteria searchCriteria = entityQueryService.getSession().createCriteria(TradeLicense.class);
         searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat").createAlias("tradeName", "subcat")
-                .createAlias("status", "licstatus").createAlias("natureOfBusiness", "nob");
+                .createAlias("status", "licstatus").createAlias("natureOfBusiness", "nob")
+                .createAlias("licenseDemand", "licDemand");
         if (isNotBlank(demandNoticeForm.getLicenseNumber()))
             searchCriteria.add(Restrictions.eq("licenseNumber", demandNoticeForm.getLicenseNumber()).ignoreCase());
         if (isNotBlank(demandNoticeForm.getOldLicenseNumber()))
@@ -432,6 +433,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         searchCriteria
                 .add(Restrictions.eq("isActive", true))
                 .add(Restrictions.eq("nob.name", PERMANENT_NATUREOFBUSINESS))
+                .add(Restrictions.gtProperty("licDemand.baseDemand", "licDemand.amtCollected"))
                 .addOrder(Order.asc("id"));
         final List<DemandNoticeForm> finalList = new LinkedList<>();
 
