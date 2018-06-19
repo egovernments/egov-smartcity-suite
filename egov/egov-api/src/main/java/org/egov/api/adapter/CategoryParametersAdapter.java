@@ -47,8 +47,8 @@
  */
 package org.egov.api.adapter;
 
-import static org.egov.eventnotification.constants.EventNotificationConstants.PARAMETER_ID;
-import static org.egov.eventnotification.constants.EventNotificationConstants.NAME;
+import static org.egov.eventnotification.constants.ConstantsHelper.PARAMETER_ID;
+import static org.egov.eventnotification.constants.ConstantsHelper.NAME;
 
 import java.lang.reflect.Type;
 

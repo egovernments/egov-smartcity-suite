@@ -47,7 +47,15 @@
  */
 package org.egov.eventnotification.web.controller.notificationdraft;
 
-import static org.egov.eventnotification.constants.EventNotificationConstants.*;
+import static org.egov.eventnotification.constants.ConstantsHelper.CATEGORY_PARAMETERS;
+import static org.egov.eventnotification.constants.ConstantsHelper.DRAFT_LIST;
+import static org.egov.eventnotification.constants.ConstantsHelper.MODE;
+import static org.egov.eventnotification.constants.ConstantsHelper.MODE_CREATE;
+import static org.egov.eventnotification.constants.ConstantsHelper.MODE_VIEW;
+import static org.egov.eventnotification.constants.ConstantsHelper.MODULE_CATEGORY;
+import static org.egov.eventnotification.constants.ConstantsHelper.NOTIFICATION_DRAFT;
+import static org.egov.eventnotification.constants.ConstantsHelper.TEMPLATE_MODULE;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,6 +80,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 public class ModifyNotificationDraftController {
+    private static final String MESSAGE = "message";
+
     @Autowired
     private DraftService draftService;
 
@@ -107,7 +117,7 @@ public class ModifyNotificationDraftController {
 
         model.addAttribute(MODE, MODE_VIEW);
 
-        return VIEW_DRAFTUPDATE;
+        return "draft-update";
     }
 
     @PostMapping("/drafts/update/{id}")
@@ -116,13 +126,13 @@ public class ModifyNotificationDraftController {
         if (errors.hasErrors()) {
             model.addAttribute(MESSAGE, "msg.draft.update.error");
             model.addAttribute(MODE, MODE_CREATE);
-            return VIEW_EVENTCREATE;
+            return "draft-update";
         }
         drafts.setId(id);
         draftService.updateDraft(drafts);
         model.addAttribute(NOTIFICATION_DRAFT, drafts);
         model.addAttribute(MESSAGE, "msg.draft.update.success");
         model.addAttribute(MODE, MODE_VIEW);
-        return VIEW_DRAFTVIEWRESULT;
+        return "draft-view-result";
     }
 }

@@ -47,7 +47,15 @@
  */
 package org.egov.eventnotification.web.controller.event;
 
-import static org.egov.eventnotification.constants.EventNotificationConstants.*;
+import static org.egov.eventnotification.constants.ConstantsHelper.EVENT;
+import static org.egov.eventnotification.constants.ConstantsHelper.EVENT_LIST;
+import static org.egov.eventnotification.constants.ConstantsHelper.EVENT_TYPE_LIST;
+import static org.egov.eventnotification.constants.ConstantsHelper.HOUR_LIST;
+import static org.egov.eventnotification.constants.ConstantsHelper.MINUTE_LIST;
+import static org.egov.eventnotification.constants.ConstantsHelper.MODE;
+import static org.egov.eventnotification.constants.ConstantsHelper.MODE_CREATE;
+import static org.egov.eventnotification.constants.ConstantsHelper.MODE_VIEW;
+
 import java.io.IOException;
 
 import javax.validation.Valid;
@@ -73,8 +81,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
  *
  */
 @Controller
-@RequestMapping(value = API_EVENT)
+@RequestMapping(value = "/event/")
 public class EventController {
+
+    private static final String ACTIVE = "Active";
+    private static final String MESSAGE = "message";
 
     @Autowired
     private EventService eventService;
@@ -88,33 +99,33 @@ public class EventController {
     @Autowired
     private EventTypeService eventTypeService;
 
-    @GetMapping(API_VIEW)
+    @GetMapping("view/")
     public String view(@ModelAttribute Event event, final Model model) {
         model.addAttribute(EVENT_LIST,
                 eventService.getAllEventByStatus(ACTIVE.toUpperCase()));
         model.addAttribute(MODE, MODE_VIEW);
         model.addAttribute(EVENT_TYPE_LIST, eventTypeService.getAllEventType());
-        return VIEW_EVENTVIEW;
+        return "event-view";
     }
 
-    @GetMapping(API_VIEW_ID)
+    @GetMapping("view/{id}")
     public String viewByEvent(@PathVariable Long id, final Model model) {
         model.addAttribute(EVENT, eventService.getEventById(id));
         model.addAttribute(MODE, MODE_VIEW);
-        return VIEW_EVENTVIEWRESULT;
+        return "event-view-result";
     }
 
-    @GetMapping(API_CREATE)
+    @GetMapping("create/")
     public String save(@ModelAttribute Event event, Model model) {
         model.addAttribute(EVENT, event);
         model.addAttribute(HOUR_LIST, eventnotificationUtil.getAllHour());
         model.addAttribute(MINUTE_LIST, eventnotificationUtil.getAllMinute());
         model.addAttribute(EVENT_LIST, eventTypeService.getAllEventType());
         model.addAttribute(MODE, MODE_CREATE);
-        return VIEW_EVENTCREATE;
+        return "event-create";
     }
 
-    @PostMapping(API_CREATE)
+    @PostMapping("create/")
     public String save(@Valid @ModelAttribute Event event,
             BindingResult errors, Model model)
             throws IOException {
@@ -125,7 +136,7 @@ public class EventController {
             model.addAttribute(MINUTE_LIST, eventnotificationUtil.getAllMinute());
             model.addAttribute(EVENT_LIST, eventTypeService.getAllEventType());
             model.addAttribute(MESSAGE, "msg.event.create.error");
-            return VIEW_EVENTCREATE;
+            return "event-create";
         }
 
         eventService.saveEvent(event);
@@ -134,6 +145,6 @@ public class EventController {
         model.addAttribute(EVENT, event);
         model.addAttribute(MESSAGE, "msg.event.create.success");
         model.addAttribute(MODE, MODE_VIEW);
-        return VIEW_EVENTSUCCESS;
+        return "event-success";
     }
 }

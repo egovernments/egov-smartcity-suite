@@ -47,7 +47,12 @@
  */
 package org.egov.api.adapter;
 
-import static org.egov.eventnotification.constants.EventNotificationConstants.*;
+import static org.egov.eventnotification.constants.ConstantsHelper.DDMMYYYY;
+import static org.egov.eventnotification.constants.ConstantsHelper.EMPTY;
+import static org.egov.eventnotification.constants.ConstantsHelper.EVENT_HOST;
+import static org.egov.eventnotification.constants.ConstantsHelper.EVENT_ID;
+import static org.egov.eventnotification.constants.ConstantsHelper.NAME;
+import static org.egov.eventnotification.constants.ConstantsHelper.ZERO;
 
 import java.lang.reflect.Type;
 
@@ -61,6 +66,14 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 
 public class EventSearchAdapter extends DataAdapter<Event> {
+    private static final double DOUBLE_DEFAULT = 0.0;
+    private static final int MAX_TEN = 10;
+    private static final String URL = "url";
+    private static final String NO = "No";
+    private static final String EVENT_FILENAME = "fileName";
+    private static final String EVENT_FILESTOREID = "fileStoreId";
+    private static final String EVENT_COST = "cost";
+    private static final String INTERESTED_COUNT = "interestedCount";
 
     private UserEventService usereventService;
 
@@ -73,10 +86,10 @@ public class EventSearchAdapter extends DataAdapter<Event> {
         JsonObject jsonObjectEvent = new JsonObject();
         jsonObjectEvent.addProperty(EVENT_ID, event.getId());
         jsonObjectEvent.addProperty(NAME, event.getName());
-        jsonObjectEvent.addProperty(EVENT_DESC, event.getDescription());
+        jsonObjectEvent.addProperty("description", event.getDescription());
 
         DateTime sd = new DateTime(event.getStartDate());
-        jsonObjectEvent.addProperty(EVENT_STARTDATE,
+        jsonObjectEvent.addProperty("startDate",
                 DateUtils.getDate(DateUtils.getDefaultFormattedDate(event.getStartDate()), DDMMYYYY).getTime());
         String startHH = null;
         String startMM = null;
@@ -90,10 +103,10 @@ public class EventSearchAdapter extends DataAdapter<Event> {
         else
             startMM = String.valueOf(sd.getMinuteOfHour());
 
-        jsonObjectEvent.addProperty(EVENT_STARTTIME, startHH + ":" + startMM);
+        jsonObjectEvent.addProperty("startTime", startHH + ":" + startMM);
 
         DateTime ed = new DateTime(event.getEndDate());
-        jsonObjectEvent.addProperty(EVENT_ENDDATE,
+        jsonObjectEvent.addProperty("endDate",
                 DateUtils.getDate(DateUtils.getDefaultFormattedDate(event.getEndDate()), DDMMYYYY).getTime());
         String endHH = null;
         String endMM = null;
@@ -107,14 +120,14 @@ public class EventSearchAdapter extends DataAdapter<Event> {
         else
             endMM = String.valueOf(ed.getMinuteOfHour());
 
-        jsonObjectEvent.addProperty(EVENT_ENDTIME, endHH + ":" + endMM);
+        jsonObjectEvent.addProperty("endTime", endHH + ":" + endMM);
 
         jsonObjectEvent.addProperty(EVENT_HOST, event.getEventhost());
-        jsonObjectEvent.addProperty(EVENT_LOCATION, event.getEventlocation());
-        jsonObjectEvent.addProperty(EVENT_ADDRESS, event.getAddress());
-        jsonObjectEvent.addProperty(EVENT_CONTACTNO, event.getContactNumber());
-        jsonObjectEvent.addProperty(EVENT_ISPAID, event.isPaid());
-        jsonObjectEvent.addProperty(EVENT_EVENTTYPE, event.getEventType().getName());
+        jsonObjectEvent.addProperty("eventlocation", event.getEventlocation());
+        jsonObjectEvent.addProperty("address", event.getAddress());
+        jsonObjectEvent.addProperty("contactnumber", event.getContactNumber());
+        jsonObjectEvent.addProperty("ispaid", event.isPaid());
+        jsonObjectEvent.addProperty("eventType", event.getEventType().getName());
         if (event.getFilestore() == null) {
             jsonObjectEvent.addProperty(EVENT_FILESTOREID, EMPTY);
             jsonObjectEvent.addProperty(EVENT_FILENAME, EMPTY);
@@ -133,7 +146,7 @@ public class EventSearchAdapter extends DataAdapter<Event> {
         else
             jsonObjectEvent.addProperty(URL, event.getUrl());
 
-        jsonObjectEvent.addProperty(USER_INTERESTED, NO);
+        jsonObjectEvent.addProperty("userInterested", NO);
 
         Long interestedCount = usereventService.countUsereventByEventId(event.getId());
         if (interestedCount == null)

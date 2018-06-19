@@ -47,7 +47,15 @@
  */
 package org.egov.eventnotification.web.controller.schedule;
 
-import static org.egov.eventnotification.constants.EventNotificationConstants.*;
+import static org.egov.eventnotification.constants.ConstantsHelper.DRAFT_LIST;
+import static org.egov.eventnotification.constants.ConstantsHelper.HOUR_LIST;
+import static org.egov.eventnotification.constants.ConstantsHelper.MINUTE_LIST;
+import static org.egov.eventnotification.constants.ConstantsHelper.MODE;
+import static org.egov.eventnotification.constants.ConstantsHelper.MODE_VIEW;
+import static org.egov.eventnotification.constants.ConstantsHelper.NOTIFICATION_SCHEDULE;
+import static org.egov.eventnotification.constants.ConstantsHelper.SCHEDULED_STATUS;
+import static org.egov.eventnotification.constants.ConstantsHelper.SCHEDULER_REPEAT_LIST;
+
 import java.util.Date;
 
 import javax.validation.Valid;
@@ -80,6 +88,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 public class ModifyScheduleController {
+    private static final String MESSAGE = "message";
+    private static final String EVENT_NOTIFICATION_GROUP = "EVENT_NOTIFICATION_GROUP";
+    private static final String TRIGGER = "eventNotificationTrigger";
+
     @Autowired
     private ScheduleService scheduleService;
 
@@ -108,7 +120,7 @@ public class ModifyScheduleController {
         model.addAttribute(MODE, MODE_VIEW);
         model.addAttribute(DRAFT_LIST, draftTypeService.getAllDraftType());
 
-        return SCHEDULE_UPDATE_VIEW;
+        return "schedule-update-view";
     }
 
     @PostMapping("/schedule/update/{id}")
@@ -121,7 +133,7 @@ public class ModifyScheduleController {
             model.addAttribute(MODE, MODE_VIEW);
             model.addAttribute(MESSAGE, "msg.notification.schedule.update.error");
 
-            return SCHEDULE_UPDATE_VIEW;
+            return "schedule-update-view";
         }
         schedule.setId(id);
         DateTime sd = new DateTime(schedule.getEventDetails().getStartDt());
@@ -167,6 +179,6 @@ public class ModifyScheduleController {
 
         model.addAttribute(NOTIFICATION_SCHEDULE, schedule);
         model.addAttribute(MESSAGE, "msg.notification.schedule.update.success");
-        return SCHEDULE_UPDATE_SUCCESS;
+        return "schedule-update-success";
     }
 }

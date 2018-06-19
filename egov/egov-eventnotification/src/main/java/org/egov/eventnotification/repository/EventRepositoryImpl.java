@@ -47,14 +47,11 @@
  */
 package org.egov.eventnotification.repository;
 
-import static org.egov.eventnotification.constants.EventNotificationConstants.ACTIVE;
-import static org.egov.eventnotification.constants.EventNotificationConstants.EVENT_ENDDATE;
-import static org.egov.eventnotification.constants.EventNotificationConstants.EVENT_HOST;
-import static org.egov.eventnotification.constants.EventNotificationConstants.EVENT_ID;
-import static org.egov.eventnotification.constants.EventNotificationConstants.EVENT_STARTDATE;
-import static org.egov.eventnotification.constants.EventNotificationConstants.NAME;
-import static org.egov.eventnotification.constants.EventNotificationConstants.STATUS_COLUMN;
-import static org.egov.eventnotification.constants.EventNotificationConstants.UPCOMING;
+import static org.egov.eventnotification.constants.ConstantsHelper.EVENT_HOST;
+import static org.egov.eventnotification.constants.ConstantsHelper.EVENT_ID;
+import static org.egov.eventnotification.constants.ConstantsHelper.NAME;
+import static org.egov.eventnotification.constants.ConstantsHelper.STATUS_COLUMN;
+import static org.egov.eventnotification.constants.ConstantsHelper.UPCOMING;
 
 import java.util.Date;
 import java.util.List;
@@ -74,6 +71,7 @@ import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 
 public class EventRepositoryImpl implements EventRepositoryCustom {
+    private static final String ACTIVE = "Active";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -119,8 +117,8 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
         if (eventSearch.getEventHost() != null)
             criteria.add(Restrictions.ilike(EVENT_HOST, eventSearch.getEventHost(), MatchMode.ANYWHERE));
 
-        criteria.add(Restrictions.between(EVENT_STARTDATE, startDate, endDate));
-        criteria.add(Restrictions.ge(EVENT_ENDDATE, DateUtils.today()));
+        criteria.add(Restrictions.between("startDate", startDate, endDate));
+        criteria.add(Restrictions.ge("endDate", DateUtils.today()));
         criteria.add(Restrictions.eq(STATUS_COLUMN, ACTIVE.toUpperCase()));
 
         criteria.addOrder(Order.desc(EVENT_ID));
