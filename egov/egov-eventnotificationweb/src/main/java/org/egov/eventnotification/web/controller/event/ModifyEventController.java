@@ -47,7 +47,15 @@
  */
 package org.egov.eventnotification.web.controller.event;
 
-import static org.egov.eventnotification.constants.EventNotificationConstants.*;
+import static org.egov.eventnotification.constants.ConstantsHelper.EVENT;
+import static org.egov.eventnotification.constants.ConstantsHelper.EVENT_LIST;
+import static org.egov.eventnotification.constants.ConstantsHelper.EVENT_STATUS_LIST;
+import static org.egov.eventnotification.constants.ConstantsHelper.HOUR_LIST;
+import static org.egov.eventnotification.constants.ConstantsHelper.MINUTE_LIST;
+import static org.egov.eventnotification.constants.ConstantsHelper.MODE;
+import static org.egov.eventnotification.constants.ConstantsHelper.MODE_UPDATE;
+import static org.egov.eventnotification.constants.ConstantsHelper.MODE_VIEW;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,6 +80,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class ModifyEventController {
 
+    private static final String MESSAGE = "message";
+
     @Autowired
     private EventService eventService;
 
@@ -93,7 +103,7 @@ public class ModifyEventController {
         model.addAttribute(EVENT_LIST, eventTypeService.getAllEventType());
         model.addAttribute(MODE, MODE_UPDATE);
         model.addAttribute(EVENT_STATUS_LIST, new ArrayList<>(Arrays.asList(EventStatus.values())));
-        return VIEW_EVENTUPDATE;
+        return "event-update";
     }
 
     @PostMapping("/event/update/{id}")
@@ -107,7 +117,7 @@ public class ModifyEventController {
             model.addAttribute(MODE, MODE_UPDATE);
             model.addAttribute(EVENT_STATUS_LIST, new ArrayList<>(Arrays.asList(EventStatus.values())));
             model.addAttribute(MESSAGE, "msg.event.update.error");
-            return VIEW_EVENTUPDATE;
+            return "event-update";
         }
         event.setId(id);
         DateTime sd = new DateTime(event.getEventDetails().getStartDt());
@@ -126,6 +136,6 @@ public class ModifyEventController {
         model.addAttribute(EVENT, event);
         model.addAttribute(MESSAGE, "msg.event.update.success");
         model.addAttribute(MODE, MODE_VIEW);
-        return VIEW_EVENTUPDATESUCCESS;
+        return "event-update-success";
     }
 }

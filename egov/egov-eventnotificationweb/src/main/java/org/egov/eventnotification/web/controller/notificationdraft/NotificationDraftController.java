@@ -47,7 +47,15 @@
  */
 package org.egov.eventnotification.web.controller.notificationdraft;
 
-import static org.egov.eventnotification.constants.EventNotificationConstants.*;
+import static org.egov.eventnotification.constants.ConstantsHelper.CATEGORY_PARAMETERS;
+import static org.egov.eventnotification.constants.ConstantsHelper.DRAFT_LIST;
+import static org.egov.eventnotification.constants.ConstantsHelper.MODE;
+import static org.egov.eventnotification.constants.ConstantsHelper.MODE_CREATE;
+import static org.egov.eventnotification.constants.ConstantsHelper.MODE_VIEW;
+import static org.egov.eventnotification.constants.ConstantsHelper.MODULE_CATEGORY;
+import static org.egov.eventnotification.constants.ConstantsHelper.NOTIFICATION_DRAFT;
+import static org.egov.eventnotification.constants.ConstantsHelper.TEMPLATE_MODULE;
+
 import javax.validation.Valid;
 
 import org.egov.eventnotification.entity.Drafts;
@@ -67,8 +75,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping(value = NOTIFICATION_DRAFTS_VIEW)
+@RequestMapping(value = "/drafts/")
 public class NotificationDraftController {
+    private static final String MESSAGE = "message";
 
     @Autowired
     private DraftService draftService;
@@ -85,28 +94,28 @@ public class NotificationDraftController {
     @Autowired
     private DraftTypeService draftTypeService;
 
-    @GetMapping(API_VIEW)
+    @GetMapping("view/")
     public String view(final Model model) {
-        model.addAttribute(NOTIFICATION_DRAFT_LIST, draftService.getAllDrafts());
+        model.addAttribute("NotificationDrafts", draftService.getAllDrafts());
         model.addAttribute(DRAFT_LIST, draftTypeService.getAllDraftType());
-        return VIEW_DRAFTS_VIEW;
+        return "drafts-view";
     }
 
-    @GetMapping(API_VIEW_ID)
+    @GetMapping("view/{id}")
     public String viewByDraft(@PathVariable Long id, final Model model) {
         model.addAttribute(NOTIFICATION_DRAFT, draftService.getDraftById(id));
         model.addAttribute(MODE, MODE_VIEW);
 
-        return VIEW_DRAFTVIEWRESULT;
+        return "draft-view-result";
     }
 
-    @GetMapping(CATEGORY_FOR_MODULE)
+    @GetMapping("getCategoriesForModule/")
     public String getCategoriesForModule(@ModelAttribute Long moduleId, final Model model) {
         model.addAttribute(MODULE_CATEGORY, moduleCategoryService.getCategoriesForModule(moduleId));
         return model.toString();
     }
 
-    @GetMapping(API_CREATE)
+    @GetMapping("create/")
     public String create(@ModelAttribute Drafts notificationDraft, Model model) {
         model.addAttribute(DRAFT_LIST, draftTypeService.getAllDraftType());
         model.addAttribute(NOTIFICATION_DRAFT, notificationDraft);
@@ -114,21 +123,21 @@ public class NotificationDraftController {
         model.addAttribute(MODULE_CATEGORY, moduleCategoryService.getAllCategories());
         model.addAttribute(CATEGORY_PARAMETERS, categoryParametersService.getAllParameters());
         model.addAttribute(MODE, MODE_CREATE);
-        return VIEW_DRAFTS_CREATE;
+        return "drafts-create";
     }
 
-    @PostMapping(API_CREATE)
+    @PostMapping("create/")
     public String create(@Valid @ModelAttribute Drafts notificationDraft,
             BindingResult errors, Model model) {
         if (errors.hasErrors()) {
             model.addAttribute(MESSAGE, "msg.draft.create.error");
             model.addAttribute(MODE, MODE_CREATE);
-            return VIEW_EVENTCREATE;
+            return "drafts-create";
         }
         draftService.saveDraft(notificationDraft);
         model.addAttribute(NOTIFICATION_DRAFT, notificationDraft);
         model.addAttribute(MESSAGE, "msg.draft.create.success");
         model.addAttribute(MODE, MODE_VIEW);
-        return VIEW_DRAFTS_CREATE_SUCCESS;
+        return "draft-success";
     }
 }

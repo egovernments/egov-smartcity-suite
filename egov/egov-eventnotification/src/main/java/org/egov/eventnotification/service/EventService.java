@@ -47,16 +47,13 @@
  */
 package org.egov.eventnotification.service;
 
-import static org.egov.eventnotification.constants.EventNotificationConstants.ACTIVE;
-import static org.egov.eventnotification.constants.EventNotificationConstants.DDMMYYYY;
-import static org.egov.eventnotification.constants.EventNotificationConstants.EMPTY;
-import static org.egov.eventnotification.constants.EventNotificationConstants.MAX_TEN;
-import static org.egov.eventnotification.constants.EventNotificationConstants.MIN_NUMBER_OF_REQUESTS;
-import static org.egov.eventnotification.constants.EventNotificationConstants.MODULE_NAME;
-import static org.egov.eventnotification.constants.EventNotificationConstants.NO;
-import static org.egov.eventnotification.constants.EventNotificationConstants.NOTIFICATION_TYPE_EVENT;
-import static org.egov.eventnotification.constants.EventNotificationConstants.YES;
-import static org.egov.eventnotification.constants.EventNotificationConstants.ZERO;
+import static org.egov.eventnotification.constants.ConstantsHelper.DDMMYYYY;
+import static org.egov.eventnotification.constants.ConstantsHelper.EMPTY;
+import static org.egov.eventnotification.constants.ConstantsHelper.MIN_NUMBER_OF_REQUESTS;
+import static org.egov.eventnotification.constants.ConstantsHelper.MODULE_NAME;
+import static org.egov.eventnotification.constants.ConstantsHelper.NOTIFICATION_TYPE_EVENT;
+import static org.egov.eventnotification.constants.ConstantsHelper.YES;
+import static org.egov.eventnotification.constants.ConstantsHelper.ZERO;
 
 import java.io.IOException;
 import java.util.Date;
@@ -85,6 +82,9 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @Transactional(readOnly = true)
 public class EventService {
+    private static final String ACTIVE = "Active";
+    private static final int MAX_TEN = 10;
+    private static final String NO = "No";
 
     @Autowired
     private EventRepository eventRepository;

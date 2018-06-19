@@ -47,25 +47,12 @@
  */
 package org.egov.api.controller;
 
-import static org.egov.api.controller.core.ApiUrl.CATEGORY_ID_PATH_PARAM;
-import static org.egov.api.controller.core.ApiUrl.EVENT_ID_PATH_PARAM;
-import static org.egov.api.controller.core.ApiUrl.EVENT_IMAGE_DOWNLOAD;
-import static org.egov.api.controller.core.ApiUrl.GET_ALL_EVENT;
-import static org.egov.api.controller.core.ApiUrl.GET_CATEGORY_FOR_MODULE;
-import static org.egov.api.controller.core.ApiUrl.GET_EVENT;
-import static org.egov.api.controller.core.ApiUrl.GET_PARAMETERS_FOR_CATEGORY;
-import static org.egov.api.controller.core.ApiUrl.INTERESTED;
-import static org.egov.api.controller.core.ApiUrl.MODULE_ID_PATH_PARAM;
-import static org.egov.api.controller.core.ApiUrl.SEARCH_DRAFT_PATH_PARAM;
-import static org.egov.api.controller.core.ApiUrl.SEARCH_EVENT;
-import static org.egov.eventnotification.constants.EventNotificationConstants.ACTIVE;
-import static org.egov.eventnotification.constants.EventNotificationConstants.EVENTID;
-import static org.egov.eventnotification.constants.EventNotificationConstants.FAIL;
-import static org.egov.eventnotification.constants.EventNotificationConstants.INTERESTED_COUNT;
-import static org.egov.eventnotification.constants.EventNotificationConstants.MODULE_NAME;
-import static org.egov.eventnotification.constants.EventNotificationConstants.SUCCESS;
-import static org.egov.eventnotification.constants.EventNotificationConstants.USERID;
-import static org.egov.eventnotification.constants.EventNotificationConstants.ZERO;
+import static org.egov.eventnotification.constants.ConstantsHelper.EVENTID;
+import static org.egov.eventnotification.constants.ConstantsHelper.FAIL;
+import static org.egov.eventnotification.constants.ConstantsHelper.MODULE_NAME;
+import static org.egov.eventnotification.constants.ConstantsHelper.SUCCESS;
+import static org.egov.eventnotification.constants.ConstantsHelper.USERID;
+import static org.egov.eventnotification.constants.ConstantsHelper.ZERO;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import java.io.File;
@@ -111,6 +98,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 @org.springframework.web.bind.annotation.RestController
 public class RestEventController extends ApiController {
     private static final Logger LOGGER = Logger.getLogger(RestEventController.class);
+    private static final String ACTIVE = "Active";
+    private static final String INTERESTED_COUNT = "interestedCount";
+
     @Autowired
     private EventService eventService;
 
@@ -126,7 +116,7 @@ public class RestEventController extends ApiController {
     @Autowired
     private CategoryParametersService categoryParametersService;
 
-    @GetMapping(path = GET_ALL_EVENT, produces = APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/events", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<String> getAllEvent() {
         try {
             return getResponseHandler()
@@ -138,7 +128,7 @@ public class RestEventController extends ApiController {
         }
     }
 
-    @GetMapping(path = GET_EVENT + EVENT_ID_PATH_PARAM, produces = APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/event/{id}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<String> getEvent(@PathVariable long id, @RequestParam(required = false) Long userid) {
         try {
             return getResponseHandler()
@@ -150,9 +140,9 @@ public class RestEventController extends ApiController {
         }
     }
 
-    @GetMapping(path = SEARCH_EVENT, produces = APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/event/search", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<String> searchEvent(EventSearch eventSearch) {
-        
+
         try {
             return getResponseHandler()
                     .setDataAdapter(new EventSearchAdapter(usereventService))
@@ -163,7 +153,7 @@ public class RestEventController extends ApiController {
         }
     }
 
-    @GetMapping(path = SEARCH_DRAFT_PATH_PARAM, produces = APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/draft/search", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<String> searchDraft(@RequestParam(required = false) String type,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) Long module) {
@@ -184,7 +174,7 @@ public class RestEventController extends ApiController {
         }
     }
 
-    @GetMapping(path = GET_CATEGORY_FOR_MODULE + MODULE_ID_PATH_PARAM, produces = APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/draft/getCategoriesForModule/{moduleId}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<String> getCategoriesForModule(@PathVariable long moduleId) {
         try {
             return getResponseHandler()
@@ -196,7 +186,7 @@ public class RestEventController extends ApiController {
         }
     }
 
-    @GetMapping(path = GET_PARAMETERS_FOR_CATEGORY + CATEGORY_ID_PATH_PARAM, produces = APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/draft/getParametersForCategory/{categoryId}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<String> getParametersForCategory(@PathVariable long categoryId) {
         try {
             return getResponseHandler()
@@ -208,7 +198,7 @@ public class RestEventController extends ApiController {
         }
     }
 
-    @PostMapping(path = GET_EVENT + INTERESTED, produces = APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/event/interested", produces = APPLICATION_JSON_VALUE)
     public String saveUserEvent(@RequestBody String jsonData) {
         JSONObject requestObject = (JSONObject) JSONValue.parse(jsonData);
         JSONObject responseObject = new JSONObject();
@@ -233,7 +223,7 @@ public class RestEventController extends ApiController {
         return responseObject.toJSONString();
     }
 
-    @GetMapping(path = EVENT_IMAGE_DOWNLOAD, produces = APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/event/{id}/download/{fileStoreId}", produces = APPLICATION_JSON_VALUE)
     public void downloadEventImage(@PathVariable final Long id, @PathVariable final String fileStoreId,
             final HttpServletResponse response) throws IOException {
         try {

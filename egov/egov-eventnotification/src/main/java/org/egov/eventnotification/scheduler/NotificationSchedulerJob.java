@@ -47,12 +47,12 @@
  */
 package org.egov.eventnotification.scheduler;
 
-import static org.egov.eventnotification.constants.EventNotificationConstants.BMA_INTERFACE_SUFFIX;
-import static org.egov.eventnotification.constants.EventNotificationConstants.BUSINESS_NOTIFICATION_TYPE;
-import static org.egov.eventnotification.constants.EventNotificationConstants.PROPERTY_MODULE;
-import static org.egov.eventnotification.constants.EventNotificationConstants.SCHEDULEID;
-import static org.egov.eventnotification.constants.EventNotificationConstants.SCHEDULE_COMPLETE;
-import static org.egov.eventnotification.constants.EventNotificationConstants.WATER_CHARGES_MODULE;
+import static org.egov.eventnotification.constants.ConstantsHelper.BMA_INTERFACE_SUFFIX;
+import static org.egov.eventnotification.constants.ConstantsHelper.BUSINESS_NOTIFICATION_TYPE;
+import static org.egov.eventnotification.constants.ConstantsHelper.PROPERTY_MODULE;
+import static org.egov.eventnotification.constants.ConstantsHelper.SCHEDULEID;
+import static org.egov.eventnotification.constants.ConstantsHelper.SCHEDULE_COMPLETE;
+import static org.egov.eventnotification.constants.ConstantsHelper.WATER_CHARGES_MODULE;
 
 import java.util.ArrayList;
 import java.util.Date;

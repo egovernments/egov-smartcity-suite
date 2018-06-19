@@ -47,7 +47,14 @@
  */
 package org.egov.eventnotification.service;
 
-import static org.egov.eventnotification.constants.EventNotificationConstants.*;
+import static org.egov.eventnotification.constants.ConstantsHelper.DAY_CRON;
+import static org.egov.eventnotification.constants.ConstantsHelper.DDMMYYYY;
+import static org.egov.eventnotification.constants.ConstantsHelper.HOURS_CRON;
+import static org.egov.eventnotification.constants.ConstantsHelper.MINUTES_CRON;
+import static org.egov.eventnotification.constants.ConstantsHelper.MONTH_CRON;
+import static org.egov.eventnotification.constants.ConstantsHelper.SCHEDULED_STATUS;
+import static org.egov.eventnotification.constants.ConstantsHelper.ZERO;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -68,6 +75,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class ScheduleService {
+    private static final int MAX_TEN = 10;
 
     @Autowired
     private ScheduleRepository notificationscheduleRepository;
@@ -148,16 +156,16 @@ public class ScheduleService {
         int minutes = calendar.getMinuteOfHour();
 
         switch (notificationschedule.getScheduleRepeat().getName().toLowerCase()) {
-        case SCHEDULE_DAY:
+        case "day":
             cronExpression = appProperties.getDailyJobCron().replace(MINUTES_CRON, String.valueOf(minutes));
             cronExpression = cronExpression.replace(HOURS_CRON, String.valueOf(hours));
             break;
-        case SCHEDULE_MONTH:
+        case "month":
             cronExpression = appProperties.getMonthlyJobCron().replace(MINUTES_CRON, String.valueOf(minutes));
             cronExpression = cronExpression.replace(HOURS_CRON, String.valueOf(hours));
             cronExpression = cronExpression.replace(DAY_CRON, String.valueOf(calendar.getDayOfMonth()));
             break;
-        case SCHEDULE_YEAR:
+        case "year":
             cronExpression = appProperties.getYearlyJobCron().replace(MINUTES_CRON, String.valueOf(minutes));
             cronExpression = cronExpression.replace(HOURS_CRON, String.valueOf(hours));
             cronExpression = cronExpression.replace(DAY_CRON, String.valueOf(calendar.getDayOfMonth()));

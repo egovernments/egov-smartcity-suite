@@ -47,7 +47,15 @@
  */
 package org.egov.eventnotification.web.controller.schedule;
 
-import static org.egov.eventnotification.constants.EventNotificationConstants.*;
+import static org.egov.eventnotification.constants.ConstantsHelper.DRAFT_LIST;
+import static org.egov.eventnotification.constants.ConstantsHelper.HOUR_LIST;
+import static org.egov.eventnotification.constants.ConstantsHelper.MINUTE_LIST;
+import static org.egov.eventnotification.constants.ConstantsHelper.MODE;
+import static org.egov.eventnotification.constants.ConstantsHelper.MODE_DELETE;
+import static org.egov.eventnotification.constants.ConstantsHelper.MODE_VIEW;
+import static org.egov.eventnotification.constants.ConstantsHelper.NOTIFICATION_SCHEDULE;
+import static org.egov.eventnotification.constants.ConstantsHelper.SCHEDULER_REPEAT_LIST;
+
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
@@ -90,6 +98,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class ScheduleController {
+    private static final String MESSAGE = "message";
+    private static final String EVENT_NOTIFICATION_GROUP = "EVENT_NOTIFICATION_GROUP";
+    private static final String TRIGGER = "eventNotificationTrigger";
+    private static final String JOB = "eventNotificationJob";
 
     @Autowired
     private ScheduleService scheduleService;
@@ -115,15 +127,15 @@ public class ScheduleController {
     @GetMapping("/schedule/view/")
     public String view(Model model) {
         model.addAttribute(DRAFT_LIST, draftService.getAllDrafts());
-        model.addAttribute(SCHEDULE_LIST,
+        model.addAttribute("scheduleList",
                 scheduleService.getAllSchedule());
-        return SCHEDULE_VIEW;
+        return "schedule-view";
     }
 
     @GetMapping("/schedule/create/{id}")
     public String save(@PathVariable Long id, @ModelAttribute Schedule schedule, Model model) {
         Drafts notificationDrafts = draftService.getDraftById(id);
-        schedule.setStatus(TO_BE_SCHEDULED);
+        schedule.setStatus("To be Scheduled");
         schedule.setMessageTemplate(notificationDrafts.getMessage());
         schedule.setTemplateName(notificationDrafts.getName());
         schedule.setDraftType(notificationDrafts.getDraftType());
@@ -136,7 +148,7 @@ public class ScheduleController {
 
         model.addAttribute(SCHEDULER_REPEAT_LIST, scheduleRepeatService.getAllScheduleRepeat());
 
-        return SCHEDULE_CREATE_VIEW;
+        return "schedule-create-view";
     }
 
     @PostMapping("/schedule/create/")
@@ -148,7 +160,7 @@ public class ScheduleController {
             model.addAttribute(MINUTE_LIST, eventnotificationUtil.getAllMinute());
             model.addAttribute(SCHEDULER_REPEAT_LIST, scheduleRepeatService.getAllScheduleRepeat());
             model.addAttribute(MESSAGE, "msg.notification.schedule.error");
-            return SCHEDULE_CREATE_VIEW;
+            return "schedule-create-view";
         }
 
         User user = userService.getCurrentUser();
@@ -160,7 +172,7 @@ public class ScheduleController {
         try {
             jobDetail.setName(ApplicationThreadLocals.getTenantID().concat("_")
                     .concat(JOB.concat(String.valueOf(schedule.getId()))));
-            jobDetail.getJobDataMap().put(SCHEDULEID, String.valueOf(schedule.getId()));
+            jobDetail.getJobDataMap().put("scheduleId", String.valueOf(schedule.getId()));
             String fullURL = request.getRequestURL().toString();
             jobDetail.getJobDataMap().put("contextURL", fullURL.substring(0, StringUtils.ordinalIndexOf(fullURL, "/", 3)));
 
@@ -188,7 +200,7 @@ public class ScheduleController {
         model.addAttribute(MESSAGE, "msg.notification.schedule.success");
         model.addAttribute(MODE, MODE_VIEW);
         model.addAttribute(NOTIFICATION_SCHEDULE, schedule);
-        return SCHEDULE_CREATE_SUCCESS;
+        return "schedule-create-success";
     }
 
     @GetMapping("/schedule/view/{id}")
@@ -197,19 +209,19 @@ public class ScheduleController {
         DateTime sd = new DateTime(notificationSchedule.getStartDate());
 
         if (sd.isBeforeNow())
-            model.addAttribute(SCHEDULE_EDITABLE, false);
+            model.addAttribute("scheduleEditable", false);
         else
-            model.addAttribute(SCHEDULE_EDITABLE, true);
+            model.addAttribute("scheduleEditable", true);
         model.addAttribute(NOTIFICATION_SCHEDULE, notificationSchedule);
         model.addAttribute(MODE, MODE_DELETE);
-        return SCHEDULE_DETAILS_VIEW;
+        return "schedule-details-view";
     }
 
     @GetMapping(path = { "/schedule/delete/{id}" }, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String deleteSchedule(@PathVariable Long id, Model model) {
         Schedule notificationSchedule = scheduleService.getScheduleById(id);
-        notificationSchedule.setStatus(SCHEDULE_DISABLED);
+        notificationSchedule.setStatus("Disabled");
 
         notificationSchedule = scheduleService.updateSchedule(notificationSchedule);
         final Scheduler scheduler = (Scheduler) beanProvider.getBean("eventnotificationScheduler");
@@ -222,6 +234,6 @@ public class ScheduleController {
             throw new ApplicationRuntimeException(e.getMessage(), e);
         }
         model.addAttribute(MESSAGE, "msg.notification.schedule.delete.success");
-        return SCHEDULE_DELETE_SUCCESS;
+        return "success";
     }
 }
