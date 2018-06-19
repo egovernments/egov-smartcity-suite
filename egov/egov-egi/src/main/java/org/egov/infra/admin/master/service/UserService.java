@@ -171,4 +171,8 @@ public class UserService {
     public List<User> getUsersByUsernameAndRolename(String userName, String roleName) {
         return userRepository.findUsersByUserAndRoleName(userName, roleName);
     }
+    
+    public List<User> findByMobileNumberAndType(String mobileNumber,UserType type) {
+        return userRepository.findByMobileNumberAndType(mobileNumber,type);
+    }
 }
