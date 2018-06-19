@@ -106,34 +106,34 @@
 						<tr>
 							<!-- 							<td></td> -->
 							<td><form:select path="floorTemp[0].classificationId"
-									id="floorTemp[${vs.index}].classificationId" class="form-control">
+									id="floorTemp[0].classificationId" class="form-control">
 									<form:option value="">Select</form:option>
 									<form:options items="${classificationId}" />
 								</form:select></td>
 							<td><form:select path="floorTemp[0].usageId"
-									id="floorTemp[${vs.index}].usageId" class="form-control">
+									id="floorTemp[0].usageId" class="form-control">
 									<form:option value="">Select</form:option>
 									<form:options items="${usageId}" />
 								</form:select></td>
 							<td><form:select path="floorTemp[0].floorId"
-									id="floorTemp[${vs.index}].floorId" class="form-control">
+									id="floorTemp[0].floorId" class="form-control">
 									<form:option value="">Select</form:option>
 									<form:options items="${floorId}" />
 								</form:select></td>
 							<td><form:select path="floorTemp[0].occupancyId"
-									id="floorTemp[${vs.index}].occupancyId" class="form-control">
+									id="floorTemp[0].occupancyId" class="form-control">
 									<form:option value="">Select</form:option>
 									<form:options items="${occupancyId}" />
 								</form:select></td>
 							<td><form:input path="floorTemp[0].constructionDate"
-									id="floorTemp[${vs.index}].constructionDate" type="text"
+									id="floorTemp[0].constructionDate" type="text"
 									class="form-control datepicker constructionDate"
 									data-date-end-date="0d" required="required" /></td>
 							<td><form:input path="floorTemp[0].constructedPlinthArea"
-									id="floorTemp[${vs.index}].constructedPlinthArea" type="text"
+									id="floorTemp[0].constructedPlinthArea" type="text"
 									required="required" class="form-control" /></td>
 							<td><form:input path="floorTemp[0].plinthAreaInBuildingPlan"
-									id="floorTemp[${vs.index}].plinthAreaInBuildingPlan"
+									id="floorTemp[0].plinthAreaInBuildingPlan"
 									type="text" required="required" class="form-control" /></td>
 							<td class="text-center"><a href="javascript:void(0);"
 								class="btn-sm btn-danger" id="deleteFloorRow"><i
@@ -153,8 +153,7 @@
 				<div class="text-center">
 					<button type="button" id="calculateTax" class="btn btn-primary">
 						Calculate</button>
-					<button type="button" id="btnclose" class="btn btn-default"
-						onclick="window.close();">Close</button>
+					<button type="button" id="btnReset" class="btn btn-default">Reset</button>
 				</div>
 			</div>
 		</div>

@@ -67,33 +67,36 @@ $(document)
 							.click(
 									function() {
 										if (validateFloorOnAdd("Please enter or select all values of existing rows before adding. Values cannot empty.")) {
-
-											var idx = $(tbody).find('tr').length;
-											// Add row
-											var row = {
-												'idx' : idx
-											};
-											addRowFromObject(row);
-											jQuery(".constructionDate")
-													.datepicker({
-														format : 'dd/mm/yyyy',
-														autoclose : true,
-													}).data('datepicker');
-											loadZonelist("floorTemp[" + idx
-													+ "].zoneId");
-											loadClassificationlist("floorTemp["
-													+ idx + "].classificationId");
-											loadUsagelist("floorTemp[" + idx
-													+ "].usageId");
-											loadFloorlist("floorTemp[" + idx
-													+ "].floorId");
-											loadOccupancylist("floorTemp["
-													+ idx + "].occupancyId");
+											addRowWithData();
 										}
 									});
 
 					function addRowFromObject(rowJsonObj) {
 						table.append(row.compose(rowJsonObj));
+					}
+					
+					function addRowWithData(){
+						var idx = $(tbody).find('tr').length;
+						// Add row
+						var row = {
+							'idx' : idx
+						};
+						addRowFromObject(row);
+						jQuery(".constructionDate")
+								.datepicker({
+									format : 'dd/mm/yyyy',
+									autoclose : true,
+								}).data('datepicker');
+						loadZonelist("floorTemp[" + idx
+								+ "].zoneId");
+						loadClassificationlist("floorTemp["
+								+ idx + "].classificationId");
+						loadUsagelist("floorTemp[" + idx
+								+ "].usageId");
+						loadFloorlist("floorTemp[" + idx
+								+ "].floorId");
+						loadOccupancylist("floorTemp["
+								+ idx + "].occupancyId");
 					}
 
 					String.prototype.compose = (function() {
@@ -316,4 +319,11 @@ $(document)
 				    });
 
 
+				    $(document).on('click',"#btnReset",function (){
+				    	$('#floorDetails tbody').find('tr').remove();
+				    	addRowWithData();
+				    	$('#taxResult tbody').find('tr').remove();
+						$('#arv').html('');
+						$('#taxResult').addClass('display-hide');
+			    });
 				});
