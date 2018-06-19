@@ -77,7 +77,7 @@ $(document).ready(function(){
 		    		  $("#draftViewTable").dataTable().fnAddData( [
 		    			  obj.id,
 		    			  obj.name,
-		    			  obj.type,
+		    			  obj.draftType,
 		    			  obj.module.name,
 		    			  obj.category.name,
 		    			  obj.message

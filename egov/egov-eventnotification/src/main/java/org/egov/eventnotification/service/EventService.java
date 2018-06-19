@@ -64,6 +64,7 @@ import java.util.List;
 
 import org.egov.eventnotification.entity.Event;
 import org.egov.eventnotification.entity.contracts.EventDetails;
+import org.egov.eventnotification.entity.contracts.EventSearch;
 import org.egov.eventnotification.repository.EventRepository;
 import org.egov.eventnotification.repository.custom.EventRepositoryCustom;
 import org.egov.infra.admin.master.entity.User;
@@ -195,8 +196,8 @@ public class EventService {
         return eventRepository.save(updatedEvent);
     }
 
-    public List<Event> searchEvent(Event eventObj, String eventDateType) {
-        return eventRepositoryCustom.searchEvent(eventObj, eventDateType);
+    public List<Event> searchEvent(EventSearch eventSearch) {
+        return eventRepositoryCustom.searchEvent(eventSearch);
     }
 
     public void eventUploadWallpaper(Event event) throws IOException {

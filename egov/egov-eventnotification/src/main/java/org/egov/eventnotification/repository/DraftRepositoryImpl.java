@@ -48,7 +48,7 @@
 package org.egov.eventnotification.repository;
 
 import static org.egov.eventnotification.constants.Constants.DRAFT_ID;
-import static org.egov.eventnotification.constants.Constants.DRAFT_NAME;
+import static org.egov.eventnotification.constants.Constants.NAME;
 
 import java.util.List;
 
@@ -77,7 +77,7 @@ public class DraftRepositoryImpl implements DraftRepositoryCustom {
             criteria.add(Restrictions.ilike("draftType.name",
                     draftObj.getDraftType().getName(), MatchMode.ANYWHERE));
         if (StringUtils.isNotBlank(draftObj.getName()))
-            criteria.add(Restrictions.ilike(DRAFT_NAME, draftObj.getName(), MatchMode.ANYWHERE));
+            criteria.add(Restrictions.ilike(NAME, draftObj.getName(), MatchMode.ANYWHERE));
         criteria.addOrder(Order.desc(DRAFT_ID));
         return criteria.list();
     }

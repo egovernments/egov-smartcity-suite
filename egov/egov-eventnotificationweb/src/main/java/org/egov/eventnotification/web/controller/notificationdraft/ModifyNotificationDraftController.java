@@ -47,24 +47,12 @@
  */
 package org.egov.eventnotification.web.controller.notificationdraft;
 
-import static org.egov.eventnotification.constants.Constants.CATEGORY_PARAMETERS;
-import static org.egov.eventnotification.constants.Constants.DRAFT_LIST;
-import static org.egov.eventnotification.constants.Constants.MESSAGE;
-import static org.egov.eventnotification.constants.Constants.MODE;
-import static org.egov.eventnotification.constants.Constants.MODE_CREATE;
-import static org.egov.eventnotification.constants.Constants.MODE_VIEW;
-import static org.egov.eventnotification.constants.Constants.MODULE_CATEGORY;
-import static org.egov.eventnotification.constants.Constants.NOTIFICATION_DRAFT;
-import static org.egov.eventnotification.constants.Constants.TEMPLATE_MODULE;
-import static org.egov.eventnotification.constants.Constants.VIEW_DRAFTUPDATE;
-import static org.egov.eventnotification.constants.Constants.VIEW_DRAFTVIEWRESULT;
-import static org.egov.eventnotification.constants.Constants.VIEW_EVENTCREATE;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
 
+import org.egov.eventnotification.constants.Constants;
 import org.egov.eventnotification.entity.CategoryParameters;
 import org.egov.eventnotification.entity.Drafts;
 import org.egov.eventnotification.entity.ModuleCategory;
@@ -100,7 +88,7 @@ public class ModifyNotificationDraftController {
     private DraftTypeService draftTypeService;
 
     @ModelAttribute("drafts")
-    public Drafts getNotificationDrafts(@PathVariable("id") Long id) {
+    public Drafts getNotificationDrafts(@PathVariable Long id) {
         return draftService.getDraftById(id);
     }
 
@@ -112,29 +100,29 @@ public class ModifyNotificationDraftController {
             moduleCategoryList = moduleCategoryService.getCategoriesForModule(drafts.getModule().getId());
         if (drafts.getCategory() != null)
             categoryParametersList = categoryParametersService.getParametersForCategory(drafts.getCategory().getId());
-        model.addAttribute(DRAFT_LIST, draftTypeService.getAllDraftType());
-        model.addAttribute(TEMPLATE_MODULE, templateModuleService.getAllModules());
-        model.addAttribute(MODULE_CATEGORY, moduleCategoryList);
-        model.addAttribute(CATEGORY_PARAMETERS, categoryParametersList);
+        model.addAttribute(Constants.DRAFT_LIST, draftTypeService.getAllDraftType());
+        model.addAttribute(Constants.TEMPLATE_MODULE, templateModuleService.getAllModules());
+        model.addAttribute(Constants.MODULE_CATEGORY, moduleCategoryList);
+        model.addAttribute(Constants.CATEGORY_PARAMETERS, categoryParametersList);
 
-        model.addAttribute(MODE, MODE_VIEW);
+        model.addAttribute(Constants.MODE, Constants.MODE_VIEW);
 
-        return VIEW_DRAFTUPDATE;
+        return Constants.VIEW_DRAFTUPDATE;
     }
 
     @PostMapping("/drafts/update/{id}")
-    public String update(@PathVariable("id") Long id, @Valid @ModelAttribute Drafts drafts,
+    public String update(@PathVariable Long id, @Valid @ModelAttribute Drafts drafts,
             BindingResult errors, Model model) {
         if (errors.hasErrors()) {
-            model.addAttribute(MESSAGE, "msg.draft.update.error");
-            model.addAttribute(MODE, MODE_CREATE);
-            return VIEW_EVENTCREATE;
+            model.addAttribute(Constants.MESSAGE, "msg.draft.update.error");
+            model.addAttribute(Constants.MODE, Constants.MODE_CREATE);
+            return Constants.VIEW_EVENTCREATE;
         }
         drafts.setId(id);
-        drafts = draftService.updateDraft(drafts);
-        model.addAttribute(NOTIFICATION_DRAFT, drafts);
-        model.addAttribute(MESSAGE, "msg.draft.update.success");
-        model.addAttribute(MODE, MODE_VIEW);
-        return VIEW_DRAFTVIEWRESULT;
+        draftService.updateDraft(drafts);
+        model.addAttribute(Constants.NOTIFICATION_DRAFT, drafts);
+        model.addAttribute(Constants.MESSAGE, "msg.draft.update.success");
+        model.addAttribute(Constants.MODE, Constants.MODE_VIEW);
+        return Constants.VIEW_DRAFTVIEWRESULT;
     }
 }

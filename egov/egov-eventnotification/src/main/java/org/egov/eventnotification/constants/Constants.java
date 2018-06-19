@@ -47,12 +47,12 @@
  */
 package org.egov.eventnotification.constants;
 
-public class Constants {
+public final class Constants {
 
     public static final String MODULE_NAME = "Eventnotification";
 
     public static final String EVENT_ID = "id";
-    public static final String EVENT_NAME = "name";
+    public static final String NAME = "name";
     public static final String EVENT_DESC = "description";
     public static final String EVENT_STARTDATE = "startDate";
     public static final String EVENT_STARTTIME = "startTime";
@@ -70,11 +70,8 @@ public class Constants {
 
     public static final String MODULE_ID = "moduleId";
     public static final String CATEGORY_ID = "id";
-    public static final String CATEGORY_NAME = "name";
     public static final String PARAMETER_ID = "id";
-    public static final String PARAMETER_NAME = "name";
     public static final String DRAFT_NOTIFICATION_TYPE = "draftType";
-    public static final String DRAFT_NAME = "name";
     public static final String DRAFT_ID = "id";
 
     public static final String DDMMYYYY = "dd/MM/yyyy";
@@ -215,7 +212,7 @@ public class Constants {
 
     public static final String PROPERTY_MODULE = "Property";
     public static final String WATER_CHARGES_MODULE = "Water Charges";
-    
+
     public static final String BMA_INTERFACE_SUFFIX = "BuildMessageAdapter";
 
     private Constants() {

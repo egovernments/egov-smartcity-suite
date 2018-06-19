@@ -102,7 +102,7 @@ public class NotificationSchedulerJob extends AbstractQuartzJob {
 
     @Autowired
     private transient EventnotificationApplicationProperties appProperties;
-    
+
     @Autowired
     private transient EventnotificationUtil eventnotificationUtil;
 
@@ -141,15 +141,17 @@ public class NotificationSchedulerJob extends AbstractQuartzJob {
         if (notificationSchedule.getDraftType().getName().equalsIgnoreCase(BUSINESS_NOTIFICATION_TYPE)) {
             List<UserTaxInformation> userTaxInfoList = null;
             BuildMessageAdapter buildMessageAdapter = getBuildMessageAdapter(notificationSchedule.getModule().getCode());
-            
+
             if (notificationSchedule.getModule().getName().equalsIgnoreCase(PROPERTY_MODULE))
-                userTaxInfoList = scheduleService.getDefaulterUserList(contextURL, appProperties.getPropertytaxRestApi().concat("Water Tax Management"));
+                userTaxInfoList = scheduleService.getDefaulterUserList(contextURL,
+                        appProperties.getPropertytaxRestApi().concat("Water Tax Management"));
             else if (notificationSchedule.getModule().getName().equalsIgnoreCase(WATER_CHARGES_MODULE))
                 userTaxInfoList = scheduleService.getDefaulterUserList(contextURL,
                         appProperties.getWatertaxRestApi().concat("Water Tax Management"));
             if (userTaxInfoList != null)
                 for (UserTaxInformation userTaxInformation : userTaxInfoList) {
-                    String message = buildMessageAdapter.buildMessage(userTaxInformation, notificationSchedule.getMessageTemplate());
+                    String message = buildMessageAdapter.buildMessage(userTaxInformation,
+                            notificationSchedule.getMessageTemplate());
                     List<Long> userIdList = new ArrayList<>();
                     userIdList.add(Long.parseLong(userTaxInformation.getUserId()));
 
@@ -193,7 +195,7 @@ public class NotificationSchedulerJob extends AbstractQuartzJob {
 
         pushNotificationService.sendNotifications(messageContent);
     }
-    
+
     protected BuildMessageAdapter getBuildMessageAdapter(final String serviceCode) {
         return (BuildMessageAdapter) eventnotificationUtil.getBean(serviceCode
                 + BMA_INTERFACE_SUFFIX);

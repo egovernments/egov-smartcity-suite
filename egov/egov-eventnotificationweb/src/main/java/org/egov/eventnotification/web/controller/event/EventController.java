@@ -47,30 +47,11 @@
  */
 package org.egov.eventnotification.web.controller.event;
 
-import static org.egov.eventnotification.constants.Constants.ACTIVE;
-import static org.egov.eventnotification.constants.Constants.API_CREATE;
-import static org.egov.eventnotification.constants.Constants.API_EVENT;
-import static org.egov.eventnotification.constants.Constants.API_VIEW;
-import static org.egov.eventnotification.constants.Constants.API_VIEW_ID;
-import static org.egov.eventnotification.constants.Constants.EVENT;
-import static org.egov.eventnotification.constants.Constants.EVENT_ID;
-import static org.egov.eventnotification.constants.Constants.EVENT_LIST;
-import static org.egov.eventnotification.constants.Constants.EVENT_TYPE_LIST;
-import static org.egov.eventnotification.constants.Constants.HOUR_LIST;
-import static org.egov.eventnotification.constants.Constants.MESSAGE;
-import static org.egov.eventnotification.constants.Constants.MINUTE_LIST;
-import static org.egov.eventnotification.constants.Constants.MODE;
-import static org.egov.eventnotification.constants.Constants.MODE_CREATE;
-import static org.egov.eventnotification.constants.Constants.MODE_VIEW;
-import static org.egov.eventnotification.constants.Constants.VIEW_EVENTCREATE;
-import static org.egov.eventnotification.constants.Constants.VIEW_EVENTSUCCESS;
-import static org.egov.eventnotification.constants.Constants.VIEW_EVENTVIEW;
-import static org.egov.eventnotification.constants.Constants.VIEW_EVENTVIEWRESULT;
-
 import java.io.IOException;
 
 import javax.validation.Valid;
 
+import org.egov.eventnotification.constants.Constants;
 import org.egov.eventnotification.entity.Event;
 import org.egov.eventnotification.service.EventService;
 import org.egov.eventnotification.service.EventTypeService;
@@ -92,7 +73,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  *
  */
 @Controller
-@RequestMapping(value = API_EVENT)
+@RequestMapping(value = Constants.API_EVENT)
 public class EventController {
 
     @Autowired
@@ -107,52 +88,52 @@ public class EventController {
     @Autowired
     private EventTypeService eventTypeService;
 
-    @GetMapping(API_VIEW)
+    @GetMapping(Constants.API_VIEW)
     public String view(@ModelAttribute Event event, final Model model) {
-        model.addAttribute(EVENT_LIST,
-                eventService.getAllEventByStatus(ACTIVE.toUpperCase()));
-        model.addAttribute(MODE, MODE_VIEW);
-        model.addAttribute(EVENT_TYPE_LIST, eventTypeService.getAllEventType());
-        return VIEW_EVENTVIEW;
+        model.addAttribute(Constants.EVENT_LIST,
+                eventService.getAllEventByStatus(Constants.ACTIVE.toUpperCase()));
+        model.addAttribute(Constants.MODE, Constants.MODE_VIEW);
+        model.addAttribute(Constants.EVENT_TYPE_LIST, eventTypeService.getAllEventType());
+        return Constants.VIEW_EVENTVIEW;
     }
 
-    @GetMapping(API_VIEW_ID)
-    public String viewByEvent(@PathVariable(EVENT_ID) Long id, final Model model) {
-        model.addAttribute(EVENT, eventService.getEventById(id));
-        model.addAttribute(MODE, MODE_VIEW);
-        return VIEW_EVENTVIEWRESULT;
+    @GetMapping(Constants.API_VIEW_ID)
+    public String viewByEvent(@PathVariable Long id, final Model model) {
+        model.addAttribute(Constants.EVENT, eventService.getEventById(id));
+        model.addAttribute(Constants.MODE, Constants.MODE_VIEW);
+        return Constants.VIEW_EVENTVIEWRESULT;
     }
 
-    @GetMapping(API_CREATE)
+    @GetMapping(Constants.API_CREATE)
     public String save(@ModelAttribute Event event, Model model) {
-        model.addAttribute(EVENT, event);
-        model.addAttribute(HOUR_LIST, eventnotificationUtil.getAllHour());
-        model.addAttribute(MINUTE_LIST, eventnotificationUtil.getAllMinute());
-        model.addAttribute(EVENT_LIST, eventTypeService.getAllEventType());
-        model.addAttribute(MODE, MODE_CREATE);
-        return VIEW_EVENTCREATE;
+        model.addAttribute(Constants.EVENT, event);
+        model.addAttribute(Constants.HOUR_LIST, eventnotificationUtil.getAllHour());
+        model.addAttribute(Constants.MINUTE_LIST, eventnotificationUtil.getAllMinute());
+        model.addAttribute(Constants.EVENT_LIST, eventTypeService.getAllEventType());
+        model.addAttribute(Constants.MODE, Constants.MODE_CREATE);
+        return Constants.VIEW_EVENTCREATE;
     }
 
-    @PostMapping(API_CREATE)
+    @PostMapping(Constants.API_CREATE)
     public String save(@Valid @ModelAttribute Event event,
             BindingResult errors, Model model)
             throws IOException {
 
         if (errors.hasErrors()) {
-            model.addAttribute(MODE, MODE_CREATE);
-            model.addAttribute(HOUR_LIST, eventnotificationUtil.getAllHour());
-            model.addAttribute(MINUTE_LIST, eventnotificationUtil.getAllMinute());
-            model.addAttribute(EVENT_LIST, eventTypeService.getAllEventType());
-            model.addAttribute(MESSAGE, "msg.event.create.error");
-            return VIEW_EVENTCREATE;
+            model.addAttribute(Constants.MODE, Constants.MODE_CREATE);
+            model.addAttribute(Constants.HOUR_LIST, eventnotificationUtil.getAllHour());
+            model.addAttribute(Constants.MINUTE_LIST, eventnotificationUtil.getAllMinute());
+            model.addAttribute(Constants.EVENT_LIST, eventTypeService.getAllEventType());
+            model.addAttribute(Constants.MESSAGE, "msg.event.create.error");
+            return Constants.VIEW_EVENTCREATE;
         }
 
         eventService.saveEvent(event);
         User user = userService.getCurrentUser();
         eventService.sendPushMessage(event, user);
-        model.addAttribute(EVENT, event);
-        model.addAttribute(MESSAGE, "msg.event.create.success");
-        model.addAttribute(MODE, MODE_VIEW);
-        return VIEW_EVENTSUCCESS;
+        model.addAttribute(Constants.EVENT, event);
+        model.addAttribute(Constants.MESSAGE, "msg.event.create.success");
+        model.addAttribute(Constants.MODE, Constants.MODE_VIEW);
+        return Constants.VIEW_EVENTSUCCESS;
     }
 }

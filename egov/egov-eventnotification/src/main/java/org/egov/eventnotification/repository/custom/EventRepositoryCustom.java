@@ -50,8 +50,9 @@ package org.egov.eventnotification.repository.custom;
 import java.util.List;
 
 import org.egov.eventnotification.entity.Event;
+import org.egov.eventnotification.entity.contracts.EventSearch;
 
 public interface EventRepositoryCustom {
 
-    List<Event> searchEvent(Event event, String eventDateType);
+    List<Event> searchEvent(EventSearch eventSearch);
 }

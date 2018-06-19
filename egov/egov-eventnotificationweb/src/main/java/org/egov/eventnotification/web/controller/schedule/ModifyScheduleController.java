@@ -47,24 +47,11 @@
  */
 package org.egov.eventnotification.web.controller.schedule;
 
-import static org.egov.eventnotification.constants.Constants.DRAFT_LIST;
-import static org.egov.eventnotification.constants.Constants.EVENT_NOTIFICATION_GROUP;
-import static org.egov.eventnotification.constants.Constants.HOUR_LIST;
-import static org.egov.eventnotification.constants.Constants.MESSAGE;
-import static org.egov.eventnotification.constants.Constants.MINUTE_LIST;
-import static org.egov.eventnotification.constants.Constants.MODE;
-import static org.egov.eventnotification.constants.Constants.MODE_VIEW;
-import static org.egov.eventnotification.constants.Constants.NOTIFICATION_SCHEDULE;
-import static org.egov.eventnotification.constants.Constants.SCHEDULED_STATUS;
-import static org.egov.eventnotification.constants.Constants.SCHEDULER_REPEAT_LIST;
-import static org.egov.eventnotification.constants.Constants.SCHEDULE_UPDATE_SUCCESS;
-import static org.egov.eventnotification.constants.Constants.SCHEDULE_UPDATE_VIEW;
-import static org.egov.eventnotification.constants.Constants.TRIGGER;
-
 import java.util.Date;
 
 import javax.validation.Valid;
 
+import org.egov.eventnotification.constants.Constants;
 import org.egov.eventnotification.entity.Schedule;
 import org.egov.eventnotification.service.DraftTypeService;
 import org.egov.eventnotification.service.ScheduleRepeatService;
@@ -109,32 +96,32 @@ public class ModifyScheduleController {
     private ApplicationContext beanProvider;
 
     @ModelAttribute("schedule")
-    public Schedule getNotificationSchedule(@PathVariable("id") Long id) {
+    public Schedule getNotificationSchedule(@PathVariable Long id) {
         return scheduleService.getScheduleById(id);
     }
 
     @GetMapping("/schedule/update/{id}")
     public String update(@ModelAttribute Schedule schedule, Model model) {
-        model.addAttribute(HOUR_LIST, eventnotificationUtil.getAllHour());
-        model.addAttribute(MINUTE_LIST, eventnotificationUtil.getAllMinute());
-        model.addAttribute(SCHEDULER_REPEAT_LIST, scheduleRepeatService.getAllScheduleRepeat());
-        model.addAttribute(MODE, MODE_VIEW);
-        model.addAttribute(DRAFT_LIST, draftTypeService.getAllDraftType());
+        model.addAttribute(Constants.HOUR_LIST, eventnotificationUtil.getAllHour());
+        model.addAttribute(Constants.MINUTE_LIST, eventnotificationUtil.getAllMinute());
+        model.addAttribute(Constants.SCHEDULER_REPEAT_LIST, scheduleRepeatService.getAllScheduleRepeat());
+        model.addAttribute(Constants.MODE, Constants.MODE_VIEW);
+        model.addAttribute(Constants.DRAFT_LIST, draftTypeService.getAllDraftType());
 
-        return SCHEDULE_UPDATE_VIEW;
+        return Constants.SCHEDULE_UPDATE_VIEW;
     }
 
     @PostMapping("/schedule/update/{id}")
-    public String update(@PathVariable("id") Long id, @Valid @ModelAttribute Schedule schedule,
+    public String update(@PathVariable Long id, @Valid @ModelAttribute Schedule schedule,
             BindingResult errors, Model model) {
         if (errors.hasErrors()) {
-            model.addAttribute(HOUR_LIST, eventnotificationUtil.getAllHour());
-            model.addAttribute(MINUTE_LIST, eventnotificationUtil.getAllMinute());
-            model.addAttribute(SCHEDULER_REPEAT_LIST, scheduleRepeatService.getAllScheduleRepeat());
-            model.addAttribute(MODE, MODE_VIEW);
-            model.addAttribute(MESSAGE, "msg.notification.schedule.update.error");
+            model.addAttribute(Constants.HOUR_LIST, eventnotificationUtil.getAllHour());
+            model.addAttribute(Constants.MINUTE_LIST, eventnotificationUtil.getAllMinute());
+            model.addAttribute(Constants.SCHEDULER_REPEAT_LIST, scheduleRepeatService.getAllScheduleRepeat());
+            model.addAttribute(Constants.MODE, Constants.MODE_VIEW);
+            model.addAttribute(Constants.MESSAGE, "msg.notification.schedule.update.error");
 
-            return SCHEDULE_UPDATE_VIEW;
+            return Constants.SCHEDULE_UPDATE_VIEW;
         }
         schedule.setId(id);
         DateTime sd = new DateTime(schedule.getEventDetails().getStartDt());
@@ -142,7 +129,7 @@ public class ModifyScheduleController {
         sd = sd.withMinuteOfHour(Integer.parseInt(schedule.getEventDetails().getStartMM()));
         sd = sd.withSecondOfMinute(00);
         schedule.setStartDate(sd.toDate());
-        schedule.setStatus(SCHEDULED_STATUS);
+        schedule.setStatus(Constants.SCHEDULED_STATUS);
 
         scheduleService.updateSchedule(schedule);
 
@@ -152,10 +139,10 @@ public class ModifyScheduleController {
 
             if (cronExpression == null) {
                 TriggerKey triggerKey = new TriggerKey(ApplicationThreadLocals.getTenantID().concat("_")
-                        .concat(TRIGGER.concat(String.valueOf(schedule.getId()))),
-                        EVENT_NOTIFICATION_GROUP);
+                        .concat(Constants.TRIGGER.concat(String.valueOf(schedule.getId()))),
+                        Constants.EVENT_NOTIFICATION_GROUP);
                 final SimpleTriggerImpl trigger = new SimpleTriggerImpl();
-                trigger.setName(TRIGGER.concat(String.valueOf(schedule.getId())));
+                trigger.setName(Constants.TRIGGER.concat(String.valueOf(schedule.getId())));
                 trigger.setStartTime(new Date(System.currentTimeMillis() + 100000));
                 trigger.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_FIRE_NOW);
                 scheduler.rescheduleJob(triggerKey, trigger);
@@ -163,10 +150,11 @@ public class ModifyScheduleController {
                     scheduler.start();
             } else {
                 TriggerKey triggerKey = new TriggerKey(ApplicationThreadLocals.getTenantID().concat("_")
-                        .concat(TRIGGER.concat(String.valueOf(schedule.getId()))),
-                        EVENT_NOTIFICATION_GROUP);
+                        .concat(Constants.TRIGGER.concat(String.valueOf(schedule.getId()))),
+                        Constants.EVENT_NOTIFICATION_GROUP);
                 final Trigger trigger = TriggerBuilder.newTrigger()
-                        .withIdentity(TRIGGER.concat(String.valueOf(schedule.getId())), EVENT_NOTIFICATION_GROUP)
+                        .withIdentity(Constants.TRIGGER.concat(String.valueOf(schedule.getId())),
+                                Constants.EVENT_NOTIFICATION_GROUP)
                         .withSchedule(CronScheduleBuilder.cronSchedule(cronExpression)).build();
                 scheduler.rescheduleJob(triggerKey, trigger);
                 if (!scheduler.isShutdown())
@@ -177,8 +165,8 @@ public class ModifyScheduleController {
             throw new ApplicationRuntimeException(e.getMessage(), e);
         }
 
-        model.addAttribute(NOTIFICATION_SCHEDULE, schedule);
-        model.addAttribute(MESSAGE, "msg.notification.schedule.update.success");
-        return SCHEDULE_UPDATE_SUCCESS;
+        model.addAttribute(Constants.NOTIFICATION_SCHEDULE, schedule);
+        model.addAttribute(Constants.MESSAGE, "msg.notification.schedule.update.success");
+        return Constants.SCHEDULE_UPDATE_SUCCESS;
     }
 }
