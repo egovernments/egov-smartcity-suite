@@ -740,6 +740,11 @@ public class WaterConnectionDetailsService {
                 && workFlowAction.equalsIgnoreCase(APPROVEWORKFLOWACTION))
             waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                     APPLICATION_STATUS_DIGITALSIGNPENDING, MODULETYPE));
+        else if (WF_STATE_REJECTED.equalsIgnoreCase(waterConnectionDetails.getState().getValue()) &&
+                APPLICATION_STATUS_ESTIMATENOTICEGEN.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()) &&
+                FORWARDWORKFLOWACTION.equalsIgnoreCase(workFlowAction))
+            waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_CREATED,
+                    MODULETYPE));
         else if (workFlowAction.equals(SIGNWORKFLOWACTION) && waterConnectionDetails.getStatus()
                 .getCode().equals(APPLICATION_STATUS_DIGITALSIGNPENDING) &&
                 REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))

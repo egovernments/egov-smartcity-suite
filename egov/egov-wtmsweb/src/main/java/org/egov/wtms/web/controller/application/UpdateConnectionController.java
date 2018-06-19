@@ -183,6 +183,8 @@ public class UpdateConnectionController extends GenericConnectionController {
     private static final String DONATION_AMOUNT = "donationCharges";
     private static final String ROAD_CATEGORY_LIST = "roadCategoryList";
     private static final String REJECTED = "Rejected";
+    private static final String YES = "Yes";
+    private static final String DEMAND_ISHISTORY_Y = "Y";
 
     private final DepartmentService departmentService;
 
@@ -399,7 +401,7 @@ public class UpdateConnectionController extends GenericConnectionController {
                 !WF_STATE_CLERK_APPROVED.equals(waterConnectionDetails.getState().getValue())) {
             final AppConfig appConfig = appConfigService.getAppConfigByModuleNameAndKeyName(MODULE_NAME,
                     WaterTaxConstants.PROCEEDWITHOUTDONATIONAMOUNTPAID);
-            if ("YES".equals(appConfig.getConfValues().get(0).getValue()))
+            if (YES.equals(appConfig.getConfValues().get(0).getValue()))
                 model.addAttribute("proceedWithoutDonation", "true");
         }
         model.addAttribute("hasJuniorOrSeniorAssistantRole",
@@ -558,6 +560,8 @@ public class UpdateConnectionController extends GenericConnectionController {
                     if (waterConnectionDetails.getConnectionType().toString().equalsIgnoreCase(METERED)
                             && waterConnectionDetails.getStatus().getCode().equalsIgnoreCase(APPLICATION_STATUS_CREATED))
                         waterConnectionDetails.setDonationCharges(donationCharges);
+                    if (!waterConnectionDetails.getWaterDemandConnection().isEmpty())
+                        waterConnectionDetails.getWaterDemandConnection().get(0).getDemand().setIsHistory(DEMAND_ISHISTORY_Y);
                     waterDemandConnection.setDemand(connectionDemandService.createDemand(waterConnectionDetails));
                     waterDemandConnection.setWaterConnectionDetails(waterConnectionDetails);
                     waterConnectionDetails.addWaterDemandConnection(waterDemandConnection);
