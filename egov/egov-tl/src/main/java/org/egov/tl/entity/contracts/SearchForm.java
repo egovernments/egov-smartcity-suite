@@ -59,7 +59,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static java.math.BigDecimal.ZERO;
 import static org.egov.infra.utils.StringUtils.toYesOrNo;
 import static org.egov.tl.utils.Constants.CLOSURE_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.CSCOPERATOR;
@@ -128,7 +127,7 @@ public class SearchForm extends DataTableSearchRequest {
         if (user.hasRole(CSCOPERATOR))
             addPrintCertificatesOptions(license, licenseActions);
         if (user.getType().equals(UserType.EMPLOYEE)) {
-            if (license.getIsActive() && license.getTotalBalance().compareTo(ZERO) > ZERO.intValue())
+            if (license.getIsActive() && license.getTotalBalance().signum() > 0)
                 licenseActions.add("Generate Demand Notice");
             if (license.isLegacyWithNoState())
                 licenseActions.add("Modify Legacy License");
