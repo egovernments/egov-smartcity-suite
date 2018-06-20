@@ -49,8 +49,8 @@ package org.egov.eventnotification.config;
 
 import static org.quartz.CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.sql.DataSource;
 
@@ -108,7 +108,7 @@ public class NotificationSchedulerConfiguration extends QuartzSchedulerConfigura
         notificationJobDetail.setDurability(true);
         notificationJobDetail.setJobClass(NotificationSchedulerJob.class);
         notificationJobDetail.setRequestsRecovery(true);
-        Map<String, String> jobDetailMap = new HashMap<>();
+        Map<String, String> jobDetailMap = new ConcurrentHashMap<>();
         jobDetailMap.put("jobBeanName", "notificationJob");
         jobDetailMap.put("userName", "system");
         jobDetailMap.put("cityDataRequired", "true");

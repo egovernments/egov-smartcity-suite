@@ -121,7 +121,7 @@ public class PushNotificationService {
 
     public void sendNotifications(MessageContent messageContent) {
         List<UserFcmDevice> userDeviceList = null;
-        if (messageContent.isSendAll())
+        if (messageContent.getMessageContentDetails().isSendAll())
             userDeviceList = getAllUserDeviceList();
         else
             userDeviceList = getUserDeviceList(messageContent);
@@ -131,7 +131,7 @@ public class PushNotificationService {
     }
 
     private List<UserFcmDevice> getUserDeviceList(MessageContent messageContent) {
-        return getAllUserDeviceByUser(messageContent.getUserIdList());
+        return getAllUserDeviceByUser(messageContent.getMessageContentDetails().getUserIdList());
     }
 
     private List<UserFcmDevice> getAllUserDeviceList() {

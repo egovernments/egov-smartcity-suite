@@ -101,7 +101,6 @@ public final class ConstantsHelper {
     public static final String SUCCESS = "success";
     public static final String FAIL = "fail";
     public static final String STATUS_COLUMN = "status";
-    //public static final String INTERESTED_COUNT = "interestedCount";
     public static final String EVENT_DATE_TYPE = "eventDateType";
     public static final String UPCOMING = "upcoming";
     public static final String ONGOING = "ongoing";

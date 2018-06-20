@@ -45,50 +45,44 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.wtms.integration.bmi;
+package org.egov.pushbox.entity.contracts;
 
-import static org.egov.eventnotification.constants.ConstantsHelper.DDMMYYYY;
-import static org.egov.eventnotification.constants.ConstantsHelper.MESSAGE_BILLAMT;
-import static org.egov.eventnotification.constants.ConstantsHelper.MESSAGE_BILLNO;
-import static org.egov.eventnotification.constants.ConstantsHelper.MESSAGE_CONSNO;
-import static org.egov.eventnotification.constants.ConstantsHelper.MESSAGE_DISRPTDATE;
-import static org.egov.eventnotification.constants.ConstantsHelper.MESSAGE_USERNAME;
+import java.util.List;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-
-import org.egov.eventnotification.entity.contracts.UserTaxInformation;
-import org.egov.eventnotification.integration.bmi.BuildMessageAdapter;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-
-public class WCBuildMessageAdapter implements BuildMessageAdapter {
-
-    @Autowired
-    private UserService userService;
-
-    @Override
-    public String buildMessage(UserTaxInformation userTaxInformation, String message) {
-        DateFormat formatter = new SimpleDateFormat(DDMMYYYY);
-        User user = userService.getUserById(Long.parseLong(userTaxInformation.getUserId()));
-        String finalMessage = message;
-        if (finalMessage.contains(MESSAGE_CONSNO))
-            finalMessage = finalMessage.replace(MESSAGE_CONSNO, userTaxInformation.getConsumerNumber());
-
-        if (finalMessage.contains(MESSAGE_BILLNO))
-            finalMessage = finalMessage.replace(MESSAGE_BILLNO, userTaxInformation.getBillNo());
-
-        if (finalMessage.contains(MESSAGE_BILLAMT))
-            finalMessage = finalMessage.replace(MESSAGE_BILLAMT, userTaxInformation.getDueAmount());
-
-        if (finalMessage.contains(MESSAGE_USERNAME))
-            finalMessage = finalMessage.replace(MESSAGE_USERNAME, user.getName());
-
-        if (finalMessage.contains(MESSAGE_DISRPTDATE) && userTaxInformation.getDueDate() != null)
-            finalMessage = finalMessage.replace(MESSAGE_DISRPTDATE, formatter.format(userTaxInformation.getDueDate()));
-
-        return finalMessage;
+public class MessageContentDetails {
+    private Long eventDateTime;
+    private String eventLocation;
+    private String eventAddress;
+    private List<Long> userIdList;
+    private boolean sendAll;
+    public Long getEventDateTime() {
+        return eventDateTime;
     }
-
+    public void setEventDateTime(Long eventDateTime) {
+        this.eventDateTime = eventDateTime;
+    }
+    public String getEventLocation() {
+        return eventLocation;
+    }
+    public void setEventLocation(String eventLocation) {
+        this.eventLocation = eventLocation;
+    }
+    public String getEventAddress() {
+        return eventAddress;
+    }
+    public void setEventAddress(String eventAddress) {
+        this.eventAddress = eventAddress;
+    }
+    public List<Long> getUserIdList() {
+        return userIdList;
+    }
+    public void setUserIdList(List<Long> userIdList) {
+        this.userIdList = userIdList;
+    }
+    public boolean isSendAll() {
+        return sendAll;
+    }
+    public void setSendAll(boolean sendAll) {
+        this.sendAll = sendAll;
+    }
 }
