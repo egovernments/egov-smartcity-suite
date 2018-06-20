@@ -137,9 +137,9 @@
 	    				<td>
 	    					<c:out value="${listVar.eventDetails.endHH}" />:<c:out value="${listVar.eventDetails.endMM}" />
 	    				</td>
-	    				<td><c:out value="${listVar.eventhost}"/></td>
-	    				<td><c:out value="${listVar.eventlocation}"/></td>
-	    				<td><c:out value="${listVar.address}"/></td>
+	    				<td><c:out value="${listVar.eventAddress.eventhost}"/></td>
+	    				<td><c:out value="${listVar.eventAddress.eventlocation}"/></td>
+	    				<td><c:out value="${listVar.eventAddress.address}"/></td>
 	    				<td><c:out value="${listVar.eventType.name}"/></td>
 	    				<td>
 	    				<c:choose>

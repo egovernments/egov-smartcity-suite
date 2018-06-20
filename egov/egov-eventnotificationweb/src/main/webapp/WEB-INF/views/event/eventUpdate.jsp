@@ -157,34 +157,34 @@
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.host" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="eventhost" id="eventhost" name="eventhost" 
-								class="form-control text-left patternvalidation" maxlength="100" required="required" value="${eventhost}"/>
-							<form:errors path="eventhost" cssClass="error-msg" />
+							<form:input path="eventAddress.eventhost" id="eventhost" name="eventAddress.eventhost" 
+								class="form-control text-left patternvalidation" maxlength="100" required="required" value="${eventAddress.eventhost}"/>
+							<form:errors path="eventAddress.eventhost" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.contactno" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="contactNumber" id="contactNumber" name="contactNumber" 
-								class="form-control text-left patternvalidation" maxlength="100" required="required"/>
-							<form:errors path="contactNumber" cssClass="error-msg" />
+							<form:input path="eventAddress.contactNumber" id="contactNumber" name="eventAddress.contactNumber" 
+								class="form-control text-left patternvalidation" maxlength="100" required="required" value="${eventAddress.contactNumber}"/>
+							<form:errors path="eventAddress.contactNumber" cssClass="error-msg" />
 						</div>
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.location" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<div class="input-group">
-								<form:input path="eventlocation" id="eventlocation" name="eventlocation" class="form-control text-left patternvalidation" maxlength="100" required="required" value="${event.eventlocation}"/>
+								<form:input path="eventAddress.eventlocation" id="eventlocation" name="eventAddress.eventlocation" class="form-control text-left patternvalidation" maxlength="100" required="required" value="${event.eventAddress.eventlocation}"/>
 								<span class="input-group-addon map-class btn-secondary" title="See on map" onclick="jQuery('#modal-6').modal('show', {backdrop: 'static'});"><i class="fa fa-map-marker specific"></i></span>
 								<form:hidden path="eventDetails.crossHierarchyId" id="crosshierarchyId"/>
 	                            <form:hidden path="eventDetails.lat" id="lat"/>
 	                            <form:hidden path="eventDetails.lng" id="lng"/>
-								<form:errors path="eventlocation" cssClass="error-msg" />
+								<form:errors path="eventAddress.eventlocation" cssClass="error-msg" />
 							</div>
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.address" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<form:textarea path="address" id="address" name="address" 
-								class="form-control text-left patternvalidation" maxlength="256" required="required" value="${address}" readonly="true"/>
-							<form:errors path="address" cssClass="error-msg" />
+							<form:textarea path="eventAddress.address" id="address" name="eventAddress.address" 
+								class="form-control text-left patternvalidation" maxlength="256" required="required" value="${eventAddress.address}" readonly="true"/>
+							<form:errors path="eventAddress.address" cssClass="error-msg" />
 						</div>
 					</div>
 					<div class="form-group">
@@ -223,10 +223,10 @@
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.url" />:</label>
 						<div class="col-sm-10 add-margin">
-							<form:input path="url" id="url" name="url"
+							<form:input path="eventAddress.url" id="url" name="eventAddress.url"
 								class="form-control text-left patternvalidation"
-								maxlength="200" value="${url}"/>
-							<form:errors path="url" cssClass="error-msg" />
+								maxlength="200" value="${eventAddress.url}"/>
+							<form:errors path="eventAddress.url" cssClass="error-msg" />
 						</div>
 					</div>
 			</div>

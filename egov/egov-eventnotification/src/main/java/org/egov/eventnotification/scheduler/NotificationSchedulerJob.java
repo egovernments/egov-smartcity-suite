@@ -69,6 +69,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
 import org.egov.pushbox.entity.contracts.MessageContent;
+import org.egov.pushbox.entity.contracts.MessageContentDetails;
 import org.egov.pushbox.service.PushNotificationService;
 import org.joda.time.DateTime;
 import org.quartz.DisallowConcurrentExecution;
@@ -177,8 +178,10 @@ public class NotificationSchedulerJob extends AbstractQuartzJob {
         calendarEnd.plusMinutes(minutes1);
 
         MessageContent messageContent = new MessageContent();
+        MessageContentDetails messageDetails = new MessageContentDetails();
+        
         messageContent.setCreatedDateTime(new Date().getTime());
-        messageContent.setEventDateTime(calendar.getMillis());
+        messageDetails.setEventDateTime(calendar.getMillis());
         messageContent.setExpiryDate(calendarEnd.getMillis());
         if (messageBody == null)
             messageContent.setMessageBody(notificationSchedule.getMessageTemplate());
@@ -187,11 +190,12 @@ public class NotificationSchedulerJob extends AbstractQuartzJob {
         messageContent.setModuleName(notificationSchedule.getTemplateName());
         messageContent.setNotificationDateTime(new Date().getTime());
         messageContent.setNotificationType(notificationSchedule.getDraftType().getName());
-        messageContent.setSendAll(seandAll);
+        messageDetails.setSendAll(seandAll);
         if (userIdList != null)
-            messageContent.setUserIdList(userIdList);
+            messageDetails.setUserIdList(userIdList);
         messageContent.setSenderId(user.getId());
         messageContent.setSenderName(user.getName());
+        messageContent.setMessageContentDetails(messageDetails);
 
         pushNotificationService.sendNotifications(messageContent);
     }

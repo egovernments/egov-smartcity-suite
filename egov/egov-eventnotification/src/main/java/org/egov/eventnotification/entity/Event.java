@@ -51,6 +51,7 @@ import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -106,21 +107,6 @@ public class Event extends AbstractAuditable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date endDate;
 
-    @NotNull
-    @SafeHtml
-    @Length(max = 100)
-    private String eventhost;
-
-    @NotNull
-    @SafeHtml
-    @Length(max = 100)
-    private String eventlocation;
-
-    @NotNull
-    @SafeHtml
-    @Length(max = 200)
-    private String address;
-
     private boolean paid;
 
     private Double cost;
@@ -141,18 +127,14 @@ public class Event extends AbstractAuditable {
     private String message;
 
     @SafeHtml
-    @Length(max = 200)
-    private String url;
-
-    @SafeHtml
     @Length(max = 20)
     private String status;
 
-    @SafeHtml
-    private String contactNumber;
-
     @Transient
     private EventDetails eventDetails;
+    
+    @Embedded
+    private EventAddress eventAddress;
 
     public EventDetails getEventDetails() {
         return eventDetails;
@@ -196,30 +178,6 @@ public class Event extends AbstractAuditable {
         this.description = description;
     }
 
-    public String getEventhost() {
-        return eventhost;
-    }
-
-    public void setEventhost(String eventhost) {
-        this.eventhost = eventhost;
-    }
-
-    public String getEventlocation() {
-        return eventlocation;
-    }
-
-    public void setEventlocation(String eventlocation) {
-        this.eventlocation = eventlocation;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
     public Double getCost() {
         return cost;
     }
@@ -242,14 +200,6 @@ public class Event extends AbstractAuditable {
 
     public void setMessage(String message) {
         this.message = message;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
     }
 
     public String getStatus() {
@@ -284,11 +234,11 @@ public class Event extends AbstractAuditable {
         this.endDate = endDate;
     }
 
-    public String getContactNumber() {
-        return contactNumber;
+    public EventAddress getEventAddress() {
+        return eventAddress;
     }
 
-    public void setContactNumber(String contactNumber) {
-        this.contactNumber = contactNumber;
+    public void setEventAddress(EventAddress eventAddress) {
+        this.eventAddress = eventAddress;
     }
 }

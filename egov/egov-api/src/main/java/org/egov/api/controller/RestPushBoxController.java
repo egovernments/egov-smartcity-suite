@@ -66,6 +66,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.pushbox.entity.UserFcmDevice;
 import org.egov.pushbox.entity.contracts.MessageContent;
+import org.egov.pushbox.entity.contracts.MessageContentDetails;
 import org.egov.pushbox.service.PushNotificationService;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -138,16 +139,16 @@ public class RestPushBoxController extends ApiController {
         try {
             MessageContent message = createMessageContentFromRequest(jsonObject);
             if (sendAll)
-                message.setSendAll(true);
+                message.getMessageContentDetails().setSendAll(true);
             else {
                 JsonElement userIdElement = jsonObject.get("userIdList");
                 JsonArray jsonArray = userIdElement.getAsJsonArray();
                 List<Long> userIdList = new ArrayList<>();
                 for (JsonElement element : jsonArray)
                     userIdList.add(Long.valueOf(isNotBlank(element.getAsString()) ? element.getAsString() : "0"));
-                message.setUserIdList(userIdList);
+                message.getMessageContentDetails().setUserIdList(userIdList);
             }
-                message.setSendAll(true);
+                message.getMessageContentDetails().setSendAll(true);
             notificationService.sendNotifications(message);
 
             UserFcmDevice responseObject = new UserFcmDevice();
@@ -160,11 +161,12 @@ public class RestPushBoxController extends ApiController {
 
     private MessageContent createMessageContentFromRequest(JsonObject content) {
         MessageContent message = new MessageContent();
+        MessageContentDetails messageDetails = new MessageContentDetails();
         message.setMessageId(content.get("messageId").getAsLong());
         message.setCreatedDateTime(content.get("createdDate").getAsLong());
-        message.setEventAddress(content.get("eventAddress").getAsString());
-        message.setEventDateTime(content.get("eventDateTime").getAsLong());
-        message.setEventLocation(content.get("eventLocation").getAsString());
+        messageDetails.setEventAddress(content.get("eventAddress").getAsString());
+        messageDetails.setEventDateTime(content.get("eventDateTime").getAsLong());
+        messageDetails.setEventLocation(content.get("eventLocation").getAsString());
         message.setExpiryDate(content.get("expiryDate").getAsLong());
         message.setImageUrl(content.get("imageUrl").getAsString());
         message.setMessageBody(content.get("messageBody").getAsString());
@@ -173,6 +175,7 @@ public class RestPushBoxController extends ApiController {
         message.setNotificationType(content.get("notificationType").getAsString());
         message.setSenderId(content.get("senderId").getAsLong());
         message.setSenderName(content.get("senderName").getAsString());
+        message.setMessageContentDetails(messageDetails);
         return message;
     }
 

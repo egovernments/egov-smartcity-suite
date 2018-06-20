@@ -70,19 +70,20 @@ public class PTBuildMessageAdapter implements BuildMessageAdapter {
     public String buildMessage(UserTaxInformation userTaxInformation, String message) {
         DateFormat formatter = new SimpleDateFormat(DDMMYYYY);
         User user = userService.getUserById(Long.parseLong(userTaxInformation.getUserId()));
-        if (message.contains(MESSAGE_USERNAME))
-            message = message.replace(MESSAGE_USERNAME, user.getName());
+        String finalMessage = message;
+        if (finalMessage.contains(MESSAGE_USERNAME))
+            finalMessage = finalMessage.replace(MESSAGE_USERNAME, user.getName());
 
-        if (message.contains(MESSAGE_PROPTNO))
-            message = message.replace(MESSAGE_PROPTNO, userTaxInformation.getConsumerNumber());
+        if (finalMessage.contains(MESSAGE_PROPTNO))
+            finalMessage = finalMessage.replace(MESSAGE_PROPTNO, userTaxInformation.getConsumerNumber());
 
-        if (message.contains(MESSAGE_DUEDATE) && userTaxInformation.getDueDate() != null)
-            message = message.replace(MESSAGE_DUEDATE, formatter.format(userTaxInformation.getDueDate()));
+        if (finalMessage.contains(MESSAGE_DUEDATE) && userTaxInformation.getDueDate() != null)
+            finalMessage = finalMessage.replace(MESSAGE_DUEDATE, formatter.format(userTaxInformation.getDueDate()));
 
-        if (message.contains(MESSAGE_DUEAMT))
-            message = message.replace(MESSAGE_DUEAMT, userTaxInformation.getDueAmount());
+        if (finalMessage.contains(MESSAGE_DUEAMT))
+            finalMessage = finalMessage.replace(MESSAGE_DUEAMT, userTaxInformation.getDueAmount());
 
-        return message;
+        return finalMessage;
     }
 
 }

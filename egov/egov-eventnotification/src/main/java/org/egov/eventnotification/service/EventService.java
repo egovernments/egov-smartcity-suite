@@ -68,6 +68,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.utils.DateUtils;
 import org.egov.pushbox.entity.contracts.MessageContent;
+import org.egov.pushbox.entity.contracts.MessageContentDetails;
 import org.egov.pushbox.service.PushNotificationService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -230,10 +231,11 @@ public class EventService {
         DateTime calendarEnd = new DateTime(event.getEndDate());
 
         MessageContent messageContent = new MessageContent();
+        MessageContentDetails messageDetails = new MessageContentDetails();
         messageContent.setCreatedDateTime(new Date().getTime());
-        messageContent.setEventAddress(event.getAddress());
-        messageContent.setEventDateTime(calendar.getMillis());
-        messageContent.setEventLocation(event.getEventlocation());
+        messageDetails.setEventAddress(event.getEventAddress().getAddress());
+        messageDetails.setEventDateTime(calendar.getMillis());
+        messageDetails.setEventLocation(event.getEventAddress().getEventlocation());
         messageContent.setExpiryDate(calendarEnd.getMillis());
         if (event.getFilestore() == null)
             messageContent.setImageUrl(EMPTY);
@@ -246,12 +248,13 @@ public class EventService {
         messageContent.setNotificationType(NOTIFICATION_TYPE_EVENT);
         messageContent.setSenderId(user.getId());
         messageContent.setSenderName(user.getName());
-        messageContent.setSendAll(Boolean.TRUE);
-        if (event.getUrl() == null)
+        messageDetails.setSendAll(Boolean.TRUE);
+        if (event.getEventAddress().getUrl() == null)
             messageContent.setUrl(EMPTY);
         else
-            messageContent.setUrl(event.getUrl());
+            messageContent.setUrl(event.getEventAddress().getUrl());
 
+        messageContent.setMessageContentDetails(messageDetails);
         pushNotificationService.sendNotifications(messageContent);
     }
 }

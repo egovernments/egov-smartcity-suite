@@ -122,10 +122,10 @@ public class EventSearchAdapter extends DataAdapter<Event> {
 
         jsonObjectEvent.addProperty("endTime", endHH + ":" + endMM);
 
-        jsonObjectEvent.addProperty(EVENT_HOST, event.getEventhost());
-        jsonObjectEvent.addProperty("eventlocation", event.getEventlocation());
-        jsonObjectEvent.addProperty("address", event.getAddress());
-        jsonObjectEvent.addProperty("contactnumber", event.getContactNumber());
+        jsonObjectEvent.addProperty(EVENT_HOST, event.getEventAddress().getEventhost());
+        jsonObjectEvent.addProperty("eventlocation", event.getEventAddress().getEventlocation());
+        jsonObjectEvent.addProperty("address", event.getEventAddress().getAddress());
+        jsonObjectEvent.addProperty("contactnumber", event.getEventAddress().getContactNumber());
         jsonObjectEvent.addProperty("ispaid", event.isPaid());
         jsonObjectEvent.addProperty("eventType", event.getEventType().getName());
         if (event.getFilestore() == null) {
@@ -141,10 +141,10 @@ public class EventSearchAdapter extends DataAdapter<Event> {
         else
             jsonObjectEvent.addProperty(EVENT_COST, event.getCost());
 
-        if (event.getUrl() == null)
+        if (event.getEventAddress().getUrl() == null)
             jsonObjectEvent.addProperty(URL, EMPTY);
         else
-            jsonObjectEvent.addProperty(URL, event.getUrl());
+            jsonObjectEvent.addProperty(URL, event.getEventAddress().getUrl());
 
         jsonObjectEvent.addProperty("userInterested", NO);
 

@@ -47,8 +47,6 @@
  */
 package org.egov.pushbox.entity.contracts;
 
-import java.util.List;
-
 public class MessageContent {
     private Long id;
     private Long messageId;
@@ -58,31 +56,11 @@ public class MessageContent {
     private String messageBody;
     private String imageUrl;
     private Long createdDateTime;
-    private Long eventDateTime;
-    private String eventLocation;
-    private String eventAddress;
     private Long senderId;
     private String senderName;
     private Long expiryDate;
-    private List<Long> userIdList;
-    private boolean sendAll;
     private String url;
-
-    public boolean isSendAll() {
-        return sendAll;
-    }
-
-    public void setSendAll(boolean sendAll) {
-        this.sendAll = sendAll;
-    }
-
-    public List<Long> getUserIdList() {
-        return userIdList;
-    }
-
-    public void setUserIdList(List<Long> userIdList) {
-        this.userIdList = userIdList;
-    }
+    private MessageContentDetails messageContentDetails;
 
     public Long getMessageId() {
         return messageId;
@@ -156,30 +134,6 @@ public class MessageContent {
         this.createdDateTime = createdDateTime;
     }
 
-    public Long getEventDateTime() {
-        return eventDateTime;
-    }
-
-    public void setEventDateTime(Long eventDateTime) {
-        this.eventDateTime = eventDateTime;
-    }
-
-    public String getEventLocation() {
-        return eventLocation;
-    }
-
-    public void setEventLocation(String eventLocation) {
-        this.eventLocation = eventLocation;
-    }
-
-    public String getEventAddress() {
-        return eventAddress;
-    }
-
-    public void setEventAddress(String eventAddress) {
-        this.eventAddress = eventAddress;
-    }
-
     public Long getSenderId() {
         return senderId;
     }
@@ -204,4 +158,11 @@ public class MessageContent {
         this.url = url;
     }
 
+    public MessageContentDetails getMessageContentDetails() {
+        return messageContentDetails;
+    }
+
+    public void setMessageContentDetails(MessageContentDetails messageContentDetails) {
+        this.messageContentDetails = messageContentDetails;
+    }
 }

@@ -45,50 +45,82 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.wtms.integration.bmi;
+package org.egov.eventnotification.entity;
 
-import static org.egov.eventnotification.constants.ConstantsHelper.DDMMYYYY;
-import static org.egov.eventnotification.constants.ConstantsHelper.MESSAGE_BILLAMT;
-import static org.egov.eventnotification.constants.ConstantsHelper.MESSAGE_BILLNO;
-import static org.egov.eventnotification.constants.ConstantsHelper.MESSAGE_CONSNO;
-import static org.egov.eventnotification.constants.ConstantsHelper.MESSAGE_DISRPTDATE;
-import static org.egov.eventnotification.constants.ConstantsHelper.MESSAGE_USERNAME;
+import java.io.Serializable;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import javax.persistence.Embeddable;
+import javax.validation.constraints.NotNull;
 
-import org.egov.eventnotification.entity.contracts.UserTaxInformation;
-import org.egov.eventnotification.integration.bmi.BuildMessageAdapter;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
-public class WCBuildMessageAdapter implements BuildMessageAdapter {
+@Embeddable
+public class EventAddress implements Serializable{
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -1756225050147426636L;
 
-    @Autowired
-    private UserService userService;
+    @NotNull
+    @SafeHtml
+    @Length(max = 100)
+    private String eventhost;
 
-    @Override
-    public String buildMessage(UserTaxInformation userTaxInformation, String message) {
-        DateFormat formatter = new SimpleDateFormat(DDMMYYYY);
-        User user = userService.getUserById(Long.parseLong(userTaxInformation.getUserId()));
-        String finalMessage = message;
-        if (finalMessage.contains(MESSAGE_CONSNO))
-            finalMessage = finalMessage.replace(MESSAGE_CONSNO, userTaxInformation.getConsumerNumber());
+    @NotNull
+    @SafeHtml
+    @Length(max = 100)
+    private String eventlocation;
 
-        if (finalMessage.contains(MESSAGE_BILLNO))
-            finalMessage = finalMessage.replace(MESSAGE_BILLNO, userTaxInformation.getBillNo());
+    @NotNull
+    @SafeHtml
+    @Length(max = 200)
+    private String address;
+    
+    @SafeHtml
+    private String contactNumber;
+    
+    @SafeHtml
+    @Length(max = 200)
+    private String url;
 
-        if (finalMessage.contains(MESSAGE_BILLAMT))
-            finalMessage = finalMessage.replace(MESSAGE_BILLAMT, userTaxInformation.getDueAmount());
-
-        if (finalMessage.contains(MESSAGE_USERNAME))
-            finalMessage = finalMessage.replace(MESSAGE_USERNAME, user.getName());
-
-        if (finalMessage.contains(MESSAGE_DISRPTDATE) && userTaxInformation.getDueDate() != null)
-            finalMessage = finalMessage.replace(MESSAGE_DISRPTDATE, formatter.format(userTaxInformation.getDueDate()));
-
-        return finalMessage;
+    public String getEventhost() {
+        return eventhost;
     }
 
+    public void setEventhost(String eventhost) {
+        this.eventhost = eventhost;
+    }
+
+    public String getEventlocation() {
+        return eventlocation;
+    }
+
+    public void setEventlocation(String eventlocation) {
+        this.eventlocation = eventlocation;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getContactNumber() {
+        return contactNumber;
+    }
+
+    public void setContactNumber(String contactNumber) {
+        this.contactNumber = contactNumber;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
 }
