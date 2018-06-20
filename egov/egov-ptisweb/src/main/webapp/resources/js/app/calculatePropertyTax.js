@@ -226,7 +226,10 @@ $(document)
 					$('#calculateTax').click(
 									function(e) {
 										var arv = 0;
-										if(!validateFloorOnAdd("Please enter or select all values of existing rows before clicking on Calculate Tax button"))
+										if(!$("#zoneId").val()){
+											bootbox.alert("Please select Revenue Zone");
+											return false;
+										}else if(!validateFloorOnAdd("Please enter or select all values of existing rows before clicking on Calculate Tax button"))
 											return false;
 										$.ajax({
 													url : "/ptis/calculatepropertytax",
@@ -320,6 +323,7 @@ $(document)
 
 
 				    $(document).on('click',"#btnReset",function (){
+				    	$('#zoneId').val('');
 				    	$('#floorDetails tbody').find('tr').remove();
 				    	addRowWithData();
 				    	$('#taxResult tbody').find('tr').remove();

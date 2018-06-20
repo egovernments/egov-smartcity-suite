@@ -56,7 +56,6 @@
 	method="POST" id="propertyTaxCalculator"
 	class="form-horizontal form-groups-bordered">
 	<input type="hidden" id="floorId" value="${floorId}" />
-	<input type="hidden" id="zoneId" value="${zoneId}" />
 	<input type="hidden" id="classificationId" value="${classificationId}" />
 	<input type="hidden" id="usageId" value="${usageId}" />
 	<input type="hidden" id="occupancyId" value="${occupancyId}" />
@@ -75,6 +74,7 @@
 					</label>
 					<div class="col-sm-3 add-margin">
 						<form:select path="zoneId" id="zoneId" class="form-control">
+						    <form:option value="">Select</form:option>
 							<form:options items="${zoneId}" />
 						</form:select>
 					</div>
