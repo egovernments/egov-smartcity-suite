@@ -15,11 +15,6 @@ Insert into eg_action(id,name,url,parentmodule,ordernumber,displayname,enabled,c
 values(nextval('SEQ_EG_ACTION'),'Modify Event','/event/update/',(select id from eg_module where name='Event Notification' ),1,
 'Modify Event',false,'eventnotification',(select id from eg_module where name='Event Notification'));
 
-Insert into eg_roleaction values((select id from eg_role where name='SYSTEM'),(select id from eg_action where name='Create Event'));
-Insert into eg_roleaction values((select id from eg_role where name='SYSTEM'),(select id from eg_action where name='Event'));
-Insert into eg_roleaction values((select id from eg_role where name='SYSTEM'),(select id from eg_action where name='Modify Event'));
-
-
 Insert into eg_action(id,name,url,parentmodule,ordernumber,displayname,enabled,contextroot,application) 
 values(nextval('SEQ_EG_ACTION'),'Drafts','/drafts/create/',(select id from eg_module where name='Notifications' ),1,
 'Draft',false,'eventnotification',(select id from eg_module where name='Notifications'));
@@ -31,10 +26,6 @@ values(nextval('SEQ_EG_ACTION'),'View Drafts','/drafts/view/',(select id from eg
 Insert into eg_action(id,name,url,parentmodule,ordernumber,displayname,enabled,contextroot,application) 
 values(nextval('SEQ_EG_ACTION'),'Update Drafts','/drafts/update/',(select id from eg_module where name='Notifications' ),1,
 'Draft',false,'eventnotification',(select id from eg_module where name='Notifications'));
-
-Insert into eg_roleaction values((select id from eg_role where name='SYSTEM'),(select id from eg_action where name='Update Drafts'));
-Insert into eg_roleaction values((select id from eg_role where name='SYSTEM'),(select id from eg_action where name='Drafts'));
-Insert into eg_roleaction values((select id from eg_role where name='SYSTEM'),(select id from eg_action where name='View Drafts'));
 
 Insert into eg_action(id,name,url,parentmodule,ordernumber,displayname,enabled,contextroot,application) 
 values(nextval('SEQ_EG_ACTION'),'Create Schedule','/schedule/create/',(select id from eg_module where name='Notifications' ),1,
@@ -52,10 +43,22 @@ Insert into eg_action(id,name,url,parentmodule,ordernumber,displayname,enabled,c
 values(nextval('SEQ_EG_ACTION'),'Update Schedule','/schedule/update/',(select id from eg_module where name='Notifications' ),1,
 'Update Schedule',false,'eventnotification',(select id from eg_module where name='Notifications'));
 
-Insert into eg_roleaction values((select id from eg_role where name='SYSTEM'),(select id from eg_action where name='Update Schedule'));
-Insert into eg_roleaction values((select id from eg_role where name='SYSTEM'),(select id from eg_action where name='Schedule'));
-Insert into eg_roleaction values((select id from eg_role where name='SYSTEM'),(select id from eg_action where name='Create Schedule'));
-Insert into eg_roleaction values((select id from eg_role where name='SYSTEM'),(select id from eg_action where name='Delete Schedule'));
+INSERT INTO eg_feature(id, name, description, module) VALUES (nextval('seq_eg_feature'), 'Event', 'Event', (select id from eg_module where name='Event Notification' ));
+INSERT INTO eg_feature(id, name, description, module) VALUES (nextval('seq_eg_feature'), 'Draft', 'Draft', (select id from eg_module where name='Event Notifications' ));
+INSERT INTO eg_feature(id, name, description, module) VALUES (nextval('seq_eg_feature'), 'Schedule', 'Schedule', (select id from eg_module where name='Event Notifications' ));
+
+INSERT INTO eg_feature_action(action, feature) VALUES ((select id FROM eg_action  WHERE name = 'Create Event') ,(select id FROM eg_feature WHERE name = 'Event'));
+INSERT INTO eg_feature_action(action, feature) VALUES ((select id FROM eg_action  WHERE name = 'Event') ,(select id FROM eg_feature WHERE name = 'Event'));
+INSERT INTO eg_feature_action(action, feature) VALUES ((select id FROM eg_action  WHERE name = 'Modify Event') ,(select id FROM eg_feature WHERE name = 'Event'));
+
+INSERT INTO eg_feature_action(action, feature) VALUES ((select id FROM eg_action  WHERE name = 'Update Drafts') ,(select id FROM eg_feature WHERE name = 'Draft'));
+INSERT INTO eg_feature_action(action, feature) VALUES ((select id FROM eg_action  WHERE name = 'Drafts') ,(select id FROM eg_feature WHERE name = 'Draft'));
+INSERT INTO eg_feature_action(action, feature) VALUES ((select id FROM eg_action  WHERE name = 'View Drafts') ,(select id FROM eg_feature WHERE name = 'Draft'));
+
+INSERT INTO eg_feature_action(action, feature) VALUES ((select id FROM eg_action  WHERE name = 'Update Schedule') ,(select id FROM eg_feature WHERE name = 'Schedule'));
+INSERT INTO eg_feature_action(action, feature) VALUES ((select id FROM eg_action  WHERE name = 'Schedule') ,(select id FROM eg_feature WHERE name = 'Schedule'));
+INSERT INTO eg_feature_action(action, feature) VALUES ((select id FROM eg_action  WHERE name = 'Create Schedule') ,(select id FROM eg_feature WHERE name = 'Schedule'));
+INSERT INTO eg_feature_action(action, feature) VALUES ((select id FROM eg_action  WHERE name = 'Delete Schedule') ,(select id FROM eg_feature WHERE name = 'Schedule'));
 
 DROP TABLE IF EXISTS egevntnotification_module;
 DROP SEQUENCE IF EXISTS seq_egevntnotification_module;
