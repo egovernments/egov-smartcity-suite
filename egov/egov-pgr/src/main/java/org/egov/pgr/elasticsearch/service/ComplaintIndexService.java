@@ -1686,20 +1686,25 @@ public class ComplaintIndexService {
         String aggregationField = CITY_REGION_NAME;
         if (isNotBlank(ivrsRequest.getType()))
             aggregationField = ComplaintIndexAggregationBuilder.fetchAggregationField(ivrsRequest.getType());
-        SearchResponse response = complaintIndexRepository.findFeedBackRatingDetails(ivrsRequest, prepareQuery(ivrsRequest),
+        SearchResponse response = complaintIndexRepository.findFeedBackRatingDetails(ivrsRequest, prepareQuery(ivrsRequest, true),
+                aggregationField);
+        SearchResponse completedResponse = complaintIndexRepository.findFeedBackRatingDetails(ivrsRequest,
+                prepareQuery(ivrsRequest, false),
                 aggregationField);
         Terms terms = response.getAggregations().get("typeAggr");
-        for (Bucket termsBucket : terms.getBuckets()) {
+        Terms closedterms = completedResponse.getAggregations().get("typeAggr");
+        for (Bucket closedBucket : closedterms.getBuckets()) {
             IVRSFeedBackResponse feedbackResponse = new IVRSFeedBackResponse();
-            setUpperLevelValues(aggregationField, feedbackResponse, termsBucket);
-            termsBucket.getDocCount();
-            feedbackResponse.setTotalComplaint(termsBucket.getDocCount());
-            feedbackResponse.setTotalFeedback(termsBucket.getDocCount());
-            Terms countTerms = termsBucket.getAggregations().get("countAggr");
-            for (Bucket countBucket : countTerms.getBuckets()) {
-                getDifferentRatingCounts(feedbackResponse, countBucket);
+            feedbackResponse.setTotalComplaint(closedBucket.getDocCount());
+            for (Bucket termsBucket : terms.getBuckets()) {
+                setUpperLevelValues(aggregationField, feedbackResponse, termsBucket);
+                feedbackResponse.setTotalFeedback(termsBucket.getDocCount());
+                Terms countTerms = termsBucket.getAggregations().get("countAggr");
+                for (Bucket countBucket : countTerms.getBuckets()) {
+                    getDifferentRatingCounts(feedbackResponse, countBucket);
+                }
+                feedbackResponseList.add(feedbackResponse);
             }
-            feedbackResponseList.add(feedbackResponse);
         }
         return feedbackResponseList;
     }
@@ -1765,10 +1770,12 @@ public class ComplaintIndexService {
         feedbackResponse.setDepartmentCode(hit[0].field(DEPARTMENT_CODE) == null ? EMPTY : hit[0].field(DEPARTMENT_CODE).value());
     }
 
-    private BoolQueryBuilder prepareQuery(final ComplaintDashBoardRequest ivrsRequest) {
+    private BoolQueryBuilder prepareQuery(final ComplaintDashBoardRequest ivrsRequest,boolean forFeedback) {
         BoolQueryBuilder boolQuery = new BoolQueryBuilder();
+        if(forFeedback==true){
         boolQuery = boolQuery.must(QueryBuilders.existsQuery(FEEDBACK_RATING))
                 .mustNot(matchQuery(FEEDBACK_RATING, 0));
+        }
         if (isNotBlank(ivrsRequest.getFromDate()) && isNotBlank(ivrsRequest.getToDate())) {
             String fromDate = new DateTime(ivrsRequest.getFromDate()).withTimeAtStartOfDay().toString(PGR_INDEX_DATE_FORMAT);
             String toDate = new DateTime(ivrsRequest.getToDate()).plusDays(1).toString(PGR_INDEX_DATE_FORMAT);
@@ -1804,7 +1811,7 @@ public class ComplaintIndexService {
     public List<IVRSFeedBackResponse> getCategoryWiseFeedBackDetails(final ComplaintDashBoardRequest ivrsRequest) {
         List<IVRSFeedBackResponse> feedbackResponseList = new ArrayList<>();
         SearchResponse response = complaintIndexRepository.findCategoryWiseFeedBackRatingDetails(ivrsRequest,
-                prepareQuery(ivrsRequest));
+                prepareQuery(ivrsRequest,true));
         if (isNotBlank(ivrsRequest.getCategoryName()) || isNotBlank(ivrsRequest.getCategoryId())) {
             Terms terms = response.getAggregations().get("categoryAggr");
             for (Bucket termsBucket : terms.getBuckets()) {

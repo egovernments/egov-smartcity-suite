@@ -816,7 +816,8 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
     public SearchResponse findFeedBackRatingDetails(ComplaintDashBoardRequest ivrsFeedBackRequest, BoolQueryBuilder feedBackQuery,
             String aggregationField) {
         return elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
-                .setQuery(feedBackQuery).addAggregation(AggregationBuilders.terms("typeAggr").field(aggregationField).size(130)
+                .setQuery(feedBackQuery.filter(QueryBuilders.matchQuery("ifClosed",1)))
+                .addAggregation(AggregationBuilders.terms("typeAggr").field(aggregationField).size(130)
                         .subAggregation(AggregationBuilders.terms("countAggr").field(FEEDBACK_RATING))
                         .subAggregation(addFieldBasedOnAggField(aggregationField)))
                 .execute().actionGet();
