@@ -1772,7 +1772,7 @@ public class ComplaintIndexService {
 
     private BoolQueryBuilder prepareQuery(final ComplaintDashBoardRequest ivrsRequest,boolean forFeedback) {
         BoolQueryBuilder boolQuery = new BoolQueryBuilder();
-        if(forFeedback==true){
+        if(forFeedback){
         boolQuery = boolQuery.must(QueryBuilders.existsQuery(FEEDBACK_RATING))
                 .mustNot(matchQuery(FEEDBACK_RATING, 0));
         }
