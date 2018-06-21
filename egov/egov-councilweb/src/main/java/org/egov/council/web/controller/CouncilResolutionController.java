@@ -55,8 +55,9 @@ import org.egov.council.entity.MeetingMOM;
 import org.egov.council.service.CouncilMeetingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -65,8 +66,8 @@ public class CouncilResolutionController {
     @Autowired
     private CouncilMeetingService councilMeetingService;
 
-    @GetMapping(value = "/councilresolution/{councilResolutionNo}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public CouncilPreambleResponse getCouncilPreambleDetails(@PathVariable final String councilResolutionNo) {
+    @RequestMapping(value = "/councilresolution", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
+    public CouncilPreambleResponse getCouncilPreambleDetails(@RequestParam("councilResolutionNo") String councilResolutionNo) {
         final MeetingMOM meetingMom = councilMeetingService.findByResolutionNumber(councilResolutionNo);
         if (meetingMom == null)
             return new CouncilPreambleResponse(HttpStatus.BAD_REQUEST.toString(), "Invalid Resolution Number", false);
