@@ -56,8 +56,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.pushbox.entity.UserFcmDevice;
-import org.egov.pushbox.entity.config.PushboxConfiguration;
 import org.egov.pushbox.entity.contracts.MessageContent;
 import org.egov.pushbox.entity.contracts.PushboxProperties;
 import org.egov.pushbox.repository.UserFcmDeviceRepository;
@@ -88,15 +88,15 @@ public class PushNotificationService {
     private UserFcmDeviceRepository pushNotificationRepo;
 
     @Autowired
-    private PushboxConfiguration pushboxConfiguration;
+    private PushboxProperties pushboxProperties;
 
     @Transactional
     public UserFcmDevice saveUserDevice(final UserFcmDevice userDevice) {
         UserFcmDevice existingRecord = pushNotificationRepo.findByUserIdAndDeviceId(userDevice.getUser().getId(),
                 userDevice.getDeviceId());
-        if (null != existingRecord) {
+        if (existingRecord != null) {
             existingRecord.setUser(userDevice.getUser());
-            existingRecord.setUserDeviceToken(userDevice.getUserDeviceToken());
+            existingRecord.setDevicetoken(userDevice.getDevicetoken());
             existingRecord.setDeviceId(userDevice.getDeviceId());
             return existingRecord;
         }
@@ -119,9 +119,14 @@ public class PushNotificationService {
         return pushNotificationRepo.findByUserIdIn(ids);
     }
 
+    /**
+     * This method fetch the userFcmDevice based on the user id and call the sendMessagesToDevices() method to send the push
+     * messages
+     * @param messageContent
+     */
     public void sendNotifications(MessageContent messageContent) {
         List<UserFcmDevice> userDeviceList = null;
-        if (messageContent.getMessageContentDetails().isSendAll())
+        if (messageContent.getDetails().isSendAll())
             userDeviceList = getAllUserDeviceList();
         else
             userDeviceList = getUserDeviceList(messageContent);
@@ -131,19 +136,21 @@ public class PushNotificationService {
     }
 
     private List<UserFcmDevice> getUserDeviceList(MessageContent messageContent) {
-        return getAllUserDeviceByUser(messageContent.getMessageContentDetails().getUserIdList());
+        return getAllUserDeviceByUser(messageContent.getDetails().getUserIdList());
     }
 
     private List<UserFcmDevice> getAllUserDeviceList() {
         return pushNotificationRepo.findAll();
     }
 
+    /**
+     * This method take the required parameters from the properties file and initialize the firebase. It will initialize only
+     * once.
+     */
     private void setUpFirebaseApp() {
         if (FirebaseApp.getApps().isEmpty()) {
-            PushboxProperties pushboxProperties = pushboxConfiguration.initPushBoxProperties();
-
-            JsonFactory JSON_FACTORY = Utils.getDefaultJsonFactory();
-            Map<String, Object> secretJson = new ConcurrentHashMap<String, Object>();
+            JsonFactory jsonFactory = Utils.getDefaultJsonFactory();
+            Map<String, Object> secretJson = new ConcurrentHashMap<>();
             secretJson.put("type", pushboxProperties.getType());
             secretJson.put("project_id", pushboxProperties.getProjectId());
             secretJson.put("private_key_id", pushboxProperties.getPrivateKeyId());
@@ -155,7 +162,7 @@ public class PushNotificationService {
             secretJson.put("auth_provider_x509_cert_url", pushboxProperties.getAuthProviderCertUrl());
             secretJson.put("client_x509_cert_url", pushboxProperties.getClientCertUrl());
 
-            try (InputStream refreshTokenStream = new ByteArrayInputStream(JSON_FACTORY.toByteArray(secretJson))) {
+            try (InputStream refreshTokenStream = new ByteArrayInputStream(jsonFactory.toByteArray(secretJson))) {
 
                 FirebaseOptions options = new FirebaseOptions.Builder()
                         .setCredentials(GoogleCredentials.fromStream(refreshTokenStream))
@@ -165,20 +172,28 @@ public class PushNotificationService {
                 LOGGER.info("##PushBoxFox## : Firebase App Initialized");
             } catch (IOException e) {
                 LOGGER.error("##PushBoxFox## : Error in setup firebase app", e);
+                throw new ApplicationRuntimeException("Error occurred while setup firebase app", e);
             }
         }
     }
 
+    /**
+     * This method build the message and send it to firebase for push notification. It uses messageContent and deviceToken to
+     * build a message.
+     * @param userDeviceList
+     * @param messageContent
+     */
     private void sendMessagesToDevices(List<UserFcmDevice> userDeviceList, MessageContent messageContent) {
         for (UserFcmDevice userDevice : userDeviceList)
             try {
                 Message message = Message.builder()
                         .putData("content", new Gson().toJson(messageContent))
-                        .setToken(userDevice.getUserDeviceToken()).build();
+                        .setToken(userDevice.getDevicetoken()).build();
                 String response = FirebaseMessaging.getInstance().sendAsync(message).get();
                 LOGGER.info("##PushBoxFox## : Message Send Status : " + response);
             } catch (Exception ex) {
                 LOGGER.error("##PushBoxFox## : Error : Encountered an exception while sending the message : " + ex.getMessage());
+                throw new ApplicationRuntimeException("Error occurred while sending the push message", ex);
             }
     }
 }

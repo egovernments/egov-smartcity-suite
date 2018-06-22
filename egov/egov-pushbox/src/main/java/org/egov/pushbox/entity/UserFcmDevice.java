@@ -48,7 +48,6 @@
 package org.egov.pushbox.entity;
 
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -62,6 +61,7 @@ import javax.persistence.Table;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 /**
@@ -71,10 +71,8 @@ import org.hibernate.validator.constraints.SafeHtml;
  */
 
 @Entity
-@Table(name = "egevntnotification_userfcmdevice")
-@Unique(id = "id", tableName = "egevntnotification_userfcmdevice", columnName = { "userid", "devicetoken",
-        "deviceid" }, fields = { "userId",
-                "userDeviceToken", "deviceid" }, enableDfltMsg = true)
+@Table(name = "egpushbox_userfcmdevice")
+@Unique(fields = { "userId", "userDeviceToken", "deviceid" }, enableDfltMsg = true)
 @SequenceGenerator(name = UserFcmDevice.SEQ_EG_USERFCMDEVICE, sequenceName = UserFcmDevice.SEQ_EG_USERFCMDEVICE, allocationSize = 1)
 public class UserFcmDevice extends AbstractAuditable {
 
@@ -83,7 +81,7 @@ public class UserFcmDevice extends AbstractAuditable {
      */
     private static final long serialVersionUID = 7674078540821342829L;
 
-    public static final String SEQ_EG_USERFCMDEVICE = "SEQ_EGEVNTNOTIFICATION_USERFCMDEVICE";
+    public static final String SEQ_EG_USERFCMDEVICE = "seq_egpushbox_userfcmdevice";
 
     @Id
     @GeneratedValue(generator = SEQ_EG_USERFCMDEVICE, strategy = GenerationType.SEQUENCE)
@@ -91,12 +89,13 @@ public class UserFcmDevice extends AbstractAuditable {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userid")
-    @Embedded
+    @NotBlank
     private User user;
 
-    @Column(name = "devicetoken", nullable = false)
+    @Column(name = "devicetoken")
     @SafeHtml
-    private String userDeviceToken;
+    @NotBlank
+    private String devicetoken;
 
     @SafeHtml
     private String deviceId;
@@ -109,12 +108,12 @@ public class UserFcmDevice extends AbstractAuditable {
         this.deviceId = deviceId;
     }
 
-    public String getUserDeviceToken() {
-        return userDeviceToken;
+    public String getDevicetoken() {
+        return devicetoken;
     }
 
-    public void setUserDeviceToken(String userDeviceToken) {
-        this.userDeviceToken = userDeviceToken;
+    public void setDevicetoken(String devicetoken) {
+        this.devicetoken = devicetoken;
     }
 
     public User getUser() {

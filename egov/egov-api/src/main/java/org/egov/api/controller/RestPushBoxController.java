@@ -107,12 +107,12 @@ public class RestPushBoxController extends ApiController {
         try {
 
             UserFcmDevice userDevice = new UserFcmDevice();
-            userDevice.setUserDeviceToken(tokenUpdate.get(USER_TOKEN_ID).toString());
+            userDevice.setDevicetoken(tokenUpdate.get(USER_TOKEN_ID).toString());
             User user = userService.getUserById(Long.valueOf(tokenUpdate.get(USER_ID).toString()));
             userDevice.setUser(user);
             userDevice.setDeviceId(tokenUpdate.get(USER_DEVICE_ID).toString());
 
-            if (isBlank(userDevice.getUserDeviceToken()))
+            if (isBlank(userDevice.getDevicetoken()))
                 return res.error(getMessage("userdevice.device.tokenunavailable"));
 
             if (userDevice.getUser() == null)
@@ -139,16 +139,16 @@ public class RestPushBoxController extends ApiController {
         try {
             MessageContent message = createMessageContentFromRequest(jsonObject);
             if (sendAll)
-                message.getMessageContentDetails().setSendAll(true);
+                message.getDetails().setSendAll(true);
             else {
                 JsonElement userIdElement = jsonObject.get("userIdList");
                 JsonArray jsonArray = userIdElement.getAsJsonArray();
                 List<Long> userIdList = new ArrayList<>();
                 for (JsonElement element : jsonArray)
                     userIdList.add(Long.valueOf(isNotBlank(element.getAsString()) ? element.getAsString() : "0"));
-                message.getMessageContentDetails().setUserIdList(userIdList);
+                message.getDetails().setUserIdList(userIdList);
             }
-                message.getMessageContentDetails().setSendAll(true);
+            message.getDetails().setSendAll(true);
             notificationService.sendNotifications(message);
 
             UserFcmDevice responseObject = new UserFcmDevice();
@@ -175,7 +175,7 @@ public class RestPushBoxController extends ApiController {
         message.setNotificationType(content.get("notificationType").getAsString());
         message.setSenderId(content.get("senderId").getAsLong());
         message.setSenderName(content.get("senderName").getAsString());
-        message.setMessageContentDetails(messageDetails);
+        message.setDetails(messageDetails);
         return message;
     }
 

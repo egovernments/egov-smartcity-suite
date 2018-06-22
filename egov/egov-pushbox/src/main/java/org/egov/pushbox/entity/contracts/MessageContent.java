@@ -60,7 +60,7 @@ public class MessageContent {
     private String senderName;
     private Long expiryDate;
     private String url;
-    private MessageContentDetails messageContentDetails;
+    private MessageContentDetails details;
 
     public Long getMessageId() {
         return messageId;
@@ -158,11 +158,11 @@ public class MessageContent {
         this.url = url;
     }
 
-    public MessageContentDetails getMessageContentDetails() {
-        return messageContentDetails;
+    public MessageContentDetails getDetails() {
+        return details;
     }
 
-    public void setMessageContentDetails(MessageContentDetails messageContentDetails) {
-        this.messageContentDetails = messageContentDetails;
+    public void setDetails(MessageContentDetails details) {
+        this.details = details;
     }
 }

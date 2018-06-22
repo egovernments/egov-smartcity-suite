@@ -55,33 +55,43 @@ public class MessageContentDetails {
     private String eventAddress;
     private List<Long> userIdList;
     private boolean sendAll;
+
     public Long getEventDateTime() {
         return eventDateTime;
     }
+
     public void setEventDateTime(Long eventDateTime) {
         this.eventDateTime = eventDateTime;
     }
+
     public String getEventLocation() {
         return eventLocation;
     }
+
     public void setEventLocation(String eventLocation) {
         this.eventLocation = eventLocation;
     }
+
     public String getEventAddress() {
         return eventAddress;
     }
+
     public void setEventAddress(String eventAddress) {
         this.eventAddress = eventAddress;
     }
+
     public List<Long> getUserIdList() {
         return userIdList;
     }
+
     public void setUserIdList(List<Long> userIdList) {
         this.userIdList = userIdList;
     }
+
     public boolean isSendAll() {
         return sendAll;
     }
+
     public void setSendAll(boolean sendAll) {
         this.sendAll = sendAll;
     }

@@ -51,7 +51,6 @@ import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -70,6 +69,7 @@ import javax.validation.constraints.NotNull;
 import org.egov.eventnotification.entity.contracts.EventDetails;
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
@@ -93,9 +93,8 @@ public class Schedule extends AbstractPersistable<Long> {
     private String templateName;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "drafttype", nullable = false)
+    @JoinColumn(name = "drafttype")
     @Valid
-    @Embedded
     private DraftType draftType;
 
     @SafeHtml
@@ -106,9 +105,8 @@ public class Schedule extends AbstractPersistable<Long> {
     private Date startDate;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "schedulerepeat", nullable = false)
+    @JoinColumn(name = "schedulerepeat")
     @Valid
-    @Embedded
     private ScheduleRepeat scheduleRepeat;
 
     @NotNull
@@ -118,9 +116,8 @@ public class Schedule extends AbstractPersistable<Long> {
     private String messageTemplate;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "module", nullable = false)
+    @JoinColumn(name = "module")
     @Valid
-    @Embedded
     private TemplateModule module;
 
     @Transient

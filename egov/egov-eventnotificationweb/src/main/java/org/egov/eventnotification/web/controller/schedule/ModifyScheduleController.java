@@ -123,6 +123,14 @@ public class ModifyScheduleController {
         return "schedule-update-view";
     }
 
+    /**
+     * This method update the schedule data and update the schedule job time.
+     * @param id
+     * @param schedule
+     * @param errors
+     * @param model
+     * @return
+     */
     @PostMapping("/schedule/update/{id}")
     public String update(@PathVariable Long id, @Valid @ModelAttribute Schedule schedule,
             BindingResult errors, Model model) {

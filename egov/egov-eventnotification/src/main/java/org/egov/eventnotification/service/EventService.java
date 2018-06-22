@@ -254,7 +254,7 @@ public class EventService {
         else
             messageContent.setUrl(event.getEventAddress().getUrl());
 
-        messageContent.setMessageContentDetails(messageDetails);
+        messageContent.setDetails(messageDetails);
         pushNotificationService.sendNotifications(messageContent);
     }
 }

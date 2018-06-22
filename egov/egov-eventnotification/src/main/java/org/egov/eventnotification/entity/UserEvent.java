@@ -47,7 +47,6 @@
  */
 package org.egov.eventnotification.entity;
 
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -81,13 +80,11 @@ public class UserEvent extends AbstractAuditable {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userid")
     @Valid
-    @Embedded
     private User user;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "event")
     @Valid
-    @Embedded
     private Event event;
 
     @Override

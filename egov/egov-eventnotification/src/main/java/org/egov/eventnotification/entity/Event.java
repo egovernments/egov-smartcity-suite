@@ -132,7 +132,7 @@ public class Event extends AbstractAuditable {
 
     @Transient
     private EventDetails eventDetails;
-    
+
     @Embedded
     private EventAddress eventAddress;
 
