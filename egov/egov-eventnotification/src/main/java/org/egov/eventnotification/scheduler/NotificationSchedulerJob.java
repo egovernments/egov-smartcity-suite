@@ -137,6 +137,12 @@ public class NotificationSchedulerJob extends AbstractQuartzJob {
         }
     }
 
+    /**
+     * This method check if it is BUSINESS type notification then one object will be created for BuildMessageAdapter. Then based
+     * on the specific module call the rest api. Which will return the user information. Then it will iterate and build a message
+     * and send it to pushbox to send the notification.
+     * @param notificationSchedule
+     */
     private void executeBusiness(Schedule notificationSchedule) {
 
         if (notificationSchedule.getDraftType().getName().equalsIgnoreCase(BUSINESS_NOTIFICATION_TYPE)) {
@@ -162,6 +168,13 @@ public class NotificationSchedulerJob extends AbstractQuartzJob {
             buildAndSendNotifications(notificationSchedule, null, Boolean.TRUE, null);
     }
 
+    /**
+     * This method build the messageContent object and send it to pushbox to send the notification.
+     * @param notificationSchedule
+     * @param messageBody
+     * @param seandAll
+     * @param userIdList
+     */
     private void buildAndSendNotifications(Schedule notificationSchedule, String messageBody, Boolean seandAll,
             List<Long> userIdList) {
         User user = userService.getCurrentUser();
@@ -179,7 +192,7 @@ public class NotificationSchedulerJob extends AbstractQuartzJob {
 
         MessageContent messageContent = new MessageContent();
         MessageContentDetails messageDetails = new MessageContentDetails();
-        
+
         messageContent.setCreatedDateTime(new Date().getTime());
         messageDetails.setEventDateTime(calendar.getMillis());
         messageContent.setExpiryDate(calendarEnd.getMillis());
@@ -195,7 +208,7 @@ public class NotificationSchedulerJob extends AbstractQuartzJob {
             messageDetails.setUserIdList(userIdList);
         messageContent.setSenderId(user.getId());
         messageContent.setSenderName(user.getName());
-        messageContent.setMessageContentDetails(messageDetails);
+        messageContent.setDetails(messageDetails);
 
         pushNotificationService.sendNotifications(messageContent);
     }

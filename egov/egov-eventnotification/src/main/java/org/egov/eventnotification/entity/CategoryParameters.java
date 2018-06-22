@@ -47,7 +47,6 @@
  */
 package org.egov.eventnotification.entity;
 
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -91,7 +90,6 @@ public class CategoryParameters extends AbstractPersistable<Long> {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category")
     @Valid
-    @Embedded
     private ModuleCategory moduleCategory;
 
     @Override

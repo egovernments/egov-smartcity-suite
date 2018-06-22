@@ -45,33 +45,13 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.pushbox.entity.config;
+package org.egov.eventnotification.repository;
 
-import org.egov.pushbox.entity.contracts.PushboxProperties;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
+import org.egov.eventnotification.entity.ScheduleLog;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-@Configuration
-public class PushboxConfiguration {
-    @Autowired
-    private Environment env;
+@Repository
+public interface ScheduleLogRepository extends JpaRepository<ScheduleLog, Long> {
 
-    @Bean
-    public PushboxProperties initPushBoxProperties() {
-        PushboxProperties pushboxProperties = new PushboxProperties();
-        pushboxProperties.setType(env.getProperty("type"));
-        pushboxProperties.setProjectId(env.getProperty("project_id"));
-        pushboxProperties.setPrivateKeyId(env.getProperty("private_key_id"));
-        pushboxProperties.setPrivateKey(env.getProperty("private_key"));
-        pushboxProperties.setClientEmail(env.getProperty("client_email"));
-        pushboxProperties.setClientId(env.getProperty("client_id"));
-        pushboxProperties.setAuthUri(env.getProperty("auth_uri"));
-        pushboxProperties.setTokenUri(env.getProperty("token_uri"));
-        pushboxProperties.setAuthProviderCertUrl(env.getProperty("auth_provider_x509_cert_url"));
-        pushboxProperties.setClientCertUrl(env.getProperty("client_x509_cert_url"));
-        pushboxProperties.setDatabaseUrl(env.getProperty("bdurl"));
-        return pushboxProperties;
-    }
 }

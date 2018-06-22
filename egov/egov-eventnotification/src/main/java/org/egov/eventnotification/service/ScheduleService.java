@@ -149,6 +149,12 @@ public class ScheduleService {
         return notificationscheduleRepository.saveAndFlush(schedule);
     }
 
+    /**
+     * This method take a cron expression from properties file and replace the hour,minute,day and month into the placeholder to
+     * make dynamic cron expression.
+     * @param notificationschedule
+     * @return
+     */
     public String getCronExpression(Schedule notificationschedule) {
         String cronExpression = null;
         DateTime calendar = new DateTime(notificationschedule.getStartDate());
@@ -177,6 +183,12 @@ public class ScheduleService {
         return cronExpression;
     }
 
+    /**
+     * This method build the URL and call the rest API using the restTemplate and return an object.
+     * @param contextURL
+     * @param urlPath
+     * @return
+     */
     public List<UserTaxInformation> getDefaulterUserList(String contextURL, String urlPath) {
         final String uri = contextURL.concat(urlPath);
         ResponseEntity<UserTaxInformation[]> results = notificationConfiguration.getRestTemplate().getForEntity(uri,

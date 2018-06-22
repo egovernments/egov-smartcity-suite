@@ -44,8 +44,8 @@ values(nextval('SEQ_EG_ACTION'),'Update Schedule','/schedule/update/',(select id
 'Update Schedule',false,'eventnotification',(select id from eg_module where name='Notifications'));
 
 INSERT INTO eg_feature(id, name, description, module) VALUES (nextval('seq_eg_feature'), 'Event', 'Event', (select id from eg_module where name='Event Notification' ));
-INSERT INTO eg_feature(id, name, description, module) VALUES (nextval('seq_eg_feature'), 'Draft', 'Draft', (select id from eg_module where name='Event Notifications' ));
-INSERT INTO eg_feature(id, name, description, module) VALUES (nextval('seq_eg_feature'), 'Schedule', 'Schedule', (select id from eg_module where name='Event Notifications' ));
+INSERT INTO eg_feature(id, name, description, module) VALUES (nextval('seq_eg_feature'), 'Draft', 'Draft', (select id from eg_module where name='Event Notification' ));
+INSERT INTO eg_feature(id, name, description, module) VALUES (nextval('seq_eg_feature'), 'Schedule', 'Schedule', (select id from eg_module where name='Event Notification' ));
 
 INSERT INTO eg_feature_action(action, feature) VALUES ((select id FROM eg_action  WHERE name = 'Create Event') ,(select id FROM eg_feature WHERE name = 'Event'));
 INSERT INTO eg_feature_action(action, feature) VALUES ((select id FROM eg_action  WHERE name = 'Event') ,(select id FROM eg_feature WHERE name = 'Event'));
@@ -131,24 +131,6 @@ CREATE TABLE egevntnotification_userevent
   CONSTRAINT egevntnotification_userevent_pkey PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS egevntnotification_userfcmdevice;
-DROP SEQUENCE IF EXISTS seq_egevntnotification_userfcmdevice;
-
-CREATE SEQUENCE seq_egevntnotification_userfcmdevice;
-CREATE TABLE egevntnotification_userfcmdevice
-(
-  id bigint NOT NULL,
-  userid bigint NOT NULL,
-  devicetoken character varying NOT NULL,
-  deviceid character varying,
-  createddate timestamp without time zone NOT NULL,
-  lastmodifieddate timestamp without time zone NOT NULL,
-  createdby bigint NOT NULL,
-  lastmodifiedby bigint NOT NULL,
-  version bigint,
-  CONSTRAINT pk_eg_userfcmdevice_pkey PRIMARY KEY (id),
-  CONSTRAINT unq_eg_user_devicetoken UNIQUE (userid, devicetoken)
-);
 DROP TABLE IF EXISTS egevntnotification_schedule;
 DROP SEQUENCE IF EXISTS seq_egevntnotification_schedule;
 
@@ -287,3 +269,4 @@ CREATE TABLE egevntnotification_schedule_log
   version bigint DEFAULT 0,
   CONSTRAINT egevntnotification_schedule_log_pkey PRIMARY KEY (id)
 );
+

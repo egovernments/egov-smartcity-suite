@@ -56,9 +56,9 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Embeddable
-public class EventAddress implements Serializable{
+public class EventAddress implements Serializable {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -1756225050147426636L;
 
@@ -76,10 +76,10 @@ public class EventAddress implements Serializable{
     @SafeHtml
     @Length(max = 200)
     private String address;
-    
+
     @SafeHtml
     private String contactNumber;
-    
+
     @SafeHtml
     @Length(max = 200)
     private String url;

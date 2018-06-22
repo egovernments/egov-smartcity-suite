@@ -45,56 +45,33 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.pushbox.entity;
+package org.egov.pushbox.config;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import org.egov.pushbox.entity.contracts.PushboxProperties;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.persistence.entity.AbstractAuditable;
+@Configuration
+public class PushboxConfiguration {
+    @Autowired
+    private Environment env;
 
-@Entity
-@Table(name = "egevntnotification_schedule_log")
-@SequenceGenerator(name = ScheduleLog.SEQ_SCHEDULE_LOG, sequenceName = ScheduleLog.SEQ_SCHEDULE_LOG, allocationSize = 1)
-public class ScheduleLog extends AbstractAuditable {
-
-    /**
-     *
-     */
-    private static final long serialVersionUID = -31845956262789699L;
-
-    public static final String SEQ_SCHEDULE_LOG = "seq_egevntnotification_schedule_log";
-
-    @Id
-    @GeneratedValue(generator = SEQ_SCHEDULE_LOG, strategy = GenerationType.SEQUENCE)
-    private Long id;
-
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "filestore")
-    private FileStoreMapper filestore;
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public FileStoreMapper getFilestore() {
-        return filestore;
-    }
-
-    public void setFilestore(FileStoreMapper filestore) {
-        this.filestore = filestore;
+    @Bean
+    public PushboxProperties initPushBoxProperties() {
+        PushboxProperties pushboxProperties = new PushboxProperties();
+        pushboxProperties.setType(env.getProperty("type"));
+        pushboxProperties.setProjectId(env.getProperty("project_id"));
+        pushboxProperties.setPrivateKeyId(env.getProperty("private_key_id"));
+        pushboxProperties.setPrivateKey(env.getProperty("private_key"));
+        pushboxProperties.setClientEmail(env.getProperty("client_email"));
+        pushboxProperties.setClientId(env.getProperty("client_id"));
+        pushboxProperties.setAuthUri(env.getProperty("auth_uri"));
+        pushboxProperties.setTokenUri(env.getProperty("token_uri"));
+        pushboxProperties.setAuthProviderCertUrl(env.getProperty("auth_provider_x509_cert_url"));
+        pushboxProperties.setClientCertUrl(env.getProperty("client_x509_cert_url"));
+        pushboxProperties.setDatabaseUrl(env.getProperty("bdurl"));
+        return pushboxProperties;
     }
 }

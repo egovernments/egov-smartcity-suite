@@ -151,6 +151,14 @@ public class ScheduleController {
         return "schedule-create-view";
     }
 
+    /**
+     * This method save the new schedule data and create a new schedule job using dynamic cron expression and scheduloe a job.
+     * @param schedule
+     * @param errors
+     * @param request
+     * @param model
+     * @return
+     */
     @PostMapping("/schedule/create/")
     public String save(@Valid @ModelAttribute Schedule schedule, BindingResult errors, HttpServletRequest request, Model model) {
 
@@ -217,6 +225,12 @@ public class ScheduleController {
         return "schedule-details-view";
     }
 
+    /**
+     * This method update the schedule status and unschedule a job. Once job is unschedule it cannot be resumed again.
+     * @param id
+     * @param model
+     * @return
+     */
     @GetMapping(path = { "/schedule/delete/{id}" }, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String deleteSchedule(@PathVariable Long id, Model model) {
