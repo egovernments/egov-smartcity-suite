@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -47,26 +47,8 @@
  */
 package org.egov.wtms.web.controller.application;
 
-import static org.egov.commons.entity.Source.CSC;
-import static org.egov.commons.entity.Source.MEESEVA;
-import static org.egov.commons.entity.Source.ONLINE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.SOURCECHANNEL_ONLINE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import javax.validation.ValidationException;
-
-import org.apache.commons.lang3.StringUtils;
 import org.egov.eis.web.contract.WorkflowContainer;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -85,7 +67,6 @@ import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.NewConnectionService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
-import org.egov.wtms.application.service.WaterConnectionService;
 import org.egov.wtms.masters.entity.DocumentNames;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
@@ -98,20 +79,43 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.FlashMap;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.servlet.view.RedirectView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import javax.validation.ValidationException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.egov.commons.entity.Source.CSC;
+import static org.egov.commons.entity.Source.MEESEVA;
+import static org.egov.commons.entity.Source.ONLINE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ADDNLCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CONN_NAME_ADDNLCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PRIMARYCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.SOURCECHANNEL_ONLINE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
 
 @Controller
 @RequestMapping(value = "/application")
 public class NewConnectionController extends GenericConnectionController {
+
     private static final String TYPE_OF_CONNECTION = "typeOfConnection";
     private static final String SEWERAGE_TAX_MANAGEMENT = "Sewerage Tax Management";
     private static final Logger LOG = LoggerFactory.getLogger(NewConnectionController.class);
@@ -124,74 +128,73 @@ public class NewConnectionController extends GenericConnectionController {
     private static final String VALIDIFPTDUEEXISTS = "validateIfPTDueExists";
     private static final String APPROVALPOSITION = "approvalPosition";
 
-    private final WaterConnectionDetailsService waterConnectionDtlsService;
-    private final ApplicationTypeService applicationTypeService;
-    private final ConnectionDemandService connectionDemandService;
-    private final NewConnectionService newConnectionService;
-    private final WaterTaxUtils waterTaxUtils;
-    
+    @Autowired
+    private WaterConnectionDetailsService waterConnectionDtlsService;
+
+    @Autowired
+    private ApplicationTypeService applicationTypeService;
+
+    @Autowired
+    private ConnectionDemandService connectionDemandService;
+
+    @Autowired
+    private NewConnectionService newConnectionService;
+
+    @Autowired
+    private WaterTaxUtils waterTaxUtils;
+
     @Autowired
     private SecurityUtils securityUtils;
-    
+
     @Autowired
     private DocumentTypeMasterService documentTypeMasterService;
+
     @Autowired
     private SewerageApplicationTypeService sewerageApplicationTypeService;
+
     @Autowired
     private SewerageApplicationDetailsService sewerageDetailsService;
+
     @Autowired
     private SewerageTaxUtils sewerageTaxUtils;
+
     @Autowired
     private SewerageConnectionService sewerageConnectionService;
-    @Autowired
-    private ModuleService moduleService ;
 
     @Autowired
-    public NewConnectionController(final WaterConnectionDetailsService waterConnectionDtlsService,
-            final ApplicationTypeService applicationTypeService, final ConnectionDemandService connectionDemandService,
-            final WaterTaxUtils waterTaxUtils, final NewConnectionService newConnectionService,
-            final WaterConnectionService waterConnectionService) {
-        this.waterConnectionDtlsService = waterConnectionDtlsService;
-        this.applicationTypeService = applicationTypeService;
-        this.connectionDemandService = connectionDemandService;
-        this.waterTaxUtils = waterTaxUtils;
-        this.newConnectionService = newConnectionService;
-    }
+    private ModuleService moduleService;
 
     @ModelAttribute("documentNamesList")
-    public List<DocumentNames> documentNamesList(
-            @ModelAttribute final WaterConnectionDetails waterConnectionDetails) {
-        waterConnectionDetails.setApplicationType(applicationTypeService.findByCode(WaterTaxConstants.NEWCONNECTION));
+    public List<DocumentNames> documentNamesList(@ModelAttribute WaterConnectionDetails waterConnectionDetails) {
+        waterConnectionDetails.setApplicationType(applicationTypeService.findByCode(NEWCONNECTION));
         return waterConnectionDtlsService.getAllActiveDocumentNames(waterConnectionDetails.getApplicationType());
     }
 
-    @RequestMapping(value = "/newConnection-newform", method = GET)
-    public String showNewApplicationForm(@ModelAttribute final WaterConnectionDetails waterConnectionDetails,
-            final Model model, final HttpServletRequest request) {
-        Boolean loggedUserIsMeesevaUser;
-        final Boolean isCSCOperator = waterTaxUtils.isCSCoperator(securityUtils.getCurrentUser());     
+    @GetMapping(value = "/newConnection-newform")
+    public String showNewApplicationForm(@ModelAttribute WaterConnectionDetails waterConnectionDetails,
+                                         Model model, HttpServletRequest request) {
         waterConnectionDetails.setApplicationDate(new Date());
         waterConnectionDetails.setConnectionStatus(ConnectionStatus.INPROGRESS);
         model.addAttribute("allowIfPTDueExists", waterTaxUtils.isNewConnectionAllowedIfPTDuePresent());
         model.addAttribute(ADDITIONALRULE, waterConnectionDetails.getApplicationType().getCode());
-        final WorkflowContainer workflowContainer = new WorkflowContainer();
+        WorkflowContainer workflowContainer = new WorkflowContainer();
         workflowContainer.setAdditionalRule(waterConnectionDetails.getApplicationType().getCode());
         prepareWorkflow(model, waterConnectionDetails, workflowContainer);
-        boolean sewerageTaxenabled=moduleService.getModuleByName(SEWERAGE_TAX_MANAGEMENT).isEnabled();
-        model.addAttribute("sewerageTaxenabled",sewerageTaxenabled);
+        boolean sewerageTaxenabled = moduleService.getModuleByName(SEWERAGE_TAX_MANAGEMENT).isEnabled();
+        model.addAttribute("sewerageTaxenabled", sewerageTaxenabled);
         //sewerage module integration
-        if(sewerageTaxenabled){
-        waterConnectionDtlsService.prepareNewForm(model,waterConnectionDetails);
+        if (sewerageTaxenabled) {
+            waterConnectionDtlsService.prepareNewForm(model, waterConnectionDetails);
         }
-        model.addAttribute(CURRENTUSER, waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
-        model.addAttribute(STATETYPE, waterConnectionDetails.getClass().getSimpleName());       
+        User currentUser = securityUtils.getCurrentUser();
+        model.addAttribute(CURRENTUSER, waterTaxUtils.getCurrentUserRole(currentUser));
+        model.addAttribute(STATETYPE, waterConnectionDetails.getClass().getSimpleName());
         model.addAttribute("documentName", waterTaxUtils.documentRequiredForBPLCategory());
-        model.addAttribute(TYPE_OF_CONNECTION, WaterTaxConstants.NEWCONNECTION);
-        model.addAttribute("isCSCOperator", isCSCOperator);
-        model.addAttribute("citizenPortalUser", waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser()));
-        model.addAttribute("isAnonymousUser", waterTaxUtils.isAnonymousUser(securityUtils.getCurrentUser()));
-        loggedUserIsMeesevaUser = waterTaxUtils.isMeesevaUser(securityUtils.getCurrentUser());
-        if (loggedUserIsMeesevaUser)
+        model.addAttribute(TYPE_OF_CONNECTION, NEWCONNECTION);
+        model.addAttribute("isCSCOperator", waterTaxUtils.isCSCoperator(currentUser));
+        model.addAttribute("citizenPortalUser", waterTaxUtils.isCitizenPortalUser(currentUser));
+        model.addAttribute("isAnonymousUser", waterTaxUtils.isAnonymousUser(currentUser));
+        if (waterTaxUtils.isMeesevaUser(currentUser))
             if (request.getParameter("applicationNo") == null)
                 throw new ApplicationRuntimeException("MEESEVA.005");
             else
@@ -199,96 +202,88 @@ public class NewConnectionController extends GenericConnectionController {
         return NEWCONNECTION_FORM;
     }
 
-    @RequestMapping(value = "/newConnection-dataEntryForm", method = GET)
-    public String dataEntryForm(@ModelAttribute final WaterConnectionDetails waterConnectionDetails,
-            final Model model) {
+    @GetMapping(value = "/newConnection-dataEntryForm")
+    public String dataEntryForm(@ModelAttribute WaterConnectionDetails waterConnectionDetails, Model model) {
+
         waterConnectionDetails.setApplicationDate(new Date());
         waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);
-        final Map<Long, String> connectionTypeMap = new HashMap<>();
-        connectionTypeMap.put(applicationTypeService.findByCode(WaterTaxConstants.NEWCONNECTION).getId(),
-                WaterTaxConstants.PRIMARYCONNECTION);
-        connectionTypeMap.put(applicationTypeService.findByCode(WaterTaxConstants.ADDNLCONNECTION).getId(),
-                WaterTaxConstants.CONN_NAME_ADDNLCONNECTION);
+        Map<Long, String> connectionTypeMap = new HashMap<>();
+        connectionTypeMap.put(applicationTypeService.findByCode(NEWCONNECTION).getId(), PRIMARYCONNECTION);
+        connectionTypeMap.put(applicationTypeService.findByCode(ADDNLCONNECTION).getId(), CONN_NAME_ADDNLCONNECTION);
         model.addAttribute(RADIOBUTTONMAP, connectionTypeMap);
         model.addAttribute("mode", "dataEntry");
-        model.addAttribute(TYPE_OF_CONNECTION, WaterTaxConstants.NEWCONNECTION);
+        model.addAttribute(TYPE_OF_CONNECTION, NEWCONNECTION);
         return "newconnection-dataEntryForm";
     }
 
-    @RequestMapping(value = "/newConnection-existingMessage/{consumerCode}", method = GET)
-    public String dataEntryMessage(final Model model, @PathVariable final String consumerCode) {
+    @GetMapping(value = "/newConnection-existingMessage/{consumerCode}")
+    public String dataEntryMessage(@PathVariable String consumerCode, Model model) {
         model.addAttribute(WATERCHARGES_CONSUMERCODE, consumerCode);
-        final WaterConnectionDetails waterConnectionDetails = waterConnectionDtlsService
-                .findByApplicationNumberOrConsumerCode(consumerCode);
+        WaterConnectionDetails waterConnectionDetails = waterConnectionDtlsService.findByApplicationNumberOrConsumerCode(consumerCode);
         model.addAttribute("connectionType", waterConnectionDtlsService.getConnectionTypesMap()
                 .get(waterConnectionDetails.getConnectionType().name()));
-        if (waterConnectionDetails.getId() != null)
-            model.addAttribute("mode", "edit");
-        else
-            model.addAttribute("mode", "");
+        model.addAttribute("mode", waterConnectionDetails.getId() == null ? EMPTY : "edit");
         return "newconnection-dataEntryMessage";
     }
 
-    @RequestMapping(value = "/newConnection-create", method = POST)
-    public String createNewConnection(@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails,
-            final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
-            final HttpServletRequest request, final Model model, @RequestParam String workFlowAction,
-            final BindingResult errors,@RequestParam("files") final MultipartFile... files) {
-        
-        final Boolean loggedUserIsMeesevaUser = waterTaxUtils.isMeesevaUser(securityUtils.getCurrentUser());
-        final Boolean isCSCOperator = waterTaxUtils.isCSCoperator(securityUtils.getCurrentUser());
-        final boolean citizenPortalUser = waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser());
+    @PostMapping(value = "/newConnection-create")
+    public String createNewConnection(@Valid @ModelAttribute WaterConnectionDetails waterConnectionDetails,
+                                      BindingResult resultBinder, HttpServletRequest request,
+                                      Model model, @RequestParam String workFlowAction,
+                                      @RequestParam("files") MultipartFile... files) {
+
+        User currentUser = securityUtils.getCurrentUser();
+        boolean loggedUserIsMeesevaUser = waterTaxUtils.isMeesevaUser(currentUser);
+        boolean isCSCOperator = waterTaxUtils.isCSCoperator(currentUser);
+        boolean citizenPortalUser = waterTaxUtils.isCitizenPortalUser(currentUser);
         model.addAttribute("citizenPortalUser", citizenPortalUser);
-        final Boolean isAnonymousUser = waterTaxUtils.isAnonymousUser(securityUtils.getCurrentUser());
+        boolean isAnonymousUser = waterTaxUtils.isAnonymousUser(currentUser);
         model.addAttribute("isAnonymousUser", isAnonymousUser);
-        if (!isCSCOperator && !citizenPortalUser && !loggedUserIsMeesevaUser && !isAnonymousUser) {
-            final Boolean isJuniorAsstOrSeniorAsst = waterTaxUtils
-                    .isLoggedInUserJuniorOrSeniorAssistant(securityUtils.getCurrentUser().getId());
-            if (!isJuniorAsstOrSeniorAsst)
-                throw new ValidationException("err.creator.application");
+        if (!isCSCOperator && !citizenPortalUser && !loggedUserIsMeesevaUser && !isAnonymousUser
+                && !waterTaxUtils.isLoggedInUserJuniorOrSeniorAssistant(currentUser.getId())) {
+            throw new ValidationException("err.creator.application");
         }
         String sourceChannel = request.getParameter("Source");
 
         newConnectionService.validatePropertyID(waterConnectionDetails, resultBinder);
         if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType()))
             waterConnectionDtlsService.validateWaterRateAndDonationHeader(waterConnectionDetails);
-        final List<ApplicationDocuments> applicationDocs = new ArrayList<>();
+        List<ApplicationDocuments> applicationDocs = new ArrayList<>();
         int i = 0;
-        final String documentRequired = waterTaxUtils.documentRequiredForBPLCategory();
+        String documentRequired = waterTaxUtils.documentRequiredForBPLCategory();
         if (!waterConnectionDetails.getApplicationDocs().isEmpty())
-            for (final ApplicationDocuments applicationDocument : waterConnectionDetails.getApplicationDocs()) {
+            for (ApplicationDocuments applicationDocument : waterConnectionDetails.getApplicationDocs()) {
                 newConnectionService.validateDocuments(applicationDocs, applicationDocument, i, resultBinder,
                         waterConnectionDetails.getCategory().getId(), documentRequired);
                 i++;
             }
-        if (waterConnectionDetails.getState() == null){
+        if (waterConnectionDetails.getState() == null) {
             waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                     WaterTaxConstants.APPLICATION_STATUS_CREATED, WaterTaxConstants.MODULETYPE));
         }
-               
+
         if (LOG.isDebugEnabled())
-            LOG.debug("Model Level Validation occurs = " + resultBinder);
+            LOG.debug("Model Level Validation occurs = {} ", resultBinder);
         if (resultBinder.hasErrors()) {
             waterConnectionDetails.setApplicationDate(new Date());
-            boolean sewerageTaxenabled=moduleService.getModuleByName(SEWERAGE_TAX_MANAGEMENT).isEnabled();
-            model.addAttribute("sewerageTaxenabled",sewerageTaxenabled);
+            boolean sewerageTaxenabled = moduleService.getModuleByName(SEWERAGE_TAX_MANAGEMENT).isEnabled();
+            model.addAttribute("sewerageTaxenabled", sewerageTaxenabled);
             //sewerage module integration
-            if(sewerageTaxenabled){
-                waterConnectionDtlsService.prepareNewForm(model,waterConnectionDetails);
+            if (sewerageTaxenabled) {
+                waterConnectionDtlsService.prepareNewForm(model, waterConnectionDetails);
             }
             model.addAttribute(VALIDIFPTDUEEXISTS, waterTaxUtils.isNewConnectionAllowedIfPTDuePresent());
-            final WorkflowContainer workflowContainer = new WorkflowContainer();
+            WorkflowContainer workflowContainer = new WorkflowContainer();
             workflowContainer.setAdditionalRule(waterConnectionDetails.getApplicationType().getCode());
             prepareWorkflow(model, waterConnectionDetails, workflowContainer);
             model.addAttribute(ADDITIONALRULE, waterConnectionDetails.getApplicationType().getCode());
-            model.addAttribute(CURRENTUSER, waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
+            model.addAttribute(CURRENTUSER, waterTaxUtils.getCurrentUserRole(currentUser));
             model.addAttribute("approvalPosOnValidate", request.getParameter(APPROVALPOSITION));
-            model.addAttribute(TYPE_OF_CONNECTION, WaterTaxConstants.NEWCONNECTION);
+            model.addAttribute(TYPE_OF_CONNECTION, NEWCONNECTION);
             model.addAttribute(STATETYPE, waterConnectionDetails.getClass().getSimpleName());
             model.addAttribute("documentName", waterTaxUtils.documentRequiredForBPLCategory());
             return NEWCONNECTION_FORM;
         }
-        SewerageApplicationDetails sewerageDetails=new SewerageApplicationDetails();
         waterConnectionDetails.getApplicationDocs().clear();
         waterConnectionDetails.setApplicationDocs(applicationDocs);
 
@@ -296,7 +291,7 @@ public class NewConnectionController extends GenericConnectionController {
 
         Long approvalPosition = 0l;
         String approvalComent = "";
-        final Boolean applicationByOthers = waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser());
+        boolean applicationByOthers = waterTaxUtils.getCurrentUserRole(currentUser);
 
         if (request.getParameter("approvalComent") != null)
             approvalComent = request.getParameter("approvalComent");
@@ -305,21 +300,21 @@ public class NewConnectionController extends GenericConnectionController {
         if (request.getParameter(APPROVALPOSITION) != null && !request.getParameter(APPROVALPOSITION).isEmpty())
             approvalPosition = Long.valueOf(request.getParameter(APPROVALPOSITION));
 
-        if (applicationByOthers != null && applicationByOthers.equals(true) || citizenPortalUser || isAnonymousUser) {
-            final Position userPosition = waterTaxUtils
+        if (applicationByOthers || citizenPortalUser || isAnonymousUser) {
+            Position userPosition = waterTaxUtils
                     .getZonalLevelClerkForLoggedInUser(waterConnectionDetails.getConnection().getPropertyIdentifier());
             if (userPosition != null)
                 approvalPosition = userPosition.getId();
             else {
                 model.addAttribute(VALIDIFPTDUEEXISTS, waterTaxUtils.isNewConnectionAllowedIfPTDuePresent());
-                final WorkflowContainer workflowContainer = new WorkflowContainer();
+                WorkflowContainer workflowContainer = new WorkflowContainer();
                 workflowContainer.setAdditionalRule(waterConnectionDetails.getApplicationType().getCode());
                 prepareWorkflow(model, waterConnectionDetails, workflowContainer);
                 model.addAttribute(ADDITIONALRULE, waterConnectionDetails.getApplicationType().getCode());
                 model.addAttribute("approvalPosOnValidate", request.getParameter(APPROVALPOSITION));
                 model.addAttribute(CURRENTUSER, waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
                 model.addAttribute(STATETYPE, waterConnectionDetails.getClass().getSimpleName());
-                errors.rejectValue(CONNECTION_PROPERTYID, "err.validate.connection.user.mapping",
+                resultBinder.rejectValue(CONNECTION_PROPERTYID, "err.validate.connection.user.mapping",
                         "err.validate.connection.user.mapping");
                 model.addAttribute("noJAORSAMessage", "No JA/SA exists to forward the application.");
                 return NEWCONNECTION_FORM;
@@ -332,7 +327,7 @@ public class NewConnectionController extends GenericConnectionController {
         }
 
         if (citizenPortalUser && (waterConnectionDetails.getSource() == null
-                || StringUtils.isBlank(waterConnectionDetails.getSource().toString())))
+                || isBlank(waterConnectionDetails.getSource().toString())))
             waterConnectionDetails.setSource(waterTaxUtils.setSourceOfConnection(securityUtils.getCurrentUser()));
 
         if (loggedUserIsMeesevaUser) {
@@ -340,13 +335,14 @@ public class NewConnectionController extends GenericConnectionController {
             if (waterConnectionDetails.getMeesevaApplicationNumber() != null)
                 waterConnectionDetails.setApplicationNumber(waterConnectionDetails.getMeesevaApplicationNumber());
         }
-        boolean isSewerageChecked=request.getParameter("sewerageApplication")==null?false:true;
+        boolean isSewerageChecked = request.getParameter("sewerageApplication") == null ? false : true;
         //sewerage integration
+        SewerageApplicationDetails sewerageDetails = new SewerageApplicationDetails();
         if (moduleService.getModuleByName(SEWERAGE_TAX_MANAGEMENT).isEnabled() && isSewerageChecked) {
-            if(isCSCOperator){
+            if (isCSCOperator) {
                 sewerageDetails.setSource(CSC.toString());
             }
-            if(isAnonymousUser){
+            if (isAnonymousUser) {
                 sewerageDetails.setSource(ONLINE.toString());
             }
             sewerageIntegration(waterConnectionDetails, resultBinder, sewerageDetails);
@@ -355,80 +351,70 @@ public class NewConnectionController extends GenericConnectionController {
         }
 
         waterConnectionDtlsService.createNewWaterConnection(waterConnectionDetails, approvalPosition,
-                approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction,
-                sourceChannel);
+                approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction, sourceChannel);
 
         if (LOG.isDebugEnabled())
             LOG.debug("createNewWaterConnection is completed ");
-        
-        String sewerageAppnumber=sewerageDetails.getApplicationNumber()==null?" ":sewerageDetails.getApplicationNumber();
+
+        String sewerageAppnumber = sewerageDetails.getApplicationNumber() == null ? " " : sewerageDetails.getApplicationNumber();
         if (loggedUserIsMeesevaUser)
             return "redirect:/application/generate-meesevareceipt?transactionServiceNumber="
                     + waterConnectionDetails.getApplicationNumber();
         else
-            return "redirect:/application/citizeenAcknowledgement?pathVars=" + waterConnectionDetails.getApplicationNumber()+"&sewerageAppNo="+sewerageAppnumber;
+            return "redirect:/application/citizeenAcknowledgement?pathVars=" + waterConnectionDetails.getApplicationNumber() + "&sewerageAppNo=" + sewerageAppnumber;
     }
 
     @ModelAttribute
-    public WaterConnectionDetails loadByConsumerNo(@RequestParam(name = "id", required = false) final Long id) {
-        if (id != null)
-            return waterConnectionDtlsService.findBy(id);
-        else
-            return new WaterConnectionDetails();
+    public WaterConnectionDetails loadByConsumerNo(@RequestParam(name = "id", required = false) Long id) {
+        return id == null ? new WaterConnectionDetails() : waterConnectionDtlsService.findBy(id);
     }
 
     // used to create/update existing details
-    @RequestMapping(value = "/newConnection-dataEntryForm", method = POST)
-    public String createExisting(@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails,
-            final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
-            final HttpServletRequest request, final Model model) {
-
+    @PostMapping(value = "/newConnection-dataEntryForm")
+    public String createExisting(@Valid @ModelAttribute WaterConnectionDetails waterConnectionDetails,
+                                 BindingResult resultBinder, Model model) {
         return createAndUpdateDataEntryRecord(waterConnectionDetails, resultBinder, model);
     }
 
-    private String createAndUpdateDataEntryRecord(final WaterConnectionDetails waterConnectionDetails,
-            final BindingResult resultBinder, final Model model) {
+    private String createAndUpdateDataEntryRecord(WaterConnectionDetails waterConnectionDetails,
+                                                  BindingResult resultBinder, Model model) {
         newConnectionService.validatePropertyIDForDataEntry(waterConnectionDetails, resultBinder);
         newConnectionService.validateExisting(waterConnectionDetails, resultBinder);
         if (resultBinder.hasErrors()) {
             model.addAttribute(VALIDIFPTDUEEXISTS, waterTaxUtils.isNewConnectionAllowedIfPTDuePresent());
-            final Map<Long, String> connectionTypeMap = new HashMap<>();
+            Map<Long, String> connectionTypeMap = new HashMap<>();
 
-            connectionTypeMap.put(applicationTypeService.findByCode(WaterTaxConstants.NEWCONNECTION).getId(),
-                    WaterTaxConstants.PRIMARYCONNECTION);
-            connectionTypeMap.put(applicationTypeService.findByCode(WaterTaxConstants.ADDNLCONNECTION).getId(),
-                    WaterTaxConstants.CONN_NAME_ADDNLCONNECTION);
+            connectionTypeMap.put(applicationTypeService.findByCode(NEWCONNECTION).getId(), PRIMARYCONNECTION);
+            connectionTypeMap.put(applicationTypeService.findByCode(ADDNLCONNECTION).getId(), CONN_NAME_ADDNLCONNECTION);
             model.addAttribute(RADIOBUTTONMAP, connectionTypeMap);
             model.addAttribute(RADIOBUTTONMAP, connectionTypeMap);
             model.addAttribute("usageTypes", usageTypeService.getActiveUsageTypes());
             model.addAttribute("connectionCategories", connectionCategoryService.getAllActiveConnectionCategory());
             model.addAttribute("pipeSizes", pipeSizeService.getAllActivePipeSize());
-            if (waterConnectionDetails.getId() == null)
-                return "newconnection-dataEntryForm";
-            else
-                return "newconnection-dataEntryEditForm";
+            return waterConnectionDetails.getId() == null ? "newconnection-dataEntryForm" : "newconnection-dataEntryEditForm";
         }
         waterConnectionDtlsService.createExisting(waterConnectionDetails);
         return "redirect:newConnection-existingMessage/" + waterConnectionDetails.getConnection().getConsumerCode();
     }
 
-    @RequestMapping(value = "/generate-meesevareceipt", method = GET)
-    public RedirectView generateMeesevaReceipt(@ModelAttribute final WaterConnectionDetails waterConnectionDetails,
-            final HttpServletRequest request, final Model model) {
-        final String keyNameArray = request.getParameter("transactionServiceNumber");
+    @GetMapping(value = "/generate-meesevareceipt")
+    public RedirectView generateMeesevaReceipt(@ModelAttribute WaterConnectionDetails waterConnectionDetails,
+                                               HttpServletRequest request) {
 
-        final RedirectView redirect = new RedirectView(WaterTaxConstants.MEESEVA_REDIRECT_URL + keyNameArray, false);
-        final FlashMap outputFlashMap = RequestContextUtils.getOutputFlashMap(request);
+        String keyNameArray = request.getParameter("transactionServiceNumber");
+
+        RedirectView redirect = new RedirectView(WaterTaxConstants.MEESEVA_REDIRECT_URL + keyNameArray, false);
+        FlashMap outputFlashMap = RequestContextUtils.getOutputFlashMap(request);
         if (outputFlashMap != null)
             outputFlashMap.put("url", request.getRequestURL());
         return redirect;
     }
 
-    @RequestMapping(value = "/application-success", method = GET)
+    @GetMapping(value = "/application-success")
     public ModelAndView successView(@ModelAttribute WaterConnectionDetails waterConnectionDetails,
-            final HttpServletRequest request, final Model model) {
+                                    HttpServletRequest request, Model model) {
 
-        final String[] keyNameArray = request.getParameter("pathVars").split(",");
+        String[] keyNameArray = request.getParameter("pathVars").split(",");
         String applicationNumber = "";
         String approverName = "";
         String currentUserDesgn = "";
@@ -463,20 +449,18 @@ public class NewConnectionController extends GenericConnectionController {
 
     }
 
-    @RequestMapping(value = "/newConnection-editExisting/{consumerCode}", method = GET)
-    public String editExisting(@ModelAttribute WaterConnectionDetails waterConnectionDetails,
-            @PathVariable final String consumerCode, final Model model) {
-        waterConnectionDetails = waterConnectionDtlsService.findByApplicationNumberOrConsumerCode(consumerCode);
+    @GetMapping(value = "/newConnection-editExisting/{consumerCode}")
+    public String editExisting(@PathVariable String consumerCode, Model model) {
+
+        WaterConnectionDetails waterConnectionDetails = waterConnectionDtlsService.findByApplicationNumberOrConsumerCode(consumerCode);
         model.addAttribute("allowIfPTDueExists", waterTaxUtils.isNewConnectionAllowedIfPTDuePresent());
         model.addAttribute(ADDITIONALRULE, waterConnectionDetails.getApplicationType().getCode());
         model.addAttribute(CURRENTUSER, waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
         model.addAttribute(STATETYPE, waterConnectionDetails.getClass().getSimpleName());
-        final Map<Long, String> connectionTypeMap = new HashMap<>();
+        Map<Long, String> connectionTypeMap = new HashMap<>();
 
-        connectionTypeMap.put(applicationTypeService.findByCode(WaterTaxConstants.NEWCONNECTION).getId(),
-                WaterTaxConstants.PRIMARYCONNECTION);
-        connectionTypeMap.put(applicationTypeService.findByCode(WaterTaxConstants.ADDNLCONNECTION).getId(),
-                WaterTaxConstants.CONN_NAME_ADDNLCONNECTION);
+        connectionTypeMap.put(applicationTypeService.findByCode(NEWCONNECTION).getId(), PRIMARYCONNECTION);
+        connectionTypeMap.put(applicationTypeService.findByCode(ADDNLCONNECTION).getId(), CONN_NAME_ADDNLCONNECTION);
         model.addAttribute(RADIOBUTTONMAP, connectionTypeMap);
         model.addAttribute("mode", "dataEntry");
         model.addAttribute("waterConnectionDetails", waterConnectionDetails);
@@ -486,15 +470,15 @@ public class NewConnectionController extends GenericConnectionController {
         return "newconnection-dataEntryEditForm";
     }
 
-    @RequestMapping(value = "/newConnection-editExisting/{consumerCode}", method = POST)
-    public String modifyExisting(@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails,
-            @PathVariable final String consumerCode, final BindingResult resultBinder,
-            final RedirectAttributes redirectAttributes, final HttpServletRequest request, final Model model) {
+    @PostMapping(value = "/newConnection-editExisting/{consumerCode}")
+    public String modifyExisting(@Valid @ModelAttribute WaterConnectionDetails waterConnectionDetails,
+                                 @PathVariable String consumerCode, BindingResult resultBinder, Model model) {
         return createAndUpdateDataEntryRecord(waterConnectionDetails, resultBinder, model);
     }
+
     //sewerage
-    private void sewerageIntegration(final WaterConnectionDetails waterConnectionDetails, final BindingResult resultBinder,
-            SewerageApplicationDetails sewerageDetails) {
+    private void sewerageIntegration(WaterConnectionDetails waterConnectionDetails, BindingResult resultBinder,
+                                     SewerageApplicationDetails sewerageDetails) {
         if (sewerageDetails.getState() == null)
             sewerageDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
                     SewerageTaxConstants.APPLICATION_STATUS_CSCCREATED, SewerageTaxConstants.MODULETYPE));
@@ -504,7 +488,7 @@ public class NewConnectionController extends GenericConnectionController {
         sewerageDetails.setApplicationType(sewerageType);
 
         SewerageApplicationDetailsDocument sewerageDocs = new SewerageApplicationDetailsDocument();
-        final List<SewerageApplicationDetailsDocument> sewapplicationDocs = new ArrayList<>();
+        List<SewerageApplicationDetailsDocument> sewapplicationDocs = new ArrayList<>();
         int firstDoc = 0;
         if (!waterConnectionDetails.getApplicationDocs().isEmpty()) {
             sewerageDocs.setDocumentDate(waterConnectionDetails.getApplicationDocs().get(0).getDocumentDate());
@@ -518,9 +502,10 @@ public class NewConnectionController extends GenericConnectionController {
         sewerageDetails.setAppDetailsDocument(sewapplicationDocs);
         sewerageConnectionService.processAndStoreApplicationDocuments(sewerageDetails);
     }
-    private void sewerageApplicationCreate(final WaterConnectionDetails waterConnectionDetails,final HttpServletRequest request,
-            String workFlowAction, final MultipartFile[] files, SewerageApplicationDetails sewerageDetails, Long approvalPosition,
-            String approvalComent) {
+
+    private void sewerageApplicationCreate(WaterConnectionDetails waterConnectionDetails, HttpServletRequest request,
+                                           String workFlowAction, MultipartFile[] files, SewerageApplicationDetails sewerageDetails,
+                                           Long approvalPosition, String approvalComent) {
 
         sewerageDetails.setApplicationDate(waterConnectionDetails.getSewerageApplicationDetails().getApplicationDate());
         sewerageDetails.setConnectionFees(waterConnectionDetails.getSewerageApplicationDetails().getConnectionFees());
@@ -533,10 +518,8 @@ public class NewConnectionController extends GenericConnectionController {
         sewerageDetails.setCreatedBy(securityUtils.getCurrentUser());
         // sewerage application create
         sewerageDetailsService
-                .createNewSewerageConnection(sewerageDetails, approvalPosition,
-                        approvalComent,
-                        sewerageDetails.getApplicationType().getCode(), files,
-                        workFlowAction, request);
+                .createNewSewerageConnection(sewerageDetails, approvalPosition, approvalComent,
+                        sewerageDetails.getApplicationType().getCode(), files, workFlowAction, request);
     }
 
 }

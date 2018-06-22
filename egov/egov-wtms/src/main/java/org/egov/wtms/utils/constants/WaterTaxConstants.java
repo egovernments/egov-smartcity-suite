@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -234,6 +234,8 @@ public class WaterTaxConstants {
     public static final String FUNDCODEGENBILL = "FUNDCODEFORGENERATEBILL";
 
     public static final String NEWCONNECTIONALLOWEDIFPTDUE = "NEWCONNECTIONALLOWEDIFPTDUE";
+    public static final String ADDITIONALCONNECTIONALLOWEDIFPTDUE = "ADDITIONALCONNECTIONALLOWEDIFPTDUE";
+    public static final String CONNECTIONALLOWEDIFPTDUE = "CONNECTIONALLOWEDIFPTDUE";
     public static final String MULTIPLENEWCONNECTIONFORPID = "MULTIPLENEWCONNECTIONFORPID";
     public static final String DOCUMENTREQUIREDFORBPL = "DOCUMENTREQUIREDFORBPL";
     public static final String ROLEFORNONEMPLOYEEINWATERTAX = "ROLEFORNONEMPLOYEEINWATERTAX";
@@ -437,4 +439,5 @@ public class WaterTaxConstants {
     public static final String SERVICECHARGES = "SERVICECHARGES";
     public static final String PENALTYCHARGES = "PENALTYCHARGES";
     public static final String REGULARISATION_DEMAND_NOTE = "Regularisation Demand Note";
+    public static final String STATUS ="status";
 }

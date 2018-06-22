@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -115,10 +115,10 @@ public class ChangeOfUseService {
                 PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ACTIVE);
         if (parentWaterConnectionDetail.getConnectionStatus().equals(ConnectionStatus.HOLDING))
             validationMessage = wcmsMessageSource.getMessage("err.validate.primary.connection.holding",
-                    new String[] { parentWaterConnectionDetail.getConnection().getConsumerCode(), propertyID }, null);
+                    new String[]{parentWaterConnectionDetail.getConnection().getConsumerCode(), propertyID}, null);
         else if (parentWaterConnectionDetail.getConnectionStatus().equals(ConnectionStatus.DISCONNECTED))
             validationMessage = wcmsMessageSource.getMessage("err.validate.primary.connection.disconnected",
-                    new String[] { parentWaterConnectionDetail.getConnection().getConsumerCode(), propertyID }, null);
+                    new String[]{parentWaterConnectionDetail.getConnection().getConsumerCode(), propertyID}, null);
         else if (assessmentDetails.getErrorDetails() != null
                 && assessmentDetails.getErrorDetails().getErrorCode() != null)
             validationMessage = assessmentDetails.getErrorDetails().getErrorMessage();
@@ -126,17 +126,17 @@ public class ChangeOfUseService {
             if (assessmentDetails.getPropertyDetails() != null
                     && assessmentDetails.getPropertyDetails().getTaxDue() != null
                     && assessmentDetails.getPropertyDetails().getTaxDue().doubleValue() > 0
-                    && !waterTaxUtils.isNewConnectionAllowedIfPTDuePresent())
+                    && !waterTaxUtils.isConnectionAllowedIfPTDuePresent())
                 validationMessage = wcmsMessageSource.getMessage("err.validate.property.taxdue",
-                        new String[] { assessmentDetails.getPropertyDetails().getTaxDue().toString(),
+                        new String[]{assessmentDetails.getPropertyDetails().getTaxDue().toString(),
                                 parentWaterConnectionDetail.getConnection().getPropertyIdentifier(),
-                                "changeOfUsage" },
+                                "changeOfUsage"},
                         null);
             validateChangeOfApplicationDue(parentWaterConnectionDetail);
         } else
             validationMessage = wcmsMessageSource.getMessage("err.validate.changeofUse.application.inprocess",
-                    new String[] { parentWaterConnectionDetail.getConnection().getConsumerCode(),
-                            inWorkflow.getApplicationNumber() },
+                    new String[]{parentWaterConnectionDetail.getConnection().getConsumerCode(),
+                            inWorkflow.getApplicationNumber()},
                     null);
         return validationMessage;
     }
@@ -152,8 +152,8 @@ public class ChangeOfUseService {
      */
     @Transactional
     public WaterConnectionDetails createChangeOfUseApplication(final WaterConnectionDetails connectionDetails,
-            final Long approvalPosition, final String approvalComent, final String additionalRule,
-            final String workFlowAction, final String sourceChannel) {
+                                                               final Long approvalPosition, final String approvalComent, final String additionalRule,
+                                                               final String workFlowAction, final String sourceChannel) {
         if (connectionDetails.getApplicationNumber() == null)
             connectionDetails.setApplicationNumber(applicationNumberGenerator.generate());
 
