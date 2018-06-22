@@ -1,0 +1,2 @@
+insert into chartofaccounts  VALUES (nextval('seq_chartofaccounts'),'1308003','Goodwill From Leases',null,true,(select id from chartofaccounts where glcode = '13080'), null, 'A', 'I',
+null, 4, false, false, (select id from schedulemapping where schedule = 'I-03'),null, null,null, null, '130', null,null, now(), 1, now(), 1, 0);
