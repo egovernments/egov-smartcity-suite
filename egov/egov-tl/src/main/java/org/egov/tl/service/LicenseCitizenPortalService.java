@@ -103,6 +103,6 @@ public class LicenseCitizenPortalService {
         portalInboxService.updateInboxMessage(tradeLicense.getApplicationNumber(), moduleService.getModuleByName(TRADE_LICENSE).getId(),
                 tradeLicense.getStatus().getName(), tradeLicense.transitionCompleted(), null, tradeLicense.getState(), tradeLicense.getCreatedBy(),
                 tradeLicense.getLicenseNumber() != null ? tradeLicense.getLicenseNumber() : tradeLicense.getApplicationNumber(),
-                format(APPLICATION_VIEW_URL, tradeLicense.getId()));
+                format(APPLICATION_VIEW_URL, tradeLicense.getUid()));
     }
 }

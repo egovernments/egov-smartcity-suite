@@ -114,7 +114,7 @@ public class LicenseApplicationIndexService {
         applicationIndexService.createApplicationIndex(ApplicationIndex.builder().withModuleName(TRADE_LICENSE)
                 .withApplicationNumber(license.getApplicationNumber()).withApplicationDate(license.getApplicationDate())
                 .withApplicationType(license.getLicenseAppType().getName()).withApplicantName(license.getLicensee().getApplicantName())
-                .withStatus(license.getEgwStatus() != null ? license.getEgwStatus().getDescription() : license.getCurrentState().getValue())
+                .withStatus(license.getStatus().getName())
                 .withUrl(format(APPLICATION_VIEW_URL, license.getUid()))
                 .withApplicantAddress(license.getAddress()).withOwnername(user.isPresent() ?
                         user.get().getUsername() + DELIMITER_COLON + user.get().getName() : NA)
@@ -134,7 +134,7 @@ public class LicenseApplicationIndexService {
 
     private void updateLicenseApplicationIndex(License license, ApplicationIndex applicationIndex) {
         Optional<User> user = getApplicationCurrentOwner(license);
-        applicationIndex.setStatus(license.getEgwStatus() != null ? license.getEgwStatus().getDescription() : license.getCurrentState().getValue());
+        applicationIndex.setStatus(license.getStatus().getName());
         applicationIndex.setApplicantAddress(license.getAddress());
         applicationIndex
                 .setOwnerName(user.isPresent() ? user.get().getUsername() + DELIMITER_COLON + user.get().getName() : EMPTY);
