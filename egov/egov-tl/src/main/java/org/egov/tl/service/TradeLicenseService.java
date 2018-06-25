@@ -105,7 +105,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
+import java.util.UUID;
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringEscapeUtils.escapeXml;
 import static org.apache.commons.lang3.StringUtils.defaultString;
@@ -545,8 +545,8 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         return licenseDocumentDetails;
     }
 
-    public ReportOutput generateAcknowledgment(Long licenseId) {
-        License license = getLicenseById(licenseId);
+    public ReportOutput generateAcknowledgment(String uid) {
+        License license = getLicenseByUID(uid);
         Map<String, Object> reportParams = new HashMap<>();
         reportParams.put("amount", license.getTotalBalance());
         ReportRequest reportRequest = new ReportRequest("tl_license_acknowledgment", license, reportParams);
@@ -585,4 +585,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         license.setCertificateFileId(fileStore.getFileStoreId());
     }
 
+    public TradeLicense getLicenseByUID(String uid) {
+        return (TradeLicense) licenseRepository.findByUid(uid);
+    }
 }

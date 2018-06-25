@@ -1,8 +1,8 @@
 /*
- *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2018  eGovernments Foundation
+ *     Copyright (C) <2018>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,13 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
- *            Further, all user interfaces, including but not limited to citizen facing interfaces,
- *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
- *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *           Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *           Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *           derived works should carry eGovernments Foundation logo on the top right corner.
  *
- *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
- *            For any further queries on attribution, including queries on brand guidelines,
- *            please contact contact@egovernments.org
+ * 	       For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ * 	       For any further queries on attribution, including queries on brand guidelines,
+ *           please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -88,6 +88,7 @@ public class SearchForm extends DataTableSearchRequest {
     private Long applicationTypeId;
     private Long natureOfBusinessId;
     private Date expiryDate;
+    private String uid;
 
     public SearchForm() {
         // For form binding
@@ -95,6 +96,7 @@ public class SearchForm extends DataTableSearchRequest {
 
     public SearchForm(License license, User user, String ownerName, String... feeCollectorRoles) {
         setLicenseId(license.getId());
+        setUid(license.getUid().toString());
         setApplicationNumber(license.getApplicationNumber());
         setLicenseNumber(license.getLicenseNumber());
         setCategoryName(license.getCategory().getName());
@@ -342,5 +344,13 @@ public class SearchForm extends DataTableSearchRequest {
 
     public void setExpiryDate(final Date expiryDate) {
         this.expiryDate = expiryDate;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 }

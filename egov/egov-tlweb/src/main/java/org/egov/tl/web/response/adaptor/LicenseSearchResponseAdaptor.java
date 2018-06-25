@@ -75,6 +75,7 @@ public class LicenseSearchResponseAdaptor implements DataTableJsonAdapter<Search
         searchResults.forEach(searchResult -> {
             JsonObject responseJson = new JsonObject();
             responseJson.addProperty("licenseId", searchResult.getLicenseId());
+            responseJson.addProperty("uid", searchResult.getUid());
             responseJson.addProperty("applicationNumber", searchResult.getApplicationNumber());
             responseJson.addProperty("tlNumber", defaultIfBlank(searchResult.getLicenseNumber()));
             responseJson.addProperty("oldLicenseNumber", defaultIfBlank(searchResult.getOldLicenseNumber()));

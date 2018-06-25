@@ -58,6 +58,7 @@ import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.contracts.LicenseStateInfo;
+import org.hibernate.annotations.Type;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
 import org.hibernate.validator.constraints.Length;
@@ -74,6 +75,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static java.lang.System.lineSeparator;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -272,6 +274,9 @@ public class License extends StateAware<Position> {
 
     @SafeHtml
     private String applicationSource;
+
+
+    private String uid;
 
     @Override
     public Long getId() {
@@ -672,6 +677,14 @@ public class License extends StateAware<Position> {
 
     public void setApplicationSource(String applicationSource) {
         this.applicationSource = applicationSource;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public String generateCertificateFileName() {

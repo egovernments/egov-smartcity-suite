@@ -165,10 +165,10 @@ $(document).ready(function () {
                         aaSorting: [],
                         columns: [{
                             "data": function (row) {
-                                return {name: row.applicationNumber, id: row.licenseId};
+                                return {name: row.applicationNumber, id: row.uid};
                             },
                             "render": function (data, type, row) {
-                                return '<a href="javascript:void(0);" onclick="goToView(' + row.licenseId + ');" data-hiddenele="licenseId" data-eleval="'
+                                return '<a href="javascript:void(0);" onclick="goToView(\''+row.uid+'\');" data-hiddenele="uid" data-eleval="'
                                     + data.id + '">' + data.name + '</a>';
                             },
                             "sTitle": "Application Number"
@@ -203,7 +203,7 @@ $(document).ready(function () {
                                 $.each(JSON.parse(row.actions), function (key, value) {
                                     option += "<option>" + value.key + "</option>";
                                 });
-                                return ('<select class="dropchange" id="recordActions" onchange="goToAction(this,' + row.licenseId + ')" >' + option + '</select>');
+                                return ('<select class="dropchange" id="recordActions" onchange="goToAction(this,\''+row.uid+'\',' + row.licenseId + ')" >' + option + '</select>');
                             }
                         }]
                     });
@@ -218,14 +218,14 @@ $(document).ready(function () {
 });
 
 function goToView(id) {
-    window.open("/tl/viewtradelicense/viewTradeLicense-view.action?id=" + id, '', 'scrollbars=yes,width=1000,height=700,status=yes');
+    window.open("/tl/license/show/" + id, '', 'scrollbars=yes,width=1000,height=700,status=yes');
 }
 
-function goToAction(obj, id) {
+function goToAction(obj,uid, id) {
     if (obj.options[obj.selectedIndex].innerHTML == 'Payment')
         window.open("/tl/pay/online/" + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'View DCB')
-        window.open("/tl/dcb/view/" + id);
+        window.open("/tl/dcb/view/" + uid);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Renew License')
         window.open("/tl/newtradelicense/newTradeLicense-beforeRenew.action?model.id=" + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Closure')
@@ -233,7 +233,7 @@ function goToAction(obj, id) {
     else if (obj.options[obj.selectedIndex].innerHTML == 'Print Certificate')
         window.open("/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id=" + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Print Provisional Certificate')
-        window.open("/tl/viewtradelicense/generate-provisional-certificate.action?model.id=" + id);
+        window.open("/tl/license/generate-provisionalcertificate/" + uid);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Closure Endorsement Notice')
         window.open("/tl/license/closure/endorsementnotice/" + id, 'cen' + id);
 

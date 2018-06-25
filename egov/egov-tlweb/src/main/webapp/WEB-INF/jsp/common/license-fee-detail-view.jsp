@@ -80,8 +80,7 @@
                 <tr>
                     <td colspan="3">
                         <a name="viewdcb" class="btn btn-secondary " id="viewdcb-btn"
-                           onclick="window.open('/tl/dcb/view/'+ <s:property
-                                   value="%{id}"/>, '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');"><s:text
+                           onclick="window.open('/tl/dcb/view/' + '<s:property value="%{uid}"/>', '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');"><s:text
                                 name='license.show.dcb'/></a>
                     </td>
                 </tr>

@@ -48,6 +48,7 @@
 package org.egov.tl.web.controller.transactions.payment;
 
 import org.egov.tl.entity.License;
+import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.contracts.DCBReportSearchRequest;
 import org.egov.tl.entity.view.DCBReportResult;
 import org.egov.tl.entity.view.InstallmentWiseDCB;
@@ -78,16 +79,16 @@ public class ViewDCBController {
     @Autowired
     private InstallmentwiseDCBReportService installmentwiseDCBReportService;
 
-    @GetMapping("{id}")
-    public String search(@PathVariable Long id, Model model, DCBReportSearchRequest searchRequest) {
-        License licenseObj = tradeLicenseService.getLicenseById(id);
-        searchRequest.setLicenseId(licenseObj.getId());
-        model.addAttribute("license", licenseObj);
+    @GetMapping("{uid}")
+    public String search(@PathVariable String uid, Model model, DCBReportSearchRequest searchRequest) {
+        TradeLicense license = tradeLicenseService.getLicenseByUID(uid);
+        searchRequest.setLicenseId(license.getId());
+        model.addAttribute("license", license);
         model.addAttribute("dcbreport", toJSON(dCBReportService.getDCBRecords(searchRequest), DCBReportResult.class,
                 OnlineDCBReportResponseAdaptor.class));
         model.addAttribute("installmentwiseReport", toJSON(installmentwiseDCBReportService.getInstallmentWiseDCBReport(
-                licenseObj.getId()), InstallmentWiseDCB.class, OnlineInstallmentwiseDCBReportAdaptor.class));
-        model.addAttribute("receipts", tradeLicenseService.getReceipts(licenseObj));
+                license.getId()), InstallmentWiseDCB.class, OnlineInstallmentwiseDCBReportAdaptor.class));
+        model.addAttribute("receipts", tradeLicenseService.getReceipts(license));
         return "view-license-dcb";
     }
 }

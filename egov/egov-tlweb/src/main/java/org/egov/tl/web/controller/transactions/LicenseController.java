@@ -47,6 +47,7 @@
  */
 package org.egov.tl.web.controller.transactions;
 
+import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseDocument;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.service.TradeLicenseService;
@@ -80,10 +81,17 @@ public class LicenseController {
         return tradeLicenseService.getAttachedDocument(licenseId);
     }
 
-    @GetMapping(value = "/acknowledgement/{licenseId}", produces = APPLICATION_PDF_VALUE)
+    @GetMapping(value = "/acknowledgement/{uid}", produces = APPLICATION_PDF_VALUE)
     @ResponseBody
-    public ResponseEntity<InputStreamResource> acknowledgment(@PathVariable Long licenseId) {
-        return reportAsResponseEntity(tradeLicenseService.generateAcknowledgment(licenseId));
+    public ResponseEntity<InputStreamResource> acknowledgment(@PathVariable String uid) {
+        return reportAsResponseEntity(tradeLicenseService.generateAcknowledgment(uid));
+    }
+
+    @GetMapping(value = "/generate-provisionalcertificate/{uid}", produces = APPLICATION_PDF_VALUE)
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> generateProvisionalCertificate(@PathVariable String uid) {
+        License tradeLicense = tradeLicenseService.getLicenseByUID(uid);
+        return reportAsResponseEntity(tradeLicenseService.generateLicenseCertificate(tradeLicense, true));
     }
 
     @GetMapping("success/{licenseId}")
@@ -95,6 +103,19 @@ public class LicenseController {
     @GetMapping("view/{licenseId}")
     public String licenseView(@PathVariable Long licenseId, Model model) {
         TradeLicense license = tradeLicenseService.getLicenseById(licenseId);
+        if (license == null) {
+            model.addAttribute("message", "msg.license.notfound");
+        } else {
+            model.addAttribute("outstandingFee", tradeLicenseService.getOutstandingFee(license));
+            model.addAttribute("licenseHistory", tradeLicenseService.populateHistory(license));
+            model.addAttribute("tradeLicense", license);
+        }
+        return "view-tradelicense";
+    }
+
+    @GetMapping("show/{uid}")
+    public String licenseView(@PathVariable String uid, Model model) {
+        TradeLicense license = tradeLicenseService.getLicenseByUID(uid);
         if (license == null) {
             model.addAttribute("message", "msg.license.notfound");
         } else {

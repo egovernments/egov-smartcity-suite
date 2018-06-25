@@ -75,6 +75,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
 
@@ -122,6 +123,7 @@ public class LegacyLicenseService extends LicenseService {
         license.setLegacy(true);
         license.setActive(true);
         license.setLicenseNumber(licenseNumberUtils.generateLicenseNumber());
+        license.setUid(UUID.randomUUID().toString());
         validityService.applyLicenseValidity(license);
         update(license);
     }

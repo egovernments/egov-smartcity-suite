@@ -60,6 +60,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.UUID;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
@@ -108,6 +109,7 @@ public class LicenseApplicationService extends TradeLicenseService {
         raiseNewDemand(license);
         license.getLicensee().setLicense(license);
         license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
+        license.setUid(UUID.randomUUID().toString());
         if (isBlank(license.getApplicationNumber()))
             license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
         processAndStoreDocument(license);

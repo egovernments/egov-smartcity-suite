@@ -102,4 +102,6 @@ public interface LicenseRepository extends JpaRepository<License, Long> {
                                                                                   String nextAction, List<Position> ownerPosition);
 
     List<License> findByStateNextActionAndStateOwnerPositionIn(String nextAction, List<Position> ownerPosition);
+
+    License findByUid(String uid);
 }

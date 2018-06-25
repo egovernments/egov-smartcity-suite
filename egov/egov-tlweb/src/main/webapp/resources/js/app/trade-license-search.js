@@ -432,16 +432,16 @@ $(document).ready(function () {
                                     $.each(JSON.parse(row.actions), function (key, value) {
                                         option += "<option>" + value.key + "</option>";
                                     });
-                                    return ('<select class="form-control" style="width:200px;font-size: small" id="recordActions" onchange="goToAction(this,' + row.licenseId + ')" >' + option + '</select>');
+                                    return ('<select class="form-control" style="width:200px;font-size: small" id="recordActions" onchange="goToAction(this,\'' + row.uid + '\',' + row.licenseId + ')" >' + option + '</select>');
                                 },
                                 "sortable": false,
                                 "orderable": false
                             }, {
                                 "data": function (row) {
-                                    return {name: row.applicationNumber, id: row.licenseId};
+                                    return {name: row.applicationNumber, id: row.uid};
                                 },
                                 "render": function (data, type, row) {
-                                    return '<a href="javascript:void(0);" onclick="goToView(' + row.licenseId + ');" data-hiddenele="licenseId" data-eleval="'
+                                    return '<a href="javascript:void(0);" onclick="goToView(\''+ row.uid +'\');" data-hiddenele="uid" data-eleval="'
                                         + data.id + '">' + data.name + '</a>';
                                 },
                                 "name": "applicationNumber"
@@ -490,14 +490,14 @@ $(document).ready(function () {
 });
 
 function goToView(id) {
-    openWindow("/tl/viewtradelicense/viewTradeLicense-view.action?id=" + id, 'vt' + id);
+    openWindow("/tl/license/show/" + id, 'vt' + id);
 }
 
-function goToAction(obj, id) {
+function goToAction(obj, uid, id) {
     if (obj.options[obj.selectedIndex].innerHTML == 'View Trade')
-        openWindow("/tl/viewtradelicense/viewTradeLicense-view.action?id=" + id, 'vt' + id);
+        openWindow("/tl/license/show/" + uid, 'vt' + uid);
     else if (obj.options[obj.selectedIndex].innerHTML == 'View DCB')
-        openWindow("/tl/dcb/view/" + id, 'vdcb' + id);
+        openWindow("/tl/dcb/view/" + uid, 'vdcb' + uid);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Modify Legacy License')
         openWindow("/tl/legacylicense/update/" + id, 'mll' + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Collect Fees')
@@ -505,17 +505,17 @@ function goToAction(obj, id) {
     else if (obj.options[obj.selectedIndex].innerHTML == 'Print Certificate')
         openWindow("/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id=" + id, 'pc' + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Print Provisional Certificate')
-        openWindow("/tl/viewtradelicense/generate-provisional-certificate.action?model.id=" + id, 'ppc' + id);
+        openWindow("/tl/license/generate-provisionalcertificate/" + uid, 'ppc' + uid);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Renew License')
         openWindow("/tl/newtradelicense/newTradeLicense-beforeRenew.action?model.id=" + id, 'rl' + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Generate Demand Notice')
-        openWindow("/tl/demand-notice/generate/" + id, 'gdn' + id);
+        openWindow("/tl/demand-notice/generate/" + uid, 'gdn' + uid);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Closure')
         openWindow("/tl/license/closure/" + id, 'cl' + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Generate Demand')
-        openWindow("/tl/demand/generate/" + id, 'gd' + id);
+        openWindow("/tl/demand/generate/" + uid, 'gd' + uid);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Print Acknowledgment')
-        openWindow("/tl/license/acknowledgement/" + id);
+        openWindow("/tl/license/acknowledgement/" + uid);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Closure Endorsement Notice')
         openWindow("/tl/license/closure/endorsementnotice/" + id, 'cen' + id);
     $(obj).val('');

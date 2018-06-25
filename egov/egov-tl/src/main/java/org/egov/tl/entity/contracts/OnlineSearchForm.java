@@ -69,6 +69,7 @@ public class OnlineSearchForm {
     private BigDecimal currDmd;
     private BigDecimal totColl;
     private String status;
+    private String uid;
 
     public OnlineSearchForm() {
         // For form binding
@@ -76,6 +77,7 @@ public class OnlineSearchForm {
 
     public OnlineSearchForm(final License license, final BigDecimal[] dmdColl) {
         setLicenseId(license.getId());
+        setUid(license.getUid().toString());
         setApplicationNumber(license.getApplicationNumber());
         setLicenseNumber(license.getLicenseNumber());
         setTradeOwnerName(license.getLicensee().getApplicantName());
@@ -188,5 +190,13 @@ public class OnlineSearchForm {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 }

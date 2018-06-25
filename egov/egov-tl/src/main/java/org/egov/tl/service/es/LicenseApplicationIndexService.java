@@ -81,7 +81,7 @@ import static org.egov.tl.utils.Constants.TRADE_LICENSE;
 @Service
 public class LicenseApplicationIndexService {
 
-    private static final String APPLICATION_VIEW_URL = "/tl/viewtradelicense/viewTradeLicense-view.action?applicationNo=%s";
+    private static final String APPLICATION_VIEW_URL = "/tl/license/show/%s";
 
     @Autowired
     private ApplicationIndexService applicationIndexService;
@@ -115,7 +115,7 @@ public class LicenseApplicationIndexService {
                 .withApplicationNumber(license.getApplicationNumber()).withApplicationDate(license.getApplicationDate())
                 .withApplicationType(license.getLicenseAppType().getName()).withApplicantName(license.getLicensee().getApplicantName())
                 .withStatus(license.getEgwStatus() != null ? license.getEgwStatus().getDescription() : license.getCurrentState().getValue())
-                .withUrl(format(APPLICATION_VIEW_URL, license.getApplicationNumber()))
+                .withUrl(format(APPLICATION_VIEW_URL, license.getUid()))
                 .withApplicantAddress(license.getAddress()).withOwnername(user.isPresent() ?
                         user.get().getUsername() + DELIMITER_COLON + user.get().getName() : NA)
                 .withChannel(isNotBlank(license.getApplicationSource()) ? license.getApplicationSource() : getChannel())

@@ -68,7 +68,7 @@ import static org.egov.tl.utils.Constants.TRADE_LICENSE;
 
 @Service
 public class LicenseCitizenPortalService {
-    private static final String APPLICATION_VIEW_URL = "/tl/license/view/%d";
+    private static final String APPLICATION_VIEW_URL = "/tl/license/show/%s";
     @Autowired
     private ModuleService moduleService;
     @Autowired
@@ -84,7 +84,7 @@ public class LicenseCitizenPortalService {
                 tradeLicense.getState().getNatureOfTask(),
                 tradeLicense.getApplicationNumber(), tradeLicense.getLicenseNumber() != null ? tradeLicense.getLicenseNumber() : tradeLicense.getApplicationNumber(),
                 tradeLicense.getId(), tradeLicense.getStateType(), getDetailedMessage(tradeLicense),
-                format(APPLICATION_VIEW_URL, tradeLicense.getId()),
+                format(APPLICATION_VIEW_URL, tradeLicense.getUid()),
                 tradeLicense.transitionCompleted(), tradeLicense.getStatus().getName(),
                 DateUtils.addHours(new Date(), licenseUtils.getSlaForAppType(tradeLicense.getLicenseAppType())), tradeLicense.getState(),
                 Arrays.asList(securityUtils.getCurrentUser()));
