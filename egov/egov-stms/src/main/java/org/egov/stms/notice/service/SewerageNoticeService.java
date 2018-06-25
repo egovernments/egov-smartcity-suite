@@ -400,7 +400,8 @@ public class SewerageNoticeService {
             else
                 reportParams.put(IS_COMMISSIONER, false);
             reportParams.put("userSignature",
-                   user.getSignature() == null?"":new ByteArrayInputStream(user.getSignature()));
+                    user.getSignature() == null ? new ByteArrayInputStream(new byte[0])
+                            : new ByteArrayInputStream(user.getSignature()));
             reportParams.put("applicationtype", stmsMessageSource.getMessage("msg.new.sewerage.conn", null, null));
             reportParams.put("municipality", cityService.getMunicipalityName());
             reportParams.put(DISTRICT, cityService.getDistrictName());
