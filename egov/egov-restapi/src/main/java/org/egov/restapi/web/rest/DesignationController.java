@@ -47,7 +47,6 @@
  */
 package org.egov.restapi.web.rest;
 
-import org.egov.restapi.service.ExternalDepartmentService;
 import org.egov.restapi.service.ExternalDesignationService;
 import org.egov.restapi.util.JsonConvertor;
 import org.springframework.beans.factory.annotation.Autowired;

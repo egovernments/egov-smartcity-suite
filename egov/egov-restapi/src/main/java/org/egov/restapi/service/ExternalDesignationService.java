@@ -48,10 +48,7 @@
 package org.egov.restapi.service;
 
 import org.egov.eis.service.DesignationService;
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.pims.commons.Designation;
-import org.egov.restapi.model.DepartmentHelper;
 import org.egov.restapi.model.DesignationHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
