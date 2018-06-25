@@ -509,11 +509,11 @@ function goToAction(obj, uid, id) {
     else if (obj.options[obj.selectedIndex].innerHTML == 'Renew License')
         openWindow("/tl/newtradelicense/newTradeLicense-beforeRenew.action?model.id=" + id, 'rl' + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Generate Demand Notice')
-        openWindow("/tl/demand-notice/generate/" + uid, 'gdn' + uid);
+        openWindow("/tl/demand-notice/generate/" + id, 'gdn' + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Closure')
         openWindow("/tl/license/closure/" + id, 'cl' + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Generate Demand')
-        openWindow("/tl/demand/generate/" + uid, 'gd' + uid);
+        openWindow("/tl/demand/generate/" + id, 'gd' + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Print Acknowledgment')
         openWindow("/tl/license/acknowledgement/" + uid);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Closure Endorsement Notice')
