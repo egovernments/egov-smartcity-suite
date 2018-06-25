@@ -77,7 +77,7 @@ public class OnlineSearchForm {
 
     public OnlineSearchForm(final License license, final BigDecimal[] dmdColl) {
         setLicenseId(license.getId());
-        setUid(license.getUid().toString());
+        setUid(license.getUid());
         setApplicationNumber(license.getApplicationNumber());
         setLicenseNumber(license.getLicenseNumber());
         setTradeOwnerName(license.getLicensee().getApplicantName());

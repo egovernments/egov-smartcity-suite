@@ -96,7 +96,7 @@ public class SearchForm extends DataTableSearchRequest {
 
     public SearchForm(License license, User user, String ownerName, String... feeCollectorRoles) {
         setLicenseId(license.getId());
-        setUid(license.getUid().toString());
+        setUid(license.getUid());
         setApplicationNumber(license.getApplicationNumber());
         setLicenseNumber(license.getLicenseNumber());
         setCategoryName(license.getCategory().getName());

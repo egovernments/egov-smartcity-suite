@@ -105,7 +105,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
+
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringEscapeUtils.escapeXml;
 import static org.apache.commons.lang3.StringUtils.defaultString;
