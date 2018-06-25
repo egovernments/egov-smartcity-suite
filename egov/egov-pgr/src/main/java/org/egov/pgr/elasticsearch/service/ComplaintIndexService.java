@@ -1694,9 +1694,9 @@ public class ComplaintIndexService {
         Terms terms = response.getAggregations().get("typeAggr");
         Terms closedterms = completedResponse.getAggregations().get("typeAggr");
         for (Bucket closedBucket : closedterms.getBuckets()) {
-            IVRSFeedBackResponse feedbackResponse = new IVRSFeedBackResponse();
-            feedbackResponse.setTotalComplaint(closedBucket.getDocCount());
             for (Bucket termsBucket : terms.getBuckets()) {
+                IVRSFeedBackResponse feedbackResponse = new IVRSFeedBackResponse();
+                feedbackResponse.setTotalComplaint(closedBucket.getDocCount());
                 setUpperLevelValues(aggregationField, feedbackResponse, termsBucket);
                 feedbackResponse.setTotalFeedback(termsBucket.getDocCount());
                 Terms countTerms = termsBucket.getAggregations().get("countAggr");
