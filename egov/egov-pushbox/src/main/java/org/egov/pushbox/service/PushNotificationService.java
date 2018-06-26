@@ -98,7 +98,7 @@ public class PushNotificationService {
             existingRecord.setUser(userDevice.getUser());
             existingRecord.setDevicetoken(userDevice.getDevicetoken());
             existingRecord.setDeviceId(userDevice.getDeviceId());
-            return existingRecord;
+            return pushNotificationRepo.save(existingRecord);
         }
         return pushNotificationRepo.save(userDevice);
     }
