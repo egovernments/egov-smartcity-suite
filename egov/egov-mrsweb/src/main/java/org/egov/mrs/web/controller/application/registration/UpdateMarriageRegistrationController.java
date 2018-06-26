@@ -101,6 +101,7 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.repository.FileStoreMapperRepository;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.utils.FileStoreUtils;
+import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.application.MarriageUtils;
 import org.egov.mrs.application.service.MarriageCertificateService;
 import org.egov.mrs.application.service.workflow.RegistrationWorkflowService;
@@ -275,11 +276,11 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
         String workFlowAction = EMPTY;
         if (isNotBlank(request.getParameter(WORK_FLOW_ACTION)))
             workFlowAction = request.getParameter(WORK_FLOW_ACTION);
-        if(!marriageRegistration.getSource().equals("API")){
+        if(!marriageRegistration.getSource().equals(MarriageConstants.SOURCE_API)){
         validateApplicationDate(marriageRegistration, errors);
         marriageFormValidator.validate(marriageRegistration, errors, "registration");
         }
-        if(marriageRegistration.getSource().equals("API")){
+        if(marriageRegistration.getSource().equals(MarriageConstants.SOURCE_API)){
             marriageRegistration.getWitnesses().clear();
             marriageRegistration.setZone(null);
         }
