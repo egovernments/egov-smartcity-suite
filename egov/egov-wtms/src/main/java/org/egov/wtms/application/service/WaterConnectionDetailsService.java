@@ -151,6 +151,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static java.math.BigDecimal.ZERO;
 import static java.math.RoundingMode.HALF_UP;
@@ -161,6 +162,7 @@ import static org.egov.commons.entity.Source.CSC;
 import static org.egov.commons.entity.Source.MEESEVA;
 import static org.egov.commons.entity.Source.SURVEY;
 import static org.egov.infra.config.core.ApplicationThreadLocals.setUserId;
+import static org.egov.infra.utils.DateUtils.noOfMonthsBetween;
 import static org.egov.wtms.masters.entity.enums.ConnectionStatus.ACTIVE;
 import static org.egov.wtms.masters.entity.enums.ConnectionStatus.CLOSED;
 import static org.egov.wtms.masters.entity.enums.ConnectionStatus.INACTIVE;
@@ -378,11 +380,11 @@ public class WaterConnectionDetailsService {
         }
         if (LOG.isDebugEnabled())
             LOG.debug(" persisting WaterConnectionDetail object is completed and WorkFlow API Stared ");
-        ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = getInitialisedWorkFlowBean();
+        ApplicationWorkflowCustomDefaultImpl applicationWorkflow = getInitialisedWorkFlowBean();
         if (LOG.isDebugEnabled())
             LOG.debug("applicationWorkflowCustomDefaultImpl initialization is done");
 
-        applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(savedWaterConnectionDetails,
+        applicationWorkflow.createCommonWorkflowTransition(savedWaterConnectionDetails,
                 approvalPosition, approvalComent, additionalRule, workFlowAction);
 
         if (waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser()))
@@ -417,7 +419,7 @@ public class WaterConnectionDetailsService {
     }
 
     public Map<String, String> getConnectionTypesMap() {
-        Map<String, String> connectionTypeMap = new LinkedHashMap<>(0);
+        Map<String, String> connectionTypeMap = new ConcurrentHashMap<>(0);
         connectionTypeMap.put(ConnectionType.METERED.toString(), METERED);
         connectionTypeMap.put(ConnectionType.NON_METERED.toString(), NON_METERED);
         return connectionTypeMap;
@@ -574,8 +576,9 @@ public class WaterConnectionDetailsService {
                     Installment nonMeterCurrentInstallment = connectionDemandService.getCurrentInstallment(
                             WATER_RATES_NONMETERED_PTMODULE, null, waterConnectionDetails.getReconnectionApprovalDate());
                     Date newDateForNextInstall;
-                    if (DateUtils.noOfMonthsBetween(waterConnectionDetails.getReconnectionApprovalDate(),
-                            financialYearDAO.getFinancialYearByDate(new Date()).getEndingDate()) >= 6) {
+                    int numberOfMonths = 6;
+                    if (noOfMonthsBetween(waterConnectionDetails.getReconnectionApprovalDate(),
+                            financialYearDAO.getFinancialYearByDate(new Date()).getEndingDate()) >= numberOfMonths) {
                         newDateForNextInstall = DateUtils.addDays(nonMeterCurrentInstallment.getToDate(), 1);
                     } else {
                         newDateForNextInstall = waterConnectionDetails.getReconnectionApprovalDate();
@@ -717,7 +720,7 @@ public class WaterConnectionDetailsService {
         else if (SIGNWORKFLOWACTION.equals(workFlowAction)
                 && APPLICATION_STATUS_DIGITALSIGNPENDING.equals(waterConnectionDetails.getStatus().getCode())
                 && REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())) {
-            waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);
+            waterConnectionDetails.setConnectionStatus(ACTIVE);
             waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_SANCTIONED, MODULETYPE));
         } else if (SIGNWORKFLOWACTION.equals(workFlowAction)
                 && APPLICATION_STATUS_DIGITALSIGNPENDING.equals(waterConnectionDetails.getStatus().getCode()))
@@ -771,7 +774,7 @@ public class WaterConnectionDetailsService {
                                                        Long approvalPosition, String additionalRule, String mode, String workFlowAction) {
 
         String loggedInUserDesignation = waterTaxUtils.loggedInUserDesignation(waterConnectionDetails);
-        WorkFlowMatrix wfmatrix ;
+        WorkFlowMatrix wfmatrix;
         String pendingAction = null;
         if (REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
             pendingAction = getReglnConnectionPendingAction(waterConnectionDetails, loggedInUserDesignation, workFlowAction);
