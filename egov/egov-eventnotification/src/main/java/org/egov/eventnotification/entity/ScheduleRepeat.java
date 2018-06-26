@@ -53,9 +53,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
@@ -74,7 +74,7 @@ public class ScheduleRepeat extends AbstractPersistable<Long> {
     @GeneratedValue(generator = SEQ_EG_ESCHEDULEREPEAT, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotNull
+    @NotBlank
     @SafeHtml
     private String name;
 

@@ -64,12 +64,12 @@
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.eventType" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<form:select path="eventType.id" id="eventType" name="eventType.id"
+							<form:select path="eventType" id="eventType" name="eventType"
 								cssClass="form-control" cssErrorClass="form-control error"	required="required">
 								<form:option value=""><spring:message code="lbl.select" /></form:option>
 								<form:options items="${eventList}" itemLabel="name" itemValue="id"/>
 							</form:select>
-							<form:errors path="eventType.id" cssClass="error-msg" />
+							<form:errors path="eventType" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"></label>
 						<div class="col-sm-3 add-margin"></div>

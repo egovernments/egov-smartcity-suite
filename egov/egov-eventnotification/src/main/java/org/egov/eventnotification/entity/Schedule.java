@@ -69,6 +69,7 @@ import javax.validation.constraints.NotNull;
 import org.egov.eventnotification.entity.contracts.EventDetails;
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
@@ -87,16 +88,18 @@ public class Schedule extends AbstractPersistable<Long> {
     @GeneratedValue(generator = SEQ_EGEVENTNOTIFICATION_SCHEDULE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotNull
+    @NotBlank
     @SafeHtml
     private String templateName;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "drafttype")
     @Valid
+    @NotNull
     private DraftType draftType;
 
     @SafeHtml
+    @NotBlank
     private String status;
 
     @Column(name = "start_date")
@@ -106,9 +109,10 @@ public class Schedule extends AbstractPersistable<Long> {
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "schedulerepeat")
     @Valid
+    @NotNull
     private ScheduleRepeat scheduleRepeat;
 
-    @NotNull
+    @NotBlank
     @Length(max = 500)
     @SafeHtml
     @Column(name = "message_template")
@@ -117,6 +121,7 @@ public class Schedule extends AbstractPersistable<Long> {
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "module")
     @Valid
+    @NotNull
     private TemplateModule module;
 
     @Transient

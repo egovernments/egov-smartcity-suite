@@ -71,6 +71,7 @@ import org.egov.eventnotification.entity.contracts.EventDetails;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
@@ -89,12 +90,12 @@ public class Event extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_EG_EVENT, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotNull
+    @NotBlank
     @Length(max = 100)
     @SafeHtml
     private String name;
 
-    @NotNull
+    @NotBlank
     @Length(max = 200)
     @SafeHtml
     private String description;
@@ -107,6 +108,7 @@ public class Event extends AbstractAuditable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date endDate;
 
+    @NotNull
     private boolean paid;
 
     private Double cost;
@@ -114,6 +116,7 @@ public class Event extends AbstractAuditable {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "eventtype")
     @Valid
+    @NotNull
     private EventType eventType;
 
     @ManyToOne(cascade = CascadeType.ALL)
@@ -121,7 +124,7 @@ public class Event extends AbstractAuditable {
     @Valid
     private FileStoreMapper filestore;
 
-    @NotNull
+    @NotBlank
     @SafeHtml
     @Length(max = 200)
     private String message;
