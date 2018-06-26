@@ -198,7 +198,7 @@ public class RegularisedConnectionController extends GenericConnectionController
             if ("SURVEY".equals(connection.getSource()))
                 waterConnectionDetails.setSource(SURVEY);
         }
-        if (isCSCOperator)
+        else if (isCSCOperator)
             waterConnectionDetails.setSource(CSC);
         else if (citizenPortalUser)
             waterConnectionDetails.setSource(CITIZENPORTAL);

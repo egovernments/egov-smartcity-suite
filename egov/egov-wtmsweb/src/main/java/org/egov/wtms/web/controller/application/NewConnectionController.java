@@ -434,6 +434,7 @@ public class NewConnectionController extends GenericConnectionController {
             }
         if (applicationNumber != null)
             waterConnectionDetails = waterConnectionDtlsService.findByApplicationNumber(applicationNumber);
+        model.addAttribute("waterTaxDueforParent", waterConnectionDetailsService.getTotalAmount(waterConnectionDetails));
         model.addAttribute("approverName", approverName);
         model.addAttribute("currentUserDesgn", currentUserDesgn);
         model.addAttribute("nextDesign", nextDesign);
