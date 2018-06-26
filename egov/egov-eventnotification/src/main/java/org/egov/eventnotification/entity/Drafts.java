@@ -62,6 +62,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
@@ -80,11 +81,13 @@ public class Drafts extends AbstractAuditable {
     private Long id;
 
     @SafeHtml
+    @NotBlank
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "drafttype")
     @Valid
+    @NotNull
     private DraftType draftType;
 
     @NotNull
@@ -101,6 +104,7 @@ public class Drafts extends AbstractAuditable {
 
     @Column(name = "notification_message")
     @SafeHtml
+    @NotBlank
     private String message;
 
     @Override

@@ -57,6 +57,7 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
@@ -75,14 +76,15 @@ public class TemplateModule extends AbstractPersistable<Long> {
     @GeneratedValue(generator = SEQ_EGEVNTNOTIFICATION_MODULE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotNull
+    @NotBlank
     @SafeHtml
     @Length(max = 100)
     private String name;
 
+    @NotNull
     private boolean active;
 
-    @NotNull
+    @NotBlank
     @SafeHtml
     @Length(max = 100)
     private String code;

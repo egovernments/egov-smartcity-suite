@@ -151,10 +151,10 @@ public class NotificationSchedulerJob extends AbstractQuartzJob {
 
             if (notificationSchedule.getModule().getName().equalsIgnoreCase(PROPERTY_MODULE))
                 userTaxInfoList = scheduleService.getDefaulterUserList(contextURL,
-                        appProperties.getPropertytaxRestApi().concat("Water Tax Management"));
+                        appProperties.getPropertytaxRestApi());
             else if (notificationSchedule.getModule().getName().equalsIgnoreCase(WATER_CHARGES_MODULE))
                 userTaxInfoList = scheduleService.getDefaulterUserList(contextURL,
-                        appProperties.getWatertaxRestApi().concat("Water Tax Management"));
+                        appProperties.getWatertaxRestApi());
             if (userTaxInfoList != null)
                 for (UserTaxInformation userTaxInformation : userTaxInfoList) {
                     String message = buildMessageAdapter.buildMessage(userTaxInformation,

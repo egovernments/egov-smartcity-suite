@@ -50,9 +50,9 @@ package org.egov.eventnotification.entity;
 import java.io.Serializable;
 
 import javax.persistence.Embeddable;
-import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Embeddable
@@ -62,22 +62,23 @@ public class EventAddress implements Serializable {
      */
     private static final long serialVersionUID = -1756225050147426636L;
 
-    @NotNull
+    @NotBlank
     @SafeHtml
     @Length(max = 100)
     private String eventhost;
 
-    @NotNull
+    @NotBlank
     @SafeHtml
     @Length(max = 100)
     private String eventlocation;
 
-    @NotNull
+    @NotBlank
     @SafeHtml
     @Length(max = 200)
     private String address;
 
     @SafeHtml
+    @NotBlank
     private String contactNumber;
 
     @SafeHtml

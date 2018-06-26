@@ -88,7 +88,7 @@ public class ModuleCategoryMap extends AbstractPersistable<Long> {
     private ModuleCategory category;
 
     @NotNull
-    @Column(name = "attributes_available", nullable = false)
+    @Column(name = "attributes_available")
     private boolean attributesAvailable;
 
     @Override

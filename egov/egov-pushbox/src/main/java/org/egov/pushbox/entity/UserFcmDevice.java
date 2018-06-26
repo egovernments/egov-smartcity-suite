@@ -64,6 +64,8 @@ import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
+import com.google.firebase.database.annotations.NotNull;
+
 /**
  *
  * @author Darshan Nagesh
@@ -89,7 +91,7 @@ public class UserFcmDevice extends AbstractAuditable {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userid")
-    @NotBlank
+    @NotNull
     private User user;
 
     @Column(name = "devicetoken")
@@ -98,6 +100,7 @@ public class UserFcmDevice extends AbstractAuditable {
     private String devicetoken;
 
     @SafeHtml
+    @NotBlank
     private String deviceId;
 
     public String getDeviceId() {
