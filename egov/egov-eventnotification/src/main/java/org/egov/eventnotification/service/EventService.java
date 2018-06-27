@@ -47,13 +47,13 @@
  */
 package org.egov.eventnotification.service;
 
-import static org.egov.eventnotification.constants.Constants.DDMMYYYY;
-import static org.egov.eventnotification.constants.Constants.EMPTY;
-import static org.egov.eventnotification.constants.Constants.MIN_NUMBER_OF_REQUESTS;
-import static org.egov.eventnotification.constants.Constants.MODULE_NAME;
-import static org.egov.eventnotification.constants.Constants.NOTIFICATION_TYPE_EVENT;
-import static org.egov.eventnotification.constants.Constants.YES;
-import static org.egov.eventnotification.constants.Constants.ZERO;
+import static org.egov.eventnotification.constants.EventnotificationConstants.DDMMYYYY;
+import static org.egov.eventnotification.constants.EventnotificationConstants.EMPTY;
+import static org.egov.eventnotification.constants.EventnotificationConstants.MIN_NUMBER_OF_REQUESTS;
+import static org.egov.eventnotification.constants.EventnotificationConstants.MODULE_NAME;
+import static org.egov.eventnotification.constants.EventnotificationConstants.NOTIFICATION_TYPE_EVENT;
+import static org.egov.eventnotification.constants.EventnotificationConstants.YES;
+import static org.egov.eventnotification.constants.EventnotificationConstants.ZERO;
 
 import java.io.IOException;
 import java.util.Date;

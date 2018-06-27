@@ -47,11 +47,11 @@
  */
 package org.egov.ptis.client.integration.bmi;
 
-import static org.egov.eventnotification.constants.Constants.DDMMYYYY;
-import static org.egov.eventnotification.constants.Constants.MESSAGE_DUEAMT;
-import static org.egov.eventnotification.constants.Constants.MESSAGE_DUEDATE;
-import static org.egov.eventnotification.constants.Constants.MESSAGE_PROPTNO;
-import static org.egov.eventnotification.constants.Constants.MESSAGE_USERNAME;
+import static org.egov.eventnotification.constants.EventnotificationConstants.DDMMYYYY;
+import static org.egov.eventnotification.constants.EventnotificationConstants.MESSAGE_DUEAMT;
+import static org.egov.eventnotification.constants.EventnotificationConstants.MESSAGE_DUEDATE;
+import static org.egov.eventnotification.constants.EventnotificationConstants.MESSAGE_PROPTNO;
+import static org.egov.eventnotification.constants.EventnotificationConstants.MESSAGE_USERNAME;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

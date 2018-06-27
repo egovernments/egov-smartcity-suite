@@ -47,14 +47,14 @@
  */
 package org.egov.eventnotification.web.controller.event;
 
-import static org.egov.eventnotification.constants.Constants.EVENT;
-import static org.egov.eventnotification.constants.Constants.EVENT_LIST;
-import static org.egov.eventnotification.constants.Constants.EVENT_STATUS_LIST;
-import static org.egov.eventnotification.constants.Constants.HOUR_LIST;
-import static org.egov.eventnotification.constants.Constants.MINUTE_LIST;
-import static org.egov.eventnotification.constants.Constants.MODE;
-import static org.egov.eventnotification.constants.Constants.MODE_UPDATE;
-import static org.egov.eventnotification.constants.Constants.MODE_VIEW;
+import static org.egov.eventnotification.constants.EventnotificationConstants.EVENT;
+import static org.egov.eventnotification.constants.EventnotificationConstants.EVENT_LIST;
+import static org.egov.eventnotification.constants.EventnotificationConstants.EVENT_STATUS_LIST;
+import static org.egov.eventnotification.constants.EventnotificationConstants.HOUR_LIST;
+import static org.egov.eventnotification.constants.EventnotificationConstants.MINUTE_LIST;
+import static org.egov.eventnotification.constants.EventnotificationConstants.MODE;
+import static org.egov.eventnotification.constants.EventnotificationConstants.MODE_UPDATE;
+import static org.egov.eventnotification.constants.EventnotificationConstants.MODE_VIEW;
 
 import java.io.IOException;
 import java.util.Arrays;

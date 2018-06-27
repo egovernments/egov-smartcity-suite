@@ -47,7 +47,7 @@
  */
 package org.egov.eventnotification.constants;
 
-public final class Constants {
+public final class EventnotificationConstants {
 
     public static final String MODULE_NAME = "Eventnotification";
 
@@ -156,7 +156,7 @@ public final class Constants {
 
     public static final String BMA_INTERFACE_SUFFIX = "BuildMessageAdapter";
 
-    private Constants() {
+    private EventnotificationConstants() {
 
     }
 }

@@ -47,13 +47,13 @@
  */
 package org.egov.eventnotification.service;
 
-import static org.egov.eventnotification.constants.Constants.DAY_CRON;
-import static org.egov.eventnotification.constants.Constants.DDMMYYYY;
-import static org.egov.eventnotification.constants.Constants.HOURS_CRON;
-import static org.egov.eventnotification.constants.Constants.MINUTES_CRON;
-import static org.egov.eventnotification.constants.Constants.MONTH_CRON;
-import static org.egov.eventnotification.constants.Constants.SCHEDULED_STATUS;
-import static org.egov.eventnotification.constants.Constants.ZERO;
+import static org.egov.eventnotification.constants.EventnotificationConstants.DAY_CRON;
+import static org.egov.eventnotification.constants.EventnotificationConstants.DDMMYYYY;
+import static org.egov.eventnotification.constants.EventnotificationConstants.HOURS_CRON;
+import static org.egov.eventnotification.constants.EventnotificationConstants.MINUTES_CRON;
+import static org.egov.eventnotification.constants.EventnotificationConstants.MONTH_CRON;
+import static org.egov.eventnotification.constants.EventnotificationConstants.SCHEDULED_STATUS;
+import static org.egov.eventnotification.constants.EventnotificationConstants.ZERO;
 
 import java.util.Arrays;
 import java.util.Date;

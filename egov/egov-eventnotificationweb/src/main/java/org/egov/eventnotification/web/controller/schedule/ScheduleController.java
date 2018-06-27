@@ -47,14 +47,14 @@
  */
 package org.egov.eventnotification.web.controller.schedule;
 
-import static org.egov.eventnotification.constants.Constants.DRAFT_LIST;
-import static org.egov.eventnotification.constants.Constants.HOUR_LIST;
-import static org.egov.eventnotification.constants.Constants.MINUTE_LIST;
-import static org.egov.eventnotification.constants.Constants.MODE;
-import static org.egov.eventnotification.constants.Constants.MODE_DELETE;
-import static org.egov.eventnotification.constants.Constants.MODE_VIEW;
-import static org.egov.eventnotification.constants.Constants.NOTIFICATION_SCHEDULE;
-import static org.egov.eventnotification.constants.Constants.SCHEDULER_REPEAT_LIST;
+import static org.egov.eventnotification.constants.EventnotificationConstants.DRAFT_LIST;
+import static org.egov.eventnotification.constants.EventnotificationConstants.HOUR_LIST;
+import static org.egov.eventnotification.constants.EventnotificationConstants.MINUTE_LIST;
+import static org.egov.eventnotification.constants.EventnotificationConstants.MODE;
+import static org.egov.eventnotification.constants.EventnotificationConstants.MODE_DELETE;
+import static org.egov.eventnotification.constants.EventnotificationConstants.MODE_VIEW;
+import static org.egov.eventnotification.constants.EventnotificationConstants.NOTIFICATION_SCHEDULE;
+import static org.egov.eventnotification.constants.EventnotificationConstants.SCHEDULER_REPEAT_LIST;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
