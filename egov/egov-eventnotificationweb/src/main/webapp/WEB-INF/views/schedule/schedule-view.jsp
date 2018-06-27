@@ -151,4 +151,4 @@
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
-	src="<cdn:url value='/resources/js/app/scheduleView.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/js/app/schedule-view.js?rnd=${app_release_no}'/>"></script>

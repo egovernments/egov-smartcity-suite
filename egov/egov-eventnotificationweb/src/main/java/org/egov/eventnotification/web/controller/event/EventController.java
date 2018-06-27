@@ -47,14 +47,14 @@
  */
 package org.egov.eventnotification.web.controller.event;
 
-import static org.egov.eventnotification.constants.ConstantsHelper.EVENT;
-import static org.egov.eventnotification.constants.ConstantsHelper.EVENT_LIST;
-import static org.egov.eventnotification.constants.ConstantsHelper.EVENT_TYPE_LIST;
-import static org.egov.eventnotification.constants.ConstantsHelper.HOUR_LIST;
-import static org.egov.eventnotification.constants.ConstantsHelper.MINUTE_LIST;
-import static org.egov.eventnotification.constants.ConstantsHelper.MODE;
-import static org.egov.eventnotification.constants.ConstantsHelper.MODE_CREATE;
-import static org.egov.eventnotification.constants.ConstantsHelper.MODE_VIEW;
+import static org.egov.eventnotification.constants.Constants.EVENT;
+import static org.egov.eventnotification.constants.Constants.EVENT_LIST;
+import static org.egov.eventnotification.constants.Constants.EVENT_TYPE_LIST;
+import static org.egov.eventnotification.constants.Constants.HOUR_LIST;
+import static org.egov.eventnotification.constants.Constants.MINUTE_LIST;
+import static org.egov.eventnotification.constants.Constants.MODE;
+import static org.egov.eventnotification.constants.Constants.MODE_CREATE;
+import static org.egov.eventnotification.constants.Constants.MODE_VIEW;
 
 import java.io.IOException;
 
@@ -64,8 +64,6 @@ import org.egov.eventnotification.entity.Event;
 import org.egov.eventnotification.service.EventService;
 import org.egov.eventnotification.service.EventTypeService;
 import org.egov.eventnotification.utils.EventnotificationUtil;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -92,9 +90,6 @@ public class EventController {
 
     @Autowired
     private EventnotificationUtil eventnotificationUtil;
-
-    @Autowired
-    private UserService userService;
 
     @Autowired
     private EventTypeService eventTypeService;
@@ -140,8 +135,7 @@ public class EventController {
         }
 
         eventService.saveEvent(event);
-        User user = userService.getCurrentUser();
-        eventService.sendPushMessage(event, user);
+        eventService.sendPushMessage(event);
         model.addAttribute(EVENT, event);
         model.addAttribute(MESSAGE, "msg.event.create.success");
         model.addAttribute(MODE, MODE_VIEW);

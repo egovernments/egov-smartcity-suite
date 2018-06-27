@@ -47,14 +47,14 @@
  */
 package org.egov.eventnotification.web.controller.notificationdraft;
 
-import static org.egov.eventnotification.constants.ConstantsHelper.CATEGORY_PARAMETERS;
-import static org.egov.eventnotification.constants.ConstantsHelper.DRAFT_LIST;
-import static org.egov.eventnotification.constants.ConstantsHelper.MODE;
-import static org.egov.eventnotification.constants.ConstantsHelper.MODE_CREATE;
-import static org.egov.eventnotification.constants.ConstantsHelper.MODE_VIEW;
-import static org.egov.eventnotification.constants.ConstantsHelper.MODULE_CATEGORY;
-import static org.egov.eventnotification.constants.ConstantsHelper.NOTIFICATION_DRAFT;
-import static org.egov.eventnotification.constants.ConstantsHelper.TEMPLATE_MODULE;
+import static org.egov.eventnotification.constants.Constants.CATEGORY_PARAMETERS;
+import static org.egov.eventnotification.constants.Constants.DRAFT_LIST;
+import static org.egov.eventnotification.constants.Constants.MODE;
+import static org.egov.eventnotification.constants.Constants.MODE_CREATE;
+import static org.egov.eventnotification.constants.Constants.MODE_VIEW;
+import static org.egov.eventnotification.constants.Constants.MODULE_CATEGORY;
+import static org.egov.eventnotification.constants.Constants.NOTIFICATION_DRAFT;
+import static org.egov.eventnotification.constants.Constants.TEMPLATE_MODULE;
 
 import javax.validation.Valid;
 
@@ -107,12 +107,6 @@ public class NotificationDraftController {
         model.addAttribute(MODE, MODE_VIEW);
 
         return "draft-view-result";
-    }
-
-    @GetMapping("getCategoriesForModule/")
-    public String getCategoriesForModule(@ModelAttribute Long moduleId, final Model model) {
-        model.addAttribute(MODULE_CATEGORY, moduleCategoryService.getCategoriesForModule(moduleId));
-        return model.toString();
     }
 
     @GetMapping("create/")

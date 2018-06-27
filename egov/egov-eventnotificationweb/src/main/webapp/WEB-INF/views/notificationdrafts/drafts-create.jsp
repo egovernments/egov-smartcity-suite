@@ -134,7 +134,7 @@
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
-<link rel="stylesheet" href="<cdn:url value='/resources/css/draftCreate.css'/>" />
+<link rel="stylesheet" href="<cdn:url value='/resources/css/draft-create.css'/>" />
 
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>  
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js" ></script>
@@ -145,5 +145,5 @@
 <script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 <script	type="text/javascript" src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<cdn:url  value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/js/app/draftNewHelper.js?rnd=${app_release_no}'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/js/app/common.js' />"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/js/app/drafts-create.js?rnd=${app_release_no}'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/js/app/window-reload-and-close.js' />"></script>

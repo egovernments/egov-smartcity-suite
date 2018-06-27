@@ -51,7 +51,7 @@
          xmlns="http://xmlns.jcp.org/xml/ns/javaee"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
 
-    <display-name>e-governments lcms web</display-name>
+    <display-name>e-governments eventnotification web</display-name>
 
     <!-- The definition of the Root Spring Container shared by all Servlets and Filters -->
     <context-param>
@@ -196,14 +196,6 @@
         <taglib>
             <taglib-uri>http://www.springframework.org/tags/form</taglib-uri>
             <taglib-location>/WEB-INF/taglib/spring-form.tld</taglib-location>
-        </taglib>
-        <taglib>
-            <taglib-uri>http://www.joda.org/joda/time/tags</taglib-uri>
-            <taglib-location>/WEB-INF/taglib/joda.tld</taglib-location>
-        </taglib>
-        <taglib>
-            <taglib-uri>http://displaytag.sf.net</taglib-uri>
-            <taglib-location>/WEB-INF/taglib/displaytag.tld</taglib-location>
         </taglib>
         <jsp-property-group>
             <url-pattern>*.jsp</url-pattern>

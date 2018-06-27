@@ -60,21 +60,6 @@ INSERT INTO eg_feature_action(action, feature) VALUES ((select id FROM eg_action
 INSERT INTO eg_feature_action(action, feature) VALUES ((select id FROM eg_action  WHERE name = 'Create Schedule') ,(select id FROM eg_feature WHERE name = 'Schedule'));
 INSERT INTO eg_feature_action(action, feature) VALUES ((select id FROM eg_action  WHERE name = 'Delete Schedule') ,(select id FROM eg_feature WHERE name = 'Schedule'));
 
-DROP TABLE IF EXISTS egevntnotification_module;
-DROP SEQUENCE IF EXISTS seq_egevntnotification_module;
-
-DROP TABLE IF EXISTS egevntnotification_category;
-DROP SEQUENCE IF EXISTS seq_egevntnotification_category;
-
-DROP TABLE IF EXISTS egevntnotification_parameters;
-DROP SEQUENCE IF EXISTS seq_egevntnotification_parameters;
-
-DROP TABLE IF EXISTS egevntnotification_event;
-DROP SEQUENCE IF EXISTS seq_egevntnotification_event;
-
-DROP TABLE IF EXISTS egevntnotification_eventtype;
-DROP SEQUENCE IF EXISTS seq_egevntnotification_eventtype;
-
 CREATE SEQUENCE seq_egevntnotification_eventtype; 
 CREATE TABLE egevntnotification_eventtype
 (
@@ -114,9 +99,6 @@ CREATE TABLE egevntnotification_event
       ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
-DROP TABLE IF EXISTS egevntnotification_userevent;
-DROP SEQUENCE IF EXISTS seq_egevntnotification_userevent;
-
 CREATE SEQUENCE seq_egevntnotification_userevent;
 CREATE TABLE egevntnotification_userevent
 (
@@ -131,15 +113,6 @@ CREATE TABLE egevntnotification_userevent
   CONSTRAINT egevntnotification_userevent_pkey PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS egevntnotification_schedule;
-DROP SEQUENCE IF EXISTS seq_egevntnotification_schedule;
-
-DROP TABLE IF EXISTS egevntnotification_drafts;
-DROP SEQUENCE IF EXISTS seq_egeventnotification_drafts;
-
-DROP TABLE IF EXISTS egevntnotification_drafttype;
-DROP SEQUENCE IF EXISTS seq_egevntnotification_drafttype;
-
 CREATE SEQUENCE seq_egevntnotification_drafttype; 
 CREATE TABLE egevntnotification_drafttype
 (
@@ -148,8 +121,6 @@ CREATE TABLE egevntnotification_drafttype
   version bigint DEFAULT 0,
   CONSTRAINT egevntnotification_drafttype_pkey PRIMARY KEY (id)
 );
-DROP TABLE IF EXISTS egevntnotification_schedulerepeat;
-DROP SEQUENCE IF EXISTS seq_egevntnotification_schedulerepeat;
 
 CREATE SEQUENCE seq_egevntnotification_schedulerepeat; 
 CREATE TABLE egevntnotification_schedulerepeat
@@ -179,13 +150,6 @@ CREATE TABLE egevntnotification_schedule
       REFERENCES egevntnotification_schedulerepeat (id) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION
 );
-
-DROP TABLE IF EXISTS egevntnotification_category_parameters;
-DROP SEQUENCE IF EXISTS seq_egevntnotification_category_parameters;
-DROP TABLE IF EXISTS egevntnotification_module_category;
-DROP SEQUENCE IF EXISTS seq_egevntnotification_module_category;
-DROP TABLE IF EXISTS egevntnotification_template_module;
-DROP SEQUENCE IF EXISTS seq_egevntnotification_template_module;
 
 CREATE SEQUENCE seq_egevntnotification_template_module; 
 CREATE TABLE egevntnotification_template_module
@@ -254,8 +218,6 @@ CREATE TABLE egevntnotification_drafts
       ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
-DROP TABLE IF EXISTS egevntnotification_schedule_log;
-DROP SEQUENCE IF EXISTS seq_egevntnotification_schedule_log;
 
 CREATE SEQUENCE seq_egevntnotification_schedule_log;
 CREATE TABLE egevntnotification_schedule_log
@@ -269,4 +231,3 @@ CREATE TABLE egevntnotification_schedule_log
   version bigint DEFAULT 0,
   CONSTRAINT egevntnotification_schedule_log_pkey PRIMARY KEY (id)
 );
-

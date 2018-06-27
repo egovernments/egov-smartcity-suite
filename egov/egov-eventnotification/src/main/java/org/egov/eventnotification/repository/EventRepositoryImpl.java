@@ -47,11 +47,11 @@
  */
 package org.egov.eventnotification.repository;
 
-import static org.egov.eventnotification.constants.ConstantsHelper.EVENT_HOST;
-import static org.egov.eventnotification.constants.ConstantsHelper.EVENT_ID;
-import static org.egov.eventnotification.constants.ConstantsHelper.NAME;
-import static org.egov.eventnotification.constants.ConstantsHelper.STATUS_COLUMN;
-import static org.egov.eventnotification.constants.ConstantsHelper.UPCOMING;
+import static org.egov.eventnotification.constants.Constants.EVENT_HOST;
+import static org.egov.eventnotification.constants.Constants.EVENT_ID;
+import static org.egov.eventnotification.constants.Constants.NAME;
+import static org.egov.eventnotification.constants.Constants.STATUS_COLUMN;
+import static org.egov.eventnotification.constants.Constants.UPCOMING;
 
 import java.util.Date;
 import java.util.List;
