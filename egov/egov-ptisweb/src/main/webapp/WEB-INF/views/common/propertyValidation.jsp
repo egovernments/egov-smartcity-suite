@@ -52,10 +52,9 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <style>
-body
-{
-  font-family:regular !important;
-  font-size:14px;
+body {
+	font-family: regular !important;
+	font-size: 14px;
 }
 </style>
 <div class="row">
@@ -64,18 +63,18 @@ body
 			style="text-align: left">
 			<div class="panel-heading">
 				<div class="panel-title">
-					<spring:message code="lbl.validation.error" />
+					<spring:message code="lbl.validation.error" text="Validation Error" />
 				</div>
 			</div>
-			<div class="panel-body" style="text-align: center;color:red;font-size:20px">
-				<div class="mandatory">
-					<spring:message code="${errorMsg}" />
+			<div class="panel-body"
+				style="text-align: center; color: red; font-size: 20px">
+				<div class="mandatory" style="text-align: center;">
+					<strong>${errorMsg}</strong>
 				</div>
-			</div>
-			<div class="buttonbottom" align="center">
-			<input type="button" name="button2" id="button2" value="Close" 
-				class="btn btn-default" onclick="window.close();" />
+				<div class="buttonbottom" align="center">
+					<input type="button" name="button2" id="button2" value="Close"
+						class="btn btn-default" onclick="window.close();" />
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
