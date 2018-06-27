@@ -47,17 +47,16 @@
  */
 package org.egov.eventnotification.web.controller.event;
 
-import static org.egov.eventnotification.constants.ConstantsHelper.EVENT;
-import static org.egov.eventnotification.constants.ConstantsHelper.EVENT_LIST;
-import static org.egov.eventnotification.constants.ConstantsHelper.EVENT_STATUS_LIST;
-import static org.egov.eventnotification.constants.ConstantsHelper.HOUR_LIST;
-import static org.egov.eventnotification.constants.ConstantsHelper.MINUTE_LIST;
-import static org.egov.eventnotification.constants.ConstantsHelper.MODE;
-import static org.egov.eventnotification.constants.ConstantsHelper.MODE_UPDATE;
-import static org.egov.eventnotification.constants.ConstantsHelper.MODE_VIEW;
+import static org.egov.eventnotification.constants.Constants.EVENT;
+import static org.egov.eventnotification.constants.Constants.EVENT_LIST;
+import static org.egov.eventnotification.constants.Constants.EVENT_STATUS_LIST;
+import static org.egov.eventnotification.constants.Constants.HOUR_LIST;
+import static org.egov.eventnotification.constants.Constants.MINUTE_LIST;
+import static org.egov.eventnotification.constants.Constants.MODE;
+import static org.egov.eventnotification.constants.Constants.MODE_UPDATE;
+import static org.egov.eventnotification.constants.Constants.MODE_VIEW;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.validation.Valid;
@@ -67,7 +66,6 @@ import org.egov.eventnotification.entity.enums.EventStatus;
 import org.egov.eventnotification.service.EventService;
 import org.egov.eventnotification.service.EventTypeService;
 import org.egov.eventnotification.utils.EventnotificationUtil;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -102,7 +100,7 @@ public class ModifyEventController {
         model.addAttribute(MINUTE_LIST, eventnotificationUtil.getAllMinute());
         model.addAttribute(EVENT_LIST, eventTypeService.getAllEventType());
         model.addAttribute(MODE, MODE_UPDATE);
-        model.addAttribute(EVENT_STATUS_LIST, new ArrayList<>(Arrays.asList(EventStatus.values())));
+        model.addAttribute(EVENT_STATUS_LIST, Arrays.asList(EventStatus.values()));
         return "event-update";
     }
 
@@ -115,22 +113,10 @@ public class ModifyEventController {
             model.addAttribute(MINUTE_LIST, eventnotificationUtil.getAllMinute());
             model.addAttribute(EVENT_LIST, eventTypeService.getAllEventType());
             model.addAttribute(MODE, MODE_UPDATE);
-            model.addAttribute(EVENT_STATUS_LIST, new ArrayList<>(Arrays.asList(EventStatus.values())));
+            model.addAttribute(EVENT_STATUS_LIST, Arrays.asList(EventStatus.values()));
             model.addAttribute(MESSAGE, "msg.event.update.error");
             return "event-update";
         }
-        event.setId(id);
-        DateTime sd = new DateTime(event.getEventDetails().getStartDt());
-        sd = sd.withHourOfDay(Integer.parseInt(event.getEventDetails().getStartHH()));
-        sd = sd.withMinuteOfHour(Integer.parseInt(event.getEventDetails().getStartMM()));
-        sd = sd.withSecondOfMinute(00);
-        event.setStartDate(sd.toDate());
-
-        DateTime ed = new DateTime(event.getEventDetails().getEndDt());
-        ed = ed.withHourOfDay(Integer.parseInt(event.getEventDetails().getEndHH()));
-        ed = ed.withMinuteOfHour(Integer.parseInt(event.getEventDetails().getEndMM()));
-        ed = ed.withSecondOfMinute(00);
-        event.setEndDate(ed.toDate());
         eventService.updateEvent(event);
 
         model.addAttribute(EVENT, event);

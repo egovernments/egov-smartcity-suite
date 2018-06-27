@@ -47,13 +47,13 @@
  */
 package org.egov.eventnotification.service;
 
-import static org.egov.eventnotification.constants.ConstantsHelper.DDMMYYYY;
-import static org.egov.eventnotification.constants.ConstantsHelper.EMPTY;
-import static org.egov.eventnotification.constants.ConstantsHelper.MIN_NUMBER_OF_REQUESTS;
-import static org.egov.eventnotification.constants.ConstantsHelper.MODULE_NAME;
-import static org.egov.eventnotification.constants.ConstantsHelper.NOTIFICATION_TYPE_EVENT;
-import static org.egov.eventnotification.constants.ConstantsHelper.YES;
-import static org.egov.eventnotification.constants.ConstantsHelper.ZERO;
+import static org.egov.eventnotification.constants.Constants.DDMMYYYY;
+import static org.egov.eventnotification.constants.Constants.EMPTY;
+import static org.egov.eventnotification.constants.Constants.MIN_NUMBER_OF_REQUESTS;
+import static org.egov.eventnotification.constants.Constants.MODULE_NAME;
+import static org.egov.eventnotification.constants.Constants.NOTIFICATION_TYPE_EVENT;
+import static org.egov.eventnotification.constants.Constants.YES;
+import static org.egov.eventnotification.constants.Constants.ZERO;
 
 import java.io.IOException;
 import java.util.Date;
@@ -65,6 +65,7 @@ import org.egov.eventnotification.entity.contracts.EventSearch;
 import org.egov.eventnotification.repository.EventRepository;
 import org.egov.eventnotification.repository.custom.EventRepositoryCustom;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.utils.DateUtils;
 import org.egov.pushbox.entity.contracts.MessageContent;
@@ -98,6 +99,9 @@ public class EventService {
 
     @Autowired
     private EventRepositoryCustom eventRepositoryCustom;
+
+    @Autowired
+    private UserService userService;
 
     public List<Event> getAllEventByStatus(String status) {
         List<Event> eventList = null;
@@ -192,6 +196,18 @@ public class EventService {
 
     @Transactional
     public Event updateEvent(Event updatedEvent) throws IOException {
+        DateTime sd = new DateTime(updatedEvent.getEventDetails().getStartDt());
+        sd = sd.withHourOfDay(Integer.parseInt(updatedEvent.getEventDetails().getStartHH()));
+        sd = sd.withMinuteOfHour(Integer.parseInt(updatedEvent.getEventDetails().getStartMM()));
+        sd = sd.withSecondOfMinute(00);
+        updatedEvent.setStartDate(sd.toDate());
+
+        DateTime ed = new DateTime(updatedEvent.getEventDetails().getEndDt());
+        ed = ed.withHourOfDay(Integer.parseInt(updatedEvent.getEventDetails().getEndHH()));
+        ed = ed.withMinuteOfHour(Integer.parseInt(updatedEvent.getEventDetails().getEndMM()));
+        ed = ed.withSecondOfMinute(00);
+        updatedEvent.setEndDate(ed.toDate());
+
         if (updatedEvent.getEventDetails().getFile()[0].getSize() > MIN_NUMBER_OF_REQUESTS)
             eventUploadWallpaper(updatedEvent);
         return eventRepository.save(updatedEvent);
@@ -225,8 +241,8 @@ public class EventService {
         fileStoreService.delete(String.valueOf(event.getFilestore()), MODULE_NAME);
     }
 
-    public void sendPushMessage(Event event, User user) {
-
+    public void sendPushMessage(Event event) {
+        User user = userService.getCurrentUser();
         DateTime calendar = new DateTime(event.getStartDate());
         DateTime calendarEnd = new DateTime(event.getEndDate());
 

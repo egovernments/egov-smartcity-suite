@@ -47,21 +47,18 @@
  */
 package org.egov.eventnotification.web.controller.schedule;
 
-import static org.egov.eventnotification.constants.ConstantsHelper.DRAFT_LIST;
-import static org.egov.eventnotification.constants.ConstantsHelper.HOUR_LIST;
-import static org.egov.eventnotification.constants.ConstantsHelper.MINUTE_LIST;
-import static org.egov.eventnotification.constants.ConstantsHelper.MODE;
-import static org.egov.eventnotification.constants.ConstantsHelper.MODE_DELETE;
-import static org.egov.eventnotification.constants.ConstantsHelper.MODE_VIEW;
-import static org.egov.eventnotification.constants.ConstantsHelper.NOTIFICATION_SCHEDULE;
-import static org.egov.eventnotification.constants.ConstantsHelper.SCHEDULER_REPEAT_LIST;
-
-import java.util.Date;
+import static org.egov.eventnotification.constants.Constants.DRAFT_LIST;
+import static org.egov.eventnotification.constants.Constants.HOUR_LIST;
+import static org.egov.eventnotification.constants.Constants.MINUTE_LIST;
+import static org.egov.eventnotification.constants.Constants.MODE;
+import static org.egov.eventnotification.constants.Constants.MODE_DELETE;
+import static org.egov.eventnotification.constants.Constants.MODE_VIEW;
+import static org.egov.eventnotification.constants.Constants.NOTIFICATION_SCHEDULE;
+import static org.egov.eventnotification.constants.Constants.SCHEDULER_REPEAT_LIST;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.lang.StringUtils;
 import org.egov.eventnotification.entity.Drafts;
 import org.egov.eventnotification.entity.Schedule;
 import org.egov.eventnotification.service.DraftService;
@@ -69,23 +66,9 @@ import org.egov.eventnotification.service.DraftTypeService;
 import org.egov.eventnotification.service.ScheduleRepeatService;
 import org.egov.eventnotification.service.ScheduleService;
 import org.egov.eventnotification.utils.EventnotificationUtil;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.joda.time.DateTime;
-import org.quartz.CronScheduleBuilder;
-import org.quartz.JobKey;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.SimpleTrigger;
-import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
-import org.quartz.TriggerKey;
-import org.quartz.impl.JobDetailImpl;
-import org.quartz.impl.triggers.SimpleTriggerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -99,9 +82,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class ScheduleController {
     private static final String MESSAGE = "message";
-    private static final String EVENT_NOTIFICATION_GROUP = "EVENT_NOTIFICATION_GROUP";
-    private static final String TRIGGER = "eventNotificationTrigger";
-    private static final String JOB = "eventNotificationJob";
 
     @Autowired
     private ScheduleService scheduleService;
@@ -113,16 +93,10 @@ public class ScheduleController {
     private EventnotificationUtil eventnotificationUtil;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private ScheduleRepeatService scheduleRepeatService;
 
     @Autowired
     private DraftTypeService draftTypeService;
-
-    @Autowired
-    private ApplicationContext beanProvider;
 
     @GetMapping("/schedule/view/")
     public String view(Model model) {
@@ -171,38 +145,11 @@ public class ScheduleController {
             return "schedule-create-view";
         }
 
-        User user = userService.getCurrentUser();
-        scheduleService.saveSchedule(schedule, user);
-
-        String cronExpression = scheduleService.getCronExpression(schedule);
-        final JobDetailImpl jobDetail = (JobDetailImpl) beanProvider.getBean("eventnotificationJobDetail");
-        final Scheduler scheduler = (Scheduler) beanProvider.getBean("eventnotificationScheduler");
+        scheduleService.saveSchedule(schedule);
         try {
-            jobDetail.setName(ApplicationThreadLocals.getTenantID().concat("_")
-                    .concat(JOB.concat(String.valueOf(schedule.getId()))));
-            jobDetail.getJobDataMap().put("scheduleId", String.valueOf(schedule.getId()));
             String fullURL = request.getRequestURL().toString();
-            jobDetail.getJobDataMap().put("contextURL", fullURL.substring(0, StringUtils.ordinalIndexOf(fullURL, "/", 3)));
-
-            if (cronExpression == null) {
-                final SimpleTriggerImpl trigger = new SimpleTriggerImpl();
-                trigger.setName(ApplicationThreadLocals.getTenantID().concat("_")
-                        .concat(TRIGGER.concat(String.valueOf(schedule.getId()))));
-                trigger.setStartTime(new Date(System.currentTimeMillis() + 100000));
-                trigger.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_FIRE_NOW);
-                scheduler.start();
-                scheduler.scheduleJob(jobDetail, trigger);
-            } else {
-                final Trigger trigger = TriggerBuilder.newTrigger()
-                        .withIdentity(ApplicationThreadLocals.getTenantID().concat("_")
-                                .concat(TRIGGER.concat(String.valueOf(schedule.getId()))),
-                                EVENT_NOTIFICATION_GROUP)
-                        .withSchedule(CronScheduleBuilder.cronSchedule(cronExpression)).build();
-                scheduler.start();
-                scheduler.scheduleJob(jobDetail, trigger);
-            }
-
-        } catch (final SchedulerException e) {
+            scheduleService.executeScheduler(schedule, fullURL);
+        } catch (final Exception e) {
             throw new ApplicationRuntimeException(e.getMessage(), e);
         }
         model.addAttribute(MESSAGE, "msg.notification.schedule.success");
@@ -234,17 +181,10 @@ public class ScheduleController {
     @GetMapping(path = { "/schedule/delete/{id}" }, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String deleteSchedule(@PathVariable Long id, Model model) {
-        Schedule notificationSchedule = scheduleService.getScheduleById(id);
-        notificationSchedule.setStatus("Disabled");
-
-        notificationSchedule = scheduleService.updateSchedule(notificationSchedule);
-        final Scheduler scheduler = (Scheduler) beanProvider.getBean("eventnotificationScheduler");
+        Schedule notificationSchedule = scheduleService.disableSchedule(id);
         try {
-            scheduler.unscheduleJob(new TriggerKey(ApplicationThreadLocals.getTenantID().concat("_")
-                    .concat(TRIGGER.concat(String.valueOf(notificationSchedule.getId()))),
-                    EVENT_NOTIFICATION_GROUP));
-            scheduler.deleteJob(new JobKey(JOB.concat(String.valueOf(notificationSchedule.getId()))));
-        } catch (final SchedulerException e) {
+            scheduleService.removeScheduler(notificationSchedule);
+        } catch (final Exception e) {
             throw new ApplicationRuntimeException(e.getMessage(), e);
         }
         model.addAttribute(MESSAGE, "msg.notification.schedule.delete.success");

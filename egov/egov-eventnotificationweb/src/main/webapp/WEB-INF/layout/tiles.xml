@@ -76,17 +76,17 @@
 
     <definition name="event-view" extends="base_layout">
         <put-attribute name="page-title" value="title.event.view.all" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/event/eventView.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/event/event-view.jsp"/>
     </definition>
     
     <definition name="event-create" extends="base_layout">
         <put-attribute name="page-title" value="title.event.new" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/event/eventNew.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/event/event-new.jsp"/>
     </definition>
     
     <definition name="event-update" extends="base_layout">
         <put-attribute name="page-title" value="lbl.event.update" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/event/eventUpdate.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/event/event-update.jsp"/>
     </definition>
     
     <definition name="event-success" extends="base_layout">
@@ -166,7 +166,7 @@
     
     <definition name="draft-update" extends="base_layout">
         <put-attribute name="page-title" value="lbl.draft.update" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/notificationdrafts/draftUpdate.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/notificationdrafts/draft-update.jsp"/>
     </definition>
 
 </tiles-definitions>

@@ -47,27 +47,41 @@
  */
 package org.egov.eventnotification.service;
 
-import static org.egov.eventnotification.constants.ConstantsHelper.DAY_CRON;
-import static org.egov.eventnotification.constants.ConstantsHelper.DDMMYYYY;
-import static org.egov.eventnotification.constants.ConstantsHelper.HOURS_CRON;
-import static org.egov.eventnotification.constants.ConstantsHelper.MINUTES_CRON;
-import static org.egov.eventnotification.constants.ConstantsHelper.MONTH_CRON;
-import static org.egov.eventnotification.constants.ConstantsHelper.SCHEDULED_STATUS;
-import static org.egov.eventnotification.constants.ConstantsHelper.ZERO;
+import static org.egov.eventnotification.constants.Constants.DAY_CRON;
+import static org.egov.eventnotification.constants.Constants.DDMMYYYY;
+import static org.egov.eventnotification.constants.Constants.HOURS_CRON;
+import static org.egov.eventnotification.constants.Constants.MINUTES_CRON;
+import static org.egov.eventnotification.constants.Constants.MONTH_CRON;
+import static org.egov.eventnotification.constants.Constants.SCHEDULED_STATUS;
+import static org.egov.eventnotification.constants.Constants.ZERO;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.egov.eventnotification.config.EventNotificationConfiguration;
 import org.egov.eventnotification.config.properties.EventnotificationApplicationProperties;
 import org.egov.eventnotification.entity.Schedule;
 import org.egov.eventnotification.entity.contracts.EventDetails;
 import org.egov.eventnotification.entity.contracts.UserTaxInformation;
 import org.egov.eventnotification.repository.ScheduleRepository;
-import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.DateUtils;
 import org.joda.time.DateTime;
+import org.quartz.CronScheduleBuilder;
+import org.quartz.JobKey;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.SimpleTrigger;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
+import org.quartz.TriggerKey;
+import org.quartz.impl.JobDetailImpl;
+import org.quartz.impl.triggers.SimpleTriggerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -76,6 +90,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ScheduleService {
     private static final int MAX_TEN = 10;
+    private static final String EVENT_NOTIFICATION_GROUP = "EVENT_NOTIFICATION_GROUP";
+    private static final String TRIGGER = "eventNotificationTrigger";
+    private static final String JOB = "eventNotificationJob";
+    private static final String BEANNOTIFSCH = "eventnotificationScheduler";
 
     @Autowired
     private ScheduleRepository notificationscheduleRepository;
@@ -85,6 +103,9 @@ public class ScheduleService {
 
     @Autowired
     private EventNotificationConfiguration notificationConfiguration;
+
+    @Autowired
+    private ApplicationContext beanProvider;
 
     public List<Schedule> getAllSchedule() {
         List<Schedule> notificationScheduleList = null;
@@ -129,7 +150,7 @@ public class ScheduleService {
     }
 
     @Transactional
-    public Schedule saveSchedule(Schedule notificationSchedule, User user) {
+    public Schedule saveSchedule(Schedule notificationSchedule) {
         DateTime sd = new DateTime(notificationSchedule.getEventDetails().getStartDt());
         sd = sd.withHourOfDay(Integer.parseInt(notificationSchedule.getEventDetails().getStartHH()));
         sd = sd.withMinuteOfHour(Integer.parseInt(notificationSchedule.getEventDetails().getStartMM()));
@@ -141,7 +162,21 @@ public class ScheduleService {
 
     @Transactional
     public Schedule updateSchedule(Schedule schedule) {
+        DateTime sd = new DateTime(schedule.getEventDetails().getStartDt());
+        sd = sd.withHourOfDay(Integer.parseInt(schedule.getEventDetails().getStartHH()));
+        sd = sd.withMinuteOfHour(Integer.parseInt(schedule.getEventDetails().getStartMM()));
+        sd = sd.withSecondOfMinute(00);
+        schedule.setStartDate(sd.toDate());
+        schedule.setStatus(SCHEDULED_STATUS);
         return notificationscheduleRepository.save(schedule);
+    }
+
+    @Transactional
+    public Schedule disableSchedule(Long id) {
+        Schedule notificationSchedule = getScheduleById(id);
+        notificationSchedule.setStatus("Disabled");
+
+        return notificationscheduleRepository.save(notificationSchedule);
     }
 
     @Transactional
@@ -155,7 +190,7 @@ public class ScheduleService {
      * @param notificationschedule
      * @return
      */
-    public String getCronExpression(Schedule notificationschedule) {
+    private String getCronExpression(Schedule notificationschedule) {
         String cronExpression = null;
         DateTime calendar = new DateTime(notificationschedule.getStartDate());
         int hours = calendar.getHourOfDay();
@@ -194,5 +229,97 @@ public class ScheduleService {
         ResponseEntity<UserTaxInformation[]> results = notificationConfiguration.getRestTemplate().getForEntity(uri,
                 UserTaxInformation[].class);
         return Arrays.asList(results.getBody());
+    }
+
+    /**
+     * This method is used to create a new job based on the newly created schedule.
+     * @param schedule
+     * @param fullURL
+     */
+    public void executeScheduler(Schedule schedule, String fullURL) {
+        String cronExpression = getCronExpression(schedule);
+        final JobDetailImpl jobDetail = (JobDetailImpl) beanProvider.getBean("eventnotificationJobDetail");
+        final Scheduler scheduler = (Scheduler) beanProvider.getBean(BEANNOTIFSCH);
+        try {
+            jobDetail.setName(ApplicationThreadLocals.getTenantID().concat("_")
+                    .concat(JOB.concat(String.valueOf(schedule.getId()))));
+            jobDetail.getJobDataMap().put("scheduleId", String.valueOf(schedule.getId()));
+            jobDetail.getJobDataMap().put("contextURL", fullURL.substring(0, StringUtils.ordinalIndexOf(fullURL, "/", 3)));
+
+            if (cronExpression == null) {
+                final SimpleTriggerImpl trigger = new SimpleTriggerImpl();
+                trigger.setName(ApplicationThreadLocals.getTenantID().concat("_")
+                        .concat(TRIGGER.concat(String.valueOf(schedule.getId()))));
+                trigger.setStartTime(new Date(System.currentTimeMillis() + 100000));
+                trigger.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_FIRE_NOW);
+                scheduler.start();
+                scheduler.scheduleJob(jobDetail, trigger);
+            } else {
+                final Trigger trigger = TriggerBuilder.newTrigger()
+                        .withIdentity(ApplicationThreadLocals.getTenantID().concat("_")
+                                .concat(TRIGGER.concat(String.valueOf(schedule.getId()))),
+                                EVENT_NOTIFICATION_GROUP)
+                        .withSchedule(CronScheduleBuilder.cronSchedule(cronExpression)).build();
+                scheduler.start();
+                scheduler.scheduleJob(jobDetail, trigger);
+            }
+
+        } catch (final SchedulerException e) {
+            throw new ApplicationRuntimeException(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * This method take a existing scheduler and remove it from schedule.
+     * @param schedule
+     */
+    public void removeScheduler(Schedule schedule) {
+        final Scheduler scheduler = (Scheduler) beanProvider.getBean(BEANNOTIFSCH);
+        try {
+            scheduler.unscheduleJob(new TriggerKey(ApplicationThreadLocals.getTenantID().concat("_")
+                    .concat(TRIGGER.concat(String.valueOf(schedule.getId()))),
+                    EVENT_NOTIFICATION_GROUP));
+            scheduler.deleteJob(new JobKey(JOB.concat(String.valueOf(schedule.getId()))));
+        } catch (final SchedulerException e) {
+            throw new ApplicationRuntimeException(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * This method modify the existing scheduler. It's basically modifying the schedule time using the rescheduleJob method.
+     * @param schedule
+     */
+    public void modifyScheduler(Schedule schedule) {
+        String cronExpression = getCronExpression(schedule);
+        final Scheduler scheduler = (Scheduler) beanProvider.getBean(BEANNOTIFSCH);
+        try {
+
+            if (cronExpression == null) {
+                TriggerKey triggerKey = new TriggerKey(ApplicationThreadLocals.getTenantID().concat("_")
+                        .concat(TRIGGER.concat(String.valueOf(schedule.getId()))),
+                        EVENT_NOTIFICATION_GROUP);
+                final SimpleTriggerImpl trigger = new SimpleTriggerImpl();
+                trigger.setName(TRIGGER.concat(String.valueOf(schedule.getId())));
+                trigger.setStartTime(new Date(System.currentTimeMillis() + 100000));
+                trigger.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_FIRE_NOW);
+                scheduler.rescheduleJob(triggerKey, trigger);
+                if (!scheduler.isShutdown())
+                    scheduler.start();
+            } else {
+                TriggerKey triggerKey = new TriggerKey(ApplicationThreadLocals.getTenantID().concat("_")
+                        .concat(TRIGGER.concat(String.valueOf(schedule.getId()))),
+                        EVENT_NOTIFICATION_GROUP);
+                final Trigger trigger = TriggerBuilder.newTrigger()
+                        .withIdentity(TRIGGER.concat(String.valueOf(schedule.getId())),
+                                EVENT_NOTIFICATION_GROUP)
+                        .withSchedule(CronScheduleBuilder.cronSchedule(cronExpression)).build();
+                scheduler.rescheduleJob(triggerKey, trigger);
+                if (!scheduler.isShutdown())
+                    scheduler.start();
+            }
+
+        } catch (final SchedulerException e) {
+            throw new ApplicationRuntimeException(e.getMessage(), e);
+        }
     }
 }

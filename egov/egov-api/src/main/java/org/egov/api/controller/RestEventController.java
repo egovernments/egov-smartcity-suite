@@ -47,12 +47,12 @@
  */
 package org.egov.api.controller;
 
-import static org.egov.eventnotification.constants.ConstantsHelper.EVENTID;
-import static org.egov.eventnotification.constants.ConstantsHelper.FAIL;
-import static org.egov.eventnotification.constants.ConstantsHelper.MODULE_NAME;
-import static org.egov.eventnotification.constants.ConstantsHelper.SUCCESS;
-import static org.egov.eventnotification.constants.ConstantsHelper.USERID;
-import static org.egov.eventnotification.constants.ConstantsHelper.ZERO;
+import static org.egov.eventnotification.constants.Constants.EVENTID;
+import static org.egov.eventnotification.constants.Constants.FAIL;
+import static org.egov.eventnotification.constants.Constants.MODULE_NAME;
+import static org.egov.eventnotification.constants.Constants.SUCCESS;
+import static org.egov.eventnotification.constants.Constants.USERID;
+import static org.egov.eventnotification.constants.Constants.ZERO;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import java.io.File;

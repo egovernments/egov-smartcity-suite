@@ -1,6 +1,3 @@
-DROP TABLE IF EXISTS egpushbox_userfcmdevice;
-DROP SEQUENCE IF EXISTS seq_egpushbox_userfcmdevice;
-
 CREATE SEQUENCE seq_egpushbox_userfcmdevice;
 CREATE TABLE egpushbox_userfcmdevice
 (

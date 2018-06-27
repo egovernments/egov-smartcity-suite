@@ -127,4 +127,4 @@
 		</div>
 	</div>
 </form:form>
-<script type="text/javascript" src="<cdn:url value='/resources/js/app/common.js' />"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/js/app/window-reload-and-close.js' />"></script>

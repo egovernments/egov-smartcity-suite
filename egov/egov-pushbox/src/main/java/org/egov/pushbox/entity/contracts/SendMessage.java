@@ -49,7 +49,7 @@ package org.egov.pushbox.entity.contracts;
 
 import java.util.List;
 
-public class SendMessageList {
+public class SendMessage {
 
     private List<SendMessagePrototype> messagePrototypeList;
 

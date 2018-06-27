@@ -240,5 +240,5 @@
 <script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/js/app/eventViewResult.js?rnd=${app_release_no}' />"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/js/app/common.js' />"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/js/app/event-view-result.js?rnd=${app_release_no}' />"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/js/app/window-reload-and-close.js' />"></script>
