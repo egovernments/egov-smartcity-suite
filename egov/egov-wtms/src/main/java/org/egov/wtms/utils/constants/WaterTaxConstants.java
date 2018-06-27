@@ -177,6 +177,12 @@ public class WaterTaxConstants {
     public static final String WF_STATE_SE_FORWARD_PENDING = "Superintending Engineer forward pending";
     public static final String WF_STATE_ME_FORWARD_PENDING = "Municipal Engineer forward pending";
     public static final String WF_STATE_AE_APPROVAL_PENDING = "Pending approval by Assistant Engineer";
+    public static final String WF_STATE_AE_REJECTION_PENDING = "Pending rejection by Assistant Engineer";
+    public static final String WF_STATE_CANCELLED = "Cancelled";
+    public static final String WF_STATE_DEE_APPROVE_PENDING = "Deputy Executive Engineer approval pending";
+    public static final String WF_STATE_EE_APPROVE_PENDING = "Executive Engineer approval pending";
+    public static final String WF_STATE_SE_APPROVE_PENDING = "Superintending Engineer approval pending";
+    public static final String WF_STATE_ME_APPROVE_PENDING = "Municipal Engineer approval pending";
 
     public static final String APPROVEWORKFLOWACTION = "Approve";
     public static final String FORWARDWORKFLOWACTION = "Forward";
@@ -194,6 +200,7 @@ public class WaterTaxConstants {
     public static final String WF_STATE_TAP_EXECUTION_DATE_BUTTON = "Execute Tap";
 
     // Application status
+    public static final String APPLICATION_STATUS_NEW = "NEW";
     public static final String APPLICATION_STATUS_CREATED = "CREATED";
     public static final String APPLICATION_STATUS_APPROVED = "APPROVED";
     public static final String APPLICATION_STATUS_VERIFIED = "VERIFIED";
@@ -209,9 +216,9 @@ public class WaterTaxConstants {
     public static final String APPLICATION_STATUS_CLOSERSANCTIONED = "CLOSERSANCTIONED";
     public static final String WORKFLOW_CLOSUREADDITIONALRULE = "CLOSECONNECTION";
     public static final String WORKFLOW_RECONNCTIONINITIATED = "RECONNECTIONINITIATED";
-    public static final String APPLICATION_STATUS__RECONNCTIONINPROGRESS = "RECONNECTIONINPROGRESS";
-    public static final String APPLICATION_STATUS__RECONNCTIONAPPROVED = "RECONNECTIONAPPROVED";
-    public static final String APPLICATION_STATUS__RECONNCTIONSANCTIONED = "RECONNECTIONSANCTIONED";
+    public static final String APPLICATION_STATUS_RECONNCTIONINPROGRESS = "RECONNECTIONINPROGRESS";
+    public static final String APPLICATION_STATUS_RECONNCTIONAPPROVED = "RECONNECTIONAPPROVED";
+    public static final String APPLICATION_STATUS_RECONNCTIONSANCTIONED = "RECONNECTIONSANCTIONED";
     public static final String APPLICATION_STATUS_RECONNDIGSIGNPENDING = "RECONNDIGSIGNPENDING";
     public static final String APPLICATION_STATUS_CLOSERDIGSIGNPENDING = "CLOSUREDIGSIGNPENDING";
     public static final String APPLICATION_STATUS_DIGITALSIGNPENDING = "DIGITALSIGNATUREPENDING";
@@ -439,5 +446,5 @@ public class WaterTaxConstants {
     public static final String SERVICECHARGES = "SERVICECHARGES";
     public static final String PENALTYCHARGES = "PENALTYCHARGES";
     public static final String REGULARISATION_DEMAND_NOTE = "Regularisation Demand Note";
-    public static final String STATUS ="status";
+    public static final String STATUS = "status";
 }

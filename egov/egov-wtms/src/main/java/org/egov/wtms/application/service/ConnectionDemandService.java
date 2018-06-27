@@ -130,7 +130,6 @@ import org.springframework.validation.BindingResult;
 public class ConnectionDemandService {
 
     private static final String FIELD_INSPECTION = "fieldInspection";
-    private static final String ADD_DEMAND = "addDemand";
     private static final String FROM_INSTALLMENT = "fromInstallment";
     private static final String TO_INSTALLMENT = "toInstallment";
     private static final String WATER_CHARGES = "Water Charges";
@@ -255,7 +254,7 @@ public class ConnectionDemandService {
         return donationDetails;
     }
 
-    private EgDemandDetails createDemandDetails(final Double amount, final String demandReason,
+    public EgDemandDetails createDemandDetails(final Double amount, final String demandReason,
             final Installment installment) {
         final EgDemandReason demandReasonObj = getDemandReasonByCodeAndInstallment(demandReason, installment);
         final EgDemandDetails demandDetail = new EgDemandDetails();
@@ -826,11 +825,8 @@ public class ConnectionDemandService {
         return currYearInstMap;
     }
 
-    public BindingResult getWaterTaxDue(final WaterConnectionDetails waterConnectionDetails, final BindingResult resultBinder,
-            final String mode) {
-        if (ADD_DEMAND.equalsIgnoreCase(mode) && !checkWaterChargesCurrentDemand(waterConnectionDetails))
-            resultBinder.reject("err.watercharge.demand.not.present", null);
-        else if (waterConnectionDetails.getEstimationNumber() == null)
+    public BindingResult getWaterTaxDue(final WaterConnectionDetails waterConnectionDetails, final BindingResult resultBinder) {
+        if (waterConnectionDetails.getEstimationNumber() == null)
             resultBinder.reject("err.demandnote.not.present");
         else {
             BigDecimal waterChargesDue = waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);

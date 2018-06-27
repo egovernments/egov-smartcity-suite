@@ -214,7 +214,7 @@
 		</div>
 	</div>
 </div>
-<c:if test="${waterConnectionDetails.applicationType.code=='REGLZNCONNECTION' && waterConnectionDetails.status.code=='CREATED' && currentState != 'NEW'}">
+<c:if test="${waterConnectionDetails.applicationType.code=='REGLZNCONNECTION' && waterConnectionDetails.status.code=='CREATED' && currentState != 'NEW' && currentState != 'Rejected'}">
 	<div class="form-group">
 		
 	</div>
@@ -225,7 +225,7 @@
 			<form:input class="form-control patternvalidation" path="donationCharges" data-pattern="number" maxlength="6" id="donationChargesInput" value='${donationCharges}'/>
 		</div>
 	</div>
-	<c:if test="${waterConnectionDetails.applicationType.code=='REGLZNCONNECTION' && waterConnectionDetails.status.code=='CREATED' && currentState != 'NEW'}">
+	<c:if test="${waterConnectionDetails.applicationType.code=='REGLZNCONNECTION' && waterConnectionDetails.status.code=='CREATED' && currentState != 'NEW' && currentState != 'Rejected'}">
 		<div>
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.connectiondate"/><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">

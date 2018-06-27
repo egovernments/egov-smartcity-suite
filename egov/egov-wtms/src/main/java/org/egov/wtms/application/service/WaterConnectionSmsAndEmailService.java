@@ -878,7 +878,7 @@ public class WaterConnectionSmsAndEmailService {
                     applicantName, WaterTaxConstants.SMSEMAILTYPERECONNECTIONAPPROVE);
             subject = waterTaxUtils.emailSubjectforEmailByCodeAndArgs("msg.reconnectionapprove.email.subject",
                     waterConnectionDetails.getApplicationNumber());
-        } else if (isDigitalSignatureEnabled && WaterTaxConstants.APPLICATION_STATUS__RECONNCTIONSANCTIONED
+        } else if (isDigitalSignatureEnabled && WaterTaxConstants.APPLICATION_STATUS_RECONNCTIONSANCTIONED
                 .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())) {
 
             smsMsg = smsBodyByCodeAndArgsWithType("msg.reconnection.sanctioned.sms", waterConnectionDetails,

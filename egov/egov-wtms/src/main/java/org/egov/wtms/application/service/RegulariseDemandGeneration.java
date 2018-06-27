@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -45,52 +45,13 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.commons.dao;
 
-import java.util.Date;
-import java.util.List;
+package org.egov.wtms.application.service;
 
-import org.egov.commons.Installment;
-import org.egov.infra.admin.master.entity.Module;
+import org.egov.wtms.application.entity.WaterConnectionDetails;
 
-public interface InstallmentDao {
-    public List<Installment> getInsatllmentByModule(Module module);
+public interface RegulariseDemandGeneration {
 
-    public List<Installment> getInsatllmentByModule(Module module, Date year);
+    WaterConnectionDetails generateDemandForRegulariseConnection(WaterConnectionDetails waterConnectionDetails);
 
-    public Installment getInsatllmentByModule(Module module, Date year, Integer installmentNumber);
-
-    public Installment getInsatllmentByModuleForGivenDate(Module module, Date installmentDate);
-
-    public List<Installment> getEffectiveInstallmentsforModuleandDate(Date dateToCompare, int noOfMonths, Module mod);
-
-    public Installment getInsatllmentByModuleForGivenDateAndInstallmentType(Module module, Date installmentDate,
-            String installmentType);
-
-    List<Installment> getInstallmentsByModuleForGivenDateAndInstallmentType(Module module, Date installmentDate,
-            String installmentType);
-
-    List<Installment> getInstallmentsByModuleAndFromDateAndInstallmentType(Module module, Date fromDate, Date currentDate,
-            String installmentType);
-
-    List<Installment> getInstallmentsByModuleBetweenFromDateAndToDate(Module module, Date fromDate, Date toDate);
-
-    List<Installment> getInstallmentsByModuleBetweenFromDateAndToDateAndInstallmentType(Module module, Date fromDate, Date toDate,
-            String installmentType);
-
-    List<Installment> fetchInstallments(final Module module, final Date toInstallmentDate, final int noOfInstallments);
-
-    List<Installment> getAllInstallmentsByModuleAndStartDate(final Module module, final Date installmentDate);
-
-    Installment fetchInstallmentByModuleAndInstallmentNumber(final Module module, final Integer installmentNumber);
-
-    public List<Installment> fetchPreviousInstallmentsInDescendingOrderByModuleAndDate(Module module, Date installmentDate,
-            int noOfInstallmentToFetch);
-
-    public Installment getInsatllmentByModuleAndDescription(Module moduleByName, String description);
-
-    List<Installment> fetchNextInstallmentsByModuleAndDate(final Module module, final Date date);
-
-    public List<Installment> getInstallmentsByModuleAndInstallmentYearOrderByInstallmentYearDescending(final Module module,
-            final int year);
 }
