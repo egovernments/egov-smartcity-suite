@@ -64,6 +64,9 @@ public class EISDashBoardUtils {
     private static final String GRADE = "ulbgrade";
     private static final String ULBCODE = "ulbcode";
     private static final String DEPARTMENT = "department";
+    private static final String EMPLOYEENAME = "name";
+    private static final String EMPLOYEECODE = "code";
+    private static final String DESIGNATION = "designation";
     private static final String ASSIGN_DATE_FORMAT = "yyyy-MM-dd";
 
 
@@ -92,6 +95,16 @@ public class EISDashBoardUtils {
         boolQuery.must(QueryBuilders.matchQuery("primaryassignment", true))
                 .must(QueryBuilders.rangeQuery("fromdate").lte(getFormattedDate(date, ASSIGN_DATE_FORMAT)).includeUpper(false))
                 .must(QueryBuilders.rangeQuery("todate").gte(getFormattedDate(date, ASSIGN_DATE_FORMAT)).includeUpper(false));
+        if (StringUtils.isNotBlank(employeesDetailRequest.getEmployeeName()))
+            boolQuery
+                    .filter(QueryBuilders.matchQuery(EMPLOYEENAME, employeesDetailRequest.getEmployeeName().toUpperCase()));
+        if (StringUtils.isNotBlank(employeesDetailRequest.getEmployeeCode()))
+            boolQuery
+                    .filter(QueryBuilders.matchQuery(EMPLOYEECODE, employeesDetailRequest.getEmployeeCode()));
+        if (StringUtils.isNotBlank(employeesDetailRequest.getDesignationName()))
+            boolQuery
+                    .filter(QueryBuilders.matchQuery(DESIGNATION, employeesDetailRequest.getDesignationName()));
+
 
         return boolQuery;
     }
