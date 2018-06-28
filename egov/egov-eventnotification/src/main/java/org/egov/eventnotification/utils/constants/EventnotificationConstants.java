@@ -45,7 +45,7 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.eventnotification.constants;
+package org.egov.eventnotification.utils.constants;
 
 public final class EventnotificationConstants {
 
@@ -155,6 +155,39 @@ public final class EventnotificationConstants {
     public static final String WATER_CHARGES_MODULE = "Water Charges";
 
     public static final String BMA_INTERFACE_SUFFIX = "BuildMessageAdapter";
+    public static final String ACTIVE = "Active";
+    public static final String INTERESTED_COUNT = "interestedCount";
+
+    public static final double DOUBLE_DEFAULT = 0.0;
+    public static final String URL = "url";
+    public static final String NO = "No";
+    public static final String EVENT_FILENAME = "fileName";
+    public static final String EVENT_FILESTOREID = "fileStoreId";
+    public static final String EVENT_COST = "cost";
+    public static final int MAX_TEN = 10;
+    public static final String MESSAGE = "message";
+    public static final String EVENT_NOTIFICATION_GROUP = "EVENT_NOTIFICATION_GROUP";
+    public static final String TRIGGER = "eventNotificationTrigger";
+    public static final String JOB = "eventNotificationJob";
+    public static final String BEANNOTIFSCH = "eventnotificationScheduler";
+
+    public static final String CONTEXTURL = "contextURL";
+
+    public static final String USER_ID = "userId";
+    public static final String USER_TOKEN_ID = "userToken";
+    public static final String USER_DEVICE_ID = "deviceId";
+
+    public static final String DESCRIPTION = "description";
+    public static final String START_DATE = "startDate";
+    public static final String START_TIME = "startTime";
+    public static final String END_DATE = "endDate";
+    public static final String END_TIME = "endTime";
+    public static final String EVENT_LOC = "eventlocation";
+    public static final String ADDRESS = "address";
+    public static final String CONTACT_NO = "contactnumber";
+    public static final String ISPAID = "ispaid";
+    public static final String EVENTTYPE = "eventType";
+    public static final String USER_INTERESTED = "userInterested";
 
     private EventnotificationConstants() {
 

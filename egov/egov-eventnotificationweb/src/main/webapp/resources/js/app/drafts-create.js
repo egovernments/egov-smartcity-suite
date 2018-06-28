@@ -45,82 +45,141 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-$(document).ready(function(){
-	
-	$("#dragdiv li").draggable({
-        helper: "clone",
-        cursor: "move",
-        revert: "invalid"
-      });
+$(document)
+		.ready(
+				function() {
 
-      initDroppable($("#message"));
+					$("#dragdiv li").draggable({
+						helper : "clone",
+						cursor : "move",
+						revert : "invalid"
+					});
 
-      function initDroppable($elements) {
-        $elements.droppable({
-          activeClass: "ui-state-default",
-          hoverClass: "ui-drop-hover",
-          accept: ":not(.ui-sortable-helper)",
+					initDroppable($("#message"));
 
-          over: function(event, ui) {
-          },
-          drop: function(event, ui) {
-            var $this = $(this);
-              $this.val($this.val() + "{{" + ui.draggable.text().trim() + "}}");
-          }
-        });
-      }
+					function initDroppable($elements) {
+						$elements.droppable({
+							activeClass : "ui-state-default",
+							hoverClass : "ui-drop-hover",
+							accept : ":not(.ui-sortable-helper)",
 
-      $('#module').change(function() {
-          $.ajax({
-              url: '/api/draft/getCategoriesForModule/'+ $('#module').val(),
-              dataType: 'json',
-              type: 'GET',
-              // This is query string i.e. country_id=123
-              success: function(data) {
-                  $('#category').empty(); // clear the current elements in select box
-                  $('#category').append($('<option value="">Select</option>'));
-                  $.each(data.result, function(i, obj) {
-                	  $('#category').append($('<option value="'+obj.id+'">'+obj.name+'</option>'));
-                	});
-              },
-              error: function(jqXHR, textStatus, errorThrown) {
-                  //alert(errorThrown);
-              }
-          });
-  });
+							over : function(event, ui) {
+							},
+							drop : function(event, ui) {
+								var $this = $(this);
+								$this.val($this.val() + "{{"
+										+ ui.draggable.text().trim() + "}}");
+							}
+						});
+					}
 
-  $('#category').change(function() {
-      $.ajax({
-          url: '/api/draft/getParametersForCategory/'+ $('#category').val(),
-          dataType: 'json',
-          type: 'GET',
-          // This is query string i.e. country_id=123
-          success: function(data) {
-          	$('#allItems').empty(); // clear the current elements in select box
-          	$.each(data.result, function(i, obj) {
-          		$('#allItems').append($('<li class="li eachParameter" id="node">'+obj.name+'</li>'));
-          	});
-              
-              $("#dragdiv li").draggable({
-                  helper: "clone",
-                  cursor: "move",
-                  revert: "invalid"
-                });
-          },
-          error: function(jqXHR, textStatus, errorThrown) {
-              //alert(errorThrown);
-          }
-      });
-  });
+					$('#module')
+							.change(
+									function() {
+										$
+												.ajax({
+													url : '/api/draft/getCategoriesForModule/'
+															+ $('#module')
+																	.val(),
+													dataType : 'json',
+													type : 'GET',
+													// This is query string i.e.
+													// country_id=123
+													success : function(data) {
+														$('#category').empty(); // clear
+																				// the
+																				// current
+																				// elements
+																				// in
+																				// select
+																				// box
+														$('#category')
+																.append(
+																		$('<option value="">Select</option>'));
+														$
+																.each(
+																		data.result,
+																		function(
+																				i,
+																				obj) {
+																			$(
+																					'#category')
+																					.append(
+																							$('<option value="'
+																									+ obj.id
+																									+ '">'
+																									+ obj.name
+																									+ '</option>'));
+																		});
+													},
+													error : function(jqXHR,
+															textStatus,
+															errorThrown) {
+														// alert(errorThrown);
+													}
+												});
+									});
 
-	$("#buttonSubmit").click(function(event){
-		
-		if ($("form").valid()) {
-			document.getElementById("createDraftForm").submit(); 
-		} else {
-			event.preventDefault();
-		}
-		
-		return true;
-	});
-});
+					$('#category')
+							.change(
+									function() {
+										$
+												.ajax({
+													url : '/api/draft/getParametersForCategory/'
+															+ $('#category')
+																	.val(),
+													dataType : 'json',
+													type : 'GET',
+													// This is query string i.e.
+													// country_id=123
+													success : function(data) {
+														$('#allItems').empty(); // clear
+																				// the
+																				// current
+																				// elements
+																				// in
+																				// select
+																				// box
+														$
+																.each(
+																		data.result,
+																		function(
+																				i,
+																				obj) {
+																			$(
+																					'#allItems')
+																					.append(
+																							$('<li class="li eachParameter" id="node">'
+																									+ obj.name
+																									+ '</li>'));
+																		});
+
+														$("#dragdiv li")
+																.draggable(
+																		{
+																			helper : "clone",
+																			cursor : "move",
+																			revert : "invalid"
+																		});
+													},
+													error : function(jqXHR,
+															textStatus,
+															errorThrown) {
+														// alert(errorThrown);
+													}
+												});
+									});
+
+					$("#buttonSubmit").click(
+							function(event) {
+
+								if ($("form").valid()) {
+									document.getElementById("createDraftForm")
+											.submit();
+								} else {
+									event.preventDefault();
+								}
+
+								return true;
+							});
+				});

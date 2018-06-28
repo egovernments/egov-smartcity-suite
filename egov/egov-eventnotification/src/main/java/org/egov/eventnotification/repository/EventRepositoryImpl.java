@@ -47,11 +47,12 @@
  */
 package org.egov.eventnotification.repository;
 
-import static org.egov.eventnotification.constants.EventnotificationConstants.EVENT_HOST;
-import static org.egov.eventnotification.constants.EventnotificationConstants.EVENT_ID;
-import static org.egov.eventnotification.constants.EventnotificationConstants.NAME;
-import static org.egov.eventnotification.constants.EventnotificationConstants.STATUS_COLUMN;
-import static org.egov.eventnotification.constants.EventnotificationConstants.UPCOMING;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.ACTIVE;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.EVENT_HOST;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.EVENT_ID;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.NAME;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.STATUS_COLUMN;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.UPCOMING;
 
 import java.util.Date;
 import java.util.List;
@@ -68,43 +69,22 @@ import org.hibernate.Session;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.joda.time.DateTime;
 
 public class EventRepositoryImpl implements EventRepositoryCustom {
-    private static final String ACTIVE = "Active";
 
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
     public List<Event> searchEvent(EventSearch eventSearch) {
-        DateTime calendar = new DateTime();
-        DateTime calendarEndDate = null;
         Date startDate;
         Date endDate;
         if (eventSearch.getEventDateType().equalsIgnoreCase(UPCOMING)) {
-            calendar = calendar.plusDays(7);
-            calendar = calendar.withHourOfDay(0);
-            calendar = calendar.withMinuteOfHour(0);
-            calendar = calendar.withSecondOfMinute(0);
-            startDate = calendar.toDate();
-            calendarEndDate = new DateTime(startDate);
-            calendarEndDate = calendarEndDate.plusDays(6);
-            calendarEndDate = calendarEndDate.withHourOfDay(23);
-            calendarEndDate = calendarEndDate.withMinuteOfHour(59);
-            calendarEndDate = calendarEndDate.withSecondOfMinute(0);
-            endDate = calendarEndDate.toDate();
+            startDate = DateUtils.startOfToday().plusDays(7).toDate();
+            endDate = DateUtils.endOfToday().plusDays(6).toDate();
         } else {
-            calendar = calendar.withHourOfDay(0);
-            calendar = calendar.withMinuteOfHour(0);
-            calendar = calendar.withSecondOfMinute(0);
-            startDate = calendar.toDate();
-            calendarEndDate = new DateTime(startDate);
-            calendarEndDate = calendarEndDate.plusDays(6);
-            calendarEndDate = calendarEndDate.withHourOfDay(23);
-            calendarEndDate = calendarEndDate.withMinuteOfHour(59);
-            calendarEndDate = calendarEndDate.withSecondOfMinute(0);
-            endDate = calendarEndDate.toDate();
+            startDate = DateUtils.startOfToday().toDate();
+            endDate = DateUtils.endOfToday().plusDays(6).toDate();
         }
 
         Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Event.class, "evnt");

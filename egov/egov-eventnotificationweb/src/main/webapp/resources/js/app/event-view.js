@@ -46,106 +46,182 @@
  *
  */
 var tableContainer;
-$(document).ready(function(){
-	
-	$('#eventViewTable').DataTable({
-		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-md-3 col-xs-6 text-right'p>>",
-		"aLengthMenu" : [[10,25,50,-1 ],[10,25,50,"All" ] ],
-		"order": [[ 0, "desc" ]],
-		sort: true,
-		"autoWidth" : false
-	});
-	
-	$('#eventViewTable tbody').on('click', 'tr', function () {
-		window.open("/eventnotification/event/view/"+$(this).children('td:first-child').text(),'_blank', "width=800, height=700, scrollbars=yes")
-    } );
-	
-	$("#eventSearch").click(function() {
-		$("#eventViewTable").DataTable().clear().draw();
-		var eventTypeData;
-		if($("#eventType option:selected").text()==="Select"){
-			eventTypeData = "";
-		}else{
-			eventTypeData = $("#eventType option:selected").text();
-		}
-		$.ajax({
-		      type: "GET",
-		      url: "/api/event/search?eventType="+eventTypeData+"&name="+$("#name").val()+"&eventHost="+$("#eventhost").val()+"&eventDateType=ongoing",
-		      contentType: "application/json; charset=utf-8",
-		      dataType: 'json',
-		      success: function (data) {
-		    	  $.each(data.result, function(i, obj) {
-		    		  var startDate = new Date(obj.startDate);
-		    		  var month = parseInt(startDate.getMonth())+1;
-		    		  if(month < 10){
-		    			  month="0"+month;
-		    		  }
-		    		  var sd = startDate.getDate()+"/"+month+"/"+startDate.getFullYear();
-		    		  var endDate = new Date(obj.endDate);
-		    		  var month1 = parseInt(endDate.getMonth())+1;
-		    		  if(month1 < 10){
-		    			  month1="0"+month1;
-		    		  }
-		    		  var ed = endDate.getDate()+"/"+month1+"/"+endDate.getFullYear()
-		    		  var ispaid,cost;
-		    		  if(obj.ispaid === "true"){
-		    			  ispaid = "Yes";
-		    			  cost = obj.cost;
-		    		  }else{
-		    			  ispaid = "No";
-		    			  cost = "";
-		    		  }
-		    	      // You could also use an ajax property on the data table initialization
-		    	      $("#eventViewTable").dataTable().fnAddData( [
-		    	    	  obj.id,
-		    	    	  obj.name,
-		    	    	  obj.description,
-		    	    	  sd,
-		    	    	  obj.startTime,
-		    	    	  ed,
-		    	    	  obj.endTime,
-		    	    	  obj.eventhost,
-		    	    	  obj.eventlocation,
-		    	    	  obj.address,
-		    	    	  obj.eventType,
-		    	    	  ispaid,
-		    	    	  cost
-		    	      ]);
-		    	    });
-		      },
-		      error: function (e) {
-		        console.log("There was an error with your request...");
-		        console.log("error: " + JSON.stringify(e));
-		      }
-		    });
-		
-	});
+$(document)
+		.ready(
+				function() {
 
-});
+					$('#eventViewTable')
+							.DataTable(
+									{
+										"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-md-3 col-xs-6 text-right'p>>",
+										"aLengthMenu" : [ [ 10, 25, 50, -1 ],
+												[ 10, 25, 50, "All" ] ],
+										"order" : [ [ 0, "desc" ] ],
+										sort : true,
+										"autoWidth" : false
+									});
 
+					$('#eventViewTable tbody')
+							.on(
+									'click',
+									'tr',
+									function() {
+										window
+												.open(
+														"/eventnotification/event/view/"
+																+ $(this)
+																		.children(
+																				'td:first-child')
+																		.text(),
+														'_blank',
+														"width=800, height=700, scrollbars=yes")
+									});
 
-$('#btnclose').click(function(){
-	bootbox.confirm({
-	    message: 'Information entered in this screen will be lost if you close this page ? Please confirm if you want to close. ',
-	    buttons: {
-	        'cancel': {
-	            label: 'No',
-	            className: 'btn-default pull-right'
-	        },
-	        'confirm': {
-	            label: 'Yes',
-	            className: 'btn-danger pull-right'
-	        }
-	    },
-	    callback: function(result) {
-	        if (result) {
-	             window.close();
-	        }
-	    }
-	});
-	
-});
+					$("#eventSearch")
+							.click(
+									function() {
+										$("#eventViewTable").DataTable()
+												.clear().draw();
+										var eventTypeData;
+										if ($("#eventType option:selected")
+												.text() === "Select") {
+											eventTypeData = "";
+										} else {
+											eventTypeData = $(
+													"#eventType option:selected")
+													.text();
+										}
+										$
+												.ajax({
+													type : "GET",
+													url : "/api/event/search?eventType="
+															+ eventTypeData
+															+ "&name="
+															+ $("#name").val()
+															+ "&eventHost="
+															+ $("#eventhost")
+																	.val()
+															+ "&eventDateType=ongoing",
+													contentType : "application/json; charset=utf-8",
+													dataType : 'json',
+													success : function(data) {
+														$
+																.each(
+																		data.result,
+																		function(
+																				i,
+																				obj) {
+																			var startDate = new Date(
+																					obj.startDate);
+																			var month = parseInt(startDate
+																					.getMonth()) + 1;
+																			if (month < 10) {
+																				month = "0"
+																						+ month;
+																			}
+																			var sd = startDate
+																					.getDate()
+																					+ "/"
+																					+ month
+																					+ "/"
+																					+ startDate
+																							.getFullYear();
+																			var endDate = new Date(
+																					obj.endDate);
+																			var month1 = parseInt(endDate
+																					.getMonth()) + 1;
+																			if (month1 < 10) {
+																				month1 = "0"
+																						+ month1;
+																			}
+																			var ed = endDate
+																					.getDate()
+																					+ "/"
+																					+ month1
+																					+ "/"
+																					+ endDate
+																							.getFullYear()
+																			var ispaid, cost;
+																			if (obj.ispaid === "true") {
+																				ispaid = "Yes";
+																				cost = obj.cost;
+																			} else {
+																				ispaid = "No";
+																				cost = "";
+																			}
+																			// You
+																			// could
+																			// also
+																			// use
+																			// an
+																			// ajax
+																			// property
+																			// on
+																			// the
+																			// data
+																			// table
+																			// initialization
+																			$(
+																					"#eventViewTable")
+																					.dataTable()
+																					.fnAddData(
+																							[
+																									obj.id,
+																									obj.name,
+																									obj.description,
+																									sd,
+																									obj.startTime,
+																									ed,
+																									obj.endTime,
+																									obj.eventhost,
+																									obj.eventlocation,
+																									obj.address,
+																									obj.eventType,
+																									ispaid,
+																									cost ]);
+																		});
+													},
+													error : function(e) {
+														console
+																.log("There was an error with your request...");
+														console
+																.log("error: "
+																		+ JSON
+																				.stringify(e));
+													}
+												});
 
-$("#buttonSubmit").click(function(event){
-	window.open("/eventnotification/event/create/",'_blank', "width=800, height=700, scrollbars=yes");
-});
+									});
+
+				});
+
+$('#btnclose')
+		.click(
+				function() {
+					bootbox
+							.confirm({
+								message : 'Information entered in this screen will be lost if you close this page ? Please confirm if you want to close. ',
+								buttons : {
+									'cancel' : {
+										label : 'No',
+										className : 'btn-default pull-right'
+									},
+									'confirm' : {
+										label : 'Yes',
+										className : 'btn-danger pull-right'
+									}
+								},
+								callback : function(result) {
+									if (result) {
+										window.close();
+									}
+								}
+							});
+
+				});
+
+$("#buttonSubmit").click(
+		function(event) {
+			window.open("/eventnotification/event/create/", '_blank',
+					"width=800, height=700, scrollbars=yes");
+		});

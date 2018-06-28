@@ -47,12 +47,30 @@
  */
 package org.egov.api.adapter;
 
-import static org.egov.eventnotification.constants.EventnotificationConstants.DDMMYYYY;
-import static org.egov.eventnotification.constants.EventnotificationConstants.EMPTY;
-import static org.egov.eventnotification.constants.EventnotificationConstants.EVENT_HOST;
-import static org.egov.eventnotification.constants.EventnotificationConstants.EVENT_ID;
-import static org.egov.eventnotification.constants.EventnotificationConstants.NAME;
-import static org.egov.eventnotification.constants.EventnotificationConstants.ZERO;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.ADDRESS;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.CONTACT_NO;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.DDMMYYYY;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.DESCRIPTION;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.DOUBLE_DEFAULT;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.EMPTY;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.END_DATE;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.END_TIME;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.EVENTTYPE;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.EVENT_COST;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.EVENT_FILENAME;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.EVENT_FILESTOREID;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.EVENT_HOST;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.EVENT_ID;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.EVENT_LOC;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.INTERESTED_COUNT;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.ISPAID;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.NAME;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.NO;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.START_DATE;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.START_TIME;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.URL;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.USER_INTERESTED;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.ZERO;
 
 import java.lang.reflect.Type;
 
@@ -65,13 +83,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 
 public class EventAdapter extends DataAdapter<Event> {
-    private static final double DOUBLE_DEFAULT = 0.0;
-    private static final String URL = "url";
-    private static final String NO = "No";
-    private static final String EVENT_FILENAME = "fileName";
-    private static final String EVENT_FILESTOREID = "fileStoreId";
-    private static final String EVENT_COST = "cost";
-    private static final String INTERESTED_COUNT = "interestedCount";
 
     private UserEventService usereventService;
 
@@ -84,24 +95,24 @@ public class EventAdapter extends DataAdapter<Event> {
         JsonObject jsonObjectEvent = new JsonObject();
         jsonObjectEvent.addProperty(EVENT_ID, event.getId());
         jsonObjectEvent.addProperty(NAME, event.getName());
-        jsonObjectEvent.addProperty("description", event.getDescription());
+        jsonObjectEvent.addProperty(DESCRIPTION, event.getDescription());
 
-        jsonObjectEvent.addProperty("startDate",
+        jsonObjectEvent.addProperty(START_DATE,
                 DateUtils.getDate(DateUtils.getDefaultFormattedDate(event.getStartDate()), DDMMYYYY).getTime());
-        jsonObjectEvent.addProperty("startTime",
-                event.getEventDetails().getStartHH() + ":" + event.getEventDetails().getStartMM());
+        jsonObjectEvent.addProperty(START_TIME,
+                event.getEventDetails().getStartHH().concat(":").concat(event.getEventDetails().getStartMM()));
 
-        jsonObjectEvent.addProperty("endDate",
+        jsonObjectEvent.addProperty(END_DATE,
                 DateUtils.getDate(DateUtils.getDefaultFormattedDate(event.getEndDate()), DDMMYYYY).getTime());
-        jsonObjectEvent.addProperty("endTime",
-                event.getEventDetails().getEndHH() + ":" + event.getEventDetails().getEndMM());
+        jsonObjectEvent.addProperty(END_TIME,
+                event.getEventDetails().getEndHH().concat(":").concat(event.getEventDetails().getEndMM()));
 
-        jsonObjectEvent.addProperty(EVENT_HOST, event.getEventAddress().getEventhost());
-        jsonObjectEvent.addProperty("eventlocation", event.getEventAddress().getEventlocation());
-        jsonObjectEvent.addProperty("address", event.getEventAddress().getAddress());
-        jsonObjectEvent.addProperty("contactnumber", event.getEventAddress().getContactNumber());
-        jsonObjectEvent.addProperty("ispaid", event.isPaid());
-        jsonObjectEvent.addProperty("eventType", event.getEventType().getName());
+        jsonObjectEvent.addProperty(EVENT_HOST, event.getEventAddress().getEventHost());
+        jsonObjectEvent.addProperty(EVENT_LOC, event.getEventAddress().getEventLocation());
+        jsonObjectEvent.addProperty(ADDRESS, event.getEventAddress().getAddress());
+        jsonObjectEvent.addProperty(CONTACT_NO, event.getEventAddress().getContactNumber());
+        jsonObjectEvent.addProperty(ISPAID, event.isPaid());
+        jsonObjectEvent.addProperty(EVENTTYPE, event.getEventType().getName());
         if (event.getFilestore() == null) {
             jsonObjectEvent.addProperty(EVENT_FILESTOREID, EMPTY);
             jsonObjectEvent.addProperty(EVENT_FILENAME, EMPTY);
@@ -120,7 +131,7 @@ public class EventAdapter extends DataAdapter<Event> {
         else
             jsonObjectEvent.addProperty(URL, event.getEventAddress().getUrl());
 
-        jsonObjectEvent.addProperty("userInterested", NO);
+        jsonObjectEvent.addProperty(USER_INTERESTED, NO);
 
         Long interestedCount = usereventService.countUsereventByEventId(event.getId());
         if (interestedCount == null)

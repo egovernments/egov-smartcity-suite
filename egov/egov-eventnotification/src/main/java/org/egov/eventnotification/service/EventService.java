@@ -47,13 +47,16 @@
  */
 package org.egov.eventnotification.service;
 
-import static org.egov.eventnotification.constants.EventnotificationConstants.DDMMYYYY;
-import static org.egov.eventnotification.constants.EventnotificationConstants.EMPTY;
-import static org.egov.eventnotification.constants.EventnotificationConstants.MIN_NUMBER_OF_REQUESTS;
-import static org.egov.eventnotification.constants.EventnotificationConstants.MODULE_NAME;
-import static org.egov.eventnotification.constants.EventnotificationConstants.NOTIFICATION_TYPE_EVENT;
-import static org.egov.eventnotification.constants.EventnotificationConstants.YES;
-import static org.egov.eventnotification.constants.EventnotificationConstants.ZERO;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.ACTIVE;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.DDMMYYYY;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.EMPTY;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MAX_TEN;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MIN_NUMBER_OF_REQUESTS;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MODULE_NAME;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.NO;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.NOTIFICATION_TYPE_EVENT;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.YES;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.ZERO;
 
 import java.io.IOException;
 import java.util.Date;
@@ -63,9 +66,9 @@ import org.egov.eventnotification.entity.Event;
 import org.egov.eventnotification.entity.contracts.EventDetails;
 import org.egov.eventnotification.entity.contracts.EventSearch;
 import org.egov.eventnotification.repository.EventRepository;
-import org.egov.eventnotification.repository.custom.EventRepositoryCustom;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.utils.DateUtils;
 import org.egov.pushbox.entity.contracts.MessageContent;
@@ -84,9 +87,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @Transactional(readOnly = true)
 public class EventService {
-    private static final String ACTIVE = "Active";
-    private static final int MAX_TEN = 10;
-    private static final String NO = "No";
 
     @Autowired
     private EventRepository eventRepository;
@@ -96,9 +96,6 @@ public class EventService {
 
     @Autowired
     private PushNotificationService pushNotificationService;
-
-    @Autowired
-    private EventRepositoryCustom eventRepositoryCustom;
 
     @Autowired
     private UserService userService;
@@ -114,20 +111,10 @@ public class EventService {
 
     public List<Event> getAllOngoingEvent(String status) {
         List<Event> eventList = null;
-        DateTime calendar = new DateTime();
-        DateTime calendarEndDate = null;
         Date startDate;
         Date endDate;
-        calendar = calendar.withHourOfDay(0);
-        calendar = calendar.withMinuteOfHour(0);
-        calendar = calendar.withSecondOfMinute(0);
-        startDate = calendar.toDate();
-        calendarEndDate = new DateTime(startDate);
-        calendarEndDate = calendarEndDate.plusDays(6);
-        calendarEndDate = calendarEndDate.withHourOfDay(23);
-        calendarEndDate = calendarEndDate.withMinuteOfHour(59);
-        calendarEndDate = calendarEndDate.withSecondOfMinute(0);
-        endDate = calendarEndDate.toDate();
+        startDate = DateUtils.startOfToday().toDate();
+        endDate = DateUtils.endOfToday().plusDays(6).toDate();
         eventList = eventRepository.findByStatusAndStartDateIsBetweenAndEndDateGreaterThanOrderByIdDesc(status,
                 startDate, endDate, DateUtils.today());
         if (!eventList.isEmpty())
@@ -174,66 +161,83 @@ public class EventService {
     }
 
     @Transactional
-    public Event saveEvent(Event event) throws IOException {
-        DateTime sd = new DateTime(event.getEventDetails().getStartDt());
-        sd = sd.withHourOfDay(Integer.parseInt(event.getEventDetails().getStartHH()));
-        sd = sd.withMinuteOfHour(Integer.parseInt(event.getEventDetails().getStartMM()));
-        sd = sd.withSecondOfMinute(00);
-        event.setStartDate(sd.toDate());
+    public Event saveEvent(Event event) {
+        try {
+            DateTime sd = new DateTime(event.getEventDetails().getStartDt());
+            sd = sd.withHourOfDay(Integer.parseInt(event.getEventDetails().getStartHH()));
+            sd = sd.withMinuteOfHour(Integer.parseInt(event.getEventDetails().getStartMM()));
+            sd = sd.withSecondOfMinute(00);
+            event.setStartDate(sd.toDate());
 
-        DateTime ed = new DateTime(event.getEventDetails().getEndDt());
-        ed = ed.withHourOfDay(Integer.parseInt(event.getEventDetails().getEndHH()));
-        ed = ed.withMinuteOfHour(Integer.parseInt(event.getEventDetails().getEndMM()));
-        ed = ed.withSecondOfMinute(00);
-        event.setEndDate(ed.toDate());
-        event.setStatus(ACTIVE.toUpperCase());
+            DateTime ed = new DateTime(event.getEventDetails().getEndDt());
+            ed = ed.withHourOfDay(Integer.parseInt(event.getEventDetails().getEndHH()));
+            ed = ed.withMinuteOfHour(Integer.parseInt(event.getEventDetails().getEndMM()));
+            ed = ed.withSecondOfMinute(00);
+            event.setEndDate(ed.toDate());
+            event.setStatus(ACTIVE.toUpperCase());
 
-        if (event.getEventDetails().getFile() != null)
-            eventUploadWallpaper(event);
+            if (event.getEventDetails().getFile() != null)
+                eventUploadWallpaper(event);
 
-        return eventRepository.save(event);
+            event = eventRepository.saveAndFlush(event);
+            sendPushMessage(event);
+
+            return event;
+        } catch (final Exception e) {
+            throw new ApplicationRuntimeException(e.getMessage(), e);
+        }
     }
 
     @Transactional
-    public Event updateEvent(Event updatedEvent) throws IOException {
-        DateTime sd = new DateTime(updatedEvent.getEventDetails().getStartDt());
-        sd = sd.withHourOfDay(Integer.parseInt(updatedEvent.getEventDetails().getStartHH()));
-        sd = sd.withMinuteOfHour(Integer.parseInt(updatedEvent.getEventDetails().getStartMM()));
-        sd = sd.withSecondOfMinute(00);
-        updatedEvent.setStartDate(sd.toDate());
+    public Event updateEvent(Event updatedEvent) {
+        try {
+            DateTime sd = new DateTime(updatedEvent.getEventDetails().getStartDt());
+            sd = sd.withHourOfDay(Integer.parseInt(updatedEvent.getEventDetails().getStartHH()));
+            sd = sd.withMinuteOfHour(Integer.parseInt(updatedEvent.getEventDetails().getStartMM()));
+            sd = sd.withSecondOfMinute(00);
+            updatedEvent.setStartDate(sd.toDate());
 
-        DateTime ed = new DateTime(updatedEvent.getEventDetails().getEndDt());
-        ed = ed.withHourOfDay(Integer.parseInt(updatedEvent.getEventDetails().getEndHH()));
-        ed = ed.withMinuteOfHour(Integer.parseInt(updatedEvent.getEventDetails().getEndMM()));
-        ed = ed.withSecondOfMinute(00);
-        updatedEvent.setEndDate(ed.toDate());
+            DateTime ed = new DateTime(updatedEvent.getEventDetails().getEndDt());
+            ed = ed.withHourOfDay(Integer.parseInt(updatedEvent.getEventDetails().getEndHH()));
+            ed = ed.withMinuteOfHour(Integer.parseInt(updatedEvent.getEventDetails().getEndMM()));
+            ed = ed.withSecondOfMinute(00);
+            updatedEvent.setEndDate(ed.toDate());
 
-        if (updatedEvent.getEventDetails().getFile()[0].getSize() > MIN_NUMBER_OF_REQUESTS)
-            eventUploadWallpaper(updatedEvent);
-        return eventRepository.save(updatedEvent);
+            if (updatedEvent.getEventDetails().getFile()[0].getSize() > MIN_NUMBER_OF_REQUESTS)
+                eventUploadWallpaper(updatedEvent);
+            return eventRepository.save(updatedEvent);
+        } catch (final Exception e) {
+            throw new ApplicationRuntimeException(e.getMessage(), e);
+        }
     }
 
     public List<Event> searchEvent(EventSearch eventSearch) {
-        return eventRepositoryCustom.searchEvent(eventSearch);
+        return eventRepository.searchEvent(eventSearch);
     }
 
-    public void eventUploadWallpaper(Event event) throws IOException {
-
-        for (MultipartFile multipartFile : event.getEventDetails().getFile())
-            if (!multipartFile.isEmpty())
-                event.setFilestore(
-                        fileStoreService.store(multipartFile.getInputStream(), multipartFile.getOriginalFilename(),
-                                multipartFile.getContentType(), MODULE_NAME));
+    public void eventUploadWallpaper(Event event) {
+        try {
+            for (MultipartFile multipartFile : event.getEventDetails().getFile())
+                if (!multipartFile.isEmpty())
+                    event.setFilestore(
+                            fileStoreService.store(multipartFile.getInputStream(), multipartFile.getOriginalFilename(),
+                                    multipartFile.getContentType(), MODULE_NAME));
+        } catch (final IOException e) {
+            throw new ApplicationRuntimeException(e.getMessage(), e);
+        }
 
     }
 
-    public void eventUploadWallpaper(Event existingEvent, Event event) throws IOException {
-
-        for (MultipartFile multipartFile : event.getEventDetails().getFile())
-            if (!multipartFile.isEmpty())
-                existingEvent.setFilestore(
-                        fileStoreService.store(multipartFile.getInputStream(), multipartFile.getOriginalFilename(),
-                                multipartFile.getContentType(), MODULE_NAME));
+    public void eventUploadWallpaper(Event existingEvent, Event event) {
+        try {
+            for (MultipartFile multipartFile : event.getEventDetails().getFile())
+                if (!multipartFile.isEmpty())
+                    existingEvent.setFilestore(
+                            fileStoreService.store(multipartFile.getInputStream(), multipartFile.getOriginalFilename(),
+                                    multipartFile.getContentType(), MODULE_NAME));
+        } catch (final IOException e) {
+            throw new ApplicationRuntimeException(e.getMessage(), e);
+        }
 
     }
 
@@ -241,7 +245,7 @@ public class EventService {
         fileStoreService.delete(String.valueOf(event.getFilestore()), MODULE_NAME);
     }
 
-    public void sendPushMessage(Event event) {
+    private void sendPushMessage(Event event) {
         User user = userService.getCurrentUser();
         DateTime calendar = new DateTime(event.getStartDate());
         DateTime calendarEnd = new DateTime(event.getEndDate());
@@ -251,7 +255,7 @@ public class EventService {
         messageContent.setCreatedDateTime(new Date().getTime());
         messageDetails.setEventAddress(event.getEventAddress().getAddress());
         messageDetails.setEventDateTime(calendar.getMillis());
-        messageDetails.setEventLocation(event.getEventAddress().getEventlocation());
+        messageDetails.setEventLocation(event.getEventAddress().getEventLocation());
         messageContent.setExpiryDate(calendarEnd.getMillis());
         if (event.getFilestore() == null)
             messageContent.setImageUrl(EMPTY);

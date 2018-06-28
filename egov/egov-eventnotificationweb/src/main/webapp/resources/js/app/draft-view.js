@@ -46,81 +46,118 @@
  *
  */
 var tableContainer;
-$(document).ready(function(){
-	$('#draftViewTable').DataTable({
-		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-md-3 col-xs-6 text-right'p>>",
-		"aLengthMenu" : [[10,25,50,-1 ],[10,25,50,"All" ] ],
-		"order": [[ 0, "desc" ]],
-		sort: true,
-		"autoWidth" : false
-	});
-	
-	$('#draftViewTable tbody').on('click', 'tr', function () {
-		window.open("/eventnotification/drafts/view/"+$(this).children('td:first-child').text(),'_blank', "width=800, height=700, scrollbars=yes")
-    } );
-	
-	$("#draftSearch").click(function() {
-		$("#draftViewTable").DataTable().clear().draw();
-		var typeVal;
-		if($("#type option:selected").text() === "Select"){
-			typeVal = "";
-		}else{
-			typeVal = $("#type option:selected").text();
-		}
-		$.ajax({
-		      type: "GET",
-		      url: "/api/draft/search?type="+typeVal+"&name="+$("#name").val(),
-		      contentType: "application/json; charset=utf-8",
-		      dataType: 'json',
-		      success: function (data) {
-		    	  $.each(data.result, function(i, obj) {
-		    		  $("#draftViewTable").dataTable().fnAddData( [
-		    			  obj.id,
-		    			  obj.name,
-		    			  obj.draftType,
-		    			  obj.module.name,
-		    			  obj.category.name,
-		    			  obj.message
-		    	      ]);
-		    	  });
-		      },
-		      error: function (e) {
-		        console.log("There was an error with your request...");
-		        console.log("error: " + JSON.stringify(e));
-		      }
-		    });
-		
-	});
+$(document)
+		.ready(
+				function() {
+					$('#draftViewTable')
+							.DataTable(
+									{
+										"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-md-3 col-xs-6 text-right'p>>",
+										"aLengthMenu" : [ [ 10, 25, 50, -1 ],
+												[ 10, 25, 50, "All" ] ],
+										"order" : [ [ 0, "desc" ] ],
+										sort : true,
+										"autoWidth" : false
+									});
 
-	
+					$('#draftViewTable tbody')
+							.on(
+									'click',
+									'tr',
+									function() {
+										window
+												.open(
+														"/eventnotification/drafts/view/"
+																+ $(this)
+																		.children(
+																				'td:first-child')
+																		.text(),
+														'_blank',
+														"width=800, height=700, scrollbars=yes")
+									});
 
-});
+					$("#draftSearch")
+							.click(
+									function() {
+										$("#draftViewTable").DataTable()
+												.clear().draw();
+										var typeVal;
+										if ($("#type option:selected").text() === "Select") {
+											typeVal = "";
+										} else {
+											typeVal = $("#type option:selected")
+													.text();
+										}
+										$
+												.ajax({
+													type : "GET",
+													url : "/api/draft/search?type="
+															+ typeVal
+															+ "&name="
+															+ $("#name").val(),
+													contentType : "application/json; charset=utf-8",
+													dataType : 'json',
+													success : function(data) {
+														$
+																.each(
+																		data.result,
+																		function(
+																				i,
+																				obj) {
+																			$(
+																					"#draftViewTable")
+																					.dataTable()
+																					.fnAddData(
+																							[
+																									obj.id,
+																									obj.name,
+																									obj.draftType,
+																									obj.module.name,
+																									obj.category.name,
+																									obj.message ]);
+																		});
+													},
+													error : function(e) {
+														console
+																.log("There was an error with your request...");
+														console
+																.log("error: "
+																		+ JSON
+																				.stringify(e));
+													}
+												});
 
+									});
 
-$('#btnclose').click(function(){
-	bootbox.confirm({
-	    message: 'Information entered in this screen will be lost if you close this page ? Please confirm if you want to close. ',
-	    buttons: {
-	        'cancel': {
-	            label: 'No',
-	            className: 'btn-default pull-right'
-	        },
-	        'confirm': {
-	            label: 'Yes',
-	            className: 'btn-danger pull-right'
-	        }
-	    },
-	    callback: function(result) {
-	        if (result) {
-	             window.close();
-	        }
-	    }
-	});
-	
-});
+				});
 
-$("#buttonSubmit").click(function(event){
-	window.open("/eventnotification/drafts/create/",'_blank', "width=800, height=700, scrollbars=yes");
-});
+$('#btnclose')
+		.click(
+				function() {
+					bootbox
+							.confirm({
+								message : 'Information entered in this screen will be lost if you close this page ? Please confirm if you want to close. ',
+								buttons : {
+									'cancel' : {
+										label : 'No',
+										className : 'btn-default pull-right'
+									},
+									'confirm' : {
+										label : 'Yes',
+										className : 'btn-danger pull-right'
+									}
+								},
+								callback : function(result) {
+									if (result) {
+										window.close();
+									}
+								}
+							});
 
+				});
 
+$("#buttonSubmit").click(
+		function(event) {
+			window.open("/eventnotification/drafts/create/", '_blank',
+					"width=800, height=700, scrollbars=yes");
+		});

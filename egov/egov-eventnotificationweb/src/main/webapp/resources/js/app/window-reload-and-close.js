@@ -45,8 +45,8 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-$("#buttonClose").click(function(event){
-		window.opener.location.reload();
-		self.close();
-		return true;
+$("#buttonClose").click(function(event) {
+	window.opener.location.reload();
+	self.close();
+	return true;
 });

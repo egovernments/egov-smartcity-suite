@@ -47,18 +47,18 @@
  */
 package org.egov.eventnotification.scheduler;
 
-import static org.egov.eventnotification.constants.EventnotificationConstants.BMA_INTERFACE_SUFFIX;
-import static org.egov.eventnotification.constants.EventnotificationConstants.BUSINESS_NOTIFICATION_TYPE;
-import static org.egov.eventnotification.constants.EventnotificationConstants.PROPERTY_MODULE;
-import static org.egov.eventnotification.constants.EventnotificationConstants.SCHEDULEID;
-import static org.egov.eventnotification.constants.EventnotificationConstants.SCHEDULE_COMPLETE;
-import static org.egov.eventnotification.constants.EventnotificationConstants.WATER_CHARGES_MODULE;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.BMA_INTERFACE_SUFFIX;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.BUSINESS_NOTIFICATION_TYPE;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.CONTEXTURL;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.PROPERTY_MODULE;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.SCHEDULEID;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.SCHEDULE_COMPLETE;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.WATER_CHARGES_MODULE;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.egov.eventnotification.config.properties.EventnotificationApplicationProperties;
 import org.egov.eventnotification.entity.Schedule;
 import org.egov.eventnotification.entity.contracts.UserTaxInformation;
@@ -76,6 +76,8 @@ import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -90,7 +92,7 @@ public class NotificationSchedulerJob extends AbstractQuartzJob {
      */
     private static final long serialVersionUID = -7038270977924187739L;
 
-    private static final Logger LOGGER = Logger.getLogger(NotificationSchedulerJob.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(NotificationSchedulerJob.class);
 
     @Autowired
     private transient UserService userService;
@@ -114,7 +116,7 @@ public class NotificationSchedulerJob extends AbstractQuartzJob {
     protected void executeInternal(final JobExecutionContext context) {
         JobDataMap dataMap = context.getJobDetail().getJobDataMap();
         scheduleId = Long.parseLong(String.valueOf(dataMap.get(SCHEDULEID)));
-        contextURL = String.valueOf(dataMap.get("contextURL"));
+        contextURL = String.valueOf(dataMap.get(CONTEXTURL));
         try {
             super.executeInternal(context);
         } catch (JobExecutionException e) {

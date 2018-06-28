@@ -47,13 +47,20 @@
  */
 package org.egov.eventnotification.service;
 
-import static org.egov.eventnotification.constants.EventnotificationConstants.DAY_CRON;
-import static org.egov.eventnotification.constants.EventnotificationConstants.DDMMYYYY;
-import static org.egov.eventnotification.constants.EventnotificationConstants.HOURS_CRON;
-import static org.egov.eventnotification.constants.EventnotificationConstants.MINUTES_CRON;
-import static org.egov.eventnotification.constants.EventnotificationConstants.MONTH_CRON;
-import static org.egov.eventnotification.constants.EventnotificationConstants.SCHEDULED_STATUS;
-import static org.egov.eventnotification.constants.EventnotificationConstants.ZERO;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.BEANNOTIFSCH;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.CONTEXTURL;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.DAY_CRON;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.DDMMYYYY;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.EVENT_NOTIFICATION_GROUP;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.HOURS_CRON;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.JOB;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MAX_TEN;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MINUTES_CRON;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MONTH_CRON;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.SCHEDULED_STATUS;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.SCHEDULEID;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.TRIGGER;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.ZERO;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -89,11 +96,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class ScheduleService {
-    private static final int MAX_TEN = 10;
-    private static final String EVENT_NOTIFICATION_GROUP = "EVENT_NOTIFICATION_GROUP";
-    private static final String TRIGGER = "eventNotificationTrigger";
-    private static final String JOB = "eventNotificationJob";
-    private static final String BEANNOTIFSCH = "eventnotificationScheduler";
 
     @Autowired
     private ScheduleRepository notificationscheduleRepository;
@@ -243,8 +245,8 @@ public class ScheduleService {
         try {
             jobDetail.setName(ApplicationThreadLocals.getTenantID().concat("_")
                     .concat(JOB.concat(String.valueOf(schedule.getId()))));
-            jobDetail.getJobDataMap().put("scheduleId", String.valueOf(schedule.getId()));
-            jobDetail.getJobDataMap().put("contextURL", fullURL.substring(0, StringUtils.ordinalIndexOf(fullURL, "/", 3)));
+            jobDetail.getJobDataMap().put(SCHEDULEID, String.valueOf(schedule.getId()));
+            jobDetail.getJobDataMap().put(CONTEXTURL, fullURL.substring(0, StringUtils.ordinalIndexOf(fullURL, "/", 3)));
 
             if (cronExpression == null) {
                 final SimpleTriggerImpl trigger = new SimpleTriggerImpl();

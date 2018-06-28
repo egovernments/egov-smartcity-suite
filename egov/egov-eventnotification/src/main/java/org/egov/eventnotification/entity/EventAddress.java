@@ -65,12 +65,12 @@ public class EventAddress implements Serializable {
     @NotBlank
     @SafeHtml
     @Length(max = 100)
-    private String eventhost;
+    private String eventHost;
 
     @NotBlank
     @SafeHtml
     @Length(max = 100)
-    private String eventlocation;
+    private String eventLocation;
 
     @NotBlank
     @SafeHtml
@@ -85,20 +85,20 @@ public class EventAddress implements Serializable {
     @Length(max = 200)
     private String url;
 
-    public String getEventhost() {
-        return eventhost;
+    public String getEventHost() {
+        return eventHost;
     }
 
-    public void setEventhost(String eventhost) {
-        this.eventhost = eventhost;
+    public void setEventHost(String eventHost) {
+        this.eventHost = eventHost;
     }
 
-    public String getEventlocation() {
-        return eventlocation;
+    public String getEventLocation() {
+        return eventLocation;
     }
 
-    public void setEventlocation(String eventlocation) {
-        this.eventlocation = eventlocation;
+    public void setEventLocation(String eventLocation) {
+        this.eventLocation = eventLocation;
     }
 
     public String getAddress() {

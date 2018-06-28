@@ -47,16 +47,16 @@
  */
 package org.egov.eventnotification.web.controller.event;
 
-import static org.egov.eventnotification.constants.EventnotificationConstants.EVENT;
-import static org.egov.eventnotification.constants.EventnotificationConstants.EVENT_LIST;
-import static org.egov.eventnotification.constants.EventnotificationConstants.EVENT_TYPE_LIST;
-import static org.egov.eventnotification.constants.EventnotificationConstants.HOUR_LIST;
-import static org.egov.eventnotification.constants.EventnotificationConstants.MINUTE_LIST;
-import static org.egov.eventnotification.constants.EventnotificationConstants.MODE;
-import static org.egov.eventnotification.constants.EventnotificationConstants.MODE_CREATE;
-import static org.egov.eventnotification.constants.EventnotificationConstants.MODE_VIEW;
-
-import java.io.IOException;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.ACTIVE;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.EVENT;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.EVENT_LIST;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.EVENT_TYPE_LIST;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.HOUR_LIST;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MESSAGE;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MINUTE_LIST;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MODE;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MODE_CREATE;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MODE_VIEW;
 
 import javax.validation.Valid;
 
@@ -64,6 +64,7 @@ import org.egov.eventnotification.entity.Event;
 import org.egov.eventnotification.service.EventService;
 import org.egov.eventnotification.service.EventTypeService;
 import org.egov.eventnotification.utils.EventnotificationUtil;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -81,9 +82,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping(value = "/event/")
 public class EventController {
-
-    private static final String ACTIVE = "Active";
-    private static final String MESSAGE = "message";
 
     @Autowired
     private EventService eventService;
@@ -122,8 +120,7 @@ public class EventController {
 
     @PostMapping("create/")
     public String save(@Valid @ModelAttribute Event event,
-            BindingResult errors, Model model)
-            throws IOException {
+            BindingResult errors, Model model) {
 
         if (errors.hasErrors()) {
             model.addAttribute(MODE, MODE_CREATE);
@@ -133,9 +130,11 @@ public class EventController {
             model.addAttribute(MESSAGE, "msg.event.create.error");
             return "event-create";
         }
-
-        eventService.saveEvent(event);
-        eventService.sendPushMessage(event);
+        try {
+            eventService.saveEvent(event);
+        } catch (final Exception e) {
+            throw new ApplicationRuntimeException(e.getMessage(), e);
+        }
         model.addAttribute(EVENT, event);
         model.addAttribute(MESSAGE, "msg.event.create.success");
         model.addAttribute(MODE, MODE_VIEW);

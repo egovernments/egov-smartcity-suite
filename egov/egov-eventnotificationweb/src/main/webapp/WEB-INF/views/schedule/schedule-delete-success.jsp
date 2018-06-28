@@ -51,17 +51,19 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <form:form method="post" action="create"
-	class="form-horizontal form-groups-bordered" modelAttribute="notificationSchedule"
-	id="schedulerForm">
+	class="form-horizontal form-groups-bordered"
+	modelAttribute="notificationSchedule" id="schedulerForm">
 	<input type="hidden" name="mode" value="${mode}" />
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-body custom-form ">
 					<c:if test="${not empty message}">
-						<div role="alert"><spring:message code="${message}"/></div>
+						<div role="alert">
+							<spring:message code="${message}" />
+						</div>
 					</c:if>
-					
+
 				</div>
 			</div>
 			<div class="form-group">

@@ -108,7 +108,6 @@ public class Event extends AbstractAuditable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date endDate;
 
-    @NotNull
     private boolean paid;
 
     private Double cost;

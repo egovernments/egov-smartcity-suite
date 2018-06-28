@@ -50,32 +50,44 @@
 
 <div class="row">
 	<div class="col-md-12">
-	<form:form modelAttribute="event" name="searcheventForm" id="searcheventForm" class="form-horizontal form-groups-bordered">
-		<div class="panel panel-primary" data-collapsed="0">
+		<form:form modelAttribute="event" name="searcheventForm"
+			id="searcheventForm" class="form-horizontal form-groups-bordered">
+			<div class="panel panel-primary" data-collapsed="0">
 
 				<div class="panel-heading">
-					<div class="panel-title"><spring:message code="lbl.event.search" /></div>
+					<div class="panel-title">
+						<spring:message code="lbl.event.search" />
+					</div>
 				</div>
 				<div class="form-group">
-					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.eventType" />:</label>
-						<div class="col-sm-3 add-margin">
-							<form:select path="eventType" id="eventType" name="eventType" class="form-control">
-								<form:option value=""><spring:message code="lbl.select" /></form:option>
-								<form:options items="${eventTypeList}" itemLabel="name" itemValue="id"/>
-							</form:select>
-						</div>
-					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.name" />:</label>
-						<div class="col-sm-3 add-margin">
-							<input id="name" name="name" class="form-control text-left" maxlength="100"/>
-						</div>
+					<label class="col-sm-2 control-label text-right"><spring:message
+							code="lbl.event.eventType" />:</label>
+					<div class="col-sm-3 add-margin">
+						<form:select path="eventType" id="eventType" name="eventType"
+							class="form-control">
+							<form:option value="">
+								<spring:message code="lbl.select" />
+							</form:option>
+							<form:options items="${eventTypeList}" itemLabel="name"
+								itemValue="id" />
+						</form:select>
+					</div>
+					<label class="col-sm-2 control-label text-right"><spring:message
+							code="lbl.event.name" />:</label>
+					<div class="col-sm-3 add-margin">
+						<input id="name" name="name" class="form-control text-left"
+							maxlength="100" />
+					</div>
 				</div>
 
 
 				<div class="form-group">
-					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.host" />:</label>
-						<div class="col-sm-3 add-margin">
-							<input id="eventhost" name="eventhost" class="form-control text-left" maxlength="20"/>
-						</div>
+					<label class="col-sm-2 control-label text-right"><spring:message
+							code="lbl.event.host" />:</label>
+					<div class="col-sm-3 add-margin">
+						<input id="eventHost" name="eventHost"
+							class="form-control text-left" maxlength="20" />
+					</div>
 					<label class="col-sm-2 control-label text-right"></label>
 					<div class="col-sm-3 add-margin"></div>
 				</div>
@@ -86,13 +98,14 @@
 					</div>
 				</div>
 			</div>
-	</form:form>
+		</form:form>
 	</div>
 </div>
-	<div class="row">
+<div class="row">
 	<div class="col-md-12 table-header text-left">
 		<spring:message code="title.event.view.all" />
-		<button type='button' class='btn btn-primary' id="buttonSubmit" style="float: right;">
+		<button type='button' class='btn btn-primary' id="buttonSubmit"
+			style="float: right;">
 			<spring:message code='lbl.add' />
 		</button>
 	</div>
@@ -117,49 +130,43 @@
 				</tr>
 			</thead>
 			<tbody>
-			<c:if test="${not empty eventList}">
-				<c:forEach var="listVar" items="${eventList}">
-	    			<tr>
-	    				<td><c:out value="${listVar.id}"/></td>
-	    				<td><c:out value="${listVar.name}"/></td>
-	    				<td><c:out value="${listVar.description}"/></td>
-	    				<td>
-	    					<fmt:formatDate pattern="dd/MM/yyyy" value="${listVar.eventDetails.startDt}" var="startDate" />
-							<c:out value="${startDate}" />
-	    				</td>
-	    				<td>
-	    					<c:out value="${listVar.eventDetails.startHH}" />:<c:out value="${listVar.eventDetails.startMM}" />
-	    				</td>
-	    				<td>
-	    					<fmt:formatDate pattern="dd/MM/yyyy" value="${listVar.eventDetails.endDt}" var="endDate" />
-							<c:out value="${endDate}" />
-	    				</td>
-	    				<td>
-	    					<c:out value="${listVar.eventDetails.endHH}" />:<c:out value="${listVar.eventDetails.endMM}" />
-	    				</td>
-	    				<td><c:out value="${listVar.eventAddress.eventhost}"/></td>
-	    				<td><c:out value="${listVar.eventAddress.eventlocation}"/></td>
-	    				<td><c:out value="${listVar.eventAddress.address}"/></td>
-	    				<td><c:out value="${listVar.eventType.name}"/></td>
-	    				<td>
-	    				<c:choose>
-	    					<c:when test="${listVar.paid == true}">
-	    						<spring:message code="lbl.event.yes" />
-	    					</c:when>
-	    					<c:otherwise>
-	    						<spring:message code="lbl.event.no" />
-	    					</c:otherwise>
-	    				</c:choose>
-	    				</td>
-	    				<td><c:out value="${listVar.cost}"/></td>
-	    			</tr>
-				</c:forEach>
-			</c:if>
-			<c:if test="${empty eventList}">
-				<tr class="odd">
-					<td colspan="13" class="dataTables_empty" valign="top">No data available in table</td>
-				</tr>
-			</c:if>
+				<c:if test="${not empty eventList}">
+					<c:forEach var="listVar" items="${eventList}">
+						<tr>
+							<td><c:out value="${listVar.id}" /></td>
+							<td><c:out value="${listVar.name}" /></td>
+							<td><c:out value="${listVar.description}" /></td>
+							<td><fmt:formatDate pattern="dd/MM/yyyy"
+									value="${listVar.eventDetails.startDt}" var="startDate" /> <c:out
+									value="${startDate}" /></td>
+							<td><c:out value="${listVar.eventDetails.startHH}" />:<c:out
+									value="${listVar.eventDetails.startMM}" /></td>
+							<td><fmt:formatDate pattern="dd/MM/yyyy"
+									value="${listVar.eventDetails.endDt}" var="endDate" /> <c:out
+									value="${endDate}" /></td>
+							<td><c:out value="${listVar.eventDetails.endHH}" />:<c:out
+									value="${listVar.eventDetails.endMM}" /></td>
+							<td><c:out value="${listVar.eventAddress.eventHost}" /></td>
+							<td><c:out value="${listVar.eventAddress.eventLocation}" /></td>
+							<td><c:out value="${listVar.eventAddress.address}" /></td>
+							<td><c:out value="${listVar.eventType.name}" /></td>
+							<td><c:choose>
+									<c:when test="${listVar.paid == true}">
+										<spring:message code="lbl.event.yes" />
+									</c:when>
+									<c:otherwise>
+										<spring:message code="lbl.event.no" />
+									</c:otherwise>
+								</c:choose></td>
+							<td><c:out value="${listVar.cost}" /></td>
+						</tr>
+					</c:forEach>
+				</c:if>
+				<c:if test="${empty eventList}">
+					<tr class="odd">
+						<td colspan="13" class="dataTables_empty" valign="top"><spring:message code="lbl.norecords" /></td>
+					</tr>
+				</c:if>
 			</tbody>
 		</table>
 	</div>
@@ -174,8 +181,10 @@
 </script>
 <link rel="stylesheet"
 	href="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>" />
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript"

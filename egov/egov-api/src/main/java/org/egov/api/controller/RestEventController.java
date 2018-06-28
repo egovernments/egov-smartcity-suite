@@ -47,42 +47,36 @@
  */
 package org.egov.api.controller;
 
-import static org.egov.eventnotification.constants.EventnotificationConstants.EVENTID;
-import static org.egov.eventnotification.constants.EventnotificationConstants.FAIL;
-import static org.egov.eventnotification.constants.EventnotificationConstants.MODULE_NAME;
-import static org.egov.eventnotification.constants.EventnotificationConstants.SUCCESS;
-import static org.egov.eventnotification.constants.EventnotificationConstants.USERID;
-import static org.egov.eventnotification.constants.EventnotificationConstants.ZERO;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.ACTIVE;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.FAIL;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.INTERESTED_COUNT;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MODULE_NAME;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.SUCCESS;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.ZERO;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Files;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
 import org.egov.api.adapter.CategoryParametersAdapter;
 import org.egov.api.adapter.DraftsAdapter;
 import org.egov.api.adapter.EventAdapter;
 import org.egov.api.adapter.EventSearchAdapter;
 import org.egov.api.adapter.ModuleCategoryAdapter;
 import org.egov.api.controller.core.ApiController;
-import org.egov.eventnotification.entity.DraftType;
-import org.egov.eventnotification.entity.Drafts;
-import org.egov.eventnotification.entity.Event;
 import org.egov.eventnotification.entity.UserEvent;
 import org.egov.eventnotification.entity.contracts.EventSearch;
+import org.egov.eventnotification.entity.contracts.UserEventRequest;
 import org.egov.eventnotification.service.CategoryParametersService;
 import org.egov.eventnotification.service.DraftService;
 import org.egov.eventnotification.service.EventService;
 import org.egov.eventnotification.service.ModuleCategoryService;
 import org.egov.eventnotification.service.UserEventService;
+import org.egov.infra.utils.FileStoreUtils;
 import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -90,16 +84,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author somvit
  *
  */
-@org.springframework.web.bind.annotation.RestController
+@RestController
 public class RestEventController extends ApiController {
-    private static final Logger LOGGER = Logger.getLogger(RestEventController.class);
-    private static final String ACTIVE = "Active";
-    private static final String INTERESTED_COUNT = "interestedCount";
+    private static final Logger LOGGER = LoggerFactory.getLogger(RestEventController.class);
 
     @Autowired
     private EventService eventService;
@@ -115,6 +108,9 @@ public class RestEventController extends ApiController {
 
     @Autowired
     private CategoryParametersService categoryParametersService;
+
+    @Autowired
+    private FileStoreUtils fileStoreUtils;
 
     @GetMapping(path = "/events", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<String> getAllEvent() {
@@ -155,19 +151,12 @@ public class RestEventController extends ApiController {
 
     @GetMapping(path = "/draft/search", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<String> searchDraft(@RequestParam(required = false) String type,
-            @RequestParam(required = false) String name,
-            @RequestParam(required = false) Long module) {
-
-        Drafts draftObj = new Drafts();
-        DraftType draftType = new DraftType();
-        draftType.setName(type);
-        draftObj.setDraftType(draftType);
-        draftObj.setName(name);
+            @RequestParam(required = false) String name) {
 
         try {
             return getResponseHandler()
                     .setDataAdapter(new DraftsAdapter())
-                    .success(draftService.searchDraft(draftObj));
+                    .success(draftService.searchDraft(type, name));
         } catch (final Exception e) {
             LOGGER.error(EGOV_API_ERROR, e);
             return getResponseHandler().error(getMessage(SERVER_ERROR_KEY));
@@ -199,13 +188,13 @@ public class RestEventController extends ApiController {
     }
 
     @PostMapping(path = "/event/interested", produces = APPLICATION_JSON_VALUE)
-    public String saveUserEvent(@RequestBody String jsonData) {
-        JSONObject requestObject = (JSONObject) JSONValue.parse(jsonData);
+    public String saveUserEvent(@RequestBody UserEventRequest userEventRequest) {
         JSONObject responseObject = new JSONObject();
-        if (requestObject.containsKey(USERID)
-                && requestObject.containsKey(EVENTID)) {
-            UserEvent userEvent = usereventService.saveUserEvent(Long.parseLong(requestObject.get(USERID).toString()),
-                    Long.parseLong(requestObject.get(EVENTID).toString()));
+        if (userEventRequest == null)
+            responseObject.put(FAIL, getMessage("error.fail.eventuser"));
+        else {
+            UserEvent userEvent = usereventService.saveUserEvent(Long.parseLong(userEventRequest.getUserid()),
+                    Long.parseLong(userEventRequest.getEventid()));
             if (userEvent == null)
                 responseObject.put(FAIL, getMessage("error.fail.event"));
             else {
@@ -216,9 +205,7 @@ public class RestEventController extends ApiController {
                 else
                     responseObject.put(INTERESTED_COUNT, String.valueOf(interestedCount));
             }
-
-        } else
-            responseObject.put(FAIL, getMessage("error.fail.eventuser"));
+        }
 
         return responseObject.toJSONString();
     }
@@ -227,18 +214,7 @@ public class RestEventController extends ApiController {
     public void downloadEventImage(@PathVariable final Long id, @PathVariable final String fileStoreId,
             final HttpServletResponse response) throws IOException {
         try {
-            Event event = eventService.getEventById(id);
-            File downloadFile = fileStoreService.fetch(fileStoreId, MODULE_NAME);
-            long contentLength = downloadFile.length();
-
-            response.setHeader("Content-Length", String.valueOf(contentLength));
-            if (event.getFilestore() == null)
-                response.setHeader("Content-Disposition", "attachment;filename=index.jpeg");
-            else
-                response.setHeader("Content-Disposition", "attachment;filename=" + event.getFilestore().getFileName());
-            response.setContentType(Files.probeContentType(downloadFile.toPath()));
-            final OutputStream out = response.getOutputStream();
-            IOUtils.write(FileUtils.readFileToByteArray(downloadFile), out);
+            fileStoreUtils.writeToHttpResponseStream(fileStoreId, MODULE_NAME, response);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

@@ -47,14 +47,15 @@
  */
 package org.egov.eventnotification.web.controller.notificationdraft;
 
-import static org.egov.eventnotification.constants.EventnotificationConstants.CATEGORY_PARAMETERS;
-import static org.egov.eventnotification.constants.EventnotificationConstants.DRAFT_LIST;
-import static org.egov.eventnotification.constants.EventnotificationConstants.MODE;
-import static org.egov.eventnotification.constants.EventnotificationConstants.MODE_CREATE;
-import static org.egov.eventnotification.constants.EventnotificationConstants.MODE_VIEW;
-import static org.egov.eventnotification.constants.EventnotificationConstants.MODULE_CATEGORY;
-import static org.egov.eventnotification.constants.EventnotificationConstants.NOTIFICATION_DRAFT;
-import static org.egov.eventnotification.constants.EventnotificationConstants.TEMPLATE_MODULE;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.CATEGORY_PARAMETERS;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.DRAFT_LIST;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MODE;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MODE_CREATE;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MODE_VIEW;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MODULE_CATEGORY;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.NOTIFICATION_DRAFT;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.TEMPLATE_MODULE;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MESSAGE;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,7 +81,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 public class ModifyNotificationDraftController {
-    private static final String MESSAGE = "message";
 
     @Autowired
     private DraftService draftService;

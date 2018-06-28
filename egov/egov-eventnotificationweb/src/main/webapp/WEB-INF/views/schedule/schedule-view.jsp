@@ -48,7 +48,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
 
-	<div class="row">
+<div class="row">
 	<div class="col-md-12 table-header text-left">
 		<spring:message code="lbl.schedule.draft.view" />
 	</div>
@@ -66,23 +66,24 @@
 				</tr>
 			</thead>
 			<tbody>
-			<c:if test="${not empty draftList}">
-				<c:forEach var="listVar" items="${draftList}">
-	    			<tr>
-	    				<td><c:out value="${listVar.id}"/></td>
-	    				<td><c:out value="${listVar.name}"/></td>
-	    				<td><c:out value="${listVar.draftType.name}"/></td>
-	    				<td><c:out value="${listVar.module.name}"/></td>
-	    				<td><c:out value="${listVar.category.name}"/></td>
-	    				<td><c:out value="${listVar.message}"/></td>
-	    			</tr>
-				</c:forEach>
-			</c:if>
-			<c:if test="${empty draftList}">
-				<tr class="odd">
-					<td colspan="13" class="dataTables_empty" valign="top"><spring:message code="lbl.norecords" /></td>
-				</tr>
-			</c:if>
+				<c:if test="${not empty draftList}">
+					<c:forEach var="listVar" items="${draftList}">
+						<tr>
+							<td><c:out value="${listVar.id}" /></td>
+							<td><c:out value="${listVar.name}" /></td>
+							<td><c:out value="${listVar.draftType.name}" /></td>
+							<td><c:out value="${listVar.module.name}" /></td>
+							<td><c:out value="${listVar.category.name}" /></td>
+							<td><c:out value="${listVar.message}" /></td>
+						</tr>
+					</c:forEach>
+				</c:if>
+				<c:if test="${empty draftList}">
+					<tr class="odd">
+						<td colspan="13" class="dataTables_empty" valign="top"><spring:message
+								code="lbl.norecords" /></td>
+					</tr>
+				</c:if>
 			</tbody>
 		</table>
 	</div>
@@ -107,30 +108,29 @@
 				</tr>
 			</thead>
 			<tbody>
-			<c:if test="${not empty scheduleList}">
-				<c:forEach var="listVar" items="${scheduleList}">
-	    			<tr>
-	    				<td><c:out value="${listVar.id}"/></td>
-	    				<td><c:out value="${listVar.templateName}"/></td>
-	    				<td><c:out value="${listVar.draftType.name}"/></td>
-	    				<td><c:out value="${listVar.status}"/></td>
-	    				<td>
-	    					<fmt:formatDate pattern="dd/MM/yyyy" value="${listVar.eventDetails.startDt}" var="startDate" />
-							<c:out value="${startDate}" />
-	    				</td>
-	    				<td>
-	    					<c:out value="${listVar.eventDetails.startHH}" />:<c:out value="${listVar.eventDetails.startMM}" />
-	    				</td>
-	    				<td><c:out value="${listVar.scheduleRepeat.name}"/></td>
-	    				<td><c:out value="${listVar.messageTemplate}"/></td>
-	    			</tr>
-				</c:forEach>
-			</c:if>
-			<c:if test="${empty scheduleList}">
-				<tr class="odd">
-					<td colspan="8" class="dataTables_empty" valign="top"><spring:message code="lbl.norecords" /></td>
-				</tr>
-			</c:if>
+				<c:if test="${not empty scheduleList}">
+					<c:forEach var="listVar" items="${scheduleList}">
+						<tr>
+							<td><c:out value="${listVar.id}" /></td>
+							<td><c:out value="${listVar.templateName}" /></td>
+							<td><c:out value="${listVar.draftType.name}" /></td>
+							<td><c:out value="${listVar.status}" /></td>
+							<td><fmt:formatDate pattern="dd/MM/yyyy"
+									value="${listVar.eventDetails.startDt}" var="startDate" /> <c:out
+									value="${startDate}" /></td>
+							<td><c:out value="${listVar.eventDetails.startHH}" />:<c:out
+									value="${listVar.eventDetails.startMM}" /></td>
+							<td><c:out value="${listVar.scheduleRepeat.name}" /></td>
+							<td><c:out value="${listVar.messageTemplate}" /></td>
+						</tr>
+					</c:forEach>
+				</c:if>
+				<c:if test="${empty scheduleList}">
+					<tr class="odd">
+						<td colspan="8" class="dataTables_empty" valign="top"><spring:message
+								code="lbl.norecords" /></td>
+					</tr>
+				</c:if>
 			</tbody>
 		</table>
 	</div>
@@ -138,8 +138,10 @@
 
 <link rel="stylesheet"
 	href="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>" />
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript"

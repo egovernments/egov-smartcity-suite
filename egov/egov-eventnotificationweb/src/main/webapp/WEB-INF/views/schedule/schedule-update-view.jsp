@@ -47,115 +47,149 @@
   --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<form:form method="post" action="" modelAttribute="schedule" id="updateScheduleform" cssClass="form-horizontal form-groups-bordered"
+<form:form method="post" action="" modelAttribute="schedule"
+	id="updateScheduleform" cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
-					<div class="panel-title"><spring:message code="lbl.schedule.notification" /></div>
+					<div class="panel-title">
+						<spring:message code="lbl.schedule.notification" />
+					</div>
 				</div>
 				<form:hidden id="mode" path="" value="${mode}" />
-				<input type="hidden" id="id" name="id" value="${id}" />
-				<input type="hidden" id="startHHHid" value="${eventDetails.startHH}" />
-				<input type="hidden" id="startMMHid" value="${eventDetails.startMM}" />
-				<form:hidden id="module" name="module" path="" value="${schedule.module.id}" />
+				<input type="hidden" id="id" name="id" value="${id}" /> <input
+					type="hidden" id="startHHHid" value="${eventDetails.startHH}" /> <input
+					type="hidden" id="startMMHid" value="${eventDetails.startMM}" />
+				<form:hidden id="module" name="module" path=""
+					value="${schedule.module.id}" />
 				<div class="panel-body">
 					<div class="form-group">
-						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.schedule.templatename" />:</label>
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.schedule.templatename" />:</label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="templateName" id="templateName" name="templateName" 
-								class="form-control text-left patternvalidation" maxlength="100" value="${templateName}" readonly="true"/>
+							<form:input path="templateName" id="templateName"
+								name="templateName"
+								class="form-control text-left patternvalidation" maxlength="100"
+								value="${templateName}" readonly="true" />
 							<form:errors path="templateName" cssClass="error-msg" />
 						</div>
-						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.schedule.type" />:</label>
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.schedule.type" />:</label>
 						<div class="col-sm-3 add-margin">
 							<form:select path="draftType" id="draftType" name="draftType"
-								cssClass="form-control" cssErrorClass="form-control error"	required="required" readonly="true">
-								<form:option value=""><spring:message code="lbl.select" /></form:option>
-								<form:options items="${draftList}" itemLabel="name" itemValue="id"/>
+								cssClass="form-control" cssErrorClass="form-control error"
+								required="required" readonly="true">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
+								<form:options items="${draftList}" itemLabel="name"
+									itemValue="id" />
 							</form:select>
 							<form:errors path="draftType" cssClass="error-msg" />
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.startdate" />:<span class="mandatory"></span></label>
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.event.startdate" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin text-center">
-							<fmt:formatDate pattern="dd/MM/yyyy" value="${eventDetails.startDt}" var="startDate" />
-							<form:input path="eventDetails.startDt" id="startDt" name="eventDetails.startDt" 
-								class="form-control datepicker" title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}" 
-								data-inputmask="'mask': 'd/m/y'" required="required" data-date-start-date="0d" value="${startDate}"/>
+							<fmt:formatDate pattern="dd/MM/yyyy"
+								value="${eventDetails.startDt}" var="startDate" />
+							<form:input path="eventDetails.startDt" id="startDt"
+								name="eventDetails.startDt" class="form-control datepicker"
+								title="Please enter a valid date"
+								pattern="\d{1,2}/\d{1,2}/\d{4}" data-inputmask="'mask': 'd/m/y'"
+								required="required" data-date-start-date="0d"
+								value="${startDate}" />
 							<form:errors path="eventDetails.startDt" cssClass="error-msg" />
 						</div>
-						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.event.starttime" />:<span class="mandatory"></span></label>
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.event.starttime" />:<span class="mandatory"></span></label>
 						<div class="col-sm-2 add-margin text-center">
-							<form:select path="eventDetails.startHH" id="startHH" name="eventDetails.startHH"
-								cssClass="form-control" cssErrorClass="form-control error"	required="required">
-								<form:option value=""><spring:message code="lbl.hours" /></form:option>
+							<form:select path="eventDetails.startHH" id="startHH"
+								name="eventDetails.startHH" cssClass="form-control"
+								cssErrorClass="form-control error" required="required">
+								<form:option value="">
+									<spring:message code="lbl.hours" />
+								</form:option>
 								<form:options items="${hourList}" />
 							</form:select>
 							<form:errors path="eventDetails.startHH" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-1 control-label text-right">:</label>
 						<div class="col-sm-2 add-margin text-center">
-							<form:select path="eventDetails.startMM" id="startMM" name="eventDetails.startMM"
-									cssClass="form-control" cssErrorClass="form-control error"	required="required">
-									<form:option value=""><spring:message code="lbl.minutes" /></form:option>
-									<form:options items="${minuteList}"/>
-								</form:select>
-								<form:errors path="eventDetails.startMM" cssClass="error-msg" />
+							<form:select path="eventDetails.startMM" id="startMM"
+								name="eventDetails.startMM" cssClass="form-control"
+								cssErrorClass="form-control error" required="required">
+								<form:option value="">
+									<spring:message code="lbl.minutes" />
+								</form:option>
+								<form:options items="${minuteList}" />
+							</form:select>
+							<form:errors path="eventDetails.startMM" cssClass="error-msg" />
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.schedule.status" />:</label>
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.schedule.status" />:</label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="status" id="status" name="status" 
-								class="form-control text-left patternvalidation" maxlength="100" readonly="true" value="${status}"/>
+							<form:input path="status" id="status" name="status"
+								class="form-control text-left patternvalidation" maxlength="100"
+								readonly="true" value="${status}" />
 							<form:errors path="status" cssClass="error-msg" />
 						</div>
-						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.schedule.repeatevery" />:<span class="mandatory"></span></label>
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.schedule.repeatevery" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin text-center">
-							<form:select path="scheduleRepeat" id="scheduleRepeat" name="scheduleRepeat"
-								cssClass="form-control" cssErrorClass="form-control error"	required="required">
-								<form:option value=""><spring:message code="lbl.select" /></form:option>
-								<form:options items="${repeatList}" itemLabel="name" itemValue="id"/>
+							<form:select path="scheduleRepeat" id="scheduleRepeat"
+								name="scheduleRepeat" cssClass="form-control"
+								cssErrorClass="form-control error" required="required">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
+								<form:options items="${repeatList}" itemLabel="name"
+									itemValue="id" />
 							</form:select>
 							<form:errors path="scheduleRepeat" cssClass="error-msg" />
 						</div>
 					</div>
-					
+
 					<div class="form-group">
-						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.schedule.notificationpreview" />:<span class="mandatory"></span></label>
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.schedule.notificationpreview" />:<span
+							class="mandatory"></span></label>
 						<div class="col-sm-10 add-margin">
-							<form:textarea path="messageTemplate" id="messageTemplate" name="messageTemplate"
-								class="form-control text-left patternvalidation"
-								maxlength="500" required="required" value="${messageTemplate}" readonly="true"/>
+							<form:textarea path="messageTemplate" id="messageTemplate"
+								name="messageTemplate"
+								class="form-control text-left patternvalidation" maxlength="500"
+								required="required" value="${messageTemplate}" readonly="true" />
 							<form:errors path="messageTemplate" cssClass="error-msg" />
 						</div>
 					</div>
+				</div>
 			</div>
 		</div>
-	</div>
-	<div class="form-group">
-		<div class="text-center">
-			<button type='submit' class='btn btn-primary' id="buttonSubmit">
-				<spring:message code='lbl.update' />
-			</button>
-			<a href='javascript:void(0)' class='btn btn-default'
-				onclick='self.close()'><spring:message code='lbl.close' /></a>
+		<div class="form-group">
+			<div class="text-center">
+				<button type='submit' class='btn btn-primary' id="buttonSubmit">
+					<spring:message code='lbl.update' />
+				</button>
+				<a href='javascript:void(0)' class='btn btn-default'
+					onclick='self.close()'><spring:message code='lbl.close' /></a>
+			</div>
 		</div>
-	</div>
 </form:form>
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>" />
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>" />
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
 
-<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
-<script	type="text/javascript" src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<cdn:url  value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/js/app/schedule-update-view.js?rnd=${app_release_no}'/>"></script>
+<script type="text/javascript"
+	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<cdn:url  value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<cdn:url value='/resources/js/app/schedule-update-view.js?rnd=${app_release_no}'/>"></script>

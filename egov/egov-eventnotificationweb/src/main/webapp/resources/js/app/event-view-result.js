@@ -45,8 +45,12 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-$(document).ready(function(){
-	$("#buttonSubmit").click(function(event){
-		window.open("/eventnotification/event/update/"+$("#eventId").val(),"_blank", "width=800, height=700, scrollbars=yes");
-	});
-});
+$(document).ready(
+		function() {
+			$("#buttonSubmit").click(
+					function(event) {
+						window.open("/eventnotification/event/update/"
+								+ $("#eventId").val(), "_blank",
+								"width=800, height=700, scrollbars=yes");
+					});
+		});
