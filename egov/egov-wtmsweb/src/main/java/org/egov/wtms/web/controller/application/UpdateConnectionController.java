@@ -99,6 +99,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_REJECTED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WORKFLOW_ACTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WORKFLOW_CLOSUREADDITIONALRULE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WORKFLOW_RECONNCTIONINITIATED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.NON_METERED_CODE;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -571,7 +572,8 @@ public class UpdateConnectionController extends GenericConnectionController {
                     waterConnectionDetails.addWaterDemandConnection(waterDemandConnection);
                     waterDemandConnectionService.createWaterDemandConnection(waterDemandConnection);
                     if (REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
-                            && waterConnectionDetails.getStatus().getCode().equalsIgnoreCase(APPLICATION_STATUS_CREATED))
+                            && APPLICATION_STATUS_CREATED.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()) 
+                            && NON_METERED_CODE.equalsIgnoreCase(waterConnectionDetails.getConnectionType().name()))
                         regulariseConnDemandGenerationImpl.generateDemandForRegulariseConnection(waterConnectionDetails);
                     // Attach any other file during field inspection and estimation
                     final Set<FileStoreMapper> fileStoreSet = addToFileStore(files);
