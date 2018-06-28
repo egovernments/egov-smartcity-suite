@@ -570,7 +570,9 @@ public class UpdateConnectionController extends GenericConnectionController {
                     waterDemandConnection.setWaterConnectionDetails(waterConnectionDetails);
                     waterConnectionDetails.addWaterDemandConnection(waterDemandConnection);
                     waterDemandConnectionService.createWaterDemandConnection(waterDemandConnection);
-                    regulariseConnDemandGenerationImpl.generateDemandForRegulariseConnection(waterConnectionDetails);
+                    if (REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
+                            && waterConnectionDetails.getStatus().getCode().equalsIgnoreCase(APPLICATION_STATUS_CREATED))
+                        regulariseConnDemandGenerationImpl.generateDemandForRegulariseConnection(waterConnectionDetails);
                     // Attach any other file during field inspection and estimation
                     final Set<FileStoreMapper> fileStoreSet = addToFileStore(files);
                     Iterator<FileStoreMapper> fsIterator = null;
