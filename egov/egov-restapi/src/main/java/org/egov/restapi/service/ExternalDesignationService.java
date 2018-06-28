@@ -47,7 +47,9 @@
  */
 package org.egov.restapi.service;
 
-import org.egov.eis.service.DesignationService;
+import org.egov.eis.service.DeptDesigService;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.pims.commons.Designation;
 import org.egov.restapi.model.DesignationHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,10 +64,15 @@ import java.util.List;
 public class ExternalDesignationService {
 
     @Autowired
-    private DesignationService designationService;
+    private DeptDesigService deptDesigService;
 
-    public List<DesignationHelper> populateDesignation() {
-        final List<Designation> designations = designationService.getAllDesignations();
+    @Autowired
+    private DepartmentService departmentService;
+
+    public List<DesignationHelper> populateDesignation(final String name) {
+
+        final Department department = departmentService.getDepartmentByName(name);
+        final List<Designation> designations = deptDesigService.getDesignationsByDepartment(department.getId());
 
         final List<DesignationHelper> designationHelpers = new ArrayList<>();
         for (final Designation designation : designations) {

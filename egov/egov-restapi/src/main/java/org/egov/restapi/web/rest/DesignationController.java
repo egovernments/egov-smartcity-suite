@@ -52,6 +52,7 @@ import org.egov.restapi.util.JsonConvertor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -63,7 +64,7 @@ public class DesignationController {
     private ExternalDesignationService externalDesignationService;
 
     @RequestMapping(value = "/eis/designations", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String getAllDesignation() {
-        return JsonConvertor.convert(externalDesignationService.populateDesignation());
+    public String getAllDesignationByDepartment(@RequestParam(value = "deptName") final String deptName) {
+        return JsonConvertor.convert(externalDesignationService.populateDesignation(deptName));
     }
 }
