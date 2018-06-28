@@ -53,13 +53,16 @@
 	class="form-horizontal form-groups-bordered" modelAttribute="drafts"
 	id="draftForm">
 	<input type="hidden" name="mode" value="${mode}" />
-	<input type="hidden" name="draftId" id="draftId" value="${notificationDraft.id}" />
+	<input type="hidden" name="draftId" id="draftId"
+		value="${notificationDraft.id}" />
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-body custom-form ">
 					<c:if test="${not empty message}">
-						<div role="alert"><spring:message code="${message}"/></div>
+						<div role="alert">
+							<spring:message code="${message}" />
+						</div>
 					</c:if>
 					<div class="panel-heading">
 						<div class="panel-title">
@@ -75,12 +78,8 @@
 								<c:out value="${notificationDraft.name}" />
 							</div>
 
-							<div class="col-xs-3 add-margin">
-								
-							</div>
-							<div class="col-xs-3 add-margin view-content">
-								
-							</div>
+							<div class="col-xs-3 add-margin"></div>
+							<div class="col-xs-3 add-margin view-content"></div>
 						</div>
 						<div class="row add-border">
 							<div class="col-xs-3 add-margin">
@@ -129,14 +128,9 @@
 		</div>
 	</div>
 </form:form>
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>" />
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
-<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/js/app/drafts-view-individual.js?rnd=${app_release_no}' />"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/js/app/window-reload-and-close.js?rnd=${app_release_no}' />"></script>
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>" />
+<script type="text/javascript"
+	src="<cdn:url value='/resources/js/app/drafts-view-individual.js?rnd=${app_release_no}' />"></script>
+<script type="text/javascript"
+	src="<cdn:url value='/resources/js/app/window-reload-and-close.js?rnd=${app_release_no}' />"></script>

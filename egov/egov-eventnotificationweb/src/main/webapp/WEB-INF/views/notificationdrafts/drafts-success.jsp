@@ -51,14 +51,18 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<form:form method="post" action="create" class="form-horizontal form-groups-bordered" modelAttribute="notificationDraft" id="draftsForm">
+<form:form method="post" action="create"
+	class="form-horizontal form-groups-bordered"
+	modelAttribute="notificationDraft" id="draftsForm">
 	<input type="hidden" name="mode" value="${mode}" />
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-body custom-form ">
 					<c:if test="${not empty message}">
-						<div role="alert"><spring:message code="${message}"/></div>
+						<div role="alert">
+							<spring:message code="${message}" />
+						</div>
 					</c:if>
 					<div class="panel-heading">
 						<div class="panel-title">
@@ -74,12 +78,8 @@
 								<c:out value="${notificationDraft.name}" />
 							</div>
 
-							<div class="col-xs-3 add-margin">
-								
-							</div>
-							<div class="col-xs-3 add-margin view-content">
-								
-							</div>
+							<div class="col-xs-3 add-margin"></div>
+							<div class="col-xs-3 add-margin view-content"></div>
 						</div>
 						<div class="row add-border">
 							<div class="col-xs-3 add-margin">
@@ -127,4 +127,5 @@
 		</div>
 	</div>
 </form:form>
-<script type="text/javascript" src="<cdn:url value='/resources/js/app/window-reload-and-close.js' />"></script>
+<script type="text/javascript"
+	src="<cdn:url value='/resources/js/app/window-reload-and-close.js' />"></script>

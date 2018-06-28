@@ -45,40 +45,27 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.eventnotification.repository;
+package org.egov.eventnotification.entity.contracts;
 
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.DRAFT_ID;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.NAME;
+public class UserEventRequest {
 
-import java.util.List;
+    private String userid;
+    private String eventid;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.apache.commons.lang3.StringUtils;
-import org.egov.eventnotification.entity.Drafts;
-import org.egov.eventnotification.repository.custom.DraftRepositoryCustom;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
-
-public class DraftRepositoryImpl implements DraftRepositoryCustom {
-
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    @Override
-    public List<Drafts> searchDraft(Drafts draftObj) {
-        Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Drafts.class, "drft");
-        criteria.createAlias("drft.draftType", "draftType");
-        if (draftObj.getDraftType().getName() != null)
-            criteria.add(Restrictions.ilike("draftType.name",
-                    draftObj.getDraftType().getName(), MatchMode.ANYWHERE));
-        if (StringUtils.isNotBlank(draftObj.getName()))
-            criteria.add(Restrictions.ilike(NAME, draftObj.getName(), MatchMode.ANYWHERE));
-        criteria.addOrder(Order.desc(DRAFT_ID));
-        return criteria.list();
+    public String getUserid() {
+        return userid;
     }
+
+    public void setUserid(String userid) {
+        this.userid = userid;
+    }
+
+    public String getEventid() {
+        return eventid;
+    }
+
+    public void setEventid(String eventid) {
+        this.eventid = eventid;
+    }
+
 }

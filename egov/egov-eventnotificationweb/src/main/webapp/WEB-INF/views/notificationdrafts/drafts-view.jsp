@@ -50,26 +50,32 @@
 
 <div class="row">
 	<div class="col-md-12">
-	<form:form modelAttribute="NotificationDraft" name="searchDraftForm" id="searchDraftForm" class="form-horizontal form-groups-bordered">
-		<div class="panel panel-primary" data-collapsed="0">
+		<form:form modelAttribute="NotificationDraft" name="searchDraftForm"
+			id="searchDraftForm" class="form-horizontal form-groups-bordered">
+			<div class="panel panel-primary" data-collapsed="0">
 
 				<div class="panel-heading">
-					<div class="panel-title"><spring:message code="lbl.event.search" /></div>
+					<div class="panel-title">
+						<spring:message code="lbl.event.search" />
+					</div>
 				</div>
 				<div class="form-group">
-					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.draft.notificationtype" />:</label>
-						<div class="col-sm-3 add-margin">
-							<select id="type" name="type" class="form-control">
-								<option value=""><spring:message code="lbl.select" /></option>
-								<c:forEach var="item" items="${draftList}">
-									<option value="${item.id}">${item.name}</option>
-								</c:forEach>
-							</select>
-						</div>
-					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.draft.name" />:</label>
-						<div class="col-sm-3 add-margin">
-							<input id="name" name="name" class="form-control text-left" maxlength="100"/>
-						</div>
+					<label class="col-sm-2 control-label text-right"><spring:message
+							code="lbl.draft.notificationtype" />:</label>
+					<div class="col-sm-3 add-margin">
+						<select id="type" name="type" class="form-control">
+							<option value=""><spring:message code="lbl.select" /></option>
+							<c:forEach var="item" items="${draftList}">
+								<option value="${item.id}">${item.name}</option>
+							</c:forEach>
+						</select>
+					</div>
+					<label class="col-sm-2 control-label text-right"><spring:message
+							code="lbl.draft.name" />:</label>
+					<div class="col-sm-3 add-margin">
+						<input id="name" name="name" class="form-control text-left"
+							maxlength="100" />
+					</div>
 				</div>
 
 				<div class="row">
@@ -79,13 +85,14 @@
 					</div>
 				</div>
 			</div>
-	</form:form>
+		</form:form>
 	</div>
 </div>
-	<div class="row">
+<div class="row">
 	<div class="col-md-12 table-header text-left">
 		<spring:message code="title.event.view.all" />
-		<button type='button' class='btn btn-primary' id="buttonSubmit" style="float: right;">
+		<button type='button' class='btn btn-primary' id="buttonSubmit"
+			style="float: right;">
 			<spring:message code='lbl.add' />
 		</button>
 	</div>
@@ -103,23 +110,23 @@
 				</tr>
 			</thead>
 			<tbody>
-			<c:if test="${not empty NotificationDrafts}">
-				<c:forEach var="listVar" items="${NotificationDrafts}">
-	    			<tr>
-	    				<td><c:out value="${listVar.id}"/></td>
-	    				<td><c:out value="${listVar.name}"/></td>
-	    				<td><c:out value="${listVar.draftType.name}"/></td>
-	    				<td><c:out value="${listVar.module.name}"/></td>
-	    				<td><c:out value="${listVar.category.name}"/></td>
-	    				<td><c:out value="${listVar.message}"/></td>
-	    			</tr>
-				</c:forEach>
-			</c:if>
-			<c:if test="${empty NotificationDrafts}">
-				<tr class="odd">
-					<td colspan="13" class="dataTables_empty" valign="top">No data available in table</td>
-				</tr>
-			</c:if>
+				<c:if test="${not empty NotificationDrafts}">
+					<c:forEach var="listVar" items="${NotificationDrafts}">
+						<tr>
+							<td><c:out value="${listVar.id}" /></td>
+							<td><c:out value="${listVar.name}" /></td>
+							<td><c:out value="${listVar.draftType.name}" /></td>
+							<td><c:out value="${listVar.module.name}" /></td>
+							<td><c:out value="${listVar.category.name}" /></td>
+							<td><c:out value="${listVar.message}" /></td>
+						</tr>
+					</c:forEach>
+				</c:if>
+				<c:if test="${empty NotificationDrafts}">
+					<tr class="odd">
+						<td colspan="13" class="dataTables_empty" valign="top"><spring:message code="lbl.norecords" /></td>
+					</tr>
+				</c:if>
 			</tbody>
 		</table>
 	</div>
@@ -134,8 +141,10 @@
 </script>
 <link rel="stylesheet"
 	href="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>" />
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript"

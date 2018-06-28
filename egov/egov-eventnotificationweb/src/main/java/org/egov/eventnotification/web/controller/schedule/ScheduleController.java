@@ -47,14 +47,15 @@
  */
 package org.egov.eventnotification.web.controller.schedule;
 
-import static org.egov.eventnotification.constants.EventnotificationConstants.DRAFT_LIST;
-import static org.egov.eventnotification.constants.EventnotificationConstants.HOUR_LIST;
-import static org.egov.eventnotification.constants.EventnotificationConstants.MINUTE_LIST;
-import static org.egov.eventnotification.constants.EventnotificationConstants.MODE;
-import static org.egov.eventnotification.constants.EventnotificationConstants.MODE_DELETE;
-import static org.egov.eventnotification.constants.EventnotificationConstants.MODE_VIEW;
-import static org.egov.eventnotification.constants.EventnotificationConstants.NOTIFICATION_SCHEDULE;
-import static org.egov.eventnotification.constants.EventnotificationConstants.SCHEDULER_REPEAT_LIST;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.DRAFT_LIST;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.HOUR_LIST;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MINUTE_LIST;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MODE;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MODE_DELETE;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MODE_VIEW;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.NOTIFICATION_SCHEDULE;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.SCHEDULER_REPEAT_LIST;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MESSAGE;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -81,7 +82,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class ScheduleController {
-    private static final String MESSAGE = "message";
 
     @Autowired
     private ScheduleService scheduleService;

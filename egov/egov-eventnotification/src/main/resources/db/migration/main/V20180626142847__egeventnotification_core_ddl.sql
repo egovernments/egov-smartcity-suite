@@ -60,6 +60,19 @@ INSERT INTO eg_feature_action(action, feature) VALUES ((select id FROM eg_action
 INSERT INTO eg_feature_action(action, feature) VALUES ((select id FROM eg_action  WHERE name = 'Create Schedule') ,(select id FROM eg_feature WHERE name = 'Schedule'));
 INSERT INTO eg_feature_action(action, feature) VALUES ((select id FROM eg_action  WHERE name = 'Delete Schedule') ,(select id FROM eg_feature WHERE name = 'Schedule'));
 
+INSERT INTO eg_roleaction (roleid, actionid) VALUES ((select id from eg_role where name='SYSTEM'),(select id FROM eg_action  WHERE name = 'Create Event'));
+INSERT INTO eg_roleaction (roleid, actionid) VALUES ((select id from eg_role where name='SYSTEM'),(select id FROM eg_action  WHERE name = 'Event'));
+INSERT INTO eg_roleaction (roleid, actionid) VALUES ((select id from eg_role where name='SYSTEM'),(select id FROM eg_action  WHERE name = 'Modify Event'));
+
+INSERT INTO eg_roleaction (roleid, actionid) VALUES ((select id from eg_role where name='SYSTEM'),(select id FROM eg_action  WHERE name = 'Update Drafts'));
+INSERT INTO eg_roleaction (roleid, actionid) VALUES ((select id from eg_role where name='SYSTEM'),(select id FROM eg_action  WHERE name = 'Drafts'));
+INSERT INTO eg_roleaction (roleid, actionid) VALUES ((select id from eg_role where name='SYSTEM'),(select id FROM eg_action  WHERE name = 'View Drafts'));
+
+INSERT INTO eg_roleaction (roleid, actionid) VALUES ((select id from eg_role where name='SYSTEM'),(select id FROM eg_action  WHERE name = 'Update Schedule'));
+INSERT INTO eg_roleaction (roleid, actionid) VALUES ((select id from eg_role where name='SYSTEM'),(select id FROM eg_action  WHERE name = 'Schedule'));
+INSERT INTO eg_roleaction (roleid, actionid) VALUES ((select id from eg_role where name='SYSTEM'),(select id FROM eg_action  WHERE name = 'Create Schedule'));
+INSERT INTO eg_roleaction (roleid, actionid) VALUES ((select id from eg_role where name='SYSTEM'),(select id FROM eg_action  WHERE name = 'Delete Schedule'));
+
 CREATE SEQUENCE seq_egevntnotification_eventtype; 
 CREATE TABLE egevntnotification_eventtype
 (

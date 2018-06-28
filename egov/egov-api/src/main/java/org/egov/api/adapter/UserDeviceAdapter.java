@@ -50,17 +50,15 @@ package org.egov.api.adapter;
 import java.lang.reflect.Type;
 
 import org.egov.pushbox.entity.UserFcmDevice;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.USER_ID;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.USER_TOKEN_ID;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.USER_DEVICE_ID;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 
 public class UserDeviceAdapter extends DataAdapter<UserFcmDevice> {
-    public static final String USER_ID = "userId";
-    public static final String USER_TOKEN_ID = "userToken";
-    public static final String SEND_ALL = "sendAll";
-    public static final String USER_DEVICE_ID = "deviceId";
-
     @Override
     public JsonElement serialize(UserFcmDevice userDevice, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject jsonObjectDraft = new JsonObject();

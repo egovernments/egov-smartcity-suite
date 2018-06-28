@@ -49,78 +49,54 @@
 package org.egov.api.controller;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.api.controller.core.ApiUrl.SEND_NOTIFICATIONS;
 import static org.egov.api.controller.core.ApiUrl.UPDATE_USER_TOKEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.log4j.Logger;
 import org.egov.api.adapter.UserAdapter;
 import org.egov.api.adapter.UserDeviceAdapter;
 import org.egov.api.controller.core.ApiController;
 import org.egov.api.controller.core.ApiResponse;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.pushbox.entity.UserFcmDevice;
-import org.egov.pushbox.entity.contracts.MessageContent;
-import org.egov.pushbox.entity.contracts.MessageContentDetails;
+import org.egov.pushbox.entity.contracts.SendNotificationRequest;
+import org.egov.pushbox.entity.contracts.UserTokenRequest;
 import org.egov.pushbox.service.PushNotificationService;
-import org.json.simple.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  *
  * @author Darshan Nagesh
  *
  */
-@org.springframework.web.bind.annotation.RestController
+@RestController
 public class RestPushBoxController extends ApiController {
 
-    public static final String USER_ID = "userId";
-    public static final String USER_TOKEN_ID = "userToken";
-    public static final String SEND_ALL = "sendAll";
-    public static final String USER_DEVICE_ID = "deviceId";
-
-    private static final Logger LOGGER = Logger.getLogger(RestPushBoxController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RestPushBoxController.class);
 
     @Autowired
     private PushNotificationService notificationService;
 
-    @Autowired
-    private UserService userService;
-
     @PostMapping(path = UPDATE_USER_TOKEN, consumes = APPLICATION_JSON_VALUE)
-    public @ResponseBody ResponseEntity<String> updateToken(@RequestBody JSONObject tokenUpdate) {
+    public @ResponseBody ResponseEntity<String> updateToken(@RequestBody UserTokenRequest userTokenRequest) {
         ApiResponse res = ApiResponse.newInstance();
         try {
 
-            UserFcmDevice userDevice = new UserFcmDevice();
-            userDevice.setDevicetoken(tokenUpdate.get(USER_TOKEN_ID).toString());
-            User user = userService.getUserById(Long.valueOf(tokenUpdate.get(USER_ID).toString()));
-            userDevice.setUser(user);
-            userDevice.setDeviceId(tokenUpdate.get(USER_DEVICE_ID).toString());
-
-            if (isBlank(userDevice.getDevicetoken()))
+            if (isBlank(userTokenRequest.getUserToken()))
                 return res.error(getMessage("userdevice.device.tokenunavailable"));
 
-            if (userDevice.getUser() == null)
+            if (isBlank(userTokenRequest.getUserId()))
                 return res.error(getMessage("userdevice.user.useridunavailable"));
 
-            if (isBlank(userDevice.getDeviceId()))
+            if (isBlank(userTokenRequest.getDeviceId()))
                 return res.error(getMessage("userdevice.user.deviceidunavailable"));
-            UserFcmDevice responseObject = notificationService.saveUserDevice(userDevice);
+            UserFcmDevice responseObject = notificationService.saveUserDevice(userTokenRequest);
             return res.setDataAdapter(new UserDeviceAdapter()).success(responseObject,
                     getMessage("msg.userdevice.update.success"));
         } catch (Exception e) {
@@ -130,26 +106,10 @@ public class RestPushBoxController extends ApiController {
     }
 
     @PostMapping(path = SEND_NOTIFICATIONS, consumes = APPLICATION_JSON_VALUE)
-    public @ResponseBody ResponseEntity<String> sendNotification(@RequestBody String content) {
-        Gson gson = new Gson();
-        JsonObject jsonObject = gson.fromJson(content, JsonObject.class);
-        JsonElement jsonElement = jsonObject.get(SEND_ALL);
-        boolean sendAll = jsonElement.getAsBoolean();
+    public @ResponseBody ResponseEntity<String> sendNotification(@RequestBody SendNotificationRequest notificationRequest) {
         ApiResponse res = ApiResponse.newInstance();
         try {
-            MessageContent message = createMessageContentFromRequest(jsonObject);
-            if (sendAll)
-                message.getDetails().setSendAll(true);
-            else {
-                JsonElement userIdElement = jsonObject.get("userIdList");
-                JsonArray jsonArray = userIdElement.getAsJsonArray();
-                List<Long> userIdList = new ArrayList<>();
-                for (JsonElement element : jsonArray)
-                    userIdList.add(Long.valueOf(isNotBlank(element.getAsString()) ? element.getAsString() : "0"));
-                message.getDetails().setUserIdList(userIdList);
-            }
-            message.getDetails().setSendAll(true);
-            notificationService.sendNotifications(message);
+            notificationService.buildAndSendNotification(notificationRequest);
 
             UserFcmDevice responseObject = new UserFcmDevice();
             return res.setDataAdapter(new UserAdapter()).success(responseObject, getMessage("msg.userdevice.update.success"));
@@ -158,25 +118,4 @@ public class RestPushBoxController extends ApiController {
             return res.error(getMessage(SERVER_ERROR_KEY));
         }
     }
-
-    private MessageContent createMessageContentFromRequest(JsonObject content) {
-        MessageContent message = new MessageContent();
-        MessageContentDetails messageDetails = new MessageContentDetails();
-        message.setMessageId(content.get("messageId").getAsLong());
-        message.setCreatedDateTime(content.get("createdDate").getAsLong());
-        messageDetails.setEventAddress(content.get("eventAddress").getAsString());
-        messageDetails.setEventDateTime(content.get("eventDateTime").getAsLong());
-        messageDetails.setEventLocation(content.get("eventLocation").getAsString());
-        message.setExpiryDate(content.get("expiryDate").getAsLong());
-        message.setImageUrl(content.get("imageUrl").getAsString());
-        message.setMessageBody(content.get("messageBody").getAsString());
-        message.setModuleName(content.get("moduleName").getAsString());
-        message.setNotificationDateTime(content.get("notificationDateTime").getAsLong());
-        message.setNotificationType(content.get("notificationType").getAsString());
-        message.setSenderId(content.get("senderId").getAsLong());
-        message.setSenderName(content.get("senderName").getAsString());
-        message.setDetails(messageDetails);
-        return message;
-    }
-
 }

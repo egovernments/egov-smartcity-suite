@@ -45,53 +45,87 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-$(document).ready(function(){
-	
-	$('#draftViewTable').DataTable({
-		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-md-3 col-xs-6 text-right'p>>",
-		"aLengthMenu" : [[10,25,50,-1 ],[10,25,50,"All" ] ],
-		"order": [[ 0, "desc" ]],
-		sort: true,
-		"autoWidth" : false
-	});
-	
-	$('#draftViewTable tbody').on('click', 'tr', function () {
-		window.open("/eventnotification/schedule/create/"+$(this).children('td:first-child').text(),'_blank', "width=800, height=700, scrollbars=yes")
-    } );
-	
-	$('#scheduleViewTable').DataTable({
-		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-md-3 col-xs-6 text-right'p>>",
-		"aLengthMenu" : [[10,25,50,-1 ],[10,25,50,"All" ] ],
-		"order": [[ 0, "desc" ]],
-		sort: true,
-		"autoWidth" : false
-	});
-	
-	$('#scheduleViewTable tbody').on('click', 'tr', function () {
-		window.open("/eventnotification/schedule/view/"+$(this).children('td:first-child').text(),'_blank', "width=800, height=700, scrollbars=yes")
-    } );
+$(document)
+		.ready(
+				function() {
 
-});
+					$('#draftViewTable')
+							.DataTable(
+									{
+										"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-md-3 col-xs-6 text-right'p>>",
+										"aLengthMenu" : [ [ 10, 25, 50, -1 ],
+												[ 10, 25, 50, "All" ] ],
+										"order" : [ [ 0, "desc" ] ],
+										sort : true,
+										"autoWidth" : false
+									});
 
+					$('#draftViewTable tbody')
+							.on(
+									'click',
+									'tr',
+									function() {
+										window
+												.open(
+														"/eventnotification/schedule/create/"
+																+ $(this)
+																		.children(
+																				'td:first-child')
+																		.text(),
+														'_blank',
+														"width=800, height=700, scrollbars=yes")
+									});
 
-$('#btnclose').click(function(){
-	bootbox.confirm({
-	    message: 'Information entered in this screen will be lost if you close this page ? Please confirm if you want to close. ',
-	    buttons: {
-	        'cancel': {
-	            label: 'No',
-	            className: 'btn-default pull-right'
-	        },
-	        'confirm': {
-	            label: 'Yes',
-	            className: 'btn-danger pull-right'
-	        }
-	    },
-	    callback: function(result) {
-	        if (result) {
-	             window.close();
-	        }
-	    }
-	});
-	
-});
+					$('#scheduleViewTable')
+							.DataTable(
+									{
+										"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-md-3 col-xs-6 text-right'p>>",
+										"aLengthMenu" : [ [ 10, 25, 50, -1 ],
+												[ 10, 25, 50, "All" ] ],
+										"order" : [ [ 0, "desc" ] ],
+										sort : true,
+										"autoWidth" : false
+									});
+
+					$('#scheduleViewTable tbody')
+							.on(
+									'click',
+									'tr',
+									function() {
+										window
+												.open(
+														"/eventnotification/schedule/view/"
+																+ $(this)
+																		.children(
+																				'td:first-child')
+																		.text(),
+														'_blank',
+														"width=800, height=700, scrollbars=yes")
+									});
+
+				});
+
+$('#btnclose')
+		.click(
+				function() {
+					bootbox
+							.confirm({
+								message : 'Information entered in this screen will be lost if you close this page ? Please confirm if you want to close. ',
+								buttons : {
+									'cancel' : {
+										label : 'No',
+										className : 'btn-default pull-right'
+									},
+									'confirm' : {
+										label : 'Yes',
+										className : 'btn-danger pull-right'
+									}
+								},
+								callback : function(result) {
+									if (result) {
+										window.close();
+									}
+								}
+							});
+
+				});

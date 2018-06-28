@@ -59,7 +59,9 @@
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-body custom-form ">
 					<c:if test="${not empty message}">
-						<div role="alert"><c:out value="${message}"/></div>
+						<div role="alert">
+							<c:out value="${message}" />
+						</div>
 					</c:if>
 					<div class="panel-heading">
 						<div class="panel-title">
@@ -75,12 +77,8 @@
 								<c:out value="${event.eventType.name}" />
 							</div>
 
-							<div class="col-xs-3 add-margin">
-								
-							</div>
-							<div class="col-xs-3 add-margin view-content">
-								
-							</div>
+							<div class="col-xs-3 add-margin"></div>
+							<div class="col-xs-3 add-margin view-content"></div>
 						</div>
 						<div class="row add-border">
 							<div class="col-xs-3 add-margin">
@@ -111,14 +109,17 @@
 								<spring:message code="lbl.event.startdate" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
-								<fmt:formatDate pattern="dd/MM/yyyy" value="${event.eventDetails.startDt}" var="startDate" />
+								<fmt:formatDate pattern="dd/MM/yyyy"
+									value="${event.eventDetails.startDt}" var="startDate" />
 								<c:out value="${startDate}" />
 							</div>
 							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.event.starttime" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
-								<c:out value="${event.eventDetails.startHH}" />:<c:out value="${event.eventDetails.startMM}" />
+								<c:out value="${event.eventDetails.startHH}" />
+								:
+								<c:out value="${event.eventDetails.startMM}" />
 							</div>
 						</div>
 						<div class="row add-border">
@@ -126,14 +127,17 @@
 								<spring:message code="lbl.event.enddate" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
-								<fmt:formatDate pattern="dd/MM/yyyy" value="${event.eventDetails.endDt}" var="endDate" />
+								<fmt:formatDate pattern="dd/MM/yyyy"
+									value="${event.eventDetails.endDt}" var="endDate" />
 								<c:out value="${endDate}" />
 							</div>
 							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.event.endtime" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
-								<c:out value="${event.eventDetails.endHH}" />:<c:out value="${event.eventDetails.endMM}" />
+								<c:out value="${event.eventDetails.endHH}" />
+								:
+								<c:out value="${event.eventDetails.endMM}" />
 							</div>
 						</div>
 						<div class="row add-border">
@@ -141,7 +145,7 @@
 								<spring:message code="lbl.event.host" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
-								<c:out value="${event.eventAddress.eventhost}" />
+								<c:out value="${event.eventAddress.eventHost}" />
 							</div>
 							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.event.contactno" />
@@ -155,7 +159,7 @@
 								<spring:message code="lbl.event.location" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
-								<c:out value="${event.eventAddress.eventlocation}" />
+								<c:out value="${event.eventAddress.eventLocation}" />
 							</div>
 							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.event.address" />
@@ -170,12 +174,14 @@
 							</div>
 							<div class="col-xs-5 add-margin view-content">
 								<c:choose>
-								    <c:when test="${empty event.filestore}">
-								        
-								    </c:when>
-								    <c:otherwise>
-								        <a href="/egi/downloadfile?fileStoreId=${event.filestore.fileStoreId}&moduleName=Eventnotification">${event.filestore.fileName }</a><br />
-								    </c:otherwise>
+									<c:when test="${empty event.filestore}">
+
+									</c:when>
+									<c:otherwise>
+										<a
+											href="/egi/downloadfile?fileStoreId=${event.filestore.fileStoreId}&moduleName=Eventnotification">${event.filestore.fileName }</a>
+										<br />
+									</c:otherwise>
 								</c:choose>
 							</div>
 						</div>
@@ -194,12 +200,12 @@
 							<div class="col-sm-3 add-margin view-content">
 								<c:choose>
 									<c:when test="${event.paid == true}">
-		    							<spring:message code="lbl.event.yes" />
-				    				</c:when>
-				    				<c:otherwise>
-				    					<spring:message code="lbl.event.no" />
-				    				</c:otherwise>
-			    				</c:choose>
+										<spring:message code="lbl.event.yes" />
+									</c:when>
+									<c:otherwise>
+										<spring:message code="lbl.event.no" />
+									</c:otherwise>
+								</c:choose>
 							</div>
 							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.event.cost" />
@@ -231,14 +237,9 @@
 		</div>
 	</div>
 </form:form>
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>" />
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
-<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/js/app/event-view-result.js?rnd=${app_release_no}' />"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/js/app/window-reload-and-close.js' />"></script>
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>" />
+<script type="text/javascript"
+	src="<cdn:url value='/resources/js/app/event-view-result.js?rnd=${app_release_no}' />"></script>
+<script type="text/javascript"
+	src="<cdn:url value='/resources/js/app/window-reload-and-close.js' />"></script>

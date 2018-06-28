@@ -49,9 +49,9 @@ package org.egov.eventnotification.service;
 
 import java.util.List;
 
+import org.egov.eventnotification.entity.DraftType;
 import org.egov.eventnotification.entity.Drafts;
 import org.egov.eventnotification.repository.DraftRepository;
-import org.egov.eventnotification.repository.custom.DraftRepositoryCustom;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,9 +63,6 @@ public class DraftService {
     @Autowired
     private DraftRepository draftRepository;
 
-    @Autowired
-    private DraftRepositoryCustom draftRepositoryCustom;
-
     public List<Drafts> getAllDrafts() {
         return draftRepository.findAll();
     }
@@ -75,8 +72,13 @@ public class DraftService {
         return draftRepository.save(draft);
     }
 
-    public List<Drafts> searchDraft(Drafts draftObj) {
-        return draftRepositoryCustom.searchDraft(draftObj);
+    public List<Drafts> searchDraft(String type, String name) {
+        Drafts draftObj = new Drafts();
+        DraftType draftType = new DraftType();
+        draftType.setName(type);
+        draftObj.setDraftType(draftType);
+        draftObj.setName(name);
+        return draftRepository.searchDraft(draftObj);
     }
 
     public Drafts getDraftById(Long id) {

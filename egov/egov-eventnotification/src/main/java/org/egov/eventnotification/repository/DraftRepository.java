@@ -48,10 +48,11 @@
 package org.egov.eventnotification.repository;
 
 import org.egov.eventnotification.entity.Drafts;
+import org.egov.eventnotification.repository.custom.DraftRepositoryCustom;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface DraftRepository extends JpaRepository<Drafts, Long> {
+public interface DraftRepository extends DraftRepositoryCustom, JpaRepository<Drafts, Long> {
 
 }

@@ -48,19 +48,30 @@
 
 package org.egov.pushbox.service;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.log4j.Logger;
+import javax.annotation.PostConstruct;
+
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.pushbox.entity.UserFcmDevice;
 import org.egov.pushbox.entity.contracts.MessageContent;
+import org.egov.pushbox.entity.contracts.MessageContentDetails;
 import org.egov.pushbox.entity.contracts.PushboxProperties;
+import org.egov.pushbox.entity.contracts.SendNotificationRequest;
+import org.egov.pushbox.entity.contracts.UserTokenRequest;
 import org.egov.pushbox.repository.UserFcmDeviceRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -82,7 +93,7 @@ import com.google.gson.Gson;
 @Service
 @Transactional(readOnly = true)
 public class PushNotificationService {
-    private static final Logger LOGGER = Logger.getLogger(PushNotificationService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PushNotificationService.class);
 
     @Autowired
     private UserFcmDeviceRepository pushNotificationRepo;
@@ -90,17 +101,24 @@ public class PushNotificationService {
     @Autowired
     private PushboxProperties pushboxProperties;
 
+    @Autowired
+    private UserService userService;
+
     @Transactional
-    public UserFcmDevice saveUserDevice(final UserFcmDevice userDevice) {
-        UserFcmDevice existingRecord = pushNotificationRepo.findByUserIdAndDeviceId(userDevice.getUser().getId(),
-                userDevice.getDeviceId());
-        if (existingRecord != null) {
-            existingRecord.setUser(userDevice.getUser());
-            existingRecord.setDevicetoken(userDevice.getDevicetoken());
-            existingRecord.setDeviceId(userDevice.getDeviceId());
+    public UserFcmDevice saveUserDevice(final UserTokenRequest userTokenRequest) {
+        UserFcmDevice existingRecord = pushNotificationRepo.findByUserIdAndDeviceId(Long.parseLong(userTokenRequest.getUserId()),
+                userTokenRequest.getDeviceId());
+        if (existingRecord == null) {
+            UserFcmDevice userDevice = new UserFcmDevice();
+            userDevice.setDevicetoken(userTokenRequest.getUserToken());
+            User user = userService.getUserById(Long.valueOf(userTokenRequest.getUserId()));
+            userDevice.setUser(user);
+            userDevice.setDeviceId(userTokenRequest.getDeviceId());
+            return pushNotificationRepo.save(userDevice);
+        } else {
+            existingRecord.setDevicetoken(userTokenRequest.getUserToken());
             return pushNotificationRepo.save(existingRecord);
         }
-        return pushNotificationRepo.save(userDevice);
     }
 
     public List<UserFcmDevice> getAllUserFcmDevice() {
@@ -130,8 +148,8 @@ public class PushNotificationService {
             userDeviceList = getAllUserDeviceList();
         else
             userDeviceList = getUserDeviceList(messageContent);
-        setUpFirebaseApp();
-        LOGGER.info("##PushBoxFox## : Sending Messages to the Devices ");
+        if (LOGGER.isInfoEnabled())
+            LOGGER.info("##PushBoxFox## : Sending Messages to the Devices ");
         sendMessagesToDevices(userDeviceList, messageContent);
     }
 
@@ -147,6 +165,7 @@ public class PushNotificationService {
      * This method take the required parameters from the properties file and initialize the firebase. It will initialize only
      * once.
      */
+    @PostConstruct
     private void setUpFirebaseApp() {
         if (FirebaseApp.getApps().isEmpty()) {
             JsonFactory jsonFactory = Utils.getDefaultJsonFactory();
@@ -169,7 +188,8 @@ public class PushNotificationService {
                         .setDatabaseUrl(pushboxProperties.getDatabaseUrl()).build();
 
                 FirebaseApp.initializeApp(options);
-                LOGGER.info("##PushBoxFox## : Firebase App Initialized");
+                if (LOGGER.isInfoEnabled())
+                    LOGGER.info("##PushBoxFox## : Firebase App Initialized");
             } catch (IOException e) {
                 LOGGER.error("##PushBoxFox## : Error in setup firebase app", e);
                 throw new ApplicationRuntimeException("Error occurred while setup firebase app", e);
@@ -190,10 +210,45 @@ public class PushNotificationService {
                         .putData("content", new Gson().toJson(messageContent))
                         .setToken(userDevice.getDevicetoken()).build();
                 String response = FirebaseMessaging.getInstance().sendAsync(message).get();
-                LOGGER.info("##PushBoxFox## : Message Send Status : " + response);
+                if (LOGGER.isInfoEnabled())
+                    LOGGER.info("##PushBoxFox## : Message Send Status : " + response);
             } catch (Exception ex) {
-                LOGGER.error("##PushBoxFox## : Error : Encountered an exception while sending the message : " + ex.getMessage());
+                LOGGER.error("##PushBoxFox## : Error : Encountered an exception while sending the message.", ex);
                 throw new ApplicationRuntimeException("Error occurred while sending the push message", ex);
             }
+    }
+
+    public void buildAndSendNotification(SendNotificationRequest notificationRequest) {
+        MessageContent message = createMessageContentFromRequest(notificationRequest);
+        if (Boolean.parseBoolean(notificationRequest.getSendAll()))
+            message.getDetails().setSendAll(true);
+        else {
+            List<Long> userIdList = new ArrayList<>();
+            for (String userid : notificationRequest.getUserIdList().split(","))
+                userIdList.add(Long.valueOf(isNotBlank(userid) ? userid : "0"));
+            message.getDetails().setUserIdList(userIdList);
+        }
+        message.getDetails().setSendAll(true);
+        sendNotifications(message);
+    }
+
+    private MessageContent createMessageContentFromRequest(SendNotificationRequest notificationRequest) {
+        MessageContent message = new MessageContent();
+        MessageContentDetails messageDetails = new MessageContentDetails();
+        message.setMessageId(Long.parseLong(notificationRequest.getMessageId()));
+        message.setCreatedDateTime(Long.parseLong(notificationRequest.getCreatedDate()));
+        messageDetails.setEventAddress(notificationRequest.getEventAddress());
+        messageDetails.setEventDateTime(Long.parseLong(notificationRequest.getEventDateTime()));
+        messageDetails.setEventLocation(notificationRequest.getEventLocation());
+        message.setExpiryDate(Long.parseLong(notificationRequest.getExpiryDate()));
+        message.setImageUrl(notificationRequest.getImageUrl());
+        message.setMessageBody(notificationRequest.getMessageBody());
+        message.setModuleName(notificationRequest.getCreatedDate());
+        message.setNotificationDateTime(Long.parseLong(notificationRequest.getNotificationDateTime()));
+        message.setNotificationType(notificationRequest.getNotificationType());
+        message.setSenderId(Long.parseLong(notificationRequest.getSenderId()));
+        message.setSenderName(notificationRequest.getSenderName());
+        message.setDetails(messageDetails);
+        return message;
     }
 }

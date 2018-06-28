@@ -47,7 +47,6 @@
  */
 package org.egov.pushbox.entity;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -94,7 +93,6 @@ public class UserFcmDevice extends AbstractAuditable {
     @NotNull
     private User user;
 
-    @Column(name = "devicetoken")
     @SafeHtml
     @NotBlank
     private String devicetoken;

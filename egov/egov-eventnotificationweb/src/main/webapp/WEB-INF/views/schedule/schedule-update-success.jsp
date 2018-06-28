@@ -60,7 +60,9 @@
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-body custom-form ">
 					<c:if test="${not empty message}">
-						<div role="alert"><spring:message code="${message}"/></div>
+						<div role="alert">
+							<spring:message code="${message}" />
+						</div>
 					</c:if>
 					<div class="panel-heading">
 						<div class="panel-title">
@@ -88,14 +90,18 @@
 								<spring:message code="lbl.event.startdate" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
-								<fmt:formatDate pattern="dd/MM/yyyy" value="${notificationSchedule.eventDetails.startDt}" var="startDate" />
+								<fmt:formatDate pattern="dd/MM/yyyy"
+									value="${notificationSchedule.eventDetails.startDt}"
+									var="startDate" />
 								<c:out value="${startDate}" />
 							</div>
 							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.event.starttime" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
-								<c:out value="${notificationSchedule.eventDetails.startHH}" />:<c:out value="${notificationSchedule.eventDetails.startMM}" />
+								<c:out value="${notificationSchedule.eventDetails.startHH}" />
+								:
+								<c:out value="${notificationSchedule.eventDetails.startMM}" />
 							</div>
 						</div>
 						<div class="row add-border">
@@ -125,10 +131,12 @@
 			</div>
 			<div class="form-group">
 				<div class="text-center">
-					<a href="javascript:void(0)" class="btn btn-default" id="buttonClose"><spring:message code="lbl.close" /></a>
+					<a href="javascript:void(0)" class="btn btn-default"
+						id="buttonClose"><spring:message code="lbl.close" /></a>
 				</div>
 			</div>
 		</div>
 	</div>
 </form:form>
-<script type="text/javascript" src="<cdn:url value='/resources/js/app/window-reload-and-close.js' />"></script>
+<script type="text/javascript"
+	src="<cdn:url value='/resources/js/app/window-reload-and-close.js' />"></script>

@@ -45,13 +45,35 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.eventnotification.repository;
+package org.egov.pushbox.entity.contracts;
 
-import org.egov.eventnotification.entity.Drafts;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+public class UserTokenRequest {
+    private String userToken;
+    private String userId;
+    private String deviceId;
 
-@Repository
-public interface DraftsRepository extends JpaRepository<Drafts, Long> {
+    public String getUserToken() {
+        return userToken;
+    }
+
+    public void setUserToken(String userToken) {
+        this.userToken = userToken;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
+    }
 
 }

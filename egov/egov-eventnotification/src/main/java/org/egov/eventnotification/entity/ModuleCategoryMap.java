@@ -57,7 +57,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import javax.validation.Valid;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
 
@@ -77,17 +77,16 @@ public class ModuleCategoryMap extends AbstractPersistable<Long> {
     @GeneratedValue(generator = SEQ_EGEN_MODULE_CATEGORY, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotNull
+    @Valid
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "moduleid")
     private TemplateModule module;
 
-    @NotNull
+    @Valid
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "categoryid")
     private ModuleCategory category;
 
-    @NotNull
     @Column(name = "attributes_available")
     private boolean attributesAvailable;
 

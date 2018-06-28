@@ -47,103 +47,116 @@
   --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<form:form method="post" action="" modelAttribute="notificationSchedule" id="deleteScheduleform" cssClass="form-horizontal form-groups-bordered">
+<form:form method="post" action="" modelAttribute="notificationSchedule"
+	id="deleteScheduleform" cssClass="form-horizontal form-groups-bordered">
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
-					<div class="panel-title"><spring:message code="lbl.schedule.notification.details" /></div>
+					<div class="panel-title">
+						<spring:message code="lbl.schedule.notification.details" />
+					</div>
 				</div>
-				<input type="hidden" id="mode" value="${mode}" />
-				<input type="hidden" id="id" name="id" value="${notificationSchedule.id}" />
-				<input type="hidden" id="scheduleDelConfirm" value='<spring:message code="msg.schedule.delete.confirm" />' />
-				<input type="hidden" id="scheduleDelSuccess" value='<spring:message code="msg.schedule.delete.success" />' />
-				<input type="hidden" id="scheduleDelError" value='<spring:message code="msg.schedule.delete.error" />' />
+				<input type="hidden" id="mode" value="${mode}" /> <input
+					type="hidden" id="id" name="id" value="${notificationSchedule.id}" />
+				<input type="hidden" id="scheduleDelConfirm"
+					value='<spring:message code="msg.schedule.delete.confirm" />' /> <input
+					type="hidden" id="scheduleDelSuccess"
+					value='<spring:message code="msg.schedule.delete.success" />' /> <input
+					type="hidden" id="scheduleDelError"
+					value='<spring:message code="msg.schedule.delete.error" />' />
 				<div class="panel-body">
 					<div class="form-group">
-						<label class="col-xs-3 control-label text-right"><spring:message code="lbl.schedule.templatename" />:</label>
+						<label class="col-xs-3 control-label text-right"><spring:message
+								code="lbl.schedule.templatename" />:</label>
 						<div class="col-xs-3 add-margin view-content">
 							<c:out value="${notificationSchedule.templateName}" />
 						</div>
-						<label class="col-xs-3 control-label text-right"><spring:message code="lbl.schedule.type" />:</label>
+						<label class="col-xs-3 control-label text-right"><spring:message
+								code="lbl.schedule.type" />:</label>
 						<div class="col-xs-3 add-margin view-content">
-							<c:out value="${notificationSchedule.draftType.name}"/>
+							<c:out value="${notificationSchedule.draftType.name}" />
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-xs-3 control-label text-right"><spring:message code="lbl.event.startdate" />:</label>
+						<label class="col-xs-3 control-label text-right"><spring:message
+								code="lbl.event.startdate" />:</label>
 						<div class="col-xs-3 add-margin view-content">
-							<fmt:formatDate pattern="dd/MM/yyyy" value="${notificationSchedule.eventDetails.startDt}" var="startDate" />
-							<c:out value="${startDate}"/>
+							<fmt:formatDate pattern="dd/MM/yyyy"
+								value="${notificationSchedule.eventDetails.startDt}"
+								var="startDate" />
+							<c:out value="${startDate}" />
 						</div>
-						<label class="col-xs-3 control-label text-right"><spring:message code="lbl.event.starttime" />:</label>
+						<label class="col-xs-3 control-label text-right"><spring:message
+								code="lbl.event.starttime" />:</label>
 						<div class="col-xs-3 add-margin view-content">
-							<c:out value="${notificationSchedule.eventDetails.startHH}" />:<c:out value="${notificationSchedule.eventDetails.startMM}" />
+							<c:out value="${notificationSchedule.eventDetails.startHH}" />
+							:
+							<c:out value="${notificationSchedule.eventDetails.startMM}" />
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-xs-3 control-label text-right"><spring:message code="lbl.schedule.status" />:</label>
+						<label class="col-xs-3 control-label text-right"><spring:message
+								code="lbl.schedule.status" />:</label>
 						<div class="col-xs-3 add-margin view-content">
-							<c:out value="${notificationSchedule.status}"/>
+							<c:out value="${notificationSchedule.status}" />
 						</div>
-						<label class="col-xs-3 control-label text-right"><spring:message code="lbl.schedule.repeatevery" />:</label>
+						<label class="col-xs-3 control-label text-right"><spring:message
+								code="lbl.schedule.repeatevery" />:</label>
 						<div class="col-xs-3 add-margin view-content">
-							<c:out value="${notificationSchedule.scheduleRepeat.name}"/>
+							<c:out value="${notificationSchedule.scheduleRepeat.name}" />
 						</div>
 					</div>
-					
+
 					<div class="form-group">
-						<label class="col-xs-3 control-label text-right"><spring:message code="lbl.schedule.notificationpreview" />:</label>
+						<label class="col-xs-3 control-label text-right"><spring:message
+								code="lbl.schedule.notificationpreview" />:</label>
 						<div class="col-xs-9 add-margin view-content">
 							<c:out value="${notificationSchedule.messageTemplate}" />
 						</div>
 					</div>
+				</div>
 			</div>
 		</div>
-	</div>
-	<div class="form-group">
-		<div class="text-center">
-			<c:choose>
-				<c:when test="${scheduleEditable == true}">
-					<button type='button' class='btn btn-primary' id="buttonEdit">
-						<spring:message code='lbl.edit' />
-					</button>				        
-				</c:when>
-				<c:otherwise>
-					<button type='button' class='btn btn-primary' id="buttonEdit" disabled="disabled">
-						<spring:message code='lbl.edit' />
-					</button>
-				</c:otherwise>
-			</c:choose>
-			
-			<c:choose>
-				<c:when test="${notificationSchedule.status == 'Disabled'}">
-					<button type='button' class='btn btn-primary' id="buttonDelete" disabled="disabled">
-				<spring:message code='lbl.schedule.delete.button' />
-			</button>			        
-				</c:when>
-				<c:otherwise>
-					<button type='button' class='btn btn-primary' id="buttonDelete">
-				<spring:message code='lbl.schedule.delete.button' />
-			</button>
-				</c:otherwise>
-			</c:choose>
-			
-			<a href='javascript:void(0)' class='btn btn-default'
-				onclick='self.close()'><spring:message code='lbl.close' /></a>
-		</div>
-	</div>
-</form:form>
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>" />
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
+		<div class="form-group">
+			<div class="text-center">
+				<c:choose>
+					<c:when test="${scheduleEditable == true}">
+						<button type='button' class='btn btn-primary' id="buttonEdit">
+							<spring:message code='lbl.edit' />
+						</button>
+					</c:when>
+					<c:otherwise>
+						<button type='button' class='btn btn-primary' id="buttonEdit"
+							disabled="disabled">
+							<spring:message code='lbl.edit' />
+						</button>
+					</c:otherwise>
+				</c:choose>
 
-<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
-<script	type="text/javascript" src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<cdn:url  value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/js/app/schedule-details-view.js?rnd=${app_release_no}'/>"></script>
+				<c:choose>
+					<c:when test="${notificationSchedule.status == 'Disabled'}">
+						<button type='button' class='btn btn-primary' id="buttonDelete"
+							disabled="disabled">
+							<spring:message code='lbl.schedule.delete.button' />
+						</button>
+					</c:when>
+					<c:otherwise>
+						<button type='button' class='btn btn-primary' id="buttonDelete">
+							<spring:message code='lbl.schedule.delete.button' />
+						</button>
+					</c:otherwise>
+				</c:choose>
+
+				<a href='javascript:void(0)' class='btn btn-default'
+					onclick='self.close()'><spring:message code='lbl.close' /></a>
+			</div>
+		</div>
+</form:form>
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>" />
+
+<script type="text/javascript"
+	src="<cdn:url  value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<cdn:url value='/resources/js/app/schedule-details-view.js?rnd=${app_release_no}'/>"></script>
