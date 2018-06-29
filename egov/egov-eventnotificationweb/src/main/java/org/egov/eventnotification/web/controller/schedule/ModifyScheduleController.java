@@ -49,12 +49,12 @@ package org.egov.eventnotification.web.controller.schedule;
 
 import static org.egov.eventnotification.utils.constants.EventnotificationConstants.DRAFT_LIST;
 import static org.egov.eventnotification.utils.constants.EventnotificationConstants.HOUR_LIST;
+import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MESSAGE;
 import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MINUTE_LIST;
 import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MODE;
 import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MODE_VIEW;
 import static org.egov.eventnotification.utils.constants.EventnotificationConstants.NOTIFICATION_SCHEDULE;
 import static org.egov.eventnotification.utils.constants.EventnotificationConstants.SCHEDULER_REPEAT_LIST;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MESSAGE;
 
 import javax.validation.Valid;
 

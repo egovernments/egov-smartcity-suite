@@ -482,7 +482,7 @@ public class ConnectionDetailService {
     public List<SearchWaterTaxBillDetail> getValueByModuleType(final String moduleType) {
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append("select  bill.consumer_id as \"consumerNumber\", bill.user_id as \"userId\",bill.bill_no as \"billNo\",dcbview.curr_balance as  \"dueAmount\"  " +
-                "from eg_bill bill, egwtr_mv_dcb_view dcbview, egevntnotification_userfcmdevice event " +
+                "from eg_bill bill, egwtr_mv_dcb_view dcbview, egpushbox_userfcmdevice event " +
                 "where dcbview.hscno= bill.consumer_id " +
                 "AND  event.userId = bill.user_id " +
                 "AND bill.module_id =(select id from eg_module where name = 'Water Tax Management') order By bill.consumer_id");

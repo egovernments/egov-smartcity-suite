@@ -45,27 +45,23 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.api.adapter;
+package org.egov.pushbox.utils.constants;
 
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.USER_DEVICE_ID;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.USER_ID;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.USER_TOKEN_ID;
+public final class PushboxConstants {
 
-import java.lang.reflect.Type;
+    public static final String TYPE = "type";
+    public static final String PROJECT_ID = "project_id";
+    public static final String PRIVATE_KEY_ID = "private_key_id";
+    public static final String PRIVATE_KEY = "private_key";
+    public static final String CLIENT_EMAIL = "client_email";
+    public static final String CLIENT_ID = "client_id";
+    public static final String AUTH_URI = "auth_uri";
+    public static final String TOKEN_URI = "token_uri";
+    public static final String AUTH_PROVIDER_CERT_URL = "auth_provider_x509_cert_url";
+    public static final String CLIENT_CERT_URL = "client_x509_cert_url";
+    public static final String DBURL = "bdurl";
 
-import org.egov.pushbox.entity.UserFcmDevice;
+    private PushboxConstants() {
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-
-public class UserDeviceAdapter extends DataAdapter<UserFcmDevice> {
-    @Override
-    public JsonElement serialize(UserFcmDevice userDevice, Type typeOfSrc, JsonSerializationContext context) {
-        JsonObject jsonObjectDraft = new JsonObject();
-        jsonObjectDraft.addProperty(USER_TOKEN_ID, userDevice.getDevicetoken());
-        jsonObjectDraft.addProperty(USER_ID, userDevice.getUser().getId());
-        jsonObjectDraft.addProperty(USER_DEVICE_ID, userDevice.getDeviceId());
-        return jsonObjectDraft;
     }
 }

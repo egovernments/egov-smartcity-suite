@@ -55,8 +55,6 @@ import static org.egov.eventnotification.utils.constants.EventnotificationConsta
 import static org.egov.eventnotification.utils.constants.EventnotificationConstants.ZERO;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-import java.io.IOException;
-
 import javax.servlet.http.HttpServletResponse;
 
 import org.egov.api.adapter.CategoryParametersAdapter;
@@ -212,7 +210,7 @@ public class RestEventController extends ApiController {
 
     @GetMapping(path = "/event/{id}/download/{fileStoreId}", produces = APPLICATION_JSON_VALUE)
     public void downloadEventImage(@PathVariable final Long id, @PathVariable final String fileStoreId,
-            final HttpServletResponse response) throws IOException {
+            final HttpServletResponse response) {
         try {
             fileStoreUtils.writeToHttpResponseStream(fileStoreId, MODULE_NAME, response);
         } catch (final Exception e) {

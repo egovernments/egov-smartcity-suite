@@ -163,23 +163,21 @@ public class EventService {
     @Transactional
     public Event saveEvent(Event event) {
         try {
-            DateTime sd = new DateTime(event.getEventDetails().getStartDt());
-            sd = sd.withHourOfDay(Integer.parseInt(event.getEventDetails().getStartHH()));
-            sd = sd.withMinuteOfHour(Integer.parseInt(event.getEventDetails().getStartMM()));
-            sd = sd.withSecondOfMinute(00);
+            DateTime sd = DateUtils.startOfGivenDate(new DateTime(event.getEventDetails().getStartDt()))
+                    .withHourOfDay(Integer.parseInt(event.getEventDetails().getStartHH()))
+                    .withMinuteOfHour(Integer.parseInt(event.getEventDetails().getStartMM()));
             event.setStartDate(sd.toDate());
 
-            DateTime ed = new DateTime(event.getEventDetails().getEndDt());
-            ed = ed.withHourOfDay(Integer.parseInt(event.getEventDetails().getEndHH()));
-            ed = ed.withMinuteOfHour(Integer.parseInt(event.getEventDetails().getEndMM()));
-            ed = ed.withSecondOfMinute(00);
+            DateTime ed = DateUtils.startOfGivenDate(new DateTime(event.getEventDetails().getEndDt()))
+                    .withHourOfDay(Integer.parseInt(event.getEventDetails().getEndHH()))
+                    .withMinuteOfHour(Integer.parseInt(event.getEventDetails().getEndMM()));
             event.setEndDate(ed.toDate());
             event.setStatus(ACTIVE.toUpperCase());
 
             if (event.getEventDetails().getFile() != null)
                 eventUploadWallpaper(event);
 
-            event = eventRepository.saveAndFlush(event);
+            eventRepository.saveAndFlush(event);
             sendPushMessage(event);
 
             return event;
@@ -191,16 +189,14 @@ public class EventService {
     @Transactional
     public Event updateEvent(Event updatedEvent) {
         try {
-            DateTime sd = new DateTime(updatedEvent.getEventDetails().getStartDt());
-            sd = sd.withHourOfDay(Integer.parseInt(updatedEvent.getEventDetails().getStartHH()));
-            sd = sd.withMinuteOfHour(Integer.parseInt(updatedEvent.getEventDetails().getStartMM()));
-            sd = sd.withSecondOfMinute(00);
+            DateTime sd = DateUtils.startOfGivenDate(new DateTime(updatedEvent.getEventDetails().getStartDt()))
+                    .withHourOfDay(Integer.parseInt(updatedEvent.getEventDetails().getStartHH()))
+                    .withMinuteOfHour(Integer.parseInt(updatedEvent.getEventDetails().getStartMM()));
             updatedEvent.setStartDate(sd.toDate());
 
-            DateTime ed = new DateTime(updatedEvent.getEventDetails().getEndDt());
-            ed = ed.withHourOfDay(Integer.parseInt(updatedEvent.getEventDetails().getEndHH()));
-            ed = ed.withMinuteOfHour(Integer.parseInt(updatedEvent.getEventDetails().getEndMM()));
-            ed = ed.withSecondOfMinute(00);
+            DateTime ed = DateUtils.startOfGivenDate(new DateTime(updatedEvent.getEventDetails().getEndDt()))
+                    .withHourOfDay(Integer.parseInt(updatedEvent.getEventDetails().getEndHH()))
+                    .withMinuteOfHour(Integer.parseInt(updatedEvent.getEventDetails().getEndMM()));
             updatedEvent.setEndDate(ed.toDate());
 
             if (updatedEvent.getEventDetails().getFile()[0].getSize() > MIN_NUMBER_OF_REQUESTS)

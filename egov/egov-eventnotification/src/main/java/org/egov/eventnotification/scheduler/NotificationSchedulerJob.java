@@ -59,8 +59,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.egov.eventnotification.config.properties.EventnotificationApplicationProperties;
 import org.egov.eventnotification.entity.Schedule;
+import org.egov.eventnotification.entity.contracts.EventnotificationProperties;
 import org.egov.eventnotification.entity.contracts.UserTaxInformation;
 import org.egov.eventnotification.integration.bmi.BuildMessageAdapter;
 import org.egov.eventnotification.service.ScheduleService;
@@ -104,23 +104,25 @@ public class NotificationSchedulerJob extends AbstractQuartzJob {
     private transient ScheduleService scheduleService;
 
     @Autowired
-    private transient EventnotificationApplicationProperties appProperties;
+    private transient EventnotificationUtil eventnotificationUtil;
 
     @Autowired
-    private transient EventnotificationUtil eventnotificationUtil;
+    private transient EventnotificationProperties appProperties;
 
     private Long scheduleId = null;
     private String contextURL = null;
 
     @Override
     protected void executeInternal(final JobExecutionContext context) {
-        JobDataMap dataMap = context.getJobDetail().getJobDataMap();
-        scheduleId = Long.parseLong(String.valueOf(dataMap.get(SCHEDULEID)));
-        contextURL = String.valueOf(dataMap.get(CONTEXTURL));
-        try {
-            super.executeInternal(context);
-        } catch (JobExecutionException e) {
-            LOGGER.error("Unable to complete execution Scheduler ", e);
+        synchronized (this) {
+            JobDataMap dataMap = context.getJobDetail().getJobDataMap();
+            scheduleId = Long.parseLong(String.valueOf(dataMap.get(SCHEDULEID)));
+            contextURL = String.valueOf(dataMap.get(CONTEXTURL));
+            try {
+                super.executeInternal(context);
+            } catch (JobExecutionException e) {
+                LOGGER.error("Unable to complete execution Scheduler ", e);
+            }
         }
     }
 
@@ -153,10 +155,10 @@ public class NotificationSchedulerJob extends AbstractQuartzJob {
 
             if (notificationSchedule.getModule().getName().equalsIgnoreCase(PROPERTY_MODULE))
                 userTaxInfoList = scheduleService.getDefaulterUserList(contextURL,
-                        appProperties.getPropertytaxRestApi());
+                        appProperties.getPropertyTaxRestApi());
             else if (notificationSchedule.getModule().getName().equalsIgnoreCase(WATER_CHARGES_MODULE))
                 userTaxInfoList = scheduleService.getDefaulterUserList(contextURL,
-                        appProperties.getWatertaxRestApi());
+                        appProperties.getWaterTaxRestApi());
             if (userTaxInfoList != null)
                 for (UserTaxInformation userTaxInformation : userTaxInfoList) {
                     String message = buildMessageAdapter.buildMessage(userTaxInformation,

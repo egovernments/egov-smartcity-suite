@@ -45,27 +45,54 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.api.adapter;
+package org.egov.eventnotification.entity.contracts;
 
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.USER_DEVICE_ID;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.USER_ID;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.USER_TOKEN_ID;
+public class EventnotificationProperties {
 
-import java.lang.reflect.Type;
+    private String dailyCron;
+    private String monthlyCron;
+    private String yearlyCron;
+    private String waterTaxRestApi;
+    private String propertyTaxRestApi;
 
-import org.egov.pushbox.entity.UserFcmDevice;
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-
-public class UserDeviceAdapter extends DataAdapter<UserFcmDevice> {
-    @Override
-    public JsonElement serialize(UserFcmDevice userDevice, Type typeOfSrc, JsonSerializationContext context) {
-        JsonObject jsonObjectDraft = new JsonObject();
-        jsonObjectDraft.addProperty(USER_TOKEN_ID, userDevice.getDevicetoken());
-        jsonObjectDraft.addProperty(USER_ID, userDevice.getUser().getId());
-        jsonObjectDraft.addProperty(USER_DEVICE_ID, userDevice.getDeviceId());
-        return jsonObjectDraft;
+    public String getDailyCron() {
+        return dailyCron;
     }
+
+    public void setDailyCron(String dailyCron) {
+        this.dailyCron = dailyCron;
+    }
+
+    public String getMonthlyCron() {
+        return monthlyCron;
+    }
+
+    public void setMonthlyCron(String monthlyCron) {
+        this.monthlyCron = monthlyCron;
+    }
+
+    public String getYearlyCron() {
+        return yearlyCron;
+    }
+
+    public void setYearlyCron(String yearlyCron) {
+        this.yearlyCron = yearlyCron;
+    }
+
+    public String getWaterTaxRestApi() {
+        return waterTaxRestApi;
+    }
+
+    public void setWaterTaxRestApi(String waterTaxRestApi) {
+        this.waterTaxRestApi = waterTaxRestApi;
+    }
+
+    public String getPropertyTaxRestApi() {
+        return propertyTaxRestApi;
+    }
+
+    public void setPropertyTaxRestApi(String propertyTaxRestApi) {
+        this.propertyTaxRestApi = propertyTaxRestApi;
+    }
+
 }

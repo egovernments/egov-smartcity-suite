@@ -67,10 +67,9 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.egov.eventnotification.config.EventNotificationConfiguration;
-import org.egov.eventnotification.config.properties.EventnotificationApplicationProperties;
 import org.egov.eventnotification.entity.Schedule;
 import org.egov.eventnotification.entity.contracts.EventDetails;
+import org.egov.eventnotification.entity.contracts.EventnotificationProperties;
 import org.egov.eventnotification.entity.contracts.UserTaxInformation;
 import org.egov.eventnotification.repository.ScheduleRepository;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -92,6 +91,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 @Transactional(readOnly = true)
@@ -101,10 +101,10 @@ public class ScheduleService {
     private ScheduleRepository notificationscheduleRepository;
 
     @Autowired
-    private EventnotificationApplicationProperties appProperties;
+    private EventnotificationProperties appProperties;
 
     @Autowired
-    private EventNotificationConfiguration notificationConfiguration;
+    private RestTemplate restTemplate;
 
     @Autowired
     private ApplicationContext beanProvider;
@@ -153,9 +153,9 @@ public class ScheduleService {
 
     @Transactional
     public Schedule saveSchedule(Schedule notificationSchedule) {
-        DateTime sd = new DateTime(notificationSchedule.getEventDetails().getStartDt());
-        sd = sd.withHourOfDay(Integer.parseInt(notificationSchedule.getEventDetails().getStartHH()));
-        sd = sd.withMinuteOfHour(Integer.parseInt(notificationSchedule.getEventDetails().getStartMM()));
+        DateTime sd = DateUtils.startOfGivenDate(new DateTime(notificationSchedule.getEventDetails().getStartDt()))
+                .withHourOfDay(Integer.parseInt(notificationSchedule.getEventDetails().getStartHH()))
+                .withMinuteOfHour(Integer.parseInt(notificationSchedule.getEventDetails().getStartMM()));
         sd = sd.withSecondOfMinute(00);
         notificationSchedule.setStartDate(sd.toDate());
         notificationSchedule.setStatus(SCHEDULED_STATUS);
@@ -164,10 +164,9 @@ public class ScheduleService {
 
     @Transactional
     public Schedule updateSchedule(Schedule schedule) {
-        DateTime sd = new DateTime(schedule.getEventDetails().getStartDt());
-        sd = sd.withHourOfDay(Integer.parseInt(schedule.getEventDetails().getStartHH()));
-        sd = sd.withMinuteOfHour(Integer.parseInt(schedule.getEventDetails().getStartMM()));
-        sd = sd.withSecondOfMinute(00);
+        DateTime sd = DateUtils.startOfGivenDate(new DateTime(schedule.getEventDetails().getStartDt()))
+                .withHourOfDay(Integer.parseInt(schedule.getEventDetails().getStartHH()))
+                .withMinuteOfHour(Integer.parseInt(schedule.getEventDetails().getStartMM()));
         schedule.setStartDate(sd.toDate());
         schedule.setStatus(SCHEDULED_STATUS);
         return notificationscheduleRepository.save(schedule);
@@ -200,16 +199,16 @@ public class ScheduleService {
 
         switch (notificationschedule.getScheduleRepeat().getName().toLowerCase()) {
         case "day":
-            cronExpression = appProperties.getDailyJobCron().replace(MINUTES_CRON, String.valueOf(minutes));
+            cronExpression = appProperties.getDailyCron().replace(MINUTES_CRON, String.valueOf(minutes));
             cronExpression = cronExpression.replace(HOURS_CRON, String.valueOf(hours));
             break;
         case "month":
-            cronExpression = appProperties.getMonthlyJobCron().replace(MINUTES_CRON, String.valueOf(minutes));
+            cronExpression = appProperties.getMonthlyCron().replace(MINUTES_CRON, String.valueOf(minutes));
             cronExpression = cronExpression.replace(HOURS_CRON, String.valueOf(hours));
             cronExpression = cronExpression.replace(DAY_CRON, String.valueOf(calendar.getDayOfMonth()));
             break;
         case "year":
-            cronExpression = appProperties.getYearlyJobCron().replace(MINUTES_CRON, String.valueOf(minutes));
+            cronExpression = appProperties.getYearlyCron().replace(MINUTES_CRON, String.valueOf(minutes));
             cronExpression = cronExpression.replace(HOURS_CRON, String.valueOf(hours));
             cronExpression = cronExpression.replace(DAY_CRON, String.valueOf(calendar.getDayOfMonth()));
             cronExpression = cronExpression.replace(MONTH_CRON, String.valueOf(calendar.getMonthOfYear()));
@@ -228,7 +227,7 @@ public class ScheduleService {
      */
     public List<UserTaxInformation> getDefaulterUserList(String contextURL, String urlPath) {
         final String uri = contextURL.concat(urlPath);
-        ResponseEntity<UserTaxInformation[]> results = notificationConfiguration.getRestTemplate().getForEntity(uri,
+        ResponseEntity<UserTaxInformation[]> results = restTemplate.getForEntity(uri,
                 UserTaxInformation[].class);
         return Arrays.asList(results.getBody());
     }
