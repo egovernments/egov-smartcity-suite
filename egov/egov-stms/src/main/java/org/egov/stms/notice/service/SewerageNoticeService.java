@@ -312,12 +312,13 @@ public class SewerageNoticeService {
                 if (scf.getFeesDetail().getCode().equalsIgnoreCase(SewerageTaxConstants.FEES_SEWERAGETAX_CODE))
                     sewerageCharges = BigDecimal.valueOf(scf.getAmount());
             }
-            final BigDecimal totalCharges =  estimationCharges.add(donationCharges).add(sewerageCharges);
+            final BigDecimal totalCharges = estimationCharges.add(donationCharges);
             reportParams.put(ESTIMATION_CHARGES, estimationCharges);
             reportParams.put(DONATION_CHARGES, donationCharges);
             reportParams.put("sewerageCharges", sewerageCharges);
             reportParams.put(TOTAL_CHARGES, totalCharges);
-            reportParams.put("amountInWords", getTotalAmountInWords(totalCharges));
+            reportParams.put("amountInWords", getTotalAmountInWords(totalCharges.setScale(2,
+                    BigDecimal.ROUND_HALF_EVEN)));
             reportParams.put(APPLICATION_DATE, getDefaultFormattedDate(sewerageApplicationDetails.getApplicationDate()));
             reportParams.put("applicantName", ownerName);
             reportParams.put(ADDRESS, assessmentDetails.getPropertyAddress());
