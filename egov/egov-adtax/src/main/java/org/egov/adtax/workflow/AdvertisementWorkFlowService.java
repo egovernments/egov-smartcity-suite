@@ -85,6 +85,7 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import static org.egov.infra.utils.ApplicationConstant.NA;
 
 
 
@@ -388,9 +389,10 @@ public class AdvertisementWorkFlowService {
                 } else if (null != owner && null != owner.getDeptDesig()) {
                     user = eisCommonService.getUserForPosition(owner.getId(), new Date());
                     historyMap
-                            .put(USER, null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
-                    historyMap.put(DEPARTMENT, null != owner.getDeptDesig().getDepartment() ? owner.getDeptDesig()
-                            .getDepartment().getName() : "");
+                            .put(USER, user == null ? NA
+                                    : user.getUsername() + "::" + user.getName());
+                    historyMap.put(DEPARTMENT, (owner.getDeptDesig() == null && owner.getDeptDesig().getDepartment() == null) ? NA
+                            : owner.getDeptDesig().getDepartment().getName());
                 }
                 historyTable.add(historyMap);
             }
