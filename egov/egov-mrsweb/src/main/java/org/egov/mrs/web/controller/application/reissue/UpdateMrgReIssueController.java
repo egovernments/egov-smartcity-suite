@@ -268,15 +268,18 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
         }
 
         String message = EMPTY;
-        String approverName;
-        String nextDesignation;
+        String approverName=EMPTY;
+        String nextDesignation=EMPTY;
 
         if (isNotBlank(workFlowAction)) {
             workflowContainer.setWorkFlowAction(workFlowAction);
             final Assignment wfInitiator = registrationWorkflowService.getWorkFlowInitiatorForReissue(reIssue);
-            approverName = wfInitiator.getEmployee().getName();
-            nextDesignation = wfInitiator.getDesignation().getName();
+            if(wfInitiator!=null){
+            approverName = wfInitiator.getEmployee().getName()==null?EMPTY:wfInitiator.getEmployee().getName();
+            nextDesignation = wfInitiator.getDesignation().getName()==null?EMPTY:wfInitiator.getDesignation().getName();
+            }
             workflowContainer.setApproverComments(request.getParameter(APPROVAL_COMMENT));
+
             if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
                 reIssueService.rejectReIssue(reIssue, workflowContainer);
                 message = messageSource.getMessage("msg.rejected.reissue", new String[] { reIssue.getApplicationNo(),
