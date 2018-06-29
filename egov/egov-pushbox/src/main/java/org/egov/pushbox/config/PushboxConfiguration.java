@@ -47,31 +47,99 @@
  */
 package org.egov.pushbox.config;
 
+import static org.egov.pushbox.utils.constants.PushboxConstants.AUTH_PROVIDER_CERT_URL;
+import static org.egov.pushbox.utils.constants.PushboxConstants.AUTH_URI;
+import static org.egov.pushbox.utils.constants.PushboxConstants.CLIENT_CERT_URL;
+import static org.egov.pushbox.utils.constants.PushboxConstants.CLIENT_EMAIL;
+import static org.egov.pushbox.utils.constants.PushboxConstants.CLIENT_ID;
+import static org.egov.pushbox.utils.constants.PushboxConstants.DBURL;
+import static org.egov.pushbox.utils.constants.PushboxConstants.PRIVATE_KEY;
+import static org.egov.pushbox.utils.constants.PushboxConstants.PRIVATE_KEY_ID;
+import static org.egov.pushbox.utils.constants.PushboxConstants.PROJECT_ID;
+import static org.egov.pushbox.utils.constants.PushboxConstants.TOKEN_URI;
+import static org.egov.pushbox.utils.constants.PushboxConstants.TYPE;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.annotation.PostConstruct;
+
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.pushbox.entity.contracts.PushboxProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
+import com.google.api.client.googleapis.util.Utils;
+import com.google.api.client.json.JsonFactory;
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
+
 @Configuration
 public class PushboxConfiguration {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PushboxConfiguration.class);
+
     @Autowired
     private Environment env;
 
     @Bean
     public PushboxProperties initPushBoxProperties() {
         PushboxProperties pushboxProperties = new PushboxProperties();
-        pushboxProperties.setType(env.getProperty("type"));
-        pushboxProperties.setProjectId(env.getProperty("project_id"));
-        pushboxProperties.setPrivateKeyId(env.getProperty("private_key_id"));
-        pushboxProperties.setPrivateKey(env.getProperty("private_key"));
-        pushboxProperties.setClientEmail(env.getProperty("client_email"));
-        pushboxProperties.setClientId(env.getProperty("client_id"));
-        pushboxProperties.setAuthUri(env.getProperty("auth_uri"));
-        pushboxProperties.setTokenUri(env.getProperty("token_uri"));
-        pushboxProperties.setAuthProviderCertUrl(env.getProperty("auth_provider_x509_cert_url"));
-        pushboxProperties.setClientCertUrl(env.getProperty("client_x509_cert_url"));
-        pushboxProperties.setDatabaseUrl(env.getProperty("bdurl"));
+        pushboxProperties.setType(env.getProperty(TYPE));
+        pushboxProperties.setProjectId(env.getProperty(PROJECT_ID));
+        pushboxProperties.setPrivateKeyId(env.getProperty(PRIVATE_KEY_ID));
+        pushboxProperties.setPrivateKey(env.getProperty(PRIVATE_KEY));
+        pushboxProperties.setClientEmail(env.getProperty(CLIENT_EMAIL));
+        pushboxProperties.setClientId(env.getProperty(CLIENT_ID));
+        pushboxProperties.setAuthUri(env.getProperty(AUTH_URI));
+        pushboxProperties.setTokenUri(env.getProperty(TOKEN_URI));
+        pushboxProperties.setAuthProviderCertUrl(env.getProperty(AUTH_PROVIDER_CERT_URL));
+        pushboxProperties.setClientCertUrl(env.getProperty(CLIENT_CERT_URL));
+        pushboxProperties.setDatabaseUrl(env.getProperty(DBURL));
         return pushboxProperties;
+    }
+
+    /**
+     * This method take the required parameters from the properties file and initialize the firebase. It will initialize only
+     * once.
+     */
+    @PostConstruct
+    public void setUpFirebaseApp() {
+        if (FirebaseApp.getApps().isEmpty()) {
+            PushboxProperties pushboxProperties = initPushBoxProperties();
+            JsonFactory jsonFactory = Utils.getDefaultJsonFactory();
+            Map<String, Object> secretJson = new ConcurrentHashMap<>();
+            secretJson.put(TYPE, pushboxProperties.getType());
+            secretJson.put(PROJECT_ID, pushboxProperties.getProjectId());
+            secretJson.put(PRIVATE_KEY_ID, pushboxProperties.getPrivateKeyId());
+            secretJson.put(PRIVATE_KEY, pushboxProperties.getPrivateKey());
+            secretJson.put(CLIENT_EMAIL, pushboxProperties.getClientEmail());
+            secretJson.put(CLIENT_ID, pushboxProperties.getClientId());
+            secretJson.put(AUTH_URI, pushboxProperties.getAuthUri());
+            secretJson.put(TOKEN_URI, pushboxProperties.getTokenUri());
+            secretJson.put(AUTH_PROVIDER_CERT_URL, pushboxProperties.getAuthProviderCertUrl());
+            secretJson.put(CLIENT_CERT_URL, pushboxProperties.getClientCertUrl());
+
+            try (InputStream refreshTokenStream = new ByteArrayInputStream(jsonFactory.toByteArray(secretJson))) {
+
+                FirebaseOptions options = new FirebaseOptions.Builder()
+                        .setCredentials(GoogleCredentials.fromStream(refreshTokenStream))
+                        .setDatabaseUrl(pushboxProperties.getDatabaseUrl()).build();
+
+                FirebaseApp.initializeApp(options);
+                if (LOGGER.isInfoEnabled())
+                    LOGGER.info("##PushBoxFox## : Firebase App Initialized");
+            } catch (IOException e) {
+                LOGGER.error("##PushBoxFox## : Error in setup firebase app", e);
+                throw new ApplicationRuntimeException("Error occurred while setup firebase app", e);
+            }
+        }
     }
 }

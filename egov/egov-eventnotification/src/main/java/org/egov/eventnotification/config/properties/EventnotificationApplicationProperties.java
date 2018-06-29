@@ -47,7 +47,9 @@
  */
 package org.egov.eventnotification.config.properties;
 
+import org.egov.eventnotification.entity.contracts.EventnotificationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
@@ -60,23 +62,14 @@ public class EventnotificationApplicationProperties {
     @Autowired
     private Environment environment;
 
-    public String getDailyJobCron() {
-        return environment.getProperty("eventnotification.daily.job.cron");
-    }
-
-    public String getMonthlyJobCron() {
-        return environment.getProperty("eventnotification.monthly.job.cron");
-    }
-
-    public String getYearlyJobCron() {
-        return environment.getProperty("eventnotification.yearly.job.cron");
-    }
-
-    public String getWatertaxRestApi() {
-        return environment.getProperty("eventnotification.watertax.rest");
-    }
-
-    public String getPropertytaxRestApi() {
-        return environment.getProperty("eventnotification.propertytax.rest");
+    @Bean
+    public EventnotificationProperties initEventnotificationProperties() {
+        EventnotificationProperties properties = new EventnotificationProperties();
+        properties.setDailyCron(environment.getProperty("eventnotification.daily.job.cron"));
+        properties.setMonthlyCron(environment.getProperty("eventnotification.monthly.job.cron"));
+        properties.setYearlyCron(environment.getProperty("eventnotification.yearly.job.cron"));
+        properties.setWaterTaxRestApi(environment.getProperty("eventnotification.watertax.rest"));
+        properties.setPropertyTaxRestApi(environment.getProperty("eventnotification.propertytax.rest"));
+        return properties;
     }
 }

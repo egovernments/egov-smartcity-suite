@@ -50,15 +50,8 @@ package org.egov.pushbox.service;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.annotation.PostConstruct;
 
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
@@ -66,7 +59,6 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.pushbox.entity.UserFcmDevice;
 import org.egov.pushbox.entity.contracts.MessageContent;
 import org.egov.pushbox.entity.contracts.MessageContentDetails;
-import org.egov.pushbox.entity.contracts.PushboxProperties;
 import org.egov.pushbox.entity.contracts.SendNotificationRequest;
 import org.egov.pushbox.entity.contracts.UserTokenRequest;
 import org.egov.pushbox.repository.UserFcmDeviceRepository;
@@ -76,11 +68,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.api.client.googleapis.util.Utils;
-import com.google.api.client.json.JsonFactory;
-import com.google.auth.oauth2.GoogleCredentials;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.gson.Gson;
@@ -97,9 +84,6 @@ public class PushNotificationService {
 
     @Autowired
     private UserFcmDeviceRepository pushNotificationRepo;
-
-    @Autowired
-    private PushboxProperties pushboxProperties;
 
     @Autowired
     private UserService userService;
@@ -162,42 +146,6 @@ public class PushNotificationService {
     }
 
     /**
-     * This method take the required parameters from the properties file and initialize the firebase. It will initialize only
-     * once.
-     */
-    @PostConstruct
-    private void setUpFirebaseApp() {
-        if (FirebaseApp.getApps().isEmpty()) {
-            JsonFactory jsonFactory = Utils.getDefaultJsonFactory();
-            Map<String, Object> secretJson = new ConcurrentHashMap<>();
-            secretJson.put("type", pushboxProperties.getType());
-            secretJson.put("project_id", pushboxProperties.getProjectId());
-            secretJson.put("private_key_id", pushboxProperties.getPrivateKeyId());
-            secretJson.put("private_key", pushboxProperties.getPrivateKey());
-            secretJson.put("client_email", pushboxProperties.getClientEmail());
-            secretJson.put("client_id", pushboxProperties.getClientId());
-            secretJson.put("auth_uri", pushboxProperties.getAuthUri());
-            secretJson.put("token_uri", pushboxProperties.getTokenUri());
-            secretJson.put("auth_provider_x509_cert_url", pushboxProperties.getAuthProviderCertUrl());
-            secretJson.put("client_x509_cert_url", pushboxProperties.getClientCertUrl());
-
-            try (InputStream refreshTokenStream = new ByteArrayInputStream(jsonFactory.toByteArray(secretJson))) {
-
-                FirebaseOptions options = new FirebaseOptions.Builder()
-                        .setCredentials(GoogleCredentials.fromStream(refreshTokenStream))
-                        .setDatabaseUrl(pushboxProperties.getDatabaseUrl()).build();
-
-                FirebaseApp.initializeApp(options);
-                if (LOGGER.isInfoEnabled())
-                    LOGGER.info("##PushBoxFox## : Firebase App Initialized");
-            } catch (IOException e) {
-                LOGGER.error("##PushBoxFox## : Error in setup firebase app", e);
-                throw new ApplicationRuntimeException("Error occurred while setup firebase app", e);
-            }
-        }
-    }
-
-    /**
      * This method build the message and send it to firebase for push notification. It uses messageContent and deviceToken to
      * build a message.
      * @param userDeviceList
@@ -211,7 +159,7 @@ public class PushNotificationService {
                         .setToken(userDevice.getDevicetoken()).build();
                 String response = FirebaseMessaging.getInstance().sendAsync(message).get();
                 if (LOGGER.isInfoEnabled())
-                    LOGGER.info("##PushBoxFox## : Message Send Status : " + response);
+                    LOGGER.info("##PushBoxFox## : Message Send Status : ".concat(response));
             } catch (Exception ex) {
                 LOGGER.error("##PushBoxFox## : Error : Encountered an exception while sending the message.", ex);
                 throw new ApplicationRuntimeException("Error occurred while sending the push message", ex);
