@@ -312,7 +312,7 @@ public class SewerageNoticeService {
                 if (scf.getFeesDetail().getCode().equalsIgnoreCase(SewerageTaxConstants.FEES_SEWERAGETAX_CODE))
                     sewerageCharges = BigDecimal.valueOf(scf.getAmount());
             }
-            final BigDecimal totalCharges = estimationCharges.add(donationCharges);
+            final BigDecimal totalCharges =  estimationCharges.add(donationCharges).add(sewerageCharges);
             reportParams.put(ESTIMATION_CHARGES, estimationCharges);
             reportParams.put(DONATION_CHARGES, donationCharges);
             reportParams.put("sewerageCharges", sewerageCharges);
