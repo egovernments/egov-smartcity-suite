@@ -497,9 +497,9 @@ function validate()
 		}
 		// display error if actual payt amt < original billed amt after system has done apportioning 
 		// (citizen might have manually changed credit amounts after system apportioning of account head amounts
-		else if(collectiontotal < billingtotal && checkpartpaymentvalue==true){
+		else if(collectiontotal < billingTotalNumberFormat && checkpartpaymentvalue=='true'){
 		        if(collectiontotal < minimumAmt){
-		        	document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.paytlessthanmin.errormessage" />' + '<br>';
+		        	document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.paytlessthanmin.errormessage" />'+': ' + minimumAmt+ '<br>';
 		        	validation=false;
 		        }
 		}

@@ -48,6 +48,7 @@
 package org.egov.wtms.application.service;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.METERED_CHARGES_REASON_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PENALTYCHARGES;
@@ -133,7 +134,7 @@ public class ConnectionDemandService {
     private static final String FROM_INSTALLMENT = "fromInstallment";
     private static final String TO_INSTALLMENT = "toInstallment";
     private static final String WATER_CHARGES = "Water Charges";
-
+    private static final int NUMBER_OF_INSTALLMENTS = 8;
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -421,7 +422,12 @@ public class ConnectionDemandService {
         waterConnectionBillable.setWaterConnectionDetails(waterConnectionDetails);
         waterConnectionBillable.setAssessmentDetails(assessmentDetails);
         waterConnectionBillable.setUserId(ApplicationThreadLocals.getUserId());
-
+        if (APPLICATION_STATUS_ESTIMATENOTICEGEN.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()) &&
+                waterConnectionBillable.getPartPaymentAllowed()) {
+            BigDecimal minAmtPayable = waterConnectionDetailsService.getTotalAmount(waterConnectionDetails)
+                    .divide(new BigDecimal(NUMBER_OF_INSTALLMENTS), BigDecimal.ROUND_HALF_UP);
+            waterConnectionBillable.getCurrentDemand().setMinAmtPayable(minAmtPayable);
+        }
         waterConnectionBillable.setReferenceNumber(billRefeNumber.generateBillNumber(currentInstallmentYear));
         waterConnectionBillable.setBillType(getBillTypeByCode(WaterTaxConstants.BILLTYPE_AUTO));
 
