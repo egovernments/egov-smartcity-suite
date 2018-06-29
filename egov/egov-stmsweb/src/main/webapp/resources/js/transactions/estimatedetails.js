@@ -269,7 +269,7 @@ function validateInspectionDetailsOnSubmit(){
         	 mandatoryValNotEntered = true;
          }
         
-    	if(mandatoryValEntered==true && mandatoryValNotEntered==true){
+    	if(mandatoryValNotEntered==true){
     		bootbox.alert("Enter all mandatory \"Pipe Details\" for  row "+(i)+".");
     		return false; 
     	}
