@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -45,22 +45,35 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
   --%>
-<div class="row">
-    <div class="col-sm-12 col-md-12 col-lg-12">
-        <br/>
-        <img id="captchaimg" style="border:1px dashed DarkSlateBlue;">
-        <i class="fa fa-refresh" id="refresh" style="cursor: pointer" title="Choose a different word"></i>
-        <br/><br/>
-        <input type='text' class="form-control" name='j_captcha_response' value='' placeholder="Enter the above displayed text"
-               required="required" style="width:95%;margin-left:19px">
-        <input type='hidden' name='j_captcha_key' value='' id="captchakey" required="required">
-    </div>
-</div>
-<script>
-    $("#refresh").click(function () {
-        var key = Date.parse(new Date()).toString();
-        $("#captchakey").val(key);
-        $("#captchaimg").attr('src', '/egi/jcaptcha?key=' + key);
-    });
-    $("#refresh").trigger('click');
-</script>
+
+<%@ tag body-content="empty" dynamic-attributes="true" isELIgnored="false" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<spring:eval expression="@environment.getProperty('captcha.strength')" var="strength"/>
+<c:choose>
+    <c:when test="${strength == 'high'}" >
+        <script src='https://www.google.com/recaptcha/api.js' async defer></script>
+        <div id="g-recaptcha" class="g-recaptcha" data-sitekey="${sessionScope.siteKey}"></div>
+    </c:when>
+    <c:when test="${strength == 'low'}">
+        <div class="row">
+            <div class="col-sm-12 col-md-12 col-lg-12">
+                <br/>
+                <img id="captchaimg" style="border:1px dashed DarkSlateBlue;">
+                <i class="fa fa-refresh" id="refresh" style="cursor: pointer" title="Choose a different word"></i>
+                <br/><br/>
+                <input type='text' class="form-control" name='j_captcha_response' value='' placeholder="Enter the above displayed text"
+                       required="required" style="width:95%;margin-left:19px">
+                <input type='hidden' name='j_captcha_key' value='' id="captchakey" required="required">
+            </div>
+        </div>
+        <script>
+            $("#refresh").click(function () {
+                var key = Date.parse(new Date()).toString();
+                $("#captchakey").val(key);
+                $("#captchaimg").attr('src', '/egi/jcaptcha?key=' + key);
+            });
+            $("#refresh").trigger('click');
+        </script>
+    </c:when>
+</c:choose>

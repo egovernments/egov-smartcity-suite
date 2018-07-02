@@ -85,7 +85,7 @@ public class ApplicationAuthorizationMetadataSource implements FilterInvocationS
 
     @Override
     public Collection<ConfigAttribute> getAllConfigAttributes() {
-        return Collections.unmodifiableCollection(new ArrayList<ConfigAttribute>());
+        return Collections.unmodifiableCollection(new ArrayList<>());
     }
 
     @Override
