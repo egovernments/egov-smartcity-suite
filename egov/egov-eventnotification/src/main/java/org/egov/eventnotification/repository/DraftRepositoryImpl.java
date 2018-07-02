@@ -47,8 +47,8 @@
  */
 package org.egov.eventnotification.repository;
 
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.DRAFT_ID;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.NAME;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.DRAFT_ID;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.NAME;
 
 import java.util.List;
 

@@ -47,30 +47,30 @@
  */
 package org.egov.api.adapter;
 
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.ADDRESS;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.CONTACT_NO;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.DDMMYYYY;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.DESCRIPTION;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.DOUBLE_DEFAULT;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.EMPTY;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.END_DATE;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.END_TIME;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.EVENTTYPE;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.EVENT_COST;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.EVENT_FILENAME;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.EVENT_FILESTOREID;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.EVENT_HOST;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.EVENT_ID;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.EVENT_LOC;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.INTERESTED_COUNT;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.ISPAID;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.NAME;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.NO;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.START_DATE;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.START_TIME;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.URL;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.USER_INTERESTED;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.ZERO;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.ADDRESS;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.CONTACT_NO;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.DDMMYYYY;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.DESCRIPTION;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.DOUBLE_DEFAULT;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.EMPTY;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.END_DATE;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.END_TIME;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.EVENTTYPE;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.EVENT_COST;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.EVENT_FILENAME;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.EVENT_FILESTOREID;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.EVENT_HOST;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.EVENT_ID;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.EVENT_LOC;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.INTERESTED_COUNT;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.ISPAID;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.NAME;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.NO;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.START_DATE;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.START_TIME;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.URL;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.USER_INTERESTED;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.ZERO;
 
 import java.lang.reflect.Type;
 
@@ -84,10 +84,10 @@ import com.google.gson.JsonSerializationContext;
 
 public class EventAdapter extends DataAdapter<Event> {
 
-    private UserEventService usereventService;
+    private UserEventService userEventService;
 
-    public EventAdapter(UserEventService usereventService) {
-        this.usereventService = usereventService;
+    public EventAdapter(UserEventService userEventService) {
+        this.userEventService = userEventService;
     }
 
     @Override
@@ -133,7 +133,7 @@ public class EventAdapter extends DataAdapter<Event> {
 
         jsonObjectEvent.addProperty(USER_INTERESTED, NO);
 
-        Long interestedCount = usereventService.countUsereventByEventId(event.getId());
+        Long interestedCount = userEventService.countUsereventByEventId(event.getId());
         if (interestedCount == null)
             jsonObjectEvent.addProperty(INTERESTED_COUNT, ZERO);
         else

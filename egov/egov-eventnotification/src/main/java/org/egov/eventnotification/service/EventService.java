@@ -47,16 +47,16 @@
  */
 package org.egov.eventnotification.service;
 
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.ACTIVE;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.DDMMYYYY;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.EMPTY;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MAX_TEN;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MIN_NUMBER_OF_REQUESTS;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MODULE_NAME;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.NO;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.NOTIFICATION_TYPE_EVENT;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.YES;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.ZERO;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.ACTIVE;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.DDMMYYYY;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.EMPTY;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.MAX_TEN;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.MIN_NUMBER_OF_REQUESTS;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.MODULE_NAME;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.NO;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.NOTIFICATION_TYPE_EVENT;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.YES;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.ZERO;
 
 import java.io.IOException;
 import java.util.Date;

@@ -45,31 +45,54 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.eventnotification.config.properties;
+package org.egov.eventnotification.entity.contracts;
 
-import org.egov.eventnotification.entity.contracts.EventnotificationProperties;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
+public class EventNotificationProperties {
 
-@Configuration
-@PropertySource(name = "eventnotificationApplicationProperties", value = {
-        "classpath:config/eventnotification-application-config.properties",
-        "classpath:config/firebase-application-config.properties" }, ignoreResourceNotFound = true)
-public class EventnotificationApplicationProperties {
-    @Autowired
-    private Environment environment;
+    private String dailyCron;
+    private String monthlyCron;
+    private String yearlyCron;
+    private String waterTaxRestApi;
+    private String propertyTaxRestApi;
 
-    @Bean
-    public EventnotificationProperties initEventnotificationProperties() {
-        EventnotificationProperties properties = new EventnotificationProperties();
-        properties.setDailyCron(environment.getProperty("eventnotification.daily.job.cron"));
-        properties.setMonthlyCron(environment.getProperty("eventnotification.monthly.job.cron"));
-        properties.setYearlyCron(environment.getProperty("eventnotification.yearly.job.cron"));
-        properties.setWaterTaxRestApi(environment.getProperty("eventnotification.watertax.rest"));
-        properties.setPropertyTaxRestApi(environment.getProperty("eventnotification.propertytax.rest"));
-        return properties;
+    public String getDailyCron() {
+        return dailyCron;
     }
+
+    public void setDailyCron(String dailyCron) {
+        this.dailyCron = dailyCron;
+    }
+
+    public String getMonthlyCron() {
+        return monthlyCron;
+    }
+
+    public void setMonthlyCron(String monthlyCron) {
+        this.monthlyCron = monthlyCron;
+    }
+
+    public String getYearlyCron() {
+        return yearlyCron;
+    }
+
+    public void setYearlyCron(String yearlyCron) {
+        this.yearlyCron = yearlyCron;
+    }
+
+    public String getWaterTaxRestApi() {
+        return waterTaxRestApi;
+    }
+
+    public void setWaterTaxRestApi(String waterTaxRestApi) {
+        this.waterTaxRestApi = waterTaxRestApi;
+    }
+
+    public String getPropertyTaxRestApi() {
+        return propertyTaxRestApi;
+    }
+
+    public void setPropertyTaxRestApi(String propertyTaxRestApi) {
+        this.propertyTaxRestApi = propertyTaxRestApi;
+    }
+
 }

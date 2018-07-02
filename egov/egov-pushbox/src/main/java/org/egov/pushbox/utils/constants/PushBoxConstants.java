@@ -45,57 +45,23 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.eventnotification.utils;
+package org.egov.pushbox.utils.constants;
 
-import java.util.ArrayList;
-import java.util.List;
+public final class PushBoxConstants {
 
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
+    public static final String TYPE = "type";
+    public static final String PROJECT_ID = "project_id";
+    public static final String PRIVATE_KEY_ID = "private_key_id";
+    public static final String PRIVATE_KEY = "private_key";
+    public static final String CLIENT_EMAIL = "client_email";
+    public static final String CLIENT_ID = "client_id";
+    public static final String AUTH_URI = "auth_uri";
+    public static final String TOKEN_URI = "token_uri";
+    public static final String AUTH_PROVIDER_CERT_URL = "auth_provider_x509_cert_url";
+    public static final String CLIENT_CERT_URL = "client_x509_cert_url";
+    public static final String DBURL = "bdurl";
 
-@Service
-public class EventnotificationUtil {
+    private PushBoxConstants() {
 
-    private static final int HOURS_MAX_NUMBER_OF_REQUESTS = 24;
-    private static final int MINUTES_MAX_NUMBER_OF_REQUESTS = 60;
-    private static final int MAX_NUMBER_OF_REQUESTS = 10;
-
-    @Autowired
-    private ApplicationContext context;
-
-    public List<String> getAllHour() {
-        final List<String> hoursList = new ArrayList<>();
-        for (int i = 0; i < HOURS_MAX_NUMBER_OF_REQUESTS; i++)
-            if (i < MAX_NUMBER_OF_REQUESTS)
-                hoursList.add("0" + i);
-            else
-                hoursList.add(String.valueOf(i));
-        return hoursList;
     }
-
-    public List<String> getAllMinute() {
-        final List<String> minutesList = new ArrayList<>();
-        for (int i = 0; i < MINUTES_MAX_NUMBER_OF_REQUESTS; i += 15)
-            if (i < MAX_NUMBER_OF_REQUESTS)
-                minutesList.add("0" + i);
-            else
-                minutesList.add(String.valueOf(i));
-        return minutesList;
-    }
-
-    public Object getBean(final String beanName) {
-
-        Object bean = null;
-        try {
-            bean = context.getBean(beanName);
-        } catch (final BeansException e) {
-            final String errorMsg = "Could not locate bean [" + beanName + "]";
-            throw new ApplicationRuntimeException(errorMsg, e);
-        }
-        return bean;
-    }
-
 }

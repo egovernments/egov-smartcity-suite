@@ -47,12 +47,12 @@
  */
 package org.egov.api.controller;
 
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.ACTIVE;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.FAIL;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.INTERESTED_COUNT;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MODULE_NAME;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.SUCCESS;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.ZERO;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.ACTIVE;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.FAIL;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.INTERESTED_COUNT;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.MODULE_NAME;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.SUCCESS;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.ZERO;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import javax.servlet.http.HttpServletResponse;
@@ -99,7 +99,7 @@ public class RestEventController extends ApiController {
     private DraftService draftService;
 
     @Autowired
-    private UserEventService usereventService;
+    private UserEventService userEventService;
 
     @Autowired
     private ModuleCategoryService moduleCategoryService;
@@ -114,7 +114,7 @@ public class RestEventController extends ApiController {
     public ResponseEntity<String> getAllEvent() {
         try {
             return getResponseHandler()
-                    .setDataAdapter(new EventAdapter(usereventService))
+                    .setDataAdapter(new EventAdapter(userEventService))
                     .success(eventService.getAllOngoingEvent(ACTIVE.toUpperCase()));
         } catch (final Exception e) {
             LOGGER.error(EGOV_API_ERROR, e);
@@ -126,7 +126,7 @@ public class RestEventController extends ApiController {
     public ResponseEntity<String> getEvent(@PathVariable long id, @RequestParam(required = false) Long userid) {
         try {
             return getResponseHandler()
-                    .setDataAdapter(new EventAdapter(usereventService))
+                    .setDataAdapter(new EventAdapter(userEventService))
                     .success(eventService.getEventById(id));
         } catch (final Exception e) {
             LOGGER.error(EGOV_API_ERROR, e);
@@ -139,7 +139,7 @@ public class RestEventController extends ApiController {
 
         try {
             return getResponseHandler()
-                    .setDataAdapter(new EventSearchAdapter(usereventService))
+                    .setDataAdapter(new EventSearchAdapter(userEventService))
                     .success(eventService.searchEvent(eventSearch));
         } catch (final Exception e) {
             LOGGER.error(EGOV_API_ERROR, e);
@@ -191,13 +191,13 @@ public class RestEventController extends ApiController {
         if (userEventRequest == null)
             responseObject.put(FAIL, getMessage("error.fail.eventuser"));
         else {
-            UserEvent userEvent = usereventService.saveUserEvent(Long.parseLong(userEventRequest.getUserid()),
+            UserEvent userEvent = userEventService.saveUserEvent(Long.parseLong(userEventRequest.getUserid()),
                     Long.parseLong(userEventRequest.getEventid()));
             if (userEvent == null)
                 responseObject.put(FAIL, getMessage("error.fail.event"));
             else {
                 responseObject.put(SUCCESS, getMessage("msg.event.success"));
-                Long interestedCount = usereventService.countUsereventByEventId(userEvent.getEvent().getId());
+                Long interestedCount = userEventService.countUsereventByEventId(userEvent.getEvent().getId());
                 if (interestedCount == null)
                     responseObject.put(INTERESTED_COUNT, ZERO);
                 else

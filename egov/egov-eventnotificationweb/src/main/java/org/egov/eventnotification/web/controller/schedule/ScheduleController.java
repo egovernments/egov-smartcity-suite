@@ -47,15 +47,15 @@
  */
 package org.egov.eventnotification.web.controller.schedule;
 
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.DRAFT_LIST;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.HOUR_LIST;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MESSAGE;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MINUTE_LIST;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MODE;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MODE_DELETE;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MODE_VIEW;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.NOTIFICATION_SCHEDULE;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.SCHEDULER_REPEAT_LIST;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.DRAFT_LIST;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.HOUR_LIST;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.MESSAGE;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.MINUTE_LIST;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.MODE;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.MODE_DELETE;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.MODE_VIEW;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.NOTIFICATION_SCHEDULE;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.SCHEDULER_REPEAT_LIST;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -64,9 +64,10 @@ import org.egov.eventnotification.entity.Drafts;
 import org.egov.eventnotification.entity.Schedule;
 import org.egov.eventnotification.service.DraftService;
 import org.egov.eventnotification.service.DraftTypeService;
+import org.egov.eventnotification.service.ScheduleDetailsService;
 import org.egov.eventnotification.service.ScheduleRepeatService;
 import org.egov.eventnotification.service.ScheduleService;
-import org.egov.eventnotification.utils.EventnotificationUtil;
+import org.egov.eventnotification.utils.EventNotificationUtil;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,13 +91,16 @@ public class ScheduleController {
     private DraftService draftService;
 
     @Autowired
-    private EventnotificationUtil eventnotificationUtil;
+    private EventNotificationUtil eventnotificationUtil;
 
     @Autowired
     private ScheduleRepeatService scheduleRepeatService;
 
     @Autowired
     private DraftTypeService draftTypeService;
+    
+    @Autowired
+    private ScheduleDetailsService scheduleDetailsService;
 
     @GetMapping("/schedule/view/")
     public String view(Model model) {
@@ -148,7 +152,7 @@ public class ScheduleController {
         scheduleService.saveSchedule(schedule);
         try {
             String fullURL = request.getRequestURL().toString();
-            scheduleService.executeScheduler(schedule, fullURL);
+            scheduleDetailsService.executeScheduler(schedule, fullURL);
         } catch (final Exception e) {
             throw new ApplicationRuntimeException(e.getMessage(), e);
         }
@@ -183,7 +187,7 @@ public class ScheduleController {
     public String deleteSchedule(@PathVariable Long id, Model model) {
         Schedule notificationSchedule = scheduleService.disableSchedule(id);
         try {
-            scheduleService.removeScheduler(notificationSchedule);
+            scheduleDetailsService.removeScheduler(notificationSchedule);
         } catch (final Exception e) {
             throw new ApplicationRuntimeException(e.getMessage(), e);
         }

@@ -45,23 +45,31 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.pushbox.utils.constants;
+package org.egov.eventnotification.config.properties;
 
-public final class PushboxConstants {
+import org.egov.eventnotification.entity.contracts.EventNotificationProperties;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 
-    public static final String TYPE = "type";
-    public static final String PROJECT_ID = "project_id";
-    public static final String PRIVATE_KEY_ID = "private_key_id";
-    public static final String PRIVATE_KEY = "private_key";
-    public static final String CLIENT_EMAIL = "client_email";
-    public static final String CLIENT_ID = "client_id";
-    public static final String AUTH_URI = "auth_uri";
-    public static final String TOKEN_URI = "token_uri";
-    public static final String AUTH_PROVIDER_CERT_URL = "auth_provider_x509_cert_url";
-    public static final String CLIENT_CERT_URL = "client_x509_cert_url";
-    public static final String DBURL = "bdurl";
+@Configuration
+@PropertySource(name = "eventnotificationApplicationProperties", value = {
+        "classpath:config/eventnotification-application-config.properties",
+        "classpath:config/firebase-application-config.properties" }, ignoreResourceNotFound = true)
+public class EventNotificationApplicationProperties {
+    @Autowired
+    private Environment environment;
 
-    private PushboxConstants() {
-
+    @Bean
+    public EventNotificationProperties initEventnotificationProperties() {
+        EventNotificationProperties properties = new EventNotificationProperties();
+        properties.setDailyCron(environment.getProperty("eventnotification.daily.job.cron"));
+        properties.setMonthlyCron(environment.getProperty("eventnotification.monthly.job.cron"));
+        properties.setYearlyCron(environment.getProperty("eventnotification.yearly.job.cron"));
+        properties.setWaterTaxRestApi(environment.getProperty("eventnotification.watertax.rest"));
+        properties.setPropertyTaxRestApi(environment.getProperty("eventnotification.propertytax.rest"));
+        return properties;
     }
 }

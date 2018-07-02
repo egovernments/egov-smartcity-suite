@@ -47,17 +47,17 @@
  */
 package org.egov.pushbox.config;
 
-import static org.egov.pushbox.utils.constants.PushboxConstants.AUTH_PROVIDER_CERT_URL;
-import static org.egov.pushbox.utils.constants.PushboxConstants.AUTH_URI;
-import static org.egov.pushbox.utils.constants.PushboxConstants.CLIENT_CERT_URL;
-import static org.egov.pushbox.utils.constants.PushboxConstants.CLIENT_EMAIL;
-import static org.egov.pushbox.utils.constants.PushboxConstants.CLIENT_ID;
-import static org.egov.pushbox.utils.constants.PushboxConstants.DBURL;
-import static org.egov.pushbox.utils.constants.PushboxConstants.PRIVATE_KEY;
-import static org.egov.pushbox.utils.constants.PushboxConstants.PRIVATE_KEY_ID;
-import static org.egov.pushbox.utils.constants.PushboxConstants.PROJECT_ID;
-import static org.egov.pushbox.utils.constants.PushboxConstants.TOKEN_URI;
-import static org.egov.pushbox.utils.constants.PushboxConstants.TYPE;
+import static org.egov.pushbox.utils.constants.PushBoxConstants.AUTH_PROVIDER_CERT_URL;
+import static org.egov.pushbox.utils.constants.PushBoxConstants.AUTH_URI;
+import static org.egov.pushbox.utils.constants.PushBoxConstants.CLIENT_CERT_URL;
+import static org.egov.pushbox.utils.constants.PushBoxConstants.CLIENT_EMAIL;
+import static org.egov.pushbox.utils.constants.PushBoxConstants.CLIENT_ID;
+import static org.egov.pushbox.utils.constants.PushBoxConstants.DBURL;
+import static org.egov.pushbox.utils.constants.PushBoxConstants.PRIVATE_KEY;
+import static org.egov.pushbox.utils.constants.PushBoxConstants.PRIVATE_KEY_ID;
+import static org.egov.pushbox.utils.constants.PushBoxConstants.PROJECT_ID;
+import static org.egov.pushbox.utils.constants.PushBoxConstants.TOKEN_URI;
+import static org.egov.pushbox.utils.constants.PushBoxConstants.TYPE;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
