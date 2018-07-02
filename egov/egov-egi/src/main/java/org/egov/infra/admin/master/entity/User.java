@@ -146,6 +146,7 @@ public class User extends AbstractAuditable {
 
     @SafeHtml
     @Length(max = 12)
+    @Column(insertable = false, updatable = false)
     private String aadhaarNumber;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
