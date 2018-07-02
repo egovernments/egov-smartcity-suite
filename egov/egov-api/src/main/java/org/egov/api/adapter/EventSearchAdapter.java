@@ -47,31 +47,31 @@
  */
 package org.egov.api.adapter;
 
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.ADDRESS;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.CONTACT_NO;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.DDMMYYYY;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.DESCRIPTION;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.DOUBLE_DEFAULT;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.EMPTY;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.END_DATE;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.END_TIME;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.EVENTTYPE;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.EVENT_COST;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.EVENT_FILENAME;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.EVENT_FILESTOREID;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.EVENT_HOST;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.EVENT_ID;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.EVENT_LOC;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.INTERESTED_COUNT;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.ISPAID;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.MAX_TEN;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.NAME;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.NO;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.START_DATE;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.START_TIME;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.URL;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.USER_INTERESTED;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.ZERO;
+import static org.egov.eventnotification.utils.constants.Constants.ADDRESS;
+import static org.egov.eventnotification.utils.constants.Constants.CONTACT_NO;
+import static org.egov.eventnotification.utils.constants.Constants.DDMMYYYY;
+import static org.egov.eventnotification.utils.constants.Constants.DESCRIPTION;
+import static org.egov.eventnotification.utils.constants.Constants.DOUBLE_DEFAULT;
+import static org.egov.eventnotification.utils.constants.Constants.EMPTY;
+import static org.egov.eventnotification.utils.constants.Constants.END_DATE;
+import static org.egov.eventnotification.utils.constants.Constants.END_TIME;
+import static org.egov.eventnotification.utils.constants.Constants.EVENTTYPE;
+import static org.egov.eventnotification.utils.constants.Constants.EVENT_COST;
+import static org.egov.eventnotification.utils.constants.Constants.EVENT_FILENAME;
+import static org.egov.eventnotification.utils.constants.Constants.EVENT_FILESTOREID;
+import static org.egov.eventnotification.utils.constants.Constants.EVENT_HOST;
+import static org.egov.eventnotification.utils.constants.Constants.EVENT_ID;
+import static org.egov.eventnotification.utils.constants.Constants.EVENT_LOC;
+import static org.egov.eventnotification.utils.constants.Constants.INTERESTED_COUNT;
+import static org.egov.eventnotification.utils.constants.Constants.ISPAID;
+import static org.egov.eventnotification.utils.constants.Constants.MAX_TEN;
+import static org.egov.eventnotification.utils.constants.Constants.NAME;
+import static org.egov.eventnotification.utils.constants.Constants.NO;
+import static org.egov.eventnotification.utils.constants.Constants.START_DATE;
+import static org.egov.eventnotification.utils.constants.Constants.START_TIME;
+import static org.egov.eventnotification.utils.constants.Constants.URL;
+import static org.egov.eventnotification.utils.constants.Constants.USER_INTERESTED;
+import static org.egov.eventnotification.utils.constants.Constants.ZERO;
 
 import java.lang.reflect.Type;
 

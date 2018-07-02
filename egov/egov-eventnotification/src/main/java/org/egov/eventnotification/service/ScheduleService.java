@@ -47,10 +47,10 @@
  */
 package org.egov.eventnotification.service;
 
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.DDMMYYYY;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.MAX_TEN;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.SCHEDULED_STATUS;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.ZERO;
+import static org.egov.eventnotification.utils.constants.Constants.DDMMYYYY;
+import static org.egov.eventnotification.utils.constants.Constants.MAX_TEN;
+import static org.egov.eventnotification.utils.constants.Constants.SCHEDULED_STATUS;
+import static org.egov.eventnotification.utils.constants.Constants.ZERO;
 
 import java.util.Arrays;
 import java.util.List;

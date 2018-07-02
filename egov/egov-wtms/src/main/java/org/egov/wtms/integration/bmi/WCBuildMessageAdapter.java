@@ -47,12 +47,12 @@
  */
 package org.egov.wtms.integration.bmi;
 
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.DDMMYYYY;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.MESSAGE_BILLAMT;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.MESSAGE_BILLNO;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.MESSAGE_CONSNO;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.MESSAGE_DISRPTDATE;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.MESSAGE_USERNAME;
+import static org.egov.eventnotification.utils.constants.Constants.DDMMYYYY;
+import static org.egov.eventnotification.utils.constants.Constants.MESSAGE_BILLAMT;
+import static org.egov.eventnotification.utils.constants.Constants.MESSAGE_BILLNO;
+import static org.egov.eventnotification.utils.constants.Constants.MESSAGE_CONSNO;
+import static org.egov.eventnotification.utils.constants.Constants.MESSAGE_DISRPTDATE;
+import static org.egov.eventnotification.utils.constants.Constants.MESSAGE_USERNAME;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

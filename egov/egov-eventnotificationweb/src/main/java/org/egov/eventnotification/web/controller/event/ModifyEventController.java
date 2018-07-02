@@ -47,15 +47,15 @@
  */
 package org.egov.eventnotification.web.controller.event;
 
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.EVENT;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.EVENT_LIST;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.EVENT_STATUS_LIST;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.HOUR_LIST;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.MESSAGE;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.MINUTE_LIST;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.MODE;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.MODE_UPDATE;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.MODE_VIEW;
+import static org.egov.eventnotification.utils.constants.Constants.EVENT;
+import static org.egov.eventnotification.utils.constants.Constants.EVENT_LIST;
+import static org.egov.eventnotification.utils.constants.Constants.EVENT_STATUS_LIST;
+import static org.egov.eventnotification.utils.constants.Constants.HOUR_LIST;
+import static org.egov.eventnotification.utils.constants.Constants.MESSAGE;
+import static org.egov.eventnotification.utils.constants.Constants.MINUTE_LIST;
+import static org.egov.eventnotification.utils.constants.Constants.MODE;
+import static org.egov.eventnotification.utils.constants.Constants.MODE_UPDATE;
+import static org.egov.eventnotification.utils.constants.Constants.MODE_VIEW;
 
 import java.util.Arrays;
 

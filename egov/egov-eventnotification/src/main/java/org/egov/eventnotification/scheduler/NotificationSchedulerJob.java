@@ -48,13 +48,13 @@
 package org.egov.eventnotification.scheduler;
 
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.BMA_INTERFACE_SUFFIX;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.BUSINESS_NOTIFICATION_TYPE;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.CONTEXTURL;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.PROPERTY_MODULE;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.SCHEDULEID;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.SCHEDULE_COMPLETE;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.WATER_CHARGES_MODULE;
+import static org.egov.eventnotification.utils.constants.Constants.BMA_INTERFACE_SUFFIX;
+import static org.egov.eventnotification.utils.constants.Constants.BUSINESS_NOTIFICATION_TYPE;
+import static org.egov.eventnotification.utils.constants.Constants.CONTEXTURL;
+import static org.egov.eventnotification.utils.constants.Constants.PROPERTY_MODULE;
+import static org.egov.eventnotification.utils.constants.Constants.SCHEDULEID;
+import static org.egov.eventnotification.utils.constants.Constants.SCHEDULE_COMPLETE;
+import static org.egov.eventnotification.utils.constants.Constants.WATER_CHARGES_MODULE;
 
 import java.util.ArrayList;
 import java.util.Date;

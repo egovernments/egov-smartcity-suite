@@ -47,14 +47,14 @@
  */
 package org.egov.eventnotification.web.controller.schedule;
 
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.DRAFT_LIST;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.HOUR_LIST;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.MESSAGE;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.MINUTE_LIST;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.MODE;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.MODE_VIEW;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.NOTIFICATION_SCHEDULE;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.SCHEDULER_REPEAT_LIST;
+import static org.egov.eventnotification.utils.constants.Constants.DRAFT_LIST;
+import static org.egov.eventnotification.utils.constants.Constants.HOUR_LIST;
+import static org.egov.eventnotification.utils.constants.Constants.MESSAGE;
+import static org.egov.eventnotification.utils.constants.Constants.MINUTE_LIST;
+import static org.egov.eventnotification.utils.constants.Constants.MODE;
+import static org.egov.eventnotification.utils.constants.Constants.MODE_VIEW;
+import static org.egov.eventnotification.utils.constants.Constants.NOTIFICATION_SCHEDULE;
+import static org.egov.eventnotification.utils.constants.Constants.SCHEDULER_REPEAT_LIST;
 
 import javax.validation.Valid;
 

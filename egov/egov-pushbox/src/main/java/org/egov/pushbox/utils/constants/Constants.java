@@ -47,7 +47,7 @@
  */
 package org.egov.pushbox.utils.constants;
 
-public final class PushBoxConstants {
+public final class Constants {
 
     public static final String TYPE = "type";
     public static final String PROJECT_ID = "project_id";
@@ -61,7 +61,7 @@ public final class PushBoxConstants {
     public static final String CLIENT_CERT_URL = "client_x509_cert_url";
     public static final String DBURL = "bdurl";
 
-    private PushBoxConstants() {
+    private Constants() {
 
     }
 }
