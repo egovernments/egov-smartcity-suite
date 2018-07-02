@@ -97,7 +97,7 @@ public class EISDashBoardUtils {
                 .must(QueryBuilders.rangeQuery("todate").gte(getFormattedDate(date, ASSIGN_DATE_FORMAT)).includeUpper(false));
         if (StringUtils.isNotBlank(employeesDetailRequest.getEmployeeName()))
             boolQuery
-                    .filter(QueryBuilders.matchQuery(EMPLOYEENAME, employeesDetailRequest.getEmployeeName().toUpperCase()));
+                    .filter(QueryBuilders.matchQuery(EMPLOYEENAME, employeesDetailRequest.getEmployeeName()));
         if (StringUtils.isNotBlank(employeesDetailRequest.getEmployeeCode()))
             boolQuery
                     .filter(QueryBuilders.matchQuery(EMPLOYEECODE, employeesDetailRequest.getEmployeeCode()));
