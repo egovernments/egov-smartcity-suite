@@ -60,7 +60,6 @@ import org.egov.infra.config.scheduling.SchedulerConfigCondition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
@@ -102,7 +101,6 @@ public class NotificationSchedulerConfiguration extends QuartzSchedulerConfigura
     }
 
     @Bean(name = "eventnotificationJobDetail")
-    @Scope("prototype")
     public JobDetailFactoryBean eventnotificationJobDetail() {
         JobDetailFactoryBean notificationJobDetail = new JobDetailFactoryBean();
         notificationJobDetail.setGroup("EVENT_NOTIFICATION_JOB_GROUP");
