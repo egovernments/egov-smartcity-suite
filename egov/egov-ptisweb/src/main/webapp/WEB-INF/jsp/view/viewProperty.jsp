@@ -298,7 +298,7 @@
 			<div class="col-xs-3 add-margin">EB Block</div>
 			<div class="col-xs-3 add-margin view-content">N/A</div>
 		</div>
-		<div class="row add-border">
+		<%-- <div class="row add-border">
 			<div class="col-xs-3 add-margin">
 				<s:text name="latitude"></s:text> 
 			</div>
@@ -319,7 +319,7 @@
 			<input type="button" name="showMap" id="show-map"
 						value="View On Map" class="buttonsubmit" data-toggle="modal" data-target="#myModal"/>
 		</div>				
-		</s:if>
+		</s:if> --%>
 		
 	</div>
 </div>

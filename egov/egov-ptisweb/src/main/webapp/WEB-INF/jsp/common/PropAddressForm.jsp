@@ -189,7 +189,7 @@ function populateBlock() {
 	    <td class="greybox"><s:text name="PinCode"/><span class="mandatory1">*</span> : </td>
 	    <td class="greybox"><s:textfield name="pinCode" value="%{pinCode}" onchange="trim(this,this.value);" maxlength="6" onblur = "validNumber(this);checkZero(this);"  /></td>
 	</tr>
-	<s:if test="%{mode == 'edit'}">
+	<%-- <s:if test="%{mode == 'edit'}">
 	<tr>
 		<td class="greybox">&nbsp;</td>
 	    <td class="greybox"><s:text name="longitude"/> : </td>
@@ -207,7 +207,7 @@ function populateBlock() {
 						value="View On Map" class="buttonsubmit" data-toggle="modal" data-target="#myModal" /></td>
 	</tr>
 	</s:if>
-	</s:if>
+	</s:if> --%>
 </div>
 <div id="myModal" class="modal fade" role="dialog">
   <div class="modal-dialog modal-lg">

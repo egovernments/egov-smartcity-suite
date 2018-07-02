@@ -95,7 +95,7 @@
 	    <td class="greybox"><s:text name="PinCode"/> : </td>
 	    <td class="greybox"><span class="bold"><s:property default="N/A" value="%{pinCode}" /> </span></td>
 	</tr>
-	<tr>
+	<%-- <tr>
 		<td class="greybox">&nbsp;</td>
 	    <td class="greybox"><s:text name="longitude"/> : </td>
 	    <td class="greybox"><span class="bold"><s:property default="N/A" value="%{basicProperty.longitude}" /> </span></td>
@@ -111,7 +111,7 @@
 			<td><input type="button" name="showMap" id="show-map"
 						value="View On Map" class="buttonsubmit" data-toggle="modal" data-target="#myModal" /></td>
 	</tr>
-	</s:if>
+	</s:if> --%>
 </div>
 <div id="myModal" class="modal fade" role="dialog">
   <div class="modal-dialog modal-lg">
