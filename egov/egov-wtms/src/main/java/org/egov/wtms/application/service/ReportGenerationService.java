@@ -50,11 +50,13 @@ package org.egov.wtms.application.service;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
+import org.egov.commons.dao.InstallmentDao;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
@@ -98,8 +100,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.egov.infra.reporting.util.ReportUtil.reportAsResponseEntity;
 import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
 import static org.egov.wtms.masters.entity.enums.ConnectionType.NON_METERED;
@@ -115,6 +119,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.FILESTORE_MODULECO
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULETYPE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PERMENENTCLOSE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PROPERTY_MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTIONWITHSLASH;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTION_ESTIMATION_NOTICE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SIGNED_DOCUMENT_PREFIX;
@@ -160,6 +165,7 @@ public class ReportGenerationService {
     private static final String DOORNO = "doorno";
     private static final String LOCALITY = "locality";
     private static final String DESIGNATION = "designation";
+    private static final String PROPERTYID = "propertyID";
 
     @Autowired
     @Qualifier("fileStoreService")
@@ -190,6 +196,12 @@ public class ReportGenerationService {
     private CityService cityService;
 
     @Autowired
+    private InstallmentDao installmentDao;
+
+    @Autowired
+    private ModuleService moduleService;
+
+    @Autowired
     private ApplicationProcessTimeService applicationProcessTimeService;
 
     @Autowired
@@ -204,18 +216,18 @@ public class ReportGenerationService {
     @Autowired
     private AutonumberServiceBeanResolver beanResolver;
 
-    public ReportOutput getReportOutput(final WaterConnectionDetails connectionDetails, final String workFlowAction) {
-        final Map<String, Object> reportParams = new HashMap<>(0);
+    public ReportOutput getReportOutput(WaterConnectionDetails connectionDetails, String workFlowAction) {
+        Map<String, Object> reportParams = new ConcurrentHashMap<>(0);
         ReportRequest reportInput = null;
-        ReportOutput reportOutput = null;
+        ReportOutput reportOutput;
         if (connectionDetails != null) {
-            final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
+            AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                     connectionDetails.getConnection().getPropertyIdentifier(),
                     PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
-            final String propAddress = assessmentDetails.getPropertyAddress();
+            String propAddress = assessmentDetails.getPropertyAddress();
             String[] doorno = null;
             double total = 0;
-            if (null != propAddress && !propAddress.isEmpty())
+            if (isNotBlank(propAddress))
                 doorno = propAddress.split(",");
             String ownerName = "";
             Iterator<OwnerName> iterator = null;
@@ -223,22 +235,22 @@ public class ReportGenerationService {
                 iterator = assessmentDetails.getOwnerNames().iterator();
             if (iterator != null && iterator.hasNext())
                 ownerName = iterator.next().getOwnerName();
-            final List<Assignment> assignList = assignmentService
-                    .findPrimaryAssignmentForDesignationName(DESG_COMM_NAME);
+            List<Assignment> assignList = assignmentService.findPrimaryAssignmentForDesignationName(DESG_COMM_NAME);
             String commissionerName = "";
             if (!assignList.isEmpty())
                 commissionerName = assignList.get(0).getEmployee().getName();
             if (NEWCONNECTION.equalsIgnoreCase(connectionDetails.getApplicationType().getCode()))
                 reportParams.put(APPLICATIONTYPE, wcmsMessageSource.getMessage("msg.new.watertap.conn", null, null));
-            else if (ADDNLCONNECTION
-                    .equalsIgnoreCase(connectionDetails.getApplicationType().getCode()))
+            else if (ADDNLCONNECTION.equalsIgnoreCase(connectionDetails.getApplicationType().getCode()))
                 reportParams.put(APPLICATIONTYPE, wcmsMessageSource.getMessage("msg.add.watertap.conn", null, null));
             else
-                reportParams.put(APPLICATIONTYPE,
-                        wcmsMessageSource.getMessage("msg.changeofuse.watertap.conn", null, null));
-            reportParams.put(CONNTITLE,
-                    WordUtils.capitalize(connectionDetails.getApplicationType().getName()));
+                reportParams.put(APPLICATIONTYPE, wcmsMessageSource.getMessage("msg.changeofuse.watertap.conn", null, null));
+            reportParams.put(CONNTITLE, WordUtils.capitalize(connectionDetails.getApplicationType().getName()));
             reportParams.put("municipality", cityService.getMunicipalityName());
+            reportParams.put("currentInstallment",
+                    installmentDao.getInsatllmentByModuleForGivenDate(moduleService.getModuleByName(PROPERTY_MODULE_NAME), new Date()));
+            reportParams.put("pipeSize", connectionDetails.getPipeSize().getSizeInInch());
+            reportParams.put("rate", connectionDemandService.getWaterRatesDetailsForDemandUpdate(connectionDetails).getMonthlyRate());
             reportParams.put(DISTRICT, cityService.getDistrictName());
             reportParams.put("purpose", connectionDetails.getUsageType().getName());
             reportParams.put(WORK_ORDER_DATE, connectionDetails.getWorkOrderDate() == null ? EMPTY
@@ -247,14 +259,14 @@ public class ReportGenerationService {
                     connectionDetails.getWorkOrderNumber() == null ? EMPTY : connectionDetails.getWorkOrderNumber());
             reportParams.put(USER_ID, securityUtils.getCurrentUser().getId());
 
-            final User user = securityUtils.getCurrentUser();
+            User user = securityUtils.getCurrentUser();
             Assignment assignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
             if (assignment == null) {
-                final List<Assignment> assignmentList = assignmentService.findByEmployeeAndGivenDate(user.getId(), new Date());
+                List<Assignment> assignmentList = assignmentService.findByEmployeeAndGivenDate(user.getId(), new Date());
                 if (!assignmentList.isEmpty())
                     assignment = assignmentList.get(0);
             }
-            String userDesignation = null;
+            String userDesignation;
             if (assignment != null && assignment.getDesignation().getName().equals(DESG_COMM_NAME))
                 userDesignation = assignment.getDesignation().getName();
             else
@@ -264,9 +276,12 @@ public class ReportGenerationService {
             reportParams.put(CONSUMERNUMBER, connectionDetails.getConnection().getConsumerCode());
             reportParams.put(APPLICANT_NAME, WordUtils.capitalize(ownerName));
             reportParams.put(ADDRESS, propAddress);
-            reportParams.put(DOORNO, doorno == null ? "" : doorno[0]);
+            reportParams.put(HOUSE_NO, doorno == null ? "" : doorno[0]);
             reportParams.put("userSignature", securityUtils.getCurrentUser().getSignature() != null
-                    ? new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()) : null);
+                    ? new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()) : new byte[0]);
+            reportParams.put("estimationDate", toDefaultDateFormat(connectionDetails.getFieldInspectionDetails().getCreatedDate()));
+            reportParams.put("estimationNumber", connectionDetails.getEstimationNumber());
+            reportParams.put(PROPERTYID, connectionDetails.getConnection().getPropertyIdentifier());
             reportParams.put(APPLICATION_DATE, toDefaultDateFormat(connectionDetails.getApplicationDate()));
             reportParams.put(DONATION_CHARGES, connectionDetails.getDonationCharges());
             reportParams.put(SECURITY_DEPOSIT, connectionDetails.getFieldInspectionDetails().getSecurityDeposit());
@@ -282,7 +297,8 @@ public class ReportGenerationService {
             reportParams.put("total", total);
             reportParams.put(COMMISSIONER_NAME, commissionerName);
             reportParams.put(DESIGNATION, userDesignation);
-            reportInput = new ReportRequest(CONNECTION_WORK_ORDER, connectionDetails, reportParams);
+            reportInput = new ReportRequest(connectionDetails.getConnectionType().equals(NON_METERED)
+                    ? "wtr_sanction_order_notice" : CONNECTION_WORK_ORDER, connectionDetails, reportParams);
         }
         reportOutput = reportService.createReport(reportInput);
         return reportOutput;
@@ -446,8 +462,9 @@ public class ReportGenerationService {
             reportParams.put(APPLICATION_DATE, toDefaultDateFormat(waterConnectionDetails.getApplicationDate()));
             reportParams.put(APPLICANT_NAME, ownerName.toString());
             reportParams.put(ADDRESS, assessmentDetails.getPropertyAddress());
+            reportParams.put(LOCALITY, assessmentDetails.getBoundaryDetails().getLocalityName());
             reportParams.put(HOUSE_NO, doorNo[0]);
-            reportParams.put("propertyID", waterConnectionDetails.getConnection().getPropertyIdentifier());
+            reportParams.put(PROPERTYID, waterConnectionDetails.getConnection().getPropertyIdentifier());
             reportParams.put("amountInWords", getTotalAmntInWords(totalCharges));
             reportParams.put(SECURITY_DEPOSIT,
                     waterConnectionDetails.getFieldInspectionDetails().getSecurityDeposit());
@@ -526,7 +543,7 @@ public class ReportGenerationService {
         reportParams.put("applicationNumber", waterConnectionDetails.getApplicationNumber());
         reportParams.put(APPLICATION_DATE, toDefaultDateFormat(waterConnectionDetails.getApplicationDate()));
 
-        reportParams.put("propertyID", waterConnectionDetails.getConnection().getPropertyIdentifier());
+        reportParams.put(PROPERTYID, waterConnectionDetails.getConnection().getPropertyIdentifier());
 
         if (waterConnectionDetails.getCloseConnectionType() != null)
             if ("T".equals(waterConnectionDetails.getCloseConnectionType()))
