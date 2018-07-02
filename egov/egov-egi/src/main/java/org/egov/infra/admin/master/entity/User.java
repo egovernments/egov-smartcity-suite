@@ -85,7 +85,7 @@ import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Cacheable
 @SequenceGenerator(name = User.SEQ_USER, sequenceName = User.SEQ_USER, allocationSize = 1)
-@Unique(fields = {"username", "pan", "aadhaarNumber", "emailId"}, enableDfltMsg = true, isSuperclass = true)
+@Unique(fields = {"username", "pan", "emailId"}, enableDfltMsg = true, isSuperclass = true)
 @CompositeUnique(fields = {"type", "mobileNumber"}, enableDfltMsg = true, message = "{user.exist.with.same.mobileno}")
 @JsonIgnoreProperties({"createdBy", "lastModifiedBy"})
 public class User extends AbstractAuditable {
@@ -145,7 +145,7 @@ public class User extends AbstractAuditable {
     private String pan;
 
     @SafeHtml
-    @Length(max = 20)
+    @Length(max = 12)
     private String aadhaarNumber;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
