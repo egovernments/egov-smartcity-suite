@@ -54,7 +54,7 @@ import org.egov.commons.service.CFinancialYearService;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.EnvironmentSettings;
-import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.exception.ApplicationValidationException;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.tl.entity.DemandGenerationLog;
 import org.egov.tl.entity.DemandGenerationLogDetail;
@@ -142,10 +142,10 @@ public class DemandGenerationService {
         DemandGenerationLog previousDemandGenLog = demandGenerationLogService
                 .getPreviousInstallmentDemandGenerationLog(financialYear.getFinYearRange());
         if (previousDemandGenLog != null && previousDemandGenLog.getDemandGenerationStatus().equals(INCOMPLETE))
-            throw new ApplicationRuntimeException("TL-008");
+            throw new ApplicationValidationException("TL-008");
 
         if (!installmentYearValidForDemandGeneration(financialYear))
-            throw new ApplicationRuntimeException("TL-006");
+            throw new ApplicationValidationException("TL-006");
 
         return demandGenerationLogService.createDemandGenerationLog(financialYear.getFinYearRange());
 
