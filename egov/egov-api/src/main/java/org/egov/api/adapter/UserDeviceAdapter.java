@@ -47,9 +47,9 @@
  */
 package org.egov.api.adapter;
 
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.USER_DEVICE_ID;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.USER_ID;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.USER_TOKEN_ID;
+import static org.egov.eventnotification.utils.constants.Constants.USER_DEVICE_ID;
+import static org.egov.eventnotification.utils.constants.Constants.USER_ID;
+import static org.egov.eventnotification.utils.constants.Constants.USER_TOKEN_ID;
 
 import java.lang.reflect.Type;
 

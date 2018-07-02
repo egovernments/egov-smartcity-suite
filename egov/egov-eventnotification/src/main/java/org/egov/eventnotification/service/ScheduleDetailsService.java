@@ -47,16 +47,16 @@
  */
 package org.egov.eventnotification.service;
 
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.BEANNOTIFSCH;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.CONTEXTURL;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.DAY_CRON;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.EVENT_NOTIFICATION_GROUP;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.HOURS_CRON;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.JOB;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.MINUTES_CRON;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.MONTH_CRON;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.SCHEDULEID;
-import static org.egov.eventnotification.utils.constants.EventNotificationConstants.TRIGGER;
+import static org.egov.eventnotification.utils.constants.Constants.BEANNOTIFSCH;
+import static org.egov.eventnotification.utils.constants.Constants.CONTEXTURL;
+import static org.egov.eventnotification.utils.constants.Constants.DAY_CRON;
+import static org.egov.eventnotification.utils.constants.Constants.EVENT_NOTIFICATION_GROUP;
+import static org.egov.eventnotification.utils.constants.Constants.HOURS_CRON;
+import static org.egov.eventnotification.utils.constants.Constants.JOB;
+import static org.egov.eventnotification.utils.constants.Constants.MINUTES_CRON;
+import static org.egov.eventnotification.utils.constants.Constants.MONTH_CRON;
+import static org.egov.eventnotification.utils.constants.Constants.SCHEDULEID;
+import static org.egov.eventnotification.utils.constants.Constants.TRIGGER;
 
 import java.util.Date;
 
