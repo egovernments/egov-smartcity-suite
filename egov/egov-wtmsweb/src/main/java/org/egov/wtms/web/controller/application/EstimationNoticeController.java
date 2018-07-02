@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -47,23 +47,9 @@
  */
 package org.egov.wtms.web.controller.application;
 
-import static org.egov.infra.reporting.util.ReportUtil.reportAsResponseEntity;
-import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.FILESTORE_MODULECODE;
-import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.WordUtils;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
@@ -84,17 +70,28 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.egov.infra.reporting.util.ReportUtil.reportAsResponseEntity;
+import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
+import static org.egov.wtms.masters.entity.enums.ConnectionType.NON_METERED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.FILESTORE_MODULECODE;
+import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 
 @Controller
 @RequestMapping(value = "/application")
 public class EstimationNoticeController {
 
+    public static final String ESTIMATION_NOTICE = "estimationNotice";
     @Autowired
     private ReportService reportService;
-
-    public static final String ESTIMATION_NOTICE = "estimationNotice";
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
 
@@ -109,51 +106,47 @@ public class EstimationNoticeController {
 
     @GetMapping(value = "/estimationNotice", produces = APPLICATION_PDF_VALUE)
     @ResponseBody
-    public ResponseEntity<InputStreamResource> generateEstimationNotice(final HttpServletRequest request,
-            final HttpSession session) {
+    public ResponseEntity<InputStreamResource> generateEstimationNotice(HttpServletRequest request,
+                                                                        HttpSession session) {
 
-        final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+        WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByApplicationNumber(request.getParameter("pathVar"));
         return generateEstimationReport(waterConnectionDetails, session);
     }
 
-    private ResponseEntity<InputStreamResource> generateEstimationReport(final WaterConnectionDetails waterConnectionDetails,
-            final HttpSession session) {
-        ReportRequest reportInput = null;
+    private ResponseEntity<InputStreamResource> generateEstimationReport(WaterConnectionDetails waterConnectionDetails,
+                                                                         HttpSession session) {
         ReportOutput reportOutput = new ReportOutput();
         if (waterConnectionDetails != null)
             if (waterConnectionDetails.getEstimationNoticeFileStoreId() != null) {
-                final FileStoreMapper fmp = waterConnectionDetails.getEstimationNoticeFileStoreId();
-                final File file = fileStoreService.fetch(fmp, FILESTORE_MODULECODE);
+                File file = fileStoreService.fetch(waterConnectionDetails.getEstimationNoticeFileStoreId(), FILESTORE_MODULECODE);
                 reportOutput = new ReportOutput();
                 try {
                     reportOutput.setReportName(waterConnectionDetails.getEstimationNumber());
                     reportOutput.setReportOutputData(FileUtils.readFileToByteArray(file));
                     reportOutput.setReportFormat(ReportFormat.PDF);
-                } catch (final IOException e) {
+                } catch (IOException e) {
                     throw new ApplicationRuntimeException("Exception in generating work order notice" + e);
                 }
             } else {
 
-                final Map<String, Object> reportParams = new HashMap<>();
-                final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
+                Map<String, Object> reportParams = new HashMap<>();
+                AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                         waterConnectionDetails.getConnection().getPropertyIdentifier(),
                         PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ACTIVE);
-                final String[] doorNo = assessmentDetails.getPropertyAddress().split(",");
-                final StringBuilder ownerName = new StringBuilder();
+                String[] doorNo = assessmentDetails.getPropertyAddress().split(",");
+                StringBuilder ownerName = new StringBuilder();
 
-                for (final OwnerName names : assessmentDetails.getOwnerNames()) {
+                for (OwnerName names : assessmentDetails.getOwnerNames()) {
                     if (assessmentDetails.getOwnerNames().size() > 1)
                         ownerName.append(", ");
                     ownerName.append(names.getOwnerName());
                 }
 
-                reportParams.put("applicationType",
-                        WordUtils.capitalize(waterConnectionDetails.getApplicationType().getName()));
+                reportParams.put("applicationType", WordUtils.capitalize(waterConnectionDetails.getApplicationType().getName()));
                 reportParams.put("cityName", session.getAttribute("citymunicipalityname"));
                 reportParams.put("district", session.getAttribute("districtName"));
-                reportParams.put("estimationDate",
-                        toDefaultDateFormat(waterConnectionDetails.getFieldInspectionDetails().getCreatedDate()));
+                reportParams.put("estimationDate", toDefaultDateFormat(waterConnectionDetails.getFieldInspectionDetails().getCreatedDate()));
                 reportParams.put("estimationNumber", waterConnectionDetails.getEstimationNumber());
                 reportParams.put("donationCharges", waterConnectionDetails.getDonationCharges());
                 final double totalCharges = waterConnectionDetails.getDonationCharges()
@@ -173,8 +166,16 @@ public class EstimationNoticeController {
                         waterConnectionDetails.getFieldInspectionDetails().getRoadCuttingCharges());
                 reportParams.put("superVisionCharges",
                         waterConnectionDetails.getFieldInspectionDetails().getSupervisionCharges());
-                reportInput = new ReportRequest(ESTIMATION_NOTICE, waterConnectionDetails, reportParams);
-                reportOutput = reportService.createReport(reportInput);
+                if (waterConnectionDetails.getConnectionType().equals(NON_METERED)) {
+                    reportParams.put("estimationDetails", waterConnectionDetails.getEstimationDetails());
+                    reportParams.put("designation", waterConnectionDetails.getState().getOwnerPosition().getDeptDesig().getDesignation().getName());
+                    reportOutput = reportService.createReport(new ReportRequest("wtr_estimation_notice_for_non_metered",
+                            waterConnectionDetails.getEstimationDetails(), reportParams));
+                } else {
+                    reportOutput = reportService.createReport(new ReportRequest(ESTIMATION_NOTICE,
+                            waterConnectionDetails.getEstimationDetails(), reportParams));
+                }
+
                 reportOutput.setReportFormat(ReportFormat.PDF);
                 reportOutput.setReportName(waterConnectionDetails.getEstimationNumber());
             }
@@ -183,10 +184,9 @@ public class EstimationNoticeController {
 
     @GetMapping(value = "/estimationNotice/view/{applicationNumber}", produces = APPLICATION_PDF_VALUE)
     @ResponseBody
-    public ResponseEntity<InputStreamResource> viewEstimationNotice(@PathVariable final String applicationNumber,
-            final HttpSession session) {
-        final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                .findByApplicationNumber(applicationNumber);
+    public ResponseEntity<InputStreamResource> viewEstimationNotice(@PathVariable String applicationNumber,
+                                                                    HttpSession session) {
+        WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumber(applicationNumber);
         return generateEstimationReport(waterConnectionDetails, session);
     }
 
