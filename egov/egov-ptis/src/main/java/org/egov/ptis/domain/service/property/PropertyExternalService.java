@@ -501,11 +501,10 @@ public class PropertyExternalService {
             basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
         else if (StringUtils.isNotBlank(oldAssessmentNo)) {
             basicProperties = (List<BasicProperty>) basicPropertyDAO.getBasicPropertyByOldMunipalNo(oldAssessmentNo);
-            if (basicProperties.size() == 1)
+            if (!basicProperties.isEmpty() && basicProperties.size() == 1)
                 basicProperty = basicProperties.get(0);
         }
-
-        if (!basicProperties.isEmpty()) {
+        if (!basicProperties.isEmpty() && basicProperties.size() > 1) {
             propertyTaxDetails = new PropertyTaxDetails();
             errorDetails.setErrorCode(PROPERTY_DUPLICATE_ERR_CODE);
             errorDetails.setErrorMessage(PROPERTY_DUPLICATE_ERR_MSG + oldAssessmentNo);
