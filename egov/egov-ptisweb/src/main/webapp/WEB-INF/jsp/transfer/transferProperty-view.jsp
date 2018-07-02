@@ -218,7 +218,7 @@
 										<th class="bluebgheadtd"><s:text name="Guardian" /></th>
 									</tr>
 									<s:if
-						test="%{!@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_DIGITAL_SIGNATURE_PENDING.equalsIgnoreCase(state.nextaction)}">
+						test="%{!@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_DIGITAL_SIGNATURE_PENDING.equalsIgnoreCase(state.nextAction)}">
 									<s:iterator value="basicproperty.propertyOwnerInfo"
 										status="status">
 										<tr>
@@ -316,7 +316,7 @@
 										<th class="bluebgheadtd"><s:text name="Guardian" /></th>
 									</tr>
 									<s:if
-						test="%{!@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_DIGITAL_SIGNATURE_PENDING.equalsIgnoreCase(state.nextaction)}">
+						test="%{!@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_DIGITAL_SIGNATURE_PENDING.equalsIgnoreCase(state.nextAction)}">
 									<s:iterator value="transfereeInfosProxy" status="ownerStatus">
 										<tr>
 											<td class="blueborderfortd" align="center"><span
