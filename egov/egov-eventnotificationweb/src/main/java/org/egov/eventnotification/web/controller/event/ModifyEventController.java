@@ -47,15 +47,15 @@
  */
 package org.egov.eventnotification.web.controller.event;
 
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.EVENT;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.EVENT_LIST;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.EVENT_STATUS_LIST;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.HOUR_LIST;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MESSAGE;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MINUTE_LIST;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MODE;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MODE_UPDATE;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MODE_VIEW;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.EVENT;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.EVENT_LIST;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.EVENT_STATUS_LIST;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.HOUR_LIST;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.MESSAGE;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.MINUTE_LIST;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.MODE;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.MODE_UPDATE;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.MODE_VIEW;
 
 import java.util.Arrays;
 
@@ -65,7 +65,7 @@ import org.egov.eventnotification.entity.Event;
 import org.egov.eventnotification.entity.enums.EventStatus;
 import org.egov.eventnotification.service.EventService;
 import org.egov.eventnotification.service.EventTypeService;
-import org.egov.eventnotification.utils.EventnotificationUtil;
+import org.egov.eventnotification.utils.EventNotificationUtil;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -83,7 +83,7 @@ public class ModifyEventController {
     private EventService eventService;
 
     @Autowired
-    private EventnotificationUtil eventnotificationUtil;
+    private EventNotificationUtil eventNotificationUtil;
 
     @Autowired
     private EventTypeService eventTypeService;
@@ -95,8 +95,8 @@ public class ModifyEventController {
 
     @GetMapping("/event/update/{id}")
     public String update(@ModelAttribute Event event, Model model) {
-        model.addAttribute(HOUR_LIST, eventnotificationUtil.getAllHour());
-        model.addAttribute(MINUTE_LIST, eventnotificationUtil.getAllMinute());
+        model.addAttribute(HOUR_LIST, eventNotificationUtil.getAllHour());
+        model.addAttribute(MINUTE_LIST, eventNotificationUtil.getAllMinute());
         model.addAttribute(EVENT_LIST, eventTypeService.getAllEventType());
         model.addAttribute(MODE, MODE_UPDATE);
         model.addAttribute(EVENT_STATUS_LIST, Arrays.asList(EventStatus.values()));
@@ -108,8 +108,8 @@ public class ModifyEventController {
             BindingResult errors, Model model) {
 
         if (errors.hasErrors()) {
-            model.addAttribute(HOUR_LIST, eventnotificationUtil.getAllHour());
-            model.addAttribute(MINUTE_LIST, eventnotificationUtil.getAllMinute());
+            model.addAttribute(HOUR_LIST, eventNotificationUtil.getAllHour());
+            model.addAttribute(MINUTE_LIST, eventNotificationUtil.getAllMinute());
             model.addAttribute(EVENT_LIST, eventTypeService.getAllEventType());
             model.addAttribute(MODE, MODE_UPDATE);
             model.addAttribute(EVENT_STATUS_LIST, Arrays.asList(EventStatus.values()));

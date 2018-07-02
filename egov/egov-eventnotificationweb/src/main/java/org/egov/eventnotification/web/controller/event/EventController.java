@@ -47,23 +47,23 @@
  */
 package org.egov.eventnotification.web.controller.event;
 
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.ACTIVE;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.EVENT;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.EVENT_LIST;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.EVENT_TYPE_LIST;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.HOUR_LIST;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MESSAGE;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MINUTE_LIST;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MODE;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MODE_CREATE;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MODE_VIEW;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.ACTIVE;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.EVENT;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.EVENT_LIST;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.EVENT_TYPE_LIST;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.HOUR_LIST;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.MESSAGE;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.MINUTE_LIST;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.MODE;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.MODE_CREATE;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.MODE_VIEW;
 
 import javax.validation.Valid;
 
 import org.egov.eventnotification.entity.Event;
 import org.egov.eventnotification.service.EventService;
 import org.egov.eventnotification.service.EventTypeService;
-import org.egov.eventnotification.utils.EventnotificationUtil;
+import org.egov.eventnotification.utils.EventNotificationUtil;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -87,7 +87,7 @@ public class EventController {
     private EventService eventService;
 
     @Autowired
-    private EventnotificationUtil eventnotificationUtil;
+    private EventNotificationUtil eventNotificationUtil;
 
     @Autowired
     private EventTypeService eventTypeService;
@@ -111,8 +111,8 @@ public class EventController {
     @GetMapping("create/")
     public String save(@ModelAttribute Event event, Model model) {
         model.addAttribute(EVENT, event);
-        model.addAttribute(HOUR_LIST, eventnotificationUtil.getAllHour());
-        model.addAttribute(MINUTE_LIST, eventnotificationUtil.getAllMinute());
+        model.addAttribute(HOUR_LIST, eventNotificationUtil.getAllHour());
+        model.addAttribute(MINUTE_LIST, eventNotificationUtil.getAllMinute());
         model.addAttribute(EVENT_LIST, eventTypeService.getAllEventType());
         model.addAttribute(MODE, MODE_CREATE);
         return "event-create";
@@ -124,8 +124,8 @@ public class EventController {
 
         if (errors.hasErrors()) {
             model.addAttribute(MODE, MODE_CREATE);
-            model.addAttribute(HOUR_LIST, eventnotificationUtil.getAllHour());
-            model.addAttribute(MINUTE_LIST, eventnotificationUtil.getAllMinute());
+            model.addAttribute(HOUR_LIST, eventNotificationUtil.getAllHour());
+            model.addAttribute(MINUTE_LIST, eventNotificationUtil.getAllMinute());
             model.addAttribute(EVENT_LIST, eventTypeService.getAllEventType());
             model.addAttribute(MESSAGE, "msg.event.create.error");
             return "event-create";

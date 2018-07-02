@@ -47,13 +47,13 @@
  */
 package org.egov.api.adapter;
 
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.CATEGORY;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.DRAFT_ID;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.DRAFT_NOTIFICATION_TYPE;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.EVENT_ID;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.MODULE;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.NAME;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.NOTIFICATION_MESSAGE;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.CATEGORY;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.DRAFT_ID;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.DRAFT_NOTIFICATION_TYPE;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.EVENT_ID;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.MODULE;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.NAME;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.NOTIFICATION_MESSAGE;
 
 import java.lang.reflect.Type;
 

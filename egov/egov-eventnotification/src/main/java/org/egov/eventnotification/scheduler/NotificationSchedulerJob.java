@@ -48,13 +48,13 @@
 package org.egov.eventnotification.scheduler;
 
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.BMA_INTERFACE_SUFFIX;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.BUSINESS_NOTIFICATION_TYPE;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.CONTEXTURL;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.PROPERTY_MODULE;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.SCHEDULEID;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.SCHEDULE_COMPLETE;
-import static org.egov.eventnotification.utils.constants.EventnotificationConstants.WATER_CHARGES_MODULE;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.BMA_INTERFACE_SUFFIX;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.BUSINESS_NOTIFICATION_TYPE;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.CONTEXTURL;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.PROPERTY_MODULE;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.SCHEDULEID;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.SCHEDULE_COMPLETE;
+import static org.egov.eventnotification.utils.constants.EventNotificationConstants.WATER_CHARGES_MODULE;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -63,11 +63,11 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.egov.eventnotification.entity.Schedule;
-import org.egov.eventnotification.entity.contracts.EventnotificationProperties;
+import org.egov.eventnotification.entity.contracts.EventNotificationProperties;
 import org.egov.eventnotification.entity.contracts.UserTaxInformation;
 import org.egov.eventnotification.integration.bmi.BuildMessageAdapter;
 import org.egov.eventnotification.service.ScheduleService;
-import org.egov.eventnotification.utils.EventnotificationUtil;
+import org.egov.eventnotification.utils.EventNotificationUtil;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.CityPreferences;
 import org.egov.infra.admin.master.entity.User;
@@ -104,10 +104,10 @@ public class NotificationSchedulerJob extends QuartzJobBean {
     private ScheduleService scheduleService;
 
     @Autowired
-    private EventnotificationUtil eventnotificationUtil;
+    private EventNotificationUtil eventNotificationUtil;
 
     @Autowired
-    private EventnotificationProperties appProperties;
+    private EventNotificationProperties appProperties;
 
     @Resource(name = "cities")
     protected List<String> cities;
@@ -228,7 +228,7 @@ public class NotificationSchedulerJob extends QuartzJobBean {
     }
 
     protected BuildMessageAdapter getBuildMessageAdapter(final String serviceCode) {
-        return (BuildMessageAdapter) eventnotificationUtil.getBean(serviceCode
+        return (BuildMessageAdapter) eventNotificationUtil.getBean(serviceCode
                 + BMA_INTERFACE_SUFFIX);
     }
 

@@ -47,7 +47,7 @@
  */
 package org.egov.eventnotification.utils.constants;
 
-public final class EventnotificationConstants {
+public final class EventNotificationConstants {
 
     public static final String MODULE_NAME = "Eventnotification";
 
@@ -189,7 +189,7 @@ public final class EventnotificationConstants {
     public static final String EVENTTYPE = "eventType";
     public static final String USER_INTERESTED = "userInterested";
 
-    private EventnotificationConstants() {
+    private EventNotificationConstants() {
 
     }
 }
