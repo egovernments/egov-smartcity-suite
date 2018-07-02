@@ -68,6 +68,27 @@
 			buttorOperatorPayTax.disabled = (btnCheckbox.checked) ? false
 					: true;
 		}
+		
+		maskAadharAndMobileNumber();
+	}
+	
+	function maskAadharAndMobileNumber(){
+		jQuery("#nameTable tr").find('td').each(function() {
+			if (jQuery(this).attr('id') == 'aadharNumView'){
+				var aadharNo = jQuery(this).find('span.bold').text();
+				aadharNo = jQuery.trim(aadharNo.replace(/[\t\n]+/g, ' '));
+				if(aadharNo != '' && aadharNo != 'N/A'){
+				    jQuery(this).find('span.bold').html(aadharNo.replace(aadharNo.substr(0, 8),"********"));
+				}
+			}
+			if (jQuery(this).attr('id') == 'mobileNumView'){
+				var mobileNo = jQuery(this).find('span.bold').text();
+				mobileNo = jQuery.trim(mobileNo.replace(/[\t\n]+/g, ' '));
+				if(mobileNo != ''){
+					jQuery(this).find('span.bold').html(mobileNo.replace(mobileNo.substr(0, 8),"********"));
+				}
+			}
+		});
 	}
 
 	function switchPayTaxButton(ensureCheckbox) {

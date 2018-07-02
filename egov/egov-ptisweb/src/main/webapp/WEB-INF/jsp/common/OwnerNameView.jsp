@@ -60,7 +60,7 @@
    
     <s:iterator value="basicProperty.propertyOwnerInfo" status="ownerStatus">
 			<tr id="nameRow">
-        		<td class="blueborderfortd" align="center">
+        		<td class="blueborderfortd" align="center" id="aadharNumView">
         			<span class="bold">
 	        			<s:if test='%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.aadhaarNumber == ""}'>
 	        				N/A
@@ -70,7 +70,7 @@
 	        			</s:else>
 	        		</span>
         		</td>
-        		<td class="blueborderfortd" align="center">
+        		<td class="blueborderfortd" align="center" id="mobileNumView">
         		   <span class="bold"><s:property value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.mobileNumber}" /></span>
         		</td>
         		<td class="blueborderfortd" align="center">
