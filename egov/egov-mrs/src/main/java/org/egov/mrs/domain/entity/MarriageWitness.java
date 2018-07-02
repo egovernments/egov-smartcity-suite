@@ -63,9 +63,8 @@ import javax.validation.constraints.NotNull;
 @SequenceGenerator(name = MarriageWitness.SEQ_WITNESS, sequenceName = MarriageWitness.SEQ_WITNESS, allocationSize = 1)
 public class MarriageWitness extends AbstractAuditable {
 
-    private static final long serialVersionUID = 8963626310849299317L;
     public static final String SEQ_WITNESS = "SEQ_EGMRS_WITNESS";
-
+    private static final long serialVersionUID = 8963626310849299317L;
     @Id
     @GeneratedValue(generator = SEQ_WITNESS, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -99,7 +98,9 @@ public class MarriageWitness extends AbstractAuditable {
 
     @SafeHtml
     @Length(max = 20)
+    @Column(insertable = false, updatable = false)
     private String aadhaarNo;
+
     @Transient
     private byte[] signature;
     @Transient

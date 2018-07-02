@@ -91,14 +91,14 @@ public class Licensee extends AbstractAuditable {
 
     @NotBlank
     @SafeHtml
-    @Length(min = 10 , max = 10)
+    @Length(min = 10, max = 10)
     @Column(name = "MOBILE_PHONENUMBER")
     @Pattern(regexp = Constants.MOBILE_NUM)
     private String mobilePhoneNumber;
 
     @SafeHtml
     @Length(max = 16)
-    @Column(name = "UNIQUEID")
+    @Column(name = "UNIQUEID", insertable = false, updatable = false)
     private String uid;
 
     @NotBlank
