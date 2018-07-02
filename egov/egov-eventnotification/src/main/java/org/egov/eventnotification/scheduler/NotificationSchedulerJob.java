@@ -47,6 +47,7 @@
  */
 package org.egov.eventnotification.scheduler;
 
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.egov.eventnotification.utils.constants.EventnotificationConstants.BMA_INTERFACE_SUFFIX;
 import static org.egov.eventnotification.utils.constants.EventnotificationConstants.BUSINESS_NOTIFICATION_TYPE;
 import static org.egov.eventnotification.utils.constants.EventnotificationConstants.CONTEXTURL;
@@ -59,15 +60,20 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.egov.eventnotification.entity.Schedule;
 import org.egov.eventnotification.entity.contracts.EventnotificationProperties;
 import org.egov.eventnotification.entity.contracts.UserTaxInformation;
 import org.egov.eventnotification.integration.bmi.BuildMessageAdapter;
 import org.egov.eventnotification.service.ScheduleService;
 import org.egov.eventnotification.utils.EventnotificationUtil;
+import org.egov.infra.admin.master.entity.City;
+import org.egov.infra.admin.master.entity.CityPreferences;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.pushbox.entity.contracts.MessageContent;
 import org.egov.pushbox.entity.contracts.MessageContentDetails;
 import org.egov.pushbox.service.PushNotificationService;
@@ -78,76 +84,80 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.quartz.QuartzJobBean;
 
 /**
  * @author somvit
  *
  */
 @DisallowConcurrentExecution
-public class NotificationSchedulerJob extends AbstractQuartzJob {
-
-    /**
-     *
-     */
-    private static final long serialVersionUID = -7038270977924187739L;
+public class NotificationSchedulerJob extends QuartzJobBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationSchedulerJob.class);
 
     @Autowired
-    private transient UserService userService;
+    private PushNotificationService pushNotificationService;
 
     @Autowired
-    private transient PushNotificationService pushNotificationService;
+    private ScheduleService scheduleService;
 
     @Autowired
-    private transient ScheduleService scheduleService;
+    private EventnotificationUtil eventnotificationUtil;
 
     @Autowired
-    private transient EventnotificationUtil eventnotificationUtil;
+    private EventnotificationProperties appProperties;
+
+    @Resource(name = "cities")
+    protected List<String> cities;
 
     @Autowired
-    private transient EventnotificationProperties appProperties;
+    private CityService cityService;
 
-    private Long scheduleId = null;
-    private String contextURL = null;
+    @Autowired
+    private UserService userService;
+
+    private String userName;
+
+    protected String moduleName;
+
+    private boolean cityDataRequired;
 
     @Override
-    protected void executeInternal(final JobExecutionContext context) {
-        synchronized (this) {
-            JobDataMap dataMap = context.getJobDetail().getJobDataMap();
-            scheduleId = Long.parseLong(String.valueOf(dataMap.get(SCHEDULEID)));
-            contextURL = String.valueOf(dataMap.get(CONTEXTURL));
-            try {
-                super.executeInternal(context);
-            } catch (JobExecutionException e) {
-                LOGGER.error("Unable to complete execution Scheduler ", e);
-            }
-        }
-    }
-
-    @Override
-    public void executeJob() {
+    protected void executeInternal(final JobExecutionContext jobCtx) throws JobExecutionException {
+        JobDataMap dataMap = jobCtx.getJobDetail().getJobDataMap();
         try {
-            Schedule notificationSchedule = scheduleService.getScheduleById(scheduleId);
+            MDC.put("appname", String.format("%s-%s", moduleName, jobCtx.getJobDetail().getKey().getName()));
+            for (String tenant : cities) {
+                MDC.put("ulbcode", tenant);
 
-            executeBusiness(notificationSchedule);
+                prepareThreadLocal(tenant);
 
-            notificationSchedule.setStatus(SCHEDULE_COMPLETE);
-            scheduleService.updateScheduleStatus(notificationSchedule);
-        } catch (RuntimeException e) {
-            // Ignoring exception to avoid quartz to continue with other cities
-            LOGGER.error("Error occurred while executing event notification schedule job.", e);
+                Long scheduleId = Long.parseLong(String.valueOf(dataMap.get(SCHEDULEID)));
+                Schedule notificationSchedule = scheduleService.getScheduleById(scheduleId);
+
+                executeBusiness(notificationSchedule, String.valueOf(dataMap.get(CONTEXTURL)));
+
+                notificationSchedule.setStatus(SCHEDULE_COMPLETE);
+                scheduleService.updateScheduleStatus(notificationSchedule);
+            }
+        } catch (Exception ex) {
+            LOGGER.error("Unable to complete execution Scheduler ", ex);
+            throw new JobExecutionException("Unable to execute batch job Scheduler", ex, false);
+        } finally {
+            ApplicationThreadLocals.clearValues();
+            MDC.clear();
         }
     }
 
     /**
      * This method check if it is BUSINESS type notification then one object will be created for BuildMessageAdapter. Then based
-     * on the specific module call the rest api. Which will return the user information. Then it will iterate and build a message
+     * on the specific module call the rest api. Which will return the data. Then it will iterate and build a message
      * and send it to pushbox to send the notification.
      * @param notificationSchedule
      */
-    private void executeBusiness(Schedule notificationSchedule) {
+    private void executeBusiness(Schedule notificationSchedule, String contextURL) {
 
         if (notificationSchedule.getDraftType().getName().equalsIgnoreCase(BUSINESS_NOTIFICATION_TYPE)) {
             List<UserTaxInformation> userTaxInfoList = null;
@@ -220,5 +230,33 @@ public class NotificationSchedulerJob extends AbstractQuartzJob {
     protected BuildMessageAdapter getBuildMessageAdapter(final String serviceCode) {
         return (BuildMessageAdapter) eventnotificationUtil.getBean(serviceCode
                 + BMA_INTERFACE_SUFFIX);
+    }
+
+    public void setModuleName(final String moduleName) {
+        this.moduleName = moduleName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = defaultIfBlank(userName, "system");
+    }
+
+    public void setCityDataRequired(boolean cityDataRequired) {
+        this.cityDataRequired = cityDataRequired;
+    }
+
+    private void prepareThreadLocal(String tenant) {
+        ApplicationThreadLocals.setTenantID(tenant);
+        ApplicationThreadLocals.setUserId(userService.getUserByUsername(userName).getId());
+        if (cityDataRequired) {
+            City city = cityService.findAll().get(0);
+            ApplicationThreadLocals.setCityCode(city.getCode());
+            ApplicationThreadLocals.setCityName(city.getName());
+            CityPreferences cityPreferences = city.getPreferences();
+            if (cityPreferences != null)
+                ApplicationThreadLocals.setMunicipalityName(cityPreferences.getMunicipalityName());
+            else
+                LOGGER.warn("City preferences not set for {}", city.getName());
+            ApplicationThreadLocals.setDomainName(city.getDomainURL());
+        }
     }
 }
