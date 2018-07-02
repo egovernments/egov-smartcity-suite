@@ -153,8 +153,8 @@ public class NotificationSchedulerJob extends QuartzJobBean {
 
     /**
      * This method check if it is BUSINESS type notification then one object will be created for BuildMessageAdapter. Then based
-     * on the specific module call the rest api. Which will return the data. Then it will iterate and build a message
-     * and send it to pushbox to send the notification.
+     * on the specific module call the rest api. Which will return the data. Then it will iterate and build a message and send it
+     * to pushbox to send the notification.
      * @param notificationSchedule
      */
     private void executeBusiness(Schedule notificationSchedule, String contextURL) {
@@ -252,10 +252,10 @@ public class NotificationSchedulerJob extends QuartzJobBean {
             ApplicationThreadLocals.setCityCode(city.getCode());
             ApplicationThreadLocals.setCityName(city.getName());
             CityPreferences cityPreferences = city.getPreferences();
-            if (cityPreferences != null)
-                ApplicationThreadLocals.setMunicipalityName(cityPreferences.getMunicipalityName());
-            else
+            if (cityPreferences == null)
                 LOGGER.warn("City preferences not set for {}", city.getName());
+            else
+                ApplicationThreadLocals.setMunicipalityName(cityPreferences.getMunicipalityName());
             ApplicationThreadLocals.setDomainName(city.getDomainURL());
         }
     }
