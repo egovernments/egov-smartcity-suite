@@ -734,7 +734,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                         Arrays.asList(JUNIOR_ASSISTANT + "/" + SENIOR_ASSISTANT)));
             return mode.equalsIgnoreCase(EDIT) ? RESULT_NEW : RESULT_VIEW;
         }
-        else if (propService.getWorkflowInitiator(property) == null) {
+        else if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)
+                && propService.getWorkflowInitiator(property) == null) {
             addActionError(getText(REJECT_ERROR_INITIATOR_INACTIVE,
                     Arrays.asList(JUNIOR_ASSISTANT + "/" + SENIOR_ASSISTANT)));
             return mode.equalsIgnoreCase(EDIT) ? RESULT_NEW : RESULT_VIEW;
