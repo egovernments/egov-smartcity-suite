@@ -198,7 +198,7 @@ public class ConnectionDemandService {
     private WaterTaxUtils waterTaxUtils;
 
     @Autowired
-    private RegulariseDemandGenerationImpl regulariseConnDemandGenerationImpl;
+    private RegulariseDemandGenerationImpl regulariseDemandGenImpl;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -935,7 +935,7 @@ public class ConnectionDemandService {
         if (REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
                 && APPLICATION_STATUS_CREATED.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
                 && ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType()))
-            regulariseConnDemandGenerationImpl.generateDemandForRegulariseConnection(waterConnectionDetails);
+            regulariseDemandGenImpl.generateDemandForRegulariseConnection(waterConnectionDetails);
     }
 
     private void populateEstimationDetails(final WaterConnectionDetails waterConnectionDetails) {
@@ -952,7 +952,7 @@ public class ConnectionDemandService {
     }
 
     private boolean validEstimationDetail(final ConnectionEstimationDetails connectionEstimationDetails) {
-        return connectionEstimationDetails != null && connectionEstimationDetails.getItemDescription() != null ? true : false;
+        return connectionEstimationDetails == null || connectionEstimationDetails.getItemDescription() == null ? false : true;
     }
 
 }
