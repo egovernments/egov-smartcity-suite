@@ -282,7 +282,6 @@ function validateEstimationDetailsOnSubmit(){
 	var tbl=document.getElementById("estimateDetails");
     var lastRow = (tbl.rows.length)-2;
     var material,quantity,uom,rate,amount;
-    var mandatoryValEntered=false, mandatoryValNotEntered=false; 
     for(var i=1;i<=lastRow;i++){
     	material=getControlInBranch(tbl.rows[i],'estimationDetailsForUpdate'+(i-1)+'itemDescription').value; 
         quantity=getControlInBranch(tbl.rows[i],'estimationDetailsForUpdate'+(i-1)+'quantity').value;
@@ -290,23 +289,12 @@ function validateEstimationDetailsOnSubmit(){
         rate=getControlInBranch(tbl.rows[i],'estimationDetailsForUpdate'+(i-1)+'unitRate').value; 
         amount=getControlInBranch(tbl.rows[i],'estimationDetailsForUpdate'+(i-1)+'amount').value;
      
-        if(material!='' ||  uom!='' ||
-        		(quantity!='' && quantity!=0) || 
-        		(rate!='' && rate!=0) ||
-        	    (amount!='' && amount!=0)) { 
-        	mandatoryValEntered = true;
-        } 
         if(material=='' ||  uom=='' ||
         		(quantity=='' || quantity==0) || 
-        		(rate=='' || rate==0) ||
-        	    (amount=='' || amount==0)) { 
-        	 mandatoryValNotEntered = true;
+        		(rate=='' || rate==0)) { 
+        	bootbox.alert("Enter all mandatory \"Estimation Details\" for row "+(i)+".");
+        	return false;
         } 
-        
-    	if(mandatoryValEntered==true && mandatoryValNotEntered==true){
-    		bootbox.alert("Enter all mandatory \"Estimation Details\" for row "+(i)+".");
-    		return false; 
-    	}
     }
     return true;
 } 
