@@ -820,7 +820,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                     emailBody = getText("msg.grpreject.email", args);
 
                 }
-            } else if (propertyState.getValue().endsWith(WF_STATE_COMMISSIONER_APPROVED)) {
+            } else if (propertyState.getNextAction().equalsIgnoreCase(WF_STATE_DIGITAL_SIGNATURE_PENDING)) {
                 args.add(property.getBasicProperty().getUpicNo());
                 final Map<String, Installment> installmentMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
                 final Installment installmentFirstHalf = installmentMap.get(CURRENTYEAR_FIRST_HALF);
