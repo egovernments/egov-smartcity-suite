@@ -46,7 +46,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
   -->
-
+<!-- Created with Jaspersoft Studio version 6.5.1.final using JasperReports Library version 6.5.1  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="wtr_sanction_order_notice" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6865e4f4-48af-4398-ab97-f36e24b17ff4">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -761,8 +761,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{houseNo}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="24" y="271" width="500" height="48" uuid="34b68b60-bbf4-4437-8efa-aaef3e0e1a8e"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="24" y="271" width="500" height="48" isPrintWhenDetailOverflows="true" uuid="34b68b60-bbf4-4437-8efa-aaef3e0e1a8e"/>
 				<textFieldExpression><![CDATA["In the reference 1st read above, you have submitted an application seeking water tap connection in the premises bearing Assessment No. "+$P{propertyID}+", D.No "+($P{houseNo}.equals(null) || $P{houseNo}.isEmpty()?"NA":$P{houseNo} )+", locality "+($P{locality}.equals(null) || $P{locality}.isEmpty() ? "NA": $P{locality})+".  As per your request and in pursuance of the G.O. 2nd read above, an estimate was prepared and served on you vide notice 3rd read above.  Therefore, Water Tap Connection (HSC) is hereby sanctioned, pending receipt of the following amount in lump-sum for BPL category and in one installment or in eight equal half-yearly installments for Non-BPL category, commencing from "+$P{currentInstallment}+", with pipesize "+$P{pipeSize}+" inches on Rs. "+$P{rate}+"/month to the above premises as per the consent agreement already submitted by you:-"]]></textFieldExpression>
 			</textField>
 			<staticText>

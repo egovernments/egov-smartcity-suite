@@ -46,11 +46,10 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
   -->
-<!-- Created with Jaspersoft Studio version 6.5.1.final using JasperReports Library version 6.5.1  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
-	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="187"/>
+	<property name="ireport.y" value="575"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<style name="Table_TH" mode="Opaque" backcolor="#F0F8FF">
@@ -80,6 +79,10 @@
 			<rightPen lineWidth="0.5" lineColor="#000000"/>
 		</box>
 	</style>
+	<style name="Title" fontName="Arial" fontSize="26" isBold="true"/>
+	<style name="SubTitle" forecolor="#666666" fontName="Arial" fontSize="18"/>
+	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
+	<style name="Detail" fontName="Arial" fontSize="12"/>
 	<parameter name="municipalityName" class="java.lang.String"/>
 	<parameter name="cityName" class="java.lang.String"/>
 	<parameter name="district" class="java.lang.String"/>
@@ -195,7 +198,7 @@
 				<textFieldExpression><![CDATA["        The ULB has come forward and wants to give an opportunity to you to regularize the same in terms of Govt. Memo cited.  Therefore you are requested to pay the following amount at the Municipal Treasury by way of Cash or DD and get the said water tap connection regularized within 3 days from the date of service of this notice failing which the tap connection will be disconnected without giving any further notice, besides initiating legal proceedings against you, as per the relevant Municipal Acts."]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="121">
+		<band height="279">
 			<staticText>
 				<reportElement x="1" y="2" width="109" height="76" uuid="30301dd1-b920-4288-916c-6ab518d6fe68"/>
 				<box topPadding="5" leftPadding="2" bottomPadding="1" rightPadding="1">
@@ -328,14 +331,14 @@
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="113" y="80" width="206" height="30" uuid="06ad246b-83be-4e19-9aa9-4b5e0bd6d703"/>
-				<textElement textAlignment="Justified" verticalAlignment="Justified">
+				<textElement textAlignment="Justified">
 					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{revenueWard}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="422" y="80" width="125" height="30" uuid="63232aa0-03ce-43bd-b650-33985b7ed9e9"/>
-				<textElement textAlignment="Justified" verticalAlignment="Justified">
+				<textElement textAlignment="Justified">
 					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{locality}]]></textFieldExpression>
@@ -375,35 +378,240 @@
 				</textElement>
 				<text><![CDATA[]]></text>
 			</staticText>
+			<staticText>
+				<reportElement x="66" y="148" width="376" height="20" uuid="3dd2232d-abba-41ac-a420-7ded8ca11b69"/>
+				<box leftPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<text><![CDATA[Donation]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="15" y="228" width="527" height="20" uuid="6548d842-ff5d-47f0-8aea-ed5fced865b8"/>
+				<box leftPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(Amount In Words) : "+$P{amountInWords}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="15" y="148" width="51" height="20" uuid="2f06d1f2-b510-41e6-b08f-c54d3d8e9cb4"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<text><![CDATA[01.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="66" y="208" width="376" height="20" uuid="0ed9b1a3-ed7b-4f55-8f13-48dc61a0f14e"/>
+				<box leftPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<text><![CDATA[Grand Total]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="442" y="188" width="100" height="20" uuid="c372c6e2-7007-4ebc-b8f3-5cc6511037c2"/>
+				<box rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{waterCharges}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="66" y="188" width="376" height="20" uuid="e547ee53-df4d-4ca0-90eb-722c32df56c7"/>
+				<box leftPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Monthly Water Charges from "+ $P{fromInstallment} +" to "+$P{toInstallment}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="442" y="168" width="100" height="20" uuid="e6f07da2-76ba-4a7e-a4c0-9e5ca4d57172"/>
+				<box rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{penaltyCharges}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="66" y="128" width="376" height="20" uuid="5da69000-a5b2-4c8e-8fe4-03e4c16f80e8"/>
+				<box leftPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold"/>
+				</textElement>
+				<text><![CDATA[Particulars]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="15" y="168" width="51" height="20" uuid="ba095cd4-f9d6-4a9b-993b-73b26ba3aeba"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<text><![CDATA[02.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="15" y="188" width="51" height="20" uuid="29f2ff66-4cbf-4add-90c8-f1f2ce93b786"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<text><![CDATA[03.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="442" y="128" width="100" height="20" uuid="5583201d-0505-4062-a3bb-aef0e6066f94"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold"/>
+				</textElement>
+				<text><![CDATA[Amount]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="442" y="208" width="100" height="20" uuid="ab1a862d-b8ed-48a5-b987-b6263d2419b5"/>
+				<box rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{totalCharges}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="15" y="128" width="51" height="20" uuid="5c921f39-33c8-4b84-9bb0-d28237326fd6"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold"/>
+				</textElement>
+				<text><![CDATA[SI No.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="66" y="168" width="376" height="20" uuid="fb714855-d4dc-48dd-83cd-210ebc2d1361"/>
+				<box leftPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<text><![CDATA[Penalty]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="15" y="208" width="51" height="20" uuid="9b52a9e5-ce06-4d68-b717-9c8e32d90db0"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<text><![CDATA[04.]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="442" y="148" width="100" height="20" uuid="9fa449e1-289a-4d88-8c61-9bb0dd27c42c"/>
+				<box rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{donationCharges}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="15" y="248" width="527" height="20" uuid="4565040f-5db0-496d-bd64-8758bbf78bd6"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Times New Roman" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(Note:  If paid through DD, two separate DDs shall be drawn – One DD for charges from Sl. No. 1 to 2 and second DD for Sl. No. 3)"]]></textFieldExpression>
+			</textField>
 		</band>
-		<band height="72">
+		<band>
 			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
-			<subreport>
-				<reportElement positionType="Float" isPrintRepeatedValues="false" x="0" y="0" width="555" height="72" uuid="58895482-15af-4514-8105-063ed3f0955e"/>
-				<subreportParameter name="donationCharges">
-					<subreportParameterExpression><![CDATA[$P{donationCharges}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="penaltyCharges">
-					<subreportParameterExpression><![CDATA[$P{penaltyCharges}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="waterCharges">
-					<subreportParameterExpression><![CDATA[$P{waterCharges}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="totalCharges">
-					<subreportParameterExpression><![CDATA[$P{totalCharges}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="fromInstallment">
-					<subreportParameterExpression><![CDATA[$P{fromInstallment}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="toInstallment">
-					<subreportParameterExpression><![CDATA[$P{toInstallment}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="amountInWords">
-					<subreportParameterExpression><![CDATA[$P{amountInWords}]]></subreportParameterExpression>
-				</subreportParameter>
-				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{estimationDetails}, false)]]></dataSourceExpression>
-				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("regulariseConnectionDemandNoteSubReport.jasper")]]></subreportExpression>
-			</subreport>
 		</band>
 	</detail>
 	<pageFooter>
