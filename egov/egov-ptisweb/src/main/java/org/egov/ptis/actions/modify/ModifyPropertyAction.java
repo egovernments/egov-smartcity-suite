@@ -905,7 +905,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction) && wfInitiator == null)
             if (propertyTaxCommonUtils.isRoOrCommissioner(loggedInUserDesignation))
                 addActionError(getText("reject.error.initiator.inactive", Arrays.asList(REVENUE_INSPECTOR_DESGN)));
-            else if (propService.getWorkflowInitiator(propertyModel) == null)
+            if (propService.getWorkflowInitiator(propertyModel) == null)
                 addActionError(getText("reject.error.initiator.inactive",
                         Arrays.asList(JUNIOR_ASSISTANT + "/" + SENIOR_ASSISTANT)));
         return wfInitiator;
