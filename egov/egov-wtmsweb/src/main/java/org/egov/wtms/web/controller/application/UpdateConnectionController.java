@@ -64,7 +64,6 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.APPROVAL_POSITION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPROVED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPROVEWORKFLOWACTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ASSISTANT_ENGINEER_DESIGN;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.CATEGORY_BPL;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CHANGEOFUSE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSINGCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.COMMISSIONER_DESGN;
@@ -74,7 +73,6 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.FILESTORE_MODULECO
 import static org.egov.wtms.utils.constants.WaterTaxConstants.FILE_STORE_ID_APPLICATION_NUMBER;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.FORWARDWORKFLOWACTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.JUNIOR_ASSISTANT_DESIGN;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.METERED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULETYPE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MUNICIPAL_ENGINEER_DESIGN;
@@ -99,7 +97,6 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_REJECTED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WORKFLOW_ACTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WORKFLOW_CLOSUREADDITIONALRULE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WORKFLOW_RECONNCTIONINITIATED;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.NON_METERED_CODE;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -125,7 +122,6 @@ import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.service.AppConfigService;
 import org.egov.infra.admin.master.service.CityService;
-import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.entity.FileStoreMapper;
@@ -134,13 +130,9 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.wtms.application.entity.ApplicationDocuments;
-import org.egov.wtms.application.entity.ConnectionEstimationDetails;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
-import org.egov.wtms.application.entity.WaterDemandConnection;
 import org.egov.wtms.application.service.ConnectionDemandService;
-import org.egov.wtms.application.service.RegulariseDemandGenerationImpl;
 import org.egov.wtms.application.service.ReportGenerationService;
-import org.egov.wtms.application.service.WaterDemandConnectionService;
 import org.egov.wtms.autonumber.EstimationNumberGenerator;
 import org.egov.wtms.autonumber.WorkOrderNumberGenerator;
 import org.egov.wtms.masters.entity.ConnectionCategory;
@@ -157,7 +149,6 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.SmartValidator;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -186,9 +177,6 @@ public class UpdateConnectionController extends GenericConnectionController {
     private static final String ROAD_CATEGORY_LIST = "roadCategoryList";
     private static final String REJECTED = "Rejected";
     private static final String YES = "Yes";
-    private static final String DEMAND_ISHISTORY_Y = "Y";
-
-    private final DepartmentService departmentService;
 
     @Autowired
     private ConnectionDemandService connectionDemandService;
@@ -218,9 +206,6 @@ public class UpdateConnectionController extends GenericConnectionController {
     private ReportGenerationService reportGenerationService;
 
     @Autowired
-    private WaterDemandConnectionService waterDemandConnectionService;
-
-    @Autowired
     private AppConfigService appConfigService;
 
     @Autowired
@@ -228,15 +213,6 @@ public class UpdateConnectionController extends GenericConnectionController {
 
     @Autowired
     private WaterTaxNumberGenerator waterTaxNumberGenerator;
-
-    @Autowired
-    private RegulariseDemandGenerationImpl regulariseConnDemandGenerationImpl;
-
-    @Autowired
-    public UpdateConnectionController(final DepartmentService departmentService,
-            final ConnectionDemandService connectionDemandService, final SmartValidator validator) {
-        this.departmentService = departmentService;
-    }
 
     @ModelAttribute
     public WaterConnectionDetails getWaterConnectionDetails(@PathVariable final String applicationNumber) {
@@ -406,7 +382,7 @@ public class UpdateConnectionController extends GenericConnectionController {
                 !WF_STATE_CLERK_APPROVED.equals(waterConnectionDetails.getState().getValue())) {
             final AppConfig appConfig = appConfigService.getAppConfigByModuleNameAndKeyName(MODULE_NAME,
                     WaterTaxConstants.PROCEEDWITHOUTDONATIONAMOUNTPAID);
-            if (YES.equals(appConfig.getConfValues().get(0).getValue()))
+            if (YES.equalsIgnoreCase(appConfig.getConfValues().get(0).getValue()))
                 model.addAttribute("proceedWithoutDonation", "true");
         }
         model.addAttribute("hasJuniorOrSeniorAssistantRole",
@@ -556,33 +532,16 @@ public class UpdateConnectionController extends GenericConnectionController {
                 if (FIELDINSPECTION.equalsIgnoreCase(mode)) {
                     final ConnectionCategory connectionCategory = connectionCategoryService
                             .findOne(waterConnectionDetails.getCategory().getId());
-                    if (connectionCategory != null && !connectionCategory.getCode().equalsIgnoreCase(CATEGORY_BPL)
-                            && waterConnectionDetails.getBplCardHolderName() != null)
-                        waterConnectionDetails.setBplCardHolderName(waterConnectionDetails.getBplCardHolderName());
-                    populateEstimationDetails(waterConnectionDetails);
-                    final WaterDemandConnection waterDemandConnection = waterTaxUtils
-                            .getCurrentDemand(waterConnectionDetails);
-                    if (waterConnectionDetails.getConnectionType().toString().equalsIgnoreCase(METERED)
-                            && waterConnectionDetails.getStatus().getCode().equalsIgnoreCase(APPLICATION_STATUS_CREATED))
-                        waterConnectionDetails.setDonationCharges(donationCharges);
-                    if (!waterConnectionDetails.getWaterDemandConnection().isEmpty())
-                        waterConnectionDetails.getWaterDemandConnection().get(0).getDemand().setIsHistory(DEMAND_ISHISTORY_Y);
-                    waterDemandConnection.setDemand(connectionDemandService.createDemand(waterConnectionDetails));
-                    waterDemandConnection.setWaterConnectionDetails(waterConnectionDetails);
-                    waterConnectionDetails.addWaterDemandConnection(waterDemandConnection);
-                    waterDemandConnectionService.createWaterDemandConnection(waterDemandConnection);
-                    if (REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
-                            && APPLICATION_STATUS_CREATED.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()) 
-                            && NON_METERED_CODE.equalsIgnoreCase(waterConnectionDetails.getConnectionType().name()))
-                        regulariseConnDemandGenerationImpl.generateDemandForRegulariseConnection(waterConnectionDetails);
+                    connectionDemandService.generateDemandForApplication(waterConnectionDetails, connectionCategory,
+                            donationCharges);
                     // Attach any other file during field inspection and estimation
                     final Set<FileStoreMapper> fileStoreSet = addToFileStore(files);
                     Iterator<FileStoreMapper> fsIterator = null;
-
                     if (fileStoreSet != null && !fileStoreSet.isEmpty())
                         fsIterator = fileStoreSet.iterator();
                     while (fsIterator != null && fsIterator.hasNext())
                         waterConnectionDetails.getFieldInspectionDetails().setFileStore(fsIterator.next());
+
                 }
                 if (REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) &&
                         (APPLICATION_STATUS_CREATED.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()) ||
@@ -842,23 +801,6 @@ public class UpdateConnectionController extends GenericConnectionController {
 
         if (waterConnectionDetails.getApprovalDate() == null)
             errors.rejectValue("approvalDate", "approvalDate.required");
-    }
-
-    private void populateEstimationDetails(final WaterConnectionDetails waterConnectionDetails) {
-        final List<ConnectionEstimationDetails> estimationDetails = new ArrayList<>();
-        if (!waterConnectionDetails.getEstimationDetails().isEmpty())
-            for (final ConnectionEstimationDetails estimationDetail : waterConnectionDetails.getEstimationDetails())
-                if (validEstimationDetail(estimationDetail)) {
-                    estimationDetail.setWaterConnectionDetails(waterConnectionDetails);
-                    estimationDetails.add(estimationDetail);
-                }
-
-        waterConnectionDetails.getEstimationDetails().clear();
-        waterConnectionDetails.setEstimationDetails(estimationDetails);
-    }
-
-    private boolean validEstimationDetail(final ConnectionEstimationDetails connectionEstimationDetails) {
-        return connectionEstimationDetails != null && connectionEstimationDetails.getItemDescription() != null ? true : false;
     }
 
 }

@@ -447,4 +447,5 @@ public class WaterTaxConstants {
     public static final String PENALTYCHARGES = "PENALTYCHARGES";
     public static final String REGULARISATION_DEMAND_NOTE = "Regularisation Demand Note";
     public static final String STATUS = "status";
+    public static final int NO_OF_INSTALLMENTS = 8;
 }
