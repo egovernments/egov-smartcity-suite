@@ -47,17 +47,17 @@
  */
 package org.egov.pushbox.config;
 
-import static org.egov.pushbox.utils.constants.Constants.AUTH_PROVIDER_CERT_URL;
-import static org.egov.pushbox.utils.constants.Constants.AUTH_URI;
-import static org.egov.pushbox.utils.constants.Constants.CLIENT_CERT_URL;
-import static org.egov.pushbox.utils.constants.Constants.CLIENT_EMAIL;
-import static org.egov.pushbox.utils.constants.Constants.CLIENT_ID;
-import static org.egov.pushbox.utils.constants.Constants.DBURL;
-import static org.egov.pushbox.utils.constants.Constants.PRIVATE_KEY;
-import static org.egov.pushbox.utils.constants.Constants.PRIVATE_KEY_ID;
-import static org.egov.pushbox.utils.constants.Constants.PROJECT_ID;
-import static org.egov.pushbox.utils.constants.Constants.TOKEN_URI;
-import static org.egov.pushbox.utils.constants.Constants.TYPE;
+import static org.egov.pushbox.utils.Constants.AUTH_PROVIDER_CERT_URL;
+import static org.egov.pushbox.utils.Constants.AUTH_URI;
+import static org.egov.pushbox.utils.Constants.CLIENT_CERT_URL;
+import static org.egov.pushbox.utils.Constants.CLIENT_EMAIL;
+import static org.egov.pushbox.utils.Constants.CLIENT_ID;
+import static org.egov.pushbox.utils.Constants.DBURL;
+import static org.egov.pushbox.utils.Constants.PRIVATE_KEY;
+import static org.egov.pushbox.utils.Constants.PRIVATE_KEY_ID;
+import static org.egov.pushbox.utils.Constants.PROJECT_ID;
+import static org.egov.pushbox.utils.Constants.TOKEN_URI;
+import static org.egov.pushbox.utils.Constants.TYPE;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

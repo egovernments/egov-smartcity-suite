@@ -45,28 +45,23 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.api.adapter;
+package org.egov.pushbox.utils;
 
-import static org.egov.eventnotification.utils.Constants.INTERESTED_COUNT;
-import static org.egov.eventnotification.utils.Constants.SUCCESS;
-import static org.egov.eventnotification.utils.Constants.ZERO;
+public final class Constants {
 
-import java.lang.reflect.Type;
+    public static final String TYPE = "type";
+    public static final String PROJECT_ID = "project_id";
+    public static final String PRIVATE_KEY_ID = "private_key_id";
+    public static final String PRIVATE_KEY = "private_key";
+    public static final String CLIENT_EMAIL = "client_email";
+    public static final String CLIENT_ID = "client_id";
+    public static final String AUTH_URI = "auth_uri";
+    public static final String TOKEN_URI = "token_uri";
+    public static final String AUTH_PROVIDER_CERT_URL = "auth_provider_x509_cert_url";
+    public static final String CLIENT_CERT_URL = "client_x509_cert_url";
+    public static final String DBURL = "bdurl";
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
+    private Constants() {
 
-public class InterestedCountAdapter extends DataAdapter<Long>{
-
-    @Override
-    public JsonElement serialize(Long object, Type typeOfSrc, JsonSerializationContext context) {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty(SUCCESS, "Data saved successfully");
-        if (object == null)
-            jsonObject.addProperty(INTERESTED_COUNT, ZERO);
-        else
-            jsonObject.addProperty(INTERESTED_COUNT, String.valueOf(object));
-        return jsonObject;
     }
 }

@@ -47,18 +47,16 @@
  */
 package org.egov.eventnotification.web.controller.event;
 
-import static org.egov.eventnotification.utils.constants.Constants.ACTIVE;
-import static org.egov.eventnotification.utils.constants.Constants.ALTERROR;
-import static org.egov.eventnotification.utils.constants.Constants.EVENT;
-import static org.egov.eventnotification.utils.constants.Constants.EVENT_LIST;
-import static org.egov.eventnotification.utils.constants.Constants.EVENT_TYPE_LIST;
-import static org.egov.eventnotification.utils.constants.Constants.HOUR_LIST;
-import static org.egov.eventnotification.utils.constants.Constants.MESSAGE;
-import static org.egov.eventnotification.utils.constants.Constants.MINUTE_LIST;
-import static org.egov.eventnotification.utils.constants.Constants.MODE;
-import static org.egov.eventnotification.utils.constants.Constants.MODE_CREATE;
-import static org.egov.eventnotification.utils.constants.Constants.MODE_VIEW;
-import static org.egov.eventnotification.utils.constants.Constants.VIEWNAME;
+import static org.egov.eventnotification.utils.Constants.ALTERROR;
+import static org.egov.eventnotification.utils.Constants.EVENT;
+import static org.egov.eventnotification.utils.Constants.EVENT_LIST;
+import static org.egov.eventnotification.utils.Constants.HOUR_LIST;
+import static org.egov.eventnotification.utils.Constants.MESSAGE;
+import static org.egov.eventnotification.utils.Constants.MINUTE_LIST;
+import static org.egov.eventnotification.utils.Constants.MODE;
+import static org.egov.eventnotification.utils.Constants.MODE_CREATE;
+import static org.egov.eventnotification.utils.Constants.MODE_VIEW;
+import static org.egov.eventnotification.utils.Constants.VIEWNAME;
 
 import javax.validation.Valid;
 
@@ -75,7 +73,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -96,22 +93,6 @@ public class EventController {
 
     @Autowired
     private EventTypeService eventTypeService;
-
-    @GetMapping("view/")
-    public String view(@ModelAttribute Event event, final Model model) {
-        model.addAttribute(EVENT_LIST,
-                eventService.getAllEventByStatus(ACTIVE.toUpperCase()));
-        model.addAttribute(MODE, MODE_VIEW);
-        model.addAttribute(EVENT_TYPE_LIST, eventTypeService.getAllEventType());
-        return "event-view";
-    }
-
-    @GetMapping("view/{id}")
-    public String viewByEvent(@PathVariable Long id, final Model model) {
-        model.addAttribute(EVENT, eventService.getEventById(id));
-        model.addAttribute(MODE, MODE_VIEW);
-        return "event-view-result";
-    }
 
     @GetMapping("create/")
     public String save(@ModelAttribute Event event, Model model) {

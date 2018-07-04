@@ -47,10 +47,10 @@
  */
 package org.egov.api.controller;
 
-import static org.egov.eventnotification.utils.constants.Constants.ACTIVE;
-import static org.egov.eventnotification.utils.constants.Constants.MODULE_NAME;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.egov.eventnotification.utils.Constants.ACTIVE;
+import static org.egov.eventnotification.utils.Constants.MODULE_NAME;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;

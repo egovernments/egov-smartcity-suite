@@ -47,15 +47,15 @@
  */
 package org.egov.eventnotification.web.controller.notificationdraft;
 
-import static org.egov.eventnotification.utils.constants.Constants.CATEGORY_PARAMETERS;
-import static org.egov.eventnotification.utils.constants.Constants.DRAFT_LIST;
-import static org.egov.eventnotification.utils.constants.Constants.MESSAGE;
-import static org.egov.eventnotification.utils.constants.Constants.MODE;
-import static org.egov.eventnotification.utils.constants.Constants.MODE_CREATE;
-import static org.egov.eventnotification.utils.constants.Constants.MODE_VIEW;
-import static org.egov.eventnotification.utils.constants.Constants.MODULE_CATEGORY;
-import static org.egov.eventnotification.utils.constants.Constants.NOTIFICATION_DRAFT;
-import static org.egov.eventnotification.utils.constants.Constants.TEMPLATE_MODULE;
+import static org.egov.eventnotification.utils.Constants.CATEGORY_PARAMETERS;
+import static org.egov.eventnotification.utils.Constants.DRAFT_LIST;
+import static org.egov.eventnotification.utils.Constants.MESSAGE;
+import static org.egov.eventnotification.utils.Constants.MODE;
+import static org.egov.eventnotification.utils.Constants.MODE_CREATE;
+import static org.egov.eventnotification.utils.Constants.MODE_VIEW;
+import static org.egov.eventnotification.utils.Constants.MODULE_CATEGORY;
+import static org.egov.eventnotification.utils.Constants.NOTIFICATION_DRAFT;
+import static org.egov.eventnotification.utils.Constants.TEMPLATE_MODULE;
 
 import java.util.ArrayList;
 import java.util.List;

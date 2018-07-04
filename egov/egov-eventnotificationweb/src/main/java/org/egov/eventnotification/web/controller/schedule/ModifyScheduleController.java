@@ -47,16 +47,16 @@
  */
 package org.egov.eventnotification.web.controller.schedule;
 
-import static org.egov.eventnotification.utils.constants.Constants.ALTERROR;
-import static org.egov.eventnotification.utils.constants.Constants.DRAFT_LIST;
-import static org.egov.eventnotification.utils.constants.Constants.HOUR_LIST;
-import static org.egov.eventnotification.utils.constants.Constants.MESSAGE;
-import static org.egov.eventnotification.utils.constants.Constants.MINUTE_LIST;
-import static org.egov.eventnotification.utils.constants.Constants.MODE;
-import static org.egov.eventnotification.utils.constants.Constants.MODE_VIEW;
-import static org.egov.eventnotification.utils.constants.Constants.NOTIFICATION_SCHEDULE;
-import static org.egov.eventnotification.utils.constants.Constants.SCHEDULER_REPEAT_LIST;
-import static org.egov.eventnotification.utils.constants.Constants.VIEWNAME;
+import static org.egov.eventnotification.utils.Constants.ALTERROR;
+import static org.egov.eventnotification.utils.Constants.DRAFT_LIST;
+import static org.egov.eventnotification.utils.Constants.HOUR_LIST;
+import static org.egov.eventnotification.utils.Constants.MESSAGE;
+import static org.egov.eventnotification.utils.Constants.MINUTE_LIST;
+import static org.egov.eventnotification.utils.Constants.MODE;
+import static org.egov.eventnotification.utils.Constants.MODE_VIEW;
+import static org.egov.eventnotification.utils.Constants.NOTIFICATION_SCHEDULE;
+import static org.egov.eventnotification.utils.Constants.SCHEDULER_REPEAT_LIST;
+import static org.egov.eventnotification.utils.Constants.VIEWNAME;
 
 import javax.validation.Valid;
 
