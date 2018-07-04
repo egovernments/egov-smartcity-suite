@@ -47,17 +47,16 @@
  */
 package org.egov.eventnotification.web.controller.schedule;
 
-import static org.egov.eventnotification.utils.constants.Constants.ALTERROR;
-import static org.egov.eventnotification.utils.constants.Constants.DRAFT_LIST;
-import static org.egov.eventnotification.utils.constants.Constants.HOUR_LIST;
-import static org.egov.eventnotification.utils.constants.Constants.MESSAGE;
-import static org.egov.eventnotification.utils.constants.Constants.MINUTE_LIST;
-import static org.egov.eventnotification.utils.constants.Constants.MODE;
-import static org.egov.eventnotification.utils.constants.Constants.MODE_DELETE;
-import static org.egov.eventnotification.utils.constants.Constants.MODE_VIEW;
-import static org.egov.eventnotification.utils.constants.Constants.NOTIFICATION_SCHEDULE;
-import static org.egov.eventnotification.utils.constants.Constants.SCHEDULER_REPEAT_LIST;
-import static org.egov.eventnotification.utils.constants.Constants.VIEWNAME;
+import static org.egov.eventnotification.utils.Constants.ALTERROR;
+import static org.egov.eventnotification.utils.Constants.DRAFT_LIST;
+import static org.egov.eventnotification.utils.Constants.HOUR_LIST;
+import static org.egov.eventnotification.utils.Constants.MESSAGE;
+import static org.egov.eventnotification.utils.Constants.MINUTE_LIST;
+import static org.egov.eventnotification.utils.Constants.MODE;
+import static org.egov.eventnotification.utils.Constants.MODE_VIEW;
+import static org.egov.eventnotification.utils.Constants.NOTIFICATION_SCHEDULE;
+import static org.egov.eventnotification.utils.Constants.SCHEDULER_REPEAT_LIST;
+import static org.egov.eventnotification.utils.Constants.VIEWNAME;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -71,7 +70,6 @@ import org.egov.eventnotification.service.ScheduleRepeatService;
 import org.egov.eventnotification.service.ScheduleService;
 import org.egov.eventnotification.utils.EventNotificationUtil;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -106,14 +104,6 @@ public class ScheduleController {
 
     @Autowired
     private ScheduleDetailsService scheduleDetailsService;
-
-    @GetMapping("/schedule/view/")
-    public String view(Model model) {
-        model.addAttribute(DRAFT_LIST, draftService.getAllDrafts());
-        model.addAttribute("scheduleList",
-                scheduleService.getAllSchedule());
-        return "schedule-view";
-    }
 
     @GetMapping("/schedule/create/{id}")
     public String save(@PathVariable Long id, @ModelAttribute Schedule schedule, Model model) {
@@ -161,20 +151,6 @@ public class ScheduleController {
         model.addAttribute(MODE, MODE_VIEW);
         model.addAttribute(NOTIFICATION_SCHEDULE, schedule);
         return "schedule-create-success";
-    }
-
-    @GetMapping("/schedule/view/{id}")
-    public String viewBySchedule(@PathVariable Long id, Model model) {
-        Schedule notificationSchedule = scheduleService.getScheduleById(id);
-        DateTime sd = new DateTime(notificationSchedule.getStartDate());
-
-        if (sd.isBeforeNow())
-            model.addAttribute("scheduleEditable", false);
-        else
-            model.addAttribute("scheduleEditable", true);
-        model.addAttribute(NOTIFICATION_SCHEDULE, notificationSchedule);
-        model.addAttribute(MODE, MODE_DELETE);
-        return "schedule-details-view";
     }
 
     /**

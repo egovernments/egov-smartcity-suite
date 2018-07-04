@@ -45,64 +45,44 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.eventnotification.repository;
+package org.egov.api.adapter;
 
-import static org.egov.eventnotification.utils.Constants.ACTIVE;
+import static org.egov.eventnotification.utils.Constants.ADDRESS;
+import static org.egov.eventnotification.utils.Constants.CONTACT_NO;
+import static org.egov.eventnotification.utils.Constants.DESCRIPTION;
+import static org.egov.eventnotification.utils.Constants.DOUBLE_DEFAULT;
+import static org.egov.eventnotification.utils.Constants.EVENTTYPE;
+import static org.egov.eventnotification.utils.Constants.EVENT_COST;
 import static org.egov.eventnotification.utils.Constants.EVENT_HOST;
 import static org.egov.eventnotification.utils.Constants.EVENT_ID;
+import static org.egov.eventnotification.utils.Constants.EVENT_LOC;
+import static org.egov.eventnotification.utils.Constants.ISPAID;
 import static org.egov.eventnotification.utils.Constants.NAME;
-import static org.egov.eventnotification.utils.Constants.STATUS_COLUMN;
-import static org.egov.eventnotification.utils.Constants.UPCOMING;
-
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import static org.egov.eventnotification.utils.Constants.NO;
+import static org.egov.eventnotification.utils.Constants.USER_INTERESTED;
 
 import org.egov.eventnotification.entity.Event;
-import org.egov.eventnotification.entity.contracts.EventSearch;
-import org.egov.eventnotification.repository.custom.EventRepositoryCustom;
-import org.egov.infra.utils.DateUtils;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
 
-public class EventRepositoryImpl implements EventRepositoryCustom {
+import com.google.gson.JsonObject;
 
-    @PersistenceContext
-    private EntityManager entityManager;
+public class EventDetailsAdapter {
 
-    @Override
-    public List<Event> searchEvent(EventSearch eventSearch) {
-        Date startDate;
-        Date endDate;
-        if (eventSearch.getEventDateType().equalsIgnoreCase(UPCOMING)) {
-            startDate = DateUtils.startOfToday().plusDays(7).toDate();
-            endDate = DateUtils.endOfToday().plusDays(6).toDate();
-        } else {
-            startDate = DateUtils.startOfToday().toDate();
-            endDate = DateUtils.endOfToday().plusDays(6).toDate();
-        }
-
-        Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Event.class, "evnt");
-        criteria.createAlias("evnt.eventType", "eventType");
-        if (eventSearch.getEventType() != null)
-            criteria.add(
-                    Restrictions.ilike("eventType.name", eventSearch.getEventType(), MatchMode.ANYWHERE));
-        if (eventSearch.getName() != null)
-            criteria.add(Restrictions.ilike(NAME, eventSearch.getName(), MatchMode.ANYWHERE));
-        if (eventSearch.getEventHost() != null)
-            criteria.add(Restrictions.ilike(EVENT_HOST, eventSearch.getEventHost(), MatchMode.ANYWHERE));
-
-        criteria.add(Restrictions.between("startDate", startDate, endDate));
-        criteria.add(Restrictions.ge("endDate", DateUtils.today()));
-        criteria.add(Restrictions.eq(STATUS_COLUMN, ACTIVE.toUpperCase()));
-
-        criteria.addOrder(Order.desc(EVENT_ID));
-        return criteria.list();
+    public void populateData(JsonObject jsonObjectEvent,Event event) {
+        jsonObjectEvent.addProperty(EVENT_ID, event.getId());
+        jsonObjectEvent.addProperty(NAME, event.getName());
+        jsonObjectEvent.addProperty(DESCRIPTION, event.getDescription());
+        
+        jsonObjectEvent.addProperty(EVENT_HOST, event.getEventAddress().getEventHost());
+        jsonObjectEvent.addProperty(EVENT_LOC, event.getEventAddress().getEventLocation());
+        jsonObjectEvent.addProperty(ADDRESS, event.getEventAddress().getAddress());
+        jsonObjectEvent.addProperty(CONTACT_NO, event.getEventAddress().getContactNumber());
+        jsonObjectEvent.addProperty(ISPAID, event.isPaid());
+        jsonObjectEvent.addProperty(EVENTTYPE, event.getEventType().getName());
+        jsonObjectEvent.addProperty(USER_INTERESTED, NO);
+        
+        if (event.getCost() == null)
+            jsonObjectEvent.addProperty(EVENT_COST, DOUBLE_DEFAULT);
+        else
+            jsonObjectEvent.addProperty(EVENT_COST, event.getCost());
     }
-
 }

@@ -45,7 +45,7 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.eventnotification.utils.constants;
+package org.egov.eventnotification.utils;
 
 public final class Constants {
 

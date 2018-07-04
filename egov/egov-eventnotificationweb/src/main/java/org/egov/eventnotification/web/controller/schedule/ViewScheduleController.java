@@ -45,28 +45,51 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.api.adapter;
+package org.egov.eventnotification.web.controller.schedule;
 
-import static org.egov.eventnotification.utils.Constants.INTERESTED_COUNT;
-import static org.egov.eventnotification.utils.Constants.SUCCESS;
-import static org.egov.eventnotification.utils.Constants.ZERO;
+import static org.egov.eventnotification.utils.Constants.DRAFT_LIST;
+import static org.egov.eventnotification.utils.Constants.MODE;
+import static org.egov.eventnotification.utils.Constants.MODE_DELETE;
+import static org.egov.eventnotification.utils.Constants.NOTIFICATION_SCHEDULE;
 
-import java.lang.reflect.Type;
+import org.egov.eventnotification.entity.Schedule;
+import org.egov.eventnotification.service.DraftService;
+import org.egov.eventnotification.service.ScheduleService;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
+@Controller
+public class ViewScheduleController {
 
-public class InterestedCountAdapter extends DataAdapter<Long>{
+    @Autowired
+    private ScheduleService scheduleService;
 
-    @Override
-    public JsonElement serialize(Long object, Type typeOfSrc, JsonSerializationContext context) {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty(SUCCESS, "Data saved successfully");
-        if (object == null)
-            jsonObject.addProperty(INTERESTED_COUNT, ZERO);
+    @Autowired
+    private DraftService draftService;
+    
+    @GetMapping("/schedule/view/")
+    public String view(Model model) {
+        model.addAttribute(DRAFT_LIST, draftService.getAllDrafts());
+        model.addAttribute("scheduleList",
+                scheduleService.getAllSchedule());
+        return "schedule-view";
+    }
+    
+    @GetMapping("/schedule/view/{id}")
+    public String viewBySchedule(@PathVariable Long id, Model model) {
+        Schedule notificationSchedule = scheduleService.getScheduleById(id);
+        DateTime sd = new DateTime(notificationSchedule.getStartDate());
+
+        if (sd.isBeforeNow())
+            model.addAttribute("scheduleEditable", false);
         else
-            jsonObject.addProperty(INTERESTED_COUNT, String.valueOf(object));
-        return jsonObject;
+            model.addAttribute("scheduleEditable", true);
+        model.addAttribute(NOTIFICATION_SCHEDULE, notificationSchedule);
+        model.addAttribute(MODE, MODE_DELETE);
+        return "schedule-details-view";
     }
 }

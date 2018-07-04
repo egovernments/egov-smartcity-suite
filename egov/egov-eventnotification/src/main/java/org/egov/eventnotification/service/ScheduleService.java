@@ -47,10 +47,10 @@
  */
 package org.egov.eventnotification.service;
 
-import static org.egov.eventnotification.utils.constants.Constants.DDMMYYYY;
-import static org.egov.eventnotification.utils.constants.Constants.MAX_TEN;
-import static org.egov.eventnotification.utils.constants.Constants.SCHEDULED_STATUS;
-import static org.egov.eventnotification.utils.constants.Constants.ZERO;
+import static org.egov.eventnotification.utils.Constants.DDMMYYYY;
+import static org.egov.eventnotification.utils.Constants.MAX_TEN;
+import static org.egov.eventnotification.utils.Constants.SCHEDULED_STATUS;
+import static org.egov.eventnotification.utils.Constants.ZERO;
 import static org.egov.infra.utils.DateUtils.getDate;
 import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
 import static org.egov.infra.utils.DateUtils.startOfGivenDate;

@@ -48,7 +48,7 @@
 package org.egov.api.controller.validator;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.egov.eventnotification.utils.constants.Constants.FAIL;
+import static org.egov.eventnotification.utils.Constants.FAIL;
 
 import org.egov.eventnotification.entity.contracts.UserEventRequest;
 import org.springframework.validation.Errors;
