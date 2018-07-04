@@ -52,9 +52,12 @@ import static org.egov.mrs.application.MarriageConstants.CMO_DESIG;
 import static org.egov.mrs.application.MarriageConstants.COMMISSIONER;
 import static org.egov.mrs.application.MarriageConstants.CREATED;
 import static org.egov.mrs.application.MarriageConstants.CSC_OPERATOR_CREATED;
+import static org.egov.mrs.application.MarriageConstants.MARRIAGE_REGISTRAR;
 import static org.egov.mrs.application.MarriageConstants.MEESEVA_OPERATOR_ROLE;
 import static org.egov.mrs.application.MarriageConstants.MHO_DESIG;
 import static org.egov.mrs.application.MarriageConstants.MODULE_NAME;
+import static org.egov.mrs.application.MarriageConstants.MRG_REASSIGNDEPARTEMENT_FOR_REGISTRARAR;
+import static org.egov.mrs.application.MarriageConstants.MRG_REASSIGNDESIGNATION_FOR_REGISTRARAR;
 import static org.egov.mrs.application.MarriageConstants.MRG_ROLEFORNONEMPLOYEE;
 import static org.egov.mrs.application.MarriageConstants.MRG_WORKFLOWDEPARTEMENT_FOR_CSCOPERATOR;
 import static org.egov.mrs.application.MarriageConstants.MRG_WORKFLOWDESIGNATION_FOR_CSCOPERATOR;
@@ -64,10 +67,6 @@ import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_APP
 import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_CMO_APPRVLPENDING;
 import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_MHO_APPRVLPENDING;
 import static org.egov.mrs.application.MarriageConstants.WFSTATE_APPROVER_REJECTED;
-import static org.egov.mrs.application.MarriageConstants.MARRIAGE_REGISTRAR;
-import static org.egov.mrs.application.MarriageConstants.MRG_REASSIGNDESIGNATION_FOR_MRSREGISTRARAR;
-import static org.egov.mrs.application.MarriageConstants.MRG_REASSIGNDEPARTEMENT_FOR_MRSREGISTRARAR;
-
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -618,7 +617,7 @@ public class RegistrationWorkflowService {
      */
     public String getDesignationForMrsRegistrarWorkFlow() {
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
-                MRG_REASSIGNDESIGNATION_FOR_MRSREGISTRARAR);
+                MRG_REASSIGNDESIGNATION_FOR_REGISTRARAR);
         return !appConfigValue.isEmpty() ? appConfigValue.get(0).getValue() : null;
     }
 
@@ -629,7 +628,7 @@ public class RegistrationWorkflowService {
      */
     public String getDepartmentForMrsRegistrarWorkFlow() {
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
-                MRG_REASSIGNDEPARTEMENT_FOR_MRSREGISTRARAR);
+                MRG_REASSIGNDEPARTEMENT_FOR_REGISTRARAR);
         return !appConfigValue.isEmpty() ? appConfigValue.get(0).getValue() : null;
     }
 }
