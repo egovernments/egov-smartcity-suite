@@ -58,6 +58,7 @@ import static org.egov.mrs.application.MarriageConstants.CREATED;
 import static org.egov.mrs.application.MarriageConstants.FILESTORE_MODULECODE;
 import static org.egov.mrs.application.MarriageConstants.FILE_STORE_ID_APPLICATION_NUMBER;
 import static org.egov.mrs.application.MarriageConstants.JUNIOR_SENIOR_ASSISTANCE_APPROVAL_PENDING;
+import static org.egov.mrs.application.MarriageConstants.MARRIAGE_REGISTRAR;
 import static org.egov.mrs.application.MarriageConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.mrs.application.MarriageConstants.WFLOW_ACTION_STEP_CANCEL_REISSUE;
 import static org.egov.mrs.application.MarriageConstants.WFLOW_ACTION_STEP_DIGISIGN;
@@ -183,6 +184,9 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
         prepareNewForm(reIssue, model);
         prepareWorkFlowForReIssue(reIssue, model);
         model.addAttribute("reIssue", reIssue);
+        model.addAttribute("mrsRegistrar",securityUtils.getCurrentUser().hasRole(MARRIAGE_REGISTRAR));
+        model.addAttribute("source",reIssue.getRegistration().getSource());
+
         if (reIssue.getStatus().getCode().equalsIgnoreCase(ReIssue.ReIssueStatus.REJECTED.toString()))
             return "reissue-form";
         return REISSUE_VIEW;
