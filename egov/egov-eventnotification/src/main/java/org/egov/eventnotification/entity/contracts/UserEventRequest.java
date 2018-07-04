@@ -47,9 +47,13 @@
  */
 package org.egov.eventnotification.entity.contracts;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 public class UserEventRequest {
 
+    @NotBlank
     private String userid;
+    @NotBlank
     private String eventid;
 
     public String getUserid() {

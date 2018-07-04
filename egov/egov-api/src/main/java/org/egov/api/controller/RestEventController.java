@@ -48,21 +48,21 @@
 package org.egov.api.controller;
 
 import static org.egov.eventnotification.utils.constants.Constants.ACTIVE;
-import static org.egov.eventnotification.utils.constants.Constants.FAIL;
-import static org.egov.eventnotification.utils.constants.Constants.INTERESTED_COUNT;
 import static org.egov.eventnotification.utils.constants.Constants.MODULE_NAME;
-import static org.egov.eventnotification.utils.constants.Constants.SUCCESS;
-import static org.egov.eventnotification.utils.constants.Constants.ZERO;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.apache.commons.lang.StringUtils.EMPTY;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.egov.api.adapter.CategoryParametersAdapter;
 import org.egov.api.adapter.DraftsAdapter;
 import org.egov.api.adapter.EventAdapter;
 import org.egov.api.adapter.EventSearchAdapter;
+import org.egov.api.adapter.InterestedCountAdapter;
 import org.egov.api.adapter.ModuleCategoryAdapter;
 import org.egov.api.controller.core.ApiController;
+import org.egov.api.controller.core.ApiResponse;
 import org.egov.eventnotification.entity.UserEvent;
 import org.egov.eventnotification.entity.contracts.EventSearch;
 import org.egov.eventnotification.entity.contracts.UserEventRequest;
@@ -72,11 +72,10 @@ import org.egov.eventnotification.service.EventService;
 import org.egov.eventnotification.service.ModuleCategoryService;
 import org.egov.eventnotification.service.UserEventService;
 import org.egov.infra.utils.FileStoreUtils;
-import org.json.simple.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -90,7 +89,6 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class RestEventController extends ApiController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RestEventController.class);
 
     @Autowired
     private EventService eventService;
@@ -112,109 +110,74 @@ public class RestEventController extends ApiController {
 
     @GetMapping(path = "/events", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<String> getAllEvent() {
-        try {
-            return getResponseHandler()
-                    .setDataAdapter(new EventAdapter(userEventService))
-                    .success(eventService.getAllOngoingEvent(ACTIVE.toUpperCase()));
-        } catch (final Exception e) {
-            LOGGER.error(EGOV_API_ERROR, e);
-            return getResponseHandler().error(getMessage(SERVER_ERROR_KEY));
-        }
+        return getResponseHandler()
+                .setDataAdapter(new EventAdapter(userEventService))
+                .success(eventService.getAllOngoingEvent(ACTIVE.toUpperCase()));
     }
 
     @GetMapping(path = "/event/{id}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<String> getEvent(@PathVariable long id, @RequestParam(required = false) Long userid) {
-        try {
-            return getResponseHandler()
-                    .setDataAdapter(new EventAdapter(userEventService))
-                    .success(eventService.getEventById(id));
-        } catch (final Exception e) {
-            LOGGER.error(EGOV_API_ERROR, e);
-            return getResponseHandler().error(getMessage(SERVER_ERROR_KEY));
-        }
+        return getResponseHandler()
+                .setDataAdapter(new EventAdapter(userEventService))
+                .success(eventService.getEventById(id));
     }
 
     @GetMapping(path = "/event/search", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<String> searchEvent(EventSearch eventSearch) {
 
-        try {
-            return getResponseHandler()
-                    .setDataAdapter(new EventSearchAdapter(userEventService))
-                    .success(eventService.searchEvent(eventSearch));
-        } catch (final Exception e) {
-            LOGGER.error(EGOV_API_ERROR, e);
-            return getResponseHandler().error(getMessage(SERVER_ERROR_KEY));
-        }
+        return getResponseHandler()
+                .setDataAdapter(new EventSearchAdapter(userEventService))
+                .success(eventService.searchEvent(eventSearch));
     }
 
     @GetMapping(path = "/draft/search", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<String> searchDraft(@RequestParam(required = false) String type,
             @RequestParam(required = false) String name) {
 
-        try {
-            return getResponseHandler()
-                    .setDataAdapter(new DraftsAdapter())
-                    .success(draftService.searchDraft(type, name));
-        } catch (final Exception e) {
-            LOGGER.error(EGOV_API_ERROR, e);
-            return getResponseHandler().error(getMessage(SERVER_ERROR_KEY));
-        }
+        return getResponseHandler()
+                .setDataAdapter(new DraftsAdapter())
+                .success(draftService.searchDraft(type, name));
     }
 
     @GetMapping(path = "/draft/getCategoriesForModule/{moduleId}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<String> getCategoriesForModule(@PathVariable long moduleId) {
-        try {
-            return getResponseHandler()
-                    .setDataAdapter(new ModuleCategoryAdapter())
-                    .success(moduleCategoryService.getCategoriesForModule(moduleId));
-        } catch (final Exception e) {
-            LOGGER.error(EGOV_API_ERROR, e);
-            return getResponseHandler().error(getMessage(SERVER_ERROR_KEY));
-        }
+        return getResponseHandler()
+                .setDataAdapter(new ModuleCategoryAdapter())
+                .success(moduleCategoryService.getCategoriesForModule(moduleId));
     }
 
     @GetMapping(path = "/draft/getParametersForCategory/{categoryId}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<String> getParametersForCategory(@PathVariable long categoryId) {
-        try {
-            return getResponseHandler()
-                    .setDataAdapter(new CategoryParametersAdapter())
-                    .success(categoryParametersService.getParametersForCategory(categoryId));
-        } catch (final Exception e) {
-            LOGGER.error(EGOV_API_ERROR, e);
-            return getResponseHandler().error(getMessage(SERVER_ERROR_KEY));
-        }
+        return getResponseHandler()
+                .setDataAdapter(new CategoryParametersAdapter())
+                .success(categoryParametersService.getParametersForCategory(categoryId));
     }
 
     @PostMapping(path = "/event/interested", produces = APPLICATION_JSON_VALUE)
-    public String saveUserEvent(@RequestBody UserEventRequest userEventRequest) {
-        JSONObject responseObject = new JSONObject();
-        if (userEventRequest == null)
-            responseObject.put(FAIL, getMessage("error.fail.eventuser"));
-        else {
-            UserEvent userEvent = userEventService.saveUserEvent(Long.parseLong(userEventRequest.getUserid()),
-                    Long.parseLong(userEventRequest.getEventid()));
-            if (userEvent == null)
-                responseObject.put(FAIL, getMessage("error.fail.event"));
-            else {
-                responseObject.put(SUCCESS, getMessage("msg.event.success"));
-                Long interestedCount = userEventService.countUsereventByEventId(userEvent.getEvent().getId());
-                if (interestedCount == null)
-                    responseObject.put(INTERESTED_COUNT, ZERO);
-                else
-                    responseObject.put(INTERESTED_COUNT, String.valueOf(interestedCount));
+    public ResponseEntity<String> saveUserEvent(@Valid @RequestBody UserEventRequest userEventRequest, BindingResult errors) {
+        ApiResponse res = ApiResponse.newInstance();
+
+        if (errors.hasErrors()) {
+            String errorMessage = EMPTY;
+            for (FieldError fieldError : errors.getFieldErrors()) {
+                errorMessage = errorMessage.concat(fieldError.getField().concat(" ").concat(fieldError.getDefaultMessage()).concat(" <br>"));
             }
+            return res.error(errorMessage);
         }
 
-        return responseObject.toJSONString();
+        UserEvent userEvent = userEventService.saveUserEvent(Long.parseLong(userEventRequest.getUserid()),
+                Long.parseLong(userEventRequest.getEventid()));
+        if (userEvent == null)
+            return res.error(getMessage("event.not.fount"));
+        else {
+            Long interestedCount = userEventService.countUsereventByEventId(userEvent.getEvent().getId());
+            return res.setDataAdapter(new InterestedCountAdapter()).success(interestedCount);
+        }
     }
 
     @GetMapping(path = "/event/{id}/download/{fileStoreId}", produces = APPLICATION_JSON_VALUE)
     public void downloadEventImage(@PathVariable final Long id, @PathVariable final String fileStoreId,
             final HttpServletResponse response) {
-        try {
-            fileStoreUtils.writeToHttpResponseStream(fileStoreId, MODULE_NAME, response);
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
+        fileStoreUtils.writeToHttpResponseStream(fileStoreId, MODULE_NAME, response);
     }
 }

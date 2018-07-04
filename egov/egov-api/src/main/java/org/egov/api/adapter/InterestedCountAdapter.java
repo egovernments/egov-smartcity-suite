@@ -45,86 +45,28 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.eventnotification.entity;
+package org.egov.api.adapter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import static org.egov.eventnotification.utils.constants.Constants.INTERESTED_COUNT;
+import static org.egov.eventnotification.utils.constants.Constants.SUCCESS;
+import static org.egov.eventnotification.utils.constants.Constants.ZERO;
 
-import org.egov.infra.persistence.entity.AbstractPersistable;
+import java.lang.reflect.Type;
 
-@Entity
-@Table(name = "egevntnotification_module_category_map")
-@SequenceGenerator(name = ModuleCategoryMap.SEQ_EGEN_MODULE_CATEGORY, sequenceName = ModuleCategoryMap.SEQ_EGEN_MODULE_CATEGORY, allocationSize = 1)
-public class ModuleCategoryMap extends AbstractPersistable<Long> {
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = 177193060109912140L;
-
-    public static final String SEQ_EGEN_MODULE_CATEGORY = "seq_egevntnotification_module_category_map";
-
-    @Id
-    @GeneratedValue(generator = SEQ_EGEN_MODULE_CATEGORY, strategy = GenerationType.SEQUENCE)
-    private Long id;
-
-    @Valid
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "moduleid")
-    @NotNull
-    private TemplateModule module;
-
-    @Valid
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "categoryid")
-    @NotNull
-    private ModuleCategory category;
-
-    @Column(name = "attributes_available")
-    private boolean attributesAvailable;
+public class InterestedCountAdapter extends DataAdapter<Long>{
 
     @Override
-    public Long getId() {
-        return id;
+    public JsonElement serialize(Long object, Type typeOfSrc, JsonSerializationContext context) {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty(SUCCESS, "Data saved successfully");
+        if (object == null)
+            jsonObject.addProperty(INTERESTED_COUNT, ZERO);
+        else
+            jsonObject.addProperty(INTERESTED_COUNT, String.valueOf(object));
+        return jsonObject;
     }
-
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public TemplateModule getModule() {
-        return module;
-    }
-
-    public void setModule(TemplateModule module) {
-        this.module = module;
-    }
-
-    public ModuleCategory getCategory() {
-        return category;
-    }
-
-    public void setCategory(ModuleCategory category) {
-        this.category = category;
-    }
-
-    public boolean isAttributesAvailable() {
-        return attributesAvailable;
-    }
-
-    public void setAttributesAvailable(boolean attributesAvailable) {
-        this.attributesAvailable = attributesAvailable;
-    }
-
 }

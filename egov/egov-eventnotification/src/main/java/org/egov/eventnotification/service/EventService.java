@@ -47,9 +47,9 @@
  */
 package org.egov.eventnotification.service;
 
+import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.egov.eventnotification.utils.constants.Constants.ACTIVE;
 import static org.egov.eventnotification.utils.constants.Constants.DDMMYYYY;
-import static org.egov.eventnotification.utils.constants.Constants.EMPTY;
 import static org.egov.eventnotification.utils.constants.Constants.MAX_TEN;
 import static org.egov.eventnotification.utils.constants.Constants.MIN_NUMBER_OF_REQUESTS;
 import static org.egov.eventnotification.utils.constants.Constants.MODULE_NAME;
@@ -57,6 +57,12 @@ import static org.egov.eventnotification.utils.constants.Constants.NO;
 import static org.egov.eventnotification.utils.constants.Constants.NOTIFICATION_TYPE_EVENT;
 import static org.egov.eventnotification.utils.constants.Constants.YES;
 import static org.egov.eventnotification.utils.constants.Constants.ZERO;
+import static org.egov.infra.utils.DateUtils.endOfToday;
+import static org.egov.infra.utils.DateUtils.getDate;
+import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
+import static org.egov.infra.utils.DateUtils.startOfGivenDate;
+import static org.egov.infra.utils.DateUtils.startOfToday;
+import static org.egov.infra.utils.DateUtils.today;
 
 import java.io.IOException;
 import java.util.Date;
@@ -70,11 +76,12 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.utils.DateUtils;
 import org.egov.pushbox.entity.contracts.MessageContent;
 import org.egov.pushbox.entity.contracts.MessageContentDetails;
 import org.egov.pushbox.service.PushNotificationService;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -87,6 +94,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @Transactional(readOnly = true)
 public class EventService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(EventService.class);
 
     @Autowired
     private EventRepository eventRepository;
@@ -102,7 +110,7 @@ public class EventService {
 
     public List<Event> getAllEventByStatus(String status) {
         List<Event> eventList = null;
-        eventList = eventRepository.findByStatusAndEndDateGreaterThanOrderByIdDesc(status, DateUtils.today());
+        eventList = eventRepository.findByStatusAndEndDateGreaterThanOrderByIdDesc(status, today());
         if (!eventList.isEmpty())
             for (Event event : eventList)
                 populateEventDetails(event);
@@ -113,10 +121,10 @@ public class EventService {
         List<Event> eventList = null;
         Date startDate;
         Date endDate;
-        startDate = DateUtils.startOfToday().toDate();
-        endDate = DateUtils.endOfToday().plusDays(6).toDate();
+        startDate = startOfToday().toDate();
+        endDate = endOfToday().plusDays(6).toDate();
         eventList = eventRepository.findByStatusAndStartDateIsBetweenAndEndDateGreaterThanOrderByIdDesc(status,
-                startDate, endDate, DateUtils.today());
+                startDate, endDate, today());
         if (!eventList.isEmpty())
             for (Event event : eventList)
                 populateEventDetails(event);
@@ -126,7 +134,7 @@ public class EventService {
     private void populateEventDetails(Event event) {
         EventDetails eventDetails = new EventDetails();
         DateTime sd = new DateTime(event.getStartDate());
-        eventDetails.setStartDt(DateUtils.getDate(DateUtils.getDefaultFormattedDate(event.getStartDate()), DDMMYYYY));
+        eventDetails.setStartDt(getDate(getDefaultFormattedDate(event.getStartDate()), DDMMYYYY));
         if (sd.getHourOfDay() < MAX_TEN)
             eventDetails.setStartHH(ZERO + String.valueOf(sd.getHourOfDay()));
         else
@@ -137,7 +145,7 @@ public class EventService {
             eventDetails.setStartMM(String.valueOf(sd.getMinuteOfHour()));
 
         DateTime ed = new DateTime(event.getEndDate());
-        eventDetails.setEndDt(DateUtils.getDate(DateUtils.getDefaultFormattedDate(event.getEndDate()), DDMMYYYY));
+        eventDetails.setEndDt(getDate(getDefaultFormattedDate(event.getEndDate()), DDMMYYYY));
         if (ed.getHourOfDay() < MAX_TEN)
             eventDetails.setEndHH(ZERO + String.valueOf(ed.getHourOfDay()));
         else
@@ -163,12 +171,12 @@ public class EventService {
     @Transactional
     public Event saveEvent(Event event) {
         try {
-            DateTime sd = DateUtils.startOfGivenDate(new DateTime(event.getEventDetails().getStartDt()))
+            DateTime sd = startOfGivenDate(new DateTime(event.getEventDetails().getStartDt()))
                     .withHourOfDay(Integer.parseInt(event.getEventDetails().getStartHH()))
                     .withMinuteOfHour(Integer.parseInt(event.getEventDetails().getStartMM()));
             event.setStartDate(sd.toDate());
 
-            DateTime ed = DateUtils.startOfGivenDate(new DateTime(event.getEventDetails().getEndDt()))
+            DateTime ed = startOfGivenDate(new DateTime(event.getEventDetails().getEndDt()))
                     .withHourOfDay(Integer.parseInt(event.getEventDetails().getEndHH()))
                     .withMinuteOfHour(Integer.parseInt(event.getEventDetails().getEndMM()));
             event.setEndDate(ed.toDate());
@@ -182,6 +190,7 @@ public class EventService {
 
             return event;
         } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
             throw new ApplicationRuntimeException(e.getMessage(), e);
         }
     }
@@ -189,12 +198,12 @@ public class EventService {
     @Transactional
     public Event updateEvent(Event updatedEvent) {
         try {
-            DateTime sd = DateUtils.startOfGivenDate(new DateTime(updatedEvent.getEventDetails().getStartDt()))
+            DateTime sd = startOfGivenDate(new DateTime(updatedEvent.getEventDetails().getStartDt()))
                     .withHourOfDay(Integer.parseInt(updatedEvent.getEventDetails().getStartHH()))
                     .withMinuteOfHour(Integer.parseInt(updatedEvent.getEventDetails().getStartMM()));
             updatedEvent.setStartDate(sd.toDate());
 
-            DateTime ed = DateUtils.startOfGivenDate(new DateTime(updatedEvent.getEventDetails().getEndDt()))
+            DateTime ed = startOfGivenDate(new DateTime(updatedEvent.getEventDetails().getEndDt()))
                     .withHourOfDay(Integer.parseInt(updatedEvent.getEventDetails().getEndHH()))
                     .withMinuteOfHour(Integer.parseInt(updatedEvent.getEventDetails().getEndMM()));
             updatedEvent.setEndDate(ed.toDate());
@@ -203,6 +212,7 @@ public class EventService {
                 eventUploadWallpaper(updatedEvent);
             return eventRepository.save(updatedEvent);
         } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
             throw new ApplicationRuntimeException(e.getMessage(), e);
         }
     }
@@ -219,9 +229,9 @@ public class EventService {
                             fileStoreService.store(multipartFile.getInputStream(), multipartFile.getOriginalFilename(),
                                     multipartFile.getContentType(), MODULE_NAME));
         } catch (final IOException e) {
+            LOGGER.error(e.getMessage(), e);
             throw new ApplicationRuntimeException(e.getMessage(), e);
         }
-
     }
 
     public void eventUploadWallpaper(Event existingEvent, Event event) {
@@ -232,6 +242,7 @@ public class EventService {
                             fileStoreService.store(multipartFile.getInputStream(), multipartFile.getOriginalFilename(),
                                     multipartFile.getContentType(), MODULE_NAME));
         } catch (final IOException e) {
+            LOGGER.error(e.getMessage(), e);
             throw new ApplicationRuntimeException(e.getMessage(), e);
         }
 

@@ -47,6 +47,7 @@
  */
 package org.egov.eventnotification.web.controller.event;
 
+import static org.egov.eventnotification.utils.constants.Constants.ALTERROR;
 import static org.egov.eventnotification.utils.constants.Constants.EVENT;
 import static org.egov.eventnotification.utils.constants.Constants.EVENT_LIST;
 import static org.egov.eventnotification.utils.constants.Constants.EVENT_STATUS_LIST;
@@ -56,6 +57,7 @@ import static org.egov.eventnotification.utils.constants.Constants.MINUTE_LIST;
 import static org.egov.eventnotification.utils.constants.Constants.MODE;
 import static org.egov.eventnotification.utils.constants.Constants.MODE_UPDATE;
 import static org.egov.eventnotification.utils.constants.Constants.MODE_VIEW;
+import static org.egov.eventnotification.utils.constants.Constants.VIEWNAME;
 
 import java.util.Arrays;
 
@@ -68,13 +70,16 @@ import org.egov.eventnotification.service.EventTypeService;
 import org.egov.eventnotification.utils.EventNotificationUtil;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class ModifyEventController {
@@ -116,15 +121,20 @@ public class ModifyEventController {
             model.addAttribute(MESSAGE, "msg.event.update.error");
             return "event-update";
         }
-        try {
-            eventService.updateEvent(event);
-        } catch (final Exception e) {
-            throw new ApplicationRuntimeException(e.getMessage(), e);
-        }
 
+        eventService.updateEvent(event);
         model.addAttribute(EVENT, event);
         model.addAttribute(MESSAGE, "msg.event.update.success");
         model.addAttribute(MODE, MODE_VIEW);
         return "event-update-success";
+    }
+
+    @ExceptionHandler(ApplicationRuntimeException.class)
+    public ModelAndView configurationErrors(ApplicationRuntimeException exception) {
+        ModelAndView model = new ModelAndView();
+        model.setViewName(VIEWNAME);
+        model.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        model.addObject(ALTERROR, HttpStatus.INTERNAL_SERVER_ERROR.toString());
+        return model;
     }
 }

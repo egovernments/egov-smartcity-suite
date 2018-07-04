@@ -144,7 +144,6 @@ public final class Constants {
     public static final String CATEGORY = "category";
     public static final String SUCCESS1 = "Success";
     public static final int MIN_NUMBER_OF_REQUESTS = 1;
-    public static final String EMPTY = "";
     public static final int ZERO = 0;
     public static final String MINUTES_CRON = "{minutes}";
     public static final String HOURS_CRON = "{hours}";
@@ -188,6 +187,8 @@ public final class Constants {
     public static final String ISPAID = "ispaid";
     public static final String EVENTTYPE = "eventType";
     public static final String USER_INTERESTED = "userInterested";
+    public static final String VIEWNAME = "error/500";
+    public static final String ALTERROR = "altError";
 
     private Constants() {
 

@@ -55,6 +55,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
@@ -73,6 +74,7 @@ public class DraftType extends AbstractPersistable<Long> {
     private Long id;
 
     @SafeHtml
+    @NotBlank
     private String name;
 
     @Override

@@ -47,12 +47,12 @@
  */
 package org.egov.api.adapter;
 
+import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.egov.eventnotification.utils.constants.Constants.ADDRESS;
 import static org.egov.eventnotification.utils.constants.Constants.CONTACT_NO;
 import static org.egov.eventnotification.utils.constants.Constants.DDMMYYYY;
 import static org.egov.eventnotification.utils.constants.Constants.DESCRIPTION;
 import static org.egov.eventnotification.utils.constants.Constants.DOUBLE_DEFAULT;
-import static org.egov.eventnotification.utils.constants.Constants.EMPTY;
 import static org.egov.eventnotification.utils.constants.Constants.END_DATE;
 import static org.egov.eventnotification.utils.constants.Constants.END_TIME;
 import static org.egov.eventnotification.utils.constants.Constants.EVENTTYPE;
@@ -72,12 +72,13 @@ import static org.egov.eventnotification.utils.constants.Constants.START_TIME;
 import static org.egov.eventnotification.utils.constants.Constants.URL;
 import static org.egov.eventnotification.utils.constants.Constants.USER_INTERESTED;
 import static org.egov.eventnotification.utils.constants.Constants.ZERO;
+import static org.egov.infra.utils.DateUtils.getDate;
+import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
 
 import java.lang.reflect.Type;
 
 import org.egov.eventnotification.entity.Event;
 import org.egov.eventnotification.service.UserEventService;
-import org.egov.infra.utils.DateUtils;
 import org.joda.time.DateTime;
 
 import com.google.gson.JsonElement;
@@ -101,9 +102,9 @@ public class EventSearchAdapter extends DataAdapter<Event> {
 
         DateTime sd = new DateTime(event.getStartDate());
         jsonObjectEvent.addProperty(START_DATE,
-                DateUtils.getDate(DateUtils.getDefaultFormattedDate(event.getStartDate()), DDMMYYYY).getTime());
-        String startHH = null;
-        String startMM = null;
+                getDate(getDefaultFormattedDate(event.getStartDate()), DDMMYYYY).getTime());
+        String startHH = EMPTY;
+        String startMM = EMPTY;
         if (sd.getHourOfDay() < MAX_TEN)
             startHH = ZERO + String.valueOf(sd.getHourOfDay());
         else
@@ -118,9 +119,9 @@ public class EventSearchAdapter extends DataAdapter<Event> {
 
         DateTime ed = new DateTime(event.getEndDate());
         jsonObjectEvent.addProperty(END_DATE,
-                DateUtils.getDate(DateUtils.getDefaultFormattedDate(event.getEndDate()), DDMMYYYY).getTime());
-        String endHH = null;
-        String endMM = null;
+                getDate(getDefaultFormattedDate(event.getEndDate()), DDMMYYYY).getTime());
+        String endHH = EMPTY;
+        String endMM = EMPTY;
         if (ed.getHourOfDay() < MAX_TEN)
             endHH = ZERO + String.valueOf(ed.getHourOfDay());
         else
