@@ -47,9 +47,16 @@
  */
 package org.egov.pushbox.entity.contracts;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 public class UserTokenRequest {
+    @NotBlank
     private String userToken;
+    
+    @NotBlank
     private String userId;
+    
+    @NotBlank
     private String deviceId;
 
     public String getUserToken() {

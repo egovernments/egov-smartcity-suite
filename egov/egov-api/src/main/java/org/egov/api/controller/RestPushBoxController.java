@@ -48,10 +48,12 @@
 
 package org.egov.api.controller;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.egov.api.controller.core.ApiUrl.SEND_NOTIFICATIONS;
 import static org.egov.api.controller.core.ApiUrl.UPDATE_USER_TOKEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.apache.commons.lang.StringUtils.EMPTY;
+
+import javax.validation.Valid;
 
 import org.egov.api.adapter.UserAdapter;
 import org.egov.api.adapter.UserDeviceAdapter;
@@ -61,10 +63,10 @@ import org.egov.pushbox.entity.UserFcmDevice;
 import org.egov.pushbox.entity.contracts.SendNotificationRequest;
 import org.egov.pushbox.entity.contracts.UserTokenRequest;
 import org.egov.pushbox.service.PushNotificationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -78,44 +80,33 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class RestPushBoxController extends ApiController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RestPushBoxController.class);
-
     @Autowired
     private PushNotificationService notificationService;
 
     @PostMapping(path = UPDATE_USER_TOKEN, consumes = APPLICATION_JSON_VALUE)
-    public @ResponseBody ResponseEntity<String> updateToken(@RequestBody UserTokenRequest userTokenRequest) {
+    public @ResponseBody ResponseEntity<String> updateToken(@Valid @RequestBody UserTokenRequest userTokenRequest,
+            BindingResult errors) {
         ApiResponse res = ApiResponse.newInstance();
-        try {
-
-            if (isBlank(userTokenRequest.getUserToken()))
-                return res.error(getMessage("userdevice.device.tokenunavailable"));
-
-            if (isBlank(userTokenRequest.getUserId()))
-                return res.error(getMessage("userdevice.user.useridunavailable"));
-
-            if (isBlank(userTokenRequest.getDeviceId()))
-                return res.error(getMessage("userdevice.user.deviceidunavailable"));
-            UserFcmDevice responseObject = notificationService.saveUserDevice(userTokenRequest);
-            return res.setDataAdapter(new UserDeviceAdapter()).success(responseObject,
-                    getMessage("msg.userdevice.update.success"));
-        } catch (Exception e) {
-            LOGGER.error(EGOV_API_ERROR, e);
-            return res.error(getMessage(SERVER_ERROR_KEY));
+        
+        if (errors.hasErrors()) {
+            String errorMessage = EMPTY;
+            for (FieldError fieldError : errors.getFieldErrors()) {
+                errorMessage = errorMessage.concat(fieldError.getField().concat(" ").concat(fieldError.getDefaultMessage()).concat(" <br>"));
+            }
+            return res.error(errorMessage);
         }
+
+        UserFcmDevice responseObject = notificationService.saveUserDevice(userTokenRequest);
+        return res.setDataAdapter(new UserDeviceAdapter()).success(responseObject,
+                getMessage("msg.userdevice.update.success"));
     }
 
     @PostMapping(path = SEND_NOTIFICATIONS, consumes = APPLICATION_JSON_VALUE)
     public @ResponseBody ResponseEntity<String> sendNotification(@RequestBody SendNotificationRequest notificationRequest) {
         ApiResponse res = ApiResponse.newInstance();
-        try {
-            notificationService.buildAndSendNotification(notificationRequest);
+        notificationService.buildAndSendNotification(notificationRequest);
 
-            UserFcmDevice responseObject = new UserFcmDevice();
-            return res.setDataAdapter(new UserAdapter()).success(responseObject, getMessage("msg.userdevice.update.success"));
-        } catch (Exception e) {
-            LOGGER.error(EGOV_API_ERROR, e);
-            return res.error(getMessage(SERVER_ERROR_KEY));
-        }
+        UserFcmDevice responseObject = new UserFcmDevice();
+        return res.setDataAdapter(new UserAdapter()).success(responseObject, getMessage("msg.userdevice.update.success"));
     }
 }

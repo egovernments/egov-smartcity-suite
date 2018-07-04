@@ -51,6 +51,9 @@ import static org.egov.eventnotification.utils.constants.Constants.DDMMYYYY;
 import static org.egov.eventnotification.utils.constants.Constants.MAX_TEN;
 import static org.egov.eventnotification.utils.constants.Constants.SCHEDULED_STATUS;
 import static org.egov.eventnotification.utils.constants.Constants.ZERO;
+import static org.egov.infra.utils.DateUtils.getDate;
+import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
+import static org.egov.infra.utils.DateUtils.startOfGivenDate;
 
 import java.util.Arrays;
 import java.util.List;
@@ -59,7 +62,6 @@ import org.egov.eventnotification.entity.Schedule;
 import org.egov.eventnotification.entity.contracts.EventDetails;
 import org.egov.eventnotification.entity.contracts.UserTaxInformation;
 import org.egov.eventnotification.repository.ScheduleRepository;
-import org.egov.infra.utils.DateUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -85,7 +87,7 @@ public class ScheduleService {
                 EventDetails eventDetails = new EventDetails();
                 DateTime sd = new DateTime(notificationSchedule.getStartDate());
                 eventDetails.setStartDt(
-                        DateUtils.getDate(DateUtils.getDefaultFormattedDate(notificationSchedule.getStartDate()),
+                        getDate(getDefaultFormattedDate(notificationSchedule.getStartDate()),
                                 DDMMYYYY));
                 if (sd.getHourOfDay() < MAX_TEN)
                     eventDetails.setStartHH(ZERO + String.valueOf(sd.getHourOfDay()));
@@ -105,7 +107,7 @@ public class ScheduleService {
         EventDetails eventDetails = new EventDetails();
         DateTime sd = new DateTime(schedule.getStartDate());
         eventDetails
-                .setStartDt(DateUtils.getDate(DateUtils.getDefaultFormattedDate(schedule.getStartDate()),
+                .setStartDt(getDate(getDefaultFormattedDate(schedule.getStartDate()),
                         DDMMYYYY));
         if (sd.getHourOfDay() < MAX_TEN)
             eventDetails.setStartHH(ZERO + String.valueOf(sd.getHourOfDay()));
@@ -121,7 +123,7 @@ public class ScheduleService {
 
     @Transactional
     public Schedule saveSchedule(Schedule notificationSchedule) {
-        DateTime sd = DateUtils.startOfGivenDate(new DateTime(notificationSchedule.getEventDetails().getStartDt()))
+        DateTime sd = startOfGivenDate(new DateTime(notificationSchedule.getEventDetails().getStartDt()))
                 .withHourOfDay(Integer.parseInt(notificationSchedule.getEventDetails().getStartHH()))
                 .withMinuteOfHour(Integer.parseInt(notificationSchedule.getEventDetails().getStartMM()));
         sd = sd.withSecondOfMinute(00);
@@ -132,7 +134,7 @@ public class ScheduleService {
 
     @Transactional
     public Schedule updateSchedule(Schedule schedule) {
-        DateTime sd = DateUtils.startOfGivenDate(new DateTime(schedule.getEventDetails().getStartDt()))
+        DateTime sd = startOfGivenDate(new DateTime(schedule.getEventDetails().getStartDt()))
                 .withHourOfDay(Integer.parseInt(schedule.getEventDetails().getStartHH()))
                 .withMinuteOfHour(Integer.parseInt(schedule.getEventDetails().getStartMM()));
         schedule.setStartDate(sd.toDate());

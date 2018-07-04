@@ -76,19 +76,21 @@ import org.quartz.TriggerBuilder;
 import org.quartz.TriggerKey;
 import org.quartz.impl.JobDetailImpl;
 import org.quartz.impl.triggers.SimpleTriggerImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ScheduleDetailsService {
-    
+    private static final Logger LOGGER = LoggerFactory.getLogger(ScheduleDetailsService.class);
     @Autowired
     private ApplicationContext beanProvider;
-    
+
     @Autowired
     private EventNotificationProperties appProperties;
-    
+
     /**
      * This method is used to create a new job based on the newly created schedule.
      * @param schedule
@@ -123,6 +125,7 @@ public class ScheduleDetailsService {
             }
 
         } catch (final SchedulerException e) {
+            LOGGER.error(e.getMessage(), e);
             throw new ApplicationRuntimeException(e.getMessage(), e);
         }
     }
@@ -139,6 +142,7 @@ public class ScheduleDetailsService {
                     EVENT_NOTIFICATION_GROUP));
             scheduler.deleteJob(new JobKey(JOB.concat(String.valueOf(schedule.getId()))));
         } catch (final SchedulerException e) {
+            LOGGER.error(e.getMessage(), e);
             throw new ApplicationRuntimeException(e.getMessage(), e);
         }
     }
@@ -177,10 +181,11 @@ public class ScheduleDetailsService {
             }
 
         } catch (final SchedulerException e) {
+            LOGGER.error(e.getMessage(), e);
             throw new ApplicationRuntimeException(e.getMessage(), e);
         }
     }
-    
+
     /**
      * This method take a cron expression from properties file and replace the hour,minute,day and month into the placeholder to
      * make dynamic cron expression.

@@ -47,12 +47,12 @@
  */
 package org.egov.api.adapter;
 
+import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.egov.eventnotification.utils.constants.Constants.ADDRESS;
 import static org.egov.eventnotification.utils.constants.Constants.CONTACT_NO;
 import static org.egov.eventnotification.utils.constants.Constants.DDMMYYYY;
 import static org.egov.eventnotification.utils.constants.Constants.DESCRIPTION;
 import static org.egov.eventnotification.utils.constants.Constants.DOUBLE_DEFAULT;
-import static org.egov.eventnotification.utils.constants.Constants.EMPTY;
 import static org.egov.eventnotification.utils.constants.Constants.END_DATE;
 import static org.egov.eventnotification.utils.constants.Constants.END_TIME;
 import static org.egov.eventnotification.utils.constants.Constants.EVENTTYPE;
@@ -71,12 +71,13 @@ import static org.egov.eventnotification.utils.constants.Constants.START_TIME;
 import static org.egov.eventnotification.utils.constants.Constants.URL;
 import static org.egov.eventnotification.utils.constants.Constants.USER_INTERESTED;
 import static org.egov.eventnotification.utils.constants.Constants.ZERO;
+import static org.egov.infra.utils.DateUtils.getDate;
+import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
 
 import java.lang.reflect.Type;
 
 import org.egov.eventnotification.entity.Event;
 import org.egov.eventnotification.service.UserEventService;
-import org.egov.infra.utils.DateUtils;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -98,12 +99,12 @@ public class EventAdapter extends DataAdapter<Event> {
         jsonObjectEvent.addProperty(DESCRIPTION, event.getDescription());
 
         jsonObjectEvent.addProperty(START_DATE,
-                DateUtils.getDate(DateUtils.getDefaultFormattedDate(event.getStartDate()), DDMMYYYY).getTime());
+                getDate(getDefaultFormattedDate(event.getStartDate()), DDMMYYYY).getTime());
         jsonObjectEvent.addProperty(START_TIME,
                 event.getEventDetails().getStartHH().concat(":").concat(event.getEventDetails().getStartMM()));
 
         jsonObjectEvent.addProperty(END_DATE,
-                DateUtils.getDate(DateUtils.getDefaultFormattedDate(event.getEndDate()), DDMMYYYY).getTime());
+                getDate(getDefaultFormattedDate(event.getEndDate()), DDMMYYYY).getTime());
         jsonObjectEvent.addProperty(END_TIME,
                 event.getEventDetails().getEndHH().concat(":").concat(event.getEventDetails().getEndMM()));
 

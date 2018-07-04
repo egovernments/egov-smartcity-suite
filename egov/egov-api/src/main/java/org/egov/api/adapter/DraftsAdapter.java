@@ -47,6 +47,7 @@
  */
 package org.egov.api.adapter;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.eventnotification.utils.constants.Constants.CATEGORY;
 import static org.egov.eventnotification.utils.constants.Constants.DRAFT_ID;
 import static org.egov.eventnotification.utils.constants.Constants.DRAFT_NOTIFICATION_TYPE;
@@ -57,7 +58,6 @@ import static org.egov.eventnotification.utils.constants.Constants.NOTIFICATION_
 
 import java.lang.reflect.Type;
 
-import org.apache.commons.lang3.StringUtils;
 import org.egov.eventnotification.entity.Drafts;
 
 import com.google.gson.JsonElement;
@@ -75,16 +75,16 @@ public class DraftsAdapter extends DataAdapter<Drafts> {
 
         if (draft.getModule() != null) {
             JsonObject jsonObjectModule = new JsonObject();
-            if (StringUtils.isNotBlank(draft.getModule().getName()))
+            if (isNotBlank(draft.getModule().getName()))
                 jsonObjectModule.addProperty(NAME, draft.getModule().getName());
-            if (null != draft.getModule().getId())
+            if (draft.getModule().getId() != null)
                 jsonObjectModule.addProperty(EVENT_ID, draft.getModule().getId());
             jsonObjectDraft.add(MODULE, jsonObjectModule);
         }
 
         if (draft.getCategory() != null) {
             JsonObject jsonObjectCategory = new JsonObject();
-            if (StringUtils.isNotBlank(draft.getCategory().getName()))
+            if (isNotBlank(draft.getCategory().getName()))
                 jsonObjectCategory.addProperty(NAME, draft.getCategory().getName());
             if (draft.getCategory().getId() != null)
                 jsonObjectCategory.addProperty(EVENT_ID, draft.getCategory().getId());

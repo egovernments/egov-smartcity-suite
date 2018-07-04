@@ -53,7 +53,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.hibernate.validator.constraints.Length;
@@ -81,7 +80,6 @@ public class TemplateModule extends AbstractPersistable<Long> {
     @Length(max = 100)
     private String name;
 
-    @NotNull
     private boolean active;
 
     @NotBlank

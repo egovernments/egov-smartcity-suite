@@ -47,6 +47,7 @@
  */
 package org.egov.eventnotification.web.controller.schedule;
 
+import static org.egov.eventnotification.utils.constants.Constants.ALTERROR;
 import static org.egov.eventnotification.utils.constants.Constants.DRAFT_LIST;
 import static org.egov.eventnotification.utils.constants.Constants.HOUR_LIST;
 import static org.egov.eventnotification.utils.constants.Constants.MESSAGE;
@@ -55,6 +56,7 @@ import static org.egov.eventnotification.utils.constants.Constants.MODE;
 import static org.egov.eventnotification.utils.constants.Constants.MODE_VIEW;
 import static org.egov.eventnotification.utils.constants.Constants.NOTIFICATION_SCHEDULE;
 import static org.egov.eventnotification.utils.constants.Constants.SCHEDULER_REPEAT_LIST;
+import static org.egov.eventnotification.utils.constants.Constants.VIEWNAME;
 
 import javax.validation.Valid;
 
@@ -66,13 +68,16 @@ import org.egov.eventnotification.service.ScheduleService;
 import org.egov.eventnotification.utils.EventNotificationUtil;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class ModifyScheduleController {
@@ -88,7 +93,7 @@ public class ModifyScheduleController {
 
     @Autowired
     private DraftTypeService draftTypeService;
-    
+
     @Autowired
     private ScheduleDetailsService scheduleDetailsService;
 
@@ -130,16 +135,19 @@ public class ModifyScheduleController {
         }
 
         scheduleService.updateSchedule(schedule);
-        try {
-
-            scheduleDetailsService.modifyScheduler(schedule);
-
-        } catch (final Exception e) {
-            throw new ApplicationRuntimeException(e.getMessage(), e);
-        }
+        scheduleDetailsService.modifyScheduler(schedule);
 
         model.addAttribute(NOTIFICATION_SCHEDULE, schedule);
         model.addAttribute(MESSAGE, "msg.notification.schedule.update.success");
         return "schedule-update-success";
+    }
+
+    @ExceptionHandler(ApplicationRuntimeException.class)
+    public ModelAndView configurationErrors(ApplicationRuntimeException exception) {
+        ModelAndView model = new ModelAndView();
+        model.setViewName(VIEWNAME);
+        model.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        model.addObject(ALTERROR, HttpStatus.INTERNAL_SERVER_ERROR.toString());
+        return model;
     }
 }
