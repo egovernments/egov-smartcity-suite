@@ -366,6 +366,9 @@ public class ComplaintIndex {
 
     private String feedbackInWords = EMPTY;
 
+    @Field(type = FieldType.String, index = not_analyzed)
+    private String feedbackCallStatus;
+
     public String getId() {
         return id;
     }
@@ -1142,5 +1145,13 @@ public class ComplaintIndex {
 
     public void setFeedbackInWords(String feedbackInWords) {
         this.feedbackInWords = feedbackInWords;
+    }
+
+    public String getFeedbackCallStatus() {
+        return feedbackCallStatus;
+    }
+
+    public void setFeedbackCallStatus(final String feedbackCallStatus) {
+        this.feedbackCallStatus = feedbackCallStatus;
     }
 }
