@@ -52,6 +52,7 @@ import org.egov.eis.entity.Employee;
 import org.egov.eis.service.EmployeeService;
 import org.egov.restapi.model.AssignmentHelper;
 import org.egov.restapi.model.EmployeeHelper;
+import org.postgresql.util.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -72,22 +73,28 @@ public class ExternalEmployeeService {
         final List<AssignmentHelper> assignmentHelpers = new ArrayList<>();
         final EmployeeHelper employeeHelper = new EmployeeHelper();
         if (employee != null) {
-            employeeHelper.setCode(employee.getCode());
-            employeeHelper.setName(employee.getName());
-            employeeHelper.setAadhaarNumber(employee.getAadhaarNumber());
-            employeeHelper.setPan(employee.getPan());
-            employeeHelper.setDateOfBirth(employee.getDob());
-            employeeHelper.setGender(employee.getGender().name());
-            employeeHelper.setEmail(employee.getEmailId());
-            employeeHelper.setEmployeeStatus(employee.getEmployeeStatus().name());
-            employeeHelper.setEmployeeType(employee.getEmployeeType().getName());
-            employeeHelper.setMobileNumber(employee.getMobileNumber());
+            createEmployeeHelper(employeeHelper, employee);
             for (Assignment assign : employee.getAssignments()) {
                 createAssignmentHelper(assignmentHelpers, assign);
             }
             employeeHelper.setAssignments(assignmentHelpers);
         }
         return employeeHelper;
+    }
+
+    private void createEmployeeHelper(final EmployeeHelper employeeHelper, final Employee employee) {
+        employeeHelper.setCode(employee.getCode());
+        employeeHelper.setName(employee.getName());
+        employeeHelper.setAadhaarNumber(employee.getAadhaarNumber());
+        employeeHelper.setPan(employee.getPan());
+        employeeHelper.setDateOfBirth(employee.getDob());
+        employeeHelper.setGender(employee.getGender().name());
+        employeeHelper.setEmail(employee.getEmailId());
+        employeeHelper.setEmployeeStatus(employee.getEmployeeStatus().name());
+        employeeHelper.setEmployeeType(employee.getEmployeeType().getName());
+        employeeHelper.setMobileNumber(employee.getMobileNumber());
+        if (employee.getSignature() != null)
+            employeeHelper.setSignature(Base64.encodeBytes(employee.getSignature()));
     }
 
     private void createAssignmentHelper(final List<AssignmentHelper> assignmentHelpers, final Assignment assignment) {
