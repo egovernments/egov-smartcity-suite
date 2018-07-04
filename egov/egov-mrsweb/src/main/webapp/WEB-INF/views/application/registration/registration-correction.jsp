@@ -65,7 +65,8 @@
 			<input type="hidden" id="registrationStatus"
 				value="${marriageRegistration.status.code}" />
 			<input type="hidden" id="allowDaysValidation"
-				value="${allowDaysValidation}" />
+				value="${allowDaysValidation}" />mrsRegistrar
+			<form:hidden path="" id="mrsRegistrar" name="mrsRegistrar" value="${mrsRegistrar}" />
 			<form:hidden path="" id="workFlowAction" name="workFlowAction" />
 			<form:hidden path="" id="serialNoExists" value="${serialNoExists}" />
 			<input type="hidden" id="pendingActions" value="${pendingActions}" />

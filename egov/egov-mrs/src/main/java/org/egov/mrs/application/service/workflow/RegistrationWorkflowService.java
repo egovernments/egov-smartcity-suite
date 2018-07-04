@@ -65,6 +65,9 @@ import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_CMO
 import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_MHO_APPRVLPENDING;
 import static org.egov.mrs.application.MarriageConstants.WFSTATE_APPROVER_REJECTED;
 import static org.egov.mrs.application.MarriageConstants.MARRIAGE_REGISTRAR;
+import static org.egov.mrs.application.MarriageConstants.MRG_REASSIGNDESIGNATION_FOR_MRSREGISTRARAR;
+import static org.egov.mrs.application.MarriageConstants.MRG_REASSIGNDEPARTEMENT_FOR_MRSREGISTRARAR;
+
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -607,5 +610,26 @@ public class RegistrationWorkflowService {
                 .withNatureOfTask("Marriage Registration :: New Registration").withInitiator(assignee);
 
     }
+    
+    /**
+     * Returns Designation for  MrsRegistrar role in workflow
+     *
+     * @return
+     */
+    public String getDesignationForMrsRegistrarWorkFlow() {
+        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
+                MRG_REASSIGNDESIGNATION_FOR_MRSREGISTRARAR);
+        return !appConfigValue.isEmpty() ? appConfigValue.get(0).getValue() : null;
+    }
 
+    /**
+     * Returns Department for  MrsRegistrar role in workflow
+     *
+     * @return
+     */
+    public String getDepartmentForMrsRegistrarWorkFlow() {
+        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
+                MRG_REASSIGNDEPARTEMENT_FOR_MRSREGISTRARAR);
+        return !appConfigValue.isEmpty() ? appConfigValue.get(0).getValue() : null;
+    }
 }

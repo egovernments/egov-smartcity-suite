@@ -58,11 +58,11 @@
 		} else if ($("#reIssueId").val()) {
 			appId = $("#reIssueId").val();
 		}
-
+				
 		var applicationtype = $("#stateType").val();
 
 		popupWindow = window.open('/mrs/reassignmrs/'
-				+appId + "/" + applicationtype, '_blank',
+				+appId + "/" + applicationtype+"?"+"mrsRegistrar="+$("#mrsRegistrar").val(), '_blank',
 				'width=650, height=500, scrollbars=yes', false);
 		jQuery('.loader-class').modal('show', {
 			backdrop : 'static'
@@ -126,7 +126,7 @@
 	<table>
 		<tr>
 			<td><c:if
-					test="${marriageRegistration.currentState.value == 'NEW' or reIssue.currentState.value == 'NEW'}">
+					test="${marriageRegistration.currentState.value == 'NEW' or reIssue.currentState.value == 'NEW' or mrsRegistrar==true }">
 					<c:if test="${isReassignEnabled}">
 						<input type="hidden" name="stateType" id="stateType"
 							value="${stateType}" />

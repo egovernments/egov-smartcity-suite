@@ -131,9 +131,16 @@ public class MarriageReassignService {
         }
     }
 
-    public Map<String, String> employeePositionMap() {
-        final String designationStr = registrationWorkFlowService.getDesignationForCscOperatorWorkFlow();
-        final String departmentStr = registrationWorkFlowService.getDepartmentForCscOperatorWorkFlow();
+    public Map<String, String> employeePositionMap(boolean mrsRegistrar) {
+        String designationStr;
+        String departmentStr;
+        if (mrsRegistrar) {
+            designationStr = registrationWorkFlowService.getDesignationForMrsRegistrarWorkFlow();
+            departmentStr = registrationWorkFlowService.getDepartmentForMrsRegistrarWorkFlow();
+        } else {
+            designationStr = registrationWorkFlowService.getDesignationForCscOperatorWorkFlow();
+            departmentStr = registrationWorkFlowService.getDepartmentForCscOperatorWorkFlow();
+        }
         Department dept = departmentService.getDepartmentByName(departmentStr.split(",")[0]);
         List<Long> desigList = designationService.getDesignationsByNames(Arrays.asList(designationStr.toUpperCase().split(",")))
                 .stream()
