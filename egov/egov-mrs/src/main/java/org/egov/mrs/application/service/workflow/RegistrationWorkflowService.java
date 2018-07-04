@@ -56,11 +56,11 @@ import static org.egov.mrs.application.MarriageConstants.MARRIAGE_REGISTRAR;
 import static org.egov.mrs.application.MarriageConstants.MEESEVA_OPERATOR_ROLE;
 import static org.egov.mrs.application.MarriageConstants.MHO_DESIG;
 import static org.egov.mrs.application.MarriageConstants.MODULE_NAME;
-import static org.egov.mrs.application.MarriageConstants.MRG_REASSIGNDEPARTEMENT_FOR_REGISTRARAR;
-import static org.egov.mrs.application.MarriageConstants.MRG_REASSIGNDESIGNATION_FOR_REGISTRARAR;
-import static org.egov.mrs.application.MarriageConstants.MRG_ROLEFORNONEMPLOYEE;
-import static org.egov.mrs.application.MarriageConstants.MRG_WORKFLOWDEPARTEMENT_FOR_CSCOPERATOR;
-import static org.egov.mrs.application.MarriageConstants.MRG_WORKFLOWDESIGNATION_FOR_CSCOPERATOR;
+import static org.egov.mrs.application.MarriageConstants.MRS_DEPARTEMENT_REGISTRARAR;
+import static org.egov.mrs.application.MarriageConstants.MRS_DESIGNATION_REGISTRARAR;
+import static org.egov.mrs.application.MarriageConstants.MRS_ROLEFORNONEMPLOYEE;
+import static org.egov.mrs.application.MarriageConstants.MRS_DEPARTEMENT_CSCOPERATOR;
+import static org.egov.mrs.application.MarriageConstants.MRS_DESIGNATION_CSCOPERATOR;
 import static org.egov.mrs.application.MarriageConstants.ROLE_CITIZEN;
 import static org.egov.mrs.application.MarriageConstants.WFLOW_ACTION_STEP_DIGISIGN;
 import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_APPRVLPENDING_DIGISIGN;
@@ -397,7 +397,7 @@ public class RegistrationWorkflowService {
      */
     public String getDesignationForThirdPartyUser() {
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
-                MRG_ROLEFORNONEMPLOYEE);
+                MRS_ROLEFORNONEMPLOYEE);
         return !appConfigValue.isEmpty() ? appConfigValue.get(0).getValue() : org.apache.commons.lang.StringUtils.EMPTY;
     }
 
@@ -422,7 +422,7 @@ public class RegistrationWorkflowService {
      */
     public List<AppConfigValues> getThirdPartyUserRoles() {
         final List<AppConfigValues> appConfigValueList = appConfigValuesService.getConfigValuesByModuleAndKey(
-                MODULE_NAME, MRG_ROLEFORNONEMPLOYEE);
+                MODULE_NAME, MRS_ROLEFORNONEMPLOYEE);
         return !appConfigValueList.isEmpty() ? appConfigValueList : Collections.emptyList();
     }
 
@@ -434,7 +434,7 @@ public class RegistrationWorkflowService {
      */
     public Boolean isCscOperator(final User user) {
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
-                MRG_ROLEFORNONEMPLOYEE);
+                MRS_ROLEFORNONEMPLOYEE);
         final String rolesForNonEmployee = !appConfigValue.isEmpty() ? appConfigValue.get(0).getValue() : null;
         for (final Role role : user.getRoles())
             if (role != null && rolesForNonEmployee != null && role.getName().equalsIgnoreCase(rolesForNonEmployee))
@@ -462,7 +462,7 @@ public class RegistrationWorkflowService {
      */
     public String getDesignationForCscOperatorWorkFlow() {
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
-                MRG_WORKFLOWDESIGNATION_FOR_CSCOPERATOR);
+                MRS_DESIGNATION_CSCOPERATOR);
         return !appConfigValue.isEmpty() ? appConfigValue.get(0).getValue() : null;
     }
 
@@ -473,7 +473,7 @@ public class RegistrationWorkflowService {
      */
     public String getDepartmentForCscOperatorWorkFlow() {
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
-                MRG_WORKFLOWDEPARTEMENT_FOR_CSCOPERATOR);
+                MRS_DEPARTEMENT_CSCOPERATOR);
         return !appConfigValue.isEmpty() ? appConfigValue.get(0).getValue() : null;
     }
 
@@ -617,7 +617,7 @@ public class RegistrationWorkflowService {
      */
     public String getDesignationForMrsRegistrarWorkFlow() {
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
-                MRG_REASSIGNDESIGNATION_FOR_REGISTRARAR);
+                MRS_DESIGNATION_REGISTRARAR);
         return !appConfigValue.isEmpty() ? appConfigValue.get(0).getValue() : null;
     }
 
@@ -628,7 +628,7 @@ public class RegistrationWorkflowService {
      */
     public String getDepartmentForMrsRegistrarWorkFlow() {
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
-                MRG_REASSIGNDEPARTEMENT_FOR_REGISTRARAR);
+                MRS_DEPARTEMENT_REGISTRARAR);
         return !appConfigValue.isEmpty() ? appConfigValue.get(0).getValue() : null;
     }
 }

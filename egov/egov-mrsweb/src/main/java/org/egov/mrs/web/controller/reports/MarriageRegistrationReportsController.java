@@ -178,10 +178,10 @@ public class MarriageRegistrationReportsController {
     @ModelAttribute("zones")
     public List<Boundary> getZonesList() {
         final AppConfigValues heirarchyType = appConfigValuesService.getConfigValuesByModuleAndKey(
-                MarriageConstants.MODULE_NAME, MarriageConstants.MARRIAGE_REGISTRATIONUNIT_HEIRARCHYTYPE).get(0);
+                MarriageConstants.MODULE_NAME, MarriageConstants.MRS_HEIRARCHYTYPE).get(0);
 
         final AppConfigValues boundaryType = appConfigValuesService.getConfigValuesByModuleAndKey(
-                MarriageConstants.MODULE_NAME, MarriageConstants.MARRIAGE_REGISTRATIONUNIT_BOUNDARYYTYPE).get(0);
+                MarriageConstants.MODULE_NAME, MarriageConstants.MRS_BOUNDARYYTYPE).get(0);
 
         if (heirarchyType != null && heirarchyType.getValue() != null && !"".equals(heirarchyType.getValue())
                 && boundaryType != null && boundaryType.getValue() != null && !"".equals(boundaryType.getValue())) {
