@@ -68,6 +68,7 @@ public class IVRSFeedbackUpdateRequest {
     private Date feedbackDate;
 
     @NotBlank(message = "Call Status is mandatory")
+    @SafeHtml(message = "Call Status contains insecure characters")
     private String callStatus;
 
     public String getCrn() {

@@ -51,7 +51,9 @@ package org.egov.pgr.integration.ivrs.entity;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.pgr.entity.Complaint;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -95,6 +97,8 @@ public class IVRSFeedback extends AbstractAuditable {
     private Date feedbackDate;
 
     @NotBlank
+    @SafeHtml
+    @Length(max = 50)
     private String callStatus;
 
     @Override
