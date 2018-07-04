@@ -246,8 +246,11 @@ public class NewConnectionController extends GenericConnectionController {
         String sourceChannel = request.getParameter("Source");
 
         newConnectionService.validatePropertyID(waterConnectionDetails, resultBinder);
-        if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType()))
+        
+        if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())){
             waterConnectionDtlsService.validateWaterRateAndDonationHeader(waterConnectionDetails);
+            waterConnectionDetailsService.validateConnectionCategory(waterConnectionDetails, resultBinder,request);
+        }
         List<ApplicationDocuments> applicationDocs = new ArrayList<>();
         int i = 0;
         String documentRequired = waterTaxUtils.documentRequiredForBPLCategory();

@@ -337,6 +337,7 @@ public class WaterTaxConstants {
     public static final String THIRD_PARTY_ERR_CODE_SUCCESS = "WTMS-REST-0";
     public static final String THIRD_PARTY_ERR_MSG_SUCCESS = "SUCCESS";
     public static final String MEESEVA_REDIRECT_URL = "/meeseva/generatereceipt?transactionServiceNumber=";
+    public static final String PTIS_DETAILS_URL = "%s/ptis/rest/property/{assessmentNumber}";
     public static final String USERNAME_ANONYMOUS = "anonymous";
     public static final String USERNAME_MEESEVA = "meeseva";
 
