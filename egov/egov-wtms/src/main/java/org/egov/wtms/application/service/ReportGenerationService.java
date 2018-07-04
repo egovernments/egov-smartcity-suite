@@ -280,7 +280,8 @@ public class ReportGenerationService {
             reportParams.put("userSignature", securityUtils.getCurrentUser().getSignature() != null
                     ? new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()) : new byte[0]);
             reportParams.put("estimationDate", toDefaultDateFormat(connectionDetails.getFieldInspectionDetails().getCreatedDate()));
-            reportParams.put("estimationNumber", connectionDetails.getEstimationNumber());
+            reportParams.put("estimationNumber", isNotBlank(connectionDetails.getEstimationNumber())
+                    ? connectionDetails.getEstimationNumber() : EMPTY);
             reportParams.put(PROPERTYID, connectionDetails.getConnection().getPropertyIdentifier());
             reportParams.put(APPLICATION_DATE, toDefaultDateFormat(connectionDetails.getApplicationDate()));
             reportParams.put(DONATION_CHARGES, connectionDetails.getDonationCharges());
@@ -452,7 +453,8 @@ public class ReportGenerationService {
             reportParams.put(CITY_NAME, cityMunicipalityName);
             reportParams.put(DISTRICT, districtName);
             reportParams.put("estimationDate", toDefaultDateFormat(waterConnectionDetails.getFieldInspectionDetails().getCreatedDate()));
-            reportParams.put("estimationNumber", waterConnectionDetails.getEstimationNumber());
+            reportParams.put("estimationNumber", isNotBlank(waterConnectionDetails.getEstimationNumber())
+                    ? waterConnectionDetails.getEstimationNumber() : EMPTY);
             reportParams.put(DONATION_CHARGES, waterConnectionDetails.getDonationCharges());
             final double totalCharges = waterConnectionDetails.getDonationCharges()
                     + waterConnectionDetails.getFieldInspectionDetails().getSupervisionCharges()

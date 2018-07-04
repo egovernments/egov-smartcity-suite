@@ -48,9 +48,9 @@
   -->
 
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="eccef7e9-f8e9-485b-8286-646c28a3380a">
-	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="192"/>
+	<property name="ireport.y" value="105"/>
 	<parameter name="district" class="java.lang.String"/>
 	<parameter name="applicationDate" class="java.lang.String"/>
 	<parameter name="houseNo" class="java.lang.String"/>
@@ -183,7 +183,7 @@
 	<columnHeader>
 		<band height="20" splitType="Stretch">
 			<staticText>
-				<reportElement x="21" y="0" width="82" height="20" uuid="7aed720e-1fc3-4104-8ac2-cef901dee4ca"/>
+				<reportElement x="21" y="0" width="48" height="20" uuid="7aed720e-1fc3-4104-8ac2-cef901dee4ca"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -197,7 +197,7 @@
 				<text><![CDATA[Sl. No.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="103" y="0" width="94" height="20" uuid="804d8955-46a3-4653-ad67-c1d37bfb3b7f"/>
+				<reportElement x="69" y="0" width="128" height="20" uuid="804d8955-46a3-4653-ad67-c1d37bfb3b7f"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -269,9 +269,9 @@
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="20" splitType="Stretch">
+		<band height="20" splitType="Prevent">
 			<textField>
-				<reportElement x="21" y="0" width="82" height="20" uuid="5f17c232-badb-4304-b265-7abb7fb37ab7"/>
+				<reportElement stretchType="RelativeToTallestObject" x="21" y="0" width="48" height="20" uuid="5f17c232-badb-4304-b265-7abb7fb37ab7"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -282,8 +282,8 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="103" y="0" width="94" height="20" uuid="4c00b39b-d46f-42be-8818-203cbd20ebb0"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="69" y="0" width="128" height="20" isPrintWhenDetailOverflows="true" uuid="4c00b39b-d46f-42be-8818-203cbd20ebb0"/>
 				<box leftPadding="3">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -295,7 +295,7 @@
 				<textFieldExpression><![CDATA[$F{itemDescription}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="197" y="0" width="76" height="20" uuid="5380025c-263a-46f6-9173-65fb6627759d"/>
+				<reportElement stretchType="RelativeToTallestObject" x="197" y="0" width="76" height="20" uuid="5380025c-263a-46f6-9173-65fb6627759d"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -307,7 +307,7 @@
 				<textFieldExpression><![CDATA[$F{quantity}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="273" y="0" width="69" height="20" uuid="38563867-8f01-44af-acdd-de8a3e268b4f"/>
+				<reportElement stretchType="RelativeToTallestObject" x="273" y="0" width="69" height="20" uuid="38563867-8f01-44af-acdd-de8a3e268b4f"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -316,10 +316,10 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{unitOfMeasurement}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{unitOfMeasurement} == null || $F{unitOfMeasurement}.isEmpty() ?"N/A" : $F{unitOfMeasurement}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="342" y="0" width="82" height="20" uuid="21d63e73-4411-45a7-bf78-22c94f21b32b"/>
+				<reportElement stretchType="RelativeToTallestObject" x="342" y="0" width="82" height="20" uuid="21d63e73-4411-45a7-bf78-22c94f21b32b"/>
 				<box rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -331,7 +331,7 @@
 				<textFieldExpression><![CDATA[$F{unitRate}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="424" y="0" width="100" height="20" uuid="20b4f9a1-3029-4ce2-a70b-fe69d96a7c1b"/>
+				<reportElement stretchType="RelativeToTallestObject" x="424" y="0" width="100" height="20" uuid="20b4f9a1-3029-4ce2-a70b-fe69d96a7c1b"/>
 				<box rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -359,7 +359,7 @@
 				<textFieldExpression><![CDATA[$P{designation}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="21" y="0" width="82" height="20" uuid="12c71716-f0b7-4ca9-a69c-927d423fc67e"/>
+				<reportElement x="21" y="0" width="48" height="20" uuid="12c71716-f0b7-4ca9-a69c-927d423fc67e"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -370,7 +370,7 @@
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="103" y="0" width="94" height="20" uuid="3666a5ac-bf71-429b-93ca-fb4c2ccf4f60"/>
+				<reportElement x="69" y="0" width="128" height="20" uuid="3666a5ac-bf71-429b-93ca-fb4c2ccf4f60"/>
 				<box leftPadding="3">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
