@@ -47,12 +47,12 @@
  */
 package org.egov.collection.integration.models;
 
+import java.math.BigDecimal;
+
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.utils.FinancialsUtil;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.infstr.services.PersistenceService;
-
-import java.math.BigDecimal;
 
 /**
  * Provides account information for receipts
@@ -63,10 +63,12 @@ public class ReceiptAccountInfoImpl implements ReceiptAccountInfo {
      * This is used to check if an account is a revenue account.
      */
     private boolean isRevenueAccount;
-    /**
+        /**
      * The private instance of receipt detail. This is used by all public getters.
      */
     private ReceiptDetail receiptDetail;
+    
+    private  String groupId;
 
     /**
      * Creates the receipt account info for given receipt detail.
@@ -193,4 +195,14 @@ public class ReceiptAccountInfoImpl implements ReceiptAccountInfo {
     public String getPurpose() {
         return receiptDetail.getPurpose() == null ? "" : receiptDetail.getPurpose();
     }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
+
+  
 }
