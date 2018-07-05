@@ -49,10 +49,11 @@ package org.egov.eventnotification.repository;
 
 import static org.egov.eventnotification.utils.Constants.ACTIVE;
 import static org.egov.eventnotification.utils.Constants.EVENT_HOST;
-import static org.egov.eventnotification.utils.Constants.EVENT_ID;
 import static org.egov.eventnotification.utils.Constants.NAME;
-import static org.egov.eventnotification.utils.Constants.STATUS_COLUMN;
 import static org.egov.eventnotification.utils.Constants.UPCOMING;
+import static org.egov.infra.utils.DateUtils.endOfGivenDate;
+import static org.egov.infra.utils.DateUtils.endOfToday;
+import static org.egov.infra.utils.DateUtils.startOfToday;
 
 import java.util.Date;
 import java.util.List;
@@ -63,12 +64,12 @@ import javax.persistence.PersistenceContext;
 import org.egov.eventnotification.entity.Event;
 import org.egov.eventnotification.entity.contracts.EventSearch;
 import org.egov.eventnotification.repository.custom.EventRepositoryCustom;
-import org.egov.infra.utils.DateUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.joda.time.DateTime;
 
 public class EventRepositoryImpl implements EventRepositoryCustom {
 
@@ -80,11 +81,11 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
         Date startDate;
         Date endDate;
         if (eventSearch.getEventDateType().equalsIgnoreCase(UPCOMING)) {
-            startDate = DateUtils.startOfToday().plusDays(7).toDate();
-            endDate = DateUtils.endOfToday().plusDays(6).toDate();
+            startDate = startOfToday().plusDays(7).toDate();
+            endDate = endOfToday().plusDays(6).toDate();
         } else {
-            startDate = DateUtils.startOfToday().toDate();
-            endDate = DateUtils.endOfToday().plusDays(6).toDate();
+            startDate = startOfToday().toDate();
+            endDate = endOfGivenDate(new DateTime(startDate)).plusDays(6).toDate();
         }
 
         Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Event.class, "evnt");
@@ -97,11 +98,11 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
         if (eventSearch.getEventHost() != null)
             criteria.add(Restrictions.ilike(EVENT_HOST, eventSearch.getEventHost(), MatchMode.ANYWHERE));
 
-        criteria.add(Restrictions.between("startDate", startDate, endDate));
-        criteria.add(Restrictions.ge("endDate", DateUtils.today()));
-        criteria.add(Restrictions.eq(STATUS_COLUMN, ACTIVE.toUpperCase()));
+        criteria.add(Restrictions.le("evnt.startDate", startDate));
+        criteria.add(Restrictions.ge("evnt.endDate", endDate));
+        criteria.add(Restrictions.eq("evnt.status", ACTIVE.toUpperCase()));
 
-        criteria.addOrder(Order.desc(EVENT_ID));
+        criteria.addOrder(Order.desc("evnt.id"));
         return criteria.list();
     }
 
