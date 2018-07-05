@@ -2360,7 +2360,11 @@ public class PropertyExternalService {
         PropertyImpl activeProperty = basicProperty.getActiveProperty();
         if (activeProperty != null) {
             for (EgDemandDetails activeDemandDetail : activeProperty.getPtDemandSet().iterator().next().getEgDemandDetails())
-                activeTax = activeTax.add(activeDemandDetail.getAmount());
+            	if(!PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES.equalsIgnoreCase(
+									activeDemandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode())
+							&& !PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY.equalsIgnoreCase(
+									activeDemandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()))
+            		activeTax = activeTax.add(activeDemandDetail.getAmount());
         }
         property.getPropertyDetail().setCategoryType(viewPropertyDetails.getCategory());
         basicProperty.setUnderWorkflow(Boolean.TRUE);

@@ -4607,7 +4607,11 @@ public class PropertyService {
         Date secondInstStartDate = yearwiseInstMap.get(PropertyTaxConstants.CURRENTYEAR_SECOND_HALF).getFromDate();
         for (EgDemandDetails demandDetail : property.getPtDemandSet().iterator().next().getEgDemandDetails()) {
             if (firstInstStartDate.equals(demandDetail.getInstallmentStartDate())
-                    || secondInstStartDate.equals(demandDetail.getInstallmentStartDate()))
+                    || secondInstStartDate.equals(demandDetail.getInstallmentStartDate()) 
+							&& !PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES.equalsIgnoreCase(
+									demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode())
+							&& !PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY.equalsIgnoreCase(
+									demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()))
                 totalTax = totalTax.add(demandDetail.getAmount());
         }
         return totalTax;
