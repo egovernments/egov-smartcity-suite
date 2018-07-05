@@ -222,7 +222,7 @@
 									name="eventAddress.eventLocation"
 									class="form-control text-left patternvalidation"
 									maxlength="100" required="required"
-									value="${event.eventAddress.eventLocation}" />
+									value="${event.eventAddress.eventLocation}" readonly="true"/>
 								<span class="input-group-addon map-class btn-secondary"
 									title="See on map"
 									onclick="jQuery('#modal-6').modal('show', {backdrop: 'static'});"><i

@@ -77,7 +77,7 @@ public class EventDetailsService {
     private static final Logger LOGGER = LoggerFactory.getLogger(EventDetailsService.class);
     @Autowired
     private FileStoreService fileStoreService;
-    
+
     protected void populateEventDetails(Event event) {
         EventDetails eventDetails = new EventDetails();
         DateTime sd = new DateTime(event.getStartDate());
@@ -108,7 +108,7 @@ public class EventDetailsService {
             eventDetails.setPaid(NO);
         event.setEventDetails(eventDetails);
     }
-    
+
     public void eventUploadWallpaper(Event event) {
         try {
             for (MultipartFile multipartFile : event.getEventDetails().getFile())

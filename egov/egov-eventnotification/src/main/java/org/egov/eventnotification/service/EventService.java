@@ -116,8 +116,8 @@ public class EventService {
         Date endDate;
         startDate = startOfToday().toDate();
         endDate = endOfToday().plusDays(6).toDate();
-        eventList = eventRepository.findByStatusAndStartDateIsBetweenAndEndDateGreaterThanOrderByIdDesc(status,
-                startDate, endDate, today());
+        eventList = eventRepository.findByStatusAndStartDateLessThanAndEndDateGreaterThanOrderByIdDesc(status,
+                startDate, endDate);
         if (!eventList.isEmpty())
             for (Event event : eventList)
                 eventDetailsService.populateEventDetails(event);

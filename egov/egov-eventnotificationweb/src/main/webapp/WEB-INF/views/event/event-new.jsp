@@ -214,7 +214,7 @@
 								<form:input path="eventAddress.eventLocation" id="eventLocation"
 									name="eventAddress.eventLocation"
 									class="form-control text-left patternvalidation"
-									maxlength="100" autocomplete="off" required="required" />
+									maxlength="100" autocomplete="off" required="required" readonly="true"/>
 								<span class="input-group-addon map-class btn-secondary"
 									title="See on map"
 									onclick="jQuery('#modal-6').modal('show', {backdrop: 'static'});"><i

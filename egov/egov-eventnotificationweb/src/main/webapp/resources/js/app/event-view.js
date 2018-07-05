@@ -84,7 +84,7 @@ $(document)
 												.clear().draw();
 										var eventTypeData;
 										if ($("#eventType option:selected")
-												.text() === "Select") {
+												.text().trim() === "Select") {
 											eventTypeData = "";
 										} else {
 											eventTypeData = $(
@@ -99,7 +99,7 @@ $(document)
 															+ "&name="
 															+ $("#name").val()
 															+ "&eventHost="
-															+ $("#eventhost")
+															+ $("#eventHost")
 																	.val()
 															+ "&eventDateType=ongoing",
 													contentType : "application/json; charset=utf-8",
