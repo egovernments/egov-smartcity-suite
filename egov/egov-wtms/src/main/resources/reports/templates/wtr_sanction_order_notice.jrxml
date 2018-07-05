@@ -50,7 +50,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="wtr_sanction_order_notice" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6865e4f4-48af-4398-ab97-f36e24b17ff4">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="1062"/>
+	<property name="ireport.y" value="1392"/>
 	<parameter name="district" class="java.lang.String"/>
 	<parameter name="applicationDate" class="java.lang.String"/>
 	<parameter name="houseNo" class="java.lang.String"/>
@@ -86,7 +86,7 @@
 		</band>
 	</background>
 	<detail>
-		<band height="756" splitType="Prevent">
+		<band height="748" splitType="Prevent">
 			<staticText>
 				<reportElement x="24" y="64" width="85" height="20" uuid="42fd1966-415f-4e95-a895-40a5168a6e50"/>
 				<text><![CDATA[Office Copy]]></text>
@@ -477,39 +477,25 @@
 				<textFieldExpression><![CDATA[$P{applicantName}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="24" y="629" width="42" height="20" uuid="f192ce26-b4c0-4ed9-a15d-344eefaf1a94"/>
-				<textElement textAlignment="Left" verticalAlignment="Top" markup="styled">
-					<font size="10"/>
-				</textElement>
-				<textFieldExpression><![CDATA["D.No "]]></textFieldExpression>
-			</textField>
-			<textField pattern="dd/MM/yyyy">
 				<reportElement x="24" y="589" width="42" height="20" uuid="27343ab8-bb8f-4819-ad1f-1c9c40246c71"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA["To,"]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="66" y="629" width="168" height="20" isPrintWhenDetailOverflows="true" uuid="7a72f523-71c2-4c41-b576-ff5a3ab429bd"/>
-				<textElement textAlignment="Left" verticalAlignment="Top">
-					<font size="10"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{houseNo}]]></textFieldExpression>
-			</textField>
 			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy">
-				<reportElement stretchType="RelativeToTallestObject" x="24" y="668" width="210" height="20" isPrintWhenDetailOverflows="true" uuid="cacd290f-180f-4a18-8ca7-8beba63a40fe"/>
+				<reportElement stretchType="RelativeToTallestObject" x="24" y="648" width="210" height="20" isPrintWhenDetailOverflows="true" uuid="cacd290f-180f-4a18-8ca7-8beba63a40fe"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["CONSUMER NO: "+$P{consumerNumber}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="24" y="696" width="500" height="55" uuid="de51f6ee-ad09-4bd8-974c-1dd1fb6ce6de"/>
+				<reportElement x="24" y="676" width="500" height="55" uuid="de51f6ee-ad09-4bd8-974c-1dd1fb6ce6de"/>
 				<text><![CDATA[Copy to Asst Engineer Water Supply with a direction to execute the water tap connection within (6) days from the date of issue of the orders, and update the date of connection in the system without fail.  He/She is also directed to get the road cutting portion repaired within a week and report compliance.]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="24" y="649" width="210" height="20" isPrintWhenDetailOverflows="true" uuid="dbebf33d-c4a7-4626-8288-7cf51d2a5187"/>
+				<reportElement stretchType="RelativeToTallestObject" x="24" y="629" width="210" height="20" isPrintWhenDetailOverflows="true" uuid="dbebf33d-c4a7-4626-8288-7cf51d2a5187"/>
 				<textElement textAlignment="Left" verticalAlignment="Top"/>
 				<textFieldExpression><![CDATA[$P{address}]]></textFieldExpression>
 			</textField>
@@ -598,7 +584,7 @@
 				<text><![CDATA[03.]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="24" y="633" width="42" height="20" uuid="0da48e78-2f03-4ce3-a7d8-f4f0a69d179d"/>
+				<reportElement x="24" y="653" width="42" height="20" uuid="0da48e78-2f03-4ce3-a7d8-f4f0a69d179d"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" markup="styled">
 					<font size="10"/>
 				</textElement>
@@ -755,14 +741,7 @@
 				<textFieldExpression><![CDATA[$P{workOrderDate}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="66" y="653" width="168" height="20" isPrintWhenDetailOverflows="true" uuid="8a8db4ef-2607-42d1-ad46-bc4b18b606fc"/>
-				<textElement textAlignment="Left" verticalAlignment="Top">
-					<font size="10"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{houseNo}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement x="24" y="259" width="500" height="127" isPrintWhenDetailOverflows="true" uuid="34b68b60-bbf4-4437-8efa-aaef3e0e1a8e"/>
+				<reportElement stretchType="RelativeToTallestObject" x="24" y="259" width="500" height="127" isPrintWhenDetailOverflows="true" uuid="34b68b60-bbf4-4437-8efa-aaef3e0e1a8e"/>
 				<textFieldExpression><![CDATA["In the reference 1st read above, you have submitted an application seeking water tap connection in the premises bearing Assessment No. "+$P{propertyID}+", D.No "+($P{houseNo}.equals(null) || $P{houseNo}.isEmpty()?"NA":$P{houseNo} )+", locality "+($P{locality}.equals(null) || $P{locality}.isEmpty() ? "NA": $P{locality})+".  As per your request and in pursuance of the G.O. 2nd read above, an estimate was prepared and served on you vide notice 3rd read above.  Therefore, Water Tap Connection (HSC) is hereby sanctioned, pending receipt of the following amount in lump-sum for BPL category and in one installment or in eight equal half-yearly installments for Non-BPL category, commencing from "+$P{currentInstallment}+", with pipesize "+$P{pipeSize}+" inches on Rs. "+$P{rate}+"/month to the above premises as per the consent agreement already submitted by you:-"]]></textFieldExpression>
 			</textField>
 			<staticText>
@@ -792,7 +771,7 @@
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="66" y="633" width="168" height="20" isPrintWhenDetailOverflows="true" uuid="a495b42c-d804-4169-a997-34deab14d385"/>
+				<reportElement stretchType="RelativeToTallestObject" x="66" y="653" width="168" height="20" isPrintWhenDetailOverflows="true" uuid="a495b42c-d804-4169-a997-34deab14d385"/>
 				<textElement textAlignment="Left" verticalAlignment="Top">
 					<font size="10"/>
 				</textElement>
@@ -810,13 +789,6 @@
 				<textElement verticalAlignment="Middle"/>
 				<text><![CDATA[Total]]></text>
 			</staticText>
-			<textField pattern="dd/MM/yyyy">
-				<reportElement x="24" y="653" width="42" height="20" uuid="39ac6a3d-af29-4343-a32f-cc51ec78d292"/>
-				<textElement textAlignment="Left" verticalAlignment="Top" markup="styled">
-					<font size="10"/>
-				</textElement>
-				<textFieldExpression><![CDATA["D.No"]]></textFieldExpression>
-			</textField>
 			<staticText>
 				<reportElement x="390" y="87" width="31" height="20" uuid="572dc895-751b-4074-ba23-519717ccea19"/>
 				<textElement verticalAlignment="Middle">
@@ -856,7 +828,7 @@
 				<textFieldExpression><![CDATA[$P{address}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="24" y="613" width="42" height="20" uuid="2f7d09d7-5419-4dbe-9e72-76e8f5fcd644"/>
+				<reportElement x="24" y="633" width="42" height="20" uuid="2f7d09d7-5419-4dbe-9e72-76e8f5fcd644"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 					<font size="10"/>
 				</textElement>

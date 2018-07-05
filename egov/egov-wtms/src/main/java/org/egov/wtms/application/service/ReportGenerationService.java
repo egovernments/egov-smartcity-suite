@@ -74,6 +74,7 @@ import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
+import org.egov.wtms.application.entity.FieldInspectionDetails;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.autonumber.EstimationNumberGenerator;
 import org.egov.wtms.masters.service.ApplicationProcessTimeService;
@@ -220,6 +221,7 @@ public class ReportGenerationService {
         Map<String, Object> reportParams = new ConcurrentHashMap<>(0);
         ReportRequest reportInput = null;
         ReportOutput reportOutput;
+        User user = securityUtils.getCurrentUser();
         if (connectionDetails != null) {
             AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                     connectionDetails.getConnection().getPropertyIdentifier(),
@@ -257,9 +259,8 @@ public class ReportGenerationService {
                     : toDefaultDateFormat(connectionDetails.getWorkOrderDate()));
             reportParams.put(WORK_ORDER_NO,
                     connectionDetails.getWorkOrderNumber() == null ? EMPTY : connectionDetails.getWorkOrderNumber());
-            reportParams.put(USER_ID, securityUtils.getCurrentUser().getId());
+            reportParams.put(USER_ID, user.getId());
 
-            User user = securityUtils.getCurrentUser();
             Assignment assignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
             if (assignment == null) {
                 List<Assignment> assignmentList = assignmentService.findByEmployeeAndGivenDate(user.getId(), new Date());
@@ -277,24 +278,24 @@ public class ReportGenerationService {
             reportParams.put(APPLICANT_NAME, WordUtils.capitalize(ownerName));
             reportParams.put(ADDRESS, propAddress);
             reportParams.put(HOUSE_NO, doorno == null ? "" : doorno[0]);
-            reportParams.put("userSignature", securityUtils.getCurrentUser().getSignature() != null
-                    ? new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()) : new byte[0]);
-            reportParams.put("estimationDate", toDefaultDateFormat(connectionDetails.getFieldInspectionDetails().getCreatedDate()));
+            reportParams.put("userSignature", user.getSignature() == null
+                    ? new byte[0] : new ByteArrayInputStream(user.getSignature()));
+
+            FieldInspectionDetails inspectionDetails = connectionDetails.getFieldInspectionDetails();
+            reportParams.put("estimationDate", toDefaultDateFormat(inspectionDetails.getCreatedDate()));
             reportParams.put("estimationNumber", isNotBlank(connectionDetails.getEstimationNumber())
                     ? connectionDetails.getEstimationNumber() : EMPTY);
             reportParams.put(PROPERTYID, connectionDetails.getConnection().getPropertyIdentifier());
             reportParams.put(APPLICATION_DATE, toDefaultDateFormat(connectionDetails.getApplicationDate()));
             reportParams.put(DONATION_CHARGES, connectionDetails.getDonationCharges());
-            reportParams.put(SECURITY_DEPOSIT, connectionDetails.getFieldInspectionDetails().getSecurityDeposit());
-            reportParams.put(ROAD_CUTTING_CHARGES,
-                    connectionDetails.getFieldInspectionDetails().getRoadCuttingCharges());
-            reportParams.put(SUPERVISION_CHARGES,
-                    connectionDetails.getFieldInspectionDetails().getSupervisionCharges());
+            reportParams.put(SECURITY_DEPOSIT, inspectionDetails.getSecurityDeposit());
+            reportParams.put(ROAD_CUTTING_CHARGES, inspectionDetails.getRoadCuttingCharges());
+            reportParams.put(SUPERVISION_CHARGES, inspectionDetails.getSupervisionCharges());
             reportParams.put(LOCALITY, assessmentDetails.getBoundaryDetails().getLocalityName());
             total = connectionDetails.getDonationCharges()
-                    + connectionDetails.getFieldInspectionDetails().getSecurityDeposit()
-                    + connectionDetails.getFieldInspectionDetails().getRoadCuttingCharges()
-                    + connectionDetails.getFieldInspectionDetails().getSupervisionCharges();
+                    + inspectionDetails.getSecurityDeposit()
+                    + inspectionDetails.getRoadCuttingCharges()
+                    + inspectionDetails.getSupervisionCharges();
             reportParams.put("total", total);
             reportParams.put(COMMISSIONER_NAME, commissionerName);
             reportParams.put(DESIGNATION, userDesignation);
