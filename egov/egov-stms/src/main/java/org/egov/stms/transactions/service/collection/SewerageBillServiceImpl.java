@@ -103,13 +103,13 @@ public class SewerageBillServiceImpl extends BillServiceInterface {
                     .compareTo(c2.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()));
 
         for (final EgDemandDetails demandDetail : details)
-            if (demandDetail.getAmount().compareTo(ZERO) > 0 && !demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
+            if (demandDetail.getAmount().signum() > 0 && !demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
                     .equalsIgnoreCase(SewerageTaxConstants.FEES_ADVANCE_CODE)) {
                 BigDecimal creaditAmt = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
 
                 // If Amount- collected amount greather than zero, then send
                 // these demand details to collection.
-                if (creaditAmt.compareTo(ZERO) > 0) {
+                if (creaditAmt.signum() > 0) {
                     final EgBillDetails billDetail = createBillDetailObject(orderNo, creaditAmt, demandDetail);
                     orderNo++;
                     billDetailList.add(billDetail);
@@ -131,14 +131,14 @@ public class SewerageBillServiceImpl extends BillServiceInterface {
                     .compareTo(c2.getEgDemandReason().getEgInstallmentMaster().getFromDate()));
 
         for (final EgDemandDetails demandDetail : details)
-            if (demandDetail.getAmount().compareTo(ZERO) > 0
+            if (demandDetail.getAmount().signum() > 0
                     && demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
                     .equalsIgnoreCase(SewerageTaxConstants.FEES_SEWERAGETAX_CODE)) {
                 BigDecimal creaditAmt = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
 
                 // If Amount- collected amount greather than zero, then send
                 // these demand details to collection.
-                if (creaditAmt.compareTo(ZERO) > 0) {
+                if (creaditAmt.signum() > 0) {
                     final EgBillDetails billDetail = createBillDetailObject(orderNo, creaditAmt, demandDetail);
                     orderNo++;
                     billDetailList.add(billDetail);
