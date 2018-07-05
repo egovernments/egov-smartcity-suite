@@ -49,7 +49,6 @@
 package org.egov.stms.transactions.service.collection;
 
 import org.egov.collection.integration.models.BillAccountDetails.PURPOSE;
-import org.egov.commons.Installment;
 import org.egov.demand.interfaces.BillServiceInterface;
 import org.egov.demand.interfaces.Billable;
 import org.egov.demand.model.EgBillDetails;
@@ -58,6 +57,7 @@ import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,6 +74,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import static java.math.BigDecimal.ZERO;
+
 @Service
 @Transactional(readOnly = true)
 public class SewerageBillServiceImpl extends BillServiceInterface {
@@ -84,106 +86,99 @@ public class SewerageBillServiceImpl extends BillServiceInterface {
     @Autowired
     private AppConfigValueService appConfigValuesService;
 
-       public Session getCurrentSession() {
+    public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
 
     @Override
     public List<EgBillDetails> getBilldetails(final Billable billObj) {
-        final List<EgBillDetails> billDetailList = new ArrayList<EgBillDetails>();
+        final List<EgBillDetails> billDetailList = new ArrayList<>();
         int orderNo = 1;
         final SewerageBillable advBillable = (SewerageBillable) billObj;
         final EgDemand dmd = advBillable.getCurrentDemand();
-        final List<EgDemandDetails> details = new ArrayList<EgDemandDetails>(dmd.getEgDemandDetails());
+        final List<EgDemandDetails> details = new ArrayList<>(dmd.getEgDemandDetails());
 
         if (!details.isEmpty())
             Collections.sort(details, (c1, c2) -> c1.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
                     .compareTo(c2.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()));
 
         for (final EgDemandDetails demandDetail : details)
-            if (demandDetail.getAmount().compareTo(BigDecimal.ZERO) > 0 && !demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
+            if (demandDetail.getAmount().compareTo(ZERO) > 0 && !demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
                     .equalsIgnoreCase(SewerageTaxConstants.FEES_ADVANCE_CODE)) {
                 BigDecimal creaditAmt = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
 
                 // If Amount- collected amount greather than zero, then send
                 // these demand details to collection.
-                if (creaditAmt.compareTo(BigDecimal.ZERO) > 0
-                       ) {
-       
-                    final EgBillDetails billdetail = createBillDetailObject(orderNo, creaditAmt, demandDetail);
-                         orderNo++;
-                        billDetailList.add(billdetail);
+                if (creaditAmt.compareTo(ZERO) > 0) {
+                    final EgBillDetails billDetail = createBillDetailObject(orderNo, creaditAmt, demandDetail);
+                    orderNo++;
+                    billDetailList.add(billDetail);
                 }
-            
-                }
-            return billDetailList;
-    }   
-    
+
+            }
+        return billDetailList;
+    }
+
     public List<EgBillDetails> getSewerageTaxTypeBilldetails(final Billable billObj) {
-        final List<EgBillDetails> billDetailList = new ArrayList<EgBillDetails>();
+        final List<EgBillDetails> billDetailList = new ArrayList<>();
         int orderNo = 1;
         final SewerageBillable advBillable = (SewerageBillable) billObj;
         final EgDemand dmd = advBillable.getCurrentDemand();
-        final List<EgDemandDetails> details = new ArrayList<EgDemandDetails>(dmd.getEgDemandDetails());
+        final List<EgDemandDetails> details = new ArrayList<>(dmd.getEgDemandDetails());
 
         if (!details.isEmpty())
             Collections.sort(details, (c1, c2) -> c1.getEgDemandReason().getEgInstallmentMaster().getFromDate()
                     .compareTo(c2.getEgDemandReason().getEgInstallmentMaster().getFromDate()));
 
         for (final EgDemandDetails demandDetail : details)
-            if (demandDetail.getAmount().compareTo(BigDecimal.ZERO) > 0 && demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
+            if (demandDetail.getAmount().compareTo(ZERO) > 0
+                    && demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
                     .equalsIgnoreCase(SewerageTaxConstants.FEES_SEWERAGETAX_CODE)) {
                 BigDecimal creaditAmt = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
 
                 // If Amount- collected amount greather than zero, then send
                 // these demand details to collection.
-                if (creaditAmt.compareTo(BigDecimal.ZERO) > 0) {
-
-                    final EgBillDetails billdetail = createBillDetailObject(orderNo, creaditAmt, demandDetail);
-                    billdetail.setEgDemandReason(demandDetail.getEgDemandReason());
+                if (creaditAmt.compareTo(ZERO) > 0) {
+                    final EgBillDetails billDetail = createBillDetailObject(orderNo, creaditAmt, demandDetail);
                     orderNo++;
-                    billDetailList.add(billdetail);
+                    billDetailList.add(billDetail);
                 }
 
-                }
-            return billDetailList;
-    }  
-    
-    private String getReceiptDetailDescription(EgDemandDetails demandDetails) {
-        String reasonType = demandDetails.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
-                + " " + SewerageTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX;
-        Installment installment = demandDetails.getEgDemandReason().getEgInstallmentMaster();
-        return reasonType
-                + (installment != null
-                        ? " " + installment.getDescription() : "");
+            }
+        return billDetailList;
+    }
+
+    private String getReceiptDetailDescription(EgDemandReason demandReason) {
+        return new StringBuilder(demandReason.getEgDemandReasonMaster().getReasonMaster())
+                .append(" ").append(SewerageTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX).append(" ")
+                .append(demandReason.getEgInstallmentMaster().getDescription()).toString();
     }
 
     private EgBillDetails createBillDetailObject(final int orderNo,
-            final BigDecimal creditAmount, EgDemandDetails demandDetail) {
-        String description = getReceiptDetailDescription(demandDetail);
+                                                 final BigDecimal creditAmount, EgDemandDetails demandDetail) {
+        String description = getReceiptDetailDescription(demandDetail.getEgDemandReason());
         final AppConfigValues sewerageFunctionCode = appConfigValuesService.getConfigValuesByModuleAndKey(
                 SewerageTaxConstants.MODULE_NAME, SewerageTaxConstants.SEWAREGE_FUCNTION_CODE).get(0);
 
-        final EgBillDetails billdetail = new EgBillDetails();
+        final EgBillDetails billDetail = new EgBillDetails();
         if (sewerageFunctionCode != null)
-            billdetail.setFunctionCode(sewerageFunctionCode.getValue());
-        billdetail.setOrderNo(orderNo);
-        billdetail.setCreateDate(new Date());
-        billdetail.setModifiedDate(new Date());
-        billdetail.setCrAmount(creditAmount);
-        billdetail.setDrAmount(BigDecimal.ZERO);
-        billdetail.setGlcode(demandDetail.getEgDemandReason().getGlcodeId().getGlcode());
-        billdetail.setDescription(description);
-        billdetail.setAdditionalFlag(1);
-        billdetail.setPurpose(PURPOSE.OTHERS.toString());
-        billdetail.setEgDemandReason(demandDetail.getEgDemandReason());
-        return billdetail;
+            billDetail.setFunctionCode(sewerageFunctionCode.getValue());
+        billDetail.setOrderNo(orderNo);
+        billDetail.setCreateDate(new Date());
+        billDetail.setModifiedDate(new Date());
+        billDetail.setCrAmount(creditAmount);
+        billDetail.setDrAmount(ZERO);
+        billDetail.setGlcode(demandDetail.getEgDemandReason().getGlcodeId().getGlcode());
+        billDetail.setDescription(description);
+        billDetail.setAdditionalFlag(1);
+        billDetail.setPurpose(PURPOSE.OTHERS.toString());
+        billDetail.setEgDemandReason(demandDetail.getEgDemandReason());
+        return billDetail;
     }
 
     @Override
     public void cancelBill() {
-
-
+        // No logic
     }
 
     @Override
@@ -191,13 +186,11 @@ public class SewerageBillServiceImpl extends BillServiceInterface {
     public String getBillXML(final Billable billObj) {
         String collectXML;
         try {
-            collectXML = URLEncoder.encode(super.getBillXML(billObj),"UTF-8");
-            LOGGER.info("collectXML --------------------------> "+collectXML); 
+            collectXML = URLEncoder.encode(super.getBillXML(billObj), "UTF-8");
+            LOGGER.info("collectXML --------------------------> " + collectXML);
         } catch (UnsupportedEncodingException e) {
-
-            throw new RuntimeException(e.getMessage());
+            throw new ApplicationRuntimeException(e.getMessage());
         }
         return collectXML;
     }
-
 }
