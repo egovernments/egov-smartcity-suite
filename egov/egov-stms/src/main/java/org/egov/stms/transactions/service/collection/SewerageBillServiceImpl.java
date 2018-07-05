@@ -55,6 +55,7 @@ import org.egov.demand.interfaces.Billable;
 import org.egov.demand.model.EgBillDetails;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
+import org.egov.demand.model.EgDemandReason;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
@@ -109,9 +110,7 @@ public class SewerageBillServiceImpl extends BillServiceInterface {
                 if (creaditAmt.compareTo(BigDecimal.ZERO) > 0
                        ) {
        
-                    final EgBillDetails billdetail = createBillDetailObject(orderNo, BigDecimal.ZERO, creaditAmt,
-                                demandDetail.getEgDemandReason().getGlcodeId().getGlcode(), getReceiptDetailDescription(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
-                                        +" "+SewerageTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX,demandDetail.getEgDemandReason().getEgInstallmentMaster()));
+                    final EgBillDetails billdetail = createBillDetailObject(orderNo, creaditAmt, demandDetail);
                          orderNo++;
                         billDetailList.add(billdetail);
                 }
@@ -138,43 +137,46 @@ public class SewerageBillServiceImpl extends BillServiceInterface {
 
                 // If Amount- collected amount greather than zero, then send
                 // these demand details to collection.
-                if (creaditAmt.compareTo(BigDecimal.ZERO) > 0
-                       ) {
-       
-                    final EgBillDetails billdetail = createBillDetailObject(orderNo, BigDecimal.ZERO, creaditAmt,
-                                demandDetail.getEgDemandReason().getGlcodeId().getGlcode(), getReceiptDetailDescription(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
-                                        +" "+SewerageTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX,demandDetail.getEgDemandReason().getEgInstallmentMaster()));
-                    billdetail.setEgDemandReason(demandDetail.getEgDemandReason());    
+                if (creaditAmt.compareTo(BigDecimal.ZERO) > 0) {
+
+                    final EgBillDetails billdetail = createBillDetailObject(orderNo, creaditAmt, demandDetail);
+                    billdetail.setEgDemandReason(demandDetail.getEgDemandReason());
                     orderNo++;
-                        billDetailList.add(billdetail);
+                    billDetailList.add(billdetail);
                 }
-            
+
                 }
             return billDetailList;
     }  
     
-    private String getReceiptDetailDescription(String reasonType, Installment instlment) {
-             return reasonType+(instlment!=null? " "+instlment.getDescription():"");
-         
-        }
-    private EgBillDetails createBillDetailObject(final int orderNo, final BigDecimal debitAmount,
-            final BigDecimal creditAmount, final String glCodeForDemandDetail, final String description) {
-      
+    private String getReceiptDetailDescription(EgDemandDetails demandDetails) {
+        String reasonType = demandDetails.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
+                + " " + SewerageTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX;
+        Installment installment = demandDetails.getEgDemandReason().getEgInstallmentMaster();
+        return reasonType
+                + (installment != null
+                        ? " " + installment.getDescription() : "");
+    }
+
+    private EgBillDetails createBillDetailObject(final int orderNo,
+            final BigDecimal creditAmount, EgDemandDetails demandDetail) {
+        String description = getReceiptDetailDescription(demandDetail);
         final AppConfigValues sewerageFunctionCode = appConfigValuesService.getConfigValuesByModuleAndKey(
                 SewerageTaxConstants.MODULE_NAME, SewerageTaxConstants.SEWAREGE_FUCNTION_CODE).get(0);
-        
+
         final EgBillDetails billdetail = new EgBillDetails();
-        if(sewerageFunctionCode!=null)
+        if (sewerageFunctionCode != null)
             billdetail.setFunctionCode(sewerageFunctionCode.getValue());
         billdetail.setOrderNo(orderNo);
         billdetail.setCreateDate(new Date());
         billdetail.setModifiedDate(new Date());
         billdetail.setCrAmount(creditAmount);
-        billdetail.setDrAmount(debitAmount);
-        billdetail.setGlcode(glCodeForDemandDetail);
+        billdetail.setDrAmount(BigDecimal.ZERO);
+        billdetail.setGlcode(demandDetail.getEgDemandReason().getGlcodeId().getGlcode());
         billdetail.setDescription(description);
         billdetail.setAdditionalFlag(1);
         billdetail.setPurpose(PURPOSE.OTHERS.toString());
+        billdetail.setEgDemandReason(demandDetail.getEgDemandReason());
         return billdetail;
     }
 
