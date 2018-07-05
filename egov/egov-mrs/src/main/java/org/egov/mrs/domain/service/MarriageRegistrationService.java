@@ -53,10 +53,9 @@ import static org.egov.infra.utils.DateUtils.toDateUsingDefaultPattern;
 import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
 import static org.egov.mrs.application.MarriageConstants.AFFIDAVIT;
 import static org.egov.mrs.application.MarriageConstants.CF_STAMP;
+import static org.egov.mrs.application.MarriageConstants.CPK_END_POINT_URL;
 import static org.egov.mrs.application.MarriageConstants.MIC;
 import static org.egov.mrs.application.MarriageConstants.MOM;
-import static org.egov.mrs.application.MarriageConstants.SOURCE_API;
-import static org.egov.mrs.application.MarriageConstants.CPK_END_POINT_URL;
 
 import java.io.File;
 import java.io.IOException;
@@ -331,7 +330,7 @@ public class MarriageRegistrationService {
                 marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.CREATED.toString(),
                         MarriageConstants.MODULE_NAME));
         marriageRegistration.setDemand(marriageRegistrationDemandService.createDemand(new BigDecimal(0)));
-        marriageRegistration.setSource(SOURCE_API);
+        marriageRegistration.setSource(Source.CHPK.toString());
         create(marriageRegistration);
         workflowService.onCreateRegistrationAPI(marriageRegistration);
         return marriageRegistration;
@@ -529,7 +528,7 @@ public class MarriageRegistrationService {
                 && Source.CITIZENPORTAL.name().equalsIgnoreCase(marriageRegistration.getSource())
                 && getPortalInbox(marriageRegistration.getApplicationNo()) != null)
             updatePortalMessage(marriageRegistration);
-        if (marriageRegistration.getSource().equalsIgnoreCase(SOURCE_API)) {
+        if (marriageRegistration.getSource().equalsIgnoreCase(Source.CHPK.toString())) {
             sendMarriageCertificate(marriageRegistration);
         }
         marriageSmsAndEmailService.sendSMS(marriageRegistration,
@@ -575,7 +574,7 @@ public class MarriageRegistrationService {
                 && Source.CITIZENPORTAL.name().equalsIgnoreCase(marriageRegistration.getSource())
                 && getPortalInbox(marriageRegistration.getApplicationNo()) != null)
             updatePortalMessage(marriageRegistration);
-        if (marriageRegistration.getSource().equalsIgnoreCase(SOURCE_API)) {
+        if (marriageRegistration.getSource().equalsIgnoreCase(Source.CHPK.toString())) {
             sendMarriageCertificate(marriageRegistration);
         }
         return marriageRegistration;

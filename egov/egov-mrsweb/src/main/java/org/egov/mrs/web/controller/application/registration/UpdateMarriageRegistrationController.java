@@ -93,6 +93,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.enums.EmployeeStatus;
 import org.egov.eis.service.AssignmentService;
@@ -284,11 +285,11 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
         String workFlowAction = EMPTY;
         if (isNotBlank(request.getParameter(WORK_FLOW_ACTION)))
             workFlowAction = request.getParameter(WORK_FLOW_ACTION);
-        if(!marriageRegistration.getSource().equals(MarriageConstants.SOURCE_API)){
+        if(!marriageRegistration.getSource().equals(Source.CHPK.toString())){
         validateApplicationDate(marriageRegistration, errors);
         marriageFormValidator.validate(marriageRegistration, errors, "registration");
         }
-        if(marriageRegistration.getSource().equals(MarriageConstants.SOURCE_API)){
+        if(marriageRegistration.getSource().equals(Source.CHPK.toString())){
             marriageRegistration.getWitnesses().clear();
             marriageRegistration.setZone(null);
         }
