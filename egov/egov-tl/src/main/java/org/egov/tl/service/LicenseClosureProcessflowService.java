@@ -68,7 +68,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.List;
 
-import static org.egov.tl.utils.Constants.*;
+import static org.egov.tl.utils.Constants.BUTTONREJECT;
+import static org.egov.tl.utils.Constants.CLOSURE_ADDITIONAL_RULE;
+import static org.egov.tl.utils.Constants.CLOSURE_APPTYPE_CODE;
+import static org.egov.tl.utils.Constants.CLOSURE_LICENSE_REJECT;
+import static org.egov.tl.utils.Constants.COMPLETED;
+import static org.egov.tl.utils.Constants.DELIMITER_COLON;
+import static org.egov.tl.utils.Constants.WF_DIGI_SIGNED;
 
 @Service
 @Transactional(readOnly = true)

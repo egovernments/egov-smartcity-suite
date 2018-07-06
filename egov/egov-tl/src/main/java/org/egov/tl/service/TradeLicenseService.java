@@ -407,8 +407,8 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         final Criteria searchCriteria = entityQueryService.getSession().createCriteria(TradeLicense.class);
         searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat").createAlias("tradeName", "subcat")
                 .createAlias("status", "licstatus").createAlias("natureOfBusiness", "nob")
-                .createAlias("licenseDemand", "licDemand").createAlias("licenseAppType","appType")
-                .add(Restrictions.ne("appType.code",licenseAppTypeService.getLicenseAppTypeByCode(CLOSURE_APPTYPE_CODE)));
+                .createAlias("licenseDemand", "licDemand").createAlias("licenseAppType", "appType")
+                .add(Restrictions.ne("appType.code", licenseAppTypeService.getLicenseAppTypeByCode(CLOSURE_APPTYPE_CODE)));
         if (isNotBlank(demandNoticeForm.getLicenseNumber()))
             searchCriteria.add(Restrictions.eq("licenseNumber", demandNoticeForm.getLicenseNumber()).ignoreCase());
         if (isNotBlank(demandNoticeForm.getOldLicenseNumber()))
@@ -475,7 +475,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
             currentStateDetail.put("date", state.getLastModifiedDate());
             currentStateDetail.put("updatedBy", state.getSenderName().contains(DELIMITER_COLON)
                     ? state.getSenderName().split(DELIMITER_COLON)[1] : state.getSenderName());
-            currentStateDetail.put("status", "END".equals(state.getValue()) ? "Completed" : state.getValue());
+            currentStateDetail.put("status", state.isEnded() ? "Completed" : state.getValue());
             currentStateDetail.put("comments", defaultString(state.getComments()));
             User ownerUser = state.getOwnerUser();
             Position ownerPosition = state.getOwnerPosition();
@@ -497,7 +497,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         processHistory.put("date", stateHistory.getLastModifiedDate());
         processHistory.put("updatedBy", stateHistory.getSenderName().contains(DELIMITER_COLON)
                 ? stateHistory.getSenderName().split(DELIMITER_COLON)[1] : stateHistory.getSenderName());
-        processHistory.put("status", "END".equals(stateHistory.getValue()) ? "Completed" : stateHistory.getValue());
+        processHistory.put("status", stateHistory.getValue());
         processHistory.put("comments", defaultString(stateHistory.getComments()));
         Position ownerPosition = stateHistory.getOwnerPosition();
         User ownerUser = stateHistory.getOwnerUser();

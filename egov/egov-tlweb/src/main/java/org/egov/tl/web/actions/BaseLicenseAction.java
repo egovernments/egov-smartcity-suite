@@ -198,7 +198,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
                 }
             }
             if (GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction())
-                    && "END".equalsIgnoreCase(license().getCurrentState().getValue())) {
+                    && license().getCurrentState().isEnded()) {
                 addActionMessage(this.getText(WF_ITEM_PROCESSED));
                 return MESSAGE;
             }
