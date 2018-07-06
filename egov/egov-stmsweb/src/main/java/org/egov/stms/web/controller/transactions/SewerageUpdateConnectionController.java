@@ -290,7 +290,7 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
 
         model.addAttribute(SEWERAGE_APPLICATION_DETAILS, sewerageApplicationDetails);
         model.addAttribute("applicationHistory",
-                sewerageApplicationDetailsService.getHistory(sewerageApplicationDetails));
+                sewerageApplicationDetailsService.populateHistory(sewerageApplicationDetails));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
 
         model.addAttribute("pipeSize", SewerageTaxConstants.getPipeScrewSizes());
