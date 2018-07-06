@@ -137,18 +137,18 @@
 							<td><c:out value="${listVar.name}" /></td>
 							<td><c:out value="${listVar.description}" /></td>
 							<td><fmt:formatDate pattern="dd/MM/yyyy"
-									value="${listVar.eventDetails.startDt}" var="startDate" /> <c:out
+									value="${listVar.details.startDt}" var="startDate" /> <c:out
 									value="${startDate}" /></td>
-							<td><c:out value="${listVar.eventDetails.startHH}" />:<c:out
-									value="${listVar.eventDetails.startMM}" /></td>
+							<td><c:out value="${listVar.details.startHH}" />:<c:out
+									value="${listVar.details.startMM}" /></td>
 							<td><fmt:formatDate pattern="dd/MM/yyyy"
-									value="${listVar.eventDetails.endDt}" var="endDate" /> <c:out
+									value="${listVar.details.endDt}" var="endDate" /> <c:out
 									value="${endDate}" /></td>
-							<td><c:out value="${listVar.eventDetails.endHH}" />:<c:out
-									value="${listVar.eventDetails.endMM}" /></td>
-							<td><c:out value="${listVar.eventAddress.eventHost}" /></td>
-							<td><c:out value="${listVar.eventAddress.eventLocation}" /></td>
-							<td><c:out value="${listVar.eventAddress.address}" /></td>
+							<td><c:out value="${listVar.details.endHH}" />:<c:out
+									value="${listVar.details.endMM}" /></td>
+							<td><c:out value="${listVar.address.eventHost}" /></td>
+							<td><c:out value="${listVar.address.eventLocation}" /></td>
+							<td><c:out value="${listVar.address.address}" /></td>
 							<td><c:out value="${listVar.eventType.name}" /></td>
 							<td><c:choose>
 									<c:when test="${listVar.paid == true}">

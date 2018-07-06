@@ -47,6 +47,7 @@
  */
 package org.egov.eventnotification.service;
 
+import static org.apache.commons.lang.StringUtils.ordinalIndexOf;
 import static org.egov.eventnotification.utils.Constants.BEANNOTIFSCH;
 import static org.egov.eventnotification.utils.Constants.CONTEXTURL;
 import static org.egov.eventnotification.utils.Constants.DAY_CRON;
@@ -60,7 +61,6 @@ import static org.egov.eventnotification.utils.Constants.TRIGGER;
 
 import java.util.Date;
 
-import org.apache.commons.lang.StringUtils;
 import org.egov.eventnotification.entity.Schedule;
 import org.egov.eventnotification.entity.contracts.EventNotificationProperties;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -104,7 +104,7 @@ public class ScheduleDetailsService {
             jobDetail.setName(ApplicationThreadLocals.getTenantID().concat("_")
                     .concat(JOB.concat(String.valueOf(schedule.getId()))));
             jobDetail.getJobDataMap().put(SCHEDULEID, String.valueOf(schedule.getId()));
-            jobDetail.getJobDataMap().put(CONTEXTURL, fullURL.substring(0, StringUtils.ordinalIndexOf(fullURL, "/", 3)));
+            jobDetail.getJobDataMap().put(CONTEXTURL, fullURL.substring(0, ordinalIndexOf(fullURL, "/", 3)));
 
             if (cronExpression == null) {
                 final SimpleTriggerImpl trigger = new SimpleTriggerImpl();
@@ -125,7 +125,7 @@ public class ScheduleDetailsService {
             }
 
         } catch (final SchedulerException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.error("Error : Encountered an exception while scheduling", e);
             throw new ApplicationRuntimeException(e.getMessage(), e);
         }
     }
@@ -142,7 +142,7 @@ public class ScheduleDetailsService {
                     EVENT_NOTIFICATION_GROUP));
             scheduler.deleteJob(new JobKey(JOB.concat(String.valueOf(schedule.getId()))));
         } catch (final SchedulerException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.error("Error : Encountered an exception while deleting a schedule job", e);
             throw new ApplicationRuntimeException(e.getMessage(), e);
         }
     }
@@ -181,7 +181,7 @@ public class ScheduleDetailsService {
             }
 
         } catch (final SchedulerException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.error("Error : Encountered an exception while update schedule", e);
             throw new ApplicationRuntimeException(e.getMessage(), e);
         }
     }

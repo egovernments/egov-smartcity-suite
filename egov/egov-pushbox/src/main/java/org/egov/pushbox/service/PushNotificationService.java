@@ -94,13 +94,13 @@ public class PushNotificationService {
                 userTokenRequest.getDeviceId());
         if (existingRecord == null) {
             UserFcmDevice userDevice = new UserFcmDevice();
-            userDevice.setDevicetoken(userTokenRequest.getUserToken());
+            userDevice.setDeviceToken(userTokenRequest.getUserToken());
             User user = userService.getUserById(Long.valueOf(userTokenRequest.getUserId()));
             userDevice.setUser(user);
             userDevice.setDeviceId(userTokenRequest.getDeviceId());
             return pushNotificationRepo.save(userDevice);
         } else {
-            existingRecord.setDevicetoken(userTokenRequest.getUserToken());
+            existingRecord.setDeviceToken(userTokenRequest.getUserToken());
             return pushNotificationRepo.save(existingRecord);
         }
     }
@@ -156,10 +156,10 @@ public class PushNotificationService {
             try {
                 Message message = Message.builder()
                         .putData("content", new Gson().toJson(messageContent))
-                        .setToken(userDevice.getDevicetoken()).build();
+                        .setToken(userDevice.getDeviceToken()).build();
                 String response = FirebaseMessaging.getInstance().sendAsync(message).get();
                 if (LOGGER.isInfoEnabled())
-                    LOGGER.info("##PushBoxFox## : Message Send Status : ".concat(response));
+                    LOGGER.info("##PushBoxFox## : Message Send Status : {}", response);
             } catch (Exception ex) {
                 LOGGER.error("##PushBoxFox## : Error : Encountered an exception while sending the message.", ex);
                 throw new ApplicationRuntimeException("Error occurred while sending the push message", ex);

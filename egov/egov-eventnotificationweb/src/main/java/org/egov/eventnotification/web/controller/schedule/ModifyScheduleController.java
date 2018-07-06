@@ -62,7 +62,6 @@ import javax.validation.Valid;
 
 import org.egov.eventnotification.entity.Schedule;
 import org.egov.eventnotification.service.DraftTypeService;
-import org.egov.eventnotification.service.ScheduleDetailsService;
 import org.egov.eventnotification.service.ScheduleRepeatService;
 import org.egov.eventnotification.service.ScheduleService;
 import org.egov.eventnotification.utils.EventNotificationUtil;
@@ -93,9 +92,6 @@ public class ModifyScheduleController {
 
     @Autowired
     private DraftTypeService draftTypeService;
-
-    @Autowired
-    private ScheduleDetailsService scheduleDetailsService;
 
     @ModelAttribute("schedule")
     public Schedule getNotificationSchedule(@PathVariable Long id) {
@@ -135,7 +131,6 @@ public class ModifyScheduleController {
         }
 
         scheduleService.updateSchedule(schedule);
-        scheduleDetailsService.modifyScheduler(schedule);
 
         model.addAttribute(NOTIFICATION_SCHEDULE, schedule);
         model.addAttribute(MESSAGE, "msg.notification.schedule.update.success");

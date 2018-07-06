@@ -89,12 +89,12 @@ public class EventAdapter extends DataAdapter<Event> {
         jsonObjectEvent.addProperty(START_DATE,
                 getDate(getDefaultFormattedDate(event.getStartDate()), DDMMYYYY).getTime());
         jsonObjectEvent.addProperty(START_TIME,
-                event.getEventDetails().getStartHH().concat(":").concat(event.getEventDetails().getStartMM()));
+                event.getDetails().getStartHH().concat(":").concat(event.getDetails().getStartMM()));
 
         jsonObjectEvent.addProperty(END_DATE,
                 getDate(getDefaultFormattedDate(event.getEndDate()), DDMMYYYY).getTime());
         jsonObjectEvent.addProperty(END_TIME,
-                event.getEventDetails().getEndHH().concat(":").concat(event.getEventDetails().getEndMM()));
+                event.getDetails().getEndHH().concat(":").concat(event.getDetails().getEndMM()));
 
         if (event.getFilestore() == null) {
             jsonObjectEvent.addProperty(EVENT_FILESTOREID, EMPTY);
@@ -104,10 +104,10 @@ public class EventAdapter extends DataAdapter<Event> {
             jsonObjectEvent.addProperty(EVENT_FILENAME, event.getFilestore().getFileName());
         }
 
-        if (event.getEventAddress().getUrl() == null)
+        if (event.getAddress().getUrl() == null)
             jsonObjectEvent.addProperty(URL, EMPTY);
         else
-            jsonObjectEvent.addProperty(URL, event.getEventAddress().getUrl());
+            jsonObjectEvent.addProperty(URL, event.getAddress().getUrl());
 
         Long interestedCount = userEventService.countUsereventByEventId(event.getId());
         if (interestedCount == null)

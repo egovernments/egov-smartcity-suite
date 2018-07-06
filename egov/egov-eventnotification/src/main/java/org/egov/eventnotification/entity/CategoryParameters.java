@@ -91,7 +91,7 @@ public class CategoryParameters extends AbstractPersistable<Long> {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category")
     @Valid
-    private ModuleCategory moduleCategory;
+    private ModuleCategory category;
 
     @Override
     public Long getId() {
@@ -111,12 +111,12 @@ public class CategoryParameters extends AbstractPersistable<Long> {
         this.name = name;
     }
 
-    public ModuleCategory getModuleCategory() {
-        return moduleCategory;
+    public ModuleCategory getCategory() {
+        return category;
     }
 
-    public void setModuleCategory(ModuleCategory moduleCategory) {
-        this.moduleCategory = moduleCategory;
+    public void setCategory(ModuleCategory category) {
+        this.category = category;
     }
 
     public boolean isActive() {

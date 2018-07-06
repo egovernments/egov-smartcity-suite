@@ -65,7 +65,7 @@
 				<form:hidden path="filestore" id="filestore" name="filestore"
 					value="${filestore}" />
 				<input type="hidden" id="paidHid" path=""
-					value="${event.eventDetails.paid}" />
+					value="${event.details.paid}" />
 				<div class="panel-body">
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message
@@ -120,96 +120,96 @@
 						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.event.startdate" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin text-center">
-							<form:input path="eventDetails.startDt" id="startDt"
-								name="eventDetails.startDt" class="form-control datepicker"
+							<form:input path="details.startDt" id="startDt"
+								name="details.startDt" class="form-control datepicker"
 								title="Please enter a valid date"
 								pattern="\d{1,2}/\d{1,2}/\d{4}" data-inputmask="'mask': 'd/m/y'"
 								required="required" data-date-start-date="0d"
-								value="${eventDetails.startDt}" />
-							<form:errors path="eventDetails.startDt" cssClass="error-msg" />
+								value="${details.startDt}" />
+							<form:errors path="details.startDt" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.event.starttime" />:<span class="mandatory"></span></label>
 						<div class="col-sm-2 add-margin text-center">
-							<form:select path="eventDetails.startHH" id="startHH"
-								name="eventDetails.startHH" cssClass="form-control"
+							<form:select path="details.startHH" id="startHH"
+								name="details.startHH" cssClass="form-control"
 								cssErrorClass="form-control error" required="required">
 								<form:option value="">
 									<spring:message code="lbl.hours" />
 								</form:option>
 								<form:options items="${hourList}" />
 							</form:select>
-							<form:errors path="eventDetails.startHH" cssClass="error-msg" />
+							<form:errors path="details.startHH" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-1 control-label text-right">:</label>
 						<div class="col-sm-2 add-margin text-center">
-							<form:select path="eventDetails.startMM" id="startMM"
-								name="eventDetails.startMM" cssClass="form-control"
+							<form:select path="details.startMM" id="startMM"
+								name="details.startMM" cssClass="form-control"
 								cssErrorClass="form-control error" required="required">
 								<form:option value="">
 									<spring:message code="lbl.minutes" />
 								</form:option>
 								<form:options items="${minuteList}" />
 							</form:select>
-							<form:errors path="eventDetails.startMM" cssClass="error-msg" />
+							<form:errors path="details.startMM" cssClass="error-msg" />
 						</div>
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.event.enddate" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin text-center">
-							<form:input path="eventDetails.endDt" id="endDt"
-								name="eventDetails.endDt" class="form-control datepicker"
+							<form:input path="details.endDt" id="endDt"
+								name="details.endDt" class="form-control datepicker"
 								title="Please enter a valid date"
 								pattern="\d{1,2}/\d{1,2}/\d{4}" data-inputmask="'mask': 'd/m/y'"
 								required="required" data-date-start-date="0d"
-								value="${eventDetails.endDt}" />
-							<form:errors path="eventDetails.endDt" cssClass="error-msg" />
+								value="${details.endDt}" />
+							<form:errors path="details.endDt" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.event.endtime" />:<span class="mandatory"></span></label>
 						<div class="col-sm-2 add-margin text-center">
-							<form:select path="eventDetails.endHH" id="endHH"
-								name="eventDetails.endHH" cssClass="form-control"
+							<form:select path="details.endHH" id="endHH"
+								name="details.endHH" cssClass="form-control"
 								cssErrorClass="form-control error" required="required">
 								<form:option value="">
 									<spring:message code="lbl.hours" />
 								</form:option>
 								<form:options items="${hourList}" />
 							</form:select>
-							<form:errors path="eventDetails.endHH" cssClass="error-msg" />
+							<form:errors path="details.endHH" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-1 control-label text-right">:</label>
 						<div class="col-sm-2 add-margin text-center">
-							<form:select path="eventDetails.endMM" id="endMM"
-								name="eventDetails.endMM" cssClass="form-control"
+							<form:select path="details.endMM" id="endMM"
+								name="details.endMM" cssClass="form-control"
 								cssErrorClass="form-control error" required="required">
 								<form:option value="">
 									<spring:message code="lbl.minutes" />
 								</form:option>
 								<form:options items="${minuteList}" />
 							</form:select>
-							<form:errors path="eventDetails.endMM" cssClass="error-msg" />
+							<form:errors path="details.endMM" cssClass="error-msg" />
 						</div>
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.event.host" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="eventAddress.eventHost" id="eventHost"
-								name="eventAddress.eventHost"
+							<form:input path="address.eventHost" id="eventHost"
+								name="address.eventHost"
 								class="form-control text-left patternvalidation" maxlength="100"
-								required="required" value="${eventAddress.eventHost}" />
-							<form:errors path="eventAddress.eventHost" cssClass="error-msg" />
+								required="required" value="${address.eventHost}" />
+							<form:errors path="address.eventHost" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.event.contactno" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="eventAddress.contactNumber" id="contactNumber"
-								name="eventAddress.contactNumber"
+							<form:input path="address.contactNumber" id="contactNumber"
+								name="address.contactNumber"
 								class="form-control text-left patternvalidation" maxlength="100"
-								required="required" value="${eventAddress.contactNumber}" />
-							<form:errors path="eventAddress.contactNumber"
+								required="required" value="${address.contactNumber}" />
+							<form:errors path="address.contactNumber"
 								cssClass="error-msg" />
 						</div>
 					</div>
@@ -218,39 +218,39 @@
 								code="lbl.event.location" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<div class="input-group">
-								<form:input path="eventAddress.eventLocation" id="eventLocation"
-									name="eventAddress.eventLocation"
+								<form:input path="address.eventLocation" id="eventLocation"
+									name="address.eventLocation"
 									class="form-control text-left patternvalidation"
 									maxlength="100" required="required"
-									value="${event.eventAddress.eventLocation}" readonly="true"/>
+									value="${event.address.eventLocation}" readonly="true"/>
 								<span class="input-group-addon map-class btn-secondary"
 									title="See on map"
 									onclick="jQuery('#modal-6').modal('show', {backdrop: 'static'});"><i
 									class="fa fa-map-marker specific"></i></span>
-								<form:hidden path="eventDetails.crossHierarchyId"
+								<form:hidden path="details.crossHierarchyId"
 									id="crosshierarchyId" />
-								<form:hidden path="eventDetails.lat" id="lat" />
-								<form:hidden path="eventDetails.lng" id="lng" />
-								<form:errors path="eventAddress.eventLocation"
+								<form:hidden path="details.lat" id="lat" />
+								<form:hidden path="details.lng" id="lng" />
+								<form:errors path="address.eventLocation"
 									cssClass="error-msg" />
 							</div>
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.event.address" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<form:textarea path="eventAddress.address" id="address"
-								name="eventAddress.address"
+							<form:textarea path="address.address" id="address"
+								name="address.address"
 								class="form-control text-left patternvalidation" maxlength="256"
-								required="required" value="${eventAddress.address}"
+								required="required" value="${address.address}"
 								readonly="true" />
-							<form:errors path="eventAddress.address" cssClass="error-msg" />
+							<form:errors path="address.address" cssClass="error-msg" />
 						</div>
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.event.Wallpaper" />:</label>
 						<div class="col-sm-5 add-margin">
-							<input type="file" id="file" name="eventDetails.file"> <label>Note:
+							<input type="file" id="file" name="details.file"> <label>Note:
 								Minimum image dimension is 100*100 and it support jpg, jpeg,
 								bmp, gif and png file type. </label>
 						</div>
@@ -294,11 +294,11 @@
 						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.event.url" />:</label>
 						<div class="col-sm-10 add-margin">
-							<form:input path="eventAddress.url" id="url"
-								name="eventAddress.url"
+							<form:input path="address.url" id="url"
+								name="address.url"
 								class="form-control text-left patternvalidation" maxlength="200"
-								value="${eventAddress.url}" />
-							<form:errors path="eventAddress.url" cssClass="error-msg" />
+								value="${address.url}" />
+							<form:errors path="address.url" cssClass="error-msg" />
 						</div>
 					</div>
 				</div>

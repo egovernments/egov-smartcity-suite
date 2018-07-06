@@ -79,58 +79,58 @@ public class EventDetailsService {
     private FileStoreService fileStoreService;
 
     protected void populateEventDetails(Event event) {
-        EventDetails eventDetails = new EventDetails();
+        EventDetails details = new EventDetails();
         DateTime sd = new DateTime(event.getStartDate());
-        eventDetails.setStartDt(getDate(getDefaultFormattedDate(event.getStartDate()), DDMMYYYY));
+        details.setStartDt(getDate(getDefaultFormattedDate(event.getStartDate()), DDMMYYYY));
         if (sd.getHourOfDay() < MAX_TEN)
-            eventDetails.setStartHH(ZERO + String.valueOf(sd.getHourOfDay()));
+            details.setStartHH(ZERO + String.valueOf(sd.getHourOfDay()));
         else
-            eventDetails.setStartHH(String.valueOf(sd.getHourOfDay()));
+            details.setStartHH(String.valueOf(sd.getHourOfDay()));
         if (sd.getMinuteOfHour() < MAX_TEN)
-            eventDetails.setStartMM(ZERO + String.valueOf(sd.getMinuteOfHour()));
+            details.setStartMM(ZERO + String.valueOf(sd.getMinuteOfHour()));
         else
-            eventDetails.setStartMM(String.valueOf(sd.getMinuteOfHour()));
+            details.setStartMM(String.valueOf(sd.getMinuteOfHour()));
 
         DateTime ed = new DateTime(event.getEndDate());
-        eventDetails.setEndDt(getDate(getDefaultFormattedDate(event.getEndDate()), DDMMYYYY));
+        details.setEndDt(getDate(getDefaultFormattedDate(event.getEndDate()), DDMMYYYY));
         if (ed.getHourOfDay() < MAX_TEN)
-            eventDetails.setEndHH(ZERO + String.valueOf(ed.getHourOfDay()));
+            details.setEndHH(ZERO + String.valueOf(ed.getHourOfDay()));
         else
-            eventDetails.setEndHH(String.valueOf(ed.getHourOfDay()));
+            details.setEndHH(String.valueOf(ed.getHourOfDay()));
         if (ed.getMinuteOfHour() < MAX_TEN)
-            eventDetails.setEndMM(ZERO + String.valueOf(ed.getMinuteOfHour()));
+            details.setEndMM(ZERO + String.valueOf(ed.getMinuteOfHour()));
         else
-            eventDetails.setEndMM(String.valueOf(ed.getMinuteOfHour()));
+            details.setEndMM(String.valueOf(ed.getMinuteOfHour()));
 
         if (event.isPaid())
-            eventDetails.setPaid(YES);
+            details.setPaid(YES);
         else
-            eventDetails.setPaid(NO);
-        event.setEventDetails(eventDetails);
+            details.setPaid(NO);
+        event.setDetails(details);
     }
 
     public void eventUploadWallpaper(Event event) {
         try {
-            for (MultipartFile multipartFile : event.getEventDetails().getFile())
+            for (MultipartFile multipartFile : event.getDetails().getFile())
                 if (!multipartFile.isEmpty())
                     event.setFilestore(
                             fileStoreService.store(multipartFile.getInputStream(), multipartFile.getOriginalFilename(),
                                     multipartFile.getContentType(), MODULE_NAME));
         } catch (final IOException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.error("Error : Encountered an exception while upload an event image", e);
             throw new ApplicationRuntimeException(e.getMessage(), e);
         }
     }
 
     public void eventUploadWallpaper(Event existingEvent, Event event) {
         try {
-            for (MultipartFile multipartFile : event.getEventDetails().getFile())
+            for (MultipartFile multipartFile : event.getDetails().getFile())
                 if (!multipartFile.isEmpty())
                     existingEvent.setFilestore(
                             fileStoreService.store(multipartFile.getInputStream(), multipartFile.getOriginalFilename(),
                                     multipartFile.getContentType(), MODULE_NAME));
         } catch (final IOException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.error("Error : Encountered an exception while upload an event image", e);
             throw new ApplicationRuntimeException(e.getMessage(), e);
         }
 

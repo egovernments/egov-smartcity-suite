@@ -83,16 +83,16 @@
 								code="lbl.event.startdate" />:</label>
 						<div class="col-xs-3 add-margin view-content">
 							<fmt:formatDate pattern="dd/MM/yyyy"
-								value="${notificationSchedule.eventDetails.startDt}"
+								value="${notificationSchedule.details.startDt}"
 								var="startDate" />
 							<c:out value="${startDate}" />
 						</div>
 						<label class="col-xs-3 control-label text-right"><spring:message
 								code="lbl.event.starttime" />:</label>
 						<div class="col-xs-3 add-margin view-content">
-							<c:out value="${notificationSchedule.eventDetails.startHH}" />
+							<c:out value="${notificationSchedule.details.startHH}" />
 							:
-							<c:out value="${notificationSchedule.eventDetails.startMM}" />
+							<c:out value="${notificationSchedule.details.startMM}" />
 						</div>
 					</div>
 					<div class="form-group">

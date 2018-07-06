@@ -70,7 +70,7 @@ public class ViewScheduleController {
 
     @Autowired
     private DraftService draftService;
-    
+
     @GetMapping("/schedule/view/")
     public String view(Model model) {
         model.addAttribute(DRAFT_LIST, draftService.getAllDrafts());
@@ -78,7 +78,7 @@ public class ViewScheduleController {
                 scheduleService.getAllSchedule());
         return "schedule-view";
     }
-    
+
     @GetMapping("/schedule/view/{id}")
     public String viewBySchedule(@PathVariable Long id, Model model) {
         Schedule notificationSchedule = scheduleService.getScheduleById(id);

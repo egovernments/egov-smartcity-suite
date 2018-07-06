@@ -129,10 +129,10 @@ public class EventSearchAdapter extends DataAdapter<Event> {
             jsonObjectEvent.addProperty(EVENT_FILENAME, event.getFilestore().getFileName());
         }
 
-        if (event.getEventAddress().getUrl() == null)
+        if (event.getAddress().getUrl() == null)
             jsonObjectEvent.addProperty(URL, EMPTY);
         else
-            jsonObjectEvent.addProperty(URL, event.getEventAddress().getUrl());
+            jsonObjectEvent.addProperty(URL, event.getAddress().getUrl());
 
         Long interestedCount = userEventService.countUsereventByEventId(event.getId());
         if (interestedCount == null)

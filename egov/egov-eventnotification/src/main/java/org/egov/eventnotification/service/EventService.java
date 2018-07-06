@@ -133,18 +133,18 @@ public class EventService {
     @Transactional
     public Event saveEvent(Event event) {
         try {
-            DateTime sd = startOfGivenDate(new DateTime(event.getEventDetails().getStartDt()))
-                    .withHourOfDay(Integer.parseInt(event.getEventDetails().getStartHH()))
-                    .withMinuteOfHour(Integer.parseInt(event.getEventDetails().getStartMM()));
+            DateTime sd = startOfGivenDate(new DateTime(event.getDetails().getStartDt()))
+                    .withHourOfDay(Integer.parseInt(event.getDetails().getStartHH()))
+                    .withMinuteOfHour(Integer.parseInt(event.getDetails().getStartMM()));
             event.setStartDate(sd.toDate());
 
-            DateTime ed = startOfGivenDate(new DateTime(event.getEventDetails().getEndDt()))
-                    .withHourOfDay(Integer.parseInt(event.getEventDetails().getEndHH()))
-                    .withMinuteOfHour(Integer.parseInt(event.getEventDetails().getEndMM()));
+            DateTime ed = startOfGivenDate(new DateTime(event.getDetails().getEndDt()))
+                    .withHourOfDay(Integer.parseInt(event.getDetails().getEndHH()))
+                    .withMinuteOfHour(Integer.parseInt(event.getDetails().getEndMM()));
             event.setEndDate(ed.toDate());
             event.setStatus(ACTIVE.toUpperCase());
 
-            if (event.getEventDetails().getFile() != null)
+            if (event.getDetails().getFile() != null)
                 eventDetailsService.eventUploadWallpaper(event);
 
             eventRepository.saveAndFlush(event);
@@ -152,7 +152,7 @@ public class EventService {
 
             return event;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.error("Error : Encountered an exception while save an event", e);
             throw new ApplicationRuntimeException(e.getMessage(), e);
         }
     }
@@ -160,21 +160,21 @@ public class EventService {
     @Transactional
     public Event updateEvent(Event updatedEvent) {
         try {
-            DateTime sd = startOfGivenDate(new DateTime(updatedEvent.getEventDetails().getStartDt()))
-                    .withHourOfDay(Integer.parseInt(updatedEvent.getEventDetails().getStartHH()))
-                    .withMinuteOfHour(Integer.parseInt(updatedEvent.getEventDetails().getStartMM()));
+            DateTime sd = startOfGivenDate(new DateTime(updatedEvent.getDetails().getStartDt()))
+                    .withHourOfDay(Integer.parseInt(updatedEvent.getDetails().getStartHH()))
+                    .withMinuteOfHour(Integer.parseInt(updatedEvent.getDetails().getStartMM()));
             updatedEvent.setStartDate(sd.toDate());
 
-            DateTime ed = startOfGivenDate(new DateTime(updatedEvent.getEventDetails().getEndDt()))
-                    .withHourOfDay(Integer.parseInt(updatedEvent.getEventDetails().getEndHH()))
-                    .withMinuteOfHour(Integer.parseInt(updatedEvent.getEventDetails().getEndMM()));
+            DateTime ed = startOfGivenDate(new DateTime(updatedEvent.getDetails().getEndDt()))
+                    .withHourOfDay(Integer.parseInt(updatedEvent.getDetails().getEndHH()))
+                    .withMinuteOfHour(Integer.parseInt(updatedEvent.getDetails().getEndMM()));
             updatedEvent.setEndDate(ed.toDate());
 
-            if (updatedEvent.getEventDetails().getFile()[0].getSize() > MIN_NUMBER_OF_REQUESTS)
+            if (updatedEvent.getDetails().getFile()[0].getSize() > MIN_NUMBER_OF_REQUESTS)
                 eventDetailsService.eventUploadWallpaper(updatedEvent);
             return eventRepository.save(updatedEvent);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.error("Error : Encountered an exception while update an event", e);
             throw new ApplicationRuntimeException(e.getMessage(), e);
         }
     }
@@ -195,9 +195,9 @@ public class EventService {
         MessageContent messageContent = new MessageContent();
         MessageContentDetails messageDetails = new MessageContentDetails();
         messageContent.setCreatedDateTime(new Date().getTime());
-        messageDetails.setEventAddress(event.getEventAddress().getAddress());
+        messageDetails.setEventAddress(event.getAddress().getAddress());
         messageDetails.setEventDateTime(calendar.getMillis());
-        messageDetails.setEventLocation(event.getEventAddress().getEventLocation());
+        messageDetails.setEventLocation(event.getAddress().getEventLocation());
         messageContent.setExpiryDate(calendarEnd.getMillis());
         if (event.getFilestore() == null)
             messageContent.setImageUrl(EMPTY);
@@ -211,10 +211,10 @@ public class EventService {
         messageContent.setSenderId(user.getId());
         messageContent.setSenderName(user.getName());
         messageDetails.setSendAll(Boolean.TRUE);
-        if (event.getEventAddress().getUrl() == null)
+        if (event.getAddress().getUrl() == null)
             messageContent.setUrl(EMPTY);
         else
-            messageContent.setUrl(event.getEventAddress().getUrl());
+            messageContent.setUrl(event.getAddress().getUrl());
 
         messageContent.setDetails(messageDetails);
         pushNotificationService.sendNotifications(messageContent);

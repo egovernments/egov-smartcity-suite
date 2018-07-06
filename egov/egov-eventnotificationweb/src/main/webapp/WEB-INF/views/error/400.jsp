@@ -46,7 +46,7 @@
   ~
   --%>
 
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <div class="alert alert-danger" role="alert">
 	<i class="fa fa-exclamation-triangle error-symbol"></i>
 	<hr/>

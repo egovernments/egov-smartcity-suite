@@ -125,7 +125,7 @@ public class Schedule extends AbstractPersistable<Long> {
     private TemplateModule module;
 
     @Transient
-    private EventDetails eventDetails;
+    private EventDetails details;
 
     @Override
     public Long getId() {
@@ -185,12 +185,12 @@ public class Schedule extends AbstractPersistable<Long> {
         this.messageTemplate = messageTemplate;
     }
 
-    public EventDetails getEventDetails() {
-        return eventDetails;
+    public EventDetails getDetails() {
+        return details;
     }
 
-    public void setEventDetails(EventDetails eventDetails) {
-        this.eventDetails = eventDetails;
+    public void setDetails(EventDetails details) {
+        this.details = details;
     }
 
     public TemplateModule getModule() {

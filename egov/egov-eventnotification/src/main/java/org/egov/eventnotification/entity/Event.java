@@ -112,7 +112,7 @@ public class Event extends AbstractAuditable {
 
     private Double cost;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "eventtype")
     @Valid
     @NotNull
@@ -133,17 +133,17 @@ public class Event extends AbstractAuditable {
     private String status;
 
     @Transient
-    private EventDetails eventDetails;
+    private EventDetails details;
 
     @Embedded
-    private EventAddress eventAddress;
+    private EventAddress address;
 
-    public EventDetails getEventDetails() {
-        return eventDetails;
+    public EventDetails getDetails() {
+        return details;
     }
 
-    public void setEventDetails(EventDetails eventDetails) {
-        this.eventDetails = eventDetails;
+    public void setDetails(EventDetails details) {
+        this.details = details;
     }
 
     public FileStoreMapper getFilestore() {
@@ -236,11 +236,11 @@ public class Event extends AbstractAuditable {
         this.endDate = endDate;
     }
 
-    public EventAddress getEventAddress() {
-        return eventAddress;
+    public EventAddress getAddress() {
+        return address;
     }
 
-    public void setEventAddress(EventAddress eventAddress) {
-        this.eventAddress = eventAddress;
+    public void setAddress(EventAddress address) {
+        this.address = address;
     }
 }

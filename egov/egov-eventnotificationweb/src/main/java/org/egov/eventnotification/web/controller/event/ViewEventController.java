@@ -66,12 +66,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class ViewEventController {
-    
+
     @Autowired
     private EventService eventService;
-    
+
     @Autowired
     private EventTypeService eventTypeService;
+
     @GetMapping("/event/view/")
     public String view(@ModelAttribute Event event, final Model model) {
         model.addAttribute(EVENT_LIST,

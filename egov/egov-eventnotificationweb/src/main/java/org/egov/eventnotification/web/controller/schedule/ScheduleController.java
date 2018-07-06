@@ -65,7 +65,6 @@ import org.egov.eventnotification.entity.Drafts;
 import org.egov.eventnotification.entity.Schedule;
 import org.egov.eventnotification.service.DraftService;
 import org.egov.eventnotification.service.DraftTypeService;
-import org.egov.eventnotification.service.ScheduleDetailsService;
 import org.egov.eventnotification.service.ScheduleRepeatService;
 import org.egov.eventnotification.service.ScheduleService;
 import org.egov.eventnotification.utils.EventNotificationUtil;
@@ -101,9 +100,6 @@ public class ScheduleController {
 
     @Autowired
     private DraftTypeService draftTypeService;
-
-    @Autowired
-    private ScheduleDetailsService scheduleDetailsService;
 
     @GetMapping("/schedule/create/{id}")
     public String save(@PathVariable Long id, @ModelAttribute Schedule schedule, Model model) {
@@ -144,9 +140,9 @@ public class ScheduleController {
             return "schedule-create-view";
         }
 
-        scheduleService.saveSchedule(schedule);
         String fullURL = request.getRequestURL().toString();
-        scheduleDetailsService.executeScheduler(schedule, fullURL);
+        scheduleService.saveSchedule(schedule, fullURL);
+
         model.addAttribute(MESSAGE, "msg.notification.schedule.success");
         model.addAttribute(MODE, MODE_VIEW);
         model.addAttribute(NOTIFICATION_SCHEDULE, schedule);
@@ -162,8 +158,7 @@ public class ScheduleController {
     @GetMapping(path = { "/schedule/delete/{id}" }, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String deleteSchedule(@PathVariable Long id, Model model) {
-        Schedule notificationSchedule = scheduleService.disableSchedule(id);
-        scheduleDetailsService.removeScheduler(notificationSchedule);
+        scheduleService.disableSchedule(id);
         model.addAttribute(MESSAGE, "msg.notification.schedule.delete.success");
         return "success";
     }

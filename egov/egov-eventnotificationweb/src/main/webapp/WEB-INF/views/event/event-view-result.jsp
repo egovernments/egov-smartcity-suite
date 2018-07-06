@@ -110,16 +110,16 @@
 							</div>
 							<div class="col-xs-3 add-margin view-content">
 								<fmt:formatDate pattern="dd/MM/yyyy"
-									value="${event.eventDetails.startDt}" var="startDate" />
+									value="${event.details.startDt}" var="startDate" />
 								<c:out value="${startDate}" />
 							</div>
 							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.event.starttime" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
-								<c:out value="${event.eventDetails.startHH}" />
+								<c:out value="${event.details.startHH}" />
 								:
-								<c:out value="${event.eventDetails.startMM}" />
+								<c:out value="${event.details.startMM}" />
 							</div>
 						</div>
 						<div class="row add-border">
@@ -128,16 +128,16 @@
 							</div>
 							<div class="col-xs-3 add-margin view-content">
 								<fmt:formatDate pattern="dd/MM/yyyy"
-									value="${event.eventDetails.endDt}" var="endDate" />
+									value="${event.details.endDt}" var="endDate" />
 								<c:out value="${endDate}" />
 							</div>
 							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.event.endtime" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
-								<c:out value="${event.eventDetails.endHH}" />
+								<c:out value="${event.details.endHH}" />
 								:
-								<c:out value="${event.eventDetails.endMM}" />
+								<c:out value="${event.details.endMM}" />
 							</div>
 						</div>
 						<div class="row add-border">
@@ -145,13 +145,13 @@
 								<spring:message code="lbl.event.host" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
-								<c:out value="${event.eventAddress.eventHost}" />
+								<c:out value="${event.address.eventHost}" />
 							</div>
 							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.event.contactno" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
-								<c:out value="${event.eventAddress.contactNumber}" />
+								<c:out value="${event.address.contactNumber}" />
 							</div>
 						</div>
 						<div class="row add-border">
@@ -159,13 +159,13 @@
 								<spring:message code="lbl.event.location" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
-								<c:out value="${event.eventAddress.eventLocation}" />
+								<c:out value="${event.address.eventLocation}" />
 							</div>
 							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.event.address" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
-								<c:out value="${event.eventAddress.address}" />
+								<c:out value="${event.address.address}" />
 							</div>
 						</div>
 						<div class="row add-border">
@@ -219,7 +219,7 @@
 								<spring:message code="lbl.event.url" />
 							</div>
 							<div class="col-sm-9 add-margin view-content">
-								<c:out value="${event.eventAddress.url}" />
+								<c:out value="${event.address.url}" />
 							</div>
 						</div>
 					</div>

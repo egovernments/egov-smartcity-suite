@@ -72,10 +72,10 @@ public class EventDetailsAdapter {
         jsonObjectEvent.addProperty(NAME, event.getName());
         jsonObjectEvent.addProperty(DESCRIPTION, event.getDescription());
         
-        jsonObjectEvent.addProperty(EVENT_HOST, event.getEventAddress().getEventHost());
-        jsonObjectEvent.addProperty(EVENT_LOC, event.getEventAddress().getEventLocation());
-        jsonObjectEvent.addProperty(ADDRESS, event.getEventAddress().getAddress());
-        jsonObjectEvent.addProperty(CONTACT_NO, event.getEventAddress().getContactNumber());
+        jsonObjectEvent.addProperty(EVENT_HOST, event.getAddress().getEventHost());
+        jsonObjectEvent.addProperty(EVENT_LOC, event.getAddress().getEventLocation());
+        jsonObjectEvent.addProperty(ADDRESS, event.getAddress().getAddress());
+        jsonObjectEvent.addProperty(CONTACT_NO, event.getAddress().getContactNumber());
         jsonObjectEvent.addProperty(ISPAID, event.isPaid());
         jsonObjectEvent.addProperty(EVENTTYPE, event.getEventType().getName());
         jsonObjectEvent.addProperty(USER_INTERESTED, NO);
