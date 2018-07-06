@@ -45,70 +45,49 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
+package org.egov.ptis.domain.service.report;
 
-package org.egov.ptis.web.controller.reports;
-
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.web.support.ui.DataTable;
-import org.egov.ptis.constants.PropertyTaxConstants;
-import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
-import org.egov.ptis.domain.entity.property.BaseRegisterReportRequest;
-import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
-import org.egov.ptis.domain.entity.property.view.PropertyMVInfo;
-import org.egov.ptis.domain.service.report.PTBaseRegisterReportService;
-import org.egov.ptis.domain.service.report.PropertyTaxReportService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.util.Date;
 import java.util.List;
 
-@Controller
-@RequestMapping(value = "report/baseRegisterVlt")
-public class BaseRegisterReportVLTController {
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
+import org.egov.ptis.domain.entity.property.BaseRegisterReportRequest;
+import org.egov.ptis.domain.entity.property.contract.TaxDefaultersRequest;
+import org.egov.ptis.domain.entity.property.view.PropertyMVInfo;
+import org.egov.ptis.repository.reports.PropertyMVInfoRepository;
+import org.egov.ptis.repository.spec.BaseRegisterSpec;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@Transactional(readOnly = true)
+public class PropertyTaxReportService {
 
 	@Autowired
-	private BoundaryService boundaryService;
+	private PropertyMVInfoRepository propertyMVInfoRepository;
 
-	@Autowired
-        private PropertyTaxReportService propertyTaxReportService;
+	@ReadOnly
+	public Page<PropertyMVInfo> pagedBaseRegisterRecords(final BaseRegisterReportRequest baseRegisterReportRequest) {
+		return propertyMVInfoRepository.findAll(
+				BaseRegisterSpec.baseRegisterSpecification(baseRegisterReportRequest),
+				new PageRequest(baseRegisterReportRequest.pageNumber(), baseRegisterReportRequest.pageSize(),
+						baseRegisterReportRequest.orderDir(), baseRegisterReportRequest.orderBy()));
 
-	@Autowired
-	private PropertyTypeMasterDAO propertyTypeMasterDAO;
-
-	@ModelAttribute
-	public void getPropertyModel(final Model model) {
-		final PropertyMVInfo propertyInfo = new PropertyMVInfo();
-		model.addAttribute("propertyInfo", propertyInfo);
 	}
 
-	@ModelAttribute("wards")
-	public List<Boundary> wardBoundaries() {
-		return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(PropertyTaxConstants.WARD,
-				PropertyTaxConstants.REVENUE_HIERARCHY_TYPE);
+	@ReadOnly
+	public List<PropertyMVInfo> getAllBaseRegisterRecords(final BaseRegisterReportRequest baseRegisterReportRequest) {
+		return propertyMVInfoRepository
+				.findAll(BaseRegisterSpec.baseRegisterSpecification(baseRegisterReportRequest));
+	}
+	
+	
+	@ReadOnly
+        public Page<PropertyMVInfo> getPropertyTaxDefaultersRecords(final TaxDefaultersRequest taxDefaultersRequest) {
+                return  null;
 	}
 
-	@RequestMapping(method = RequestMethod.GET)
-	public String searchForm(final Model model) {
-		model.addAttribute("currDate", new Date());
-		return "baseRegisterVLT-form";
-	}
-
-	@GetMapping(value = "/result", produces = MediaType.TEXT_PLAIN_VALUE)
-	@ResponseBody
-	public String searchBaseRegister(final BaseRegisterReportRequest baseRegisterReportRequest) {
-		final PropertyTypeMaster propertyType = propertyTypeMasterDAO.getPropertyTypeMasterByCode("VAC_LAND");
-		baseRegisterReportRequest.setVacantLand(propertyType.getId());
-		return new DataTable<>(propertyTaxReportService.pagedBaseRegisterRecords(baseRegisterReportRequest),
-				baseRegisterReportRequest.draw()).toJson(BaseRegisterVLTResultAdaptor.class);
-	}
 
 }
