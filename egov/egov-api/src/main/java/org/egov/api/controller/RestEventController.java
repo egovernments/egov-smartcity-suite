@@ -168,7 +168,7 @@ public class RestEventController extends ApiController {
         UserEvent userEvent = userEventService.saveUserEvent(Long.parseLong(userEventRequest.getUserid()),
                 Long.parseLong(userEventRequest.getEventid()));
         if (userEvent == null)
-            return res.error(getMessage("event.not.fount"));
+            return res.error(getMessage("user.event.already.exists"));
         else {
             Long interestedCount = userEventService.countUsereventByEventId(userEvent.getEvent().getId());
             return res.setDataAdapter(new InterestedCountAdapter()).success(interestedCount);

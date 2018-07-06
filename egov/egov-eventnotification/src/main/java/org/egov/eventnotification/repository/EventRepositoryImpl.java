@@ -47,6 +47,7 @@
  */
 package org.egov.eventnotification.repository;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.eventnotification.utils.Constants.ACTIVE;
 import static org.egov.eventnotification.utils.Constants.EVENT_HOST;
 import static org.egov.eventnotification.utils.Constants.NAME;
@@ -90,12 +91,12 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
 
         Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Event.class, "evnt");
         criteria.createAlias("evnt.eventType", "eventType");
-        if (eventSearch.getEventType() != null)
+        if (isNotBlank(eventSearch.getEventType()))
             criteria.add(
                     Restrictions.ilike("eventType.name", eventSearch.getEventType(), MatchMode.ANYWHERE));
-        if (eventSearch.getName() != null)
+        if (isNotBlank(eventSearch.getName()))
             criteria.add(Restrictions.ilike(NAME, eventSearch.getName(), MatchMode.ANYWHERE));
-        if (eventSearch.getEventHost() != null)
+        if (isNotBlank(eventSearch.getEventHost()))
             criteria.add(Restrictions.ilike(EVENT_HOST, eventSearch.getEventHost(), MatchMode.ANYWHERE));
 
         criteria.add(Restrictions.le("evnt.startDate", startDate));

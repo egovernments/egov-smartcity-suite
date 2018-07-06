@@ -63,7 +63,7 @@ public class UserDeviceAdapter extends DataAdapter<UserFcmDevice> {
     @Override
     public JsonElement serialize(UserFcmDevice userDevice, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject jsonObjectDraft = new JsonObject();
-        jsonObjectDraft.addProperty(USER_TOKEN_ID, userDevice.getDevicetoken());
+        jsonObjectDraft.addProperty(USER_TOKEN_ID, userDevice.getDeviceToken());
         jsonObjectDraft.addProperty(USER_ID, userDevice.getUser().getId());
         jsonObjectDraft.addProperty(USER_DEVICE_ID, userDevice.getDeviceId());
         return jsonObjectDraft;

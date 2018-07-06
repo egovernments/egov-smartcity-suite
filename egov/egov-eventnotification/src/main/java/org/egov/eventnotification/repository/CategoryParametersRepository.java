@@ -56,6 +56,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CategoryParametersRepository extends JpaRepository<CategoryParameters, Long> {
 
-    List<CategoryParameters> findByModuleCategoryId(Long id);
+    List<CategoryParameters> findByCategoryId(Long id);
 
 }

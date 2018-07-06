@@ -116,10 +116,10 @@
 							<td><c:out value="${listVar.draftType.name}" /></td>
 							<td><c:out value="${listVar.status}" /></td>
 							<td><fmt:formatDate pattern="dd/MM/yyyy"
-									value="${listVar.eventDetails.startDt}" var="startDate" /> <c:out
+									value="${listVar.details.startDt}" var="startDate" /> <c:out
 									value="${startDate}" /></td>
-							<td><c:out value="${listVar.eventDetails.startHH}" />:<c:out
-									value="${listVar.eventDetails.startMM}" /></td>
+							<td><c:out value="${listVar.details.startHH}" />:<c:out
+									value="${listVar.details.startMM}" /></td>
 							<td><c:out value="${listVar.scheduleRepeat.name}" /></td>
 							<td><c:out value="${listVar.messageTemplate}" /></td>
 						</tr>

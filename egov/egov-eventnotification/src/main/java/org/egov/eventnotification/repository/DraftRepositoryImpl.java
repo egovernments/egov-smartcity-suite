@@ -47,6 +47,7 @@
  */
 package org.egov.eventnotification.repository;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.eventnotification.utils.Constants.DRAFT_ID;
 import static org.egov.eventnotification.utils.Constants.NAME;
 
@@ -55,7 +56,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.apache.commons.lang3.StringUtils;
 import org.egov.eventnotification.entity.Drafts;
 import org.egov.eventnotification.repository.custom.DraftRepositoryCustom;
 import org.hibernate.Criteria;
@@ -73,10 +73,10 @@ public class DraftRepositoryImpl implements DraftRepositoryCustom {
     public List<Drafts> searchDraft(Drafts draftObj) {
         Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Drafts.class, "drft");
         criteria.createAlias("drft.draftType", "draftType");
-        if (draftObj.getDraftType().getName() != null)
+        if (isNotBlank(draftObj.getDraftType().getName()))
             criteria.add(Restrictions.ilike("draftType.name",
                     draftObj.getDraftType().getName(), MatchMode.ANYWHERE));
-        if (StringUtils.isNotBlank(draftObj.getName()))
+        if (isNotBlank(draftObj.getName()))
             criteria.add(Restrictions.ilike(NAME, draftObj.getName(), MatchMode.ANYWHERE));
         criteria.addOrder(Order.desc(DRAFT_ID));
         return criteria.list();

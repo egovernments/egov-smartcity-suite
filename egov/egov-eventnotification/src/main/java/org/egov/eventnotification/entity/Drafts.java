@@ -84,7 +84,7 @@ public class Drafts extends AbstractAuditable {
     @NotBlank
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "drafttype")
     @Valid
     @NotNull

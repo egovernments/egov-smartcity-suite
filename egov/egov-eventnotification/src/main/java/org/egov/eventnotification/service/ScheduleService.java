@@ -79,67 +79,78 @@ public class ScheduleService {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private ScheduleDetailsService scheduleDetailsService;
+
     public List<Schedule> getAllSchedule() {
         List<Schedule> notificationScheduleList = null;
         notificationScheduleList = scheduleRepository.findByOrderByIdDesc();
         if (!notificationScheduleList.isEmpty())
             for (Schedule notificationSchedule : notificationScheduleList) {
-                EventDetails eventDetails = new EventDetails();
+                EventDetails details = new EventDetails();
                 DateTime sd = new DateTime(notificationSchedule.getStartDate());
-                eventDetails.setStartDt(
+                details.setStartDt(
                         getDate(getDefaultFormattedDate(notificationSchedule.getStartDate()),
                                 DDMMYYYY));
                 if (sd.getHourOfDay() < MAX_TEN)
-                    eventDetails.setStartHH(ZERO + String.valueOf(sd.getHourOfDay()));
+                    details.setStartHH(ZERO + String.valueOf(sd.getHourOfDay()));
                 else
-                    eventDetails.setStartHH(String.valueOf(sd.getHourOfDay()));
+                    details.setStartHH(String.valueOf(sd.getHourOfDay()));
                 if (sd.getMinuteOfHour() < MAX_TEN)
-                    eventDetails.setStartMM(ZERO + String.valueOf(sd.getMinuteOfHour()));
+                    details.setStartMM(ZERO + String.valueOf(sd.getMinuteOfHour()));
                 else
-                    eventDetails.setStartMM(String.valueOf(sd.getMinuteOfHour()));
-                notificationSchedule.setEventDetails(eventDetails);
+                    details.setStartMM(String.valueOf(sd.getMinuteOfHour()));
+                notificationSchedule.setDetails(details);
             }
         return notificationScheduleList;
     }
 
     public Schedule getScheduleById(Long id) {
         Schedule schedule = scheduleRepository.findOne(id);
-        EventDetails eventDetails = new EventDetails();
+        EventDetails details = new EventDetails();
         DateTime sd = new DateTime(schedule.getStartDate());
-        eventDetails
+        details
                 .setStartDt(getDate(getDefaultFormattedDate(schedule.getStartDate()),
                         DDMMYYYY));
         if (sd.getHourOfDay() < MAX_TEN)
-            eventDetails.setStartHH(ZERO + String.valueOf(sd.getHourOfDay()));
+            details.setStartHH(ZERO + String.valueOf(sd.getHourOfDay()));
         else
-            eventDetails.setStartHH(String.valueOf(sd.getHourOfDay()));
+            details.setStartHH(String.valueOf(sd.getHourOfDay()));
         if (sd.getMinuteOfHour() < MAX_TEN)
-            eventDetails.setStartMM(ZERO + String.valueOf(sd.getMinuteOfHour()));
+            details.setStartMM(ZERO + String.valueOf(sd.getMinuteOfHour()));
         else
-            eventDetails.setStartMM(String.valueOf(sd.getMinuteOfHour()));
-        schedule.setEventDetails(eventDetails);
+            details.setStartMM(String.valueOf(sd.getMinuteOfHour()));
+        schedule.setDetails(details);
         return schedule;
     }
 
     @Transactional
-    public Schedule saveSchedule(Schedule notificationSchedule) {
-        DateTime sd = startOfGivenDate(new DateTime(notificationSchedule.getEventDetails().getStartDt()))
-                .withHourOfDay(Integer.parseInt(notificationSchedule.getEventDetails().getStartHH()))
-                .withMinuteOfHour(Integer.parseInt(notificationSchedule.getEventDetails().getStartMM()));
+    public Schedule saveSchedule(Schedule notificationSchedule, String fullURL) {
+        DateTime sd = startOfGivenDate(new DateTime(notificationSchedule.getDetails().getStartDt()))
+                .withHourOfDay(Integer.parseInt(notificationSchedule.getDetails().getStartHH()))
+                .withMinuteOfHour(Integer.parseInt(notificationSchedule.getDetails().getStartMM()));
         sd = sd.withSecondOfMinute(00);
         notificationSchedule.setStartDate(sd.toDate());
         notificationSchedule.setStatus(SCHEDULED_STATUS);
-        return scheduleRepository.save(notificationSchedule);
+        scheduleRepository.save(notificationSchedule);
+
+        scheduleDetailsService.executeScheduler(notificationSchedule, fullURL);
+
+        return notificationSchedule;
     }
 
     @Transactional
     public Schedule updateSchedule(Schedule schedule) {
-        DateTime sd = startOfGivenDate(new DateTime(schedule.getEventDetails().getStartDt()))
-                .withHourOfDay(Integer.parseInt(schedule.getEventDetails().getStartHH()))
-                .withMinuteOfHour(Integer.parseInt(schedule.getEventDetails().getStartMM()));
+        DateTime sd = startOfGivenDate(new DateTime(schedule.getDetails().getStartDt()))
+                .withHourOfDay(Integer.parseInt(schedule.getDetails().getStartHH()))
+                .withMinuteOfHour(Integer.parseInt(schedule.getDetails().getStartMM()));
         schedule.setStartDate(sd.toDate());
         schedule.setStatus(SCHEDULED_STATUS);
-        return scheduleRepository.save(schedule);
+        scheduleRepository.save(schedule);
+
+        scheduleDetailsService.modifyScheduler(schedule);
+
+        return schedule;
     }
 
     @Transactional
@@ -147,7 +158,9 @@ public class ScheduleService {
         Schedule notificationSchedule = getScheduleById(id);
         notificationSchedule.setStatus("Disabled");
 
-        return scheduleRepository.save(notificationSchedule);
+        scheduleRepository.save(notificationSchedule);
+        scheduleDetailsService.removeScheduler(notificationSchedule);
+        return notificationSchedule;
     }
 
     @Transactional

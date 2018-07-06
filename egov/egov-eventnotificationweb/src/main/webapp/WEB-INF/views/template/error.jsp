@@ -47,7 +47,7 @@
   --%>
 
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>

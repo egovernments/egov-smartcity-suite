@@ -47,9 +47,6 @@
   --%>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <form:form method="post" action="create"
 	class="form-horizontal form-groups-bordered"
@@ -91,7 +88,7 @@
 							</div>
 							<div class="col-xs-3 add-margin view-content">
 								<fmt:formatDate pattern="dd/MM/yyyy"
-									value="${notificationSchedule.eventDetails.startDt}"
+									value="${notificationSchedule.details.startDt}"
 									var="startDate" />
 								<c:out value="${startDate}" />
 							</div>
@@ -99,9 +96,9 @@
 								<spring:message code="lbl.event.starttime" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
-								<c:out value="${notificationSchedule.eventDetails.startHH}" />
+								<c:out value="${notificationSchedule.details.startHH}" />
 								:
-								<c:out value="${notificationSchedule.eventDetails.startMM}" />
+								<c:out value="${notificationSchedule.details.startMM}" />
 							</div>
 						</div>
 						<div class="row add-border">

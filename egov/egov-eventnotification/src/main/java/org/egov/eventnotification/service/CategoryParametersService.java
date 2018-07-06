@@ -67,7 +67,7 @@ public class CategoryParametersService {
     }
 
     public List<CategoryParameters> getParametersForCategory(Long categoryId) {
-        return categoryParametersRepository.findByModuleCategoryId(categoryId);
+        return categoryParametersRepository.findByCategoryId(categoryId);
     }
 
 }

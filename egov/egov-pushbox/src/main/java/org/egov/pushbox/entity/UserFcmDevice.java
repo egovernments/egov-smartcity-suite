@@ -95,7 +95,7 @@ public class UserFcmDevice extends AbstractAuditable {
 
     @SafeHtml
     @NotBlank
-    private String devicetoken;
+    private String deviceToken;
 
     @SafeHtml
     @NotBlank
@@ -109,12 +109,12 @@ public class UserFcmDevice extends AbstractAuditable {
         this.deviceId = deviceId;
     }
 
-    public String getDevicetoken() {
-        return devicetoken;
+    public String getDeviceToken() {
+        return deviceToken;
     }
 
-    public void setDevicetoken(String devicetoken) {
-        this.devicetoken = devicetoken;
+    public void setDeviceToken(String deviceToken) {
+        this.deviceToken = deviceToken;
     }
 
     public User getUser() {

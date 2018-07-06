@@ -156,9 +156,9 @@ $(document)
 												map
 														.setCenter(place.geometry.location);
 												map.setZoom(17); // Why 17?
-																	// Because
-																	// it looks
-																	// good.
+												// Because
+												// it looks
+												// good.
 											}
 
 											var address = '';
