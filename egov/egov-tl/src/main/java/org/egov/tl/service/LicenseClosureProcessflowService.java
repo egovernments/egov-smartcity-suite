@@ -68,13 +68,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.List;
 
-import static org.egov.tl.utils.Constants.BUTTONREJECT;
-import static org.egov.tl.utils.Constants.CLOSURE_ADDITIONAL_RULE;
-import static org.egov.tl.utils.Constants.CLOSURE_LICENSE_REJECT;
-import static org.egov.tl.utils.Constants.CLOSURE_NATUREOFTASK;
-import static org.egov.tl.utils.Constants.DELIMITER_COLON;
-import static org.egov.tl.utils.Constants.COMPLETED;
-import static org.egov.tl.utils.Constants.WF_DIGI_SIGNED;
+import static org.egov.tl.utils.Constants.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -98,6 +92,9 @@ public class LicenseClosureProcessflowService {
     @Autowired
     @Qualifier("workflowService")
     private SimpleWorkflowService<TradeLicense> licenseWorkflowService;
+
+    @Autowired
+    private LicenseAppTypeService licenseAppTypeService;
 
     public void startClosureProcessflow(TradeLicense license) {
         if (securityUtils.currentUserIsEmployee()) {
@@ -132,7 +129,7 @@ public class LicenseClosureProcessflowService {
                 .withOwner(processOwner)
                 .withNextAction(workflowMatrix.getNextAction())
                 .withExtraInfo(licenseStateInfo)
-                .withNatureOfTask(CLOSURE_NATUREOFTASK)
+                .withNatureOfTask(licenseAppTypeService.getLicenseAppTypeByCode(CLOSURE_APPTYPE_CODE).getName())
                 .withInitiator(flowInitiator);
     }
 
@@ -159,7 +156,7 @@ public class LicenseClosureProcessflowService {
                 .withOwner(processOwner)
                 .withNextAction(workflowMatrix.getNextAction())
                 .withExtraInfo(licenseStateInfo)
-                .withNatureOfTask(CLOSURE_NATUREOFTASK)
+                .withNatureOfTask(licenseAppTypeService.getLicenseAppTypeByCode(CLOSURE_APPTYPE_CODE).getName())
                 .withInitiator(processOwner);
     }
 

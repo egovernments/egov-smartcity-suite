@@ -124,7 +124,7 @@ public class LicenseService {
             existingDocs.addAll(license.getDocuments()
                     .stream()
                     .filter(licenseDocument -> licenseDocument.getType().getApplicationType().equals
-                            (ApplicationType.valueOf(license.getLicenseAppType().getName().toUpperCase())) && licenseDocument.getId() != null)
+                            (ApplicationType.valueOf(license.getLicenseAppType().getCode())) && licenseDocument.getId() != null)
                     .collect(Collectors.toList()));
         }
 

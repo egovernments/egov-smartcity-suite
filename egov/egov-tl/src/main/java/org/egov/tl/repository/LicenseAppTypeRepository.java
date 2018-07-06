@@ -59,5 +59,7 @@ public interface LicenseAppTypeRepository extends JpaRepository<LicenseAppType, 
 
     LicenseAppType findByName(String name);
 
+    LicenseAppType findByCode(String name);
+
     List<LicenseAppType> findByDisplayTrueOrderByNameAsc();
 }

@@ -138,7 +138,7 @@ public class LicenseProcessWorkflowService {
             initiateWfTransition(tradeLicense);
             tradeLicense.transition().withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
                     .withComments(workflowBean.getApproverComments())
-                    .withNatureOfTask(tradeLicense.isReNewApplication() ? RENEWAL_NATUREOFWORK : NEW_NATUREOFWORK)
+                    .withNatureOfTask(tradeLicense.getLicenseAppType().getName())
                     .withStateValue(workFlowMatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(wfInitiator)
                     .withNextAction(workFlowMatrix.getNextAction()).withInitiator(wfInitiator).withExtraInfo(licenseStateInfo);
         } else if (BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction()) && userPositions.contains(tradeLicense.getCurrentState().getInitiatorPosition())) {
@@ -313,7 +313,7 @@ public class LicenseProcessWorkflowService {
             license.transition().withSenderName(licenseUtils.getApplicationSenderName(currentUser.getType()
                     , currentUser.getName(), license.getLicensee().getApplicantName()))
                     .withComments(workflowBean.getApproverComments())
-                    .withNatureOfTask(license.isReNewApplication() ? RENEWAL_NATUREOFWORK : NEW_NATUREOFWORK)
+                    .withNatureOfTask(license.getLicenseAppType().getName())
                     .withStateValue(workFlowMatrix.getNextState()).withDateInfo(new Date())
                     .withOwner(wfAssignment.getPosition()).withNextAction(workFlowMatrix.getNextAction())
                     .withInitiator(wfAssignment.getPosition()).withExtraInfo(licenseStateInfo);

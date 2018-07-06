@@ -60,7 +60,7 @@ import java.util.Date;
 import java.util.List;
 
 import static org.egov.infra.utils.StringUtils.toYesOrNo;
-import static org.egov.tl.utils.Constants.CLOSURE_LIC_APPTYPE;
+import static org.egov.tl.utils.Constants.CLOSURE_APPTYPE_CODE;
 import static org.egov.tl.utils.Constants.CSCOPERATOR;
 import static org.egov.tl.utils.Constants.TL_APPROVER_ROLENAME;
 import static org.egov.tl.utils.Constants.TL_CREATOR_ROLENAME;
@@ -129,7 +129,7 @@ public class SearchForm extends DataTableSearchRequest {
         if (user.hasRole(CSCOPERATOR))
             addPrintCertificatesOptions(license, licenseActions);
         if (user.getType().equals(UserType.EMPLOYEE)) {
-            if (license.getIsActive() && license.getTotalBalance().signum() > 0)
+            if (!license.isAppTypeClosure() && license.getIsActive() && license.getTotalBalance().signum() > 0)
                 licenseActions.add("Generate Demand Notice");
             if (license.isLegacyWithNoState())
                 licenseActions.add("Modify Legacy License");
@@ -157,7 +157,7 @@ public class SearchForm extends DataTableSearchRequest {
     private void addPrintCertificatesOptions(License license, List<String> licenseActions) {
         if (license.isStatusActive() && !license.isLegacy())
             licenseActions.add("Print Certificate");
-        if (!CLOSURE_LIC_APPTYPE.equals(license.getLicenseAppType().getName())
+        if (!CLOSURE_APPTYPE_CODE.equals(license.getLicenseAppType().getCode())
                 && license.getStatus().getStatusCode().equals(Constants.STATUS_UNDERWORKFLOW))
             licenseActions.add("Print Provisional Certificate");
     }

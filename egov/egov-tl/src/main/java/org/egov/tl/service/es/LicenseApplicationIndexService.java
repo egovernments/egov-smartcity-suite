@@ -137,7 +137,7 @@ public class LicenseApplicationIndexService {
         applicationIndex.setStatus(license.getStatus().getName());
         applicationIndex.setApplicantAddress(license.getAddress());
         applicationIndex
-                .setOwnerName(user.isPresent() ? user.get().getUsername() + DELIMITER_COLON + user.get().getName() : EMPTY);
+                .setOwnerName(user.isPresent() ? user.get().getUsername() + DELIMITER_COLON + user.get().getName() : NA);
         applicationIndex.setConsumerCode(license.getLicenseNumber());
         applicationIndex.setClosed(NO);
         applicationIndex.setApproved(INPROGRESS);

@@ -72,7 +72,7 @@ import static org.egov.infra.reporting.util.ReportUtil.CONTENT_TYPES;
 import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
 import static org.egov.tl.utils.Constants.AUTO;
 import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
-import static org.egov.tl.utils.Constants.CLOSURE_LIC_APPTYPE;
+import static org.egov.tl.utils.Constants.CLOSURE_APPTYPE_CODE;
 import static org.egov.tl.utils.Constants.LICENSE_STATUS_ACKNOWLEDGED;
 import static org.egov.tl.utils.Constants.LICENSE_STATUS_ACTIVE;
 import static org.egov.tl.utils.Constants.LICENSE_STATUS_CANCELLED;
@@ -160,7 +160,7 @@ public class LicenseClosureService extends LicenseService {
         license.setNewWorkflow(true);
         license.setApplicationDate(new Date());
         license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
-        license.setLicenseAppType(licenseAppTypeService.getLicenseAppTypeByName(CLOSURE_LIC_APPTYPE));
+        license.setLicenseAppType(licenseAppTypeService.getLicenseAppTypeByCode(CLOSURE_APPTYPE_CODE));
         update(license);
         licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
         tradeLicenseSmsAndEmailService.sendLicenseClosureMessage(license, license.getWorkflowContainer().getWorkFlowAction());

@@ -78,6 +78,8 @@ public class LicenseAppType extends AbstractAuditable {
     @Length(max = 256, message = "masters.licenseApplicationType.name.length")
     private String name;
 
+    private String code;
+
     private Boolean display;
 
     @Override
@@ -96,6 +98,14 @@ public class LicenseAppType extends AbstractAuditable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public Boolean getDisplay() {

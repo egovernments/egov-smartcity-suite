@@ -165,17 +165,17 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
     @Override
     protected LicenseAppType getLicenseApplicationTypeForRenew() {
-        return licenseAppTypeService.getLicenseAppTypeByName(RENEWAL_LIC_APPTYPE);
+        return licenseAppTypeService.getLicenseAppTypeByCode(RENEW_APPTYPE_CODE);
     }
 
     @Override
     protected LicenseAppType getLicenseApplicationType() {
-        return licenseAppTypeService.getLicenseAppTypeByName(NEW_LIC_APPTYPE);
+        return licenseAppTypeService.getLicenseAppTypeByCode(NEW_APPTYPE_CODE);
     }
 
     @Override
     protected LicenseAppType getClosureLicenseApplicationType() {
-        return licenseAppTypeService.getLicenseAppTypeByName(CLOSURE_LIC_APPTYPE);
+        return licenseAppTypeService.getLicenseAppTypeByCode(CLOSURE_APPTYPE_CODE);
     }
 
     @Transactional
@@ -407,7 +407,8 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         final Criteria searchCriteria = entityQueryService.getSession().createCriteria(TradeLicense.class);
         searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat").createAlias("tradeName", "subcat")
                 .createAlias("status", "licstatus").createAlias("natureOfBusiness", "nob")
-                .createAlias("licenseDemand", "licDemand");
+                .createAlias("licenseDemand", "licDemand").createAlias("licenseAppType","appType")
+                .add(Restrictions.ne("appType.code",licenseAppTypeService.getLicenseAppTypeByCode(CLOSURE_APPTYPE_CODE)));
         if (isNotBlank(demandNoticeForm.getLicenseNumber()))
             searchCriteria.add(Restrictions.eq("licenseNumber", demandNoticeForm.getLicenseNumber()).ignoreCase());
         if (isNotBlank(demandNoticeForm.getOldLicenseNumber()))
@@ -526,9 +527,9 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
         List<LicenseDocument> licenseDocuments = getLicenseById(licenseId).getDocuments();
         Map<String, Map<String, List<LicenseDocument>>> licenseDocumentDetails = new HashMap<>();
-        licenseDocumentDetails.put(NEW_LIC_APPTYPE.toUpperCase(), new HashMap<>());
-        licenseDocumentDetails.put(RENEWAL_LIC_APPTYPE.toUpperCase(), new HashMap<>());
-        licenseDocumentDetails.put(CLOSURE_LIC_APPTYPE.toUpperCase(), new HashMap<>());
+        licenseDocumentDetails.put(NEW_APPTYPE_CODE, new HashMap<>());
+        licenseDocumentDetails.put(RENEW_APPTYPE_CODE, new HashMap<>());
+        licenseDocumentDetails.put(CLOSURE_APPTYPE_CODE, new HashMap<>());
 
         for (LicenseDocument document : licenseDocuments) {
             String docType = document.getType().getName();

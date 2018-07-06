@@ -404,8 +404,6 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         final DateTime currentDate = new DateTime();
         final User user = securityUtils.getCurrentUser();
         WorkFlowMatrix wfmatrix = null;
-        final String natureOfWork = licenseObj.isReNewApplication()
-                ? RENEWAL_NATUREOFWORK : NEW_NATUREOFWORK;
         if (licenseConfigurationService.digitalSignEnabled() && !licenseObj.getEgwStatus().getCode().equals(APPLICATION_STATUS_CREATED_CODE)) {
             licenseObj.setEgwStatus(egwStatusHibernateDAO
                     .getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_APPROVED_CODE));
@@ -438,7 +436,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                             WF_STATE_COMMISSIONER_APPROVED_STR, null);
             if (wfmatrix != null)
                 licenseObj.transition().progressWithStateCopy().withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
-                        .withComments(wfmatrix.getNextStatus()).withNatureOfTask(natureOfWork)
+                        .withComments(wfmatrix.getNextStatus()).withNatureOfTask(licenseObj.getLicenseAppType().getName())
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
                         .withOwner(licenseObj.getState().getInitiatorPosition())
                         .withNextAction(wfmatrix.getNextAction());

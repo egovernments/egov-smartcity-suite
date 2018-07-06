@@ -150,7 +150,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @SkipValidation
     public String showForApproval() throws IOException {
         documentTypes = tradeLicenseService.getDocumentTypesByApplicationType(ApplicationType.valueOf(license()
-                .getLicenseAppType().getName().toUpperCase()));
+                .getLicenseAppType().getCode()));
         if (!license().isNewWorkflow()) {
             if (license().getState().getValue().equals(WF_LICENSE_CREATED)
                     || license().getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED_STR) && license()
@@ -212,7 +212,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         prepareNewForm();
         licenseHistory = tradeLicenseService.populateHistory(tradeLicense);
         documentTypes = tradeLicenseService.getDocumentTypesByApplicationType(ApplicationType.valueOf(license()
-                .getLicenseAppType().getName().toUpperCase()));
+                .getLicenseAppType().getCode()));
     }
 
     @Override
@@ -230,7 +230,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         if (!tradeLicense.hasState() || (tradeLicense.hasState() && tradeLicense.getCurrentState().isEnded()))
             currentState = "";
         tradeLicense.setNewWorkflow(true);
-        renewAppType = RENEWAL_LIC_APPTYPE;
+        renewAppType = RENEW_APPTYPE_CODE;
         return super.beforeRenew();
     }
 
@@ -244,7 +244,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
 
     public void prepareRenew() {
         prepareNewForm();
-        renewAppType = RENEWAL_LIC_APPTYPE;
+        renewAppType = RENEW_APPTYPE_CODE;
         documentTypes = tradeLicenseService.getDocumentTypesByApplicationType(ApplicationType.RENEW);
     }
 
@@ -313,15 +313,15 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     public String getAdditionalRule() {
         if (tradeLicense.isNewWorkflow()) {
             if (!securityUtils.currentUserIsEmployee())
-                return RENEWAL_LIC_APPTYPE.equals(renewAppType) ? CSCOPERATORRENEWLICENSE : CSCOPERATORNEWLICENSE;
+                return RENEW_APPTYPE_CODE.equals(renewAppType) ? CSCOPERATORRENEWLICENSE : CSCOPERATORNEWLICENSE;
             else if (license().isCollectionPending())
                 return tradeLicense.isNewApplication() ? NEWLICENSECOLLECTION : RENEWLICENSECOLLECTION;
-            else if (RENEWAL_LIC_APPTYPE.equals(renewAppType) || tradeLicense != null && tradeLicense.isReNewApplication())
+            else if (RENEW_APPTYPE_CODE.equals(renewAppType) || tradeLicense != null && tradeLicense.isReNewApplication())
                 return RENEWLICENSE;
             else
                 return NEWLICENSE;
         } else {//TODO to be removed
-            if (RENEWAL_LIC_APPTYPE.equals(renewAppType) || tradeLicense != null && tradeLicense.isReNewApplication())
+            if (RENEW_APPTYPE_CODE.equals(renewAppType) || tradeLicense != null && tradeLicense.isReNewApplication())
                 return RENEW_ADDITIONAL_RULE;
             else
                 return NEW_ADDITIONAL_RULE;

@@ -68,8 +68,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import static org.egov.tl.utils.Constants.COMMISSIONER_DESGN;
-import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
-import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
+import static org.egov.tl.utils.Constants.NEW_APPTYPE_CODE;
+import static org.egov.tl.utils.Constants.RENEW_APPTYPE_CODE;
 
 @Service
 public class LicenseUtils {
@@ -111,9 +111,9 @@ public class LicenseUtils {
     }
 
     public Integer getSlaForAppType(LicenseAppType licenseAppType) {
-        if (NEW_LIC_APPTYPE.equals(licenseAppType.getName()))
+        if (NEW_APPTYPE_CODE.equals(licenseAppType.getCode()))
             return licenseConfigurationService.getNewAppTypeSla();
-        else if (RENEWAL_LIC_APPTYPE.equals(licenseAppType.getName()))
+        else if (RENEW_APPTYPE_CODE.equals(licenseAppType.getCode()))
             return licenseConfigurationService.getRenewAppTypeSla();
         else
             return licenseConfigurationService.getClosureAppTypeSla();

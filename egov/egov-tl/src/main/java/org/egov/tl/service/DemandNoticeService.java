@@ -87,7 +87,7 @@ import static org.egov.infra.utils.DateUtils.toYearFormat;
 import static org.egov.infra.utils.PdfUtils.appendFiles;
 import static org.egov.tl.utils.Constants.CITY_GRADE_CORPORATION;
 import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
-import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
+import static org.egov.tl.utils.Constants.RENEW_APPTYPE_CODE;
 import static org.egov.tl.utils.Constants.TRADE_LICENSE;
 
 @Service
@@ -176,8 +176,8 @@ public class DemandNoticeService {
             reportParams.put("arrearLicenseFee", arrLicenseFee);
             reportParams.put("totalLicenseFee", currLicenseFee.add(arrLicenseFee).add(arrLicensePenalty).setScale(0, ROUND_HALF_UP));
             reportParams.put("currentYear", toYearFormat(currentInstallment.getFromDate()));
-            LicenseAppType licenseAppType = licenseAppTypeService.getLicenseAppTypeByName(license.getIsActive()
-                    ? RENEWAL_LIC_APPTYPE : license.getLicenseAppType().getName());
+            LicenseAppType licenseAppType = licenseAppTypeService.getLicenseAppTypeByCode(license.getIsActive()
+                    ? RENEW_APPTYPE_CODE : license.getLicenseAppType().getCode());
             reportParams.put("penaltyCalculationMessage",
                     getPenaltyRateDetails(penaltyRatesService.search(licenseAppType), currentInstallment, licenseAppType));
         }

@@ -56,7 +56,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
 
 @Service
 @Transactional(readOnly = true)
@@ -69,12 +68,12 @@ public class LicenseAppTypeService {
         return licenseAppTypeRepository.findByName(name);
     }
 
-    public List<LicenseAppType> findAllLicenseAppType() {
-        return licenseAppTypeRepository.findByDisplayTrueOrderByNameAsc();
+    public LicenseAppType getLicenseAppTypeByCode(String name) {
+        return licenseAppTypeRepository.findByCode(name);
     }
 
-    public LicenseAppType getNewLicenseAppType() {
-        return getLicenseAppTypeByName(NEW_LIC_APPTYPE);
+    public List<LicenseAppType> findAllLicenseAppType() {
+        return licenseAppTypeRepository.findByDisplayTrueOrderByNameAsc();
     }
 
     public List<LicenseAppType> findByDisplayTrue() {

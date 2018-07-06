@@ -82,12 +82,12 @@ import static org.egov.infra.security.utils.SecureCodeUtils.generatePDF417Code;
 import static org.egov.infra.utils.ApplicationConstant.UNDERSCORE;
 import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
 import static org.egov.infra.utils.StringUtils.appendTimestamp;
-import static org.egov.tl.utils.Constants.CLOSURE_NATUREOFTASK;
+import static org.egov.tl.utils.Constants.CLOSURE_APPTYPE_CODE;
 import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
 import static org.egov.tl.utils.Constants.LICENSE_STATUS_CANCELLED;
-import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
+import static org.egov.tl.utils.Constants.NEW_APPTYPE_CODE;
 import static org.egov.tl.utils.Constants.PERMANENT_NATUREOFBUSINESS;
-import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
+import static org.egov.tl.utils.Constants.RENEW_APPTYPE_CODE;
 import static org.egov.tl.utils.Constants.STATUS_ACKNOWLEDGED;
 import static org.egov.tl.utils.Constants.STATUS_ACTIVE;
 import static org.egov.tl.utils.Constants.STATUS_COLLECTIONPENDING;
@@ -552,11 +552,11 @@ public class License extends StateAware<Position> {
     }
 
     public boolean canCollectFee() {
-        return !isPaid() && !isRejected() && !isNatureOfTaskClosure() && (isAcknowledged() || isApproved());
+        return !isPaid() && !isRejected() && !isAppTypeClosure() && (isAcknowledged() || isApproved());
     }
 
-    private boolean isNatureOfTaskClosure() {
-        return this.hasState() && CLOSURE_NATUREOFTASK.equals(this.getState().getNatureOfTask());
+    public boolean isAppTypeClosure() {
+        return CLOSURE_APPTYPE_CODE.equals(this.getLicenseAppType().getCode());
     }
 
     public boolean isStatusActive() {
@@ -564,7 +564,7 @@ public class License extends StateAware<Position> {
     }
 
     public boolean isNewApplication() {
-        return getLicenseAppType() != null && NEW_LIC_APPTYPE.equals(getLicenseAppType().getName());
+        return getLicenseAppType() != null && NEW_APPTYPE_CODE.equals(getLicenseAppType().getCode());
     }
 
     public boolean isNewPermanentApplication() {
@@ -572,7 +572,7 @@ public class License extends StateAware<Position> {
     }
 
     public boolean isReNewApplication() {
-        return getLicenseAppType() != null && RENEWAL_LIC_APPTYPE.equals(getLicenseAppType().getName());
+        return getLicenseAppType() != null && RENEW_APPTYPE_CODE.equals(getLicenseAppType().getCode());
     }
 
     public boolean isPermanent() {
@@ -640,7 +640,7 @@ public class License extends StateAware<Position> {
     }
 
     public boolean canCollectLicenseFee() {
-        return this.isNewWorkflow() && !isNatureOfTaskClosure() && !isPaid() &&
+        return this.isNewWorkflow() && !isAppTypeClosure() && !isPaid() &&
                 (STATUS_ACKNOWLEDGED.equals(this.getStatus().getStatusCode())
                         || STATUS_COLLECTIONPENDING.equals(this.getStatus().getStatusCode()));
     }
@@ -687,7 +687,7 @@ public class License extends StateAware<Position> {
 
     public String generateCertificateFileName() {
         return new StringBuilder()
-                .append(licenseAppType.getName().toLowerCase())
+                .append(licenseAppType.getCode().toLowerCase())
                 .append(UNDERSCORE).append(appendTimestamp((isBlank(this.getLicenseNumber())
                         ? this.getApplicationNumber()
                         : this.getLicenseNumber()).replaceAll("[/-]", UNDERSCORE))).toString();

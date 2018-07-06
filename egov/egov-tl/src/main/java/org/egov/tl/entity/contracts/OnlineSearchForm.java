@@ -54,7 +54,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.egov.tl.utils.Constants.CLOSURE_LIC_APPTYPE;
+import static org.egov.tl.utils.Constants.CLOSURE_APPTYPE_CODE;
 
 public class OnlineSearchForm {
 
@@ -97,7 +97,7 @@ public class OnlineSearchForm {
             actions.add("Closure");
         if (license.isStatusActive() && !license.isLegacy())
             actions.add("Print Certificate");
-        if (!CLOSURE_LIC_APPTYPE.equals(license.getLicenseAppType().getName()) && license.getStatus().getStatusCode().equals(Constants.STATUS_UNDERWORKFLOW))
+        if (!CLOSURE_APPTYPE_CODE.equals(license.getLicenseAppType().getCode()) && license.getStatus().getStatusCode().equals(Constants.STATUS_UNDERWORKFLOW))
             actions.add("Print Provisional Certificate");
         if (license.isClosed())
             actions.add("Closure Endorsement Notice");
