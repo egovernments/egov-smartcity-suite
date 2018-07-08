@@ -59,6 +59,7 @@ import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
+import org.egov.wtms.application.entity.FieldInspectionDetails;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ReportGenerationService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
@@ -146,13 +147,14 @@ public class EstimationNoticeController {
                 reportParams.put("applicationType", WordUtils.capitalize(waterConnectionDetails.getApplicationType().getName()));
                 reportParams.put("cityName", session.getAttribute("citymunicipalityname"));
                 reportParams.put("district", session.getAttribute("districtName"));
-                reportParams.put("estimationDate", toDefaultDateFormat(waterConnectionDetails.getFieldInspectionDetails().getCreatedDate()));
                 reportParams.put("estimationNumber", waterConnectionDetails.getEstimationNumber());
                 reportParams.put("donationCharges", waterConnectionDetails.getDonationCharges());
-                final double totalCharges = waterConnectionDetails.getDonationCharges()
-                        + waterConnectionDetails.getFieldInspectionDetails().getSupervisionCharges()
-                        + waterConnectionDetails.getFieldInspectionDetails().getRoadCuttingCharges()
-                        + waterConnectionDetails.getFieldInspectionDetails().getSecurityDeposit();
+                FieldInspectionDetails inspectionDetails = waterConnectionDetails.getFieldInspectionDetails();
+                reportParams.put("estimationDate", toDefaultDateFormat(inspectionDetails.getCreatedDate()));
+                double totalCharges = waterConnectionDetails.getDonationCharges()
+                        + inspectionDetails.getSupervisionCharges()
+                        + inspectionDetails.getRoadCuttingCharges()
+                        + inspectionDetails.getSecurityDeposit();
                 reportParams.put("totalCharges", totalCharges);
                 reportParams.put("applicationDate", toDefaultDateFormat(waterConnectionDetails.getApplicationDate()));
                 reportParams.put("applicantName", ownerName.toString());
@@ -160,12 +162,9 @@ public class EstimationNoticeController {
                 reportParams.put("houseNo", doorNo[0]);
                 reportParams.put("propertyID", waterConnectionDetails.getConnection().getPropertyIdentifier());
                 reportParams.put("amountInWords", reportGenerationService.getTotalAmntInWords(totalCharges));
-                reportParams.put("securityDeposit",
-                        waterConnectionDetails.getFieldInspectionDetails().getSecurityDeposit());
-                reportParams.put("roadCuttingCharges",
-                        waterConnectionDetails.getFieldInspectionDetails().getRoadCuttingCharges());
-                reportParams.put("superVisionCharges",
-                        waterConnectionDetails.getFieldInspectionDetails().getSupervisionCharges());
+                reportParams.put("securityDeposit", inspectionDetails.getSecurityDeposit());
+                reportParams.put("roadCuttingCharges", inspectionDetails.getRoadCuttingCharges());
+                reportParams.put("superVisionCharges", inspectionDetails.getSupervisionCharges());
                 if (waterConnectionDetails.getConnectionType().equals(NON_METERED)) {
                     reportParams.put("estimationDetails", waterConnectionDetails.getEstimationDetails());
                     reportParams.put("designation", waterConnectionDetails.getState().getOwnerPosition().getDeptDesig().getDesignation().getName());
