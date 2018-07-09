@@ -282,7 +282,7 @@ body {
 
 						<tbody>
 							<tr>
-								<th class="bluebgheadtd"><spring:message code="lbl.adharno" /></th>
+								<%-- <th class="bluebgheadtd"><spring:message code="lbl.adharno" /></th> --%>
 								<th class="bluebgheadtd"><spring:message
 										code="lbl.MobileNumber" /><span class="mandatory1">*</span></th>
 								<th class="bluebgheadtd"><spring:message
@@ -315,7 +315,7 @@ body {
 											<c:choose>
 												<c:when
 													test="${propertyOwner.property.basicProperty.propertyOwnerInfo[status.index].owner.aadhaarNumber!=null &&  not empty propertyOwner.property.basicProperty.propertyOwnerInfo[status.index].owner.aadhaarNumber}">
-													<c:choose>
+													<%-- <c:choose>
 													<c:when
 													test="${mode=='editMobileNo'}">
 													<td class="blueborderfortd" align="center"><form:input
@@ -335,7 +335,7 @@ body {
 															maxlength="12" readonly="false" /> <form:hidden
 															path="ownerAudit[${status.index}].aadhaarNo" /></td>
 													</c:otherwise>
-													</c:choose>
+													</c:choose> --%>
 													<td class="blueborderfortd" align="center"><form:input
 															path="propertyOwnerInfo[${status.index}].owner.mobileNumber"
 															id="mobileNumber" maxlength="10"
@@ -372,13 +372,13 @@ body {
 												</c:when>
 												<c:when
 													test="${mode=='editMobileNo'}">
-													<td class="blueborderfortd" align="center"><form:input
+													<%-- <td class="blueborderfortd" align="center"><form:input
 															path="propertyOwnerInfo[${status.index}].owner.aadhaarNumber"
 															cssClass="form-control patternvalidation"
 															data-pattern="number" id="aadharNumber"
 															onblur="getOwnerByAadharDetails(this);" 
 															maxlength="12" readonly="true" /> <form:hidden
-															path="ownerAudit[${status.index}].aadhaarNo" /></td>
+															path="ownerAudit[${status.index}].aadhaarNo" /></td> --%>
 													<td class="blueborderfortd" align="center"><form:input
 															path="propertyOwnerInfo[${status.index}].owner.mobileNumber"
 															id="mobileNumber" maxlength="10"
@@ -414,13 +414,13 @@ body {
 															path="ownerAudit[${status.index}].guardianName" /></td>
 												</c:when>
 												<c:otherwise>
-													<td class="blueborderfortd" align="center"><form:input
+													<%-- <td class="blueborderfortd" align="center"><form:input
 															path="propertyOwnerInfo[${status.index}].owner.aadhaarNumber"
 															id="aadharNumber" maxlength="12"
 															cssClass="form-control patternvalidation"
 															data-pattern="number" data-idx="0"
 															onblur="getOwnerByAadharDetails(this);" /> <form:hidden
-															path="ownerAudit[${status.index}].aadhaarNo" /></td>
+															path="ownerAudit[${status.index}].aadhaarNo" /></td> --%>
 													<td class="blueborderfortd" align="center"><form:input
 															path="propertyOwnerInfo[${status.index}].owner.mobileNumber"
 															cssClass="form-control patternvalidation"
@@ -467,6 +467,7 @@ body {
 						</tbody>
 					</table>
 				</div>
+				<spring:message code="aadhar.note.text"/>
 			</div>
 			<div class="row">
 				<div class="text-center">
