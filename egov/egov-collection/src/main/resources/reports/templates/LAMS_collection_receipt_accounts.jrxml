@@ -333,7 +333,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{description} == null || $F{description} == "" ? $F{accountName} : ("ADVANCE_AMOUNT".equals($F{purpose})?"Advance Collection":("CURRENT_AMOUNT".equals($F{purpose})?$F{description}:"Dues"))]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{description} == null || $F{description} == "" ? $F{accountName} : ("ADVANCE_AMOUNT".equals($F{purpose})?"Advance Collection":(("CURRENT_AMOUNT".equals($F{purpose})||("ARREAR_AMOUNT".equals($F{purpose})))?$F{description}:"Dues"))]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Group" evaluationGroup="ROW_GROUP" pattern="#,##0.00;-#,##0.00">
 				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="375" y="0" width="90" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" printWhenGroupChanges="ROW_GROUP" uuid="18d971f7-827b-4109-ac75-b78fb88cfbf2">

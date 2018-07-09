@@ -89,7 +89,7 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
     /**
      * Set of bounced instruments of this receipt - Will be created only if event is InstrumentBounced
      */
-    private final Set<ReceiptInstrumentInfo> bouncedInstruments = new HashSet<>(0);
+    private final Set<ReceiptInstrumentInfo> bouncedInstruments = new LinkedHashSet<>(0);
     private final Set<ChallanInfo> challanDetails = new HashSet<>(0);
     private ChallanInfo challan;
     /**
