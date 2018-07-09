@@ -506,7 +506,7 @@ public class PropertyTransferService {
         for (final PropertyMutationTransferee transferee : transferees) {
             if (transferee != null) {
                 User user = null;
-                if (null != transferee.getTransferee().getAadhaarNumber()
+                /*if (null != transferee.getTransferee().getAadhaarNumber()
                         && !transferee.getTransferee().getAadhaarNumber().isEmpty()) {
                     List<User> userList = userService.getUserByAadhaarNumberAndType(transferee.getTransferee().getAadhaarNumber(),
                             transferee.getTransferee().getType());
@@ -519,15 +519,14 @@ public class PropertyTransferService {
                                     &&
                                     userList.get(i).getName().equalsIgnoreCase(transferee.getTransferee().getName()))
                                 user = userList.get(i);
-                } else {
+                } else*/ 
+                if (StringUtils.isNotBlank(transferee.getTransferee().getMobileNumber())) {
                     Query qry = entityManager.createNamedQuery("USER_BY_NAMEANDMOBILENO");
                     qry.setParameter("name", transferee.getTransferee().getName());
                     qry.setParameter("mobileNumber", transferee.getTransferee().getMobileNumber());
                     qry.setParameter("gender", transferee.getTransferee().getGender());
                     if (!qry.getResultList().isEmpty())
                         user = (User) qry.getResultList().get(0);
-                    else
-                        user = null;
                 }
                 if (user == null) {
                     final Citizen newOwner = new Citizen();
