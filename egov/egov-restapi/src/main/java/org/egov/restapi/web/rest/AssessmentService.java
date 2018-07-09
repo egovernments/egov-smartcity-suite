@@ -84,6 +84,7 @@ import org.egov.restapi.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -771,7 +772,7 @@ public class AssessmentService {
         return mapper.readValue(jsonString, cls);
     }
     
-    @RequestMapping(value = "/property/taxDefaulters", method = RequestMethod.POST, produces = APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/property/taxDefaulters", produces = APPLICATION_JSON_VALUE)
     public List<DefaultersResult> getPropertyTaxDefaulters(@RequestBody TaxDefaultersRequest defaultersRequest, final HttpServletRequest request){
         return propertyTaxReportService.getdefaultersList(defaultersRequest);
     }

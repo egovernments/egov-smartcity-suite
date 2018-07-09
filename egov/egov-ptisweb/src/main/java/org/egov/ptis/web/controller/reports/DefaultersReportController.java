@@ -48,9 +48,7 @@
 package org.egov.ptis.web.controller.reports;
 
 import static org.egov.infra.utils.JsonUtils.toJSON;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -66,8 +64,6 @@ import org.egov.ptis.actions.reports.DefaultersReportHelperAdaptor;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.DefaultersInfo;
-import org.egov.ptis.domain.entity.property.contract.TaxDefaultersRequest;
-import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.service.report.ReportService;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,7 +71,6 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -164,22 +159,4 @@ public class DefaultersReportController {
         return new StringBuilder("{ \"data\":").append(toJSON(defaultersList, DefaultersInfo.class,
                 DefaultersReportHelperAdaptor.class)).append("}").toString();
     }
-    
-    
-    
-    
-    /**
-     * This method gives the various dues related to a property - property dues, water dues, sewerage dues
-     * @param defaultersRequest
-     * @param request
-     * @return AssessmentDetails
-     * @throws IOException
-     */
-    @RequestMapping(value = "/property/taxDefaulters", method = RequestMethod.POST, produces = APPLICATION_JSON_VALUE)
-    public AssessmentDetails getPropertyTaxDefaulters(@RequestBody TaxDefaultersRequest defaultersRequest, final HttpServletRequest request){
-        AssessmentDetails assessmentDetails = null;
-          
-        return assessmentDetails;
-    }
-
 }

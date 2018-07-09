@@ -209,7 +209,7 @@
 								cellpadding="0" cellspacing="0">
 								<tbody>
 									<tr>
-										<th class="bluebgheadtd"><s:text name="adharno" /></th>
+										<%-- <th class="bluebgheadtd"><s:text name="adharno" /></th> --%>
 										<th class="bluebgheadtd"><s:text name="MobileNumber" /></th>
 										<th class="bluebgheadtd"><s:text name="OwnerName" /></th>
 										<th class="bluebgheadtd"><s:text name="gender" /></th>
@@ -222,14 +222,14 @@
 									<s:iterator value="basicproperty.propertyOwnerInfo"
 										status="status">
 										<tr>
-											<td class="blueborderfortd" align="center"><span
+											<%-- <td class="blueborderfortd" align="center"><span
 												class="bold"> <s:if
 														test='%{owner.aadhaarNumber == ""}'>
 								        				N/A
 								        			</s:if> <s:else>
 														<s:property value="%{owner.aadhaarNumber}" default="N/A" />
 													</s:else>
-											</span></td>
+											</span></td> --%>
 											<td class="blueborderfortd" align="center"><span
 												class="bold"><s:property value="owner.mobileNumber" /></span></td>
 											<td class="blueborderfortd" align="center"><span
@@ -254,14 +254,14 @@
 									<s:else>
 									<s:iterator value="transfereeInfos" status="ownerStatus">
 										<tr>
-											<td class="blueborderfortd" align="center"><span
+											<%-- <td class="blueborderfortd" align="center"><span
 												class="bold"> <s:if
 														test='%{transferorInfos[#ownerStatus.index].aadhaarNumber == ""}'>N/A</s:if>
 													<s:else>
 														<s:property
 															value="%{transferorInfos[#ownerStatus.index].aadhaarNumber}" />
 													</s:else>
-											</span></td>
+											</span></td> --%>
 											<td class="blueborderfortd" align="center"><span
 												class="bold"><s:property
 														value="%{transferorInfos[#ownerStatus.index].mobileNumber}" /></span>
@@ -306,7 +306,7 @@
 								<table width="100%" border="0" cellspacing="0" cellpadding="0"
 									class="tablebottom" id="nameTable">
 									<tr>
-										<th class="bluebgheadtd"><s:text name="adharno" /></th>
+										<%-- <th class="bluebgheadtd"><s:text name="adharno" /></th> --%>
 										<th class="bluebgheadtd"><s:text name="MobileNumber" />(without
 											+91)</th>
 										<th class="bluebgheadtd"><s:text name="OwnerName" /></th>
@@ -319,14 +319,14 @@
 						test="%{!@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_DIGITAL_SIGNATURE_PENDING.equalsIgnoreCase(state.nextAction)}">
 									<s:iterator value="transfereeInfosProxy" status="ownerStatus">
 										<tr>
-											<td class="blueborderfortd" align="center"><span
+											<%-- <td class="blueborderfortd" align="center"><span
 												class="bold"> <s:if
 														test='%{transfereeInfosProxy[#ownerStatus.index].transferee.aadhaarNumber == ""}'>N/A</s:if>
 													<s:else>
 														<s:property
 															value="%{transfereeInfosProxy[#ownerStatus.index].transferee.aadhaarNumber}" />
 													</s:else>
-											</span></td>
+											</span></td> --%>
 											<td class="blueborderfortd" align="center"><span
 												class="bold"><s:property
 														value="%{transfereeInfosProxy[#ownerStatus.index].transferee.mobileNumber}" /></span>
@@ -359,14 +359,14 @@
 									<s:iterator value="basicproperty.propertyOwnerInfo"
 										status="status">
 										<tr>
-											<td class="blueborderfortd" align="center"><span
+											<%-- <td class="blueborderfortd" align="center"><span
 												class="bold"> <s:if
 														test='%{owner.aadhaarNumber == ""}'>
 								        				N/A
 								        			</s:if> <s:else>
 														<s:property value="%{owner.aadhaarNumber}" default="N/A" />
 													</s:else>
-											</span></td>
+											</span></td> --%>
 											<td class="blueborderfortd" align="center"><span
 												class="bold"><s:property value="owner.mobileNumber" /></span></td>
 											<td class="blueborderfortd" align="center"><span

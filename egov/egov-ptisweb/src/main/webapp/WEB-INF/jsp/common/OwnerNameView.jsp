@@ -49,7 +49,7 @@
 <%@ include file="/includes/taglibs.jsp" %>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablebottom" id="nameTable" >
   <tr>
-	<th class="bluebgheadtd"><s:text name="adharno"/></th>
+	<%-- <th class="bluebgheadtd"><s:text name="adharno"/></th> --%>
 	<th class="bluebgheadtd"><s:text name="MobileNumber" /> (without +91)</th>
     <th class="bluebgheadtd"><s:text name="OwnerName"/></th>
     <th class="bluebgheadtd"><s:text name="gender"/></th>
@@ -60,7 +60,7 @@
    
     <s:iterator value="basicProperty.propertyOwnerInfo" status="ownerStatus">
 			<tr id="nameRow">
-        		<td class="blueborderfortd" align="center" id="aadharNumView">
+        		<%-- <td class="blueborderfortd" align="center" id="aadharNumView">
         			<span class="bold">
 	        			<s:if test='%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.aadhaarNumber == ""}'>
 	        				N/A
@@ -69,7 +69,7 @@
 							<s:property value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.aadhaarNumber}" default="N/A" />        			
 	        			</s:else>
 	        		</span>
-        		</td>
+        		</td> --%>
         		<td class="blueborderfortd" align="center" id="mobileNumView">
         		   <span class="bold"><s:property value="%{basicProperty.propertyOwnerInfo[#ownerStatus.index].owner.mobileNumber}" /></span>
         		</td>
