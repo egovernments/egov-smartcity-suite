@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -242,6 +242,7 @@
 			</div>
 		</div>
 	</c:if>
+	<c:if test="${waterConnectionDetails.applicationType.code!='NEWCONNECTION'}">
 	<div class="form-group" id ="cardHolderDiv">
 		<label class="col-sm-3 control-label text-right"><spring:message
 				code="lbl.bpl.cardholdername" /><span class="mandatory"></span></label> 
@@ -250,6 +251,7 @@
 			<form:errors path="bplCardHolderName" cssClass="add-margin error-msg" />		
 		</div>
 	</div>
+	</c:if>
 
 <form:hidden id="typeOfConnection" path="" value="${typeOfConnection}"/>
 <c:if test="${mode=='addconnection'}">
