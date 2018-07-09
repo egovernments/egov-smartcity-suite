@@ -48,6 +48,7 @@
 
 package org.egov.tl.service;
 
+import org.apache.commons.lang.WordUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.Installment;
 import org.egov.demand.model.BillReceipt;
@@ -550,6 +551,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         License license = getLicenseByUID(uid);
         Map<String, Object> reportParams = new HashMap<>();
         reportParams.put("amount", license.getTotalBalance());
+        reportParams.put("licAppType", WordUtils.capitalizeFully(license.getLicenseAppType().getCode()));
         ReportRequest reportRequest = new ReportRequest("tl_license_acknowledgment", license, reportParams);
         reportRequest.setReportFormat(ReportFormat.PDF);
         ReportOutput reportOutput = reportService.createReport(reportRequest);

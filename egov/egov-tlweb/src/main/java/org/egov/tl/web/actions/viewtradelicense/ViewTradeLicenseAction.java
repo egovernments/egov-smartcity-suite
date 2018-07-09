@@ -188,7 +188,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         setUrl("viewtradelicense/saveclosure.action?model.id=");
         if (tradeLicense.hasState() && !tradeLicense.transitionCompleted()) {
             ServletActionContext.getResponse().setContentType("text/html");
-            ServletActionContext.getResponse().getWriter().write("<center style='color:red;font-weight:bolder'>" + WordUtils.capitalize(tradeLicense.getLicenseAppType().getCode())+ " License workflow is in progress !</center>");
+            ServletActionContext.getResponse().getWriter().write("<center style='color:red;font-weight:bolder'>" + WordUtils.capitalizeFully(tradeLicense.getLicenseAppType().getCode())+ " License workflow is in progress !</center>");
             return null;
         }
         return "closure";
