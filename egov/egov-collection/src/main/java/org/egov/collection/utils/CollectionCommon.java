@@ -55,6 +55,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -359,6 +360,17 @@ public class CollectionCommon {
                         Integer groupId = 0;
                         BillReceiptInfo billReceiptInfo = new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO,
                                 persistenceService, null);
+
+                        List<ReceiptAccountInfo> receiptAccountInfoList = billReceiptInfo.getAccountDetails().stream()
+                                .collect(Collectors.toList());
+                        Collections.sort(receiptAccountInfoList, (receiptAccountInfo1, receiptAccountInfo2) -> {
+                            if (receiptAccountInfo1.getOrderNumber() != null && receiptAccountInfo2.getOrderNumber() != null)
+                                return receiptAccountInfo1.getOrderNumber().compareTo(receiptAccountInfo2.getOrderNumber());
+                            return 0;
+                        });
+
+                        billReceiptInfo.getAccountDetails().clear();
+                        billReceiptInfo.getAccountDetails().addAll(receiptAccountInfoList);
                         for (ReceiptAccountInfo receiptAccountInfo : billReceiptInfo.getAccountDetails()) {
                             ((ReceiptAccountInfoImpl) receiptAccountInfo).setGroupId(groupId.toString());
                             if (StringUtils.isNotBlank(receiptAccountInfo.getPurpose())
