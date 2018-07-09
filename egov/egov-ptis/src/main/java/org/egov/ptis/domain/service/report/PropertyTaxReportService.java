@@ -47,10 +47,12 @@
  */
 package org.egov.ptis.domain.service.report;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.ptis.domain.entity.property.BaseRegisterReportRequest;
+import org.egov.ptis.domain.entity.property.DefaultersResult;
 import org.egov.ptis.domain.entity.property.contract.TaxDefaultersRequest;
 import org.egov.ptis.domain.entity.property.view.PropertyMVInfo;
 import org.egov.ptis.repository.reports.PropertyMVInfoRepository;
@@ -65,29 +67,36 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class PropertyTaxReportService {
 
-	@Autowired
-	private PropertyMVInfoRepository propertyMVInfoRepository;
+    @Autowired
+    private PropertyMVInfoRepository propertyMVInfoRepository;
 
-	@ReadOnly
-	public Page<PropertyMVInfo> pagedBaseRegisterRecords(final BaseRegisterReportRequest baseRegisterReportRequest) {
-		return propertyMVInfoRepository.findAll(
-				BaseRegisterSpec.baseRegisterSpecification(baseRegisterReportRequest),
-				new PageRequest(baseRegisterReportRequest.pageNumber(), baseRegisterReportRequest.pageSize(),
-						baseRegisterReportRequest.orderDir(), baseRegisterReportRequest.orderBy()));
+    @ReadOnly
+    public Page<PropertyMVInfo> pagedBaseRegisterRecords(final BaseRegisterReportRequest baseRegisterReportRequest) {
+        return propertyMVInfoRepository.findAll(
+                BaseRegisterSpec.baseRegisterSpecification(baseRegisterReportRequest),
+                new PageRequest(baseRegisterReportRequest.pageNumber(), baseRegisterReportRequest.pageSize(),
+                        baseRegisterReportRequest.orderDir(), baseRegisterReportRequest.orderBy()));
 
-	}
+    }
 
-	@ReadOnly
-	public List<PropertyMVInfo> getAllBaseRegisterRecords(final BaseRegisterReportRequest baseRegisterReportRequest) {
-		return propertyMVInfoRepository
-				.findAll(BaseRegisterSpec.baseRegisterSpecification(baseRegisterReportRequest));
-	}
-	
-	
-	@ReadOnly
-        public Page<PropertyMVInfo> getPropertyTaxDefaultersRecords(final TaxDefaultersRequest taxDefaultersRequest) {
-                return  null;
-	}
+    @ReadOnly
+    public List<PropertyMVInfo> getAllBaseRegisterRecords(final BaseRegisterReportRequest baseRegisterReportRequest) {
+        return propertyMVInfoRepository
+                .findAll(BaseRegisterSpec.baseRegisterSpecification(baseRegisterReportRequest));
+    }
 
-
+    @ReadOnly
+    public List<DefaultersResult> getdefaultersList(TaxDefaultersRequest defaultersRequest) {
+        List<PropertyMVInfo> propertyList = propertyMVInfoRepository.findAll();
+        List<DefaultersResult> resultList = new ArrayList<>();
+        for(PropertyMVInfo prop : propertyList){
+            DefaultersResult defaulter = new DefaultersResult();
+            defaulter.setAssessmentNo(prop.getPropertyId());
+            defaulter.setOwnerName(prop.getOwnerName());
+            defaulter.setMobileNumber(prop.getMobileNumber());
+            defaulter.setTotalDue(prop.getArrearDemand());
+            resultList.add(defaulter);
+        }
+        return resultList;
+    }
 }

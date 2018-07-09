@@ -45,27 +45,38 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
+package org.egov.ptis.domain.entity.property;
 
-package org.egov.ptis.repository.spec;
+import java.math.BigDecimal;
 
-import javax.persistence.criteria.Predicate;
-
-import org.egov.ptis.domain.entity.property.contract.TaxDefaultersRequest;
-import org.egov.ptis.domain.entity.property.view.PropertyMVInfo;
-import org.springframework.data.jpa.domain.Specification;
-
-public class PropertyTaxDefaultersSpec {
-
-    private PropertyTaxDefaultersSpec() {
-
+public class DefaultersResult {
+    private String assessmentNo;
+    private String ownerName;
+    private String mobileNumber;
+    private BigDecimal totalDue;
+    
+    public String getAssessmentNo() {
+        return assessmentNo;
     }
-
-    public static Specification<PropertyMVInfo> propertyTaxDefaultersSpecification(
-            final TaxDefaultersRequest baseRegisterReportRequest) {
-        return (root, query, builder) -> {
-            final Predicate predicate = builder.conjunction();
-            return predicate;
-        };
+    public void setAssessmentNo(String assessmentNo) {
+        this.assessmentNo = assessmentNo;
     }
-
+    public String getOwnerName() {
+        return ownerName;
+    }
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
+    }
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
+    public void setMobileNumber(String mobileNumber) {
+        this.mobileNumber = mobileNumber;
+    }
+    public BigDecimal getTotalDue() {
+        return totalDue;
+    }
+    public void setTotalDue(BigDecimal totalDue) {
+        this.totalDue = totalDue;
+    }
 }
