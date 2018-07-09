@@ -242,8 +242,6 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
         for (final PropertyOwnerInfo ownerInfo : basicProperty.getPropertyOwnerInfo())
             if (ownerInfo != null) {
                 User user = null;
-                for (final Address address : ownerInfo.getOwner().getAddress())
-                    address.setHouseNoBldgApt(doorNumber);
                 if (StringUtils.isNotBlank(ownerInfo.getOwner().getAadhaarNumber()))
                     user = userService.getUserByAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
                 if (user == null || user.getId().equals(ownerInfo.getOwner().getId()))

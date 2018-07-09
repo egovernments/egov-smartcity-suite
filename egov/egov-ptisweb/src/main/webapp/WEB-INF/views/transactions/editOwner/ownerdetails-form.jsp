@@ -467,7 +467,9 @@ body {
 						</tbody>
 					</table>
 				</div>
-				<spring:message code="aadhar.note.text"/>
+				<c:if test="${mode!='editDoorNo'}">
+				<span style="color:red"><spring:message code="aadhar.note.text"/></span>
+				</c:if>
 			</div>
 			<div class="row">
 				<div class="text-center">

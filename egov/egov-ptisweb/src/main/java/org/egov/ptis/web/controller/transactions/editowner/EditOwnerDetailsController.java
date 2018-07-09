@@ -123,13 +123,11 @@ public class EditOwnerDetailsController {
         model.addAttribute("pageTitle", pageTitle);
         model.addAttribute("guardianRelations", Arrays.asList(GuardianRelation.values()));
         model.addAttribute("gender", Gender.values());
-        for (final PropertyOwnerInfo ownerInfo : basicProperty.getPropertyOwnerInfo())
-            for (final Address address : ownerInfo.getOwner().getAddress()) {
-                model.addAttribute("mode", mode);
-                model.addAttribute("doorNumber", address.getHouseNoBldgApt());
-                model.addAttribute("existingDoorNumber", address.getHouseNoBldgApt());
-                model.addAttribute("pinCode", address.getPinCode());
-            }
+        final Address address = basicProperty.getAddress();
+        model.addAttribute("mode", mode);
+        model.addAttribute("doorNumber", address.getHouseNoBldgApt());
+        model.addAttribute("existingDoorNumber", address.getHouseNoBldgApt());
+        model.addAttribute("pinCode", address.getPinCode());
         ownerAuditList = ownerAuditService.setOwnerAuditDetails(basicProperty);
         propertyOwner.setOwnerAudit(ownerAuditList);
         model.addAttribute("propertyOwner", propertyOwner);
