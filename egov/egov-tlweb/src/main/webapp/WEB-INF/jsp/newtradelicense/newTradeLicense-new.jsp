@@ -414,7 +414,7 @@
                             </s:if>
                             <s:else>
                                 <div class="panel-title" style="text-align:center">
-                                    <s:if test="%{licenseAppType.name=='Renew'}">
+                                    <s:if test="%{licenseAppType.code=='RENEW'}">
                                         <s:text name='renewtradeLicense.heading'/>
                                     </s:if>
                                     <s:else>
@@ -498,7 +498,7 @@
                             </s:if>
                             <s:else>
                                 <div class="panel-title" style="text-align:center">
-                                    <s:if test="%{licenseAppType.name=='Renew'}">
+                                    <s:if test="%{licenseAppType.code=='RENEW'}">
                                         <s:text name='renewtradeLicense.heading'/>
                                     </s:if>
                                     <s:else>

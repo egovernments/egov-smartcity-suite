@@ -48,7 +48,6 @@
 
 package org.egov.tl.web.actions.viewtradelicense;
 
-import org.apache.commons.lang.WordUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -188,7 +187,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         setUrl("viewtradelicense/saveclosure.action?model.id=");
         if (tradeLicense.hasState() && !tradeLicense.transitionCompleted()) {
             ServletActionContext.getResponse().setContentType("text/html");
-            ServletActionContext.getResponse().getWriter().write("<center style='color:red;font-weight:bolder'>" + WordUtils.capitalizeFully(tradeLicense.getLicenseAppType().getCode())+ " License workflow is in progress !</center>");
+            ServletActionContext.getResponse().getWriter().write("<center style='color:red;font-weight:bolder'>" + tradeLicense.getLicenseAppType().getName()+ " workflow is in progress !</center>");
             return null;
         }
         return "closure";
