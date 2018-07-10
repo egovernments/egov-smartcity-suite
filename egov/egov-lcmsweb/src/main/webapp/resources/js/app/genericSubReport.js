@@ -286,8 +286,7 @@ function callAjaxBydrillDownReport(aggregatedByValues) {
 							"sTitle" : "Legal Case Number",
 							"className" : "text-left",
 							"render" : function(data, type, full, meta) {
-								return '<a href="/lcms/application/view/?lcNumber='
-										+ data + '">' + data + '</div>';
+								return '<a href="javascript:void(0);" onclick="openLegalCase(\''+ data +'\')">' + data + '</a>';
 							}
 						},
 						{
@@ -346,8 +345,8 @@ function callAjaxBydrillDownReport(aggregatedByValues) {
 
 	
 
-function openLegalCase(lcNumber) {
-	window.open("/lcms/application/view/?lcNumber="+ lcNumber , "", "height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
+function openLegalCase(data) {
+	window.open("/lcms/application/view/?lcNumber="+ data , "", "height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
 }
 
 
@@ -373,9 +372,9 @@ function submitSubReportStatusForm() {
 		var lcNumber = $("#lcNumber").val();
 		var isMonthColVisibile = false;
 		
-		oDataTable.clear().draw();
+		/*oDataTable.clear().draw();
 		oDataTable.destroy();
-		oTable.remove();
+		oTable.remove();*/
 		
 		$('#tabledata').append('<table class="table table-bordered table-hover multiheadertbl" id="genericSubReport-table"> </table>')
 		oTable = $('#genericSubReport-table');
@@ -424,8 +423,7 @@ function submitSubReportStatusForm() {
 								"sTitle" : "Legal Case Number",
 								"className" : "text-left",
 								"render" : function(data, type, full, meta) {
-									return '<a href="/lcms/application/view/?lcNumber='
-											+ data + '">' + data + '</div>';
+									return '<a href="javascript:void(0);" onclick="openLegalCase(\''+ data +'\')">' + data + '</a>';
 								}
 							},
 							{
@@ -476,8 +474,6 @@ function submitSubReportStatusForm() {
             } );
         } ).draw();
 		
-
-	}
+}
 		
-
-	}
+}

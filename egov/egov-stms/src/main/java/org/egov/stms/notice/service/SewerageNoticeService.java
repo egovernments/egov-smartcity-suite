@@ -317,7 +317,8 @@ public class SewerageNoticeService {
             reportParams.put(DONATION_CHARGES, donationCharges);
             reportParams.put("sewerageCharges", sewerageCharges);
             reportParams.put(TOTAL_CHARGES, totalCharges);
-            reportParams.put("amountInWords", getTotalAmountInWords(totalCharges));
+            reportParams.put("amountInWords", getTotalAmountInWords(totalCharges.setScale(2,
+                    BigDecimal.ROUND_HALF_EVEN)));
             reportParams.put(APPLICATION_DATE, getDefaultFormattedDate(sewerageApplicationDetails.getApplicationDate()));
             reportParams.put("applicantName", ownerName);
             reportParams.put(ADDRESS, assessmentDetails.getPropertyAddress());
@@ -400,7 +401,8 @@ public class SewerageNoticeService {
             else
                 reportParams.put(IS_COMMISSIONER, false);
             reportParams.put("userSignature",
-                   user.getSignature() == null?"":new ByteArrayInputStream(user.getSignature()));
+                    user.getSignature() == null ? new ByteArrayInputStream(new byte[0])
+                            : new ByteArrayInputStream(user.getSignature()));
             reportParams.put("applicationtype", stmsMessageSource.getMessage("msg.new.sewerage.conn", null, null));
             reportParams.put("municipality", cityService.getMunicipalityName());
             reportParams.put(DISTRICT, cityService.getDistrictName());

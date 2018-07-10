@@ -50,7 +50,7 @@ package org.egov.ptis.client.workflow;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.WorkflowBean;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_AMALGAMATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_AMALGAMATION;
 
 public class ActionAmalgmate extends WorkflowDetails {
 
@@ -62,7 +62,7 @@ public class ActionAmalgmate extends WorkflowDetails {
 
 	@Override
 	public String getActionName() {
-		return WFLOW_ACTION_NAME_AMALGAMATE;
+		return APPLICATION_TYPE_AMALGAMATION;
 	}
 
 	@Override

@@ -109,6 +109,10 @@ public class EducationalQualificationService {
         return qualificationRepository.findByisActive(true);
     }
 
+    public EducationalQualification findByName(String name) {
+        return qualificationRepository.findByName(name);
+    }
+    
     @SuppressWarnings("unchecked")
     public List<EducationalQualification> search(
             EducationalQualification qualification) {

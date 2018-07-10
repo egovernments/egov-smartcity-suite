@@ -159,8 +159,9 @@ public class AdvocateMasterService implements EntityTypeService {
     @Transactional
     public void createAdvocateUser(final AdvocateMaster advocateMaster) {
         User user = null;
-        if (advocateMaster.getAdvocateUser() != null && advocateMaster.getAdvocateUser().getId() != null)
-            user = userService.getUserById(advocateMaster.getAdvocateUser().getId());
+        if (advocateMaster.getAdvocateUser() != null && advocateMaster.getAdvocateUser().getId() != null &&
+                advocateMaster.getAdvocateUser().getUsername() != null)
+            user = userService.getUserByUsername(advocateMaster.getAdvocateUser().getUsername());
         if (user == null) {
             final BusinessUser businessUser = new BusinessUser();
             user = createNewAdvocateUser(advocateMaster, businessUser);

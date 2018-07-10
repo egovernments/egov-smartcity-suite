@@ -65,14 +65,16 @@ public final class DCBReportSpec {
     public static Specification<DCBReportResult> dCBReportSpecification(final DCBReportSearchRequest dCBReportSearchRequest) {
         return (root, query, builder) -> {
             final Predicate result = builder.conjunction();
-            if (isNotBlank(dCBReportSearchRequest.getLicensenumber()))
-                result.getExpressions().add(builder.equal(root.get("licensenumber"), dCBReportSearchRequest.getLicensenumber()));
-            if (dCBReportSearchRequest.getLicenseid() != null)
-                result.getExpressions().add(builder.equal(root.get("licenseid"), dCBReportSearchRequest.getLicenseid()));
+            if (isNotBlank(dCBReportSearchRequest.getLicenseNumber()))
+                result.getExpressions().add(builder.equal(root.get("licenseNumber"), dCBReportSearchRequest.getLicenseNumber()));
+            if (dCBReportSearchRequest.getLicenseId() != null)
+                result.getExpressions().add(builder.equal(root.get("licenseId"), dCBReportSearchRequest.getLicenseId()));
             if (dCBReportSearchRequest.getActiveLicense() > 0)
                 result.getExpressions().add(builder.equal(root.get("active"), dCBReportSearchRequest.getActiveLicense() == 1));
             if (dCBReportSearchRequest.getWardId() != null && !dCBReportSearchRequest.getWardId().isEmpty())
-                result.getExpressions().add(root.get("wardid").in(dCBReportSearchRequest.getWardId()));
+                result.getExpressions().add(root.get("wardId").in(dCBReportSearchRequest.getWardId()));
+            if (dCBReportSearchRequest.getAdminWardId() != null && !dCBReportSearchRequest.getAdminWardId().isEmpty())
+                result.getExpressions().add(root.get("adminWard").in(dCBReportSearchRequest.getAdminWardId()));
             return result;
         };
     }

@@ -65,7 +65,8 @@
 			<input type="hidden" id="registrationStatus"
 				value="${marriageRegistration.status.code}" />
 			<input type="hidden" id="allowDaysValidation"
-				value="${allowDaysValidation}" />
+				value="${allowDaysValidation}" />mrsRegistrar
+			<form:hidden path="" id="mrsRegistrar" name="mrsRegistrar" value="${mrsRegistrar}" />
 			<form:hidden path="" id="workFlowAction" name="workFlowAction" />
 			<form:hidden path="" id="serialNoExists" value="${serialNoExists}" />
 			<input type="hidden" id="pendingActions" value="${pendingActions}" />
@@ -97,7 +98,7 @@
 			<ul class="nav nav-tabs" id="settingstab">
 				<li class="active"><a data-toggle="tab" href="#applicant-info"
 					data-tabidx=0>Applicant's Information</a></li>
-					<c:if test="${source ne 'API'}">
+					<c:if test="${source ne 'CHPK'}">
 				<li><a data-toggle="tab" href="#witness-info" data-tabidx=1>Witnesses
 						Information</a></li>
 						</c:if>
@@ -111,7 +112,7 @@
 						</div>
 					</div>
 				</div>
-				<c:if test="${source ne 'API'}">
+				<c:if test="${source ne 'CHPK'}">
 				<div id="witness-info" class="tab-pane fade">
 					<div class="panel panel-primary" data-collapsed="0">
 						<div class="panel-body custom-form ">

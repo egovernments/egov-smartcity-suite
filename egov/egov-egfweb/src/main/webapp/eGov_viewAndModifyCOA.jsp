@@ -129,7 +129,7 @@ function loadSelectDataForChartOfacounts(url,sourceobj,destobj)
 			for(var i = 0 ; i < id.length  ; i++)
 			{
 				
-				var menuItem =  { label: name[i], id: id[i], url: actionurl[i] } ;
+				var menuItem =  { label: actionurl[i]+'-'+name[i], id: id[i], url: actionurl[i] } ;
 				var tempNode = new YAHOO.widget.TextNode(menuItem, menuObj, false);
 				tempNode.onLabelClick = onLabelClick
 				
@@ -220,7 +220,7 @@ function loadNodeData(node, fnLoadComplete){
 				}
 				if ((name[i] != null) && (name[i].length > 0)){
 				
-					var menuItem =  { label: name[i], id: id[i], url: nodeurl } ;
+					var menuItem =  { label: actionurl[i]+'-'+name[i], id: id[i], url: nodeurl } ;
 					var tempNode = new YAHOO.widget.TextNode(menuItem, node, false);
 					tempNode.onLabelClick = onLabelClick
 					if( nodeurl.length<parseInt(coaDetailLength)) 

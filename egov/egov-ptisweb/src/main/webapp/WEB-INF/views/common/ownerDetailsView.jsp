@@ -66,7 +66,7 @@
 				class="table table-bordered" id="vacantLandTable">
 				<thead>
 					<tr>
-						<th><spring:message code="lbl.adharno" /></th>
+						<%-- <th><spring:message code="lbl.adharno" /></th> --%>
 						<th><spring:message
 								code="lbl.MobileNumber" /></th>
 						<th><spring:message code="lbl.OwnerName" /></th>
@@ -86,8 +86,8 @@
 								var="ownerInfo">
 								<tr id="ownerDetailsRow">
 								
-									<td class="blueborderfortd" align="center" ><c:out
-											default="N/A" value="${ownerInfo.owner.aadhaarNumber}"></c:out></td>
+									<%-- <td class="blueborderfortd" align="center" ><c:out
+											default="N/A" value="${ownerInfo.owner.aadhaarNumber}"></c:out></td> --%>
 									<td class="blueborderfortd" align="center"><c:out
 											default="N/A" value="${ownerInfo.owner.mobileNumber}"></c:out></td>
 									<td class="blueborderfortd" align="center"><c:out

@@ -124,10 +124,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 
-
 @ParentPackage("egov")
 @Results({ @Result(name = "view", location = "viewProperty-view.jsp"),
-		@Result(name = "viewApplication", location = "viewApplication-view.jsp") })
+        @Result(name = "viewApplication", location = "viewApplication-view.jsp"),
+        @Result(name = "viewApplicationError", location = "viewProperty-error.jsp") })
 public class ViewPropertyAction extends BaseFormAction {
 
     private static final String DOCUMENTDATE = "documentdate";
@@ -180,23 +180,16 @@ public class ViewPropertyAction extends BaseFormAction {
 
     @Action(value = "/view/viewProperty-viewForm")
     public String viewForm() {
-      
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Entered into viewForm method, propertyId : " + propertyId);
         try {
             viewMap = new HashMap<>();
             if (propertyId != null && !propertyId.isEmpty())
                 setBasicProperty(basicPropertyDAO.getBasicPropertyByPropertyID(propertyId));
             else if (applicationNo != null && !applicationNo.isEmpty()) {
-                getBasicPropForAppNo(applicationNo, applicationType);
+                    getBasicPropForAppNo(applicationNo, applicationType);
                 setPropertyId(basicProperty.getUpicNo());
             }
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug("viewForm : BasicProperty : " + basicProperty);
             if (property == null)
                 property = (PropertyImpl) getBasicProperty().getProperty();
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug("viewForm : Property : " + property);
             final Ptdemand ptDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
             if (ptDemand == null) {
                 setErrorMessage("No Tax details for current Demand period.");
@@ -292,11 +285,7 @@ public class ViewPropertyAction extends BaseFormAction {
                 setRoleName(getRolesForUserId(userId));
                 citizenPortalUser = propService.isCitizenPortalUser(userService.getUserById(userId));
             }
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("viewForm : viewMap : " + viewMap);
-                LOGGER.debug("Exit from method viewForm");
-            }
-            if (applicationNo != null && !applicationNo.isEmpty())
+            if (StringUtils.isNotBlank(applicationNo))
                 return "viewApplication";
 			else {
 				getPropertyDocumentDetails();
@@ -304,7 +293,7 @@ public class ViewPropertyAction extends BaseFormAction {
 			}
         } catch (final Exception e) {
             LOGGER.error("Exception in View Property: ", e);
-            throw new ApplicationRuntimeException("Exception in View Property : " + e);
+            return "viewApplicationError";
         }
     }
 
@@ -325,23 +314,13 @@ public class ViewPropertyAction extends BaseFormAction {
 	}
 
     private void checkIsDemandActive(final Property property) {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Entered into checkIsDemandActive");
         if (property.getStatus().equals(PropertyTaxConstants.STATUS_DEMAND_INACTIVE))
             isDemandActive = false;
         else
             isDemandActive = true;
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("checkIsDemandActive - Is demand active? : " + isDemandActive);
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Exiting from checkIsDemandActive");
     }
 
     private String getRolesForUserId(final Long userId) {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Entered into method getRolesForUserId");
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("User id : " + userId);
         String roleName;
         final List<String> roleNameList = new ArrayList<>();
         final User user = userService.getUserById(userId);
@@ -349,13 +328,10 @@ public class ViewPropertyAction extends BaseFormAction {
             roleName = role.getName() != null ? role.getName() : "";
             roleNameList.add(roleName);
         }
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Exit from method getRolesForUserId with return value : "
-                    + roleNameList.toString().toUpperCase());
         return roleNameList.toString().toUpperCase();
     }
 
-    private void getBasicPropForAppNo(final String appNo, final String appType) {
+    private void getBasicPropForAppNo(final String appNo, final String appType){
         if (!StringUtils.isBlank(appType))
             if (Arrays.asList(APPLICATION_TYPE_NEW_ASSESSENT, APPLICATION_TYPE_ALTER_ASSESSENT, APPLICATION_TYPE_TAX_EXEMTION,
                     APPLICATION_TYPE_BIFURCATE_ASSESSENT,
@@ -399,7 +375,7 @@ public class ViewPropertyAction extends BaseFormAction {
    public void getDocumentDetails() {
         try {
             final Query query = entityManager.createNamedQuery("DOCUMENT_TYPE_DETAILS_BY_ID");
-            query.setParameter(1, basicProperty.getId());
+            query.setParameter("basicProperty", basicProperty.getId());
             DocumentTypeDetails documentTypeDetails = (DocumentTypeDetails) query.getSingleResult();
             viewMap.put(DOCUMENTNO, documentTypeDetails.getDocumentNo());
             viewMap.put(DOCUMENTDATE, documentTypeDetails.getDocumentDate());
@@ -414,9 +390,6 @@ public class ViewPropertyAction extends BaseFormAction {
     }
 
     public void setFloorDetails(final Property property) {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Entered into setFloorDetails, Property: " + property);
-
         final List<Floor> floors = property.getPropertyDetail().getFloorDetails();
         property.getPropertyDetail().setFloorDetailsProxy(floors);
         int i = 0;
@@ -424,8 +397,6 @@ public class ViewPropertyAction extends BaseFormAction {
             floorNoStr[i] = FLOOR_MAP.get(flr.getFloorNo());
             i++;
         }
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Exiting from setFloorDetails: ");
     }
 
     public String getFloorNoStr(final Integer floorNo) {

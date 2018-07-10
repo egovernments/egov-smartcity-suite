@@ -61,8 +61,6 @@ import org.egov.tl.entity.enums.ApplicationType;
 import org.egov.tl.repository.LicenseRepository;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -71,7 +69,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -95,8 +92,7 @@ public class LicenseService {
     private FileStoreService fileStoreService;
 
     @Autowired
-    @Qualifier("parentMessageSource")
-    private MessageSource licenseMessageSource;
+    private LicenseConfigurationService licenseConfigurationService;
 
     @Transactional
     public void update(TradeLicense license) {
@@ -128,7 +124,7 @@ public class LicenseService {
             existingDocs.addAll(license.getDocuments()
                     .stream()
                     .filter(licenseDocument -> licenseDocument.getType().getApplicationType().equals
-                            (ApplicationType.valueOf(license.getLicenseAppType().getName().toUpperCase())) && licenseDocument.getId() != null)
+                            (ApplicationType.valueOf(license.getLicenseAppType().getCode())) && licenseDocument.getId() != null)
                     .collect(Collectors.toList()));
         }
 
@@ -182,12 +178,9 @@ public class LicenseService {
     }
 
     public Date calculateDueDate(License license) {
-        String slaDate = license.isNewApplication()
-                ? licenseMessageSource.getMessage("msg.newTradeLicense.sla",
-                new String[]{license.getApplicationNumber()}, Locale.getDefault())
-                : licenseMessageSource.getMessage("msg.renewTradeLicense.sla",
-                new String[]{license.getApplicationNumber()}, Locale.getDefault());
-        return new DateTime().plusDays(Integer.valueOf(slaDate)).toDate();
+        Integer slaDays = license.isNewApplication() ? licenseConfigurationService.getNewAppTypeSla()
+                : licenseConfigurationService.getRenewAppTypeSla();
+        return new DateTime().plusDays(slaDays).toDate();
     }
 
 }

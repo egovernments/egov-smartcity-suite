@@ -54,7 +54,10 @@ public class EmployeeDetailRequest {
     private String district;
     private String grade;
     private String ulbCode;
+    private String employeeName;
+    private String employeeCode;
     private String departmentName;
+    private String designationName;
     private String aggregationLevel;
 
 
@@ -90,12 +93,36 @@ public class EmployeeDetailRequest {
         this.ulbCode = ulbCode;
     }
 
+    public String getEmployeeName() {
+        return employeeName;
+    }
+
+    public void setEmployeeName(final String employeeName) {
+        this.employeeName = employeeName;
+    }
+
+    public String getEmployeeCode() {
+        return employeeCode;
+    }
+
+    public void setEmployeeCode(final String employeeCode) {
+        this.employeeCode = employeeCode;
+    }
+
     public String getDepartmentName() {
         return departmentName;
     }
 
     public void setDepartmentName(final String departmentName) {
         this.departmentName = departmentName;
+    }
+
+    public String getDesignationName() {
+        return designationName;
+    }
+
+    public void setDesignationName(final String designationName) {
+        this.designationName = designationName;
     }
 
     public String getAggregationLevel() {

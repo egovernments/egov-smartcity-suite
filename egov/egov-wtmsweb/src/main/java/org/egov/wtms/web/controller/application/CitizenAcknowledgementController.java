@@ -77,6 +77,7 @@ public class CitizenAcknowledgementController {
     public ResponseEntity<InputStreamResource> generateEstimationNotice(final HttpServletRequest request) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByApplicationNumber(request.getParameter("pathVars"));
-        return reportGenerationService.generateReport(waterConnectionDetails);
+        String sewerageApplicationNo=request.getParameter("sewerageAppNo");
+        return reportGenerationService.generateReport(waterConnectionDetails,sewerageApplicationNo);
     }
 }

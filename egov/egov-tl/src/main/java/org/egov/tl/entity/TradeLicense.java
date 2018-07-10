@@ -62,7 +62,7 @@ import java.util.List;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
-import static org.egov.tl.utils.Constants.CLOSURE_NATUREOFTASK;
+import static org.egov.tl.utils.Constants.CLOSURE_APPTYPE_CODE;
 
 @Entity
 @Table(name = "egtl_trade_license")
@@ -100,7 +100,7 @@ public class TradeLicense extends License {
 
     @Override
     public String myLinkId() {
-        if (CLOSURE_NATUREOFTASK.equals(getState().getNatureOfTask()))
+        if (CLOSURE_APPTYPE_CODE.equals(this.getLicenseAppType().getCode()))
             if (isNewWorkflow())
                 return format(CLOSURE_UPDATE_URL, id);
             else

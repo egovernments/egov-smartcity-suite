@@ -1,0 +1,3 @@
+delete from eg_roleaction where actionid in(select id from eg_action where name in('OnlineTransactionReportResult','SearchOnlineReceipts')and contextroot='collection');
+Insert into eg_roleaction (roleid,actionid) values ((select id from eg_role where upper(name)='SYSTEM'),(select id from eg_action where name='OnlineTransactionReportResult'));
+Insert into eg_roleaction (roleid,actionid) values ((select id from eg_role where upper(name)='SYSTEM'),(select id from eg_action where name='SearchOnlineReceipts'));

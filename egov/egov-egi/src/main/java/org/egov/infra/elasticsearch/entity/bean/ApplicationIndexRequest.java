@@ -70,6 +70,7 @@ public class ApplicationIndexRequest {
     private String ageing;
     private String closed;
     private String beyondSLA;
+    private String approved;
 
     public String getRegion() {
         return region;
@@ -229,6 +230,14 @@ public class ApplicationIndexRequest {
 
     public void setBeyondSLA(String beyondSLA) {
         this.beyondSLA = beyondSLA;
+    }
+
+    public String getApproved() {
+        return approved;
+    }
+
+    public void setApproved(String approved) {
+        this.approved = approved;
     }
 
 }

@@ -110,6 +110,8 @@ public class Feature extends AbstractPersistable<Long> {
     @AuditJoinTable
     private Set<Role> roles;
 
+    private boolean enabled;
+
     @Override
     public Long getId() {
         return id;
@@ -158,6 +160,14 @@ public class Feature extends AbstractPersistable<Long> {
 
     public void setRoles(final Set<Role> roles) {
         this.roles = roles;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(final boolean enabled) {
+        this.enabled = enabled;
     }
 
     public boolean hasRole(Role role) {

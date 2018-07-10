@@ -32,7 +32,7 @@ elasticsearch_archive: 'elasticsearch-{{elasticsearch_version}}.zip'
 #elasticsearch_service_startonboot: yes
 
 #Wildfly Version
-wildfly_version: 10.1.0
+wildfly_version: 11.0.0
 wildfly_install_dir: "{{ANSIBLE_WORKSPACE}}"
 wildfly_home: "{{wildfly_install_dir}}/wildfly-{{wildfly_version}}.Final"
 wildfly_download_url: 'https://devops.egovernments.org/downloads/wildfly'

@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -51,8 +51,6 @@ package org.egov.tl.service;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
-import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.License;
@@ -70,7 +68,6 @@ import java.util.stream.Collectors;
 import static org.egov.tl.utils.Constants.JA_DESIGNATION_CODE;
 import static org.egov.tl.utils.Constants.PUBLIC_HEALTH_DEPT_CODE;
 import static org.egov.tl.utils.Constants.SA_DESIGNATION_CODE;
-import static org.egov.tl.utils.Constants.TRADE_LICENSE;
 
 @Service
 @Transactional
@@ -91,9 +88,6 @@ public class ProcessOwnerReassignmentService {
     @Autowired
     private LicenseApplicationIndexService licenseApplicationIndexService;
 
-    @Autowired
-    private AppConfigValueService appConfigValuesService;
-
     public Map<String, String> employeePositionMap() {
 
         List<Assignment> assignments = assignmentService.findByDepartmentCodeAndDesignationCode(PUBLIC_HEALTH_DEPT_CODE
@@ -109,7 +103,7 @@ public class ProcessOwnerReassignmentService {
 
     @Transactional
     public Boolean reassignLicenseProcessOwner(Long licenseId, Long approverPositionId) {
-        License license = tradeLicenseService.getLicenseById(Long.valueOf(licenseId));
+        License license = tradeLicenseService.getLicenseById(licenseId);
         if (license != null) {
             Position position = positionMasterService.getPositionById(approverPositionId);
             license.changeProcessOwner(position);
@@ -119,10 +113,5 @@ public class ProcessOwnerReassignmentService {
             return true;
         }
         return false;
-    }
-
-    public boolean reassignmentEnabled() {
-        final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(TRADE_LICENSE, "Reassignment");
-        return !appConfigValues.isEmpty() && "Y".equals(appConfigValues.get(0).getValue());
     }
 }

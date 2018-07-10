@@ -60,6 +60,7 @@ public class CouncilResolutionsResponse {
     private String resolutionNo;
     private String status;
     private BigDecimal sanctionAmount;
+    private String gistOfPreamble;
 
     public String getMeetingType() {
         return meetingType;
@@ -131,6 +132,14 @@ public class CouncilResolutionsResponse {
 
     public void setSanctionAmount(BigDecimal sanctionAmount) {
         this.sanctionAmount = sanctionAmount;
+    }
+
+    public String getGistOfPreamble() {
+        return gistOfPreamble;
+    }
+
+    public void setGistOfPreamble(String gistOfPreamble) {
+        this.gistOfPreamble = gistOfPreamble;
     }
 
 }

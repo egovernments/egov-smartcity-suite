@@ -74,6 +74,6 @@
 	</class>
 	
 	<query name="DOCUMENT_TYPE_DETAILS_BY_ID">
-           <![CDATA[select dtd from org.egov.ptis.domain.entity.document.DocumentTypeDetails dtd where dtd.basicPropertyId = ?]]></query>
+           <![CDATA[select dtd from org.egov.ptis.domain.entity.document.DocumentTypeDetails dtd where dtd.basicPropertyId = :basicProperty]]></query>
 	
 </hibernate-mapping>

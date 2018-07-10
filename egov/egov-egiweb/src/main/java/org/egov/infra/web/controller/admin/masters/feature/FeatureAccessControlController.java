@@ -104,21 +104,22 @@ public class FeatureAccessControlController {
 
     @RequestMapping(value = "/by-role", method = RequestMethod.POST)
     public String createByRole(@RequestParam Long roleId, @RequestParam(required = false) Long moduleId, Model model) {
-        model.addAttribute("features", moduleId == null ? featureService.getAllFeatures() : featureService.getAllFeaturesByModuleId(moduleId));
+        model.addAttribute("features", moduleId == null ? featureService.getAllFeatures() :
+                featureService.getAllFeaturesByModuleId(moduleId));
         model.addAttribute("role", roleService.getRoleById(roleId));
         return "accesscontrol";
     }
 
     @RequestMapping(value = "/grant/{featureId}/{roleId}", method = RequestMethod.POST)
     @ResponseBody
-    public String createFeatureRoleMapping(@PathVariable("featureId") Feature feature, @PathVariable("roleId") Role role){
+    public String createFeatureRoleMapping(@PathVariable("featureId") Feature feature, @PathVariable("roleId") Role role) {
         featureAccessControlService.grantAccess(feature, role);
         return "DONE";
     }
 
     @RequestMapping(value = "/revoke/{featureId}/{roleId}", method = RequestMethod.POST)
     @ResponseBody
-    public String removeFeatureRoleMapping(@PathVariable("featureId") Feature feature, @PathVariable("roleId") Role role){
+    public String removeFeatureRoleMapping(@PathVariable("featureId") Feature feature, @PathVariable("roleId") Role role) {
         featureAccessControlService.revokeAccess(feature, role);
         return "DONE";
     }

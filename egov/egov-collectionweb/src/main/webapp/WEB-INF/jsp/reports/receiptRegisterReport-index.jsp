@@ -206,7 +206,7 @@
 				<td class="greybox"><s:select headerKey="-1"
 								headerValue="----Choose----" name="branchId" id="branchId"
 								cssClass="selectwk" list="dropdownData.bankBranchlist"
-								listKey="id" listValue="branchname"
+								listKey="id" listValue="bank.name+'-'+branchname"
 								value="%{branchId}" />
 				</tr>
 			</table>

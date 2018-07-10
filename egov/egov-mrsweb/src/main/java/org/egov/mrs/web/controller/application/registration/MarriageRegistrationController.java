@@ -53,8 +53,8 @@ import static org.egov.mrs.application.MarriageConstants.BOUNDARYTYPE_LOCALITY;
 import static org.egov.mrs.application.MarriageConstants.BOUNDARY_TYPE;
 import static org.egov.mrs.application.MarriageConstants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.mrs.application.MarriageConstants.MARRIAGEREGISTRATION_DAYS_VALIDATION;
-import static org.egov.mrs.application.MarriageConstants.MARRIAGE_REGISTRATIONUNIT_BOUNDARYYTYPE;
-import static org.egov.mrs.application.MarriageConstants.MARRIAGE_REGISTRATIONUNIT_HEIRARCHYTYPE;
+import static org.egov.mrs.application.MarriageConstants.MRS_BOUNDARYYTYPE;
+import static org.egov.mrs.application.MarriageConstants.MRS_HEIRARCHYTYPE;
 import static org.egov.mrs.application.MarriageConstants.MODULE_NAME;
 import static org.egov.mrs.application.MarriageConstants.REGISTER_NO_OF_DAYS;
 import static org.egov.mrs.application.MarriageConstants.getMarriageVenues;
@@ -154,10 +154,10 @@ public class MarriageRegistrationController extends GenericWorkFlowController {
 
     private void getBoundaryTypeForRegistration(final Model model) {
         final AppConfigValues heirarchyType = appConfigValuesService.getConfigValuesByModuleAndKey(
-                MODULE_NAME, MARRIAGE_REGISTRATIONUNIT_HEIRARCHYTYPE).get(0);
+                MODULE_NAME, MRS_HEIRARCHYTYPE).get(0);
 
         final AppConfigValues boundaryType = appConfigValuesService.getConfigValuesByModuleAndKey(
-                MODULE_NAME, MARRIAGE_REGISTRATIONUNIT_BOUNDARYYTYPE).get(0);
+                MODULE_NAME, MRS_BOUNDARYYTYPE).get(0);
 
         if (heirarchyType != null && heirarchyType.getValue() != null && !"".equals(heirarchyType.getValue())
                 && boundaryType != null && boundaryType.getValue() != null && !"".equals(boundaryType.getValue())) {

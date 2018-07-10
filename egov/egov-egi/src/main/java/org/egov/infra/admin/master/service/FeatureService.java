@@ -59,18 +59,18 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-@Transactional(readOnly=true)
+@Transactional(readOnly = true)
 public class FeatureService {
 
     @Autowired
     private FeatureRepository featureRepository;
 
     public List<Feature> getAllFeatures() {
-        return featureRepository.findAll();
+        return featureRepository.findAllByEnabledIsTrueOrderByNameAsc();
     }
 
     public List<Feature> getAllFeaturesByModuleId(Long moduleId) {
-        return featureRepository.findByModuleId(moduleId);
+        return featureRepository.findByModuleIdAndEnabledIsTrueOrderByNameAsc(moduleId);
     }
 
     public Feature getFeatureById(Long id) {

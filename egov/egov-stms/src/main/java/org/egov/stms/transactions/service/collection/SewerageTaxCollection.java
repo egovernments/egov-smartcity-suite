@@ -48,6 +48,15 @@
 
 package org.egov.stms.transactions.service.collection;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.log4j.Logger;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
@@ -58,10 +67,12 @@ import org.egov.commons.Installment;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.integration.TaxCollection;
 import org.egov.demand.model.EgBill;
+import org.egov.demand.model.EgBillDetails;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.utils.DateUtils;
 import org.egov.stms.masters.entity.enums.SewerageConnectionStatus;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.entity.SewerageDemandConnection;
@@ -74,12 +85,6 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -389,8 +394,14 @@ public class SewerageTaxCollection extends TaxCollection {
             final EgBill egBill = egBillDAO.findById(Long.valueOf(billReceiptInfo.getBillReferenceNum()), false);
 
             if (egBill != null) {
+                final Set<EgBillDetails> billDetails =  egBill.getEgBillDetails();
                 final Installment currentInstallment = sewerageDemandService.getCurrentInstallment();
                 final Installment nextInstallment = sewerageDemandService.getNextInstallment();
+                
+                List<EgBillDetails> billDetailsList = new ArrayList<>(billDetails);
+                receiptAmountInfo
+                        .setInstallmentFrom(DateUtils.toDefaultDateFormat(billDetailsList.get(0).getInstallmentStartDate()));
+                receiptAmountInfo.setInstallmentTo(DateUtils.toDefaultDateFormat(billDetailsList.get(0).getInstallmentEndDate()));
 
                 final SewerageDemandConnection sewerageDemandConnection = sewerageDemandConnectionService
                         .getSewerageDemandConnectionByDemand(egBill.getEgDemand());

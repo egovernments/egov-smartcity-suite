@@ -134,7 +134,7 @@ public class ApplicationSewerageSearchController {
         if (propertyOwnerDetails != null)
             modelMap.addAttribute("propertyOwnerDetails", propertyOwnerDetails);
         model.addAttribute("applicationHistory",
-                sewerageApplicationDetailsService.getHistory(sewerageApplicationDetails));
+                sewerageApplicationDetailsService.populateHistory(sewerageApplicationDetails));
         model.addAttribute("documentNamesList",
                 sewerageConnectionService.getSewerageApplicationDoc(sewerageApplicationDetails));
         return new ModelAndView("viewseweragedetails", "sewerageApplicationDetails", sewerageApplicationDetails);

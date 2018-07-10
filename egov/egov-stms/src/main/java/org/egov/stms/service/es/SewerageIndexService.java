@@ -840,10 +840,10 @@ public class SewerageIndexService {
                 if (sewerageApplnDetailsObj.getConnection().getExecutionDate() != null
                         && isNotBlank(sewerageApplnDetailsObj.getConnection().getExecutionDate().toString())) {
                     if (sewerageApplnDetailsObj.getConnection().getExecutionDate()
-                            .compareTo(
+                            .before(
                                     DateUtils.toDateUsingDefaultPattern(
                                             DateUtils.getDefaultFormattedDate(
-                                                    sewerageApplnDetailsObj.getApplicationDate()))) <= 0) {
+                                                    DateUtils.now())))) {
                         status = "DateValidationFailed";
                     } else {
                         sewerageApplicationDetailsList.add(sewerageApplnDetailsObj);

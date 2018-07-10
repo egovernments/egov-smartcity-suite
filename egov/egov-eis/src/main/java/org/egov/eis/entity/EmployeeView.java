@@ -76,7 +76,7 @@ public class EmployeeView implements java.io.Serializable {
     private String code;
     private String name;
     private String userName;
-    private String userActive;
+    private boolean userActive;
     private Date dateOfAppointment;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -145,11 +145,11 @@ public class EmployeeView implements java.io.Serializable {
         this.userName = userName;
     }
 
-    public String getUserActive() {
+    public boolean getUserActive() {
         return userActive;
     }
 
-    public void setUserActive(final String userActive) {
+    public void setUserActive(final boolean userActive) {
         this.userActive = userActive;
     }
 

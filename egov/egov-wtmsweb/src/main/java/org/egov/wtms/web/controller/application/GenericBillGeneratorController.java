@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -47,16 +47,7 @@
  */
 package org.egov.wtms.web.controller.application;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
-import java.math.BigDecimal;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.ValidationException;
-
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
@@ -64,103 +55,104 @@ import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
-import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxUtils;
-import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.ValidationException;
+
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
+import static org.egov.infra.config.core.ApplicationThreadLocals.setUserId;
+import static org.egov.wtms.masters.entity.enums.ConnectionStatus.ACTIVE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.USERNAME_ANONYMOUS;
 
 @Controller
 @RequestMapping(value = "/application")
 public class GenericBillGeneratorController {
 
-    private final WaterConnectionDetailsService waterConnectionDetailsService;
-    private final ConnectionDemandService connectionDemandService;
-    private final WaterTaxUtils waterTaxUtils;
+    @Autowired
+    private WaterTaxUtils waterTaxUtils;
 
     @Autowired
     private SecurityUtils securityUtils;
+
     @Autowired
     private UserService userService;
+
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
 
     @Autowired
-    public GenericBillGeneratorController(final WaterConnectionDetailsService waterConnectionDetailsService,
-            final ConnectionDemandService connectionDemandService, final WaterTaxUtils waterTaxUtils) {
-        this.waterConnectionDetailsService = waterConnectionDetailsService;
-        this.connectionDemandService = connectionDemandService;
-        this.waterTaxUtils = waterTaxUtils;
-    }
+    private WaterConnectionDetailsService waterConnectionDetailsService;
 
-    @RequestMapping(value = "/generatebill/{applicationCode}", method = GET)
-    public String showCollectFeeForm(final Model model, @PathVariable final String applicationCode) {
+    @Autowired
+    private ConnectionDemandService connectionDemandService;
+
+    @GetMapping(value = "/generatebill/{applicationCode}")
+    public String showCollectFeeForm(@PathVariable String applicationCode) {
         return "redirect:/application/collecttax-view?applicationCode=" + applicationCode;
     }
 
-    @RequestMapping(value = "/collecttax-view", method = GET)
+    @GetMapping(value = "/collecttax-view")
     public ModelAndView collectTaxView(@ModelAttribute WaterConnectionDetails waterConnectionDetails,
-            final HttpServletRequest request, final Model model) {
-        if (request.getParameter("applicationCode") != null)
+                                       HttpServletRequest request, Model model) {
+        String consumerNumber = request.getParameter("applicationCode");
+        if (isNotBlank(consumerNumber))
             waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(
-                    request.getParameter("applicationCode"), ConnectionStatus.ACTIVE);
-        model.addAttribute(
-                "connectionType",
-                waterConnectionDetailsService.getConnectionTypesMap().get(
-                        waterConnectionDetails.getConnectionType().name()));
+                    consumerNumber, ACTIVE);
+        if (waterConnectionDetails == null)
+            waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerNumber);
+        model.addAttribute("connectionType",
+                waterConnectionDetailsService.getConnectionTypesMap().get(waterConnectionDetails.getConnectionType().name()));
         model.addAttribute("mode", "waterTaxCollection");
         model.addAttribute("checkOperator", waterTaxUtils.checkCollectionOperatorRole());
         model.addAttribute("feeDetails", connectionDemandService.getSplitFee(waterConnectionDetails));
-        final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
-        model.addAttribute("waterTaxDueforParent", waterTaxDueforParent);
+        model.addAttribute("waterTaxDueforParent", waterConnectionDetailsService.getTotalAmount(waterConnectionDetails));
         return new ModelAndView("application/collecttax-view", "waterConnectionDetails", waterConnectionDetails);
     }
 
-    @RequestMapping(value = "/generatebill/{applicationCode}", method = POST)
-    public String payTax(@ModelAttribute final WaterConnectionDetails waterConnectionDetails,
-            final RedirectAttributes redirectAttributes, @PathVariable final String applicationCode,
-            @RequestParam final String applicationTypeCode, final Model model) {
-        final WaterConnectionDetails waterconnectionDetails = waterConnectionDetailsService
-                .findByApplicationNumberOrConsumerCodeAndStatus(applicationCode, ConnectionStatus.ACTIVE);
-        final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
+    @PostMapping(value = "/generatebill/{applicationCode}")
+    public String payTax(@ModelAttribute WaterConnectionDetails waterConnectionDetails, @PathVariable String applicationCode,
+                         @RequestParam String applicationTypeCode, Model model) {
+        WaterConnectionDetails waterconnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(applicationCode);
+        AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                 waterconnectionDetails.getConnection().getPropertyIdentifier(),
                 PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
-        if (assessmentDetails != null)
-            return generateBillAndRedirectToCollection(applicationCode, applicationTypeCode,
-                    model);
-        else
+        if (assessmentDetails == null)
             throw new ValidationException("invalid.property");
+        else
+            return generateBillAndRedirectToCollection(applicationCode, applicationTypeCode, model);
     }
 
-    @RequestMapping(value = "/generatebillOnline/{applicationCode}", method = GET)
-    public String payTaxOnline(@ModelAttribute final WaterConnectionDetails waterConnectionDetails,
-            final RedirectAttributes redirectAttributes, @PathVariable final String applicationCode,
-            @RequestParam final String applicationTypeCode, final Model model) {
-        final WaterConnectionDetails waterconnectionDetails = waterConnectionDetailsService
-                .findByApplicationNumberOrConsumerCodeAndStatus(applicationCode, ConnectionStatus.ACTIVE);
-        final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
+    @GetMapping(value = "/generatebillOnline/{applicationCode}")
+    public String payTaxOnline(@ModelAttribute WaterConnectionDetails waterConnectionDetails, @PathVariable String applicationCode,
+                               @RequestParam String applicationTypeCode, Model model) {
+        WaterConnectionDetails waterconnectionDetails = waterConnectionDetailsService
+                .findByApplicationNumberOrConsumerCodeAndStatus(applicationCode, ACTIVE);
+        AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                 waterconnectionDetails.getConnection().getPropertyIdentifier(),
                 PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
-        if (assessmentDetails != null)
-            return generateBillAndRedirectToCollection(applicationCode, applicationTypeCode,
-                    model);
-        else
+        if (assessmentDetails == null)
             throw new ValidationException("invalid.property");
+        else
+            return generateBillAndRedirectToCollection(applicationCode, applicationTypeCode, model);
 
     }
 
-    private String generateBillAndRedirectToCollection(
-            final String applicationCode, final String applicationTypeCode, final Model model) {
-        if (ApplicationThreadLocals.getUserId() == null && securityUtils.getCurrentUser().getUsername().equals("anonymous"))
-            ApplicationThreadLocals.setUserId(userService.getUserByUsername(WaterTaxConstants.USERNAME_ANONYMOUS).getId());
+    private String generateBillAndRedirectToCollection(String applicationCode, String applicationTypeCode, Model model) {
+        if (getUserId() == null && securityUtils.getCurrentUser().getUsername().equals("anonymous"))
+            setUserId(userService.getUserByUsername(USERNAME_ANONYMOUS).getId());
         model.addAttribute("collectxml", connectionDemandService.generateBill(applicationCode, applicationTypeCode));
         model.addAttribute("citizenrole", waterTaxUtils.getCitizenUserRole());
         return "collecttax-redirection";

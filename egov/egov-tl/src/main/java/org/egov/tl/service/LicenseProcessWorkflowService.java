@@ -116,6 +116,9 @@ public class LicenseProcessWorkflowService {
     @Autowired
     private ValidityService validityService;
 
+    @Autowired
+    private LicenseConfigurationService licenseConfigurationService;
+
     public void createNewLicenseWorkflowTransition(TradeLicense tradeLicense,
                                                    WorkflowBean workflowBean) {
         DateTime currentDate = new DateTime();
@@ -135,7 +138,7 @@ public class LicenseProcessWorkflowService {
             initiateWfTransition(tradeLicense);
             tradeLicense.transition().withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
                     .withComments(workflowBean.getApproverComments())
-                    .withNatureOfTask(tradeLicense.isReNewApplication() ? RENEWAL_NATUREOFWORK : NEW_NATUREOFWORK)
+                    .withNatureOfTask(tradeLicense.getLicenseAppType().getName())
                     .withStateValue(workFlowMatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(wfInitiator)
                     .withNextAction(workFlowMatrix.getNextAction()).withInitiator(wfInitiator).withExtraInfo(licenseStateInfo);
         } else if (BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction()) && userPositions.contains(tradeLicense.getCurrentState().getInitiatorPosition())) {
@@ -195,7 +198,7 @@ public class LicenseProcessWorkflowService {
         if (BUTTONAPPROVE.equals(workflowBean.getWorkFlowAction()))
             tradeLicense.setApprovedBy(currentUser);
 
-        if (!licenseUtils.isDigitalSignEnabled() && BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction()) && !tradeLicense.isCollectionPending()) {
+        if (!licenseConfigurationService.digitalSignEnabled() && BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction()) && !tradeLicense.isCollectionPending()) {
             tradeLicense.transition().end().withStateValue(workFlowMatrix.getNextState())
                     .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
                     .withComments(workflowBean.getApproverComments())
@@ -266,7 +269,7 @@ public class LicenseProcessWorkflowService {
         if (!StringUtils.isEmpty(tradeLicense.getState().getExtraInfo())) {
             WorkFlowMatrix workFlowMatrix = workFlowMatrixService.getWorkFlowObjectbyId(licenseStateInfo.getWfMatrixRef());
             if (workFlowMatrix != null) {
-                if (licenseUtils.isDigitalSignEnabled() || STATUS_ACKNOWLEDGED.equals(tradeLicense.getStatus().getStatusCode())) {
+                if (licenseConfigurationService.digitalSignEnabled() || STATUS_ACKNOWLEDGED.equals(tradeLicense.getStatus().getStatusCode())) {
                     tradeLicense.transition().progressWithStateCopy().withSenderName(collectionOperator)
                             .withComments(workFlowMatrix.getNextState())
                             .withStateValue(workFlowMatrix.getNextState()).withDateInfo(currentDate.toDate())
@@ -310,7 +313,7 @@ public class LicenseProcessWorkflowService {
             license.transition().withSenderName(licenseUtils.getApplicationSenderName(currentUser.getType()
                     , currentUser.getName(), license.getLicensee().getApplicantName()))
                     .withComments(workflowBean.getApproverComments())
-                    .withNatureOfTask(license.isReNewApplication() ? RENEWAL_NATUREOFWORK : NEW_NATUREOFWORK)
+                    .withNatureOfTask(license.getLicenseAppType().getName())
                     .withStateValue(workFlowMatrix.getNextState()).withDateInfo(new Date())
                     .withOwner(wfAssignment.getPosition()).withNextAction(workFlowMatrix.getNextAction())
                     .withInitiator(wfAssignment.getPosition()).withExtraInfo(licenseStateInfo);

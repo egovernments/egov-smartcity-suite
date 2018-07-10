@@ -64,6 +64,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Collection;
+
 import static org.egov.infra.utils.JsonUtils.toJSON;
 import static org.egov.tl.utils.Constants.MESSAGE;
 
@@ -93,12 +95,14 @@ public class DemandGenerationController {
 
     @PostMapping("generate")
     @ResponseBody
-    public String generateDemand(DemandGenerationRequest demandGenerationRequest) {
-        demandGenerationService.generateDemand(demandGenerationRequest);
+    public Iterable<DemandGenerationLogDetail> generateDemand(DemandGenerationRequest demandGenerationRequest) {
+        Collection<DemandGenerationLogDetail> demandLogDetails = demandGenerationService.generateDemand(demandGenerationRequest);
         CFinancialYear financialYear = financialYearService.getLatestFinancialYear();
         demandGenerationService.updateDemandGenerationLog(financialYear);
-        return toJSON(demandGenerationService.getDemandGenerationLog(financialYear).getDetails(),
-                DemandGenerationLogDetail.class, DemandGenerationResponseAdaptor.class);
+        if (demandLogDetails.isEmpty()) {
+            demandLogDetails = demandGenerationService.getDemandGenerationLog(financialYear).getDetails();
+        }
+        return demandLogDetails;
     }
 
     @GetMapping("generate/{licenseId}")

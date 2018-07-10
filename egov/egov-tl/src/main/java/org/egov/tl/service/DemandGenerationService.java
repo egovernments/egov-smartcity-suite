@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -54,7 +54,7 @@ import org.egov.commons.service.CFinancialYearService;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.EnvironmentSettings;
-import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.exception.ApplicationValidationException;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.tl.entity.DemandGenerationLog;
 import org.egov.tl.entity.DemandGenerationLogDetail;
@@ -72,6 +72,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import static org.egov.infra.persistence.utils.PersistenceUtils.flushBatchUpdate;
@@ -106,6 +108,19 @@ public class DemandGenerationService {
     @Qualifier("tradeLicenseService")
     private AbstractLicenseService licenseService;
 
+    @Autowired
+    private LicenseConfigurationService licenseConfigurationService;
+
+    @Autowired
+    private TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
+
+    @Autowired
+    private DemandNoticeService demandNoticeService;
+
+    @Autowired
+    private PenaltyRatesService penaltyRatesService;
+
+
     private int batchSize;
 
     @Autowired
@@ -127,10 +142,10 @@ public class DemandGenerationService {
         DemandGenerationLog previousDemandGenLog = demandGenerationLogService
                 .getPreviousInstallmentDemandGenerationLog(financialYear.getFinYearRange());
         if (previousDemandGenLog != null && previousDemandGenLog.getDemandGenerationStatus().equals(INCOMPLETE))
-            throw new ApplicationRuntimeException("TL-008");
+            throw new ApplicationValidationException("TL-008");
 
         if (!installmentYearValidForDemandGeneration(financialYear))
-            throw new ApplicationRuntimeException("TL-006");
+            throw new ApplicationValidationException("TL-006");
 
         return demandGenerationLogService.createDemandGenerationLog(financialYear.getFinYearRange());
 
@@ -143,15 +158,17 @@ public class DemandGenerationService {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, timeout = 7200)
-    public List<DemandGenerationLogDetail> generateDemand(DemandGenerationRequest demandGenerationRequest) {
+    public Collection<DemandGenerationLogDetail> generateDemand(DemandGenerationRequest demandGenerationRequest) {
         DemandGenerationLog demandGenerationLog = demandGenerationLogService
                 .getDemandGenerationLogByInstallmentYear(demandGenerationRequest.getInstallmentYear());
         List<DemandGenerationLogDetail> demandGenerationLogDetails = new ArrayList<>();
-        if (demandGenerationLog != null) {
+        if (demandGenerationLog != null && !demandGenerationRequest.getLicenseIds().isEmpty()) {
             Module module = moduleService.getModuleByName(TRADE_LICENSE);
             CFinancialYear financialYear = financialYearService.getFinacialYearByYearRange(demandGenerationRequest.getInstallmentYear());
             Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(module, financialYear.getStartingDate());
             int batchUpdateCount = 0;
+            boolean notificationRequired = licenseConfigurationService.notifyOnDemandGeneration();
+            Date penaltyDate = penaltyRatesService.getPenaltyDate(licenseService.getLicenseApplicationTypeForRenew(), installment);
             for (Long licenseId : demandGenerationRequest.getLicenseIds()) {
                 License license = licenseService.getLicenseById(licenseId);
                 DemandGenerationLogDetail demandGenerationLogDetail = demandGenerationLogService.
@@ -160,6 +177,9 @@ public class DemandGenerationService {
                     if (!installment.equals(license.getCurrentDemand().getEgInstallmentMaster())) {
                         licenseService.raiseDemand(license, module, installment);
                         demandGenerationLogDetail.setDetail(SUCCESSFUL);
+                        if (notificationRequired)
+                            tradeLicenseSmsAndEmailService.sendNotificationOnDemandGeneration(license, installment,
+                                    demandNoticeService.generateReport(license.getId()), penaltyDate);
                     }
                     demandGenerationLogDetail.setStatus(COMPLETED);
                 } catch (RuntimeException e) {
@@ -179,9 +199,14 @@ public class DemandGenerationService {
         boolean generationSuccess = true;
         try {
             License license = licenseService.getLicenseById(licenseId);
-            licenseService.raiseDemand(license, licenseService.getModuleName(), installmentDao.
-                    getInsatllmentByModuleForGivenDate(licenseService.getModuleName(),
-                            new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate()));
+            Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(licenseService.getModuleName(),
+                    new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate());
+            licenseService.raiseDemand(license, licenseService.getModuleName(), installment);
+            if (licenseConfigurationService.notifyOnDemandGeneration()) {
+                tradeLicenseSmsAndEmailService.sendNotificationOnDemandGeneration(license, installment,
+                        demandNoticeService.generateReport(license.getId()),
+                        penaltyRatesService.getPenaltyDate(license.getLicenseAppType(), installment));
+            }
         } catch (ValidationException e) {
             LOGGER.warn(ERROR_MSG, e);
             generationSuccess = false;
@@ -197,5 +222,4 @@ public class DemandGenerationService {
                 withMaximumValue().millisOfDay().withMaximumValue();
         return currentDate.isAfter(startOfCalenderDate) && currentDate.isBefore(endOfCalenderDate);
     }
-
 }

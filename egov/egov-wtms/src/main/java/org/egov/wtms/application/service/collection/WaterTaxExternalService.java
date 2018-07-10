@@ -121,7 +121,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.BILLTYPE_AUTO;
 
 public class WaterTaxExternalService {
 
@@ -209,7 +209,7 @@ public class WaterTaxExternalService {
                     .getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.MONTHLY, new Date())
                     .getInstallmentYear());
         waterConnectionBillable.setReferenceNumber(billRefeNumber.generateBillNumber(currentInstallmentYear));
-        waterConnectionBillable.setBillType(connectionDemandService.getBillTypeByCode(BILLTYPE_MANUAL));
+        waterConnectionBillable.setBillType(connectionDemandService.getBillTypeByCode(BILLTYPE_AUTO));
         waterConnectionBillable.setTransanctionReferenceNumber(payWaterTaxDetails.getTransactionId());
         final EgBill egBill = generateBill(waterConnectionBillable);
         for (final EgBillDetails billDetails : egBill.getEgBillDetails())

@@ -53,6 +53,9 @@ import static java.lang.String.format;
 import static org.egov.ptis.constants.PropertyTaxConstants.DATE_FORMAT_YYYYMMDD;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -101,6 +104,7 @@ public class SurveyApplicationService {
     private static final String APPLICATION_STATUS = "applicationStatus";
     private static final String ISAPPROVED = "isApproved";
     private static final String ISCANCELLED = "isCancelled";
+    
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
 
@@ -121,11 +125,11 @@ public class SurveyApplicationService {
         if (StringUtils.isNotBlank(searchSurveyRequest.getFromDate()))
             fromDate = DateUtils.getDate(searchSurveyRequest.getFromDate(), DATE_FORMAT_YYYYMMDD);
         else
-            fromDate = new Date(2018 - 01 - 01);
+            fromDate = DateUtils.getDate("2018-01-01", "yyyy-MM-dd");
         if (StringUtils.isNotBlank(searchSurveyRequest.getToDate()))
             toDate = DateUtils.getDate(searchSurveyRequest.getToDate(), DATE_FORMAT_YYYYMMDD);
         else
-            toDate = new Date();
+            toDate = DateUtils.addDays(new Date(), 1);
         NativeSearchQuery search = new NativeSearchQueryBuilder()
                 .addAggregation(AggregationBuilders.count(APP_COUNT).field(APP_NO))
                 .withIndices(SURVEY_INDEX).withQuery(prepareQuery(searchSurveyRequest, fromDate, toDate))
@@ -159,7 +163,7 @@ public class SurveyApplicationService {
 
     private BoolQueryBuilder prepareQuery(SearchSurveyRequest searchSurveyRequest, Date fromDate, Date toDate) {
         BoolQueryBuilder boolQuery = new BoolQueryBuilder();
-        boolQuery = boolQuery.filter(QueryBuilders.rangeQuery(APP_DATE).gte(fromDate).lte(toDate))
+        boolQuery = boolQuery.filter(QueryBuilders.rangeQuery(APP_DATE).gte(fromDate).lt(toDate))
                 .filter(QueryBuilders.matchQuery(CITY_CODE, ApplicationThreadLocals.getCityCode()));
         if (StringUtils.isNotBlank(searchSurveyRequest.getApplicationType()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("applicationType", searchSurveyRequest.getApplicationType()));
@@ -190,7 +194,6 @@ public class SurveyApplicationService {
         final Query query = setSearchParameter(searchSurveyRequest, queryStr);
         query.setMaxResults(20);
         return query.getResultList();
-
     }
 
     private Query setSearchParameter(SearchSurveyRequest searchSurveyRequest, StringBuilder queryStr) {
@@ -201,7 +204,7 @@ public class SurveyApplicationService {
             qry.setParameter("assessmentNumber", searchSurveyRequest.getAssessmentNo());
 
         if (StringUtils.isNotBlank(searchSurveyRequest.getApplicationNo()))
-            qry.setParameter("applicationNo", searchSurveyRequest.getApplicationNo());
+            qry.setParameter(APP_NO, searchSurveyRequest.getApplicationNo());
 
         if (StringUtils.isNotBlank(searchSurveyRequest.getApplicationType()))
             qry.setParameter("applicationtype", searchSurveyRequest.getApplicationType());
@@ -237,24 +240,36 @@ public class SurveyApplicationService {
 
     }
 
-    @SuppressWarnings("deprecation")
     @Transactional
     public boolean updateWorkflow(String applicationNo, User user) {
         try {
             List<Assignment> assignments = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(user.getId());
-            if (assignments.isEmpty()) {
-                return false;
-            } else {
-                SQLQuery sqlQuery = entityManager.unwrap(Session.class).createSQLQuery("update eg_wf_states set owner_pos =:ownerpos where id in(select state_id from egpt_property where applicationNo=:applicationNo)");
-                sqlQuery.setParameter("applicationNo", applicationNo);
-                sqlQuery.setParameter("ownerpos", assignments.get(0).getPosition().getId());
+            boolean isRevAssistantExist = false;
+            Long assistPos = null;
+            if (!assignments.isEmpty()) {
+                for (Assignment assignment : assignments) {
+                    if (REVENUE_HIERARCHY_TYPE.equalsIgnoreCase(assignment.getDepartment().getName())
+                            && (assignment.getDesignation().getName().equalsIgnoreCase(JUNIOR_ASSISTANT)
+                                    || assignment.getDesignation().getName()
+                                            .equalsIgnoreCase(SENIOR_ASSISTANT))) {
+                        assistPos = assignment.getPosition().getId();
+                        isRevAssistantExist = true;
+                        break;
+                    }
+                }
+            }
+            if (isRevAssistantExist) {
+                SQLQuery sqlQuery = entityManager.unwrap(Session.class).createSQLQuery(
+                        "update eg_wf_states set owner_pos =:ownerpos where id in(select state_id from egpt_property where applicationNo=:applicationNo)");
+                sqlQuery.setParameter(APP_NO, applicationNo);
+                sqlQuery.setParameter("ownerpos", assistPos);
                 sqlQuery.executeUpdate();
+                return true;
             }
         } catch (Exception e) {
-            throw new ApplicationRuntimeException("Error occured while updating survey property application: " + e.getMessage(), e);
+            throw new ApplicationRuntimeException(
+                    "Error occured while updating survey property application: " + e.getMessage(), e);
         }
-        return true;
-
+        return false;
     }
-
 }

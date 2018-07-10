@@ -49,6 +49,8 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCgxY6DqJ4TxnRfKjlZR8SfLSQRtOSTxEU"></script>
+<script src="<cdn:url value='/resources/js/app/property-map.js?rnd=${app_release_no}'/>"></script>
 <link rel="stylesheet"
 	href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
 <table width="100%" border="0" cellspacing="0" cellpadding="0"
@@ -108,18 +110,6 @@
 		<td class="greybox" width="25%"></td>
 		<td class="greybox"></td>
 	</tr>
-	<%-- <tr class="superStructureRow">
-		<td class="greybox">&nbsp;</td>
-		<td class="bluebox"><s:text name="superstructure"></s:text> :</td>
-		<td class="bluebox"><s:checkbox name="propertyDetail.structure"
-				id="propertyDetail.structure" value="%{propertyDetail.structure}"
-				onclick="enableOrDisableSiteOwnerDetails(this);" /></td>
-		<td class="greybox siteowner"><s:text name="siteowner"></s:text><span
-			class="mandatory1"> *</span> :</td>
-		<td class="greybox siteowner"><s:textfield maxlength="64"
-				value="%{propertyDetail.siteOwner}" name="propertyDetail.siteOwner"
-				id="siteOwner"></s:textfield></td>
-	</tr> --%>
 	<tr>
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="ownership.type"></s:text>
@@ -189,21 +179,9 @@
 					listKey="id" listValue="name" /></td>
 		</s:else>
 	</tr>
+	
 	<tr>
 		<td class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="blockno"></s:text> <span
-			class="mandatory1">*</span> :</td>
-		<s:if
-			test="%{basicProperty.propertyID.area !=null && isBlockActive() && isLocalityActive()}">
-			<td class="greybox"><s:textfield name="block" id="block"
-					value="%{basicProperty.propertyID.area.name}" /></td>
-		</s:if>
-		<s:else>
-			<td class="bluebox"><s:select list="dropdownData.blocks"
-					name="blockId" value="%{blockId}" headerKey="-1" id="blockId"
-					headerValue="%{getText('default.select')}" listKey="id"
-					listValue="name" /></td>
-		</s:else>
 		<td class="greybox"><s:text name="revwardno"></s:text> <span
 			class="mandatory1">*</span> :</td>
 		<s:if
@@ -215,7 +193,20 @@
 			<td class="bluebox"><s:select list="dropdownData.wards"
 					name="wardId" value="%{wardId}" headerKey="-1" id="wardId"
 					headerValue="%{getText('default.select')}" listKey="id"
-					listValue="name" onchange="populateBlock();" /></td>
+					listValue="name" onchange="populateBlock(this.value);" /></td>
+		</s:else>
+		<td class="greybox"><s:text name="blockno"></s:text> <span
+			class="mandatory1">*</span> :</td>
+		<s:if
+			test="%{basicProperty.propertyID.area !=null && isBlockActive() && isLocalityActive()}">
+			<td class="greybox"><s:textfield name="block" id="block"
+					value="%{basicProperty.propertyID.area.name}" /></td>
+		</s:if>
+		<s:else>
+			<td class="bluebox"><s:select list="dropdownData.blocks"
+					name="blockId" value="%{blockId}" headerKey="" id="blockId"
+					headerValue="%{getText('default.select')}" listKey="id"
+					listValue="name" cssClass="selectnew"/></td>
 		</s:else>
 	</tr>
 	<tr>
@@ -234,9 +225,6 @@
 					id="electionWardId" headerValue="%{getText('default.select')}"
 					listKey="id" listValue="name" /></td>
 		</s:else>
-	</tr>
-	<tr>
-		<td class="greybox">&nbsp;</td>
 		<s:if
 			test="%{oldPropertyTypeCode==@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND && modifyRsn==@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_ADD_OR_ALTER}">
 			<td class="greybox"><s:text name="Door No"></s:text> :</td>
@@ -250,6 +238,23 @@
 			</s:else>
 		</s:if>
 	</tr>
+	<%-- <tr>
+		<td class="greybox">&nbsp;</td>
+	    <td class="greybox"><s:text name="longitude"/> : </td>
+	    <td class="greybox"><span class="bold"><s:property default="N/A" value="%{basicProperty.longitude}" /> </span></td>
+	    <td class="greybox"><s:text name="latitude"/> : </td>
+	    <td class="greybox"><span class="bold"><s:property default="N/A" value="%{basicProperty.latitude}" /> </span></td>
+	</tr>
+	<s:if test="%{basicProperty.latitude != null && basicProperty.longitude != null}">
+	<tr>
+			<td class="greybox">&nbsp;</td>
+			<td class="greybox">&nbsp;</td>
+			<td class="greybox">&nbsp;</td>
+			<td class="greybox">&nbsp;</td>
+			<td><input type="button" name="showMap" id="show-map"
+						value="View On Map" class="buttonsubmit" data-toggle="modal" data-target="#myModal"/></td>
+	</tr>
+	</s:if> --%>
 	<!-- Amenities section -->
 
 	<tr id="amenitiesHeaderRow" class="amenities">
@@ -347,6 +352,21 @@
 		</tr>
 	</s:if>
 </table>
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Property On Google Map</h4>
+      </div>
+			<div id="map-canvas" style="height:500px;width:500pxpx;"></div>      
+			<div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
 <script type="text/javascript">
 	function populatePropTypeCategory() {
 		populatepropTypeCategoryId({
@@ -363,8 +383,11 @@
 		}
 		var propType = jQuery('#propTypeId :selected').text();
 		var doorno = jQuery("#houseNo").val() != '';
+		var wardId = '<s:property value="%{basicProperty.propertyID.ward.id}"/>';
+		populateBlock(wardId);
 		if(doorno && propType=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND_STR}"/>'){
 			jQuery("#houseNo").prop("readonly", true);
+			jQuery("#dateOfCompletion").datepicker();
 		}
 		else{
 			jQuery("#houseNo").prop("readonly", false);
@@ -387,17 +410,8 @@
 		jQuery('#localityId').change(function() {
 			 populateBoundaries();
 		 });
-		var blocks = jQuery('#blockId').children('option').length;
-		var wards = jQuery('#wardId').children('option').length;
-		if(blocks < 2 && !'<s:property value="%{isBlockActive()}"/>'){
-			bootbox.alert("No block details mapped for ward.");
-			return false;
-		}
-		if(wards < 2 && !'<s:property value="%{isWardActive()}"/>'){
-			bootbox.alert("No ward details mapped for locality.");
-			return false;
-		}
 	});
+	
 	jQuery(function() {
 		jQuery("#propTypeId").change(function(){
 			var propType = jQuery('#propTypeId :selected').text();
@@ -433,15 +447,12 @@
 				jQuery.each(response.results.streets, function (j, street) {
 					jQuery('#streetId').append("<option value='"+street.streetId+"'>"+street.streetName+"</option>");
 				});
-				<s:if test="%{wardId != null}">
+				if(wardId != null)
 					jQuery('#wardId').val('<s:property value="%{wardId}"/>');
-				</s:if>
-				<s:if test="%{blockId != null}">
+				if(blockId != null)
 					jQuery('#blockId').val('<s:property value="%{blockId}"/>');
-				</s:if>
-				<s:if test="%{streetId != null}">
+				if(streetId != null)
 					jQuery('#streetId').val('<s:property value="%{streetId}"/>');
-				</s:if>
 			}, 
 			error: function (response) {
 				jQuery('#wardId').html("");
@@ -453,12 +464,12 @@
 
 	}
 
-	function populateBlock() {
+	function populateBlock(wardId) {
 		jQuery.ajax({
 			url: "/egi/boundary/ajaxBoundary-blockByWard.action",
 			type: "GET",
 			data: {
-				wardId : jQuery('#wardId').val()
+				wardId : wardId
 			},
 			cache: false,
 			dataType: "json",
@@ -467,14 +478,14 @@
 				jQuery.each(response, function (j, block) {
 					jQuery('#blockId').append("<option value='"+block.blockId+"'>"+block.blockName+"</option>");
 				});
-				<s:if test="%{blockId != null}">
-					jQuery('#blockId').val('<s:property value="%{blockId}"/>');
-				</s:if>
 			}, 
 			error: function (response) {
 				jQuery('#blockId').html("");
 				bootbox.alert("No block details mapped for ward")
 			}
 		});
+		var lat = parseFloat('<s:property value="%{basicProperty.latitude}"/>');
+	    var lng = parseFloat('<s:property value="%{basicProperty.longitude}"/>');
+		jQuery('#show-map').on('click',initialize(lat, lng));
 	}
 </script>

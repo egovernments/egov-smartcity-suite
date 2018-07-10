@@ -155,9 +155,9 @@
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.attached.document"/></label>
 						<div class="col-sm-3 add-margin view-content">
 							<c:choose>
-								<c:when test="${waterConnectionDetails.fileStore != null}">
-									<a href="/egi/downloadfile?fileStoreId=${waterConnectionDetails.fileStore.fileStoreId}&moduleName=WTMS" target="_blank"> 
-									<c:out value="${waterConnectionDetails.fileStore.fileName}"/></a>
+								<c:when test="${waterConnectionDetails.fieldInspectionDetails.fileStore != null}">
+									<a href="/egi/downloadfile?fileStoreId=${waterConnectionDetails.fieldInspectionDetails.fileStore.fileStoreId}&moduleName=WTMS" target="_blank"> 
+									<c:out value="${waterConnectionDetails.fieldInspectionDetails.fileStore.fileName}"/></a>
 								</c:when>
 								<c:otherwise>
 									<c:out value="N/A"/>

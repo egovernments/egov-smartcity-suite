@@ -48,6 +48,20 @@
 
 package org.egov.stms.transactions.service;
 
+import static org.egov.stms.utils.constants.SewerageTaxConstants.MODULE_NAME;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.SEWERAGEROLEFORNONEMPLOYEE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.SEWERAGE_DEPARTEMENT_FOR_REASSIGNMENT;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.SEWERAGE_WORKFLOWDEPARTEMENT_FOR_CSCOPERATOR;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.SEWERAGE_WORKFLOWDESIGNATION_FOR_CSCOPERATOR;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
@@ -62,27 +76,14 @@ import org.egov.pims.commons.Position;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
+import org.egov.ptis.wtms.PropertyIntegrationService;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
-import org.egov.wtms.utils.PropertyExtnUtils;
-import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
-import static org.egov.stms.utils.constants.SewerageTaxConstants.MODULE_NAME;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.SEWERAGEROLEFORNONEMPLOYEE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.SEWERAGE_DEPARTEMENT_FOR_REASSIGNMENT;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.SEWERAGE_WORKFLOWDEPARTEMENT_FOR_CSCOPERATOR;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.SEWERAGE_WORKFLOWDESIGNATION_FOR_CSCOPERATOR;
 
 @Service
 @Transactional(readOnly = true)
@@ -99,7 +100,8 @@ public class SewerageWorkflowService {
     @Autowired
     private BoundaryService boundaryService;
     @Autowired
-    private PropertyExtnUtils propertyExtnUtils;
+    @Qualifier("propertyIntegrationServiceImpl")
+    private PropertyIntegrationService propertyIntegrationService;
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -147,7 +149,7 @@ public class SewerageWorkflowService {
 
     public Assignment getMappedAssignmentForCscOperator(final String asessmentNumber) {
 
-        final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(asessmentNumber,
+        final AssessmentDetails assessmentDetails = propertyIntegrationService.getAssessmentDetailsForFlag(asessmentNumber,
                 PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
         Assignment assignmentObj = null;
         final Boundary boundaryObj = boundaryService
@@ -171,7 +173,7 @@ public class SewerageWorkflowService {
                 if (assignment.isEmpty()) {
                     // Ward->Zone
                     if (boundaryObj.getParent() != null && boundaryObj.getParent().getBoundaryType() != null
-                            && boundaryObj.getParent().getBoundaryType().equals(WaterTaxConstants.BOUNDARY_TYPE_ZONE)) {
+                            && boundaryObj.getParent().getBoundaryType().equals("Zone")) {
                         assignment = assignmentService.findByDeptDesgnAndParentAndActiveChildBoundaries(
                                 departmentService.getDepartmentByName(dept).getId(),
                                 designationService.getDesignationByName(desg).getId(), boundaryObj.getParent().getId());
@@ -179,7 +181,7 @@ public class SewerageWorkflowService {
                             // Ward->Zone->City
                             if (boundaryObj.getParent() != null && boundaryObj.getParent().getParent() != null
                                     && boundaryObj.getParent().getParent().getBoundaryType().getName()
-                                            .equals(WaterTaxConstants.BOUNDARY_TYPE_CITY))
+                                            .equals("City"))
                             assignment = assignmentService.findByDeptDesgnAndParentAndActiveChildBoundaries(
                                     departmentService.getDepartmentByName(dept).getId(),
                                     designationService.getDesignationByName(desg).getId(),
@@ -188,7 +190,7 @@ public class SewerageWorkflowService {
                     // ward->City mapp
                     if (assignment.isEmpty())
                         if (boundaryObj.getParent() != null && boundaryObj.getParent().getBoundaryType().getName()
-                                .equals(WaterTaxConstants.BOUNDARY_TYPE_CITY))
+                                .equals("City"))
                             assignment = assignmentService.findByDeptDesgnAndParentAndActiveChildBoundaries(
                                     departmentService.getDepartmentByName(dept).getId(),
                                     designationService.getDesignationByName(desg).getId(),

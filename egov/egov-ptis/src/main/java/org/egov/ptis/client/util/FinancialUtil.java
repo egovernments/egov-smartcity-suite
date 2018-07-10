@@ -47,6 +47,28 @@
  */
 package org.egov.ptis.client.util;
 
+import static org.egov.billsaccounting.services.VoucherConstant.VOUCHERNUMBER;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARREARS_DEMAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARREAR_DEMANDRSN_GLCODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENT_DEMAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENT_DEMANDRSN_GLCODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUNCTIONARY_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUND_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUND_SRC_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEPT_CODE_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.FUNCTION_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTIS_EG_MODULES_ID;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.apache.log4j.Logger;
 import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.billsaccounting.services.VoucherConstant;
@@ -60,30 +82,6 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import static org.egov.billsaccounting.services.VoucherConstant.VOUCHERNUMBER;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARREARS_DEMAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENT_DEMAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUNCTIONARY_CODE;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUND_CODE;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUND_SRC_CODE;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEPT_CODE_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.FUNCTION_CODE;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_ARREARTAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_CURRENTTAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_TAX_PAYABLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTIS_EG_MODULES_ID;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-
 /**
  * @author subhash Provides API to create Voucher in financials whenever there
  *         is change(increase/decrease) in demand in PTIS. Use this API to
@@ -92,13 +90,15 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
  */
 
 public class FinancialUtil {
-    private static final Logger LOGGER = Logger.getLogger(FinancialUtil.class);
+    private static final String AMOUNT = "amount";
+
+	private static final Logger LOGGER = Logger.getLogger(FinancialUtil.class);
 
     private static final String VOUCHERNAME = "JVoucher";
 
     private static final String VOUCHERTYPE = "Journal Voucher";
 
-    private static final String URL_FOR_DCB = "/ptis/view/viewDCBProperty!displayPropInfo.action?propertyId=";
+    private static final String URL_FOR_DCB = "/ptis/view/viewDCBProperty-displayPropInfo.action?propertyId=";
 
     @Autowired
     private ModuleService moduleDao;
@@ -115,63 +115,42 @@ public class FinancialUtil {
      * @param indexNum
      *            Property id for which the voucher is creating.
      * @param amounts
-     *            Map of Installment and reason wise demand map demand map --
-     *            (key-demand reason, val-respective demand)
+     *            Map of Glcode wise demand map --
+     *            (key-Glcode, val - Map of amounts and flag to denote increase/decrease)
      * @param transaction
      *            Reason for voucher creation ( Property creation or
      *            modification etc )
-     * @throws IOException
      */
-    public void createVoucher(String indexNum, Map<Installment, Map<String, BigDecimal>> amounts, String transaction) {
+    public void createVoucher(String indexNum, Map<String, Map<String, Object>> amountsMap, String transaction) {
 
-        LOGGER.info("createVoucher: IndexNumber==>" + indexNum + " amounts==>" + amounts + "actionName==>"
+        LOGGER.info("createVoucher: IndexNumber==>" + indexNum + " amountsMap ==>" + amountsMap + "actionName==>"
                 + transaction);
-
-        Map<String, Map<String, BigDecimal>> resultMap = prepareDemandForGlcode(amounts);
-        Map<String, BigDecimal> arrearsDemandMap = resultMap.get(ARREARS_DEMAND);
-        Map<String, BigDecimal> currentDemandMap = resultMap.get(CURRENT_DEMAND);
+        boolean demandIncreased = (boolean) amountsMap.get("demandIncreased").get("isIncreased");
 
         HashMap<String, Object> headerdetails = createHeaderDetails(indexNum, transaction);
-        List<HashMap<String, Object>> accountDetList = new ArrayList<HashMap<String, Object>>();
+        List<HashMap<String, Object>> accountDetList = new ArrayList<>();
+        BigDecimal amount = BigDecimal.ZERO;
         try {
-
-            for (Map.Entry<String, BigDecimal> arrearsDemand : arrearsDemandMap.entrySet()) {
-                if (arrearsDemand.getValue().compareTo(BigDecimal.ZERO) == 1) {
-                    accountDetList.add(createAccDetailmap(GLCODEMAP_FOR_ARREARTAX.get(arrearsDemand.getKey()),
-                            arrearsDemand.getValue().abs(), BigDecimal.ZERO));
-                    accountDetList.add(createAccDetailmap(GLCODEMAP_FOR_TAX_PAYABLE.get(arrearsDemand.getKey()),
-                            BigDecimal.ZERO, arrearsDemand.getValue().abs()));
-
-                } else if (arrearsDemand.getValue().compareTo(BigDecimal.ZERO) == -1) {
-                    accountDetList.add(createAccDetailmap(GLCODEMAP_FOR_ARREARTAX.get(arrearsDemand.getKey()),
-                            BigDecimal.ZERO, arrearsDemand.getValue().abs()));
-                    accountDetList.add(createAccDetailmap(GLCODEMAP_FOR_TAX_PAYABLE.get(arrearsDemand.getKey()),
-                            arrearsDemand.getValue().abs(), BigDecimal.ZERO));
-                }
-            }
-            for (Map.Entry<String, BigDecimal> currentDemand : currentDemandMap.entrySet()) {
-                if (currentDemand.getValue().compareTo(BigDecimal.ZERO) == 1) {
-                    accountDetList.add(createAccDetailmap(GLCODEMAP_FOR_CURRENTTAX.get(currentDemand.getKey()),
-                            currentDemand.getValue().abs(), BigDecimal.ZERO));
-                    accountDetList.add(createAccDetailmap(GLCODEMAP_FOR_TAX_PAYABLE.get(currentDemand.getKey()),
-                            BigDecimal.ZERO, currentDemand.getValue().abs()));
-
-                } else if (currentDemand.getValue().compareTo(BigDecimal.ZERO) == -1) {
-
-                    if (currentDemand.getKey().equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE)) {
-                        accountDetList.add(createAccDetailmap(PropertyTaxConstants.GLCODE_FOR_ADVANCE, BigDecimal.ZERO,
-                                currentDemand.getValue().abs()));
-                        accountDetList.add(createAccDetailmap(PropertyTaxConstants.GLCODE_FOR_ADVANCE, currentDemand
-                                .getValue().abs(), BigDecimal.ZERO));
+            
+            for(Map.Entry<String, Map<String, Object>> amounts : amountsMap.entrySet()){
+                if(!"demandIncreased".equalsIgnoreCase(amounts.getKey())){
+                    if(CURRENT_DEMANDRSN_GLCODE.equalsIgnoreCase(amounts.getKey()) 
+                            || ARREAR_DEMANDRSN_GLCODE.equalsIgnoreCase(amounts.getKey())){
+                        if(demandIncreased)
+                            accountDetList.add(createAccDetailmap(amounts.getKey(),
+                                    ((BigDecimal)amounts.getValue().get(AMOUNT)).abs(), BigDecimal.ZERO));
+                        else
+                            accountDetList.add(createAccDetailmap(amounts.getKey(),
+                                    BigDecimal.ZERO, ((BigDecimal)amounts.getValue().get(AMOUNT)).abs()));
                     } else {
-                        accountDetList.add(createAccDetailmap(GLCODEMAP_FOR_CURRENTTAX.get(currentDemand.getKey()),
-                                BigDecimal.ZERO, currentDemand.getValue().abs()));
-                        accountDetList.add(createAccDetailmap(GLCODEMAP_FOR_TAX_PAYABLE.get(currentDemand.getKey()),
-                                currentDemand.getValue().abs(), BigDecimal.ZERO));
+                        amount = (BigDecimal)amounts.getValue().get(AMOUNT);
+                        if(amount.compareTo(BigDecimal.ZERO) < 0)
+                            accountDetList.add(createAccDetailmap(amounts.getKey(), amount.abs(), BigDecimal.ZERO));
+                        else 
+                            accountDetList.add(createAccDetailmap(amounts.getKey(), BigDecimal.ZERO, amount.abs()));
                     }
-
+                            
                 }
-
             }
 
             CVoucherHeader cvh = createVoucher.createVoucher(headerdetails, accountDetList,
@@ -219,19 +198,18 @@ public class FinancialUtil {
      * @return Map Contains voucher header details
      */
     private HashMap<String, Object> createHeaderDetails(String indexNumber, String transaction) {
-        SimpleDateFormat sdf = new SimpleDateFormat("MMM-dd-yyyy HH:mm:ss");
-        String description = "PTIS / " + indexNumber + " / " + transaction + " / " + sdf.format(new Date());
+        String description = "PTIS / " + indexNumber + " / " + transaction;
         String sourceURL = URL_FOR_DCB + indexNumber;
 
-        HashMap<String, Object> headerdetails = new HashMap<String, Object>();
+        HashMap<String, Object> headerdetails = new HashMap<>();
         headerdetails.put(VoucherConstant.VOUCHERNAME, VOUCHERNAME);
         headerdetails.put(VoucherConstant.VOUCHERTYPE, VOUCHERTYPE);
         headerdetails.put(VoucherConstant.DESCRIPTION, description);
         headerdetails.put(VoucherConstant.VOUCHERNUMBER, VOUCHERNUMBER);
         headerdetails.put(VoucherConstant.VOUCHERDATE, new Date());
         headerdetails.put(VoucherConstant.STATUS, 0);
-        headerdetails.put(VoucherConstant.MODULEID, PTIS_EG_MODULES_ID);
-        headerdetails.put(VoucherConstant.DEPARTMENTCODE, DEPT_CODE_TAX);
+        headerdetails.put(VoucherConstant.MODULEID, propertyTaxCommonUtil.getModuleIdByName());
+        headerdetails.put(VoucherConstant.DEPARTMENTCODE, getDepartmentCode());
         headerdetails.put(VoucherConstant.FUNDCODE, getFundCode());
         headerdetails.put(VoucherConstant.SOURCEPATH, sourceURL);
         return headerdetails;

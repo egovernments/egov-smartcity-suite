@@ -78,10 +78,10 @@ public class IVRSFeedbackUpdateAPIValidator implements Validator {
         IVRSFeedbackUpdateRequest request = (IVRSFeedbackUpdateRequest) target;
 
         if (isBlank(request.getCrn()) || complaintService.getComplaintByCRN(request.getCrn()) == null)
-            errors.rejectValue("crn", "Invalid CRN", "Invalid CRN");
+            errors.rejectValue("crn", "PGR.002", "CRN does not exist");
 
         if (isBlank(request.getRating()) || feedbackRatingRepository.findByName(request.getRating()) == null)
-            errors.rejectValue("rating", "Invalid Rating", "Invalid Rating");
+            errors.rejectValue("rating", "Rating not found in the system", "Rating not found in the system");
 
     }
 }

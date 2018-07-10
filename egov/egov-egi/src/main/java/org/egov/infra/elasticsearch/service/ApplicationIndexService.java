@@ -48,15 +48,18 @@
 
 package org.egov.infra.elasticsearch.service;
 
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.elasticsearch.entity.ApplicationIndex;
+import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
 import org.egov.infra.elasticsearch.repository.ApplicationIndexRepository;
 import org.egov.infra.elasticsearch.service.es.ApplicationDocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.defaultString;
@@ -107,5 +110,11 @@ public class ApplicationIndexService {
         return applicationIndexRepository.findByApplicationNumberAndCityName(applicationNumber,
                 ApplicationThreadLocals.getCityName());
     }
+    
+	public List<ApplicationIndex> findAllByCityNameAndCreatedByAndApprovalStatus(User currentUser,
+			List<ApprovalStatus> approvalStatuses) {
+		return applicationIndexRepository.findAllByCityNameAndCreatedByAndApprovalStatus(ApplicationThreadLocals.getCityName(),
+				currentUser, approvalStatuses);
+	}
 
 }

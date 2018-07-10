@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -72,19 +72,21 @@ public final class BaseRegisterSpec {
             if (baseRegisterRequest.getWardId() != null)
                 predicate.getExpressions()
                         .add(builder.equal(root.get("wardId"), baseRegisterRequest.getWardId()));
+            if (baseRegisterRequest.getAdminWard() != null)
+                predicate.getExpressions().add(builder.equal(root.get("adminWard"), baseRegisterRequest.getAdminWard()));
             if (baseRegisterRequest.getStatusId() != null)
                 predicate.getExpressions()
                         .add(builder.equal(root.get("statusId"), baseRegisterRequest.getStatusId()));
             if (baseRegisterRequest.getStatusId() == null)
                 predicate.getExpressions()
-                        .add(builder.and(builder.notLike(root.get("statusname"), "Cancelled"),
-                                builder.notLike(root.get("statusname"), "Suspended")));
+                        .add(builder.and(builder.notLike(root.get("statusName"), "Cancelled"),
+                                builder.notLike(root.get("statusName"), "Suspended")));
             if ("Defaulters".equals(baseRegisterRequest.getFilterName()))
                 predicate.getExpressions()
-                        .add(builder.or(builder.greaterThan(root.get("arrearlicensefee"), 0),
-                                builder.greaterThan(root.get("arrearpenaltyfee"), 0),
-                                builder.greaterThan(root.get("curlicensefee"), 0),
-                                builder.greaterThan(root.get("curpenaltyfee"), 0)));
+                        .add(builder.or(builder.greaterThan(root.get("arrearLicenseFee"), 0),
+                                builder.greaterThan(root.get("arrearPenaltyFee"), 0),
+                                builder.greaterThan(root.get("curLicenseFee"), 0),
+                                builder.greaterThan(root.get("curPenaltyFee"), 0)));
             query.distinct(true);
             return predicate;
         };

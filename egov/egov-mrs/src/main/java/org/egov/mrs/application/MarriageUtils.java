@@ -131,7 +131,7 @@ public class MarriageUtils {
 
     public Boolean isDigitalSignEnabled() {
         final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
-                MarriageConstants.MODULE_NAME, MarriageConstants.APPCONFKEY_DIGITALSIGNINWORKFLOW).get(0);
+                MarriageConstants.MODULE_NAME, MarriageConstants.DIGITALSIGNINWORKFLOW_ENABLED).get(0);
         return "YES".equalsIgnoreCase(appConfigValue.getValue());
     }
 
@@ -170,7 +170,7 @@ public class MarriageUtils {
     public boolean isReassignEnabled() {
         final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(
                 MarriageConstants.MODULE_NAME,
-                MarriageConstants.APPCONFKEY_REASSIGN_BUTTONENABLED);
+                MarriageConstants.REASSIGN_BUTTONENABLED);
         return !appConfigValues.isEmpty() && "YES".equals(appConfigValues.get(0).getValue()) ? true : false;
     }
 

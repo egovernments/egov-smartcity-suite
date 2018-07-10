@@ -82,11 +82,6 @@ $(document).ready(function () {
                 dataType: "json",
                 data: {'locality': this.value}
             }).done(function (response) {
-                if (response.length < 1) {
-                    bootbox.alert("Could not find ward for Locality : " + $('#boundary').find(":selected").text());
-                    $('#boundary').val('');
-                    return;
-                }
                 $.each(response, function (key, boundary) {
                     $('#adminWard').append('<option value="' + boundary.wardId + '">' + boundary.wardName + '</option>');
                 });

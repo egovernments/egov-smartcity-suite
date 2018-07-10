@@ -73,7 +73,7 @@ public class CouncilResolutionsService {
         final StringBuilder queryString = new StringBuilder();
         queryString.append("select c.meetingType.name as meetingType,c.committeeType.name as committeeType,");
         queryString.append("mom.preamble.department.name as department,mom.agenda.agendaNumber as agendaNo,");
-        queryString.append("mom.preamble.preambleNumber as preambleNo,mom.resolutionNumber as resolutionNo,");
+        queryString.append("mom.preamble.preambleNumber as preambleNo,mom.preamble.gistOfPreamble as gistOfPreamble,mom.resolutionNumber as resolutionNo,");
         queryString.append("mom.itemNumber as serialNo,mom.resolutionStatus.code as status,");
         queryString.append("mom.preamble.sanctionAmount as sanctionAmount ");
         queryString.append(" from CouncilMeeting c, MeetingMOM mom where  mom.meeting=c.id and c.committeeType.isActive=true");

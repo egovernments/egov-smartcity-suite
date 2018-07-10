@@ -298,6 +298,7 @@ function validateResolutionNumber(resolutionNumber){
 
 
 $('#buttonSubmit').click(function(e) {
+	validateMeetingNumber();
 	var nonUniqueAgenda=validateAgendaNumber($('#agendaNumber').val());
 	if($('#emptyRow').length){
 		bootbox.alert("Atleast one preamble item should be added into agenda");

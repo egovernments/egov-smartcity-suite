@@ -92,7 +92,6 @@ public final class Constants {
     public static final String TRADELICENSEMODULE = "TRADELICENSE";
     public static final String WARD = "WARD";
     public static final String BEFORE_RENEWAL = "beforeRenew";
-    public static final String ACKNOWLEDGEMENT_RENEW = "acknowledgement_renew";
     public static final BigDecimal CHQ_BOUNCE_PENALTY = BigDecimal.valueOf(1000);
     public static final String DEMANDRSN_STR_CHQ_BOUNCE_PENALTY = "CHEQUE BOUNCE PENALTY";
     public static final Character DMD_STATUS_CHEQUE_BOUNCED = 'B';
@@ -115,7 +114,7 @@ public final class Constants {
     public static final String APPLICATION_STATUS_GENECERT_CODE = "CERTIFICATEGENERATED";
     public static final String APPLICATION_STATUS_REJECTED = "REJECTED";
     public static final String APPLICATION_STATUS_CANCELLED = "CANCELLED";
-    public static final String RENEWAL_LIC_APPTYPE = "Renew";
+    public static final String RENEW_APPTYPE_CODE = "RENEW";
     public static final String SEARCH_BY_APPNO = "ApplicationNumber";
     public static final String SEARCH_BY_LICENSENO = "LicenseNumber";
     public static final String SEARCH_BY_OLDLICENSENO = "OldLicenseNumber";
@@ -129,11 +128,8 @@ public final class Constants {
     public static final String PENALTY_DMD_REASON_CODE = "Penalty";
     public static final String SIGNWORKFLOWACTION = "Sign";
     public static final String WF_PREVIEW_BUTTON = "Preview";
-    public static final String DIGITALSIGNINCLUDEINWORKFLOW = "DIGITALSIGNINCLUDEINWORKFLOW";
     public static final String PERMANENT_NATUREOFBUSINESS = "Permanent";
     public static final String TEMP_NATUREOFBUSINESS = "Temporary";
-    public static final String RENEWAL_NATUREOFWORK = "Renewal of Trade License";
-    public static final String NEW_NATUREOFWORK = "New Trade License";
     public static final String WF_FIRST_LVL_FEECOLLECTED = "First level fee collected";
     public static final String WF_SI_APPROVED = "SI/MHO approved";
     public static final String WF_REVENUECLERK_APPROVED = "Revenue clerk approved";
@@ -147,7 +143,7 @@ public final class Constants {
     public static final String WF_CERTIFICATE_GEN_PENDING = "Certificate generation pending";
     public static final String RENEW_ADDITIONAL_RULE = "RENEWTRADELICENSE";
     public static final String NEW_ADDITIONAL_RULE = "NEWTRADELICENSE";
-    public static final String NEW_LIC_APPTYPE = "New";
+    public static final String NEW_APPTYPE_CODE = "NEW";
     public static final String DELIMITER_COLON = "::";
     public static final String EDIT_APPROVAL_MODE = "editForApproval";
     public static final String DIGI_ENABLED_WF_SECOND_LVL_FEECOLLECTED = "Digital sign-Second level fee collected";
@@ -159,8 +155,6 @@ public final class Constants {
     public static final String GENERATE_CERTIFICATE = "tl_generateCertificate";
     public static final String CLOSURE_ADDITIONAL_RULE = "CLOSURELICENSE";
     public static final String CITY_GRADE_CORPORATION = "Corp";
-    public static final String TL_LICENSE_ACT_CORPORATION = "Trade license Act corporation";
-    public static final String TL_LICENSE_ACT_DEFAULT = "Trade license Act Muncipalities";
     public static final String CSCOPERATOR = "CSC Operator";
     public static final String PRINTACK = "printAck";
     public static final String PUBLIC_HEALTH_DEPT_CODE = "PHS";
@@ -169,11 +163,10 @@ public final class Constants {
     public static final String SA_DESIGNATION = "Senior Assistant";
     public static final String SA_DESIGNATION_CODE = "SASST";
     public static final String JA_DESIGNATION_CODE = "JASST";
-    public static final String CLOSURE_NATUREOFTASK = "Closure License";
     public static final String BILL_TYPE_AUTO = "AUTO";
     public static final String TRADE_LICENSE = "Trade License";
     public static final String TL_SERVICE_CODE = "TL";
-    public static final String CLOSURE_LIC_APPTYPE = "Closure";
+    public static final String CLOSURE_APPTYPE_CODE = "CLOSURE";
     public static final String COMMISSIONER_DESGN = "Commissioner";
     public static final String MEESEVA_RESULT_ACK = "meesevaAck";
     public static final String MEESEVAOPERATOR = "MeeSeva Operator";
@@ -194,6 +187,8 @@ public final class Constants {
     public static final String PROCESS_OWNER_FORMAT = "%s [%s]";
     public static final String RENEW_WITHOUT_FEE = "RENEWALWITHOUTFEE";
     public static final String COMPLETED = "Completed";
+    public static final String ADMIN_HIERARCHY = "ADMINISTRATION";
+    public static final String ADMIN_WARD = "Ward";
     public static final Map<String, String> OWNERSHIP_TYPE = new ImmutableMap.Builder<String, String>()
             .put(OWNERSHIP_TYPE_OWN, OWNERSHIP_TYPE_OWN).put(OWNERSHIP_TYPE_RENTED, OWNERSHIP_TYPE_RENTED)
             .put(OWNERSHIP_TYPE_ULB, OWNERSHIP_TYPE_ULB).put(OWNERSHIP_TYPE_STATEGOVERNMENT, OWNERSHIP_TYPE_STATEGOVERNMENT)

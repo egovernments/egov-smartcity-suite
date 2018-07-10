@@ -77,6 +77,7 @@ function submitForm() {
 
 	var caseNumber = $("#caseNumber").val();
 	var lcNumber = $("#lcNumber").val();
+	
 
 	$('.report-section').removeClass('display-hide');
 	$('#report-footer').show();
@@ -101,8 +102,8 @@ function submitForm() {
 							"sTitle" : "Legal Case Number",
 							"className" : "text-right",
 							"render" : function(data, type, full, meta) {
-								return '<a href="/lcms/application/view/?lcNumber='
-										+ data + '">' + data + '</div>';
+								return '<a href="javascript:void(0);" onclick="openLegalCase(\''+ data +'\')">' + data + '</a>';
+								
 							}
 						},
 						{
@@ -145,15 +146,18 @@ function submitForm() {
 							title : 'Actions',
 							"className" : "text-right",
 							render : function(data, type, full) {
+								if(full.legalViewAccess)
+									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="4">View legalCase</option></select>');
+
 
 								if (full.casestatus == 'LCCREATED'
-										|| full.casestatus == 'HEARING' || full.casestatus == 'INTERIM_STAY' ) {
+										|| full.casestatus == 'HEARING' || full.casestatus == 'INTERIM_STAY' && !full.legalViewAccess) {
 									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="1">Judgment</option><option value="2">Add/Edit Standing Counsel</option><option value="10">Add/Edit Counter Affidavit Details</option><option value="3">Edit legalCase</option><option value="4">View legalCase</option><option value="6">Hearings</option><option value="7">Interim Order</option><option value="8">Close Case</option></select>');
-								} else if (full.casestatus == 'JUDGMENT') {
+								} else if (full.casestatus == 'JUDGMENT' && !full.legalViewAccess) {
 									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="4">View legalCase</option><option value="5">Edit Judgment</option><option value="8">Close Case</option><option value="11">Judgment Implementation</option></select>');
-								} else if (full.casestatus == 'CLOSED') {
+								} else if (full.casestatus == 'CLOSED' && !full.legalViewAccess) {
 									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="9">Edit Close Case</option></select>');
-								} else if (full.casestatus == 'JUDGEMENT_IMPL') {
+								} else if (full.casestatus == 'JUDGEMENT_IMPL' && !full.legalViewAccess) {
 									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="12">Edit Judgment Implementation</option><option value="8">Close Case</option></select>');
 								}
 							}
@@ -196,8 +200,8 @@ $("#legalCaseResults").on('change', 'tbody tr td .dropchange', function() {
 		$('#searchlegalcaseForm1').attr('method', 'get');
 		$('#searchlegalcaseForm1').attr('action', url);
 		window.location = url;
-
-	}
+		
+}
 
 	if (this.value == 2) {
 		var url = '/lcms/standingCouncil/create/?lcNumber=' + lcNumber;
@@ -225,7 +229,7 @@ $("#legalCaseResults").on('change', 'tbody tr td .dropchange', function() {
 		var url = '/lcms/application/view/?lcNumber=' + lcNumber;
 		$('#searchlegalcaseForm1').attr('method', 'get');
 		$('#searchlegalcaseForm1').attr('action', url);
-		window.location = url;
+		window.open(url,"","height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
 
 	}
 	if (this.value == 3) {
@@ -246,6 +250,7 @@ $("#legalCaseResults").on('change', 'tbody tr td .dropchange', function() {
 		var url = '/lcms/lcinterimorder/list/?lcNumber=' + lcNumber;
 		$('#searchlegalcaseForm1').attr('method', 'get');
 		$('#searchlegalcaseForm1').attr('action', url);
+		//window.open(url,"","height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
 		window.location = url;
 
 	}
@@ -275,7 +280,6 @@ $("#legalCaseResults").on('change', 'tbody tr td .dropchange', function() {
 		$('#searchlegalcaseForm1').attr('method', 'get');
 		$('#searchlegalcaseForm1').attr('action', url);
 		window.location = url;
-
 	}
 });
 
@@ -286,4 +290,7 @@ function loadsubreportstatus(){
 	else
 		$("#reportstatus").hide();
 }
-		
+	
+function openLegalCase(data) {
+	window.open("/lcms/application/view/?lcNumber="+ data , "", "height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
+}

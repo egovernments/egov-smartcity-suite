@@ -54,7 +54,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.egov.tl.utils.Constants.CLOSURE_LIC_APPTYPE;
+import static org.egov.tl.utils.Constants.CLOSURE_APPTYPE_CODE;
 
 public class OnlineSearchForm {
 
@@ -69,6 +69,7 @@ public class OnlineSearchForm {
     private BigDecimal currDmd;
     private BigDecimal totColl;
     private String status;
+    private String uid;
 
     public OnlineSearchForm() {
         // For form binding
@@ -76,6 +77,7 @@ public class OnlineSearchForm {
 
     public OnlineSearchForm(final License license, final BigDecimal[] dmdColl) {
         setLicenseId(license.getId());
+        setUid(license.getUid());
         setApplicationNumber(license.getApplicationNumber());
         setLicenseNumber(license.getLicenseNumber());
         setTradeOwnerName(license.getLicensee().getApplicantName());
@@ -95,7 +97,7 @@ public class OnlineSearchForm {
             actions.add("Closure");
         if (license.isStatusActive() && !license.isLegacy())
             actions.add("Print Certificate");
-        if (!CLOSURE_LIC_APPTYPE.equals(license.getLicenseAppType().getName()) && license.getStatus().getStatusCode().equals(Constants.STATUS_UNDERWORKFLOW))
+        if (!CLOSURE_APPTYPE_CODE.equals(license.getLicenseAppType().getCode()) && license.getStatus().getStatusCode().equals(Constants.STATUS_UNDERWORKFLOW))
             actions.add("Print Provisional Certificate");
         if (license.isClosed())
             actions.add("Closure Endorsement Notice");
@@ -188,5 +190,13 @@ public class OnlineSearchForm {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 }

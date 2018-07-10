@@ -85,6 +85,7 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import static org.egov.infra.utils.ApplicationConstant.NA;
 
 
 
@@ -366,6 +367,7 @@ public class AdvertisementWorkFlowService {
         final List<Map<String, Object>> historyTable = new ArrayList<>();
         final State<Position> state = advertisementPermitDetail.getState();
         final Map<String, Object> map = new HashMap<>(0);
+        String username;
         if (null != state) {
             if (!advertisementPermitDetail.getStateHistory().isEmpty()
                     && advertisementPermitDetail.getStateHistory() != null)
@@ -386,11 +388,16 @@ public class AdvertisementWorkFlowService {
                             null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
                                     .getDepartmentForUser(user.getId()).getName() : "");
                 } else if (null != owner && null != owner.getDeptDesig()) {
-                    user = eisCommonService.getUserForPosition(owner.getId(), new Date());
+                    if (eisCommonService.getUserForPosition(owner.getId(), new Date()) == null) {
+                        username = NA;
+                    } else {
+                        user = eisCommonService.getUserForPosition(owner.getId(), new Date());
+                        username = user.getUsername() + "::" + user.getName();
+                    }
                     historyMap
-                            .put(USER, null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
-                    historyMap.put(DEPARTMENT, null != owner.getDeptDesig().getDepartment() ? owner.getDeptDesig()
-                            .getDepartment().getName() : "");
+                            .put(USER, username);
+                    historyMap.put(DEPARTMENT, (owner.getDeptDesig() == null && owner.getDeptDesig().getDepartment() == null) ? NA
+                            : owner.getDeptDesig().getDepartment().getName());
                 }
                 historyTable.add(historyMap);
             }
@@ -405,8 +412,14 @@ public class AdvertisementWorkFlowService {
                 map.put(DEPARTMENT, null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
                         .getDepartmentForUser(user.getId()).getName() : "");
             } else if (null != ownerPosition && null != ownerPosition.getDeptDesig()) {
-                user = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
-                map.put(USER, null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
+
+                if (eisCommonService.getUserForPosition(ownerPosition.getId(), new Date()) == null) {
+                    username = NA;
+                } else {
+                    user = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
+                    username = user.getUsername() + "::" + user.getName();
+                }
+                map.put(USER, username);
                 map.put(DEPARTMENT, null != ownerPosition.getDeptDesig().getDepartment() ? ownerPosition
                         .getDeptDesig().getDepartment().getName() : "");
             }

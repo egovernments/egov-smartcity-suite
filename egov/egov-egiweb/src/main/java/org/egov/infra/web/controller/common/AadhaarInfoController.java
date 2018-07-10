@@ -53,6 +53,7 @@ import org.egov.infra.web.rest.error.ErrorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -67,18 +68,24 @@ public class AadhaarInfoController {
 
     private static final Logger LOG = LoggerFactory.getLogger(AadhaarInfoController.class);
 
+    @Value("${aadhaar.service.enabled}")
+    private boolean aadhaarServiceEnabled;
+
     @Autowired
     private AadhaarInfoServiceClient aadhaarInfoServiceClient;
 
     @RequestMapping(value = "/{uid}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> aadhaarInfo(@PathVariable final String uid) throws Exception {
-        return new ResponseEntity<String>(aadhaarInfoServiceClient.getAadhaarInfo(uid).toJSON(), HttpStatus.OK);
+    public ResponseEntity<?> aadhaarInfo(@PathVariable String uid) {
+        if (aadhaarServiceEnabled)
+            return new ResponseEntity<>(aadhaarInfoServiceClient.getAadhaarInfo(uid).toJSON(), HttpStatus.OK);
+        else
+            return new ResponseEntity<>("{\"Status\": \"Unavailable\"}", HttpStatus.OK);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> exceptionHandler(final Exception ex) {
+    public ResponseEntity<ErrorResponse> exceptionHandler(Exception ex) {
         LOG.error("Error occurred while contacting SRDH web service", ex);
-        return new ResponseEntity<ErrorResponse>(new ErrorResponse("INFRA-001",
+        return new ResponseEntity<>(new ErrorResponse("INFRA-001",
                 "Detail not found in uidai server for the given aadhaar no", HttpStatus.NOT_FOUND), HttpStatus.NOT_FOUND);
     }
 }

@@ -64,6 +64,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static org.egov.tl.utils.Constants.NEW_APPTYPE_CODE;
+
 @Service
 @Transactional(readOnly = true)
 public class FeeMatrixService<T extends License> {
@@ -135,12 +137,12 @@ public class FeeMatrixService<T extends License> {
         Optional<FeeMatrix> feeMatrix = getFeeMatrixForTemporaryLicense(license, feeType, effectiveDate);
         if (!feeMatrix.isPresent()) {
             feeMatrix = feeMatrixRepository.findFeeMatrix(license, license.getNatureOfBusiness(), feeType,
-                    licenseAppTypeService.getNewLicenseAppType(), effectiveDate);
+                    licenseAppTypeService.getLicenseAppTypeByCode(NEW_APPTYPE_CODE), effectiveDate);
         }
 
         if (!feeMatrix.isPresent() && license.isTemporary()) {
             feeMatrix = feeMatrixRepository.findFeeMatrix(license, natureOfBusinessService.getPermanentBusinessNature(),
-                    feeType, licenseAppTypeService.getNewLicenseAppType(), effectiveDate);
+                    feeType, licenseAppTypeService.getLicenseAppTypeByCode(NEW_APPTYPE_CODE), effectiveDate);
         }
         return feeMatrix;
     }

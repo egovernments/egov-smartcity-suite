@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+  ~ eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) <2018>  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -27,13 +27,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
-  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
-  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
-  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~           Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~           Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~           derived works should carry eGovernments Foundation logo on the top right corner.
   ~
-  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
-  ~            For any further queries on attribution, including queries on brand guidelines,
-  ~            please contact contact@egovernments.org
+  ~ 	       For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~ 	       For any further queries on attribution, including queries on brand guidelines,
+  ~           please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -72,7 +72,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{licenseAppType}.getName()+"  License Application Acknowledgement"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{licenseAppType}.getName()+" Application Acknowledgement"]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
@@ -107,7 +107,7 @@
 			</staticText>
 			<staticText>
 				<reportElement positionType="Float" x="398" y="119" width="173" height="32" isPrintInFirstWholeBand="true" uuid="c12cc72e-17fb-4155-b0a3-57e2d63a2cb9">
-					<printWhenExpression><![CDATA[$F{licenseAppType}.getName()!="Closure"]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{licenseAppType}.getCode() != "CLOSURE"]]></printWhenExpression>
 				</reportElement>
 				<textElement verticalAlignment="Middle">
 					<font size="12"/>
@@ -137,7 +137,7 @@
 			</textField>
 			<textField>
 				<reportElement positionType="Float" x="571" y="119" width="211" height="32" isPrintInFirstWholeBand="true" uuid="3c09aadb-31ab-43dd-a64c-634231f52618">
-					<printWhenExpression><![CDATA[$F{licenseAppType}.getName()!="Closure"]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{licenseAppType}.getCode() != "CLOSURE"]]></printWhenExpression>
 				</reportElement>
 				<textElement verticalAlignment="Middle">
 					<font size="12"/>
@@ -198,7 +198,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{licenseNumber}.equals(null) ? "NA":$F{licenseNumber}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{licenseNumber} == null ? "NA":$F{licenseNumber}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -212,7 +212,7 @@
 		<band height="84" splitType="Stretch">
 			<staticText>
 				<reportElement stretchType="RelativeToTallestObject" x="31" y="28" width="367" height="20" isPrintWhenDetailOverflows="true" uuid="182e16be-5dcb-4320-aa54-952196ac5995">
-					<printWhenExpression><![CDATA[$F{licenseAppType}.getName()!="Closure"]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{licenseAppType}.getCode() != "CLOSURE"]]></printWhenExpression>
 				</reportElement>
 				<textElement verticalAlignment="Middle"/>
 				<text><![CDATA[Final License Fee will be subjected to inspection.]]></text>

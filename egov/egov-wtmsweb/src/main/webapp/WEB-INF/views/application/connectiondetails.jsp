@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -114,7 +114,7 @@
 </div>
 <div class="form-group">
     <label class="col-sm-3 control-label text-right"><spring:message
-			code="lbl.propertytype" /><span class="mandatory"></span></label>
+			code="lbl.propertytype.water" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
 		<form:select path="propertyType" data-first-option="false" id="propertyType"
 			cssClass="form-control" required="required" >
@@ -214,20 +214,9 @@
 		</div>
 	</div>
 </div>
-<c:if test="${waterConnectionDetails.applicationType.code=='REGLZNCONNECTION' && waterConnectionDetails.status.code=='CREATED' && currentState != 'NEW'}">
+<c:if test="${waterConnectionDetails.applicationType.code=='REGLZNCONNECTION' && waterConnectionDetails.status.code=='CREATED' && currentState != 'NEW' && currentState != 'Rejected'}">
 	<div class="form-group">
-		<label class="col-sm-3 control-label text-right">
-				<spring:message code="lbl.service.charges"/>
-			</label>
-			<div class="col-sm-3 add-margin">
-				<input class="form-control" id="serviceCharges" disabled="true" value="${serviceCharges}"/> 
-			</div>
-		<label class="col-sm-2 control-label text-right">
-			<spring:message code="lbl.penalty.amount"/>
-		</label>
-		<div class="col-sm-3 add-margin">
-			<input class="form-control" id="penaltyAmount" value="${penaltyAmount}" disabled="true"/>
-		</div>
+		
 	</div>
 </c:if>
 	<div class="form-group display-hide showfields" id="donationChargesDiv" style="display:none">
@@ -236,7 +225,7 @@
 			<form:input class="form-control patternvalidation" path="donationCharges" data-pattern="number" maxlength="6" id="donationChargesInput" value='${donationCharges}'/>
 		</div>
 	</div>
-	<c:if test="${waterConnectionDetails.applicationType.code=='REGLZNCONNECTION' && waterConnectionDetails.status.code=='CREATED' && currentState != 'NEW'}">
+	<c:if test="${waterConnectionDetails.applicationType.code=='REGLZNCONNECTION' && waterConnectionDetails.status.code=='CREATED' && currentState != 'NEW' && currentState != 'Rejected'}">
 		<div>
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.connectiondate"/><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
@@ -244,8 +233,16 @@
 					data-date-end-date="-1d" id="executionDate" data-inputmask="'mask': 'd/m/y'" required="required" />
 				<form:errors path="executionDate" cssClass="add-margin error-msg" />
 			</div>
+			
+			<label class="col-sm-2 control-label text-right">
+				<spring:message code="lbl.penalty.amount"/>
+			</label>
+			<div class="col-sm-3 add-margin">
+				<input class="form-control" id="penaltyAmount" value="${penaltyAmount}" disabled="true"/>
+			</div>
 		</div>
 	</c:if>
+	<c:if test="${waterConnectionDetails.applicationType.code!='NEWCONNECTION'}">
 	<div class="form-group" id ="cardHolderDiv">
 		<label class="col-sm-3 control-label text-right"><spring:message
 				code="lbl.bpl.cardholdername" /><span class="mandatory"></span></label> 
@@ -254,6 +251,7 @@
 			<form:errors path="bplCardHolderName" cssClass="add-margin error-msg" />		
 		</div>
 	</div>
+	</c:if>
 
 <form:hidden id="typeOfConnection" path="" value="${typeOfConnection}"/>
 <c:if test="${mode=='addconnection'}">
@@ -268,9 +266,9 @@
 </c:if>	
 
 <script>
-
+	$("#penaltyAmount").val($("#donationChargesInput").val()/2);
 	$("#donationChargesInput").on('change', function() {
-		$("#penaltyAmount").val($("#donationChargesInput").val());
+		$("#penaltyAmount").val($("#donationChargesInput").val()/2);
 	});
 	
 	if($("#connectionType").val()=='METERED'){

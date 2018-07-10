@@ -123,6 +123,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -339,11 +340,11 @@ public class PropertyTransferService {
     }
 
     public List<PropertyMutationMaster> getPropertyTransferReasons() {
-        return propertyMutationMasterDAO.getAllActiveReasonsByType(TRANSFER);
+        return propertyMutationMasterDAO.getAllActiveReasonsByType(PROP_MUTATION_RSN);
     }
 
     public PropertyMutationMaster getPropertyTransferReasonsByCode(final String mutationCode) {
-        return propertyMutationMasterDAO.getPropertyMutationMasterByCodeAndType(mutationCode, TRANSFER);
+        return propertyMutationMasterDAO.getPropertyMutationMasterByCodeAndType(mutationCode, PROP_MUTATION_RSN);
     }
 
     public PropertyMutation getPropertyMutationByApplicationNo(final String applicationNo) {
@@ -505,7 +506,7 @@ public class PropertyTransferService {
         for (final PropertyMutationTransferee transferee : transferees) {
             if (transferee != null) {
                 User user = null;
-                if (null != transferee.getTransferee().getAadhaarNumber()
+                /*if (null != transferee.getTransferee().getAadhaarNumber()
                         && !transferee.getTransferee().getAadhaarNumber().isEmpty()) {
                     List<User> userList = userService.getUserByAadhaarNumberAndType(transferee.getTransferee().getAadhaarNumber(),
                             transferee.getTransferee().getType());
@@ -518,15 +519,14 @@ public class PropertyTransferService {
                                     &&
                                     userList.get(i).getName().equalsIgnoreCase(transferee.getTransferee().getName()))
                                 user = userList.get(i);
-                } else {
+                } else*/ 
+                if (StringUtils.isNotBlank(transferee.getTransferee().getMobileNumber())) {
                     Query qry = entityManager.createNamedQuery("USER_BY_NAMEANDMOBILENO");
                     qry.setParameter("name", transferee.getTransferee().getName());
                     qry.setParameter("mobileNumber", transferee.getTransferee().getMobileNumber());
                     qry.setParameter("gender", transferee.getTransferee().getGender());
                     if (!qry.getResultList().isEmpty())
                         user = (User) qry.getResultList().get(0);
-                    else
-                        user = null;
                 }
                 if (user == null) {
                     final Citizen newOwner = new Citizen();
@@ -559,7 +559,10 @@ public class PropertyTransferService {
 
     private void processAndStoreDocument(final PropertyMutation propertyMutation, final String oldTransferReason) {
         if (StringUtils.isNotBlank(oldTransferReason)
-                && !oldTransferReason.equals(propertyMutation.getMutationReason().getId().toString()))
+                && Arrays
+                        .asList(propertyMutation.getMutationReason().getCode(), oldTransferReason)
+                        .contains("SUCCESSION")
+                && !oldTransferReason.equals(propertyMutation.getMutationReason().getCode()))
             propertyMutation.getDocuments().clear();
         if (propertyMutation.getDocuments().isEmpty() && !propertyMutation.getDocumentsProxy().isEmpty())
             propertyMutation.setDocuments(propertyMutation.getDocumentsProxy());
@@ -756,24 +759,27 @@ public class PropertyTransferService {
         BigDecimal documentValue = partyValue.compareTo(departmentValue) > 0 ? partyValue : departmentValue;
 
         if (documentValue.compareTo(BigDecimal.ZERO) > 0) {
-            final MutationFeeDetails mutationFeeDetails = (MutationFeeDetails) mutationFeeRepository.getMutationFee(documentValue);
-            if (mutationFeeDetails != null) {
-                if (mutationFeeDetails.getFlatAmount() != null
-                        && mutationFeeDetails.getFlatAmount().compareTo(BigDecimal.ZERO) > 0)
-                    if (mutationFeeDetails.getIsRecursive().toString().equalsIgnoreCase("N"))
-                        mutationFee = mutationFeeDetails.getFlatAmount();
-                    else {
-                        BigDecimal excessDocValue = documentValue.subtract(mutationFeeDetails.getLowLimit()).add(BigDecimal.ONE);
-                        BigDecimal multiplicationFactor = excessDocValue.divide(mutationFeeDetails.getRecursiveFactor(),
-                                BigDecimal.ROUND_CEILING);
-                        mutationFee = mutationFeeDetails.getFlatAmount()
-                                .add(multiplicationFactor.multiply(mutationFeeDetails.getRecursiveAmount()));
-                    }
-                if (mutationFeeDetails.getPercentage() != null
-                        && mutationFeeDetails.getPercentage().compareTo(BigDecimal.ZERO) > 0
-                        && mutationFeeDetails.getIsRecursive().toString().equalsIgnoreCase("N"))
-                        mutationFee = documentValue.multiply(mutationFeeDetails.getPercentage())
-                                .divide(PropertyTaxConstants.BIGDECIMAL_100);
+            List<MutationFeeDetails> mutationFeeDetailsList = mutationFeeRepository.getMutationFee(documentValue);
+            if (!mutationFeeDetailsList.isEmpty()) {
+            	MutationFeeDetails mutationFeeDetails = mutationFeeDetailsList.get(0);
+            	if(mutationFeeDetails != null){
+            		if (mutationFeeDetails.getFlatAmount() != null
+                            && mutationFeeDetails.getFlatAmount().compareTo(BigDecimal.ZERO) > 0)
+                        if ("N".equalsIgnoreCase(mutationFeeDetails.getIsRecursive().toString()))
+                            mutationFee = mutationFeeDetails.getFlatAmount();
+                        else {
+                            BigDecimal excessDocValue = documentValue.subtract(mutationFeeDetails.getLowLimit()).add(BigDecimal.ONE);
+                            BigDecimal multiplicationFactor = excessDocValue.divide(mutationFeeDetails.getRecursiveFactor(),
+                                    BigDecimal.ROUND_CEILING);
+                            mutationFee = mutationFeeDetails.getFlatAmount()
+                                    .add(multiplicationFactor.multiply(mutationFeeDetails.getRecursiveAmount()));
+                        }
+                    if (mutationFeeDetails.getPercentage() != null
+                            && mutationFeeDetails.getPercentage().compareTo(BigDecimal.ZERO) > 0
+                            && mutationFeeDetails.getIsRecursive().toString().equalsIgnoreCase("N"))
+                            mutationFee = documentValue.multiply(mutationFeeDetails.getPercentage())
+                                    .divide(PropertyTaxConstants.BIGDECIMAL_100);
+            	}
             }
         }
         return mutationFee.setScale(0, BigDecimal.ROUND_HALF_UP);

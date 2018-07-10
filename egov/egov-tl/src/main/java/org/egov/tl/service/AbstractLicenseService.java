@@ -90,7 +90,6 @@ import org.egov.tl.repository.LicenseDocumentTypeRepository;
 import org.egov.tl.repository.LicenseRepository;
 import org.egov.tl.service.es.LicenseApplicationIndexService;
 import org.egov.tl.utils.LicenseNumberUtils;
-import org.egov.tl.utils.LicenseUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -180,25 +179,18 @@ public abstract class AbstractLicenseService<T extends License> {
 
     @Autowired
     protected DesignationService designationService;
-
+    @Autowired
+    protected LicenseConfigurationService licenseConfigurationService;
     @Autowired
     private PenaltyRatesService penaltyRatesService;
-
-    @Autowired
-    private LicenseUtils licenseUtils;
-
     @Autowired
     private DepartmentService departmentService;
-
     @Autowired
     private TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
-
     @Autowired
     private SubCategoryDetailsService subCategoryDetailsService;
-
     @Autowired
     private FeeTypeService feeTypeService;
-
     @Autowired
     private LicenseCitizenPortalService licenseCitizenPortalService;
 
@@ -419,7 +411,7 @@ public abstract class AbstractLicenseService<T extends License> {
         // Refetching license in this txn to avoid lazy initialization issue
         License license = licenseRepository.findOne(licenze.getId());
         Map<EgDemandReason, EgDemandDetails> reasonWiseDemandDetails = getReasonWiseDemandDetails(license.getLicenseDemand());
-        license.setLicenseAppType(licenseAppTypeService.getLicenseAppTypeByName(RENEWAL_LIC_APPTYPE));
+        license.setLicenseAppType(licenseAppTypeService.getLicenseAppTypeByCode(RENEW_APPTYPE_CODE));
         for (FeeMatrixDetail feeMatrixDetail : feeMatrixService.getLicenseFeeDetails(license, installment.getFromDate())) {
             String feeType = feeMatrixDetail.getFeeMatrix().getFeeType().getName();
             if (feeType.contains("Late"))
@@ -437,6 +429,7 @@ public abstract class AbstractLicenseService<T extends License> {
                 licenseDemandDetail.setAmount(tradeAmt);
             if (license.getCurrentDemand().getEgInstallmentMaster().getInstallmentYear().before(installment.getInstallmentYear()))
                 license.getLicenseDemand().setEgInstallmentMaster(installment);
+
         }
         license.getLicenseDemand().recalculateBaseDemand();
         licenseRepository.save(license);
@@ -491,7 +484,7 @@ public abstract class AbstractLicenseService<T extends License> {
                         null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
                 license.transition().start().withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
                         .withComments(workflowBean.getApproverComments())
-                        .withNatureOfTask(license.isReNewApplication() ? RENEWAL_NATUREOFWORK : NEW_NATUREOFWORK)
+                        .withNatureOfTask(license.getLicenseAppType().getName())
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(wfInitiator)
                         .withNextAction(wfmatrix.getNextAction()).withInitiator(wfInitiator);
                 license.setEgwStatus(
@@ -499,7 +492,7 @@ public abstract class AbstractLicenseService<T extends License> {
             } else if (BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
                 Position commissioner = getCommissionerPosition();
                 if (APPLICATION_STATUS_APPROVED_CODE.equals(license.getEgwStatus().getCode())) {
-                    if (licenseUtils.isDigitalSignEnabled())
+                    if (licenseConfigurationService.digitalSignEnabled())
                         license.transition().progressWithStateCopy()
                                 .withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
                                 .withComments(workflowBean.getApproverComments())
@@ -719,7 +712,7 @@ public abstract class AbstractLicenseService<T extends License> {
                     license.transition().startNext();
                 license.transition()
                         .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
-                        .withComments(workflowBean.getApproverComments()).withNatureOfTask(CLOSURE_NATUREOFTASK)
+                        .withComments(workflowBean.getApproverComments()).withNatureOfTask(license.getLicenseAppType().getName())
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(new DateTime().toDate()).withOwner(position)
                         .withNextAction(wfmatrix.getNextAction()).withInitiator(wfInitiator).withExtraInfo(license.getLicenseAppType().getName());
             } else
@@ -818,7 +811,7 @@ public abstract class AbstractLicenseService<T extends License> {
                 license.transition().startNext();
             license.transition().withSenderName(
                     wfAssignment.getEmployee().getUsername() + DELIMITER_COLON + wfAssignment.getEmployee().getName())
-                    .withComments(comment).withNatureOfTask(CLOSURE_NATUREOFTASK)
+                    .withComments(comment).withNatureOfTask(license.getLicenseAppType().getName())
                     .withStateValue("NEW").withDateInfo(new Date()).withOwner(wfAssignment.getPosition())
                     .withNextAction("SI/SS Approval Pending").withInitiator(wfAssignment.getPosition()).withExtraInfo(license.getLicenseAppType().getName());
             license.setEgwStatus(

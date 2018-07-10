@@ -90,8 +90,7 @@ import static org.egov.tl.utils.Constants.*;
         @Result(name = ACKNOWLEDGEMENT, location = "newTradeLicense-acknowledgement.jsp"),
         @Result(name = MESSAGE, location = "newTradeLicense-message.jsp"),
         @Result(name = BEFORE_RENEWAL, location = "newTradeLicense-beforeRenew.jsp"),
-        @Result(name = PRINTACK, location = "newTradeLicense-printAck.jsp"),
-        @Result(name = ACKNOWLEDGEMENT_RENEW, location = "newTradeLicense-acknowledgement_renew.jsp")})
+        @Result(name = PRINTACK, location = "newTradeLicense-printAck.jsp")})
 public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
 
     private static final long serialVersionUID = 1L;
@@ -151,7 +150,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @SkipValidation
     public String showForApproval() throws IOException {
         documentTypes = tradeLicenseService.getDocumentTypesByApplicationType(ApplicationType.valueOf(license()
-                .getLicenseAppType().getName().toUpperCase()));
+                .getLicenseAppType().getCode()));
         if (!license().isNewWorkflow()) {
             if (license().getState().getValue().equals(WF_LICENSE_CREATED)
                     || license().getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED_STR) && license()
@@ -169,7 +168,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
                     || license().getEgwStatus().getCode().equals(APPLICATION_STATUS_APPROVED_CODE)
                     && license().getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED_STR))
                 mode = DISABLE_APPROVER_MODE;
-            else if (licenseUtils.isDigitalSignEnabled()
+            else if (this.isDigitalSignatureEnabled()
                     && license().getState().getValue().equals(DIGI_ENABLED_WF_SECOND_LVL_FEECOLLECTED)
                     || license().getState().getValue().equals(WF_DIGI_SIGNED)
                     || license().getState().getValue().equals(WF_ACTION_DIGI_SIGN_COMMISSION_NO_COLLECTION))
@@ -204,7 +203,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
             final ValidationError vr = new ValidationError("license.fee.notcollected", "license.fee.notcollected");
             throw new ValidationException(Arrays.asList(vr));
         }
-        if (SIGNWORKFLOWACTION.equals(workFlowAction) && !licenseUtils.isDigitalSignEnabled())
+        if (SIGNWORKFLOWACTION.equals(workFlowAction) && !this.isDigitalSignatureEnabled())
             throw new ValidationException("error.digisign.disabled", "error.digisign.disabled");
         return super.approve();
     }
@@ -213,7 +212,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         prepareNewForm();
         licenseHistory = tradeLicenseService.populateHistory(tradeLicense);
         documentTypes = tradeLicenseService.getDocumentTypesByApplicationType(ApplicationType.valueOf(license()
-                .getLicenseAppType().getName().toUpperCase()));
+                .getLicenseAppType().getCode()));
     }
 
     @Override
@@ -231,7 +230,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         if (!tradeLicense.hasState() || (tradeLicense.hasState() && tradeLicense.getCurrentState().isEnded()))
             currentState = "";
         tradeLicense.setNewWorkflow(true);
-        renewAppType = RENEWAL_LIC_APPTYPE;
+        renewAppType = RENEW_APPTYPE_CODE;
         return super.beforeRenew();
     }
 
@@ -245,7 +244,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
 
     public void prepareRenew() {
         prepareNewForm();
-        renewAppType = RENEWAL_LIC_APPTYPE;
+        renewAppType = RENEW_APPTYPE_CODE;
         documentTypes = tradeLicenseService.getDocumentTypesByApplicationType(ApplicationType.RENEW);
     }
 
@@ -314,15 +313,15 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     public String getAdditionalRule() {
         if (tradeLicense.isNewWorkflow()) {
             if (!securityUtils.currentUserIsEmployee())
-                return RENEWAL_LIC_APPTYPE.equals(renewAppType) ? CSCOPERATORRENEWLICENSE : CSCOPERATORNEWLICENSE;
+                return RENEW_APPTYPE_CODE.equals(renewAppType) ? CSCOPERATORRENEWLICENSE : CSCOPERATORNEWLICENSE;
             else if (license().isCollectionPending())
                 return tradeLicense.isNewApplication() ? NEWLICENSECOLLECTION : RENEWLICENSECOLLECTION;
-            else if (RENEWAL_LIC_APPTYPE.equals(renewAppType) || tradeLicense != null && tradeLicense.isReNewApplication())
+            else if (RENEW_APPTYPE_CODE.equals(renewAppType) || tradeLicense != null && tradeLicense.isReNewApplication())
                 return RENEWLICENSE;
             else
                 return NEWLICENSE;
         } else {//TODO to be removed
-            if (RENEWAL_LIC_APPTYPE.equals(renewAppType) || tradeLicense != null && tradeLicense.isReNewApplication())
+            if (RENEW_APPTYPE_CODE.equals(renewAppType) || tradeLicense != null && tradeLicense.isReNewApplication())
                 return RENEW_ADDITIONAL_RULE;
             else
                 return NEW_ADDITIONAL_RULE;

@@ -91,7 +91,7 @@
 	<table class="table table-bordered" id="ownerInfoTbl">
 		<thead>
 			<tr>
-				<th class="text-center"><s:text name="adharno" /></th>
+				<!-- <th class="text-center"><s:text name="adharno" /></th> -->
 				<th class="text-center"><s:text name="MobileNumber" />
 					(without +91)</th>
 				<th class="text-center"><s:text name="OwnerName" /></th>
@@ -106,7 +106,7 @@
 
 			<s:iterator value="amalgamationOwners" status="ownerStatus">
 				<tr id="nameRow">
-					<td align="center"><span class="bold"> 
+					<!-- <td align="center"><span class="bold"> 
 						<s:if test='%{amalgamationOwners[#ownerStatus.index].owner.aadhaarNumber == ""}'>
 							N/A
 						</s:if>
@@ -114,7 +114,7 @@
 							<s:property value="%{amalgamationOwners[#ownerStatus.index].owner.aadhaarNumber}"
 									default="N/A" />
 						</s:else>
-					</span></td>
+					</span></td> -->
 					<td align="center"><span class="bold"><s:property
 								value="%{amalgamationOwners[#ownerStatus.index].owner.mobileNumber}" /></span>
 					</td>

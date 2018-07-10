@@ -192,20 +192,6 @@
  	<s:hidden id="extentAppartenauntLand" name="propertyDetail.extentAppartenauntLand" value="%{propertyDetail.extentAppartenauntLand}"/>
  	<s:hidden id="sitalArea" name="sitalArea" value="%{areaOfPlot}"/>
 	
-	<%-- <tr class="superStructureRow">
-		<td class="greybox">&nbsp;</td>
-		<td class="bluebox"><s:text name="superstructure"></s:text> :</td>
-		<td class="bluebox">
-		 <s:checkbox name="propertyDetail.structure" title="Select if property is super structure" id="propertyDetail.structure"
-			value="%{propertyDetail.structure}" onclick="enableOrDisableSiteOwnerDetails(this);" />
-		</td>
-		<td class="greybox siteowner"><s:text name="siteowner"></s:text>
-			<span class="mandatory1">*</span>:
-		</td>
-		<td class="greybox siteowner"><s:textfield maxlength="32" value="%{propertyDetail.siteOwner}"
-				name="propertyDetail.siteOwner" id="siteOwner"></s:textfield></td>
-	</tr> --%>
-	
 	<s:if test="%{!basicProperty.regdDocNo.isEmpty()}">
 	<tr>
 		<td class="greybox">&nbsp;</td>
@@ -334,5 +320,14 @@
 			propTypeId : document.getElementById("propTypeId").value
 		});
 	}
-    
+  	jQuery(document).ready(function() {
+ 		jQuery('#propTypeId').change(function() {
+ 			var propertyType = jQuery('#propTypeId :selected').text();
+ 	 		if(propertyType == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND_STR}"/>'){
+ 	 			setEffectiveDate();
+ 	 		}
+		 });
+ 		jQuery('#dateOfCompletion').attr('readonly', true);
+ 	});
+  	
 </script>

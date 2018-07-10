@@ -103,7 +103,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     private static final String MODEL_ID = "model.id";
 
     private TradeLicense tradeLicense = new TradeLicense();
-    private Long licenseid;
+    private Long licenseId;
     private String url;
     private Boolean enableState;
     private String digiSignedFile;
@@ -187,7 +187,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         setUrl("viewtradelicense/saveclosure.action?model.id=");
         if (tradeLicense.hasState() && !tradeLicense.transitionCompleted()) {
             ServletActionContext.getResponse().setContentType("text/html");
-            ServletActionContext.getResponse().getWriter().write("<center style='color:red;font-weight:bolder'>" + tradeLicense.getLicenseAppType().getName() + " License workflow is in progress !</center>");
+            ServletActionContext.getResponse().getWriter().write("<center style='color:red;font-weight:bolder'>" + tradeLicense.getLicenseAppType().getName()+ " workflow is in progress !</center>");
             return null;
         }
         return "closure";
@@ -212,8 +212,8 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @Action(value = "/viewtradelicense/saveclosure")
     public String saveClosure() {
         populateWorkflowBean();
-        if (getLicenseid() != null) {
-            tradeLicense = tradeLicenseService.getLicenseById(getLicenseid());
+        if (getLicenseId() != null) {
+            tradeLicense = tradeLicenseService.getLicenseById(getLicenseId());
             if (tradeLicenseService.currentUserIsMeeseva()) {
                 tradeLicense.setApplicationNumber(getApplicationNo());
                 tradeLicenseService.closureWithMeeseva(tradeLicense, workflowBean);
@@ -234,8 +234,8 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @Action(value = "/viewtradelicense/viewTradeLicense-cancelLicense")
     public String updateLicenseClosure() {
         populateWorkflowBean();
-        if (getLicenseid() != null) {
-            tradeLicense = tradeLicenseService.getLicenseById(getLicenseid());
+        if (getLicenseId() != null) {
+            tradeLicense = tradeLicenseService.getLicenseById(getLicenseId());
             WorkFlowMatrix wfmatrix = tradeLicenseService.getWorkFlowMatrixApi(license(), workflowBean);
             if (!license().getCurrentState().getValue().equals(wfmatrix.getCurrentState())) {
                 addActionMessage(this.getText("wf.item.processed"));
@@ -270,7 +270,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         fileStoreIds = license.getDigiSignedCertFileStoreId();
         ulbCode = ApplicationThreadLocals.getCityCode();
         applicationNo = license.getApplicationNumber();
-        return licenseUtils.isDigitalSignEnabled() ? "closureEndorsementDigiSign" : "closureEndorsementNotice";
+        return this.isDigitalSignatureEnabled() ? "closureEndorsementDigiSign" : "closureEndorsementNotice";
     }
 
     @Override
@@ -286,12 +286,12 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         this.workflowBean = workflowBean;
     }
 
-    public Long getLicenseid() {
-        return licenseid;
+    public Long getLicenseId() {
+        return licenseId;
     }
 
-    public void setLicenseid(Long licenseid) {
-        this.licenseid = licenseid;
+    public void setLicenseId(Long licenseId) {
+        this.licenseId = licenseId;
     }
 
     public Boolean hasCSCPublicRole() {

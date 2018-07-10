@@ -57,6 +57,7 @@ import org.egov.ptis.domain.entity.property.BaseRegisterReportRequest;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.view.PropertyMVInfo;
 import org.egov.ptis.domain.service.report.PTBaseRegisterReportService;
+import org.egov.ptis.domain.service.report.PropertyTaxReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -78,7 +79,7 @@ public class BaseRegisterReportVLTController {
 	private BoundaryService boundaryService;
 
 	@Autowired
-	private PTBaseRegisterReportService ptbaseRegisterReportService;
+        private PropertyTaxReportService propertyTaxReportService;
 
 	@Autowired
 	private PropertyTypeMasterDAO propertyTypeMasterDAO;
@@ -106,7 +107,7 @@ public class BaseRegisterReportVLTController {
 	public String searchBaseRegister(final BaseRegisterReportRequest baseRegisterReportRequest) {
 		final PropertyTypeMaster propertyType = propertyTypeMasterDAO.getPropertyTypeMasterByCode("VAC_LAND");
 		baseRegisterReportRequest.setVacantLand(propertyType.getId());
-		return new DataTable<>(ptbaseRegisterReportService.pagedBaseRegisterRecords(baseRegisterReportRequest),
+		return new DataTable<>(propertyTaxReportService.pagedBaseRegisterRecords(baseRegisterReportRequest),
 				baseRegisterReportRequest.draw()).toJson(BaseRegisterVLTResultAdaptor.class);
 	}
 

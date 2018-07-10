@@ -51,6 +51,9 @@ package org.egov.pgr.integration.ivrs.entity;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.pgr.entity.Complaint;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -62,6 +65,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 import static org.egov.pgr.integration.ivrs.entity.IVRSFeedback.SEQ_IVRSFEEDBACK;
 
@@ -89,6 +93,14 @@ public class IVRSFeedback extends AbstractAuditable {
     @JoinColumn(name = "ivrsRating")
     private IVRSRating ivrsRating;
 
+    @NotNull
+    private Date feedbackDate;
+
+    @NotBlank
+    @SafeHtml
+    @Length(max = 50)
+    private String callStatus;
+
     @Override
     public Long getId() {
         return id;
@@ -113,6 +125,22 @@ public class IVRSFeedback extends AbstractAuditable {
 
     public void setIvrsRating(IVRSRating ivrsRating) {
         this.ivrsRating = ivrsRating;
+    }
+
+    public Date getFeedbackDate() {
+        return feedbackDate;
+    }
+
+    public void setFeedbackDate(Date feedbackDate) {
+        this.feedbackDate = feedbackDate;
+    }
+
+    public String getCallStatus() {
+        return callStatus;
+    }
+
+    public void setCallStatus(final String callStatus) {
+        this.callStatus = callStatus;
     }
 }
 

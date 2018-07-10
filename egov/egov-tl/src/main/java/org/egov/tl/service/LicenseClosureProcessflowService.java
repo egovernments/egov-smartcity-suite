@@ -60,7 +60,6 @@ import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.contracts.LicenseStateInfo;
-import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -71,10 +70,10 @@ import java.util.List;
 
 import static org.egov.tl.utils.Constants.BUTTONREJECT;
 import static org.egov.tl.utils.Constants.CLOSURE_ADDITIONAL_RULE;
+import static org.egov.tl.utils.Constants.CLOSURE_APPTYPE_CODE;
 import static org.egov.tl.utils.Constants.CLOSURE_LICENSE_REJECT;
-import static org.egov.tl.utils.Constants.CLOSURE_NATUREOFTASK;
-import static org.egov.tl.utils.Constants.DELIMITER_COLON;
 import static org.egov.tl.utils.Constants.COMPLETED;
+import static org.egov.tl.utils.Constants.DELIMITER_COLON;
 import static org.egov.tl.utils.Constants.WF_DIGI_SIGNED;
 
 @Service
@@ -85,7 +84,7 @@ public class LicenseClosureProcessflowService {
     private SecurityUtils securityUtils;
 
     @Autowired
-    private LicenseUtils licenseUtils;
+    private LicenseConfigurationService licenseConfigurationService;
 
     @Autowired
     private AssignmentService assignmentService;
@@ -99,6 +98,9 @@ public class LicenseClosureProcessflowService {
     @Autowired
     @Qualifier("workflowService")
     private SimpleWorkflowService<TradeLicense> licenseWorkflowService;
+
+    @Autowired
+    private LicenseAppTypeService licenseAppTypeService;
 
     public void startClosureProcessflow(TradeLicense license) {
         if (securityUtils.currentUserIsEmployee()) {
@@ -133,7 +135,7 @@ public class LicenseClosureProcessflowService {
                 .withOwner(processOwner)
                 .withNextAction(workflowMatrix.getNextAction())
                 .withExtraInfo(licenseStateInfo)
-                .withNatureOfTask(CLOSURE_NATUREOFTASK)
+                .withNatureOfTask(licenseAppTypeService.getLicenseAppTypeByCode(CLOSURE_APPTYPE_CODE).getName())
                 .withInitiator(flowInitiator);
     }
 
@@ -160,7 +162,7 @@ public class LicenseClosureProcessflowService {
                 .withOwner(processOwner)
                 .withNextAction(workflowMatrix.getNextAction())
                 .withExtraInfo(licenseStateInfo)
-                .withNatureOfTask(CLOSURE_NATUREOFTASK)
+                .withNatureOfTask(licenseAppTypeService.getLicenseAppTypeByCode(CLOSURE_APPTYPE_CODE).getName())
                 .withInitiator(processOwner);
     }
 
@@ -179,7 +181,7 @@ public class LicenseClosureProcessflowService {
         User currentUser = securityUtils.getCurrentUser();
         license.transition().end()
                 .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
-                .withComments(licenseUtils.isDigitalSignEnabled() ? WF_DIGI_SIGNED : "Approved")
+                .withComments(licenseConfigurationService.digitalSignEnabled() ? WF_DIGI_SIGNED : "Approved")
                 .withDateInfo(new Date())
                 .withStateValue(workflowMatrix.getNextState())
                 .withNextAction(COMPLETED);

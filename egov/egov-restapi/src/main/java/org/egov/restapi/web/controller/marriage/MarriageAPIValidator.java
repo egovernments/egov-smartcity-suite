@@ -59,6 +59,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
+import static org.egov.mrs.application.MarriageConstants.getMarriageVenues;
+import static org.egov.mrs.application.MarriageConstants.MAX_SIZE;
 
 @Component
 public class MarriageAPIValidator implements Validator {
@@ -93,12 +95,25 @@ public class MarriageAPIValidator implements Validator {
         if (marriageRegistrationRequest.getHusbandreligion() != null
                 && religionService.getReligion(marriageRegistrationRequest.getHusbandreligion()) == null) {
             errors.rejectValue("husbandreligion", "Invalid bridegroom's religion", "Invalid bridegroom's religion");
+        }      
+        if (marriageRegistrationRequest.getWifereligion() != null
+                && religionService.getReligion(marriageRegistrationRequest.getWifereligion()) == null) {
+            errors.rejectValue("wifereligion", "Invalid bride's religion", "Invalid bride's religion");
         }
-
         if (marriageRegistrationRequest.getHusbandQualification() != null &&
-                educationalQualificationService.findByCode(marriageRegistrationRequest.getHusbandQualification()) == null) {
+                educationalQualificationService.findByName(marriageRegistrationRequest.getHusbandQualification()) == null) {
             errors.rejectValue("husbandQualification", "Invalid bridegroom's education qualification",
                     "Invalid bridegroom's education qualification");
+        }
+        if (marriageRegistrationRequest.getWifeQualification() != null &&
+                educationalQualificationService.findByName(marriageRegistrationRequest.getWifeQualification()) == null) {
+            errors.rejectValue("wifeQualification", "Invalid bride's education qualification",
+                    "Invalid bride's education qualification");
+        }
+        if (marriageRegistrationRequest.getVenue() != null
+                && !getMarriageVenues().contains(marriageRegistrationRequest.getVenue())) {
+            errors.rejectValue("venue", "Invalid Venue Type",
+                    "venue should be in [Residence,Function Hall,Worship Place,Others ");
         }
 
     }
@@ -115,7 +130,10 @@ public class MarriageAPIValidator implements Validator {
         }
         if (marriageDocumentUpload.getWifePhotoFile() == null) {
             errors.rejectValue("wifePhotoFile", "Provide wife Photo", "Provide wife Photo");
-        }      
+        }   
+        if (marriageDocumentUpload.getDataSheet() != null && marriageDocumentUpload.getDataSheet().getSize() > MAX_SIZE) {
+            errors.rejectValue("dataSheet", "Max Upload size exceeded(2 MB)","Max Upload size exceeded(2 MB)");
+        }
     }
 
 }

@@ -72,7 +72,7 @@
                     <s:hidden name="currentState" value="%{state.value}"/>
                 </s:if>
                 <s:hidden name="actionName" value="create"/>
-                <s:hidden name="licenseid" id="licenseId" value="%{id}"/>
+                <s:hidden name="licenseId" id="licenseId" value="%{id}"/>
                 <s:hidden id="detailChanged" name="detailChanged"></s:hidden>
                 <s:hidden id="url" name="url" value="%{url}"></s:hidden>
                 <input type="hidden" name="applicationNo" value="${param.applicationNo}" id="applicationNo"/>

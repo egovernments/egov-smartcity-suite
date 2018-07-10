@@ -224,6 +224,10 @@ public class MarriageRegistration extends StateAware<Position> {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "marriagePhotoFileStore")
     private FileStoreMapper marriagePhotoFileStore;
+    
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "datasheetFileStore")
+    private FileStoreMapper datasheetFileStore;
 
     @NotNull
     @Column(name = "serialno", unique = true)
@@ -662,6 +666,14 @@ public class MarriageRegistration extends StateAware<Position> {
 
     public enum RegistrationStatus {
         CREATED, APPROVED, REJECTED, REGISTERED, CANCELLED, DIGITALSIGNED
+    }
+
+    public FileStoreMapper getDatasheetFileStore() {
+        return datasheetFileStore;
+    }
+
+    public void setDatasheetFileStore(FileStoreMapper datasheetFileStore) {
+        this.datasheetFileStore = datasheetFileStore;
     }
 
 }

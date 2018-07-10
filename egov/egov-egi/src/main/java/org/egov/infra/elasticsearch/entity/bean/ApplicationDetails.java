@@ -72,6 +72,8 @@ public class ApplicationDetails {
     private long totalReceived = 0;
     private long totalClosed = 0;
     private long totalOpen = 0;
+    private long totalRejectedClosed=0;
+    private long totalApprovedClosed=0;
     private long closedWithinSLA = 0;
     private long closedBeyondSLA = 0;
     private long openWithinSLA = 0;
@@ -247,6 +249,22 @@ public class ApplicationDetails {
 
     public void setTotalOpen(long totalOpen) {
         this.totalOpen = totalOpen;
+    }
+
+    public long getTotalRejectedClosed() {
+        return totalRejectedClosed;
+    }
+
+    public void setTotalRejectedClosed(long totalRejectedClosed) {
+        this.totalRejectedClosed = totalRejectedClosed;
+    }
+
+    public long getTotalApprovedClosed() {
+        return totalApprovedClosed;
+    }
+
+    public void setTotalApprovedClosed(long totalApprovedClosed) {
+        this.totalApprovedClosed = totalApprovedClosed;
     }
 
     public long getClosedWithinSLA() {

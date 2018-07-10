@@ -86,6 +86,7 @@ import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
+import org.egov.ptis.client.util.FinancialUtil;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
@@ -183,6 +184,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     protected String applicationType;
     protected String initiator;
     protected boolean showCheckboxForGIS = false;
+    
+    @Autowired
+    protected FinancialUtil financialUtil;
 
     @Autowired
     transient LayoutApprovalAuthorityRepository layoutApprovalAuthorityRepo;
@@ -310,12 +314,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             addActionError(getText("mandatory.pattaNum"));
         if (null == propertyDetail.getSitalArea().getArea())
             addActionError(getText("mandatory.vacantLandArea"));
-        final Date effDate = propertyTaxUtil.getEffectiveDateForProperty(property);
         if (null == propertyDetail.getDateOfCompletion())
             addActionError(getText("mandatory.dtOfCmpln"));
-        else if (propertyDetail.getDateOfCompletion().before(effDate))
-            addActionError(getText("vacant.effectiveDate.before.6inst"));
-
         if (null == propertyDetail.getCurrentCapitalValue())
             addActionError(getText("mandatory.capitalValue"));
         if (null == propertyDetail.getMarketValue())
@@ -725,9 +725,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         natureOfTasks.put(NEW_ASSESSMENT, NATURE_NEW_ASSESSMENT);
         natureOfTasks.put(ADDTIONAL_RULE_ALTER_ASSESSMENT, NATURE_ALTERATION);
         natureOfTasks.put(ADDTIONAL_RULE_BIFURCATE_ASSESSMENT, NATURE_BIFURCATION);
-        natureOfTasks.put(DEMOLITION, NATURE_DEMOLITION);
+        natureOfTasks.put(DEMOLITION, APPLICATION_TYPE_DEMOLITION);
         natureOfTasks.put(EXEMPTION, NATURE_TAX_EXEMPTION);
-        natureOfTasks.put(AMALGAMATION, NATURE_AMALGAMATION);
+        natureOfTasks.put(AMALGAMATION, APPLICATION_TYPE_AMALGAMATION);
         return natureOfTasks;
     }
 
@@ -820,7 +820,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                     emailBody = getText("msg.grpreject.email", args);
 
                 }
-            } else if (propertyState.getValue().endsWith(WF_STATE_COMMISSIONER_APPROVED)) {
+            } else if (propertyState.getNextAction().equalsIgnoreCase(WF_STATE_DIGITAL_SIGNATURE_PENDING)) {
                 args.add(property.getBasicProperty().getUpicNo());
                 final Map<String, Installment> installmentMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
                 final Installment installmentFirstHalf = installmentMap.get(CURRENTYEAR_FIRST_HALF);
@@ -1013,17 +1013,22 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     }
 
     public void enableActionsForGIS(final PropertyImpl property, final List<DocumentType> documentTypes) {
-        if (property.getState().getNextAction().endsWith(WF_STATE_COMMISSIONER_APPROVAL_PENDING)
-                && property.getSurveyVariance().compareTo(BigDecimal.TEN) > 0)
-            showCheckboxForGIS = true;
-        if (property.isThirdPartyVerified()
-                && property.getState().getValue().endsWith(":".concat(WF_STATE_REJECTED))
-                && WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING
-                        .equalsIgnoreCase(property.getState().getNextAction())) {
-            showCheckboxForGIS = true;
-            for (final DocumentType docType : documentTypes)
-                if (DOCUMENT_TYPE_THIRD_PARTY_SURVEY.equalsIgnoreCase(docType.getName()))
-                    docType.setMandatory(true);
+        String appConfigValue = propertyTaxCommonUtils.getAppConfigValue(APPCONFIG_GIS_THIRDPARTY_CHECKBOX_REQUIRED, PTMODULENAME);
+        if("N".equalsIgnoreCase(appConfigValue))
+            showCheckboxForGIS = false;
+        else {
+            if (property.getState().getNextAction().endsWith(WF_STATE_COMMISSIONER_APPROVAL_PENDING)
+                    && property.getSurveyVariance().compareTo(BigDecimal.TEN) > 0)
+                showCheckboxForGIS = true;
+            if (property.isThirdPartyVerified()
+                    && property.getState().getValue().endsWith(":".concat(WF_STATE_REJECTED))
+                    && WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING
+                            .equalsIgnoreCase(property.getState().getNextAction())) {
+                showCheckboxForGIS = true;
+                for (final DocumentType docType : documentTypes)
+                    if (DOCUMENT_TYPE_THIRD_PARTY_SURVEY.equalsIgnoreCase(docType.getName()))
+                        docType.setMandatory(true);
+            }
         }
     }
 
@@ -1054,6 +1059,10 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                                 owner.getOwner().getMobileNumber().concat(",").concat(owner.getOwner().getName())));
                 }
         }
+    }
+    
+    public String getDemandVoucherAppConfigValue(){
+        return propertyTaxCommonUtils.getAppConfigValue(APPCONFIG_DEMAND_VOUCHER_GENERATION_REQUIRED, PTMODULENAME);
     }
 
     public WorkflowBean getWorkflowBean() {

@@ -49,7 +49,7 @@
 <%@ include file="/includes/taglibs.jsp" %>
     <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablebottom" id="nameTable" >
     <tr>
-    <th class="bluebgheadtd"><s:text name="adharno"/></th>
+    <%-- <th class="bluebgheadtd"><s:text name="adharno"/></th> --%>
     <th class="bluebgheadtd"><s:text name="MobileNumber" /> <span class="mandatory1">*</span></th>
     <th class="bluebgheadtd"><s:text name="OwnerName"/><span class="mandatory1">*</span></th>
     <th class="bluebgheadtd"><s:text name="gender"/><span class="mandatory1">*</span></th>
@@ -62,13 +62,12 @@
       <tr id="nameRow" >
       <s:hidden name="basicProperty.propertyOwnerInfoProxy[0].owner.type" id="basicProperty.propertyOwnerInfoProxy[0].owner.type"
        value="%{basicProperty.propertyOwnerInfoProxy[0].owner.type}"></s:hidden>
-        <td class="blueborderfortd" align="center">
+        <%-- <td class="blueborderfortd" align="center">
 		   <s:textfield name="basicProperty.propertyOwnerInfoProxy[0].owner.aadhaarNumber" value="%{basicProperty.propertyOwnerInfoProxy[0].owner.aadhaarNumber}" id="aadharNo" cssClass="txtaadhar" size="12" maxlength="12"  data-idx="0" onblur="getAadharDetails(this);"></s:textfield>
-		</td>
+		</td> --%>
 		 <td class="blueborderfortd" align="center">
         	+91 <s:textfield name="basicProperty.propertyOwnerInfoProxy[0].owner.mobileNumber" title="Mobile number of the owner" maxlength="10" size="20" id="mobileNumber"  value="%{basicProperty.propertyOwnerInfoProxy[0].owner.mobileNumber}" 
         		onblur="getUserDetailsForMobileNo(this);validNumber(this);checkZero(this,'Mobile Number');" data-idx="0" data-optional="0" data-errormsg="Mobile no is mandatory!"/>
-        		<s:checkbox name="editMobileno[0]" class="mobilecheckbox" id="editMobileno[0]" onclick="enableMobileNumber(this);" data-idx="0" data-toggle="tooltip" data-placement="top" title="Citizen confirmed that his/her mobile no is changed" />
 		<td class="blueborderfortd" align="center">
         	<s:textfield name="basicProperty.propertyOwnerInfoProxy[0].owner.name" title="Owner of the Property" maxlength="74" size="20" id="ownerName"  value="%{basicProperty.propertyOwnerInfoProxy[0].owner.name}" 
         		onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="0" data-errormsg="Owner name is mandatory!"/>
@@ -107,14 +106,13 @@
 			<tr id="nameRow">
 			 <s:hidden name="basicProperty.propertyOwnerInfoProxy[%{#ownerStatus.index}].owner.type" id="basicProperty.propertyOwnerInfoProxy[%{#ownerStatus.index}].owner.type"
                        value="%{basicProperty.propertyOwnerInfoProxy[#ownerStatus.index].owner.type}"></s:hidden>
-			  <td class="blueborderfortd" align="center">
+			  <%-- <td class="blueborderfortd" align="center">
 			  <s:textfield name="basicProperty.propertyOwnerInfoProxy[%{#ownerStatus.index}].owner.aadhaarNumber" id="aadharNo" size="12" maxlength="12" data-optional="1" data-errormsg="Aadhar no is mandatory!"
 			  value="%{basicProperty.propertyOwnerInfoProxy[#ownerStatus.index].owner.aadhaarNumber}" data-idx="%{#ownerStatus.index}" onblur="getAadharDetails(this);" cssClass="txtaadhar"></s:textfield>
-			  </td>
+			  </td> --%>
 			  <td class="blueborderfortd" align="center">
         			+91 <s:textfield name="basicProperty.propertyOwnerInfoProxy[%{#ownerStatus.index}].owner.mobileNumber" maxlength="10" size="20" id="mobileNumber" value="%{basicProperty.propertyOwnerInfoProxy[#ownerStatus.index].owner.mobileNumber}" 
         				onblur="getUserDetailsForMobileNo(this);validNumber(this);checkZero(this,'Mobile Number');" data-idx="%{#ownerStatus.index}" data-optional="0" data-errormsg="Mobile no is mandatory!" />
-        			<s:checkbox name="editMobileno[%{#ownerStatus.index}]" id="editMobileno[%{#ownerStatus.index}]" onclick="enableMobileNumber(this);" data-idx="%{#ownerStatus.index}" data-toggle="tooltip" data-placement="top" title="Citizen confirmed that his/her mobile no is changed" />
         		</td>
         		<td class="blueborderfortd" align="center">
         			<s:textfield name="basicProperty.propertyOwnerInfoProxy[%{#ownerStatus.index}].owner.name" maxlength="74" size="20" id="ownerName" value="%{basicProperty.propertyOwnerInfoProxy[#ownerStatus.index].owner.name}" 
@@ -214,13 +212,11 @@
     	        }
     	    });
        }
-
        function getUserDetailsForMobileNo(obj) {
     	   var mobileNo = jQuery(obj).val();
     	   var rowidx= jQuery(obj).data('idx');
-           if(jQuery("input[name='editMobileno["+ rowidx +"]']").is(':checked') ==  true) {
-        	   jQuery("input[name='editMobileno["+ rowidx +"]']").prop('checked', false);
-           } else {
+    	   var docTypeName= jQuery('#assessmentDocumentNames :selected').text();
+    	   if(docTypeName != 'Un-registered Document / Notary document'){
     	   jQuery.ajax({
 				type: "GET",
 				url: "/ptis/common/ajaxCommon-getUserByMobileNo.action",
@@ -239,13 +235,4 @@
            });
        }
       }
-
-       function enableMobileNumber(obj) { 
-    	   var rowidx= jQuery(obj).data('idx');
-    	   if(obj.checked == true) {
-    		   jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.mobileNumber']").attr('readonly', false);
-        	 } else {
-        	   jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.mobileNumber']").attr('readonly', true);
-             }
-          }
       </script>

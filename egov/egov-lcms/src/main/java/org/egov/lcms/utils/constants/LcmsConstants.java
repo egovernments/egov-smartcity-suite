@@ -245,5 +245,7 @@ public class LcmsConstants {
 
     public static final String STANDINGCOUNSEL_ROLES = "STANDINGCOUNSEL_ROLES";
     public static final String VIEW_LEGALCASE_LINK = "/lcms/application/view/?lcNumber=";
+    
+    public static final String LCMS_VIEW_ACCESS_ROLE = "LCMS VIEW ACCESS";
 
 }

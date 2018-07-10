@@ -77,9 +77,11 @@ public class MarriageReIssueJsonAdaptor implements JsonSerializer<ReIssue> {
             jsonObject.addProperty("husbandName", defaultIfBlank(reIssue.getRegistration().getHusband().getFullName(), N_A));
             jsonObject.addProperty("wifeName", defaultIfBlank(reIssue.getRegistration().getWife().getFullName(), N_A));
             jsonObject.addProperty("remarks", defaultIfBlank(reIssue.getRejectionReason(), N_A));
-            jsonObject.addProperty("zone", defaultIfBlank(reIssue.getRegistration().getZone().getName(), N_A));
+            jsonObject.addProperty("zone", defaultIfBlank(
+                    reIssue.getRegistration().getZone() == null ? N_A : reIssue.getRegistration().getZone().getName(), N_A));
             jsonObject.addProperty("marriageRegistrationUnit",
-                    defaultIfBlank(reIssue.getRegistration().getMarriageRegistrationUnit().getName(), N_A));
+                    defaultIfBlank(reIssue.getRegistration().getMarriageRegistrationUnit() == null ? N_A
+                            : reIssue.getRegistration().getMarriageRegistrationUnit().getName(), N_A));
 
             if (reIssue.getMarriageCertificate().isEmpty())
                 jsonObject.addProperty("certificateIssued", "No");

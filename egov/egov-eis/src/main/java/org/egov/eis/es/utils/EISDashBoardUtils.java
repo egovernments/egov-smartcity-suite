@@ -64,6 +64,9 @@ public class EISDashBoardUtils {
     private static final String GRADE = "ulbgrade";
     private static final String ULBCODE = "ulbcode";
     private static final String DEPARTMENT = "department";
+    private static final String EMPLOYEENAME = "name";
+    private static final String EMPLOYEECODE = "code";
+    private static final String DESIGNATION = "designation";
     private static final String ASSIGN_DATE_FORMAT = "yyyy-MM-dd";
 
 
@@ -86,17 +89,27 @@ public class EISDashBoardUtils {
     }
 
     public static BoolQueryBuilder prepareWhereClauseForEmployees(final EmployeeDetailRequest employeesDetailRequest) {
+        Date date = new Date();
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
         boolQuery = prepareWhereClause(employeesDetailRequest, boolQuery);
-        if (StringUtils.isNotBlank(employeesDetailRequest.getDepartmentName())) {
+        boolQuery.must(QueryBuilders.matchQuery("primaryassignment", true))
+                .must(QueryBuilders.rangeQuery("fromdate").lte(getFormattedDate(date, ASSIGN_DATE_FORMAT)).includeUpper(false))
+                .must(QueryBuilders.rangeQuery("todate").gte(getFormattedDate(date, ASSIGN_DATE_FORMAT)).includeUpper(false));
+        if (StringUtils.isNotBlank(employeesDetailRequest.getEmployeeName()))
             boolQuery
-                    .filter(QueryBuilders.matchQuery(DEPARTMENT, employeesDetailRequest.getDepartmentName()));
-        }
+                    .filter(QueryBuilders.matchQuery(EMPLOYEENAME, employeesDetailRequest.getEmployeeName()));
+        if (StringUtils.isNotBlank(employeesDetailRequest.getEmployeeCode()))
+            boolQuery
+                    .filter(QueryBuilders.matchQuery(EMPLOYEECODE, employeesDetailRequest.getEmployeeCode()));
+        if (StringUtils.isNotBlank(employeesDetailRequest.getDesignationName()))
+            boolQuery
+                    .filter(QueryBuilders.matchQuery(DESIGNATION, employeesDetailRequest.getDesignationName()));
+
+
         return boolQuery;
     }
 
     public static BoolQueryBuilder prepareWhereClause(EmployeeDetailRequest employeesDetailRequest, BoolQueryBuilder boolQuery) {
-        Date date = new Date();
         if (StringUtils.isNotBlank(employeesDetailRequest.getUlbCode()))
             boolQuery
                     .filter(QueryBuilders.matchQuery(ULBCODE, employeesDetailRequest.getUlbCode()));
@@ -109,10 +122,10 @@ public class EISDashBoardUtils {
         if (StringUtils.isNotBlank(employeesDetailRequest.getGrade()))
             boolQuery
                     .filter(QueryBuilders.matchQuery(GRADE, employeesDetailRequest.getGrade()));
-        boolQuery.must(QueryBuilders.matchQuery("primaryassignment", true))
-                .must(QueryBuilders.rangeQuery("fromdate").lte(getFormattedDate(date, ASSIGN_DATE_FORMAT)).includeUpper(false))
-                .must(QueryBuilders.rangeQuery("todate").gte(getFormattedDate(date, ASSIGN_DATE_FORMAT)).includeUpper(false));
-
+        if (StringUtils.isNotBlank(employeesDetailRequest.getDepartmentName())) {
+            boolQuery
+                    .filter(QueryBuilders.matchQuery(DEPARTMENT, employeesDetailRequest.getDepartmentName()));
+        }
         return boolQuery;
     }
 }

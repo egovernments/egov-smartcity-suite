@@ -50,30 +50,53 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <div class="row">
-	<div class="col-md-12"> 
-		<div class="text-right error-msg" style="font-size:14px;"><spring:message code="lbl.application.date"/> : <fmt:formatDate pattern="dd/MM/yyyy" value="${waterConnectionDetails.applicationDate}" /></div>
+	<div class="col-md-12">
+		<div class="text-right error-msg" style="font-size: 14px;">
+			<spring:message code="lbl.application.date" />
+			:
+			<fmt:formatDate pattern="dd/MM/yyyy"
+				value="${waterConnectionDetails.applicationDate}" />
+		</div>
 		<form:form role="form" action="newConnection-create"
 			modelAttribute="waterConnectionDetails" id="newWaterConnectionform"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
-			<form:hidden path="applicationType" id="applicationType" value="${waterConnectionDetails.applicationType.id}"/>
-			<form:hidden path="connectionStatus" id="connectionStatus" value="${waterConnectionDetails.connectionStatus}"/> 
-			<form:hidden path="meesevaApplicationNumber" id="meesevaApplicationNumber" value="${waterConnectionDetails.meesevaApplicationNumber}" />
+			<form:hidden path="applicationType" id="applicationType"
+				value="${waterConnectionDetails.applicationType.id}" />
+			<form:hidden path="connectionStatus" id="connectionStatus"
+				value="${waterConnectionDetails.connectionStatus}" />
+			<form:hidden path="meesevaApplicationNumber"
+				id="meesevaApplicationNumber"
+				value="${waterConnectionDetails.meesevaApplicationNumber}" />
+			<input type="hidden" name="waterConnectionDetails"
+				value="${waterConnectionDetails.id}">
+			<input type="hidden"
+				name="waterConnectionDetails.sewerageApplicationDetails"
+				value="${sewerageApplicationDetails}">
+			<form:hidden path="sewerageApplicationDetails.applicationType.id"
+				id="waterConnectionDetails.sewerageApplicationDetails.applicationType.id"
+				value="${waterConnectionDetails.sewerageApplicationDetails.applicationType.id}" />
 
-			<input type="hidden" id="currentUser" name="currentUser" value="${currentUser}"/>
-			<input type="hidden" id="citizenPortalUser" name="citizenPortalUser" value="${citizenPortalUser}"/>
-			<input type="hidden" id="isAnonymousUser" name="isAnonymousUser" value="${isAnonymousUser}"/>
-			<form:hidden id="mode" path=""  value="${mode}"/>
-			<form:hidden path="legacy" id="legacy" value="false"/>
-			<input type="hidden" name="allowIfPTDueExists" id="allowIfPTDueExists" value="${allowIfPTDueExists}"> 
-			<input type="hidden" name="validateIfPTDueExists" id="validateIfPTDueExists" value="${validateIfPTDueExists}"> 
-			<input type="hidden" name="approvalPosOnValidate" id="approvalPosOnValidate" value="${approvalPosOnValidate}"> 
-						<input type="hidden" name="noJAORSAMessage" id="noJAORSAMessage" value="${noJAORSAMessage}">
-			
-			<form:hidden id="documentName" path="" value="${documentName}"/>
+			<input type="hidden" id="currentUser" name="currentUser"
+				value="${currentUser}" />
+			<input type="hidden" id="citizenPortalUser" name="citizenPortalUser"
+				value="${citizenPortalUser}" />
+			<input type="hidden" id="isAnonymousUser" name="isAnonymousUser"
+				value="${isAnonymousUser}" />
+			<form:hidden id="mode" path="" value="${mode}" />
+			<form:hidden path="legacy" id="legacy" value="false" />
+			<input type="hidden" name="allowIfPTDueExists"
+				id="allowIfPTDueExists" value="${allowIfPTDueExists}">
+			<input type="hidden" name="validateIfPTDueExists"
+				id="validateIfPTDueExists" value="${validateIfPTDueExists}">
+			<input type="hidden" name="approvalPosOnValidate"
+				id="approvalPosOnValidate" value="${approvalPosOnValidate}">
+			<input type="hidden" name="noJAORSAMessage" id="noJAORSAMessage"
+				value="${noJAORSAMessage}">
+			<form:hidden id="documentName" path="" value="${documentName}" />
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
@@ -81,20 +104,34 @@
 					</div>
 				</div>
 				<div class="panel-body custom-form ">
+					<c:if test='${sewerageTaxenabled}'>
+						<div class="panel-heading">
+							<div class="panel-title">
+								<input type="checkbox" id="addSewerageAppln"
+									name="sewerageApplication">&nbspApply for Sewerage
+								Connection also</input><br>
+							</div>
+						</div>
+					</c:if>
 					<jsp:include page="applicantdetails.jsp"></jsp:include>
-					<jsp:include page="connectiondetails.jsp"></jsp:include>	
-					<jsp:include page="documentdetails.jsp"></jsp:include>	
+					<jsp:include page="connectiondetails.jsp"></jsp:include>
+					<div class="sewerageDetails">
+						<jsp:include page="sewerageconnection.jsp"></jsp:include>
+					</div>
+					<jsp:include page="documentdetails.jsp"></jsp:include>
 				</div>
-			</div>			
-			
-			<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
-				<div class="buttonbottom" align="center">
-					<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
-				</div>
-         </form:form>
+			</div>
+			<jsp:include page="../common/commonWorkflowMatrix.jsp" />
+			<div class="buttonbottom" align="center">
+				<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
+			</div>
+		</form:form>
 	</div>
 </div>
 
-<script src="<cdn:url value='/resources/js/app/newconnection.js?rnd=${app_release_no}'/>"></script>
-<script src="<cdn:url value='/resources/js/app/connectiondetails.js?rnd=${app_release_no}'/>"></script>
-<script src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/js/app/newconnection.js?rnd=${app_release_no}'/>"></script>
+<script
+	src="<cdn:url value='/resources/js/app/connectiondetails.js?rnd=${app_release_no}'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>

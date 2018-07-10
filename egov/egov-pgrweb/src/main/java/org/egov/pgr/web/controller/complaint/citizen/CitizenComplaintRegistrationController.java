@@ -67,6 +67,7 @@ import javax.validation.Valid;
 import javax.validation.ValidationException;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.egov.pgr.utils.constants.PGRConstants.CITIZEN_PORTAL_MODE;
 import static org.egov.pgr.utils.constants.PGRConstants.DEFAULT_RECEIVING_MODE;
 import static org.egov.pgr.utils.constants.PGRConstants.MODULE_NAME;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -85,7 +86,7 @@ public class CitizenComplaintRegistrationController extends GenericComplaintCont
 
     @RequestMapping(value = "show-reg-form", method = GET)
     public String showComplaintRegistrationForm(@ModelAttribute Complaint complaint) {
-        setReceivingMode(complaint, DEFAULT_RECEIVING_MODE);
+        setReceivingMode(complaint, CITIZEN_PORTAL_MODE);
         return CITIZEN_COMPLAINT_REGISTRATION_FORM;
     }
 

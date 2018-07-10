@@ -73,6 +73,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import static org.egov.mrs.application.MarriageConstants.APPROVED;
+import static org.egov.mrs.application.MarriageConstants.REGISTERED;
+
 
 @RestController
 public class MarriageRegistrationAPIController {
@@ -111,6 +114,10 @@ public class MarriageRegistrationAPIController {
         if (marriageRegistration == null)
             return new MarriageRegistrationResponse(false, applicationNo, HttpStatus.BAD_REQUEST.toString(),
                     "Application Number Does not exist");
+        if (marriageRegistration.getStatus().getCode().equals(APPROVED) ||
+                marriageRegistration.getStatus().getCode().equals(REGISTERED))
+            return new MarriageRegistrationResponse(false, applicationNo, HttpStatus.BAD_REQUEST.toString(),
+                    "Application is already Processed");
         marriageAPIValidator.validateDocuments(marriageDocumentUpload, binding);
         if (binding.hasErrors()) {
             List<String> marriageRegistrationResponse = binding.getFieldErrors()
@@ -123,6 +130,9 @@ public class MarriageRegistrationAPIController {
 
         marriageAPIService.uploadApplicantPhoto(marriageDocumentUpload.getMarriagePhotoFile(),
                 marriageDocumentUpload.getHusbandPhotoFile(), marriageDocumentUpload.getWifePhotoFile(), marriageRegistration);
+        if (marriageDocumentUpload.getDataSheet() != null) {
+            marriageAPIService.uploadDataSheet(marriageDocumentUpload.getDataSheet(), marriageRegistration);
+        }
         if (marriageDocumentUpload.getMemorandumOfMarriage() != null) {
             marriageAPIService.uploadMarriageDocument(marriageDocumentUpload.getMemorandumOfMarriage(), marriageRegistration);
         }

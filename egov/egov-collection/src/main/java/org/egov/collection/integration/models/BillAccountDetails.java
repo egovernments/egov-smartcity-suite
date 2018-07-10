@@ -47,16 +47,16 @@
  */
 package org.egov.collection.integration.models;
 
+import java.math.BigDecimal;
+
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-
-import java.math.BigDecimal;
 
 @XStreamAlias("account")
 public class BillAccountDetails implements Comparable<BillAccountDetails> {
 
     public enum PURPOSE {
-        ARREAR_AMOUNT, CURRENT_AMOUNT, ADVANCE_AMOUNT, ARREAR_LATEPAYMENT_CHARGES, CURRENT_LATEPAYMENT_CHARGES, CHEQUE_BOUNCE_PENALTY, REBATE, OTHERS
+        ARREAR_AMOUNT, CURRENT_AMOUNT, ADVANCE_AMOUNT, ARREAR_LATEPAYMENT_CHARGES, CURRENT_LATEPAYMENT_CHARGES, CHEQUE_BOUNCE_PENALTY, REBATE, OTHERS, SERVICETAX, CG_SERVICETAX, SG_SERVICETAX
     };
 
     @XStreamAsAttribute
@@ -97,7 +97,7 @@ public class BillAccountDetails implements Comparable<BillAccountDetails> {
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append(order).append(",").append(glCode).append(",").append(crAmount).append(",").append(crAmount)
-        .append(",").append(description).append(",").append(isActualDemand);
+                .append(",").append(description).append(",").append(isActualDemand);
         return sb.toString();
     }
 

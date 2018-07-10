@@ -57,27 +57,28 @@ body
   font-size:18px;
 }
 </style>
+<script type="text/javascript">
+document.getElementsByClassName('title2')[0].innerHTML = "${pageTitle}";
+</script>
 <div class="row">
 	<div class="col-md-12">
-		<div class="panel panel-primary" data-collapsed="0"
-			style="text-align: left">
-			<div class="panel-heading">
-				<div class="panel-title">
-					<spring:message code="lbl.ownerdetail.title" />
-				</div>
-			</div>
-			<div class="panel-body" style="text-align: center">
-						Owner details updated successfully
+		<div class="panel body" data-collapsed="0">
+			<form:form method="post" class="form-horizontal form-groups-bordered"
+				modelAttribute="propertyOwner" id="ownerEditAck">
+				<div class="panel panel-primary" data-collapsed="0">
+					<div class="panel-heading">
+						<div class="panel-title" style="text-align: center;">
+							<strong>${successMessage}</strong>
+						</div>
+					</div>
 				</div>
 				<div class="row">
 					<div class="text-center">
-						<button type="button" class="btn btn-default" data-dismiss="modal"
-							onclick="window.close();">
-							<spring:message code="lbl.close" />
-						</button>
+						<a href="javascript:void(0)" class="btn btn-default"
+							onclick="self.close()"><spring:message code="lbl.close" /></a>
 					</div>
 				</div>
-			</div>
+			</form:form>
 		</div>
 	</div>
 </div>

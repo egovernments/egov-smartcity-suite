@@ -263,7 +263,7 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
 
         model.addAttribute("sewerageApplicationDetails", sewerageApplicationDetails);
         model.addAttribute("applicationHistory",
-                sewerageApplicationDetailsService.getHistory(sewerageApplicationDetails));
+                sewerageApplicationDetailsService.populateHistory(sewerageApplicationDetails));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
 
         model.addAttribute("pipeSize", SewerageTaxConstants.getPipeScrewSizes());

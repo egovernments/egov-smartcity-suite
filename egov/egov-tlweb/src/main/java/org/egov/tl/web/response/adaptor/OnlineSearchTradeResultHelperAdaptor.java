@@ -67,6 +67,7 @@ public class OnlineSearchTradeResultHelperAdaptor implements JsonSerializer<Onli
         JsonObject searchResult = new JsonObject();
         if (searchFormObj != null) {
             searchResult.addProperty("licenseId", searchFormObj.getLicenseId());
+            searchResult.addProperty("uid", searchFormObj.getUid());
             searchResult.addProperty("applicationNumber", searchFormObj.getApplicationNumber());
             searchResult.addProperty("tlNumber", defaultIfBlank(searchFormObj.getLicenseNumber()));
             searchResult.addProperty("tradeOwner", searchFormObj.getTradeOwnerName());

@@ -357,8 +357,17 @@ public class ComplaintIndex {
     @Field(type = FieldType.Integer)
     private int noOfFeedbackReviews;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT, timezone = DEFAULT_TIMEZONE)
+    @Field(type = FieldType.Date, index = not_analyzed, format = date_optional_time, pattern = ES_DATE_FORMAT)
+    private Date feedbackDate;
+
     @Field(type = FieldType.String, index = not_analyzed)
     private String feedbackReason = EMPTY;
+
+    private String feedbackInWords = EMPTY;
+
+    @Field(type = FieldType.String, index = not_analyzed)
+    private String feedbackCallStatus;
 
     public String getId() {
         return id;
@@ -1110,8 +1119,16 @@ public class ComplaintIndex {
         return noOfFeedbackReviews;
     }
 
-    public void setNoOfFeedbackReviews(final int noOfFeedbackReviews) {
+    public void setNoOfFeedbackReviews(int noOfFeedbackReviews) {
         this.noOfFeedbackReviews = noOfFeedbackReviews;
+    }
+
+    public Date getFeedbackDate() {
+        return feedbackDate;
+    }
+
+    public void setFeedbackDate(Date feedbackDate) {
+        this.feedbackDate = feedbackDate;
     }
 
     public String getFeedbackReason() {
@@ -1120,5 +1137,21 @@ public class ComplaintIndex {
 
     public void setFeedbackReason(String feedbackReason) {
         this.feedbackReason = feedbackReason;
+    }
+
+    public String getFeedbackInWords() {
+        return feedbackInWords;
+    }
+
+    public void setFeedbackInWords(String feedbackInWords) {
+        this.feedbackInWords = feedbackInWords;
+    }
+
+    public String getFeedbackCallStatus() {
+        return feedbackCallStatus;
+    }
+
+    public void setFeedbackCallStatus(final String feedbackCallStatus) {
+        this.feedbackCallStatus = feedbackCallStatus;
     }
 }

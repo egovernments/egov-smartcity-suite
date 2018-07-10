@@ -98,6 +98,8 @@ public class IVRSFeedbackService {
             ivrsFeedback.setComplaint(complaint);
         IVRSRating rating = ivrsRatingRepository.findByName(request.getRating());
         ivrsFeedback.setIvrsRating(rating);
+        ivrsFeedback.setFeedbackDate(request.getFeedbackDate());
+        ivrsFeedback.setCallStatus(request.getCallStatus());
         ivrsFeedback = ivrsFeedbackRepository.saveAndFlush(ivrsFeedback);
         complaint.setCitizenFeedback(CitizenFeedback.value(rating.getWeight()));
         complaintRepository.saveAndFlush(complaint);

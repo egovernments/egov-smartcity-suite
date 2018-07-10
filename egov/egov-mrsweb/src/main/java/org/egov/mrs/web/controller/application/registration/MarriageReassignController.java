@@ -69,6 +69,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping(value = "/reassignmrs/{appId}/{applicationtype}")
@@ -99,9 +100,9 @@ public class MarriageReassignController extends GenericWorkFlowController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String getReassign(@ModelAttribute("reassign") final MarriageReassignInfo reassignInfo, final Model model,
-            @PathVariable final String applicationtype, @PathVariable final Long appId, final HttpServletRequest request) {
+            @RequestParam("mrsRegistrar") boolean mrsRegistrar ,@PathVariable final String applicationtype, @PathVariable final Long appId, final HttpServletRequest request) {
 
-        Map<String, String> employeeWithPosition = marriageReassignService.employeePositionMap();
+        Map<String, String> employeeWithPosition = marriageReassignService.employeePositionMap(mrsRegistrar);
         if (employeeWithPosition.isEmpty()) {
             model.addAttribute("message", messageSource.getMessage("notexists.position",
                     new String[] {}, null));

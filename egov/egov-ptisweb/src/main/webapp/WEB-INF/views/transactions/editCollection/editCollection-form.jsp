@@ -170,7 +170,7 @@ body {
 							</td>
 								<td class="col-xs-2" align="right">
 									<c:if
-										test="${demandDetailBeans[demandInfoStatus.index].reasonMaster == 'Penalty Fines'}">
+										test="${demandDetailBeans[demandInfoStatus.index].reasonMaster == 'Penalty Fines' && demandDetailBeans[demandInfoStatus.index].actualCollection != demandDetailBeans[demandInfoStatus.index].actualAmount}">
 										<form:input path="demandDetailBeans[${demandInfoStatus.index}].revisedAmount" onblur="validNumber(this);" id="${taxName}-${taxId}-rvsdAmount" cssClass="form-control" />
 										<form:errors path="demandDetailBeans[${demandInfoStatus.index}].revisedAmount" cssClass="add-margin error-msg" />
 									</c:if>
@@ -190,10 +190,20 @@ body {
 
 							</td>
 								<td class="col-xs-2" align="right" >
+								<c:choose>
+								<c:when test="${demandDetailBeans[demandInfoStatus.index].actualCollection == demandDetailBeans[demandInfoStatus.index].actualAmount}">
+									<form:input path="demandDetailBeans[${demandInfoStatus.index}].revisedCollection" onblur="checkPenaltyCollection(this);validNumber(this);" id="${taxName}-${taxId}-rvsdCollection" data-idx="${taxId}" cssClass="form-control" readonly="true"/>
+									<form:hidden
+										path="demandDetailBeans[${demandInfoStatus.index}].isCollectionEditable" />
+									<form:errors path="demandDetailBeans[${demandInfoStatus.index}].revisedCollection" cssClass="add-margin error-msg" />
+								</c:when>
+								<c:otherwise>
 									<form:input path="demandDetailBeans[${demandInfoStatus.index}].revisedCollection" onblur="checkPenaltyCollection(this);validNumber(this);" id="${taxName}-${taxId}-rvsdCollection" data-idx="${taxId}" cssClass="form-control" />
 									<form:hidden
 										path="demandDetailBeans[${demandInfoStatus.index}].isCollectionEditable" />
 									<form:errors path="demandDetailBeans[${demandInfoStatus.index}].revisedCollection" cssClass="add-margin error-msg" />
+								</c:otherwise>	
+								</c:choose>
 								</td>
 							</tr>
 						</c:forEach>

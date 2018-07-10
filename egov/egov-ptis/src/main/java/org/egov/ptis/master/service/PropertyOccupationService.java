@@ -69,4 +69,8 @@ public class PropertyOccupationService {
     public List<PropertyOccupation> getAllPropertyOccupations() {
         return propertyOccupationRepository.findAll();
     }
+    
+    public PropertyOccupation getPropertyOccupationByID(final Long id) {
+        return propertyOccupationRepository.findOne(id);
+    }
 }

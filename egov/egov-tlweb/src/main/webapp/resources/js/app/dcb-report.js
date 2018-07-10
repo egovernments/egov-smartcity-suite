@@ -65,21 +65,33 @@ $(document).ready(function (e) {
         else if (!$('#ward').val())
             var wardid = "";
 
+        if ($('#adminward').val() != null) {
+            var adminwardid = "";
+            $("#adminward option:selected").each(function () {
+                var $this = $(this);
+                adminwardid = adminwardid + $this.val() + ",";
+            });
+            adminwardid = adminwardid.substring(0, adminwardid.length - 1);
+        }
+        else if (!$('#adminward').val())
+            var adminwardid = "";
+
         var info = table.page.info();
         if (info.start == 0)
-            getSumOfRecords(wardid);
-        searchDCBReport(wardid);
+            getSumOfRecords(wardid,adminwardid);
+        searchDCBReport(wardid,adminwardid);
     });
 });
 
-function getSumOfRecords(wardid) {
+function getSumOfRecords(wardid,adminwardid) {
 
     $.ajax({
         url: "grand-total",
         data: {
-            'licensenumber': $('#licensenumber').val(),
+            'licenseNumber': $('#licensenumber').val(),
             'activeLicense': $('#activeLicense').val(),
-            'wardId': wardid
+            'wardId': wardid,
+            'adminWardId':adminwardid
         },
         type: 'GET',
         async: true,
@@ -112,7 +124,7 @@ $.fn.dataTable.ext.errMode = function () {
     $('.loader-class').modal('hide');
 };
 
-function searchDCBReport(wardid) {
+function searchDCBReport(wardid,adminwardid) {
     try {
         $('.loader-class').modal('show', {backdrop: 'static'});
         $('.report-section').removeClass('display-hide');
@@ -155,9 +167,10 @@ function searchDCBReport(wardid) {
                 data: function (args) {
                     return {
                         "args": JSON.stringify(args),
-                        'licensenumber': $('#licensenumber').val(),
+                        'licenseNumber': $('#licensenumber').val(),
                         'activeLicense': $('#activeLicense').val(),
-                        'wardId': wardid
+                        'wardId': wardid,
+                        'adminWardId':adminwardid
                     }
                 }
             },
@@ -166,8 +179,8 @@ function searchDCBReport(wardid) {
                 {
                     "data": function (row, type, set, meta) {
                         return {
-                            name: row.licensenumber,
-                            id: row.licenseid
+                            name: row.licenseNumber,
+                            id: row.licenseId
                         };
                     },
                     "render": function (data, type, row) {
@@ -175,7 +188,7 @@ function searchDCBReport(wardid) {
                             + data.id + '">' + data.name + '</a>';
                     },
                     "sTitle": "License No.",
-                    "name": "licensenumber",
+                    "name": "licenseNumber",
                     "width": 10
                 }, {
                     "data": "oldLicenseNo",
@@ -184,8 +197,13 @@ function searchDCBReport(wardid) {
                     "width": 10
                 }, {
                     "data": "ward",
-                    "name": "wardname",
-                    "sTitle": "Ward",
+                    "name": "wardName",
+                    "sTitle": "Revenue Ward",
+                    "width": 10
+                }, {
+                    "data": "adminWard",
+                    "name": "adminWard",
+                    "sTitle": "Election Ward",
                     "width": 10
                 }, {
                     "data": "active",
@@ -193,41 +211,41 @@ function searchDCBReport(wardid) {
                     "sTitle": "Active",
                     "width": 10
                 }, {
-                    "data": "arreardemand",
-                    "name": "arreardemand",
+                    "data": "arrearDemand",
+                    "name": "arrearDemand",
                     "sTitle": "Arrears"
                 }, {
-                    "data": "currentdemand",
-                    "name": "currentdemand",
+                    "data": "currentDemand",
+                    "name": "currentDemand",
                     "sTitle": "Current"
                 }, {
-                    "data": "totaldemand",
+                    "data": "totalDemand",
                     "orderable": false,
                     "sortable": false,
                     "sTitle": "Total"
                 }, {
-                    "data": "arrearcollection",
-                    "name": "arrearcollection",
+                    "data": "arrearCollection",
+                    "name": "arrearCollection",
                     "sTitle": "Arrears"
                 }, {
-                    "data": "currentcollection",
-                    "name": "currentcollection",
+                    "data": "currentCollection",
+                    "name": "currentCollection",
                     "sTitle": "Current"
                 }, {
-                    "data": "totalcollection",
+                    "data": "totalCollection",
                     "orderable": false,
                     "sortable": false,
                     "sTitle": "Total"
                 }, {
-                    "data": "arrearbalance",
-                    "name": "arrearbalance",
+                    "data": "arrearBalance",
+                    "name": "arrearBalance",
                     "sTitle": "Arrears"
                 }, {
-                    "data": "currentbalance",
-                    "name": "currentbalance",
+                    "data": "currentBalance",
+                    "name": "currentBalance",
                     "sTitle": "Current"
                 }, {
-                    "data": "totalbalance",
+                    "data": "totalBalance",
                     "orderable": false,
                     "sortable": false,
                     "sTitle": "Total"
@@ -240,7 +258,6 @@ function searchDCBReport(wardid) {
                     $('#report-footer').show();
                 }
                 if (data.length > 0) {
-                    updateTotalFooter(4, api, true);
                     updateTotalFooter(5, api, true);
                     updateTotalFooter(6, api, true);
                     updateTotalFooter(7, api, true);
@@ -249,13 +266,14 @@ function searchDCBReport(wardid) {
                     updateTotalFooter(10, api, true);
                     updateTotalFooter(11, api, true);
                     updateTotalFooter(12, api, true);
+                    updateTotalFooter(13, api, true);
                 }
             },
             "initComplete": function (settings, json) {
                 $('.loader-class').modal('hide');
             },
             "aoColumnDefs": [{
-                "aTargets": [4, 5, 6, 7, 8, 9, 10, 11, 12],
+                "aTargets": [5, 6, 7, 8, 9, 10, 11, 12, 13],
                 "mRender": function (data, type, full) {
                     return formatNumberInr(data);
                 },

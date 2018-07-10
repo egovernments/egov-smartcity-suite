@@ -52,6 +52,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import java.io.IOException;
 import java.text.ParseException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -59,6 +60,7 @@ import org.codehaus.jackson.map.SerializationConfig;
 import org.egov.dcb.bean.ChequePayment;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.model.DocumentDetailsRequest;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.domain.model.NewPropertyDetails;
 import org.egov.ptis.domain.model.ViewPropertyDetails;
@@ -74,9 +76,12 @@ import org.egov.restapi.model.SurroundingBoundaryDetails;
 import org.egov.restapi.model.VacantLandDetails;
 import org.egov.restapi.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -125,6 +130,28 @@ public class CreateAssessmentController {
                 newPropertyDetails = propertyExternalService.createNewProperty(viewPropertyDetails);
         }
         return newPropertyDetails;
+    }
+    
+    /**
+     * API to allow uploading documents
+     * @param applicationNo
+     * @param ulbCode
+     * @param documentDetail
+     * @return
+     */
+    @RequestMapping(value = "/property/uploaddocument/{applicationNo}", method = RequestMethod.POST)
+    public NewPropertyDetails uploadSupportDocuments(@PathVariable String applicationNo, @RequestParam String ulbCode,
+    		DocumentDetailsRequest documentDetail) {
+    	NewPropertyDetails newPropertyDetails;
+    	ErrorDetails errorDetails = validationUtil.validateDocumentUploadRequest(documentDetail, applicationNo);
+    	if (errorDetails != null && StringUtils.isNotBlank(errorDetails.getErrorCode())) {
+            newPropertyDetails = new NewPropertyDetails();
+            newPropertyDetails.setApplicationNo("-1");
+            newPropertyDetails.setErrorDetails(errorDetails);
+        } else {
+        	newPropertyDetails = propertyExternalService.saveDocument(documentDetail, applicationNo);
+        }
+    	return newPropertyDetails;
     }
 
     /**

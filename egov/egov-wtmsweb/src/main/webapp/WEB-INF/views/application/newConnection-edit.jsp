@@ -167,7 +167,7 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enc
 		window.location="/wtms/application/regulariseconnection/demandnote-view/"+obj;
 	}
 	
-	if($("#applicationType").val()==='REGLZNCONNECTION' && $("#statuscode").val()==='CREATED' && $("#executionDate").val()==='') {
+	if($("#applicationType").val()==='REGLZNCONNECTION' && $("#statuscode").val()==='CREATED' && 'Rejected'!=$("#currentState").val() && $("#executionDate").val()==='') {
 		$(".workAction").hide();
 		$("#editDCB").hide();
 	}

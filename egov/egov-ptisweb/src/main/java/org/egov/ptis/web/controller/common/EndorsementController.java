@@ -117,8 +117,8 @@ public class EndorsementController {
         javax.persistence.Query qry;
         final Property property;
         if (serviceName.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)) {
-            qry = entityManager.createQuery("from PropertyImpl P where P.id =?");
-            qry.setParameter(1, Long.valueOf(assessmentNo));
+            qry = entityManager.createQuery("from PropertyImpl P where P.id =:id");
+            qry.setParameter("id", Long.valueOf(assessmentNo));
             property = (Property) qry.getSingleResult();
             basicProperty = property.getBasicProperty();
         } else

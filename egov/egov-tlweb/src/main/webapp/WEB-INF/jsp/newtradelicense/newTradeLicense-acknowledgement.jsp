@@ -127,8 +127,6 @@
                                     <s:property value="getPayableAmountInWords()"/>
                                 </div>
                             </div>
-
-
                             <div class="row add-border">
                                 <div class="col-sm-3 col-xs-6 add-margin">
                                     <s:text name="license.startdate"/>
@@ -138,23 +136,29 @@
                                     <s:property value="%{commencementDateFrmttd}"/>
                                 </div>
                             </div>
-
                         </div>
+                    </div>
+                    <div class="text-center">
+                        <s:if test="%{currentUserIsCitizenOrAnonymous() && !isPaid()}">
+                            <button type="button" id="collectfee" class="btn btn-primary"
+                                    onclick="window.open('/tl/pay/online/<s:property value="%{id}"/>', '_blank'
+                                            ,'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');" >
+                                Pay License Fee</button>
+                        </s:if>
+                        <s:if test="%{hasCscOperatorRole()}">
+                            <button type="button" name="PrintAck" id="PrintAck" class="btn btn-default"
+                                    onclick="window.open('/tl/newtradelicense/newtradelicense-printAck.action?model.id=<s:property value="%{id}"/>'
+                                            , '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');" >Print</button>
+                        </s:if>
+                        <s:else>
+                            <button type="button" id="print" class="btn btn-default" onclick="window.print();">Print</button>
+                        </s:else>
+                        <button type="button" id="closebn" class="btn btn-default" onclick="window.close();">Close</button>
                     </div>
                 </s:push>
             </s:form>
         </div>
     </div>
-</div>
-<div align="center">
-    <s:if test="%{hasCscOperatorRole == true}">
-        <input type="button" value="Print" name="PrintAck" id="PrintAck" class="button"
-               onclick="window.open('/tl/newtradelicense/newtradelicense-printAck.action?model.id=<s:property value="%{id}"/>', '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');" >
-    </s:if>
-    <s:else>
-        <input type="button" id="print" class="button printbtn" value="Print"/>  </s:else>
-    &nbsp;&nbsp;
-    <input type="button" id="close" value="Close" class="button" onclick="javascript:window.close();"/>
 </div>
 <script src="<cdn:url  value='/resources/global/js/jquery/plugins/jQuery.print.js' context='/egi'/>"></script>
 </body>

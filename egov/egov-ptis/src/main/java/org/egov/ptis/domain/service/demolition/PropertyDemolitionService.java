@@ -338,7 +338,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
                 property.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvarComments).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(new Date()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
-                        .withNatureOfTask(NATURE_DEMOLITION)
+                        .withNatureOfTask(APPLICATION_TYPE_DEMOLITION)
                         .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null);
             } else if (property.getCurrentState().getNextAction().equalsIgnoreCase("END"))
                 property.transition().end().withSenderName(user.getUsername() + "::" + user.getName())

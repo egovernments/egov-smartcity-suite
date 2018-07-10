@@ -53,6 +53,7 @@ import org.egov.mrs.masters.entity.MarriageReligion;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -70,9 +71,8 @@ import javax.validation.constraints.NotNull;
 @SequenceGenerator(name = MarriagePriest.SEQ_PRIEST, sequenceName = MarriagePriest.SEQ_PRIEST, allocationSize = 1)
 public class MarriagePriest extends AbstractAuditable {
 
-    private static final long serialVersionUID = -3486065393428049965L;
     public static final String SEQ_PRIEST = "SEQ_EGMRS_PRIEST";
-
+    private static final long serialVersionUID = -3486065393428049965L;
     @Id
     @GeneratedValue(generator = SEQ_PRIEST, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -94,6 +94,7 @@ public class MarriagePriest extends AbstractAuditable {
 
     @SafeHtml
     @Length(max = 20)
+    @Column(insertable = false, updatable = false)
     private String aadhaarNo;
 
     @Override
@@ -141,7 +142,7 @@ public class MarriagePriest extends AbstractAuditable {
     public Name getName() {
         return name;
     }
-    
+
     public void setName(Name name) {
         this.name = name;
     }

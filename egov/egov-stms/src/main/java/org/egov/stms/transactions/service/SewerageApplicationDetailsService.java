@@ -47,6 +47,7 @@
  */
 package org.egov.stms.transactions.service;
 
+import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_CANCELLED;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_COLLECTINSPECTIONFEE;
@@ -87,7 +88,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -1017,60 +1018,46 @@ public class SewerageApplicationDetailsService {
 
         return updatedSewerageApplicationDetails;
     }
-
-    public List<HashMap<String, Object>> getHistory(final SewerageApplicationDetails sewerageApplicationDetails) {
-        User user;
+/*
+ * updating application State and State History table info 
+ */
+    public List<HashMap<String, Object>> populateHistory(final SewerageApplicationDetails sewerageApplicationDetails) {
         final List<HashMap<String, Object>> historyTable = new ArrayList<>();
         final State<Position> state = sewerageApplicationDetails.getState();
-        final HashMap<String, Object> map = new HashMap<>();
-        if (null != state) {
-            if (!sewerageApplicationDetails.getStateHistory().isEmpty()
-                    && sewerageApplicationDetails.getStateHistory() != null)
-                Collections.reverse(sewerageApplicationDetails.getStateHistory());
-            for (final StateHistory<Position> stateHistory : sewerageApplicationDetails.getStateHistory()) {
-                final HashMap<String, Object> historyMap = new HashMap<>();
-                historyMap.put("date", stateHistory.getDateInfo());
-                historyMap.put("comments", stateHistory.getComments());
-                historyMap.put("updatedBy", stateHistory.getLastModifiedBy().getUsername() + "::"
-                        + stateHistory.getLastModifiedBy().getName());
-                historyMap.put("status", stateHistory.getValue());
-                final Position owner = stateHistory.getOwnerPosition();
-                user = stateHistory.getOwnerUser();
-                if (null != user && !user.getType().toString().equals("CITIZEN")) {
-                    historyMap.put("user", user.getUsername() + "::" + user.getName());
-                    historyMap.put(DEPARTMENT,
-                            null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
-                                    .getDepartmentForUser(user.getId()).getName() : "");
-                } else if (null != owner && null != owner.getDeptDesig()) {
-                    user = eisCommonService.getUserForPosition(owner.getId(), new Date());
-                    historyMap
-                            .put("user", null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
-                    historyMap.put(DEPARTMENT,
-                            owner.getDeptDesig().getDepartment() == null ? StringUtils.EMPTY : owner.getDeptDesig()
-                                    .getDepartment().getName());
-                }
-                historyTable.add(historyMap);
-            }
-
-            map.put("date", state.getDateInfo());
-            map.put("comments", state.getComments() != null ? state.getComments() : "");
-            map.put("updatedBy", state.getLastModifiedBy().getUsername() + "::" + state.getLastModifiedBy().getName());
-            map.put("status", state.getValue());
-            final Position ownerPosition = state.getOwnerPosition();
-            user = state.getOwnerUser();
-            if (null != user && !user.getType().toString().equals("CITIZEN")) {
-                map.put("user", user.getUsername() + "::" + user.getName());
-                map.put(DEPARTMENT, null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
-                        .getDepartmentForUser(user.getId()).getName() : "");
-            } else if (null != ownerPosition && null != ownerPosition.getDeptDesig()) {
-                user = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
-                map.put("user", null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
-                map.put(DEPARTMENT, null != ownerPosition.getDeptDesig().getDepartment() ? ownerPosition
-                        .getDeptDesig().getDepartment().getName() : "");
-            }
-            historyTable.add(map);
+        if (state!=null) {
+            final HashMap<String, Object> stateMap = new HashMap<>();
+            stateMap.put("date", state.getLastModifiedDate());
+            stateMap.put("date", state.getDateInfo());
+            stateMap.put("comments", state.getComments());
+            stateMap.put("updatedBy", state.getSenderName());
+            stateMap.put("status", state.getValue());
+            setUserAndDepartment(state.getOwnerPosition(), stateMap);
+            historyTable.add(stateMap);
+            state.getHistory().stream().sorted(Comparator.comparing(StateHistory<Position>::getLastModifiedDate).reversed())
+            .forEach(sh -> historyTable.add(updateHistoryTableInfo(sh)));
         }
         return historyTable;
+    }
+
+    private HashMap<String, Object> updateHistoryTableInfo(StateHistory<Position> stateHistory) {
+        Position position = stateHistory.getOwnerPosition();
+        final HashMap<String, Object> stateHistoryMap = new HashMap<>();
+        stateHistoryMap.put("date", stateHistory.getLastModifiedDate());
+        stateHistoryMap.put("comments", defaultString(stateHistory.getComments()));
+        stateHistoryMap.put("updatedBy", stateHistory.getSenderName());
+        stateHistoryMap.put("status", stateHistory.getValue());
+        setUserAndDepartment(position, stateHistoryMap);
+        return stateHistoryMap;
+    }
+
+    private void setUserAndDepartment(final Position owner, final HashMap<String, Object> applicationHistoryMap) {
+
+        if (owner.getDeptDesig() != null) {
+            User user = eisCommonService.getUserForPosition(owner.getId(), new Date());
+            applicationHistoryMap
+                    .put("user", user.getUsername() == null ? StringUtils.EMPTY : user.getUsername() + "::" + user.getName());
+            applicationHistoryMap.put(DEPARTMENT, owner.getDeptDesig().getDepartment().getName());
+        }
     }
 
     public void updateStateTransition(final SewerageApplicationDetails sewerageApplicationDetails,

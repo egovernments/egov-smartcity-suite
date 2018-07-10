@@ -164,7 +164,7 @@
 						<div class="col-md-4 add-margin">
 							<input type="text" name="consumerCode"
 								class="form-control patternvalidation" data-pattern="number"
-								maxlength="10" id="consumerCode" />
+								maxlength="15" id="consumerCode" />
 						</div>
 					</div>
 					<div class="form-group">
@@ -173,7 +173,7 @@
 						<div class="col-md-4 add-margin">
 							<input type="text" name="assessmentNumber"
 								class="form-control patternvalidation" data-pattern="number"
-								maxlength="10" id="assessmentNumber" />
+								maxlength="15" id="assessmentNumber" />
 						</div>
 					</div>
 					<div class="form-group">

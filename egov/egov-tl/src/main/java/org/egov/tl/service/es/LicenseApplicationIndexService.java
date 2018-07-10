@@ -81,7 +81,7 @@ import static org.egov.tl.utils.Constants.TRADE_LICENSE;
 @Service
 public class LicenseApplicationIndexService {
 
-    private static final String APPLICATION_VIEW_URL = "/tl/viewtradelicense/viewTradeLicense-view.action?applicationNo=%s";
+    private static final String APPLICATION_VIEW_URL = "/tl/license/show/%s";
 
     @Autowired
     private ApplicationIndexService applicationIndexService;
@@ -114,8 +114,8 @@ public class LicenseApplicationIndexService {
         applicationIndexService.createApplicationIndex(ApplicationIndex.builder().withModuleName(TRADE_LICENSE)
                 .withApplicationNumber(license.getApplicationNumber()).withApplicationDate(license.getApplicationDate())
                 .withApplicationType(license.getLicenseAppType().getName()).withApplicantName(license.getLicensee().getApplicantName())
-                .withStatus(license.getEgwStatus() != null ? license.getEgwStatus().getDescription() : license.getCurrentState().getValue())
-                .withUrl(format(APPLICATION_VIEW_URL, license.getApplicationNumber()))
+                .withStatus(license.getStatus().getName())
+                .withUrl(format(APPLICATION_VIEW_URL, license.getUid()))
                 .withApplicantAddress(license.getAddress()).withOwnername(user.isPresent() ?
                         user.get().getUsername() + DELIMITER_COLON + user.get().getName() : NA)
                 .withChannel(isNotBlank(license.getApplicationSource()) ? license.getApplicationSource() : getChannel())
@@ -134,10 +134,10 @@ public class LicenseApplicationIndexService {
 
     private void updateLicenseApplicationIndex(License license, ApplicationIndex applicationIndex) {
         Optional<User> user = getApplicationCurrentOwner(license);
-        applicationIndex.setStatus(license.getEgwStatus() != null ? license.getEgwStatus().getDescription() : license.getCurrentState().getValue());
+        applicationIndex.setStatus(license.getStatus().getName());
         applicationIndex.setApplicantAddress(license.getAddress());
         applicationIndex
-                .setOwnerName(user.isPresent() ? user.get().getUsername() + DELIMITER_COLON + user.get().getName() : EMPTY);
+                .setOwnerName(user.isPresent() ? user.get().getUsername() + DELIMITER_COLON + user.get().getName() : NA);
         applicationIndex.setConsumerCode(license.getLicenseNumber());
         applicationIndex.setClosed(NO);
         applicationIndex.setApproved(INPROGRESS);

@@ -48,15 +48,28 @@
 
 package org.egov.pgr.integration.ivrs.entity.contract;
 
+import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
+
+import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 public class IVRSFeedbackUpdateRequest {
 
-    @SafeHtml
+    @SafeHtml(message = "CRN contains insecure characters")
+    @NotBlank(message = "CRN is mandatory")
     private String crn;
 
-    @SafeHtml
+    @SafeHtml(message = "Rating contains insecure characters")
+    @NotBlank(message = "Rating is mandatory")
     private String rating;
+
+    @NotNull(message = "Feedback Date is mandatory")
+    private Date feedbackDate;
+
+    @NotBlank(message = "Call Status is mandatory")
+    @SafeHtml(message = "Call Status contains insecure characters")
+    private String callStatus;
 
     public String getCrn() {
         return crn;
@@ -72,6 +85,22 @@ public class IVRSFeedbackUpdateRequest {
 
     public void setRating(String rating) {
         this.rating = rating;
+    }
+
+    public Date getFeedbackDate() {
+        return feedbackDate;
+    }
+
+    public void setFeedbackDate(Date feedbackDate) {
+        this.feedbackDate = feedbackDate;
+    }
+
+    public String getCallStatus() {
+        return callStatus;
+    }
+
+    public void setCallStatus(final String callStatus) {
+        this.callStatus = callStatus;
     }
 }
 

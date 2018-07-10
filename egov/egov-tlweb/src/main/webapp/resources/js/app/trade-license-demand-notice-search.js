@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -189,8 +189,8 @@ $(document).ready(function () {
                 var wardId = $('#wardId').val();
                 var localityId = $('#localityId').val();
                 var status = $('#status').val();
-
-                if (!licenseNumber && !oldLicenseNumber && !category && !subCategory && !wardId && !localityId && !status) {
+                var electionWard = $('#electionWard').val();
+                if (!licenseNumber && !oldLicenseNumber && !category && !subCategory && !wardId && !localityId && !status && !electionWard) {
                     bootbox.alert("Atleast one search criteria is mandatory!");
                     return false;
                 }
@@ -207,6 +207,7 @@ $(document).ready(function () {
                                 categoryId: category,
                                 subCategoryId: subCategory,
                                 wardId: wardId,
+                                electionWard: electionWard,
                                 localityId: localityId,
                                 statusId: status,
 
@@ -240,8 +241,12 @@ $(document).ready(function () {
                                 "sTitle": "Trade Owner"
                             },
                             {
-                                "data": "wardname",
-                                "sTitle": "ward No."
+                                "data": "revenueWardName",
+                                "sTitle": "Revenue Ward"
+                            },
+                            {
+                                "data": "adminWardName",
+                                "sTitle": "Election Ward"
                             },
                             {
                                 "data": "tlArrearFee",

@@ -178,7 +178,7 @@
 								cellpadding="0" cellspacing="0">
 								<tbody>
 									<tr>
-										<th class="bluebgheadtd"><s:text name="adharno" /></th>
+										<%-- <th class="bluebgheadtd"><s:text name="adharno" /></th> --%>
 										<th class="bluebgheadtd"><s:text name="MobileNumber" /></th>
 										<th class="bluebgheadtd"><s:text name="OwnerName" /></th>
 										<th class="bluebgheadtd"><s:text name="gender" /></th>
@@ -189,13 +189,13 @@
 									<s:iterator value="basicproperty.propertyOwnerInfo"
 										status="status">
 										<tr>
-											<td class="blueborderfortd" align="center"><s:if
+											<%-- <td class="blueborderfortd" align="center"><s:if
 													test='%{owner.aadhaarNumber == ""}'>
 													<span class="bold">N/A</span>
 												</s:if> <s:else>
 													<span class="bold"><s:property
 															value="%{owner.aadhaarNumber}" default="N/A" /> </span>
-												</s:else></td>
+												</s:else></td> --%>
 											<td class="blueborderfortd" align="center"><span
 												class="bold"><s:property value="owner.mobileNumber" /></span></td>
 											<td class="blueborderfortd" align="center"><span
@@ -383,6 +383,22 @@
 			else {
 				jQuery('#succession').hide();
 				jQuery('#otherReasons').show();
+			}
+			if (selectedValue == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_UNREG_WILL}" />'
+					|| selectedValue == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_REG_WILL}" />'){
+				jQuery('#transferTable tbody tr:eq(5)').find('td:eq(1)')
+						.append('<span class="mandatory1">*</span>');
+				jQuery('#transferTable tbody tr:eq(5)').find('input').prop('required',true);
+			}
+			else {
+				jQuery('#transferTable tbody tr:eq(5)').find('td:eq(1)').find('span').remove();
+				jQuery('#transferTable tbody tr:eq(5)').find('input').prop('required',false);
+			}
+			if (selectedValue == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_UNREG_WILL}" />')
+					jQuery('.documentDetRow').find('span').remove();
+			else if(jQuery('.documentDetRow').find('span').text() == ''){
+				jQuery('.documentDetRow').find('td:eq(1)').append('<span class="mandatory1">*</span>');
+				jQuery('.documentDetRow').find('td:eq(3)').append('<span class="mandatory1">*</span>');
 			}
 		}
 		

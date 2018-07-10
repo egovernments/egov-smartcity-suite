@@ -90,6 +90,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.CrossHierarchy;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
@@ -122,15 +123,18 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
+import org.egov.ptis.domain.dao.property.PropertyHibernateDAO;
 import org.egov.ptis.domain.dao.property.PropertyMutationDAO;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.document.DocumentTypeDetails;
+import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.property.Apartment;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.BoundaryCategory;
 import org.egov.ptis.domain.entity.property.BuiltUpProperty;
+import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.FloorType;
@@ -158,6 +162,7 @@ import org.egov.ptis.domain.entity.property.WoodType;
 import org.egov.ptis.domain.entity.property.view.SurveyBean;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.BoundaryDetails;
+import org.egov.ptis.domain.model.DocumentDetailsRequest;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.domain.model.FloorDetails;
 import org.egov.ptis.domain.model.LocalityDetails;
@@ -176,6 +181,7 @@ import org.egov.ptis.domain.model.TaxCalculatorRequest;
 import org.egov.ptis.domain.model.TaxCalculatorResponse;
 import org.egov.ptis.domain.model.ViewPropertyDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
+import org.egov.ptis.domain.repository.vacancyremission.VacancyRemissionRepository;
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.ptis.master.service.FloorTypeService;
@@ -193,6 +199,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 
 public class PropertyExternalService {
+    private static final String PROP_SERVICE = "propService";
+    private static final String FROM_BOUNDARY_B_WHERE_B_ID_ID = "from Boundary b where b.id = :id";
     private static final Logger LOGGER = LoggerFactory.getLogger(PropertyExternalService.class);
     private static final String ASSESSMENT = "Assessment";
     public static final Integer FLAG_MOBILE_EMAIL = 0;
@@ -277,7 +285,9 @@ public class PropertyExternalService {
     @Qualifier("documentTypeDetailsService")
     private PersistenceService<DocumentTypeDetails, Long> documentTypeDetailsService;
     @Autowired
-    private PropertySurveyService surveyService ;
+    private PropertySurveyService surveyService;
+    @Autowired
+    private PropertyHibernateDAO propertyHibernateDAO;
 
     private PropertyImpl propty = new PropertyImpl();
 
@@ -384,12 +394,14 @@ public class PropertyExternalService {
     private void loadPropertyDues(PropertyImpl property, AssessmentDetails assessmentDetail) {
         final Map<String, BigDecimal> resultmap = ptDemandDAO.getDemandCollMap(property);
         if (null != resultmap && !resultmap.isEmpty()) {
-            final BigDecimal currDmd = resultmap.get(CURR_FIRSTHALF_DMD_STR);
+            final BigDecimal currDmd = resultmap.get(CURR_FIRSTHALF_DMD_STR)
+                    .add(resultmap.get(CURR_SECONDHALF_DMD_STR));
             final BigDecimal arrDmd = resultmap.get(ARR_DMD_STR);
-            final BigDecimal currCollection = resultmap.get(CURR_FIRSTHALF_COLL_STR);
-            final BigDecimal arrColelection = resultmap.get(ARR_COLL_STR);
-
-            final BigDecimal taxDue = currDmd.add(arrDmd).subtract(currCollection).subtract(arrColelection);
+            final BigDecimal currCollection = resultmap.get(CURR_FIRSTHALF_COLL_STR)
+                    .add(resultmap.get(CURR_SECONDHALF_COLL_STR));
+            final BigDecimal arrCollection = resultmap.get(ARR_COLL_STR);
+            final BigDecimal taxDue = currDmd.add(arrDmd).subtract(currCollection)
+                    .subtract(arrCollection);
             assessmentDetail.getPropertyDetails().setTaxDue(taxDue);
             assessmentDetail.getPropertyDetails().setCurrentTax(currDmd);
             assessmentDetail.getPropertyDetails().setArrearTax(arrDmd);
@@ -462,17 +474,17 @@ public class PropertyExternalService {
 
     private Set<OwnerName> prepareOwnerInfo(final Property property) {
         final List<PropertyOwnerInfo> propertyOwners = property.getBasicProperty().getPropertyOwnerInfo();
-        final Set<OwnerName> ownerNames = new HashSet<OwnerName>(0);
+        final Set<OwnerName> ownerNames = new HashSet<>(0);
         if (propertyOwners != null && !propertyOwners.isEmpty())
             for (final PropertyOwnerInfo propertyOwner : propertyOwners) {
                 final OwnerName ownerName = new OwnerName();
-                if(StringUtils.isNotBlank(propertyOwner.getOwner().getAadhaarNumber()))
-                ownerName.setAadhaarNumber(propertyOwner.getOwner().getAadhaarNumber()
-                        .replaceAll("\\w(?=\\w{4})", "*"));
+                if (StringUtils.isNotBlank(propertyOwner.getOwner().getAadhaarNumber()))
+                    ownerName.setAadhaarNumber(propertyOwner.getOwner().getAadhaarNumber()
+                            .replaceAll("\\w(?=\\w{4})", "*"));
                 ownerName.setOwnerName(propertyOwner.getOwner().getName());
-                if(StringUtils.isNotBlank(propertyOwner.getOwner().getMobileNumber()))
-                ownerName.setMobileNumber(propertyOwner.getOwner().getMobileNumber()
-                        .replaceAll("\\w(?=\\w{2})", "*"));
+                if (StringUtils.isNotBlank(propertyOwner.getOwner().getMobileNumber()))
+                    ownerName.setMobileNumber(propertyOwner.getOwner().getMobileNumber()
+                            .replaceAll("\\w(?=\\w{2})", "*"));
                 ownerName.setEmailId(propertyOwner.getOwner().getEmailId());
                 ownerNames.add(ownerName);
             }
@@ -489,11 +501,10 @@ public class PropertyExternalService {
             basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
         else if (StringUtils.isNotBlank(oldAssessmentNo)) {
             basicProperties = (List<BasicProperty>) basicPropertyDAO.getBasicPropertyByOldMunipalNo(oldAssessmentNo);
-            if (basicProperties.size() == 1)
+            if (!basicProperties.isEmpty() && basicProperties.size() == 1)
                 basicProperty = basicProperties.get(0);
         }
-
-        if (!basicProperties.isEmpty()) {
+        if (!basicProperties.isEmpty() && basicProperties.size() > 1) {
             propertyTaxDetails = new PropertyTaxDetails();
             errorDetails.setErrorCode(PROPERTY_DUPLICATE_ERR_CODE);
             errorDetails.setErrorMessage(PROPERTY_DUPLICATE_ERR_MSG + oldAssessmentNo);
@@ -527,7 +538,7 @@ public class PropertyExternalService {
             final String mobileNumber, final String category, final String doorNo) {
         final List<BasicProperty> basicProperties = basicPropertyDAO.getBasicPropertiesForTaxDetails(assessmentNo,
                 ownerName, mobileNumber, category, doorNo);
-        List<PropertyTaxDetails> propTxDetailsList = new ArrayList<PropertyTaxDetails>();
+        List<PropertyTaxDetails> propTxDetailsList = new ArrayList<>();
         if (null != basicProperties && !basicProperties.isEmpty()) {
             for (final BasicProperty basicProperty : basicProperties) {
                 final PropertyTaxDetails propertyTaxDetails = getPropertyTaxDetails(basicProperty, category);
@@ -795,13 +806,13 @@ public class PropertyExternalService {
                         paidTo = rcptAcctInfo.getDescription().split("-", 2);
                     }
                 }
-
+                Module module = moduleService.getModuleByName(PropertyTaxConstants.PTMODULENAME);
                 if (paidFrom != null)
                     fromInstallment = installmentDao.getInsatllmentByModuleAndDescription(
-                            moduleService.getModuleByName(PropertyTaxConstants.PTMODULENAME), paidFrom[1].toString());
+                            module, paidFrom[1]);
                 if (paidTo != null)
                     toInstallment = installmentDao.getInsatllmentByModuleAndDescription(
-                            moduleService.getModuleByName(PropertyTaxConstants.PTMODULENAME), paidTo[1].toString());
+                            module, paidTo[1]);
             }
             /**
              * If collection is done for complete current financial year only, todate shown is last date of current financial year
@@ -975,19 +986,19 @@ public class PropertyExternalService {
             list = qry.getResultList();
             if (null != list && !list.isEmpty()) {
                 final CrossHierarchy crossHeirarchyImpl = (CrossHierarchy) list.get(0);
-                qry = entityManager.createQuery("from Boundary b where b.id = :id");
+                qry = entityManager.createQuery(FROM_BOUNDARY_B_WHERE_B_ID_ID);
                 qry.setParameter("id", crossHeirarchyImpl.getParent().getId());
                 list = qry.getResultList();
                 if (null != list && !list.isEmpty()) {
                     final Boundary block = (Boundary) list.get(0);
                     localityDetails.setBlockName(block.getName());
-                    qry = entityManager.createQuery("from Boundary b where b.id = :id");
+                    qry = entityManager.createQuery(FROM_BOUNDARY_B_WHERE_B_ID_ID);
                     qry.setParameter("id", block.getParent().getId());
                     list = qry.getResultList();
                     if (null != list && !list.isEmpty()) {
                         final Boundary ward = (Boundary) list.get(0);
                         localityDetails.setWardName(ward.getName());
-                        qry = entityManager.createQuery("from Boundary b where b.id = :id");
+                        qry = entityManager.createQuery(FROM_BOUNDARY_B_WHERE_B_ID_ID);
                         qry.setParameter("id", ward.getParent().getId());
                         list = qry.getResultList();
                         if (null != list && !list.isEmpty()) {
@@ -1177,7 +1188,7 @@ public class PropertyExternalService {
     public NewPropertyDetails createNewProperty(ViewPropertyDetails viewpropertyDetails) throws ParseException {
 
         NewPropertyDetails newPropertyDetails = null;
-        final PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
+        final PropertyService propService = beanProvider.getBean(PROP_SERVICE, PropertyService.class);
         BasicProperty basicProperty = createBscPropty(viewpropertyDetails, propService);
         final Address ownerCorrAddr = createCorrespondenceAddress(viewpropertyDetails, basicProperty.getAddress());
         PropertyImpl property = (PropertyImpl) basicProperty.getWFProperty();
@@ -1194,23 +1205,24 @@ public class PropertyExternalService {
                 uploadContentTypes);
         basicPropertyService.createOwners(property, basicProperty, ownerCorrAddr);
         /*
-         * Duplicate GIS property will be persisted, which will be used for generating comparison reports  
+         * Duplicate GIS property will be persisted, which will be used for generating comparison reports
          */
         PropertyImpl gisProperty = (PropertyImpl) property.createPropertyclone();
         Ptdemand ptdemand = property.getPtDemandSet().iterator().next();
         Ptdemand gisPtdemand = gisProperty.getPtDemandSet().iterator().next();
-        if(gisPtdemand != null)
+        List<Installment> instList = new ArrayList<>();
+        if (gisPtdemand != null)
             gisPtdemand.getDmdCalculations().setAlv(ptdemand.getDmdCalculations().getAlv());
-        if(!gisProperty.getPropertyDetail().getFloorDetails().isEmpty()){
-            for(Floor floor : gisProperty.getPropertyDetail().getFloorDetails())
+        if (!gisProperty.getPropertyDetail().getFloorDetails().isEmpty()) {
+            for (Floor floor : gisProperty.getPropertyDetail().getFloorDetails())
                 floor.setPropertyDetail(gisProperty.getPropertyDetail());
         }
         gisProperty.setStatus('G');
         gisProperty.setSource(SOURCE_SURVEY);
         BigDecimal gisTax = BigDecimal.ZERO;
-        for (EgDemandDetails demandDetail : gisPtdemand.getEgDemandDetails())
-            gisTax = gisTax.add(demandDetail.getAmount());
-        
+        if (gisPtdemand != null) {
+            gisTax = propService.getSurveyTax(gisProperty, gisPtdemand.getEgInstallmentMaster().getFromDate());
+        }
         GisDetails gisDetails = new GisDetails();
         gisDetails.setGisProperty(gisProperty);
         gisDetails.setApplicationProperty(property);
@@ -1220,14 +1232,13 @@ public class PropertyExternalService {
         gisDetails.setPropertyZone(basicProperty.getPropertyID().getZone());
         gisProperty.setGisDetails(gisDetails);
         property.setGisDetails(gisDetails);
-        
-        
+
         basicProperty.addProperty(gisProperty);
         transitionWorkFlow(property, propService, PROPERTY_MODE_CREATE);
         basicPropertyService.applyAuditing(property.getState());
         SurveyBean surveyBean = new SurveyBean();
-        surveyBean.setGisTax(gisTax);
         surveyBean.setProperty(property);
+        surveyBean.setGisTax(gisTax);
         surveyBean.setApplicationTax(gisTax);
         surveyBean.setAgeOfCompletion(propService.getSlaValue(APPLICATION_TYPE_NEW_ASSESSENT));
         surveyService.updateSurveyIndex(APPLICATION_TYPE_NEW_ASSESSENT, surveyBean);
@@ -1271,7 +1282,7 @@ public class PropertyExternalService {
                 wallType = wallTypeService.getWallTypeById(Long.valueOf(viewPropertyDetails.getWallType()));
             if (StringUtils.isNotBlank(viewPropertyDetails.getWoodType()))
                 woodType = woodTypeService.getWoodTypeById(Long.valueOf(viewPropertyDetails.getWoodType()));
-            
+
             propertyImpl.getPropertyDetail().setFloorDetailsProxy(getFloorList(viewPropertyDetails.getFloorDetails()));
             setAmenities(viewPropertyDetails, propertyImpl);
 
@@ -1306,7 +1317,7 @@ public class PropertyExternalService {
         try {
             propService.createDemand(propertyImpl, propCompletionDate);
         } catch (TaxCalculatorExeption e) {
-
+            LOGGER.error("Error while calculating Taxes", e.getMessage());
         }
         return basicProperty;
     }
@@ -1347,15 +1358,17 @@ public class PropertyExternalService {
     private void setBasicPropOwnerInfo(ViewPropertyDetails viewPropertyDetails, BasicProperty basicProperty) {
         if (StringUtils.isNotBlank(viewPropertyDetails.getDocType())
                 && PropertyTaxConstants.DOCUMENT_NAME_NOTARY_DOCUMENT.equals(viewPropertyDetails.getDocType()))
-            basicProperty.setPropertyOwnerInfoProxy(getNotaryOwners());
+            basicProperty
+                    .setPropertyOwnerInfoProxy(getNotaryOwners(viewPropertyDetails.getOwnerDetails().get(0).getMobileNumber()));
         else
             basicProperty.setPropertyOwnerInfoProxy(getPropertyOwnerInfoList(viewPropertyDetails.getOwnerDetails()));
     }
 
-    private List<PropertyOwnerInfo> getNotaryOwners() {
+    private List<PropertyOwnerInfo> getNotaryOwners(String mobileNo) {
         List<PropertyOwnerInfo> notaryOwnersList = new ArrayList<>();
         PropertyOwnerInfo notaryPropOwner = new PropertyOwnerInfo();
         User notaryUser = userService.getUserByUsername(PropertyTaxConstants.NOTARY_DOCUMENT_OWNER);
+        notaryUser.setMobileNumber(mobileNo);
         notaryPropOwner.setOwner(notaryUser);
         notaryOwnersList.add(notaryPropOwner);
         return notaryOwnersList;
@@ -1411,7 +1424,7 @@ public class PropertyExternalService {
         propertyImpl.getPropertyDetail().setMarketValue(viewPropertyDetails.getMarketValue());
     }
 
-    private void setAmenities(ViewPropertyDetails viewPropertyDetails, PropertyImpl propertyImpl) throws ParseException {
+    private void setAmenities(ViewPropertyDetails viewPropertyDetails, PropertyImpl propertyImpl) {
         propertyImpl.getPropertyDetail().setLift(viewPropertyDetails.getHasLift());
         propertyImpl.getPropertyDetail().setToilets(viewPropertyDetails.getHasToilet());
         propertyImpl.getPropertyDetail().setWaterTap(viewPropertyDetails.getHasWaterTap());
@@ -1691,7 +1704,7 @@ public class PropertyExternalService {
         property.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
                 .withComments(approverComments).withStateValue(wfmatrix.getNextState())
                 .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
-                .withNatureOfTask(natureOftask).withInitiator(assignment != null ? assignment.getPosition() : null);
+                .withNatureOfTask(natureOftask).withInitiator(assignment.getPosition());
 
         return property;
     }
@@ -2087,7 +2100,7 @@ public class PropertyExternalService {
             getVacantLandDetails(assessmentInfo, propertyDetail, propertyID);
 
         final Query query = entityManager.createNamedQuery("DOCUMENT_TYPE_DETAILS_BY_ID");
-        query.setParameter(1, propertyID.getBasicProperty().getId());
+        query.setParameter("basicProperty", propertyID.getBasicProperty().getId());
         List<DocumentTypeDetails> docTypeDetailsList = query.getResultList();
         if (!docTypeDetailsList.isEmpty()) {
             DocumentTypeDetails docTypeDetails = docTypeDetailsList.get(0);
@@ -2341,13 +2354,17 @@ public class PropertyExternalService {
     public NewPropertyDetails updateProperty(ViewPropertyDetails viewPropertyDetails) throws ParseException {
         NewPropertyDetails newPropertyDetails = null;
         BigDecimal activeTax = BigDecimal.ZERO;
-        final PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
+        final PropertyService propService = beanProvider.getBean(PROP_SERVICE, PropertyService.class);
         BasicProperty basicProperty = updateBasicProperty(viewPropertyDetails, propService);
         PropertyImpl property = (PropertyImpl) basicProperty.getWFProperty();
-        PropertyImpl activeProperty= basicProperty.getActiveProperty();
+        PropertyImpl activeProperty = basicProperty.getActiveProperty();
         if (activeProperty != null) {
             for (EgDemandDetails activeDemandDetail : activeProperty.getPtDemandSet().iterator().next().getEgDemandDetails())
-                activeTax = activeTax.add(activeDemandDetail.getAmount());
+            	if(!PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES.equalsIgnoreCase(
+									activeDemandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode())
+							&& !PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY.equalsIgnoreCase(
+									activeDemandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()))
+            		activeTax = activeTax.add(activeDemandDetail.getAmount());
         }
         property.getPropertyDetail().setCategoryType(viewPropertyDetails.getCategory());
         basicProperty.setUnderWorkflow(Boolean.TRUE);
@@ -2355,13 +2372,13 @@ public class PropertyExternalService {
         basicProperty.setLatitude(viewPropertyDetails.getLatitude());
         basicProperty.setLongitude(viewPropertyDetails.getLongitude());
         property.setReferenceId(viewPropertyDetails.getReferenceId());
-        
+
         /*
-         * Duplicate GIS property will be persisted, which will be used for generating comparison reports  
+         * Duplicate GIS property will be persisted, which will be used for generating comparison reports
          */
         PropertyImpl gisProperty = (PropertyImpl) property.createPropertyclone();
-        if(!gisProperty.getPropertyDetail().getFloorDetails().isEmpty()){
-            for(Floor floor : gisProperty.getPropertyDetail().getFloorDetails()){
+        if (!gisProperty.getPropertyDetail().getFloorDetails().isEmpty()) {
+            for (Floor floor : gisProperty.getPropertyDetail().getFloorDetails()) {
                 floor.setPropertyDetail(gisProperty.getPropertyDetail());
                 basicPropertyService.applyAuditing(floor);
             }
@@ -2370,30 +2387,26 @@ public class PropertyExternalService {
         gisProperty.setSource(SOURCE_SURVEY);
         Ptdemand ptdemand = property.getPtDemandSet().iterator().next();
         Ptdemand gisPtdemand = gisProperty.getPtDemandSet().iterator().next();
-        if(gisPtdemand != null)
+        if (gisPtdemand != null)
             gisPtdemand.getDmdCalculations().setAlv(ptdemand.getDmdCalculations().getAlv());
         basicProperty.addProperty(gisProperty);
-        
-        Ptdemand gisPtDemand = gisProperty.getPtDemandSet().iterator().next();
-        basicPropertyService.applyAuditing(gisPtDemand.getDmdCalculations());
-       
+
+        basicPropertyService.applyAuditing(gisPtdemand.getDmdCalculations());
+
         transitionWorkFlow(property, propService, PROPERTY_MODE_MODIFY);
         basicPropertyService.applyAuditing(property.getState());
         propService.updateIndexes(property, PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT);
         if (SOURCE_SURVEY.equalsIgnoreCase(property.getSource())) {
             SurveyBean surveyBean = new SurveyBean();
-            BigDecimal totalTax = BigDecimal.ZERO;
-            
-            for (EgDemandDetails demandDetail : property.getPtDemandSet().iterator().next().getEgDemandDetails())
-                totalTax = totalTax.add(demandDetail.getAmount());
             surveyBean.setProperty(property);
+            BigDecimal totalTax = propService.getSurveyTax(gisProperty, gisPtdemand.getEgInstallmentMaster().getFromDate());
             surveyBean.setGisTax(totalTax);
             surveyBean.setApplicationTax(totalTax);
             surveyBean.setAgeOfCompletion(propService.getSlaValue(APPLICATION_TYPE_ALTER_ASSESSENT));
             surveyBean.setSystemTax(activeTax);
             surveyService.updateSurveyIndex(APPLICATION_TYPE_ALTER_ASSESSENT, surveyBean);
         }
-  
+
         if (basicProperty.getWFProperty() != null && basicProperty.getWFProperty().getPtDemandSet() != null
                 && !basicProperty.getWFProperty().getPtDemandSet().isEmpty()) {
             for (Ptdemand ptDemand : basicProperty.getWFProperty().getPtDemandSet()) {
@@ -2672,9 +2685,8 @@ public class PropertyExternalService {
     }
 
     public NewPropertyDetails createAppurTenantProperties(ViewPropertyDetails viewPropertyDetails) throws ParseException {
-
         NewPropertyDetails newPropertyDetails = null;
-        final PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
+        final PropertyService propService = beanProvider.getBean(PROP_SERVICE, PropertyService.class);
         BasicProperty vacantBasicProperty = new BasicPropertyImpl();
         final BasicProperty nonVacantBasicProperty = createBasicProp(viewPropertyDetails, propService);
         updatePropertyStatusValuesRemarks(nonVacantBasicProperty);
@@ -2685,6 +2697,7 @@ public class PropertyExternalService {
             updatePropertyStatusValuesRefProperty(nonVacantBasicProperty, vacantBasicProperty);
             createVacantProperty(nonVacantProperty, vacantBasicProperty, viewPropertyDetails, propService);
         } catch (final TaxCalculatorExeption e) {
+            LOGGER.error("Error while calculating Taxes", e.getMessage());
         }
 
         if (null != nonVacantBasicProperty) {
@@ -2706,7 +2719,7 @@ public class PropertyExternalService {
             throws TaxCalculatorExeption, ParseException {
         PropertyImpl nonVacProp = createAppurTenantProperty(nonVacantBasicProperty, Boolean.TRUE, viewPropertyDetails,
                 propService);
-        persistAndMessage(nonVacantBasicProperty, nonVacProp, propService);
+        persistAndMessage(nonVacantBasicProperty);
         saveDocumentTypeDetails(nonVacantBasicProperty, viewPropertyDetails);
         return nonVacProp;
     }
@@ -2721,7 +2734,7 @@ public class PropertyExternalService {
         vacantProperty.getPropertyDetail().setAppurtenantLandChecked(null);
         vacantBasicProperty.getAddress().setHouseNoBldgApt(null);
         vacantProperty.getPropertyDetail().getFloorDetails().clear();
-        persistAndMessage(vacantBasicProperty, vacantProperty, propService);
+        persistAndMessage(vacantBasicProperty);
         saveDocumentTypeDetails(vacantBasicProperty, viewPropertyDetails);
     }
 
@@ -2744,8 +2757,7 @@ public class PropertyExternalService {
                 : OWNERSHIP_TYPE_STATE_GOVT.equals(propertyType) ? CATEGORY_STATE_GOVT : CATEGORY_CENTRAL_GOVT;
     }
 
-    private void persistAndMessage(final BasicProperty basicProperty, final PropertyImpl property,
-            final PropertyService propService) throws ParseException {
+    private void persistAndMessage(final BasicProperty basicProperty) {
         basicPropertyService.persist(basicProperty);
     }
 
@@ -3018,9 +3030,9 @@ public class PropertyExternalService {
             assessmentDetails.setOwners(basicProperty.getFullOwnerName());
             assessmentDetails.setStatus(basicProperty.getActive());
             Property property = basicProperty.getProperty();
-            if(property != null){
+            if (property != null) {
                 assessmentDetails.setExempted(property.getIsExemptedFromTax());
-                if(!property.getIsExemptedFromTax()){
+                if (!property.getIsExemptedFromTax()) {
                     Map<String, BigDecimal> dmdCollMap = ptDemandDAO.getDemandIncludingPenaltyCollMap(property);
                     if (!dmdCollMap.isEmpty()) {
                         BigDecimal totalDemand = dmdCollMap.get(ARR_DMD_STR).add(dmdCollMap.get(CURR_FIRSTHALF_DMD_STR))
@@ -3049,8 +3061,10 @@ public class PropertyExternalService {
 
     public TaxCalculatorResponse calculateTaxes(TaxCalculatorRequest taxCalculatorRequest) throws ParseException {
         TaxCalculatorResponse taxCalculatorResponse = new TaxCalculatorResponse();
+        BigDecimal taxVariance;
+        BigDecimal arvVariance;
         final Map<String, Installment> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
-        PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
+        PropertyService propService = beanProvider.getBean(PROP_SERVICE, PropertyService.class);
         BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(taxCalculatorRequest.getAssessmentNo());
         PropertyImpl propertyImpl = (PropertyImpl) basicProperty.getProperty();
         taxCalculatorResponse.setAssessmentNo(basicProperty.getUpicNo());
@@ -3073,20 +3087,24 @@ public class PropertyExternalService {
             } catch (TaxCalculatorExeption e) {
                 LOGGER.error("create : There are no Unit rates defined for chosen combinations", e);
             }
-            calculationsMap =getARVAndTaxDetails(propService, propertyImpl, currYearInstMap.get(CURRENTYEAR_SECOND_HALF), true);
+            calculationsMap = getARVAndTaxDetails(propService, propertyImpl, currYearInstMap.get(CURRENTYEAR_SECOND_HALF), true);
             taxCalculatorResponse.setCalculatedARV(calculationsMap.get(ARV));
             taxCalculatorResponse.setNewHalfYearlyTax(calculationsMap.get(HALF_YEARLY_TAX));
 
-            BigDecimal taxVariance = ((taxCalculatorResponse.getNewHalfYearlyTax()
-                    .subtract(taxCalculatorResponse.getExistingHalfYearlyTax())).multiply(BIGDECIMAL_100))
-                            .divide(taxCalculatorResponse.getExistingHalfYearlyTax(), 1, BigDecimal.ROUND_HALF_UP);
+            if (taxCalculatorResponse.getExistingHalfYearlyTax().compareTo(ZERO) > 0)
+                taxVariance = ((taxCalculatorResponse.getNewHalfYearlyTax()
+                        .subtract(taxCalculatorResponse.getExistingHalfYearlyTax())).multiply(BIGDECIMAL_100))
+                                .divide(taxCalculatorResponse.getExistingHalfYearlyTax(), 1, BigDecimal.ROUND_HALF_UP);
+            else
+                taxVariance = BIGDECIMAL_100;
             taxCalculatorResponse.setTaxVariance(taxVariance);
             if (taxCalculatorResponse.getExistingARV().compareTo(ZERO) > 0) {
-                BigDecimal arvVariance = ((taxCalculatorResponse.getCalculatedARV()
+                arvVariance = ((taxCalculatorResponse.getCalculatedARV()
                         .subtract(taxCalculatorResponse.getExistingARV())).multiply(BIGDECIMAL_100))
                                 .divide(taxCalculatorResponse.getExistingARV(), 1, BigDecimal.ROUND_HALF_UP);
-                taxCalculatorResponse.setArvVariance(arvVariance);
-            }
+            } else
+                arvVariance = BIGDECIMAL_100;
+            taxCalculatorResponse.setArvVariance(arvVariance);
         }
         return taxCalculatorResponse;
     }
@@ -3138,5 +3156,36 @@ public class PropertyExternalService {
                 basicProperty = basicProperties.get(0);
         }
         return basicProperty;
+    }
+
+    public Property getPropertyByApplicationNo(String applicationNo) {
+        return propertyHibernateDAO.getPropertyByApplicationNo(applicationNo);
+    }
+
+    public NewPropertyDetails saveDocument(DocumentDetailsRequest documentDetails, String applicationNo) {
+        Property property = getPropertyByApplicationNo(applicationNo);
+        NewPropertyDetails newPropertyDetails = new NewPropertyDetails();
+        PropertyService propService = beanProvider.getBean(PROP_SERVICE, PropertyService.class);
+        VacancyRemissionRepository vacancyRemissionRepository = beanProvider.getBean("vacancyRemissionRepository",
+                VacancyRemissionRepository.class);
+        Document document;
+        List<Document> docs = new ArrayList<>();
+        List<DocumentType> documentTypes = propService.getDocumentTypesForTransactionType(TransactionType.CREATE);
+        for (DocumentType documentType : documentTypes) {
+            document = new Document();
+            document.setType(vacancyRemissionRepository.findDocumentTypeByNameAndTransactionType(
+                    documentType.getName(), TransactionType.CREATE));
+            if (DOCUMENT_TYPE_PHOTO_OF_ASSESSMENT.equalsIgnoreCase(documentType.getName()))
+                document.setFiles(propService.addToFileStore(documentDetails.getPhotoFile()));
+            docs.add(document);
+        }
+        property.setDocuments(docs);
+        basicPropertyService.update(property.getBasicProperty());
+        newPropertyDetails.setApplicationNo(applicationNo);
+        ErrorDetails errorDetails = new ErrorDetails();
+        errorDetails.setErrorCode(THIRD_PARTY_DOCS_UPLOAD_SUCCESS_CODE);
+        errorDetails.setErrorMessage(THIRD_PARTY_DOCS_UPLOAD_SUCCESS_MSG);
+        newPropertyDetails.setErrorDetails(errorDetails);
+        return newPropertyDetails;
     }
 }
