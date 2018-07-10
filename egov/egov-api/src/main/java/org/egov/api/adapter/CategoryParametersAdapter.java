@@ -47,8 +47,8 @@
  */
 package org.egov.api.adapter;
 
+import static org.egov.eventnotification.utils.Constants.ID;
 import static org.egov.eventnotification.utils.Constants.NAME;
-import static org.egov.eventnotification.utils.Constants.PARAMETER_ID;
 
 import java.lang.reflect.Type;
 
@@ -62,7 +62,7 @@ public class CategoryParametersAdapter extends DataAdapter<CategoryParameters> {
     @Override
     public JsonElement serialize(CategoryParameters parameter, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject jsonObjectEvent = new JsonObject();
-        jsonObjectEvent.addProperty(PARAMETER_ID, parameter.getId());
+        jsonObjectEvent.addProperty(ID, parameter.getId());
         jsonObjectEvent.addProperty(NAME, parameter.getName());
         return jsonObjectEvent;
     }

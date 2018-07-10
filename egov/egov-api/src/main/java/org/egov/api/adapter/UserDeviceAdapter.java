@@ -47,10 +47,6 @@
  */
 package org.egov.api.adapter;
 
-import static org.egov.eventnotification.utils.Constants.USER_DEVICE_ID;
-import static org.egov.eventnotification.utils.Constants.USER_ID;
-import static org.egov.eventnotification.utils.Constants.USER_TOKEN_ID;
-
 import java.lang.reflect.Type;
 
 import org.egov.pushbox.entity.UserFcmDevice;
@@ -63,9 +59,9 @@ public class UserDeviceAdapter extends DataAdapter<UserFcmDevice> {
     @Override
     public JsonElement serialize(UserFcmDevice userDevice, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject jsonObjectDraft = new JsonObject();
-        jsonObjectDraft.addProperty(USER_TOKEN_ID, userDevice.getDeviceToken());
-        jsonObjectDraft.addProperty(USER_ID, userDevice.getUser().getId());
-        jsonObjectDraft.addProperty(USER_DEVICE_ID, userDevice.getDeviceId());
+        jsonObjectDraft.addProperty("userToken", userDevice.getDeviceToken());
+        jsonObjectDraft.addProperty("userId", userDevice.getUser().getId());
+        jsonObjectDraft.addProperty("deviceId", userDevice.getDeviceId());
         return jsonObjectDraft;
     }
 }

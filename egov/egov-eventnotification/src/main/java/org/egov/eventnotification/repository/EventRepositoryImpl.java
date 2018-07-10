@@ -51,7 +51,6 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.eventnotification.utils.Constants.ACTIVE;
 import static org.egov.eventnotification.utils.Constants.EVENT_HOST;
 import static org.egov.eventnotification.utils.Constants.NAME;
-import static org.egov.eventnotification.utils.Constants.UPCOMING;
 import static org.egov.infra.utils.DateUtils.endOfGivenDate;
 import static org.egov.infra.utils.DateUtils.endOfToday;
 import static org.egov.infra.utils.DateUtils.startOfToday;
@@ -81,7 +80,7 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
     public List<Event> searchEvent(EventSearch eventSearch) {
         Date startDate;
         Date endDate;
-        if (eventSearch.getEventDateType().equalsIgnoreCase(UPCOMING)) {
+        if (eventSearch.getEventDateType().equalsIgnoreCase("upcoming")) {
             startDate = startOfToday().plusDays(7).toDate();
             endDate = endOfToday().plusDays(6).toDate();
         } else {

@@ -47,42 +47,6 @@
  */
 $(document).ready(
 		function() {
-			$("#buttonDelete").click(
-					function(event) {
-						bootbox.confirm($("#scheduleDelConfirm").val(),
-								function(result) {
-									if (result === true) {
-										disableSchedule();
-									}
-								});
-					});
-
-			function disableSchedule() {
-				$.ajax({
-					type : "GET",
-					url : "/eventnotification/schedule/delete/"
-							+ $("#id").val(),
-					contentType : "application/json; charset=utf-8",
-					dataType : 'json',
-					success : function(data) {
-						if (data === "success") {
-							bootbox.alert({
-								message : $("#scheduleDelSuccess").val(),
-								callback : function() {
-									window.close();
-								}
-							})
-						} else {
-							bootbox.alert($("#scheduleDelError").val());
-						}
-					},
-					error : function(e) {
-						console.log("There was an error with your request...");
-						console.log("error: " + JSON.stringify(e));
-					}
-				});
-			}
-
 			$("#buttonEdit").click(
 					function(event) {
 						window.open("/eventnotification/schedule/update/"

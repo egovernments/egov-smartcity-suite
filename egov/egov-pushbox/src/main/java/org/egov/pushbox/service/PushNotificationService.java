@@ -48,10 +48,14 @@
 
 package org.egov.pushbox.service;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-
-import java.util.ArrayList;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.annotation.PostConstruct;
 
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
@@ -65,9 +69,15 @@ import org.egov.pushbox.repository.UserFcmDeviceRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.api.client.googleapis.util.Utils;
+import com.google.api.client.json.JsonFactory;
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.gson.Gson;
@@ -88,6 +98,9 @@ public class PushNotificationService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private Environment env;
+
     @Transactional
     public UserFcmDevice saveUserDevice(final UserTokenRequest userTokenRequest) {
         UserFcmDevice existingRecord = pushNotificationRepo.findByUserIdAndDeviceId(Long.parseLong(userTokenRequest.getUserId()),
@@ -103,10 +116,6 @@ public class PushNotificationService {
             existingRecord.setDeviceToken(userTokenRequest.getUserToken());
             return pushNotificationRepo.save(existingRecord);
         }
-    }
-
-    public List<UserFcmDevice> getAllUserFcmDevice() {
-        return pushNotificationRepo.findAll();
     }
 
     public UserFcmDevice getUserFcmDevice(final Long id) {
@@ -168,14 +177,10 @@ public class PushNotificationService {
 
     public void buildAndSendNotification(SendNotificationRequest notificationRequest) {
         MessageContent message = createMessageContentFromRequest(notificationRequest);
-        if (Boolean.parseBoolean(notificationRequest.getSendAll()))
+        if (notificationRequest.isSendAll())
             message.getDetails().setSendAll(true);
-        else {
-            List<Long> userIdList = new ArrayList<>();
-            for (String userid : notificationRequest.getUserIdList().split(","))
-                userIdList.add(Long.valueOf(isNotBlank(userid) ? userid : "0"));
-            message.getDetails().setUserIdList(userIdList);
-        }
+        else
+            message.getDetails().setUserIdList(notificationRequest.getUserIdList());
         message.getDetails().setSendAll(true);
         sendNotifications(message);
     }
@@ -198,5 +203,41 @@ public class PushNotificationService {
         message.setSenderName(notificationRequest.getSenderName());
         message.setDetails(messageDetails);
         return message;
+    }
+
+    /**
+     * This method take the required parameters from the properties file and initialize the firebase. It will initialize only
+     * once.
+     */
+    @PostConstruct
+    public void setUpFirebaseApp() {
+        if (FirebaseApp.getApps().isEmpty()) {
+            JsonFactory jsonFactory = Utils.getDefaultJsonFactory();
+            Map<String, Object> secretJson = new ConcurrentHashMap<>();
+            secretJson.put("type", env.getProperty("type"));
+            secretJson.put("project_id", env.getProperty("project_id"));
+            secretJson.put("private_key_id", env.getProperty("private_key_id"));
+            secretJson.put("private_key", env.getProperty("private_key"));
+            secretJson.put("client_email", env.getProperty("client_email"));
+            secretJson.put("client_id", env.getProperty("client_id"));
+            secretJson.put("auth_uri", env.getProperty("auth_uri"));
+            secretJson.put("token_uri", env.getProperty("token_uri"));
+            secretJson.put("auth_provider_x509_cert_url", env.getProperty("auth_provider_x509_cert_url"));
+            secretJson.put("client_x509_cert_url", env.getProperty("client_x509_cert_url"));
+
+            try (InputStream refreshTokenStream = new ByteArrayInputStream(jsonFactory.toByteArray(secretJson))) {
+
+                FirebaseOptions options = new FirebaseOptions.Builder()
+                        .setCredentials(GoogleCredentials.fromStream(refreshTokenStream))
+                        .setDatabaseUrl(env.getProperty("bdurl")).build();
+
+                FirebaseApp.initializeApp(options);
+                if (LOGGER.isInfoEnabled())
+                    LOGGER.info("##PushBoxFox## : Firebase App Initialized");
+            } catch (IOException e) {
+                LOGGER.error("##PushBoxFox## : Error in setup firebase app", e);
+                throw new ApplicationRuntimeException("Error occurred while setup firebase app", e);
+            }
+        }
     }
 }

@@ -47,15 +47,12 @@
  */
 package org.egov.eventnotification.web.controller.notificationdraft;
 
-import static org.egov.eventnotification.utils.Constants.CATEGORY_PARAMETERS;
 import static org.egov.eventnotification.utils.Constants.DRAFT_LIST;
 import static org.egov.eventnotification.utils.Constants.MESSAGE;
 import static org.egov.eventnotification.utils.Constants.MODE;
 import static org.egov.eventnotification.utils.Constants.MODE_CREATE;
 import static org.egov.eventnotification.utils.Constants.MODE_VIEW;
-import static org.egov.eventnotification.utils.Constants.MODULE_CATEGORY;
 import static org.egov.eventnotification.utils.Constants.NOTIFICATION_DRAFT;
-import static org.egov.eventnotification.utils.Constants.TEMPLATE_MODULE;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -111,9 +108,9 @@ public class ModifyNotificationDraftController {
         if (drafts.getCategory() != null)
             categoryParametersList = categoryParametersService.getParametersForCategory(drafts.getCategory().getId());
         model.addAttribute(DRAFT_LIST, draftTypeService.getAllDraftType());
-        model.addAttribute(TEMPLATE_MODULE, templateModuleService.getAllModules());
-        model.addAttribute(MODULE_CATEGORY, moduleCategoryList);
-        model.addAttribute(CATEGORY_PARAMETERS, categoryParametersList);
+        model.addAttribute("TemplateModule", templateModuleService.getAllModules());
+        model.addAttribute("ModuleCategory", moduleCategoryList);
+        model.addAttribute("CategoryParameters", categoryParametersList);
 
         model.addAttribute(MODE, MODE_VIEW);
 
@@ -130,8 +127,7 @@ public class ModifyNotificationDraftController {
         }
         draftService.updateDraft(drafts);
         model.addAttribute(NOTIFICATION_DRAFT, drafts);
-        model.addAttribute(MESSAGE, "msg.draft.update.success");
         model.addAttribute(MODE, MODE_VIEW);
-        return "draft-view-result";
+        return "redirect:/drafts/view/" + drafts.getId();
     }
 }

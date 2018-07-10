@@ -50,7 +50,6 @@ package org.egov.eventnotification.web.controller.event;
 import static org.egov.eventnotification.utils.Constants.ACTIVE;
 import static org.egov.eventnotification.utils.Constants.EVENT;
 import static org.egov.eventnotification.utils.Constants.EVENT_LIST;
-import static org.egov.eventnotification.utils.Constants.EVENT_TYPE_LIST;
 import static org.egov.eventnotification.utils.Constants.MODE;
 import static org.egov.eventnotification.utils.Constants.MODE_VIEW;
 
@@ -78,7 +77,7 @@ public class ViewEventController {
         model.addAttribute(EVENT_LIST,
                 eventService.getAllEventByStatus(ACTIVE.toUpperCase()));
         model.addAttribute(MODE, MODE_VIEW);
-        model.addAttribute(EVENT_TYPE_LIST, eventTypeService.getAllEventType());
+        model.addAttribute("eventTypeList", eventTypeService.getAllEventType());
         return "event-view";
     }
 

@@ -47,7 +47,6 @@
  */
 package org.egov.eventnotification.web.controller.schedule;
 
-import static org.egov.eventnotification.utils.Constants.ALTERROR;
 import static org.egov.eventnotification.utils.Constants.DRAFT_LIST;
 import static org.egov.eventnotification.utils.Constants.HOUR_LIST;
 import static org.egov.eventnotification.utils.Constants.MESSAGE;
@@ -56,7 +55,6 @@ import static org.egov.eventnotification.utils.Constants.MODE;
 import static org.egov.eventnotification.utils.Constants.MODE_VIEW;
 import static org.egov.eventnotification.utils.Constants.NOTIFICATION_SCHEDULE;
 import static org.egov.eventnotification.utils.Constants.SCHEDULER_REPEAT_LIST;
-import static org.egov.eventnotification.utils.Constants.VIEWNAME;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -68,20 +66,15 @@ import org.egov.eventnotification.service.DraftTypeService;
 import org.egov.eventnotification.service.ScheduleRepeatService;
 import org.egov.eventnotification.service.ScheduleService;
 import org.egov.eventnotification.utils.EventNotificationUtil;
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class ScheduleController {
@@ -143,10 +136,9 @@ public class ScheduleController {
         String fullURL = request.getRequestURL().toString();
         scheduleService.saveSchedule(schedule, fullURL);
 
-        model.addAttribute(MESSAGE, "msg.notification.schedule.success");
         model.addAttribute(MODE, MODE_VIEW);
         model.addAttribute(NOTIFICATION_SCHEDULE, schedule);
-        return "schedule-create-success";
+        return "redirect:/schedule/view/" + schedule.getId();
     }
 
     /**
@@ -155,21 +147,9 @@ public class ScheduleController {
      * @param model
      * @return
      */
-    @GetMapping(path = { "/schedule/delete/{id}" }, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
+    @PostMapping(path = { "/schedule/delete/{id}" }, produces = MediaType.APPLICATION_JSON_VALUE)
     public String deleteSchedule(@PathVariable Long id, Model model) {
         scheduleService.disableSchedule(id);
-        model.addAttribute(MESSAGE, "msg.notification.schedule.delete.success");
-        return "success";
+        return "redirect:/schedule/view/" + id;
     }
-
-    @ExceptionHandler(ApplicationRuntimeException.class)
-    public ModelAndView configurationErrors(ApplicationRuntimeException exception) {
-        ModelAndView model = new ModelAndView();
-        model.setViewName(VIEWNAME);
-        model.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-        model.addObject(ALTERROR, HttpStatus.INTERNAL_SERVER_ERROR.toString());
-        return model;
-    }
-
 }

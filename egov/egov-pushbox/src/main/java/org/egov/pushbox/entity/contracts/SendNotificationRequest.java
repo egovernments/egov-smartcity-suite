@@ -47,6 +47,8 @@
  */
 package org.egov.pushbox.entity.contracts;
 
+import java.util.List;
+
 public class SendNotificationRequest {
 
     private String messageId;
@@ -62,8 +64,8 @@ public class SendNotificationRequest {
     private String notificationType;
     private String senderId;
     private String senderName;
-    private String sendAll;
-    private String userIdList;
+    private boolean sendAll;
+    private List<Long> userIdList;
 
     public String getMessageId() {
         return messageId;
@@ -169,19 +171,19 @@ public class SendNotificationRequest {
         this.senderName = senderName;
     }
 
-    public String getSendAll() {
+    public boolean isSendAll() {
         return sendAll;
     }
 
-    public void setSendAll(String sendAll) {
+    public void setSendAll(boolean sendAll) {
         this.sendAll = sendAll;
     }
 
-    public String getUserIdList() {
+    public List<Long> getUserIdList() {
         return userIdList;
     }
 
-    public void setUserIdList(String userIdList) {
+    public void setUserIdList(List<Long> userIdList) {
         this.userIdList = userIdList;
     }
 }

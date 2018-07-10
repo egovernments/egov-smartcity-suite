@@ -48,13 +48,7 @@
 package org.egov.eventnotification.scheduler;
 
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
-import static org.egov.eventnotification.utils.Constants.BMA_INTERFACE_SUFFIX;
-import static org.egov.eventnotification.utils.Constants.BUSINESS_NOTIFICATION_TYPE;
-import static org.egov.eventnotification.utils.Constants.CONTEXTURL;
-import static org.egov.eventnotification.utils.Constants.PROPERTY_MODULE;
-import static org.egov.eventnotification.utils.Constants.SCHEDULEID;
-import static org.egov.eventnotification.utils.Constants.SCHEDULE_COMPLETE;
-import static org.egov.eventnotification.utils.Constants.WATER_CHARGES_MODULE;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -74,6 +68,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.pushbox.entity.contracts.MessageContent;
 import org.egov.pushbox.entity.contracts.MessageContentDetails;
 import org.egov.pushbox.service.PushNotificationService;
@@ -134,12 +129,12 @@ public class NotificationSchedulerJob extends QuartzJobBean {
 
                 prepareThreadLocal(tenant);
 
-                Long scheduleId = Long.parseLong(String.valueOf(dataMap.get(SCHEDULEID)));
+                Long scheduleId = Long.parseLong(String.valueOf(dataMap.get("scheduleId")));
                 Schedule notificationSchedule = scheduleService.getScheduleById(scheduleId);
 
-                executeBusiness(notificationSchedule, String.valueOf(dataMap.get(CONTEXTURL)));
+                executeBusiness(notificationSchedule, String.valueOf(dataMap.get("contextURL")));
 
-                notificationSchedule.setStatus(SCHEDULE_COMPLETE);
+                notificationSchedule.setStatus("Complete");
                 scheduleService.updateScheduleStatus(notificationSchedule);
             }
         } catch (Exception ex) {
@@ -159,22 +154,29 @@ public class NotificationSchedulerJob extends QuartzJobBean {
      */
     private void executeBusiness(Schedule notificationSchedule, String contextURL) {
 
-        if (notificationSchedule.getDraftType().getName().equalsIgnoreCase(BUSINESS_NOTIFICATION_TYPE)) {
+        if (notificationSchedule.getDraftType().getName().equalsIgnoreCase("BUSINESS")) {
             List<UserTaxInformation> userTaxInfoList = null;
             BuildMessageAdapter buildMessageAdapter = getBuildMessageAdapter(notificationSchedule.getModule().getCode());
 
-            if (notificationSchedule.getModule().getName().equalsIgnoreCase(PROPERTY_MODULE))
+            if (notificationSchedule.getModule().getName().equalsIgnoreCase("Property"))
                 userTaxInfoList = scheduleService.getDefaulterUserList(contextURL,
-                        appProperties.getPropertyTaxRestApi());
-            else if (notificationSchedule.getModule().getName().equalsIgnoreCase(WATER_CHARGES_MODULE))
+                        appProperties.getPropertyTaxRestApi(), "POST");
+            else if (notificationSchedule.getModule().getName().equalsIgnoreCase("Water Charges"))
                 userTaxInfoList = scheduleService.getDefaulterUserList(contextURL,
-                        appProperties.getWaterTaxRestApi());
+                        appProperties.getWaterTaxRestApi(), "GET");
             if (userTaxInfoList != null)
                 for (UserTaxInformation userTaxInformation : userTaxInfoList) {
                     String message = buildMessageAdapter.buildMessage(userTaxInformation,
                             notificationSchedule.getMessageTemplate());
                     List<Long> userIdList = new ArrayList<>();
-                    userIdList.add(Long.parseLong(userTaxInformation.getUserId()));
+                    if (isNotBlank(userTaxInformation.getMobileNumber())) {
+                        List<User> userList = userService.findByMobileNumberAndType(userTaxInformation.getMobileNumber(),
+                                UserType.CITIZEN);
+                        if (userList != null)
+                            for (User userid : userList)
+                                userIdList.add(userid.getId());
+                    } else
+                        userIdList.add(Long.parseLong(userTaxInformation.getUserId()));
 
                     buildAndSendNotifications(notificationSchedule, message, Boolean.FALSE, userIdList);
                 }
@@ -228,8 +230,7 @@ public class NotificationSchedulerJob extends QuartzJobBean {
     }
 
     protected BuildMessageAdapter getBuildMessageAdapter(final String serviceCode) {
-        return (BuildMessageAdapter) eventNotificationUtil.getBean(serviceCode
-                + BMA_INTERFACE_SUFFIX);
+        return (BuildMessageAdapter) eventNotificationUtil.getBean(serviceCode.concat("BuildMessageAdapter"));
     }
 
     public void setModuleName(final String moduleName) {
