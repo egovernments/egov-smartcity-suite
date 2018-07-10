@@ -408,7 +408,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat").createAlias("tradeName", "subcat")
                 .createAlias("status", "licstatus").createAlias("natureOfBusiness", "nob")
                 .createAlias("licenseDemand", "licDemand").createAlias("licenseAppType", "appType")
-                .add(Restrictions.ne("appType.code", licenseAppTypeService.getLicenseAppTypeByCode(CLOSURE_APPTYPE_CODE)));
+                .add(Restrictions.ne("appType.code", CLOSURE_APPTYPE_CODE));
         if (isNotBlank(demandNoticeForm.getLicenseNumber()))
             searchCriteria.add(Restrictions.eq("licenseNumber", demandNoticeForm.getLicenseNumber()).ignoreCase());
         if (isNotBlank(demandNoticeForm.getOldLicenseNumber()))
