@@ -83,6 +83,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class EventService {
     private static final Logger LOGGER = LoggerFactory.getLogger(EventService.class);
+    
+    private static final int MIN_NUMBER_OF_REQUESTS = 1;
 
     @Autowired
     private EventRepository eventRepository;
@@ -168,7 +170,7 @@ public class EventService {
                     .withMinuteOfHour(Integer.parseInt(updatedEvent.getDetails().getEndMM()));
             updatedEvent.setEndDate(ed.toDate());
 
-            if (updatedEvent.getDetails().getFile()[0].getSize() > 1)
+            if (updatedEvent.getDetails().getFile()[0].getSize() > MIN_NUMBER_OF_REQUESTS)
                 eventDetailsService.eventUploadWallpaper(updatedEvent);
             return eventRepository.save(updatedEvent);
         } catch (final Exception e) {
