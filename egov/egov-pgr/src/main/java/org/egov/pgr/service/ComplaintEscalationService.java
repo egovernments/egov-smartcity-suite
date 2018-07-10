@@ -159,7 +159,7 @@ public class ComplaintEscalationService {
         return escalationRepository.findEscalationByComplaintTypeId(complaintTypeId);
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional(propagation = Propagation.REQUIRES_NEW, timeout = 1500)
     public void escalateComplaint() {
         boolean sendMessage = configurationService.sendMessageOnEscalation();
         getComplaintsEligibleForEscalation()
