@@ -45,30 +45,60 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.restapi.web.rest;
+package org.egov.restapi.web.controller.applications;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.elasticsearch.entity.ApplicationIndex;
+import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
+import org.egov.infra.elasticsearch.service.ApplicationIndexService;
+import org.egov.restapi.web.contracts.applications.ApplicationSearchResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class RestApplicationSearchController {
 
-    /*@RequestMapping(value = "/common/application/search", method = RequestMethod.POST)
-    @ResponseBody
-    public String searchApplication(@RequestBody final ApplicationSearchRequest searchRequest) {
-        final String applicationNumber = searchRequest.getApplicationNumber() != null ? "\""
-                + searchRequest.getApplicationNumber() + "\"" : "";
-        searchRequest.setApplicationNumber(applicationNumber);
-        final SearchResult searchResult = searchService.search(asList(Index.APPLICATION.toString()),
-                asList(IndexType.APPLICATIONSEARCH.toString()), searchRequest.searchQuery(),
-                searchRequest.searchFilters(), Sort.NULL, Page.NULL);
-        return convertSearchResultToJson(searchResult);
-    }
+	@Autowired
+	private ApplicationIndexService applicationIndexService;
 
-    private String convertSearchResultToJson(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(SearchResult.class, new ApplicationSearchAdaptor()).create();
-        final String json = gson.toJson(object);
-        return json;
-    }*/
+	@Autowired
+    private UserService userService;
 
+	@RequestMapping(value = "/application/search", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<ApplicationSearchResponse> fetchApplicationsForUser(@RequestParam String ulbCode, @RequestParam Long userId,
+			@RequestParam ApprovalStatus status) {
+		List<ApprovalStatus> approvalStatuses;
+		List<ApplicationSearchResponse> responseList = new ArrayList<>();
+
+		User user = userService.getUserById(userId);
+		if (status != null)
+			approvalStatuses = Arrays.asList(status);
+		else
+			approvalStatuses = Arrays.asList(ApprovalStatus.values());
+
+		List<ApplicationIndex> applications = applicationIndexService.findAllByCityNameAndCreatedByAndApprovalStatus(user,
+				approvalStatuses);
+
+		ApplicationSearchResponse searchResponse;
+		for (ApplicationIndex application : applications) {
+			searchResponse = new ApplicationSearchResponse(application.getModuleName(), application.getApplicationNumber(),
+					application.getApplicationDate(), application.getApplicationType(), application.getApplicantName(),
+					application.getApplicantAddress(), application.getDisposalDate(), application.getStatus(),
+					application.getConsumerCode(), application.getMobileNumber(), application.getOwnerName(),
+					application.getAadharNumber(), application.getApproved().name(), application.getChannel(),
+					application.getCityCode(), application.getCityName());
+			responseList.add(searchResponse);
+		}
+
+		return responseList;
+	}
 }
