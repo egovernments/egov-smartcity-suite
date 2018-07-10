@@ -47,7 +47,6 @@
  */
 package org.egov.eventnotification.web.controller.event;
 
-import static org.egov.eventnotification.utils.Constants.ALTERROR;
 import static org.egov.eventnotification.utils.Constants.EVENT;
 import static org.egov.eventnotification.utils.Constants.EVENT_LIST;
 import static org.egov.eventnotification.utils.Constants.HOUR_LIST;
@@ -56,7 +55,6 @@ import static org.egov.eventnotification.utils.Constants.MINUTE_LIST;
 import static org.egov.eventnotification.utils.Constants.MODE;
 import static org.egov.eventnotification.utils.Constants.MODE_CREATE;
 import static org.egov.eventnotification.utils.Constants.MODE_VIEW;
-import static org.egov.eventnotification.utils.Constants.VIEWNAME;
 
 import javax.validation.Valid;
 
@@ -64,18 +62,14 @@ import org.egov.eventnotification.entity.Event;
 import org.egov.eventnotification.service.EventService;
 import org.egov.eventnotification.service.EventTypeService;
 import org.egov.eventnotification.utils.EventNotificationUtil;
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
 
 /**
  * @author somvit
@@ -119,17 +113,7 @@ public class EventController {
 
         eventService.saveEvent(event);
         model.addAttribute(EVENT, event);
-        model.addAttribute(MESSAGE, "msg.event.create.success");
         model.addAttribute(MODE, MODE_VIEW);
-        return "event-success";
-    }
-
-    @ExceptionHandler(ApplicationRuntimeException.class)
-    public ModelAndView configurationErrors(ApplicationRuntimeException exception) {
-        ModelAndView model = new ModelAndView();
-        model.setViewName(VIEWNAME);
-        model.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-        model.addObject(ALTERROR, HttpStatus.INTERNAL_SERVER_ERROR.toString());
-        return model;
+        return "redirect:/event/view/" + event.getId();
     }
 }

@@ -49,14 +49,10 @@ package org.egov.api.adapter;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.egov.eventnotification.utils.Constants.DDMMYYYY;
-import static org.egov.eventnotification.utils.Constants.END_DATE;
-import static org.egov.eventnotification.utils.Constants.END_TIME;
 import static org.egov.eventnotification.utils.Constants.EVENT_FILENAME;
 import static org.egov.eventnotification.utils.Constants.EVENT_FILESTOREID;
 import static org.egov.eventnotification.utils.Constants.INTERESTED_COUNT;
 import static org.egov.eventnotification.utils.Constants.MAX_TEN;
-import static org.egov.eventnotification.utils.Constants.START_DATE;
-import static org.egov.eventnotification.utils.Constants.START_TIME;
 import static org.egov.eventnotification.utils.Constants.URL;
 import static org.egov.eventnotification.utils.Constants.ZERO;
 import static org.egov.infra.utils.DateUtils.getDate;
@@ -88,7 +84,7 @@ public class EventSearchAdapter extends DataAdapter<Event> {
 
         eventDetailsAdapter.populateData(jsonObjectEvent, event);
         DateTime sd = new DateTime(event.getStartDate());
-        jsonObjectEvent.addProperty(START_DATE,
+        jsonObjectEvent.addProperty("startDate",
                 getDate(getDefaultFormattedDate(event.getStartDate()), DDMMYYYY).getTime());
         String startHH = EMPTY;
         String startMM = EMPTY;
@@ -102,10 +98,10 @@ public class EventSearchAdapter extends DataAdapter<Event> {
         else
             startMM = String.valueOf(sd.getMinuteOfHour());
 
-        jsonObjectEvent.addProperty(START_TIME, startHH.concat(":").concat(startMM));
+        jsonObjectEvent.addProperty("startTime", startHH.concat(":").concat(startMM));
 
         DateTime ed = new DateTime(event.getEndDate());
-        jsonObjectEvent.addProperty(END_DATE,
+        jsonObjectEvent.addProperty("endDate",
                 getDate(getDefaultFormattedDate(event.getEndDate()), DDMMYYYY).getTime());
         String endHH = EMPTY;
         String endMM = EMPTY;
@@ -119,7 +115,7 @@ public class EventSearchAdapter extends DataAdapter<Event> {
         else
             endMM = String.valueOf(ed.getMinuteOfHour());
 
-        jsonObjectEvent.addProperty(END_TIME, endHH.concat(":").concat(endMM));
+        jsonObjectEvent.addProperty("endTime", endHH.concat(":").concat(endMM));
 
         if (event.getFilestore() == null) {
             jsonObjectEvent.addProperty(EVENT_FILESTOREID, EMPTY);

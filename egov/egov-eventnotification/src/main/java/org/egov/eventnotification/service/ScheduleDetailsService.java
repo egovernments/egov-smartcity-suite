@@ -49,14 +49,11 @@ package org.egov.eventnotification.service;
 
 import static org.apache.commons.lang.StringUtils.ordinalIndexOf;
 import static org.egov.eventnotification.utils.Constants.BEANNOTIFSCH;
-import static org.egov.eventnotification.utils.Constants.CONTEXTURL;
 import static org.egov.eventnotification.utils.Constants.DAY_CRON;
 import static org.egov.eventnotification.utils.Constants.EVENT_NOTIFICATION_GROUP;
 import static org.egov.eventnotification.utils.Constants.HOURS_CRON;
-import static org.egov.eventnotification.utils.Constants.JOB;
 import static org.egov.eventnotification.utils.Constants.MINUTES_CRON;
 import static org.egov.eventnotification.utils.Constants.MONTH_CRON;
-import static org.egov.eventnotification.utils.Constants.SCHEDULEID;
 import static org.egov.eventnotification.utils.Constants.TRIGGER;
 
 import java.util.Date;
@@ -102,9 +99,9 @@ public class ScheduleDetailsService {
         final Scheduler scheduler = (Scheduler) beanProvider.getBean(BEANNOTIFSCH);
         try {
             jobDetail.setName(ApplicationThreadLocals.getTenantID().concat("_")
-                    .concat(JOB.concat(String.valueOf(schedule.getId()))));
-            jobDetail.getJobDataMap().put(SCHEDULEID, String.valueOf(schedule.getId()));
-            jobDetail.getJobDataMap().put(CONTEXTURL, fullURL.substring(0, ordinalIndexOf(fullURL, "/", 3)));
+                    .concat("eventNotificationJob".concat(String.valueOf(schedule.getId()))));
+            jobDetail.getJobDataMap().put("scheduleId", String.valueOf(schedule.getId()));
+            jobDetail.getJobDataMap().put("contextURL", fullURL.substring(0, ordinalIndexOf(fullURL, "/", 3)));
 
             if (cronExpression == null) {
                 final SimpleTriggerImpl trigger = new SimpleTriggerImpl();
@@ -140,7 +137,7 @@ public class ScheduleDetailsService {
             scheduler.unscheduleJob(new TriggerKey(ApplicationThreadLocals.getTenantID().concat("_")
                     .concat(TRIGGER.concat(String.valueOf(schedule.getId()))),
                     EVENT_NOTIFICATION_GROUP));
-            scheduler.deleteJob(new JobKey(JOB.concat(String.valueOf(schedule.getId()))));
+            scheduler.deleteJob(new JobKey("eventNotificationJob".concat(String.valueOf(schedule.getId()))));
         } catch (final SchedulerException e) {
             LOGGER.error("Error : Encountered an exception while deleting a schedule job", e);
             throw new ApplicationRuntimeException(e.getMessage(), e);

@@ -48,9 +48,6 @@
 package org.egov.ptis.client.integration.bmi;
 
 import static org.egov.eventnotification.utils.Constants.DDMMYYYY;
-import static org.egov.eventnotification.utils.Constants.MESSAGE_DUEAMT;
-import static org.egov.eventnotification.utils.Constants.MESSAGE_DUEDATE;
-import static org.egov.eventnotification.utils.Constants.MESSAGE_PROPTNO;
 import static org.egov.eventnotification.utils.Constants.MESSAGE_USERNAME;
 
 import java.text.DateFormat;
@@ -58,30 +55,24 @@ import java.text.SimpleDateFormat;
 
 import org.egov.eventnotification.entity.contracts.UserTaxInformation;
 import org.egov.eventnotification.integration.bmi.BuildMessageAdapter;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class PTBuildMessageAdapter implements BuildMessageAdapter {
-    @Autowired
-    private UserService userService;
 
     @Override
     public String buildMessage(UserTaxInformation userTaxInformation, String message) {
         DateFormat formatter = new SimpleDateFormat(DDMMYYYY);
-        User user = userService.getUserById(Long.parseLong(userTaxInformation.getUserId()));
         String finalMessage = message;
         if (finalMessage.contains(MESSAGE_USERNAME))
-            finalMessage = finalMessage.replace(MESSAGE_USERNAME, user.getName());
+            finalMessage = finalMessage.replace(MESSAGE_USERNAME, userTaxInformation.getOwnerName());
 
-        if (finalMessage.contains(MESSAGE_PROPTNO))
-            finalMessage = finalMessage.replace(MESSAGE_PROPTNO, userTaxInformation.getConsumerNumber());
+        if (finalMessage.contains("{{propertyNumber}}"))
+            finalMessage = finalMessage.replace("{{propertyNumber}}", userTaxInformation.getAssessmentNo());
 
-        if (finalMessage.contains(MESSAGE_DUEDATE) && userTaxInformation.getDueDate() != null)
-            finalMessage = finalMessage.replace(MESSAGE_DUEDATE, formatter.format(userTaxInformation.getDueDate()));
+        if (finalMessage.contains("{{dueDate}}") && userTaxInformation.getDueDate() != null)
+            finalMessage = finalMessage.replace("{{dueDate}}", formatter.format(userTaxInformation.getDueDate()));
 
-        if (finalMessage.contains(MESSAGE_DUEAMT))
-            finalMessage = finalMessage.replace(MESSAGE_DUEAMT, userTaxInformation.getDueAmount());
+        if (finalMessage.contains("{{dueAmount}}"))
+            finalMessage = finalMessage.replace("{{dueAmount}}", userTaxInformation.getTotalDue());
 
         return finalMessage;
     }

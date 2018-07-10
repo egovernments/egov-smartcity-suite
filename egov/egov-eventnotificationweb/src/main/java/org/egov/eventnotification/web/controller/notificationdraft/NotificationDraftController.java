@@ -47,15 +47,12 @@
  */
 package org.egov.eventnotification.web.controller.notificationdraft;
 
-import static org.egov.eventnotification.utils.Constants.CATEGORY_PARAMETERS;
 import static org.egov.eventnotification.utils.Constants.DRAFT_LIST;
 import static org.egov.eventnotification.utils.Constants.MESSAGE;
 import static org.egov.eventnotification.utils.Constants.MODE;
 import static org.egov.eventnotification.utils.Constants.MODE_CREATE;
 import static org.egov.eventnotification.utils.Constants.MODE_VIEW;
-import static org.egov.eventnotification.utils.Constants.MODULE_CATEGORY;
 import static org.egov.eventnotification.utils.Constants.NOTIFICATION_DRAFT;
-import static org.egov.eventnotification.utils.Constants.TEMPLATE_MODULE;
 
 import javax.validation.Valid;
 
@@ -113,9 +110,9 @@ public class NotificationDraftController {
     public String create(@ModelAttribute Drafts notificationDraft, Model model) {
         model.addAttribute(DRAFT_LIST, draftTypeService.getAllDraftType());
         model.addAttribute(NOTIFICATION_DRAFT, notificationDraft);
-        model.addAttribute(TEMPLATE_MODULE, templateModuleService.getAllModules());
-        model.addAttribute(MODULE_CATEGORY, moduleCategoryService.getAllCategories());
-        model.addAttribute(CATEGORY_PARAMETERS, categoryParametersService.getAllParameters());
+        model.addAttribute("TemplateModule", templateModuleService.getAllModules());
+        model.addAttribute("ModuleCategory", moduleCategoryService.getAllCategories());
+        model.addAttribute("CategoryParameters", categoryParametersService.getAllParameters());
         model.addAttribute(MODE, MODE_CREATE);
         return "drafts-create";
     }
@@ -130,8 +127,7 @@ public class NotificationDraftController {
         }
         draftService.saveDraft(notificationDraft);
         model.addAttribute(NOTIFICATION_DRAFT, notificationDraft);
-        model.addAttribute(MESSAGE, "msg.draft.create.success");
         model.addAttribute(MODE, MODE_VIEW);
-        return "draft-success";
+        return "redirect:/drafts/view/" + notificationDraft.getId();
     }
 }

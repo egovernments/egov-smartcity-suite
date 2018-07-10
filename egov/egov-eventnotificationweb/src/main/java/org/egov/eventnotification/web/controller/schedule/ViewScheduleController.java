@@ -49,7 +49,6 @@ package org.egov.eventnotification.web.controller.schedule;
 
 import static org.egov.eventnotification.utils.Constants.DRAFT_LIST;
 import static org.egov.eventnotification.utils.Constants.MODE;
-import static org.egov.eventnotification.utils.Constants.MODE_DELETE;
 import static org.egov.eventnotification.utils.Constants.NOTIFICATION_SCHEDULE;
 
 import org.egov.eventnotification.entity.Schedule;
@@ -89,7 +88,7 @@ public class ViewScheduleController {
         else
             model.addAttribute("scheduleEditable", true);
         model.addAttribute(NOTIFICATION_SCHEDULE, notificationSchedule);
-        model.addAttribute(MODE, MODE_DELETE);
+        model.addAttribute(MODE, "delete");
         return "schedule-details-view";
     }
 }

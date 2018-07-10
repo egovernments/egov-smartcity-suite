@@ -50,8 +50,6 @@ package org.egov.eventnotification.service;
 import static org.egov.eventnotification.utils.Constants.DDMMYYYY;
 import static org.egov.eventnotification.utils.Constants.MAX_TEN;
 import static org.egov.eventnotification.utils.Constants.MODULE_NAME;
-import static org.egov.eventnotification.utils.Constants.NO;
-import static org.egov.eventnotification.utils.Constants.YES;
 import static org.egov.eventnotification.utils.Constants.ZERO;
 import static org.egov.infra.utils.DateUtils.getDate;
 import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
@@ -103,9 +101,9 @@ public class EventDetailsService {
             details.setEndMM(String.valueOf(ed.getMinuteOfHour()));
 
         if (event.isPaid())
-            details.setPaid(YES);
+            details.setPaid("Yes");
         else
-            details.setPaid(NO);
+            details.setPaid("No");
         event.setDetails(details);
     }
 

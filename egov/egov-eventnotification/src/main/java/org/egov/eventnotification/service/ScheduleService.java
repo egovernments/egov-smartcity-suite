@@ -49,7 +49,6 @@ package org.egov.eventnotification.service;
 
 import static org.egov.eventnotification.utils.Constants.DDMMYYYY;
 import static org.egov.eventnotification.utils.Constants.MAX_TEN;
-import static org.egov.eventnotification.utils.Constants.SCHEDULED_STATUS;
 import static org.egov.eventnotification.utils.Constants.ZERO;
 import static org.egov.infra.utils.DateUtils.getDate;
 import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
@@ -60,6 +59,7 @@ import java.util.List;
 
 import org.egov.eventnotification.entity.Schedule;
 import org.egov.eventnotification.entity.contracts.EventDetails;
+import org.egov.eventnotification.entity.contracts.TaxDefaulterRequest;
 import org.egov.eventnotification.entity.contracts.UserTaxInformation;
 import org.egov.eventnotification.repository.ScheduleRepository;
 import org.joda.time.DateTime;
@@ -131,7 +131,7 @@ public class ScheduleService {
                 .withMinuteOfHour(Integer.parseInt(notificationSchedule.getDetails().getStartMM()));
         sd = sd.withSecondOfMinute(00);
         notificationSchedule.setStartDate(sd.toDate());
-        notificationSchedule.setStatus(SCHEDULED_STATUS);
+        notificationSchedule.setStatus("scheduled");
         scheduleRepository.save(notificationSchedule);
 
         scheduleDetailsService.executeScheduler(notificationSchedule, fullURL);
@@ -145,7 +145,7 @@ public class ScheduleService {
                 .withHourOfDay(Integer.parseInt(schedule.getDetails().getStartHH()))
                 .withMinuteOfHour(Integer.parseInt(schedule.getDetails().getStartMM()));
         schedule.setStartDate(sd.toDate());
-        schedule.setStatus(SCHEDULED_STATUS);
+        schedule.setStatus("scheduled");
         scheduleRepository.save(schedule);
 
         scheduleDetailsService.modifyScheduler(schedule);
@@ -174,10 +174,17 @@ public class ScheduleService {
      * @param urlPath
      * @return
      */
-    public List<UserTaxInformation> getDefaulterUserList(String contextURL, String urlPath) {
+    public List<UserTaxInformation> getDefaulterUserList(String contextURL, String urlPath, String method) {
         final String uri = contextURL.concat(urlPath);
-        ResponseEntity<UserTaxInformation[]> results = restTemplate.getForEntity(uri,
-                UserTaxInformation[].class);
+        ResponseEntity<UserTaxInformation[]> results = null;
+        if (method.equals("GET"))
+            results = restTemplate.getForEntity(uri, UserTaxInformation[].class);
+        else {
+            TaxDefaulterRequest req = new TaxDefaulterRequest();
+            req.setMobileOnly(true);
+            results = restTemplate.postForEntity(uri, req, UserTaxInformation[].class);
+        }
+
         return Arrays.asList(results.getBody());
     }
 }

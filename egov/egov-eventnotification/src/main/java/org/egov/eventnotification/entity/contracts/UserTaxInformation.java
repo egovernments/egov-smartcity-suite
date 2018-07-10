@@ -54,6 +54,10 @@ public class UserTaxInformation {
     private String dueAmount;
     private String dueDate;
     private String billNo;
+    private String assessmentNo;
+    private String ownerName;
+    private String mobileNumber;
+    private String totalDue;
 
     public String getConsumerNumber() {
         return consumerNumber;
@@ -95,4 +99,35 @@ public class UserTaxInformation {
         this.billNo = billNo;
     }
 
+    public String getAssessmentNo() {
+        return assessmentNo;
+    }
+
+    public void setAssessmentNo(String assessmentNo) {
+        this.assessmentNo = assessmentNo;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
+    }
+
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
+
+    public void setMobileNumber(String mobileNumber) {
+        this.mobileNumber = mobileNumber;
+    }
+
+    public String getTotalDue() {
+        return totalDue;
+    }
+
+    public void setTotalDue(String totalDue) {
+        this.totalDue = totalDue;
+    }
 }

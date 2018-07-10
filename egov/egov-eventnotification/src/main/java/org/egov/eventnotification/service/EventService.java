@@ -49,9 +49,7 @@ package org.egov.eventnotification.service;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.egov.eventnotification.utils.Constants.ACTIVE;
-import static org.egov.eventnotification.utils.Constants.MIN_NUMBER_OF_REQUESTS;
 import static org.egov.eventnotification.utils.Constants.MODULE_NAME;
-import static org.egov.eventnotification.utils.Constants.NOTIFICATION_TYPE_EVENT;
 import static org.egov.infra.utils.DateUtils.endOfToday;
 import static org.egov.infra.utils.DateUtils.startOfGivenDate;
 import static org.egov.infra.utils.DateUtils.startOfToday;
@@ -170,7 +168,7 @@ public class EventService {
                     .withMinuteOfHour(Integer.parseInt(updatedEvent.getDetails().getEndMM()));
             updatedEvent.setEndDate(ed.toDate());
 
-            if (updatedEvent.getDetails().getFile()[0].getSize() > MIN_NUMBER_OF_REQUESTS)
+            if (updatedEvent.getDetails().getFile()[0].getSize() > 1)
                 eventDetailsService.eventUploadWallpaper(updatedEvent);
             return eventRepository.save(updatedEvent);
         } catch (final Exception e) {
@@ -207,7 +205,7 @@ public class EventService {
         messageContent.setMessageId(event.getId());
         messageContent.setModuleName(event.getName());
         messageContent.setNotificationDateTime(new Date().getTime());
-        messageContent.setNotificationType(NOTIFICATION_TYPE_EVENT);
+        messageContent.setNotificationType("Event");
         messageContent.setSenderId(user.getId());
         messageContent.setSenderName(user.getName());
         messageDetails.setSendAll(Boolean.TRUE);

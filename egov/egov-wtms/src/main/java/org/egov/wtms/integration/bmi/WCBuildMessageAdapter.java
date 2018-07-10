@@ -48,10 +48,6 @@
 package org.egov.wtms.integration.bmi;
 
 import static org.egov.eventnotification.utils.Constants.DDMMYYYY;
-import static org.egov.eventnotification.utils.Constants.MESSAGE_BILLAMT;
-import static org.egov.eventnotification.utils.Constants.MESSAGE_BILLNO;
-import static org.egov.eventnotification.utils.Constants.MESSAGE_CONSNO;
-import static org.egov.eventnotification.utils.Constants.MESSAGE_DISRPTDATE;
 import static org.egov.eventnotification.utils.Constants.MESSAGE_USERNAME;
 
 import java.text.DateFormat;
@@ -73,20 +69,20 @@ public class WCBuildMessageAdapter implements BuildMessageAdapter {
         DateFormat formatter = new SimpleDateFormat(DDMMYYYY);
         User user = userService.getUserById(Long.parseLong(userTaxInformation.getUserId()));
         String finalMessage = message;
-        if (finalMessage.contains(MESSAGE_CONSNO))
-            finalMessage = finalMessage.replace(MESSAGE_CONSNO, userTaxInformation.getConsumerNumber());
+        if (finalMessage.contains("{{consumerNumber}}"))
+            finalMessage = finalMessage.replace("{{consumerNumber}}", userTaxInformation.getConsumerNumber());
 
-        if (finalMessage.contains(MESSAGE_BILLNO))
-            finalMessage = finalMessage.replace(MESSAGE_BILLNO, userTaxInformation.getBillNo());
+        if (finalMessage.contains("{{billNumber}}"))
+            finalMessage = finalMessage.replace("{{billNumber}}", userTaxInformation.getBillNo());
 
-        if (finalMessage.contains(MESSAGE_BILLAMT))
-            finalMessage = finalMessage.replace(MESSAGE_BILLAMT, userTaxInformation.getDueAmount());
+        if (finalMessage.contains("{{billAmount}}"))
+            finalMessage = finalMessage.replace("{{billAmount}}", userTaxInformation.getDueAmount());
 
         if (finalMessage.contains(MESSAGE_USERNAME))
             finalMessage = finalMessage.replace(MESSAGE_USERNAME, user.getName());
 
-        if (finalMessage.contains(MESSAGE_DISRPTDATE) && userTaxInformation.getDueDate() != null)
-            finalMessage = finalMessage.replace(MESSAGE_DISRPTDATE, formatter.format(userTaxInformation.getDueDate()));
+        if (finalMessage.contains("{{disruptionDate}}") && userTaxInformation.getDueDate() != null)
+            finalMessage = finalMessage.replace("{{disruptionDate}}", formatter.format(userTaxInformation.getDueDate()));
 
         return finalMessage;
     }

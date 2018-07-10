@@ -48,13 +48,8 @@
 package org.egov.api.adapter;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.egov.eventnotification.utils.Constants.CATEGORY;
-import static org.egov.eventnotification.utils.Constants.DRAFT_ID;
-import static org.egov.eventnotification.utils.Constants.DRAFT_NOTIFICATION_TYPE;
-import static org.egov.eventnotification.utils.Constants.EVENT_ID;
-import static org.egov.eventnotification.utils.Constants.MODULE;
+import static org.egov.eventnotification.utils.Constants.ID;
 import static org.egov.eventnotification.utils.Constants.NAME;
-import static org.egov.eventnotification.utils.Constants.NOTIFICATION_MESSAGE;
 
 import java.lang.reflect.Type;
 
@@ -69,17 +64,17 @@ public class DraftsAdapter extends DataAdapter<Drafts> {
     @Override
     public JsonElement serialize(Drafts draft, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject jsonObjectDraft = new JsonObject();
-        jsonObjectDraft.addProperty(DRAFT_ID, draft.getId());
+        jsonObjectDraft.addProperty(ID, draft.getId());
         jsonObjectDraft.addProperty(NAME, draft.getName());
-        jsonObjectDraft.addProperty(DRAFT_NOTIFICATION_TYPE, draft.getDraftType().getName());
+        jsonObjectDraft.addProperty("draftType", draft.getDraftType().getName());
 
         if (draft.getModule() != null) {
             JsonObject jsonObjectModule = new JsonObject();
             if (isNotBlank(draft.getModule().getName()))
                 jsonObjectModule.addProperty(NAME, draft.getModule().getName());
             if (draft.getModule().getId() != null)
-                jsonObjectModule.addProperty(EVENT_ID, draft.getModule().getId());
-            jsonObjectDraft.add(MODULE, jsonObjectModule);
+                jsonObjectModule.addProperty(ID, draft.getModule().getId());
+            jsonObjectDraft.add("module", jsonObjectModule);
         }
 
         if (draft.getCategory() != null) {
@@ -87,10 +82,10 @@ public class DraftsAdapter extends DataAdapter<Drafts> {
             if (isNotBlank(draft.getCategory().getName()))
                 jsonObjectCategory.addProperty(NAME, draft.getCategory().getName());
             if (draft.getCategory().getId() != null)
-                jsonObjectCategory.addProperty(EVENT_ID, draft.getCategory().getId());
-            jsonObjectDraft.add(CATEGORY, jsonObjectCategory);
+                jsonObjectCategory.addProperty(ID, draft.getCategory().getId());
+            jsonObjectDraft.add("category", jsonObjectCategory);
         }
-        jsonObjectDraft.addProperty(NOTIFICATION_MESSAGE, draft.getMessage());
+        jsonObjectDraft.addProperty("message", draft.getMessage());
         return jsonObjectDraft;
     }
 }

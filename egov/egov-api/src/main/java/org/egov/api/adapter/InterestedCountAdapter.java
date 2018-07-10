@@ -48,7 +48,6 @@
 package org.egov.api.adapter;
 
 import static org.egov.eventnotification.utils.Constants.INTERESTED_COUNT;
-import static org.egov.eventnotification.utils.Constants.SUCCESS;
 import static org.egov.eventnotification.utils.Constants.ZERO;
 
 import java.lang.reflect.Type;
@@ -57,12 +56,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 
-public class InterestedCountAdapter extends DataAdapter<Long>{
+public class InterestedCountAdapter extends DataAdapter<Long> {
 
     @Override
     public JsonElement serialize(Long object, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty(SUCCESS, "Data saved successfully");
+        jsonObject.addProperty("success", "Data saved successfully");
         if (object == null)
             jsonObject.addProperty(INTERESTED_COUNT, ZERO);
         else

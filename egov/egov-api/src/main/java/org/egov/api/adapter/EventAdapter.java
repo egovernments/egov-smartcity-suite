@@ -49,13 +49,9 @@ package org.egov.api.adapter;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.egov.eventnotification.utils.Constants.DDMMYYYY;
-import static org.egov.eventnotification.utils.Constants.END_DATE;
-import static org.egov.eventnotification.utils.Constants.END_TIME;
 import static org.egov.eventnotification.utils.Constants.EVENT_FILENAME;
 import static org.egov.eventnotification.utils.Constants.EVENT_FILESTOREID;
 import static org.egov.eventnotification.utils.Constants.INTERESTED_COUNT;
-import static org.egov.eventnotification.utils.Constants.START_DATE;
-import static org.egov.eventnotification.utils.Constants.START_TIME;
 import static org.egov.eventnotification.utils.Constants.URL;
 import static org.egov.eventnotification.utils.Constants.ZERO;
 import static org.egov.infra.utils.DateUtils.getDate;
@@ -86,14 +82,14 @@ public class EventAdapter extends DataAdapter<Event> {
 
         eventDetailsAdapter.populateData(jsonObjectEvent, event);
 
-        jsonObjectEvent.addProperty(START_DATE,
+        jsonObjectEvent.addProperty("startDate",
                 getDate(getDefaultFormattedDate(event.getStartDate()), DDMMYYYY).getTime());
-        jsonObjectEvent.addProperty(START_TIME,
+        jsonObjectEvent.addProperty("startTime",
                 event.getDetails().getStartHH().concat(":").concat(event.getDetails().getStartMM()));
 
-        jsonObjectEvent.addProperty(END_DATE,
+        jsonObjectEvent.addProperty("endDate",
                 getDate(getDefaultFormattedDate(event.getEndDate()), DDMMYYYY).getTime());
-        jsonObjectEvent.addProperty(END_TIME,
+        jsonObjectEvent.addProperty("endTime",
                 event.getDetails().getEndHH().concat(":").concat(event.getDetails().getEndMM()));
 
         if (event.getFilestore() == null) {

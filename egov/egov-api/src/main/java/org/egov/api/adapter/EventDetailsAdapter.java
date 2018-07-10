@@ -47,19 +47,9 @@
  */
 package org.egov.api.adapter;
 
-import static org.egov.eventnotification.utils.Constants.ADDRESS;
-import static org.egov.eventnotification.utils.Constants.CONTACT_NO;
-import static org.egov.eventnotification.utils.Constants.DESCRIPTION;
-import static org.egov.eventnotification.utils.Constants.DOUBLE_DEFAULT;
-import static org.egov.eventnotification.utils.Constants.EVENTTYPE;
-import static org.egov.eventnotification.utils.Constants.EVENT_COST;
 import static org.egov.eventnotification.utils.Constants.EVENT_HOST;
-import static org.egov.eventnotification.utils.Constants.EVENT_ID;
-import static org.egov.eventnotification.utils.Constants.EVENT_LOC;
-import static org.egov.eventnotification.utils.Constants.ISPAID;
+import static org.egov.eventnotification.utils.Constants.ID;
 import static org.egov.eventnotification.utils.Constants.NAME;
-import static org.egov.eventnotification.utils.Constants.NO;
-import static org.egov.eventnotification.utils.Constants.USER_INTERESTED;
 
 import org.egov.eventnotification.entity.Event;
 
@@ -67,22 +57,22 @@ import com.google.gson.JsonObject;
 
 public class EventDetailsAdapter {
 
-    public void populateData(JsonObject jsonObjectEvent,Event event) {
-        jsonObjectEvent.addProperty(EVENT_ID, event.getId());
+    public void populateData(JsonObject jsonObjectEvent, Event event) {
+        jsonObjectEvent.addProperty(ID, event.getId());
         jsonObjectEvent.addProperty(NAME, event.getName());
-        jsonObjectEvent.addProperty(DESCRIPTION, event.getDescription());
-        
+        jsonObjectEvent.addProperty("description", event.getDescription());
+
         jsonObjectEvent.addProperty(EVENT_HOST, event.getAddress().getEventHost());
-        jsonObjectEvent.addProperty(EVENT_LOC, event.getAddress().getEventLocation());
-        jsonObjectEvent.addProperty(ADDRESS, event.getAddress().getAddress());
-        jsonObjectEvent.addProperty(CONTACT_NO, event.getAddress().getContactNumber());
-        jsonObjectEvent.addProperty(ISPAID, event.isPaid());
-        jsonObjectEvent.addProperty(EVENTTYPE, event.getEventType().getName());
-        jsonObjectEvent.addProperty(USER_INTERESTED, NO);
-        
+        jsonObjectEvent.addProperty("eventlocation", event.getAddress().getEventLocation());
+        jsonObjectEvent.addProperty("address", event.getAddress().getAddress());
+        jsonObjectEvent.addProperty("contactnumber", event.getAddress().getContactNumber());
+        jsonObjectEvent.addProperty("ispaid", event.isPaid());
+        jsonObjectEvent.addProperty("eventType", event.getEventType().getName());
+        jsonObjectEvent.addProperty("userInterested", "No");
+
         if (event.getCost() == null)
-            jsonObjectEvent.addProperty(EVENT_COST, DOUBLE_DEFAULT);
+            jsonObjectEvent.addProperty("cost", 0.0);
         else
-            jsonObjectEvent.addProperty(EVENT_COST, event.getCost());
+            jsonObjectEvent.addProperty("cost", event.getCost());
     }
 }

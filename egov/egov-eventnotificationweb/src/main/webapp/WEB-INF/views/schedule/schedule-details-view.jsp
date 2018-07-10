@@ -47,7 +47,7 @@
   --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<form:form method="post" action="" modelAttribute="notificationSchedule"
+<form:form method="post" action="/eventnotification/schedule/delete/${notificationSchedule.id}" modelAttribute="notificationSchedule"
 	id="deleteScheduleform" cssClass="form-horizontal form-groups-bordered">
 	<div class="row">
 		<div class="col-md-12">
@@ -142,7 +142,7 @@
 						</button>
 					</c:when>
 					<c:otherwise>
-						<button type='button' class='btn btn-primary' id="buttonDelete">
+						<button type='submit' class='btn btn-primary' id="buttonDelete">
 							<spring:message code='lbl.schedule.delete.button' />
 						</button>
 					</c:otherwise>
@@ -160,3 +160,5 @@
 	src="<cdn:url  value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/js/app/schedule-details-view.js?rnd=${app_release_no}'/>"></script>
+<script type="text/javascript"
+	src="<cdn:url value='/resources/js/app/window-reload-and-close.js' />"></script>

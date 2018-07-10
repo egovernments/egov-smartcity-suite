@@ -59,7 +59,7 @@ import javax.persistence.Table;
 
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Unique;
+import org.egov.infra.persistence.validator.annotation.CompositeUnique;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -73,7 +73,7 @@ import com.google.firebase.database.annotations.NotNull;
 
 @Entity
 @Table(name = "egpushbox_userfcmdevice")
-@Unique(fields = { "userId", "userDeviceToken", "deviceid" }, enableDfltMsg = true)
+@CompositeUnique(fields = { "userId", "userDeviceToken", "deviceid" }, enableDfltMsg = true)
 @SequenceGenerator(name = UserFcmDevice.SEQ_EG_USERFCMDEVICE, sequenceName = UserFcmDevice.SEQ_EG_USERFCMDEVICE, allocationSize = 1)
 public class UserFcmDevice extends AbstractAuditable {
 
