@@ -83,7 +83,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class EventService {
     private static final Logger LOGGER = LoggerFactory.getLogger(EventService.class);
-    
+
     private static final int MIN_NUMBER_OF_REQUESTS = 1;
 
     @Autowired
