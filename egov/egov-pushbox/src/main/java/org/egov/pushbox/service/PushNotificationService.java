@@ -141,8 +141,6 @@ public class PushNotificationService {
             userDeviceList = getAllUserDeviceList();
         else
             userDeviceList = getUserDeviceList(messageContent);
-        if (LOGGER.isInfoEnabled())
-            LOGGER.info("##PushBoxFox## : Sending Messages to the Devices ");
         sendMessagesToDevices(userDeviceList, messageContent);
     }
 
