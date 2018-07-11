@@ -90,12 +90,14 @@ public class PropertyTaxReportService {
         List<PropertyMVInfo> propertyList = propertyMVInfoRepository.findAll();
         List<DefaultersResult> resultList = new ArrayList<>();
         for(PropertyMVInfo prop : propertyList){
-            DefaultersResult defaulter = new DefaultersResult();
-            defaulter.setAssessmentNo(prop.getPropertyId());
-            defaulter.setOwnerName(prop.getOwnerName());
-            defaulter.setMobileNumber(prop.getMobileNumber());
-            defaulter.setTotalDue(prop.getArrearDemand());
-            resultList.add(defaulter);
+            if(prop != null && prop.getMobileNumber() != null) {
+                DefaultersResult defaulter = new DefaultersResult();
+                defaulter.setAssessmentNo(prop.getPropertyId());
+                defaulter.setOwnerName(prop.getOwnerName());
+                defaulter.setMobileNumber(prop.getMobileNumber());
+                defaulter.setTotalDue(prop.getArrearDemand());
+                resultList.add(defaulter);
+            }
         }
         return resultList;
     }
