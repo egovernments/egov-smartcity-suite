@@ -65,7 +65,7 @@
 			<input type="hidden" id="registrationStatus"
 				value="${marriageRegistration.status.code}" />
 			<input type="hidden" id="allowDaysValidation"
-				value="${allowDaysValidation}" />mrsRegistrar
+				value="${allowDaysValidation}" />
 			<form:hidden path="" id="mrsRegistrar" name="mrsRegistrar" value="${mrsRegistrar}" />
 			<form:hidden path="" id="workFlowAction" name="workFlowAction" />
 			<form:hidden path="" id="serialNoExists" value="${serialNoExists}" />
@@ -77,7 +77,7 @@
 				value="${marriageRegistration.feeCollected}" />
 			<input type="hidden" id="source" value="${source}"/>
 			<c:if
-				test="${marriageRegistration.status.code eq 'CREATED' && !marriageRegistration.feeCollected && nextActn ne 'Junior/Senior Assistance approval pending'  && nextActn ne 'Revenue Clerk Approval Pending'}">
+				test="${marriageRegistration.status.code eq 'CREATED' && !marriageRegistration.feeCollected && nextActn ne 'Junior/Senior Assistance approval pending'  && (pendingActions ne 'Clerk Approval Pending' and pendingActions ne 'Revenue Clerk Approval Pending')}">
 				<div data-collapsed="0">
 					<div class="panel-heading">
 						<div style="color: red; font-size: 16px;" align="center">
@@ -174,7 +174,7 @@
 
 			<c:choose>
 				<c:when
-					test="${marriageRegistration.status.code eq 'CREATED' && (nextActn eq 'Junior/Senior Assistance approval pending'  || nextActn eq 'Revenue Clerk Approval Pending')}">
+					test="${marriageRegistration.status.code eq 'CREATED' && (nextActn eq 'Junior/Senior Assistance approval pending'  || (pendingActions eq 'Clerk Approval Pending' || pendingActions eq 'Revenue Clerk Approval Pending'))}">
 					<div class="buttonbottom" align="center">
 						<jsp:include page="../../common/commonWorkflowMatrix-button.jsp" />
 					</div>

@@ -82,9 +82,9 @@ public class MarriageConstants {
     public static final String WFLOW_PENDINGACTION_APPRVLPENDING_PRINTCERT = "Commisioner Approval Pending_PrintCert";
     public static final String WFLOW_PENDINGACTION_CMO_APPRVLPENDING = "Chief Medical Officer of Health Approval Pending";
     public static final String WFLOW_PENDINGACTION_MHO_APPRVLPENDING = "Municipal Health Officer Approval Pending";
-    public static final String WFLOW_PENDINGACTION_REV_CLERK_APPRVLPENDING = "Revenue Clerk Approval Pending";
+    public static final String WFLOW_PENDINGACTION_CLERK_APPRVLPENDING = "Clerk Approval Pending";
     public static final String WFLOW_PENDINGACTION_APPROVAL_APPROVEPENDING ="Approver Approval Pending";
-    public static final String WFSTATE_REV_CLRK_APPROVED="Revenue Clerk Approved";
+    public static final String WFSTATE_CLRK_APPROVED="Clerk Approved";
     public static final String WFSTATE_APPROVER_REJECTED ="Approver Rejected Application";
     public static final String WFSTATE_MHO_APPROVED="Municipal Health Officer Approved";
     public static final String WFSTATE_CMOH_APPROVED="Chief Medical Officer of Health Approved";
@@ -92,7 +92,6 @@ public class MarriageConstants {
     public static final String COMMISSIONER ="Commissioner";
     public static final String MARRIAGE_REGISTRAR = "Marriage Registrar";
     
-
     public static final String APPROVED = "APPROVED";
     public static final String MARRIAGEFEECOLLECTION_FUCNTION_CODE = "MARRIAGE_FUNCTION_CODE";
     public static final String FILESTORE_MODULECODE = "MRS";
@@ -127,7 +126,6 @@ public class MarriageConstants {
     public static final String ANONYMOUS_USER= "Anonymous";
     public static final String SOURCE_ONLINE = "ONLINE";
 
-
     public static final String DIGITALSIGNINWORKFLOW_ENABLED = "DIGITALSIGN_IN_WORKFLOW";
     public static final String REASSIGN_BUTTONENABLED = "REASSIGN_BUTTONENABLED";
     
@@ -150,7 +148,7 @@ public class MarriageConstants {
     public static final String MRS_HEIRARCHYTYPE = "MARRIAGE_REGISTRATIONUNIT_HEIRARCHYTYPE";
     public static final String MRS_BOUNDARYYTYPE = "MARRIAGE_REGISTRATIONUNIT_BOUNDARYYTYPE";
     
-    
+  
     //CSC operator related constants
     public static final String MRS_ROLEFORNONEMPLOYEE = "MRSROLEFORNONEMPLOYEE";
     public static final String CSC_OPERATOR_ROLE = "CSC Operator";

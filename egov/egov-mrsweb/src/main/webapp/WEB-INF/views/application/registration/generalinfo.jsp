@@ -229,7 +229,7 @@
 
 		<c:choose>
 			<c:when
-				test="${(currentState eq 'NEW' && nextActn eq 'Junior/Senior Assistance approval pending'  || nextActn eq 'Revenue Clerk Approval Pending') || (currentState ne 'DATAENTRY' && currentState ne 'NEW' && currentState ne 'CSC Operator created')}">
+				test="${(currentState eq 'NEW' && nextActn eq 'Junior/Senior Assistance approval pending'  || (pendingActions eq 'Clerk Approval Pending' or pendingActions eq 'Revenue Clerk Approval Pending')) || (currentState ne 'DATAENTRY' && currentState ne 'NEW' && currentState ne 'CSC Operator created')}">
 				<form:hidden path="marriagePhotoFileStore" />
 				<form:hidden class="encodedPhoto" path="encodedMarriagePhoto" />
 				<img id="marriage-photo" class="add-margin marriage-img"
@@ -310,8 +310,9 @@
 			</div>
 		</div>
 		</c:if> --%>
+		
 <c:if
-	test="${(marriageRegistration.status.code eq 'CREATED' && nextActn ne 'Junior/Senior Assistance approval pending'  && nextActn ne 'Revenue Clerk Approval Pending')|| currentState == 'DATAENTRY'|| marriageRegistration.status.code =='DIGITALSIGNED'|| marriageRegistration.status.code == 'APPROVED'}">
+	test="${(marriageRegistration.status.code eq 'CREATED' && (nextActn ne 'Junior/Senior Assistance approval pending'  and pendingActions ne 'Clerk Approval Pending' and pendingActions ne 'Revenue Clerk Approval Pending'))|| currentState == 'DATAENTRY'|| marriageRegistration.status.code =='DIGITALSIGNED'|| marriageRegistration.status.code == 'APPROVED'}">
 	<div class="form-group">
 		<label class="col-sm-3 control-label validate-madatory"> <spring:message
 				code="lbl.serial.no" /> <span class="mandatory"></span>

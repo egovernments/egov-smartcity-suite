@@ -333,6 +333,7 @@ public class MarriageRegistrationService {
         marriageRegistration.setSource(Source.CHPK.toString());
         create(marriageRegistration);
         workflowService.onCreateRegistrationAPI(marriageRegistration);
+        marriageRegistrationUpdateIndexesService.updateIndexes(marriageRegistration);
         return marriageRegistration;
     }
     

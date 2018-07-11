@@ -50,8 +50,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
 <div class="row" id="page-content">
 	<div class="col-md-12">
@@ -82,9 +82,10 @@
 				id="reIssueRegistrationId" value="${reIssue.registration.id}" />
 			<form:hidden path="" id="workFlowAction" name="workFlowAction" />
 			<input type="hidden" id="nextActn" value="${nextActn}" />
-			<input type="hidden" id="employeeAssgnNotValid" value="${employeeAssgnNotValid}" />
+			<input type="hidden" id="employeeAssgnNotValid"
+				value="${employeeAssgnNotValid}" />
 			<c:if
-				test="${reIssue.status.code =='CREATED' && !reIssue.feeCollected  && nextActn ne 'Junior/Senior Assistance approval pending'  && nextActn ne 'Revenue Clerk Approval Pending'}">
+				test="${reIssue.status.code =='CREATED' && !reIssue.feeCollected  && nextActn ne 'Junior/Senior Assistance approval pending'  && (nextActn ne 'Clerk Approval Pending' and nextActn ne 'Revenue Clerk Approval Pending')}">
 				<div data-collapsed="0">
 					<div class="panel-heading">
 						<div style="color: red; font-size: 16px;" align="center">
@@ -127,7 +128,7 @@
 
 			<c:choose>
 				<c:when
-					test="${reIssue.status.code eq 'CREATED' && (nextActn ne null && nextActn eq 'Junior/Senior Assistance approval pending'  || nextActn eq 'Revenue Clerk Approval Pending')}">
+					test="${reIssue.status.code eq 'CREATED' && nextActn ne null && (nextActn eq 'Junior/Senior Assistance approval pending'  || pendingActions eq 'Clerk Approval Pending' || pendingActions eq 'Revenue Clerk Approval Pending')}">
 					<div class="buttonbottom" align="center">
 						<jsp:include page="../../common/commonWorkflowMatrix-button.jsp" />
 					</div>

@@ -114,7 +114,7 @@ public class RegistrationWorkflowService {
     private static final String STEP_FORWARD = "Forward";
     private static final String STEP_PRINT_CERTIFICATE = "Print Certificate";
     private static final String APPROVER_REJECTED = "Approver Rejected Application";
-    private static final String INITIATOR_INITIAL_STATE = "Revenue Clerk Approval Pending";
+    private static final String INITIATOR_INITIAL_STATE = "Clerk Approval Pending";
     @Autowired
     @Qualifier("workflowService")
     private SimpleWorkflowService<MarriageRegistration> marriageRegistrationWorkflowService;
@@ -604,7 +604,7 @@ public class RegistrationWorkflowService {
         }
         marriageRegistration.transition()
                 .start()
-                .withStateValue(MarriageConstants.WFSTATE_REV_CLRK_APPROVED)
+                .withStateValue(MarriageConstants.WFSTATE_CLRK_APPROVED)
                 .withOwner(assignee).withNextAction(wfmatrix.getNextAction()).withDateInfo(new Date())
                 .withNatureOfTask("Marriage Registration :: New Registration").withInitiator(assignee);
 

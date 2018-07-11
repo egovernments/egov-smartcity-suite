@@ -50,7 +50,6 @@ package org.egov.mrs.web.controller.application.registration;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.egov.mrs.application.MarriageConstants.MARRIAGE_REGISTRAR;
 import static org.egov.mrs.application.MarriageConstants.ADDITIONAL_RULE_REGISTRATION;
 import static org.egov.mrs.application.MarriageConstants.APPLICATION_NUMBER;
 import static org.egov.mrs.application.MarriageConstants.APPROVAL_COMMENT;
@@ -60,6 +59,7 @@ import static org.egov.mrs.application.MarriageConstants.FILESTORE_MODULECODE;
 import static org.egov.mrs.application.MarriageConstants.FILE_STORE_ID_APPLICATION_NUMBER;
 import static org.egov.mrs.application.MarriageConstants.JUNIOR_SENIOR_ASSISTANCE_APPROVAL_PENDING;
 import static org.egov.mrs.application.MarriageConstants.MARRIAGEREGISTRATION_DAYS_VALIDATION;
+import static org.egov.mrs.application.MarriageConstants.MARRIAGE_REGISTRAR;
 import static org.egov.mrs.application.MarriageConstants.MODULE_NAME;
 import static org.egov.mrs.application.MarriageConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.mrs.application.MarriageConstants.WFLOW_ACTION_STEP_CANCEL;
@@ -69,14 +69,14 @@ import static org.egov.mrs.application.MarriageConstants.WFLOW_ACTION_STEP_REJEC
 import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_APPROVAL_APPROVEPENDING;
 import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_APPRVLPENDING_DIGISIGN;
 import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_APPRVLPENDING_PRINTCERT;
+import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_CLERK_APPRVLPENDING;
 import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_DIGISIGNPENDING;
 import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_PRINTCERTIFICATE;
-import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_REV_CLERK_APPRVLPENDING;
 import static org.egov.mrs.application.MarriageConstants.WFSTATE_APPROVER_REJECTED;
+import static org.egov.mrs.application.MarriageConstants.WFSTATE_CLRK_APPROVED;
 import static org.egov.mrs.application.MarriageConstants.WFSTATE_CMOH_APPROVED;
-import static org.egov.mrs.application.MarriageConstants.WFSTATE_MHO_APPROVED;
-import static org.egov.mrs.application.MarriageConstants.WFSTATE_REV_CLRK_APPROVED;
 import static org.egov.mrs.application.MarriageConstants.WFSTATE_MARRIAGEAPI_NEW;
+import static org.egov.mrs.application.MarriageConstants.WFSTATE_MHO_APPROVED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -104,7 +104,6 @@ import org.egov.infra.filestore.repository.FileStoreMapperRepository;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.FileStoreUtils;
-import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.application.MarriageUtils;
 import org.egov.mrs.application.service.MarriageCertificateService;
 import org.egov.mrs.application.service.workflow.RegistrationWorkflowService;
@@ -242,7 +241,7 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
                 workFlowContainer.setPendingActions(WFLOW_PENDINGACTION_PRINTCERTIFICATE);
             }
 
-        if ((WFSTATE_REV_CLRK_APPROVED.equals(registration.getState().getValue())
+        if (( WFSTATE_CLRK_APPROVED.equals(registration.getState().getValue())
                 || WFSTATE_MHO_APPROVED.equals(registration.getState().getValue())
                 || WFSTATE_MARRIAGEAPI_NEW.equals(registration.getState().getValue())
                 || WFSTATE_CMOH_APPROVED.equals(registration.getState().getValue()))
@@ -258,14 +257,14 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
         
         if (registration.getStatus().getCode().equalsIgnoreCase(CREATED)
                 && (JUNIOR_SENIOR_ASSISTANCE_APPROVAL_PENDING.equalsIgnoreCase(registration.getState().getNextAction())
-                        || WFLOW_PENDINGACTION_REV_CLERK_APPRVLPENDING
+                        ||  WFLOW_PENDINGACTION_CLERK_APPRVLPENDING
                                 .equalsIgnoreCase(registration.getState().getNextAction()))) {
-            workFlowContainer.setPendingActions(WFLOW_PENDINGACTION_REV_CLERK_APPRVLPENDING);
-            model.addAttribute(PENDING_ACTIONS, WFLOW_PENDINGACTION_REV_CLERK_APPRVLPENDING);
-            model.addAttribute("nextActn", WFLOW_PENDINGACTION_REV_CLERK_APPRVLPENDING);
+            workFlowContainer.setPendingActions(WFLOW_PENDINGACTION_CLERK_APPRVLPENDING);
+            model.addAttribute(PENDING_ACTIONS, WFLOW_PENDINGACTION_CLERK_APPRVLPENDING);
+            model.addAttribute("nextActn", WFLOW_PENDINGACTION_CLERK_APPRVLPENDING);
             model.addAttribute("isReassignEnabled", marriageUtils.isReassignEnabled());
         } else {
-            model.addAttribute("nextActn", registration.getState().getNextAction());
+            model.addAttribute("nextActn", registration.getState(). getNextAction());
         }
         
         workFlowContainer.setAdditionalRule(ADDITIONAL_RULE_REGISTRATION);
