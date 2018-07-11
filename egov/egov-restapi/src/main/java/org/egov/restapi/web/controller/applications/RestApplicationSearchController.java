@@ -49,6 +49,8 @@ package org.egov.restapi.web.controller.applications;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.egov.infra.admin.master.entity.User;
@@ -97,6 +99,16 @@ public class RestApplicationSearchController {
 					application.getAadharNumber(), application.getApproved().name(), application.getChannel(),
 					application.getCityCode(), application.getCityName());
 			responseList.add(searchResponse);
+		}
+		if(!responseList.isEmpty()){
+			Collections.sort(responseList, new Comparator<ApplicationSearchResponse>() {
+                @Override
+                public int compare(ApplicationSearchResponse response1, ApplicationSearchResponse response2) {
+                    if (response1.getApplicationDate() != null && response2.getApplicationDate() != null)
+                        return response2.getApplicationDate().compareTo(response1.getApplicationDate());
+                    return 0;
+                }
+            });
 		}
 
 		return responseList;
