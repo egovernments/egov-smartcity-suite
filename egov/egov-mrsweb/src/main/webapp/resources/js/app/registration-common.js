@@ -170,12 +170,13 @@ $(document)
 					});
 					
 					 if (($('#registrationStatus').val() != '' && $('#registrationStatus').val() == 'CREATED' && $(
-									'#nextActn').val() != 'Junior/Senior Assistance approval pending' && $(
-									'#nextActn').val() != 'Revenue Clerk Approval Pending' && $(
-									'#nextActn').val() != 'Chief Medical Officer of Health Approval Pending' && $(
-									'#nextActn').val() != 'Municipal Health Officer Approval Pending')&& $(
-									'#registrationStatus').val() != 'REJECTED' || ($('#currentState').val() =='Revenue Clerk Approved'
-								&& $("#feeCollected").val() == 'false')) {
+						'#nextActn').val() != 'Junior/Senior Assistance approval pending' && ($(
+						'#nextActn').val() != 'Revenue Clerk Approval Pending' && $(
+						'#nextActn').val() != 'Clerk Approval Pending') && $(
+						'#nextActn').val() != 'Chief Medical Officer of Health Approval Pending' && $(
+						'#nextActn').val() != 'Municipal Health Officer Approval Pending')&& $(
+						'#registrationStatus').val() != 'REJECTED' || ($('#currentState').val() =='Clerk Approved')
+					&& $("#feeCollected").val() == 'false'){
 						$(".show-row").hide();
 						$('#approverDetailHeading').hide();
 						$('#approvalDepartment').removeAttr('required');

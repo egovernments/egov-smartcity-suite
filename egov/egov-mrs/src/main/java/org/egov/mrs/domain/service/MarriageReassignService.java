@@ -54,6 +54,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
+import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
@@ -131,10 +132,10 @@ public class MarriageReassignService {
         }
     }
 
-    public Map<String, String> employeePositionMap(boolean mrsRegistrar) {
+    public Map<String, String> employeePositionMap(boolean mrsRegistrar, String source) {
         String designationStr;
         String departmentStr;
-        if (mrsRegistrar) {
+        if (mrsRegistrar && Source.CHPK.name().equalsIgnoreCase(source)) {
             designationStr = registrationWorkFlowService.getDesignationForMrsRegistrarWorkFlow();
             departmentStr = registrationWorkFlowService.getDepartmentForMrsRegistrarWorkFlow();
         } else {

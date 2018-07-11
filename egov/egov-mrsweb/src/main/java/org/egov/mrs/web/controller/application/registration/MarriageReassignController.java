@@ -53,6 +53,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
@@ -100,10 +101,14 @@ public class MarriageReassignController extends GenericWorkFlowController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String getReassign(@ModelAttribute("reassign") final MarriageReassignInfo reassignInfo, final Model model,
-            @RequestParam("mrsRegistrar") boolean mrsRegistrar ,@PathVariable final String applicationtype, @PathVariable final Long appId, final HttpServletRequest request) {
+            @RequestParam("mrsRegistrar") boolean mrsRegistrar, @PathVariable final String applicationtype,
+            @PathVariable final Long appId, final HttpServletRequest request, @RequestParam("source") String source) {
 
-        Map<String, String> employeeWithPosition = marriageReassignService.employeePositionMap(mrsRegistrar);
-        if (employeeWithPosition.isEmpty()) {
+        Map<String, String> employeeWithPosition = marriageReassignService.employeePositionMap(mrsRegistrar,source);
+        if(mrsRegistrar && Source.CHPK.name().equalsIgnoreCase(source) && employeeWithPosition.isEmpty())
+            model.addAttribute("message", messageSource.getMessage("notexists.registrarer.reassign.position",
+                    new String[] {}, null));
+        else if (employeeWithPosition.isEmpty()) {
             model.addAttribute("message", messageSource.getMessage("notexists.position",
                     new String[] {}, null));
         } else {
