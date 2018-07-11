@@ -61,7 +61,6 @@ import static org.egov.wtms.masters.entity.enums.ConnectionStatus.ACTIVE;
 import static org.egov.wtms.masters.entity.enums.ConnectionStatus.CLOSED;
 import static org.egov.wtms.masters.entity.enums.ConnectionStatus.INACTIVE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ADDNLCONNECTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATIONSTATUSCLOSED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_APPROVED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CANCELLED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CLOSERAPRROVED;
@@ -991,14 +990,14 @@ public class WaterConnectionDetailsService {
                     || waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_APPROVED)
                     || waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_SANCTIONED)
                     || waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_CLOSERSANCTIONED)) {
-                applicationIndex.setStatus(APPLICATIONSTATUSCLOSED);
+                applicationIndex.setStatus(waterConnectionDetails.getStatus().getCode());
                 applicationIndex.setApproved(ApprovalStatus.APPROVED);
                 applicationIndex.setClosed(ClosureStatus.YES);
                 applicationIndex.setOwnerName(user == null ? EMPTY : user.getUsername() + "::" + user.getName());
 
             }
             if (waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_CANCELLED)) {
-                applicationIndex.setStatus(APPLICATIONSTATUSCLOSED);
+                applicationIndex.setStatus(waterConnectionDetails.getStatus().getCode());
                 applicationIndex.setApproved(ApprovalStatus.REJECTED);
                 applicationIndex.setClosed(ClosureStatus.YES);
             }
