@@ -61,6 +61,7 @@ import javax.validation.Valid;
 
 import org.egov.eventnotification.entity.Drafts;
 import org.egov.eventnotification.entity.Schedule;
+import org.egov.eventnotification.entity.contracts.EventDetails;
 import org.egov.eventnotification.service.DraftService;
 import org.egov.eventnotification.service.DraftTypeService;
 import org.egov.eventnotification.service.ScheduleRepeatService;
@@ -102,6 +103,9 @@ public class ScheduleController {
         schedule.setTemplateName(notificationDrafts.getName());
         schedule.setDraftType(notificationDrafts.getDraftType());
         schedule.setModule(notificationDrafts.getModule());
+        EventDetails details = new EventDetails();
+        details.setDraftId(notificationDrafts.getId());
+        schedule.setDetails(details);
 
         model.addAttribute(NOTIFICATION_SCHEDULE, schedule);
         model.addAttribute(HOUR_LIST, eventnotificationUtil.getAllHour());

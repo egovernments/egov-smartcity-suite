@@ -57,7 +57,6 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.egov.eventnotification.entity.Schedule;
-import org.egov.eventnotification.entity.contracts.EventNotificationProperties;
 import org.egov.eventnotification.entity.contracts.UserTaxInformation;
 import org.egov.eventnotification.integration.bmi.BuildMessageAdapter;
 import org.egov.eventnotification.service.ScheduleService;
@@ -100,9 +99,6 @@ public class NotificationSchedulerJob extends QuartzJobBean {
 
     @Autowired
     private EventNotificationUtil eventNotificationUtil;
-
-    @Autowired
-    private EventNotificationProperties appProperties;
 
     @Resource(name = "cities")
     protected List<String> cities;
@@ -158,12 +154,9 @@ public class NotificationSchedulerJob extends QuartzJobBean {
             List<UserTaxInformation> userTaxInfoList = null;
             BuildMessageAdapter buildMessageAdapter = getBuildMessageAdapter(notificationSchedule.getModule().getCode());
 
-            if (notificationSchedule.getModule().getName().equalsIgnoreCase("Property"))
-                userTaxInfoList = scheduleService.getDefaulterUserList(contextURL,
-                        appProperties.getPropertyTaxRestApi(), "POST");
-            else if (notificationSchedule.getModule().getName().equalsIgnoreCase("Water Charges"))
-                userTaxInfoList = scheduleService.getDefaulterUserList(contextURL,
-                        appProperties.getWaterTaxRestApi(), "GET");
+            userTaxInfoList = scheduleService.getDefaulterUserList(contextURL,
+                    notificationSchedule.getUrl(), notificationSchedule.getMethod());
+
             if (userTaxInfoList != null)
                 for (UserTaxInformation userTaxInformation : userTaxInfoList) {
                     String message = buildMessageAdapter.buildMessage(userTaxInformation,
@@ -176,7 +169,7 @@ public class NotificationSchedulerJob extends QuartzJobBean {
                             for (User userid : userList)
                                 userIdList.add(userid.getId());
                     } else
-                        userIdList.add(Long.parseLong(userTaxInformation.getUserId()));
+                        userIdList.add(userTaxInformation.getUserId());
 
                     buildAndSendNotifications(notificationSchedule, message, Boolean.FALSE, userIdList);
                 }

@@ -113,6 +113,22 @@
 								<c:out value="${notificationDraft.message}" />
 							</div>
 						</div>
+						<div class="row add-border">
+							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.draft.url" />
+							</div>
+							<div class="col-xs-9 add-margin view-content">
+								<c:out value="${notificationDraft.url}" />
+							</div>
+						</div>
+						<div class="row add-border">
+							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.draft.method" />
+							</div>
+							<div class="col-xs-9 add-margin view-content">
+								<c:out value="${notificationDraft.method}" />
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>

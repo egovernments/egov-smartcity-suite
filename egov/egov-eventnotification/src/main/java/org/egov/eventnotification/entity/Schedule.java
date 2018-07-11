@@ -77,9 +77,6 @@ import org.hibernate.validator.constraints.SafeHtml;
 @SequenceGenerator(name = Schedule.SEQ_EGEVENTNOTIFICATION_SCHEDULE, sequenceName = Schedule.SEQ_EGEVENTNOTIFICATION_SCHEDULE, allocationSize = 1)
 public class Schedule extends AbstractPersistable<Long> {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 3093610095876757549L;
 
     public static final String SEQ_EGEVENTNOTIFICATION_SCHEDULE = "seq_egevntnotification_schedule";
@@ -90,6 +87,7 @@ public class Schedule extends AbstractPersistable<Long> {
 
     @NotBlank
     @SafeHtml
+    @Length(max = 100)
     private String templateName;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -100,6 +98,7 @@ public class Schedule extends AbstractPersistable<Long> {
 
     @SafeHtml
     @NotBlank
+    @Length(max = 20)
     private String status;
 
     @Column(name = "start_date")
@@ -123,6 +122,14 @@ public class Schedule extends AbstractPersistable<Long> {
     @Valid
     @NotNull
     private TemplateModule module;
+
+    @SafeHtml
+    @Length(max = 50)
+    private String url;
+
+    @SafeHtml
+    @Length(max = 10)
+    private String method;
 
     @Transient
     private EventDetails details;
@@ -199,5 +206,21 @@ public class Schedule extends AbstractPersistable<Long> {
 
     public void setModule(TemplateModule module) {
         this.module = module;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
     }
 }

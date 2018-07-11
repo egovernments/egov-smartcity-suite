@@ -155,6 +155,8 @@ CREATE TABLE egevntnotification_schedule
   schedulerepeat bigint,
   module bigint,
   version bigint DEFAULT 0,
+  url character varying(100),
+  method character varying(10),
   CONSTRAINT egevntnotification_schedule_pkey PRIMARY KEY (id),
   CONSTRAINT fk_drafttype_schedule_ref FOREIGN KEY (drafttype)
       REFERENCES egevntnotification_drafttype (id) MATCH SIMPLE
@@ -219,6 +221,8 @@ CREATE TABLE egevntnotification_drafts
   lastmodifiedby bigint NOT NULL,
   version bigint DEFAULT 0,
   drafttype bigint,
+  url character varying(100),
+  method character varying(10),
   CONSTRAINT egevntnotification_drafts_pkey PRIMARY KEY (id),
   CONSTRAINT fk_category_drafts_ref FOREIGN KEY (category)
       REFERENCES egevntnotification_module_category (id) MATCH SIMPLE

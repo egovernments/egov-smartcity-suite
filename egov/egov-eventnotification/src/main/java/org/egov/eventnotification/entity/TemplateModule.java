@@ -64,9 +64,6 @@ import org.hibernate.validator.constraints.SafeHtml;
 @SequenceGenerator(name = TemplateModule.SEQ_EGEVNTNOTIFICATION_MODULE, sequenceName = TemplateModule.SEQ_EGEVNTNOTIFICATION_MODULE, allocationSize = 1)
 public class TemplateModule extends AbstractPersistable<Long> {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 7392974152674723576L;
 
     public static final String SEQ_EGEVNTNOTIFICATION_MODULE = "seq_egevntnotification_template_module";

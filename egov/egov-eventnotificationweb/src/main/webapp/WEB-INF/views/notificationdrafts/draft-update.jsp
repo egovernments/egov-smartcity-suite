@@ -142,6 +142,30 @@
 							<form:errors path="message" cssClass="error-msg" />
 						</div>
 					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.draft.url" />:</label>
+						<div class="col-sm-10 add-margin">
+							<form:input path="url" id="url" name="url"
+								class="form-control text-left patternvalidation" maxlength="100"
+								value="${url}" />
+							<form:errors path="url" cssClass="error-msg" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.draft.method" />:</label>
+						<div class="col-sm-3 add-margin">
+							<form:select path="method" id="method" name="method"
+								cssClass="form-control" cssErrorClass="form-control error">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
+								<form:options items="${methods}"/>
+							</form:select>
+							<form:errors path="method" cssClass="error-msg" />
+						</div>
+					</div>
 				</div>
 			</div>
 			<div class="form-group">

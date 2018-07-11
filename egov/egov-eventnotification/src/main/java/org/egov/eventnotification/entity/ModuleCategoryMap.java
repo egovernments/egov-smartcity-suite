@@ -67,9 +67,6 @@ import org.egov.infra.persistence.entity.AbstractPersistable;
 @SequenceGenerator(name = ModuleCategoryMap.SEQ_EGEN_MODULE_CATEGORY, sequenceName = ModuleCategoryMap.SEQ_EGEN_MODULE_CATEGORY, allocationSize = 1)
 public class ModuleCategoryMap extends AbstractPersistable<Long> {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 177193060109912140L;
 
     public static final String SEQ_EGEN_MODULE_CATEGORY = "seq_egevntnotification_module_category_map";

@@ -69,9 +69,6 @@ import org.hibernate.validator.constraints.SafeHtml;
 @SequenceGenerator(name = CategoryParameters.SEQ_EGEN_PARAMETERS, sequenceName = CategoryParameters.SEQ_EGEN_PARAMETERS, allocationSize = 1)
 public class CategoryParameters extends AbstractPersistable<Long> {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 504113404748178245L;
 
     public static final String SEQ_EGEN_PARAMETERS = "seq_egevntnotification_category_parameters";

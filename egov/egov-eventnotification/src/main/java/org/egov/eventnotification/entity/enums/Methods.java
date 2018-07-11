@@ -45,131 +45,18 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.eventnotification.entity.contracts;
+package org.egov.eventnotification.entity.enums;
 
-import java.util.Date;
+public enum Methods {
+    GET("GET"), POST("POST");
 
-import org.springframework.web.multipart.MultipartFile;
+    private String name;
 
-public class EventDetails {
-
-    private String startHH;
-
-    private String startMM;
-
-    private String endHH;
-
-    private String endMM;
-
-    private double lng;
-
-    private double lat;
-
-    private Long crossHierarchyId;
-
-    private Date startDt;
-
-    private Date endDt;
-
-    private MultipartFile[] file;
-
-    private String paid;
-
-    private Long draftId;
-
-    public String getStartHH() {
-        return startHH;
+    private Methods(String name) {
+        this.name = name;
     }
 
-    public void setStartHH(String startHH) {
-        this.startHH = startHH;
-    }
-
-    public String getStartMM() {
-        return startMM;
-    }
-
-    public void setStartMM(String startMM) {
-        this.startMM = startMM;
-    }
-
-    public String getEndHH() {
-        return endHH;
-    }
-
-    public void setEndHH(String endHH) {
-        this.endHH = endHH;
-    }
-
-    public String getEndMM() {
-        return endMM;
-    }
-
-    public void setEndMM(String endMM) {
-        this.endMM = endMM;
-    }
-
-    public double getLng() {
-        return lng;
-    }
-
-    public void setLng(double lng) {
-        this.lng = lng;
-    }
-
-    public double getLat() {
-        return lat;
-    }
-
-    public void setLat(double lat) {
-        this.lat = lat;
-    }
-
-    public Long getCrossHierarchyId() {
-        return crossHierarchyId;
-    }
-
-    public void setCrossHierarchyId(Long crossHierarchyId) {
-        this.crossHierarchyId = crossHierarchyId;
-    }
-
-    public Date getStartDt() {
-        return startDt;
-    }
-
-    public void setStartDt(Date startDt) {
-        this.startDt = startDt;
-    }
-
-    public Date getEndDt() {
-        return endDt;
-    }
-
-    public void setEndDt(Date endDt) {
-        this.endDt = endDt;
-    }
-
-    public MultipartFile[] getFile() {
-        return file;
-    }
-
-    public void setFile(MultipartFile... files) {
-        file = files;
-    }
-
-    public String getPaid() {
-        return paid;
-    }
-
-    public void setPaid(String paid) {
-        this.paid = paid;
-    }
-
-    public Long getDraftId() {
-        return draftId;
-    }
-
-    public void setDraftId(Long draftId) {
-        this.draftId = draftId;
+    public String getName() {
+        return name;
     }
 }

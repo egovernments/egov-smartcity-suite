@@ -47,10 +47,10 @@
  */
 package org.egov.api.controller;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.egov.eventnotification.utils.Constants.ACTIVE;
 import static org.egov.eventnotification.utils.Constants.MODULE_NAME;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -159,14 +159,13 @@ public class RestEventController extends ApiController {
 
         if (errors.hasErrors()) {
             String errorMessage = EMPTY;
-            for (FieldError fieldError : errors.getFieldErrors()) {
-                errorMessage = errorMessage.concat(fieldError.getField().concat(" ").concat(fieldError.getDefaultMessage()).concat(" <br>"));
-            }
+            for (FieldError fieldError : errors.getFieldErrors())
+                errorMessage = errorMessage
+                        .concat(fieldError.getField().concat(" ").concat(fieldError.getDefaultMessage()).concat(" <br>"));
             return res.error(errorMessage);
         }
 
-        UserEvent userEvent = userEventService.saveUserEvent(Long.parseLong(userEventRequest.getUserid()),
-                Long.parseLong(userEventRequest.getEventid()));
+        UserEvent userEvent = userEventService.saveUserEvent(userEventRequest.getUserid(), userEventRequest.getEventid());
         if (userEvent == null)
             return res.error(getMessage("user.event.already.exists"));
         else {

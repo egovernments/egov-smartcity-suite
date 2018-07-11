@@ -103,7 +103,7 @@ public class PushNotificationService {
 
     @Transactional
     public UserFcmDevice saveUserDevice(final UserTokenRequest userTokenRequest) {
-        UserFcmDevice existingRecord = pushNotificationRepo.findByUserIdAndDeviceId(Long.parseLong(userTokenRequest.getUserId()),
+        UserFcmDevice existingRecord = pushNotificationRepo.findByUserIdAndDeviceId(userTokenRequest.getUserId(),
                 userTokenRequest.getDeviceId());
         if (existingRecord == null) {
             UserFcmDevice userDevice = new UserFcmDevice();

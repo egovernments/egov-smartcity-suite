@@ -79,9 +79,6 @@ import org.hibernate.validator.constraints.SafeHtml;
 @SequenceGenerator(name = Event.SEQ_EG_EVENT, sequenceName = Event.SEQ_EG_EVENT, allocationSize = 1)
 public class Event extends AbstractAuditable {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -2576923299660723402L;
 
     public static final String SEQ_EG_EVENT = "SEQ_EGEVNTNOTIFICATION_EVENT";

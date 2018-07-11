@@ -60,6 +60,7 @@ import javax.persistence.Table;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.CompositeUnique;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -77,9 +78,6 @@ import com.google.firebase.database.annotations.NotNull;
 @SequenceGenerator(name = UserFcmDevice.SEQ_EG_USERFCMDEVICE, sequenceName = UserFcmDevice.SEQ_EG_USERFCMDEVICE, allocationSize = 1)
 public class UserFcmDevice extends AbstractAuditable {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 7674078540821342829L;
 
     public static final String SEQ_EG_USERFCMDEVICE = "seq_egpushbox_userfcmdevice";
@@ -95,10 +93,12 @@ public class UserFcmDevice extends AbstractAuditable {
 
     @SafeHtml
     @NotBlank
+    @Length(max = 160)
     private String deviceToken;
 
     @SafeHtml
     @NotBlank
+    @Length(max = 20)
     private String deviceId;
 
     public String getDeviceId() {

@@ -47,17 +47,20 @@
  */
 package org.egov.eventnotification.entity.contracts;
 
+import java.math.BigDecimal;
+import java.util.Date;
+
 public class UserTaxInformation {
 
     private String consumerNumber;
-    private String userId;
-    private String dueAmount;
-    private String dueDate;
+    private Long userId;
+    private Double dueAmount;
+    private Date dueDate;
     private String billNo;
     private String assessmentNo;
     private String ownerName;
     private String mobileNumber;
-    private String totalDue;
+    private BigDecimal totalDue;
 
     public String getConsumerNumber() {
         return consumerNumber;
@@ -67,27 +70,27 @@ public class UserTaxInformation {
         this.consumerNumber = consumerNumber;
     }
 
-    public String getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public String getDueAmount() {
+    public Double getDueAmount() {
         return dueAmount;
     }
 
-    public void setDueAmount(String dueAmount) {
+    public void setDueAmount(Double dueAmount) {
         this.dueAmount = dueAmount;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
-    public String getDueDate() {
+    public Date getDueDate() {
         return dueDate;
     }
 
-    public void setDueDate(String dueDate) {
+    public void setDueDate(Date dueDate) {
         this.dueDate = dueDate;
     }
 
@@ -123,11 +126,11 @@ public class UserTaxInformation {
         this.mobileNumber = mobileNumber;
     }
 
-    public String getTotalDue() {
+    public BigDecimal getTotalDue() {
         return totalDue;
     }
 
-    public void setTotalDue(String totalDue) {
+    public void setTotalDue(BigDecimal totalDue) {
         this.totalDue = totalDue;
     }
 }

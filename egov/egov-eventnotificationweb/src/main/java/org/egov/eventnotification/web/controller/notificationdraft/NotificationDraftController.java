@@ -54,9 +54,12 @@ import static org.egov.eventnotification.utils.Constants.MODE_CREATE;
 import static org.egov.eventnotification.utils.Constants.MODE_VIEW;
 import static org.egov.eventnotification.utils.Constants.NOTIFICATION_DRAFT;
 
+import java.util.Arrays;
+
 import javax.validation.Valid;
 
 import org.egov.eventnotification.entity.Drafts;
+import org.egov.eventnotification.entity.enums.Methods;
 import org.egov.eventnotification.service.CategoryParametersService;
 import org.egov.eventnotification.service.DraftService;
 import org.egov.eventnotification.service.DraftTypeService;
@@ -113,6 +116,7 @@ public class NotificationDraftController {
         model.addAttribute("TemplateModule", templateModuleService.getAllModules());
         model.addAttribute("ModuleCategory", moduleCategoryService.getAllCategories());
         model.addAttribute("CategoryParameters", categoryParametersService.getAllParameters());
+        model.addAttribute("methods", Arrays.asList(Methods.values()));
         model.addAttribute(MODE, MODE_CREATE);
         return "drafts-create";
     }

@@ -55,6 +55,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -63,9 +64,6 @@ import org.hibernate.validator.constraints.SafeHtml;
 @SequenceGenerator(name = DraftType.SEQ_EG_DRAFTTYPE, sequenceName = DraftType.SEQ_EG_DRAFTTYPE, allocationSize = 1)
 public class DraftType extends AbstractPersistable<Long> {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -8439353929261903322L;
     public static final String SEQ_EG_DRAFTTYPE = "seq_egevntnotification_drafttype";
 
@@ -75,6 +73,7 @@ public class DraftType extends AbstractPersistable<Long> {
 
     @SafeHtml
     @NotBlank
+    @Length(max = 100)
     private String name;
 
     @Override

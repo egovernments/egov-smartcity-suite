@@ -72,7 +72,7 @@ public class PTBuildMessageAdapter implements BuildMessageAdapter {
             finalMessage = finalMessage.replace("{{dueDate}}", formatter.format(userTaxInformation.getDueDate()));
 
         if (finalMessage.contains("{{dueAmount}}"))
-            finalMessage = finalMessage.replace("{{dueAmount}}", userTaxInformation.getTotalDue());
+            finalMessage = finalMessage.replace("{{dueAmount}}", String.valueOf(userTaxInformation.getTotalDue().doubleValue()));
 
         return finalMessage;
     }
