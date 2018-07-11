@@ -57,10 +57,12 @@ import static org.egov.infra.utils.DateUtils.startOfGivenDate;
 import java.util.Arrays;
 import java.util.List;
 
+import org.egov.eventnotification.entity.Drafts;
 import org.egov.eventnotification.entity.Schedule;
 import org.egov.eventnotification.entity.contracts.EventDetails;
 import org.egov.eventnotification.entity.contracts.TaxDefaulterRequest;
 import org.egov.eventnotification.entity.contracts.UserTaxInformation;
+import org.egov.eventnotification.repository.DraftRepository;
 import org.egov.eventnotification.repository.ScheduleRepository;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,6 +83,9 @@ public class ScheduleService {
 
     @Autowired
     private ScheduleDetailsService scheduleDetailsService;
+
+    @Autowired
+    private DraftRepository draftRepository;
 
     public List<Schedule> getAllSchedule() {
         List<Schedule> notificationScheduleList = null;
@@ -130,8 +135,11 @@ public class ScheduleService {
                 .withHourOfDay(Integer.parseInt(notificationSchedule.getDetails().getStartHH()))
                 .withMinuteOfHour(Integer.parseInt(notificationSchedule.getDetails().getStartMM()));
         sd = sd.withSecondOfMinute(00);
+        Drafts draft = draftRepository.findOne(notificationSchedule.getDetails().getDraftId());
         notificationSchedule.setStartDate(sd.toDate());
         notificationSchedule.setStatus("scheduled");
+        notificationSchedule.setUrl(draft.getUrl());
+        notificationSchedule.setMethod(draft.getMethod());
         scheduleRepository.save(notificationSchedule);
 
         scheduleDetailsService.executeScheduler(notificationSchedule, fullURL);

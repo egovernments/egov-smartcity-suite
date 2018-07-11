@@ -66,9 +66,6 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @SequenceGenerator(name = ScheduleLog.SEQ_SCHEDULE_LOG, sequenceName = ScheduleLog.SEQ_SCHEDULE_LOG, allocationSize = 1)
 public class ScheduleLog extends AbstractAuditable {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -31845956262789699L;
 
     public static final String SEQ_SCHEDULE_LOG = "seq_egevntnotification_schedule_log";

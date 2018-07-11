@@ -56,8 +56,7 @@ import org.springframework.core.env.Environment;
 
 @Configuration
 @PropertySource(name = "eventnotificationApplicationProperties", value = {
-        "classpath:config/eventnotification-application-config.properties",
-        "classpath:config/firebase-application-config.properties" }, ignoreResourceNotFound = true)
+        "classpath:config/eventnotification-application-config.properties" }, ignoreResourceNotFound = true)
 public class EventNotificationApplicationProperties {
     @Autowired
     private Environment environment;
@@ -68,8 +67,7 @@ public class EventNotificationApplicationProperties {
         properties.setDailyCron(environment.getProperty("eventnotification.daily.job.cron"));
         properties.setMonthlyCron(environment.getProperty("eventnotification.monthly.job.cron"));
         properties.setYearlyCron(environment.getProperty("eventnotification.yearly.job.cron"));
-        properties.setWaterTaxRestApi(environment.getProperty("eventnotification.watertax.rest"));
-        properties.setPropertyTaxRestApi(environment.getProperty("eventnotification.propertytax.rest"));
+        properties.setDefaultCron(environment.getProperty("eventnotification.default.cron"));
         return properties;
     }
 }

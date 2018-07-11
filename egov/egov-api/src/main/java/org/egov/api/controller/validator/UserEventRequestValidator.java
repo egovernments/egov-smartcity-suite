@@ -47,7 +47,6 @@
  */
 package org.egov.api.controller.validator;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.egov.eventnotification.utils.Constants.FAIL;
 
 import org.egov.eventnotification.entity.contracts.UserEventRequest;
@@ -67,10 +66,10 @@ public class UserEventRequestValidator implements Validator {
         if (userEventRequest == null)
             errors.rejectValue(FAIL, "error.fail.eventuser");
 
-        if (isBlank(userEventRequest.getEventid()))
+        if (userEventRequest.getEventid() == null)
             errors.rejectValue(FAIL, "error.eventid");
 
-        if (isBlank(userEventRequest.getUserid()))
+        if (userEventRequest.getUserid() == null)
             errors.rejectValue(FAIL, "error.userid");
 
     }

@@ -52,8 +52,7 @@ public class EventNotificationProperties {
     private String dailyCron;
     private String monthlyCron;
     private String yearlyCron;
-    private String waterTaxRestApi;
-    private String propertyTaxRestApi;
+    private String defaultCron;
 
     public String getDailyCron() {
         return dailyCron;
@@ -79,20 +78,11 @@ public class EventNotificationProperties {
         this.yearlyCron = yearlyCron;
     }
 
-    public String getWaterTaxRestApi() {
-        return waterTaxRestApi;
+    public String getDefaultCron() {
+        return defaultCron;
     }
 
-    public void setWaterTaxRestApi(String waterTaxRestApi) {
-        this.waterTaxRestApi = waterTaxRestApi;
+    public void setDefaultCron(String defaultCron) {
+        this.defaultCron = defaultCron;
     }
-
-    public String getPropertyTaxRestApi() {
-        return propertyTaxRestApi;
-    }
-
-    public void setPropertyTaxRestApi(String propertyTaxRestApi) {
-        this.propertyTaxRestApi = propertyTaxRestApi;
-    }
-
 }

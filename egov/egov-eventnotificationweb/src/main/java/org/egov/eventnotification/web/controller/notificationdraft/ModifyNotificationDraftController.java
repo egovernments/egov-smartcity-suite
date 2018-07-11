@@ -55,6 +55,7 @@ import static org.egov.eventnotification.utils.Constants.MODE_VIEW;
 import static org.egov.eventnotification.utils.Constants.NOTIFICATION_DRAFT;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -62,6 +63,7 @@ import javax.validation.Valid;
 import org.egov.eventnotification.entity.CategoryParameters;
 import org.egov.eventnotification.entity.Drafts;
 import org.egov.eventnotification.entity.ModuleCategory;
+import org.egov.eventnotification.entity.enums.Methods;
 import org.egov.eventnotification.service.CategoryParametersService;
 import org.egov.eventnotification.service.DraftService;
 import org.egov.eventnotification.service.DraftTypeService;
@@ -111,6 +113,7 @@ public class ModifyNotificationDraftController {
         model.addAttribute("TemplateModule", templateModuleService.getAllModules());
         model.addAttribute("ModuleCategory", moduleCategoryList);
         model.addAttribute("CategoryParameters", categoryParametersList);
+        model.addAttribute("methods", Arrays.asList(Methods.values()));
 
         model.addAttribute(MODE, MODE_VIEW);
 

@@ -47,14 +47,16 @@
  */
 package org.egov.pushbox.entity.contracts;
 
+import javax.validation.constraints.NotNull;
+
 import org.hibernate.validator.constraints.NotBlank;
 
 public class UserTokenRequest {
     @NotBlank
     private String userToken;
 
-    @NotBlank
-    private String userId;
+    @NotNull
+    private Long userId;
 
     @NotBlank
     private String deviceId;
@@ -67,11 +69,11 @@ public class UserTokenRequest {
         this.userToken = userToken;
     }
 
-    public String getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 

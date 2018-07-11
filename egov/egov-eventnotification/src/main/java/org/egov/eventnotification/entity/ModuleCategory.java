@@ -71,9 +71,6 @@ import org.hibernate.validator.constraints.SafeHtml;
 @Embeddable
 public class ModuleCategory extends AbstractPersistable<Long> {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -3869160080779728227L;
 
     public static final String SEQ_EGEVNTNOTIFICATION_CATEGORY = "seq_egevntnotification_module_category";

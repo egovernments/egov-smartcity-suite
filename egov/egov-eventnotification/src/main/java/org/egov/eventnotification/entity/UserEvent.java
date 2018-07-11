@@ -67,9 +67,6 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @SequenceGenerator(name = UserEvent.SEQ_EG_USEREVENT, sequenceName = Event.SEQ_EG_EVENT, allocationSize = 1)
 public class UserEvent extends AbstractAuditable {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 1905507824693993872L;
 
     public static final String SEQ_EG_USEREVENT = "SEQ_EGEVNTNOTIFICATION_USEREVENT";

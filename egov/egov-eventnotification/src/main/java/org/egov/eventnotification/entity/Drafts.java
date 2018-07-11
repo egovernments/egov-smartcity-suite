@@ -61,6 +61,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -69,9 +70,6 @@ import org.hibernate.validator.constraints.SafeHtml;
 @SequenceGenerator(name = Drafts.SEQ_EGEVENTNOTIFICATION_DRAFTS, sequenceName = Drafts.SEQ_EGEVENTNOTIFICATION_DRAFTS, allocationSize = 1)
 public class Drafts extends AbstractAuditable {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 6211626862831989672L;
     public static final String SEQ_EGEVENTNOTIFICATION_DRAFTS = "SEQ_EGEVENTNOTIFICATION_DRAFTS";
 
@@ -81,6 +79,7 @@ public class Drafts extends AbstractAuditable {
 
     @SafeHtml
     @NotBlank
+    @Length(max = 100)
     private String name;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -104,7 +103,16 @@ public class Drafts extends AbstractAuditable {
     @Column(name = "notification_message")
     @SafeHtml
     @NotBlank
+    @Length(max = 500)
     private String message;
+
+    @SafeHtml
+    @Length(max = 50)
+    private String url;
+
+    @SafeHtml
+    @Length(max = 10)
+    private String method;
 
     @Override
     public Long getId() {
@@ -154,5 +162,21 @@ public class Drafts extends AbstractAuditable {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
     }
 }

@@ -55,6 +55,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -63,9 +64,6 @@ import org.hibernate.validator.constraints.SafeHtml;
 @SequenceGenerator(name = ScheduleRepeat.SEQ_EG_ESCHEDULEREPEAT, sequenceName = ScheduleRepeat.SEQ_EG_ESCHEDULEREPEAT, allocationSize = 1)
 public class ScheduleRepeat extends AbstractPersistable<Long> {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 1297735596140759994L;
 
     public static final String SEQ_EG_ESCHEDULEREPEAT = "seq_egevntnotification_schedulerepeat";
@@ -76,6 +74,7 @@ public class ScheduleRepeat extends AbstractPersistable<Long> {
 
     @NotBlank
     @SafeHtml
+    @Length(max = 20)
     private String name;
 
     @Override

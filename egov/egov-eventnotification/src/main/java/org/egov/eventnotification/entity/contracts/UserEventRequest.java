@@ -52,23 +52,23 @@ import org.hibernate.validator.constraints.NotBlank;
 public class UserEventRequest {
 
     @NotBlank
-    private String userid;
+    private Long userid;
     @NotBlank
-    private String eventid;
+    private Long eventid;
 
-    public String getUserid() {
+    public Long getUserid() {
         return userid;
     }
 
-    public void setUserid(String userid) {
+    public void setUserid(Long userid) {
         this.userid = userid;
     }
 
-    public String getEventid() {
+    public Long getEventid() {
         return eventid;
     }
 
-    public void setEventid(String eventid) {
+    public void setEventid(Long eventid) {
         this.eventid = eventid;
     }
 

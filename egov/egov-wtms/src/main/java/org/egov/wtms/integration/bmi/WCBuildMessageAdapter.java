@@ -67,7 +67,7 @@ public class WCBuildMessageAdapter implements BuildMessageAdapter {
     @Override
     public String buildMessage(UserTaxInformation userTaxInformation, String message) {
         DateFormat formatter = new SimpleDateFormat(DDMMYYYY);
-        User user = userService.getUserById(Long.parseLong(userTaxInformation.getUserId()));
+        User user = userService.getUserById(userTaxInformation.getUserId());
         String finalMessage = message;
         if (finalMessage.contains("{{consumerNumber}}"))
             finalMessage = finalMessage.replace("{{consumerNumber}}", userTaxInformation.getConsumerNumber());
@@ -76,7 +76,7 @@ public class WCBuildMessageAdapter implements BuildMessageAdapter {
             finalMessage = finalMessage.replace("{{billNumber}}", userTaxInformation.getBillNo());
 
         if (finalMessage.contains("{{billAmount}}"))
-            finalMessage = finalMessage.replace("{{billAmount}}", userTaxInformation.getDueAmount());
+            finalMessage = finalMessage.replace("{{billAmount}}", String.valueOf(userTaxInformation.getDueAmount()));
 
         if (finalMessage.contains(MESSAGE_USERNAME))
             finalMessage = finalMessage.replace(MESSAGE_USERNAME, user.getName());

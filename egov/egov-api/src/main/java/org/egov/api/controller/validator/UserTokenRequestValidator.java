@@ -67,7 +67,7 @@ public class UserTokenRequestValidator implements Validator {
         if (isBlank(userTokenRequest.getUserToken()))
             errors.reject("userdevice.device.tokenunavailable");
 
-        if (isBlank(userTokenRequest.getUserId()))
+        if (userTokenRequest.getUserId() == null)
             errors.reject("userdevice.user.useridunavailable");
 
         if (isBlank(userTokenRequest.getDeviceId()))

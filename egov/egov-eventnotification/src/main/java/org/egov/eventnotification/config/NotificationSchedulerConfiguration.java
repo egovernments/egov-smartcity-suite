@@ -54,9 +54,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.sql.DataSource;
 
+import org.egov.eventnotification.entity.contracts.EventNotificationProperties;
 import org.egov.eventnotification.scheduler.NotificationSchedulerJob;
 import org.egov.infra.config.scheduling.QuartzSchedulerConfiguration;
 import org.egov.infra.config.scheduling.SchedulerConfigCondition;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
@@ -67,6 +69,9 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 @Configuration
 @Conditional(SchedulerConfigCondition.class)
 public class NotificationSchedulerConfiguration extends QuartzSchedulerConfiguration {
+
+    @Autowired
+    private EventNotificationProperties properties;
 
     @Bean(destroyMethod = "destroy")
     public SchedulerFactoryBean notificationScheduler(DataSource dataSource) {
@@ -95,7 +100,7 @@ public class NotificationSchedulerConfiguration extends QuartzSchedulerConfigura
         evntnotifCron.setJobDetail(eventnotificationJobDetail().getObject());
         evntnotifCron.setGroup("EVENT_NOTIFICATION_TRIGGER_GROUP");
         evntnotifCron.setName("EVENT_NOTIFICATION_TRIGGER");
-        evntnotifCron.setCronExpression("0 15 0 * * ?");
+        evntnotifCron.setCronExpression(properties.getDefaultCron());
         evntnotifCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
         return evntnotifCron;
     }
