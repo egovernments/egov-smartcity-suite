@@ -84,6 +84,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.egov.wtms.utils.constants.WaterTaxConstants.INPROGRESS;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
 
 @Service
 @Transactional(readOnly = true)
@@ -479,13 +480,13 @@ public class ConnectionDetailService {
                 && applicationDocument.getDocumentDate() == null ? false : true;
     }
 
-    public List<SearchWaterTaxBillDetail> getValueByModuleType(final String moduleType) {
+    public List<SearchWaterTaxBillDetail> getValueByModuleType() {
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append("select  bill.consumer_id as \"consumerNumber\", bill.user_id as \"userId\",bill.bill_no as \"billNo\",dcbview.curr_balance as  \"dueAmount\"  " +
                 "from eg_bill bill, egwtr_mv_dcb_view dcbview, egpushbox_userfcmdevice event " +
                 "where dcbview.hscno= bill.consumer_id " +
                 "AND  event.userId = bill.user_id " +
-                "AND bill.module_id =(select id from eg_module where name = 'Water Tax Management') order By bill.consumer_id");
+                "AND bill.module_id =(select id from eg_module where name = '"+MODULE_NAME+"') order By bill.consumer_id");
         final Query query = entityManager.unwrap(Session.class).createSQLQuery(queryStr.toString());
 
         query.setResultTransformer(new AliasToBeanResultTransformer(SearchWaterTaxBillDetail.class));
