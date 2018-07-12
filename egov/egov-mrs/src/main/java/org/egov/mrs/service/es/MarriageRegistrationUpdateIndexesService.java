@@ -74,6 +74,7 @@ import java.util.List;
 
 import static org.egov.mrs.application.MarriageConstants.APPL_INDEX_MODULE_NAME;
 import static org.egov.mrs.application.MarriageConstants.APPROVED;
+import static org.egov.mrs.application.MarriageConstants.REGISTERED;
 
 @Service
 @Transactional(readOnly = true)
@@ -128,7 +129,8 @@ public class MarriageRegistrationUpdateIndexesService {
             applicationIndex.setOwnerName(user != null ? user.getUsername() + "::" + user.getName() : "");
 
             // mark application index as closed on Application Approved
-            if (APPROVED.equals(marriageRegistration.getStatus().getCode())) {
+            if (APPROVED.equals(marriageRegistration.getStatus().getCode()) ||
+                    REGISTERED.equals(marriageRegistration.getStatus().getCode())) {
                 applicationIndex.setApproved(ApprovalStatus.APPROVED);
                 applicationIndex.setClosed(ClosureStatus.YES);
             }
