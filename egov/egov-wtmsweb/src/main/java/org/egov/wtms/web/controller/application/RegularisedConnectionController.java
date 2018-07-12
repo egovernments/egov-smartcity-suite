@@ -268,11 +268,10 @@ public class RegularisedConnectionController extends GenericConnectionController
                 waterConnectionDetails.setSource(MEESEVA);
             }
         }
-        String sourceChannel = request.getParameter("Source");
         regularisedConnectionService.updateCurrentWorkFlow(connection);
         waterConnectionDetailsService.createNewWaterConnection(waterConnectionDetails,
                 approvalPosition, approvalComment, waterConnectionDetails.getApplicationType().getCode(),
-                workFlowAction, sourceChannel);
+                workFlowAction);
 
         if (loggedUserIsMeesevaUser)
             return "redirect:/application/generate-meesevareceipt?transactionServiceNumber="

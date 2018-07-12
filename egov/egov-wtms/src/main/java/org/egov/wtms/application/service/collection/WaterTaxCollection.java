@@ -533,8 +533,7 @@ public class WaterTaxCollection extends TaxCollection {
     private void updateWaterTaxIndexes(final EgDemand demand) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .getWaterConnectionDetailsByDemand(demand);
-        final String sourceChannel = null;
-        waterConnectionDetailsService.updateIndexes(waterConnectionDetails, sourceChannel);
+        waterConnectionDetailsService.updateIndexes(waterConnectionDetails);
     }
 
     @Override

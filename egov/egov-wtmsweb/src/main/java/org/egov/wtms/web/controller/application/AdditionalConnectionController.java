@@ -47,6 +47,7 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import static org.egov.commons.entity.Source.CSC;
 import static org.egov.commons.entity.Source.MEESEVA;
 import static org.egov.commons.entity.Source.ONLINE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SOURCECHANNEL_ONLINE;
@@ -61,6 +62,7 @@ import javax.validation.Valid;
 import javax.validation.ValidationException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.commons.entity.Source;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -188,7 +190,6 @@ public class AdditionalConnectionController extends GenericConnectionController 
                 throw new ValidationException("err.creator.application");
         }
 
-        String sourceChannel = request.getParameter("Source");
         final WaterConnectionDetails parent = waterConnectionDetailsService.getActiveConnectionDetailsByConnection(addConnection
                 .getConnection().getParentConnection());
         final String message = additionalConnectionService.validateAdditionalConnection(parent);
@@ -274,22 +275,22 @@ public class AdditionalConnectionController extends GenericConnectionController 
             }
         }
 
-        if (isAnonymousUser) {
+        if (isAnonymousUser)
             addConnection.setSource(ONLINE);
-            sourceChannel = SOURCECHANNEL_ONLINE;
-        }
-
-        if (citizenPortalUser && (addConnection.getSource() == null || StringUtils.isBlank(addConnection.getSource().toString())))
+        else if (isCSCOperator)
+            addConnection.setSource(CSC);
+        else if (citizenPortalUser && (addConnection.getSource() == null || StringUtils.isBlank(addConnection.getSource().toString())))
             addConnection.setSource(waterTaxUtils.setSourceOfConnection(securityUtils.getCurrentUser()));
-
-        if (loggedUserIsMeesevaUser) {
+        else if (loggedUserIsMeesevaUser) {
             addConnection.setSource(MEESEVA);
             if (addConnection.getMeesevaApplicationNumber() != null)
                 addConnection.setApplicationNumber(addConnection.getMeesevaApplicationNumber());
         }
+        else
+            addConnection.setSource(Source.SYSTEM);
 
         waterConnectionDetailsService.createNewWaterConnection(addConnection, approvalPosition, approvalComment,
-                addConnection.getApplicationType().getCode(), workFlowActionValue, sourceChannel);
+                addConnection.getApplicationType().getCode(), workFlowActionValue);
 
         if (loggedUserIsMeesevaUser)
             return "redirect:/application/generate-meesevareceipt?transactionServiceNumber="

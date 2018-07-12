@@ -161,7 +161,7 @@ public class CloserConnectionService {
             waterConnectionDetailsService.updatePortalMessage(waterConnectionDetails);
         else if (waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser()))
             waterConnectionDetailsService.pushPortalMessage(savedwaterConnectionDetails);
-        waterConnectionDetailsService.updateIndexes(savedwaterConnectionDetails, sourceChannel);
+        waterConnectionDetailsService.updateIndexes(savedwaterConnectionDetails);
         return savedwaterConnectionDetails;
     }
 }

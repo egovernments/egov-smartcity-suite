@@ -47,6 +47,28 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.egov.commons.entity.Source.CSC;
+import static org.egov.commons.entity.Source.MEESEVA;
+import static org.egov.commons.entity.Source.ONLINE;
+import static org.egov.commons.entity.Source.SYSTEM;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ADDNLCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CONN_NAME_ADDNLCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PRIMARYCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import javax.validation.ValidationException;
+
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ModuleService;
@@ -90,27 +112,6 @@ import org.springframework.web.servlet.FlashMap;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.servlet.view.RedirectView;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import javax.validation.ValidationException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.egov.commons.entity.Source.CSC;
-import static org.egov.commons.entity.Source.MEESEVA;
-import static org.egov.commons.entity.Source.ONLINE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.ADDNLCONNECTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.CONN_NAME_ADDNLCONNECTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.PRIMARYCONNECTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.SOURCECHANNEL_ONLINE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
 
 @Controller
 @RequestMapping(value = "/application")
@@ -243,8 +244,6 @@ public class NewConnectionController extends GenericConnectionController {
                 && !waterTaxUtils.isLoggedInUserJuniorOrSeniorAssistant(currentUser.getId())) {
             throw new ValidationException("err.creator.application");
         }
-        String sourceChannel = request.getParameter("Source");
-
         newConnectionService.validatePropertyID(waterConnectionDetails, resultBinder);
         
         if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())){
@@ -324,20 +323,21 @@ public class NewConnectionController extends GenericConnectionController {
             }
 
         }
-        if (isAnonymousUser) {
+        if (isAnonymousUser)
             waterConnectionDetails.setSource(ONLINE);
-            sourceChannel = SOURCECHANNEL_ONLINE;
-        }
-
-        if (citizenPortalUser && (waterConnectionDetails.getSource() == null
+        else if (isCSCOperator)
+            waterConnectionDetails.setSource(CSC);
+        else if (citizenPortalUser && (waterConnectionDetails.getSource() == null
                 || isBlank(waterConnectionDetails.getSource().toString())))
             waterConnectionDetails.setSource(waterTaxUtils.setSourceOfConnection(securityUtils.getCurrentUser()));
-
-        if (loggedUserIsMeesevaUser) {
+        else if (loggedUserIsMeesevaUser) {
             waterConnectionDetails.setSource(MEESEVA);
             if (waterConnectionDetails.getMeesevaApplicationNumber() != null)
                 waterConnectionDetails.setApplicationNumber(waterConnectionDetails.getMeesevaApplicationNumber());
         }
+        else
+            waterConnectionDetails.setSource(SYSTEM);
+        
         boolean isSewerageChecked = request.getParameter("sewerageApplication") == null ? false : true;
         //sewerage integration
         SewerageApplicationDetails sewerageDetails = new SewerageApplicationDetails();
@@ -354,7 +354,7 @@ public class NewConnectionController extends GenericConnectionController {
         }
 
         waterConnectionDtlsService.createNewWaterConnection(waterConnectionDetails, approvalPosition,
-                approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction, sourceChannel);
+                approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction);
 
         if (LOG.isDebugEnabled())
             LOG.debug("createNewWaterConnection is completed ");

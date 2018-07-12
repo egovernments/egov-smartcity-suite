@@ -612,7 +612,7 @@ public class ConnectionDemandService {
                     waterConnectionDetails.getWaterDemandConnection().get(0).getDemand().addEgDemandDetails(iterator.next());
             }
         }
-        waterConnectionDetailsService.updateIndexes(waterConnectionDetails, sourceChannel);
+        waterConnectionDetailsService.updateIndexes(waterConnectionDetails);
         waterConnectionDetailsService.save(waterConnectionDetails);
         return waterConnectionDetails;
     }

@@ -121,7 +121,7 @@ public class WaterTaxConstants {
     public static final String ROLE_CSCOPERTAOR = "CSC Operator";
     public static final String ROLE_ULBOPERATOR = "ULB Operator";
     public static final String ROLE_BILLCOLLECTOR = "Collection Operator";
-    public static final String ROLE_CLERKFORADONI = "Senior Assistant,Junior Assistant";
+    public static final String ROLE_CLERK = "Senior Assistant,Junior Assistant";
     public static final String ROLE_APPROVERROLE = "Water Tax Approver";
     public static final String ROLE_COMMISSIONERDEPARTEMNT = "Administration";
     public static final String ROLE_SUPERUSER = "SYSTEM";
