@@ -124,7 +124,6 @@
 									</c:forEach>
 								</c:when>
 								<c:otherwise>
-								
 								</c:otherwise>
 							</c:choose>
 					</c:if>
@@ -155,5 +154,12 @@ $(document).ready(function()
 		$('#approvalDesignation').attr('required', 'required');
 		$('#approvalPosition').attr('required', 'required');
 	}
+	jQuery('#fileStoreId').blur(function(){
+		var extension = $('#fileStoreId').val().split('.').pop().toLowerCase();
+		if(jQuery.inArray(extension, ['gif','exe']) == 0) {
+		    bootbox.alert('Invalid document extension.....');
+		}
+	});
+	
 });
 </script>
