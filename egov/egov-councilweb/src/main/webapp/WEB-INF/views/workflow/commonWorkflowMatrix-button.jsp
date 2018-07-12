@@ -67,6 +67,9 @@
 			$('#approvalPosition').removeAttr('required');
 			$('#approvalComent').attr('required', 'required');	
 			} 
+		else if (rejectbutton == 'Approve' || rejectbutton == 'Forward') {
+			$('#approvalComent').removeAttr('required');
+		}
 	   document.forms[0].submit;
 	   return true;
 	}
