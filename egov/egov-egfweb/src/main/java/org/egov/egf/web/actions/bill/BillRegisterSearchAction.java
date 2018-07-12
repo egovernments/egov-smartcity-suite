@@ -220,10 +220,7 @@ public class BillRegisterSearchAction extends BaseFormAction {
                 billMap.put("billamount", object[4]);
                 billMap.put("passedamount", object[5]);
                 billMap.put("billstatus", object[6].toString());
-                if (null != object[7])
-                    billMap.put("sourcepath", object[7].toString());
-                else
-                    billMap.put("sourcepath",
+                billMap.put("sourcepath",
                             "/EGF/bill/billView-view.action?billId=" + object[8].toString());
                 // If bill is created from create bill screen
                 if (object[11] != null)
