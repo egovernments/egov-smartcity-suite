@@ -383,7 +383,7 @@ public class WaterConnectionDetailsService {
     @Transactional
     public WaterConnectionDetails createNewWaterConnection(WaterConnectionDetails waterConnectionDetails,
                                                            Long approvalPosition, String approvalComent, String additionalRule,
-                                                           String workFlowAction, String sourceChannel) {
+                                                           String workFlowAction) {
         if (isBlank(waterConnectionDetails.getApplicationNumber()))
             waterConnectionDetails.setApplicationNumber(applicationNumberGenerator.generate());
         waterConnectionDetails.setApplicationDate(new Date());
@@ -411,7 +411,7 @@ public class WaterConnectionDetailsService {
 
         if (waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser()))
             pushPortalMessage(savedWaterConnectionDetails);
-        updateIndexes(savedWaterConnectionDetails, sourceChannel);
+        updateIndexes(savedWaterConnectionDetails);
 
         waterConnectionSmsAndEmailService.sendSmsAndEmail(waterConnectionDetails, workFlowAction);
         if (LOG.isDebugEnabled())
@@ -617,13 +617,13 @@ public class WaterConnectionDetailsService {
                 connectionDemandService.updateDemandForNonmeteredConnection(waterConnectionDetails,
                         nonMeterReconnInstallment, reconnInSameInstallment, null);
             }
-            updateIndexes(waterConnectionDetails, sourceChannel);
+            updateIndexes(waterConnectionDetails);
         }
 
         if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())
                 && APPLICATION_STATUS_SANCTIONED.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())) {
             connectionDemandService.updateDemandForNonmeteredConnection(waterConnectionDetails, null, null, workFlowAction);
-            updateIndexes(waterConnectionDetails, sourceChannel);
+            updateIndexes(waterConnectionDetails);
         }
 
         // Setting FileStoreMap object object while Commissioner Sign's the
@@ -657,7 +657,7 @@ public class WaterConnectionDetailsService {
             waterConnectionDetails.setCloseconnectionreason(null);
             waterConnectionDetails.setApplicationType(
                     applicationTypeService.findByCode(waterConnectionDetails.getPreviousApplicationType()));
-            updateIndexes(waterConnectionDetails, sourceChannel);
+            updateIndexes(waterConnectionDetails);
             updatedWaterConnectionDetails = waterConnectionDetailsRepository.save(waterConnectionDetails);
         }
         // back to CLoserSanctioned Status if Reconnection is Rejected 2 times
@@ -670,13 +670,13 @@ public class WaterConnectionDetailsService {
             waterConnectionDetails.setConnectionStatus(CLOSED);
             waterConnectionDetails.setReConnectionReason(null);
             waterConnectionDetails.setApplicationType(applicationTypeService.findByCode(CLOSINGCONNECTION));
-            updateIndexes(waterConnectionDetails, sourceChannel);
+            updateIndexes(waterConnectionDetails);
             updatedWaterConnectionDetails = waterConnectionDetailsRepository.save(waterConnectionDetails);
         }
         if (!workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT))
             waterConnectionSmsAndEmailService.sendSmsAndEmail(waterConnectionDetails, workFlowAction);
 
-        updateIndexes(waterConnectionDetails, sourceChannel);
+        updateIndexes(waterConnectionDetails);
         if (waterConnectionDetails.getSource() != null
                 && Source.CITIZENPORTAL.toString().equalsIgnoreCase(waterConnectionDetails.getSource().toString())
                 && getPortalInbox(waterConnectionDetails.getApplicationNumber()) != null)
@@ -896,7 +896,7 @@ public class WaterConnectionDetailsService {
     }
 
     @Transactional
-    public void updateIndexes(WaterConnectionDetails waterConnectionDetails, String sourceChannel) {
+    public void updateIndexes(WaterConnectionDetails waterConnectionDetails) {
 
         AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                 waterConnectionDetails.getConnection().getPropertyIdentifier(),
@@ -979,12 +979,12 @@ public class WaterConnectionDetailsService {
                         applicationIndex.setChannel(Source.CSC.toString());
                     else if (waterTaxUtils.isCitizenPortalUser(waterConnectionDetails.getCreatedBy()))
                         applicationIndex.setChannel(Source.CITIZENPORTAL.toString());
-                    else if (sourceChannel == null)
+                    else if (waterConnectionDetails.getSource() == null)
                         applicationIndex.setChannel(SYSTEM);
                     else if (MEESEVA.toString().equalsIgnoreCase(waterConnectionDetails.getSource().toString()))
                         applicationIndex.setChannel(MEESEVA.toString());
                     else
-                        applicationIndex.setChannel(sourceChannel);
+                        applicationIndex.setChannel(waterConnectionDetails.getSource().name());
             }
             if (waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_RECONNCTIONSANCTIONED)
                     || waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_APPROVED)
@@ -1052,10 +1052,8 @@ public class WaterConnectionDetailsService {
                     if (waterTaxUtils.isCSCoperator(waterConnectionDetails.getCreatedBy())
                             && UserType.BUSINESS.equals(waterConnectionDetails.getCreatedBy().getType()))
                         channel = CSC.toString();
-                    else if (sourceChannel == null)
-                        channel = SYSTEM;
                     else
-                        channel = sourceChannel;
+                        channel = SYSTEM;
                 } else
                     channel = waterConnectionDetails.getSource().toString();
 
@@ -1068,7 +1066,7 @@ public class WaterConnectionDetailsService {
                         .withUrl(String.format(WTMS_APPLICATION_VIEW, waterConnectionDetails.getApplicationNumber()))
                         .withApplicantAddress(assessmentDetails.getPropertyAddress())
                         .withOwnername(user.getUsername() + "::" + user.getName())
-                        .withChannel(sourceChannel == null ? channel : sourceChannel)
+                        .withChannel(channel)
                         .withMobileNumber(mobileNumber.toString()).withClosed(ClosureStatus.NO)
                         .withAadharNumber(aadharNumber.toString()).withApproved(ApprovalStatus.INPROGRESS)
                         .withSla(appProcessTime == null ? 0 : appProcessTime).build();
@@ -1453,8 +1451,7 @@ public class WaterConnectionDetailsService {
                 waterConnectionDetailsRepository.save(waterConnectionDetails);
                 waterConnectionSmsAndEmailService.sendSmsAndEmail(waterConnectionDetails, null);
                 updatePortalMessage(waterConnectionDetails);
-                updateIndexes(waterConnectionDetails, waterConnectionDetails.getSource() == null
-                        ? null : waterConnectionDetails.getSource().toString());
+                updateIndexes(waterConnectionDetails);
             }
             return true;
         }
@@ -1552,8 +1549,7 @@ public class WaterConnectionDetailsService {
             waterConnectionDetailsRepository.saveAndFlush(waterConnectionDetails);
             waterConnectionSmsAndEmailService.sendSmsAndEmail(waterConnectionDetails, null);
             updatePortalMessage(waterConnectionDetails);
-            updateIndexes(waterConnectionDetails, waterConnectionDetails.getSource() == null ? null
-                    : waterConnectionDetails.getSource().toString());
+            updateIndexes(waterConnectionDetails);
             return true;
         }
         return false;

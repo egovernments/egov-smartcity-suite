@@ -60,6 +60,7 @@ import javax.validation.Valid;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.egov.commons.entity.Source;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.domain.model.ErrorDetails;
@@ -229,10 +230,10 @@ public class RestWaterConnectionController {
             if (userPosition != null)
                 approvalPosition = userPosition.getId();
         }
+        waterConnectionDetails.setSource(Source.SURVEY);
         waterConnectionDetails = changeOfUseService.createChangeOfUseApplication(waterConnectionDetails,
                 approvalPosition, WaterTaxConstants.APPLICATION_GIS_SYSTEM, waterConnectionDetails.getApplicationType().getCode(),
-                null,
-                WaterTaxConstants.SURVEY);
+                null);
         return waterConnectionDetails.getApplicationNumber();
 
     }
@@ -253,7 +254,7 @@ public class RestWaterConnectionController {
             approvalPosition = userPosition.getId();
         if (!applicationCode.equals(WaterTaxConstants.CHANGEOFUSE))
             waterConnectionDetails = waterConnectionDetailsService.createNewWaterConnection(waterConnectionDetails,
-                    approvalPosition, "Rest Api", waterConnectionDetails.getApplicationType().getCode(), null, null);
+                    approvalPosition, "Rest Api", waterConnectionDetails.getApplicationType().getCode(), null);
         return waterConnectionDetails;
 
     }

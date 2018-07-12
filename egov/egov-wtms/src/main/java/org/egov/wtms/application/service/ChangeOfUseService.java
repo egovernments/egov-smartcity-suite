@@ -57,7 +57,6 @@ import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.application.workflow.ApplicationWorkflowCustomDefaultImpl;
-import org.egov.wtms.application.service.ConnectionAddressService;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.service.ApplicationProcessTimeService;
 import org.egov.wtms.utils.PropertyExtnUtils;
@@ -115,10 +114,10 @@ public class ChangeOfUseService {
                 PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ACTIVE);
         if (parentWaterConnectionDetail.getConnectionStatus().equals(ConnectionStatus.HOLDING))
             validationMessage = wcmsMessageSource.getMessage("err.validate.primary.connection.holding",
-                    new String[]{parentWaterConnectionDetail.getConnection().getConsumerCode(), propertyID}, null);
+                    new String[] { parentWaterConnectionDetail.getConnection().getConsumerCode(), propertyID }, null);
         else if (parentWaterConnectionDetail.getConnectionStatus().equals(ConnectionStatus.DISCONNECTED))
             validationMessage = wcmsMessageSource.getMessage("err.validate.primary.connection.disconnected",
-                    new String[]{parentWaterConnectionDetail.getConnection().getConsumerCode(), propertyID}, null);
+                    new String[] { parentWaterConnectionDetail.getConnection().getConsumerCode(), propertyID }, null);
         else if (assessmentDetails.getErrorDetails() != null
                 && assessmentDetails.getErrorDetails().getErrorCode() != null)
             validationMessage = assessmentDetails.getErrorDetails().getErrorMessage();
@@ -128,15 +127,15 @@ public class ChangeOfUseService {
                     && assessmentDetails.getPropertyDetails().getTaxDue().doubleValue() > 0
                     && !waterTaxUtils.isConnectionAllowedIfPTDuePresent())
                 validationMessage = wcmsMessageSource.getMessage("err.validate.property.taxdue",
-                        new String[]{assessmentDetails.getPropertyDetails().getTaxDue().toString(),
+                        new String[] { assessmentDetails.getPropertyDetails().getTaxDue().toString(),
                                 parentWaterConnectionDetail.getConnection().getPropertyIdentifier(),
-                                "changeOfUsage"},
+                                "changeOfUsage" },
                         null);
             validateChangeOfApplicationDue(parentWaterConnectionDetail);
         } else
             validationMessage = wcmsMessageSource.getMessage("err.validate.changeofUse.application.inprocess",
-                    new String[]{parentWaterConnectionDetail.getConnection().getConsumerCode(),
-                            inWorkflow.getApplicationNumber()},
+                    new String[] { parentWaterConnectionDetail.getConnection().getConsumerCode(),
+                            inWorkflow.getApplicationNumber() },
                     null);
         return validationMessage;
     }
@@ -152,8 +151,8 @@ public class ChangeOfUseService {
      */
     @Transactional
     public WaterConnectionDetails createChangeOfUseApplication(final WaterConnectionDetails connectionDetails,
-                                                               final Long approvalPosition, final String approvalComent, final String additionalRule,
-                                                               final String workFlowAction, final String sourceChannel) {
+            final Long approvalPosition, final String approvalComent, final String additionalRule,
+            final String workFlowAction) {
         if (connectionDetails.getApplicationNumber() == null)
             connectionDetails.setApplicationNumber(applicationNumberGenerator.generate());
 
@@ -169,7 +168,7 @@ public class ChangeOfUseService {
                 approvalComent, additionalRule, workFlowAction);
         if (waterTaxUtils.isCitizenPortalUser(userService.getUserById(waterConnectionDetails.getCreatedBy().getId())))
             waterConnectionDetailsService.pushPortalMessage(waterConnectionDetails);
-        waterConnectionDetailsService.updateIndexes(waterConnectionDetails, sourceChannel);
+        waterConnectionDetailsService.updateIndexes(waterConnectionDetails);
         waterConnectionSmsAndEmailService.sendSmsAndEmail(waterConnectionDetails, workFlowAction);
         return waterConnectionDetails;
     }

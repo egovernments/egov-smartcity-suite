@@ -81,7 +81,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.PERMENENTCLOSECODE
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PREVIEWWORKFLOWACTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTIONCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_CLERKFORADONI;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_CLERK;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SENIOR_ASSISTANT_DESIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SIGNED_DOCUMENT_PREFIX;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SIGNWORKFLOWACTION;
@@ -615,7 +615,7 @@ public class UpdateConnectionController extends GenericConnectionController {
                                 .equals(APPLICATION_STATUS_RECONNCTIONINPROGRESS)
                         || waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_CLOSERINPROGRESS)
                         || waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_CLOSERINITIATED)))
-            approvalPosition = waterTaxUtils.getApproverPosition(ROLE_CLERKFORADONI, waterConnectionDetails);
+            approvalPosition = waterTaxUtils.getApproverPosition(ROLE_CLERK, waterConnectionDetails);
         if ((approvalPosition == null || approvalPosition.equals(Long.valueOf(0)))
                 && (waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_DIGITALSIGNPENDING)
                         || waterConnectionDetails.getStatus().getCode().equals(APPROVED)))

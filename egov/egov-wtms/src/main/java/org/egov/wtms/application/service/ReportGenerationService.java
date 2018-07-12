@@ -670,7 +670,7 @@ public class ReportGenerationService {
             reportRequest = new ReportRequest(REGULARISE_CONN_DEMAND_NOTE, waterConnectionDetails, reportParams);
             reportOutput = reportService.createReport(reportRequest);
             saveRegulariseConnDemandNote(waterConnectionDetails, reportOutput);
-            waterConnectionDetailsService.updateIndexes(waterConnectionDetails, null);
+            waterConnectionDetailsService.updateIndexes(waterConnectionDetails);
         } else
             reportOutput = getRegulariseConnDemandNote(waterConnectionDetails.getEstimationNoticeFileStoreId());
         reportOutput.setReportName(waterConnectionDetails.getEstimationNumber());
