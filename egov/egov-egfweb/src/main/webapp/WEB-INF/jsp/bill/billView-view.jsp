@@ -82,7 +82,17 @@
 	}
 }
 </style>
-
+<script>
+	function openSource(){
+		if("<s:property value='%{egBillRegister.egBillregistermis.sourcePath}' escapeHtml='false'/>"=="" || "<s:property value='%{egBillRegister.egBillregistermis.sourcePath}'/>"=='null')
+			bootbox.alert('Source is not available');
+		else{
+			var url = '<s:property value="%{egBillRegister.egBillregistermis.sourcePath}" escapeHtml="false"/>';
+			window.open(url,'Source','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700')
+		}   
+			
+	}
+</script>
 
 </head>
 <body>
@@ -123,6 +133,18 @@
 				<tr>
 					<td class="greybox"><s:text name="bill.narration" /></td>
 					<td colspan="3" class="greybox"><s:property value="narration" /></td>
+				</tr> 
+				<!-- <tr>
+					<td class="bluebox"><a href="#" id="sourceLink"
+						onclick=" return openSource();">Source</a></td>
+
+				</tr> -->
+			</table>
+			<table align="center" id="sourceIcon">
+				<tr>
+					<td class="bluebox"><a href="#" id="sourceLink"
+						onclick=" return openSource();">Source</a></td>
+
 				</tr>
 			</table>
 			<br />
