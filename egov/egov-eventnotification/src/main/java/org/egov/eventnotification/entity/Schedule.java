@@ -118,13 +118,13 @@ public class Schedule extends AbstractPersistable<Long> {
     private String messageTemplate;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "module")
+    @JoinColumn(name = "category")
     @Valid
     @NotNull
-    private TemplateModule module;
+    private TemplateCategory category;
 
     @SafeHtml
-    @Length(max = 50)
+    @Length(max = 100)
     private String url;
 
     @SafeHtml
@@ -200,12 +200,12 @@ public class Schedule extends AbstractPersistable<Long> {
         this.details = details;
     }
 
-    public TemplateModule getModule() {
-        return module;
+    public TemplateCategory getCategory() {
+        return category;
     }
 
-    public void setModule(TemplateModule module) {
-        this.module = module;
+    public void setCategory(TemplateCategory category) {
+        this.category = category;
     }
 
     public String getUrl() {

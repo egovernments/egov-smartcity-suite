@@ -73,27 +73,27 @@ $(document)
 						});
 					}
 
-					$('#module')
+					$('#category')
 							.change(
 									function() {
 										$
 												.ajax({
 													url : '/api/draft/getCategoriesForModule/'
-															+ $('#module')
+															+ $('#category')
 																	.val(),
 													dataType : 'json',
 													type : 'GET',
 													// This is query string i.e.
 													// country_id=123
 													success : function(data) {
-														$('#category').empty(); // clear
+														$('#subCategory').empty(); // clear
 																				// the
 																				// current
 																				// elements
 																				// in
 																				// select
 																				// box
-														$('#category')
+														$('#subCategory')
 																.append(
 																		$('<option value="">Select</option>'));
 														$
@@ -103,7 +103,7 @@ $(document)
 																				i,
 																				obj) {
 																			$(
-																					'#category')
+																					'#subCategory')
 																					.append(
 																							$('<option value="'
 																									+ obj.id
@@ -120,13 +120,13 @@ $(document)
 												});
 									});
 
-					$('#category')
+					$('#subCategory')
 							.change(
 									function() {
 										$
 												.ajax({
 													url : '/api/draft/getParametersForCategory/'
-															+ $('#category')
+															+ $('#subCategory')
 																	.val(),
 													dataType : 'json',
 													type : 'GET',

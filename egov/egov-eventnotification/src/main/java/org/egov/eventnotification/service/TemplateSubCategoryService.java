@@ -45,83 +45,28 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.eventnotification.entity;
+package org.egov.eventnotification.service;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import java.util.List;
 
-import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.eventnotification.entity.TemplateSubCategory;
+import org.egov.eventnotification.repository.TemplateSubCategoryRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Entity
-@Table(name = "egevntnotification_category_parameters")
-@SequenceGenerator(name = CategoryParameters.SEQ_EGEN_PARAMETERS, sequenceName = CategoryParameters.SEQ_EGEN_PARAMETERS, allocationSize = 1)
-public class CategoryParameters extends AbstractPersistable<Long> {
+@Service
+@Transactional(readOnly = true)
+public class TemplateSubCategoryService {
 
-    private static final long serialVersionUID = 504113404748178245L;
+    @Autowired
+    private TemplateSubCategoryRepository templateSubCategoryRepository;
 
-    public static final String SEQ_EGEN_PARAMETERS = "seq_egevntnotification_category_parameters";
-
-    @Id
-    @GeneratedValue(generator = SEQ_EGEN_PARAMETERS, strategy = GenerationType.SEQUENCE)
-    private Long id;
-
-    @NotBlank
-    @Length(max = 100)
-    @SafeHtml
-    private String name;
-
-    private boolean active;
-
-    @NotNull
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "category")
-    @Valid
-    private ModuleCategory category;
-
-    @Override
-    public Long getId() {
-        return id;
+    public List<TemplateSubCategory> getAllCategories() {
+        return templateSubCategoryRepository.findAll();
     }
 
-    @Override
-    public void setId(Long id) {
-        this.id = id;
+    public List<TemplateSubCategory> getCategoriesForModule(Long categoryId) {
+        return templateSubCategoryRepository.findByCategoryId(categoryId);
     }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public ModuleCategory getCategory() {
-        return category;
-    }
-
-    public void setCategory(ModuleCategory category) {
-        this.category = category;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
 }

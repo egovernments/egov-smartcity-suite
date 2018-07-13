@@ -152,7 +152,7 @@ public class NotificationSchedulerJob extends QuartzJobBean {
 
         if (notificationSchedule.getDraftType().getName().equalsIgnoreCase("BUSINESS")) {
             List<UserTaxInformation> userTaxInfoList = null;
-            BuildMessageAdapter buildMessageAdapter = getBuildMessageAdapter(notificationSchedule.getModule().getCode());
+            BuildMessageAdapter buildMessageAdapter = getBuildMessageAdapter(notificationSchedule.getCategory().getCode());
 
             userTaxInfoList = scheduleService.getDefaulterUserList(contextURL,
                     notificationSchedule.getUrl(), notificationSchedule.getMethod());

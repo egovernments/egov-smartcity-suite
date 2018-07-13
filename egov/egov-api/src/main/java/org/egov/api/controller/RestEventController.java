@@ -55,21 +55,21 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import org.egov.api.adapter.CategoryParametersAdapter;
 import org.egov.api.adapter.DraftsAdapter;
 import org.egov.api.adapter.EventAdapter;
 import org.egov.api.adapter.EventSearchAdapter;
 import org.egov.api.adapter.InterestedCountAdapter;
-import org.egov.api.adapter.ModuleCategoryAdapter;
+import org.egov.api.adapter.TemplateParameterAdapter;
+import org.egov.api.adapter.TemplateSubCategoryAdapter;
 import org.egov.api.controller.core.ApiController;
 import org.egov.api.controller.core.ApiResponse;
 import org.egov.eventnotification.entity.UserEvent;
 import org.egov.eventnotification.entity.contracts.EventSearch;
 import org.egov.eventnotification.entity.contracts.UserEventRequest;
-import org.egov.eventnotification.service.CategoryParametersService;
 import org.egov.eventnotification.service.DraftService;
 import org.egov.eventnotification.service.EventService;
-import org.egov.eventnotification.service.ModuleCategoryService;
+import org.egov.eventnotification.service.TemplateParameterService;
+import org.egov.eventnotification.service.TemplateSubCategoryService;
 import org.egov.eventnotification.service.UserEventService;
 import org.egov.infra.utils.FileStoreUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,10 +100,10 @@ public class RestEventController extends ApiController {
     private UserEventService userEventService;
 
     @Autowired
-    private ModuleCategoryService moduleCategoryService;
+    private TemplateSubCategoryService templateSubCategoryService;
 
     @Autowired
-    private CategoryParametersService categoryParametersService;
+    private TemplateParameterService templateParameterService;
 
     @Autowired
     private FileStoreUtils fileStoreUtils;
@@ -142,15 +142,15 @@ public class RestEventController extends ApiController {
     @GetMapping(path = "/draft/getCategoriesForModule/{moduleId}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<String> getCategoriesForModule(@PathVariable long moduleId) {
         return getResponseHandler()
-                .setDataAdapter(new ModuleCategoryAdapter())
-                .success(moduleCategoryService.getCategoriesForModule(moduleId));
+                .setDataAdapter(new TemplateSubCategoryAdapter())
+                .success(templateSubCategoryService.getCategoriesForModule(moduleId));
     }
 
     @GetMapping(path = "/draft/getParametersForCategory/{categoryId}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<String> getParametersForCategory(@PathVariable long categoryId) {
         return getResponseHandler()
-                .setDataAdapter(new CategoryParametersAdapter())
-                .success(categoryParametersService.getParametersForCategory(categoryId));
+                .setDataAdapter(new TemplateParameterAdapter())
+                .success(templateParameterService.getParametersForCategory(categoryId));
     }
 
     @PostMapping(path = "/event/interested", produces = APPLICATION_JSON_VALUE)

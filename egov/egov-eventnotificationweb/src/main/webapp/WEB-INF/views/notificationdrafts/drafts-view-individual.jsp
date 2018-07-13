@@ -94,7 +94,7 @@
 								<spring:message code="lbl.draft.module" />
 							</div>
 							<div class="col-xs-9 add-margin view-content">
-								<c:out value="${notificationDraft.module.name}" />
+								<c:out value="${notificationDraft.category.name}" />
 							</div>
 						</div>
 						<div class="row add-border">
@@ -102,7 +102,7 @@
 								<spring:message code="lbl.draft.category" />
 							</div>
 							<div class="col-xs-9 add-margin view-content">
-								<c:out value="${notificationDraft.category.name}" />
+								<c:out value="${notificationDraft.subCategory.name}" />
 							</div>
 						</div>
 						<div class="row add-border">

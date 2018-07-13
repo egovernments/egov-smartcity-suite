@@ -116,8 +116,8 @@
 							<td><c:out value="${listVar.id}" /></td>
 							<td><c:out value="${listVar.name}" /></td>
 							<td><c:out value="${listVar.draftType.name}" /></td>
-							<td><c:out value="${listVar.module.name}" /></td>
 							<td><c:out value="${listVar.category.name}" /></td>
+							<td><c:out value="${listVar.subCategory.name}" /></td>
 							<td><c:out value="${listVar.message}" /></td>
 						</tr>
 					</c:forEach>

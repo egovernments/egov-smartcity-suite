@@ -60,11 +60,11 @@ import javax.validation.Valid;
 
 import org.egov.eventnotification.entity.Drafts;
 import org.egov.eventnotification.entity.enums.Methods;
-import org.egov.eventnotification.service.CategoryParametersService;
 import org.egov.eventnotification.service.DraftService;
 import org.egov.eventnotification.service.DraftTypeService;
-import org.egov.eventnotification.service.ModuleCategoryService;
-import org.egov.eventnotification.service.TemplateModuleService;
+import org.egov.eventnotification.service.TemplateCategoryService;
+import org.egov.eventnotification.service.TemplateParameterService;
+import org.egov.eventnotification.service.TemplateSubCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -83,13 +83,13 @@ public class NotificationDraftController {
     private DraftService draftService;
 
     @Autowired
-    private CategoryParametersService categoryParametersService;
+    private TemplateParameterService templateParameterService;
 
     @Autowired
-    private ModuleCategoryService moduleCategoryService;
+    private TemplateSubCategoryService templateSubCategoryService;
 
     @Autowired
-    private TemplateModuleService templateModuleService;
+    private TemplateCategoryService templateCategoryService;
 
     @Autowired
     private DraftTypeService draftTypeService;
@@ -113,9 +113,9 @@ public class NotificationDraftController {
     public String create(@ModelAttribute Drafts notificationDraft, Model model) {
         model.addAttribute(DRAFT_LIST, draftTypeService.getAllDraftType());
         model.addAttribute(NOTIFICATION_DRAFT, notificationDraft);
-        model.addAttribute("TemplateModule", templateModuleService.getAllModules());
-        model.addAttribute("ModuleCategory", moduleCategoryService.getAllCategories());
-        model.addAttribute("CategoryParameters", categoryParametersService.getAllParameters());
+        model.addAttribute("TemplateModule", templateCategoryService.getAllModules());
+        model.addAttribute("ModuleCategory", templateSubCategoryService.getAllCategories());
+        model.addAttribute("CategoryParameters", templateParameterService.getAllParameters());
         model.addAttribute("methods", Arrays.asList(Methods.values()));
         model.addAttribute(MODE, MODE_CREATE);
         return "drafts-create";

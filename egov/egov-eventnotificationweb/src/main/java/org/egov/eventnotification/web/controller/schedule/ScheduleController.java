@@ -102,7 +102,7 @@ public class ScheduleController {
         schedule.setMessageTemplate(notificationDrafts.getMessage());
         schedule.setTemplateName(notificationDrafts.getName());
         schedule.setDraftType(notificationDrafts.getDraftType());
-        schedule.setModule(notificationDrafts.getModule());
+        schedule.setCategory(notificationDrafts.getCategory());
         EventDetails details = new EventDetails();
         details.setDraftId(notificationDrafts.getId());
         schedule.setDetails(details);

@@ -52,18 +52,18 @@ import static org.egov.eventnotification.utils.Constants.NAME;
 
 import java.lang.reflect.Type;
 
-import org.egov.eventnotification.entity.ModuleCategory;
+import org.egov.eventnotification.entity.TemplateParameter;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 
-public class ModuleCategoryAdapter extends DataAdapter<ModuleCategory> {
+public class TemplateParameterAdapter extends DataAdapter<TemplateParameter> {
     @Override
-    public JsonElement serialize(ModuleCategory category, Type typeOfSrc, JsonSerializationContext context) {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty(ID, category.getId());
-        jsonObject.addProperty(NAME, category.getName());
-        return jsonObject;
+    public JsonElement serialize(TemplateParameter parameter, Type typeOfSrc, JsonSerializationContext context) {
+        JsonObject jsonObjectEvent = new JsonObject();
+        jsonObjectEvent.addProperty(ID, parameter.getId());
+        jsonObjectEvent.addProperty(NAME, parameter.getName());
+        return jsonObjectEvent;
     }
 }

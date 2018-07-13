@@ -45,13 +45,25 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.eventnotification.repository;
+package org.egov.api.adapter;
 
-import org.egov.eventnotification.entity.ScheduleLog;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import static org.egov.eventnotification.utils.Constants.ID;
+import static org.egov.eventnotification.utils.Constants.NAME;
 
-@Repository
-public interface ScheduleLogRepository extends JpaRepository<ScheduleLog, Long> {
+import java.lang.reflect.Type;
 
+import org.egov.eventnotification.entity.TemplateSubCategory;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+
+public class TemplateSubCategoryAdapter extends DataAdapter<TemplateSubCategory> {
+    @Override
+    public JsonElement serialize(TemplateSubCategory subCategory, Type typeOfSrc, JsonSerializationContext context) {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty(ID, subCategory.getId());
+        jsonObject.addProperty(NAME, subCategory.getName());
+        return jsonObject;
+    }
 }

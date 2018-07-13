@@ -45,29 +45,85 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.eventnotification.service;
+package org.egov.eventnotification.entity;
 
-import java.util.List;
+import javax.persistence.Embeddable;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
-import org.egov.eventnotification.entity.CategoryParameters;
-import org.egov.eventnotification.repository.CategoryParametersRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.SafeHtml;
 
-@Service
-@Transactional(readOnly = true)
-public class CategoryParametersService {
+@Entity
+@Table(name = "egevntnotification_module_category")
+@SequenceGenerator(name = TemplateSubCategory.SEQ_EGEVNTNOTIFICATION_CATEGORY, sequenceName = TemplateSubCategory.SEQ_EGEVNTNOTIFICATION_CATEGORY, allocationSize = 1)
+@Embeddable
+public class TemplateSubCategory extends AbstractPersistable<Long> {
 
-    @Autowired
-    private CategoryParametersRepository categoryParametersRepository;
+    private static final long serialVersionUID = -3869160080779728227L;
 
-    public List<CategoryParameters> getAllParameters() {
-        return categoryParametersRepository.findAll();
+    public static final String SEQ_EGEVNTNOTIFICATION_CATEGORY = "seq_egevntnotification_module_category";
+
+    @Id
+    @GeneratedValue(generator = SEQ_EGEVNTNOTIFICATION_CATEGORY, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @NotBlank
+    @SafeHtml
+    @Length(max = 100)
+    private String name;
+
+    private boolean active;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "module")
+    @Valid
+    private TemplateCategory category;
+
+    public TemplateCategory getCategory() {
+        return category;
     }
 
-    public List<CategoryParameters> getParametersForCategory(Long categoryId) {
-        return categoryParametersRepository.findByCategoryId(categoryId);
+    public void setCategory(TemplateCategory category) {
+        this.category = category;
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
 }

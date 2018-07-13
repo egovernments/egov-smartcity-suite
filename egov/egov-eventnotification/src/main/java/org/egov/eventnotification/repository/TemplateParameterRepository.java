@@ -49,13 +49,13 @@ package org.egov.eventnotification.repository;
 
 import java.util.List;
 
-import org.egov.eventnotification.entity.ModuleCategory;
+import org.egov.eventnotification.entity.TemplateParameter;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ModuleCategoryRepository extends JpaRepository<ModuleCategory, Long> {
+public interface TemplateParameterRepository extends JpaRepository<TemplateParameter, Long> {
 
-    List<ModuleCategory> findByModuleId(Long moduleId);
+    List<TemplateParameter> findBySubCategoryId(Long id);
 
 }

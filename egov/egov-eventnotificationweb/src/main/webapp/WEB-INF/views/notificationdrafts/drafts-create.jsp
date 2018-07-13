@@ -92,7 +92,7 @@
 						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.draft.module" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<form:select path="module" id="module" name="module"
+							<form:select path="category" id="category" name="category"
 								cssClass="form-control" cssErrorClass="form-control error"
 								required="required">
 								<form:option value="">
@@ -101,21 +101,21 @@
 								<form:options items="${TemplateModule}" itemLabel="name"
 									itemValue="id" />
 							</form:select>
-							<form:errors path="module" cssClass="error-msg" />
+							<form:errors path="category" cssClass="error-msg" />
 						</div>
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.draft.category" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<form:select path="category" id="category" name="category"
+							<form:select path="subCategory" id="subCategory" name="subCategory"
 								cssClass="form-control" cssErrorClass="form-control error"
 								required="required">
 								<form:option value="">
 									<spring:message code="lbl.select" />
 								</form:option>
 							</form:select>
-							<form:errors path="category" cssClass="error-msg" />
+							<form:errors path="subCategory" cssClass="error-msg" />
 						</div>
 					</div>
 					<div class="form-group">
@@ -132,7 +132,7 @@
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.draft.notificationMessage" />:<span class="mandatory"></span></label>
-						<div class="col-sm-3 add-margin">
+						<div class="col-sm-10 add-margin">
 							<form:textarea rows="4" cols="50" path="message" id="message"
 								name="message" class="form-control text-left patternvalidation"
 								required="required" />

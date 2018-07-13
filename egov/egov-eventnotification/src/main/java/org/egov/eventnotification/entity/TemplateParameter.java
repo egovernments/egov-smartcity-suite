@@ -48,11 +48,16 @@
 package org.egov.eventnotification.entity;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.hibernate.validator.constraints.Length;
@@ -60,29 +65,30 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
-@Table(name = "egevntnotification_template_module")
-@SequenceGenerator(name = TemplateModule.SEQ_EGEVNTNOTIFICATION_MODULE, sequenceName = TemplateModule.SEQ_EGEVNTNOTIFICATION_MODULE, allocationSize = 1)
-public class TemplateModule extends AbstractPersistable<Long> {
+@Table(name = "egevntnotification_category_parameters")
+@SequenceGenerator(name = TemplateParameter.SEQ_EGEN_PARAMETERS, sequenceName = TemplateParameter.SEQ_EGEN_PARAMETERS, allocationSize = 1)
+public class TemplateParameter extends AbstractPersistable<Long> {
 
-    private static final long serialVersionUID = 7392974152674723576L;
+    private static final long serialVersionUID = 504113404748178245L;
 
-    public static final String SEQ_EGEVNTNOTIFICATION_MODULE = "seq_egevntnotification_template_module";
+    public static final String SEQ_EGEN_PARAMETERS = "seq_egevntnotification_category_parameters";
 
     @Id
-    @GeneratedValue(generator = SEQ_EGEVNTNOTIFICATION_MODULE, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_EGEN_PARAMETERS, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @NotBlank
-    @SafeHtml
     @Length(max = 100)
+    @SafeHtml
     private String name;
 
     private boolean active;
 
-    @NotBlank
-    @SafeHtml
-    @Length(max = 100)
-    private String code;
+    @NotNull
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "category")
+    @Valid
+    private TemplateSubCategory subCategory;
 
     @Override
     public Long getId() {
@@ -102,20 +108,20 @@ public class TemplateModule extends AbstractPersistable<Long> {
         this.name = name;
     }
 
+    public TemplateSubCategory getSubCategory() {
+        return subCategory;
+    }
+
+    public void setSubCategory(TemplateSubCategory subCategory) {
+        this.subCategory = subCategory;
+    }
+
     public boolean isActive() {
         return active;
     }
 
     public void setActive(boolean active) {
         this.active = active;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
 }
