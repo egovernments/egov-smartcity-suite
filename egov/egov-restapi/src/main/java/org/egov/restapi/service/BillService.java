@@ -48,15 +48,6 @@
 
 package org.egov.restapi.service;
 
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccountDetail;
@@ -92,7 +83,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.exilant.GLEngine.ChartOfAccounts;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional(readOnly = true)
@@ -288,7 +284,6 @@ public class BillService {
                 .getAccountCodeByPurposeName(RestApiConstants.CONTRACTOR_ADVANCE_PURPOSE);
         BigDecimal creditAmount = BigDecimal.ZERO;
         BigDecimal debitAmount = BigDecimal.ZERO;
-        Map<String,Object> duplicateBillDetails = new HashMap<String,Object>();
         for (final BillDetails billDetails : billRegister.getBillDetails())
             if (StringUtils.isBlank(billDetails.getGlcode())) {
                 restErrors = new RestErrors();
@@ -338,7 +333,7 @@ public class BillService {
                         projectCodeAccountDetailType = chartOfAccountsHibernateDAO.getAccountDetailTypeIdByName(
                                 coa.getGlcode(),
                                 WorksConstants.PROJECTCODE);
-                     if (projectCodeAccountDetailType != null)
+                    if (projectCodeAccountDetailType != null)
                         isProjectCodeSubledger = true;
 
                     if (coa != null && !coa.getChartOfAccountDetails().isEmpty()) {
@@ -376,31 +371,6 @@ public class BillService {
                         errors.add(restErrors);
                     }
                 }
-                
-                if(duplicateBillDetails.get(coa.getGlcode()) == null) { 
-                    duplicateBillDetails.put(coa.getGlcode(), coa);
-                } else {
-                    restErrors = new RestErrors();
-                    restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_DUPLICATE_BILLDETAILS);
-                    restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_DUPLICATE_BILLDETAILS);
-                    errors.add(restErrors);
-                }
-                Boolean subledgerExistsInPayee = false;
-                List<Accountdetailtype> detailTypes = chartOfAccountsHibernateDAO.getAccountdetailtypeListByGLCode(billDetails.getGlcode());
-                if(detailTypes != null) {
-                    for(BillPayeeDetails billPayeeDetail : billRegister.getBillPayeeDetails()) {
-                        if(billPayeeDetail.getGlcode().equals(billDetails.getGlcode())) 
-                            subledgerExistsInPayee = true;
-                    }
-                    
-                    if(!subledgerExistsInPayee) {   
-                        restErrors = new RestErrors();
-                        restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_SUBLEDGER_DETAILS_REQUIRED);
-                        restErrors.setErrorMessage(billDetails.getGlcode() + " - "
-                                + RestApiConstants.THIRD_PARTY_ERR_MSG_SUBLEDGER_DETAILS_REQUIRED);
-                        errors.add(restErrors);
-                    }
-                }
             }
         if (!isProjectCodeSubledger) {
             restErrors = new RestErrors();
@@ -424,7 +394,6 @@ public class BillService {
 
     private void validateBillPayeeDetails(final BillRegister billRegister, final List<RestErrors> errors) {
         RestErrors restErrors;
-        Map<String, Object> duplicatePayeeDetails = new HashMap<String, Object>();
         if (billRegister.getBillPayeeDetails() == null || billRegister.getBillPayeeDetails().isEmpty()) {
             restErrors = new RestErrors();
             restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_PAYEE_DETAILS);
@@ -500,7 +469,7 @@ public class BillService {
                     }
                 }
 
-                for (final BillDetails billDetails : billRegister.getBillDetails()) 
+                for (final BillDetails billDetails : billRegister.getBillDetails())
                     if (billDetails.getGlcode().equals(billPayeeDetails.getGlcode()))
                         isCOAExistInDetails = true;
                 if (!isCOAExistInDetails) {
@@ -509,19 +478,6 @@ public class BillService {
                     restErrors.setErrorMessage(billPayeeDetails.getGlcode() + " - "
                             + RestApiConstants.THIRD_PARTY_ERR_MSG_PAYEE_GLCODE_NOT_IN_DETAILS);
                     errors.add(restErrors);
-                } 
-                
-                if(duplicatePayeeDetails.get(coa.getGlcode()) == null) {
-                    duplicatePayeeDetails.put(coa.getGlcode(), billPayeeDetails);
-                } else {
-                    BillPayeeDetails bp = (BillPayeeDetails) duplicatePayeeDetails.get(coa.getGlcode());
-                    if(bp.getAccountDetailKey().equalsIgnoreCase(billPayeeDetails.getAccountDetailKey())) {
-                        restErrors = new RestErrors();
-                        restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_DUPLICATE_BILLPAYEEDETAILS);
-                        restErrors.setErrorMessage(billPayeeDetails.getGlcode() + " - "
-                                + RestApiConstants.THIRD_PARTY_ERR_MSG_DUPLICATE_BILLPAYEEDETAILS);
-                        errors.add(restErrors);
-                    }
                 }
             }
     }
