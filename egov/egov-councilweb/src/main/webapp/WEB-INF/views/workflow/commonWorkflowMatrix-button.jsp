@@ -67,9 +67,18 @@
 			$('#approvalPosition').removeAttr('required');
 			$('#approvalComent').attr('required', 'required');	
 			} 
-		else if (rejectbutton == 'Approve' || rejectbutton == 'Forward') {
+		else if (rejectbutton == 'Approve') {
+			$('#approvalDepartment').removeAttr('required');
+			$('#approvalDesignation').removeAttr('required');
+			$('#approvalPosition').removeAttr('required');
 			$('#approvalComent').removeAttr('required');
 		}
+		else if(rejectbutton == 'Forward'){
+			$('#approvalDepartment').attr('required', 'required');	
+			$('#approvalDesignation').attr('required', 'required');	
+			$('#approvalPosition').attr('required', 'required');	
+			$('#approvalComent').removeAttr('required');
+			}
 	   document.forms[0].submit;
 	   return true;
 	}
