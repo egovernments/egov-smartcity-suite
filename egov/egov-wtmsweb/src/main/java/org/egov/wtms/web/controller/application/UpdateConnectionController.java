@@ -47,6 +47,7 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import static org.egov.wtms.masters.entity.enums.ConnectionType.NON_METERED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ADDNLCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_NUMBER;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CLOSERDIGSIGNPENDING;
@@ -58,6 +59,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_FEEPAID;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_RECONNCTIONINPROGRESS;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_RECONNDIGSIGNPENDING;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_VERIFIED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_WOGENERATED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPROVAL_COMMENT;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPROVAL_POSITION;
@@ -79,6 +81,8 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.MUNICIPAL_ENGINEER
 import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PERMENENTCLOSECODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PREVIEWWORKFLOWACTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PROCEED_WITHOUT_METER_EST_AMT;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PROCEED_WITHOUT_NONMETER_EST_AMT;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTIONCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_CLERK;
@@ -97,7 +101,6 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_REJECTED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WORKFLOW_ACTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WORKFLOW_CLOSUREADDITIONALRULE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WORKFLOW_RECONNCTIONINITIATED;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_VERIFIED;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -139,12 +142,10 @@ import org.egov.wtms.autonumber.WorkOrderNumberGenerator;
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.DonationDetails;
 import org.egov.wtms.masters.entity.enums.ClosureType;
-import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.masters.service.MeterCostService;
 import org.egov.wtms.masters.service.RoadCategoryService;
 import org.egov.wtms.utils.WaterTaxNumberGenerator;
 import org.egov.wtms.utils.WaterTaxUtils;
-import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -383,7 +384,8 @@ public class UpdateConnectionController extends GenericConnectionController {
         if (!WF_STATE_REJECTED.equals(waterConnectionDetails.getState().getValue()) &&
                 !WF_STATE_CLERK_APPROVED.equals(waterConnectionDetails.getState().getValue())) {
             final AppConfig appConfig = appConfigService.getAppConfigByModuleNameAndKeyName(MODULE_NAME,
-                    WaterTaxConstants.PROCEEDWITHOUTDONATIONAMOUNTPAID);
+                    NON_METERED.equals(waterConnectionDetails.getConnectionType()) ? PROCEED_WITHOUT_NONMETER_EST_AMT
+                            : PROCEED_WITHOUT_METER_EST_AMT);
             if (YES.equalsIgnoreCase(appConfig.getConfValues().get(0).getValue()))
                 model.addAttribute("proceedWithoutDonation", "true");
         }
@@ -510,12 +512,11 @@ public class UpdateConnectionController extends GenericConnectionController {
         String workFlowAction = "";
         Double donationCharges = 0d;
         final String sourceChannel = request.getParameter("Source");
-        
-        if(APPLICATION_STATUS_CREATED.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()) ||
+
+        if (APPLICATION_STATUS_CREATED.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()) ||
                 APPLICATION_STATUS_VERIFIED.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()) &&
-                ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())) {
+                        NON_METERED.equals(waterConnectionDetails.getConnectionType()))
             waterConnectionDetailsService.validateConnectionCategory(waterConnectionDetails, resultBinder, request);
-        }
 
         if (request.getParameter(DONATION_AMOUNT) != null)
             donationCharges = Double.valueOf(request.getParameter(DONATION_AMOUNT));
