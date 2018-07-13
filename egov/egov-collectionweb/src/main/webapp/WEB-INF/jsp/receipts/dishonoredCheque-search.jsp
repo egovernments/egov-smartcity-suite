@@ -371,8 +371,8 @@
 											<display:column headerClass="bluebgheadtd"
 												class="blueborderfortd" title="Reference No"
 												style="width:20%;text-align:center">
-												<s:textfield name="referenceNum" style="width: 200px;"
-													id="referenceNum" cssClass="form-control" />
+												<s:textfield name="referenceNum"    style="width: 200px;"
+													maxlength="20" id="referenceNum" cssClass="form-control" />
 											</display:column>
 
 											<display:column headerClass="bluebgheadtd"
