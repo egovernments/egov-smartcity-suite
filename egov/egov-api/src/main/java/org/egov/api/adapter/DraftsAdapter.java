@@ -68,21 +68,21 @@ public class DraftsAdapter extends DataAdapter<Drafts> {
         jsonObjectDraft.addProperty(NAME, draft.getName());
         jsonObjectDraft.addProperty("draftType", draft.getDraftType().getName());
 
-        if (draft.getModule() != null) {
+        if (draft.getCategory() != null) {
             JsonObject jsonObjectModule = new JsonObject();
-            if (isNotBlank(draft.getModule().getName()))
-                jsonObjectModule.addProperty(NAME, draft.getModule().getName());
-            if (draft.getModule().getId() != null)
-                jsonObjectModule.addProperty(ID, draft.getModule().getId());
+            if (isNotBlank(draft.getCategory().getName()))
+                jsonObjectModule.addProperty(NAME, draft.getCategory().getName());
+            if (draft.getCategory().getId() != null)
+                jsonObjectModule.addProperty(ID, draft.getCategory().getId());
             jsonObjectDraft.add("module", jsonObjectModule);
         }
 
-        if (draft.getCategory() != null) {
+        if (draft.getSubCategory() != null) {
             JsonObject jsonObjectCategory = new JsonObject();
-            if (isNotBlank(draft.getCategory().getName()))
-                jsonObjectCategory.addProperty(NAME, draft.getCategory().getName());
-            if (draft.getCategory().getId() != null)
-                jsonObjectCategory.addProperty(ID, draft.getCategory().getId());
+            if (isNotBlank(draft.getSubCategory().getName()))
+                jsonObjectCategory.addProperty(NAME, draft.getSubCategory().getName());
+            if (draft.getSubCategory().getId() != null)
+                jsonObjectCategory.addProperty(ID, draft.getSubCategory().getId());
             jsonObjectDraft.add("category", jsonObjectCategory);
         }
         jsonObjectDraft.addProperty("message", draft.getMessage());

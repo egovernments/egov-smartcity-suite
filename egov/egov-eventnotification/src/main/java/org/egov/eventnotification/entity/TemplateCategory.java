@@ -47,37 +47,42 @@
  */
 package org.egov.eventnotification.entity;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
-@Table(name = "egevntnotification_schedule_log")
-@SequenceGenerator(name = ScheduleLog.SEQ_SCHEDULE_LOG, sequenceName = ScheduleLog.SEQ_SCHEDULE_LOG, allocationSize = 1)
-public class ScheduleLog extends AbstractAuditable {
+@Table(name = "egevntnotification_template_module")
+@SequenceGenerator(name = TemplateCategory.SEQ_EGEVNTNOTIFICATION_MODULE, sequenceName = TemplateCategory.SEQ_EGEVNTNOTIFICATION_MODULE, allocationSize = 1)
+public class TemplateCategory extends AbstractPersistable<Long> {
 
-    private static final long serialVersionUID = -31845956262789699L;
+    private static final long serialVersionUID = 7392974152674723576L;
 
-    public static final String SEQ_SCHEDULE_LOG = "seq_egevntnotification_schedule_log";
+    public static final String SEQ_EGEVNTNOTIFICATION_MODULE = "seq_egevntnotification_template_module";
 
     @Id
-    @GeneratedValue(generator = SEQ_SCHEDULE_LOG, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_EGEVNTNOTIFICATION_MODULE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "filestore")
-    @NotNull
-    private FileStoreMapper filestore;
+    @NotBlank
+    @SafeHtml
+    @Length(max = 100)
+    private String name;
+
+    private boolean active;
+
+    @NotBlank
+    @SafeHtml
+    @Length(max = 100)
+    private String code;
 
     @Override
     public Long getId() {
@@ -89,11 +94,28 @@ public class ScheduleLog extends AbstractAuditable {
         this.id = id;
     }
 
-    public FileStoreMapper getFilestore() {
-        return filestore;
+    public String getName() {
+        return name;
     }
 
-    public void setFilestore(FileStoreMapper filestore) {
-        this.filestore = filestore;
+    public void setName(String name) {
+        this.name = name;
     }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
 }

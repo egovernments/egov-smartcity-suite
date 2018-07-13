@@ -47,13 +47,13 @@
  */
 package org.egov.eventnotification.entity.contracts;
 
-import org.hibernate.validator.constraints.NotBlank;
+import com.google.firebase.database.annotations.NotNull;
 
 public class UserEventRequest {
 
-    @NotBlank
+    @NotNull
     private Long userid;
-    @NotBlank
+    @NotNull
     private Long eventid;
 
     public Long getUserid() {

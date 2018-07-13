@@ -153,7 +153,7 @@ CREATE TABLE egevntnotification_schedule
   message_template character varying(500) NOT NULL,
   drafttype bigint,
   schedulerepeat bigint,
-  module bigint,
+  category bigint,
   version bigint DEFAULT 0,
   url character varying(100),
   method character varying(10),
@@ -212,8 +212,8 @@ CREATE TABLE egevntnotification_drafts
 (
   id bigint NOT NULL,
   name character varying(100) NOT NULL,
-  module bigint,
   category bigint,
+  sub_category bigint,
   notification_message text,
   createddate timestamp without time zone NOT NULL,
   lastmodifieddate timestamp without time zone NOT NULL,
@@ -224,27 +224,13 @@ CREATE TABLE egevntnotification_drafts
   url character varying(100),
   method character varying(10),
   CONSTRAINT egevntnotification_drafts_pkey PRIMARY KEY (id),
-  CONSTRAINT fk_category_drafts_ref FOREIGN KEY (category)
+  CONSTRAINT fk_category_drafts_ref FOREIGN KEY (sub_category)
       REFERENCES egevntnotification_module_category (id) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION,
   CONSTRAINT fk_drafttype_draft_ref FOREIGN KEY (drafttype)
       REFERENCES egevntnotification_drafttype (id) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION,
-  CONSTRAINT fk_module_drafts_ref FOREIGN KEY (module)
+  CONSTRAINT fk_module_drafts_ref FOREIGN KEY (category)
       REFERENCES egevntnotification_template_module (id) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION
-);
-
-
-CREATE SEQUENCE seq_egevntnotification_schedule_log;
-CREATE TABLE egevntnotification_schedule_log
-(
-  id bigint NOT NULL,
-  filestore bigint NOT NULL,
-  createddate timestamp without time zone NOT NULL,
-  lastmodifieddate timestamp without time zone NOT NULL,
-  createdby bigint NOT NULL,
-  lastmodifiedby bigint NOT NULL,
-  version bigint DEFAULT 0,
-  CONSTRAINT egevntnotification_schedule_log_pkey PRIMARY KEY (id)
 );

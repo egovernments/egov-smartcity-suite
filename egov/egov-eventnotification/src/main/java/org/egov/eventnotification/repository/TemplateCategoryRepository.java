@@ -45,28 +45,13 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.eventnotification.service;
+package org.egov.eventnotification.repository;
 
-import java.util.List;
+import org.egov.eventnotification.entity.TemplateCategory;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import org.egov.eventnotification.entity.ModuleCategory;
-import org.egov.eventnotification.repository.ModuleCategoryRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+@Repository
+public interface TemplateCategoryRepository extends JpaRepository<TemplateCategory, Long> {
 
-@Service
-@Transactional(readOnly = true)
-public class ModuleCategoryService {
-
-    @Autowired
-    private ModuleCategoryRepository moduleCategoryRepository;
-
-    public List<ModuleCategory> getAllCategories() {
-        return moduleCategoryRepository.findAll();
-    }
-
-    public List<ModuleCategory> getCategoriesForModule(Long moduleId) {
-        return moduleCategoryRepository.findByModuleId(moduleId);
-    }
 }

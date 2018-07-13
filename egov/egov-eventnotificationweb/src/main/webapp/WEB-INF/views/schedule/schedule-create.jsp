@@ -60,8 +60,8 @@
 					</div>
 				</div>
 				<form:hidden id="mode" path="" value="${mode}" />
-				<form:hidden id="module" name="module" path="module"
-					value="${notificationSchedule.module.id}" />
+				<form:hidden id="category" name="category" path="category"
+					value="${notificationSchedule.category.id}" />
 				<form:hidden id="draftId" name="details.draftId" path=""
 					value="${notificationSchedule.details.draftId}" />
 				<div class="panel-body">

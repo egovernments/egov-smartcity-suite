@@ -60,15 +60,15 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.egov.eventnotification.entity.CategoryParameters;
 import org.egov.eventnotification.entity.Drafts;
-import org.egov.eventnotification.entity.ModuleCategory;
+import org.egov.eventnotification.entity.TemplateParameter;
+import org.egov.eventnotification.entity.TemplateSubCategory;
 import org.egov.eventnotification.entity.enums.Methods;
-import org.egov.eventnotification.service.CategoryParametersService;
 import org.egov.eventnotification.service.DraftService;
 import org.egov.eventnotification.service.DraftTypeService;
-import org.egov.eventnotification.service.ModuleCategoryService;
-import org.egov.eventnotification.service.TemplateModuleService;
+import org.egov.eventnotification.service.TemplateCategoryService;
+import org.egov.eventnotification.service.TemplateParameterService;
+import org.egov.eventnotification.service.TemplateSubCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -85,13 +85,13 @@ public class ModifyNotificationDraftController {
     private DraftService draftService;
 
     @Autowired
-    private CategoryParametersService categoryParametersService;
+    private TemplateParameterService templateParameterService;
 
     @Autowired
-    private ModuleCategoryService moduleCategoryService;
+    private TemplateSubCategoryService templateSubCategoryService;
 
     @Autowired
-    private TemplateModuleService templateModuleService;
+    private TemplateCategoryService templateCategoryService;
 
     @Autowired
     private DraftTypeService draftTypeService;
@@ -103,16 +103,16 @@ public class ModifyNotificationDraftController {
 
     @GetMapping("/drafts/update/{id}")
     public String update(@ModelAttribute Drafts drafts, Model model) {
-        List<ModuleCategory> moduleCategoryList = new ArrayList<>();
-        List<CategoryParameters> categoryParametersList = new ArrayList<>();
-        if (drafts.getModule() != null)
-            moduleCategoryList = moduleCategoryService.getCategoriesForModule(drafts.getModule().getId());
+        List<TemplateSubCategory> templateSubCategoryList = new ArrayList<>();
+        List<TemplateParameter> templateParameterList = new ArrayList<>();
         if (drafts.getCategory() != null)
-            categoryParametersList = categoryParametersService.getParametersForCategory(drafts.getCategory().getId());
+            templateSubCategoryList = templateSubCategoryService.getCategoriesForModule(drafts.getCategory().getId());
+        if (drafts.getCategory() != null)
+            templateParameterList = templateParameterService.getParametersForCategory(drafts.getSubCategory().getId());
         model.addAttribute(DRAFT_LIST, draftTypeService.getAllDraftType());
-        model.addAttribute("TemplateModule", templateModuleService.getAllModules());
-        model.addAttribute("ModuleCategory", moduleCategoryList);
-        model.addAttribute("CategoryParameters", categoryParametersList);
+        model.addAttribute("TemplateModule", templateCategoryService.getAllModules());
+        model.addAttribute("ModuleCategory", templateSubCategoryList);
+        model.addAttribute("CategoryParameters", templateParameterList);
         model.addAttribute("methods", Arrays.asList(Methods.values()));
 
         model.addAttribute(MODE, MODE_VIEW);

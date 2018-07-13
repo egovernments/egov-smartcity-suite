@@ -90,15 +90,15 @@ public class Drafts extends AbstractAuditable {
 
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "module")
+    @JoinColumn(name = "category")
     @Valid
-    private TemplateModule module;
+    private TemplateCategory category;
 
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "category")
+    @JoinColumn(name = "sub_category")
     @Valid
-    private ModuleCategory category;
+    private TemplateSubCategory subCategory;
 
     @Column(name = "notification_message")
     @SafeHtml
@@ -107,7 +107,7 @@ public class Drafts extends AbstractAuditable {
     private String message;
 
     @SafeHtml
-    @Length(max = 50)
+    @Length(max = 100)
     private String url;
 
     @SafeHtml
@@ -140,20 +140,20 @@ public class Drafts extends AbstractAuditable {
         this.draftType = draftType;
     }
 
-    public TemplateModule getModule() {
-        return module;
-    }
-
-    public void setModule(TemplateModule module) {
-        this.module = module;
-    }
-
-    public ModuleCategory getCategory() {
+    public TemplateCategory getCategory() {
         return category;
     }
 
-    public void setCategory(ModuleCategory category) {
+    public void setCategory(TemplateCategory category) {
         this.category = category;
+    }
+
+    public TemplateSubCategory getSubCategory() {
+        return subCategory;
+    }
+
+    public void setSubCategory(TemplateSubCategory subCategory) {
+        this.subCategory = subCategory;
     }
 
     public String getMessage() {
