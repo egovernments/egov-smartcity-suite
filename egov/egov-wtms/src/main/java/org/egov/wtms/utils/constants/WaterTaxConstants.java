@@ -430,7 +430,8 @@ public class WaterTaxConstants {
 
     public static final String INPROGRESS = "INPROGRESS";
     public static final String APPLICATIONINITIATORROLE = "WCMSDESIGNATIONFORINITIATOR";
-    public static final String PROCEEDWITHOUTDONATIONAMOUNTPAID = "PROCEEDWITHOUTDONATIONAMOUNTPAID";
+    public static final String PROCEED_WITHOUT_NONMETER_EST_AMT = "PROCEED_WITHOUT_NONMETER_ESTIMATION_AMOUNT";
+    public static final String PROCEED_WITHOUT_METER_EST_AMT = "PROCEED_WITHOUT_METER_ESTIMATION_AMOUNT";
 
     public static final String ENGINEERING_CODE = "ENG";
     public static final String JUNIOR_ASSISTANT_DESIGN_CODE = "JASST";
