@@ -158,6 +158,7 @@ $(document).ready(function()
 		var extension = $('#fileStoreId').val().split('.').pop().toLowerCase();
 		if(jQuery.inArray(extension, ['gif','exe']) == 0) {
 		    bootbox.alert('Invalid document extension.....');
+		    jQuery('#fileStoreId').val("");
 		}
 	});
 	
