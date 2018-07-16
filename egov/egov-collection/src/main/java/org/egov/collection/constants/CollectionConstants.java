@@ -341,6 +341,7 @@ public final class CollectionConstants {
     public static final String PURPOSE_NAME_ATM_ACCOUNTCODE = "ATM ACCOUNT CODE";
     public static final String PURPOSE_NAME_INTERUNITACCOUNT = "Inter-Unit Transfer Account";
     public static final String PURPOSE_NAME_REBATE = "REBATE";
+    public static final String PURPOSE_NAME_THIRD_PARTY_COLLECTION = "Third Party Receivable";
 
     // Bank Remittance
     public static final String BANKREMITTANCE_SERVICETOTALCASHAMOUNT = "SERVICETOTALCASHAMOUNT";
