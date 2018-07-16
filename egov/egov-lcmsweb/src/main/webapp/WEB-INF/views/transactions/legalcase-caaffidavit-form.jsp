@@ -62,13 +62,13 @@
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message
-								code="lbl.datesubpwr" />:</label>
+								code="lbl.datesubpwr" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<form:input name="pwrList[0].pwrDueDate"
 								path="pwrList[0].pwrDueDate" class="form-control datepicker"
 								title="Please enter a valid date"
 								pattern="\d{1,2}/\d{1,2}/\d{4}" data-date-end-date="-1d"
-								id="pwrDueDate" data-inputmask="'mask': 'd/m/y'"
+								id="pwrDueDate" data-inputmask="'mask': 'd/m/y'" required="required"
 							 />
 							<form:errors path="pwrList[0].pwrDueDate"
 								cssClass="add-margin error-msg" />
@@ -122,7 +122,7 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-2 control-label text-right"><spring:message
+					<%-- 	<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.eofficecomputernumber" />:</label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="counterAffidavits[0].eOfficeComputerNumber"
@@ -130,7 +130,7 @@
 								data-pattern="alphanumerichyphenbackslash"  id="eoffice" maxlength="16"/>
 							<form:errors path="counterAffidavits[0].eOfficeComputerNumber"
 								cssClass="error-msg" />
-						</div>
+						</div> --%>
 						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.cafillingdate" />:</label>
 						<div class="col-sm-3 add-margin">

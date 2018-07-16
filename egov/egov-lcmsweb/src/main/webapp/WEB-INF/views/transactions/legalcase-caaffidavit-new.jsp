@@ -58,6 +58,7 @@
 	enctype="multipart/form-data">
 	<input type="hidden" name="legalCase" value="${legalCase.id}" />
 	<input type="hidden" id="mode" name="mode" value="${mode}" />
+	<input type="hidden" value="${advocateUserRole}" id="advocateUserRole"/>
 	<jsp:include page="../transactions/view-summarizedcase.jsp" />
 	<%-- <%@ include file="legalcase-assignedDeptDet.jsp"%> --%>
 	<%@ include file="legalcase-caaffidavit-form.jsp"%>
