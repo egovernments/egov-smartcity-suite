@@ -122,15 +122,6 @@
 						</div>
 					</div>
 					<div class="form-group">
-					<%-- 	<label class="col-sm-2 control-label text-right"><spring:message
-								code="lbl.eofficecomputernumber" />:</label>
-						<div class="col-sm-3 add-margin">
-							<form:input path="counterAffidavits[0].eOfficeComputerNumber"
-								class="form-control  patternvalidation"
-								data-pattern="alphanumerichyphenbackslash"  id="eoffice" maxlength="16"/>
-							<form:errors path="counterAffidavits[0].eOfficeComputerNumber"
-								cssClass="error-msg" />
-						</div> --%>
 						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.cafillingdate" />:</label>
 						<div class="col-sm-3 add-margin">
