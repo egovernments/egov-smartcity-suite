@@ -49,13 +49,13 @@ jQuery(document).ready(
 		function($) {
 			
 			var advocateUserRole=$('#advocateUserRole').val();
-			var pwrApprovalDate=$('#pwrApprovalDate').val();
+			var pwrDueDate=$('#pwrDueDate').val();
 			var modeval=$('#mode').val();
 			if(modeval=='counteredit')
 			{
 			
-			if(advocateUserRole!="" && pwrApprovalDate!=null)
-					$("#pwrApprovalDate").prop("disabled", true);
+			if(advocateUserRole!="" && pwrDueDate!=null)
+					$("#pwrDueDate").prop("disabled", true);
 			}
 			
 			$('#buttonid').click(function() {
