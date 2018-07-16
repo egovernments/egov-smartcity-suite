@@ -47,6 +47,17 @@
  */
 jQuery(document).ready(
 		function($) {
+			
+			var advocateUserRole=$('#advocateUserRole').val();
+			var pwrApprovalDate=$('#pwrApprovalDate').val();
+			var modeval=$('#mode').val();
+			if(modeval=='counteredit')
+			{
+			
+			if(advocateUserRole!="" && pwrApprovalDate!=null)
+					$("#pwrApprovalDate").prop("disabled", true);
+			}
+			
 			$('#buttonid').click(function() {
 				formValidation();
 			
@@ -61,11 +72,10 @@ function formValidation(){
 	var pwrapprovaldate = $("#pwrApprovalDate").val();
 	var counteraffidavitduedate = $("#counterAffidavitDueDate").val();
 	var counteraffidavitapprovaldate = $("#counterAffidavitApprovalDate").val();
-	var eofficenum = $("#eoffice").val();
 	var cafilingdate = $("#caFilingDate").val();
 	if (((pwrduedate == null || pwrduedate == "") && (pwrapprovaldate == null || pwrapprovaldate == "") && 
 			(counteraffidavitduedate== null || counteraffidavitduedate== "") && 
-			(counteraffidavitapprovaldate== null || counteraffidavitapprovaldate=="") && (eofficenum== null || eofficenum =="")
+			(counteraffidavitapprovaldate== null || counteraffidavitapprovaldate=="")
 			&& (cafilingdate == null || cafilingdate==""))) {
 		bootbox
 				.alert('Please enter one field else close screen');

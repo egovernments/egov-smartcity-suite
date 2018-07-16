@@ -47,10 +47,14 @@
  */
 package org.egov.lcms.web.controller.transactions;
 
+import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.entity.PwrDocuments;
 import org.egov.lcms.transactions.service.LegalCaseService;
 import org.egov.lcms.utils.LegalCaseUtil;
+import org.egov.lcms.utils.constants.LcmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -78,10 +82,16 @@ public class CounterAffidavitController {
 
     @Autowired
     private LegalCaseUtil legalCaseUtil;
+    
+    @Autowired
+    private SecurityUtils securityUtils;
 
+    
     @RequestMapping(value = "/create/", method = RequestMethod.GET)
     public String viewForm(@ModelAttribute("legalCase") final LegalCase legalCase,
             @RequestParam("lcNumber") final String lcNumber, final Model model, final HttpServletRequest request) {
+        final String advocateUserRole = checkLoggedInUserIsAdvocate(securityUtils.getCurrentUser());
+        model.addAttribute("advocateUserRole", advocateUserRole);
         if (legalCase.getCounterAffidavits().isEmpty()) {
             model.addAttribute("mode", "countercreate");
             model.addAttribute("legalCase", legalCase);
@@ -121,6 +131,15 @@ public class CounterAffidavitController {
         documentDetailsList = legalCaseUtil.getPwrDocumentList(legalCase);
         legalCase.getPwrList().get(0).setPwrDocuments(documentDetailsList);
         return legalCase;
+    }
+    
+    public String checkLoggedInUserIsAdvocate(User user) {
+        String advocateUserRole = "";
+        for (final Role role : user.getRoles())
+            if (role != null && role.getName().equalsIgnoreCase(LcmsConstants.STANDING_COUNSEL_ROLE))
+                advocateUserRole = role.getName();
+        return advocateUserRole;
+
     }
 
 }
