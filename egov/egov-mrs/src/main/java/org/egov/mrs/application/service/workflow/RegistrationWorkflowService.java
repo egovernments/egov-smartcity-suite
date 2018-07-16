@@ -228,10 +228,14 @@ public class RegistrationWorkflowService {
             // started
 
             // As there is only one step approval, following line would not work,
-
-            nextStateOwner = assignment != null ? assignment.getPosition() : null;
-            nextState = APPROVER_REJECTED;
-            nextAction = INITIATOR_INITIAL_STATE;
+       
+            if (Source.CHPK.name().equalsIgnoreCase(registration.getSource()))
+                nextAction = STATE_END;
+            else {
+                nextStateOwner = assignment != null ? assignment.getPosition() : null;
+                nextState = APPROVER_REJECTED;
+                nextAction = INITIATOR_INITIAL_STATE;
+            }
         } else if (workflowContainer.getWorkFlowAction().equalsIgnoreCase(STEP_CANCEL) ||
                 workflowContainer.getWorkFlowAction().equalsIgnoreCase(STEP_PRINT_CERTIFICATE))
             nextAction = STATE_END;

@@ -322,6 +322,10 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
             workflowContainer.setApproverComments(request.getParameter("approvalComent"));
             if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
                 marriageRegistrationService.rejectRegistration(marriageRegistration, workflowContainer);
+                if (Source.CHPK.name().equalsIgnoreCase(marriageRegistration.getSource()))
+                    message = messageSource.getMessage("msg.reject.application",
+                            new String[] { marriageRegistration.getApplicationNo(), null }, null);
+                else
                 message = messageSource.getMessage(
                         "msg.rejected.registration",
                         new String[] { marriageRegistration.getApplicationNo(),
