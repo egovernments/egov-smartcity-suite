@@ -253,7 +253,8 @@ public class ReportGenerationService {
             reportParams.put("currentInstallment",
                     installmentDao.getInsatllmentByModuleForGivenDate(moduleService.getModuleByName(PROPERTY_MODULE_NAME), new Date()));
             reportParams.put("pipeSize", connectionDetails.getPipeSize().getSizeInInch());
-            reportParams.put("rate", connectionDemandService.getWaterRatesDetailsForDemandUpdate(connectionDetails).getMonthlyRate());
+            if (NON_METERED.equals(connectionDetails.getConnectionType()))
+                reportParams.put("rate", connectionDemandService.getWaterRatesDetailsForDemandUpdate(connectionDetails).getMonthlyRate());
             reportParams.put(DISTRICT, cityService.getDistrictName());
             reportParams.put("purpose", connectionDetails.getUsageType().getName());
             reportParams.put(WORK_ORDER_DATE, connectionDetails.getWorkOrderDate() == null ? EMPTY
