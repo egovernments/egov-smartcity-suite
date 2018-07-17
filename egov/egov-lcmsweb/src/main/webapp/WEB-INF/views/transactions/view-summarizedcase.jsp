@@ -181,7 +181,15 @@
 										<spring:message code="lbl.fieldbycarp" />
 									</div>
 									<div class="col-sm-3 add-margin view-content">
-										${legalCase.isFiledByCorporation}</div>
+										<c:choose>
+											<c:when test="${legalCase.isFiledByCorporation == 'true'}">
+												<c:out value="YES" />
+											</c:when>
+											<c:otherwise>
+												<c:out value="NO" />
+											</c:otherwise>
+										</c:choose>
+									</div>
 									<div class="col-xs-3 add-margin">
 										<spring:message code="lbl.oldreferencenumber" />
 									</div>
@@ -379,7 +387,7 @@
 <script
 	src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script
-        src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script
 	src="<cdn:url value='/resources/js/app/legalcase-ajax.js?rnd=${app_release_no}'/>"></script>
 <script
