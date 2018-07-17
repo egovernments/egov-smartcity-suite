@@ -246,7 +246,7 @@ $(document).ready(
                     },
                     {
                         element: "#create-griev",
-                        title: "Create Grievance",
+                        title: "Register Grievance",
                         content: "Finally, click here to register your grievance."
                     }],
                 storage: false,

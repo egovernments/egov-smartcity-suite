@@ -55,7 +55,8 @@
       href="<cdn:url  value='/resources/global/css/egov/map-autocomplete.css?rnd=${app_release_no}' context='/egi'/>">
 <div class="row">
     <div class="col-md-12">
-        <form:form role="form" action="register" modelAttribute="complaint" commandName="complaint" id="complaintform" cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
+        <form:form role="form" action="register" modelAttribute="complaint" id="complaintform"
+                   cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
             <div class="panel panel-primary" data-collapsed="0">
                 <div class="panel-heading">
                     <div class="panel-title">
@@ -64,7 +65,7 @@
                 </div>
                 <div class="panel-body custom-form ">
                     <div class="form-group">
-                        <label class="col-sm-3 control-label"><spring:message code="lbl.receivingmode"/></label>
+                        <label class="col-sm-3 control-label"><spring:message code="lbl.receivingmode"/><span class="mandatory"></span></label>
                         <div class="col-sm-9 col-xs-12 dynamic-span">
                             <form:radiobuttons path="receivingMode" items="${receivingModes}" itemValue="id" itemLabel="name" element="span"/>
                             <form:errors path="receivingMode" cssClass="add-margin error-msg"/>
