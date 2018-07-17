@@ -126,6 +126,12 @@
                                     <directory>../egov-portal/src/main/resources/db/migration</directory>
                                 </resource>
                                 <resource>
+                                    <directory>../egov-eventnotification/src/main/resources/db/migration</directory>
+                                </resource>
+                                <resource>
+                                    <directory>../egov-pushbox/src/main/resources/db/migration</directory>
+                                </resource>
+                                <resource>
                                     <directory>../egov-ptis/src/main/resources/db/migration</directory>
                                 </resource>
                                 <resource>
