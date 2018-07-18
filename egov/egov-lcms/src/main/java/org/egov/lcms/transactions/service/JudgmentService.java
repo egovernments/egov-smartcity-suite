@@ -127,7 +127,7 @@ public class JudgmentService {
     }
 
     public Judgment findByLCNumber(final String lcNumber) {
-        return judgmentRepository.findByLegalCase_lcNumber(lcNumber);
+        return judgmentRepository.findByLegalCaseLcNumber(lcNumber);
     }
 
     public void updateNextDate(final Judgment judgment) {
@@ -142,7 +142,7 @@ public class JudgmentService {
 
     public List<JudgmentDocuments> getDocumentDetails(final Judgment judgment, final MultipartFile[] files)
             throws IOException {
-        final List<JudgmentDocuments> documentDetailsList = new ArrayList<JudgmentDocuments>();
+        final List<JudgmentDocuments> documentDetailsList = new ArrayList<>();
 
         if (files != null)
             for (int i = 0; i < files.length; i++)

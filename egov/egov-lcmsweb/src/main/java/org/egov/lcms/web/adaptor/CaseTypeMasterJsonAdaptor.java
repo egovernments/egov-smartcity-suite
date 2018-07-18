@@ -47,13 +47,14 @@
  */
 package org.egov.lcms.web.adaptor;
 
+import java.lang.reflect.Type;
+
+import org.egov.lcms.masters.entity.CaseTypeMaster;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import org.egov.lcms.masters.entity.CaseTypeMaster;
-
-import java.lang.reflect.Type;
 
 public class CaseTypeMasterJsonAdaptor implements JsonSerializer<CaseTypeMaster> {
     @Override
@@ -61,18 +62,20 @@ public class CaseTypeMasterJsonAdaptor implements JsonSerializer<CaseTypeMaster>
             final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
         if (casetypeMaster != null) {
-            if (casetypeMaster.getCaseType() != null)
-                jsonObject.addProperty("caseType", casetypeMaster.getCaseType());
-            else
+            if (casetypeMaster.getCaseType() == null)
                 jsonObject.addProperty("caseType", "");
-            if (casetypeMaster.getCode() != null)
-                jsonObject.addProperty("code", casetypeMaster.getCode());
             else
+                jsonObject.addProperty("caseType", casetypeMaster.getCaseType());
+
+            if (casetypeMaster.getCode() == null)
                 jsonObject.addProperty("code", "");
-            if (casetypeMaster.getActive() != null)
-                jsonObject.addProperty("active", casetypeMaster.getActive() == true ? "YES" : "NO");
             else
+                jsonObject.addProperty("code", casetypeMaster.getCode());
+
+            if (casetypeMaster.getActive() == null)
                 jsonObject.addProperty("active", "");
+            else
+                jsonObject.addProperty("active", casetypeMaster.getActive() ? "YES" : "NO");
 
             jsonObject.addProperty("id", casetypeMaster.getId());
         }

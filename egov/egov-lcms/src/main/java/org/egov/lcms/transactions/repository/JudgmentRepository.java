@@ -59,7 +59,7 @@ import java.util.List;
 @Repository
 public interface JudgmentRepository extends JpaRepository<Judgment, Long> {
 
-    Judgment findByLegalCase_lcNumber(final String lcNumber);
+    Judgment findByLegalCaseLcNumber(final String lcNumber);
 
     @Query("select jd from JudgmentDocuments jd where jd.judgment.id=:judgmentId order by jd.id desc")
     List<JudgmentDocuments> getJudgmentDocumentList(@Param("judgmentId") Long judgmentId);
