@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -79,6 +79,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.egov.wtms.masters.entity.enums.ConnectionStatus.ACTIVE;
 import static org.egov.wtms.masters.entity.enums.ConnectionStatus.INPROGRESS;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN;
@@ -104,6 +105,7 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
     private EgBillType billType;
     private String referenceNumber;
     private String transanctionReferenceNumber;
+    private String serviceCode;
 
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
@@ -227,26 +229,30 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     @Override
     public Boolean getPartPaymentAllowed() {
-        if (getWaterConnectionDetails().getConnectionStatus() != null
+        return getWaterConnectionDetails().getConnectionStatus() != null
                 && (ACTIVE.equals(getWaterConnectionDetails().getConnectionStatus())
-                || INPROGRESS.equals(getWaterConnectionDetails().getConnectionStatus())))
-            return true;
-        else
-            return false;
+                || INPROGRESS.equals(getWaterConnectionDetails().getConnectionStatus()));
     }
 
     @Override
     public String getServiceCode() {
-        if (getWaterConnectionDetails().getStatus().getCode()
-                .equalsIgnoreCase(APPLICATION_STATUS_ESTIMATENOTICEGEN))
-            return appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
-                    ESTSERVICECODEGENBILL).get(0).getValue();
+        if (isNotBlank(this.serviceCode))
+            return this.serviceCode;
+        else {
+            if (getWaterConnectionDetails().getStatus().getCode()
+                    .equalsIgnoreCase(APPLICATION_STATUS_ESTIMATENOTICEGEN))
+                return appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
+                        ESTSERVICECODEGENBILL).get(0).getValue();
 
-        else
-            return appConfigValuesService
-                    .getConfigValuesByModuleAndKey(MODULE_NAME, SERVEICECODEGENBILL)
-                    .get(0).getValue();
+            else
+                return appConfigValuesService
+                        .getConfigValuesByModuleAndKey(MODULE_NAME, SERVEICECODEGENBILL)
+                        .get(0).getValue();
+        }
+    }
 
+    public void setServiceCode(String serviceCode) {
+        this.serviceCode = serviceCode;
     }
 
     @Override
@@ -334,10 +340,11 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
         if (ownerSet == null)
             throw new ApplicationRuntimeException("Property Owner set is null...");
         final StringBuilder ownerFullName = new StringBuilder();
-        final Set<String> ownerNameSet = new HashSet<String>();
+        final Set<String> ownerNameSet = new HashSet<>();
         for (final OwnerName propOwnerInfo : ownerSet)
-            if (propOwnerInfo.getOwnerName() != null && !propOwnerInfo.getOwnerName().trim().equals(""))
-                if (!ownerNameSet.contains(propOwnerInfo.getOwnerName().trim())) {
+            if (propOwnerInfo.getOwnerName() != null
+                    && !propOwnerInfo.getOwnerName().trim().equals("")
+                    && !ownerNameSet.contains(propOwnerInfo.getOwnerName().trim())) {
                     if (!ownerFullName.toString().trim().equals(""))
                         ownerFullName.append(", ");
                     ownerNameSet.add(propOwnerInfo.getOwnerName().trim());
