@@ -47,12 +47,8 @@
  */
 package org.egov.lcms.masters.service;
 
-import org.egov.lcms.masters.entity.CourtTypeMaster;
-import org.egov.lcms.masters.repository.CourtTypeMasterRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -62,14 +58,20 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.Metamodel;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.egov.lcms.masters.entity.CourtTypeMaster;
+import org.egov.lcms.masters.repository.CourtTypeMasterRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
 public class CourtTypeMasterService {
 
     private final CourtTypeMasterRepository courtTypeMasterRepository;
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -114,11 +116,11 @@ public class CourtTypeMasterService {
         final CriteriaQuery<CourtTypeMaster> createQuery = cb.createQuery(CourtTypeMaster.class);
         final Root<CourtTypeMaster> courttypeMasterObj = createQuery.from(CourtTypeMaster.class);
         createQuery.select(courttypeMasterObj);
-        final Metamodel m = entityManager.getMetamodel();
-        final javax.persistence.metamodel.EntityType<CourtTypeMaster> CourttypeMaster = m.entity(CourtTypeMaster.class);
+        final Metamodel model = entityManager.getMetamodel();
+        final javax.persistence.metamodel.EntityType<CourtTypeMaster> courttypeMaster = model.entity(CourtTypeMaster.class);
 
         final List<CourtTypeMaster> resultList;
-        final List<Predicate> predicates = new ArrayList<Predicate>();
+        final List<Predicate> predicates = new ArrayList<>();
         if (courtTypeMaster.getCode() == null && courtTypeMaster.getCourtType() == null
                 && courtTypeMaster.getActive() == null)
             resultList = findAll();
@@ -129,7 +131,7 @@ public class CourtTypeMasterService {
                 predicates
                         .add(cb.like(
                                 cb.lower(courttypeMasterObj
-                                        .get(CourttypeMaster.getDeclaredSingularAttribute("code", String.class))),
+                                        .get(courttypeMaster.getDeclaredSingularAttribute("code", String.class))),
                                 code));
             }
             if (courtTypeMaster.getCourtType() != null) {
@@ -137,21 +139,21 @@ public class CourtTypeMasterService {
                 predicates.add(cb.isNotNull(courttypeMasterObj.get("courtType")));
                 predicates.add(cb.like(
                         cb.lower(courttypeMasterObj
-                                .get(CourttypeMaster.getDeclaredSingularAttribute("courtType", String.class))),
+                                .get(courttypeMaster.getDeclaredSingularAttribute("courtType", String.class))),
                         courtType));
             }
             if (courtTypeMaster.getActive() != null)
-                if (courtTypeMaster.getActive() == true)
+                if (courtTypeMaster.getActive())
                     predicates
                             .add(cb.equal(
                                     courttypeMasterObj
-                                            .get(CourttypeMaster.getDeclaredSingularAttribute("active", Boolean.class)),
+                                            .get(courttypeMaster.getDeclaredSingularAttribute("active", Boolean.class)),
                                     true));
                 else
                     predicates
                             .add(cb.equal(
                                     courttypeMasterObj
-                                            .get(CourttypeMaster.getDeclaredSingularAttribute("active", Boolean.class)),
+                                            .get(courttypeMaster.getDeclaredSingularAttribute("active", Boolean.class)),
                                     false));
 
             createQuery.where(predicates.toArray(new Predicate[] {}));

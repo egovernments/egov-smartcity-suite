@@ -206,11 +206,11 @@ public class AdvocateMasterService implements EntityTypeService {
         final CriteriaQuery<AdvocateMaster> createQuery = cb.createQuery(AdvocateMaster.class);
         final Root<AdvocateMaster> advocateMasterObj = createQuery.from(AdvocateMaster.class);
         createQuery.select(advocateMasterObj);
-        final Metamodel m = entityManager.getMetamodel();
-        final javax.persistence.metamodel.EntityType<AdvocateMaster> AdvocateMaster = m.entity(AdvocateMaster.class);
+        final Metamodel model = entityManager.getMetamodel();
+        final javax.persistence.metamodel.EntityType<AdvocateMaster> advocateMasters = model.entity(AdvocateMaster.class);
 
         final List<AdvocateMaster> resultList;
-        final List<Predicate> predicates = new ArrayList<Predicate>();
+        final List<Predicate> predicates = new ArrayList<>();
         if (advocateMaster.getName() == null && advocateMaster.getMobileNumber() == null
                 && advocateMaster.getEmail() == null)
             resultList = findAll();
@@ -221,7 +221,7 @@ public class AdvocateMasterService implements EntityTypeService {
                 predicates
                         .add(cb.like(
                                 cb.lower(advocateMasterObj
-                                        .get(AdvocateMaster.getDeclaredSingularAttribute("name", String.class))),
+                                        .get(advocateMasters.getDeclaredSingularAttribute("name", String.class))),
                                 name));
             }
             if (advocateMaster.getMobileNumber() != null) {
@@ -229,7 +229,7 @@ public class AdvocateMasterService implements EntityTypeService {
                 predicates.add(cb.isNotNull(advocateMasterObj.get("mobileNumber")));
                 predicates.add(cb.like(
                         cb.lower(advocateMasterObj
-                                .get(AdvocateMaster.getDeclaredSingularAttribute("mobileNumber", String.class))),
+                                .get(advocateMasters.getDeclaredSingularAttribute("mobileNumber", String.class))),
                         mobileNumber));
             }
             if (advocateMaster.getEmail() != null) {
@@ -238,7 +238,7 @@ public class AdvocateMasterService implements EntityTypeService {
                 predicates
                         .add(cb.like(
                                 cb.lower(advocateMasterObj
-                                        .get(AdvocateMaster.getDeclaredSingularAttribute("email", String.class))),
+                                        .get(advocateMasters.getDeclaredSingularAttribute("email", String.class))),
                                 email));
             }
 

@@ -114,11 +114,11 @@ public class CaseTypeMasterService {
         final CriteriaQuery<CaseTypeMaster> createQuery = cb.createQuery(CaseTypeMaster.class);
         final Root<CaseTypeMaster> casetypemasters = createQuery.from(CaseTypeMaster.class);
         createQuery.select(casetypemasters);
-        final Metamodel m = entityManager.getMetamodel();
-        final javax.persistence.metamodel.EntityType<CaseTypeMaster> CasetypeMaster = m.entity(CaseTypeMaster.class);
+        final Metamodel model = entityManager.getMetamodel();
+        final javax.persistence.metamodel.EntityType<CaseTypeMaster> casetypeMasters = model.entity(CaseTypeMaster.class);
 
         final List<CaseTypeMaster> resultList;
-        final List<Predicate> predicates = new ArrayList<Predicate>();
+        final List<Predicate> predicates = new ArrayList<>();
         if (casetypeMaster.getCaseType() == null && casetypeMaster.getCode() == null
                 && casetypeMaster.getActive() == null)
             resultList = findAll();
@@ -128,7 +128,7 @@ public class CaseTypeMasterService {
                 predicates.add(cb.isNotNull(casetypemasters.get("code")));
                 predicates.add(cb.like(
                         cb.lower(
-                                casetypemasters.get(CasetypeMaster.getDeclaredSingularAttribute("code", String.class))),
+                                casetypemasters.get(casetypeMasters.getDeclaredSingularAttribute("code", String.class))),
                         code));
             }
             if (casetypeMaster.getCaseType() != null) {
@@ -136,17 +136,17 @@ public class CaseTypeMasterService {
                 predicates.add(cb.isNotNull(casetypemasters.get("caseType")));
                 predicates.add(cb.like(
                         cb.lower(casetypemasters
-                                .get(CasetypeMaster.getDeclaredSingularAttribute("caseType", String.class))),
+                                .get(casetypeMasters.getDeclaredSingularAttribute("caseType", String.class))),
                         caseType));
             }
             if (casetypeMaster.getActive() != null)
                 if (casetypeMaster.getActive())
                     predicates.add(cb.equal(
-                            casetypemasters.get(CasetypeMaster.getDeclaredSingularAttribute("active", Boolean.class)),
+                            casetypemasters.get(casetypeMasters.getDeclaredSingularAttribute("active", Boolean.class)),
                             true));
                 else
                     predicates.add(cb.equal(
-                            casetypemasters.get(CasetypeMaster.getDeclaredSingularAttribute("active", Boolean.class)),
+                            casetypemasters.get(casetypeMasters.getDeclaredSingularAttribute("active", Boolean.class)),
                             false));
 
             createQuery.where(predicates.toArray(new Predicate[] {}));
