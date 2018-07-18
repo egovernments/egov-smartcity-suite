@@ -87,13 +87,13 @@ public class Complainant extends AbstractPersistable<Long> {
     @Pattern(regexp = Constants.MOBILE_NUM)
     private String mobile;
 
-    @Length(max = 100)
+    @Length(max = 128)
     @SafeHtml
     @Email(regexp = Constants.EMAIL)
     private String email;
 
     @ManyToOne
-    @JoinColumn(name = "userDetail", nullable = true)
+    @JoinColumn(name = "userDetail")
     private User userDetail;
 
     @Length(max = 256)
