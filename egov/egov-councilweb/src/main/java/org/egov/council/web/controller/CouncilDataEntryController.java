@@ -208,11 +208,11 @@ public class CouncilDataEntryController {
     
     private void validateNumber(MeetingMOM meetingMOM,BindingResult errors) {
         if (StringUtils.isNotBlank(meetingMOM.getAgenda().getAgendaNumber())
-                && (!councilAgendaService.findByAgendaNo(meetingMOM.getAgenda().getAgendaNumber()).isEmpty())) {
+                && !councilAgendaService.findByAgendaNo(meetingMOM.getAgenda().getAgendaNumber()).isEmpty()) {
             errors.rejectValue("agenda.agendaNumber", "err.agenda.alreadyexists");
         }
         if (StringUtils.isNotBlank(meetingMOM.getMeeting().getMeetingNumber())
-                && (null != councilMeetingService.findByMeetingNumber(meetingMOM.getMeeting().getMeetingNumber()))) {
+                && councilMeetingService.findByMeetingNumber(meetingMOM.getMeeting().getMeetingNumber())!=null) {
             errors.rejectValue("meeting.meetingNumber", "err.meeting.no.alreadyexists");
         }
         
