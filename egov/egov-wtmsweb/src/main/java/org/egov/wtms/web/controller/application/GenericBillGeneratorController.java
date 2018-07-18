@@ -70,7 +70,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ValidationException;
+import java.math.BigDecimal;
 
+import static java.math.BigDecimal.ZERO;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
 import static org.egov.infra.config.core.ApplicationThreadLocals.setUserId;
@@ -118,7 +120,8 @@ public class GenericBillGeneratorController {
         model.addAttribute("mode", "waterTaxCollection");
         model.addAttribute("checkOperator", waterTaxUtils.checkCollectionOperatorRole());
         model.addAttribute("feeDetails", connectionDemandService.getSplitFee(waterConnectionDetails));
-        model.addAttribute("waterTaxDueforParent", waterConnectionDetailsService.getTotalAmount(waterConnectionDetails));
+        BigDecimal waterTaxDueAmount = waterConnectionDetailsService.getWaterTaxDueAmount(waterConnectionDetails);
+        model.addAttribute("waterTaxDueforParent", waterTaxDueAmount.signum() >= 0 ? waterTaxDueAmount : ZERO);
         return new ModelAndView("application/collecttax-view", "waterConnectionDetails", waterConnectionDetails);
     }
 

@@ -450,4 +450,7 @@ public class WaterTaxConstants {
     public static final String REGULARISATION_DEMAND_NOTE = "Regularisation Demand Note";
     public static final String STATUS = "status";
     public static final int NO_OF_INSTALLMENTS = 8;
+    public static final String ESTIMATIONCHARGES_SERVICE_CODE = "WES";
+    public static final String WATERTAX_CHARGES_SERVICE_CODE = "WT";
+    public static final String WATERTAX_CONNECTION_CHARGE = "WTAXCONCHARGE";
 }
