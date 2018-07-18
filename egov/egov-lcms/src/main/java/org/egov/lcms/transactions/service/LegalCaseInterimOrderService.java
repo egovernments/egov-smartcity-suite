@@ -119,7 +119,6 @@ public class LegalCaseInterimOrderService {
         }
 
         return savedlcInterimOrder;
-        /* legalCaseRepository.save(legalCaseInterimOrder.getLegalCase()); */
     }
 
     public List<LegalCaseInterimOrder> findAll() {
@@ -135,7 +134,7 @@ public class LegalCaseInterimOrderService {
     }
 
     public List<LegalCaseInterimOrder> findByLCNumber(final String lcNumber) {
-        return legalCaseInterimOrderRepository.findByLegalCase_lcNumber(lcNumber);
+        return legalCaseInterimOrderRepository.findByLegalCaseLcNumber(lcNumber);
     }
 
     public void updateNextDate(final LegalCaseInterimOrder legalCaseInterimOrder, final LegalCase legalCase) {
@@ -143,7 +142,7 @@ public class LegalCaseInterimOrderService {
         if (!DateUtils.compareDates(legalCase.getNextDate(), legalCaseInterimOrder.getIoDate()))
             legalCase.setNextDate(legalCaseInterimOrder.getIoDate());
         else {
-            final List<Date> ioDateList = new ArrayList<Date>(0);
+            final List<Date> ioDateList = new ArrayList<>(0);
             ioDateList.add(legalCaseInterimOrder.getIoDate());
             final Iterator<LegalCaseInterimOrder> iteratorInterimOrder = legalCase.getLegalCaseInterimOrder()
                     .iterator();
@@ -159,7 +158,7 @@ public class LegalCaseInterimOrderService {
 
     public List<LcInterimOrderDocuments> getDocumentDetails(final LegalCaseInterimOrder legalCaseInterimOrder,
             final MultipartFile[] files) throws IOException {
-        final List<LcInterimOrderDocuments> documentDetailsList = new ArrayList<LcInterimOrderDocuments>();
+        final List<LcInterimOrderDocuments> documentDetailsList = new ArrayList<>();
 
         if (files != null)
             for (int i = 0; i < files.length; i++)

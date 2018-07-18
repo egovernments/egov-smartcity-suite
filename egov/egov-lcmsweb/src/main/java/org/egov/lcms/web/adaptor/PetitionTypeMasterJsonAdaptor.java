@@ -47,13 +47,14 @@
  */
 package org.egov.lcms.web.adaptor;
 
+import java.lang.reflect.Type;
+
+import org.egov.lcms.masters.entity.PetitionTypeMaster;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import org.egov.lcms.masters.entity.PetitionTypeMaster;
-
-import java.lang.reflect.Type;
 
 public class PetitionTypeMasterJsonAdaptor implements JsonSerializer<PetitionTypeMaster> {
     @Override
@@ -61,23 +62,26 @@ public class PetitionTypeMasterJsonAdaptor implements JsonSerializer<PetitionTyp
             final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
         if (petitionTypeMaster != null) {
-            if (petitionTypeMaster.getCourtType() != null)
-                jsonObject.addProperty("courtType", petitionTypeMaster.getCourtType().getCourtType());
-            else
+            if (petitionTypeMaster.getCourtType() == null)
                 jsonObject.addProperty("courtType", "");
+            else
+                jsonObject.addProperty("courtType", petitionTypeMaster.getCourtType().getCourtType());
+
             jsonObject.addProperty("id", petitionTypeMaster.getId());
-            if (petitionTypeMaster.getPetitionType() != null)
-                jsonObject.addProperty("petitionType", petitionTypeMaster.getPetitionType());
-            else
+            if (petitionTypeMaster.getPetitionType() == null)
                 jsonObject.addProperty("petitionType", "");
-            if (petitionTypeMaster.getCode() != null)
-                jsonObject.addProperty("code", petitionTypeMaster.getCode());
             else
+                jsonObject.addProperty("petitionType", petitionTypeMaster.getPetitionType());
+
+            if (petitionTypeMaster.getCode() == null)
                 jsonObject.addProperty("code", "");
-            if (petitionTypeMaster.getActive() != null)
-                jsonObject.addProperty("active", petitionTypeMaster.getActive()== true ? "YES" : "NO");
             else
+                jsonObject.addProperty("code", petitionTypeMaster.getCode());
+
+            if (petitionTypeMaster.getActive() == null)
                 jsonObject.addProperty("active", "");
+            else
+                jsonObject.addProperty("active", petitionTypeMaster.getActive() ? "YES" : "NO");
 
         }
         return jsonObject;

@@ -47,32 +47,35 @@
  */
 package org.egov.lcms.web.adaptor;
 
+import java.lang.reflect.Type;
+
+import org.egov.lcms.masters.entity.InterimOrder;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import org.egov.lcms.masters.entity.InterimOrder;
-
-import java.lang.reflect.Type;
 
 public class InterimOrderJsonAdaptor implements JsonSerializer<InterimOrder> {
     @Override
     public JsonElement serialize(final InterimOrder interimOrder, final Type type, final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
         if (interimOrder != null) {
-            if (interimOrder.getInterimOrderType() != null)
-                jsonObject.addProperty("interimOrderType", interimOrder.getInterimOrderType());
-            else
+            if (interimOrder.getInterimOrderType() == null)
                 jsonObject.addProperty("interimOrderType", "");
+            else
+                jsonObject.addProperty("interimOrderType", interimOrder.getInterimOrderType());
 
-            if (interimOrder.getCode() != null)
-                jsonObject.addProperty("code", interimOrder.getCode());
-            else
+            if (interimOrder.getCode() == null)
                 jsonObject.addProperty("code", "");
-            if (interimOrder.getActive() != null)
-                jsonObject.addProperty("active", interimOrder.getActive() ? "YES" : "NO");
             else
+                jsonObject.addProperty("code", interimOrder.getCode());
+
+            if (interimOrder.getActive() == null)
                 jsonObject.addProperty("active", "");
+            else
+                jsonObject.addProperty("active", interimOrder.getActive() ? "YES" : "NO");
+
             jsonObject.addProperty("id", interimOrder.getId());
         }
         return jsonObject;
