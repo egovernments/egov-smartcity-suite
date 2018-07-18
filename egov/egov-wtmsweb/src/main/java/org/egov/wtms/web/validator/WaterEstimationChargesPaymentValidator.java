@@ -81,7 +81,7 @@ public class WaterEstimationChargesPaymentValidator implements Validator {
     public boolean validate(String applicationNumber, String consumerNumber, Errors errors) {
 
         if (isBlank(applicationNumber) && isBlank(consumerNumber)) {
-            errors.reject("Invalid Params");
+            errors.reject("msg.consumercode.or.applicaitonno", "msg.consumercode.or.applicaitonno");
             return true;
         }
         WaterConnectionDetails connectionDetails = isNotBlank(applicationNumber)
@@ -90,20 +90,20 @@ public class WaterEstimationChargesPaymentValidator implements Validator {
         if (isNotBlank(applicationNumber) && isNotBlank(consumerNumber)) {
             if (connectionDetails == null || connectionDetails.getConnection() == null
                     || !consumerNumber.equals(connectionDetails.getConnection().getConsumerCode())) {
-                errors.reject("Invalid Params");
+                errors.reject("msg.invalid.params", "msg.invalid.params");
                 return true;
             }
         } else if (isNotBlank(applicationNumber) && isBlank(consumerNumber)
                 && connectionDetails == null) {
-            errors.reject("Invalid ApplicationNumber");
+            errors.reject("msg.invalid.applicationnumber", "msg.invalid.applicationnumber");
             return true;
 
         } else if (isNotBlank(consumerNumber) && isBlank(applicationNumber)
                 && connectionDetails == null) {
-            errors.reject("Invalid ConsumerCode");
+            errors.reject("msg.invalid.consumercode", "msg.invalid.consumercode");
             return true;
         } else if (estimationChargesPaymentService.getEstimationDueAmount(connectionDetails).signum() <= 0) {
-            errors.reject("Estimation charges is not their for collection");
+            errors.reject("msg.estimationcharges", "msg.estimationcharges");
             return true;
         }
         return false;

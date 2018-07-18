@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -156,7 +156,7 @@ public class AdditionalConnectionController extends GenericConnectionController 
         model.addAttribute("mode", "addconnection");
         model.addAttribute("validationMessage",
                 additionalConnectionService.validateAdditionalConnection(parentConnectionDetails));
-        final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getTotalAmount(parentConnectionDetails);
+        final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getWaterTaxDueAmount(parentConnectionDetails);
         model.addAttribute("waterTaxDueforParent", waterTaxDueforParent);
 
         loggedUserIsMeesevaUser = waterTaxUtils.isMeesevaUser(securityUtils.getCurrentUser());

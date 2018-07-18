@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -303,7 +303,7 @@ public class ChangeOfUseController extends GenericConnectionController {
         model.addAttribute("mode", "changeOfUse");
         model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
         model.addAttribute("validationMessage", changeOfUseService.validateChangeOfUseConnection(connectionUnderChange));
-        final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getTotalAmount(connectionUnderChange);
+        final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getWaterTaxDueAmount(connectionUnderChange);
         model.addAttribute("waterTaxDueforParent", waterTaxDueforParent);
         model.addAttribute("typeOfConnection", WaterTaxConstants.CHANGEOFUSE);
         model.addAttribute("usageTypes", usageTypeService.getActiveUsageTypes());

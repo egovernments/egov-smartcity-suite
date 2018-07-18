@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -102,7 +102,7 @@ public class ViewConnectionController {
         model.addAttribute("feeDetails", connectionDemandService.getSplitFee(details));
         model.addAttribute("checkOperator", waterTaxUtils.checkCollectionOperatorRole());
         model.addAttribute("citizenRole", waterTaxUtils.getCitizenUserRole());
-        final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getTotalAmount(details);
+        final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getWaterTaxDueAmount(details);
         model.addAttribute("waterTaxDueforParent", waterTaxDueforParent);
         model.addAttribute("mode", "search");
         model.addAttribute("citizenPortal", waterTaxUtils.isCitizenPortalUser(ApplicationThreadLocals.getUserId() != null ?userService.getUserById(ApplicationThreadLocals.getUserId()):securityUtils.getCurrentUser()));

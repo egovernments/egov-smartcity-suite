@@ -94,7 +94,7 @@ public class WaterEstimationChargesPaymentController {
                                        Model model) {
 
         if (waterEstimationChargesPaymentValidator.validate(applicationNumber, consumerNumber, bindingResult)) {
-            model.addAttribute("message", bindingResult.getFieldError().getDefaultMessage());
+            model.addAttribute("message", bindingResult.getAllErrors().get(0).getDefaultMessage());
             return "estimationpayment-verificationform";
         }
         WaterConnectionDetails connectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(
