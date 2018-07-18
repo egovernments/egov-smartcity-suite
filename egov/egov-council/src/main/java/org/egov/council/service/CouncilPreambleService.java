@@ -50,6 +50,7 @@ package org.egov.council.service;
 import static org.egov.council.utils.constants.CouncilConstants.ADJOURNED;
 import static org.egov.council.utils.constants.CouncilConstants.APPROVED;
 import static org.egov.council.utils.constants.CouncilConstants.IMPLEMENTATION_STATUS_FINISHED;
+import static org.egov.council.utils.constants.CouncilConstants.MODULE_FULLNAME;
 import static org.egov.council.utils.constants.CouncilConstants.REJECTED;
 import static org.egov.council.utils.constants.CouncilConstants.RESOLUTION_APPROVED_PREAMBLE;
 import static org.egov.infra.utils.ApplicationConstant.ANONYMOUS_USERNAME;
@@ -91,7 +92,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class CouncilPreambleService {
 
     private static final String STATUS_CODE = "status.code";
+    private static final String PREAMBLE_NUMBER_AUTO = "PREAMBLE_NUMBER_AUTO";
+
     private final CouncilPreambleRepository councilPreambleRepository;
+    
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -265,6 +269,11 @@ public class CouncilPreambleService {
 
         criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         return criteria;
+    }
+    
+    public Boolean isAutoPreambleNoGenEnabled() {
+        return autoGenerationModeEnabled(
+                MODULE_FULLNAME, PREAMBLE_NUMBER_AUTO);
     }
 
 }
