@@ -269,17 +269,15 @@ public class ReportGenerationService {
                 if (!assignmentList.isEmpty())
                     assignment = assignmentList.get(0);
             }
-            String userDesignation;
-            if (assignment != null && assignment.getDesignation().getName().equals(DESG_COMM_NAME))
+            String userDesignation = EMPTY;
+            if (assignment != null)
                 userDesignation = assignment.getDesignation().getName();
-            else
-                userDesignation = null;
-
+            
             reportParams.put(WORK_FLOW_ACTION, workFlowAction);
             reportParams.put(CONSUMERNUMBER, connectionDetails.getConnection().getConsumerCode());
             reportParams.put(APPLICANT_NAME, WordUtils.capitalize(ownerName));
             reportParams.put(ADDRESS, propAddress);
-            reportParams.put(HOUSE_NO, doorno == null ? "" : doorno[0]);
+            reportParams.put(HOUSE_NO, doorno == null ? EMPTY : doorno[0]);
             reportParams.put("userSignature", user.getSignature() == null
                     ? new byte[0] : new ByteArrayInputStream(user.getSignature()));
 
