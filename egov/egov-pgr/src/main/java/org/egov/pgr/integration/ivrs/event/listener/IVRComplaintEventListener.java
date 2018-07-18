@@ -109,7 +109,7 @@ public class IVRComplaintEventListener {
                             defaultString((String) ivrResponse.get("error")));
             }
         } catch (RuntimeException e) {
-            LOG.error("Error occurred while sending IVR request", e);
+            LOG.warn("Error occurred while sending IVR request", e);
         } finally {
             complaintUpdateEvent.finish();
         }
