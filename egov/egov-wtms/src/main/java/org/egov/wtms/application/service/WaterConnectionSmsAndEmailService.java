@@ -69,7 +69,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.ENABLEDIGITALSIGNA
 import static org.egov.wtms.utils.constants.WaterTaxConstants.METERED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.NON_METERED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.NON_METERED_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTIONCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SMSEMAILTYPEADDCONNESTNOTICE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SMSEMAILTYPEADDCONNFEEPAID;
@@ -276,9 +276,7 @@ public class WaterConnectionSmsAndEmailService {
 
         } else if (APPLICATION_STATUS_SANCTIONED
                 .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())) {
-            if (METERED.toUpperCase()
-                    .equalsIgnoreCase(waterConnectionDetails.getConnectionType().toString())) {
-
+            if (METERED.equalsIgnoreCase(waterConnectionDetails.getConnectionType().toString())) {
                 body = emailBodyByCodeAndArgsWithType("msg.conncetionexeuction.metered.email.body",
                         waterConnectionDetails, applicantName, SMSEMAILTYPECHANGEOFUSEEXECUTION);
                 smsMsg = smsBodyByCodeAndArgsWithType("msg.conncetionexeuction.metered.sms", waterConnectionDetails,
@@ -433,7 +431,7 @@ public class WaterConnectionSmsAndEmailService {
                 .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()) &&
                 Arrays.asList(NEWCONNECTION, ADDNLCONNECTION)
                         .contains(waterConnectionDetails.getApplicationType().getCode())
-                && NON_METERED.equalsIgnoreCase(waterConnectionDetails.getConnectionType().toString())) {
+                && NON_METERED_CODE.equalsIgnoreCase(waterConnectionDetails.getConnectionType().toString())) {
             smsMsg = smsBodyByCodeAndArgsWithType("msg.newandadditionalconn.nonmeter.estimationnotice.sms",
                     waterConnectionDetails, applicantName, SMSEMAILTYPENEWCONNESTNOTICE);
             body = emailBodyByCodeAndArgsWithType("msg.newandadditionalconn.nonmeter.estimationnotice.email.body",
@@ -628,7 +626,7 @@ public class WaterConnectionSmsAndEmailService {
                     null);
 
         else if (Arrays.asList(SMSEMAILTYPENEWCONNESTNOTICE, SMSEMAILTYPEADDCONNESTNOTICE)
-                .contains(type) && NON_METERED.equalsIgnoreCase(waterConnectionDetails.getConnectionType().toString()))
+                .contains(type) && NON_METERED_CODE.equalsIgnoreCase(waterConnectionDetails.getConnectionType().toString()))
             emailBody = wcmsMessageSource.getMessage(code,
                     new String[] { applicantName,
                             waterConnectionDetails.getApplicationNumber(),
@@ -780,7 +778,7 @@ public class WaterConnectionSmsAndEmailService {
                     null);
 
         else if (Arrays.asList(SMSEMAILTYPENEWCONNESTNOTICE, SMSEMAILTYPEADDCONNESTNOTICE)
-                .contains(type) && NON_METERED.equalsIgnoreCase(waterConnectionDetails.getConnectionType().toString()))
+                .contains(type) && NON_METERED_CODE.equalsIgnoreCase(waterConnectionDetails.getConnectionType().toString()))
             smsMsg = wcmsMessageSource.getMessage(code,
                     new String[] { applicantName, waterConnectionDetails.getApplicationNumber(),
                             waterConnectionDetails.getApplicationType().getName(),
