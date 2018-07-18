@@ -561,14 +561,8 @@ public class WaterConnectionDetailsService {
                     historyMap.put(DEPARTMENT, eisCommonService.getDepartmentForUser(user.getId()) == null
                             ? EMPTY : eisCommonService.getDepartmentForUser(user.getId()).getName());
                 } else if (owner != null && owner.getDeptDesig() != null) {
-                    try {
-                        user = eisCommonService.getUserForPosition(owner.getId(), stateHistory.getLastModifiedDate());
-                    } catch (ApplicationRuntimeException e) {
-                        if (Log.isErrorEnabled())
-                            Log.error("Exception while getting history of record :" + e);
-                        throw new ApplicationRuntimeException("err.user.not.found");
-                    }
-                    historyMap.put("user", user.getUsername() == null ? EMPTY : user.getUsername() + "::" + user.getName());
+                    user = eisCommonService.getUserForPosition(owner.getId(), stateHistory.getLastModifiedDate());
+                    historyMap.put("user", user== null ? EMPTY : user.getUsername() + "::" + user.getName());
                     historyMap.put(DEPARTMENT, owner.getDeptDesig().getDepartment() == null
                             ? EMPTY : owner.getDeptDesig().getDepartment().getName());
                 }

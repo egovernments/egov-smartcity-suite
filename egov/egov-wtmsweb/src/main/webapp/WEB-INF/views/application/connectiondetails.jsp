@@ -49,8 +49,9 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<script src="<cdn:url value='/resources/js/app/connectiondetails.js?rnd=${app_release_no}'/>"></script>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+<script
+	src="<cdn:url value='/resources/js/app/connectiondetails.js?rnd=${app_release_no}'/>"></script>
 <div class="panel-heading custom_form_panel_heading">
 	<div class="panel-title">
 		<spring:message code="lbl.connection.details" />
@@ -62,31 +63,35 @@
 	<c:choose>
 		<c:when test="${mode != 'fieldInspection'}">
 			<c:if test="${mode !='dataEntry' }">
-			<div class="col-sm-3 add-margin">
-				<form:select path="connectionType" data-first-option="false" cssClass="form-control" required="required"> 
-					<form:option value="">
-						<spring:message code="lbl.select" />
-					</form:option>
-					<form:options items="${connectionTypes}" />
-				</form:select>
-				<form:errors path="connectionType" cssClass="add-margin error-msg" />
-			</div>
+				<div class="col-sm-3 add-margin">
+					<form:select path="connectionType" data-first-option="false"
+						cssClass="form-control" required="required">
+						<form:option value="">
+							<spring:message code="lbl.select" />
+						</form:option>
+						<form:options items="${connectionTypes}" />
+					</form:select>
+					<form:errors path="connectionType" cssClass="add-margin error-msg" />
+				</div>
 			</c:if>
 			<c:if test="${mode =='dataEntry' }">
-			<div class="col-sm-3 add-margin">
-				<form:select path="connectionType" data-first-option="false" cssClass="form-control" required="required"  onchange="getEmptyValues();"> 
-					<form:option value="">
-						<spring:message code="lbl.select" />
-					</form:option>
-					<form:options items="${connectionTypes}" />
-				</form:select>
-				<form:errors path="connectionType" cssClass="add-margin error-msg" />
-			</div>
+				<div class="col-sm-3 add-margin">
+					<form:select path="connectionType" data-first-option="false"
+						cssClass="form-control" required="required"
+						onchange="getEmptyValues();">
+						<form:option value="">
+							<spring:message code="lbl.select" />
+						</form:option>
+						<form:options items="${connectionTypes}" />
+					</form:select>
+					<form:errors path="connectionType" cssClass="add-margin error-msg" />
+				</div>
 			</c:if>
 		</c:when>
 		<c:otherwise>
 			<div class="col-sm-3 add-margin">
-				<form:select path="connectionType" data-first-option="false" cssClass="form-control" disabled="true"> 
+				<form:select path="connectionType" data-first-option="false"
+					cssClass="form-control" disabled="true">
 					<form:option value="">
 						<spring:message code="lbl.select" />
 					</form:option>
@@ -96,41 +101,41 @@
 			</div>
 		</c:otherwise>
 	</c:choose>
-	
-    <label class="col-sm-2 control-label text-right"><spring:message
+
+	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.watersourcetype" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-		<form:select path="waterSource" data-first-option="false" 
+		<form:select path="waterSource" data-first-option="false"
 			cssClass="form-control" required="required">
 			<form:option value="">
 				<spring:message code="lbl.select" />
 			</form:option>
-			
-			<form:options items="${waterSourceTypes}" itemValue="id" id="waterSourceDropdown"
-				itemLabel="waterSourceType" />
+
+			<form:options items="${waterSourceTypes}" itemValue="id"
+				id="waterSourceDropdown" itemLabel="waterSourceType" />
 		</form:select>
 		<form:errors path="waterSource" cssClass="add-margin error-msg" />
 	</div>
 </div>
 <div class="form-group">
-    <label class="col-sm-3 control-label text-right"><spring:message
+	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.propertytype.water" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-		<form:select path="propertyType" data-first-option="false" id="propertyType"
-			cssClass="form-control" required="required" >
+		<form:select path="propertyType" data-first-option="false"
+			id="propertyType" cssClass="form-control" required="required">
 			<form:option value="">
 				<spring:message code="lbl.select" />
 			</form:option>
 			<form:options items="${propertyTypes}" itemValue="id"
 				itemLabel="name" />
-		</form:select>		
-		<form:errors path="propertyType" cssClass="add-margin error-msg" />					
+		</form:select>
+		<form:errors path="propertyType" cssClass="add-margin error-msg" />
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.category" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-		<form:select path="category" data-first-option="false" id="connectionCategorie"
-			cssClass="form-control" required="required">
+		<form:select path="category" data-first-option="false"
+			id="connectionCategorie" cssClass="form-control" required="required">
 			<form:option value="">
 				<spring:message code="lbl.select" />
 			</form:option>
@@ -139,7 +144,7 @@
 		</form:select>
 		<form:errors path="category" cssClass="add-margin error-msg" />
 	</div>
-	
+
 </div>
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message
@@ -150,8 +155,7 @@
 			<form:option value="">
 				<spring:message code="lbl.select" />
 			</form:option>
-			<form:options items="${usageTypes}" itemValue="id"
-				itemLabel="name" />
+			<form:options items="${usageTypes}" itemValue="id" itemLabel="name" />
 		</form:select>
 		<form:errors path="usageType" cssClass="add-margin error-msg" />
 	</div>
@@ -159,131 +163,151 @@
 			code="lbl.hscpipesize.inches" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
 		<form:select path="pipeSize" data-first-option="false" id="pipeSize"
-			cssClass="form-control" required="required" >
+			cssClass="form-control" required="required">
 			<form:option value="">
 				<spring:message code="lbl.select" />
 			</form:option>
-			<form:options items="${pipeSizes}" itemValue="id" 
-				itemLabel="code" />
-		</form:select>		
-		<form:errors path="pipeSize" cssClass="add-margin error-msg" />					
+			<form:options items="${pipeSizes}" itemValue="id" itemLabel="code" />
+		</form:select>
+		<form:errors path="pipeSize" cssClass="add-margin error-msg" />
 	</div>
 </div>
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message
-			code="lbl.sumpcapacity.litres" /><!-- <span class="mandatory"></span> --></label> 
+			code="lbl.sumpcapacity.litres" />
+		<!-- <span class="mandatory"></span> --></label>
 	<div class="col-sm-3 add-margin">
-		<form:input class="form-control patternvalidation" data-pattern="number" maxlength="6" id="sumpCapacity" path="sumpCapacity" />
-		<form:errors path="sumpCapacity" cssClass="add-margin error-msg" />		
+		<form:input class="form-control patternvalidation"
+			data-pattern="number" maxlength="6" id="sumpCapacity"
+			path="sumpCapacity" />
+		<form:errors path="sumpCapacity" cssClass="add-margin error-msg" />
 	</div>
-	<label class="col-sm-2 control-label text-right" id="rooms" style="display:none"><spring:message
-		code="lbl.no.of.rooms" /></label>
-	<div class="col-sm-3 add-margin" style="display:none" id="roomsdiv">
-			<form:input class="form-control patternvalidation" data-pattern="number" maxlength="3" id="numberOfRooms" path="numberOfRooms" />
-			<form:errors path="numberOfRooms" cssClass="add-margin error-msg" />		
-		</div>	
+	<label class="col-sm-2 control-label text-right" id="rooms"
+		style="display: none"><spring:message code="lbl.no.of.rooms" /></label>
+	<div class="col-sm-3 add-margin" style="display: none" id="roomsdiv">
+		<form:input class="form-control patternvalidation"
+			data-pattern="number" maxlength="3" id="numberOfRooms"
+			path="numberOfRooms" />
+		<form:errors path="numberOfRooms" cssClass="add-margin error-msg" />
+	</div>
 	<label class="col-sm-2 control-label text-right" id="persons"><spring:message
-			code="lbl.no.of.persons" /></label> 
-		<div class="col-sm-3 add-margin" id="personsdiv">
-			<form:input class="form-control patternvalidation" data-pattern="number" maxlength="3" id="numberOfPerson" path="numberOfPerson" />
-			<form:errors path="numberOfPerson" cssClass="add-margin error-msg" />		
-		</div>
+			code="lbl.no.of.persons" /></label>
+	<div class="col-sm-3 add-margin" id="personsdiv">
+		<form:input class="form-control patternvalidation"
+			data-pattern="number" maxlength="3" id="numberOfPerson"
+			path="numberOfPerson" />
+		<form:errors path="numberOfPerson" cssClass="add-margin error-msg" />
+	</div>
 </div>
-<div class="form-group display-hide showfields" id="waterSupplyDiv" style="display:none">
-<label class="col-sm-3 control-label text-right"><spring:message 
-			code="lbl.watersupplytype"/><span class="mandatory"/></label>
+<div class="form-group display-hide showfields" id="waterSupplyDiv"
+	style="display: none">
+	<label class="col-sm-3 control-label text-right"><spring:message
+			code="lbl.watersupplytype" /><span class="mandatory" /></label>
 	<div class="col-sm-3 add-margin">
-		<form:select path="waterSupply" data-first-option="false" 
-					cssClass="form-control" id = "waterSupplyType">
+		<form:select path="waterSupply" data-first-option="false"
+			cssClass="form-control" id="waterSupplyType">
 			<form:option value="">
-				<spring:message code="lbl.select"/>
+				<spring:message code="lbl.select" />
 			</form:option>
-			
-			<form:options items="${waterSupplyTypes}" itemValue="id" itemLabel="waterSupplyType" />
-			
+
+			<form:options items="${waterSupplyTypes}" itemValue="id"
+				itemLabel="waterSupplyType" />
+
 		</form:select>
-		<form:errors path="waterSupply" cssClass="add-margin error-msg"/>
-	
+		<form:errors path="waterSupply" cssClass="add-margin error-msg" />
+
 	</div>
-	
+
 	<div id="buildingNameDiv">
-		<label class="col-sm-2 control-label text-right"><spring:message code="lbl.apartmentorcomplexname"/><span class="mandatory"/></label>
+		<label class="col-sm-2 control-label text-right"><spring:message
+				code="lbl.apartmentorcomplexname" /><span class="mandatory" /></label>
 		<div class="col-sm-3 add-margin">
-			<form:input class="form-control patternvalidation" data-pattern="alphabetwithspace" maxlength="50" id="buildingName" path="buildingName"/>
-			<form:errors path="buildingName" cssClass="add-margin error-msg"/>
+			<form:input class="form-control patternvalidation"
+				data-pattern="alphabetwithspace" maxlength="50" id="buildingName"
+				path="buildingName" />
+			<form:errors path="buildingName" cssClass="add-margin error-msg" />
 		</div>
 	</div>
 </div>
-<c:if test="${waterConnectionDetails.applicationType.code=='REGLZNCONNECTION' && waterConnectionDetails.status.code=='CREATED' && currentState != 'NEW' && currentState != 'Rejected'}">
-	<div class="form-group">
-		
+<div class="form-group display-hide showfields" id="donationChargesDiv"
+	style="display: none">
+	<label class="col-sm-3 control-label text-right"><spring:message
+			code="lbl.donationorcontribution" /><span class="mandatory" /></label>
+	<div class="col-sm-3 add-margin">
+		<form:input class="form-control patternvalidation"
+			path="donationCharges" data-pattern="number" maxlength="6"
+			id="donationChargesInput" value='${donationCharges}' />
 	</div>
-</c:if>
-	<div class="form-group display-hide showfields" id="donationChargesDiv" style="display:none">
-		<label class="col-sm-3 control-label text-right"><spring:message code="lbl.donationorcontribution"/><span class="mandatory"/></label>
-		<div class="col-sm-3 add-margin">
-			<form:input class="form-control patternvalidation" path="donationCharges" data-pattern="number" maxlength="6" id="donationChargesInput" value='${donationCharges}'/>
-		</div>
-	</div>
-	<c:if test="${waterConnectionDetails.applicationType.code=='REGLZNCONNECTION' && waterConnectionDetails.status.code=='CREATED' && currentState != 'NEW' && currentState != 'Rejected'}">
+</div>
+<div class="form-group">
+	<c:if
+		test="${waterConnectionDetails.applicationType.code=='REGLZNCONNECTION' && waterConnectionDetails.status.code=='CREATED' && currentState != 'NEW' && currentState != 'Rejected'}">
 		<div>
-			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.connectiondate"/><span class="mandatory"></span></label>
+			<label class="col-sm-3 control-label text-right"><spring:message
+					code="lbl.connectiondate" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="executionDate" title="Please enter a valid date" class="form-control datepicker" pattern="\d{1,2}/\d{1,2}/\d{4}" 
-					data-date-end-date="-1d" id="executionDate" data-inputmask="'mask': 'd/m/y'" required="required" />
+				<form:input path="executionDate" title="Please enter a valid date"
+					class="form-control datepicker" pattern="\d{1,2}/\d{1,2}/\d{4}"
+					data-date-end-date="-1d" id="executionDate"
+					data-inputmask="'mask': 'd/m/y'" required="required" />
 				<form:errors path="executionDate" cssClass="add-margin error-msg" />
 			</div>
-			
-			<label class="col-sm-2 control-label text-right">
-				<spring:message code="lbl.penalty.amount"/>
+
+			<label class="col-sm-2 control-label text-right"> <spring:message
+					code="lbl.penalty.amount" />
 			</label>
 			<div class="col-sm-3 add-margin">
-				<input class="form-control" id="penaltyAmount" value="${penaltyAmount}" disabled="true"/>
+				<input class="form-control" id="penaltyAmount"
+					value="${penaltyAmount}" disabled="true" />
 			</div>
 		</div>
 	</c:if>
-	<c:if test="${waterConnectionDetails.applicationType.code!='NEWCONNECTION'}">
-	<div class="form-group" id ="cardHolderDiv">
+</div>
+<c:if
+	test="${waterConnectionDetails.applicationType.code!='NEWCONNECTION'}">
+	<div class="form-group" id="cardHolderDiv">
 		<label class="col-sm-3 control-label text-right"><spring:message
-				code="lbl.bpl.cardholdername" /><span class="mandatory"></span></label> 
+				code="lbl.bpl.cardholdername" /><span class="mandatory"></span></label>
 		<div class="col-sm-3 add-margin">
-			<form:input class="form-control patternvalidation" data-pattern="alphabetwithspace" maxlength="50" id="bplCardHolderName" path="bplCardHolderName" required="required"  />
-			<form:errors path="bplCardHolderName" cssClass="add-margin error-msg" />		
+			<form:input class="form-control patternvalidation"
+				data-pattern="alphabetwithspace" maxlength="50"
+				id="bplCardHolderName" path="bplCardHolderName" required="required" />
+			<form:errors path="bplCardHolderName" cssClass="add-margin error-msg" />
 		</div>
 	</div>
-	</c:if>
+</c:if>
 
-<form:hidden id="typeOfConnection" path="" value="${typeOfConnection}"/>
+<form:hidden id="typeOfConnection" path="" value="${typeOfConnection}" />
 <c:if test="${mode=='addconnection'}">
-<div class="form-group">
+	<div class="form-group">
 		<label class="col-sm-3 control-label text-right"><spring:message
-			code="lbl.addconnection.reason" /><span class="mandatory"></span></label> 
+				code="lbl.addconnection.reason" /><span class="mandatory"></span></label>
 		<div class="col-sm-8 add-margin">
-			<form:textarea class="form-control patternvalidation" data-pattern="string" maxlength="1024" id="connectionReason" path="connectionReason" required="required" />
-			<form:errors path="connectionReason" cssClass="add-margin error-msg" />		
+			<form:textarea class="form-control patternvalidation"
+				data-pattern="string" maxlength="1024" id="connectionReason"
+				path="connectionReason" required="required" />
+			<form:errors path="connectionReason" cssClass="add-margin error-msg" />
 		</div>
-</div>	
-</c:if>	
+	</div>
+</c:if>
 
 <script>
-	$("#penaltyAmount").val($("#donationChargesInput").val()/2);
+	$("#penaltyAmount").val($("#donationChargesInput").val() / 2);
 	$("#donationChargesInput").on('change', function() {
-		$("#penaltyAmount").val($("#donationChargesInput").val()/2);
+		$("#penaltyAmount").val($("#donationChargesInput").val() / 2);
 	});
-	
-	if($("#connectionType").val()=='METERED'){
+
+	if ($("#connectionType").val() == 'METERED') {
 		$('#donationChargesDiv').show();
-		$('#donationChargesInput').attr('required','required');
-	}
-	else if ($('#connectionType').val()=='NON_METERED' && $("#applicationType").val()=='REGLZNCONNECTION') {
+		$('#donationChargesInput').attr('required', 'required');
+	} else if ($('#connectionType').val() == 'NON_METERED'
+			&& $("#applicationType").val() == 'REGLZNCONNECTION') {
 		$('#donationChargesDiv').show();
 		$('#donationChargesInput').prop('disabled', true);
-	}
-	else if($('#connectionType').val()=='NON_METERED'){
+	} else if ($('#connectionType').val() == 'NON_METERED') {
 		$('#donationChargesDiv').hide();
 		$('#donationChargesInput').attr('disabled', true);
 	}
 </script>
 
 
-		
