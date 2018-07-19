@@ -47,6 +47,13 @@
  */
 package org.egov.ptis.web.controller.transactions.digitalsignature;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITAL_SIGNATURE_PENDING;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infra.workflow.inbox.InboxRenderServiceDelegate;
@@ -58,13 +65,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITAL_SIGNATURE_PENDING;
 
 @Controller
 @RequestMapping(value = "/digitalSignature")
@@ -96,6 +96,7 @@ public class DigitalSignatureReportController {
                 if (record != null && record.getState() != null && record.getState().getNextAction() != null &&
                         record.getState().getNextAction().equalsIgnoreCase(WF_STATE_DIGITAL_SIGNATURE_PENDING)) {
                     tempMap = new HashMap<>();
+                    
                     WorkflowTypes workflowTypes = workflowTypeService.getEnabledWorkflowTypeByType(record.getStateType());
                     if (PTMODULENAME.equalsIgnoreCase(workflowTypes.getModule().getName())) {
                         if (record.getState().getValue().startsWith("Create")
@@ -115,7 +116,11 @@ public class DigitalSignatureReportController {
                     }
                 }
         }
-        return resultList;
+        
+        if (resultList.size() > 20)
+            return resultList.subList(0, resultList.size() < 20 ? resultList.size() : 20);
+        else
+            return resultList;
     }
 
 }
