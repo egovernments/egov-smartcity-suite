@@ -59,9 +59,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
-
-import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
 import static org.egov.infra.utils.DateUtils.currentDateToGivenFormat;
@@ -71,9 +68,9 @@ import static org.egov.pgr.entity.enums.ComplaintStatus.COMPLETED;
 import static org.egov.pgr.utils.constants.PGRConstants.MODULE_NAME;
 
 @Component
-public class IVRComplaintEventListener {
+public class IVRSComplaintEventListener {
 
-    private static final Logger LOG = LoggerFactory.getLogger(IVRComplaintEventListener.class);
+    private static final Logger LOG = LoggerFactory.getLogger(IVRSComplaintEventListener.class);
     private static final String IVR_DATE_FORMAT = "dd-MM-yy";
 
     @Autowired
@@ -102,11 +99,9 @@ public class IVRComplaintEventListener {
                                 encodeURL(complaint.getComplainant().getName()));
                 if (LOG.isInfoEnabled())
                     LOG.info("IVR Request : {}", ivrRequestURL);
-                Map<String, Object> ivrResponse = simpleRestClient.getRESTResponseAsMap(ivrRequestURL);
+                String ivrResponse = simpleRestClient.getRESTResponse(ivrRequestURL);
                 if (LOG.isInfoEnabled())
-                    LOG.info("IVR Response : {}, Date : {}, Error : {}",
-                            ivrResponse.get("result"), ivrResponse.get("incoming"),
-                            defaultString((String) ivrResponse.get("error")));
+                    LOG.info("IVR Response : {}", ivrResponse);
             }
         } catch (RuntimeException e) {
             LOG.warn("Error occurred while sending IVR request", e);
