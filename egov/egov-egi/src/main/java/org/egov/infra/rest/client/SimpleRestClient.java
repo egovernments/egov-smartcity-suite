@@ -59,6 +59,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -66,18 +67,18 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class SimpleRestClient {
     private static final Logger LOG = LoggerFactory.getLogger(SimpleRestClient.class);
 
-    public String getRESTResponse(final String restUrl) {
+    public String getRESTResponse(String restUrl) {
         try {
-            return IOUtils.toString(HttpClientBuilder.create().build().execute(new HttpGet(restUrl)).getEntity().getContent(), UTF_8);
+            return IOUtils.toString(HttpClientBuilder.create().build()
+                    .execute(new HttpGet(restUrl)).getEntity().getContent(), UTF_8);
         } catch (UnsupportedOperationException | IOException e) {
-            //TODO yet to decide to rethrow 
             LOG.error("Error occurred while rest response from url {}", restUrl, e);
             return "500";
         }
 
     }
 
-    public HashMap<String, Object> getRESTResponseAsMap(final String restUrl) {
+    public Map<String, Object> getRESTResponseAsMap(String restUrl) {
         return new Gson().fromJson(getRESTResponse(restUrl), new TypeToken<HashMap<String, Object>>() {
         }.getType());
     }
