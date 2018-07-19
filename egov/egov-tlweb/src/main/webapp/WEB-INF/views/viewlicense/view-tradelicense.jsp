@@ -408,8 +408,10 @@
                                         <c:forEach items="${licenseHistory}" varStatus="stat"
                                                    var="history">
                                             <tr>
+                                                <fmt:formatDate value="${history.date}" var="historyDate"
+                                                                pattern="dd/MM/yyyy HH:mm a"/>
                                                 <td class="blueborderfortd" style="text-align: left">
-                                                        ${history.date}</td>
+                                                        ${historyDate}</td>
                                                 <td class="blueborderfortd" style="text-align: left">
                                                         ${history.updatedBy}</td>
                                                 <td class="blueborderfortd" style="text-align: left">
