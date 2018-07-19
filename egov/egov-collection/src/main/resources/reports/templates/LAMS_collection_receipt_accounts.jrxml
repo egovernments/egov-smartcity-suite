@@ -104,12 +104,28 @@
 		<variableExpression><![CDATA[("ARREAR_LATEPAYMENT_CHARGES".equals($F{purpose})||"CURRENT_LATEPAYMENT_CHARGES".equals($F{purpose})) ? $F{crAmount} : BigDecimal.ZERO]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.valueOf(0)]]></initialValueExpression>
 	</variable>
-	<variable name="GST_ST_SUM" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[("CG_SERVICETAX".equals($F{purpose}) || "SG_SERVICETAX".equals($F{purpose}) || "SERVICETAX".equals($F{purpose})) ? $F{crAmount} : BigDecimal.valueOf(0)]]></variableExpression>
+	<variable name="CGST_SUM" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[("CG_SERVICETAX".equals($F{purpose})) ? $F{crAmount} : BigDecimal.valueOf(0)]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.valueOf(0)]]></initialValueExpression>
 	</variable>
-	<variable name="GST_ST" class="java.math.BigDecimal" resetType="Group" resetGroup="ROW_GROUP" calculation="Sum">
-		<variableExpression><![CDATA[("CG_SERVICETAX".equals($F{purpose}) || "SG_SERVICETAX".equals($F{purpose}) ||"SERVICETAX".equals($F{purpose})) ? $F{crAmount} : BigDecimal.valueOf(0)]]></variableExpression>
+	<variable name="CGST" class="java.math.BigDecimal" resetType="Group" resetGroup="ROW_GROUP" calculation="Sum">
+		<variableExpression><![CDATA[("CG_SERVICETAX".equals($F{purpose})) ? $F{crAmount} : BigDecimal.valueOf(0)]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.valueOf(0)]]></initialValueExpression>
+	</variable>
+	<variable name="SGST" class="java.math.BigDecimal" resetType="Group" resetGroup="ROW_GROUP" calculation="Sum">
+		<variableExpression><![CDATA[("SG_SERVICETAX".equals($F{purpose})) ? $F{crAmount} : BigDecimal.valueOf(0)]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.valueOf(0)]]></initialValueExpression>
+	</variable>
+	<variable name="ST" class="java.math.BigDecimal" resetType="Group" resetGroup="ROW_GROUP" calculation="Sum">
+		<variableExpression><![CDATA[("SERVICETAX".equals($F{purpose})) ? $F{crAmount} : BigDecimal.valueOf(0)]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.valueOf(0)]]></initialValueExpression>
+	</variable>
+	<variable name="SGST_SUM" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[("SG_SERVICETAX".equals($F{purpose})) ? $F{crAmount} : BigDecimal.valueOf(0)]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.valueOf(0)]]></initialValueExpression>
+	</variable>
+	<variable name="ST_SUM" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[("SERVICETAX".equals($F{purpose})) ? $F{crAmount} : BigDecimal.valueOf(0)]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.valueOf(0)]]></initialValueExpression>
 	</variable>
 	<filterExpression><![CDATA[$F{isRevenueAccount} == false && ($F{crAmount} > 0 || $F{drAmount} > 0)]]></filterExpression>
@@ -117,8 +133,8 @@
 		<groupExpression><![CDATA["DUMMY_GROUP"]]></groupExpression>
 		<groupFooter>
 			<band height="20">
-				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00">
-					<reportElement stretchType="RelativeToTallestObject" x="465" y="0" width="90" height="20" printWhenGroupChanges="ROW_GROUP" uuid="e47e6bba-c2db-4ef1-86dd-123efb614019">
+				<textField isStretchWithOverflow="true" pattern="#,##0;-#,##0">
+					<reportElement stretchType="RelativeToTallestObject" x="478" y="0" width="77" height="20" printWhenGroupChanges="ROW_GROUP" uuid="e47e6bba-c2db-4ef1-86dd-123efb614019">
 						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 					</reportElement>
 					<box leftPadding="5" rightPadding="5">
@@ -129,7 +145,7 @@
 						<rightPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+						<font fontName="Times New Roman" size="9" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{totalAmount}]]></textFieldExpression>
 				</textField>
@@ -145,12 +161,12 @@
 						<rightPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+						<font fontName="Times New Roman" size="9" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 					</textElement>
 					<text><![CDATA[Total:]]></text>
 				</staticText>
-				<textField evaluationTime="Report" pattern="#,##0.00;-#,##0.00">
-					<reportElement x="215" y="0" width="80" height="20" printWhenGroupChanges="ROW_GROUP" uuid="47b66a59-5b5b-4dd9-a928-d6ca366aa561">
+				<textField evaluationTime="Report" pattern="#,##0;-#,##0">
+					<reportElement x="215" y="0" width="65" height="20" printWhenGroupChanges="ROW_GROUP" uuid="47b66a59-5b5b-4dd9-a928-d6ca366aa561">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
@@ -159,12 +175,12 @@
 						<pen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font isBold="true"/>
+						<font size="9" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{RENT_SUM}]]></textFieldExpression>
 				</textField>
-				<textField pattern="#,##0.00;-#,##0.00">
-					<reportElement x="295" y="0" width="80" height="20" printWhenGroupChanges="ROW_GROUP" uuid="696a9df3-f0af-4c1d-a613-6f1cd3ca882a">
+				<textField pattern="#,##0;-#,##0">
+					<reportElement stretchType="RelativeToTallestObject" x="280" y="0" width="57" height="20" printWhenGroupChanges="ROW_GROUP" uuid="696a9df3-f0af-4c1d-a613-6f1cd3ca882a">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
@@ -172,12 +188,12 @@
 						<pen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font isBold="true"/>
+						<font size="9" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{PENALTY_SUM}]]></textFieldExpression>
 				</textField>
-				<textField evaluationTime="Report" pattern="#,##0.00;-#,##0.00">
-					<reportElement x="375" y="0" width="90" height="20" printWhenGroupChanges="ROW_GROUP" uuid="0f1a8655-f1fc-49de-8084-7ec0628032ef">
+				<textField isStretchWithOverflow="true" evaluationTime="Report" pattern="#,##0;-#,##0">
+					<reportElement stretchType="RelativeToTallestObject" x="337" y="0" width="47" height="20" printWhenGroupChanges="ROW_GROUP" uuid="0f1a8655-f1fc-49de-8084-7ec0628032ef">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
@@ -185,14 +201,42 @@
 						<pen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font isBold="true"/>
+						<font size="9" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{GST_ST_SUM}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{CGST_SUM}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Report" pattern="#,##0;-#,##0">
+					<reportElement stretchType="RelativeToTallestObject" x="384" y="0" width="47" height="20" printWhenGroupChanges="ROW_GROUP" uuid="8cd8a811-0e0c-4658-a286-7a3bbbc789e8">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					</reportElement>
+					<box leftPadding="5" rightPadding="5">
+						<pen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SGST_SUM}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Report" pattern="#,##0;-#,##0">
+					<reportElement stretchType="RelativeToTallestObject" x="431" y="0" width="47" height="20" printWhenGroupChanges="ROW_GROUP" uuid="ce8cf49d-866f-4495-963e-a7981f50ad3e">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box leftPadding="5" rightPadding="5">
+						<pen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{ST_SUM}]]></textFieldExpression>
 				</textField>
 			</band>
 			<band height="21">
 				<textField isStretchWithOverflow="true">
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="555" height="20" uuid="66f37aeb-3f37-4968-9cb6-61cb1ff378eb"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="555" height="20" printWhenGroupChanges="ROW_GROUP" uuid="66f37aeb-3f37-4968-9cb6-61cb1ff378eb"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -218,13 +262,14 @@
 		</groupFooter>
 	</group>
 	<columnHeader>
-		<band height="35" splitType="Stretch">
+		<band height="36" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<staticText>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="465" y="0" width="90" height="35" printWhenGroupChanges="ROW_GROUP" uuid="cb57527c-581d-44fc-ac00-6614e34f6d1d">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="478" y="0" width="77" height="35" printWhenGroupChanges="ROW_GROUP" uuid="cb57527c-581d-44fc-ac00-6614e34f6d1d">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 				</reportElement>
 				<box leftPadding="5" rightPadding="5">
 					<topPen lineWidth="0.5"/>
@@ -238,7 +283,7 @@
 				<text><![CDATA[Total]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="215" y="0" width="80" height="35" printWhenGroupChanges="ROW_GROUP" uuid="f78f7e66-9ff6-4ee6-acd0-ed3a9aefe35b">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="215" y="0" width="65" height="35" printWhenGroupChanges="ROW_GROUP" uuid="f78f7e66-9ff6-4ee6-acd0-ed3a9aefe35b">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
@@ -271,7 +316,7 @@
 				<text><![CDATA[Month & Year]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="295" y="0" width="80" height="35" printWhenGroupChanges="ROW_GROUP" uuid="8b612164-63eb-4cc9-b952-73f8400b7a4b">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="280" y="0" width="57" height="35" printWhenGroupChanges="ROW_GROUP" uuid="8b612164-63eb-4cc9-b952-73f8400b7a4b">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
@@ -288,7 +333,7 @@
 				<text><![CDATA[Penalty]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="375" y="0" width="90" height="35" isPrintWhenDetailOverflows="true" printWhenGroupChanges="ROW_GROUP" uuid="77273109-fb57-44a6-91cf-c78312dafb1d">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="337" y="0" width="47" height="35" isPrintWhenDetailOverflows="true" printWhenGroupChanges="ROW_GROUP" uuid="77273109-fb57-44a6-91cf-c78312dafb1d">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
@@ -302,15 +347,50 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
-				<text><![CDATA[GST[CGST+SGST]/ST]]></text>
+				<text><![CDATA[CGST]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="384" y="0" width="47" height="35" isPrintWhenDetailOverflows="true" printWhenGroupChanges="ROW_GROUP" uuid="f255124f-1dc3-4a3f-81fe-1089227c9ddf">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<box leftPadding="5" rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SGST]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="431" y="0" width="47" height="35" isPrintWhenDetailOverflows="true" printWhenGroupChanges="ROW_GROUP" uuid="7c527c86-5847-4039-a1c5-079609e9bc17">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+				</reportElement>
+				<box leftPadding="5" rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ST]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="21" splitType="Stretch">
+		<band height="20" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-			<textField evaluationTime="Group" evaluationGroup="ROW_GROUP" pattern="#,##0.00;-#,##0.00">
-				<reportElement isPrintRepeatedValues="false" x="295" y="0" width="80" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" printWhenGroupChanges="ROW_GROUP" uuid="e6a4affa-57b0-43c2-9510-e67d9f6e54c4">
+			<textField evaluationTime="Group" evaluationGroup="ROW_GROUP" pattern="#,##0;-#,##0">
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="280" y="0" width="57" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" printWhenGroupChanges="ROW_GROUP" uuid="e6a4affa-57b0-43c2-9510-e67d9f6e54c4">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
@@ -318,7 +398,9 @@
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Right"/>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$V{PENALTY}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
@@ -331,23 +413,25 @@
 					<pen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="9" pdfFontName="Times-Roman" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{description} == null || $F{description} == "" ? $F{accountName} : ("ADVANCE_AMOUNT".equals($F{purpose})?"Advance Collection":(("CURRENT_AMOUNT".equals($F{purpose})||("ARREAR_AMOUNT".equals($F{purpose})))?$F{description}:"Dues"))]]></textFieldExpression>
 			</textField>
-			<textField evaluationTime="Group" evaluationGroup="ROW_GROUP" pattern="#,##0.00;-#,##0.00">
-				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="375" y="0" width="90" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" printWhenGroupChanges="ROW_GROUP" uuid="18d971f7-827b-4109-ac75-b78fb88cfbf2">
+			<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="ROW_GROUP" pattern="#,##0;-#,##0">
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="337" y="0" width="47" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" printWhenGroupChanges="ROW_GROUP" uuid="18d971f7-827b-4109-ac75-b78fb88cfbf2">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[$V{GST_ST}]]></textFieldExpression>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{CGST}]]></textFieldExpression>
 			</textField>
-			<textField evaluationTime="Group" evaluationGroup="ROW_GROUP" pattern="#,##0.00;-#,##0.00">
-				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="215" y="0" width="80" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" printWhenGroupChanges="ROW_GROUP" uuid="dc777fb4-7aeb-4e07-a64d-ea6469606e7b">
+			<textField evaluationTime="Group" evaluationGroup="ROW_GROUP" pattern="#,##0;-#,##0">
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="215" y="0" width="65" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" printWhenGroupChanges="ROW_GROUP" uuid="dc777fb4-7aeb-4e07-a64d-ea6469606e7b">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
@@ -356,19 +440,52 @@
 					<pen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Right">
+					<font size="9"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{RENT_ADV}]]></textFieldExpression>
 			</textField>
-			<textField evaluationTime="Group" evaluationGroup="ROW_GROUP" pattern="#,##0.00;-#,##0.00">
-				<reportElement isPrintRepeatedValues="false" x="465" y="0" width="90" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" printWhenGroupChanges="ROW_GROUP" uuid="5cb58406-4015-4981-a5e5-94162537402d">
+			<textField evaluationTime="Group" evaluationGroup="ROW_GROUP" pattern="#,##0;-#,##0">
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="478" y="0" width="77" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" printWhenGroupChanges="ROW_GROUP" uuid="5cb58406-4015-4981-a5e5-94162537402d">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Right"/>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$V{ROW_TOTAL}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Group" evaluationGroup="ROW_GROUP" pattern="#,##0;-#,##0">
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="384" y="0" width="47" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" printWhenGroupChanges="ROW_GROUP" uuid="ca0610c3-8b88-44d7-954d-6da80825760d">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+				</reportElement>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SGST}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Group" evaluationGroup="ROW_GROUP" pattern="#,##0;-#,##0">
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="431" y="0" width="47" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" printWhenGroupChanges="ROW_GROUP" uuid="ca4308b2-2ae4-4fae-8700-3e8c5374a899">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+				</reportElement>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{ST}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
