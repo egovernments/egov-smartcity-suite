@@ -115,7 +115,15 @@ public class City extends AbstractAuditable {
 
     @SafeHtml
     @NotBlank
+    private String lgdCode;
+
+    @SafeHtml
+    @NotBlank
     private String districtCode;
+
+    @SafeHtml
+    @NotBlank
+    private String districtLGDCode;
 
     @SafeHtml
     @NotBlank
@@ -188,6 +196,14 @@ public class City extends AbstractAuditable {
         this.code = code;
     }
 
+    public String getLgdCode() {
+        return lgdCode;
+    }
+
+    public void setLgdCode(final String lgdCode) {
+        this.lgdCode = lgdCode;
+    }
+
     public Float getLongitude() {
         return longitude;
     }
@@ -210,6 +226,14 @@ public class City extends AbstractAuditable {
 
     public void setDistrictCode(final String districtCode) {
         this.districtCode = districtCode;
+    }
+
+    public String getDistrictLGDCode() {
+        return districtLGDCode;
+    }
+
+    public void setDistrictLGDCode(final String districtLGDCode) {
+        this.districtLGDCode = districtLGDCode;
     }
 
     public String getDistrictName() {
@@ -251,10 +275,12 @@ public class City extends AbstractAuditable {
         cityPrefs.put(CITY_CORP_NAME_KEY, name);
         cityPrefs.put(CITY_LOCAL_NAME_KEY, localName);
         cityPrefs.put(CITY_CODE_KEY, code);
+        cityPrefs.put(CITY_LGD_CODE_KEY, lgdCode);
         cityPrefs.put(CITY_LAT_KEY, latitude);
         cityPrefs.put(CITY_LNG_KEY, longitude);
         cityPrefs.put(CITY_DIST_NAME_KEY, districtName);
         cityPrefs.put(CITY_DIST_CODE_KEY, districtCode);
+        cityPrefs.put(CITY_DIST_LGD_CODE_KEY, districtLGDCode);
         cityPrefs.put(CITY_CORP_GRADE_KEY, grade);
         cityPrefs.put(CITY_REGION_NAME_KEY, regionName);
         if (preferences != null) {

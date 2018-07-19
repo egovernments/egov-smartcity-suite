@@ -51,6 +51,7 @@ package org.egov.infra.utils;
 public final class ApplicationConstant {
 
     public static final String CITY_CODE_KEY = "cityCode";
+    public static final String CITY_LGD_CODE_KEY = "cityLGDCode";
     public static final String CITY_NAME_KEY = "cityname";
     public static final String CITY_URL_KEY = "cityurl";
     public static final String CITY_LOGO_FS_UUID_KEY = "citylogo";
@@ -60,6 +61,7 @@ public final class ApplicationConstant {
     public static final String CITY_CORP_GRADE_KEY = "cityGrade";
     public static final String CITY_DIST_NAME_KEY = "districtName";
     public static final String CITY_DIST_CODE_KEY = "districtCode";
+    public static final String CITY_DIST_LGD_CODE_KEY = "districtLGDCode";
     public static final String CITY_CORP_NAME_KEY = "citymunicipalityname";
     public static final String CITY_CORP_ADDRESS_KEY = "corpAddress";
     public static final String CITY_CORP_CALLCENTER_NO_KEY = "corpCallCenterNo";
@@ -108,7 +110,6 @@ public final class ApplicationConstant {
     public static final String DOT = ".";
     public static final String COMMA = ",";
     public static final String UNKNOWN = "Unknown";
-
 
     private ApplicationConstant() {
     }
