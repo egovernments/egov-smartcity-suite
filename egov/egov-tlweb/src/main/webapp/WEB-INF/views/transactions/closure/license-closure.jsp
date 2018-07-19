@@ -124,8 +124,9 @@
                                                                 <tr>
                                                                     <td class="blueborderfortd"
                                                                         style="text-align: left">
-                                                                        <c:out
-                                                                                value="${history.date}"/></td>
+                                                                        <fmt:formatDate value="${history.date}" var="historyDate"
+                                                                                        pattern="dd-MM-yyyy HH:mm a"/>
+                                                                        <c:out value="${historyDate}"/></td>
                                                                     <td class="blueborderfortd"
                                                                         style="text-align: left">
                                                                         <c:out
