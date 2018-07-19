@@ -173,7 +173,7 @@ $(document).ready(
         $('input[type=radio][name=receivingMode]').change(function () {
             $('#receivingCenter').prop('selectedIndex', 0);
             disableCRN();
-            if ($(this).next().text() == 'Manual') {
+            if ($(this).data('rcrequired')) {
                 enableRC();
             } else {
                 disableRC();

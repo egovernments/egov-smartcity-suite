@@ -84,6 +84,8 @@ public class ReceivingMode extends AbstractPersistable<Long> {
 
     private boolean visible;
 
+    private boolean rcRequired;
+
     @Override
     public Long getId() {
         return this.id;
@@ -116,6 +118,14 @@ public class ReceivingMode extends AbstractPersistable<Long> {
 
     public void setVisible(final boolean visible) {
         this.visible = visible;
+    }
+
+    public boolean isRcRequired() {
+        return rcRequired;
+    }
+
+    public void setRcRequired(boolean rcRequired) {
+        this.rcRequired = rcRequired;
     }
 
     @Override
