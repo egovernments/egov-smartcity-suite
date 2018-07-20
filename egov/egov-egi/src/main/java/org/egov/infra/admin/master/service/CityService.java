@@ -75,6 +75,8 @@ import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_NAME_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_DIST_NAME_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_LOGO_FS_UUID_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_LOGO_URL;
+import static org.egov.infra.utils.ApplicationConstant.CITY_LGD_CODE_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_DIST_LGD_CODE_KEY;
 
 @Service
 @Transactional(readOnly = true)
@@ -165,6 +167,14 @@ public class CityService {
 
     public String getCityLogoURL() {
         return format(CITY_LOGO_URL, getDomainURL());
+    }
+
+    public String getCityLGDCode() {
+        return (String) cityDataForKey(CITY_LGD_CODE_KEY);
+    }
+
+    public String getDistrictLGDCode() {
+        return (String) cityDataForKey(CITY_DIST_LGD_CODE_KEY);
     }
 
     public byte[] getCityLogoAsBytes() {
