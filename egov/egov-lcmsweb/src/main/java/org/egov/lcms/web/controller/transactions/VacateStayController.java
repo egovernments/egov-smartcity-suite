@@ -94,9 +94,8 @@ public class VacateStayController {
 
     @ModelAttribute
     private LegalCaseInterimOrder getLcInterimOrder(@RequestParam("lcInterimOrderId") final String lcInterimOrderId) {
-        final LegalCaseInterimOrder legalCaseInterimOrder = legalCaseInterimOrderService
+       return legalCaseInterimOrderService
                 .findById(Long.parseLong(lcInterimOrderId));
-        return legalCaseInterimOrder;
     }
 
     @RequestMapping(value = "/new/", method = RequestMethod.POST)

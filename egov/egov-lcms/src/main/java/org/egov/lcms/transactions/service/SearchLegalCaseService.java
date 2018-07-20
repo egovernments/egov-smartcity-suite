@@ -173,8 +173,7 @@ public class SearchLegalCaseService {
     }
 
     public List<ReportStatus> getReportStatus() {
-        final List<ReportStatus> reportStatusList = reportStatusRepository.findAll();
-        return reportStatusList;
+        return reportStatusRepository.findAll();
     }
 
     public Boolean checkLoggedInUser(final User user) {

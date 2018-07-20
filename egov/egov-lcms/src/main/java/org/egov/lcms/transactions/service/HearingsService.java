@@ -158,7 +158,7 @@ public class HearingsService {
     }
 
     public List<Hearings> findByLCNumber(final String lcNumber) {
-        return hearingsRepository.findByLegalCase_lcNumber(lcNumber);
+        return hearingsRepository.findByLegalCaseLcNumber(lcNumber);
     }
 
     public void updateNextDate(final Hearings hearings, final LegalCase legalCase) {

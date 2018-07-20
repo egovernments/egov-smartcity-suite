@@ -77,8 +77,7 @@ public class LegalCaseDisposalController {
 
     @ModelAttribute
     private LegalCase getLegalCase(@RequestParam("lcNumber") final String lcNumber) {
-        final LegalCase legalCase = legalCaseService.findByLcNumber(lcNumber);
-        return legalCase;
+        return legalCaseService.findByLcNumber(lcNumber);
     }
 
     @RequestMapping(value = "/new/", method = RequestMethod.GET)

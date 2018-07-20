@@ -91,7 +91,7 @@ public class LegalCaseInterimOrderService {
     private LegalCaseService legalCaseService;
 
     @Autowired
-    private LCInterimOrderDocumentsRepository lCInterimOrderDocumentsRepository;
+    private LCInterimOrderDocumentsRepository lCInterimOrderDocsRepository;
 
     @Autowired
     public LegalCaseInterimOrderService(final LegalCaseInterimOrderRepository legalCaseInterimOrderRepository) {
@@ -178,6 +178,6 @@ public class LegalCaseInterimOrderService {
     public void persistDocuments(final List<LcInterimOrderDocuments> documentDetailsList) {
         if (documentDetailsList != null && !documentDetailsList.isEmpty())
             for (final LcInterimOrderDocuments doc : documentDetailsList)
-                lCInterimOrderDocumentsRepository.save(doc);
+                lCInterimOrderDocsRepository.save(doc);
     }
 }

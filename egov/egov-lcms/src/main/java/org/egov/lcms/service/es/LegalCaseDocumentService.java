@@ -110,10 +110,10 @@ public class LegalCaseDocumentService {
                     .withStatus(legalCase.getStatus().getDescription())
                     .withPetitionerNames(legalCase.getPetitionersNames())
                     .withRespondantNames(legalCase.getRespondantNames()).withNextDate(legalCase.getNextDate())
-                    .withPreviousCaseNumber(legalCase.getAppealNum() != null ? legalCase.getAppealNum() : "")
+                    .withPreviousCaseNumber(legalCase.getAppealNum() == null ? "" : legalCase.getAppealNum())
                     .withOfficerIncharge(
-                            legalCase.getOfficerIncharge() != null ? legalCase.getOfficerIncharge().getName() : "")
-                    .withSubStatus(legalCase.getReportStatus() !=null ? legalCase.getReportStatus().getName() : "")
+                            legalCase.getOfficerIncharge() == null ? "" : legalCase.getOfficerIncharge().getName())
+                    .withSubStatus(legalCase.getReportStatus() ==null ? "" : legalCase.getReportStatus().getName())
                     .withPwrDueDate(legalCase.getPwrList().get(0).getPwrDueDate())
                     .withCaDueDate(legalCase.getPwrList().get(0).getCaDueDate())
                     .withFiledByULB(legalCase.getIsFiledByCorporation())
@@ -144,13 +144,13 @@ public class LegalCaseDocumentService {
         legalCaseDocument.setFiledByULB(legalCase.getIsFiledByCorporation());
         legalCaseDocument.setNextDate(legalCase.getNextDate());
         legalCaseDocument.setOfficerIncharge(
-                legalCase.getOfficerIncharge() != null ? legalCase.getOfficerIncharge().getName() : "");
+                legalCase.getOfficerIncharge() == null ? "" : legalCase.getOfficerIncharge().getName());
         legalCaseDocument.setPetitionerNames(legalCase.getPetitionersNames());
         legalCaseDocument.setRespondantNames(legalCase.getRespondantNames());
-        legalCaseDocument.setPreviousCaseNumber(legalCase.getAppealNum() != null ? legalCase.getAppealNum() : "");
+        legalCaseDocument.setPreviousCaseNumber(legalCase.getAppealNum() == null ? "" : legalCase.getAppealNum());
         legalCaseDocument.setStatus(legalCase.getStatus().getDescription());
         legalCaseDocument
-                .setSubStatus(legalCase.getReportStatus() != null ? legalCase.getReportStatus().getName() : "");
+                .setSubStatus(legalCase.getReportStatus() == null ? "" :legalCase.getReportStatus().getName());
         if (legalCase.getPwrList() != null && !legalCase.getPwrList().isEmpty()) {
             legalCaseDocument.setPwrDueDate(legalCase.getPwrList().get(0).getPwrDueDate());
             legalCaseDocument.setCaFilingDate(legalCase.getPwrList().get(0).getCaFilingDate());

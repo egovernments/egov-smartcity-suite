@@ -76,8 +76,7 @@ public class EditLegalCaseDisposalController {
 
     @ModelAttribute
     private LegalCase getLegalCase(@RequestParam("lcNumber") final String lcNumber) {
-        final LegalCase legalCase = legalCaseService.findByLcNumber(lcNumber);
-        return legalCase;
+        return legalCaseService.findByLcNumber(lcNumber);
     }
 
     @RequestMapping(value = "/edit/", method = RequestMethod.GET)

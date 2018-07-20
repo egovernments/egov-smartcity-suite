@@ -98,8 +98,7 @@ public class JudgmentController {
 
     @ModelAttribute
     private LegalCase getLegalCase(@RequestParam("lcNumber") final String lcNumber, final HttpServletRequest request) {
-        final LegalCase legalCase = legalcaseService.findByLcNumber(lcNumber);
-        return legalCase;
+       return legalcaseService.findByLcNumber(lcNumber);
     }
 
     @RequestMapping(value = "/new/", method = RequestMethod.POST)

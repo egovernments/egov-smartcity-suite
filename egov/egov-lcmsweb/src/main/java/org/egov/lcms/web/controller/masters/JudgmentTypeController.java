@@ -47,8 +47,10 @@
  */
 package org.egov.lcms.web.controller.masters;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.egov.lcms.masters.entity.JudgmentType;
 import org.egov.lcms.masters.service.JudgmentTypeService;
 import org.egov.lcms.web.adaptor.JudgmentTypeJsonAdaptor;
@@ -65,101 +67,99 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.validation.Valid;
-import java.util.List;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping("/judgmenttype")
 public class JudgmentTypeController {
-	private final static String JUDGMENTTYPE_NEW = "judgmenttype-new";
-	private final static String JUDGMENTTYPE_RESULT = "judgmenttype-result";
-	private final static String JUDGMENTTYPE_EDIT = "judgmenttype-edit";
-	private final static String JUDGMENTTYPE_VIEW = "judgmenttype-view";
-	private final static String JUDGMENTTYPE_SEARCH = "judgmenttype-search";
-	@Autowired
-	private JudgmentTypeService judgmentTypeService;
-	@Autowired
-	private MessageSource messageSource;
+    private final static String JUDGMENTTYPE_NEW = "judgmenttype-new";
+    private final static String JUDGMENTTYPE_RESULT = "judgmenttype-result";
+    private final static String JUDGMENTTYPE_EDIT = "judgmenttype-edit";
+    private final static String JUDGMENTTYPE_VIEW = "judgmenttype-view";
+    private final static String JUDGMENTTYPE_SEARCH = "judgmenttype-search";
+    @Autowired
+    private JudgmentTypeService judgmentTypeService;
+    @Autowired
+    private MessageSource messageSource;
 
-	private void prepareNewForm(Model model) {
-	}
+    private void prepareNewForm(final Model model) {
+    }
 
-	@RequestMapping(value = "/new", method = RequestMethod.GET)
-	public String newForm(final Model model) {
-		prepareNewForm(model);
-		model.addAttribute("judgmentType", new JudgmentType());
-		return JUDGMENTTYPE_NEW;
-	}
+    @RequestMapping(value = "/new", method = RequestMethod.GET)
+    public String newForm(final Model model) {
+        prepareNewForm(model);
+        model.addAttribute("judgmentType", new JudgmentType());
+        return JUDGMENTTYPE_NEW;
+    }
 
-	@RequestMapping(value = "/create", method = RequestMethod.POST)
-	public String create(@Valid @ModelAttribute final JudgmentType judgmentType, final BindingResult errors,
-			final Model model, final RedirectAttributes redirectAttrs) {
-		if (errors.hasErrors()) {
-			prepareNewForm(model);
-			return JUDGMENTTYPE_NEW;
-		}
-		judgmentTypeService.persist(judgmentType);
-		redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.judgmentType.success", null, null));
-		return "redirect:/judgmenttype/result/" + judgmentType.getId();
-	}
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    public String create(@Valid @ModelAttribute final JudgmentType judgmentType, final BindingResult errors,
+            final Model model, final RedirectAttributes redirectAttrs) {
+        if (errors.hasErrors()) {
+            prepareNewForm(model);
+            return JUDGMENTTYPE_NEW;
+        }
+        judgmentTypeService.persist(judgmentType);
+        redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.judgmentType.success", null, null));
+        return "redirect:/judgmenttype/result/" + judgmentType.getId();
+    }
 
-	@RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
-	public String edit(@PathVariable("id") final Long id, Model model) {
-		JudgmentType judgmentType = judgmentTypeService.findOne(id);
-		prepareNewForm(model);
-		model.addAttribute("judgmentType", judgmentType);
-		return JUDGMENTTYPE_EDIT;
-	}
+    @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
+    public String edit(@PathVariable("id") final Long id, final Model model) {
+        final JudgmentType judgmentType = judgmentTypeService.findOne(id);
+        prepareNewForm(model);
+        model.addAttribute("judgmentType", judgmentType);
+        return JUDGMENTTYPE_EDIT;
+    }
 
-	@RequestMapping(value = "/update", method = RequestMethod.POST)
-	public String update(@Valid @ModelAttribute final JudgmentType judgmentType, final BindingResult errors,
-			final Model model, final RedirectAttributes redirectAttrs) {
-		if (errors.hasErrors()) {
-			prepareNewForm(model);
-			return JUDGMENTTYPE_EDIT;
-		}
-		judgmentTypeService.persist(judgmentType);
-		redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.judgmentType.update", null, null));
-		return "redirect:/judgmenttype/result/" + judgmentType.getId();
-	}
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    public String update(@Valid @ModelAttribute final JudgmentType judgmentType, final BindingResult errors,
+            final Model model, final RedirectAttributes redirectAttrs) {
+        if (errors.hasErrors()) {
+            prepareNewForm(model);
+            return JUDGMENTTYPE_EDIT;
+        }
+        judgmentTypeService.persist(judgmentType);
+        redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.judgmentType.update", null, null));
+        return "redirect:/judgmenttype/result/" + judgmentType.getId();
+    }
 
-	@RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
-	public String view(@PathVariable("id") final Long id, Model model) {
-		JudgmentType judgmentType = judgmentTypeService.findOne(id);
-		prepareNewForm(model);
-		model.addAttribute("judgmentType", judgmentType);
-		return JUDGMENTTYPE_VIEW;
-	}
+    @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
+    public String view(@PathVariable("id") final Long id, final Model model) {
+        final JudgmentType judgmentType = judgmentTypeService.findOne(id);
+        prepareNewForm(model);
+        model.addAttribute("judgmentType", judgmentType);
+        return JUDGMENTTYPE_VIEW;
+    }
 
-	@RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
-	public String result(@PathVariable("id") final Long id, Model model) {
-		JudgmentType judgmentType = judgmentTypeService.findOne(id);
-		model.addAttribute("judgmentType", judgmentType);
-		return JUDGMENTTYPE_RESULT;
-	}
+    @RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
+    public String result(@PathVariable("id") final Long id, final Model model) {
+        final JudgmentType judgmentType = judgmentTypeService.findOne(id);
+        model.addAttribute("judgmentType", judgmentType);
+        return JUDGMENTTYPE_RESULT;
+    }
 
-	@RequestMapping(value = "/search/{mode}", method = RequestMethod.GET)
-	public String search(@PathVariable("mode") final String mode, Model model) {
-		JudgmentType judgmentType = new JudgmentType();
-		prepareNewForm(model);
-		model.addAttribute("judgmentType", judgmentType);
-		return JUDGMENTTYPE_SEARCH;
+    @RequestMapping(value = "/search/{mode}", method = RequestMethod.GET)
+    public String search(@PathVariable("mode") final String mode, final Model model) {
+        final JudgmentType judgmentType = new JudgmentType();
+        prepareNewForm(model);
+        model.addAttribute("judgmentType", judgmentType);
+        return JUDGMENTTYPE_SEARCH;
 
-	}
+    }
 
-	@RequestMapping(value = "/ajaxsearch/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-	public @ResponseBody String ajaxsearch(@PathVariable("mode") final String mode, Model model,
-			@ModelAttribute final JudgmentType judgmentType) {
-		List<JudgmentType> searchResultList = judgmentTypeService.search(judgmentType);
-		String result = new StringBuilder("{ \"data\":").append(toSearchResultJson(searchResultList)).append("}")
-				.toString();
-		return result;
-	}
+    @RequestMapping(value = "/ajaxsearch/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String ajaxsearch(@PathVariable("mode") final String mode, final Model model,
+            @ModelAttribute final JudgmentType judgmentType) {
+        final List<JudgmentType> searchResultList = judgmentTypeService.search(judgmentType);
+        return new StringBuilder("{ \"data\":").append(toSearchResultJson(searchResultList)).append("}")
+                .toString();
+    }
 
-	public Object toSearchResultJson(final Object object) {
-		final GsonBuilder gsonBuilder = new GsonBuilder();
-		final Gson gson = gsonBuilder.registerTypeAdapter(JudgmentType.class, new JudgmentTypeJsonAdaptor()).create();
-		final String json = gson.toJson(object);
-		return json;
-	}
+    public Object toSearchResultJson(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(JudgmentType.class, new JudgmentTypeJsonAdaptor()).create();
+        return gson.toJson(object);
+    }
 }
