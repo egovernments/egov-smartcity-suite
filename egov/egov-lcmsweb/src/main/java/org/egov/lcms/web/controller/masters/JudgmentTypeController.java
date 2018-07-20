@@ -80,15 +80,13 @@ public class JudgmentTypeController {
     private final static String JUDGMENTTYPE_SEARCH = "judgmenttype-search";
     @Autowired
     private JudgmentTypeService judgmentTypeService;
+    
     @Autowired
     private MessageSource messageSource;
 
-    private void prepareNewForm(final Model model) {
-    }
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String newForm(final Model model) {
-        prepareNewForm(model);
         model.addAttribute("judgmentType", new JudgmentType());
         return JUDGMENTTYPE_NEW;
     }
@@ -97,7 +95,6 @@ public class JudgmentTypeController {
     public String create(@Valid @ModelAttribute final JudgmentType judgmentType, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs) {
         if (errors.hasErrors()) {
-            prepareNewForm(model);
             return JUDGMENTTYPE_NEW;
         }
         judgmentTypeService.persist(judgmentType);
@@ -108,7 +105,6 @@ public class JudgmentTypeController {
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
     public String edit(@PathVariable("id") final Long id, final Model model) {
         final JudgmentType judgmentType = judgmentTypeService.findOne(id);
-        prepareNewForm(model);
         model.addAttribute("judgmentType", judgmentType);
         return JUDGMENTTYPE_EDIT;
     }
@@ -117,7 +113,6 @@ public class JudgmentTypeController {
     public String update(@Valid @ModelAttribute final JudgmentType judgmentType, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs) {
         if (errors.hasErrors()) {
-            prepareNewForm(model);
             return JUDGMENTTYPE_EDIT;
         }
         judgmentTypeService.persist(judgmentType);
@@ -128,7 +123,6 @@ public class JudgmentTypeController {
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
     public String view(@PathVariable("id") final Long id, final Model model) {
         final JudgmentType judgmentType = judgmentTypeService.findOne(id);
-        prepareNewForm(model);
         model.addAttribute("judgmentType", judgmentType);
         return JUDGMENTTYPE_VIEW;
     }
@@ -143,7 +137,6 @@ public class JudgmentTypeController {
     @RequestMapping(value = "/search/{mode}", method = RequestMethod.GET)
     public String search(@PathVariable("mode") final String mode, final Model model) {
         final JudgmentType judgmentType = new JudgmentType();
-        prepareNewForm(model);
         model.addAttribute("judgmentType", judgmentType);
         return JUDGMENTTYPE_SEARCH;
 
