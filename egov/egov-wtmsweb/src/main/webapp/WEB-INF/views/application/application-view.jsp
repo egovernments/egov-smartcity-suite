@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -70,6 +70,7 @@
 				<input type="hidden"  id="checkOperator" value="${checkOperator}" />
 				<input type="hidden"  id="ulbUserRole" value="${ulbUserRole}" />
                 <input type="hidden"  id="citizenPortal" value="${citizenPortal}" />
+                <input type="hidden" id="estimationAmount" value="${estimationAmount}"/>
 			<input id="applicationCode" type="hidden" value="<c:out value="${waterConnectionDetails.applicationNumber}" />" />  
 			<input id="consumerCode" type="hidden" value="<c:out value="${waterConnectionDetails.connection.consumerCode}" />" /> 						
 				<jsp:include page="commonappdetails-view.jsp"></jsp:include>
@@ -91,14 +92,15 @@
             <c:if test="${waterConnectionDetails.status.code == 'SANCTIONED' && waterConnectionDetails.connectionType == 'METERED' && checkOperator && waterTaxDueforParent > 0}">
 				<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button>
             </c:if>
-            <c:if test="${(waterConnectionDetails.status.code == 'CREATED' && waterConnectionDetails.applicationType.code == 'REGLZNCONNECTION' || waterConnectionDetails.status.code == 'SANCTIONED' && waterConnectionDetails.connectionType != 'METERED') && checkOperator }">
+            <c:if test="${(waterConnectionDetails.status.code == 'CREATED' && waterConnectionDetails.applicationType.code == 'REGLZNCONNECTION'
+            || waterConnectionDetails.status.code == 'SANCTIONED' && waterConnectionDetails.connectionType != 'METERED') && checkOperator }">
                 <button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button>
             </c:if>
-            <c:if test="${waterConnectionDetails.status.code == 'SANCTIONED' && waterConnectionDetails.connectionType != 'METERED' && citizenRole }">
-                <button type="submit" class="btn btn-primary" id="dcbscreen-view"><spring:message code="lbl.dcbscreen.view"/></button>
+            <c:if test="${estimationAmount>0}">
+                <button type="submit" class="btn btn-primary" id="payEstimation"><spring:message code="lbl.pay.estimationdue"/></button>
             </c:if>
-            <c:if test="${waterConnectionDetails.status.code != 'ESTIMATIONNOTICEGENERATED' && waterTaxDueforParent > 0 && (citizenRole && !checkOperator) }">
-                <button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.online"/></button>
+            <c:if test="${waterConnectionDetails.status.code != 'ESTIMATIONNOTICEGENERATED' && waterTaxDueforParent > 0 && citizenRole }">
+                <button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button>
                 <button type="submit" class="btn btn-primary" id="dcbscreen-view"><spring:message code="lbl.dcbscreen.view"/></button>
             </c:if>
             <c:if test="${waterConnectionDetails.status.code != 'CREATED' && waterConnectionDetails.status.code != 'VERIFIED'

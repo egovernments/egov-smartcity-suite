@@ -50,24 +50,25 @@ package org.egov.wtms.web.controller.application;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
+import org.egov.wtms.service.WaterEstimationChargesPaymentService;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+
+import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
 
 @Controller
 @RequestMapping(value = "/application")
@@ -78,16 +79,17 @@ public class ViewConnectionController {
     @Autowired
     private ConnectionDemandService connectionDemandService;
     @Autowired
+    private WaterEstimationChargesPaymentService estimationChargesPaymentService;
+    @Autowired
     private WaterTaxUtils waterTaxUtils;
     @Autowired
     private SecurityUtils securityUtils;
     @Autowired
     private UserService userService;
 
-    @RequestMapping(value = "/view/{applicationNumber}", method = RequestMethod.GET)
-    public String view(final Model model, @PathVariable final String applicationNumber, final HttpServletRequest request) {
-        WaterConnectionDetails details = null;
-        details = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(applicationNumber,
+    @GetMapping(value = "/view/{applicationNumber}")
+    public String view(@PathVariable String applicationNumber, Model model) {
+        WaterConnectionDetails details = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(applicationNumber,
                 ConnectionStatus.ACTIVE);
         if (details == null)
             details = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(applicationNumber,
@@ -104,22 +106,25 @@ public class ViewConnectionController {
         model.addAttribute("citizenRole", waterTaxUtils.getCitizenUserRole());
         final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getWaterTaxDueAmount(details);
         model.addAttribute("waterTaxDueforParent", waterTaxDueforParent);
+        BigDecimal estimationAmount = estimationChargesPaymentService.getEstimationDueAmount(details);
+        model.addAttribute("estimationAmount", estimationAmount.signum() >= 0 ? estimationAmount : BigDecimal.ZERO);
         model.addAttribute("mode", "search");
-        model.addAttribute("citizenPortal", waterTaxUtils.isCitizenPortalUser(ApplicationThreadLocals.getUserId() != null ?userService.getUserById(ApplicationThreadLocals.getUserId()):securityUtils.getCurrentUser()));
+        model.addAttribute("citizenPortal", waterTaxUtils.isCitizenPortalUser(getUserId() == null
+                ? securityUtils.getCurrentUser() : userService.getUserById(getUserId())));
         return "application-view";
     }
 
     @ModelAttribute("cscUserRole")
     public String getCurrentUserRole() {
         String cscUserRole = "";
-        User currentUser = null;
+        User currentUser;
 
-        if (ApplicationThreadLocals.getUserId() != null)
-            currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
-        else
+        if (getUserId() == null)
             currentUser = securityUtils.getCurrentUser();
+        else
+            currentUser = userService.getUserById(getUserId());
 
-        for (final Role userrole : currentUser.getRoles())
+        for (Role userrole : currentUser.getRoles())
             if (userrole.getName().equals(WaterTaxConstants.ROLE_CSCOPERTAOR)) {
                 cscUserRole = userrole.getName();
                 break;
@@ -130,12 +135,12 @@ public class ViewConnectionController {
     @ModelAttribute("ulbUserRole")
     public String getUlbOperatorUserRole() {
         String userRole = "";
-        User currentUser = null;
-        if (ApplicationThreadLocals.getUserId() != null)
-            currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
-        else
+        User currentUser;
+        if (getUserId() == null)
             currentUser = securityUtils.getCurrentUser();
-        for (final Role userrole : currentUser.getRoles())
+        else
+            currentUser = userService.getUserById(getUserId());
+        for (Role userrole : currentUser.getRoles())
             if (userrole.getName().equals(WaterTaxConstants.ROLE_ULBOPERATOR)) {
                 userRole = userrole.getName();
                 break;
