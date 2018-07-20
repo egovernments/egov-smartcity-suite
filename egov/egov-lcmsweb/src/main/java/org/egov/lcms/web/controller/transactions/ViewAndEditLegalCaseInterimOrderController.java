@@ -47,6 +47,13 @@
  */
 package org.egov.lcms.web.controller.transactions;
 
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import org.egov.lcms.masters.service.InterimOrderService;
 import org.egov.lcms.transactions.entity.LcInterimOrderDocuments;
 import org.egov.lcms.transactions.entity.LegalCaseInterimOrder;
@@ -64,13 +71,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
-
 @Controller
 @RequestMapping(value = "/lcinterimorder")
 public class ViewAndEditLegalCaseInterimOrderController {
@@ -86,9 +86,8 @@ public class ViewAndEditLegalCaseInterimOrderController {
 
     @ModelAttribute
     public LegalCaseInterimOrder getLcInterimOrder(@PathVariable final String lcInterimOrderId) {
-        final LegalCaseInterimOrder legalCaseInterimOrder = legalCaseInterimOrderService
+        return legalCaseInterimOrderService
                 .findById(Long.parseLong(lcInterimOrderId));
-        return legalCaseInterimOrder;
     }
 
     @RequestMapping(value = "/edit/{lcInterimOrderId}", method = RequestMethod.GET)
@@ -134,8 +133,8 @@ public class ViewAndEditLegalCaseInterimOrderController {
     }
 
     private LegalCaseInterimOrder getLcInterimOrderDocuments(final LegalCaseInterimOrder legalCaseInterimOrder) {
-        List<LcInterimOrderDocuments> documentDetailsList = new ArrayList<LcInterimOrderDocuments>();
-        documentDetailsList = legalCaseUtil.getLcInterimOrderDocumentList(legalCaseInterimOrder);
+        final List<LcInterimOrderDocuments> documentDetailsList = legalCaseUtil
+                .getLcInterimOrderDocumentList(legalCaseInterimOrder);
         legalCaseInterimOrder.setLcInterimOrderDocuments(documentDetailsList);
         return legalCaseInterimOrder;
     }

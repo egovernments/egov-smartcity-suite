@@ -126,14 +126,12 @@ public class LegalCaseUtil {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     public EgwStatus getStatusForModuleAndCode(final String moduleName, final String statusCode) {
-        final EgwStatus status = egwStatusDAO.getStatusByModuleAndCode(moduleName, statusCode);
-        return status;
+        return egwStatusDAO.getStatusByModuleAndCode(moduleName, statusCode);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     public List<EgwStatus> getStatusForModule() {
-        final List<EgwStatus> statusList = egwStatusDAO.getStatusByModule(LcmsConstants.MODULE_TYPE_LEGALCASE);
-        return statusList;
+        return egwStatusDAO.getStatusByModule(LcmsConstants.MODULE_TYPE_LEGALCASE);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
@@ -153,29 +151,25 @@ public class LegalCaseUtil {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     public List<LegalCaseUploadDocuments> getLegalCaseDocumentList(final LegalCase legalcase) {
-        final List<LegalCaseUploadDocuments> legalDoc = legalCaseRepository
+        return legalCaseRepository
                 .getLegalCaseUploadDocumentList(legalcase.getId());
-        return legalDoc;
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     public List<JudgmentDocuments> getJudgmentDocumentList(final Judgment judgment) {
-        final List<JudgmentDocuments> judgmentDoc = judgmentRepository.getJudgmentDocumentList(judgment.getId());
-        return judgmentDoc;
+        return judgmentRepository.getJudgmentDocumentList(judgment.getId());
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     public List<LcInterimOrderDocuments> getLcInterimOrderDocumentList(
             final LegalCaseInterimOrder legalCaseInterimOrder) {
-        final List<LcInterimOrderDocuments> interimOrderDoc = legalCaseInterimOrderRepository
+        return legalCaseInterimOrderRepository
                 .getLcInterimOrderDocumentList(legalCaseInterimOrder.getId());
-        return interimOrderDoc;
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     public Employee getEmployeeByUserName(final String userName) {
-        final Employee employee = employeeService.getEmployeeByUserName(userName);
-        return employee;
+        return employeeService.getEmployeeByUserName(userName);
 
     }
 
@@ -185,15 +179,13 @@ public class LegalCaseUtil {
     }
 
     public List<PwrDocuments> getPwrDocumentList(final LegalCase legalcase) {
-        final List<PwrDocuments> pwrDoc = legalCaseRepository.getPwrDocumentList(legalcase.getPwrList().get(0).getId());
-        return pwrDoc;
+        return legalCaseRepository.getPwrDocumentList(legalcase.getPwrList().get(0).getId());
 
     }
 
     public List<AppealDocuments> getAppealDocumentList(final JudgmentImpl judgmentImpl) {
-        final List<AppealDocuments> appealDoc = judgmentImplRepository
+        return judgmentImplRepository
                 .getAppealDocumentList(judgmentImpl.getAppeal().get(0).getId());
-        return appealDoc;
 
     }
 
@@ -204,8 +196,7 @@ public class LegalCaseUtil {
                     .getPrimaryAssignmentForPositionAndDate(legalcase.getOfficerIncharge().getId(), new Date());
         return assignment != null ? assignment.getEmployee().getMobileNumber() : "";
     }
-    
-   
+
     public void sendSMSOnLegalCase(final String mobileNumber, final String smsBody) {
         notificationService.sendSMS(mobileNumber, smsBody);
     }
@@ -217,7 +208,7 @@ public class LegalCaseUtil {
                     .getPrimaryAssignmentForPositionAndDate(legalcase.getOfficerIncharge().getId(), new Date());
         return assignment != null ? assignment.getEmployee().getName() : "";
     }
-    
+
     public static Map<String, Integer> getAllMonthsInNumber() {
         final Map<String, Integer> monthMap = new HashMap<>();
         monthMap.put("Jan", 1);
@@ -234,7 +225,7 @@ public class LegalCaseUtil {
         monthMap.put("Dec", 12);
         return monthMap;
     }
-    
+
     public String getMunicipalityName() {
         return ApplicationThreadLocals.getMunicipalityName();
     }

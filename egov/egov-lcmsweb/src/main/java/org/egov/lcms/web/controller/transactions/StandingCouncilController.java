@@ -89,8 +89,7 @@ public class StandingCouncilController {
 
     @ModelAttribute
     private LegalCase getLegalCase(@RequestParam("lcNumber") final String lcNumber) {
-        final LegalCase legalcase = legalCaseService.findByLcNumber(lcNumber);
-        return legalcase;
+        return legalCaseService.findByLcNumber(lcNumber);
     }
 
     @RequestMapping(value = "/create/", method = RequestMethod.POST)
@@ -109,8 +108,8 @@ public class StandingCouncilController {
         model.addAttribute("message", "Standing Council Saved successfully.");
         model.addAttribute("legalcase", legalCase);
         model.addAttribute("legalCaseAdvocate", legalCaseAdvocate);
-        final List<BipartisanDetails> pettempList = new ArrayList<BipartisanDetails>();
-        final List<BipartisanDetails> respoTempList = new ArrayList<BipartisanDetails>();
+        final List<BipartisanDetails> pettempList = new ArrayList<>();
+        final List<BipartisanDetails> respoTempList = new ArrayList<>();
         for (final BipartisanDetails dd : legalCase.getBipartisanDetails())
             if (dd.getIsRepondent())
                 pettempList.add(dd);

@@ -157,16 +157,14 @@ public class PetitionTypeMasterController {
     public @ResponseBody String ajaxsearch(@PathVariable("mode") final String mode, final Model model,
             @ModelAttribute final PetitionTypeMaster petitionTypeMaster) {
         final List<PetitionTypeMaster> searchResultList = petitionTypeMasterService.search(petitionTypeMaster);
-        final String result = new StringBuilder("{ \"data\":").append(toSearchResultJson(searchResultList)).append("}")
+        return new StringBuilder("{ \"data\":").append(toSearchResultJson(searchResultList)).append("}")
                 .toString();
-        return result;
     }
 
     public Object toSearchResultJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.registerTypeAdapter(PetitionTypeMaster.class, new PetitionTypeMasterJsonAdaptor())
                 .create();
-        final String json = gson.toJson(object);
-        return json;
+        return gson.toJson(object);
     }
 }
