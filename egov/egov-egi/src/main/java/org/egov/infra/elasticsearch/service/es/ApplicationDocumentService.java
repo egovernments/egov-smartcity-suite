@@ -1024,10 +1024,10 @@ public class ApplicationDocumentService {
                     .mustNot(QueryBuilders.matchQuery(COLUMN_APPROVED, REJECTED));
         else if (OPEN_WITHIN_SLA.equalsIgnoreCase(applicationStatus))
             appStatusQuery = appStatusQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 0))
-                    .must(QueryBuilders.rangeQuery(SLA_GAP).lte(0)).mustNot(QueryBuilders.matchQuery(COLUMN_APPROVED, REJECTED));
+                    .must(QueryBuilders.rangeQuery(SLA_GAP).lte(0));
         else if (OPEN_BEYOND_SLA.equalsIgnoreCase(applicationStatus))
             appStatusQuery = appStatusQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 0))
-                    .must(QueryBuilders.rangeQuery(SLA_GAP).gt(0)).mustNot(QueryBuilders.matchQuery(COLUMN_APPROVED, REJECTED));
+                    .must(QueryBuilders.rangeQuery(SLA_GAP).gt(0));
         else if (SLAB1BEYOND_SLA.equalsIgnoreCase(applicationStatus))
             appStatusQuery = appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).gte(1).lt(8))
                     .mustNot(QueryBuilders.matchQuery(COLUMN_APPROVED, REJECTED));
