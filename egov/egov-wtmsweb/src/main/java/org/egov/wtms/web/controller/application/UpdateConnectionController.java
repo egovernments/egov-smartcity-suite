@@ -96,6 +96,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.WCMS_PENALTY_CHARG
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_ESTIMATION_NOTICE_BUTTON;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_RECONNECTIONACKNOWLDGEENT_BUTTON;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_BUTTON_GENERATEESTIMATE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_CLERK_APPROVED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_REJECTED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WORKFLOW_ACTION;
@@ -513,19 +514,20 @@ public class UpdateConnectionController extends GenericConnectionController {
         Double donationCharges = 0d;
         final String sourceChannel = request.getParameter("Source");
 
+        if (request.getParameter(WORKFLOW_ACTION) != null) {
+            workFlowAction = request.getParameter(WORKFLOW_ACTION);
+            request.getSession().setAttribute(WORKFLOW_ACTION, workFlowAction);
+        }
         if (APPLICATION_STATUS_CREATED.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()) ||
                 APPLICATION_STATUS_VERIFIED.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()) &&
-                        NON_METERED.equals(waterConnectionDetails.getConnectionType()))
+                        NON_METERED.equals(waterConnectionDetails.getConnectionType()) &&
+                        !WF_STATE_BUTTON_GENERATEESTIMATE.equalsIgnoreCase(workFlowAction))
             waterConnectionDetailsService.validateConnectionCategory(waterConnectionDetails, resultBinder, request);
 
         if (request.getParameter(DONATION_AMOUNT) != null)
             donationCharges = Double.valueOf(request.getParameter(DONATION_AMOUNT));
         if (request.getParameter(MODE) != null)
             mode = request.getParameter(MODE);
-
-        if (request.getParameter("workFlowAction") != null)
-            workFlowAction = request.getParameter("workFlowAction");
-        request.getSession().setAttribute(WORKFLOW_ACTION, workFlowAction);
 
         if (PROCEEDWITHOUTDONATION.equalsIgnoreCase(workFlowAction)
                 && APPLICATION_STATUS_ESTIMATENOTICEGEN.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()))
