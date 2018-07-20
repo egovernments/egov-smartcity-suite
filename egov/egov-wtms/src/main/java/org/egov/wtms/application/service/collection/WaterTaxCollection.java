@@ -47,6 +47,7 @@
  */
 package org.egov.wtms.application.service.collection;
 
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.DMD_STATUS_CHEQUE_BOUNCED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
 
@@ -260,9 +261,11 @@ public class WaterTaxCollection extends TaxCollection {
     public void updateWaterConnectionDetails(final EgDemand demand) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .getWaterConnectionDetailsByDemand(demand);
-        if (!waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE)) {
-            waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
-                    WaterTaxConstants.APPLICATION_STATUS_FEEPAID, WaterTaxConstants.MODULETYPE));
+        if (!waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE)
+                && !waterConnectionDetails.transitionCompleted()) {
+            if (APPLICATION_STATUS_ESTIMATENOTICEGEN.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()))
+                waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
+                        WaterTaxConstants.APPLICATION_STATUS_FEEPAID, WaterTaxConstants.MODULETYPE));
             Long approvalPosition;
             final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = waterConnectionDetailsService
                     .getInitialisedWorkFlowBean();

@@ -80,10 +80,12 @@
 <div class="row text-center">
 	<div class="add-margin">
 	<c:if test="${!waterConnectionDetails.legacy}">
-          <c:if test="${waterConnectionDetails.status.code == 'ESTIMATIONNOTICEGENERATED' && waterConnectionDetails.status.code != 'VERIFIED'  && (checkOperator ) }">
-                <button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.collect.fees"/></button>
+          <c:if test="${waterConnectionDetails.status.code == 'ESTIMATIONNOTICEGENERATED'  && checkOperator 
+          && ((waterConnectionDetails.applicationType.code=='REGLZNCONNECTION' && 
+				waterConnectionDetails.connectionStatus=='INPROGRESS') || (waterConnectionDetails.connectionStatus=='ACTIVE'))}">
+                <button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button>
             </c:if>
-            <c:if test="${waterConnectionDetails.status.code == 'ESTIMATIONNOTICEGENERATED' && ( citizenRole && !checkOperator) }">
+            <c:if test="${waterConnectionDetails.status.code == 'ESTIMATIONNOTICEGENERATED' && citizenRole && !checkOperator }">
                 <button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button>
             </c:if>
             <c:if test="${waterConnectionDetails.status.code == 'SANCTIONED' && waterConnectionDetails.connectionType == 'METERED' && checkOperator && waterTaxDueforParent > 0}">
