@@ -122,7 +122,6 @@
 					<th><spring:message code="lbl.event.enddate" /></th>
 					<th><spring:message code="lbl.event.endtime" /></th>
 					<th><spring:message code="lbl.event.host" /></th>
-					<th><spring:message code="lbl.event.location" /></th>
 					<th><spring:message code="lbl.event.address" /></th>
 					<th><spring:message code="lbl.event.eventType" /></th>
 					<th><spring:message code="lbl.event.ispaid" /></th>
@@ -147,7 +146,6 @@
 							<td><c:out value="${listVar.details.endHH}" />:<c:out
 									value="${listVar.details.endMM}" /></td>
 							<td><c:out value="${listVar.address.eventHost}" /></td>
-							<td><c:out value="${listVar.address.eventLocation}" /></td>
 							<td><c:out value="${listVar.address.address}" /></td>
 							<td><c:out value="${listVar.eventType.name}" /></td>
 							<td><c:choose>
@@ -164,7 +162,7 @@
 				</c:if>
 				<c:if test="${empty eventList}">
 					<tr class="odd">
-						<td colspan="13" class="dataTables_empty" valign="top"><spring:message code="lbl.norecords" /></td>
+						<td colspan="12" class="dataTables_empty" valign="top"><spring:message code="lbl.norecords" /></td>
 					</tr>
 				</c:if>
 			</tbody>

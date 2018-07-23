@@ -156,15 +156,9 @@
 						</div>
 						<div class="row add-border">
 							<div class="col-xs-3 add-margin">
-								<spring:message code="lbl.event.location" />
-							</div>
-							<div class="col-xs-3 add-margin view-content">
-								<c:out value="${event.address.eventLocation}" />
-							</div>
-							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.event.address" />
 							</div>
-							<div class="col-xs-3 add-margin view-content">
+							<div class="col-xs-9 add-margin view-content">
 								<c:out value="${event.address.address}" />
 							</div>
 						</div>

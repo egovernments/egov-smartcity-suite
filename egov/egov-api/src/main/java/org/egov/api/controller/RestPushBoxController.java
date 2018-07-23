@@ -48,10 +48,10 @@
 
 package org.egov.api.controller;
 
+import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.egov.api.controller.core.ApiUrl.SEND_NOTIFICATIONS;
 import static org.egov.api.controller.core.ApiUrl.UPDATE_USER_TOKEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.apache.commons.lang.StringUtils.EMPTY;
 
 import javax.validation.Valid;
 
@@ -87,12 +87,12 @@ public class RestPushBoxController extends ApiController {
     public @ResponseBody ResponseEntity<String> updateToken(@Valid @RequestBody UserTokenRequest userTokenRequest,
             BindingResult errors) {
         ApiResponse res = ApiResponse.newInstance();
-        
+
         if (errors.hasErrors()) {
             String errorMessage = EMPTY;
-            for (FieldError fieldError : errors.getFieldErrors()) {
-                errorMessage = errorMessage.concat(fieldError.getField().concat(" ").concat(fieldError.getDefaultMessage()).concat(" <br>"));
-            }
+            for (FieldError fieldError : errors.getFieldErrors())
+                errorMessage = errorMessage
+                        .concat(fieldError.getField().concat(" ").concat(fieldError.getDefaultMessage()).concat(" <br>"));
             return res.error(errorMessage);
         }
 

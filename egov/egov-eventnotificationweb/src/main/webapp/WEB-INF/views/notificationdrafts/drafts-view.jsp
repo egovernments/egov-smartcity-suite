@@ -56,7 +56,7 @@
 
 				<div class="panel-heading">
 					<div class="panel-title">
-						<spring:message code="lbl.event.search" />
+						<spring:message code="lbl.draft.search" />
 					</div>
 				</div>
 				<div class="form-group">
@@ -90,7 +90,7 @@
 </div>
 <div class="row">
 	<div class="col-md-12 table-header text-left">
-		<spring:message code="title.event.view.all" />
+		<spring:message code="title.draft.view.all" />
 		<button type='button' class='btn btn-primary' id="buttonSubmit"
 			style="float: right;">
 			<spring:message code='lbl.add' />

@@ -53,7 +53,7 @@ import org.springframework.context.annotation.PropertySource;
 @Configuration
 @PropertySource(name = "pushboxApplicationProperties", value = {
         "classpath:config/firebase-application-config.properties",
-        "classpath:config/pushbox-override-${env}.properties"}, ignoreResourceNotFound = true)
+        "classpath:config/pushbox-override-${env}.properties" }, ignoreResourceNotFound = true)
 public class PushboxApplicationProperties {
-    
+
 }
