@@ -65,6 +65,7 @@ public class PropertyMaterlizeView implements Serializable {
     private String propertyAddress;
     private PropertyTypeMaster propTypeMstrID;
     private Boundary ward;
+    private Boundary electionWard;
     private Boundary zone;
     private Boundary street;
     private Boundary block;
@@ -159,6 +160,14 @@ public class PropertyMaterlizeView implements Serializable {
 
     public void setWard(final Boundary ward) {
         this.ward = ward;
+    }
+
+    public Boundary getElectionWard() {
+        return electionWard;
+    }
+
+    public void setElectionWard(Boundary electionWard) {
+        this.electionWard = electionWard;
     }
 
     public Boundary getZone() {
