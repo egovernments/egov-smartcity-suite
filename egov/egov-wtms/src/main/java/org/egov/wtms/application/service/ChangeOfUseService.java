@@ -47,6 +47,10 @@
  */
 package org.egov.wtms.application.service;
 
+import static org.egov.wtms.masters.entity.enums.ConnectionStatus.ACTIVE;
+import static org.egov.wtms.masters.entity.enums.ConnectionStatus.INACTIVE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CHANGEOFUSE;
+
 import java.math.BigDecimal;
 
 import org.egov.infra.admin.master.service.UserService;
@@ -160,7 +164,15 @@ public class ChangeOfUseService {
                 .getApplicationProcessTime(connectionDetails.getApplicationType(), connectionDetails.getCategory());
         if (appProcessTime != null)
             connectionDetails.setDisposalDate(waterConnectionDetailsService.getDisposalDate(connectionDetails, appProcessTime));
-        final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsRepository.save(connectionDetails);
+        WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsRepository.save(connectionDetails);
+        WaterConnectionDetails primaryApplication = waterConnectionDetailsRepository
+                .findConnectionDetailsByConsumerCodeAndConnectionStatus(
+                        waterConnectionDetails.getConnection().getConsumerCode(), ACTIVE);
+        if (primaryApplication != null) {
+            primaryApplication.setConnectionStatus(INACTIVE);
+            primaryApplication.setIsHistory(true);
+            waterConnectionDetailsRepository.saveAndFlush(primaryApplication);
+        }
         connectionAddressService.createConnectionAddress(waterConnectionDetails);
         final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = waterConnectionDetailsService
                 .getInitialisedWorkFlowBean();

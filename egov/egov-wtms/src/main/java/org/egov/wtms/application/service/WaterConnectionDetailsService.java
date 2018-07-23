@@ -1573,17 +1573,6 @@ public class WaterConnectionDetailsService {
     }
 
     public WaterConnectionDetails updateApplicationStatus(WaterConnectionDetails waterConnectionDetails) {
-        if (CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())) {
-            WaterConnectionDetails connectionToBeDeactivated = waterConnectionDetailsRepository
-                    .findConnectionDetailsByConsumerCodeAndConnectionStatus(
-                            waterConnectionDetails.getConnection().getConsumerCode(), ACTIVE);
-            if (connectionToBeDeactivated != null) {
-                connectionToBeDeactivated.setConnectionStatus(INACTIVE);
-                connectionToBeDeactivated.setIsHistory(true);
-                waterConnectionDetailsRepository.saveAndFlush(connectionToBeDeactivated);
-            }
-        }
-
         if (NEWCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
                 || ADDNLCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
                 || CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())) {

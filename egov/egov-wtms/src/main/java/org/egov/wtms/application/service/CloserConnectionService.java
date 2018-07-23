@@ -47,6 +47,7 @@
  */
 package org.egov.wtms.application.service;
 
+import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WORKFLOW_CLOSUREADDITIONALRULE;
 
 import java.math.BigDecimal;
@@ -144,9 +145,9 @@ public class CloserConnectionService {
     @Transactional
     public WaterConnectionDetails updatecloserConnection(final WaterConnectionDetails waterConnectionDetails,
             final Long approvalPosition, final String approvalComent,
-            final String workFlowAction, final String sourceChannel) {
+            final String workFlowAction) {
 
-        waterConnectionDetailsService.applicationStatusChange(waterConnectionDetails, workFlowAction, "");
+        waterConnectionDetailsService.applicationStatusChange(waterConnectionDetails, workFlowAction, EMPTY);
         final WaterConnectionDetails savedwaterConnectionDetails = waterConnectionDetailsRepository
                 .saveAndFlush(waterConnectionDetails);
 
