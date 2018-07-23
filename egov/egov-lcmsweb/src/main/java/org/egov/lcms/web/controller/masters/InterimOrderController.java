@@ -71,23 +71,23 @@ import java.util.List;
 @Controller
 @RequestMapping("/interimorder")
 public class InterimOrderController {
-    private final static String INTERIMORDER_NEW = "interimorder-new";
-    private final static String INTERIMORDER_RESULT = "interimorder-result";
-    private final static String INTERIMORDER_EDIT = "interimorder-edit";
-    private final static String INTERIMORDER_VIEW = "interimorder-view";
-    private final static String INTERIMORDER_SEARCH = "interimorder-search";
+    
+    private static final String INTERIMORDER_NEW = "interimorder-new";
+    private static final String INTERIMORDER_RESULT = "interimorder-result";
+    private static final String INTERIMORDER_EDIT = "interimorder-edit";
+    private static final String INTERIMORDER_VIEW = "interimorder-view";
+    private static final String INTERIMORDER_SEARCH = "interimorder-search";
+    private static final String INTERIMORDER = "interimOrder";
+    
     @Autowired
     private InterimOrderService interimOrderService;
+    
     @Autowired
     private MessageSource messageSource;
 
-    private void prepareNewForm(final Model model) {
-    }
-
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String newForm(final Model model) {
-        prepareNewForm(model);
-        model.addAttribute("interimOrder", new InterimOrder());
+        model.addAttribute(INTERIMORDER, new InterimOrder());
         return INTERIMORDER_NEW;
     }
 
@@ -95,7 +95,6 @@ public class InterimOrderController {
     public String create(@Valid @ModelAttribute final InterimOrder interimOrder, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs) {
         if (errors.hasErrors()) {
-            prepareNewForm(model);
             return INTERIMORDER_NEW;
         }
         interimOrderService.create(interimOrder);
@@ -106,8 +105,7 @@ public class InterimOrderController {
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
     public String edit(@PathVariable("id") final Long id, final Model model) {
         final InterimOrder interimOrder = interimOrderService.findOne(id);
-        prepareNewForm(model);
-        model.addAttribute("interimOrder", interimOrder);
+        model.addAttribute(INTERIMORDER, interimOrder);
         return INTERIMORDER_EDIT;
     }
 
@@ -115,7 +113,6 @@ public class InterimOrderController {
     public String update(@Valid @ModelAttribute final InterimOrder interimOrder, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs) {
         if (errors.hasErrors()) {
-            prepareNewForm(model);
             return INTERIMORDER_EDIT;
         }
         interimOrderService.update(interimOrder);
@@ -126,23 +123,21 @@ public class InterimOrderController {
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
     public String view(@PathVariable("id") final Long id, final Model model) {
         final InterimOrder interimOrder = interimOrderService.findOne(id);
-        prepareNewForm(model);
-        model.addAttribute("interimOrder", interimOrder);
+        model.addAttribute(INTERIMORDER, interimOrder);
         return INTERIMORDER_VIEW;
     }
 
     @RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
     public String result(@PathVariable("id") final Long id, final Model model) {
         final InterimOrder interimOrder = interimOrderService.findOne(id);
-        model.addAttribute("interimOrder", interimOrder);
+        model.addAttribute(INTERIMORDER, interimOrder);
         return INTERIMORDER_RESULT;
     }
 
     @RequestMapping(value = "/search/{mode}", method = RequestMethod.GET)
     public String search(@PathVariable("mode") final String mode, final Model model) {
         final InterimOrder interimOrder = new InterimOrder();
-        prepareNewForm(model);
-        model.addAttribute("interimOrder", interimOrder);
+        model.addAttribute(INTERIMORDER, interimOrder);
         return INTERIMORDER_SEARCH;
 
     }

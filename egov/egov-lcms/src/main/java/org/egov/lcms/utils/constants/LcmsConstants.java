@@ -81,7 +81,7 @@ public class LcmsConstants {
     public static final String YEARLY_REPORT = "yearlyReport";
     public static final String MONTH = "month(legalcase.casedate)";
     public static final String EGW_STATUS = "egwStatus";
-    public static final String LEGAL_CASE = "Legalcase";
+    public static final String LEGALCASE = "legalCase";
     public static final String LEGAL_CASE_DEPARTMENT = "legalcaseDepartment";
     public static final String LEGAL_CASE_DEPARTMENT_AND_DEPARTMENT = "legalcaseDepartment.department";
     public static final String LEGAL_CASE_STATUS = "Legalcase.egwStatus";
@@ -248,5 +248,7 @@ public class LcmsConstants {
     
     public static final String LCMS_VIEW_ACCESS_ROLE = "LCMS VIEW ACCESS";
     public static final String STANDING_COUNSEL_ROLE = "STANDING_COUNSEL";
+    
+    public static final String MODE = "mode";
 
 }

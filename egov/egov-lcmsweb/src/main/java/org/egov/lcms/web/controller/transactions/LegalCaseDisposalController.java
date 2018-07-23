@@ -51,6 +51,7 @@ import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.entity.LegalCaseDisposal;
 import org.egov.lcms.transactions.service.LegalCaseDisposalService;
 import org.egov.lcms.transactions.service.LegalCaseService;
+import org.egov.lcms.utils.constants.LcmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -68,6 +69,9 @@ import java.text.ParseException;
 @Controller
 @RequestMapping(value = "/legalcasedisposal")
 public class LegalCaseDisposalController {
+    
+    private static final String LEGLCASEDISPOSAL = "legalCaseDisposal";
+
 
     @Autowired
     private LegalCaseDisposalService legalCaseDisposalService;
@@ -84,9 +88,9 @@ public class LegalCaseDisposalController {
     public String newForm(@ModelAttribute final LegalCaseDisposal legalCaseDisposal, final Model model,
             @RequestParam("lcNumber") final String lcNumber, final HttpServletRequest request) {
         final LegalCase legalCase = getLegalCase(lcNumber);
-        model.addAttribute("legalCase", legalCase);
-        model.addAttribute("legalCaseDisposal", legalCaseDisposal);
-        model.addAttribute("mode", "create");
+        model.addAttribute(LcmsConstants.LEGALCASE, legalCase);
+        model.addAttribute(LEGLCASEDISPOSAL, legalCaseDisposal);
+        model.addAttribute(LcmsConstants.MODE, "create");
         return "legalcaseDisposal-new";
     }
 
@@ -96,14 +100,14 @@ public class LegalCaseDisposalController {
             final HttpServletRequest request) throws ParseException {
         final LegalCase legalCase = getLegalCase(lcNumber);
         if (errors.hasErrors()) {
-            model.addAttribute("legalcase", legalCase);
+            model.addAttribute(LcmsConstants.LEGALCASE, legalCase);
             return "legalcaseDisposal-new";
         } else
             legalCaseDisposal.setLegalCase(legalCase);
         legalCaseDisposalService.persist(legalCaseDisposal);
-        redirectAttrs.addFlashAttribute("legalCaseDisposal", legalCaseDisposal);
+        redirectAttrs.addFlashAttribute(LEGLCASEDISPOSAL, legalCaseDisposal);
         model.addAttribute("message", "Case is closed successfully.");
-        model.addAttribute("mode", "create");
+        model.addAttribute(LcmsConstants.MODE, "create");
         return "legalcaseDisposal-success";
     }
 

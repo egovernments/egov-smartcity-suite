@@ -76,6 +76,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/counterAffidavit")
 public class CounterAffidavitController {
+    
+   
 
     @Autowired
     private LegalCaseService legalCaseService;
@@ -92,12 +94,12 @@ public class CounterAffidavitController {
         final String advocateUserRole = checkLoggedInUserIsAdvocate(securityUtils.getCurrentUser());
         model.addAttribute("advocateUserRole", advocateUserRole);
         if (legalCase.getCounterAffidavits().isEmpty()) {
-            model.addAttribute("mode", "countercreate");
-            model.addAttribute("legalCase", legalCase);
+            model.addAttribute(LcmsConstants.LEGALCASE, "countercreate");
+            model.addAttribute(LcmsConstants.LEGALCASE, legalCase);
         } else {
             final LegalCase newlegalCase = getPwrDocuments(legalCase);
-            model.addAttribute("mode", "counteredit");
-            model.addAttribute("legalCase", newlegalCase);
+            model.addAttribute(LcmsConstants.MODE, "counteredit");
+            model.addAttribute(LcmsConstants.LEGALCASE, newlegalCase);
         }
         return "legalcase-caaffidavit";
     }
@@ -115,11 +117,11 @@ public class CounterAffidavitController {
             return "legalcase-caaffidavit";
         else
             legalCaseService.update(legalCase, files);
-        redirectAttrs.addFlashAttribute("legalCase", legalCase);
+        redirectAttrs.addFlashAttribute(LcmsConstants.LEGALCASE, legalCase);
         model.addAttribute("message", "Counter Affidavit Details Saved Successfully.");
         final LegalCase newlegalCase = getPwrDocuments(legalCase);
-        model.addAttribute("legalcase", newlegalCase);
-        model.addAttribute("mode", "view");
+        model.addAttribute(LcmsConstants.LEGALCASE, newlegalCase);
+        model.addAttribute(LcmsConstants.MODE, "view");
         return "legalcase-ca-success";
 
     }

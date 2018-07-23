@@ -59,24 +59,24 @@
 							<spring:message code="lbl.code" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
-							${casetypeMaster.code}</div>
+							${caseTypeMaster.code}</div>
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.casetype" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
-							${casetypeMaster.caseType}</div>
+							${caseTypeMaster.caseType}</div>
 					</div>
 					<div class="row add-border">
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.description" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
-							${casetypeMaster.notes}</div>
+							${caseTypeMaster.notes}</div>
 							<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.ordernumber" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
-							${casetypeMaster.ordernumber}</div>
+							${caseTypeMaster.ordernumber}</div>
 					</div>
 					<div class="row add-border">
 					
@@ -85,7 +85,7 @@
 						</div>
 						<div class="col-sm-3 add-margin view-content">
 							<c:choose>
-								<c:when test="${casetypeMaster.active == 'true'}">
+								<c:when test="${caseTypeMaster.active == 'true'}">
 									<c:out value="YES" />
 								</c:when>
 								<c:otherwise>
