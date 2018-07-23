@@ -62,7 +62,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EventRepository extends EventRepositoryCustom, JpaRepository<Event, Long> {
 
-    List<Event> findByStatusAndStartDateLessThanAndEndDateGreaterThanOrderByIdDesc(String status, Date startDate, Date endDate);
+    List<Event> findByStatusAndStartDateIsBetweenOrderByIdDesc(String status, Date startDate, Date endDate);
 
     List<Event> findByStatusOrderByIdDesc(String status);
 

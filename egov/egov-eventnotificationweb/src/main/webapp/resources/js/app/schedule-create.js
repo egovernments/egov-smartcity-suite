@@ -82,5 +82,11 @@ $(document)
 
 										return true;
 									});
+					
+					$("#draftType > option").each(function() {
+						if($(this).attr('selected') != 'selected'){
+							$(this).attr("disabled","disabled")
+						}
+					});
 
 				});

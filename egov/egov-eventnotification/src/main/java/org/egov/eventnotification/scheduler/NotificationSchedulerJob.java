@@ -122,20 +122,23 @@ public class NotificationSchedulerJob extends QuartzJobBean {
             MDC.put("appname", String.format("%s-%s", moduleName, jobCtx.getJobDetail().getKey().getName()));
             for (String tenant : cities) {
                 MDC.put("ulbcode", tenant);
+                try {
+                    prepareThreadLocal(tenant);
 
-                prepareThreadLocal(tenant);
+                    Long scheduleId = Long.parseLong(String.valueOf(dataMap.get("scheduleId")));
 
-                Long scheduleId = Long.parseLong(String.valueOf(dataMap.get("scheduleId")));
-                Schedule notificationSchedule = scheduleService.getScheduleById(scheduleId);
+                    Schedule notificationSchedule = scheduleService.getScheduleById(scheduleId);
 
-                executeBusiness(notificationSchedule, String.valueOf(dataMap.get("contextURL")));
+                    executeBusiness(notificationSchedule, String.valueOf(dataMap.get("contextURL")));
 
-                notificationSchedule.setStatus("Complete");
-                scheduleService.updateScheduleStatus(notificationSchedule);
+                    notificationSchedule.setStatus("Complete");
+                    scheduleService.updateScheduleStatus(notificationSchedule);
+                } catch (Exception ex) {
+                    // Ignoring and logging exception since exception will cause multi city scheduler to fail for all remaining
+                    // cities.
+                    LOGGER.error("Unable to complete execution Scheduler ", ex);
+                }
             }
-        } catch (Exception ex) {
-            LOGGER.error("Unable to complete execution Scheduler ", ex);
-            throw new JobExecutionException("Unable to execute batch job Scheduler", ex, false);
         } finally {
             ApplicationThreadLocals.clearValues();
             MDC.clear();

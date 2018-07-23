@@ -52,7 +52,6 @@ import static org.egov.eventnotification.utils.Constants.ACTIVE;
 import static org.egov.eventnotification.utils.Constants.EVENT_HOST;
 import static org.egov.eventnotification.utils.Constants.NAME;
 import static org.egov.infra.utils.DateUtils.endOfGivenDate;
-import static org.egov.infra.utils.DateUtils.endOfToday;
 import static org.egov.infra.utils.DateUtils.startOfToday;
 
 import java.util.Date;
@@ -78,12 +77,12 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
 
     @Override
     public List<Event> searchEvent(EventSearch eventSearch) {
-        Date startDate;
-        Date endDate;
-        if (eventSearch.getEventDateType().equalsIgnoreCase("upcoming")) {
+        Date startDate = null;
+        Date endDate = null;
+        if (isNotBlank(eventSearch.getEventDateType()) && eventSearch.getEventDateType().equalsIgnoreCase("upcoming")) {
             startDate = startOfToday().plusDays(7).toDate();
-            endDate = endOfToday().plusDays(6).toDate();
-        } else {
+            endDate = endOfGivenDate(new DateTime(startDate)).plusDays(6).toDate();
+        } else if (isNotBlank(eventSearch.getEventDateType()) && eventSearch.getEventDateType().equalsIgnoreCase("ongoing")) {
             startDate = startOfToday().toDate();
             endDate = endOfGivenDate(new DateTime(startDate)).plusDays(6).toDate();
         }
@@ -98,8 +97,8 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
         if (isNotBlank(eventSearch.getEventHost()))
             criteria.add(Restrictions.ilike(EVENT_HOST, eventSearch.getEventHost(), MatchMode.ANYWHERE));
 
-        criteria.add(Restrictions.le("evnt.startDate", startDate));
-        criteria.add(Restrictions.ge("evnt.endDate", endDate));
+        if (startDate != null && endDate != null)
+            criteria.add(Restrictions.between("evnt.startDate", startDate, endDate));
         criteria.add(Restrictions.eq("evnt.status", ACTIVE.toUpperCase()));
 
         criteria.addOrder(Order.desc("evnt.id"));
