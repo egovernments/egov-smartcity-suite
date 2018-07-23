@@ -49,7 +49,6 @@ package org.egov.wtms.application.service;
 
 import static org.egov.wtms.masters.entity.enums.ConnectionStatus.ACTIVE;
 import static org.egov.wtms.masters.entity.enums.ConnectionStatus.INACTIVE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.CHANGEOFUSE;
 
 import java.math.BigDecimal;
 
