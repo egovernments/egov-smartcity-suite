@@ -52,6 +52,7 @@ import org.egov.lcms.transactions.entity.Judgment;
 import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.service.JudgmentService;
 import org.egov.lcms.transactions.service.LegalCaseService;
+import org.egov.lcms.utils.constants.LcmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -71,6 +72,8 @@ import java.text.ParseException;
 @Controller
 @RequestMapping("/judgment")
 public class JudgmentController {
+    
+    private static final String JUDGMENT = "judgment";
 
     @Autowired
     private JudgmentTypeService judgmentTypeService;
@@ -90,9 +93,9 @@ public class JudgmentController {
             @RequestParam("lcNumber") final String lcNumber, final HttpServletRequest request, final Model model) {
         prepareNewForm(model);
         final LegalCase legalCase = getLegalCase(lcNumber, request);
-        model.addAttribute("legalCase", legalCase);
-        model.addAttribute("judgment", judgment);
-        model.addAttribute("mode", "create");
+        model.addAttribute(LcmsConstants.LEGALCASE, legalCase);
+        model.addAttribute(JUDGMENT, judgment);
+        model.addAttribute(LcmsConstants.MODE, "create");
         return "judgment-new";
     }
 
@@ -109,13 +112,13 @@ public class JudgmentController {
         final LegalCase legalcase = getLegalCase(lcNumber, request);
         if (errors.hasErrors()) {
             prepareNewForm(model);
-            model.addAttribute("legalcase", legalcase);
+            model.addAttribute(LcmsConstants.LEGALCASE, legalcase);
             return "judgment-new";
         } else
             judgment.setLegalCase(legalcase);
         judgmentService.persist(judgment, files);
-        model.addAttribute("mode", "view");
-        redirectAttrs.addFlashAttribute("judgment", judgment);
+        model.addAttribute(LcmsConstants.MODE, "view");
+        redirectAttrs.addFlashAttribute(JUDGMENT, judgment);
         model.addAttribute("message", "Judgment Created successfully.");
         return "judgment-success";
 

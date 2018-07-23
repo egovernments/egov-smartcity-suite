@@ -47,8 +47,10 @@
  */
 package org.egov.lcms.web.controller.masters;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.egov.lcms.masters.entity.CourtMaster;
 import org.egov.lcms.masters.service.CourtMasterService;
 import org.egov.lcms.masters.service.CourtTypeMasterService;
@@ -66,21 +68,26 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.validation.Valid;
-import java.util.List;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping("/courtmaster")
 public class CourtMasterController {
-    private final static String COURTMASTER_NEW = "courtmaster-new";
-    private final static String COURTMASTER_RESULT = "courtmaster-result";
-    private final static String COURTMASTER_EDIT = "courtmaster-edit";
-    private final static String COURTMASTER_VIEW = "courtmaster-view";
-    private final static String COURTMASTER_SEARCH = "courtmaster-search";
+    
+    private static final String COURTMASTER_NEW = "courtmaster-new";
+    private static final String COURTMASTER_RESULT = "courtmaster-result";
+    private static final String COURTMASTER_EDIT = "courtmaster-edit";
+    private static final String COURTMASTER_VIEW = "courtmaster-view";
+    private static final String COURTMASTER_SEARCH = "courtmaster-search";
+    private static final String COURTMASTER = "courtMaster";
+    
     @Autowired
     private CourtMasterService courtMasterService;
+    
     @Autowired
     private MessageSource messageSource;
+    
     @Autowired
     private CourtTypeMasterService courtTypeMasterService;
 
@@ -91,7 +98,7 @@ public class CourtMasterController {
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String newForm(final Model model) {
         prepareNewForm(model);
-        model.addAttribute("courtMaster", new CourtMaster());
+        model.addAttribute(COURTMASTER, new CourtMaster());
         return COURTMASTER_NEW;
     }
 
@@ -111,7 +118,7 @@ public class CourtMasterController {
     public String edit(@PathVariable("id") final Long id, final Model model) {
         final CourtMaster courtMaster = courtMasterService.findOne(id);
         prepareNewForm(model);
-        model.addAttribute("courtMaster", courtMaster);
+        model.addAttribute(COURTMASTER, courtMaster);
         return COURTMASTER_EDIT;
     }
 
@@ -131,14 +138,14 @@ public class CourtMasterController {
     public String view(@PathVariable("id") final Long id, final Model model) {
         final CourtMaster courtMaster = courtMasterService.findOne(id);
         prepareNewForm(model);
-        model.addAttribute("courtMaster", courtMaster);
+        model.addAttribute(COURTMASTER, courtMaster);
         return COURTMASTER_VIEW;
     }
 
     @RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
     public String result(@PathVariable("id") final Long id, final Model model) {
         final CourtMaster courtMaster = courtMasterService.findOne(id);
-        model.addAttribute("courtMaster", courtMaster);
+        model.addAttribute(COURTMASTER, courtMaster);
         return COURTMASTER_RESULT;
     }
 
@@ -146,7 +153,7 @@ public class CourtMasterController {
     public String search(@PathVariable("mode") final String mode, final Model model) {
         final CourtMaster courtMaster = new CourtMaster();
         prepareNewForm(model);
-        model.addAttribute("courtMaster", courtMaster);
+        model.addAttribute(COURTMASTER, courtMaster);
         return COURTMASTER_SEARCH;
 
     }
@@ -155,7 +162,7 @@ public class CourtMasterController {
     public @ResponseBody String ajaxsearch(@PathVariable("mode") final String mode, final Model model,
             @ModelAttribute final CourtMaster courtMaster) {
         final List<CourtMaster> searchResultList = courtMasterService.search(courtMaster);
-       return new StringBuilder("{ \"data\":").append(toSearchResultJson(searchResultList)).append("}")
+        return new StringBuilder("{ \"data\":").append(toSearchResultJson(searchResultList)).append("}")
                 .toString();
     }
 

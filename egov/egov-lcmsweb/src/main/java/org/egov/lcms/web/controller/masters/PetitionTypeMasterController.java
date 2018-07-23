@@ -72,15 +72,20 @@ import java.util.List;
 @Controller
 @RequestMapping("/petitiontypemaster")
 public class PetitionTypeMasterController {
-    private final static String PETITIONTYPEMASTER_NEW = "petitiontypemaster-new";
-    private final static String PETITIONTYPEMASTER_RESULT = "petitiontypemaster-result";
-    private final static String PETITIONTYPEMASTER_EDIT = "petitiontypemaster-edit";
-    private final static String PETITIONTYPEMASTER_VIEW = "petitiontypemaster-view";
-    private final static String PETITIONTYPEMASTER_SEARCH = "petitiontypemaster-search";
+    
+    private static final String PETITIONTYPEMASTER_NEW = "petitiontypemaster-new";
+    private static final String PETITIONTYPEMASTER_RESULT = "petitiontypemaster-result";
+    private static final String PETITIONTYPEMASTER_EDIT = "petitiontypemaster-edit";
+    private static final String PETITIONTYPEMASTER_VIEW = "petitiontypemaster-view";
+    private static final String PETITIONTYPEMASTER_SEARCH = "petitiontypemaster-search";
+    private static final String PETITIONTYPEMASTER = "petitionTypeMaster";
+    
     @Autowired
     private PetitionTypeMasterService petitionTypeMasterService;
+    
     @Autowired
     private MessageSource messageSource;
+    
     @Autowired
     private CourtTypeMasterService courtTypeMasterService;
 
@@ -91,7 +96,7 @@ public class PetitionTypeMasterController {
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String newForm(final Model model) {
         prepareNewForm(model);
-        model.addAttribute("petitionTypeMaster", new PetitionTypeMaster());
+        model.addAttribute(PETITIONTYPEMASTER, new PetitionTypeMaster());
         return PETITIONTYPEMASTER_NEW;
     }
 
@@ -112,7 +117,7 @@ public class PetitionTypeMasterController {
     public String edit(@PathVariable("id") final Long id, final Model model) {
         final PetitionTypeMaster petitionTypeMaster = petitionTypeMasterService.findOne(id);
         prepareNewForm(model);
-        model.addAttribute("petitionTypeMaster", petitionTypeMaster);
+        model.addAttribute(PETITIONTYPEMASTER, petitionTypeMaster);
         return PETITIONTYPEMASTER_EDIT;
     }
 
@@ -133,14 +138,14 @@ public class PetitionTypeMasterController {
     public String view(@PathVariable("id") final Long id, final Model model) {
         final PetitionTypeMaster petitionTypeMaster = petitionTypeMasterService.findOne(id);
         prepareNewForm(model);
-        model.addAttribute("petitionTypeMaster", petitionTypeMaster);
+        model.addAttribute(PETITIONTYPEMASTER, petitionTypeMaster);
         return PETITIONTYPEMASTER_VIEW;
     }
 
     @RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
     public String result(@PathVariable("id") final Long id, final Model model) {
         final PetitionTypeMaster petitionTypeMaster = petitionTypeMasterService.findOne(id);
-        model.addAttribute("petitionTypeMaster", petitionTypeMaster);
+        model.addAttribute(PETITIONTYPEMASTER, petitionTypeMaster);
         return PETITIONTYPEMASTER_RESULT;
     }
 
@@ -148,7 +153,7 @@ public class PetitionTypeMasterController {
     public String search(@PathVariable("mode") final String mode, final Model model) {
         final PetitionTypeMaster petitionTypeMaster = new PetitionTypeMaster();
         prepareNewForm(model);
-        model.addAttribute("petitionTypeMaster", petitionTypeMaster);
+        model.addAttribute(PETITIONTYPEMASTER, petitionTypeMaster);
         return PETITIONTYPEMASTER_SEARCH;
 
     }

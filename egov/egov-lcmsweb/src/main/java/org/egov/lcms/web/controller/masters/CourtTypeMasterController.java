@@ -71,23 +71,23 @@ import java.util.List;
 @Controller
 @RequestMapping("/courttypemaster")
 public class CourtTypeMasterController {
-    private final static String COURTTYPEMASTER_NEW = "courttypemaster-new";
-    private final static String COURTTYPEMASTER_RESULT = "courttypemaster-result";
-    private final static String COURTTYPEMASTER_EDIT = "courttypemaster-edit";
-    private final static String COURTTYPEMASTER_VIEW = "courttypemaster-view";
-    private final static String COURTTYPEMASTER_SEARCH = "courttypemaster-search";
+    
+    private static final String COURTTYPEMASTER_NEW = "courttypemaster-new";
+    private static final String COURTTYPEMASTER_RESULT = "courttypemaster-result";
+    private static final String COURTTYPEMASTER_EDIT = "courttypemaster-edit";
+    private static final String COURTTYPEMASTER_VIEW = "courttypemaster-view";
+    private static final String COURTTYPEMASTER_SEARCH = "courttypemaster-search";
+    private static final String COURTTYPEMASTER = "courtTypeMaster";
+    
     @Autowired
     private CourtTypeMasterService courtTypeMasterService;
+    
     @Autowired
     private MessageSource messageSource;
 
-    private void prepareNewForm(final Model model) {
-    }
-
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String newForm(final Model model) {
-        prepareNewForm(model);
-        model.addAttribute("courtTypeMaster", new CourtTypeMaster());
+        model.addAttribute(COURTTYPEMASTER, new CourtTypeMaster());
         return COURTTYPEMASTER_NEW;
     }
 
@@ -95,7 +95,6 @@ public class CourtTypeMasterController {
     public String create(@Valid @ModelAttribute final CourtTypeMaster courtTypeMaster, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs) {
         if (errors.hasErrors()) {
-            prepareNewForm(model);
             return COURTTYPEMASTER_NEW;
         }
         courtTypeMasterService.create(courtTypeMaster);
@@ -106,8 +105,7 @@ public class CourtTypeMasterController {
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
     public String edit(@PathVariable("id") final Long id, final Model model) {
         final CourtTypeMaster courtTypeMaster = courtTypeMasterService.findOne(id);
-        prepareNewForm(model);
-        model.addAttribute("courtTypeMaster", courtTypeMaster);
+        model.addAttribute(COURTTYPEMASTER, courtTypeMaster);
         return COURTTYPEMASTER_EDIT;
     }
 
@@ -115,7 +113,6 @@ public class CourtTypeMasterController {
     public String update(@Valid @ModelAttribute final CourtTypeMaster courtTypeMaster, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs) {
         if (errors.hasErrors()) {
-            prepareNewForm(model);
             return COURTTYPEMASTER_EDIT;
         }
         courtTypeMasterService.update(courtTypeMaster);
@@ -126,23 +123,21 @@ public class CourtTypeMasterController {
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
     public String view(@PathVariable("id") final Long id, final Model model) {
         final CourtTypeMaster courtTypeMaster = courtTypeMasterService.findOne(id);
-        prepareNewForm(model);
-        model.addAttribute("courtTypeMaster", courtTypeMaster);
+        model.addAttribute(COURTTYPEMASTER, courtTypeMaster);
         return COURTTYPEMASTER_VIEW;
     }
 
     @RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
     public String result(@PathVariable("id") final Long id, final Model model) {
         final CourtTypeMaster courtTypeMaster = courtTypeMasterService.findOne(id);
-        model.addAttribute("courtTypeMaster", courtTypeMaster);
+        model.addAttribute(COURTTYPEMASTER, courtTypeMaster);
         return COURTTYPEMASTER_RESULT;
     }
 
     @RequestMapping(value = "/search/{mode}", method = RequestMethod.GET)
     public String search(@PathVariable("mode") final String mode, final Model model) {
         final CourtTypeMaster courtTypeMaster = new CourtTypeMaster();
-        prepareNewForm(model);
-        model.addAttribute("courtTypeMaster", courtTypeMaster);
+        model.addAttribute(COURTTYPEMASTER, courtTypeMaster);
         return COURTTYPEMASTER_SEARCH;
 
     }

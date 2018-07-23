@@ -73,11 +73,14 @@ import com.google.gson.GsonBuilder;
 @Controller
 @RequestMapping("/judgmenttype")
 public class JudgmentTypeController {
-    private final static String JUDGMENTTYPE_NEW = "judgmenttype-new";
-    private final static String JUDGMENTTYPE_RESULT = "judgmenttype-result";
-    private final static String JUDGMENTTYPE_EDIT = "judgmenttype-edit";
-    private final static String JUDGMENTTYPE_VIEW = "judgmenttype-view";
-    private final static String JUDGMENTTYPE_SEARCH = "judgmenttype-search";
+    
+    private static final String JUDGMENTTYPE_NEW = "judgmenttype-new";
+    private static final String JUDGMENTTYPE_RESULT = "judgmenttype-result";
+    private static final String JUDGMENTTYPE_EDIT = "judgmenttype-edit";
+    private static final String JUDGMENTTYPE_VIEW = "judgmenttype-view";
+    private static final String JUDGMENTTYPE_SEARCH = "judgmenttype-search";
+    private static final String JUDGMENTTYPE = "judgmentType";
+    
     @Autowired
     private JudgmentTypeService judgmentTypeService;
     
@@ -87,7 +90,7 @@ public class JudgmentTypeController {
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String newForm(final Model model) {
-        model.addAttribute("judgmentType", new JudgmentType());
+        model.addAttribute(JUDGMENTTYPE, new JudgmentType());
         return JUDGMENTTYPE_NEW;
     }
 
@@ -105,7 +108,7 @@ public class JudgmentTypeController {
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
     public String edit(@PathVariable("id") final Long id, final Model model) {
         final JudgmentType judgmentType = judgmentTypeService.findOne(id);
-        model.addAttribute("judgmentType", judgmentType);
+        model.addAttribute(JUDGMENTTYPE, judgmentType);
         return JUDGMENTTYPE_EDIT;
     }
 
@@ -123,21 +126,21 @@ public class JudgmentTypeController {
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
     public String view(@PathVariable("id") final Long id, final Model model) {
         final JudgmentType judgmentType = judgmentTypeService.findOne(id);
-        model.addAttribute("judgmentType", judgmentType);
+        model.addAttribute(JUDGMENTTYPE, judgmentType);
         return JUDGMENTTYPE_VIEW;
     }
 
     @RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
     public String result(@PathVariable("id") final Long id, final Model model) {
         final JudgmentType judgmentType = judgmentTypeService.findOne(id);
-        model.addAttribute("judgmentType", judgmentType);
+        model.addAttribute(JUDGMENTTYPE, judgmentType);
         return JUDGMENTTYPE_RESULT;
     }
 
     @RequestMapping(value = "/search/{mode}", method = RequestMethod.GET)
     public String search(@PathVariable("mode") final String mode, final Model model) {
         final JudgmentType judgmentType = new JudgmentType();
-        model.addAttribute("judgmentType", judgmentType);
+        model.addAttribute(JUDGMENTTYPE, judgmentType);
         return JUDGMENTTYPE_SEARCH;
 
     }

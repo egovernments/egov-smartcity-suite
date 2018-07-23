@@ -71,23 +71,23 @@ import java.util.List;
 @Controller
 @RequestMapping("/governmentdepartment")
 public class GovernmentDepartmentController {
-    private final static String GOVERNMENTDEPARTMENT_NEW = "governmentdepartment-new";
-    private final static String GOVERNMENTDEPARTMENT_RESULT = "governmentdepartment-result";
-    private final static String GOVERNMENTDEPARTMENT_EDIT = "governmentdepartment-edit";
-    private final static String GOVERNMENTDEPARTMENT_VIEW = "governmentdepartment-view";
-    private final static String GOVERNMENTDEPARTMENT_SEARCH = "governmentdepartment-search";
+    
+    private static final String GOVERNMENTDEPARTMENT_NEW = "governmentdepartment-new";
+    private static final String GOVERNMENTDEPARTMENT_RESULT = "governmentdepartment-result";
+    private static final String GOVERNMENTDEPARTMENT_EDIT = "governmentdepartment-edit";
+    private static final String GOVERNMENTDEPARTMENT_VIEW = "governmentdepartment-view";
+    private static final String GOVERNMENTDEPARTMENT_SEARCH = "governmentdepartment-search";
+    private static final String GOVERNMENTDEPARTMENT = "governmentDepartment";
+    
     @Autowired
     private GovernmentDepartmentService governmentDepartmentService;
+    
     @Autowired
     private MessageSource messageSource;
 
-    private void prepareNewForm(final Model model) {
-    }
-
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String newForm(final Model model) {
-        prepareNewForm(model);
-        model.addAttribute("governmentDepartment", new GovernmentDepartment());
+        model.addAttribute(GOVERNMENTDEPARTMENT, new GovernmentDepartment());
         return GOVERNMENTDEPARTMENT_NEW;
     }
 
@@ -95,7 +95,6 @@ public class GovernmentDepartmentController {
     public String create(@Valid @ModelAttribute final GovernmentDepartment governmentDepartment,
             final BindingResult errors, final Model model, final RedirectAttributes redirectAttrs) {
         if (errors.hasErrors()) {
-            prepareNewForm(model);
             return GOVERNMENTDEPARTMENT_NEW;
         }
         governmentDepartmentService.persist(governmentDepartment);
@@ -107,8 +106,7 @@ public class GovernmentDepartmentController {
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
     public String edit(@PathVariable("id") final Long id, final Model model) {
         final GovernmentDepartment governmentDepartment = governmentDepartmentService.findOne(id);
-        prepareNewForm(model);
-        model.addAttribute("governmentDepartment", governmentDepartment);
+        model.addAttribute(GOVERNMENTDEPARTMENT, governmentDepartment);
         return GOVERNMENTDEPARTMENT_EDIT;
     }
 
@@ -116,7 +114,6 @@ public class GovernmentDepartmentController {
     public String update(@Valid @ModelAttribute final GovernmentDepartment governmentDepartment,
             final BindingResult errors, final Model model, final RedirectAttributes redirectAttrs) {
         if (errors.hasErrors()) {
-            prepareNewForm(model);
             return GOVERNMENTDEPARTMENT_EDIT;
         }
         governmentDepartmentService.persist(governmentDepartment);
@@ -128,23 +125,21 @@ public class GovernmentDepartmentController {
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
     public String view(@PathVariable("id") final Long id, final Model model) {
         final GovernmentDepartment governmentDepartment = governmentDepartmentService.findOne(id);
-        prepareNewForm(model);
-        model.addAttribute("governmentDepartment", governmentDepartment);
+        model.addAttribute(GOVERNMENTDEPARTMENT, governmentDepartment);
         return GOVERNMENTDEPARTMENT_VIEW;
     }
 
     @RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
     public String result(@PathVariable("id") final Long id, final Model model) {
         final GovernmentDepartment governmentDepartment = governmentDepartmentService.findOne(id);
-        model.addAttribute("governmentDepartment", governmentDepartment);
+        model.addAttribute(GOVERNMENTDEPARTMENT, governmentDepartment);
         return GOVERNMENTDEPARTMENT_RESULT;
     }
 
     @RequestMapping(value = "/search/{mode}", method = RequestMethod.GET)
     public String search(@PathVariable("mode") final String mode, final Model model) {
         final GovernmentDepartment governmentDepartment = new GovernmentDepartment();
-        prepareNewForm(model);
-        model.addAttribute("governmentDepartment", governmentDepartment);
+        model.addAttribute(GOVERNMENTDEPARTMENT, governmentDepartment);
         return GOVERNMENTDEPARTMENT_SEARCH;
 
     }

@@ -51,6 +51,7 @@ import org.egov.lcms.transactions.entity.LegalCaseInterimOrder;
 import org.egov.lcms.transactions.entity.VacateStay;
 import org.egov.lcms.transactions.service.LegalCaseInterimOrderService;
 import org.egov.lcms.transactions.service.VacateStayService;
+import org.egov.lcms.utils.constants.LcmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -68,6 +69,10 @@ import java.util.List;
 @Controller
 @RequestMapping("/vacatestay")
 public class VacateStayController {
+    
+    private static final String VACATESTAY = "vacateStay";
+    private static final String LEGALCASEINTERIMORDER = "legalCaseInterimOrder";
+    private static final String LCNUMBER = "lcNumber";
 
     @Autowired
     private LegalCaseInterimOrderService legalCaseInterimOrderService;
@@ -84,11 +89,11 @@ public class VacateStayController {
         final List<VacateStay> vacateStayList = getLcInterimOrder(lcInterimOrderId).getVacateStay();
         if (!vacateStayList.isEmpty())
             vacateStay = vacateStayList.get(0);
-        model.addAttribute("legalCaseInterimOrder", legalCaseInterimOrder);
-        model.addAttribute("vacateStay", vacateStay);
-        model.addAttribute("lcNumber", legalCaseInterimOrder.getLegalCase().getLcNumber());
-        model.addAttribute("legalCase", legalCaseInterimOrder.getLegalCase());
-        model.addAttribute("mode", "create");
+        model.addAttribute(LEGALCASEINTERIMORDER, legalCaseInterimOrder);
+        model.addAttribute(VACATESTAY, vacateStay);
+        model.addAttribute(LCNUMBER, legalCaseInterimOrder.getLegalCase().getLcNumber());
+        model.addAttribute(LcmsConstants.LEGALCASE, legalCaseInterimOrder.getLegalCase());
+        model.addAttribute(LcmsConstants.MODE, "create");
         return "vacatestay-new";
     }
 
@@ -105,16 +110,16 @@ public class VacateStayController {
 
         final LegalCaseInterimOrder legalCaseInterimOrder = getLcInterimOrder(lcInterimOrderId);
         if (errors.hasErrors()) {
-            model.addAttribute("legalCaseInterimOrder", legalCaseInterimOrder);
+            model.addAttribute(LEGALCASEINTERIMORDER, legalCaseInterimOrder);
             return "vacatestay-new";
         } else
             vacateStay.setLegalCaseInterimOrder(legalCaseInterimOrder);
         vacateStayService.persist(vacateStay);
-        model.addAttribute("mode", "create");
+        model.addAttribute(LcmsConstants.MODE, "create");
         model.addAttribute("lcInterimOrderId", legalCaseInterimOrder.getId());
-        model.addAttribute("lcNumber", legalCaseInterimOrder.getLegalCase().getLcNumber());
-        model.addAttribute("legalCase", legalCaseInterimOrder.getLegalCase());
-        redirectAttrs.addFlashAttribute("vacateStay", vacateStay);
+        model.addAttribute(LCNUMBER, legalCaseInterimOrder.getLegalCase().getLcNumber());
+        model.addAttribute(LcmsConstants.LEGALCASE, legalCaseInterimOrder.getLegalCase());
+        redirectAttrs.addFlashAttribute(VACATESTAY, vacateStay);
         model.addAttribute("message", "Vacate Stay Saved successfully.");
         return "vacatestay-success";
 

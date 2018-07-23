@@ -51,6 +51,7 @@ import org.egov.lcms.transactions.entity.BipartisanDetails;
 import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.entity.LegalCaseAdvocate;
 import org.egov.lcms.transactions.service.LegalCaseService;
+import org.egov.lcms.utils.constants.LcmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -71,6 +72,8 @@ import java.util.List;
 @RequestMapping("/standingCouncil")
 public class StandingCouncilController {
 
+    private static final String LEGALCASEADVOCATE = "legalCaseAdvocate";
+    
     @Autowired
     private LegalCaseService legalCaseService;
 
@@ -81,9 +84,9 @@ public class StandingCouncilController {
         final List<LegalCaseAdvocate> legalAdvocateList = getLegalCase(lcNumber).getLegalCaseAdvocates();
         if (!legalAdvocateList.isEmpty())
             legalCaseAdvocate = legalAdvocateList.get(0);
-        model.addAttribute("legalCase", legalCase);
+        model.addAttribute(LcmsConstants.LEGALCASE, legalCase);
         model.addAttribute("seniourAdvisRequired", legalCase.getIsSenioradvrequired());
-        model.addAttribute("legalCaseAdvocate", legalCaseAdvocate);
+        model.addAttribute(LEGALCASEADVOCATE, legalCaseAdvocate);
         return "legalcase-standingCouncil";
     }
 
@@ -99,15 +102,15 @@ public class StandingCouncilController {
             throws ParseException {
         final LegalCase legalCase = getLegalCase(lcNumber);
         if (errors.hasErrors()) {
-            model.addAttribute("legalcase", legalCase);
+            model.addAttribute(LcmsConstants.LEGALCASE, legalCase);
             return "legalcase-standingCouncil";
         } else
             legalCaseAdvocate.setLegalCase(legalCase);
         legalCaseService.saveStandingCouncilEntity(legalCaseAdvocate);
-        redirectAttrs.addFlashAttribute("legalCaseAdvocate", legalCaseAdvocate);
+        redirectAttrs.addFlashAttribute(LEGALCASEADVOCATE, legalCaseAdvocate);
         model.addAttribute("message", "Standing Council Saved successfully.");
-        model.addAttribute("legalcase", legalCase);
-        model.addAttribute("legalCaseAdvocate", legalCaseAdvocate);
+        model.addAttribute(LcmsConstants.LEGALCASE, legalCase);
+        model.addAttribute(LEGALCASEADVOCATE, legalCaseAdvocate);
         final List<BipartisanDetails> pettempList = new ArrayList<>();
         final List<BipartisanDetails> respoTempList = new ArrayList<>();
         for (final BipartisanDetails dd : legalCase.getBipartisanDetails())
@@ -115,7 +118,7 @@ public class StandingCouncilController {
                 pettempList.add(dd);
             else
                 respoTempList.add(dd);
-        model.addAttribute("mode", "view");
+        model.addAttribute(LcmsConstants.MODE, "view");
         model.addAttribute("pettempList", pettempList);
         model.addAttribute("respoTempList", respoTempList);
         return "legalcasedetails-view";

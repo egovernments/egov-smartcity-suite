@@ -57,6 +57,7 @@ import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.entity.LegalCaseUploadDocuments;
 import org.egov.lcms.transactions.service.LegalCaseService;
 import org.egov.lcms.utils.LegalCaseUtil;
+import org.egov.lcms.utils.constants.LcmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -93,8 +94,8 @@ public class ViewAndEditLegalCaseController extends GenericLegalCaseController {
     public String view(@RequestParam("lcNumber") final String lcNumber, final Model model) {
         final LegalCase legalCase = legalCaseService.findByLcNumber(lcNumber);
         final LegalCase newlegalCase = getLegalCaseDocuments(legalCase);
-        model.addAttribute("legalCase", newlegalCase);
-        model.addAttribute("mode", "view");
+        model.addAttribute(LcmsConstants.LEGALCASE, newlegalCase);
+        model.addAttribute(LcmsConstants.MODE, "view");
         return "legalcasedetails-view";
     }
 
@@ -102,7 +103,7 @@ public class ViewAndEditLegalCaseController extends GenericLegalCaseController {
     public String edit(@RequestParam("lcNumber") final String lcNumber, final Model model) {
         final LegalCase legalCase = legalCaseService.findByLcNumber(lcNumber);
         final LegalCase newlegalCase = getLegalCaseDocuments(legalCase);
-        model.addAttribute("legalCase", newlegalCase);
+        model.addAttribute(LcmsConstants.LEGALCASE, newlegalCase);
         setDropDownValues(model);
         final String[] casenumberyear = legalCase.getCaseNumber().split("/");
         legalCase.setCaseNumber(casenumberyear[0]);
@@ -110,7 +111,7 @@ public class ViewAndEditLegalCaseController extends GenericLegalCaseController {
             legalCase.setWpYear(casenumberyear[1]);
         legalCase.getBipartisanPetitionerDetailsList().addAll(legalCase.getPetitioners());
         legalCase.getBipartisanRespondentDetailsList().addAll(legalCase.getRespondents());
-        model.addAttribute("mode", "edit");
+        model.addAttribute(LcmsConstants.MODE, "edit");
         return "legalcase-edit";
     }
 
@@ -124,9 +125,9 @@ public class ViewAndEditLegalCaseController extends GenericLegalCaseController {
         legalCaseService.persist(legalCase, files);
         setDropDownValues(model);
         final LegalCase newlegalCase = getLegalCaseDocuments(legalCase);
-        model.addAttribute("legalCase", newlegalCase);
-        redirectAttrs.addFlashAttribute("legalCase", newlegalCase);
-        model.addAttribute("mode", "view");
+        model.addAttribute(LcmsConstants.LEGALCASE, newlegalCase);
+        redirectAttrs.addFlashAttribute(LcmsConstants.LEGALCASE, newlegalCase);
+        model.addAttribute(LcmsConstants.MODE, "view");
         model.addAttribute("message", "LegalCase updated successfully.");
         return "legalcase-success";
     }

@@ -61,6 +61,7 @@ import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.service.JudgmentService;
 import org.egov.lcms.transactions.service.LegalCaseService;
 import org.egov.lcms.utils.LegalCaseUtil;
+import org.egov.lcms.utils.constants.LcmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -75,6 +76,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping(value = "/judgment")
 public class EditJudgmentController {
+    
+    private static final String JUDGMENT = "judgment";
 
     @Autowired
     private JudgmentTypeService judgmentTypeService;
@@ -102,9 +105,9 @@ public class EditJudgmentController {
         final List<Judgment> judgementList = getLegalCase(lcNumber).getJudgment();
         final Judgment judgmentObj = judgementList.get(0);
         prepareNewForm(model);
-        model.addAttribute("judgment", judgmentObj);
+        model.addAttribute(JUDGMENT, judgmentObj);
         getJudgmentDocuments(judgmentObj);
-        model.addAttribute("mode", "edit");
+        model.addAttribute(LcmsConstants.MODE, "edit");
         return "judgment-edit";
     }
 
@@ -119,9 +122,9 @@ public class EditJudgmentController {
         }
         judgmentService.persist(judgment, files);
         getJudgmentDocuments(judgment);
-        redirectAttrs.addFlashAttribute("judgment", judgment);
+        redirectAttrs.addFlashAttribute(JUDGMENT, judgment);
         model.addAttribute("message", "Judgment updated successfully.");
-        model.addAttribute("mode", "view");
+        model.addAttribute(LcmsConstants.MODE, "view");
         return "judgment-success";
     }
 

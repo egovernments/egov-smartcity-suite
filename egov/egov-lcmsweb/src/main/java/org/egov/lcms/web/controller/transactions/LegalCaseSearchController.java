@@ -101,9 +101,8 @@ public class LegalCaseSearchController extends GenericLegalCaseController {
             @ModelAttribute final LegalCaseSearchResult legalCaseSearchResult, final HttpServletRequest request) {
         final List<LegalCaseSearchResult> legalcaseSearchList = searchLegalCaseService
                 .getLegalCaseReport(legalCaseSearchResult);
-        final String result = new StringBuilder("{ \"data\":").append(
+        return new StringBuilder("{ \"data\":").append(
                 JsonUtils.toJSON(legalcaseSearchList, LegalCaseSearchResult.class, LegalCaseSearchJsonAdaptor.class))
                 .append("}").toString();
-        return result;
     }
 }
