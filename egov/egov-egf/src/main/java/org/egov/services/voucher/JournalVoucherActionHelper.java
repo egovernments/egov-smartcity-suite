@@ -78,12 +78,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Transactional(readOnly = true)
 @Service
@@ -207,11 +202,12 @@ public class JournalVoucherActionHelper {
         final User user = securityUtils.getCurrentUser();
         Position pos = null;
         Assignment wfInitiator = null;
-        if (null != voucherHeader.getId())
-            wfInitiator = getWorkflowInitiator(voucherHeader);
 
         if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
-                final String stateValue = FinancialConstants.WORKFLOW_STATE_REJECTED;
+            //TODO : wfInitiator is checked only in case of reject, need to fix this.
+            wfInitiator = getWorkflowInitiator(voucherHeader);
+
+            final String stateValue = FinancialConstants.WORKFLOW_STATE_REJECTED;
                 voucherHeader.transition().progressWithStateCopy().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
                         .withStateValue(stateValue).withDateInfo(currentDate.toDate())
                         .withOwner(wfInitiator.getPosition()).withNextAction(FinancialConstants.WF_STATE_EOA_Approval_Pending);
