@@ -90,7 +90,7 @@ public class LegalCaseInterimOrderController {
 
     @RequestMapping(value = "/new/", method = RequestMethod.GET)
     public String viewForm(@ModelAttribute("legalCaseInterimOrder") final LegalCaseInterimOrder legalCaseInterimOrder,
-            @RequestParam("lcNumber") final String lcNumber, final Model model, final HttpServletRequest request) {
+            @RequestParam(LCNUMBER) final String lcNumber, final Model model, final HttpServletRequest request) {
         final LegalCase legalCase = getLegalCase(lcNumber, request);
         model.addAttribute(LcmsConstants.LEGALCASE, legalCase);
         model.addAttribute(INTERIMORDERS, interimOrderService.getActiveInterimOrder());
@@ -101,7 +101,7 @@ public class LegalCaseInterimOrderController {
     }
 
     @ModelAttribute
-    private LegalCase getLegalCase(@RequestParam("lcNumber") final String lcNumber, final HttpServletRequest request) {
+    private LegalCase getLegalCase(@RequestParam(LCNUMBER) final String lcNumber, final HttpServletRequest request) {
         return legalcaseService.findByLcNumber(lcNumber);
     }
 
@@ -109,7 +109,7 @@ public class LegalCaseInterimOrderController {
     public String create(
             @Valid @ModelAttribute("legalCaseInterimOrder") final LegalCaseInterimOrder legalCaseInterimOrder,
             final BindingResult errors, final RedirectAttributes redirectAttrs,
-            @RequestParam("lcNumber") final String lcNumber, @RequestParam("file") final MultipartFile[] files,
+            @RequestParam(LCNUMBER) final String lcNumber, @RequestParam("file") final MultipartFile[] files,
             final HttpServletRequest request, final Model model) throws IOException, ParseException {
         final LegalCase legalCase = getLegalCase(lcNumber, request);
         if (errors.hasErrors()) {
@@ -128,7 +128,7 @@ public class LegalCaseInterimOrderController {
     }
 
     @RequestMapping(value = "/list/", method = RequestMethod.GET)
-    public String getInterimOrderList(final Model model, @RequestParam("lcNumber") final String lcNumber,
+    public String getInterimOrderList(final Model model, @RequestParam(LCNUMBER) final String lcNumber,
             final HttpServletRequest request) {
         final LegalCase legalCase = getLegalCase(lcNumber, request);
         final List<LegalCaseInterimOrder> lcInterimOrderList = legalCaseInterimOrderService.findByLCNumber(lcNumber);
