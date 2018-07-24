@@ -194,7 +194,8 @@ public class NewConnectionService {
         final ConnectionCategory connectionCategory = connectionCategoryService.findOne(categoryId);
         if (connectionCategory != null && documentRequired != null
                 && connectionCategory.getName().equalsIgnoreCase(CATEGORY_BPL)
-                && documentRequired.equalsIgnoreCase(applicationDocument.getDocumentNames().getDocumentName()))
+                && documentRequired.equalsIgnoreCase(applicationDocument.getDocumentNames().getDocumentName()) 
+                && applicationDocument.getDocumentNames().isRequired())
             validateDocumentsForBPLCategory(applicationDocs, applicationDocument, resultBinder, i);
         else {
             validateDocumentsRequired(applicationDocument, resultBinder, i);
