@@ -43,9 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- *
  */
-
 package org.egov.adtax.workflow;
 
 import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.ADTAX_ROLEFORNONEMPLOYEE;
@@ -74,10 +72,12 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pims.commons.Position;
@@ -87,12 +87,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import static org.egov.infra.utils.ApplicationConstant.NA;
 
-
-
 @Service
 @Transactional(readOnly = true)
 public class AdvertisementWorkFlowService {
-
     @Autowired
     private AppConfigValueService appConfigValuesService;
     @Autowired
@@ -103,6 +100,8 @@ public class AdvertisementWorkFlowService {
     protected AssignmentService assignmentService;
     @Autowired
     private EisCommonService eisCommonService;
+    @Autowired
+    private UserService userService;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -112,7 +111,7 @@ public class AdvertisementWorkFlowService {
     }
 
     /**
-     * Returns Designation for third party user
+     * Returns Designation for third party user.
      *
      * @return
      */
@@ -124,7 +123,7 @@ public class AdvertisementWorkFlowService {
     }
 
     /**
-     * Returns Department for property tax workflow
+     * Returns Department for property tax workflow.
      *
      * @return
      */
@@ -135,7 +134,7 @@ public class AdvertisementWorkFlowService {
     }
 
     /**
-     * Checks whether user is an employee or not
+     * Checks whether user is an employee or not.
      *
      * @param user
      * @return
@@ -143,15 +142,16 @@ public class AdvertisementWorkFlowService {
     public Boolean isEmployee(final User user) {
         for (final Role role : user.getRoles()) {
             for (final AppConfigValues appconfig : getThirdPartyUserRoles()) {
-                if (role != null && appconfig != null && role.getName().equals(appconfig.getValue()))
+                if (role != null && appconfig != null && role.getName().equals(appconfig.getValue())) {
                     return false;
+                }
             }
         }
         return true;
     }
 
     /**
-     * Returns third party user roles
+     * Returns third party user roles.
      *
      * @return
      */
@@ -162,7 +162,7 @@ public class AdvertisementWorkFlowService {
     }
 
     /**
-     * Checks whether user is csc operator or not
+     * Checks whether user is csc operator or not.
      *
      * @param user
      * @return
@@ -172,14 +172,15 @@ public class AdvertisementWorkFlowService {
                 ADTAX_ROLEFORNONEMPLOYEE);
         String rolesForNonEmployee = !appConfigValue.isEmpty() ? appConfigValue.get(0).getValue() : null;
         for (final Role role : user.getRoles()) {
-            if (role != null && rolesForNonEmployee != null && role.getName().equalsIgnoreCase(rolesForNonEmployee))
+            if (role != null && rolesForNonEmployee != null && role.getName().equalsIgnoreCase(rolesForNonEmployee)) {
                 return true;
+            }
         }
         return false;
     }
 
     /**
-     * Returns Designation for property tax csc operator workflow
+     * Returns Designation for property tax csc operator workflow.
      *
      * @return
      */
@@ -190,7 +191,7 @@ public class AdvertisementWorkFlowService {
     }
 
     /**
-     * Returns Department for property tax csc operator workflow
+     * Returns Department for property tax csc operator workflow.
      *
      * @return
      */
@@ -214,17 +215,19 @@ public class AdvertisementWorkFlowService {
                         && advertisementPermitDetail.getAdvertisement().getElectionWard() != null
                                 ? advertisementPermitDetail.getAdvertisement().getElectionWard().getId() : null;
 
-                if (boundaryId == null)
-                    assignment = assignmentService.findByDepartmentAndDesignation(deptId, desgId);
-                else
-
+                if (boundaryId != null){
                     assignment = assignmentService.findAssignmentByDepartmentDesignationAndBoundary(deptId, desgId,
                             boundaryId);
-                if (!assignment.isEmpty())
+                } else {
+                    assignment = assignmentService.findByDepartmentAndDesignation(deptId, desgId);
+                }
+                if (!assignment.isEmpty()) {
                     break;
+                }
             }
-            if (!assignment.isEmpty())
+            if (!assignment.isEmpty()) {
                 break;
+            }
         }
         return !assignment.isEmpty() ? assignment.get(0) : null;
     }
@@ -232,7 +235,7 @@ public class AdvertisementWorkFlowService {
     /**
      * Getting User assignment based on designation ,department and zone boundary Reading Designation and Department from
      * appconfig values and Values should be 'Senior Assistant,Junior Assistant' for designation and
-     * 'Revenue,Accounts,Administration' for department
+     * 'Revenue,Accounts,Administration' for department.
      *
      * @param basicProperty
      * @return
@@ -247,11 +250,13 @@ public class AdvertisementWorkFlowService {
             for (final String desg : designation) {
                 assignment = assignmentService.findByDepartmentAndDesignation(departmentService
                         .getDepartmentByName(dept).getId(), designationService.getDesignationByName(desg).getId());
-                if (!assignment.isEmpty())
+                if (!assignment.isEmpty()) {
                     break;
+                }
             }
-            if (!assignment.isEmpty())
+            if (!assignment.isEmpty()) {
                 break;
+            }
         }
         return !assignment.isEmpty() ? assignment.get(0) : null;
     }
@@ -260,8 +265,9 @@ public class AdvertisementWorkFlowService {
         Assignment assignment;
         assignment = getAssignmentByDeptDesigElecWard(advertisementPermitDetail);
 
-        if (assignment == null)
+        if (assignment == null) {
             assignment = getUserPositionByZone(advertisementPermitDetail);
+        }
         return assignment;
     }
 
@@ -280,21 +286,17 @@ public class AdvertisementWorkFlowService {
                                     new Date());
                     wfInitiator = getActiveAssignment(assignment);
                 }
+            } else if (!isEmployee(advertisementPermitDetail.getCreatedBy())|| "anonymous".equalsIgnoreCase(advertisementPermitDetail.getCreatedBy().getName()) ) {
+                wfInitiator = getUserAssignment(advertisementPermitDetail.getCreatedBy(), advertisementPermitDetail);
             } else {
-
-                if (!isEmployee(advertisementPermitDetail.getCreatedBy())|| advertisementPermitDetail.getCreatedBy().getName().equalsIgnoreCase("anonymous") ) {
-                    wfInitiator = getUserAssignment(advertisementPermitDetail.getCreatedBy(), advertisementPermitDetail);
-                } else {
-                    wfInitiator = assignmentService.getPrimaryAssignmentForUser(advertisementPermitDetail
-                            .getCreatedBy().getId());
-                }
+                wfInitiator = assignmentService.getPrimaryAssignmentForUser(advertisementPermitDetail
+                        .getCreatedBy().getId());
             }
         }
         return wfInitiator;
     }
 
     private Assignment getUserAssignmentByPassingPositionAndUser(final User user, Position position) {
-
         Assignment wfInitiatorAssignment = null;
 
         if (user != null && position != null) {
@@ -310,7 +312,6 @@ public class AdvertisementWorkFlowService {
     }
 
     public Boolean validateUserHasSamePositionAsInitiator(final Long userId, Position position) {
-
         Boolean userHasSamePosition = false;
 
         if (userId != null && position != null) {
@@ -326,52 +327,52 @@ public class AdvertisementWorkFlowService {
 
     public Assignment getUserAssignment(User user, AdvertisementPermitDetail advertisementPermitDetail) {
         Assignment assignment;
-        if (isCscOperator(user)|| user.getUsername().equalsIgnoreCase("anonymous"))
+        if (isCscOperator(user)|| "anonymous".equalsIgnoreCase(user.getUsername())) {
             assignment = getMappedAssignmentForCscOperator(advertisementPermitDetail);
-            
-        else
+        } else {
             assignment = getWorkFlowInitiator(advertisementPermitDetail);
+        }
         return assignment;
     }
 
     private Assignment getActiveAssignment(List<Assignment> assignment) {
         Assignment wfInitiator = null;
-        for (final Assignment assign : assignment)
+        for (final Assignment assign : assignment) {
             if (assign.getEmployee().isActive()) {
                 wfInitiator = assign;
                 break;
             }
+        }
         return wfInitiator;
     }
     
     public String getApproverName(final Long approvalPosition) {
         Assignment assignment = null;
         List<Assignment> asignList = null;
-        if (approvalPosition != null)
+        if (approvalPosition != null) {
             assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(approvalPosition, new Date());
+        }
         if (assignment != null) {
             asignList = new ArrayList<>();
             asignList.add(assignment);
-        } else if (assignment == null)
+        } else {
             asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
+        }
         return !asignList.isEmpty() ? asignList.get(0).getEmployee().getName() : "";
     }
     
-
-    /**
-     * @param advertisementPermitDetail
-     * @return
-     */
     public List<Map<String, Object>> getHistory(final AdvertisementPermitDetail advertisementPermitDetail) {
         User user;
+        Department userDepartment;
         final List<Map<String, Object>> historyTable = new ArrayList<>();
         final State<Position> state = advertisementPermitDetail.getState();
         final Map<String, Object> map = new HashMap<>(0);
         String username;
         if (null != state) {
             if (!advertisementPermitDetail.getStateHistory().isEmpty()
-                    && advertisementPermitDetail.getStateHistory() != null)
+                    && advertisementPermitDetail.getStateHistory() != null) {
                 Collections.reverse(advertisementPermitDetail.getStateHistory());
+            }
             Map<String, Object> historyMap;
             for (final StateHistory<Position> stateHistory : advertisementPermitDetail.getStateHistory()) {
                 historyMap = new HashMap<>(0);
@@ -382,21 +383,20 @@ public class AdvertisementWorkFlowService {
                 historyMap.put(STATUS, stateHistory.getValue());
                 final Position owner = stateHistory.getOwnerPosition();
                 user = stateHistory.getOwnerUser();
-                if (null != user) {
+                if (user!=null) {
+                    userDepartment=eisCommonService.getDepartmentForUser(user.getId());
                     historyMap.put(USER, user.getUsername() + "::" + user.getName());
                     historyMap.put(DEPARTMENT,
-                            null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
-                                    .getDepartmentForUser(user.getId()).getName() : "");
-                } else if (null != owner && null != owner.getDeptDesig()) {
-                    if (eisCommonService.getUserForPosition(owner.getId(), new Date()) == null) {
-                        username = NA;
-                    } else {
-                        user = eisCommonService.getUserForPosition(owner.getId(), new Date());
+                             userDepartment!=null ? userDepartment.getName() : "");
+                } else if (owner!=null &&  owner.getDeptDesig()!=null) {
+                    user=eisCommonService.getUserForPosition(owner.getId(), new Date());
+                    if (user != null) 
                         username = user.getUsername() + "::" + user.getName();
-                    }
+                    else
+                        username = NA;
                     historyMap
                             .put(USER, username);
-                    historyMap.put(DEPARTMENT, (owner.getDeptDesig() == null && owner.getDeptDesig().getDepartment() == null) ? NA
+                    historyMap.put(DEPARTMENT, owner.getDeptDesig() == null && owner.getDeptDesig().getDepartment() == null ? NA
                             : owner.getDeptDesig().getDepartment().getName());
                 }
                 historyTable.add(historyMap);
@@ -407,25 +407,48 @@ public class AdvertisementWorkFlowService {
             map.put(STATUS, state.getValue());
             final Position ownerPosition = state.getOwnerPosition();
             user = state.getOwnerUser();
-            if (null != user) {
+            if (user != null) {
+                userDepartment = eisCommonService.getDepartmentForUser(user.getId());
                 map.put(USER, user.getUsername() + "::" + user.getName());
-                map.put(DEPARTMENT, null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
-                        .getDepartmentForUser(user.getId()).getName() : "");
-            } else if (null != ownerPosition && null != ownerPosition.getDeptDesig()) {
-
-                if (eisCommonService.getUserForPosition(ownerPosition.getId(), new Date()) == null) {
-                    username = NA;
-                } else {
-                    user = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
+                map.put(DEPARTMENT, userDepartment != null ? userDepartment.getName() : "");
+            } else if (ownerPosition != null && ownerPosition.getDeptDesig() != null) {
+                user = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
+                if (user != null)
                     username = user.getUsername() + "::" + user.getName();
-                }
+                else 
+                    username = NA;
+
                 map.put(USER, username);
-                map.put(DEPARTMENT, null != ownerPosition.getDeptDesig().getDepartment() ? ownerPosition
+                map.put(DEPARTMENT, ownerPosition.getDeptDesig().getDepartment() != null ? ownerPosition
                         .getDeptDesig().getDepartment().getName() : "");
             }
             historyTable.add(map);
         }
         return historyTable;
+    }
+
+    public User getApproverByStatePosition(AdvertisementPermitDetail advertisementPermitDetail) {
+        Assignment assignment = null;
+        User user = null;
+        List<Assignment> asignList = null;
+
+        if (advertisementPermitDetail.getState() != null && advertisementPermitDetail.getState().getOwnerPosition() != null) {
+            assignment = assignmentService
+                    .getPrimaryAssignmentForPositionAndDate(advertisementPermitDetail.getState().getOwnerPosition()
+                            .getId(), new Date());
+            if (assignment != null) {
+                asignList = new ArrayList<>();
+                asignList.add(assignment);
+            } else
+                asignList = assignmentService.getAssignmentsForPosition(
+                        advertisementPermitDetail.getState().getOwnerPosition().getId(),
+                        new Date());
+            if (!asignList.isEmpty()) {
+                user = userService.getUserById(asignList.get(0).getEmployee().getId());
+            }
+
+        }
+        return user;
     }
 
 }
