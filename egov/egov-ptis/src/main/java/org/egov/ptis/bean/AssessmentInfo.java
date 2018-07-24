@@ -50,6 +50,7 @@ package org.egov.ptis.bean;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.ptis.domain.model.OwnerInformation;
 
+import java.math.BigDecimal;
 import java.util.List;
 public class AssessmentInfo {
 
@@ -90,8 +91,8 @@ public class AssessmentInfo {
     private String surveyNumber=StringUtils.EMPTY;
     private String pattaNumber=StringUtils.EMPTY;
     private Float vacantLandArea=0.0f;
-    private Double marketValue=0.0d;
-    private Double currentCapitalValue=0.0d;
+    private BigDecimal marketValue=BigDecimal.ZERO;
+    private BigDecimal currentCapitalValue=BigDecimal.ZERO;
     private String effectiveDate=StringUtils.EMPTY;
     private String northBoundary=StringUtils.EMPTY;
     private String southBoundary=StringUtils.EMPTY;
@@ -403,20 +404,20 @@ public class AssessmentInfo {
         this.vacantLandArea = vacantLandArea;
     }
 
-    public Double getMarketValue() {
+    public BigDecimal getMarketValue() {
         return marketValue;
     }
 
-    public void setMarketValue(Double marketValue) {
+    public void setMarketValue(BigDecimal marketValue) {
         this.marketValue = marketValue;
     }
 
-    public Double getCurrentCapitalValue() {
+    public BigDecimal getCurrentCapitalValue() {
         return currentCapitalValue;
     }
 
-    public void setCurrentCapitalValue(Double currentCapitalValue) {
-        this.currentCapitalValue = currentCapitalValue;
+    public void setCurrentCapitalValue(BigDecimal bigDecimal) {
+        this.currentCapitalValue = bigDecimal;
     }
 
     public String getEffectiveDate() {

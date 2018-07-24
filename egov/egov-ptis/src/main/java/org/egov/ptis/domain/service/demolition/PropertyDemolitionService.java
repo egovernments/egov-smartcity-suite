@@ -491,8 +491,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         if (null == propertyDetail.getCurrentCapitalValue())
         	errorMessages.put("propertyDetail.currentCapitalValue", "currCapitalValue.required");
         if (propertyDetail.getCurrentCapitalValue() != null
-                && propertyDetail.getCurrentCapitalValue() < Double
-                        .parseDouble(VACANTLAND_MIN_CUR_CAPITALVALUE))
+                && propertyDetail.getCurrentCapitalValue().compareTo(new BigDecimal(VACANTLAND_MIN_CUR_CAPITALVALUE)) == -1)
         	errorMessages.put("minvalue.capitalValue" , "minvalue.capitalValue");
         if (StringUtils.isBlank(property.getBasicProperty().getPropertyID().getNorthBoundary()))
         	errorMessages.put("basicProperty.propertyID.northBoundary", "northBoundary.required");

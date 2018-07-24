@@ -409,9 +409,9 @@ public class APTaxCalculator implements PropertyTaxCalculator {
 
         unitTaxCalculationInfo.setFloorNumber("VACANT");
         unitTaxCalculationInfo.setBaseRateEffectiveDate(occupancyDate);
-        unitTaxCalculationInfo.setCapitalValue(new BigDecimal(property.getPropertyDetail().getCurrentCapitalValue()));
+        unitTaxCalculationInfo.setCapitalValue(property.getPropertyDetail().getCurrentCapitalValue());
         unitTaxCalculationInfo.setMarketValue(property.getPropertyDetail().getMarketValue() != null
-                ? new BigDecimal(property.getPropertyDetail().getMarketValue()) : BigDecimal.ZERO);
+                ? property.getPropertyDetail().getMarketValue() : BigDecimal.ZERO);
         unitTaxCalculationInfo.setNetARV(
                 unitTaxCalculationInfo.getCapitalValue().compareTo(unitTaxCalculationInfo.getMarketValue()) < 0
                         ? unitTaxCalculationInfo.getMarketValue() : unitTaxCalculationInfo.getCapitalValue());
@@ -478,7 +478,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
     }
 
     public BigDecimal convertYardToSquareMeters(final Float vacantLandArea) {
-        final Float areaInSqMts = vacantLandArea * new Float(SQUARE_YARD_TO_SQUARE_METER_VALUE);
+        final Float areaInSqMts = vacantLandArea * SQUARE_YARD_TO_SQUARE_METER_VALUE;
         return new BigDecimal(areaInSqMts).setScale(2, BigDecimal.ROUND_HALF_UP);
     }
 

@@ -1188,8 +1188,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         propDetail.setFieldVerificationDate(propertyDetail.getFieldVerificationDate());
         propDetail.setFloorDetails(propertyDetail.getFloorDetails());
         propDetail.setPropertyDetailsID(propertyDetail.getPropertyDetailsID());
-        propDetail.setWater_Meter_Num(propertyDetail.getWater_Meter_Num());
-        propDetail.setElec_Meter_Num(propertyDetail.getElec_Meter_Num());
+        propDetail.setWaterMeterNum(propertyDetail.getWaterMeterNum());
+        propDetail.setElecMeterNum(propertyDetail.getElecMeterNum());
         propDetail.setNoofFloors(numOfFloors);
         propDetail.setFieldIrregular(propertyDetail.getFieldIrregular());
         propDetail.setDateOfCompletion(propertyDetail.getDateOfCompletion());
