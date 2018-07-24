@@ -106,6 +106,7 @@ public class CommonWaterTaxSearchController {
     private static final String ERR_MIGRATED_CONN = "err.migratedconnection.modify.notallowed";
     private static final String ERR_DATAENTRY_MODIFY = "err.modifynotallowed.collectiondone";
     private static final String COLLECTION_ALREADY_DONE = "invalid.collecttax";
+    private static final String ERR_CLOSURE_NOT_ALLOWED="err.application.inprogress";
 
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
@@ -191,7 +192,12 @@ public class CommonWaterTaxSearchController {
             waterConnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(
                     searchRequest.getConsumerCode(), ConnectionStatus.CLOSED);
         else
-            waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(searchRequest.getConsumerCode());
+            waterConnectionDetails = waterConnectionDetailsService
+                    .findByConsumerCodeAndConnectionStatus(searchRequest.getConsumerCode(), ConnectionStatus.INPROGRESS);
+
+        if (waterConnectionDetails == null)
+            waterConnectionDetails = waterConnectionDetailsService
+                    .findByConsumerCodeAndConnectionStatus(searchRequest.getConsumerCode(), ConnectionStatus.ACTIVE);
 
         if (waterConnectionDetails == null) {
             resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, INVALID_CONSUMERNUMBER);
@@ -252,8 +258,10 @@ public class CommonWaterTaxSearchController {
                 return "redirect:/application/close/" + waterConnectionDetails.getConnection().getConsumerCode();
             else {
                 model.addAttribute(MODE, ERROR_MODE);
-                model.addAttribute(APPLICATIONTYPE, applicationType);
-                resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, INVALID_CONSUMERNUMBER);
+                resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, ERR_CLOSURE_NOT_ALLOWED,
+                        new String[] { waterConnectionDetails.getApplicationType().getName(),
+                                waterConnectionDetails.getApplicationNumber() },
+                        ERR_CLOSURE_NOT_ALLOWED);
                 return COMMON_FORM_SEARCH;
             }
 
