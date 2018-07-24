@@ -48,6 +48,7 @@
 package org.egov.restapi.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @SuppressWarnings("serial")
 public class VacantLandDetails implements Serializable {
@@ -55,8 +56,8 @@ public class VacantLandDetails implements Serializable {
 	private String surveyNumber;
 	private String pattaNumber;
 	private Float vacantLandArea;
-	private Double marketValue;
-	private Double currentCapitalValue;
+	private BigDecimal marketValue;
+	private BigDecimal currentCapitalValue;
 	private String effectiveDate;
 	private Long vacantLandPlot;
 	private Long layoutApprovalAuthority;
@@ -126,19 +127,19 @@ public class VacantLandDetails implements Serializable {
 		this.vacantLandArea = vacantLandArea;
 	}
 
-	public Double getMarketValue() {
+	public BigDecimal getMarketValue() {
 		return marketValue;
 	}
 
-	public void setMarketValue(Double marketValue) {
+	public void setMarketValue(BigDecimal marketValue) {
 		this.marketValue = marketValue;
 	}
 
-	public Double getCurrentCapitalValue() {
+	public BigDecimal getCurrentCapitalValue() {
 		return currentCapitalValue;
 	}
 
-	public void setCurrentCapitalValue(Double currentCapitalValue) {
+	public void setCurrentCapitalValue(BigDecimal currentCapitalValue) {
 		this.currentCapitalValue = currentCapitalValue;
 	}
 

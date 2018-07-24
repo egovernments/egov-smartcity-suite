@@ -49,20 +49,11 @@ package org.egov.ptis.bean.aadharseeding;
 
 public class AadharSearchResult {
 
-    public AadharSearchResult() {}
-
     private String assessmentNo;
     private String ownerName;
     private String doorNo;
     private String address;
 
-    public AadharSearchResult(String assessmentNo , String ownerName ,String doorNo , String address ) {
-        this.assessmentNo = assessmentNo;
-        this.ownerName = ownerName;
-        this.doorNo = doorNo;
-        this.address = address;
-    }
-    
     public String getAssessmentNo() {
         return assessmentNo;
     }

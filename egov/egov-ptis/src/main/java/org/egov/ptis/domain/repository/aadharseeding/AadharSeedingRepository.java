@@ -50,7 +50,6 @@ package org.egov.ptis.domain.repository.aadharseeding;
 import java.util.List;
 
 import org.egov.ptis.bean.aadharseeding.AadharSeeding;
-import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.springframework.data.jpa.repository.JpaRepository;
 

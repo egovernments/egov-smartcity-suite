@@ -680,13 +680,13 @@ public class ValidationUtil {
                 errorDetails.setErrorCode(MARKET_AREA_VALUE_REQ_CODE);
                 errorDetails.setErrorMessage(MARKET_AREA_VALUE_REQ_MSG);
                 return errorDetails;
-            } else if (Double.valueOf(vacantLandDetails.getMarketValue()) == 0) {
+            } else if (vacantLandDetails.getMarketValue().compareTo(BigDecimal.ZERO) == 0) {
                 errorDetails.setErrorCode(MARKET_VALUE_GREATER_THAN_ZERO_CODE);
                 errorDetails.setErrorMessage(MARKET_VALUE_GREATER_THAN_ZERO_MSG);
                 return errorDetails;
             } else {
                 final Pattern pattern = Pattern.compile(DIGITS_FLOAT_INT_DBL);
-                final Matcher matcher = pattern.matcher(Double.toString(vacantLandDetails.getMarketValue()));
+                final Matcher matcher = pattern.matcher(vacantLandDetails.getMarketValue().toString());
                 if (!matcher.matches()) {
                     errorDetails.setErrorCode(MKT_VAL_NUMBER_REQ_CODE);
                     errorDetails.setErrorMessage(MKT_VAL_NUMBER_REQ_MSG);
@@ -697,7 +697,7 @@ public class ValidationUtil {
                 errorDetails.setErrorCode(CURRENT_CAPITAL_VALUE_REQ_CODE);
                 errorDetails.setErrorMessage(CURRENT_CAPITAL_VALUE_REQ_MSG);
                 return errorDetails;
-            } else if (Double.valueOf(vacantLandDetails.getCurrentCapitalValue()) == 0.0) {
+            } else if (vacantLandDetails.getCurrentCapitalValue().compareTo(BigDecimal.ZERO) == 0) {
                 errorDetails.setErrorCode(CURRENT_CAPITAL_VALUE_GREATER_THAN_ZERO_CODE);
                 errorDetails.setErrorMessage(CURRENT_CAPITAL_VALUE_GREATER_THAN_ZERO_MSG);
                 return errorDetails;

@@ -2596,8 +2596,8 @@ public class PropertyExternalService {
         propDetail.setFieldVerificationDate(propertyDetail.getFieldVerificationDate());
         propDetail.setFloorDetails(propertyDetail.getFloorDetails());
         propDetail.setPropertyDetailsID(propertyDetail.getPropertyDetailsID());
-        propDetail.setWater_Meter_Num(propertyDetail.getWater_Meter_Num());
-        propDetail.setElec_Meter_Num(propertyDetail.getElec_Meter_Num());
+        propDetail.setWaterMeterNum(propertyDetail.getWaterMeterNum());
+        propDetail.setElecMeterNum(propertyDetail.getElecMeterNum());
         propDetail.setNoofFloors(numOfFloors);
         propDetail.setFieldIrregular(propertyDetail.getFieldIrregular());
         propDetail.setDateOfCompletion(propertyDetail.getDateOfCompletion());
@@ -2649,8 +2649,8 @@ public class PropertyExternalService {
                 propertyDetail.getPlinthArea(), propertyDetail.getCommVacantLand(), propertyDetail.getNonResPlotArea(),
                 false, propertyDetail.getSurveyNumber(), propertyDetail.getFieldVerified(),
                 propertyDetail.getFieldVerificationDate(), propertyDetail.getFloorDetails(),
-                propertyDetail.getPropertyDetailsID(), propertyDetail.getWater_Meter_Num(),
-                propertyDetail.getElec_Meter_Num(), 0, propertyDetail.getFieldIrregular(),
+                propertyDetail.getPropertyDetailsID(), propertyDetail.getWaterMeterNum(),
+                propertyDetail.getElecMeterNum(), 0, propertyDetail.getFieldIrregular(),
                 propertyDetail.getDateOfCompletion(), propertyDetail.getProperty(), propertyDetail.getUpdatedTime(),
                 propertyDetail.getPropertyUsage(), null, propertyDetail.getPropertyTypeMaster(),
                 propertyDetail.getPropertyType(), propertyDetail.getInstallment(),
