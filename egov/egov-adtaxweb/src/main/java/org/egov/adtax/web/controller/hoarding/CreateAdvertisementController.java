@@ -47,7 +47,9 @@
  */
 package org.egov.adtax.web.controller.hoarding;
 
+import java.util.Date;
 import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -91,6 +93,12 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequestMapping("/hoarding")
 public class CreateAdvertisementController extends HoardingControllerSupport {
 
+    private static final String NOTEXISTS_POSITION = "notexists.position";
+    private static final String CURRENT_STATE = "currentState";
+    private static final String HOARDING_CREATE = "hoarding-create";
+    private static final String ADDITIONAL_RULE = "additionalRule";
+    private static final String STATE_TYPE = "stateType";
+    private static final String IS_EMPLOYEE = "isEmployee";
     private static final String APPROVAL_POSITION = "approvalPosition";
     private static final String APPLICATION_PDF = "application/pdf";
     protected String reportId;
@@ -119,21 +127,12 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
     @RequestMapping(value = { "/create" }, method = GET)
     public String createHoardingForm(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail,
             final Model model, HttpServletRequest request) {
-        buildCreateHoardingForm(advertisementPermitDetail, model);
-        model.addAttribute("currentState", "NEW");
-        return "hoarding-create";
-    }
-
-    private void buildCreateHoardingForm(final AdvertisementPermitDetail advertisementPermitDetail, final Model model) {
         User currentUser = securityUtils.getCurrentUser();
 
-        WorkflowContainer workFlowContainer = new WorkflowContainer();
-        workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
-        prepareWorkflow(model, advertisementPermitDetail, workFlowContainer);
-        model.addAttribute("additionalRule", AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
-        model.addAttribute("isEmployee", !ANONYMOUS_USER.equalsIgnoreCase(currentUser.getName())
+        buildCreateHoardingForm(advertisementPermitDetail, model);
+        model.addAttribute(IS_EMPLOYEE, !ANONYMOUS_USER.equalsIgnoreCase(currentUser.getName())
                 && advertisementWorkFlowService.isEmployee(securityUtils.getCurrentUser()));
-        model.addAttribute("stateType", advertisementPermitDetail.getClass().getSimpleName());
+        return HOARDING_CREATE;
     }
 
     @RequestMapping(value = { "/createbycitizen" }, method = GET)
@@ -141,10 +140,9 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
             final Model model, HttpServletRequest request) {
 
         buildCreateHoardingForm(advertisementPermitDetail, model);
-        model.addAttribute("currentState", "NEW");
         model.addAttribute("applicationSource", "online");
 
-        return "hoarding-create";
+        return HOARDING_CREATE;
     }
 
     @RequestMapping(value = { "/create", "/createbycitizen" }, method = POST)
@@ -153,6 +151,7 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
             final RedirectAttributes redirAttrib, final HttpServletRequest request, final Model model,
             @RequestParam String workFlowAction) {
         User currentuser = securityUtils.getCurrentUser();
+        boolean isActiveApprover=false;
         Boolean isEmployee = !ANONYMOUS_USER.equalsIgnoreCase(currentuser.getName())
                 && advertisementWorkFlowService.isEmployee(securityUtils.getCurrentUser());
         validateAssignmentForCscUser(advertisementPermitDetail, isEmployee, resultBinder);
@@ -169,14 +168,9 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
             advertisementPermitDetail.setApplicationtype(AdvertisementApplicationType.NEW);
 
             if (resultBinder.hasErrors()) {
-                WorkflowContainer workFlowContainer = new WorkflowContainer();
-                model.addAttribute("isEmployee",isEmployee);
-                workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
-                prepareWorkflow(model, advertisementPermitDetail, workFlowContainer);
-                model.addAttribute("additionalRule", AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
-                model.addAttribute("stateType", advertisementPermitDetail.getClass().getSimpleName());
-                model.addAttribute("currentState", "NEW");
-                return "hoarding-create";
+                model.addAttribute(IS_EMPLOYEE,isEmployee);
+                buildCreateHoardingForm(advertisementPermitDetail, model);
+                return HOARDING_CREATE;
             }
         }
         storeHoardingDocuments(advertisementPermitDetail);
@@ -186,15 +180,6 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
         String approverName = "";
         String nextDesignation = "";
 
-        if (!isEmployee || ANONYMOUS_USER.equalsIgnoreCase(currentuser.getName())) {
-            Assignment assignment = advertisementWorkFlowService.getMappedAssignmentForCscOperator(advertisementPermitDetail);
-            if (assignment != null) {
-                approvalPosition = assignment.getPosition().getId();
-                approverName = assignment.getEmployee().getName();
-                nextDesignation = assignment.getDesignation().getName();
-
-            }
-        }
 
         if (request.getParameter("approvalComent") != null)
             approvalComment = request.getParameter("approvalComent");
@@ -206,6 +191,19 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
             nextDesignation = request.getParameter("nextDesignation");
         if (request.getParameter(APPROVAL_POSITION) != null && !request.getParameter(APPROVAL_POSITION).isEmpty())
             approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
+        
+        if (!isEmployee || ANONYMOUS_USER.equalsIgnoreCase(currentuser.getName())) {
+            Assignment assignment = advertisementWorkFlowService.getMappedAssignmentForCscOperator(advertisementPermitDetail);
+            if (assignment != null) {
+                approvalPosition = assignment.getPosition().getId();
+                approverName = assignment.getEmployee().getName();
+                nextDesignation = assignment.getDesignation().getName();
+                isActiveApprover =assignment.getToDate().compareTo(new Date())>=0;
+
+            }
+        }
+
+        if(isActiveApprover){
         advertisementPermitDetail.getAdvertisement().setPenaltyCalculationDate(advertisementPermitDetail.getApplicationDate());
         advertisementPermitDetailService.createAdvertisementPermitDetail(advertisementPermitDetail, approvalPosition,
                 approvalComment, "CREATEADVERTISEMENT", workFlowAction, currentuser);
@@ -215,10 +213,16 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
                         advertisementPermitDetail.getApplicationNumber() },
                 null);
         redirAttrib.addFlashAttribute("message", message);
-        if (!isEmployee) {
+        if (!isEmployee)
             return "redirect:/hoarding/showack/" + advertisementPermitDetail.getId();
-        } else {
+         else 
             return "redirect:/hoarding/success/" + advertisementPermitDetail.getId();
+        }
+        else{
+            model.addAttribute(IS_EMPLOYEE,isEmployee);
+            model.addAttribute("message", NOTEXISTS_POSITION);
+            buildCreateHoardingForm(advertisementPermitDetail, model);     
+            return HOARDING_CREATE;
         }
     }
     
@@ -264,6 +268,15 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
 
     }
 
+    private void buildCreateHoardingForm(final AdvertisementPermitDetail advertisementPermitDetail, final Model model) {
+        WorkflowContainer workFlowContainer = new WorkflowContainer();
+        workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
+        model.addAttribute(CURRENT_STATE, "NEW");
+        prepareWorkflow(model, advertisementPermitDetail, workFlowContainer);
+        model.addAttribute(ADDITIONAL_RULE, AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
+        model.addAttribute(STATE_TYPE, advertisementPermitDetail.getClass().getSimpleName());
+    }
+    
     public void validateAssignmentForCscUser(final AdvertisementPermitDetail advertisementPermitDetail, Boolean isEmployee,
             final BindingResult errors) {
         if (!isEmployee && advertisementPermitDetail != null) {
@@ -271,7 +284,7 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
                     ? advertisementWorkFlowService.getAssignmentByDeptDesigElecWard(advertisementPermitDetail)
                     : null;
             if (assignment == null && advertisementWorkFlowService.getUserPositionByZone(advertisementPermitDetail) == null)
-                errors.reject("notexists.position", "notexists.position");
+                errors.reject(NOTEXISTS_POSITION, NOTEXISTS_POSITION);
         }
     }
 
