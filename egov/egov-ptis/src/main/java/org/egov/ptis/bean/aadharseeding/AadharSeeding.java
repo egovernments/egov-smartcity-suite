@@ -64,9 +64,14 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+<<<<<<< Updated upstream:egov/egov-ptis/src/main/java/org/egov/ptis/bean/aadharseeding/AadharSeeding.java
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
+=======
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.hibernate.validator.constraints.NotBlank;
+>>>>>>> Stashed changes:egov/egov-eventnotification/src/main/java/org/egov/eventnotification/entity/ModuleCategoryMap.java
 
 @Entity
 @Table(name= "egpt_aadharseeding")
@@ -103,9 +108,16 @@ public class AadharSeeding extends StateAware<Position>{
         this.basicProperty = basicProperty;
     }
 
+<<<<<<< Updated upstream:egov/egov-ptis/src/main/java/org/egov/ptis/bean/aadharseeding/AadharSeeding.java
     public List<AadharSeedingDetails> getAadharSeedingDetails() {
         return aadharSeedingDetails;
     }
+=======
+    @NotNull
+    @Column(name = "attributes_available")
+    @NotBlank
+    private boolean attributesAvailable;
+>>>>>>> Stashed changes:egov/egov-eventnotification/src/main/java/org/egov/eventnotification/entity/ModuleCategoryMap.java
 
     public void setAadharSeedingDetails(List<AadharSeedingDetails> aadharSeedingDetails) {
         this.aadharSeedingDetails = aadharSeedingDetails;

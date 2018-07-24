@@ -57,7 +57,6 @@ import org.hibernate.validator.constraints.SafeHtml;
 
 @Embeddable
 public class EventAddress implements Serializable {
-
     private static final long serialVersionUID = -1756225050147426636L;
 
     @NotBlank
