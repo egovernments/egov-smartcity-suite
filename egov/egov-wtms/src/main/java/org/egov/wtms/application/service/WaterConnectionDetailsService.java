@@ -1573,10 +1573,22 @@ public class WaterConnectionDetailsService {
     }
 
     public WaterConnectionDetails updateApplicationStatus(WaterConnectionDetails waterConnectionDetails) {
+        if (CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())) {
+            WaterConnectionDetails previousApplication = waterConnectionDetailsRepository
+                    .findConnectionDetailsByConsumerCodeAndConnectionStatus(
+                            waterConnectionDetails.getConnection().getConsumerCode(), ACTIVE);
+            if (previousApplication != null) {
+                previousApplication.setConnectionStatus(INACTIVE);
+                previousApplication.setIsHistory(true);
+                waterConnectionDetailsRepository.saveAndFlush(previousApplication);
+            }
+        }
+
         if (NEWCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
                 || ADDNLCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
                 || CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())) {
-            waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_SANCTIONED, MODULETYPE));
+            waterConnectionDetails
+                    .setStatus(waterTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_SANCTIONED, MODULETYPE));
             waterConnectionDetails.setConnectionStatus(ACTIVE);
         }
 
