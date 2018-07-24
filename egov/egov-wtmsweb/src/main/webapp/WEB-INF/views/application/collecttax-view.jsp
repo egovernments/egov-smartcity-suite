@@ -72,7 +72,7 @@
 	<div class="row text-center">
 		<div class="add-margin">
 			<c:choose>
-				<c:when test="${mode!=null && mode=='waterTaxCollection' && ((waterConnectionDetails.applicationtype.code=='REGLZNCONNECTION' && 
+				<c:when test="${mode!=null && mode=='waterTaxCollection' && ((waterConnectionDetails.applicationType.code=='REGLZNCONNECTION' && 
 				waterConnectionDetails.connectionStatus=='INPROGRESS') || (waterConnectionDetails.connectionStatus=='ACTIVE'))}">
 					<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button>
 				</c:when>

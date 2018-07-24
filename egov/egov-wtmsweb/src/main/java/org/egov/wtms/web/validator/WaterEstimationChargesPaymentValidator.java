@@ -106,6 +106,10 @@ public class WaterEstimationChargesPaymentValidator implements Validator {
             errors.reject("msg.estimationcharges", "msg.estimationcharges");
             return true;
         }
+        else if (isBlank(connectionDetails.getEstimationNumber())) {
+            errors.reject("msg.estimation.notice.not.generated", "msg.estimation.notice.not.generated");
+            return true;
+        }
         return false;
     }
 }

@@ -1679,7 +1679,7 @@ public class WaterConnectionDetailsService {
         AssessmentDetails assessmentDetails = getPropertyDetails(
                 waterConnectionDetails.getConnection().getPropertyIdentifier(), request);
         if (waterConnectionDetails.getCategory().getName().equalsIgnoreCase(CATEGORY_BPL)) {
-            if (assessmentDetails.getPropertyDetails().getCurrentTax().compareTo(new BigDecimal(500)) >= 0) {
+            if (assessmentDetails.getPropertyDetails().getCurrentTax().compareTo(new BigDecimal(500)) > 0) {
                 String errorMessage = wcmsMessageSource.getMessage("msg.propertytax.nonBPLcategory", new String[]{},
                         Locale.getDefault());
                 errors.rejectValue("category", errorMessage, errorMessage);
