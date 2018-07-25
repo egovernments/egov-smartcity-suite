@@ -96,11 +96,34 @@
 				$('#approvalComent').removeAttr('required');
 			} 
 		if(rejectbutton!='' && rejectbutton!=null && rejectbutton!='Reassign') {
-			if($('#editWaterConnectionform').valid()) {
+			if(rejectbutton=='Cancel') {
+			bootbox.confirm({
+					message:'Please confirm if you want to permanently cancel the application',
+						
+						buttons: {
+							'cancel' : {
+								label : 'No',
+								className : 'btn-defult'
+							},
+								
+							'confirm' : {
+								label : 'Yes',
+								className : 'btn-danger'
+							}	
+						},
+						callback: function(result) {
+							if(result && $('#editWaterConnectionform').valid()) {
+								$('#editWaterConnectionform').submit();
+							}
+						}
+				});
+			}
+			else if($('#editWaterConnectionform').valid()) {
 		   		$('#editWaterConnectionform').submit();
 		   		return true;
 			}
-			return false;
+			else
+				return false; 
 		}
 		else
 	   		return false;
@@ -124,10 +147,10 @@
 					<button type="button" class="btn btn-primary" id="reassign">Reassign</button>
 				</c:if>
 				<c:if test="${proceedWithoutDonation==true && statuscode=='ESTIMATIONNOTICEGENERATED'}">
-					<form:button  type="submit" id="proceedwithoutdonation" class="btn btn-primary workAction" onclick="validateWorkFlowApprover('Proceed Without Donation');"><c:out value="Proceed Without Donation"/></form:button>
+					<form:button  type="button" id="proceedwithoutdonation" class="btn btn-primary workAction" onclick="validateWorkFlowApprover('Proceed Without Donation');"><c:out value="Proceed Without Donation"/></form:button>
 				</c:if>
 		<c:forEach items="${validActionList}" var="validButtons">
-			<form:button type="submit" id="${validButtons}" class="btn btn-primary workAction"  value="${validButtons}" onclick="validateWorkFlowApprover('${validButtons}');">
+			<form:button type="button" id="${validButtons}" class="btn btn-primary workAction"  value="${validButtons}" onclick="validateWorkFlowApprover('${validButtons}');">
 						<c:out value="${validButtons}" /> </form:button>
 			</c:forEach>
 				<input type="button" name="button2" id="button2" value="Close"
