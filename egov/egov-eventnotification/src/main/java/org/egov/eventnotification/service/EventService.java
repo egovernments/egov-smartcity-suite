@@ -202,7 +202,7 @@ public class EventService {
         if (event.getFilestore() == null)
             messageContent.setImageUrl(EMPTY);
         else
-            messageContent.setImageUrl(String.valueOf(event.getFilestore()));
+            messageContent.setImageUrl(String.valueOf(event.getFilestore().getFileStoreId()));
         messageContent.setMessageBody(event.getMessage());
         messageContent.setMessageId(event.getId());
         messageContent.setModuleName(event.getName());
