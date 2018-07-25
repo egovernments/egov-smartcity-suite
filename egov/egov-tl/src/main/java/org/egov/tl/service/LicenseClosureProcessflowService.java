@@ -141,7 +141,7 @@ public class LicenseClosureProcessflowService {
 
     private void startClosureProcessByExternalUsers(TradeLicense license) {
         WorkFlowMatrix workflowMatrix = getWorkFlowMatrix(license);
-        List<Assignment> assignments = licenseProcessWorkflowService.getAssignments(workflowMatrix);
+        List<Assignment> assignments = licenseProcessWorkflowService.getAssignments(workflowMatrix, license.getAdminWard());
 
         Position processOwner = assignments.get(0).getPosition();
         LicenseStateInfo licenseStateInfo = new LicenseStateInfo();

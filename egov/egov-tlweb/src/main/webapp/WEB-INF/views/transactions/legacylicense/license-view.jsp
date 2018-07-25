@@ -129,6 +129,12 @@
         <div class="col-xs-3 add-margin view-content">
             <c:out value="${tradeLicense.parentBoundary.name}"/>
         </div>
+        <div class="col-xs-3 add-margin">
+            <spring:message code='lbl.admin.ward'/>
+        </div>
+        <div class="col-xs-3 add-margin view-content">
+            <c:out value="${tradeLicense.adminWard.name}" default="N/A"/>
+        </div>
     </div>
 
     <div class="row">

@@ -53,6 +53,7 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.PositionMasterService;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.DepartmentService;
@@ -298,7 +299,7 @@ public class LicenseProcessWorkflowService {
         WorkFlowMatrix workFlowMatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
                 null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(),
                 null, new Date(), null);
-        List<Assignment> assignmentList = getAssignments(workFlowMatrix);
+        List<Assignment> assignmentList = getAssignments(workFlowMatrix, license.getAdminWard());
         if (!assignmentList.isEmpty()) {
             String additionalRule = license.isNewApplication() ? NEWLICENSE : RENEWLICENSE;
             final Assignment wfAssignment = assignmentList.get(0);
@@ -343,20 +344,22 @@ public class LicenseProcessWorkflowService {
         }
     }
 
-    public List<Assignment> getAssignments(WorkFlowMatrix workFlowMatrix) {
+    public List<Assignment> getAssignments(WorkFlowMatrix workFlowMatrix, Boundary boundary) {
         Department nextAssigneeDept = departmentService.getDepartmentByName(workFlowMatrix.getDepartment());
-        List<Designation> nextDesig = designationService.getDesignationsByNames(Arrays.asList(StringUtils.upperCase(workFlowMatrix.getNextDesignation()).split(",")));
-        List<Assignment> assignmentList = getAssignmentsForDeptAndDesignation(nextAssigneeDept, nextDesig);
+        List<Designation> nextDesignation = designationService.getDesignationsByNames(Arrays.asList(StringUtils.upperCase(workFlowMatrix.getNextDesignation()).split(",")));
+        List<Long> designationIds = new ArrayList<>();
+        nextDesignation.forEach(designation -> designationIds.add(designation.getId()));
+        List<Assignment> assignmentList = new ArrayList<>();
+        if (licenseConfigurationService.jurisdictionBasedRoutingEnabled() && boundary != null)
+            assignmentList = assignmentService.getAssignmentsByDepartmentAndDesignationsAndBoundary(nextAssigneeDept.getId(), designationIds, boundary.getId());
         if (assignmentList.isEmpty())
-            throw new ValidationException(ERROR_KEY_WF_INITIATOR_NOT_DEFINED, ERROR_KEY_WF_INITIATOR_NOT_DEFINED);
+            assignmentList = getAssignmentsForDeptAndDesignation(nextAssigneeDept, designationIds);
         return assignmentList;
     }
 
-    private List<Assignment> getAssignmentsForDeptAndDesignation(Department nextAssigneeDept, List<Designation> nextAssigneeDesig) {
-        List<Long> designationIds = new ArrayList<>();
-        nextAssigneeDesig.forEach(designation -> designationIds.add(designation.getId()));
+    private List<Assignment> getAssignmentsForDeptAndDesignation(Department nextAssigneeDept, List<Long> nextAssigneeDesig) {
         return assignmentService.
-                findByDepartmentDesignationsAndGivenDate(nextAssigneeDept.getId(), designationIds, new Date());
+                findByDepartmentDesignationsAndGivenDate(nextAssigneeDept.getId(), nextAssigneeDesig, new Date());
     }
 
     public void setLicenseWorkflowService(SimpleWorkflowService<TradeLicense> licenseWorkflowService) {

@@ -65,6 +65,7 @@ public class LicenseConfigurationService {
     private static final String RENEW_APPTYPE_DEFAULT_SLA = "RENEW_APPTYPE_DEFAULT_SLA";
     private static final String CLOSURE_APPTYPE_DEFAULT_SLA = "CLOSURE_APPTYPE_DEFAULT_SLA";
     private static final String FEE_COLLECTOR_ROLES = "FEE_COLLECTOR_ROLES";
+    private static final String JURISDICTION_BASED_ROUTING = "JURISDICTION_BASED_ROUTING";
 
     @Autowired
     private LicenseConfigurationRepository licenseConfigurationRepository;
@@ -95,6 +96,10 @@ public class LicenseConfigurationService {
 
     public String[] getFeeCollectorRoles() {
         return getValueByKey(FEE_COLLECTOR_ROLES).split(",");
+    }
+
+    public boolean jurisdictionBasedRoutingEnabled() {
+        return Boolean.valueOf(getValueByKey(JURISDICTION_BASED_ROUTING));
     }
 
     public String getValueByKey(String key) {

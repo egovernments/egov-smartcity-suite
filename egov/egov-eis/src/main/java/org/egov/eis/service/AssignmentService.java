@@ -251,6 +251,13 @@ public class AssignmentService {
         return assignments;
     }
 
+    public List<Assignment> getAssignmentsByDepartmentAndDesignationsAndBoundary(final Long deptId, final List<Long> desigIds,
+                                                                                 final Long boundaryId) {
+        Set<Long> boundaries = new HashSet<>();
+        boundaries.add(boundaryId);
+        return assignmentRepository.findByDepartmentAndDesignationsAndBoundaries(deptId, desigIds, boundaries);
+    }
+
     private Set<Long> getBoundaries(final Long boundaryId) {
         final Set<Long> bndIds = new HashSet<>();
         final List<Boundary> boundaries = boundaryService.findActiveChildrenWithParent(boundaryId);
@@ -351,8 +358,7 @@ public class AssignmentService {
         if (employeePositionSearch.getIsPrimary() != null)
             queryString.append(" AND assignment.primary =:primary ");
         Query queryResult = entityManager.unwrap(Session.class).createQuery(queryString.toString());
-        queryResult = setParametersToQuery(employeePositionSearch, queryResult);
-
+        setParametersToQuery(employeePositionSearch, queryResult);
         return queryResult.list();
     }
 
