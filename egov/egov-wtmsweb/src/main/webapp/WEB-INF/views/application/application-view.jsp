@@ -96,7 +96,7 @@
             || waterConnectionDetails.status.code == 'SANCTIONED' && waterConnectionDetails.connectionType != 'METERED') && checkOperator }">
                 <button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button>
             </c:if>
-            <c:if test="${estimationAmount>0 && waterConnectionDetails.estimationNumber != null}">
+            <c:if test="${estimationAmount>0 && not empty waterConnectionDetails.estimationNumber}">
                 <button type="submit" class="btn btn-primary" id="payEstimation"><spring:message code="lbl.pay.estimationdue"/></button>
             </c:if>
             <c:if test="${waterConnectionDetails.status.code != 'ESTIMATIONNOTICEGENERATED' && waterTaxDueforParent > 0 && citizenRole }">
