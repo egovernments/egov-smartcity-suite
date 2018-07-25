@@ -65,7 +65,7 @@ import java.util.List;
 public class DueLegalCaseReportController  extends GenericLegalCaseController {
 
     public @ModelAttribute("reportTypeList") List<String> getReportByTypes() {
-        final List<String> reportTypeList = new ArrayList<String>();
+        final List<String> reportTypeList = new ArrayList<>();
         reportTypeList.add(LcmsConstants.DUEPWRREPORT);
         reportTypeList.add(LcmsConstants.DUECAREPORT);
         reportTypeList.add(LcmsConstants.DUEJUDGEMENTIMPLPREPORT);

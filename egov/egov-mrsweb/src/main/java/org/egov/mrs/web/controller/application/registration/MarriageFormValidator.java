@@ -108,7 +108,7 @@ public class MarriageFormValidator implements Validator {
         if (reIssue.getStatus() != null && "CREATED".equals(reIssue.getStatus().getCode())
                 && !reIssue.isFeeCollected() && !MarriageConstants.JUNIOR_SENIOR_ASSISTANCE_APPROVAL_PENDING
                         .equalsIgnoreCase(reIssue.getState().getNextAction())
-                && !MarriageConstants.WFLOW_PENDINGACTION_REV_CLERK_APPRVLPENDING
+                && !MarriageConstants.WFLOW_PENDINGACTION_CLERK_APPRVLPENDING
                         .equalsIgnoreCase(reIssue.getState().getNextAction()))
             errors.reject("validate.collect.reissueFee", null);
         
@@ -213,7 +213,7 @@ public class MarriageFormValidator implements Validator {
             if (registration.getStatus() != null && "CREATED".equals(registration.getStatus().getCode())
                     && !registration.isFeeCollected() && !MarriageConstants.JUNIOR_SENIOR_ASSISTANCE_APPROVAL_PENDING
                             .equalsIgnoreCase(registration.getState().getNextAction())
-                    && !MarriageConstants.WFLOW_PENDINGACTION_REV_CLERK_APPRVLPENDING
+                    &&  !MarriageConstants.WFLOW_PENDINGACTION_CLERK_APPRVLPENDING
                             .equalsIgnoreCase(registration.getState().getNextAction()))
                 errors.reject("validate.collect.marriageFee", null);
 

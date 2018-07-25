@@ -47,6 +47,13 @@
  */
 package org.egov.lcms.web.controller.transactions;
 
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import org.egov.lcms.masters.service.JudgmentTypeService;
 import org.egov.lcms.transactions.entity.Judgment;
 import org.egov.lcms.transactions.entity.JudgmentDocuments;
@@ -54,6 +61,7 @@ import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.service.JudgmentService;
 import org.egov.lcms.transactions.service.LegalCaseService;
 import org.egov.lcms.utils.LegalCaseUtil;
+import org.egov.lcms.utils.constants.LcmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -65,16 +73,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
-
 @Controller
 @RequestMapping(value = "/judgment")
 public class EditJudgmentController {
+    
+    private static final String JUDGMENT = "judgment";
 
     @Autowired
     private JudgmentTypeService judgmentTypeService;
@@ -90,8 +93,7 @@ public class EditJudgmentController {
 
     @ModelAttribute
     private LegalCase getLegalCase(@RequestParam("lcNumber") final String lcNumber) {
-        final LegalCase legalCase = legalCaseService.findByLcNumber(lcNumber);
-        return legalCase;
+        return legalCaseService.findByLcNumber(lcNumber);
     }
 
     private void prepareNewForm(final Model model) {
@@ -103,14 +105,14 @@ public class EditJudgmentController {
         final List<Judgment> judgementList = getLegalCase(lcNumber).getJudgment();
         final Judgment judgmentObj = judgementList.get(0);
         prepareNewForm(model);
-        model.addAttribute("judgment", judgmentObj);
+        model.addAttribute(JUDGMENT, judgmentObj);
         getJudgmentDocuments(judgmentObj);
-        model.addAttribute("mode", "edit");
+        model.addAttribute(LcmsConstants.MODE, "edit");
         return "judgment-edit";
     }
 
     @RequestMapping(value = "/edit/", method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute final Judgment judgment,final BindingResult errors,
+    public String update(@Valid @ModelAttribute final Judgment judgment, final BindingResult errors,
             @RequestParam("lcNumber") final String lcNumber,
             @RequestParam("file") final MultipartFile[] files, final HttpServletRequest request, final Model model,
             final RedirectAttributes redirectAttrs) throws IOException, ParseException {
@@ -120,15 +122,14 @@ public class EditJudgmentController {
         }
         judgmentService.persist(judgment, files);
         getJudgmentDocuments(judgment);
-        redirectAttrs.addFlashAttribute("judgment", judgment);
+        redirectAttrs.addFlashAttribute(JUDGMENT, judgment);
         model.addAttribute("message", "Judgment updated successfully.");
-        model.addAttribute("mode", "view");
+        model.addAttribute(LcmsConstants.MODE, "view");
         return "judgment-success";
     }
 
     private Judgment getJudgmentDocuments(final Judgment judgment) {
-        List<JudgmentDocuments> documentDetailsList = new ArrayList<JudgmentDocuments>();
-        documentDetailsList = legalCaseUtil.getJudgmentDocumentList(judgment);
+        final List<JudgmentDocuments> documentDetailsList = legalCaseUtil.getJudgmentDocumentList(judgment);
         judgment.setJudgmentDocuments(documentDetailsList);
         return judgment;
     }

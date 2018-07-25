@@ -51,6 +51,7 @@ import org.egov.lcms.transactions.entity.Hearings;
 import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.service.HearingsService;
 import org.egov.lcms.transactions.service.LegalCaseService;
+import org.egov.lcms.utils.constants.LcmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -69,6 +70,8 @@ import java.util.List;
 @Controller
 @RequestMapping(value = "/hearing")
 public class HearingsController {
+    
+    private static final String HEARINGS = "hearings";
 
     @Autowired
     private HearingsService hearingsService;
@@ -80,17 +83,16 @@ public class HearingsController {
     public String newForm(@ModelAttribute("hearings") final Hearings hearings, final Model model,
             @RequestParam("lcNumber") final String lcNumber, final HttpServletRequest request) {
         final LegalCase legalCase = getLegalCase(lcNumber, request);
-        model.addAttribute("legalCase", legalCase);
+        model.addAttribute(LcmsConstants.LEGALCASE, legalCase);
         model.addAttribute("positionTemplList", hearings.getPositionTemplList());
-        model.addAttribute("hearings", hearings);
-        model.addAttribute("mode", "create");
+        model.addAttribute(HEARINGS, hearings);
+        model.addAttribute(LcmsConstants.MODE, "create");
         return "hearings-new";
     }
 
     @ModelAttribute
     private LegalCase getLegalCase(@RequestParam("lcNumber") final String lcNumber, final HttpServletRequest request) {
-        final LegalCase legalCase = legalCaseService.findByLcNumber(lcNumber);
-        return legalCase;
+        return legalCaseService.findByLcNumber(lcNumber);
     }
 
     @RequestMapping(value = "/new/", method = RequestMethod.POST)
@@ -100,14 +102,14 @@ public class HearingsController {
         final LegalCase legalCase = getLegalCase(lcNumber, request);
         hearingsService.validateDate(hearings, legalCase, errors);
         if (errors.hasErrors()) {
-            model.addAttribute("legalCase", legalCase);
+            model.addAttribute(LcmsConstants.LEGALCASE, legalCase);
             return "hearings-new";
         }
         hearings.setLegalCase(legalCase);
         hearingsService.persist(hearings);
-        redirectAttrs.addFlashAttribute("hearings", hearings);
+        redirectAttrs.addFlashAttribute(HEARINGS, hearings);
         model.addAttribute("message", "Hearing created successfully.");
-        model.addAttribute("mode", "create");
+        model.addAttribute(LcmsConstants.MODE, "create");
         return "hearings-success";
     }
 
@@ -116,11 +118,11 @@ public class HearingsController {
             @Valid @ModelAttribute final Hearings hearings, final HttpServletRequest request) {
         final LegalCase legalCase = getLegalCase(lcNumber, request);
         final List<Hearings> hearingsList = hearingsService.findByLCNumber(lcNumber);
-        model.addAttribute("legalCase", legalCase);
+        model.addAttribute(LcmsConstants.LEGALCASE, legalCase);
         model.addAttribute("lcNumber", legalCase.getLcNumber());
         model.addAttribute("hearingsId", legalCase.getHearings());
         model.addAttribute("positionTemplList", hearings.getPositionTemplList());
-        model.addAttribute("hearings", hearings);
+        model.addAttribute(HEARINGS, hearings);
         model.addAttribute("hearingsList", hearingsList);
         return "hearings-list";
 

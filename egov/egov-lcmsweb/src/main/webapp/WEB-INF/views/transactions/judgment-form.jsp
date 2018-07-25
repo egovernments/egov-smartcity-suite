@@ -109,7 +109,8 @@
 								code="lbl.implementbydate" /> :</label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="implementByDate"
-								class="form-control datepicker" data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'"/>
+								class="form-control datepicker" data-date-end-date="0d"
+								data-inputmask="'mask': 'd/m/y'" />
 							<form:errors path="implementByDate" cssClass="error-msg" />
 						</div>
 					</div>
@@ -119,8 +120,9 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="costAwarded" id="costAwarded"
 								class="form-control text-left patternvalidation"
-								data-pattern="decimalvalues" maxlength="10" 
-								title="Please enter a valid digits ,it will allow upto 10 digits"  data-first-option="false&true"/>
+								data-pattern="decimalvalues" maxlength="10"
+								title="Please enter a valid digits ,it will allow upto 10 digits"
+								data-first-option="false&true" />
 							<form:errors path="costAwarded" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-3 control-label text-right"><spring:message
@@ -128,7 +130,9 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="compensationAwarded" id="compensationAwarded"
 								class="form-control text-left patternvalidation"
-								data-pattern="decimalvalues" title="Please enter a valid digits,it will allow upto 10 digits" maxlength="10" data-first-option="false&true"/>
+								data-pattern="decimalvalues"
+								title="Please enter a valid digits,it will allow upto 10 digits"
+								maxlength="10" data-first-option="false&true" />
 							<form:errors path="compensationAwarded" cssClass="error-msg" />
 						</div>
 					</div>
@@ -145,16 +149,6 @@
 							<form:errors path="judgmentDetails" cssClass="error-msg" />
 						</div>
 					</div>
-					<%-- <div class="form-group">
-						<label class="col-sm-3 control-label text-right"><font
-							size="2"><spring:message code="lbl.mesg.document" />:</font></label>
-						<div class="col-sm-3 add-margin">
-							<input type="file" id="file" name="judgmentDocuments[0].files"
-								class="file-ellipsis upload-file">
-							<form:errors path="judgmentDocuments[0].files"
-								cssClass="add-margin error-msg" />
-						</div>
-					</div> --%>
 
 					<div class="form-group" id="enquirydetails" style="display: none">
 						<label class="col-sm-3 control-label text-right"><spring:message

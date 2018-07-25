@@ -53,6 +53,7 @@ import org.egov.commons.Area;
 import org.egov.ptis.domain.entity.property.vacantland.LayoutApprovalAuthority;
 import org.egov.ptis.domain.entity.property.vacantland.VacantLandPlotArea;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -95,22 +96,22 @@ public interface PropertyDetail extends Property {
     /**
      * @return Returns the Water_Meter_Num
      */
-    public String getWater_Meter_Num();
+    public String getWaterMeterNum();
 
     /**
      * @param Water_Meter_Num The Water_Meter_Num to set.
      */
-    public void setWater_Meter_Num(String Water_Meter_Num);
+    public void setWaterMeterNum(String waterMeterNum);
 
     /**
      * @return Returns the Elec_Meter_Num
      */
-    public String getElec_Meter_Num();
+    public String getElecMeterNum();
 
     /**
      * @param Water_Meter_Num The Water_Meter_Num to set.
      */
-    public void setElec_Meter_Num(String Elec_Meter_Num);
+    public void setElecMeterNum(String elecMeterNum);
 
     /**
      * @return Returns the PropertyDetailsID
@@ -345,13 +346,13 @@ public interface PropertyDetail extends Property {
 
     public void setPattaNumber(String pattaNumber);
 
-    public Double getCurrentCapitalValue();
+    public BigDecimal getCurrentCapitalValue();
 
-    public void setCurrentCapitalValue(Double currentCapitalValue);
+    public void setCurrentCapitalValue(BigDecimal currentCapitalValue);
 
-    public Double getMarketValue();
+    public BigDecimal getMarketValue();
 
-    public void setMarketValue(Double marketValue);
+    public void setMarketValue(BigDecimal marketValue);
 
     public String getCategoryType();
 

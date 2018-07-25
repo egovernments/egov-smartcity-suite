@@ -117,10 +117,11 @@ public class JudgmentImplService {
     public void saveOrUpdate(final JudgmentImpl judgmentImpl, final MultipartFile[] files)
             throws IOException, ParseException {
         persist(judgmentImpl, files);
-        if (judgmentImpl.getJudgment().getImplementByDate() != null)
-            judgmentImpl.getJudgment().getLegalCase().setNextDate(judgmentImpl.getJudgment().getImplementByDate());
-        else
+        if (judgmentImpl.getJudgment().getImplementByDate() == null)
             judgmentImpl.getJudgment().getLegalCase().setNextDate(judgmentImpl.getJudgment().getOrderDate());
+        else
+            judgmentImpl.getJudgment().getLegalCase().setNextDate(judgmentImpl.getJudgment().getImplementByDate());
+
         final EgwStatus statusObj = legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
                 LcmsConstants.LEGALCASE_STATUS_JUDGMENT_IMPLIMENTED);
         judgmentImpl.getJudgment().getLegalCase().setStatus(statusObj);
@@ -155,8 +156,8 @@ public class JudgmentImplService {
     }
 
     public List<AppealDocuments> getAppealDocList(final JudgmentImpl judgmentImpl) {
-        final List<AppealDocuments> judgmentImplAppealDOc = new ArrayList<AppealDocuments>();
-        final Set<AppealDocuments> appealDOcSet = new HashSet<AppealDocuments>();
+        final List<AppealDocuments> judgmentImplAppealDOc = new ArrayList<>();
+        final Set<AppealDocuments> appealDOcSet = new HashSet<>();
         if (!judgmentImpl.getAppeal().isEmpty() && judgmentImpl.getAppeal().get(0) != null) {
             for (final AppealDocuments appealDocs : judgmentImpl.getAppeal().get(0).getAppealDocuments())
                 appealDOcSet.add(appealDocs);
@@ -167,7 +168,7 @@ public class JudgmentImplService {
 
     public List<AppealDocuments> getDocumentDetails(final JudgmentImpl judgmentImpl, final MultipartFile[] files)
             throws IOException {
-        final List<AppealDocuments> documentDetailsList = new ArrayList<AppealDocuments>();
+        final List<AppealDocuments> documentDetailsList = new ArrayList<>();
 
         if (files != null)
             for (int i = 0; i < files.length; i++)

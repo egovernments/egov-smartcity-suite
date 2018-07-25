@@ -108,18 +108,18 @@ public class JudgmentImpl extends AbstractAuditable {
     @Audited
     private ImplementationFailure implementationFailure;
 
-    @Length(max = 128)
+    @Length(max = 1024)
     @Column(name = "implementationdetails")
     @Audited
     private String details;
 
     @OneToMany(mappedBy = "judgmentImpl", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Audited
-    private List<Contempt> contempt = new ArrayList<Contempt>(0);
+    private List<Contempt> contempt = new ArrayList<>(0);
 
     @OneToMany(mappedBy = "judgmentImpl", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Audited
-    private List<Appeal> appeal = new ArrayList<Appeal>(0);
+    private List<Appeal> appeal = new ArrayList<>(0);
 
     @Override
     public Long getId() {
@@ -196,7 +196,7 @@ public class JudgmentImpl extends AbstractAuditable {
     }
 
     public List<ValidationError> validate() {
-        final List<ValidationError> errors = new ArrayList<ValidationError>();
+        final List<ValidationError> errors = new ArrayList<>();
         if (getDateOfCompliance() != null && !DateUtils.compareDates(getDateOfCompliance(), judgment.getOrderDate()))
             errors.add(new ValidationError("dateofcompliance", "dateofcompliance.less.orderDate"));
         for (final Contempt contempt : getContempt())

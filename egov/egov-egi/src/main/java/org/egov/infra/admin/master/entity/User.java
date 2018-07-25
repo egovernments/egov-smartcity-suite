@@ -59,6 +59,7 @@ import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.persistence.validator.annotation.CompositeUnique;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.validation.regex.Constants;
+import org.hibernate.annotations.Type;
 import org.hibernate.envers.AuditJoinTable;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Email;
@@ -78,6 +79,8 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
+import static org.apache.commons.lang3.StringUtils.overlay;
+import static org.apache.commons.lang3.StringUtils.repeat;
 import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
 
 @Entity
@@ -146,7 +149,7 @@ public class User extends AbstractAuditable {
 
     @SafeHtml
     @Length(max = 12)
-    @Column(insertable = false, updatable = false)
+    @Type(type = "encryptedString")
     private String aadhaarNumber;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
@@ -269,6 +272,11 @@ public class User extends AbstractAuditable {
         this.pan = pan;
     }
 
+    public String getMaskedAadhaarNumber() {
+        return overlay(getAadhaarNumber(), repeat('*', 9), 1, 10);
+    }
+
+    @JsonIgnore
     public String getAadhaarNumber() {
         return aadhaarNumber;
     }

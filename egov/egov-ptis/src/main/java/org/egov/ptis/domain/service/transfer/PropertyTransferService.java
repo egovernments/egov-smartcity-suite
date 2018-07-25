@@ -311,7 +311,7 @@ public class PropertyTransferService {
     }
 
     public BigDecimal getWaterTaxDues(final String wtmsTaxDueChecking_REST_url) {
-        final HashMap<String, Object> waterTaxInfo = simpleRestClient.getRESTResponseAsMap(wtmsTaxDueChecking_REST_url);
+        final Map<String, Object> waterTaxInfo = simpleRestClient.getRESTResponseAsMap(wtmsTaxDueChecking_REST_url);
         return waterTaxInfo.get("totalTaxDue") == null ? BigDecimal.ZERO : new BigDecimal(
                 Double.valueOf((Double) waterTaxInfo.get("totalTaxDue")));
     }

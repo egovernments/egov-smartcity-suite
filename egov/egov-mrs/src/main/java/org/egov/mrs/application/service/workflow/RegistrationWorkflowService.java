@@ -114,7 +114,7 @@ public class RegistrationWorkflowService {
     private static final String STEP_FORWARD = "Forward";
     private static final String STEP_PRINT_CERTIFICATE = "Print Certificate";
     private static final String APPROVER_REJECTED = "Approver Rejected Application";
-    private static final String INITIATOR_INITIAL_STATE = "Revenue Clerk Approval Pending";
+    private static final String INITIATOR_INITIAL_STATE = "Clerk Approval Pending";
     @Autowired
     @Qualifier("workflowService")
     private SimpleWorkflowService<MarriageRegistration> marriageRegistrationWorkflowService;
@@ -228,10 +228,14 @@ public class RegistrationWorkflowService {
             // started
 
             // As there is only one step approval, following line would not work,
-
-            nextStateOwner = assignment != null ? assignment.getPosition() : null;
-            nextState = APPROVER_REJECTED;
-            nextAction = INITIATOR_INITIAL_STATE;
+       
+            if (Source.CHPK.name().equalsIgnoreCase(registration.getSource()))
+                nextAction = STATE_END;
+            else {
+                nextStateOwner = assignment != null ? assignment.getPosition() : null;
+                nextState = APPROVER_REJECTED;
+                nextAction = INITIATOR_INITIAL_STATE;
+            }
         } else if (workflowContainer.getWorkFlowAction().equalsIgnoreCase(STEP_CANCEL) ||
                 workflowContainer.getWorkFlowAction().equalsIgnoreCase(STEP_PRINT_CERTIFICATE))
             nextAction = STATE_END;
@@ -604,7 +608,7 @@ public class RegistrationWorkflowService {
         }
         marriageRegistration.transition()
                 .start()
-                .withStateValue(MarriageConstants.WFSTATE_REV_CLRK_APPROVED)
+                .withStateValue(MarriageConstants.WFSTATE_CLRK_APPROVED)
                 .withOwner(assignee).withNextAction(wfmatrix.getNextAction()).withDateInfo(new Date())
                 .withNatureOfTask("Marriage Registration :: New Registration").withInitiator(assignee);
 

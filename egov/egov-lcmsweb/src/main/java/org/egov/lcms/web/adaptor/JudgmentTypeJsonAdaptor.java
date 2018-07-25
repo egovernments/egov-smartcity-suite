@@ -47,33 +47,37 @@
  */
 package org.egov.lcms.web.adaptor;
 
+import java.lang.reflect.Type;
+
+import org.egov.lcms.masters.entity.JudgmentType;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import org.egov.lcms.masters.entity.JudgmentType;
-
-import java.lang.reflect.Type;
 
 public class JudgmentTypeJsonAdaptor implements JsonSerializer<JudgmentType> {
-	@Override
-	public JsonElement serialize(final JudgmentType judgmentType, final Type type, final JsonSerializationContext jsc) {
-		final JsonObject jsonObject = new JsonObject();
-		if (judgmentType != null) {
-			if (judgmentType.getName() != null)
-				jsonObject.addProperty("name", judgmentType.getName());
-			else
-				jsonObject.addProperty("name", "");
-			if (judgmentType.getCode() != null)
-				jsonObject.addProperty("code", judgmentType.getCode());
-			else
-				jsonObject.addProperty("code", "");
-			if (judgmentType.getActive() != null)
-				jsonObject.addProperty("active", judgmentType.getActive() == true ? "YES" : "NO");
-			else
-				jsonObject.addProperty("active", "");
-			jsonObject.addProperty("id", judgmentType.getId());
-		}
-		return jsonObject;
-	}
+    @Override
+    public JsonElement serialize(final JudgmentType judgmentType, final Type type, final JsonSerializationContext jsc) {
+        final JsonObject jsonObject = new JsonObject();
+        if (judgmentType != null) {
+            if (judgmentType.getName() == null)
+                jsonObject.addProperty("name", "");
+            else
+                jsonObject.addProperty("name", judgmentType.getName());
+
+            if (judgmentType.getCode() == null)
+                jsonObject.addProperty("code", "");
+            else
+                jsonObject.addProperty("code", judgmentType.getCode());
+
+            if (judgmentType.getActive() == null)
+                jsonObject.addProperty("active", "");
+            else
+                jsonObject.addProperty("active", judgmentType.getActive() ? "YES" : "NO");
+
+            jsonObject.addProperty("id", judgmentType.getId());
+        }
+        return jsonObject;
+    }
 }

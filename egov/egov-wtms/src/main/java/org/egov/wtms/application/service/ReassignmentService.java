@@ -100,11 +100,9 @@ public class ReassignmentService {
             waterConnectionDetails.changeProcessOwner(position);
             waterConnectionDetails.changeProcessInitiator(position);
             waterConnectionDetailsService.save(waterConnectionDetails);
-            waterConnectionDetailsService.updateIndexes(waterConnectionDetails,
-                    waterConnectionDetails.getSource() != null ? waterConnectionDetails.getSource().toString() : null);
+            waterConnectionDetailsService.updateIndexes(waterConnectionDetails);
         }
         return true;
     }
-
 
 }

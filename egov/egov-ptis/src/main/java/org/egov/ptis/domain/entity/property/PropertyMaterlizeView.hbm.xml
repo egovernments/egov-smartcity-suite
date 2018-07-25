@@ -64,6 +64,7 @@
 		<many-to-one name="propTypeMstrID" class="org.egov.ptis.domain.entity.property.PropertyTypeMaster" 	column="PROPTYMASTER"/>
 		<many-to-one name="zone" class="org.egov.infra.admin.master.entity.Boundary" column="ZONEID"/>
 		<many-to-one name="ward" class="org.egov.infra.admin.master.entity.Boundary" column="WARDID"/>
+		<many-to-one name="electionWard" class="org.egov.infra.admin.master.entity.Boundary" column="ELECTIONWARDID"/>
 		<many-to-one name="street" class="org.egov.infra.admin.master.entity.Boundary" column="STREETID"/>
 		<many-to-one name="block" class="org.egov.infra.admin.master.entity.Boundary" column="BLOCKID"/>
 		<many-to-one name="locality" class="org.egov.infra.admin.master.entity.Boundary" column="LOCALITYID"/>

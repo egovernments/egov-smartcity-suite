@@ -51,6 +51,7 @@ import org.egov.infra.utils.DateUtils;
 import org.egov.lcms.transactions.entity.Hearings;
 import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.service.HearingsService;
+import org.egov.lcms.utils.constants.LcmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -68,6 +69,9 @@ import java.text.ParseException;
 @Controller
 @RequestMapping(value = "/hearing")
 public class EditHearingsController {
+    
+    private static final String HEARINGS = "hearings";
+    
     @Autowired
     private HearingsService hearingsService;
 
@@ -75,8 +79,8 @@ public class EditHearingsController {
     public String edit(@PathVariable("hearingsId") final String hearingsId, final Model model) {
         final Hearings hearings = hearingsService.findById(Long.parseLong(hearingsId));
         model.addAttribute("legalCase", hearings.getLegalCase());
-        model.addAttribute("hearings", hearings);
-        model.addAttribute("mode", "edit");
+        model.addAttribute(HEARINGS, hearings);
+        model.addAttribute(LcmsConstants.MODE, "edit");
         return "hearings-edit";
     }
 
@@ -90,13 +94,13 @@ public class EditHearingsController {
             errors.rejectValue("hearingDate", "ValidateDate.hearing.casedate");
         hearings.setLegalCase(legalcase);
         if (errors.hasErrors()) {
-            model.addAttribute("legalCase", legalcase);
-            model.addAttribute("hearings", hearings);
+            model.addAttribute(LcmsConstants.LEGALCASE, legalcase);
+            model.addAttribute(HEARINGS, hearings);
             return "hearings-edit";
         }
         hearingsService.persist(hearings);
-        redirectAttrs.addFlashAttribute("hearings", hearings);
-        model.addAttribute("mode", "edit");
+        redirectAttrs.addFlashAttribute(HEARINGS, hearings);
+        model.addAttribute(LcmsConstants.MODE, "edit");
         model.addAttribute("message", "Hearing updated successfully.");
         return "hearings-success";
     }

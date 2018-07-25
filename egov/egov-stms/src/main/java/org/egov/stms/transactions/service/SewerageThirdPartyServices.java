@@ -183,7 +183,7 @@ public class SewerageThirdPartyServices {
         result.put("CURRENTWATERCHARGE", BigDecimal.ZERO);
         final String wtmsRestURL = String.format(WTMS_TAXDUE_RESTURL, WebUtils.extractRequestDomainURL(request, false),
                 assessmentNo);
-        final HashMap<String, Object> waterTaxInfo = simpleRestClient.getRESTResponseAsMap(wtmsRestURL);
+        final Map<String, Object> waterTaxInfo = simpleRestClient.getRESTResponseAsMap(wtmsRestURL);
         result.put(
                 "WATERTAXDUE",
                 waterTaxInfo.get("totalTaxDue") == null ? BigDecimal.ZERO : new BigDecimal(Double
@@ -198,7 +198,7 @@ public class SewerageThirdPartyServices {
     public BigDecimal getCurrentWaterTax(final String assessmentNo, final HttpServletRequest request) {
         final String wtmsRestURL = String.format(WTMS_TAXDUE_RESTURL, WebUtils.extractRequestDomainURL(request, false),
                 assessmentNo);
-        final HashMap<String, Object> waterTaxInfo = simpleRestClient.getRESTResponseAsMap(wtmsRestURL);
+        final Map<String, Object> waterTaxInfo = simpleRestClient.getRESTResponseAsMap(wtmsRestURL);
         return waterTaxInfo.get(currentDemand) == null ? BigDecimal.ZERO : new BigDecimal(
                 Double.valueOf((Double) waterTaxInfo.get(currentDemand)));
     }

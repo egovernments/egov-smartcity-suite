@@ -47,6 +47,8 @@
  */
 package org.egov.wtms.application.service;
 
+import java.util.HashMap;
+
 import org.egov.commons.entity.Source;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -57,8 +59,6 @@ import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.HashMap;
 
 @Service
 @Transactional(readOnly = true)
@@ -84,9 +84,8 @@ public class ReconnectionService {
      * @param approvalComent
      * @param additionalRule
      * @param workFlowAction
-     * @return Update Old Connection Object And Creates New
-     *         WaterConnectionDetails with INPROGRESS of ApplicationType as
-     *         "CHNAGEOFUSE"
+     * @return Update Old Connection Object And Creates New WaterConnectionDetails with INPROGRESS of ApplicationType as
+     * "CHNAGEOFUSE"
      */
     @Transactional
     public WaterConnectionDetails updateReConnection(final WaterConnectionDetails waterConnectionDetails,
@@ -109,7 +108,7 @@ public class ReconnectionService {
             waterConnectionDetailsService.updatePortalMessage(waterConnectionDetails);
         else if (waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser()))
             waterConnectionDetailsService.pushPortalMessage(savedwaterConnectionDetails);
-        waterConnectionDetailsService.updateIndexes(savedwaterConnectionDetails, sourceChannel);
+        waterConnectionDetailsService.updateIndexes(savedwaterConnectionDetails);
         return savedwaterConnectionDetails;
     }
 

@@ -6,7 +6,8 @@
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
-  ~
+  ~ 
+  
   ~     This program is free software: you can redistribute it and/or modify
   ~     it under the terms of the GNU General Public License as published by
   ~     the Free Software Foundation, either version 3 of the License, or
@@ -53,18 +54,23 @@
 	var popupWindow = null;
 	function openReassignWindow() {
 		var appId;
+		var mrsRegistrar=false;
+		var source="";
 		if ($("#registrationId").val()) {
 			appId = $("#registrationId").val();
 		} else if ($("#reIssueId").val()) {
 			appId = $("#reIssueId").val();
 		}
-		var mrsRegistrar=false;
 		if($("#mrsRegistrar").val() == 'true'){
 			mrsRegistrar=true;
 			}
+		if($("#source").val() !=null)
+		   source=$("#source").val();
+
+		
 		var applicationtype = $("#stateType").val();
 		popupWindow = window.open('/mrs/reassignmrs/'
-				+appId + "/" + applicationtype+"?"+"mrsRegistrar="+mrsRegistrar, '_blank',
+				+appId + "/" + applicationtype+"?"+"mrsRegistrar="+mrsRegistrar+"&source="+source, '_blank',
 				'width=650, height=500, scrollbars=yes', false);
 		jQuery('.loader-class').modal('show', {
 			backdrop : 'static'
@@ -141,8 +147,8 @@
 							id="Reassign" name="Reassign"
 							onclick="return openReassignWindow();" />
 					</c:if>
-				</c:if> <c:forEach items="${validActionList}" var="validButtons">
-
+				</c:if> 
+				<c:forEach items="${validActionList}" var="validButtons">
 					<form:button type="submit" id="${validButtons}"
 						class="btn btn-primary" value="${validButtons}"
 						onclick="return validateWorkFlowApprover('${validButtons}');">
@@ -152,4 +158,4 @@
 				class="btn btn-default" onclick="window.close();" /></td>
 		</tr>
 	</table>
-</div>
+</div>,

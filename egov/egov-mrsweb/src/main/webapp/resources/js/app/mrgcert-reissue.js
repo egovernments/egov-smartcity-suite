@@ -68,12 +68,14 @@ $(document).ready( function () {
 		 $('#txt-feepaid').val(Math.floor($('#txt-feepaid').val()));
 	 }
 	 
-	if($('#reIssueStatus').val()=='APPROVED' || ($('#currentState').val() =='Revenue Clerk Approved'
-		&& $("#feeCollected").val() == 'false') || ($('#reIssueStatus').val() == 'CREATED' && $(
-			'#nextActn').val() != 'Junior/Senior Assistance approval pending' && $(
-			'#nextActn').val() != 'Revenue Clerk Approval Pending' && $(
-			'#nextActn').val() != 'Chief Medical Officer of Health Approval Pending' && $(
-			'#nextActn').val() != 'Municipal Health Officer Approval Pending')){ 
+	if(($('#reIssueStatus').val() != '' && $('#reIssueStatus').val() == 'CREATED' && $(
+	'#nextActn').val() != 'Junior/Senior Assistance approval pending' && ($(
+	'#nextActn').val() != 'Revenue Clerk Approval Pending' && $(
+	'#nextActn').val() != 'Clerk Approval Pending') && $(
+	'#nextActn').val() != 'Chief Medical Officer of Health Approval Pending' && $(
+	'#nextActn').val() != 'Municipal Health Officer Approval Pending')&& $(
+	'#reIssueStatus').val() != 'REJECTED' || ($('#currentState').val() =='Clerk Approved')
+		&& $("#feeCollected").val() == 'false'){ 
         $(".show-row").hide();
         $('#approverDetailHeading').hide();
         $('#approvalDepartment').removeAttr('required');

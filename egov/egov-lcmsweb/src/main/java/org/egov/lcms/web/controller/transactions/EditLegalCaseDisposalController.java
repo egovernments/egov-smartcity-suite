@@ -51,6 +51,7 @@ import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.entity.LegalCaseDisposal;
 import org.egov.lcms.transactions.service.LegalCaseDisposalService;
 import org.egov.lcms.transactions.service.LegalCaseService;
+import org.egov.lcms.utils.constants.LcmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -68,6 +69,10 @@ import java.util.List;
 @Controller
 @RequestMapping(value = "/legalcasedisposal")
 public class EditLegalCaseDisposalController {
+    
+    private static final String LEGALCASEDISPOSAL = "legalCaseDisposal";
+
+    
     @Autowired
     private LegalCaseDisposalService legalCaseDisposalService;
 
@@ -76,8 +81,7 @@ public class EditLegalCaseDisposalController {
 
     @ModelAttribute
     private LegalCase getLegalCase(@RequestParam("lcNumber") final String lcNumber) {
-        final LegalCase legalCase = legalCaseService.findByLcNumber(lcNumber);
-        return legalCase;
+        return legalCaseService.findByLcNumber(lcNumber);
     }
 
     @RequestMapping(value = "/edit/", method = RequestMethod.GET)
@@ -85,9 +89,9 @@ public class EditLegalCaseDisposalController {
         final LegalCase legalCase = legalCaseService.findByLcNumber(lcNumber);
         final List<LegalCaseDisposal> legalCaseDisposalList = getLegalCase(lcNumber).getLegalcaseDisposal();
         final LegalCaseDisposal legalCaseDisposalObj = legalCaseDisposalList.get(0);
-        model.addAttribute("legalCase", legalCase);
-        model.addAttribute("legalCaseDisposal", legalCaseDisposalObj);
-        model.addAttribute("mode", "edit");
+        model.addAttribute(LcmsConstants.LEGALCASE, legalCase);
+        model.addAttribute(LEGALCASEDISPOSAL, legalCaseDisposalObj);
+        model.addAttribute(LcmsConstants.MODE, "edit");
         return "legalcaseDisposal-edit";
     }
 
@@ -99,9 +103,9 @@ public class EditLegalCaseDisposalController {
         if (errors.hasErrors())
             return "legalcaseDisposal-edit";
         legalCaseDisposalService.persist(legalCaseDisposal);
-        redirectAttrs.addFlashAttribute("legalCaseDisposal", legalCaseDisposal);
+        redirectAttrs.addFlashAttribute(LEGALCASEDISPOSAL, legalCaseDisposal);
         model.addAttribute("message", "Close Case updated successfully.");
-        model.addAttribute("mode", "edit");
+        model.addAttribute(LcmsConstants.MODE, "edit");
         return "legalcaseDisposal-success";
     }
 }

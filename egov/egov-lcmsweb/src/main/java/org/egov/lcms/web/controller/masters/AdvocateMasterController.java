@@ -78,19 +78,25 @@ import java.util.List;
 @Controller
 @RequestMapping("/advocatemaster")
 public class AdvocateMasterController {
-    private final static String ADVOCATEMASTER_NEW = "advocatemaster-new";
-    private final static String ADVOCATEMASTER_RESULT = "advocatemaster-result";
-    private final static String ADVOCATEMASTER_EDIT = "advocatemaster-edit";
-    private final static String ADVOCATEMASTER_VIEW = "advocatemaster-view";
-    private final static String ADVOCATEMASTER_SEARCH = "advocatemaster-search";
+    
+    private static final String ADVOCATEMASTER_NEW = "advocatemaster-new";
+    private static final String ADVOCATEMASTER_RESULT = "advocatemaster-result";
+    private static final String ADVOCATEMASTER_EDIT = "advocatemaster-edit";
+    private static final String ADVOCATEMASTER_VIEW = "advocatemaster-view";
+    private static final String ADVOCATEMASTER_SEARCH = "advocatemaster-search";
+    private static final String ADVOCATEMASTER = "advocateMaster";
+    
     @Autowired
     @Qualifier("advocateMasterService")
     private AdvocateMasterService advocateMasterService;
+    
     @Autowired
     private MessageSource messageSource;
+    
     @Autowired
     @Qualifier("bankService")
     private BankService bankService;
+    
     @Autowired
     @Qualifier("bankBranchService")
     private BankBranchService bankBranchService;
@@ -106,7 +112,7 @@ public class AdvocateMasterController {
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String newForm(final Model model) {
         prepareNewForm(model);
-        model.addAttribute("advocateMaster", new AdvocateMaster());
+        model.addAttribute(ADVOCATEMASTER, new AdvocateMaster());
         model.addAttribute("mode", "create");
         return ADVOCATEMASTER_NEW;
     }
@@ -141,13 +147,13 @@ public class AdvocateMasterController {
 
         if (advocateMaster.getBankName() != null && advocateMaster.getBankBranch() != null) {
             final Bankbranch bankbranch = bankBranchService.findById(advocateMaster.getBankBranch().getId(), false);
-            final List<Bankbranch> bankbranchList = new ArrayList<Bankbranch>();
+            final List<Bankbranch> bankbranchList = new ArrayList<>();
             bankbranchList.add(bankbranch);
             advocateMaster.setBankBranch(bankbranch);
             model.addAttribute("bankbranchlist", bankbranchList);
         }
         prepareNewForm(model);
-        model.addAttribute("advocateMaster", advocateMaster);
+        model.addAttribute(ADVOCATEMASTER, advocateMaster);
         return ADVOCATEMASTER_EDIT;
 
     }
@@ -179,7 +185,7 @@ public class AdvocateMasterController {
     public String view(@PathVariable("id") final Long id, final Model model) {
         final AdvocateMaster advocateMaster = advocateMasterService.findOne(id);
         prepareNewForm(model);
-        model.addAttribute("advocateMaster", advocateMaster);
+        model.addAttribute(ADVOCATEMASTER, advocateMaster);
         return ADVOCATEMASTER_VIEW;
     }
 
@@ -187,7 +193,7 @@ public class AdvocateMasterController {
     public String result(@PathVariable("id") final Long id, final Model model,@PathVariable("mode") final String mode) {
         final AdvocateMaster advocateMaster = advocateMasterService.findOne(id);
         model.addAttribute("mode", mode);
-        model.addAttribute("advocateMaster", advocateMaster);
+        model.addAttribute(ADVOCATEMASTER, advocateMaster);
         return ADVOCATEMASTER_RESULT;
     }
 
@@ -203,7 +209,7 @@ public class AdvocateMasterController {
     public String search(@PathVariable("mode") final String mode, final Model model) {
         final AdvocateMaster advocateMaster = new AdvocateMaster();
         prepareNewForm(model);
-        model.addAttribute("advocateMaster", advocateMaster);
+        model.addAttribute(ADVOCATEMASTER, advocateMaster);
         return ADVOCATEMASTER_SEARCH;
 
     }
@@ -212,16 +218,14 @@ public class AdvocateMasterController {
     public @ResponseBody String ajaxsearch(@PathVariable("mode") final String mode, final Model model,
             @ModelAttribute final AdvocateMaster advocateMaster) {
         final List<AdvocateMaster> searchResultList = advocateMasterService.search(advocateMaster);
-        final String result = new StringBuilder("{ \"data\":").append(toSearchResultJson(searchResultList)).append("}")
+        return new StringBuilder("{ \"data\":").append(toSearchResultJson(searchResultList)).append("}")
                 .toString();
-        return result;
     }
 
     public Object toSearchResultJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.registerTypeAdapter(AdvocateMaster.class, new AdvocateMasterJsonAdaptor())
                 .create();
-        final String json = gson.toJson(object);
-        return json;
+        return gson.toJson(object);
     }
 }

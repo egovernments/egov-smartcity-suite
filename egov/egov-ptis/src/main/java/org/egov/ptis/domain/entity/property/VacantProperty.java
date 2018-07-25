@@ -60,6 +60,8 @@ import java.util.List;
 
 import static java.lang.Boolean.FALSE;
 
+import java.math.BigDecimal;
+
 /**
  * The Implementation Class for the VacantProperty
  * 
@@ -83,8 +85,8 @@ public class VacantProperty extends AbstractProperty {
     private java.util.List<Floor> floorDetails = new ArrayList<>();
     private java.util.List<Floor> floorDetailsProxy = new ArrayList<>();
     private Integer propertyDetailsID;
-    private String water_Meter_Num;
-    private String elec_Meter_Num;
+    private String waterMeterNum;
+    private String elecMeterNum;
     private Integer noofFloors;
     private char fieldIrregular = 'N';
     private Date dateOfCompletion;
@@ -115,8 +117,8 @@ public class VacantProperty extends AbstractProperty {
     private WoodType woodType;
     private Apartment apartment = null;
     private String pattaNumber;
-    private Double currentCapitalValue;
-    private Double marketValue;
+    private BigDecimal currentCapitalValue;
+    private BigDecimal marketValue;
     private String categoryType;
     private String occupancyCertificationNo;
     private Date occupancyCertificationDate;
@@ -131,15 +133,15 @@ public class VacantProperty extends AbstractProperty {
 
     public VacantProperty(Area sitalArea, Area totalBuiltupArea, Area commBuiltUpArea, Area plinthArea,
             Area commVacantLand, Area nonResPlotArea, Boolean irregular, String surveyNumber, Character fieldVerified,
-            Date fieldVerificationDate, List<Floor> floorDetails, Integer propertyDetailsID, String water_Meter_Num,
-            String elec_Meter_Num, Integer no_of_floors, char fieldIrregular, Date dateOfCompletion, Property property,
+            Date fieldVerificationDate, List<Floor> floorDetails, Integer propertyDetailsID, String waterMeterNum,
+            String elecMeterNum, Integer no_of_floors, char fieldIrregular, Date dateOfCompletion, Property property,
             Date updatedTime, PropertyUsage propertyUsage, PropertyCreationReason creationReason,
             PropertyTypeMaster propertyTypeMaster, String propertyType, Installment installment,
             PropertyOccupation propertyOccupation, PropertyMutationMaster propertyMutationMaster, Character comZone,
             Character cornerPlot, Double extentSite, Double extentAppartenauntLand, FloorType floorType,
             RoofType roofType, WallType wallType, WoodType woodType, boolean lift, boolean toilets, boolean waterTap,
             boolean structure, boolean electricity, boolean attachedBathRoom, boolean waterHarvesting, boolean cable,
-            String siteOwner, String pattaNumber, Double currentCapitalValue, Double marketValue, String categoryType,
+            String siteOwner, String pattaNumber, BigDecimal currentCapitalValue, BigDecimal marketValue, String categoryType,
             String occupancyCertificationNo,Date occupancyCertificationDate, Boolean appurtenantLandChecked, Boolean corrAddressDiff,
             PropertyDepartment propertyDepartment, VacantLandPlotArea vacantLandPlotArea,
             LayoutApprovalAuthority layoutApprovalAuthority, String layoutPermitNo, Date layoutPermitDate) {
@@ -156,8 +158,8 @@ public class VacantProperty extends AbstractProperty {
         this.fieldVerificationDate = fieldVerificationDate;
         this.floorDetails = floorDetails;
         this.propertyDetailsID = propertyDetailsID;
-        this.water_Meter_Num = water_Meter_Num;
-        this.elec_Meter_Num = elec_Meter_Num;
+        this.waterMeterNum = waterMeterNum;
+        this.elecMeterNum = elecMeterNum;
         this.noofFloors = noofFloors;
         this.fieldIrregular = fieldIrregular;
         this.dateOfCompletion = dateOfCompletion;
@@ -286,8 +288,8 @@ public class VacantProperty extends AbstractProperty {
      * @return Returns the elec_Meter_Num.
      */
     @Override
-    public String getElec_Meter_Num() {
-        return elec_Meter_Num;
+    public String getElecMeterNum() {
+        return elecMeterNum;
     }
 
     /**
@@ -295,8 +297,8 @@ public class VacantProperty extends AbstractProperty {
      *            The elec_Meter_Num to set.
      */
     @Override
-    public void setElec_Meter_Num(String elec_Meter_Num) {
-        this.elec_Meter_Num = elec_Meter_Num;
+    public void setElecMeterNum(String elecMeterNum) {
+        this.elecMeterNum = elecMeterNum;
     }
 
     /**
@@ -549,8 +551,8 @@ public class VacantProperty extends AbstractProperty {
      * @return Returns the water_Meter_Num.
      */
     @Override
-    public String getWater_Meter_Num() {
-        return water_Meter_Num;
+    public String getWaterMeterNum() {
+        return waterMeterNum;
     }
 
     /**
@@ -558,8 +560,8 @@ public class VacantProperty extends AbstractProperty {
      *            The water_Meter_Num to set.
      */
     @Override
-    public void setWater_Meter_Num(String water_Meter_Num) {
-        this.water_Meter_Num = water_Meter_Num;
+    public void setWaterMeterNum(String waterMeterNum) {
+        this.waterMeterNum = waterMeterNum;
     }
 
     /**
@@ -915,22 +917,22 @@ public class VacantProperty extends AbstractProperty {
     }
 
     @Override
-    public Double getCurrentCapitalValue() {
+    public BigDecimal getCurrentCapitalValue() {
         return currentCapitalValue;
     }
 
     @Override
-    public void setCurrentCapitalValue(Double currentCapitalValue) {
+    public void setCurrentCapitalValue(BigDecimal currentCapitalValue) {
         this.currentCapitalValue = currentCapitalValue;
     }
 
     @Override
-    public Double getMarketValue() {
+    public BigDecimal getMarketValue() {
         return marketValue;
     }
 
     @Override
-    public void setMarketValue(Double marketValue) {
+    public void setMarketValue(BigDecimal marketValue) {
         this.marketValue = marketValue;
     }
 

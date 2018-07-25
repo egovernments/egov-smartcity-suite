@@ -59,6 +59,8 @@ public class PropertyOwnerInfo extends AbstractPersistable<Long> {
     private PropertySource source;
     private Integer orderNo;
     private User owner;
+    private Long userId;
+    
     //TODO LATER now setting citizen as owner type in future this should be captured on owner transfer form
     private UserType ownerType = UserType.CITIZEN;
 
@@ -115,6 +117,14 @@ public class PropertyOwnerInfo extends AbstractPersistable<Long> {
 
     public void setOwner(final User owner) {
         this.owner = owner;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public UserType getOwnerType() {

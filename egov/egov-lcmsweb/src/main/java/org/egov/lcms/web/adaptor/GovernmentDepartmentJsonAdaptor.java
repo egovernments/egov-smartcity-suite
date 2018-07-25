@@ -47,35 +47,39 @@
  */
 package org.egov.lcms.web.adaptor;
 
+import java.lang.reflect.Type;
+
+import org.egov.lcms.masters.entity.GovernmentDepartment;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import org.egov.lcms.masters.entity.GovernmentDepartment;
-
-import java.lang.reflect.Type;
 
 public class GovernmentDepartmentJsonAdaptor implements JsonSerializer<GovernmentDepartment> {
-	@Override
-	public JsonElement serialize(final GovernmentDepartment governmentDepartment, final Type type,
-			final JsonSerializationContext jsc) {
-		final JsonObject jsonObject = new JsonObject();
-		if (governmentDepartment != null) {
-		 	if (governmentDepartment.getName() != null)
-				jsonObject.addProperty("name", governmentDepartment.getName());
-			else
-				jsonObject.addProperty("name", "");
-			if (governmentDepartment.getName() != null)
-				jsonObject.addProperty("code", governmentDepartment.getCode());
-			else
-				jsonObject.addProperty("code", "");
-			if (governmentDepartment.getActive() != null)
-		                jsonObject.addProperty("active", governmentDepartment.getActive() == true ? "YES" : "NO");
-		            else
-		                jsonObject.addProperty("active", "");
-		            jsonObject.addProperty("id", governmentDepartment.getId());
-			jsonObject.addProperty("id", governmentDepartment.getId());
-		}
-		return jsonObject;
-	}
+    @Override
+    public JsonElement serialize(final GovernmentDepartment governmentDepartment, final Type type,
+            final JsonSerializationContext jsc) {
+        final JsonObject jsonObject = new JsonObject();
+        if (governmentDepartment != null) {
+            if (governmentDepartment.getName() == null)
+                jsonObject.addProperty("name", "");
+            else
+                jsonObject.addProperty("name", governmentDepartment.getName());
+
+            if (governmentDepartment.getName() == null)
+                jsonObject.addProperty("code", "");
+            else
+                jsonObject.addProperty("code", governmentDepartment.getCode());
+
+            if (governmentDepartment.getActive() == null)
+                jsonObject.addProperty("active", "");
+            else
+                jsonObject.addProperty("active", governmentDepartment.getActive() ? "YES" : "NO");
+
+            jsonObject.addProperty("id", governmentDepartment.getId());
+            jsonObject.addProperty("id", governmentDepartment.getId());
+        }
+        return jsonObject;
+    }
 }

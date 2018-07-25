@@ -100,7 +100,7 @@ public class WaterChargeDashboardService {
     public BigDecimal getWaterChargeTotalDemand(final HttpServletRequest request) {
         final String wtmsRestURL = format(PropertyTaxConstants.WTMS_TOTALDEMAND_RESTURL,
                 WebUtils.extractRequestDomainURL(request, false));
-        final HashMap<String, Object> waterTaxInfo = simpleRestClient.getRESTResponseAsMap(wtmsRestURL);
+        final Map<String, Object> waterTaxInfo = simpleRestClient.getRESTResponseAsMap(wtmsRestURL);
         return waterTaxInfo.get("currentDemand") == null ? BigDecimal.ZERO
                 : new BigDecimal(Double.valueOf((Double) waterTaxInfo.get("currentDemand")));
     }

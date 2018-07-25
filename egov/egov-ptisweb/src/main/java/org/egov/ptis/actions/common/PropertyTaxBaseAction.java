@@ -321,8 +321,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         if (null == propertyDetail.getMarketValue())
             addActionError(getText("mandatory.marketValue"));
         if (propertyDetail.getCurrentCapitalValue() != null
-                && propertyDetail.getCurrentCapitalValue() < Double
-                        .parseDouble(VACANTLAND_MIN_CUR_CAPITALVALUE))
+                && propertyDetail.getCurrentCapitalValue().compareTo(new BigDecimal(VACANTLAND_MIN_CUR_CAPITALVALUE)) == -1)
             addActionError(getText("minvalue.capitalValue"));
         if (isBlank(eastBoundary))
             addActionError(getText("mandatory.eastBoundary"));

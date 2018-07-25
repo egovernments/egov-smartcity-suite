@@ -109,11 +109,11 @@ public class JudgmentTypeService {
         final CriteriaQuery<JudgmentType> createQuery = cb.createQuery(JudgmentType.class);
         final Root<JudgmentType> judgmentTypeObj = createQuery.from(JudgmentType.class);
         createQuery.select(judgmentTypeObj);
-        final Metamodel m = entityManager.getMetamodel();
-        final javax.persistence.metamodel.EntityType<JudgmentType> JudgmentType = m.entity(JudgmentType.class);
+        final Metamodel model = entityManager.getMetamodel();
+        final javax.persistence.metamodel.EntityType<JudgmentType> judgmentTypes = model.entity(JudgmentType.class);
 
         final List<JudgmentType> resultList;
-        final List<Predicate> predicates = new ArrayList<Predicate>();
+        final List<Predicate> predicates = new ArrayList<>();
         if (judgmentType.getName() == null && judgmentType.getCode() == null && judgmentType.getActive() == null)
             resultList = findAll();
         else {
@@ -123,24 +123,24 @@ public class JudgmentTypeService {
                 predicates
                 .add(cb.like(
                         cb.lower(judgmentTypeObj
-                                .get(JudgmentType.getDeclaredSingularAttribute("name", String.class))),
+                                .get(judgmentTypes.getDeclaredSingularAttribute("name", String.class))),
                                 interimOrderType));
             }
             if (judgmentType.getCode() != null) {
                 final String code = "%" + judgmentType.getCode().toLowerCase() + "%";
                 predicates.add(cb.isNotNull(judgmentTypeObj.get("code")));
                 predicates.add(cb.like(
-                        cb.lower(judgmentTypeObj.get(JudgmentType.getDeclaredSingularAttribute("code", String.class))),
+                        cb.lower(judgmentTypeObj.get(judgmentTypes.getDeclaredSingularAttribute("code", String.class))),
                         code));
             }
             if (judgmentType.getActive() != null)
                 if (judgmentType.getActive())
                     predicates.add(cb.equal(
-                            judgmentTypeObj.get(JudgmentType.getDeclaredSingularAttribute("active", Boolean.class)),
+                            judgmentTypeObj.get(judgmentTypes.getDeclaredSingularAttribute("active", Boolean.class)),
                             true));
                 else
                     predicates.add(cb.equal(
-                            judgmentTypeObj.get(JudgmentType.getDeclaredSingularAttribute("active", Boolean.class)),
+                            judgmentTypeObj.get(judgmentTypes.getDeclaredSingularAttribute("active", Boolean.class)),
                             false));
 
             createQuery.where(predicates.toArray(new Predicate[] {}));

@@ -131,7 +131,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WTMS_AMALGAMATE_WATER_CONNECTIONS_URL;
 import static org.egov.ptis.constants.PropertyTaxConstants.WTMS_TAXDUE_RESTURL;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_MODIFY;
 
 
 import java.io.File;
@@ -2082,8 +2081,8 @@ public class PropertyService {
         propDetail.setFieldVerificationDate(propertyDetail.getFieldVerificationDate());
         propDetail.setFloorDetails(propertyDetail.getFloorDetails());
         propDetail.setPropertyDetailsID(propertyDetail.getPropertyDetailsID());
-        propDetail.setWater_Meter_Num(propertyDetail.getWater_Meter_Num());
-        propDetail.setElec_Meter_Num(propertyDetail.getElec_Meter_Num());
+        propDetail.setWaterMeterNum(propertyDetail.getWaterMeterNum());
+        propDetail.setElecMeterNum(propertyDetail.getElecMeterNum());
         propDetail.setNoofFloors(numOfFloors);
         propDetail.setFieldIrregular(propertyDetail.getFieldIrregular());
         propDetail.setDateOfCompletion(propertyDetail.getDateOfCompletion());
@@ -3999,7 +3998,8 @@ public class PropertyService {
         basicPropByDoorNo.setParameter("houseNo", houseNo);
         // this condition is required because, after rejection the validation shouldn't happen for the same houseNo
         return !basicPropByDoorNo.list().isEmpty()
-                && (basicProperty == null || !basicProperty.getAddress().getHouseNoBldgApt().equals(houseNo));
+                && (basicProperty == null || !(basicProperty.getAddress().getHouseNoBldgApt() == null ? ""
+                        : basicProperty.getAddress().getHouseNoBldgApt()).equals(houseNo));
     }
 
     public Map<Installment, Map<String, BigDecimal>> getExcessCollAmtMap() {

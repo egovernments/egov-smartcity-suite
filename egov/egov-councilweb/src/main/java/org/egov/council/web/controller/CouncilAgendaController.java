@@ -96,6 +96,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/agenda")
 public class CouncilAgendaController {
 
+    private static final String COUNCIL_PREAMBLE = "councilPreamble";
+    private static final String MESSAGE = "message";
     private static final String AGENDA_NUMBER_AUTO = "AGENDA_NUMBER_AUTO";
     private static final String DATA = "{\"data\":";
     private static final String COUNCIL_AGENDA = "councilAgenda";
@@ -150,7 +152,7 @@ public class CouncilAgendaController {
     public String newForm(final Model model) {
         model.addAttribute("autoAgendaNoGenEnabled", isAutoAgendaNoGenEnabled()); 
         model.addAttribute(COUNCIL_AGENDA, new CouncilAgenda());
-        model.addAttribute("councilPreamble", new CouncilPreamble());
+        model.addAttribute(COUNCIL_PREAMBLE, new CouncilPreamble());
         return COUNCILAGENDA_NEW;
     }
 
@@ -161,9 +163,13 @@ public class CouncilAgendaController {
             final RedirectAttributes redirectAttrs) {
         
         if (!councilAgendaService.findByAgendaNo(councilAgenda.getAgendaNumber()).isEmpty()) {
-            errors.rejectValue("agendaNumber", "err.agenda.alreadyexists");
+            model.addAttribute(MESSAGE, messageSource.getMessage("err.agenda.alreadyexists",
+                    new String[] {}, null));
         }
         if (errors.hasErrors()) {
+            model.addAttribute("autoAgendaNoGenEnabled", isAutoAgendaNoGenEnabled()); 
+            model.addAttribute(COUNCIL_AGENDA, new CouncilAgenda());
+            model.addAttribute(COUNCIL_PREAMBLE, new CouncilPreamble());
             return COUNCILAGENDA_NEW;
         }
         List<CouncilAgendaDetails> preambleList = new ArrayList<>();
@@ -189,7 +195,7 @@ public class CouncilAgendaController {
         councilAgenda.setAgendaDetails(preambleList);
         councilAgendaService.create(councilAgenda);
 
-        redirectAttrs.addFlashAttribute("message",
+        redirectAttrs.addFlashAttribute(MESSAGE,
                 messageSource.getMessage("msg.agenda.success", null, null));
         return "redirect:/agenda/result/" + councilAgenda.getId();
     }
@@ -247,7 +253,7 @@ public class CouncilAgendaController {
         councilAgenda.setCouncilAgendaDetailsForUpdate(councilAgenda
                 .getAgendaDetails());
         model.addAttribute(COUNCIL_AGENDA, councilAgenda);
-        model.addAttribute("councilPreamble", new CouncilPreamble());
+        model.addAttribute(COUNCIL_PREAMBLE, new CouncilPreamble());
 
         return COUNCILAGENDA_EDIT;
     }
@@ -286,7 +292,7 @@ public class CouncilAgendaController {
         if (!existingPreambleList.isEmpty())
             councilAgendaService.deleteAllInBatch(existingPreambleList); // UPDATE
                                                                          // STATUS
-        redirectAttrs.addFlashAttribute("message",
+        redirectAttrs.addFlashAttribute(MESSAGE,
                 messageSource.getMessage("msg.agenda.success", null, null));
         return "redirect:/agenda/result/" + councilAgenda.getId();
     }

@@ -110,11 +110,11 @@ public class CourtMasterService {
         final CriteriaQuery<CourtMaster> createQuery = cb.createQuery(CourtMaster.class);
         final Root<CourtMaster> courtMasterobj = createQuery.from(CourtMaster.class);
         createQuery.select(courtMasterobj);
-        final Metamodel m = entityManager.getMetamodel();
-        final javax.persistence.metamodel.EntityType<CourtMaster> CourtMaster = m.entity(CourtMaster.class);
+        final Metamodel model = entityManager.getMetamodel();
+        final javax.persistence.metamodel.EntityType<CourtMaster> courtMasters = model.entity(CourtMaster.class);
 
         final List<CourtMaster> resultList;
-        final List<Predicate> predicates = new ArrayList<Predicate>();
+        final List<Predicate> predicates = new ArrayList<>();
         if (courtMaster.getName() == null && courtMaster.getCourtType() == null && courtMaster.getActive() == null)
             resultList = findAll();
         else {
@@ -122,7 +122,7 @@ public class CourtMasterService {
                 final String name = "%" + courtMaster.getName().toLowerCase() + "%";
                 predicates.add(cb.isNotNull(courtMasterobj.get("name")));
                 predicates.add(cb.like(
-                        cb.lower(courtMasterobj.get(CourtMaster.getDeclaredSingularAttribute("name", String.class))),
+                        cb.lower(courtMasterobj.get(courtMasters.getDeclaredSingularAttribute("name", String.class))),
                         name));
             }
             if (courtMaster.getCourtType() != null)
@@ -130,11 +130,11 @@ public class CourtMasterService {
             if (courtMaster.getActive() != null)
                 if (courtMaster.getActive())
                     predicates.add(cb.equal(
-                            courtMasterobj.get(CourtMaster.getDeclaredSingularAttribute("active", Boolean.class)),
+                            courtMasterobj.get(courtMasters.getDeclaredSingularAttribute("active", Boolean.class)),
                             true));
                 else
                     predicates.add(cb.equal(
-                            courtMasterobj.get(CourtMaster.getDeclaredSingularAttribute("active", Boolean.class)),
+                            courtMasterobj.get(courtMasters.getDeclaredSingularAttribute("active", Boolean.class)),
                             false));
 
             createQuery.where(predicates.toArray(new Predicate[] {}));

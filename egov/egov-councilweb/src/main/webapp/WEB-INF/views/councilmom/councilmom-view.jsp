@@ -181,13 +181,13 @@
 										<td class="text-center">${counter.index+1}</td>
 										<td><c:out value="${meetingAttend.councilMember.name}" /></td>
 										<td><c:out
-												value="${meetingAttend.councilMember.electionWard.name}" /></td>
+												value="${not empty meetingAttend.councilMember.electionWard.name?meetingAttend.councilMember.electionWard.name:'N/A'}" /></td>
 										<td><c:out
 												value="${meetingAttend.councilMember.designation.name}" /></td>
 										<td><c:out
-												value="${meetingAttend.councilMember.qualification.name}" /></td>
+												value="${not empty meetingAttend.councilMember.qualification.name?meetingAttend.councilMember.qualification.name:'N/A'}" /></td>
 										<td><c:out
-												value="${meetingAttend.councilMember.partyAffiliation.name}" /></td>
+												value="${not empty meetingAttend.councilMember.partyAffiliation.name?meetingAttend.councilMember.partyAffiliation.name:'N/A'}" /></td>
 										<td class="text-center"><c:out
 												value="${meetingAttend.attendedMeeting?'Yes':'No'}" /></td>
 									</tr>

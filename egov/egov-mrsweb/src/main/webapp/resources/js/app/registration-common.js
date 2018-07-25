@@ -170,12 +170,13 @@ $(document)
 					});
 					
 					 if (($('#registrationStatus').val() != '' && $('#registrationStatus').val() == 'CREATED' && $(
-									'#nextActn').val() != 'Junior/Senior Assistance approval pending' && $(
-									'#nextActn').val() != 'Revenue Clerk Approval Pending' && $(
-									'#nextActn').val() != 'Chief Medical Officer of Health Approval Pending' && $(
-									'#nextActn').val() != 'Municipal Health Officer Approval Pending')&& $(
-									'#registrationStatus').val() != 'REJECTED' || ($('#currentState').val() =='Revenue Clerk Approved'
-								&& $("#feeCollected").val() == 'false')) {
+						'#nextActn').val() != 'Junior/Senior Assistance approval pending' && ($(
+						'#nextActn').val() != 'Revenue Clerk Approval Pending' && $(
+						'#nextActn').val() != 'Clerk Approval Pending') && $(
+						'#nextActn').val() != 'Chief Medical Officer of Health Approval Pending' && $(
+						'#nextActn').val() != 'Municipal Health Officer Approval Pending')&& $(
+						'#registrationStatus').val() != 'REJECTED' || ($('#currentState').val() =='Clerk Approved')
+					&& $("#feeCollected").val() == 'false'){
 						$(".show-row").hide();
 						$('#approverDetailHeading').hide();
 						$('#approvalDepartment').removeAttr('required');
@@ -329,7 +330,7 @@ function validateChecklists() {
 	// Passport is assumed to be common proof for both age and residence
 	// If passport is not attached then validate for other age and residence
 	// proof documents
-	if ($('#registrationStatus').val() == "" ||$('#source').val()=='CHPK') {
+	if ($('#registrationStatus').val() == "" && $('#source').val()!='CHPK') {
 		var ageAddrProofAttached = false;
 		if ($('input[id^="indvcommonhusbandPassport"]').val() == "") {
 			$('input[type="file"][id^="ageproofhusband"]').toArray().map(

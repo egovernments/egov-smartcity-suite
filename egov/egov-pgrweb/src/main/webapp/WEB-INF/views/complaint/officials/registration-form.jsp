@@ -55,7 +55,8 @@
       href="<cdn:url  value='/resources/global/css/egov/map-autocomplete.css?rnd=${app_release_no}' context='/egi'/>">
 <div class="row">
     <div class="col-md-12">
-        <form:form role="form" action="register" modelAttribute="complaint" commandName="complaint" id="complaintform" cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
+        <form:form role="form" action="register" modelAttribute="complaint" id="complaintform"
+                   cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
             <div class="panel panel-primary" data-collapsed="0">
                 <div class="panel-heading">
                     <div class="panel-title">
@@ -64,9 +65,14 @@
                 </div>
                 <div class="panel-body custom-form ">
                     <div class="form-group">
-                        <label class="col-sm-3 control-label"><spring:message code="lbl.receivingmode"/></label>
+                        <label class="col-sm-3 control-label"><spring:message code="lbl.receivingmode"/><span class="mandatory"></span></label>
                         <div class="col-sm-9 col-xs-12 dynamic-span">
-                            <form:radiobuttons path="receivingMode" items="${receivingModes}" itemValue="id" itemLabel="name" element="span"/>
+                            <c:forEach items="${receivingModes}" var="receivingMode">
+                                <form:radiobutton path="receivingMode" value="${receivingMode.id}"
+                                                  data-rcrequired="${receivingMode.rcRequired}" element="span"/>
+                                <form:label path=""
+                                            cssClass="control-label">${receivingMode.name}&nbsp;&nbsp;</form:label>
+                            </c:forEach>
                             <form:errors path="receivingMode" cssClass="add-margin error-msg"/>
                         </div>
                     </div>
@@ -295,8 +301,8 @@
 <script src="<cdn:url  value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
 <script src="<cdn:url  value='/resources/js/app/complaint.js?rnd=${app_release_no}'/>"></script>
 <script>
-    var receivingMode = '${complaint.receivingMode.name}';
-    if (receivingMode === 'Manual') {
+    var rcRequired= ${complaint.receivingMode.rcRequired};
+    if (rcRequired) {
         enableRC();
         enabledCRN();
     }

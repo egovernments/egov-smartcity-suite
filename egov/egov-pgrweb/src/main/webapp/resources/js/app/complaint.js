@@ -173,7 +173,7 @@ $(document).ready(
         $('input[type=radio][name=receivingMode]').change(function () {
             $('#receivingCenter').prop('selectedIndex', 0);
             disableCRN();
-            if ($(this).next().text() == 'Manual') {
+            if ($(this).data('rcrequired')) {
                 enableRC();
             } else {
                 disableRC();
@@ -246,7 +246,7 @@ $(document).ready(
                     },
                     {
                         element: "#create-griev",
-                        title: "Create Grievance",
+                        title: "Register Grievance",
                         content: "Finally, click here to register your grievance."
                     }],
                 storage: false,

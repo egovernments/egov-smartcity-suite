@@ -121,7 +121,7 @@ public class WaterTaxConstants {
     public static final String ROLE_CSCOPERTAOR = "CSC Operator";
     public static final String ROLE_ULBOPERATOR = "ULB Operator";
     public static final String ROLE_BILLCOLLECTOR = "Collection Operator";
-    public static final String ROLE_CLERKFORADONI = "Senior Assistant,Junior Assistant";
+    public static final String ROLE_CLERK = "Senior Assistant,Junior Assistant";
     public static final String ROLE_APPROVERROLE = "Water Tax Approver";
     public static final String ROLE_COMMISSIONERDEPARTEMNT = "Administration";
     public static final String ROLE_SUPERUSER = "SYSTEM";
@@ -430,7 +430,8 @@ public class WaterTaxConstants {
 
     public static final String INPROGRESS = "INPROGRESS";
     public static final String APPLICATIONINITIATORROLE = "WCMSDESIGNATIONFORINITIATOR";
-    public static final String PROCEEDWITHOUTDONATIONAMOUNTPAID = "PROCEEDWITHOUTDONATIONAMOUNTPAID";
+    public static final String PROCEED_WITHOUT_NONMETER_EST_AMT = "PROCEED_WITHOUT_NONMETER_ESTIMATION_AMOUNT";
+    public static final String PROCEED_WITHOUT_METER_EST_AMT = "PROCEED_WITHOUT_METER_ESTIMATION_AMOUNT";
 
     public static final String ENGINEERING_CODE = "ENG";
     public static final String JUNIOR_ASSISTANT_DESIGN_CODE = "JASST";
@@ -449,4 +450,7 @@ public class WaterTaxConstants {
     public static final String REGULARISATION_DEMAND_NOTE = "Regularisation Demand Note";
     public static final String STATUS = "status";
     public static final int NO_OF_INSTALLMENTS = 8;
+    public static final String ESTIMATIONCHARGES_SERVICE_CODE = "WES";
+    public static final String WATERTAX_CHARGES_SERVICE_CODE = "WT";
+    public static final String WATERTAX_CONNECTION_CHARGE = "WTAXCONCHARGE";
 }

@@ -71,6 +71,7 @@ import java.util.List;
 public class PetitionTypeMasterService {
 
     private final PetitionTypeMasterRepository petitionTypeMasterRepository;
+    
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -111,12 +112,12 @@ public class PetitionTypeMasterService {
         final CriteriaQuery<PetitionTypeMaster> createQuery = cb.createQuery(PetitionTypeMaster.class);
         final Root<PetitionTypeMaster> petitionTypeMasterobj = createQuery.from(PetitionTypeMaster.class);
         createQuery.select(petitionTypeMasterobj);
-        final Metamodel m = entityManager.getMetamodel();
-        final javax.persistence.metamodel.EntityType<PetitionTypeMaster> PetitionTypeMaster = m
+        final Metamodel model = entityManager.getMetamodel();
+        final javax.persistence.metamodel.EntityType<PetitionTypeMaster> petitionTypes = model
                 .entity(PetitionTypeMaster.class);
 
         final List<PetitionTypeMaster> resultList;
-        final List<Predicate> predicates = new ArrayList<Predicate>();
+        final List<Predicate> predicates = new ArrayList<>();
         if (petitionTypeMaster.getCode() == null && petitionTypeMaster.getCourtType() == null
                 && petitionTypeMaster.getPetitionType() == null && petitionTypeMaster.getActive() == null)
             resultList = findAll();
@@ -127,7 +128,7 @@ public class PetitionTypeMasterService {
                 predicates
                         .add(cb.like(
                                 cb.lower(petitionTypeMasterobj
-                                        .get(PetitionTypeMaster.getDeclaredSingularAttribute("code", String.class))),
+                                        .get(petitionTypes.getDeclaredSingularAttribute("code", String.class))),
                                 code));
             }
             if (petitionTypeMaster.getPetitionType() != null) {
@@ -135,7 +136,7 @@ public class PetitionTypeMasterService {
                 predicates.add(cb.isNotNull(petitionTypeMasterobj.get("petitionType")));
                 predicates.add(cb.like(
                         cb.lower(petitionTypeMasterobj
-                                .get(PetitionTypeMaster.getDeclaredSingularAttribute("petitionType", String.class))),
+                                .get(petitionTypes.getDeclaredSingularAttribute("petitionType", String.class))),
                         petitionType));
             }
             if (petitionTypeMaster.getCourtType() != null)
@@ -145,13 +146,13 @@ public class PetitionTypeMasterService {
                     predicates
                             .add(cb.equal(
                                     petitionTypeMasterobj.get(
-                                            PetitionTypeMaster.getDeclaredSingularAttribute("active", Boolean.class)),
+                                            petitionTypes.getDeclaredSingularAttribute("active", Boolean.class)),
                                     true));
                 else
                     predicates
                             .add(cb.equal(
                                     petitionTypeMasterobj.get(
-                                            PetitionTypeMaster.getDeclaredSingularAttribute("active", Boolean.class)),
+                                            petitionTypes.getDeclaredSingularAttribute("active", Boolean.class)),
                                     false));
 
             createQuery.where(predicates.toArray(new Predicate[] {}));

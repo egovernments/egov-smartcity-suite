@@ -121,6 +121,22 @@
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-3 control-label"><spring:message
+                                        code="lbl.city.lgd.code"/><span class="mandatory"></span></label>
+                                <c:set var="helptext">
+                                    <spring:message code="help.city.ldg.code"/>
+                                </c:set>
+                                <div class="col-sm-6" style="padding-top: 7px">
+                                    <form:input path="lgdCode" id="lgdCode" type="text"
+                                                data-toggle="popover" data-trigger="focus" data-placement="right"
+                                                data-content="${helptext}"
+                                                class="form-control" placeholder="" autocomplete="off"
+                                                required="required"/>
+                                    <form:errors path="lgdCode" cssClass="add-margin error-msg"/>
+                                </div>
+
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"><spring:message
                                         code="lbl.city.domain.url"/><span class="mandatory"></span></label>
                                 <c:set var="helptext">
                                     <spring:message code="help.city.domain.url"/>
@@ -167,6 +183,22 @@
                                     <form:errors path="districtCode"
                                                  cssClass="add-margin error-msg"/>
                                 </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"><spring:message
+                                        code="lbl.city.district.lgd.code"/><span class="mandatory"></span></label>
+                                <c:set var="helptext">
+                                    <spring:message code="help.city.district.ldg.code"/>
+                                </c:set>
+                                <div class="col-sm-6" style="padding-top: 7px">
+                                    <form:input path="districtLGDCode" id="districtLGDCode" type="text"
+                                                data-toggle="popover" data-trigger="focus" data-placement="right"
+                                                data-content="${helptext}"
+                                                class="form-control" placeholder="" autocomplete="off"
+                                                required="required"/>
+                                    <form:errors path="districtLGDCode" cssClass="add-margin error-msg"/>
+                                </div>
+
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-3 control-label"><spring:message

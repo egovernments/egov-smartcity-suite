@@ -532,7 +532,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="14" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{commissionerName}+" , "+$P{designation}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{commissionerName}+" , Commissioner"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="393" y="546" width="131" height="20" isPrintWhenDetailOverflows="true" uuid="2174decf-51cb-43b8-b617-8ed13f25b7dc"/>
@@ -888,7 +888,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="14" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{commissionerName}+" , "+$P{designation}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{commissionerName}+" , Commissioner"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="319" y="466" width="111" height="20" uuid="861da01d-d5f2-4906-9c44-a37b7be03cc8"/>

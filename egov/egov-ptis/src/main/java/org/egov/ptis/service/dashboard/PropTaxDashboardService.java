@@ -62,12 +62,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_S
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
@@ -94,9 +91,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class PropTaxDashboardService {
 
-    @PersistenceContext
-    private EntityManager entityManager;
-    
     @Autowired
     private CFinancialYearService cFinancialYearService;
 
@@ -212,7 +206,7 @@ public class PropTaxDashboardService {
     public BigDecimal getWaterChargeTotalDemand(final HttpServletRequest request) {
         final String wtmsRestURL = format(PropertyTaxConstants.WTMS_TOTALDEMAND_RESTURL,
                 WebUtils.extractRequestDomainURL(request, false));
-        final HashMap<String, Object> waterTaxInfo = simpleRestClient.getRESTResponseAsMap(wtmsRestURL);
+        final Map<String, Object> waterTaxInfo = simpleRestClient.getRESTResponseAsMap(wtmsRestURL);
         return waterTaxInfo.get("currentDemand") == null ? BigDecimal.ZERO
                 : new BigDecimal(Double.valueOf((Double) waterTaxInfo.get("currentDemand")));
     }

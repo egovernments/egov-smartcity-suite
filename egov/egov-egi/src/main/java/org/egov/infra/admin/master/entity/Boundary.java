@@ -91,6 +91,7 @@ public class Boundary extends AbstractAuditable {
 
     public static final String SEQ_BOUNDARY = "seq_eg_boundary";
     private static final long serialVersionUID = 3054956514161912026L;
+
     @Expose
     @Id
     @GeneratedValue(generator = SEQ_BOUNDARY, strategy = GenerationType.SEQUENCE)
@@ -105,6 +106,9 @@ public class Boundary extends AbstractAuditable {
     @SafeHtml
     @NotBlank
     private String code;
+
+    @SafeHtml
+    private String lgdCode;
 
     private Long boundaryNum;
 
@@ -191,6 +195,14 @@ public class Boundary extends AbstractAuditable {
 
     public void setCode(final String code) {
         this.code = code;
+    }
+
+    public String getLgdCode() {
+        return lgdCode;
+    }
+
+    public void setLgdCode(final String lgdCode) {
+        this.lgdCode = lgdCode;
     }
 
     public boolean isLeaf() {

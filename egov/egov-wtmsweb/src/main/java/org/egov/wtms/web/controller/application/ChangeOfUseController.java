@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -47,9 +47,9 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import static org.egov.commons.entity.Source.CSC;
 import static org.egov.commons.entity.Source.MEESEVA;
 import static org.egov.commons.entity.Source.ONLINE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.SOURCECHANNEL_ONLINE;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -61,6 +61,7 @@ import javax.validation.Valid;
 import javax.validation.ValidationException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.commons.entity.Source;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -69,7 +70,6 @@ import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ChangeOfUseService;
 import org.egov.wtms.application.service.ConnectionDetailService;
-import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.DocumentNames;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
@@ -93,9 +93,6 @@ public class ChangeOfUseController extends GenericConnectionController {
 
     private static final String APPROVAL_POSITION = "approvalPosition";
     private static final String CHANGEOFUSE_FORM = "changeOfUse-form";
-
-    @Autowired
-    private WaterConnectionDetailsService waterConnectionDetailsService;
 
     @Autowired
     private ApplicationTypeService applicationTypeService;
@@ -170,7 +167,6 @@ public class ChangeOfUseController extends GenericConnectionController {
         String message = "";
         if (parent != null)
             message = changeOfUseService.validateChangeOfUseConnection(parent);
-        String sourceChannel = request.getParameter("Source");
         String consumerCode = "";
         if (!message.isEmpty() && !"".equals(message)) {
             if (changeOfUse.getConnection().getParentConnection() != null)
@@ -253,20 +249,21 @@ public class ChangeOfUseController extends GenericConnectionController {
             }
         }
         changeOfUse.setApplicationDate(new Date());
-        if (isAnonymousUser) {
+        if (isAnonymousUser)
             changeOfUse.setSource(ONLINE);
-            sourceChannel = SOURCECHANNEL_ONLINE;
-        }
-        if (citizenPortalUser && (changeOfUse.getSource() == null || StringUtils.isBlank(changeOfUse.getSource().toString())))
+        else if (isCSCOperator)
+            changeOfUse.setSource(CSC);
+        else if (citizenPortalUser
+                && (changeOfUse.getSource() == null || StringUtils.isBlank(changeOfUse.getSource().toString())))
             changeOfUse.setSource(waterTaxUtils.setSourceOfConnection(securityUtils.getCurrentUser()));
-
-        if (loggedInMeesevaUser) {
+        else if (loggedInMeesevaUser) {
             changeOfUse.setSource(MEESEVA);
             if (changeOfUse.getMeesevaApplicationNumber() != null)
                 changeOfUse.setApplicationNumber(changeOfUse.getMeesevaApplicationNumber());
-        }
+        } else
+            changeOfUse.setSource(Source.SYSTEM);
         changeOfUseService.createChangeOfUseApplication(changeOfUse, approvalPosition, approvalComent, changeOfUse
-                .getApplicationType().getCode(), workFlowAction, sourceChannel);
+                .getApplicationType().getCode(), workFlowAction);
 
         if (loggedInMeesevaUser)
             return "redirect:/application/generate-meesevareceipt?transactionServiceNumber=" + changeOfUse.getApplicationNumber();
@@ -306,7 +303,7 @@ public class ChangeOfUseController extends GenericConnectionController {
         model.addAttribute("mode", "changeOfUse");
         model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
         model.addAttribute("validationMessage", changeOfUseService.validateChangeOfUseConnection(connectionUnderChange));
-        final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getTotalAmount(connectionUnderChange);
+        final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getWaterTaxDueAmount(connectionUnderChange);
         model.addAttribute("waterTaxDueforParent", waterTaxDueforParent);
         model.addAttribute("typeOfConnection", WaterTaxConstants.CHANGEOFUSE);
         model.addAttribute("usageTypes", usageTypeService.getActiveUsageTypes());

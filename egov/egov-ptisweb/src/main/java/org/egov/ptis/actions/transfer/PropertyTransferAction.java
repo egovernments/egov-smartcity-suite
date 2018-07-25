@@ -390,6 +390,9 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         transitionWorkFlow(propertyMutation);
 		propertyMutation.setSource(propertyTaxCommonUtils.setSourceOfProperty(securityUtils.getCurrentUser(),
 				ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())));
+		if( getNatureOfTask().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER)){
+		    propertyMutation.setMutationReason(transferOwnerService.getPropertyTransferReasonsByCode(MUTATION_REASON_CODE_SALE));
+		}
         loggedUserIsMeesevaUser = propertyService.isMeesevaUser(transferOwnerService.getLoggedInUser());
         if (!loggedUserIsMeesevaUser)
             transferOwnerService.initiatePropertyTransfer(basicproperty, propertyMutation);

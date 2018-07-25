@@ -178,7 +178,14 @@
 								<spring:message code="lbl.fieldbycarp" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
-								${legalCase.isFiledByCorporation}</div>
+								<c:choose>
+								<c:when test="${legalCase.isFiledByCorporation == 'true'}">
+									<c:out value="YES" />
+								</c:when> 
+								<c:otherwise>
+									<c:out value="NO" />
+								</c:otherwise>
+							</c:choose></div>
 							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.oldreferencenumber" />
 							</div>

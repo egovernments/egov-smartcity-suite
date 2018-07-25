@@ -253,7 +253,8 @@ public class ReportGenerationService {
             reportParams.put("currentInstallment",
                     installmentDao.getInsatllmentByModuleForGivenDate(moduleService.getModuleByName(PROPERTY_MODULE_NAME), new Date()));
             reportParams.put("pipeSize", connectionDetails.getPipeSize().getSizeInInch());
-            reportParams.put("rate", connectionDemandService.getWaterRatesDetailsForDemandUpdate(connectionDetails).getMonthlyRate());
+            if (NON_METERED.equals(connectionDetails.getConnectionType()))
+                reportParams.put("rate", connectionDemandService.getWaterRatesDetailsForDemandUpdate(connectionDetails).getMonthlyRate());
             reportParams.put(DISTRICT, cityService.getDistrictName());
             reportParams.put("purpose", connectionDetails.getUsageType().getName());
             reportParams.put(WORK_ORDER_DATE, connectionDetails.getWorkOrderDate() == null ? EMPTY
@@ -268,17 +269,15 @@ public class ReportGenerationService {
                 if (!assignmentList.isEmpty())
                     assignment = assignmentList.get(0);
             }
-            String userDesignation;
-            if (assignment != null && assignment.getDesignation().getName().equals(DESG_COMM_NAME))
+            String userDesignation = EMPTY;
+            if (assignment != null)
                 userDesignation = assignment.getDesignation().getName();
-            else
-                userDesignation = null;
-
+            
             reportParams.put(WORK_FLOW_ACTION, workFlowAction);
             reportParams.put(CONSUMERNUMBER, connectionDetails.getConnection().getConsumerCode());
             reportParams.put(APPLICANT_NAME, WordUtils.capitalize(ownerName));
             reportParams.put(ADDRESS, propAddress);
-            reportParams.put(HOUSE_NO, doorno == null ? "" : doorno[0]);
+            reportParams.put(HOUSE_NO, doorno == null ? EMPTY : doorno[0]);
             reportParams.put("userSignature", user.getSignature() == null
                     ? new byte[0] : new ByteArrayInputStream(user.getSignature()));
 
@@ -670,7 +669,7 @@ public class ReportGenerationService {
             reportRequest = new ReportRequest(REGULARISE_CONN_DEMAND_NOTE, waterConnectionDetails, reportParams);
             reportOutput = reportService.createReport(reportRequest);
             saveRegulariseConnDemandNote(waterConnectionDetails, reportOutput);
-            waterConnectionDetailsService.updateIndexes(waterConnectionDetails, null);
+            waterConnectionDetailsService.updateIndexes(waterConnectionDetails);
         } else
             reportOutput = getRegulariseConnDemandNote(waterConnectionDetails.getEstimationNoticeFileStoreId());
         reportOutput.setReportName(waterConnectionDetails.getEstimationNumber());
