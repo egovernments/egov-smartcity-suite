@@ -79,6 +79,9 @@ public class BillAccountDetails implements Comparable<BillAccountDetails> {
 
     @XStreamAsAttribute
     private final PURPOSE purpose;
+    
+    @XStreamAsAttribute
+    private Integer groupdId;
 
     public BillAccountDetails(final String glCode, final Integer order, final BigDecimal crAmount,
             final BigDecimal drAmount, final String functionCode, final String description, final Boolean isActualDemand,
@@ -91,6 +94,20 @@ public class BillAccountDetails implements Comparable<BillAccountDetails> {
         this.description = description;
         this.isActualDemand = isActualDemand;
         this.purpose = purpose;
+    }
+
+    public BillAccountDetails(final String glCode, final Integer order, final BigDecimal crAmount,
+            final BigDecimal drAmount, final String functionCode, final String description, final Boolean isActualDemand,
+            final PURPOSE purpose, final Integer groupId) {
+        this.glCode = glCode;
+        this.order = order;
+        this.crAmount = crAmount;
+        this.drAmount = drAmount;
+        this.functionCode = functionCode;
+        this.description = description;
+        this.isActualDemand = isActualDemand;
+        this.purpose = purpose;
+        this.groupdId = groupId;
     }
 
     @Override
@@ -158,6 +175,10 @@ public class BillAccountDetails implements Comparable<BillAccountDetails> {
     public int hashCode() {
         return glCode.hashCode() + order.hashCode() + crAmount.hashCode() + drAmount.hashCode()
                 + description.hashCode() + functionCode.hashCode() + isActualDemand.hashCode();
+    }
+
+    public Integer getGroupdId() {
+        return groupdId;
     }
 
 }
