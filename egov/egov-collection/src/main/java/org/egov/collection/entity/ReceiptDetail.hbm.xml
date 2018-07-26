@@ -101,6 +101,9 @@
 		<property name="purpose" type="string">
 			<column name="PURPOSE" length="25" />
 		</property>
+		<property name="groupId" type="long">
+			<column name="GROUPID" precision="22" scale="0" />
+		</property>
 	</class>
 	<query name="QUERY_RECEIPTDETAIL_BY_RECEIPTNUMBER">
 	<![CDATA[

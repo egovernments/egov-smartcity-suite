@@ -1,0 +1,1 @@
+alter table egcl_collectiondetails add column groupid bigint default 0;

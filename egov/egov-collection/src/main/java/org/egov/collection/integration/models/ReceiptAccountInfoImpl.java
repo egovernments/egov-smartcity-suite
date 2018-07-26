@@ -204,5 +204,10 @@ public class ReceiptAccountInfoImpl implements ReceiptAccountInfo {
         this.groupId = groupId;
     }
 
+    @Override
+    public Long getGroupdId() {
+        return receiptDetail.getGroupId() ;
+    }
+
   
 }

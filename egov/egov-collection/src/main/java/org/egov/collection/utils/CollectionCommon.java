@@ -302,10 +302,13 @@ public class CollectionCommon {
                     if (billAccount.getIsActualDemand())
                         totalAmountToBeCollected = totalAmountToBeCollected.add(billAccount.getCrAmount()).subtract(
                                 billAccount.getDrAmount());
+                    Long billAccountGroupid = Long.valueOf((billAccount.getGroupdId() == null) ? 0 : billAccount.getGroupdId());
+
                     final ReceiptDetail receiptDetail = new ReceiptDetail(account, function, billAccount.getCrAmount()
                             .subtract(billAccount.getDrAmount()), billAccount.getDrAmount(), billAccount.getCrAmount(),
                             Long.valueOf(billAccount.getOrder()), billAccount.getDescription(),
-                            billAccount.getIsActualDemand(), receiptHeader, billAccount.getPurpose().toString());
+                            billAccount.getIsActualDemand(), receiptHeader, billAccount.getPurpose().toString(),
+                            billAccountGroupid);
                     receiptHeader.addReceiptDetail(receiptDetail);
                 }
                 receiptHeader.setTotalAmountToBeCollected(totalAmountToBeCollected);
@@ -578,7 +581,7 @@ public class CollectionCommon {
                 final ReceiptDetail receiptDetail = new ReceiptDetail(oldDetail.getAccounthead(),
                         oldDetail.getFunction(), oldDetail.getCramountToBePaid(), oldDetail.getDramount(),
                         oldDetail.getCramount(), oldDetail.getOrdernumber(), oldDetail.getDescription(),
-                        oldDetail.getIsActualDemand(), newReceiptHeader, oldDetail.getPurpose());
+                        oldDetail.getIsActualDemand(), newReceiptHeader, oldDetail.getPurpose(), oldDetail.getGroupId());
                 receiptDetail.setCramount(oldDetail.getCramount());
                 receiptDetail.setFinancialYear(oldDetail.getFinancialYear());
 

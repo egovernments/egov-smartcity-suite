@@ -111,4 +111,8 @@ public interface ReceiptAccountInfo {
      */
     public abstract String getPurpose();
 
+    /**
+     * @return the group id of the credit amount
+     */
+    public abstract Long getGroupdId();
 }

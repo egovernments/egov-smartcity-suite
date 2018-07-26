@@ -47,6 +47,18 @@
  */
 package org.egov.collection.web.actions.receipts;
 
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -112,18 +124,6 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentHeader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 @ParentPackage("egov")
 @Results({ @Result(name = ReceiptAction.NEW, location = "receipt-new.jsp"),
@@ -712,7 +712,7 @@ public class ReceiptAction extends BaseFormAction {
                         receiptHeader.setReceiptdate(manualReceiptDate);
                         receiptHeader.setVoucherDate(manualReceiptDate);
                     }
-                    if (StringUtils.isNotBlank(manualReceiptNumber))
+                    if (org.apache.commons.lang.StringUtils.isNotBlank(manualReceiptNumber))
                         receiptHeader.setManualreceiptnumber(manualReceiptNumber);
                     if (isBillSourcemisc()) {
                         receiptHeader.setReceipttype(CollectionConstants.RECEIPT_TYPE_ADHOC);
@@ -1024,9 +1024,7 @@ public class ReceiptAction extends BaseFormAction {
     }
 
     /**
-     * This method create a new receipt header object with details contained in given receipt header object. Both the receipt
-     * header objects are added to the same parent <code>ReceiptPayeeDetail</code> object which in turn is added to the model.
-     *
+     * This method create a new receipt header object with details contained in given receipt header object.
      * @param oldReceiptHeader the instance of <code>ReceiptHeader</code> whose data is to be copied
      */
     private void populateReceiptModelWithExistingReceiptInfo(final ReceiptHeader oldReceiptHeader) {
@@ -1061,7 +1059,7 @@ public class ReceiptAction extends BaseFormAction {
                 final ReceiptDetail receiptDetail = new ReceiptDetail(oldDetail.getAccounthead(),
                         oldDetail.getFunction(), oldDetail.getCramount(), oldDetail.getDramount(),
                         oldDetail.getCramount(), oldDetail.getOrdernumber(), oldDetail.getDescription(),
-                        oldDetail.getIsActualDemand(), receiptHeader, oldDetail.getPurpose());
+                        oldDetail.getIsActualDemand(), receiptHeader, oldDetail.getPurpose(), oldDetail.getGroupId());
                 receiptDetail.setCramountToBePaid(oldDetail.getCramountToBePaid());
                 receiptDetail.setCramount(oldDetail.getCramount());
                 if (oldDetail.getAccountPayeeDetails() != null)
@@ -1181,7 +1179,7 @@ public class ReceiptAction extends BaseFormAction {
         final ReceiptHeader receiptHeaderToBeCancelled = receiptHeaderService.findById(oldReceiptId, false);
         if (receiptHeaderToBeCancelled.getReceipttype() == CollectionConstants.RECEIPT_TYPE_BILL)
             receiptHeaderService.validateReceiptCancellation(receiptHeaderToBeCancelled.getReceiptnumber(),
-                    receiptHeaderToBeCancelled.getService().getCode(),receiptHeaderToBeCancelled.getConsumerCode());
+                    receiptHeaderToBeCancelled.getService().getCode(), receiptHeaderToBeCancelled.getConsumerCode());
         LOGGER.info("Receipt Header to be Cancelled : " + receiptHeaderToBeCancelled.getReceiptnumber());
 
         for (final InstrumentHeader instrumentHeader : receiptHeaderToBeCancelled.getReceiptInstrument())
