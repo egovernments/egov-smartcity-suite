@@ -48,6 +48,8 @@
 
 package org.egov.ptis.domain.entity.property;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.exceptions.InvalidPropertyException;
@@ -558,14 +560,22 @@ public class PropertyImpl extends StateAware<Position> implements Property {
     @Override
     public String getStateDetails() {
         final StringBuilder stateDetails = new StringBuilder();
-        final String upicNo = getBasicProperty().getUpicNo() != null && !getBasicProperty().getUpicNo().isEmpty()
-                ? getBasicProperty().getUpicNo() : "";
-        final String applicationNo = getApplicationNo() != null && !getApplicationNo().isEmpty() ? getApplicationNo()
-                : "";
+        BasicProperty basicPropertyObj = getBasicProperty();
+
+        String upicNo = EMPTY;
+        String applicationNo = EMPTY;
+
+        if (isNotBlank(basicPropertyObj.getUpicNo())) {
+            upicNo = basicPropertyObj.getUpicNo();
+        }
+        if (isNotBlank(getApplicationNo())) {
+            applicationNo = getApplicationNo();
+        }
+
         stateDetails.append(upicNo.isEmpty() ? applicationNo : upicNo).append(", ")
-                .append(getBasicProperty().getPrimaryOwner().getName()).append(", ")
+                .append(basicPropertyObj.getPrimaryOwner().getName()).append(", ")
                 .append(PROPERTY_TYPE_CATEGORIES.get(getPropertyDetail().getCategoryType())).append(", ")
-                .append(getBasicProperty().getPropertyID().getLocality().getName());
+                .append(basicPropertyObj.getPropertyID().getLocality().getName());
         return stateDetails.toString();
     }
 
