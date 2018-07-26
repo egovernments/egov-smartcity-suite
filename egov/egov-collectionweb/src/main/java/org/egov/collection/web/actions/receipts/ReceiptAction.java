@@ -712,7 +712,7 @@ public class ReceiptAction extends BaseFormAction {
                         receiptHeader.setReceiptdate(manualReceiptDate);
                         receiptHeader.setVoucherDate(manualReceiptDate);
                     }
-                    if (org.apache.commons.lang.StringUtils.isNotBlank(manualReceiptNumber))
+                    if (StringUtils.isNotBlank(manualReceiptNumber))
                         receiptHeader.setManualreceiptnumber(manualReceiptNumber);
                     if (isBillSourcemisc()) {
                         receiptHeader.setReceipttype(CollectionConstants.RECEIPT_TYPE_ADHOC);
