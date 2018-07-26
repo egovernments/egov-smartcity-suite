@@ -248,7 +248,7 @@
 			<div class="col-sm-3 add-margin">
 				<form:input path="executionDate" title="Please enter a valid date"
 					class="form-control datepicker" pattern="\d{1,2}/\d{1,2}/\d{4}"
-					data-date-end-date="-1d" id="executionDate"
+					data-date-end-date="-1d" id="connectionDate"
 					data-inputmask="'mask': 'd/m/y'" required="required" />
 				<form:errors path="executionDate" cssClass="add-margin error-msg" />
 			</div>
@@ -307,6 +307,11 @@
 	} else if ($('#connectionType').val() == 'NON_METERED') {
 		$('#donationChargesDiv').hide();
 		$('#donationChargesInput').attr('disabled', true);
+	}
+	
+	if($("#connectionDate").val()!='') {
+		$("#connectionDate").removeAttr('required');
+		$("#connectionDate").attr('disabled',true);
 	}
 </script>
 
