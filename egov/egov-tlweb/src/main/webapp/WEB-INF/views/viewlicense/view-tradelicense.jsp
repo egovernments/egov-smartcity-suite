@@ -401,7 +401,7 @@
                                             <th class="bluebgheadtd"><spring:message code="lbl.wf.updatedby"/></th>
                                             <th class="bluebgheadtd"><spring:message code="lbl.wf.currentowner"/></th>
                                             <th class="bluebgheadtd"><spring:message code="lbl.wf.status"/></th>
-                                            <th class="bluebgheadtd"><spring:message code="lbl.wf.comments"/></th>
+                                            <th class="bluebgheadtd"><spring:message code="lbl.remarks"/></th>
                                         </tr>
                                         </thead>
                                         <tbody>

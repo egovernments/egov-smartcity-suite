@@ -109,13 +109,13 @@
                 <s:if test="%{getNextAction()!='END'}">
                 if (name == "Forward" || name == "forward") {
                     if (approverDeptId && approverDeptId.val() == -1) {
-                        bootbox.alert("Please Select the Approver Department ");
+                        bootbox.alert("Please select the Approver Department ");
                         return false;
                     } else if (approverDesgId && approverDesgId.val() == -1) {
-                        bootbox.alert("Please Select the Approver Designation ");
+                        bootbox.alert("Please select the Approver Designation ");
                         return false;
                     } else if (approverPosId && approverPosId.val() == -1) {
-                        bootbox.alert("Please Select the Approver ");
+                        bootbox.alert("Please select the Approver ");
                         return false;
                     }
                 }
@@ -128,7 +128,7 @@
                 }
                 if ((name == "Reject" || name == "reject" || name == "Cancel")) {
                     if (approverComments == null || approverComments == "" || approverComments.trim().length == 0) {
-                        bootbox.alert("Please Enter Rejection Remarks ");
+                        bootbox.alert("Please enter rejection Remarks ");
                         return false;
                     }
                 }

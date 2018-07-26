@@ -143,13 +143,13 @@ $(document).ready(function () {
             }
             if (name == "Forward" || name == "Approve" || name == "Save") {
                 if (approverComments == null || approverComments == "" || approverComments.trim().length == 0) {
-                    bootbox.alert("Please enter approver remarks ");
+                    bootbox.alert("Please enter the Remarks ");
                     return false;
                 }
             }
             if ((name == "Reject" || name == "Cancel")) {
                 if (approverComments == null || approverComments == "" || approverComments.trim().length == 0) {
-                    bootbox.alert("Please enter rejection remarks ");
+                    bootbox.alert("Please enter rejection Remarks ");
                     return false;
                 }
             }

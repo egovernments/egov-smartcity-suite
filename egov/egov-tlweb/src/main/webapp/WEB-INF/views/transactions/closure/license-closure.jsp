@@ -115,7 +115,7 @@
                                                                 <th class="bluebgheadtd"><spring:message
                                                                         code="lbl.wf.status"/></th>
                                                                 <th class="bluebgheadtd"><spring:message
-                                                                        code="lbl.wf.comments"/></th>
+                                                                        code="lbl.remarks"/></th>
                                                             </tr>
                                                             </thead>
                                                             <tbody>
