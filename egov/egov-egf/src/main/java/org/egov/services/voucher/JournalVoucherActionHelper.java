@@ -255,7 +255,7 @@ public class JournalVoucherActionHelper {
     }
 
     private Assignment getWorkflowInitiator(final CVoucherHeader voucherHeader) {
-        Assignment wfInitiator = assignmentService.findByEmployeeAndGivenDate(voucherHeader.getCreatedBy().getId(), new Date())
+        Assignment wfInitiator = assignmentService.findByEmployeeAndGivenDate(voucherHeader.getCreatedBy().getId(), voucherHeader.getCreatedDate())
                 .get(0);
         return wfInitiator;
     }
