@@ -172,9 +172,9 @@ public class ConnectionDetailService {
                     if (waterConnectionDetails != null) {
                         waterTaxDue = getDueInfo(waterConnectionDetails);
                         waterTaxDue.setPropertyID(propertyIdentifier);
-                        if(connection.getConsumerCode()!=null && waterConnectionDetailsService.getCurrentDue(waterConnectionDetails).compareTo(BigDecimal.ZERO) > 0){
-                                consumerCodes.add(connection.getConsumerCode());
-                        }
+                        if (connection.getConsumerCode() != null && waterConnectionDetailsService
+                                .getCurrentDue(waterConnectionDetails).compareTo(BigDecimal.ZERO) > 0)
+                            consumerCodes.add(connection.getConsumerCode());
                         arrDmd = arrDmd.add(waterTaxDue.getArrearDemand());
                         arrColl = arrColl.add(waterTaxDue.getArrearCollection());
                         currDmd = currDmd.add(waterTaxDue.getCurrentDemand());
@@ -209,13 +209,12 @@ public class ConnectionDetailService {
         final WaterConnection waterConnection = waterConnectionService
                 .findParentWaterConnection(waterTaxDetailRequest.getAssessmentNumber());
         List<WaterConnectionDetails> waterConnectionDetailslist;
-        Boolean parentConnection = false;
         WaterConnectionDetails waterConnectionDetailsRetainer = null;
-        WaterConnectionDetails waterConnectionDetails;
+        WaterConnectionDetails waterConnectionDetails = null;
         final ApplicationType additionAppType = applicationTypeService.findByCode(WaterTaxConstants.ADDNLCONNECTION);
         if (waterConnections.isEmpty()) {
             for (final String childAssessmentNumber : waterTaxDetailRequest.getChildAssessmentNumber())
-                if (waterConnectionDetailsRetainer == null && parentConnection == false) {
+                if (waterConnectionDetailsRetainer == null) {
                     waterConnectionDetailsRetainer = waterConnectionDetailsService
                             .getPrimaryConnectionDetailsByPropertyAssessmentNumbers(
                                     waterTaxDetailRequest.getChildAssessmentNumber());
@@ -223,7 +222,6 @@ public class ConnectionDetailService {
                     connectiontemp.setOldPropertyIdentifier(childAssessmentNumber);
                     connectiontemp.setPropertyIdentifier(waterTaxDetailRequest.getAssessmentNumber());
                     waterConnectionRepository.save(connectiontemp);
-                    parentConnection = Boolean.TRUE;
                 } else {
                     waterConnectionDetailslist = waterConnectionDetailsService
                             .getAllConnectionDetailsExceptInactiveStatusByPropertyID(childAssessmentNumber);
@@ -254,17 +252,11 @@ public class ConnectionDetailService {
             if (waterConnectionDetailsRetainerObj != null
                     && !waterTaxDetailRequest.getChildAssessmentNumber().isEmpty())
                 for (final String childAssessmentNumber : waterTaxDetailRequest.getChildAssessmentNumber()) {
-                    waterConnectionDetails = waterConnectionDetailsService
+                    List<WaterConnectionDetails> connectionDetailsList = waterConnectionDetailsService
                             .getPrimaryConnectionDetailsByPropertyIdentifier(childAssessmentNumber);
-                    if (waterConnectionDetails != null) {
-                        final WaterConnection connectiontemp = waterConnectionDetails.getConnection();
-                        connectiontemp.setOldPropertyIdentifier(connectiontemp.getPropertyIdentifier());
-                        connectiontemp.setPropertyIdentifier(waterTaxDetailRequest.getAssessmentNumber());
-                        connectiontemp.setParentConnection(waterConnectionDetailsRetainerObj.getConnection());
-                        waterConnectionDetails.setApplicationType(additionAppType);
-                        waterConnectionDetails.setConnection(connectiontemp);
-                        waterConnectionDetailsRepository.save(waterConnectionDetails);
-                    } else {
+                    if (!connectionDetailsList.isEmpty())
+                        waterConnectionDetails = connectionDetailsList.get(0);
+                    if (waterConnectionDetails == null) {
                         waterConnectionDetailslist = waterConnectionDetailsService
                                 .getChildConnectionDetailsByPropertyID(childAssessmentNumber);
                         for (final WaterConnectionDetails tempconn : waterConnectionDetailslist) {
@@ -273,6 +265,15 @@ public class ConnectionDetailService {
                             connectiontemp.setPropertyIdentifier(childAssessmentNumber);
                             waterConnectionRepository.save(connectiontemp);
                         }
+
+                    } else {
+                        final WaterConnection connectiontemp = waterConnectionDetails.getConnection();
+                        connectiontemp.setOldPropertyIdentifier(connectiontemp.getPropertyIdentifier());
+                        connectiontemp.setPropertyIdentifier(waterTaxDetailRequest.getAssessmentNumber());
+                        connectiontemp.setParentConnection(waterConnectionDetailsRetainerObj.getConnection());
+                        waterConnectionDetails.setApplicationType(additionAppType);
+                        waterConnectionDetails.setConnection(connectiontemp);
+                        waterConnectionDetailsRepository.save(waterConnectionDetails);
                     }
                 }
         }
@@ -393,12 +394,12 @@ public class ConnectionDetailService {
             instId = Integer.valueOf(listObj[1].toString());
             installment = installmentDao.findById(instId, false);
             if (currFirstHalf.equals(installment) || currSecondHalf.equals(installment)) {
-                if (listObj[3] != null && new BigDecimal((Double) listObj[3]).compareTo(BigDecimal.ZERO) == 1)
+                if (listObj[3] != null && new BigDecimal((Double) listObj[3]).compareTo(BigDecimal.ZERO) > 0)
                     currCollection = currCollection.add(new BigDecimal((Double) listObj[3]));
                 currDmd = currDmd.add(new BigDecimal((Double) listObj[2]));
             } else if (listObj[2] != null) {
                 arrDmd = arrDmd.add(new BigDecimal((Double) listObj[2]));
-                if (new BigDecimal((Double) listObj[3]).compareTo(BigDecimal.ZERO) == 1)
+                if (new BigDecimal((Double) listObj[3]).compareTo(BigDecimal.ZERO) > 0)
                     arrCollection = arrCollection.add(new BigDecimal((Double) listObj[3]));
             }
         }
@@ -414,8 +415,7 @@ public class ConnectionDetailService {
     }
 
     public Map<String, BigDecimal> getDemandCollMapForPtisIntegration(
-            final WaterConnectionDetails waterConnectionDetails, final String moduleName,
-            final String installmentType) {
+            final WaterConnectionDetails waterConnectionDetails, final String moduleName) {
         final EgDemand currDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
         Installment installment;
         List<Object> dmdCollList = new ArrayList<>(0);

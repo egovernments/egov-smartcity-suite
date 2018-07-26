@@ -118,7 +118,7 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
     // removed "CLOSED" cos not allowing to create NEW Connection if any records
     // with closed Connectionstatus
     @Query("select wcd from WaterConnectionDetails wcd where wcd.connection.parentConnection is null and wcd.connectionStatus not in ('INACTIVE') and wcd.connection.propertyIdentifier =:propertyIdentifier")
-    WaterConnectionDetails getPrimaryConnectionDetailsByPropertyID(
+    List<WaterConnectionDetails> getPrimaryConnectionDetailsByPropertyID(
             @Param("propertyIdentifier") String propertyIdentifier);
 
     @Query("select wcd from WaterConnectionDetails wcd where wcd.connection.parentConnection is null and wcd.connectionStatus in ('ACTIVE') and wcd.connection.propertyIdentifier =:propertyIdentifier) order by wcd.applicationDate asc ")

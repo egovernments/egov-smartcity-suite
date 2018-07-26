@@ -47,6 +47,7 @@
  */
 package org.egov.wtms.application.service;
 
+import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.egov.wtms.masters.entity.enums.ConnectionStatus.ACTIVE;
 import static org.egov.wtms.masters.entity.enums.ConnectionStatus.CLOSED;
@@ -110,22 +111,27 @@ public class NewConnectionService {
     private WaterConnectionService waterConnectionService;
 
     public String checkConnectionPresentForProperty(final String propertyID) {
-        String validationMessage = "";
+        String validationMessage = EMPTY;
         /**
          * Validate only if configuration value is 'NO' for multiple new connection per property allowed or not. If configuration
          * value is 'YES' then multiple new connections are allowed. This will impact on the Additional connection feature.
          **/
         if (!waterTaxUtils.isMultipleNewConnectionAllowedForPID()) {
-            final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+            List<WaterConnectionDetails> connectionDetailList = waterConnectionDetailsService
                     .getPrimaryConnectionDetailsByPropertyIdentifier(propertyID);
+            WaterConnectionDetails waterConnectionDetails = null;
+            if (!connectionDetailList.isEmpty())
+                waterConnectionDetails = connectionDetailList.get(0);
             if (waterConnectionDetails == null)
                 return validationMessage;
             else if (ACTIVE.equals(waterConnectionDetails.getConnectionStatus()))
                 validationMessage = wcmsMessageSource.getMessage("err.validate.newconnection.active", new String[] {
                         waterConnectionDetails.getConnection().getConsumerCode(), propertyID }, null);
             else if (INPROGRESS.equals(waterConnectionDetails.getConnectionStatus()))
-                validationMessage = wcmsMessageSource.getMessage("err.validate.newconnection.application.inprocess",
-                        new String[] { propertyID, waterConnectionDetails.getApplicationNumber() }, null);
+                validationMessage = wcmsMessageSource.getMessage("err.validate.waterconnection.application.inprogress",
+                        new String[] { waterConnectionDetails.getApplicationType().getName(),
+                                propertyID, waterConnectionDetails.getApplicationNumber() },
+                        null);
             else if (DISCONNECTED.equals(waterConnectionDetails.getConnectionStatus()))
                 validationMessage = wcmsMessageSource
                         .getMessage("err.validate.newconnection.disconnected", new String[] {
@@ -194,7 +200,7 @@ public class NewConnectionService {
         final ConnectionCategory connectionCategory = connectionCategoryService.findOne(categoryId);
         if (connectionCategory != null && documentRequired != null
                 && connectionCategory.getName().equalsIgnoreCase(CATEGORY_BPL)
-                && documentRequired.equalsIgnoreCase(applicationDocument.getDocumentNames().getDocumentName()) 
+                && documentRequired.equalsIgnoreCase(applicationDocument.getDocumentNames().getDocumentName())
                 && applicationDocument.getDocumentNames().isRequired())
             validateDocumentsForBPLCategory(applicationDocs, applicationDocument, resultBinder, i);
         else {

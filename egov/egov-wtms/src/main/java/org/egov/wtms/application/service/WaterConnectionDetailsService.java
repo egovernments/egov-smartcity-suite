@@ -439,9 +439,13 @@ public class WaterConnectionDetailsService {
         waterConnectionDetails.setApplicationDate(waterConnectionDetails.getExecutionDate());
         waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_SANCTIONED, MODULETYPE));
         if (waterConnectionDetails.getApplicationType().getCode().equalsIgnoreCase(ADDNLCONNECTION)) {
-            WaterConnectionDetails primaryConnectionDetails = getPrimaryConnectionDetailsByPropertyIdentifier(
+            List<WaterConnectionDetails> connectionDetailsList = getPrimaryConnectionDetailsByPropertyIdentifier(
                     waterConnectionDetails.getConnection().getPropertyIdentifier());
-            waterConnectionDetails.getConnection().setParentConnection(primaryConnectionDetails.getConnection());
+            WaterConnectionDetails primaryConnectionDetails = null;
+            if(!connectionDetailsList.isEmpty()) {
+                primaryConnectionDetails = connectionDetailsList.get(0);
+                waterConnectionDetails.getConnection().setParentConnection(primaryConnectionDetails.getConnection());
+            }
         }
         WaterConnectionDetails savedWaterConnectionDetails = waterConnectionDetailsRepository.save(waterConnectionDetails);
         updateConsumerIndex(savedWaterConnectionDetails);
@@ -495,7 +499,7 @@ public class WaterConnectionDetailsService {
         return waterConnectionDetailsRepository.findByConnectionAndConnectionStatus(waterConnection, ACTIVE);
     }
 
-    public WaterConnectionDetails getPrimaryConnectionDetailsByPropertyIdentifier(String propertyIdentifier) {
+    public List<WaterConnectionDetails> getPrimaryConnectionDetailsByPropertyIdentifier(String propertyIdentifier) {
         return waterConnectionDetailsRepository.getPrimaryConnectionDetailsByPropertyID(propertyIdentifier);
     }
 
