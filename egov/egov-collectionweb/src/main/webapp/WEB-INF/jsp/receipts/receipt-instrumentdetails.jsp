@@ -232,6 +232,7 @@ function showInstrumentDetails(obj){
  		clearCardDetails();
 		clearChequeDDDetails();
 		clearBankDetails();
+		clearManualReceiptData();
 	}
 	else  if(obj.id=='chequeradiobutton'){
 		document.getElementById('cashdetails').style.display='none';
@@ -243,6 +244,7 @@ function showInstrumentDetails(obj){
 		clearCashDetails();
 		clearCardDetails();
 		clearBankDetails();
+		clearManualReceiptData();
 	}
 	else  if(obj.id=='ddradiobutton'){
 		document.getElementById('cashdetails').style.display='none';
@@ -254,6 +256,7 @@ function showInstrumentDetails(obj){
 		clearCashDetails();
 		clearCardDetails();
 		clearBankDetails();
+		clearManualReceiptData();
 	}
 	else if(obj.id=='cardradiobutton'){
 		document.getElementById('cashdetails').style.display='none';
@@ -265,6 +268,7 @@ function showInstrumentDetails(obj){
 		clearCashDetails();
 		clearBankDetails();
 		clearChequeDDDetails();
+		clearManualReceiptData();
 	}
 	else if(obj.id=='bankradiobutton'){
 		document.getElementById('cashdetails').style.display='none';
@@ -281,6 +285,7 @@ function showInstrumentDetails(obj){
 				getBankBranchList(document.getElementById('fundId'));
 			}
 		</s:if>
+		document.getElementById('manualreceipt').style.display='block';    
 	}
 	else if(obj.id=='onlineradiobutton'){
 		document.getElementById('onlinedetails').style.display='table-row';
@@ -293,6 +298,7 @@ function showInstrumentDetails(obj){
  		clearCardDetails();
 		clearChequeDDDetails();
 		clearBankDetails();
+		clearManualReceiptData();
 	}
 }
 function validateTransactionNumber()

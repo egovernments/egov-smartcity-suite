@@ -812,6 +812,7 @@ function onBodyLoad()
 	displayPaytModes();
 	displayPaymentDetails();
 	loadchequedetails();
+	clearManualReceiptData();
 }
 
 function checkandcalculatecredittotal(index,elem){
@@ -1015,6 +1016,7 @@ function checkreset()
 	clearBankDetails();
 	clearChequeDDDetails();
 	displayPaytModes();
+	clearManualReceiptData();
 	document.getElementById('paidBy').value='<s:property value="%{payeeName}" escapeJavaScript="true"/>';
 	<s:if test="%{isBillSourcemisc()}"> 
 		//To load the account codes if only a misc receipt request
@@ -1183,7 +1185,8 @@ function showHideMandataryMark(obj){
 		   <td class="bluebox"><s:textfield label="paidBy" id="paidBy" maxlength="150" name="paidBy" value="%{payeeName}" /></td>
 	    </tr>
 	    </s:if>
-		<table id="manualreceipt" >
+		<table id="manualreceipt" >    
+		
 		<s:if test="%{!isBillSourcemisc() && manualReceiptNumberAndDateReq}">
 					<tr>
 					<td class="bluebox" width="3%" ></td>
@@ -1201,7 +1204,9 @@ function showHideMandataryMark(obj){
 					<td class="bluebox"><s:textfield id="manualReceiptDate" name="manualReceiptDate" cssClass="datepicker"  styleId="manualReceiptDate" onblur="validateManualReceiptDate(this);" data-inputmask="'mask': 'd/m/y'"/><div>(DD/MM/YYYY)</div></td>
 				</tr>
 		 </s:if>
+		
 		</table>
+		
 		</table>
 			
 

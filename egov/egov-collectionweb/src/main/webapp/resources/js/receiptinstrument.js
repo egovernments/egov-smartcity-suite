@@ -512,6 +512,13 @@ function clearPaytModes() {
 	document.getElementById('onlineradiobuttonspan').style.display = "none";
 	document.getElementById('onlinedetails').style.display = "none";
 }
+function clearManualReceiptData()
+{
+	document.getElementById('manualreceiptinfo').checked=false;
+	document.getElementById("manualReceiptDate").value="";
+	document.getElementById("manualReceiptNumber").value="";
+	document.getElementById('manualreceipt').style.display='none';  
+}
 
 function process(date){
 	   var parts = date.split("/");
