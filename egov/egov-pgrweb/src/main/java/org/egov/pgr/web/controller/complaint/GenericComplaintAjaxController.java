@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -92,15 +92,15 @@ public class GenericComplaintAjaxController {
     private EmployeeViewService employeeViewService;
 
     @GetMapping(value = {"/complaint/citizen/complaintTypes", "/complaint/citizen/anonymous/complaintTypes",
-            "/complaint/officials/complaintTypes", "/complaint/router/complaintTypes", "/complaint/escalationTime/complaintTypes"},
-            produces = APPLICATION_JSON_VALUE)
+            "/complaint/officials/complaintTypes", "/complaint/router/complaintTypes",
+            "/complaint/escalationTime/complaintTypes"}, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public List<ComplaintType> getAllActiveComplaintTypesByNameLike(@RequestParam String complaintTypeName) {
         return complaintTypeService.findAllActiveByNameLike(complaintTypeName);
     }
 
     @GetMapping(value = {"/complaint/citizen/complainttypes-by-category", "/complaint/citizen/anonymous/complainttypes-by-category",
-            "/complaint/officials/complainttypes-by-category"}, produces = APPLICATION_JSON_VALUE)
+            "/complaint/officials/complainttypes-by-category", "/grievance/thirdparty/complainttypes-by-category"}, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public List<ComplaintType> complaintTypesByCategory(@RequestParam Long categoryId) {
         return complaintTypeService.findActiveComplaintTypesByCategory(categoryId);
@@ -126,7 +126,7 @@ public class GenericComplaintAjaxController {
     }
 
     @GetMapping(value = {"/complaint/citizen/locations", "/complaint/citizen/anonymous/locations",
-            "/complaint/officials/locations"}, produces = TEXT_PLAIN_VALUE)
+            "/complaint/officials/locations", "/grievance/thirdparty/locations"}, produces = TEXT_PLAIN_VALUE)
     @ResponseBody
     public String getAllLocationJSON(@RequestParam String locationName) {
         StringBuilder locationJSONData = new StringBuilder();
