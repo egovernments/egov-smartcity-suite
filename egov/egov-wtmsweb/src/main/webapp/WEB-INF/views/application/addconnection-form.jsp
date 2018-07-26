@@ -55,7 +55,7 @@
 	<div class="col-md-12">
 	
 		<form:form action="addConnection-create"
-			modelAttribute="addConnection" id="addWaterConnectionform"
+			modelAttribute="addConnection" id="waterConnectionForm"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 			<input type="hidden" name="validationMessage" id="validationMessage" value="${validationMessage}">

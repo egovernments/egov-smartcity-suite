@@ -48,7 +48,7 @@
 $(document)
 		.ready(
 				function() {
-					var validator = $("#editWaterConnectionform").validate({
+					var validator = $("#waterConnectionForm").validate({
 						highlight : function(element, errorClass) {
 							$(element).fadeOut(function() {
 								$(element).fadeIn();
@@ -475,7 +475,7 @@ $(document)
 
 
 function validateForm(validator) {
-if ($('#editWaterConnectionform').valid()) {
+if ($('#waterConnectionForm').valid()) {
 	return true;
 } else {
 	$errorInput = undefined;

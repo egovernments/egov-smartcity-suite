@@ -84,7 +84,6 @@
 					$('#approvalDesignation').removeAttr('required');
 					$('#approvalPosition').removeAttr('required');
 					$('#approvalComent').removeAttr('required');
-					return true;
 				}
 			}
 			$('#approvalDepartment').attr('required', 'required');
@@ -112,14 +111,14 @@
 							}	
 						},
 						callback: function(result) {
-							if(result && $('#editWaterConnectionform').valid()) {
-								$('#editWaterConnectionform').submit();
+							if(result && $('#waterConnectionForm').valid()) {
+								$('#waterConnectionForm').submit();
 							}
 						}
 				});
 			}
-			else if($('#editWaterConnectionform').valid()) {
-		   		$('#editWaterConnectionform').submit();
+			else if($('#waterConnectionForm').valid()) {
+		   		$('#waterConnectionForm').submit();
 		   		return true;
 			}
 			else

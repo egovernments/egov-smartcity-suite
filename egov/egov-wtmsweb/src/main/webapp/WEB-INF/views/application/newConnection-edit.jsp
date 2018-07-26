@@ -54,7 +54,7 @@
 
 	
 <form:form role="form" method="post" modelAttribute="waterConnectionDetails" 
-id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">	
+id="waterConnectionForm" cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">	
 <div class="container-fluid">
 	<spring:hasBindErrors name="waterConnectionDetails">
 	<div class="alert alert-danger col-md-12 col-md-offset-0">

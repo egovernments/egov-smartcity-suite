@@ -61,7 +61,7 @@
 				value="${waterConnectionDetails.applicationDate}" />
 		</div>
 		<form:form role="form" action="newConnection-create"
-			modelAttribute="waterConnectionDetails" id="newWaterConnectionform"
+			modelAttribute="waterConnectionDetails" id="waterConnectionForm"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 			<form:hidden path="applicationType" id="applicationType"
