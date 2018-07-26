@@ -92,8 +92,8 @@ $('#metercurrentReadingDate').on('change', function(){
 	function getUrlToPring() {
 		var consumerCode = $('#consumerCode').val();
 		var url = '/wtms/application/meterdemandnotice?pathVar=' + consumerCode;
-		$('#editmeterWaterConnectionform').attr('method', 'get');
-		$('#editmeterWaterConnectionform').attr('action', url);
+		$('#waterConnectionForm').attr('method', 'get');
+		$('#waterConnectionForm').attr('action', url);
 		window.location = url;
 	}
 	function valiateReading() {

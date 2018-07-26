@@ -93,6 +93,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.SUBMITWORKFLOWACTI
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SUPERIENTEND_ENGINEER_DESIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SUPERINTENDING_ENGINEER_DESIGNATION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WCMS_PENALTY_CHARGES_PERCENTAGE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_CANCEL;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_ESTIMATION_NOTICE_BUTTON;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_RECONNECTIONACKNOWLDGEENT_BUTTON;
@@ -521,7 +522,8 @@ public class UpdateConnectionController extends GenericConnectionController {
         if (APPLICATION_STATUS_CREATED.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()) ||
                 APPLICATION_STATUS_VERIFIED.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()) &&
                         NON_METERED.equals(waterConnectionDetails.getConnectionType()) &&
-                        !WF_STATE_BUTTON_GENERATEESTIMATE.equalsIgnoreCase(workFlowAction))
+                        !Arrays.asList(WF_STATE_BUTTON_GENERATEESTIMATE, WFLOW_ACTION_STEP_CANCEL, WFLOW_ACTION_STEP_REJECT)
+                                .contains(workFlowAction))
             waterConnectionDetailsService.validateConnectionCategory(waterConnectionDetails, resultBinder, request);
 
         if (request.getParameter(DONATION_AMOUNT) != null)
