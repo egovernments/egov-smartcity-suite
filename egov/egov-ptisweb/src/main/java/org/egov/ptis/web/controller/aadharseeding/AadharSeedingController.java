@@ -57,6 +57,7 @@ import org.egov.ptis.bean.aadharseeding.AadharSeedingRequest;
 import org.egov.ptis.service.aadharseeding.AadharSeedingService;
 import org.egov.ptis.service.aadharseeding.AadharService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -79,7 +80,7 @@ public class AadharSeedingController {
     private AadharSeedingService aadharSeedingService;
     
     @Autowired
-    private AadharService aadharService;
+    private ApplicationContext beanProvider;
     
     @GetMapping(value = { "/search" })
     public String getAadhaarSeedingSearchForm(final Model model) {
@@ -99,6 +100,8 @@ public class AadharSeedingController {
     @GetMapping(value = "/peoplehubdata/{aadharNumber}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public MultiSchemeBenifitsByAadhaar geDetails(@PathVariable final String aadharNumber) {
+        AadharService aadharService = (AadharService) beanProvider
+                .getBean("aadharService");
         return aadharService.getAadharDetails(aadharNumber);
     }
 
