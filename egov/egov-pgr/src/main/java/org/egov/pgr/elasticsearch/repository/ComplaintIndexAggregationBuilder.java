@@ -66,6 +66,7 @@ import org.egov.pgr.elasticsearch.entity.contract.ComplaintDashBoardRequest;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogramInterval;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsBuilder;
 import org.elasticsearch.search.aggregations.metrics.MetricsAggregationBuilder;
@@ -203,5 +204,10 @@ public final class ComplaintIndexAggregationBuilder {
         else if ("locality".equalsIgnoreCase(aggregationType))
             aggregationField = LOCALITY_NAME;
         return aggregationField;
+    }
+    
+    public static AggregationBuilder prepareMonthlyAggregations(String aggregationName, String fieldName) {
+        return AggregationBuilders.dateHistogram("dateAggr").field("completionDate").interval(DateHistogramInterval.MONTH)
+                .subAggregation(AggregationBuilders.terms(aggregationName).field(fieldName));
     }
 }

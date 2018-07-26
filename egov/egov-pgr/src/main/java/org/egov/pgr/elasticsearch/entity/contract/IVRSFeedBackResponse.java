@@ -2,6 +2,8 @@ package org.egov.pgr.elasticsearch.entity.contract;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
+import java.util.List;
+
 public class IVRSFeedBackResponse {
     private String regionName = EMPTY;
     private String districtName = EMPTY;
@@ -17,12 +19,16 @@ public class IVRSFeedBackResponse {
     private String functionaryName = EMPTY;
     private String functionaryMobileNo = EMPTY;
     private long totalComplaint = 0;
+    private long todaysClosed = 0;
     private long totalFeedback = 0;
     private long good = 0;
     private long average = 0;
     private long bad = 0;
     private String compalintType = EMPTY;
     private String complaintCategory = EMPTY;
+    private long responded = 0;
+    private long notResponded = 0;
+    private List<MonthlyFeedbackCounts> monthlyCounts;
 
     public String getRegionName() {
         return regionName;
@@ -183,4 +189,37 @@ public class IVRSFeedBackResponse {
     public void setComplaintCategory(String complaintCategory) {
         this.complaintCategory = complaintCategory;
     }
+
+    public long getResponded() {
+        return responded;
+    }
+
+    public void setResponded(long responded) {
+        this.responded = responded;
+    }
+
+    public long getNotResponded() {
+        return notResponded;
+    }
+
+    public void setNotResponded(long notResponded) {
+        this.notResponded = notResponded;
+    }
+
+    public List<MonthlyFeedbackCounts> getMonthlyCounts() {
+        return monthlyCounts;
+    }
+
+    public void setMonthlyCounts(List<MonthlyFeedbackCounts> monthlyCounts) {
+        this.monthlyCounts = monthlyCounts;
+    }
+
+    public long getTodaysClosed() {
+        return todaysClosed;
+    }
+
+    public void setTodaysClosed(long todaysClosed) {
+        this.todaysClosed = todaysClosed;
+    }
+
 }

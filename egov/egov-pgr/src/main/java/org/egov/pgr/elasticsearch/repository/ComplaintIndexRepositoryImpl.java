@@ -48,31 +48,6 @@
 
 package org.egov.pgr.elasticsearch.repository;
 
-import org.apache.commons.lang3.StringUtils;
-import org.egov.pgr.elasticsearch.entity.ComplaintIndex;
-import org.egov.pgr.elasticsearch.entity.contract.ComplaintDashBoardRequest;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.aggregations.AggregationBuilders;
-import org.elasticsearch.search.aggregations.metrics.tophits.TopHitsBuilder;
-import org.elasticsearch.search.sort.FieldSortBuilder;
-import org.elasticsearch.search.sort.SortOrder;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
-import org.springframework.data.elasticsearch.core.query.SearchQuery;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.utils.StringUtils.defaultIfBlank;
@@ -92,6 +67,31 @@ import static org.egov.pgr.utils.constants.PGRConstants.PGR_INDEX_DATE_FORMAT;
 import static org.egov.pgr.utils.constants.PGRConstants.PGR_INDEX_NAME;
 import static org.egov.pgr.utils.constants.PGRConstants.WARD_NAME;
 import static org.egov.pgr.utils.constants.PGRConstants.WARD_NUMBER;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import org.egov.pgr.elasticsearch.entity.ComplaintIndex;
+import org.egov.pgr.elasticsearch.entity.contract.ComplaintDashBoardRequest;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.metrics.tophits.TopHitsBuilder;
+import org.elasticsearch.search.sort.FieldSortBuilder;
+import org.elasticsearch.search.sort.SortOrder;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.data.elasticsearch.core.query.SearchQuery;
 
 public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomRepository {
 
@@ -146,6 +146,7 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
     private static final String LOCALITY_NUMBER="localityNo";
     private static final String DISTRICT_CODE="cityDistrictCode";
     private static final String FEEDBACK_RATING="feedbackRating";
+    private static final String FEEDBACK_CALL_STATUS="feedbackCallStatus";
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
 
@@ -816,9 +817,15 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
     public SearchResponse findFeedBackRatingDetails(ComplaintDashBoardRequest ivrsFeedBackRequest, BoolQueryBuilder feedBackQuery,
             String aggregationField) {
         return elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
-                .setQuery(feedBackQuery.filter(QueryBuilders.matchQuery("ifClosed",1)))
+                .setQuery(feedBackQuery.filter(QueryBuilders.matchQuery("ifClosed", 1))
+                        .must(QueryBuilders.matchQuery("complaintStatusName", "COMPLETED")))
                 .addAggregation(AggregationBuilders.terms("typeAggr").field(aggregationField).size(130)
-                        .subAggregation(AggregationBuilders.terms("countAggr").field(FEEDBACK_RATING))
+                        .subAggregation(AggregationBuilders.terms("callStatCountAggr").field(FEEDBACK_CALL_STATUS)
+                        .subAggregation(AggregationBuilders.terms("countAggr").field(FEEDBACK_RATING)))
+                        .subAggregation(ComplaintIndexAggregationBuilder.prepareMonthlyAggregations("callStatusCount", FEEDBACK_CALL_STATUS)
+                        .subAggregation(ComplaintIndexAggregationBuilder.prepareMonthlyAggregations("ratingCount", FEEDBACK_RATING)))
+                        .subAggregation(getCountBetweenSpecifiedDates("todaysComplaintCount", "completionDate",
+                                new DateTime().toString(formatter), new DateTime().plusDays(1).toString(formatter)))
                         .subAggregation(addFieldBasedOnAggField(aggregationField)))
                 .execute().actionGet();
     }
@@ -881,13 +888,15 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                     .setQuery(feedBackQuery)
                     .addAggregation(AggregationBuilders.terms("categoryAggr").field("categoryName").size(130)
                             .subAggregation(AggregationBuilders.terms("complaintTypeAggr").field("complaintTypeName")
-                                    .subAggregation(AggregationBuilders.terms("countAggr").field(FEEDBACK_RATING))))
+                                    .subAggregation(AggregationBuilders.terms("callStatCountAggr").field(FEEDBACK_CALL_STATUS)
+                                    .subAggregation(AggregationBuilders.terms("countAggr").field(FEEDBACK_RATING)))))
                     .execute().actionGet();
         } else {
             return elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
                     .setQuery(feedBackQuery)
                     .addAggregation(AggregationBuilders.terms("categoryAggr").field("categoryName").size(130)
-                            .subAggregation(AggregationBuilders.terms("countAggr").field(FEEDBACK_RATING)))
+                            .subAggregation(AggregationBuilders.terms("callStatCountAggr").field(FEEDBACK_CALL_STATUS)
+                            .subAggregation(AggregationBuilders.terms("countAggr").field(FEEDBACK_RATING))))
                     .execute().actionGet();
         }
 
