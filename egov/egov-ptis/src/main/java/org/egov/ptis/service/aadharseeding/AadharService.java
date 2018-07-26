@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -45,11 +45,12 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.ptis.domain.repository.aadharseeding;
+package org.egov.ptis.service.aadharseeding;
 
-import org.egov.ptis.bean.aadharseeding.AadharSeedingDetails;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.egov.ptis.bean.aadharseeding.MultiSchemeBenifitsByAadhaar;
 
-public interface AadharSeedingDetailsRepository extends JpaRepository<AadharSeedingDetails, Long> {
-    AadharSeedingDetails findByOwner(Long id);
+public interface AadharService {
+
+    MultiSchemeBenifitsByAadhaar getAadharDetails(String aadharNumber);
+
 }
