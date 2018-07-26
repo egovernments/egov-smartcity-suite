@@ -57,7 +57,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.AccountPayeeDetail;
@@ -78,7 +77,6 @@ import org.egov.collection.integration.models.PaymentInfoBank;
 import org.egov.collection.integration.models.PaymentInfoCash;
 import org.egov.collection.integration.models.PaymentInfoChequeDD;
 import org.egov.collection.integration.models.ReceiptAccountInfo;
-import org.egov.collection.integration.models.ReceiptAccountInfoImpl;
 import org.egov.collection.integration.pgi.PaymentGatewayAdaptor;
 import org.egov.collection.integration.pgi.PaymentRequest;
 import org.egov.collection.integration.pgi.PaymentResponse;
@@ -358,12 +356,9 @@ public class CollectionCommon {
             for (final ReceiptHeader receiptHeader : receipts) {
                 String additionalMessage = null;
                 if (receiptType == CollectionConstants.RECEIPT_TYPE_BILL) {
-                    // TODO: Check for LAMS service must be removed once groupId implemented by all the billing systems
                     if (receiptHeader.getService().getCode().equals(CollectionConstants.SERVICECODE_LAMS)) {
-                        Integer groupId = 0;
                         BillReceiptInfo billReceiptInfo = new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO,
                                 persistenceService, null);
-
                         List<ReceiptAccountInfo> receiptAccountInfoList = billReceiptInfo.getAccountDetails().stream()
                                 .collect(Collectors.toList());
                         Collections.sort(receiptAccountInfoList, (receiptAccountInfo1, receiptAccountInfo2) -> {
@@ -371,17 +366,8 @@ public class CollectionCommon {
                                 return receiptAccountInfo1.getOrderNumber().compareTo(receiptAccountInfo2.getOrderNumber());
                             return 0;
                         });
-
                         billReceiptInfo.getAccountDetails().clear();
                         billReceiptInfo.getAccountDetails().addAll(receiptAccountInfoList);
-                        for (ReceiptAccountInfo receiptAccountInfo : billReceiptInfo.getAccountDetails()) {
-                            ((ReceiptAccountInfoImpl) receiptAccountInfo).setGroupId(groupId.toString());
-                            if (StringUtils.isNotBlank(receiptAccountInfo.getPurpose())
-                                    && (BillAccountDetails.PURPOSE.SG_SERVICETAX.name().equals(receiptAccountInfo.getPurpose())
-                                            || BillAccountDetails.PURPOSE.SERVICETAX.name()
-                                                    .equals(receiptAccountInfo.getPurpose())))
-                                groupId++;
-                        }
                         receiptList.add(billReceiptInfo);
                     } else {
                         additionalMessage = receiptHeaderService.getAdditionalInfoForReceipt(serviceCode,

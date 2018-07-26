@@ -114,5 +114,5 @@ public interface ReceiptAccountInfo {
     /**
      * @return the group id of the credit amount
      */
-    public abstract Long getGroupdId();
+    public abstract Long getGroupId();
 }

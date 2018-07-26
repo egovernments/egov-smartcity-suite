@@ -68,7 +68,6 @@ public class ReceiptAccountInfoImpl implements ReceiptAccountInfo {
      */
     private ReceiptDetail receiptDetail;
     
-    private  String groupId;
 
     /**
      * Creates the receipt account info for given receipt detail.
@@ -196,16 +195,9 @@ public class ReceiptAccountInfoImpl implements ReceiptAccountInfo {
         return receiptDetail.getPurpose() == null ? "" : receiptDetail.getPurpose();
     }
 
-    public String getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(String groupId) {
-        this.groupId = groupId;
-    }
-
+ 
     @Override
-    public Long getGroupdId() {
+    public Long getGroupId() {
         return receiptDetail.getGroupId() ;
     }
 
