@@ -156,7 +156,16 @@
 										<spring:message code="lbl.event.no" />
 									</c:otherwise>
 								</c:choose></td>
-							<td><c:out value="${listVar.cost}" /></td>
+							<td>
+								<c:choose>
+									<c:when test="${empty listVar.cost}">
+										0
+									</c:when>
+									<c:otherwise>
+										<c:out value="${listVar.cost}" />
+									</c:otherwise>
+								</c:choose>
+							</td>
 						</tr>
 					</c:forEach>
 				</c:if>

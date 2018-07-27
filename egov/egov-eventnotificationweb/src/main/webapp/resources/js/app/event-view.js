@@ -142,12 +142,12 @@ $(document)
 																					+ endDate
 																							.getFullYear()
 																			var ispaid, cost;
-																			if (obj.ispaid === "true") {
+																			if (obj.ispaid === true) {
 																				ispaid = "Yes";
 																				cost = obj.cost;
 																			} else {
 																				ispaid = "No";
-																				cost = "";
+																				cost = "0";
 																			}
 																			// You
 																			// could
@@ -174,7 +174,6 @@ $(document)
 																									ed,
 																									obj.endTime,
 																									obj.eventhost,
-																									obj.eventlocation,
 																									obj.address,
 																									obj.eventType,
 																									ispaid,
