@@ -1826,8 +1826,8 @@ public class ComplaintIndexService {
 
     private BoolQueryBuilder prepareQuery(final ComplaintDashBoardRequest ivrsRequest) {
         BoolQueryBuilder boolQuery = new BoolQueryBuilder();
-        boolQuery=boolQuery.must(QueryBuilders.matchQuery("ifClosed", 1))
-        .must(QueryBuilders.matchQuery("complaintStatusName", "COMPLETED"));
+        boolQuery=boolQuery.must(matchQuery("ifClosed", 1))
+        .must(matchQuery("complaintStatusName", "COMPLETED"));
         if (isNotBlank(ivrsRequest.getFromDate()) && isNotBlank(ivrsRequest.getToDate())) {
             String fromDate = new DateTime(ivrsRequest.getFromDate()).withTimeAtStartOfDay().toString(PGR_INDEX_DATE_FORMAT);
             String toDate = new DateTime(ivrsRequest.getToDate()).plusDays(1).toString(PGR_INDEX_DATE_FORMAT);
