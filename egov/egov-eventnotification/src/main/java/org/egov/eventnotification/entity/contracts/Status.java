@@ -47,42 +47,42 @@
  */
 package org.egov.eventnotification.entity.contracts;
 
-public class TaxDefaulterRequest {
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
-    private boolean mobileOnly;
-    private String ulbCode;
-    private int page;
-    private int pageSize;
+public class Status {
 
-    public boolean isMobileOnly() {
-        return mobileOnly;
+    @SerializedName("hasNextPage")
+    @Expose
+    private String hasNextPage;
+    @SerializedName("type")
+    @Expose
+    private String type;
+    @SerializedName("message")
+    @Expose
+    private String message;
+
+    public String getHasNextPage() {
+        return hasNextPage;
     }
 
-    public void setMobileOnly(boolean mobileOnly) {
-        this.mobileOnly = mobileOnly;
+    public void setHasNextPage(String hasNextPage) {
+        this.hasNextPage = hasNextPage;
     }
 
-    public String getUlbCode() {
-        return ulbCode;
+    public String getType() {
+        return type;
     }
 
-    public void setUlbCode(String ulbCode) {
-        this.ulbCode = ulbCode;
+    public void setType(String type) {
+        this.type = type;
     }
 
-    public int getPage() {
-        return page;
+    public String getMessage() {
+        return message;
     }
 
-    public void setPage(int page) {
-        this.page = page;
-    }
-
-    public int getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
+    public void setMessage(String message) {
+        this.message = message;
     }
 }
