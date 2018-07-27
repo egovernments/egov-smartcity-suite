@@ -169,7 +169,6 @@ public class PushNotificationService {
                     LOGGER.info("##PushBoxFox## : Message Send Status : {}", response);
             } catch (Exception ex) {
                 LOGGER.error("##PushBoxFox## : Error : Encountered an exception while sending the message.", ex);
-                throw new ApplicationRuntimeException("Error occurred while sending the push message", ex);
             }
     }
 
