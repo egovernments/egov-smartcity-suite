@@ -824,7 +824,7 @@ public class ConnectionDemandService {
     public void createDemandDetailForPenaltyAndServiceCharges(WaterConnectionDetails waterConnectionDetails) {
 
         Installment installment = installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(
-                moduleService.getModuleByName(MODULE_NAME), waterConnectionDetails.getExecutionDate(), YEARLY);
+                moduleService.getModuleByName(MODULE_NAME), new Date(), YEARLY);
 
         waterConnectionDetails.getWaterDemandConnection().get(0).getDemand().addEgDemandDetails(createDemandDetailsrForDataEntry(
                 BigDecimal.valueOf(waterConnectionDetails.getDonationCharges()).divide(new BigDecimal(2)),
