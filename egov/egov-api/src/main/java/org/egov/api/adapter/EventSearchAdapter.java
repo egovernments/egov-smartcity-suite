@@ -131,7 +131,7 @@ public class EventSearchAdapter extends DataAdapter<Event> {
             jsonObjectEvent.addProperty(URL, event.getAddress().getUrl());
 
         Long interestedCount = userEventService.countUsereventByEventId(event.getId());
-        if (interestedCount == null) {
+        if (interestedCount == 0) {
             jsonObjectEvent.addProperty("userInterested", "No");
             jsonObjectEvent.addProperty(INTERESTED_COUNT, ZERO);
         } else {
