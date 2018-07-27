@@ -514,11 +514,13 @@ function clearPaytModes() {
 }
 function clearManualReceiptData()
 {
-	document.getElementById('manualreceiptinfo').checked=false;
-	document.getElementById("manualReceiptDate").value="";
-	document.getElementById("manualReceiptNumber").value="";
-	document.getElementById('manualreceipt').style.display='none';  
-}
+	if(null != document.getElementById('manualreceiptinfo')){
+		document.getElementById('manualreceiptinfo').checked=false;
+		document.getElementById("manualReceiptDate").value="";
+		document.getElementById("manualReceiptNumber").value="";
+	}
+	document.getElementById('manualreceipt').style.display='none';
+}  
 
 function process(date){
 	   var parts = date.split("/");
