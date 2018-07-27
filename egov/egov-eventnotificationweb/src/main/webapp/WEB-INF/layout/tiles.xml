@@ -75,7 +75,7 @@
     </definition>
 
     <definition name="event-view" extends="base_layout">
-        <put-attribute name="page-title" value="title.event.view.all" cascade="true"/>
+        <put-attribute name="page-title" value="title.event" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/event/event-view.jsp"/>
     </definition>
     
@@ -110,17 +110,17 @@
     </definition>
     
     <definition name="schedule-create-view" extends="base_layout">
-        <put-attribute name="page-title" value="lbl.schedule.notification" cascade="true"/>
+        <put-attribute name="page-title" value="lbl.schedule.view" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/schedule/schedule-create.jsp"/>
     </definition>
     
     <definition name="schedule-details-view" extends="base_layout">
-        <put-attribute name="page-title" value="lbl.schedule.notification.details" cascade="true"/>
+        <put-attribute name="page-title" value="lbl.schedule.view" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/schedule/schedule-details-view.jsp"/>
     </definition>
     
     <definition name="schedule-update-view" extends="base_layout">
-        <put-attribute name="page-title" value="lbl.schedule.notification.update" cascade="true"/>
+        <put-attribute name="page-title" value="lbl.schedule.view" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/schedule/schedule-update-view.jsp"/>
     </definition>
     
@@ -130,12 +130,12 @@
     </definition>
     
     <definition name="draft-update-success" extends="base_layout">
-        <put-attribute name="page-title" value="lbl.draft.update" cascade="true"/>
+        <put-attribute name="page-title" value="lbl.draft.view" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/notificationdrafts/drafts-view-individual.jsp"/>
     </definition>
     
     <definition name="draft-update" extends="base_layout">
-        <put-attribute name="page-title" value="lbl.draft.update" cascade="true"/>
+        <put-attribute name="page-title" value="lbl.draft.view" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/notificationdrafts/draft-update.jsp"/>
     </definition>
 

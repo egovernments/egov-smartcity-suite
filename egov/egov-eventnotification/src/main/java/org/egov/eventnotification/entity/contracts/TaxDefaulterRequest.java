@@ -50,6 +50,7 @@ package org.egov.eventnotification.entity.contracts;
 public class TaxDefaulterRequest {
 
     private boolean mobileOnly;
+    private String ulbCode;
 
     public boolean isMobileOnly() {
         return mobileOnly;
@@ -57,5 +58,13 @@ public class TaxDefaulterRequest {
 
     public void setMobileOnly(boolean mobileOnly) {
         this.mobileOnly = mobileOnly;
+    }
+
+    public String getUlbCode() {
+        return ulbCode;
+    }
+
+    public void setUlbCode(String ulbCode) {
+        this.ulbCode = ulbCode;
     }
 }

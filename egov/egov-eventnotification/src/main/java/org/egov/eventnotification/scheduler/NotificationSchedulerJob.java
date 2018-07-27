@@ -129,7 +129,7 @@ public class NotificationSchedulerJob extends QuartzJobBean {
 
                     Schedule notificationSchedule = scheduleService.getScheduleById(scheduleId);
 
-                    executeBusiness(notificationSchedule, String.valueOf(dataMap.get("contextURL")));
+                    executeBusiness(notificationSchedule, String.valueOf(dataMap.get("contextURL")),ApplicationThreadLocals.getCityCode());
 
                     notificationSchedule.setStatus("Complete");
                     scheduleService.updateScheduleStatus(notificationSchedule);
@@ -151,15 +151,14 @@ public class NotificationSchedulerJob extends QuartzJobBean {
      * to pushbox to send the notification.
      * @param notificationSchedule
      */
-    private void executeBusiness(Schedule notificationSchedule, String contextURL) {
-
+    private void executeBusiness(Schedule notificationSchedule, String contextURL, String ulbCode) {
         if (notificationSchedule.getDraftType().getName().equalsIgnoreCase("BUSINESS")) {
             List<UserTaxInformation> userTaxInfoList = null;
             BuildMessageAdapter buildMessageAdapter = getBuildMessageAdapter(notificationSchedule.getCategory().getCode());
 
             userTaxInfoList = scheduleService.getDefaulterUserList(contextURL,
-                    notificationSchedule.getUrl(), notificationSchedule.getMethod());
-
+                    notificationSchedule.getUrl(), notificationSchedule.getMethod(),ulbCode);
+          
             if (userTaxInfoList != null)
                 for (UserTaxInformation userTaxInformation : userTaxInfoList) {
                     String message = buildMessageAdapter.buildMessage(userTaxInformation,

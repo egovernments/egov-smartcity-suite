@@ -68,6 +68,7 @@ public class EventNotificationApplicationProperties {
         properties.setMonthlyCron(environment.getProperty("eventnotification.monthly.job.cron"));
         properties.setYearlyCron(environment.getProperty("eventnotification.yearly.job.cron"));
         properties.setDefaultCron(environment.getProperty("eventnotification.default.cron"));
+        properties.setRefererIp(environment.getProperty("eventnotification.referer.ip"));
         return properties;
     }
 }

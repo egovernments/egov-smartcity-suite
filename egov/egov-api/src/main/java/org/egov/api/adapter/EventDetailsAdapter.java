@@ -68,7 +68,6 @@ public class EventDetailsAdapter {
         jsonObjectEvent.addProperty("contactnumber", event.getAddress().getContactNumber());
         jsonObjectEvent.addProperty("ispaid", event.isPaid());
         jsonObjectEvent.addProperty("eventType", event.getEventType().getName());
-        jsonObjectEvent.addProperty("userInterested", "No");
 
         if (event.getCost() == null)
             jsonObjectEvent.addProperty("cost", 0.0);

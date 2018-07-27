@@ -60,12 +60,15 @@ import java.util.List;
 import org.egov.eventnotification.entity.Drafts;
 import org.egov.eventnotification.entity.Schedule;
 import org.egov.eventnotification.entity.contracts.EventDetails;
+import org.egov.eventnotification.entity.contracts.EventNotificationProperties;
 import org.egov.eventnotification.entity.contracts.TaxDefaulterRequest;
 import org.egov.eventnotification.entity.contracts.UserTaxInformation;
 import org.egov.eventnotification.repository.DraftRepository;
 import org.egov.eventnotification.repository.ScheduleRepository;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,6 +89,9 @@ public class ScheduleService {
 
     @Autowired
     private DraftRepository draftRepository;
+    
+    @Autowired
+    private EventNotificationProperties appProperties;
 
     public List<Schedule> getAllSchedule() {
         List<Schedule> notificationScheduleList = null;
@@ -182,15 +188,20 @@ public class ScheduleService {
      * @param urlPath
      * @return
      */
-    public List<UserTaxInformation> getDefaulterUserList(String contextURL, String urlPath, String method) {
+    public List<UserTaxInformation> getDefaulterUserList(String contextURL, String urlPath, String method,String ulbCode) {
         final String uri = contextURL.concat(urlPath);
         ResponseEntity<UserTaxInformation[]> results = null;
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Referer", appProperties.getRefererIp());
+        HttpEntity<String> entity = new HttpEntity<>("parameters", headers);
         if (method.equals("GET"))
-            results = restTemplate.getForEntity(uri, UserTaxInformation[].class);
+            results = restTemplate.getForEntity(uri, UserTaxInformation[].class,entity);
         else {
             TaxDefaulterRequest req = new TaxDefaulterRequest();
             req.setMobileOnly(true);
-            results = restTemplate.postForEntity(uri, req, UserTaxInformation[].class);
+            req.setUlbCode(ulbCode);
+            HttpEntity<TaxDefaulterRequest> request = new HttpEntity<>(req, headers);
+            results = restTemplate.postForEntity(uri, request, UserTaxInformation[].class);
         }
 
         return Arrays.asList(results.getBody());

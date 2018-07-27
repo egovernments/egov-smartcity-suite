@@ -53,6 +53,7 @@ public class EventNotificationProperties {
     private String monthlyCron;
     private String yearlyCron;
     private String defaultCron;
+    private String refererIp;
 
     public String getDailyCron() {
         return dailyCron;
@@ -84,5 +85,13 @@ public class EventNotificationProperties {
 
     public void setDefaultCron(String defaultCron) {
         this.defaultCron = defaultCron;
+    }
+
+    public String getRefererIp() {
+        return refererIp;
+    }
+
+    public void setRefererIp(String refererIp) {
+        this.refererIp = refererIp;
     }
 }

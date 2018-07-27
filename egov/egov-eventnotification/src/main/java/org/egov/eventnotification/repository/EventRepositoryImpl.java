@@ -95,7 +95,7 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
         if (isNotBlank(eventSearch.getName()))
             criteria.add(Restrictions.ilike(NAME, eventSearch.getName(), MatchMode.ANYWHERE));
         if (isNotBlank(eventSearch.getEventHost()))
-            criteria.add(Restrictions.ilike(EVENT_HOST, eventSearch.getEventHost(), MatchMode.ANYWHERE));
+            criteria.add(Restrictions.ilike("evnt.address.eventHost", eventSearch.getEventHost(), MatchMode.ANYWHERE));
 
         if (startDate != null && endDate != null)
             criteria.add(Restrictions.between("evnt.startDate", startDate, endDate));
