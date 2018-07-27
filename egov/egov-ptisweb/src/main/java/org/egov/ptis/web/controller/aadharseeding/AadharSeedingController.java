@@ -69,7 +69,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import org.egov.ptis.bean.aadharseeding.MultiSchemeBenifitsByAadhaar;
+import org.egov.ptis.bean.aadharseeding.AadhaarDetails;
 import com.google.gson.GsonBuilder;
 
 @Controller
@@ -99,7 +99,7 @@ public class AadharSeedingController {
 
     @GetMapping(value = "/peoplehubdata/{aadharNumber}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public MultiSchemeBenifitsByAadhaar geDetails(@PathVariable final String aadharNumber) {
+    public AadhaarDetails geDetails(@PathVariable final String aadharNumber) {
         AadharService aadharService = (AadharService) beanProvider
                 .getBean("aadharService");
         return aadharService.getAadharDetails(aadharNumber);

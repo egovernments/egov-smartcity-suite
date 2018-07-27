@@ -47,10 +47,10 @@
  */
 package org.egov.ptis.service.aadharseeding;
 
-import org.egov.ptis.bean.aadharseeding.MultiSchemeBenifitsByAadhaar;
+import org.egov.ptis.bean.aadharseeding.AadhaarDetails;
 
 public interface AadharService {
 
-    MultiSchemeBenifitsByAadhaar getAadharDetails(String aadharNumber);
+    AadhaarDetails getAadharDetails(String aadharNumber);
 
 }

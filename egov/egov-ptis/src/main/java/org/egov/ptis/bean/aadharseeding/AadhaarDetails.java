@@ -47,7 +47,7 @@
  */
 package org.egov.ptis.bean.aadharseeding;
 
-public class MultiSchemeBenifitsByAadhaar {
+public class AadhaarDetails {
 
     public String getReson() {
         return Reson;
@@ -56,6 +56,7 @@ public class MultiSchemeBenifitsByAadhaar {
     public void setReson(String Reson) {
         this.Reson = Reson;
     }
+
     protected String Reson;
 
     public String getCare_of() {
@@ -73,7 +74,8 @@ public class MultiSchemeBenifitsByAadhaar {
     public void setSNO(String SNO) {
         this.SNO = SNO;
     }
-    protected String UID_NUM; 
+
+    protected String UID_NUM;
 
     public String getUID_NUM() {
         return UID_NUM;
@@ -82,6 +84,7 @@ public class MultiSchemeBenifitsByAadhaar {
     public void setUID_NUM(String UID_NUM) {
         this.UID_NUM = UID_NUM;
     }
+
     protected String SNO;
     protected String care_of;
     protected String CITIZEN_NAME;
@@ -101,6 +104,7 @@ public class MultiSchemeBenifitsByAadhaar {
     public void setAuth_reason(String Auth_reason) {
         this.Auth_reason = Auth_reason;
     }
+
     protected String Auth_reason;
     protected String RATION_ID;
     protected String KISSAN_CARD;
@@ -210,7 +214,6 @@ public class MultiSchemeBenifitsByAadhaar {
         this.GEO_LONG = GEO_LONG;
     }
 
-   
     protected String base64file;
 
     public String getBase64file() {
@@ -220,6 +223,7 @@ public class MultiSchemeBenifitsByAadhaar {
     public void setBase64file(String base64file) {
         this.base64file = base64file;
     }
+
     protected String Srdhwstxn;
     protected String status;
 
