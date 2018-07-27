@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -48,17 +48,35 @@
 
 package org.egov.ptis.domain.entity.property.contract;
 
-import org.egov.infra.web.support.search.DataTableSearchRequest;
+public class TaxDefaultersRequest {
 
-public class TaxDefaultersRequest extends DataTableSearchRequest {
-    
-    private Boolean mobileOnly;
+    private boolean mobileOnly;
 
-    public Boolean getMobileOnly() {
+    private Integer page;
+
+    private Integer pageSize;
+
+    public boolean getMobileOnly() {
         return mobileOnly;
-    }   
+    }
 
     public void setMobileOnly(Boolean mobileOnly) {
         this.mobileOnly = mobileOnly;
+    }
+
+    public Integer getPage() {
+        return page;
+    }
+
+    public void setPage(Integer page) {
+        this.page = page;
+    }
+
+    public Integer getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(Integer pageSize) {
+        this.pageSize = pageSize;
     }
 }
