@@ -58,7 +58,7 @@ public class BillAccountDetails implements Comparable<BillAccountDetails> {
     public enum PURPOSE {
         ARREAR_AMOUNT, CURRENT_AMOUNT, ADVANCE_AMOUNT, ARREAR_LATEPAYMENT_CHARGES, CURRENT_LATEPAYMENT_CHARGES, CHEQUE_BOUNCE_PENALTY, REBATE, OTHERS, SERVICETAX, CG_SERVICETAX, SG_SERVICETAX
     };
-  
+
     @XStreamAsAttribute
     private final String glCode;
 
@@ -79,9 +79,9 @@ public class BillAccountDetails implements Comparable<BillAccountDetails> {
 
     @XStreamAsAttribute
     private final PURPOSE purpose;
-    
+
     @XStreamAsAttribute
-    private Integer groupdId;
+    private Integer groupId;
 
     public BillAccountDetails(final String glCode, final Integer order, final BigDecimal crAmount,
             final BigDecimal drAmount, final String functionCode, final String description, final Boolean isActualDemand,
@@ -107,7 +107,7 @@ public class BillAccountDetails implements Comparable<BillAccountDetails> {
         this.description = description;
         this.isActualDemand = isActualDemand;
         this.purpose = purpose;
-        this.groupdId = groupId;
+        this.groupId = groupId;
     }
 
     @Override
@@ -177,8 +177,8 @@ public class BillAccountDetails implements Comparable<BillAccountDetails> {
                 + description.hashCode() + functionCode.hashCode() + isActualDemand.hashCode();
     }
 
-    public Integer getGroupdId() {
-        return groupdId;
+    public Integer getGroupId() {
+        return groupId;
     }
 
 }

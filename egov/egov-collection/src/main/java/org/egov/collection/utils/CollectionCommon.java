@@ -300,7 +300,7 @@ public class CollectionCommon {
                     if (billAccount.getIsActualDemand())
                         totalAmountToBeCollected = totalAmountToBeCollected.add(billAccount.getCrAmount()).subtract(
                                 billAccount.getDrAmount());
-                    Long billAccountGroupid = Long.valueOf((billAccount.getGroupdId() == null) ? 0 : billAccount.getGroupdId());
+                    Long billAccountGroupid = Long.valueOf((billAccount.getGroupId() == null) ? 0 : billAccount.getGroupId());
 
                     final ReceiptDetail receiptDetail = new ReceiptDetail(account, function, billAccount.getCrAmount()
                             .subtract(billAccount.getDrAmount()), billAccount.getDrAmount(), billAccount.getCrAmount(),
