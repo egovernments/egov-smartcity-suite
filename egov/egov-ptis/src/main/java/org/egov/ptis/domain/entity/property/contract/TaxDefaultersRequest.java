@@ -48,35 +48,17 @@
 
 package org.egov.ptis.domain.entity.property.contract;
 
-public class TaxDefaultersRequest {
+import org.egov.infra.web.support.search.DataTableSearchRequest;
 
+public class TaxDefaultersRequest extends DataTableSearchRequest {
+    
     private Boolean mobileOnly;
 
-    private Integer page;
-
-    private Integer pageSize;
-
-    public boolean getMobileOnly() {
+    public Boolean getMobileOnly() {
         return mobileOnly;
-    }
+    }   
 
     public void setMobileOnly(Boolean mobileOnly) {
         this.mobileOnly = mobileOnly;
-    }
-
-    public Integer getPage() {
-        return page;
-    }
-
-    public void setPage(Integer page) {
-        this.page = page;
-    }
-
-    public Integer getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(Integer pageSize) {
-        this.pageSize = pageSize;
     }
 }

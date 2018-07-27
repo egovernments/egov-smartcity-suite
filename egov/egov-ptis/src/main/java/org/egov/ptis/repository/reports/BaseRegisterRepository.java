@@ -45,32 +45,16 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.api.adapter;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
+package org.egov.ptis.repository.reports;
 
-import org.egov.api.adapter.DataAdapter;
 import org.egov.ptis.domain.entity.property.view.PropertyMVInfo;
-import org.springframework.stereotype.Component;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.stereotype.Repository;
 
-import java.lang.reflect.Type;
-import java.math.BigDecimal;
-
-@Component
-public class DefaultersResultAdapter extends DataAdapter<PropertyMVInfo> {
-
-    @Override
-    public JsonElement serialize(PropertyMVInfo defaultersResultObj, Type type, JsonSerializationContext context) {
-        JsonObject jsonObject = new JsonObject();
-        if (defaultersResultObj.getTotalDue().compareTo(BigDecimal.ZERO) == 1) {
-            jsonObject.addProperty("assessmentNo", defaultersResultObj.getPropertyId());
-            jsonObject.addProperty("ownerName", defaultersResultObj.getOwnerName());
-            jsonObject.addProperty("mobileNumber", defaultersResultObj.getMobileNumber());
-            jsonObject.addProperty("totalDue", defaultersResultObj.getTotalDue());
-        }
-        return jsonObject;
-    }
+@Repository
+public interface BaseRegisterRepository
+		extends JpaRepository<PropertyMVInfo, Long>, JpaSpecificationExecutor<PropertyMVInfo> {
 
 }
