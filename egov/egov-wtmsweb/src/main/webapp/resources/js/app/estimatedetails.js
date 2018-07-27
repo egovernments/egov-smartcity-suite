@@ -51,9 +51,6 @@ $(document).ready(function()
 	if($('#pipelineDistance') != null && $('#pipelineDistance').val() == 0.0)
 		$('#pipelineDistance').val('');	
 	
-	if($('#estimationCharges') != null && $('#estimationCharges').val() == 0.0)
-		$('#estimationCharges').val('');
-	
 	loadConnectionCategories();
 	
 	$('#connectionCategorie').change(function () {
