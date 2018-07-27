@@ -57,9 +57,7 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.ptis.bean.AssessmentInfo;
 import org.egov.ptis.constants.PropertyTaxConstants;
-import org.egov.ptis.domain.entity.property.DefaultersResult;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
-import org.egov.ptis.domain.entity.property.contract.TaxDefaultersRequest;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.DrainageEnum;
 import org.egov.ptis.domain.model.ErrorDetails;
@@ -74,7 +72,6 @@ import org.egov.ptis.domain.model.TaxCalculatorRequest;
 import org.egov.ptis.domain.model.TaxCalculatorResponse;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
-import org.egov.ptis.domain.service.report.PropertyTaxReportService;
 import org.egov.restapi.model.AssessmentRequest;
 import org.egov.restapi.model.LocalityCodeDetails;
 import org.egov.restapi.model.OwnershipCategoryDetails;
@@ -84,7 +81,6 @@ import org.egov.restapi.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -116,8 +112,6 @@ public class AssessmentService {
     private PropertyExternalService propertyExternalService;
     @Autowired
     private ValidationUtil validationUtil;
-    @Autowired
-    private PropertyTaxReportService propertyTaxReportService;
 
     /**
      * This method is used for handling user request for assessment details.
@@ -770,10 +764,5 @@ public class AssessmentService {
         mapper.configure(SerializationConfig.Feature.AUTO_DETECT_FIELDS, true);
         mapper.setDateFormat(ChequePayment.CHEQUE_DATE_FORMAT);
         return mapper.readValue(jsonString, cls);
-    }
-    
-    @PostMapping(value = "/property/taxDefaulters", produces = APPLICATION_JSON_VALUE)
-    public List<DefaultersResult> getPropertyTaxDefaulters(@RequestBody TaxDefaultersRequest defaultersRequest, final HttpServletRequest request){
-        return propertyTaxReportService.getdefaultersList(defaultersRequest);
     }
 }
