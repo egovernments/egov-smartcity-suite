@@ -1682,7 +1682,6 @@ public class ComplaintIndexService {
 
     public List<IVRSFeedBackResponse> getDetailsBasedOnFeedBack(final ComplaintDashBoardRequest ivrsRequest) {
         List<IVRSFeedBackResponse> feedbackResponseList = new ArrayList<>();
-        IVRSFeedBackResponse feedbackResponse = new IVRSFeedBackResponse();
         String aggregationField = CITY_REGION_NAME;
         if (isNotBlank(ivrsRequest.getType()))
             aggregationField = ComplaintIndexAggregationBuilder.fetchAggregationField(ivrsRequest.getType());
@@ -1692,14 +1691,13 @@ public class ComplaintIndexService {
                 aggregationField);
         Terms closedterms = completedResponse.getAggregations().get("typeAggr");
         for (Bucket closedBucket : closedterms.getBuckets()) {
-            feedbackResponse = new IVRSFeedBackResponse();
+            IVRSFeedBackResponse feedbackResponse = new IVRSFeedBackResponse();
             feedbackResponse.setTotalComplaint(closedBucket.getDocCount());
             Range todaysClosedCount = closedBucket.getAggregations().get("todaysComplaintCount");
             feedbackResponse.setTodaysClosed(todaysClosedCount.getBuckets().get(0).getDocCount());
             setUpperLevelValues(aggregationField, feedbackResponse, closedBucket);
             callStatusAndRatingCount(closedBucket, feedbackResponse);
-            final List<MonthlyFeedbackCounts> monthWiseStat = getMonthlyFeedbackCount(closedBucket);
-            feedbackResponse.setMonthlyCounts(monthWiseStat);
+            feedbackResponse.setMonthlyCounts(getMonthlyFeedbackCount(closedBucket));
             feedbackResponseList.add(feedbackResponse);
         }
         return feedbackResponseList;
@@ -1725,7 +1723,7 @@ public class ComplaintIndexService {
     }
 
     private void prepareMonthlyCallStatCounts(Histogram.Bucket entry, MonthlyFeedbackCounts monthStat) {
-        Terms callStatCountAggr = entry.getAggregations().get("callStatusCount");
+        Terms callStatCountAggr = entry.getAggregations().get("callStatCountAggr");
         for (Bucket callStatBucket : callStatCountAggr.getBuckets()) {
             int callStatus = callStatBucket.getKeyAsNumber().intValue();
             if (callStatus == 3 || callStatus == 4) {
@@ -1737,15 +1735,15 @@ public class ComplaintIndexService {
     }
 
     private void prepareMonthlyRatingCount(Bucket callStatBucket, MonthlyFeedbackCounts monthStat) {
-        Terms countAggr = callStatBucket.getAggregations().get("ratingCount");
-        if (null != countAggr)
+        Terms countAggr = callStatBucket.getAggregations().get("countAggr");
+        if (countAggr!=null)
             for (Bucket bucketRating : countAggr.getBuckets()) {
                 int fbRating = bucketRating.getKeyAsNumber().intValue();
-                if (fbRating == 1)
+                if (fbRating == GOOD_RATING)
                     monthStat.setGoodCount(bucketRating.getDocCount());
-                else if (fbRating == 2)
+                else if (fbRating == BAD_RATING)
                     monthStat.setBadCount(bucketRating.getDocCount());
-                else if (fbRating == 3)
+                else if (fbRating == AVG_RATING)
                     monthStat.setBadCount(bucketRating.getDocCount());
             }
     }
@@ -1765,11 +1763,11 @@ public class ComplaintIndexService {
 
     private void getDifferentRatingCounts(IVRSFeedBackResponse feedbackResponse, Bucket countBucket) {
         int rating = countBucket.getKeyAsNumber().intValue();
-        if (rating == 1) {
+        if (rating == GOOD_RATING) {
             feedbackResponse.setGood(countBucket.getDocCount());
-        } else if (rating == 2) {
+        } else if (rating == BAD_RATING) {
             feedbackResponse.setAverage(countBucket.getDocCount());
-        } else if (rating == 3) {
+        } else if (rating == AVG_RATING) {
             feedbackResponse.setBad(countBucket.getDocCount());
         }
         feedbackResponse.setTotalFeedback(feedbackResponse.getGood() + feedbackResponse.getBad() + feedbackResponse.getAverage());
@@ -1828,6 +1826,8 @@ public class ComplaintIndexService {
 
     private BoolQueryBuilder prepareQuery(final ComplaintDashBoardRequest ivrsRequest) {
         BoolQueryBuilder boolQuery = new BoolQueryBuilder();
+        boolQuery=boolQuery.must(QueryBuilders.matchQuery("ifClosed", 1))
+        .must(QueryBuilders.matchQuery("complaintStatusName", "COMPLETED"));
         if (isNotBlank(ivrsRequest.getFromDate()) && isNotBlank(ivrsRequest.getToDate())) {
             String fromDate = new DateTime(ivrsRequest.getFromDate()).withTimeAtStartOfDay().toString(PGR_INDEX_DATE_FORMAT);
             String toDate = new DateTime(ivrsRequest.getToDate()).plusDays(1).toString(PGR_INDEX_DATE_FORMAT);
@@ -1871,8 +1871,7 @@ public class ComplaintIndexService {
                 for (Bucket complaintTypeBucket : complaintTypeTerms.getBuckets()) {
                     IVRSFeedBackResponse feedbackResponse = new IVRSFeedBackResponse();
                     feedbackResponse.setCompalintType(complaintTypeBucket.getKeyAsString());
-                    feedbackResponse.setTotalComplaint(complaintTypeBucket.getDocCount());
-                    callStatusAndRatingCount(complaintTypeBucket, feedbackResponse);
+                    setCategoryWiseResponse(complaintTypeBucket, feedbackResponse);
                     feedbackResponseList.add(feedbackResponse);
                 }
             }
@@ -1881,11 +1880,18 @@ public class ComplaintIndexService {
             for (Bucket termsBucket : terms.getBuckets()) {
                 IVRSFeedBackResponse feedbackResponse = new IVRSFeedBackResponse();
                 feedbackResponse.setComplaintCategory(termsBucket.getKeyAsString());
-                feedbackResponse.setTotalComplaint(termsBucket.getDocCount());
-                callStatusAndRatingCount(termsBucket, feedbackResponse);
+                setCategoryWiseResponse(termsBucket, feedbackResponse);
                 feedbackResponseList.add(feedbackResponse);
             }
         }
         return feedbackResponseList;
+    }
+
+    private void setCategoryWiseResponse(Bucket complaintTypeBucket, IVRSFeedBackResponse feedbackResponse) {
+        feedbackResponse.setTotalComplaint(complaintTypeBucket.getDocCount());
+        Range todaysClosedCount = complaintTypeBucket.getAggregations().get("todaysComplaintCount");
+        feedbackResponse.setTodaysClosed(todaysClosedCount.getBuckets().get(0).getDocCount());
+        feedbackResponse.setMonthlyCounts(getMonthlyFeedbackCount(complaintTypeBucket));
+        callStatusAndRatingCount(complaintTypeBucket, feedbackResponse);
     }
 }

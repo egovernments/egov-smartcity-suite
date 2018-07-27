@@ -79,6 +79,9 @@ public final class ComplaintIndexAggregationBuilder {
     private static final String CITY_CODE = "cityCode";
     private static final String CITY_REGION_NAME = "cityRegionName";
     private static final String CITY_DISTRICT_NAME = "cityDistrictName";
+    private static final String FEEDBACK_CALL_STATUS = "feedbackCallStatus";
+    private static final String FEEDBACK_RATING = "feedbackRating";
+    
    
     private ComplaintIndexAggregationBuilder() {
         //Only static API's
@@ -206,8 +209,13 @@ public final class ComplaintIndexAggregationBuilder {
         return aggregationField;
     }
     
-    public static AggregationBuilder prepareMonthlyAggregations(String aggregationName, String fieldName) {
+    public static AggregationBuilder prepareMonthlyAggregations() {
         return AggregationBuilders.dateHistogram("dateAggr").field("completionDate").interval(DateHistogramInterval.MONTH)
-                .subAggregation(AggregationBuilders.terms(aggregationName).field(fieldName));
+                .subAggregation(getCallStatusAndRating());
+    }
+
+    public static AggregationBuilder getCallStatusAndRating() {
+        return AggregationBuilders.terms("callStatCountAggr").field(FEEDBACK_CALL_STATUS)
+                .subAggregation(AggregationBuilders.terms("countAggr").field(FEEDBACK_RATING));
     }
 }

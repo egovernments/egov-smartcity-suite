@@ -145,8 +145,7 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
     private static final String REGION_NAME="cityRegionName";
     private static final String LOCALITY_NUMBER="localityNo";
     private static final String DISTRICT_CODE="cityDistrictCode";
-    private static final String FEEDBACK_RATING="feedbackRating";
-    private static final String FEEDBACK_CALL_STATUS="feedbackCallStatus";
+
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
 
@@ -817,13 +816,10 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
     public SearchResponse findFeedBackRatingDetails(ComplaintDashBoardRequest ivrsFeedBackRequest, BoolQueryBuilder feedBackQuery,
             String aggregationField) {
         return elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
-                .setQuery(feedBackQuery.filter(QueryBuilders.matchQuery("ifClosed", 1))
-                        .must(QueryBuilders.matchQuery("complaintStatusName", "COMPLETED")))
+                .setQuery(feedBackQuery)
                 .addAggregation(AggregationBuilders.terms("typeAggr").field(aggregationField).size(130)
-                        .subAggregation(AggregationBuilders.terms("callStatCountAggr").field(FEEDBACK_CALL_STATUS)
-                        .subAggregation(AggregationBuilders.terms("countAggr").field(FEEDBACK_RATING)))
-                        .subAggregation(ComplaintIndexAggregationBuilder.prepareMonthlyAggregations("callStatusCount", FEEDBACK_CALL_STATUS)
-                        .subAggregation(ComplaintIndexAggregationBuilder.prepareMonthlyAggregations("ratingCount", FEEDBACK_RATING)))
+                        .subAggregation(ComplaintIndexAggregationBuilder.getCallStatusAndRating())
+                        .subAggregation(ComplaintIndexAggregationBuilder.prepareMonthlyAggregations())
                         .subAggregation(getCountBetweenSpecifiedDates("todaysComplaintCount", "completionDate",
                                 new DateTime().toString(formatter), new DateTime().plusDays(1).toString(formatter)))
                         .subAggregation(addFieldBasedOnAggField(aggregationField)))
@@ -883,22 +879,25 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
    
     public SearchResponse findCategoryWiseFeedBackRatingDetails(ComplaintDashBoardRequest ivrsFeedBackRequest,
             BoolQueryBuilder feedBackQuery) {
-        if (isNotBlank(ivrsFeedBackRequest.getCategoryId())||isNotBlank(ivrsFeedBackRequest.getCategoryName())) {
+        if (isNotBlank(ivrsFeedBackRequest.getCategoryId()) || isNotBlank(ivrsFeedBackRequest.getCategoryName())) {
             return elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
                     .setQuery(feedBackQuery)
                     .addAggregation(AggregationBuilders.terms("categoryAggr").field("categoryName").size(130)
                             .subAggregation(AggregationBuilders.terms("complaintTypeAggr").field("complaintTypeName")
-                                    .subAggregation(AggregationBuilders.terms("callStatCountAggr").field(FEEDBACK_CALL_STATUS)
-                                    .subAggregation(AggregationBuilders.terms("countAggr").field(FEEDBACK_RATING)))))
+                                    .subAggregation(ComplaintIndexAggregationBuilder.getCallStatusAndRating())
+                                    .subAggregation(ComplaintIndexAggregationBuilder.prepareMonthlyAggregations())
+                                    .subAggregation(getCountBetweenSpecifiedDates("todaysComplaintCount", "completionDate",
+                                            new DateTime().toString(formatter), new DateTime().plusDays(1).toString(formatter)))))
                     .execute().actionGet();
         } else {
             return elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
                     .setQuery(feedBackQuery)
                     .addAggregation(AggregationBuilders.terms("categoryAggr").field("categoryName").size(130)
-                            .subAggregation(AggregationBuilders.terms("callStatCountAggr").field(FEEDBACK_CALL_STATUS)
-                            .subAggregation(AggregationBuilders.terms("countAggr").field(FEEDBACK_RATING))))
+                            .subAggregation(ComplaintIndexAggregationBuilder.getCallStatusAndRating())
+                            .subAggregation(ComplaintIndexAggregationBuilder.prepareMonthlyAggregations())
+                            .subAggregation(getCountBetweenSpecifiedDates("todaysComplaintCount", "completionDate",
+                                    new DateTime().toString(formatter), new DateTime().plusDays(1).toString(formatter))))
                     .execute().actionGet();
         }
-
     }
 }
