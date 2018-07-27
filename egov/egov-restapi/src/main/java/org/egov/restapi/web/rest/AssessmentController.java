@@ -110,14 +110,12 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  */
 @RestController
 @Scope(scopeName=ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class AssessmentService {
+public class AssessmentController {
 
     @Autowired
     private PropertyExternalService propertyExternalService;
     @Autowired
     private ValidationUtil validationUtil;
-    @Autowired
-    private PropertyTaxReportService propertyTaxReportService;
 
     /**
      * This method is used for handling user request for assessment details.
@@ -772,8 +770,4 @@ public class AssessmentService {
         return mapper.readValue(jsonString, cls);
     }
     
-    @PostMapping(value = "/property/taxDefaulters", produces = APPLICATION_JSON_VALUE)
-    public List<DefaultersResult> getPropertyTaxDefaulters(@RequestBody TaxDefaultersRequest defaultersRequest, final HttpServletRequest request){
-        return propertyTaxReportService.getdefaultersList(defaultersRequest);
-    }
 }

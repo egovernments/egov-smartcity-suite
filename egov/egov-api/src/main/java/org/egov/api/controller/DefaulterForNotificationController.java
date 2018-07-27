@@ -45,41 +45,53 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.ptis.domain.service.report;
+package org.egov.api.controller;
 
-import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
-import org.egov.ptis.domain.entity.property.BaseRegisterReportRequest;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.log4j.Logger;
+import org.egov.api.controller.core.ApiController;
+import org.egov.api.controller.core.ApiResponse;
+import org.egov.ptis.domain.entity.property.contract.TaxDefaultersRequest;
 import org.egov.ptis.domain.entity.property.view.PropertyMVInfo;
-import org.egov.ptis.repository.reports.PropertyMVInfoRepository;
-import org.egov.ptis.repository.spec.BaseRegisterSpec;
+import org.egov.ptis.domain.service.report.PropertyTaxReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.List;
-
-@Service
-@Transactional(readOnly = true)
-public class PTBaseRegisterReportService {
-
+@Controller
+public class DefaulterForNotificationController extends ApiController{
+    
+    private static final String INVALID_PAGE_NUMBER_ERROR = "Invalid Page Number";
+    private static final String HAS_NEXT_PAGE = "hasNextPage";
+    private static final Logger LOGGER = Logger.getLogger(DefaulterForNotificationController.class);
+    private static final String EGOV_API_ERROR = "EGOV-API ERROR ";
+    private static final String SERVER_ERROR = "server.error";
+    
     @Autowired
-    private PropertyMVInfoRepository baseRegisterReportRepository;
-
-    @ReadOnly
-    public Page<PropertyMVInfo> pagedBaseRegisterRecords(final BaseRegisterReportRequest baseRegisterReportRequest) {
-        return baseRegisterReportRepository.findAll(
-                BaseRegisterSpec.baseRegisterSpecification(baseRegisterReportRequest),
-                new PageRequest(baseRegisterReportRequest.pageNumber(), baseRegisterReportRequest.pageSize(),
-                        baseRegisterReportRequest.orderDir(), baseRegisterReportRequest.orderBy()));
-
+    private PropertyTaxReportService propertyTaxReportService;
+    
+    public ApiResponse getResponseHandler() {
+        return ApiResponse.newInstance();
     }
-
-    @ReadOnly
-    public List<PropertyMVInfo> getAllBaseRegisterRecords(final BaseRegisterReportRequest baseRegisterReportRequest) {
-        return baseRegisterReportRepository
-                .findAll(BaseRegisterSpec.baseRegisterSpecification(baseRegisterReportRequest));
+    
+    @PostMapping(value = "/property/taxDefaulters", produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> getPropertyTaxDefaulters(@RequestBody TaxDefaultersRequest defaultersRequest, final HttpServletRequest request){
+        if (defaultersRequest.getPage() < 1)
+            return getResponseHandler().error(INVALID_PAGE_NUMBER_ERROR);
+        try {
+            final Page<PropertyMVInfo> pagelist = propertyTaxReportService.getLatest(defaultersRequest.getMobileOnly(), defaultersRequest.getPage(), defaultersRequest.getPageSize());
+            final boolean hasNextPage = pagelist.getTotalElements() > defaultersRequest.getPage() * defaultersRequest.getPageSize();
+            return getResponseHandler().putStatusAttribute(HAS_NEXT_PAGE, String.valueOf(hasNextPage))
+                    .setDataAdapter(new org.egov.api.adapter.DefaultersResultAdapter()).success(pagelist.getContent());
+        } catch (final Exception e) {
+            LOGGER.error(EGOV_API_ERROR, e);
+            return getResponseHandler().error(getMessage(SERVER_ERROR));
+        }
     }
-
 }

@@ -47,13 +47,10 @@
  */
 package org.egov.ptis.domain.service.report;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.ptis.domain.entity.property.BaseRegisterReportRequest;
-import org.egov.ptis.domain.entity.property.DefaultersResult;
-import org.egov.ptis.domain.entity.property.contract.TaxDefaultersRequest;
 import org.egov.ptis.domain.entity.property.view.PropertyMVInfo;
 import org.egov.ptis.repository.reports.PropertyMVInfoRepository;
 import org.egov.ptis.repository.spec.BaseRegisterSpec;
@@ -86,17 +83,10 @@ public class PropertyTaxReportService {
     }
 
     @ReadOnly
-    public List<DefaultersResult> getdefaultersList(TaxDefaultersRequest defaultersRequest) {
-        List<PropertyMVInfo> propertyList = propertyMVInfoRepository.findAll();
-        List<DefaultersResult> resultList = new ArrayList<>();
-        for(PropertyMVInfo prop : propertyList){
-            DefaultersResult defaulter = new DefaultersResult();
-            defaulter.setAssessmentNo(prop.getPropertyId());
-            defaulter.setOwnerName(prop.getOwnerName());
-            defaulter.setMobileNumber(prop.getMobileNumber());
-            defaulter.setTotalDue(prop.getArrearDemand());
-            resultList.add(defaulter);
-        }
-        return resultList;
+    public Page<PropertyMVInfo> getLatest(boolean mobileOnly, Integer page, Integer pageSize) {
+        if (mobileOnly)
+            return propertyMVInfoRepository.findAllByMobileNumberNotNull(new PageRequest(page - 1, pageSize));
+        else
+            return propertyMVInfoRepository.findAll(new PageRequest(page - 1, pageSize));
     }
 }

@@ -69,612 +69,601 @@ import java.util.Set;
 @Table(name = "EGPT_VIEW_PROPERTYINFO")
 public class PropertyMVInfo implements Serializable {
 
-	private static final long serialVersionUID = -6146352214041057969L;
+    private static final long serialVersionUID = -6146352214041057969L;
 
-	@Id
-	private Integer basicPropertyID;
+    @Id
+    private Integer basicPropertyID;
 
-	@Column(name = "UPICNO")
-	private String propertyId;
+    @Column(name = "UPICNO")
+    private String propertyId;
 
-	@Column(name = "OLDMUNCIPALNUMBER")
-	private String oldMuncipalNum;
+    @Column(name = "OLDMUNCIPALNUMBER")
+    private String oldMuncipalNum;
 
-	@Column(name = "OWNERSNAME")
-	private String ownerName;
+    @Column(name = "OWNERSNAME")
+    private String ownerName;
 
-	private String houseNo;
+    private String houseNo;
 
-	@Column(name = "ADDRESS")
-	private String propertyAddress;
+    @Column(name = "ADDRESS")
+    private String propertyAddress;
 
-	@Column(name = "PROPTYMASTER")
-	private Long propType;
+    @Column(name = "PROPTYMASTER")
+    private Long propType;
 
-	@ManyToOne
-	@JoinColumn(name = "WARDID")
-	private Boundary ward;
-	
-	@ManyToOne
-	@JoinColumn(name = "ELECTIONWARDID")
-	private Boundary electionWard;
-	
+    @ManyToOne
+    @JoinColumn(name = "WARDID")
+    private Boundary ward;
 
-	@ManyToOne
-	@JoinColumn(name = "ZONEID")
-	private Boundary zone;
+    @ManyToOne
+    @JoinColumn(name = "ELECTIONWARDID")
+    private Boundary electionWard;
 
-	@ManyToOne
-	@JoinColumn(name = "STREETID")
-	private Boundary street;
+    @ManyToOne
+    @JoinColumn(name = "ZONEID")
+    private Boundary zone;
 
-	@ManyToOne
-	@JoinColumn(name = "BLOCKID")
-	private Boundary block;
+    @ManyToOne
+    @JoinColumn(name = "STREETID")
+    private Boundary street;
 
-	@ManyToOne
-	@JoinColumn(name = "LOCALITYID")
-	private Boundary locality;
+    @ManyToOne
+    @JoinColumn(name = "BLOCKID")
+    private Boundary block;
 
-	@Column(name = "SOURCE_ID")
-	private Integer sourceID;
+    @ManyToOne
+    @JoinColumn(name = "LOCALITYID")
+    private Boundary locality;
 
-	@Column(name = "SITAL_AREA")
-	private BigDecimal sitalArea;
+    @Column(name = "SOURCE_ID")
+    private Integer sourceID;
 
-	@Column(name = "TOTAL_BUILTUP_AREA")
-	private BigDecimal toalBuiltUpArea;
+    @Column(name = "SITAL_AREA")
+    private BigDecimal sitalArea;
 
-	@Column(name = "LATEST_STATUS")
-	private Integer latestStatus;
+    @Column(name = "TOTAL_BUILTUP_AREA")
+    private BigDecimal toalBuiltUpArea;
 
-	@Column(name = "AGGREGATE_CURRENT_FIRSTHALF_DEMAND")
-	private BigDecimal aggrCurrFirstHalfDmd;
+    @Column(name = "LATEST_STATUS")
+    private Integer latestStatus;
 
-	@Column(name = "AGGREGATE_CURRENT_SECONDHALF_DEMAND")
-	private BigDecimal aggrCurrSecondHalfDmd;
+    @Column(name = "AGGREGATE_CURRENT_FIRSTHALF_DEMAND")
+    private BigDecimal aggrCurrFirstHalfDmd;
 
-	@Column(name = "AGGREGATE_ARREAR_DEMAND")
-	private BigDecimal aggrArrDmd;
+    @Column(name = "AGGREGATE_CURRENT_SECONDHALF_DEMAND")
+    private BigDecimal aggrCurrSecondHalfDmd;
 
-	@Column(name = "CURRENT_FIRSTHALF_COLLECTION")
-	private BigDecimal aggrCurrFirstHalfColl;
+    @Column(name = "AGGREGATE_ARREAR_DEMAND")
+    private BigDecimal aggrArrDmd;
 
-	@Column(name = "CURRENT_SECONDHALF_COLLECTION")
-	private BigDecimal aggrCurrSecondHalfColl;
+    @Column(name = "CURRENT_FIRSTHALF_COLLECTION")
+    private BigDecimal aggrCurrFirstHalfColl;
 
-	@Column(name = "ARREARCOLLECTION")
-	private BigDecimal aggrArrColl;
+    @Column(name = "CURRENT_SECONDHALF_COLLECTION")
+    private BigDecimal aggrCurrSecondHalfColl;
 
-	@Column(name = "PEN_AGGR_ARREAR_DEMAND")
-	private BigDecimal aggrArrearPenaly;
+    @Column(name = "ARREARCOLLECTION")
+    private BigDecimal aggrArrColl;
 
-	@Column(name = "PEN_AGGR_ARR_COLL")
-	private BigDecimal aggrArrearPenalyColl;
+    @Column(name = "PEN_AGGR_ARREAR_DEMAND")
+    private BigDecimal aggrArrearPenaly;
 
-	@Column(name = "PEN_AGGR_CURRENT_FIRSTHALF_DEMAND")
-	private BigDecimal aggrCurrFirstHalfPenaly;
+    @Column(name = "PEN_AGGR_ARR_COLL")
+    private BigDecimal aggrArrearPenalyColl;
 
-	@Column(name = "PEN_AGGR_CURRENT_FIRSTHALF_COLL")
-	private BigDecimal aggrCurrFirstHalfPenalyColl;
+    @Column(name = "PEN_AGGR_CURRENT_FIRSTHALF_DEMAND")
+    private BigDecimal aggrCurrFirstHalfPenaly;
 
-	@Column(name = "PEN_AGGR_CURRENT_SECONDHALF_DEMAND")
-	private BigDecimal aggrCurrSecondHalfPenaly;
+    @Column(name = "PEN_AGGR_CURRENT_FIRSTHALF_COLL")
+    private BigDecimal aggrCurrFirstHalfPenalyColl;
 
-	@Column(name = "PEN_AGGR_CURRENT_SECONDHALF_COLL")
-	private BigDecimal aggrCurrSecondHalfPenalyColl;
+    @Column(name = "PEN_AGGR_CURRENT_SECONDHALF_DEMAND")
+    private BigDecimal aggrCurrSecondHalfPenaly;
 
-	@Column(name = "ARREAR_DEMAND")
-	private BigDecimal arrearDemand;
+    @Column(name = "PEN_AGGR_CURRENT_SECONDHALF_COLL")
+    private BigDecimal aggrCurrSecondHalfPenalyColl;
 
-	@Column(name = "ARREAR_COLLECTION")
-	private BigDecimal arrearCollection;
+    @Column(name = "ARREAR_DEMAND")
+    private BigDecimal arrearDemand;
 
-	private String gisRefNo;
+    @Column(name = "ARREAR_COLLECTION")
+    private BigDecimal arrearCollection;
 
-	@OneToMany(targetEntity = InstDmdCollInfo.class, cascade = CascadeType.ALL, mappedBy = "propMatView")
-	private Set<InstDmdCollInfo> instDmdColl;
+    private String gisRefNo;
 
-	private BigDecimal alv;
+    @OneToMany(targetEntity = InstDmdCollInfo.class, cascade = CascadeType.ALL, mappedBy = "propMatView")
+    private Set<InstDmdCollInfo> instDmdColl;
 
-	private Boolean isExempted;
+    private BigDecimal alv;
 
-	private String usage;
+    private Boolean isExempted;
 
-	private Character source;
+    private String usage;
 
-	@OneToMany(targetEntity = FloorDetailsInfo.class, cascade = CascadeType.ALL, mappedBy = "propMatView")
-	private Set<FloorDetailsInfo> floorDetails;
+    private Character source;
 
-	@Column(name = "MOBILENO")
-	private String mobileNumber;
+    @OneToMany(targetEntity = FloorDetailsInfo.class, cascade = CascadeType.ALL, mappedBy = "propMatView")
+    private Set<FloorDetailsInfo> floorDetails;
 
-	private Boolean isActive;
+    @Column(name = "MOBILENO")
+    private String mobileNumber;
 
-	@Column(name = "IS_UNDER_COURTCASE")
-	private Boolean isUnderCourtCase;
+    private Boolean isActive;
 
-	@Column(name = "CATEGORY_TYPE")
-	private String categoryType;
+    @Column(name = "IS_UNDER_COURTCASE")
+    private Boolean isUnderCourtCase;
 
-	@Column(name = "REGD_DOC_NO")
-	private String regdDocNo;
+    @Column(name = "CATEGORY_TYPE")
+    private String categoryType;
 
-	@Column(name = "REGD_DOC_DATE")
-	private Date regdDocDate;
+    @Column(name = "REGD_DOC_NO")
+    private String regdDocNo;
 
-	private String pattaNo;
+    @Column(name = "REGD_DOC_DATE")
+    private Date regdDocDate;
 
-	private BigDecimal marketValue;
+    private String pattaNo;
 
-	@Column(name = "CAPITALVALUE")
-	private BigDecimal capitalValue;
+    private BigDecimal marketValue;
 
-	private Date assessmentDate;
+    @Column(name = "CAPITALVALUE")
+    private BigDecimal capitalValue;
 
-	private Date lastUpdated;
+    private Date assessmentDate;
 
-	private String surveyNo;
+    private Date lastUpdated;
 
-	private String duePeriod;
+    private String surveyNo;
 
-	private BigDecimal advance;
+    private String duePeriod;
 
-	private BigDecimal rebate;
+    private BigDecimal advance;
 
-	private BigDecimal adjustment;
+    private BigDecimal rebate;
 
-	public Integer getBasicPropertyID() {
-		return basicPropertyID;
-	}
+    private BigDecimal adjustment;
 
-	public void setBasicPropertyID(final Integer tbasicPropertyID) {
-		basicPropertyID = tbasicPropertyID;
-	}
+    public Integer getBasicPropertyID() {
+        return basicPropertyID;
+    }
 
-	public String getPropertyId() {
-		return propertyId;
-	}
+    public void setBasicPropertyID(final Integer tbasicPropertyID) {
+        basicPropertyID = tbasicPropertyID;
+    }
 
-	public void setPropertyId(final String propertyId) {
-		this.propertyId = propertyId;
-	}
+    public String getPropertyId() {
+        return propertyId;
+    }
 
-	public String getOwnerName() {
-		return ownerName;
-	}
+    public void setPropertyId(final String propertyId) {
+        this.propertyId = propertyId;
+    }
 
-	public void setOwnerName(final String ownerName) {
-		this.ownerName = ownerName;
-	}
+    public String getOwnerName() {
+        return ownerName;
+    }
 
-	public String getHouseNo() {
-		return houseNo;
-	}
+    public void setOwnerName(final String ownerName) {
+        this.ownerName = ownerName;
+    }
 
-	public void setHouseNo(final String houseNo) {
-		this.houseNo = houseNo;
-	}
+    public String getHouseNo() {
+        return houseNo;
+    }
 
-	public String getPropertyAddress() {
-		return propertyAddress;
-	}
+    public void setHouseNo(final String houseNo) {
+        this.houseNo = houseNo;
+    }
 
-	public void setPropertyAddress(final String propertyAddress) {
-		this.propertyAddress = propertyAddress;
-	}
+    public String getPropertyAddress() {
+        return propertyAddress;
+    }
 
-	public Boundary getWard() {
-		return ward;
-	}
+    public void setPropertyAddress(final String propertyAddress) {
+        this.propertyAddress = propertyAddress;
+    }
 
-	public void setWard(final Boundary ward) {
-		this.ward = ward;
-	}
+    public Boundary getWard() {
+        return ward;
+    }
 
-	public Boundary getZone() {
-		return zone;
-	}
+    public void setWard(final Boundary ward) {
+        this.ward = ward;
+    }
 
-	public void setZone(final Boundary zone) {
-		this.zone = zone;
-	}
+    public Boundary getZone() {
+        return zone;
+    }
 
-	public Boundary getStreet() {
-		return street;
-	}
+    public void setZone(final Boundary zone) {
+        this.zone = zone;
+    }
 
-	public void setStreet(final Boundary street) {
-		this.street = street;
-	}
+    public Boundary getStreet() {
+        return street;
+    }
 
-	public Integer getSourceID() {
-		return sourceID;
-	}
+    public void setStreet(final Boundary street) {
+        this.street = street;
+    }
 
-	public void setSourceID(final Integer sourceID) {
-		this.sourceID = sourceID;
-	}
+    public Integer getSourceID() {
+        return sourceID;
+    }
 
-	public BigDecimal getSitalArea() {
-		return sitalArea;
-	}
+    public void setSourceID(final Integer sourceID) {
+        this.sourceID = sourceID;
+    }
 
-	public void setSitalArea(final BigDecimal sitalArea) {
-		this.sitalArea = sitalArea;
-	}
+    public BigDecimal getSitalArea() {
+        return sitalArea;
+    }
 
-	public BigDecimal getToalBuiltUpArea() {
-		return toalBuiltUpArea;
-	}
+    public void setSitalArea(final BigDecimal sitalArea) {
+        this.sitalArea = sitalArea;
+    }
 
-	public void setToalBuiltUpArea(final BigDecimal toalBuiltUpArea) {
-		this.toalBuiltUpArea = toalBuiltUpArea;
-	}
+    public BigDecimal getToalBuiltUpArea() {
+        return toalBuiltUpArea;
+    }
 
-	public Integer getLatestStatus() {
-		return latestStatus;
-	}
+    public void setToalBuiltUpArea(final BigDecimal toalBuiltUpArea) {
+        this.toalBuiltUpArea = toalBuiltUpArea;
+    }
 
-	public void setLatestStatus(final Integer latestStatus) {
-		this.latestStatus = latestStatus;
-	}
+    public Integer getLatestStatus() {
+        return latestStatus;
+    }
 
-	public Long getPropType() {
-		return propType;
-	}
+    public void setLatestStatus(final Integer latestStatus) {
+        this.latestStatus = latestStatus;
+    }
 
-	public void setPropType(final Long propType) {
-		this.propType = propType;
-	}
+    public Long getPropType() {
+        return propType;
+    }
 
-	public BigDecimal getAggrArrDmd() {
-		return aggrArrDmd;
-	}
+    public void setPropType(final Long propType) {
+        this.propType = propType;
+    }
 
-	public void setAggrArrDmd(final BigDecimal aggrArrDmd) {
-		this.aggrArrDmd = aggrArrDmd;
-	}
+    public BigDecimal getAggrArrDmd() {
+        return aggrArrDmd;
+    }
 
-	public BigDecimal getAggrArrColl() {
-		return aggrArrColl;
-	}
+    public void setAggrArrDmd(final BigDecimal aggrArrDmd) {
+        this.aggrArrDmd = aggrArrDmd;
+    }
 
-	public void setAggrArrColl(final BigDecimal aggrArrColl) {
-		this.aggrArrColl = aggrArrColl;
-	}
+    public BigDecimal getAggrArrColl() {
+        return aggrArrColl;
+    }
 
-	public BigDecimal getTotalDemand() {
-		return aggrArrDmd;
-	}
+    public void setAggrArrColl(final BigDecimal aggrArrColl) {
+        this.aggrArrColl = aggrArrColl;
+    }
 
-	public String getGisRefNo() {
-		return gisRefNo;
-	}
+    public BigDecimal getTotalDue() {
+        return aggrArrDmd.subtract(arrearCollection == null ? BigDecimal.ZERO : arrearCollection).add(aggrCurrFirstHalfDmd)
+                .add(aggrCurrSecondHalfDmd)
+                .subtract(aggrCurrFirstHalfColl.add(aggrCurrSecondHalfColl)).add(aggrArrearPenaly)
+                .subtract(aggrArrearPenalyColl == null ? BigDecimal.ZERO : aggrArrearPenalyColl)
+                .add(aggrCurrFirstHalfPenaly).add(aggrCurrSecondHalfPenaly)
+                .subtract(aggrCurrFirstHalfPenalyColl == null ? BigDecimal.ZERO
+                        : aggrCurrFirstHalfPenalyColl)
+                .subtract(aggrCurrSecondHalfPenalyColl == null ? BigDecimal.ZERO : aggrCurrSecondHalfPenalyColl);
+    }
 
-	public void setGisRefNo(final String gisRefNo) {
-		this.gisRefNo = gisRefNo;
-	}
+    public String getGisRefNo() {
+        return gisRefNo;
+    }
 
-	public Set<InstDmdCollInfo> getInstDmdColl() {
-		return instDmdColl;
-	}
+    public void setGisRefNo(final String gisRefNo) {
+        this.gisRefNo = gisRefNo;
+    }
 
-	public void setInstDmdColl(final Set<InstDmdCollInfo> instDmdColl) {
-		this.instDmdColl = instDmdColl;
-	}
+    public Set<InstDmdCollInfo> getInstDmdColl() {
+        return instDmdColl;
+    }
 
-	public BigDecimal getAlv() {
-		return alv;
-	}
+    public void setInstDmdColl(final Set<InstDmdCollInfo> instDmdColl) {
+        this.instDmdColl = instDmdColl;
+    }
 
-	public void setAlv(final BigDecimal alv) {
-		this.alv = alv;
-	}
+    public BigDecimal getAlv() {
+        return alv;
+    }
 
-	/*
-	 * @Override public String toString() { final StringBuilder objStr = new
-	 * StringBuilder();
-	 * 
-	 * objStr.append("BasicPropertyId: " + getBasicPropertyID()).append(
-	 * "|PropertyId: ").append(getPropertyId()) .append("|SitalArea: "
-	 * ).append(getSitalArea()).append("|AggCurr1stHalfDemand: "
-	 * ).append(getAggrCurrFirstHalfDmd()) .append("|AggCurr2ndHalfDemand: "
-	 * ).append(getAggrCurrSecondHalfDmd()) .append("|AggArrDemand: "
-	 * ).append(getAggrArrDmd()).append("|AggCurr1stHalfColl: "
-	 * ).append(getAggrCurrFirstHalfColl()) .append("|AggCurr2ndHalfColl: "
-	 * ).append(getAggrCurrSecondHalfColl()) .append("|AggArrColl: "
-	 * ).append(getAggrArrColl()).append("|TotalDemand: "
-	 * ).append(getTotalDemand());
-	 * 
-	 * return objStr.toString(); }
-	 */
-	public Boundary getBlock() {
-		return block;
-	}
+    public void setAlv(final BigDecimal alv) {
+        this.alv = alv;
+    }
 
-	public void setBlock(final Boundary block) {
-		this.block = block;
-	}
+    public Boundary getBlock() {
+        return block;
+    }
 
-	public Boundary getLocality() {
-		return locality;
-	}
+    public void setBlock(final Boundary block) {
+        this.block = block;
+    }
 
-	public void setLocality(final Boundary locality) {
-		this.locality = locality;
-	}
+    public Boundary getLocality() {
+        return locality;
+    }
 
-	public Boolean getIsExempted() {
-		return isExempted;
-	}
+    public void setLocality(final Boundary locality) {
+        this.locality = locality;
+    }
 
-	public void setIsExempted(final Boolean isExempted) {
-		this.isExempted = isExempted;
-	}
+    public Boolean getIsExempted() {
+        return isExempted;
+    }
 
-	public String getUsage() {
-		return usage;
-	}
+    public void setIsExempted(final Boolean isExempted) {
+        this.isExempted = isExempted;
+    }
 
-	public void setUsage(final String usage) {
-		this.usage = usage;
-	}
+    public String getUsage() {
+        return usage;
+    }
 
-	public Character getSource() {
-		return source;
-	}
+    public void setUsage(final String usage) {
+        this.usage = usage;
+    }
 
-	public void setSource(final Character source) {
-		this.source = source;
-	}
+    public Character getSource() {
+        return source;
+    }
 
-	public Set<FloorDetailsInfo> getFloorDetails() {
-		return floorDetails;
-	}
+    public void setSource(final Character source) {
+        this.source = source;
+    }
 
-	public void setFloorDetails(final Set<FloorDetailsInfo> floorDetails) {
-		this.floorDetails = floorDetails;
-	}
+    public Set<FloorDetailsInfo> getFloorDetails() {
+        return floorDetails;
+    }
 
-	public String getMobileNumber() {
-		return mobileNumber;
-	}
+    public void setFloorDetails(final Set<FloorDetailsInfo> floorDetails) {
+        this.floorDetails = floorDetails;
+    }
 
-	public void setMobileNumber(final String mobileNumber) {
-		this.mobileNumber = mobileNumber;
-	}
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
 
-	public boolean getIsActive() {
-		return isActive;
-	}
+    public void setMobileNumber(final String mobileNumber) {
+        this.mobileNumber = mobileNumber;
+    }
 
-	public void setIsActive(final boolean isActive) {
-		this.isActive = isActive;
-	}
+    public boolean getIsActive() {
+        return isActive;
+    }
 
-	public BigDecimal getAggrArrearPenaly() {
-		return aggrArrearPenaly;
-	}
+    public void setIsActive(final boolean isActive) {
+        this.isActive = isActive;
+    }
 
-	public void setAggrArrearPenaly(final BigDecimal aggrArrearPenaly) {
-		this.aggrArrearPenaly = aggrArrearPenaly;
-	}
+    public BigDecimal getAggrArrearPenaly() {
+        return aggrArrearPenaly;
+    }
 
-	public BigDecimal getAggrArrearPenalyColl() {
-		return aggrArrearPenalyColl;
-	}
+    public void setAggrArrearPenaly(final BigDecimal aggrArrearPenaly) {
+        this.aggrArrearPenaly = aggrArrearPenaly;
+    }
 
-	public void setAggrArrearPenalyColl(final BigDecimal aggrArrearPenalyColl) {
-		this.aggrArrearPenalyColl = aggrArrearPenalyColl;
-	}
+    public BigDecimal getAggrArrearPenalyColl() {
+        return aggrArrearPenalyColl;
+    }
 
-	public BigDecimal getAggrCurrFirstHalfDmd() {
-		return aggrCurrFirstHalfDmd;
-	}
+    public void setAggrArrearPenalyColl(final BigDecimal aggrArrearPenalyColl) {
+        this.aggrArrearPenalyColl = aggrArrearPenalyColl;
+    }
 
-	public void setAggrCurrFirstHalfDmd(final BigDecimal aggrCurrFirstHalfDmd) {
-		this.aggrCurrFirstHalfDmd = aggrCurrFirstHalfDmd;
-	}
+    public BigDecimal getAggrCurrFirstHalfDmd() {
+        return aggrCurrFirstHalfDmd;
+    }
 
-	public BigDecimal getAggrCurrSecondHalfDmd() {
-		return aggrCurrSecondHalfDmd;
-	}
+    public void setAggrCurrFirstHalfDmd(final BigDecimal aggrCurrFirstHalfDmd) {
+        this.aggrCurrFirstHalfDmd = aggrCurrFirstHalfDmd;
+    }
 
-	public void setAggrCurrSecondHalfDmd(final BigDecimal aggrCurrSecondHalfDmd) {
-		this.aggrCurrSecondHalfDmd = aggrCurrSecondHalfDmd;
-	}
+    public BigDecimal getAggrCurrSecondHalfDmd() {
+        return aggrCurrSecondHalfDmd;
+    }
 
-	public BigDecimal getAggrCurrFirstHalfColl() {
-		return aggrCurrFirstHalfColl;
-	}
+    public void setAggrCurrSecondHalfDmd(final BigDecimal aggrCurrSecondHalfDmd) {
+        this.aggrCurrSecondHalfDmd = aggrCurrSecondHalfDmd;
+    }
 
-	public void setAggrCurrFirstHalfColl(final BigDecimal aggrCurrFirstHalfColl) {
-		this.aggrCurrFirstHalfColl = aggrCurrFirstHalfColl;
-	}
+    public BigDecimal getAggrCurrFirstHalfColl() {
+        return aggrCurrFirstHalfColl;
+    }
 
-	public BigDecimal getAggrCurrSecondHalfColl() {
-		return aggrCurrSecondHalfColl;
-	}
+    public void setAggrCurrFirstHalfColl(final BigDecimal aggrCurrFirstHalfColl) {
+        this.aggrCurrFirstHalfColl = aggrCurrFirstHalfColl;
+    }
 
-	public void setAggrCurrSecondHalfColl(final BigDecimal aggrCurrSecondHalfColl) {
-		this.aggrCurrSecondHalfColl = aggrCurrSecondHalfColl;
-	}
+    public BigDecimal getAggrCurrSecondHalfColl() {
+        return aggrCurrSecondHalfColl;
+    }
 
-	public BigDecimal getAggrCurrFirstHalfPenaly() {
-		return aggrCurrFirstHalfPenaly;
-	}
+    public void setAggrCurrSecondHalfColl(final BigDecimal aggrCurrSecondHalfColl) {
+        this.aggrCurrSecondHalfColl = aggrCurrSecondHalfColl;
+    }
 
-	public void setAggrCurrFirstHalfPenaly(final BigDecimal aggrCurrFirstHalfPenaly) {
-		this.aggrCurrFirstHalfPenaly = aggrCurrFirstHalfPenaly;
-	}
+    public BigDecimal getAggrCurrFirstHalfPenaly() {
+        return aggrCurrFirstHalfPenaly;
+    }
 
-	public BigDecimal getAggrCurrFirstHalfPenalyColl() {
-		return aggrCurrFirstHalfPenalyColl;
-	}
+    public void setAggrCurrFirstHalfPenaly(final BigDecimal aggrCurrFirstHalfPenaly) {
+        this.aggrCurrFirstHalfPenaly = aggrCurrFirstHalfPenaly;
+    }
 
-	public void setAggrCurrFirstHalfPenalyColl(final BigDecimal aggrCurrFirstHalfPenalyColl) {
-		this.aggrCurrFirstHalfPenalyColl = aggrCurrFirstHalfPenalyColl;
-	}
+    public BigDecimal getAggrCurrFirstHalfPenalyColl() {
+        return aggrCurrFirstHalfPenalyColl;
+    }
 
-	public BigDecimal getAggrCurrSecondHalfPenaly() {
-		return aggrCurrSecondHalfPenaly;
-	}
+    public void setAggrCurrFirstHalfPenalyColl(final BigDecimal aggrCurrFirstHalfPenalyColl) {
+        this.aggrCurrFirstHalfPenalyColl = aggrCurrFirstHalfPenalyColl;
+    }
 
-	public void setAggrCurrSecondHalfPenaly(final BigDecimal aggrCurrSecondHalfPenaly) {
-		this.aggrCurrSecondHalfPenaly = aggrCurrSecondHalfPenaly;
-	}
+    public BigDecimal getAggrCurrSecondHalfPenaly() {
+        return aggrCurrSecondHalfPenaly;
+    }
 
-	public BigDecimal getAggrCurrSecondHalfPenalyColl() {
-		return aggrCurrSecondHalfPenalyColl;
-	}
+    public void setAggrCurrSecondHalfPenaly(final BigDecimal aggrCurrSecondHalfPenaly) {
+        this.aggrCurrSecondHalfPenaly = aggrCurrSecondHalfPenaly;
+    }
 
-	public void setAggrCurrSecondHalfPenalyColl(final BigDecimal aggrCurrSecondHalfPenalyColl) {
-		this.aggrCurrSecondHalfPenalyColl = aggrCurrSecondHalfPenalyColl;
-	}
+    public BigDecimal getAggrCurrSecondHalfPenalyColl() {
+        return aggrCurrSecondHalfPenalyColl;
+    }
 
-	public BigDecimal getArrearDemand() {
-		return arrearDemand;
-	}
+    public void setAggrCurrSecondHalfPenalyColl(final BigDecimal aggrCurrSecondHalfPenalyColl) {
+        this.aggrCurrSecondHalfPenalyColl = aggrCurrSecondHalfPenalyColl;
+    }
 
-	public void setArrearDemand(final BigDecimal arrearDemand) {
-		this.arrearDemand = arrearDemand;
-	}
+    public BigDecimal getArrearDemand() {
+        return arrearDemand;
+    }
 
-	public BigDecimal getArrearCollection() {
-		return arrearCollection;
-	}
+    public void setArrearDemand(final BigDecimal arrearDemand) {
+        this.arrearDemand = arrearDemand;
+    }
 
-	public void setArrearCollection(final BigDecimal arrearCollection) {
-		this.arrearCollection = arrearCollection;
-	}
+    public BigDecimal getArrearCollection() {
+        return arrearCollection;
+    }
 
-	public Boolean getIsUnderCourtCase() {
-		return isUnderCourtCase;
-	}
+    public void setArrearCollection(final BigDecimal arrearCollection) {
+        this.arrearCollection = arrearCollection;
+    }
 
-	public void setIsUnderCourtCase(final Boolean isUnderCourtCase) {
-		this.isUnderCourtCase = isUnderCourtCase;
-	}
+    public Boolean getIsUnderCourtCase() {
+        return isUnderCourtCase;
+    }
 
-	public String getCategoryType() {
-		return categoryType;
-	}
+    public void setIsUnderCourtCase(final Boolean isUnderCourtCase) {
+        this.isUnderCourtCase = isUnderCourtCase;
+    }
 
-	public void setCategoryType(final String categoryType) {
-		this.categoryType = categoryType;
-	}
+    public String getCategoryType() {
+        return categoryType;
+    }
 
-	public String getRegdDocNo() {
-		return regdDocNo;
-	}
+    public void setCategoryType(final String categoryType) {
+        this.categoryType = categoryType;
+    }
 
-	public void setRegdDocNo(final String regdDocNo) {
-		this.regdDocNo = regdDocNo;
-	}
+    public String getRegdDocNo() {
+        return regdDocNo;
+    }
 
-	public Date getRegdDocDate() {
-		return regdDocDate;
-	}
+    public void setRegdDocNo(final String regdDocNo) {
+        this.regdDocNo = regdDocNo;
+    }
 
-	public void setRegdDocDate(final Date regdDocDate) {
-		this.regdDocDate = regdDocDate;
-	}
+    public Date getRegdDocDate() {
+        return regdDocDate;
+    }
 
-	public BigDecimal getMarketValue() {
-		return marketValue;
-	}
+    public void setRegdDocDate(final Date regdDocDate) {
+        this.regdDocDate = regdDocDate;
+    }
 
-	public void setMarketValue(final BigDecimal marketValue) {
-		this.marketValue = marketValue;
-	}
+    public BigDecimal getMarketValue() {
+        return marketValue;
+    }
 
-	public String getPattaNo() {
-		return pattaNo;
-	}
+    public void setMarketValue(final BigDecimal marketValue) {
+        this.marketValue = marketValue;
+    }
 
-	public void setPattaNo(final String pattaNo) {
-		this.pattaNo = pattaNo;
-	}
+    public String getPattaNo() {
+        return pattaNo;
+    }
 
-	public BigDecimal getCapitalValue() {
-		return capitalValue;
-	}
+    public void setPattaNo(final String pattaNo) {
+        this.pattaNo = pattaNo;
+    }
 
-	public void setCapitalValue(final BigDecimal capitalValue) {
-		this.capitalValue = capitalValue;
-	}
+    public BigDecimal getCapitalValue() {
+        return capitalValue;
+    }
 
-	public Date getAssessmentDate() {
-		return assessmentDate;
-	}
+    public void setCapitalValue(final BigDecimal capitalValue) {
+        this.capitalValue = capitalValue;
+    }
 
-	public void setAssessmentDate(final Date assessmentDate) {
-		this.assessmentDate = assessmentDate;
-	}
+    public Date getAssessmentDate() {
+        return assessmentDate;
+    }
 
-	public Date getLastUpdated() {
-		return lastUpdated;
-	}
+    public void setAssessmentDate(final Date assessmentDate) {
+        this.assessmentDate = assessmentDate;
+    }
 
-	public void setLastUpdated(final Date lastUpdated) {
-		this.lastUpdated = lastUpdated;
-	}
+    public Date getLastUpdated() {
+        return lastUpdated;
+    }
 
-	public String getSurveyNo() {
-		return surveyNo;
-	}
+    public void setLastUpdated(final Date lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
 
-	public void setSurveyNo(final String surveyNo) {
-		this.surveyNo = surveyNo;
-	}
+    public String getSurveyNo() {
+        return surveyNo;
+    }
 
-	public String getDuePeriod() {
-		return duePeriod;
-	}
+    public void setSurveyNo(final String surveyNo) {
+        this.surveyNo = surveyNo;
+    }
 
-	public void setDuePeriod(final String duePeriod) {
-		this.duePeriod = duePeriod;
-	}
+    public String getDuePeriod() {
+        return duePeriod;
+    }
 
-	public BigDecimal getAdvance() {
-		return advance;
-	}
+    public void setDuePeriod(final String duePeriod) {
+        this.duePeriod = duePeriod;
+    }
 
-	public void setAdvance(final BigDecimal advance) {
-		this.advance = advance;
-	}
+    public BigDecimal getAdvance() {
+        return advance;
+    }
 
-	public String getOldMuncipalNum() {
-		return oldMuncipalNum;
-	}
+    public void setAdvance(final BigDecimal advance) {
+        this.advance = advance;
+    }
 
-	public void setOldMuncipalNum(final String oldMuncipalNum) {
-		this.oldMuncipalNum = oldMuncipalNum;
-	}
+    public String getOldMuncipalNum() {
+        return oldMuncipalNum;
+    }
 
-	public BigDecimal getRebate() {
-		return rebate;
-	}
+    public void setOldMuncipalNum(final String oldMuncipalNum) {
+        this.oldMuncipalNum = oldMuncipalNum;
+    }
 
-	public void setRebate(final BigDecimal rebate) {
-		this.rebate = rebate;
-	}
+    public BigDecimal getRebate() {
+        return rebate;
+    }
 
-	public BigDecimal getAdjustment() {
-		return adjustment;
-	}
+    public void setRebate(final BigDecimal rebate) {
+        this.rebate = rebate;
+    }
 
-	public void setAdjustment(final BigDecimal adjustment) {
-		this.adjustment = adjustment;
-	}
-	
-	public Boundary getElectionWard() {
-		return electionWard;
-	}
+    public BigDecimal getAdjustment() {
+        return adjustment;
+    }
 
-	public void setElectionWard(Boundary electionWard) {
-		this.electionWard = electionWard;
-	}
+    public void setAdjustment(final BigDecimal adjustment) {
+        this.adjustment = adjustment;
+    }
+
+    public Boundary getElectionWard() {
+        return electionWard;
+    }
+
+    public void setElectionWard(Boundary electionWard) {
+        this.electionWard = electionWard;
+    }
 
 }
