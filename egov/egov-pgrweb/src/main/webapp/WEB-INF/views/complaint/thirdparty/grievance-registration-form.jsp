@@ -87,12 +87,13 @@
                             <form:errors path="receivingCenterDetails" cssClass="add-margin error-msg"/>
                         </div>
                     </div>
-                    <div class="form-group" id="regnoblock">
+                    <div class="form-group display-hide" id="regnoblock">
                         <label for="crn" class="col-sm-3 control-label"><spring:message code="lbl.crn"/>
+                            <small id="crnReq" class="display-hide"></small>
                         </label>
                         <div class="col-sm-6">
                             <form:input path="crn" id="crn" cssClass="form-control patternvalidation"
-                                        data-pattern="alphanumericwithhyphen" maxlength="32" placeholder=""/>
+                                        data-pattern="alphanumericwithhyphen" maxlength="32" placeholder="" disabled="true"/>
                             <form:errors path="crn" cssClass="add-margin error-msg"/>
                         </div>
                     </div>
@@ -327,6 +328,9 @@
 <script src="<cdn:url  value='/resources/js/app/fileuploadndmaps.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url  value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
 <script src="<cdn:url  value='/resources/js/app/complaint.js?rnd=${app_release_no}'/>"></script>
+<script>
+    enabledCRN();
+</script>
 <style>
     .or-spacer {
         margin: 17px auto 12px auto;

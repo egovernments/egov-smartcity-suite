@@ -118,7 +118,7 @@ public class GenericComplaintAjaxController {
         return designationService.getAllDesignationsByNameLike(designationName);
     }
 
-    @GetMapping("/complaint/officials/isCrnRequired")
+    @GetMapping(value = {"/complaint/officials/isCrnRequired", "/grievance/thirdparty/isCrnRequired"})
     @ResponseBody
     public boolean isCrnRequired(@RequestParam Long receivingCenterId) {
         ReceivingCenter receivingCenter = receivingCenterService.findByRCenterId(receivingCenterId);
