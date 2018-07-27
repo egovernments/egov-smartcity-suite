@@ -134,8 +134,7 @@ public class EventSearchAdapter extends DataAdapter<Event> {
         if (interestedCount == null) {
             jsonObjectEvent.addProperty("userInterested", "No");
             jsonObjectEvent.addProperty(INTERESTED_COUNT, ZERO);
-        }
-        else {
+        } else {
             jsonObjectEvent.addProperty("userInterested", "Yes");
             jsonObjectEvent.addProperty(INTERESTED_COUNT, String.valueOf(interestedCount));
         }

@@ -47,42 +47,33 @@
  */
 package org.egov.eventnotification.entity.contracts;
 
-public class TaxDefaulterRequest {
+import java.util.List;
 
-    private boolean mobileOnly;
-    private String ulbCode;
-    private int page;
-    private int pageSize;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
-    public boolean isMobileOnly() {
-        return mobileOnly;
+public class TaxDefaulterResponse {
+
+    @SerializedName("status")
+    @Expose
+    private Status status;
+    @SerializedName("result")
+    @Expose
+    private List<UserTaxInformation> result = null;
+
+    public Status getStatus() {
+        return status;
     }
 
-    public void setMobileOnly(boolean mobileOnly) {
-        this.mobileOnly = mobileOnly;
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
-    public String getUlbCode() {
-        return ulbCode;
+    public List<UserTaxInformation> getResult() {
+        return result;
     }
 
-    public void setUlbCode(String ulbCode) {
-        this.ulbCode = ulbCode;
-    }
-
-    public int getPage() {
-        return page;
-    }
-
-    public void setPage(int page) {
-        this.page = page;
-    }
-
-    public int getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
+    public void setResult(List<UserTaxInformation> result) {
+        this.result = result;
     }
 }

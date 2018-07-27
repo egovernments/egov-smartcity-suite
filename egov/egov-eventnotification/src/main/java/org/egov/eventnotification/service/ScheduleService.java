@@ -54,6 +54,7 @@ import static org.egov.infra.utils.DateUtils.getDate;
 import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
 import static org.egov.infra.utils.DateUtils.startOfGivenDate;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -62,6 +63,7 @@ import org.egov.eventnotification.entity.Schedule;
 import org.egov.eventnotification.entity.contracts.EventDetails;
 import org.egov.eventnotification.entity.contracts.EventNotificationProperties;
 import org.egov.eventnotification.entity.contracts.TaxDefaulterRequest;
+import org.egov.eventnotification.entity.contracts.TaxDefaulterResponse;
 import org.egov.eventnotification.entity.contracts.UserTaxInformation;
 import org.egov.eventnotification.repository.DraftRepository;
 import org.egov.eventnotification.repository.ScheduleRepository;
@@ -89,7 +91,7 @@ public class ScheduleService {
 
     @Autowired
     private DraftRepository draftRepository;
-    
+
     @Autowired
     private EventNotificationProperties appProperties;
 
@@ -188,22 +190,31 @@ public class ScheduleService {
      * @param urlPath
      * @return
      */
-    public List<UserTaxInformation> getDefaulterUserList(String contextURL, String urlPath, String method,String ulbCode) {
-        final String uri = contextURL.concat(urlPath);
+    public List<UserTaxInformation> getDefaulterUserList(String url, String method, String ulbCode) {
         ResponseEntity<UserTaxInformation[]> results = null;
         HttpHeaders headers = new HttpHeaders();
         headers.set("Referer", appProperties.getRefererIp());
         HttpEntity<String> entity = new HttpEntity<>("parameters", headers);
-        if (method.equals("GET"))
-            results = restTemplate.getForEntity(uri, UserTaxInformation[].class,entity);
-        else {
-            TaxDefaulterRequest req = new TaxDefaulterRequest();
-            req.setMobileOnly(true);
-            req.setUlbCode(ulbCode);
-            HttpEntity<TaxDefaulterRequest> request = new HttpEntity<>(req, headers);
-            results = restTemplate.postForEntity(uri, request, UserTaxInformation[].class);
-        }
+        if (method.equals("GET")) {
+            results = restTemplate.getForEntity(url, UserTaxInformation[].class, entity);
+            return Arrays.asList(results.getBody());
+        } else {
+            ResponseEntity<TaxDefaulterResponse> response = null;
+            int page = 1;
+            List<UserTaxInformation> uerTaxInformationList = new ArrayList<>();
+            do {
+                TaxDefaulterRequest req = new TaxDefaulterRequest();
+                req.setMobileOnly(true);
+                req.setUlbCode(ulbCode);
+                req.setPage(page);
+                req.setPageSize(1000);
+                HttpEntity<TaxDefaulterRequest> request = new HttpEntity<>(req, headers);
+                response = restTemplate.postForEntity(url, request, TaxDefaulterResponse.class);
+                uerTaxInformationList.addAll(response.getBody().getResult());
+                page++;
+            } while (response.getBody().getStatus().getHasNextPage().equalsIgnoreCase("true"));
+            return uerTaxInformationList;
 
-        return Arrays.asList(results.getBody());
+        }
     }
 }

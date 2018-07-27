@@ -49,7 +49,6 @@ package org.egov.eventnotification.repository;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.eventnotification.utils.Constants.ACTIVE;
-import static org.egov.eventnotification.utils.Constants.EVENT_HOST;
 import static org.egov.eventnotification.utils.Constants.NAME;
 import static org.egov.infra.utils.DateUtils.endOfGivenDate;
 import static org.egov.infra.utils.DateUtils.startOfToday;
