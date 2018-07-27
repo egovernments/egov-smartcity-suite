@@ -329,7 +329,10 @@
 <script src="<cdn:url  value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
 <script src="<cdn:url  value='/resources/js/app/complaint.js?rnd=${app_release_no}'/>"></script>
 <script>
-    enabledCRN();
+    var crnRequired= ${complaint.receivingCenter.crnRequired};
+    if(crnRequired){
+        enabledCRN();
+    }
 </script>
 <style>
     .or-spacer {
