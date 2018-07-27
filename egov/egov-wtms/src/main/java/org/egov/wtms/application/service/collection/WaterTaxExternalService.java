@@ -476,7 +476,7 @@ public class WaterTaxExternalService {
                 WaterTaxConstants.DEMANDREASONANDGLCODEMAP);
         Map<String, String> demandReasonGlCodePairmap = new HashMap<>();
         for (AppConfigValues appConfig : demandreasonGlcode) {
-            String rows[] = appConfig.getValue().split("=");
+            String[] rows = appConfig.getValue().split("=");
             demandReasonGlCodePairmap.put(rows[0], rows[1]);
         }
         boolean result = false;
@@ -537,7 +537,7 @@ public class WaterTaxExternalService {
         waterTaxDetails.setConsumerNo(waterConnectionDetails.getConnection().getConsumerCode());
 
         List<PropertyOwnerInfo> propOwnerInfos = basicProperty.getPropertyOwnerInfo();
-        if (propOwnerInfos.isEmpty()) {
+        if (!propOwnerInfos.isEmpty()) {
             waterTaxDetails.setOwnerName(propOwnerInfos.get(0).getOwner().getName());
             waterTaxDetails.setMobileNo(propOwnerInfos.get(0).getOwner().getMobileNumber());
         }
