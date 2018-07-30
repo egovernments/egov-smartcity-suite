@@ -49,27 +49,31 @@
 
 jQuery(document).ready(
 		function($) {
-
+		
     var isSelectedAll=false;
+    var wardIds = [];
 
 	$('.wards').on('change',function(){		
-        
+		wardIds.length=0;
 		if(!isSelectedAll && $('option:contains("All")').is(":selected")){
 			isSelectedAll=true;
 			$(this).find('option:selected').removeAttr('selected');
 			$(this).find('option:not([selected])').prop('selected', true);
+			wardIds.push($(this).val());
 		}
 		else if(isSelectedAll && !$('option:contains("All")').is(":selected")){
 			isSelectedAll=false;
 			$(this).find('option:selected').prop('selected', false);
+			wardIds.push($(this).val());
 		}
 		else{
 			isSelectedAll=false;
 			$(this).find('option:contains("All")').prop('selected', false);
+			wardIds.push($(this).val());
 		}
-    });
-    
-
+		$('#wardsHdnIds').val(wardIds);
+    }); 
+	
 $("select.tick-indicator").mousedown(function(e){
     e.preventDefault();
     

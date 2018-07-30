@@ -114,12 +114,21 @@
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.ward" />
 					</div>
+				<c:choose>
+					<c:when test="${!councilPreamble.wards.isEmpty()}">
 					<div class="col-sm-9 add-margin view-content">
 						<c:forEach items="${councilPreamble.wards}" var="ward"
 							varStatus="i">
 							<c:if test="${i.index ne 0}">, </c:if> ${ward.name}
 						</c:forEach>
 					</div>
+					</c:when>
+					<c:otherwise>
+					<div class="col-sm-9 add-margin view-content">
+						N/A
+					</div>
+					</c:otherwise>
+					</c:choose>
 				</div>
 			</div>
 
