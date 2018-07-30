@@ -63,6 +63,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.egov.api.adapter.DefaultersResultAdapter;
 
 @Controller
 public class DefaulterForNotificationController extends ApiController{
@@ -88,7 +89,7 @@ public class DefaulterForNotificationController extends ApiController{
             final Page<PropertyMVInfo> pagelist = propertyTaxReportService.getLatest(defaultersRequest.getMobileOnly(), defaultersRequest.getPage(), defaultersRequest.getPageSize());
             final boolean hasNextPage = pagelist.getTotalElements() > defaultersRequest.getPage() * defaultersRequest.getPageSize();
             return getResponseHandler().putStatusAttribute(HAS_NEXT_PAGE, String.valueOf(hasNextPage))
-                    .setDataAdapter(new org.egov.api.adapter.DefaultersResultAdapter()).success(pagelist.getContent());
+                    .setDataAdapter(new DefaultersResultAdapter()).success(pagelist.getContent());
         } catch (final Exception e) {
             LOGGER.error(EGOV_API_ERROR, e);
             return getResponseHandler().error(getMessage(SERVER_ERROR));

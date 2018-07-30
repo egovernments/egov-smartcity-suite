@@ -56,21 +56,18 @@ import org.egov.ptis.domain.entity.property.view.PropertyMVInfo;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Type;
-import java.math.BigDecimal;
 
 @Component
 public class DefaultersResultAdapter extends DataAdapter<PropertyMVInfo> {
 
-    @Override
-    public JsonElement serialize(PropertyMVInfo defaultersResultObj, Type type, JsonSerializationContext context) {
-        JsonObject jsonObject = new JsonObject();
-        if (defaultersResultObj.getTotalDue().compareTo(BigDecimal.ZERO) == 1) {
-            jsonObject.addProperty("assessmentNo", defaultersResultObj.getPropertyId());
-            jsonObject.addProperty("ownerName", defaultersResultObj.getOwnerName());
-            jsonObject.addProperty("mobileNumber", defaultersResultObj.getMobileNumber());
-            jsonObject.addProperty("totalDue", defaultersResultObj.getTotalDue());
-        }
-        return jsonObject;
-    }
+	@Override
+	public JsonElement serialize(PropertyMVInfo defaultersResultObj, Type type, JsonSerializationContext context) {
+		JsonObject jsonObject = new JsonObject();
+		jsonObject.addProperty("assessmentNo", defaultersResultObj.getPropertyId());
+		jsonObject.addProperty("ownerName", defaultersResultObj.getOwnerName());
+		jsonObject.addProperty("mobileNumber", defaultersResultObj.getMobileNumber());
+		jsonObject.addProperty("totalDue", defaultersResultObj.getTotalDue());
+		return jsonObject;
+	}
 
 }

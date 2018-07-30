@@ -108,7 +108,7 @@ public class PushNotificationService {
         if (existingRecord == null) {
             UserFcmDevice userDevice = new UserFcmDevice();
             userDevice.setDeviceToken(userTokenRequest.getUserToken());
-            User user = userService.getUserById(Long.valueOf(userTokenRequest.getUserId()));
+            User user = userService.getUserById(userTokenRequest.getUserId());
             userDevice.setUser(user);
             userDevice.setDeviceId(userTokenRequest.getDeviceId());
             return pushNotificationRepo.save(userDevice);

@@ -118,7 +118,14 @@
 								<spring:message code="lbl.draft.url" />
 							</div>
 							<div class="col-xs-9 add-margin view-content">
-								<c:out value="${notificationDraft.url}" />
+								<c:choose>
+									<c:when test="${empty notificationDraft.url}">
+										NA
+									</c:when>
+									<c:otherwise>
+										<c:out value="${notificationDraft.url}" />
+									</c:otherwise>
+								</c:choose>
 							</div>
 						</div>
 						<div class="row add-border">
@@ -126,7 +133,14 @@
 								<spring:message code="lbl.draft.method" />
 							</div>
 							<div class="col-xs-9 add-margin view-content">
-								<c:out value="${notificationDraft.method}" />
+								<c:choose>
+									<c:when test="${empty notificationDraft.method}">
+										NA
+									</c:when>
+									<c:otherwise>
+										<c:out value="${notificationDraft.method}" />
+									</c:otherwise>
+								</c:choose>
 							</div>
 						</div>
 					</div>
