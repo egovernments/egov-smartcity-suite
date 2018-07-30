@@ -180,6 +180,7 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
     public String editApprovedRegistration(@PathVariable final Long id, final Model model) {
         final MarriageRegistration marriageRegistration = marriageRegistrationService.get(id);
         buildMrgRegistrationUpdateResult(marriageRegistration, model);
+        model.addAttribute("source",marriageRegistration.getSource());
         if (LOGGER.isInfoEnabled())
             LOGGER.info(".........finished build marriage registration for update........ ");
         return MRG_REGISTRATION_EDIT_APPROVED;
@@ -481,7 +482,10 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
     public String modifyRegisteredApplication(@RequestParam final Long id,
             @ModelAttribute final MarriageRegistration registration, final Model model,
             final HttpServletRequest request, final BindingResult errors) {
-
+        if (registration.getSource().equals(Source.CHPK.toString())) {
+            registration.getWitnesses().clear();
+            registration.setZone(null);
+        }
         validateApplicationDate(registration, errors);
         if (errors.hasErrors()) {
             model.addAttribute(MARRIAGE_REGISTRATION, registration);

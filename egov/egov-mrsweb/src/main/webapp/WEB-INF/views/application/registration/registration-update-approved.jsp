@@ -61,7 +61,7 @@
 			modelAttribute="marriageRegistration" id="form-updateregistration"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
-
+			<input type="hidden" id="source" value="${source}"/>
 			<input type="hidden" name="marriageRegistration"
 				value="${marriageRegistration.id}" />
 			<input type="hidden" id="registrationStatus"
@@ -69,12 +69,14 @@
 			<input type="hidden" id="allowDaysValidation"
 				value="${allowDaysValidation}" />
 			<form:hidden path="" id="workFlowAction" name="workFlowAction" />
-
+			
 			<ul class="nav nav-tabs" id="settingstab">
 				<li class="active"><a data-toggle="tab" href="#applicant-info" data-tabidx=0>Applicant's
 						Information</a></li>
+						<c:if test="${source ne 'CHPK'}">
 				<li><a data-toggle="tab" href="#witness-info" data-tabidx=1>Witnesses
 						Information</a></li>
+						</c:if>
 				<li><a data-toggle="tab" href="#checklist-info" data-tabidx=2>Checklist</a></li>
 			</ul>
 			<div class="tab-content">
@@ -127,7 +129,6 @@
 					<div class="panel panel-primary" data-collapsed="0">
 						<div class="panel-body custom-form ">
 							<jsp:include page="checklist.jsp"></jsp:include>
-							<jsp:include page="documentdetails.jsp"></jsp:include>
 						</div>
 
 					</div>
