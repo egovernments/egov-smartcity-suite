@@ -177,8 +177,8 @@ public class AadharSeedingService extends GenericWorkFlowController {
         formData.setAssessmentNo(assessmentNo);
         formData.setOwnershipCategory(basicProperty.getProperty().getPropertyDetail().getCategoryType());
         basicProperty.getProperty();
-        formData.setDoorNo(basicProperty.getProperty().getPropertyAddress().getHouseNoBldgApt() != null
-                ? basicProperty.getProperty().getPropertyAddress().getHouseNoBldgApt() : "N/A");
+        formData.setDoorNo(basicProperty.getAddress().getHouseNoBldgApt() != null
+                ? basicProperty.getAddress().getHouseNoBldgApt() : "N/A");
         formData.setZoneName(basicProperty.getPropertyID().getZone().getName());
         formData.setRevenueWardName(basicProperty.getPropertyID().getWard().getName());
         formData.setBlockName(basicProperty.getPropertyID().getArea().getName());
