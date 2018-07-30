@@ -48,6 +48,7 @@
 
 package org.egov.infra.config.security;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.egov.infra.security.utils.captcha.DefaultCaptchaService;
 import org.egov.infra.security.utils.captcha.DefaultCaptchaStore;
 import org.jasypt.encryption.pbe.PBEStringEncryptor;
@@ -92,6 +93,7 @@ public class SecurityConfiguration {
     @Bean
     public PBEStringEncryptor dataEncryptor() {
         PooledPBEStringEncryptor dataEncryptor = new PooledPBEStringEncryptor();
+        dataEncryptor.setProvider(new BouncyCastleProvider());
         dataEncryptor.setAlgorithm(environment.getProperty("data.enc.algo"));
         dataEncryptor.setPassword(environment.getRequiredProperty("data.enc.key"));
         dataEncryptor.setPoolSize(Runtime.getRuntime().availableProcessors());
