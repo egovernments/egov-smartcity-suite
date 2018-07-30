@@ -205,6 +205,14 @@
 								<spring:message code="lbl.event.cost" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
+								<c:choose>
+									<c:when test="${event.paid == true}">
+										<c:out value="${event.cost}" />
+									</c:when>
+									<c:otherwise>
+										0
+									</c:otherwise>
+								</c:choose>
 								<c:out value="${event.cost}" />
 							</div>
 						</div>
@@ -213,7 +221,14 @@
 								<spring:message code="lbl.event.url" />
 							</div>
 							<div class="col-sm-9 add-margin view-content">
-								<c:out value="${event.address.url}" />
+								<c:choose>
+									<c:when test="${empty event.address.url}">
+										NA
+									</c:when>
+									<c:otherwise>
+										<c:out value="${event.address.url}" />
+									</c:otherwise>
+								</c:choose>
 							</div>
 						</div>
 					</div>

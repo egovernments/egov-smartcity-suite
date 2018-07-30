@@ -46,7 +46,10 @@
  *
  */
 $("#buttonClose").click(function(event) {
-	window.opener.location.reload();
+	if(window.opener != null && !window.opener.closed)
+    {
+		window.opener.location.reload();
+    }
 	self.close();
 	return true;
 });

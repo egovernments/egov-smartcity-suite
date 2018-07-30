@@ -52,5 +52,6 @@ $(document).ready(
 						window.open("/eventnotification/schedule/update/"
 								+ $("#id").val(), "_blank",
 								"width=800, height=700, scrollbars=yes");
+						self.close();
 					});
 		});
