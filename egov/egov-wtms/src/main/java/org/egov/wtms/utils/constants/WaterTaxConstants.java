@@ -453,4 +453,5 @@ public class WaterTaxConstants {
     public static final String ESTIMATIONCHARGES_SERVICE_CODE = "WES";
     public static final String WATERTAX_CHARGES_SERVICE_CODE = "WT";
     public static final String WATERTAX_CONNECTION_CHARGE = "WTAXCONCHARGE";
+    public static final String WATER_CHARGES_SCHEME_INDEX ="waterchargescheme";
 }
