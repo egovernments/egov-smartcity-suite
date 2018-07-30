@@ -152,163 +152,163 @@ public class WaterChargesDashboardIndex {
     @Field(type = FieldType.Double)
     private Double nonBplExecution;
 
-    public java.lang.String getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(java.lang.String id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public java.lang.String getUlbCode() {
+    public String getUlbCode() {
         return ulbCode;
     }
 
-    public void setUlbCode(java.lang.String ulbCode) {
+    public void setUlbCode(String ulbCode) {
         this.ulbCode = ulbCode;
     }
 
-    public java.lang.String getUlbName() {
+    public String getUlbName() {
         return ulbName;
     }
 
-    public void setUlbName(java.lang.String ulbName) {
+    public void setUlbName(String ulbName) {
         this.ulbName = ulbName;
     }
 
-    public java.lang.String getDistrictName() {
+    public String getDistrictName() {
         return districtName;
     }
 
-    public void setDistrictName(java.lang.String districtName) {
+    public void setDistrictName(String districtName) {
         this.districtName = districtName;
     }
 
-    public java.lang.String getRegionName() {
+    public String getRegionName() {
         return regionName;
     }
 
-    public void setRegionName(java.lang.String regionName) {
+    public void setRegionName(String regionName) {
         this.regionName = regionName;
     }
 
-    public java.lang.String getRevenueWard() {
+    public String getRevenueWard() {
         return revenueWard;
     }
 
-    public void setRevenueWard(java.lang.String revenueWard) {
+    public void setRevenueWard(String revenueWard) {
         this.revenueWard = revenueWard;
     }
 
-    public java.lang.String getElectionWard() {
+    public String getElectionWard() {
         return electionWard;
     }
 
-    public void setElectionWard(java.lang.String electionWard) {
+    public void setElectionWard(String electionWard) {
         this.electionWard = electionWard;
     }
 
-    public java.lang.String getGrade() {
+    public String getGrade() {
         return grade;
     }
 
-    public void setGrade(java.lang.String grade) {
+    public void setGrade(String grade) {
         this.grade = grade;
     }
 
-    public java.lang.String getFunctionaryName() {
+    public String getFunctionaryName() {
         return functionaryName;
     }
 
-    public void setFunctionaryName(java.lang.String functionaryName) {
+    public void setFunctionaryName(String functionaryName) {
         this.functionaryName = functionaryName;
     }
 
-    public java.lang.String getApplicationNumber() {
+    public String getApplicationNumber() {
         return applicationNumber;
     }
 
-    public void setApplicationNumber(java.lang.String applicationNumber) {
+    public void setApplicationNumber(String applicationNumber) {
         this.applicationNumber = applicationNumber;
     }
 
-    public java.lang.String getApplicationType() {
+    public String getApplicationType() {
         return applicationType;
     }
 
-    public void setApplicationType(java.lang.String applicationType) {
+    public void setApplicationType(String applicationType) {
         this.applicationType = applicationType;
     }
 
-    public java.lang.String getConnectionType() {
+    public String getConnectionType() {
         return connectionType;
     }
 
-    public void setConnectionType(java.lang.String connectionType) {
+    public void setConnectionType(String connectionType) {
         this.connectionType = connectionType;
     }
 
-    public java.lang.String getConnectionCategory() {
+    public String getConnectionCategory() {
         return connectionCategory;
     }
 
-    public void setConnectionCategory(java.lang.String connectionCategory) {
+    public void setConnectionCategory(String connectionCategory) {
         this.connectionCategory = connectionCategory;
     }
 
-    public java.lang.String getConnectionStatus() {
+    public String getConnectionStatus() {
         return connectionStatus;
     }
 
-    public void setConnectionStatus(java.lang.String connectionStatus) {
+    public void setConnectionStatus(String connectionStatus) {
         this.connectionStatus = connectionStatus;
     }
 
-    public java.lang.String getApplicationSource() {
+    public String getApplicationSource() {
         return applicationSource;
     }
 
-    public void setApplicationSource(java.lang.String applicationSource) {
+    public void setApplicationSource(String applicationSource) {
         this.applicationSource = applicationSource;
     }
 
-    public java.lang.String getApplicationUrl() {
+    public String getApplicationUrl() {
         return applicationUrl;
     }
 
-    public void setApplicationUrl(java.lang.String applicationUrl) {
+    public void setApplicationUrl(String applicationUrl) {
         this.applicationUrl = applicationUrl;
     }
 
-    public java.util.Date getApplicationDate() {
+    public Date getApplicationDate() {
         return applicationDate;
     }
 
-    public void setApplicationDate(java.util.Date applicationDate) {
+    public void setApplicationDate(Date applicationDate) {
         this.applicationDate = applicationDate;
     }
 
-    public java.util.Date getApplicationCreatedDate() {
+    public Date getApplicationCreatedDate() {
         return applicationCreatedDate;
     }
 
-    public void setApplicationCreatedDate(java.util.Date applicationCreatedDate) {
+    public void setApplicationCreatedDate(Date applicationCreatedDate) {
         this.applicationCreatedDate = applicationCreatedDate;
     }
 
-    public java.util.Date getWorkOrderDate() {
+    public Date getWorkOrderDate() {
         return workOrderDate;
     }
 
-    public void setWorkOrderDate(java.util.Date workOrderDate) {
+    public void setWorkOrderDate(Date workOrderDate) {
         this.workOrderDate = workOrderDate;
     }
 
-    public java.util.Date getExecutionDate() {
+    public Date getExecutionDate() {
         return executionDate;
     }
 
-    public void setExecutionDate(java.util.Date executionDate) {
+    public void setExecutionDate(Date executionDate) {
         this.executionDate = executionDate;
     }
 
