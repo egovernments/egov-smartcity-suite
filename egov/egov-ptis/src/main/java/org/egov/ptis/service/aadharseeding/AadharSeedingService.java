@@ -53,6 +53,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ELECTIONWARD_BNDRY_TY
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -132,7 +133,7 @@ public class AadharSeedingService extends GenericWorkFlowController {
         }
         model.addAttribute("aadharSeeding", new AadharSeedingRequest());
         model.addAttribute("wardId", wards);
-        model.addAttribute("electionWardId", wards);
+        model.addAttribute("electionWardId", electionWards);
     }
 
     public List<String[]> prepareOutput(AadharSeedingRequest aadharSeedingRequest) {
@@ -165,7 +166,7 @@ public class AadharSeedingService extends GenericWorkFlowController {
         if (aadharSeedingRequest.getElectionWardId() != null)
             wherClause = " and mv.electionWard.id=" + aadharSeedingRequest.getElectionWardId();
         if (aadharSeedingRequest.getWardId() != null)
-            wherClause = " and mv.ward.id=" + aadharSeedingRequest.getElectionWardId();
+            wherClause = " and mv.ward.id=" + aadharSeedingRequest.getWardId();
         searchQry = baseQry + wherClause + orderBy;
         return entityManager.unwrap(Session.class).createQuery(searchQry).list();
     }
@@ -176,9 +177,8 @@ public class AadharSeedingService extends GenericWorkFlowController {
         formData.setAssessmentNo(assessmentNo);
         formData.setOwnershipCategory(basicProperty.getProperty().getPropertyDetail().getCategoryType());
         basicProperty.getProperty();
-        if (basicProperty.getProperty().getPropertyAddress() != null)
-            formData.setDoorNo(basicProperty.getProperty().getPropertyAddress().getHouseNoBldgApt() != null
-                    ? basicProperty.getProperty().getPropertyAddress().getHouseNoBldgApt() : "N/A");
+        formData.setDoorNo(basicProperty.getProperty().getPropertyAddress().getHouseNoBldgApt() != null
+                ? basicProperty.getProperty().getPropertyAddress().getHouseNoBldgApt() : "N/A");
         formData.setZoneName(basicProperty.getPropertyID().getZone().getName());
         formData.setRevenueWardName(basicProperty.getPropertyID().getWard().getName());
         formData.setBlockName(basicProperty.getPropertyID().getArea().getName());
@@ -186,17 +186,10 @@ public class AadharSeedingService extends GenericWorkFlowController {
         formData.setLocalty(basicProperty.getPropertyID().getLocality().getName());
         formData.setLatitude(basicProperty.getLatitude());
         formData.setLongitude(basicProperty.getLongitude());
-        formData.setExtentOfSite(basicProperty.getProperty().getPropertyDetail().getExtentSite());
-
-        if (basicProperty.getProperty().getPropertyAddress() != null)
-            formData.setDoorNo(basicProperty.getProperty().getPropertyAddress().getHouseNoBldgApt() != null
-                    ? basicProperty.getProperty().getPropertyAddress().getHouseNoBldgApt() : "N/A");
-
-        if (basicProperty.getProperty().getPropertyDetail().getPlinthArea() != null)
-            formData.setPlinthArea(basicProperty.getProperty().getPropertyDetail().getPlinthArea().getArea());
-
+        formData.setExtentOfSite(BigDecimal.valueOf(basicProperty.getProperty().getPropertyDetail().getSitalArea().getArea()));
+        formData.setPlinthArea(BigDecimal.valueOf(basicProperty.getProperty().getPropertyDetail().getPlinthArea().getArea()));
         formData.setPropertyType(basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster().getType());
-        formData.setDocNo(basicProperty.getRegdDocNo());
+        formData.setDocNo(basicProperty.getRegdDocNo() == null ? "NA" : basicProperty.getRegdDocNo());
         formData.setDocDate(basicProperty.getRegdDocDate());
         formData.setSurveyNumber(basicProperty.getProperty().getPropertyDetail().getSurveyNumber());
         formData.setAddress(basicProperty.getAddress().toString());

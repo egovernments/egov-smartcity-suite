@@ -119,7 +119,8 @@
 						</div>
 						<div class="col-xs-3 add-margin view-content">
 							<strong><c:out
-									value="${aadharSeedingUpdate.electionWardName}" /> </strong>
+									value="${aadharSeedingUpdate.electionWardName}" default="N/A" />
+							</strong>
 						</div>
 					</div>
 					<div class="row add-border">
@@ -134,8 +135,8 @@
 							<label><spring:message code="lbl.locality" /></label>
 						</div>
 						<div class="col-xs-3 add-margin view-content">
-							<strong><c:out value="${aadharSeedingUpdate.localty}" />
-							</strong>
+							<strong><c:out value="${aadharSeedingUpdate.localty}"
+									default="N/A" /> </strong>
 						</div>
 					</div>
 					<div class="row add-border">
@@ -144,6 +145,22 @@
 						</div>
 						<div class="col-xs-3 add-margin view-content">
 							<strong><c:out value="${aadharSeedingUpdate.zoneName}"
+									default="N/A" /> </strong>
+						</div>
+					</div>
+					<div class="row add-border">
+						<div class="col-xs-3 add-margin">
+							<label><spring:message code="lbl.latitude" /></label>
+						</div>
+						<div class="col-xs-3 add-margin view-content">
+							<strong><c:out value="${aadharSeedingUpdate.latitude}"
+									default="N/A" /> </strong>
+						</div>
+						<div class="col-xs-3 add-margin">
+							<label><spring:message code="lbl.longitude" /></label>
+						</div>
+						<div class="col-xs-3 add-margin view-content">
+							<strong><c:out value="${aadharSeedingUpdate.longitude}"
 									default="N/A" /> </strong>
 						</div>
 					</div>
@@ -162,7 +179,7 @@
 						</div>
 						<div class="col-xs-3 add-margin view-content">
 							<strong><c:out
-									value="${aadharSeedingUpdate.extentOfSite}" /> </strong>
+									value="${aadharSeedingUpdate.extentOfSite}" default="N/A" /> </strong>
 						</div>
 
 						<div class="col-xs-3 add-margin">
@@ -182,11 +199,11 @@
 									value="${aadharSeedingUpdate.propertyType}" default="N/A" /> </strong>
 						</div>
 						<div class="col-xs-3 add-margin">
-							<label><spring:message code="lbl.docType" /></label>
+							<label><spring:message code="lbl.surveyNumber" /></label>
 						</div>
 						<div class="col-xs-3 add-margin view-content">
 							<strong><c:out
-									value="${aadharSeedingUpdate.documentType}" default="N/A" /> </strong>
+									value="${aadharSeedingUpdate.surveyNumber}" default="N/A" /> </strong>
 						</div>
 					</div>
 					<div class="row add-border">
@@ -203,15 +220,6 @@
 						<div class="col-xs-3 add-margin view-content">
 							<strong><c:out value="${aadharSeedingUpdate.docDate}"
 									default="N/A" /> </strong>
-						</div>
-					</div>
-					<div class="row add-border">
-						<div class="col-xs-3 add-margin">
-							<label><spring:message code="lbl.surveyNumber" /></label>
-						</div>
-						<div class="col-xs-3 add-margin view-content">
-							<strong><c:out
-									value="${aadharSeedingUpdate.surveyNumber}" default="N/A" /> </strong>
 						</div>
 					</div>
 				</div>
@@ -364,7 +372,7 @@
 											cssClass="form-control" readonly="true" /></td>
 									<td class="blueborderfortd" align="center"><img
 										height="100" width="100"
-										src="data:image/jpg;base64,<c:out value=''/>"/></td>
+										src="data:image/jpg;base64,<c:out value=''/>" /></td>
 								</tr>
 							</c:forEach>
 						</tbody>
@@ -414,47 +422,46 @@
 															data-pattern="number" id="aadharNumber" required="true"
 															maxlength="12" readonly="true" /></td>
 												</c:if>
-												</c:forEach>
+											</c:forEach>
 										</c:when>
-							<c:otherwise>
-								<td class="blueborderfortd" align="center"><form:input
-										path="propertyOwnerInfoProxy[${status.index}].owner.aadhaarNumber"
-										cssClass="form-control patternvalidation loaddetails"
-										data-pattern="number" id="aadharNumber" required="true"
-										onblur="getOwnerByAadharDetails(this);" maxlength="12"
-										readonly="false" /></td>
-								<form:hidden
-									path="propertyOwnerInfoProxy[${status.index}].userId"
-									id="propertyOwnerInfoProxy[${status.index}].userId"
-									name="propertyOwnerInfoProxy[${status.index}].userId"
-									value="${aadharUpdate.owner.id}" />
-							</c:otherwise>
-							</c:choose>
-							<td class="blueborderfortd" align="center"><form:input
-									path="" id="mobileNumber" maxlength="10"
-									cssClass="form-control patternvalidation" data-pattern="number"
-									readonly="true" /></td>
-							<td class="blueborderfortd" align="center"><form:input
-									path="" id="name" maxlength="74" cssClass="form-control"
-									readonly="true" /></td>
-							<td class="blueborderfortd" align="center"><form:input
-									path="" id="sgender" name="gender" data-first-option="false"
-									cssClass="form-control" readonly="true" /></td>
-							<td class="blueborderfortd" align="center"><form:input
-									path="" id="emailId" maxlength="32" cssClass="form-control"
-									readonly="true" /></td>
-							<td class="blueborderfortd" align="center"><form:input
-									path="" id="guardianRelation" name="guardianRelation"
-									data-first-option="false" cssClass="form-control"
-									readonly="true" /></td>
-							<td class="blueborderfortd" align="center"><form:input
-									path="" id="guardianName" maxlength="32"
-									cssClass="form-control" readonly="true" /></td>
-							<td class="blueborderfortd" align="center"><img height="100"
-								width="100"
-								src=""/></td>
-								<%-- data:image/jpg;base64,<c:out value=''/> --%>
-							</tr>
+										<c:otherwise>
+											<td class="blueborderfortd" align="center"><form:input
+													path="propertyOwnerInfoProxy[${status.index}].owner.aadhaarNumber"
+													cssClass="form-control patternvalidation loaddetails"
+													data-pattern="number" id="aadharNumber" required="true"
+													onblur="getOwnerByAadharDetails(this);" maxlength="12"
+													readonly="false" /></td>
+											<form:hidden
+												path="propertyOwnerInfoProxy[${status.index}].userId"
+												id="propertyOwnerInfoProxy[${status.index}].userId"
+												name="propertyOwnerInfoProxy[${status.index}].userId"
+												value="${aadharUpdate.owner.id}" />
+										</c:otherwise>
+									</c:choose>
+									<td class="blueborderfortd" align="center"><form:input
+											path="" id="mobileNumber" maxlength="10"
+											cssClass="form-control patternvalidation"
+											data-pattern="number" readonly="true" /></td>
+									<td class="blueborderfortd" align="center"><form:input
+											path="" id="name" maxlength="74" cssClass="form-control"
+											readonly="true" /></td>
+									<td class="blueborderfortd" align="center"><form:input
+											path="" id="sgender" name="gender" data-first-option="false"
+											cssClass="form-control" readonly="true" /></td>
+									<td class="blueborderfortd" align="center"><form:input
+											path="" id="emailId" maxlength="32" cssClass="form-control"
+											readonly="true" /></td>
+									<td class="blueborderfortd" align="center"><form:input
+											path="" id="guardianRelation" name="guardianRelation"
+											data-first-option="false" cssClass="form-control"
+											readonly="true" /></td>
+									<td class="blueborderfortd" align="center"><form:input
+											path="" id="guardianName" maxlength="32"
+											cssClass="form-control" readonly="true" /></td>
+									<td class="blueborderfortd" align="center"><img
+										height="100" width="100" src="" /></td>
+									<%-- data:image/jpg;base64,<c:out value=''/> --%>
+								</tr>
 							</c:forEach>
 						</tbody>
 
@@ -463,11 +470,11 @@
 			</div>
 			<div class="row">
 				<div class="text-center">
-					<c:if test = "${aadharSeedingDetails == null}">
-					<button type="submit" class="btn btn-primary add-margin"
-						id="submitform">
-						<spring:message code="lbl.update" />
-					</button>
+					<c:if test="${aadharSeedingDetails == null}">
+						<button type="submit" class="btn btn-primary add-margin"
+							id="submitform">
+							<spring:message code="lbl.update" />
+						</button>
 					</c:if>
 					<a href="javascript:void(0)" class="btn btn-default"
 						onclick="self.close()"><spring:message code="lbl.close" /></a>
@@ -536,45 +543,42 @@
 										.each(
 												function() {
 													$(this)
-															.val(value.care_of== "101" ? "NA" :
-																	value.care_of
-																			.substr(value.care_of
-																					.indexOf(" ") + 1));
+															.val(
+																	value.care_of == "101" ? "NA"
+																			: value.care_of
+																					.substr(value.care_of
+																							.indexOf(" ") + 1));
 												});
-								
-								var relation="";
-								if(value.care_of.substring(0,4)=="S/O:" || value.care_of.substring(0,4)=="D/O:"){
-									relation="Father";
-								}
-								else if(value.care_of.substring(0,4)=="W/O:"){
-									relation="Husband";
-								}
-								else 
-									{
-									relation="Other";
-									}
-								$(tr)
-										.find('td:eq(6)')
-										.find("input")
-										.each(
-												function() {
-													$(this)
-															.val(relation);
-												});
-								var source="data:image/jpg;base64,"+<c:out value='value.base64file'/>;
-								$(tr).find('td:eq(7)').find('img').attr("src", source)
 
-								$('#submitform').attr('disabled',false);
+								var relation = "";
+								if (value.care_of.substring(0, 4) == "S/O:"
+										|| value.care_of.substring(0, 4) == "D/O:") {
+									relation = "Father";
+								} else if (value.care_of.substring(0, 4) == "W/O:") {
+									relation = "Husband";
+								} else {
+									relation = "Other";
+								}
+								$(tr).find('td:eq(6)').find("input").each(
+										function() {
+											$(this).val(relation);
+										});
+								var source = "data:image/jpg;base64,"
+										+ <c:out value='value.base64file'/>;
+								$(tr).find('td:eq(7)').find('img').attr("src",
+										source)
+
+								$('#submitform').attr('disabled', false);
 							} else {
 								bootbox
 										.alert("There is no Data found with the Aadhar Number!");
-								$('#submitform').attr('disabled',true);
+								$('#submitform').attr('disabled', true);
 							}
 						});
 	}
-    window.onunload = refreshParent;
-    function refreshParent() {
-        window.opener.location.reload();
-    }
+	window.onunload = refreshParent;
+	function refreshParent() {
+		window.opener.location.reload();
+	}
 </script>
 

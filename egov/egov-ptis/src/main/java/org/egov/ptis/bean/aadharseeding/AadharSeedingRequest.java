@@ -47,6 +47,7 @@
  */
 package org.egov.ptis.bean.aadharseeding;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -69,8 +70,8 @@ public class AadharSeedingRequest {
     private List<PropertyOwnerInfo> propertyOwnerInfoProxy;
     private Double latitude;
     private Double longitude;
-    private Double extentOfSite;
-    private Float plinthArea;
+    private BigDecimal extentOfSite;
+    private BigDecimal plinthArea;
     private String propertyType;
     private String docNo;
     private Date docDate;
@@ -198,19 +199,19 @@ public class AadharSeedingRequest {
         this.longitude = longitude;
     }
 
-    public Double getExtentOfSite() {
+    public BigDecimal getExtentOfSite() {
         return extentOfSite;
     }
 
-    public void setExtentOfSite(Double extentOfSite) {
+    public void setExtentOfSite(BigDecimal extentOfSite) {
         this.extentOfSite = extentOfSite;
     }
 
-    public Float getPlinthArea() {
+    public BigDecimal getPlinthArea() {
         return plinthArea;
     }
 
-    public void setPlinthArea(Float plinthArea) {
+    public void setPlinthArea(BigDecimal plinthArea) {
         this.plinthArea = plinthArea;
     }
 
