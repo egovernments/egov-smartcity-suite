@@ -186,8 +186,10 @@ public class AadharSeedingService extends GenericWorkFlowController {
         formData.setLocalty(basicProperty.getPropertyID().getLocality().getName());
         formData.setLatitude(basicProperty.getLatitude());
         formData.setLongitude(basicProperty.getLongitude());
-        formData.setExtentOfSite(BigDecimal.valueOf(basicProperty.getProperty().getPropertyDetail().getSitalArea().getArea()));
-        formData.setPlinthArea(BigDecimal.valueOf(basicProperty.getProperty().getPropertyDetail().getPlinthArea().getArea()));
+        formData.setExtentOfSite(BigDecimal.valueOf(basicProperty.getProperty().getPropertyDetail().getSitalArea() == null ? 0
+                : basicProperty.getProperty().getPropertyDetail().getSitalArea().getArea()));
+        formData.setPlinthArea(BigDecimal.valueOf(basicProperty.getProperty().getPropertyDetail().getPlinthArea() == null ? 0
+                : basicProperty.getProperty().getPropertyDetail().getPlinthArea().getArea()));
         formData.setPropertyType(basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster().getType());
         formData.setDocNo(basicProperty.getRegdDocNo() == null ? "NA" : basicProperty.getRegdDocNo());
         formData.setDocDate(basicProperty.getRegdDocDate());

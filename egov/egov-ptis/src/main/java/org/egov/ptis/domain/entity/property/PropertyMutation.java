@@ -117,7 +117,8 @@ public class PropertyMutation extends StateAware<Position> {
         final StringBuilder stateDetails = new StringBuilder();
         stateDetails.append(getBasicProperty().getUpicNo()).append(", ")
                 .append(getPrimaryTransferee().getName()).append(", ")
-                .append(PROPERTY_TYPE_CATEGORIES.get(getBasicProperty().getProperty().getPropertyDetail().getCategoryType()))
+                .append(getBasicProperty().getProperty().getPropertyDetail().getCategoryType() == null ? "NA"
+                        : getBasicProperty().getProperty().getPropertyDetail().getCategoryType())
                 .append(", ")
                 .append(getBasicProperty().getPropertyID().getLocality() == null ? ""
                         : getBasicProperty().getPropertyID().getLocality().getName());
