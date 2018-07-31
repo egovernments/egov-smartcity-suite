@@ -81,8 +81,7 @@ public class WaterChargeSurveyDashboardService {
     private static final String DISTRICT_NAME = "districtName";
     private static final String REGION_NAME = "regionName";
     private static final String FUNCTIONARY_NAME = "functionaryName";
-    private static final String LOCALITY_NAME = "localityName";
-    private static final String REVENUE_WARD = "revenueWard";
+    private static final String ELECTION_WARD = "electionWard";
     private static final String BPL_CONNECTION = "bplConnection";
     private static final String NONBPL_CONNECTION = "nonBplConnection";
     private static final String BPL_SANCTION_ISSUED = "bplSanctionOrder";
@@ -118,7 +117,7 @@ public class WaterChargeSurveyDashboardService {
                 .setQuery(prepareQuery(surveyDashboardRequest))
                 .execute().actionGet();
 
-        return setSurveyResponse(aggregationField, response);
+        return setSurveyResponse(aggregationField, response, surveyDashboardRequest);
     }
 
 
@@ -133,9 +132,7 @@ public class WaterChargeSurveyDashboardService {
         else if (isNotBlank(surveyDashboardRequest.getUlbCode()))
             boolQuery = boolQuery.filter(matchQuery(CITY_CODE, surveyDashboardRequest.getUlbCode()));
         else if (isNotBlank(surveyDashboardRequest.getWardName()))
-            boolQuery = boolQuery.filter(matchQuery(REVENUE_WARD, surveyDashboardRequest.getWardName()));
-        else if (isNotBlank(surveyDashboardRequest.getLocalityName()))
-            boolQuery = boolQuery.filter(matchQuery(LOCALITY_NAME, surveyDashboardRequest.getLocalityName()));
+            boolQuery = boolQuery.filter(matchQuery(ELECTION_WARD, surveyDashboardRequest.getWardName()));
         else if (isNotBlank(surveyDashboardRequest.getFunctionaryName()))
             boolQuery = boolQuery.filter(matchQuery(FUNCTIONARY_NAME, surveyDashboardRequest.getFunctionaryName()));
         if (isNotBlank(surveyDashboardRequest.getFromDate()))
@@ -146,12 +143,17 @@ public class WaterChargeSurveyDashboardService {
         return boolQuery;
     }
 
-    private List<WaterChargeSurveyDashboardResponse> setSurveyResponse(String aggregationField, SearchResponse response) {
+    private List<WaterChargeSurveyDashboardResponse> setSurveyResponse(String aggregationField, SearchResponse response,
+                                                                       WaterChargeSurveyDashboardRequest request) {
 
         Terms ulbTerms = response.getAggregations().get(AGGREGATION_WISE);
-        Iterable<CityIndex> cities = cityIndexService.findAll();
-        List<CityIndex> city = new ArrayList<>();
-        cities.forEach(city::add);
+        List<CityIndex> city = new ArrayList<>(0);
+        if (isNotBlank(request.getUlbCode()) && (ELECTION_WARD.equals(aggregationField) || FUNCTIONARY_NAME.equals(aggregationField))) {
+            city.add(cityIndexService.findByCitycode(request.getUlbCode()));
+        } else {
+            Iterable<CityIndex> cities = cityIndexService.findAll();
+            cities.forEach(city::add);
+        }
 
         List<WaterChargeSurveyDashboardResponse> responseList = new ArrayList<>();
         for (Bucket bucket : ulbTerms.getBuckets()) {
@@ -161,8 +163,9 @@ public class WaterChargeSurveyDashboardService {
             surveyResponse.setSanctionOrderIssued(getSanctionOrderIssueCount(bucket));
             surveyResponse.setConnectionExecuted(getConnectionExecutedCount(bucket));
             double applicationReceived = surveyResponse.getApplicaitonReceived().getTotalConnection();
-            surveyResponse.setPendingSanction(applicationReceived - surveyResponse.getSanctionOrderIssued().getTotalConnection());
-            surveyResponse.setPendingExecution(applicationReceived - surveyResponse.getConnectionExecuted().getTotalConnection());
+            double totalSanctionIssued = surveyResponse.getSanctionOrderIssued().getTotalConnection();
+            surveyResponse.setPendingSanction(applicationReceived - totalSanctionIssued);
+            surveyResponse.setPendingExecution(totalSanctionIssued - surveyResponse.getConnectionExecuted().getTotalConnection());
             responseList.add(surveyResponse);
         }
         return responseList;
@@ -183,16 +186,28 @@ public class WaterChargeSurveyDashboardService {
                 }
             });
         else if (CITY_CODE.equals(aggregationField) || CITY_NAME.equals(aggregationField)) {
-            surveyResponse.setUlbCode(name);
             cities.stream().forEach(cityIndex -> {
                 if (cityIndex.getCitycode().equals(name)) {
-                    surveyResponse.setUlbGrade(cityIndex.getCitygrade());
-                    surveyResponse.setUlbName(cityIndex.getName());
-                    surveyResponse.setRegionName(cityIndex.getRegionname());
-                    surveyResponse.setDistrictName(cityIndex.getDistrictname());
+                    setCityDetails(surveyResponse, cityIndex);
                 }
             });
+        } else if (ELECTION_WARD.equals(aggregationField)) {
+            surveyResponse.setWardName(name);
+            cities.stream().forEach(cityIndex ->
+                    setCityDetails(surveyResponse, cityIndex));
+        } else if (FUNCTIONARY_NAME.equals(aggregationField)) {
+            surveyResponse.setFunctionaryName(name);
+            cities.stream().forEach(cityIndex ->
+                    setCityDetails(surveyResponse, cityIndex));
         }
+    }
+
+    private void setCityDetails(WaterChargeSurveyDashboardResponse surveyResponse, CityIndex cityIndex) {
+        surveyResponse.setUlbCode(cityIndex.getCitycode());
+        surveyResponse.setUlbGrade(cityIndex.getCitygrade());
+        surveyResponse.setUlbName(cityIndex.getName());
+        surveyResponse.setRegionName(cityIndex.getRegionname());
+        surveyResponse.setDistrictName(cityIndex.getDistrictname());
     }
 
     private WaterChargeConnectionCount getApplicationReceivedCount(Bucket bucket) {
