@@ -48,6 +48,7 @@
 package org.egov.ptis.domain.entity.property;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.persistence.entity.enums.GuardianRelation;
@@ -60,7 +61,6 @@ import java.util.Date;
 import java.util.List;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION_WIFE;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TYPE_CATEGORIES;
 
 /**
  * @author subhash
@@ -115,13 +115,15 @@ public class PropertyMutation extends StateAware<Position> {
     @Override
     public String getStateDetails() {
         final StringBuilder stateDetails = new StringBuilder();
+        PropertyDetail propertyDetail= getBasicProperty().getProperty().getPropertyDetail();
+        Boundary locality =getBasicProperty().getPropertyID().getLocality();
         stateDetails.append(getBasicProperty().getUpicNo()).append(", ")
                 .append(getPrimaryTransferee().getName()).append(", ")
-                .append(getBasicProperty().getProperty().getPropertyDetail().getCategoryType() == null ? "NA"
-                        : getBasicProperty().getProperty().getPropertyDetail().getCategoryType())
+                .append(propertyDetail.getCategoryType() == null ? "NA"
+                        : propertyDetail.getCategoryType())
                 .append(", ")
-                .append(getBasicProperty().getPropertyID().getLocality() == null ? ""
-                        : getBasicProperty().getPropertyID().getLocality().getName());
+                .append(locality == null ? ""
+                        : locality.getName());
         return stateDetails.toString();
     }
 
