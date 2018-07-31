@@ -66,19 +66,19 @@ public final class GlobalExceptionHandler {
     private static final Logger LOG = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     private static final String DEFAULT_ERROR_VIEW = "/error/500";
-    private static final String ERROR_MESSAGE = "An error occurred while processing the request";
-    private static final String VALIDATION_ERROR_MESSAGE = "Validation failed";
+    private static final String ERROR_MESSAGE = "An error occurred while processing the request : {}";
+    private static final String VALIDATION_ERROR_MESSAGE = "Validation failed on request : {}";
 
     @ExceptionHandler({Exception.class, ApplicationRuntimeException.class})
     public RedirectView handleGenericException(HttpServletRequest request, Exception e) {
-        LOG.error(ERROR_MESSAGE, e);
+        LOG.error(ERROR_MESSAGE, request.getRequestURL(), e);
         return errorView(request, e.getMessage());
     }
 
     @ExceptionHandler(ApplicationValidationException.class)
     public RedirectView handleValidationException(HttpServletRequest request, ApplicationValidationException e) {
         if (LOG.isWarnEnabled())
-            LOG.warn(VALIDATION_ERROR_MESSAGE, e);
+            LOG.warn(VALIDATION_ERROR_MESSAGE, request.getRequestURL(), e);
         return errorView(request, e.getMessage());
     }
 
