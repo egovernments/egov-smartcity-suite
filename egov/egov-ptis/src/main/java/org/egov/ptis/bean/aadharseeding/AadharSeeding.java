@@ -95,6 +95,10 @@ public class AadharSeeding extends StateAware<Position>{
     
     private Boolean isAadharValid;
     
+    private String responseCode;
+
+    private String bhudharId;
+    
     public BasicPropertyImpl getBasicProperty() {
         return basicProperty;
     }
@@ -149,4 +153,21 @@ public class AadharSeeding extends StateAware<Position>{
     protected void setId(Long id) {
         this.id = id;
     }
+
+    public String getResponseCode() {
+        return responseCode;
+    }
+
+    public void setResponseCode(String responseCode) {
+        this.responseCode = responseCode;
+    }
+    
+    public String getBhudharId() {
+        return bhudharId;
+    }
+
+    public void setBhudharId(String bhudharId) {
+        this.bhudharId = bhudharId;
+    }
+
 }
