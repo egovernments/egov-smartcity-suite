@@ -50,6 +50,9 @@ package org.egov.eventnotification.entity.contracts;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class UserTaxInformation {
 
     private String consumerNumber;
@@ -57,9 +60,17 @@ public class UserTaxInformation {
     private Double dueAmount;
     private Date dueDate;
     private String billNo;
+    @SerializedName("assessmentNo")
+    @Expose
     private String assessmentNo;
+    @SerializedName("ownerName")
+    @Expose
     private String ownerName;
+    @SerializedName("mobileNumber")
+    @Expose
     private String mobileNumber;
+    @SerializedName("totalDue")
+    @Expose
     private BigDecimal totalDue;
 
     public String getConsumerNumber() {

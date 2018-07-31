@@ -161,22 +161,21 @@ public class NotificationSchedulerJob extends QuartzJobBean {
                     notificationSchedule.getMethod(), ulbCode);
 
             if (userTaxInfoList != null)
-                for (UserTaxInformation userTaxInformation : userTaxInfoList)
-                    if (userTaxInformation != null) {
-                        String message = buildMessageAdapter.buildMessage(userTaxInformation,
-                                notificationSchedule.getMessageTemplate());
-                        List<Long> userIdList = new ArrayList<>();
-                        if (isNotBlank(userTaxInformation.getMobileNumber())) {
-                            List<User> userList = userService.findByMobileNumberAndType(userTaxInformation.getMobileNumber(),
-                                    UserType.CITIZEN);
-                            if (userList != null)
-                                for (User userid : userList)
-                                    userIdList.add(userid.getId());
-                        } else
-                            userIdList.add(userTaxInformation.getUserId());
+                for (UserTaxInformation userTaxInformation : userTaxInfoList) {
+                    String message = buildMessageAdapter.buildMessage(userTaxInformation,
+                            notificationSchedule.getMessageTemplate());
+                    List<Long> userIdList = new ArrayList<>();
+                    if (isNotBlank(userTaxInformation.getMobileNumber())) {
+                        List<User> userList = userService.findByMobileNumberAndType(userTaxInformation.getMobileNumber(),
+                                UserType.CITIZEN);
+                        if (userList != null)
+                            for (User userid : userList)
+                                userIdList.add(userid.getId());
+                    } else
+                        userIdList.add(userTaxInformation.getUserId());
 
-                        buildAndSendNotifications(notificationSchedule, message, Boolean.FALSE, userIdList);
-                    }
+                    buildAndSendNotifications(notificationSchedule, message, Boolean.FALSE, userIdList);
+                }
         } else
             buildAndSendNotifications(notificationSchedule, null, Boolean.TRUE, null);
     }

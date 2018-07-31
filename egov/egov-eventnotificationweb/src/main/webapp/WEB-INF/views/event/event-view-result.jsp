@@ -213,7 +213,6 @@
 										0
 									</c:otherwise>
 								</c:choose>
-								<c:out value="${event.cost}" />
 							</div>
 						</div>
 						<div class="row add-border">

@@ -103,7 +103,7 @@ public class EventService {
 
     public List<Event> getAllEventByStatus(String status) {
         List<Event> eventList = null;
-        eventList = eventRepository.findByStatusAndEndDateGreaterThanOrderByIdDesc(status, today());
+        eventList = eventRepository.findByStatusAndStartDateGreaterThanOrderByIdDesc(status, today());
         if (!eventList.isEmpty())
             for (Event event : eventList)
                 eventDetailsService.populateEventDetails(event);

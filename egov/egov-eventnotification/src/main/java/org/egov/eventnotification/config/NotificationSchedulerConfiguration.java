@@ -57,17 +57,14 @@ import javax.sql.DataSource;
 import org.egov.eventnotification.entity.contracts.EventNotificationProperties;
 import org.egov.eventnotification.scheduler.NotificationSchedulerJob;
 import org.egov.infra.config.scheduling.QuartzSchedulerConfiguration;
-import org.egov.infra.config.scheduling.SchedulerConfigCondition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
 @Configuration
-@Conditional(SchedulerConfigCondition.class)
 public class NotificationSchedulerConfiguration extends QuartzSchedulerConfiguration {
 
     @Autowired

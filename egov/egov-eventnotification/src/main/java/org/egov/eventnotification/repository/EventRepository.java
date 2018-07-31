@@ -66,5 +66,5 @@ public interface EventRepository extends EventRepositoryCustom, JpaRepository<Ev
 
     List<Event> findByStatusOrderByIdDesc(String status);
 
-    List<Event> findByStatusAndEndDateGreaterThanOrderByIdDesc(String status, Date endDate);
+    List<Event> findByStatusAndStartDateGreaterThanOrderByIdDesc(String status, Date endDate);
 }
