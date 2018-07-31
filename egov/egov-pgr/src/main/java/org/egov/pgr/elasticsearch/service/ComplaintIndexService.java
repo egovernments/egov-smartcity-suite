@@ -1765,9 +1765,9 @@ public class ComplaintIndexService {
         int rating = countBucket.getKeyAsNumber().intValue();
         if (rating == GOOD_RATING) {
             feedbackResponse.setGood(countBucket.getDocCount());
-        } else if (rating == BAD_RATING) {
-            feedbackResponse.setAverage(countBucket.getDocCount());
         } else if (rating == AVG_RATING) {
+            feedbackResponse.setAverage(countBucket.getDocCount());
+        } else if (rating == BAD_RATING) {
             feedbackResponse.setBad(countBucket.getDocCount());
         }
         feedbackResponse.setTotalFeedback(feedbackResponse.getGood() + feedbackResponse.getBad() + feedbackResponse.getAverage());
