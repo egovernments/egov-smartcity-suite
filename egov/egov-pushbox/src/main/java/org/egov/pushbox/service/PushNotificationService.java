@@ -48,15 +48,14 @@
 
 package org.egov.pushbox.service;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.annotation.PostConstruct;
-
+import com.google.api.client.googleapis.util.Utils;
+import com.google.api.client.json.JsonFactory;
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.Message;
+import com.google.gson.Gson;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -69,23 +68,21 @@ import org.egov.pushbox.repository.UserFcmDeviceRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.api.client.googleapis.util.Utils;
-import com.google.api.client.json.JsonFactory;
-import com.google.auth.oauth2.GoogleCredentials;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.Message;
-import com.google.gson.Gson;
+import javax.annotation.PostConstruct;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
- *
  * @author Darshan Nagesh
- *
  */
 @Service
 @Transactional(readOnly = true)
@@ -100,6 +97,9 @@ public class PushNotificationService {
 
     @Autowired
     private Environment env;
+
+    @Value("${firebase.enabled}")
+    private boolean firebaseEnabled;
 
     @Transactional
     public UserFcmDevice saveUserDevice(final UserTokenRequest userTokenRequest) {
@@ -133,6 +133,7 @@ public class PushNotificationService {
     /**
      * This method fetch the userFcmDevice based on the user id and call the sendMessagesToDevices() method to send the push
      * messages
+     *
      * @param messageContent
      */
     public void sendNotifications(MessageContent messageContent) {
@@ -155,6 +156,7 @@ public class PushNotificationService {
     /**
      * This method build the message and send it to firebase for push notification. It uses messageContent and deviceToken to
      * build a message.
+     *
      * @param userDeviceList
      * @param messageContent
      */
@@ -208,7 +210,7 @@ public class PushNotificationService {
      */
     @PostConstruct
     public void setUpFirebaseApp() {
-        if (FirebaseApp.getApps().isEmpty()) {
+        if (firebaseEnabled && FirebaseApp.getApps().isEmpty()) {
             JsonFactory jsonFactory = Utils.getDefaultJsonFactory();
             Map<String, Object> secretJson = new ConcurrentHashMap<>();
             secretJson.put("type", env.getProperty("type"));
