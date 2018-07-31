@@ -138,9 +138,9 @@ public class WaterChargeSurveyDashboardService {
             boolQuery = boolQuery.filter(matchQuery(LOCALITY_NAME, surveyDashboardRequest.getLocalityName()));
         else if (isNotBlank(surveyDashboardRequest.getFunctionaryName()))
             boolQuery = boolQuery.filter(matchQuery(FUNCTIONARY_NAME, surveyDashboardRequest.getFunctionaryName()));
-        if (surveyDashboardRequest.getFromDate() != null)
+        if (isNotBlank(surveyDashboardRequest.getFromDate()))
             boolQuery = boolQuery.filter(rangeQuery(APPLICATION_CREATED_DATE).gte(surveyDashboardRequest.getFromDate()));
-        if (surveyDashboardRequest.getToDate() != null)
+        if (isNotBlank(surveyDashboardRequest.getToDate()))
             boolQuery = boolQuery.filter(rangeQuery(APPLICATION_CREATED_DATE).lte(surveyDashboardRequest.getToDate()));
 
         return boolQuery;
@@ -177,18 +177,20 @@ public class WaterChargeSurveyDashboardService {
             surveyResponse.setRegionName(name);
         else if (DISTRICT_NAME.equals(aggregationField))
             cities.stream().forEach(cityIndex -> {
-                if (cityIndex.getDistrictname().equals(name))
+                if (cityIndex.getDistrictname().equals(name)) {
                     surveyResponse.setRegionName(cityIndex.getRegionname());
-                surveyResponse.setDistrictName(cityIndex.getDistrictname());
+                    surveyResponse.setDistrictName(cityIndex.getDistrictname());
+                }
             });
-        else if (CITY_CODE.equals(aggregationField)) {
+        else if (CITY_CODE.equals(aggregationField) || CITY_NAME.equals(aggregationField)) {
             surveyResponse.setUlbCode(name);
             cities.stream().forEach(cityIndex -> {
-                if (cityIndex.getCitycode().equals(name))
+                if (cityIndex.getCitycode().equals(name)) {
                     surveyResponse.setUlbGrade(cityIndex.getCitygrade());
-                surveyResponse.setUlbName(cityIndex.getName());
-                surveyResponse.setRegionName(cityIndex.getRegionname());
-                surveyResponse.setDistrictName(cityIndex.getDistrictname());
+                    surveyResponse.setUlbName(cityIndex.getName());
+                    surveyResponse.setRegionName(cityIndex.getRegionname());
+                    surveyResponse.setDistrictName(cityIndex.getDistrictname());
+                }
             });
         }
     }

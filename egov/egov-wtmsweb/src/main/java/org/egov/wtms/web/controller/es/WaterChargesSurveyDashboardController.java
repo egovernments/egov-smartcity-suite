@@ -53,7 +53,7 @@ import org.egov.wtms.entity.es.WaterChargeSurveyDashboardResponse;
 import org.egov.wtms.service.es.WaterChargeSurveyDashboardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -66,7 +66,7 @@ public class WaterChargesSurveyDashboardController {
     @Autowired
     private WaterChargeSurveyDashboardService surveyDashboardService;
 
-    @PostMapping(value = "/aggregate" ,  produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/aggregate", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<WaterChargeSurveyDashboardResponse> showDetails(WaterChargeSurveyDashboardRequest surveyDashboardRequest) {
         return surveyDashboardService.getAggregatedSurveyDetails(surveyDashboardRequest);
     }

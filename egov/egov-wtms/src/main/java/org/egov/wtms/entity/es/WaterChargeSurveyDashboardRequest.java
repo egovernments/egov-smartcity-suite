@@ -47,8 +47,6 @@
  */
 package org.egov.wtms.entity.es;
 
-import java.util.Date;
-
 public class WaterChargeSurveyDashboardRequest {
 
     private String ulbGrade;
@@ -61,8 +59,8 @@ public class WaterChargeSurveyDashboardRequest {
     private String functionaryName;
     private String applicationNumber;
     private String aggregationLevel;
-    private Date fromDate;
-    private Date toDate;
+    private String fromDate;
+    private String toDate;
 
     public String getUlbGrade() {
         return ulbGrade;
@@ -144,19 +142,19 @@ public class WaterChargeSurveyDashboardRequest {
         this.aggregationLevel = aggregationLevel;
     }
 
-    public Date getFromDate() {
+    public String getFromDate() {
         return fromDate;
     }
 
-    public void setFromDate(Date fromDate) {
+    public void setFromDate(String fromDate) {
         this.fromDate = fromDate;
     }
 
-    public Date getToDate() {
+    public String getToDate() {
         return toDate;
     }
 
-    public void setToDate(Date toDate) {
+    public void setToDate(String toDate) {
         this.toDate = toDate;
     }
 }
