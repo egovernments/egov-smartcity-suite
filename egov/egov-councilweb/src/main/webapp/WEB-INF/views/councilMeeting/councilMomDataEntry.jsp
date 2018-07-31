@@ -75,7 +75,7 @@
 			<div class="form-group">
 			
 				<label class="col-md-2 col-sm-3 control-label text-right"><spring:message
-						code="lbl.agendaNumber" /><span class="mandatory"></label>
+						code="lbl.agendaNumber" /></label>
 				<div class="col-md-2 col-sm-3">
 					<form:input path="agenda.agendaNumber" id="agendaNumber" type="text"
 						class="form-control text-left patternvalidation" maxlength="20" 
