@@ -48,6 +48,32 @@
 
 package org.egov.wtms.service;
 
+import static java.math.BigDecimal.ROUND_HALF_UP;
+import static java.math.BigDecimal.ZERO;
+import static org.egov.infra.utils.DateUtils.toYearFormat;
+import static org.egov.wtms.masters.entity.enums.ConnectionStatus.ACTIVE;
+import static org.egov.wtms.masters.entity.enums.ConnectionType.METERED;
+import static org.egov.wtms.masters.entity.enums.ConnectionType.NON_METERED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.BILLTYPE_AUTO;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CATEGORY_BPL;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.DEMANDRSN_CODE_ADVANCE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.EGMODULE_NAME;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ESTIMATIONCHARGES_SERVICE_CODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.METERED_CHARGES_REASON_CODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.MONTHLY;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.NO_OF_INSTALLMENTS;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PENALTYCHARGES;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAXREASONCODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_CONNECTION_CHARGE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.YEARLY;
+
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -65,34 +91,10 @@ import org.egov.wtms.autonumber.BillReferenceNumberGenerator;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxUtils;
-import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import static org.egov.infra.utils.DateUtils.toYearFormat;
-import static org.egov.wtms.masters.entity.enums.ConnectionStatus.ACTIVE;
-import static org.egov.wtms.masters.entity.enums.ConnectionType.METERED;
-import static org.egov.wtms.masters.entity.enums.ConnectionType.NON_METERED;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.CATEGORY_BPL;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.DEMANDRSN_CODE_ADVANCE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.EGMODULE_NAME;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.ESTIMATIONCHARGES_SERVICE_CODE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.METERED_CHARGES_REASON_CODE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.MONTHLY;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.NO_OF_INSTALLMENTS;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.PENALTYCHARGES;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAXREASONCODE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_CONNECTION_CHARGE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.YEARLY;
 
 @Service
 @Transactional(readOnly = true)
@@ -122,7 +124,7 @@ public class WaterEstimationChargesPaymentService {
 
     public BigDecimal getEstimationDueAmount(WaterConnectionDetails waterConnectionDetails) {
         EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
-        BigDecimal estimationAmount = BigDecimal.ZERO;
+        BigDecimal estimationAmount = ZERO;
         List<String> demandCodes = Arrays.asList(METERED_CHARGES_REASON_CODE, WATERTAXREASONCODE,
                 DEMANDRSN_CODE_ADVANCE, WATERTAX_CONNECTION_CHARGE,PENALTYCHARGES);
         if (currentDemand != null)
@@ -167,12 +169,12 @@ public class WaterEstimationChargesPaymentService {
                 waterConnectionBillable.getCurrentDemand().setMinAmtPayable(estimationAmount);
             else
                 waterConnectionBillable.getCurrentDemand().setMinAmtPayable(estimationAmount.divide(
-                        noOfInstallment, BigDecimal.ROUND_HALF_UP));
+                        noOfInstallment, ROUND_HALF_UP).setScale(0, ROUND_HALF_UP));
         }
 
         BillReferenceNumberGenerator billRefeNumber = beanResolver.getAutoNumberServiceFor(BillReferenceNumberGenerator.class);
         waterConnectionBillable.setReferenceNumber(billRefeNumber.generateBillNumber(currentInstallmentYear));
-        waterConnectionBillable.setBillType(connectionDemandService.getBillTypeByCode(WaterTaxConstants.BILLTYPE_AUTO));
+        waterConnectionBillable.setBillType(connectionDemandService.getBillTypeByCode(BILLTYPE_AUTO));
         waterConnectionBillable.setServiceCode(ESTIMATIONCHARGES_SERVICE_CODE);
 
         return connectionBillService.getBillXML(waterConnectionBillable);

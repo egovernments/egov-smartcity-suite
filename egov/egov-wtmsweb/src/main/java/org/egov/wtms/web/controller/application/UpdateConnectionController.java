@@ -783,11 +783,8 @@ public class UpdateConnectionController extends GenericConnectionController {
                     + (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "") + ","
                     + (nextDesign != null ? nextDesign : "");
             return "redirect:/application/application-success?pathVars=" + pathVars;
-        } else {
-            if (waterConnectionDetails.getStatus().getCode().equalsIgnoreCase(APPLICATION_STATUS_WOGENERATED))
-                model.addAttribute("meterFocus", true);
+        } else 
             return loadViewData(model, request, waterConnectionDetails);
-        }
     }
 
     private ReportOutput getReportOutputObject(final WaterConnectionDetails waterConnectionDetails,
