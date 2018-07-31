@@ -119,7 +119,8 @@
 								name="chartOfAccount.glCode" />:<span class="mandatory1">*</span></strong></td>
 					<td class="bluebox" width="10%"><input type="text"
 						readonly="readonly" name="generatedGlcode" id="generatedGlcode"
-						size="10" /> <input type="text" name="newGlcode" id="newGlcode"
+						size="10" /> <input type="text" name="newGlcode" id="newGlcode" 
+						onkeypress="return event.charCode >= 48 && event.charCode <= 57"
 						size="2" maxlength='<s:property value="glCodeLengths[4l]"/>' /></td>
 				</tr>
 				<tr>
