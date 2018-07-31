@@ -82,7 +82,7 @@
 						<spring:message code="lbl.amount" />
 					</div>
 					<div class="col-sm-3 add-margin view-content">
-						${councilPreamble.sanctionAmount}</div>
+						${councilPreamble.sanctionAmount ne null ? councilPreamble.sanctionAmount:'N/A'}</div>		
 				</div>
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin">
@@ -165,11 +165,11 @@
 											<td width="8%"><c:out
 													value="${preamble.meeting.meetingDate}" /></td>
 											<td><c:out
-													value="${preamble.meeting.committeeType.name}" /></td>
-											<td><c:out value="${preamble.preamble.status.code}" /></td>
-											<td><c:out value="${preamble.resolutionNumber}" /></td>
+													value="${preamble.meeting.committeeType ne null?preamble.meeting.committeeType.name:'N/A'}" /></td>
+											<td><c:out value="${preamble.preamble.status ne null?preamble.preamble.status.code:'N/A'}" /></td>
+											<td><c:out value="${preamble.resolutionNumber ne null?preamble.resolutionNumber:'N/A'}" /></td>
 											<td><span class="more"><c:out
-														value="${preamble.resolutionDetail}" /></span></td>
+														value="${preamble.resolutionDetail ne null?preamble.resolutionDetail:'N/A'}" /></span></td>
 											<td><button type="button"
 													class="btn btn-xs btn-secondary view">
 													<i class="fa fa-eye" aria-hidden="true"></i>&nbsp;&nbsp;View

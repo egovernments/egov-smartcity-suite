@@ -130,12 +130,12 @@
 										<td width="10%"><c:out
 												value="${mom.preamble.preambleNumber}" /></td>
 										<td width="30%"><span class="more"><c:out
-													value="${mom.resolutionDetail}" /></span></td>
+													value="${mom.resolutionDetail ne null?mom.resolutionDetail:'N/A'}" /></span></td>
 										<td width="10%"><c:out
-												value="${mom.resolutionStatus.code}" /></td>
-										<td><c:out value="${mom.resolutionNumber}"></c:out></td>
+												value="${mom.resolutionStatus ne null?mom.resolutionStatus.code:'N/A'}" /></td>
+										<td><c:out value="${mom.resolutionNumber ne null?mom.resolutionNumber :'N/A'}"></c:out></td>
 										<td width="30%"><span class="more"><c:out
-													value="${mom.preamble.gistOfPreamble}" />
+													value="${mom.preamble.gistOfPreamble ne null?mom.preamble.gistOfPreamble:'N/A'}" />
 													<br>
 													<c:out value="${mom.preamble.addtionalGistOfPreamble}"></c:out>
 													</span></td>
@@ -181,13 +181,13 @@
 										<td class="text-center">${counter.index+1}</td>
 										<td><c:out value="${meetingAttend.councilMember.name}" /></td>
 										<td><c:out
-												value="${not empty meetingAttend.councilMember.electionWard.name?meetingAttend.councilMember.electionWard.name:'N/A'}" /></td>
+												value="${ meetingAttend.councilMember.electionWard.name ne null?meetingAttend.councilMember.electionWard.name:'N/A'}" /></td>
 										<td><c:out
 												value="${meetingAttend.councilMember.designation.name}" /></td>
 										<td><c:out
-												value="${not empty meetingAttend.councilMember.qualification.name?meetingAttend.councilMember.qualification.name:'N/A'}" /></td>
+												value="${meetingAttend.councilMember.qualification.name ne null?meetingAttend.councilMember.qualification.name:'N/A'}" /></td>
 										<td><c:out
-												value="${not empty meetingAttend.councilMember.partyAffiliation.name?meetingAttend.councilMember.partyAffiliation.name:'N/A'}" /></td>
+												value="${meetingAttend.councilMember.partyAffiliation.name ne null?meetingAttend.councilMember.partyAffiliation.name:'N/A'}" /></td>
 										<td class="text-center"><c:out
 												value="${meetingAttend.attendedMeeting?'Yes':'No'}" /></td>
 									</tr>

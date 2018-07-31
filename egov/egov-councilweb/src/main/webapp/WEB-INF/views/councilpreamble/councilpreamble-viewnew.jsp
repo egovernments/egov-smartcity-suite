@@ -83,8 +83,8 @@
 						<spring:message code="lbl.amount" />
 					</div>
 					<div class="col-sm-3 add-margin view-content">
-						${councilPreamble.sanctionAmount}</div>
-				</div>
+						${councilPreamble.sanctionAmount ne null?councilPreamble.sanctionAmount:'N/A'}</div>
+				 </div>
 				
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin">
@@ -136,7 +136,7 @@
 						<spring:message code="lbl.status" />
 					</div>
 					<div class="col-sm-3 add-margin view-content">
-						${councilPreamble.status.code}</div>
+						${councilPreamble.status ne null?councilPreamble.status.code:'N/A'}</div>
 				</div>
 			</div>
 
