@@ -48,44 +48,6 @@
 
 package org.egov.pgr.elasticsearch.service;
 
-import static java.lang.String.format;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.defaultString;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
-import static org.egov.infra.utils.ApplicationConstant.NA;
-import static org.egov.infra.utils.DateUtils.startOfToday;
-import static org.egov.pgr.utils.constants.PGRConstants.CITY_CODE;
-import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_ALL;
-import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_COMPLETED;
-import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_PENDING;
-import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_REJECTED;
-import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_REOPENED;
-import static org.egov.pgr.utils.constants.PGRConstants.COMPLETED_STATUS;
-import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_ALL_FUNCTIONARY;
-import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_ALL_LOCALITIES;
-import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_ALL_ULB;
-import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_ALL_WARDS;
-import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_CITY;
-import static org.egov.pgr.utils.constants.PGRConstants.NOASSIGNMENT;
-import static org.egov.pgr.utils.constants.PGRConstants.PENDING_STATUS;
-import static org.egov.pgr.utils.constants.PGRConstants.PGR_INDEX_DATE_FORMAT;
-import static org.egov.pgr.utils.constants.PGRConstants.REJECTED_STATUS;
-import static org.egov.pgr.utils.constants.PGRConstants.WARD_NUMBER;
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
-import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
-import static org.elasticsearch.index.query.QueryBuilders.termQuery;
-import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-import org.egov.infra.utils.DateUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.City;
@@ -95,6 +57,7 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.es.CityIndexService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.mapper.BeanMapperConfiguration;
+import org.egov.infra.utils.DateUtils;
 import org.egov.pgr.elasticsearch.entity.ComplaintIndex;
 import org.egov.pgr.elasticsearch.entity.contract.ComplaintDashBoardRequest;
 import org.egov.pgr.elasticsearch.entity.contract.ComplaintDashBoardResponse;
@@ -131,6 +94,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import static java.lang.String.format;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
+import static org.egov.infra.utils.ApplicationConstant.NA;
+import static org.egov.infra.utils.DateUtils.startOfToday;
+import static org.egov.pgr.utils.constants.PGRConstants.*;
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
+import static org.elasticsearch.index.query.QueryBuilders.termQuery;
+import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
 
 @Service
 @Transactional(readOnly = true)
@@ -191,7 +175,6 @@ public class ComplaintIndexService {
     private static final String DEPARTMENT_CODE = "departmentCode";
     private static final String FUNCTIONARYWISE = "functionarywise";
     private static final String CREATED_DATE = "createdDate";
-    private static final String FEEDBACK_RATING = "feedbackRating";
     private static final int GOOD_RATING = 1;
     private static final int BAD_RATING = 2;
     private static final int AVG_RATING = 3;
@@ -338,7 +321,7 @@ public class ComplaintIndexService {
             complaintIndex.setDurationRange("");
         }
         // update status related fields in index
-        complaintIndex = updateComplaintIndexStatusRelatedFields(complaintIndex);
+        updateComplaintIndexStatusRelatedFields(complaintIndex);
         // If complaint is re-opened
         if (complaintIndex.getComplaintStatusName().equalsIgnoreCase(ComplaintStatus.REOPENED.toString()) &&
                 !status.contains(COMPLAINT_REOPENED)) {
@@ -419,7 +402,7 @@ public class ComplaintIndexService {
         }
         complaintIndex = updateEscalationLevelIndexFields(complaintIndex);
         // update status related fields in index
-        complaintIndex = updateComplaintIndexStatusRelatedFields(complaintIndex);
+        updateComplaintIndexStatusRelatedFields(complaintIndex);
 
         complaintIndexRepository.save(complaintIndex);
     }
@@ -438,7 +421,7 @@ public class ComplaintIndexService {
             complaintIndex = updateComplaintLevelIndexFields(complaintIndex);
             complaintIndex = updateEscalationLevelIndexFields(complaintIndex);
             // update status related fields in index
-            complaintIndex = updateComplaintIndexStatusRelatedFields(complaintIndex);
+            updateComplaintIndexStatusRelatedFields(complaintIndex);
             complaintIndexRepository.save(complaintIndex);
         }
     }
@@ -1516,9 +1499,9 @@ public class ComplaintIndexService {
     }
 
     public List<ComplaintIndex> getFeedbackComplaints(final ComplaintDashBoardRequest complaintDashBoardRequest,
-            final String fieldName, final String fieldValue) {
+                                                      final String fieldName, final String fieldValue) {
         BoolQueryBuilder boolQuery = getFilterQuery(complaintDashBoardRequest);
-        if (!fieldValue.isEmpty())
+        if (isNotBlank(fieldValue))
             boolQuery.must(termsQuery(fieldName, fieldValue.split(",")));
         final List<ComplaintIndex> complaints = complaintIndexRepository.findAllComplaintsByField(complaintDashBoardRequest,
                 boolQuery);
@@ -1736,7 +1719,7 @@ public class ComplaintIndexService {
 
     private void prepareMonthlyRatingCount(Bucket callStatBucket, MonthlyFeedbackCounts monthStat) {
         Terms countAggr = callStatBucket.getAggregations().get("countAggr");
-        if (countAggr!=null)
+        if (countAggr != null)
             for (Bucket bucketRating : countAggr.getBuckets()) {
                 int fbRating = bucketRating.getKeyAsNumber().intValue();
                 if (fbRating == GOOD_RATING)
@@ -1826,8 +1809,8 @@ public class ComplaintIndexService {
 
     private BoolQueryBuilder prepareQuery(final ComplaintDashBoardRequest ivrsRequest) {
         BoolQueryBuilder boolQuery = new BoolQueryBuilder();
-        boolQuery=boolQuery.must(matchQuery("ifClosed", 1))
-        .must(matchQuery("complaintStatusName", "COMPLETED"));
+        boolQuery = boolQuery.must(matchQuery("ifClosed", 1))
+                .must(matchQuery("complaintStatusName", "COMPLETED"));
         if (isNotBlank(ivrsRequest.getFromDate()) && isNotBlank(ivrsRequest.getToDate())) {
             String fromDate = new DateTime(ivrsRequest.getFromDate()).withTimeAtStartOfDay().toString(PGR_INDEX_DATE_FORMAT);
             String toDate = new DateTime(ivrsRequest.getToDate()).plusDays(1).toString(PGR_INDEX_DATE_FORMAT);
