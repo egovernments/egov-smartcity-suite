@@ -110,6 +110,7 @@ public final class ApplicationConstant {
     public static final String DOT = ".";
     public static final String COMMA = ",";
     public static final String UNKNOWN = "Unknown";
+    public static final String AUTO = "AUTO";
 
     private ApplicationConstant() {
     }
