@@ -203,7 +203,7 @@
 							<div class="greybox" style="text-align: left">
 								<s:submit name="CollectTax" value="CollectTax" id="CollectTax"
 									cssClass="buttonsubmit"
-									onclick="return onSubmit('searchProperty-searchOwnerDetails.action', 'assessmentform');"></s:submit>
+									onclick="return onSubmit('collectPropertyTax-generateBill.action', 'assessmentform');"></s:submit>
 							</div>
 						</td>
 					</s:if>
@@ -261,7 +261,7 @@
 							<div class="greybox" style="text-align: left">
 								<s:submit name="CollectTax" value="CollectTax" id="CollectTax"
 									cssClass="buttonsubmit"
-									onclick="return onSubmit('searchProperty-searchOwnerDetails.action', 'oldassessmentform');"></s:submit>
+									onclick="return onSubmit('collectPropertyTax-generateBill.action', 'oldassessmentform');"></s:submit>
 							</div>
 						</td>
 					</s:if>

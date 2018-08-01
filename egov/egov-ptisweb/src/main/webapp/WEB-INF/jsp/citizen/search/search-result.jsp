@@ -57,7 +57,7 @@
 		}
 
 		function onlinePayTaxForm(propertyId){
-			document.viewform.action='${pageContext.request.contextPath}/citizen/collection/collection-searchOwnerDetails.action?assessmentNumber='+propertyId+'&isCitizen=true';
+			document.viewform.action='/../ptis/citizen/collection/collection-generateBill.action?assessmentNumber='+propertyId;
 			document.viewform.submit(); 
 		}
 
