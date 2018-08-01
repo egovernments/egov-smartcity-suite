@@ -45,46 +45,21 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.eventnotification.utils;
 
-public final class Constants {
+package org.egov.eventnotification.config;
 
-    public static final String MODULE_NAME = "Eventnotification";
+import org.springframework.context.annotation.ConditionContext;
+import org.springframework.context.annotation.ConfigurationCondition;
+import org.springframework.core.type.AnnotatedTypeMetadata;
 
-    public static final String ID = "id";
-    public static final String NAME = "name";
-    public static final String EVENT_HOST = "eventhost";
-    public static final String DDMMYYYY = "dd/MM/yyyy";
-    public static final String EVENT_LIST = "eventList";
-    public static final String MODE = "mode";
-    public static final String MODE_VIEW = "view";
-    public static final String MODE_CREATE = "create";
-    public static final String EVENT = "event";
-    public static final String NOTIFICATION_DRAFT = "notificationDraft";
-    public static final String HOUR_LIST = "hourList";
-    public static final String MINUTE_LIST = "minuteList";
-    public static final String FAIL = "fail";
-    public static final String DRAFT_LIST = "draftList";
-    public static final String NOTIFICATION_SCHEDULE = "notificationSchedule";
-    public static final String SCHEDULER_REPEAT_LIST = "repeatList";
-    public static final String MESSAGE_USERNAME = "{{userName}}";
-    public static final int ZERO = 0;
-    public static final String MINUTES_CRON = "{minutes}";
-    public static final String HOURS_CRON = "{hours}";
-    public static final String DAY_CRON = "{day}";
-    public static final String MONTH_CRON = "{month}";
-    public static final String ACTIVE = "Active";
-    public static final String INTERESTED_COUNT = "interestedCount";
-    public static final String URL = "url";
-    public static final String EVENT_FILENAME = "fileName";
-    public static final String EVENT_FILESTOREID = "fileStoreId";
-    public static final int MAX_TEN = 10;
-    public static final String MESSAGE = "message";
-    public static final String EVENT_NOTIFICATION_GROUP = "EVENT_NOTIFICATION_GROUP";
-    public static final String TRIGGER = "eventNotificationTrigger";
-    public static final String BEANNOTIFSCH = "eventNotificationScheduler";
+public class NotificationConfigCondition implements ConfigurationCondition {
+    @Override
+    public ConfigurationPhase getConfigurationPhase() {
+        return ConfigurationPhase.REGISTER_BEAN;
+    }
 
-    private Constants() {
-
+    @Override
+    public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+        return context.getEnvironment().getProperty("firebase.enabled", Boolean.class);
     }
 }

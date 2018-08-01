@@ -47,63 +47,34 @@
  */
 package org.egov.eventnotification.config;
 
-import static org.quartz.CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.sql.DataSource;
-
-import org.egov.eventnotification.entity.contracts.EventNotificationProperties;
 import org.egov.eventnotification.scheduler.NotificationSchedulerJob;
 import org.egov.infra.config.scheduling.QuartzSchedulerConfiguration;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
+import javax.sql.DataSource;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 @Configuration
+@Conditional(NotificationConfigCondition.class)
 public class NotificationSchedulerConfiguration extends QuartzSchedulerConfiguration {
 
-    @Autowired
-    private EventNotificationProperties properties;
-
-    @Bean(destroyMethod = "destroy")
-    public SchedulerFactoryBean notificationScheduler(DataSource dataSource) {
-        SchedulerFactoryBean evntnotifScheduler = createScheduler(dataSource);
-        evntnotifScheduler.setSchedulerName("eventnotification-scheduler");
-        evntnotifScheduler.setAutoStartup(true);
-        evntnotifScheduler.setOverwriteExistingJobs(true);
-        evntnotifScheduler.setTriggers(
-                eventnotificationCronTrigger().getObject());
-        return evntnotifScheduler;
+    @Bean(name = "eventNotificationScheduler", destroyMethod = "destroy")
+    public SchedulerFactoryBean eventNotificationScheduler(DataSource dataSource) {
+        SchedulerFactoryBean notificationScheduler = createScheduler(dataSource);
+        notificationScheduler.setSchedulerName("eventnotification-scheduler");
+        notificationScheduler.setAutoStartup(true);
+        notificationScheduler.setOverwriteExistingJobs(true);
+        notificationScheduler.setStartupDelay(1500);
+        return notificationScheduler;
     }
 
-    @Bean(name = "eventnotificationScheduler", destroyMethod = "destroy")
-    public SchedulerFactoryBean eventnotificationScheduler(DataSource dataSource) {
-        SchedulerFactoryBean notifScheduler = createScheduler(dataSource);
-        notifScheduler.setSchedulerName("notification-scheduler");
-        notifScheduler.setAutoStartup(true);
-        notifScheduler.setOverwriteExistingJobs(true);
-        notifScheduler.setStartupDelay(1500);
-        return notifScheduler;
-    }
-
-    @Bean
-    public CronTriggerFactoryBean eventnotificationCronTrigger() {
-        CronTriggerFactoryBean evntnotifCron = new CronTriggerFactoryBean();
-        evntnotifCron.setJobDetail(eventnotificationJobDetail().getObject());
-        evntnotifCron.setGroup("EVENT_NOTIFICATION_TRIGGER_GROUP");
-        evntnotifCron.setName("EVENT_NOTIFICATION_TRIGGER");
-        evntnotifCron.setCronExpression(properties.getDefaultCron());
-        evntnotifCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
-        return evntnotifCron;
-    }
-
-    @Bean(name = "eventnotificationJobDetail")
-    public JobDetailFactoryBean eventnotificationJobDetail() {
+    @Bean(name = "eventNotificationJobDetail")
+    public JobDetailFactoryBean eventNotificationJobDetail() {
         JobDetailFactoryBean notificationJobDetail = new JobDetailFactoryBean();
         notificationJobDetail.setGroup("EVENT_NOTIFICATION_JOB_GROUP");
         notificationJobDetail.setName("EVENT_NOTIFICATION_JOB");
