@@ -118,22 +118,19 @@ public class PreambleWorkflowCustomImpl implements PreambleWorkflowCustom {
             } else {
                 wfInitiator = assignmentService.getPrimaryAssignmentForUser(councilPreamble.getCreatedBy().getId());
                 if (wfInitiator == null)
-                    wfInitiator = assignmentService.getAllAssignmentsByEmpId(councilPreamble
+                    wfInitiator = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(councilPreamble
                             .getCreatedBy().getId()).get(0);
             }
             
         }
         if(wfInitiator==null && !ANONYMOUS.equalsIgnoreCase(user.getUsername())){
-            wfInitiator =assignmentService.getAllAssignmentsByEmpId(user.getId()).get(0);
+            wfInitiator =assignmentService.getAllActiveEmployeeAssignmentsByEmpId(user.getId()).get(0);
         }
         if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0))) {
             pos = positionMasterService.getPositionById(approvalPosition);
         } else {
             pos = wfInitiator != null ? wfInitiator.getPosition() : null;
-        }
-        
-
-        
+        }   
         // New Entry
         if (councilPreamble!=null &&  councilPreamble.getState()==null||CouncilConstants.REJECTED.equalsIgnoreCase(councilPreamble.getStatus().getCode())
                 || CouncilConstants.WF_ANONYMOUSPREAMBLE_STATE.equalsIgnoreCase(councilPreamble.getState().getValue())
