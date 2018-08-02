@@ -52,7 +52,10 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.exception.ApplicationValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.HttpMediaTypeException;
+import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.FlashMap;
@@ -68,6 +71,7 @@ public final class GlobalExceptionHandler {
     private static final String DEFAULT_ERROR_VIEW = "/error/500";
     private static final String ERROR_MESSAGE = "An error occurred while processing the request : {}";
     private static final String VALIDATION_ERROR_MESSAGE = "Validation failed on request : {}";
+    private static final String INVALID_REQUEST = "Invalid request : {}";
 
     @ExceptionHandler({Exception.class, ApplicationRuntimeException.class})
     public RedirectView handleGenericException(HttpServletRequest request, Exception e) {
@@ -79,6 +83,27 @@ public final class GlobalExceptionHandler {
     public RedirectView handleValidationException(HttpServletRequest request, ApplicationValidationException e) {
         if (LOG.isWarnEnabled())
             LOG.warn(VALIDATION_ERROR_MESSAGE, request.getRequestURL(), e);
+        return errorView(request, e.getMessage());
+    }
+
+    @ExceptionHandler(HttpMediaTypeException.class)
+    public RedirectView handleMediaTypeException(HttpServletRequest request, HttpMediaTypeException e) {
+        if (LOG.isWarnEnabled())
+            LOG.warn(INVALID_REQUEST, request.getRequestURL(), e);
+        return errorView(request, e.getMessage());
+    }
+
+    @ExceptionHandler(HttpMessageConversionException.class)
+    public RedirectView handleMessageConversionException(HttpServletRequest request, HttpMessageConversionException e) {
+        if (LOG.isWarnEnabled())
+            LOG.warn(INVALID_REQUEST, request.getRequestURL(), e);
+        return errorView(request, e.getMessage());
+    }
+
+    @ExceptionHandler(ServletRequestBindingException.class)
+    public RedirectView handleRequestBindingException(HttpServletRequest request, ServletRequestBindingException e) {
+        if (LOG.isWarnEnabled())
+            LOG.warn(INVALID_REQUEST, request.getRequestURL(), e);
         return errorView(request, e.getMessage());
     }
 
