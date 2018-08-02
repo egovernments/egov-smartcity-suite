@@ -52,7 +52,6 @@ import org.apache.commons.lang.StringUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
-import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
@@ -100,9 +99,6 @@ public class SewerageReassignService {
     private SewerageWorkflowService sewerageWorkflowService;
 
     @Autowired
-    private PositionMasterService positionMasterService;
-
-    @Autowired
     private AppConfigValueService appConfigValuesService;
 
     public User getLoggedInUser() {
@@ -118,8 +114,8 @@ public class SewerageReassignService {
         List<String> designationCodes = designationService.getDesignationsByNames(Arrays.asList(designationStr.split(",")))
                 .stream().map(Designation::getCode).collect(Collectors.toList());
         List<Assignment> assignments = new ArrayList<>();
-        departmentCodes.stream().forEach(s -> assignments.addAll(assignmentService
-                .findByDepartmentCodeAndDesignationCode(s, designationCodes)));
+        departmentCodes.stream().forEach(deptCode -> assignments.addAll(assignmentService
+                .findByDepartmentCodeAndDesignationCode(deptCode, designationCodes)));
         assignments.removeAll(assignmentService.getAllAssignmentsByEmpId(ApplicationThreadLocals.getUserId()));
         return assignments
                 .stream()

@@ -58,8 +58,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import static java.util.Collections.emptyList;
-
 @Service
 @Transactional(readOnly = true)
 public class DesignationService {
