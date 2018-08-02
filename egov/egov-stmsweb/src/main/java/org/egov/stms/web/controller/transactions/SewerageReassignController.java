@@ -95,7 +95,7 @@ public class SewerageReassignController {
     public String getReassign(@ModelAttribute("reassign") final SewerageReassignDetails reassignDetails, final Model model,
                               @PathVariable final String appType, @PathVariable final String applicationNum,
                               final HttpServletRequest request) {
-        Map<Long, String> employeeWithPosition = sewerageReassignService.getEmployees();
+        Map<String, String> employeeWithPosition = sewerageReassignService.getEmployees();
         if (!employeeWithPosition.isEmpty())
             model.addAttribute("assignments", employeeWithPosition);
 
@@ -110,7 +110,8 @@ public class SewerageReassignController {
     @RequestMapping(method = RequestMethod.POST)
     public String update(@ModelAttribute("reassign") final SewerageReassignDetails reassignDetails, final Model model,
                          @Valid final BindingResult errors, final HttpServletRequest request) {
-        Long positionId = Long.valueOf(request.getParameter("approvalPosition"));
+        String[] selectedId = request.getParameter("approvalPosition").split("-");
+        Long positionId = Long.valueOf(selectedId[1]);
         Position position = positionMasterService.getPositionById(positionId);
         Assignment assignment = assignmentService.getAssignmentsForPosition(positionId).get(0);
         String applicationNo = sewerageReassignService.getSewerageApplication(reassignDetails, position);

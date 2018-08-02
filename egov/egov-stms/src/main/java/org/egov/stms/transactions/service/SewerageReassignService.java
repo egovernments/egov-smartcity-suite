@@ -105,13 +105,14 @@ public class SewerageReassignService {
         return securityUtils.getCurrentUser();
     }
 
-    public Map<Long, String> getEmployees() {
+    public Map<String, String> getEmployees() {
 
         final String designationStr = sewerageWorkflowService.getDesignationForCscOperatorWorkFlow();
         final String departmentStr = sewerageWorkflowService.getDepartmentForReassignment();
         List<String> departmentCodes = departmentService.getDepartmentsByNames(Arrays.asList(departmentStr.split(",")))
                 .stream().map(Department::getCode).collect(Collectors.toList());
-        List<String> designationCodes = designationService.getDesignationsByNames(Arrays.asList(designationStr.split(",")))
+        List<String> designationCodes = designationService.getDesignationsByNames(Arrays.asList(StringUtils
+                .upperCase(designationStr).split(",")))
                 .stream().map(Designation::getCode).collect(Collectors.toList());
         List<Assignment> assignments = new ArrayList<>();
         departmentCodes.stream().forEach(deptCode -> assignments.addAll(assignmentService
@@ -119,7 +120,8 @@ public class SewerageReassignService {
         assignments.removeAll(assignmentService.getAllAssignmentsByEmpId(ApplicationThreadLocals.getUserId()));
         return assignments
                 .stream()
-                .collect(Collectors.toMap(assignment -> assignment.getPosition().getId(),
+                .collect(Collectors.toMap(assignment -> new StringBuffer().append(assignment.getId())
+                                .append("-").append(assignment.getPosition().getId()).toString(),
                         assignment -> new StringBuffer().append(assignment.getEmployee().getName())
                                 .append("-").append(assignment.getPosition().getName()).toString()));
     }

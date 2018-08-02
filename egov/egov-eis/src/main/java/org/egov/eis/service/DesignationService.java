@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2018  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -57,6 +57,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+
+import static java.util.Collections.emptyList;
 
 @Service
 @Transactional(readOnly = true)
@@ -113,7 +115,7 @@ public class DesignationService {
     }
 
     public List<Designation> getDesignationsByNames(List<String> names) {
-        return designationRepository.findAllByNameIn(names);
+        return names.isEmpty() ? emptyList() : designationRepository.getDesignationsByNames(names);
     }
 
     public List<Designation> getDesignationsByName(String name) {

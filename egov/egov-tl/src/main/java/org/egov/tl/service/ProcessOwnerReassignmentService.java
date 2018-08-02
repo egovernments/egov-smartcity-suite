@@ -96,7 +96,8 @@ public class ProcessOwnerReassignmentService {
 
         return assignments
                 .stream()
-                .collect(Collectors.toMap(assignment -> assignment.getPosition().getId().toString(),
+                .collect(Collectors.toMap(assignment -> new StringBuffer().append(assignment.getId())
+                                .append("-").append(assignment.getPosition().getId()).toString(),
                         assignment -> new StringBuffer().append(assignment.getEmployee().getName())
                                 .append("-").append(assignment.getPosition().getName()).toString()));
     }
