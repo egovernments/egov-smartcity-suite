@@ -232,6 +232,7 @@
         <jcaptcha.version>2.0-alpha-1</jcaptcha.version>
         <javaxt.core.version>1.7.8</javaxt.core.version>
         <pdfbox.version>2.0.4</pdfbox.version>
+        <bouncycastle.version>1.60</bouncycastle.version>
         <!-- Plugin dependency versions-->
         <mvn.javadoc.plugin.version>2.10.4</mvn.javadoc.plugin.version>
         <mvn.release.plugin.version>2.5.3</mvn.release.plugin.version>
@@ -626,6 +627,12 @@
                 <version>${jasypt-version}</version>
                 <scope>compile</scope>
             </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk15on</artifactId>
+                <version>${bouncycastle.version}</version>
+                <scope>provided</scope>
+            </dependency>
             <!-- SECURITY END -->
 
             <!-- EMBEDDED REDIS STARTS -->
@@ -731,6 +738,16 @@
                 <groupId>com.lowagie</groupId>
                 <artifactId>itext</artifactId>
                 <version>${itext-version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.bouncycastle</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>bouncycastle</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>commons-javaflow</groupId>
@@ -1288,6 +1305,10 @@
         <dependency>
             <groupId>org.jasypt</groupId>
             <artifactId>jasypt-hibernate4</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15on</artifactId>
         </dependency>
         <dependency>
             <groupId>net.coobird</groupId>
