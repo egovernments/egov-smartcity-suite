@@ -47,7 +47,25 @@
  */
 package org.egov.wtms.application.service;
 
+import static org.egov.wtms.utils.constants.WaterTaxConstants.BILLTYPE_MANUAL;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.INPROGRESS;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_CITIZEN;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
+import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.demand.model.EgDemand;
 import org.egov.ptis.client.util.PropertyTaxUtil;
@@ -72,19 +90,6 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.egov.wtms.utils.constants.WaterTaxConstants.INPROGRESS;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
 
 @Service
 @Transactional(readOnly = true)
@@ -118,6 +123,9 @@ public class ConnectionDetailService {
 
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
+
+    @Autowired
+    private FinancialYearDAO financialYearDAO;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -480,15 +488,25 @@ public class ConnectionDetailService {
                 && applicationDocument.getDocumentDate() == null ? false : true;
     }
 
+    @SuppressWarnings("unchecked")
     public List<SearchWaterTaxBillDetail> getValueByModuleType() {
-        final StringBuilder queryStr = new StringBuilder();
-        queryStr.append("select  bill.consumer_id as \"consumerNumber\", bill.user_id as \"userId\",bill.bill_no as \"billNo\",dcbview.curr_balance as  \"dueAmount\"  " +
-                "from eg_bill bill, egwtr_mv_dcb_view dcbview, egpushbox_userfcmdevice event " +
-                "where dcbview.hscno= bill.consumer_id " +
-                "AND  event.userId = bill.user_id " +
-                "AND bill.module_id =(select id from eg_module where name = '"+MODULE_NAME+"') order By bill.consumer_id");
+        final StringBuilder queryStr = new StringBuilder(800);
+        CFinancialYear finYear = financialYearDAO.getFinancialYearByDate(new Date());
+        queryStr.append(
+                "select bill.consumer_id as \"consumerNumber\", bill.user_id as \"userId\",bill.bill_no as \"billNo\",dcbview.curr_balance as  \"dueAmount\"  ")
+                .append(" from eg_bill bill, egwtr_mv_dcb_view dcbview, egpushbox_userfcmdevice event, eg_user usr, ")
+                .append(" egpt_basic_property basicproperty, egpt_property_owner_info ownerinfo")
+                .append(" where dcbview.hscno= bill.consumer_id AND event.userId = usr.id AND dcbview.propertyid=basicproperty.propertyid AND")
+                .append(" ownerinfo.basicproperty=basicproperty.id AND ownerinfo.owner=usr.id AND usr.type =:userType ")
+                .append(" AND bill.id_bill_type=(select id from eg_bill_type where code=:billType)")
+                .append(" AND bill.issue_date>=:startDate AND bill.issue_date<=:endDate")
+                .append(" AND bill.module_id =(select id from eg_module where name =:moduleName) order By bill.consumer_id ");
         final Query query = entityManager.unwrap(Session.class).createSQLQuery(queryStr.toString());
-
+        query.setParameter("userType", ROLE_CITIZEN);
+        query.setParameter("moduleName", MODULE_NAME);
+        query.setParameter("billType", BILLTYPE_MANUAL);
+        query.setParameter("startDate", finYear.getStartingDate());
+        query.setParameter("endDate", finYear.getEndingDate());
         query.setResultTransformer(new AliasToBeanResultTransformer(SearchWaterTaxBillDetail.class));
         return query.list();
     }
