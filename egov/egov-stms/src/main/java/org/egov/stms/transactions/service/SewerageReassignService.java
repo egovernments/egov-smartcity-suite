@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -67,11 +67,11 @@ import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPCONFKEY_REASSIGN_BUTTONENABLED;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.MODULE_NAME;
@@ -109,44 +109,23 @@ public class SewerageReassignService {
         return securityUtils.getCurrentUser();
     }
 
-    public Long getLoggedInPositiontionId() {
-        Position position = null;
-        Long userId = ApplicationThreadLocals.getUserId();
-        if (userId != null && userId.intValue() != 0) {
-            position = positionMasterService.getPositionByUserId(userId);
-        }
-        return position.getId();
-    }
-
-    public Map<Long, String> getemployees() {
+    public Map<Long, String> getEmployees() {
 
         final String designationStr = sewerageWorkflowService.getDesignationForCscOperatorWorkFlow();
         final String departmentStr = sewerageWorkflowService.getDepartmentForReassignment();
-        final String[] departments = departmentStr.split(",");
-        final String[] designations = designationStr.split(",");
-        Department dept = null;
-        Map<Long, String> empWithPosition = new HashMap<>();
-        for (String department : departments) {
-            dept = departmentService.getDepartmentByName(department);
-            for (String designationName : Arrays.asList(designations)) {
-                List<Designation> desig = designationService.getDesignationsByName(designationName);
-                for (Designation designation : desig) {
-                    List<Assignment> assignments = assignmentService.findAllAssignmentsByDeptDesigAndDates(dept.getId(),
-                            designation.getId(), new Date());
-                    if (!assignments.isEmpty()) {
-                        for (Assignment assignment : assignments) {
-                            if (assignment != null && assignment.getPosition() != null
-                                    && !(getLoggedInPositiontionId()).equals(assignment.getPosition().getId())) {
-                                empWithPosition.put(assignment.getPosition().getId(),
-                                        assignment.getEmployee().getName().concat("/")
-                                                .concat(assignment.getPosition().getName()));
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return empWithPosition;
+        List<String> departmentCodes = departmentService.getDepartmentsByNames(Arrays.asList(departmentStr.split(",")))
+                .stream().map(Department::getCode).collect(Collectors.toList());
+        List<String> designationCodes = designationService.getDesignationsByNames(Arrays.asList(designationStr.split(",")))
+                .stream().map(Designation::getCode).collect(Collectors.toList());
+        List<Assignment> assignments = new ArrayList<>();
+        departmentCodes.stream().forEach(s -> assignments.addAll(assignmentService
+                .findByDepartmentCodeAndDesignationCode(s, designationCodes)));
+        assignments.removeAll(assignmentService.getAllAssignmentsByEmpId(ApplicationThreadLocals.getUserId()));
+        return assignments
+                .stream()
+                .collect(Collectors.toMap(assignment -> assignment.getPosition().getId(),
+                        assignment -> new StringBuffer().append(assignment.getEmployee().getName())
+                                .append("-").append(assignment.getPosition().getName()).toString()));
     }
 
     public String getSewerageApplication(final SewerageReassignDetails sewerageReassignDetails, final Position position) {

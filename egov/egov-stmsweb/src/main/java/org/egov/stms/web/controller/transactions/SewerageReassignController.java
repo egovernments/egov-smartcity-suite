@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -93,9 +93,9 @@ public class SewerageReassignController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String getReassign(@ModelAttribute("reassign") final SewerageReassignDetails reassignDetails, final Model model,
-            @PathVariable final String appType, @PathVariable final String applicationNum,
-            final HttpServletRequest request) {
-        Map<Long, String> employeeWithPosition = sewerageReassignService.getemployees();
+                              @PathVariable final String appType, @PathVariable final String applicationNum,
+                              final HttpServletRequest request) {
+        Map<Long, String> employeeWithPosition = sewerageReassignService.getEmployees();
         if (!employeeWithPosition.isEmpty())
             model.addAttribute("assignments", employeeWithPosition);
 
@@ -109,7 +109,7 @@ public class SewerageReassignController {
 
     @RequestMapping(method = RequestMethod.POST)
     public String update(@ModelAttribute("reassign") final SewerageReassignDetails reassignDetails, final Model model,
-            @Valid final BindingResult errors, final HttpServletRequest request) {
+                         @Valid final BindingResult errors, final HttpServletRequest request) {
         Long positionId = Long.valueOf(request.getParameter("approvalPosition"));
         Position position = positionMasterService.getPositionById(positionId);
         Assignment assignment = assignmentService.getAssignmentsForPosition(positionId).get(0);
