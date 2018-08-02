@@ -563,6 +563,8 @@ public class SearchNoticesAction extends SearchFormAction {
 
     @Override
     public void validate() {
+        if (wardId == null || wardId == -1)
+            addActionError(getText("mandatory.noticeward"));
         if (noticeType == null || noticeType.equals("-1"))
             addActionError(getText("mandatory.noticeType"));
         if (noticeFromDate != null && noticeToDate == null)
