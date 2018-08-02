@@ -100,7 +100,7 @@ public class PropertyTaxReportService {
         DefaultersResultForNotification result = new DefaultersResultForNotification();
         List<DefaultersResultHolder> defaultersResultHolderList = new ArrayList<>();
         for (PropertyMVInfo mvInfo : propertyDetails) {
-            if (mvInfo.getTotalDue().compareTo(BigDecimal.ZERO) == 1) {
+            if (mvInfo.getTotalDue() != null && mvInfo.getTotalDue().compareTo(BigDecimal.ZERO) == 1) {
                 DefaultersResultHolder defaultersResultHolder = new DefaultersResultHolder();
                 defaultersResultHolder.setAssessmentNo(mvInfo.getPropertyId());
                 defaultersResultHolder.setMobileNumber(mvInfo.getMobileNumber());
