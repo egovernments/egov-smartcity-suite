@@ -74,37 +74,37 @@ public final class GlobalExceptionHandler {
     private static final String INVALID_REQUEST = "Invalid request : {}";
 
     @ExceptionHandler({Exception.class, ApplicationRuntimeException.class})
-    public RedirectView handleGenericException(HttpServletRequest request, Exception e) {
-        LOG.error(ERROR_MESSAGE, request.getRequestURL(), e);
-        return errorView(request, e.getMessage());
+    public RedirectView handleGenericException(HttpServletRequest request, Exception exp) {
+        LOG.error(ERROR_MESSAGE, request.getRequestURL(), exp);
+        return errorView(request, exp.getMessage());
     }
 
     @ExceptionHandler(ApplicationValidationException.class)
-    public RedirectView handleValidationException(HttpServletRequest request, ApplicationValidationException e) {
+    public RedirectView handleValidationException(HttpServletRequest request, ApplicationValidationException ave) {
         if (LOG.isWarnEnabled())
-            LOG.warn(VALIDATION_ERROR_MESSAGE, request.getRequestURL(), e);
-        return errorView(request, e.getMessage());
+            LOG.warn(VALIDATION_ERROR_MESSAGE, request.getRequestURL(), ave);
+        return errorView(request, ave.getMessage());
     }
 
     @ExceptionHandler(HttpMediaTypeException.class)
-    public RedirectView handleMediaTypeException(HttpServletRequest request, HttpMediaTypeException e) {
+    public RedirectView handleMediaTypeException(HttpServletRequest request, HttpMediaTypeException hmte) {
         if (LOG.isWarnEnabled())
-            LOG.warn(INVALID_REQUEST, request.getRequestURL(), e);
-        return errorView(request, e.getMessage());
+            LOG.warn(INVALID_REQUEST, request.getRequestURL(), hmte);
+        return errorView(request, hmte.getMessage());
     }
 
     @ExceptionHandler(HttpMessageConversionException.class)
-    public RedirectView handleMessageConversionException(HttpServletRequest request, HttpMessageConversionException e) {
+    public RedirectView handleMessageConversionException(HttpServletRequest request, HttpMessageConversionException hmce) {
         if (LOG.isWarnEnabled())
-            LOG.warn(INVALID_REQUEST, request.getRequestURL(), e);
-        return errorView(request, e.getMessage());
+            LOG.warn(INVALID_REQUEST, request.getRequestURL(), hmce);
+        return errorView(request, hmce.getMessage());
     }
 
     @ExceptionHandler(ServletRequestBindingException.class)
-    public RedirectView handleRequestBindingException(HttpServletRequest request, ServletRequestBindingException e) {
+    public RedirectView handleRequestBindingException(HttpServletRequest request, ServletRequestBindingException srbe) {
         if (LOG.isWarnEnabled())
-            LOG.warn(INVALID_REQUEST, request.getRequestURL(), e);
-        return errorView(request, e.getMessage());
+            LOG.warn(INVALID_REQUEST, request.getRequestURL(), srbe);
+        return errorView(request, srbe.getMessage());
     }
 
     public RedirectView errorView(HttpServletRequest request, String message) {
