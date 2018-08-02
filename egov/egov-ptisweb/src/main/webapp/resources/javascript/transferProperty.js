@@ -63,8 +63,11 @@ function calculateMutationFee() {
 
 calculateMutationFeeSuccess = function(req, res) {
 	results = res.results;
-	if (results != '') {
+	if (results != '' && results[0].MutationFee != 0) {
 		document.getElementById("mutationFee").value = results[0].MutationFee;
+	}
+	else{
+		bootbox.alert('Mutation fee is not defined for the given Document value or Market value (whichever in greater)');
 	}
 }
 
