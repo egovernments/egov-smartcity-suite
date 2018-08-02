@@ -94,7 +94,7 @@
 				<div class="row">
 					<div class="text-center">
 						<a href="javascript:void(0);" id="eventSearch"
-							class="btn btn-primary"><spring:message code='lbl.search' /></a
+							class="btn btn-primary"><spring:message code='lbl.search' /></a>
 					</div>
 				</div>
 			</div>

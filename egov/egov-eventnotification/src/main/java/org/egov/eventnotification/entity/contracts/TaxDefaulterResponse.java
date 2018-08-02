@@ -54,26 +54,26 @@ import com.google.gson.annotations.SerializedName;
 
 public class TaxDefaulterResponse {
 
-    @SerializedName("status")
+	@SerializedName("hasNext")
     @Expose
-    private Status status;
-    @SerializedName("result")
+	private boolean hasNext;
+    @SerializedName("defaultersResultHolderList")
     @Expose
-    private List<UserTaxInformation> result = null;
+    private List<UserTaxInformation> defaultersResultHolderList = null;
 
-    public Status getStatus() {
-        return status;
-    }
+	public boolean isHasNext() {
+		return hasNext;
+	}
 
-    public void setStatus(Status status) {
-        this.status = status;
-    }
+	public void setHasNext(boolean hasNext) {
+		this.hasNext = hasNext;
+	}
 
-    public List<UserTaxInformation> getResult() {
-        return result;
-    }
+	public List<UserTaxInformation> getDefaultersResultHolderList() {
+		return defaultersResultHolderList;
+	}
 
-    public void setResult(List<UserTaxInformation> result) {
-        this.result = result;
-    }
+	public void setDefaultersResultHolderList(List<UserTaxInformation> defaultersResultHolderList) {
+		this.defaultersResultHolderList = defaultersResultHolderList;
+	}
 }

@@ -210,9 +210,9 @@ public class ScheduleService {
                 req.setPageSize(1000);
                 HttpEntity<TaxDefaulterRequest> request = new HttpEntity<>(req, headers);
                 response = restTemplate.postForEntity(url, request, TaxDefaulterResponse.class);
-                uerTaxInformationList.addAll(response.getBody().getResult());
+                uerTaxInformationList.addAll(response.getBody().getDefaultersResultHolderList());
                 page++;
-            } while (response.getBody().getStatus().getHasNextPage().equalsIgnoreCase("true"));
+            } while (response.getBody().isHasNext());
             return uerTaxInformationList;
 
         }
