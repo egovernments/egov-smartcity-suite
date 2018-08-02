@@ -112,7 +112,6 @@
 						</div>
 					</div>
 				</div>
-				<c:if test="${source ne 'CHPK'}">
 				<div id="witness-info" class="tab-pane fade">
 					<div class="panel panel-primary" data-collapsed="0">
 						<div class="panel-body custom-form ">
@@ -156,7 +155,6 @@
 						</div>
 					</div>
 				</div>
-				</c:if>
 				<div id="checklist-info" class="tab-pane fade">
 					<div class="panel panel-primary" data-collapsed="0">
 						<div class="panel-body custom-form ">
