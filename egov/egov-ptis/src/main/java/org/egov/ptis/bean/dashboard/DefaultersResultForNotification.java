@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2018  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -45,29 +45,23 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.api.adapter;
+package org.egov.ptis.bean.dashboard;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
+import java.util.List;
 
-import org.egov.api.adapter.DataAdapter;
-import org.egov.ptis.domain.entity.property.view.PropertyMVInfo;
-import org.springframework.stereotype.Component;
-
-import java.lang.reflect.Type;
-
-@Component
-public class DefaultersResultAdapter extends DataAdapter<PropertyMVInfo> {
-
-	@Override
-	public JsonElement serialize(PropertyMVInfo defaultersResultObj, Type type, JsonSerializationContext context) {
-		JsonObject jsonObject = new JsonObject();
-		jsonObject.addProperty("assessmentNo", defaultersResultObj.getPropertyId());
-		jsonObject.addProperty("ownerName", defaultersResultObj.getOwnerName());
-		jsonObject.addProperty("mobileNumber", defaultersResultObj.getMobileNumber());
-		jsonObject.addProperty("totalDue", defaultersResultObj.getTotalDue());
-		return jsonObject;
-	}
-
+public class DefaultersResultForNotification {
+    private List<DefaultersResultHolder> defaultersResultHolderList;
+    private boolean hasNext;
+    public List<DefaultersResultHolder> getDefaultersResultHolderList() {
+        return defaultersResultHolderList;
+    }
+    public void setDefaultersResultHolderList(List<DefaultersResultHolder> defaultersResultHolderList) {
+        this.defaultersResultHolderList = defaultersResultHolderList;
+    }
+    public boolean isHasNext() {
+        return hasNext;
+    }
+    public void setHasNext(boolean hasNext) {
+        this.hasNext = hasNext;
+    }
 }

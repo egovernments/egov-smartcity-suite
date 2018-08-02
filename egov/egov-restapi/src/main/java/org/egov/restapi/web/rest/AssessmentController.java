@@ -47,6 +47,19 @@
  */
 package org.egov.restapi.web.rest;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeMap;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -56,8 +69,10 @@ import org.egov.infra.utils.StringUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.ptis.bean.AssessmentInfo;
+import org.egov.ptis.bean.dashboard.DefaultersResultForNotification;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
+import org.egov.ptis.domain.entity.property.contract.TaxDefaultersRequest;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.DrainageEnum;
 import org.egov.ptis.domain.model.ErrorDetails;
@@ -72,6 +87,7 @@ import org.egov.ptis.domain.model.TaxCalculatorRequest;
 import org.egov.ptis.domain.model.TaxCalculatorResponse;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
+import org.egov.ptis.domain.service.report.PropertyTaxReportService;
 import org.egov.restapi.model.AssessmentRequest;
 import org.egov.restapi.model.LocalityCodeDetails;
 import org.egov.restapi.model.OwnershipCategoryDetails;
@@ -81,22 +97,11 @@ import org.egov.restapi.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeMap;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 /**
  * The AssessmentService class is used as the RESTFul service to handle user request and response.
@@ -106,12 +111,14 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  */
 @RestController
 @Scope(scopeName=ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class AssessmentService {
+public class AssessmentController {
 
     @Autowired
     private PropertyExternalService propertyExternalService;
     @Autowired
     private ValidationUtil validationUtil;
+    @Autowired
+    private PropertyTaxReportService propertyTaxReportService;
 
     /**
      * This method is used for handling user request for assessment details.
@@ -764,5 +771,11 @@ public class AssessmentService {
         mapper.configure(SerializationConfig.Feature.AUTO_DETECT_FIELDS, true);
         mapper.setDateFormat(ChequePayment.CHEQUE_DATE_FORMAT);
         return mapper.readValue(jsonString, cls);
+    }
+    
+    @PostMapping(value = "/property/taxDefaulters", produces = APPLICATION_JSON_VALUE)
+    public DefaultersResultForNotification getPropertyTaxDefaulters(@RequestBody TaxDefaultersRequest defaultersRequest,
+            final HttpServletRequest request) {
+        return propertyTaxReportService.getResultList(defaultersRequest);
     }
 }

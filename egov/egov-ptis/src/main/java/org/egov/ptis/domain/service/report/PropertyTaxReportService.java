@@ -47,10 +47,15 @@
  */
 package org.egov.ptis.domain.service.report;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
+import org.egov.ptis.bean.dashboard.DefaultersResultForNotification;
+import org.egov.ptis.bean.dashboard.DefaultersResultHolder;
 import org.egov.ptis.domain.entity.property.BaseRegisterReportRequest;
+import org.egov.ptis.domain.entity.property.contract.TaxDefaultersRequest;
 import org.egov.ptis.domain.entity.property.view.PropertyMVInfo;
 import org.egov.ptis.repository.reports.PropertyMVInfoRepository;
 import org.egov.ptis.repository.spec.BaseRegisterSpec;
@@ -83,10 +88,30 @@ public class PropertyTaxReportService {
     }
 
     @ReadOnly
-    public Page<PropertyMVInfo> getLatest(boolean mobileOnly, Integer page, Integer pageSize) {
-        if (mobileOnly)
-            return propertyMVInfoRepository.findAllByMobileNumberNotNull(new PageRequest(page - 1, pageSize));
+    public DefaultersResultForNotification getResultList(final TaxDefaultersRequest defaultersRequest) {
+        Page<PropertyMVInfo> propertyDetails = null;
+        if (defaultersRequest.getMobileOnly())
+            propertyDetails = propertyMVInfoRepository
+                    .findAllByMobileNumberNotNull(
+                            new PageRequest(defaultersRequest.getPage() - 1, defaultersRequest.getPageSize()));
         else
-            return propertyMVInfoRepository.findAll(new PageRequest(page - 1, pageSize));
+            propertyDetails = propertyMVInfoRepository
+                    .findAll(new PageRequest(defaultersRequest.getPage() - 1, defaultersRequest.getPageSize()));
+        DefaultersResultForNotification result = new DefaultersResultForNotification();
+        List<DefaultersResultHolder> defaultersResultHolderList = new ArrayList<>();
+        for (PropertyMVInfo mvInfo : propertyDetails) {
+            if (mvInfo.getTotalDue().compareTo(BigDecimal.ZERO) == 1) {
+                DefaultersResultHolder defaultersResultHolder = new DefaultersResultHolder();
+                defaultersResultHolder.setAssessmentNo(mvInfo.getPropertyId());
+                defaultersResultHolder.setMobileNumber(mvInfo.getMobileNumber());
+                defaultersResultHolder.setOwnerName(mvInfo.getOwnerName());
+                defaultersResultHolder.setTotalDue(mvInfo.getTotalDue());
+                defaultersResultHolderList.add(defaultersResultHolder);
+            }
+        }
+        result.setDefaultersResultHolderList(defaultersResultHolderList);
+        result.setHasNext(propertyDetails.hasNext());
+
+        return result;
     }
 }
