@@ -71,4 +71,9 @@ public class WaterChargesSurveyDashboardController {
         return surveyDashboardService.getAggregatedSurveyDetails(surveyDashboardRequest);
     }
 
+    @GetMapping(value = "/applicationdetails", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<WaterChargeSurveyDashboardResponse> showApplicationDetails(WaterChargeSurveyDashboardRequest surveyDashboardRequest) {
+        return surveyDashboardService.getApplicationDetails(surveyDashboardRequest);
+    }
+
 }

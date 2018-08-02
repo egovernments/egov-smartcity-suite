@@ -49,26 +49,21 @@ package org.egov.wtms.entity.es;
 
 public class WaterChargeSurveyDashboardRequest {
 
-    private String ulbGrade;
     private String ulbCode;
     private String ulbName;
     private String regionName;
     private String districtName;
     private String wardName;
-    private String localityName;
     private String functionaryName;
     private String applicationNumber;
     private String aggregationLevel;
     private String fromDate;
     private String toDate;
-
-    public String getUlbGrade() {
-        return ulbGrade;
-    }
-
-    public void setUlbGrade(String ulbGrade) {
-        this.ulbGrade = ulbGrade;
-    }
+    private String bpl;
+    private String sanctionIssued;
+    private String executionIssued;
+    private String pendingSanction;
+    private String pendingExecution;
 
     public String getUlbCode() {
         return ulbCode;
@@ -110,14 +105,6 @@ public class WaterChargeSurveyDashboardRequest {
         this.wardName = wardName;
     }
 
-    public String getLocalityName() {
-        return localityName;
-    }
-
-    public void setLocalityName(String localityName) {
-        this.localityName = localityName;
-    }
-
     public String getFunctionaryName() {
         return functionaryName;
     }
@@ -156,5 +143,45 @@ public class WaterChargeSurveyDashboardRequest {
 
     public void setToDate(String toDate) {
         this.toDate = toDate;
+    }
+
+    public String getBpl() {
+        return bpl;
+    }
+
+    public void setBpl(String bpl) {
+        this.bpl = bpl;
+    }
+
+    public String getSanctionIssued() {
+        return sanctionIssued;
+    }
+
+    public void setSanctionIssued(String sanctionIssued) {
+        this.sanctionIssued = sanctionIssued;
+    }
+
+    public String getExecutionIssued() {
+        return executionIssued;
+    }
+
+    public void setExecutionIssued(String executionIssued) {
+        this.executionIssued = executionIssued;
+    }
+
+    public String getPendingSanction() {
+        return pendingSanction;
+    }
+
+    public void setPendingSanction(String pendingSanction) {
+        this.pendingSanction = pendingSanction;
+    }
+
+    public String getPendingExecution() {
+        return pendingExecution;
+    }
+
+    public void setPendingExecution(String pendingExecution) {
+        this.pendingExecution = pendingExecution;
     }
 }

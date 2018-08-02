@@ -47,6 +47,7 @@
  */
 package org.egov.wtms.entity.es;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.Date;
@@ -65,6 +66,11 @@ public class WaterChargeSurveyDashboardResponse {
     private String localityName = EMPTY;
     private String functionaryName = EMPTY;
     private String applicationNumber = EMPTY;
+    private String address = EMPTY;
+    private String applicantName = EMPTY;
+    private String connectionStatus = EMPTY;
+    private String applicationURL = EMPTY;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date applicationDate;
     private Date workOrderDate;
     private Date executionDate;
@@ -227,5 +233,37 @@ public class WaterChargeSurveyDashboardResponse {
 
     public void setConnectionAverageDays(double connectionAverageDays) {
         this.connectionAverageDays = connectionAverageDays;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getApplicantName() {
+        return applicantName;
+    }
+
+    public void setApplicantName(String applicantName) {
+        this.applicantName = applicantName;
+    }
+
+    public String getConnectionStatus() {
+        return connectionStatus;
+    }
+
+    public void setConnectionStatus(String connectionStatus) {
+        this.connectionStatus = connectionStatus;
+    }
+
+    public String getApplicationURL() {
+        return applicationURL;
+    }
+
+    public void setApplicationURL(String applicationURL) {
+        this.applicationURL = applicationURL;
     }
 }

@@ -57,6 +57,7 @@ import java.util.Date;
 
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATER_CHARGES_SCHEME_INDEX;
 import static org.springframework.data.elasticsearch.annotations.DateFormat.date_optional_time;
+import static org.springframework.data.elasticsearch.annotations.FieldIndex.analyzed;
 import static org.springframework.data.elasticsearch.annotations.FieldIndex.not_analyzed;
 import static org.springframework.data.elasticsearch.annotations.FieldType.Date;
 import static org.springframework.data.elasticsearch.annotations.FieldType.String;
@@ -151,6 +152,12 @@ public class WaterChargesDashboardIndex {
 
     @Field(type = FieldType.Double)
     private Double nonBplExecution;
+
+    @Field(type = String, index = analyzed)
+    private String address;
+
+    @Field(type = String, index = not_analyzed)
+    private String applicantName;
 
     public String getId() {
         return id;
@@ -382,5 +389,21 @@ public class WaterChargesDashboardIndex {
 
     public void setNonBplExecution(Double nonBplExecution) {
         this.nonBplExecution = nonBplExecution;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getApplicantName() {
+        return applicantName;
+    }
+
+    public void setApplicantName(String applicantName) {
+        this.applicantName = applicantName;
     }
 }

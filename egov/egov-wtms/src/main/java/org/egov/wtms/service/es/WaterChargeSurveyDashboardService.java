@@ -55,20 +55,27 @@ import org.egov.wtms.entity.es.WaterChargeSurveyDashboardRequest;
 import org.egov.wtms.entity.es.WaterChargeSurveyDashboardResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms.Bucket;
 import org.elasticsearch.search.aggregations.metrics.sum.Sum;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CATEGORY_BPL;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATER_CHARGES_SCHEME_INDEX;
+import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.elasticsearch.index.query.QueryBuilders.termQuery;
@@ -90,6 +97,12 @@ public class WaterChargeSurveyDashboardService {
     private static final String NON_BPL_EXECUTED = "nonBplExecution";
     private static final String APPLICATION_CREATED_DATE = "applicationCreatedDate";
     private static final String AGGREGATION_WISE = "aggregationWise";
+    private static final String SANCTION_ISSUED = "workOrderIssued";
+    private static final String CONNECTION_CATEGORY = "connectionCategory";
+    private static final String CONNECTION_EXECUTED = "connectionExecuted";
+    private static final String TRUE = "true";
+    private static final String FALSE = "false";
+    private static final String YES = "YES";
 
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
@@ -125,15 +138,15 @@ public class WaterChargeSurveyDashboardService {
         BoolQueryBuilder boolQuery = new BoolQueryBuilder();
         if (isNotBlank(surveyDashboardRequest.getRegionName()))
             boolQuery = boolQuery.filter(termQuery(REGION_NAME, surveyDashboardRequest.getRegionName()));
-        else if (isNotBlank(surveyDashboardRequest.getDistrictName()))
+        if (isNotBlank(surveyDashboardRequest.getDistrictName()))
             boolQuery = boolQuery.filter(matchQuery(DISTRICT_NAME, surveyDashboardRequest.getDistrictName()));
-        else if (isNotBlank(surveyDashboardRequest.getUlbName()))
+        if (isNotBlank(surveyDashboardRequest.getUlbName()))
             boolQuery = boolQuery.filter(matchQuery(CITY_NAME, surveyDashboardRequest.getUlbName()));
-        else if (isNotBlank(surveyDashboardRequest.getUlbCode()))
+        if (isNotBlank(surveyDashboardRequest.getUlbCode()))
             boolQuery = boolQuery.filter(matchQuery(CITY_CODE, surveyDashboardRequest.getUlbCode()));
-        else if (isNotBlank(surveyDashboardRequest.getWardName()))
-            boolQuery = boolQuery.filter(matchQuery(ELECTION_WARD, surveyDashboardRequest.getWardName()));
-        else if (isNotBlank(surveyDashboardRequest.getFunctionaryName()))
+        if (isNotBlank(surveyDashboardRequest.getWardName()))
+            boolQuery = boolQuery.filter(termQuery(ELECTION_WARD, surveyDashboardRequest.getWardName()));
+        if (isNotBlank(surveyDashboardRequest.getFunctionaryName()))
             boolQuery = boolQuery.filter(matchQuery(FUNCTIONARY_NAME, surveyDashboardRequest.getFunctionaryName()));
         if (isNotBlank(surveyDashboardRequest.getFromDate()))
             boolQuery = boolQuery.filter(rangeQuery(APPLICATION_CREATED_DATE).gte(surveyDashboardRequest.getFromDate()));
@@ -230,5 +243,54 @@ public class WaterChargeSurveyDashboardService {
         connectionCount.setNonBPLConnection(nonBPLCount.getValue());
         connectionCount.setTotalConnection(bplCount.getValue() + nonBPLCount.getValue());
         return connectionCount;
+    }
+
+    public List<WaterChargeSurveyDashboardResponse> getApplicationDetails(WaterChargeSurveyDashboardRequest request) {
+        String aggregationField = ELECTION_WARD;
+        if (isNotBlank(request.getAggregationLevel()))
+            aggregationField = request.getAggregationLevel();
+
+        AggregationBuilder aggregationBuilder = AggregationBuilders.terms(AGGREGATION_WISE).field(aggregationField).size(100);
+        SearchResponse response = elasticsearchTemplate.getClient().prepareSearch(WATER_CHARGES_SCHEME_INDEX).setSize(0)
+                .setQuery(prepareQuery(request).filter(prepareQueryGetApplication(request)))
+                .addAggregation(aggregationBuilder).setSize(5000)
+                .execute().actionGet();
+
+        List<WaterChargeSurveyDashboardResponse> responseList = new ArrayList<>();
+        SearchHits hitFields = response.getHits();
+        for (SearchHit hit : hitFields) {
+            Map<String, Object> sourceAsMap = hit.sourceAsMap();
+            WaterChargeSurveyDashboardResponse surveyResponse = new WaterChargeSurveyDashboardResponse();
+            surveyResponse.setApplicationNumber(sourceAsMap.get("applicationNumber").toString());
+            surveyResponse.setApplicationDate(
+                    new DateTime(sourceAsMap.get(APPLICATION_CREATED_DATE).toString()).toDate());
+            surveyResponse.setApplicantName(sourceAsMap.get("applicantName").toString());
+            surveyResponse.setAddress(sourceAsMap.get("address").toString());
+            surveyResponse.setConnectionStatus(sourceAsMap.get("connectionStatus").toString());
+            surveyResponse.setApplicationURL(sourceAsMap.get("applicationUrl").toString());
+            responseList.add(surveyResponse);
+        }
+        return responseList;
+
+    }
+
+    private QueryBuilder prepareQueryGetApplication(WaterChargeSurveyDashboardRequest request) {
+        QueryBuilder queryBuilder;
+        if (YES.equals(request.getPendingExecution()) || YES.equals(request.getPendingSanction())) {
+            queryBuilder = YES.equals(request.getPendingExecution())
+                    ? boolQuery().must(matchQuery(SANCTION_ISSUED, FALSE))
+                    : boolQuery().must(matchQuery(SANCTION_ISSUED, TRUE)).must(matchQuery(CONNECTION_EXECUTED, FALSE));
+        } else {
+            queryBuilder = YES.equals(request.getBpl())
+                    ? boolQuery().must(matchQuery(CONNECTION_CATEGORY, CATEGORY_BPL))
+                    : boolQuery().mustNot(matchQuery(CONNECTION_CATEGORY, CATEGORY_BPL));
+
+            if (YES.equals(request.getSanctionIssued())) {
+                queryBuilder = boolQuery().must(matchQuery(SANCTION_ISSUED, TRUE));
+            } else if (YES.equals(request.getExecutionIssued())) {
+                queryBuilder = boolQuery().must(matchQuery(CONNECTION_EXECUTED, TRUE));
+            }
+        }
+        return queryBuilder;
     }
 }
