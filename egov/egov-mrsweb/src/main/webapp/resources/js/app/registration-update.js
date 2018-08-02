@@ -71,18 +71,6 @@ $(document)
 					$(".btn-primary")
 							.click(
 									function(e) {
-										if ($('#allowDaysValidation').val() == "YES") {
-											var noOfDays = validateApplicationDate();
-											if (noOfDays > 90) {
-												bootbox
-														.alert("Application will not be accepted beyond 90 days from the date of marriage "
-																+ $(
-																		'#txt-dateOfMarriage')
-																		.val());
-												return false;
-											}
-										}
-
 										var action = $('#workFlowAction').val();
 										if (action == 'Forward') {
 											validateMandatoryOnApprove(action);

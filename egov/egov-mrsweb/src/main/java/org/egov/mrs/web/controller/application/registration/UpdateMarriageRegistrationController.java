@@ -286,7 +286,6 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
         if (isNotBlank(request.getParameter(WORK_FLOW_ACTION)))
             workFlowAction = request.getParameter(WORK_FLOW_ACTION);
         if(!marriageRegistration.getSource().equals(Source.CHPK.toString())){
-        validateApplicationDate(marriageRegistration, errors);
         marriageFormValidator.validate(marriageRegistration, errors, "registration");
         }
         if(marriageRegistration.getSource().equals(Source.CHPK.toString())){
