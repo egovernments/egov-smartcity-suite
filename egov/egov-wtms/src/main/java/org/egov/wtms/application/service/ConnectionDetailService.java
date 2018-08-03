@@ -493,7 +493,7 @@ public class ConnectionDetailService {
         final StringBuilder queryStr = new StringBuilder(800);
         CFinancialYear finYear = financialYearDAO.getFinancialYearByDate(new Date());
         queryStr.append(
-                "select bill.consumer_id as \"consumerNumber\", bill.user_id as \"userId\",bill.bill_no as \"billNo\",dcbview.curr_balance as  \"dueAmount\"  ")
+                "select bill.consumer_id as \"consumerNumber\", usr.id as \"userId\",bill.bill_no as \"billNo\",dcbview.curr_balance as  \"dueAmount\"  ")
                 .append(" from eg_bill bill, egwtr_mv_dcb_view dcbview, egpushbox_userfcmdevice event, eg_user usr, ")
                 .append(" egpt_basic_property basicproperty, egpt_property_owner_info ownerinfo")
                 .append(" where dcbview.hscno= bill.consumer_id AND event.userId = usr.id AND dcbview.propertyid=basicproperty.propertyid AND")
@@ -508,6 +508,7 @@ public class ConnectionDetailService {
         query.setParameter("startDate", finYear.getStartingDate());
         query.setParameter("endDate", finYear.getEndingDate());
         query.setResultTransformer(new AliasToBeanResultTransformer(SearchWaterTaxBillDetail.class));
+        
         return query.list();
     }
 }
