@@ -345,10 +345,14 @@ public class PropertyMVInfo implements Serializable {
     }
 
     public BigDecimal getTotalDue() {
-        return aggrArrDmd.subtract(arrearCollection).add(aggrCurrFirstHalfDmd).add(aggrCurrSecondHalfDmd)
-                .subtract(aggrCurrFirstHalfColl.add(aggrCurrSecondHalfColl)).add(aggrArrearPenaly)
-                .subtract(aggrArrearPenalyColl).add(aggrCurrFirstHalfPenaly).add(aggrCurrSecondHalfPenaly)
-                .subtract(aggrCurrFirstHalfPenalyColl).subtract(aggrCurrSecondHalfPenalyColl);
+    	return aggrArrDmd.subtract(arrearCollection == null ? BigDecimal.ZERO : arrearCollection).add(aggrCurrFirstHalfDmd)
+                .add(aggrCurrSecondHalfDmd)
+                .subtract(aggrCurrFirstHalfColl.add(aggrCurrSecondHalfColl)).add(aggrArrearPenaly == null ? BigDecimal.ZERO : aggrArrearPenaly)
+                .subtract(aggrArrearPenalyColl == null ? BigDecimal.ZERO : aggrArrearPenalyColl)
+                .add(aggrCurrFirstHalfPenaly == null ? BigDecimal.ZERO : aggrCurrFirstHalfPenaly).add(aggrCurrSecondHalfPenaly == null ? BigDecimal.ZERO : aggrCurrSecondHalfPenaly)
+                .subtract(aggrCurrFirstHalfPenalyColl == null ? BigDecimal.ZERO
+                        : aggrCurrFirstHalfPenalyColl)
+                .subtract(aggrCurrSecondHalfPenalyColl == null ? BigDecimal.ZERO : aggrCurrSecondHalfPenalyColl);
     }
 
     public String getGisRefNo() {
