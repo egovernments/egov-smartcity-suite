@@ -48,8 +48,10 @@
 
 package org.egov.ptis.domain.entity.property.view;
 
-import org.egov.infra.admin.master.entity.Boundary;
-import org.hibernate.annotations.Immutable;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -59,10 +61,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.Set;
+
+import org.egov.infra.admin.master.entity.Boundary;
+import org.hibernate.annotations.Immutable;
 
 @Entity
 @Immutable
@@ -119,62 +120,62 @@ public class PropertyMVInfo implements Serializable {
     private Integer sourceID;
 
     @Column(name = "SITAL_AREA")
-    private BigDecimal sitalArea;
+    private BigDecimal sitalArea = BigDecimal.ZERO;
 
     @Column(name = "TOTAL_BUILTUP_AREA")
-    private BigDecimal toalBuiltUpArea;
+    private BigDecimal toalBuiltUpArea = BigDecimal.ZERO;
 
     @Column(name = "LATEST_STATUS")
     private Integer latestStatus;
 
     @Column(name = "AGGREGATE_CURRENT_FIRSTHALF_DEMAND")
-    private BigDecimal aggrCurrFirstHalfDmd;
+    private BigDecimal aggrCurrFirstHalfDmd = BigDecimal.ZERO;
 
     @Column(name = "AGGREGATE_CURRENT_SECONDHALF_DEMAND")
-    private BigDecimal aggrCurrSecondHalfDmd;
+    private BigDecimal aggrCurrSecondHalfDmd = BigDecimal.ZERO;
 
     @Column(name = "AGGREGATE_ARREAR_DEMAND")
-    private BigDecimal aggrArrDmd;
+    private BigDecimal aggrArrDmd = BigDecimal.ZERO;
 
     @Column(name = "CURRENT_FIRSTHALF_COLLECTION")
-    private BigDecimal aggrCurrFirstHalfColl;
+    private BigDecimal aggrCurrFirstHalfColl = BigDecimal.ZERO;
 
     @Column(name = "CURRENT_SECONDHALF_COLLECTION")
-    private BigDecimal aggrCurrSecondHalfColl;
+    private BigDecimal aggrCurrSecondHalfColl = BigDecimal.ZERO;
 
     @Column(name = "ARREARCOLLECTION")
-    private BigDecimal aggrArrColl;
+    private BigDecimal aggrArrColl = BigDecimal.ZERO;
 
     @Column(name = "PEN_AGGR_ARREAR_DEMAND")
-    private BigDecimal aggrArrearPenaly;
+    private BigDecimal aggrArrearPenaly = BigDecimal.ZERO;
 
     @Column(name = "PEN_AGGR_ARR_COLL")
-    private BigDecimal aggrArrearPenalyColl;
+    private BigDecimal aggrArrearPenalyColl = BigDecimal.ZERO;
 
     @Column(name = "PEN_AGGR_CURRENT_FIRSTHALF_DEMAND")
-    private BigDecimal aggrCurrFirstHalfPenaly;
+    private BigDecimal aggrCurrFirstHalfPenaly = BigDecimal.ZERO;
 
     @Column(name = "PEN_AGGR_CURRENT_FIRSTHALF_COLL")
-    private BigDecimal aggrCurrFirstHalfPenalyColl;
+    private BigDecimal aggrCurrFirstHalfPenalyColl = BigDecimal.ZERO;
 
     @Column(name = "PEN_AGGR_CURRENT_SECONDHALF_DEMAND")
-    private BigDecimal aggrCurrSecondHalfPenaly;
+    private BigDecimal aggrCurrSecondHalfPenaly = BigDecimal.ZERO;
 
     @Column(name = "PEN_AGGR_CURRENT_SECONDHALF_COLL")
-    private BigDecimal aggrCurrSecondHalfPenalyColl;
+    private BigDecimal aggrCurrSecondHalfPenalyColl = BigDecimal.ZERO;
 
     @Column(name = "ARREAR_DEMAND")
-    private BigDecimal arrearDemand;
+    private BigDecimal arrearDemand = BigDecimal.ZERO;
 
     @Column(name = "ARREAR_COLLECTION")
-    private BigDecimal arrearCollection;
+    private BigDecimal arrearCollection = BigDecimal.ZERO;
 
     private String gisRefNo;
 
     @OneToMany(targetEntity = InstDmdCollInfo.class, cascade = CascadeType.ALL, mappedBy = "propMatView")
     private Set<InstDmdCollInfo> instDmdColl;
 
-    private BigDecimal alv;
+    private BigDecimal alv = BigDecimal.ZERO;
 
     private Boolean isExempted;
 
@@ -204,10 +205,10 @@ public class PropertyMVInfo implements Serializable {
 
     private String pattaNo;
 
-    private BigDecimal marketValue;
+    private BigDecimal marketValue = BigDecimal.ZERO;
 
     @Column(name = "CAPITALVALUE")
-    private BigDecimal capitalValue;
+    private BigDecimal capitalValue = BigDecimal.ZERO;
 
     private Date assessmentDate;
 
@@ -217,11 +218,11 @@ public class PropertyMVInfo implements Serializable {
 
     private String duePeriod;
 
-    private BigDecimal advance;
+    private BigDecimal advance = BigDecimal.ZERO;
 
-    private BigDecimal rebate;
+    private BigDecimal rebate = BigDecimal.ZERO;
 
-    private BigDecimal adjustment;
+    private BigDecimal adjustment = BigDecimal.ZERO;
 
     public Integer getBasicPropertyID() {
         return basicPropertyID;
@@ -344,14 +345,10 @@ public class PropertyMVInfo implements Serializable {
     }
 
     public BigDecimal getTotalDue() {
-        return aggrArrDmd.subtract(arrearCollection == null ? BigDecimal.ZERO : arrearCollection).add(aggrCurrFirstHalfDmd)
-                .add(aggrCurrSecondHalfDmd)
+        return aggrArrDmd.subtract(arrearCollection).add(aggrCurrFirstHalfDmd).add(aggrCurrSecondHalfDmd)
                 .subtract(aggrCurrFirstHalfColl.add(aggrCurrSecondHalfColl)).add(aggrArrearPenaly)
-                .subtract(aggrArrearPenalyColl == null ? BigDecimal.ZERO : aggrArrearPenalyColl)
-                .add(aggrCurrFirstHalfPenaly).add(aggrCurrSecondHalfPenaly)
-                .subtract(aggrCurrFirstHalfPenalyColl == null ? BigDecimal.ZERO
-                        : aggrCurrFirstHalfPenalyColl)
-                .subtract(aggrCurrSecondHalfPenalyColl == null ? BigDecimal.ZERO : aggrCurrSecondHalfPenalyColl);
+                .subtract(aggrArrearPenalyColl).add(aggrCurrFirstHalfPenaly).add(aggrCurrSecondHalfPenaly)
+                .subtract(aggrCurrFirstHalfPenalyColl).subtract(aggrCurrSecondHalfPenalyColl);
     }
 
     public String getGisRefNo() {
@@ -662,7 +659,7 @@ public class PropertyMVInfo implements Serializable {
         return electionWard;
     }
 
-    public void setElectionWard(Boundary electionWard) {
+    public void setElectionWard(final Boundary electionWard) {
         this.electionWard = electionWard;
     }
 
