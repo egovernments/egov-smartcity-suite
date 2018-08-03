@@ -71,6 +71,10 @@ import org.springframework.validation.Validator;
 
 @Component
 public class MarriageAPIValidator implements Validator {
+    
+    private static final String MOBILE_PATTERN = "[0-9]{10}";
+    private Pattern pattern= Pattern.compile(MOBILE_PATTERN);
+    private Matcher matcher;
 
     @Autowired
     private BoundaryTypeRepository boundaryTypeRepository;
@@ -85,10 +89,7 @@ public class MarriageAPIValidator implements Validator {
     public boolean supports(Class<?> clazz) {
         return MarriageRegistrationRequest.class.equals(clazz);
     }
-    private static final String MOBILE_PATTERN = "[0-9]{10}";
-    private Pattern pattern= Pattern.compile(MOBILE_PATTERN);
-    private Matcher matcher;
-
+    
     @Override
     public void validate(final Object target, final Errors errors) {
 
