@@ -83,9 +83,9 @@ public class ViewMarriageRegistrationController extends MarriageRegistrationCont
 
     @RequestMapping(value = "/view/{registrationId}", method = RequestMethod.GET)
     public String viewRegistration(@PathVariable final Long registrationId, @RequestParam(required = false) String mode,
-            final Model model) throws IOException {
+            final Model model) {
         final MarriageRegistration registration = marriageRegistrationService.get(registrationId);
-
+        model.addAttribute("source",registration.getSource());
         prepareMrgRegForView(mode, model, registration);
         return "registration-view";
     }
@@ -114,7 +114,7 @@ public class ViewMarriageRegistrationController extends MarriageRegistrationCont
     
     @RequestMapping(value = "/viewapplication/{applnNo}", method = RequestMethod.GET)
     public String viewRegistrationByApplnNumber(@PathVariable final String applnNo, @RequestParam(required = false) String mode,
-            final Model model) throws IOException {
+            final Model model) {
         if (null == applnNo) {
             model.addAttribute("message", "msg.appln.no.not.found");
             return "marriagecommon-error";

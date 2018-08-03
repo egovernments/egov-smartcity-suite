@@ -66,10 +66,11 @@
 			modelAttribute="registration" id="form-registrationview"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
-
 					  <ul class="nav nav-tabs" id="settingstab">
 					    <li class="active"><a data-toggle="tab" href="#applicant-info">Applicant's Information</a></li>
+					    <c:if test="${source ne 'CHPK'}">
 					    <li><a data-toggle="tab" href="#witness-info">Witnesses Information</a></li>
+					    </c:if>
 					    <li><a data-toggle="tab" href="#checklist">Checklist</a></li>
 					  </ul>
 					  <div class="tab-content">

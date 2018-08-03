@@ -57,6 +57,18 @@
 		</div>
 	</div>
 	
+	<c:if test="${source eq 'CHPK' && registration.datasheetFileStore!=null}">
+	<div class="form-group">
+	<label class="col-sm-4 add-margin text-right">
+		<spring:message code="lbl.datasheet"/>
+	</label>
+	<div class="col-sm-2 add-margin text-center">
+		<a onclick="window.open('/mrs/registration/downloadMarriagefile/${registration.datasheetFileStore.fileStoreId}', 
+             'newwindow','width=800,height=600,scrollbars=yes'); "data-gallery> ${registration.datasheetFileStore.fileName}</a>
+	</div>
+	</div>
+	</c:if>
+	
 	<div class="form-group">
 		<label class="col-sm-offset-6 view-content">
 			<spring:message code="lbl.submitted.by.couple"/>
