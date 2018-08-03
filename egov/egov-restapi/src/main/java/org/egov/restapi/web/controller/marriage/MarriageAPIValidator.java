@@ -47,6 +47,14 @@
  */
 package org.egov.restapi.web.controller.marriage;
 
+import static org.egov.mrs.application.MarriageConstants.MAX_SIZE;
+import static org.egov.mrs.application.MarriageConstants.REGISTER_NO_OF_DAYS;
+import static org.egov.mrs.application.MarriageConstants.getMarriageVenues;
+
+import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.egov.commons.service.EducationalQualificationService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
@@ -55,12 +63,11 @@ import org.egov.infra.admin.master.repository.BoundaryTypeRepository;
 import org.egov.mrs.masters.service.ReligionService;
 import org.egov.restapi.web.contracts.marriageregistration.MarriageDocumentUpload;
 import org.egov.restapi.web.contracts.marriageregistration.MarriageRegistrationRequest;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import static org.egov.mrs.application.MarriageConstants.getMarriageVenues;
-import static org.egov.mrs.application.MarriageConstants.MAX_SIZE;
 
 @Component
 public class MarriageAPIValidator implements Validator {
@@ -78,11 +85,17 @@ public class MarriageAPIValidator implements Validator {
     public boolean supports(Class<?> clazz) {
         return MarriageRegistrationRequest.class.equals(clazz);
     }
+    private static final String MOBILE_PATTERN = "[0-9]{10}";
+    private Pattern pattern= Pattern.compile(MOBILE_PATTERN);
+    private Matcher matcher;
 
     @Override
     public void validate(final Object target, final Errors errors) {
 
-        final MarriageRegistrationRequest marriageRegistrationRequest = (MarriageRegistrationRequest) target;
+        final MarriageRegistrationRequest marriageRegistrationRequest = (MarriageRegistrationRequest) target;     
+        validateBrideGroomInformation(marriageRegistrationRequest,errors);
+        validateBrideInformation(marriageRegistrationRequest,errors);
+        validateDateOfMarriage(marriageRegistrationRequest,errors);
 
         if (marriageRegistrationRequest.getLocality() != null) {
             BoundaryType locality = boundaryTypeRepository.findByNameAndHierarchyTypeName("Locality", "LOCATION");
@@ -116,6 +129,53 @@ public class MarriageAPIValidator implements Validator {
                     "venue should be in [Residence,Function Hall,Worship Place,Others ");
         }
 
+    }
+    
+    private void validateBrideGroomInformation(final MarriageRegistrationRequest registration, final Errors errors) {
+        if (registration.getHusbnadAgeInYearsAsOnMarriage() != null
+                && registration.getHusbnadAgeInYearsAsOnMarriage() <= 21)
+            errors.rejectValue("husbnadAgeInYearsAsOnMarriage", "BrideGroom age should be more than 21 yrs",
+                    "BrideGroom should be more than 21 yrs");
+        if (registration.getHusbandAgeInMonthsAsOnMarriage() != null
+                && registration.getHusbandAgeInMonthsAsOnMarriage() > 12)
+            errors.rejectValue("husbandAgeInMonthsAsOnMarriage", "Invalid month for BrideGroom", "Invalid month for BrideGroom");
+        validateBrideGroomMobileNo(registration, errors);
+    }
+
+    private void validateBrideInformation(final MarriageRegistrationRequest registration, final Errors errors) {
+        if (registration.getWifeAgeInYearsAsOnMarriage() != null
+                && registration.getWifeAgeInYearsAsOnMarriage() <= 18)
+            errors.rejectValue("wifeAgeInYearsAsOnMarriage", "Bride age should be more than 18 yrs",
+                    "Bride age should be more than 18 yrs");
+        if (registration.getWifeAgeInMonthsAsOnMarriage() != null
+                && registration.getWifeAgeInMonthsAsOnMarriage() > 12)
+            errors.rejectValue("wifeAgeInMonthsAsOnMarriage", "Invalid month for bride", "Invalid month for bride");
+        validateBrideMobileNo(registration, errors);
+    }
+
+    public void validateBrideMobileNo(final MarriageRegistrationRequest marriageRegistrationRequest, final Errors errors) {
+        if (marriageRegistrationRequest.getWifeContactInfo().getMobileNo() != null) {
+            matcher = pattern.matcher(marriageRegistrationRequest.getWifeContactInfo().getMobileNo());
+            if (!matcher.matches() || marriageRegistrationRequest.getWifeContactInfo().getMobileNo().length() != 10)
+                errors.rejectValue("wifeContactInfo.mobileNo", "Invalid MobileNo. for Bride", "Invalid MobileNo. for Bride");
+        }
+    }
+
+    public void validateBrideGroomMobileNo(final MarriageRegistrationRequest marriageRegistrationRequest, final Errors errors) {
+        if (marriageRegistrationRequest.getHusbandContactInfo().getMobileNo() != null) {
+            matcher = pattern.matcher(marriageRegistrationRequest.getHusbandContactInfo().getMobileNo());
+            if (!matcher.matches() || marriageRegistrationRequest.getWifeContactInfo().getMobileNo().length() != 10)
+                errors.rejectValue("husbandContactInfo.mobileNo", "Invalid MobileNo. for BrideGroom",
+                        "Invalid MobileNo. for BrideGroom");
+        }
+    }
+
+    private void validateDateOfMarriage(final MarriageRegistrationRequest marriageRegistrationRequest, final Errors errors) {
+        if (!new DateTime(new Date()).isBefore(new DateTime(marriageRegistrationRequest.getDateOfMarriage()).plusDays(Integer
+                .parseInt(REGISTER_NO_OF_DAYS) + 1))) {
+            errors.rejectValue("dateOfMarriage", "Invalid marriage date",
+                    "Application will not be accepted beyond 90 days from the date of marriage");
+        }
     }
 
     public void validateDocuments(final Object target, final Errors errors) {
