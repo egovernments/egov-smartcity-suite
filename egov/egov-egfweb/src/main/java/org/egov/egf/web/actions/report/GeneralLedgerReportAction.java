@@ -49,7 +49,6 @@ package org.egov.egf.web.actions.report;
 
 import com.exilant.eGov.src.reports.GeneralLedgerReport;
 import com.exilant.eGov.src.reports.GeneralLedgerReportBean;
-import com.exilant.exility.common.TaskFailedException;
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 import org.apache.log4j.Logger;
@@ -74,10 +73,7 @@ import org.hibernate.FlushMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.LinkedList;
-import java.util.List;
 
 @ParentPackage("egov")
 @Results({
@@ -88,63 +84,37 @@ import java.util.List;
 })
 public class GeneralLedgerReportAction extends BaseFormAction {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 4734431707050536319L;
     private static final Logger LOGGER = Logger.getLogger(GeneralLedgerReportAction.class);
-    private GeneralLedgerReportBean generalLedgerReportBean = new GeneralLedgerReportBean();
 
     @Autowired
-    @Qualifier("persistenceService")
-    private PersistenceService persistenceService;
-    @Autowired
-    @Qualifier("generalLedgerReport")
-    private GeneralLedgerReport generalLedgerReport;
+    private transient AppConfigValueService appConfigValuesService;
 
-    protected DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-    protected LinkedList generalLedgerDisplayList = new LinkedList();
-    String heading = "";
-    List<CChartOfAccounts> allChartOfAccounts;
-    String parentForDetailedCode = "";
-    private String glCode;
-    @Autowired
-    AppConfigValueService appConfigValuesService;
     @Autowired
     @Qualifier("chartOfAccountsService")
-    private PersistenceService<CChartOfAccounts, Long> chartOfAccountsService;
+    private transient PersistenceService<CChartOfAccounts, Long> chartOfAccountsService;
 
-    public GeneralLedgerReportAction() {
-        LOGGER.error("creating instance of GeneralLedgerReportAction ");
-    }
+    @Autowired
+    @Qualifier("generalLedgerReport")
+    private transient GeneralLedgerReport generalLedgerReport;
+
+    private transient GeneralLedgerReportBean generalLedgerReportBean = new GeneralLedgerReportBean();
+    private LinkedList generalLedgerDisplayList = new LinkedList();
+    private String heading = "";
 
     @Override
     public Object getModel() {
         return generalLedgerReportBean;
     }
 
-    @SuppressWarnings("unchecked")
     public void prepareNewForm() {
         super.prepare();
 
-        allChartOfAccounts = persistenceService
-                .findAllBy(
-                        "select ca from CChartOfAccounts ca where"
-                                +
-                                " ca.glcode not in(select glcode from CChartOfAccounts where glcode like '47%' and glcode not like '471%' and glcode !='4741')"
-                                +
-                                " and ca.glcode not in (select glcode from CChartOfAccounts where glcode = '471%') " +
-                                " and ca.isActiveForPosting=true and ca.classification=4  and ca.glcode like ?", glCode + "%");
-        addDropdownData("fundList",
-                persistenceService.findAllBy(" from Fund where isactive=true and isnotleaf=false order by name"));
+        addDropdownData("fundList", persistenceService.findAllBy(" from Fund where isactive=true and isnotleaf=false order by name"));
         addDropdownData("departmentList", persistenceService.findAllBy("from Department order by name"));
         addDropdownData("functionaryList", persistenceService.findAllBy(" from Functionary where isactive=true order by name"));
-        addDropdownData("fundsourceList",
-                persistenceService.findAllBy(" from Fundsource where isactive=true order by name"));
+        addDropdownData("fundsourceList", persistenceService.findAllBy(" from Fundsource where isactive=true order by name"));
         addDropdownData("fieldList", persistenceService.findAllBy(" from Boundary b where lower(b.boundaryType.name)='ward' "));
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Inside  Prepare ........");
-
     }
 
     @SkipValidation
@@ -159,24 +129,20 @@ public class GeneralLedgerReportAction extends BaseFormAction {
             @RequiredFieldValidator(fieldName = "glCode1", message = "", key = FinancialConstants.REQUIRED),
             @RequiredFieldValidator(fieldName = "fund_id", message = "", key = FinancialConstants.REQUIRED),
             @RequiredFieldValidator(fieldName = "startDate", message = "", key = FinancialConstants.REQUIRED),
-            @RequiredFieldValidator(fieldName = "endDate", message = "", key = FinancialConstants.REQUIRED) })
+            @RequiredFieldValidator(fieldName = "endDate", message = "", key = FinancialConstants.REQUIRED)})
     @ValidationErrorPage(value = FinancialConstants.STRUTS_RESULT_PAGE_SEARCH)
     @SkipValidation
     @Action(value = "/report/generalLedgerReport-ajaxSearch")
     @ReadOnly
-    public String ajaxSearch() throws TaskFailedException {
+    public String ajaxSearch() {
 
         persistenceService.getSession().setDefaultReadOnly(true);
         persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("GeneralLedgerAction | Search | start");
         try {
             generalLedgerDisplayList = generalLedgerReport.getGeneralLedgerList(generalLedgerReportBean);
-        } catch (final Exception e) {
-
+        } catch (Exception e) {
+            LOGGER.error("Error while getting General Ledger", e);
         }
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("GeneralLedgerAction | list | End");
         heading = getGLHeading();
         generalLedgerReportBean.setHeading(getGLHeading());
         prepareNewForm();
@@ -184,19 +150,14 @@ public class GeneralLedgerReportAction extends BaseFormAction {
     }
 
     @Action(value = "/report/generalLedgerReport-searchDrilldown")
-    public String searchDrilldown()
-    {
+    public String searchDrilldown() {
         persistenceService.getSession().setDefaultReadOnly(true);
         persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("GeneralLedgerAction | Search | start");
         try {
             generalLedgerDisplayList = generalLedgerReport.getGeneralLedgerList(generalLedgerReportBean);
-        } catch (final Exception e) {
-
+        } catch (Exception e) {
+            LOGGER.error("Error while getting General Ledger", e);
         }
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("GeneralLedgerAction | list | End");
         heading = getGLHeading();
         generalLedgerReportBean.setHeading(getGLHeading());
         prepareNewForm();
@@ -205,63 +166,53 @@ public class GeneralLedgerReportAction extends BaseFormAction {
 
     private String getGLHeading() {
 
-        String heading = "";
+        String glHeading = "";
         CChartOfAccounts glCode = new CChartOfAccounts();
         Fund fund = new Fund();
-        if (checkNullandEmpty(generalLedgerReportBean.getGlCode1()) && checkNullandEmpty(generalLedgerReportBean.getGlCode1())) {
+        if (checkNullandEmpty(generalLedgerReportBean.getGlCode1())) {
             glCode = (CChartOfAccounts) persistenceService.find("from CChartOfAccounts where glcode = ?",
                     generalLedgerReportBean.getGlCode1());
-            if (generalLedgerReportBean.getFund_id().isEmpty())
-            {
+            if (generalLedgerReportBean.getFund_id().isEmpty()) {
                 fund = (Fund) persistenceService.find("from Fund where id = ?", 0);
-            }
-            else
+            } else
                 fund = (Fund) persistenceService.find("from Fund where id = ?",
                         Integer.parseInt(generalLedgerReportBean.getFund_id()));
         }
-        if (fund == null)
-        {
-            heading = "General Ledger Report for " + glCode.getGlcode() + ":" + glCode.getName()
-                    + " from " + generalLedgerReportBean.getStartDate() + " to " + generalLedgerReportBean.getEndDate();
-        }
-        else
-            heading = "General Ledger Report for " + glCode.getGlcode() + ":" + glCode.getName() + " for " + fund.getName()
-                    + " from " + generalLedgerReportBean.getStartDate() + " to " + generalLedgerReportBean.getEndDate();
-        if (checkNullandEmpty(generalLedgerReportBean.getDepartmentId()))
-        {
+        if (fund == null) {
+            glHeading = new StringBuilder(50).append("General Ledger Report for ").append(glCode.getGlcode())
+                    .append(":").append(glCode.getName()).append(" from ").append(generalLedgerReportBean.getStartDate())
+                    .append(" to ").append(generalLedgerReportBean.getEndDate()).toString();
+        } else
+            glHeading = new StringBuilder(50).append("General Ledger Report for ").append(glCode.getGlcode()).append(":")
+                    .append(glCode.getName()).append(" for ").append(fund.getName()).append(" from ")
+                    .append(generalLedgerReportBean.getStartDate()).append(" to ").append(generalLedgerReportBean.getEndDate()).toString();
+        if (checkNullandEmpty(generalLedgerReportBean.getDepartmentId())) {
             final Department dept = (Department) persistenceService.find("from Department where id = ?",
                     Long.parseLong(generalLedgerReportBean.getDepartmentId()));
-            heading = heading + " under " + dept.getName() + " Department ";
+            glHeading = glHeading + " under " + dept.getName() + " Department ";
         }
-        if (checkNullandEmpty(generalLedgerReportBean.getFunctionCode()))
-        {
+        if (checkNullandEmpty(generalLedgerReportBean.getFunctionCode())) {
             final CFunction function = (CFunction) persistenceService.find("from CFunction where id = ?",
                     Long.valueOf(generalLedgerReportBean.getFunctionCodeId()));
-            heading = heading + " in " + function.getName() + " Function ";
+            glHeading = glHeading + " in " + function.getName() + " Function ";
         }
 
-        if (checkNullandEmpty(generalLedgerReportBean.getFunctionaryId()))
-        {
+        if (checkNullandEmpty(generalLedgerReportBean.getFunctionaryId())) {
             final Functionary functionary = (Functionary) persistenceService.find("from Functionary where id = ?",
                     Integer.parseInt(generalLedgerReportBean.getFunctionaryId()));
-            heading = heading + " in " + functionary.getName() + " Functionary ";
+            glHeading = glHeading + " in " + functionary.getName() + " Functionary ";
         }
 
-        if (checkNullandEmpty(generalLedgerReportBean.getFieldId()))
-        {
+        if (checkNullandEmpty(generalLedgerReportBean.getFieldId())) {
             final Boundary ward = (Boundary) persistenceService.find("from Boundary where id = ?",
                     Long.parseLong(generalLedgerReportBean.getFieldId()));
-            heading = heading + " in " + ward.getName() + " Field ";
+            glHeading = glHeading + " in " + ward.getName() + " Field ";
         }
-        return heading;
+        return glHeading;
     }
 
-    private boolean checkNullandEmpty(final String column)
-    {
-        if (column != null && !column.isEmpty())
-            return true;
-        else
-            return false;
+    private boolean checkNullandEmpty(final String column) {
+        return column != null && !column.isEmpty();
 
     }
 
@@ -269,8 +220,7 @@ public class GeneralLedgerReportAction extends BaseFormAction {
         return generalLedgerReportBean;
     }
 
-    public void setGeneralLedgerReportBean(
-            GeneralLedgerReportBean generalLedgerReportBean) {
+    public void setGeneralLedgerReportBean(GeneralLedgerReportBean generalLedgerReportBean) {
         this.generalLedgerReportBean = generalLedgerReportBean;
     }
 
