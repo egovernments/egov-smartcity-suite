@@ -134,7 +134,7 @@ public class MarriageAPIValidator implements Validator {
     
     private void validateBrideGroomInformation(final MarriageRegistrationRequest registration, final Errors errors) {
         if (registration.getHusbnadAgeInYearsAsOnMarriage() != null
-                && registration.getHusbnadAgeInYearsAsOnMarriage() <= 21)
+                && registration.getHusbnadAgeInYearsAsOnMarriage() < 21)
             errors.rejectValue("husbnadAgeInYearsAsOnMarriage", "BrideGroom age should be more than 21 yrs",
                     "BrideGroom should be more than 21 yrs");
         if (registration.getHusbandAgeInMonthsAsOnMarriage() != null
@@ -145,7 +145,7 @@ public class MarriageAPIValidator implements Validator {
 
     private void validateBrideInformation(final MarriageRegistrationRequest registration, final Errors errors) {
         if (registration.getWifeAgeInYearsAsOnMarriage() != null
-                && registration.getWifeAgeInYearsAsOnMarriage() <= 18)
+                && registration.getWifeAgeInYearsAsOnMarriage() < 18)
             errors.rejectValue("wifeAgeInYearsAsOnMarriage", "Bride age should be more than 18 yrs",
                     "Bride age should be more than 18 yrs");
         if (registration.getWifeAgeInMonthsAsOnMarriage() != null

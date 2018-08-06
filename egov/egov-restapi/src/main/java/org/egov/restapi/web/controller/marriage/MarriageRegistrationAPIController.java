@@ -47,17 +47,30 @@
  */
 package org.egov.restapi.web.controller.marriage;
 
+import static org.egov.mrs.application.MarriageConstants.APPROVED;
+import static org.egov.mrs.application.MarriageConstants.REGISTERED;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.egov.commons.entity.Source;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
+import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.utils.DateUtils;
+import org.egov.infra.utils.StringUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
+import org.egov.mrs.application.service.MarriageCertificateService;
+import org.egov.mrs.domain.entity.MarriageCertificate;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.service.MarriageRegistrationService;
 import org.egov.restapi.service.MarriageAPIService;
+import org.egov.restapi.web.contracts.marriageregistration.MarriageCertificateResponse;
 import org.egov.restapi.web.contracts.marriageregistration.MarriageDocumentUpload;
 import org.egov.restapi.web.contracts.marriageregistration.MarriageRegistrationRequest;
 import org.egov.restapi.web.contracts.marriageregistration.MarriageRegistrationResponse;
@@ -73,19 +86,26 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import static org.egov.mrs.application.MarriageConstants.APPROVED;
-import static org.egov.mrs.application.MarriageConstants.REGISTERED;
 
 
 @RestController
 public class MarriageRegistrationAPIController {
 
+    private static final String MRS_REGISTRATION_PRINTCERTFICATE = "/mrs/registration/printcertficate/";
+    private static final String DATE_FORMAT = "dd/MM/yyyy";
     @Autowired
     private MarriageAPIService marriageAPIService;
     @Autowired
     private MarriageAPIValidator marriageAPIValidator;
     @Autowired
     private MarriageRegistrationService marriageRegistrationService;
+    @Autowired
+    private MarriageCertificateService marriageCertificateService;
+    @Autowired
+    private AssignmentService assignmentService;
+    @Autowired
+    private UserService userService;
+    
 
     @PostMapping("/marriageregistration/create")
     public MarriageRegistrationResponse createMarriageRegistration(
@@ -105,6 +125,31 @@ public class MarriageRegistrationAPIController {
                     HttpStatus.OK.toString(),
                     "Marriage Application Created Successfully");
         }
+    }
+    
+    @RequestMapping(value = "/marriageregistration/getmarriagecertificate/{applicationNumber}", method = RequestMethod.GET)
+    public MarriageCertificateResponse getMarriageCertificate(
+            @PathVariable final String applicationNumber) {
+        final MarriageRegistration marriageRegistration = marriageRegistrationService.findByApplicationNo(applicationNumber);
+        if (marriageRegistration == null)
+            return new MarriageCertificateResponse(StringUtils.EMPTY,
+                    "Application Number Does not exist");
+        if (marriageRegistration.getStatus().getCode().equals(REGISTERED)
+                && marriageRegistration.getSource().equals(Source.CHPK.toString())) {
+            MarriageCertificate marriageCertificate = marriageCertificateService.getGeneratedCertificate(marriageRegistration);
+            Assignment assignment = assignmentService
+                    .getPrimaryAssignmentForUser(
+                            userService.getUsersByNameLike(marriageRegistration.getRegistrarName()).get(0).getId());
+            return new MarriageCertificateResponse(marriageRegistration.getStatus().getDescription(),
+                    ApplicationThreadLocals.getDomainURL() + MRS_REGISTRATION_PRINTCERTFICATE + marriageCertificate.getId(),
+                    marriageCertificate.getCertificateNo(),
+                    DateUtils.getFormattedDate(marriageCertificate.getCertificateDate(), DATE_FORMAT),
+                    marriageRegistration.getRegistrarName(), assignment.getDesignation().getName(),
+                    "Marriage Certificate sent Successfully");
+        } else
+            return new MarriageCertificateResponse(marriageRegistration.getStatus().getDescription(),
+                    "Marriage Certificate Not Generated this application");
+
     }
 
     @RequestMapping(value = "/marriageregistration/uploaddocuments/{applicationNo}", method = RequestMethod.POST)
