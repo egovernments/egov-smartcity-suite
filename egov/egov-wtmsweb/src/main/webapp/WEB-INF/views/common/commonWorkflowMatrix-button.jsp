@@ -95,7 +95,7 @@
 				$('#approvalComent').removeAttr('required');
 			} 
 		if(rejectbutton!='' && rejectbutton!=null && rejectbutton!='Reassign') {
-			if(rejectbutton=='Cancel') {
+			if($('#waterConnectionForm').valid() && rejectbutton=='Cancel') {
 			bootbox.confirm({
 					message:'Please confirm if you want to permanently cancel the application',
 						

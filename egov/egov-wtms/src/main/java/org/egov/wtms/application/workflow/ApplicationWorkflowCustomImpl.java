@@ -289,7 +289,8 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                 waterConnectionDetails.transition().progressWithStateCopy()
                         .withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(stateValue).withDateInfo(currentDate.toDate())
-                        .withOwner(wfInitiator != null && wfInitiator.getPosition() != null ? wfInitiator.getPosition() : null)
+                        .withOwner(wfInitiator != null && wfInitiator.getPosition() != null ? wfInitiator.getPosition()
+                                : ownerPosition)
                         .withNextAction("Application Rejected")
                         .withNatureOfTask(natureOfwork);
             }

@@ -822,7 +822,8 @@ public class WaterConnectionDetailsService {
                 || APPLICATION_STATUS_RECONNCTIONINPROGRESS.equals(waterConnectionDetails.getStatus().getCode()))
                 || APPLICATION_STATUS_FEEPAID.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
                 && (FORWARDWORKFLOWACTION.equalsIgnoreCase(workFlowAction) ||
-                APPROVEWORKFLOWACTION.equalsIgnoreCase(workFlowAction)))
+                APPROVEWORKFLOWACTION.equalsIgnoreCase(workFlowAction) || 
+               WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)))
             wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
                     additionalRule, waterConnectionDetails.getCurrentState().getValue(), pendingAction, null,
                     loggedInUserDesignation);

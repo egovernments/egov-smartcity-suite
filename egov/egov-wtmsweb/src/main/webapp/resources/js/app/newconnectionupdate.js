@@ -394,13 +394,11 @@ $(document)
 											} else if (action=='' && (status=='CREATED' || status=='CLOSERINITIATED' || status=='RECONNECTIONINITIATED')) {
 												return false;
 											}
-											else {
-												validateWorkFlowApprover(action);
-												
+											else if(action!='Cancel'){
 												if (validateForm(validator))
 													document.forms[0].submit();
 												else
-												 return false;
+													return false;
 											}
 										}
 									});
