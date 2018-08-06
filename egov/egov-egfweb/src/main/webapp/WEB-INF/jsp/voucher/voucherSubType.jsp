@@ -142,6 +142,7 @@ function onChangeVSubType(){
 		document.getElementById('partyBillDate').readOnly=true;
 		document.getElementById('voucherTypeBean.billNum').readOnly=true;
 		document.getElementById('billDate').readOnly=true;
+		document.getElementById('lblError').innerHTML = "";
 	}
 	else{
 		document.getElementById('voucherTypeBean.partyBillNum').readOnly=false;
@@ -159,8 +160,14 @@ function onChangeVSubType(){
 	
 }    
 
-function isSpecialChar(Obj)
-{
-  return true;
+function isSpecialChar(Obj){
+	var pattern=/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi;
+	if(document.getElementById('voucherTypeBean.partyName').value.match(pattern))
+	{
+		document.getElementById('lblError').innerHTML = "Special character are not allowed.. ";
+		return false;
+	}else{
+		document.getElementById('lblError').innerHTML = "";
+	}
   }
 </script>
