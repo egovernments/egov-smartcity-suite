@@ -275,7 +275,7 @@
 		
 		if(vhType =='-1' )	{
 			document.getElementById('lblError').innerHTML = "Please select voucher sub type ";
-			document.getElementById('voucherDate').focus();
+			document.getElementById('vType').focus();
 			return false;
 		}
 		if(vhDate == '' )	{
