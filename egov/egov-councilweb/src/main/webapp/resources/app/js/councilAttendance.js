@@ -47,9 +47,21 @@
  */
 
 $(document).ready(function() {
-	
+	if($('.councilcommitmem:checked').length >0 && 
+	$(".councilcommitmemchk").length ==  $('.councilcommitmem:checked').length) {
+		$('#committeechk').prop('checked', true);
+	} else {
+		$('#committeechk').prop('checked', false);
+	}
 	$(".councilcommitmem").change(function() {  
     	var $hiddenName=$(this).data('change-to');
+    	if($('.councilcommitmem:checked').length >0 && $(".councilcommitmemchk").length ==  $('.councilcommitmem:checked').length) {
+    		$('#committeechk').prop('checked', true);
+
+    	} else {
+    		$('#committeechk').prop('checked', false);
+
+    	}
     	if($(this).is(':checked')) {
     		$('input[name="'+$hiddenName+'"]').val(true);
     	} else {
@@ -70,7 +82,6 @@ $(document).ready(function() {
 			setHiddenValue(false);
 		}
 	});
-
 	$("#btnsubmit").click(function(e) { 
 		var chkbxLength = $('.councilcommitmem:checked').length;
 		if(chkbxLength <= 0) {
