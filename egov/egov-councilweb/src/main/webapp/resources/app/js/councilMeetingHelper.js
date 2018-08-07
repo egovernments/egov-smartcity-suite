@@ -128,6 +128,14 @@ $('#meetingNumber').blur(function(){
 });
 
 
+$('#meetingLocation').on('mouseleave',function(){
+	var place=$('#meetingLocation').val().trim();
+	if($('#meetingLocation').val()!='' && place.length<5){
+	$('#meetingLocation').val('');
+	bootbox.alert("Meeting place should have atleast 5 characters");
+	}
+});
+
 function validateMeetingNumber(){
 	var meetingNumber=$('#meetingNumber').val();
 	if(meetingNumber != '') {

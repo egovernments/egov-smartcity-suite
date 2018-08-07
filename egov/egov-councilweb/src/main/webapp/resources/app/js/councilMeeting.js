@@ -153,4 +153,12 @@ $("#resultTable").on('click','tbody tr td  .generateMeeting',function(event) {
 	
 });
 
+$('#meetingLocation').on('mouseleave',function(){
+	var place=$('#meetingLocation').val().trim();
+	if($('#meetingLocation').val()!='' && place.length<5){
+	$('#meetingLocation').val('');
+	bootbox.alert("Meeting place should have atleast 5 characters");
+	}
+});
+
 
