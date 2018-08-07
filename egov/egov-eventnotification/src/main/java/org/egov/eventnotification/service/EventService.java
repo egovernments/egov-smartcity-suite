@@ -63,6 +63,7 @@ import org.egov.eventnotification.entity.contracts.EventSearch;
 import org.egov.eventnotification.repository.EventRepository;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.pushbox.entity.contracts.MessageContent;
@@ -216,6 +217,8 @@ public class EventService {
         else
             messageContent.setUrl(event.getAddress().getUrl());
 
+        messageDetails.setCityName(ApplicationThreadLocals.getCityName());
+        messageDetails.setUlbCode(ApplicationThreadLocals.getCityCode());
         messageContent.setDetails(messageDetails);
         pushNotificationService.sendNotifications(messageContent);
     }

@@ -221,6 +221,8 @@ public class NotificationSchedulerJob extends QuartzJobBean {
         messageContent.setSenderId(user.getId());
         messageContent.setSenderName(user.getName());
         messageContent.setDetails(messageDetails);
+        messageDetails.setCityName(ApplicationThreadLocals.getCityName());
+        messageDetails.setUlbCode(ApplicationThreadLocals.getCityCode());
 
         pushNotificationService.sendNotifications(messageContent);
     }
