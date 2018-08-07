@@ -166,7 +166,7 @@ public class GeneralLedgerReportAction extends BaseFormAction {
 
     private String getGLHeading() {
 
-        String glHeading = "";
+        StringBuilder glHeading = new StringBuilder(50);
         CChartOfAccounts glCode = new CChartOfAccounts();
         Fund fund = new Fund();
         if (checkNullandEmpty(generalLedgerReportBean.getGlCode1())) {
@@ -178,37 +178,38 @@ public class GeneralLedgerReportAction extends BaseFormAction {
                 fund = (Fund) persistenceService.find("from Fund where id = ?",
                         Integer.parseInt(generalLedgerReportBean.getFund_id()));
         }
+
         if (fund == null) {
-            glHeading = new StringBuilder(50).append("General Ledger Report for ").append(glCode.getGlcode())
+            glHeading.append("General Ledger Report for ").append(glCode.getGlcode())
                     .append(":").append(glCode.getName()).append(" from ").append(generalLedgerReportBean.getStartDate())
                     .append(" to ").append(generalLedgerReportBean.getEndDate()).toString();
         } else
-            glHeading = new StringBuilder(50).append("General Ledger Report for ").append(glCode.getGlcode()).append(":")
+            glHeading.append("General Ledger Report for ").append(glCode.getGlcode()).append(":")
                     .append(glCode.getName()).append(" for ").append(fund.getName()).append(" from ")
                     .append(generalLedgerReportBean.getStartDate()).append(" to ").append(generalLedgerReportBean.getEndDate()).toString();
         if (checkNullandEmpty(generalLedgerReportBean.getDepartmentId())) {
             final Department dept = (Department) persistenceService.find("from Department where id = ?",
                     Long.parseLong(generalLedgerReportBean.getDepartmentId()));
-            glHeading = glHeading + " under " + dept.getName() + " Department ";
+            glHeading.append(" under ").append(dept.getName()).append(" Department ");
         }
         if (checkNullandEmpty(generalLedgerReportBean.getFunctionCode())) {
             final CFunction function = (CFunction) persistenceService.find("from CFunction where id = ?",
                     Long.valueOf(generalLedgerReportBean.getFunctionCodeId()));
-            glHeading = glHeading + " in " + function.getName() + " Function ";
+            glHeading.append(" in ").append(function.getName()).append(" Function ");
         }
 
         if (checkNullandEmpty(generalLedgerReportBean.getFunctionaryId())) {
             final Functionary functionary = (Functionary) persistenceService.find("from Functionary where id = ?",
                     Integer.parseInt(generalLedgerReportBean.getFunctionaryId()));
-            glHeading = glHeading + " in " + functionary.getName() + " Functionary ";
+            glHeading.append(" in ").append(functionary.getName()).append(" Functionary ");
         }
 
         if (checkNullandEmpty(generalLedgerReportBean.getFieldId())) {
             final Boundary ward = (Boundary) persistenceService.find("from Boundary where id = ?",
                     Long.parseLong(generalLedgerReportBean.getFieldId()));
-            glHeading = glHeading + " in " + ward.getName() + " Field ";
+            glHeading.append(" in ").append(ward.getName()).append(" Field ");
         }
-        return glHeading;
+        return glHeading.toString();
     }
 
     private boolean checkNullandEmpty(final String column) {

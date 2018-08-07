@@ -176,7 +176,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
     private static final String BILL_PAYMENT = "BillPayment";
     private static final String BANKBRANCH_LIST = "bankbranchList";
     private static final String RTGS_TRANSACTION_SUCCESS = "rtgs.transaction.success";
-    private static final String CHQ_ASSIGNMENT_TRANSACTION_SUCCESS = "chq.assignment.transaction.success";
+    private static final String CHQ_ASSIGNMENT_TXN_SUCCESS = "chq.assignment.transaction.success";
     private static final String DEPARTMENT = "department";
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Constants.LOCALE);
     private final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Constants.LOCALE);
@@ -1037,7 +1037,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                 if (paymentMode.equalsIgnoreCase(FinancialConstants.MODEOFPAYMENT_RTGS))
                     addActionMessage(getMessage(RTGS_TRANSACTION_SUCCESS));
                 else
-                    addActionMessage(getMessage(CHQ_ASSIGNMENT_TRANSACTION_SUCCESS));
+                    addActionMessage(getMessage(CHQ_ASSIGNMENT_TXN_SUCCESS));
 
                 instVoucherList = paymentService.getInstVoucherList();
             } else {
@@ -1067,9 +1067,9 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
         else
             selectedRowsIdArray = new String[0];
         int length = selectedRowsIdArray.length;
-        for (int i = 0; i < length; i++) {
+        for (int index = 0; index < length; index++) {
             ChequeAssignment chequeAssignment = new ChequeAssignment();
-            String[] items = selectedRowsIdArray[i].split("\\~");
+            String[] items = selectedRowsIdArray[index].split("\\~");
             chequeAssignment.setVoucherHeaderId(Long.valueOf(items[0]));
             chequeAssignment.setPaidTo(items[1]);
             chequeAssignment.setSerialNo(items[2]);
@@ -1225,7 +1225,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                 if (paymentMode.equalsIgnoreCase(FinancialConstants.MODEOFPAYMENT_RTGS))
                     addActionMessage(getMessage(RTGS_TRANSACTION_SUCCESS));
                 else
-                    addActionMessage(getMessage(CHQ_ASSIGNMENT_TRANSACTION_SUCCESS));
+                    addActionMessage(getMessage(CHQ_ASSIGNMENT_TXN_SUCCESS));
 
                 instVoucherList = paymentService.getInstVoucherList();
             } else {
@@ -1268,7 +1268,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                 if (paymentMode.equalsIgnoreCase(FinancialConstants.MODEOFPAYMENT_RTGS))
                     addActionMessage(getMessage(RTGS_TRANSACTION_SUCCESS));
                 else
-                    addActionMessage(getMessage(CHQ_ASSIGNMENT_TRANSACTION_SUCCESS));
+                    addActionMessage(getMessage(CHQ_ASSIGNMENT_TXN_SUCCESS));
                 instVoucherList = paymentService.getInstVoucherList();
             } else {
                 loadChequeSerialNo();
@@ -1311,7 +1311,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                 baf.setIfscCode(entity.getIfsccode());
                 baf.setNetAmount((BigDecimal) obj[2]);
                 voucherno = new StringBuilder().append(voucherno).append(instrumentVoucher.getVoucherHeaderId()
-                        .getVoucherNumber()).append(",").toString();
+                        .getVoucherNumber()).append(',').toString();
                 adviceList.add(baf);
             }
         }
@@ -1383,24 +1383,41 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
 
         final StringBuilder sql = new StringBuilder();
         try {
-            if (isNotBlank(fromDate))
-                sql.append(" and iv.voucherHeaderId.voucherDate>='" + sdf.format(formatter.parse(fromDate)) + "' ");
-            if (isNotBlank(toDate))
-                sql.append(" and iv.voucherHeaderId.voucherDate<='" + sdf.format(formatter.parse(toDate)) + "'");
-            if (bankaccount != null && bankaccount != -1)
-                sql.append(" and  ih.bankAccountId.id=" + bankaccount);
-            if (instrumentNumber != null && !instrumentNumber.isEmpty())
-                sql.append(" and  ih.instrumentNumber='" + instrumentNumber + "'");
-            if (department != null && department != -1)
-                sql.append(" and  iv.voucherHeaderId.vouchermis.departmentid.id=" + department);
-            if (voucherHeader.getVoucherNumber() != null && !voucherHeader.getVoucherNumber().isEmpty())
-                sql.append(" and  iv.voucherHeaderId.voucherNumber='" + voucherHeader.getVoucherNumber() + "'");
-            final String mainquery = "select ih from  InstrumentVoucher iv ,InstrumentHeader ih ,InstrumentType it where iv.instrumentHeaderId.id =ih.id and ih.instrumentNumber is not null and ih.instrumentType=it.id and ( it.type = 'cheque' or it.type = 'cash' ) and   iv.voucherHeaderId.status=0  and iv.voucherHeaderId.type='"
-                    + FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT + "'  " + sql + " "
-
-                    + " and ih.statusId.id in (?)  order by iv.voucherHeaderId.voucherDate";
+            List<Object> params = new LinkedList<>();
+            if (isNotBlank(fromDate)) {
+                sql.append(" and iv.voucherHeaderId.voucherDate>=? ");
+                params.add(sdf.format(formatter.parse(fromDate)));
+            }
+            if (isNotBlank(toDate)) {
+                sql.append(" and iv.voucherHeaderId.voucherDate<=? ");
+                params.add(sdf.format(formatter.parse(toDate)));
+            }
+            if (bankaccount != null && bankaccount != -1) {
+                sql.append(" and  ih.bankAccountId.id=? ");
+                params.add(bankaccount);
+            }
+            if (isNotBlank(instrumentNumber)) {
+                sql.append(" and  ih.instrumentNumber=? ");
+                params.add(instrumentNumber);
+            }
+            if (department != null && department != -1) {
+                sql.append(" and  iv.voucherHeaderId.vouchermis.departmentid.id=? ");
+                params.add(department);
+            }
+            if (isNotBlank(voucherHeader.getVoucherNumber())) {
+                sql.append(" and  iv.voucherHeaderId.voucherNumber=? ");
+                params.add(voucherHeader.getVoucherNumber());
+            }
+            final String mainQuery = new StringBuilder(500)
+                    .append("select ih from  InstrumentVoucher iv ,InstrumentHeader ih ,InstrumentType it ")
+                    .append("where iv.instrumentHeaderId.id =ih.id and ih.instrumentNumber is not null ")
+                    .append("and ih.instrumentType=it.id and ( it.type = 'cheque' or it.type = 'cash' ) and ")
+                    .append("iv.voucherHeaderId.status=0  and iv.voucherHeaderId.type='")
+                    .append(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT).append("'  ")
+                    .append(sql).append(" and ih.statusId.id in (?)  order by iv.voucherHeaderId.voucherDate").toString();
             final EgwStatus created = instrumentService.getStatusId(FinancialConstants.INSTRUMENT_CREATED_STATUS);
-            instrumentHeaderList = persistenceService.findAllBy(mainquery, created.getId());
+            params.add(created.getId());
+            instrumentHeaderList = persistenceService.findAllBy(mainQuery, params.toArray());
             final LinkedHashSet lhs = new LinkedHashSet();
             lhs.addAll(instrumentHeaderList);
             instrumentHeaderList.clear();
@@ -1447,24 +1464,40 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
 
         final StringBuilder sql = new StringBuilder();
         try {
-            if (isNotBlank(fromDate))
-                sql.append(" and iv.voucherHeaderId.voucherDate>='" + sdf.format(formatter.parse(fromDate)) + "' ");
-            if (isNotBlank(toDate))
-                sql.append(" and iv.voucherHeaderId.voucherDate<='" + sdf.format(formatter.parse(toDate)) + "'");
-            if (bankaccount != null && bankaccount != -1)
-                sql.append(" and  ih.bankAccountId.id=" + bankaccount);
-            if (instrumentNumber != null && !instrumentNumber.isEmpty())
-                sql.append(" and  ih.transactionNumber='" + instrumentNumber + "'");
-            if (department != null && department != -1)
-                sql.append(" and  iv.voucherHeaderId.vouchermis.departmentid.id=" + department);
-            if (voucherHeader.getVoucherNumber() != null && !voucherHeader.getVoucherNumber().isEmpty())
-                sql.append(" and  iv.voucherHeaderId.voucherNumber='" + voucherHeader.getVoucherNumber() + "'");
-            final String mainquery = "select ih from  InstrumentVoucher iv,InstrumentHeader ih ,InstrumentType it where iv.instrumentHeaderId.id =ih.id and ih.transactionNumber is not null and ih.instrumentType=it.id and it.type = 'advice' and   iv.voucherHeaderId.status=0  and iv.voucherHeaderId.type='"
-                    + FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT + "'  " + sql + " "
-
-                    + " and ih.statusId.id in (?)  order by iv.voucherHeaderId.voucherDate";
+            List<Object> params = new LinkedList<>();
+            if (isNotBlank(fromDate)) {
+                sql.append(" and iv.voucherHeaderId.voucherDate>=? ");
+                params.add(sdf.format(formatter.parse(fromDate)));
+            }
+            if (isNotBlank(toDate)) {
+                sql.append(" and iv.voucherHeaderId.voucherDate<=? ");
+                params.add(sdf.format(formatter.parse(toDate)));
+            }
+            if (bankaccount != null && bankaccount != -1) {
+                sql.append(" and  ih.bankAccountId.id=? ");
+                params.add(bankaccount);
+            }
+            if (isNotBlank(instrumentNumber)) {
+                sql.append(" and  ih.transactionNumber=? ");
+                params.add(instrumentNumber);
+            }
+            if (department != null && department != -1) {
+                sql.append(" and  iv.voucherHeaderId.vouchermis.departmentid.id=? ");
+                params.add(department);
+            }
+            if (isNotBlank(voucherHeader.getVoucherNumber())) {
+                sql.append(" and  iv.voucherHeaderId.voucherNumber=? ");
+                params.add(voucherHeader.getVoucherNumber());
+            }
+            final String mainQuery = new StringBuilder(500)
+                    .append("select ih from  InstrumentVoucher iv,InstrumentHeader ih ,InstrumentType it ")
+                    .append("where iv.instrumentHeaderId.id =ih.id and ih.transactionNumber is not null and ih.instrumentType=it.id ")
+                    .append("and it.type = 'advice' and   iv.voucherHeaderId.status=0  and iv.voucherHeaderId.type='")
+                    .append(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT).append("' ").append(sql)
+                    .append(" and ih.statusId.id in (?)  order by iv.voucherHeaderId.voucherDate").toString();
             final EgwStatus created = instrumentService.getStatusId(FinancialConstants.INSTRUMENT_CREATED_STATUS);
-            instrumentHeaderList = persistenceService.findAllBy(mainquery, created.getId());
+            params.add(created.getId());
+            instrumentHeaderList = persistenceService.findAllBy(mainQuery, params.toArray());
             final LinkedHashSet lhs = new LinkedHashSet();
             lhs.addAll(instrumentHeaderList);
             instrumentHeaderList.clear();
@@ -1501,10 +1534,10 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
         appConfigValuesList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF", "Reason For Cheque Surrendaring");
         for (final AppConfigValues app : appConfigValuesList) {
             final String value = app.getValue();
-            if (app.getValue().indexOf('|') != -1)
-                surrendarReasonMap.put(app.getValue(), value.substring(0, app.getValue().indexOf('|')));
-            else
+            if (app.getValue().indexOf('|') == -1)
                 surrendarReasonMap.put(app.getValue(), app.getValue());
+            else
+                surrendarReasonMap.put(app.getValue(), value.substring(0, app.getValue().indexOf('|')));
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed loadReasonsForSurrendaring.");
@@ -1595,39 +1628,40 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                             "Please select atleast one Cheque for Surrendering ")));
 
             }
+
+            if (department == null || department == -1)
+                throw new ValidationException(Arrays.asList(new ValidationError(EXCEPTION_WHILE_SURRENDER_CHEQUE,
+                        "please select department")));
+            int index = 0;
+            instrumentHeaderList = (List<InstrumentHeader>) getSession().get(INSTRUMENT_HEADER_LIST);
+            final String[] newSurrender = new String[instrumentHeaderList.size()];
+            for (final InstrumentHeader iheader : instrumentHeaderList) {
+                newSurrender[index] = null;
+
+                for (final String ih : surrender)
+                    if (ih.equalsIgnoreCase(iheader.getId().toString()))
+                        newSurrender[index] = ih;
+                index++;
+            }
+            surrender = newSurrender;
             final List<InstrumentHeader> suurenderChequelist = new ArrayList<>();
             final List<String> chequeNoList = new ArrayList<>();
             final List<String> serialNoList = new ArrayList<>();
             final List<Date> chequeDateList = new ArrayList<>();
             InstrumentHeader instrumentHdr = null;
-            if (null == department || -1 == department)
-                throw new ValidationException(Arrays.asList(new ValidationError(EXCEPTION_WHILE_SURRENDER_CHEQUE,
-                        "please select department")));
-            int j = 0;
-            instrumentHeaderList = (List<InstrumentHeader>) getSession().get(INSTRUMENT_HEADER_LIST);
-            final String[] newSurrender = new String[instrumentHeaderList.size()];
-            for (final InstrumentHeader iheader : instrumentHeaderList) {
-                newSurrender[j] = null;
-
-                for (final String ih : surrender)
-                    if (ih.equalsIgnoreCase(iheader.getId().toString()))
-                        newSurrender[j] = ih;
-                j++;
-            }
-            surrender = newSurrender;
             if (surrender != null && surrender.length > 0) {
-                for (int i = 0; i < surrender.length; i++) {
-                    if (surrender[i] == null)
+                for (int indx = 0; indx < surrender.length; indx++) {
+                    if (surrender[indx] == null)
                         instrumentHdr = null;
                     else
                         instrumentHdr = (InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?",
-                                Long.valueOf(surrender[i]));
-                    if (instrumentHdr != null && (surrendarReasons[i] == null || surrendarReasons[i].equalsIgnoreCase("-1"))) {
-                        reasonMissingRows.append(i + 1);
-                        reasonMissingRows.append(",");
+                                Long.valueOf(surrender[indx]));
+                    if (instrumentHdr != null && (surrendarReasons[indx] == null || surrendarReasons[indx].equalsIgnoreCase("-1"))) {
+                        reasonMissingRows.append(indx + 1);
+                        reasonMissingRows.append(',');
                     }
                     if (instrumentHdr != null) {
-                        instrumentHdr.setSurrendarReason(surrendarReasons[i]);
+                        instrumentHdr.setSurrendarReason(surrendarReasons[indx]);
                         suurenderChequelist.add(instrumentHdr);
                         if (instrumentHdr.getTransactionNumber() != null)
                             containsRTGS = true;
@@ -1649,13 +1683,13 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                             "Cannot reassign RTGS Numbers. Use RTGS Screen")));
                 else if (button.equalsIgnoreCase("surrenderAndReassign") && !containsRTGS) {
 
-                    for (int i = 0; i < surrender.length; i++)
-                        if (surrender[i] != null)
+                    for (int indx = 0; indx < surrender.length; indx++)
+                        if (surrender[indx] != null)
                             if (!isChequeNoGenerationAuto()) {
-                                chequeNoList.add(newInstrumentNumber[i]);
-                                serialNoList.add(newSerialNo[i]);
+                                chequeNoList.add(newInstrumentNumber[indx]);
+                                serialNoList.add(newSerialNo[indx]);
                                 try {
-                                    chequeDateList.add(formatter.parse(newInstrumentDate[i]));
+                                    chequeDateList.add(formatter.parse(newInstrumentDate[indx]));
 
                                 } catch (final ParseException e) {
                                     throw new ValidationException(Arrays.asList(new ValidationError(
@@ -1702,9 +1736,9 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
         if (!selectedRowsId.isEmpty()) {
             instrumentHeaderList = new ArrayList<>();
             int length = selectedArray.length;
-            for (int i = 0; i < length; i++) {
+            for (int index = 0; index < length; index++) {
                 InstrumentHeader instrumentsHeader = new InstrumentHeader();
-                String[] items = selectedArray[i].split("\\~");
+                String[] items = selectedArray[index].split("\\~");
                 if (items[0] != null && !items[0].isEmpty()) {
                     instrumentsHeader.setId(Long.valueOf(items[0]));
                 }
@@ -1749,14 +1783,14 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
         final List<Map<String, Object>> instrumentVouchers = new ArrayList<>();
         instHeaderList = new ArrayList<>();
 
-        int i = 0;
+        int index = 0;
         for (final InstrumentHeader instrumentHdr : suurenderChequelist) {
             final InstrumentHeader newInstrumentHeader = instrumentHdr.clone();
-            newInstrumentHeader.setInstrumentNumber(chequeNoList.get(i));
-            newInstrumentHeader.setSerialNo(financialYearDAO.findById(Long.valueOf(serialNoList.get(i)), false));
+            newInstrumentHeader.setInstrumentNumber(chequeNoList.get(index));
+            newInstrumentHeader.setSerialNo(financialYearDAO.findById(Long.valueOf(serialNoList.get(index)), false));
             newInstrumentHeader.setStatusId(instrumentService.getStatusId(FinancialConstants.INSTRUMENT_CREATED_STATUS));
-            newInstrumentHeader.setInstrumentDate(chequeDatelist.get(i));
-            i++;
+            newInstrumentHeader.setInstrumentDate(chequeDatelist.get(index));
+            index++;
             instHeaderList.add(instrumentHeaderService.persist(newInstrumentHeader));
             for (final InstrumentVoucher iv : instrumentHdr.getInstrumentVouchers()) {
                 Map<String, Object> instrumentVoucherMap = new HashMap<>();
@@ -1778,14 +1812,13 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting validateNewChequeNumbers...");
         if (newInstrumentNumber != null && newInstrumentNumber.length > 0) {
-            int i = 0;
             InstrumentHeader instrumentHdr;
-            for (i = 0; i < suurenderChequelist.size(); i++) {
-                instrumentHdr = suurenderChequelist.get(i);
-                if (!instrumentService.isChequeNumberValid(chequeNoList.get(i), instrumentHdr.getBankAccountId().getId(),
-                        department, serialNoList.get(i)))
-                    addFieldError("newInstrumentNumber[" + i + "]", getMessage(PAYMENT_CHEQUENUMBER_INVALID) + " "
-                            + chequeNoList.get(i));
+            for (int index = 0; index < suurenderChequelist.size(); index++) {
+                instrumentHdr = suurenderChequelist.get(index);
+                if (!instrumentService.isChequeNumberValid(chequeNoList.get(index), instrumentHdr.getBankAccountId().getId(),
+                        department, serialNoList.get(index)))
+                    addFieldError("newInstrumentNumber[" + index + "]", getMessage(PAYMENT_CHEQUENUMBER_INVALID) + " "
+                            + chequeNoList.get(index));
             }
         }
         if (LOGGER.isDebugEnabled())
@@ -1795,7 +1828,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
     public void validateDataForManual() throws ParseException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting validateDataForManual...");
-        int i = 0;
+        int index = 0;
         final Map<String, String> chqNoMap = new HashMap<>();
         if (paymentMode.equals(FinancialConstants.MODEOFPAYMENT_CHEQUE)) {
             for (final ChequeAssignment assignment : chequeAssignmentList)
@@ -1806,20 +1839,20 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                         break;
                     }
                     if (isBlank(assignment.getChequeNumber())) {
-                        addFieldError(CHEQUE_ASSIGNMENT_PREFIX + i + CHEQUE_NUMBER_SUFFIX, getMessage(PAYMENT_CHEQUENO_EMPTY));
+                        addFieldError(CHEQUE_ASSIGNMENT_PREFIX + index + CHEQUE_NUMBER_SUFFIX, getMessage(PAYMENT_CHEQUENO_EMPTY));
                         break;
                     } else if (reassignSurrenderChq) {
                         if (!instrumentService.isReassigningChequeNumberValid(assignment.getChequeNumber(),
                                 bankaccount.longValue(), voucherHeader.getVouchermis().getDepartmentid().getId().intValue(),
                                 assignment.getSerialNo()))
-                            addFieldError(CHEQUE_ASSIGNMENT_PREFIX + i + CHEQUE_NUMBER_SUFFIX,
+                            addFieldError(CHEQUE_ASSIGNMENT_PREFIX + index + CHEQUE_NUMBER_SUFFIX,
                                     getMessage(PAYMENT_CHEQUENUMBER_INVALID));
                     } else if (!instrumentService.isChequeNumberValid(assignment.getChequeNumber(), bankaccount.longValue(),
                             voucherHeader.getVouchermis().getDepartmentid().getId().intValue(), assignment.getSerialNo()))
-                        addFieldError(CHEQUE_ASSIGNMENT_PREFIX + i + CHEQUE_NUMBER_SUFFIX,
+                        addFieldError(CHEQUE_ASSIGNMENT_PREFIX + index + CHEQUE_NUMBER_SUFFIX,
                                 getMessage(PAYMENT_CHEQUENUMBER_INVALID));
                     if (null == assignment.getChequeDate()) {
-                        addFieldError(CHEQUE_ASSIGNMENT_PREFIX + i + CHEQUE_NUMBER_SUFFIX, getMessage(PAYMENT_CHEQUENO_EMPTY));
+                        addFieldError(CHEQUE_ASSIGNMENT_PREFIX + index + CHEQUE_NUMBER_SUFFIX, getMessage(PAYMENT_CHEQUENO_EMPTY));
                         break;
                     }
                     if (assignment.getChequeDate().compareTo(assignment.getVoucherDate()) < 0) {
@@ -1832,29 +1865,28 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                             // cheque to different
                             // parties.
                             addFieldError(
-                                    CHEQUE_ASSIGNMENT_PREFIX + i + CHEQUE_NUMBER_SUFFIX,
+                                    CHEQUE_ASSIGNMENT_PREFIX + index + CHEQUE_NUMBER_SUFFIX,
                                     getMessage("payment.duplicate.chequeno", new String[]{assignment.getChequeNumber(),
                                             chqNoMap.get(assignment.getChequeNumber()), assignment.getPaidTo()}));
                     } else
                         chqNoMap.put(assignment.getChequeNumber(), assignment.getPaidTo());
-                    i++;
+                    index++;
                 }
-        } else  // cash or RTGS
-        {
+        } else {
+            // cash or RTGS
             // / Validations are done for RTGS payment mode
-            String chequedt = null;
-            if (paymentMode.equalsIgnoreCase(FinancialConstants.MODEOFPAYMENT_RTGS))
+            if (FinancialConstants.MODEOFPAYMENT_RTGS.equalsIgnoreCase(paymentMode))
                 return;
-            chequedt = parameters.get("chequeDt")[0];
+            String chequedt = parameters.get("chequeDt")[0];
             if (StringUtils.isEmpty(parameters.get(IN_FAVOUR_OF)[0]))
                 addFieldError(IN_FAVOUR_OF, getMessage("inFavourOf.is.empty"));
             if (StringUtils.isEmpty(parameters.get(CHEQUE_NO)[0]))
                 addFieldError(CHEQUE_NO, getMessage(PAYMENT_CHEQUENO_EMPTY));
             else {
-                for (int j = 0; j < chequeAssignmentList.size(); j++)
-                    if (parameters.get(CHEQUE_ASSIGNMENT_PREFIX + j + "].isSelected") != null
-                            && parameters.get(CHEQUE_ASSIGNMENT_PREFIX + j + "].isSelected")[0].equals("true")) {
-                        final String paymentdt = parameters.get(CHEQUE_ASSIGNMENT_PREFIX + j + "].tempPaymentDate")[0];
+                for (int indx = 0; indx < chequeAssignmentList.size(); indx++)
+                    if (parameters.get(CHEQUE_ASSIGNMENT_PREFIX + indx + "].isSelected") != null
+                            && parameters.get(CHEQUE_ASSIGNMENT_PREFIX + indx + "].isSelected")[0].equals("true")) {
+                        final String paymentdt = parameters.get(CHEQUE_ASSIGNMENT_PREFIX + indx + "].tempPaymentDate")[0];
 
                         if (formatter.parse(chequedt).compareTo(formatter.parse(paymentdt)) < 0)
                             addFieldError("Cheque date cannot be less than paymnet date",
@@ -1863,7 +1895,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                 if (reassignSurrenderChq) {
                     if (!instrumentService.isReassigningChequeNumberValid(parameters.get(CHEQUE_NO)[0], bankaccount.longValue(),
                             voucherHeader.getVouchermis().getDepartmentid().getId().intValue(), parameters.get("serialNo")[0]))
-                        addFieldError(CHEQUE_ASSIGNMENT_PREFIX + i + CHEQUE_NUMBER_SUFFIX, getMessage(PAYMENT_CHEQUENUMBER_INVALID));
+                        addFieldError(CHEQUE_ASSIGNMENT_PREFIX + index + CHEQUE_NUMBER_SUFFIX, getMessage(PAYMENT_CHEQUENUMBER_INVALID));
                 } else if (!instrumentService.isChequeNumberValid(parameters.get(CHEQUE_NO)[0], bankaccount.longValue(),
                         voucherHeader.getVouchermis().getDepartmentid().getId().intValue(), parameters.get("serialNo")[0]))
                     addFieldError("chequeN0", getMessage(PAYMENT_CHEQUENUMBER_INVALID));
