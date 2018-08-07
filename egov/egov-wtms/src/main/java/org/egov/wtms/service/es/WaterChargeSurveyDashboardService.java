@@ -275,22 +275,22 @@ public class WaterChargeSurveyDashboardService {
     }
 
     private QueryBuilder prepareQueryGetApplication(WaterChargeSurveyDashboardRequest request) {
-        QueryBuilder queryBuilder;
+        BoolQueryBuilder boolQuery;
         if (YES.equals(request.getPendingExecution()) || YES.equals(request.getPendingSanction())) {
-            queryBuilder = YES.equals(request.getPendingExecution())
+            boolQuery = YES.equals(request.getPendingSanction())
                     ? boolQuery().must(matchQuery(SANCTION_ISSUED, FALSE))
                     : boolQuery().must(matchQuery(SANCTION_ISSUED, TRUE)).must(matchQuery(CONNECTION_EXECUTED, FALSE));
         } else {
-            queryBuilder = YES.equals(request.getBpl())
+            boolQuery = YES.equals(request.getBpl())
                     ? boolQuery().must(matchQuery(CONNECTION_CATEGORY, CATEGORY_BPL))
                     : boolQuery().mustNot(matchQuery(CONNECTION_CATEGORY, CATEGORY_BPL));
 
             if (YES.equals(request.getSanctionIssued())) {
-                queryBuilder = boolQuery().must(matchQuery(SANCTION_ISSUED, TRUE));
+                boolQuery = boolQuery.filter(matchQuery(SANCTION_ISSUED, TRUE));
             } else if (YES.equals(request.getExecutionIssued())) {
-                queryBuilder = boolQuery().must(matchQuery(CONNECTION_EXECUTED, TRUE));
+                boolQuery = boolQuery.filter(matchQuery(CONNECTION_EXECUTED, TRUE));
             }
         }
-        return queryBuilder;
+        return boolQuery;
     }
 }
