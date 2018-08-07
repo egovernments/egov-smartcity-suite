@@ -72,7 +72,6 @@ import org.egov.eis.entity.DrawingOfficer;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.exception.ApplicationException;
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationError;
@@ -154,7 +153,6 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
                 Constants.INPUT_STREAM, Constants.CONTENT_TYPE, "text/html"})
 })
 public class ChequeAssignmentAction extends BaseVoucherAction {
-    public static final String RTGSAUTOGENERATIONNUMBERFORMAT = "000000";
     private static final long serialVersionUID = -3721873563220007939L;
     private static final String SURRENDERSEARCH = "surrendersearch";
     private static final String SURRENDERRTGSSEARCH = "surrenderRTGSsearch";
@@ -178,6 +176,9 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
     private static final String RTGS_TRANSACTION_SUCCESS = "rtgs.transaction.success";
     private static final String CHQ_ASSIGNMENT_TXN_SUCCESS = "chq.assignment.transaction.success";
     private static final String DEPARTMENT = "department";
+    private static final String BANK_ADVICE_REPORT_PATH = "/reports/templates/bankAdviceExcelReport.jasper";
+    private static final String RECOVERY_LIST = "recoveryList";
+    private static final String ACCOUNT_NO_AND_RTGS_ENTRY_MAP = "accountNoAndRtgsEntryMapSession";
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Constants.LOCALE);
     private final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Constants.LOCALE);
     private transient Map<String, String> modeOfPaymentMap;
@@ -209,7 +210,6 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
     private transient Map<String, Boolean> rtgsSeceltedAccMap = new HashMap<>();
     private transient List<ChequeAssignment> rtgsList = new LinkedList<>();
     private transient List<ChequeAssignment> viewReceiptDetailsList = new ArrayList<>();
-    private String bankAdviceJasperPath = "/reports/templates/bankAdviceExcelReport.jasper";
     private String paymentMode;
     private String inFavourOf;
     private Integer bankaccount = 0;
@@ -403,37 +403,27 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
 
         // Get App config value
         for (final String key : propartyAppConfigKeysList) {
-            String value = null;
-            try {
-                final List<AppConfigValues> configValues = appConfigValuesService
-                        .getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, key);
-
-                for (final AppConfigValues appConfigVal : configValues) {
-                    value = appConfigVal.getValue();
-                    propartyAppConfigResultList.put(key, value);
-                }
-            } catch (final Exception e) {
-                throw new ApplicationRuntimeException("Appconfig value for EB Voucher propartys is not defined in the system");
+            final List<AppConfigValues> configValues = appConfigValuesService
+                    .getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, key);
+            for (final AppConfigValues appConfigVal : configValues) {
+                propartyAppConfigResultList.put(key, appConfigVal.getValue());
             }
         }
-        for (final String key : propartyAppConfigResultList.keySet()) {
-
-            if (key.equals("EB Voucher Property-Fund"))
-                voucherHeader.setFundId((Fund) persistenceService.find("from Fund where code = ?",
-                        propartyAppConfigResultList.get(key)));
-            if (key.equals("EB Voucher Property-Function"))
-                voucherHeader.getVouchermis()
-                        .setFunction(
-                                (CFunction) persistenceService.find("from CFunction where code = ?",
-                                        propartyAppConfigResultList.get(key)));
-            if (key.equals("EB Voucher Property-Department"))
+        for (final Map.Entry<String, String> entry : propartyAppConfigResultList.entrySet()) {
+            String appConfigKey = entry.getKey();
+            String appConfigValue = entry.getValue();
+            if (appConfigKey.equals("EB Voucher Property-Fund"))
+                voucherHeader.setFundId((Fund) persistenceService.find("from Fund where code = ?", appConfigValue));
+            else if (appConfigKey.equals("EB Voucher Property-Function"))
+                voucherHeader.getVouchermis().setFunction(
+                        (CFunction) persistenceService.find("from CFunction where code = ?", appConfigValue));
+            else if (appConfigKey.equals("EB Voucher Property-Department"))
                 voucherHeader.getVouchermis().setDepartmentid(
-                        (Department) persistenceService.find("from Department where deptCode = ?",
-                                propartyAppConfigResultList.get(key)));
-            if (key.equals("EB Voucher Property-BankBranch"))
-                bank_branch = propartyAppConfigResultList.get(key);
-            if (key.equals("EB Voucher Property-BankAccount")) {
-                bank_account = propartyAppConfigResultList.get(key);
+                        (Department) persistenceService.find("from Department where deptCode = ?", appConfigValue));
+            else if (appConfigKey.equals("EB Voucher Property-BankBranch"))
+                bank_branch = appConfigValue;
+            else if (appConfigKey.equals("EB Voucher Property-BankAccount")) {
+                bank_account = appConfigValue;
                 final Bankaccount ba = (Bankaccount) persistenceService.find(" from Bankaccount where accountnumber=?",
                         bank_account);
                 if (ba.getId() != null)
@@ -451,7 +441,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
         final List<Recovery> listRecovery = recoveryService.getAllActiveAutoRemitTds();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("RemitRecoveryAction | Tds list size : " + listRecovery.size());
-        addDropdownData("recoveryList", listRecovery);
+        addDropdownData(RECOVERY_LIST, listRecovery);
         paymentMode = FinancialConstants.MODEOFPAYMENT_RTGS;
         rtgsContractorAssignment = true;
         if (deptNonMandatory)
@@ -530,7 +520,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                 }
             }
         }
-        getSession().put("accountNoAndRtgsEntryMapSession", accountNoAndRemittanceRtgsEntryMap);
+        getSession().put(ACCOUNT_NO_AND_RTGS_ENTRY_MAP, accountNoAndRemittanceRtgsEntryMap);
         if (0 != drawingOfficerId) {
             final DrawingOfficer drawingOfficer = (DrawingOfficer) persistenceService.find("from DrawingOfficer where id =?",
                     drawingOfficerId);
@@ -576,11 +566,11 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
             LOGGER.debug("Starting prepareBeforeSearchForRemittance...");
         paymentMode = FinancialConstants.MODEOFPAYMENT_CASH;
 
-        if (getSession().get("recoveryList") == null) {
+        if (getSession().get(RECOVERY_LIST) == null) {
             final List<Recovery> listRecovery = recoveryService.getAllActiveRecoverys();
             getSession().put("RecoveryList", listRecovery);
         }
-        addDropdownData("recoveryList", (List) getSession().get("recoveryList"));
+        addDropdownData(RECOVERY_LIST, (List) getSession().get(RECOVERY_LIST));
         // overriding department Mandatory Condition only for remittance cheque assignment search
         deptNonMandatory = true;
         if (LOGGER.isDebugEnabled())
@@ -618,7 +608,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
         modeOfPaymentMap = new LinkedHashMap<>();
         modeOfPaymentMap.put(FinancialConstants.MODEOFPAYMENT_CASH, getText("cash.consolidated.cheque"));
         final List<Recovery> listRecovery = recoveryService.getAllActiveRecoverys();
-        addDropdownData("recoveryList", listRecovery);
+        addDropdownData(RECOVERY_LIST, listRecovery);
         return "before_remittance_search";
     }
 
@@ -682,7 +672,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                 }
 
             }
-        getSession().put("accountNoAndRtgsEntryMapSession", accountNoAndRtgsEntryMap);
+        getSession().put(ACCOUNT_NO_AND_RTGS_ENTRY_MAP, accountNoAndRtgsEntryMap);
         assignmentType = BILL_PAYMENT;
         return "searchRtgsResult";
     }
@@ -736,7 +726,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                 }
 
             }
-        getSession().put("accountNoAndRtgsEntryMapSession", accountNoAndRtgsEntryMap);
+        getSession().put(ACCOUNT_NO_AND_RTGS_ENTRY_MAP, accountNoAndRtgsEntryMap);
 
         assignmentType = BILL_PAYMENT;
         if (LOGGER.isDebugEnabled())
@@ -969,7 +959,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
             resultMap = prepareMapForRTGS();
             if (!getFieldErrors().isEmpty()) {
                 accountNoAndRtgsEntryMap = (Map<Bankaccount, List<ChequeAssignment>>) getSession().get(
-                        "accountNoAndRtgsEntryMapSession");
+                        ACCOUNT_NO_AND_RTGS_ENTRY_MAP);
                 return "searchRtgsResult";
             }
             createRtgsAssignment(resultMap);
@@ -2045,7 +2035,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
         data.add(bankAdvice);
 
         setFileName(instrumentHdr.getVoucherHeaderId().getVoucherNumber() + "." + ReportFormat.XLS.toString().toLowerCase());
-        inputStream = reportHelper.exportXls(getInputStream(), bankAdviceJasperPath, null, data);
+        inputStream = reportHelper.exportXls(getInputStream(), BANK_ADVICE_REPORT_PATH, null, data);
         return "bankAdvice-XLS";
     }
 

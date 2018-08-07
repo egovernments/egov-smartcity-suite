@@ -181,10 +181,10 @@ public class GeneralLedgerReportAction extends BaseFormAction {
 
         if (fund == null) {
             glHeading.append("General Ledger Report for ").append(glCode.getGlcode())
-                    .append(":").append(glCode.getName()).append(" from ").append(generalLedgerReportBean.getStartDate())
+                    .append(':').append(glCode.getName()).append(" from ").append(generalLedgerReportBean.getStartDate())
                     .append(" to ").append(generalLedgerReportBean.getEndDate()).toString();
         } else
-            glHeading.append("General Ledger Report for ").append(glCode.getGlcode()).append(":")
+            glHeading.append("General Ledger Report for ").append(glCode.getGlcode()).append(':')
                     .append(glCode.getName()).append(" for ").append(fund.getName()).append(" from ")
                     .append(generalLedgerReportBean.getStartDate()).append(" to ").append(generalLedgerReportBean.getEndDate()).toString();
         if (checkNullandEmpty(generalLedgerReportBean.getDepartmentId())) {
