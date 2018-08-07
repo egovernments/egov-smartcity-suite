@@ -164,7 +164,8 @@ function isSpecialChar(Obj){
 	var pattern=/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi;
 	if(document.getElementById('voucherTypeBean.partyName').value.match(pattern))
 	{
-		document.getElementById('lblError').innerHTML = "Special character are not allowed.. ";
+		document.getElementById('voucherTypeBean.partyName').focus();
+		document.getElementById('lblError').innerHTML = "Special characters are not allowed ";
 		return false;
 	}else{
 		document.getElementById('lblError').innerHTML = "";
