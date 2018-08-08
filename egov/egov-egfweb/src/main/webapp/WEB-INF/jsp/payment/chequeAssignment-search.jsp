@@ -199,11 +199,6 @@
 			return true;
 		}
 	</script>
-	<s:if test="%{!validateUser('chequeassignment')}">
-		<script>
-			document.getElementById('searchBtn').disabled = true;
-			document.getElementById('errorSpan').innerHTML = '<s:text name="chq.assignment.invalid.user"/>'
-		</script>
-	</s:if>
+	
 </body>
 </html>
