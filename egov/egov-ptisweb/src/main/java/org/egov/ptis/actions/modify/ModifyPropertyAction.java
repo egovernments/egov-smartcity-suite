@@ -883,7 +883,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 	propertyImplService.update(propertyModel);
                 }
                 surveyBean.setProperty(propertyModel);
-                propertySurveyService.updateSurveyIndex(applicationSource, surveyBean);
+                propertySurveyService.updateSurveyIndex(APPLICATION_TYPE_ALTER_ASSESSENT, surveyBean);
             }
             
         }
