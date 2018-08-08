@@ -63,12 +63,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import static org.egov.infra.workflow.entity.WorkflowTypes.SEQ_WORKFLOWTYPES;
+import static org.egov.infra.workflow.entity.WorkflowType.SEQ_WORKFLOWTYPES;
 
 @Entity
 @Table(name = "EG_WF_TYPES")
 @SequenceGenerator(name = SEQ_WORKFLOWTYPES, sequenceName = SEQ_WORKFLOWTYPES, allocationSize = 1)
-public class WorkflowTypes extends AbstractAuditable {
+public class WorkflowType extends AbstractAuditable {
 
     static final String SEQ_WORKFLOWTYPES = "SEQ_EG_WF_TYPES";
     private static final long serialVersionUID = 1L;

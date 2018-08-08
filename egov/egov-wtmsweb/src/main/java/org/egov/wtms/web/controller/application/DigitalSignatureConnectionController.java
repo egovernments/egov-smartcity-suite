@@ -68,7 +68,7 @@ import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.utils.FileStoreUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infra.workflow.entity.WorkflowTypes;
+import org.egov.infra.workflow.entity.WorkflowType;
 import org.egov.infra.workflow.inbox.InboxRenderServiceDelegate;
 import org.egov.infra.workflow.service.WorkflowTypeService;
 import org.egov.ptis.domain.model.AssessmentDetails;
@@ -253,13 +253,13 @@ public class DigitalSignatureConnectionController {
                 if (record != null && record.getState() != null && record.getState().getNextAction() != null && record
                         .getState().getNextAction().equalsIgnoreCase(WaterTaxConstants.DIGITAL_SIGNATURE_PENDING)) {
                     tempMap = new HashMap<>();
-                    final WorkflowTypes workflowTypes = workflowTypeService
+                    final WorkflowType workflowType = workflowTypeService
                             .getEnabledWorkflowTypeByType(record.getStateType());
-                    if (WaterTaxConstants.MODULE_NAME.equalsIgnoreCase(workflowTypes.getModule().getName())) {
+                    if (WaterTaxConstants.MODULE_NAME.equalsIgnoreCase(workflowType.getModule().getName())) {
                         waterConnectionDetails = (WaterConnectionDetails) record;
                         tempMap.put("objectId", ((WaterConnectionDetails) record).getApplicationNumber());
                         tempMap.put("type", record.getState().getNatureOfTask());
-                        tempMap.put("module", workflowTypes.getModule().getDisplayName());
+                        tempMap.put("module", workflowType.getModule().getDisplayName());
                         tempMap.put("details", record.getStateDetails());
                         tempMap.put("hscNumber", waterConnectionDetails.getConnection().getConsumerCode());
                         tempMap.put("status", record.getCurrentState().getValue());

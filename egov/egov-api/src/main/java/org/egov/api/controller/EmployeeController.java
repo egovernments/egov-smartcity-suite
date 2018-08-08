@@ -63,7 +63,7 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.StringUtils;
 import org.egov.infra.workflow.entity.State.StateStatus;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infra.workflow.entity.WorkflowTypes;
+import org.egov.infra.workflow.entity.WorkflowType;
 import org.egov.infra.workflow.service.WorkflowTypeService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pgr.entity.Priority;
@@ -302,7 +302,7 @@ public class EmployeeController extends ApiController {
                 final Long wftitemscount = (Long) getWorkflowItemsCountByWFType(userId, ownerPostitions, workFlowTypeStr, "");
                 if (wftitemscount > 0) {
                     final HashMap<String, Object> workFlowType = new HashMap<>();
-                    final WorkflowTypes workFlowTypeObj = workflowTypeService.getEnabledWorkflowTypeByType(workFlowTypeStr);
+                    final WorkflowType workFlowTypeObj = workflowTypeService.getEnabledWorkflowTypeByType(workFlowTypeStr);
                     workFlowType.put("workflowtype", workFlowTypeStr);
                     workFlowType.put("inboxlistcount", wftitemscount);
                     workFlowType.put("workflowtypename", workFlowTypeObj.getDisplayName());

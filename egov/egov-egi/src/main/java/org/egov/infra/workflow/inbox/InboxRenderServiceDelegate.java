@@ -56,7 +56,7 @@ import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.entity.WorkflowAction;
-import org.egov.infra.workflow.entity.WorkflowTypes;
+import org.egov.infra.workflow.entity.WorkflowType;
 import org.egov.infra.workflow.service.OwnerGroupService;
 import org.egov.infra.workflow.service.StateService;
 import org.egov.infra.workflow.service.WorkflowActionService;
@@ -78,6 +78,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import static java.lang.String.format;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang.StringUtils.EMPTY;
@@ -88,7 +89,7 @@ import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
 public class InboxRenderServiceDelegate<T extends StateAware> {
     private static final Logger LOG = LoggerFactory.getLogger(InboxRenderServiceDelegate.class);
     private static final String INBOX_RENDER_SERVICE_SUFFIX = "%sInboxRenderService";
-    private static final Map<String, WorkflowTypes> WORKFLOW_TYPE_CACHE = new ConcurrentHashMap<>();
+    private static final Map<String, WorkflowType> WORKFLOW_TYPE_CACHE = new ConcurrentHashMap<>();
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -126,8 +127,9 @@ public class InboxRenderServiceDelegate<T extends StateAware> {
     public List<Inbox> getWorkflowHistoryItems(Long stateId) {
         List<Inbox> inboxHistoryItems = new LinkedList<>();
         for (StateHistory stateHistory : getStateHistory(stateId)) {
-            inboxHistoryItems.add(Inbox
-                    .buildHistory(stateHistory, getWorkflowType(stateHistory.getState().getType())));
+            Optional<WorkflowType> workflowType = getWorkflowType(stateHistory.getState().getType());
+            if (workflowType.isPresent())
+                inboxHistoryItems.add(Inbox.buildHistory(stateHistory, workflowType.get()));
         }
         return inboxHistoryItems;
     }
@@ -167,10 +169,9 @@ public class InboxRenderServiceDelegate<T extends StateAware> {
     private List<Inbox> buildInbox(List<T> items) {
         List<Inbox> inboxItems = new ArrayList<>();
         for (StateAware stateAware : items) {
-            inboxItems.add(Inbox
-                    .build(stateAware,
-                            getWorkflowType(stateAware.getStateType()),
-                            getNextAction(stateAware.getState())));
+            Optional<WorkflowType> workflowType = getWorkflowType(stateAware.getStateType());
+            if (workflowType.isPresent())
+                inboxItems.add(Inbox.build(stateAware, workflowType.get(), getNextAction(stateAware.getState())));
         }
         inboxItems.addAll(microserviceUtils.getInboxItems());
         return inboxItems
@@ -182,8 +183,9 @@ public class InboxRenderServiceDelegate<T extends StateAware> {
     private Optional<InboxRenderService<T>> getInboxRenderService(String type) {
         InboxRenderService<T> inboxRenderService = null;
         try {
-            if (getWorkflowType(type) != null)
-                inboxRenderService = applicationContext.getBean(String.format(INBOX_RENDER_SERVICE_SUFFIX, type), InboxRenderService.class);
+            Optional<WorkflowType> workflowType = getWorkflowType(type);
+            if (workflowType.isPresent())
+                inboxRenderService = applicationContext.getBean(format(INBOX_RENDER_SERVICE_SUFFIX, type), InboxRenderService.class);
         } catch (BeansException e) {
             LOG.warn("{}InboxRenderService bean not defined", type, e);
         }
@@ -202,14 +204,14 @@ public class InboxRenderServiceDelegate<T extends StateAware> {
         return nextAction;
     }
 
-    private WorkflowTypes getWorkflowType(String type) {
-        WorkflowTypes workflowType = WORKFLOW_TYPE_CACHE.get(type);
+    private Optional<WorkflowType> getWorkflowType(String type) {
+        WorkflowType workflowType = WORKFLOW_TYPE_CACHE.get(type);
         if (workflowType == null) {
             workflowType = workflowTypeService.getEnabledWorkflowTypeByType(type);
             if (workflowType != null)
                 WORKFLOW_TYPE_CACHE.put(type, workflowType);
         }
-        return workflowType;
+        return Optional.ofNullable(workflowType);
     }
 
     private List<Long> currentUserPositionIds() {

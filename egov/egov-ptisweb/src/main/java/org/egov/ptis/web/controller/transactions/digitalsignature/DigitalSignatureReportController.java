@@ -55,7 +55,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infra.workflow.entity.WorkflowTypes;
+import org.egov.infra.workflow.entity.WorkflowType;
 import org.egov.infra.workflow.inbox.InboxRenderServiceDelegate;
 import org.egov.infra.workflow.service.WorkflowTypeService;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -97,8 +97,8 @@ public class DigitalSignatureReportController {
                         record.getState().getNextAction().equalsIgnoreCase(WF_STATE_DIGITAL_SIGNATURE_PENDING)) {
                     tempMap = new HashMap<>();
                     
-                    WorkflowTypes workflowTypes = workflowTypeService.getEnabledWorkflowTypeByType(record.getStateType());
-                    if (PTMODULENAME.equalsIgnoreCase(workflowTypes.getModule().getName())) {
+                    WorkflowType workflowType = workflowTypeService.getEnabledWorkflowTypeByType(record.getStateType());
+                    if (PTMODULENAME.equalsIgnoreCase(workflowType.getModule().getName())) {
                         if (record.getState().getValue().startsWith("Create")
                                 || record.getState().getValue().startsWith("Alter")
                                 || record.getState().getValue().startsWith("Bifurcate")
@@ -109,7 +109,7 @@ public class DigitalSignatureReportController {
                         else
                             tempMap.put("objectId", record.getId());
                         tempMap.put("type", record.getState().getNatureOfTask());
-                        tempMap.put("module", workflowTypes.getModule().getDisplayName());
+                        tempMap.put("module", workflowType.getModule().getDisplayName());
                         tempMap.put("details", record.getStateDetails());
                         tempMap.put("status", record.getCurrentState().getValue());
                         resultList.add(tempMap);
