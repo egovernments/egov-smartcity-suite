@@ -192,4 +192,8 @@ public class CollectionApplicationProperties {
     public String atomReconcileUrl() {
         return environment.getProperty("atom.reconcile.url");
     }
+
+    public String mobilePaymentServiceCode() {
+        return environment.getProperty("mobile.paymentservice.code");
+    }
 }
