@@ -223,6 +223,7 @@ public class AadharSeedingService extends GenericWorkFlowController {
         aadharSeeding.setBasicProperty(
                 (BasicPropertyImpl) basicPropertyDAO.getBasicPropertyByPropertyID(aadharSeedingRequest.getAssessmentNo()));
         aadharSeeding.setStatus(UPDATED);
+        aadharSeeding.setFlag(false);
         wfmatrix = propertyWorkflowService.getWfMatrix("AadharSeeding", null,
                 null, "AADHAR SEEDING", "AadharSeeding:New", null);
         startWorkflow(wfmatrix, aadharSeeding);
