@@ -50,7 +50,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="eccef7e9-f8e9-485b-8286-646c28a3380a">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="105"/>
+	<property name="ireport.y" value="96"/>
 	<parameter name="district" class="java.lang.String"/>
 	<parameter name="applicationDate" class="java.lang.String"/>
 	<parameter name="houseNo" class="java.lang.String"/>
@@ -112,25 +112,25 @@
 				</textElement>
 				<text><![CDATA[ESTIMATE NOTICE FOR NEW CONNECTION]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="291" y="14" width="233" height="20" isPrintWhenDetailOverflows="true" uuid="f0654867-0e02-4fdf-8b16-85ba6bd7ff50"/>
+			<textField>
+				<reportElement positionType="Float" x="273" y="14" width="251" height="20" uuid="f0654867-0e02-4fdf-8b16-85ba6bd7ff50"/>
 				<box rightPadding="5"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="291" y="43" width="233" height="20" isPrintWhenDetailOverflows="true" uuid="70d3b073-cf61-429d-924c-afebefa6c43e"/>
+			<textField>
+				<reportElement positionType="Float" x="273" y="43" width="251" height="20" uuid="70d3b073-cf61-429d-924c-afebefa6c43e"/>
 				<box rightPadding="5"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$P{district}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="121" y="14" width="100" height="20" uuid="982316f4-0861-4142-80c8-7ddbae8c51a5"/>
+				<reportElement x="121" y="14" width="151" height="20" uuid="982316f4-0861-4142-80c8-7ddbae8c51a5"/>
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$P{estimationNumber}.equals(null) || $P{estimationNumber}.isEmpty()?" N/A " : $P{estimationNumber}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="121" y="43" width="100" height="20" uuid="139b821e-bcab-44b6-a319-ab1e3942bcd8"/>
+				<reportElement x="121" y="43" width="151" height="20" uuid="139b821e-bcab-44b6-a319-ab1e3942bcd8"/>
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$P{estimationDate}]]></textFieldExpression>
 			</textField>
@@ -283,7 +283,7 @@
 				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="69" y="0" width="128" height="20" isPrintWhenDetailOverflows="true" uuid="4c00b39b-d46f-42be-8818-203cbd20ebb0"/>
+				<reportElement stretchType="RelativeToTallestObject" x="69" y="0" width="128" height="20" uuid="4c00b39b-d46f-42be-8818-203cbd20ebb0"/>
 				<box leftPadding="3">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>

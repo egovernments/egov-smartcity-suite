@@ -46,11 +46,11 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
   -->
-<!-- Created with Jaspersoft Studio version 6.5.1.final using JasperReports Library version 6.5.1  -->
+
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="wtr_sanction_order_notice" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6865e4f4-48af-4398-ab97-f36e24b17ff4">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="1392"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="district" class="java.lang.String"/>
 	<parameter name="applicationDate" class="java.lang.String"/>
 	<parameter name="houseNo" class="java.lang.String"/>
@@ -269,9 +269,9 @@
 				<reportElement stretchType="RelativeToTallestObject" x="24" y="465" width="500" height="20" isPrintWhenDetailOverflows="true" uuid="eb58137f-9cda-494e-8db0-5be18b6ca93d"/>
 				<textFieldExpression><![CDATA["2.Further, the Water Tap connection now being sanctioned is allotted with an Identification bearing Consumer No. "+$P{consumerNumber}+" ."]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="393" y="566" width="131" height="20" isPrintWhenDetailOverflows="true" uuid="89256f37-671b-4e13-8c11-c6578828b972"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+			<textField>
+				<reportElement stretchType="RelativeToTallestObject" x="296" y="566" width="228" height="20" uuid="89256f37-671b-4e13-8c11-c6578828b972"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$P{municipality}]]></textFieldExpression>
 			</textField>
 			<staticText>
@@ -469,8 +469,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA["Sri,Smt"]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="66" y="609" width="168" height="20" isPrintWhenDetailOverflows="true" uuid="6b1caa52-da1b-491c-b1f3-c0556d71d1ec"/>
+			<textField>
+				<reportElement x="66" y="609" width="230" height="20" uuid="6b1caa52-da1b-491c-b1f3-c0556d71d1ec"/>
 				<textElement textAlignment="Left" verticalAlignment="Top">
 					<font size="10"/>
 				</textElement>
@@ -483,8 +483,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA["To,"]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy">
-				<reportElement stretchType="RelativeToTallestObject" x="24" y="648" width="210" height="20" isPrintWhenDetailOverflows="true" uuid="cacd290f-180f-4a18-8ca7-8beba63a40fe"/>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="24" y="648" width="272" height="20" uuid="cacd290f-180f-4a18-8ca7-8beba63a40fe"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 					<font size="10" isBold="true"/>
 				</textElement>
@@ -495,7 +495,7 @@
 				<text><![CDATA[Copy to Asst Engineer Water Supply with a direction to execute the water tap connection within (6) days from the date of issue of the orders, and update the date of connection in the system without fail.  He/She is also directed to get the road cutting portion repaired within a week and report compliance.]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="24" y="629" width="210" height="20" isPrintWhenDetailOverflows="true" uuid="dbebf33d-c4a7-4626-8288-7cf51d2a5187"/>
+				<reportElement stretchType="RelativeToTallestObject" x="24" y="629" width="272" height="20" isPrintWhenDetailOverflows="true" uuid="dbebf33d-c4a7-4626-8288-7cf51d2a5187"/>
 				<textElement textAlignment="Left" verticalAlignment="Top"/>
 				<textFieldExpression><![CDATA[$P{address}]]></textFieldExpression>
 			</textField>
@@ -534,15 +534,16 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{commissionerName}+" , Commissioner"]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="393" y="546" width="131" height="20" isPrintWhenDetailOverflows="true" uuid="2174decf-51cb-43b8-b617-8ed13f25b7dc"/>
+			<textField>
+				<reportElement stretchType="RelativeToTallestObject" x="296" y="546" width="228" height="20" uuid="2174decf-51cb-43b8-b617-8ed13f25b7dc"/>
+				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$P{designation} =="Commissioner" ?"Commissioner ":" For Commissioner"]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="776" splitType="Prevent">
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="393" y="597" width="131" height="20" isPrintWhenDetailOverflows="true" uuid="83724648-0963-443b-9ad8-05bf01b43c35"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+			<textField>
+				<reportElement x="296" y="597" width="228" height="20" uuid="83724648-0963-443b-9ad8-05bf01b43c35"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$P{municipality}]]></textFieldExpression>
 			</textField>
 			<staticText>
@@ -770,8 +771,8 @@
 				</textElement>
 				<text><![CDATA[:]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="66" y="653" width="168" height="20" isPrintWhenDetailOverflows="true" uuid="a495b42c-d804-4169-a997-34deab14d385"/>
+			<textField>
+				<reportElement x="66" y="653" width="230" height="20" uuid="a495b42c-d804-4169-a997-34deab14d385"/>
 				<textElement textAlignment="Left" verticalAlignment="Top">
 					<font size="10"/>
 				</textElement>
@@ -823,7 +824,7 @@
 				<text><![CDATA[Road Cutting Charges]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="24" y="673" width="210" height="20" isPrintWhenDetailOverflows="true" uuid="b5310d3e-d5d1-44ba-ac4e-d83433e91962"/>
+				<reportElement stretchType="RelativeToTallestObject" x="24" y="673" width="272" height="20" isPrintWhenDetailOverflows="true" uuid="b5310d3e-d5d1-44ba-ac4e-d83433e91962"/>
 				<textElement textAlignment="Left" verticalAlignment="Top"/>
 				<textFieldExpression><![CDATA[$P{address}]]></textFieldExpression>
 			</textField>
@@ -876,8 +877,8 @@
 				<textElement verticalAlignment="Middle"/>
 				<text><![CDATA[Security Deposit]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy">
-				<reportElement stretchType="RelativeToTallestObject" x="24" y="692" width="210" height="20" isPrintWhenDetailOverflows="true" uuid="0ab091bc-f910-402f-9e87-4a6157ba3e2b"/>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="24" y="692" width="272" height="20" uuid="0ab091bc-f910-402f-9e87-4a6157ba3e2b"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
 					<font size="10" isBold="true"/>
 				</textElement>
@@ -990,8 +991,9 @@
 				<reportElement x="331" y="528" width="193" height="50" uuid="318f6019-e943-4463-a3be-cfbe69659e19"/>
 				<imageExpression><![CDATA[$P{userSignature}]]></imageExpression>
 			</image>
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="393" y="578" width="131" height="20" isPrintWhenDetailOverflows="true" uuid="2c1e8d10-8cd9-493c-9167-7f3bae6e39c5"/>
+			<textField>
+				<reportElement x="296" y="578" width="228" height="20" uuid="2c1e8d10-8cd9-493c-9167-7f3bae6e39c5"/>
+				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$P{designation} =="Commissioner" ?"Commissioner ":" For Commissioner"]]></textFieldExpression>
 			</textField>
 		</band>
