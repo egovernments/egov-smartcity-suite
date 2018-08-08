@@ -141,7 +141,7 @@ public class AdvertisementPermitDetailUpdateIndexService {
                 applicationIndex.setStatus(advertisementPermitDetail.getStatus().getDescription());
                 applicationIndex.setOwnerName(user != null ? user.getUsername() + "::" + user.getName() : "");
 
-                // Set application index status to approved on advertisement approval
+                // Set application index status to approved on advertisement approval and close
                 if (advertisementPermitDetail.getStatus().getCode()
                         .equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED)) {
                     String applicantName = advertisementPermitDetail.getAgency() != null
@@ -152,6 +152,9 @@ public class AdvertisementPermitDetailUpdateIndexService {
                     applicationIndex.setApplicantAddress(address);
                     applicationIndex.setMobileNumber(advertisementPermitDetail.getAgency() != null
                             ? advertisementPermitDetail.getAgency().getMobileNumber() : "");
+                    applicationIndex.setApproved(ApprovalStatus.APPROVED);
+                    applicationIndex.setClosed(ClosureStatus.YES);
+                    
                 }
                 // mark application index as closed on generate permit order
                 if (advertisementPermitDetail.getStatus().getCode()
