@@ -55,8 +55,6 @@ public class MessageContentDetails {
     private String eventAddress;
     private List<Long> userIdList;
     private boolean sendAll;
-    private String cityName;
-    private String ulbCode;
 
     public Long getEventDateTime() {
         return eventDateTime;
@@ -97,20 +95,4 @@ public class MessageContentDetails {
     public void setSendAll(boolean sendAll) {
         this.sendAll = sendAll;
     }
-
-	public String getCityName() {
-		return cityName;
-	}
-
-	public void setCityName(String cityName) {
-		this.cityName = cityName;
-	}
-
-	public String getUlbCode() {
-		return ulbCode;
-	}
-
-	public void setUlbCode(String ulbCode) {
-		this.ulbCode = ulbCode;
-	}
 }

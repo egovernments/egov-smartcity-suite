@@ -217,9 +217,10 @@ public class EventService {
         else
             messageContent.setUrl(event.getAddress().getUrl());
 
-        messageDetails.setCityName(ApplicationThreadLocals.getCityName());
-        messageDetails.setUlbCode(ApplicationThreadLocals.getCityCode());
+        messageContent.setCityName(ApplicationThreadLocals.getCityName());
+        messageContent.setUlbCode(ApplicationThreadLocals.getCityCode());
         messageContent.setDetails(messageDetails);
+        
         pushNotificationService.sendNotifications(messageContent);
     }
 }

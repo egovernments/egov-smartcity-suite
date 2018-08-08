@@ -61,6 +61,8 @@ public class MessageContent {
     private Long expiryDate;
     private String url;
     private MessageContentDetails details;
+    private String cityName;
+    private String ulbCode;
 
     public Long getMessageId() {
         return messageId;
@@ -165,4 +167,20 @@ public class MessageContent {
     public void setDetails(MessageContentDetails details) {
         this.details = details;
     }
+
+	public String getCityName() {
+		return cityName;
+	}
+
+	public void setCityName(String cityName) {
+		this.cityName = cityName;
+	}
+
+	public String getUlbCode() {
+		return ulbCode;
+	}
+
+	public void setUlbCode(String ulbCode) {
+		this.ulbCode = ulbCode;
+	}
 }
