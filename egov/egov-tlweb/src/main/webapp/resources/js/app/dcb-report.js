@@ -302,7 +302,7 @@ function updateTotalFooter(colidx, api, isServerSide) {
 
     // Total over all pages
     if (isServerSide && recordTotal != null)
-        total = recordTotal[colidx - 4];
+        total = recordTotal[colidx - 5];
     else
         total = api.column(colidx).data().reduce(function (a, b) {
             return intVal(a) + intVal(b);

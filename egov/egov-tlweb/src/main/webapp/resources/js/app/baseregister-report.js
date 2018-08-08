@@ -252,17 +252,17 @@ function onSubmitEvent(event) {
                     $('#report-footer').show();
                 }
                 if (data.length > 0) {
-                    updateTotalFooter(16, api);
                     updateTotalFooter(17, api);
                     updateTotalFooter(18, api);
                     updateTotalFooter(19, api);
+                    updateTotalFooter(20, api);
                 }
             },
             "initComplete": function (settings, json) {
                 $('.loader-class').modal('hide');
             },
             "aoColumnDefs": [{
-                "aTargets": [16, 17, 18, 19],
+                "aTargets": [17, 18, 19, 20],
                 "mRender": function (data, type, full) {
                     return formatNumberInr(data);
                 },
@@ -288,7 +288,7 @@ function updateTotalFooter(colidx, api) {
     };
 
     // Total over all pages
-    total = recordTotal[colidx - 16];
+    total = recordTotal[colidx - 17];
 
     // Total over this page
     pageTotal = api.column(colidx, {
