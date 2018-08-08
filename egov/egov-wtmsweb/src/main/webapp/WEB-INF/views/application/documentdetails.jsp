@@ -84,10 +84,10 @@
 	<div class="col-sm-3 add-margin text-center">
 		<c:choose>
 			<c:when test="${docs.required}">
-				<form:input class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" id="applicationDocs${status.index}documentNumber" path="applicationDocs[${status.index}].documentNumber" min="3" maxlength="50" required="required" />
+				<form:input class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" id="applicationDocs${status.index}documentNumber" path="applicationDocs[${status.index}].documentNumber" minlength="3" maxlength="50" required="required" />
 			</c:when>
 			<c:otherwise>
-				<form:input class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" id="applicationDocs${status.index}documentNumber" path="applicationDocs[${status.index}].documentNumber" min="3" maxlength="50" />
+				<form:input class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" id="applicationDocs${status.index}documentNumber" path="applicationDocs[${status.index}].documentNumber" minlength="3" maxlength="50" />
 			</c:otherwise>		
 		</c:choose> 
 		<form:errors path="applicationDocs[${status.index}].documentNumber" cssClass="add-margin error-msg" />
