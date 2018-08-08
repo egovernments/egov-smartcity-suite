@@ -877,6 +877,11 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 propService.updatePortal(propertyModel, getApplicationType());
             if (SOURCE_SURVEY.equalsIgnoreCase(propertyModel.getSource())) {
                 SurveyBean surveyBean = new SurveyBean();
+                if(isThirdPartyCheckbox() 
+                		&& PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING.equalsIgnoreCase(propertyModel.getState().getNextAction())){
+                	propertyModel.setThirdPartyVerified(true);
+                	propertyImplService.update(propertyModel);
+                }
                 surveyBean.setProperty(propertyModel);
                 propertySurveyService.updateSurveyIndex(applicationSource, surveyBean);
             }

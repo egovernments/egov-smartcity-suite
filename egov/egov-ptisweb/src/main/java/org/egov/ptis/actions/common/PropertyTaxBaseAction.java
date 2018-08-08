@@ -184,6 +184,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     protected String applicationType;
     protected String initiator;
     protected boolean showCheckboxForGIS = false;
+    protected boolean thirdPartyCheckbox = false;
+    protected boolean disableThirdPartyCheckbox = false;
     
     @Autowired
     protected FinancialUtil financialUtil;
@@ -1011,25 +1013,31 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             return Boolean.FALSE;
     }
 
-    public void enableActionsForGIS(final PropertyImpl property, final List<DocumentType> documentTypes) {
-        String appConfigValue = propertyTaxCommonUtils.getAppConfigValue(APPCONFIG_GIS_THIRDPARTY_CHECKBOX_REQUIRED, PTMODULENAME);
-        if("N".equalsIgnoreCase(appConfigValue))
-            showCheckboxForGIS = false;
-        else {
-            if (property.getState().getNextAction().endsWith(WF_STATE_COMMISSIONER_APPROVAL_PENDING)
-                    && property.getSurveyVariance().compareTo(BigDecimal.TEN) > 0)
-                showCheckboxForGIS = true;
-            if (property.isThirdPartyVerified()
-                    && property.getState().getValue().endsWith(":".concat(WF_STATE_REJECTED))
-                    && WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING
-                            .equalsIgnoreCase(property.getState().getNextAction())) {
-                showCheckboxForGIS = true;
-                for (final DocumentType docType : documentTypes)
-                    if (DOCUMENT_TYPE_THIRD_PARTY_SURVEY.equalsIgnoreCase(docType.getName()))
-                        docType.setMandatory(true);
-            }
-        }
-    }
+	public void enableActionsForGIS(final PropertyImpl property, final List<DocumentType> documentTypes) {
+		String appConfigValue = propertyTaxCommonUtils.getAppConfigValue(APPCONFIG_GIS_THIRDPARTY_CHECKBOX_REQUIRED,
+				PTMODULENAME);
+		if (property.getState().getNextAction().endsWith(WF_STATE_COMMISSIONER_APPROVAL_PENDING)
+				&& property.getSurveyVariance().compareTo(BigDecimal.TEN) > 0) {
+			showCheckboxForGIS = true;
+			if (property.isThirdPartyVerified())
+				thirdPartyCheckbox = true;
+		}
+		if (property.isThirdPartyVerified() && property.getState().getValue().endsWith(":".concat(WF_STATE_REJECTED))
+				&& WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING
+						.equalsIgnoreCase(property.getState().getNextAction())) {
+			showCheckboxForGIS = true;
+			if (PropertyTaxConstants.PROPERTY_MODIFY_REASON_ADD_OR_ALTER
+					.equalsIgnoreCase(property.getPropertyModifyReason()) && property.isThirdPartyVerified())
+				thirdPartyCheckbox = true;
+			for (final DocumentType docType : documentTypes)
+				if (DOCUMENT_TYPE_THIRD_PARTY_SURVEY.equalsIgnoreCase(docType.getName()))
+					docType.setMandatory(true);
+		}
+		if ("N".equalsIgnoreCase(appConfigValue))
+			disableThirdPartyCheckbox = true;
+		else
+			disableThirdPartyCheckbox = false;
+	}
 
     public void validateOwnerDetails(final PropertyImpl property) {
         for (final PropertyOwnerInfo owner : property.getBasicProperty().getPropertyOwnerInfoProxy())
@@ -1278,5 +1286,21 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     public void setShowCheckboxForGIS(final boolean showCheckboxForGIS) {
         this.showCheckboxForGIS = showCheckboxForGIS;
     }
+
+	public boolean isDisableThirdPartyCheckbox() {
+		return disableThirdPartyCheckbox;
+	}
+
+	public void setDisableThirdPartyCheckbox(boolean disableThirdPartyCheckbox) {
+		this.disableThirdPartyCheckbox = disableThirdPartyCheckbox;
+	}
+
+	public boolean isThirdPartyCheckbox() {
+		return thirdPartyCheckbox;
+	}
+
+	public void setThirdPartyCheckbox(boolean thirdPartyCheckbox) {
+		this.thirdPartyCheckbox = thirdPartyCheckbox;
+	}
 
 }

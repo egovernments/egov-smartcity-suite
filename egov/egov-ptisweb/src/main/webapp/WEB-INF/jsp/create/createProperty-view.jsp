@@ -77,16 +77,31 @@
 			jQuery('#Forward').hide();
 		} 
 		var gisFlag = '<s:property value="%{showCheckboxForGIS}"/>';
+		var checkboxDisabled = '<s:property value="%{disableThirdPartyCheckbox}"/>';
 		<s:if test='%{showCheckboxForGIS && @org.egov.ptis.constants.PropertyTaxConstants@SOURCE_SURVEY.equalsIgnoreCase(model.source)}'>
-			jQuery('#thirdPartyVerified').attr('disabled', true);
+			var checkboxVal = jQuery('#thirdPartyCheckbox').prop("checked");
+			var thirdPartyVerified = '<s:property value="%{model.thirdPartyVerified}"/>';
+			if(checkboxDisabled == 'true'){
+				jQuery('#thirdPartyCheckbox').attr('disabled', true);
+				enableDisableActionsForGIS(checkboxVal, thirdPartyVerified);
+			} else {
+				if(thirdPartyVerified == 'true'){
+					jQuery('#thirdPartyCheckbox').attr('disabled', true);
+					enableDisableActionsForGIS(checkboxVal, thirdPartyVerified);
+				} else {
+					if(userDesign == 'UD Revenue Inspector'){
+						jQuery('#thirdPartyCheckbox').attr('disabled', true);
+					} else {
+						enableDisableActionsForGIS(checkboxVal, thirdPartyVerified);
+					}
+				}
+			}
 		</s:if>	
-		if(gisFlag == 'true'){
-			enableDisableActionsForGIS();
-		}
 	}
 	
 	jQuery(document).on('change', ".thirdPartyVerifiedcheckbox", function () {
-		enableDisableActionsForGIS();
+		var thirdPartyVerified = '<s:property value="%{model.thirdPartyVerified}"/>';
+		enableDisableActionsForGIS(jQuery(this).prop("checked"), thirdPartyVerified);
 	});
 	
  	function setCorrCheckBox(){
@@ -204,7 +219,7 @@
 						<br />
 						<s:if test="%{showCheckboxForGIS && model.state.nextAction.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVAL_PENDING)
 							&& @org.egov.ptis.constants.PropertyTaxConstants@SOURCE_SURVEY.equalsIgnoreCase(model.source)}">
-							<s:checkbox name="model.thirdPartyVerified" id="thirdPartyVerified" value="%{thirdPartyVerified}" cssClass="thirdPartyVerifiedcheckbox"/>
+							<s:checkbox name="thirdPartyCheckbox" id="thirdPartyCheckbox" value="%{thirdPartyCheckbox}" cssClass="thirdPartyVerifiedcheckbox"/>
 							<s:text name="survey.thirdparty.verfied" />
 						</s:if>				
 					</s:if> 

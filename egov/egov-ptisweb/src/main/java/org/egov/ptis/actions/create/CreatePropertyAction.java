@@ -955,6 +955,10 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
         if (SOURCE_SURVEY.equalsIgnoreCase(property.getSource())) {
             SurveyBean surveyBean = new SurveyBean();
+            if(isThirdPartyCheckbox() 
+            		&& PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING.equalsIgnoreCase(property.getState().getNextAction())){
+            	property.setThirdPartyVerified(true);
+            }
             surveyBean.setProperty(property);
             propertySurveyService.updateSurveyIndex( APPLICATION_TYPE_NEW_ASSESSENT, surveyBean);
         }

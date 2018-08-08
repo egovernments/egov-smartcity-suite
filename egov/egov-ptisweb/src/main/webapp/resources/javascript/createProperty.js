@@ -1278,17 +1278,18 @@ function confirmSubmit(msg) {
 	}
 }
 
-function enableDisableActionsForGIS(){
-	var thirdPartyCheckVal = jQuery('#thirdPartyVerified').prop("checked");
-	if(thirdPartyCheckVal != undefined){
-		if(thirdPartyCheckVal){
-			 jQuery('#Approve').removeAttr("disabled");
-			 jQuery('#Reject').removeAttr("disabled");
-		 }
-		 else{
-			 jQuery('#Approve').attr('disabled', 'disabled');
-			 jQuery('#Reject').attr('disabled', 'disabled');
-		 }
+function enableDisableActionsForGIS(checkboxValue, thirdPartyFlag){
+	if(thirdPartyFlag == 'false'){
+		if(checkboxValue){
+			jQuery('#Approve').attr('disabled', 'disabled');
+			jQuery('#Reject').removeAttr("disabled");
+		} else {
+			jQuery('#Approve').attr('disabled', 'disabled');
+			jQuery('#Reject').attr('disabled', 'disabled');
+		}
+	} else {
+		jQuery('#Approve').removeAttr("disabled");
+		jQuery('#Reject').removeAttr("disabled");
 	}
 }
 
