@@ -48,9 +48,11 @@
 
 package org.egov.wtms.service.es;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.egov.infra.admin.master.entity.es.CityIndex;
 import org.egov.infra.admin.master.service.es.CityIndexService;
 import org.egov.wtms.entity.es.WaterChargeConnectionCount;
+import org.egov.wtms.entity.es.WaterChargeConnectionCountMonthWise;
 import org.egov.wtms.entity.es.WaterChargeSurveyDashboardRequest;
 import org.egov.wtms.entity.es.WaterChargeSurveyDashboardResponse;
 import org.elasticsearch.action.search.SearchResponse;
@@ -69,9 +71,11 @@ import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CATEGORY_BPL;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATER_CHARGES_SCHEME_INDEX;
@@ -103,6 +107,9 @@ public class WaterChargeSurveyDashboardService {
     private static final String TRUE = "true";
     private static final String FALSE = "false";
     private static final String YES = "YES";
+    private static final String WORKORDER_DATE = "workOrderDate";
+    private static final String EXECUTION_DATE = "executionDate";
+    private static final String APPLICATION_DATE = "applicationDate";
 
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
@@ -292,5 +299,83 @@ public class WaterChargeSurveyDashboardService {
             }
         }
         return boolQuery;
+    }
+
+    public Map<String, Map<String, WaterChargeConnectionCountMonthWise>> getMonthWiseCount(WaterChargeSurveyDashboardRequest request) {
+
+        SearchResponse count = elasticsearchTemplate.getClient().prepareSearch(WATER_CHARGES_SCHEME_INDEX).setSize(0)
+                .setQuery(prepareQuery(request))
+                .execute().actionGet();
+
+        SearchResponse response = elasticsearchTemplate.getClient().prepareSearch(WATER_CHARGES_SCHEME_INDEX).setSize(0)
+                .setQuery(prepareQuery(request))
+                .addAggregation(AggregationBuilders.terms(AGGREGATION_WISE).field(APPLICATION_DATE).size(100))
+                .setSize((int) count.getHits().totalHits())
+                .execute().actionGet();
+
+        Map<String, Map<String, WaterChargeConnectionCountMonthWise>> countMonthWise = new HashMap<>();
+
+        SearchHits hitFields = response.getHits();
+        for (SearchHit hit : hitFields) {
+            String year;
+            String month;
+            Map<String, Object> sourceAsMap = hit.sourceAsMap();
+            year = getYearOfGivenDate(sourceAsMap.get(APPLICATION_DATE).toString());
+            month = getMonthOfGivenDate(sourceAsMap.get(APPLICATION_DATE).toString());
+            setMonthYearWiseCount(countMonthWise, year, month, APPLICATION_DATE);
+
+            String workOrderDate = sourceAsMap.get(WORKORDER_DATE) == null ? EMPTY : sourceAsMap.get(WORKORDER_DATE).toString();
+            if (isNotBlank(workOrderDate)) {
+                year = getYearOfGivenDate(workOrderDate);
+                month = getMonthOfGivenDate(workOrderDate);
+                setMonthYearWiseCount(countMonthWise, year, month, WORKORDER_DATE);
+            }
+
+            String executionDate = sourceAsMap.get(EXECUTION_DATE) == null ? EMPTY : sourceAsMap.get(EXECUTION_DATE).toString();
+            if (isNotBlank(executionDate)) {
+                year = getYearOfGivenDate(executionDate);
+                month = getMonthOfGivenDate(executionDate);
+                setMonthYearWiseCount(countMonthWise, year, month, EXECUTION_DATE);
+            }
+        }
+        return countMonthWise;
+    }
+
+    private void setMonthYearWiseCount(Map<String, Map<String, WaterChargeConnectionCountMonthWise>> countMonthWise,
+                                       String year, String month, String countCondition) {
+
+        if (!countMonthWise.isEmpty() && countMonthWise.containsKey(year)) {
+            if (!countMonthWise.get(year).isEmpty() && countMonthWise.get(year).containsKey(month)) {
+                WaterChargeConnectionCountMonthWise connectionCountMonthWise = countMonthWise.get(year).get(month);
+                getApplicationCount(countCondition, connectionCountMonthWise);
+            } else {
+                WaterChargeConnectionCountMonthWise connectionCountMonthWise = new WaterChargeConnectionCountMonthWise();
+                getApplicationCount(countCondition, connectionCountMonthWise);
+                countMonthWise.get(year).put(month, connectionCountMonthWise);
+            }
+        } else {
+            Map<String, WaterChargeConnectionCountMonthWise> monthWise = new HashedMap();
+            WaterChargeConnectionCountMonthWise connectionCountMonthWise = new WaterChargeConnectionCountMonthWise();
+            getApplicationCount(countCondition, connectionCountMonthWise);
+            monthWise.put(month, connectionCountMonthWise);
+            countMonthWise.put(year, monthWise);
+        }
+    }
+
+    private void getApplicationCount(String countCondition, WaterChargeConnectionCountMonthWise countMonthWise) {
+        if (countCondition.equals(WORKORDER_DATE))
+            countMonthWise.setSanctionIssued(countMonthWise.getSanctionIssued() + 1);
+        else if (countCondition.equals(EXECUTION_DATE))
+            countMonthWise.setConnectionExecuted(countMonthWise.getConnectionExecuted() + 1);
+        else
+            countMonthWise.setApplicationReceived(countMonthWise.getApplicationReceived() + 1);
+    }
+
+    private String getMonthOfGivenDate(String date) {
+        return String.valueOf(new DateTime(date).getMonthOfYear());
+    }
+
+    private String getYearOfGivenDate(String date) {
+        return String.valueOf(new DateTime(date).getYear());
     }
 }

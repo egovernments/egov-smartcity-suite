@@ -45,42 +45,35 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
+package org.egov.wtms.entity.es;
 
-package org.egov.wtms.web.controller.es;
+public class WaterChargeConnectionCountMonthWise {
 
-import org.egov.wtms.entity.es.WaterChargeConnectionCountMonthWise;
-import org.egov.wtms.entity.es.WaterChargeSurveyDashboardRequest;
-import org.egov.wtms.entity.es.WaterChargeSurveyDashboardResponse;
-import org.egov.wtms.service.es.WaterChargeSurveyDashboardService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+    private double applicationReceived;
+    private double sanctionIssued;
+    private double connectionExecuted;
 
-import java.util.List;
-import java.util.Map;
-
-@RestController
-@RequestMapping(value = "/scheme")
-public class WaterChargesSurveyDashboardController {
-
-    @Autowired
-    private WaterChargeSurveyDashboardService surveyDashboardService;
-
-    @GetMapping(value = "/aggregate", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<WaterChargeSurveyDashboardResponse> showDetails(WaterChargeSurveyDashboardRequest surveyDashboardRequest) {
-        return surveyDashboardService.getAggregatedSurveyDetails(surveyDashboardRequest);
+    public double getApplicationReceived() {
+        return applicationReceived;
     }
 
-    @GetMapping(value = "/applicationdetails", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<WaterChargeSurveyDashboardResponse> showApplicationDetails(WaterChargeSurveyDashboardRequest surveyDashboardRequest) {
-        return surveyDashboardService.getApplicationDetails(surveyDashboardRequest);
+    public void setApplicationReceived(double applicationReceived) {
+        this.applicationReceived = applicationReceived;
     }
 
-    @GetMapping(value = "/monthwisecount", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Map<String, WaterChargeConnectionCountMonthWise>> showMonthWiseApplicationCount(WaterChargeSurveyDashboardRequest request) {
-        return surveyDashboardService.getMonthWiseCount(request);
+    public double getSanctionIssued() {
+        return sanctionIssued;
     }
 
+    public void setSanctionIssued(double sanctionIssued) {
+        this.sanctionIssued = sanctionIssued;
+    }
+
+    public double getConnectionExecuted() {
+        return connectionExecuted;
+    }
+
+    public void setConnectionExecuted(double connectionExecuted) {
+        this.connectionExecuted = connectionExecuted;
+    }
 }
