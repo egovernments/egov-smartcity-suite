@@ -59,6 +59,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name= "egpt_aadharseeding_details")
@@ -81,6 +82,7 @@ public class AadharSeedingDetails extends AbstractAuditable{
     @NotNull
     private Long owner;
     
+    @Type(type = "encryptedString")
     private String aadharNo;
 
     public AadharSeeding getAadharSeeding() {
