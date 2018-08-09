@@ -174,7 +174,7 @@
 		<tr>
 			<td width="10%" class="<c:out value='${tdclass}' />">Narration :
 				&nbsp;</td>
-			<td colspan="3" class="<c:out value='${tdclass}' />"><s:property
+			<td colspan="3" id="narrationDescription" class="<c:out value='${tdclass}' />"><s:property
 					value="%{getMasterName('narration')}" /></td>
 			<c:choose>
 				<c:when test="${tdclass == 'bluebox'}">
@@ -188,3 +188,9 @@
 		</tr>
 	</table>
 </div>
+<script type="text/javascript">
+	var narrationText = document.getElementById('narrationDescription').innerText;
+	if(narrationText == ""){
+		document.getElementById('narrationDescription').innerText = "N/A";
+	}
+</script>
