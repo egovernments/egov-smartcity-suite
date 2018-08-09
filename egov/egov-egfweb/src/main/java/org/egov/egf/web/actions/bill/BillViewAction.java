@@ -57,7 +57,6 @@ import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFunction;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.commons.EgovCommon;
-import org.egov.egf.web.actions.voucher.VoucherSearchAction;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -68,8 +67,6 @@ import org.egov.model.bills.EgBillregister;
 import org.egov.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -77,17 +74,17 @@ import java.util.Map;
 
 @ParentPackage("egov")
 @Results({
-    @Result(name = Constants.VIEW, location = "billView-" + Constants.VIEW + ".jsp")
+        @Result(name = Constants.VIEW, location = "billView-" + Constants.VIEW + ".jsp")
 })
-public class BillViewAction extends BaseFormAction
-{
-    private static final Logger LOGGER = Logger.getLogger(VoucherSearchAction.class);
+public class BillViewAction extends BaseFormAction {
+    private static final Logger LOGGER = Logger.getLogger(BillViewAction.class);
     private static final long serialVersionUID = 1L;
-    EgBillregister egBillRegister = new EgBillregister();
-    List<Map<String, Object>> billDetailsList = new ArrayList<Map<String, Object>>();
-    List<Map<String, Object>> subledgerList = new ArrayList<Map<String, Object>>();
+    private transient EgBillregister egBillRegister = new EgBillregister();
+    private transient List<Map<String, Object>> billDetailsList = new ArrayList<>();
+    private transient List<Map<String, Object>> subledgerList = new ArrayList<>();
     @Autowired
-    private EgovCommon egovCommon;
+    private transient EgovCommon egovCommon;
+
     public List<Map<String, Object>> getSubledgerList() {
         return subledgerList;
     }
@@ -112,22 +109,13 @@ public class BillViewAction extends BaseFormAction
         this.egBillRegister = egBillRegister;
     }
 
-    public final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Constants.LOCALE);
-
     @Override
     public Object getModel() {
         return egBillRegister;
     }
 
-    @Override
-    public void prepare()
-    {
-        super.prepare();
-    }
-
     @Action(value = "/bill/billView-view")
-    public String view() throws ApplicationException, ParseException
-    {
+    public String view() {
         loadBillDetails();
         return Constants.VIEW;
     }
@@ -137,18 +125,15 @@ public class BillViewAction extends BaseFormAction
             LOGGER.debug("-----------Start of loadBillDetails()-----------");
         Map<String, Object> temp = null;
         Map<String, Object> subLedgerTemp = null;
-        if (egBillRegister.getEgBilldetailes() != null && egBillRegister.getEgBilldetailes().size() != 0)
-        {
+        if (egBillRegister.getEgBilldetailes() != null && !egBillRegister.getEgBilldetailes().isEmpty()) {
             final List<EgBilldetails> billDetList = persistenceService.findAllBy(
                     " from EgBilldetails where egBillregister.id=? ",
                     egBillRegister.getId());
-            for (final EgBilldetails billDetail : billDetList)
-            {
+            for (final EgBilldetails billDetail : billDetList) {
                 final CChartOfAccounts coa = (CChartOfAccounts) persistenceService.find(" from CChartOfAccounts where id=?  ",
                         billDetail.getGlcodeid().longValue());
-                temp = new HashMap<String, Object>();
-                if (billDetail.getFunctionid() != null)
-                {
+                temp = new HashMap<>();
+                if (billDetail.getFunctionid() != null) {
                     final CFunction function = (CFunction) getPersistenceService().find("from CFunction where id=?",
                             billDetail.getFunctionid().longValue());
                     temp.put(Constants.FUNCTION, function.getName());
@@ -162,15 +147,14 @@ public class BillViewAction extends BaseFormAction
 
                 billDetailsList.add(temp);
 
-                for (final EgBillPayeedetails payeeDetails : billDetail.getEgBillPaydetailes())
-                {
+                for (final EgBillPayeedetails payeeDetails : billDetail.getEgBillPaydetailes()) {
                     final Accountdetailtype detailtype = (Accountdetailtype) persistenceService.find(
                             " from Accountdetailtype where id=?", payeeDetails.getAccountDetailTypeId());
-                    subLedgerTemp = new HashMap<String, Object>();
+                    subLedgerTemp = new HashMap<>();
                     try {
                         subLedgerTemp = getAccountDetails(detailtype, payeeDetails.getAccountDetailKeyId(), subLedgerTemp);
                     } catch (final ApplicationException e) {
-                        final List<ValidationError> errors = new ArrayList<ValidationError>();
+                        final List<ValidationError> errors = new ArrayList<>();
                         errors.add(new ValidationError("exp", e.getMessage()));
                         throw new ValidationException(errors);
                     }
@@ -189,22 +173,13 @@ public class BillViewAction extends BaseFormAction
     }
 
     public Map<String, Object> getAccountDetails(final Accountdetailtype detailtype, final Integer detailkeyid,
-            final Map<String, Object> tempMap) throws ApplicationException
-            {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("-----------Start of getAccountDetails()-----------");
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("-----------detailtype::" + detailtype.getId());
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("-----------detailkeyid::" + detailkeyid);
+                                                 final Map<String, Object> tempMap) throws ApplicationException {
         egovCommon.setPersistenceService(persistenceService);
         final EntityType entityType = egovCommon.getEntityType(detailtype, detailkeyid);
         tempMap.put(Constants.DETAILKEY, entityType.getName());
         tempMap.put(Constants.DETAILTYPE_NAME, detailtype.getName());
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("-----------End of loadBillDetails()-----------");
         return tempMap;
-            }
+    }
 
     public void setBillId(final long billId) {
         egBillRegister = (EgBillregister) persistenceService.find(" from EgBillregister where id = ?", billId);
