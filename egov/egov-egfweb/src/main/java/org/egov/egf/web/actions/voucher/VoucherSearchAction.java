@@ -106,6 +106,7 @@ public class VoucherSearchAction extends BaseFormAction {
     private static final String INTERNAL = "Internal";
     private static final String TYPE_LIST = "typeList";
     private static final String SOURCE = "source";
+    private static final String TYPE = "type";
     private final List<String> headerFields = new ArrayList<>();
     private final List<String> mandatoryFields = new ArrayList<>();
     private final Map<Integer, String> sourceMap = new HashMap<>();
@@ -165,7 +166,9 @@ public class VoucherSearchAction extends BaseFormAction {
         if (headerFields.contains("subscheme"))
             addDropdownData("subschemeList", Collections.emptyList());
 
-        if (parameters.get(SHOW_MODE) != null) {
+        if (parameters.get(SHOW_MODE) == null) {
+            addDropdownData(TYPE_LIST, VoucherHelper.VOUCHER_TYPES);
+        } else {
             showMode = parameters.get(SHOW_MODE)[0];
             if (NON_BILL_PAYMENT.equalsIgnoreCase(showMode)) {
                 final List<String> typeList = new ArrayList<>();
@@ -179,10 +182,10 @@ public class VoucherSearchAction extends BaseFormAction {
                         FinancialConstants.JOURNALVOUCHER_NAME_SUPPLIERJOURNAL);
                 nameList.put(FinancialConstants.JOURNALVOUCHER_NAME_SALARYJOURNAL,
                         FinancialConstants.JOURNALVOUCHER_NAME_SALARYJOURNAL);
-            } else
+            } else {
                 addDropdownData(TYPE_LIST, VoucherHelper.VOUCHER_TYPES);
-        } else
-            addDropdownData(TYPE_LIST, VoucherHelper.VOUCHER_TYPES);
+            }
+        }
     }
 
     private void populateSourceMap() {
@@ -222,23 +225,20 @@ public class VoucherSearchAction extends BaseFormAction {
     public void prepareSearch() {
 
         if (showMode != null && !showMode.equalsIgnoreCase("nonbillPayment") &&
-                parameters.get("type") != null && !parameters.get("type")[0].equalsIgnoreCase("-1"))
-            nameList = getVoucherNameMap(parameters.get("type")[0]);
+                parameters.get(TYPE) != null && !parameters.get(TYPE)[0].equalsIgnoreCase("-1"))
+            nameList = getVoucherNameMap(parameters.get(TYPE)[0]);
 
     }
 
     @ValidationErrorPage(value = SEARCH)
     @Action(value = "/voucher/voucherSearch-search")
     public String search() throws ApplicationException, ParseException {
-        boolean ismodifyJv = false;
-        voucherList = new ArrayList<>();
-        Map<String, Object> voucherMap;
         if (parameters.get(SHOW_MODE) != null)
             showMode = parameters.get(SHOW_MODE)[0];
         if (voucherHeader.getModuleId() != null && voucherHeader.getModuleId() == -1)
             voucherHeader.setModuleId(null);
         // validate if mode is edit and financial year is not active
-        if (null != showMode && showMode.equalsIgnoreCase("edit")) {
+        if (showMode != null && showMode.equalsIgnoreCase("edit")) {
             final boolean validateFinancialYearForPosting = voucherSearchUtil.validateFinancialYearForPosting(fromDate, toDate);
             if (!validateFinancialYearForPosting)
                 throw new ValidationException(Arrays.asList(new ValidationError(
@@ -248,6 +248,8 @@ public class VoucherSearchAction extends BaseFormAction {
 
         List<CVoucherHeader> list;
         List<Query> qryObj;
+        boolean ismodifyJv = false;
+        voucherList = new ArrayList<>();
         // for view voucher implementing paginated result
         if (isBlank(showMode)) {
             qryObj = voucherSearchUtil.voucherSearchQuery(voucherHeader, fromDate, toDate, showMode);
@@ -260,13 +262,14 @@ public class VoucherSearchAction extends BaseFormAction {
             list = voucherSearchUtil.searchNonBillVouchers(voucherHeader, fromDate, toDate, showMode);
         else
             list = voucherSearchUtil.search(voucherHeader, fromDate, toDate, showMode);
+        Map<String, Object> voucherMap;
         if (isBlank(showMode)) {
             for (final CVoucherHeader voucherheader : list) {
                 voucherMap = new HashMap<>();
                 final BigDecimal amt = voucherheader.getTotalAmount();
                 voucherMap.put("id", voucherheader.getId());
                 voucherMap.put("vouchernumber", voucherheader.getVoucherNumber());
-                voucherMap.put("type", voucherheader.getType());
+                voucherMap.put(TYPE, voucherheader.getType());
                 voucherMap.put("name", voucherheader.getName());
                 voucherMap.put("deptName", voucherheader.getVouchermis().getDepartmentid().getName());
                 voucherMap.put("voucherdate", voucherheader.getVoucherDate());
@@ -303,7 +306,7 @@ public class VoucherSearchAction extends BaseFormAction {
                     voucherMap = new HashMap<>();
                     voucherMap.put("id", voucherheader.getId());
                     voucherMap.put("vouchernumber", voucherheader.getVoucherNumber());
-                    voucherMap.put("type", voucherheader.getType());
+                    voucherMap.put(TYPE, voucherheader.getType());
                     voucherMap.put("name", voucherheader.getName());
                     voucherMap.put("deptName", voucherheader.getVouchermis().getDepartmentid().getName());
                     voucherMap.put("voucherdate", voucherheader.getVoucherDate());

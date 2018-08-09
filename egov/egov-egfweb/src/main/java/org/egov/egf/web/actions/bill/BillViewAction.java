@@ -133,12 +133,14 @@ public class BillViewAction extends BaseFormAction {
                 final CChartOfAccounts coa = (CChartOfAccounts) persistenceService.find(" from CChartOfAccounts where id=?  ",
                         billDetail.getGlcodeid().longValue());
                 temp = new HashMap<>();
-                if (billDetail.getFunctionid() != null) {
+                if (billDetail.getFunctionid() == null) {
+                    temp.put(Constants.FUNCTION, "");
+                } else {
                     final CFunction function = (CFunction) getPersistenceService().find("from CFunction where id=?",
                             billDetail.getFunctionid().longValue());
                     temp.put(Constants.FUNCTION, function.getName());
-                } else
-                    temp.put(Constants.FUNCTION, "");
+                }
+
 
                 temp.put("glcode", coa.getGlcode());
                 temp.put("accountHead", coa.getName());

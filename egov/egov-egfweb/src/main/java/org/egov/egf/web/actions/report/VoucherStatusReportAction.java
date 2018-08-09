@@ -49,7 +49,6 @@ package org.egov.egf.web.actions.report;
 
 
 import net.sf.jasperreports.engine.JRException;
-import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -108,7 +107,6 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 })
 @ParentPackage("egov")
 public class VoucherStatusReportAction extends BaseFormAction {
-    private static final Logger LOGGER = Logger.getLogger(VoucherStatusReportAction.class);
     private static final long serialVersionUID = 1L;
     private static final String JASPERPATH = "/reports/templates/voucherStatusReport.jasper";
     private static final String SCHEME = "scheme";
@@ -322,14 +320,14 @@ public class VoucherStatusReportAction extends BaseFormAction {
             sql.append("  vh.fundId=").append(voucherHeader.getFundId().getId());
 
         if (voucherHeader.getType() != null && !voucherHeader.getType().equals("-1"))
-            sql.append(" and vh.type='").append(voucherHeader.getType()).append("'");
+            sql.append(" and vh.type='").append(voucherHeader.getType()).append('\'');
         if (voucherHeader.getName() != null && !voucherHeader.getName().equalsIgnoreCase("-1")
                 && !voucherHeader.getName().equalsIgnoreCase("0"))
-            sql.append(" and vh.name='").append(voucherHeader.getName()).append("'");
+            sql.append(" and vh.name='").append(voucherHeader.getName()).append('\'');
         if (fromDate != null)
-            sql.append(" and vh.voucherDate>='").append(Constants.DDMMYYYYFORMAT1.format(fromDate)).append("'");
+            sql.append(" and vh.voucherDate>='").append(Constants.DDMMYYYYFORMAT1.format(fromDate)).append('\'');
         if (toDate != null)
-            sql.append(" and vh.voucherDate<='").append(Constants.DDMMYYYYFORMAT1.format(toDate)).append("'");
+            sql.append(" and vh.voucherDate<='").append(Constants.DDMMYYYYFORMAT1.format(toDate)).append('\'');
         if (voucherHeader.getStatus() != -1)
             sql.append(" and vh.status=").append(voucherHeader.getStatus());
 
@@ -346,7 +344,7 @@ public class VoucherStatusReportAction extends BaseFormAction {
         if (voucherHeader.getVouchermis().getDivisionid() != null)
             sql.append(" and vh.vouchermis.divisionid=").append(voucherHeader.getVouchermis().getDivisionid().getId());
         if (!modeOfPayment.equals("-1"))
-            sql.append(" and upper(ph.type) ='").append(getModeOfPayment()).append("'");
+            sql.append(" and upper(ph.type) ='").append(getModeOfPayment()).append('\'');
         countQry = "select count(*) " + sql;
         return persistenceService.getSession()
                 .createQuery(new StringBuilder().append("select vh ").append(sql)
