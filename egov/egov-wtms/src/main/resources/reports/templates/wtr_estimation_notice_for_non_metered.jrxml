@@ -48,9 +48,9 @@
   -->
 
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="eccef7e9-f8e9-485b-8286-646c28a3380a">
-	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="96"/>
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="96"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="district" class="java.lang.String"/>
 	<parameter name="applicationDate" class="java.lang.String"/>
 	<parameter name="houseNo" class="java.lang.String"/>
@@ -72,26 +72,13 @@
 	<variable name="amountTotal" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$V{amount}]]></variableExpression>
 	</variable>
-	<background>
-		<band height="802">
-			<rectangle>
-				<reportElement x="0" y="0" width="555" height="802" uuid="113c06ab-af78-4c8c-8872-6fe284a565af"/>
-				<graphicElement>
-					<pen lineWidth="1.25"/>
-				</graphicElement>
-			</rectangle>
-		</band>
-	</background>
 	<title>
 		<band height="294" splitType="Stretch">
-			<rectangle>
-				<reportElement x="21" y="4" width="503" height="59" uuid="9850d957-121a-40fc-a982-475fdb8dedb1"/>
-			</rectangle>
 			<line>
 				<reportElement x="21" y="34" width="503" height="1" uuid="58664f03-3e10-4a10-9d2b-12d2cb46f1eb"/>
 			</line>
 			<line>
-				<reportElement x="272" y="4" width="1" height="59" uuid="674d5b25-9dee-4ab1-8427-be88e7078d05"/>
+				<reportElement x="272" y="3" width="1" height="59" uuid="674d5b25-9dee-4ab1-8427-be88e7078d05"/>
 			</line>
 			<staticText>
 				<reportElement x="21" y="14" width="100" height="20" uuid="67cb3741-49b8-413c-bdc3-0724a9af7d4d"/>
@@ -175,6 +162,18 @@
 				</textElement>
 				<text><![CDATA[Estimate Notice for Procurement of Material for Water Tap Connection ]]></text>
 			</staticText>
+			<line>
+				<reportElement x="21" y="61" width="503" height="1" uuid="0763c4b8-211a-4f2f-9d6f-dd0a9a5f652e"/>
+			</line>
+			<line>
+				<reportElement x="21" y="2" width="503" height="1" uuid="ea519bfc-2ca7-4421-a92d-5380ef776766"/>
+			</line>
+			<line>
+				<reportElement x="21" y="3" width="1" height="59" uuid="8f057450-21bd-440b-9072-b7d8dc9bbc96"/>
+			</line>
+			<line>
+				<reportElement x="524" y="2" width="1" height="59" uuid="264b9240-41a4-4f03-a5b0-1180713f2c55"/>
+			</line>
 		</band>
 	</title>
 	<pageHeader>

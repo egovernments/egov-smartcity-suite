@@ -50,7 +50,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="wtr_sanction_order_notice" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6865e4f4-48af-4398-ab97-f36e24b17ff4">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="940"/>
 	<parameter name="district" class="java.lang.String"/>
 	<parameter name="applicationDate" class="java.lang.String"/>
 	<parameter name="houseNo" class="java.lang.String"/>
@@ -75,16 +75,6 @@
 	<parameter name="total" class="java.lang.Double"/>
 	<parameter name="commissionerName" class="java.lang.String"/>
 	<parameter name="userSignature" class="java.lang.Object"/>
-	<background>
-		<band height="802">
-			<rectangle>
-				<reportElement x="0" y="0" width="555" height="802" uuid="113c06ab-af78-4c8c-8872-6fe284a565af"/>
-				<graphicElement>
-					<pen lineWidth="1.25"/>
-				</graphicElement>
-			</rectangle>
-		</band>
-	</background>
 	<detail>
 		<band height="748" splitType="Prevent">
 			<staticText>
@@ -529,7 +519,7 @@
 			</textField>
 			<textField>
 				<reportElement x="137" y="30" width="316" height="20" uuid="9c8f0227-fa05-4b7b-bac7-e37acbea58fa"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<textElement verticalAlignment="Middle">
 					<font size="14" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{commissionerName}+" , Commissioner"]]></textFieldExpression>
@@ -886,7 +876,7 @@
 			</textField>
 			<textField>
 				<reportElement x="137" y="30" width="316" height="20" uuid="9072ab39-d8c6-44c4-a2e6-0b64afa2391d"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<textElement verticalAlignment="Middle">
 					<font size="14" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{commissionerName}+" , Commissioner"]]></textFieldExpression>
