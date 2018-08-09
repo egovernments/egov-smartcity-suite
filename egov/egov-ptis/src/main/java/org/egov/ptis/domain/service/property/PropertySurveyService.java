@@ -122,9 +122,7 @@ public class PropertySurveyService {
     @Transactional
     public PTGISIndex createPropertySurveyindex(final String applicationType, final SurveyBean surveyBean) {
         PTGISIndex ptGisIndex = new PTGISIndex();
-        Double taxVar;
         final String state;
-        taxVar = calculatetaxvariance(applicationType, surveyBean, ptGisIndex);
         state = surveyBean.getProperty().getState().getValue();
         final Date applicationDate = surveyBean.getProperty().getCreatedDate() == null ? new Date()
                 : surveyBean.getProperty().getCreatedDate();
@@ -149,7 +147,6 @@ public class PropertySurveyService {
                 .withRevenueWard(propId.getWard().getName())
                 .withGisTax(surveyBean.getGisTax().doubleValue()).withApplicationTax(surveyBean.getApplicationTax().doubleValue())
                 .withSystemTax(surveyBean.getSystemTax().doubleValue()).withApprovedTax(surveyBean.getApprovedTax().doubleValue())
-                .withTaxVariance(taxVar)
                 .withAgeOfCompletion(surveyBean.getAgeOfCompletion())
                 .withCompletionDate(completionDate)
                 .withIsApproved(isApproved)
@@ -184,7 +181,7 @@ public class PropertySurveyService {
 
         if (applicationType.equalsIgnoreCase(PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT)
                 && sysTax.compareTo(BigDecimal.ZERO) > 0)
-            taxVar = ((surveyBean.getApprovedTax().subtract(sysTax)).multiply(BigDecimal.valueOf(100.0)))
+            taxVar = ((BigDecimal.valueOf(index.getApprovedTax()).subtract(sysTax)).multiply(BigDecimal.valueOf(100.0)))
                     .divide(sysTax, BigDecimal.ROUND_HALF_UP).doubleValue();
         else
             taxVar = Double.valueOf(100);
@@ -195,24 +192,19 @@ public class PropertySurveyService {
     public PTGISIndex updatePropertySurveyIndex(final SurveyBean surveyBean,
             final PTGISIndex ptGisIndex) {
 
-        Double taxVar;
         String stateValue = surveyBean.getProperty().getState().getValue();
-
-        taxVar = calculatetaxvariance(ptGisIndex.getApplicationType(), surveyBean, ptGisIndex);
-
         String riName = stateValue.endsWith(PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVED)
                 ? surveyBean.getProperty().getState().getLastModifiedBy().getName() : ptGisIndex.getRiName();
         String assistantName = stateValue.endsWith(PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVED)
                 ? surveyBean.getProperty().getState().getLastModifiedBy().getName() : ptGisIndex.getAssistantName();
-        updateApplicationDetails(surveyBean, ptGisIndex, taxVar);
+        updateApplicationDetails(surveyBean, ptGisIndex);
 
         ptGisIndex.setAssistantName(assistantName);
         ptGisIndex.setRiName(riName);
         return updatePTGISIndex(ptGisIndex);
     }
 
-    private void updateApplicationDetails(final SurveyBean surveyBean, final PTGISIndex ptGisIndex,
-            final Double taxVar) {
+    private void updateApplicationDetails(final SurveyBean surveyBean, final PTGISIndex ptGisIndex) {
         PropertyImpl propertyImpl = surveyBean.getProperty();
         BasicProperty basicProperty = propertyImpl.getBasicProperty();
         String stateValue = propertyImpl.getState().getValue();
@@ -223,8 +215,9 @@ public class PropertySurveyService {
         }
 
         if (stateValue.endsWith(WF_STATE_COMMISSIONER_APPROVED)) {
-            ptGisIndex.setApprovedTax(surveyBean.getApprovedTax().doubleValue());
+            ptGisIndex.setApprovedTax(ptGisIndex.getApplicationTax());
             ptGisIndex.setIsApproved(true);
+            ptGisIndex.setTaxVariance(calculatetaxvariance(ptGisIndex.getApplicationType(), surveyBean, ptGisIndex));
         }
 
         if (stateValue.endsWith(WF_STATE_CLOSED) && propertyImpl.getStatus().equals(STATUS_DEMAND_INACTIVE)) {
@@ -242,7 +235,6 @@ public class PropertySurveyService {
         ptGisIndex.setThirdPrtyFlag(propertyImpl.isThirdPartyVerified());
         ptGisIndex.setDoorNo(doorNo == null ? ptGisIndex.getDoorNo() : doorNo);
         ptGisIndex.setSentToThirdParty(propertyImpl.isSentToThirdParty());
-        ptGisIndex.setTaxVariance(taxVar);
         ptGisIndex.setFunctionaryName(getFunctionaryDetail(surveyBean));
     }
 

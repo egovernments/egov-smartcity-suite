@@ -918,9 +918,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         if (SOURCE_SURVEY.equalsIgnoreCase(property.getSource())) {
             SurveyBean surveyBean = new SurveyBean();
             surveyBean.setProperty(property);
-            BigDecimal totalTax=propService.getSurveyTax(property,new Date());
-            surveyBean.setApprovedTax(totalTax);
-            surveyBean.setSystemTax(totalTax);
             propertySurveyService.updateSurveyIndex(APPLICATION_TYPE_NEW_ASSESSENT, surveyBean);
         }
         if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(property.getSource()))

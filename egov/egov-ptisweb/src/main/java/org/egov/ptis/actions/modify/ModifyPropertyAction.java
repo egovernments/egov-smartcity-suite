@@ -783,8 +783,6 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         if (SOURCE_SURVEY.equalsIgnoreCase(propertyModel.getSource())) {
             SurveyBean surveyBean = new SurveyBean();
             surveyBean.setProperty(propertyModel);
-            BigDecimal totalTax = propService.getSurveyTax(propertyModel, new Date());
-            surveyBean.setApprovedTax(totalTax);
             propertySurveyService.updateSurveyIndex(getApplicationType(), surveyBean);
         }
         basicPropertyService.update(basicProp);
