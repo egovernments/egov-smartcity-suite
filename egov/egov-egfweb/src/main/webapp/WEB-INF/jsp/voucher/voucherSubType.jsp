@@ -68,7 +68,7 @@
 			<span class="mandatory1">*</span>
 		</div></td>
 	<td class="bluebox"><s:textfield name="voucherTypeBean.partyName"
-			id="voucherTypeBean.partyName" onblur="isSpecialChar(this)"
+			id="voucherTypeBean.partyName" onchange="isSpecialChar(this)"
 			value="%{voucherTypeBean.partyName}" /></td>
 </tr>
 <tr>
@@ -131,6 +131,7 @@ function onChangeVSubType(){
 	document.getElementById('voucherTypeBean.voucherSubType').value = vType;
 	
 	if(vType == 'JVGeneral'){
+		document.getElementById('lblError').innerHTML = "";
 		document.getElementById('voucherTypeBean.partyBillNum').value="";
 		document.getElementById('voucherTypeBean.partyName').value="";
 		document.getElementById('partyBillDate').value="";
@@ -142,7 +143,7 @@ function onChangeVSubType(){
 		document.getElementById('partyBillDate').readOnly=true;
 		document.getElementById('voucherTypeBean.billNum').readOnly=true;
 		document.getElementById('billDate').readOnly=true;
-		document.getElementById('lblError').innerHTML = "";
+		
 	}
 	else{
 		document.getElementById('voucherTypeBean.partyBillNum').readOnly=false;
@@ -162,6 +163,14 @@ function onChangeVSubType(){
 
 function isSpecialChar(Obj){
 	var pattern=/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi;
+	var partyNameEntered = document.getElementById('voucherTypeBean.partyName').value;
+	if(partyNameEntered.trim().length == 0){
+		document.getElementById('lblError').innerHTML = "Only empty spaces are not allowed";
+		document.getElementById('voucherTypeBean.partyName').focus();
+		return false;
+	}else{
+		document.getElementById('lblError').innerHTML = "";
+	}
 	if(document.getElementById('voucherTypeBean.partyName').value.match(pattern))
 	{
 		document.getElementById('voucherTypeBean.partyName').focus();
@@ -171,4 +180,5 @@ function isSpecialChar(Obj){
 		document.getElementById('lblError').innerHTML = "";
 	}
   }
+  
 </script>
