@@ -139,7 +139,7 @@
                            style="overflow-x: auto;max-width: 100%;min-width: 100%">
                         <tfoot id="report-footer">
                         <tr>
-                            <td colspan="16">Total</td>
+                            <td colspan="17" style="text-align: right">Total</td>
                             <td></td>
                             <td></td>
                             <td></td>

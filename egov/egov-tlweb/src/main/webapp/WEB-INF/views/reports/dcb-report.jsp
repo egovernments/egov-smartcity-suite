@@ -141,8 +141,7 @@
                         </thead>
                         <tfoot id="report-footer">
                         <tr>
-                            <td colspan="4"><spring:message code="lbl.total"/></td>
-                            <td></td>
+                            <td colspan="5" style="text-align: right;"><spring:message code="lbl.total"/></td>
                             <td></td>
                             <td></td>
                             <td></td>
