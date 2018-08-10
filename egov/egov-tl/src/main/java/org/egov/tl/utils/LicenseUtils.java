@@ -57,7 +57,6 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.validation.exception.ValidationException;
 import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.service.LicenseConfigurationService;
@@ -105,9 +104,7 @@ public class LicenseUtils {
             commissionerAssignments = assignmentService.getAllActiveAssignments(
                     designationService.getDesignationByName(COMMISSIONER_DESGN).getId());
         }
-        if (commissionerAssignments.isEmpty())
-            throw new ValidationException("TL-0010", "No valid Commissioner assignment found.");
-        return commissionerAssignments.get(0);
+        return commissionerAssignments.isEmpty() ? null : commissionerAssignments.get(0);
     }
 
     public Integer getSlaForAppType(LicenseAppType licenseAppType) {
