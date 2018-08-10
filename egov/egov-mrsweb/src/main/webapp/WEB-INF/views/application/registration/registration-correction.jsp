@@ -170,7 +170,7 @@
 				<jsp:include page="../../common/commonWorkflowMatrix.jsp" />
 			</c:if>
 
-			<c:choose>
+			<%-- <c:choose>
 				<c:when
 					test="${marriageRegistration.status.code eq 'CREATED' && (nextActn eq 'Junior/Senior Assistance approval pending'  || (pendingActions eq 'Clerk Approval Pending' || pendingActions eq 'Revenue Clerk Approval Pending'))}">
 					<div class="buttonbottom" align="center">
@@ -186,14 +186,14 @@
 									class="btn btn-default" onclick="window.close();" />
 							</div>
 						</c:when>
-						<c:otherwise>
+						<c:otherwise> --%>
 							<div class="buttonbottom" align="center">
 								<jsp:include page="../../common/commonWorkflowMatrix-button.jsp" />
 							</div>
-						</c:otherwise>
+						<%-- </c:otherwise>
 					</c:choose>
 				</c:otherwise>
-			</c:choose>
+			</c:choose> --%>
 		</form:form>
 	</div>
 </div>
