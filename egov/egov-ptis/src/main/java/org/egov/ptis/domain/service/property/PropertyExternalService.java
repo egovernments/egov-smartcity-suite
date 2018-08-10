@@ -2358,14 +2358,6 @@ public class PropertyExternalService {
         BasicProperty basicProperty = updateBasicProperty(viewPropertyDetails, propService);
         PropertyImpl property = (PropertyImpl) basicProperty.getWFProperty();
         PropertyImpl activeProperty = basicProperty.getActiveProperty();
-        if (activeProperty != null) {
-            for (EgDemandDetails activeDemandDetail : activeProperty.getPtDemandSet().iterator().next().getEgDemandDetails())
-            	if(!PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES.equalsIgnoreCase(
-									activeDemandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode())
-							&& !PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY.equalsIgnoreCase(
-									activeDemandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()))
-            		activeTax = activeTax.add(activeDemandDetail.getAmount());
-        }
         property.getPropertyDetail().setCategoryType(viewPropertyDetails.getCategory());
         basicProperty.setUnderWorkflow(Boolean.TRUE);
         basicProperty.setParcelId(viewPropertyDetails.getParcelId());
@@ -2403,7 +2395,22 @@ public class PropertyExternalService {
             surveyBean.setGisTax(totalTax);
             surveyBean.setApplicationTax(totalTax);
             surveyBean.setAgeOfCompletion(propService.getSlaValue(APPLICATION_TYPE_ALTER_ASSESSENT));
-            surveyBean.setSystemTax(activeTax);
+            if (activeProperty != null) {
+            	Ptdemand activePtDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(activeProperty);
+            	Map<String, Installment> yearwiseInstMap = propertyTaxUtil.getInstallmentsForCurrYear(gisPtdemand.getEgInstallmentMaster().getFromDate());
+                Date firstInstStartDate = yearwiseInstMap.get(PropertyTaxConstants.CURRENTYEAR_FIRST_HALF).getFromDate();
+                Date secondInstStartDate = yearwiseInstMap.get(PropertyTaxConstants.CURRENTYEAR_SECOND_HALF).getFromDate();
+                for (EgDemandDetails demandDetail : activePtDemand.getEgDemandDetails()) {
+                    if (firstInstStartDate.equals(demandDetail.getInstallmentStartDate())
+                            || secondInstStartDate.equals(demandDetail.getInstallmentStartDate()) 
+        							&& !PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES.equalsIgnoreCase(
+        									demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode())
+        							&& !PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY.equalsIgnoreCase(
+        									demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()))
+                    	activeTax = activeTax.add(demandDetail.getAmount());
+                }
+            	surveyBean.setSystemTax(activeTax);
+            }
             surveyService.updateSurveyIndex(APPLICATION_TYPE_ALTER_ASSESSENT, surveyBean);
         }
 
