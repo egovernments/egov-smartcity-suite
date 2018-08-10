@@ -211,7 +211,7 @@ public class MarriageFormValidator implements Validator {
             validateDocumentAttachments(errors, registration);
 
             if (registration.getStatus() != null && "CREATED".equals(registration.getStatus().getCode())
-                    && (!registration.isFeeCollected() && workFlowAction != null && workFlowAction.equalsIgnoreCase("APPROVE"))
+                    && !registration.isFeeCollected() && workFlowAction != null && workFlowAction.equalsIgnoreCase("APPROVE")
                     && !MarriageConstants.JUNIOR_SENIOR_ASSISTANCE_APPROVAL_PENDING
                             .equalsIgnoreCase(registration.getState().getNextAction())
                     && !MarriageConstants.WFLOW_PENDINGACTION_CLERK_APPRVLPENDING
