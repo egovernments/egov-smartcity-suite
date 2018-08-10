@@ -119,7 +119,7 @@
 								name="chartOfAccount.glCode" />:<span class="mandatory1">*</span></strong></td>
 					<td class="bluebox" width="10%"><input type="text"
 						readonly="readonly" name="generatedGlcode" id="generatedGlcode"
-						size="10" /> <input type="text" name="newGlcode" id="newGlcode" 
+						size="10" /> <input type="text" name="newGlcode" id="newGlcode" onblur="isNotNumber(this)" onchange="isNotNumber(this)"
 						onkeypress="return event.charCode >= 48 && event.charCode <= 57"
 						size="2" maxlength='<s:property value="glCodeLengths[4l]"/>' /></td>
 				</tr>
@@ -201,7 +201,19 @@
 		        oDS: oDS, 
 		        oAC: oAC 
 		    }; 
-		}(); 
+		}();
+		
+		function isNotNumber(Obj){
+			var pattern=/^[0-9\b]+$/;
+			if(document.getElementById('newGlcode').value.match(pattern))
+			{
+				document.getElementById('lblError').innerHTML = "";	
+			}else{
+				document.getElementById('newGlcode').value = "";
+				document.getElementById('lblError').innerHTML = "Please enter only numbers";
+				return false;
+			}
+		  }
 </script>
 	</div>
 </body>
