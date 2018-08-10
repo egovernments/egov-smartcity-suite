@@ -84,7 +84,7 @@
 								code="lbl.consumerno" /><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="connection.oldConsumerNumber" id="consumerCodeData"
-								class="form-control text-left patternvalidation" data-pattern="alphanumerichyphenbackslash" maxlength="15" required="required" />
+								class="form-control text-left patternvalidation" data-pattern="alphanumerichyphenbackslash" maxlength="25" required="required" />
 								<form:errors path="connection.oldConsumerNumber" cssClass="add-margin error-msg" />	
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message
