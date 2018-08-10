@@ -69,6 +69,9 @@ import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.FetchType.LAZY;
+
 @Entity
 @Table(name = "EGTL_MSTR_SUB_CATEGORY")
 @SequenceGenerator(name = LicenseSubCategory.SEQUENCE, sequenceName = LicenseSubCategory.SEQUENCE, allocationSize = 1)
@@ -92,7 +95,7 @@ public class LicenseSubCategory extends AbstractAuditable {
     @SafeHtml
     private String name;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "ID_CATEGORY")
     private LicenseCategory category;
 
@@ -108,7 +111,7 @@ public class LicenseSubCategory extends AbstractAuditable {
     @JoinColumn(name = "ID_LICENSE_SUB_TYPE")
     private LicenseSubType licenseSubType;
 
-    @OneToMany(mappedBy = "subCategory", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "subCategory", fetch = LAZY, cascade = ALL, orphanRemoval = true)
     @Valid
     private List<LicenseSubCategoryDetails> licenseSubCategoryDetails = new ArrayList<>();
 
