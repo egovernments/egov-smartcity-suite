@@ -167,7 +167,7 @@ public class NewRegistrationController extends MarriageRegistrationController {
             final BindingResult errors, final RedirectAttributes redirectAttributes) {
         User logedinUser = securityUtils.getCurrentUser();
         validateApplicationDate(marriageRegistration, errors);
-        marriageFormValidator.validate(marriageRegistration, errors, "registration",null);
+        marriageFormValidator.validate(marriageRegistration, errors, "registration");
         boolean loggedUserIsMeesevaUser = registrationWorkFlowService.isMeesevaUser(logedinUser);
         boolean citizenPortalUser = registrationWorkFlowService.isCitizenPortalUser(securityUtils.getCurrentUser());
         final Boolean isEmployee = !ANONYMOUS_USER.equalsIgnoreCase(logedinUser.getName())

@@ -132,7 +132,7 @@ public class MarriageFormValidator implements Validator {
         }
     }
 
-    public void validate(final Object target, final Errors errors, final String type,String workFlowAction) {
+    public void validate(final Object target, final Errors errors, final String type) {
         final MarriageRegistration registration = (MarriageRegistration) target;
         if (type != null && "DATAENTRY".equals(type)) {
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "applicationNo", "Notempty.mrg.appln.no");
@@ -211,10 +211,9 @@ public class MarriageFormValidator implements Validator {
             validateDocumentAttachments(errors, registration);
 
             if (registration.getStatus() != null && "CREATED".equals(registration.getStatus().getCode())
-                    && !registration.isFeeCollected() && workFlowAction != null && workFlowAction.equalsIgnoreCase("APPROVE")
-                    && !MarriageConstants.JUNIOR_SENIOR_ASSISTANCE_APPROVAL_PENDING
+                    && !registration.isFeeCollected() && !MarriageConstants.JUNIOR_SENIOR_ASSISTANCE_APPROVAL_PENDING
                             .equalsIgnoreCase(registration.getState().getNextAction())
-                    && !MarriageConstants.WFLOW_PENDINGACTION_CLERK_APPRVLPENDING
+                    &&  !MarriageConstants.WFLOW_PENDINGACTION_CLERK_APPRVLPENDING
                             .equalsIgnoreCase(registration.getState().getNextAction()))
                 errors.reject("validate.collect.marriageFee", null);
 
