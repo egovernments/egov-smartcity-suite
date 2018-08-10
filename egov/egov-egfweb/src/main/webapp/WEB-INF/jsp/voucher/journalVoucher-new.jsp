@@ -300,6 +300,12 @@
 				document.getElementById('voucherTypeBean.partyName').focus();
 				return false;
 			}
+			var partyName = document.getElementById('voucherTypeBean.partyName').value;
+			if(partyName.trim().length == 0){
+				document.getElementById('lblError').innerHTML = "Only empty spaces are not allowed";
+				document.getElementById('voucherTypeBean.partyName').focus();
+				return false;
+			}
 		}
 		var billDate = document.getElementById("billDate").value;
 	    var date = billDate.substring(0, 2);

@@ -169,16 +169,16 @@ function isSpecialChar(Obj){
 		document.getElementById('voucherTypeBean.partyName').focus();
 		return false;
 	}else{
-		document.getElementById('lblError').innerHTML = "";
-	}
-	if(document.getElementById('voucherTypeBean.partyName').value.match(pattern))
-	{
-		document.getElementById('voucherTypeBean.partyName').focus();
-		document.getElementById('lblError').innerHTML = "Special characters are not allowed ";
-		return false;
-	}else{
-		document.getElementById('lblError').innerHTML = "";
-	}
+		if(document.getElementById('voucherTypeBean.partyName').value.match(pattern))
+		{
+			document.getElementById('voucherTypeBean.partyName').focus();
+			document.getElementById('lblError').innerHTML = "Special characters are not allowed ";
+			return false;
+		}else{
+			document.getElementById('lblError').innerHTML = "";
+		}
+	} 
+	
   }
   
 </script>
