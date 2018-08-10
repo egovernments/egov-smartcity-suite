@@ -300,7 +300,9 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
         User approver = license.getApprovedBy();
         if (isProvisional || approver == null) {
-            approver = licenseUtils.getCommissionerAssignment().getEmployee();
+            Assignment commissionerAssignment = licenseUtils.getCommissionerAssignment();
+            if (commissionerAssignment != null)
+                approver = commissionerAssignment.getEmployee();
         }
 
         ByteArrayInputStream commissionerSign = new ByteArrayInputStream(
