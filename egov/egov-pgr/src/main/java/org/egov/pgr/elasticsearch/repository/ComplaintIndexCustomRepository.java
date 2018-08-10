@@ -92,4 +92,6 @@ public interface ComplaintIndexCustomRepository {
 
     SearchResponse findCategoryWiseFeedBackRatingDetails(ComplaintDashBoardRequest ivrsFeedBackRequest,
             BoolQueryBuilder feedBackQuery);
+
+    List<ComplaintIndex> findIvrsComplaints(ComplaintDashBoardRequest complaintDashBoardRequest, BoolQueryBuilder query, String fieldName, String paramValue);
 }

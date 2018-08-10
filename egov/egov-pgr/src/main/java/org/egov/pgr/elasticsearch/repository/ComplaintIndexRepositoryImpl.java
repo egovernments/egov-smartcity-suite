@@ -145,7 +145,9 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
     private static final String REGION_NAME="cityRegionName";
     private static final String LOCALITY_NUMBER="localityNo";
     private static final String DISTRICT_CODE="cityDistrictCode";
-
+    private static final String COMPLETION_DATE="completionDate";
+    private static final String CREATED_DATE="createdDate";
+    private static final String TODAY_COMPLAINT_COUNT="todaysComplaintCount";
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
 
@@ -153,7 +155,7 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
     public SearchResponse todaysComplaintCount(BoolQueryBuilder query) {
         return elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
                 .setQuery(query)
-                .setSize(0).addAggregation(getCountBetweenSpecifiedDates("todaysComplaintCount", "createdDate",
+                .setSize(0).addAggregation(getCountBetweenSpecifiedDates(TODAY_COMPLAINT_COUNT, CREATED_DATE,
                         new DateTime().toString(formatter), new DateTime().plusDays(1).toString(formatter)))
                 .execute().actionGet();
     }
@@ -189,10 +191,10 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                 .addAggregation(getCountWithGrouping("slaCount", IF_SLA, 2))
                 .addAggregation(getAverageWithFilter(IF_CLOSED, 1, "AgeingInWeeks", COMPLAINT_AGEINGDAYS_FROM_DUE))
                 .addAggregation(getAverageWithExclusion(SATISFACTION_AVERAGE, SATISFACTION_INDEX))
-                .addAggregation(getCountBetweenSpecifiedDates("currentYear", "createdDate",
+                .addAggregation(getCountBetweenSpecifiedDates("currentYear", CREATED_DATE,
                         currentYearFromDate.toString(formatter),
                         new DateTime().plusDays(1).toString(formatter)))
-                .addAggregation(getCountBetweenSpecifiedDates("todaysComplaintCount", "createdDate",
+                .addAggregation(getCountBetweenSpecifiedDates(TODAY_COMPLAINT_COUNT, CREATED_DATE,
                         new DateTime().toString(formatter), new DateTime().plusDays(1).toString(formatter)))
                 .execute().actionGet();
 
@@ -820,11 +822,23 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                 .addAggregation(AggregationBuilders.terms("typeAggr").field(aggregationField).size(130)
                         .subAggregation(ComplaintIndexAggregationBuilder.getCallStatusAndRating())
                         .subAggregation(ComplaintIndexAggregationBuilder.prepareMonthlyAggregations())
-                        .subAggregation(getCountBetweenSpecifiedDates("todaysComplaintCount", "completionDate",
-                                new DateTime().toString(formatter), new DateTime().plusDays(1).toString(formatter)))
+                        .subAggregation(getCountBetweenSpecifiedDates(TODAY_COMPLAINT_COUNT,
+                                COMPLETION_DATE, new DateTime().toString(formatter), new DateTime().plusDays(1).toString(formatter)))
                         .subAggregation(addFieldBasedOnAggField(aggregationField)))
                 .execute().actionGet();
     }
+
+    @Override
+    public List<ComplaintIndex> findIvrsComplaints(final ComplaintDashBoardRequest complaintDashBoardRequest,
+                                                         final BoolQueryBuilder query, String fieldName, String paramValue) {
+        final SortOrder sortOrder = complaintDashBoardRequest.getSortDirection().equals("ASC") ? SortOrder.ASC : SortOrder.DESC;
+        final SearchQuery searchQuery = new NativeSearchQueryBuilder().withQuery(query.must(QueryBuilders.matchQuery(fieldName, paramValue)))
+                .withSort(new FieldSortBuilder(complaintDashBoardRequest.getSortField()).order(sortOrder))
+                .withPageable(new PageRequest(0, complaintDashBoardRequest.getSize()))
+                .build();
+        return elasticsearchTemplate.queryForList(searchQuery, ComplaintIndex.class);
+    }
+
 
     private TopHitsBuilder addFieldBasedOnAggField(String aggregationField) {
         TopHitsBuilder field = AggregationBuilders.topHits("paramDetails");
@@ -883,10 +897,10 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
             return elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
                     .setQuery(feedBackQuery)
                     .addAggregation(AggregationBuilders.terms("categoryAggr").field("categoryName").size(130)
-                            .subAggregation(AggregationBuilders.terms("complaintTypeAggr").field("complaintTypeName")
+                            .subAggregation(AggregationBuilders.terms("complaintTypeAggr").field(COMPLAINT_TYPE_NAME)
                                     .subAggregation(ComplaintIndexAggregationBuilder.getCallStatusAndRating())
                                     .subAggregation(ComplaintIndexAggregationBuilder.prepareMonthlyAggregations())
-                                    .subAggregation(getCountBetweenSpecifiedDates("todaysComplaintCount", "completionDate",
+                                    .subAggregation(getCountBetweenSpecifiedDates(TODAY_COMPLAINT_COUNT, COMPLETION_DATE,
                                             new DateTime().toString(formatter), new DateTime().plusDays(1).toString(formatter)))))
                     .execute().actionGet();
         } else {
@@ -895,7 +909,7 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                     .addAggregation(AggregationBuilders.terms("categoryAggr").field("categoryName").size(130)
                             .subAggregation(ComplaintIndexAggregationBuilder.getCallStatusAndRating())
                             .subAggregation(ComplaintIndexAggregationBuilder.prepareMonthlyAggregations())
-                            .subAggregation(getCountBetweenSpecifiedDates("todaysComplaintCount", "completionDate",
+                            .subAggregation(getCountBetweenSpecifiedDates(TODAY_COMPLAINT_COUNT, COMPLETION_DATE,
                                     new DateTime().toString(formatter), new DateTime().plusDays(1).toString(formatter))))
                     .execute().actionGet();
         }

@@ -95,6 +95,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -104,6 +105,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static java.lang.String.format;
+import static java.math.BigDecimal.ZERO;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -178,7 +180,11 @@ public class ComplaintIndexService {
     private static final int GOOD_RATING = 1;
     private static final int BAD_RATING = 2;
     private static final int AVG_RATING = 3;
-
+    private static final int RESPONDED_WITH_FEEDBACK = 3;
+    private static final int RESPONDED_WITH_REPEAT_FEEDBACK = 4;
+    private static final String COMPLETION_DATE = "completionDate";
+    private static final String IF_CLOSED = "ifClosed";
+    private static final String TODAY_COMPLAINT_COUNT = "todaysComplaintCount";
     @Autowired
     private CityService cityService;
 
@@ -633,7 +639,7 @@ public class ComplaintIndexService {
         BoolQueryBuilder todaysComplaintQuery = getFilterQuery(complaintDashBoardRequest, true);
         Range todaysCount = complaintIndexRepository
                 .todaysComplaintCount(todaysComplaintQuery)
-                .getAggregations().get("todaysComplaintCount");
+                .getAggregations().get(TODAY_COMPLAINT_COUNT);
         result.put("todaysComplaintsCount", todaysCount.getBuckets().get(0).getDocCount());
 
         // For Dynamic results based on grouping fields
@@ -1482,7 +1488,7 @@ public class ComplaintIndexService {
         if (isNotBlank(fieldValue))
             boolQuery.filter(matchQuery(fieldName, fieldValue));
         else
-            boolQuery = boolQuery.filter(matchQuery("ifClosed", 1)).filter(rangeQuery(fieldName).gte(lowerLimit).lte(upperLimit));
+            boolQuery = boolQuery.filter(matchQuery(IF_CLOSED, 1)).filter(rangeQuery(fieldName).gte(lowerLimit).lte(upperLimit));
 
         final List<ComplaintIndex> complaints = complaintIndexRepository.findAllComplaintsByField(complaintDashBoardRequest,
                 boolQuery);
@@ -1500,14 +1506,18 @@ public class ComplaintIndexService {
 
     public List<ComplaintIndex> getFeedbackComplaints(final ComplaintDashBoardRequest complaintDashBoardRequest,
                                                       final String fieldName, final String fieldValue) {
-        BoolQueryBuilder boolQuery = getFilterQuery(complaintDashBoardRequest);
+
+        List<ComplaintIndex> complaintList = new ArrayList<>();
         if (isNotBlank(fieldValue))
-            boolQuery.must(termsQuery(fieldName, fieldValue.split(",")));
-        final List<ComplaintIndex> complaints = complaintIndexRepository.findAllComplaintsByField(complaintDashBoardRequest,
-                boolQuery);
-        setComplaintViewURL(complaints);
-        getFeedbackInWords(complaints);
-        return complaints;
+            for (String callStatus : Arrays.asList(fieldValue.split(","))) {
+                BoolQueryBuilder boolQuery = getIvrsFilterQuery(complaintDashBoardRequest, false);
+                List<ComplaintIndex> complaints = complaintIndexRepository.findIvrsComplaints(complaintDashBoardRequest,
+                        boolQuery, fieldName, callStatus);
+                setComplaintViewURL(complaints);
+                getFeedbackInWords(complaints);
+                complaintList.addAll(complaints);
+            }
+        return complaintList;
     }
 
     private void getFeedbackInWords(List<ComplaintIndex> complaints) {
@@ -1676,7 +1686,7 @@ public class ComplaintIndexService {
         for (Bucket closedBucket : closedterms.getBuckets()) {
             IVRSFeedBackResponse feedbackResponse = new IVRSFeedBackResponse();
             feedbackResponse.setTotalComplaint(closedBucket.getDocCount());
-            Range todaysClosedCount = closedBucket.getAggregations().get("todaysComplaintCount");
+            Range todaysClosedCount = closedBucket.getAggregations().get(TODAY_COMPLAINT_COUNT);
             feedbackResponse.setTodaysClosed(todaysClosedCount.getBuckets().get(0).getDocCount());
             setUpperLevelValues(aggregationField, feedbackResponse, closedBucket);
             callStatusAndRatingCount(closedBucket, feedbackResponse);
@@ -1707,14 +1717,16 @@ public class ComplaintIndexService {
 
     private void prepareMonthlyCallStatCounts(Histogram.Bucket entry, MonthlyFeedbackCounts monthStat) {
         Terms callStatCountAggr = entry.getAggregations().get("callStatCountAggr");
+        BigDecimal nonRespondedCount = ZERO;
         for (Bucket callStatBucket : callStatCountAggr.getBuckets()) {
             int callStatus = callStatBucket.getKeyAsNumber().intValue();
-            if (callStatus == 3 || callStatus == 4) {
+            if (RESPONDED_WITH_FEEDBACK == callStatus || RESPONDED_WITH_REPEAT_FEEDBACK == callStatus) {
                 monthStat.setRespondedCount(callStatBucket.getDocCount());
                 prepareMonthlyRatingCount(callStatBucket, monthStat);
             } else
-                monthStat.setNonRespondedCount(callStatBucket.getDocCount());
+                nonRespondedCount = nonRespondedCount.add(BigDecimal.valueOf(callStatBucket.getDocCount()));
         }
+        monthStat.setNonRespondedCount(nonRespondedCount.longValue());
     }
 
     private void prepareMonthlyRatingCount(Bucket callStatBucket, MonthlyFeedbackCounts monthStat) {
@@ -1733,15 +1745,18 @@ public class ComplaintIndexService {
 
     private void callStatusAndRatingCount(Bucket closedBucket, IVRSFeedBackResponse feedbackResponse) {
         Terms callStatTerms = closedBucket.getAggregations().get("callStatCountAggr");
+        BigDecimal notRespondedCount = ZERO;
         for (Bucket callStatBucket : callStatTerms.getBuckets()) {
-            if (callStatBucket.getKeyAsNumber().intValue() == 3 || callStatBucket.getKeyAsNumber().intValue() == 4) {
+            if (RESPONDED_WITH_FEEDBACK == callStatBucket.getKeyAsNumber().intValue()
+                    || RESPONDED_WITH_REPEAT_FEEDBACK == callStatBucket.getKeyAsNumber().intValue()) {
                 feedbackResponse.setResponded(callStatBucket.getDocCount());
                 Terms countTerms = callStatBucket.getAggregations().get("countAggr");
                 for (Bucket countBucket : countTerms.getBuckets())
                     getDifferentRatingCounts(feedbackResponse, countBucket);
             } else
-                feedbackResponse.setNotResponded(callStatBucket.getDocCount());
+                notRespondedCount = notRespondedCount.add(BigDecimal.valueOf(callStatBucket.getDocCount()));
         }
+        feedbackResponse.setNotResponded(notRespondedCount.longValue());
     }
 
     private void getDifferentRatingCounts(IVRSFeedBackResponse feedbackResponse, Bucket countBucket) {
@@ -1809,12 +1824,12 @@ public class ComplaintIndexService {
 
     private BoolQueryBuilder prepareQuery(final ComplaintDashBoardRequest ivrsRequest) {
         BoolQueryBuilder boolQuery = new BoolQueryBuilder();
-        boolQuery = boolQuery.must(matchQuery("ifClosed", 1))
+        boolQuery = boolQuery.must(matchQuery(IF_CLOSED, 1))
                 .must(matchQuery("complaintStatusName", "COMPLETED"));
         if (isNotBlank(ivrsRequest.getFromDate()) && isNotBlank(ivrsRequest.getToDate())) {
             String fromDate = new DateTime(ivrsRequest.getFromDate()).withTimeAtStartOfDay().toString(PGR_INDEX_DATE_FORMAT);
             String toDate = new DateTime(ivrsRequest.getToDate()).plusDays(1).toString(PGR_INDEX_DATE_FORMAT);
-            boolQuery = boolQuery.must(rangeQuery("completionDate").from(fromDate).to(toDate));
+            boolQuery = boolQuery.must(rangeQuery(COMPLETION_DATE).from(fromDate).to(toDate));
         }
         if (isNotBlank(ivrsRequest.getRegionName()))
             boolQuery = boolQuery.filter(matchQuery(CITY_REGION_NAME, ivrsRequest.getRegionName()));
@@ -1872,9 +1887,49 @@ public class ComplaintIndexService {
 
     private void setCategoryWiseResponse(Bucket complaintTypeBucket, IVRSFeedBackResponse feedbackResponse) {
         feedbackResponse.setTotalComplaint(complaintTypeBucket.getDocCount());
-        Range todaysClosedCount = complaintTypeBucket.getAggregations().get("todaysComplaintCount");
+        Range todaysClosedCount = complaintTypeBucket.getAggregations().get(TODAY_COMPLAINT_COUNT);
         feedbackResponse.setTodaysClosed(todaysClosedCount.getBuckets().get(0).getDocCount());
         feedbackResponse.setMonthlyCounts(getMonthlyFeedbackCount(complaintTypeBucket));
         callStatusAndRatingCount(complaintTypeBucket, feedbackResponse);
+    }
+
+    private BoolQueryBuilder getIvrsFilterQuery(final ComplaintDashBoardRequest complaintDashBoardRequest, boolean todays) {
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().must(matchQuery(IF_CLOSED, 1))
+                .must(matchQuery("complaintStatusName", "COMPLETED"));
+        if (todays) {
+            boolQuery = boolQuery.must(rangeQuery(COMPLETION_DATE)
+                    .from(startOfToday().toString(PGR_INDEX_DATE_FORMAT))
+                    .to(new DateTime().plusDays(1).toString(PGR_INDEX_DATE_FORMAT)));
+        } else if (isNotBlank(complaintDashBoardRequest.getFromDate()) && isNotBlank(complaintDashBoardRequest.getToDate())) {
+            String fromDate = new DateTime(complaintDashBoardRequest.getFromDate()).withTimeAtStartOfDay().toString(PGR_INDEX_DATE_FORMAT);
+            String toDate = new DateTime(complaintDashBoardRequest.getToDate()).plusDays(1).toString(PGR_INDEX_DATE_FORMAT);
+            boolQuery = boolQuery.must(rangeQuery(COMPLETION_DATE).from(fromDate).to(toDate));
+        }
+        if (isNotBlank(complaintDashBoardRequest.getRegionName()))
+            boolQuery = boolQuery.filter(matchQuery(CITY_REGION_NAME, complaintDashBoardRequest.getRegionName()));
+        if (isNotBlank(complaintDashBoardRequest.getUlbGrade()))
+            boolQuery = boolQuery.filter(matchQuery(CITY_GRADE, complaintDashBoardRequest.getUlbGrade()));
+        if (isNotBlank(complaintDashBoardRequest.getCategoryId()))
+            boolQuery = boolQuery.filter(matchQuery("categoryId", complaintDashBoardRequest.getCategoryId()));
+        if (isNotBlank(complaintDashBoardRequest.getDistrictName()))
+            boolQuery = boolQuery
+                    .filter(matchQuery(CITY_DISTRICT_NAME, complaintDashBoardRequest.getDistrictName()));
+        if (isNotBlank(complaintDashBoardRequest.getUlbCode()))
+            boolQuery = boolQuery.filter(matchQuery(CITY_CODE, complaintDashBoardRequest.getUlbCode()));
+        if (isNotBlank(complaintDashBoardRequest.getWardNo()))
+            boolQuery = boolQuery.filter(matchQuery("wardNo", complaintDashBoardRequest.getWardNo()));
+        if (isNotBlank(complaintDashBoardRequest.getDepartmentCode()))
+            boolQuery = boolQuery
+                    .filter(matchQuery(DEPARTMENT_CODE, complaintDashBoardRequest.getDepartmentCode()));
+        if (isNotBlank(complaintDashBoardRequest.getComplaintTypeCode()))
+            boolQuery = boolQuery.filter(matchQuery("complaintTypeCode",
+                    complaintDashBoardRequest.getComplaintTypeCode()));
+        if (isNotBlank(complaintDashBoardRequest.getLocalityName()))
+            boolQuery = boolQuery.filter(matchQuery(LOCALITY_NAME,
+                    complaintDashBoardRequest.getLocalityName()));
+        if (isNotBlank(complaintDashBoardRequest.getFunctionaryName()))
+            boolQuery = boolQuery.filter(matchQuery(INITIAL_FUNCTIONARY_NAME,
+                    complaintDashBoardRequest.getFunctionaryName()));
+        return boolQuery;
     }
 }
