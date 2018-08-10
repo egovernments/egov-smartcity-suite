@@ -47,7 +47,7 @@
  */
 package org.egov.tl.web.controller.transactions.payment;
 
-import org.egov.tl.entity.License;
+import org.egov.infra.exception.ApplicationValidationException;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.contracts.DCBReportSearchRequest;
 import org.egov.tl.entity.view.DCBReportResult;
@@ -82,6 +82,9 @@ public class ViewDCBController {
     @GetMapping("{uid}")
     public String search(@PathVariable String uid, Model model, DCBReportSearchRequest searchRequest) {
         TradeLicense license = tradeLicenseService.getLicenseByUID(uid);
+        if (license == null)
+            throw new ApplicationValidationException("License not found");
+
         searchRequest.setLicenseId(license.getId());
         model.addAttribute("license", license);
         model.addAttribute("dcbreport", toJSON(dCBReportService.getDCBRecords(searchRequest), DCBReportResult.class,
