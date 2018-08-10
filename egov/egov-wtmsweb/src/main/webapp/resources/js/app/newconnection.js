@@ -134,7 +134,7 @@ $(document).ready(function(){
 	var currentloggedInUser=$('#currentUser').val();
 	var citizenPortal=$('#citizenPortalUser').val();
 	var isAnonymousUser = $('#isAnonymousUser').val();
-	if((currentloggedInUser=='true' && mode=='' && validateIfPTDueExists=='') ||(currentloggedInUser=='true' && validateIfPTDueExists=='false')
+	if($('#isCSCOperator').val()=='true' || (currentloggedInUser=='true' && mode=='' && validateIfPTDueExists=='') ||(currentloggedInUser=='true' && validateIfPTDueExists=='false')
 	|| (citizenPortal=='true' && mode=='' && validateIfPTDueExists=='') ||(citizenPortal=='true' && validateIfPTDueExists=='false')
 	|| (isAnonymousUser=='true' && mode=='' && validateIfPTDueExists=='') ||(isAnonymousUser=='true' && validateIfPTDueExists=='false'))
         	{

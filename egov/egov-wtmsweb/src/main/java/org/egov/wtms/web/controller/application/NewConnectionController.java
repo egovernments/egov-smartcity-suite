@@ -264,8 +264,6 @@ public class NewConnectionController extends GenericConnectionController {
                     WaterTaxConstants.APPLICATION_STATUS_CREATED, WaterTaxConstants.MODULETYPE));
         }
 
-        if (LOG.isDebugEnabled())
-            LOG.debug("Model Level Validation occurs = {} ", resultBinder);
         if (resultBinder.hasErrors()) {
             waterConnectionDetails.setApplicationDate(new Date());
             boolean sewerageTaxenabled = moduleService.getModuleByName(SEWERAGE_TAX_MANAGEMENT).isEnabled();
@@ -284,6 +282,9 @@ public class NewConnectionController extends GenericConnectionController {
             model.addAttribute(TYPE_OF_CONNECTION, NEWCONNECTION);
             model.addAttribute(STATETYPE, waterConnectionDetails.getClass().getSimpleName());
             model.addAttribute("documentName", waterTaxUtils.documentRequiredForBPLCategory());
+            model.addAttribute("isCSCOperator", waterTaxUtils.isCSCoperator(currentUser));
+            model.addAttribute("citizenPortalUser", waterTaxUtils.isCitizenPortalUser(currentUser));
+            model.addAttribute("isAnonymousUser", waterTaxUtils.isAnonymousUser(currentUser));
             return NEWCONNECTION_FORM;
         }
         waterConnectionDetails.getApplicationDocs().clear();
