@@ -53,13 +53,14 @@ import org.egov.wtms.entity.es.WaterChargeSurveyDashboardRequest;
 import org.egov.wtms.entity.es.WaterChargeSurveyDashboardResponse;
 import org.egov.wtms.service.es.WaterChargeSurveyDashboardService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 @RequestMapping(value = "/scheme")
@@ -68,19 +69,24 @@ public class WaterChargesSurveyDashboardController {
     @Autowired
     private WaterChargeSurveyDashboardService surveyDashboardService;
 
-    @GetMapping(value = "/aggregate", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/aggregate", produces = APPLICATION_JSON_VALUE)
     public List<WaterChargeSurveyDashboardResponse> showDetails(WaterChargeSurveyDashboardRequest surveyDashboardRequest) {
         return surveyDashboardService.getAggregatedSurveyDetails(surveyDashboardRequest);
     }
 
-    @GetMapping(value = "/applicationdetails", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/applicationdetails", produces = APPLICATION_JSON_VALUE)
     public List<WaterChargeSurveyDashboardResponse> showApplicationDetails(WaterChargeSurveyDashboardRequest surveyDashboardRequest) {
         return surveyDashboardService.getApplicationDetails(surveyDashboardRequest);
     }
 
-    @GetMapping(value = "/monthwisecount", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/monthwisecount", produces = APPLICATION_JSON_VALUE)
     public Map<String, Map<String, WaterChargeConnectionCountMonthWise>> showMonthWiseApplicationCount(WaterChargeSurveyDashboardRequest request) {
         return surveyDashboardService.getMonthWiseCount(request);
+    }
+
+    @GetMapping(value = "/pastsummary", produces = APPLICATION_JSON_VALUE)
+    public Map<String, String> applicationCountSummary(WaterChargeSurveyDashboardRequest request) {
+        return surveyDashboardService.applicationCountSummary(request);
     }
 
 }

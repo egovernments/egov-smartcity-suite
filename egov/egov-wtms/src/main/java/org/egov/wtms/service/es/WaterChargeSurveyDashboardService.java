@@ -378,4 +378,39 @@ public class WaterChargeSurveyDashboardService {
     private String getYearOfGivenDate(String date) {
         return String.valueOf(new DateTime(date).getYear());
     }
+
+    public Map<String, String> applicationCountSummary(WaterChargeSurveyDashboardRequest request) {
+
+        AggregationBuilder aggregationBuilder = AggregationBuilders.terms(AGGREGATION_WISE).field(REGION_NAME).size(100);
+
+        SearchResponse applicationCount = elasticsearchTemplate.getClient().prepareSearch(WATER_CHARGES_SCHEME_INDEX).setSize(0)
+                .addAggregation(aggregationBuilder)
+                .setQuery(prepareQuery(request, APPLICATION_CREATED_DATE))
+                .execute().actionGet();
+
+        SearchResponse sanctionCount = elasticsearchTemplate.getClient().prepareSearch(WATER_CHARGES_SCHEME_INDEX).setSize(0)
+                .addAggregation(aggregationBuilder)
+                .setQuery(prepareQuery(request, WORKORDER_DATE))
+                .execute().actionGet();
+
+        SearchResponse executionCount = elasticsearchTemplate.getClient().prepareSearch(WATER_CHARGES_SCHEME_INDEX).setSize(0)
+                .addAggregation(aggregationBuilder)
+                .setQuery(prepareQuery(request, EXECUTION_DATE))
+                .execute().actionGet();
+
+        Map<String, String> connectionSummary = new HashMap<>();
+        connectionSummary.put("yesterdayApplicationCount", String.valueOf(applicationCount.getHits().totalHits()));
+        connectionSummary.put("yesterdaySanctionCount", String.valueOf(sanctionCount.getHits().totalHits()));
+        connectionSummary.put("yesterdayExecutionCount", String.valueOf(executionCount.getHits().totalHits()));
+        return connectionSummary;
+    }
+
+    private BoolQueryBuilder prepareQuery(WaterChargeSurveyDashboardRequest request, String date) {
+        BoolQueryBuilder boolQuery = new BoolQueryBuilder();
+        if (isNotBlank(request.getFromDate()))
+            boolQuery = boolQuery.filter(rangeQuery(date).gte(request.getFromDate()));
+        if (isNotBlank(request.getFromDate()))
+            boolQuery = boolQuery.filter(rangeQuery(date).lt(request.getToDate()));
+        return boolQuery;
+    }
 }

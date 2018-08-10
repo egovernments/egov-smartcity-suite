@@ -96,6 +96,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
@@ -555,7 +556,7 @@ public class WaterTaxUtils {
 
     public List<Installment> getMonthlyInstallments(Date executionDate) {
         return installmentDao.getInstallmentsByModuleAndFromDateAndInstallmentType(
-                moduleService.getModuleByName(WaterTaxConstants.MODULE_NAME), executionDate, new Date(), WaterTaxConstants.MONTHLY);
+                moduleService.getModuleByName(MODULE_NAME), executionDate, new Date(), WaterTaxConstants.MONTHLY);
     }
 
     public Double waterConnectionDue(long parentId) {
@@ -610,10 +611,7 @@ public class WaterTaxUtils {
     public Boolean isDigitalSignatureEnabled() {
         List<AppConfigValues> appConfigValue = getAppConfigValueByModuleNameAndKeyName(
                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.ENABLEDIGITALSIGNATURE);
-        if (appConfigValue != null && !appConfigValue.isEmpty())
-            return APPCONFIGVALUEOFENABLED.equalsIgnoreCase(appConfigValue.get(0).getValue());
-        else
-            return false;
+        return appConfigValue.isEmpty() ? false : APPCONFIGVALUEOFENABLED.equalsIgnoreCase(appConfigValue.get(0).getValue());
     }
 
     public Boolean isLoggedInUserJuniorOrSeniorAssistant(Long userid) {
@@ -702,12 +700,18 @@ public class WaterTaxUtils {
         return compareUserRoleWithParameter(user, ROLE_ADMIN);
     }
 
-    private boolean compareUserRoleWithParameter(User user, String userRole) {
+    public boolean compareUserRoleWithParameter(User user, String userRole) {
         return user.getRoles().stream().anyMatch(role -> role != null && role.getName().equalsIgnoreCase(userRole));
     }
 
     private String getConfigurationValueByKey(String key) {
         return getAppConfigValueByModuleNameAndKeyName(MODULE_NAME, key).get(0).getValue();
+    }
+
+    public String getUserRole(String userRole) {
+        User user = getUserId() == null ? securityUtils.getCurrentUser() : userService.getUserById(getUserId());
+        Optional<Role> roles = user.getRoles().stream().filter(role -> userRole.equals(role.getName())).findFirst();
+        return roles.isPresent() ? roles.get().getName() : EMPTY;
     }
 
 }
