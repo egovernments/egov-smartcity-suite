@@ -291,7 +291,7 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
             }
             Map<String, Object> responseParameterMap = (Map<String, Object>) responseMap.get("RECORDSET").get("ROW");
             final Map<String, String> responseSbimopsMap = new LinkedHashMap<>();
-            responseParameterMap.forEach((k, v) -> responseSbimopsMap.put(k, v.toString()));
+            responseParameterMap.forEach((key, value) -> responseSbimopsMap.put(key, value.toString()));
             return responseSbimopsMap;
         } catch (IOException e) {
             LOGGER.error("SBIMOPS reconciliation, error while reading the response content");

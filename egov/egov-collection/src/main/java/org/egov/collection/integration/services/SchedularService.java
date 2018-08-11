@@ -248,26 +248,22 @@ public class SchedularService {
                     modulo);
 
             LOGGER.debug("Thread ID = " + Thread.currentThread().getId() + ": got " + reconcileList.size() + " results.");
-            int i = 1;
             if (reconcileList != null && !reconcileList.isEmpty()) {
-
                 for (final OnlinePayment onlinePaymentObj : reconcileList) {
                     LOGGER.info("SBIMOPS Receiptid::::" + onlinePaymentObj.getReceiptHeader().getId());
                     PaymentResponse paymentResponse = sbimopsAdaptor.createOfflinePaymentRequest(onlinePaymentObj);
-                    if (paymentResponse != null && isNotBlank(paymentResponse.getReceiptId())) {
-                        LOGGER.debug("paymentResponse.getReceiptId():" + paymentResponse.getReceiptId() != null
-                                ? paymentResponse.getReceiptId() : " Receipt id is null");
-                        LOGGER.debug("paymentResponse.getAdditionalInfo6():" + paymentResponse.getAdditionalInfo6() != null
-                                ? paymentResponse.getAdditionalInfo6() : " consumer code is blank ");
-                        LOGGER.debug("paymentResponse.getAuthStatus():" + paymentResponse.getAuthStatus());
+                    if (paymentResponse == null)
+                        LOGGER.debug("Online Receipt Persisted for the Receipt Id: " + onlinePaymentObj.getReceiptHeader().getId()
+                                + " Response is null");
+                    else if (isNotBlank(paymentResponse.getReceiptId())) {
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("paymentResponse.getReceiptId():" + paymentResponse.getReceiptId());
+                            LOGGER.debug("paymentResponse.getAdditionalInfo6():" + paymentResponse.getAdditionalInfo6() == null
+                                    ? " consumer code is blank " : paymentResponse.getAdditionalInfo6());
+                            LOGGER.debug("paymentResponse.getAuthStatus():" + paymentResponse.getAuthStatus());
+                        }
                         processOnlineTransaction(paymentResponse);
                     }
-                    LOGGER.debug("$$$$$$ Online Receipt Persisted for the Receipt Id: "
-                            + paymentResponse.getReceiptId() != null ? paymentResponse.getReceiptId() : ""
-                                    + (isNotBlank(paymentResponse.getAdditionalInfo6()) ? " and consumer code: "
-                                            + paymentResponse.getAdditionalInfo6() : ""));
-                    if (i == 1)
-                        break;
                 }
             }
         } catch (final ApplicationRuntimeException ex) {
