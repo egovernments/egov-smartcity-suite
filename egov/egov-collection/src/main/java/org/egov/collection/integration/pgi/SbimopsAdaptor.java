@@ -47,6 +47,9 @@
  */
 package org.egov.collection.integration.pgi;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -55,14 +58,28 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 import org.egov.collection.config.properties.CollectionApplicationProperties;
 import org.egov.collection.constants.CollectionConstants;
+import org.egov.collection.entity.OnlinePayment;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.models.ServiceDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.google.gson.JsonObject;
 
 /**
  * The PaymentRequestAdaptor class frames the request object for the payment service.
@@ -70,6 +87,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class SbimopsAdaptor implements PaymentGatewayAdaptor {
     private static final Logger LOGGER = Logger.getLogger(SbimopsAdaptor.class);
     private static final String SBIMOPS_HOA_FORMAT = "%-19sVN";
+    private static final String REQUEST_CONTENT_TYPE = "application/json";
 
     @Autowired
     private CollectionApplicationProperties collectionApplicationProperties;
@@ -130,7 +148,6 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
     public PaymentResponse parsePaymentResponse(final String response) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Insider SbimopsAdaptor-parsePaymentResponse");
-            LOGGER.info("Response message from SBIMOPS Payment gateway: " + response);
         }
         final String[] keyValueStr = response.replace("{", "").replace("}", "").split(",");
         final LinkedHashMap<String, String> responseMap = new LinkedHashMap<>(0);
@@ -166,6 +183,120 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
 
         }
         return sbiPaymentResponse;
+    }
+
+    public PaymentResponse createOfflinePaymentRequest(final OnlinePayment onlinePayment) {
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("inside sbimops :createOfflinePaymentRequest");
+        final PaymentResponse sbimopsResponse = new DefaultPaymentResponse();
+
+        CloseableHttpResponse response = reconciliationResponse(onlinePayment);
+
+        if (response == null)
+            return sbimopsResponse;
+        else {
+            final Map<String, String> responseParameterMap = prepareResponseMap(response);
+            sbimopsResponse.setAdditionalInfo6(onlinePayment.getReceiptHeader().getConsumerCode().replace("-", "")
+                    .replace("/", ""));
+            sbimopsResponse.setReceiptId(onlinePayment.getReceiptHeader().getId().toString());
+            final String transactionStatus = responseParameterMap.get(CollectionConstants.SBIMOPS_STATUS.toUpperCase());
+            sbimopsResponse.setAuthStatus("S".equalsIgnoreCase(transactionStatus)
+                    ? CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS : transactionStatus);
+
+            if (sbimopsResponse.getAuthStatus().equals(CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS)) {
+                sbimopsResponse
+                        .setTxnAmount(new BigDecimal(Double.valueOf(responseParameterMap.get(CollectionConstants.SBIMOPS_TAMT))));
+                sbimopsResponse.setTxnReferenceNo(responseParameterMap.get(CollectionConstants.SBIMOPS_CFMSID).toString());
+                final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
+                Date transDate = null;
+                try {
+                    transDate = simpleDateFormat.parse(responseParameterMap.get(CollectionConstants.SBIMOPS_BNKDT).toString());
+                    sbimopsResponse.setTxnDate(transDate);
+                } catch (final ParseException e) {
+                    LOGGER.error(
+                            "Error in parsing transaction date ["
+                                    + responseParameterMap.get(CollectionConstants.SBIMOPS_BANK_DATE)
+                                    + "]",
+                            e);
+                    throw new ApplicationRuntimeException(".transactiondate.parse.error", e);
+                }
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("End SbimopsAdaptor-parsePaymentResponse");
+            }
+            return sbimopsResponse;
+        }
+
+    }
+
+    private CloseableHttpResponse reconciliationResponse(OnlinePayment onlinePayment) {
+        CloseableHttpResponse response;
+        try {
+            final HttpPost httpPost = new HttpPost(collectionApplicationProperties.sbimopsReconcileUrl());
+            StringEntity stringEntity = new StringEntity(prepeareReconciliationRequest(onlinePayment),
+                    CollectionConstants.UTF_ENCODING);
+            stringEntity.setContentType(REQUEST_CONTENT_TYPE);
+            httpPost.setEntity(stringEntity);
+
+            UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
+                    collectionApplicationProperties.sbimopsReconcileUsername(),
+                    collectionApplicationProperties.sbimopsReconcilePassword());
+
+            CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+            credentialsProvider.setCredentials(AuthScope.ANY, credentials);
+            HttpClient client = HttpClientBuilder.create()
+                    .setDefaultCredentialsProvider(credentialsProvider)
+                    .build();
+            response = (CloseableHttpResponse) client.execute(httpPost);
+        } catch (IOException e) {
+            LOGGER.error(
+                    "SBIMOPS reconciliation, error while sending the request for SBIMOPS reconciliation");
+            throw new ApplicationRuntimeException(
+                    "SBIMOPS reconciliation, error while sending the request for SBIMOPS reconciliation", e);
+        }
+        return response;
+    }
+
+    private String prepeareReconciliationRequest(final OnlinePayment onlinePayment) {
+        final JsonObject deptCodeJson = new JsonObject();
+        deptCodeJson.addProperty(CollectionConstants.SBIMOPS_DEPTCODE,
+                collectionApplicationProperties.sbimopsDepartmentcode(CollectionConstants.MESSAGEKEY_SBIMOPS_DC));
+        final JsonObject transactionIdJson = new JsonObject();
+        final StringBuilder transactionId = new StringBuilder(onlinePayment.getReceiptHeader().getConsumerCode())
+                .append(CollectionConstants.SEPARATOR_HYPHEN).append(onlinePayment.getReceiptHeader().getId());
+        transactionIdJson.addProperty(CollectionConstants.SBIMOPS_DEPTTID, transactionId.toString());
+        final JsonObject requestJson = new JsonObject();
+        deptCodeJson.add(CollectionConstants.SBIMOPS_ROW, transactionIdJson);
+        requestJson.add(CollectionConstants.SBIMOPS_RECORDSET, deptCodeJson);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("SBIMOPS reconciliation request:" + requestJson.toString());
+        return requestJson.toString();
+    }
+
+    private Map<String, String> prepareResponseMap(CloseableHttpResponse response) {
+        try {
+
+            InputStreamReader inputStreamReader = new InputStreamReader(response.getEntity().getContent());
+            BufferedReader reader = new BufferedReader(inputStreamReader);
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            Map<String, Map<String, Object>> responseMap = null;
+
+            try {
+                responseMap = objectMapper.readValue(reader.readLine(),
+                        new TypeReference<Map<String, Map<String, Object>>>() {
+                        });
+            } finally {
+                reader.close();
+                inputStreamReader.close();
+            }
+            Map<String, Object> responseParameterMap = (Map<String, Object>) responseMap.get("RECORDSET").get("ROW");
+            final Map<String, String> responseSbimopsMap = new LinkedHashMap<>();
+            responseParameterMap.forEach((k, v) -> responseSbimopsMap.put(k, v.toString()));
+            return responseSbimopsMap;
+        } catch (IOException e) {
+            LOGGER.error("SBIMOPS reconciliation, error while reading the response content");
+            throw new ApplicationRuntimeException(" SBIMOPS reconciliation, error while reading the response content", e);
+        }
     }
 
 }

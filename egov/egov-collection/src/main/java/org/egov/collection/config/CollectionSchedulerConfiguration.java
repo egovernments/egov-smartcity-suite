@@ -58,6 +58,7 @@ import javax.sql.DataSource;
 import org.egov.collection.scheduler.AtomReconciliationJob;
 import org.egov.collection.scheduler.AxisReconciliationJob;
 import org.egov.collection.scheduler.RemittanceInstrumentJob;
+import org.egov.collection.scheduler.SbimopsReconciliationJob;
 import org.egov.infra.config.scheduling.QuartzSchedulerConfiguration;
 import org.egov.infra.config.scheduling.SchedulerConfigCondition;
 import org.springframework.context.annotation.Bean;
@@ -89,7 +90,12 @@ public class CollectionSchedulerConfiguration extends QuartzSchedulerConfigurati
                 atomReconciliationCronTrigger3().getObject(),
                 atomReconciliationCronTrigger4().getObject(),
                 remittanceCashInstrumentCronTrigger0().getObject(),
-                remittanceCashInstrumentCronTrigger1().getObject());
+                remittanceCashInstrumentCronTrigger1().getObject(),
+                sbimopsReconciliationCronTrigger0().getObject(),
+                sbimopsReconciliationCronTrigger1().getObject(),
+                sbimopsReconciliationCronTrigger2().getObject(),
+                sbimopsReconciliationCronTrigger3().getObject(),
+                sbimopsReconciliationCronTrigger4().getObject());
         return collectionScheduler;
     }
 
@@ -299,4 +305,113 @@ public class CollectionSchedulerConfiguration extends QuartzSchedulerConfigurati
         atomReconciliationJob.setModulo(4);
         return atomReconciliationJob;
     }
+
+    public JobDetailFactoryBean createSbimopsJobDetailFactory(int modulo) {
+        JobDetailFactoryBean sbimopsReconciliationJobDetail = new JobDetailFactoryBean();
+        sbimopsReconciliationJobDetail.setGroup(COLLECTION_JOB_GROUP);
+        sbimopsReconciliationJobDetail.setName(String.format("COLLECTION_SBIMOPS_RECON_%d_JOB", modulo));
+        sbimopsReconciliationJobDetail.setDurability(true);
+        sbimopsReconciliationJobDetail.setJobClass(SbimopsReconciliationJob.class);
+        sbimopsReconciliationJobDetail.setRequestsRecovery(true);
+        Map<String, String> jobDetailMap = prepareJobDetailMap();
+        jobDetailMap.put("jobBeanName", String.format("sbimopsReconciliationJob%d", modulo));
+        sbimopsReconciliationJobDetail.setJobDataAsMap(jobDetailMap);
+        return sbimopsReconciliationJobDetail;
+    }
+
+    public CronTriggerFactoryBean createSbimopsCronTrigger(JobDetailFactoryBean jobDetail, int modulo) {
+        CronTriggerFactoryBean sbimopsReconciliationCron = new CronTriggerFactoryBean();
+        sbimopsReconciliationCron.setJobDetail(jobDetail.getObject());
+        sbimopsReconciliationCron.setGroup(COLLECTION_TRIGGER_GROUP);
+        sbimopsReconciliationCron.setName(String.format("COLLECTION_SBIMOPS_RECON_%d_TRIGGER", modulo));
+        sbimopsReconciliationCron.setCronExpression("0 */45 * * * ?");
+        sbimopsReconciliationCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
+        return sbimopsReconciliationCron;
+    }
+
+    @Bean
+    public JobDetailFactoryBean sbimopsReconciliationJobDetail0() {
+        return createSbimopsJobDetailFactory(0);
+    }
+
+    @Bean
+    public CronTriggerFactoryBean sbimopsReconciliationCronTrigger0() {
+        return createSbimopsCronTrigger(sbimopsReconciliationJobDetail0(), 0);
+    }
+
+    @Bean("sbimopsReconciliationJob0")
+    public SbimopsReconciliationJob sbimopsReconciliationJob0() {
+        SbimopsReconciliationJob sbimopsReconciliationJob = new SbimopsReconciliationJob();
+        sbimopsReconciliationJob.setModulo(0);
+        return sbimopsReconciliationJob;
+    }
+
+    @Bean
+    public JobDetailFactoryBean sbimopsReconciliationJobDetail1() {
+        return createSbimopsJobDetailFactory(1);
+    }
+
+    @Bean
+    public CronTriggerFactoryBean sbimopsReconciliationCronTrigger1() {
+        return createSbimopsCronTrigger(sbimopsReconciliationJobDetail1(), 1);
+    }
+
+    @Bean("sbimopsReconciliationJob1")
+    public SbimopsReconciliationJob sbimopsReconciliationJob1() {
+        SbimopsReconciliationJob sbimopsReconciliationJob = new SbimopsReconciliationJob();
+        sbimopsReconciliationJob.setModulo(1);
+        return sbimopsReconciliationJob;
+    }
+
+    @Bean
+    public JobDetailFactoryBean sbimopsReconciliationJobDetail2() {
+        return createSbimopsJobDetailFactory(2);
+    }
+
+    @Bean
+    public CronTriggerFactoryBean sbimopsReconciliationCronTrigger2() {
+        return createSbimopsCronTrigger(sbimopsReconciliationJobDetail2(), 2);
+    }
+
+    @Bean("sbimopsReconciliationJob2")
+    public SbimopsReconciliationJob sbimopsReconciliationJob2() {
+        SbimopsReconciliationJob sbimopsReconciliationJob = new SbimopsReconciliationJob();
+        sbimopsReconciliationJob.setModulo(2);
+        return sbimopsReconciliationJob;
+    }
+
+    @Bean
+    public JobDetailFactoryBean sbimopsReconciliationJobDetail3() {
+        return createSbimopsJobDetailFactory(3);
+    }
+
+    @Bean
+    public CronTriggerFactoryBean sbimopsReconciliationCronTrigger3() {
+        return createSbimopsCronTrigger(sbimopsReconciliationJobDetail3(), 3);
+    }
+
+    @Bean("sbimopsReconciliationJob3")
+    public SbimopsReconciliationJob sbimopsReconciliationJob3() {
+        SbimopsReconciliationJob sbimopsReconciliationJob = new SbimopsReconciliationJob();
+        sbimopsReconciliationJob.setModulo(3);
+        return sbimopsReconciliationJob;
+    }
+
+    @Bean
+    public JobDetailFactoryBean sbimopsReconciliationJobDetail4() {
+        return createSbimopsJobDetailFactory(4);
+    }
+
+    @Bean
+    public CronTriggerFactoryBean sbimopsReconciliationCronTrigger4() {
+        return createSbimopsCronTrigger(sbimopsReconciliationJobDetail4(), 4);
+    }
+
+    @Bean("sbimopsReconciliationJob4")
+    public SbimopsReconciliationJob sbimopsReconciliationJob4() {
+        SbimopsReconciliationJob sbimopsReconciliationJob = new SbimopsReconciliationJob();
+        sbimopsReconciliationJob.setModulo(4);
+        return sbimopsReconciliationJob;
+    }
+
 }

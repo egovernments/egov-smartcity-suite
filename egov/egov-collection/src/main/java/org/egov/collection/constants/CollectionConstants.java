@@ -573,8 +573,17 @@ public final class CollectionConstants {
     public static final String SBIMOPS_BANKTIME_STAMP = "BankTimeStamp";
     public static final String SBIMOPS_STATUS = "Status";
 
+    // SBIMOPS reconciliation parameters name
+    public static final String SBIMOPS_DEPTTID = "DEPTTID";
+    public static final String SBIMOPS_ROW = "ROW";
+    public static final String SBIMOPS_RECORDSET = "RECORDSET";
+    public static final String SBIMOPS_CFMSID = "CFMSID";
+    public static final String SBIMOPS_TAMT = "TAMT";
+    public static final String SBIMOPS_BNKDT = "BNKDT";
+
     public static final String MESSAGEKEY_SBIMOPS_DC = "sbimops.department.code";
 
+    public static final String UTF_ENCODING = "UTF-8";
     // This is an array for creating hex chars
     public static final char[] AXIS_HEX_TABLE = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A',
             'B', 'C', 'D', 'E', 'F' };
@@ -633,6 +642,7 @@ public final class CollectionConstants {
     public static final Integer DEFAULT_PAGE_SIZE = 30;
     public static final Integer QUARTZ_BULKBILL_JOBS = 2;
     public static final Integer QUARTZ_ATOM_RECONCILE_BULK_JOBS = 5;
+    public static final Integer QUARTZ_SBIMOPS_RECONCILE_BULK_JOBS = 5;
 
     public static final String DATE_FORMAT_YYYYMMDD = "yyyy-MM-dd";
     public static final SimpleDateFormat DATEFORMATTER_YYYY_MM_DD = new SimpleDateFormat(DATE_FORMAT_YYYYMMDD);

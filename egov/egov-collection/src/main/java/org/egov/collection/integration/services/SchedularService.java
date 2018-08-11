@@ -61,6 +61,7 @@ import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.integration.pgi.AtomAdaptor;
 import org.egov.collection.integration.pgi.AxisAdaptor;
 import org.egov.collection.integration.pgi.PaymentResponse;
+import org.egov.collection.integration.pgi.SbimopsAdaptor;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.DateUtils;
@@ -90,6 +91,9 @@ public class SchedularService {
 
     @Autowired
     private AtomAdaptor atomAdaptor;
+
+    @Autowired
+    private SbimopsAdaptor sbimopsAdaptor;
 
     @Transactional
     public void reconcileAXIS() {
@@ -236,4 +240,71 @@ public class SchedularService {
         }
     }
 
+    @Transactional
+    public void reconcileSBIMOPS(Integer modulo) {
+        try {
+            LOGGER.debug("Inside reconcileSBIMOPS");
+            final List<OnlinePayment> reconcileList = getPendingOnlineTransaction(CollectionConstants.SERVICECODE_SBIMOPS,
+                    modulo);
+
+            LOGGER.debug("Thread ID = " + Thread.currentThread().getId() + ": got " + reconcileList.size() + " results.");
+            int i = 1;
+            if (reconcileList != null && !reconcileList.isEmpty()) {
+
+                for (final OnlinePayment onlinePaymentObj : reconcileList) {
+                    LOGGER.info("SBIMOPS Receiptid::::" + onlinePaymentObj.getReceiptHeader().getId());
+                    PaymentResponse paymentResponse = sbimopsAdaptor.createOfflinePaymentRequest(onlinePaymentObj);
+                    if (paymentResponse != null && isNotBlank(paymentResponse.getReceiptId())) {
+                        LOGGER.debug("paymentResponse.getReceiptId():" + paymentResponse.getReceiptId() != null
+                                ? paymentResponse.getReceiptId() : " Receipt id is null");
+                        LOGGER.debug("paymentResponse.getAdditionalInfo6():" + paymentResponse.getAdditionalInfo6() != null
+                                ? paymentResponse.getAdditionalInfo6() : " consumer code is blank ");
+                        LOGGER.debug("paymentResponse.getAuthStatus():" + paymentResponse.getAuthStatus());
+                        processOnlineTransaction(paymentResponse);
+                    }
+                    LOGGER.debug("$$$$$$ Online Receipt Persisted for the Receipt Id: "
+                            + paymentResponse.getReceiptId() != null ? paymentResponse.getReceiptId() : ""
+                                    + (isNotBlank(paymentResponse.getAdditionalInfo6()) ? " and consumer code: "
+                                            + paymentResponse.getAdditionalInfo6() : ""));
+                    if (i == 1)
+                        break;
+                }
+            }
+        } catch (final ApplicationRuntimeException ex) {
+            LOGGER.error("SBIMOPS payment reconciliation failed" + ex);
+        }
+    }
+
+    public List<OnlinePayment> getPendingOnlineTransaction(String paymentServiceCode, Integer modulo) {
+        final Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MINUTE, -30);
+        StringBuilder queryString = new StringBuilder(200);
+        queryString.append(
+                "select receipt from org.egov.collection.entity.OnlinePayment as receipt where receipt.status.code=:onlinestatuscode")
+                .append(" and receipt.service.code=:paymentservicecode and receipt.createdDate<:thirtyminslesssysdate  and MOD(receipt.id, ")
+                .append(CollectionConstants.QUARTZ_SBIMOPS_RECONCILE_BULK_JOBS)
+                .append(") = :modulo  order by receipt.id asc");
+        final Query query = persistenceService
+                .getSession()
+                .createQuery(queryString.toString())
+                .setMaxResults(50);
+        query.setString("onlinestatuscode", CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
+        query.setString("paymentservicecode", paymentServiceCode);
+        query.setParameter("thirtyminslesssysdate", new Date(cal.getTimeInMillis()));
+        query.setParameter("modulo", modulo);
+        return query.list();
+    }
+
+    private void processOnlineTransaction(PaymentResponse paymentResponse) {
+        ReceiptHeader onlinePaymentReceiptHeader = (ReceiptHeader) persistenceService.findByNamedQuery(
+                CollectionConstants.QUERY_PENDING_RECEIPT_BY_ID_AND_CITYCODE,
+                Long.valueOf(paymentResponse.getReceiptId()),
+                ApplicationThreadLocals.getCityCode());
+
+        if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(paymentResponse.getAuthStatus()))
+            reconciliationService.processSuccessMsg(onlinePaymentReceiptHeader, paymentResponse);
+        // TODO: get the list of SBIMOPS pending status list
+        else
+            reconciliationService.processFailureMsg(onlinePaymentReceiptHeader, paymentResponse);
+    }
 }

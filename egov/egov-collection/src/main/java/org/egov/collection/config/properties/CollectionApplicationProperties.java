@@ -59,7 +59,7 @@ import org.springframework.core.env.Environment;
         "classpath:config/egov-erp-${user.name}.properties",
         "classpath:config/application-config-${client.id}.properties",
         "classpath:config/egov-erp-override.properties",
-        "classpath:config/collection-override-${env}.properties"}, ignoreResourceNotFound = true)
+        "classpath:config/collection-override-${env}.properties" }, ignoreResourceNotFound = true)
 public class CollectionApplicationProperties {
 
     @Autowired
@@ -139,6 +139,22 @@ public class CollectionApplicationProperties {
 
     public String sbimopsHoa(final String cityCode, final String serviceCode) {
         return environment.getProperty(cityCode.concat(serviceCode).concat(".sbimops.hoa"));
+    }
+
+    public String sbimopsReconcileUrl() {
+        return environment.getProperty("sbimops.reconcile.url");
+    }
+
+    public String sbimopsReconcileUsername() {
+        return environment.getProperty("sbimops.reconcile.username");
+    }
+
+    public String sbimopsReconcilePassword() {
+        return environment.getProperty("sbimops.reconcile.password");
+    }
+
+    public String sbimopsTransactionMessage() {
+        return environment.getProperty("SBIMOPS.transactionmessage");
     }
 
     public String getUpdateDemandUrl(final String serviceCode) {
