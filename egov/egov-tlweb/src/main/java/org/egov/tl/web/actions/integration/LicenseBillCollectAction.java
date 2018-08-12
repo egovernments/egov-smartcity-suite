@@ -77,6 +77,7 @@ public class LicenseBillCollectAction extends BaseFormAction {
     private String collectXML;
 
     @Autowired
+    @Qualifier("TLCollectionsInterface")
     private transient LicenseBillService licenseBillService;
 
     @Autowired

@@ -74,6 +74,7 @@ import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 public class LicenseBillOnlinePaymentController {
 
     @Autowired
+    @Qualifier("TLCollectionsInterface")
     private LicenseBillService licenseBillService;
 
     @Autowired
