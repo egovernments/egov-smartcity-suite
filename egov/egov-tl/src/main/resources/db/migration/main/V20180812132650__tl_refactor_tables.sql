@@ -13,7 +13,7 @@ DROP SEQUENCE SEQ_EGTL_MSTR_LICENSE_SUB_TYPE;
 DROP TABLE EGTL_MSTR_LICENSE_TYPE;
 DROP SEQUENCE SEQ_EGTL_MSTR_LICENSE_TYPE;
 ALTER TABLE EGTL_MSTR_BUSINESS_NATURE ALTER COLUMN "name" Type varchar(25);
-ALTER TABLE EGTL_MSTR_CATEGORY ALTER COLUMN "name" TYPE varchar(50);
+ALTER TABLE EGTL_MSTR_CATEGORY ALTER COLUMN "name" TYPE varchar(150);
 ALTER TABLE EGTL_MSTR_SUB_CATEGORY  ALTER COLUMN "name" TYPE varchar(150);
 INSERT INTO egtl_configuration values (nextval('seq_egtl_configuration'), 'CHEQUE_BOUNCE_PENALTY', '1000','License fee cheque bounce penalty',(select id from eg_user where username='system'),now(),(select id from eg_user where username='system'),now(),0);
 update egtl_document_type set applicationType=(select id from EGTL_MSTR_APP_TYPE where code='NEW') where applicationType='NEW';

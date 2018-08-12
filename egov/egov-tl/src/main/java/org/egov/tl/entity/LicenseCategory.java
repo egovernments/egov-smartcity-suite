@@ -75,7 +75,7 @@ public class LicenseCategory extends AbstractAuditable {
     private Long id;
 
     @NotEmpty
-    @Length(max = 50)
+    @Length(max = 150)
     @SafeHtml
     private String name;
 
