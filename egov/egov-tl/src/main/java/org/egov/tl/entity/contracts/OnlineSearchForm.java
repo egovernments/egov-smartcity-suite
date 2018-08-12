@@ -48,13 +48,14 @@
 package org.egov.tl.entity.contracts;
 
 import org.egov.tl.entity.TradeLicense;
-import org.egov.tl.utils.Constants;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.egov.tl.utils.Constants.CLOSURE_APPTYPE_CODE;
+import static org.egov.tl.utils.Constants.STATUS_UNDERWORKFLOW;
 
 public class OnlineSearchForm {
 
@@ -75,7 +76,7 @@ public class OnlineSearchForm {
         // For form binding
     }
 
-    public OnlineSearchForm(final TradeLicense license, final BigDecimal[] dmdColl) {
+    public OnlineSearchForm(final TradeLicense license, final BigDecimal... dmdColl) {
         setLicenseId(license.getId());
         setUid(license.getUid());
         setApplicationNumber(license.getApplicationNumber());
@@ -83,7 +84,7 @@ public class OnlineSearchForm {
         setTradeOwnerName(license.getLicensee().getApplicantName());
         setMobileNo(license.getLicensee().getMobilePhoneNumber());
         setStatus(license.getStatus().getName());
-        setPropertyAssessmentNo(license.getAssessmentNo() != null ? license.getAssessmentNo() : "");
+        setPropertyAssessmentNo(license.getAssessmentNo() == null ? EMPTY : license.getAssessmentNo());
         setArrDmd(dmdColl[0]);
         setCurrDmd(dmdColl[1]);
         setTotColl(dmdColl[2]);
@@ -97,7 +98,8 @@ public class OnlineSearchForm {
             actions.add("Closure");
         if (license.isStatusActive() && !license.isLegacy())
             actions.add("Print Certificate");
-        if (!CLOSURE_APPTYPE_CODE.equals(license.getLicenseAppType().getCode()) && license.getStatus().getStatusCode().equals(Constants.STATUS_UNDERWORKFLOW))
+        if (!CLOSURE_APPTYPE_CODE.equals(license.getLicenseAppType().getCode())
+                && STATUS_UNDERWORKFLOW.equals(license.getStatus().getStatusCode()))
             actions.add("Print Provisional Certificate");
         if (license.isClosed())
             actions.add("Closure Endorsement Notice");

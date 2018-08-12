@@ -90,6 +90,7 @@ import static org.egov.tl.utils.Constants.*;
 public class LicenseProcessWorkflowService {
 
     private static final String ERROR_KEY_WF_INITIATOR_NOT_DEFINED = "error.wf.initiator.not.defined";
+    private static final String ANY = "ANY";
 
     @Autowired
     private LicenseStatusService licenseStatusService;
@@ -174,13 +175,13 @@ public class LicenseProcessWorkflowService {
         WorkFlowMatrix wfmatrix;
         if (tradeLicense.hasState() && !tradeLicense.getState().isEnded()) {
             State<Position> state = tradeLicense.getState();
-            wfmatrix = this.licenseWorkflowService.getWfMatrix(tradeLicense.getStateType(), "ANY",
+            wfmatrix = this.licenseWorkflowService.getWfMatrix(tradeLicense.getStateType(), ANY,
                     null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState() != null ?
                             workflowBean.getCurrentState() : state.getValue(), state.getNextAction(), new Date(),
                     workflowBean.getCurrentDesignation() != null ? workflowBean.getCurrentDesignation() : "%"
                             + state.getOwnerPosition().getDeptDesig().getDesignation().getName() + "%");
         } else {
-            wfmatrix = this.licenseWorkflowService.getWfMatrix(tradeLicense.getStateType(), "ANY",
+            wfmatrix = this.licenseWorkflowService.getWfMatrix(tradeLicense.getStateType(), ANY,
                     null, workflowBean.getAdditionaRule(), "Start", null,
                     new Date(), null);
         }
@@ -227,7 +228,7 @@ public class LicenseProcessWorkflowService {
             String additionalRule = license.isNewApplication() ? NEWLICENSE : RENEWLICENSE;
             final Assignment wfAssignment = assignmentList.get(0);
             User currentUser = securityUtils.getCurrentUser();
-            WorkFlowMatrix nextWorkFlowMatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), "ANY",
+            WorkFlowMatrix nextWorkFlowMatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), ANY,
                     null, additionalRule, workFlowMatrix.getNextState(), workFlowMatrix.getNextAction(),
                     new Date(), "%" + wfAssignment.getDesignation().getName() + "%");
             LicenseStateInfo licenseStateInfo = new LicenseStateInfo();
@@ -303,7 +304,7 @@ public class LicenseProcessWorkflowService {
             licenseStateInfo.setRejectionPosition(currentPosition.getId());
         }
         if (workFlowMatrix.getNextref() == null) {
-            WorkFlowMatrix nextWorkFlowMatrix = this.licenseWorkflowService.getWfMatrix(TRADELICENSE, "ANY",
+            WorkFlowMatrix nextWorkFlowMatrix = this.licenseWorkflowService.getWfMatrix(TRADELICENSE, ANY,
                     null, workflowBean.getAdditionaRule(), workFlowMatrix.getNextState(), workFlowMatrix.getNextAction(),
                     new Date(), "%" + position.getDeptDesig().getDesignation().getName() + "%");
             if (nextWorkFlowMatrix != null)

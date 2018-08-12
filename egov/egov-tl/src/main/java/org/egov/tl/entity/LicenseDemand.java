@@ -52,6 +52,7 @@ import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 
 import java.util.Date;
+import java.util.Objects;
 
 import static java.math.BigDecimal.ZERO;
 
@@ -93,5 +94,22 @@ public class LicenseDemand extends EgDemand {
             this.setAmtCollected(this.getAmtCollected().add(demandDetail.getAmtCollected()));
             this.setBaseDemand(this.getBaseDemand().add(demandDetail.getAmount()));
         }
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj)
+            return true;
+        if (!(obj instanceof LicenseDemand))
+            return false;
+        if (!super.equals(obj))
+            return false;
+        final LicenseDemand that = (LicenseDemand) obj;
+        return Objects.equals(getLicense(), that.getLicense());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getLicense());
     }
 }

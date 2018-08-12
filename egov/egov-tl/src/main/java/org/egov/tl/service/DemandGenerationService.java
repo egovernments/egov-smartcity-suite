@@ -108,7 +108,7 @@ public class DemandGenerationService {
     private TradeLicenseService licenseService;
 
     @Autowired
-    private LicenseRenewalNotificationService licenseRenewalNotificationService;
+    private LicenseRenewalNotificationService renewalNotificationService;
 
     private int batchSize;
 
@@ -164,7 +164,7 @@ public class DemandGenerationService {
                     if (!installment.equals(license.getCurrentDemand().getEgInstallmentMaster())) {
                         licenseService.raiseDemand(license, module, installment);
                         demandGenerationLogDetail.setDetail(SUCCESSFUL);
-                        licenseRenewalNotificationService.notifyLicenseRenewal(license, installment);
+                        renewalNotificationService.notifyLicenseRenewal(license, installment);
                     }
                     demandGenerationLogDetail.setStatus(COMPLETED);
                 } catch (RuntimeException e) {
@@ -187,7 +187,7 @@ public class DemandGenerationService {
             Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(licenseService.getModuleName(),
                     new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate());
             licenseService.raiseDemand(license, licenseService.getModuleName(), installment);
-            licenseRenewalNotificationService.notifyLicenseRenewal(license, installment);
+            renewalNotificationService.notifyLicenseRenewal(license, installment);
         } catch (ValidationException e) {
             LOGGER.warn(ERROR_MSG, e);
             generationSuccess = false;

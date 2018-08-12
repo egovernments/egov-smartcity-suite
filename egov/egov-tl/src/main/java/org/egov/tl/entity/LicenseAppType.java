@@ -114,7 +114,7 @@ public class LicenseAppType extends AbstractAuditable {
         this.code = code;
     }
 
-    public boolean getDisplay() {
+    public boolean isDisplay() {
         return display;
     }
 
@@ -123,12 +123,12 @@ public class LicenseAppType extends AbstractAuditable {
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o)
+    public boolean equals(Object obj) {
+        if (this == obj)
             return true;
-        if (!(o instanceof LicenseAppType))
+        if (!(obj instanceof LicenseAppType))
             return false;
-        final LicenseAppType that = (LicenseAppType) o;
+        LicenseAppType that = (LicenseAppType) obj;
         return Objects.equals(getName(), that.getName()) &&
                 Objects.equals(getCode(), that.getCode());
     }

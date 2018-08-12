@@ -67,7 +67,22 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.File;
@@ -76,6 +91,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static java.lang.String.format;
@@ -677,7 +693,7 @@ public class TradeLicense extends StateAware<Position> {
     }
 
     public boolean isClosureApplicable() {
-        return isStatusActive() || (getIsActive() && LICENSE_STATUS_CANCELLED.equals(getStatus().getName()));
+        return isStatusActive() || getIsActive() && LICENSE_STATUS_CANCELLED.equals(getStatus().getName());
     }
 
     public BigDecimal getLatestAmountPaid() {
@@ -777,15 +793,30 @@ public class TradeLicense extends StateAware<Position> {
     }
 
     public File qrCode(String installmentYear, BigDecimal licenseFeePaid) {
-        StringBuilder qrCodeContent = new StringBuilder(170);
-        qrCodeContent.append("License Number : ").append(getLicenseNumber()).append(lineSeparator());
-        qrCodeContent.append("Trade Title : ").append(getNameOfEstablishment()).append(lineSeparator());
-        qrCodeContent.append("Owner Name : ").append(getLicensee().getApplicantName()).append(lineSeparator());
-        qrCodeContent.append("Valid Till : ").append(toDefaultDateTimeFormat(getDateOfExpiry())).append(lineSeparator());
-        qrCodeContent.append("Installment Year : ").append(installmentYear).append(lineSeparator());
-        qrCodeContent.append("Paid Amount : ").append(currencySymbolUtf8()).append(licenseFeePaid).append(lineSeparator());
-        qrCodeContent.append("More : ").append(ApplicationThreadLocals.getDomainURL())
+        StringBuilder qrCodeContent = new StringBuilder(170)
+                .append("License Number : ").append(getLicenseNumber()).append(lineSeparator())
+                .append("Trade Title : ").append(getNameOfEstablishment()).append(lineSeparator())
+                .append("Owner Name : ").append(getLicensee().getApplicantName()).append(lineSeparator())
+                .append("Valid Till : ").append(toDefaultDateTimeFormat(getDateOfExpiry())).append(lineSeparator())
+                .append("Installment Year : ").append(installmentYear).append(lineSeparator())
+                .append("Paid Amount : ").append(currencySymbolUtf8()).append(licenseFeePaid).append(lineSeparator())
+                .append("More : ").append(ApplicationThreadLocals.getDomainURL())
                 .append("/tl/viewtradelicense/viewTradeLicense-view.action?id=").append(getId());
         return generatePDF417Code(qrCodeContent.toString());
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj)
+            return true;
+        if (!(obj instanceof TradeLicense))
+            return false;
+        final TradeLicense that = (TradeLicense) obj;
+        return Objects.equals(getUid(), that.getUid());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getUid());
     }
 }

@@ -166,8 +166,10 @@ public class TradeLicenseService {
     private static final String ARREAR = "arrear";
     private static final String CURRENT = "current";
     private static final String PENALTY = "penalty";
-    private static final String ERROR_KEY_WF_INITIATOR_NOT_DEFINED = "error.wf.initiator.not.defined";
-    private static final String ERROR_KEY_WF_NEXT_OWNER_NOT_FOUND = "error.wf.next.owner.not.found";
+    private static final String ERROR_WF_INITIATOR_NOT_DEFINED = "error.wf.initiator.not.defined";
+    private static final String ERROR_WF_NEXT_OWNER_NOT_FOUND = "error.wf.next.owner.not.found";
+    private static final String NEW_STATE = "NEW";
+    private static final String REVENUE_CLERK_JA_APPROVED = "Revenue Clerk/JA Approved";
 
     @PersistenceContext
     protected EntityManager entityManager;
@@ -283,12 +285,12 @@ public class TradeLicenseService {
         List<Assignment> assignmentList = getAssignmentsForDeptAndDesignation(nextAssigneeDept, nextAssigneeDesig);
         if (assignmentList.isEmpty()) {
             nextAssigneeDesig = Optional.ofNullable(designationService.getDesignationByName(SA_DESIGNATION)).
-                    orElseThrow(() -> new ValidationException(ERROR_KEY_WF_INITIATOR_NOT_DEFINED, ERROR_KEY_WF_INITIATOR_NOT_DEFINED));
+                    orElseThrow(() -> new ValidationException(ERROR_WF_INITIATOR_NOT_DEFINED, ERROR_WF_INITIATOR_NOT_DEFINED));
             assignmentList = getAssignmentsForDeptAndDesignation(nextAssigneeDept, nextAssigneeDesig);
         }
         if (assignmentList.isEmpty()) {
             nextAssigneeDesig = Optional.ofNullable(designationService.getDesignationByName(RC_DESIGNATION)).
-                    orElseThrow(() -> new ValidationException(ERROR_KEY_WF_INITIATOR_NOT_DEFINED, ERROR_KEY_WF_INITIATOR_NOT_DEFINED));
+                    orElseThrow(() -> new ValidationException(ERROR_WF_INITIATOR_NOT_DEFINED, ERROR_WF_INITIATOR_NOT_DEFINED));
             assignmentList = getAssignmentsForDeptAndDesignation(nextAssigneeDept, nextAssigneeDesig);
         }
         return assignmentList;
@@ -370,15 +372,15 @@ public class TradeLicenseService {
 
     public void calcPenaltyDemandDetails(TradeLicense license, EgDemand demand) {
         Map<Installment, BigDecimal> installmentPenalty = new HashMap<>();
-        Map<Installment, EgDemandDetails> installmentWisePenaltyDemandDetail = getInstallmentWisePenaltyDemandDetails(demand);
-        Map<Installment, EgDemandDetails> installmentWiseLicenseDemandDetail = getInstallmentWiseLicenseDemandDetails(demand);
+        Map<Installment, EgDemandDetails> penaltyDetails = getInstallmentWisePenaltyDemandDetails(demand);
+        Map<Installment, EgDemandDetails> demandDetails = getInstallmentWiseLicenseDemandDetails(demand);
         if (license.isNewApplication())
             installmentPenalty = getCalculatedPenalty(license, license.getCommencementDate(), new Date(), demand);
         else if (license.isReNewApplication())
             installmentPenalty = getCalculatedPenalty(license, null, new Date(), demand);
         for (final Map.Entry<Installment, BigDecimal> penalty : installmentPenalty.entrySet()) {
-            EgDemandDetails penaltyDemandDetail = installmentWisePenaltyDemandDetail.get(penalty.getKey());
-            EgDemandDetails licenseDemandDetail = installmentWiseLicenseDemandDetail.get(penalty.getKey());
+            EgDemandDetails penaltyDemandDetail = penaltyDetails.get(penalty.getKey());
+            EgDemandDetails licenseDemandDetail = demandDetails.get(penalty.getKey());
             if (penalty.getValue().signum() > 0) {
                 if (penaltyDemandDetail != null && licenseDemandDetail.getBalance().signum() > 0)
                     penaltyDemandDetail.setAmount(penalty.getValue().setScale(0, RoundingMode.HALF_UP));
@@ -394,38 +396,41 @@ public class TradeLicenseService {
     }
 
     private Map<Installment, EgDemandDetails> getInstallmentWisePenaltyDemandDetails(final EgDemand currentDemand) {
-        final Map<Installment, EgDemandDetails> installmentWisePenaltyDemandDetails = new TreeMap<>();
+        final Map<Installment, EgDemandDetails> penaltyDemandDetails = new TreeMap<>();
         if (currentDemand != null)
             for (final EgDemandDetails dmdDet : currentDemand.getEgDemandDetails())
                 if (dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(PENALTY_DMD_REASON_CODE))
-                    installmentWisePenaltyDemandDetails.put(dmdDet.getEgDemandReason().getEgInstallmentMaster(), dmdDet);
+                    penaltyDemandDetails.put(dmdDet.getEgDemandReason().getEgInstallmentMaster(), dmdDet);
 
-        return installmentWisePenaltyDemandDetails;
+        return penaltyDemandDetails;
     }
 
     private Map<Installment, EgDemandDetails> getInstallmentWiseLicenseDemandDetails(final EgDemand currentDemand) {
-        final Map<Installment, EgDemandDetails> installmentWiseLicenseDemandDetails = new TreeMap<>();
+        final Map<Installment, EgDemandDetails> demandDetails = new TreeMap<>();
         if (currentDemand != null)
             for (final EgDemandDetails dmdDet : currentDemand.getEgDemandDetails())
                 if (!dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(PENALTY_DMD_REASON_CODE))
-                    installmentWiseLicenseDemandDetails.put(dmdDet.getEgDemandReason().getEgInstallmentMaster(), dmdDet);
+                    demandDetails.put(dmdDet.getEgDemandReason().getEgInstallmentMaster(), dmdDet);
 
-        return installmentWiseLicenseDemandDetails;
+        return demandDetails;
     }
 
     private Map<Installment, BigDecimal> getCalculatedPenalty(TradeLicense license, Date fromDate, Date collectionDate,
                                                               EgDemand demand) {
         final Map<Installment, BigDecimal> installmentPenalty = new HashMap<>();
-        for (final EgDemandDetails demandDetails : demand.getEgDemandDetails())
+        for (final EgDemandDetails demandDetails : demand.getEgDemandDetails()) {
             if (!demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(PENALTY_DMD_REASON_CODE)
-                    && demandDetails.getAmount().subtract(demandDetails.getAmtCollected()).signum() >= 0)
-                if (fromDate != null)
-                    installmentPenalty.put(demandDetails.getEgDemandReason().getEgInstallmentMaster(),
-                            penaltyRatesService.calculatePenalty(license, fromDate, collectionDate, demandDetails.getAmount()));
-                else
+                    && demandDetails.getAmount().subtract(demandDetails.getAmtCollected()).signum() >= 0) {
+                if (fromDate == null) {
                     installmentPenalty.put(demandDetails.getEgDemandReason().getEgInstallmentMaster(),
                             penaltyRatesService.calculatePenalty(license, demandDetails.getEgDemandReason().getEgInstallmentMaster().getFromDate(),
                                     collectionDate, demandDetails.getAmount()));
+                } else {
+                    installmentPenalty.put(demandDetails.getEgDemandReason().getEgInstallmentMaster(),
+                            penaltyRatesService.calculatePenalty(license, fromDate, collectionDate, demandDetails.getAmount()));
+                }
+            }
+        }
         return installmentPenalty;
     }
 
@@ -540,10 +545,11 @@ public class TradeLicenseService {
             if (!license.hasState()) {
                 Position wfInitiator;
                 List<Assignment> assignments = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(user.getId());
-                if (!assignments.isEmpty())
+                if (assignments.isEmpty()) {
+                    throw new ValidationException(ERROR_WF_INITIATOR_NOT_DEFINED, "No officials assigned to process this application");
+                } else {
                     wfInitiator = assignments.get(0).getPosition();
-                else
-                    throw new ValidationException(ERROR_KEY_WF_INITIATOR_NOT_DEFINED, "No officials assigned to process this application");
+                }
                 final WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
                         null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
                 license.transition().start().withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
@@ -746,7 +752,6 @@ public class TradeLicenseService {
 
     @Transactional
     public TradeLicense saveClosure(TradeLicense license, final WorkflowBean workflowBean) {
-        final User currentUser = this.securityUtils.getCurrentUser();
         if (license.hasState() && !license.getState().isEnded())
             throw new ValidationException("lic.appl.wf.validation", "Cannot initiate Closure process, application under processing");
         license.setNewWorkflow(false);
@@ -754,9 +759,9 @@ public class TradeLicenseService {
         if (workflowBean.getApproverPositionId() != null) {
             position = positionMasterService.getPositionById(workflowBean.getApproverPositionId());
         }
-        if (license.getState() == null || (license.hasState() && license.getState().isEnded())) {
+        if (license.getState() == null || license.hasState() && license.getState().isEnded()) {
             final WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
-                    null, workflowBean.getAdditionaRule(), "NEW", null);
+                    null, workflowBean.getAdditionaRule(), NEW_STATE, null);
             final List<Assignment> assignments = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(this.securityUtils.getCurrentUser().getId());
             if (securityUtils.currentUserIsEmployee()) {
                 Position wfInitiator = null;
@@ -764,12 +769,14 @@ public class TradeLicenseService {
                     if (!assignments.isEmpty())
                         wfInitiator = assignments.get(0).getPosition();
                     else
-                        throw new ValidationException(ERROR_KEY_WF_NEXT_OWNER_NOT_FOUND, "No employee assigned to process Closure application", "Closure");
+                        throw new ValidationException(ERROR_WF_NEXT_OWNER_NOT_FOUND, "No employee assigned to process Closure application", "Closure");
                 }
-                if (!license.hasState())
-                    license.transition().start();
-                else
+                if (license.hasState()) {
                     license.transition().startNext();
+                } else {
+                    license.transition().start();
+                }
+                User currentUser = this.securityUtils.getCurrentUser();
                 license.transition()
                         .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
                         .withComments(workflowBean.getApproverComments()).withNatureOfTask(license.getLicenseAppType().getName())
@@ -824,9 +831,9 @@ public class TradeLicenseService {
                         .withOwner(license.getState().getInitiatorPosition()).withNextAction("SI/SS Approval Pending");
 
             }
-        else if ("NEW".equals(license.getState().getValue())) {
+        else if (NEW_STATE.equals(license.getState().getValue())) {
             final WorkFlowMatrix newwfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
-                    null, workflowBean.getAdditionaRule(), "NEW", null);
+                    null, workflowBean.getAdditionaRule(), NEW_STATE, null);
             license.transition().progressWithStateCopy()
                     .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
                     .withComments(workflowBean.getApproverComments())
@@ -835,11 +842,9 @@ public class TradeLicenseService {
             license.setEgwStatus(egwStatusHibernateDAO
                     .getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_CREATED_CODE));
             license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
-        } else if ("Revenue Clerk/JA Approved".equals(license.getState().getValue())
-                || WORKFLOW_STATE_REJECTED.equals(license.getState().getValue())) {
-
-            license.setEgwStatus(egwStatusHibernateDAO
-                    .getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_CREATED_CODE));
+        } else if (REVENUE_CLERK_JA_APPROVED.equals(license.getState().getValue()) ||
+                WORKFLOW_STATE_REJECTED.equals(license.getState().getValue())) {
+            license.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_CREATED_CODE));
             license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_UNDERWORKFLOW));
             license.transition().progressWithStateCopy()
                     .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
@@ -863,21 +868,23 @@ public class TradeLicenseService {
         else if (currentUserRoles.contains(MEESEVAOPERATOR))
             comment = "Meeseva Operator Initiated";
         List<Assignment> assignmentList = getAssignments();
-        if (!assignmentList.isEmpty()) {
+        if (assignmentList.isEmpty()) {
+            throw new ValidationException(ERROR_WF_INITIATOR_NOT_DEFINED, ERROR_WF_INITIATOR_NOT_DEFINED);
+        } else {
             final Assignment wfAssignment = assignmentList.get(0);
-            if (!license.hasState())
-                license.transition().start();
-            else
+            if (license.hasState()) {
                 license.transition().startNext();
+            } else {
+                license.transition().start();
+            }
             license.transition().withSenderName(
                     wfAssignment.getEmployee().getUsername() + DELIMITER_COLON + wfAssignment.getEmployee().getName())
                     .withComments(comment).withNatureOfTask(license.getLicenseAppType().getName())
-                    .withStateValue("NEW").withDateInfo(new Date()).withOwner(wfAssignment.getPosition())
+                    .withStateValue(NEW_STATE).withDateInfo(new Date()).withOwner(wfAssignment.getPosition())
                     .withNextAction("SI/SS Approval Pending").withInitiator(wfAssignment.getPosition()).withExtraInfo(license.getLicenseAppType().getName());
             license.setEgwStatus(
                     egwStatusHibernateDAO.getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_CREATED_CODE));
-        } else
-            throw new ValidationException(ERROR_KEY_WF_INITIATOR_NOT_DEFINED, ERROR_KEY_WF_INITIATOR_NOT_DEFINED);
+        }
     }
 
     public List<Long> getLicenseIdsForDemandGeneration(CFinancialYear financialYear) {
@@ -1124,7 +1131,7 @@ public class TradeLicenseService {
 
     public BigDecimal[] getDemandColl(TradeLicense license) {
         BigDecimal[] dmdColl = new BigDecimal[3];
-        Arrays.fill(dmdColl, BigDecimal.ZERO);
+        Arrays.fill(dmdColl, ZERO);
         final Installment latestInstallment = this.installmentDao.getInsatllmentByModuleForGivenDate(getModuleName(),
                 new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate());
         license.getCurrentDemand().getEgDemandDetails().stream().forEach(egDemandDetails -> {
