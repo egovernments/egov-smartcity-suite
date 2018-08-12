@@ -59,6 +59,7 @@ import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.contracts.LicenseStateInfo;
+import org.hibernate.annotations.NaturalId;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.hibernate.envers.RelationTargetAuditMode;
@@ -295,6 +296,8 @@ public class TradeLicense extends StateAware<Position> {
     private String applicationSource;
 
     @NotAudited
+    @NaturalId
+    @Column(nullable = false, unique = true, updatable = false)
     private String uid;
 
     @Transient
