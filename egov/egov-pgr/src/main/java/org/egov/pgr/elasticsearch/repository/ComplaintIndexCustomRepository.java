@@ -94,4 +94,7 @@ public interface ComplaintIndexCustomRepository {
             BoolQueryBuilder feedBackQuery);
 
     List<ComplaintIndex> findIvrsComplaints(ComplaintDashBoardRequest complaintDashBoardRequest, BoolQueryBuilder query, String fieldName, String paramValue);
-}
+
+    SearchResponse findFeedBackRatingWithoutAggr(ComplaintDashBoardRequest ivrsFeedBackRequest, BoolQueryBuilder feedBackQuery);
+
+    }

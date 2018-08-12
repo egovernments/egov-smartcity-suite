@@ -914,4 +914,16 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                     .execute().actionGet();
         }
     }
+
+    @Override
+    public SearchResponse findFeedBackRatingWithoutAggr(ComplaintDashBoardRequest ivrsFeedBackRequest, BoolQueryBuilder feedBackQuery) {
+        return elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
+                .setQuery(feedBackQuery).setSize(0)
+                .addAggregation(getCount("closedCount", "crn"))
+                .addAggregation(ComplaintIndexAggregationBuilder.getCallStatusAndRating())
+                .addAggregation(ComplaintIndexAggregationBuilder.prepareMonthlyAggregations())
+                .addAggregation(getCountBetweenSpecifiedDates(TODAY_COMPLAINT_COUNT,
+                        COMPLETION_DATE, new DateTime().toString(formatter), new DateTime().plusDays(1).toString(formatter)))
+                .execute().actionGet();
+    }
 }

@@ -185,6 +185,9 @@ public class ComplaintIndexService {
     private static final String COMPLETION_DATE = "completionDate";
     private static final String IF_CLOSED = "ifClosed";
     private static final String TODAY_COMPLAINT_COUNT = "todaysComplaintCount";
+    private static final String CALL_STATUS_AGGR = "callStatCountAggr";
+    private static final String DATE_AGGR = "dateAggr";
+
     @Autowired
     private CityService cityService;
 
@@ -1675,32 +1678,41 @@ public class ComplaintIndexService {
 
     public List<IVRSFeedBackResponse> getDetailsBasedOnFeedBack(final ComplaintDashBoardRequest ivrsRequest) {
         List<IVRSFeedBackResponse> feedbackResponseList = new ArrayList<>();
-        String aggregationField = CITY_REGION_NAME;
-        if (isNotBlank(ivrsRequest.getType()))
-            aggregationField = ComplaintIndexAggregationBuilder.fetchAggregationField(ivrsRequest.getType());
-
-        SearchResponse completedResponse = complaintIndexRepository.findFeedBackRatingDetails(ivrsRequest,
-                prepareQuery(ivrsRequest),
-                aggregationField);
-        Terms closedterms = completedResponse.getAggregations().get("typeAggr");
-        for (Bucket closedBucket : closedterms.getBuckets()) {
+        if (isNotBlank(ivrsRequest.getType())) {
+            String aggregationField = ComplaintIndexAggregationBuilder.fetchAggregationField(ivrsRequest.getType());
+            SearchResponse completedResponse = complaintIndexRepository.findFeedBackRatingDetails(ivrsRequest,
+                    prepareQuery(ivrsRequest),
+                    aggregationField);
+            Terms closedterms = completedResponse.getAggregations().get("typeAggr");
+            for (Bucket closedBucket : closedterms.getBuckets()) {
+                IVRSFeedBackResponse feedbackResponse = new IVRSFeedBackResponse();
+                feedbackResponse.setTotalComplaint(closedBucket.getDocCount());
+                Range todaysClosedCount = closedBucket.getAggregations().get(TODAY_COMPLAINT_COUNT);
+                feedbackResponse.setTodaysClosed(todaysClosedCount.getBuckets().get(0).getDocCount());
+                setUpperLevelValues(aggregationField, feedbackResponse, closedBucket);
+                callStatusAndRatingCount(closedBucket.getAggregations().get(CALL_STATUS_AGGR), feedbackResponse);
+                feedbackResponse.setMonthlyCounts(getMonthlyFeedbackCount(closedBucket.getAggregations().get(DATE_AGGR)));
+                feedbackResponseList.add(feedbackResponse);
+            }
+        } else {
+            SearchResponse searchResponse = complaintIndexRepository.findFeedBackRatingWithoutAggr(ivrsRequest,
+                    prepareQuery(ivrsRequest));
+            ValueCount closedComplaints = searchResponse.getAggregations().get("closedCount");
+            Range todayClosedCount = searchResponse.getAggregations().get(TODAY_COMPLAINT_COUNT);
             IVRSFeedBackResponse feedbackResponse = new IVRSFeedBackResponse();
-            feedbackResponse.setTotalComplaint(closedBucket.getDocCount());
-            Range todaysClosedCount = closedBucket.getAggregations().get(TODAY_COMPLAINT_COUNT);
-            feedbackResponse.setTodaysClosed(todaysClosedCount.getBuckets().get(0).getDocCount());
-            setUpperLevelValues(aggregationField, feedbackResponse, closedBucket);
-            callStatusAndRatingCount(closedBucket, feedbackResponse);
-            feedbackResponse.setMonthlyCounts(getMonthlyFeedbackCount(closedBucket));
+            feedbackResponse.setTotalComplaint(closedComplaints.getValue());
+            feedbackResponse.setTodaysClosed(todayClosedCount.getBuckets().get(0).getDocCount());
+            callStatusAndRatingCount(searchResponse.getAggregations().get(CALL_STATUS_AGGR), feedbackResponse);
+            feedbackResponse.setMonthlyCounts(getMonthlyFeedbackCount(searchResponse.getAggregations().get(DATE_AGGR)));
             feedbackResponseList.add(feedbackResponse);
         }
         return feedbackResponseList;
     }
 
-    private List<MonthlyFeedbackCounts> getMonthlyFeedbackCount(final Bucket closedBucket) {
+    private List<MonthlyFeedbackCounts> getMonthlyFeedbackCount(final Histogram dateAgg) {
         String[] dateArray;
         List<MonthlyFeedbackCounts> monthRateList = new ArrayList<>();
         Map<Integer, String> monthValuesMap = DateUtils.getAllMonthsWithFullNames();
-        Histogram dateAgg = closedBucket.getAggregations().get("dateAggr");
         Integer month;
         String monthName;
         for (Histogram.Bucket entry : dateAgg.getBuckets()) {
@@ -1716,7 +1728,7 @@ public class ComplaintIndexService {
     }
 
     private void prepareMonthlyCallStatCounts(Histogram.Bucket entry, MonthlyFeedbackCounts monthStat) {
-        Terms callStatCountAggr = entry.getAggregations().get("callStatCountAggr");
+        Terms callStatCountAggr = entry.getAggregations().get(CALL_STATUS_AGGR);
         BigDecimal nonRespondedCount = ZERO;
         for (Bucket callStatBucket : callStatCountAggr.getBuckets()) {
             int callStatus = callStatBucket.getKeyAsNumber().intValue();
@@ -1743,8 +1755,7 @@ public class ComplaintIndexService {
             }
     }
 
-    private void callStatusAndRatingCount(Bucket closedBucket, IVRSFeedBackResponse feedbackResponse) {
-        Terms callStatTerms = closedBucket.getAggregations().get("callStatCountAggr");
+    private void callStatusAndRatingCount(Terms callStatTerms, IVRSFeedBackResponse feedbackResponse) {
         BigDecimal notRespondedCount = ZERO;
         for (Bucket callStatBucket : callStatTerms.getBuckets()) {
             if (RESPONDED_WITH_FEEDBACK == callStatBucket.getKeyAsNumber().intValue()
@@ -1889,8 +1900,8 @@ public class ComplaintIndexService {
         feedbackResponse.setTotalComplaint(complaintTypeBucket.getDocCount());
         Range todaysClosedCount = complaintTypeBucket.getAggregations().get(TODAY_COMPLAINT_COUNT);
         feedbackResponse.setTodaysClosed(todaysClosedCount.getBuckets().get(0).getDocCount());
-        feedbackResponse.setMonthlyCounts(getMonthlyFeedbackCount(complaintTypeBucket));
-        callStatusAndRatingCount(complaintTypeBucket, feedbackResponse);
+        feedbackResponse.setMonthlyCounts(getMonthlyFeedbackCount(complaintTypeBucket.getAggregations().get(DATE_AGGR)));
+        callStatusAndRatingCount(complaintTypeBucket.getAggregations().get(CALL_STATUS_AGGR), feedbackResponse);
     }
 
     private BoolQueryBuilder getIvrsFilterQuery(final ComplaintDashBoardRequest complaintDashBoardRequest, boolean todays) {
