@@ -48,7 +48,6 @@
 
 package org.egov.tl.web.actions.newtradelicense;
 
-import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -61,12 +60,10 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
 import org.egov.pims.commons.Position;
-import org.egov.tl.entity.License;
+import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.Licensee;
-import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
-import org.egov.tl.entity.enums.ApplicationType;
 import org.egov.tl.service.LicenseCategoryService;
 import org.egov.tl.service.LicenseService;
 import org.egov.tl.service.LicenseSubCategoryService;
@@ -75,7 +72,6 @@ import org.egov.tl.web.actions.BaseLicenseAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -83,6 +79,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import static java.lang.String.format;
 import static org.egov.tl.utils.Constants.*;
 
 @ParentPackage("egov")
@@ -148,9 +145,9 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @Override
     @Action(value = "/newtradelicense/newTradeLicense-showForApproval")
     @SkipValidation
-    public String showForApproval() throws IOException {
-        documentTypes = tradeLicenseService.getDocumentTypesByApplicationType(ApplicationType.valueOf(license()
-                .getLicenseAppType().getCode()));
+    @ValidationErrorPage(MESSAGE)
+    public String showForApproval() {
+        documentTypes = this.licenseDocumentTypeService.getDocumentTypesByApplicationType(license().getLicenseAppType());
         if (!license().isNewWorkflow()) {
             if (license().getState().getValue().equals(WF_LICENSE_CREATED)
                     || license().getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED_STR) && license()
@@ -181,11 +178,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
                 .getPositionsForEmployee(securityUtils.getCurrentUser().getId(), new Date());
         Position owner = license().currentAssignee();
         if (!positionList.isEmpty() && !positionList.contains(owner)) {
-            ServletActionContext.getResponse().setContentType("text/html");
-            ServletActionContext.getResponse().getWriter()
-                    .write("<center style='color:red;font-weight:bolder'>Workflow item is in "
-                            + owner.getName() + " inbox !</center>");
-            return null;
+            throw new ValidationException("error.workflow.inprogress", "License application is with " + owner.getName());
         }
         licenseHistory = tradeLicenseService.populateHistory(tradeLicense);
         return super.showForApproval();
@@ -211,21 +204,19 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     public void prepareShowForApproval() {
         prepareNewForm();
         licenseHistory = tradeLicenseService.populateHistory(tradeLicense);
-        documentTypes = tradeLicenseService.getDocumentTypesByApplicationType(ApplicationType.valueOf(license()
-                .getLicenseAppType().getCode()));
+        documentTypes = this.licenseDocumentTypeService.getDocumentTypesByApplicationType(license().getLicenseAppType());
     }
 
     @Override
     @SkipValidation
     @Action(value = "/newtradelicense/newTradeLicense-beforeRenew")
-    public String beforeRenew() throws IOException {
+    @ValidationErrorPage(MESSAGE)
+    public String beforeRenew() {
         prepareNewForm();
-        documentTypes = tradeLicenseService.getDocumentTypesByApplicationType(ApplicationType.RENEW);
+        documentTypes = licenseDocumentTypeService.getDocumentTypesForRenewApplicationType();
         if (tradeLicense.hasState() && !tradeLicense.transitionCompleted()) {
-            ServletActionContext.getResponse().setContentType("text/html");
-            ServletActionContext.getResponse().getWriter()
-                    .write("<center style='color:red;font-weight:bolder'>Renewal workflow is in progress !</center>");
-            return null;
+            throw new ValidationException(WF_INPROGRESS_ERROR_CODE,
+                    format(WF_INPROGRESS_ERROR_MSG_FORMAT, tradeLicense.getLicenseAppType().getName()));
         }
         if (!tradeLicense.hasState() || (tradeLicense.hasState() && tradeLicense.getCurrentState().isEnded()))
             currentState = "";
@@ -245,7 +236,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     public void prepareRenew() {
         prepareNewForm();
         renewAppType = RENEW_APPTYPE_CODE;
-        documentTypes = tradeLicenseService.getDocumentTypesByApplicationType(ApplicationType.RENEW);
+        documentTypes = licenseDocumentTypeService.getDocumentTypesForRenewApplicationType();
     }
 
     @Override
@@ -253,13 +244,13 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         super.prepareNewForm();
         if (license() != null && license().getId() != null)
             tradeLicense = tradeLicenseService.getLicenseById(license().getId());
-        documentTypes = tradeLicenseService.getDocumentTypesByApplicationType(ApplicationType.NEW);
+        documentTypes = licenseDocumentTypeService.getDocumentTypesForNewApplication();
         setOwnerShipTypeMap(OWNERSHIP_TYPE);
         final List<Boundary> localityList = boundaryService
                 .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(LOCALITY, LOCATION_HIERARCHY_TYPE);
         addDropdownData("localityList", localityList);
         addDropdownData("tradeTypeList", tradeLicenseService.getAllNatureOfBusinesses());
-        addDropdownData("categoryList", licenseCategoryService.getCategories());
+        addDropdownData("categoryList", licenseCategoryService.getCategoriesOrderByName());
         addDropdownData("uomList", unitOfMeasurementService.getAllActiveUOM());
         addDropdownData("subCategoryList", tradeLicense.getCategory() == null ? Collections.emptyList()
                 : licenseSubCategoryService.getSubCategoriesByCategory(tradeLicense.getCategory().getId()));
@@ -268,7 +259,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     }
 
     @Override
-    public License getModel() {
+    public TradeLicense getModel() {
         return tradeLicense;
     }
 
@@ -320,8 +311,8 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
                 return RENEWLICENSE;
             else
                 return NEWLICENSE;
-        } else {//TODO to be removed
-            if (RENEW_APPTYPE_CODE.equals(renewAppType) || tradeLicense != null && tradeLicense.isReNewApplication())
+        } else {
+            if (RENEW_APPTYPE_CODE.equals(renewAppType) || tradeLicense.isReNewApplication())
                 return RENEW_ADDITIONAL_RULE;
             else
                 return NEW_ADDITIONAL_RULE;

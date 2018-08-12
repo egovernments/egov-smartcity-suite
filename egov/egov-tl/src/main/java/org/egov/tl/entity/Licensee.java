@@ -50,6 +50,8 @@ package org.egov.tl.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.validation.regex.Constants;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.RelationTargetAuditMode;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
@@ -69,16 +71,18 @@ import javax.validation.constraints.Pattern;
 
 @Entity
 @Table(name = "EGTL_LICENSEE")
+@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 @SequenceGenerator(name = Licensee.SEQUENCE, sequenceName = Licensee.SEQUENCE, allocationSize = 1)
 public class Licensee extends AbstractAuditable {
-    public static final String SEQUENCE = "SEQ_EGTL_LICENSEE";
+    protected static final String SEQUENCE = "SEQ_EGTL_LICENSEE";
     private static final long serialVersionUID = 6723590685484215531L;
+
     @Id
     @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotBlank(message = "licensee.name.err.required")
-    @Length(max = 256, message = "licensee.name.err.maxlength")
+    @NotBlank
+    @Length(max = 256)
     @SafeHtml
     @Column(name = "APPLICANT_NAME")
     private String applicantName;
@@ -98,7 +102,7 @@ public class Licensee extends AbstractAuditable {
 
     @SafeHtml
     @Length(max = 16)
-    @Column(name = "UNIQUEID", insertable = false, updatable = false)
+    @Column(name = "UNIQUEID")
     private String uid;
 
     @NotBlank
@@ -116,7 +120,7 @@ public class Licensee extends AbstractAuditable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_LICENSE")
-    private License license;
+    private TradeLicense license;
 
     @Override
     public Long getId() {
@@ -152,11 +156,11 @@ public class Licensee extends AbstractAuditable {
         this.emailId = emailId;
     }
 
-    public License getLicense() {
+    public TradeLicense getLicense() {
         return license;
     }
 
-    public void setLicense(final License license) {
+    public void setLicense(final TradeLicense license) {
         this.license = license;
     }
 

@@ -46,13 +46,19 @@
   ~
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
 <form:form role="form" action="create" modelAttribute="unitOfMeasurement" cssClass="form-horizontal form-groups-bordered">
     <div class="row">
         <div class="col-md-12">
+            <c:if test="${not empty message}">
+                <div class="alert alert-success" role="alert">
+                    <spring:message code="${message}" arguments="${name}"/>
+                </div>
+            </c:if>
             <div class="panel panel-primary" data-collapsed="0">
                 <div class="panel-heading">
                     <div class="panel-title"><spring:message code="title.uom.create"/>
@@ -65,14 +71,15 @@
                         <div class="col-sm-3 add-margin">
                             <form:input path="name" id="name" cssClass="form-control patternvalidation"
                                         data-pattern="alphanumericwithspacehyphenunderscore"
-                                        cssErrorClass="form-control patternvalidation error" required="required" maxLength="32"/>
+                                        cssErrorClass="form-control patternvalidation error" required="required" maxLength="50"/>
                             <form:errors path="name" cssClass="error-msg"/>
                         </div>
                         <label class="col-sm-2 control-label text-right"><spring:message code="lbl.code"/>
                             <span id="mandatory" class="mandatory"></span></label>
                         <div class="col-sm-3 add-margin">
                             <form:input path="code" id="code" cssClass="form-control patternvalidation" data-pattern="alphabets"
-                                        cssErrorClass="form-control patternvalidation error" required="required" maxLength="5"/>
+                                        cssErrorClass="form-control patternvalidation error" required="required" readonly="true"
+                                        value="${code}" maxlength="5"/>
                             <form:errors path="code" cssClass="error-msg"/>
                         </div>
                     </div>
@@ -81,7 +88,7 @@
                             <spring:message code="lbl.active"/>
                         </label>
                         <div class="col-sm-3 add-margin">
-                            <form:checkbox path="active" id="active"/>
+                            <form:checkbox path="active" id="active" checked="true"/>
                             <form:errors path="active" cssClass="error-msg"/>
                         </div>
                     </div>
@@ -92,7 +99,7 @@
     <div class="form-group">
         <div class="text-center">
             <button type='submit' class='btn btn-primary' id="buttonSubmit"><spring:message code='lbl.save'/></button>
-            <button type="reset" class="btn btn-default" onclick="window.location.reload()"><spring:message code="lbl.reset"/></button>
+            <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
             <a href='javascript:void(0)' class='btn btn-default' onclick='self.close()'><spring:message code='lbl.close'/></a>
         </div>
     </div>

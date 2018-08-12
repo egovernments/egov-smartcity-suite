@@ -47,7 +47,7 @@
  */
 package org.egov.tl.entity.contracts;
 
-import org.egov.tl.entity.License;
+import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.utils.Constants;
 
 import java.math.BigDecimal;
@@ -75,7 +75,7 @@ public class OnlineSearchForm {
         // For form binding
     }
 
-    public OnlineSearchForm(final License license, final BigDecimal[] dmdColl) {
+    public OnlineSearchForm(final TradeLicense license, final BigDecimal[] dmdColl) {
         setLicenseId(license.getId());
         setUid(license.getUid());
         setApplicationNumber(license.getApplicationNumber());

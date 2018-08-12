@@ -50,7 +50,6 @@ package org.egov.tl.service;
 
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
-import org.egov.tl.entity.License;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
 import org.joda.time.DateTime;
@@ -79,33 +78,33 @@ import static org.egov.tl.utils.Constants.STATUS_ACTIVE;
 @Service
 @Transactional(readOnly = true)
 public class LicenseApplicationService extends TradeLicenseService {
-    @Autowired
-    private TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
+
     @Autowired
     private LicenseProcessWorkflowService licenseProcessWorkflowService;
+
     @Autowired
     private LicenseCitizenPortalService licenseCitizenPortalService;
 
     @Transactional
-    public License createWithMeseva(TradeLicense license, WorkflowBean wfBean) {
+    public TradeLicense createWithMeseva(TradeLicense license, WorkflowBean wfBean) {
         return create(license, wfBean);
     }
 
     @Transactional
-    public License renewWithMeeseva(TradeLicense license, WorkflowBean wfBean) {
+    public TradeLicense renewWithMeeseva(TradeLicense license, WorkflowBean wfBean) {
         return renew(license, wfBean);
     }
 
     @Transactional
-    public License create(final TradeLicense license, final WorkflowBean workflowBean) {
-        final Date fromRange = installmentDao.getInsatllmentByModuleForGivenDate(this.getModuleName(), new DateTime().toDate())
+    public TradeLicense create(TradeLicense license, WorkflowBean workflowBean) {
+        Date fromRange = installmentDao.getInsatllmentByModuleForGivenDate(this.getModuleName(), new DateTime().toDate())
                 .getFromDate();
-        final Date toRange = installmentDao
+        Date toRange = installmentDao
                 .getInsatllmentByModuleForGivenDate(this.getModuleName(), new DateTime().plusYears(1).toDate()).getToDate();
         if (license.getCommencementDate() == null || license.getCommencementDate().before(fromRange)
                 || license.getCommencementDate().after(toRange))
             throw new ValidationException("TL-009", "TL-009");
-        license.setLicenseAppType(getLicenseApplicationType());
+        license.setLicenseAppType(licenseAppTypeService.getNewLicenseApplicationType());
         raiseNewDemand(license);
         license.getLicensee().setLicense(license);
         license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
@@ -121,14 +120,14 @@ public class LicenseApplicationService extends TradeLicenseService {
         if (securityUtils.currentUserIsCitizen())
             licenseCitizenPortalService.onCreate(license);
         licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
-        sendEmailAndSMS(license, workflowBean.getWorkFlowAction());
+        tradeLicenseSmsAndEmailService.sendSmsAndEmail(license, workflowBean.getWorkFlowAction());
         return license;
     }
 
     @Transactional
-    public License renew(final TradeLicense license, final WorkflowBean workflowBean) {
+    public TradeLicense renew(final TradeLicense license, final WorkflowBean workflowBean) {
         license.setApplicationDate(new Date());
-        license.setLicenseAppType(this.getLicenseApplicationTypeForRenew());
+        license.setLicenseAppType(licenseAppTypeService.getRenewLicenseApplicationType());
         if (!currentUserIsMeeseva())
             license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
         final BigDecimal currentDemandAmount = recalculateLicenseFee(license.getCurrentDemand());
@@ -148,31 +147,20 @@ public class LicenseApplicationService extends TradeLicenseService {
         this.licenseRepository.save(license);
         if (securityUtils.currentUserIsCitizen())
             licenseCitizenPortalService.onCreate(license);
-        sendEmailAndSMS(license, workflowBean.getWorkFlowAction());
+        tradeLicenseSmsAndEmailService.sendSmsAndEmail(license, workflowBean.getWorkFlowAction());
         licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
         return license;
     }
 
-    @Transactional
-    public License save(final TradeLicense license) {
-        license.setLicenseAppType(getLicenseApplicationType());
-        if (securityUtils.currentUserIsEmployee())
-            licenseRepository.save(license);
-        return license;
-    }
-
-    @Transactional
     @Override
-    public void updateTradeLicense(final TradeLicense license, final WorkflowBean workflowBean) {
+    @Transactional
+    public void updateTradeLicense(TradeLicense license, WorkflowBean workflowBean) {
         processAndStoreDocument(license);
         final BigDecimal currentDemandAmount = recalculateLicenseFee(license.getCurrentDemand());
         final BigDecimal feematrixDmdAmt = calculateFeeAmount(license);
         if (feematrixDmdAmt.compareTo(currentDemandAmount) >= 0)
             updateDemandForChangeTradeArea(license);
-        if (!license.isPaid())
-            license.setCollectionPending(true);
-        else
-            license.setCollectionPending(false);
+        license.setCollectionPending(!license.isPaid());
         if (BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
             licenseProcessWorkflowService.getRejectTransition(license, workflowBean);
         else
@@ -195,14 +183,14 @@ public class LicenseApplicationService extends TradeLicenseService {
 
     public void processDigitalSignature(String applicationNumber) {
         if (isNotBlank(applicationNumber)) {
-            License license = licenseRepository.findByApplicationNumber(applicationNumber);
+            TradeLicense license = licenseRepository.findByApplicationNumber(applicationNumber);
             WorkflowBean workflowBean = new WorkflowBean();
             workflowBean.setWorkFlowAction(SIGNWORKFLOWACTION);
             workflowBean.setAdditionaRule(license.isNewApplication() ? NEWLICENSE : RENEWLICENSE);
             license.setCertificateFileId(license.getDigiSignedCertFileStoreId());
-            licenseProcessWorkflowService.createNewLicenseWorkflowTransition((TradeLicense) license, workflowBean);
+            licenseProcessWorkflowService.createNewLicenseWorkflowTransition(license, workflowBean);
             licenseRepository.save(license);
-            licenseCitizenPortalService.onUpdate((TradeLicense) license);
+            licenseCitizenPortalService.onUpdate(license);
             tradeLicenseSmsAndEmailService.sendSMsAndEmailOnDigitalSign(license);
             licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
         }

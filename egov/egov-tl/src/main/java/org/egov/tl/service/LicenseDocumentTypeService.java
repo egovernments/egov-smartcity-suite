@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -47,8 +47,8 @@
  */
 package org.egov.tl.service;
 
+import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.LicenseDocumentType;
-import org.egov.tl.entity.enums.ApplicationType;
 import org.egov.tl.repository.LicenseDocumentTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -56,47 +56,61 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 @Service
 @Transactional(readOnly = true)
-public class DocumentTypeService {
-    private final LicenseDocumentTypeRepository licenseDocumentTypeRepository;
+public class LicenseDocumentTypeService {
 
     @Autowired
-    public DocumentTypeService(final LicenseDocumentTypeRepository licenseDocumentTypeRepository) {
-        this.licenseDocumentTypeRepository = licenseDocumentTypeRepository;
+    private LicenseDocumentTypeRepository licenseDocumentTypeRepository;
+
+    @Autowired
+    private LicenseAppTypeService licenseAppTypeService;
+
+    @Transactional
+    public LicenseDocumentType create(LicenseDocumentType documentType) {
+        return licenseDocumentTypeRepository.save(documentType);
+    }
+
+    public LicenseDocumentType getDocumentTypeById(Long id) {
+        return licenseDocumentTypeRepository.findOne(id);
     }
 
     @Transactional
-    public LicenseDocumentType create(final LicenseDocumentType documenttype) {
-        return licenseDocumentTypeRepository.save(documenttype);
-    }
-
-    public LicenseDocumentType getDocumentTypeById(final Long id) {
-        return licenseDocumentTypeRepository.findById(id);
-    }
-
-    @Transactional
-    public LicenseDocumentType update(final LicenseDocumentType documenttype) {
-        if (!documenttype.isEnabled())
-            documenttype.setMandatory(false);
-        return licenseDocumentTypeRepository.save(documenttype);
+    public LicenseDocumentType update(LicenseDocumentType documentType) {
+        if (!documentType.isEnabled())
+            documentType.setMandatory(false);
+        return licenseDocumentTypeRepository.save(documentType);
     }
 
     public List<LicenseDocumentType> findAll() {
         return licenseDocumentTypeRepository.findAll();
     }
 
-    public List<LicenseDocumentType> getDocumentTypesByApplicationType(ApplicationType applicationType) {
-        return licenseDocumentTypeRepository.findByApplicationTypeAndEnabledTrue(applicationType);
+    public List<LicenseDocumentType> getDocumentTypesForNewApplication() {
+        return getDocumentTypesByApplicationType(licenseAppTypeService.getNewLicenseApplicationType());
     }
 
-    public List<LicenseDocumentType> search(final String name, final ApplicationType applicationType) {
-        if (name != null && applicationType != null)
-            return licenseDocumentTypeRepository.findByNameAndApplicationType(name, applicationType);
-        else if (name != null)
+    public List<LicenseDocumentType> getDocumentTypesForRenewApplicationType() {
+        return getDocumentTypesByApplicationType(licenseAppTypeService.getRenewLicenseApplicationType());
+    }
+
+    public List<LicenseDocumentType> getDocumentTypesForClosureApplicationType() {
+        return getDocumentTypesByApplicationType(licenseAppTypeService.getRenewLicenseApplicationType());
+    }
+
+    public List<LicenseDocumentType> getDocumentTypesByApplicationType(LicenseAppType applicationType) {
+        return licenseDocumentTypeRepository.findByApplicationTypeIdAndEnabledTrue(applicationType.getId());
+    }
+
+    public List<LicenseDocumentType> search(String name, LicenseAppType applicationType) {
+        if (isNotBlank(name) && applicationType != null)
+            return licenseDocumentTypeRepository.findByNameAndApplicationTypeId(name, applicationType.getId());
+        else if (isNotBlank(name))
             return licenseDocumentTypeRepository.findByName(name);
         else if (applicationType != null)
-            return licenseDocumentTypeRepository.findByApplicationType(applicationType);
+            return licenseDocumentTypeRepository.findByApplicationTypeId(applicationType.getId());
         else
             return licenseDocumentTypeRepository.findAll();
     }

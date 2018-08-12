@@ -92,7 +92,7 @@ public class LicenseDocument extends AbstractAuditable {
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "license")
-    private License license;
+    private TradeLicense license;
 
     @Transient
     private transient List<MultipartFile> multipartFiles;
@@ -180,11 +180,11 @@ public class LicenseDocument extends AbstractAuditable {
         this.uploadsContentType = uploadsContentType;
     }
 
-    public License getLicense() {
+    public TradeLicense getLicense() {
         return license;
     }
 
-    public void setLicense(final License license) {
+    public void setLicense(final TradeLicense license) {
         this.license = license;
     }
 

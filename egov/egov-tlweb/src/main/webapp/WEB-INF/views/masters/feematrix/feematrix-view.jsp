@@ -46,15 +46,12 @@
   ~
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/includes/taglibs.jsp" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
 <div class="row">
     <div class="col-md-12">
-        <c:if test="${not empty message}">
-            <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
-        </c:if>
         <div class="panel panel-primary" data-collapsed="0">
             <div class="panel-heading">
                 <div class="panel-title"><spring:message code="title.feematrix.view"/></div>
@@ -64,96 +61,63 @@
                            cssClass="form-horizontal form-groups-bordered">
                     <div class="form-group">
                         <label class="col-sm-3 control-label">
-                            <spring:message code="lbl.licenseapptype"/><span class="mandatory"></span>
+                            <spring:message code="lbl.licenseapptype"/>
                         </label>
                         <div class="col-sm-3 add-margin">
-                            <form:input path="licenseAppType.name" id="licenseAppType" cssClass="form-control" readonly="true" required="true"
-                                        cssErrorClass="form-control error"/>
+                            <form:label path="licenseAppType.name" cssClass="form-control">${feeMatrix.licenseAppType.name}</form:label>
                         </div>
                         <label class="col-sm-3 control-label">
-                            <spring:message code="lbl.tradetype"/><span class="mandatory"></span>
+                            <spring:message code="lbl.tradetype"/>
                         </label>
                         <div class="col-sm-3 add-margin">
-                            <form:input path="natureOfBusiness.name" id="natureOfBusiness" cssClass="form-control" readonly="true" required="true"
-                                        cssErrorClass="form-control error"/>
+                            <form:label path="natureOfBusiness.name" cssClass="form-control">${feeMatrix.natureOfBusiness.name}</form:label>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label class="col-sm-3 control-label">
-                            <spring:message code="lbl.licensecategory"/><span class="mandatory"></span>
+                            <spring:message code="lbl.licensecategory"/>
                         </label>
                         <div class="col-sm-3 add-margin">
-                            <form:select path="licenseCategory" id="licenseCategory" cssClass="form-control" required="true"
-                                         cssErrorClass="form-control error" disabled="true">
-                                <form:option value="">
-                                    <spring:message code="lbl.select"/>
-                                </form:option>
-                                <form:options items="${licenseCategoryList}" itemValue="id" itemLabel="name"/>
-                            </form:select>
+                            <form:label path="licenseCategory" cssClass="form-control">${feeMatrix.licenseCategory.name}</form:label>
                         </div>
                         <label class="col-sm-3 control-label">
-                            <spring:message code="lbl.subcategory"/><span class="mandatory"></span>
+                            <spring:message code="lbl.subcategory"/>
                         </label>
                         <div class="col-sm-3 add-margin">
-                            <form:select path="subCategory" id="subCategory" cssClass="form-control select2" required="true"
-                                         cssErrorClass="form-control error select2" disabled="true">
-                                <form:option value="">
-                                    <spring:message code="lbl.select"/>
-                                </form:option>
-                            </form:select>
+                            <form:label path="subCategory" cssClass="form-control">${feeMatrix.subCategory.name}</form:label>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label class="col-sm-3 control-label">
-                            <spring:message code="lbl.feetype"/><span class="mandatory"></span>
+                            <spring:message code="lbl.feetype"/>
                         </label>
                         <div class="col-sm-3 add-margin">
-                            <form:select path="feeType" id="feeType" cssClass="form-control" required="true"
-                                         cssErrorClass="form-control error" disabled="true">
-                                <form:option value="">
-                                    <spring:message code="lbl.select"/>
-                                </form:option>
-                            </form:select>
+                            <form:label path="feeType" cssClass="form-control">${feeMatrix.feeType.name}</form:label>
                         </div>
                         <label class="col-sm-3 control-label">
-                            <spring:message code="lbl.unitofmeasurement"/>
+                            <spring:message code="lbl.financialyear"/>
                         </label>
                         <div class="col-sm-3 add-margin">
-                            <form:input path="" id="unitOfMeasurement" class="form-control" disabled="true"/>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">
-                            <spring:message code="lbl.rateType"/>
-                        </label>
-                        <div class="col-sm-3 add-margin">
-                            <form:input id="rateType" path="" class="form-control text-left" disabled="true"/>
-                        </div>
-
-                        <label class="col-sm-3 control-label">
-                            <spring:message code="lbl.financialyear"/><span class="mandatory"></span>
-                        </label>
-                        <div class="col-sm-3 add-margin">
-                            <form:input path="financialYear.finYearRange" id="financialYear" cssClass="form-control" readonly="true" required="true"
-                                        cssErrorClass="form-control error"/>
+                            <form:label path="financialYear.finYearRange" cssClass="form-control">${feeMatrix.financialYear.finYearRange}</form:label>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-3 control-label">
-                            <spring:message code="lbl.effective.from"/><span class="mandatory"></span>
+                            <spring:message code="lbl.effective.from"/>
                         </label>
                         <div class="col-sm-3 add-margin">
-                            <form:input id="effectiveFrom" readonly="true" path="effectiveFrom" class="form-control text-left" maxlength="10"/>
+                            <fmt:formatDate value="${feeMatrix.effectiveFrom}" var="effectiveFrom" pattern="dd/MM/yyyy"/>
+                            <form:label path="effectiveFrom" cssClass="form-control">${effectiveFrom}</form:label>
                         </div>
 
                         <label class="col-sm-3 control-label">
-                            <spring:message code="lbl.effective.to"/><span class="mandatory"></span>
+                            <spring:message code="lbl.effective.to"/>
                         </label>
                         <div class="col-sm-3 add-margin">
-                            <form:input readonly="true" id="effectiveTo" path="effectiveTo" class="form-control text-left" maxlength="10"/>
+                            <fmt:formatDate value="${feeMatrix.effectiveTo}" var="effectiveTo" pattern="dd/MM/yyyy"/>
+                            <form:label path="effectiveTo" cssClass="form-control">${effectiveTo}</form:label>
                         </div>
                     </div>
                     <div class="panel-heading">
@@ -165,29 +129,28 @@
                         <table class="table table-bordered fromto" id="result" data-from="<spring:message code='lbl.uomfrom'/>"
                                data-to="<spring:message code='lbl.uomto'/>">
                             <thead>
-                            <th><spring:message code="lbl.uomfrom"/></th>
-                            <th><spring:message code="lbl.uomto"/></th>
-                            <th><spring:message code="lbl.amount"/></th>
+                            <th class="text-center"><spring:message code="lbl.uomfrom"/></th>
+                            <th class="text-center"><spring:message code="lbl.uomto"/></th>
+                            <th class="text-center"><spring:message code="lbl.amount"/></th>
                             </thead>
                             <tbody>
                             <c:if test="${not empty feeMatrix.feeMatrixDetail}">
                                 <c:forEach items="${feeMatrix.feeMatrixDetail}" var="detail" varStatus="vs">
                                     <tr data-create="no">
                                         <td>
-                                            <input type="text" name="feeMatrixDetail[${vs.index}].uomFrom" value="${detail.uomFrom}"
-                                                   class="form-control fromRange patternvalidation fromvalue"
-                                                   pattern="-?\d*" data-pattern="numerichyphen" data-fromto="from"
-                                                   maxlength="8" readonly="readonly" required="required"/>
+                                            <form:label path="feeMatrixDetail[${vs.index}].uomFrom" cssClass="form-control text-right">
+                                                ${detail.uomFrom}
+                                            </form:label>
                                         </td>
                                         <td>
-                                            <input type="text" name="feeMatrixDetail[${vs.index}].uomTo" value="${detail.uomTo}"
-                                                   class="form-control patternvalidation tovalue"
-                                                   pattern="-?\d*" data-pattern="numerichyphen" data-fromto="to"
-                                                   maxlength="8" readonly="readonly" required="required"/>
+                                            <form:label path="feeMatrixDetail[${vs.index}].uomTo" cssClass="form-control text-right">
+                                                ${detail.uomTo}
+                                            </form:label>
                                         </td>
                                         <td>
-                                            <input type="text" name="feeMatrixDetail[${vs.index}].amount" value="${detail.amount}"
-                                                   class="form-control patternvalidation" data-pattern="number" maxlength="8" readonly="readonly" required="required"/>
+                                            <form:label path="feeMatrixDetail[${vs.index}].amount" cssClass="form-control text-right">
+                                                ${detail.amount}
+                                            </form:label>
                                         </td>
                                     </tr>
                                 </c:forEach>
@@ -205,9 +168,4 @@
         </div>
     </div>
 </div>
-<script>
-    //for repopulating all autocomplete upon load
-    var subCategory = '${feeMatrix.subCategory.id}';
-    var feeType = '${feeMatrix.feeType.id}';
-</script>
 <script src="<cdn:url  value='/resources/js/app/license-fee-matrix.js?rnd=${app_release_no}'/>"></script>

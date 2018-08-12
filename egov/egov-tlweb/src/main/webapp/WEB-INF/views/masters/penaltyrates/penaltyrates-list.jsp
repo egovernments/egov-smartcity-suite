@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -51,18 +51,16 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
-<form:form role="form" 
-	modelAttribute="penaltyForm" commandName="penaltyForm"
-	id="penaltyform" cssClass="form-horizontal form-groups-bordered">
+<form:form role="form" modelAttribute="penaltyForm" id="penaltyform" cssClass="form-horizontal form-groups-bordered">
 	<div class="row">
 		<div class="col-sm-12">
 			<input type="hidden" name="licenseAppTypeId"
 				value="${penaltyForm.licenseAppType.id}" />
 			<table class="table table-bordered fromto" id="result">
 				<thead>
-					<th><spring:message code="lbl.from" /></th>
-					<th><spring:message code="lbl.to" /></th>
-					<th><spring:message code="lbl.penaltyrate" /></th>
+					<th class="text-center"><spring:message code="lbl.from" /></th>
+					<th class="text-center"><spring:message code="lbl.to" /></th>
+					<th class="text-center"><spring:message code="lbl.penaltyrate" /></th>
 					
 				</thead>
 				<tbody>
@@ -95,7 +93,6 @@
 								</tr>
 							</c:forEach>
 						</c:when>
-						
 					</c:choose>
 				</tbody>
 			</table>

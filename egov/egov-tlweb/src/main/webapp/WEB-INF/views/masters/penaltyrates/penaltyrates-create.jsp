@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -51,8 +51,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
-<form:form role="form" action="search" modelAttribute="penaltyForm"
-	commandName="penaltyForm" id="penaltysearchform"
+<form:form role="form" action="search" modelAttribute="penaltyForm" id="penaltysearchform"
 	cssClass="form-horizontal form-groups-bordered">
 	<div class="row">
 		<div class="col-md-12">
@@ -84,9 +83,7 @@
 	</div>
 	<div class="form-group">
 		<div class="text-center">
-			<button type='button' class='btn btn-primary' id="search">
-				<spring:message code='lbl.search' />
-			</button>
+			<button type='button' class='btn btn-primary' id="search"><spring:message code='lbl.search' /></button>
 			<a href='javascript:void(0)' class='btn btn-default' onclick='self.close()'><spring:message code='lbl.close' /></a>
 		</div>
 	</div>

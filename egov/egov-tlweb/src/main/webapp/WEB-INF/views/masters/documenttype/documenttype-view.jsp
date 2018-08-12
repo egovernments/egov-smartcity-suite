@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -45,48 +45,54 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
   --%>
-
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
 <div class="row">
     <div class="col-md-12">
-        <form:form id="documenttypesuccess" method="post" class="form-horizontal form-groups-bordered" modelAttribute="documenttype">
-            <c:if test="${not empty message}">
-                <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
-            </c:if>
+        <c:if test="${not empty message}">
+            <div class="alert alert-success" role="alert">
+                <spring:message code="${message}" arguments="${name}"/>
+            </div>
+        </c:if>
+        <form:form id="documenttypesuccess" method="GET" class="form-horizontal form-groups-bordered" modelAttribute="licenseDocumentType">
             <div class="panel panel-primary" data-collapsed="0">
                 <div class="panel-heading">
-                    <div class="panel-title"><spring:message code="${heading}"/></div>
+                    <div class="panel-title"><spring:message code="title.document.view"/></div>
                 </div>
                 <div class="panel-body ">
-                    <div class="row add-border">
-                        <div class="col-md-3 col-sm-3 add-margin"><spring:message code="lbl.name"/></div>
-                        <div class="col-md-3 col-sm-3 add-margin view-content">
-                            <c:out value="${documenttype.name}"></c:out>
+                    <div class="row">
+                        <div class="col-sm-3 add-margin"><spring:message code="lbl.name"/></div>
+                        <div class="col-sm-3 add-margin">
+                            <form:label path="name" class="form-control text-left">${licenseDocumentType.name}</form:label>
                         </div>
-                        <div class="col-md-3 col-sm-3 add-margin"><spring:message code="lbl.licenseAppType"/></div>
-                        <div class="col-md-3 col-sm-3 add-margin view-content">
-                            <c:out value="${documenttype.applicationType}"></c:out>
+                        <div class="col-sm-3 add-margin"><spring:message code="lbl.licenseAppType"/></div>
+                        <div class="col-sm-3 add-margin">
+                            <form:label path="applicationType" class="form-control text-left">${licenseDocumentType.applicationType.name}</form:label>
                         </div>
                     </div>
-                    <div class="row add-border">
-                        <div class="col-md-3 col-sm-3 add-margin"><spring:message code="lbl.mandatory"/></div>
-                        <div class="col-md-3 col-sm-3 add-margin view-content">
-                            <c:choose>
-                                <c:when test="${documenttype.mandatory == true}">
-                                    Yes</c:when>
-                                <c:otherwise>No</c:otherwise>
-                            </c:choose>
+                    <div class="row">
+                        <div class="col-sm-3 add-margin"><spring:message code="lbl.enabled"/></div>
+                        <div class="col-sm-3 add-margin">
+                            <form:label path="enabled" class="form-control text-left">
+                                ${licenseDocumentType.enabled ? "Yes" : "No"}
+                            </form:label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3 add-margin"><spring:message code="lbl.mandatory"/></div>
+                        <div class="col-sm-3 add-margin">
+                            <form:label path="mandatory" class="form-control text-left">
+                                ${licenseDocumentType.mandatory ? "Yes" : "No"}
+                            </form:label>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="text-center">
-
                     <button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()">
                         <spring:message code="lbl.close"/>
                     </button>
@@ -95,3 +101,7 @@
         </form:form>
     </div>
 </div>
+<script>
+    if (window.opener.jQuery)
+        window.opener.jQuery("[id=searchbtn]").click();
+</script>

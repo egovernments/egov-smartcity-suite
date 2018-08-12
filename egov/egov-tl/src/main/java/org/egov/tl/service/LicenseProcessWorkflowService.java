@@ -82,6 +82,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.egov.tl.utils.Constants.*;
 
 @Service
@@ -89,13 +90,17 @@ import static org.egov.tl.utils.Constants.*;
 public class LicenseProcessWorkflowService {
 
     private static final String ERROR_KEY_WF_INITIATOR_NOT_DEFINED = "error.wf.initiator.not.defined";
+
     @Autowired
-    protected LicenseStatusService licenseStatusService;
+    private LicenseStatusService licenseStatusService;
+
     @Autowired
-    @Qualifier("workflowService")
+    @Qualifier("tradeLicenseWorkflowService")
     private SimpleWorkflowService<TradeLicense> licenseWorkflowService;
+
     @Autowired
     private SecurityUtils securityUtils;
+
     @Autowired
     private AssignmentService assignmentService;
 
@@ -135,14 +140,16 @@ public class LicenseProcessWorkflowService {
         WorkFlowMatrix workFlowMatrix = getWorkFlowMatrix(tradeLicense, workflowBean);
         if (!tradeLicense.hasState() || tradeLicense.transitionCompleted()) {
             wfInitiator = getWfInitiatorByUser(workFlowMatrix.getCurrentDesignation());
-            LicenseStateInfo licenseStateInfo = getLicenseStateInfo(workflowBean, wfInitiator, workFlowMatrix, new LicenseStateInfo(), wfInitiator);
+            LicenseStateInfo licenseStateInfo = getLicenseStateInfo(workflowBean, wfInitiator,
+                    workFlowMatrix, new LicenseStateInfo(), wfInitiator);
             initiateWfTransition(tradeLicense);
             tradeLicense.transition().withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
                     .withComments(workflowBean.getApproverComments())
                     .withNatureOfTask(tradeLicense.getLicenseAppType().getName())
                     .withStateValue(workFlowMatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(wfInitiator)
                     .withNextAction(workFlowMatrix.getNextAction()).withInitiator(wfInitiator).withExtraInfo(licenseStateInfo);
-        } else if (BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction()) && userPositions.contains(tradeLicense.getCurrentState().getInitiatorPosition())) {
+        } else if (BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction())
+                && userPositions.contains(tradeLicense.getCurrentState().getInitiatorPosition())) {
             tradeLicense.transition().end().withStateValue(LICENSE_STATUS_CANCELLED)
                     .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
                     .withComments(workflowBean.getApproverComments())
@@ -154,94 +161,13 @@ public class LicenseProcessWorkflowService {
                     .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
                     .withComments(workflowBean.getApproverComments()).withDateInfo(currentDate.toDate())
                     .withNextAction(workFlowMatrix.getCurrentStatus());
-            updateActiveStatus(tradeLicense);
+            activateLicense(tradeLicense);
         } else {
             Position owner = getCurrentPositionByWorkFlowBean(workflowBean, currentState);
-            LicenseStateInfo licenseStateInfo = getLicenseStateInfo(workflowBean, owner, workFlowMatrix, tradeLicense.extraInfo(), (Position) currentState.getOwnerPosition());
+            LicenseStateInfo licenseStateInfo = getLicenseStateInfo(workflowBean, owner, workFlowMatrix,
+                    tradeLicense.extraInfo(), (Position) currentState.getOwnerPosition());
             commonWorkflowTransition(tradeLicense, workflowBean, workFlowMatrix, licenseStateInfo);
         }
-    }
-
-    private void updateCancelStatus(TradeLicense tradeLicense) {
-        tradeLicense.setStatus(licenseStatusService.getLicenseStatusByCode(STATUS_CANCELLED));
-        tradeLicense.setCollectionPending(false);
-        if (tradeLicense.isNewApplication())
-            tradeLicense.setActive(false);
-    }
-
-    private void initiateWfTransition(TradeLicense tradeLicense) {
-        if (!tradeLicense.hasState())
-            tradeLicense.transition().start();
-        else
-            tradeLicense.transition().startNext();
-    }
-
-    private LicenseStateInfo getLicenseStateInfo(WorkflowBean workflowBean, Position position, WorkFlowMatrix workFlowMatrix, LicenseStateInfo licenseStateInfo, Position currentPosition) {
-        if (workFlowMatrix.isRejectEnabled() != null && workFlowMatrix.isRejectEnabled()) {
-            licenseStateInfo.setRejectionPosition(currentPosition.getId());
-        }
-        if (workFlowMatrix.getNextref() != null)
-            licenseStateInfo.setWfMatrixRef(workFlowMatrix.getNextref());
-        else {
-            WorkFlowMatrix nextWorkFlowMatrix = this.licenseWorkflowService.getWfMatrix("TradeLicense", "ANY",
-                    null, workflowBean.getAdditionaRule(), workFlowMatrix.getNextState(), workFlowMatrix.getNextAction(), new Date(), "%" + position.getDeptDesig().getDesignation().getName() + "%");
-            if (nextWorkFlowMatrix != null)
-                licenseStateInfo.setWfMatrixRef(nextWorkFlowMatrix.getId());
-        }
-        return licenseStateInfo;
-    }
-
-    private void commonWorkflowTransition(TradeLicense tradeLicense, WorkflowBean workflowBean, WorkFlowMatrix workFlowMatrix, LicenseStateInfo licenseStateInfo) {
-        DateTime currentDate = new DateTime();
-        User currentUser = securityUtils.getCurrentUser();
-        Position owner = getCurrentPositionByWorkFlowBean(workflowBean, tradeLicense.getCurrentState());
-
-        if (BUTTONAPPROVE.equals(workflowBean.getWorkFlowAction()))
-            tradeLicense.setApprovedBy(currentUser);
-
-        if (!licenseConfigurationService.digitalSignEnabled() && BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction()) && !tradeLicense.isCollectionPending()) {
-            tradeLicense.transition().end().withStateValue(workFlowMatrix.getNextState())
-                    .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
-                    .withComments(workflowBean.getApproverComments())
-                    .withDateInfo(currentDate.toDate())
-                    .withNextAction(COMPLETED);
-            updateActiveStatus(tradeLicense);
-        } else {
-            tradeLicense.transition().progressWithStateCopy().withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
-                    .withComments(workflowBean.getApproverComments())
-                    .withStateValue(workFlowMatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(owner)
-                    .withNextAction(BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction()) ? workFlowMatrix.getNextAction() : EMPTY)
-                    .withExtraInfo(licenseStateInfo);
-            if (BUTTONAPPROVE.equals(workflowBean.getWorkFlowAction()) && tradeLicense.isCollectionPending())
-                tradeLicense.setStatus(licenseStatusService.getLicenseStatusByCode(STATUS_COLLECTIONPENDING));
-            else
-                tradeLicense.setStatus(licenseStatusService.getLicenseStatusByCode(STATUS_UNDERWORKFLOW));
-        }
-
-    }
-
-    private Position getCurrentPositionByWorkFlowBean(WorkflowBean workflowBean, State<Position> currentState) {
-        if (workflowBean.getApproverPositionId() != null && workflowBean.getWorkFlowAction() != null
-                && !BUTTONAPPROVE.equals(workflowBean.getWorkFlowAction()))
-            return positionMasterService.getPositionById(workflowBean.getApproverPositionId());
-        else
-            return currentState.getOwnerPosition();
-    }
-
-    private Position getWfInitiatorByUser(String designation) {
-        User currentUser = securityUtils.getCurrentUser();
-        List<Assignment> assignments = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(currentUser.getId());
-        Optional<Assignment> empAssignment;
-        if (!assignments.isEmpty()) {
-            empAssignment = assignments.stream().filter(assignment ->
-                    designation.contains(assignment.getDesignation().getName()))
-                    .findAny();
-            if (empAssignment.isPresent())
-                return empAssignment.get().getPosition();
-            else
-                throw new ValidationException(ERROR_KEY_WF_INITIATOR_NOT_DEFINED, "No officials assigned to process this application");
-        } else
-            throw new ValidationException(ERROR_KEY_WF_INITIATOR_NOT_DEFINED, "No officials assigned to process this application");
     }
 
     public WorkFlowMatrix getWorkFlowMatrix(TradeLicense tradeLicense, WorkflowBean workflowBean) {
@@ -253,10 +179,11 @@ public class LicenseProcessWorkflowService {
                             workflowBean.getCurrentState() : state.getValue(), state.getNextAction(), new Date(),
                     workflowBean.getCurrentDesignation() != null ? workflowBean.getCurrentDesignation() : "%"
                             + state.getOwnerPosition().getDeptDesig().getDesignation().getName() + "%");
-        } else
+        } else {
             wfmatrix = this.licenseWorkflowService.getWfMatrix(tradeLicense.getStateType(), "ANY",
                     null, workflowBean.getAdditionaRule(), "Start", null,
                     new Date(), null);
+        }
         return wfmatrix;
     }
 
@@ -267,10 +194,11 @@ public class LicenseProcessWorkflowService {
                 , currentUser.getUsername() + DELIMITER_COLON + currentUser.getName()
                 , tradeLicense.getLicensee().getApplicantName());
         LicenseStateInfo licenseStateInfo = tradeLicense.extraInfo();
-        if (!StringUtils.isEmpty(tradeLicense.getState().getExtraInfo())) {
+        if (isNotBlank(tradeLicense.getState().getExtraInfo())) {
             WorkFlowMatrix workFlowMatrix = workFlowMatrixService.getWorkFlowObjectbyId(licenseStateInfo.getWfMatrixRef());
             if (workFlowMatrix != null) {
-                if (licenseConfigurationService.digitalSignEnabled() || STATUS_ACKNOWLEDGED.equals(tradeLicense.getStatus().getStatusCode())) {
+                if (licenseConfigurationService.digitalSignEnabled()
+                        || STATUS_ACKNOWLEDGED.equals(tradeLicense.getStatus().getStatusCode())) {
                     tradeLicense.transition().progressWithStateCopy().withSenderName(collectionOperator)
                             .withComments(workFlowMatrix.getNextState())
                             .withStateValue(workFlowMatrix.getNextState()).withDateInfo(currentDate.toDate())
@@ -282,17 +210,10 @@ public class LicenseProcessWorkflowService {
                             .withStateValue(workFlowMatrix.getNextState())
                             .withDateInfo(currentDate.toDate())
                             .withNextAction(COMPLETED);
-                    updateActiveStatus(tradeLicense);
+                    activateLicense(tradeLicense);
                 }
             }
         }
-    }
-
-    private void updateActiveStatus(TradeLicense tradeLicense) {
-        tradeLicense.setStatus(licenseStatusService.getLicenseStatusByCode(STATUS_ACTIVE));
-        tradeLicense.setActive(true);
-        tradeLicense.setLegacy(false);
-        validityService.applyLicenseValidity(tradeLicense);
     }
 
     public void getWfWithThirdPartyOp(final TradeLicense license, final WorkflowBean workflowBean) {
@@ -300,7 +221,9 @@ public class LicenseProcessWorkflowService {
                 null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(),
                 null, new Date(), null);
         List<Assignment> assignmentList = getAssignments(workFlowMatrix, license.getAdminWard());
-        if (!assignmentList.isEmpty()) {
+        if (assignmentList.isEmpty()) {
+            throw new ValidationException(ERROR_KEY_WF_INITIATOR_NOT_DEFINED, ERROR_KEY_WF_INITIATOR_NOT_DEFINED);
+        } else {
             String additionalRule = license.isNewApplication() ? NEWLICENSE : RENEWLICENSE;
             final Assignment wfAssignment = assignmentList.get(0);
             User currentUser = securityUtils.getCurrentUser();
@@ -318,8 +241,7 @@ public class LicenseProcessWorkflowService {
                     .withStateValue(workFlowMatrix.getNextState()).withDateInfo(new Date())
                     .withOwner(wfAssignment.getPosition()).withNextAction(workFlowMatrix.getNextAction())
                     .withInitiator(wfAssignment.getPosition()).withExtraInfo(licenseStateInfo);
-        } else
-            throw new ValidationException(ERROR_KEY_WF_INITIATOR_NOT_DEFINED, ERROR_KEY_WF_INITIATOR_NOT_DEFINED);
+        }
     }
 
     public void getRejectTransition(TradeLicense tradeLicense, WorkflowBean workflowBean) {
@@ -346,15 +268,82 @@ public class LicenseProcessWorkflowService {
 
     public List<Assignment> getAssignments(WorkFlowMatrix workFlowMatrix, Boundary boundary) {
         Department nextAssigneeDept = departmentService.getDepartmentByName(workFlowMatrix.getDepartment());
-        List<Designation> nextDesignation = designationService.getDesignationsByNames(Arrays.asList(StringUtils.upperCase(workFlowMatrix.getNextDesignation()).split(",")));
+        List<Designation> nextDesignation = designationService.
+                getDesignationsByNames(Arrays.asList(StringUtils.upperCase(workFlowMatrix.getNextDesignation()).split(",")));
         List<Long> designationIds = new ArrayList<>();
         nextDesignation.forEach(designation -> designationIds.add(designation.getId()));
         List<Assignment> assignmentList = new ArrayList<>();
         if (licenseConfigurationService.jurisdictionBasedRoutingEnabled() && boundary != null)
-            assignmentList = assignmentService.getAssignmentsByDepartmentAndDesignationsAndBoundary(nextAssigneeDept.getId(), designationIds, boundary.getId());
+            assignmentList = assignmentService
+                    .getAssignmentsByDepartmentAndDesignationsAndBoundary(nextAssigneeDept.getId(), designationIds, boundary.getId());
         if (assignmentList.isEmpty())
             assignmentList = getAssignmentsForDeptAndDesignation(nextAssigneeDept, designationIds);
         return assignmentList;
+    }
+
+    private void updateCancelStatus(TradeLicense tradeLicense) {
+        tradeLicense.setStatus(licenseStatusService.getLicenseStatusByCode(STATUS_CANCELLED));
+        tradeLicense.setCollectionPending(false);
+        if (tradeLicense.isNewApplication())
+            tradeLicense.setActive(false);
+    }
+
+    private void initiateWfTransition(TradeLicense tradeLicense) {
+        if (tradeLicense.hasState()) {
+            tradeLicense.transition().startNext();
+        } else {
+            tradeLicense.transition().start();
+        }
+    }
+
+    private LicenseStateInfo getLicenseStateInfo(WorkflowBean workflowBean, Position position,
+                                                 WorkFlowMatrix workFlowMatrix, LicenseStateInfo licenseStateInfo,
+                                                 Position currentPosition) {
+        if (workFlowMatrix.isRejectEnabled() != null && workFlowMatrix.isRejectEnabled()) {
+            licenseStateInfo.setRejectionPosition(currentPosition.getId());
+        }
+        if (workFlowMatrix.getNextref() == null) {
+            WorkFlowMatrix nextWorkFlowMatrix = this.licenseWorkflowService.getWfMatrix(TRADELICENSE, "ANY",
+                    null, workflowBean.getAdditionaRule(), workFlowMatrix.getNextState(), workFlowMatrix.getNextAction(),
+                    new Date(), "%" + position.getDeptDesig().getDesignation().getName() + "%");
+            if (nextWorkFlowMatrix != null)
+                licenseStateInfo.setWfMatrixRef(nextWorkFlowMatrix.getId());
+        } else {
+            licenseStateInfo.setWfMatrixRef(workFlowMatrix.getNextref());
+        }
+        return licenseStateInfo;
+    }
+
+    private void commonWorkflowTransition(TradeLicense tradeLicense, WorkflowBean workflowBean,
+                                          WorkFlowMatrix workFlowMatrix, LicenseStateInfo licenseStateInfo) {
+        DateTime currentDate = new DateTime();
+        User currentUser = securityUtils.getCurrentUser();
+        Position owner = getCurrentPositionByWorkFlowBean(workflowBean, tradeLicense.getCurrentState());
+
+        if (BUTTONAPPROVE.equals(workflowBean.getWorkFlowAction()))
+            tradeLicense.setApprovedBy(currentUser);
+
+        if (!licenseConfigurationService.digitalSignEnabled() && BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())
+                && !tradeLicense.isCollectionPending()) {
+            tradeLicense.transition().end().withStateValue(workFlowMatrix.getNextState())
+                    .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
+                    .withComments(workflowBean.getApproverComments())
+                    .withDateInfo(currentDate.toDate())
+                    .withNextAction(COMPLETED);
+            activateLicense(tradeLicense);
+        } else {
+            tradeLicense.transition().progressWithStateCopy()
+                    .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
+                    .withComments(workflowBean.getApproverComments())
+                    .withStateValue(workFlowMatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(owner)
+                    .withNextAction(BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction()) ? workFlowMatrix.getNextAction() : EMPTY)
+                    .withExtraInfo(licenseStateInfo);
+            if (BUTTONAPPROVE.equals(workflowBean.getWorkFlowAction()) && tradeLicense.isCollectionPending())
+                tradeLicense.setStatus(licenseStatusService.getLicenseStatusByCode(STATUS_COLLECTIONPENDING));
+            else
+                tradeLicense.setStatus(licenseStatusService.getLicenseStatusByCode(STATUS_UNDERWORKFLOW));
+        }
+
     }
 
     private List<Assignment> getAssignmentsForDeptAndDesignation(Department nextAssigneeDept, List<Long> nextAssigneeDesig) {
@@ -362,7 +351,35 @@ public class LicenseProcessWorkflowService {
                 findByDepartmentDesignationsAndGivenDate(nextAssigneeDept.getId(), nextAssigneeDesig, new Date());
     }
 
-    public void setLicenseWorkflowService(SimpleWorkflowService<TradeLicense> licenseWorkflowService) {
-        this.licenseWorkflowService = licenseWorkflowService;
+    private void activateLicense(TradeLicense tradeLicense) {
+        tradeLicense.setStatus(licenseStatusService.getLicenseStatusByCode(STATUS_ACTIVE));
+        tradeLicense.setActive(true);
+        tradeLicense.setLegacy(false);
+        validityService.applyLicenseValidity(tradeLicense);
+    }
+
+    private Position getCurrentPositionByWorkFlowBean(WorkflowBean workflowBean, State<Position> currentState) {
+        if (workflowBean.getApproverPositionId() != null && workflowBean.getWorkFlowAction() != null
+                && !BUTTONAPPROVE.equals(workflowBean.getWorkFlowAction()))
+            return positionMasterService.getPositionById(workflowBean.getApproverPositionId());
+        else
+            return currentState.getOwnerPosition();
+    }
+
+    private Position getWfInitiatorByUser(String designation) {
+        User currentUser = securityUtils.getCurrentUser();
+        List<Assignment> assignments = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(currentUser.getId());
+        if (assignments.isEmpty()) {
+            throw new ValidationException(ERROR_KEY_WF_INITIATOR_NOT_DEFINED, "No officials assigned to process this application");
+        } else {
+            Optional<Assignment> empAssignment = assignments.stream().filter(assignment ->
+                    designation.contains(assignment.getDesignation().getName()))
+                    .findAny();
+            if (empAssignment.isPresent())
+                return empAssignment.get().getPosition();
+            else
+                throw new ValidationException(ERROR_KEY_WF_INITIATOR_NOT_DEFINED, "No officials assigned to process this application");
+        }
     }
 }
+

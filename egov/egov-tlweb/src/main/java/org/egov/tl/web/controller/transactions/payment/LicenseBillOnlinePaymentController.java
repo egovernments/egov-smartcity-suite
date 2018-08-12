@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -47,12 +47,13 @@
  */
 package org.egov.tl.web.controller.transactions.payment;
 
-import org.egov.tl.entity.License;
+import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.contracts.OnlineSearchForm;
 import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.service.integration.LicenseBillService;
 import org.egov.tl.web.response.adaptor.OnlineSearchTradeResultHelperAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -76,6 +77,7 @@ public class LicenseBillOnlinePaymentController {
     private LicenseBillService licenseBillService;
 
     @Autowired
+    @Qualifier("tradeLicenseService")
     private TradeLicenseService tradeLicenseService;
 
     @ModelAttribute("onlineSearchForm")
@@ -85,7 +87,7 @@ public class LicenseBillOnlinePaymentController {
 
     @GetMapping("{id}")
     public String showPaymentForm(@PathVariable final Long id, Model model) throws IOException {
-        final License license = tradeLicenseService.getLicenseById(id);
+        final TradeLicense license = tradeLicenseService.getLicenseById(id);
         if (license.isPaid()) {
             model.addAttribute("paymentdone", "License Fee already collected");
             return "license-onlinepayment";

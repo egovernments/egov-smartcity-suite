@@ -55,7 +55,6 @@ import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.tl.entity.License;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.service.es.LicenseApplicationIndexService;
 import org.egov.tl.utils.LicenseNumberUtils;
@@ -117,17 +116,16 @@ public class LicenseClosureService extends LicenseService {
     @Autowired
     private LicenseClosureProcessflowService licenseClosureProcessflowService;
 
-    public ReportOutput generateClosureEndorsementNotice(License license) {
+    public ReportOutput generateClosureEndorsementNotice(TradeLicense license) {
         Map<String, Object> reportParams = new HashMap<>();
         reportParams.put("License", license);
         reportParams.put("currentDate", currentDateToDefaultDateFormat());
         reportParams.put("municipality", cityService.getMunicipalityName());
-        return reportService.createReport(
-                new ReportRequest("tl_closure_endorsement_notice", license, reportParams));
+        return reportService.createReport(new ReportRequest("tl_closure_endorsement_notice", license, reportParams));
     }
 
     @Transactional
-    public License generateClosureEndorsement(TradeLicense license) {
+    public TradeLicense generateClosureEndorsement(TradeLicense license) {
         FileStoreMapper fileStore = fileStoreService
                 .store(generateClosureEndorsementNotice(license).asInputStream(),
                         license.generateCertificateFileName() + ".pdf", CONTENT_TYPES.get(PDF), TL_FILE_STORE_DIR);
@@ -138,8 +136,8 @@ public class LicenseClosureService extends LicenseService {
     }
 
     @Transactional
-    public License approveClosure(String applicationNumber) {
-        TradeLicense license = (TradeLicense) getLicenseByApplicationNumber(applicationNumber);
+    public TradeLicense approveClosure(String applicationNumber) {
+        TradeLicense license = getLicenseByApplicationNumber(applicationNumber);
         license.setActive(false);
         license.setClosed(true);
         license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_CANCELLED));
@@ -152,7 +150,7 @@ public class LicenseClosureService extends LicenseService {
     }
 
     @Transactional
-    public License createClosure(TradeLicense license) {
+    public TradeLicense createClosure(TradeLicense license) {
         processSupportDocuments(license);
         licenseClosureProcessflowService.startClosureProcessflow(license);
         if (AUTO.equals(license.getApplicationNumber()))
@@ -172,8 +170,7 @@ public class LicenseClosureService extends LicenseService {
     @Transactional
     public void cancelClosure(TradeLicense license) {
         if (license.getState().getExtraInfo() != null)
-            license.setLicenseAppType(licenseAppTypeService
-                    .getLicenseAppTypeByName(license.extraInfo().getOldAppType()));
+            license.setLicenseAppType(licenseAppTypeService.getLicenseAppTypeByName(license.extraInfo().getOldAppType()));
         license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACTIVE));
         processSupportDocuments(license);
         licenseClosureProcessflowService.processCancellation(license);

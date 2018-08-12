@@ -111,7 +111,7 @@
                                                     <th><spring:message code="license.applicationnumber"/></th>
                                                     <th><spring:message code="lbl.category"/></th>
                                                     <th><spring:message code="lbl.subcategory"/></th>
-                                                    <th><spring:message code="lbl.license.fee"/></th>
+                                                    <th><spring:message code="lbl.amount"/></th>
                                                     <th><spring:message code="lbl.view"/></th>
                                                     <th style="text-align: center">
                                                         <input type="checkbox" id="selectAll"/><spring:message

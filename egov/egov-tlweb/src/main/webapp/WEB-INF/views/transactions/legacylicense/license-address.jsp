@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -52,20 +52,16 @@
     </div>
 </div>
 <div class="form-group">
-    <label class="col-sm-3 control-label text-right"><spring:message
-            code='license.propertyNo.lbl'/></label>
+    <label class="col-sm-3 control-label text-right"><spring:message code='license.propertyNo.lbl'/></label>
     <div class="col-sm-3 add-margin">
-        <form:input path="assessmentNo" id="propertyNo"
-                    value="${tradeLicense.assessmentNo}" class="form-control"
-                    onblur="getPropertyDetails();" maxlength="15" placeholder=""
-                    autocomplete="off"/>
+        <form:input path="assessmentNo" id="propertyNo" value="${tradeLicense.assessmentNo}" class="form-control"
+                    onblur="getPropertyDetails();" maxlength="15" placeholder="" autocomplete="off"/>
     </div>
-
-    <label class="col-sm-2 control-label text-right"><spring:message
-            code='lbl.locality'/> <span class="mandatory"></span></label>
+</div>
+<div class="form-group">
+    <label class="col-sm-3 control-label text-right"><spring:message code='lbl.locality'/> <span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
-        <form:select path="boundary" id="boundary" class="form-control"
-                     required="true">
+        <form:select path="boundary" id="boundary" class="form-control" required="true">
             <form:option value="">
                 <spring:message code="lbl.select"/>
             </form:option>
@@ -73,15 +69,10 @@
         </form:select>
         <form:errors path="boundary" cssClass="error-msg"/>
     </div>
-</div>
-<div class="form-group">
-    <label class="col-sm-3 control-label text-right">
-        <spring:message code='baseregister.ward'/>
-        <span class="mandatory"></span>
-    </label>
+    <label class="col-sm-2 control-label text-right"><spring:message code='baseregister.ward'/><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
-        <form:select path="parentBoundary" id="parentBoundary"
-                     class="form-control" required="true" data-selected-id="${tradeLicense.parentBoundary.id}">
+        <form:select path="parentBoundary" id="parentBoundary" class="form-control" required="true"
+                     data-selected-id="${tradeLicense.parentBoundary.id}">
             <form:option value="">
                 <spring:message code="lbl.select"/>
             </form:option>
@@ -89,12 +80,12 @@
         </form:select>
         <form:errors path="parentBoundary" cssClass="error-msg"/>
     </div>
-    <label class="col-sm-2 control-label text-right">
-        <spring:message code='lbl.admin.ward'/>
-    </label>
+
+</div>
+<div class="form-group">
+    <label class="col-sm-3 control-label text-right"><spring:message code='lbl.admin.ward'/></label>
     <div class="col-sm-3 add-margin">
-        <form:select path="adminWard" id="adminWard"
-                     class="form-control" data-selected-id="${tradeLicense.adminWard.id}">
+        <form:select path="adminWard" id="adminWard" class="form-control" data-selected-id="${tradeLicense.adminWard.id}">
             <form:option value="">
                 <spring:message code="lbl.select"/>
             </form:option>
@@ -102,15 +93,9 @@
         </form:select>
         <form:errors path="adminWard" cssClass="error-msg"/>
     </div>
-</div>
-<div class="form-group">
-    <label class="col-sm-3 control-label text-right">
-        <spring:message code='license.ownerShipType.lbl'/>
-        <span class="mandatory"></span>
-    </label>
+    <label class="col-sm-2 control-label text-right"><spring:message code='license.ownerShipType.lbl'/><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
-        <form:select path="ownershipType" id="ownershipType"
-                     class="form-control " required="true">
+        <form:select path="ownershipType" id="ownershipType" class="form-control " required="true">
             <form:option value="">
                 <spring:message code="lbl.select"/>
             </form:option>
@@ -118,15 +103,58 @@
         </form:select>
         <form:errors path="ownershipType" cssClass="error-msg"/>
     </div>
-    <label class="col-sm-2 control-label text-right">
-        <spring:message code='license.address'/>
-        <span class="mandatory"></span>
+</div>
+<div class="form-group">
+    <label class="col-sm-3 control-label text-right"><spring:message code='license.address'/><span class="mandatory"></span></label>
+    <div class="col-sm-5 add-margin">
+        <form:textarea path="address" id="address" maxlength="250" class="form-control" required="required" rows="3"/>
+        <form:errors path="address" cssClass="error-msg"/>
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-sm-3 control-label text-right">
+        <spring:message code='license.traderCheckbox.lbl' />
     </label>
     <div class="col-sm-3 add-margin">
-        <form:textarea path="address" id="address" maxlength="250"
-                       onblur="checkLength(this,250)" class="form-control"
-                       required="required"/>
-        <form:errors path="address" cssClass="error-msg"/>
+        <c:if test="${tradeLicense.agreementDate !=null}">
+            <c:set value="${true}" var="showdetail"/>
+        </c:if>
+        <input type="checkbox" name="" onclick="showHideAgreement()"
+               id="showAgreementDtl" theme="simple" <c:if test="${showdetail}">
+            checked="checked"</c:if>
+        />
+    </div>
+</div>
+
+<div id="agreementSec" style="display: none">
+    <div class="panel-heading custom_form_panel_heading">
+        <div class="panel-title">
+            <spring:message code='license.AgreementDetails.lbl' />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-3 control-label text-right"><spring:message
+                code='license.agreementDate.lbl' /><span class="mandatory"></span>
+        </label>
+        <div class="col-sm-3 add-margin">
+            <fmt:formatDate type="date" value="${trdaeLicense.agreementDate}"
+                            pattern="dd/MM/yyyy" var="agreementDateFrmttd" />
+            <form:input path="agreementDate" id="agreementDate"
+                        value="${agreementDateFrmttd}"
+                        Class="form-control datepicker" maxlength="10" />
+            <form:errors path="agreementDate" cssClass="error-msg" />
+        </div>
+
+        <label class="col-sm-2 control-label text-right"><spring:message
+                code='license.agreementDocNo.lbl' /><span class="mandatory"></span></label>
+        <div class="col-sm-3 add-margin">
+            <form:input path="agreementDocNo" id="agreementDocNo"
+                        value="${tradeLicense.agreementDocNo}" maxlength="50"
+                        Class="form-control patternvalidation"
+                        data-pattern="alphanumerichyphenbackslash" />
+            <form:errors path="agreementDocNo" cssClass="error-msg" />
+        </div>
     </div>
 </div>
 <script>

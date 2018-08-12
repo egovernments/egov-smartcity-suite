@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -46,8 +46,55 @@
  *
  */
 
-package org.egov.tl.entity.enums;
+package org.egov.tl.web.controller.masters.documenttype;
 
-public enum RateTypeEnum {
-    Flat_by_Range, Percentage, Unit_by_Range;
+import org.egov.infra.web.support.ui.DataTable;
+import org.egov.tl.entity.LicenseAppType;
+import org.egov.tl.entity.LicenseDocumentType;
+import org.egov.tl.service.LicenseAppTypeService;
+import org.egov.tl.service.LicenseDocumentTypeService;
+import org.egov.tl.web.response.adaptor.LicenseDocumentTypeResponseAdaptor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+
+@Controller
+@RequestMapping("/documenttype")
+public class ViewDocumentTypeController {
+
+    @Autowired
+    private LicenseDocumentTypeService licenseDocumentTypeService;
+
+    @Autowired
+    private LicenseAppTypeService licenseAppTypeService;
+
+    @GetMapping("/view/{id}")
+    public String documentTypeView(@PathVariable("id") Long id, Model model) {
+        LicenseDocumentType licenseDocumentType = licenseDocumentTypeService.getDocumentTypeById(id);
+        model.addAttribute("licenseDocumentType", licenseDocumentType);
+        return "document-view";
+    }
+
+    @GetMapping("/search")
+    public String documentTypeSearch(@ModelAttribute LicenseDocumentType documentType, Model model) {
+        model.addAttribute("applicationTypes", licenseAppTypeService.getAllApplicationTypes());
+        return "document-search";
+    }
+
+    @PostMapping(value = "/search", produces = TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String documentTypeSearch(@RequestParam String name, @RequestParam LicenseAppType applicationType) {
+        return new DataTable<>(new PageImpl<>(licenseDocumentTypeService.search(name, applicationType)), 0L)
+                .toJson(LicenseDocumentTypeResponseAdaptor.class);
+    }
 }

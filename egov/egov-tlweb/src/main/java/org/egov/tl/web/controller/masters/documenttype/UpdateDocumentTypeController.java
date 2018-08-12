@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -45,23 +45,56 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
+package org.egov.tl.web.controller.masters.documenttype;
 
-package org.egov.tl.service;
-
-import org.egov.tl.entity.LicenseType;
-import org.egov.tl.repository.LicenseTypeRepository;
+import org.egov.tl.entity.LicenseDocumentType;
+import org.egov.tl.service.LicenseAppTypeService;
+import org.egov.tl.service.LicenseDocumentTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-@Service
-@Transactional(readOnly = true)
-public class LicenseTypeService {
+import javax.validation.Valid;
+
+@Controller
+@RequestMapping("/documenttype/edit/{id}")
+public class UpdateDocumentTypeController {
 
     @Autowired
-    private LicenseTypeRepository licenseTypeRepository;
+    private LicenseDocumentTypeService licenseDocumentTypeService;
 
-    public LicenseType getLicenseTypeByName(String name) {
-        return licenseTypeRepository.findByName(name);
+    @Autowired
+    private LicenseAppTypeService licenseAppTypeService;
+
+    @ModelAttribute
+    public LicenseDocumentType licenseDocumentType(@PathVariable Long id) {
+        return licenseDocumentTypeService.getDocumentTypeById(id);
+    }
+
+    @GetMapping
+    public String documentTypeEdit(Model model) {
+        model.addAttribute("applicationTypes", licenseAppTypeService.getAllApplicationTypes());
+        return "document-edit";
+    }
+
+    @PostMapping
+    public String documentTypeEdit(@Valid @ModelAttribute LicenseDocumentType licenseDocumentType, BindingResult errors,
+                                   RedirectAttributes redirectAttrs) {
+        if (errors.hasErrors()) {
+            return "document-edit";
+        }
+        licenseDocumentTypeService.update(licenseDocumentType);
+        redirectAttrs.addFlashAttribute("message", "msg.update.success");
+        redirectAttrs.addFlashAttribute("name", licenseDocumentType.getName());
+        return "redirect:/documenttype/view/" + licenseDocumentType.getId();
     }
 }
+
+

@@ -2,7 +2,7 @@
  * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2018>  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -51,7 +51,7 @@ package org.egov.tl.entity.contracts;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.web.support.search.DataTableSearchRequest;
-import org.egov.tl.entity.License;
+import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.utils.Constants;
 import org.joda.time.DateTime;
 
@@ -94,7 +94,7 @@ public class SearchForm extends DataTableSearchRequest {
         // For form binding
     }
 
-    public SearchForm(License license, User user, String ownerName, String... feeCollectorRoles) {
+    public SearchForm(TradeLicense license, User user, String ownerName, String... feeCollectorRoles) {
         setLicenseId(license.getId());
         setUid(license.getUid());
         setApplicationNumber(license.getApplicationNumber());
@@ -114,7 +114,7 @@ public class SearchForm extends DataTableSearchRequest {
         addActions(license, user, feeCollectorRoles);
     }
 
-    private void addActions(License license, User user, String... feeCollectorRoles) {
+    private void addActions(TradeLicense license, User user, String... feeCollectorRoles) {
         List<String> licenseActions = new ArrayList<>();
         licenseActions.add("View Trade");
         licenseActions.add("View DCB");
@@ -141,7 +141,7 @@ public class SearchForm extends DataTableSearchRequest {
         setActions(licenseActions);
     }
 
-    private void addRoleSpecificActions(License license, User user, List<String> licenseActions) {
+    private void addRoleSpecificActions(TradeLicense license, User user, List<String> licenseActions) {
         if (user.hasAnyRole(TL_CREATOR_ROLENAME, TL_APPROVER_ROLENAME)) {
             addPrintCertificatesOptions(license, licenseActions);
             if (license.isReadyForRenewal())
@@ -154,7 +154,7 @@ public class SearchForm extends DataTableSearchRequest {
         }
     }
 
-    private void addPrintCertificatesOptions(License license, List<String> licenseActions) {
+    private void addPrintCertificatesOptions(TradeLicense license, List<String> licenseActions) {
         if (license.isStatusActive() && !license.isLegacy())
             licenseActions.add("Print Certificate");
         if (!CLOSURE_APPTYPE_CODE.equals(license.getLicenseAppType().getCode())
@@ -162,7 +162,7 @@ public class SearchForm extends DataTableSearchRequest {
             licenseActions.add("Print Provisional Certificate");
     }
 
-    private void demandGenerationOption(List<String> licenseActions, License license) {
+    private void demandGenerationOption(List<String> licenseActions, TradeLicense license) {
         Date nextYearInstallment = new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate();
         Date currentYearInstallment = license.getLicenseDemand().getEgInstallmentMaster().getToDate();
         if (license.isNewPermanentApplication() && !license.isLegacyWithNoState() && license.getIsActive()

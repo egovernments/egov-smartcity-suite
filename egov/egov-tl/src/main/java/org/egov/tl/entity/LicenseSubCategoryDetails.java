@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -49,7 +49,7 @@ package org.egov.tl.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.egov.tl.entity.enums.RateTypeEnum;
+import org.egov.tl.entity.enums.RateType;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -63,6 +63,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import static javax.persistence.FetchType.LAZY;
 
@@ -71,7 +72,7 @@ import static javax.persistence.FetchType.LAZY;
 @SequenceGenerator(name = LicenseSubCategoryDetails.SEQUENCE, sequenceName = LicenseSubCategoryDetails.SEQUENCE, allocationSize = 1)
 public class LicenseSubCategoryDetails extends AbstractPersistable<Long> {
 
-    public static final String SEQUENCE = "SEQ_egtl_subcategory_details";
+    protected static final String SEQUENCE = "SEQ_egtl_subcategory_details";
     private static final long serialVersionUID = 5084451633368214374L;
 
     @Id
@@ -85,15 +86,18 @@ public class LicenseSubCategoryDetails extends AbstractPersistable<Long> {
 
     @ManyToOne
     @JoinColumn(name = "uom_id")
+    @NotNull
     private UnitOfMeasurement uom;
 
     @ManyToOne
     @JoinColumn(name = "feetype_id")
+    @NotNull
     private FeeType feeType;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "RATETYPE")
-    private RateTypeEnum rateType;
+    @NotNull
+    private RateType rateType;
 
     @Transient
     private boolean markedForRemoval;
@@ -124,11 +128,11 @@ public class LicenseSubCategoryDetails extends AbstractPersistable<Long> {
         this.uom = uom;
     }
 
-    public RateTypeEnum getRateType() {
+    public RateType getRateType() {
         return rateType;
     }
 
-    public void setRateType(RateTypeEnum rateType) {
+    public void setRateType(RateType rateType) {
         this.rateType = rateType;
     }
 

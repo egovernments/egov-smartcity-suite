@@ -56,20 +56,7 @@ import org.hibernate.envers.AuditMappedBy;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -95,36 +82,37 @@ public class FeeMatrix extends AbstractAuditable {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "natureOfBusiness")
+    @JoinColumn(name = "natureOfBusiness", updatable = false)
     private NatureOfBusiness natureOfBusiness;
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "licenseCategory")
+    @JoinColumn(name = "licenseCategory", updatable = false)
     private LicenseCategory licenseCategory;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "subCategory")
+    @JoinColumn(name = "subCategory", updatable = false)
     private LicenseSubCategory subCategory;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "licenseAppType")
+    @JoinColumn(name = "licenseAppType", updatable = false)
     private LicenseAppType licenseAppType;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "feeType")
+    @JoinColumn(name = "feeType", updatable = false)
     private FeeType feeType;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "financialYear")
+    @JoinColumn(name = "financialYear", updatable = false)
     private CFinancialYear financialYear;
 
     @NotNull
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(updatable = false)
     private Date effectiveFrom;
 
     @NotNull

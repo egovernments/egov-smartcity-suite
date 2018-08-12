@@ -54,10 +54,10 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.tl.entity.LicenseCategory;
 import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.NatureOfBusiness;
-import org.egov.tl.service.DocumentTypeService;
 import org.egov.tl.service.FeeTypeService;
 import org.egov.tl.service.LegacyLicenseService;
 import org.egov.tl.service.LicenseCategoryService;
+import org.egov.tl.service.LicenseDocumentTypeService;
 import org.egov.tl.service.NatureOfBusinessService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -67,7 +67,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static org.egov.tl.entity.enums.ApplicationType.RENEW;
 import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
 import static org.egov.tl.utils.Constants.LOCALITY;
 import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
@@ -77,7 +76,7 @@ import static org.egov.tl.utils.Constants.OWNERSHIP_TYPE;
 public class LegacyLicenseController extends GenericWorkFlowController {
 
     @Autowired
-    protected DocumentTypeService documentTypeService;
+    protected LicenseDocumentTypeService licenseDocumentTypeService;
 
     @Autowired
     protected FeeTypeService feeTypeService;
@@ -111,12 +110,12 @@ public class LegacyLicenseController extends GenericWorkFlowController {
 
     @ModelAttribute("category")
     public List<LicenseCategory> category() {
-        return licenseCategoryService.getCategories();
+        return licenseCategoryService.getCategoriesOrderByName();
     }
 
     @ModelAttribute("documentTypes")
     public List<LicenseDocumentType> documentsList() {
-        return documentTypeService.getDocumentTypesByApplicationType(RENEW);
+        return licenseDocumentTypeService.getDocumentTypesForRenewApplicationType();
     }
 
     @ModelAttribute("feeTypeId")

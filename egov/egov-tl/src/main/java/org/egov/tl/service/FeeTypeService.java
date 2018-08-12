@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -71,12 +71,12 @@ public class FeeTypeService {
     }
 
     @Transactional
-    public FeeType create(final FeeType feeType) {
+    public FeeType create(FeeType feeType) {
         return feeTypeRepository.save(feeType);
     }
 
     @Transactional
-    public FeeType update(final FeeType feeType) {
+    public FeeType update(FeeType feeType) {
         return feeTypeRepository.save(feeType);
     }
 
@@ -88,7 +88,4 @@ public class FeeTypeService {
         return feeTypeRepository.findByName(name);
     }
 
-    public FeeType findById(Long id) {
-        return feeTypeRepository.findOne(id);
-    }
 }

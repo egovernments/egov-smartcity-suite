@@ -55,6 +55,7 @@ import org.egov.tl.service.DemandGenerationService;
 import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.web.response.adaptor.DemandGenerationResponseAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -80,6 +81,7 @@ public class DemandGenerationController {
     private CFinancialYearService financialYearService;
 
     @Autowired
+    @Qualifier("tradeLicenseService")
     private TradeLicenseService tradeLicenseService;
 
     @GetMapping("generate")

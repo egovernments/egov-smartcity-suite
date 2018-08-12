@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -50,9 +50,9 @@ package org.egov.tl.repository;
 
 import org.egov.tl.entity.FeeMatrix;
 import org.egov.tl.entity.FeeType;
-import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.NatureOfBusiness;
+import org.egov.tl.entity.TradeLicense;
 
 import java.util.Date;
 import java.util.List;
@@ -62,6 +62,6 @@ public interface FeeMatrixRepositoryCustom {
 
     List<FeeMatrix> searchFeeMatrix(Long categoryId, Long subcategoryId, Long financialYearId);
 
-    Optional<FeeMatrix> findFeeMatrix(License license, NatureOfBusiness natureOfBusiness, FeeType feeType,
+    Optional<FeeMatrix> findFeeMatrix(TradeLicense license, NatureOfBusiness natureOfBusiness, FeeType feeType,
                                       LicenseAppType appType, Date effectiveDate);
 }

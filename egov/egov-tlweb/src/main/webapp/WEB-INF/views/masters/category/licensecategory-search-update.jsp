@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -53,11 +53,6 @@
 
 <div class="row" id="page-content">
     <div class="col-md-12">
-        <c:if test="${not empty message}">
-            <div class="alert alert-success" role="alert">
-                <spring:message code="${message}"/>
-            </div>
-        </c:if>
         <form:form role="form" method="post" modelAttribute="licenseCategory" class="form-horizontal form-groups-bordered">
             <div class="panel panel-primary" data-collapsed="0">
                 <div class="panel-heading">
@@ -65,7 +60,7 @@
                 </div>
                 <div class="panel-body custom-form">
                     <div class="form-group">
-                        <label class="col-sm-4 control-label"> <spring:message code="licenseCategory.category.lbl"/><span class="mandatory"></span>
+                        <label class="col-sm-4 control-label"><spring:message code="licenseCategory.category.lbl"/><span class="mandatory"></span>
                         </label>
                         <div class="col-sm-4 add-margin">
                             <form:select path="code" cssClass="form-control" cssErrorClass="form-control error" required="required">
@@ -81,7 +76,6 @@
             <div class="form-group">
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary"><spring:message code="lbl.modify"/></button>
-                    <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
                     <button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()"><spring:message code="lbl.close"/></button>
                 </div>
             </div>

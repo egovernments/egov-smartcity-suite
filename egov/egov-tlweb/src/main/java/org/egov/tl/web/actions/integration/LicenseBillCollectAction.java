@@ -54,7 +54,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.tl.entity.License;
+import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.service.integration.LicenseBillService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,7 +87,7 @@ public class LicenseBillCollectAction extends BaseFormAction {
 
     @Override
     public String execute() throws IOException {
-        final License license = tradeLicenseService.getLicenseById(licenseId);
+        final TradeLicense license = tradeLicenseService.getLicenseById(licenseId);
         if (license.isPaid()) {
             ServletActionContext.getResponse().setContentType("text/html");
             ServletActionContext.getResponse().getWriter()
@@ -101,7 +101,7 @@ public class LicenseBillCollectAction extends BaseFormAction {
 
     @Action(value = "/integration/licenseBillCollect-collectfees")
     public String payFee() throws IOException {
-        final License license = tradeLicenseService.getLicenseById(licenseId);
+        final TradeLicense license = tradeLicenseService.getLicenseById(licenseId);
         collectXML = URLEncoder.encode(licenseBillService.createLicenseBillXML(license), "UTF-8");
         return SUCCESS;
     }

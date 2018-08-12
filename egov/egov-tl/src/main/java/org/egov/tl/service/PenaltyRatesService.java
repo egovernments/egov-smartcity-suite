@@ -50,7 +50,7 @@ package org.egov.tl.service;
 import org.egov.commons.Installment;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.utils.DateUtils;
-import org.egov.tl.entity.License;
+import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.PenaltyRates;
 import org.egov.tl.repository.PenaltyRatesRepository;
@@ -81,18 +81,10 @@ public class PenaltyRatesService {
         return penaltyRatesRepository.findOne(id);
     }
 
-    /**
-     * @param licenseAppType
-     * @return To get Min fromRange from penalty master for the given LicenseAppType.
-     */
     public Long getMinFromRange(LicenseAppType licenseAppType) {
         return penaltyRatesRepository.findTopByLicenseAppTypeOrderByFromRangeAsc(licenseAppType).getFromRange();
     }
 
-    /**
-     * @param licenseAppType
-     * @return To get Max toRange from penalty master for the given LicenseAppType.
-     */
     public Long getMaxToRange(LicenseAppType licenseAppType) {
         return penaltyRatesRepository.findTopByLicenseAppTypeOrderByToRangeDesc(licenseAppType).getToRange();
     }
@@ -113,7 +105,7 @@ public class PenaltyRatesService {
         penaltyRatesRepository.delete(penaltyRates);
     }
 
-    public BigDecimal calculatePenalty(License license, Date fromDate, Date toDate, BigDecimal amount) {
+    public BigDecimal calculatePenalty(TradeLicense license, Date fromDate, Date toDate, BigDecimal amount) {
         if (fromDate != null) {
             int paymentDueDays = DateUtils.daysBetween(fromDate, toDate);
             PenaltyRates penaltyRates = findByDaysAndLicenseAppType(paymentDueDays, license.getLicenseAppType());

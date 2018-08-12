@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -52,7 +52,7 @@ import org.egov.tl.entity.FeeType;
 import org.egov.tl.entity.LicenseCategory;
 import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.entity.UnitOfMeasurement;
-import org.egov.tl.entity.enums.RateTypeEnum;
+import org.egov.tl.entity.enums.RateType;
 import org.egov.tl.service.FeeTypeService;
 import org.egov.tl.service.LicenseCategoryService;
 import org.egov.tl.service.LicenseSubCategoryService;
@@ -93,7 +93,7 @@ public class CreateSubCategoryController {
 
     @ModelAttribute("licenseCategories")
     public List<LicenseCategory> licenseCategories() {
-        return licenseCategoryService.getCategories();
+        return licenseCategoryService.getCategoriesOrderByName();
     }
 
     @ModelAttribute("licenseUomTypes")
@@ -109,7 +109,7 @@ public class CreateSubCategoryController {
     @GetMapping("/create")
     public String showCreateSubCategoryForm(Model model) {
         model.addAttribute("code", licenseSubCategoryService.getSubCategoryCode());
-        model.addAttribute("rateTypes", RateTypeEnum.values());
+        model.addAttribute("rateTypes", RateType.allValues());
         return "subcategory-create";
     }
 
@@ -120,6 +120,7 @@ public class CreateSubCategoryController {
             return "subcategory-create";
         licenseSubCategoryService.createSubCategory(licenseSubCategory);
         responseAttrbs.addFlashAttribute("message", "msg.subcategory.save.success");
-        return "redirect:/licensesubcategory/view/" + licenseSubCategory.getCode();
+        responseAttrbs.addFlashAttribute("name", licenseSubCategory.getName());
+        return "redirect:/licensesubcategory/create";
     }
 }

@@ -52,6 +52,9 @@
 
 <div class="row">
     <div class="col-md-12">
+        <c:if test="${not empty message}">
+            <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
+        </c:if>
         <div class="panel panel-primary" data-collapsed="0">
             <div class="panel-heading">
                 <div class="panel-title"><spring:message code="title.feematrix.edit"/></div>
@@ -168,25 +171,21 @@
                             <spring:message code="lbl.effective.to"/><span class="mandatory"></span>
                         </label>
                         <div class="col-sm-3 add-margin">
-                            <form:input id="effectiveTo" path="effectiveTo" class="datepicker form-control text-left" maxlength="10" />
+                            <form:input id="effectiveTo" path="effectiveTo" class="datepicker form-control text-left" maxlength="10"/>
                         </div>
                     </div>
                     <div class="panel-heading">
                         <div class="col-md-12 panel-title text-left">
                             <spring:message code="lbl.fee.details"/>
-                            <button type="button" class="btn btn-secondary pull-right" id="addrow">
-                                <i class="fa fa-plus-circle" aria-hidden="true"></i> &nbsp;Add Row
-                            </button>
                         </div>
                     </div>
                     <div class="col-sm-12">
                         <table class="table table-bordered fromto" id="result" data-from="<spring:message code='lbl.uomfrom'/>"
                                data-to="<spring:message code='lbl.uomto'/>">
                             <thead>
-                            <th><spring:message code="lbl.uomfrom"/></th>
-                            <th><spring:message code="lbl.uomto"/></th>
-                            <th><spring:message code="lbl.amount"/></th>
-                            <th></th>
+                            <th class="text-center"><spring:message code="lbl.uomfrom"/></th>
+                            <th class="text-center"><spring:message code="lbl.uomto"/></th>
+                            <th class="text-center" colspan="2"><spring:message code="lbl.amount"/></th>
                             </thead>
                             <tbody>
                             <c:if test="${not empty feeMatrix.feeMatrixDetail}">
@@ -198,20 +197,22 @@
                                     <tr style="display:${display}">
                                         <td>
                                             <form:input path="feeMatrixDetail[${vs.index}].uomFrom" value="${detail.uomFrom}"
-                                                        cssClass="form-control fromRange patternvalidation fromvalue"
-                                                        pattern="-?\d*" data-pattern="numerichyphen" data-fromto="from"
+                                                        cssClass="form-control fromRange patternvalidation fromvalue text-right"
+                                                        data-pattern="number" data-fromto="from"
                                                         maxlength="8" readonly="true" required="true"/>
                                         </td>
                                         <td>
                                             <form:input path="feeMatrixDetail[${vs.index}].uomTo" value="${detail.uomTo}"
-                                                        cssClass="form-control patternvalidation tovalue"
-                                                        pattern="-?\d*" data-pattern="numerichyphen" data-fromto="to"
+                                                        cssClass="form-control patternvalidation tovalue text-right"
+                                                        data-pattern="number" data-fromto="to"
                                                         maxlength="8" required="true"/>
                                         </td>
                                         <td>
                                             <form:input path="feeMatrixDetail[${vs.index}].amount" value="${detail.amount}"
-                                                        cssClass="form-control patternvalidation" data-pattern="number" maxlength="8" required="true"/>
-                                            <form:hidden path="feeMatrixDetail[${vs.index}].markedForRemoval" id="feeMatrixDetail[${vs.index}].markedForRemoval"
+                                                        cssClass="form-control patternvalidation text-right"
+                                                        data-pattern="number" maxlength="8" required="true"/>
+                                            <form:hidden path="feeMatrixDetail[${vs.index}].markedForRemoval"
+                                                         id="feeMatrixDetail[${vs.index}].markedForRemoval"
                                                          value="${detail.markedForRemoval}" cssClass="markedForRemoval"/>
                                         </td>
                                         <td><span class="add-padding"><i class="fa fa-trash delete-row" aria-hidden="true"></i></span></td>
@@ -219,12 +220,21 @@
                                 </c:forEach>
                             </c:if>
                             </tbody>
+                            <tfoot>
+                            <tr>
+                                <td colspan="4">
+                                    <button type="button" class="btn btn-secondary pull-right" id="addrow">
+                                        <i class="fa fa-plus-circle" aria-hidden="true"></i> &nbsp;
+                                        <spring:message code="lbl.add.more"/>
+                                    </button>
+                                </td>
+                            </tr>
+                            </tfoot>
                         </table>
                     </div>
                     <div class="form-group text-center">
-                        <button type="submit" class="btn btn-primary" id="submit">
-                            <spring:message code="lbl.save"/>
-                        </button>
+                        <button type="submit" class="btn btn-primary" id="submit"><spring:message code="lbl.save"/></button>
+                        <button type="button" class="btn btn-default" onclick="location.reload()"><spring:message code="lbl.reset"/></button>
                         <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();">
                             <spring:message code="lbl.close"/>
                         </button>

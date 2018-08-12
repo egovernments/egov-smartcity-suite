@@ -49,7 +49,7 @@ package org.egov.tl.web.controller.transactions.digisign;
 
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.utils.FileStoreUtils;
-import org.egov.tl.entity.License;
+import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.service.LicenseAppTypeService;
 import org.egov.tl.service.LicenseCertificateDigiSignService;
 import org.egov.tl.service.LicenseConfigurationService;
@@ -68,6 +68,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.egov.tl.utils.Constants.TL_FILE_STORE_DIR;
 import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 
@@ -93,8 +94,8 @@ public class LicenseCertificateDigiSignController {
                                             Model model) {
         licenseCertificateDigiSignService.digitalSignTransition(Arrays.asList(applicationNumbers));
         model.addAttribute("successMessage", "Digitally Signed Successfully");
-        model.addAttribute("fileStoreId", fileStoreIds.length == 1 ? fileStoreIds[0] : "");
-        model.addAttribute("applnum", applicationNumbers.length == 1 ? applicationNumbers[0] : "");
+        model.addAttribute("fileStoreId", fileStoreIds.length == 1 ? fileStoreIds[0] : EMPTY);
+        model.addAttribute("applnum", applicationNumbers.length == 1 ? applicationNumbers[0] : EMPTY);
 
         return "digitalSignature-success";
     }
@@ -109,7 +110,7 @@ public class LicenseCertificateDigiSignController {
     @GetMapping("/bulk-digisign")
     public String showLicenseBulkDigiSignForm(Model model) {
         if (licenseConfigurationService.digitalSignEnabled())
-            model.addAttribute("applicationType", licenseAppTypeService.findByDisplayTrue());
+            model.addAttribute("applicationType", licenseAppTypeService.getDisplayableLicenseAppTypes());
         else
             model.addAttribute("message", "msg.digisign.enabled");
         return "license-bulk-digisign-form";
@@ -118,18 +119,18 @@ public class LicenseCertificateDigiSignController {
     @GetMapping("/bulk-digisign/")
     public String getLicenseForDigiSign(@RequestParam Long licenseAppTypeId, Model model) {
         model.addAttribute("licenses", licenseCertificateDigiSignService.getLicensePendingForDigiSign(licenseAppTypeId));
-        model.addAttribute("applicationType", licenseAppTypeService.findByDisplayTrue());
+        model.addAttribute("applicationType", licenseAppTypeService.getDisplayableLicenseAppTypes());
         return "license-bulk-digisign-form";
     }
 
     @PostMapping("/bulk-digisign")
     public String bulkDigitalSignature(@RequestParam List<Long> licenseIds, Model model) {
 
-        List<License> licenses = licenseCertificateDigiSignService.generateLicenseCertificateForDigiSign(licenseIds);
+        List<TradeLicense> licenses = licenseCertificateDigiSignService.generateLicenseCertificateForDigiSign(licenseIds);
         List<String> fileStoreIds = licenses.parallelStream()
-                .map(License::getDigiSignedCertFileStoreId).collect(Collectors.toList());
+                .map(TradeLicense::getDigiSignedCertFileStoreId).collect(Collectors.toList());
         List<String> applicaitonNumbers = licenses.parallelStream()
-                .map(License::getApplicationNumber).collect(Collectors.toList());
+                .map(TradeLicense::getApplicationNumber).collect(Collectors.toList());
 
         model.addAttribute("fileStoreIds", String.join(",", fileStoreIds));
         model.addAttribute("applicationNo", String.join(",", applicaitonNumbers));

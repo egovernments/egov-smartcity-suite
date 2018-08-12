@@ -50,7 +50,7 @@ package org.egov.tl.service;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.tl.entity.DemandGenerationLog;
 import org.egov.tl.entity.DemandGenerationLogDetail;
-import org.egov.tl.entity.License;
+import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.enums.ProcessStatus;
 import org.egov.tl.repository.DemandGenerationLogDetailRepository;
 import org.egov.tl.repository.DemandGenerationLogRepository;
@@ -105,7 +105,7 @@ public class DemandGenerationLogService {
     }
 
     @Transactional
-    public DemandGenerationLogDetail createOrGetDemandGenerationLogDetail(DemandGenerationLog demandGenerationLog, License license) {
+    public DemandGenerationLogDetail createOrGetDemandGenerationLogDetail(DemandGenerationLog demandGenerationLog, TradeLicense license) {
 
         DemandGenerationLogDetail logDetail = demandGenerationLogDetailRepository.
                 findByDemandGenerationLogIdAndLicenseId(demandGenerationLog.getId(), license.getId());

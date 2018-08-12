@@ -82,7 +82,7 @@ public class PenaltyRatesController {
 
     @ModelAttribute("licenseAppTypes")
     public List<LicenseAppType> licenseAppTypes() {
-        return licenseAppTypeService.findAllLicenseAppType();
+        return licenseAppTypeService.getDisplayableLicenseAppTypes();
     }
 
     @GetMapping("/create")

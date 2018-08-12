@@ -53,11 +53,9 @@ import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseDocument;
 import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.TradeLicense;
-import org.egov.tl.entity.enums.ApplicationType;
 import org.egov.tl.repository.LicenseRepository;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,15 +97,15 @@ public class LicenseService {
         licenseRepository.save(license);
     }
 
-    public License getLicenseById(Long id) {
+    public TradeLicense getLicenseById(Long id) {
         return licenseRepository.findOne(id);
     }
 
-    public License getLicenseByApplicationNumber(String applicationNumber) {
+    public TradeLicense getLicenseByApplicationNumber(String applicationNumber) {
         return licenseRepository.findByApplicationNumber(applicationNumber);
     }
 
-    public License getLicenseByOldLicenseNumber(String oldLicenseNumber) {
+    public TradeLicense getLicenseByOldLicenseNumber(String oldLicenseNumber) {
         return licenseRepository.findByOldLicenseNumber(oldLicenseNumber);
     }
 
@@ -124,7 +122,7 @@ public class LicenseService {
             existingDocs.addAll(license.getDocuments()
                     .stream()
                     .filter(licenseDocument -> licenseDocument.getType().getApplicationType().equals
-                            (ApplicationType.valueOf(license.getLicenseAppType().getCode())) && licenseDocument.getId() != null)
+                            (license.getLicenseAppType()) && licenseDocument.getId() != null)
                     .collect(Collectors.toList()));
         }
 
@@ -166,7 +164,7 @@ public class LicenseService {
         license.getDocuments().addAll(documents);
     }
 
-    public ReportOutput generateAcknowledgement(License license) {
+    public ReportOutput generateAcknowledgement(TradeLicense license) {
         Map<String, Object> reportParams = new ConcurrentHashMap<>();
         reportParams.put("municipality", getMunicipalityName());
         reportParams.put("cityname", getCityName());
@@ -177,7 +175,7 @@ public class LicenseService {
         return reportService.createReport(reportRequest);
     }
 
-    public Date calculateDueDate(License license) {
+    public Date calculateDueDate(TradeLicense license) {
         Integer slaDays = license.isNewApplication() ? licenseConfigurationService.getNewAppTypeSla()
                 : licenseConfigurationService.getRenewAppTypeSla();
         return new DateTime().plusDays(slaDays).toDate();

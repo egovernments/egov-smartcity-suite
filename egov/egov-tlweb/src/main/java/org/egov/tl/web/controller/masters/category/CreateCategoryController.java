@@ -81,13 +81,13 @@ public class CreateCategoryController {
     }
 
     @PostMapping("/create")
-    public String createCategory(@Valid LicenseCategory licenseCategory,
-                                 BindingResult bindingResult, RedirectAttributes responseAttrbs) {
+    public String createCategory(@Valid LicenseCategory licenseCategory, BindingResult bindingResult,
+                                 RedirectAttributes responseAttrbs) {
         if (bindingResult.hasErrors())
             return "licensecategory-create";
         licenseCategoryService.saveCategory(licenseCategory);
         responseAttrbs.addFlashAttribute("message", "msg.create.category.success");
-
-        return "redirect:/licensecategory/view/" + licenseCategory.getCode();
+        responseAttrbs.addFlashAttribute("name", licenseCategory.getName());
+        return "redirect:/licensecategory/create";
     }
 }

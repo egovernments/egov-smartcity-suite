@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -46,13 +46,12 @@
   ~
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<form:form role="form" modelAttribute="documenttype" commandName="documenttype"
-           cssClass="form-horizontal form-groups-bordered">
+<form:form role="form" modelAttribute="licenseDocumentType" cssClass="form-horizontal form-groups-bordered">
     <div class="row">
         <div class="col-md-12">
             <div class="panel panel-primary" data-collapsed="0">
@@ -61,40 +60,36 @@
                 </div>
                 <div class="panel-body custom-form">
                     <div class="form-group">
-                        <label class="col-sm-3 control-label text-right">
-                            <spring:message code="lbl.name"/> <span id="mandatory" class="mandatory"></span>
+                        <label class="col-sm-2 control-label text-right">
+                            <spring:message code="lbl.name"/><span id="mandatory" class="mandatory"></span>
                         </label>
                         <div class="col-sm-3 add-margin">
-                            <form:input path="name" id="name" class="form-control text-left patternvalidation"
-                                        maxLength="50"/>
+                            <form:input path="name" id="name" class="form-control text-left patternvalidation" maxLength="50"/>
+                            <form:errors path="name" cssClass="error-msg"/>
                         </div>
-                        <label class="col-sm-2 control-label text-right">
+                        <label class="col-sm-3 control-label text-right">
                             <spring:message code="lbl.licenseAppType"/> <span class="mandatory"></span>
                         </label>
                         <div class="col-sm-3 add-margin">
                             <form:select path="applicationType" id="applicationType_dropdown" cssClass="form-control"
                                          disabled="true" cssErrorClass="form-control error">
                                 <form:option value=""><spring:message code="lbl.select"/></form:option>
-                                <form:options items="${applicationTypes}"/>
+                                <form:options items="${applicationTypes}" itemLabel="name"/>
                             </form:select>
+                            <form:errors path="applicationType" cssClass="error-msg"/>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-3 control-label text-right"><spring:message
-                                    code="lbl.mandatory"/></label>
-                            <div class="col-sm-3 add-margin">
-                                <form:checkbox path="mandatory" id="mandatory"/>
-                            </div>
-                            <label class="col-sm-3 control-label text-right"><spring:message
-                                    code="lbl.enabled"/></label>
+                            <label class="col-sm-2 control-label text-right"><spring:message code="lbl.enabled"/></label>
                             <div class="col-sm-3 add-margin">
                                 <form:checkbox path="enabled" id="enabled"/>
                             </div>
                         </div>
-                    </div>
-                    <div class="text-left error-msg" style="font-size: 14px;">
-                    <c:if test="${not empty message}">
-                        <div><spring:message code="${message}"/></div>
-                    </c:if>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label text-right"><spring:message code="lbl.mandatory"/></label>
+                            <div class="col-sm-3 add-margin">
+                                <form:checkbox path="mandatory" id="mandatory"/>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -104,12 +99,11 @@
     <div class="form-group">
         <div class="text-center">
             <button type='submit' class='btn btn-primary' id="buttonSubmit">
-                <spring:message code='lbl.submit'/>
+                <spring:message code='lbl.save'/>
             </button>
-            <a href='javascript:void(0)' class='btn btn-default' onclick='self.close()'><spring:message
-                    code='lbl.close'/></a>
+            <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
+            <a href='javascript:void(0)' class='btn btn-default' onclick='self.close()'><spring:message code='lbl.close'/></a>
         </div>
     </div>
 </form:form>
-<script type="text/javascript"
-        src="<cdn:url value='/resources/js/app/license-document-type.js?rnd=${app_release_no}'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/js/app/license-document-type.js?rnd=${app_release_no}'/>"></script>

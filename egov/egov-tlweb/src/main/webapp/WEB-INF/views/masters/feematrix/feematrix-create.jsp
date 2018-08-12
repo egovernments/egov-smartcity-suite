@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -52,6 +52,9 @@
 
 <div class="row">
     <div class="col-md-12">
+        <c:if test="${not empty message}">
+            <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
+        </c:if>
         <div class="panel panel-primary" data-collapsed="0">
             <div class="panel-heading">
                 <div class="panel-title"><spring:message code="title.feematrix.new"/></div>
@@ -179,19 +182,15 @@
                     <div class="panel-heading">
                         <div class="col-md-12 panel-title text-left">
                             <spring:message code="lbl.fee.details"/>
-                            <button type="button" class="btn btn-secondary pull-right" id="addrow">
-                                <i class="fa fa-plus-circle" aria-hidden="true"></i> &nbsp;Add Row
-                            </button>
                         </div>
                     </div>
                     <div class="col-sm-12">
                         <table class="table table-bordered fromto" id="result" data-from="<spring:message code='lbl.uomfrom'/>"
                                data-to="<spring:message code='lbl.uomto'/>">
                             <thead>
-                            <th><spring:message code="lbl.uomfrom"/></th>
-                            <th><spring:message code="lbl.uomto"/></th>
-                            <th><spring:message code="lbl.amount"/></th>
-                            <th></th>
+                            <th class="text-center"><spring:message code="lbl.uomfrom"/></th>
+                            <th class="text-center"><spring:message code="lbl.uomto"/></th>
+                            <th class="text-center" colspan="2"><spring:message code="lbl.amount"/></th>
                             </thead>
                             <tbody>
                             <c:choose>
@@ -200,19 +199,20 @@
                                         <tr class="dynamicInput">
                                             <td>
                                                 <input type="text" name="feeMatrixDetail[${vs.index}].uomFrom" value="${feeMatrixDetail.uomFrom}"
-                                                       class="form-control fromRange patternvalidation fromvalue"
-                                                       pattern="-?\d*" data-pattern="numerichyphen" data-fromto="from"
+                                                       class="form-control fromRange patternvalidation fromvalue text-right"
+                                                       data-pattern="number" data-fromto="from"
                                                        maxlength="8" readonly="readonly" required="required"/>
                                             </td>
                                             <td>
                                                 <input type="text" name="feeMatrixDetail[${vs.index}].uomTo" value="${feeMatrixDetail.uomTo}"
-                                                       class="form-control patternvalidation tovalue"
-                                                       pattern="-?\d*" data-pattern="numerichyphen" data-fromto="to"
+                                                       class="form-control patternvalidation tovalue text-right"
+                                                       data-pattern="number" data-fromto="to"
                                                        maxlength="8" required="required"/>
                                             </td>
                                             <td>
                                                 <input type="text" name="feeMatrixDetail[${vs.index}].amount" value="${feeMatrixDetail.amount}"
-                                                       class="form-control patternvalidation" data-pattern="number" maxlength="8" required="required"/>
+                                                       class="form-control patternvalidation text-right"
+                                                       data-pattern="number" maxlength="8" required="required"/>
                                             </td>
                                             <td><span class="add-padding"><i class="fa fa-trash delete-row" aria-hidden="true"></i></span></td>
                                         </tr>
@@ -222,19 +222,19 @@
                                     <tr>
                                         <td>
                                             <input type="text" name="feeMatrixDetail[0].uomFrom" value="0"
-                                                   class="form-control patternvalidation fromvalue"
-                                                   pattern="-?\d*" data-pattern="numerichyphen" data-fromto="from"
+                                                   class="form-control patternvalidation fromvalue text-right"
+                                                   data-pattern="number" data-fromto="from"
                                                    required="required" readonly="readonly"/>
                                         </td>
                                         <td>
                                             <input type="text" name="feeMatrixDetail[0].uomTo"
-                                                   class="form-control patternvalidation tovalue"
-                                                   pattern="-?\d*" data-pattern="numerichyphen" data-fromto="to"
+                                                   class="form-control patternvalidation tovalue text-right"
+                                                   data-pattern="number" data-fromto="to"
                                                    maxlength="8" required="required"/>
                                         </td>
                                         <td>
                                             <input type="text" name="feeMatrixDetail[0].amount"
-                                                   class="form-control patternvalidation"
+                                                   class="form-control patternvalidation text-right"
                                                    data-pattern="number" maxlength="8" required="required"/>
                                         </td>
                                         <td><span class="add-padding"><i class="fa fa-trash delete-row" data-func="add" aria-hidden="true"></i></span></td>
@@ -242,12 +242,20 @@
                                 </c:otherwise>
                             </c:choose>
                             </tbody>
+                            <tfoot>
+                            <tr>
+                                <td colspan="4">
+                                    <button type="button" class="btn btn-secondary pull-right" id="addrow">
+                                        <i class="fa fa-plus-circle" aria-hidden="true"></i> &nbsp;<spring:message code="lbl.add.more"/>
+                                    </button>
+                                </td>
+                            </tr>
+                            </tfoot>
                         </table>
                     </div>
                     <div class="form-group text-center">
-                        <button type="submit" class="btn btn-primary" id="search">
-                            <spring:message code="lbl.save"/>
-                        </button>
+                        <button type="submit" class="btn btn-primary" id="search"><spring:message code="lbl.save"/></button>
+                        <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
                         <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();">
                             <spring:message code="lbl.close"/>
                         </button>

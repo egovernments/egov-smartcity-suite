@@ -58,6 +58,7 @@ import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.web.response.adaptor.OnlineDCBReportResponseAdaptor;
 import org.egov.tl.web.response.adaptor.OnlineInstallmentwiseDCBReportAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -71,6 +72,7 @@ import static org.egov.infra.utils.JsonUtils.toJSON;
 public class ViewDCBController {
 
     @Autowired
+    @Qualifier("tradeLicenseService")
     private TradeLicenseService tradeLicenseService;
 
     @Autowired

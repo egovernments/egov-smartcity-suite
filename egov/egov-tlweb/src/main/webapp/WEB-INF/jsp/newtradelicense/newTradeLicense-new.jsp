@@ -129,13 +129,8 @@
 
                 }
 
-                var adhaar = document.getElementById('adhaarId').value;
+
                 var mobileno = document.getElementById('mobilePhoneNumber').value;
-                if (adhaar.length > 0 && adhaar.length < 12) {
-                    $('#adhaarError').removeClass("hide");
-                    $("#adhaarId").focus();
-                    return false;
-                }
                 if (mobileno.length > 0 && mobileno.length < 10) {
                     $('#mobileError').removeClass("hide");
                     $("#mobilePhoneNumber").focus();

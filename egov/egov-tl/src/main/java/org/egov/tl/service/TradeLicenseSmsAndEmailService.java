@@ -52,7 +52,7 @@ import org.egov.commons.service.CFinancialYearService;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.reporting.engine.ReportOutput;
-import org.egov.tl.entity.License;
+import org.egov.tl.entity.TradeLicense;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -111,7 +111,7 @@ public class TradeLicenseSmsAndEmailService {
         notificationService.sendEmail(email, emailSubject, emailBody);
     }
 
-    public void sendSmsAndEmail(final License license, final String workFlowAction) {
+    public void sendSmsAndEmail(final TradeLicense license, final String workFlowAction) {
         String smsMsg = null;
         String emailBody = "";
         String emailSubject = "";
@@ -248,7 +248,7 @@ public class TradeLicenseSmsAndEmailService {
         sendEmail(license.getLicensee().getEmailId(), emailBody, emailSubject);
     }
 
-    public void sendSMsAndEmailOnCollection(final License license, final BigDecimal demandAmount) {
+    public void sendSMsAndEmailOnCollection(final TradeLicense license, final BigDecimal demandAmount) {
         String smsMsg;
         String emailBody;
         String emailSubject;
@@ -297,7 +297,7 @@ public class TradeLicenseSmsAndEmailService {
         sendEmail(license.getLicensee().getEmailId(), emailBody, emailSubject);
     }
 
-    public void sendLicenseClosureMessage(final License license, final String workflowAction) {
+    public void sendLicenseClosureMessage(final TradeLicense license, final String workflowAction) {
         String smsMsg = null;
         String emailBody = "";
         String emailSubject = "";
@@ -345,7 +345,7 @@ public class TradeLicenseSmsAndEmailService {
 
     }
 
-    public void sendSMsAndEmailOnDigitalSign(final License license) {
+    public void sendSMsAndEmailOnDigitalSign(final TradeLicense license) {
         final Locale locale = Locale.getDefault();
         String smsCode = "msg.digi.sign.no.collection";
         String smsMsg = licenseMessageSource.getMessage(
@@ -370,7 +370,7 @@ public class TradeLicenseSmsAndEmailService {
         sendEmail(license.getLicensee().getEmailId(), emailBody, emailSubject);
     }
 
-    public void sendNotificationOnDemandGeneration(License license, Installment installment,
+    public void sendNotificationOnDemandGeneration(TradeLicense license, Installment installment,
                                                    ReportOutput reportOutput, Date penaltyDate) {
 
         Locale locale = Locale.getDefault();

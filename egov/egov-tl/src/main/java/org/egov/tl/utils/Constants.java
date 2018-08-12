@@ -50,7 +50,6 @@ package org.egov.tl.utils;
 
 import com.google.common.collect.ImmutableMap;
 
-import java.math.BigDecimal;
 import java.util.Map;
 
 public final class Constants {
@@ -58,17 +57,13 @@ public final class Constants {
     public static final String TL_FILE_STORE_DIR = "TL";
     public static final String NEW = "new";
     public static final String VIEW = "view";
-    public static final String ROLE_BILLCOLLECTOR = "Collection Operator";
     public static final String WF_STATE_COMMISSIONER_APPROVED_STR = "Commissioner approved";
     public static final String WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING = "Sanitary inspector Approve pending";
-    public static final String BUILDINGTYPE_RENTAL_AGREEMANT = "Rental";
-    public static final String BUILDINGTYPE_OWN_BUILDING = "Own Building";
     public static final String FROM = "from";
     public static final String DROPDOWN_DIVISION_LIST_LICENSE = "divisionListLicense";
     public static final String DROPDOWN_DIVISION_LIST_LICENSEE = "divisionListLicensee";
     public static final String DROPDOWN_AREA_LIST_LICENSE = "areaListLicense";
     public static final String DROPDOWN_AREA_LIST_LICENSEE = "areaListLicense";
-    public static final String DROPDOWN_TRADENAME_LIST = "tradeNameList";
     public static final String MESSAGE = "message";
     public static final String GENERATECERTIFICATE = "Generate Certificate";
     public static final String BUTTONAPPROVE = "Approve";
@@ -92,11 +87,6 @@ public final class Constants {
     public static final String TRADELICENSEMODULE = "TRADELICENSE";
     public static final String WARD = "WARD";
     public static final String BEFORE_RENEWAL = "beforeRenew";
-    public static final BigDecimal CHQ_BOUNCE_PENALTY = BigDecimal.valueOf(1000);
-    public static final String DEMANDRSN_STR_CHQ_BOUNCE_PENALTY = "CHEQUE BOUNCE PENALTY";
-    public static final Character DMD_STATUS_CHEQUE_BOUNCED = 'B';
-    public static final String DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY = "CHQ_BUNC_PENALTY";
-    public static final String DEMANDRSN_REBATE = "REBATE";
     public static final String OWNERSHIP_TYPE_OWN = "Own";
     public static final String OWNERSHIP_TYPE_RENTED = "Rented";
     public static final String OWNERSHIP_TYPE_STATEGOVERNMENT = "State Government";
@@ -184,7 +174,6 @@ public final class Constants {
     public static final String EXTERNAL_CLOSURE_LICENSE = "EXTERNALCLOSUREAPPLICATION";
     public static final String CLOSURE_LICENSE_REJECT = "CLOSURELICENSEREJECT";
     public static final String AUTO = "Auto";
-    public static final String PROCESS_OWNER_FORMAT = "%s [%s]";
     public static final String RENEW_WITHOUT_FEE = "RENEWALWITHOUTFEE";
     public static final String COMPLETED = "Completed";
     public static final String ADMIN_HIERARCHY = "ADMINISTRATION";

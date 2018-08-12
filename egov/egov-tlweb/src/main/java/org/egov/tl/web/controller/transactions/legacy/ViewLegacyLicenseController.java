@@ -48,7 +48,6 @@
 
 package org.egov.tl.web.controller.transactions.legacy;
 
-import org.egov.tl.entity.License;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.service.LegacyLicenseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +66,7 @@ public class ViewLegacyLicenseController {
     private LegacyLicenseService legacyLicenseService;
 
     @ModelAttribute("tradeLicense")
-    public License tradeLicense(@PathVariable String applicationNumber) {
+    public TradeLicense tradeLicense(@PathVariable String applicationNumber) {
         return legacyLicenseService.getLicenseByApplicationNumber(applicationNumber);
     }
 

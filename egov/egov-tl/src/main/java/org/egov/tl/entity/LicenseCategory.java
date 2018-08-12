@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -54,6 +54,7 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.SafeHtml;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -66,20 +67,22 @@ import javax.persistence.Table;
 @Unique(fields = {"name", "code"}, enableDfltMsg = true)
 @SequenceGenerator(name = LicenseCategory.SEQUENCE, sequenceName = LicenseCategory.SEQUENCE, allocationSize = 1)
 public class LicenseCategory extends AbstractAuditable {
-    public static final String SEQUENCE = "SEQ_EGTL_MSTR_CATEGORY";
+    protected static final String SEQUENCE = "SEQ_EGTL_MSTR_CATEGORY";
     private static final long serialVersionUID = 2997222319085575846L;
+
     @Id
     @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotEmpty(message = "tradelic.master.tradecategoryname.null")
-    @Length(max = 256, message = "tradelic.masters.tradecategoryname.length")
+    @NotEmpty
+    @Length(max = 50)
     @SafeHtml
     private String name;
 
-    @NotEmpty(message = "tradelic.master.tradecategorycode.null")
-    @Length(max = 5, message = "tradelic.masters.tradecategorycode.length")
+    @NotEmpty
+    @Length(max = 5)
     @SafeHtml
+    @Column(updatable = false)
     private String code;
 
     public String getName() {

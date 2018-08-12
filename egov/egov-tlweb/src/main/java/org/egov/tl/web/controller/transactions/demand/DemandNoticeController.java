@@ -57,6 +57,7 @@ import org.egov.tl.service.LicenseStatusService;
 import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.web.response.adaptor.DemandNoticeAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -72,13 +73,13 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.egov.infra.utils.JsonUtils.toJSON;
+import static org.egov.tl.utils.Constants.ADMIN_HIERARCHY;
+import static org.egov.tl.utils.Constants.ADMIN_WARD;
 import static org.egov.tl.utils.Constants.LOCALITY;
 import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.tl.utils.Constants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.tl.utils.Constants.REVENUE_WARD;
 import static org.egov.tl.utils.Constants.STATUS_CANCELLED;
-import static org.egov.tl.utils.Constants.ADMIN_HIERARCHY;
-import static org.egov.tl.utils.Constants.ADMIN_WARD;
 import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
@@ -87,6 +88,7 @@ import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 public class DemandNoticeController {
 
     @Autowired
+    @Qualifier("tradeLicenseService")
     private TradeLicenseService tradeLicenseService;
 
     @Autowired
@@ -104,7 +106,7 @@ public class DemandNoticeController {
     @GetMapping("search")
     public String searchFormforNotice(Model model) {
         model.addAttribute("demandnoticesearchForm", new DemandNoticeForm());
-        model.addAttribute("categoryList", licenseCategoryService.getCategories());
+        model.addAttribute("categoryList", licenseCategoryService.getCategoriesOrderByName());
         model.addAttribute("subCategoryList", Collections.emptyList());
         model.addAttribute("localityList", boundaryService
                 .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(LOCALITY, LOCATION_HIERARCHY_TYPE));

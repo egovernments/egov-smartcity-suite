@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -46,44 +46,43 @@
   ~
   --%>
 
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 
 <div class="panel-heading custom_form_panel_heading">
     <div class="panel-title"><s:text name='license.location.lbl'/></div>
 </div>
+
 <div class="form-group">
     <label class="col-sm-3 control-label text-right"><s:text name='license.propertyNo.lbl'/></label>
     <div class="col-sm-3 add-margin">
         <s:textfield name="assessmentNo" id="propertyNo" value="%{assessmentNo}" maxlength="15"
                      onblur="getPropertyDetails();" class="form-control"/>
     </div>
+</div>
 
-    <label class="col-sm-2 control-label text-right"><s:text name='license.locality.lbl'/><span
-            class="mandatory"></span></label>
+<div class="form-group">
+    <label class="col-sm-3 control-label text-right"><s:text name='license.locality.lbl'/><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
         <s:select name="boundary" id="boundary" list="dropdownData.localityList"
                   listKey="id" listValue="name" headerKey="" headerValue="%{getText('default.select')}" required="true"
                   value="%{boundary.id}" class="form-control"/>
         <div id="locality_error" class="error-msg" style="display:none;" align="left"></div>
     </div>
-</div>
-<div class="form-group">
-    <label class="col-sm-3 control-label text-right"><s:text name='license.division'/><span
-            class="mandatory"></span></label>
+    <label class="col-sm-2 control-label text-right"><s:text name='license.division'/><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
         <select name="parentBoundary" id="parentBoundary" class="form-control" required="true">
             <option value=""><s:text name='default.select'/></option>
         </select>
     </div>
-    <label class="col-sm-2 control-label text-right"><s:text name='lbl.admin.ward'/></label>
+</div>
+<div class="form-group">
+    <label class="col-sm-3 control-label text-right"><s:text name='lbl.admin.ward'/></label>
     <div class="col-sm-3 add-margin">
         <select name="adminWard" id="adminWard" class="form-control">
             <option value=""><s:text name='default.select'/></option>
         </select>
     </div>
-</div>
-<div class="form-group">
-    <label class="col-sm-3 control-label text-right"><s:text name='license.ownerShipType.lbl'/><span
+    <label class="col-sm-2 control-label text-right"><s:text name='license.ownerShipType.lbl'/><span
             class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
         <s:select headerKey="-1" headerValue="%{getText('default.select')}" name="ownershipType"
@@ -91,12 +90,43 @@
                   list="ownerShipTypeMap" cssClass="form-control" value="%{ownershipType}" required="true"/>
         <div id="ownership_error" class="error-msg" style="display:none;" align="left"></div>
     </div>
-    <label class="col-sm-2 control-label text-right"><s:text name='license.address'/><span
+</div>
+<div class="form-group">
+    <label class="col-sm-3 control-label text-right"><s:text name='license.address'/><span
             class="mandatory"></span></label>
-    <div class="col-sm-3 add-margin">
-        <s:textarea name="address" id="address" maxlength="250" onblur="checkLength(this,250)" class="form-control"
-                    required="true"/>
+    <div class="col-sm-5 add-margin">
+        <s:textarea name="address" id="address" maxlength="250" onblur="checkLength(this,250)" class="form-control" rows="3" required="true"/>
         <div id="address_error" class="error-msg" style="display:none;" align="left"></div>
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-sm-3 control-label text-right"><s:text name='license.traderCheckbox.lbl'/></label>
+    <div class="col-sm-3 add-margin">
+        <s:checkbox theme="simple" key="showAgreementDtl" onclick="showHideAgreement()" id="showAgreementDtl"
+                    disabled="%{sDisabled}"/>
+    </div>
+</div>
+
+<div id="agreementSec" style="display: none;">
+    <div class="panel-heading custom_form_panel_heading">
+        <div class="panel-title"><s:text name='license.AgreementDetails.lbl'/></div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-3 control-label text-right"><s:text name='license.agreementDate.lbl'/><span
+                class="mandatory"></span></label>
+        <div class="col-sm-3 add-margin">
+            <s:date name="agreementDate" format="dd/MM/yyyy" var="agreementDateFrmttd"/>
+            <s:textfield name="agreementDate" cssClass="form-control datepicker" data-date-end-date="0d"
+                         id="agreementDate" maxlength="10" value="%{agreementDateFrmttd}"/>
+        </div>
+
+        <label class="col-sm-2 control-label text-right"><s:text name='license.agreementDocNo.lbl'/><span
+                class="mandatory"></span></label>
+        <div class="col-sm-3 add-margin">
+            <s:textfield name="agreementDocNo" maxlength="50" id="agreementDocNo" value="%{agreementDocNo}"
+                         cssClass="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash"/>
+        </div>
     </div>
 </div>
 <script>

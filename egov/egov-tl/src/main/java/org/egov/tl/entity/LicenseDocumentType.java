@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -50,15 +50,16 @@ package org.egov.tl.entity;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.CompositeUnique;
-import org.egov.tl.entity.enums.ApplicationType;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -66,24 +67,30 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "egtl_document_type")
 @SequenceGenerator(name = LicenseDocumentType.SEQUENCE, sequenceName = LicenseDocumentType.SEQUENCE, allocationSize = 1)
-@CompositeUnique(fields = {"name",
-        "applicationType"}, enableDfltMsg = true, checkForNull = true, message = "{license.document.exist}")
+@CompositeUnique(fields = {"name", "applicationType"}, enableDfltMsg = true, checkForNull = true, message = "{license.document.exist}")
 public class LicenseDocumentType extends AbstractPersistable<Long> {
-    public static final String SEQUENCE = "seq_egtl_document_type";
+
+    protected static final String SEQUENCE = "seq_egtl_document_type";
+
     private static final long serialVersionUID = -4917193602014054096L;
+
     @Id
     @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotNull
+    @NotBlank
     @Length(max = 50)
+    @SafeHtml
     private String name;
+
     private boolean mandatory;
+
     private boolean enabled;
 
     @NotNull
-    @Enumerated(EnumType.STRING)
-    private ApplicationType applicationType;
+    @ManyToOne
+    @JoinColumn(name = "applicationType", updatable = false)
+    private LicenseAppType applicationType;
 
 
     @Override
@@ -120,11 +127,11 @@ public class LicenseDocumentType extends AbstractPersistable<Long> {
         this.enabled = enabled;
     }
 
-    public ApplicationType getApplicationType() {
+    public LicenseAppType getApplicationType() {
         return applicationType;
     }
 
-    public void setApplicationType(final ApplicationType applicationType) {
+    public void setApplicationType(final LicenseAppType applicationType) {
         this.applicationType = applicationType;
     }
 }

@@ -45,16 +45,28 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
+
 package org.egov.tl.entity.enums;
 
-import org.apache.commons.lang3.StringUtils;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-public enum ApplicationType {
-    NEW, RENEW,CLOSURE;
+public enum RateType {
+    FLAT_BY_RANGE("Flat by Range"), PERCENTAGE("Percentage"), UNIT_BY_RANGE("Unit by Range");
+    private String name;
+
+    RateType(String name) {
+        this.name = name;
+    }
+
+    public static Map<String, String> allValues() {
+        return Stream.of(RateType.values())
+                .collect(Collectors.toMap(RateType::name, RateType::toString));
+    }
 
     @Override
     public String toString() {
-        return StringUtils.capitalize(name());
+        return this.name;
     }
 }
-

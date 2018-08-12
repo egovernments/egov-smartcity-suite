@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -49,72 +49,51 @@
 package org.egov.tl.web.controller.masters.documenttype;
 
 import org.egov.tl.entity.LicenseDocumentType;
-import org.egov.tl.entity.enums.ApplicationType;
-import org.egov.tl.service.DocumentTypeService;
-import org.egov.tl.web.response.adaptor.LicenseDocumentTypeResponseAdaptor;
+import org.egov.tl.service.LicenseAppTypeService;
+import org.egov.tl.service.LicenseDocumentTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 
-import static org.egov.infra.utils.JsonUtils.toJSON;
-import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
-
 @Controller
 @RequestMapping("/documenttype")
-public class DocumentTypeController {
+public class CreateDocumentTypeController {
 
     @Autowired
-    private DocumentTypeService documentTypeService;
+    private LicenseDocumentTypeService licenseDocumentTypeService;
 
+    @Autowired
+    private LicenseAppTypeService licenseAppTypeService;
+
+    @ModelAttribute
+    public LicenseDocumentType licenseDocumentType() {
+        return new LicenseDocumentType();
+    }
 
     @GetMapping("/create")
-    public String documentTypeForm(@ModelAttribute("documenttype") LicenseDocumentType documenttype) {
+    public String documentTypeForm(Model model) {
+        model.addAttribute("applicationTypes", licenseAppTypeService.getAllApplicationTypes());
         return "document-new";
     }
 
     @PostMapping("/create")
-    public String documentTypeCreate(@Valid @ModelAttribute("documenttype") LicenseDocumentType documenttype,
+    public String documentTypeCreate(@Valid @ModelAttribute LicenseDocumentType licenseDocumentType,
                                      BindingResult errors, RedirectAttributes redirectAttrs) {
         if (errors.hasErrors()) {
             return "document-new";
         }
 
-        documentTypeService.create(documenttype);
-        redirectAttrs.addFlashAttribute("documenttype", documenttype);
+        licenseDocumentTypeService.create(licenseDocumentType);
         redirectAttrs.addFlashAttribute("message", "msg.document.success");
-        redirectAttrs.addFlashAttribute("heading", "msg.heading.success");
-        return "redirect:/documenttype/view/" + documenttype.getId();
-    }
-
-    @GetMapping("/view/{id}")
-    public String documentTypeView(@PathVariable("id") Long id, Model model) {
-        LicenseDocumentType documenttype = documentTypeService.getDocumentTypeById(id);
-        model.addAttribute("documenttype", documenttype);
-        return "document-view";
-    }
-
-    @GetMapping("/search")
-    public String documentTypeSearch(@ModelAttribute("documenttype") LicenseDocumentType documenttype) {
-        return "document-search";
-    }
-
-    @PostMapping(value = "/search", produces = TEXT_PLAIN_VALUE)
-    @ResponseBody
-    public String documentTypeSearch(@RequestParam String name,
-                                     @RequestParam ApplicationType applicationType) {
-        return new StringBuilder("{ \"data\":").append(
-                toJSON(documentTypeService.search(name, applicationType), LicenseDocumentType.class,
-                        LicenseDocumentTypeResponseAdaptor.class)).append("}").toString();
+        redirectAttrs.addFlashAttribute("name", licenseDocumentType.getName());
+        return "redirect:/documenttype/create";
     }
 }

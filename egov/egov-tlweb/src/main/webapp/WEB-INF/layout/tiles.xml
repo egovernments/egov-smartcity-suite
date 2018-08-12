@@ -158,19 +158,19 @@
     </definition>
     <definition name="document-new" extends="base_layout">
         <put-attribute name="page-title" value="title.create.document" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/documenttype/document-new.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/documenttype/documenttype-create.jsp"/>
     </definition>
     <definition name="document-search" extends="base_layout">
         <put-attribute name="page-title" value="title.document.search" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/documenttype/document-search.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/documenttype/documenttype-search.jsp"/>
     </definition>
     <definition name="document-edit" extends="base_layout">
         <put-attribute name="page-title" value="title.document.edit" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/documenttype/document-edit.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/documenttype/documenttype-update.jsp"/>
     </definition>
     <definition name="document-view" extends="base_layout">
         <put-attribute name="page-title" value="title.document.view" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/documenttype/document-view.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/documenttype/documenttype-view.jsp"/>
     </definition>
     <definition name="licensecategory-create" extends="base_layout">
         <put-attribute name="page-title" value="title.document.new" cascade="true"/>

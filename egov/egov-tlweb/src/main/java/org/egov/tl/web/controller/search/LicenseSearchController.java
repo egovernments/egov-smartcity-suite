@@ -57,6 +57,7 @@ import org.egov.tl.service.NatureOfBusinessService;
 import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.web.response.adaptor.LicenseSearchResponseAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -80,6 +81,7 @@ public class LicenseSearchController {
     private LicenseCategoryService licenseCategoryService;
 
     @Autowired
+    @Qualifier("tradeLicenseService")
     private TradeLicenseService tradeLicenseService;
 
     @Autowired
@@ -97,8 +99,8 @@ public class LicenseSearchController {
     }
 
     @GetMapping("license")
-    public String searchLicenseForm(final Model model) {
-        model.addAttribute("categoryList", licenseCategoryService.getCategories());
+    public String searchLicenseForm(Model model) {
+        model.addAttribute("categoryList", licenseCategoryService.getCategoriesOrderByName());
         model.addAttribute("subCategoryList", Collections.emptyList());
         model.addAttribute("statusList", licenseStatusService.findAll());
         model.addAttribute("applicationType", licenseAppTypeService.getAllApplicationTypes());
@@ -108,15 +110,15 @@ public class LicenseSearchController {
 
     @PostMapping(value = "license", produces = TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String searchLicense(final SearchForm searchForm) {
+    public String searchLicense(SearchForm searchForm) {
         return new DataTable<>(tradeLicenseService.searchTradeLicense(searchForm), searchForm.draw())
                 .toJson(LicenseSearchResponseAdaptor.class);
     }
 
     @GetMapping(value = "autocomplete", produces = APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<String> autocompleteSearch(@RequestParam final String searchParamValue,
-                                           @RequestParam final String searchParamType) {
+    public List<String> autocompleteSearch(@RequestParam String searchParamValue,
+                                           @RequestParam String searchParamType) {
         return tradeLicenseService.getTradeLicenseForGivenParam(searchParamValue, searchParamType);
     }
 }

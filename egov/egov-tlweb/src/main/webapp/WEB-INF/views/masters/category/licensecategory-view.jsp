@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -46,45 +46,35 @@
   ~
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-
 <div class="row">
     <div class="col-md-12">
-        <c:if test="${not empty message}">
-            <div class="alert alert-success" role="alert">
-                <spring:message code="${message}"/>
-            </div>
-        </c:if>
-        <form:form role="form" method="post" class="form-horizontal form-groups-bordered" modelAttribute="licenseCategory">
-
+        <form:form role="form" method="GET" class="form-horizontal form-groups-bordered" modelAttribute="licenseCategory">
             <div class="panel panel-primary" data-collapsed="0">
                 <div class="panel-heading">
                     <div class="panel-title"><spring:message code="title.category.view"/></div>
                 </div>
                 <div class="panel-body custom-form">
                     <div class="form-group">
-                        <label class="col-sm-3 control-label text-right"> <spring:message code="lbl.name"/> <span id="mandatory" class="mandatory"></span>
-                        </label>
+                        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.name"/></label>
                         <div class="col-sm-3 add-margin">
-                            <form:input path="name" id="name" disabled="true" class="form-control text-left"/>
+                            <form:label path="name" cssClass="form-control">${licenseCategory.name}</form:label>
                         </div>
-                        <label class="col-sm-2 control-label text-right"> <spring:message code="lbl.code"/> <span class="mandatory"></span>
-                        </label>
+                        <label class="col-sm-2 control-label text-right"><spring:message code="lbl.code"/></label>
                         <div class="col-sm-3 add-margin">
-                            <form:input path="code" id="code" disabled="true" class="form-control text-left"/>
+                            <form:label path="code" cssClass="form-control">${licenseCategory.code}</form:label>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="form-group">
                 <div class="text-center">
+                    <a href='javascript:void(0)' class='btn btn-default' onclick='window.location="."'><spring:message code='lbl.back'/></a>
                     <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
                 </div>
             </div>
         </form:form>
     </div>
 </div>
-

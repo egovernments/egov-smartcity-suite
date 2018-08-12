@@ -114,20 +114,6 @@
                                     <div class="panel-body">
                                         <div class="row add-border">
                                             <div class="col-xs-3 add-margin">
-                                                <spring:message code='licensee.aadhaarNo'/>
-                                            </div>
-                                            <div class="col-xs-3 add-margin view-content">
-                                                    ${tradeLicense.licensee.uid}
-                                            </div>
-                                            <div class="col-xs-3 add-margin">
-                                                <spring:message code='search.licensee.mobileNo'/>
-                                            </div>
-                                            <div class="col-xs-3 add-margin view-content">
-                                                    ${tradeLicense.licensee.mobilePhoneNumber}
-                                            </div>
-                                        </div>
-                                        <div class="row add-border">
-                                            <div class="col-xs-3 add-margin">
                                                 <spring:message code='licensee.applicantname'/>
                                             </div>
                                             <div class="col-xs-3 add-margin view-content">
@@ -140,17 +126,26 @@
                                                     ${tradeLicense.licensee.fatherOrSpouseName}
                                             </div>
                                         </div>
-                                        <div class="row">
+                                        <div class="row add-border">
+                                            <div class="col-xs-3 add-margin">
+                                                <spring:message code='search.licensee.mobileNo'/>
+                                            </div>
+                                            <div class="col-xs-3 add-margin view-content">
+                                                    ${tradeLicense.licensee.mobilePhoneNumber}
+                                            </div>
                                             <div class="col-xs-3 add-margin">
                                                 <spring:message code='lbl.emailid'/>
                                             </div>
                                             <div class="col-xs-3 add-margin view-content">
                                                     ${tradeLicense.licensee.emailId}
                                             </div>
+                                        </div>
+
+                                        <div class="row">
                                             <div class="col-xs-3 add-margin">
                                                 <spring:message code='licensee.address'/>
                                             </div>
-                                            <div class="col-xs-3 add-margin view-content">
+                                            <div class="col-xs-6 add-margin view-content">
                                                     ${tradeLicense.licensee.address}
                                             </div>
                                         </div>

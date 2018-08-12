@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -46,7 +46,7 @@
   ~
   --%>
 
-<%@ page contentType="text/html; charset=UTF-8" language="java" %>
+<%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
@@ -55,7 +55,7 @@
     <div class="col-md-12">
         <c:if test="${not empty message}">
             <div class="alert alert-success" role="alert">
-                <spring:message code="${message}"/>
+                <spring:message code="${message}" arguments="${name}"/>
             </div>
         </c:if>
         <form:form role="form" method="post" class="form-horizontal form-groups-bordered" modelAttribute="licenseCategory">
@@ -70,14 +70,13 @@
                         </label>
                         <div class="col-sm-3">
                             <form:input path="name" id="name" type="text" cssClass="form-control low-width"
-                                        cssErrorClass="form-control error low-width" required="required" maxlength="256"/>
+                                        cssErrorClass="form-control error low-width" required="required" maxlength="50"/>
                             <form:errors path="name" cssClass="error-msg"/>
                         </div>
                         <label class="col-sm-2 control-label"> <spring:message code="lbl.code"/><span class="mandatory"></span>
                         </label>
                         <div class="col-sm-3">
-                            <form:input path="code" id="code" disabled="true" type="text" class="form-control low-width patternvalidation"
-                                        data-pattern="alphabets" required="required" maxlength="256"/>
+                            <form:input path="code" id="code" disabled="true" type="text" class="form-control low-width" required="required"/>
                             <form:errors path="code" cssClass="error-msg"/>
                         </div>
                     </div>
@@ -86,7 +85,8 @@
             <div class="row">
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary"><spring:message code="lbl.update"/></button>
-                    <button type="reset" class="btn btn-default" onclick="window.location.reload()"><spring:message code="lbl.reset"/></button>
+                    <a href='javascript:void(0)' class='btn btn-default' onclick='window.location="."'><spring:message code='lbl.back'/></a>
+                    <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
                     <button type="button" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></button>
                 </div>
             </div>

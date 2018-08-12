@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -52,6 +52,7 @@ import org.egov.tl.entity.UnitOfMeasurement;
 import org.egov.tl.service.UnitOfMeasurementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -74,7 +75,8 @@ public class CreateUnitOfMeasurementController {
     }
 
     @GetMapping("/create")
-    public String showCreateUomForm() {
+    public String showCreateUomForm(Model model) {
+        model.addAttribute("code", unitOfMeasurementService.getNextUomCode());
         return "uom-create";
     }
 
@@ -85,6 +87,7 @@ public class CreateUnitOfMeasurementController {
             return "uom-create";
         unitOfMeasurementService.save(unitOfMeasurement);
         responseAttrbs.addFlashAttribute("message", "msg.uom.save.success");
-        return "redirect:/licenseunitofmeasurement/view/" + unitOfMeasurement.getCode();
+        responseAttrbs.addFlashAttribute("name", unitOfMeasurement.getName());
+        return "redirect:/licenseunitofmeasurement/create";
     }
 }

@@ -54,6 +54,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+
+import static org.egov.infra.utils.ApplicationConstant.COMMA;
+
 
 @Service
 @Transactional(readOnly = true)
@@ -65,6 +69,7 @@ public class LicenseConfigurationService {
     private static final String RENEW_APPTYPE_DEFAULT_SLA = "RENEW_APPTYPE_DEFAULT_SLA";
     private static final String CLOSURE_APPTYPE_DEFAULT_SLA = "CLOSURE_APPTYPE_DEFAULT_SLA";
     private static final String FEE_COLLECTOR_ROLES = "FEE_COLLECTOR_ROLES";
+    private static final String CHEQUE_BOUNCE_PENALTY = "CHEQUE_BOUNCE_PENALTY";
     private static final String JURISDICTION_BASED_ROUTING = "JURISDICTION_BASED_ROUTING";
 
     @Autowired
@@ -95,11 +100,15 @@ public class LicenseConfigurationService {
     }
 
     public String[] getFeeCollectorRoles() {
-        return getValueByKey(FEE_COLLECTOR_ROLES).split(",");
+        return getValueByKey(FEE_COLLECTOR_ROLES).split(COMMA);
     }
 
     public boolean jurisdictionBasedRoutingEnabled() {
         return Boolean.valueOf(getValueByKey(JURISDICTION_BASED_ROUTING));
+    }
+
+    public BigDecimal chequeBouncePenalty() {
+        return new BigDecimal(getValueByKey(CHEQUE_BOUNCE_PENALTY));
     }
 
     public String getValueByKey(String key) {

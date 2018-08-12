@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -46,54 +46,42 @@
   ~
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
-
 <div class="row" id="page-content">
     <div class="col-md-12">
-        <c:if test="${not empty message}">
-            <div class="alert alert-success" role="alert">
-                <spring:message code="${message}"/>
-            </div>
-        </c:if>
-        <form:form role="form" method="post" modelAttribute="licenseSubCategory" class="form-horizontal form-groups-bordered">
+        <form:form role="form" method="GET" modelAttribute="licenseSubCategory" class="form-horizontal form-groups-bordered">
         <div class="panel panel-primary" data-collapsed="0">
             <div class="panel-heading">
                 <div class="panel-title"><strong><spring:message code="title.subcategory.view"/></strong></div>
             </div>
             <div class="panel-body custom-form">
                 <div class="form-group">
-                    <label class="col-sm-2 control-label">
-                        <spring:message code="licenseCategory.category.lbl"/><span class="mandatory"></span>
-                    </label>
+                    <label class="col-sm-2 control-label"><spring:message code="licenseCategory.category.lbl"/></label>
                     <div class="col-sm-3 add-margin">
-                        <form:input path="category.name" cssClass="form-control" cssErrorClass="form-control error" disabled="true"/>
+                        <form:label cssClass="form-control" path="category.name">${licenseSubCategory.category.name}</form:label>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="name" class="col-sm-2 control-label text-right">
-                        <spring:message code="lbl.name"/><span id="mandatory" class="mandatory"></span>
-                    </label>
+                    <label class="col-sm-2 control-label text-right"><spring:message code="lbl.name"/></label>
                     <div class="col-sm-3 add-margin">
-                        <form:input path="name" id="name" cssClass="form-control" cssErrorClass="form-control error" disabled="true"/>
+                        <form:label cssClass="form-control" path="name">${licenseSubCategory.name}</form:label>
                         <form:errors path="name" cssClass="error-msg"/>
                     </div>
-                    <label for="code" class="col-sm-2 control-label text-right">
-                        <spring:message code="lbl.code"/><span id="mandatory" class="mandatory"></span>
-                    </label>
+                    <label class="col-sm-2 control-label text-right"><spring:message code="lbl.code"/></label>
                     <div class="col-sm-3 add-margin">
-                        <form:input path="code" id="code" cssClass="form-control" cssErrorClass="form-control error" disabled="true"/>
+                        <form:label cssClass="form-control" path="code">${licenseSubCategory.code}</form:label>
                         <form:errors path="code" cssClass="error-msg"/>
                     </div>
                 </div>
                 <div class="panel-heading">
                     <div class="col-md-12 panel-title text-left">
                         <strong>
-                            <spring:message code="title.subcategory.view.details"/>
+                            <spring:message code="title.details"/>
                         </strong>
                     </div>
                 </div>
@@ -101,22 +89,28 @@
                     <table class="table table-bordered " id="subcat">
                         <thead>
                         <tr>
-                            <th><spring:message code="lbl.feetype"/><span class="mandatory"></span></th>
-                            <th><spring:message code="lbl.rateType"/><span class="mandatory"></span></th>
-                            <th><spring:message code="license.uom.lbl"/><span class="mandatory"></span></th>
+                            <th class="text-center"><spring:message code="lbl.feetype"/></th>
+                            <th class="text-center"><spring:message code="lbl.rateType"/></th>
+                            <th class="text-center"><spring:message code="license.uom.lbl"/></th>
                         </tr>
                         </thead>
                         <tbody>
                         <c:forEach items="${licenseSubCategory.licenseSubCategoryDetails}" var="licenseSubCategoryDetail" varStatus="item">
                             <tr>
                                 <td>
-                                    <form:input path="licenseSubCategoryDetails[${item.index}].feeType.name" cssClass="form-control feeType" disabled="true"/>
+                                    <form:label cssClass="form-control" path="licenseSubCategoryDetails[${item.index}].feeType.name">
+                                        ${licenseSubCategoryDetail.feeType.name}
+                                    </form:label>
                                 </td>
                                 <td>
-                                    <form:input path="licenseSubCategoryDetails[${item.index}].rateType" cssClass="form-control rateType" disabled="true"/>
+                                    <form:label cssClass="form-control" path="licenseSubCategoryDetails[${item.index}].rateType">
+                                        ${licenseSubCategoryDetail.rateType.toString()}
+                                    </form:label>
                                 </td>
                                 <td>
-                                    <form:input path="licenseSubCategoryDetails[${item.index}].uom.name" cssClass="form-control uom" disabled="true"/>
+                                    <form:label cssClass="form-control" path="licenseSubCategoryDetails[${item.index}].uom.name">
+                                        ${licenseSubCategoryDetail.uom.name}
+                                    </form:label>
                                 </td>
                             </tr>
                         </c:forEach>
@@ -128,6 +122,7 @@
     </div>
     <div class="form-group">
         <div class="text-center">
+            <a href='javascript:void(0)' class='btn btn-default' onclick='window.location="."'><spring:message code='lbl.back'/></a>
             <button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()">
                 <spring:message code="lbl.close"/>
             </button>

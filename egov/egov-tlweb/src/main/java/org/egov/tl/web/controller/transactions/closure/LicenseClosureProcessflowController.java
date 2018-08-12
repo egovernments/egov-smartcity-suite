@@ -53,11 +53,12 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.StringUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.tl.entity.TradeLicense;
-import org.egov.tl.entity.enums.ApplicationType;
 import org.egov.tl.service.LicenseClosureProcessflowService;
 import org.egov.tl.service.LicenseClosureService;
+import org.egov.tl.service.LicenseDocumentTypeService;
 import org.egov.tl.service.TradeLicenseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -80,13 +81,17 @@ public class LicenseClosureProcessflowController extends GenericWorkFlowControll
     protected LicenseClosureService licenseClosureService;
 
     @Autowired
-    protected TradeLicenseService tradeLicenseService;
+    @Qualifier("tradeLicenseService")
+    private TradeLicenseService tradeLicenseService;
 
     @Autowired
     private SecurityUtils securityUtils;
 
     @Autowired
     private LicenseClosureProcessflowService licenseClosureProcessflowService;
+
+    @Autowired
+    private LicenseDocumentTypeService licenseDocumentTypeService;
 
     @ModelAttribute("tradeLicense")
     public TradeLicense getTradeLicense(@PathVariable Long licenseId, Model model) {
@@ -102,8 +107,8 @@ public class LicenseClosureProcessflowController extends GenericWorkFlowControll
         model.addAttribute("outstandingFee", tradeLicenseService.getOutstandingFee(license));
         model.addAttribute("licenseHistory", tradeLicenseService.populateHistory(license));
         model.addAttribute("isEmployee", isEmployee);
-        model.addAttribute("documentTypes", tradeLicenseService.getDocumentTypesByApplicationType(ApplicationType.CLOSURE));
-        model.addAttribute("forwardEnabled", licenseClosureProcessflowService.getWorkFlowMatrix(license) == null ? "false" :
+        model.addAttribute("documentTypes", licenseDocumentTypeService.getDocumentTypesForClosureApplicationType());
+        model.addAttribute("forwardEnabled", licenseClosureProcessflowService.getWorkFlowMatrix(license) != null &&
                 licenseClosureProcessflowService.getWorkFlowMatrix(license).isForwardEnabled());
         return license;
     }

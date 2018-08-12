@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -47,29 +47,32 @@
  */
 package org.egov.tl.web.response.adaptor;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
+import org.egov.infra.web.support.ui.DataTable;
 import org.egov.tl.entity.LicenseDocumentType;
 
 import java.lang.reflect.Type;
 
 import static org.egov.infra.utils.StringUtils.toYesOrNo;
 
-public class LicenseDocumentTypeResponseAdaptor implements JsonSerializer<LicenseDocumentType> {
+public class LicenseDocumentTypeResponseAdaptor implements DataTableJsonAdapter<LicenseDocumentType> {
 
     @Override
-    public JsonElement serialize(LicenseDocumentType documenttype, Type type, JsonSerializationContext jsc) {
-        JsonObject documentTypeResponse = new JsonObject();
-
-        if (documenttype != null) {
-            documentTypeResponse.addProperty("id", documenttype.getId());
-            documentTypeResponse.addProperty("name", documenttype.getName());
-            documentTypeResponse.addProperty("applicationType", documenttype.getApplicationType().name());
-            documentTypeResponse.addProperty("mandatory", toYesOrNo(documenttype.isMandatory()));
-            documentTypeResponse.addProperty("enabled", toYesOrNo(documenttype.isEnabled()));
-        }
-        return documentTypeResponse;
+    public JsonElement serialize(DataTable<LicenseDocumentType> documentTypeDataTable, Type type, JsonSerializationContext jsc) {
+        JsonArray documentTypesData = new JsonArray();
+        documentTypeDataTable.getData().forEach(documentType -> {
+            JsonObject documentTypeJson = new JsonObject();
+            documentTypeJson.addProperty("id", documentType.getId());
+            documentTypeJson.addProperty("name", documentType.getName());
+            documentTypeJson.addProperty("applicationType", documentType.getApplicationType().getName());
+            documentTypeJson.addProperty("mandatory", toYesOrNo(documentType.isMandatory()));
+            documentTypeJson.addProperty("enabled", toYesOrNo(documentType.isEnabled()));
+            documentTypesData.add(documentTypeJson);
+        });
+        return enhance(documentTypesData, documentTypeDataTable);
     }
 }

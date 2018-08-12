@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -46,12 +46,35 @@
  *
  */
 
-package org.egov.tl.repository;
+package org.egov.tl.service;
 
-import org.egov.tl.entity.LicenseType;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.egov.commons.Installment;
+import org.egov.tl.entity.TradeLicense;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-public interface LicenseTypeRepository extends JpaRepository<LicenseType, Long> {
+@Service
+@Transactional(readOnly = true)
+public class LicenseRenewalNotificationService {
 
-    LicenseType findByName(String name);
+    @Autowired
+    private LicenseConfigurationService licenseConfigurationService;
+
+    @Autowired
+    private TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
+
+    @Autowired
+    private DemandNoticeService demandNoticeService;
+
+    @Autowired
+    private PenaltyRatesService penaltyRatesService;
+
+    public void notifyLicenseRenewal(TradeLicense license, Installment installment) {
+        if (licenseConfigurationService.notifyOnDemandGeneration()) {
+            tradeLicenseSmsAndEmailService.sendNotificationOnDemandGeneration(license, installment,
+                    demandNoticeService.generateReport(license.getId()),
+                    penaltyRatesService.getPenaltyDate(license.getLicenseAppType(), installment));
+        }
+    }
 }

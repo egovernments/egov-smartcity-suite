@@ -58,7 +58,7 @@ import org.egov.infra.exception.ApplicationValidationException;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.tl.entity.DemandGenerationLog;
 import org.egov.tl.entity.DemandGenerationLogDetail;
-import org.egov.tl.entity.License;
+import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.contracts.DemandGenerationRequest;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -73,7 +73,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 import static org.egov.infra.persistence.utils.PersistenceUtils.flushBatchUpdate;
@@ -106,20 +105,10 @@ public class DemandGenerationService {
 
     @Autowired
     @Qualifier("tradeLicenseService")
-    private AbstractLicenseService licenseService;
+    private TradeLicenseService licenseService;
 
     @Autowired
-    private LicenseConfigurationService licenseConfigurationService;
-
-    @Autowired
-    private TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
-
-    @Autowired
-    private DemandNoticeService demandNoticeService;
-
-    @Autowired
-    private PenaltyRatesService penaltyRatesService;
-
+    private LicenseRenewalNotificationService licenseRenewalNotificationService;
 
     private int batchSize;
 
@@ -167,19 +156,15 @@ public class DemandGenerationService {
             CFinancialYear financialYear = financialYearService.getFinacialYearByYearRange(demandGenerationRequest.getInstallmentYear());
             Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(module, financialYear.getStartingDate());
             int batchUpdateCount = 0;
-            boolean notificationRequired = licenseConfigurationService.notifyOnDemandGeneration();
-            Date penaltyDate = penaltyRatesService.getPenaltyDate(licenseService.getLicenseApplicationTypeForRenew(), installment);
             for (Long licenseId : demandGenerationRequest.getLicenseIds()) {
-                License license = licenseService.getLicenseById(licenseId);
+                TradeLicense license = licenseService.getLicenseById(licenseId);
                 DemandGenerationLogDetail demandGenerationLogDetail = demandGenerationLogService.
                         createOrGetDemandGenerationLogDetail(demandGenerationLog, license);
                 try {
                     if (!installment.equals(license.getCurrentDemand().getEgInstallmentMaster())) {
                         licenseService.raiseDemand(license, module, installment);
                         demandGenerationLogDetail.setDetail(SUCCESSFUL);
-                        if (notificationRequired)
-                            tradeLicenseSmsAndEmailService.sendNotificationOnDemandGeneration(license, installment,
-                                    demandNoticeService.generateReport(license.getId()), penaltyDate);
+                        licenseRenewalNotificationService.notifyLicenseRenewal(license, installment);
                     }
                     demandGenerationLogDetail.setStatus(COMPLETED);
                 } catch (RuntimeException e) {
@@ -198,15 +183,11 @@ public class DemandGenerationService {
     public boolean generateLicenseDemand(Long licenseId) {
         boolean generationSuccess = true;
         try {
-            License license = licenseService.getLicenseById(licenseId);
+            TradeLicense license = licenseService.getLicenseById(licenseId);
             Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(licenseService.getModuleName(),
                     new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate());
             licenseService.raiseDemand(license, licenseService.getModuleName(), installment);
-            if (licenseConfigurationService.notifyOnDemandGeneration()) {
-                tradeLicenseSmsAndEmailService.sendNotificationOnDemandGeneration(license, installment,
-                        demandNoticeService.generateReport(license.getId()),
-                        penaltyRatesService.getPenaltyDate(license.getLicenseAppType(), installment));
-            }
+            licenseRenewalNotificationService.notifyLicenseRenewal(license, installment);
         } catch (ValidationException e) {
             LOGGER.warn(ERROR_MSG, e);
             generationSuccess = false;

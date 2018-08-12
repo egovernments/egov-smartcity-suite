@@ -58,9 +58,7 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.tl.entity.LicenseAppType;
-import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.service.LicenseConfigurationService;
-import org.egov.tl.service.LicenseSubCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -74,24 +72,21 @@ import static org.egov.tl.utils.Constants.RENEW_APPTYPE_CODE;
 public class LicenseUtils {
     @Autowired
     private ModuleService moduleService;
+
     @Autowired
     private AssignmentService assignmentService;
+
     @Autowired
     private DepartmentService departmentService;
+
     @Autowired
     private DesignationService designationService;
-    @Autowired
-    private LicenseSubCategoryService licenseSubCategoryService;
 
     @Autowired
     private LicenseConfigurationService licenseConfigurationService;
 
     public Module getModule(final String moduleName) {
         return moduleService.getModuleByName(moduleName);
-    }
-
-    public List<LicenseSubCategory> getAllTradeNames(final String simpleName) {
-        return licenseSubCategoryService.getSubCategoriesByLicenseTypeName(simpleName);
     }
 
     public List<Department> getAllDepartments() {

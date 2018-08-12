@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -45,66 +45,66 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
   --%>
-
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<form:form role="form" action="create" modelAttribute="documenttype" commandName="documenttype"
-           cssClass="form-horizontal form-groups-bordered">
+<form:form role="form" action="create" modelAttribute="licenseDocumentType" cssClass="form-horizontal form-groups-bordered">
     <div class="row">
         <div class="col-md-12">
+            <c:if test="${not empty message}">
+                <div class="alert alert-success" role="alert">
+                    <spring:message code="${message}" arguments="${name}"/>
+                </div>
+            </c:if>
             <div class="panel panel-primary" data-collapsed="0">
                 <div class="panel-heading">
                     <div class="panel-title"><spring:message code="title.create.document"/></div>
                 </div>
                 <div class="panel-body">
                     <div class="form-group">
-                        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.name"/> <span
-                                id="mandatory" class="mandatory"></span></label>
+                        <label class="col-sm-2 control-label text-right"><spring:message code="lbl.name"/>
+                            <span id="mandatory" class="mandatory"></span>
+                        </label>
                         <div class="col-sm-3 add-margin">
-                            <form:input path="name" id="name" class="form-control text-left" required="required"
-                                        maxLength="50"/>
+                            <form:input path="name" id="name" class="form-control text-left" required="required" maxLength="50"/>
+                            <form:errors path="name" cssClass="error-msg"/>
                         </div>
-                        <label class="col-sm-2 control-label text-right"><spring:message code="lbl.licenseAppType"/>
-                            <span
-                                    class="mandatory"></span> </label>
+                        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.licenseAppType"/>
+                            <span class="mandatory"></span>
+                        </label>
                         <div class="col-sm-3 add-margin">
                             <form:select path="applicationType" id="applicationType_dropdown"
-                                         cssClass="form-control capitalize"
+                                         cssClass="form-control"
                                          cssErrorClass="form-control" required="required">
                                 <form:option value=""><spring:message code="lbl.select"/></form:option>
-                                <form:options items="${applicationType}"/>
+                                <form:options items="${applicationTypes}" itemLabel="name" itemValue="id"/>
                             </form:select>
+                            <form:errors path="applicationType" cssClass="error-msg"/>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.mandatory"/></label>
-                        <div class="col-sm-3 add-margin">
-                            <form:checkbox path="mandatory" id="mandatory"/>
-                        </div>
-                        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.enabled"/></label>
+                        <label class="col-sm-2 control-label text-right"><spring:message code="lbl.enabled"/></label>
                         <div class="col-sm-3 add-margin">
                             <form:checkbox path="enabled" id="enabled"/>
                         </div>
                     </div>
-                    <spring:hasBindErrors name="documenttype">
-                        <div>
-                            <form:errors path="name" cssClass="error-msg add-margin"/>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label text-right"><spring:message code="lbl.mandatory"/></label>
+                        <div class="col-sm-3 add-margin">
+                            <form:checkbox path="mandatory" id="mandatory"/>
                         </div>
-                    </spring:hasBindErrors>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     <div class="form-group">
         <div class="text-center">
-            <button type='submit' class='btn btn-primary' id="buttonSubmit">
-                <spring:message code='lbl.submit'/>
-            </button>
-            <a href='javascript:void(0)' class='btn btn-default' onclick='self.close()'><spring:message
-                    code='lbl.close'/></a>
+            <button type='submit' class='btn btn-primary' id="buttonSubmit"><spring:message code='lbl.save'/></button>
+            <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
+            <a href='javascript:void(0)' class='btn btn-default' onclick='self.close()'><spring:message code='lbl.close'/></a>
         </div>
     </div>
 </form:form>

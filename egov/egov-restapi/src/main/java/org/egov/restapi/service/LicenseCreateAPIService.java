@@ -53,15 +53,15 @@ import org.egov.infra.admin.master.repository.BoundaryRepository;
 import org.egov.infra.admin.master.repository.BoundaryTypeRepository;
 import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.restapi.web.contracts.tradelicense.LicenseCreateRequest;
-import org.egov.tl.entity.License;
-import org.egov.tl.entity.Licensee;
 import org.egov.tl.entity.TradeLicense;
+import org.egov.tl.entity.Licensee;
 import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.repository.LicenseCategoryRepository;
 import org.egov.tl.repository.LicenseSubCategoryRepository;
 import org.egov.tl.repository.NatureOfBusinessRepository;
 import org.egov.tl.service.LicenseApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -76,6 +76,7 @@ import static org.egov.tl.utils.Constants.CSCOPERATORNEWLICENSE;
 public class LicenseCreateAPIService {
 
     @Autowired
+    @Qualifier("licenseApplicationService")
     private LicenseApplicationService licenseApplicationService;
 
     @Autowired
@@ -96,7 +97,7 @@ public class LicenseCreateAPIService {
     @Autowired
     private CrossHierarchyService crossHierarchyService;
 
-    public License createLicense(LicenseCreateRequest license) {
+    public TradeLicense createLicense(LicenseCreateRequest license) {
         TradeLicense tradeLicense = new TradeLicense();
         Licensee licensee = new Licensee();
         licensee.setMobilePhoneNumber(license.getMobilePhoneNumber());

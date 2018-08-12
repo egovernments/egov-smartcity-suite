@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -46,15 +46,19 @@
   ~
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
-
 <div class="row" id="page-content">
     <div class="col-md-12">
+        <c:if test="${not empty message}">
+            <div class="alert alert-success" role="alert">
+                <spring:message code="${message}" arguments="${name}"/>
+            </div>
+        </c:if>
         <form:form role="form" method="post" modelAttribute="licenseSubCategory" class="form-horizontal form-groups-bordered">
         <div class="panel panel-primary" data-collapsed="0">
             <div class="panel-heading">
@@ -76,7 +80,7 @@
                 <div class="form-group">
                     <label class="col-sm-2 control-label text-right"><spring:message code="lbl.name"/> <span id="mandatory" class="mandatory"></span></label>
                     <div class="col-sm-3 add-margin">
-                        <form:input path="name" id="name" cssClass="form-control" cssErrorClass="form-control error" required="required" maxLength="256"/>
+                        <form:input path="name" id="name" cssClass="form-control" cssErrorClass="form-control error" required="required" maxLength="50"/>
                         <form:errors path="name" cssClass="error-msg"/>
                     </div>
                     <label class="col-sm-2 control-label text-right"><spring:message code="lbl.code"/> <span id="mandatory" class="mandatory"></span></label>
@@ -87,18 +91,15 @@
                     </div>
                 </div>
                 <div class="panel-heading">
-                    <div class="panel-title text-left"><strong><spring:message code="title.subcategory.view.details"/></strong>
-                        <button type="button" class="btn btn-secondary pull-right" id="addrow"><i class="fa fa-plus-circle" aria-hidden="true"></i> &nbsp;Add Row</button>
-                    </div>
+                    <div class="panel-title text-left"><strong><spring:message code="title.details"/></strong></div>
                 </div>
                 <div class="col-md-12">
                     <table class="table table-bordered" id="subcat">
                         <thead>
                         <tr>
-                            <th><spring:message code="lbl.feetype"/><span class="mandatory"></span></th>
-                            <th><spring:message code="lbl.rateType"/><span class="mandatory"></span></th>
-                            <th><spring:message code="license.uom.lbl"/><span class="mandatory"></span></th>
-                            <th></th>
+                            <th class="text-center"><spring:message code="lbl.feetype"/><span class="mandatory"></span></th>
+                            <th class="text-center"><spring:message code="lbl.rateType"/><span class="mandatory"></span></th>
+                            <th class="text-center" colspan="2"><spring:message code="license.uom.lbl"/><span class="mandatory"></span></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -182,6 +183,15 @@
                             </c:otherwise>
                         </c:choose>
                         </tbody>
+                        <tfoot>
+                        <tr>
+                            <td colspan="4">
+                                <button type="button" class="btn btn-secondary pull-right" id="addrow">
+                                    <i class="fa fa-plus-circle" aria-hidden="true"></i> &nbsp;<spring:message code="lbl.add.more"/>
+                                </button>
+                            </td>
+                        </tr>
+                        </tfoot>
                     </table>
                 </div>
             </div>
@@ -190,8 +200,8 @@
     <div class="form-group">
         <div class="text-center">
             <button type="submit" class="btn btn-primary"><spring:message code="lbl.update"/></button>
-            <button type="reset" class="btn btn-default" onclick="window.location.reload()"><spring:message code="lbl.reset"/></button>
-            <button type="button" class="btn btn-primary" onclick="redirect('/tl/licensesubcategory/update')"><spring:message code="lbl.back"/></button>
+            <a href='javascript:void(0)' class='btn btn-default' onclick='window.location="."'><spring:message code='lbl.back'/></a>
+            <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
             <button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()"><spring:message code="lbl.close"/></button>
         </div>
     </div>

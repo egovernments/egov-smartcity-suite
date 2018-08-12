@@ -49,10 +49,11 @@ package org.egov.tl.web.controller.transactions.closure;
 
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.utils.FileStoreUtils;
-import org.egov.tl.entity.License;
+import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.service.LicenseClosureService;
 import org.egov.tl.service.TradeLicenseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -79,12 +80,13 @@ public class ClosureEndorsementController {
     private LicenseClosureService licenseClosureService;
 
     @Autowired
+    @Qualifier("tradeLicenseService")
     private TradeLicenseService tradeLicenseService;
 
     @GetMapping("/digisign-transition")
     public String approvedClosureWithDigiSign(@RequestParam String fileStoreIds, @RequestParam String applicationNumbers,
                                               Model model) {
-        License license = licenseClosureService.approveClosure(applicationNumbers);
+        TradeLicense license = licenseClosureService.approveClosure(applicationNumbers);
         model.addAttribute("fileStoreId", fileStoreIds);
         model.addAttribute("license", license);
         return "closure-endorsement-success";
@@ -93,7 +95,7 @@ public class ClosureEndorsementController {
     @GetMapping(value = "/endorsementnotice/{licenseId}", produces = APPLICATION_PDF_VALUE)
     @ResponseBody
     public ResponseEntity<InputStreamResource> closureEndorsementNotice(@PathVariable Long licenseId) {
-        License license = tradeLicenseService.getLicenseById(licenseId);
+        TradeLicense license = tradeLicenseService.getLicenseById(licenseId);
         if (isBlank(license.getDigiSignedCertFileStoreId())) {
             ReportOutput reportOutput = licenseClosureService.generateClosureEndorsementNotice(license);
             reportOutput.setReportName(license.generateCertificateFileName());
@@ -108,7 +110,7 @@ public class ClosureEndorsementController {
     @ResponseBody
     public ResponseEntity<InputStreamResource> downloadSignedEndorsementNotice(@RequestParam String fileStoreId,
                                                                                @RequestParam String applicationNumber) {
-        License license = tradeLicenseService.getLicenseByApplicationNumber(applicationNumber);
+        TradeLicense license = tradeLicenseService.getLicenseByApplicationNumber(applicationNumber);
         return fileStoreUtils.fileAsPDFResponse(fileStoreId, license.generateCertificateFileName(), TL_FILE_STORE_DIR);
     }
 }
