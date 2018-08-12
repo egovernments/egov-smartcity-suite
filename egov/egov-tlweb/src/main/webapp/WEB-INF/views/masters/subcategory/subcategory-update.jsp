@@ -80,13 +80,13 @@
                 <div class="form-group">
                     <label class="col-sm-2 control-label text-right"><spring:message code="lbl.name"/> <span id="mandatory" class="mandatory"></span></label>
                     <div class="col-sm-3 add-margin">
-                        <form:input path="name" id="name" cssClass="form-control" cssErrorClass="form-control error" required="required" maxLength="50"/>
+                        <form:input path="name" id="name" cssClass="form-control" cssErrorClass="form-control error" required="required" maxLength="150"/>
                         <form:errors path="name" cssClass="error-msg"/>
                     </div>
                     <label class="col-sm-2 control-label text-right"><spring:message code="lbl.code"/> <span id="mandatory" class="mandatory"></span></label>
                     <div class="col-sm-3 add-margin">
                         <form:input path="code" id="code" cssClass="form-control patternvalidation" data-pattern="alphabets" cssErrorClass="form-control error"
-                                    readonly="true" required="required" maxLength="32"/>
+                                    readonly="true" required="required" maxLength="5"/>
                         <form:errors path="code" cssClass="error-msg"/>
                     </div>
                 </div>

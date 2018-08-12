@@ -70,13 +70,14 @@
                         </label>
                         <div class="col-sm-3">
                             <form:input path="name" id="name" type="text" cssClass="form-control low-width"
-                                        cssErrorClass="form-control error low-width" required="required" maxlength="50"/>
+                                        cssErrorClass="form-control error low-width" required="required" maxlength="150"/>
                             <form:errors path="name" cssClass="error-msg"/>
                         </div>
                         <label class="col-sm-2 control-label"> <spring:message code="lbl.code"/><span class="mandatory"></span>
                         </label>
                         <div class="col-sm-3">
-                            <form:input path="code" id="code" disabled="true" type="text" class="form-control low-width" required="required"/>
+                            <form:input path="code" id="code" disabled="true" type="text" class="form-control low-width"
+                                        maxlength="5" required="required"/>
                             <form:errors path="code" cssClass="error-msg"/>
                         </div>
                     </div>

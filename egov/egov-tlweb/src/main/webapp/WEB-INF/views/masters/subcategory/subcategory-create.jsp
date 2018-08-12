@@ -87,7 +87,7 @@
                     <div class="col-sm-3 add-margin">
                         <form:input path="name" id="name" cssClass="form-control patternvalidation"
                                     data-pattern="alphanumericwithspacehyphenunderscore"
-                                    cssErrorClass="form-control error" required="required" maxLength="50"/>
+                                    cssErrorClass="form-control error" required="required" maxLength="150"/>
                         <form:errors path="name" cssClass="error-msg"/>
                     </div>
                     <label class="col-sm-2 control-label text-right">
