@@ -1743,6 +1743,9 @@ label.error {
 .form-control.low-width {
   width: 99%;
 }
+label.form-control {
+  height : auto;
+}
 .form-group .input-group .form-control.style-form,
 .form-control.style-form {
   border: 0;
