@@ -106,8 +106,9 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
         final DefaultPaymentRequest sbiPaymentRequest = new DefaultPaymentRequest();
         sbiPaymentRequest.setParameter(CollectionConstants.SBIMOPS_DC,
                 collectionApplicationProperties.sbimopsDepartmentcode(CollectionConstants.MESSAGEKEY_SBIMOPS_DC));
-        StringBuilder transactionId = new StringBuilder(receiptHeader.getConsumerCode())
-                .append(CollectionConstants.SEPARATOR_HYPHEN).append(receiptHeader.getId());
+        StringBuilder transactionId = new StringBuilder(receiptHeader.getId().toString())
+                .append(CollectionConstants.SEPARATOR_HYPHEN)
+                .append(receiptHeader.getConsumerCode().replace("-", "").replace("/", ""));
         sbiPaymentRequest.setParameter(CollectionConstants.SBIMOPS_DTID, transactionId.toString());
         sbiPaymentRequest.setParameter(CollectionConstants.SBIMOPS_RN, receiptHeader.getPayeeName());
         sbiPaymentRequest.setParameter(CollectionConstants.SBIMOPS_RID, receiptHeader.getConsumerCode());
@@ -163,8 +164,8 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
         sbiPaymentResponse.setErrorDescription(responseMap.get(CollectionConstants.SBIMOPS_STATUS));
         final String[] consumercodeTransactionId = responseMap.get(CollectionConstants.SBIMOPS_DTID)
                 .split(CollectionConstants.SEPARATOR_HYPHEN);
-        sbiPaymentResponse.setAdditionalInfo6(consumercodeTransactionId[0]);
-        sbiPaymentResponse.setReceiptId(consumercodeTransactionId[1]);
+        sbiPaymentResponse.setAdditionalInfo6(consumercodeTransactionId[1]);
+        sbiPaymentResponse.setReceiptId(consumercodeTransactionId[0]);
         if (sbiPaymentResponse.getAuthStatus().equals(CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS)) {
             sbiPaymentResponse.setTxnAmount(new BigDecimal(responseMap.get(CollectionConstants.SBIMOPS_TA)));
             sbiPaymentResponse.setTxnReferenceNo(responseMap.get(CollectionConstants.SBIMOPS_CFMS_TRID));
@@ -261,8 +262,9 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
         deptCodeJson.addProperty(CollectionConstants.SBIMOPS_DEPTCODE,
                 collectionApplicationProperties.sbimopsDepartmentcode(CollectionConstants.MESSAGEKEY_SBIMOPS_DC));
         final JsonObject transactionIdJson = new JsonObject();
-        final StringBuilder transactionId = new StringBuilder(onlinePayment.getReceiptHeader().getConsumerCode())
-                .append(CollectionConstants.SEPARATOR_HYPHEN).append(onlinePayment.getReceiptHeader().getId());
+        StringBuilder transactionId = new StringBuilder(onlinePayment.getReceiptHeader().getId().toString())
+                .append(CollectionConstants.SEPARATOR_HYPHEN)
+                .append(onlinePayment.getReceiptHeader().getConsumerCode().replace("-", "").replace("/", ""));
         transactionIdJson.addProperty(CollectionConstants.SBIMOPS_DEPTTID, transactionId.toString());
         final JsonObject requestJson = new JsonObject();
         deptCodeJson.add(CollectionConstants.SBIMOPS_ROW, transactionIdJson);
