@@ -407,6 +407,12 @@ public class WaterChargeSurveyDashboardService {
 
     private BoolQueryBuilder prepareQuery(WaterChargeSurveyDashboardRequest request, String date) {
         BoolQueryBuilder boolQuery = new BoolQueryBuilder();
+        if (isNotBlank(request.getRegionName()))
+            boolQuery = boolQuery.filter(termQuery(REGION_NAME, request.getRegionName()));
+        if (isNotBlank(request.getDistrictName()))
+            boolQuery = boolQuery.filter(matchQuery(DISTRICT_NAME, request.getDistrictName()));
+        if (isNotBlank(request.getUlbCode()))
+            boolQuery = boolQuery.filter(matchQuery(CITY_CODE, request.getUlbCode()));
         if (isNotBlank(request.getFromDate()))
             boolQuery = boolQuery.filter(rangeQuery(date).gte(request.getFromDate()));
         if (isNotBlank(request.getFromDate()))
