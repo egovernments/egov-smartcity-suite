@@ -64,7 +64,9 @@
                     <div class="panel panel-primary" data-collapsed="0">
                         <div class="panel-heading">
                             <div class="panel-title text-center no-float">
-                                <s:text name="license.acknowledgement.slip.for.new"/>
+                                <s:text name="license.acknowledgement.slip.for.new">
+                                    <s:param><s:property value="%{licenseAppType.name}"/></s:param>
+                                </s:text>
                             </div>
                         </div>
                         <div class="panel-body">
