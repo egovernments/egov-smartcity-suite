@@ -46,7 +46,9 @@
  */
 package org.egov.council.service.workflow;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
@@ -107,24 +109,31 @@ public class PreambleWorkflowCustomImpl implements PreambleWorkflowCustom {
         Position pos = null;
         Assignment wfInitiator = null;
         WorkFlowMatrix wfmatrix = null;
+        List<Assignment> activeAssignment=Collections.emptyList();
         
         if (null != councilPreamble.getId()) {
             if (ANONYMOUS.equalsIgnoreCase(councilPreamble.getCreatedBy().getName())) {
                 wfInitiator = assignmentService
                         .getPrimaryAssignmentForPositon(councilPreamble.getState().getInitiatorPosition().getId());
-                if (wfInitiator == null)
-                    wfInitiator = assignmentService
-                            .getAssignmentsForPosition(councilPreamble.getState().getInitiatorPosition().getId()).get(0);
+                if (wfInitiator == null) {
+                    activeAssignment = assignmentService
+                            .getAssignmentsForPosition(councilPreamble.getState().getInitiatorPosition().getId());
+                    wfInitiator = !activeAssignment.isEmpty() ? activeAssignment.get(0) : null;
+                }
             } else {
                 wfInitiator = assignmentService.getPrimaryAssignmentForUser(councilPreamble.getCreatedBy().getId());
-                if (wfInitiator == null)
-                    wfInitiator = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(councilPreamble
-                            .getCreatedBy().getId()).get(0);
+
+                if (wfInitiator == null) {
+                    activeAssignment = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(councilPreamble
+                            .getCreatedBy().getId());
+                    wfInitiator = !activeAssignment.isEmpty() ? activeAssignment.get(0) : null;
+                }
             }
-            
+
         }
-        if(wfInitiator==null && !ANONYMOUS.equalsIgnoreCase(user.getUsername())){
-            wfInitiator =assignmentService.getAllActiveEmployeeAssignmentsByEmpId(user.getId()).get(0);
+        if (wfInitiator == null && !ANONYMOUS.equalsIgnoreCase(user.getUsername())) {
+            activeAssignment = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(user.getId());
+            wfInitiator = !activeAssignment.isEmpty() ? activeAssignment.get(0) : null;
         }
         if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0))) {
             pos = positionMasterService.getPositionById(approvalPosition);
@@ -224,11 +233,11 @@ public class PreambleWorkflowCustomImpl implements PreambleWorkflowCustom {
                     .withNatureOfTask(CouncilConstants.NATURE_OF_WORK);
         }
         // IF HOD FORWARD TO Commissioner THEN TRANSITION OCCUR HERE
-        else if ("HODAPPROVED".equalsIgnoreCase(councilPreamble.getStatus().getCode())
-                || (CouncilConstants.CREATED.equalsIgnoreCase(councilPreamble.getStatus().getCode())
+        else if (("HODAPPROVED".equalsIgnoreCase(councilPreamble.getStatus().getCode())
+                || CouncilConstants.CREATED.equalsIgnoreCase(councilPreamble.getStatus().getCode()))
                         && CouncilConstants.DESIGNATION_COMMISSIONER.equalsIgnoreCase(
                                 pos == null || null == pos.getDeptDesig() ? ""
-                                        : pos.getDeptDesig().getDesignation().getName()))) {
+                                        : pos.getDeptDesig().getDesignation().getName())) {
             if (CouncilConstants.CREATED.equalsIgnoreCase(councilPreamble.getStatus().getCode())) {
                 wfmatrix = councilPreambleWorkflowService.getWfMatrix(councilPreamble.getStateType(), null, null, null,
                         CouncilConstants.APPROVED, CouncilConstants.COMMISSIONER_APPROVALPENDING);
