@@ -108,12 +108,12 @@ import static org.egov.tl.utils.Constants.*;
                 "/viewtradelicense", "method", "showForApproval"}),
         @Result(name = "tl_generateCertificate", type = "redirectAction",
                 location = "../viewtradelicense/viewTradeLicense-generateCertificate"),
-        @Result(name = "approve", location = "newTradeLicense-new.jsp"),
+        @Result(name = APPROVE_PAGE, location = "newTradeLicense-new.jsp"),
         @Result(name = REPORT_PAGE, location = "newTradeLicense-report.jsp"),
         @Result(name = "digitalSignatureRedirection", location = "newTradeLicense-digitalSignatureRedirection.jsp"),
         @Result(name = MEESEVA_RESULT_ACK, location = "/meeseva/generatereceipt", type = "redirect",
                 params = {"prependServletContext", "false", "transactionServiceNumber", "${applicationNo}"})})
-public abstract class BaseLicenseAction<T extends TradeLicense> extends GenericWorkFlowAction {
+public abstract class BaseLicenseAction extends GenericWorkFlowAction {
 
     protected static final String WF_INPROGRESS_ERROR_CODE = "WF.INPROGRESS";
     protected static final String WF_INPROGRESS_ERROR_MSG_FORMAT = "Cannot continue, A %s application is already in progress.";
@@ -122,6 +122,7 @@ public abstract class BaseLicenseAction<T extends TradeLicense> extends GenericW
     private static final String VALIDATE_SUPPORT_DOCUMENT = "error.support.docs";
     private static final String LICENSE_REJECT = "license.rejected";
 
+    protected transient TradeLicense tradeLicense = new TradeLicense();
     protected transient String roleName;
     protected transient String reportId;
     protected transient String fileStoreIds;
@@ -170,10 +171,12 @@ public abstract class BaseLicenseAction<T extends TradeLicense> extends GenericW
         this.addRelatedEntity("tradeName", LicenseSubCategory.class);
     }
 
-    protected abstract T license();
+    protected TradeLicense license() {
+        return tradeLicense;
+    }
 
     @ValidationErrorPage(NEW)
-    public String create(final T license) {
+    public String create(TradeLicense license) {
         addNewDocuments();
         populateWorkflowBean();
         if (tradeLicenseService.currentUserIsMeeseva()) {

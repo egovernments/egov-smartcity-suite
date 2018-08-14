@@ -60,9 +60,9 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
 import org.egov.pims.commons.Position;
-import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.Licensee;
+import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.service.LicenseCategoryService;
 import org.egov.tl.service.LicenseService;
@@ -88,16 +88,15 @@ import static org.egov.tl.utils.Constants.*;
         @Result(name = MESSAGE, location = "newTradeLicense-message.jsp"),
         @Result(name = BEFORE_RENEWAL, location = "newTradeLicense-beforeRenew.jsp"),
         @Result(name = PRINTACK, location = "newTradeLicense-printAck.jsp")})
-public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
+public class NewTradeLicenseAction extends BaseLicenseAction {
 
     private static final long serialVersionUID = 1L;
 
-    private TradeLicense tradeLicense = new TradeLicense();
-    private List<LicenseDocumentType> documentTypes = new ArrayList<>();
-    private Map<String, String> ownerShipTypeMap;
     private String mode;
     private String message;
     private String renewAppType;
+    private transient List<LicenseDocumentType> documentTypes = new ArrayList<>();
+    private transient Map<String, String> ownerShipTypeMap;
 
     @Autowired
     private transient BoundaryService boundaryService;
@@ -269,11 +268,6 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
 
     public void setWorkflowBean(final WorkflowBean workflowBean) {
         this.workflowBean = workflowBean;
-    }
-
-    @Override
-    protected TradeLicense license() {
-        return tradeLicense;
     }
 
     public List<LicenseDocumentType> getDocumentTypes() {

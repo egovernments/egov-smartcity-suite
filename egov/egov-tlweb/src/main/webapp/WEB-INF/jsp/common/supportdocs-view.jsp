@@ -46,7 +46,7 @@
   ~
   --%>
 
-<%@ page language="java" pageEncoding="UTF-8" %>
+<%@ page pageEncoding="UTF-8" %>
 <%@ include file="/includes/taglibs.jsp" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <c:choose>

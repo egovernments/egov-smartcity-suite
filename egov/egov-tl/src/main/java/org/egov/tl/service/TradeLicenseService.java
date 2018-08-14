@@ -1278,7 +1278,7 @@ public class TradeLicenseService {
 
         for (LicenseDocument document : licenseDocuments) {
             String docType = document.getType().getName();
-            String appType = document.getType().getApplicationType().toString();
+            String appType = document.getType().getApplicationType().getCode();
 
             if (licenseDocumentDetails.get(appType).containsKey(docType)) {
                 licenseDocumentDetails.get(appType).get(docType).add(document);

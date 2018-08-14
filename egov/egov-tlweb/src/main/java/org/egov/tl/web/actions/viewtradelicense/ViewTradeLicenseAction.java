@@ -98,11 +98,10 @@ import static org.egov.tl.utils.Constants.TL_FILE_STORE_DIR;
                 params = {"fileStoreIds", "${fileStoreIds}", "applicationNumbers", "${applicationNo}"}),
         @Result(name = "closureEndorsementDigiSign", location = "closure-endorsementnotice-digitalsigned.jsp")
 })
-public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
+public class ViewTradeLicenseAction extends BaseLicenseAction {
     private static final long serialVersionUID = 1L;
     private static final String MODEL_ID = "model.id";
 
-    private TradeLicense tradeLicense = new TradeLicense();
     private Long licenseId;
     private String url;
     private Boolean enableState;
@@ -118,12 +117,6 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
 
     @Override
     public TradeLicense getModel() {
-        return tradeLicense;
-
-    }
-
-    @Override
-    protected TradeLicense license() {
         return tradeLicense;
     }
 
