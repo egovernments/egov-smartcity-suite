@@ -55,50 +55,56 @@
         </c:if>
         <div class="panel panel-primary" data-collapsed="0">
             <div class="panel-heading">
-                <div class="panel-title"><spring:message code="title.validity"/></div>
+                <div class="panel-title">&nbsp;</div>
             </div>
             <div class="panel-body custom">
-                <div class="row add-border">
+                <div class="row">
                     <div class="col-xs-3 add-margin">
                         <spring:message code="lbl.tradetype"/>
                     </div>
-                    <div class="col-sm-3 add-margin view-content">${validity.natureOfBusiness.name}</div>
+                    <div class="col-sm-3 add-margin">
+                        <label class="form-control">${validity.natureOfBusiness.name}</label>
+                    </div>
                     <div class="col-xs-3 add-margin">
                         <spring:message code="lbl.licensecategory"/>
                     </div>
-                    <div class="col-sm-3 add-margin view-content"><c:out value="${validity.licenseCategory.name}" default="NA"/></div>
+                    <div class="col-sm-3 add-margin">
+                        <label class="form-control"><c:out value="${validity.licenseCategory.name}" default="NA"/></label>
+                    </div>
                 </div>
-                <div class="row add-border">
+                <div class="row">
                     <label class="col-sm-3 add-margin"><spring:message code="lbl.basedon.finyear"/></label>
-                    <div class="col-sm-3 add-margin view-content">
+                    <div class="col-sm-3 add-margin">
+                        <label class="form-control">
                         <c:if test="${validity.basedOnFinancialYear == true}">
                             Yes
                         </c:if>
                         <c:if test="${validity.basedOnFinancialYear == false}">
                             No
                         </c:if>
+                        </label>
                     </div>
                 </div>
                 <c:if test="${validity.basedOnFinancialYear == false}">
-                    <div class="row add-border">
+                    <div class="row">
                         <div class="col-xs-3 add-margin">
                             <spring:message code="lbl.day"/>
                         </div>
-                        <div class="col-sm-3 add-margin view-content">${validity.day}</div>
+                        <div class="col-sm-3 add-margin"><label class="form-control">${validity.day}</label></div>
                         <div class="col-xs-3 add-margin">
                             <spring:message code="lbl.week"/>
                         </div>
-                        <div class="col-sm-3 add-margin view-content">${validity.week}</div>
+                        <div class="col-sm-3 add-margin"><label class="form-control">${validity.week}</label></div>
                     </div>
-                    <div class="row add-border">
+                    <div class="row">
                         <div class="col-xs-3 add-margin">
                             <spring:message code="lbl.month"/>
                         </div>
-                        <div class="col-sm-3 add-margin view-content">${validity.month}</div>
+                        <div class="col-sm-3 add-margin"><label class="form-control">${validity.month}</label></div>
                         <div class="col-xs-3 add-margin">
                             <spring:message code="lbl.year"/>
                         </div>
-                        <div class="col-sm-3 add-margin view-content">${validity.year}</div>
+                        <div class="col-sm-3 add-margin"><label class="form-control">${validity.year}</label></div>
                     </div>
                 </c:if>
             </div>
@@ -107,6 +113,6 @@
 </div>
 <div class="row text-center">
     <div class="add-margin">
-        <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()">Close</a>
+        <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
     </div>
 </div>

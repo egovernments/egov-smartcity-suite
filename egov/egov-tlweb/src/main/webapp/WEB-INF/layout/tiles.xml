@@ -119,16 +119,25 @@
     </definition>
 
     <definition name="penaltyRates-create" extends="base_layout">
-        <put-attribute name="page-title" value="title.searchpenaltyRate" cascade="true"/>
+        <put-attribute name="page-title" value="title.create.penalty.rate" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/penaltyrates/penaltyrates-create.jsp"/>
     </definition>
 
     <definition name="penaltyRates-view" extends="base_layout">
-        <put-attribute name="page-title" value="title.searchpenaltyRate" cascade="true"/>
+        <put-attribute name="page-title" value="title.view.penalty.rate" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/penaltyrates/penaltyrates-view.jsp"/>
     </definition>
 
     <definition name="penaltyRates-result" template="/WEB-INF/views/masters/penaltyrates/penaltyrates-result.jsp"/>
+
+    <definition name="penaltyRates-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.view.penalty.rate" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/penaltyrates/penaltyrates-search.jsp"/>
+    </definition>
+    <definition name="penaltyRates-viewResult" extends="base_layout">
+        <put-attribute name="page-title" value="title.view.penalty.rate" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/penaltyrates/penaltyrates-list.jsp"/>
+    </definition>
 
     <definition name="digitalSignature-success" extends="base_layout">
         <put-attribute name="page-title" value="lbl.digitalSignature.success.title" cascade="true"/>
@@ -240,14 +249,7 @@
         <put-attribute name="page-title" value="title.baseregister" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/baseregister-report.jsp"/>
     </definition>
-    <definition name="penaltyRates-search" extends="base_layout">
-        <put-attribute name="page-title" value="title.searchpenaltyRate" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/penaltyrates/penaltyrates-search.jsp"/>
-    </definition>
-    <definition name="penaltyRates-viewResult" extends="base_layout">
-        <put-attribute name="page-title" value="title.searchpenaltyRate" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/penaltyrates/penaltyrates-list.jsp"/>
-    </definition>
+
     <definition name="search-demandnotice" extends="base_layout">
         <put-attribute name="page-title" value="title.document.new" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/transactions/demand/search-demandnotice.jsp"/>
