@@ -19,6 +19,7 @@ public class IVRSFeedBackResponse {
     private String functionaryName = EMPTY;
     private String functionaryMobileNo = EMPTY;
     private long totalComplaint = 0;
+    private long totalIvrsUpdated = 0;
     private long todaysClosed = 0;
     private long totalFeedback = 0;
     private long good = 0;
@@ -222,4 +223,11 @@ public class IVRSFeedBackResponse {
         this.todaysClosed = todaysClosed;
     }
 
+    public long getTotalIvrsUpdated() {
+        return totalIvrsUpdated;
+    }
+
+    public void setTotalIvrsUpdated(long totalIvrsUpdated) {
+        this.totalIvrsUpdated = totalIvrsUpdated;
+    }
 }

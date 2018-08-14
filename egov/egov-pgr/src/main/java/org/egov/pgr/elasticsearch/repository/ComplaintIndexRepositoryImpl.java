@@ -48,6 +48,7 @@
 
 package org.egov.pgr.elasticsearch.repository;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.utils.StringUtils.defaultIfBlank;
@@ -141,13 +142,13 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
     private static final String SATISFACTION_INDEX = "satisfactionIndex";
     private static final String SATISFACTION_AVERAGE = "satisfactionAverage";
     private static final String COMPLAINT_AGEINGDAYS_FROM_DUE = "complaintAgeingdaysFromDue";
-    private static final String CITY_GRADE="cityGrade";
-    private static final String REGION_NAME="cityRegionName";
-    private static final String LOCALITY_NUMBER="localityNo";
-    private static final String DISTRICT_CODE="cityDistrictCode";
-    private static final String COMPLETION_DATE="completionDate";
-    private static final String CREATED_DATE="createdDate";
-    private static final String TODAY_COMPLAINT_COUNT="todaysComplaintCount";
+    private static final String CITY_GRADE = "cityGrade";
+    private static final String REGION_NAME = "cityRegionName";
+    private static final String LOCALITY_NUMBER = "localityNo";
+    private static final String DISTRICT_CODE = "cityDistrictCode";
+    private static final String COMPLETION_DATE = "completionDate";
+    private static final String CREATED_DATE = "createdDate";
+    private static final String TODAY_COMPLAINT_COUNT = "todaysComplaintCount";
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
 
@@ -816,7 +817,7 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
 
     @Override
     public SearchResponse findFeedBackRatingDetails(ComplaintDashBoardRequest ivrsFeedBackRequest, BoolQueryBuilder feedBackQuery,
-            String aggregationField) {
+                                                    String aggregationField) {
         return elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
                 .setQuery(feedBackQuery)
                 .addAggregation(AggregationBuilders.terms("typeAggr").field(aggregationField).size(130)
@@ -830,15 +831,21 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
 
     @Override
     public List<ComplaintIndex> findIvrsComplaints(final ComplaintDashBoardRequest complaintDashBoardRequest,
-                                                         final BoolQueryBuilder query, String fieldName, String paramValue) {
+                                                   final BoolQueryBuilder query, String fieldName, String paramValue) {
+        SearchQuery searchQuery;
         final SortOrder sortOrder = complaintDashBoardRequest.getSortDirection().equals("ASC") ? SortOrder.ASC : SortOrder.DESC;
-        final SearchQuery searchQuery = new NativeSearchQueryBuilder().withQuery(query.must(QueryBuilders.matchQuery(fieldName, paramValue)))
-                .withSort(new FieldSortBuilder(complaintDashBoardRequest.getSortField()).order(sortOrder))
-                .withPageable(new PageRequest(0, complaintDashBoardRequest.getSize()))
-                .build();
+        if (isBlank(fieldName) && isBlank(paramValue))
+            searchQuery = new NativeSearchQueryBuilder().withQuery(query)
+                    .withSort(new FieldSortBuilder(complaintDashBoardRequest.getSortField()).order(sortOrder))
+                    .withPageable(new PageRequest(0, complaintDashBoardRequest.getSize()))
+                    .build();
+        else
+            searchQuery = new NativeSearchQueryBuilder().withQuery(query.must(QueryBuilders.matchQuery(fieldName, paramValue)))
+                    .withSort(new FieldSortBuilder(complaintDashBoardRequest.getSortField()).order(sortOrder))
+                    .withPageable(new PageRequest(0, complaintDashBoardRequest.getSize()))
+                    .build();
         return elasticsearchTemplate.queryForList(searchQuery, ComplaintIndex.class);
     }
-
 
     private TopHitsBuilder addFieldBasedOnAggField(String aggregationField) {
         TopHitsBuilder field = AggregationBuilders.topHits("paramDetails");
@@ -889,10 +896,10 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
         }
         return field;
     }
-    
-   
+
+
     public SearchResponse findCategoryWiseFeedBackRatingDetails(ComplaintDashBoardRequest ivrsFeedBackRequest,
-            BoolQueryBuilder feedBackQuery) {
+                                                                BoolQueryBuilder feedBackQuery) {
         if (isNotBlank(ivrsFeedBackRequest.getCategoryId()) || isNotBlank(ivrsFeedBackRequest.getCategoryName())) {
             return elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
                     .setQuery(feedBackQuery)

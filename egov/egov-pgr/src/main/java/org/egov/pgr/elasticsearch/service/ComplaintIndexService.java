@@ -108,6 +108,7 @@ import static java.lang.String.format;
 import static java.math.BigDecimal.ZERO;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
 import static org.egov.infra.utils.ApplicationConstant.NA;
@@ -1511,16 +1512,22 @@ public class ComplaintIndexService {
                                                       final String fieldName, final String fieldValue) {
 
         List<ComplaintIndex> complaintList = new ArrayList<>();
-        if (isNotBlank(fieldValue))
+        if (isBlank(fieldName) && isBlank(fieldValue)) {
+            getComplaintsByField(complaintDashBoardRequest, fieldName, fieldValue, complaintList);
+        } else
             for (String callStatus : Arrays.asList(fieldValue.split(","))) {
-                BoolQueryBuilder boolQuery = getIvrsFilterQuery(complaintDashBoardRequest, false);
-                List<ComplaintIndex> complaints = complaintIndexRepository.findIvrsComplaints(complaintDashBoardRequest,
-                        boolQuery, fieldName, callStatus);
-                setComplaintViewURL(complaints);
-                getFeedbackInWords(complaints);
-                complaintList.addAll(complaints);
+                getComplaintsByField(complaintDashBoardRequest, fieldName, callStatus, complaintList);
             }
         return complaintList;
+    }
+
+    private void getComplaintsByField(ComplaintDashBoardRequest complaintDashBoardRequest, String fieldName, String callStatus, List<ComplaintIndex> complaintList) {
+        BoolQueryBuilder boolQuery = getIvrsFilterQuery(complaintDashBoardRequest, false);
+        List<ComplaintIndex> complaints = complaintIndexRepository.findIvrsComplaints(complaintDashBoardRequest,
+                boolQuery, fieldName, callStatus);
+        setComplaintViewURL(complaints);
+        getFeedbackInWords(complaints);
+        complaintList.addAll(complaints);
     }
 
     private void getFeedbackInWords(List<ComplaintIndex> complaints) {
@@ -1686,11 +1693,12 @@ public class ComplaintIndexService {
             Terms closedterms = completedResponse.getAggregations().get("typeAggr");
             for (Bucket closedBucket : closedterms.getBuckets()) {
                 IVRSFeedBackResponse feedbackResponse = new IVRSFeedBackResponse();
-                feedbackResponse.setTotalComplaint(closedBucket.getDocCount());
                 Range todaysClosedCount = closedBucket.getAggregations().get(TODAY_COMPLAINT_COUNT);
+                feedbackResponse.setTotalComplaint(closedBucket.getDocCount());
                 feedbackResponse.setTodaysClosed(todaysClosedCount.getBuckets().get(0).getDocCount());
                 setUpperLevelValues(aggregationField, feedbackResponse, closedBucket);
                 callStatusAndRatingCount(closedBucket.getAggregations().get(CALL_STATUS_AGGR), feedbackResponse);
+                feedbackResponse.setTotalIvrsUpdated(feedbackResponse.getResponded() + feedbackResponse.getNotResponded());
                 feedbackResponse.setMonthlyCounts(getMonthlyFeedbackCount(closedBucket.getAggregations().get(DATE_AGGR)));
                 feedbackResponseList.add(feedbackResponse);
             }
@@ -1703,6 +1711,7 @@ public class ComplaintIndexService {
             feedbackResponse.setTotalComplaint(closedComplaints.getValue());
             feedbackResponse.setTodaysClosed(todayClosedCount.getBuckets().get(0).getDocCount());
             callStatusAndRatingCount(searchResponse.getAggregations().get(CALL_STATUS_AGGR), feedbackResponse);
+            feedbackResponse.setTotalIvrsUpdated(feedbackResponse.getResponded() + feedbackResponse.getNotResponded());
             feedbackResponse.setMonthlyCounts(getMonthlyFeedbackCount(searchResponse.getAggregations().get(DATE_AGGR)));
             feedbackResponseList.add(feedbackResponse);
         }
@@ -1897,11 +1906,12 @@ public class ComplaintIndexService {
     }
 
     private void setCategoryWiseResponse(Bucket complaintTypeBucket, IVRSFeedBackResponse feedbackResponse) {
-        feedbackResponse.setTotalComplaint(complaintTypeBucket.getDocCount());
         Range todaysClosedCount = complaintTypeBucket.getAggregations().get(TODAY_COMPLAINT_COUNT);
+        feedbackResponse.setTotalComplaint(complaintTypeBucket.getDocCount());
         feedbackResponse.setTodaysClosed(todaysClosedCount.getBuckets().get(0).getDocCount());
         feedbackResponse.setMonthlyCounts(getMonthlyFeedbackCount(complaintTypeBucket.getAggregations().get(DATE_AGGR)));
         callStatusAndRatingCount(complaintTypeBucket.getAggregations().get(CALL_STATUS_AGGR), feedbackResponse);
+        feedbackResponse.setTotalIvrsUpdated(feedbackResponse.getResponded() + feedbackResponse.getNotResponded());
     }
 
     private BoolQueryBuilder getIvrsFilterQuery(final ComplaintDashBoardRequest complaintDashBoardRequest, boolean todays) {
