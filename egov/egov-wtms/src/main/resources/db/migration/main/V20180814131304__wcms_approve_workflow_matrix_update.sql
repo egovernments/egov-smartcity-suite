@@ -1,0 +1,7 @@
+
+
+INSERT INTO EG_WF_MATRIX (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction,nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate) VALUES (nextval('seq_eg_wf_matrix'), 'ANY', 'WaterConnectionDetails', 'Application Approval Pending', NULL, 'Pending Digital Signature', 'Commissioner', 'NEWCONNECTION', 'END', 'END', 'Commissioner', 'END', 'Preview,Sign', null, null, '2017-04-01', '2099-04-01');
+
+INSERT INTO EG_WF_MATRIX (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction,nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate) VALUES (nextval('seq_eg_wf_matrix'), 'ANY', 'WaterConnectionDetails', 'Application Approval Pending', NULL, 'Pending Digital Signature', 'Commissioner', 'ADDNLCONNECTION', 'END', 'END', 'Commissioner', 'END', 'Preview,Sign', null, null, '2017-04-01', '2099-04-01');
+
+INSERT INTO EG_WF_MATRIX (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction,nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate) VALUES (nextval('seq_eg_wf_matrix'), 'ANY', 'WaterConnectionDetails', 'Application Approval Pending', NULL, 'Pending Digital Signature', 'Commissioner', 'CHANGEOFUSE', 'END', 'END', 'Commissioner', 'END', 'Preview,Sign', null, null, '2017-04-01', '2099-04-01');

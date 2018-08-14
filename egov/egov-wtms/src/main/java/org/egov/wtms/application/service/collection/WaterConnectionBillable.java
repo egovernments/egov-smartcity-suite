@@ -85,7 +85,6 @@ import static org.egov.wtms.masters.entity.enums.ConnectionStatus.INPROGRESS;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.BILLTYPE_AUTO;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.DEPTCODEGENBILL;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.EGMODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ESTSERVICECODEGENBILL;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.FUNCTIONARYCODEGENBILL;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.FUNDCODEGENBILL;
@@ -219,7 +218,7 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     @Override
     public Module getModule() {
-        return moduleService.getModuleByName(EGMODULE_NAME);
+        return moduleService.getModuleByName(MODULE_NAME);
     }
 
     @Override

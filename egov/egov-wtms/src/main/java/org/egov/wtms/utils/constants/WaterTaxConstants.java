@@ -72,7 +72,6 @@ public class WaterTaxConstants {
     public static final String NON_METERED = "Non-metered";
     public static final String NON_METERED_CODE = "NON_METERED";
     public static final String EGMODULES_NAME = "Water Charges";
-    public static final String EGMODULE_NAME = "Water Tax Management";
     public static final String WATERTAX_SECURITY_CHARGE = "WTAXSECURITY";
     public static final String WATERTAX_DONATION_CHARGE = "WTAXDONATION";
     public static final String WATERTAX_ROADCUTTING_CHARGE = "WTAXROADCUTTING";
@@ -163,9 +162,9 @@ public class WaterTaxConstants {
     public static final String WF_STATE_COMMISSIONER_APPROVED = "Commissioner Approved";
     public static final String WF_STATE_CLOSURE_FORWARED_APPROVER = "Close forwared By Approver";
     public static final String WF_STATE_RECONN_FORWARED_APPROVER = "ReConn forwared By Approver";
-    public static final String WF_STATE_COLSURE_APPROVED = "Close approve By Comm";
+    public static final String WF_STATE_CLOSURE_APPROVED = "Close approve By Comm";
     public static final String WF_STATE_RECONN_APPROVED = "Reconnection approve By Comm";
-    public static final String WF_STATE_STATE_FORWARD = "Application Approval Pending";
+    public static final String WF_STATE_APPROVAL_PENDING = "Application Approval Pending";
     public static final String WF_STATE_ASSISTANT_ENGINEER_APPROVED = "Asst engg approved";
     public static final String WF_STATE_WORK_ORDER_GENERETED = "Work order generated";
     public static final String WF_STATE_DEE_APPROVED = "Deputy Executive Engineer approved";
@@ -183,6 +182,7 @@ public class WaterTaxConstants {
     public static final String WF_STATE_EE_APPROVE_PENDING = "Executive Engineer approval pending";
     public static final String WF_STATE_SE_APPROVE_PENDING = "Superintending Engineer approval pending";
     public static final String WF_STATE_ME_APPROVE_PENDING = "Municipal Engineer approval pending";
+    public static final String PENDING_DIGI_SIGN = "Pending Digital Signature";
 
     public static final String APPROVEWORKFLOWACTION = "Approve";
     public static final String FORWARDWORKFLOWACTION = "Forward";
@@ -453,5 +453,13 @@ public class WaterTaxConstants {
     public static final String ESTIMATIONCHARGES_SERVICE_CODE = "WES";
     public static final String WATERTAX_CHARGES_SERVICE_CODE = "WT";
     public static final String WATERTAX_CONNECTION_CHARGE = "WTAXCONCHARGE";
-    public static final String WATER_CHARGES_SCHEME_INDEX ="waterchargescheme";
+    public static final String WATER_CHARGES_SCHEME_INDEX = "waterchargescheme";
+    
+    public static final String CLOSURE_WATER_TAP_CONNECTION="Closure Water Tap Connection";
+    public static final String RECONNECTION_WATER_TAP_CONNECTION="Reconnection Water Tap Connection";
+    public static final String NEW_WATER_TAP_CONNECTION="New Water Tap Connection";
+    public static final String ADDNL_WATER_TAP_CONNECTION="Additional Water Tap Connection";
+    public static final String CHANGEOFUSE_WATER_TAP_CONNECTION="Change Of Usage Water Tap Connection";
+    public static final String REGLZN_WATER_TAP_CONNECTION="Regularization connection Water Tap Connection";
+     
 }

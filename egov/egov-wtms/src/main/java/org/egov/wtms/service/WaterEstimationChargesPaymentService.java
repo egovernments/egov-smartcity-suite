@@ -57,7 +57,7 @@ import static org.egov.wtms.masters.entity.enums.ConnectionType.NON_METERED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.BILLTYPE_AUTO;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CATEGORY_BPL;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.DEMANDRSN_CODE_ADVANCE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.EGMODULE_NAME;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ESTIMATIONCHARGES_SERVICE_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.METERED_CHARGES_REASON_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MONTHLY;
@@ -145,13 +145,13 @@ public class WaterEstimationChargesPaymentService {
 
         if (ConnectionStatus.INPROGRESS.equals(connectionDetails.getConnectionStatus()))
             currentInstallmentYear = toYearFormat(connectionDemandService.getCurrentInstallment(
-                    EGMODULE_NAME, YEARLY, new Date()).getInstallmentYear());
+                    MODULE_NAME, YEARLY, new Date()).getInstallmentYear());
         else if (ACTIVE.equals(connectionDetails.getConnectionStatus()) && NON_METERED.equals(connectionDetails.getConnectionType()))
             currentInstallmentYear = toYearFormat(connectionDemandService.getCurrentInstallment(
                     WATER_RATES_NONMETERED_PTMODULE, null, new Date()).getInstallmentYear());
         else if (ACTIVE.equals(connectionDetails.getConnectionStatus()) && METERED.equals(connectionDetails.getConnectionType()))
             currentInstallmentYear = toYearFormat(connectionDemandService.getCurrentInstallment(
-                    EGMODULE_NAME, MONTHLY, new Date()).getInstallmentYear());
+                    MODULE_NAME, MONTHLY, new Date()).getInstallmentYear());
         AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                 connectionDetails.getConnection().getPropertyIdentifier(),
                 PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);

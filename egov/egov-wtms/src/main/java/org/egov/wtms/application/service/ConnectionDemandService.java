@@ -47,6 +47,49 @@
  */
 package org.egov.wtms.application.service;
 
+import static java.math.BigDecimal.ZERO;
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.egov.infra.utils.DateUtils.toYearFormat;
+import static org.egov.infra.utils.StringUtils.encodeURL;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.wtms.masters.entity.enums.ConnectionStatus.ACTIVE;
+import static org.egov.wtms.masters.entity.enums.ConnectionStatus.INPROGRESS;
+import static org.egov.wtms.masters.entity.enums.ConnectionType.METERED;
+import static org.egov.wtms.masters.entity.enums.ConnectionType.NON_METERED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CREATED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.METERED_CHARGES_REASON_CODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.MONTHLY;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PENALTYCHARGES;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PROPERTY_MODULE_NAME;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAXREASONCODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_CHARGES_SERVICE_CODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_DONATION_CHARGE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_FIELDINSPECTION_CHARGE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_ROADCUTTING_CHARGE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_SECURITY_CHARGE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_SUPERVISION_CHARGE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.YEARLY;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.validation.ValidationException;
+
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
@@ -98,49 +141,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.validation.ValidationException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static java.math.BigDecimal.ZERO;
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.egov.infra.utils.DateUtils.toYearFormat;
-import static org.egov.infra.utils.StringUtils.encodeURL;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.wtms.masters.entity.enums.ConnectionStatus.ACTIVE;
-import static org.egov.wtms.masters.entity.enums.ConnectionStatus.INPROGRESS;
-import static org.egov.wtms.masters.entity.enums.ConnectionType.METERED;
-import static org.egov.wtms.masters.entity.enums.ConnectionType.NON_METERED;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CREATED;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.EGMODULE_NAME;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.METERED_CHARGES_REASON_CODE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.MONTHLY;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.PENALTYCHARGES;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.PROPERTY_MODULE_NAME;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAXREASONCODE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_CHARGES_SERVICE_CODE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_DONATION_CHARGE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_FIELDINSPECTION_CHARGE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_ROADCUTTING_CHARGE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_SECURITY_CHARGE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_SUPERVISION_CHARGE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.YEARLY;
 
 @Service
 @Transactional(readOnly = true)
@@ -238,7 +238,7 @@ public class ConnectionDemandService {
         }
 
         Installment installment = installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(
-                moduleService.getModuleByName(EGMODULE_NAME), new Date(), YEARLY);
+                moduleService.getModuleByName(MODULE_NAME), new Date(), YEARLY);
         // Not updating demand amount collected for new connection as per the
         // discussion.
         if (installment != null) {
@@ -364,7 +364,7 @@ public class ConnectionDemandService {
         if (NON_METERED.equals(waterConnectionDetails.getConnectionType()))
             currInstallment = getCurrentInstallment(WATER_RATES_NONMETERED_PTMODULE, null, new Date());
         else
-            currInstallment = getCurrentInstallment(EGMODULE_NAME, MONTHLY, new Date());
+            currInstallment = getCurrentInstallment(MODULE_NAME, MONTHLY, new Date());
         StringBuilder queryBuilder = new StringBuilder(500);
         queryBuilder
                 .append("select dmdRes.id,dmdRes.id_installment, sum(dmdDet.amount) as amount, sum(dmdDet.amt_collected) as amt_collected, ")
@@ -403,13 +403,13 @@ public class ConnectionDemandService {
 
         if (INPROGRESS.equals(waterConnectionDetails.getConnectionStatus()))
             currentInstallmentYear = toYearFormat(getCurrentInstallment
-                    (EGMODULE_NAME, YEARLY, new Date()).getInstallmentYear());
+                    (MODULE_NAME, YEARLY, new Date()).getInstallmentYear());
         else if (ACTIVE.equals(waterConnectionDetails.getConnectionStatus()) && NON_METERED.equals(waterConnectionDetails.getConnectionType()))
             currentInstallmentYear = toYearFormat(getCurrentInstallment(
                     WATER_RATES_NONMETERED_PTMODULE, null, new Date()).getInstallmentYear());
         else if (ACTIVE.equals(waterConnectionDetails.getConnectionStatus()) && METERED.equals(waterConnectionDetails.getConnectionType()))
             currentInstallmentYear = toYearFormat(getCurrentInstallment(
-                    EGMODULE_NAME, MONTHLY, new Date()).getInstallmentYear());
+                    MODULE_NAME, MONTHLY, new Date()).getInstallmentYear());
 
         AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                 waterConnectionDetails.getConnection().getPropertyIdentifier(),
@@ -453,7 +453,7 @@ public class ConnectionDemandService {
             installmentList = installmentDao.getInstallmentsByModuleAndFromDateAndInstallmentType(
                     moduleService.getModuleByName(WaterTaxConstants.MODULE_NAME), previousDate, currentDate, MONTHLY);
 
-        installment = getCurrentInstallment(EGMODULE_NAME, MONTHLY, currentDate);
+        installment = getCurrentInstallment(MODULE_NAME, MONTHLY, currentDate);
 
         if (!currentMonthIncluded && installmentList.size() > 1 && installmentList.contains(installment))
             installmentList.remove(installment);
@@ -762,7 +762,7 @@ public class ConnectionDemandService {
     public Boolean meterEntryAllReadyExistForCurrentMonth(WaterConnectionDetails waterConnectionDetails, Date givenDate) {
         Boolean currrentInstallMentExist = false;
 
-        Installment installment = getCurrentInstallment(EGMODULE_NAME, MONTHLY, givenDate);
+        Installment installment = getCurrentInstallment(MODULE_NAME, MONTHLY, givenDate);
         if (waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand() != null
                 && installment != null
                 && installment.getInstallmentNumber().equals(waterTaxUtils.getCurrentDemand(waterConnectionDetails)

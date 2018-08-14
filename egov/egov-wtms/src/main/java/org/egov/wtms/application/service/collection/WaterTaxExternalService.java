@@ -124,7 +124,7 @@ import static org.egov.infra.utils.DateUtils.toYearFormat;
 import static org.egov.wtms.masters.entity.enums.ConnectionStatus.ACTIVE;
 import static org.egov.wtms.masters.entity.enums.ConnectionStatus.INPROGRESS;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.BILLTYPE_AUTO;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.EGMODULE_NAME;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PAYMENT_TYPE_ADVANCE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_CHARGES_SERVICE_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE;
@@ -187,7 +187,7 @@ public class WaterTaxExternalService {
 
         if (INPROGRESS.equals(waterConnectionDetails.getConnectionStatus()))
             currentInstallmentYear = toYearFormat(connectionDemandService.getCurrentInstallment(
-                    EGMODULE_NAME, WaterTaxConstants.YEARLY, new Date()).getInstallmentYear());
+                    MODULE_NAME, WaterTaxConstants.YEARLY, new Date()).getInstallmentYear());
         else if (ACTIVE.equals(waterConnectionDetails.getConnectionStatus())
                 && ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType()))
             currentInstallmentYear = toYearFormat(connectionDemandService.getCurrentInstallment(
@@ -195,7 +195,7 @@ public class WaterTaxExternalService {
         else if (ACTIVE.equals(waterConnectionDetails.getConnectionStatus())
                 && ConnectionType.METERED.equals(waterConnectionDetails.getConnectionType()))
             currentInstallmentYear = toYearFormat(connectionDemandService.getCurrentInstallment(
-                    EGMODULE_NAME, WaterTaxConstants.MONTHLY, new Date()).getInstallmentYear());
+                    MODULE_NAME, WaterTaxConstants.MONTHLY, new Date()).getInstallmentYear());
 
         AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                 waterConnectionDetails.getConnection().getPropertyIdentifier(),
@@ -472,7 +472,7 @@ public class WaterTaxExternalService {
 
     private boolean thereIsCurrentBalanceToBePaid(EgBill bill) {
 
-        List<AppConfigValues> demandreasonGlcode = waterTaxUtils.getAppConfigValueByModuleNameAndKeyName(EGMODULE_NAME,
+        List<AppConfigValues> demandreasonGlcode = waterTaxUtils.getAppConfigValueByModuleNameAndKeyName(MODULE_NAME,
                 WaterTaxConstants.DEMANDREASONANDGLCODEMAP);
         Map<String, String> demandReasonGlCodePairmap = new HashMap<>();
         for (AppConfigValues appConfig : demandreasonGlcode) {

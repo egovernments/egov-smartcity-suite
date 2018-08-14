@@ -125,7 +125,7 @@ public class BaseRegisterReportController {
 
             final Module nonMeteredModule = moduleService
                     .getModuleByName(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE);
-            final Module meteredModule = moduleService.getModuleByName(WaterTaxConstants.EGMODULE_NAME);
+            final Module meteredModule = moduleService.getModuleByName(WaterTaxConstants.MODULE_NAME);
             final Installment currInstallmentForNonMetered = installmentDao
                     .getInsatllmentByModuleForGivenDate(nonMeteredModule, new Date());
             final Installment currInstallmentForMetered = installmentDao

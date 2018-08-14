@@ -437,7 +437,7 @@ public class WaterTaxCollection extends TaxCollection {
 
     @Override
     protected Module module() {
-        return moduleService.getModuleByName(WaterTaxConstants.EGMODULE_NAME);
+        return moduleService.getModuleByName(WaterTaxConstants.MODULE_NAME);
     }
 
     public EgDemand getCurrentDemand(final Long billId) {

@@ -1679,21 +1679,23 @@ public class WaterConnectionDetailsService {
 
 
     public void validateConnectionCategory(final WaterConnectionDetails waterConnectionDetails, final BindingResult errors,
-                                           HttpServletRequest request) {
-        AssessmentDetails assessmentDetails = getPropertyDetails(
-                waterConnectionDetails.getConnection().getPropertyIdentifier(), request);
-        if (waterConnectionDetails.getCategory().getName().equalsIgnoreCase(CATEGORY_BPL)) {
-            if (assessmentDetails.getPropertyDetails().getCurrentTax().compareTo(new BigDecimal(500)) > 0) {
-                String errorMessage = wcmsMessageSource.getMessage("msg.propertytax.nonBPLcategory", new String[]{},
-                        Locale.getDefault());
-                errors.rejectValue("category", errorMessage, errorMessage);
-            }
+            HttpServletRequest request) {
+        if (Arrays.asList(NEWCONNECTION, ADDNLCONNECTION).contains(waterConnectionDetails.getApplicationType().getCode())) {
+            AssessmentDetails assessmentDetails = getPropertyDetails(
+                    waterConnectionDetails.getConnection().getPropertyIdentifier(), request);
+            if (waterConnectionDetails.getCategory().getName().equalsIgnoreCase(CATEGORY_BPL)) {
+                if (assessmentDetails.getPropertyDetails().getCurrentTax().compareTo(new BigDecimal(500)) > 0) {
+                    String errorMessage = wcmsMessageSource.getMessage("msg.propertytax.nonBPLcategory", new String[] {},
+                            Locale.getDefault());
+                    errors.rejectValue("category", errorMessage, errorMessage);
+                }
 
-        } else {
-            if (assessmentDetails.getPropertyDetails().getCurrentTax().compareTo(new BigDecimal(500)) <= 0) {
-                String errorMessage = wcmsMessageSource.getMessage("msg.propertytax.BPLcategory", new String[]{},
-                        Locale.getDefault());
-                errors.rejectValue("category", errorMessage, errorMessage);
+            } else {
+                if (assessmentDetails.getPropertyDetails().getCurrentTax().compareTo(new BigDecimal(500)) <= 0) {
+                    String errorMessage = wcmsMessageSource.getMessage("msg.propertytax.BPLcategory", new String[] {},
+                            Locale.getDefault());
+                    errors.rejectValue("category", errorMessage, errorMessage);
+                }
             }
         }
 

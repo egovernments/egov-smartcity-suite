@@ -47,19 +47,56 @@
  */
 package org.egov.wtms.application.workflow;
 
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ADDNLCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ADDNL_WATER_TAP_CONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CANCELLED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CLOSERDIGSIGNPENDING;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CLOSERINPROGRESS;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNPENDING;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_FEEPAID;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_RECONNCTIONINPROGRESS;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_RECONNDIGSIGNPENDING;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_VERIFIED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPROVEWORKFLOWACTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ASSISTANT_ENGINEER_DESIGN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ASSISTANT_EXECUTIVE_ENGINEER_DESIGN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CHANGEOFUSE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CHANGEOFUSE_WATER_TAP_CONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSINGCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSURE_WATER_TAP_CONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.COMMISSIONER_DESGN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.DEPUTY_ENGINEER_DESIGN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.EXECUTIVE_ENGINEER_DESIGN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.FORWARDWORKFLOWACTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.JUNIOR_ASSISTANT_DESIGN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULETYPE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.MUNICIPAL_ENGINEER_DESIGN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.NEW_WATER_TAP_CONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTIONCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTION_WATER_TAP_CONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.REGLZN_WATER_TAP_CONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_APPROVERROLE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_SUPERUSER;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SENIOR_ASSISTANT_DESIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SIGNWORKFLOWACTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.SUPERIENTEND_ENGINEER_DESIGN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.TAP_INSPPECTOR_DESIGN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_CANCEL;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_THIRDPARTY_CREATED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_AE_APPROVAL_PENDING;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_CANCELLED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_CLOSURE_APPROVED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_CLOSURE_FORWARED_APPROVER;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_RECONN_APPROVED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_RECONN_FORWARED_APPROVER;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_REJECTED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WORKFLOW_CLOSUREADDITIONALRULE;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -84,7 +121,6 @@ import org.egov.wtms.application.service.WaterConnectionSmsAndEmailService;
 import org.egov.wtms.application.service.WaterDemandConnectionService;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.WaterTaxUtils;
-import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -194,7 +230,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
             currentUser = userService.getUserById(waterConnectionDetails.getCreatedBy().getId());
             if (currentUser != null && waterConnectionDetails.getLegacy().equals(true)) {
                 for (final Role userrole : currentUser.getRoles())
-                    if (userrole.getName().equals(WaterTaxConstants.ROLE_SUPERUSER) ||
+                    if (userrole.getName().equals(ROLE_SUPERUSER) ||
                             ROLE_APPROVERROLE.equals(userrole.getName())) {
                         final Position positionuser = waterTaxUtils.getZonalLevelClerkForLoggedInUser(
                                 waterConnectionDetails.getConnection().getPropertyIdentifier());
@@ -239,7 +275,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
 
             }
         }
-        if (workFlowAction != null && WaterTaxConstants.WFLOW_ACTION_STEP_CANCEL.equalsIgnoreCase(workFlowAction)) {
+        if (workFlowAction != null && WFLOW_ACTION_STEP_CANCEL.equalsIgnoreCase(workFlowAction)) {
             waterConnectionDetails.setConnectionStatus(ConnectionStatus.INACTIVE);
             final EgDemand demand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
             if (demand != null) {
@@ -252,7 +288,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
             }
 
             waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
-                    WaterTaxConstants.APPLICATION_STATUS_CANCELLED, WaterTaxConstants.MODULETYPE));
+                    APPLICATION_STATUS_CANCELLED, MODULETYPE));
             waterConnectionDetails.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
                     .withComments(approvalComent).withStateValue(WF_STATE_CANCELLED).withOwner(ownerPosition)
                     .withDateInfo(currentDate.toDate())
@@ -266,7 +302,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
             if (wfInitiator != null && wfInitiator.equals(userAssignment)) {
                 waterConnectionDetails.setConnectionStatus(ConnectionStatus.INACTIVE);
                 if (waterConnectionDetails.getStatus() != null && waterConnectionDetails.getStatus().getCode()
-                        .equals(WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN)) {
+                        .equals(APPLICATION_STATUS_ESTIMATENOTICEGEN)) {
                     final EgDemand demand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
                     if (demand != null) {
                         final WaterDemandConnection waterDemandConnection = waterDemandConnectionService
@@ -278,7 +314,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                     }
                 }
                 waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
-                        WaterTaxConstants.APPLICATION_STATUS_CANCELLED, WaterTaxConstants.MODULETYPE));
+                        APPLICATION_STATUS_CANCELLED, MODULETYPE));
                 waterConnectionDetails.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork)
                         .withNextAction("END");
@@ -317,8 +353,8 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(ownerPosition).withNextAction(wfmatrix.getNextAction())
                         .withNatureOfTask(natureOfwork);
-            } else if ((additionalRule.equals(WaterTaxConstants.WORKFLOW_CLOSUREADDITIONALRULE)
-                    || additionalRule.equals(WaterTaxConstants.RECONNECTIONCONNECTION))
+            } else if ((additionalRule.equals(WORKFLOW_CLOSUREADDITIONALRULE)
+                    || additionalRule.equals(RECONNECTIONCONNECTION))
                     && (waterConnectionDetails.getCurrentState().getValue().equals("Closed")
                             || waterConnectionDetails.getCurrentState().getValue().equals("END"))) {
                 if (currState != null && (waterTaxUtils.getCurrentUserRole() || waterTaxUtils.isCurrentUserCitizenRole()
@@ -350,7 +386,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                                 waterConnectionDetailsService.getReglnConnectionPendingAction(waterConnectionDetails,
                                         loggedInUserDesignation, workFlowAction),
                                 null);
-                } else if (getloggedinUserDesignationForEstimationAndWorkOrderGeneratedStatus(loggedInUserDesignation))
+                } else if (isCurrentUserApprover(loggedInUserDesignation))
                     wfmatrix = getMatrixbyStatusAndLoggedInUser(waterConnectionDetails, additionalRule, workFlowAction,
                             loggedInUserDesignation);
                 else if (APPLICATION_STATUS_FEEPAID.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()) &&
@@ -361,8 +397,8 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                 else
                     wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null,
                             null, additionalRule, waterConnectionDetails.getCurrentState().getValue(), null, null);
-                if ((additionalRule.equals(WaterTaxConstants.WORKFLOW_CLOSUREADDITIONALRULE)
-                        || additionalRule.equals(WaterTaxConstants.RECONNECTIONCONNECTION)) && wfmatrix != null
+                if ((additionalRule.equals(WORKFLOW_CLOSUREADDITIONALRULE)
+                        || additionalRule.equals(RECONNECTIONCONNECTION)) && wfmatrix != null
                         && wfmatrix.getNextAction().equalsIgnoreCase("END"))
                     waterConnectionDetails.transition().end()
                             .withSenderName(user.getUsername() + "::" + user.getName()).withComments(approvalComent)
@@ -388,29 +424,24 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
         WorkFlowMatrix wfmatrix = null;
         wfmatrix = getWorkFlowMatrix(workFlowAction, loggedInUserDesignation, waterConnectionDetails, additionalRule);
         if (wfmatrix == null
-                && (WaterTaxConstants.APPROVEWORKFLOWACTION.equalsIgnoreCase(workFlowAction)
-                        || WaterTaxConstants.FORWARDWORKFLOWACTION.equalsIgnoreCase(workFlowAction))
-                && (loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.MUNICIPAL_ENGINEER_DESIGN)
-                        || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.DEPUTY_ENGINEER_DESIGN)
-                        || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.SUPERIENTEND_ENGINEER_DESIGN)
-                        || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.EXECUTIVE_ENGINEER_DESIGN)
-                        || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.COMMISSIONER_DESGN))) {
+                && (APPROVEWORKFLOWACTION.equalsIgnoreCase(workFlowAction)
+                        || FORWARDWORKFLOWACTION.equalsIgnoreCase(workFlowAction))) {
             if (waterConnectionDetails.getStatus().getCode()
-                    .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERDIGSIGNPENDING))
+                    .equals(APPLICATION_STATUS_CLOSERDIGSIGNPENDING))
                 wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
-                        additionalRule, WaterTaxConstants.WF_STATE_COLSURE_APPROVED, null, null,
+                        additionalRule, WF_STATE_CLOSURE_APPROVED, null, null,
                         loggedInUserDesignation);
             if (waterConnectionDetails.getStatus().getCode()
-                    .equals(WaterTaxConstants.APPLICATION_STATUS_RECONNDIGSIGNPENDING))
+                    .equals(APPLICATION_STATUS_RECONNDIGSIGNPENDING))
                 wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
-                        additionalRule, WaterTaxConstants.WF_STATE_RECONN_APPROVED, null, null,
+                        additionalRule, WF_STATE_RECONN_APPROVED, null, null,
                         loggedInUserDesignation);
         }
 
         if (wfmatrix == null
-                && waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_VERIFIED)
-                && (loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.ASSISTANT_EXECUTIVE_ENGINEER_DESIGN) ||
-                        loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.TAP_INSPPECTOR_DESIGN)))
+                && waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_VERIFIED)
+                && (loggedInUserDesignation.equalsIgnoreCase(ASSISTANT_EXECUTIVE_ENGINEER_DESIGN) ||
+                        loggedInUserDesignation.equalsIgnoreCase(TAP_INSPPECTOR_DESIGN)))
             wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
                     additionalRule, waterConnectionDetails.getCurrentState().getValue(), null, null,
                     null);
@@ -424,106 +455,66 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
     public WorkFlowMatrix getWorkFlowMatrix(final String workFlowAction, final String loggedInUserDesignation,
             final WaterConnectionDetails waterConnectionDetails, final String additionalRule) {
         WorkFlowMatrix workFlowMatrix = null;
-        if (workFlowAction.equals(WaterTaxConstants.FORWARDWORKFLOWACTION)
-                && waterConnectionDetails.getStatus().getCode()
-                        .equals(WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNPENDING)
-                &&
-                loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.DEPUTY_ENGINEER_DESIGN))
+        if (workFlowAction.equals(FORWARDWORKFLOWACTION)
+                && (waterConnectionDetails.getStatus().getCode()
+                        .equals(APPLICATION_STATUS_DIGITALSIGNPENDING) ||
+                        waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_FEEPAID))) {
             workFlowMatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
-                    additionalRule, "Deputy Engineer Approved", null, null, loggedInUserDesignation);
-        if (workFlowMatrix == null && workFlowAction.equals(WaterTaxConstants.FORWARDWORKFLOWACTION)
-                && waterConnectionDetails.getStatus().getCode()
-                        .equals(WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNPENDING)
-                && (loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.MUNICIPAL_ENGINEER_DESIGN)
-                        || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.SUPERIENTEND_ENGINEER_DESIGN)
-                        || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.EXECUTIVE_ENGINEER_DESIGN)))
-            workFlowMatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
-                    additionalRule, WaterTaxConstants.EXECUTIVEENGINEERFORWARDED, null, null, loggedInUserDesignation);
-        else if (workFlowAction.equals(WaterTaxConstants.FORWARDWORKFLOWACTION)
-                && waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_FEEPAID)
-                && (loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.MUNICIPAL_ENGINEER_DESIGN)
-                        || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.DEPUTY_ENGINEER_DESIGN)
-                        || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.ASSISTANT_ENGINEER_DESIGN)
-                        || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.ASSISTANT_EXECUTIVE_ENGINEER_DESIGN)
-                        || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.SUPERIENTEND_ENGINEER_DESIGN)
-                        || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.EXECUTIVE_ENGINEER_DESIGN)
-                        || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.TAP_INSPPECTOR_DESIGN)))
-            workFlowMatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
-                    additionalRule, WaterTaxConstants.WF_STATE_STATE_FORWARD, null, null, loggedInUserDesignation);
-        else if (workFlowAction.equals(WaterTaxConstants.APPROVEWORKFLOWACTION)
-                && waterConnectionDetails.getStatus().getCode()
-                        .equals(WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNPENDING)
-                && (loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.MUNICIPAL_ENGINEER_DESIGN)
-                        || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.SUPERIENTEND_ENGINEER_DESIGN)
-                        || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.EXECUTIVE_ENGINEER_DESIGN)))
-            workFlowMatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
-                    additionalRule, WaterTaxConstants.EXECUTIVEENGINEERFORWARDED, null, null, loggedInUserDesignation);
-        else if (workFlowMatrix == null
-                && (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION)
-                        || waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.CHANGEOFUSE)
-                        || waterConnectionDetails.getApplicationType().getCode()
-                                .equals(WaterTaxConstants.ADDNLCONNECTION))
-                && workFlowAction.equals(WaterTaxConstants.SIGNWORKFLOWACTION))
-            workFlowMatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
-                    additionalRule, WaterTaxConstants.WF_STATE_COMMISSIONER_APPROVED, null, null,
-                    loggedInUserDesignation);
-        if (workFlowMatrix == null && WaterTaxConstants.FORWARDWORKFLOWACTION.equalsIgnoreCase(workFlowAction)) {
-            if (waterConnectionDetails.getStatus().getCode()
-                    .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINPROGRESS))
+                    additionalRule, waterConnectionDetails.getState().getValue(), null, null, loggedInUserDesignation);
+            if (workFlowMatrix == null)
                 workFlowMatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
-                        additionalRule, WaterTaxConstants.WF_STATE_CLOSURE_FORWARED_APPROVER, null, null,
+                        additionalRule, waterConnectionDetails.getState().getValue(), null, null);
+        } else if (workFlowAction.equals(APPROVEWORKFLOWACTION)
+                && waterConnectionDetails.getStatus().getCode()
+                        .equals(APPLICATION_STATUS_DIGITALSIGNPENDING)
+                && (loggedInUserDesignation.equalsIgnoreCase(MUNICIPAL_ENGINEER_DESIGN)
+                        || loggedInUserDesignation.equalsIgnoreCase(SUPERIENTEND_ENGINEER_DESIGN)
+                        || loggedInUserDesignation.equalsIgnoreCase(EXECUTIVE_ENGINEER_DESIGN)))
+            workFlowMatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
+                    additionalRule, waterConnectionDetails.getState().getValue(), null, null);
+        else if (Arrays.asList(NEWCONNECTION, CHANGEOFUSE, ADDNLCONNECTION)
+                .contains(waterConnectionDetails.getApplicationType().getCode())
+                && workFlowAction.equals(SIGNWORKFLOWACTION))
+            workFlowMatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
+                    additionalRule, WF_STATE_COMMISSIONER_APPROVED, null, null,
+                    loggedInUserDesignation);
+        if (workFlowMatrix == null && FORWARDWORKFLOWACTION.equalsIgnoreCase(workFlowAction)) {
+            if (waterConnectionDetails.getStatus().getCode()
+                    .equals(APPLICATION_STATUS_CLOSERINPROGRESS))
+                workFlowMatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
+                        additionalRule, WF_STATE_CLOSURE_FORWARED_APPROVER, null, null,
                         loggedInUserDesignation);
             if (waterConnectionDetails.getStatus().getCode()
-                    .equals(WaterTaxConstants.APPLICATION_STATUS_RECONNCTIONINPROGRESS))
+                    .equals(APPLICATION_STATUS_RECONNCTIONINPROGRESS))
                 workFlowMatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
-                        additionalRule, WaterTaxConstants.WF_STATE_RECONN_FORWARED_APPROVER, null, null,
+                        additionalRule, WF_STATE_RECONN_FORWARED_APPROVER, null, null,
                         loggedInUserDesignation);
         }
         return workFlowMatrix;
     }
 
-    protected boolean getloggedinUserDesignationForEstimationAndWorkOrderGeneratedStatus(final String loggedInUserDesignation) {
-        return loggedInUserDesignation != null && !"".equals(loggedInUserDesignation)
-                && (loggedInUserDesignation.equals(WaterTaxConstants.COMMISSIONER_DESGN)
-                        || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.EXECUTIVE_ENGINEER_DESIGN)
-                        || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.MUNICIPAL_ENGINEER_DESIGN)
-                        || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.SUPERIENTEND_ENGINEER_DESIGN)
-                        || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.TAP_INSPPECTOR_DESIGN)
-                        || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.ASSISTANT_ENGINEER_DESIGN)
-                        || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.DEPUTY_ENGINEER_DESIGN)
-                        || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.ASSISTANT_EXECUTIVE_ENGINEER_DESIGN));
+    protected boolean isCurrentUserApprover(final String loggedInUserDesignation) {
+        return isNotBlank(loggedInUserDesignation) &&
+                Arrays.asList(COMMISSIONER_DESGN, EXECUTIVE_ENGINEER_DESIGN, MUNICIPAL_ENGINEER_DESIGN,
+                        SUPERIENTEND_ENGINEER_DESIGN,
+                        TAP_INSPPECTOR_DESIGN, ASSISTANT_ENGINEER_DESIGN, DEPUTY_ENGINEER_DESIGN,
+                        ASSISTANT_EXECUTIVE_ENGINEER_DESIGN)
+                        .contains(loggedInUserDesignation);
     }
 
     public String getNatureOfTask(final WaterConnectionDetails waterConnectionDetails) {
-        final String wfTypeDisplayName = "Water Tap Connection";
-        if (waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINPROGRESS)
-                || waterConnectionDetails.getStatus().getCode()
-                        .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINITIATED)
-                || waterConnectionDetails.getStatus().getCode()
-                        .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERDIGSIGNPENDING)
-                || waterConnectionDetails.getStatus().getCode()
-                        .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERAPRROVED)
-                || waterConnectionDetails.getStatus().getCode()
-                        .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED))
-            return "Closure " + wfTypeDisplayName;
-        else if (waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.WORKFLOW_RECONNCTIONINITIATED)
-                || waterConnectionDetails.getStatus().getCode()
-                        .equals(WaterTaxConstants.APPLICATION_STATUS_RECONNCTIONINPROGRESS)
-                || waterConnectionDetails.getStatus().getCode()
-                        .equals(WaterTaxConstants.APPLICATION_STATUS_RECONNCTIONAPPROVED)
-                || waterConnectionDetails.getStatus().getCode()
-                        .equals(WaterTaxConstants.APPLICATION_STATUS_RECONNDIGSIGNPENDING)
-                || waterConnectionDetails.getStatus().getCode()
-                        .equals(WaterTaxConstants.APPLICATION_STATUS_RECONNCTIONSANCTIONED))
-            return "Reconnection " + wfTypeDisplayName;
-        else if (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION))
-            return "New " + wfTypeDisplayName;
-        else if (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.ADDNLCONNECTION))
-            return "Additional " + wfTypeDisplayName;
-        else if (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.CHANGEOFUSE))
-            return "Change Of Usage " + wfTypeDisplayName;
+        if (CLOSINGCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
+            return CLOSURE_WATER_TAP_CONNECTION;
+        else if (RECONNECTIONCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
+            return RECONNECTION_WATER_TAP_CONNECTION;
+        else if (NEWCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
+            return NEW_WATER_TAP_CONNECTION;
+        else if (ADDNLCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
+            return ADDNL_WATER_TAP_CONNECTION;
+        else if (CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
+            return CHANGEOFUSE_WATER_TAP_CONNECTION;
         else
-            return waterConnectionDetails.getApplicationType().getName() + " " + wfTypeDisplayName;
+            return REGLZN_WATER_TAP_CONNECTION;
     }
 
     public boolean isDesignationOfClerk() {

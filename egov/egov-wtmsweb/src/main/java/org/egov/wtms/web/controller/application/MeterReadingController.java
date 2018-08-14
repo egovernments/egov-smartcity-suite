@@ -52,7 +52,6 @@ import static org.egov.infra.utils.DateUtils.getFormattedDate;
 import static org.egov.infra.utils.DateUtils.noOfMonthsBetween;
 import static org.egov.infra.utils.DateUtils.toDateUsingDefaultPattern;
 import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.EGMODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MONTHLY;
 
@@ -322,7 +321,7 @@ public class MeterReadingController {
 
         newInstallmentList = installmentDao.getInstallmentsByModuleForGivenDateAndInstallmentType(
                 moduleService.getModuleByName(MODULE_NAME), previousDate, MONTHLY);
-        currentInstallment = connectionDemandService.getCurrentInstallment(EGMODULE_NAME, MONTHLY, new Date());
+        currentInstallment = connectionDemandService.getCurrentInstallment(MODULE_NAME, MONTHLY, new Date());
         if (newInstallmentList.isEmpty() || !newInstallmentList.contains(currentInstallment))
             newInstallmentList.add(currentInstallment);
 

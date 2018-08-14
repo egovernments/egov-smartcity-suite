@@ -106,7 +106,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.DEMANDISHISTORY;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.DEMANDRSN_CODE_ADVANCE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.DEMANDRSN_REASON_ADVANCE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.DEMAND_REASON_ORDER_MAP;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.EGMODULE_NAME;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ESTIMATIONCHARGES_SERVICE_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.GLCODE_FOR_ADVANCE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MAX_ADVANCES_ALLOWED;
@@ -168,7 +168,7 @@ public class ConnectionBillService extends BillServiceInterface {
         Set<Installment> sortedInstallmentSet = new TreeSet<>();
         DemandComparatorByOrderId demandComparatorByOrderId = new DemandComparatorByOrderId();
         List<EgDemandDetails> orderedDetailsList = new ArrayList<>();
-        Installment currInstallment = connectionDemandService.getCurrentInstallment(EGMODULE_NAME, YEARLY, new Date());
+        Installment currInstallment = connectionDemandService.getCurrentInstallment(MODULE_NAME, YEARLY, new Date());
         CFinancialYear finYear = financialYearDAO.getFinancialYearByDate(new Date());
 
         getDemandDetailsInstallmentWise(billObj, demand, installmentWise, sortedInstallmentSet);
@@ -292,7 +292,7 @@ public class ConnectionBillService extends BillServiceInterface {
          * current year second half installment
          */
         BigDecimal advanceCollection = demandGenericDAO.getBalanceByDmdMasterCodeInst(demand, DEMANDRSN_CODE_ADVANCE,
-                moduleService.getModuleByName(EGMODULE_NAME), dmdDetInstallment);
+                moduleService.getModuleByName(MODULE_NAME), dmdDetInstallment);
         CFinancialYear finYear = financialYearDAO.getFinancialYearByDate(new Date());
 
         if (advanceCollection.signum() < 0)
