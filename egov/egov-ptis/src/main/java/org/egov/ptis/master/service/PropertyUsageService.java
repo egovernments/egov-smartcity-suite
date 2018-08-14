@@ -199,7 +199,6 @@ public class PropertyUsageService {
     	return propertyUsageRepository.findUsageByCode(code);
     }
     
-    @ReadOnly
     public List<PropertyUsage> getAllActiveMixedPropertyUsages(){
         return propertyUsageRepository.findByIsActiveTrueOrderByUsageName();
     }
