@@ -48,7 +48,7 @@
 package org.egov.wtms.application.service;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WORKFLOW_CLOSUREADDITIONALRULE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSECONNECTION;
 
 import java.math.BigDecimal;
 
@@ -154,7 +154,7 @@ public class CloserConnectionService {
         final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = waterConnectionDetailsService
                 .getInitialisedWorkFlowBean();
         applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(savedwaterConnectionDetails,
-                approvalPosition, approvalComent, WORKFLOW_CLOSUREADDITIONALRULE, workFlowAction);
+                approvalPosition, approvalComent, CLOSECONNECTION, workFlowAction);
 
         if (waterConnectionDetails.getSource() != null
                 && Source.CITIZENPORTAL.toString().equalsIgnoreCase(waterConnectionDetails.getSource().toString())

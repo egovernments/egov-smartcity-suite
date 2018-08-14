@@ -92,7 +92,7 @@ public class WaterChargesIntegrationServiceImpl implements WaterChargesIntegrati
         BigDecimal arrearTotal = BigDecimal.ZERO;
         Installment arrInstal = null;
         final Installment currentInstallment = connectionDetailService
-                .getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, new Date());
+                .getCurrentInstallment(WaterTaxConstants.PROPERTY_MODULE_NAME, null, new Date());
         final List<WaterConnection> waterConnections = waterConnectionService.findByPropertyIdentifier(propertyId);
         final List<ConsumerConsumption> consumerConsumptions = new ArrayList<>();
         for (final WaterConnection waterConnection : waterConnections) {
@@ -104,7 +104,7 @@ public class WaterChargesIntegrationServiceImpl implements WaterChargesIntegrati
                     consumerConsumption.setHscno(waterConnectionDetails.getConnection().getConsumerCode());
                     final Map<String, BigDecimal> resultmap = connectionDetailService
                             .getDemandCollMapForPtisIntegration(waterConnectionDetails,
-                                    WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE);
+                                    WaterTaxConstants.PROPERTY_MODULE_NAME);
                     if (null != resultmap && !resultmap.isEmpty()) {
                         final BigDecimal arrInstallment = resultmap.get(WaterTaxConstants.ARR_INSTALFROM_STR);
                         if (null != arrInstallment && arrInstallment != BigDecimal.ZERO)
@@ -143,7 +143,7 @@ public class WaterChargesIntegrationServiceImpl implements WaterChargesIntegrati
                     .getActiveNonHistoryConnectionDetailsByConnection(waterConnection);
             if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())) {
                 final Map<String, BigDecimal> resultmap = connectionDetailService.getDemandCollMapForBill(
-                        waterConnectionDetails, WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null);
+                        waterConnectionDetails, WaterTaxConstants.PROPERTY_MODULE_NAME, null);
                 if (resultmap != null && !resultmap.isEmpty()) {
                     nonMeteredConnBillDetails = new HashSet<>();
                     final BigDecimal install = resultmap.get("inst");

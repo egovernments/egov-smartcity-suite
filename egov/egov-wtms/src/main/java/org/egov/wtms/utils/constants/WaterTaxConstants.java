@@ -63,7 +63,6 @@ public class WaterTaxConstants {
     public static final String MODULETYPE = "WATERTAXAPPLICATION";
     public static final String DASH_DELIM = "-";
     public static final String APPROVED = "APPROVED";
-    public static final String CREATEWORKFLOWSTATE = "CREATED";
     public static final String APPLICATION_NUMBER = "applicationNumber";
     public static final String NEWCONNECTION = "NEWCONNECTION";
     public static final String REGULARIZE_CONNECTION = "REGLZNCONNECTION";
@@ -79,7 +78,7 @@ public class WaterTaxConstants {
     public static final String CONNECTION_FEE = "Connection fee";
     public static final String ADDNLCONNECTION = "ADDNLCONNECTION";
     public static final String CLOSINGCONNECTION = "CLOSINGCONNECTION";
-    public static final String RECONNECTIONCONNECTION = "RECONNECTION";
+    public static final String RECONNECTION = "RECONNECTION";
     public static final String RECONNECTIONWITHSLASH = "Re-Connection";
     public static final String CHANGEOFUSE = "CHANGEOFUSE";
     public static final String CLOSURECONN = "Closure Of Connection";
@@ -120,7 +119,6 @@ public class WaterTaxConstants {
     public static final String ROLE_CSCOPERTAOR = "CSC Operator";
     public static final String ROLE_ULBOPERATOR = "ULB Operator";
     public static final String ROLE_BILLCOLLECTOR = "Collection Operator";
-    public static final String ROLE_CLERK = "Senior Assistant,Junior Assistant";
     public static final String ROLE_APPROVERROLE = "Water Tax Approver";
     public static final String ROLE_COMMISSIONERDEPARTEMNT = "Administration";
     public static final String ROLE_SUPERUSER = "SYSTEM";
@@ -156,7 +154,6 @@ public class WaterTaxConstants {
     public static final String WFLOW_ACTION_STEP_REJECT = "Reject";
     public static final String WFLOW_ACTION_STEP_CANCEL = "Cancel";
     public static final String WF_STATE_REVENUE_CLERK_APPROVAL_PENDING = "Revenenu Clerk Approval Pending";
-    public static final String WF_STATE_TAP_EXECUTION_DATE = "Execute Tap";
     public static final String WF_STATE_CLERK_APPROVED = "Clerk approved";
     public static final String WF_STATE_PAYMENT_DONE_AGT_ESTIMATION = "Payment done against Estimation";
     public static final String WF_STATE_COMMISSIONER_APPROVED = "Commissioner Approved";
@@ -214,7 +211,6 @@ public class WaterTaxConstants {
     public static final String APPLICATION_STATUS_CLOSERINPROGRESS = "CLOSERINPROGRESS";
     public static final String APPLICATION_STATUS_CLOSERAPRROVED = "CLOSERAPPROVED";
     public static final String APPLICATION_STATUS_CLOSERSANCTIONED = "CLOSERSANCTIONED";
-    public static final String WORKFLOW_CLOSUREADDITIONALRULE = "CLOSECONNECTION";
     public static final String WORKFLOW_RECONNCTIONINITIATED = "RECONNECTIONINITIATED";
     public static final String APPLICATION_STATUS_RECONNCTIONINPROGRESS = "RECONNECTIONINPROGRESS";
     public static final String APPLICATION_STATUS_RECONNCTIONAPPROVED = "RECONNECTIONAPPROVED";
@@ -255,23 +251,17 @@ public class WaterTaxConstants {
     public static final String PRIMARYCONNECTION = "Primary Connection";
     public static final String CONN_NAME_ADDNLCONNECTION = "Additional Connection";
 
-    public static final String NEW_CONNECTION_MATRIX_ADDL_RULE = "NEWCONNECTION";
     public static final String FEE_COLLECTION_COMMENT = "Water connection fee collected";
 
-    public static final String ADDRULE_FOR_NEW_CONNECTION = "NEWCONNECTION";
-    public static final String ADDRULE_FOR_ADD_CONNECTION = "ADDNLCONNECTION";
-    public static final String ADDRULE_FOR_CHANGE_OF_USE = "CHANGEOFUSE";
     public static final String WF_WORKORDER_BUTTON = "Generate WorkOrder";
     public static final String YEARLY = "Yearly";
     public static final String MONTHLY = "Monthly";
 
     public static final String WATERTAXREASONCODE = "WTAXCHARGES";
     public static final String METERED_CHARGES_REASON_CODE = "METERCHARGES";
-    public static final String WF_ESTIMATION_NOTICE_BUTTON = "Generate Estimation Notice";
     public static final String WF_CLOSERACKNOWLDGEENT_BUTTON = "Generate Acknowledgement";
     public static final Character DMD_STATUS_CHEQUE_BOUNCED = 'B';
     public static final String WF_RECONNECTIONACKNOWLDGEENT_BUTTON = "Generate Reconnection Ack";
-    public static final String WATER_RATES_NONMETERED_PTMODULE = "Property Tax";
 
     public static final String CURR_DUE = "CurrentDue";
     public static final String ARR_DUE = "ArrearDue";
@@ -283,8 +273,8 @@ public class WaterTaxConstants {
     public static final String WFLOW_ACTION_STEP_THIRDPARTY_CREATED = "Created";
     public static final String NONMETEREDDEMANDREASON = "Water Charges";
     public static final String METERCHARGESDEMANDREASON = "Water Tap Meter charges";
-    public static final String MASTERSTATUSACTIVE = "ACTIVE";
-    public static final String MASTERSTATUSINACTIVE = "IN ACTIVE";
+    public static final String ACTIVE = "ACTIVE";
+    public static final String INACTIVE = "INACTIVE";
     public static final String COLLECTION_STRING_SERVICE_CODE = "WT";
     public static final String GENERATEBILL = "GENERATEBILL";
     public static final String PREVIOUS_SECOND_HALF = "Previous 2nd Half";
@@ -341,7 +331,6 @@ public class WaterTaxConstants {
     public static final String USERNAME_ANONYMOUS = "anonymous";
     public static final String USERNAME_MEESEVA = "meeseva";
 
-    public static final String PREVIEWWORKFLOWACTION = "Preview";
     public static final String SIGNWORKFLOWACTION = "Sign";
     public static final String WF_PREVIEW_BUTTON = "Preview";
     public static final String WF_SIGN_BUTTON = "Sign";
@@ -412,7 +401,7 @@ public class WaterTaxConstants {
     public static final String ASSISTANT_ENGINEER_DESIGN = "Assistant engineer";
     public static final String ASSISTANT_EXECUTIVE_ENGINEER_DESIGN = "Assistant executive engineer";
     public static final String JUNIOR_OR_SENIOR_ASSISTANT_DESIGN = "Senior Assistant,Junior Assistant";
-    public static final String AE_TAPE_AEE__DESIGN = "Assistant executive engineer,Assistant engineer,Tap Inspector";
+    public static final String AE_AEE_TI_DESIGN = "Assistant executive engineer,Assistant engineer,Tap Inspector";
     public static final String JUNIOR_OR_SENIOR_ASSISTANT_DESIGN_REVENUE_CLERK = "Senior Assistant,Junior Assistant,Revenue Clerk";
 
     public static final String SENIOR_ASSISTANT_DESIGN = "Senior Assistant";
@@ -421,9 +410,6 @@ public class WaterTaxConstants {
     public static final String BOUNDARY_TYPE_ZONE = "Zone";
     public static final String BOUNDARY_TYPE_CITY = "City";
     public static final String CONNECTION_RECTIFICATION = "connection-rectification";
-
-    public static final String ASSESSMENTSTATUSACTIVE = "ACTIVE";
-    public static final String ASSESSMENTSTATUSINACTIVE = "INACTIVE";
 
     public static final String IS_METEREDDONATIONAMOUNT_MANUAL = "IS_METEREDDONATIONAMOUNT_MANUAL";
     public static final String IS_NONMETEREDDONATIONAMOUNT_MANUAL = "IS_NONMETEREDDONATIONAMOUNT_MANUAL";
@@ -454,12 +440,12 @@ public class WaterTaxConstants {
     public static final String WATERTAX_CHARGES_SERVICE_CODE = "WT";
     public static final String WATERTAX_CONNECTION_CHARGE = "WTAXCONCHARGE";
     public static final String WATER_CHARGES_SCHEME_INDEX = "waterchargescheme";
-    
-    public static final String CLOSURE_WATER_TAP_CONNECTION="Closure Water Tap Connection";
-    public static final String RECONNECTION_WATER_TAP_CONNECTION="Reconnection Water Tap Connection";
-    public static final String NEW_WATER_TAP_CONNECTION="New Water Tap Connection";
-    public static final String ADDNL_WATER_TAP_CONNECTION="Additional Water Tap Connection";
-    public static final String CHANGEOFUSE_WATER_TAP_CONNECTION="Change Of Usage Water Tap Connection";
-    public static final String REGLZN_WATER_TAP_CONNECTION="Regularization connection Water Tap Connection";
-     
+
+    public static final String CLOSURE_WATER_TAP_CONNECTION = "Closure Water Tap Connection";
+    public static final String RECONN_WATER_TAP_CONNECTION = "Reconnection Water Tap Connection";
+    public static final String NEW_WATER_TAP_CONNECTION = "New Water Tap Connection";
+    public static final String ADDNL_WATER_TAP_CONNECTION = "Additional Water Tap Connection";
+    public static final String CHANGEOFUSE_WATER_TAP_CONNECTION = "Change Of Usage Water Tap Connection";
+    public static final String REGLZN_WATER_TAP_CONNECTION = "Regularization connection Water Tap Connection";
+
 }

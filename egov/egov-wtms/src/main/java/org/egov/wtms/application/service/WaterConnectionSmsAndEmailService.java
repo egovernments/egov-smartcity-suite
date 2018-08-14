@@ -70,7 +70,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.METERED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.NON_METERED_CODE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTIONCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SMSEMAILTYPEADDCONNESTNOTICE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SMSEMAILTYPEADDCONNFEEPAID;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SMSEMAILTYPEADDITONALCONNAPPROVE;
@@ -193,7 +193,7 @@ public class WaterConnectionSmsAndEmailService {
             else if (CLOSINGCONNECTION
                     .equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
                 getSmsAndEmailForClosingConnection(waterConnectionDetails, email, mobileNumber);
-            else if (RECONNECTIONCONNECTION
+            else if (RECONNECTION
                     .equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
                 getSmsAndEmailForReConnection(waterConnectionDetails, email, mobileNumber);
 

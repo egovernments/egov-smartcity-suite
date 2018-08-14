@@ -127,7 +127,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.BILLTYPE_AUTO;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PAYMENT_TYPE_ADVANCE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_CHARGES_SERVICE_CODE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PROPERTY_MODULE_NAME;
 
 public class WaterTaxExternalService {
 
@@ -191,7 +191,7 @@ public class WaterTaxExternalService {
         else if (ACTIVE.equals(waterConnectionDetails.getConnectionStatus())
                 && ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType()))
             currentInstallmentYear = toYearFormat(connectionDemandService.getCurrentInstallment(
-                    WATER_RATES_NONMETERED_PTMODULE, null, new Date()).getInstallmentYear());
+                    PROPERTY_MODULE_NAME, null, new Date()).getInstallmentYear());
         else if (ACTIVE.equals(waterConnectionDetails.getConnectionStatus())
                 && ConnectionType.METERED.equals(waterConnectionDetails.getConnectionType()))
             currentInstallmentYear = toYearFormat(connectionDemandService.getCurrentInstallment(
@@ -259,10 +259,10 @@ public class WaterTaxExternalService {
 
                 if (paidFrom != null)
                     fromInstallment = installmentDao.getInsatllmentByModuleAndDescription(
-                            moduleService.getModuleByName(WATER_RATES_NONMETERED_PTMODULE), paidFrom[0].trim());
+                            moduleService.getModuleByName(PROPERTY_MODULE_NAME), paidFrom[0].trim());
                 if (paidTo != null)
                     toInstallment = installmentDao.getInsatllmentByModuleAndDescription(
-                            moduleService.getModuleByName(WATER_RATES_NONMETERED_PTMODULE), paidTo[0].trim());
+                            moduleService.getModuleByName(PROPERTY_MODULE_NAME), paidTo[0].trim());
             }
 
             if (totalAmountToBePaid.signum() == 0) {

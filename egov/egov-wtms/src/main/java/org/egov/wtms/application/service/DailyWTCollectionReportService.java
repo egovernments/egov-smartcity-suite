@@ -232,7 +232,7 @@ public class DailyWTCollectionReportService {
                                     .getDescription();
                         else if (ConnectionType.NON_METERED.equals(waterConnection.getConnectionType()))
                             currentInstallment = connectionDemandService
-                                    .getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null,
+                                    .getCurrentInstallment(WaterTaxConstants.PROPERTY_MODULE_NAME, null,
                                             new Date())
                                     .getDescription();
 

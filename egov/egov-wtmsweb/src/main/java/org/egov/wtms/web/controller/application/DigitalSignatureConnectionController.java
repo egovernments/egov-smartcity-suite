@@ -208,7 +208,7 @@ public class DigitalSignatureConnectionController {
                             WaterTaxConstants.SIGNWORKFLOWACTION);
                     fileName = WaterTaxConstants.SIGNED_DOCUMENT_PREFIX + waterConnectionDetails.getApplicationNumber()
                             + ".pdf";
-                } else if (currentState.equalsIgnoreCase(WaterTaxConstants.RECONNECTIONCONNECTION)) {
+                } else if (currentState.equalsIgnoreCase(WaterTaxConstants.RECONNECTION)) {
                     reportOutput = reportGenerationService.generateReconnectionReport(waterConnectionDetails,
                             WaterTaxConstants.SIGNWORKFLOWACTION);
                     fileName = WaterTaxConstants.SIGNED_DOCUMENT_PREFIX + waterConnectionDetails.getApplicationNumber()

@@ -47,7 +47,7 @@
  */
 package org.egov.wtms.application.service.collection;
 
-import static org.egov.wtms.utils.constants.WaterTaxConstants.AE_TAPE_AEE__DESIGN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.AE_AEE_TI_DESIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_FEEPAID;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.DMD_STATUS_CHEQUE_BOUNCED;
@@ -274,7 +274,7 @@ public class WaterTaxCollection extends TaxCollection {
             Long approvalPosition;
             final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = waterConnectionDetailsService
                     .getInitialisedWorkFlowBean();
-            approvalPosition = waterTaxUtils.getApproverPosition(AE_TAPE_AEE__DESIGN, waterConnectionDetails);
+            approvalPosition = waterTaxUtils.getApproverPosition(AE_AEE_TI_DESIGN, waterConnectionDetails);
             if (!REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) &&
                     APPLICATION_STATUS_ESTIMATENOTICEGEN.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()))
                 applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(waterConnectionDetails,
@@ -536,7 +536,7 @@ public class WaterTaxCollection extends TaxCollection {
             final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = waterConnectionDetailsService
                     .getInitialisedWorkFlowBean();
             applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(waterConnectionDetails,
-                    approvalPosition, "Receipt Cancelled", WaterTaxConstants.NEW_CONNECTION_MATRIX_ADDL_RULE, null);
+                    approvalPosition, "Receipt Cancelled", WaterTaxConstants.NEWCONNECTION, null);
         }
 
     }

@@ -104,7 +104,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.NON_METERED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.NON_METERED_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PENALTYCHARGES;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PTIS_DETAILS_URL;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTIONCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SIGNED_DOCUMENT_PREFIX;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SIGNWORKFLOWACTION;
@@ -117,7 +117,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.TEMPERARYCLOSECODE
 import static org.egov.wtms.utils.constants.WaterTaxConstants.USERNAME_MEESEVA;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAXREASONCODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_CONNECTION_CHARGE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PROPERTY_MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_CANCEL;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_PREVIEW_BUTTON;
@@ -134,7 +134,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_REJECTED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_SE_APPROVE_PENDING;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_SE_FORWARD_PENDING;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_TAP_EXECUTION_DATE_BUTTON;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WORKFLOW_CLOSUREADDITIONALRULE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSECONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WORKFLOW_RECONNCTIONINITIATED;
 
 import java.io.ByteArrayInputStream;
@@ -594,7 +594,7 @@ public class WaterConnectionDetailsService {
                 && waterConnectionDetails.getCloseConnectionType().equals(TEMPERARYCLOSECODE)
                 && waterConnectionDetails.getReConnectionReason() != null
                 && workFlowAction.equals(APPROVEWORKFLOWACTION)) {
-            waterConnectionDetails.setApplicationType(applicationTypeService.findByCode(RECONNECTIONCONNECTION));
+            waterConnectionDetails.setApplicationType(applicationTypeService.findByCode(RECONNECTION));
             waterConnectionDetails.setConnectionStatus(ACTIVE);
             waterConnectionDetails.setReconnectionApprovalDate(new Date());
             if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())) {
@@ -602,7 +602,7 @@ public class WaterConnectionDetailsService {
                 boolean reconnInSameInstallment;
                 if (checkTwoDatesAreInSameInstallment(waterConnectionDetails)) {
                     Installment nonMeterCurrentInstallment = connectionDemandService.getCurrentInstallment(
-                            WATER_RATES_NONMETERED_PTMODULE, null, waterConnectionDetails.getReconnectionApprovalDate());
+                            PROPERTY_MODULE_NAME, null, waterConnectionDetails.getReconnectionApprovalDate());
                     Date newDateForNextInstall;
                     int numberOfMonths = 6;
                     if (noOfMonthsBetween(waterConnectionDetails.getReconnectionApprovalDate(),
@@ -612,11 +612,11 @@ public class WaterConnectionDetailsService {
                         newDateForNextInstall = waterConnectionDetails.getReconnectionApprovalDate();
                     }
                     nonMeterReconnInstallment = connectionDemandService.getCurrentInstallment(
-                            WATER_RATES_NONMETERED_PTMODULE, null, newDateForNextInstall);
+                            PROPERTY_MODULE_NAME, null, newDateForNextInstall);
                     reconnInSameInstallment = true;
                 } else {
                     nonMeterReconnInstallment = connectionDemandService.getCurrentInstallment(
-                            WATER_RATES_NONMETERED_PTMODULE, null,
+                            PROPERTY_MODULE_NAME, null,
                             waterConnectionDetails.getReconnectionApprovalDate());
                     reconnInSameInstallment = false;
                 }
@@ -644,10 +644,10 @@ public class WaterConnectionDetailsService {
         WaterConnectionDetails updatedWaterConnectionDetails = waterConnectionDetailsRepository.save(waterConnectionDetails);
         ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = getInitialisedWorkFlowBean();
         if (waterConnectionDetails.getCloseConnectionType() != null)
-            additionalRule = WORKFLOW_CLOSUREADDITIONALRULE;
+            additionalRule = CLOSECONNECTION;
 
         if (waterConnectionDetails.getReConnectionReason() != null)
-            additionalRule = RECONNECTIONCONNECTION;
+            additionalRule = RECONNECTION;
         applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(updatedWaterConnectionDetails,
                 approvalPosition, approvalComent, additionalRule, workFlowAction);
 
@@ -705,9 +705,9 @@ public class WaterConnectionDetailsService {
     public boolean checkTwoDatesAreInSameInstallment(WaterConnectionDetails waterConnectionDetails) {
 
         Installment nonMeterClosedInstallment = connectionDemandService.getCurrentInstallment(
-                WATER_RATES_NONMETERED_PTMODULE, null, waterConnectionDetails.getCloseApprovalDate());
+                PROPERTY_MODULE_NAME, null, waterConnectionDetails.getCloseApprovalDate());
         Installment nonMeterReconnInstallment = connectionDemandService.getCurrentInstallment(
-                WATER_RATES_NONMETERED_PTMODULE, null, waterConnectionDetails.getReconnectionApprovalDate());
+                PROPERTY_MODULE_NAME, null, waterConnectionDetails.getReconnectionApprovalDate());
 
         return nonMeterClosedInstallment.getDescription().equals(nonMeterReconnInstallment.getDescription());
     }
@@ -721,7 +721,7 @@ public class WaterConnectionDetailsService {
                 ADDNLCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) ||
                 REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
             applicationStatusUpdate(waterConnectionDetails, workFlowAction);
-        else if (RECONNECTIONCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
+        else if (RECONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
             reconnectionStatusUpdate(waterConnectionDetails, workFlowAction);
         else if (CLOSINGCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
             closureStatusUpdate(waterConnectionDetails, workFlowAction, mode);

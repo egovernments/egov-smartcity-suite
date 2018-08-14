@@ -72,7 +72,6 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_FIELDINSP
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_ROADCUTTING_CHARGE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_SECURITY_CHARGE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_SUPERVISION_CHARGE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.YEARLY;
 
 import java.math.BigDecimal;
@@ -362,7 +361,7 @@ public class ConnectionDemandService {
                                                                            WaterConnectionDetails waterConnectionDetails) {
         Installment currInstallment;
         if (NON_METERED.equals(waterConnectionDetails.getConnectionType()))
-            currInstallment = getCurrentInstallment(WATER_RATES_NONMETERED_PTMODULE, null, new Date());
+            currInstallment = getCurrentInstallment(PROPERTY_MODULE_NAME, null, new Date());
         else
             currInstallment = getCurrentInstallment(MODULE_NAME, MONTHLY, new Date());
         StringBuilder queryBuilder = new StringBuilder(500);
@@ -406,7 +405,7 @@ public class ConnectionDemandService {
                     (MODULE_NAME, YEARLY, new Date()).getInstallmentYear());
         else if (ACTIVE.equals(waterConnectionDetails.getConnectionStatus()) && NON_METERED.equals(waterConnectionDetails.getConnectionType()))
             currentInstallmentYear = toYearFormat(getCurrentInstallment(
-                    WATER_RATES_NONMETERED_PTMODULE, null, new Date()).getInstallmentYear());
+                    PROPERTY_MODULE_NAME, null, new Date()).getInstallmentYear());
         else if (ACTIVE.equals(waterConnectionDetails.getConnectionStatus()) && METERED.equals(waterConnectionDetails.getConnectionType()))
             currentInstallmentYear = toYearFormat(getCurrentInstallment(
                     MODULE_NAME, MONTHLY, new Date()).getInstallmentYear());
@@ -652,7 +651,7 @@ public class ConnectionDemandService {
         List<Installment> installmentList = new ArrayList<>();
 
         if (installment == null)
-            installment = getCurrentInstallment(WATER_RATES_NONMETERED_PTMODULE, null, new Date());
+            installment = getCurrentInstallment(PROPERTY_MODULE_NAME, null, new Date());
         if (workFlowAction != null && workFlowAction.equals(WaterTaxConstants.WF_STATE_TAP_EXECUTION_DATE_BUTTON))
             installemntStartDate = new Date();
 

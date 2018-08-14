@@ -98,7 +98,7 @@ public class ReconnectionService {
 
         final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = waterConnectionDetailsService
                 .getInitialisedWorkFlowBean();
-        additionalRule = WaterTaxConstants.RECONNECTIONCONNECTION;
+        additionalRule = WaterTaxConstants.RECONNECTION;
 
         applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(savedwaterConnectionDetails,
                 approvalPosition, approvalComent, additionalRule, workFlowAction);

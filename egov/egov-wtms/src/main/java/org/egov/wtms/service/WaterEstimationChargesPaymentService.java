@@ -66,7 +66,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.PENALTYCHARGES;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAXREASONCODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_CONNECTION_CHARGE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PROPERTY_MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.YEARLY;
 
 import java.math.BigDecimal;
@@ -148,7 +148,7 @@ public class WaterEstimationChargesPaymentService {
                     MODULE_NAME, YEARLY, new Date()).getInstallmentYear());
         else if (ACTIVE.equals(connectionDetails.getConnectionStatus()) && NON_METERED.equals(connectionDetails.getConnectionType()))
             currentInstallmentYear = toYearFormat(connectionDemandService.getCurrentInstallment(
-                    WATER_RATES_NONMETERED_PTMODULE, null, new Date()).getInstallmentYear());
+                    PROPERTY_MODULE_NAME, null, new Date()).getInstallmentYear());
         else if (ACTIVE.equals(connectionDetails.getConnectionStatus()) && METERED.equals(connectionDetails.getConnectionType()))
             currentInstallmentYear = toYearFormat(connectionDemandService.getCurrentInstallment(
                     MODULE_NAME, MONTHLY, new Date()).getInstallmentYear());
