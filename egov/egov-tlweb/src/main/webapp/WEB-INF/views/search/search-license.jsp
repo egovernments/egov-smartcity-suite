@@ -103,7 +103,7 @@
                         <form:select path="statusId" id="status" cssClass="form-control"
                                      cssErrorClass="form-control error">
                             <form:option value="">
-                                <spring:message code="lbl.category.select"/>
+                                <spring:message code="lbl.select"/>
                             </form:option>
                             <form:options items="${statusList}" itemValue="id" itemLabel="name"/>
                         </form:select>
