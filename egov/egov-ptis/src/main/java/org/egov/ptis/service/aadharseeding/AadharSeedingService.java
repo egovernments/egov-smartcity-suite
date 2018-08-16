@@ -61,6 +61,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -68,6 +69,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.StringUtils;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.ptis.bean.aadharseeding.AadharSearchResult;
@@ -75,6 +77,7 @@ import org.egov.ptis.bean.aadharseeding.AadharSeeding;
 import org.egov.ptis.bean.aadharseeding.AadharSeedingDetails;
 import org.egov.ptis.bean.aadharseeding.AadharSeedingRequest;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
+import org.egov.ptis.domain.entity.document.DocumentTypeDetails;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
@@ -188,18 +191,17 @@ public class AadharSeedingService extends GenericWorkFlowController {
         formData.setLongitude(basicProperty.getLongitude());
         formData.setExtentOfSite(BigDecimal.valueOf(basicProperty.getProperty().getPropertyDetail().getSitalArea() == null ? 0
                 : basicProperty.getProperty().getPropertyDetail().getSitalArea().getArea()));
-        formData.setPlinthArea(BigDecimal.valueOf(basicProperty.getProperty().getPropertyDetail().getPlinthArea() == null ? 0
-                : basicProperty.getProperty().getPropertyDetail().getPlinthArea().getArea()));
-        formData.setPropertyType(basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster().getType());
-        formData.setDocNo(basicProperty.getRegdDocNo() == null ? "NA" : basicProperty.getRegdDocNo());
-        formData.setDocDate(basicProperty.getRegdDocDate());
-        formData.setSurveyNumber(basicProperty.getProperty().getPropertyDetail().getSurveyNumber());
+        formData.setPlinthArea(BigDecimal.valueOf(basicProperty.getProperty().getPropertyDetail().getTotalBuiltupArea() == null ? 0
+                : basicProperty.getProperty().getPropertyDetail().getTotalBuiltupArea().getArea()));
+		formData.setPropertyType(basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster().getType());
+		setDocumentDetails(basicProperty, formData);
+		formData.setSurveyNumber(basicProperty.getProperty().getPropertyDetail().getSurveyNumber());
         formData.setAddress(basicProperty.getAddress().toString());
         formData.setPropertyOwnerInfo(basicProperty.getPropertyOwnerInfo());
         if (status.equals(UPDATED)) {
             AadharSeeding aadharSeeding = aadharSeedingRepository
                     .getAadharSeedingByBasicProperty((BasicPropertyImpl) basicProperty);
-            List<PropertyOwnerInfo> ownerList = new ArrayList();
+            List<PropertyOwnerInfo> ownerList = new ArrayList<>();
             PropertyOwnerInfo propertyOwnerInfo;
             for (AadharSeedingDetails aadharSeedingDetails : aadharSeeding.getAadharSeedingDetails()) {
                 propertyOwnerInfo = new PropertyOwnerInfo();
@@ -302,4 +304,22 @@ public class AadharSeedingService extends GenericWorkFlowController {
         }
         return resultList;
     }
+    
+    private void setDocumentDetails(BasicProperty basicProperty, AadharSeedingRequest formData) {
+		final Query getdocumentsQuery = entityManager.createNamedQuery("DOCUMENT_TYPE_DETAILS_BY_ID");
+		getdocumentsQuery.setParameter("basicProperty", basicProperty.getId());
+
+		List<DocumentTypeDetails> documentTypeDetails = (List<DocumentTypeDetails>) getdocumentsQuery.getResultList();
+		if (documentTypeDetails.isEmpty()) {
+			formData.setDocNo(StringUtils.isBlank(basicProperty.getRegdDocNo()) ? "N/A" : basicProperty.getRegdDocNo());
+			formData.setDocDate(basicProperty.getRegdDocDate() == null ? null : basicProperty.getRegdDocDate());
+			formData.setDocType("N/A");
+		} else {
+			formData.setDocNo(StringUtils.isBlank(documentTypeDetails.get(0).getDocumentNo()) ? "N/A"
+					: documentTypeDetails.get(0).getDocumentNo());
+			formData.setDocDate(documentTypeDetails.get(0).getDocumentDate());
+			formData.setDocType(StringUtils.isBlank(documentTypeDetails.get(0).getDocumentName()) ? "N/A"
+					: documentTypeDetails.get(0).getDocumentName());
+		}
+	}
 }

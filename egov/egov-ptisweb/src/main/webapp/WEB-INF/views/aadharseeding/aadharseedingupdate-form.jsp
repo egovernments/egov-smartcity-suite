@@ -222,6 +222,15 @@
 									default="N/A" /> </strong>
 						</div>
 					</div>
+					<div class="row add-border">
+						<div class="col-xs-3 add-margin">
+							<label><spring:message code="lbl.docType" /></label>
+						</div>
+						<div class="col-xs-3 add-margin view-content">
+							<strong><c:out value="${aadharSeedingUpdate.docType}"
+									default="N/A" /> </strong>
+						</div>
+					</div>
 				</div>
 			</div>
 			<div class="panel panel-primary" data-collapsed="0">

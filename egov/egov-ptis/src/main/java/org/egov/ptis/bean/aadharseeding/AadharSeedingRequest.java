@@ -75,6 +75,7 @@ public class AadharSeedingRequest {
     private String propertyType;
     private String docNo;
     private Date docDate;
+    private String docType;
     private String surveyNumber;
     private String documentType;
     private String successMessage;
@@ -262,4 +263,13 @@ public class AadharSeedingRequest {
     public void setSuccessMessage(String successMessage) {
         this.successMessage = successMessage;
     }
+
+	public String getDocType() {
+		return docType;
+	}
+
+	public void setDocType(String docType) {
+		this.docType = docType;
+	}
+    
 }
