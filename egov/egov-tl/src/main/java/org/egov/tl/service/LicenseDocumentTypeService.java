@@ -97,7 +97,7 @@ public class LicenseDocumentTypeService {
     }
 
     public List<LicenseDocumentType> getDocumentTypesForClosureApplicationType() {
-        return getDocumentTypesByApplicationType(licenseAppTypeService.getRenewLicenseApplicationType());
+        return getDocumentTypesByApplicationType(licenseAppTypeService.getClosureLicenseApplicationType());
     }
 
     public List<LicenseDocumentType> getDocumentTypesByApplicationType(LicenseAppType applicationType) {
