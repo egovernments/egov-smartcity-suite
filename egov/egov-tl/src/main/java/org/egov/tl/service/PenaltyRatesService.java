@@ -48,11 +48,10 @@
 package org.egov.tl.service;
 
 import org.egov.commons.Installment;
-import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.utils.DateUtils;
-import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.PenaltyRates;
+import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.repository.PenaltyRatesRepository;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,10 +93,9 @@ public class PenaltyRatesService {
         return penaltyRatesRepository.save(penaltyRates);
     }
 
-    @ReadOnly
-    public List<PenaltyRates> search(LicenseAppType licenseAppType) {
-        return licenseAppType != null ?
-                penaltyRatesRepository.findByLicenseAppTypeOrderByIdAsc(licenseAppType) : penaltyRatesRepository.findAll();
+    public List<PenaltyRates> getPenaltyRatesByLicenseAppType(LicenseAppType licenseAppType) {
+        return licenseAppType == null ? penaltyRatesRepository.findAll() :
+                penaltyRatesRepository.findByLicenseAppTypeOrderByIdAsc(licenseAppType);
     }
 
     @Transactional
@@ -119,7 +117,7 @@ public class PenaltyRatesService {
     }
 
     public Date getPenaltyDate(LicenseAppType licenseAppType, Installment installment) {
-        Optional<PenaltyRates> penaltyRates = search(licenseAppType)
+        Optional<PenaltyRates> penaltyRates = getPenaltyRatesByLicenseAppType(licenseAppType)
                 .stream()
                 .filter(penaltyRate -> penaltyRate.getRate().doubleValue() <= ZERO.doubleValue())
                 .findFirst();

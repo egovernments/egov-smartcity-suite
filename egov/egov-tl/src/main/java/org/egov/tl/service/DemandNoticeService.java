@@ -181,7 +181,8 @@ public class DemandNoticeService {
             LicenseAppType licenseAppType = licenseAppTypeService.getLicenseAppTypeByCode(license.getIsActive()
                     ? RENEW_APPTYPE_CODE : license.getLicenseAppType().getCode());
             reportParams.put("penaltyCalculationMessage",
-                    getPenaltyRateDetails(penaltyRatesService.search(licenseAppType), currentInstallment, licenseAppType));
+                    getPenaltyRateDetails(penaltyRatesService.getPenaltyRatesByLicenseAppType(licenseAppType),
+                            currentInstallment, licenseAppType));
         }
         return reportService.createReport(new ReportRequest("tl_demand_notice", license, reportParams));
     }
