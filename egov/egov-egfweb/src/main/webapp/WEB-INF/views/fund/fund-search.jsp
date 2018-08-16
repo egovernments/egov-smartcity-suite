@@ -69,7 +69,8 @@
               </div>
               <label class="col-sm-3 control-label text-right"><spring:message code="lbl.code" /> </label>
               <div class="col-sm-3 add-margin">
-                <form:input path="code" class="form-control text-left patternvalidation" data-pattern="alphanumeric"
+                <form:input path="code" class="form-control text-left patternvalidation" 
+                onkeypress="return replaceSpecialChar(event)" data-pattern="alphanumeric"
                   maxlength="50" />
                 <form:errors path="code" cssClass="error-msg" />
               </div>
@@ -140,6 +141,11 @@
 			e.preventDefault();
 		}
 	});
+	function replaceSpecialChar(e) {
+	    var k;
+	    document.all ? k = e.keyCode : k = e.which;
+	    return ((k > 64 && k < 91) || (k > 96 && k < 123) || k == 8 || k == 32 || (k >= 48 && k <= 57));
+	}
 </script>
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>

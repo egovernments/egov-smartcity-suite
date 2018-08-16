@@ -58,12 +58,14 @@
 					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.name" /> <span class="mandatory"></span> </label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="name" class="form-control text-left patternvalidation" data-pattern="alphanumeric" maxlength="50" required="required" />
+							<form:input path="name" class="form-control text-left patternvalidation" 
+							onkeypress="return replaceSpecialChar(event)" data-pattern="alphanumeric" maxlength="50" required="required" />
 							<form:errors path="name" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.code" /> <span class="mandatory"></span> </label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="code" class="form-control text-left patternvalidation" data-pattern="alphanumeric" maxlength="50" required="required" />
+							<form:input path="code" class="form-control text-left patternvalidation" 
+							onkeypress="return replaceSpecialChar(event)" data-pattern="alphanumeric" maxlength="50" required="required" />
 							<form:errors path="code" cssClass="error-msg" />
 						</div>
 					</div>
@@ -83,3 +85,10 @@
 			</div>
 		</div>
 	</div>
+	<script type="text/javascript" >
+		function replaceSpecialChar(e) {
+		    var k;
+		    document.all ? k = e.keyCode : k = e.which;
+		    return ((k > 64 && k < 91) || (k > 96 && k < 123) || k == 8 || k == 32 || (k >= 48 && k <= 57));
+		}
+	</script>

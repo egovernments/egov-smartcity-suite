@@ -60,14 +60,14 @@
 								code="lbl.code" /> <span class="mandatory"></span> </label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="code"
-								class="form-control text-left patternvalidation"
+								class="form-control text-left patternvalidation" onkeypress="return replaceSpecialChar(event)"
 								data-pattern="alphanumeric" maxlength="50" required="required" />
 							<form:errors path="code" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.name" /> <span class="mandatory"></span> </label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="name"
+							<form:input path="name" onkeypress="return replaceSpecialChar(event)"
 								class="form-control text-left patternvalidation"
 								data-pattern="alphanumeric" maxlength="50" required="required" />
 							<form:errors path="name" cssClass="error-msg" />
@@ -85,9 +85,10 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.mobile" /> </label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="mobile" id="mobile"
+							<form:input path="mobile" id="mobile" onchange="checkLength();"
 								class="form-control text-left patternvalidation"
-								data-pattern="number" maxlength="10"   />
+								data-pattern="number" maxlength="10" />
+								<p id="errorForMobileNo" style="color:red;font-size:14px;display:none;">Please enter 10 digit mobile number</p>
 							<form:errors path="mobile" cssClass="error-msg" />
 						</div>
 					</div>
@@ -95,9 +96,10 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.email" /> </label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="email"
+							<form:input path="email" id="emailId" onchange="isvalidEmail()"
 								class="form-control text-left patternvalidation"
 								data-pattern="alphanumeric" maxlength="25" />
+								<p id="errorForEmailId" style="color:red;font-size:14px;display:none;">Please enter valid email id</p>
 							<form:errors path="email" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-3 control-label text-right"><spring:message
@@ -119,7 +121,7 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.panno" /> </label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="panno"
+							<form:input path="panno" onkeypress="return replaceSpecialChar(event)"
 								class="form-control text-left patternvalidation"
 								data-pattern="alphanumeric" maxlength="10" />
 							<form:errors path="panno" cssClass="error-msg" />
@@ -129,7 +131,7 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.tinno" /> </label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="tinno"
+							<form:input path="tinno" onkeypress="return replaceSpecialChar(event)"
 								class="form-control text-left patternvalidation"
 								data-pattern="alphanumeric" maxlength="20" />
 							<form:errors path="tinno" cssClass="error-msg" />
@@ -159,7 +161,7 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.bankaccount" /> </label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="bankaccount"
+							<form:input path="bankaccount" onkeypress="return replaceSpecialChar(event)"
 								class="form-control text-left patternvalidation"
 								data-pattern="alphanumeric" maxlength="25" />
 							<form:errors path="bankaccount" cssClass="error-msg" />
@@ -169,7 +171,7 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.ifsccode" /> </label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="ifsccode"
+							<form:input path="ifsccode" onkeypress="return replaceSpecialChar(event)"
 								class="form-control text-left patternvalidation"
 								data-pattern="alphanumeric" maxlength="12" />
 							<form:errors path="ifsccode" cssClass="error-msg" />
@@ -177,6 +179,40 @@
 					</div>
 					<input type="hidden" name="relation" value="${relation.id}" />
 
-                    <script type="text/javascript"
-                            src="/egi/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}"></script>
+<script type="text/javascript">
+
+function replaceSpecialChar(e) {
+    var k;
+    document.all ? k = e.keyCode : k = e.which;
+    return ((k > 64 && k < 91) || (k > 96 && k < 123) || k == 8 || k == 32 || (k >= 48 && k <= 57));
+}
+function isvalidEmail(){
+	var filter = /^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+	var emailId = $("#emailId").val();
+	if(emailId != ""){
+		if (filter.test(emailId)) {
+			$("#errorForEmailId").hide();
+	    }else {
+	    	$("#errorForEmailId").show();
+	    }
+	}else{
+		$("#errorForEmailId").hide();
+	}
+		
+}
+function checkLength(){
+	var mobileNo = $('#mobile').val();
+	if(mobileNo != ""){
+		if(mobileNo.length != 10){
+			$("#errorForMobileNo").show();
+		}else{
+			$("#errorForMobileNo").hide();
+		}
+	}else{
+		$("#errorForMobileNo").hide();
+	}
+}
+
+</script>
+<script type="text/javascript" src="/egi/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}"></script>
 					
