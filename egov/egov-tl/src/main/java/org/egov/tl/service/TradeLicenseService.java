@@ -993,7 +993,6 @@ public class TradeLicenseService {
         }
     }
 
-    @ReadOnly
     public ReportOutput generateLicenseCertificate(TradeLicense license, boolean isProvisional) {
         String reportTemplate;
         if (CITY_GRADE_CORPORATION.equals(cityService.getCityGrade()))
@@ -1219,7 +1218,7 @@ public class TradeLicenseService {
             final HashMap<String, Object> currentStateDetail = new HashMap<>();
             currentStateDetail.put("date", state.getLastModifiedDate());
             currentStateDetail.put("updatedBy", state.getSenderName().contains(DELIMITER_COLON)
-                    ? state.getSenderName().split(DELIMITER_COLON)[1] : state.getSenderName());
+                    ? state.getSenderName().split(DELIMITER_COLON)[1] :state.getSenderName());
             currentStateDetail.put("status", state.isEnded() ? "Completed" : state.getValue());
             currentStateDetail.put("comments", defaultString(state.getComments()));
             User ownerUser = state.getOwnerUser();
