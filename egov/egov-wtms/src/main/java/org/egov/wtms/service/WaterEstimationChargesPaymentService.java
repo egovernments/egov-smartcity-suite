@@ -62,7 +62,6 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.ESTIMATIONCHARGES_
 import static org.egov.wtms.utils.constants.WaterTaxConstants.METERED_CHARGES_REASON_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MONTHLY;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.NO_OF_INSTALLMENTS;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.PENALTYCHARGES;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAXREASONCODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_CONNECTION_CHARGE;
@@ -126,7 +125,7 @@ public class WaterEstimationChargesPaymentService {
         EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
         BigDecimal estimationAmount = ZERO;
         List<String> demandCodes = Arrays.asList(METERED_CHARGES_REASON_CODE, WATERTAXREASONCODE,
-                DEMANDRSN_CODE_ADVANCE, WATERTAX_CONNECTION_CHARGE,PENALTYCHARGES);
+                DEMANDRSN_CODE_ADVANCE, WATERTAX_CONNECTION_CHARGE);
         if (currentDemand != null)
             for (EgDemandDetails demandDetails : currentDemand.getEgDemandDetails()) {
                 if (!demandCodes.contains(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode())) {
@@ -184,7 +183,7 @@ public class WaterEstimationChargesPaymentService {
         EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
         BigDecimal estimationAmount = BigDecimal.ZERO;
         List<String> demandCodes = Arrays.asList(METERED_CHARGES_REASON_CODE, WATERTAXREASONCODE,
-                DEMANDRSN_CODE_ADVANCE, WATERTAX_CONNECTION_CHARGE,PENALTYCHARGES);
+                DEMANDRSN_CODE_ADVANCE, WATERTAX_CONNECTION_CHARGE);
         if (currentDemand != null)
             for (EgDemandDetails demandDetails : currentDemand.getEgDemandDetails()) {
                 if (!demandCodes.contains(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode())) {

@@ -114,7 +114,6 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.METERED_CHARGES_RE
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULETYPE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.NON_METERED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ORDERED_DEMAND_RSNS_LIST;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.PENALTYCHARGES;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PROPERTY_MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAXREASONCODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_CHARGES_SERVICE_CODE;
@@ -253,7 +252,7 @@ public class ConnectionBillService extends BillServiceInterface {
                                                  Map<Installment, List<EgDemandDetails>> installmentWise,
                                                  Set<Installment> sortedInstallmentSet) {
         List<String> demandCodes = Arrays.asList(METERED_CHARGES_REASON_CODE, WATERTAXREASONCODE,
-                DEMANDRSN_CODE_ADVANCE, WATERTAX_CONNECTION_CHARGE,PENALTYCHARGES);
+                DEMANDRSN_CODE_ADVANCE, WATERTAX_CONNECTION_CHARGE);
         for (EgDemandDetails demandDetail : demand.getEgDemandDetails()) {
             Installment installment = demandDetail.getEgDemandReason().getEgInstallmentMaster();
             boolean checkDemandReason = demandCodes.contains(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode());
