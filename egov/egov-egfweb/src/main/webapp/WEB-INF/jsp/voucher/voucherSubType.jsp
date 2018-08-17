@@ -68,7 +68,7 @@
 			<span class="mandatory1">*</span>
 		</div></td>
 	<td class="bluebox"><s:textfield name="voucherTypeBean.partyName"
-			id="voucherTypeBean.partyName" onchange="isSpecialChar(this)"
+			id="voucherTypeBean.partyName" onchange="isSpecialChar(this)" onblur="isSpecialChar(this)"
 			value="%{voucherTypeBean.partyName}" /></td>
 </tr>
 <tr>
@@ -160,25 +160,5 @@ function onChangeVSubType(){
 	}
 	
 }    
-
-function isSpecialChar(Obj){
-	var pattern=/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi;
-	var partyNameEntered = document.getElementById('voucherTypeBean.partyName').value;
-	if(partyNameEntered.trim().length == 0){
-		document.getElementById('lblError').innerHTML = "Only empty spaces are not allowed";
-		document.getElementById('voucherTypeBean.partyName').focus();
-		return false;
-	}else{
-		if(document.getElementById('voucherTypeBean.partyName').value.match(pattern))
-		{
-			document.getElementById('voucherTypeBean.partyName').focus();
-			document.getElementById('lblError').innerHTML = "Special characters are not allowed ";
-			return false;
-		}else{
-			document.getElementById('lblError').innerHTML = "";
-		}
-	} 
-	
-  }
   
 </script>
