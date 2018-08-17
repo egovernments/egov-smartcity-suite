@@ -114,19 +114,15 @@
 			}
 		return true; 
 		}
+	
 	function isSpecialChar(){
-		var pattern=/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi;
-		if(document.getElementById('code').value.match(pattern)){
-			document.getElementById('code').focus();
-			document.getElementById('errorMsgCode').style.display = "block";
-			return false;
-		}else if(document.getElementById('name').value.match(pattern)){
-			document.getElementById('name').focus();
-			document.getElementById('errorMsgCode').style.display = "block";
-		}else{
-			document.getElementById('errorMsgCode').style.display = "none";
-		}
-	  }
+		  var codeEntered = document.getElementById('code').value;
+		  var nameEntered = document.getElementById('name').value;
+		  var replacedCode = codeEntered.replace(/[`~!@#$%^&*()_|+\-=÷¿?;:><'",.<>\{\}\[\]\\\/]/gi, '');
+		  var replacedName = nameEntered.replace(/[`~!@#$%^&*()_|+\-=÷¿?;:><'",.<>\{\}\[\]\\\/]/gi, '');
+		  document.getElementById('code').value = replacedCode;
+		  document.getElementById('name').value = replacedName;	  
+	}
     </SCRIPT>
 </head>
 <body>
@@ -161,11 +157,10 @@
 			</div>
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tr>
-					<p id="errorMsgCode" style="font-size:14px;display:none;color:red;" class="text-center">Special characters are not allowed </p>
 					<td style="width: 10%"></td>
 					<td class="greybox" width="10%"><s:text name="scheme.code" /><span
 						class="mandatory1"> *</span></td>
-					<td class="greybox" width="30%"><s:textfield id="code" onchange="isSpecialChar()"
+					<td class="greybox" width="30%"><s:textfield id="code" onkeyup="isSpecialChar()" onchange="isSpecialChar()"
 							name="code" value="%{scheme.code}"
 							onblur="checkuniquenesscode();" /></td>
 					<egov:uniquecheck id="codeuniquecode" name="codeuniquecode"
@@ -174,7 +169,7 @@
 
 					<td class="greybox" width="10%"><s:text name="scheme.name" /><span
 						class="mandatory1"> *</span></td>
-					<td class="greybox" width="30%"><s:textfield id="name" onchange="isSpecialChar()"
+					<td class="greybox" width="30%"><s:textfield id="name" onkeyup="isSpecialChar()" onchange="isSpecialChar()"
 							name="name" value="%{scheme.name}"
 							onblur="checkuniquenessname();" /></td>
 					<egov:uniquecheck id="uniquename" name="uniquename"

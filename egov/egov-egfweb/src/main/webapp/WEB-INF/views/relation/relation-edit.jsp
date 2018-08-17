@@ -61,7 +61,7 @@
 	</div>
 	<div class="form-group">
 		<div class="text-center">
-			<button type='submit' class='btn btn-primary' id="buttonSubmit">
+			<button type='button' class='btn btn-primary' id="buttonSubmit" onclick = "validateFormData();">
 				<spring:message code='lbl.update' />
 			</button>
 			<a href='javascript:void(0)' class='btn btn-default'
@@ -70,10 +70,54 @@
 	</div>
 </form:form>
 <script>
-	$('#buttonSubmit').click(function(e) {
-		if ($('form').valid()) {
-		} else {
-			e.preventDefault();
+
+var validMobile = true;
+var validEmail = true;
+function submitForm(){
+	if ($('form').valid()) {
+	} else {
+		e.preventDefault();
+	}
+}
+function validateFormData(){
+	if(validEmail == true && validMobile == true){
+		$("#buttonSubmit").attr('type','submit');
+		submitForm();
+	}else{
+		$("#buttonSubmit").attr('type','button');
+	}
+}
+function checkLength(){
+	var mobileNo = $('#mobile').val();
+	if(mobileNo != ""){
+		if(mobileNo.length != 10){
+			$("#errorForMobileNo").show();
+			validMobile = false;
+			return false;
+		}else{
+			validMobile = true;
+			$("#errorForMobileNo").hide();
 		}
-	});
+	}else{
+		validMobile = true;
+		$("#errorForMobileNo").hide();
+	}
+}
+function isvalidEmail(){
+	var filter = /^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+	var emailId = $("#emailId").val();
+	if(emailId != ""){
+		if (filter.test(emailId)) {
+			validEmail = true;
+			$("#errorForEmailId").hide();
+	    }else {
+	    	validEmail = false;
+	    	$("#errorForEmailId").show();
+	    }
+	}else{
+		validEmail = true;
+		$("#errorForEmailId").hide();
+	}
+		
+}
 </script>

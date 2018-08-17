@@ -186,33 +186,6 @@ function replaceSpecialChar(e) {
     document.all ? k = e.keyCode : k = e.which;
     return ((k > 64 && k < 91) || (k > 96 && k < 123) || k == 8 || k == 32 || (k >= 48 && k <= 57));
 }
-function isvalidEmail(){
-	var filter = /^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
-	var emailId = $("#emailId").val();
-	if(emailId != ""){
-		if (filter.test(emailId)) {
-			$("#errorForEmailId").hide();
-	    }else {
-	    	$("#errorForEmailId").show();
-	    }
-	}else{
-		$("#errorForEmailId").hide();
-	}
-		
-}
-function checkLength(){
-	var mobileNo = $('#mobile').val();
-	if(mobileNo != ""){
-		if(mobileNo.length != 10){
-			$("#errorForMobileNo").show();
-		}else{
-			$("#errorForMobileNo").hide();
-		}
-	}else{
-		$("#errorForMobileNo").hide();
-	}
-}
-
 </script>
 <script type="text/javascript" src="/egi/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}"></script>
 					
