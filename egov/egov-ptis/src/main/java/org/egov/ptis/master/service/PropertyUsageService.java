@@ -112,7 +112,6 @@ public class PropertyUsageService {
         return propertyUsageHibernateDAO.getAllActivePropertyUsage();
     }
     
-    @ReadOnly
     public PropertyUsage findById(Long id) {
         return propertyUsageHibernateDAO.findById(id, false);
     }
