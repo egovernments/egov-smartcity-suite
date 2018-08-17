@@ -203,7 +203,28 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
             }
         }
 
-        if(isActiveApprover){
+        if (!isEmployee) {
+            if (isActiveApprover) {
+                return createAdvertisementOnApproverCheck(advertisementPermitDetail, redirAttrib, workFlowAction, currentuser,
+                        isEmployee,
+                        approvalPosition, approvalComment, approverName, nextDesignation);
+            } else {
+                model.addAttribute(IS_EMPLOYEE, isEmployee);
+                model.addAttribute("message", NOTEXISTS_POSITION);
+                buildCreateHoardingForm(advertisementPermitDetail, model);
+                return HOARDING_CREATE;
+            }
+
+        }
+        else{
+            return createAdvertisementOnApproverCheck(advertisementPermitDetail, redirAttrib, workFlowAction, currentuser,
+                    isEmployee, approvalPosition, approvalComment, approverName, nextDesignation); 
+        }
+    }
+
+    private String createAdvertisementOnApproverCheck(final AdvertisementPermitDetail advertisementPermitDetail,
+            final RedirectAttributes redirAttrib, String workFlowAction, User currentuser, Boolean isEmployee,
+            Long approvalPosition, String approvalComment, String approverName, String nextDesignation) {
         advertisementPermitDetail.getAdvertisement().setPenaltyCalculationDate(advertisementPermitDetail.getApplicationDate());
         advertisementPermitDetailService.createAdvertisementPermitDetail(advertisementPermitDetail, approvalPosition,
                 approvalComment, "CREATEADVERTISEMENT", workFlowAction, currentuser);
@@ -217,13 +238,6 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
             return "redirect:/hoarding/showack/" + advertisementPermitDetail.getId();
          else 
             return "redirect:/hoarding/success/" + advertisementPermitDetail.getId();
-        }
-        else{
-            model.addAttribute(IS_EMPLOYEE,isEmployee);
-            model.addAttribute("message", NOTEXISTS_POSITION);
-            buildCreateHoardingForm(advertisementPermitDetail, model);     
-            return HOARDING_CREATE;
-        }
     }
     
     @RequestMapping(value = "/success/{id}", method = GET)
