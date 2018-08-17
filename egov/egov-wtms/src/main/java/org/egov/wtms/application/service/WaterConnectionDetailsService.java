@@ -135,6 +135,8 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_SE_FORWAR
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_TAP_EXECUTION_DATE_BUTTON;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSECONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WORKFLOW_RECONNCTIONINITIATED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.JUNIOR_ASSISTANT_DESIGN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.SENIOR_ASSISTANT_DESIGN;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -275,6 +277,7 @@ public class WaterConnectionDetailsService {
     private static final String REQ_INITIAL_READING = "InitialReadingRequired";
     private static final String REQ_METER_SERIAL_NUMBER = "MeterSerialNumberRequired";
     private static final String ERR_WATER_RATES_NOT_DEFINED = "WaterRatesNotDefined";
+    private static final String INVALID_EXECUTION_DATE = "InvalidExecutionDate";
 
     @Autowired
     protected WaterConnectionDetailsRepository waterConnectionDetailsRepository;
@@ -1432,7 +1435,7 @@ public class WaterConnectionDetailsService {
     }
 
     public String validateInput(WaterConnectionExecutionResponse executionDetailsResponse,
-                                List<WaterConnectionDetails> connectionDetailsList) {
+            List<WaterConnectionDetails> connectionDetailsList) {
         JSONObject jsonObject = new JSONObject(executionDetailsResponse);
         JSONArray jsonArray = jsonObject.getJSONArray("executeWaterApplicationDetails");
         String status = EMPTY;
@@ -1442,12 +1445,15 @@ public class WaterConnectionDetailsService {
             if (validateDonationDetails(connectionDetails)) {
                 if (connectionDetails != null && isNotBlank(jsonObj.getString(EXECUTION_DATE))) {
                     connectionDetails.setExecutionDate(DateUtils.toDateUsingDefaultPattern(jsonObj.getString(EXECUTION_DATE)));
-                    if (connectionDetails.getExecutionDate() != null
-                            && connectionDetails.getExecutionDate().compareTo(DateUtils.toDateUsingDefaultPattern(
-                            DateUtils.getDefaultFormattedDate(connectionDetails.getApprovalDate()))) < 0)
-                        status = DATE_VALIDATION_FAILED;
-                    else
-                        connectionDetailsList.add(connectionDetails);
+                    if (connectionDetails.getExecutionDate() != null) {
+                        if (connectionDetails.getExecutionDate().compareTo(DateUtils.toDateUsingDefaultPattern(
+                                DateUtils.getDefaultFormattedDate(connectionDetails.getApprovalDate()))) < 0)
+                            status = DATE_VALIDATION_FAILED;
+                        else if (connectionDetails.getExecutionDate().compareTo(new Date()) > 0)
+                            status = INVALID_EXECUTION_DATE;
+                        else
+                            connectionDetailsList.add(connectionDetails);
+                    }
                 }
             } else
                 status = ERR_WATER_RATES_NOT_DEFINED;
@@ -1519,7 +1525,7 @@ public class WaterConnectionDetailsService {
     }
 
     public String validateMeterDetails(WaterConnectionExecutionResponse executionResponse,
-                                       List<WaterConnectionDetails> applicationList) {
+            List<WaterConnectionDetails> applicationList) {
         String validStatus;
 
         JSONObject jsonObject = new JSONObject(executionResponse);
@@ -1531,12 +1537,15 @@ public class WaterConnectionDetailsService {
         WaterConnectionDetails waterConnectionDetails = findByApplicationNumber(jsonObj.getString(APPLICATION_NUMBER));
         if (executionResponse != null && isNotBlank(jsonObj.getString(EXECUTION_DATE))) {
             waterConnectionDetails.setExecutionDate(DateUtils.toDateUsingDefaultPattern(jsonObj.getString(EXECUTION_DATE)));
-            if (waterConnectionDetails.getExecutionDate() != null
-                    && waterConnectionDetails.getExecutionDate().compareTo(DateUtils.toDateUsingDefaultPattern(
-                    DateUtils.getDefaultFormattedDate(waterConnectionDetails.getApplicationDate()))) < 0)
-                validStatus = DATE_VALIDATION_FAILED;
-            else
-                applicationList.add(waterConnectionDetails);
+            if (waterConnectionDetails.getExecutionDate() != null) {
+                if (waterConnectionDetails.getExecutionDate().compareTo(DateUtils.toDateUsingDefaultPattern(
+                        DateUtils.getDefaultFormattedDate(waterConnectionDetails.getApprovalDate()))) < 0)
+                    validStatus = DATE_VALIDATION_FAILED;
+                else if (waterConnectionDetails.getExecutionDate().compareTo(new Date()) > 0)
+                    validStatus = INVALID_EXECUTION_DATE;
+                else
+                    applicationList.add(waterConnectionDetails);
+            }
         }
         waterConnectionDetails.getConnection().setMeterSerialNumber(jsonObj.getString(METER_SERIAL_NUMBER));
         waterConnectionDetails.getConnection().setInitialReading(Long.valueOf(jsonObj.getString(INITIAL_READING)));
@@ -1604,8 +1613,12 @@ public class WaterConnectionDetailsService {
     }
 
     public String getReglnConnectionPendingAction(WaterConnectionDetails waterConnectionDetails,
-                                                  String loggedInUserDesignation, String workFlowAction) {
-        if (APPLICATION_STATUS_FEEPAID.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
+            String loggedInUserDesignation, String workFlowAction) {
+        if (APPLICATION_STATUS_CREATED.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()) &&
+                workFlowAction.isEmpty() && WF_STATE_REJECTED.equalsIgnoreCase(waterConnectionDetails.getState().getValue()) &&
+                Arrays.asList(JUNIOR_ASSISTANT_DESIGN, SENIOR_ASSISTANT_DESIGN).contains(loggedInUserDesignation))
+            return WF_STATE_AE_APPROVAL_PENDING;
+        else if (APPLICATION_STATUS_FEEPAID.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
                 && FORWARDWORKFLOWACTION.equalsIgnoreCase(workFlowAction))
             return getReglnForwardPendingAction(loggedInUserDesignation);
         if ((APPLICATION_STATUS_FEEPAID.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
