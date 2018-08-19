@@ -214,7 +214,7 @@ public class LegacyLicenseService extends LicenseService {
     }
 
     public void storeDocument(TradeLicense license) {
-        List<LicenseDocument> documents = license.getDocuments();
+        List<LicenseDocument> documents = license.getLicenseDocuments();
         for (LicenseDocument document : documents) {
             List<MultipartFile> files = document.getMultipartFiles();
             document.setType(licenseDocumentTypeRepository.findOne(document.getType().getId()));

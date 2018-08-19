@@ -301,8 +301,6 @@ public class TradeLicense extends StateAware<Position> {
     private String uid;
 
     @Transient
-    private transient MultipartFile[] files;
-    @Transient
     private transient WorkflowContainer workflowContainer = new WorkflowContainer();
     @Transient
     private transient List<LicenseDocument> licenseDocuments = new ArrayList<>();
@@ -596,14 +594,6 @@ public class TradeLicense extends StateAware<Position> {
 
     public void setLegacyFeePayStatus(List<Boolean> legacyFeePayStatus) {
         this.legacyFeePayStatus = legacyFeePayStatus;
-    }
-
-    public MultipartFile[] getFiles() {
-        return files;
-    }
-
-    public void setFiles(MultipartFile[] files) {
-        this.files = files;
     }
 
     public WorkflowContainer getWorkflowContainer() {

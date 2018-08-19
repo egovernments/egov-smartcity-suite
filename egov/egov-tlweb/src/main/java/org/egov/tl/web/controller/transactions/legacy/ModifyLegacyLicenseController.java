@@ -92,7 +92,6 @@ public class ModifyLegacyLicenseController extends LegacyLicenseController {
             model.addAttribute("legacyFeePayStatus", legacyService.legacyInstallmentStatus(tradeLicense));
             return UPDATE_LEGACY_FORM;
         }
-        tradeLicense.setDocuments(tradeLicense.getLicenseDocuments());
         legacyService.updateLegacy(tradeLicense);
         return "redirect:/legacylicense/view/" + tradeLicense.getApplicationNumber();
     }
