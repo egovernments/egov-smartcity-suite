@@ -147,10 +147,10 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
 
     @Override
     public PaymentResponse parsePaymentResponse(final String response) {
-        if (LOGGER.isDebugEnabled()) {
+        if (LOGGER.isDebugEnabled())
             LOGGER.debug("Insider SbimopsAdaptor-parsePaymentResponse");
-            LOGGER.debug("Sbimops relatime transaction response : " + response);
-        }
+        if (LOGGER.isInfoEnabled())
+            LOGGER.info("Sbimops relatime transaction response : " + response);
         final String[] keyValueStr = response.replace("{", "").replace("}", "").split(",");
         final LinkedHashMap<String, String> responseMap = new LinkedHashMap<>(0);
 
@@ -176,7 +176,8 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
                 transDate = simpleDateFormat.parse(responseMap.get(CollectionConstants.SBIMOPS_BANKTIME_STAMP));
                 sbiPaymentResponse.setTxnDate(transDate);
             } catch (final ParseException e) {
-                LOGGER.error("Error in parsing transaction date [" + responseMap.get(CollectionConstants.SBIMOPS_BANK_DATE) + "]",
+                LOGGER.error(
+                        "Error in parsing transaction date [" + responseMap.get(CollectionConstants.SBIMOPS_BANKTIME_STAMP) + "]",
                         e);
                 throw new ApplicationRuntimeException(".transactiondate.parse.error", e);
             }
@@ -217,7 +218,7 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
                 } catch (final ParseException e) {
                     LOGGER.error(
                             "Error in parsing transaction date ["
-                                    + responseParameterMap.get(CollectionConstants.SBIMOPS_BANK_DATE)
+                                    + responseParameterMap.get(CollectionConstants.SBIMOPS_BNKDT)
                                     + "]",
                             e);
                     throw new ApplicationRuntimeException(".transactiondate.parse.error", e);
@@ -242,6 +243,11 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
             UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
                     collectionApplicationProperties.sbimopsReconcileUsername(),
                     collectionApplicationProperties.sbimopsReconcilePassword());
+
+            if (LOGGER.isInfoEnabled())
+                LOGGER.info("Sbimops reconciliation URL:" + collectionApplicationProperties.sbimopsReconcileUrl()
+                        + " |username: " + collectionApplicationProperties.sbimopsReconcileUsername()
+                        + " |password: " + collectionApplicationProperties.sbimopsReconcilePassword());
 
             CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
             credentialsProvider.setCredentials(AuthScope.ANY, credentials);
@@ -271,8 +277,8 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
         deptCodeJson.add(CollectionConstants.SBIMOPS_ROW, transactionIdJson);
         requestJson.add(CollectionConstants.SBIMOPS_RECORDSET, deptCodeJson);
 
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("SBIMOPS reconciliation request:" + requestJson.toString());
+        if (LOGGER.isInfoEnabled())
+            LOGGER.info("SBIMOPS reconciliation request parameters:" + requestJson.toString());
         return requestJson.toString();
     }
 
@@ -293,8 +299,8 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
                 reader.close();
                 inputStreamReader.close();
             }
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Sbimops reconciliation response : " + responseMap);
+            if (LOGGER.isInfoEnabled())
+                LOGGER.info("Sbimops reconciliation response : " + responseMap);
             Map<String, Object> responseParameterMap = (Map<String, Object>) responseMap.get("RECORDSET").get("ROW");
             final Map<String, String> responseSbimopsMap = new LinkedHashMap<>();
             responseParameterMap.forEach((key, value) -> responseSbimopsMap.put(key, value.toString()));
