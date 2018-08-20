@@ -10,15 +10,10 @@ public class BillPaymetDetails {
 	private String billVoucherStatus;
 	private String paymentVoucherNo;
 	private String paymentVoucherStatus;
-	//private Double amount;
 	private BigDecimal paymentAmount;
 	private Date voucherDate;
 	private String chequRefNo;
 	
-	
-	public BillPaymetDetails() {
-		
-	}
 	
 	public String getCityname() {
 		return cityname;

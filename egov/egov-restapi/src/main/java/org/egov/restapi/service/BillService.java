@@ -142,6 +142,13 @@ public class BillService {
 
     @Autowired
     private FinancialUtils financialUtils;
+    
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
     public List<RestErrors> validateBillRegister(final BillRegister billRegister) {
         final List<RestErrors> errors = new ArrayList<>();
@@ -616,17 +623,12 @@ public class BillService {
     		query.setParameter("billNo", billNo);
     		query.setParameter("billStatus", "Approved");
     		List resultWithAliasedBean = query.setResultTransformer(Transformers.aliasToBean(BillPaymetDetails.class)).list();
-    		if (resultWithAliasedBean != null && resultWithAliasedBean.size() > 0) {
+    		if (resultWithAliasedBean.size() > 0) {
     			return resultWithAliasedBean;
     		}else {
     			return null;
     		}	
     	}
     
-        @PersistenceContext
-        private EntityManager entityManager;
-
-        public Session getCurrentSession() {
-            return entityManager.unwrap(Session.class);
-        }
+      
 	}

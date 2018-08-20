@@ -210,7 +210,7 @@ public class CreateBillController {
         	}
             response.setStatus(HttpServletResponse.SC_CREATED);
             List<BillPaymetDetails> billPaymetDetails = billService.getBillAndPaymentDetails(billNo);
-            if(billPaymetDetails != null && billPaymetDetails.size() > 0) {
+            if(billPaymetDetails.size() > 0) {
             	return JsonConvertor.convert(billPaymetDetails);
             }else {
             	restErrors = new RestErrors();
