@@ -148,8 +148,8 @@ Please enter Function</p>
 								<tr>
 									<td class="bluebox"><s:text name="party.bill.number" /></td>
 									<td class="bluebox"><s:textfield
-											name="commonBean.partyBillNumber"
-											id="commonBean.partyBillNumber" /></td>
+											name="commonBean.partyBillNumber" onchange= "isSpecialChar();"
+											id="commonBean.partyBillNumber" onkeyup= "isSpecialChar();"/></td>
 									<td class="bluebox"><s:text name="party.bill.date" /></td>
 									<s:date name='commonBean.partyBillDate'
 										var="commonBean.partyBillDateId" format='dd/MM/yyyy' />
@@ -336,5 +336,13 @@ Please enter Function</p>
 			 
 		 }
 	}
+
+	
+	function isSpecialChar(){
+		  var numberEntered = document.getElementById('commonBean.partyBillNumber').value;
+		  var replacedNumber = numberEntered.replace(/[`~!@#$%^&*()_|+\-=÷¿?;:><'",.<>\{\}\[\]\\\/]/gi, '');
+		  document.getElementById('commonBean.partyBillNumber').value = replacedNumber;   
+	}
+	  
 </script>
 
