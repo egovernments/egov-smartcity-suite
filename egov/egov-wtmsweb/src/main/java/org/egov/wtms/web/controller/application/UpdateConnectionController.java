@@ -60,7 +60,6 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_FEEPAID;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_RECONNCTIONINPROGRESS;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_RECONNDIGSIGNPENDING;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_VERIFIED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_WOGENERATED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPROVAL_COMMENT;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPROVAL_POSITION;
@@ -96,7 +95,6 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.SUBMITWORKFLOWACTI
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SUPERIENTEND_ENGINEER_DESIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SUPERINTENDING_ENGINEER_DESIGNATION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WCMS_PENALTY_CHARGES_PERCENTAGE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_CANCEL;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_PREVIEW_BUTTON;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_RECONNECTIONACKNOWLDGEENT_BUTTON;
@@ -530,12 +528,6 @@ public class UpdateConnectionController extends GenericConnectionController {
             workFlowAction = request.getParameter(WORKFLOW_ACTION);
             request.getSession().setAttribute(WORKFLOW_ACTION, workFlowAction);
         }
-        if (APPLICATION_STATUS_CREATED.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()) ||
-                APPLICATION_STATUS_VERIFIED.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()) &&
-                        NON_METERED.equals(waterConnectionDetails.getConnectionType()) &&
-                        !Arrays.asList(WF_STATE_BUTTON_GENERATEESTIMATE, WFLOW_ACTION_STEP_CANCEL, WFLOW_ACTION_STEP_REJECT)
-                                .contains(workFlowAction))
-            waterConnectionDetailsService.validateConnectionCategory(waterConnectionDetails, resultBinder, request);
 
         if (request.getParameter(DONATION_AMOUNT) != null)
             donationCharges = Double.valueOf(request.getParameter(DONATION_AMOUNT));

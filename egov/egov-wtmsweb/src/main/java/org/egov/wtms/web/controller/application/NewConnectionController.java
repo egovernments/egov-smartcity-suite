@@ -245,10 +245,9 @@ public class NewConnectionController extends GenericConnectionController {
             throw new ValidationException("err.creator.application");
         }
         newConnectionService.validatePropertyID(waterConnectionDetails, resultBinder);
-        
-        if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())){
+
+        if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())) {
             waterConnectionDtlsService.validateWaterRateAndDonationHeader(waterConnectionDetails);
-            waterConnectionDetailsService.validateConnectionCategory(waterConnectionDetails, resultBinder,request);
         }
         List<ApplicationDocuments> applicationDocs = new ArrayList<>();
         int i = 0;
