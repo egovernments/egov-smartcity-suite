@@ -122,12 +122,11 @@ public abstract class AdtaxWorkflowCustomImpl implements AdtaxWorkflowCustom {
         String currentState = "";
        
         Assignment wfInitiator = advertisementWorkFlowService.getWorkFlowInitiator(advertisementPermitDetail);
-
         if (approvalPosition != null && approvalPosition > 0)
             pos = positionMasterService.getPositionById(approvalPosition);
         Boolean cscOperatorLoggedIn = advertisementWorkFlowService.isCscOperator(user);
         WorkFlowMatrix wfmatrix = null;
-        if (cscOperatorLoggedIn || ANONYMOUS_USER.equalsIgnoreCase(user.getName())) {
+        if ((cscOperatorLoggedIn || ANONYMOUS_USER.equalsIgnoreCase(user.getName())) && advertisementPermitDetail.getState()==null) {
             currentState = "Third Party operator created";
             wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(), null,
                     null, additionalRule, currentState, null);
@@ -180,7 +179,7 @@ public abstract class AdtaxWorkflowCustomImpl implements AdtaxWorkflowCustom {
                     .withSenderName(user.getUsername() + AdvertisementTaxConstants.COLON_CONCATE + user.getName())
                     .withComments(approvalComent)
                     .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
-                    .withOwner(wfInitiator != null ? wfInitiator.getPosition() : null)
+                    .withOwner(wfInitiator.getPosition())
                     .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(AdvertisementTaxConstants.NATURE_OF_WORK);
         } else if (AdvertisementTaxConstants.WF_REJECT_BUTTON.equalsIgnoreCase(workFlowAction) ||
                 AdvertisementTaxConstants.WF_CANCELAPPLICATION_BUTTON.equalsIgnoreCase(workFlowAction) ||

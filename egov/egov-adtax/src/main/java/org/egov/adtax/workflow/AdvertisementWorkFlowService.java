@@ -55,6 +55,7 @@ import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.DEPARTMEN
 import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.MODULE_NAME;
 import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.STATUS;
 import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.USER;
+import static org.egov.infra.utils.ApplicationConstant.NA;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -78,6 +79,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pims.commons.Position;
@@ -85,7 +87,6 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import static org.egov.infra.utils.ApplicationConstant.NA;
 
 @Service
 @Transactional(readOnly = true)
@@ -271,7 +272,7 @@ public class AdvertisementWorkFlowService {
         return assignment;
     }
 
-    public Assignment getWorkFlowInitiator(final AdvertisementPermitDetail advertisementPermitDetail) {
+    public Assignment getWorkFlowInitiator(final AdvertisementPermitDetail advertisementPermitDetail){
         Assignment wfInitiator = null;
         List<Assignment> assignment;
         if (advertisementPermitDetail != null) {
@@ -289,8 +290,10 @@ public class AdvertisementWorkFlowService {
             } else if (!isEmployee(advertisementPermitDetail.getCreatedBy())|| "anonymous".equalsIgnoreCase(advertisementPermitDetail.getCreatedBy().getName()) ) {
                 wfInitiator = getUserAssignment(advertisementPermitDetail.getCreatedBy(), advertisementPermitDetail);
             } else {
-                wfInitiator = assignmentService.getPrimaryAssignmentForUser(advertisementPermitDetail
-                        .getCreatedBy().getId());
+                wfInitiator = assignmentService.getPrimaryAssignmentForUser(advertisementPermitDetail.getCreatedBy().getId());
+               if(wfInitiator==null)
+                   throw new ApplicationRuntimeException("Current User with id:"+advertisementPermitDetail.getCreatedBy().getId()+" does not have primary position or is inactive");
+
             }
         }
         return wfInitiator;

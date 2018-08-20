@@ -47,13 +47,20 @@
  */
 package org.egov.adtax.web.controller.hoarding;
 
+import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.ANONYMOUS_USER;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
 import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.apache.commons.lang.StringUtils;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
+import org.egov.adtax.entity.RequestDetails;
 import org.egov.adtax.entity.SubCategory;
 import org.egov.adtax.entity.enums.AdvertisementApplicationType;
 import org.egov.adtax.entity.enums.AdvertisementStatus;
@@ -83,11 +90,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.ANONYMOUS_USER;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping("/hoarding")
@@ -151,7 +153,7 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
             final RedirectAttributes redirAttrib, final HttpServletRequest request, final Model model,
             @RequestParam String workFlowAction) {
         User currentuser = securityUtils.getCurrentUser();
-        boolean isActiveApprover=false;
+        boolean isActiveApprover = false;
         Boolean isEmployee = !ANONYMOUS_USER.equalsIgnoreCase(currentuser.getName())
                 && advertisementWorkFlowService.isEmployee(securityUtils.getCurrentUser());
         validateAssignmentForCscUser(advertisementPermitDetail, isEmployee, resultBinder);
@@ -166,78 +168,72 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
 
             advertisementPermitDetail.setSource(Source.SYSTEM.toString());
             advertisementPermitDetail.setApplicationtype(AdvertisementApplicationType.NEW);
-
-            if (resultBinder.hasErrors()) {
-                model.addAttribute(IS_EMPLOYEE,isEmployee);
-                buildCreateHoardingForm(advertisementPermitDetail, model);
-                return HOARDING_CREATE;
-            }
         }
+        model.addAttribute(IS_EMPLOYEE, isEmployee);
+
+        if (resultBinder.hasErrors()) {
+            buildCreateHoardingForm(advertisementPermitDetail, model);
+            return HOARDING_CREATE;
+        }
+
         storeHoardingDocuments(advertisementPermitDetail);
+        RequestDetails requestDetails = new RequestDetails();
+        requestDetails.setIsEmployee(isEmployee);
+        requestDetails.setApprovalComment(StringUtils.defaultString(request.getParameter("approvalComent"), ""));
+        requestDetails.setWorkflowaction(StringUtils.defaultString(request.getParameter("workFlowAction"), ""));
+        requestDetails.setApproverName(StringUtils.defaultString(request.getParameter("approverName"), ""));
+        requestDetails.setNextDesignation(StringUtils.defaultString(request.getParameter("nextDesignation"), ""));
+        requestDetails
+                .setApprovalPosition(Long.valueOf(StringUtils.defaultString(request.getParameter(APPROVAL_POSITION), "0")));
 
-        Long approvalPosition = 0l;
-        String approvalComment = "";
-        String approverName = "";
-        String nextDesignation = "";
-
-
-        if (request.getParameter("approvalComent") != null)
-            approvalComment = request.getParameter("approvalComent");
-        if (request.getParameter("workFlowAction") != null)
-            workFlowAction = request.getParameter("workFlowAction");
-        if (request.getParameter("approverName") != null)
-            approverName = request.getParameter("approverName");
-        if (request.getParameter("nextDesignation") != null)
-            nextDesignation = request.getParameter("nextDesignation");
-        if (request.getParameter(APPROVAL_POSITION) != null && !request.getParameter(APPROVAL_POSITION).isEmpty())
-            approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
-        
         if (!isEmployee || ANONYMOUS_USER.equalsIgnoreCase(currentuser.getName())) {
             Assignment assignment = advertisementWorkFlowService.getMappedAssignmentForCscOperator(advertisementPermitDetail);
             if (assignment != null) {
-                approvalPosition = assignment.getPosition().getId();
-                approverName = assignment.getEmployee().getName();
-                nextDesignation = assignment.getDesignation().getName();
-                isActiveApprover =assignment.getToDate().compareTo(new Date())>=0;
+                requestDetails.setApprovalPosition(
+                        Long.valueOf(StringUtils.defaultString(assignment.getPosition().getId().toString(), "0")));
+                requestDetails.setApproverName(StringUtils.defaultString(assignment.getEmployee().getName(), ""));
+                requestDetails.setNextDesignation(StringUtils.defaultString(assignment.getDesignation().getName(), ""));
+                isActiveApprover = assignment.getToDate().compareTo(new Date()) >= 0;
 
             }
         }
+     
+        if (isEmployee && advertisementPermitDetail!=null) {
+            createAdvertisementOnApproverCheck(advertisementPermitDetail, redirAttrib, currentuser,
+                    requestDetails);
+                    return "redirect:/hoarding/success/" +  advertisementPermitDetail.getId();
+        } else {
+            if (isActiveApprover && advertisementPermitDetail!=null) {
+                createAdvertisementOnApproverCheck(advertisementPermitDetail, redirAttrib,
+                        currentuser, requestDetails);
+                return "redirect:/hoarding/showack/" + advertisementPermitDetail.getId();
 
-        if (!isEmployee) {
-            if (isActiveApprover) {
-                return createAdvertisementOnApproverCheck(advertisementPermitDetail, redirAttrib, workFlowAction, currentuser,
-                        isEmployee,
-                        approvalPosition, approvalComment, approverName, nextDesignation);
             } else {
-                model.addAttribute(IS_EMPLOYEE, isEmployee);
                 model.addAttribute("message", NOTEXISTS_POSITION);
                 buildCreateHoardingForm(advertisementPermitDetail, model);
                 return HOARDING_CREATE;
             }
-
         }
-        else{
-            return createAdvertisementOnApproverCheck(advertisementPermitDetail, redirAttrib, workFlowAction, currentuser,
-                    isEmployee, approvalPosition, approvalComment, approverName, nextDesignation); 
-        }
-    }
+       }
+    
 
-    private String createAdvertisementOnApproverCheck(final AdvertisementPermitDetail advertisementPermitDetail,
-            final RedirectAttributes redirAttrib, String workFlowAction, User currentuser, Boolean isEmployee,
-            Long approvalPosition, String approvalComment, String approverName, String nextDesignation) {
+    private void createAdvertisementOnApproverCheck(final AdvertisementPermitDetail advertisementPermitDetail,
+            final RedirectAttributes redirAttrib, User currentuser,
+            RequestDetails requestDtls) {
+        if(advertisementPermitDetail!=null && advertisementPermitDetail.getAdvertisement()!=null){
         advertisementPermitDetail.getAdvertisement().setPenaltyCalculationDate(advertisementPermitDetail.getApplicationDate());
-        advertisementPermitDetailService.createAdvertisementPermitDetail(advertisementPermitDetail, approvalPosition,
-                approvalComment, "CREATEADVERTISEMENT", workFlowAction, currentuser);
+        
+        advertisementPermitDetailService.createAdvertisementPermitDetail(advertisementPermitDetail,
+                requestDtls.getApprovalPosition(),
+                StringUtils.defaultString(requestDtls.getApprovalComment(), "") , "CREATEADVERTISEMENT", StringUtils.defaultString(requestDtls.getWorkflowaction(), ""), currentuser);
         redirAttrib.addFlashAttribute("advertisementPermitDetail", advertisementPermitDetail);
         String message = messageSource.getMessage("msg.success.forward",
-                new String[] { approverName.concat("~").concat(nextDesignation),
+                new String[] {StringUtils.defaultString(requestDtls.getApproverName(), "").concat("~").concat(StringUtils.defaultString(requestDtls.getNextDesignation(), "")),
                         advertisementPermitDetail.getApplicationNumber() },
                 null);
         redirAttrib.addFlashAttribute("message", message);
-        if (!isEmployee)
-            return "redirect:/hoarding/showack/" + advertisementPermitDetail.getId();
-         else 
-            return "redirect:/hoarding/success/" + advertisementPermitDetail.getId();
+        }
+
     }
     
     @RequestMapping(value = "/success/{id}", method = GET)
@@ -283,12 +279,14 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
     }
 
     private void buildCreateHoardingForm(final AdvertisementPermitDetail advertisementPermitDetail, final Model model) {
+        if(advertisementPermitDetail!=null){
         WorkflowContainer workFlowContainer = new WorkflowContainer();
         workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
         model.addAttribute(CURRENT_STATE, "NEW");
         prepareWorkflow(model, advertisementPermitDetail, workFlowContainer);
         model.addAttribute(ADDITIONAL_RULE, AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE);
         model.addAttribute(STATE_TYPE, advertisementPermitDetail.getClass().getSimpleName());
+        }
     }
     
     public void validateAssignmentForCscUser(final AdvertisementPermitDetail advertisementPermitDetail, Boolean isEmployee,
