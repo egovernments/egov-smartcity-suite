@@ -350,7 +350,7 @@ public class BillServiceTest extends AbstractContextControllerTest<BillService> 
         assertEquals(2, errors.size());
     }
 
-    //@Test
+    @Test
     public void shouldGiveErrorsIfInvalidGlcode() {
         when(chartOfAccountsService.getByGlCode(Matchers.anyString())).thenReturn(null);
         errors = billService.validateBillRegister(billRegister);
