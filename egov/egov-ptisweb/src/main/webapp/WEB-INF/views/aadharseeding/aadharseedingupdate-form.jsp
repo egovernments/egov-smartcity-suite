@@ -50,6 +50,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <div id="aadharSeedingError" class="errorstyle" style="color: red"></div>
 <form:form role="form" action="" modelAttribute="aadharSeedingUpdate"
@@ -218,8 +219,11 @@
 							<label><spring:message code="lbl.docDate" /></label>
 						</div>
 						<div class="col-xs-3 add-margin view-content">
-							<strong><c:out value="${aadharSeedingUpdate.docDate}"
-									default="N/A" /> </strong>
+							<fmt:formatDate value="${aadharSeedingUpdate.docDate}"
+								pattern="dd/MM/yyyy" var="docdate" />
+							<strong> <c:out value="${docdate}"
+									default="N/A" />
+							</strong>
 						</div>
 					</div>
 					<div class="row add-border">
