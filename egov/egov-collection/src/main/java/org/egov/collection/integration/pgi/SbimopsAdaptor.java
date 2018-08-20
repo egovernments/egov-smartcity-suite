@@ -149,6 +149,7 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
     public PaymentResponse parsePaymentResponse(final String response) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Insider SbimopsAdaptor-parsePaymentResponse");
+            LOGGER.debug("Sbimops relatime transaction response : " + response);
         }
         final String[] keyValueStr = response.replace("{", "").replace("}", "").split(",");
         final LinkedHashMap<String, String> responseMap = new LinkedHashMap<>(0);
@@ -269,6 +270,7 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
         final JsonObject requestJson = new JsonObject();
         deptCodeJson.add(CollectionConstants.SBIMOPS_ROW, transactionIdJson);
         requestJson.add(CollectionConstants.SBIMOPS_RECORDSET, deptCodeJson);
+
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("SBIMOPS reconciliation request:" + requestJson.toString());
         return requestJson.toString();
@@ -291,6 +293,8 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
                 reader.close();
                 inputStreamReader.close();
             }
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("Sbimops reconciliation response : " + responseMap);
             Map<String, Object> responseParameterMap = (Map<String, Object>) responseMap.get("RECORDSET").get("ROW");
             final Map<String, String> responseSbimopsMap = new LinkedHashMap<>();
             responseParameterMap.forEach((key, value) -> responseSbimopsMap.put(key, value.toString()));
