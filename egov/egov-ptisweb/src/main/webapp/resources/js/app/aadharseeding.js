@@ -158,18 +158,24 @@ $('#updateBtn').on(
 						}
 						jsonObj.push(myObj);
 					});
-			var obj = {
-				"info" : jsonObj
+			if(jQuery.isEmptyObject(jsonObj)){
+				bootbox
+				.alert("Please select the records to Update!");
 			}
-			var o = JSON.stringify(obj);
-			jQuery.ajax({
-				url : "/ptis/aadharseeding/aadhardataapprovalform",
-				type : "POST",
-				data : JSON.stringify(o),
-				cache : false,
-				contentType : "application/json; charset=utf-8",
-				success : function() {
-					window.location.reload()
-				}
-			});
+			else{
+				var obj = {
+						"info" : jsonObj
+					}
+				var o = JSON.stringify(obj);
+				jQuery.ajax({
+					url : "/ptis/aadharseeding/aadhardataapprovalform",
+					type : "POST",
+					data : JSON.stringify(o),
+					cache : false,
+					contentType : "application/json; charset=utf-8",
+					success : function() {
+						window.location.reload()
+					}
+				});
+			}
 		});

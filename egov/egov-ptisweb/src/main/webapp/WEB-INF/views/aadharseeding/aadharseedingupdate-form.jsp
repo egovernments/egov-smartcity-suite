@@ -473,7 +473,6 @@
 											cssClass="form-control" readonly="true" /></td>
 									<td class="blueborderfortd" align="center"><img
 										height="100" width="100" src="" /></td>
-									<%-- data:image/jpg;base64,<c:out value=''/> --%>
 								</tr>
 							</c:forEach>
 						</tbody>
