@@ -452,7 +452,7 @@ public class RestApiConstants {
     
     public static final String THIRD_PARTY_ERR_CODE_SUBLEDGER_DETAILS_REQUIRED = "EGF-REST-41";
     public static final String THIRD_PARTY_ERR_MSG_SUBLEDGER_DETAILS_REQUIRED = "is subledger code in bill details, So Bill Payee details required ";
-
+    
     public static final String THIRD_PARTY_ERR_CODE_NOT_EXIST_CONTRACTOR = "EGWORKS-CONTRACTOR-1";
     public static final String THIRD_PARTY_ERR_MSG_NOT_EXIST_CONTRACTOR = "No contractor exists with given contractor code";
 
@@ -699,4 +699,11 @@ public class RestApiConstants {
     public static final String BIFURCATION_ERROR_CODE = "128";
     public static final String BIFURCATION_ERROR_MSG = "As child property is created on this assessment number, please Bifurcate the property before performing anything else on this property";
 
+    public static final String THIRD_PARTY_ERR_CODE_NO_BILLNO = "EGF-REST-129";
+    public static final String THIRD_PARTY_ERR_MSG_NO_BILLNO = "Bill Number is required";
+    
+    public static final String THIRD_PARTY_ERR_CODE_NO_BILL_STATUS = "EGF-REST-130";
+    public static final String THIRD_PARTY_ERR_MSG_NO_BILL_STATUS = "Bill Status is not Approved";
+       
+    
 }

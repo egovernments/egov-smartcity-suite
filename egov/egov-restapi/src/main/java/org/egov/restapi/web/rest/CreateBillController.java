@@ -48,21 +48,27 @@
 package org.egov.restapi.web.rest;
 
 import com.google.gson.JsonObject;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.egov.dcb.bean.ChequePayment;
+import org.egov.egf.expensebill.service.ExpenseBillService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.bills.EgBillregister;
+import org.egov.restapi.constants.RestApiConstants;
+import org.egov.restapi.model.BillPaymetDetails;
 import org.egov.restapi.model.BillRegister;
 import org.egov.restapi.model.RestErrors;
 import org.egov.restapi.service.BillService;
 import org.egov.restapi.util.JsonConvertor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -73,6 +79,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
@@ -82,6 +89,9 @@ public class CreateBillController {
     @Autowired
     private BillService billService;
 
+    @Autowired
+    private ExpenseBillService expenseBillService;
+    
     /**
      * API to create works contractor bill.
      *
@@ -169,4 +179,53 @@ public class CreateBillController {
         mapper.setDateFormat(ChequePayment.CHEQUE_DATE_FORMAT);
         return mapper.readValue(jsonString, cls);
     }
+    
+    @RequestMapping(value = "/egf/billpaymentdetails", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getBillAndPaymentDetails(final HttpServletResponse response,String billNo,String cityCode) {
+    	RestErrors restErrors;
+    	try {
+        	if(StringUtils.isEmpty(billNo) || billNo == null) {
+        		restErrors = new RestErrors();
+                restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_BILLNO);
+                restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_BILLNO);
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return JsonConvertor.convert(restErrors);
+        	}
+        	
+        	EgBillregister egBillregister = expenseBillService.getByBillnumber(billNo);
+        	if(egBillregister==null) {
+        		restErrors = new RestErrors();
+                restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NOT_VALID_BILLNUMBER);
+                restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NOT_VALID_BILLNUMBER);
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return JsonConvertor.convert(restErrors);
+        	}
+        	
+        	if(!egBillregister.getStatus().getCode().contentEquals("Approved")) {
+        		restErrors = new RestErrors();
+                restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_BILL_STATUS);
+                restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_BILL_STATUS);
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return JsonConvertor.convert(restErrors);
+        	}
+            response.setStatus(HttpServletResponse.SC_CREATED);
+            List<BillPaymetDetails> billPaymetDetails = billService.getBillAndPaymentDetails(billNo);
+            if(billPaymetDetails != null && billPaymetDetails.size() > 0) {
+            	return JsonConvertor.convert(billPaymetDetails);
+            }else {
+            	restErrors = new RestErrors();
+                restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_DATA_FOUND);
+                restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MESSAGE_NO_DATA_FOUND);
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return JsonConvertor.convert(restErrors);
+            }
+            
+        } catch (final Exception e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return JsonConvertor.convert(StringUtils.EMPTY);
+        }
+    }
+
+    
+    
 }

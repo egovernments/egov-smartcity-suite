@@ -70,6 +70,7 @@ import org.egov.model.bills.EgBillregistermis;
 import org.egov.restapi.constants.RestApiConstants;
 import org.egov.restapi.model.BillDetails;
 import org.egov.restapi.model.BillPayeeDetails;
+import org.egov.restapi.model.BillPaymetDetails;
 import org.egov.restapi.model.BillRegister;
 import org.egov.restapi.model.RestErrors;
 import org.egov.services.masters.SchemeService;
@@ -78,6 +79,9 @@ import org.egov.works.master.service.ContractorService;
 import org.egov.works.models.estimate.ProjectCode;
 import org.egov.works.services.ProjectCodeService;
 import org.egov.works.utils.WorksConstants;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -89,6 +93,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 @Service
 @Transactional(readOnly = true)
@@ -596,4 +603,30 @@ public class BillService {
     public EgBillregister createBill(final EgBillregister egBillregister) {
         return expenseBillService.create(egBillregister, null, null, null, "Create And Approve");
     }
-}
+  
+    public List<BillPaymetDetails> getBillAndPaymentDetails(String billNo) {	
+    	String queryString = new String("SELECT DISTINCT mbd.billVoucherHeader.voucherNumber AS billVoucherNo,"
+    			+ " mbd.payVoucherHeader.voucherNumber AS paymentVoucherNo,mbd.paidamount AS paymentAmount,"
+    			+ " mbd.payVoucherHeader.voucherDate AS voucherDate,iv.instrumentHeaderId.instrumentNumber AS chequRefNo"
+    			+ " FROM Miscbilldetail AS mbd,InstrumentVoucher AS iv,EgBillregister AS egbr,InstrumentHeader AS instrumentHeader"
+    			+ " WHERE mbd.payVoucherHeader.id= iv.voucherHeaderId.id and iv.instrumentHeaderId.id=instrumentHeader.id and "
+    			+ " egbr.billnumber=mbd.billnumber and "
+    			+ " mbd.billnumber =:billNo AND egbr.status.code =:billStatus");
+    		Query query = getCurrentSession().createQuery(queryString);  
+    		query.setParameter("billNo", billNo);
+    		query.setParameter("billStatus", "Approved");
+    		List resultWithAliasedBean = query.setResultTransformer(Transformers.aliasToBean(BillPaymetDetails.class)).list();
+    		if (resultWithAliasedBean != null && resultWithAliasedBean.size() > 0) {
+    			return resultWithAliasedBean;
+    		}else {
+    			return null;
+    		}	
+    	}
+    
+        @PersistenceContext
+        private EntityManager entityManager;
+
+        public Session getCurrentSession() {
+            return entityManager.unwrap(Session.class);
+        }
+	}
