@@ -180,6 +180,7 @@ public class WaterTaxConstants {
     public static final String WF_STATE_SE_APPROVE_PENDING = "Superintending Engineer approval pending";
     public static final String WF_STATE_ME_APPROVE_PENDING = "Municipal Engineer approval pending";
     public static final String PENDING_DIGI_SIGN = "Pending Digital Signature";
+    public static final String COMM_APPROVAL_PENDING = "Commissioner Approval Pending";
 
     public static final String APPROVEWORKFLOWACTION = "Approve";
     public static final String FORWARDWORKFLOWACTION = "Forward";

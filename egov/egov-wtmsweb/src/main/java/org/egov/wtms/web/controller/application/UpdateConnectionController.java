@@ -82,6 +82,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULETYPE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MUNICIPAL_ENGINEER_DESIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.COMM_APPROVAL_PENDING;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PENDING_DIGI_SIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PERMENENTCLOSECODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PROCEED_WITHOUT_METER_EST_AMT;
@@ -326,6 +327,11 @@ public class UpdateConnectionController extends GenericConnectionController {
                 waterConnectionDetails.getApprovalNumber() != null && COMMISSIONER_DESGN.equalsIgnoreCase(loggedInUserDesignation)
                 && APPLICATION_STATUS_DIGITALSIGNPENDING.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()))
             workflowContainer.setPendingActions(PENDING_DIGI_SIGN);
+        else if (Arrays.asList(NEWCONNECTION, ADDNLCONNECTION, CHANGEOFUSE)
+                .contains(waterConnectionDetails.getApplicationType().getCode()) &&
+                APPLICATION_STATUS_FEEPAID.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()) &&
+                COMMISSIONER_DESGN.equalsIgnoreCase(loggedInUserDesignation))
+            workflowContainer.setPendingActions(COMM_APPROVAL_PENDING);
         prepareWorkflow(model, waterConnectionDetails, workflowContainer);
         model.addAttribute("currentState", waterConnectionDetails.getCurrentState().getValue());
         model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
