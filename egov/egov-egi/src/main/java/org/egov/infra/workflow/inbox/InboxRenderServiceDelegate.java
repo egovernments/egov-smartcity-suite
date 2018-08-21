@@ -110,7 +110,6 @@ public class InboxRenderServiceDelegate<T extends StateAware> {
     @Autowired
     private MicroserviceUtils microserviceUtils;
 
-    @ReadOnly
     public List<Inbox> getCurrentUserInboxItems() {
         return buildInbox(getAssignedWorkflowItems())
                 .parallelStream()
@@ -118,7 +117,6 @@ public class InboxRenderServiceDelegate<T extends StateAware> {
                 .collect(Collectors.toList());
     }
 
-    @ReadOnly
     public List<Inbox> getCurrentUserDraftItems() {
         return buildInbox(getAssignedWorkflowDrafts());
     }
@@ -134,12 +132,10 @@ public class InboxRenderServiceDelegate<T extends StateAware> {
         return inboxHistoryItems;
     }
 
-    @ReadOnly
     public List<T> getAssignedWorkflowItems() {
         return getAssignedWorkflowItems(false);
     }
 
-    @ReadOnly
     public List<T> getAssignedWorkflowDrafts() {
         return getAssignedWorkflowItems(true);
     }
