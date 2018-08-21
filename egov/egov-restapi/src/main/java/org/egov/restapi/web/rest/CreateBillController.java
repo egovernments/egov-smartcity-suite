@@ -210,14 +210,14 @@ public class CreateBillController {
         	}
             response.setStatus(HttpServletResponse.SC_CREATED);
             List<BillPaymetDetails> billPaymetDetails = billService.getBillAndPaymentDetails(billNo);
-            if(!billPaymetDetails.isEmpty()) {
-            	return JsonConvertor.convert(billPaymetDetails);
-            }else {
+            if(billPaymetDetails.isEmpty()) {
             	restErrors = new RestErrors();
                 restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_DATA_FOUND);
                 restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MESSAGE_NO_DATA_FOUND);
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 return JsonConvertor.convert(restErrors);
+            }else {
+            	return JsonConvertor.convert(billPaymetDetails);
             }
             
         } catch (final Exception e) {
