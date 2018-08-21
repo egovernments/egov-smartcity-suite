@@ -612,23 +612,18 @@ public class BillService {
     }
   
     public List<BillPaymetDetails> getBillAndPaymentDetails(String billNo) {	
-    	String queryString = new String("SELECT DISTINCT mbd.billVoucherHeader.voucherNumber AS billVoucherNo,"
+    	StringBuilder queryString = new StringBuilder("SELECT DISTINCT mbd.billVoucherHeader.voucherNumber AS billVoucherNo,"
     			+ " mbd.payVoucherHeader.voucherNumber AS paymentVoucherNo,mbd.paidamount AS paymentAmount,"
     			+ " mbd.payVoucherHeader.voucherDate AS voucherDate,iv.instrumentHeaderId.instrumentNumber AS chequRefNo"
     			+ " FROM Miscbilldetail AS mbd,InstrumentVoucher AS iv,EgBillregister AS egbr,InstrumentHeader AS instrumentHeader"
     			+ " WHERE mbd.payVoucherHeader.id= iv.voucherHeaderId.id and iv.instrumentHeaderId.id=instrumentHeader.id and "
     			+ " egbr.billnumber=mbd.billnumber and "
     			+ " mbd.billnumber =:billNo AND egbr.status.code =:billStatus");
-    		Query query = getCurrentSession().createQuery(queryString);  
+    		Query query = getCurrentSession().createQuery(queryString.toString());  
     		query.setParameter("billNo", billNo);
     		query.setParameter("billStatus", "Approved");
     		List resultWithAliasedBean = query.setResultTransformer(Transformers.aliasToBean(BillPaymetDetails.class)).list();
-    		if (resultWithAliasedBean.size() > 0) {
-    			return resultWithAliasedBean;
-    		}else {
-    			return null;
-    		}	
+    		return resultWithAliasedBean;
     	}
     
-      
 	}
