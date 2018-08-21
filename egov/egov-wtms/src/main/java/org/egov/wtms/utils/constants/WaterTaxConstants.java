@@ -393,14 +393,14 @@ public class WaterTaxConstants {
 
     // Designation
     public static final String COMMISSIONER_DESGN = "Commissioner";
-    public static final String EXECUTIVE_ENGINEER_DESIGN = "Executive engineer";
+    public static final String EXECUTIVE_ENGINEER_DESIGN = "Executive Engineer";
     public static final String MUNICIPAL_ENGINEER_DESIGN = "Municipal Engineer";
-    public static final String DEPUTY_ENGINEER_DESIGN = "Deputy Executive engineer";
+    public static final String DEPUTY_ENGINEER_DESIGN = "Deputy Executive Engineer";
     public static final String SUPERIENTEND_ENGINEER_DESIGN = "Superintendent Engineer";
     public static final String SUPERINTENDING_ENGINEER_DESIGNATION = "Superintending Engineer";
     public static final String TAP_INSPPECTOR_DESIGN = "Tap Inspector";
-    public static final String ASSISTANT_ENGINEER_DESIGN = "Assistant engineer";
-    public static final String ASSISTANT_EXECUTIVE_ENGINEER_DESIGN = "Assistant executive engineer";
+    public static final String ASSISTANT_ENGINEER_DESIGN = "Assistant Engineer";
+    public static final String ASSISTANT_EXECUTIVE_ENGINEER_DESIGN = "Assistant Executive Engineer";
     public static final String JUNIOR_OR_SENIOR_ASSISTANT_DESIGN = "Senior Assistant,Junior Assistant";
     public static final String AE_AEE_TI_DESIGN = "Assistant executive engineer,Assistant engineer,Tap Inspector";
     public static final String JUNIOR_OR_SENIOR_ASSISTANT_DESIGN_REVENUE_CLERK = "Senior Assistant,Junior Assistant,Revenue Clerk";

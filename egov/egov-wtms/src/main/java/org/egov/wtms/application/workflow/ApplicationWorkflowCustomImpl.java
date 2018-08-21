@@ -477,9 +477,10 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                         .equals(APPLICATION_STATUS_DIGITALSIGNPENDING)
                 && (loggedInUserDesignation.equalsIgnoreCase(MUNICIPAL_ENGINEER_DESIGN)
                         || loggedInUserDesignation.equalsIgnoreCase(SUPERIENTEND_ENGINEER_DESIGN)
-                        || loggedInUserDesignation.equalsIgnoreCase(EXECUTIVE_ENGINEER_DESIGN)))
+                        || loggedInUserDesignation.equalsIgnoreCase(EXECUTIVE_ENGINEER_DESIGN)
+                        || loggedInUserDesignation.equalsIgnoreCase(DEPUTY_ENGINEER_DESIGN)))
             workFlowMatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
-                    additionalRule, waterConnectionDetails.getState().getValue(), null, null);
+                    additionalRule, waterConnectionDetails.getState().getValue(), null, null, loggedInUserDesignation);
         else if (Arrays.asList(NEWCONNECTION, CHANGEOFUSE, ADDNLCONNECTION)
                 .contains(waterConnectionDetails.getApplicationType().getCode())
                 && workFlowAction.equals(SIGNWORKFLOWACTION))
