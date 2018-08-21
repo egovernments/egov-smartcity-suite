@@ -120,20 +120,15 @@
 				</div>
 			</div>
 
-
 			<jsp:include page="../../common/reg-reissue-wfhistory.jsp"></jsp:include>
 			<c:if test="${mode ne 'view'}">
 				<jsp:include page="../../common/commonWorkflowMatrix.jsp" />
 			</c:if>
 
-			<c:choose>
-				<c:when
-					test="${reIssue.status.code eq 'CREATED' && nextActn ne null && (nextActn eq 'Junior/Senior Assistance approval pending'  || pendingActions eq 'Clerk Approval Pending' || pendingActions eq 'Revenue Clerk Approval Pending')}">
-					<div class="buttonbottom" align="center">
+				<div class="buttonbottom" align="center">
 						<jsp:include page="../../common/commonWorkflowMatrix-button.jsp" />
 					</div>
-				</c:when>
-				<c:otherwise>
+				<%-- <c:otherwise>
 					<c:choose>
 						<c:when
 							test="${reIssue.status.code eq 'CREATED' && !reIssue.feeCollected}">
@@ -143,13 +138,10 @@
 							</div>
 						</c:when>
 						<c:otherwise>
-							<div class="buttonbottom" align="center">
-								<jsp:include page="../../common/commonWorkflowMatrix-button.jsp" />
-							</div>
+							
 						</c:otherwise>
 					</c:choose>
-				</c:otherwise>
-			</c:choose>
+				</c:otherwise> --%>
 		</form:form>
 	</div>
 </div>

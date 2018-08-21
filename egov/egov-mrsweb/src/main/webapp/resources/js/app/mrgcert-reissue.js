@@ -68,26 +68,60 @@ $(document).ready( function () {
 		 $('#txt-feepaid').val(Math.floor($('#txt-feepaid').val()));
 	 }
 	 
-	if(($('#reIssueStatus').val() != '' && $('#reIssueStatus').val() == 'CREATED' && $(
-	'#nextActn').val() != 'Junior/Senior Assistance approval pending' && ($(
-	'#nextActn').val() != 'Revenue Clerk Approval Pending' && $(
-	'#nextActn').val() != 'Clerk Approval Pending') && $(
-	'#nextActn').val() != 'Chief Medical Officer of Health Approval Pending' && $(
-	'#nextActn').val() != 'Municipal Health Officer Approval Pending')&& $(
-	'#reIssueStatus').val() != 'REJECTED' || ($('#currentState').val() =='Clerk Approved')
-		&& $("#feeCollected").val() == 'false'){ 
-        $(".show-row").hide();
-        $('#approverDetailHeading').hide();
-        $('#approvalDepartment').removeAttr('required');
-        $('#approvalDesignation').removeAttr('required');
-        $('#approvalPosition').removeAttr('required');
-    } else {
-        $(".show-row").show();
-        $('#approverDetailHeading').show();
-        $('#approvalDepartment').attr('required', 'required');
-        $('#approvalDesignation').attr('required', 'required');
-        $('#approvalPosition').attr('required', 'required');
-    }
+	 if ($("#feeCollected").val() == "false" && (($('#reIssueStatus').val() != '' && $('#reIssueStatus').val() == 'CREATED' && $(
+		'#nextActn').val() != 'Junior/Senior Assistance approval pending' && ($(
+		'#nextActn').val() != 'Revenue Clerk Approval Pending' && $(
+		'#nextActn').val() != 'Clerk Approval Pending') && $(
+		'#nextActn').val() != 'Chief Medical Officer of Health Approval Pending' && $(
+		'#nextActn').val() != 'Municipal Health Officer Approval Pending')&& ($(
+		'#reIssueStatus').val() != 'REJECTED' || ($('#currentState').val() =='Clerk Approved')
+))){
+		$(".show-row").hide();
+		$("#Approve").hide();
+		$('#approverDetailHeading').hide();
+		$('#approvalDepartment').removeAttr('required');
+		$('#approvalDesignation').removeAttr('required');
+		$('#approvalPosition').removeAttr('required');
+		
+		} 
+	 else if ($("#feeCollected").val() == 'true' && $(
+		'#nextActn').val() != 'Clerk Approval Pending' && 
+		($('#nextActn').val() != 'Chief Medical Officer of Health Approval Pending' &&
+		$('#nextActn').val() != 'Municipal Health Officer Approval Pending')){
+		$(".show-row").hide();
+		$("#Approve").show();
+		$('#approverDetailHeading').hide();
+		$('#approvalDepartment').removeAttr('required');
+		$('#approvalDesignation').removeAttr('required');
+		$('#approvalPosition').removeAttr('required');
+	 }
+	 else if($('#nextActn').val() == 'Chief Medical Officer of Health Approval Pending' || $(
+		'#nextActn').val() == 'Municipal Health Officer Approval Pending'){
+		if ($("#feeCollected").val() == "false"){
+		 $(".show-row").show();
+			$("#Approve").hide();
+			$('#approverDetailHeading').show();
+			$('#approvalDepartment').attr('required', 'required');
+			$('#approvalDesignation').attr('required', 'required');
+			$('#approvalPosition').attr('required', 'required'); 
+		}
+		else
+			{
+			$(".show-row").show();
+			$("#Approve").show();
+			$('#approverDetailHeading').show();
+			$('#approvalDepartment').attr('required', 'required');
+			$('#approvalDesignation').attr('required', 'required');
+			$('#approvalPosition').attr('required', 'required');
+			}
+	 }
+	 else {
+		$(".show-row").show();
+		$('#approverDetailHeading').show();
+		$('#approvalDepartment').attr('required', 'required');
+		$('#approvalDesignation').attr('required', 'required');
+		$('#approvalPosition').attr('required', 'required');
+	}
 
 	$('.slide-history-menu').click(function(){
 		$(this).parent().find('.history-slide').slideToggle();
