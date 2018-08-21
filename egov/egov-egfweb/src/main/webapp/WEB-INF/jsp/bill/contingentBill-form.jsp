@@ -165,8 +165,8 @@ Please enter Function</p>
 									<td class="bluebox" style="text-align: left"><s:text
 											name="payto" /><span class="mandatory1"> *</span></td>
 									<td class="bluebox" style="text-align: left; width: 240"
-										colspan="4"><s:textfield name="commonBean.payto"
-											id="commonBean.payto" size="55" value="%{commonBean.payto}" /></td>
+										colspan="4"><s:textfield name="commonBean.payto" onchange= "isSpecialCharForPayTo();"
+											id="commonBean.payto" onkeyup= "isSpecialCharForPayTo();" size="55" value="%{commonBean.payto}" /></td>
 								</tr>
 							</tbody>
 						</table>
@@ -342,6 +342,11 @@ Please enter Function</p>
 		  var numberEntered = document.getElementById('commonBean.partyBillNumber').value;
 		  var replacedNumber = numberEntered.replace(/[`~!@#$%^&*()_|+\-=÷¿?;:><'",.<>\{\}\[\]\\\/]/gi, '');
 		  document.getElementById('commonBean.partyBillNumber').value = replacedNumber;   
+	}
+	function isSpecialCharForPayTo(){
+		var nameEntered = document.getElementById('commonBean.payto').value;
+		  var replacedName = nameEntered.replace(/[`~!@#$%^&*()_|+\-=÷¿?;:><'",.<>\{\}\[\]\\\/]/gi, '');
+		  document.getElementById('commonBean.payto').value = replacedName;
 	}
 	  
 </script>
