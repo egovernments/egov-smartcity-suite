@@ -46,38 +46,29 @@
  *
  */
 
-package org.egov.wtms.web.controller.search;
+package org.egov.wtms.web.validator;
 
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.web.rest.error.ErrorResponse;
 import org.egov.wtms.entity.es.ConnectionSearchRequest;
 import org.egov.wtms.service.WaterTaxSearchService;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
-import org.egov.wtms.web.validator.WaterTaxSearchValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
 
-import java.util.List;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
-import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
-import static org.egov.infra.utils.JsonUtils.toJSON;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
-import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+@Component
+public class WaterTaxSearchValidator implements Validator {
 
-@Controller
-@RequestMapping(value = "/search/waterSearch/")
-public class WaterTaxSearchController {
+    private static final String COUNT_THOUSAND = "1000";
+    private static final String COUNT_TWO_HUNDRED = "200";
+    private static final String ERROR_REFINE_CRITERIA = "Entered criteria return more than %s records, please refine your search criteria";
+
+    @Autowired
+    private WaterTaxSearchService waterTaxSearchService;
 
     @Autowired
     private WaterTaxUtils waterTaxUtils;
@@ -85,48 +76,28 @@ public class WaterTaxSearchController {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private BoundaryService boundaryService;
-
-    @Autowired
-    private WaterTaxSearchService waterTaxSearchService;
-
-    @Autowired
-    private WaterTaxSearchValidator waterTaxSearchValidator;
-
-    @ModelAttribute
-    public ConnectionSearchRequest searchRequest() {
-        return new ConnectionSearchRequest();
+    @Override
+    public boolean supports(Class<?> clazz) {
+        return ConnectionSearchRequest.class.equals(clazz);
     }
 
-    @ModelAttribute("citizenRole")
-    public Boolean getCitizenUserRole() {
-        User currentUser = userService.getUserById(getUserId());
-        return currentUser == null ? true : waterTaxUtils.compareUserRoleWithParameter(currentUser, WaterTaxConstants.ROLE_PUBLIC);
-    }
-
-    @ModelAttribute("revenueWards")
-    public List<Boundary> revenueWardList() {
-        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WaterTaxConstants.REVENUE_WARD, REVENUE_HIERARCHY_TYPE);
-    }
-
-    @GetMapping
-    public String newSearchForm() {
-        return "waterTaxSearch-newForm";
-    }
-
-    @PostMapping(produces = TEXT_PLAIN_VALUE)
-    @ResponseBody
-    public String searchConnection(@ModelAttribute ConnectionSearchRequest searchRequest, BindingResult result) {
-        waterTaxSearchValidator.validate(searchRequest, result);
-        if (result.hasErrors()) {
-            return new StringBuilder("{ \"data\":")
-                    .append(toJSON(new ErrorResponse("error", result.getAllErrors().get(0).getDefaultMessage(), HttpStatus.BAD_REQUEST)))
-                    .append("}").toString();
-        } else {
-            return new StringBuilder("{ \"data\":")
-                    .append(toJSON(waterTaxSearchService.searchConnection(searchRequest))).append("}").toString();
+    @Override
+    public void validate(Object target, Errors errors) {
+        ConnectionSearchRequest request = (ConnectionSearchRequest) target;
+        int responseCount;
+        if (waterTaxUtils.compareUserRoleWithParameter(userService.getCurrentUser(), WaterTaxConstants.ROLE_PUBLIC)) {
+            if (isNotBlank(request.getApplicantName()) || isNotBlank(request.getDoorNumber())) {
+                responseCount = waterTaxSearchService.getCountOfConnectionBySearchRequest(request);
+                if (responseCount >= 200) {
+                        errors.reject(getMessage(COUNT_TWO_HUNDRED), getMessage(COUNT_TWO_HUNDRED));
+                }
+            }
+        } else if (waterTaxSearchService.getCountOfConnectionBySearchRequest(request) > 1000) {
+            errors.reject(getMessage(COUNT_THOUSAND), getMessage(COUNT_THOUSAND));
         }
     }
 
+    private String getMessage(String resultSize) {
+        return String.format(ERROR_REFINE_CRITERIA, resultSize);
+    }
 }

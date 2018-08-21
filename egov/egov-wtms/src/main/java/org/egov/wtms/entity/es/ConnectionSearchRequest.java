@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -46,6 +46,8 @@
  *
  */
 package org.egov.wtms.entity.es;
+
+import java.util.List;
 
 public class ConnectionSearchRequest {
     private String applicationType;
@@ -93,6 +95,7 @@ public class ConnectionSearchRequest {
     private Long currentDemand;
     public String meesevaApplicationNumber;
     private String closureType;
+    private List<String> actions;
 
     public String getMeesevaApplicationNumber() {
         return meesevaApplicationNumber;
@@ -458,4 +461,11 @@ public class ConnectionSearchRequest {
         this.closureType = closureType;
     }
 
+    public List<String> getActions() {
+        return actions;
+    }
+
+    public void setActions(List<String> actions) {
+        this.actions = actions;
+    }
 }

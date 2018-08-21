@@ -125,7 +125,9 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_APPROVERROLE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_CITIZEN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_CSCOPERTAOR;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_MEESEVA_OPERATOR;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_PUBLIC;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_SUPERUSER;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_ULBOPERATOR;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SENDEMAILFORWATERTAX;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SENDSMSFORWATERTAX;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.USERNAME_ANONYMOUS;
@@ -656,6 +658,16 @@ public class WaterTaxUtils {
     public Boolean isCurrentUserCitizenRole() {
         User currentUser = getUserId() == null ? securityUtils.getCurrentUser() : userService.getUserById(getUserId());
         return compareUserRoleWithParameter(currentUser, ROLE_CITIZEN);
+    }
+
+    public boolean isUlbOperator() {
+        User currentUser = getUserId() == null ? securityUtils.getCurrentUser() : userService.getUserById(getUserId());
+        return compareUserRoleWithParameter(currentUser, ROLE_ULBOPERATOR);
+    }
+
+    public boolean isPublicRole() {
+        User currentUser = userService.getUserById(getUserId());
+        return currentUser == null ? true : compareUserRoleWithParameter(currentUser, ROLE_PUBLIC);
     }
 
     public Long getApprovalPositionFromStateHistory(final WaterConnectionDetails waterConnectionDetails,
