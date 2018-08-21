@@ -70,6 +70,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getCityName;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
 import static org.egov.ptis.constants.PropertyTaxConstants.WATER_TAX_INDEX_NAME;
 import static org.egov.wtms.masters.entity.enums.ConnectionStatus.DISCONNECTED;
@@ -85,9 +86,11 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_OPERATOR;
 @Service
 public class WaterTaxSearchService {
 
+    private static final String TEMP_CLOSURE_TYPE = "T";
     private static final String RECONNECTION = "Reconnection";
     private static final String ENTER_METER_READING = "Enter Meter Reading";
     private static final String CLOSED = "CLOSED";
+    private static final String HOLDING = "HOLDING";
     private static final String CHANGE_OF_USE = "Change of use";
     private static final String VIEW_DCB_SCREEN = "View DCB Screen";
     private static final String COLLECT_CHARGES = "Collect Charge";
@@ -161,7 +164,7 @@ public class WaterTaxSearchService {
 
     private BoolQueryBuilder getFilterQuery(ConnectionSearchRequest searchRequest) {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
-                .filter(QueryBuilders.termQuery("cityName", "Piduguralla"));
+                .filter(QueryBuilders.termQuery("cityName", getCityName()));
         if (isNotBlank(searchRequest.getApplicantName()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("consumerName", searchRequest.getApplicantName()));
         if (isNotBlank(searchRequest.getConsumerCode()))
@@ -230,7 +233,7 @@ public class WaterTaxSearchService {
         } else if (REGULARIZE_CONNECTION.equals(connection.getApplicationCode()) && ACTIVE.equals(connection.getStatus())) {
             connectionActions.add(VIEW_WATER_CONNECTION);
             connectionActions.add(DOWNLOAD_REGULARISE_PROCEEDING);
-        } else if (CLOSED.equals(connection.getStatus()) || "HOLDING".equals(connection.getStatus())
+        } else if (CLOSED.equals(connection.getStatus()) || HOLDING.equals(connection.getStatus())
                 || ROLE_OPERATOR.equals(waterTaxUtils.getUserRole(ROLE_OPERATOR))) {
             connectionActions.add(VIEW_WATER_CONNECTION);
         } else if (ROLE_OPERATOR.equals(waterTaxUtils.getUserRole(ROLE_OPERATOR))) {
@@ -259,7 +262,7 @@ public class WaterTaxSearchService {
             }
         } else if ((ulbOperator || cscUser) && DISCONNECTED.toString().equals(connection.getStatus())) {
             connectionActions.add(RECONNECTION);
-        } else if (ulbOperator && ("T").equals(connection.getClosureType()) && CLOSED.equals(connection.getStatus())) {
+        } else if (ulbOperator && TEMP_CLOSURE_TYPE.equals(connection.getClosureType()) && CLOSED.equals(connection.getStatus())) {
             connectionActions.add(VIEW_WATER_CONNECTION);
             connectionActions.add(RECONNECTION);
             connectionActions.add(CHANGE_OF_USE);
@@ -318,7 +321,7 @@ public class WaterTaxSearchService {
         if ((cscUser || ulbOperator) && CLOSED.equals(connection.getStatus())) {
             connectionActions.add(VIEW_WATER_CONNECTION);
             connectionActions.add(DOWNLOAD_CLOSURE_PROCEEDING);
-            if (("T").equals(connection.getClosureType())) {
+            if (TEMP_CLOSURE_TYPE.equals(connection.getClosureType())) {
                 connectionActions.add(RECONNECTION);
             }
         } else if (collectionOperatorRole) {
@@ -336,7 +339,7 @@ public class WaterTaxSearchService {
             connectionActions.add(ENTER_METER_READING);
             if (collectionOperatorRole && connection.getWaterTaxDue() > 0)
                 connectionActions.add(COLLECT_CHARGES);
-        } else if (ulbOperator && ("T").equals(connection.getClosureType()) && connection.getWaterTaxDue() > 0) {
+        } else if (ulbOperator && TEMP_CLOSURE_TYPE.equals(connection.getClosureType()) && connection.getWaterTaxDue() > 0) {
             connectionActions.add(VIEW_WATER_CONNECTION);
             if (collectionOperatorRole) {
                 connectionActions.add(VIEW_DCB_SCREEN);
@@ -346,7 +349,7 @@ public class WaterTaxSearchService {
             }
         } else if (collectionOperatorRole && connection.getWaterTaxDue() > 0) {
             connectionActions.add(COLLECT_CHARGES);
-        } else if ((cscUser || ulbOperator || adminRole)) {
+        } else if (cscUser || ulbOperator || adminRole) {
             connectionActions.add(VIEW_DCB_SCREEN);
             connectionActions.add(VIEW_WATER_CONNECTION);
             connectionActions.add(DOWNLOAD_RECONNEC_PROCEEDING);
@@ -374,7 +377,7 @@ public class WaterTaxSearchService {
                 getActionForMeterAndNonMeter(connectionActions);
                 connectionActions.add(VIEW_DCB_SCREEN);
             }
-            if (collectionOperatorRole && (connection.getWaterTaxDue() >= 0))
+            if (collectionOperatorRole && connection.getWaterTaxDue() >= 0)
                 connectionActions.add(COLLECT_CHARGES);
         }
     }
