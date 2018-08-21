@@ -622,8 +622,8 @@ public class BillService {
     		Query query = getCurrentSession().createQuery(queryString.toString());  
     		query.setParameter("billNo", billNo);
     		query.setParameter("billStatus", "Approved");
-    		List resultWithAliasedBean = query.setResultTransformer(Transformers.aliasToBean(BillPaymetDetails.class)).list();
-    		return resultWithAliasedBean;
+    		return query.setResultTransformer(Transformers.aliasToBean(BillPaymetDetails.class)).list();
+    		 
     	}
     
 	}
