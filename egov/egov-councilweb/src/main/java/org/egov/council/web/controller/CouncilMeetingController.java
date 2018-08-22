@@ -282,6 +282,8 @@ public class CouncilMeetingController {
                          final Model model, final RedirectAttributes redirectAttrs) {
         validateCouncilMeeting(errors);
         if (errors.hasErrors()) {
+            councilMeetingService.sortMeetingMomByItemNumber(councilMeeting);
+            model.addAttribute("autoMeetingNoGenEnabled", true);
             return COUNCILMEETING_EDIT;
         }
         councilMeetingService.update(councilMeeting);
