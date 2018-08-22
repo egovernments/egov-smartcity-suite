@@ -50,6 +50,8 @@ package org.egov.tl.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
@@ -68,6 +70,7 @@ import javax.persistence.Table;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static javax.persistence.FetchType.LAZY;
 
@@ -95,11 +98,12 @@ public class LicenseSubCategory extends AbstractAuditable {
     @SafeHtml
     private String name;
 
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne(fetch = LAZY, optional = false)
     @JoinColumn(name = "ID_CATEGORY", updatable = false)
     private LicenseCategory category;
 
     @OneToMany(mappedBy = "subCategory", fetch = LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Fetch(FetchMode.SUBSELECT)
     @Valid
     private List<LicenseSubCategoryDetails> licenseSubCategoryDetails = new ArrayList<>();
 
@@ -146,24 +150,18 @@ public class LicenseSubCategory extends AbstractAuditable {
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o)
+    public boolean equals(Object obj) {
+        if (this == obj)
             return true;
-        if (o == null || getClass() != o.getClass())
+        if (!(obj instanceof LicenseSubCategory))
             return false;
-
-        final LicenseSubCategory that = (LicenseSubCategory) o;
-
-        if (getCode() != null ? !getCode().equals(that.getCode()) : that.getCode() != null)
-            return false;
-        return getName() != null ? getName().equals(that.getName()) : that.getName() == null;
-
+        LicenseSubCategory that = (LicenseSubCategory) obj;
+        return Objects.equals(getCode(), that.getCode()) &&
+                Objects.equals(getCategory(), that.getCategory());
     }
 
     @Override
     public int hashCode() {
-        int result = getCode() != null ? getCode().hashCode() : 0;
-        result = 31 * result + (getName() != null ? getName().hashCode() : 0);
-        return result;
+        return Objects.hash(getCode(), getCategory());
     }
 }

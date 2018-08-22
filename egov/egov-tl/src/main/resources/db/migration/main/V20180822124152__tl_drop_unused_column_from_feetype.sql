@@ -1,0 +1,1 @@
+alter table egtl_mstr_fee_type drop column feeprocesstype;

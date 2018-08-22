@@ -105,14 +105,14 @@ public class FeeMatrixService {
     public List<FeeMatrixDetail> getLicenseFeeDetails(TradeLicense license, Date effectiveDate) {
         List<FeeMatrixDetail> licenseFeeDetails = new ArrayList<>();
         for (LicenseSubCategoryDetails subcategoryDetail : license.getTradeName().getLicenseSubCategoryDetails()) {
-            FeeMatrix feeMatrix = getFeeMatrix(license, subcategoryDetail.getFeeType(), effectiveDate).
-                    orElseThrow(() -> new ValidationException("TL-002", "Fee matrix not defined"));
-            FeeMatrixDetail feeMatrixDetail = feeMatrix.getFeeMatrixDetail().
-                    parallelStream().
-                    filter(detail -> license.getTradeArea_weight().intValue() > detail.getUomFrom()
-                            && license.getTradeArea_weight().intValue() <= detail.getUomTo()).
-                    findFirst().
-                    orElseThrow(() -> new ValidationException("TL-003", "Fee range not defined"));
+            FeeMatrix feeMatrix = getFeeMatrix(license, subcategoryDetail.getFeeType(), effectiveDate)
+                    .orElseThrow(() -> new ValidationException("TL-002", "Fee matrix not defined"));
+            FeeMatrixDetail feeMatrixDetail = feeMatrix.getFeeMatrixDetail()
+                    .stream()
+                    .filter(detail -> license.getTradeArea_weight().intValue() > detail.getUomFrom()
+                            && license.getTradeArea_weight().intValue() <= detail.getUomTo())
+                    .findFirst()
+                    .orElseThrow(() -> new ValidationException("TL-003", "Fee range not defined"));
             licenseFeeDetails.add(feeMatrixDetail);
         }
 

@@ -60,6 +60,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import java.util.Objects;
 
 @Entity
 @Table(name = "EGTL_MSTR_BUSINESS_NATURE")
@@ -84,7 +85,7 @@ public class NatureOfBusiness extends AbstractPersistable<Long> {
     }
 
     @Override
-    public void setId(final Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -92,7 +93,22 @@ public class NatureOfBusiness extends AbstractPersistable<Long> {
         return name;
     }
 
-    public void setName(final String name) {
+    public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!(obj instanceof NatureOfBusiness))
+            return false;
+        NatureOfBusiness that = (NatureOfBusiness) obj;
+        return Objects.equals(getName(), that.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getName());
     }
 }

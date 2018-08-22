@@ -64,6 +64,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 import static javax.persistence.FetchType.LAZY;
 
@@ -80,7 +81,7 @@ public class LicenseSubCategoryDetails extends AbstractPersistable<Long> {
     private Long id;
 
     @JsonIgnore
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne(fetch = LAZY, optional = false)
     @JoinColumn(name = "subcategory_id")
     private LicenseSubCategory subCategory;
 
@@ -153,24 +154,18 @@ public class LicenseSubCategoryDetails extends AbstractPersistable<Long> {
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o)
+    public boolean equals(Object obj) {
+        if (this == obj)
             return true;
-        if (o == null || getClass() != o.getClass())
+        if (!(obj instanceof LicenseSubCategoryDetails))
             return false;
-
-        final LicenseSubCategoryDetails that = (LicenseSubCategoryDetails) o;
-
-        if (getSubCategory() != null ? !getSubCategory().equals(that.getSubCategory()) : that.getSubCategory() != null)
-            return false;
-        return getFeeType() != null ? getFeeType().equals(that.getFeeType()) : that.getFeeType() == null;
-
+        LicenseSubCategoryDetails that = (LicenseSubCategoryDetails) obj;
+        return Objects.equals(getSubCategory(), that.getSubCategory()) &&
+                Objects.equals(getFeeType(), that.getFeeType());
     }
 
     @Override
     public int hashCode() {
-        int result = getSubCategory() != null ? getSubCategory().hashCode() : 0;
-        result = 31 * result + (getFeeType() != null ? getFeeType().hashCode() : 0);
-        return result;
+        return Objects.hash(getSubCategory(), getFeeType());
     }
 }

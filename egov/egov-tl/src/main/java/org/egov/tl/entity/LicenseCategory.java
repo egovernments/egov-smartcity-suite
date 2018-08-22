@@ -51,7 +51,7 @@ package org.egov.tl.entity;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Column;
@@ -61,6 +61,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import java.util.Objects;
 
 @Entity
 @Table(name = "EGTL_MSTR_CATEGORY")
@@ -74,12 +75,12 @@ public class LicenseCategory extends AbstractAuditable {
     @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotEmpty
+    @NotBlank
     @Length(max = 150)
     @SafeHtml
     private String name;
 
-    @NotEmpty
+    @NotBlank
     @Length(max = 5)
     @SafeHtml
     @Column(updatable = false)
@@ -111,4 +112,18 @@ public class LicenseCategory extends AbstractAuditable {
         this.id = id;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!(obj instanceof LicenseCategory))
+            return false;
+        LicenseCategory that = (LicenseCategory) obj;
+        return Objects.equals(getCode(), that.getCode());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getCode());
+    }
 }

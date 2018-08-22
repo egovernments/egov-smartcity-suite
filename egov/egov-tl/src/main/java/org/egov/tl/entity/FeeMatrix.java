@@ -100,7 +100,7 @@ public class FeeMatrix extends AbstractAuditable {
     private NatureOfBusiness natureOfBusiness;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "licenseCategory", updatable = false)
     private LicenseCategory licenseCategory;
 
@@ -223,12 +223,12 @@ public class FeeMatrix extends AbstractAuditable {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o)
+    public boolean equals(Object obj) {
+        if (this == obj)
             return true;
-        if (!(o instanceof FeeMatrix))
+        if (!(obj instanceof FeeMatrix))
             return false;
-        FeeMatrix feeMatrix = (FeeMatrix) o;
+        FeeMatrix feeMatrix = (FeeMatrix) obj;
         return Objects.equals(natureOfBusiness.getId(), feeMatrix.natureOfBusiness.getId()) &&
                 Objects.equals(licenseCategory.getId(), feeMatrix.licenseCategory.getId()) &&
                 Objects.equals(subCategory.getId(), feeMatrix.subCategory.getId()) &&
