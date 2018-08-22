@@ -78,6 +78,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class SchedularService {
 
     private static final Logger LOGGER = Logger.getLogger(SchedularService.class);
+    public static final Integer QUARTZ_SBIMOPS_RECONCILE_BULK_JOBS = 5;
 
     @Autowired
     @Qualifier("persistenceService")
@@ -278,7 +279,7 @@ public class SchedularService {
         queryString.append(
                 "select receipt from org.egov.collection.entity.OnlinePayment as receipt where receipt.status.code=:onlinestatuscode")
                 .append(" and receipt.service.code=:paymentservicecode and receipt.createdDate<:thirtyminslesssysdate  and MOD(receipt.id, ")
-                .append(CollectionConstants.QUARTZ_SBIMOPS_RECONCILE_BULK_JOBS)
+                .append(QUARTZ_SBIMOPS_RECONCILE_BULK_JOBS)
                 .append(") = :modulo  order by receipt.id asc");
         final Query query = persistenceService
                 .getSession()
@@ -292,6 +293,11 @@ public class SchedularService {
     }
 
     private void processOnlineTransaction(PaymentResponse paymentResponse) {
+
+        // If the transaction status is Pending, Keeping the transaction in pending status for five days from transaction date.
+        final Calendar fiveDaysBackCalender = Calendar.getInstance();
+        fiveDaysBackCalender.add(Calendar.DATE, -5);
+
         ReceiptHeader onlinePaymentReceiptHeader = (ReceiptHeader) persistenceService.findByNamedQuery(
                 CollectionConstants.QUERY_PENDING_RECEIPT_BY_ID_AND_CITYCODE,
                 Long.valueOf(paymentResponse.getReceiptId()),
@@ -299,8 +305,12 @@ public class SchedularService {
 
         if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(paymentResponse.getAuthStatus()))
             reconciliationService.processSuccessMsg(onlinePaymentReceiptHeader, paymentResponse);
-        // TODO: get the list of SBIMOPS pending status list
-        else
+        else if (CollectionConstants.PGI_AUTHORISATION_CODE_PENDING.equals(paymentResponse.getAuthStatus()) &&
+                (DateUtils.compareDates(onlinePaymentReceiptHeader.getCreatedDate(), fiveDaysBackCalender.getTime()))) {
+            onlinePaymentReceiptHeader.getOnlinePayment().setAuthorisationStatusCode(
+                    paymentResponse.getAuthStatus());
+            onlinePaymentReceiptHeader.getOnlinePayment().setRemarks(paymentResponse.getErrorDescription());
+        } else
             reconciliationService.processFailureMsg(onlinePaymentReceiptHeader, paymentResponse);
     }
 }
