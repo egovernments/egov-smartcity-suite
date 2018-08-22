@@ -464,7 +464,7 @@ public class OnlineReceiptAction extends BaseFormAction {
                 for (final ReceiptDetail rDetails : receiptHeader.getReceiptDetails())
                     rDetails.getCramountToBePaid().setScale(CollectionConstants.AMOUNT_PRECISION_DEFAULT,
                             BigDecimal.ROUND_UP);
-                setReceiptDetailList(new ArrayList<ReceiptDetail>(receiptHeader.getReceiptDetails()));
+                setReceiptDetailList(new ArrayList<>(receiptHeader.getReceiptDetails()));
 
                 if (totalAmountToBeCollected.compareTo(BigDecimal.ZERO) == -1) {
                     addActionError(getText("billreceipt.totalamountlessthanzero.error"));
@@ -472,8 +472,8 @@ public class OnlineReceiptAction extends BaseFormAction {
                 } else
                     setTotalAmountToBeCollected(totalAmountToBeCollected.setScale(
                             CollectionConstants.AMOUNT_PRECISION_DEFAULT, BigDecimal.ROUND_UP));
-            } catch (final Exception e) {
-                LOGGER.error(getText("billreceipt.error.improperbilldata") + e);
+            } catch (final Exception exp) {
+                LOGGER.error(getText("billreceipt.error.improperbilldata"), exp);
                 addActionError(getText("billreceipt.error.improperbilldata"));
             }
         }

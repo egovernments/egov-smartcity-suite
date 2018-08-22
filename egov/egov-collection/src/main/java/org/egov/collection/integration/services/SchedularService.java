@@ -47,13 +47,6 @@
  */
 package org.egov.collection.integration.services;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.OnlinePayment;
@@ -74,12 +67,19 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 @Service
 public class SchedularService {
 
-    private static final Logger LOGGER = Logger.getLogger(SchedularService.class);
     public static final Integer QUARTZ_SBIMOPS_RECONCILE_BULK_JOBS = 5;
-
+    private static final Logger LOGGER = Logger.getLogger(SchedularService.class);
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
@@ -150,13 +150,13 @@ public class SchedularService {
                         LOGGER.info("$$$$$$ Online Receipt Persisted with Receipt Number: "
                                 + onlinePaymentReceiptHeader.getReceiptnumber()
                                 + (onlinePaymentReceiptHeader.getConsumerCode() != null ? " and consumer code: "
-                                        + onlinePaymentReceiptHeader.getConsumerCode() : "")
+                                + onlinePaymentReceiptHeader.getConsumerCode() : "")
                                 + "; Time taken(ms) = "
                                 + elapsedTimeInMillis);
                     }
                 }
-            } catch (final ApplicationRuntimeException ex) {
-                LOGGER.error("AXIS payment reconciliation failed" + ex);
+            } catch (final ApplicationRuntimeException exp) {
+                LOGGER.error("AXIS payment reconciliation failed", exp);
             }
         }
     }
@@ -230,13 +230,13 @@ public class SchedularService {
                         LOGGER.info("$$$$$$ Online Receipt Persisted with Receipt Number: "
                                 + onlinePaymentReceiptHeader.getReceiptnumber()
                                 + (onlinePaymentReceiptHeader.getConsumerCode() != null ? " and consumer code: "
-                                        + onlinePaymentReceiptHeader.getConsumerCode() : "")
+                                + onlinePaymentReceiptHeader.getConsumerCode() : "")
                                 + "; Time taken(ms) = "
                                 + elapsedTimeInMillis);
                     }
                 }
-            } catch (final ApplicationRuntimeException ex) {
-                LOGGER.error("ATOM payment reconciliation failed" + ex);
+            } catch (final ApplicationRuntimeException exp) {
+                LOGGER.error("ATOM payment reconciliation failed", exp);
             }
         }
     }
@@ -259,16 +259,16 @@ public class SchedularService {
                     else if (isNotBlank(paymentResponse.getReceiptId())) {
                         if (LOGGER.isDebugEnabled()) {
                             LOGGER.debug("paymentResponse.getReceiptId():" + paymentResponse.getReceiptId());
-                            LOGGER.debug("paymentResponse.getAdditionalInfo6():" + paymentResponse.getAdditionalInfo6() == null
-                                    ? " consumer code is blank " : paymentResponse.getAdditionalInfo6());
+                            LOGGER.debug("paymentResponse.getAdditionalInfo6():" +
+                                    defaultIfBlank(paymentResponse.getAdditionalInfo6(), " consumer code is blank "));
                             LOGGER.debug("paymentResponse.getAuthStatus():" + paymentResponse.getAuthStatus());
                         }
                         processOnlineTransaction(paymentResponse);
                     }
                 }
             }
-        } catch (final ApplicationRuntimeException ex) {
-            LOGGER.error("SBIMOPS payment reconciliation failed" + ex);
+        } catch (final ApplicationRuntimeException exp) {
+            LOGGER.error("SBIMOPS payment reconciliation failed", exp);
         }
     }
 
