@@ -74,6 +74,13 @@
 
 <script>
 	 $('#buttonSubmit').click(function(e) {
+		  var place = $('#meetingLocation').val().trim();
+			if ($('#meetingLocation').val() != '' && place.length < 5) {
+				$('#meetingLocation').val('');
+				bootbox.alert("Meeting place should have atleast 5 characters");
+				e.preventDefault();
+			} 
+
 		if ($('form').valid()) {
 			 var action = '/council/councilmeeting/create' ;
  			$('#councilMeetingform').attr('method', 'post');

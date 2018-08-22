@@ -47,37 +47,36 @@
  */
 
 jQuery('#btnsearch').click(function(e) {
-		
+
+	callAjaxSearch();
+});
+
+$('form').keypress(function(e) {
+	if (e.which == 13) {
+		e.preventDefault();
 		callAjaxSearch();
+	}
+});
+
+function getFormData($form) {
+	var unindexed_array = $form.serializeArray();
+	var indexed_array = {};
+
+	$.map(unindexed_array, function(n, i) {
+		indexed_array[n['name']] = n['value'];
 	});
 
-$('form').keypress(function (e) {
-    if (e.which == 13) {
-    	e.preventDefault();
-    	callAjaxSearch();
-    }
-}); 
-
-function getFormData($form){
-    var unindexed_array = $form.serializeArray();
-    var indexed_array = {};
-
-    $.map(unindexed_array, function(n, i){
-        indexed_array[n['name']] = n['value'];
-    });
-
-    return indexed_array;
+	return indexed_array;
 }
 
-
 function callAjaxSearch() {
-	drillDowntableContainer = jQuery("#resultTable");		
+	drillDowntableContainer = jQuery("#resultTable");
 	jQuery('.report-section').removeClass('display-hide');
-		reportdatatable = drillDowntableContainer
+	reportdatatable = drillDowntableContainer
 			.dataTable({
 				ajax : {
-					url : "/council/agenda/searchagenda-tocreatemeeting",      
-					type: "POST",
+					url : "/council/agenda/searchagenda-tocreatemeeting",
+					type : "POST",
 					beforeSend : function() {
 						$('.loader-class').modal('show', {
 							backdrop : 'static'
@@ -89,73 +88,94 @@ function callAjaxSearch() {
 					}
 				},
 				"bDestroy" : true,
-				"autoWidth": false,
+				"autoWidth" : false,
 				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
 				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
 				"oTableTools" : {
 					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-					"aButtons" : [{"sExtends" : "xls"},
-						           {"sExtends" :"pdf"},
-						           {"sExtends" : "print"}]
+					"aButtons" : [ {
+						"sExtends" : "xls"
+					}, {
+						"sExtends" : "pdf"
+					}, {
+						"sExtends" : "print"
+					} ]
 				},
-				aaSorting: [],				
-				columns : [ { 
-"data" : "agendaNumber", "sClass" : "text-center"} ,{ 
-"data" : "committeeType", "sClass" : "text-center"} ,{ 
-"data" : "status", "sClass" : "text-center"}
-,{ "data" : null, "sClass" : "text-center", "target":-1,
-	
-    sortable: false,
-    "render": function ( data, type, full, meta ) {
-        var mode = $('#mode').val();
-       	return '<button type="button" class="btn btn-xs btn-secondary view"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;&nbsp;Create Meeting</button>';
-    }
-}
-,{ "data": "id", "visible":false }
-]				
+				aaSorting : [],
+				columns : [
+						{
+							"data" : "agendaNumber",
+							"sClass" : "text-center"
+						},
+						{
+							"data" : "committeeType",
+							"sClass" : "text-center"
+						},
+						{
+							"data" : "status",
+							"sClass" : "text-center"
+						},
+						{
+							"data" : null,
+							"sClass" : "text-center",
+							"target" : -1,
+
+							sortable : false,
+							"render" : function(data, type, full, meta) {
+								var mode = $('#mode').val();
+								return '<button type="button" class="btn btn-xs btn-secondary view"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;&nbsp;Create Meeting</button>';
+							}
+						}, {
+							"data" : "id",
+							"visible" : false
+						} ]
 			});
-			}
+}
 
+$("#resultTable").on(
+		'click',
+		'tbody tr td  .view',
+		function(event) {
+			var id = reportdatatable.fnGetData($(this).parent().parent(), 4);
+			window.open('/council/councilmeeting/new' + '/' + id, '',
+					'width=800, height=600,scrollbars=yes');
 
-$("#resultTable").on('click','tbody tr td  .view',function(event) {
-	var id = reportdatatable.fnGetData($(this).parent().parent(),4);
-	window.open('/council/councilmeeting/new' + '/'+id,'','width=800, height=600,scrollbars=yes');
-	
-});
+		});
 
-$('#meetingNumber').blur(function(){
+$('#meetingNumber').blur(function() {
 	validateMeetingNumber();
 });
 
-
-$('#meetingLocation').on('mouseleave',function(){
-	var place=$('#meetingLocation').val().trim();
-	if($('#meetingLocation').val()!='' && place.length<5){
-	$('#meetingLocation').val('');
-	bootbox.alert("Meeting place should have atleast 5 characters");
+$('#meetingLocation').on('mouseleave', function() {
+	var place = $('#meetingLocation').val().trim();
+	if ($('#meetingLocation').val() != '' && place.length < 5) {
+		$('#meetingLocation').val('');
+		bootbox.alert("Meeting place should have atleast 5 characters");
 	}
 });
 
-function validateMeetingNumber(){
-	var meetingNumber=$('#meetingNumber').val();
-	if(meetingNumber != '') {
-		$.ajax({
-			url: "/council/councilmom/checkUnique-MeetingNo",      
-			type: "GET",
-			data: {
-				meetingNumber : meetingNumber,  
-			},
-			dataType: "json",
-			success: function (response) { 
-				if(!response) {
+function validateMeetingNumber() {
+	var meetingNumber = $('#meetingNumber').val();
+	if (meetingNumber != '') {
+		$
+				.ajax({
+					url : "/council/councilmom/checkUnique-MeetingNo",
+					type : "GET",
+					data : {
+						meetingNumber : meetingNumber,
+					},
+					dataType : "json",
+					success : function(response) {
+						if (!response) {
+							$('#meetingNumber').val('');
+							bootbox
+									.alert("Entered Meeting Number already exists. Please Enter Unique Number.");
+						}
+					},
+					error : function(response) {
 						$('#meetingNumber').val('');
-						bootbox.alert("Entered Meeting Number already exists. Please Enter Unique Number.");
-				}
-			}, 
-			error: function (response) {
-				$('#meetingNumber').val('');
-				bootbox.alert("connection validation failed");
-			}
-		});
-	}	
+						bootbox.alert("connection validation failed");
+					}
+				});
+	}
 }

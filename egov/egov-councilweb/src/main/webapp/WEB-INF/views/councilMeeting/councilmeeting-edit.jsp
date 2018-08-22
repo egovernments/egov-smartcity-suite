@@ -130,6 +130,11 @@
 	src="<cdn:url value='/resources/app/js/showMoreorLessContent.js?rnd=${app_release_no}'/>"></script>
 <script>
 	$('#buttonSubmit').click(function(e) {
+		var place = $('#meetingLocation').val().trim();		
+		if ($('#meetingLocation').val() != '' && place.length < 5) {
+			$('#meetingLocation').val('');
+			bootbox.alert("Meeting place should have atleast 5 characters");
+		}
 		if ($('form').valid()) {
 		} else {
 			e.preventDefault();

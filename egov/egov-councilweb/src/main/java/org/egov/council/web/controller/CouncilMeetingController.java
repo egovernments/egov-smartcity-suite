@@ -236,6 +236,8 @@ public class CouncilMeetingController {
 
         validateCouncilMeeting(errors);
         if (errors.hasErrors()) {
+            model .addAttribute("autoMeetingNoGenEnabled", isAutoMeetingNoGenEnabled()); 
+            model.addAttribute(COUNCIL_MEETING, councilMeeting);
             return COUNCILMEETING_NEW;
         }
         if (councilMeeting.getStatus() == null)
