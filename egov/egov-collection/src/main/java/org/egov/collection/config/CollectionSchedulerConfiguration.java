@@ -84,11 +84,6 @@ public class CollectionSchedulerConfiguration extends QuartzSchedulerConfigurati
         collectionScheduler.setOverwriteExistingJobs(true);
         collectionScheduler.setTriggers(
                 axisReconciliationCronTrigger().getObject(),
-                atomReconciliationCronTrigger0().getObject(),
-                atomReconciliationCronTrigger1().getObject(),
-                atomReconciliationCronTrigger2().getObject(),
-                atomReconciliationCronTrigger3().getObject(),
-                atomReconciliationCronTrigger4().getObject(),
                 remittanceCashInstrumentCronTrigger0().getObject(),
                 remittanceCashInstrumentCronTrigger1().getObject(),
                 sbimopsReconciliationCronTrigger0().getObject(),
