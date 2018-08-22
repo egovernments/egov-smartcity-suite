@@ -220,7 +220,7 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
             if (sbiPaymentResponse.getAuthStatus().equals(CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS)) {
                 sbiPaymentResponse.setTxnAmount(new BigDecimal(responseMap.get(SBIMOPS_TA)));
                 sbiPaymentResponse.setTxnReferenceNo(responseMap.get(SBIMOPS_CFMS_TRID));
-                final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("DDMMYYYYHHMMSS", Locale.getDefault());
+                final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("ddMMyyyyHHmmss", Locale.getDefault());
                 Date transDate = null;
                 try {
                     transDate = simpleDateFormat.parse(responseMap.get(SBIMOPS_BANKTIME_STAMP));
