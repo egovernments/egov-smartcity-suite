@@ -49,7 +49,6 @@ package org.egov.ptis.service.aadharseeding;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.ELECTIONWARD_BNDRY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
 
@@ -124,7 +123,7 @@ public class AadharSeedingService extends GenericWorkFlowController {
         final List<Boundary> revWardList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD,
                 REVENUE_HIERARCHY_TYPE);
         final List<Boundary> electionWardList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
-                ELECTIONWARD_BNDRY_TYPE,
+                WARD,
                 ADMIN_HIERARCHY_TYPE);
         Map<Long, String> wards = new ConcurrentHashMap<>();
         Map<Long, String> electionWards = new ConcurrentHashMap<>();
