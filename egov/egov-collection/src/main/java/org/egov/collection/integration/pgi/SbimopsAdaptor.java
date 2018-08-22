@@ -128,7 +128,7 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
 
     public static final String MESSAGEKEY_SBIMOPS_DC = "sbimops.department.code";
 
-    private static final ArrayList<String> SBIMOPS_AUTHORISATION_CODES_WAITINGFOR_PAY_GATEWAY_RESPONSE = new ArrayList<String>() {
+    private static final ArrayList<String> SBIMOPS_CODES_WAITINGFOR_PG_RESPONSE = new ArrayList<String>() {
         {
             add("Pending");
             add("P");
@@ -386,7 +386,7 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
         if (CollectionConstants.ONLINEPAYMENT_STATUS_DESC_SUCCESS.equalsIgnoreCase(transactionStatus)
                 || "S".equalsIgnoreCase(transactionStatus))
             return CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS;
-        else if (SBIMOPS_AUTHORISATION_CODES_WAITINGFOR_PAY_GATEWAY_RESPONSE.contains(transactionStatus))
+        else if (SBIMOPS_CODES_WAITINGFOR_PG_RESPONSE.contains(transactionStatus))
             return CollectionConstants.PGI_AUTHORISATION_CODE_PENDING;
         else
             return CollectionConstants.PGI_AUTHORISATION_CODE_FAILED;

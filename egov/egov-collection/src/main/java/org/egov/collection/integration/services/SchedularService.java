@@ -306,7 +306,7 @@ public class SchedularService {
         if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(paymentResponse.getAuthStatus()))
             reconciliationService.processSuccessMsg(onlinePaymentReceiptHeader, paymentResponse);
         else if (CollectionConstants.PGI_AUTHORISATION_CODE_PENDING.equals(paymentResponse.getAuthStatus()) &&
-                (DateUtils.compareDates(onlinePaymentReceiptHeader.getCreatedDate(), fiveDaysBackCalender.getTime()))) {
+                DateUtils.compareDates(onlinePaymentReceiptHeader.getCreatedDate(), fiveDaysBackCalender.getTime())) {
             onlinePaymentReceiptHeader.getOnlinePayment().setAuthorisationStatusCode(
                     paymentResponse.getAuthStatus());
             onlinePaymentReceiptHeader.getOnlinePayment().setRemarks(paymentResponse.getErrorDescription());
