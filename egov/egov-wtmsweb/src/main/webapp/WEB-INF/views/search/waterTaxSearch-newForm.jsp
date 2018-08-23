@@ -118,7 +118,7 @@
                         <div class="col-md-4 add-margin">
                             <input type="text" name="applicantName" id="applicantName"
                                    class="form-control patternvalidation"
-                                   data-pattern="alphabetwithspace" maxlength="100"/>
+                                   data-pattern="alphabetwithspecialcharacters" maxlength="100"/>
                             <form:errors path="applicantName" id="applicantNameError" cssClass="error-msg"/>
                         </div>
                     </div>
