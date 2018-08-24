@@ -677,10 +677,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             if (receiptHeader.getReceipttype() == CollectionConstants.RECEIPT_TYPE_BILL) {
                 if (receiptHeader.getService().getCode().equals(CollectionConstants.SERVICECODE_LAMS)) {
                     // TODO Implement separate API for Microservice billing services
-                    final Set<BillReceiptInfo> billReceipts = new HashSet<>(0);
                     final BillReceiptInfo billReceipt = new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO,
                             persistenceService, null);
-                    billReceipts.add(billReceipt);
                     collectionsUtil.updateReceiptDetailsAndGetReceiptAmountInfo(new BillReceiptReq(billReceipt),
                             receiptHeader.getService().getCode());
                 } else
