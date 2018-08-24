@@ -71,6 +71,7 @@ import org.egov.collection.entity.ReceiptMisc;
 import org.egov.collection.entity.ReceiptVoucher;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
+import org.egov.collection.integration.models.BillReceiptReq;
 import org.egov.collection.integration.models.ReceiptCancellationInfo;
 import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.collection.utils.CollectionsNumberGenerator;
@@ -190,7 +191,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         try {
             rcptDate = formatter.parse(receiptDate);
         } catch (final ParseException e) {
-            LOGGER.error("Exception while parsing ReceiptDate" + e.getMessage());
+            LOGGER.error("Exception while parsing ReceiptDate", e);
+            throw new ApplicationRuntimeException(e.getMessage());
         }
 
         if (paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_CASH)
@@ -672,8 +674,18 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             if (receiptHeader.getState() != null
                     && !receiptHeader.getState().getValue().equals(CollectionConstants.WF_STATE_END))
                 endReceiptWorkFlowOnCancellation(receiptHeader);
-            if (receiptHeader.getReceipttype() == CollectionConstants.RECEIPT_TYPE_BILL)
-                updateBillingSystemWithReceiptInfo(receiptHeader, null, null);
+            if (receiptHeader.getReceipttype() == CollectionConstants.RECEIPT_TYPE_BILL) {
+                if (receiptHeader.getService().getCode().equals(CollectionConstants.SERVICECODE_LAMS)) {
+                    // TODO Implement separate API for Microservice billing services
+                    final Set<BillReceiptInfo> billReceipts = new HashSet<>(0);
+                    final BillReceiptInfo billReceipt = new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO,
+                            persistenceService, null);
+                    billReceipts.add(billReceipt);
+                    collectionsUtil.updateReceiptDetailsAndGetReceiptAmountInfo(new BillReceiptReq(billReceipt),
+                            receiptHeader.getService().getCode());
+                } else
+                    updateBillingSystemWithReceiptInfo(receiptHeader, null, null);
+            }
         }
         return super.persist(receiptHeader);
     }
@@ -1142,7 +1154,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                     CollectionConstants.APPCONFIG_VALUE_COLLECTIONDATAENTRYCUTOFFDATE));
         } catch (final ParseException e) {
-            LOGGER.error("Error parsing Cut Off Date" + e.getMessage());
+            LOGGER.error("Error parsing Cut Off Date", e);
+            throw new ApplicationRuntimeException(e.getMessage());
         }
         return cutOffDate;
     }
