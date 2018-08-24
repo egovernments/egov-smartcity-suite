@@ -48,6 +48,7 @@
 
 package org.egov.mrs.domain.service;
 
+import static org.egov.infra.utils.ApplicationConstant.NA;
 import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
 import static org.egov.infra.utils.DateUtils.toDateUsingDefaultPattern;
 import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
@@ -78,9 +79,12 @@ import org.apache.log4j.Logger;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.entity.Source;
 import org.egov.demand.model.EgDemandDetails;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
@@ -92,6 +96,7 @@ import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.StringUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.mrs.application.MarriageConstants;
@@ -134,6 +139,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+
 
 @Service
 @Transactional(readOnly = true)
@@ -212,6 +218,8 @@ public class MarriageRegistrationService {
     private PortalInboxService portalInboxService;
     @Autowired
     private ReportService reportService;
+    @Autowired
+    protected AssignmentService assignmentService;
 
     @Autowired
     public MarriageRegistrationService(final MarriageRegistrationRepository registrationRepository) {
@@ -780,51 +788,66 @@ public class MarriageRegistrationService {
         final Map<String, Object> map = new HashMap<>(0);
         if (null != state) {
             if (!registration.getStateHistory().isEmpty()
-                    && registration.getStateHistory() != null)
+                    && registration.getStateHistory() != null){
                 Collections.reverse(registration.getStateHistory());
             Map<String, Object> historyMap;
             for (final StateHistory<Position> stateHistory : registration.getStateHistory()) {
                 historyMap = new HashMap<>(0);
                 historyMap.put("date", stateHistory.getDateInfo());
-                historyMap.put("comments", stateHistory.getComments() != null ? stateHistory.getComments() : "");
+                historyMap.put("comments", StringUtils.emptyIfNull(stateHistory.getComments()));
                 historyMap.put("updatedBy", stateHistory.getLastModifiedBy().getUsername() + "::"
                         + stateHistory.getLastModifiedBy().getName());
                 historyMap.put(STATUS, stateHistory.getValue());
                 final Position owner = stateHistory.getOwnerPosition();
                 user = stateHistory.getOwnerUser();
-                if (null != user) {
-                    historyMap.put(USER, user.getUsername() + "::" + user.getName());
-                    historyMap.put(DEPARTMENT,
-                            null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
-                                    .getDepartmentForUser(user.getId()).getName() : "");
-                } else if (null != owner && null != owner.getDeptDesig()) {
-                    user = eisCommonService.getUserForPosition(owner.getId(), new Date());
-                    historyMap
-                            .put(USER, null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
-                    historyMap.put(DEPARTMENT, null != owner.getDeptDesig().getDepartment() ? owner.getDeptDesig()
-                            .getDepartment().getName() : "");
-                }
+                setUserDetails(user, map, historyMap, owner);
                 historyTable.add(historyMap);
             }
             map.put("date", state.getDateInfo());
-            map.put("comments", state.getComments() != null ? state.getComments() : "");
+            map.put("comments", StringUtils.emptyIfNull(state.getComments()));
             map.put("updatedBy", state.getLastModifiedBy().getUsername() + "::" + state.getLastModifiedBy().getName());
             map.put(STATUS, state.getValue());
             final Position ownerPosition = state.getOwnerPosition();
             user = state.getOwnerUser();
-            if (null != user) {
-                map.put(USER, user.getUsername() + "::" + user.getName());
-                map.put(DEPARTMENT, null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
-                        .getDepartmentForUser(user.getId()).getName() : "");
-            } else if (null != ownerPosition && null != ownerPosition.getDeptDesig()) {
-                user = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
-                map.put(USER, null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
-                map.put(DEPARTMENT, null != ownerPosition.getDeptDesig().getDepartment() ? ownerPosition
-                        .getDeptDesig().getDepartment().getName() : "");
-            }
+            setUserDetails(user, map, map, ownerPosition);
+        }
             historyTable.add(map);
         }
+       
         return historyTable;
+    }
+
+    private void setUserDetails(User user, final Map<String, Object> map, Map<String, Object> historyMap, final Position owner) {
+        Department userDepartment;
+        if (user!=null) {
+            userDepartment=eisCommonService.getDepartmentForUser(user.getId());
+            historyMap.put(USER, user.getUsername() + "::" + user.getName());
+            historyMap.put(DEPARTMENT,
+                     userDepartment!=null ? userDepartment.getName() : "");
+        } else if (owner != null && owner.getDeptDesig() != null) {
+            setUserAndDepartment(map, owner);
+        }
+    }
+
+    private void setUserAndDepartment(final Map<String, Object> map, final Position owner) {
+        User user;
+        String username;
+        Assignment primaryassignment = assignmentService.getPrimaryAssignmentForPositionAndDate(owner.getId(),
+                new Date());
+        if (primaryassignment == null)
+            user = eisCommonService.getUserForPosition(owner.getId(), new Date());
+        else
+            user = primaryassignment.getEmployee();
+
+        if (user == null)
+            username = NA;
+        else {
+            username = user.getUsername() + "::" + user.getName();
+        }
+
+        map.put(USER, username);
+        map.put(DEPARTMENT, owner.getDeptDesig().getDepartment() != null ? owner
+                .getDeptDesig().getDepartment().getName() : "");
     }
 
     @SuppressWarnings("unchecked")
