@@ -55,6 +55,7 @@ import org.egov.tl.service.LicenseCertificateDigiSignService;
 import org.egov.tl.service.LicenseConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -69,6 +70,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.egov.tl.utils.Constants.TL_FILE_STORE_DIR;
 import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 
@@ -104,6 +106,8 @@ public class LicenseCertificateDigiSignController {
     @ResponseBody
     public ResponseEntity<InputStreamResource> downloadSignedLicenseCertificate(@RequestParam String file,
                                                                                 @RequestParam String applnum) {
+        if (isBlank(file))
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         return fileStoreUtils.fileAsPDFResponse(file, applnum, TL_FILE_STORE_DIR);
     }
 
