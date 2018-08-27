@@ -800,8 +800,9 @@ public class MarriageRegistrationService {
                 historyMap.put(STATUS, stateHistory.getValue());
                 final Position owner = stateHistory.getOwnerPosition();
                 user = stateHistory.getOwnerUser();
-                setUserDetails(user, map, historyMap, owner);
+                setUserDetails(user, historyMap, owner);
                 historyTable.add(historyMap);
+            }
             }
             map.put("date", state.getDateInfo());
             map.put("comments", StringUtils.emptyIfNull(state.getComments()));
@@ -809,20 +810,19 @@ public class MarriageRegistrationService {
             map.put(STATUS, state.getValue());
             final Position ownerPosition = state.getOwnerPosition();
             user = state.getOwnerUser();
-            setUserDetails(user, map, map, ownerPosition);
-        }
+            setUserDetails(user, map, ownerPosition);
             historyTable.add(map);
         }
        
         return historyTable;
     }
 
-    private void setUserDetails(User user, final Map<String, Object> map, Map<String, Object> historyMap, final Position owner) {
+    private void setUserDetails(User user, final Map<String, Object> map, final Position owner) {
         Department userDepartment;
         if (user!=null) {
             userDepartment=eisCommonService.getDepartmentForUser(user.getId());
-            historyMap.put(USER, user.getUsername() + "::" + user.getName());
-            historyMap.put(DEPARTMENT,
+            map.put(USER, user.getUsername() + "::" + user.getName());
+            map.put(DEPARTMENT,
                      userDepartment!=null ? userDepartment.getName() : "");
         } else if (owner != null && owner.getDeptDesig() != null) {
             setUserAndDepartment(map, owner);
