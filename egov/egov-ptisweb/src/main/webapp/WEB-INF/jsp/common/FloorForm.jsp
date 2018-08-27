@@ -114,7 +114,7 @@
 					<s:textfield name="propertyDetail.floorDetailsProxy[0].firmName"
 						id="firmName" size="20"
 						value="%{propertyDetail.floorDetailsProxy[0].firmName}"
-						maxlength="32" cssStyle="width:100%" title="Name of the Firm"/>
+						maxlength="100" cssStyle="width:100%" title="Name of the Firm"/>
 				</div>
 			</td>
 			<td class="blueborderfortd" style="padding: 2px 2px">
@@ -134,7 +134,7 @@
 					<s:textfield name="propertyDetail.floorDetailsProxy[0].occupantName"
 						id="occupantName" size="20"
 						value="%{propertyDetail.floorDetailsProxy[0].occupantName}"
-						maxlength="32" cssStyle="width:100%" title="Name of the occupied by person"/>
+						maxlength="100" cssStyle="width:100%" title="Name of the occupied by person"/>
 				</div>
 			</td>
 			
@@ -290,7 +290,7 @@
 				<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
 					<s:textfield name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].firmName"
-						id="firmName" size="25" maxlength="32"
+						id="firmName" size="25" maxlength="100"
 						value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].firmName}"
 						cssStyle="width:100%" title="Name of the Firm"/>
 				</div>
@@ -311,7 +311,7 @@
                <td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
 						<s:textfield name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].occupantName"
-							id="occupantname" size="25" maxlength="32" value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].occupantName}"
+							id="occupantname" size="25" maxlength="100" value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].occupantName}"
 							cssStyle="width:100%"  title="Name of the occupied by person"/>
 					</div>
 				</td>
