@@ -161,14 +161,16 @@ public class WaterEstimationChargesPaymentService {
 
         BigDecimal noOfInstallment = BigDecimal.valueOf(NO_OF_INSTALLMENTS);
         if (waterConnectionBillable.getPartPaymentAllowed() && NON_METERED.equals(connectionDetails.getConnectionType())) {
-
             BigDecimal estimationAmount = getEstimationAmount(connectionDetails);
+            BigDecimal estimationDueAmount = getEstimationDueAmount(connectionDetails);
+            BigDecimal estimationInstAmount = estimationAmount.divide(noOfInstallment, ROUND_HALF_UP).setScale(0, ROUND_HALF_UP);
             if (CATEGORY_BPL.equalsIgnoreCase(connectionDetails.getCategory().getName())
-                    ||  REGULARIZE_CONNECTION.equals(connectionDetails.getApplicationType().getCode()))
+                    || REGULARIZE_CONNECTION.equals(connectionDetails.getApplicationType().getCode()))
                 waterConnectionBillable.getCurrentDemand().setMinAmtPayable(estimationAmount);
+            else if (estimationDueAmount.compareTo(estimationInstAmount) > 0)
+                waterConnectionBillable.getCurrentDemand().setMinAmtPayable(estimationInstAmount);
             else
-                waterConnectionBillable.getCurrentDemand().setMinAmtPayable(estimationAmount.divide(
-                        noOfInstallment, ROUND_HALF_UP).setScale(0, ROUND_HALF_UP));
+                waterConnectionBillable.getCurrentDemand().setMinAmtPayable(estimationDueAmount);
         }
 
         BillReferenceNumberGenerator billRefeNumber = beanResolver.getAutoNumberServiceFor(BillReferenceNumberGenerator.class);
