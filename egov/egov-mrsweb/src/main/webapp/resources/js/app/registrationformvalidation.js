@@ -296,8 +296,9 @@ $('.age-field').blur( function () {
   if($('#source').val()=='CHPK'){
 	  	if($('#marriagePhotoFileStore').val()==''|| $('[id="husband.photoFileStore"]').val()==''
 	  		|| $('[id="wife.photoFileStore"]').val()==''){
+	  		$("input[type=file]").attr('disabled', true);
 	       $('#Approve').hide(); 
-	       $('#Reject').hide();
+	       $('#Reject').show();
 	  	}	
 	 }
   
