@@ -155,16 +155,11 @@ $(document).ready(function(){
 							bootbox.alert("Minimum PipeSize should not be greater than the maximum PipeSize");
 							return false;
 						}
-						else if(minimum == maximum) {
-							bootbox.alert("Minimum PipeSize should not be same as maximum PipeSize");
-							return false;
-					    }
-						else{
-								  if($('#effectiveDate').val() !=undefined)
+						else if($('#effectiveDate').val() !=undefined)
 							     donationheadercombination();
 						}
 					}
-			  }
+			  
 		  		});
 	  
 	  $("#resetid").click(function(){
