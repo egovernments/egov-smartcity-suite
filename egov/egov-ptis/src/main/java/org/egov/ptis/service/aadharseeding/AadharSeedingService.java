@@ -164,7 +164,7 @@ public class AadharSeedingService extends GenericWorkFlowController {
         if (isNotBlank(aadharSeedingRequest.getAssessmentNo()))
             wherClause = " and mv.propertyId= '" + aadharSeedingRequest.getAssessmentNo() + "'";
         if (isNotBlank(aadharSeedingRequest.getDoorNo()))
-            wherClause = " and mv.houseNo= '" + aadharSeedingRequest.getDoorNo() + "'";
+            wherClause = " and mv.houseNo like '" + aadharSeedingRequest.getDoorNo() + ""+ "%'";
         if (aadharSeedingRequest.getElectionWardId() != null)
             wherClause = " and mv.electionWard.id=" + aadharSeedingRequest.getElectionWardId();
         if (aadharSeedingRequest.getWardId() != null)

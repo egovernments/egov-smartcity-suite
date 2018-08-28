@@ -63,51 +63,44 @@
 						<spring:message code="lbl.aadhar.search" />
 					</div>
 				</div>
-				<br>
-				<div class="form-group text-left">
+				<div class="form-group">
 					<label class="col-sm-3 control-label"> <spring:message
 							code="lbl.ward" /> :
 					</label>
-					<div class="col-sm-3 add-margin">
+					<div class="col-sm-2">
 						<form:select path="wardId" id="wardId" class="form-control">
 						    <form:option value="">Select</form:option>
 							<form:options items="${wardId}" />
 						</form:select>
 					</div>
-					<br>
 					
 					<label class="col-sm-3 control-label"> <spring:message
 							code="lbl.elec.wardno" /> :
 					</label>
-					<div class="col-sm-3 add-margin">
+					<div class="col-sm-2">
 						<form:select path="electionWardId" id="electionWardId" class="form-control">
 						    <form:option value="">Select</form:option>
 							<form:options items="${electionWardId}" />
 						</form:select>
 					</div>
-					<br>
 				</div>
-				<div class="form-group text-left">
+				<div class="form-group">
 					<label class="col-sm-3 control-label"> <spring:message
 							code="lbl.assmtno" /> :
 					</label>
-					<div class="col-sm-3 add-margin">
+					<div class="col-sm-2">
 						<form:input path="" id="assessmentNo" type="text"
 									class="form-control" />
 					</div>
-					<br>
 					
 					<label class="col-sm-3 control-label"> <spring:message
 							code="lbl.doorNumber" /> :
 					</label>
-					<div class="col-sm-3 add-margin">
+					<div class="col-sm-2">
 						<form:input path="" id="doorNo" type="text"
 									class="form-control" />
 					</div>
-					<br>
 				</div>
-				<br>
-
 			</div>
 
 		</div>
@@ -119,9 +112,8 @@
 					<button type="button" id="btnClose" class="btn btn-default" onClick=window.close()>Close</button>
 				</div>
 			</div>
-</form:form><br>
+</form:form>
 <spring:message code="reports.note.text" />
-		<br />
 		<div id="searchAssessmentResult-header" class="col-md-12 table-header text-left">
 		
 			</div>
