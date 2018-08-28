@@ -60,17 +60,17 @@ public class Name {
 
     @NotNull
     @SafeHtml
-    @Length(max = 30)
+    @Length(max = 30,message="Husband/wife firstName should be less than 30 character")
     private String firstName;
 
     @NotNull
     @SafeHtml
-    @Length(max = 20)
+    @Length(max = 20,message="Husband/wife middleName should be less than 20 character")
     private String middleName;
 
     @NotNull
     @SafeHtml
-    @Length(max = 20)
+    @Length(max = 20,message="Husband/wife lastName  should be less than 20 character")
     private String lastName;
 
     @Formula("concat(firstName,' ',middleName,' ',lastName)")
