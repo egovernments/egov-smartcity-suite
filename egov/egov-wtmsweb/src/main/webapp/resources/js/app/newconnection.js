@@ -126,8 +126,14 @@ $(document).ready(function(){
 	}
 	
 	
-	if($('#noJAORSAMessage') && $('#noJAORSAMessage').val())
+	if($('#noJAORSAMessage') && $('#noJAORSAMessage').val()) {
 		bootbox.alert($('#noJAORSAMessage').val());
+		$(".show-row").hide();
+		$('#approverDetailHeading').hide();
+		$('#approvalDepartment').removeAttr('required');
+		$('#approvalDesignation').removeAttr('required');
+		$('#approvalPosition').removeAttr('required');
+	}
 
 	var mode =$('#mode').val();
 	var validateIfPTDueExists=$('#validateIfPTDueExists').val();

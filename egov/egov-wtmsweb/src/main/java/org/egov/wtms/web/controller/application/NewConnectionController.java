@@ -315,6 +315,7 @@ public class NewConnectionController extends GenericConnectionController {
                 model.addAttribute(ADDITIONALRULE, waterConnectionDetails.getApplicationType().getCode());
                 model.addAttribute("approvalPosOnValidate", request.getParameter(APPROVALPOSITION));
                 model.addAttribute(CURRENTUSER, waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
+                model.addAttribute(TYPE_OF_CONNECTION, NEWCONNECTION);
                 model.addAttribute(STATETYPE, waterConnectionDetails.getClass().getSimpleName());
                 resultBinder.rejectValue(CONNECTION_PROPERTYID, "err.validate.connection.user.mapping",
                         "err.validate.connection.user.mapping");

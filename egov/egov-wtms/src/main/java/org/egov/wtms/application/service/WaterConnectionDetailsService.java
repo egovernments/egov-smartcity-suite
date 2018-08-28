@@ -84,6 +84,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.APPROVEWORKFLOWACT
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ASSISTANT_ENGINEER_DESIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CATEGORY_BPL;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CHANGEOFUSE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSECONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSINGCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CONNECTIONTYPE_METERED;
@@ -93,6 +94,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.EGMODULES_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.EXECUTIVE_ENGINEER_DESIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.FILESTORE_MODULECODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.FORWARDWORKFLOWACTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.JUNIOR_ASSISTANT_DESIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.JUNIOR_OR_SENIOR_ASSISTANT_DESIGN_REVENUE_CLERK;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.METERED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.METERED_CHARGES_REASON_CODE;
@@ -102,9 +104,11 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.MUNICIPAL_ENGINEER
 import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.NON_METERED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.NON_METERED_CODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PROPERTY_MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PTIS_DETAILS_URL;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.SENIOR_ASSISTANT_DESIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SIGNED_DOCUMENT_PREFIX;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SIGNWORKFLOWACTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.STATUS;
@@ -116,7 +120,6 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.TEMPERARYCLOSECODE
 import static org.egov.wtms.utils.constants.WaterTaxConstants.USERNAME_MEESEVA;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAXREASONCODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAX_CONNECTION_CHARGE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.PROPERTY_MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_CANCEL;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_PREVIEW_BUTTON;
@@ -133,10 +136,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_REJECTED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_SE_APPROVE_PENDING;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_SE_FORWARD_PENDING;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_TAP_EXECUTION_DATE_BUTTON;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSECONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WORKFLOW_RECONNCTIONINITIATED;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.JUNIOR_ASSISTANT_DESIGN;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.SENIOR_ASSISTANT_DESIGN;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -1208,10 +1208,10 @@ public class WaterConnectionDetailsService {
     public void validateWaterRateAndDonationHeader(WaterConnectionDetails waterConnectionDetails) {
         DonationDetails donationDetails = connectionDemandService.getDonationDetails(waterConnectionDetails);
         if (donationDetails == null)
-            throw new ValidationException("donation.combination.required");
+            throw new ApplicationRuntimeException("donation.combination.required");
         WaterRatesDetails waterRatesDetails = connectionDemandService.getWaterRatesDetailsForDemandUpdate(waterConnectionDetails);
         if (waterRatesDetails == null)
-            throw new ValidationException("err.water.rate.not.found");
+            throw new ApplicationRuntimeException("err.water.rate.not.found");
     }
 
     public String getApprovalPositionOnValidate(Long approvalPositionId) {
