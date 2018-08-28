@@ -49,6 +49,7 @@ package org.egov.restapi.web.controller.marriage;
 
 import static org.egov.mrs.application.MarriageConstants.APPROVED;
 import static org.egov.mrs.application.MarriageConstants.REGISTERED;
+import static org.egov.mrs.application.MarriageConstants.REJECTED;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -136,6 +137,7 @@ public class MarriageRegistrationAPIController {
                     "Application Number Does not exist");
         if (marriageRegistration.getStatus().getCode().equals(REGISTERED)
                 && marriageRegistration.getSource().equals(Source.CHPK.toString())) {
+
             MarriageCertificate marriageCertificate = marriageCertificateService.getGeneratedCertificate(marriageRegistration);
             Assignment assignment = assignmentService
                     .getPrimaryAssignmentForUser(
@@ -146,6 +148,12 @@ public class MarriageRegistrationAPIController {
                     DateUtils.getFormattedDate(marriageCertificate.getCertificateDate(), DATE_FORMAT),
                     marriageRegistration.getRegistrarName(), assignment.getDesignation().getName(),
                     "Marriage Certificate sent Successfully");
+        } else if (marriageRegistration.getStatus().getCode().equals(REJECTED)
+                && marriageRegistration.getSource().equals(Source.CHPK.toString())) {
+            return new MarriageCertificateResponse(marriageRegistration.getStatus().getDescription(),
+                    "Marriage Registration  for Application Number :" + marriageRegistration.getApplicationNo()
+                            + " is Rejected",
+                    StringUtils.emptyIfNull(marriageRegistration.getRejectionReason()));
         } else
             return new MarriageCertificateResponse(marriageRegistration.getStatus().getDescription(),
                     "Marriage Certificate Not Generated this application");

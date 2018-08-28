@@ -63,6 +63,8 @@ public class MarriageCertificateResponse {
 
     private String designation;
 
+    private String reasonForRejection;
+
     public MarriageCertificateResponse(final String status, final String message) {
         this.status = status;
         this.message = message;
@@ -78,6 +80,14 @@ public class MarriageCertificateResponse {
         this.certificateDate = certificateDate;
         this.certificateIssuedAuthority = certificateIssuedAuthority;
         this.designation = designation;
+        
+    }
+    
+    public MarriageCertificateResponse(final String status,
+            final String message,final String reasonForRejection) {
+        this.status = status;
+        this.message = message;
+        this.reasonForRejection = reasonForRejection;
 
     }
 
@@ -135,6 +145,14 @@ public class MarriageCertificateResponse {
 
     public void setStatus(final String status) {
         this.status = status;
+    }
+
+    public String getReasonForRejection() {
+        return reasonForRejection;
+    }
+
+    public void setReasonForRejection(String reasonForRejection) {
+        this.reasonForRejection = reasonForRejection;
     }
 
 }
