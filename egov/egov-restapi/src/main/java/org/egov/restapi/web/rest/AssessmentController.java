@@ -121,6 +121,33 @@ public class AssessmentController {
     private PropertyTaxReportService propertyTaxReportService;
 
     /**
+     * This method is used get the property tax details.
+     * 
+     * @param assessmentRequest
+     * @return
+     * @throws IOException
+     */
+    @RequestMapping(value = "/v1/property/propertytaxdetails", method = RequestMethod.GET, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public String getSecuredPropertyTaxDetails(AssessmentRequest assessmentRequest)
+            throws IOException {
+        return getPropertyTaxDetails(assessmentRequest);
+    }
+    
+    /**
+     * This method is used to pay the property tax.
+     * 
+     * @param payPropertyTaxDetails
+     * @param request
+     * @return responseJson - server response in JSON format
+     * @throws IOException
+     */
+    @RequestMapping(value = "/v1/property/paypropertytax", method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public String paySecuredPropertyTax(@RequestBody String payPropertyTaxDetails, final HttpServletRequest request)
+            throws IOException {
+        return payPropertyTax(payPropertyTaxDetails, request);
+    }
+    
+    /**
      * This method is used for handling user request for assessment details.
      * 
      * @param assessmentRequest
@@ -148,9 +175,13 @@ public class AssessmentController {
     @RequestMapping(value = "/property/propertytaxdetails", method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public String getPropertyTaxDetails(@RequestBody String assessmentRequest)
             throws IOException {
-        PropertyTaxDetails propertyTaxDetails = new PropertyTaxDetails();
         AssessmentRequest assessmentReq = (AssessmentRequest) getObjectFromJSONRequest(assessmentRequest,
                 AssessmentRequest.class);
+        return getPropertyTaxDetails(assessmentReq);
+    }
+
+    private String getPropertyTaxDetails(AssessmentRequest assessmentReq) {
+        PropertyTaxDetails propertyTaxDetails = new PropertyTaxDetails();
         try {
             String assessmentNo = assessmentReq.getAssessmentNo();
             String oldAssessmentNo = assessmentReq.getOldAssessmentNo();
