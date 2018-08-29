@@ -59,7 +59,7 @@
             <th><s:text name="lbl.wf.updatedby"/></th>
             <th><s:text name="lbl.wf.currentowner"/></th>
             <th><s:text name="lbl.wf.status"/></th>
-            <th><s:text name="lbl.wf.comments"/></th>
+            <th><s:text name="wf.approver.remarks"/></th>
         </tr>
         </thead>
         <tbody>

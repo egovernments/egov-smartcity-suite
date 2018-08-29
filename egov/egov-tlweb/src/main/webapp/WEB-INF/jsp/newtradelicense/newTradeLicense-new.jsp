@@ -129,13 +129,8 @@
 
                 }
 
-                var adhaar = document.getElementById('adhaarId').value;
+
                 var mobileno = document.getElementById('mobilePhoneNumber').value;
-                if (adhaar.length > 0 && adhaar.length < 12) {
-                    $('#adhaarError').removeClass("hide");
-                    $("#adhaarId").focus();
-                    return false;
-                }
                 if (mobileno.length > 0 && mobileno.length < 10) {
                     $('#mobileError').removeClass("hide");
                     $("#mobilePhoneNumber").focus();
@@ -414,7 +409,7 @@
                             </s:if>
                             <s:else>
                                 <div class="panel-title" style="text-align:center">
-                                    <s:if test="%{licenseAppType.name=='Renew'}">
+                                    <s:if test="%{licenseAppType.code=='RENEW'}">
                                         <s:text name='renewtradeLicense.heading'/>
                                     </s:if>
                                     <s:else>
@@ -498,7 +493,7 @@
                             </s:if>
                             <s:else>
                                 <div class="panel-title" style="text-align:center">
-                                    <s:if test="%{licenseAppType.name=='Renew'}">
+                                    <s:if test="%{licenseAppType.code=='RENEW'}">
                                         <s:text name='renewtradeLicense.heading'/>
                                     </s:if>
                                     <s:else>

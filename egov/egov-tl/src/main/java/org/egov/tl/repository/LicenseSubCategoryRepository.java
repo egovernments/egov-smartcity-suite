@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -62,8 +62,6 @@ public interface LicenseSubCategoryRepository extends JpaRepository<LicenseSubCa
     LicenseSubCategory findByCode(String code);
 
     List<LicenseSubCategory> findByCategoryIdOrderByNameAsc(Long id);
-
-    List<LicenseSubCategory> findByLicenseTypeName(String licenseTypeName);
 
     LicenseSubCategory findTopByOrderByIdDesc();
 }

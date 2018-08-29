@@ -84,7 +84,7 @@ public class CreateLicenseClosureValidator extends LicenseClosureValidator {
 
         if (!securityUtils.currentUserIsEmployee()) {
             WorkFlowMatrix workflowMatrix = licenseClosureProcessflowService.getWorkFlowMatrix(license);
-            List<Assignment> assignmentList = licenseProcessWorkflowService.getAssignments(workflowMatrix);
+            List<Assignment> assignmentList = licenseProcessWorkflowService.getAssignments(workflowMatrix, license.getAdminWard());
             if (assignmentList.isEmpty())
                 errors.reject("validate.initiator.not.defined");
         } else {

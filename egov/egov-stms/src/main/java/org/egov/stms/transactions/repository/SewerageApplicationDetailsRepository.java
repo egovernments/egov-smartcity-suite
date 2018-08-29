@@ -87,7 +87,7 @@ public interface SewerageApplicationDetailsRepository extends JpaRepository<Sewe
     SewerageApplicationDetails findByConnectionAndConnection_Status(SewerageConnection sewerageConnection,
             SewerageConnectionStatus connectionStatus);
 
-    @Query("select scd from SewerageApplicationDetails scd where scd.connection.status not in ('INACTIVE') and scd.connectionDetail.propertyIdentifier =:propertyIdentifier order by scd.id desc")
+    @Query("select scd from SewerageApplicationDetails scd where scd.isActive = true and scd.connectionDetail.propertyIdentifier =:propertyIdentifier order by scd.id desc")
     List<SewerageApplicationDetails> getSewerageConnectionDetailsByPropertyID(
             @Param("propertyIdentifier") String propertyIdentifier); 
     

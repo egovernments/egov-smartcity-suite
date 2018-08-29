@@ -80,7 +80,7 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
         ptisScheduler.setAutoStartup(true);
         ptisScheduler.setOverwriteExistingJobs(true);
         ptisScheduler.setTriggers(
-                ptisBulkBillGenerationCronTrigger0().getObject(),
+                /*ptisBulkBillGenerationCronTrigger0().getObject(),
                 ptisBulkBillGenerationCronTrigger1().getObject(),
                 ptisBulkBillGenerationCronTrigger2().getObject(),
                 ptisBulkBillGenerationCronTrigger3().getObject(),
@@ -89,7 +89,7 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
                 ptisBulkBillGenerationCronTrigger6().getObject(),
                 ptisBulkBillGenerationCronTrigger7().getObject(),
                 ptisBulkBillGenerationCronTrigger8().getObject(),
-                ptisBulkBillGenerationCronTrigger9().getObject(),
+                ptisBulkBillGenerationCronTrigger9().getObject(),*/
                 demandActivationCronTrigger().getObject(),
                 collectionAchievementsCronTrigger().getObject()
         );

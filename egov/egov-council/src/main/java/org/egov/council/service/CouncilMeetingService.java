@@ -49,11 +49,16 @@
 package org.egov.council.service;
 
 import static org.egov.council.utils.constants.CouncilConstants.ADJOURNED;
+import static org.egov.council.utils.constants.CouncilConstants.AGENDAUSEDINMEETING;
+import static org.egov.council.utils.constants.CouncilConstants.AGENDA_MODULENAME;
 import static org.egov.council.utils.constants.CouncilConstants.ATTENDANCEFINALIZED;
 import static org.egov.council.utils.constants.CouncilConstants.MEETINGCANCELLED;
 import static org.egov.council.utils.constants.CouncilConstants.MEETINGSTATUSAPPROVED;
 import static org.egov.council.utils.constants.CouncilConstants.MEETINGUSEDINRMOM;
+import static org.egov.council.utils.constants.CouncilConstants.MEETING_MODULENAME;
+import static org.egov.council.utils.constants.CouncilConstants.MOM_FINALISED;
 import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_MODULENAME;
+import static org.egov.council.utils.constants.CouncilConstants.RESOLUTION_APPROVED_PREAMBLE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -69,10 +74,12 @@ import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.council.autonumber.PreambleNumberGenerator;
 import org.egov.council.entity.CouncilAgendaDetails;
 import org.egov.council.entity.CouncilMeeting;
 import org.egov.council.entity.MeetingAttendence;
 import org.egov.council.entity.MeetingMOM;
+import org.egov.council.entity.enums.PreambleType;
 import org.egov.council.repository.CouncilMeetingRepository;
 import org.egov.council.repository.CouncilMoMRepository;
 import org.egov.council.repository.MeetingAttendanceRepository;
@@ -84,6 +91,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.utils.DateUtils;
+import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -100,6 +108,7 @@ public class CouncilMeetingService {
     private static final String STATUS_DOT_CODE = "status.code";
     private final CouncilMeetingRepository councilMeetingRepository;
     private final MeetingAttendanceRepository meetingAttendanceRepository;
+    
     @PersistenceContext
     private EntityManager entityManager;
     @Autowired
@@ -112,6 +121,8 @@ public class CouncilMeetingService {
     private UserService userService;
     @Autowired
     private FileStoreService fileStoreService;
+    @Autowired
+    private AutonumberServiceBeanResolver autonumberServiceBeanResolver;
 
     @Autowired
     public CouncilMeetingService(CouncilMeetingRepository councilMeetingRepository,
@@ -264,5 +275,31 @@ public class CouncilMeetingService {
         else
             return Collections.emptySet();
 }
-    
+    public void prepareMeetingMomData(final MeetingMOM meetingMOM, List<MeetingMOM> meetingMOMList,
+            List<CouncilAgendaDetails> preambleList,boolean autoPreambleNoGenEnabled) {
+        for (MeetingMOM meetingMoMs : meetingMOM.getMeeting().getMeetingMOMs()) {
+            meetingMoMs.getPreamble().setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(
+                    PREAMBLE_MODULENAME, RESOLUTION_APPROVED_PREAMBLE));
+            meetingMoMs.getPreamble().setType(PreambleType.GENERAL);
+            meetingMoMs.setMeeting(meetingMOM.getMeeting());
+            if (autoPreambleNoGenEnabled){
+                PreambleNumberGenerator preamblenumbergenerator = autonumberServiceBeanResolver
+                        .getAutoNumberServiceFor(PreambleNumberGenerator.class);
+                meetingMoMs.getPreamble().setPreambleNumber(preamblenumbergenerator
+                        .getNextNumber(meetingMoMs.getPreamble()));
+                }
+            meetingMoMs.getMeeting().setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(MEETING_MODULENAME, MOM_FINALISED));
+            meetingMoMs.getMeeting().setCommitteeType(meetingMOM.getAgenda().getCommitteeType());
+            meetingMoMs.setAgenda(meetingMOM.getAgenda());
+            meetingMoMs.getAgenda()
+                    .setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(AGENDA_MODULENAME, AGENDAUSEDINMEETING));
+            meetingMoMs.setLegacy(true);
+            CouncilAgendaDetails councilAgendaDetails = new CouncilAgendaDetails();
+            councilAgendaDetails.setAgenda(meetingMOM.getAgenda());
+            councilAgendaDetails.setPreamble(meetingMoMs.getPreamble());
+            councilAgendaDetails.setItemNumber(meetingMoMs.getItemNumber());
+            preambleList.add(councilAgendaDetails);
+            meetingMOMList.add(meetingMoMs);
+        }
+    }
 }

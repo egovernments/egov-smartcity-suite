@@ -203,7 +203,6 @@ public class RemittanceServiceImpl extends RemittanceService {
                     LOGGER.error("Error Parsing Date", e);
                 }
             if (serviceName != null && serviceName.length() > 0) {
-                persistenceService.findByNamedQuery(CollectionConstants.QUERY_SERVICE_BY_NAME, serviceName);
                 final ServiceDetails serviceDetails = (ServiceDetails) persistenceService
                         .findByNamedQuery(CollectionConstants.QUERY_SERVICE_BY_NAME, serviceName);
 
@@ -264,7 +263,7 @@ public class RemittanceServiceImpl extends RemittanceService {
             receiptHeader.setStatus(receiptStatusRemitted);
             receiptHeader.setRemittanceReferenceNumber(remittance.getReferenceNumber());
             receiptHeaderService.update(receiptHeader);
-            receiptHeaderService.updateCollectionIndexAndPushMail(receiptHeader);
+            //receiptHeaderService.updateCollectionIndexAndPushMail(receiptHeader);
         }
         return bankRemitList;
     }

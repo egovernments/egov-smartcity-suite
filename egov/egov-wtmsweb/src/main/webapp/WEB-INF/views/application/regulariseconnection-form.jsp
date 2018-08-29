@@ -57,7 +57,7 @@
 	<div class="col-md-12"> 
 		<div class="text-right error-msg" style="font-size:14px;"><spring:message code="lbl.application.date"/> : <fmt:formatDate pattern="dd/MM/yyyy" value="${waterConnectionDetails.applicationDate}" /></div>
 		<form:form role="form" action="" method="post"
-			modelAttribute="waterConnectionDetails" id="regulariseWaterConnectionForm"
+			modelAttribute="waterConnectionDetails" id="waterConnectionForm"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 			<form:hidden path="applicationType" id="applicationType" value="${waterConnectionDetails.applicationType.id}"/>

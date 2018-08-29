@@ -110,11 +110,11 @@ public class InterimOrderService {
         final CriteriaQuery<InterimOrder> createQuery = cb.createQuery(InterimOrder.class);
         final Root<InterimOrder> interimorder = createQuery.from(InterimOrder.class);
         createQuery.select(interimorder);
-        final Metamodel m = entityManager.getMetamodel();
-        final javax.persistence.metamodel.EntityType<InterimOrder> InterimOrder = m.entity(InterimOrder.class);
+        final Metamodel model = entityManager.getMetamodel();
+        final javax.persistence.metamodel.EntityType<InterimOrder> interimOrders = model.entity(InterimOrder.class);
 
         final List<InterimOrder> resultList;
-        final List<Predicate> predicates = new ArrayList<Predicate>();
+        final List<Predicate> predicates = new ArrayList<>();
         if (interimOrder.getInterimOrderType() == null && interimOrder.getCode() == null
                 && interimOrder.getActive() == null)
             resultList = findAll();
@@ -124,24 +124,24 @@ public class InterimOrderService {
                 predicates.add(cb.isNotNull(interimorder.get("interimOrderType")));
                 predicates.add(cb.like(
                         cb.lower(interimorder
-                                .get(InterimOrder.getDeclaredSingularAttribute("interimOrderType", String.class))),
+                                .get(interimOrders.getDeclaredSingularAttribute("interimOrderType", String.class))),
                         interimOrderType));
             }
             if (interimOrder.getCode() != null) {
                 final String code = "%" + interimOrder.getCode().toLowerCase() + "%";
                 predicates.add(cb.isNotNull(interimorder.get("code")));
                 predicates.add(cb.like(
-                        cb.lower(interimorder.get(InterimOrder.getDeclaredSingularAttribute("code", String.class))),
+                        cb.lower(interimorder.get(interimOrders.getDeclaredSingularAttribute("code", String.class))),
                         code));
             }
             if (interimOrder.getActive() != null)
                 if (interimOrder.getActive())
                     predicates.add(cb.equal(
-                            interimorder.get(InterimOrder.getDeclaredSingularAttribute("active", Boolean.class)),
+                            interimorder.get(interimOrders.getDeclaredSingularAttribute("active", Boolean.class)),
                             true));
                 else
                     predicates.add(cb.equal(
-                            interimorder.get(InterimOrder.getDeclaredSingularAttribute("active", Boolean.class)),
+                            interimorder.get(interimOrders.getDeclaredSingularAttribute("active", Boolean.class)),
                             false));
 
             createQuery.where(predicates.toArray(new Predicate[] {}));

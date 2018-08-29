@@ -48,7 +48,6 @@
 
 package org.egov.restapi.web.controller.pgr.integration.ivrs;
 
-import com.beust.jcommander.ParameterException;
 import org.egov.pgr.integration.ivrs.entity.contract.IVRSFeedbackUpdateRequest;
 import org.egov.pgr.integration.ivrs.entity.contract.IVRSFeedbackUpdateResponse;
 import org.egov.pgr.integration.ivrs.service.IVRSFeedbackService;
@@ -59,6 +58,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -101,8 +101,8 @@ public class IVRSFeedbackUpdateAPIController {
         }
     }
 
-    @ExceptionHandler(ParameterException.class)
-    public ResponseEntity<Object> paramterErrors(ParameterException exception) {
+    @ExceptionHandler(ServletRequestBindingException.class)
+    public ResponseEntity<Object> parameterErrors(ServletRequestBindingException exception) {
         LOG.error("Error occurred while updating feedback", exception);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new IVRSFeedbackUpdateResponse(false, HttpStatus.BAD_REQUEST.toString(), exception.getMessage()));

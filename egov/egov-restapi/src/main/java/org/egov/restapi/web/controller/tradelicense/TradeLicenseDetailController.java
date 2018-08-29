@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -53,6 +53,7 @@ import org.egov.restapi.web.contracts.tradelicense.TradeLicenseDetailRequest;
 import org.egov.restapi.web.contracts.tradelicense.TradeLicenseDetailResponse;
 import org.egov.tl.service.TradeLicenseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -68,6 +69,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class TradeLicenseDetailController {
 
     @Autowired
+    @Qualifier("tradeLicenseService")
     private TradeLicenseService tradeLicenseService;
 
     @GetMapping(value = "/details", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)

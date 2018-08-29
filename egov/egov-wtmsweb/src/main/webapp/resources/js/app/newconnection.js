@@ -126,15 +126,21 @@ $(document).ready(function(){
 	}
 	
 	
-	if($('#noJAORSAMessage') && $('#noJAORSAMessage').val())
+	if($('#noJAORSAMessage') && $('#noJAORSAMessage').val()) {
 		bootbox.alert($('#noJAORSAMessage').val());
+		$(".show-row").hide();
+		$('#approverDetailHeading').hide();
+		$('#approvalDepartment').removeAttr('required');
+		$('#approvalDesignation').removeAttr('required');
+		$('#approvalPosition').removeAttr('required');
+	}
 
 	var mode =$('#mode').val();
 	var validateIfPTDueExists=$('#validateIfPTDueExists').val();
 	var currentloggedInUser=$('#currentUser').val();
 	var citizenPortal=$('#citizenPortalUser').val();
 	var isAnonymousUser = $('#isAnonymousUser').val();
-	if((currentloggedInUser=='true' && mode=='' && validateIfPTDueExists=='') ||(currentloggedInUser=='true' && validateIfPTDueExists=='false')
+	if($('#isCSCOperator').val()=='true' || (currentloggedInUser=='true' && mode=='' && validateIfPTDueExists=='') ||(currentloggedInUser=='true' && validateIfPTDueExists=='false')
 	|| (citizenPortal=='true' && mode=='' && validateIfPTDueExists=='') ||(citizenPortal=='true' && validateIfPTDueExists=='false')
 	|| (isAnonymousUser=='true' && mode=='' && validateIfPTDueExists=='') ||(isAnonymousUser=='true' && validateIfPTDueExists=='false'))
         	{

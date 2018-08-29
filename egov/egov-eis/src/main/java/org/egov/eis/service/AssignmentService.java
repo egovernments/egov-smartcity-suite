@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -251,6 +251,13 @@ public class AssignmentService {
         return assignments;
     }
 
+    public List<Assignment> getAssignmentsByDepartmentAndDesignationsAndBoundary(final Long deptId, final List<Long> desigIds,
+                                                                                 final Long boundaryId) {
+        Set<Long> boundaries = new HashSet<>();
+        boundaries.add(boundaryId);
+        return assignmentRepository.findByDepartmentAndDesignationsAndBoundaries(deptId, desigIds, boundaries);
+    }
+
     private Set<Long> getBoundaries(final Long boundaryId) {
         final Set<Long> bndIds = new HashSet<>();
         final List<Boundary> boundaries = boundaryService.findActiveChildrenWithParent(boundaryId);
@@ -351,8 +358,7 @@ public class AssignmentService {
         if (employeePositionSearch.getIsPrimary() != null)
             queryString.append(" AND assignment.primary =:primary ");
         Query queryResult = entityManager.unwrap(Session.class).createQuery(queryString.toString());
-        queryResult = setParametersToQuery(employeePositionSearch, queryResult);
-
+        setParametersToQuery(employeePositionSearch, queryResult);
         return queryResult.list();
     }
 
@@ -393,8 +399,8 @@ public class AssignmentService {
         return assignmentRepository.findByPositionAndEmployee(posId, userId, currDate);
     }
 
-    public List<Assignment> findByDepartmentCodeAndDesignationCode(String departmentCode, List<String> desigCode) {
-        return assignmentRepository.findByDepartmentCodeAndDesignationCode(departmentCode, desigCode, new Date());
+    public List<Assignment> findByDepartmentCodeAndDesignationCode(String departmentCode, List<String> desigCodes) {
+        return assignmentRepository.findAllByDepartmentCodeAndDesignationCodeInAndFromDateLessThanEqualAndToDateGreaterThanEqual(departmentCode, desigCodes, new Date(), new Date());
     }
 
     public List<Designation> getDesignationsByActiveAssignmentAndDesignationNames(List<String> designationNames) {

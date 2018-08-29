@@ -47,7 +47,8 @@
  */
 package org.egov.wtms.application.service;
 
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WORKFLOW_CLOSUREADDITIONALRULE;
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSECONNECTION;
 
 import java.math.BigDecimal;
 
@@ -144,16 +145,16 @@ public class CloserConnectionService {
     @Transactional
     public WaterConnectionDetails updatecloserConnection(final WaterConnectionDetails waterConnectionDetails,
             final Long approvalPosition, final String approvalComent,
-            final String workFlowAction, final String sourceChannel) {
+            final String workFlowAction) {
 
-        waterConnectionDetailsService.applicationStatusChange(waterConnectionDetails, workFlowAction, "");
+        waterConnectionDetailsService.applicationStatusChange(waterConnectionDetails, workFlowAction, EMPTY);
         final WaterConnectionDetails savedwaterConnectionDetails = waterConnectionDetailsRepository
                 .saveAndFlush(waterConnectionDetails);
 
         final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = waterConnectionDetailsService
                 .getInitialisedWorkFlowBean();
         applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(savedwaterConnectionDetails,
-                approvalPosition, approvalComent, WORKFLOW_CLOSUREADDITIONALRULE, workFlowAction);
+                approvalPosition, approvalComent, CLOSECONNECTION, workFlowAction);
 
         if (waterConnectionDetails.getSource() != null
                 && Source.CITIZENPORTAL.toString().equalsIgnoreCase(waterConnectionDetails.getSource().toString())
@@ -161,7 +162,7 @@ public class CloserConnectionService {
             waterConnectionDetailsService.updatePortalMessage(waterConnectionDetails);
         else if (waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser()))
             waterConnectionDetailsService.pushPortalMessage(savedwaterConnectionDetails);
-        waterConnectionDetailsService.updateIndexes(savedwaterConnectionDetails, sourceChannel);
+        waterConnectionDetailsService.updateIndexes(savedwaterConnectionDetails);
         return savedwaterConnectionDetails;
     }
 }

@@ -51,7 +51,8 @@ import org.egov.commons.Installment;
 import org.egov.commons.service.CFinancialYearService;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.notification.service.NotificationService;
-import org.egov.tl.entity.License;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.tl.entity.TradeLicense;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -66,7 +67,6 @@ import static org.egov.infra.config.core.ApplicationThreadLocals.getCityName;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getDomainURL;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getMunicipalityName;
 import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
-import static org.egov.infra.utils.DateUtils.today;
 import static org.egov.tl.utils.Constants.APPLICATION_STATUS_FIRSTCOLLECTIONDONE_CODE;
 import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
 import static org.egov.tl.utils.Constants.BUTTONFORWARD;
@@ -111,7 +111,7 @@ public class TradeLicenseSmsAndEmailService {
         notificationService.sendEmail(email, emailSubject, emailBody);
     }
 
-    public void sendSmsAndEmail(final License license, final String workFlowAction) {
+    public void sendSmsAndEmail(final TradeLicense license, final String workFlowAction) {
         String smsMsg = null;
         String emailBody = "";
         String emailSubject = "";
@@ -122,20 +122,20 @@ public class TradeLicenseSmsAndEmailService {
         if (license.getState().getHistory().isEmpty() && license.isAcknowledged()) {
 
             smsMsg = licenseMessageSource.getMessage(
-                    String.format(MSG_LICENSE_CREATE_SMS, license.getLicenseAppType().getName().toLowerCase()),
+                    String.format(MSG_LICENSE_CREATE_SMS, license.getLicenseAppType().getCode().toLowerCase()),
                     new String[]{license.getLicensee().getApplicantName(),
                             license.getApplicationNumber(),
                             getMunicipalityName()},
                     locale);
             emailBody = licenseMessageSource.getMessage(
-                    String.format(MSG_LICENSE_CREATE_BODY, license.getLicenseAppType().getName().toLowerCase()),
+                    String.format(MSG_LICENSE_CREATE_BODY, license.getLicenseAppType().getCode().toLowerCase()),
                     new String[]{license.getLicensee().getApplicantName(),
                             license.getNameOfEstablishment(),
                             license.getApplicationNumber(),
                             getMunicipalityName()},
                     locale);
             emailSubject = licenseMessageSource.getMessage(String.format(MSG_LICENSE_CREATE_SUBJECT,
-                    license.getLicenseAppType().getName().toLowerCase()),
+                    license.getLicenseAppType().getCode().toLowerCase()),
                     new String[]{getMunicipalityName()}, locale);
 
         } else if (workFlowAction.equals(BUTTONAPPROVE) && STATUS_UNDERWORKFLOW.equalsIgnoreCase(license.getStatus().getStatusCode())) {
@@ -146,7 +146,7 @@ public class TradeLicenseSmsAndEmailService {
             if (digitalSignEnabled && demAmt.compareTo(ZERO) == 0) {
 
                 emailCode = String.format(MSG_LICENSE_DIGI_APPROVAL_BODY,
-                        license.getLicenseAppType().getName().toLowerCase());
+                        license.getLicenseAppType().getCode().toLowerCase());
                 emailBody = licenseMessageSource.getMessage(
                         emailCode,
                         new String[]{license.getLicensee().getApplicantName(),
@@ -166,7 +166,7 @@ public class TradeLicenseSmsAndEmailService {
                         locale);
             } else if (!digitalSignEnabled && demAmt.compareTo(ZERO) == 0) {
                 emailCode = String.format(MSG_LICENSE_APPROVAL_BODY,
-                        license.getLicenseAppType().getName().toLowerCase());
+                        license.getLicenseAppType().getCode().toLowerCase());
                 emailBody = licenseMessageSource.getMessage(
                         emailCode,
                         new String[]{license.getLicensee().getApplicantName(),
@@ -186,7 +186,7 @@ public class TradeLicenseSmsAndEmailService {
                         locale);
             } else if (demAmt.compareTo(ZERO) > 0 && digitalSignEnabled) {
                 emailCode = String.format(MSG_LICENSE_DIGI_APPROVALAMT_BODY,
-                        license.getLicenseAppType().getName().toLowerCase());
+                        license.getLicenseAppType().getCode().toLowerCase());
                 emailBody = licenseMessageSource.getMessage(
                         emailCode,
                         new String[]{license.getLicensee().getApplicantName(),
@@ -205,7 +205,7 @@ public class TradeLicenseSmsAndEmailService {
                         locale);
             } else if (demAmt.compareTo(ZERO) > 0 && !digitalSignEnabled) {
                 emailCode = String.format(MSG_LICENSE_APPROVALAMT_BODY,
-                        license.getLicenseAppType().getName().toLowerCase());
+                        license.getLicenseAppType().getCode().toLowerCase());
                 emailBody = licenseMessageSource.getMessage(
                         emailCode,
                         new String[]{license.getLicensee().getApplicantName(),
@@ -235,7 +235,7 @@ public class TradeLicenseSmsAndEmailService {
                             getMunicipalityName()},
                     locale);
             emailBody = licenseMessageSource.getMessage(
-                    String.format(MSG_LICENSE_CANCEL_BODY, license.getLicenseAppType().getName().toLowerCase()),
+                    String.format(MSG_LICENSE_CANCEL_BODY, license.getLicenseAppType().getCode().toLowerCase()),
                     new String[]{license.getLicensee().getApplicantName(),
                             license.getApplicationNumber(),
                             license.getNameOfEstablishment(),
@@ -248,14 +248,14 @@ public class TradeLicenseSmsAndEmailService {
         sendEmail(license.getLicensee().getEmailId(), emailBody, emailSubject);
     }
 
-    public void sendSMsAndEmailOnCollection(final License license, final BigDecimal demandAmount) {
+    public void sendSMsAndEmailOnCollection(final TradeLicense license, final BigDecimal demandAmount) {
         String smsMsg;
         String emailBody;
         String emailSubject;
         final Locale locale = Locale.getDefault();
         if ("First Level Fee Collected".equals(license.getState().getValue()) || (license.getEgwStatus() != null && APPLICATION_STATUS_FIRSTCOLLECTIONDONE_CODE.equals(license.getEgwStatus().getCode()))) {
             smsMsg = licenseMessageSource.getMessage(
-                    String.format(MSG_LICENSE_FIRSTLEVEL_SMS, license.getLicenseAppType().getName().toLowerCase()),
+                    String.format(MSG_LICENSE_FIRSTLEVEL_SMS, license.getLicenseAppType().getCode().toLowerCase()),
                     new String[]{license.getLicensee().getApplicantName(),
                             demandAmount.toString(),
                             license.getNameOfEstablishment(),
@@ -263,10 +263,10 @@ public class TradeLicenseSmsAndEmailService {
                             getMunicipalityName()},
                     locale);
             emailSubject = licenseMessageSource.getMessage(
-                    String.format(MSG_LICENSE_FIRSTLEVEL_SUBJECT, license.getLicenseAppType().getName().toLowerCase()),
+                    String.format(MSG_LICENSE_FIRSTLEVEL_SUBJECT, license.getLicenseAppType().getCode().toLowerCase()),
                     new String[]{license.getLicenseAppType().getName()}, locale);
             emailBody = licenseMessageSource.getMessage(
-                    String.format(MSG_LICENSE_FIRSTLEVEL_BODY, license.getLicenseAppType().getName().toLowerCase()),
+                    String.format(MSG_LICENSE_FIRSTLEVEL_BODY, license.getLicenseAppType().getCode().toLowerCase()),
                     new String[]{license.getLicensee().getApplicantName(),
                             demandAmount.toString(),
                             license.getNameOfEstablishment(),
@@ -275,7 +275,7 @@ public class TradeLicenseSmsAndEmailService {
                     locale);
         } else {
             smsMsg = licenseMessageSource.getMessage(
-                    String.format(MSG_LICENSE_SECONDLEVEL_SMS, license.getLicenseAppType().getName().toLowerCase()),
+                    String.format(MSG_LICENSE_SECONDLEVEL_SMS, license.getLicenseAppType().getCode().toLowerCase()),
                     new String[]{license.getLicensee().getApplicantName(),
                             demandAmount.toString(),
                             license.getNameOfEstablishment(),
@@ -285,7 +285,7 @@ public class TradeLicenseSmsAndEmailService {
             emailSubject = licenseMessageSource.getMessage("msg.newTradeLicensecollection.email.subject",
                     new String[]{license.getLicenseNumber()}, locale);
             emailBody = licenseMessageSource.getMessage(
-                    String.format(MSG_LICENSE_SECONDLEVEL_BODY, license.getLicenseAppType().getName().toLowerCase()),
+                    String.format(MSG_LICENSE_SECONDLEVEL_BODY, license.getLicenseAppType().getCode().toLowerCase()),
                     new String[]{license.getLicensee().getApplicantName(),
                             demandAmount.toString(),
                             license.getNameOfEstablishment(),
@@ -297,7 +297,7 @@ public class TradeLicenseSmsAndEmailService {
         sendEmail(license.getLicensee().getEmailId(), emailBody, emailSubject);
     }
 
-    public void sendLicenseClosureMessage(final License license, final String workflowAction) {
+    public void sendLicenseClosureMessage(final TradeLicense license, final String workflowAction) {
         String smsMsg = null;
         String emailBody = "";
         String emailSubject = "";
@@ -345,7 +345,7 @@ public class TradeLicenseSmsAndEmailService {
 
     }
 
-    public void sendSMsAndEmailOnDigitalSign(final License license) {
+    public void sendSMsAndEmailOnDigitalSign(final TradeLicense license) {
         final Locale locale = Locale.getDefault();
         String smsCode = "msg.digi.sign.no.collection";
         String smsMsg = licenseMessageSource.getMessage(
@@ -370,36 +370,39 @@ public class TradeLicenseSmsAndEmailService {
         sendEmail(license.getLicensee().getEmailId(), emailBody, emailSubject);
     }
 
-    public void sendNotificationOnDemandGeneration(License license, BigDecimal tradeAmt,
-                                                   Installment installment, Date penaltyDate) {
+    public void sendNotificationOnDemandGeneration(TradeLicense license, Installment installment,
+                                                   ReportOutput reportOutput, Date penaltyDate) {
 
         Locale locale = Locale.getDefault();
-        String emailSubject = licenseMessageSource.getMessage("msg.demand.generation.email.subject",
-                new String[]{getMunicipalityName()}, locale);
 
-        String messageBody = "";
-        String installmentYear = cFinancialYearService.getFinancialYearByDate(installment.getFromDate()).getFinYearRange();
-        if (penaltyDate.after(today())) {
-            messageBody = licenseMessageSource.getMessage("msg.demand.generation.penalty.email.body",
-                    new String[]{license.getLicensee().getApplicantName(),
-                            license.getNameOfEstablishment(),
-                            license.getLicenseNumber(),
-                            installmentYear,
-                            tradeAmt.toString(),
-                            getDefaultFormattedDate(penaltyDate),
-                            getMunicipalityName()},
-                    locale);
-        } else {
-            messageBody = licenseMessageSource.getMessage("msg.demand.generation.email.body",
-                    new String[]{license.getLicensee().getApplicantName(),
-                            license.getNameOfEstablishment(),
-                            license.getLicenseNumber(),
-                            installmentYear,
-                            tradeAmt.toString(),
-                            getMunicipalityName()},
-                    locale);
-        }
-        sendSMS(license.getLicensee().getMobilePhoneNumber(), messageBody);
-        sendEmail(license.getLicensee().getEmailId(), messageBody, emailSubject);
+        String smsBody = licenseMessageSource.getMessage("msg.demand.generation.sms.body",
+                new String[]{license.getLicensee().getApplicantName(),
+                        license.getNameOfEstablishment(),
+                        license.getLicenseNumber(),
+                        getDefaultFormattedDate(license.getDateOfExpiry()),
+                        getDefaultFormattedDate(penaltyDate),
+                        getDomainURL(),
+                        license.getId().toString(),
+                        getMunicipalityName()},
+                locale);
+
+        String emailSubject = licenseMessageSource.getMessage("msg.demand.generation.email.subject",
+                new String[]{cFinancialYearService.getFinancialYearByDate(installment.getFromDate()).getFinYearRange(),
+                        license.getLicenseNumber()},
+                locale);
+
+        String emailBody = licenseMessageSource.getMessage("msg.demand.generation.email.body",
+                new String[]{license.getLicensee().getApplicantName(),
+                        license.getNameOfEstablishment(),
+                        license.getLicenseNumber(),
+                        getDefaultFormattedDate(license.getDateOfExpiry()),
+                        getDefaultFormattedDate(penaltyDate),
+                        getDomainURL(),
+                        license.getId().toString(),
+                        getMunicipalityName()},
+                locale);
+        notificationService.sendSMS(license.getLicensee().getMobilePhoneNumber(), smsBody);
+        notificationService.sendEmailWithAttachment(license.getLicensee().getEmailId(), emailSubject, emailBody,
+                "application/pdf", "demand_notice", reportOutput.getReportOutputData());
     }
 }

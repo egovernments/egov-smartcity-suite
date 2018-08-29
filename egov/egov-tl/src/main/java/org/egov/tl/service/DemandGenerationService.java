@@ -54,11 +54,11 @@ import org.egov.commons.service.CFinancialYearService;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.EnvironmentSettings;
-import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.exception.ApplicationValidationException;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.tl.entity.DemandGenerationLog;
 import org.egov.tl.entity.DemandGenerationLogDetail;
-import org.egov.tl.entity.License;
+import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.contracts.DemandGenerationRequest;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -105,7 +105,10 @@ public class DemandGenerationService {
 
     @Autowired
     @Qualifier("tradeLicenseService")
-    private AbstractLicenseService licenseService;
+    private TradeLicenseService licenseService;
+
+    @Autowired
+    private LicenseRenewalNotificationService renewalNotificationService;
 
     private int batchSize;
 
@@ -128,10 +131,10 @@ public class DemandGenerationService {
         DemandGenerationLog previousDemandGenLog = demandGenerationLogService
                 .getPreviousInstallmentDemandGenerationLog(financialYear.getFinYearRange());
         if (previousDemandGenLog != null && previousDemandGenLog.getDemandGenerationStatus().equals(INCOMPLETE))
-            throw new ApplicationRuntimeException("TL-008");
+            throw new ApplicationValidationException("TL-008");
 
         if (!installmentYearValidForDemandGeneration(financialYear))
-            throw new ApplicationRuntimeException("TL-006");
+            throw new ApplicationValidationException("TL-006");
 
         return demandGenerationLogService.createDemandGenerationLog(financialYear.getFinYearRange());
 
@@ -154,13 +157,14 @@ public class DemandGenerationService {
             Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(module, financialYear.getStartingDate());
             int batchUpdateCount = 0;
             for (Long licenseId : demandGenerationRequest.getLicenseIds()) {
-                License license = licenseService.getLicenseById(licenseId);
+                TradeLicense license = licenseService.getLicenseById(licenseId);
                 DemandGenerationLogDetail demandGenerationLogDetail = demandGenerationLogService.
                         createOrGetDemandGenerationLogDetail(demandGenerationLog, license);
                 try {
                     if (!installment.equals(license.getCurrentDemand().getEgInstallmentMaster())) {
                         licenseService.raiseDemand(license, module, installment);
                         demandGenerationLogDetail.setDetail(SUCCESSFUL);
+                        renewalNotificationService.notifyLicenseRenewal(license, installment);
                     }
                     demandGenerationLogDetail.setStatus(COMPLETED);
                 } catch (RuntimeException e) {
@@ -179,10 +183,11 @@ public class DemandGenerationService {
     public boolean generateLicenseDemand(Long licenseId) {
         boolean generationSuccess = true;
         try {
-            License license = licenseService.getLicenseById(licenseId);
-            licenseService.raiseDemand(license, licenseService.getModuleName(), installmentDao.
-                    getInsatllmentByModuleForGivenDate(licenseService.getModuleName(),
-                            new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate()));
+            TradeLicense license = licenseService.getLicenseById(licenseId);
+            Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(licenseService.getModuleName(),
+                    new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate());
+            licenseService.raiseDemand(license, licenseService.getModuleName(), installment);
+            renewalNotificationService.notifyLicenseRenewal(license, installment);
         } catch (ValidationException e) {
             LOGGER.warn(ERROR_MSG, e);
             generationSuccess = false;

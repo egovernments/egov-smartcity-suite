@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -48,7 +48,6 @@
 package org.egov.tl.repository;
 
 import org.egov.tl.entity.LicenseDocumentType;
-import org.egov.tl.entity.enums.ApplicationType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -57,14 +56,12 @@ import java.util.List;
 @Repository
 public interface LicenseDocumentTypeRepository extends JpaRepository<LicenseDocumentType, Long> {
 
-    LicenseDocumentType findById(Long id);
-
-    List<LicenseDocumentType> findByNameAndApplicationType(String name, ApplicationType applicationType);
+    List<LicenseDocumentType> findByNameAndApplicationTypeId(String name, Long applicationTypeId);
 
     List<LicenseDocumentType> findByName(String name);
 
-    List<LicenseDocumentType> findByApplicationType(ApplicationType applicationType);
+    List<LicenseDocumentType> findByApplicationTypeId(Long applicationTypeId);
 
-    List<LicenseDocumentType> findByApplicationTypeAndEnabledTrue(ApplicationType applicationType);
+    List<LicenseDocumentType> findByApplicationTypeIdAndEnabledTrue(Long applicationTypeId);
 
 }

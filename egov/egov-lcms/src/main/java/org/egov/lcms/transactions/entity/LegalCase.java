@@ -217,48 +217,48 @@ public class LegalCase extends AbstractAuditable {
 
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Audited
-    private List<Judgment> judgment = new ArrayList<Judgment>(0);
+    private List<Judgment> judgment = new ArrayList<>(0);
 
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY)
     @NotAudited
-    private List<LegalCaseUploadDocuments> legalCaseUploadDocuments = new ArrayList<LegalCaseUploadDocuments>();
+    private List<LegalCaseUploadDocuments> legalCaseUploadDocuments = new ArrayList<>();
 
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Audited
-    private final List<Pwr> pwrList = new ArrayList<Pwr>(0);
+    private final List<Pwr> pwrList = new ArrayList<>(0);
 
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Audited
-    private final List<CounterAffidavit> counterAffidavits = new ArrayList<CounterAffidavit>(0);
+    private final List<CounterAffidavit> counterAffidavits = new ArrayList<>(0);
 
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Audited
-    private List<LegalCaseInterimOrder> legalCaseInterimOrder = new ArrayList<LegalCaseInterimOrder>(0);
+    private List<LegalCaseInterimOrder> legalCaseInterimOrder = new ArrayList<>(0);
 
     @Audited
     @OrderBy("id asc")
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<BipartisanDetails> bipartisanDetails = new ArrayList<BipartisanDetails>(0);
+    private List<BipartisanDetails> bipartisanDetails = new ArrayList<>(0);
 
     @OrderBy("id")
     @OneToMany(mappedBy = "legalCase", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @Audited
-    private List<LegalCaseAdvocate> legalCaseAdvocates = new ArrayList<LegalCaseAdvocate>(0);
+    private List<LegalCaseAdvocate> legalCaseAdvocates = new ArrayList<>(0);
 
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Audited
-    private List<Hearings> hearings = new ArrayList<Hearings>(0);
+    private List<Hearings> hearings = new ArrayList<>(0);
 
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Audited
-    private List<LegalCaseDisposal> legalCaseDisposal = new ArrayList<LegalCaseDisposal>(0);
+    private List<LegalCaseDisposal> legalCaseDisposal = new ArrayList<>(0);
 
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Audited
-    private final List<LegalCaseDepartment> legalCaseDepartment = new ArrayList<LegalCaseDepartment>(0);
+    private final List<LegalCaseDepartment> legalCaseDepartment = new ArrayList<>(0);
 
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<BatchCase> batchCaseSet = new ArrayList<BatchCase>(0);
+    private List<BatchCase> batchCaseSet = new ArrayList<>(0);
 
     // TODO:need to enable when we start work on PaperBook and ProcessRegister
     // object
@@ -270,24 +270,24 @@ public class LegalCase extends AbstractAuditable {
      */
 
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<LegalCaseMiscDetails> legalCaseMiscDetails = new ArrayList<LegalCaseMiscDetails>(0);
+    private List<LegalCaseMiscDetails> legalCaseMiscDetails = new ArrayList<>(0);
 
     @Transient
     @Audited
     @OrderBy("id asc")
-    private List<BipartisanDetails> bipartisanRespondentDetailsList = new ArrayList<BipartisanDetails>(0);
+    private List<BipartisanDetails> bipartisanRespondentDetailsList = new ArrayList<>(0);
 
     @Transient
     @Audited
     @OrderBy("id asc")
-    private List<BipartisanDetails> bipartisanPetitionerDetailsList = new ArrayList<BipartisanDetails>(0);
+    private List<BipartisanDetails> bipartisanPetitionerDetailsList = new ArrayList<>(0);
 
     @Transient
-    private List<Judgment> judgmentsBeanList = new ArrayList<Judgment>(0);
+    private List<Judgment> judgmentsBeanList = new ArrayList<>(0);
 
     public List<ValidationError> validate() {
-        final List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (getIsFiledByCorporation() == true && getStampNumber().length() == 0)
+        final List<ValidationError> errors = new ArrayList<>();
+        if (getIsFiledByCorporation() && getStampNumber().length() == 0)
             errors.add(new ValidationError("stampNumber", "case.stampNumber.invalid"));
         for (final BipartisanDetails bipartisanDetails2 : getBipartisanDetails()) {
             final BipartisanDetails element = bipartisanDetails2;
@@ -409,12 +409,12 @@ public class LegalCase extends AbstractAuditable {
         // iterate through this.getBipartisan and return only petitioners (based
         // on isRespondent=0)
 
-        final List<BipartisanDetails> tempList = new ArrayList<BipartisanDetails>();
+        final List<BipartisanDetails> tempList = new ArrayList<>();
         for (final BipartisanDetails temp : bipartisanDetails)
             if (!temp.getIsRepondent())
                 tempList.add(temp);
-        final Set<BipartisanDetails> tempset = new HashSet<BipartisanDetails>(tempList);
-        bipartisanPetitionerDetailsList = new ArrayList<BipartisanDetails>(tempset);
+        final Set<BipartisanDetails> tempset = new HashSet<>(tempList);
+        bipartisanPetitionerDetailsList = new ArrayList<>(tempset);
         return bipartisanPetitionerDetailsList;
 
     }
@@ -422,11 +422,11 @@ public class LegalCase extends AbstractAuditable {
     public List<BipartisanDetails> getRespondents() {
         // iterate through this.getBipartisan and return only petitioners (based
         // on isRespondent=1)
-        final List<BipartisanDetails> tempList = new ArrayList<BipartisanDetails>();
+        final List<BipartisanDetails> tempList = new ArrayList<>();
         for (final BipartisanDetails temp : bipartisanDetails)
             if (temp.getIsRepondent())
                 tempList.add(temp);
-        bipartisanRespondentDetailsList = new ArrayList<BipartisanDetails>(tempList);
+        bipartisanRespondentDetailsList = new ArrayList<>(tempList);
         return bipartisanRespondentDetailsList;
     }
 
@@ -463,9 +463,7 @@ public class LegalCase extends AbstractAuditable {
     public String getDepartmentName() {
         for (final LegalCaseDepartment ld : legalCaseDepartment)
             if (ld != null && ld.getDepartment().getName() != null) {
-                final String dep = ld.getDepartment().getName();
-
-                return dep;
+                return ld.getDepartment().getName();
             }
         return null;
     }

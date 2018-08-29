@@ -55,6 +55,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
@@ -75,6 +76,7 @@ import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.egov.collection.integration.models.PaymentInfoBank;
 import org.egov.collection.integration.models.PaymentInfoCash;
 import org.egov.collection.integration.models.PaymentInfoChequeDD;
+import org.egov.collection.integration.models.ReceiptAccountInfo;
 import org.egov.collection.integration.pgi.PaymentGatewayAdaptor;
 import org.egov.collection.integration.pgi.PaymentRequest;
 import org.egov.collection.integration.pgi.PaymentResponse;
@@ -298,10 +300,13 @@ public class CollectionCommon {
                     if (billAccount.getIsActualDemand())
                         totalAmountToBeCollected = totalAmountToBeCollected.add(billAccount.getCrAmount()).subtract(
                                 billAccount.getDrAmount());
+                    Long billAccountGroupid = Long.valueOf((billAccount.getGroupId() == null) ? 0 : billAccount.getGroupId());
+
                     final ReceiptDetail receiptDetail = new ReceiptDetail(account, function, billAccount.getCrAmount()
                             .subtract(billAccount.getDrAmount()), billAccount.getDrAmount(), billAccount.getCrAmount(),
                             Long.valueOf(billAccount.getOrder()), billAccount.getDescription(),
-                            billAccount.getIsActualDemand(), receiptHeader, billAccount.getPurpose().toString());
+                            billAccount.getIsActualDemand(), receiptHeader, billAccount.getPurpose().toString(),
+                            billAccountGroupid);
                     receiptHeader.addReceiptDetail(receiptDetail);
                 }
                 receiptHeader.setTotalAmountToBeCollected(totalAmountToBeCollected);
@@ -350,19 +355,37 @@ public class CollectionCommon {
         } else
             for (final ReceiptHeader receiptHeader : receipts) {
                 String additionalMessage = null;
-                if (receiptType == CollectionConstants.RECEIPT_TYPE_BILL
-                        && !receiptHeader.getService().getCode().equals(CollectionConstants.SERVICECODE_LAMS))
-                    additionalMessage = receiptHeaderService.getAdditionalInfoForReceipt(serviceCode,
-                            new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO, persistenceService,
-                                    null));
-                if (additionalMessage != null)
-                    receiptList.add(new BillReceiptInfoImpl(receiptHeader, additionalMessage,
-                            chartOfAccountsHibernateDAO, persistenceService));
-                else
-                    receiptList.add(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO,
-                            persistenceService, null));
-            }
+                if (receiptType == CollectionConstants.RECEIPT_TYPE_BILL) {
+                    if (receiptHeader.getService().getCode().equals(CollectionConstants.SERVICECODE_LAMS)) {
+                        BillReceiptInfo billReceiptInfo = new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO,
+                                persistenceService, null);
+                        List<ReceiptAccountInfo> receiptAccountInfoList = billReceiptInfo.getAccountDetails().stream()
+                                .collect(Collectors.toList());
+                        Collections.sort(receiptAccountInfoList, (receiptAccountInfo1, receiptAccountInfo2) -> {
+                            if (receiptAccountInfo1.getOrderNumber() != null && receiptAccountInfo2.getOrderNumber() != null)
+                                return receiptAccountInfo1.getOrderNumber().compareTo(receiptAccountInfo2.getOrderNumber());
+                            return 0;
+                        });
+                        billReceiptInfo.getAccountDetails().clear();
+                        billReceiptInfo.getAccountDetails().addAll(receiptAccountInfoList);
+                        receiptList.add(billReceiptInfo);
+                    } else {
+                        additionalMessage = receiptHeaderService.getAdditionalInfoForReceipt(serviceCode,
+                                new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO, persistenceService,
+                                        null));
+                    }
+                }
 
+                if (receiptList.isEmpty()) {
+                    if (additionalMessage != null)
+                        receiptList.add(new BillReceiptInfoImpl(receiptHeader, additionalMessage,
+                                chartOfAccountsHibernateDAO, persistenceService));
+                    else
+                        receiptList.add(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO,
+                                persistenceService, null));
+                }
+
+            }
         if (receiptType == CollectionConstants.RECEIPT_TYPE_BILL)
             reportParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoAsStream());
         else
@@ -544,7 +567,7 @@ public class CollectionCommon {
                 final ReceiptDetail receiptDetail = new ReceiptDetail(oldDetail.getAccounthead(),
                         oldDetail.getFunction(), oldDetail.getCramountToBePaid(), oldDetail.getDramount(),
                         oldDetail.getCramount(), oldDetail.getOrdernumber(), oldDetail.getDescription(),
-                        oldDetail.getIsActualDemand(), newReceiptHeader, oldDetail.getPurpose());
+                        oldDetail.getIsActualDemand(), newReceiptHeader, oldDetail.getPurpose(), oldDetail.getGroupId());
                 receiptDetail.setCramount(oldDetail.getCramount());
                 receiptDetail.setFinancialYear(oldDetail.getFinancialYear());
 

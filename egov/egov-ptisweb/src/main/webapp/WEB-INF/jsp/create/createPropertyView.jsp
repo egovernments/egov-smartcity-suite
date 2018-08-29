@@ -164,20 +164,6 @@
 		   <span class="bold"><s:property value="%{propertyDetail.sitalArea.area}" default="N/A"/></span>
 		</td>
 	</tr>
-	<%-- <tr class="superStructureRow">
-	<td class="greybox" width="5%">&nbsp;</td>
-	<td class="greybox" width="20%"><s:text name="superstructure"/>:</td>
-		<td class="greybox" width="20%">
-		<s:if test="propertyDetail.structure == true">
-				<span class="bold">Yes</span>
-			</s:if> <s:else>
-				<span class="bold">No</span>
-			</s:else>
-		</td>
-	<td class="greybox siteowner"><s:text name="siteowner"/> :</td>
-		<td class="greybox siteowner"><span class="bold"><s:property default="N/A" value="%{propertyDetail.siteOwner}" /> </span></td>
-	</tr> --%>
-	
 	<s:if test="%{!basicProperty.regdDocNo.isEmpty()}">
 		<tr>
 			<td class="greybox" width="5%">&nbsp;</td>
@@ -272,5 +258,4 @@
 			</div>
 		</td>
 	</tr>
-
 </table>

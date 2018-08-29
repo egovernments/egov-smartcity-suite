@@ -75,6 +75,8 @@
 				</spring:hasBindErrors>
 				<br />
 			</div>
+			<input type="hidden" id="mrsRegistrar" value="${mrsRegistrar}" />
+			
 			<input type="hidden" id="message" value="${message}" />
 			<input type="hidden" name="stateType" id="stateType"
 				value="${stateType}" />

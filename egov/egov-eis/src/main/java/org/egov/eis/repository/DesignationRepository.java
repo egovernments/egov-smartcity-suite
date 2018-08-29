@@ -72,10 +72,10 @@ public interface DesignationRepository extends JpaRepository<Designation, Long>,
 
     @Query("select distinct d.roles from Designation d where d.name=:designationName ")
     Set<Role> getRolesByDesignation(@Param("designationName") String designationName);
-    
+
     @Query("select d from Designation d where upper(d.name) in :designationnames")
     List<Designation> getDesignationsByNames(@Param("designationnames") List<String> designationNames);
-    
+
     @Query("select d from Designation d where upper(d.name) like upper(:name)")
     List<Designation> getDesignationsByName(@Param("name") final String name);
 

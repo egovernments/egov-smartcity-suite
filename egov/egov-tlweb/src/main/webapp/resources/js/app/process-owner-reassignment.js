@@ -57,12 +57,14 @@ $(document).ready(function () {
     $('#ReassignSubmit').click(function () {
 
         if ($("#approvalPosition").val() != "") {
+            var approverpos = $("#approvalPosition").val();
+            var positionId =approverpos.split("-")[1];
             var name = $("#approvalPosition option:selected").text().split(/-/)[0];
             $.ajax({
                 url: "/tl/license/reassign",
                 type: "POST",
                 data: {
-                    approvalPosition: $("#approvalPosition").val(),
+                    approvalPosition: positionId,
                     licenseId: id
                 },
                 success: function (response) {

@@ -82,10 +82,27 @@
 	}
 }
 </style>
+<script>
+	function openSource(){
+		if("<s:property value='%{egBillRegister.egBillregistermis.sourcePath}' escapeHtml='false'/>"=="" || "<s:property value='%{egBillRegister.egBillregistermis.sourcePath}'/>"=='null')
+			bootbox.alert('Source is not available');
+		else{
+			var url = '<s:property value="%{egBillRegister.egBillregistermis.sourcePath}" escapeHtml="false"/>';
+			window.open(url,'Source','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700')
+		}   
+			
+	}
 
+    function checkForNerration(){
+        var narrationText = document.getElementById('narrationValue').innerText;
+        if(narrationText == ""){
+            document.getElementById('narrationValue').innerText = "N/A";
+        }
+	}
+</script>
 
 </head>
-<body>
+<body onload="checkForNerration()">
 	<s:form action="billView" theme="simple">
 		<span class="mandatory1"> <s:actionerror /> <s:fielderror />
 			<s:actionmessage />
@@ -122,7 +139,19 @@
 				</tr>
 				<tr>
 					<td class="greybox"><s:text name="bill.narration" /></td>
-					<td colspan="3" class="greybox"><s:property value="narration" /></td>
+					<td colspan="3" id="narrationValue" class="greybox"><s:property value="narration" /></td>
+				</tr> 
+				<!-- <tr>
+					<td class="bluebox"><a href="#" id="sourceLink"
+						onclick=" return openSource();">Source</a></td>
+
+				</tr> -->
+			</table>
+			<table align="center" id="sourceIcon">
+				<tr>
+					<td class="bluebox"><a href="#" id="sourceLink"
+						onclick=" return openSource();">Source</a></td>
+
 				</tr>
 			</table>
 			<br />

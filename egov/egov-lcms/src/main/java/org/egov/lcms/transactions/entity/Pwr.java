@@ -47,13 +47,9 @@
  */
 package org.egov.lcms.transactions.entity;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.utils.DateUtils;
-import org.egov.infra.validation.exception.ValidationError;
-import org.hibernate.envers.AuditOverride;
-import org.hibernate.envers.AuditOverrides;
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -69,9 +65,15 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import javax.persistence.Transient;
+
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.utils.DateUtils;
+import org.egov.infra.validation.exception.ValidationError;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 @Entity
 @Table(name = "EGLC_PWR")
@@ -99,7 +101,7 @@ public class Pwr extends AbstractAuditable {
 
     @OneToMany(mappedBy = "pwr", fetch = FetchType.LAZY)
     @NotAudited
-    private List<PwrDocuments> pwrDocuments = new ArrayList<PwrDocuments>(0);
+    private List<PwrDocuments> pwrDocuments = new ArrayList<>(0);
 
     @Temporal(TemporalType.DATE)
     @Column(name = "caduedate")
@@ -115,6 +117,9 @@ public class Pwr extends AbstractAuditable {
     @Column(name = "pwrapprovaldate")
     @Audited
     private Date pwrApprovalDate;
+
+    @Transient
+    private String advocateUserRole;
 
     @Override
     public Long getId() {
@@ -185,6 +190,14 @@ public class Pwr extends AbstractAuditable {
 
     public void setPwrApprovalDate(final Date pwrApprovalDate) {
         this.pwrApprovalDate = pwrApprovalDate;
+    }
+
+    public String getAdvocateUserRole() {
+        return advocateUserRole;
+    }
+
+    public void setAdvocateUserRole(final String advocateUserRole) {
+        this.advocateUserRole = advocateUserRole;
     }
 
 }

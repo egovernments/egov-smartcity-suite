@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -53,7 +53,6 @@ import static org.egov.commons.entity.Source.MEESEVA;
 import static org.egov.commons.entity.Source.ONLINE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PERMENENTCLOSECODE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.SOURCECHANNEL_ONLINE;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -66,7 +65,6 @@ import javax.validation.Valid;
 import javax.validation.ValidationException;
 
 import org.egov.eis.web.contract.WorkflowContainer;
-import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -74,7 +72,6 @@ import org.egov.pims.commons.Position;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.CloserConnectionService;
 import org.egov.wtms.application.service.ConnectionDemandService;
-import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.PipeSize;
 import org.egov.wtms.masters.entity.UsageType;
@@ -90,7 +87,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.SmartValidator;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -105,10 +101,6 @@ public class CloserConnectionController extends GenericConnectionController {
     private static final String MEESEVA_APPLICATION_NUMBER = "meesevaApplicationNumber";
     private static final String WATERCONNECTIONDETAILS = "waterConnectionDetails";
     private static final String APPROVALPOSITION = "approvalPosition";
-
-    private final WaterConnectionDetailsService waterConnectionDetailsService;
-
-    private final DepartmentService departmentService;
 
     @Autowired
     private ConnectionDemandService connectionDemandService;
@@ -127,14 +119,6 @@ public class CloserConnectionController extends GenericConnectionController {
     @Autowired
     @Qualifier("parentMessageSource")
     private MessageSource wcmsMessageSource;
-
-    @Autowired
-    public CloserConnectionController(final WaterConnectionDetailsService waterConnectionDetailsService,
-            final DepartmentService departmentService, final ConnectionDemandService connectionDemandService,
-            final SmartValidator validator) {
-        this.waterConnectionDetailsService = waterConnectionDetailsService;
-        this.departmentService = departmentService;
-    }
 
     @ModelAttribute
     public WaterConnectionDetails getWaterConnectionDetails(@PathVariable final String applicationCode) {
@@ -178,10 +162,10 @@ public class CloserConnectionController extends GenericConnectionController {
         model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
         model.addAttribute("applicationDocList",
                 waterConnectionDetailsService.getApplicationDocForExceptClosureAndReConnection(waterConnectionDetails));
-        model.addAttribute("additionalRule", WaterTaxConstants.WORKFLOW_CLOSUREADDITIONALRULE);
+        model.addAttribute("additionalRule", WaterTaxConstants.CLOSECONNECTION);
         model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
         final WorkflowContainer workflowContainer = new WorkflowContainer();
-        workflowContainer.setAdditionalRule(WaterTaxConstants.WORKFLOW_CLOSUREADDITIONALRULE);
+        workflowContainer.setAdditionalRule(WaterTaxConstants.CLOSECONNECTION);
         prepareWorkflow(model, waterConnectionDetails, workflowContainer);
         model.addAttribute("radioButtonMap", Arrays.asList(ClosureType.values()));
         model.addAttribute("loggedInCSCUser", waterTaxUtils.getCurrentUserRole());
@@ -195,7 +179,7 @@ public class CloserConnectionController extends GenericConnectionController {
         model.addAttribute(MODE, "closureConnection");
         model.addAttribute("validationMessage",
                 closerConnectionService.validateChangeOfUseConnection(waterConnectionDetails));
-        final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
+        final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getWaterTaxDueAmount(waterConnectionDetails);
         model.addAttribute("waterTaxDueforParent", waterTaxDueforParent);
         model.addAttribute("citizenPortalUser", waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser()));
         model.addAttribute("isAnonymousUser", waterTaxUtils.isAnonymousUser(securityUtils.getCurrentUser()));
@@ -229,11 +213,7 @@ public class CloserConnectionController extends GenericConnectionController {
             if (!isJuniorAsstOrSeniorAsst)
                 throw new ValidationException("err.creator.application");
         }
-        String sourceChannel = request.getParameter("Source");
         String workFlowAction = "";
-
-        if (request.getParameter(MODE) != null)
-            request.getParameter(MODE);
 
         if (request.getParameter("workFlowAction") != null)
             workFlowAction = request.getParameter("workFlowAction");
@@ -277,10 +257,8 @@ public class CloserConnectionController extends GenericConnectionController {
         waterConnectionDetails
                 .setApplicationType(applicationTypeService.findByCode(WaterTaxConstants.CLOSINGCONNECTION));
 
-        if (isAnonymousUser) {
+        if (isAnonymousUser)
             waterConnectionDetails.setSource(ONLINE);
-            sourceChannel = SOURCECHANNEL_ONLINE;
-        }
         if (citizenPortalUser && (waterConnectionDetails.getSource() == null
                 || isBlank(waterConnectionDetails.getSource().toString())))
             waterConnectionDetails.setSource(waterTaxUtils.setSourceOfConnection(securityUtils.getCurrentUser()));
@@ -288,8 +266,7 @@ public class CloserConnectionController extends GenericConnectionController {
             waterConnectionDetails.setApplicationNumber(waterConnectionDetails.getMeesevaApplicationNumber());
             waterConnectionDetails.setSource(MEESEVA);
         }
-        closerConnectionService.updatecloserConnection(
-                waterConnectionDetails, approvalPosition, approvalComent, workFlowAction, sourceChannel);
+        closerConnectionService.updatecloserConnection(waterConnectionDetails, approvalPosition, approvalComent, workFlowAction);
         model.addAttribute(WATERCONNECTIONDETAILS, waterConnectionDetails);
         model.addAttribute(MODE, "ack");
         if (loggedUserIsMeesevaUser)

@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -51,35 +51,39 @@ package org.egov.tl.entity;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import java.util.Objects;
 
 @Entity
 @Table(name = "EGTL_MSTR_CATEGORY")
 @Unique(fields = {"name", "code"}, enableDfltMsg = true)
 @SequenceGenerator(name = LicenseCategory.SEQUENCE, sequenceName = LicenseCategory.SEQUENCE, allocationSize = 1)
 public class LicenseCategory extends AbstractAuditable {
-    public static final String SEQUENCE = "SEQ_EGTL_MSTR_CATEGORY";
+    protected static final String SEQUENCE = "SEQ_EGTL_MSTR_CATEGORY";
     private static final long serialVersionUID = 2997222319085575846L;
+
     @Id
     @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotEmpty(message = "tradelic.master.tradecategoryname.null")
-    @Length(max = 256, message = "tradelic.masters.tradecategoryname.length")
+    @NotBlank
+    @Length(max = 150)
     @SafeHtml
     private String name;
 
-    @NotEmpty(message = "tradelic.master.tradecategorycode.null")
-    @Length(max = 5, message = "tradelic.masters.tradecategorycode.length")
+    @NotBlank
+    @Length(max = 5)
     @SafeHtml
+    @Column(updatable = false)
     private String code;
 
     public String getName() {
@@ -108,4 +112,18 @@ public class LicenseCategory extends AbstractAuditable {
         this.id = id;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!(obj instanceof LicenseCategory))
+            return false;
+        LicenseCategory that = (LicenseCategory) obj;
+        return Objects.equals(getCode(), that.getCode());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getCode());
+    }
 }

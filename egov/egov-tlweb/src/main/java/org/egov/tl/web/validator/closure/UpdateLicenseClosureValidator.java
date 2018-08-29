@@ -94,9 +94,9 @@ public class UpdateLicenseClosureValidator extends LicenseClosureValidator {
                 .equals(workFlowMatrix.getCurrentState())) {
             redirectAttributes.addFlashAttribute(MESSAGE, "msg.license.process");
             return true;
-        } else if (!assignments
+        } else if (assignments
                 .stream()
-                .anyMatch(assignment -> license.getCurrentState().getOwnerPosition().equals(assignment.getPosition()))) {
+                .noneMatch(assignment -> license.getCurrentState().getOwnerPosition().equals(assignment.getPosition()))) {
             redirectAttributes.addFlashAttribute(MESSAGE, "msg.reassigned");
             redirectAttributes.addFlashAttribute("ownerPosition", license.getCurrentState().getOwnerPosition().getName());
             return true;

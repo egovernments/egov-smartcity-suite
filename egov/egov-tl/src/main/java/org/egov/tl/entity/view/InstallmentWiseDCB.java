@@ -108,11 +108,11 @@ public class InstallmentWiseDCB {
     }
 
     public InstallmentWiseDCB(Long count) {
-
+        //Do nothing for jpa spec
     }
 
     public InstallmentWiseDCB() {
-
+        //Do nothing for jpa spec
     }
 
     public Long getId() {

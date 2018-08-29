@@ -66,6 +66,7 @@ import org.egov.pgr.elasticsearch.entity.contract.ComplaintDashBoardRequest;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogramInterval;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsBuilder;
 import org.elasticsearch.search.aggregations.metrics.MetricsAggregationBuilder;
@@ -78,7 +79,10 @@ public final class ComplaintIndexAggregationBuilder {
     private static final String CITY_CODE = "cityCode";
     private static final String CITY_REGION_NAME = "cityRegionName";
     private static final String CITY_DISTRICT_NAME = "cityDistrictName";
-   
+    private static final String FEEDBACK_CALL_STATUS = "feedbackCallStatus";
+    private static final String FEEDBACK_RATING = "feedbackRating";
+
+
     private ComplaintIndexAggregationBuilder() {
         //Only static API's
     }
@@ -138,7 +142,7 @@ public final class ComplaintIndexAggregationBuilder {
 
         if (isNotBlank(complaintDashBoardRequest.getType())) {
             if (complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_REGION))
-                aggregationField = "cityRegionName";
+                aggregationField = CITY_REGION_NAME;
             if (complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_DISTRICT))
                 aggregationField = "cityDistrictCode";
             if (complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ULBGRADE))
@@ -185,23 +189,34 @@ public final class ComplaintIndexAggregationBuilder {
     }
 
     public static String fetchAggregationField(String aggregationType) {
-        String aggregationField = null;
         if (DASHBOARD_GROUPING_REGION.equalsIgnoreCase(aggregationType))
-            aggregationField = CITY_REGION_NAME;
+            return CITY_REGION_NAME;
         else if (DASHBOARD_GROUPING_DISTRICT.equalsIgnoreCase(aggregationType))
-            aggregationField = CITY_DISTRICT_NAME;
+            return CITY_DISTRICT_NAME;
         else if (DASHBOARD_GROUPING_CITY.equalsIgnoreCase(aggregationType))
-            aggregationField = "cityName";
+            return "cityName";
         else if (DASHBOARD_GROUPING_ULBGRADE.equalsIgnoreCase(aggregationType))
-            aggregationField = "cityGrade";
+            return "cityGrade";
         else if (DASHBOARD_GROUPING_WARDWISE.equalsIgnoreCase(aggregationType))
-            aggregationField = WARD_NUMBER;
+            return WARD_NUMBER;
         else if (DASHBOARD_GROUPING_DEPARTMENTWISE.equalsIgnoreCase(aggregationType))
-            aggregationField = "departmentCode";
+            return "departmentCode";
         else if ("functionary".equalsIgnoreCase(aggregationType))
-            aggregationField = INITIAL_FUNCTIONARY_NAME;
+            return INITIAL_FUNCTIONARY_NAME;
         else if ("locality".equalsIgnoreCase(aggregationType))
-            aggregationField = LOCALITY_NAME;
-        return aggregationField;
+            return LOCALITY_NAME;
+        else
+            return CITY_REGION_NAME;
+
+    }
+
+    public static AggregationBuilder prepareMonthlyAggregations() {
+        return AggregationBuilders.dateHistogram("dateAggr").field("completionDate").interval(DateHistogramInterval.MONTH)
+                .subAggregation(getCallStatusAndRating());
+    }
+
+    public static AggregationBuilder getCallStatusAndRating() {
+        return AggregationBuilders.terms("callStatCountAggr").field(FEEDBACK_CALL_STATUS)
+                .subAggregation(AggregationBuilders.terms("countAggr").field(FEEDBACK_RATING));
     }
 }

@@ -199,7 +199,7 @@
 								cellpadding="0" cellspacing="0">
 								<tbody>
 									<tr>
-										<th class="bluebgheadtd"><s:text name="adharno" /></th>
+										<%-- <th class="bluebgheadtd"><s:text name="adharno" /></th> --%>
 										<th class="bluebgheadtd"><s:text name="OwnerName" /></th>
 										<th class="bluebgheadtd"><s:text name="gender" /></th>
 										<th class="bluebgheadtd"><s:text name="MobileNumber" /></th>
@@ -211,13 +211,13 @@
 									<s:iterator value="basicproperty.propertyOwnerInfo"
 										status="status">
 										<tr>
-											<td class="blueborderfortd" align="center"><s:if
+											<%-- <td class="blueborderfortd" align="center"><s:if
 													test='%{owner.aadhaarNumber == ""}'>
 													<span class="bold"> N/A</span>
 												</s:if> <s:else>
 													<span class="bold"><s:property
 															value="%{owner.aadhaarNumber}" default="N/A" /> </span>
-												</s:else></td>
+												</s:else></td> --%>
 											<td class="blueborderfortd" align="center"><span
 												class="bold"><s:property value="owner.name" /></span></td>
 											<td class="blueborderfortd" align="center"><span

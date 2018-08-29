@@ -50,6 +50,8 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCgxY6DqJ4TxnRfKjlZR8SfLSQRtOSTxEU"></script>
+<script src="<cdn:url value='/resources/js/app/property-map.js?rnd=${app_release_no}'/>"></script>
 <s:if test="%{(viewMap.propertyWF != null && viewMap.propertyWF != '' && viewMap.propertyWF == 'WF')}">
 <s:set var="prop" value="property"/>
 </s:if>
@@ -312,6 +314,13 @@
 					value="%{basicProperty.longitude}" />
 			</div>
 		</div>
+		<s:if test="%{basicProperty.latitude != null && basicProperty.longitude != null}">
+		<div class="row add-border" align="center">
+			<input type="button" name="showMap" id="show-map"
+						value="View On Map" class="buttonsubmit" data-toggle="modal" data-target="#myModal"/>
+		</div>				
+		</s:if>
+		
 	</div>
 </div>
 
@@ -485,9 +494,29 @@
 	</div>
 	<%@ include file="../common/taxDetails.jsp"%>	
 </div>
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Property On Google Map</h4>
+      </div>
+			<div id="map-canvas" style="height:500px;width:500pxpx;"></div>      
+			<div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
 <script type="text/javascript">
 	function showDocumentManagerView(indexNum) {
 		var url = "../view/viewProperty!viewDoc.action?propertyId=" + indexNum;
 		window.open(url, 'docview', 'width=1000,height=400');
 	}
+	var lat = parseFloat('<s:property value="%{basicProperty.latitude}"/>');
+    var lng = parseFloat('<s:property value="%{basicProperty.longitude}"/>');
+	jQuery('#show-map').on('click',initialize(lat, lng));
 </script>
+
+

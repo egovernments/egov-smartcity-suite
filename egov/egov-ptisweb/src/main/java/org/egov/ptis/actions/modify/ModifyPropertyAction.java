@@ -783,8 +783,6 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         if (SOURCE_SURVEY.equalsIgnoreCase(propertyModel.getSource())) {
             SurveyBean surveyBean = new SurveyBean();
             surveyBean.setProperty(propertyModel);
-            BigDecimal totalTax = propService.getSurveyTax(propertyModel, new Date());
-            surveyBean.setApprovedTax(totalTax);
             propertySurveyService.updateSurveyIndex(getApplicationType(), surveyBean);
         }
         basicPropertyService.update(basicProp);
@@ -877,8 +875,13 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 propService.updatePortal(propertyModel, getApplicationType());
             if (SOURCE_SURVEY.equalsIgnoreCase(propertyModel.getSource())) {
                 SurveyBean surveyBean = new SurveyBean();
+                if(isThirdPartyCheckbox() 
+                		&& PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING.equalsIgnoreCase(propertyModel.getState().getNextAction())){
+                	propertyModel.setThirdPartyVerified(true);
+                	propertyImplService.update(propertyModel);
+                }
                 surveyBean.setProperty(propertyModel);
-                propertySurveyService.updateSurveyIndex(applicationSource, surveyBean);
+                propertySurveyService.updateSurveyIndex(APPLICATION_TYPE_ALTER_ASSESSENT, surveyBean);
             }
             
         }
@@ -905,7 +908,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction) && wfInitiator == null)
             if (propertyTaxCommonUtils.isRoOrCommissioner(loggedInUserDesignation))
                 addActionError(getText("reject.error.initiator.inactive", Arrays.asList(REVENUE_INSPECTOR_DESGN)));
-            else
+            if (propService.getWorkflowInitiator(propertyModel) == null)
                 addActionError(getText("reject.error.initiator.inactive",
                         Arrays.asList(JUNIOR_ASSISTANT + "/" + SENIOR_ASSISTANT)));
         return wfInitiator;
@@ -1188,8 +1191,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         propDetail.setFieldVerificationDate(propertyDetail.getFieldVerificationDate());
         propDetail.setFloorDetails(propertyDetail.getFloorDetails());
         propDetail.setPropertyDetailsID(propertyDetail.getPropertyDetailsID());
-        propDetail.setWater_Meter_Num(propertyDetail.getWater_Meter_Num());
-        propDetail.setElec_Meter_Num(propertyDetail.getElec_Meter_Num());
+        propDetail.setWaterMeterNum(propertyDetail.getWaterMeterNum());
+        propDetail.setElecMeterNum(propertyDetail.getElecMeterNum());
         propDetail.setNoofFloors(numOfFloors);
         propDetail.setFieldIrregular(propertyDetail.getFieldIrregular());
         propDetail.setDateOfCompletion(propertyDetail.getDateOfCompletion());

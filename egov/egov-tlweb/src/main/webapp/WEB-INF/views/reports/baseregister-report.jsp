@@ -102,12 +102,21 @@
                                 <form:option value="">
                                     <spring:message code="lbl.select"/>
                                 </form:option>
-                                <form:options items="${wardList}" itemValue="id" itemLabel="name"/>
+                                <form:options items="${revenueWards}" itemValue="id" itemLabel="name"/>
                             </form:select>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.options"/></label>
+                        <label class="col-sm-3 control-label text-right"> <spring:message code='lbl.admin.ward'/></label>
+                        <div class="col-sm-3 add-margin">
+                            <form:select path="adminWard" id="adminward" cssClass="form-control" cssErrorClass="form-control error">
+                                <form:option value="">
+                                    <spring:message code="lbl.select"/>
+                                </form:option>
+                                <form:options items="${electionWards}" itemValue="id" itemLabel="name"/>
+                            </form:select>
+                        </div>
+                        <label class="col-sm-2 control-label text-right"><spring:message code="lbl.options"/></label>
                         <div class="col-sm-3 add-margin">
                             <form:select path="filterName" id="filter" items="${filters}" cssClass="form-control"
                                          cssErrorClass="form-control error"/>
@@ -130,7 +139,7 @@
                            style="overflow-x: auto;max-width: 100%;min-width: 100%">
                         <tfoot id="report-footer">
                         <tr>
-                            <td colspan="16">Total</td>
+                            <td colspan="17" style="text-align: right">Total</td>
                             <td></td>
                             <td></td>
                             <td></td>

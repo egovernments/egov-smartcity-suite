@@ -56,6 +56,8 @@ import org.egov.pims.commons.Position;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -77,7 +79,7 @@ public class CouncilMeeting extends StateAware<Position> {
     @ManyToOne
     @JoinColumn(name = "committeeType")
     private CommitteeType committeeType;
-    
+
     @ManyToOne
     @JoinColumn(name = "meetingType")
     private CouncilMeetingType meetingType;
@@ -92,6 +94,7 @@ public class CouncilMeeting extends StateAware<Position> {
     @Column(name = "meetingTime")
     private String meetingTime;
 
+    @Size(min = 5, max = 100)
     @Column(name = "meetingLocation")
     private String meetingLocation;
 
@@ -162,7 +165,7 @@ public class CouncilMeeting extends StateAware<Position> {
     }
 
     public void setMeetingLocation(String meetingLocation) {
-        this.meetingLocation = meetingLocation;
+        this.meetingLocation = meetingLocation.trim();
     }
 
     public EgwStatus getStatus() {

@@ -59,7 +59,7 @@
 
 			<form:form method="post"
 				modelAttribute="waterConnectionDetails"
-				id="editmeterWaterConnectionform"
+				id="waterConnectionForm"
 				cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 				
 				<div class="container-fluid">

@@ -55,6 +55,7 @@ public class DCRSearchRequest {
     private String collectionOperator;
     private String revenueWard;
     private String status;
+    private String electionWard;
 
     public Date getFromDate() {
         return fromDate;
@@ -94,5 +95,13 @@ public class DCRSearchRequest {
 
     public void setRevenueWard(final String revenueWard) {
         this.revenueWard = revenueWard;
+    }
+
+    public String getElectionWard() {
+        return electionWard;
+    }
+
+    public void setElectionWard(String electionWard) {
+        this.electionWard = electionWard;
     }
 }

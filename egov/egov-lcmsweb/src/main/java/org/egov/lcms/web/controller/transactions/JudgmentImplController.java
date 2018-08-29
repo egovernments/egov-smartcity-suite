@@ -47,12 +47,20 @@
  */
 package org.egov.lcms.web.controller.transactions;
 
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import org.egov.lcms.transactions.entity.AppealDocuments;
 import org.egov.lcms.transactions.entity.Judgment;
 import org.egov.lcms.transactions.entity.JudgmentImpl;
 import org.egov.lcms.transactions.service.JudgmentImplService;
 import org.egov.lcms.transactions.service.JudgmentService;
 import org.egov.lcms.utils.LegalCaseUtil;
+import org.egov.lcms.utils.constants.LcmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -64,16 +72,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
-
 @Controller
 @RequestMapping("/judgmentimpl")
 public class JudgmentImplController {
+    
+    private static final String JUDGMENTIMPL = "judgmentImpl";
 
     @Autowired
     private JudgmentImplService judgmentImplService;
@@ -89,10 +92,10 @@ public class JudgmentImplController {
         final Judgment judgment = judgmentService.findByLCNumber(lcNumber);
         if (judgment.getJudgmentImpl().isEmpty()) {
             final JudgmentImpl judgemnetImpl = new JudgmentImpl();
-            model.addAttribute("mode", "create");
+            model.addAttribute(LcmsConstants.MODE, "create");
             return judgemnetImpl;
         } else {
-            model.addAttribute("mode", "edit");
+            model.addAttribute(LcmsConstants.MODE, "edit");
             return judgment.getJudgmentImpl().get(0);
         }
     }
@@ -102,12 +105,12 @@ public class JudgmentImplController {
             @RequestParam("lcNumber") final String lcNumber, final Model model, final HttpServletRequest request) {
         final Judgment judgment = judgmentService.findByLCNumber(lcNumber);
         judgmentImpl = getJudgment(lcNumber, request, model);
-        model.addAttribute("legalCase", judgment.getLegalCase());
+        model.addAttribute(LcmsConstants.LEGALCASE, judgment.getLegalCase());
         model.addAttribute("judgment", judgment);
-        model.addAttribute("judgmentImpl", judgmentImpl);
+        model.addAttribute(JUDGMENTIMPL, judgmentImpl);
         if (!judgmentImpl.getAppeal().isEmpty()) {
             final JudgmentImpl newjudgmentImpl = getAppealDocuments(judgmentImpl);
-            model.addAttribute("judgmentImpl", newjudgmentImpl);
+            model.addAttribute(JUDGMENTIMPL, newjudgmentImpl);
         }
         return "judgmentimpl-new";
     }
@@ -120,7 +123,7 @@ public class JudgmentImplController {
         final Judgment judgment = judgmentService.findByLCNumber(lcNumber);
         if (errors.hasErrors()) {
             model.addAttribute("judgment", judgment);
-            model.addAttribute("legalCase", judgment.getLegalCase());
+            model.addAttribute(LcmsConstants.LEGALCASE, judgment.getLegalCase());
             return "judgmentimpl-new";
         } else
             judgmentImpl.setJudgment(judgment);
@@ -128,18 +131,17 @@ public class JudgmentImplController {
         if (judgmentImpl.getImplementationFailure() != null
                 && judgmentImpl.getImplementationFailure().toString().equals("Appeal")) {
             final JudgmentImpl newjudgmentImpl = getAppealDocuments(judgmentImpl);
-            model.addAttribute("judgmentImpl", newjudgmentImpl);
+            model.addAttribute(JUDGMENTIMPL, newjudgmentImpl);
         }
-        model.addAttribute("mode", "view");
-        redirectAttrs.addFlashAttribute("judgmentImpl", judgmentImpl);
+        model.addAttribute(LcmsConstants.MODE, "view");
+        redirectAttrs.addFlashAttribute(JUDGMENTIMPL, judgmentImpl);
         model.addAttribute("message", "Judgment Implementation Saved successfully.");
         return "judgmentimpl-success";
 
     }
 
     private JudgmentImpl getAppealDocuments(final JudgmentImpl judgmentImpl) {
-        List<AppealDocuments> documentDetailsList = new ArrayList<AppealDocuments>();
-        documentDetailsList = legalCaseUtil.getAppealDocumentList(judgmentImpl);
+        final List<AppealDocuments> documentDetailsList = legalCaseUtil.getAppealDocumentList(judgmentImpl);
         judgmentImpl.getAppeal().get(0).setAppealDocuments(documentDetailsList);
         return judgmentImpl;
     }

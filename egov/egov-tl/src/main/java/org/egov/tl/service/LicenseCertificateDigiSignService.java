@@ -54,9 +54,10 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.pims.commons.Position;
-import org.egov.tl.entity.License;
+import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.repository.LicenseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,12 +70,14 @@ import static org.egov.tl.utils.Constants.TL_FILE_STORE_DIR;
 import static org.egov.tl.utils.Constants.WF_ACTION_DIGI_PENDING;
 
 @Service
+@Transactional(readOnly = true)
 public class LicenseCertificateDigiSignService {
 
     @Autowired
     private LicenseRepository licenseRepository;
 
     @Autowired
+    @Qualifier("tradeLicenseService")
     private TradeLicenseService tradeLicenseService;
 
     @Autowired
@@ -84,21 +87,23 @@ public class LicenseCertificateDigiSignService {
     private PositionMasterService positionMasterService;
 
     @Autowired
+    @Qualifier("licenseApplicationService")
     private LicenseApplicationService licenseApplicationService;
 
     @Transactional
     public void digitalSignTransition(List<String> applicationNumbers) {
         for (String applicationNumber : applicationNumbers) {
-            License license = tradeLicenseService.getLicenseByApplicationNumber(applicationNumber);
-            if (!license.isNewWorkflow())
-                tradeLicenseService.digitalSignTransition(applicationNumber);
-            else
+            TradeLicense license = tradeLicenseService.getLicenseByApplicationNumber(applicationNumber);
+            if (license.isNewWorkflow()) {
                 licenseApplicationService.processDigitalSignature(applicationNumber);
+            } else {
+                tradeLicenseService.digitalSignTransition(applicationNumber);
+            }
         }
     }
 
     @ReadOnly
-    public List<License> getLicensePendingForDigiSign(Long licenseAppTypeId) {
+    public List<TradeLicense> getLicensePendingForDigiSign(Long licenseAppTypeId) {
         List<Position> currentUserPositions = positionMasterService.getCurrentUserPositions();
         return licenseAppTypeId == 0 ?
                 licenseRepository.findByStateNextActionAndStateOwnerPositionIn(WF_ACTION_DIGI_PENDING, currentUserPositions)
@@ -108,11 +113,11 @@ public class LicenseCertificateDigiSignService {
 
     }
 
-    public List<License> generateLicenseCertificateForDigiSign(List<Long> licenseIds) {
+    public List<TradeLicense> generateLicenseCertificateForDigiSign(List<Long> licenseIds) {
 
-        List<License> licenses = new ArrayList<>();
+        List<TradeLicense> licenses = new ArrayList<>();
         for (Long licenseId : licenseIds) {
-            License license = tradeLicenseService.getLicenseById(licenseId);
+            TradeLicense license = tradeLicenseService.getLicenseById(licenseId);
             ReportOutput reportOutput = tradeLicenseService.generateLicenseCertificate(license, false);
             FileStoreMapper fileStore = fileStoreService.store(reportOutput.getReportOutputData(),
                     license.generateCertificateFileName() + ".pdf", CONTENT_TYPES.get(PDF), TL_FILE_STORE_DIR);

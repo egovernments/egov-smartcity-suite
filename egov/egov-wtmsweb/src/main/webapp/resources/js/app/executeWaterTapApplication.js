@@ -212,9 +212,17 @@ $('#update').on('click', function(){
 	
 	var jsonObj = [];
 	var myObj = {};
+	var isError = false;
 	
 	$('.check_box:checked').each(function() {
 		var $tr = jQuery(this).closest('tr');
+		var currentDate = formatCurrentDate();
+		    var validDate = compareDate($tr.find('.execDate').val(), currentDate);
+		    if(validDate==-1) {
+		    	bootbox.alert("Execution date can not be greater than current date : "+currentDate);
+		    	isError =true;
+		    	return false;
+		    }
 			myObj = { "id" : ""+$tr.find('.check_box').val(),
 					"executionDate" : "" + $tr.find('.execDate').val(),
 					"applicationNumber" : "" + $tr.find('applicationNumber').val()
@@ -222,6 +230,8 @@ $('#update').on('click', function(){
 			
 			jsonObj.push(myObj);
 		});
+	if(isError)
+		return false;
 		
 		var obj = {"executeWaterApplicationDetails" : jsonObj};
 		var o = JSON.stringify(obj);
@@ -263,6 +273,10 @@ $('#update').on('click', function(){
 					bootbox.alert(" Active Monthly Water Rates are not defined for the selected application");
 					return false;
 				}
+				else if (response == "InvalidExecutionDate") {
+					bootbox.alert(" Execution date can not be greater than current date");
+					return false;
+				}
 				
 			},
 			error : function(response) {
@@ -273,6 +287,23 @@ $('#update').on('click', function(){
 		
 	});
 	
+	
+function formatCurrentDate () {
+	var currentDate = new Date();
+	var date = currentDate.getDate();
+	var month = currentDate.getMonth() + 1;
+	var year = currentDate.getFullYear();
+	
+	if(date<10) {
+		date = '0' + date;
+	}
+	
+	if(month<10) {
+		month = '0' + month; 
+	}
+	
+	return date+'/'+month+'/'+year;	
+}
 
 function compareDate(dt1, dt2) {
 	var d1, m1, y1, d2, m2, y2, ret;

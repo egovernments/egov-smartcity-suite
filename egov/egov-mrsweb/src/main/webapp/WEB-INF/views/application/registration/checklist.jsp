@@ -57,7 +57,7 @@
 				<spring:message code="lbl.common.docs"/>
 		</div>
 	</div>
-	<c:if test="${source eq 'API' && marriageRegistration.datasheetFileStore!=null}">
+	<c:if test="${source eq 'CHPK' && marriageRegistration.datasheetFileStore!=null}">
 	
 	<label class="col-sm-4 add-margin text-right">
 		<spring:message code="lbl.datasheet"/>

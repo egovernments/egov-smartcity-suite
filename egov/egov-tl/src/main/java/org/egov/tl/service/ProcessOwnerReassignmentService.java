@@ -53,10 +53,11 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.pims.commons.Position;
-import org.egov.tl.entity.License;
+import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.repository.LicenseRepository;
 import org.egov.tl.service.es.LicenseApplicationIndexService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -80,6 +81,7 @@ public class ProcessOwnerReassignmentService {
     private PositionMasterService positionMasterService;
 
     @Autowired
+    @Qualifier("tradeLicenseService")
     private TradeLicenseService tradeLicenseService;
 
     @Autowired
@@ -96,14 +98,15 @@ public class ProcessOwnerReassignmentService {
 
         return assignments
                 .stream()
-                .collect(Collectors.toMap(assignment -> assignment.getPosition().getId().toString(),
+                .collect(Collectors.toMap(assignment -> new StringBuffer().append(assignment.getId())
+                                .append("-").append(assignment.getPosition().getId()).toString(),
                         assignment -> new StringBuffer().append(assignment.getEmployee().getName())
                                 .append("-").append(assignment.getPosition().getName()).toString()));
     }
 
     @Transactional
     public Boolean reassignLicenseProcessOwner(Long licenseId, Long approverPositionId) {
-        License license = tradeLicenseService.getLicenseById(licenseId);
+        TradeLicense license = tradeLicenseService.getLicenseById(licenseId);
         if (license != null) {
             Position position = positionMasterService.getPositionById(approverPositionId);
             license.changeProcessOwner(position);

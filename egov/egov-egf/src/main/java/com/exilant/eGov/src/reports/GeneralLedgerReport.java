@@ -148,10 +148,16 @@ public class GeneralLedgerReport {
         final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         final SimpleDateFormat formatter1 = new SimpleDateFormat("dd-MMM-yyyy");
         Date dt = new Date();
-        final String endDate1 = reportBean.getEndDate();
+        String endDate1 = reportBean.getEndDate();
+        if(endDate1 == "" || endDate1.length() == 0) {
+        	endDate1 = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
+        }
         isCurDate(endDate1);
         try {
             endDate = reportBean.getEndDate();
+            if(endDate == "" || endDate.length() == 0) {
+            	endDate = endDate1;
+        	}
             dt = sdf.parse(endDate);
             formendDate = formatter1.format(dt);
         } catch (final Exception e) {

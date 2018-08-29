@@ -72,10 +72,10 @@ import java.util.Date;
 import java.util.List;
 
 import static org.egov.mrs.application.MarriageConstants.BOUNDARY_TYPE;
-import static org.egov.mrs.application.MarriageConstants.MARRIAGE_DEFAULT_FUNCTIONARY_CODE;
-import static org.egov.mrs.application.MarriageConstants.MARRIAGE_DEFAULT_FUND_CODE;
-import static org.egov.mrs.application.MarriageConstants.MARRIAGE_DEFAULT_FUND_SRC_CODE;
-import static org.egov.mrs.application.MarriageConstants.MARRIAGE_DEPARTMENT_CODE;
+import static org.egov.mrs.application.MarriageConstants.MRS_DEFAULT_FUNCTIONARY_CODE;
+import static org.egov.mrs.application.MarriageConstants.MRS_DEFAULT_FUND_CODE;
+import static org.egov.mrs.application.MarriageConstants.MRS_DEFAULT_FUND_SRC_CODE;
+import static org.egov.mrs.application.MarriageConstants.MRG_DEPARTMENT_CODE;
 import static org.egov.mrs.application.MarriageConstants.MODULE_NAME;
 
 /**
@@ -156,32 +156,32 @@ public class ReIssueBillable extends AbstractBillable implements Billable {
     @Override
     public String getBoundaryType() {
         final AppConfigValues boundaryType = appConfigValuesService.getConfigValuesByModuleAndKey(
-                MarriageConstants.MODULE_NAME, MarriageConstants.MARRIAGE_REGISTRATIONUNIT_BOUNDARYYTYPE).get(0);
+                MarriageConstants.MODULE_NAME, MarriageConstants.MRS_BOUNDARYYTYPE).get(0);
         return boundaryType != null && !"".equals(boundaryType) ? boundaryType.getValue() : BOUNDARY_TYPE;
 
     }
 
     @Override
     public String getDepartmentCode() {
-        final AppConfigValues marriageDeptCode = getAppConfigValue(MARRIAGE_DEPARTMENT_CODE);
+        final AppConfigValues marriageDeptCode = getAppConfigValue(MRG_DEPARTMENT_CODE);
         return marriageDeptCode != null ? marriageDeptCode.getValue() : "";
     }
 
     @Override
     public BigDecimal getFunctionaryCode() {
-        final AppConfigValues marriageFunctionaryCode = getAppConfigValue(MARRIAGE_DEFAULT_FUNCTIONARY_CODE);
+        final AppConfigValues marriageFunctionaryCode = getAppConfigValue(MRS_DEFAULT_FUNCTIONARY_CODE);
         return marriageFunctionaryCode != null ? new BigDecimal(marriageFunctionaryCode.getValue()) : BigDecimal.ZERO;
     }
 
     @Override
     public String getFundCode() {
-        final AppConfigValues marriageFundCode = getAppConfigValue(MARRIAGE_DEFAULT_FUND_CODE);
+        final AppConfigValues marriageFundCode = getAppConfigValue(MRS_DEFAULT_FUND_CODE);
         return marriageFundCode != null ? marriageFundCode.getValue() : "";
     }
 
     @Override
     public String getFundSourceCode() {
-        final AppConfigValues marriageFundSrcCode = getAppConfigValue(MARRIAGE_DEFAULT_FUND_SRC_CODE);
+        final AppConfigValues marriageFundSrcCode = getAppConfigValue(MRS_DEFAULT_FUND_SRC_CODE);
         return marriageFundSrcCode != null ? marriageFundSrcCode.getValue() : "";
     }
 

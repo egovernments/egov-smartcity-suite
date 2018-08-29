@@ -137,19 +137,13 @@ function onSubmitEvent(event) {
                     }
                 }],
             ajax: {
-                url: "search",
+                url: "search?" + $("#baseregisterform").serialize(),
                 type: 'POST',
                 data: function (args) {
                     return {
-                        "args": JSON.stringify(args),
-                        "categoryId": $("#category").val(),
-                        "subCategoryId": $("#subCategory").val(),
-                        "statusId": $("#status").val(),
-                        "wardId": $("#ward").val(),
-                        "filterName": $("#filter").val()
+                        "args": JSON.stringify(args)
                     };
                 }
-
             },
             columns: [
                 {
@@ -166,7 +160,7 @@ function onSubmitEvent(event) {
                             + data.name + '</a>';
                     },
                     "sTitle": "License No.",
-                    "name": "licensenumber"
+                    "name": "licenseNumber"
                 }, {
                     "data": "oldLicenseNo",
                     "name": "oldLicenseNumber",
@@ -196,9 +190,13 @@ function onSubmitEvent(event) {
                     "name": "assessmentno",
                     "sTitle": "Assessment No"
                 }, {
-                    "data": "wardname",
-                    "name": "wardname",
-                    "sTitle": "Ward No"
+                    "data": "revenueWard",
+                    "name": "revenueward",
+                    "sTitle": "Revenue Ward"
+                },{
+                    "data": "electionWard",
+                    "name": "electionward",
+                    "sTitle": "Election Ward"
                 }, {
                     "data": "localityname",
                     "name": "localityname",
@@ -254,17 +252,17 @@ function onSubmitEvent(event) {
                     $('#report-footer').show();
                 }
                 if (data.length > 0) {
-                    updateTotalFooter(16, api);
                     updateTotalFooter(17, api);
                     updateTotalFooter(18, api);
                     updateTotalFooter(19, api);
+                    updateTotalFooter(20, api);
                 }
             },
             "initComplete": function (settings, json) {
                 $('.loader-class').modal('hide');
             },
             "aoColumnDefs": [{
-                "aTargets": [16, 17, 18, 19],
+                "aTargets": [17, 18, 19, 20],
                 "mRender": function (data, type, full) {
                     return formatNumberInr(data);
                 },
@@ -290,7 +288,7 @@ function updateTotalFooter(colidx, api) {
     };
 
     // Total over all pages
-    total = recordTotal[colidx - 16];
+    total = recordTotal[colidx - 17];
 
     // Total over this page
     pageTotal = api.column(colidx, {

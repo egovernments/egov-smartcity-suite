@@ -127,7 +127,7 @@
 						<s:if test="%{model.thirdPartyVerified 
 							&& showCheckboxForGIS
 							&& @org.egov.ptis.constants.PropertyTaxConstants@SOURCE_SURVEY.equalsIgnoreCase(model.source)}">
-							<s:checkbox name="model.thirdPartyVerified" id="thirdPartyVerified" value="%{model.thirdPartyVerified}" />
+							<s:checkbox name="thirdPartyCheckbox" id="thirdPartyCheckbox" value="%{model.thirdPartyVerified}" />
 							<s:text name="survey.thirdparty.verfied" />
 						</s:if>	
 							<s:if test="%{!citizenPortalUser}">
@@ -238,10 +238,8 @@
 				jQuery('#vacantLandArea').attr('readOnly', true);
 			</s:if>
 			<s:if test='%{showCheckboxForGIS && @org.egov.ptis.constants.PropertyTaxConstants@SOURCE_SURVEY.equalsIgnoreCase(model.source)}'>
-				if(jQuery('#thirdPartyVerified').is(":checked")){
-					jQuery('#thirdPartyVerified').attr('disabled', true);
-				}
-			</s:if>	
+				jQuery('#thirdPartyCheckbox').attr('disabled', true);	
+			</s:if>
 		}
 
 		function onSubmit() {

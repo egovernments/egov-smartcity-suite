@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -54,9 +54,17 @@
 </head>
 <body onload="refreshInbox()">
 <s:form action="newTradeLicense" theme="simple">
-    <div class="alert alert-info view-content">
-        <s:actionmessage/>
-    </div>
+    <s:if test="%{hasErrors()}">
+        <div class="alert alert-danger view-content">
+            <s:actionerror/>
+            <s:fielderror/>
+        </div>
+    </s:if>
+    <s:if test="%{hasActionMessages()}">
+        <div class="alert alert-info view-content">
+            <s:actionmessage/>
+        </div>
+    </s:if>
     <div class="text-center">
         <input type="button" value="Close" onclick="javascript:window.close()" class="button"/>
     </div>

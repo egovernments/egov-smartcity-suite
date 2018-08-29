@@ -68,7 +68,7 @@
 			<span class="mandatory1">*</span>
 		</div></td>
 	<td class="bluebox"><s:textfield name="voucherTypeBean.partyName"
-			id="voucherTypeBean.partyName" onblur="isSpecialChar(this)"
+			id="voucherTypeBean.partyName" onchange="isSpecialChar(this)" onblur="isSpecialChar(this)"
 			value="%{voucherTypeBean.partyName}" /></td>
 </tr>
 <tr>
@@ -131,6 +131,7 @@ function onChangeVSubType(){
 	document.getElementById('voucherTypeBean.voucherSubType').value = vType;
 	
 	if(vType == 'JVGeneral'){
+		document.getElementById('lblError').innerHTML = "";
 		document.getElementById('voucherTypeBean.partyBillNum').value="";
 		document.getElementById('voucherTypeBean.partyName').value="";
 		document.getElementById('partyBillDate').value="";
@@ -142,6 +143,7 @@ function onChangeVSubType(){
 		document.getElementById('partyBillDate').readOnly=true;
 		document.getElementById('voucherTypeBean.billNum').readOnly=true;
 		document.getElementById('billDate').readOnly=true;
+		
 	}
 	else{
 		document.getElementById('voucherTypeBean.partyBillNum').readOnly=false;
@@ -158,9 +160,5 @@ function onChangeVSubType(){
 	}
 	
 }    
-
-function isSpecialChar(Obj)
-{
-  return true;
-  }
+  
 </script>

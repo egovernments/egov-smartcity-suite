@@ -48,7 +48,7 @@
 
 package org.egov.infra.workflow.matrix.service;
 
-import org.egov.infra.workflow.entity.WorkflowTypes;
+import org.egov.infra.workflow.entity.WorkflowType;
 import org.egov.infra.workflow.matrix.entity.WorkFlowAdditionalRule;
 import org.egov.infra.workflow.matrix.repository.WorkFlowAdditionalRuleRepository;
 import org.egov.infra.workflow.service.WorkflowTypeService;
@@ -84,7 +84,7 @@ public class WorkFlowAdditionalDetailsService {
         return this.entityQueryService.findAllBy(" select distinct(moduletype) from EgwStatus order by moduletype asc");
     }
 
-    public List<WorkflowTypes> getobjectTypeList() {
+    public List<WorkflowType> getobjectTypeList() {
         return workflowTypeService.getAllWorkflowTypes();
     }
 

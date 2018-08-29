@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -52,20 +52,21 @@ import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 
 import java.util.Date;
+import java.util.Objects;
 
 import static java.math.BigDecimal.ZERO;
 
 public class LicenseDemand extends EgDemand {
     private static final long serialVersionUID = -8850906441323607906L;
-    private License license;
+    private TradeLicense license;
     private Date renewalDate;
     private char isLateRenewal;
 
-    public License getLicense() {
+    public TradeLicense getLicense() {
         return license;
     }
 
-    public void setLicense(final License license) {
+    public void setLicense(final TradeLicense license) {
         this.license = license;
     }
 
@@ -93,5 +94,22 @@ public class LicenseDemand extends EgDemand {
             this.setAmtCollected(this.getAmtCollected().add(demandDetail.getAmtCollected()));
             this.setBaseDemand(this.getBaseDemand().add(demandDetail.getAmount()));
         }
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj)
+            return true;
+        if (!(obj instanceof LicenseDemand))
+            return false;
+        if (!super.equals(obj))
+            return false;
+        final LicenseDemand that = (LicenseDemand) obj;
+        return Objects.equals(getLicense(), that.getLicense());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getLicense());
     }
 }

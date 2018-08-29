@@ -103,8 +103,8 @@ public class ViewPropertyDetails {
     private String surveyNumber;
     private String pattaNumber;
     private Float vacantLandArea;
-    private Double marketValue;
-    private Double currentCapitalValue;
+    private BigDecimal marketValue;
+    private BigDecimal currentCapitalValue;
     private String effectiveDate;
     private String northBoundary;
     private String southBoundary;
@@ -560,19 +560,19 @@ public class ViewPropertyDetails {
         this.vacantLandArea = vacantLandArea;
     }
 
-    public Double getMarketValue() {
+    public BigDecimal getMarketValue() {
         return marketValue;
     }
 
-    public void setMarketValue(Double marketValue) {
+    public void setMarketValue(BigDecimal marketValue) {
         this.marketValue = marketValue;
     }
 
-    public Double getCurrentCapitalValue() {
+    public BigDecimal getCurrentCapitalValue() {
         return currentCapitalValue;
     }
 
-    public void setCurrentCapitalValue(Double currentCapitalValue) {
+    public void setCurrentCapitalValue(BigDecimal currentCapitalValue) {
         this.currentCapitalValue = currentCapitalValue;
     }
 

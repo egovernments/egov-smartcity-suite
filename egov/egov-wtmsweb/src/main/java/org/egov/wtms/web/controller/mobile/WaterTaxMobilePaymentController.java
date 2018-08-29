@@ -176,7 +176,7 @@ public class WaterTaxMobilePaymentController {
         waterConnectionBillable.setUserId(2L);
         ApplicationThreadLocals.setUserId(2L);
         currentInstallmentYear = formatYear.format(connectionDemandService
-                .getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, new Date())
+                .getCurrentInstallment(WaterTaxConstants.PROPERTY_MODULE_NAME, null, new Date())
                 .getInstallmentYear());
         waterConnectionBillable.setReferenceNumber(billRefeNumber.generateBillNumber(currentInstallmentYear));
         waterConnectionBillable.setBillType(connectionDemandService.getBillTypeByCode(BILLTYPE_MANUAL));

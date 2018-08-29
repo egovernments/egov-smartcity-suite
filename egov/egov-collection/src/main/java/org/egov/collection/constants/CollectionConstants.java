@@ -88,6 +88,7 @@ public final class CollectionConstants {
     public static final String INSTRUMENTTYPE_CARD = FinancialConstants.INSTRUMENT_TYPE_CARD;
     public static final String INSTRUMENTTYPE_BANK = FinancialConstants.INSTRUMENT_TYPE_BANK;
     public static final String INSTRUMENTTYPE_ONLINE = FinancialConstants.INSTRUMENT_TYPE_ONLINE;
+    public static final String INSTRUMENTTYPE_ATM = FinancialConstants.INSTRUMENT_TYPE_ATM;
 
     // Receipt types
     public static final char RECEIPT_TYPE_ADHOC = 'A';
@@ -341,6 +342,7 @@ public final class CollectionConstants {
     public static final String PURPOSE_NAME_ATM_ACCOUNTCODE = "ATM ACCOUNT CODE";
     public static final String PURPOSE_NAME_INTERUNITACCOUNT = "Inter-Unit Transfer Account";
     public static final String PURPOSE_NAME_REBATE = "REBATE";
+    public static final String PURPOSE_NAME_THIRD_PARTY_COLLECTION = "Third Party Receivable";
 
     // Bank Remittance
     public static final String BANKREMITTANCE_SERVICETOTALCASHAMOUNT = "SERVICETOTALCASHAMOUNT";
@@ -412,6 +414,9 @@ public final class CollectionConstants {
     public static final String CHALLAN_STATUS_DESC_CANCELLED = "Cancelled";
 
     public static final String PGI_AUTHORISATION_CODE_SUCCESS = "0300";
+    public static final String PGI_AUTHORISATION_CODE_FAILED = "FAILED";
+    public static final String PGI_AUTHORISATION_CODE_PENDING = "PENDING";
+    public static final String PGI_AUTHORISATION_CODE_ABORTED = "ABORTED";
 
     // Bill desk waiting for response from payment gateway.
     public static final String PGI_AUTHORISATION_CODE_WAITINGFOR_PAY_GATEWAY_RESPONSE = "0002";
@@ -546,34 +551,7 @@ public final class CollectionConstants {
     public static final String AXIS_CHECK_DR_EXISTS = "vpc_DRExists";
     public static final String AXIS_ABORTED_AUTH_STATUS = "A";
 
-    // SBIMOPS payment gateway variables
-    public static final String SBIMOPS_DEPTCODE = "deptcode";
-    public static final String SBIMOPS_DDCODE = "ddocode";
-    public static final String SBIMOPS_HOA = "hoa";
-    public static final String SBIMOPS_DEPTTRANSID = "depttransid";
-    public static final String SBIMOPS_REMITTER_NAME = "remittersname";
-    public static final String SBIMOPS_TAMOUNT = "tamount";
-    public static final String SBIMOPS_MD = "MD";
-    public static final String SBIMOPS_DRU = "dru";
-    public static final String SBIMOPS_BANKSTATUS = "bankstatus";
-    public static final String SBIMOPS_BANK_DATE = "bankdate";
-    public static final String SBIMOPS_BANK_AMOUNT = "bankamount";
-    public static final String SBIMOPS_BANK_NAME = "bankname";
-    public static final String SBIMOPS_UAMOUNT = "uamount";
-
-    public static final String SBIMOPS_DC = "DC";
-    public static final String SBIMOPS_DTID = "DTID";
-    public static final String SBIMOPS_RN = "RN";
-    public static final String SBIMOPS_RID = "RID";
-    public static final String SBIMOPS_TA = "TA";
-    public static final String SBIMOPS_CH = "Ch";
-    public static final String SBIMOPS_RURL = "RUrl";
-    public static final String SBIMOPS_CFMS_TRID = "CFMS_TRID";
-    public static final String SBIMOPS_BANKTIME_STAMP = "BankTimeStamp";
-    public static final String SBIMOPS_STATUS = "Status";
-
-    public static final String MESSAGEKEY_SBIMOPS_DC = "sbimops.department.code";
-
+    public static final String UTF_ENCODING = "UTF-8";
     // This is an array for creating hex chars
     public static final char[] AXIS_HEX_TABLE = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A',
             'B', 'C', 'D', 'E', 'F' };
@@ -601,7 +579,6 @@ public final class CollectionConstants {
     public static final String USER_TYPE_FOR_CITIZEN = "CITIZEN";
     public static final String DEPT_CODE_FOR_ACCOUNTS = "ACC";
 
-    public static final String INSTRUMENTTYPE_ATM = "atm";
     public static final String REPORT_TEMPLATE_REMITTANCE_STATEMENT = "collection_remittanc_statement_report";
     public static final String REMITTANCEVOUCHERREPORT_BRV = "BRV";
     public static final String REMITTANCEVOUCHERREPORT_CSL = "CSL";
@@ -696,4 +673,5 @@ public final class CollectionConstants {
             add("P");
         }
     };
+
 }

@@ -815,13 +815,14 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         if (logger.isDebugEnabled())
             logger.debug("createOwners for property: " + property + ", basicProperty: " + basicProperty
                     + ", ownerAddress: " + ownerAddress);
-        User user;
+        User user = null;
         property.getAmalgamationOwners().clear();
         for (final AmalgamationOwner ownerInfo : property.getAmalgamationOwnersProxy()) {
             if (ownerInfo != null) {
-                if (StringUtils.isNotBlank(ownerInfo.getOwner().getAadhaarNumber()))
+                /*if (StringUtils.isNotBlank(ownerInfo.getOwner().getAadhaarNumber()))
                     user = userService.getUserByAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
-                else
+                else*/
+                if (StringUtils.isNotBlank(ownerInfo.getOwner().getMobileNumber()))
                 	 user = (User) basicPropertyService.find(FROM_USER_WHERE_NAME_AND_MOBILE_NUMBER_AND_GENDER, ownerInfo
                              .getOwner().getName(), ownerInfo.getOwner().getMobileNumber(), ownerInfo.getOwner()
                                      .getGender());

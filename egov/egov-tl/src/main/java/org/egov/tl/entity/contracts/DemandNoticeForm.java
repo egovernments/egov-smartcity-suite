@@ -76,6 +76,8 @@ public class DemandNoticeForm {
     private BigDecimal tlArrearPenalty;
     private BigDecimal tlCurrentFee;
     private BigDecimal tlCurentPenalty;
+    private Long electionWard;
+    private String electionWardName;
 
     public DemandNoticeForm() {
 
@@ -89,6 +91,7 @@ public class DemandNoticeForm {
         setCategoryName(license.getCategory().getName());
         setSubCategoryName(license.getTradeName().getName());
         setTradeTitle(license.getNameOfEstablishment());
+        setElectionWardName(license.getAdminWard() == null ? "N/A" : license.getAdminWard().getName());
         if (null != license.getLicensee()) {
             setTradeOwnerName(license.getLicensee().getApplicantName());
         }
@@ -282,4 +285,19 @@ public class DemandNoticeForm {
         this.applicationNumber = applicationNumber;
     }
 
+    public Long getElectionWard() {
+        return electionWard;
+    }
+
+    public void setElectionWard(Long electionWard) {
+        this.electionWard = electionWard;
+    }
+
+    public String getElectionWardName() {
+        return electionWardName;
+    }
+
+    public void setElectionWardName(String electionWardName) {
+        this.electionWardName = electionWardName;
+    }
 }

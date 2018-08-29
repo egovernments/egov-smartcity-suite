@@ -59,6 +59,8 @@ import java.util.List;
 
 import static java.lang.Boolean.FALSE;
 
+import java.math.BigDecimal;
+
 /**
  * The Implementation Class for the BuildUpProperty
  * 
@@ -81,8 +83,8 @@ public class BuiltUpProperty extends AbstractProperty {
     private List<Floor> floorDetails = new ArrayList<>();
     private List<Floor> floorDetailsProxy = new ArrayList<>();
     private Integer propertyDetailsID;
-    private String water_Meter_Num;
-    private String elec_Meter_Num;
+    private String waterMeterNum;
+    private String elecMeterNum;
     private Integer noofFloors;
     private char fieldIrregular = 'N';
     private transient Property property;
@@ -113,8 +115,8 @@ public class BuiltUpProperty extends AbstractProperty {
     private WoodType woodType;
     private Apartment apartment = null;
     private String pattaNumber;
-    private Double currentCapitalValue;
-    private Double marketValue;
+    private BigDecimal currentCapitalValue;
+    private BigDecimal marketValue;
     private String categoryType;
     private String occupancyCertificationNo;
     private Date occupancyCertificationDate;
@@ -129,15 +131,15 @@ public class BuiltUpProperty extends AbstractProperty {
 
     public BuiltUpProperty(Area sitalArea, Area totalBuiltupArea, Area commBuiltUpArea, Area plinthArea,
             Area commVacantLand, Area nonResPlotArea, Boolean irregular, String surveyNumber, Character fieldVerified,
-            Date fieldVerificationDate, List<Floor> floorDetails, Integer propertyDetailsID, String water_Meter_Num,
-            String elec_Meter_Num, Integer noOFfloors, char fieldIrregular, Property property, Date updatedTime,
+            Date fieldVerificationDate, List<Floor> floorDetails, Integer propertyDetailsID, String waterMeterNum,
+            String elecMeterNum, Integer noOFfloors, char fieldIrregular, Property property, Date updatedTime,
             PropertyUsage propertyUsage, Date dateOfCompletion, PropertyCreationReason creationReason,
             PropertyTypeMaster propertyTypeMaster, String propertyType, PropertyMutationMaster propertyMutationMaster,
             Character comZone, Character cornerPlot, PropertyOccupation propertyOccupation, Double extentSite,
             Double extentAppartenauntLand, FloorType floorType, RoofType roofType, WallType wallType, WoodType woodType,
             boolean lift, boolean toilets, boolean waterTap, boolean structure, boolean electricity,
             boolean attachedBathRoom, boolean waterHarvesting, boolean cable, String siteOwner, Apartment apartment,
-            String pattaNumber, Double currentCapitalValue, Double marketValue, String categoryType,
+            String pattaNumber, BigDecimal currentCapitalValue, BigDecimal marketValue, String categoryType,
             String occupancyCertificationNo, Date occupancyCertificationDate, Boolean appurtenantLandChecked, Boolean corrAddressDiff,
             PropertyDepartment propertyDepartment, VacantLandPlotArea vacantLandPlotArea,
             LayoutApprovalAuthority layoutApprovalAuthority, String layoutPermitNo, Date layoutPermitDate) {
@@ -154,8 +156,8 @@ public class BuiltUpProperty extends AbstractProperty {
         this.fieldVerificationDate = fieldVerificationDate;
         this.floorDetails = floorDetails;
         this.propertyDetailsID = propertyDetailsID;
-        this.water_Meter_Num = water_Meter_Num;
-        this.elec_Meter_Num = elec_Meter_Num;
+        this.waterMeterNum = waterMeterNum;
+        this.elecMeterNum = elecMeterNum;
         this.noofFloors = noofFloors;
         this.fieldIrregular = fieldIrregular;
         this.property = property;
@@ -306,8 +308,8 @@ public class BuiltUpProperty extends AbstractProperty {
      * @return Returns the Water_Meter_Num
      */
     @Override
-    public String getWater_Meter_Num() {
-        return water_Meter_Num;
+    public String getWaterMeterNum() {
+        return waterMeterNum;
     }
 
     /**
@@ -315,16 +317,16 @@ public class BuiltUpProperty extends AbstractProperty {
      *            The Water_Meter_Num to set.
      */
     @Override
-    public void setWater_Meter_Num(String water_Meter_Num) {
-        this.water_Meter_Num = water_Meter_Num;
+    public void setWaterMeterNum(String waterMeterNum) {
+        this.waterMeterNum = waterMeterNum;
     }
 
     /**
      * @return Returns the Elec_Meter_Num
      */
     @Override
-    public String getElec_Meter_Num() {
-        return elec_Meter_Num;
+    public String getElecMeterNum() {
+        return elecMeterNum;
     }
 
     /**
@@ -332,8 +334,8 @@ public class BuiltUpProperty extends AbstractProperty {
      *            The Water_Meter_Num to set.
      */
     @Override
-    public void setElec_Meter_Num(String elec_Meter_Num) {
-        this.elec_Meter_Num = elec_Meter_Num;
+    public void setElecMeterNum(String elecMeterNum) {
+        this.elecMeterNum = elecMeterNum;
     }
 
     /**
@@ -956,22 +958,22 @@ public class BuiltUpProperty extends AbstractProperty {
     }
 
     @Override
-    public Double getCurrentCapitalValue() {
+    public BigDecimal getCurrentCapitalValue() {
         return currentCapitalValue;
     }
 
     @Override
-    public void setCurrentCapitalValue(Double currentCapitalValue) {
+    public void setCurrentCapitalValue(BigDecimal currentCapitalValue) {
         this.currentCapitalValue = currentCapitalValue;
     }
 
     @Override
-    public Double getMarketValue() {
+    public BigDecimal getMarketValue() {
         return marketValue;
     }
 
     @Override
-    public void setMarketValue(Double marketValue) {
+    public void setMarketValue(BigDecimal marketValue) {
         this.marketValue = marketValue;
     }
 

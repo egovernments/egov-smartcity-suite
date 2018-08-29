@@ -238,9 +238,11 @@
     });
 
     var parentBoundary = '${model.parentBoundary.id}';
+    var adminWard = '${model.adminWard.id}';
     $(document).ready(function () {
         if ($('#boundary').val() != '') {
             $('#boundary').trigger('blur');
+            $('#adminWard').val(adminWard);
         }
     });
 

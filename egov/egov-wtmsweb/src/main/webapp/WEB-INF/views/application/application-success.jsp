@@ -133,8 +133,15 @@
 								<spring:message code="msg.reconnection.disconnected" />
 								<%-- <spring:message code="msg.success.forward" /><br>${approvalUser} --%>
 							</c:when>
+							<c:when test="${waterConnectionDetails.applicationType.code== 'REGLZNCONNECTION' && waterConnectionDetails.state.value == 'Rejected'}">
+								<spring:message code="msg.regulariseconnection.reject.success" />
+								<span>${approverName}~${nextDesign}</span>
+							</c:when>
 							<c:when test="${waterConnectionDetails.applicationType.code== 'REGLZNCONNECTION' && waterConnectionDetails.status.code=='DIGITALSIGNATUREPENDING'}">
 								<span><spring:message code="msg.connection.approved.success" />${approverName}~${nextDesign}</span>
+							</c:when>
+							<c:when test="${waterConnectionDetails.applicationType.code== 'REGLZNCONNECTION' && waterConnectionDetails.state.value == 'Cancelled'}">
+								<span><spring:message code="msg.regulariseconnection.cancel.success" /></span>
 							</c:when>
 							<c:when test="${waterConnectionDetails.applicationType.code== 'REGLZNCONNECTION' &&  waterConnectionDetails.connectionStatus == 'INPROGRESS'}">
 								<spring:message code="msg.regulariseconnection.ack.success" />

@@ -63,6 +63,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -155,7 +156,7 @@ public class CalculatePropertyTaxService {
     
     public Map<String, String> getCurrentHalfyearTaxRates(final Map<Installment, TaxCalculationInfo> instTaxMap,
             final PropertyTypeMaster propTypeMstr) {
-        final Map<String, String> taxDetails = new ConcurrentHashMap<>();
+        final Map<String, String> taxDetails = new LinkedHashMap<>();
         final Installment currentInstall = propertyTaxCommonUtils.getCurrentPeriodInstallment();
         final TaxCalculationInfo calculationInfo = instTaxMap.get(currentInstall);
         final BigDecimal annualValue = calculationInfo.getTotalNetARV();
@@ -198,7 +199,6 @@ public class CalculatePropertyTaxService {
             BigDecimal eduTax, BigDecimal unAuthPenalty, BigDecimal vacLandTax, BigDecimal sewrageTax,
             BigDecimal serviceCharges) {
         taxDetails.put("Annual Rental Value", propertyTaxCommonUtils.formatAmount(annualValue)); 
-        taxDetails.put("Total Tax", propertyTaxCommonUtils.formatAmount(totalPropertyTax)); 
         if (OWNERSHIP_TYPE_VAC_LAND.equalsIgnoreCase(propTypeMstr.getCode()))
         taxDetails.put("Vacant Land Tax", propertyTaxCommonUtils.formatAmount(vacLandTax)); 
             else{
@@ -213,6 +213,8 @@ public class CalculatePropertyTaxService {
             taxDetails.put("Service Charges", propertyTaxCommonUtils.formatAmount(serviceCharges)); 
         if (!OWNERSHIP_TYPE_VAC_LAND.equalsIgnoreCase(propTypeMstr.getCode()))
             taxDetails.put("Unauthorized Penalty", propertyTaxCommonUtils.formatAmount(unAuthPenalty));
+        
+        taxDetails.put("Total Tax", propertyTaxCommonUtils.formatAmount(totalPropertyTax));
     }
     
    

@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -48,7 +48,7 @@
 
 package org.egov.tl.repository;
 
-import org.egov.tl.entity.License;
+import org.egov.tl.entity.TradeLicense;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -59,12 +59,12 @@ import java.util.Date;
 import java.util.List;
 
 @Repository
-public interface SearchTradeRepository extends JpaRepository<License, Long>, JpaSpecificationExecutor<License> {
+public interface SearchTradeRepository extends JpaRepository<TradeLicense, Long>, JpaSpecificationExecutor<TradeLicense> {
 
-    @Query("select license from License license where license.licenseDemand in (select deatils.egDemand  from " +
+    @Query("select license from TradeLicense license where license.licenseDemand in (select deatils.egDemand  from " +
             "EgDemandDetails deatils where deatils.egDemandReason in (select reason.id from EgDemandReason reason where " +
             "reason.egInstallmentMaster<= (select installment.id from Installment installment where installment.fromDate < :currentDate " +
             "and installment.toDate >= :currentDate and  installment.module=(select egmod.id from Module egmod where egmod.name='Trade License')))" +
             "and (deatils.amount - deatils.amtCollected) >0) and license.isActive=true")
-    List<License> findLicenseClosureByCurrentInstallmentYear(@Param("currentDate") Date currentDate);
+    List<TradeLicense> findLicenseClosureByCurrentInstallmentYear(@Param("currentDate") Date currentDate);
 }

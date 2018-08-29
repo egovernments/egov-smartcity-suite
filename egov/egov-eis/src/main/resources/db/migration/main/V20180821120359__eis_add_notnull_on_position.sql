@@ -1,0 +1,1 @@
+alter table egeis_assignment alter column position set not null;

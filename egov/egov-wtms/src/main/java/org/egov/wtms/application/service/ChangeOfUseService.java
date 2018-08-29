@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -57,7 +57,6 @@ import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.application.workflow.ApplicationWorkflowCustomDefaultImpl;
-import org.egov.wtms.application.service.ConnectionAddressService;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.service.ApplicationProcessTimeService;
 import org.egov.wtms.utils.PropertyExtnUtils;
@@ -126,7 +125,7 @@ public class ChangeOfUseService {
             if (assessmentDetails.getPropertyDetails() != null
                     && assessmentDetails.getPropertyDetails().getTaxDue() != null
                     && assessmentDetails.getPropertyDetails().getTaxDue().doubleValue() > 0
-                    && !waterTaxUtils.isNewConnectionAllowedIfPTDuePresent())
+                    && !waterTaxUtils.isConnectionAllowedIfPTDuePresent())
                 validationMessage = wcmsMessageSource.getMessage("err.validate.property.taxdue",
                         new String[] { assessmentDetails.getPropertyDetails().getTaxDue().toString(),
                                 parentWaterConnectionDetail.getConnection().getPropertyIdentifier(),
@@ -153,7 +152,7 @@ public class ChangeOfUseService {
     @Transactional
     public WaterConnectionDetails createChangeOfUseApplication(final WaterConnectionDetails connectionDetails,
             final Long approvalPosition, final String approvalComent, final String additionalRule,
-            final String workFlowAction, final String sourceChannel) {
+            final String workFlowAction) {
         if (connectionDetails.getApplicationNumber() == null)
             connectionDetails.setApplicationNumber(applicationNumberGenerator.generate());
 
@@ -169,7 +168,7 @@ public class ChangeOfUseService {
                 approvalComent, additionalRule, workFlowAction);
         if (waterTaxUtils.isCitizenPortalUser(userService.getUserById(waterConnectionDetails.getCreatedBy().getId())))
             waterConnectionDetailsService.pushPortalMessage(waterConnectionDetails);
-        waterConnectionDetailsService.updateIndexes(waterConnectionDetails, sourceChannel);
+        waterConnectionDetailsService.updateIndexes(waterConnectionDetails);
         waterConnectionSmsAndEmailService.sendSmsAndEmail(waterConnectionDetails, workFlowAction);
         return waterConnectionDetails;
     }

@@ -59,7 +59,7 @@
 			</td>
 		</tr>
 		<tr>
-			<th class="bluebgheadtd"><s:text name="adharno" /></th>
+			<%-- <th class="bluebgheadtd"><s:text name="adharno" /></th> --%>
 			<th class="bluebgheadtd"><s:text name="MobileNumber" /> <span
 				class="mandatory1">*</span></th>
 			<th class="bluebgheadtd"><s:text name="OwnerName" /><span
@@ -78,11 +78,11 @@
 				<s:hidden name="basicProperty.propertyOwnerInfoProxy[0].owner.type"
 					id="basicProperty.propertyOwnerInfoProxy[0].owner.type"
 					value="%{basicProperty.propertyOwnerInfoProxy[0].owner.type}"></s:hidden>
-				<td class="blueborderfortd" align="center"><s:textfield
+				<%-- <td class="blueborderfortd" align="center"><s:textfield
 						name="basicProperty.propertyOwnerInfoProxy[0].owner.aadhaarNumber"
 						value="%{basicProperty.propertyOwnerInfoProxy[0].owner.aadhaarNumber}"
 						id="aadharNo" cssClass="txtaadhar" size="12" maxlength="12"
-						data-idx="0" onblur="getAadharDetails(this);"></s:textfield></td>
+						data-idx="0" onblur="getAadharDetails(this);"></s:textfield></td> --%>
 				<td class="blueborderfortd" align="center">+91 <s:textfield
 						name="basicProperty.propertyOwnerInfoProxy[0].owner.mobileNumber"
 						title="Mobile number of the owner" maxlength="10" size="20"
@@ -151,13 +151,13 @@
 						name="basicProperty.propertyOwnerInfoProxy[%{#ownerStatus.index}].owner.type"
 						id="basicProperty.propertyOwnerInfoProxy[%{#ownerStatus.index}].owner.type"
 						value="%{basicProperty.propertyOwnerInfoProxy[#ownerStatus.index].owner.type}"></s:hidden>
-					<td class="blueborderfortd" align="center"><s:textfield
+					<%-- <td class="blueborderfortd" align="center"><s:textfield
 							name="basicProperty.propertyOwnerInfoProxy[%{#ownerStatus.index}].owner.aadhaarNumber"
 							id="aadharNo" size="12" maxlength="12" data-optional="1"
 							data-errormsg="Aadhar no is mandatory!"
 							value="%{basicProperty.propertyOwnerInfoProxy[#ownerStatus.index].owner.aadhaarNumber}"
 							data-idx="%{#ownerStatus.index}" onblur="getAadharDetails(this);"
-							cssClass="txtaadhar"></s:textfield></td>
+							cssClass="txtaadhar"></s:textfield></td> --%>
 					<td class="blueborderfortd" align="center">+91 <s:textfield
 							name="basicProperty.propertyOwnerInfoProxy[%{#ownerStatus.index}].owner.mobileNumber"
 							maxlength="10" size="20" id="mobileNumber"

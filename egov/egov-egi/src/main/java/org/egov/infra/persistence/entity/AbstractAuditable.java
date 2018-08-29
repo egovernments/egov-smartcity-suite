@@ -56,6 +56,7 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import javax.persistence.Column;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -72,11 +73,12 @@ public abstract class AbstractAuditable extends AbstractPersistable<Long> {
     private static final long serialVersionUID = 7138056997693406739L;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "createdBy")
+    @JoinColumn(name = "createdBy", updatable = false)
     @CreatedBy
     private User createdBy;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(updatable = false)
     @CreatedDate
     private Date createdDate;
 

@@ -1,0 +1,7 @@
+{
+	"resources": [
+		{
+			"url": "/v1.0/property/**"
+		}
+	]
+}

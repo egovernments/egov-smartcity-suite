@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -49,6 +49,7 @@
 package org.egov.tl.web.controller.masters.subcategory;
 
 import org.egov.tl.entity.LicenseSubCategory;
+import org.egov.tl.entity.enums.RateType;
 import org.egov.tl.service.FeeTypeService;
 import org.egov.tl.service.LicenseCategoryService;
 import org.egov.tl.service.LicenseSubCategoryService;
@@ -102,12 +103,14 @@ public class UpdateSubCategoryController {
         }
         licenseSubCategoryService.updateSubCategory(licenseSubCategory);
         responseAttrbs.addFlashAttribute("message", "msg.success.subcategory.update");
-        return "redirect:/licensesubcategory/view/" + licenseSubCategory.getCode();
+        responseAttrbs.addFlashAttribute("name", licenseSubCategory.getName());
+        return "redirect:/licensesubcategory/update/" + licenseSubCategory.getCode();
     }
 
     private void prepareSubCategoryAssociations(Model model) {
-        model.addAttribute("licenseCategories", licenseCategoryService.getCategories());
+        model.addAttribute("licenseCategories", licenseCategoryService.getCategoriesOrderByName());
         model.addAttribute("licenseFeeTypes", feeTypeService.findAll());
-        model.addAttribute("licenseUomTypes", unitOfMeasurementService.getAllUOM());
+        model.addAttribute("rateTypes", RateType.allValues());
+        model.addAttribute("licenseUomTypes", unitOfMeasurementService.getAllActiveUOM());
     }
 }

@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -69,6 +69,8 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
 
     WaterConnectionDetails findByApplicationNumber(String applicationNumber);
 
+    WaterConnectionDetails findByConnectionConsumerCode(String consumerNumber);
+
     WaterConnectionDetails findByApplicationNumberAndConnectionStatus(String applicationNumber,
             ConnectionStatus connectionStatus);
 
@@ -116,7 +118,7 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
     // removed "CLOSED" cos not allowing to create NEW Connection if any records
     // with closed Connectionstatus
     @Query("select wcd from WaterConnectionDetails wcd where wcd.connection.parentConnection is null and wcd.connectionStatus not in ('INACTIVE') and wcd.connection.propertyIdentifier =:propertyIdentifier")
-    WaterConnectionDetails getPrimaryConnectionDetailsByPropertyID(
+    List<WaterConnectionDetails> getPrimaryConnectionDetailsByPropertyID(
             @Param("propertyIdentifier") String propertyIdentifier);
 
     @Query("select wcd from WaterConnectionDetails wcd where wcd.connection.parentConnection is null and wcd.connectionStatus in ('ACTIVE') and wcd.connection.propertyIdentifier =:propertyIdentifier) order by wcd.applicationDate asc ")

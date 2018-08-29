@@ -94,9 +94,9 @@
 			class="org.egov.ptis.domain.entity.property.PropertyMutationMaster"
 			column="ID_MUTATION" unique="true" />
 
-		<property name="water_Meter_Num" column="WATER_METER_NUM" />
+		<property name="waterMeterNum" column="WATER_METER_NUM" />
 
-		<property name="elec_Meter_Num" column="ELEC_METER_NUM" />
+		<property name="elecMeterNum" column="ELEC_METER_NUM" />
 
 		<property name="surveyNumber" column="SURVEY_NUM" />
 
@@ -122,8 +122,8 @@
 		<property name="extentSite" column="extentsite" type="double" />
 		<property name="extentAppartenauntLand" column="extent_appurtenant_land" type="double" />
 		<property name="siteOwner" column="siteowner" type="java.lang.String" />
-		<property name="currentCapitalValue" column="current_capitalValue"	type="double" />
-		<property name="marketValue" column="marketvalue" type="double" />
+		<property name="currentCapitalValue" column="current_capitalValue"	type="java.math.BigDecimal" precision="15" scale="2" />
+		<property name="marketValue" column="marketvalue" type="java.math.BigDecimal" precision="15" scale="2" />
 		<property name="pattaNumber" column="pattanumber" type="java.lang.String" />
 		<property name="categoryType" column="category_type" type="java.lang.String" />
 		<property name="occupancyCertificationNo" column="occupancy_certificationno" type="java.lang.String" />

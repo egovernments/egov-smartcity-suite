@@ -236,6 +236,8 @@ public class CouncilMeetingController {
 
         validateCouncilMeeting(errors);
         if (errors.hasErrors()) {
+            model .addAttribute("autoMeetingNoGenEnabled", isAutoMeetingNoGenEnabled()); 
+            model.addAttribute(COUNCIL_MEETING, councilMeeting);
             return COUNCILMEETING_NEW;
         }
         if (councilMeeting.getStatus() == null)
@@ -280,6 +282,8 @@ public class CouncilMeetingController {
                          final Model model, final RedirectAttributes redirectAttrs) {
         validateCouncilMeeting(errors);
         if (errors.hasErrors()) {
+            councilMeetingService.sortMeetingMomByItemNumber(councilMeeting);
+            model.addAttribute("autoMeetingNoGenEnabled", true);
             return COUNCILMEETING_EDIT;
         }
         councilMeetingService.update(councilMeeting);

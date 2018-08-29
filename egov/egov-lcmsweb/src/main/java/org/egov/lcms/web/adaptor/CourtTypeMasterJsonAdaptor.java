@@ -47,13 +47,14 @@
  */
 package org.egov.lcms.web.adaptor;
 
+import java.lang.reflect.Type;
+
+import org.egov.lcms.masters.entity.CourtTypeMaster;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import org.egov.lcms.masters.entity.CourtTypeMaster;
-
-import java.lang.reflect.Type;
 
 public class CourtTypeMasterJsonAdaptor implements JsonSerializer<CourtTypeMaster> {
     @Override
@@ -61,18 +62,21 @@ public class CourtTypeMasterJsonAdaptor implements JsonSerializer<CourtTypeMaste
             final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
         if (courttypeMaster != null) {
-            if (courttypeMaster.getCourtType() != null)
-                jsonObject.addProperty("courtType", courttypeMaster.getCourtType());
-            else
+            if (courttypeMaster.getCourtType() == null)
                 jsonObject.addProperty("courtType", "");
-            if (courttypeMaster.getCode() != null)
-                jsonObject.addProperty("code", courttypeMaster.getCode());
             else
+                jsonObject.addProperty("courtType", courttypeMaster.getCourtType());
+
+            if (courttypeMaster.getCode() == null)
                 jsonObject.addProperty("code", "");
-            if (courttypeMaster.getActive() != null)
-                jsonObject.addProperty("active", courttypeMaster.getActive() == true ? "YES" : "NO");
             else
+                jsonObject.addProperty("code", courttypeMaster.getCode());
+
+            if (courttypeMaster.getActive() == null)
                 jsonObject.addProperty("active", "");
+            else
+                jsonObject.addProperty("active", courttypeMaster.getActive() ? "YES" : "NO");
+
             jsonObject.addProperty("id", courttypeMaster.getId());
         }
         return jsonObject;

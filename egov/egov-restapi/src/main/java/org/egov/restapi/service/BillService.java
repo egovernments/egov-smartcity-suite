@@ -61,23 +61,23 @@ import org.egov.commons.service.FunctionService;
 import org.egov.commons.service.FundService;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.expensebill.service.ExpenseBillService;
+import org.egov.egf.model.BillPaymentDetails;
 import org.egov.egf.utils.FinancialUtils;
 import org.egov.infra.admin.master.service.DepartmentService;
-import org.egov.model.bills.EgBillPayeedetails;
-import org.egov.model.bills.EgBilldetails;
-import org.egov.model.bills.EgBillregister;
-import org.egov.model.bills.EgBillregistermis;
+import org.egov.model.bills.*;
 import org.egov.restapi.constants.RestApiConstants;
 import org.egov.restapi.model.BillDetails;
 import org.egov.restapi.model.BillPayeeDetails;
 import org.egov.restapi.model.BillRegister;
 import org.egov.restapi.model.RestErrors;
+import org.egov.services.bills.BillsService;
 import org.egov.services.masters.SchemeService;
 import org.egov.services.masters.SubSchemeService;
 import org.egov.works.master.service.ContractorService;
 import org.egov.works.models.estimate.ProjectCode;
 import org.egov.works.services.ProjectCodeService;
 import org.egov.works.utils.WorksConstants;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -89,6 +89,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 @Service
 @Transactional(readOnly = true)
@@ -135,6 +138,16 @@ public class BillService {
 
     @Autowired
     private FinancialUtils financialUtils;
+
+    @Autowired
+    private BillsService billsService;
+    
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
     public List<RestErrors> validateBillRegister(final BillRegister billRegister) {
         final List<RestErrors> errors = new ArrayList<>();
@@ -596,4 +609,11 @@ public class BillService {
     public EgBillregister createBill(final EgBillregister egBillregister) {
         return expenseBillService.create(egBillregister, null, null, null, "Create And Approve");
     }
-}
+  
+    public List<BillPaymentDetails> getBillAndPaymentDetails(String billNo) {
+            return billsService.getBillAndPaymentDetails(billNo);
+    	}
+
+
+    
+	}

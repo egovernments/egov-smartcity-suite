@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -50,7 +50,7 @@ package org.egov.ptis.domain.service.report;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.ptis.domain.entity.property.BaseRegisterReportRequest;
 import org.egov.ptis.domain.entity.property.view.PropertyMVInfo;
-import org.egov.ptis.repository.reports.BaseRegisterRepository;
+import org.egov.ptis.repository.reports.PropertyMVInfoRepository;
 import org.egov.ptis.repository.spec.BaseRegisterSpec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -64,22 +64,22 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class PTBaseRegisterReportService {
 
-	@Autowired
-	private BaseRegisterRepository baseRegisterReportRepository;
+    @Autowired
+    private PropertyMVInfoRepository baseRegisterReportRepository;
 
-	@ReadOnly
-	public Page<PropertyMVInfo> pagedBaseRegisterRecords(final BaseRegisterReportRequest baseRegisterReportRequest) {
-		return baseRegisterReportRepository.findAll(
-				BaseRegisterSpec.baseRegisterSpecification(baseRegisterReportRequest),
-				new PageRequest(baseRegisterReportRequest.pageNumber(), baseRegisterReportRequest.pageSize(),
-						baseRegisterReportRequest.orderDir(), baseRegisterReportRequest.orderBy()));
+    @ReadOnly
+    public Page<PropertyMVInfo> pagedBaseRegisterRecords(final BaseRegisterReportRequest baseRegisterReportRequest) {
+        return baseRegisterReportRepository.findAll(
+                BaseRegisterSpec.baseRegisterSpecification(baseRegisterReportRequest),
+                new PageRequest(baseRegisterReportRequest.pageNumber(), baseRegisterReportRequest.pageSize(),
+                        baseRegisterReportRequest.orderDir(), baseRegisterReportRequest.orderBy()));
 
-	}
+    }
 
-	@ReadOnly
-	public List<PropertyMVInfo> getAllBaseRegisterRecords(final BaseRegisterReportRequest baseRegisterReportRequest) {
-		return baseRegisterReportRepository
-				.findAll(BaseRegisterSpec.baseRegisterSpecification(baseRegisterReportRequest));
-	}
+    @ReadOnly
+    public List<PropertyMVInfo> getAllBaseRegisterRecords(final BaseRegisterReportRequest baseRegisterReportRequest) {
+        return baseRegisterReportRepository
+                .findAll(BaseRegisterSpec.baseRegisterSpecification(baseRegisterReportRequest));
+    }
 
 }

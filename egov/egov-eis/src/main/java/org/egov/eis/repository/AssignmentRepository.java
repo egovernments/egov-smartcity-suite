@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -216,13 +216,14 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
     List<Assignment> findByPositionAndEmployee(@Param("posId") Long posId, @Param("userId") Long userId,
                                                @Param("givenDate") Date givenDate);
 
-    @Query(" from Assignment A where A.designation.id in(select desig.id from Designation desig where desig.code in :designationCode)" +
-            " and A.department.id in (select depart.id from Department depart where depart.code = :departmentCode) " +
-            "and A.fromDate<=:givenDate and A.toDate>=:givenDate ")
-    List<Assignment> findByDepartmentCodeAndDesignationCode(@Param("departmentCode") String departmentCode
-            , @Param("designationCode") List<String> desigCode
-            , @Param("givenDate") Date givenDate);
+    List<Assignment> findAllByDepartmentCodeAndDesignationCodeInAndFromDateLessThanEqualAndToDateGreaterThanEqual(String departmentCode, List<String> designationCodes, Date fromDate, Date toDate);
 
     @Query("select distinct A.designation from  Assignment A where A.fromDate<=current_date and A.toDate>=current_date and trim(upper(A.designation.name)) in(:designationNames)")
     List<Designation> findAllDesignationByActiveAssignmentAndDesignationNames(@Param("designationNames") List<String> designationNames);
+
+    @Query(" select ASSIGN from Assignment ASSIGN inner join ASSIGN.employee as EMP inner join EMP.jurisdictions as JRDN "
+            + " where ASSIGN.department.id=:deptId and ASSIGN.designation.id in :desigIds and ASSIGN.fromDate<=current_date and ASSIGN.toDate>=current_date "
+            + " and JRDN.boundary.id in :boundaryIds and ASSIGN.employee.active=true order by ASSIGN.primary desc")
+    List<Assignment> findByDepartmentAndDesignationsAndBoundaries(@Param("deptId") final Long deptId,
+                                                                  @Param("desigIds") final List<Long> desigIds, @Param("boundaryIds") final Set<Long> boundaryIds);
 }

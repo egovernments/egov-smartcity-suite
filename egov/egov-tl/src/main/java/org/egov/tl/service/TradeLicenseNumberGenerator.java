@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -67,5 +67,4 @@ public class TradeLicenseNumberGenerator implements LicenseNumberGenerator {
         return String.format(LICENSE_NUMBER_FORMAT,
                 databaseSequenceProvider.getNextSequence(LICENSE_NUMBER_SEQ_NAME), DateUtils.currentYear());
     }
-
 }

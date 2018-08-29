@@ -117,6 +117,7 @@ function isAppurtenantLand(extentOfSite, totalPlingthArea) {
 	}).done(function(response) {
 		if (response.isAppurTenantLand) {
 			jQuery('tr.vacantlanddetaills').show();
+			setEffectiveDate();
 			jQuery('#vacantLandArea').val(response.vacantLandArea);
 			jQuery('#vacantLandArea').attr('readOnly', true);
 			jQuery('#extentAppartenauntLand').val(response.extentAppartenauntLand);
@@ -1277,16 +1278,39 @@ function confirmSubmit(msg) {
 	}
 }
 
-function enableDisableActionsForGIS(){
-	var thirdPartyCheckVal = jQuery('#thirdPartyVerified').prop("checked");
-	if(thirdPartyCheckVal != undefined){
-		if(thirdPartyCheckVal){
-			 jQuery('#Approve').removeAttr("disabled");
-			 jQuery('#Reject').removeAttr("disabled");
-		 }
-		 else{
-			 jQuery('#Approve').attr('disabled', 'disabled');
-			 jQuery('#Reject').attr('disabled', 'disabled');
-		 }
+function enableDisableActionsForGIS(checkboxValue, thirdPartyFlag){
+	if(thirdPartyFlag == 'false'){
+		if(checkboxValue){
+			jQuery('#Approve').attr('disabled', 'disabled');
+			jQuery('#Reject').removeAttr("disabled");
+		} else {
+			jQuery('#Approve').attr('disabled', 'disabled');
+			jQuery('#Reject').attr('disabled', 'disabled');
+		}
+	} else {
+		jQuery('#Approve').removeAttr("disabled");
+		jQuery('#Reject').removeAttr("disabled");
 	}
 }
+
+function setEffectiveDate(){
+		var today = new Date();
+		var curMonth = today.getMonth()+1;
+		var currYear = today.getFullYear();
+		var baseDate;
+		var effectiveDate;
+		if(curMonth < 4){
+			baseDate = new Date(currYear,4,1);
+			effectiveDate = baseDate.getDate().toString()+"/"+baseDate.getMonth().toString()+"/"+(baseDate.getFullYear()-3).toString();
+		}
+		else if(curMonth > 3 && curMonth <10){
+			baseDate = new Date(currYear,10,1);
+			effectiveDate = baseDate.getDate().toString()+"/"+baseDate.getMonth().toString()+"/"+(baseDate.getFullYear()-3).toString();
+		}
+		else if(curMonth > 9){
+			baseDate = new Date(currYear,4,1);
+			effectiveDate = baseDate.getDate().toString()+"/"+baseDate.getMonth().toString()+"/"+(baseDate.getFullYear()-2).toString()
+		}
+		jQuery('#dateOfCompletion').val(effectiveDate);
+	}
+

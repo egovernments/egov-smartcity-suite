@@ -47,7 +47,9 @@
  */
 package org.egov.wtms.application.entity;
 
-import org.egov.demand.model.EgDemand;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -58,12 +60,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.egov.demand.model.EgDemand;
+import org.hibernate.annotations.Immutable;
 
 @Entity
 @Table(name = "egwtr_mv_dcb_view")
+@Immutable
 public class WaterChargeMaterlizeView implements Serializable {
 
     private static final long serialVersionUID = -6146352214041057969L;
@@ -86,17 +89,16 @@ public class WaterChargeMaterlizeView implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "demand")
     private EgDemand demand;
-   
+
     private Long wardid;
-  
+
     private Long zoneid;
-   
+
     private Long street;
     private Long block;
-   
+
     private Long locality;
-    
-    
+
     @Column(name = "curr_demand")
     private double currentdemand;
     @Column(name = "curr_coll")
@@ -111,7 +113,7 @@ public class WaterChargeMaterlizeView implements Serializable {
     private double arrearbalance;
 
     @OneToMany(mappedBy = "waterMatView", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<InstDmdCollResponse> instDmdColl = new ArrayList<InstDmdCollResponse>(0);
+    private List<InstDmdCollResponse> instDmdColl = new ArrayList<>(0);
 
     public String getAddress() {
         return address;
@@ -297,47 +299,44 @@ public class WaterChargeMaterlizeView implements Serializable {
         this.houseno = houseno;
     }
 
-	public Long getWardid() {
-		return wardid;
-	}
+    public Long getWardid() {
+        return wardid;
+    }
 
-	public void setWardid(Long wardid) {
-		this.wardid = wardid;
-	}
+    public void setWardid(Long wardid) {
+        this.wardid = wardid;
+    }
 
-	public Long getZoneid() {
-		return zoneid;
-	}
+    public Long getZoneid() {
+        return zoneid;
+    }
 
-	public void setZoneid(Long zoneid) {
-		this.zoneid = zoneid;
-	}
+    public void setZoneid(Long zoneid) {
+        this.zoneid = zoneid;
+    }
 
-	public Long getStreet() {
-		return street;
-	}
+    public Long getStreet() {
+        return street;
+    }
 
-	public void setStreet(Long street) {
-		this.street = street;
-	}
+    public void setStreet(Long street) {
+        this.street = street;
+    }
 
-	public Long getBlock() {
-		return block;
-	}
+    public Long getBlock() {
+        return block;
+    }
 
-	public void setBlock(Long block) {
-		this.block = block;
-	}
+    public void setBlock(Long block) {
+        this.block = block;
+    }
 
-	public Long getLocality() {
-		return locality;
-	}
+    public Long getLocality() {
+        return locality;
+    }
 
-	public void setLocality(Long locality) {
-		this.locality = locality;
-	}
+    public void setLocality(Long locality) {
+        this.locality = locality;
+    }
 
-	
-
-	
 }

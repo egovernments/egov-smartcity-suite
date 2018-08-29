@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -53,20 +53,20 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.DateUtils;
-import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.tl.service.LicenseNumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.egov.tl.utils.Constants.TRADE_LICENSE;
 
 @Service
 public class LicenseNumberUtils {
 
     @Autowired
-    private AutonumberServiceBeanResolver autonumberServiceBeanResolver;
+    private LicenseNumberGenerator licenseNumberGenerator;
 
     @Autowired
     private ApplicationNumberGenerator applicationNumberGenerator;
@@ -81,7 +81,7 @@ public class LicenseNumberUtils {
     private InstallmentDao installmentDao;
 
     public String generateLicenseNumber() {
-        return autonumberServiceBeanResolver.getAutoNumberServiceFor(LicenseNumberGenerator.class).generateLicenseNumber();
+        return licenseNumberGenerator.generateLicenseNumber();
     }
 
     public String generateApplicationNumber() {
@@ -92,6 +92,6 @@ public class LicenseNumberUtils {
         String currentInstallmentYear = DateUtils.toYearFormat(installmentDao.getInsatllmentByModuleForGivenDate(
                 moduleService.getModuleByName(TRADE_LICENSE), new Date()).getInstallmentYear());
         String sequenceName = Constants.LICENSE_BILLNO_SEQ + currentInstallmentYear;
-        return String.format("%s%06d", "", genericSequenceNumberGenerator.getNextSequence(sequenceName));
+        return String.format("%s%06d", EMPTY, genericSequenceNumberGenerator.getNextSequence(sequenceName));
     }
 }

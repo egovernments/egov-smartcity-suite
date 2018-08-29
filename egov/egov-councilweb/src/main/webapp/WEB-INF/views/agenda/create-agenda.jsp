@@ -60,6 +60,16 @@
 	<jsp:include page="../councilpreamble/councilpreamble-search-form.jsp" />
 
 </form:form>
+<div class="col-md-12">
+	<div class="panel-heading">
+		<div class="panel-title text-center no-float">
+			<c:if test="${not empty message}">
+				<strong style="color: red;">Entered ${message}</strong>
+			</c:if>
+		</div>
+	</div>
+</div>
+
 <div class="row display-hide report-section">
 	<div class="col-md-12 table-header text-left">Preamble Search
 		Result</div>

@@ -48,7 +48,6 @@
 
 package org.egov.tl.web.actions.viewtradelicense;
 
-import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -57,6 +56,7 @@ import org.egov.eis.entity.Assignment;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
@@ -68,11 +68,11 @@ import org.egov.tl.web.actions.BaseLicenseAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.egov.infra.reporting.engine.ReportFormat.PDF;
 import static org.egov.infra.reporting.util.ReportUtil.CONTENT_TYPES;
@@ -98,12 +98,11 @@ import static org.egov.tl.utils.Constants.TL_FILE_STORE_DIR;
                 params = {"fileStoreIds", "${fileStoreIds}", "applicationNumbers", "${applicationNo}"}),
         @Result(name = "closureEndorsementDigiSign", location = "closure-endorsementnotice-digitalsigned.jsp")
 })
-public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
+public class ViewTradeLicenseAction extends BaseLicenseAction {
     private static final long serialVersionUID = 1L;
     private static final String MODEL_ID = "model.id";
 
-    private TradeLicense tradeLicense = new TradeLicense();
-    private Long licenseid;
+    private Long licenseId;
     private String url;
     private Boolean enableState;
     private String digiSignedFile;
@@ -119,12 +118,6 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @Override
     public TradeLicense getModel() {
         return tradeLicense;
-
-    }
-
-    @Override
-    protected TradeLicense license() {
-        return tradeLicense;
     }
 
     @Override
@@ -134,7 +127,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
 
     @Override
     @Action(value = "/viewtradelicense/viewTradeLicense-showForApproval")
-    public String showForApproval() throws IOException {
+    public String showForApproval() {
         tradeLicense = tradeLicenseService.getLicenseById(license().getId());
         return super.showForApproval();
     }
@@ -182,13 +175,13 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     }
 
     @Action(value = "/viewtradelicense/showclosureform")
-    public String showClosureForm() throws IOException {
+    @ValidationErrorPage(MESSAGE)
+    public String showClosureForm() {
         prepareClosureForm();
         setUrl("viewtradelicense/saveclosure.action?model.id=");
         if (tradeLicense.hasState() && !tradeLicense.transitionCompleted()) {
-            ServletActionContext.getResponse().setContentType("text/html");
-            ServletActionContext.getResponse().getWriter().write("<center style='color:red;font-weight:bolder'>" + tradeLicense.getLicenseAppType().getName() + " License workflow is in progress !</center>");
-            return null;
+            throw new ValidationException(WF_INPROGRESS_ERROR_CODE,
+                    format(WF_INPROGRESS_ERROR_MSG_FORMAT, tradeLicense.getLicenseAppType().getName()));
         }
         return "closure";
     }
@@ -212,8 +205,8 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @Action(value = "/viewtradelicense/saveclosure")
     public String saveClosure() {
         populateWorkflowBean();
-        if (getLicenseid() != null) {
-            tradeLicense = tradeLicenseService.getLicenseById(getLicenseid());
+        if (getLicenseId() != null) {
+            tradeLicense = tradeLicenseService.getLicenseById(getLicenseId());
             if (tradeLicenseService.currentUserIsMeeseva()) {
                 tradeLicense.setApplicationNumber(getApplicationNo());
                 tradeLicenseService.closureWithMeeseva(tradeLicense, workflowBean);
@@ -234,8 +227,8 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @Action(value = "/viewtradelicense/viewTradeLicense-cancelLicense")
     public String updateLicenseClosure() {
         populateWorkflowBean();
-        if (getLicenseid() != null) {
-            tradeLicense = tradeLicenseService.getLicenseById(getLicenseid());
+        if (getLicenseId() != null) {
+            tradeLicense = tradeLicenseService.getLicenseById(getLicenseId());
             WorkFlowMatrix wfmatrix = tradeLicenseService.getWorkFlowMatrixApi(license(), workflowBean);
             if (!license().getCurrentState().getValue().equals(wfmatrix.getCurrentState())) {
                 addActionMessage(this.getText("wf.item.processed"));
@@ -286,12 +279,12 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         this.workflowBean = workflowBean;
     }
 
-    public Long getLicenseid() {
-        return licenseid;
+    public Long getLicenseId() {
+        return licenseId;
     }
 
-    public void setLicenseid(Long licenseid) {
-        this.licenseid = licenseid;
+    public void setLicenseId(Long licenseId) {
+        this.licenseId = licenseId;
     }
 
     public Boolean hasCSCPublicRole() {

@@ -98,6 +98,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -217,7 +218,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
             floor.setPropertyDetail(propertyModel.getPropertyDetail());
         }
         if (StringUtils.isNotBlank(taxExemptedReason) && !taxExemptedReason.equals("-1")) {
-            final javax.persistence.Query qry = entityManager.createNamedQuery("EXEMPTIOREASON_BYID");
+            final Query qry = entityManager.createNamedQuery("EXEMPTIOREASON_BYID");
             qry.setParameter("id", Long.valueOf(taxExemptedReason));
             taxExemptionReason = (TaxExemptionReason) qry.getSingleResult();
             propertyModel.setTaxExemptedReason(taxExemptionReason);
@@ -229,7 +230,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
         propertyModel.setEffectiveDate(effectiveDate);
         basicProperty.setUnderWorkflow(Boolean.TRUE);
         final Set<Ptdemand> newPtdemandSet = propertyModel.getPtDemandSet();
-        final Set<EgDemandDetails> demandDetailSet = new HashSet<EgDemandDetails>();
+        final Set<EgDemandDetails> demandDetailSet = new HashSet<>();
 
         if (StringUtils.isNotBlank(workFlowAction) && !workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT))
             for (final Ptdemand ptdemand : newPtdemandSet)
@@ -538,7 +539,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
     @Transactional
     public void processAndStoreApplicationDocuments(final PropertyImpl property, final String taxExemptedReason,
             final String previousExemptionReason) {
-        final javax.persistence.Query qry = entityManager.createNamedQuery("EXEMPTIOREASON_BYID");
+        final Query qry = entityManager.createNamedQuery("EXEMPTIOREASON_BYID");
         qry.setParameter("id", Long.valueOf(taxExemptedReason));
         TaxExemptionReason taxExemptionReason = (TaxExemptionReason) qry.getSingleResult();
         final TransactionType transactionType = getTransactionTypeByExemptionCode(taxExemptionReason.getCode());

@@ -82,7 +82,7 @@ public class PenaltyRatesController {
 
     @ModelAttribute("licenseAppTypes")
     public List<LicenseAppType> licenseAppTypes() {
-        return licenseAppTypeService.findAllLicenseAppType();
+        return licenseAppTypeService.getDisplayableLicenseAppTypes();
     }
 
     @GetMapping("/create")
@@ -110,7 +110,7 @@ public class PenaltyRatesController {
     public String search(@ModelAttribute PenaltyForm penaltyForm, BindingResult errors, Model model) {
         if (errors.hasErrors())
             return PENALTYRATE_RESULT;
-        penaltyForm.setPenaltyRatesList(penaltyRatesService.search(penaltyForm.getLicenseAppType()));
+        penaltyForm.setPenaltyRatesList(penaltyRatesService.getPenaltyRatesByLicenseAppType(penaltyForm.getLicenseAppType()));
         model.addAttribute("penaltyForm", penaltyForm);
         return PENALTYRATE_RESULT;
     }
@@ -119,7 +119,7 @@ public class PenaltyRatesController {
     public String searchview(@ModelAttribute PenaltyForm penaltyForm, BindingResult errors, Model model) {
         if (errors.hasErrors())
             return "penaltyRates-search";
-        penaltyForm.setPenaltyRatesList(penaltyRatesService.search(penaltyForm.getLicenseAppType()));
+        penaltyForm.setPenaltyRatesList(penaltyRatesService.getPenaltyRatesByLicenseAppType(penaltyForm.getLicenseAppType()));
         model.addAttribute("penaltyForm", penaltyForm);
 
         return "penaltyRates-viewResult";

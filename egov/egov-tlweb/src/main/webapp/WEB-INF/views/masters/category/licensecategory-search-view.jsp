@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -46,18 +46,13 @@
   ~
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
 <div class="row" id="page-content">
     <div class="col-md-12">
-        <c:if test="${not empty message}">
-            <div class="alert alert-success" role="alert">
-                <spring:message code="${message}"/>
-            </div>
-        </c:if>
         <form:form role="form" method="post" modelAttribute="licenseCategory" class="form-horizontal form-groups-bordered">
             <div class="panel panel-primary" data-collapsed="0">
                 <div class="panel-heading">
@@ -80,7 +75,6 @@
             <div class="form-group">
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary"><spring:message code="lbl.view"/></button>
-                    <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
                     <button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()"><spring:message code="lbl.close"/></button>
                 </div>
             </div>

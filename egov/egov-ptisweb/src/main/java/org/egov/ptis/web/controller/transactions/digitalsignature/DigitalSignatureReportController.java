@@ -47,8 +47,15 @@
  */
 package org.egov.ptis.web.controller.transactions.digitalsignature;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITAL_SIGNATURE_PENDING;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infra.workflow.entity.WorkflowTypes;
+import org.egov.infra.workflow.entity.WorkflowType;
 import org.egov.infra.workflow.inbox.InboxRenderServiceDelegate;
 import org.egov.infra.workflow.service.WorkflowTypeService;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -58,13 +65,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITAL_SIGNATURE_PENDING;
 
 @Controller
 @RequestMapping(value = "/digitalSignature")
@@ -96,8 +96,9 @@ public class DigitalSignatureReportController {
                 if (record != null && record.getState() != null && record.getState().getNextAction() != null &&
                         record.getState().getNextAction().equalsIgnoreCase(WF_STATE_DIGITAL_SIGNATURE_PENDING)) {
                     tempMap = new HashMap<>();
-                    WorkflowTypes workflowTypes = workflowTypeService.getEnabledWorkflowTypeByType(record.getStateType());
-                    if (PTMODULENAME.equalsIgnoreCase(workflowTypes.getModule().getName())) {
+                    
+                    WorkflowType workflowType = workflowTypeService.getEnabledWorkflowTypeByType(record.getStateType());
+                    if (PTMODULENAME.equalsIgnoreCase(workflowType.getModule().getName())) {
                         if (record.getState().getValue().startsWith("Create")
                                 || record.getState().getValue().startsWith("Alter")
                                 || record.getState().getValue().startsWith("Bifurcate")
@@ -108,14 +109,18 @@ public class DigitalSignatureReportController {
                         else
                             tempMap.put("objectId", record.getId());
                         tempMap.put("type", record.getState().getNatureOfTask());
-                        tempMap.put("module", workflowTypes.getModule().getDisplayName());
+                        tempMap.put("module", workflowType.getModule().getDisplayName());
                         tempMap.put("details", record.getStateDetails());
                         tempMap.put("status", record.getCurrentState().getValue());
                         resultList.add(tempMap);
                     }
                 }
         }
-        return resultList;
+        
+        if (resultList.size() > 20)
+            return resultList.subList(0, resultList.size() < 20 ? resultList.size() : 20);
+        else
+            return resultList;
     }
 
 }

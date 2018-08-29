@@ -52,7 +52,6 @@ import static org.egov.infra.utils.DateUtils.getFormattedDate;
 import static org.egov.infra.utils.DateUtils.noOfMonthsBetween;
 import static org.egov.infra.utils.DateUtils.toDateUsingDefaultPattern;
 import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.EGMODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MONTHLY;
 
@@ -194,7 +193,6 @@ public class MeterReadingController {
     public String updateMeterEntry(@ModelAttribute final WaterConnectionDetails waterConnectionDetails,
             final BindingResult errors, final RedirectAttributes redirectAttrs, final Model model,
             final HttpServletRequest request) {
-        final String sourceChannel = request.getParameter("Source");
         Date givenDate = null;
         if (request.getParameter(METER_CURRENT_READING_DATE) != null)
             givenDate = toDateUsingDefaultPattern(request.getParameter(METER_CURRENT_READING_DATE));
@@ -248,7 +246,7 @@ public class MeterReadingController {
                 meterReadingConnectionDetailObj, previousReading, currentDate, previousDate, currentMonthIncluded);
         final WaterConnectionDetails savedWaterConnectionDetails = waterConnectionDetailsRepository
                 .save(waterconnectionDetails);
-        waterConnectionDetailsService.updateIndexes(savedWaterConnectionDetails, sourceChannel);
+        waterConnectionDetailsService.updateIndexes(savedWaterConnectionDetails);
         return REDIRECT_TO_METERDEMANDNOTICE
                 + savedWaterConnectionDetails.getConnection().getConsumerCode();
     }
@@ -323,7 +321,7 @@ public class MeterReadingController {
 
         newInstallmentList = installmentDao.getInstallmentsByModuleForGivenDateAndInstallmentType(
                 moduleService.getModuleByName(MODULE_NAME), previousDate, MONTHLY);
-        currentInstallment = connectionDemandService.getCurrentInstallment(EGMODULE_NAME, MONTHLY, new Date());
+        currentInstallment = connectionDemandService.getCurrentInstallment(MODULE_NAME, MONTHLY, new Date());
         if (newInstallmentList.isEmpty() || !newInstallmentList.contains(currentInstallment))
             newInstallmentList.add(currentInstallment);
 

@@ -544,7 +544,10 @@ public class SearchNoticesAction extends SearchFormAction {
             params.add(nextDate.getTime());
         }
         if (StringUtils.isNotBlank(indexNumber)) {
-            criteriaString.append(" and pmv.propertyId = ?");
+        	if(NOTICE_TYPE_SURVEY_COMPARISON.equalsIgnoreCase(noticeType))
+        		criteriaString.append(" and bp.upicNo = ?");
+        	else
+        		criteriaString.append(" and pmv.propertyId = ?");
             params.add(indexNumber);
         }
         if (StringUtils.isNotBlank(houseNumber)) {
@@ -563,6 +566,8 @@ public class SearchNoticesAction extends SearchFormAction {
 
     @Override
     public void validate() {
+        if (wardId == null || wardId == -1)
+            addActionError(getText("mandatory.noticeward"));
         if (noticeType == null || noticeType.equals("-1"))
             addActionError(getText("mandatory.noticeType"));
         if (noticeFromDate != null && noticeToDate == null)

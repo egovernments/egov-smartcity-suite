@@ -49,9 +49,12 @@ package org.egov.eis.service;
 
 import org.egov.eis.repository.DeptDesigRepository;
 import org.egov.pims.commons.DeptDesig;
+import org.egov.pims.commons.Designation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -70,6 +73,10 @@ public class DeptDesigService {
 
     public DeptDesig findByDepartmentAndDesignation(final Long id, final Long designationId) {
         return deptDesigRepository.findByDepartment_IdAndDesignation_Id(id, designationId);
+    }
+
+    public List<Designation> getDesignationsByDepartment(final Long departmentId) {
+        return deptDesigRepository.getDesignationsByDepartment(departmentId);
     }
 
     @Transactional

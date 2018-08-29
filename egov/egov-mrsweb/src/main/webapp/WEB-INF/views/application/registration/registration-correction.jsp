@@ -66,6 +66,7 @@
 				value="${marriageRegistration.status.code}" />
 			<input type="hidden" id="allowDaysValidation"
 				value="${allowDaysValidation}" />
+			<form:hidden path="" id="mrsRegistrar" name="mrsRegistrar" value="${mrsRegistrar}" />
 			<form:hidden path="" id="workFlowAction" name="workFlowAction" />
 			<form:hidden path="" id="serialNoExists" value="${serialNoExists}" />
 			<input type="hidden" id="pendingActions" value="${pendingActions}" />
@@ -76,7 +77,7 @@
 				value="${marriageRegistration.feeCollected}" />
 			<input type="hidden" id="source" value="${source}"/>
 			<c:if
-				test="${marriageRegistration.status.code eq 'CREATED' && !marriageRegistration.feeCollected && nextActn ne 'Junior/Senior Assistance approval pending'  && nextActn ne 'Revenue Clerk Approval Pending'}">
+				test="${marriageRegistration.status.code eq 'CREATED' && !marriageRegistration.feeCollected && nextActn  ne 'Junior/Senior Assistance approval pending'  && (pendingActions ne 'Clerk Approval Pending' and pendingActions ne 'Revenue Clerk Approval Pending')}">
 				<div data-collapsed="0">
 					<div class="panel-heading">
 						<div style="color: red; font-size: 16px;" align="center">
@@ -97,7 +98,7 @@
 			<ul class="nav nav-tabs" id="settingstab">
 				<li class="active"><a data-toggle="tab" href="#applicant-info"
 					data-tabidx=0>Applicant's Information</a></li>
-					<c:if test="${source ne 'API'}">
+					<c:if test="${source ne 'CHPK'}">
 				<li><a data-toggle="tab" href="#witness-info" data-tabidx=1>Witnesses
 						Information</a></li>
 						</c:if>
@@ -111,7 +112,6 @@
 						</div>
 					</div>
 				</div>
-				<c:if test="${source ne 'API'}">
 				<div id="witness-info" class="tab-pane fade">
 					<div class="panel panel-primary" data-collapsed="0">
 						<div class="panel-body custom-form ">
@@ -155,7 +155,6 @@
 						</div>
 					</div>
 				</div>
-				</c:if>
 				<div id="checklist-info" class="tab-pane fade">
 					<div class="panel panel-primary" data-collapsed="0">
 						<div class="panel-body custom-form ">
@@ -171,9 +170,9 @@
 				<jsp:include page="../../common/commonWorkflowMatrix.jsp" />
 			</c:if>
 
-			<c:choose>
+			<%-- <c:choose>
 				<c:when
-					test="${marriageRegistration.status.code eq 'CREATED' && (nextActn eq 'Junior/Senior Assistance approval pending'  || nextActn eq 'Revenue Clerk Approval Pending')}">
+					test="${marriageRegistration.status.code eq 'CREATED' && (nextActn eq 'Junior/Senior Assistance approval pending'  || (pendingActions eq 'Clerk Approval Pending' || pendingActions eq 'Revenue Clerk Approval Pending'))}">
 					<div class="buttonbottom" align="center">
 						<jsp:include page="../../common/commonWorkflowMatrix-button.jsp" />
 					</div>
@@ -187,14 +186,14 @@
 									class="btn btn-default" onclick="window.close();" />
 							</div>
 						</c:when>
-						<c:otherwise>
+						<c:otherwise> --%>
 							<div class="buttonbottom" align="center">
 								<jsp:include page="../../common/commonWorkflowMatrix-button.jsp" />
 							</div>
-						</c:otherwise>
+						<%-- </c:otherwise>
 					</c:choose>
 				</c:otherwise>
-			</c:choose>
+			</c:choose> --%>
 		</form:form>
 	</div>
 </div>

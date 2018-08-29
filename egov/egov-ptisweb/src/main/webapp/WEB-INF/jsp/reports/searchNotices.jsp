@@ -155,7 +155,8 @@
 				</tr>
 				<tr>
 					<td class="greybox">&nbsp;</td>
-					<td class="greybox"><s:text name="Ward" /> :</td>
+					<td class="greybox"><s:text name="Ward" /><span
+						class="mandatory1">*</span> :</td>
 					<td class="greybox"><s:select name="wardId" id="wardId"
 							list="dropdownData.wardList" listKey="id" listValue="name"
 							headerKey="-1" headerValue="%{getText('default.select')}"

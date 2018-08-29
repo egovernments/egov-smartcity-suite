@@ -114,6 +114,9 @@ public final class PGRConstants {
     public static final String APPROVAL_COMMENT_ATTRIB = "approvalComent";
     public static final String APPROVAL_POSITION_ATTRIB = "approvalPosition";
     public static final String LOCATION_ATTRIB = "location";
+    public static final String CITIZEN_PORTAL_MODE = "CPORTAL";
+    public static final String EMPLOYEE_APP_MODE = "EMPAPP";
+    public static final String CITIZEN_APP_MODE = "MOBILE";
 
     private PGRConstants() {
         //Only invariables

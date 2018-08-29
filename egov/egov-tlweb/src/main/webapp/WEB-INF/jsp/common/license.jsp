@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -105,15 +105,7 @@
 </div>
 
 <div class="form-group">
-    <label class="col-sm-3 control-label text-right"><s:text name='license.uom.lbl'/><span
-            class="mandatory"></span></label>
-    <div class="col-sm-3 add-margin">
-        <s:textfield name="uom" maxlength="20" id="uom"
-                     value="%{tradeName.licenseSubCategoryDetails.iterator.next.uom.name}" readOnly="true"
-                     required="true" class="form-control"/>
-        <div id="uom_error" class="error-msg" style="display:none;" align="left"></div>
-    </div>
-    <label class="col-sm-2 control-label text-right"><s:text name='license.premises.lbl'/><span
+    <label class="col-sm-3 control-label text-right"><s:text name='license.premises.lbl'/><span
             class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
         <s:textfield name="tradeArea_weight" maxlength="8" id="tradeArea_weight" value="%{tradeArea_weight}"
@@ -121,49 +113,26 @@
                      required="true" data-pattern="number"/>
         <div id="tradeArea_weight_error" class="error-msg" style="display:none;" align="left"></div>
     </div>
+    <label class="col-sm-2 control-label text-right"><s:text name='license.uom.lbl'/><span
+            class="mandatory"></span></label>
+    <div class="col-sm-3 add-margin">
+        <s:textfield name="uom" maxlength="20" id="uom"
+                     value="%{tradeName.licenseSubCategoryDetails.iterator.next.uom.name}" readOnly="true"
+                     required="true" class="form-control"/>
+        <div id="uom_error" class="error-msg" style="display:none;" align="left"></div>
+    </div>
 </div>
 
 <div class="form-group">
-    <label class="col-sm-3 control-label text-right"><s:text name='license.remarks'/></label>
-    <div class="col-sm-3 add-margin">
-        <s:textarea name="remarks" id="remarks" value="%{remarks}" maxlength="250" class="form-control"/>
-    </div>
-
-    <label class="col-sm-2 control-label text-right"><s:text name='license.startdate'/><span
+    <label class="col-sm-3 control-label text-right"><s:text name='license.startdate'/><span
             class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
         <s:date name="commencementDate" format="dd/MM/yyyy" var="commencementDateFrmttd"/>
         <s:textfield name="commencementDate" cssClass="form-control datepicker" required="true" id="startDate"
                      maxlength="10" value="%{commencementDateFrmttd}"/>
     </div>
-</div>
-<div class="form-group">
-    <label class="col-sm-3 control-label text-right"><s:text name='license.traderCheckbox.lbl'/></label>
+    <label class="col-sm-2 control-label text-right"><s:text name='license.remarks'/></label>
     <div class="col-sm-3 add-margin">
-        <s:checkbox theme="simple" key="showAgreementDtl" onclick="showHideAgreement()" id="showAgreementDtl"
-                    disabled="%{sDisabled}"/>
-    </div>
-</div>
-
-<div id="agreementSec" style="display: none;">
-    <div class="panel-heading custom_form_panel_heading">
-        <div class="panel-title"><s:text name='license.AgreementDetails.lbl'/></div>
-    </div>
-
-    <div class="form-group">
-        <label class="col-sm-3 control-label text-right"><s:text name='license.agreementDate.lbl'/><span
-                class="mandatory"></span></label>
-        <div class="col-sm-3 add-margin">
-            <s:date name="agreementDate" format="dd/MM/yyyy" var="agreementDateFrmttd"/>
-            <s:textfield name="agreementDate" cssClass="form-control datepicker" data-date-end-date="0d"
-                         id="agreementDate" maxlength="10" value="%{agreementDateFrmttd}"/>
-        </div>
-
-        <label class="col-sm-2 control-label text-right"><s:text name='license.agreementDocNo.lbl'/><span
-                class="mandatory"></span></label>
-        <div class="col-sm-3 add-margin">
-            <s:textfield name="agreementDocNo" maxlength="50" id="agreementDocNo" value="%{agreementDocNo}"
-                         cssClass="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash"/>
-        </div>
+        <s:textarea name="remarks" id="remarks" value="%{remarks}" maxlength="512" class="form-control" rows="3"/>
     </div>
 </div>

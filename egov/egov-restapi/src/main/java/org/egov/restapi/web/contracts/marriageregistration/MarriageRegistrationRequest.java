@@ -50,11 +50,13 @@ package org.egov.restapi.web.contracts.marriageregistration;
 import java.util.Date;
 
 import javax.persistence.Embedded;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.egov.mrs.domain.entity.Contact;
 import org.egov.mrs.domain.entity.Name;
 import org.egov.mrs.domain.enums.MaritalStatus;
+import org.hibernate.validator.constraints.Length;
 
 public class MarriageRegistrationRequest {
 
@@ -79,6 +81,7 @@ public class MarriageRegistrationRequest {
     // husband details
     @NotNull(message = "Provide bridegroom's full name")
     @Embedded
+    @Valid
     private Name husbandName;
 
     @NotNull(message = "Provide bridegroom's religion")
@@ -99,6 +102,7 @@ public class MarriageRegistrationRequest {
     private String husbandAadhaarNo;
 
     @NotNull(message = "Provide bridegroom's parents name")
+    @Length(max = 70,message="Parents name should be less than 70 character")
     private String husbandparentsName;
 
     @NotNull(message = "Provide bridegroom's eduaction qualification")
@@ -121,6 +125,7 @@ public class MarriageRegistrationRequest {
     // wife details
     @NotNull(message = "Provide bride's full name")
     @Embedded
+    @Valid
     private Name wifeName;
 
     @NotNull(message = "Provide bride's religion")
@@ -141,6 +146,7 @@ public class MarriageRegistrationRequest {
     private String wifeAadhaarNo;
 
     @NotNull(message = "Provide bride's parents name")
+    @Length(max = 70,message="Parents name should be less than 70 character")
     private String wifeparentsName;
 
     @NotNull(message = "Provide bride's education qualification")

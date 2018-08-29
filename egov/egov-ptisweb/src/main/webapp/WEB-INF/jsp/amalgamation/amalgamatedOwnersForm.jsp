@@ -55,7 +55,7 @@
 	<table class="table table-bordered" id="ownerInfoTbl">
 		<thead>
 			<tr>
-				<th class="text-center"><s:text name="adharno" /></th>
+				<!-- <th class="text-center"><s:text name="adharno" /></th> -->
 				<th class="text-center"><s:text name="MobileNumber" /> <span
 					class="mandatory1">*</span> (without +91)</th>
 				<th class="text-center"><s:text name="OwnerName" /><span
@@ -92,13 +92,13 @@
 							name="amalgamationOwnersProxy[%{#ownerStatus.index}].owner.username"
 							id="amalgamationOwnersProxy[%{#ownerStatus.index}].owner.username"
 							value="%{amalgamationOwnersProxy[#ownerStatus.index].owner.username}"></s:hidden>
-						<td><s:textfield
+						<!-- <td><s:textfield
 								name="amalgamationOwnersProxy[%{#ownerStatus.index}].owner.aadhaarNumber"
 								id="aadharNo" size="12" maxlength="12" data-optional="1"
 								data-errormsg="Aadhar no is mandatory!"
 								value="%{amalgamationOwnersProxy[#ownerStatus.index].owner.aadhaarNumber}"
 								data-idx="%{#ownerStatus.index}"
-								cssClass="form-control  txtaadhar"></s:textfield></td>
+								cssClass="form-control  txtaadhar"></s:textfield></td> -->
 						<td><s:textfield
 								name="amalgamationOwnersProxy[%{#ownerStatus.index}].owner.mobileNumber"
 								maxlength="10" size="20" id="mobileNumber"

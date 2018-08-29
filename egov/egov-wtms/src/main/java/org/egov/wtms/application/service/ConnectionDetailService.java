@@ -47,7 +47,10 @@
  */
 package org.egov.wtms.application.service;
 
+import static org.egov.wtms.utils.constants.WaterTaxConstants.BILLTYPE_MANUAL;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.INPROGRESS;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_CITIZEN;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -60,12 +63,15 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
+import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.demand.model.EgDemand;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.wtms.application.entity.ApplicationDocuments;
+import org.egov.wtms.application.entity.SearchWaterTaxBillDetail;
 import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
@@ -78,7 +84,9 @@ import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
+import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -115,6 +123,9 @@ public class ConnectionDetailService {
 
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
+
+    @Autowired
+    private FinancialYearDAO financialYearDAO;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -172,9 +183,9 @@ public class ConnectionDetailService {
                     if (waterConnectionDetails != null) {
                         waterTaxDue = getDueInfo(waterConnectionDetails);
                         waterTaxDue.setPropertyID(propertyIdentifier);
-                        if(connection.getConsumerCode()!=null && waterConnectionDetailsService.getCurrentDue(waterConnectionDetails).compareTo(BigDecimal.ZERO) > 0){
-                                consumerCodes.add(connection.getConsumerCode());
-                        }
+                        if (connection.getConsumerCode() != null && waterConnectionDetailsService
+                                .getCurrentDue(waterConnectionDetails).compareTo(BigDecimal.ZERO) > 0)
+                            consumerCodes.add(connection.getConsumerCode());
                         arrDmd = arrDmd.add(waterTaxDue.getArrearDemand());
                         arrColl = arrColl.add(waterTaxDue.getArrearCollection());
                         currDmd = currDmd.add(waterTaxDue.getCurrentDemand());
@@ -209,13 +220,12 @@ public class ConnectionDetailService {
         final WaterConnection waterConnection = waterConnectionService
                 .findParentWaterConnection(waterTaxDetailRequest.getAssessmentNumber());
         List<WaterConnectionDetails> waterConnectionDetailslist;
-        Boolean parentConnection = false;
         WaterConnectionDetails waterConnectionDetailsRetainer = null;
-        WaterConnectionDetails waterConnectionDetails;
+        WaterConnectionDetails waterConnectionDetails = null;
         final ApplicationType additionAppType = applicationTypeService.findByCode(WaterTaxConstants.ADDNLCONNECTION);
         if (waterConnections.isEmpty()) {
             for (final String childAssessmentNumber : waterTaxDetailRequest.getChildAssessmentNumber())
-                if (waterConnectionDetailsRetainer == null && parentConnection == false) {
+                if (waterConnectionDetailsRetainer == null) {
                     waterConnectionDetailsRetainer = waterConnectionDetailsService
                             .getPrimaryConnectionDetailsByPropertyAssessmentNumbers(
                                     waterTaxDetailRequest.getChildAssessmentNumber());
@@ -223,7 +233,6 @@ public class ConnectionDetailService {
                     connectiontemp.setOldPropertyIdentifier(childAssessmentNumber);
                     connectiontemp.setPropertyIdentifier(waterTaxDetailRequest.getAssessmentNumber());
                     waterConnectionRepository.save(connectiontemp);
-                    parentConnection = Boolean.TRUE;
                 } else {
                     waterConnectionDetailslist = waterConnectionDetailsService
                             .getAllConnectionDetailsExceptInactiveStatusByPropertyID(childAssessmentNumber);
@@ -254,17 +263,11 @@ public class ConnectionDetailService {
             if (waterConnectionDetailsRetainerObj != null
                     && !waterTaxDetailRequest.getChildAssessmentNumber().isEmpty())
                 for (final String childAssessmentNumber : waterTaxDetailRequest.getChildAssessmentNumber()) {
-                    waterConnectionDetails = waterConnectionDetailsService
+                    List<WaterConnectionDetails> connectionDetailsList = waterConnectionDetailsService
                             .getPrimaryConnectionDetailsByPropertyIdentifier(childAssessmentNumber);
-                    if (waterConnectionDetails != null) {
-                        final WaterConnection connectiontemp = waterConnectionDetails.getConnection();
-                        connectiontemp.setOldPropertyIdentifier(connectiontemp.getPropertyIdentifier());
-                        connectiontemp.setPropertyIdentifier(waterTaxDetailRequest.getAssessmentNumber());
-                        connectiontemp.setParentConnection(waterConnectionDetailsRetainerObj.getConnection());
-                        waterConnectionDetails.setApplicationType(additionAppType);
-                        waterConnectionDetails.setConnection(connectiontemp);
-                        waterConnectionDetailsRepository.save(waterConnectionDetails);
-                    } else {
+                    if (!connectionDetailsList.isEmpty())
+                        waterConnectionDetails = connectionDetailsList.get(0);
+                    if (waterConnectionDetails == null) {
                         waterConnectionDetailslist = waterConnectionDetailsService
                                 .getChildConnectionDetailsByPropertyID(childAssessmentNumber);
                         for (final WaterConnectionDetails tempconn : waterConnectionDetailslist) {
@@ -273,6 +276,15 @@ public class ConnectionDetailService {
                             connectiontemp.setPropertyIdentifier(childAssessmentNumber);
                             waterConnectionRepository.save(connectiontemp);
                         }
+
+                    } else {
+                        final WaterConnection connectiontemp = waterConnectionDetails.getConnection();
+                        connectiontemp.setOldPropertyIdentifier(connectiontemp.getPropertyIdentifier());
+                        connectiontemp.setPropertyIdentifier(waterTaxDetailRequest.getAssessmentNumber());
+                        connectiontemp.setParentConnection(waterConnectionDetailsRetainerObj.getConnection());
+                        waterConnectionDetails.setApplicationType(additionAppType);
+                        waterConnectionDetails.setConnection(connectiontemp);
+                        waterConnectionDetailsRepository.save(waterConnectionDetails);
                     }
                 }
         }
@@ -393,12 +405,12 @@ public class ConnectionDetailService {
             instId = Integer.valueOf(listObj[1].toString());
             installment = installmentDao.findById(instId, false);
             if (currFirstHalf.equals(installment) || currSecondHalf.equals(installment)) {
-                if (listObj[3] != null && new BigDecimal((Double) listObj[3]).compareTo(BigDecimal.ZERO) == 1)
+                if (listObj[3] != null && new BigDecimal((Double) listObj[3]).compareTo(BigDecimal.ZERO) > 0)
                     currCollection = currCollection.add(new BigDecimal((Double) listObj[3]));
                 currDmd = currDmd.add(new BigDecimal((Double) listObj[2]));
             } else if (listObj[2] != null) {
                 arrDmd = arrDmd.add(new BigDecimal((Double) listObj[2]));
-                if (new BigDecimal((Double) listObj[3]).compareTo(BigDecimal.ZERO) == 1)
+                if (new BigDecimal((Double) listObj[3]).compareTo(BigDecimal.ZERO) > 0)
                     arrCollection = arrCollection.add(new BigDecimal((Double) listObj[3]));
             }
         }
@@ -414,8 +426,7 @@ public class ConnectionDetailService {
     }
 
     public Map<String, BigDecimal> getDemandCollMapForPtisIntegration(
-            final WaterConnectionDetails waterConnectionDetails, final String moduleName,
-            final String installmentType) {
+            final WaterConnectionDetails waterConnectionDetails, final String moduleName) {
         final EgDemand currDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
         Installment installment;
         List<Object> dmdCollList = new ArrayList<>(0);
@@ -475,5 +486,29 @@ public class ConnectionDetailService {
     public boolean validApplicationDocument(final ApplicationDocuments applicationDocument) {
         return !applicationDocument.getDocumentNames().isRequired() && applicationDocument.getDocumentNumber() == null
                 && applicationDocument.getDocumentDate() == null ? false : true;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<SearchWaterTaxBillDetail> getValueByModuleType() {
+        final StringBuilder queryStr = new StringBuilder(800);
+        CFinancialYear finYear = financialYearDAO.getFinancialYearByDate(new Date());
+        queryStr.append(
+                "select bill.consumer_id as \"consumerNumber\", usr.id as \"userId\",bill.bill_no as \"billNo\",dcbview.curr_balance as  \"dueAmount\"  ")
+                .append(" from eg_bill bill, egwtr_mv_dcb_view dcbview, egpushbox_userfcmdevice event, eg_user usr, ")
+                .append(" egpt_basic_property basicproperty, egpt_property_owner_info ownerinfo")
+                .append(" where dcbview.hscno= bill.consumer_id AND event.userId = usr.id AND dcbview.propertyid=basicproperty.propertyid AND")
+                .append(" ownerinfo.basicproperty=basicproperty.id AND ownerinfo.owner=usr.id AND usr.type =:userType ")
+                .append(" AND bill.id_bill_type=(select id from eg_bill_type where code=:billType)")
+                .append(" AND bill.issue_date>=:startDate AND bill.issue_date<=:endDate")
+                .append(" AND bill.module_id =(select id from eg_module where name =:moduleName) order By bill.consumer_id ");
+        final Query query = entityManager.unwrap(Session.class).createSQLQuery(queryStr.toString());
+        query.setParameter("userType", ROLE_CITIZEN);
+        query.setParameter("moduleName", MODULE_NAME);
+        query.setParameter("billType", BILLTYPE_MANUAL);
+        query.setParameter("startDate", finYear.getStartingDate());
+        query.setParameter("endDate", finYear.getEndingDate());
+        query.setResultTransformer(new AliasToBeanResultTransformer(SearchWaterTaxBillDetail.class));
+        
+        return query.list();
     }
 }

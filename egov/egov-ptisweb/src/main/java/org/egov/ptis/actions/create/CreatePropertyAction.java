@@ -734,7 +734,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                         Arrays.asList(JUNIOR_ASSISTANT + "/" + SENIOR_ASSISTANT)));
             return mode.equalsIgnoreCase(EDIT) ? RESULT_NEW : RESULT_VIEW;
         }
-        else if (propService.getWorkflowInitiator(property) == null) {
+        else if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)
+                && propService.getWorkflowInitiator(property) == null) {
             addActionError(getText(REJECT_ERROR_INITIATOR_INACTIVE,
                     Arrays.asList(JUNIOR_ASSISTANT + "/" + SENIOR_ASSISTANT)));
             return mode.equalsIgnoreCase(EDIT) ? RESULT_NEW : RESULT_VIEW;
@@ -917,9 +918,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         if (SOURCE_SURVEY.equalsIgnoreCase(property.getSource())) {
             SurveyBean surveyBean = new SurveyBean();
             surveyBean.setProperty(property);
-            BigDecimal totalTax=propService.getSurveyTax(property,new Date());
-            surveyBean.setApprovedTax(totalTax);
-            surveyBean.setSystemTax(totalTax);
             propertySurveyService.updateSurveyIndex(APPLICATION_TYPE_NEW_ASSESSENT, surveyBean);
         }
         if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(property.getSource()))
@@ -954,6 +952,10 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
         if (SOURCE_SURVEY.equalsIgnoreCase(property.getSource())) {
             SurveyBean surveyBean = new SurveyBean();
+            if(isThirdPartyCheckbox() 
+            		&& PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING.equalsIgnoreCase(property.getState().getNextAction())){
+            	property.setThirdPartyVerified(true);
+            }
             surveyBean.setProperty(property);
             propertySurveyService.updateSurveyIndex( APPLICATION_TYPE_NEW_ASSESSENT, surveyBean);
         }
@@ -1198,8 +1200,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 propertyDetail.getPlinthArea(), propertyDetail.getCommVacantLand(), propertyDetail.getNonResPlotArea(),
                 false, propertyDetail.getSurveyNumber(), propertyDetail.getFieldVerified(),
                 propertyDetail.getFieldVerificationDate(), propertyDetail.getFloorDetails(),
-                propertyDetail.getPropertyDetailsID(), propertyDetail.getWater_Meter_Num(),
-                propertyDetail.getElec_Meter_Num(), 0, propertyDetail.getFieldIrregular(),
+                propertyDetail.getPropertyDetailsID(), propertyDetail.getWaterMeterNum(),
+                propertyDetail.getElecMeterNum(), 0, propertyDetail.getFieldIrregular(),
                 propertyDetail.getDateOfCompletion(), propertyDetail.getProperty(), propertyDetail.getUpdatedTime(),
                 propertyDetail.getPropertyUsage(), null, propertyDetail.getPropertyTypeMaster(),
                 propertyDetail.getPropertyType(), propertyDetail.getInstallment(),

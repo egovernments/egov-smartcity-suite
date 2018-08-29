@@ -50,6 +50,7 @@ package org.egov.tl.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -57,24 +58,27 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 @Entity
-@SequenceGenerator(name = FeeType.SEQ, sequenceName = FeeType.SEQ, allocationSize = 1)
 @Table(name = "egtl_mstr_fee_type")
+@SequenceGenerator(name = FeeType.SEQ, sequenceName = FeeType.SEQ, allocationSize = 1)
 public class FeeType extends AbstractAuditable {
 
     public static final String SEQ = "seq_egtl_mstr_fee_type";
     private static final long serialVersionUID = -766315755023031686L;
+
     @Id
     @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
     private Long id;
-    @NotNull
+
+    @NotBlank
     @Length(max = 32)
     private String name;
+
+    @NotBlank
     @Length(max = 12)
     private String code;
-    private FeeProcessType feeProcessType;
 
     @Override
     public Long getId() {
@@ -102,37 +106,18 @@ public class FeeType extends AbstractAuditable {
         this.code = code;
     }
 
-    public FeeProcessType getFeeProcessType() {
-        return feeProcessType;
-    }
-
-    public void setFeeProcessType(final FeeProcessType feeProcessType) {
-        this.feeProcessType = feeProcessType;
-    }
-
     @Override
-    public boolean equals(final Object o) {
-        if (this == o)
+    public boolean equals(Object obj) {
+        if (this == obj)
             return true;
-        if (o == null || getClass() != o.getClass())
+        if (!(obj instanceof FeeType))
             return false;
-
-        final FeeType feeType = (FeeType) o;
-
-        if (getName() != null ? !getName().equals(feeType.getName()) : feeType.getName() != null)
-            return false;
-        return getCode() != null ? getCode().equals(feeType.getCode()) : feeType.getCode() == null;
-
+        FeeType feeType = (FeeType) obj;
+        return Objects.equals(getCode(), feeType.getCode());
     }
 
     @Override
     public int hashCode() {
-        int result = getName() != null ? getName().hashCode() : 0;
-        result = 31 * result + (getCode() != null ? getCode().hashCode() : 0);
-        return result;
-    }
-
-    public enum FeeProcessType {
-        RANGE
+        return Objects.hash(getCode());
     }
 }

@@ -134,7 +134,7 @@ public class MobilePaymentController {
     public String newform(final Model model, @PathVariable final String assessmentNo,
                           @PathVariable final String ulbCode, @PathVariable final BigDecimal amountToBePaid,
                           @PathVariable final String mobileNumber, @PathVariable final String emailId,
-                          @PathVariable final String category, final HttpServletRequest request) throws ParseException {
+                          @PathVariable final String category, final HttpServletRequest request) {
         String redirectUrl = "";
         if (!basicPropertyDAO.isAssessmentNoExist(assessmentNo)) {
             model.addAttribute(ERROR_MSG, THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_NOT_FOUND);
@@ -152,7 +152,7 @@ public class MobilePaymentController {
                 BigDecimal totalTaxDue = BigDecimal.ZERO;
                 final String propType = property.getPropertyDetail().getPropertyTypeMaster().getCode();
                 String propCategory=checkPropertyCategory(propType);
-                if (category !=propCategory) {
+                if (!category.equalsIgnoreCase(propCategory)) {
                     model.addAttribute(ERROR_MSG, CHECK_PROPERTY_CATEGORY);
                     return PROPERTY_VALIDATION;
                 }
@@ -193,7 +193,7 @@ public class MobilePaymentController {
                     model.addAttribute("redirectUrl", redirectUrl);
                 }
             } else {
-                model.addAttribute("errorMsg", MOBILE_PAYMENT_INCORRECT_BILL_DATA);
+                model.addAttribute(ERROR_MSG, MOBILE_PAYMENT_INCORRECT_BILL_DATA);
                 return PROPERTY_VALIDATION;
             }
         } catch (final ValidationException e) {

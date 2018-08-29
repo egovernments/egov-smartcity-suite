@@ -598,4 +598,20 @@
         <put-attribute name="page-title" value="lbl.property.tax.calculate" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/propertytaxcalculator/propertytaxcalculator-form.jsp"/>
     </definition>  
+    <definition name="aadharseedingsearch-form" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.aadhar.search" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/aadharseeding/aadharseedingsearch-form.jsp"/>
+    </definition>
+    <definition name="aadharseedingupdate-form" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.aadhar.update" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/aadharseeding/aadharseedingupdate-form.jsp"/>
+    </definition>
+    <definition name="aadharseeding-success" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.aadhar.update" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/aadharseeding/aadharseeding-success.jsp"/>
+    </definition>
+    <definition name="aadharseeding-approvalform" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.aadhar.approve" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/aadharseeding/aadharseeding-approvalform.jsp"/>
+    </definition>
 </tiles-definitions> 

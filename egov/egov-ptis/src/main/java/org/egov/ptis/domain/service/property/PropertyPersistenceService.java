@@ -114,13 +114,15 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
         for (final PropertyOwnerInfo ownerInfo : property.getBasicProperty().getPropertyOwnerInfoProxy()) {
             orderNo++;
             if (ownerInfo != null) {
-                User user;
-                if (StringUtils.isNotBlank(ownerInfo.getOwner().getAadhaarNumber()))
+                User user = null;
+                /*if (StringUtils.isNotBlank(ownerInfo.getOwner().getAadhaarNumber()))
                     user = userService.getUserByAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
-                else
+                else*/
+                if (StringUtils.isNotBlank(ownerInfo.getOwner().getMobileNumber())) {
                     user = (User) find(FROM_USER_WHERE_NAME_AND_MOBILE_NUMBER_AND_GENDER, ownerInfo
                             .getOwner().getName(), ownerInfo.getOwner().getMobileNumber(), ownerInfo.getOwner()
                                     .getGender());
+                }
                 if (user == null) {
                     final Citizen newOwner = new Citizen();
                     user = createNewOwner(ownerInfo, newOwner);
@@ -240,8 +242,6 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
         for (final PropertyOwnerInfo ownerInfo : basicProperty.getPropertyOwnerInfo())
             if (ownerInfo != null) {
                 User user = null;
-                for (final Address address : ownerInfo.getOwner().getAddress())
-                    address.setHouseNoBldgApt(doorNumber);
                 if (StringUtils.isNotBlank(ownerInfo.getOwner().getAadhaarNumber()))
                     user = userService.getUserByAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
                 if (user == null || user.getId().equals(ownerInfo.getOwner().getId()))

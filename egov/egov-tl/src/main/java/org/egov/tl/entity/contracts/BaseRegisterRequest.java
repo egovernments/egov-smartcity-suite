@@ -61,6 +61,8 @@ public class BaseRegisterRequest extends DataTableSearchRequest {
 
     private Long wardId;
 
+    private Long adminWard;
+
     private String filterName;
 
     private ReportFormat printFormat;
@@ -113,4 +115,11 @@ public class BaseRegisterRequest extends DataTableSearchRequest {
         this.printFormat = printFormat;
     }
 
+    public Long getAdminWard() {
+        return adminWard;
+    }
+
+    public void setAdminWard(Long adminWard) {
+        this.adminWard = adminWard;
+    }
 }

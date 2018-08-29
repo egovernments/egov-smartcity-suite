@@ -292,8 +292,7 @@ public class SurveyDashboardService {
                 .execute().actionGet();
 
         SearchResponse completedResponse = elasticsearchTemplate.getClient().prepareSearch(PROPERTYSURVEYDETAILS_INDEX).setSize(0)
-                .setQuery(prepareQuery(surveyRequest).filter(QueryBuilders.matchQuery(APPLICATION_STATUS, "Closed"))
-                        .filter(QueryBuilders.matchQuery(STATUS_IS_APPROVED, true)))
+                .setQuery(prepareQuery(surveyRequest).filter(QueryBuilders.matchQuery(STATUS_IS_APPROVED, true)))
                 .addAggregation(aggregationBuilder).execute().actionGet();
 
         SearchResponse approvedResponse = elasticsearchTemplate.getClient().prepareSearch(PROPERTYSURVEYDETAILS_INDEX).setSize(0)

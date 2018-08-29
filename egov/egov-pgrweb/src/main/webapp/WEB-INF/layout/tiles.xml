@@ -251,4 +251,9 @@
         <put-attribute name="body" value="/WEB-INF/views/integration/ivrs/ivrs-feedbackreview-search.jsp"/>
     </definition>
     <!--ivrsfeedback definition ends-->
+    <definition name="grievance-registration-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.complaint.reg" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/complaint/thirdparty/grievance-registration-form.jsp"/>
+    </definition>
+
 </tiles-definitions>

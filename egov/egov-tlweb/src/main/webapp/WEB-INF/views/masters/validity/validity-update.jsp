@@ -56,30 +56,18 @@
         <div class="col-md-12">
             <div class="panel panel-primary" data-collapsed="0">
                 <div class="panel-heading">
-                    <div class="panel-title"><spring:message code="title.validity"/></div>
+                    <div class="panel-title">&nbsp;</div>
                 </div>
                 <div class="panel-body">
                     <div class="form-group">
                         <label class="col-sm-3 control-label text-right"><spring:message code="lbl.tradetype"/> <span
                                 class="mandatory"></span> </label>
                         <div class="col-sm-3 add-margin">
-                            <form:select path="natureOfBusiness" id="natureOfBusiness" cssClass="form-control"
-                                         cssErrorClass="form-control error">
-                                <form:option value="">
-                                    <spring:message code="lbl.select"/>
-                                </form:option>
-                                <form:options items="${natureOfBusinessList}" itemValue="id" itemLabel="name" required="required"/>
-                            </form:select>
+                            <label class="form-control">${validity.natureOfBusiness.name}</label>
                         </div>
                         <label class="col-sm-2 control-label text-right"><spring:message code="lbl.licensecategory"/> </label>
                         <div class="col-sm-3 add-margin">
-                            <form:select path="licenseCategory" id="licenseCategory" cssClass="form-control"
-                                         cssErrorClass="form-control error">
-                                <form:option value="">
-                                    <spring:message code="lbl.select"/>
-                                </form:option>
-                                <form:options items="${licenseCategoryList}" itemValue="id" itemLabel="name"/>
-                            </form:select>
+                            <label class="form-control"><c:out value="${validity.licenseCategory.name}" default="NA"/></label>
                         </div>
                     </div>
                     <div class="form-group">

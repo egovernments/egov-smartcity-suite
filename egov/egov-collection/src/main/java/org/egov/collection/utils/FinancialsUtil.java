@@ -47,6 +47,10 @@
  */
 package org.egov.collection.utils;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.collection.constants.CollectionConstants;
@@ -67,13 +71,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 /**
- * Utility class for interfacing with financials. This class should be used for
- * calling any financials APIs from erp collections.
+ * Utility class for interfacing with financials. This class should be used for calling any financials APIs from erp collections.
  */
 public class FinancialsUtil {
     private InstrumentService instrumentService;
@@ -90,8 +89,7 @@ public class FinancialsUtil {
     private static final Logger LOGGER = Logger.getLogger(FinancialsUtil.class);
 
     /**
-     * @param instrumentService
-     *            the Instrument Service to set
+     * @param instrumentService the Instrument Service to set
      */
     public void setInstrumentService(final InstrumentService instrumentService) {
         this.instrumentService = instrumentService;
@@ -100,8 +98,7 @@ public class FinancialsUtil {
     /**
      * Fetches instrument type object for given instrument type as string
      *
-     * @param type
-     *            Instrument type as string e.g. cash/cheque
+     * @param type Instrument type as string e.g. cash/cheque
      * @return Instrument type object for given instrument type as string
      */
     public InstrumentType getInstrumentTypeByType(final String type) {
@@ -180,8 +177,7 @@ public class FinancialsUtil {
     }
 
     /**
-     * Create Instrument Header for list of HashMap of instrument header
-     * properties
+     * Create Instrument Header for list of HashMap of instrument header properties
      *
      * @param paramList
      * @return List of InstrumentHeader
@@ -191,11 +187,10 @@ public class FinancialsUtil {
     }
 
     /**
-     * Update Cheque/DD/Card Instrument Status after creating Bank Remittance
-     * Voucher(if the Bank Remittance voucher type is Contra)
+     * Update Cheque/DD/Card Instrument Status after creating Bank Remittance Voucher(if the Bank Remittance voucher type is
+     * Contra)
      *
-     * @param Map
-     *            containing Instrument and PayInSlip voucher information
+     * @param Map containing Instrument and PayInSlip voucher information
      */
 
     @Transactional
@@ -210,11 +205,10 @@ public class FinancialsUtil {
     }
 
     /**
-     * Update Cheque/DD/Card Instrument Status after creating Bank Remittance
-     * Voucher(if the Bank Remittance voucher type is Receipt)
+     * Update Cheque/DD/Card Instrument Status after creating Bank Remittance Voucher(if the Bank Remittance voucher type is
+     * Receipt)
      *
-     * @param Map
-     *            containing Instrument and PayInSlip voucher information
+     * @param Map containing Instrument and PayInSlip voucher information
      */
 
     @Transactional
@@ -225,8 +219,7 @@ public class FinancialsUtil {
     /**
      * Update Cash Instrument Status after creating Pay in Slip Voucher
      *
-     * @param Map
-     *            containing Instrument and PayInSlip voucher information
+     * @param Map containing Instrument and PayInSlip voucher information
      */
     @Deprecated
     @Transactional
@@ -241,8 +234,7 @@ public class FinancialsUtil {
     }
 
     /**
-     * @param contraService
-     *            the contraService to set
+     * @param contraService the contraService to set
      */
     public void setContraService(final ContraService contraService) {
         this.contraService = contraService;
@@ -251,8 +243,7 @@ public class FinancialsUtil {
     /**
      * Checks whether given account is a revenue account (cash/cheque in hand)
      *
-     * @param coa
-     *            the account object
+     * @param coa the account object
      * @return true if the account is a revenue account, else false
      */
     @SuppressWarnings("unchecked")
@@ -276,7 +267,8 @@ public class FinancialsUtil {
                             || purposeName.equals(CollectionConstants.PURPOSE_NAME_CASH_IN_TRANSIT)
                             || purposeName.equals(CollectionConstants.PURPOSE_NAME_CREDIT_CARD)
                             || purposeName.equals(CollectionConstants.PURPOSE_NAME_ATM_ACCOUNTCODE)
-                            || purposeName.equals(CollectionConstants.PURPOSE_NAME_INTERUNITACCOUNT))
+                            || purposeName.equals(CollectionConstants.PURPOSE_NAME_INTERUNITACCOUNT)
+                            || purposeName.equals(CollectionConstants.PURPOSE_NAME_THIRD_PARTY_COLLECTION))
                         return true;
                 }
             } catch (final Exception e) {

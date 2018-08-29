@@ -67,33 +67,36 @@ $(document)
 							.click(
 									function() {
 										if (validateFloorOnAdd("Please enter or select all values of existing rows before adding. Values cannot empty.")) {
-
-											var idx = $(tbody).find('tr').length;
-											// Add row
-											var row = {
-												'idx' : idx
-											};
-											addRowFromObject(row);
-											jQuery(".constructionDate")
-													.datepicker({
-														format : 'dd/mm/yyyy',
-														autoclose : true,
-													}).data('datepicker');
-											loadZonelist("floorTemp[" + idx
-													+ "].zoneId");
-											loadClassificationlist("floorTemp["
-													+ idx + "].classificationId");
-											loadUsagelist("floorTemp[" + idx
-													+ "].usageId");
-											loadFloorlist("floorTemp[" + idx
-													+ "].floorId");
-											loadOccupancylist("floorTemp["
-													+ idx + "].occupancyId");
+											addRowWithData();
 										}
 									});
 
 					function addRowFromObject(rowJsonObj) {
 						table.append(row.compose(rowJsonObj));
+					}
+					
+					function addRowWithData(){
+						var idx = $(tbody).find('tr').length;
+						// Add row
+						var row = {
+							'idx' : idx
+						};
+						addRowFromObject(row);
+						jQuery(".constructionDate")
+								.datepicker({
+									format : 'dd/mm/yyyy',
+									autoclose : true,
+								}).data('datepicker');
+						loadZonelist("floorTemp[" + idx
+								+ "].zoneId");
+						loadClassificationlist("floorTemp["
+								+ idx + "].classificationId");
+						loadUsagelist("floorTemp[" + idx
+								+ "].usageId");
+						loadFloorlist("floorTemp[" + idx
+								+ "].floorId");
+						loadOccupancylist("floorTemp["
+								+ idx + "].occupancyId");
 					}
 
 					String.prototype.compose = (function() {
@@ -223,7 +226,10 @@ $(document)
 					$('#calculateTax').click(
 									function(e) {
 										var arv = 0;
-										if(!validateFloorOnAdd("Please enter or select all values of existing rows before clicking on Calculate Tax button"))
+										if(!$("#zoneId").val()){
+											bootbox.alert("Please select Revenue Zone");
+											return false;
+										}else if(!validateFloorOnAdd("Please enter or select all values of existing rows before clicking on Calculate Tax button"))
 											return false;
 										$.ajax({
 													url : "/ptis/calculatepropertytax",
@@ -232,11 +238,18 @@ $(document)
 													cache : false,
 													dataType : "json",
 													success : function(response) {
+														var exception;
 														$('#taxResult tbody').find('tr').remove();
 														$('#arv').html('');
 														$('#taxResult').removeClass('display-hide');
 														$.each(response,function(i,item) {
-																			if (i != 'Annual Rental Value') {
+																			if(i=='exceptionString'){
+																				$('#taxResult tbody').find('tr').remove();
+																				$('#taxResult').addClass('display-hide');
+																				$('#arv').append("<b>"+item+"</b>");
+																				exception = i;
+																			}
+																			else if (i != 'Annual Rental Value') {
 																				var row;
 																				if (i != 'Total Tax') {
 																					row = '<tr><td> '+ i + ' </td> <td class="text-right"> ' + item
@@ -253,7 +266,9 @@ $(document)
 																				arv = item;
 																			}
 																		});
-														$('#arv').append("<b>Annual Rental Value is Rs. </b><b>" + arv + "</b>");
+														if(exception!='exceptionString'){
+															$('#arv').append("<b>Annual Rental Value is Rs. </b><b>" + arv + "</b>");
+														}
 														
 													},
 													error : function(response) {
@@ -273,7 +288,7 @@ $(document)
 				    $(document).on('click',"#deleteFloorRow",function (){
 				    	 var rowIndex = $(this).closest('td').parent()[0].sectionRowIndex;
 				        var rowCount = $('#floorDetails tr').length-1;
-				        if(rowCount==0){
+				        if(rowCount==1){
 				        	bootbox.alert("This row cannot be deleted!");
 				        	return false;
 				        }
@@ -307,4 +322,12 @@ $(document)
 				    });
 
 
+				    $(document).on('click',"#btnReset",function (){
+				    	$('#zoneId').val('');
+				    	$('#floorDetails tbody').find('tr').remove();
+				    	addRowWithData();
+				    	$('#taxResult tbody').find('tr').remove();
+						$('#arv').html('');
+						$('#taxResult').addClass('display-hide');
+			    });
 				});

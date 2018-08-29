@@ -47,13 +47,14 @@
  */
 package org.egov.lcms.web.adaptor;
 
+import java.lang.reflect.Type;
+
+import org.egov.lcms.masters.entity.AdvocateMaster;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import org.egov.lcms.masters.entity.AdvocateMaster;
-
-import java.lang.reflect.Type;
 
 public class AdvocateMasterJsonAdaptor implements JsonSerializer<AdvocateMaster> {
     @Override
@@ -61,18 +62,22 @@ public class AdvocateMasterJsonAdaptor implements JsonSerializer<AdvocateMaster>
             final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
         if (advocateMaster != null) {
-            if (advocateMaster.getName() != null)
-                jsonObject.addProperty("name", advocateMaster.getName());
-            else
+            if (advocateMaster.getName() == null)
                 jsonObject.addProperty("name", "");
-            if (advocateMaster.getMobileNumber() != null)
-                jsonObject.addProperty("mobileNumber", advocateMaster.getMobileNumber());
             else
+                jsonObject.addProperty("name", advocateMaster.getName());
+
+            if (advocateMaster.getMobileNumber() == null)
+
                 jsonObject.addProperty("mobileNumber", "");
-            if (advocateMaster.getEmail() != null)
-                jsonObject.addProperty("email", advocateMaster.getEmail());
             else
+                jsonObject.addProperty("mobileNumber", advocateMaster.getMobileNumber());
+
+            if (advocateMaster.getEmail() == null)
                 jsonObject.addProperty("email", "");
+            else
+                jsonObject.addProperty("email", advocateMaster.getEmail());
+
             jsonObject.addProperty("id", advocateMaster.getId());
         }
         return jsonObject;

@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -57,8 +57,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static org.egov.tl.utils.Constants.TRADELICENSE;
-
 @Service
 @Transactional(readOnly = true)
 public class LicenseSubCategoryService {
@@ -66,12 +64,8 @@ public class LicenseSubCategoryService {
     @Autowired
     private LicenseSubCategoryRepository licenseSubCategoryRepository;
 
-    @Autowired
-    private LicenseTypeService licenseTypeService;
-
     @Transactional
     public void createSubCategory(LicenseSubCategory subCategory) {
-        subCategory.setLicenseType(licenseTypeService.getLicenseTypeByName(TRADELICENSE));
         for (LicenseSubCategoryDetails categoryDetails : subCategory.getLicenseSubCategoryDetails())
             categoryDetails.setSubCategory(subCategory);
         licenseSubCategoryRepository.save(subCategory);
@@ -91,10 +85,6 @@ public class LicenseSubCategoryService {
 
     public LicenseSubCategory getSubCategoryByCode(String code) {
         return licenseSubCategoryRepository.findByCode(code);
-    }
-
-    public List<LicenseSubCategory> getSubCategoriesByLicenseTypeName(String licenseTypeName) {
-        return licenseSubCategoryRepository.findByLicenseTypeName(licenseTypeName);
     }
 
     public String getSubCategoryCode() {

@@ -113,8 +113,8 @@ public class BaseRegisterResultAdaptor implements DataTableJsonAdapter<PropertyM
 					: BigDecimal.ZERO.add(baseRegisterResultObj.getAggrCurrSecondHalfColl() != null
 							? baseRegisterResultObj.getAggrCurrSecondHalfColl() : BigDecimal.ZERO);
 
-			final BigDecimal totalColl = currColl.add(baseRegisterResultObj.getArrearCollection() != null
-					? baseRegisterResultObj.getArrearCollection() : BigDecimal.ZERO);
+			final BigDecimal totalColl = currColl.add(baseRegisterResultObj.getAggrArrColl() != null
+					? baseRegisterResultObj.getAggrArrColl() : BigDecimal.ZERO);
 			if (!valuesMap.isEmpty())
 				currTotal = (valuesMap.get(TOTAL_CURR_PROPERTY_TAX) != null ? valuesMap.get(TOTAL_CURR_PROPERTY_TAX)
 						: BigDecimal.ZERO)
@@ -140,12 +140,12 @@ public class BaseRegisterResultAdaptor implements DataTableJsonAdapter<PropertyM
 							&& org.apache.commons.lang.StringUtils.isNotBlank(baseRegisterResultObj.getDuePeriod())
 									? baseRegisterResultObj.getDuePeriod() : "NA");
 			jsonObject.addProperty("currentColl", currColl);
-			jsonObject.addProperty("arrearTotal", baseRegisterResultObj.getArrearDemand() != null
-					? baseRegisterResultObj.getArrearDemand() : BigDecimal.ZERO);
+			jsonObject.addProperty("arrearTotal", baseRegisterResultObj.getAggrArrDmd() != null
+					? baseRegisterResultObj.getAggrArrDmd() : BigDecimal.ZERO);
 			jsonObject.addProperty("arrearPenaltyFines", baseRegisterResultObj.getAggrArrearPenaly() != null
 					? baseRegisterResultObj.getAggrArrearPenaly() : BigDecimal.ZERO);
-			jsonObject.addProperty("arrearColl", baseRegisterResultObj.getArrearCollection() != null
-					? baseRegisterResultObj.getArrearCollection() : BigDecimal.ZERO);
+			jsonObject.addProperty("arrearColl", baseRegisterResultObj.getAggrArrColl() != null
+					? baseRegisterResultObj.getAggrArrColl() : BigDecimal.ZERO);
 			jsonObject.addProperty("totalColl", totalColl);
 
 			if (!valuesMap.isEmpty()) {

@@ -48,6 +48,13 @@
 $(document)
 		.ready(
 				function() {
+					var validator = $("#waterConnectionForm").validate({
+						highlight : function(element, errorClass) {
+							$(element).fadeOut(function() {
+								$(element).fadeIn();
+							});
+						}
+						});
 					
 					if($("#connectionType").val()==="METERED"){
 						$(".showfields").show();
@@ -118,7 +125,7 @@ $(document)
 						$('#approvalDesignation').removeAttr('required');
 						$('#approvalPosition').removeAttr('required');
 					}
-					if (isCommissionerLoggedIn == 'true' || (typeOfConnection=='REGLZNCONNECTION' && approvalPositionExist=='' && status == 'CREATED' && executionDate=='')) {
+					if (isCommissionerLoggedIn == 'true' || (typeOfConnection=='REGLZNCONNECTION' && approvalPositionExist=='' && status == 'CREATED' && executionDate=='' && currentstate!='Rejected')) {
 						$(".show-row").hide();
 						$('#approverDetailHeading').hide();
 						$('#approvalDepartment').removeAttr('required');
@@ -387,11 +394,11 @@ $(document)
 											} else if (action=='' && (status=='CREATED' || status=='CLOSERINITIATED' || status=='RECONNECTIONINITIATED')) {
 												return false;
 											}
-											else {
-												validateWorkFlowApprover(action);
-												if ($('form').valid())
+											else if(action!='Cancel'){
+												if (validateForm(validator))
 													document.forms[0].submit();
-												return true;
+												else
+													return false;
 											}
 										}
 									});
@@ -460,4 +467,40 @@ $(document)
 					if ($('#meterFocus').val() == 'true') {
 						$('#meterSerialNumber').focus();
 					}
+					
 	});
+
+
+
+function validateForm(validator) {
+if ($('#waterConnectionForm').valid()) {
+	return true;
+} else {
+	$errorInput = undefined;
+
+	$.each(validator.invalidElements(),
+			function(index, elem) {
+
+				if (!$(elem).is(":visible")
+						&& !$(elem).val()
+						&& index == 0
+						&& $(elem).closest('div').find(
+								'.bootstrap-tagsinput').length > 0) {
+					$errorInput = $(elem);
+				}
+
+				if (!$(elem).is(":visible")
+						&& !$(elem).closest('div.panel-body')
+								.is(":visible")) {
+					$(elem).closest('div.panel-body').show();
+					console.log("elem", $(elem));
+				}
+			});
+
+	if ($errorInput)
+		$errorInput.tagsinput('focus');
+
+	validator.focusInvalid();
+	return false;
+}
+}

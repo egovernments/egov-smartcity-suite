@@ -84,18 +84,18 @@
                         <c:out value="${documentType.name}"/>
                     </c:otherwise>
                 </c:choose>
-                <form:hidden path="documents[${stat.index}].type"
-                             id="documents${stat.index}type.id" value="${documentType.id}"/>
+                <form:hidden path="licenseDocuments[${stat.index}].type"
+                             id="licenseDocuments${stat.index}type.id" value="${documentType.id}"/>
             </div>
             <div class="col-sm-4">
-                <input type="file" name="documents[${stat.index}].multipartFiles" id="uploadFile${stat.index}"
+                <input type="file" name="licenseDocuments[${stat.index}].multipartFiles" id="uploadFile${stat.index}"
                        class="file-ellipsis upload-file"/>
-                <form:errors path="documents[${stat.index}].multipartFiles" class="add-margin error-msg"/>
+                <form:errors path="licenseDocuments[${stat.index}].multipartFiles" class="add-margin error-msg"/>
             </div>
             <div class="col-sm-3 add-margin">
-                <form:textarea path="documents[${stat.index}].description" class="form-control"/>
+                <form:textarea path="licenseDocuments[${stat.index}].description" class="form-control"/>
                 <c:if test="${documentType.mandatory}">
-                    <form:errors path="documents[${stat.index}].description"
+                    <form:errors path="licenseDocuments[${stat.index}].description"
                                  class="add-margin error-msg tradelicenceerror"/>
                 </c:if>
             </div>

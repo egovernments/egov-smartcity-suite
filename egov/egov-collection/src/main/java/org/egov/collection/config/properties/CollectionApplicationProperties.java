@@ -58,7 +58,8 @@ import org.springframework.core.env.Environment;
         "classpath:config/payment-gateway.properties",
         "classpath:config/egov-erp-${user.name}.properties",
         "classpath:config/application-config-${client.id}.properties",
-        "classpath:config/egov-erp-override.properties" }, ignoreResourceNotFound = true)
+        "classpath:config/egov-erp-override.properties",
+        "classpath:config/collection-override-${env}.properties" }, ignoreResourceNotFound = true)
 public class CollectionApplicationProperties {
 
     @Autowired
@@ -136,6 +137,26 @@ public class CollectionApplicationProperties {
         return environment.getProperty(cityCode.concat(".sbimops.hoa"));
     }
 
+    public String sbimopsHoa(final String cityCode, final String serviceCode) {
+        return environment.getProperty(cityCode.concat(serviceCode).concat(".sbimops.hoa"));
+    }
+
+    public String sbimopsReconcileUrl() {
+        return environment.getProperty("sbimops.reconcile.url");
+    }
+
+    public String sbimopsReconcileUsername() {
+        return environment.getProperty("sbimops.reconcile.username");
+    }
+
+    public String sbimopsReconcilePassword() {
+        return environment.getProperty("sbimops.reconcile.password");
+    }
+
+    public String sbimopsTransactionMessage() {
+        return environment.getProperty("SBIMOPS.transactionmessage");
+    }
+
     public String getUpdateDemandUrl(final String serviceCode) {
         return environment.getProperty(serviceCode.concat(".updatedemand.url"));
     }
@@ -186,5 +207,9 @@ public class CollectionApplicationProperties {
 
     public String atomReconcileUrl() {
         return environment.getProperty("atom.reconcile.url");
+    }
+
+    public String mobilePaymentServiceCode() {
+        return environment.getProperty("mobile.paymentservice.code");
     }
 }

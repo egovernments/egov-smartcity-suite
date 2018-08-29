@@ -73,9 +73,8 @@ import java.util.Set;
 @SequenceGenerator(name = MrApplicant.SEQ_APPLICANT, sequenceName = MrApplicant.SEQ_APPLICANT, allocationSize = 1)
 public class MrApplicant extends AbstractAuditable {
 
-    private static final long serialVersionUID = -4678440835941976527L;
     public static final String SEQ_APPLICANT = "SEQ_EGMRS_APPLICANT";
-
+    private static final long serialVersionUID = -4678440835941976527L;
     @Id
     @GeneratedValue(generator = SEQ_APPLICANT, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -117,7 +116,9 @@ public class MrApplicant extends AbstractAuditable {
 
     @SafeHtml
     @Length(max = 20)
+    @Column(insertable = false, updatable = false)
     private String aadhaarNo;
+
     @Transient
     private byte[] photo;
     @Transient
@@ -165,7 +166,7 @@ public class MrApplicant extends AbstractAuditable {
 
     @NotNull
     @Length(max = 100)
-    private String locality;   
+    private String locality;
 
     @NotNull
     @Length(max = 30)

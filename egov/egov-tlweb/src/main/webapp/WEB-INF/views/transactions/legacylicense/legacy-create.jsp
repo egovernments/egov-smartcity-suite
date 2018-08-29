@@ -105,7 +105,7 @@
 
                         <div class="panel-heading custom_form_panel_heading">
                             <div class="panel-title">
-                                <spring:message code='license.title.feedetail'/>
+                                <spring:message code='title.license.legacy.feedetail'/>
                             </div>
                         </div>
                         <div class="col-md-12">

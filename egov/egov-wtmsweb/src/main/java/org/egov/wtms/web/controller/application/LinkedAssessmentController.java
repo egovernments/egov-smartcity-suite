@@ -96,10 +96,10 @@ public class LinkedAssessmentController {
     public String linkActiveAssessments(@ModelAttribute final LinkedAssessment linkedAssessment,
             final BindingResult resultBinder, final RedirectAttributes redirectAttrs, final Model model) {
         if (linkedAssessment.getPropertyAssessmentDetails().getStatus()
-                .equalsIgnoreCase(WaterTaxConstants.ASSESSMENTSTATUSACTIVE))
+                .equalsIgnoreCase(WaterTaxConstants.ACTIVE))
             throw new ValidationException("err.assessment.no.active");
         if (linkedAssessment.getActiveAssessmentDetails().getStatus()
-                .equalsIgnoreCase(WaterTaxConstants.ASSESSMENTSTATUSINACTIVE))
+                .equalsIgnoreCase(WaterTaxConstants.ACTIVE))
             throw new ValidationException("err.assessment.no.inactive");
         final List<WaterConnectionDetails> waterconnectiondetailslist = waterConnectionDetailsService
                 .getAllConnectionDetailsByPropertyID(

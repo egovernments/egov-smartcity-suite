@@ -61,7 +61,7 @@
 				value="${waterConnectionDetails.applicationDate}" />
 		</div>
 		<form:form role="form" action="newConnection-create"
-			modelAttribute="waterConnectionDetails" id="newWaterConnectionform"
+			modelAttribute="waterConnectionDetails" id="waterConnectionForm"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 			<form:hidden path="applicationType" id="applicationType"
@@ -82,6 +82,8 @@
 
 			<input type="hidden" id="currentUser" name="currentUser"
 				value="${currentUser}" />
+			<input type="hidden" id="isCSCOperator" name="isCSCOperator"
+				value="${isCSCOperator}" />
 			<input type="hidden" id="citizenPortalUser" name="citizenPortalUser"
 				value="${citizenPortalUser}" />
 			<input type="hidden" id="isAnonymousUser" name="isAnonymousUser"

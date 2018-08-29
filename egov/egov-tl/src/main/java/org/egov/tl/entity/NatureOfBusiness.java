@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -52,31 +52,31 @@ import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import java.util.Objects;
 
 @Entity
 @Table(name = "EGTL_MSTR_BUSINESS_NATURE")
 @SequenceGenerator(name = NatureOfBusiness.SEQUENCE, sequenceName = NatureOfBusiness.SEQUENCE, allocationSize = 1)
-@Unique(fields = {"name"}, message = "masters.tradenature.isunique")
-@NamedQuery(name = "NATUREOFBUSINESS_BY_NAME", query = "select nfb FROM NatureOfBusiness nfb where name =:name")
+@Unique(fields = "name", enableDfltMsg = true)
 public class NatureOfBusiness extends AbstractPersistable<Long> {
-    public static final String BY_NAME = "NATUREOFBUSINESS_BY_NAME";
-    public static final String SEQUENCE = "SEQ_EGTL_MSTR_BUSINESS_NATURE";
+    protected static final String SEQUENCE = "SEQ_EGTL_MSTR_BUSINESS_NATURE";
     private static final long serialVersionUID = 5631753833454331638L;
 
     @Id
     @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotBlank(message = "tradelic.master.tradenature.null")
-    @Length(max = 256, message = "masters.tradenature.length")
+    @NotBlank
+    @Length(max = 25)
+    @SafeHtml
     private String name;
 
     @Override
@@ -85,7 +85,7 @@ public class NatureOfBusiness extends AbstractPersistable<Long> {
     }
 
     @Override
-    public void setId(final Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -93,7 +93,22 @@ public class NatureOfBusiness extends AbstractPersistable<Long> {
         return name;
     }
 
-    public void setName(final String name) {
+    public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!(obj instanceof NatureOfBusiness))
+            return false;
+        NatureOfBusiness that = (NatureOfBusiness) obj;
+        return Objects.equals(getName(), that.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getName());
     }
 }

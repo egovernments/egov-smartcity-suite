@@ -1,0 +1,1 @@
+alter table egtl_license alter column uid type varchar(36);

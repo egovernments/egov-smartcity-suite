@@ -148,7 +148,7 @@ public class AdvocateMaster extends AbstractAuditable implements EntityType {
 
     @Audited
     @NotNull
-    private boolean isSenioradvocate;
+    private Boolean isSenioradvocate;
 
     @Audited
     private String paymentMode;
@@ -315,11 +315,11 @@ public class AdvocateMaster extends AbstractAuditable implements EntityType {
         this.isActive = isActive;
     }
 
-    public boolean getIsSenioradvocate() {
+    public Boolean getIsSenioradvocate() {
         return isSenioradvocate;
     }
 
-    public void setIsSenioradvocate(final boolean isSenioradvocate) {
+    public void setIsSenioradvocate(final Boolean isSenioradvocate) {
         this.isSenioradvocate = isSenioradvocate;
     }
 

@@ -48,15 +48,18 @@
 
 package org.egov.wtms.web.controller.application;
 
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ACTIVE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.INACTIVE;
+
+import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
+
+import org.egov.commons.entity.ChairPerson;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import org.egov.commons.entity.ChairPerson;
-import org.egov.wtms.utils.constants.WaterTaxConstants;
-
-import java.lang.reflect.Type;
-import java.text.SimpleDateFormat;
 
 public class ChairPersonAdaptor implements JsonSerializer<ChairPerson> {
 
@@ -69,7 +72,7 @@ public class ChairPersonAdaptor implements JsonSerializer<ChairPerson> {
         jsonObject.addProperty("toDate",
                 chairPerson.getToDate() != null ? dateformat.format(chairPerson.getToDate()) : "Till Date");
         jsonObject.addProperty("status",
-                chairPerson.isActive() ? WaterTaxConstants.MASTERSTATUSACTIVE : WaterTaxConstants.MASTERSTATUSINACTIVE);
+                chairPerson.isActive() ? ACTIVE : INACTIVE);
         return jsonObject;
     }
 }

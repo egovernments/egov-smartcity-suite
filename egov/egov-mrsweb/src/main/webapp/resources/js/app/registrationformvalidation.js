@@ -279,7 +279,7 @@ $('.age-field').blur( function () {
 	}
 	});
 
-  if($('#source').val()=='API'){
+  if($('#source').val()=='CHPK'){
 	  $('#select-registrationunit').removeAttr("required");
 	  $('#txt-zone').removeAttr("required");
 	  $('[id="husband.occupation"]').removeAttr("required");
@@ -293,11 +293,12 @@ $('.age-field').blur( function () {
 	  
   }
   
-  if($('#source').val()=='API'){
+  if($('#source').val()=='CHPK'){
 	  	if($('#marriagePhotoFileStore').val()==''|| $('[id="husband.photoFileStore"]').val()==''
 	  		|| $('[id="wife.photoFileStore"]').val()==''){
+	  		$("input[type=file]").attr('disabled', true);
 	       $('#Approve').hide(); 
-	       $('#Reject').hide();
+	       $('#Reject').show();
 	  	}	
 	 }
   

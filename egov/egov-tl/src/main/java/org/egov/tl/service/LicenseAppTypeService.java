@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -51,12 +51,16 @@ package org.egov.tl.service;
 import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.repository.LicenseAppTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
+import static org.egov.tl.utils.Constants.CLOSURE_APPTYPE_CODE;
+import static org.egov.tl.utils.Constants.NEW_APPTYPE_CODE;
+import static org.egov.tl.utils.Constants.RENEW_APPTYPE_CODE;
+
 
 @Service
 @Transactional(readOnly = true)
@@ -69,19 +73,27 @@ public class LicenseAppTypeService {
         return licenseAppTypeRepository.findByName(name);
     }
 
-    public List<LicenseAppType> findAllLicenseAppType() {
-        return licenseAppTypeRepository.findByDisplayTrueOrderByNameAsc();
+    public LicenseAppType getLicenseAppTypeByCode(String name) {
+        return licenseAppTypeRepository.findByCode(name);
     }
 
-    public LicenseAppType getNewLicenseAppType() {
-        return getLicenseAppTypeByName(NEW_LIC_APPTYPE);
+    public LicenseAppType getRenewLicenseApplicationType() {
+        return getLicenseAppTypeByCode(RENEW_APPTYPE_CODE);
     }
 
-    public List<LicenseAppType> findByDisplayTrue() {
+    public LicenseAppType getNewLicenseApplicationType() {
+        return getLicenseAppTypeByCode(NEW_APPTYPE_CODE);
+    }
+
+    public LicenseAppType getClosureLicenseApplicationType() {
+        return getLicenseAppTypeByCode(CLOSURE_APPTYPE_CODE);
+    }
+
+    public List<LicenseAppType> getDisplayableLicenseAppTypes() {
         return licenseAppTypeRepository.findByDisplayTrueOrderByNameAsc();
     }
 
     public List<LicenseAppType> getAllApplicationTypes() {
-        return licenseAppTypeRepository.findAll();
+        return licenseAppTypeRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
     }
 }

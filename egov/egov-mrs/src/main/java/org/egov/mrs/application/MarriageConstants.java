@@ -63,7 +63,6 @@ public class MarriageConstants {
 
     public static final String REISSUE_FEECRITERIA = "Re-Issue Fee";
     public static final String ADDITIONAL_RULE_REGISTRATION = "MARRIAGE REGISTRATION";
-    public static final String SOURCE_API= "API";
     public static final double MAX_SIZE = 2097152;
     public static final String CPK_END_POINT_URL = "http://www.chpk.ap.gov.in/CPKServices/MarriageCertificate/Create/";
 
@@ -83,9 +82,9 @@ public class MarriageConstants {
     public static final String WFLOW_PENDINGACTION_APPRVLPENDING_PRINTCERT = "Commisioner Approval Pending_PrintCert";
     public static final String WFLOW_PENDINGACTION_CMO_APPRVLPENDING = "Chief Medical Officer of Health Approval Pending";
     public static final String WFLOW_PENDINGACTION_MHO_APPRVLPENDING = "Municipal Health Officer Approval Pending";
-    public static final String WFLOW_PENDINGACTION_REV_CLERK_APPRVLPENDING = "Revenue Clerk Approval Pending";
+    public static final String WFLOW_PENDINGACTION_CLERK_APPRVLPENDING = "Clerk Approval Pending";
     public static final String WFLOW_PENDINGACTION_APPROVAL_APPROVEPENDING ="Approver Approval Pending";
-    public static final String WFSTATE_REV_CLRK_APPROVED="Revenue Clerk Approved";
+    public static final String WFSTATE_CLRK_APPROVED="Clerk Approved";
     public static final String WFSTATE_APPROVER_REJECTED ="Approver Rejected Application";
     public static final String WFSTATE_MHO_APPROVED="Municipal Health Officer Approved";
     public static final String WFSTATE_CMOH_APPROVED="Chief Medical Officer of Health Approved";
@@ -93,7 +92,6 @@ public class MarriageConstants {
     public static final String COMMISSIONER ="Commissioner";
     public static final String MARRIAGE_REGISTRAR = "Marriage Registrar";
     
-
     public static final String APPROVED = "APPROVED";
     public static final String MARRIAGEFEECOLLECTION_FUCNTION_CODE = "MARRIAGE_FUNCTION_CODE";
     public static final String FILESTORE_MODULECODE = "MRS";
@@ -128,9 +126,8 @@ public class MarriageConstants {
     public static final String ANONYMOUS_USER= "Anonymous";
     public static final String SOURCE_ONLINE = "ONLINE";
 
-
-    public static final String APPCONFKEY_DIGITALSIGNINWORKFLOW = "DIGITALSIGN_IN_WORKFLOW";
-    public static final String APPCONFKEY_REASSIGN_BUTTONENABLED = "REASSIGN_BUTTONENABLED";
+    public static final String DIGITALSIGNINWORKFLOW_ENABLED = "DIGITALSIGN_IN_WORKFLOW";
+    public static final String REASSIGN_BUTTONENABLED = "REASSIGN_BUTTONENABLED";
     
     //CITIZEN
     public static final String ROLE_CITIZEN = "CITIZEN";
@@ -139,24 +136,26 @@ public class MarriageConstants {
     public static final String CMO_DESIG = "Chief Medical Officer of Health";
     public static final String MHO_DESIG = "Municipal Health Officer";
 
-    public static final String MARRIAGE_DEPARTMENT_CODE = "MARRIAGE_DEPARTMENT_CODE";
-    public static final String MARRIAGE_DEFAULT_FUNCTIONARY_CODE = "MARRIAGE_DEFAULT_FUNCTIONARY_CODE";
-    public static final String MARRIAGE_DEFAULT_FUND_SRC_CODE = "MARRIAGE_DEFAULT_FUND_SRC_CODE";
-    public static final String MARRIAGE_DEFAULT_FUND_CODE = "MARRIAGE_DEFAULT_FUND_CODE";
+    public static final String MRG_DEPARTMENT_CODE = "MARRIAGE_DEPARTMENT_CODE";
+    public static final String MRS_DEFAULT_FUNCTIONARY_CODE = "MARRIAGE_DEFAULT_FUNCTIONARY_CODE";
+    public static final String MRS_DEFAULT_FUND_SRC_CODE = "MARRIAGE_DEFAULT_FUND_SRC_CODE";
+    public static final String MRS_DEFAULT_FUND_CODE = "MARRIAGE_DEFAULT_FUND_CODE";
 
     public static final String APPROVAL_COMMENT = "approvalComment";
     public static final String APPLICATION_NUMBER = "applicationNumber";
     public static final String FILE_STORE_ID_APPLICATION_NUMBER = "fileStoreIdApplicationNumber";
     
-    public static final String MARRIAGE_REGISTRATIONUNIT_HEIRARCHYTYPE = "MARRIAGE_REGISTRATIONUNIT_HEIRARCHYTYPE";
-    public static final String MARRIAGE_REGISTRATIONUNIT_BOUNDARYYTYPE = "MARRIAGE_REGISTRATIONUNIT_BOUNDARYYTYPE";
+    public static final String MRS_HEIRARCHYTYPE = "MARRIAGE_REGISTRATIONUNIT_HEIRARCHYTYPE";
+    public static final String MRS_BOUNDARYYTYPE = "MARRIAGE_REGISTRATIONUNIT_BOUNDARYYTYPE";
     
-    
+  
     //CSC operator related constants
-    public static final String MRG_ROLEFORNONEMPLOYEE = "MRSROLEFORNONEMPLOYEE";
+    public static final String MRS_ROLEFORNONEMPLOYEE = "MRSROLEFORNONEMPLOYEE";
     public static final String CSC_OPERATOR_ROLE = "CSC Operator";
-    public static final String MRG_WORKFLOWDESIGNATION_FOR_CSCOPERATOR = "MRSDESIGNATIONFORCSCOPERATORWORKFLOW";
-    public static final String MRG_WORKFLOWDEPARTEMENT_FOR_CSCOPERATOR = "MRSDEPARTMENTFORCSCOPERATORWORKFLOW";
+    public static final String MRS_DESIGNATION_CSCOPERATOR = "MRSDESIGNATIONFORCSCOPERATORWORKFLOW";
+    public static final String MRS_DEPARTEMENT_CSCOPERATOR = "MRSDEPARTMENTFORCSCOPERATORWORKFLOW";
+    public static final String MRS_DESIGNATION_REGISTRARAR = "MRSDESIGNATIONFORMRSREGISTRAR";
+    public static final String MRS_DEPARTEMENT_REGISTRARAR = "MRSDEPARTMENTFORMRSREGISTRARAR";
     public static final String CREATED =  "CREATED";
     public static final String JUNIOR_SENIOR_ASSISTANCE_APPROVAL_PENDING ="Junior/Senior Assistance approval pending";
     public static final String CSC_OPERATOR_CREATED =  "CSC Operator created";

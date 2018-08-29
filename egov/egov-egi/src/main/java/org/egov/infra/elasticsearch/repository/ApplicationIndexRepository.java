@@ -48,11 +48,22 @@
 
 package org.egov.infra.elasticsearch.repository;
 
+import java.util.List;
+
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.elasticsearch.entity.ApplicationIndex;
+import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ApplicationIndexRepository extends JpaRepository<ApplicationIndex, Long> {
     ApplicationIndex findByApplicationNumberAndCityName(String applicationNumber, String cityName);
+    
+	@Query("select application from ApplicationIndex application where application.cityName = :cityName and application.createdBy = :createdBy "
+			+ "and application.approved in :approvalStatuses ")
+	List<ApplicationIndex> findAllByCityNameAndCreatedByAndApprovalStatus(@Param("cityName") String cityName,
+			@Param("createdBy") User createdBy, @Param("approvalStatuses") List<ApprovalStatus> approvalStatuses);
 }

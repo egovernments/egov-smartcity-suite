@@ -1,5 +1,5 @@
 /*
- *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
  *     Copyright (C) 2018  eGovernments Foundation
@@ -26,13 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
- *            Further, all user interfaces, including but not limited to citizen facing interfaces,
- *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
- *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *           Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *           Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *           derived works should carry eGovernments Foundation logo on the top right corner.
  *
- *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
- *            For any further queries on attribution, including queries on brand guidelines,
- *            please contact contact@egovernments.org
+ * 	       For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ * 	       For any further queries on attribution, including queries on brand guidelines,
+ *           please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -51,7 +51,7 @@ package org.egov.tl.entity.contracts;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.web.support.search.DataTableSearchRequest;
-import org.egov.tl.entity.License;
+import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.utils.Constants;
 import org.joda.time.DateTime;
 
@@ -60,10 +60,10 @@ import java.util.Date;
 import java.util.List;
 
 import static org.egov.infra.utils.StringUtils.toYesOrNo;
-import static org.egov.tl.utils.Constants.CLOSURE_LIC_APPTYPE;
+import static org.egov.tl.utils.Constants.CLOSURE_APPTYPE_CODE;
+import static org.egov.tl.utils.Constants.CSCOPERATOR;
 import static org.egov.tl.utils.Constants.TL_APPROVER_ROLENAME;
 import static org.egov.tl.utils.Constants.TL_CREATOR_ROLENAME;
-import static org.egov.tl.utils.Constants.CSCOPERATOR;
 
 public class SearchForm extends DataTableSearchRequest {
     private Long licenseId;
@@ -88,13 +88,15 @@ public class SearchForm extends DataTableSearchRequest {
     private Long applicationTypeId;
     private Long natureOfBusinessId;
     private Date expiryDate;
+    private String uid;
 
     public SearchForm() {
         // For form binding
     }
 
-    public SearchForm(License license, User user, String ownerName, String... feeCollectorRoles) {
+    public SearchForm(TradeLicense license, User user, String ownerName, String... feeCollectorRoles) {
         setLicenseId(license.getId());
+        setUid(license.getUid());
         setApplicationNumber(license.getApplicationNumber());
         setLicenseNumber(license.getLicenseNumber());
         setCategoryName(license.getCategory().getName());
@@ -112,7 +114,7 @@ public class SearchForm extends DataTableSearchRequest {
         addActions(license, user, feeCollectorRoles);
     }
 
-    private void addActions(License license, User user, String... feeCollectorRoles) {
+    private void addActions(TradeLicense license, User user, String... feeCollectorRoles) {
         List<String> licenseActions = new ArrayList<>();
         licenseActions.add("View Trade");
         licenseActions.add("View DCB");
@@ -127,7 +129,7 @@ public class SearchForm extends DataTableSearchRequest {
         if (user.hasRole(CSCOPERATOR))
             addPrintCertificatesOptions(license, licenseActions);
         if (user.getType().equals(UserType.EMPLOYEE)) {
-            if (license.getIsActive())
+            if (!license.isAppTypeClosure() && license.getIsActive() && license.getTotalBalance().signum() > 0)
                 licenseActions.add("Generate Demand Notice");
             if (license.isLegacyWithNoState())
                 licenseActions.add("Modify Legacy License");
@@ -139,7 +141,7 @@ public class SearchForm extends DataTableSearchRequest {
         setActions(licenseActions);
     }
 
-    private void addRoleSpecificActions(License license, User user, List<String> licenseActions) {
+    private void addRoleSpecificActions(TradeLicense license, User user, List<String> licenseActions) {
         if (user.hasAnyRole(TL_CREATOR_ROLENAME, TL_APPROVER_ROLENAME)) {
             addPrintCertificatesOptions(license, licenseActions);
             if (license.isReadyForRenewal())
@@ -152,15 +154,15 @@ public class SearchForm extends DataTableSearchRequest {
         }
     }
 
-    private void addPrintCertificatesOptions(License license, List<String> licenseActions) {
+    private void addPrintCertificatesOptions(TradeLicense license, List<String> licenseActions) {
         if (license.isStatusActive() && !license.isLegacy())
             licenseActions.add("Print Certificate");
-        if (!CLOSURE_LIC_APPTYPE.equals(license.getLicenseAppType().getName())
+        if (!CLOSURE_APPTYPE_CODE.equals(license.getLicenseAppType().getCode())
                 && license.getStatus().getStatusCode().equals(Constants.STATUS_UNDERWORKFLOW))
             licenseActions.add("Print Provisional Certificate");
     }
 
-    private void demandGenerationOption(List<String> licenseActions, License license) {
+    private void demandGenerationOption(List<String> licenseActions, TradeLicense license) {
         Date nextYearInstallment = new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate();
         Date currentYearInstallment = license.getLicenseDemand().getEgInstallmentMaster().getToDate();
         if (license.isNewPermanentApplication() && !license.isLegacyWithNoState() && license.getIsActive()
@@ -342,5 +344,13 @@ public class SearchForm extends DataTableSearchRequest {
 
     public void setExpiryDate(final Date expiryDate) {
         this.expiryDate = expiryDate;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 }

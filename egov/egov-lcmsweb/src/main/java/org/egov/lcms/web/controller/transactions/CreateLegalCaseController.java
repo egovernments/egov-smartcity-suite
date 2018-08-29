@@ -51,6 +51,7 @@ package org.egov.lcms.web.controller.transactions;
 import org.egov.lcms.autonumber.LegalCaseNumberGenerator;
 import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.service.LegalCaseService;
+import org.egov.lcms.utils.constants.LcmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -80,8 +81,8 @@ public class CreateLegalCaseController extends GenericLegalCaseController {
     @RequestMapping(value = "create/", method = RequestMethod.GET)
     public String newForm(@ModelAttribute final LegalCase legalcase, final Model model,
             final HttpServletRequest request) {
-        model.addAttribute("legalcase", legalcase);
-        model.addAttribute("mode", "create");
+        model.addAttribute(LcmsConstants.LEGALCASE, legalcase);
+        model.addAttribute(LcmsConstants.MODE, "create");
         return "legalCase-newForm";
     }
 
@@ -95,16 +96,16 @@ public class CreateLegalCaseController extends GenericLegalCaseController {
         if (validateCasenumber != null)
             errors.reject("error.legalcase.casenumber");
         if (errors.hasErrors()) {
-            model.addAttribute("mode", "create");
+            model.addAttribute(LcmsConstants.MODE, "create");
             model.addAttribute("bipartisanRespondentDetailsList", legalCase.getBipartisanRespondentDetailsList());
             model.addAttribute("bipartisanPetitionerDetailsList", legalCase.getBipartisanPetitionerDetailsList());
             return "legalCase-newForm";
         }
         legalCase.setLcNumber(legalCaseNumberGenerator.generateLegalCaseNumber());
         legalCaseService.persist(legalCase, files);
-        redirectAttrs.addFlashAttribute("legalCase", legalCase);
+        redirectAttrs.addFlashAttribute(LcmsConstants.LEGALCASE, legalCase);
         model.addAttribute("message", "Legal Case created successfully.");
-        model.addAttribute("mode", "view");
+        model.addAttribute(LcmsConstants.MODE, "view");
         return "legalcase-success";
     }
 

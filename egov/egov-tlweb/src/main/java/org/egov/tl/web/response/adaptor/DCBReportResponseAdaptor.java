@@ -71,21 +71,22 @@ public class DCBReportResponseAdaptor implements DataTableJsonAdapter<DCBReportR
         final JsonArray dCBReportResultData = new JsonArray();
         dCBReportResult.forEach(dCBReport -> {
             final JsonObject dCBReportResultJson = new JsonObject();
-            dCBReportResultJson.addProperty("licenseid", dCBReport.getLicenseid());
+            dCBReportResultJson.addProperty("licenseId", dCBReport.getLicenseId());
             dCBReportResultJson.addProperty("active", toYesOrNo(dCBReport.isActive()));
-            dCBReportResultJson.addProperty("licensenumber", defaultIfBlank(dCBReport.getLicensenumber()));
+            dCBReportResultJson.addProperty("licenseNumber", defaultIfBlank(dCBReport.getLicenseNumber()));
             dCBReportResultJson.addProperty("oldLicenseNo", defaultIfBlank(dCBReport.getOldLicenseNumber()));
-            dCBReportResultJson.addProperty("ward",dCBReport.getWardname());
-            dCBReportResultJson.addProperty("username", dCBReport.getUsername());
-            dCBReportResultJson.addProperty("currentdemand", dCBReport.getCurrentdemand());
-            dCBReportResultJson.addProperty("arreardemand", dCBReport.getArreardemand());
-            dCBReportResultJson.addProperty("totaldemand", dCBReport.getTotaldemand());
-            dCBReportResultJson.addProperty("currentcollection", dCBReport.getCurrentcollection());
-            dCBReportResultJson.addProperty("arrearcollection", dCBReport.getArrearcollection());
-            dCBReportResultJson.addProperty("totalcollection", dCBReport.getTotalcollection());
-            dCBReportResultJson.addProperty("currentbalance", dCBReport.getCurrentbalance());
-            dCBReportResultJson.addProperty("arrearbalance", dCBReport.getArrearbalance());
-            dCBReportResultJson.addProperty("totalbalance", dCBReport.getTotalbalance());
+            dCBReportResultJson.addProperty("ward", defaultIfBlank(dCBReport.getWardName()));
+            dCBReportResultJson.addProperty("adminWard", defaultIfBlank(dCBReport.getAdminWardName()));
+            dCBReportResultJson.addProperty("userName", dCBReport.getUserName());
+            dCBReportResultJson.addProperty("currentDemand", dCBReport.getCurrentDemand());
+            dCBReportResultJson.addProperty("arrearDemand", dCBReport.getArrearDemand());
+            dCBReportResultJson.addProperty("totalDemand", dCBReport.getTotalDemand());
+            dCBReportResultJson.addProperty("currentCollection", dCBReport.getCurrentCollection());
+            dCBReportResultJson.addProperty("arrearCollection", dCBReport.getArrearCollection());
+            dCBReportResultJson.addProperty("totalCollection", dCBReport.getTotalCollection());
+            dCBReportResultJson.addProperty("currentBalance", dCBReport.getCurrentBalance());
+            dCBReportResultJson.addProperty("arrearBalance", dCBReport.getArrearBalance());
+            dCBReportResultJson.addProperty("totalBalance", dCBReport.getTotalBalance());
 
             dCBReportResultData.add(dCBReportResultJson);
         });

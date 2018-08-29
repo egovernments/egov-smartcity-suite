@@ -47,8 +47,8 @@
  */
 package org.egov.wtms.application.service;
 
-import static org.egov.wtms.utils.constants.WaterTaxConstants.ASSESSMENTSTATUSACTIVE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ACTIVE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PROPERTY_MODULE_NAME;
 
 import java.util.Date;
 import java.util.List;
@@ -84,7 +84,7 @@ public class ArrearRegisterReportService {
     public List<WaterChargeMaterlizeView> prepareQueryforArrearRegisterReport(final Long zoneId, final Long wardId,
             final Long locality) {
         final Installment currentInst = connectionDemandService
-                .getCurrentInstallment(WATER_RATES_NONMETERED_PTMODULE, null, new Date());
+                .getCurrentInstallment(PROPERTY_MODULE_NAME, null, new Date());
         final StringBuilder queryString = new StringBuilder(500);
 
         queryString.append(
@@ -103,7 +103,7 @@ public class ArrearRegisterReportService {
             queryString.append("  and pmv.wardid= :wardId ");
         queryString.append(" order by pmv.connectiondetailsid ");
         final Query query = getCurrentSession().createQuery(queryString.toString());
-        query.setParameter("status", ASSESSMENTSTATUSACTIVE);
+        query.setParameter("status", ACTIVE);
         query.setParameter("fromDate", currentInst.getFromDate());
         query.setParameter("toDate", currentInst.getToDate());
 

@@ -247,8 +247,8 @@ function callAjaxBydrillDownReport(aggregatedByValues,monthh,yearr) {
 							"sTitle" : "Legal Case Number",
 							"className" : "text-left",
 							"render" : function(data, type, full, meta) {
-								return '<a href="/lcms/application/view/?lcNumber='
-										+ data + '">' + data + '</div>';
+								return '<a href="javascript:void(0);" onclick="openLegalCase(\''+ data +'\')">' + data + '</a>';
+								
 							}
 						},
 						{
@@ -300,14 +300,10 @@ function callAjaxBydrillDownReport(aggregatedByValues,monthh,yearr) {
 	
 	})
 
-	
-		
 }
 
-	
-
-function openLegalCase(lcNumber) {
-	window.open("/lcms/application/view/?lcNumber="+ lcNumber , "", "height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
+function openLegalCase(data) {
+	window.open("/lcms/application/view/?lcNumber="+ data , "", "height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
 }
 
 

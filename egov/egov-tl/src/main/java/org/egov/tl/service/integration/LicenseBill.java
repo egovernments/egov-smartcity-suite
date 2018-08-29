@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -53,24 +53,23 @@ import org.egov.demand.model.AbstractBillable;
 import org.egov.demand.model.EgBillType;
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.admin.master.entity.Module;
-import org.egov.tl.entity.License;
+import org.egov.tl.entity.TradeLicense;
 import org.joda.time.LocalDate;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
-
 import java.util.List;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.apache.commons.lang.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.egov.infra.utils.StringUtils.defaultIfBlank;
 
 public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalculator {
 
     public static final String DEFAULT_FUNCTIONARY_CODE = "1";
 
-    private License license;
+    private TradeLicense license;
     private String moduleName;
     private String serviceCode;
     private String referenceNumber;
@@ -81,11 +80,11 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
     private EgBillType billType;
     private String transanctionReferenceNumber;
 
-    public License getLicense() {
+    public TradeLicense getLicense() {
         return license;
     }
 
-    public void setLicense(License license) {
+    public void setLicense(TradeLicense license) {
         this.license = license;
     }
 
@@ -122,7 +121,7 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
         return new StringBuilder().
                 append(license.getLicensee().getAddress()).
                 append("\nPh : ").
-                append(defaultIfBlank(license.getLicensee().getMobilePhoneNumber(), "NA"))
+                append(defaultIfBlank(license.getLicensee().getMobilePhoneNumber()))
                 .toString();
     }
 

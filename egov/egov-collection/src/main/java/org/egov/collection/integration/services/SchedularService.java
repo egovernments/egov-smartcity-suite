@@ -47,13 +47,6 @@
  */
 package org.egov.collection.integration.services;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.OnlinePayment;
@@ -61,6 +54,7 @@ import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.integration.pgi.AtomAdaptor;
 import org.egov.collection.integration.pgi.AxisAdaptor;
 import org.egov.collection.integration.pgi.PaymentResponse;
+import org.egov.collection.integration.pgi.SbimopsAdaptor;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.DateUtils;
@@ -73,11 +67,19 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 @Service
 public class SchedularService {
 
+    public static final Integer QUARTZ_SBIMOPS_RECONCILE_BULK_JOBS = 5;
     private static final Logger LOGGER = Logger.getLogger(SchedularService.class);
-
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
@@ -90,6 +92,9 @@ public class SchedularService {
 
     @Autowired
     private AtomAdaptor atomAdaptor;
+
+    @Autowired
+    private SbimopsAdaptor sbimopsAdaptor;
 
     @Transactional
     public void reconcileAXIS() {
@@ -145,13 +150,13 @@ public class SchedularService {
                         LOGGER.info("$$$$$$ Online Receipt Persisted with Receipt Number: "
                                 + onlinePaymentReceiptHeader.getReceiptnumber()
                                 + (onlinePaymentReceiptHeader.getConsumerCode() != null ? " and consumer code: "
-                                        + onlinePaymentReceiptHeader.getConsumerCode() : "")
+                                + onlinePaymentReceiptHeader.getConsumerCode() : "")
                                 + "; Time taken(ms) = "
                                 + elapsedTimeInMillis);
                     }
                 }
-            } catch (final ApplicationRuntimeException ex) {
-                LOGGER.error("AXIS payment reconciliation failed" + ex);
+            } catch (final ApplicationRuntimeException exp) {
+                LOGGER.error("AXIS payment reconciliation failed", exp);
             }
         }
     }
@@ -225,15 +230,87 @@ public class SchedularService {
                         LOGGER.info("$$$$$$ Online Receipt Persisted with Receipt Number: "
                                 + onlinePaymentReceiptHeader.getReceiptnumber()
                                 + (onlinePaymentReceiptHeader.getConsumerCode() != null ? " and consumer code: "
-                                        + onlinePaymentReceiptHeader.getConsumerCode() : "")
+                                + onlinePaymentReceiptHeader.getConsumerCode() : "")
                                 + "; Time taken(ms) = "
                                 + elapsedTimeInMillis);
                     }
                 }
-            } catch (final ApplicationRuntimeException ex) {
-                LOGGER.error("ATOM payment reconciliation failed" + ex);
+            } catch (final ApplicationRuntimeException exp) {
+                LOGGER.error("ATOM payment reconciliation failed", exp);
             }
         }
     }
 
+    @Transactional
+    public void reconcileSBIMOPS(Integer modulo) {
+        try {
+            LOGGER.debug("Inside reconcileSBIMOPS");
+            final List<OnlinePayment> reconcileList = getPendingOnlineTransaction(CollectionConstants.SERVICECODE_SBIMOPS,
+                    modulo);
+
+            LOGGER.debug("Thread ID = " + Thread.currentThread().getId() + ": got " + reconcileList.size() + " results.");
+            if (reconcileList != null && !reconcileList.isEmpty()) {
+                for (final OnlinePayment onlinePaymentObj : reconcileList) {
+                    LOGGER.info("SBIMOPS Receiptid::::" + onlinePaymentObj.getReceiptHeader().getId());
+                    PaymentResponse paymentResponse = sbimopsAdaptor.createOfflinePaymentRequest(onlinePaymentObj);
+                    if (paymentResponse == null)
+                        LOGGER.debug("Online Receipt Persisted for the Receipt Id: " + onlinePaymentObj.getReceiptHeader().getId()
+                                + " Response is null");
+                    else if (isNotBlank(paymentResponse.getReceiptId())) {
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("paymentResponse.getReceiptId():" + paymentResponse.getReceiptId());
+                            LOGGER.debug("paymentResponse.getAdditionalInfo6():" +
+                                    defaultIfBlank(paymentResponse.getAdditionalInfo6(), " consumer code is blank "));
+                            LOGGER.debug("paymentResponse.getAuthStatus():" + paymentResponse.getAuthStatus());
+                        }
+                        processOnlineTransaction(paymentResponse);
+                    }
+                }
+            }
+        } catch (final ApplicationRuntimeException exp) {
+            LOGGER.error("SBIMOPS payment reconciliation failed", exp);
+        }
+    }
+
+    public List<OnlinePayment> getPendingOnlineTransaction(String paymentServiceCode, Integer modulo) {
+        final Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MINUTE, -30);
+        StringBuilder queryString = new StringBuilder(200);
+        queryString.append(
+                "select receipt from org.egov.collection.entity.OnlinePayment as receipt where receipt.status.code=:onlinestatuscode")
+                .append(" and receipt.service.code=:paymentservicecode and receipt.createdDate<:thirtyminslesssysdate  and MOD(receipt.id, ")
+                .append(QUARTZ_SBIMOPS_RECONCILE_BULK_JOBS)
+                .append(") = :modulo  order by receipt.id asc");
+        final Query query = persistenceService
+                .getSession()
+                .createQuery(queryString.toString())
+                .setMaxResults(50);
+        query.setString("onlinestatuscode", CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
+        query.setString("paymentservicecode", paymentServiceCode);
+        query.setParameter("thirtyminslesssysdate", new Date(cal.getTimeInMillis()));
+        query.setParameter("modulo", modulo);
+        return query.list();
+    }
+
+    private void processOnlineTransaction(PaymentResponse paymentResponse) {
+
+        // If the transaction status is Pending, Keeping the transaction in pending status for five days from transaction date.
+        final Calendar fiveDaysBackCalender = Calendar.getInstance();
+        fiveDaysBackCalender.add(Calendar.DATE, -5);
+
+        ReceiptHeader onlinePaymentReceiptHeader = (ReceiptHeader) persistenceService.findByNamedQuery(
+                CollectionConstants.QUERY_PENDING_RECEIPT_BY_ID_AND_CITYCODE,
+                Long.valueOf(paymentResponse.getReceiptId()),
+                ApplicationThreadLocals.getCityCode());
+
+        if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(paymentResponse.getAuthStatus()))
+            reconciliationService.processSuccessMsg(onlinePaymentReceiptHeader, paymentResponse);
+        else if (CollectionConstants.PGI_AUTHORISATION_CODE_PENDING.equals(paymentResponse.getAuthStatus()) &&
+                DateUtils.compareDates(onlinePaymentReceiptHeader.getCreatedDate(), fiveDaysBackCalender.getTime())) {
+            onlinePaymentReceiptHeader.getOnlinePayment().setAuthorisationStatusCode(
+                    paymentResponse.getAuthStatus());
+            onlinePaymentReceiptHeader.getOnlinePayment().setRemarks(paymentResponse.getErrorDescription());
+        } else
+            reconciliationService.processFailureMsg(onlinePaymentReceiptHeader, paymentResponse);
+    }
 }

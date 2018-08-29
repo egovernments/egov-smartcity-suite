@@ -61,7 +61,7 @@ public interface LegalCaseInterimOrderRepository extends JpaRepository<LegalCase
 
     LegalCaseInterimOrder findById(final Long id);
 
-    List<LegalCaseInterimOrder> findByLegalCase_lcNumber(final String lcNumber);
+    List<LegalCaseInterimOrder> findByLegalCaseLcNumber(final String lcNumber);
 
     @Query("select iod from LcInterimOrderDocuments iod where iod.legalCaseInterimOrder.id=:interimOrderId order by iod.id desc")
     List<LcInterimOrderDocuments> getLcInterimOrderDocumentList(@Param("interimOrderId") Long interimOrderId);

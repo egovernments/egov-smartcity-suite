@@ -53,6 +53,7 @@ import org.egov.commons.Fund;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
+import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -65,6 +66,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "view_egeis_employee")
+@Immutable
 public class EmployeeView implements java.io.Serializable {
 
     private static final long serialVersionUID = -4195561328807134993L;

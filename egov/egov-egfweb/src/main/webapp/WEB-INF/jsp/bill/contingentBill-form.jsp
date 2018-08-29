@@ -50,6 +50,11 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <jsp:include page="../voucher/vouchertrans-filter-new-contingent.jsp" />
+<p id="errorMsgForDept" style="color:red;font-size:14px;border:none;overflow:auto;height:20px;display:none;" class="text-center">
+Please select department</p>
+<p id="errorMsgForFunction" style="color:red;font-size:14px;border:none;overflow:auto;height:20px;display:none;" class="text-center">
+Please enter Function</p>
+
 <tr>
 	<td class="greybox"></td>
 	<td class="greybox"><s:text name="function" /><span
@@ -143,8 +148,8 @@
 								<tr>
 									<td class="bluebox"><s:text name="party.bill.number" /></td>
 									<td class="bluebox"><s:textfield
-											name="commonBean.partyBillNumber"
-											id="commonBean.partyBillNumber" /></td>
+											name="commonBean.partyBillNumber" onchange= "isSpecialChar();"
+											id="commonBean.partyBillNumber" onkeyup= "isSpecialChar();"/></td>
 									<td class="bluebox"><s:text name="party.bill.date" /></td>
 									<s:date name='commonBean.partyBillDate'
 										var="commonBean.partyBillDateId" format='dd/MM/yyyy' />
@@ -160,8 +165,8 @@
 									<td class="bluebox" style="text-align: left"><s:text
 											name="payto" /><span class="mandatory1"> *</span></td>
 									<td class="bluebox" style="text-align: left; width: 240"
-										colspan="4"><s:textfield name="commonBean.payto"
-											id="commonBean.payto" size="55" value="%{commonBean.payto}" /></td>
+										colspan="4"><s:textfield name="commonBean.payto" onchange= "isSpecialCharForPayTo();"
+											id="commonBean.payto" onkeyup= "isSpecialCharForPayTo();" size="55" value="%{commonBean.payto}" /></td>
 								</tr>
 							</tbody>
 						</table>
@@ -223,7 +228,7 @@
 
 				<td align="center" class="blueborderfortd1"
 					style="text-align: center"><input type="button" name="Done"
-					onclick="updateTabels()" class="buttongeneral" value="Done"
+					onclick="checkForDept();" class="buttongeneral" value="Done"
 					align="middle" /></td>
 
 			</tr>
@@ -308,5 +313,41 @@
 
 	</div>
 </center>
+<script type="text/javascript"> 
+	function checkForDept(){
+		var deptSelected = document.getElementById('vouchermis.departmentid').value;
+		var functionSelected = document.getElementById('commonBean.functionName').value;
+		if(deptSelected == -1 || deptSelected == "-1" || deptSelected == "" ){
+			document.getElementById('vouchermis.departmentid').focus();
+			document.getElementById('errorMsgForFunction').style.display = "none";
+			document.getElementById('errorMsgForDept').style.display = "block";
+			return false;
+		 }else{
+			 if(functionSelected == null || functionSelected == ""){
+				 document.getElementById('commonBean.functionName').focus();
+				 document.getElementById('errorMsgForDept').style.display = "none";
+				 document.getElementById('errorMsgForFunction').style.display = "block";
+				 
+			 }else{
+				 document.getElementById('errorMsgForDept').style.display = "none";
+				 document.getElementById('errorMsgForFunction').style.display = "none";
+				 updateTabels();
+			 }
+			 
+		 }
+	}
 
+	
+	function isSpecialChar(){
+		  var numberEntered = document.getElementById('commonBean.partyBillNumber').value;
+		  var replacedNumber = numberEntered.replace(/[`~!@#$%^&*()_|+\-=÷¿?;:><'",.<>\{\}\[\]\\\/]/gi, '');
+		  document.getElementById('commonBean.partyBillNumber').value = replacedNumber;   
+	}
+	function isSpecialCharForPayTo(){
+		var nameEntered = document.getElementById('commonBean.payto').value;
+		  var replacedName = nameEntered.replace(/[`~!@#$%^&*()_|+\-=÷¿?;:><'",.<>\{\}\[\]\\\/]/gi, '');
+		  document.getElementById('commonBean.payto').value = replacedName;
+	}
+	  
+</script>
 

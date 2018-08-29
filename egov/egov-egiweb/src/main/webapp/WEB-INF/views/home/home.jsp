@@ -65,7 +65,7 @@
     <meta name="author" content="eGovernments Foundation"/>
     <spring:eval expression="@environment.getProperty('user.pwd.strength')" var="pwdstrengthmsg"/>
     <spring:message code="usr.pwd.strength.msg.${pwdstrengthmsg}" var="pwdmsg" htmlEscape="true"/>
-    <title><spring:message code="msg.urban.portal"/></title>
+    <title><spring:message code="lbl.egov.header"/></title>
 
     <link rel="icon" href="<cdn:url value='/resources/global/images/favicon.png'/>" sizes="32x32">
     <link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap.css'/>">
@@ -352,7 +352,7 @@
             <div id="legal">
                 <c:set var="now" value="<%=new org.joda.time.DateTime()%>"/>
                 <span class="copyright">
-                    <spring:message code="lbl.copyright"/> <span><i class="fa fa-copyright"></i></span> <joda:format value="${now}" pattern="yyyy"/> <a href="http://www.egovernments.org" target="_blank"> <spring:message code="lbl.egov"/>.<sup>&reg;</sup></a></span>
+                    <spring:message code="lbl.copyright"/> <span><i class="fa fa-copyright"></i></span> <joda:format value="${now}" pattern="yyyy"/> <a href="http://www.egovernments.org" target="_blank"> <spring:message code="lbl.egov.foundation"/>.<sup>&reg;</sup></a></span>
                 <span class="version">eGov ERP - ${app_version}_${app_buildno}<c:if test="${not empty app_core_build_no}"> @ Core - ${app_core_build_no}</c:if></span>
             </div>
         </div>

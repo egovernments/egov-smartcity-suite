@@ -1,0 +1,1 @@
+update egcl_servicedetails set name = 'CFMS Payment Gateway' where code='SBIMOPS';

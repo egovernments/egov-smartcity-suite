@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -48,55 +48,39 @@
 
 package org.egov.wtms.web.controller.search;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WATER_TAX_INDEX_NAME;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.City;
-import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.wtms.application.entity.WaterConnectionDetails;
-import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.infra.web.rest.error.ErrorResponse;
 import org.egov.wtms.entity.es.ConnectionSearchRequest;
-import org.egov.wtms.entity.es.WaterChargeDocument;
-import org.egov.wtms.masters.entity.enums.ConnectionStatus;
-import org.egov.wtms.repository.es.WaterChargeDocumentRepository;
+import org.egov.wtms.service.WaterTaxSearchService;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
+import org.egov.wtms.web.validator.WaterTaxSearchValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
-import org.springframework.data.elasticsearch.core.query.SearchQuery;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
+
+import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
+import static org.egov.infra.utils.JsonUtils.toJSON;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
 @RequestMapping(value = "/search/waterSearch/")
 public class WaterTaxSearchController {
 
-    private final CityService cityService;
-
     @Autowired
     private WaterTaxUtils waterTaxUtils;
-
-    @Autowired
-    private SecurityUtils securityUtils;
 
     @Autowired
     private UserService userService;
@@ -105,272 +89,44 @@ public class WaterTaxSearchController {
     private BoundaryService boundaryService;
 
     @Autowired
-    private WaterChargeDocumentRepository waterChargeDocumentRepository;
+    private WaterTaxSearchService waterTaxSearchService;
 
     @Autowired
-    private WaterConnectionDetailsService waterConnectionDetailsService;
-
-    @Autowired
-    private ElasticsearchTemplate elasticsearchTemplate;
-
-    @Autowired
-    public WaterTaxSearchController(final CityService cityService) {
-        this.cityService = cityService;
-    }
+    private WaterTaxSearchValidator waterTaxSearchValidator;
 
     @ModelAttribute
     public ConnectionSearchRequest searchRequest() {
         return new ConnectionSearchRequest();
     }
 
-    /**
-     * Assumptions: assuming appconfig Key "RolesForSearchWaterTaxConnection" List Contals 1st Entry "CSC Operator" order by value
-     * asc
-     *
-     * @return String if Logged in User is CSC Operattor
-     */
-    @ModelAttribute("cscUserRole")
-    public String getCurrentUserRole() {
-        String cscUserRole = "";
-        User currentUser;
-
-        if (ApplicationThreadLocals.getUserId() != null)
-            currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
-        else
-            currentUser = securityUtils.getCurrentUser();
-
-        for (final Role userrole : currentUser.getRoles())
-            if (userrole.getName().equals(WaterTaxConstants.ROLE_CSCOPERTAOR)) {
-                cscUserRole = userrole.getName();
-                break;
-            }
-        return cscUserRole;
-    }
-
     @ModelAttribute("citizenRole")
     public Boolean getCitizenUserRole() {
-        Boolean citizenrole = Boolean.FALSE;
-        if (ApplicationThreadLocals.getUserId() != null) {
-            final User currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
-            for (final Role userrole : currentUser.getRoles())
-                if (userrole.getName().equals(WaterTaxConstants.ROLE_PUBLIC)) {
-                    citizenrole = Boolean.TRUE;
-                    break;
-                }
-        } else
-            citizenrole = Boolean.TRUE;
-        return citizenrole;
-    }
-
-    /**
-     * Assumptions: assuming appconfig Key "RolesForSearchWaterTaxConnection" List Contals 4th Entry "ULB Operator" order by value
-     * asc
-     *
-     * @return String if Logged in User is ULB Operattor
-     */
-    @ModelAttribute("ulbUserRole")
-    public String getUlbOperatorUserRole() {
-        String userRole = "";
-        User currentUser;
-        if (ApplicationThreadLocals.getUserId() != null)
-            currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
-        else
-            currentUser = securityUtils.getCurrentUser();
-        for (final Role userrole : currentUser.getRoles())
-            if (userrole.getName().equals(WaterTaxConstants.ROLE_ULBOPERATOR)) {
-                userRole = userrole.getName();
-                break;
-            }
-        return userRole;
-    }
-
-    /**
-     * @return String if Logged in User is SUPER USER
-     */
-    @ModelAttribute("superUserRole")
-    public String getSuperUserRole() {
-        String userRole = "";
-        User currentUser;
-
-        if (ApplicationThreadLocals.getUserId() != null)
-            currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
-        else
-            currentUser = securityUtils.getCurrentUser();
-        for (final Role userrole : currentUser.getRoles())
-            if (userrole.getName().equals(WaterTaxConstants.ROLE_SUPERUSER)) {
-                userRole = userrole.getName();
-                break;
-            }
-
-        return userRole;
-    }
-
-    /**
-     * @return String if Logged in User is Property Administrator
-     */
-    @ModelAttribute("administratorRole")
-    public String getAdminstratorRole() {
-        String userRole = "";
-        User currentUser;
-
-        if (ApplicationThreadLocals.getUserId() != null)
-            currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
-        else
-            currentUser = securityUtils.getCurrentUser();
-        for (final Role userrole : currentUser.getRoles())
-            if (userrole.getName().equals(WaterTaxConstants.ROLE_ADMIN)) {
-                userRole = userrole.getName();
-                break;
-            }
-
-        return userRole;
-    }
-
-    /**
-     * Assumptions: assuming appconfig Key "RolesForSearchWaterTaxConnection" List Contals 3th Entry "Water Tax Approver" order by
-     * value asc
-     *
-     * @return String if Logged in User is Water Tax Approver
-     */
-    @ModelAttribute("approverUserRole")
-    public String getApproverUserRole() {
-        String userRole = "";
-        User currentUser;
-        waterTaxUtils.getUserRolesForLoggedInUser();
-
-        if (ApplicationThreadLocals.getUserId() != null)
-            currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
-        else
-            currentUser = securityUtils.getCurrentUser();
-        for (final Role userrole : currentUser.getRoles())
-            if (userrole.getName().equals(WaterTaxConstants.ROLE_APPROVERROLE)) {
-                userRole = userrole.getName();
-                break;
-            }
-        return userRole;
-    }
-
-    /**
-     * Assumptions: assuming appconfig Key "RolesForSearchWaterTaxConnection" List Contals 5th Entry "Operator"
-     *
-     * @return String if Logged in User is Operator
-     */
-    @ModelAttribute("operatorRole")
-    public String getOperatorUserRole() {
-        String userRole = "";
-        User currentUser;
-        if (ApplicationThreadLocals.getUserId() != null)
-            currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
-        else
-            currentUser = securityUtils.getCurrentUser();
-        for (final Role userrole : currentUser.getRoles())
-            if (userrole.getName().equals(WaterTaxConstants.ROLE_OPERATOR)) {
-                userRole = userrole.getName();
-                break;
-            }
-        return userRole;
-    }
-
-    @ModelAttribute("billcollectionRole")
-    public String getBillOperatorUserRole() {
-        String userRole = "";
-        User currentUser;
-        if (ApplicationThreadLocals.getUserId() != null)
-            currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
-        else
-            currentUser = securityUtils.getCurrentUser();
-        for (final Role userrole : currentUser.getRoles())
-            if (userrole.getName().equals(WaterTaxConstants.ROLE_BILLCOLLECTOR)) {
-                userRole = userrole.getName();
-                break;
-            }
-        return userRole;
+        User currentUser = userService.getUserById(getUserId());
+        return currentUser == null ? true : waterTaxUtils.compareUserRoleWithParameter(currentUser, WaterTaxConstants.ROLE_PUBLIC);
     }
 
     @ModelAttribute("revenueWards")
     public List<Boundary> revenueWardList() {
-        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WaterTaxConstants.REVENUE_WARD,
-                REVENUE_HIERARCHY_TYPE);
+        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WaterTaxConstants.REVENUE_WARD, REVENUE_HIERARCHY_TYPE);
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    public String newSearchForm(final Model model) {
+    @GetMapping
+    public String newSearchForm() {
         return "waterTaxSearch-newForm";
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @PostMapping(produces = TEXT_PLAIN_VALUE)
     @ResponseBody
-    public List<ConnectionSearchRequest> searchConnection(@ModelAttribute final ConnectionSearchRequest searchRequest) {
-        List<WaterChargeDocument> temList;
-        final List<ConnectionSearchRequest> finalResult = new ArrayList<>();
-        temList = findAllWaterChargeIndexByFilter(searchRequest);
-        for (final WaterChargeDocument waterChargeIndex : temList) {
-            final WaterConnectionDetails closureapplication = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(
-                    waterChargeIndex.getConsumerCode(), ConnectionStatus.CLOSED);
-            final WaterConnectionDetails reconnApplication = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(
-                    waterChargeIndex.getConsumerCode(), ConnectionStatus.ACTIVE);
-            final ConnectionSearchRequest customerObj = new ConnectionSearchRequest();
-            if (closureapplication != null)
-                customerObj.setApplicationcode(closureapplication.getApplicationNumber());
-            else if (reconnApplication != null)
-                customerObj.setApplicationcode(reconnApplication.getApplicationNumber());
-            customerObj.setApplicantName(waterChargeIndex.getConsumerName());
-            customerObj.setConsumerCode(waterChargeIndex.getConsumerCode());
-            customerObj.setOldConsumerNumber(waterChargeIndex.getOldConsumerCode());
-            customerObj.setPropertyid(waterChargeIndex.getPropertyId());
-            customerObj.setAddress(waterChargeIndex.getLocality());
-            customerObj.setApplicationType(waterChargeIndex.getApplicationCode());
-            customerObj.setUsage(waterChargeIndex.getUsage());
-            customerObj.setIslegacy(waterChargeIndex.getLegacy());
-            customerObj.setPropertyTaxDue(waterChargeIndex.getTotalDue());
-            customerObj.setStatus(waterChargeIndex.getStatus());
-            customerObj.setConnectiontype(waterChargeIndex.getConnectionType());
-            customerObj.setWaterTaxDue(waterChargeIndex.getWaterTaxDue());
-            customerObj.setClosureType(waterChargeIndex.getClosureType());
-            finalResult.add(customerObj);
+    public String searchConnection(@ModelAttribute ConnectionSearchRequest searchRequest, BindingResult result) {
+        waterTaxSearchValidator.validate(searchRequest, result);
+        if (result.hasErrors()) {
+            return new StringBuilder("{ \"data\":")
+                    .append(toJSON(new ErrorResponse("error", result.getAllErrors().get(0).getDefaultMessage(), HttpStatus.BAD_REQUEST)))
+                    .append("}").toString();
+        } else {
+            return new StringBuilder("{ \"data\":")
+                    .append(toJSON(waterTaxSearchService.searchConnection(searchRequest))).append("}").toString();
         }
-        return finalResult;
-
-    }
-
-    private BoolQueryBuilder getFilterQuery(final ConnectionSearchRequest searchRequest) {
-        final City cityWebsite = cityService.getCityByCode(ApplicationThreadLocals.getCityCode());
-        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
-                .filter(QueryBuilders.termQuery("cityName", cityWebsite.getName()));
-        if (StringUtils.isNotBlank(searchRequest.getApplicantName()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("consumerName", searchRequest.getApplicantName()));
-        if (StringUtils.isNotBlank(searchRequest.getConsumerCode()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("consumerCode", searchRequest.getConsumerCode()));
-        if (StringUtils.isNotBlank(searchRequest.getOldConsumerNumber()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("oldConsumerCode", searchRequest.getOldConsumerNumber()));
-        if (StringUtils.isNotBlank(searchRequest.getPropertyid()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("propertyId", searchRequest.getPropertyid()));
-        if (StringUtils.isNotBlank(searchRequest.getRevenueWard()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("revenueWard", searchRequest.getRevenueWard()));
-        if (StringUtils.isNotBlank(searchRequest.getMobileNumber()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("mobileNumber", searchRequest.getMobileNumber()));
-        if (StringUtils.isNotBlank(searchRequest.getDoorNumber()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("doorNo", searchRequest.getDoorNumber()));
-        if (StringUtils.isNotBlank(searchRequest.getLocality()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("locality", searchRequest.getLocality()));
-
-        return boolQuery;
-    }
-
-    public List<WaterChargeDocument> findAllWaterChargeIndexByFilter(final ConnectionSearchRequest searchRequest) {
-
-        final BoolQueryBuilder query = getFilterQuery(searchRequest);
-        final SearchQuery countQuery = new NativeSearchQueryBuilder().withIndices(WATER_TAX_INDEX_NAME).withQuery(query).build();
-        final long count = elasticsearchTemplate.queryForPage(countQuery, WaterChargeDocument.class).getTotalElements();
-        final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices(WATER_TAX_INDEX_NAME)
-                .withQuery(query).withPageable(new PageRequest(0, count > 0 ? (int) count : 1)).build();
-
-        final Iterable<WaterChargeDocument> sampleEntities = waterChargeDocumentRepository.search(searchQuery);
-        final List<WaterChargeDocument> sampleEntitiesTemp = new ArrayList<>();
-        for (final WaterChargeDocument document : sampleEntities)
-            sampleEntitiesTemp.add(document);
-
-        return sampleEntitiesTemp;
     }
 
 }

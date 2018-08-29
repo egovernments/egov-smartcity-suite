@@ -57,6 +57,7 @@ import static org.egov.council.utils.constants.CouncilConstants.WARD;
 import static org.egov.infra.utils.JsonUtils.toJSON;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -306,6 +307,20 @@ public class CouncilPreambleController extends GenericWorkFlowController {
                     .getCurrentState().getValue());
             return COUNCILPREAMBLE_EDIT;
         }
+        List<Boundary> wardIdsList = new ArrayList<>();
+
+        String selectedWardIds=request.getParameter("wardsHiddenIds");
+
+        if (StringUtils.isNotEmpty(selectedWardIds)) {
+            String[] wardIds = selectedWardIds.split(",");
+            
+            for (String wrdId : wardIds) {
+                if (StringUtils.isNotEmpty(wrdId))
+                    wardIdsList.add(boundaryService.getBoundaryById(Long.valueOf(wrdId)));
+            }
+        }
+        councilPreamble.setWards(wardIdsList);
+
         if (attachments != null && attachments.getSize() > 0) {
             try {
                 councilPreamble.setFilestoreid(fileStoreService.store(

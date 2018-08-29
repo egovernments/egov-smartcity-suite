@@ -52,7 +52,7 @@ import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.StateHistory;
-import org.egov.infra.workflow.entity.WorkflowTypes;
+import org.egov.infra.workflow.entity.WorkflowType;
 
 import java.util.Date;
 
@@ -79,37 +79,37 @@ public class Inbox {
         //Default constructor for external inbox integration
     }
 
-    private Inbox(StateAware stateAware, WorkflowTypes workflowTypes, String nextAction) {
+    private Inbox(StateAware stateAware, WorkflowType workflowType, String nextAction) {
         State state = stateAware.getCurrentState();
-        this.id = workflowTypes.isGrouped() ? EMPTY : new StringBuilder(5).append(state.getId()).append("#")
-                .append(workflowTypes.getId()).toString();
+        this.id = workflowType.isGrouped() ? EMPTY : new StringBuilder(5).append(state.getId()).append("#")
+                .append(workflowType.getId()).toString();
         this.date = toDefaultDateTimeFormat(state.getCreatedDate());
         this.sender = state.getSenderName();
-        this.task = defaultIfBlank(state.getNatureOfTask(), workflowTypes.getDisplayName());
+        this.task = defaultIfBlank(state.getNatureOfTask(), workflowType.getDisplayName());
         this.status = state.getValue() + (isBlank(nextAction) ? EMPTY : " - " + nextAction);
         this.details = defaultIfBlank(stateAware.getStateDetails(), EMPTY);
-        this.link = workflowTypes.getLink().replace(":ID", stateAware.myLinkId());
-        this.moduleName = workflowTypes.getModule().getDisplayName();
+        this.link = workflowType.getLink().replace(":ID", stateAware.myLinkId());
+        this.moduleName = workflowType.getModule().getDisplayName();
         this.createdDate = state.getCreatedDate();
         this.draft = state.isNew() && state.getCreatedBy().getId().equals(getUserId());
     }
 
-    private Inbox(StateHistory stateHistory, WorkflowTypes workflowTypes) {
+    private Inbox(StateHistory stateHistory, WorkflowType workflowType) {
         this.id = stateHistory.getState().getId().toString();
         this.date = toDefaultDateTimeFormat(stateHistory.getLastModifiedDate());
         this.sender = stateHistory.getSenderName();
-        this.task = defaultIfBlank(stateHistory.getNatureOfTask(), workflowTypes.getDisplayName());
+        this.task = defaultIfBlank(stateHistory.getNatureOfTask(), workflowType.getDisplayName());
         this.status = stateHistory.getValue()
                 + (isBlank(stateHistory.getNextAction()) ? EMPTY : " - " + stateHistory.getNextAction());
         this.details = isBlank(stateHistory.getComments()) ? EMPTY : escapeSpecialChars(stateHistory.getComments());
         this.link = EMPTY;
     }
 
-    public static Inbox build(StateAware stateAware, WorkflowTypes workflowType, String nextAction) {
+    public static Inbox build(StateAware stateAware, WorkflowType workflowType, String nextAction) {
         return new Inbox(stateAware, workflowType, nextAction);
     }
 
-    public static Inbox buildHistory(StateHistory stateHistory, WorkflowTypes workflowType) {
+    public static Inbox buildHistory(StateHistory stateHistory, WorkflowType workflowType) {
         return new Inbox(stateHistory, workflowType);
     }
 

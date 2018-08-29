@@ -4,7 +4,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -47,24 +47,14 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
   -->
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
        default-lazy-init="true">
 
     <context:component-scan base-package="org.egov.tl"/>
-
-    <bean id="baseLicenseService" class="org.egov.tl.service.AbstractLicenseService" scope="prototype" abstract="true"/>
-
-    <bean id="tradeLicenseService" class="org.egov.tl.service.TradeLicenseService" parent="baseLicenseService">
-        <property name="licenseWorkflowService" ref="tradeLicenseWorkflowService"/>
-    </bean>
-
-    <bean id="licenseDocumentTypeService" class="org.egov.infstr.services.PersistenceService">
-        <constructor-arg name="type" value="org.egov.tl.entity.LicenseDocumentType"/>
-    </bean>
 
     <bean id="tradeLicensePersistenceService" class="org.egov.infstr.services.PersistenceService">
         <constructor-arg name="type" value="org.egov.tl.entity.TradeLicense"/>
@@ -76,17 +66,5 @@
 
     <bean id="TradeLicenseInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
         <constructor-arg index="0" ref="tradeLicensePersistenceService"/>
-    </bean>
-
-    <bean id="TLCollectionsInterface" class="org.egov.tl.service.integration.LicenseBillService" scope="prototype"/>
-
-    <bean id="licenseUtils" class="org.egov.tl.utils.LicenseUtils"/>
-
-    <bean id="tradeLicenseSmsAndEmailService" class="org.egov.tl.service.TradeLicenseSmsAndEmailService"/>
-
-    <bean id="tradeLicenseNumberGenerator" class="org.egov.tl.service.TradeLicenseNumberGenerator"/>
-
-    <bean id="licenseProcessWorkflowService" class="org.egov.tl.service.LicenseProcessWorkflowService">
-        <property name="licenseWorkflowService" ref="tradeLicenseWorkflowService"/>
     </bean>
 </beans>

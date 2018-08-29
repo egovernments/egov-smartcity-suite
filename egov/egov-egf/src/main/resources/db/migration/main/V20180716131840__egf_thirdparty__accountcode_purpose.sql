@@ -1,0 +1,1 @@
+Insert into egf_accountcode_purpose (ID,NAME,MODIFIEDDATE,MODIFIEDBY,CREATEDDATE,CREATEDBY) values ((select max(id)+1 from egf_accountcode_purpose),'Third Party Receivable',now(),(select id from eg_user where lower(username) ='system' and type='SYSTEM'),now(),(select id from eg_user where lower(username) ='system' and type='SYSTEM'));

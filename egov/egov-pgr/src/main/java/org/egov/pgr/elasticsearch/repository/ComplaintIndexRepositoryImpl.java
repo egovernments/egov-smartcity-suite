@@ -48,31 +48,7 @@
 
 package org.egov.pgr.elasticsearch.repository;
 
-import org.apache.commons.lang3.StringUtils;
-import org.egov.pgr.elasticsearch.entity.ComplaintIndex;
-import org.egov.pgr.elasticsearch.entity.contract.ComplaintDashBoardRequest;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.aggregations.AggregationBuilders;
-import org.elasticsearch.search.aggregations.metrics.tophits.TopHitsBuilder;
-import org.elasticsearch.search.sort.FieldSortBuilder;
-import org.elasticsearch.search.sort.SortOrder;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
-import org.springframework.data.elasticsearch.core.query.SearchQuery;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
+import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.utils.StringUtils.defaultIfBlank;
@@ -92,6 +68,31 @@ import static org.egov.pgr.utils.constants.PGRConstants.PGR_INDEX_DATE_FORMAT;
 import static org.egov.pgr.utils.constants.PGRConstants.PGR_INDEX_NAME;
 import static org.egov.pgr.utils.constants.PGRConstants.WARD_NAME;
 import static org.egov.pgr.utils.constants.PGRConstants.WARD_NUMBER;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import org.egov.pgr.elasticsearch.entity.ComplaintIndex;
+import org.egov.pgr.elasticsearch.entity.contract.ComplaintDashBoardRequest;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.metrics.tophits.TopHitsBuilder;
+import org.elasticsearch.search.sort.FieldSortBuilder;
+import org.elasticsearch.search.sort.SortOrder;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.data.elasticsearch.core.query.SearchQuery;
 
 public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomRepository {
 
@@ -141,11 +142,13 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
     private static final String SATISFACTION_INDEX = "satisfactionIndex";
     private static final String SATISFACTION_AVERAGE = "satisfactionAverage";
     private static final String COMPLAINT_AGEINGDAYS_FROM_DUE = "complaintAgeingdaysFromDue";
-    private static final String CITY_GRADE="cityGrade";
-    private static final String REGION_NAME="cityRegionName";
-    private static final String LOCALITY_NUMBER="localityNo";
-    private static final String DISTRICT_CODE="cityDistrictCode";
-    private static final String FEEDBACK_RATING="feedbackRating";
+    private static final String CITY_GRADE = "cityGrade";
+    private static final String REGION_NAME = "cityRegionName";
+    private static final String LOCALITY_NUMBER = "localityNo";
+    private static final String DISTRICT_CODE = "cityDistrictCode";
+    private static final String COMPLETION_DATE = "completionDate";
+    private static final String CREATED_DATE = "createdDate";
+    private static final String TODAY_COMPLAINT_COUNT = "todaysComplaintCount";
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
 
@@ -153,7 +156,7 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
     public SearchResponse todaysComplaintCount(BoolQueryBuilder query) {
         return elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
                 .setQuery(query)
-                .setSize(0).addAggregation(getCountBetweenSpecifiedDates("todaysComplaintCount", "createdDate",
+                .setSize(0).addAggregation(getCountBetweenSpecifiedDates(TODAY_COMPLAINT_COUNT, CREATED_DATE,
                         new DateTime().toString(formatter), new DateTime().plusDays(1).toString(formatter)))
                 .execute().actionGet();
     }
@@ -189,10 +192,10 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                 .addAggregation(getCountWithGrouping("slaCount", IF_SLA, 2))
                 .addAggregation(getAverageWithFilter(IF_CLOSED, 1, "AgeingInWeeks", COMPLAINT_AGEINGDAYS_FROM_DUE))
                 .addAggregation(getAverageWithExclusion(SATISFACTION_AVERAGE, SATISFACTION_INDEX))
-                .addAggregation(getCountBetweenSpecifiedDates("currentYear", "createdDate",
+                .addAggregation(getCountBetweenSpecifiedDates("currentYear", CREATED_DATE,
                         currentYearFromDate.toString(formatter),
                         new DateTime().plusDays(1).toString(formatter)))
-                .addAggregation(getCountBetweenSpecifiedDates("todaysComplaintCount", "createdDate",
+                .addAggregation(getCountBetweenSpecifiedDates(TODAY_COMPLAINT_COUNT, CREATED_DATE,
                         new DateTime().toString(formatter), new DateTime().plusDays(1).toString(formatter)))
                 .execute().actionGet();
 
@@ -814,12 +817,34 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
 
     @Override
     public SearchResponse findFeedBackRatingDetails(ComplaintDashBoardRequest ivrsFeedBackRequest, BoolQueryBuilder feedBackQuery,
-            String aggregationField) {
+                                                    String aggregationField) {
         return elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
-                .setQuery(feedBackQuery).addAggregation(AggregationBuilders.terms("typeAggr").field(aggregationField).size(130)
-                        .subAggregation(AggregationBuilders.terms("countAggr").field(FEEDBACK_RATING))
+                .setQuery(feedBackQuery)
+                .addAggregation(AggregationBuilders.terms("typeAggr").field(aggregationField).size(130)
+                        .subAggregation(ComplaintIndexAggregationBuilder.getCallStatusAndRating())
+                        .subAggregation(ComplaintIndexAggregationBuilder.prepareMonthlyAggregations())
+                        .subAggregation(getCountBetweenSpecifiedDates(TODAY_COMPLAINT_COUNT,
+                                COMPLETION_DATE, new DateTime().toString(formatter), new DateTime().plusDays(1).toString(formatter)))
                         .subAggregation(addFieldBasedOnAggField(aggregationField)))
                 .execute().actionGet();
+    }
+
+    @Override
+    public List<ComplaintIndex> findIvrsComplaints(final ComplaintDashBoardRequest complaintDashBoardRequest,
+                                                   final BoolQueryBuilder query, String fieldName, String paramValue) {
+        SearchQuery searchQuery;
+        final SortOrder sortOrder = complaintDashBoardRequest.getSortDirection().equals("ASC") ? SortOrder.ASC : SortOrder.DESC;
+        if (isBlank(fieldName) && isBlank(paramValue))
+            searchQuery = new NativeSearchQueryBuilder().withQuery(query)
+                    .withSort(new FieldSortBuilder(complaintDashBoardRequest.getSortField()).order(sortOrder))
+                    .withPageable(new PageRequest(0, complaintDashBoardRequest.getSize()))
+                    .build();
+        else
+            searchQuery = new NativeSearchQueryBuilder().withQuery(query.must(QueryBuilders.matchQuery(fieldName, paramValue)))
+                    .withSort(new FieldSortBuilder(complaintDashBoardRequest.getSortField()).order(sortOrder))
+                    .withPageable(new PageRequest(0, complaintDashBoardRequest.getSize()))
+                    .build();
+        return elasticsearchTemplate.queryForList(searchQuery, ComplaintIndex.class);
     }
 
     private TopHitsBuilder addFieldBasedOnAggField(String aggregationField) {
@@ -871,24 +896,41 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
         }
         return field;
     }
-    
-   
+
+
     public SearchResponse findCategoryWiseFeedBackRatingDetails(ComplaintDashBoardRequest ivrsFeedBackRequest,
-            BoolQueryBuilder feedBackQuery) {
-        if (isNotBlank(ivrsFeedBackRequest.getCategoryId())||isNotBlank(ivrsFeedBackRequest.getCategoryName())) {
+                                                                BoolQueryBuilder feedBackQuery) {
+        if (isNotBlank(ivrsFeedBackRequest.getCategoryId()) || isNotBlank(ivrsFeedBackRequest.getCategoryName())) {
             return elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
                     .setQuery(feedBackQuery)
                     .addAggregation(AggregationBuilders.terms("categoryAggr").field("categoryName").size(130)
-                            .subAggregation(AggregationBuilders.terms("complaintTypeAggr").field("complaintTypeName")
-                                    .subAggregation(AggregationBuilders.terms("countAggr").field(FEEDBACK_RATING))))
+                            .subAggregation(AggregationBuilders.terms("complaintTypeAggr").field(COMPLAINT_TYPE_NAME)
+                                    .subAggregation(ComplaintIndexAggregationBuilder.getCallStatusAndRating())
+                                    .subAggregation(ComplaintIndexAggregationBuilder.prepareMonthlyAggregations())
+                                    .subAggregation(getCountBetweenSpecifiedDates(TODAY_COMPLAINT_COUNT, COMPLETION_DATE,
+                                            new DateTime().toString(formatter), new DateTime().plusDays(1).toString(formatter)))))
                     .execute().actionGet();
         } else {
             return elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
                     .setQuery(feedBackQuery)
                     .addAggregation(AggregationBuilders.terms("categoryAggr").field("categoryName").size(130)
-                            .subAggregation(AggregationBuilders.terms("countAggr").field(FEEDBACK_RATING)))
+                            .subAggregation(ComplaintIndexAggregationBuilder.getCallStatusAndRating())
+                            .subAggregation(ComplaintIndexAggregationBuilder.prepareMonthlyAggregations())
+                            .subAggregation(getCountBetweenSpecifiedDates(TODAY_COMPLAINT_COUNT, COMPLETION_DATE,
+                                    new DateTime().toString(formatter), new DateTime().plusDays(1).toString(formatter))))
                     .execute().actionGet();
         }
+    }
 
+    @Override
+    public SearchResponse findFeedBackRatingWithoutAggr(ComplaintDashBoardRequest ivrsFeedBackRequest, BoolQueryBuilder feedBackQuery) {
+        return elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
+                .setQuery(feedBackQuery).setSize(0)
+                .addAggregation(getCount("closedCount", "crn"))
+                .addAggregation(ComplaintIndexAggregationBuilder.getCallStatusAndRating())
+                .addAggregation(ComplaintIndexAggregationBuilder.prepareMonthlyAggregations())
+                .addAggregation(getCountBetweenSpecifiedDates(TODAY_COMPLAINT_COUNT,
+                        COMPLETION_DATE, new DateTime().toString(formatter), new DateTime().plusDays(1).toString(formatter)))
+                .execute().actionGet();
     }
 }

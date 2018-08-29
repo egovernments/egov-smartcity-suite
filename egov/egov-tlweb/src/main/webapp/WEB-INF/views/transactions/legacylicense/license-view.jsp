@@ -55,21 +55,6 @@
 
     <div class="row add-border">
         <div class="col-xs-3 add-margin">
-            <spring:message code='licensee.aadhaarNo'/>
-        </div>
-        <div class="col-xs-3 add-margin view-content">
-            <c:out value="${tradeLicense.licensee.uid}"/>
-        </div>
-        <div class="col-xs-3 add-margin">
-            <spring:message code='search.licensee.mobileNo'/>
-        </div>
-        <div class="col-xs-3 add-margin view-content">
-            <c:out value="${tradeLicense.licensee.mobilePhoneNumber}"/>
-        </div>
-    </div>
-
-    <div class="row add-border">
-        <div class="col-xs-3 add-margin">
             <spring:message code='licensee.applicantname'/>
         </div>
         <div class="col-xs-3 add-margin view-content">
@@ -83,17 +68,26 @@
         </div>
     </div>
 
-    <div class="row">
+    <div class="row add-border">
+        <div class="col-xs-3 add-margin">
+            <spring:message code='search.licensee.mobileNo'/>
+        </div>
+        <div class="col-xs-3 add-margin view-content">
+            <c:out value="${tradeLicense.licensee.mobilePhoneNumber}"/>
+        </div>
         <div class="col-xs-3 add-margin">
             <spring:message code='lbl.emailid'/>
         </div>
         <div class="col-xs-3 add-margin view-content">
             <c:out value="${tradeLicense.licensee.emailId}"/>
         </div>
+    </div>
+
+    <div class="row add-border">
         <div class="col-xs-3 add-margin">
             <spring:message code='licensee.address'/>
         </div>
-        <div class="col-xs-3 add-margin view-content">
+        <div class="col-xs-6 add-margin view-content">
             <c:out value="${tradeLicense.licensee.address}"/>
         </div>
     </div>
@@ -129,9 +123,15 @@
         <div class="col-xs-3 add-margin view-content">
             <c:out value="${tradeLicense.parentBoundary.name}"/>
         </div>
+        <div class="col-xs-3 add-margin">
+            <spring:message code='lbl.admin.ward'/>
+        </div>
+        <div class="col-xs-3 add-margin view-content">
+            <c:out value="${tradeLicense.adminWard.name}" default="N/A"/>
+        </div>
     </div>
 
-    <div class="row">
+    <div class="row add-border">
         <div class="col-xs-3 add-margin">
             <spring:message code='license.ownerShipType.lbl'/>
         </div>
@@ -147,6 +147,32 @@
     </div>
 
 </div>
+
+<c:if test="${tradeLicense.agreementDate!=null}">
+    <div class="panel-heading  custom_form_panel_heading subheadnew">
+        <div class="panel-title">
+            <spring:message code='license.AgreementDetails.lbl'/>
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="row add-border">
+            <div class="col-xs-3 add-margin">
+                <spring:message code='license.agreementDate.lbl'/>
+            </div>
+            <div class="col-xs-3 add-margin view-content">
+                <fmt:formatDate value="${tradeLicense.agreementDate}"
+                                pattern="dd/MM/yyyy" var="agreementDateFrmttd"/>
+                <c:out value="${agreementDateFrmttd}"/>
+            </div>
+            <div class="col-xs-3 add-margin">
+                <spring:message code='license.agreementDocNo.lbl'/>
+            </div>
+            <div class="col-xs-3 add-margin view-content">
+                <c:out value="${tradeLicense.agreementDocNo}"/>
+            </div>
+        </div>
+    </div>
+</c:if>
 
 <div class="panel-heading  custom_form_panel_heading subheadnew">
     <div class="panel-title">
@@ -216,12 +242,6 @@
     </div>
     <div class="row">
         <div class="col-xs-3 add-margin">
-            <spring:message code='license.remarks'/>
-        </div>
-        <div class="col-xs-3 add-margin view-content">
-            <c:out value="${tradeLicense.remarks}"/>
-        </div>
-        <div class="col-xs-3 add-margin">
             <spring:message code='license.startdate'/>
         </div>
         <div class="col-xs-3 add-margin view-content">
@@ -229,35 +249,16 @@
                             pattern="dd/MM/yyyy" var="commencementDateFrmttd"/>
             <c:out value="${commencementDateFrmttd}"/>
         </div>
+        <div class="col-xs-3 add-margin">
+            <spring:message code='license.remarks'/>
+        </div>
+        <div class="col-xs-3 add-margin view-content">
+            <c:out value="${tradeLicense.remarks}"/>
+        </div>
     </div>
 
 </div>
 
-<c:if test="${tradeLicense.agreementDate!=null}">
-    <div class="panel-heading  custom_form_panel_heading subheadnew">
-        <div class="panel-title">
-            <spring:message code='license.AgreementDetails.lbl'/>
-        </div>
-    </div>
-    <div class="panel-body">
-        <div class="row add-border">
-            <div class="col-xs-3 add-margin">
-                <spring:message code='license.agreementDate.lbl'/>
-            </div>
-            <div class="col-xs-3 add-margin view-content">
-                <fmt:formatDate value="${tradeLicense.agreementDate}"
-                                pattern="dd/MM/yyyy" var="agreementDateFrmttd"/>
-                <c:out value="${agreementDateFrmttd}"/>
-            </div>
-            <div class="col-xs-3 add-margin">
-                <spring:message code='license.agreementDocNo.lbl'/>
-            </div>
-            <div class="col-xs-3 add-margin view-content">
-                <c:out value="${tradeLicense.agreementDocNo}"/>
-            </div>
-        </div>
-    </div>
-</c:if>
 <c:set value="${outstandingFee}" var="feeInfo"></c:set>
 <c:if test="${feeInfo.size()> 0}">
     <div class="panel-heading  custom_form_panel_heading subheadnew">
@@ -287,7 +288,7 @@
             <td colspan="3">
                 <div style="text-align:left">
                     <a name="viewdcb" class="btn btn-secondary align-right" id="viewdcb"
-                       onclick="window.open('/tl/dcb/view/'+ ${tradeLicense.id}, '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');">
+                       onclick="window.open('/tl/dcb/view/'+ '${tradeLicense.uid}', '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');">
                         <spring:message code='lbl.show.dcb'/></a>
                 </div>
             </td>

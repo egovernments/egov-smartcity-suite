@@ -552,9 +552,15 @@ public class ApplicationDocumentService {
         if (StringUtils.isNotBlank(applicationIndexRequest.getService()))
             boolQuery = boolQuery
                     .filter(QueryBuilders.matchQuery(APPLICATION_TYPE, applicationIndexRequest.getService()));
-        if (StringUtils.isNotBlank(applicationIndexRequest.getSource()))
-            boolQuery = boolQuery
-                    .filter(QueryBuilders.matchQuery(CHANNEL, applicationIndexRequest.getSource()));
+        if (StringUtils.isNotBlank(applicationIndexRequest.getSource())) {
+
+            if ("OTHERS".equalsIgnoreCase(applicationIndexRequest.getSource()))
+                boolQuery = boolQuery.mustNot(QueryBuilders.termsQuery(CHANNEL,
+                        Arrays.asList(SOURCE_CSC, SOURCE_MEESEVA, SOURCE_ONLINE, SOURCE_SYSTEM)));
+            else
+                boolQuery = boolQuery
+                        .filter(QueryBuilders.matchQuery(CHANNEL, applicationIndexRequest.getSource()));
+        }
         if (fromDate != null && toDate != null)
             boolQuery = boolQuery
                     .filter(QueryBuilders.rangeQuery(APPLICATION_DATE).gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate))
@@ -574,6 +580,9 @@ public class ApplicationDocumentService {
                 if (REJECTED.equalsIgnoreCase(applicationIndexRequest.getApproved()))
                     boolQuery = boolQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 1))
                             .filter(QueryBuilders.matchQuery(COLUMN_APPROVED, REJECTED));
+                else
+                    boolQuery = boolQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 1))
+                            .filter(QueryBuilders.matchQuery(COLUMN_APPROVED, APPROVED));
             }
             if (StringUtils.isNotBlank(applicationIndexRequest.getBeyondSLA()))
                 boolQuery = filterBasedOnSLAForFunctionary(applicationIndexRequest, boolQuery);
@@ -589,21 +598,26 @@ public class ApplicationDocumentService {
             if (StringUtils.isNotBlank(applicationIndexRequest.getAgeing())) {
                 if ("0-1Wdays".equalsIgnoreCase(applicationIndexRequest.getAgeing()))
                     slaQuery = slaQuery
-                            .filter(QueryBuilders.rangeQuery(SLA_GAP).gte(1).lt(8));
+                            .filter(QueryBuilders.rangeQuery(SLA_GAP).gte(1).lt(8))
+                            .mustNot(QueryBuilders.matchQuery(COLUMN_APPROVED, REJECTED));
                 else if ("1W-1M".equalsIgnoreCase(applicationIndexRequest.getAgeing()))
                     slaQuery = slaQuery
-                            .filter(QueryBuilders.rangeQuery(SLA_GAP).gte(8).lt(31));
+                            .filter(QueryBuilders.rangeQuery(SLA_GAP).gte(8).lt(31))
+                            .mustNot(QueryBuilders.matchQuery(COLUMN_APPROVED, REJECTED));
                 else if ("1M-3M".equalsIgnoreCase(applicationIndexRequest.getAgeing()))
                     slaQuery = slaQuery
-                            .filter(QueryBuilders.rangeQuery(SLA_GAP).gte(31).lt(91));
+                            .filter(QueryBuilders.rangeQuery(SLA_GAP).gte(31).lt(91))
+                            .mustNot(QueryBuilders.matchQuery(COLUMN_APPROVED, REJECTED));
                 else
-                    slaQuery = slaQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).gte(91));
+                    slaQuery = slaQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).gte(91))
+                            .mustNot(QueryBuilders.matchQuery(COLUMN_APPROVED, REJECTED));
             } else
                 slaQuery = slaQuery
                         .filter(QueryBuilders.rangeQuery(SLA_GAP).gt(0));
         } else
             slaQuery = slaQuery
-                    .filter(QueryBuilders.rangeQuery(SLA_GAP).lte(0));
+                    .filter(QueryBuilders.rangeQuery(SLA_GAP).lte(0))
+                    .mustNot(QueryBuilders.matchQuery(COLUMN_APPROVED, REJECTED));
         return slaQuery;
     }
 
@@ -1003,9 +1017,11 @@ public class ApplicationDocumentService {
             appStatusQuery = appStatusQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 1))
                     .must(QueryBuilders.rangeQuery(SLA_GAP).gt(0)).must(QueryBuilders.matchQuery(COLUMN_APPROVED, APPROVED));
         else if (TOTAL_BEYOND_SLA.equalsIgnoreCase(applicationStatus))
-            appStatusQuery = appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).gt(0));
+            appStatusQuery = appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).gt(0))
+                    .mustNot(QueryBuilders.matchQuery(COLUMN_APPROVED, REJECTED));
         else if (TOTAL_WITHIN_SLA.equalsIgnoreCase(applicationStatus))
-            appStatusQuery = appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).lte(0));
+            appStatusQuery = appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).lte(0))
+                    .mustNot(QueryBuilders.matchQuery(COLUMN_APPROVED, REJECTED));
         else if (OPEN_WITHIN_SLA.equalsIgnoreCase(applicationStatus))
             appStatusQuery = appStatusQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 0))
                     .must(QueryBuilders.rangeQuery(SLA_GAP).lte(0));
@@ -1013,13 +1029,17 @@ public class ApplicationDocumentService {
             appStatusQuery = appStatusQuery.filter(QueryBuilders.matchQuery(IS_CLOSED, 0))
                     .must(QueryBuilders.rangeQuery(SLA_GAP).gt(0));
         else if (SLAB1BEYOND_SLA.equalsIgnoreCase(applicationStatus))
-            appStatusQuery = appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).gte(1).lt(8));
+            appStatusQuery = appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).gte(1).lt(8))
+                    .mustNot(QueryBuilders.matchQuery(COLUMN_APPROVED, REJECTED));
         else if (SLAB2BEYOND_SLA.equalsIgnoreCase(applicationStatus))
-            appStatusQuery = appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).gte(8).lt(31));
+            appStatusQuery = appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).gte(8).lt(31))
+                    .mustNot(QueryBuilders.matchQuery(COLUMN_APPROVED, REJECTED));
         else if (SLAB3BEYOND_SLA.equalsIgnoreCase(applicationStatus))
-            appStatusQuery = appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).gte(31).lt(91));
+            appStatusQuery = appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).gte(31).lt(91))
+                    .mustNot(QueryBuilders.matchQuery(COLUMN_APPROVED, REJECTED));
         else if (SLAB4BEYOND_SLA.equalsIgnoreCase(applicationStatus))
-            appStatusQuery = appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).gte(91));
+            appStatusQuery = appStatusQuery.filter(QueryBuilders.rangeQuery(SLA_GAP).gte(91))
+                    .mustNot(QueryBuilders.matchQuery(COLUMN_APPROVED, REJECTED));
         else if (CSC_TOTAL.equalsIgnoreCase(applicationStatus))
             appStatusQuery = appStatusQuery.filter(QueryBuilders.matchQuery(CHANNEL, SOURCE_CSC));
         else if (MEESEVA_TOTAL.equalsIgnoreCase(applicationStatus))
@@ -1271,7 +1291,7 @@ public class ApplicationDocumentService {
                 appInfo.setSla(details.get(SLA) == null ? 0 : (int) details.get(SLA));
                 appInfo.setServiceGroup(details.get(MODULE_NAME).toString());
                 appInfo.setAge(details.get(SLA_GAP) == null ? 0 : (int) details.get(SLA_GAP));
-                appInfo.setPendingWith(details.get(OWNER_NAME).toString());
+                appInfo.setPendingWith(details.get(OWNER_NAME) == null ? "NA" : details.get(OWNER_NAME).toString());
                 appInfo.setUlbName(details.get(CITY_NAME).toString());
                 appInfo.setUrl(details.get("url").toString());
                 appInfo.setCityCode(details.get(CITY_CODE).toString());

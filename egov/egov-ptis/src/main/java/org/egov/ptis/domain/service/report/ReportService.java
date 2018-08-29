@@ -936,10 +936,12 @@ public class ReportService {
     public Installment getMinInstallment(final Installment minInstallment, final InstDmdCollMaterializeView idc,
             final BigDecimal dmdtot, final BigDecimal colltot) {
         Installment inst = null;
+        if(dmdtot.compareTo(colltot) > 0){
         if (minInstallment == null)
             return idc.getInstallment();
-        else if (dmdtot.compareTo(colltot) > 0 && minInstallment.getFromDate().after(idc.getInstallment().getFromDate()))
+        else if (minInstallment.getFromDate().after(idc.getInstallment().getFromDate()))
             inst = idc.getInstallment();
+        }
         return inst == null ? minInstallment : inst;
     }
 

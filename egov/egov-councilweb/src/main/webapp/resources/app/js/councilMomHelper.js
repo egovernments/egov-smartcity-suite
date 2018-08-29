@@ -158,14 +158,14 @@ $(document).ready(function() {
 		}
 	}
 
-	$('#agendaTable tbody').on('blur','tr .validnum',function() {
+	$('#agendaTable tbody').on('blur mouseleave','tr .validnum',function() {
 		var rowObj = $(this).closest('tr');
     	validateUniqueDetails(rowObj.index(), $(rowObj).find('.validnum').val(),'agendaTable');
     	validateSumotoDetails(rowObj.index(), $(rowObj).find('.validnum').val(),'agendaTable');
     	validateResolutionNumber($(this));
     });
     
-    $('#sumotoTable tbody').on('blur','tr .validnum',function(e) {
+    $('#sumotoTable tbody').on('blur mouseleave','tr .validnum',function(e) {
     	var rowObj = $(this).closest('tr');
     	validateSumotoDetails(rowObj.index(), $(rowObj).find('.validnum').val(),'sumotoTable');
     	validateUniqueDetails(rowObj.index(), $(rowObj).find('.validnum').val(),'sumotoTable');

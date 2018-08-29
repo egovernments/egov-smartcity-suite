@@ -174,6 +174,9 @@
 						</c:forEach>
 					</select>
 				</div>
+				<input type="hidden" name="wardsHiddenIds" id="wardsHdnIds"
+					class="wardsHdnIds">
+			
 			</div>
 			<div>Note: After getting the council preamble prepared and
 				approved by the head of the section, the same should be uploaded

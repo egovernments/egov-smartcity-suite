@@ -223,16 +223,16 @@ public class DailyWTCollectionReportService {
                     String currentInstallment = null;
                     if (Arrays.asList(WaterTaxConstants.CREATECONNECTIONDMDDESC).contains(receiptDmdRsnDesc))
                         currentInstallment = connectionDemandService.getCurrentInstallment(
-                                WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.YEARLY, new Date()).getDescription();
+                                WaterTaxConstants.MODULE_NAME, WaterTaxConstants.YEARLY, new Date()).getDescription();
                     else if (Arrays.asList(WaterTaxConstants.WATERCHARGESDMDDESC).contains(receiptDmdRsnDesc))
                         if (ConnectionType.METERED.equals(waterConnection.getConnectionType()))
                             currentInstallment = connectionDemandService
-                                    .getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.MONTHLY,
+                                    .getCurrentInstallment(WaterTaxConstants.MODULE_NAME, WaterTaxConstants.MONTHLY,
                                             new Date())
                                     .getDescription();
                         else if (ConnectionType.NON_METERED.equals(waterConnection.getConnectionType()))
                             currentInstallment = connectionDemandService
-                                    .getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null,
+                                    .getCurrentInstallment(WaterTaxConstants.PROPERTY_MODULE_NAME, null,
                                             new Date())
                                     .getDescription();
 

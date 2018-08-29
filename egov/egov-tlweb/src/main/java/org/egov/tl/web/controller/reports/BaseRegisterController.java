@@ -53,7 +53,6 @@ import org.egov.infra.reporting.engine.ReportDisposition;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.web.support.ui.DataTable;
 import org.egov.tl.entity.contracts.BaseRegisterRequest;
-import org.egov.tl.entity.view.BaseRegister;
 import org.egov.tl.service.BaseRegisterService;
 import org.egov.tl.service.LicenseCategoryService;
 import org.egov.tl.service.LicenseStatusService;
@@ -73,10 +72,10 @@ import java.util.Collections;
 
 import static org.egov.infra.utils.StringUtils.appendTimestamp;
 import static org.egov.infra.reporting.util.ReportUtil.reportAsResponseEntity;
-import static org.egov.tl.utils.Constants.LOCALITY;
-import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.tl.utils.Constants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.tl.utils.Constants.REVENUE_WARD;
+import static org.egov.tl.utils.Constants.ADMIN_HIERARCHY;
+import static org.egov.tl.utils.Constants.ADMIN_WARD;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
@@ -97,14 +96,15 @@ public class BaseRegisterController {
 
     @GetMapping("search")
     public String baseRegisterSearchForm(Model model) {
-        model.addAttribute("baseRegister", new BaseRegister());
+        model.addAttribute("baseRegister", new BaseRegisterRequest());
         model.addAttribute("categories", licenseCategoryService.getCategoriesOrderByName());
         model.addAttribute("subcategories", Collections.emptyList());
         model.addAttribute("statusList", licenseStatusService.findAll());
         model.addAttribute("filters", Arrays.asList("All", "Defaulters"));
-        boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(LOCALITY, LOCATION_HIERARCHY_TYPE);
-        model.addAttribute("wardList", boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(REVENUE_WARD,
+        model.addAttribute("revenueWards", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(REVENUE_WARD,
                 REVENUE_HIERARCHY_TYPE));
+        model.addAttribute("electionWards", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ADMIN_WARD,
+                ADMIN_HIERARCHY));
         return "baseregister-report";
     }
 

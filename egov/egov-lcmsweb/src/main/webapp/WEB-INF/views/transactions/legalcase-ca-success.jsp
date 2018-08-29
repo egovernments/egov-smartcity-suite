@@ -107,11 +107,6 @@
 					</div>
 					<div class="row add-border">
 						<div class="col-xs-2 add-margin">
-							<spring:message code="lbl.eofficecomputernumber" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${legalCase.counterAffidavits[0].eOfficeComputerNumber}</div>
-						<div class="col-xs-2 add-margin">
 							<spring:message code="lbl.cafillingdate" />
 						</div>
 						<div class="col-xs-3 add-margin view-content">

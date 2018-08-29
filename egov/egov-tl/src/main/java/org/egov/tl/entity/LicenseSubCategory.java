@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -50,13 +50,15 @@ package org.egov.tl.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -68,6 +70,9 @@ import javax.persistence.Table;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import static javax.persistence.FetchType.LAZY;
 
 @Entity
 @Table(name = "EGTL_MSTR_SUB_CATEGORY")
@@ -75,40 +80,30 @@ import java.util.List;
 @Unique(fields = {"code", "name"}, enableDfltMsg = true)
 public class LicenseSubCategory extends AbstractAuditable {
 
-    public static final String SEQUENCE = "SEQ_EGTL_MSTR_SUB_CATEGORY";
+    protected static final String SEQUENCE = "SEQ_EGTL_MSTR_SUB_CATEGORY";
     private static final long serialVersionUID = 4137779539190266766L;
 
     @Id
     @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotBlank(message = "tradelic.master.tradesubcategorycode.null")
-    @Length(max = 5, message = "tradelic.master.tradesubcategorycode.length")
+    @NotBlank
+    @Length(max = 5)
     @SafeHtml
+    @Column(updatable = false)
     private String code;
 
-    @NotBlank(message = "tradelic.master.tradesubcategoryname.null")
-    @Length(max = 256, message = "tradelic.master.tradesubcategoryname.length")
+    @NotBlank
+    @Length(max = 150)
     @SafeHtml
     private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "ID_CATEGORY")
+    @ManyToOne(fetch = LAZY, optional = false)
+    @JoinColumn(name = "ID_CATEGORY", updatable = false)
     private LicenseCategory category;
 
-    @ManyToOne
-    @JoinColumn(name = "ID_LICENSE_TYPE")
-    private LicenseType licenseType;
-
-    @ManyToOne
-    @JoinColumn(name = "ID_NATURE")
-    private NatureOfBusiness natureOfBusiness;
-
-    @ManyToOne
-    @JoinColumn(name = "ID_LICENSE_SUB_TYPE")
-    private LicenseSubType licenseSubType;
-
-    @OneToMany(mappedBy = "subCategory", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "subCategory", fetch = LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Fetch(FetchMode.SUBSELECT)
     @Valid
     private List<LicenseSubCategoryDetails> licenseSubCategoryDetails = new ArrayList<>();
 
@@ -126,7 +121,7 @@ public class LicenseSubCategory extends AbstractAuditable {
         return category;
     }
 
-    public void setCategory(final LicenseCategory category) {
+    public void setCategory(LicenseCategory category) {
         this.category = category;
     }
 
@@ -134,7 +129,7 @@ public class LicenseSubCategory extends AbstractAuditable {
         return code;
     }
 
-    public void setCode(final String code) {
+    public void setCode(String code) {
         this.code = code;
     }
 
@@ -142,36 +137,8 @@ public class LicenseSubCategory extends AbstractAuditable {
         return name;
     }
 
-    public void setName(final String name) {
+    public void setName(String name) {
         this.name = name;
-    }
-
-    public LicenseType getLicenseType() {
-        return licenseType;
-    }
-
-    public void setLicenseType(LicenseType licenseType) {
-        this.licenseType = licenseType;
-    }
-
-    public NatureOfBusiness getNatureOfBusiness() {
-        return natureOfBusiness;
-    }
-
-    public void setNatureOfBusiness(NatureOfBusiness natureOfBusiness) {
-        this.natureOfBusiness = natureOfBusiness;
-    }
-
-    public LicenseSubType getLicenseSubType() {
-        return licenseSubType;
-    }
-
-    public void setLicenseSubType(LicenseSubType licenseSubType) {
-        this.licenseSubType = licenseSubType;
-    }
-
-    public void addLicenseSubCategoryDetails(LicenseSubCategoryDetails licenseSubCategoryDetail) {
-        getLicenseSubCategoryDetails().add(licenseSubCategoryDetail);
     }
 
     public List<LicenseSubCategoryDetails> getLicenseSubCategoryDetails() {
@@ -183,24 +150,18 @@ public class LicenseSubCategory extends AbstractAuditable {
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o)
+    public boolean equals(Object obj) {
+        if (this == obj)
             return true;
-        if (o == null || getClass() != o.getClass())
+        if (!(obj instanceof LicenseSubCategory))
             return false;
-
-        final LicenseSubCategory that = (LicenseSubCategory) o;
-
-        if (getCode() != null ? !getCode().equals(that.getCode()) : that.getCode() != null)
-            return false;
-        return getName() != null ? getName().equals(that.getName()) : that.getName() == null;
-
+        LicenseSubCategory that = (LicenseSubCategory) obj;
+        return Objects.equals(getCode(), that.getCode()) &&
+                Objects.equals(getCategory(), that.getCategory());
     }
 
     @Override
     public int hashCode() {
-        int result = getCode() != null ? getCode().hashCode() : 0;
-        result = 31 * result + (getName() != null ? getName().hashCode() : 0);
-        return result;
+        return Objects.hash(getCode(), getCategory());
     }
 }

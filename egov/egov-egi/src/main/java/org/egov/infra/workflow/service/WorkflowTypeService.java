@@ -48,7 +48,7 @@
 
 package org.egov.infra.workflow.service;
 
-import org.egov.infra.workflow.entity.WorkflowTypes;
+import org.egov.infra.workflow.entity.WorkflowType;
 import org.egov.infra.workflow.repository.WorkflowTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -64,19 +64,19 @@ public class WorkflowTypeService {
     @Autowired
     private WorkflowTypeRepository workflowTypeRepository;
 
-    public WorkflowTypes getEnabledWorkflowTypeByType(String type) {
+    public WorkflowType getEnabledWorkflowTypeByType(String type) {
         return workflowTypeRepository.findByTypeAndEnabledIsTrue(type);
     }
 
-    public WorkflowTypes getWorkflowTypeByType(String type) {
+    public WorkflowType getWorkflowTypeByType(String type) {
         return workflowTypeRepository.findByType(type);
     }
 
-    public List<WorkflowTypes> getAllWorkflowTypes() {
+    public List<WorkflowType> getAllWorkflowTypes() {
         return workflowTypeRepository.findAll(new Sort(Sort.Direction.ASC, "type"));
     }
 
-    public WorkflowTypes getWorkflowTypeById(Long id) {
+    public WorkflowType getWorkflowTypeById(Long id) {
         return workflowTypeRepository.findOne(id);
     }
 }

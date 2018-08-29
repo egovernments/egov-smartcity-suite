@@ -49,7 +49,7 @@
 package org.egov.infra.workflow.matrix.entity;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.egov.infra.workflow.entity.WorkflowTypes;
+import org.egov.infra.workflow.entity.WorkflowType;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -75,7 +75,7 @@ public class WorkFlowAdditionalRule extends AbstractPersistable<Long> {
 
     @ManyToOne
     @JoinColumn(name = "objecttypeid")
-    private WorkflowTypes objecttypeid;
+    private WorkflowType objecttypeid;
     private String additionalRule;
     private String states;
     private String status;
@@ -92,11 +92,11 @@ public class WorkFlowAdditionalRule extends AbstractPersistable<Long> {
         this.id = id;
     }
 
-    public WorkflowTypes getObjecttypeid() {
+    public WorkflowType getObjecttypeid() {
         return this.objecttypeid;
     }
 
-    public void setObjecttypeid(WorkflowTypes objecttypeid) {
+    public void setObjecttypeid(WorkflowType objecttypeid) {
         this.objecttypeid = objecttypeid;
     }
 

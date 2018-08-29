@@ -50,6 +50,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ taglib prefix="egov" tagdir="/WEB-INF/tags" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <link rel="stylesheet"
 	  href="<cdn:url  value='/resources/global/css/egov/map-autocomplete.css?rnd=${app_release_no}' context='/egi'/>">
@@ -242,8 +243,7 @@
 			</div>
 			<div class="row">
 				<div class="col-sm-offset-3 col-md-6 text-center" id="captcha-section">
-					<spring:eval expression="@environment.getProperty('captcha.strength')" var="strength"/>
-					<c:import url="/WEB-INF/views/common/captcha-${strength}.jsp" context="/egi"/>
+					<egov:captcha/>
 					<form:errors cssClass="add-margin error-msg"/>
 				</div>
 			</div><br>

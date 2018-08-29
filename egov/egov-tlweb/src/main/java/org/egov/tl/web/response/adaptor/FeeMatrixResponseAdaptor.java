@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -51,35 +51,37 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
+import org.egov.infra.web.support.ui.DataTable;
 import org.egov.tl.entity.FeeMatrix;
 import org.egov.tl.entity.FeeMatrixDetail;
 
 import java.lang.reflect.Type;
 
-public class FeeMatrixResponseAdaptor implements JsonSerializer<FeeMatrix> {
+public class FeeMatrixResponseAdaptor implements DataTableJsonAdapter<FeeMatrix> {
     @Override
-    public JsonElement serialize(FeeMatrix feeMatrix, Type type, JsonSerializationContext jsc) {
-        JsonObject feeMatrixResponse = new JsonObject();
-        if (feeMatrix != null) {
-            feeMatrixResponse.addProperty("id", feeMatrix.getId());
-            feeMatrixResponse.addProperty("licenseCategory", feeMatrix.getLicenseCategory().getName());
-            feeMatrixResponse.addProperty("subCategory", feeMatrix.getSubCategory().getName());
-            feeMatrixResponse.addProperty("feeType", feeMatrix.getFeeType().getName());
-            feeMatrixResponse.addProperty("financialYear", feeMatrix.getFinancialYear().getFinYearRange());
-            feeMatrixResponse.addProperty("natureOfBussiness", feeMatrix.getNatureOfBusiness().getName());
-            feeMatrixResponse.addProperty("licenseAppType", feeMatrix.getLicenseAppType().getName());
-            JsonArray details = new JsonArray();
-            for (FeeMatrixDetail detail : feeMatrix.getFeeMatrixDetail()) {
-                JsonObject detailJson = new JsonObject();
-                detailJson.addProperty("uomFrom", detail.getUomFrom());
-                detailJson.addProperty("uomTo", detail.getUomTo());
-                detailJson.addProperty("amount", detail.getAmount());
-                details.add(detailJson);
+    public JsonElement serialize(DataTable<FeeMatrix> feeMatrixDataTable, Type type, JsonSerializationContext jsc) {
+        JsonArray feeMatrixData = new JsonArray();
+        feeMatrixDataTable.getData().forEach(feeMatrix -> {
+            JsonObject feeMatrixJson = new JsonObject();
+            feeMatrixJson.addProperty("id", feeMatrix.getId());
+            feeMatrixJson.addProperty("licenseCategory", feeMatrix.getLicenseCategory().getName());
+            feeMatrixJson.addProperty("subCategory", feeMatrix.getSubCategory().getName());
+            feeMatrixJson.addProperty("feeType", feeMatrix.getFeeType().getName());
+            feeMatrixJson.addProperty("financialYear", feeMatrix.getFinancialYear().getFinYearRange());
+            feeMatrixJson.addProperty("natureOfBussiness", feeMatrix.getNatureOfBusiness().getName());
+            feeMatrixJson.addProperty("licenseAppType", feeMatrix.getLicenseAppType().getName());
+            JsonArray feeMatrixDetailsJson = new JsonArray();
+            for (FeeMatrixDetail feeMatrixDetail : feeMatrix.getFeeMatrixDetail()) {
+                JsonObject feeMatrixDetailJson = new JsonObject();
+                feeMatrixDetailJson.addProperty("uomFrom", feeMatrixDetail.getUomFrom());
+                feeMatrixDetailJson.addProperty("uomTo", feeMatrixDetail.getUomTo());
+                feeMatrixDetailJson.addProperty("amount", feeMatrixDetail.getAmount());
+                feeMatrixDetailsJson.add(feeMatrixDetailJson);
             }
-            feeMatrixResponse.add("details", details);
-
-        }
-        return feeMatrixResponse;
+            feeMatrixJson.add("details", feeMatrixDetailsJson);
+            feeMatrixData.add(feeMatrixJson);
+        });
+        return enhance(feeMatrixData, feeMatrixDataTable);
     }
 }

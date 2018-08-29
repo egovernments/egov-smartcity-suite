@@ -50,8 +50,6 @@ package org.egov.adtax.service.es;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -61,13 +59,11 @@ import javax.persistence.PersistenceContext;
 import org.apache.log4j.Logger;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
+import org.egov.adtax.workflow.AdvertisementWorkFlowService;
 import org.egov.commons.entity.Source;
-import org.egov.eis.entity.Assignment;
-import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.elasticsearch.entity.ApplicationIndex;
 import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
 import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
@@ -82,23 +78,18 @@ public class AdvertisementPermitDetailUpdateIndexService {
     private static final Logger LOGGER = Logger.getLogger(AdvertisementPermitDetailUpdateIndexService.class);
 
     private static final String ADTAX_APPLICATION_VIEW = "/adtax/hoarding/view/%s";
+    
     @PersistenceContext
     private EntityManager entityManager;
 
     @Autowired
     private ApplicationIndexService applicationIndexService;
-
     @Autowired
-    private AssignmentService assignmentService;
-
+    private AdvertisementWorkFlowService advertisementWorkFlowService;
     @Autowired
     private SecurityUtils securityUtils;
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private AdvertisementIndexService advertisementIndexService;
-    
     @Autowired
     protected AppConfigValueService appConfigValuesService;
 
@@ -110,35 +101,19 @@ public class AdvertisementPermitDetailUpdateIndexService {
      * @param advertisementPermitDetail
      */
     public void updateAdvertisementPermitDetailIndexes(final AdvertisementPermitDetail advertisementPermitDetail) {
-
-        Assignment assignment = null;
-        User user = null;
-        List<Assignment> asignList = Collections.emptyList();
-         if (advertisementPermitDetail.getState() != null && advertisementPermitDetail.getState().getOwnerPosition() != null) {
-            assignment = assignmentService
-                    .getPrimaryAssignmentForPositionAndDate(advertisementPermitDetail.getState().getOwnerPosition()
-                            .getId(), new Date());
-            if (assignment != null) {
-                asignList = new ArrayList<>();
-                asignList.add(assignment);
-            } else if (assignment == null)
-                asignList = assignmentService.getAssignmentsForPosition(
-                        advertisementPermitDetail.getState().getOwnerPosition().getId(),
-                        new Date());
-            if (!asignList.isEmpty()) {
-                user = userService.getUserById(asignList.get(0).getEmployee().getId());
-                if (LOGGER.isInfoEnabled()) {
-                    LOGGER.info("Get user from asignList ....");
-                    LOGGER.info(user != null ? user : "user is null");
-                }
-            } else {
-                user = securityUtils.getCurrentUser();
-                if (LOGGER.isInfoEnabled()) {
-                    LOGGER.info("Get curent  user....");
-                    LOGGER.info(user != null ? user : "user is null");
-                }
+  
+        User user=advertisementWorkFlowService.getApproverByStatePosition(advertisementPermitDetail); 
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("Get user from asignList ....");
+            LOGGER.info(user != null ? user : "user is null");
+        }
+        if(user==null){
+            user = securityUtils.getCurrentUser();
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Get curent  user....");
+                LOGGER.info(user != null ? user : "user is null");
             }
-         }
+        }
         // For legacy application - create only advertisementIndex
         if (advertisementPermitDetail.getAdvertisement().getLegacy()
                 && (null == advertisementPermitDetail.getId() || (null != advertisementPermitDetail.getId()
@@ -166,7 +141,7 @@ public class AdvertisementPermitDetailUpdateIndexService {
                 applicationIndex.setStatus(advertisementPermitDetail.getStatus().getDescription());
                 applicationIndex.setOwnerName(user != null ? user.getUsername() + "::" + user.getName() : "");
 
-                // Set application index status to approved on advertisement approval
+                // Set application index status to approved on advertisement approval and close
                 if (advertisementPermitDetail.getStatus().getCode()
                         .equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED)) {
                     String applicantName = advertisementPermitDetail.getAgency() != null
@@ -177,6 +152,9 @@ public class AdvertisementPermitDetailUpdateIndexService {
                     applicationIndex.setApplicantAddress(address);
                     applicationIndex.setMobileNumber(advertisementPermitDetail.getAgency() != null
                             ? advertisementPermitDetail.getAgency().getMobileNumber() : "");
+                    applicationIndex.setApproved(ApprovalStatus.APPROVED);
+                    applicationIndex.setClosed(ClosureStatus.YES);
+                    
                 }
                 // mark application index as closed on generate permit order
                 if (advertisementPermitDetail.getStatus().getCode()

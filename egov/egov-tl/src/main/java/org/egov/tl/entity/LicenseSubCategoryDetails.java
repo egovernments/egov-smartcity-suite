@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -49,7 +49,7 @@ package org.egov.tl.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.egov.tl.entity.enums.RateTypeEnum;
+import org.egov.tl.entity.enums.RateType;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -63,13 +63,17 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import java.util.Objects;
+
+import static javax.persistence.FetchType.LAZY;
 
 @Entity
 @Table(name = "egtl_subcategory_details")
 @SequenceGenerator(name = LicenseSubCategoryDetails.SEQUENCE, sequenceName = LicenseSubCategoryDetails.SEQUENCE, allocationSize = 1)
 public class LicenseSubCategoryDetails extends AbstractPersistable<Long> {
 
-    public static final String SEQUENCE = "SEQ_egtl_subcategory_details";
+    protected static final String SEQUENCE = "SEQ_egtl_subcategory_details";
     private static final long serialVersionUID = 5084451633368214374L;
 
     @Id
@@ -77,21 +81,24 @@ public class LicenseSubCategoryDetails extends AbstractPersistable<Long> {
     private Long id;
 
     @JsonIgnore
-    @ManyToOne
+    @ManyToOne(fetch = LAZY, optional = false)
     @JoinColumn(name = "subcategory_id")
     private LicenseSubCategory subCategory;
 
     @ManyToOne
     @JoinColumn(name = "uom_id")
+    @NotNull
     private UnitOfMeasurement uom;
 
     @ManyToOne
     @JoinColumn(name = "feetype_id")
+    @NotNull
     private FeeType feeType;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "RATETYPE")
-    private RateTypeEnum rateType;
+    @NotNull
+    private RateType rateType;
 
     @Transient
     private boolean markedForRemoval;
@@ -122,11 +129,11 @@ public class LicenseSubCategoryDetails extends AbstractPersistable<Long> {
         this.uom = uom;
     }
 
-    public RateTypeEnum getRateType() {
+    public RateType getRateType() {
         return rateType;
     }
 
-    public void setRateType(RateTypeEnum rateType) {
+    public void setRateType(RateType rateType) {
         this.rateType = rateType;
     }
 
@@ -147,24 +154,18 @@ public class LicenseSubCategoryDetails extends AbstractPersistable<Long> {
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o)
+    public boolean equals(Object obj) {
+        if (this == obj)
             return true;
-        if (o == null || getClass() != o.getClass())
+        if (!(obj instanceof LicenseSubCategoryDetails))
             return false;
-
-        final LicenseSubCategoryDetails that = (LicenseSubCategoryDetails) o;
-
-        if (getSubCategory() != null ? !getSubCategory().equals(that.getSubCategory()) : that.getSubCategory() != null)
-            return false;
-        return getFeeType() != null ? getFeeType().equals(that.getFeeType()) : that.getFeeType() == null;
-
+        LicenseSubCategoryDetails that = (LicenseSubCategoryDetails) obj;
+        return Objects.equals(getSubCategory(), that.getSubCategory()) &&
+                Objects.equals(getFeeType(), that.getFeeType());
     }
 
     @Override
     public int hashCode() {
-        int result = getSubCategory() != null ? getSubCategory().hashCode() : 0;
-        result = 31 * result + (getFeeType() != null ? getFeeType().hashCode() : 0);
-        return result;
+        return Objects.hash(getSubCategory(), getFeeType());
     }
 }

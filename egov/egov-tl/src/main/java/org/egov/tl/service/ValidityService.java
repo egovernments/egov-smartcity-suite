@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -51,7 +51,7 @@ package org.egov.tl.service;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.validation.exception.ValidationException;
-import org.egov.tl.entity.License;
+import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.Validity;
 import org.egov.tl.repository.ValidityRepository;
 import org.joda.time.DateTime;
@@ -61,7 +61,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -101,7 +105,7 @@ public class ValidityService {
             return validityRepository.findAll();
     }
 
-    public Validity getApplicableLicenseValidity(final License license) {
+    public Validity getApplicableLicenseValidity(final TradeLicense license) {
         return Optional.
                 ofNullable(validityRepository.findByNatureOfBusinessIdAndLicenseCategoryId(
                         license.getNatureOfBusiness().getId(), license.getCategory().getId())).
@@ -109,7 +113,7 @@ public class ValidityService {
                         license.getNatureOfBusiness().getId()));
     }
 
-    public void applyLicenseValidity(License license) {
+    public void applyLicenseValidity(TradeLicense license) {
         Validity validity = getApplicableLicenseValidity(license);
         if (validity == null)
             throw new ValidationException("TL-010", "License validity not defined.");
@@ -128,7 +132,7 @@ public class ValidityService {
         }
     }
 
-    private void applyLicenseExpiryBasedOnFinancialYear(License license) {
+    private void applyLicenseExpiryBasedOnFinancialYear(TradeLicense license) {
         license.getCurrentDemand().getEgDemandDetails().stream()
                 .filter(demandDetail -> demandDetail.getAmount().doubleValue() > 0
                         && demandDetail.getAmount().subtract(demandDetail.getAmtCollected()).doubleValue() <= 0)
@@ -136,7 +140,7 @@ public class ValidityService {
                 .ifPresent(demandDetail -> license.setDateOfExpiry(demandDetail.getInstallmentEndDate()));
     }
 
-    private void applyLicenseExpiryBasedOnCustomValidity(License license, Validity validity) {
+    private void applyLicenseExpiryBasedOnCustomValidity(TradeLicense license, Validity validity) {
         LocalDate nextExpiryDate = new LocalDate(license.isNewApplication() ? license.getCommencementDate() :
                 license.getCurrentDemand().getEgInstallmentMaster().getFromDate());
         if (validity.getYear() != null && validity.getYear() > 0)

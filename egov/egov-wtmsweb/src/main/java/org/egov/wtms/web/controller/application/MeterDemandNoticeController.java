@@ -276,7 +276,7 @@ public class MeterDemandNoticeController {
 
     private BigDecimal getCurrentMonthDemandAmount(final WaterConnectionDetails waterConnectionDetails, final Date givenDate) {
         BigDecimal currentAmount = BigDecimal.ZERO;
-        final Installment installment = connectionDemandService.getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME,
+        final Installment installment = connectionDemandService.getCurrentInstallment(WaterTaxConstants.MODULE_NAME,
                 WaterTaxConstants.MONTHLY, givenDate);
         final EgDemandReason demandReasonObj = connectionDemandService.getDemandReasonByCodeAndInstallment(
                 WaterTaxConstants.METERED_CHARGES_REASON_CODE, installment);

@@ -71,88 +71,83 @@ import static org.egov.infra.utils.JsonUtils.toJSON;
 @Controller
 @RequestMapping("/casetypemaster")
 public class CaseTypeMasterController {
-	private final static String CASETYPEMASTER_NEW = "casetypemaster-new";
-	private final static String CASETYPEMASTER_RESULT = "casetypemaster-result";
-	private final static String CASETYPEMASTER_EDIT = "casetypemaster-edit";
-	private final static String CASETYPEMASTER_VIEW = "casetypemaster-view";
-	private final static String CASETYPEMASTER_SEARCH = "casetypemaster-search";
-	@Autowired
-	private CaseTypeMasterService casetypeMasterService;
-	@Autowired
-	private MessageSource messageSource;
 
-	private void prepareNewForm(Model model) {
-	}
+    private static final String CASETYPEMASTER_NEW = "casetypemaster-new";
+    private static final String CASETYPEMASTER_RESULT = "casetypemaster-result";
+    private static final String CASETYPEMASTER_EDIT = "casetypemaster-edit";
+    private static final String CASETYPEMASTER_VIEW = "casetypemaster-view";
+    private static final String CASETYPEMASTER_SEARCH = "casetypemaster-search";
+    private static final String CASETYPEMASTER = "caseTypeMaster";
 
-	@RequestMapping(value = "/new", method = RequestMethod.GET)
-	public String newForm(final Model model) {
-		prepareNewForm(model);
-		model.addAttribute("caseTypeMaster", new CaseTypeMaster());
-		return CASETYPEMASTER_NEW;
-	}
+    @Autowired
+    private CaseTypeMasterService casetypeMasterService;
 
-	@RequestMapping(value = "/create", method = RequestMethod.POST)
-	public String create(@Valid @ModelAttribute final CaseTypeMaster casetypeMaster, final BindingResult errors,
-			final Model model, final RedirectAttributes redirectAttrs) {
-		if (errors.hasErrors()) {
-			prepareNewForm(model);
-			return CASETYPEMASTER_NEW;
-		}
-		casetypeMasterService.create(casetypeMaster);
-		redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.casetypeMaster.success", null, null));
-		return "redirect:/casetypemaster/result/" + casetypeMaster.getId();
-	}
+    @Autowired
+    private MessageSource messageSource;
 
-	@RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
-	public String edit(@PathVariable("id") final Long id, Model model) {
-		CaseTypeMaster casetypeMaster = casetypeMasterService.findOne(id);
-		prepareNewForm(model);
-		model.addAttribute("caseTypeMaster", casetypeMaster);
-		return CASETYPEMASTER_EDIT;
-	}
+    @RequestMapping(value = "/new", method = RequestMethod.GET)
+    public String newForm(final Model model) {
+        model.addAttribute(CASETYPEMASTER, new CaseTypeMaster());
+        return CASETYPEMASTER_NEW;
+    }
 
-	@RequestMapping(value = "/update", method = RequestMethod.POST)
-	public String update(@Valid @ModelAttribute final CaseTypeMaster casetypeMaster, final BindingResult errors,
-			final Model model, final RedirectAttributes redirectAttrs) {
-		if (errors.hasErrors()) {
-			prepareNewForm(model);
-			return CASETYPEMASTER_EDIT;
-		}
-		casetypeMasterService.update(casetypeMaster);
-		redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.casetypeMaster.update", null, null));
-		return "redirect:/casetypemaster/result/" + casetypeMaster.getId();
-	}
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    public String create(@Valid @ModelAttribute final CaseTypeMaster caseTypeMaster, final BindingResult errors,
+            final Model model, final RedirectAttributes redirectAttrs) {
+        if (errors.hasErrors()) {
+            return CASETYPEMASTER_NEW;
+        }
+        casetypeMasterService.create(caseTypeMaster);
+        redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.casetypeMaster.success", null, null));
+        return "redirect:/casetypemaster/result/" + caseTypeMaster.getId();
+    }
 
-	@RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
-	public String view(@PathVariable("id") final Long id, Model model) {
-		CaseTypeMaster casetypeMaster = casetypeMasterService.findOne(id);
-		prepareNewForm(model);
-		model.addAttribute("casetypeMaster", casetypeMaster);
-		return CASETYPEMASTER_VIEW;
-	}
+    @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
+    public String edit(@PathVariable("id") final Long id, Model model) {
+        CaseTypeMaster caseTypeMaster = casetypeMasterService.findOne(id);
+        model.addAttribute(CASETYPEMASTER, caseTypeMaster);
+        return CASETYPEMASTER_EDIT;
+    }
 
-	@RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
-	public String result(@PathVariable("id") final Long id, Model model) {
-		CaseTypeMaster casetypeMaster = casetypeMasterService.findOne(id);
-		model.addAttribute("casetypeMaster", casetypeMaster);
-		return CASETYPEMASTER_RESULT;
-	}
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    public String update(@Valid @ModelAttribute final CaseTypeMaster caseTypeMaster, final BindingResult errors,
+            final Model model, final RedirectAttributes redirectAttrs) {
+        if (errors.hasErrors()) {
+            return CASETYPEMASTER_EDIT;
+        }
+        casetypeMasterService.update(caseTypeMaster);
+        redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.casetypeMaster.update", null, null));
+        return "redirect:/casetypemaster/result/" + caseTypeMaster.getId();
+    }
 
-	@RequestMapping(value = "/search/{mode}", method = RequestMethod.GET)
-	public String search(@PathVariable("mode") final String mode, Model model) {
-		CaseTypeMaster casetypeMaster = new CaseTypeMaster();
-		prepareNewForm(model);
-		model.addAttribute("casetypeMaster", casetypeMaster);
-		return CASETYPEMASTER_SEARCH;
+    @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
+    public String view(@PathVariable("id") final Long id, Model model) {
+        CaseTypeMaster caseTypeMaster = casetypeMasterService.findOne(id);
+        model.addAttribute(CASETYPEMASTER, caseTypeMaster);
+        return CASETYPEMASTER_VIEW;
+    }
 
-	}
+    @RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
+    public String result(@PathVariable("id") final Long id, Model model) {
+        CaseTypeMaster caseTypeMaster = casetypeMasterService.findOne(id);
+        model.addAttribute(CASETYPEMASTER, caseTypeMaster);
+        return CASETYPEMASTER_RESULT;
+    }
 
-	@RequestMapping(value = "/ajaxsearch/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-	public @ResponseBody String ajaxsearch(@PathVariable("mode") final String mode, Model model,
-			@ModelAttribute final CaseTypeMaster casetypeMaster) {
-		List<CaseTypeMaster> searchResultList = casetypeMasterService.search(casetypeMaster);
-		String result = new StringBuilder("{ \"data\":").append(toJSON(searchResultList, CaseTypeMaster.class, CaseTypeMasterJsonAdaptor.class)).append("}")
-				.toString();
-		return result;
-	}
+    @RequestMapping(value = "/search/{mode}", method = RequestMethod.GET)
+    public String search(@PathVariable("mode") final String mode, Model model) {
+        CaseTypeMaster caseTypeMaster = new CaseTypeMaster();
+        model.addAttribute(CASETYPEMASTER, caseTypeMaster);
+        return CASETYPEMASTER_SEARCH;
+
+    }
+
+    @RequestMapping(value = "/ajaxsearch/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String ajaxsearch(@PathVariable("mode") final String mode, Model model,
+            @ModelAttribute final CaseTypeMaster casetypeMaster) {
+        List<CaseTypeMaster> searchResultList = casetypeMasterService.search(casetypeMaster);
+        return new StringBuilder("{ \"data\":")
+                .append(toJSON(searchResultList, CaseTypeMaster.class, CaseTypeMasterJsonAdaptor.class)).append("}")
+                .toString();
+    }
 }

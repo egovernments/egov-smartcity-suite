@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -45,7 +45,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
   --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8"%>
 <%@ include file="/includes/taglibs.jsp" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <script src="<cdn:url  value='/resources/js/app/license-fee-matrix.js?rnd=${app_release_no}'/>"></script>
@@ -104,13 +104,12 @@
                         <spring:message code='lbl.search'/>
                     </button>
                     <button type="button" class="btn btn-default" data-dismiss="modal"
-                            onclick="window.close();">Close
+                            onclick="window.close();"><spring:message code="lbl.close"/>
                     </button>
                 </div>
                 <div class="row display-hide report-section">
-                    <div class="col-md-12 form-group report-table-container">
-                        <table class="table table-bordered table-hover multiheadertbl"
-                               id="resultTable">
+                    <div class="col-md-12 report-table-container">
+                        <table class="table table-bordered table-hover" id="resultTable">
                             <thead>
                             <tr>
                                 <th></th>

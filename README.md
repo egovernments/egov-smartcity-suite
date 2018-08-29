@@ -26,7 +26,7 @@ FAQ related to various deployment and development issues are discussed [here][FA
 * Clone the eGov repository (development is done on the develop branch).
 ```bash
 $ mkdir -p ${HOME}/egovgithub && cd egovgithub
-$ git clone  -b develop --single-branch  https://github.com/egovernments/eGov.git
+$ git clone  -b develop --single-branch  https://github.com/egovernments/egov-smartcity-suite.git
 ```
 * First time setup which will install the stacks, build the source code, and deploys the artifact to Wildfly
 ```bash
@@ -80,7 +80,7 @@ $ id -un
 ```bash
 $ mkdir egovgithub
 $ cd egovgithub
-$ git clone https://github.com/egovernments/eGov.git
+$ git clone https://github.com/egovernments/egov-smartcity-suite.git
 $ git checkout develop
 ```
 2. Change directory to `<CLONED_REPO_DIR>/egov/egov-config/src/main/resources/config/` and create a file called `egov-erp-<username>.properties` and enter the following values based on your environment config.
@@ -209,7 +209,7 @@ This section gives more details regarding developing and contributing to eGov su
 #### Repository Structure
 `egov` - folder contains all the source code of eGov opensource projects
 #### Check out sources
-`git clone git@github.com:egovernments/eGov.git` or `git clone https://github.com/egovernments/eGov.git`
+`git clone git@github.com:egovernments/egov-smartcity-suite.git` or `git clone https://github.com/egovernments/egov-smartcity-suite.git`
 #### Prerequisites
 
 * Install your favorite IDE for java project. Recommended Eclipse or IntelliJ IDEA

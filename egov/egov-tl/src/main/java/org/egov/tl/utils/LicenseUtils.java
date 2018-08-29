@@ -57,42 +57,36 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.validation.exception.ValidationException;
 import org.egov.tl.entity.LicenseAppType;
-import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.service.LicenseConfigurationService;
-import org.egov.tl.service.LicenseSubCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 import static org.egov.tl.utils.Constants.COMMISSIONER_DESGN;
-import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
-import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
+import static org.egov.tl.utils.Constants.NEW_APPTYPE_CODE;
+import static org.egov.tl.utils.Constants.RENEW_APPTYPE_CODE;
 
 @Service
 public class LicenseUtils {
     @Autowired
     private ModuleService moduleService;
+
     @Autowired
     private AssignmentService assignmentService;
+
     @Autowired
     private DepartmentService departmentService;
+
     @Autowired
     private DesignationService designationService;
-    @Autowired
-    private LicenseSubCategoryService licenseSubCategoryService;
 
     @Autowired
     private LicenseConfigurationService licenseConfigurationService;
 
     public Module getModule(final String moduleName) {
         return moduleService.getModuleByName(moduleName);
-    }
-
-    public List<LicenseSubCategory> getAllTradeNames(final String simpleName) {
-        return licenseSubCategoryService.getSubCategoriesByLicenseTypeName(simpleName);
     }
 
     public List<Department> getAllDepartments() {
@@ -105,15 +99,13 @@ public class LicenseUtils {
             commissionerAssignments = assignmentService.getAllActiveAssignments(
                     designationService.getDesignationByName(COMMISSIONER_DESGN).getId());
         }
-        if (commissionerAssignments.isEmpty())
-            throw new ValidationException("TL-0010", "No valid Commissioner assignment found.");
-        return commissionerAssignments.get(0);
+        return commissionerAssignments.isEmpty() ? null : commissionerAssignments.get(0);
     }
 
     public Integer getSlaForAppType(LicenseAppType licenseAppType) {
-        if (NEW_LIC_APPTYPE.equals(licenseAppType.getName()))
+        if (NEW_APPTYPE_CODE.equals(licenseAppType.getCode()))
             return licenseConfigurationService.getNewAppTypeSla();
-        else if (RENEWAL_LIC_APPTYPE.equals(licenseAppType.getName()))
+        else if (RENEW_APPTYPE_CODE.equals(licenseAppType.getCode()))
             return licenseConfigurationService.getRenewAppTypeSla();
         else
             return licenseConfigurationService.getClosureAppTypeSla();

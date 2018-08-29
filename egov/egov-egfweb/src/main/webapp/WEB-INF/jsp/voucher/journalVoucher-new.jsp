@@ -275,7 +275,7 @@
 		
 		if(vhType =='-1' )	{
 			document.getElementById('lblError').innerHTML = "Please select voucher sub type ";
-			document.getElementById('voucherDate').focus();
+			document.getElementById('vType').focus();
 			return false;
 		}
 		if(vhDate == '' )	{
@@ -297,6 +297,12 @@
 		if(vVoucherSubType != 'JVGeneral' && vVoucherSubType != '-1' )	{
 			if(document.getElementById('voucherTypeBean.partyName').value == '' ) {
 				document.getElementById('lblError').innerHTML = "Please enter a Party Name ";
+				document.getElementById('voucherTypeBean.partyName').focus();
+				return false;
+			}
+			var partyName = document.getElementById('voucherTypeBean.partyName').value;
+			if(partyName.trim().length == 0){
+				document.getElementById('lblError').innerHTML = "Only empty spaces are not allowed";
 				document.getElementById('voucherTypeBean.partyName').focus();
 				return false;
 			}

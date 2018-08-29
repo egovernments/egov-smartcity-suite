@@ -47,7 +47,7 @@
   --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<form:form role="form" action="search" modelAttribute="casetypeMaster"
+<form:form role="form" action="search" modelAttribute="caseTypeMaster"
 	id="casetypeMastersearchform"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">

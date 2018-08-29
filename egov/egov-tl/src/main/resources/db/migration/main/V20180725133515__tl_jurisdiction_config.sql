@@ -1,0 +1,1 @@
+insert into egtl_configuration values (nextval('seq_egtl_configuration'),'JURISDICTION_BASED_ROUTING','false','Enable/Disable routing based on jurisdiction',(select id from eg_user where username='system' and type='SYSTEM'),now(),(select id from eg_user where username='system' and type='SYSTEM'),now(),0);

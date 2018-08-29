@@ -139,8 +139,8 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
                 "namespace", "${actionNamespace}", "propertyId", "${assessmentNum}", "wfType", "GRP", "applicationSource",
                 "${applicationSource}" }),
         @Result(name = "meesevaerror", location = "/WEB-INF/jsp/common/meeseva-errorPage.jsp"),
-        @Result(name = APPLICATION_TYPE_COLLECT_TAX, type = "redirectAction", location = "searchProperty-searchOwnerDetails", params = {
-                "namespace", "/search", "assessmentNum", "${assessmentNum}" }),
+        @Result(name = APPLICATION_TYPE_COLLECT_TAX, type = "redirectAction", location = "collectPropertyTax-generateBill", params = {
+                "namespace", "/collection", "propertyId", "${assessmentNum}" }),
         @Result(name = APPLICATION_TYPE_DEMAND_BILL, type = "redirectAction", location = "billGeneration-generateDemandBill", params = {
                 "namespace", "/bills", "indexNumber", "${assessmentNum}" }),
         @Result(name = APPLICATION_TYPE_VACANCY_REMISSION, type = "redirect", location = "../vacancyremission/create/${assessmentNum},${mode}", params = {
@@ -841,7 +841,8 @@ public class SearchPropertyAction extends SearchFormAction {
                 searchResultMap.put(ADDRESS, basicProperty.getAddress().toString());
                 searchResultMap.put("source", basicProperty.getSource().toString());
                 searchResultMap.put("isDemandActive", String.valueOf(isDemandActive));
-                searchResultMap.put("propType", property.getPropertyDetail().getPropertyTypeMaster().getCode());
+                searchResultMap.put("propType", property.getPropertyDetail().getPropertyTypeMaster() == null ? "NA"
+                        : property.getPropertyDetail().getPropertyTypeMaster().getCode());
                 searchResultMap.put("isTaxExempted", String.valueOf(property.getIsExemptedFromTax()));
                 searchResultMap.put("isUnderWorkflow", String.valueOf(basicProperty.isUnderWorkflow()));
                 searchResultMap.put("enableVacancyRemission",

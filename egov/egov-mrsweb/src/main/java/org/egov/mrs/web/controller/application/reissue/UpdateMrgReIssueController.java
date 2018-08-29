@@ -58,6 +58,7 @@ import static org.egov.mrs.application.MarriageConstants.CREATED;
 import static org.egov.mrs.application.MarriageConstants.FILESTORE_MODULECODE;
 import static org.egov.mrs.application.MarriageConstants.FILE_STORE_ID_APPLICATION_NUMBER;
 import static org.egov.mrs.application.MarriageConstants.JUNIOR_SENIOR_ASSISTANCE_APPROVAL_PENDING;
+import static org.egov.mrs.application.MarriageConstants.MARRIAGE_REGISTRAR;
 import static org.egov.mrs.application.MarriageConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.mrs.application.MarriageConstants.WFLOW_ACTION_STEP_CANCEL_REISSUE;
 import static org.egov.mrs.application.MarriageConstants.WFLOW_ACTION_STEP_DIGISIGN;
@@ -66,13 +67,13 @@ import static org.egov.mrs.application.MarriageConstants.WFLOW_ACTION_STEP_REJEC
 import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_APPROVAL_APPROVEPENDING;
 import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_APPRVLPENDING_DIGISIGN;
 import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_APPRVLPENDING_PRINTCERT;
+import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_CLERK_APPRVLPENDING;
 import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_DIGISIGNPENDING;
 import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_PRINTCERTIFICATE;
-import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_REV_CLERK_APPRVLPENDING;
 import static org.egov.mrs.application.MarriageConstants.WFSTATE_APPROVER_REJECTED;
+import static org.egov.mrs.application.MarriageConstants.WFSTATE_CLRK_APPROVED;
 import static org.egov.mrs.application.MarriageConstants.WFSTATE_CMOH_APPROVED;
 import static org.egov.mrs.application.MarriageConstants.WFSTATE_MHO_APPROVED;
-import static org.egov.mrs.application.MarriageConstants.WFSTATE_REV_CLRK_APPROVED;
 import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 
 import java.io.IOException;
@@ -183,6 +184,10 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
         prepareNewForm(reIssue, model);
         prepareWorkFlowForReIssue(reIssue, model);
         model.addAttribute("reIssue", reIssue);
+        model.addAttribute("mrsRegistrar",securityUtils.getCurrentUser().hasRole(MARRIAGE_REGISTRAR));
+        model.addAttribute("source",reIssue.getRegistration().getSource());
+        model.addAttribute("isReassignEnabled", marriageUtils.isReassignEnabled());
+
         if (reIssue.getStatus().getCode().equalsIgnoreCase(ReIssue.ReIssueStatus.REJECTED.toString()))
             return "reissue-form";
         return REISSUE_VIEW;
@@ -203,7 +208,7 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
                 workFlowContainer.setPendingActions(WFLOW_PENDINGACTION_PRINTCERTIFICATE);
             }
         workFlowContainer.setAdditionalRule(ADDITIONAL_RULE_REGISTRATION);
-        if ((WFSTATE_REV_CLRK_APPROVED.equals(reIssue.getState().getValue())
+        if ((WFSTATE_CLRK_APPROVED.equals(reIssue.getState().getValue())
                 || WFSTATE_MHO_APPROVED.equals(reIssue.getState().getValue())
                 || WFSTATE_CMOH_APPROVED.equals(reIssue.getState().getValue()))
                 && WFLOW_PENDINGACTION_APPROVAL_APPROVEPENDING.equals(reIssue.getState().getNextAction())) {
@@ -217,10 +222,10 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
         if (reIssue.getStatus().getCode().equalsIgnoreCase(CREATED)
                 && (JUNIOR_SENIOR_ASSISTANCE_APPROVAL_PENDING
                         .equalsIgnoreCase(reIssue.getState().getNextAction())
-                        || WFLOW_PENDINGACTION_REV_CLERK_APPRVLPENDING.equalsIgnoreCase(reIssue.getState().getNextAction()))) {
-            workFlowContainer.setPendingActions(WFLOW_PENDINGACTION_REV_CLERK_APPRVLPENDING);
-            model.addAttribute(PENDING_ACTIONS, WFLOW_PENDINGACTION_REV_CLERK_APPRVLPENDING);
-            model.addAttribute("nextActn", WFLOW_PENDINGACTION_REV_CLERK_APPRVLPENDING);
+                        || WFLOW_PENDINGACTION_CLERK_APPRVLPENDING.equalsIgnoreCase(reIssue.getState().getNextAction()))) {
+            workFlowContainer.setPendingActions(WFLOW_PENDINGACTION_CLERK_APPRVLPENDING);
+            model.addAttribute(PENDING_ACTIONS, WFLOW_PENDINGACTION_CLERK_APPRVLPENDING);
+            model.addAttribute("nextActn", WFLOW_PENDINGACTION_CLERK_APPRVLPENDING);
             model.addAttribute("isReassignEnabled", marriageUtils.isReassignEnabled());
         } else {
             model.addAttribute("nextActn", reIssue.getState().getNextAction());
@@ -268,15 +273,18 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
         }
 
         String message = EMPTY;
-        String approverName;
-        String nextDesignation;
+        String approverName=EMPTY;
+        String nextDesignation=EMPTY;
 
         if (isNotBlank(workFlowAction)) {
             workflowContainer.setWorkFlowAction(workFlowAction);
             final Assignment wfInitiator = registrationWorkflowService.getWorkFlowInitiatorForReissue(reIssue);
-            approverName = wfInitiator.getEmployee().getName();
-            nextDesignation = wfInitiator.getDesignation().getName();
+            if(wfInitiator!=null){
+            approverName = wfInitiator.getEmployee().getName()==null?EMPTY:wfInitiator.getEmployee().getName();
+            nextDesignation = wfInitiator.getDesignation().getName()==null?EMPTY:wfInitiator.getDesignation().getName();
+            }
             workflowContainer.setApproverComments(request.getParameter(APPROVAL_COMMENT));
+
             if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
                 reIssueService.rejectReIssue(reIssue, workflowContainer);
                 message = messageSource.getMessage("msg.rejected.reissue", new String[] { reIssue.getApplicationNo(),

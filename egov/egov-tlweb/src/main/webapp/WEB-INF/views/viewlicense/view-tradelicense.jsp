@@ -114,20 +114,6 @@
                                     <div class="panel-body">
                                         <div class="row add-border">
                                             <div class="col-xs-3 add-margin">
-                                                <spring:message code='licensee.aadhaarNo'/>
-                                            </div>
-                                            <div class="col-xs-3 add-margin view-content">
-                                                    ${tradeLicense.licensee.uid}
-                                            </div>
-                                            <div class="col-xs-3 add-margin">
-                                                <spring:message code='search.licensee.mobileNo'/>
-                                            </div>
-                                            <div class="col-xs-3 add-margin view-content">
-                                                    ${tradeLicense.licensee.mobilePhoneNumber}
-                                            </div>
-                                        </div>
-                                        <div class="row add-border">
-                                            <div class="col-xs-3 add-margin">
                                                 <spring:message code='licensee.applicantname'/>
                                             </div>
                                             <div class="col-xs-3 add-margin view-content">
@@ -140,17 +126,26 @@
                                                     ${tradeLicense.licensee.fatherOrSpouseName}
                                             </div>
                                         </div>
-                                        <div class="row">
+                                        <div class="row add-border">
+                                            <div class="col-xs-3 add-margin">
+                                                <spring:message code='search.licensee.mobileNo'/>
+                                            </div>
+                                            <div class="col-xs-3 add-margin view-content">
+                                                    ${tradeLicense.licensee.mobilePhoneNumber}
+                                            </div>
                                             <div class="col-xs-3 add-margin">
                                                 <spring:message code='lbl.emailid'/>
                                             </div>
                                             <div class="col-xs-3 add-margin view-content">
                                                     ${tradeLicense.licensee.emailId}
                                             </div>
+                                        </div>
+
+                                        <div class="row">
                                             <div class="col-xs-3 add-margin">
                                                 <spring:message code='licensee.address'/>
                                             </div>
-                                            <div class="col-xs-3 add-margin view-content">
+                                            <div class="col-xs-6 add-margin view-content">
                                                     ${tradeLicense.licensee.address}
                                             </div>
                                         </div>
@@ -373,7 +368,7 @@
                                     <td colspan="3">
                                         <div style="text-align:left">
                                             <a name="viewdcb" class="btn btn-secondary align-right" id="viewdcb"
-                                               onclick="window.open('/tl/dcb/view/'+ ${tradeLicense.id}, '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');">
+                                               onclick="window.open('/tl/dcb/view/'+ '${tradeLicense.uid}', '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');">
                                                 <spring:message code='lbl.show.dcb'/></a>
                                         </div>
                                     </td>
@@ -401,15 +396,17 @@
                                             <th class="bluebgheadtd"><spring:message code="lbl.wf.updatedby"/></th>
                                             <th class="bluebgheadtd"><spring:message code="lbl.wf.currentowner"/></th>
                                             <th class="bluebgheadtd"><spring:message code="lbl.wf.status"/></th>
-                                            <th class="bluebgheadtd"><spring:message code="lbl.wf.comments"/></th>
+                                            <th class="bluebgheadtd"><spring:message code="lbl.remarks"/></th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         <c:forEach items="${licenseHistory}" varStatus="stat"
                                                    var="history">
                                             <tr>
+                                                <fmt:formatDate value="${history.date}" var="historyDate"
+                                                                pattern="dd/MM/yyyy HH:mm a"/>
                                                 <td class="blueborderfortd" style="text-align: left">
-                                                        ${history.date}</td>
+                                                        ${historyDate}</td>
                                                 <td class="blueborderfortd" style="text-align: left">
                                                         ${history.updatedBy}</td>
                                                 <td class="blueborderfortd" style="text-align: left">

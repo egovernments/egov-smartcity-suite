@@ -112,7 +112,6 @@ public class PropertyUsageService {
         return propertyUsageHibernateDAO.getAllActivePropertyUsage();
     }
     
-    @ReadOnly
     public PropertyUsage findById(Long id) {
         return propertyUsageHibernateDAO.findById(id, false);
     }
@@ -199,7 +198,6 @@ public class PropertyUsageService {
     	return propertyUsageRepository.findUsageByCode(code);
     }
     
-    @ReadOnly
     public List<PropertyUsage> getAllActiveMixedPropertyUsages(){
         return propertyUsageRepository.findByIsActiveTrueOrderByUsageName();
     }

@@ -50,7 +50,8 @@ $(document).ready(function () {
     var tableContainer1 = $("#document-Table");
     $("#searchbtn").click(function () {
         tableContainer1.dataTable({
-            "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+            "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i>" +
+            "<'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
             "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
             "bDestroy": true,
             "autoWidth": false,
@@ -58,8 +59,10 @@ $(document).ready(function () {
                 type: "POST",
                 url: "search?" + $("#searchdocumentform").serialize(),
                 dataSrc: function (json) {
-                    //Make your callback here.
-                    $('.report-section').removeClass('display-hide');
+                    if (json.data == '')
+                        $('.report-section').hide();
+                    else
+                        $('.report-section').show();
                     return json.data;
                 }
             },
@@ -71,7 +74,8 @@ $(document).ready(function () {
                 {
                     "data": null, 'sClass': "text-center", "target": -1, "defaultContent":
 
-                        '<button type="button" class="btn btn-xs btn-secondary edit add-margin"><span class="glyphicon glyphicon-edit"></span>&nbsp;Edit</button>'
+                    '<button type="button" class="btn btn-xs btn-secondary edit add-margin">' +
+                    '<span class="glyphicon glyphicon-edit"></span>&nbsp;</button>'
                 }
                 ,
                 {"data": "id", "visible": false}
@@ -86,19 +90,20 @@ $(document).ready(function () {
 
     });
 
+    $("#enabled").click(function () {
+        if ($("#enabled").prop('checked') == false) {
+            $('input:checkbox[name=mandatory]').attr('checked', false);
+        }
+    });
+
+    $('input:checkbox[name=mandatory]').click(function () {
+        if ($("#enabled").prop('checked') == false) {
+            bootbox.alert("Please first make the document enabled");
+            return false;
+        }
+        else
+            $('input:checkbox[name=mandatory]').attr('checked', true);
+    });
 });
 
-$("#enabled").click(function () {
-    if ($("#enabled").prop('checked') == false) {
-        $('input:checkbox[name=mandatory]').attr('checked', false);
-    }
-})
 
-$('input:checkbox[name=mandatory]').click(function () {
-    if ($("#enabled").prop('checked') == false) {
-        bootbox.alert("Please first make the document enabled");
-        return false;
-    }
-    else
-        $('input:checkbox[name=mandatory]').attr('checked', true);
-})

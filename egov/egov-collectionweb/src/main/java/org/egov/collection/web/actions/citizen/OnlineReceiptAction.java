@@ -229,7 +229,10 @@ public class OnlineReceiptAction extends BaseFormAction {
                     || (onlinePaymentReceiptHeader.getOnlinePayment().getService().getCode()
                             .equals(CollectionConstants.SERVICECODE_AXIS) &&
                             CollectionConstants.AXIS_AUTHORISATION_CODES_WAITINGFOR_PAY_GATEWAY_RESPONSE
-                                    .contains(paymentResponse.getAuthStatus()))) {
+                                    .contains(paymentResponse.getAuthStatus()))
+                    || (onlinePaymentReceiptHeader.getOnlinePayment().getService().getCode()
+                            .equals(CollectionConstants.SERVICECODE_SBIMOPS)
+                            && CollectionConstants.PGI_AUTHORISATION_CODE_PENDING.equals(paymentResponse.getAuthStatus()))) {
                 final EgwStatus paymentStatus = collectionsUtil.getStatusForModuleAndCode(
                         CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
                         CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
@@ -266,7 +269,7 @@ public class OnlineReceiptAction extends BaseFormAction {
         LOGGER.debug("Cancelled receipt after receiving failure message from the payment gateway");
 
         addActionError(getText(onlinePaymentReceiptHeader.getOnlinePayment().getService().getCode().toLowerCase()
-                + ".pgi." + onlinePaymentReceiptHeader.getService().getCode().toLowerCase() + "."
+                + ".pgi."
                 + paymentResponse.getAuthStatus()));
         receiptResponse = "FAILURE|NA";
     }
@@ -461,7 +464,7 @@ public class OnlineReceiptAction extends BaseFormAction {
                 for (final ReceiptDetail rDetails : receiptHeader.getReceiptDetails())
                     rDetails.getCramountToBePaid().setScale(CollectionConstants.AMOUNT_PRECISION_DEFAULT,
                             BigDecimal.ROUND_UP);
-                setReceiptDetailList(new ArrayList<ReceiptDetail>(receiptHeader.getReceiptDetails()));
+                setReceiptDetailList(new ArrayList<>(receiptHeader.getReceiptDetails()));
 
                 if (totalAmountToBeCollected.compareTo(BigDecimal.ZERO) == -1) {
                     addActionError(getText("billreceipt.totalamountlessthanzero.error"));
@@ -469,8 +472,8 @@ public class OnlineReceiptAction extends BaseFormAction {
                 } else
                     setTotalAmountToBeCollected(totalAmountToBeCollected.setScale(
                             CollectionConstants.AMOUNT_PRECISION_DEFAULT, BigDecimal.ROUND_UP));
-            } catch (final Exception e) {
-                LOGGER.error(getText("billreceipt.error.improperbilldata") + e);
+            } catch (final Exception exp) {
+                LOGGER.error(getText("billreceipt.error.improperbilldata"), exp);
                 addActionError(getText("billreceipt.error.improperbilldata"));
             }
         }

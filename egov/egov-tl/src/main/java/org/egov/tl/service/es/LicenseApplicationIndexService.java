@@ -55,7 +55,7 @@ import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
 import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
 import org.egov.infra.elasticsearch.service.ApplicationIndexService;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.tl.entity.License;
+import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -65,7 +65,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.lang.String.format;
-import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.egov.commons.entity.Source.CSC;
 import static org.egov.commons.entity.Source.SYSTEM;
@@ -81,7 +80,7 @@ import static org.egov.tl.utils.Constants.TRADE_LICENSE;
 @Service
 public class LicenseApplicationIndexService {
 
-    private static final String APPLICATION_VIEW_URL = "/tl/viewtradelicense/viewTradeLicense-view.action?applicationNo=%s";
+    private static final String APPLICATION_VIEW_URL = "/tl/license/show/%s";
 
     @Autowired
     private ApplicationIndexService applicationIndexService;
@@ -95,7 +94,7 @@ public class LicenseApplicationIndexService {
     @Autowired
     private LicenseUtils licenseUtils;
 
-    public void createOrUpdateLicenseApplicationIndex(final License license) {
+    public void createOrUpdateLicenseApplicationIndex(final TradeLicense license) {
         ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(license.getApplicationNumber());
 
         if (applicationIndex != null) {
@@ -105,7 +104,7 @@ public class LicenseApplicationIndexService {
         }
     }
 
-    private void createLicenseApplicationIndex(License license) {
+    private void createLicenseApplicationIndex(TradeLicense license) {
         Optional<User> user = getApplicationCurrentOwner(license);
         if (license.getApplicationDate() == null)
             license.setApplicationDate(new Date());
@@ -114,8 +113,8 @@ public class LicenseApplicationIndexService {
         applicationIndexService.createApplicationIndex(ApplicationIndex.builder().withModuleName(TRADE_LICENSE)
                 .withApplicationNumber(license.getApplicationNumber()).withApplicationDate(license.getApplicationDate())
                 .withApplicationType(license.getLicenseAppType().getName()).withApplicantName(license.getLicensee().getApplicantName())
-                .withStatus(license.getEgwStatus() != null ? license.getEgwStatus().getDescription() : license.getCurrentState().getValue())
-                .withUrl(format(APPLICATION_VIEW_URL, license.getApplicationNumber()))
+                .withStatus(license.getStatus().getName())
+                .withUrl(format(APPLICATION_VIEW_URL, license.getUid()))
                 .withApplicantAddress(license.getAddress()).withOwnername(user.isPresent() ?
                         user.get().getUsername() + DELIMITER_COLON + user.get().getName() : NA)
                 .withChannel(isNotBlank(license.getApplicationSource()) ? license.getApplicationSource() : getChannel())
@@ -126,18 +125,19 @@ public class LicenseApplicationIndexService {
     }
 
     private String getChannel() {
-        return securityUtils.currentUserIsEmployee() ?
-                SYSTEM.toString() :
-                securityUtils.getCurrentUser().hasRole(CSCOPERATOR) ? CSC.toString() : "ONLINE";
+        if (securityUtils.currentUserIsEmployee())
+            return SYSTEM.toString();
+        else
+            return securityUtils.getCurrentUser().hasRole(CSCOPERATOR) ? CSC.toString() : "ONLINE";
     }
 
 
-    private void updateLicenseApplicationIndex(License license, ApplicationIndex applicationIndex) {
+    private void updateLicenseApplicationIndex(TradeLicense license, ApplicationIndex applicationIndex) {
         Optional<User> user = getApplicationCurrentOwner(license);
-        applicationIndex.setStatus(license.getEgwStatus() != null ? license.getEgwStatus().getDescription() : license.getCurrentState().getValue());
+        applicationIndex.setStatus(license.getStatus().getName());
         applicationIndex.setApplicantAddress(license.getAddress());
         applicationIndex
-                .setOwnerName(user.isPresent() ? user.get().getUsername() + DELIMITER_COLON + user.get().getName() : EMPTY);
+                .setOwnerName(user.isPresent() ? user.get().getUsername() + DELIMITER_COLON + user.get().getName() : NA);
         applicationIndex.setConsumerCode(license.getLicenseNumber());
         applicationIndex.setClosed(NO);
         applicationIndex.setApproved(INPROGRESS);
@@ -154,7 +154,7 @@ public class LicenseApplicationIndexService {
 
     }
 
-    private Optional<User> getApplicationCurrentOwner(final License license) {
+    private Optional<User> getApplicationCurrentOwner(final TradeLicense license) {
         User user = null;
 
         if (license.hasState() && license.getState().getOwnerPosition() != null) {

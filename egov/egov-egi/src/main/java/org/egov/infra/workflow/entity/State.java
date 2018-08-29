@@ -92,12 +92,12 @@ public class State<T extends OwnerGroup> extends AbstractAuditable {
     private Long id;
 
     @NotBlank
-    @Length(max = 255)
+    @Length(max = 50)
     @SafeHtml
     private String type;
 
     @NotBlank
-    @Length(max = 255)
+    @Length(max = 100)
     @SafeHtml
     private String value;
 
@@ -114,7 +114,7 @@ public class State<T extends OwnerGroup> extends AbstractAuditable {
     @OrderBy("id")
     private Set<StateHistory<T>> history = new HashSet<>();
 
-    @Length(max = 100)
+    @Length(max = 200)
     @SafeHtml
     private String senderName;
 

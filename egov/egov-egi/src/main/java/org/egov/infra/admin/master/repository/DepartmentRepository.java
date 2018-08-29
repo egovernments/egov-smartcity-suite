@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -66,12 +66,14 @@ import static org.hibernate.jpa.QueryHints.HINT_CACHEABLE;
 @Repository
 public interface DepartmentRepository extends JpaRepository<Department, Long> {
 
-    @QueryHints({ @QueryHint(name = HINT_CACHEABLE, value = "true") })
+    @QueryHints({@QueryHint(name = HINT_CACHEABLE, value = "true")})
     @Query("select d from Department d where upper(d.name)=:departmentname")
     Department findByNameUpperCase(@Param("departmentname") String departmentname);
 
     List<Department> findByNameContainingIgnoreCase(String name);
 
-    @QueryHints({ @QueryHint(name = HINT_CACHEABLE, value = "true") })
+    @QueryHints({@QueryHint(name = HINT_CACHEABLE, value = "true")})
     Department findByCode(String code);
+
+    List<Department> findAllByNameIn(List<String> departmentNames);
 }

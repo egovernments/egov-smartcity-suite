@@ -83,8 +83,8 @@
 						<spring:message code="lbl.amount" />
 					</div>
 					<div class="col-sm-3 add-margin view-content">
-						${councilPreamble.sanctionAmount}</div>
-				</div>
+						${councilPreamble.sanctionAmount ne null?councilPreamble.sanctionAmount:'N/A'}</div>
+				 </div>
 				
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin">
@@ -116,17 +116,27 @@
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.ward" />
 					</div>
+					<c:choose>
+					<c:when test="${!councilPreamble.wards.isEmpty()}">
 					<div class="col-sm-9 add-margin view-content">
 						<c:forEach items="${councilPreamble.wards}" var="ward"
 							varStatus="i">
 							<c:if test="${i.index ne 0}">, </c:if> ${ward.name}
 						</c:forEach>
 					</div>
+					</c:when>
+					<c:otherwise>
+					<div class="col-sm-9 add-margin view-content">
+						N/A
+					</div>
+					</c:otherwise>
+					</c:choose>
+					
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.status" />
 					</div>
 					<div class="col-sm-3 add-margin view-content">
-						${councilPreamble.status.code}</div>
+						${councilPreamble.status ne null?councilPreamble.status.code:'N/A'}</div>
 				</div>
 			</div>
 

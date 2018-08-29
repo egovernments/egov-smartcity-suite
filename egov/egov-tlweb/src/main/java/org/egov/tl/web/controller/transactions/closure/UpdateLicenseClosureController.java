@@ -48,7 +48,6 @@
 package org.egov.tl.web.controller.transactions.closure;
 
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.tl.entity.License;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.service.LicenseConfigurationService;
 import org.egov.tl.web.validator.closure.UpdateLicenseClosureValidator;
@@ -148,7 +147,7 @@ public class UpdateLicenseClosureController extends LicenseClosureProcessflowCon
             return LICENSECLOSURE;
         if (updateLicenseClosureValidator.closureInProgress(tradeLicense, redirectAttributes))
             return REDIRECT_TO_VIEW + tradeLicense.getId();
-        License license = licenseClosureService.generateClosureEndorsement(tradeLicense);
+        TradeLicense license = licenseClosureService.generateClosureEndorsement(tradeLicense);
         model.addAttribute("fileStoreIds", license.getDigiSignedCertFileStoreId());
         model.addAttribute("applicationNo", license.getApplicationNumber());
         model.addAttribute("ulbCode", ApplicationThreadLocals.getCityCode());

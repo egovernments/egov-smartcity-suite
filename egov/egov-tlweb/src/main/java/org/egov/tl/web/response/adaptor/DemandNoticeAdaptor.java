@@ -77,7 +77,8 @@ public class DemandNoticeAdaptor implements JsonSerializer<DemandNoticeForm> {
             jsonObject.addProperty("tlArrearPenalty", searchFormObj.getTlArrearPenalty());
             jsonObject.addProperty("status", searchFormObj.getStatus());
             jsonObject.addProperty("ownerName", searchFormObj.getOwnerName());
-            jsonObject.addProperty("wardName", searchFormObj.getWarName());
+            jsonObject.addProperty("revenueWardName", searchFormObj.getWarName());
+            jsonObject.addProperty("adminWardName", searchFormObj.getElectionWardName());
 
         }
         return jsonObject;

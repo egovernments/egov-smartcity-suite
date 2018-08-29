@@ -53,6 +53,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
@@ -62,6 +63,7 @@ import org.springframework.scheduling.quartz.SpringBeanJobFactory;
 import javax.sql.DataSource;
 import java.util.Properties;
 
+import static org.egov.infra.utils.ApplicationConstant.AUTO;
 import static org.quartz.impl.StdSchedulerFactory.AUTO_GENERATE_INSTANCE_ID;
 import static org.quartz.impl.StdSchedulerFactory.PROP_SCHED_BATCH_TIME_WINDOW;
 import static org.quartz.impl.StdSchedulerFactory.PROP_SCHED_INSTANCE_ID;
@@ -70,22 +72,23 @@ import static org.quartz.impl.StdSchedulerFactory.PROP_SCHED_MAX_BATCH_SIZE;
 import static org.quartz.impl.StdSchedulerFactory.PROP_SCHED_SCHEDULER_THREADS_INHERIT_CONTEXT_CLASS_LOADER_OF_INITIALIZING_THREAD;
 import static org.quartz.impl.StdSchedulerFactory.PROP_SCHED_WRAP_JOB_IN_USER_TX;
 
+@Configuration
 public class QuartzSchedulerConfiguration {
-
-    private static final String APP_SCHEDULER_NAME = "ERP_APP_SCHEDULER";
+    public static final String APP_SCHEDULER_NAME = "ERP_APP_SCHEDULER";
     private static final String FALSE = "false";
     private static final String TRUE = "true";
 
     @Autowired
-    private ApplicationContext applicationContext;
-
-    @Autowired
     private Environment env;
 
+    @Autowired
+    private ApplicationContext context;
+
     @Bean
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public SpringBeanJobFactory springBeanJobFactory() {
         QuartzJobAwareBeanFactory jobFactory = new QuartzJobAwareBeanFactory();
-        jobFactory.setApplicationContext(applicationContext);
+        jobFactory.setApplicationContext(context);
         return jobFactory;
     }
 
@@ -93,7 +96,7 @@ public class QuartzSchedulerConfiguration {
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public SimpleThreadPoolTaskExecutor taskExecutor() {
         SimpleThreadPoolTaskExecutor taskExecutor = new SimpleThreadPoolTaskExecutor();
-        taskExecutor.setInstanceId("AUTO");
+        taskExecutor.setInstanceId(AUTO);
         taskExecutor.setInstanceName(APP_SCHEDULER_NAME);
         taskExecutor.setThreadCount(10);
         taskExecutor.setThreadNamePrefix(APP_SCHEDULER_NAME);

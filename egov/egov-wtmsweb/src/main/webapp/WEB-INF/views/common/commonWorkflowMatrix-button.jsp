@@ -84,7 +84,6 @@
 					$('#approvalDesignation').removeAttr('required');
 					$('#approvalPosition').removeAttr('required');
 					$('#approvalComent').removeAttr('required');
-					return true;
 				}
 			}
 			$('#approvalDepartment').attr('required', 'required');
@@ -96,8 +95,34 @@
 				$('#approvalComent').removeAttr('required');
 			} 
 		if(rejectbutton!='' && rejectbutton!=null && rejectbutton!='Reassign') {
-		   document.forms[0].submit;
-		   return true;
+			if($('#waterConnectionForm').valid() && rejectbutton=='Cancel') {
+			bootbox.confirm({
+					message:'Please confirm if you want to permanently cancel the application',
+						
+						buttons: {
+							'cancel' : {
+								label : 'No',
+								className : 'btn-defult'
+							},
+								
+							'confirm' : {
+								label : 'Yes',
+								className : 'btn-danger'
+							}	
+						},
+						callback: function(result) {
+							if(result && $('#waterConnectionForm').valid()) {
+								$('#waterConnectionForm').submit();
+							}
+						}
+				});
+			}
+			else if($('#waterConnectionForm').valid()) {
+		   		$('#waterConnectionForm').submit();
+		   		return true;
+			}
+			else
+				return false; 
 		}
 		else
 	   		return false;
@@ -108,26 +133,23 @@
 		<tr>
 			<td>
 				<c:if test="${waterConnectionDetails.applicationType.code=='REGLZNCONNECTION' && waterConnectionDetails.status.code=='CREATED'
-				&& waterConnectionDetails.executionDate== null && currentState != 'NEW'}">
+				&& waterConnectionDetails.executionDate== null && currentState != 'NEW' && currentState != 'Rejected'}">
 					<input type="button" value="Save" id="save" onclick="validateWorkFlowApprover('save')" class="btn btn-primary" />
+					<input type="button" value="Reject" id="Reject" onclick="validateWorkFlowApprover('Reject')" class="btn btn-primary" />
 				</c:if>
 				<c:if test="${waterConnectionDetails.applicationType.code=='REGLZNCONNECTION' && (waterConnectionDetails.status.code=='CREATED' ||
-				 waterConnectionDetails.status.code=='ESTIMATIONNOTICEGENERATED')&& waterConnectionDetails.executionDate!=null}">
+				 waterConnectionDetails.status.code=='ESTIMATIONNOTICEGENERATED')&& waterConnectionDetails.executionDate!=null && currentState != 'Rejected'}">
 				 	<input type="button" value="Generate Demand Note" name="Generate Demand Note" id="generateDemandNote" class="btn btn-primary" 
 							onclick="generateDemandNotice('${waterConnectionDetails.applicationNumber}')" />
-					<c:if test="${waterConnectionDetails.estimationNumber==null}">
-						<input type="button" value="Add/Edit DCB" name="Add/Edit DCB" id="editDCB" class="btn btn-primary" 
-							onclick="showeditDcb('${waterConnectionDetails.connection.consumerCode}')" />
-					</c:if>
 				</c:if>
 				<c:if test="${hasJuniorOrSeniorAssistantRole  && reassignEnabled  && applicationState=='NEW'}">
 					<button type="button" class="btn btn-primary" id="reassign">Reassign</button>
 				</c:if>
 				<c:if test="${proceedWithoutDonation==true && statuscode=='ESTIMATIONNOTICEGENERATED'}">
-					<form:button  type="submit" id="proceedwithoutdonation" class="btn btn-primary workAction" onclick="validateWorkFlowApprover('Proceed Without Donation');"><c:out value="Proceed Without Donation"/></form:button>
+					<form:button  type="button" id="proceedwithoutdonation" class="btn btn-primary workAction" onclick="validateWorkFlowApprover('Proceed Without Donation');"><c:out value="Proceed Without Donation"/></form:button>
 				</c:if>
 		<c:forEach items="${validActionList}" var="validButtons">
-			<form:button type="submit" id="${validButtons}" class="btn btn-primary workAction"  value="${validButtons}" onclick="validateWorkFlowApprover('${validButtons}');">
+			<form:button type="button" id="${validButtons}" class="btn btn-primary workAction"  value="${validButtons}" onclick="validateWorkFlowApprover('${validButtons}');">
 						<c:out value="${validButtons}" /> </form:button>
 			</c:forEach>
 				<input type="button" name="button2" id="button2" value="Close"

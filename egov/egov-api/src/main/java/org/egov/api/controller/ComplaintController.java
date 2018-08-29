@@ -131,6 +131,8 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.egov.infra.validation.regex.Constants.EMAIL;
+import static org.egov.pgr.utils.constants.PGRConstants.CITIZEN_APP_MODE;
+import static org.egov.pgr.utils.constants.PGRConstants.EMPLOYEE_APP_MODE;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -152,6 +154,8 @@ public class ComplaintController extends ApiController {
     private static final String LOCATION_ID = "locationId";
     private static final String INVALID_PAGE_NUMBER_ERROR = "Invalid Page Number";
     private static final String HAS_NEXT_PAGE = "hasNextPage";
+    private static final String[] HIGH_PRIORITY_SOURCE = {"VMC", "TLC", "DRONE"};
+
     @Autowired
     private ComplaintStatusService complaintStatusService;
 
@@ -342,25 +346,20 @@ public class ComplaintController extends ApiController {
                 complaint.setComplaintType(complaintType);
             }
 
-
-            String receivingModeKey = "receivingMode";
-            ReceivingMode receivingMode;
-            String[] highPriorityComplaintSource = {"VMC", "TLC", "DRONE"};
-
             String priorityCode = "NORMAL";
-
-            if (complaintRequest.get(receivingModeKey) != null && isNotBlank(complaintRequest.get(receivingModeKey).toString())) {
-                String receivingModeVal = complaintRequest.get(receivingModeKey).toString();
-                receivingMode = receivingModeService.getReceivingModeByCode(receivingModeVal);
-                if (Arrays.asList(highPriorityComplaintSource).contains(receivingModeVal)) {
+            String receivingModeCode = (String) complaintRequest.get("receivingMode");
+            boolean highPrioritySource = false;
+            ReceivingMode receivingMode = null;
+            if (isNotBlank(receivingModeCode)) {
+                receivingMode = getReceivingModeByCode(receivingModeCode);
+                highPrioritySource = Arrays.asList(HIGH_PRIORITY_SOURCE).contains(receivingModeCode);
+                if (highPrioritySource)
                     priorityCode = "HIGH";
-                }
-            } else {
-                receivingMode = receivingModeService.getReceivingModeByCode("MOBILE");
             }
 
-            if (receivingMode == null)
-                return getResponseHandler().error(getMessage("msg.invalid.receiving.mode"));
+            if (receivingMode == null || !highPrioritySource)
+                receivingMode = securityUtils.currentUserIsEmployee() ? getReceivingModeByCode(EMPLOYEE_APP_MODE)
+                        : getReceivingModeByCode(CITIZEN_APP_MODE);
 
             complaint.setPriority(priorityService.getPriorityByCode(priorityCode));
             complaint.setReceivingMode(receivingMode);
@@ -377,6 +376,10 @@ public class ComplaintController extends ApiController {
             LOGGER.error(EGOV_API_ERROR, e);
             return getResponseHandler().error(getMessage(SERVER_ERROR));
         }
+    }
+
+    private ReceivingMode getReceivingModeByCode(String code) {
+        return receivingModeService.getReceivingModeByCode(code);
     }
 
     private Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {

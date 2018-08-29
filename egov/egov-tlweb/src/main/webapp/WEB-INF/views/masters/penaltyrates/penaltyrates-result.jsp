@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -71,9 +71,9 @@
 				value="${penaltyForm.licenseAppType.id}" />
 			<table class="table table-bordered fromto" id="result">
 				<thead>
-					<th><spring:message code="lbl.from" /></th>
-					<th><spring:message code="lbl.to" /></th>
-					<th><spring:message code="lbl.penaltyrate" /></th>
+					<th class="text-center"><spring:message code="lbl.from" /></th>
+					<th class="text-center"><spring:message code="lbl.to" /></th>
+					<th class="text-center"><spring:message code="lbl.penaltyrate" /></th>
 					<th></th>
 				</thead>
 				<tbody>
@@ -128,12 +128,19 @@
 						</c:otherwise>
 					</c:choose>
 				</tbody>
+				<tfoot>
+					<tr>
+						<td colspan="4">
+							<button type="button" class="btn btn-secondary pull-right" id="add-row">
+								<i class="fa fa-plus-circle" aria-hidden="true"></i> &nbsp;
+								<spring:message code="lbl.add.more"/>
+							</button>
+						</td>
+					</tr>
+				</tfoot>
 			</table>
 		</div>
 		<div class="col-sm-12 text-center">
-			<button type="button" id="add-row" class="btn btn-primary">
-				<spring:message code="lbl.add" />
-			</button>
 			<button type='submit' class='btn btn-primary' id="buttonSubmit">
 				<spring:message code="lbl.save" />
 			</button>

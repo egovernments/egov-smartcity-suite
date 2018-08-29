@@ -47,10 +47,21 @@
  */
 package org.egov.lcms.web.controller.transactions;
 
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
+import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.entity.PwrDocuments;
 import org.egov.lcms.transactions.service.LegalCaseService;
 import org.egov.lcms.utils.LegalCaseUtil;
+import org.egov.lcms.utils.constants.LcmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -62,16 +73,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
-
 @Controller
 @RequestMapping("/counterAffidavit")
 public class CounterAffidavitController {
+    
+   
 
     @Autowired
     private LegalCaseService legalCaseService;
@@ -79,24 +85,28 @@ public class CounterAffidavitController {
     @Autowired
     private LegalCaseUtil legalCaseUtil;
 
+    @Autowired
+    private SecurityUtils securityUtils;
+
     @RequestMapping(value = "/create/", method = RequestMethod.GET)
     public String viewForm(@ModelAttribute("legalCase") final LegalCase legalCase,
             @RequestParam("lcNumber") final String lcNumber, final Model model, final HttpServletRequest request) {
+        final String advocateUserRole = checkLoggedInUserIsAdvocate(securityUtils.getCurrentUser());
+        model.addAttribute("advocateUserRole", advocateUserRole);
         if (legalCase.getCounterAffidavits().isEmpty()) {
-            model.addAttribute("mode", "countercreate");
-            model.addAttribute("legalCase", legalCase);
+            model.addAttribute(LcmsConstants.LEGALCASE, "countercreate");
+            model.addAttribute(LcmsConstants.LEGALCASE, legalCase);
         } else {
             final LegalCase newlegalCase = getPwrDocuments(legalCase);
-            model.addAttribute("mode", "counteredit");
-            model.addAttribute("legalCase", newlegalCase);
+            model.addAttribute(LcmsConstants.MODE, "counteredit");
+            model.addAttribute(LcmsConstants.LEGALCASE, newlegalCase);
         }
         return "legalcase-caaffidavit";
     }
 
     @ModelAttribute
     private LegalCase getLegalCase(@RequestParam("lcNumber") final String lcNumber) {
-        final LegalCase legalcase = legalCaseService.findByLcNumber(lcNumber);
-        return legalcase;
+        return legalCaseService.findByLcNumber(lcNumber);
     }
 
     @RequestMapping(value = "/create/", method = RequestMethod.POST)
@@ -107,20 +117,28 @@ public class CounterAffidavitController {
             return "legalcase-caaffidavit";
         else
             legalCaseService.update(legalCase, files);
-        redirectAttrs.addFlashAttribute("legalCase", legalCase);
+        redirectAttrs.addFlashAttribute(LcmsConstants.LEGALCASE, legalCase);
         model.addAttribute("message", "Counter Affidavit Details Saved Successfully.");
         final LegalCase newlegalCase = getPwrDocuments(legalCase);
-        model.addAttribute("legalcase", newlegalCase);
-        model.addAttribute("mode", "view");
+        model.addAttribute(LcmsConstants.LEGALCASE, newlegalCase);
+        model.addAttribute(LcmsConstants.MODE, "view");
         return "legalcase-ca-success";
 
     }
 
     private LegalCase getPwrDocuments(final LegalCase legalCase) {
-        List<PwrDocuments> documentDetailsList = new ArrayList<PwrDocuments>();
-        documentDetailsList = legalCaseUtil.getPwrDocumentList(legalCase);
+        final List<PwrDocuments> documentDetailsList = legalCaseUtil.getPwrDocumentList(legalCase);
         legalCase.getPwrList().get(0).setPwrDocuments(documentDetailsList);
         return legalCase;
+    }
+
+    public String checkLoggedInUserIsAdvocate(final User user) {
+        String advocateUserRole = "";
+        for (final Role role : user.getRoles())
+            if (role != null && role.getName().equalsIgnoreCase(LcmsConstants.STANDING_COUNSEL_ROLE))
+                advocateUserRole = role.getName();
+        return advocateUserRole;
+
     }
 
 }

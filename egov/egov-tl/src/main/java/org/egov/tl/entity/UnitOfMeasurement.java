@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -54,6 +54,7 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -67,21 +68,22 @@ import javax.persistence.Table;
 @Unique(fields = {"name", "code"}, enableDfltMsg = true)
 public class UnitOfMeasurement extends AbstractAuditable {
 
-    public static final String SEQUENCE = "SEQ_EGTL_MSTR_UNITOFMEASURE";
+    protected static final String SEQUENCE = "SEQ_EGTL_MSTR_UNITOFMEASURE";
     private static final long serialVersionUID = -3990672464573945978L;
 
     @Id
     @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotBlank(message = "tradelic.uommaster.name.null")
-    @Length(min = 1, max = 50, message = "tradelic.uommaster.name.length")
+    @NotBlank
+    @Length(max = 50)
     @SafeHtml
     private String name;
 
-    @NotBlank(message = "tradelic.uommaster.code.null")
-    @Length(min = 1, max = 50, message = "tradelic.uommaster.code.length")
+    @NotBlank
+    @Length(max = 5)
     @SafeHtml
+    @Column(updatable = false)
     private String code;
 
     private boolean active;

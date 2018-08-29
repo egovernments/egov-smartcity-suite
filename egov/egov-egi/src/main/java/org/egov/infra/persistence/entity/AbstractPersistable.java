@@ -48,11 +48,17 @@
 
 package org.egov.infra.persistence.entity;
 
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.TypeDef;
+import org.jasypt.hibernate4.type.EncryptedStringType;
+
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 import java.io.Serializable;
 
 @MappedSuperclass
+@TypeDef(name = "encryptedString", typeClass = EncryptedStringType.class,
+        parameters = {@Parameter(name = "encryptorRegisteredName", value = "stringDataEncryptor")})
 public abstract class AbstractPersistable<PK extends Serializable> implements Serializable {
 
     private static final long serialVersionUID = 7094572260034458544L;

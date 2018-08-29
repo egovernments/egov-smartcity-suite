@@ -306,10 +306,7 @@ public class ViewPropertyAction extends BaseFormAction {
 			viewMap.put(DOCUMENTDATE,
 					propertyMutation.getDeedDate() != null ? propertyMutation.getDeedDate() : null);
 		} else {
-			viewMap.put(DOCUMENTNO,
-					basicProperty.getRegdDocNo() != null ? basicProperty.getRegdDocNo() : StringUtils.EMPTY);
-			viewMap.put(DOCUMENTDATE,
-					basicProperty.getRegdDocDate() != null ? basicProperty.getRegdDocDate() : null);
+			setDocDetails();
 		}
 	}
 
@@ -373,21 +370,25 @@ public class ViewPropertyAction extends BaseFormAction {
     }
     
    public void getDocumentDetails() {
-        try {
-            final Query query = entityManager.createNamedQuery("DOCUMENT_TYPE_DETAILS_BY_ID");
-            query.setParameter("basicProperty", basicProperty.getId());
-            DocumentTypeDetails documentTypeDetails = (DocumentTypeDetails) query.getSingleResult();
-            viewMap.put(DOCUMENTNO, documentTypeDetails.getDocumentNo());
-            viewMap.put(DOCUMENTDATE, documentTypeDetails.getDocumentDate());
-        } catch (Exception e) {
-            LOGGER.error("No Document type details present for Basicproperty " + e);
-            viewMap.put(DOCUMENTNO,
-                    basicProperty.getRegdDocNo() != null ? basicProperty.getRegdDocNo() : StringUtils.EMPTY);
-            viewMap.put(DOCUMENTDATE, basicProperty.getRegdDocDate() != null ? basicProperty.getRegdDocDate() : null);
-        }
+        setDocDetails();
         if (property.getStatus().equals('W'))
             viewMap.put("propertyWF", "WF");
     }
+
+	private void setDocDetails() {
+		try {
+			final Query query = entityManager.createNamedQuery("DOCUMENT_TYPE_DETAILS_BY_ID");
+			query.setParameter("basicProperty", basicProperty.getId());
+			DocumentTypeDetails documentTypeDetails = (DocumentTypeDetails) query.getSingleResult();
+			viewMap.put(DOCUMENTNO, documentTypeDetails.getDocumentNo());
+			viewMap.put(DOCUMENTDATE, documentTypeDetails.getDocumentDate());
+		} catch (Exception e) {
+			LOGGER.error("No Document type details present for Basicproperty " + e);
+			viewMap.put(DOCUMENTNO,
+					basicProperty.getRegdDocNo() != null ? basicProperty.getRegdDocNo() : StringUtils.EMPTY);
+			viewMap.put(DOCUMENTDATE, basicProperty.getRegdDocDate() != null ? basicProperty.getRegdDocDate() : null);
+		}
+	}
 
     public void setFloorDetails(final Property property) {
         final List<Floor> floors = property.getPropertyDetail().getFloorDetails();

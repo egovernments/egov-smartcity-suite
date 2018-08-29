@@ -55,7 +55,7 @@
 	<div class="col-md-12">
 	 
 		<form:form action="changeOfUse-create"
-			modelAttribute="changeOfUse" id="changeOfUseform"
+			modelAttribute="changeOfUse" id="waterConnectionForm"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 			

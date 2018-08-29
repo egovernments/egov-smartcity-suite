@@ -47,14 +47,15 @@
  */
 package org.egov.lcms.web.adaptor;
 
+import java.lang.reflect.Type;
+
+import org.egov.lcms.reports.entity.LegalCommonReportResult;
+import org.egov.lcms.utils.constants.LcmsConstants;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import org.egov.lcms.reports.entity.LegalCommonReportResult;
-import org.egov.lcms.utils.constants.LcmsConstants;
-
-import java.lang.reflect.Type;
 
 public class GenericSubReportJsonAdaptor implements JsonSerializer<LegalCommonReportResult> {
 
@@ -65,7 +66,7 @@ public class GenericSubReportJsonAdaptor implements JsonSerializer<LegalCommonRe
         final JsonObject jsonObject = new JsonObject();
 
         jsonObject.addProperty("aggregatedBy",
-                genericSubResult.getAggregatedBy() != null ? genericSubResult.getAggregatedBy() : "");
+                genericSubResult.getAggregatedBy() == null ? "" : genericSubResult.getAggregatedBy());
         jsonObject.addProperty("count", genericSubResult.getCount());
         if (genericSubResult.getAggregatedBy() == null) {
             jsonObject.addProperty("caseNumber", genericSubResult.getCaseNumber());
@@ -74,15 +75,15 @@ public class GenericSubReportJsonAdaptor implements JsonSerializer<LegalCommonRe
             jsonObject.addProperty("courtName", genericSubResult.getCourtName());
             jsonObject.addProperty("petitionerName", genericSubResult.getPetitionerName());
             jsonObject.addProperty("respondantName", genericSubResult.getRespondantName());
-            jsonObject.addProperty("standingCounsel", genericSubResult.getStandingCounsel() != null
-                    ? genericSubResult.getStandingCounsel() : "");
+            jsonObject.addProperty("standingCounsel", genericSubResult.getStandingCounsel() == null
+                    ? "" : genericSubResult.getStandingCounsel());
             if (genericSubResult.getCaseStatus().equalsIgnoreCase(LcmsConstants.LEGALCASE_STATUS_CREATED_DESC))
-                jsonObject.addProperty("statusDesc", genericSubResult.getReportStatus() != null
-                        ? genericSubResult.getReportStatus() : "");
+                jsonObject.addProperty("statusDesc", genericSubResult.getReportStatus() == null
+                        ? "" : genericSubResult.getReportStatus());
             else
 
-                jsonObject.addProperty("statusDesc", genericSubResult.getCaseStatus() != null
-                        ? genericSubResult.getCaseStatus() : "");
+                jsonObject.addProperty("statusDesc", genericSubResult.getCaseStatus() == null
+                        ? "" : genericSubResult.getCaseStatus());
 
         }
 

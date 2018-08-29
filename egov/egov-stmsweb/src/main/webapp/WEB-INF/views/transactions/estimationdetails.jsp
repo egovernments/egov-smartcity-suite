@@ -68,7 +68,7 @@
 					<div class="row">
 						<label class="col-sm-3 control-label"><spring:message  code="lbl.inspectiondate"/></label> 
 						<div class="col-sm-3 add-margin">
-							<input class="form-control datepicker today" data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'" id="inspectionDate" name="inspectionDate" required="required"/> 
+							<input class="form-control datepicker today" data-date-start-date="0d" data-inputmask="'mask': 'd/m/y'" id="inspectionDate" name="inspectionDate" required="required"/> 
 						</div>
 				
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.attachdocument"/></label>
@@ -234,9 +234,9 @@
 					      <tr>
 							<th class="text-center"><spring:message code="lbl.slno" /></th>
 							<th class="text-center"><spring:message code="lbl.material" /><span class="mandatory"></span></th>
-							<th class="text-center"><spring:message code="lbl.quantity" /></th>
-							<th class="text-center"><spring:message code="lbl.uom" /></th>
-							<th class="text-center"><spring:message code="lbl.rate" /></th>
+							<th class="text-center"><spring:message code="lbl.quantity" /><span class="mandatory"></span></th>
+							<th class="text-center"><spring:message code="lbl.uom" /><span class="mandatory"></span></th>
+							<th class="text-center"><spring:message code="lbl.rate" /><span class="mandatory"></span></th>
 							<th class="text-center"><spring:message code="lbl.amount" /></th>
 							<th class="text-center"><spring:message code="lbl.actions" /></th>
 					      </tr>

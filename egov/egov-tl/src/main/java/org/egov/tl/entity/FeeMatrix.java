@@ -57,6 +57,7 @@ import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -95,36 +96,37 @@ public class FeeMatrix extends AbstractAuditable {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "natureOfBusiness")
+    @JoinColumn(name = "natureOfBusiness", updatable = false)
     private NatureOfBusiness natureOfBusiness;
 
     @NotNull
-    @ManyToOne
-    @JoinColumn(name = "licenseCategory")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "licenseCategory", updatable = false)
     private LicenseCategory licenseCategory;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "subCategory")
+    @JoinColumn(name = "subCategory", updatable = false)
     private LicenseSubCategory subCategory;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "licenseAppType")
+    @JoinColumn(name = "licenseAppType", updatable = false)
     private LicenseAppType licenseAppType;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "feeType")
+    @JoinColumn(name = "feeType", updatable = false)
     private FeeType feeType;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "financialYear")
+    @JoinColumn(name = "financialYear", updatable = false)
     private CFinancialYear financialYear;
 
     @NotNull
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(updatable = false)
     private Date effectiveFrom;
 
     @NotNull
@@ -221,12 +223,12 @@ public class FeeMatrix extends AbstractAuditable {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o)
+    public boolean equals(Object obj) {
+        if (this == obj)
             return true;
-        if (!(o instanceof FeeMatrix))
+        if (!(obj instanceof FeeMatrix))
             return false;
-        FeeMatrix feeMatrix = (FeeMatrix) o;
+        FeeMatrix feeMatrix = (FeeMatrix) obj;
         return Objects.equals(natureOfBusiness.getId(), feeMatrix.natureOfBusiness.getId()) &&
                 Objects.equals(licenseCategory.getId(), feeMatrix.licenseCategory.getId()) &&
                 Objects.equals(subCategory.getId(), feeMatrix.subCategory.getId()) &&

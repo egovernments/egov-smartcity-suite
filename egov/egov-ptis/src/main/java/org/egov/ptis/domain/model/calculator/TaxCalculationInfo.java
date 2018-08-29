@@ -47,171 +47,174 @@
  */
 package org.egov.ptis.domain.model.calculator;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
 @XStreamAlias("taxcalculationinfo")
 public abstract class TaxCalculationInfo {
-	@XStreamAsAttribute
-	private String propertyOwnerName;
-	@XStreamAsAttribute
-	private String propertyAddress;
-	private String houseNumber;
-	private String zone;
-	private String ward;
-	private String block;
-	private String locality;
-	private BigDecimal propertyArea;
-	private BigDecimal totalTaxPayable;
-	private String propertyType;
-	private String propertyId;
-	private String taxCalculationInfoXML;
-	private BigDecimal totalNetARV;
-	private Date occupencyDate;
+    @XStreamAsAttribute
+    private String propertyOwnerName;
+    @XStreamAsAttribute
+    private String propertyAddress;
+    private String houseNumber;
+    private String zone;
+    private String ward;
+    private String block;
+    private String locality;
+    private BigDecimal propertyArea;
+    private BigDecimal totalTaxPayable;
+    private String propertyType;
+    private String propertyId;
+    private String taxCalculationInfoXML;
+    private BigDecimal totalNetARV;
+    private Date occupencyDate;
 
-	/**
-	 * unitTaxCalculationInfos is a list of UnitTaxCalculation(s) In case of
-	 * multiple UnitTaxCalculation each object represent tax calculation for
-	 * different base rents
-	 */
-	@XStreamAlias("unittax")
-	private List<UnitTaxCalculationInfo> unitTaxCalculationInfos = new ArrayList<UnitTaxCalculationInfo>();
+    /**
+     * unitTaxCalculationInfos is a list of UnitTaxCalculation(s) In case of
+     * multiple UnitTaxCalculation each object represent tax calculation for
+     * different base rents
+     */
+    @XStreamAlias("unittax")
+    private List<UnitTaxCalculationInfo> unitTaxCalculationInfos = new ArrayList<UnitTaxCalculationInfo>();
 
-	public String getPropertyOwnerName() {
-		return propertyOwnerName;
-	}
+    public String getPropertyOwnerName() {
+        return propertyOwnerName;
+    }
 
-	public String getPropertyAddress() {
-		return propertyAddress;
-	}
+    public String getPropertyAddress() {
+        return propertyAddress;
+    }
 
-	public String getHouseNumber() {
-		return houseNumber;
-	}
+    public String getHouseNumber() {
+        return houseNumber;
+    }
 
-	public String getZone() {
-		return zone;
-	}
+    public String getZone() {
+        return zone;
+    }
 
-	public String getWard() {
-		return ward;
-	}
+    public String getWard() {
+        return ward;
+    }
 
-	public BigDecimal getTotalTaxPayable() {
-		return totalTaxPayable;
-	}
+    public BigDecimal getTotalTaxPayable() {
+        return totalTaxPayable;
+    }
 
-	public List<UnitTaxCalculationInfo> getUnitTaxCalculationInfos() {
-		return unitTaxCalculationInfos;
-	}
+    public List<UnitTaxCalculationInfo> getUnitTaxCalculationInfos() {
+        return unitTaxCalculationInfos;
+    }
 
-	public void setPropertyOwnerName(String propertyOwnerName) {
-		this.propertyOwnerName = propertyOwnerName;
-	}
+    public void setPropertyOwnerName(final String propertyOwnerName) {
+        this.propertyOwnerName = propertyOwnerName;
+    }
 
-	public void setPropertyAddress(String propertyAddress) {
-		this.propertyAddress = propertyAddress;
-	}
+    public void setPropertyAddress(final String propertyAddress) {
+        this.propertyAddress = propertyAddress;
+    }
 
-	public void setHouseNumber(String houseNumber) {
-		this.houseNumber = houseNumber;
-	}
+    public void setHouseNumber(final String houseNumber) {
+        this.houseNumber = houseNumber;
+    }
 
-	public void setZone(String zone) {
-		this.zone = zone;
-	}
+    public void setZone(final String zone) {
+        this.zone = zone;
+    }
 
-	public void setWard(String ward) {
-		this.ward = ward;
-	}
+    public void setWard(final String ward) {
+        this.ward = ward;
+    }
 
-	public void setTotalTaxPayable(BigDecimal totalTaxPayable) {
-		this.totalTaxPayable = totalTaxPayable;
-	}
+    public void setTotalTaxPayable(final BigDecimal totalTaxPayable) {
+        this.totalTaxPayable = totalTaxPayable;
+    }
 
-	public void setUnitTaxCalculationInfo(List<UnitTaxCalculationInfo> unitTaxCalculationInfos) {
-		this.unitTaxCalculationInfos = unitTaxCalculationInfos;
-	}
+    public void setUnitTaxCalculationInfo(final List<UnitTaxCalculationInfo> unitTaxCalculationInfos) {
+        this.unitTaxCalculationInfos = unitTaxCalculationInfos;
+    }
 
-	public BigDecimal getPropertyArea() {
-		return propertyArea;
-	}
+    public BigDecimal getPropertyArea() {
+        return propertyArea;
+    }
 
-	public void setPropertyArea(BigDecimal propertyArea) {
-		this.propertyArea = propertyArea;
-	}
+    public void setPropertyArea(final BigDecimal propertyArea) {
+        this.propertyArea = propertyArea;
+    }
 
-	public void addUnitTaxCalculationInfo(UnitTaxCalculationInfo unitTaxCalculationInfo) {
-		getUnitTaxCalculationInfos().add(unitTaxCalculationInfo);
-	}
+    public void addUnitTaxCalculationInfo(final UnitTaxCalculationInfo unitTaxCalculationInfo) {
+        getUnitTaxCalculationInfos().add(unitTaxCalculationInfo);
+    }
 
-	public String getPropertyType() {
-		return propertyType;
-	}
+    public String getPropertyType() {
+        return propertyType;
+    }
 
-	public void setPropertyType(String propertyType) {
-		this.propertyType = propertyType;
-	}
+    public void setPropertyType(final String propertyType) {
+        this.propertyType = propertyType;
+    }
 
-	public String getTaxCalculationInfoXML() {
-		return taxCalculationInfoXML;
-	}
+    public String getTaxCalculationInfoXML() {
+        return taxCalculationInfoXML;
+    }
 
-	public void setTaxCalculationInfoXML(String taxCalculationInfoXML) {
-		this.taxCalculationInfoXML = taxCalculationInfoXML;
-	}
+    public void setTaxCalculationInfoXML(final String taxCalculationInfoXML) {
+        this.taxCalculationInfoXML = taxCalculationInfoXML;
+    }
 
-	public Date getOccupencyDate() {
-		return occupencyDate;
-	}
+    public Date getOccupencyDate() {
+        return occupencyDate;
+    }
 
-	public void setOccupencyDate(Date occupencyDate) {
-		this.occupencyDate = occupencyDate;
-	}
+    public void setOccupencyDate(final Date occupencyDate) {
+        this.occupencyDate = occupencyDate;
+    }
 
-	public String getBlock() {
-		return block;
-	}
+    public String getBlock() {
+        return block;
+    }
 
-	public void setBlock(String block) {
-		this.block = block;
-	}
+    public void setBlock(final String block) {
+        this.block = block;
+    }
 
-	public String getLocality() {
-		return locality;
-	}
+    public String getLocality() {
+        return locality;
+    }
 
-	public void setLocality(String locality) {
-		this.locality = locality;
-	}
+    public void setLocality(final String locality) {
+        this.locality = locality;
+    }
 
-	public String getPropertyId() {
-		return propertyId;
-	}
+    public String getPropertyId() {
+        return propertyId;
+    }
 
-	public void setPropertyId(String propertyId) {
-		this.propertyId = propertyId;
-	}
+    public void setPropertyId(final String propertyId) {
+        this.propertyId = propertyId;
+    }
 
-	public BigDecimal getTotalNetARV() {
-		return totalNetARV;
-	}
+    public BigDecimal getTotalNetARV() {
+        return totalNetARV;
+    }
 
-	public void setTotalNetARV(BigDecimal totalNetARV) {
-		this.totalNetARV = totalNetARV;
-	}
+    public void setTotalNetARV(final BigDecimal totalNetARV) {
+        this.totalNetARV = totalNetARV;
+    }
 
-	@Override
+    @Override
     public int hashCode() {
-        int hashCode = this.propertyOwnerName.hashCode() + this.propertyAddress.hashCode()
-                + this.houseNumber.hashCode() + this.locality.hashCode() + this.zone.hashCode() + this.ward.hashCode()
-                + this.totalTaxPayable.hashCode() + this.propertyType.hashCode()
-                + this.taxCalculationInfoXML.hashCode() + this.totalNetARV.hashCode();
+        final int hashCode = (propertyOwnerName == null ? 0 : propertyOwnerName.hashCode())
+                + (propertyAddress == null ? 0 : propertyAddress.hashCode())
+                + (houseNumber == null ? 0 : houseNumber.hashCode()) + (locality == null ? 0 : locality.hashCode())
+                + (zone == null ? 0 : zone.hashCode()) + (ward == null ? 0 : ward.hashCode())
+                + totalTaxPayable.hashCode() + propertyType.hashCode()
+                + (taxCalculationInfoXML == null ? 0 : taxCalculationInfoXML.hashCode())
+                + (totalNetARV == null ? 0 : totalNetARV.hashCode());
         return hashCode;
     }
 

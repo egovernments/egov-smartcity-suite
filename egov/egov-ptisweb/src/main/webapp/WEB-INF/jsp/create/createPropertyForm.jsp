@@ -324,27 +324,10 @@
  		jQuery('#propTypeId').change(function() {
  			var propertyType = jQuery('#propTypeId :selected').text();
  	 		if(propertyType == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND_STR}"/>'){
- 	 			var today = new Date();
- 	 			var curMonth = today.getMonth()+1;
- 	 			var currYear = today.getFullYear();
- 	 			var baseDate;
- 	 			var effectiveDate;
- 	 			if(curMonth < 4){
- 	 				baseDate = new Date(currYear,4,1);
- 	 				effectiveDate = baseDate.getDate().toString()+"/"+baseDate.getMonth().toString()+"/"+(baseDate.getFullYear()-3).toString();
- 	 			}
- 	 			else if(curMonth > 3 && curMonth <10){
- 	 				baseDate = new Date(currYear,10,1);
- 	 				effectiveDate = baseDate.getDate().toString()+"/"+baseDate.getMonth().toString()+"/"+(baseDate.getFullYear()-3).toString();
- 	 			}
- 	 			else if(curMonth > 9){
- 	 				baseDate = new Date(currYear,4,1);
- 	 				effectiveDate = baseDate.getDate().toString()+"/"+baseDate.getMonth().toString()+"/"+(baseDate.getFullYear()-2).toString()
- 	 			}
- 	 			jQuery('#dateOfCompletion').val(effectiveDate);
+ 	 			setEffectiveDate();
  	 		}
 		 });
  		jQuery('#dateOfCompletion').attr('readonly', true);
  	});
- 
+  	
 </script>

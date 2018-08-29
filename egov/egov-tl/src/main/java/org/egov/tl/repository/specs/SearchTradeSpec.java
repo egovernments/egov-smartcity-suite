@@ -48,7 +48,7 @@
 
 package org.egov.tl.repository.specs;
 
-import org.egov.tl.entity.License;
+import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.contracts.SearchForm;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -60,7 +60,7 @@ public final class SearchTradeSpec {
         //static methods only
     }
 
-    public static Specification<License> searchTrade(final SearchForm searchForm) {
+    public static Specification<TradeLicense> searchTrade(final SearchForm searchForm) {
         return (root, query, builder) -> {
             final Predicate predicate = builder.conjunction();
             if (searchForm.getLicenseNumber() != null)

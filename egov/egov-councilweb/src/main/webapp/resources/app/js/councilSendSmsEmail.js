@@ -92,7 +92,7 @@ function callAjaxSearch() {
 				},
 				aaSorting: [],				
 				columns : [ { 
-"data" : "committeeType", "sClass" : "text-left"} ,{ 
+"data" : "meetingType", "sClass" : "text-left"} ,{ 
 "data" : "meetingNumber", "sClass" : "text-left"} ,{ 
 "data" : "meetingCreatedDate", "sClass" : "text-left"},{ 
 "data" : "meetingDate", "sClass" : "text-left"},{

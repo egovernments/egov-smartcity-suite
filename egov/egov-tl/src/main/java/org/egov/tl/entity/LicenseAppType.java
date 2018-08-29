@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -52,33 +52,41 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.SafeHtml;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import java.util.Objects;
 
 @Entity
 @Table(name = "EGTL_MSTR_APP_TYPE")
-@Unique(fields = "licenseApplicationType", message = "masters.licenseApplicationType.isunique")
+@Unique(fields = {"name", "code"}, enableDfltMsg = true)
 @SequenceGenerator(name = LicenseAppType.SEQUENCE, sequenceName = LicenseAppType.SEQUENCE, allocationSize = 1)
-@NamedQuery(name = "APPTYPE_BY_NAME", query = "select la FROM LicenseAppType la where name =:name")
 public class LicenseAppType extends AbstractAuditable {
-    public static final String BY_NAME = "APPTYPE_BY_NAME";
     public static final String SEQUENCE = "SEQ_EGTL_MSTR_APP_TYPE";
     private static final long serialVersionUID = 6937736396204496999L;
+
     @Id
     @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotBlank(message = "masters.licenseApplicationType.name.null")
-    @Length(max = 256, message = "masters.licenseApplicationType.name.length")
+    @NotBlank
+    @Length(max = 50)
+    @SafeHtml
     private String name;
 
-    private Boolean display;
+    @NotBlank
+    @SafeHtml
+    @Length(max = 10)
+    @Column(updatable = false)
+    private String code;
+
+    private boolean display;
 
     @Override
     public Long getId() {
@@ -98,11 +106,35 @@ public class LicenseAppType extends AbstractAuditable {
         this.name = name;
     }
 
-    public Boolean getDisplay() {
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public boolean isDisplay() {
         return display;
     }
 
-    public void setDisplay(Boolean display) {
+    public void setDisplay(boolean display) {
         this.display = display;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!(obj instanceof LicenseAppType))
+            return false;
+        LicenseAppType that = (LicenseAppType) obj;
+        return Objects.equals(getName(), that.getName()) &&
+                Objects.equals(getCode(), that.getCode());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getName(), getCode());
     }
 }

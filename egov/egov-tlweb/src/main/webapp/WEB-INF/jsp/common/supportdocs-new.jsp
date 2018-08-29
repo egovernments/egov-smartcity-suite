@@ -46,7 +46,7 @@
   ~
   --%>
 
-<%@ page language="java" pageEncoding="UTF-8" %>
+<%@ page pageEncoding="UTF-8" %>
 <%@ include file="/includes/taglibs.jsp" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <div class="col-md-12">
@@ -97,7 +97,7 @@
                 <div id="collapse1" class="panel-collapse collapse" role="tabpanel">
                     <div class="panel-body">
                         <div class="row add-border">
-                            <%@ include file="../common/supportdocs-view.jsp" %>
+                            <%@ include file="supportdocs-view.jsp" %>
                         </div>
                     </div>
                 </div>

@@ -114,6 +114,15 @@
 			}
 		return true; 
 		}
+	
+	function isSpecialChar(){
+		  var codeEntered = document.getElementById('code').value;
+		  var nameEntered = document.getElementById('name').value;
+		  var replacedCode = codeEntered.replace(/[`~!@#$%^&*()_|+\-=÷¿?;:><'",.<>\{\}\[\]\\\/]/gi, '');
+		  var replacedName = nameEntered.replace(/[`~!@#$%^&*()_|+\-=÷¿?;:><'",.<>\{\}\[\]\\\/]/gi, '');
+		  document.getElementById('code').value = replacedCode;
+		  document.getElementById('name').value = replacedName;	  
+	}
     </SCRIPT>
 </head>
 <body>
@@ -151,7 +160,7 @@
 					<td style="width: 10%"></td>
 					<td class="greybox" width="10%"><s:text name="scheme.code" /><span
 						class="mandatory1"> *</span></td>
-					<td class="greybox" width="30%"><s:textfield id="code"
+					<td class="greybox" width="30%"><s:textfield id="code" onkeyup="isSpecialChar()" onchange="isSpecialChar()"
 							name="code" value="%{scheme.code}"
 							onblur="checkuniquenesscode();" /></td>
 					<egov:uniquecheck id="codeuniquecode" name="codeuniquecode"
@@ -160,7 +169,7 @@
 
 					<td class="greybox" width="10%"><s:text name="scheme.name" /><span
 						class="mandatory1"> *</span></td>
-					<td class="greybox" width="30%"><s:textfield id="name"
+					<td class="greybox" width="30%"><s:textfield id="name" onkeyup="isSpecialChar()" onchange="isSpecialChar()"
 							name="name" value="%{scheme.name}"
 							onblur="checkuniquenessname();" /></td>
 					<egov:uniquecheck id="uniquename" name="uniquename"

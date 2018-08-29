@@ -48,6 +48,7 @@
 package org.egov.collection.integration.services;
 
 import org.apache.log4j.Logger;
+import org.egov.collection.config.properties.CollectionApplicationProperties;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.OnlinePayment;
 import org.egov.collection.entity.ReceiptDetail;
@@ -137,6 +138,9 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
     
     @Autowired
     private EnvironmentSettings environmentSettings;
+    
+    @Autowired
+    private CollectionApplicationProperties collectionApplicationProperties;
 
     public CollectionIntegrationServiceImpl() {
         super(ReceiptHeader.class);
@@ -667,7 +671,7 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
                     CollectionConstants.AMOUNT_PRECISION_DEFAULT, BigDecimal.ROUND_UP));
 
         final ServiceDetails paymentService = (ServiceDetails) persistenceService.findByNamedQuery(
-                CollectionConstants.QUERY_SERVICE_BY_CODE, CollectionConstants.SERVICECODE_AXIS);
+                CollectionConstants.QUERY_SERVICE_BY_CODE, collectionApplicationProperties.mobilePaymentServiceCode());
 
         if (receiptHeader.getStatus() == null) {
             receiptHeader.setReceiptdate(new Date());

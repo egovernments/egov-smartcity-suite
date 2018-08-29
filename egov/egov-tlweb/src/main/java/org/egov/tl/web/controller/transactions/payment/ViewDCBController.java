@@ -47,7 +47,8 @@
  */
 package org.egov.tl.web.controller.transactions.payment;
 
-import org.egov.tl.entity.License;
+import org.egov.infra.exception.ApplicationValidationException;
+import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.contracts.DCBReportSearchRequest;
 import org.egov.tl.entity.view.DCBReportResult;
 import org.egov.tl.entity.view.InstallmentWiseDCB;
@@ -57,6 +58,7 @@ import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.web.response.adaptor.OnlineDCBReportResponseAdaptor;
 import org.egov.tl.web.response.adaptor.OnlineInstallmentwiseDCBReportAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -70,6 +72,7 @@ import static org.egov.infra.utils.JsonUtils.toJSON;
 public class ViewDCBController {
 
     @Autowired
+    @Qualifier("tradeLicenseService")
     private TradeLicenseService tradeLicenseService;
 
     @Autowired
@@ -78,16 +81,19 @@ public class ViewDCBController {
     @Autowired
     private InstallmentwiseDCBReportService installmentwiseDCBReportService;
 
-    @GetMapping("{id}")
-    public String search(@PathVariable Long id, Model model, DCBReportSearchRequest searchRequest) {
-        License licenseObj = tradeLicenseService.getLicenseById(id);
-        searchRequest.setLicenseid(licenseObj.getId());
-        model.addAttribute("license", licenseObj);
+    @GetMapping("{uid}")
+    public String search(@PathVariable String uid, Model model, DCBReportSearchRequest searchRequest) {
+        TradeLicense license = tradeLicenseService.getLicenseByUID(uid);
+        if (license == null)
+            throw new ApplicationValidationException("License not found");
+
+        searchRequest.setLicenseId(license.getId());
+        model.addAttribute("license", license);
         model.addAttribute("dcbreport", toJSON(dCBReportService.getDCBRecords(searchRequest), DCBReportResult.class,
                 OnlineDCBReportResponseAdaptor.class));
         model.addAttribute("installmentwiseReport", toJSON(installmentwiseDCBReportService.getInstallmentWiseDCBReport(
-                licenseObj.getId()), InstallmentWiseDCB.class, OnlineInstallmentwiseDCBReportAdaptor.class));
-        model.addAttribute("receipts", tradeLicenseService.getReceipts(licenseObj));
+                license.getId()), InstallmentWiseDCB.class, OnlineInstallmentwiseDCBReportAdaptor.class));
+        model.addAttribute("receipts", tradeLicenseService.getReceipts(license));
         return "view-license-dcb";
     }
 }

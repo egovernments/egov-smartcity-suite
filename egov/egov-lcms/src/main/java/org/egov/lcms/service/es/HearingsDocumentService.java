@@ -92,11 +92,11 @@ public class HearingsDocumentService {
         else {
             hearingsDocument = HearingsDocument.builder()
                     .withLcNumber(hearings.getLegalCase().getLcNumber()).withHearingDate(hearings.getHearingDate())
-                    .withHearingOutcome(hearings.getHearingOutcome() != null ? hearings.getHearingOutcome() : "")
+                    .withHearingOutcome(hearings.getHearingOutcome() == null ?"": hearings.getHearingOutcome())
                     .withPurposeOfHearing(hearings.getPurposeofHearings())
-                    .withAdditionalLawyer(hearings.getAdditionalLawyers() != null ? hearings.getAdditionalLawyers() : "")
-                    .withEmployeeNames(hearings.getTempEmplyeeHearing() != null
-                            ? hearings.getEmployeeHearing() : "")
+                    .withAdditionalLawyer(hearings.getAdditionalLawyers() == null ? "" : hearings.getAdditionalLawyers())
+                    .withEmployeeNames(hearings.getTempEmplyeeHearing() == null
+                            ? "" : hearings.getEmployeeHearing())
                     .withStandingCounselPresent(hearings.getIsStandingCounselPresent())
                     .withCityName(ApplicationThreadLocals.getCityName())
                     .withCityCode(ApplicationThreadLocals.getCityCode())
@@ -118,7 +118,7 @@ public class HearingsDocumentService {
         hearingsDocument.setHearingOutcome(hearings.getHearingOutcome());
         hearingsDocument.setAdditionalLawyer(hearings.getAdditionalLawyers());
         hearingsDocument.setEmployeeNames(
-                hearings.getTempEmplyeeHearing() != null ? hearings.getEmployeeHearing() : "");
+                hearings.getTempEmplyeeHearing() == null ? "" :hearings.getEmployeeHearing());
         hearingsDocument.setStandingCounselPresent(hearings.getIsStandingCounselPresent());
         createHearingsDocument(hearingsDocument);
         return hearingsDocument;

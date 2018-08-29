@@ -272,7 +272,7 @@ public class NewReIssueController extends GenericWorkFlowController {
                     new String[] { approverName.concat("~").concat(nextDesignation), reIssueResult.getApplicationNo() }, null);
         } else if ("Cancel ReIssue".equals(workflowContainer.getWorkFlowAction())) {
             reIssueResult = reIssueService.rejectReIssue(reIssue, workflowContainer);
-            message = messageSource.getMessage("msg.cancelled.reissue", null, null);
+            message = messageSource.getMessage("msg.cancelled.reissue", new String[] {reIssueResult.getApplicationNo()}, null);
         }
 
         // On Cancel, output rejection certificate

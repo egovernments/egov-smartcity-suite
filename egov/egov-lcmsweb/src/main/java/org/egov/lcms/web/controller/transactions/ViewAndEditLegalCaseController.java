@@ -47,12 +47,17 @@
  */
 package org.egov.lcms.web.controller.transactions;
 
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.List;
+
 import org.egov.lcms.masters.service.CourtMasterService;
 import org.egov.lcms.masters.service.PetitionTypeMasterService;
 import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.entity.LegalCaseUploadDocuments;
 import org.egov.lcms.transactions.service.LegalCaseService;
 import org.egov.lcms.utils.LegalCaseUtil;
+import org.egov.lcms.utils.constants.LcmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -63,11 +68,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 @RequestMapping(value = "/application/")
@@ -87,16 +87,15 @@ public class ViewAndEditLegalCaseController extends GenericLegalCaseController {
 
     @ModelAttribute
     private LegalCase getLegalCase(@RequestParam("lcNumber") final String lcNumber) {
-        final LegalCase legalCase = legalCaseService.findByLcNumber(lcNumber);
-        return legalCase;
+        return legalCaseService.findByLcNumber(lcNumber);
     }
 
     @RequestMapping(value = "/view/", method = RequestMethod.GET)
     public String view(@RequestParam("lcNumber") final String lcNumber, final Model model) {
         final LegalCase legalCase = legalCaseService.findByLcNumber(lcNumber);
         final LegalCase newlegalCase = getLegalCaseDocuments(legalCase);
-        model.addAttribute("legalCase", newlegalCase);
-        model.addAttribute("mode", "view");
+        model.addAttribute(LcmsConstants.LEGALCASE, newlegalCase);
+        model.addAttribute(LcmsConstants.MODE, "view");
         return "legalcasedetails-view";
     }
 
@@ -104,7 +103,7 @@ public class ViewAndEditLegalCaseController extends GenericLegalCaseController {
     public String edit(@RequestParam("lcNumber") final String lcNumber, final Model model) {
         final LegalCase legalCase = legalCaseService.findByLcNumber(lcNumber);
         final LegalCase newlegalCase = getLegalCaseDocuments(legalCase);
-        model.addAttribute("legalCase", newlegalCase);
+        model.addAttribute(LcmsConstants.LEGALCASE, newlegalCase);
         setDropDownValues(model);
         final String[] casenumberyear = legalCase.getCaseNumber().split("/");
         legalCase.setCaseNumber(casenumberyear[0]);
@@ -112,7 +111,7 @@ public class ViewAndEditLegalCaseController extends GenericLegalCaseController {
             legalCase.setWpYear(casenumberyear[1]);
         legalCase.getBipartisanPetitionerDetailsList().addAll(legalCase.getPetitioners());
         legalCase.getBipartisanRespondentDetailsList().addAll(legalCase.getRespondents());
-        model.addAttribute("mode", "edit");
+        model.addAttribute(LcmsConstants.MODE, "edit");
         return "legalcase-edit";
     }
 
@@ -126,9 +125,9 @@ public class ViewAndEditLegalCaseController extends GenericLegalCaseController {
         legalCaseService.persist(legalCase, files);
         setDropDownValues(model);
         final LegalCase newlegalCase = getLegalCaseDocuments(legalCase);
-        model.addAttribute("legalCase", newlegalCase);
-        redirectAttrs.addFlashAttribute("legalCase", newlegalCase);
-        model.addAttribute("mode", "view");
+        model.addAttribute(LcmsConstants.LEGALCASE, newlegalCase);
+        redirectAttrs.addFlashAttribute(LcmsConstants.LEGALCASE, newlegalCase);
+        model.addAttribute(LcmsConstants.MODE, "view");
         model.addAttribute("message", "LegalCase updated successfully.");
         return "legalcase-success";
     }
@@ -139,8 +138,7 @@ public class ViewAndEditLegalCaseController extends GenericLegalCaseController {
     }
 
     private LegalCase getLegalCaseDocuments(final LegalCase legalCase) {
-        List<LegalCaseUploadDocuments> documentDetailsList = new ArrayList<LegalCaseUploadDocuments>();
-        documentDetailsList = legalCaseUtil.getLegalCaseDocumentList(legalCase);
+        final List<LegalCaseUploadDocuments> documentDetailsList = legalCaseUtil.getLegalCaseDocumentList(legalCase);
         legalCase.setLegalCaseUploadDocuments(documentDetailsList);
         return legalCase;
     }

@@ -50,53 +50,57 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <div class="panel panel-primary" data-collapsed="0">
-	<div class="panel-heading slide-history-menu">
-		<div class="panel-title">
-			<spring:message  code="lbl.apphistory"/>
-		</div>
-		<div class="history-icon">
-			<i class="fa fa-angle-up fa-2x" id="toggle-his-icon"></i>
-		</div>
-	</div>
-	<div class="panel-body history-slide display-hide">
-		<div class="row add-margin hidden-xs visible-sm visible-md visible-lg header-color">
-			<div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.date"/></div>
-			<div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.updatedby"/></div>
-			<div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.status" /></div>
-			<div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.currentowner"/></div>
-			<div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.department" /></div>
-			<div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.comments" /></div>
-		</div>
-		<c:choose>
-				<c:when test="${!applicationHistory.isEmpty()}">
-					<c:forEach items="${applicationHistory}" var="history">
-					<div class="row add-margin">
-						<div class="col-sm-2 col-xs-12 add-margin">
-							<fmt:formatDate value="${history.date}" var="historyDate"
-								pattern="dd-MM-yyyy HH:mm a E" />
-							<c:out value="${historyDate}" />
-						</div>
-						<div class="col-sm-2 col-xs-12 add-margin">
-							<c:out value="${history.updatedBy}" />
-						</div>
-						<div class="col-sm-2 col-xs-12 add-margin">
-							<c:out value="${history.status}" />
-						</div>
-						<div class="col-sm-2 col-xs-12 add-margin">
-							<c:out value="${history.user}" />
-						</div>
-						<div class="col-sm-2 col-xs-12 add-margin">
-							<c:out value="${history.department}" />
-						</div>
-						<div class="col-sm-2 col-xs-12 add-margin">
-							<c:out value="${history.comments}" />&nbsp;
-						</div>
-					</div>
-					</c:forEach>
-				</c:when>
-				<c:otherwise>
-					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.nohistorydetails.code"/></div>
-				</c:otherwise>
-			</c:choose>
-	</div>
+    <div class="panel-heading slide-history-menu">
+        <div class="panel-title">
+            <spring:message code="lbl.apphistory"/>
+        </div>
+        <div class="history-icon">
+            <i class="fa fa-angle-up fa-2x" id="toggle-his-icon"></i>
+        </div>
+    </div>
+    <div class="panel-body history-slide display-hide">
+        <div class="row add-border">
+            <table class="table table-bordered"
+                   style="width:97%;margin:0 auto;">
+                <thead>
+                <tr>
+                    <th class="bluebgheadtd"><spring:message code="lbl.wf.date"/></th>
+                    <th class="bluebgheadtd"><spring:message code="lbl.wf.updatedby"/></th>
+                    <th class="bluebgheadtd"><spring:message code="lbl.wf.status"/></th>
+                    <th class="bluebgheadtd"><spring:message code="lbl.currentowner"/></th>
+                    <th class="bluebgheadtd"><spring:message code="lbl.department"/></th>
+                    <th class="bluebgheadtd"><spring:message code="lbl.wf.comments"/></th>
+                </tr>
+                </thead>
+                <tbody>
+                <c:choose>
+                    <c:when test="${!applicationHistory.isEmpty()}">
+                        <c:forEach items="${applicationHistory}" var="history">
+                            <tr>
+                                <td class="blueborderfortd" style="text-align: left">
+                                    <fmt:formatDate value="${history.date}" var="historyDate"
+                                                    pattern="dd-MM-yyyy HH:mm a E"/>
+                                        ${historyDate}</td>
+                                <td class="blueborderfortd" style="text-align: left">
+                                        ${history.updatedBy}</td>
+                                <td class="blueborderfortd" style="text-align: left">
+                                        ${history.status}</td>
+                                <td class="blueborderfortd" style="text-align: left">
+                                        ${history.user}</td>
+                                <td class="blueborderfortd" style="text-align: left">
+                                        ${history.department}</td>
+                                <td class="blueborderfortd" style="text-align: left">
+                                        ${history.comments}</td>
+                            </tr>
+                        </c:forEach>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="col-md-3 col-xs-6 add-margin"><spring:message
+                                code="lbl.nohistorydetails.code"/></div>
+                    </c:otherwise>
+                </c:choose>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>

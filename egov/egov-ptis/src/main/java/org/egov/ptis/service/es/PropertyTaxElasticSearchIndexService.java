@@ -680,10 +680,7 @@ public class PropertyTaxElasticSearchIndexService {
      */
     public List<TaxDefaulters> getTopDefaulters(final PropertyTaxDefaultersRequest propertyTaxDefaultersRequest) {
         BoolQueryBuilder boolQuery = filterBasedOnRequest(propertyTaxDefaultersRequest);
-        boolQuery = boolQuery.mustNot(QueryBuilders.matchQuery(CITY_NAME, "Guntur"))
-                .mustNot(QueryBuilders.matchQuery(CITY_NAME, "Vijayawada"))
-                .mustNot(QueryBuilders.matchQuery(CITY_NAME, "Visakhapatnam"))
-                .filter(QueryBuilders.matchQuery(IS_ACTIVE, true))
+        boolQuery = boolQuery.filter(QueryBuilders.matchQuery(IS_ACTIVE, true))
                 .filter(QueryBuilders.matchQuery(IS_EXEMPTED, false));
 
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices(PROPERTY_TAX_INDEX_NAME)

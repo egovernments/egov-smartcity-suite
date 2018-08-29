@@ -66,22 +66,17 @@ import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.service.BankAccountService;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.autonumber.RtgsNumberGenerator;
-import org.egov.egf.commons.EgovCommon;
 import org.egov.egf.model.BankAdviceReportInfo;
 import org.egov.egf.web.actions.voucher.BaseVoucherAction;
 import org.egov.eis.entity.DrawingOfficer;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationException;
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportFormat;
-import org.egov.infra.script.entity.Script;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.model.instrument.InstrumentVoucher;
 import org.egov.model.payment.ChequeAssignment;
@@ -90,7 +85,6 @@ import org.egov.model.recoveries.Recovery;
 import org.egov.model.service.RecoveryService;
 import org.egov.payment.client.BankAdviceForm;
 import org.egov.services.cheque.ChequeService;
-import org.egov.services.contra.ContraService;
 import org.egov.services.instrument.InstrumentHeaderService;
 import org.egov.services.instrument.InstrumentService;
 import org.egov.services.instrument.InstrumentVoucherService;
@@ -101,7 +95,6 @@ import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.ReportHelper;
 import org.egov.utils.VoucherHelper;
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,8 +104,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -120,7 +111,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -128,6 +118,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 @ParentPackage("egov")
 @Results({
@@ -149,115 +143,127 @@ import java.util.Set;
         @Result(name = "surrendercheques", location = "chequeAssignment-surrendercheques.jsp"),
         @Result(name = "rtgsSearch", location = "chequeAssignment-rtgsSearch.jsp"),
         @Result(name = "tnebRtgsSearch", location = "chequeAssignment-tnebRtgsSearch.jsp"),
-        @Result(name = "bankAdvice-PDF", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
+        @Result(name = "bankAdvice-PDF", type = "stream", location = Constants.INPUT_STREAM, params = {Constants.INPUT_NAME,
                 Constants.INPUT_STREAM, Constants.CONTENT_TYPE, "application/pdf", Constants.CONTENT_DISPOSITION,
-                "no-cache;filename=BandAdvice.pdf" }),
-        @Result(name = "bankAdvice-XLS", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
+                "no-cache;filename=BandAdvice.pdf"}),
+        @Result(name = "bankAdvice-XLS", type = "stream", location = Constants.INPUT_STREAM, params = {Constants.INPUT_NAME,
                 Constants.INPUT_STREAM, Constants.CONTENT_TYPE, "application/xls", Constants.CONTENT_DISPOSITION,
-                "no-cache;filename=${fileName}" }),
-        @Result(name = "bankAdvice-HTML", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
-                Constants.INPUT_STREAM, Constants.CONTENT_TYPE, "text/html" })
+                "no-cache;filename=${fileName}"}),
+        @Result(name = "bankAdvice-HTML", type = "stream", location = Constants.INPUT_STREAM, params = {Constants.INPUT_NAME,
+                Constants.INPUT_STREAM, Constants.CONTENT_TYPE, "text/html"})
 })
 public class ChequeAssignmentAction extends BaseVoucherAction {
     private static final long serialVersionUID = -3721873563220007939L;
     private static final String SURRENDERSEARCH = "surrendersearch";
     private static final String SURRENDERRTGSSEARCH = "surrenderRTGSsearch";
-    private String paymentMode, inFavourOf;
-    private Integer bankaccount, selectedRows = 0, bankbranch;
+    private static final Logger LOGGER = Logger.getLogger(ChequeAssignmentAction.class);
+    private static final String JASPER_PATH = "/org/egov/payment/client/bankAdviceReport.jasper";
+    private static final String WORKS = "Works";
+    private static final String RTGS_DATE_LESS_THAN_PAYMENT_DATE = "rtgs.date.less.than.payment.date";
+    private static final String CHEQUE_NO = "chequeNo";
+    private static final String IN_FAVOUR_OF = "inFavourOf";
+    private static final String INSTRUMENT_VOUCHER_LIST = "instrumentVoucherList";
+    private static final String INSTRUMENT_HEADER_LIST = "instrumentHeaderList";
+    private static final String UNPARSABLE_DATE = "Unparsable Date";
+    private static final String BANKACCOUNT_LIST = "bankaccountList";
+    private static final String PAYMENT_CHEQUENO_EMPTY = "payment.chequeno.empty";
+    private static final String CHEQUE_NUMBER_SUFFIX = "].chequeNumber";
+    private static final String CHEQUE_ASSIGNMENT_PREFIX = "chequeAssignmentList[";
+    private static final String PAYMENT_CHEQUENUMBER_INVALID = "payment.chequenumber.invalid";
+    private static final String EXCEPTION_WHILE_SURRENDER_CHEQUE = "Exception while surrender Cheque ";
+    private static final String BILL_PAYMENT = "BillPayment";
+    private static final String BANKBRANCH_LIST = "bankbranchList";
+    private static final String RTGS_TRANSACTION_SUCCESS = "rtgs.transaction.success";
+    private static final String CHQ_ASSIGNMENT_TXN_SUCCESS = "chq.assignment.transaction.success";
+    private static final String DEPARTMENT = "department";
+    private static final String BANK_ADVICE_REPORT_PATH = "/reports/templates/bankAdviceExcelReport.jasper";
+    private static final String RECOVERY_LIST = "recoveryList";
+    private static final String ACCOUNT_NO_AND_RTGS_ENTRY_MAP = "accountNoAndRtgsEntryMapSession";
+    private final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Constants.LOCALE);
+    private final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Constants.LOCALE);
+    private transient Map<String, String> modeOfPaymentMap;
+    private transient List<InstrumentVoucher> instVoucherList;
+    private transient List<InstrumentHeader> instVoucherDisplayList;
+    private transient InputStream inputStream;
+    private transient ReportHelper reportHelper;
+    private transient Map<String, Object> paramMap = new HashMap<>();
+    private transient List<Object> adviceList = new ArrayList<>();
+    private String fromDate;
+    private String toDate;
+    private String[] surrender;
+    private String instrumentNumber;
+    private Long recoveryId;
+    private String[] newInstrumentNumber;
+    private String[] newSerialNo;
+    private String[] newInstrumentDate;
+    private String[] surrendarReasons;
+    private String bank_account_dept;
+    private transient Map<String, String> bankBranchMap = Collections.emptyMap();
+    private transient Map<String, String> billTypeMap = Collections.emptyMap();
+    private String billType;
+    private transient Map<String, String> bankAccountMap = Collections.emptyMap();
+    private transient Map<String, String> surrendarReasonMap = Collections.emptyMap();
+    private transient Map<Bankaccount, List<ChequeAssignment>> accountNoAndRtgsEntryMap = new HashMap<>();
+    private transient Map<BankAccountRemittanceCOA, List<ChequeAssignment>> accountNoAndRemittanceRtgsEntryMap = new HashMap<>();
+    private transient Map<String, String> rtgsdateMap = new HashMap<>();
+    private transient Map<String, String> rtgsRefNoMap = new HashMap<>();
+    private transient Map<String, Boolean> rtgsSeceltedAccMap = new HashMap<>();
+    private transient List<ChequeAssignment> rtgsList = new LinkedList<>();
+    private transient List<ChequeAssignment> viewReceiptDetailsList = new ArrayList<>();
+    private String paymentMode;
+    private String inFavourOf;
+    private Integer bankaccount = 0;
+    private Integer selectedRows = 0;
+    private Integer bankbranch;
     private String bank_branch;
     private String bank_account;
     private Integer department;
-    public Map<String, String> modeOfPaymentMap;
     private Date chequeDt;
     private boolean chequeNoGenerationAuto;
     private boolean rtgsNoGenerationAuto;
     private String typeOfAccount;
-    private List<Map<String, Object>> bankbranchList;
     private String fileName;
-
-    @Autowired
-    @Qualifier("persistenceService")
-    private PersistenceService persistenceService;
     @Autowired
     @Qualifier("paymentService")
-    private PaymentService paymentService;
+    private transient PaymentService paymentService;
     @Autowired
     @Qualifier("chequeAssignmentHelper")
-    private ChequeAssignmentHelper chequeAssignmentHelper;
+    private transient ChequeAssignmentHelper chequeAssignmentHelper;
     @Autowired
     @Qualifier("instrumentService")
-    private InstrumentService instrumentService;
+    private transient InstrumentService instrumentService;
     @Autowired
     @Qualifier("instrumentHeaderService")
-    private InstrumentHeaderService instrumentHeaderService;
+    private transient InstrumentHeaderService instrumentHeaderService;
     @Autowired
     @Qualifier("bankService")
-    private BankService bankService;
-
+    private transient BankService bankService;
     @Autowired
     @Qualifier("bankAccountService")
-    private BankAccountService bankAccountService;
-
-    private List<ChequeAssignment> chequeAssignmentList;
-    private List<InstrumentHeader> instHeaderList = null;
-    List<InstrumentVoucher> instVoucherList;
-    List<InstrumentHeader> instVoucherDisplayList;
-    private static final Logger LOGGER = Logger.getLogger(ChequeAssignmentAction.class);
-    @Autowired
-    private AppConfigValueService appConfigValuesService;
-    private static final String JASPER_PATH = "/org/egov/payment/client/bankAdviceReport.jasper";
-    InputStream inputStream;
-    ReportHelper reportHelper;
-    Map<String, Object> paramMap = new HashMap<String, Object>();
-    List<Object> adviceList = new ArrayList<Object>();
-    String fromDate;
-    String toDate;
+    private transient BankAccountService bankAccountService;
+    private transient List<ChequeAssignment> chequeAssignmentList;
+    private transient List<InstrumentHeader> instHeaderList = null;
     private String rtgsDate;
     private String rtgsRefNo;
-    private final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Constants.LOCALE);
-    private final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Constants.LOCALE);
-    private List<InstrumentVoucher> instrumentVoucherList;
-    private List<InstrumentHeader> instrumentHeaderList;
-    private List<InstrumentHeader> tempInstrumentHeaderList;
+    private transient List<InstrumentVoucher> instrumentVoucherList;
+    private transient List<InstrumentHeader> instrumentHeaderList;
+    private transient List<InstrumentHeader> tempInstrumentHeaderList;
     @Autowired
-    private AutonumberServiceBeanResolver beanResolver;
-    String[] surrender;
-    String instrumentNumber;
-    Long recoveryId;
+    private transient AutonumberServiceBeanResolver beanResolver;
     private String button;
-    String[] newInstrumentNumber;
-    String[] newSerialNo;
-    String[] newInstrumentDate;
-    String[] surrendarReasons;
-    private ChequeService chequeService;
-    String bank_account_dept;
+    private transient ChequeService chequeService;
     private Date currentDate;
-    Map<String, String> bankBranchMap = Collections.EMPTY_MAP;
-    Map<String, String> billTypeMap = Collections.EMPTY_MAP;
-    String billType;
-    Map<String, String> bankAccountMap = Collections.EMPTY_MAP;
     @Autowired
     @Qualifier("remittanceRecoveryService")
-    private RecoveryService recoveryService;
-    Map<String, String> surrendarReasonMap = Collections.EMPTY_MAP;
+    private transient RecoveryService recoveryService;
     private boolean reassignSurrenderChq = false;
     // to overriding department Mandatory Condition only for remittance cheque assignment search
     private Boolean deptNonMandatory = false;
     private Boolean functionNonMandatory = false;
     private Boolean rtgsContractorAssignment = false;
-    private String assignmentType = "BillPayment";// SalaryPayment or RemittancePayment
-    private List<String> chequeSlNoList = new ArrayList<String>();
-    private Map chequeSlNoMap;
-    Map<Bankaccount, List<ChequeAssignment>> accountNoAndRtgsEntryMap = new HashMap<Bankaccount, List<ChequeAssignment>>();
-    Map<BankAccountRemittanceCOA, List<ChequeAssignment>> accountNoAndRemittanceRtgsEntryMap = new HashMap<BankAccountRemittanceCOA, List<ChequeAssignment>>();
-    Map<String, String> rtgsdateMap = new HashMap<String, String>();
-    Map<String, String> rtgsRefNoMap = new HashMap<String, String>();
-    Map<String, Boolean> rtgsSeceltedAccMap = new HashMap<String, Boolean>();
-    List<ChequeAssignment> rtgsList = new LinkedList<ChequeAssignment>();
-    List<ChequeAssignment> viewReceiptDetailsList = new ArrayList<ChequeAssignment>();
-    public static final String RTGSAUTOGENERATIONNUMBERFORMAT = "000000";
-    private final NumberFormat ackNumberFormat = new DecimalFormat(RTGSAUTOGENERATIONNUMBERFORMAT);
-    String bankAdviceJasperPath = "/reports/templates/bankAdviceExcelReport.jasper";
+    private String assignmentType = BILL_PAYMENT;
+    private transient List<String> chequeSlNoList = new ArrayList<>();
+    private transient Map chequeSlNoMap;
     private Integer drawingOfficerId;
     private String drawingOfficerCode;
     private String billSubType;
@@ -266,9 +272,9 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
     private String paymentId;
     private BigDecimal totalDeductedAmount;
     private Boolean nonSubledger = false;
-    private FinancialYearDAO financialYearDAO;
+    private transient FinancialYearDAO financialYearDAO;
     private boolean containsRTGS = false;
-    private List<CFinancialYear> yearCodeList;
+    private transient List<CFinancialYear> yearCodeList;
     private Long departmentId;
     private boolean chequePrintingEnabled;
     private String chequePrintAvailableAt;
@@ -277,7 +283,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
     private Long instHeaderId;
     private String selectedRowsId;
     @Autowired
-    private InstrumentVoucherService instrumentVoucherService;
+    private transient InstrumentVoucherService instrumentVoucherService;
 
     public List<String> getChequeSlNoList() {
         return chequeSlNoList;
@@ -332,15 +338,15 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
         super.prepare();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting prepare...");
-        addDropdownData("bankaccountList", Collections.EMPTY_LIST);
+        addDropdownData(BANKACCOUNT_LIST, Collections.emptyList());
         addDropdownData("regionsList", VoucherHelper.TNEB_REGIONS);
         chequeNoGenerationAuto = paymentService.isChequeNoGenerationAuto();
         rtgsNoGenerationAuto = paymentService.isRtgsNoGenerationAuto();
         typeOfAccount = FinancialConstants.TYPEOFACCOUNT_PAYMENTS + "," + FinancialConstants.TYPEOFACCOUNT_RECEIPTS_PAYMENTS;
         currentDate = new Date();
         // overriding department Mandatory Condition only for remittance cheque assignment search
-        if (deptNonMandatory == true)
-            mandatoryFields.remove("department");
+        if (deptNonMandatory)
+            mandatoryFields.remove(DEPARTMENT);
 
         // overriding function Mandatory Condition only for cheque assignment search
         mandatoryFields.remove("function");
@@ -356,11 +362,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
             LOGGER.debug("Starting beforeSearch...");
         paymentMode = FinancialConstants.MODEOFPAYMENT_CHEQUE;
         loadBillTypeMap();
-        // typeOfAccount = FinancialConstants.TYPEOFACCOUNT_PAYMENTS+","+FinancialConstants.TYPEOFACCOUNT_RECEIPTS_PAYMENTS;
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Completed beforeSearch.");
-        // overriding department Mandatory Condition only for cheque assignment search
-        mandatoryFields.remove("department");
+        mandatoryFields.remove(DEPARTMENT);
         mandatoryFields.remove("function");
 
         deptNonMandatory = true;
@@ -371,14 +373,8 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
     @SkipValidation
     @Action(value = "/payment/chequeAssignment-beforeRtgsSearch")
     public String beforeRtgsSearch() {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Starting beforeRtgsSearch...");
         paymentMode = FinancialConstants.MODEOFPAYMENT_RTGS;
         rtgsContractorAssignment = true;
-        // loadBillTypeMap();
-        // typeOfAccount = FinancialConstants.TYPEOFACCOUNT_PAYMENTS+","+FinancialConstants.TYPEOFACCOUNT_RECEIPTS_PAYMENTS;
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Completed beforeRtgsSearch.");
         return "rtgsSearch";
     }
 
@@ -397,8 +393,8 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
 
     private void setTNEBMandatoryFields() {
         billType = "Expense";
-        final List<String> propartyAppConfigKeysList = new ArrayList<String>();
-        final Map<String, String> propartyAppConfigResultList = new LinkedHashMap<String, String>();
+        final List<String> propartyAppConfigKeysList = new ArrayList<>();
+        final Map<String, String> propartyAppConfigResultList = new LinkedHashMap<>();
         propartyAppConfigKeysList.add(FinancialConstants.EB_VOUCHER_PROPERTY_FUND);
         propartyAppConfigKeysList.add(FinancialConstants.EB_VOUCHER_PROPERTY_FUNCTION);
         propartyAppConfigKeysList.add(FinancialConstants.EB_VOUCHER_PROPERTY_DEPARTMENT);
@@ -407,37 +403,27 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
 
         // Get App config value
         for (final String key : propartyAppConfigKeysList) {
-            String value = null;
-            try {
-                final List<AppConfigValues> configValues = appConfigValuesService
-                        .getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, key);
-
-                for (final AppConfigValues appConfigVal : configValues) {
-                    value = appConfigVal.getValue();
-                    propartyAppConfigResultList.put(key, value);
-                }
-            } catch (final Exception e) {
-                throw new ApplicationRuntimeException("Appconfig value for EB Voucher propartys is not defined in the system");
+            final List<AppConfigValues> configValues = appConfigValuesService
+                    .getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, key);
+            for (final AppConfigValues appConfigVal : configValues) {
+                propartyAppConfigResultList.put(key, appConfigVal.getValue());
             }
         }
-        for (final String key : propartyAppConfigResultList.keySet()) {
-
-            if (key.equals("EB Voucher Property-Fund"))
-                voucherHeader.setFundId((Fund) persistenceService.find("from Fund where code = ?",
-                        propartyAppConfigResultList.get(key)));
-            if (key.equals("EB Voucher Property-Function"))
-                voucherHeader.getVouchermis()
-                        .setFunction(
-                                (CFunction) persistenceService.find("from CFunction where code = ?",
-                                        propartyAppConfigResultList.get(key)));
-            if (key.equals("EB Voucher Property-Department"))
+        for (final Map.Entry<String, String> entry : propartyAppConfigResultList.entrySet()) {
+            String appConfigKey = entry.getKey();
+            String appConfigValue = entry.getValue();
+            if (appConfigKey.equals("EB Voucher Property-Fund"))
+                voucherHeader.setFundId((Fund) persistenceService.find("from Fund where code = ?", appConfigValue));
+            else if (appConfigKey.equals("EB Voucher Property-Function"))
+                voucherHeader.getVouchermis().setFunction(
+                        (CFunction) persistenceService.find("from CFunction where code = ?", appConfigValue));
+            else if (appConfigKey.equals("EB Voucher Property-Department"))
                 voucherHeader.getVouchermis().setDepartmentid(
-                        (Department) persistenceService.find("from Department where deptCode = ?",
-                                propartyAppConfigResultList.get(key)));
-            if (key.equals("EB Voucher Property-BankBranch"))
-                bank_branch = propartyAppConfigResultList.get(key);
-            if (key.equals("EB Voucher Property-BankAccount")) {
-                bank_account = propartyAppConfigResultList.get(key);
+                        (Department) persistenceService.find("from Department where deptCode = ?", appConfigValue));
+            else if (appConfigKey.equals("EB Voucher Property-BankBranch"))
+                bank_branch = appConfigValue;
+            else if (appConfigKey.equals("EB Voucher Property-BankAccount")) {
+                bank_account = appConfigValue;
                 final Bankaccount ba = (Bankaccount) persistenceService.find(" from Bankaccount where accountnumber=?",
                         bank_account);
                 if (ba.getId() != null)
@@ -455,11 +441,11 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
         final List<Recovery> listRecovery = recoveryService.getAllActiveAutoRemitTds();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("RemitRecoveryAction | Tds list size : " + listRecovery.size());
-        addDropdownData("recoveryList", listRecovery);
+        addDropdownData(RECOVERY_LIST, listRecovery);
         paymentMode = FinancialConstants.MODEOFPAYMENT_RTGS;
         rtgsContractorAssignment = true;
-        if (deptNonMandatory == true)
-            mandatoryFields.remove("department");
+        if (deptNonMandatory)
+            mandatoryFields.remove(DEPARTMENT);
         if (mandatoryFields.contains("fund"))
             mandatoryFields.remove("fund");
         if (LOGGER.isDebugEnabled())
@@ -483,22 +469,19 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
     public String searchRemittanceRTGS() throws ApplicationException, ParseException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting searchRemittanceRTGS...");
-        List<ChequeAssignment> rtgsChequeAssignmentList = null;
-        List<ChequeAssignment> rtgsEntry = new ArrayList<ChequeAssignment>();
+        List<ChequeAssignment> rtgsChequeAssignmentList;
+        List<ChequeAssignment> rtgsEntry;
         rtgsContractorAssignment = true;
         boolean addList = false;
-        // TODO Initialize to null not new ()
-        Bankaccount bnkAcc = new Bankaccount();
-        new BankAccountRemittanceCOA();
-        // TODO Initialize to null not new ()
-        CChartOfAccounts coa = new CChartOfAccounts();
+        Bankaccount bnkAcc;
+        CChartOfAccounts coa;
 
         rtgsChequeAssignmentList = paymentService.getPaymentVoucherForRemittanceRTGSInstrument(parameters, voucherHeader);
 
         for (final ChequeAssignment chqAssgn : rtgsChequeAssignmentList) {
             BankAccountRemittanceCOA bnkAccCOA = new BankAccountRemittanceCOA();
             if (accountNoAndRemittanceRtgsEntryMap.isEmpty()) {
-                rtgsEntry = new ArrayList<ChequeAssignment>();
+                rtgsEntry = new ArrayList<>();
                 bnkAcc = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
                         Long.parseLong(chqAssgn.getBankAccountId().toString()));
                 coa = (CChartOfAccounts) persistenceService.find("from CChartOfAccounts where id =?", new Long(chqAssgn
@@ -513,9 +496,8 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                 final java.util.Iterator keySetitr = bankAccntKeySet.iterator();
                 while (keySetitr.hasNext()) {
                     final BankAccountRemittanceCOA bkcoa = (BankAccountRemittanceCOA) keySetitr.next();
-                    addList = false;
-                    if (bkcoa.getBankAccount().getId().equals(Integer.parseInt(chqAssgn.getBankAccountId().toString())) &&
-                            bkcoa.getRemittanceCOA().getId().toString().equals(chqAssgn.getGlcodeId().toString())) {
+                    if (bkcoa.getBankAccount().getId() == chqAssgn.getBankAccountId() &&
+                            bkcoa.getRemittanceCOA().getId() == chqAssgn.getGlcodeId()) {
                         bnkAccCOA = bkcoa;
                         addList = false;
                         break;
@@ -525,7 +507,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                 if (!addList) {
                     accountNoAndRemittanceRtgsEntryMap.get(bnkAccCOA).add(chqAssgn);
                 } else {
-                    rtgsEntry = new ArrayList<ChequeAssignment>();
+                    rtgsEntry = new ArrayList<>();
                     bnkAcc = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
                             Long.parseLong(chqAssgn.getBankAccountId().toString()));
                     coa = (CChartOfAccounts) persistenceService.find("from CChartOfAccounts where id =?", new Long(chqAssgn
@@ -538,14 +520,14 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                 }
             }
         }
-        getSession().put("accountNoAndRtgsEntryMapSession", accountNoAndRemittanceRtgsEntryMap);
+        getSession().put(ACCOUNT_NO_AND_RTGS_ENTRY_MAP, accountNoAndRemittanceRtgsEntryMap);
         if (0 != drawingOfficerId) {
             final DrawingOfficer drawingOfficer = (DrawingOfficer) persistenceService.find("from DrawingOfficer where id =?",
                     drawingOfficerId);
             drawingOfficerCode = drawingOfficer.getCode();
         }
-        assignmentType = "BillPayment";
-        if (!"".equals(parameters.get("recoveryId")[0])) {
+        assignmentType = BILL_PAYMENT;
+        if (!EMPTY.equals(parameters.get("recoveryId")[0])) {
             final Recovery recovery = (Recovery) persistenceService.find("from Recovery where id=?",
                     new Long(parameters.get("recoveryId")[0]));
             if (recovery.getChartofaccounts().getChartOfAccountDetails().isEmpty())
@@ -584,11 +566,11 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
             LOGGER.debug("Starting prepareBeforeSearchForRemittance...");
         paymentMode = FinancialConstants.MODEOFPAYMENT_CASH;
 
-        if (getSession().get("recoveryList") == null) {
+        if (getSession().get(RECOVERY_LIST) == null) {
             final List<Recovery> listRecovery = recoveryService.getAllActiveRecoverys();
             getSession().put("RecoveryList", listRecovery);
         }
-        addDropdownData("recoveryList", (List) getSession().get("recoveryList"));
+        addDropdownData(RECOVERY_LIST, (List) getSession().get(RECOVERY_LIST));
         // overriding department Mandatory Condition only for remittance cheque assignment search
         deptNonMandatory = true;
         if (LOGGER.isDebugEnabled())
@@ -607,8 +589,8 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
             LOGGER.debug("Starting prepareBeforeRtgsSearch...");
         paymentMode = FinancialConstants.MODEOFPAYMENT_RTGS;
         rtgsContractorAssignment = true;
-        if (deptNonMandatory == true)
-            mandatoryFields.remove("department");
+        if (deptNonMandatory)
+            mandatoryFields.remove(DEPARTMENT);
         if (mandatoryFields.contains("fund"))
             mandatoryFields.remove("fund");
 
@@ -623,15 +605,10 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting beforeSearchForRemittance...");
         paymentMode = FinancialConstants.MODEOFPAYMENT_CASH;
-        modeOfPaymentMap = new LinkedHashMap<String, String>();
+        modeOfPaymentMap = new LinkedHashMap<>();
         modeOfPaymentMap.put(FinancialConstants.MODEOFPAYMENT_CASH, getText("cash.consolidated.cheque"));
         final List<Recovery> listRecovery = recoveryService.getAllActiveRecoverys();
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("RemitRecoveryAction | Tds list size : " + listRecovery.size());
-        addDropdownData("recoveryList", listRecovery);
-        // typeOfAccount = FinancialConstants.TYPEOFACCOUNT_PAYMENTS+","+FinancialConstants.TYPEOFACCOUNT_RECEIPTS_PAYMENTS;
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Completed beforeSearchForRemittance.");
+        addDropdownData(RECOVERY_LIST, listRecovery);
         return "before_remittance_search";
     }
 
@@ -641,17 +618,13 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
     public String searchRTGS() throws ApplicationException, ParseException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting searchRTGS...");
-        List<ChequeAssignment> rtgsChequeAssignmentList = null;
-        List<ChequeAssignment> dbpRtgsAssignmentList = null;
-        List<ChequeAssignment> rtgsEntry = new ArrayList<ChequeAssignment>();
+        List<ChequeAssignment> rtgsChequeAssignmentList;
+        List<ChequeAssignment> dbpRtgsAssignmentList;
+        List<ChequeAssignment> rtgsEntry;
         rtgsContractorAssignment = true;
         boolean addList = false;
-        Bankaccount bnkAcc = new Bankaccount();
+        Bankaccount bnkAcc;
         Bankaccount selBnkAcc = new Bankaccount();
-        Set<Bankaccount> bankAccSet = new HashSet<Bankaccount>();
-        ArrayList<Bankaccount> bankAccntList = new ArrayList<Bankaccount>();
-        ChequeAssignment obj = new ChequeAssignment();
-
         rtgsChequeAssignmentList = paymentService.getPaymentVoucherForRTGSInstrument(parameters, voucherHeader);
         dbpRtgsAssignmentList = paymentService.getDirectBankPaymentVoucherForRTGSInstrument(parameters, voucherHeader);
 
@@ -665,7 +638,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
         for (final ChequeAssignment chqAssgn : rtgsChequeAssignmentList)
             // to set date
             if (accountNoAndRtgsEntryMap.isEmpty()) {
-                rtgsEntry = new ArrayList<ChequeAssignment>();
+                rtgsEntry = new ArrayList<>();
                 bnkAcc = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
                         Long.parseLong(chqAssgn.getBankAccountId().toString()));
                 selBnkAcc = bnkAcc;
@@ -677,8 +650,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                 final java.util.Iterator ir = bankAccntSet.iterator();
                 while (ir.hasNext()) {
                     final Bankaccount bk = (Bankaccount) ir.next();
-                    addList = false;
-                    if (bk.getId().compareTo(chqAssgn.getBankAccountId().longValue()) == 0) {
+                    if (bk.getId().compareTo(chqAssgn.getBankAccountId()) == 0) {
                         selBnkAcc = bk;
                         addList = false;
                         break;
@@ -689,7 +661,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                     accountNoAndRtgsEntryMap.get(selBnkAcc).add(chqAssgn);
                     selBnkAcc = null;
                 } else {
-                    rtgsEntry = new ArrayList<ChequeAssignment>();
+                    rtgsEntry = new ArrayList<>();
                     bnkAcc = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
                             Long.parseLong(chqAssgn.getBankAccountId().toString()));
                     selBnkAcc = bnkAcc;
@@ -700,14 +672,8 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                 }
 
             }
-        getSession().put("accountNoAndRtgsEntryMapSession", accountNoAndRtgsEntryMap);
-        // getSession().put("voucherIdOwnerNameMap", voucherIDOwnerNameMap);
-        // chequeAssignmentList=rtgsChequeAssignmentList;
-        // if(LOGGER.isInfoEnabled()) LOGGER.info("rtgsChequeAssignmentList>>>>>"+rtgsdateMap);
-
-        assignmentType = "BillPayment";
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Completed searchRTGS.");
+        getSession().put(ACCOUNT_NO_AND_RTGS_ENTRY_MAP, accountNoAndRtgsEntryMap);
+        assignmentType = BILL_PAYMENT;
         return "searchRtgsResult";
     }
 
@@ -715,23 +681,18 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
     public String searchTNEBRTGS() throws ApplicationException, ParseException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting searchTNEBRTGS...");
-        List<ChequeAssignment> rtgsChequeAssignmentList = null;
-        List<ChequeAssignment> rtgsEntry = new ArrayList<ChequeAssignment>();
+        List<ChequeAssignment> rtgsChequeAssignmentList;
+        List<ChequeAssignment> rtgsEntry;
         rtgsContractorAssignment = true;
         boolean addList = false;
-        Bankaccount bnkAcc = new Bankaccount();
+        Bankaccount bnkAcc;
         Bankaccount selBnkAcc = new Bankaccount();
-        new HashSet<Bankaccount>();
-        new ArrayList<Bankaccount>();
-        new ChequeAssignment();
-
         rtgsChequeAssignmentList = paymentService.getPaymentVoucherForTNEBRTGSInstrument(parameters, voucherHeader);
-
         chequeDt = new Date();
         for (final ChequeAssignment chqAssgn : rtgsChequeAssignmentList)
             // to set date
             if (accountNoAndRtgsEntryMap.isEmpty()) {
-                rtgsEntry = new ArrayList<ChequeAssignment>();
+                rtgsEntry = new ArrayList<>();
                 bnkAcc = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
                         Long.parseLong(chqAssgn.getBankAccountId().toString()));
                 selBnkAcc = bnkAcc;
@@ -743,8 +704,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                 final java.util.Iterator ir = bankAccntSet.iterator();
                 while (ir.hasNext()) {
                     final Bankaccount bk = (Bankaccount) ir.next();
-                    addList = false;
-                    if (bk.getId().equals(Integer.parseInt(chqAssgn.getBankAccountId().toString()))) {
+                    if (bk.getId() == chqAssgn.getBankAccountId()) {
                         selBnkAcc = bk;
                         addList = false;
                         break;
@@ -755,7 +715,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                     accountNoAndRtgsEntryMap.get(selBnkAcc).add(chqAssgn);
                     selBnkAcc = null;
                 } else {
-                    rtgsEntry = new ArrayList<ChequeAssignment>();
+                    rtgsEntry = new ArrayList<>();
                     bnkAcc = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
                             Long.parseLong(chqAssgn.getBankAccountId().toString()));
                     selBnkAcc = bnkAcc;
@@ -766,9 +726,9 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                 }
 
             }
-        getSession().put("accountNoAndRtgsEntryMapSession", accountNoAndRtgsEntryMap);
+        getSession().put(ACCOUNT_NO_AND_RTGS_ENTRY_MAP, accountNoAndRtgsEntryMap);
 
-        assignmentType = "BillPayment";
+        assignmentType = BILL_PAYMENT;
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed searchRTGS.");
         return "searchRtgsResult";
@@ -779,7 +739,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
     public String search() throws ApplicationException, ParseException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting search...");
-        chequeSlNoMap = loadChequeSerialNo(bankaccount);
+        chequeSlNoMap = loadChequeSerialNo();
         chequeAssignmentList = paymentService.getPaymentVoucherNotInInstrument(parameters, voucherHeader);
         if (!paymentMode.equals(FinancialConstants.MODEOFPAYMENT_CHEQUE)) {
             chequeDt = new Date();
@@ -788,21 +748,17 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
             inFavourOf = appList.get(0).getValue();
         }
         loadBankAndAccount();
-        if (LOGGER.isInfoEnabled())
-            LOGGER.info("" + reassignSurrenderChq);
-        assignmentType = "BillPayment";
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Completed search.");
+        assignmentType = BILL_PAYMENT;
         return "searchpayment";
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, String> loadChequeSerialNo(final Integer acc) {
-        chequeSlNoMap = new LinkedHashMap<String, String>();
+    private Map<String, String> loadChequeSerialNo() {
+        chequeSlNoMap = new LinkedHashMap<>();
         try {
             if (bankaccount != null) {
                 if (department != null) {
-                    final List<Object[]> yearCodeList = persistenceService
+                    final List<Object[]> yearCodes = persistenceService
                             .findAllBy(
                                     "select ac.serialNo ,fs.finYearRange from  AccountCheques ac,CFinancialYear fs,ChequeDeptMapping cd  where ac.serialNo = fs.id and  bankAccountId=?"
                                             + "and ac.id=cd.accountCheque and cd.allotedTo=(select id from Department where id = "
@@ -810,12 +766,12 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                                             + " order by serialNo desc ",
                                     bankaccount);
 
-                    if (yearCodeList != null) {
-                        for (final Object[] s : yearCodeList)
+                    if (yearCodes != null) {
+                        for (final Object[] s : yearCodes)
                             chequeSlNoMap.put(s[0], s[1]);
                     }
                 } else if (departmentId != null) {
-                    final List<Object[]> yearCodeList = persistenceService
+                    final List<Object[]> yearCodes = persistenceService
                             .findAllBy(
                                     "select ac.serialNo ,fs.finYearRange from  AccountCheques ac,CFinancialYear fs,ChequeDeptMapping cd  where ac.serialNo = fs.id and  bankAccountId=?"
                                             + "and ac.id=cd.accountCheque and cd.allotedTo=(select id from Department where id = "
@@ -823,30 +779,26 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                                             + " order by serialNo desc ",
                                     bankaccount);
 
-                    if (yearCodeList != null) {
-                        for (final Object[] s : yearCodeList)
+                    if (yearCodes != null) {
+                        for (final Object[] s : yearCodes)
                             chequeSlNoMap.put(s[0], s[1]);
                     }
                 } else {
-                    final List<Object[]> yearCodeList = persistenceService
+                    final List<Object[]> yearCodes = persistenceService
                             .findAllBy(
                                     "select ac.serialNo ,fs.finYearRange from  AccountCheques ac,CFinancialYear fs,ChequeDeptMapping cd  where ac.serialNo = fs.id and  bankAccountId=?"
                                             + "and ac.id=cd.accountCheque and cd.allotedTo=(select id from Department where upper(name) = 'ACCOUNTS')"
                                             + " order by serialNo desc ",
                                     bankaccount);
 
-                    if (yearCodeList != null) {
-                        for (final Object[] s : yearCodeList)
+                    if (yearCodes != null) {
+                        for (final Object[] s : yearCodes)
                             chequeSlNoMap.put(s[0], s[1]);
                     }
                 }
             }
-        } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting year code " + e.getMessage(),
-                    new HibernateException(e.getMessage()));
-        } catch (final Exception e) {
-            LOGGER.error("Exception occured while getting year code " + e.getMessage(),
-                    new HibernateException(e.getMessage()));
+        } catch (Exception e) {
+            LOGGER.error("Exception occured while getting year code ", e);
         }
         return chequeSlNoMap;
     }
@@ -864,8 +816,6 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
             LOGGER.debug("Starting prepareSearchChequesOfRemittance...");
         beforeSearchForRemittance();
         assignmentType = "RemittancePayment";
-        // mandatoryFields.add(Constants.RECOVERY);
-        // overriding department Mandatory Condition only for remittance cheque assignment search
         deptNonMandatory = true;
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed prepareSearchChequesOfRemittance.");
@@ -876,12 +826,8 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting searchForSalaryPayments...");
         voucherHeader.setName(FinancialConstants.PAYMENTVOUCHER_NAME_SALARY);
-        loadChequeSerialNo(bankaccount);
+        loadChequeSerialNo();
         chequeAssignmentList = paymentService.getPaymentVoucherNotInInstrument(parameters, voucherHeader);
-        if (LOGGER.isInfoEnabled())
-            LOGGER.info("" + reassignSurrenderChq);
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Completed searchForSalaryPayments.");
         return "searchsalpayment";
     }
 
@@ -890,12 +836,8 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting searchForPensionPayments...");
         voucherHeader.setName(FinancialConstants.PAYMENTVOUCHER_NAME_PENSION);
-        loadChequeSerialNo(bankaccount);
+        loadChequeSerialNo();
         chequeAssignmentList = paymentService.getPaymentVoucherNotInInstrument(parameters, voucherHeader);
-        if (LOGGER.isInfoEnabled())
-            LOGGER.info("" + reassignSurrenderChq);
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Completed searchForSalaryPayments.");
         return "searchpensionpayment";
     }
 
@@ -904,7 +846,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
     public String beforeSalarySearch() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting beforeSalarySearch...");
-        modeOfPaymentMap = new LinkedHashMap<String, String>();
+        modeOfPaymentMap = new LinkedHashMap<>();
         modeOfPaymentMap.put(FinancialConstants.MODEOFPAYMENT_CASH, getText("cash.consolidated.cheque"));
         modeOfPaymentMap.put(FinancialConstants.MODEOFPAYMENT_RTGS, getText("rtgs"));
         if (LOGGER.isDebugEnabled())
@@ -917,7 +859,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
     public String beforePensionSearch() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting beforePensionSearch...");
-        modeOfPaymentMap = new LinkedHashMap<String, String>();
+        modeOfPaymentMap = new LinkedHashMap<>();
         modeOfPaymentMap.put(FinancialConstants.MODEOFPAYMENT_CASH, getText("cash.consolidated.cheque"));
         modeOfPaymentMap.put(FinancialConstants.MODEOFPAYMENT_RTGS, getText("rtgs"));
         if (LOGGER.isDebugEnabled())
@@ -971,12 +913,12 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
         final Recovery recovery = (Recovery) persistenceService.find("from Recovery where id=?", recoveryId);
         voucherHeader.setType(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
         voucherHeader.setName(FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE);
-        loadChequeSerialNo(bankaccount);
+        loadChequeSerialNo();
         chequeAssignmentList = paymentService.getPaymentVoucherNotInInstrument(parameters, voucherHeader);
         if (recovery != null && recovery.getRemitted() != null)
             inFavourOf = recovery.getRemitted();
         else
-            inFavourOf = "";
+            inFavourOf = EMPTY;
         loadBankAndAccount();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed searchChequesOfRemittance.");
@@ -988,8 +930,9 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
             LOGGER.debug("Starting loadBankAndAccount...");
         if (voucherHeader.getFundId() != null) {
             setTypeOfAccount(typeOfAccount);
-            bankbranchList = bankService.getPaymentApprovedBankAndBranchName(voucherHeader.getFundId().getId(), currentDate);
-            addDropdownData("bankbranchList", bankbranchList);
+            List<Map<String, Object>> bankbranchList = bankService
+                    .getPaymentApprovedBankAndBranchName(voucherHeader.getFundId().getId(), currentDate);
+            addDropdownData(BANKBRANCH_LIST, bankbranchList);
             bankBranchMap = new LinkedHashMap<>();
             for (final Map mp : bankbranchList)
                 bankBranchMap.put((String) mp.get("bankBranchId"), (String) mp.get("bankBranchName"));
@@ -997,7 +940,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
         }
         if (getBankbranch() != null) {
             setTypeOfAccount(typeOfAccount);
-            addDropdownData("bankaccountList",
+            addDropdownData(BANKACCOUNT_LIST,
                     bankAccountService.getBankaccountsHasApprovedPayment(voucherHeader.getFundId().getId(), getBankbranch()));
         }
         if (LOGGER.isDebugEnabled())
@@ -1010,32 +953,29 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
     public String update() throws ApplicationException, ParseException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Start createInstrumentForRTGS");
-        Map<String, List<ChequeAssignment>> resultMap = new HashMap<String, List<ChequeAssignment>>();
-        instHeaderList = new ArrayList<InstrumentHeader>();
+        Map<String, List<ChequeAssignment>> resultMap;
+        instHeaderList = new ArrayList<>();
         try {
-            // validateData();
             resultMap = prepareMapForRTGS();
             if (!getFieldErrors().isEmpty()) {
-                // searchRTGS();
                 accountNoAndRtgsEntryMap = (Map<Bankaccount, List<ChequeAssignment>>) getSession().get(
-                        "accountNoAndRtgsEntryMapSession");
+                        ACCOUNT_NO_AND_RTGS_ENTRY_MAP);
                 return "searchRtgsResult";
             }
             createRtgsAssignment(resultMap);
         } catch (final ValidationException e) {
             searchRTGS();
-            LOGGER.error(e.getMessage());
-            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            LOGGER.error("Validation Error", e);
+            final List<ValidationError> errors = new ArrayList<>();
             errors.add(new ValidationError("exp", e.getMessage()));
             throw new ValidationException(e.getErrors());
         } catch (final Exception e) {
-            // searchRTGS();
-            LOGGER.error(e.getMessage());
-            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            LOGGER.error("Error while searching rtgs", e);
+            final List<ValidationError> errors = new ArrayList<>();
             errors.add(new ValidationError("exp", e.getMessage()));
             throw new ValidationException(errors);
         }
-        addActionMessage(getMessage("rtgs.transaction.success"));
+        addActionMessage(getMessage(RTGS_TRANSACTION_SUCCESS));
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed createInstrument.");
@@ -1046,13 +986,10 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
     @ValidationErrorPage(value = "searchpayment")
     @SkipValidation
     @Action(value = "/payment/chequeAssignment-create")
-    public String create() throws ApplicationException
+    public String create() {
 
-    {
-    	
-    	LOGGER.error("size--------"+parameters.size());
-    	if(!paymentMode.equalsIgnoreCase("cash"))
-        prepareChequeAssignmentList();
+        if (!paymentMode.equalsIgnoreCase("cash"))
+            prepareChequeAssignmentList();
         final List<AppConfigValues> printAvailConfig = appConfigValuesService
                 .getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, "chequeprintavailableat");
 
@@ -1061,18 +998,18 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
         for (final AppConfigValues appConfigVal : printAvailConfig)
             chequePrintAvailableAt = appConfigVal.getValue();
         if (chequePrintAvailableAt == null)
-            chequePrintAvailableAt = "";
+            chequePrintAvailableAt = EMPTY;
         Bankaccount bankAccount;
         if (bankaccount != null && bankaccount != 0) {
             bankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?", bankaccount.longValue());
-            if (bankAccount.getChequeformat() != null && !bankAccount.getChequeformat().equals("")) {
+            if (bankAccount.getChequeformat() != null) {
                 chequeFormat = bankAccount.getChequeformat().getId().toString();
             }
         }
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting createInstrument...");
-        loadChequeSerialNo(bankaccount);
+        loadChequeSerialNo();
         try {
             validateData();
             if (reassignSurrenderChq || !isChequeNoGenerationAuto())
@@ -1088,21 +1025,21 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                             voucherHeader.getVouchermis().getDepartmentid());
                 selectedRows = paymentService.selectedRows;
                 if (paymentMode.equalsIgnoreCase(FinancialConstants.MODEOFPAYMENT_RTGS))
-                    addActionMessage(getMessage("rtgs.transaction.success"));
+                    addActionMessage(getMessage(RTGS_TRANSACTION_SUCCESS));
                 else
-                    addActionMessage(getMessage("chq.assignment.transaction.success"));
+                    addActionMessage(getMessage(CHQ_ASSIGNMENT_TXN_SUCCESS));
 
                 instVoucherList = paymentService.getInstVoucherList();
             } else {
-                loadChequeSerialNo(bankaccount);
+                loadChequeSerialNo();
                 return "searchpayment";
             }
         } catch (final ValidationException e) {
-            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            final List<ValidationError> errors = new ArrayList<>();
             errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
             throw new ValidationException(errors);
         } catch (final Exception e) {
-            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            final List<ValidationError> errors = new ArrayList<>();
             errors.add(new ValidationError("exp", e.getMessage()));
             throw new ValidationException(errors);
         }
@@ -1120,9 +1057,9 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
         else
             selectedRowsIdArray = new String[0];
         int length = selectedRowsIdArray.length;
-        for (int i = 0; i < length; i++) {
+        for (int index = 0; index < length; index++) {
             ChequeAssignment chequeAssignment = new ChequeAssignment();
-            String[] items = selectedRowsIdArray[i].split("\\~");
+            String[] items = selectedRowsIdArray[index].split("\\~");
             chequeAssignment.setVoucherHeaderId(Long.valueOf(items[0]));
             chequeAssignment.setPaidTo(items[1]);
             chequeAssignment.setSerialNo(items[2]);
@@ -1131,12 +1068,12 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                 chequeAssignment.setChequeDate(formatter.parse(items[4]));
                 chequeAssignment.setVoucherDate(formatter.parse(items[6]));
             } catch (ParseException e) {
-                e.printStackTrace();
+                LOGGER.error("Error parsing voucher date", e);
             }
             chequeAssignment.setVoucherNumber(items[5]);
             String item = items[7];
             if (item.contains(";"))
-                item = items[7].replace(";", "");
+                item = items[7].replace(";", EMPTY);
             chequeAssignment.setPaidAmount(BigDecimal.valueOf(Double.valueOf(item)));
             chequeAssignment.setIsSelected(true);
             chequeAssignmentList.add(chequeAssignment);
@@ -1145,127 +1082,112 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
     }
 
     private void createRtgsAssignment(final Map<String, List<ChequeAssignment>> resultMap) throws Exception {
-        instVoucherList = new ArrayList<InstrumentVoucher>();
-        // InstrumentHeader instHeaderObj=new InstrumentHeader();
-        // InstrumentVoucher instVoucherObj=new InstrumentVoucher();
-        instVoucherDisplayList = new ArrayList<InstrumentHeader>();
+        instVoucherList = new ArrayList<>();
+        instVoucherDisplayList = new ArrayList<>();
         for (final Entry<String, List<ChequeAssignment>> row : resultMap.entrySet())
-            if (row.getKey() != null)
-                if (getRtgsSeceltedAccMap().get(row.getKey()) != null && getRtgsSeceltedAccMap().get(row.getKey())) {
-                    if (isRtgsNoGenerationAuto()) {
-                        final String[] dateArray = new String[] { getRtgsdateMap().get(String.valueOf(Long.valueOf(row.getKey()))) };
-                        // LOGGER.debug(dateArray);
-                        Date rtgsdate = null;
-                        final Date autoNoCutOffDate = FinancialConstants.RTGS_FINYEAR_WISE_ROLLING_SEQ_CUTOFF_DATE;
-                        String rtgsNo = "";
-                        if (dateArray[0] != null) {
-                            final String date = dateArray[0];
-                            // LOGGER.debug(date);
-                            rtgsdate = formatter.parse(date);
-                            // LOGGER.debug(rtgsdate);
-                        }
-                        final String finYearRange = financialYearDAO.getFinancialYearByDate(rtgsdate).getFinYearRange();
-
-                        RtgsNumberGenerator r = (RtgsNumberGenerator) beanResolver
-                                .getAutoNumberServiceFor(RtgsNumberGenerator.class);
-                        if (null == autoNoCutOffDate || rtgsdate.after(autoNoCutOffDate)) {
-                            rtgsNo = r.getNextNumber("RTGS_RefNumber_" + finYearRange.replace('-', '_'));
-
-                            rtgsNo = rtgsNo + "/" + finYearRange;
-                        } else
-                            rtgsNo = r.getNextNumber("RTGS_RefNumber");
-
-                        // LOGGER.debug(rtgsNo);
-                        final String[] refNoArray = new String[] { rtgsNo };
-                        parameters.put("rtgsRefNo", refNoArray);
-                    } else {
-                        final String[] refNoArray = new String[] { getRtgsRefNoMap().get(row.getKey()) };
-                        parameters.put("rtgsRefNo", refNoArray);
+            if (row.getKey() != null && getRtgsSeceltedAccMap().get(row.getKey()) != null && getRtgsSeceltedAccMap().get(row.getKey())) {
+                if (isRtgsNoGenerationAuto()) {
+                    final String[] dateArray = new String[]{getRtgsdateMap().get(String.valueOf(Long.valueOf(row.getKey())))};
+                    Date rtgsdate = null;
+                    final Date autoNoCutOffDate = FinancialConstants.RTGS_FINYEAR_WISE_ROLLING_SEQ_CUTOFF_DATE;
+                    String rtgsNo;
+                    if (dateArray[0] != null) {
+                        final String date = dateArray[0];
+                        rtgsdate = formatter.parse(date);
                     }
-                    final String[] dateArray = new String[] { getRtgsdateMap().get(row.getKey()) };
-                    parameters.put("rtgsDate", dateArray);
-                    chequeAssignmentList = resultMap.get(row.getKey());
-                    bankaccount = Integer.parseInt(row.getKey());
+                    final String finYearRange = financialYearDAO.getFinancialYearByDate(rtgsdate).getFinYearRange();
 
-                    paymentService.createInstrument(chequeAssignmentList, paymentMode, bankaccount, parameters, voucherHeader
-                            .getVouchermis().getDepartmentid());
-                    instVoucherList.addAll(paymentService.getInstVoucherList());
-                    List<InstrumentVoucher> tempInstVoucherList = new ArrayList<InstrumentVoucher>();
-                    for (InstrumentVoucher iv : instVoucherList) {
-                        Paymentheader payment = paymentService.getPaymentHeaderByVoucherHeaderId(iv.getVoucherHeaderId().getId());
-                        iv.setPaymentAmount(payment.getPaymentAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+                    RtgsNumberGenerator rtgsNumberGenerator = beanResolver.getAutoNumberServiceFor(RtgsNumberGenerator.class);
+                    if (rtgsdate != null && rtgsdate.after(autoNoCutOffDate)) {
+                        rtgsNo = rtgsNumberGenerator.getNextNumber("RTGS_RefNumber_" + finYearRange.replace('-', '_'));
 
-                        tempInstVoucherList.add(iv);
-                    }
-                    instVoucherList = new ArrayList<InstrumentVoucher>();
-                    instVoucherList = tempInstVoucherList;
-                    // if(LOGGER.isInfoEnabled()) LOGGER.info("addded instrunment"+instList);
+                        rtgsNo = new StringBuilder().append(rtgsNo).append("/").append(finYearRange).toString();
+                    } else
+                        rtgsNo = rtgsNumberGenerator.getNextNumber("RTGS_RefNumber");
+
+                    final String[] refNoArray = new String[]{rtgsNo};
+                    parameters.put("rtgsRefNo", refNoArray);
+                } else {
+                    final String[] refNoArray = new String[]{getRtgsRefNoMap().get(row.getKey())};
+                    parameters.put("rtgsRefNo", refNoArray);
                 }
+                final String[] dateArray = new String[]{getRtgsdateMap().get(row.getKey())};
+                parameters.put("rtgsDate", dateArray);
+                chequeAssignmentList = resultMap.get(row.getKey());
+                bankaccount = Integer.parseInt(row.getKey());
+
+                paymentService.createInstrument(chequeAssignmentList, paymentMode, bankaccount, parameters, voucherHeader
+                        .getVouchermis().getDepartmentid());
+                instVoucherList.addAll(paymentService.getInstVoucherList());
+                List<InstrumentVoucher> tempInstVoucherList = new ArrayList<>();
+                for (InstrumentVoucher iv : instVoucherList) {
+                    Paymentheader payment = paymentService.getPaymentHeaderByVoucherHeaderId(iv.getVoucherHeaderId().getId());
+                    iv.setPaymentAmount(payment.getPaymentAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+
+                    tempInstVoucherList.add(iv);
+                }
+                instVoucherList = new ArrayList<>();
+                instVoucherList = tempInstVoucherList;
+            }
     }
 
     private Map<String, List<ChequeAssignment>> prepareMapForRTGS() throws ParseException {
         ArrayList<ChequeAssignment> rtgsEntry;
-        final List<ChequeAssignment> ContractorbillList = new ArrayList<ChequeAssignment>();
-        new ArrayList<ChequeAssignment>();
-        new ArrayList<ChequeAssignment>();
+        final List<ChequeAssignment> contractorbillList = new ArrayList<>();
+        new ArrayList<>();
+        new ArrayList<>();
         Date rtgsdate = null;
 
-        final Map<String, List<ChequeAssignment>> resultMap = new HashMap<String, List<ChequeAssignment>>();
-        new ArrayList<InstrumentHeader>();
-        // if(expType==null || expType.equals("-1") || expType.equals("Purchase")) Works
-        // FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT
+        final Map<String, List<ChequeAssignment>> resultMap = new HashMap<>();
+        new ArrayList<>();
         for (final ChequeAssignment chqAssgn : rtgsList)
             if (resultMap.isEmpty()) {
-                rtgsEntry = new ArrayList<ChequeAssignment>();
+                rtgsEntry = new ArrayList<>();
                 rtgsEntry.add(chqAssgn);
-                if (chqAssgn.getBankAccountId() != null && !"".equals(chqAssgn.getBankAccountId()))
+                if (chqAssgn.getBankAccountId() != null)
                     resultMap.put(String.valueOf(chqAssgn.getBankAccountId().longValue()), rtgsEntry);
                 if (chqAssgn.getIsSelected()) {
                     rtgsSeceltedAccMap.put(String.valueOf(chqAssgn.getBankAccountId().longValue()), true);
-                    if (chqAssgn.getExpenditureType() != null && !"".equals(chqAssgn.getExpenditureType()))
-                        if (chqAssgn.getExpenditureType().equalsIgnoreCase("Works"))
-                            ContractorbillList.add(chqAssgn);
+                    if (isNotBlank(chqAssgn.getExpenditureType()) &&
+                            chqAssgn.getExpenditureType().equalsIgnoreCase(WORKS))
+                        contractorbillList.add(chqAssgn);
                     rtgsdate = Constants.DDMMYYYYFORMAT2.parse(getRtgsdateMap().get(String.valueOf(chqAssgn.getBankAccountId().longValue())));
                     if (chqAssgn.getVoucherDate().compareTo(rtgsdate) > 0)
-                        addFieldError("rtgs.date.less.than.payment.date",
+                        addFieldError(RTGS_DATE_LESS_THAN_PAYMENT_DATE,
                                 " RTGS Date cannot be less than Payment Date." + chqAssgn.getVoucherNumber());
                 }
             } else if (resultMap.containsKey(String.valueOf(chqAssgn.getBankAccountId().longValue()))) {
                 resultMap.get(String.valueOf(chqAssgn.getBankAccountId().longValue())).add(chqAssgn);
                 if (chqAssgn.getIsSelected()) {
                     rtgsSeceltedAccMap.put(String.valueOf(chqAssgn.getBankAccountId().longValue()), true);
-                    if (chqAssgn.getExpenditureType() != null && !"".equals(chqAssgn.getExpenditureType()))
-                        if (chqAssgn.getExpenditureType().equalsIgnoreCase("Works"))
-                            ContractorbillList.add(chqAssgn);
+                    if (isNotBlank(chqAssgn.getExpenditureType()) &&
+                            chqAssgn.getExpenditureType().equalsIgnoreCase(WORKS))
+                        contractorbillList.add(chqAssgn);
                     rtgsdate = Constants.DDMMYYYYFORMAT2.parse(getRtgsdateMap().get(String.valueOf(chqAssgn.getBankAccountId().longValue())));
                     if (chqAssgn.getVoucherDate().compareTo(rtgsdate) > 0)
-                        addFieldError("rtgs.date.less.than.payment.date",
+                        addFieldError(RTGS_DATE_LESS_THAN_PAYMENT_DATE,
                                 "RTGS Date cannot be less than Payment Date." + chqAssgn.getVoucherNumber());
                 }
             } else {
-                rtgsEntry = new ArrayList<ChequeAssignment>();
+                rtgsEntry = new ArrayList<>();
                 rtgsEntry.add(chqAssgn);
                 resultMap.put(String.valueOf(chqAssgn.getBankAccountId().longValue()), rtgsEntry);
                 if (chqAssgn.getIsSelected()) {
                     rtgsSeceltedAccMap.put(String.valueOf(chqAssgn.getBankAccountId().longValue()), true);
-                    if (chqAssgn.getExpenditureType() != null && !"".equals(chqAssgn.getExpenditureType()))
-                        if (chqAssgn.getExpenditureType().equalsIgnoreCase("Works"))
-                            ContractorbillList.add(chqAssgn);
+                    if (isNotBlank(chqAssgn.getExpenditureType())
+                            && chqAssgn.getExpenditureType().equalsIgnoreCase(WORKS))
+                        contractorbillList.add(chqAssgn);
                     rtgsdate = Constants.DDMMYYYYFORMAT2.parse(getRtgsdateMap().get(String.valueOf(chqAssgn.getBankAccountId().longValue())));
                     if (chqAssgn.getVoucherDate().compareTo(rtgsdate) > 0)
-                        addFieldError("rtgs.date.less.than.payment.date",
+                        addFieldError(RTGS_DATE_LESS_THAN_PAYMENT_DATE,
                                 "RTGS Date cannot be less than Payment Date." + chqAssgn.getVoucherNumber());
                 }
             }
         try {
-            paymentService.validatePaymentForRTGSAssignment(ContractorbillList, "Contractor");
-            // paymentService.validatePaymentForRTGSAssignment(SupplierbillList,"Supplier") ;
-            // paymentService.validatePaymentForRTGSAssignment(ContingentbillList,FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT)
-            // ;
+            paymentService.validatePaymentForRTGSAssignment(contractorbillList, "Contractor");
         } catch (final ValidationException e) {
             accountNoAndRtgsEntryMap = (Map<Bankaccount, List<ChequeAssignment>>) getSession().get("accountNoAndRtgsEntryMap");
             addFieldError("rtgs.payment.mandatory.details.missing", e.getErrors().get(0).getMessage());
-            // getMessage("rtgs.payment.mandatory.details.missing"));
         } catch (final ApplicationException e) {
             accountNoAndRtgsEntryMap = (Map<Bankaccount, List<ChequeAssignment>>) getSession().get("accountNoAndRtgsEntryMap");
             addFieldError("rtgs.payment.mandatory.details.missing", e.getMessage());
@@ -1275,11 +1197,8 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
 
     @ValidationErrorPage(value = "searchsalpayment")
     @SkipValidation
-    public String createInstrumentForSalaryPayment() throws ApplicationException, ParseException {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Starting createInstrumentForSalaryPayment...");
-        // loadBankAndAccount();
-        loadChequeSerialNo(bankaccount);
+    public String createInstrumentForSalaryPayment() {
+        loadChequeSerialNo();
 
         try {
             validateData();
@@ -1294,31 +1213,27 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                             voucherHeader.getVouchermis().getDepartmentid());
                 selectedRows = paymentService.selectedRows;
                 if (paymentMode.equalsIgnoreCase(FinancialConstants.MODEOFPAYMENT_RTGS))
-                    addActionMessage(getMessage("rtgs.transaction.success"));
+                    addActionMessage(getMessage(RTGS_TRANSACTION_SUCCESS));
                 else
-                    addActionMessage(getMessage("chq.assignment.transaction.success"));
+                    addActionMessage(getMessage(CHQ_ASSIGNMENT_TXN_SUCCESS));
 
                 instVoucherList = paymentService.getInstVoucherList();
-                // if(paymentMode.equals(FinancialConstants.MODEOFPAYMENT_RTGS))
-                // return "bankadvice";
             } else {
-                loadChequeSerialNo(bankaccount);
+                loadChequeSerialNo();
                 return "searchsalpayment";
             }
         } catch (final ValidationException e) {
             throw new ValidationException(e.getErrors());
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage());
-            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            LOGGER.error("Error occurred while instrumentation salary", e);
+            final List<ValidationError> errors = new ArrayList<>();
             errors.add(new ValidationError("exp", e.getMessage()));
             throw new ValidationException(errors);
         }
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Completed createInstrumentForSalaryPayment.");
         if (paymentMode.equalsIgnoreCase(FinancialConstants.MODEOFPAYMENT_RTGS)) {
             prepareBeforeSalarySearch();
             beforeSalarySearch();
-            mandatoryFields.remove("department");
+            mandatoryFields.remove(DEPARTMENT);
             return "before_salary_search";
         } else
             return "view";
@@ -1326,12 +1241,8 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
 
     @ValidationErrorPage(value = "searchpensionpayment")
     @SkipValidation
-    public String createInstrumentForPensionPayment() throws ApplicationException, ParseException {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Starting createInstrumentForPensionPayment...");
-        // loadBankAndAccount();
-        loadChequeSerialNo(bankaccount);
-
+    public String createInstrumentForPensionPayment() {
+        loadChequeSerialNo();
         try {
             validateData();
             if (reassignSurrenderChq || !isChequeNoGenerationAuto())
@@ -1345,44 +1256,38 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                             voucherHeader.getVouchermis().getDepartmentid());
                 selectedRows = paymentService.selectedRows;
                 if (paymentMode.equalsIgnoreCase(FinancialConstants.MODEOFPAYMENT_RTGS))
-                    addActionMessage(getMessage("rtgs.transaction.success"));
+                    addActionMessage(getMessage(RTGS_TRANSACTION_SUCCESS));
                 else
-                    addActionMessage(getMessage("chq.assignment.transaction.success"));
+                    addActionMessage(getMessage(CHQ_ASSIGNMENT_TXN_SUCCESS));
                 instVoucherList = paymentService.getInstVoucherList();
-                // if(paymentMode.equals(FinancialConstants.MODEOFPAYMENT_RTGS))
-                // return "bankadvice";
             } else {
-                loadChequeSerialNo(bankaccount);
+                loadChequeSerialNo();
                 return "searchpensionpayment";
             }
         } catch (final ValidationException e) {
             throw new ValidationException(e.getErrors());
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage());
-            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            LOGGER.error("Error occurred while instrumentation pension", e);
+            final List<ValidationError> errors = new ArrayList<>();
             errors.add(new ValidationError("exp", e.getMessage()));
             throw new ValidationException(errors);
         }
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Completed createInstrumentForPensionPayment.");
         if (paymentMode.equalsIgnoreCase(FinancialConstants.MODEOFPAYMENT_RTGS)) {
             prepareBeforePensionSearch();
             beforePensionSearch();
-            mandatoryFields.remove("department");
+            mandatoryFields.remove(DEPARTMENT);
             return "before_pension_search";
         } else
             return "view";
     }
 
-    public void generateAdvice() throws Exception {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Starting generateAdvice...");
+    public void generateAdvice() throws ApplicationException {
         BankAdviceForm baf;
-        EntityType entity = null;
-        String voucherno = "";
-        final InstrumentHeader instrumentHeader = (InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?",
+        EntityType entity;
+        String voucherno = EMPTY;
+        final InstrumentHeader instrumentHdr = (InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?",
                 Long.valueOf(parameters.get("instHeaderId")[0]));
-        for (final InstrumentVoucher instrumentVoucher : instrumentHeader.getInstrumentVouchers()) {
+        for (final InstrumentVoucher instrumentVoucher : instrumentHdr.getInstrumentVouchers()) {
             final Object[] obj = (Object[]) persistenceService
                     .find(" select gld.detailTypeId.id,gld.detailKeyId,gld.amount from CGeneralLedgerDetail gld,CGeneralLedger gl where gl.id=gld.generalLedgerId.id and gl.voucherHeaderId=?",
                             instrumentVoucher.getVoucherHeaderId());
@@ -1395,40 +1300,34 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                 baf.setBankAccountNo(entity.getBankaccount());
                 baf.setIfscCode(entity.getIfsccode());
                 baf.setNetAmount((BigDecimal) obj[2]);
-                voucherno = voucherno + instrumentVoucher.getVoucherHeaderId().getVoucherNumber() + ",";
+                voucherno = new StringBuilder().append(voucherno).append(instrumentVoucher.getVoucherHeaderId()
+                        .getVoucherNumber()).append(',').toString();
                 adviceList.add(baf);
             }
         }
 
-        if (adviceList.size() != 0) {
+        if (!adviceList.isEmpty()) {
             voucherno = voucherno.substring(0, voucherno.length() - 1);
-            paramMap.put("chequeNo", instrumentHeader.getInstrumentNumber());
-            paramMap.put("chequeDate", paymentService.formatter.format(instrumentHeader.getInstrumentDate()));
+            paramMap.put(CHEQUE_NO, instrumentHdr.getInstrumentNumber());
+            paramMap.put("chequeDate", paymentService.formatter.format(instrumentHdr.getInstrumentDate()));
             paramMap.put("pymtVhNo", voucherno);
-            paramMap.put("inFavourOf", instrumentHeader.getPayTo());
-            paramMap.put("pymtBank", instrumentHeader.getBankAccountId().getBankbranch().getBank().getName() + "-"
-                    + instrumentHeader.getBankAccountId().getBankbranch().getBranchname());
-            paramMap.put("pymtAcNo", instrumentHeader.getBankAccountId().getAccountnumber());
+            paramMap.put(IN_FAVOUR_OF, instrumentHdr.getPayTo());
+            paramMap.put("pymtBank", instrumentHdr.getBankAccountId().getBankbranch().getBank().getName() + "-"
+                    + instrumentHdr.getBankAccountId().getBankbranch().getBranchname());
+            paramMap.put("pymtAcNo", instrumentHdr.getBankAccountId().getAccountnumber());
         }
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Completed generateAdvice.");
     }
 
     public void validateData() {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Starting validateData...");
-        // rtgsContractorAssignment is true only for rtgs assignment for asstbudget user
         if (paymentMode.equalsIgnoreCase(FinancialConstants.MODEOFPAYMENT_RTGS)) {
             if (!rtgsContractorAssignment) {
-                if (rtgsRefNo == null || rtgsRefNo.equalsIgnoreCase(""))
+                if (isBlank(rtgsRefNo))
                     addFieldError("rtgsrefno", getMessage("rtgs.refno.empty"));
-                if (rtgsDate == null || rtgsDate.equalsIgnoreCase(""))
+                if (isBlank(rtgsDate))
                     addFieldError("rtgsdate", getMessage("rtgs.date.empty"));
             }
             return;
         }
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Completed validateData.");
         checkMandatory("vouchermis.departmentid", Constants.DEPARTMENT, voucherHeader.getVouchermis().getDepartmentid(),
                 "voucher.department.mandatory");
     }
@@ -1438,7 +1337,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
     public String beforeSearchForSurrender() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting beforeSearchForSurrender...");
-        addDropdownData("bankaccountList", Collections.EMPTY_LIST);
+        addDropdownData(BANKACCOUNT_LIST, Collections.emptyList());
         loadBankAndAccounForSurender();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed beforeSearchForSurrender.");
@@ -1450,7 +1349,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
     public String beforeSearchForRTGSSurrender() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting beforeSearchForSurrender...");
-        addDropdownData("bankaccountList", Collections.EMPTY_LIST);
+        addDropdownData(BANKACCOUNT_LIST, Collections.emptyList());
         loadBankAndAccounForRTGSSurender();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed beforeSearchForSurrender.");
@@ -1461,58 +1360,72 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
     @ValidationErrorPage(value = SURRENDERSEARCH)
     @Action(value = "/payment/chequeAssignment-searchChequesForSurrender")
     public String searchChequesForSurrender() {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Starting searchChequesForSurrender...");
-
         validateForSuurenderSearch();
-        if (getFieldErrors().size() > 0) {
+        if (!getFieldErrors().isEmpty()) {
             if (bank_branch != null && !bank_branch.equals("-1"))
                 addDropdownData(
-                        "bankaccountList",
+                        BANKACCOUNT_LIST,
                         persistenceService.findAllBy(" from Bankaccount where bankbranch.id=? and isactive=true ",
                                 Integer.valueOf(bank_branch.split("-")[1])));
             loadReasonsForSurrendaring();
             return beforeSearchForSurrender();
         }
 
-        final StringBuffer sql = new StringBuffer();
+        final StringBuilder sql = new StringBuilder();
         try {
-            if (!"".equals(fromDate))
-                sql.append(" and iv.voucherHeaderId.voucherDate>='" + sdf.format(formatter.parse(fromDate)) + "' ");
-            if (!"".equals(toDate))
-                sql.append(" and iv.voucherHeaderId.voucherDate<='" + sdf.format(formatter.parse(toDate)) + "'");
-            if (bankaccount != null && bankaccount != -1)
-                sql.append(" and  ih.bankAccountId.id=" + bankaccount);
-            if (instrumentNumber != null && !instrumentNumber.isEmpty())
-                sql.append(" and  ih.instrumentNumber='" + instrumentNumber + "'");
-            if (department != null && department != -1)
-                sql.append(" and  iv.voucherHeaderId.vouchermis.departmentid.id=" + department);
-            if (voucherHeader.getVoucherNumber() != null && !voucherHeader.getVoucherNumber().isEmpty())
-                sql.append(" and  iv.voucherHeaderId.voucherNumber='" + voucherHeader.getVoucherNumber() + "'");
-            final String mainquery = "select ih from  InstrumentVoucher iv ,InstrumentHeader ih ,InstrumentType it where iv.instrumentHeaderId.id =ih.id and ih.instrumentNumber is not null and ih.instrumentType=it.id and ( it.type = 'cheque' or it.type = 'cash' ) and   iv.voucherHeaderId.status=0  and iv.voucherHeaderId.type='"
-                    + FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT + "'  " + sql + " "
-
-                    + " and ih.statusId.id in (?)  order by iv.voucherHeaderId.voucherDate";
+            List<Object> params = new LinkedList<>();
+            if (isNotBlank(fromDate)) {
+                sql.append(" and iv.voucherHeaderId.voucherDate>=? ");
+                params.add(sdf.format(formatter.parse(fromDate)));
+            }
+            if (isNotBlank(toDate)) {
+                sql.append(" and iv.voucherHeaderId.voucherDate<=? ");
+                params.add(sdf.format(formatter.parse(toDate)));
+            }
+            if (bankaccount != null && bankaccount != -1) {
+                sql.append(" and  ih.bankAccountId.id=? ");
+                params.add(bankaccount);
+            }
+            if (isNotBlank(instrumentNumber)) {
+                sql.append(" and  ih.instrumentNumber=? ");
+                params.add(instrumentNumber);
+            }
+            if (department != null && department != -1) {
+                sql.append(" and  iv.voucherHeaderId.vouchermis.departmentid.id=? ");
+                params.add(department);
+            }
+            if (isNotBlank(voucherHeader.getVoucherNumber())) {
+                sql.append(" and  iv.voucherHeaderId.voucherNumber=? ");
+                params.add(voucherHeader.getVoucherNumber());
+            }
+            final String mainQuery = new StringBuilder(500)
+                    .append("select ih from  InstrumentVoucher iv ,InstrumentHeader ih ,InstrumentType it ")
+                    .append("where iv.instrumentHeaderId.id =ih.id and ih.instrumentNumber is not null ")
+                    .append("and ih.instrumentType=it.id and ( it.type = 'cheque' or it.type = 'cash' ) and ")
+                    .append("iv.voucherHeaderId.status=0  and iv.voucherHeaderId.type='")
+                    .append(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT).append("'  ")
+                    .append(sql).append(" and ih.statusId.id in (?)  order by iv.voucherHeaderId.voucherDate").toString();
             final EgwStatus created = instrumentService.getStatusId(FinancialConstants.INSTRUMENT_CREATED_STATUS);
-            instrumentHeaderList = persistenceService.findAllBy(mainquery, created.getId());
+            params.add(created.getId());
+            instrumentHeaderList = persistenceService.findAllBy(mainQuery, params.toArray());
             final LinkedHashSet lhs = new LinkedHashSet();
             lhs.addAll(instrumentHeaderList);
             instrumentHeaderList.clear();
             instrumentHeaderList.addAll(lhs);
-            instrumentVoucherList = new ArrayList<InstrumentVoucher>();
+            instrumentVoucherList = new ArrayList<>();
             for (final InstrumentHeader ih : instrumentHeaderList)
                 instrumentVoucherList.addAll(ih.getInstrumentVouchers());
-            getSession().put("instrumentVoucherList", instrumentVoucherList);
-            getSession().put("instrumentHeaderList", instrumentHeaderList);
+            getSession().put(INSTRUMENT_VOUCHER_LIST, instrumentVoucherList);
+            getSession().put(INSTRUMENT_HEADER_LIST, instrumentHeaderList);
 
-            if (instrumentVoucherList.size() > 0) {
+            if (!instrumentVoucherList.isEmpty()) {
                 loadReasonsForSurrendaring();
-                loadChequeSerialNo(bankaccount);
+                loadChequeSerialNo();
             }
 
         } catch (final ParseException e) {
-            LOGGER.error(e.getMessage());
-            throw new ValidationException(Arrays.asList(new ValidationError("Unparsable Date", "Unparsable Date")));
+            LOGGER.error("Error occurred while parsing date", e);
+            throw new ValidationException(Arrays.asList(new ValidationError(UNPARSABLE_DATE, UNPARSABLE_DATE)));
         }
         getheader();
         if (LOGGER.isDebugEnabled())
@@ -1532,50 +1445,66 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
         if (getFieldErrors().size() > 0) {
             if (bank_branch != null && !bank_branch.equals("-1"))
                 addDropdownData(
-                        "bankaccountList",
+                        BANKACCOUNT_LIST,
                         persistenceService.findAllBy(" from Bankaccount where bankbranch.id=? and isactive=true ",
                                 Integer.valueOf(bank_branch.split("-")[1])));
             loadReasonsForSurrendaring();
             return beforeSearchForRTGSSurrender();
         }
 
-        final StringBuffer sql = new StringBuffer();
+        final StringBuilder sql = new StringBuilder();
         try {
-            if (!"".equals(fromDate))
-                sql.append(" and iv.voucherHeaderId.voucherDate>='" + sdf.format(formatter.parse(fromDate)) + "' ");
-            if (!"".equals(toDate))
-                sql.append(" and iv.voucherHeaderId.voucherDate<='" + sdf.format(formatter.parse(toDate)) + "'");
-            if (bankaccount != null && bankaccount != -1)
-                sql.append(" and  ih.bankAccountId.id=" + bankaccount);
-            if (instrumentNumber != null && !instrumentNumber.isEmpty())
-                sql.append(" and  ih.transactionNumber='" + instrumentNumber + "'");
-            if (department != null && department != -1)
-                sql.append(" and  iv.voucherHeaderId.vouchermis.departmentid.id=" + department);
-            if (voucherHeader.getVoucherNumber() != null && !voucherHeader.getVoucherNumber().isEmpty())
-                sql.append(" and  iv.voucherHeaderId.voucherNumber='" + voucherHeader.getVoucherNumber() + "'");
-            final String mainquery = "select ih from  InstrumentVoucher iv,InstrumentHeader ih ,InstrumentType it where iv.instrumentHeaderId.id =ih.id and ih.transactionNumber is not null and ih.instrumentType=it.id and it.type = 'advice' and   iv.voucherHeaderId.status=0  and iv.voucherHeaderId.type='"
-                    + FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT + "'  " + sql + " "
-
-                    + " and ih.statusId.id in (?)  order by iv.voucherHeaderId.voucherDate";
+            List<Object> params = new LinkedList<>();
+            if (isNotBlank(fromDate)) {
+                sql.append(" and iv.voucherHeaderId.voucherDate>=? ");
+                params.add(sdf.format(formatter.parse(fromDate)));
+            }
+            if (isNotBlank(toDate)) {
+                sql.append(" and iv.voucherHeaderId.voucherDate<=? ");
+                params.add(sdf.format(formatter.parse(toDate)));
+            }
+            if (bankaccount != null && bankaccount != -1) {
+                sql.append(" and  ih.bankAccountId.id=? ");
+                params.add(bankaccount);
+            }
+            if (isNotBlank(instrumentNumber)) {
+                sql.append(" and  ih.transactionNumber=? ");
+                params.add(instrumentNumber);
+            }
+            if (department != null && department != -1) {
+                sql.append(" and  iv.voucherHeaderId.vouchermis.departmentid.id=? ");
+                params.add(department);
+            }
+            if (isNotBlank(voucherHeader.getVoucherNumber())) {
+                sql.append(" and  iv.voucherHeaderId.voucherNumber=? ");
+                params.add(voucherHeader.getVoucherNumber());
+            }
+            final String mainQuery = new StringBuilder(500)
+                    .append("select ih from  InstrumentVoucher iv,InstrumentHeader ih ,InstrumentType it ")
+                    .append("where iv.instrumentHeaderId.id =ih.id and ih.transactionNumber is not null and ih.instrumentType=it.id ")
+                    .append("and it.type = 'advice' and   iv.voucherHeaderId.status=0  and iv.voucherHeaderId.type='")
+                    .append(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT).append("' ").append(sql)
+                    .append(" and ih.statusId.id in (?)  order by iv.voucherHeaderId.voucherDate").toString();
             final EgwStatus created = instrumentService.getStatusId(FinancialConstants.INSTRUMENT_CREATED_STATUS);
-            instrumentHeaderList = persistenceService.findAllBy(mainquery, created.getId());
+            params.add(created.getId());
+            instrumentHeaderList = persistenceService.findAllBy(mainQuery, params.toArray());
             final LinkedHashSet lhs = new LinkedHashSet();
             lhs.addAll(instrumentHeaderList);
             instrumentHeaderList.clear();
             instrumentHeaderList.addAll(lhs);
-            instrumentVoucherList = new ArrayList<InstrumentVoucher>();
+            instrumentVoucherList = new ArrayList<>();
             for (final InstrumentHeader ih : instrumentHeaderList)
                 instrumentVoucherList.addAll(ih.getInstrumentVouchers());
-            getSession().put("instrumentVoucherList", instrumentVoucherList);
-            getSession().put("instrumentHeaderList", instrumentHeaderList);
+            getSession().put(INSTRUMENT_VOUCHER_LIST, instrumentVoucherList);
+            getSession().put(INSTRUMENT_HEADER_LIST, instrumentHeaderList);
 
-            if (instrumentVoucherList.size() > 0)
+            if (!instrumentVoucherList.isEmpty())
                 loadReasonsForSurrendaring();
-            loadChequeSerialNo(bankaccount);
+            loadChequeSerialNo();
 
         } catch (final ParseException e) {
-            LOGGER.error(e.getMessage());
-            throw new ValidationException(Arrays.asList(new ValidationError("Unparsable Date", "Unparsable Date")));
+            LOGGER.error("Error occurred while parsing date", e);
+            throw new ValidationException(Arrays.asList(new ValidationError(UNPARSABLE_DATE, UNPARSABLE_DATE)));
         }
         getheader();
         if (LOGGER.isDebugEnabled())
@@ -1591,14 +1520,14 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
             LOGGER.debug("Starting loadReasonsForSurrendaring...");
 
         List<AppConfigValues> appConfigValuesList;
-        surrendarReasonMap = new LinkedHashMap<String, String>();
+        surrendarReasonMap = new LinkedHashMap<>();
         appConfigValuesList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF", "Reason For Cheque Surrendaring");
         for (final AppConfigValues app : appConfigValuesList) {
             final String value = app.getValue();
-            if (app.getValue().indexOf('|') != -1)
-                surrendarReasonMap.put(app.getValue(), value.substring(0, app.getValue().indexOf('|')));
-            else
+            if (app.getValue().indexOf('|') == -1)
                 surrendarReasonMap.put(app.getValue(), app.getValue());
+            else
+                surrendarReasonMap.put(app.getValue(), value.substring(0, app.getValue().indexOf('|')));
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed loadReasonsForSurrendaring.");
@@ -1611,9 +1540,9 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting loadBankAndAccounForSurender...");
         setTypeOfAccount(typeOfAccount);
-        addDropdownData("bankbranchList", bankService.getChequeAssignedBankAndBranchName(currentDate));
+        addDropdownData(BANKBRANCH_LIST, bankService.getChequeAssignedBankAndBranchName(currentDate));
         if (getBankbranch() != null) {
-            addDropdownData("bankaccountList",
+            addDropdownData(BANKACCOUNT_LIST,
                     bankAccountService.getBankaccountsWithAssignedCheques(getBankbranch(), null, currentDate));
         }
         if (LOGGER.isDebugEnabled())
@@ -1624,9 +1553,9 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting loadBankAndAccounForSurender...");
         setTypeOfAccount(typeOfAccount);
-        addDropdownData("bankbranchList", bankService.getRTGSAssignedBankAndBranchName(currentDate));
+        addDropdownData(BANKBRANCH_LIST, bankService.getRTGSAssignedBankAndBranchName(currentDate));
         if (getBankbranch() != null) {
-            addDropdownData("bankaccountList", bankAccountService.getBankaccountsWithAssignedRTGS(getBankbranch(), currentDate));
+            addDropdownData(BANKACCOUNT_LIST, bankAccountService.getBankaccountsWithAssignedRTGS(getBankbranch(), currentDate));
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed loadBankAndAccounForSurender.");
@@ -1658,8 +1587,8 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
             addFieldError("bankaccount", getMessage("bankaccount.empty"));
         if (bank_branch == null || bank_branch.equals("-1"))
             addFieldError("bankbranch", getMessage("bankbranch.empty"));
-        if (isFieldMandatory("department") && (null == department || department == -1))
-            addFieldError("department", getMessage("validate.department.null"));
+        if (isFieldMandatory(DEPARTMENT) && (null == department || department == -1))
+            addFieldError(DEPARTMENT, getMessage("validate.department.null"));
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed validateForSuurenderSearch.");
@@ -1668,126 +1597,110 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
     @ValidationErrorPage(value = "surrendercheques")
     @SkipValidation
     @Action(value = "/payment/chequeAssignment-save")
-    public String save()
-    {
+    public String save() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting surrenderCheques...");
-        final StringBuffer reasonMissingRows = new StringBuffer(50);
+        final StringBuilder reasonMissingRows = new StringBuilder(50);
         prepareInstrumentList();
         loadBankAndAccount();
         loadReasonsForSurrendaring();
-        loadChequeSerialNo(bankaccount);
+        loadChequeSerialNo();
 
         try {
 
-            if (surrender == null){
-            	if(containsRTGS)
-            	{
-            		addActionError("Please select atleast one Cheque for Surrendering");
-            		return searchForRTGSSurrender();
-            		
-            	}
-            	else
-                throw new ValidationException(Arrays.asList(new ValidationError("Exception while surrender Cheque ",
-                        "Please select atleast one Cheque for Surrendering ")));
-            	
+            if (surrender == null) {
+                if (containsRTGS) {
+                    addActionError("Please select atleast one Cheque for Surrendering");
+                    return searchForRTGSSurrender();
+
+                } else
+                    throw new ValidationException(Arrays.asList(new ValidationError(EXCEPTION_WHILE_SURRENDER_CHEQUE,
+                            "Please select atleast one Cheque for Surrendering ")));
+
             }
-            final List<InstrumentHeader> suurenderChequelist = new ArrayList<InstrumentHeader>();
-            final List<String> chequeNoList = new ArrayList<String>();
-            final List<String> serialNoList = new ArrayList<String>();
-            final List<Date> chequeDateList = new ArrayList<Date>();
-            InstrumentHeader instrumentHeader = null;
-            if (null == department || -1 == department)
-                throw new ValidationException(Arrays.asList(new ValidationError("Exception while surrender Cheque ",
+
+            if (department == null || department == -1)
+                throw new ValidationException(Arrays.asList(new ValidationError(EXCEPTION_WHILE_SURRENDER_CHEQUE,
                         "please select department")));
-            int j = 0;
-            instrumentHeaderList = (List<InstrumentHeader>) getSession().get("instrumentHeaderList");
+            int index = 0;
+            instrumentHeaderList = (List<InstrumentHeader>) getSession().get(INSTRUMENT_HEADER_LIST);
             final String[] newSurrender = new String[instrumentHeaderList.size()];
-            for (final InstrumentHeader iheader : instrumentHeaderList)
-            {
-                newSurrender[j] = null;
+            for (final InstrumentHeader iheader : instrumentHeaderList) {
+                newSurrender[index] = null;
 
                 for (final String ih : surrender)
                     if (ih.equalsIgnoreCase(iheader.getId().toString()))
-                        newSurrender[j] = ih;
-                j++;
+                        newSurrender[index] = ih;
+                index++;
             }
             surrender = newSurrender;
-            if (surrender != null && surrender.length > 0)
-            {
-                for (int i = 0; i < surrender.length; i++)
-                {
-                    if (surrender[i] == null)
-                        instrumentHeader = null;
+            final List<InstrumentHeader> suurenderChequelist = new ArrayList<>();
+            final List<String> chequeNoList = new ArrayList<>();
+            final List<String> serialNoList = new ArrayList<>();
+            final List<Date> chequeDateList = new ArrayList<>();
+            InstrumentHeader instrumentHdr = null;
+            if (surrender != null && surrender.length > 0) {
+                for (int indx = 0; indx < surrender.length; indx++) {
+                    if (surrender[indx] == null)
+                        instrumentHdr = null;
                     else
-                        instrumentHeader = (InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?",
-                                Long.valueOf(surrender[i]));
-                    if (instrumentHeader != null && (surrendarReasons[i] == null || surrendarReasons[i].equalsIgnoreCase("-1")))
-                    {
-                        reasonMissingRows.append(i + 1);
-                        reasonMissingRows.append(",");
+                        instrumentHdr = (InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?",
+                                Long.valueOf(surrender[indx]));
+                    if (instrumentHdr != null && (surrendarReasons[indx] == null || surrendarReasons[indx].equalsIgnoreCase("-1"))) {
+                        reasonMissingRows.append(indx + 1);
+                        reasonMissingRows.append(',');
                     }
-                    if (instrumentHeader != null)
-                    {
-                        instrumentHeader.setSurrendarReason(surrendarReasons[i]);
-                        suurenderChequelist.add(instrumentHeader);
-                        if (instrumentHeader.getTransactionNumber() != null)
+                    if (instrumentHdr != null) {
+                        instrumentHdr.setSurrendarReason(surrendarReasons[indx]);
+                        suurenderChequelist.add(instrumentHdr);
+                        if (instrumentHdr.getTransactionNumber() != null)
                             containsRTGS = true;
                     }
 
                 }
                 if (!reasonMissingRows.toString().isEmpty())
-                	if(containsRTGS)
-                	{
-                		addActionError("please select the Reason for Surrendering the cheque for selected  rows");
-                		return searchForRTGSSurrender();
-                		
-                	}
-                	else
-                    throw new ValidationException(Arrays.asList(new ValidationError("Exception while surrender Cheque ",
-                            "please select the Reason for Surrendering the cheque for selected  rows")));
+                    if (containsRTGS) {
+                        addActionError("please select the Reason for Surrendering the cheque for selected  rows");
+                        return searchForRTGSSurrender();
+
+                    } else
+                        throw new ValidationException(Arrays.asList(new ValidationError(EXCEPTION_WHILE_SURRENDER_CHEQUE,
+                                "please select the Reason for Surrendering the cheque for selected  rows")));
                 instrumentService.surrenderCheques(suurenderChequelist);
-                if (button.equalsIgnoreCase("surrenderAndReassign") && containsRTGS == true)
+                if (button.equalsIgnoreCase("surrenderAndReassign") && containsRTGS)
                     throw new ValidationException(Arrays.asList(new ValidationError(
                             "Cannot reassign RTGS Numbers. Use RTGS Screen ",
                             "Cannot reassign RTGS Numbers. Use RTGS Screen")));
-                else if (button.equalsIgnoreCase("surrenderAndReassign") && containsRTGS == false)
-                {
+                else if (button.equalsIgnoreCase("surrenderAndReassign") && !containsRTGS) {
 
-                    for (int i = 0; i < surrender.length; i++)
-                         if (surrender[i] != null)
-                            if (!isChequeNoGenerationAuto())
-                            {
-                                chequeNoList.add(newInstrumentNumber[i]);
-                                serialNoList.add(newSerialNo[i]);
+                    for (int indx = 0; indx < surrender.length; indx++)
+                        if (surrender[indx] != null)
+                            if (!isChequeNoGenerationAuto()) {
+                                chequeNoList.add(newInstrumentNumber[indx]);
+                                serialNoList.add(newSerialNo[indx]);
                                 try {
-                                    chequeDateList.add(formatter.parse(newInstrumentDate[i]));
+                                    chequeDateList.add(formatter.parse(newInstrumentDate[indx]));
 
                                 } catch (final ParseException e) {
                                     throw new ValidationException(Arrays.asList(new ValidationError(
                                             "Exception while formatting ChequeDate ", "TRANSACTION_FAILED")));
                                 }
-                            }
-                            else
-                            {
-                                chequeNoList.add(getNewChequenumbers(instrumentHeader, department));
+                            } else {
+                                chequeNoList.add(getNewChequenumbers(instrumentHdr, department));
                                 chequeDateList.add(new Date());
 
                             }
 
-                    if (!isChequeNoGenerationAuto())
-                    {
+                    if (!isChequeNoGenerationAuto()) {
                         validateNewChequeNumbers(suurenderChequelist, chequeNoList, department, serialNoList);
                         if (getFieldErrors().size() > 0)
                             throw new ValidationException(Arrays.asList(new ValidationError("TRANSACTION FAILED",
                                     "TRANSACTION FAILED")));
                     }
-                    // instrumentService.surrenderCheques(suurenderChequelist);
                     paymentMode = "cheque";
                     instHeaderList = addNewInstruments(suurenderChequelist, chequeNoList, chequeDateList, serialNoList);
                     addActionMessage(getMessage("surrender.reassign.succesful"));
-                } else
-                {
+                } else {
                     instHeaderList = suurenderChequelist;
                     paymentMode = "cheque";
                     addActionMessage(getMessage("surrender.succesful"));
@@ -1797,8 +1710,8 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                 throw new ValidationException(Arrays.asList(new ValidationError("Exception while surrender ChequeDate ",
                         "please select at least one cheque")));
         } catch (final ValidationException e) {
-            instrumentVoucherList = (List<InstrumentVoucher>) getSession().get("instrumentVoucherList");
-            instrumentHeaderList = (List<InstrumentHeader>) getSession().get("instrumentHeaderList");
+            instrumentVoucherList = (List<InstrumentVoucher>) getSession().get(INSTRUMENT_VOUCHER_LIST);
+            instrumentHeaderList = (List<InstrumentHeader>) getSession().get(INSTRUMENT_HEADER_LIST);
             getheader();
 
             throw e;
@@ -1813,9 +1726,9 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
         if (!selectedRowsId.isEmpty()) {
             instrumentHeaderList = new ArrayList<>();
             int length = selectedArray.length;
-            for (int i = 0; i < length; i++) {
+            for (int index = 0; index < length; index++) {
                 InstrumentHeader instrumentsHeader = new InstrumentHeader();
-                String[] items = selectedArray[i].split("\\~");
+                String[] items = selectedArray[index].split("\\~");
                 if (items[0] != null && !items[0].isEmpty()) {
                     instrumentsHeader.setId(Long.valueOf(items[0]));
                 }
@@ -1827,7 +1740,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                         instrumentsHeader.setInstrumentDate(formatter.parse(items[2]));
                     }
                 } catch (ParseException e) {
-                    e.printStackTrace();
+                    LOGGER.error("Error parsing instrument date", e);
                 }
                 if (items[3] != null && !items[3].isEmpty()) {
                     instrumentsHeader.setSerialNo(financialYearDAO.findById(Long.valueOf(items[3]), false));
@@ -1835,7 +1748,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                 if (items[4] != null && !items[4].isEmpty()) {
                     String item = items[4];
                     if (item.contains(";"))
-                        item = items[4].replace(";", "");
+                        item = items[4].replace(";", EMPTY);
                     instrumentsHeader.setSurrendarReason(item);
                 }
                 instrumentHeaderList.add(instrumentsHeader);
@@ -1845,9 +1758,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
     }
 
     private String getNewChequenumbers(final InstrumentHeader instrumentHeader, final Integer department) {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Starting getNewChequenumbers...");
-        return chequeService.nextChequeNumber(instrumentHeader.getBankAccountId().getId().toString(), 1, department);
+        return instrumentHeader == null ? EMPTY : chequeService.nextChequeNumber(instrumentHeader.getBankAccountId().getId().toString(), 1, department);
 
     }
 
@@ -1855,58 +1766,49 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
      * @param suurenderChequelist
      */
     private List<InstrumentHeader> addNewInstruments(final List<InstrumentHeader> suurenderChequelist,
-            final List<String> chequeNoList,
-            final List<Date> chequeDatelist, final List<String> serialNoList) {
+                                                     final List<String> chequeNoList,
+                                                     final List<Date> chequeDatelist, final List<String> serialNoList) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting addNewInstruments...");
-        Map<String, Object> instrumentVoucherMap = null;
-        final List<Map<String, Object>> instrumentVoucherList = new ArrayList<Map<String, Object>>();
-        instHeaderList = new ArrayList<InstrumentHeader>();
+        final List<Map<String, Object>> instrumentVouchers = new ArrayList<>();
+        instHeaderList = new ArrayList<>();
 
-        int i = 0;
-        for (final InstrumentHeader instrumentHeader : suurenderChequelist) {
-            final InstrumentHeader newInstrumentHeader = instrumentHeader.clone();
-            newInstrumentHeader.setInstrumentNumber(chequeNoList.get(i).toString());
-            newInstrumentHeader.setSerialNo(financialYearDAO.findById(Long.valueOf(serialNoList.get(i).toString()), false));
+        int index = 0;
+        for (final InstrumentHeader instrumentHdr : suurenderChequelist) {
+            final InstrumentHeader newInstrumentHeader = instrumentHdr.clone();
+            newInstrumentHeader.setInstrumentNumber(chequeNoList.get(index));
+            newInstrumentHeader.setSerialNo(financialYearDAO.findById(Long.valueOf(serialNoList.get(index)), false));
             newInstrumentHeader.setStatusId(instrumentService.getStatusId(FinancialConstants.INSTRUMENT_CREATED_STATUS));
-            newInstrumentHeader.setInstrumentDate(chequeDatelist.get(i));
-            i++;
+            newInstrumentHeader.setInstrumentDate(chequeDatelist.get(index));
+            index++;
             instHeaderList.add(instrumentHeaderService.persist(newInstrumentHeader));
-            final Set<InstrumentVoucher> instrumentVouchers = instrumentHeader.getInstrumentVouchers();
-
-            for (final InstrumentVoucher iv : instrumentVouchers) {
-                instrumentVoucherMap = new HashMap<String, Object>();
+            for (final InstrumentVoucher iv : instrumentHdr.getInstrumentVouchers()) {
+                Map<String, Object> instrumentVoucherMap = new HashMap<>();
                 instrumentVoucherMap.put(VoucherConstant.VOUCHER_HEADER, iv.getVoucherHeaderId());
                 instrumentVoucherMap.put(VoucherConstant.INSTRUMENT_HEADER, newInstrumentHeader);
-                instrumentVoucherList.add(instrumentVoucherMap);
+                instrumentVouchers.add(instrumentVoucherMap);
 
             }
 
         }
-        instVoucherList = instrumentService.updateInstrumentVoucherReference(instrumentVoucherList);
+        instVoucherList = instrumentService.updateInstrumentVoucherReference(instrumentVouchers);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed addNewInstruments.");
         return instHeaderList;
     }
 
     private void validateNewChequeNumbers(final List<InstrumentHeader> suurenderChequelist, final List<String> chequeNoList,
-            final Integer department, final List<String> serialNoList) {
+                                          final Integer department, final List<String> serialNoList) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting validateNewChequeNumbers...");
         if (newInstrumentNumber != null && newInstrumentNumber.length > 0) {
-            int i = 0;
-            InstrumentHeader instrumentHeader = null;
-            for (i = 0; i < suurenderChequelist.size(); i++) {
-                instrumentHeader = suurenderChequelist.get(i);
-                /*
-                 * Set<InstrumentVoucher> instrumentVouchers = instrumentHeader.getInstrumentVouchers(); for(InstrumentVoucher
-                 * iv:instrumentVouchers) { dept=iv.getVoucherHeaderId().getVouchermis().getDepartmentid().getId(); if(dept!=null)
-                 * {break; } }
-                 */
-                if (!instrumentService.isChequeNumberValid(chequeNoList.get(i), instrumentHeader.getBankAccountId().getId(),
-                        department, serialNoList.get(i)))
-                    addFieldError("newInstrumentNumber[" + i + "]", getMessage("payment.chequenumber.invalid") + " "
-                            + chequeNoList.get(i).toString());
+            InstrumentHeader instrumentHdr;
+            for (int index = 0; index < suurenderChequelist.size(); index++) {
+                instrumentHdr = suurenderChequelist.get(index);
+                if (!instrumentService.isChequeNumberValid(chequeNoList.get(index), instrumentHdr.getBankAccountId().getId(),
+                        department, serialNoList.get(index)))
+                    addFieldError("newInstrumentNumber[" + index + "]", getMessage(PAYMENT_CHEQUENUMBER_INVALID) + " "
+                            + chequeNoList.get(index));
             }
         }
         if (LOGGER.isDebugEnabled())
@@ -1916,8 +1818,8 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
     public void validateDataForManual() throws ParseException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting validateDataForManual...");
-        int i = 0;
-        final Map<String, String> chqNoMap = new HashMap<String, String>();
+        int index = 0;
+        final Map<String, String> chqNoMap = new HashMap<>();
         if (paymentMode.equals(FinancialConstants.MODEOFPAYMENT_CHEQUE)) {
             for (final ChequeAssignment assignment : chequeAssignmentList)
                 if (assignment.getIsSelected()) {
@@ -1926,21 +1828,21 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                         addFieldError("Year code should not be empty", getMessage("payment.yearcode.invalid"));
                         break;
                     }
-                    if (null == assignment.getChequeNumber() || "".equals(assignment.getChequeNumber())) {
-                        addFieldError("chequeAssignmentList[" + i + "].chequeNumber", getMessage("payment.chequeno.empty"));
+                    if (isBlank(assignment.getChequeNumber())) {
+                        addFieldError(CHEQUE_ASSIGNMENT_PREFIX + index + CHEQUE_NUMBER_SUFFIX, getMessage(PAYMENT_CHEQUENO_EMPTY));
                         break;
                     } else if (reassignSurrenderChq) {
                         if (!instrumentService.isReassigningChequeNumberValid(assignment.getChequeNumber(),
                                 bankaccount.longValue(), voucherHeader.getVouchermis().getDepartmentid().getId().intValue(),
                                 assignment.getSerialNo()))
-                            addFieldError("chequeAssignmentList[" + i + "].chequeNumber",
-                                    getMessage("payment.chequenumber.invalid"));
+                            addFieldError(CHEQUE_ASSIGNMENT_PREFIX + index + CHEQUE_NUMBER_SUFFIX,
+                                    getMessage(PAYMENT_CHEQUENUMBER_INVALID));
                     } else if (!instrumentService.isChequeNumberValid(assignment.getChequeNumber(), bankaccount.longValue(),
                             voucherHeader.getVouchermis().getDepartmentid().getId().intValue(), assignment.getSerialNo()))
-                        addFieldError("chequeAssignmentList[" + i + "].chequeNumber",
-                                getMessage("payment.chequenumber.invalid"));
+                        addFieldError(CHEQUE_ASSIGNMENT_PREFIX + index + CHEQUE_NUMBER_SUFFIX,
+                                getMessage(PAYMENT_CHEQUENUMBER_INVALID));
                     if (null == assignment.getChequeDate()) {
-                        addFieldError("chequeAssignmentList[" + i + "].chequeNumber", getMessage("payment.chequeno.empty"));
+                        addFieldError(CHEQUE_ASSIGNMENT_PREFIX + index + CHEQUE_NUMBER_SUFFIX, getMessage(PAYMENT_CHEQUENO_EMPTY));
                         break;
                     }
                     if (assignment.getChequeDate().compareTo(assignment.getVoucherDate()) < 0) {
@@ -1953,41 +1855,40 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                             // cheque to different
                             // parties.
                             addFieldError(
-                                    "chequeAssignmentList[" + i + "].chequeNumber",
-                                    getMessage("payment.duplicate.chequeno", new String[] { assignment.getChequeNumber(),
-                                            chqNoMap.get(assignment.getChequeNumber()), assignment.getPaidTo() }));
+                                    CHEQUE_ASSIGNMENT_PREFIX + index + CHEQUE_NUMBER_SUFFIX,
+                                    getMessage("payment.duplicate.chequeno", new String[]{assignment.getChequeNumber(),
+                                            chqNoMap.get(assignment.getChequeNumber()), assignment.getPaidTo()}));
                     } else
                         chqNoMap.put(assignment.getChequeNumber(), assignment.getPaidTo());
-                    i++;
+                    index++;
                 }
-        } else  // cash or RTGS
-        {
+        } else {
+            // cash or RTGS
             // / Validations are done for RTGS payment mode
-            String chequedt = null;
-            if (paymentMode.equalsIgnoreCase(FinancialConstants.MODEOFPAYMENT_RTGS))
+            if (FinancialConstants.MODEOFPAYMENT_RTGS.equalsIgnoreCase(paymentMode))
                 return;
-            chequedt = parameters.get("chequeDt")[0];
-            if (StringUtils.isEmpty(parameters.get("inFavourOf")[0]))
-                addFieldError("inFavourOf", getMessage("inFavourOf.is.empty"));
-            if (StringUtils.isEmpty(parameters.get("chequeNo")[0]))
-                addFieldError("chequeNo", getMessage("payment.chequeno.empty"));
+            String chequedt = parameters.get("chequeDt")[0];
+            if (StringUtils.isEmpty(parameters.get(IN_FAVOUR_OF)[0]))
+                addFieldError(IN_FAVOUR_OF, getMessage("inFavourOf.is.empty"));
+            if (StringUtils.isEmpty(parameters.get(CHEQUE_NO)[0]))
+                addFieldError(CHEQUE_NO, getMessage(PAYMENT_CHEQUENO_EMPTY));
             else {
-                for (int j = 0; j < chequeAssignmentList.size(); j++)
-                    if (parameters.get("chequeAssignmentList[" + j + "].isSelected") != null
-                            && parameters.get("chequeAssignmentList[" + j + "].isSelected")[0].equals("true")) {
-                        final String paymentdt = parameters.get("chequeAssignmentList[" + j + "].tempPaymentDate")[0];
+                for (int indx = 0; indx < chequeAssignmentList.size(); indx++)
+                    if (parameters.get(CHEQUE_ASSIGNMENT_PREFIX + indx + "].isSelected") != null
+                            && parameters.get(CHEQUE_ASSIGNMENT_PREFIX + indx + "].isSelected")[0].equals("true")) {
+                        final String paymentdt = parameters.get(CHEQUE_ASSIGNMENT_PREFIX + indx + "].tempPaymentDate")[0];
 
                         if (formatter.parse(chequedt).compareTo(formatter.parse(paymentdt)) < 0)
                             addFieldError("Cheque date cannot be less than paymnet date",
                                     getMessage("payment.chequedate.invalid"));
                     }
                 if (reassignSurrenderChq) {
-                    if (!instrumentService.isReassigningChequeNumberValid(parameters.get("chequeNo")[0], bankaccount.longValue(),
+                    if (!instrumentService.isReassigningChequeNumberValid(parameters.get(CHEQUE_NO)[0], bankaccount.longValue(),
                             voucherHeader.getVouchermis().getDepartmentid().getId().intValue(), parameters.get("serialNo")[0]))
-                        addFieldError("chequeAssignmentList[" + i + "].chequeNumber", getMessage("payment.chequenumber.invalid"));
-                } else if (!instrumentService.isChequeNumberValid(parameters.get("chequeNo")[0], bankaccount.longValue(),
+                        addFieldError(CHEQUE_ASSIGNMENT_PREFIX + index + CHEQUE_NUMBER_SUFFIX, getMessage(PAYMENT_CHEQUENUMBER_INVALID));
+                } else if (!instrumentService.isChequeNumberValid(parameters.get(CHEQUE_NO)[0], bankaccount.longValue(),
                         voucherHeader.getVouchermis().getDepartmentid().getId().intValue(), parameters.get("serialNo")[0]))
-                    addFieldError("chequeN0", getMessage("payment.chequenumber.invalid"));
+                    addFieldError("chequeN0", getMessage(PAYMENT_CHEQUENUMBER_INVALID));
             }
             if (null == getChequeDt())
                 addFieldError("chequeDt", getMessage("payment.chequedate.empty"));
@@ -1996,28 +1897,12 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
             LOGGER.debug("Completed validateDataForManual.");
     }
 
-    @SkipValidation
-    public boolean validateUser(final String purpose) throws ParseException {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Starting validateUser...");
-        getPersistenceService().findAllByNamedQuery(Script.BY_NAME,
-                "Paymentheader.show.bankbalance").get(0);
-        final List<String> list = null;// (List<String>)
-        // validScript.eval(Script.createContext("persistenceService",paymentService,"purpose",purpose));
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Completed validateUser.");
-        if (list.get(0).equals("true"))
-            return true;
-        else
-            return false;
-    }
-
     @Override
     public void validate() {
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting validate...");
-        if (!rtgsContractorAssignment && !containsRTGS ) {
+        if (!rtgsContractorAssignment && !containsRTGS) {
             checkMandatory("fundId", Constants.FUND, voucherHeader.getFundId(), "voucher.fund.mandatory");
             checkMandatory("vouchermis.departmentid", Constants.DEPARTMENT, voucherHeader.getVouchermis().getDepartmentid(),
                     "voucher.department.mandatory");
@@ -2050,7 +1935,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
     private void loadBillTypeMap() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting loadBillTypeMap...");
-        billTypeMap = new HashMap<String, String>();
+        billTypeMap = new HashMap<>();
         billTypeMap.put(FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT,
                 FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT);
         billTypeMap.put(FinancialConstants.STANDARD_EXPENDITURETYPE_WORKS + "-"
@@ -2070,7 +1955,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
     }
 
     @SkipValidation
-    public String ajaxGenerateAdviceHtml() throws Exception {
+    public String ajaxGenerateAdviceHtml() throws ApplicationException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxGenerateAdviceHtml...");
         generateAdvice();
@@ -2081,7 +1966,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
     }
 
     @SkipValidation
-    public String generateAdvicePdf() throws Exception {
+    public String generateAdvicePdf() throws JRException, IOException, ApplicationException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting generateAdvicePdf...");
         generateAdvice();
@@ -2095,16 +1980,16 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
         return bankBranchMap;
     }
 
-    public void setBillTypeMap(final Map<String, String> billTypeMap) {
-        this.billTypeMap = billTypeMap;
+    public void setBankBranchMap(final Map<String, String> bankBranchMap) {
+        this.bankBranchMap = bankBranchMap;
     }
 
     public Map<String, String> getBillTypeMap() {
         return billTypeMap;
     }
 
-    public void setBankBranchMap(final Map<String, String> bankBranchMap) {
-        this.bankBranchMap = bankBranchMap;
+    public void setBillTypeMap(final Map<String, String> billTypeMap) {
+        this.billTypeMap = billTypeMap;
     }
 
     public Map<String, String> getBankAccountMap() {
@@ -2116,7 +2001,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
     }
 
     @SkipValidation
-    public String generateAdviceXls() throws Exception {
+    public String generateAdviceXls() throws JRException, IOException, ApplicationException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting generateAdviceXls...");
         generateAdvice();
@@ -2136,24 +2021,21 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
         if (chequePrintEnabled == null)
             return false;
 
-        if (chequePrintEnabled.equalsIgnoreCase("Y"))
-            return true;
-        else
-            return false;
+        return "Y".equalsIgnoreCase(chequePrintEnabled);
     }
 
     @SkipValidation
     @Action(value = "/payment/chequeAssignment-bankAdviceExcel")
     public String bankAdviceExcel() throws JRException, IOException {
         BankAdviceReportInfo bankAdvice = new BankAdviceReportInfo();
-        final InstrumentVoucher instrumentHeader = instrumentVoucherService.getInstrumentVoucherByVoucherHeader(instHeaderId);
-        bankAdvice.setPartyName(instrumentHeader.getInstrumentHeaderId().getPayTo());
-        bankAdvice.setAmount(instrumentHeader.getInstrumentHeaderId().getInstrumentAmount());
-        final List<Object> data = new ArrayList<Object>();
+        final InstrumentVoucher instrumentHdr = instrumentVoucherService.getInstrumentVoucherByVoucherHeader(instHeaderId);
+        bankAdvice.setPartyName(instrumentHdr.getInstrumentHeaderId().getPayTo());
+        bankAdvice.setAmount(instrumentHdr.getInstrumentHeaderId().getInstrumentAmount());
+        final List<Object> data = new ArrayList<>();
         data.add(bankAdvice);
 
-        setFileName(instrumentHeader.getVoucherHeaderId().getVoucherNumber() + "." + ReportFormat.XLS.toString().toLowerCase());
-        inputStream = reportHelper.exportXls(getInputStream(), bankAdviceJasperPath, null, data);
+        setFileName(instrumentHdr.getVoucherHeaderId().getVoucherNumber() + "." + ReportFormat.XLS.toString().toLowerCase());
+        inputStream = reportHelper.exportXls(getInputStream(), BANK_ADVICE_REPORT_PATH, null, data);
         return "bankAdvice-XLS";
     }
 
@@ -2315,9 +2197,6 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
         this.surrender = surrender;
     }
 
-    public void setContraService(final ContraService contraService) {
-    }
-
     public String getBank_branch() {
         return bank_branch;
     }
@@ -2384,9 +2263,6 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
 
     public void setInstrumentHeaderList(final List<InstrumentHeader> instrumentHeaderList) {
         this.instrumentHeaderList = instrumentHeaderList;
-    }
-
-    public void setEgovCommon(final EgovCommon egovCommon) {
     }
 
     public String getTypeOfAccount() {
@@ -2482,12 +2358,12 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
         return rtgsRefNoMap;
     }
 
-    public List<ChequeAssignment> getRtgsList() {
-        return rtgsList;
-    }
-
     public void setRtgsRefNoMap(final Map<String, String> rtgsRefNoMap) {
         this.rtgsRefNoMap = rtgsRefNoMap;
+    }
+
+    public List<ChequeAssignment> getRtgsList() {
+        return rtgsList;
     }
 
     public void setRtgsList(final List<ChequeAssignment> rtgsList) {
@@ -2649,20 +2525,20 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
         return chequePrintingEnabled;
     }
 
-    public String getChequePrintAvailableAt() {
-        return chequePrintAvailableAt;
-    }
-
-    public String getInstrumentHeader() {
-        return instrumentHeader;
-    }
-
     public void setChequePrintingEnabled(boolean chequePrintingEnabled) {
         this.chequePrintingEnabled = chequePrintingEnabled;
     }
 
+    public String getChequePrintAvailableAt() {
+        return chequePrintAvailableAt;
+    }
+
     public void setChequePrintAvailableAt(String chequePrintAvailableAt) {
         this.chequePrintAvailableAt = chequePrintAvailableAt;
+    }
+
+    public String getInstrumentHeader() {
+        return instrumentHeader;
     }
 
     public void setInstrumentHeader(String instrumentHeader) {

@@ -47,7 +47,12 @@
  */
 package org.egov.wtms.application.service.collection;
 
+import static org.egov.wtms.utils.constants.WaterTaxConstants.AE_AEE_TI_DESIGN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_FEEPAID;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.DMD_STATUS_CHEQUE_BOUNCED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.FEE_COLLECTION_COMMENT;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULETYPE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
 
 import java.math.BigDecimal;
@@ -117,12 +122,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class WaterTaxCollection extends TaxCollection {
     private static final Logger LOGGER = Logger.getLogger(WaterTaxCollection.class);
     private final WaterTaxUtils waterTaxUtils;
+
     @Autowired
     private EgBillDao egBillDAO;
+
     @Autowired
     private ModuleService moduleService;
+
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
+
     @Autowired
     @Qualifier("workflowService")
     private SimpleWorkflowService<WaterConnectionDetails> waterConnectionWorkflowService;
@@ -260,18 +269,20 @@ public class WaterTaxCollection extends TaxCollection {
     public void updateWaterConnectionDetails(final EgDemand demand) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .getWaterConnectionDetailsByDemand(demand);
-        if (!waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE)) {
-            waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
-                    WaterTaxConstants.APPLICATION_STATUS_FEEPAID, WaterTaxConstants.MODULETYPE));
+        if (!waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE)
+                && !waterConnectionDetails.transitionCompleted()) {
             Long approvalPosition;
             final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = waterConnectionDetailsService
                     .getInitialisedWorkFlowBean();
-            approvalPosition = waterTaxUtils.getApproverPosition(WaterTaxConstants.AE_TAPE_AEE__DESIGN,
-                    waterConnectionDetails);
-            if (!REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
+            approvalPosition = waterTaxUtils.getApproverPosition(AE_AEE_TI_DESIGN, waterConnectionDetails);
+            if (!REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) &&
+                    APPLICATION_STATUS_ESTIMATENOTICEGEN.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()))
                 applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(waterConnectionDetails,
-                        approvalPosition, WaterTaxConstants.FEE_COLLECTION_COMMENT,
+                        approvalPosition, FEE_COLLECTION_COMMENT,
                         waterConnectionDetails.getApplicationType().getCode(), null);
+            if (APPLICATION_STATUS_ESTIMATENOTICEGEN.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()))
+                waterConnectionDetails
+                        .setStatus(waterTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_FEEPAID, MODULETYPE));
             waterConnectionSmsAndEmailService.sendSmsAndEmail(waterConnectionDetails, null);
             waterConnectionDetailsService.saveAndFlushWaterConnectionDetail(waterConnectionDetails);
         }
@@ -426,7 +437,7 @@ public class WaterTaxCollection extends TaxCollection {
 
     @Override
     protected Module module() {
-        return moduleService.getModuleByName(WaterTaxConstants.EGMODULE_NAME);
+        return moduleService.getModuleByName(WaterTaxConstants.MODULE_NAME);
     }
 
     public EgDemand getCurrentDemand(final Long billId) {
@@ -525,7 +536,7 @@ public class WaterTaxCollection extends TaxCollection {
             final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = waterConnectionDetailsService
                     .getInitialisedWorkFlowBean();
             applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(waterConnectionDetails,
-                    approvalPosition, "Receipt Cancelled", WaterTaxConstants.NEW_CONNECTION_MATRIX_ADDL_RULE, null);
+                    approvalPosition, "Receipt Cancelled", WaterTaxConstants.NEWCONNECTION, null);
         }
 
     }
@@ -533,8 +544,7 @@ public class WaterTaxCollection extends TaxCollection {
     private void updateWaterTaxIndexes(final EgDemand demand) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .getWaterConnectionDetailsByDemand(demand);
-        final String sourceChannel = null;
-        waterConnectionDetailsService.updateIndexes(waterConnectionDetails, sourceChannel);
+        waterConnectionDetailsService.updateIndexes(waterConnectionDetails);
     }
 
     @Override

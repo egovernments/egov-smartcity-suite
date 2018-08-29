@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -50,12 +50,14 @@ package org.egov.tl.web.controller.masters.feematrix;
 
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.infra.web.support.ui.DataTable;
 import org.egov.tl.entity.FeeMatrix;
 import org.egov.tl.entity.LicenseCategory;
 import org.egov.tl.service.FeeMatrixService;
 import org.egov.tl.service.LicenseCategoryService;
 import org.egov.tl.web.response.adaptor.FeeMatrixResponseAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -68,7 +70,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
-import static org.egov.infra.utils.JsonUtils.toJSON;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
@@ -112,9 +113,7 @@ public class ViewFeeMatrixController {
                          @RequestParam(required = false) Long subcategoryId,
                          @RequestParam(required = false) Long financialYearId) {
 
-        return new StringBuilder("{ \"data\":").
-                append(toJSON(
-                        feeMatrixService.getFeeMatrix(categoryId, subcategoryId, financialYearId), FeeMatrix.class,
-                        FeeMatrixResponseAdaptor.class)).append("}").toString();
+        return new DataTable<>(new PageImpl<>(feeMatrixService.getFeeMatrix(categoryId, subcategoryId, financialYearId)), 0L)
+                .toJson(FeeMatrixResponseAdaptor.class);
     }
 }

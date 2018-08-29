@@ -92,7 +92,7 @@ public class MarriageRegDataEntryController extends MarriageRegistrationControll
             final Model model,
             final HttpServletRequest request,
             final BindingResult errors) {
-        marriageFormValidator.validate(marriageRegistration, errors, DATAENTRY);
+        marriageFormValidator.validate(marriageRegistration, errors, DATAENTRY,null);
         if (errors.hasErrors()) {
             model.addAttribute("currentState", DATAENTRY);
             return "mrgreg-dataentryform";
