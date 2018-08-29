@@ -255,9 +255,15 @@ public class JournalVoucherActionHelper {
     }
 
     private Assignment getWorkflowInitiator(final CVoucherHeader voucherHeader) {
-        Assignment wfInitiator = assignmentService.findByEmployeeAndGivenDate(voucherHeader.getCreatedBy().getId(), voucherHeader.getCreatedDate())
-                .get(0);
-        return wfInitiator;
+        List<Assignment> wfInitiator = assignmentService.findByEmployeeAndGivenDate(voucherHeader.getCreatedBy().getId(),
+                voucherHeader.getCreatedDate());
+        if(wfInitiator.isEmpty()){
+            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            errors.add(new ValidationError("exp", "Can not reject, Assignment of the initiator has been expired"));
+            throw new ValidationException(errors);
+        }else{
+            return wfInitiator.get(0);
+        }
     }
 
     private HashMap<String, Object> createHeaderAndMisDetails(CVoucherHeader voucherHeader) throws ValidationException

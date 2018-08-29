@@ -269,6 +269,13 @@ function validate(name,value){
 	</script>
 <body
 	onload="loadDropDownCodes();loadDropDownCodesFunction();checkBillId();refreshInbox()">
+	<div style="color: red">
+		<s:actionerror />
+		<s:fielderror />
+	</div>
+	<div style="color: green">
+		<s:actionmessage />
+	</div>
 	<s:form action="preApprovedVoucher" theme="simple">
 		<s:token />
 		<jsp:include page="../budget/budgetHeader.jsp">
