@@ -61,27 +61,23 @@ import org.egov.commons.service.FunctionService;
 import org.egov.commons.service.FundService;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.expensebill.service.ExpenseBillService;
+import org.egov.egf.model.BillPaymentDetails;
 import org.egov.egf.utils.FinancialUtils;
 import org.egov.infra.admin.master.service.DepartmentService;
-import org.egov.model.bills.EgBillPayeedetails;
-import org.egov.model.bills.EgBilldetails;
-import org.egov.model.bills.EgBillregister;
-import org.egov.model.bills.EgBillregistermis;
+import org.egov.model.bills.*;
 import org.egov.restapi.constants.RestApiConstants;
 import org.egov.restapi.model.BillDetails;
 import org.egov.restapi.model.BillPayeeDetails;
-import org.egov.restapi.model.BillPaymetDetails;
 import org.egov.restapi.model.BillRegister;
 import org.egov.restapi.model.RestErrors;
+import org.egov.services.bills.BillsService;
 import org.egov.services.masters.SchemeService;
 import org.egov.services.masters.SubSchemeService;
 import org.egov.works.master.service.ContractorService;
 import org.egov.works.models.estimate.ProjectCode;
 import org.egov.works.services.ProjectCodeService;
 import org.egov.works.utils.WorksConstants;
-import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -142,6 +138,9 @@ public class BillService {
 
     @Autowired
     private FinancialUtils financialUtils;
+
+    @Autowired
+    private BillsService billsService;
     
     @PersistenceContext
     private EntityManager entityManager;
@@ -611,19 +610,10 @@ public class BillService {
         return expenseBillService.create(egBillregister, null, null, null, "Create And Approve");
     }
   
-    public List<BillPaymetDetails> getBillAndPaymentDetails(String billNo) {	
-    	StringBuilder queryString = new StringBuilder("SELECT DISTINCT mbd.billVoucherHeader.voucherNumber AS billVoucherNo,"
-    			+ " mbd.payVoucherHeader.voucherNumber AS paymentVoucherNo,mbd.paidamount AS paymentAmount,"
-    			+ " mbd.payVoucherHeader.voucherDate AS voucherDate,iv.instrumentHeaderId.instrumentNumber AS chequRefNo"
-    			+ " FROM Miscbilldetail AS mbd,InstrumentVoucher AS iv,EgBillregister AS egbr,InstrumentHeader AS instrumentHeader"
-    			+ " WHERE mbd.payVoucherHeader.id= iv.voucherHeaderId.id and iv.instrumentHeaderId.id=instrumentHeader.id and "
-    			+ " egbr.billnumber=mbd.billnumber and "
-    			+ " mbd.billnumber =:billNo AND egbr.status.code =:billStatus");
-    		Query query = getCurrentSession().createQuery(queryString.toString());  
-    		query.setParameter("billNo", billNo);
-    		query.setParameter("billStatus", "Approved");
-    		return query.setResultTransformer(Transformers.aliasToBean(BillPaymetDetails.class)).list();
-    		 
+    public List<BillPaymentDetails> getBillAndPaymentDetails(String billNo) {
+            return billsService.getBillAndPaymentDetails(billNo);
     	}
+
+
     
 	}

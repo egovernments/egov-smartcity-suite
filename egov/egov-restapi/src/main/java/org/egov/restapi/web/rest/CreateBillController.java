@@ -60,9 +60,9 @@ import org.egov.egf.expensebill.service.ExpenseBillService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
+import org.egov.egf.model.BillPaymentDetails;
 import org.egov.model.bills.EgBillregister;
 import org.egov.restapi.constants.RestApiConstants;
-import org.egov.restapi.model.BillPaymetDetails;
 import org.egov.restapi.model.BillRegister;
 import org.egov.restapi.model.RestErrors;
 import org.egov.restapi.service.BillService;
@@ -184,7 +184,7 @@ public class CreateBillController {
     public String getBillAndPaymentDetails(final HttpServletResponse response,String billNo,String cityCode) {
     	RestErrors restErrors;
     	try {
-        	if(StringUtils.isEmpty(billNo) || billNo == null) {
+        	if(StringUtils.isEmpty(billNo)) {
         		restErrors = new RestErrors();
                 restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_BILLNO);
                 restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_BILLNO);
@@ -209,7 +209,7 @@ public class CreateBillController {
                 return JsonConvertor.convert(restErrors);
         	}
             response.setStatus(HttpServletResponse.SC_CREATED);
-            List<BillPaymetDetails> billPaymetDetails = billService.getBillAndPaymentDetails(billNo);
+            List<BillPaymentDetails> billPaymetDetails = billService.getBillAndPaymentDetails(billNo);
             if(billPaymetDetails.isEmpty()) {
             	restErrors = new RestErrors();
                 restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_DATA_FOUND);
