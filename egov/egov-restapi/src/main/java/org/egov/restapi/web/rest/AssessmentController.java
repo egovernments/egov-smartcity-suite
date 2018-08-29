@@ -127,7 +127,7 @@ public class AssessmentController {
      * @return
      * @throws IOException
      */
-    @RequestMapping(value = "/v1/property/propertytaxdetails", method = RequestMethod.GET, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/v1.0/property/propertytaxdetails", method = RequestMethod.GET, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public String getSecuredPropertyTaxDetails(AssessmentRequest assessmentRequest)
             throws IOException {
         return getPropertyTaxDetails(assessmentRequest);
@@ -141,7 +141,7 @@ public class AssessmentController {
      * @return responseJson - server response in JSON format
      * @throws IOException
      */
-    @RequestMapping(value = "/v1/property/paypropertytax", method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/v1.0/property/paypropertytax", method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public String paySecuredPropertyTax(@RequestBody String payPropertyTaxDetails, final HttpServletRequest request)
             throws IOException {
         return payPropertyTax(payPropertyTaxDetails, request);
