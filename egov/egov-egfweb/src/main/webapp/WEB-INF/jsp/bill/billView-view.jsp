@@ -92,10 +92,17 @@
 		}   
 			
 	}
+
+    function checkForNerration(){
+        var narrationText = document.getElementById('narrationValue').innerText;
+        if(narrationText == ""){
+            document.getElementById('narrationValue').innerText = "N/A";
+        }
+	}
 </script>
 
 </head>
-<body>
+<body onload="checkForNerration()">
 	<s:form action="billView" theme="simple">
 		<span class="mandatory1"> <s:actionerror /> <s:fielderror />
 			<s:actionmessage />
@@ -132,7 +139,7 @@
 				</tr>
 				<tr>
 					<td class="greybox"><s:text name="bill.narration" /></td>
-					<td colspan="3" class="greybox"><s:property value="narration" /></td>
+					<td colspan="3" id="narrationValue" class="greybox"><s:property value="narration" /></td>
 				</tr> 
 				<!-- <tr>
 					<td class="bluebox"><a href="#" id="sourceLink"
