@@ -48,7 +48,7 @@
 package org.egov.services.bills;
 
 import org.egov.commons.CVoucherHeader;
-import org.egov.dao.billPayment.BillAndPaymentDetailsDAO;
+import org.egov.dao.billpayment.BillAndPaymentDetailsDAO;
 import org.egov.dao.bills.EgBillRegisterHibernateDAO;
 import org.egov.egf.model.BillPaymentDetails;
 import org.egov.model.bills.EgBillregister;

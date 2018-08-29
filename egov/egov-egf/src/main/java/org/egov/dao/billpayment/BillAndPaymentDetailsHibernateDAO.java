@@ -1,4 +1,4 @@
-package org.egov.dao.billPayment;
+package org.egov.dao.billpayment;
 
 import java.util.List;
 
