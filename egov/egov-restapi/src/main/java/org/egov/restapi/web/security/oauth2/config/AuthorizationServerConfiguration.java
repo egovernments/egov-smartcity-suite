@@ -117,12 +117,12 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     }
 
     @Override
-    public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
+    public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
         endpoints.tokenStore(tokenStore).authenticationManager(authenticationManager)
                 .setClientDetailsService(clientDetailsService);
     }
 
-    private SecuredClient getSecuredClientFromResource() throws IOException, JsonParseException, JsonMappingException {
+    private SecuredClient getSecuredClientFromResource() throws IOException {
         final ObjectMapper mapper = new ObjectMapper();
         mapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
         mapper.configure(SerializationConfig.Feature.AUTO_DETECT_FIELDS, true);

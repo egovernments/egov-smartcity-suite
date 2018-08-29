@@ -83,12 +83,12 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) {
         String userName = authentication.getName();
-        String password = authentication.getCredentials().toString();
         User user = userService.getUserByUsername(userName);
 
         if (user == null)
             throw new OAuth2Exception("Invalid login credentials");
 
+        String password = authentication.getCredentials().toString();
         if (passwordEncoder.matches(password, user.getPassword())) {
             List<GrantedAuthority> grantedAuths = new ArrayList<>();
             user.getRoles().forEach(role -> grantedAuths.add(new SimpleGrantedAuthority("ROLE_" + role.getName())));

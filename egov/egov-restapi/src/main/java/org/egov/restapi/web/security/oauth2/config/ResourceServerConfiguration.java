@@ -112,7 +112,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 
     }
 
-    private SecuredResource getSecuredResourceFromResource() throws IOException, JsonParseException, JsonMappingException {
+    private SecuredResource getSecuredResourceFromResource() throws IOException {
         final ObjectMapper mapper = new ObjectMapper();
         mapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
         mapper.configure(SerializationConfig.Feature.AUTO_DETECT_FIELDS, true);
