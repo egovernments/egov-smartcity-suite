@@ -170,19 +170,38 @@ $(document).ready(function(){
 			$("#cardHolderDiv").show();
 	    	$("#bplCardHolderName").attr('required', 'required');
 	    	$("#bplCardHolderName").val();
-			/*$(".check-text:contains('"+documentName+"')").parent().find('input, textarea, button, select').attr("required","required");
-			$(".check-text:contains('"+documentName+"')").parent().find('input:checkbox').prop('checked', true);
-			$(".check-text:contains('"+documentName+"')").parent().find('input[type=hidden]:eq(1)').val(true);*/
+	    	return makeDocumentDetailsMandatory();
 		}
 		else if($('#connectionCategorie :selected').text().localeCompare("BPL") != -1)  {
 			$("#cardHolderDiv").hide();
 	    	$("#bplCardHolderName").removeAttr('required');
 	    	$("#bplCardHolderName").val('');
-	    	/*$(".check-text:contains('"+documentName+"')").parent().find('input, textarea, button, select').removeAttr('required');
-	     	$(".check-text:contains('"+other+"')").parent().find('input, textarea, button, select').removeAttr('required');
-	     	$(".check-text:contains('"+documentName+"')").parent().find('input:checkbox').prop('checked', false);
-	     	$(".check-text:contains('"+documentName+"')").parent().find('input[type=hidden]:eq(1)').val(false);*/
+	    	return makeDocumentDetailsNonMandatory();
 		}
+	}
+	
+	function makeDocumentDetailsMandatory(){
+		$("#documentListTable").find('tbody').find('tr').each(function() { 
+			if($(this).text().trim().startsWith("White Ration Card")) {
+				$(this).find('[type=checkbox]').prop('checked',true);
+				$(this).find('[type=checkbox]').prop('disabled',true);
+				$(this).find('[type=text]').attr('required','required');
+				$(this).find('[type=file]').attr('required','required');
+			}
+		});
+	}
+	
+	function makeDocumentDetailsNonMandatory(){
+		$("#documentListTable").find('tbody').find('tr').each(function() { 
+			if($(this).text().trim().startsWith("White Ration Card")) {
+				$(this).find('[type=checkbox]').prop('checked',false);
+				$(this).find('[type=text]').removeAttr('required');
+				$(this).find('[type=file]').removeAttr('required');
+				$(this).find('[type=text]').attr('value','');
+				$(this).find('[type=file]').attr('value','');
+				$(this).find('[class=error]').hide();
+			}
+		});
 	}
 	
 	function validatePrimaryConnection() {
