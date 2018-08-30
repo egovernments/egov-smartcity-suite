@@ -122,7 +122,13 @@ jQuery(document)
 												});
 									});
 				});
-
+$(document).ready(function(){
+    if(localStorage.getItem("status") == "OK")
+    {
+    	bootbox.alert("Aadhar Seeding Approved for the selected Assessments successfully!");
+        localStorage.clear();
+    }
+});
 function setHiddenValueByLink(obj) {
 	window.open("../aadharseeding/aadhardataupdateform/" + obj.innerHTML
 			+ '/CREATED', '', "_self");
@@ -174,6 +180,7 @@ $('#updateBtn').on(
 					cache : false,
 					contentType : "application/json; charset=utf-8",
 					success : function() {
+						localStorage.setItem("status","OK")
 						window.location.reload()
 					}
 				});
