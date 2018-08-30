@@ -450,6 +450,11 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private PropertyImpl createNonVacantProperty(final Character status, final BasicProperty nonVacantBasicProperty)
             throws TaxCalculatorExeption {
         final PropertyImpl nonVacantProperty = createAppurTenantProperty(status, nonVacantBasicProperty, Boolean.TRUE);
+        if (!property.getDocuments().isEmpty()){
+            nonVacantProperty.setDocuments(property.getDocuments());
+            propService.processAndStoreDocument(nonVacantProperty.getDocuments());
+        }
+
         persistAndMessage(nonVacantBasicProperty, nonVacantProperty);
         return nonVacantProperty;
     }
@@ -536,9 +541,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             clonedProp.setPropertyDetail(changePropertyDetail(clonedProp));
         basicProperty.addProperty(clonedProp);
         if (basicProperty.getSource() == PropertyTaxConstants.SOURCEOFDATA_APPLICATION) {
-            if (!clonedProp.getDocuments().isEmpty())
-                propService.processAndStoreDocument(clonedProp.getDocuments());
-
             propService.createDemand(clonedProp, propCompletionDate);
         }
         basicProperty.setUnderWorkflow(Boolean.TRUE);
@@ -548,7 +550,10 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         if (loggedUserIsMeesevaUser && clonedProp.getMeesevaApplicationNumber() != null)
             basicProperty.setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
         propService.updateIndexes(clonedProp, APPLICATION_TYPE_NEW_ASSESSENT);
-        propService.processAndStoreDocument(clonedProp.getAssessmentDocuments());
+        if (!property.getAssessmentDocuments().isEmpty()) {
+            clonedProp.setAssessmentDocuments(property.getAssessmentDocuments());
+            propService.processAndStoreDocument(clonedProp.getAssessmentDocuments());
+        }
         return clonedProp;
     }
 
