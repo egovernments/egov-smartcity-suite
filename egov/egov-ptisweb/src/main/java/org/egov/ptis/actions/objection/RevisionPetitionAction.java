@@ -1252,8 +1252,10 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             if (!propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
                 propCompletionDate = propService
                         .getLowestDtOfCompFloorWise(objection.getProperty().getPropertyDetail().getFloorDetailsProxy());
-            else
+            else{
                 propCompletionDate = objection.getProperty().getPropertyDetail().getDateOfCompletion();
+                setAreaOfPlot(objection.getProperty().getPropertyDetail().getSitalArea().getArea().toString());
+            }
 
         }
         if (propCompletionDate != null) {
