@@ -60,6 +60,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.repository.BoundaryRepository;
 import org.egov.infra.admin.master.repository.BoundaryTypeRepository;
+import org.egov.infra.utils.StringUtils;
 import org.egov.mrs.masters.service.ReligionService;
 import org.egov.restapi.web.contracts.marriageregistration.MarriageDocumentUpload;
 import org.egov.restapi.web.contracts.marriageregistration.MarriageRegistrationRequest;
@@ -105,7 +106,15 @@ public class MarriageAPIValidator implements Validator {
             if (childBoundary == null)
                 errors.rejectValue("locality", "Invalid Locality", "Invalid Locality");
         }
-
+        if (marriageRegistrationRequest.getHusbandName() != null &&
+                StringUtils.isBlank(marriageRegistrationRequest.getHusbandName().getFirstName())) {
+            errors.rejectValue("husbandName.firstName", "Husband firstName cannot be empty","Husband firstName cannot be empty");
+        }
+        if (marriageRegistrationRequest.getWifeName() != null
+                && StringUtils.isBlank(marriageRegistrationRequest.getWifeName().getFirstName())) {
+            errors.rejectValue("wifeName.firstName", "Wife firstName cannot be empty", "Wife firstName cannot be empty");
+        }
+        
         if (marriageRegistrationRequest.getHusbandreligion() != null
                 && religionService.getReligion(marriageRegistrationRequest.getHusbandreligion()) == null) {
             errors.rejectValue("husbandreligion", "Invalid bridegroom's religion", "Invalid bridegroom's religion");
