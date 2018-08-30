@@ -438,6 +438,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         }
 
         setAckMessage("Property Created Successfully in the System and Forwarded to : ");
+        setApplicationNoMessage(" with application number : ");
         setAssessmentNoMessage(" for Digital Signature with assessment number : ");
         property = nonVacantProperty;
         if (!loggedUserIsMeesevaUser)
