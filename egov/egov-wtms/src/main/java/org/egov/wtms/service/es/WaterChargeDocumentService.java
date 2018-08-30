@@ -122,10 +122,10 @@ public class WaterChargeDocumentService {
         if (waterConnectionDetails.getLegacy()) {
             if (waterConnectionDetails.getApplicationDate() != null)
                 createdDate = dateFormatter.format(waterConnectionDetails.getApplicationDate());
-        } else if (waterConnectionDetails.getExecutionDate() != null)
-            createdDate = dateFormatter.format(waterConnectionDetails.getExecutionDate());
-        else
+        } else if (waterConnectionDetails.getExecutionDate() == null)
             createdDate = dateFormatter.format(waterConnectionDetails.getApplicationDate());
+        else
+            createdDate = dateFormatter.format(waterConnectionDetails.getExecutionDate());
         monthlyRate = monthlyRateFirld(waterConnectionDetails);
         if (ownerNameItr != null && ownerNameItr.hasNext())
             ownerNameItr.next().getMobileNumber();
