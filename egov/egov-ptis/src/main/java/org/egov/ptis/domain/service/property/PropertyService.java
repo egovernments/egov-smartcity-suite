@@ -2399,7 +2399,7 @@ public class PropertyService {
                 .withStatus(property.getState().getValue())
                 .withUrl(format(APPLICATION_VIEW_URL, property.getApplicationNo(), applictionType))
                 .withApplicantAddress(property.getBasicProperty().getAddress().toString())
-                .withOwnername(stateOwner.getUsername() + "::" + stateOwner.getName())
+                .withOwnername(stateOwner.getUsername() + "::" + stateOwner.getName().trim())
                 .withChannel(source).withMobileNumber(owner.getMobileNumber())
                 .withAadharNumber(owner.getAadhaarNumber()).withConsumerCode(property.getBasicProperty().getUpicNo())
                 .withClosed(closureStatus)
@@ -2426,7 +2426,7 @@ public class PropertyService {
         if (propertyApplicationTypes().contains(applictionType)) {
             applicationIndex.setConsumerCode(property.getBasicProperty().getUpicNo());
             applicationIndex.setApplicantName(owner.getName());
-            applicationIndex.setOwnerName(stateOwner.getUsername() + "::" + stateOwner.getName());
+            applicationIndex.setOwnerName(stateOwner.getUsername() + "::" + stateOwner.getName().trim());
             applicationIndex.setMobileNumber(owner.getMobileNumber());
             applicationIndex.setAadharNumber(owner.getAadhaarNumber());
             applicationIndex.setClosed(
