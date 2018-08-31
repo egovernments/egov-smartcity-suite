@@ -51,10 +51,7 @@ import com.google.gson.GsonBuilder;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.admin.master.service.CityService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.core.LocalizationSettings;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.stms.masters.entity.enums.PropertyType;
@@ -105,9 +102,6 @@ public class SewerageRateDCBReportController {
 
     @Autowired
     private SewerageThirdPartyServices sewerageThirdPartyServices;
-
-    @Autowired
-    private CityService cityService;
 
     @Autowired
     private SewerageIndexService sewerageIndexService;
@@ -178,8 +172,6 @@ public class SewerageRateDCBReportController {
         }
         if (wardList != null && !wardList.isEmpty())
             searchRequest.setWards(wardList);
-        final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
-        searchRequest.setUlbName(cityWebsite.getName());
         if (null != searchRequest.getWards() && !searchRequest.getWards().isEmpty() && searchRequest.getWards().get(0) != null)
             wards.addAll(searchRequest.getWards());
         else
@@ -201,7 +193,7 @@ public class SewerageRateDCBReportController {
         } else
             propertyTypeList.add(searchRequest.getPropertyType());
 
-        dcbMap = sewerageIndexService.wardWiseBoolQueryFilter(searchRequest.getUlbName(), wardNames, propertyTypeList);
+        dcbMap = sewerageIndexService.wardWiseBoolQueryFilter(wardNames, propertyTypeList);
         wardwiseResultList = sewerageDCBReporService.getSewerageRateDCBWardwiseReport(dcbMap, searchRequest.getPropertyType());
 
         IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(LocalizationSettings.datePattern()).create()
@@ -214,7 +206,6 @@ public class SewerageRateDCBReportController {
     public String getConnectionDCBReport(@ModelAttribute final DCBReportWardwiseResult searchRequest, final Model model,
                                          @PathVariable final String id, final HttpServletRequest request) {
         String propType = null;
-        String ulbName;
         Long wardId;
         String revenueWard = null;
         final List<String> propertyTypeList = new ArrayList<>();
@@ -237,10 +228,8 @@ public class SewerageRateDCBReportController {
             propertyTypeList.add(RESIDENTIAL);
         } else
             propertyTypeList.add(propType);
-        final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
-        ulbName = cityWebsite.getName();
-
-        wardConnectionMap = sewerageIndexService.wardWiseConnectionQueryFilter(propertyTypeList, revenueWard, ulbName);
+       
+        wardConnectionMap = sewerageIndexService.wardWiseConnectionQueryFilter(propertyTypeList, revenueWard);
         model.addAttribute("currentDate", new Date());
         model.addAttribute("revenueWard", revenueWard);
         model.addAttribute("dcbResultList",
