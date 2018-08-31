@@ -156,7 +156,7 @@ public class AadharSeedingService extends GenericWorkFlowController {
     public List<String[]> getQueryResult(AadharSeedingRequest aadharSeedingRequest) {
         String searchQry = "";
         String baseQry = "select mv.propertyId, mv.ownerName, mv.houseNo, mv.propertyAddress from PropertyMaterlizeView mv "
-                + "where mv.basicPropertyID in(select p.basicProperty from PropertyImpl p where p.source='SURVEY' and "
+                + "where mv.basicPropertyID in(select p.basicProperty from PropertyImpl p where "
                 + "p.propertyDetail.structure=false and p.status in('A','I') and p.id not in(select m.property from PropertyMutation m "
                 + "where m.state.status <> 2)) and mv.basicPropertyID not in(select basicProperty from AadharSeeding)";
         String wherClause = "";
