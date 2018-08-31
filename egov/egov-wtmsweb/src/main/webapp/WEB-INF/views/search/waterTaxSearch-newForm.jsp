@@ -114,7 +114,7 @@
                     </c:if>
                     <div class="form-group">
                         <label class="col-md-4 control-label"> <spring:message
-                                code="lbl.applicant.name"/></label>
+                                code="lbl.assessee.name"/></label>
                         <div class="col-md-4 add-margin">
                             <input type="text" name="applicantName" id="applicantName"
                                    class="form-control patternvalidation" maxlength="100"/>
