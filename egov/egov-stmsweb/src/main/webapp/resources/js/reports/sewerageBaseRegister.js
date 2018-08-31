@@ -272,7 +272,6 @@ function submitButton() {
 				$('#report-footer').show();
 			}
 			if (data.length > 0) {
-				updateTotalFooter(1, api);
 				updateTotalFooter(9, api);
 				updateTotalFooter(10, api);
 				updateTotalFooter(11, api);
