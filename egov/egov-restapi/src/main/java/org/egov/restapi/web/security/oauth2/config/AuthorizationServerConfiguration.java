@@ -78,8 +78,8 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 @EnableAuthorizationServer
 public class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
 
-    private static final String SECURED_CLIENTS_CONFIG_JSON = "secured-clients-config.json";
-    private static final String SECURED_CLIENTS_CONFIG_OVERRIDE_JSON = "secured-clients-config-override.json";
+    private static final String SECURED_CLIENTS_CONFIG_JSON = "restapi-secured-clients-config.json";
+    private static final String SECURED_CLIENTS_CONFIG_OVERRIDE_JSON = "restapi-secured-clients-config-override.json";
     private static final String SCOPE_WRITE = "write";
     private static final String SCOPE_READ = "read";
     private static final String GRANT_TYPE_PASSWORD = "password";
