@@ -73,6 +73,7 @@ public class SurveyResponse {
     private double diffFromSurveytax = 0;
     private double difference = 0;
     private long totalCancelled=0;
+    private long totalClosed=0;
 
     public String getRegionName() {
         return regionName;
@@ -247,6 +248,14 @@ public class SurveyResponse {
 
     public void setTotalCancelled(long totalCancelled) {
         this.totalCancelled = totalCancelled;
+    }
+
+    public long getTotalClosed() {
+        return totalClosed;
+    }
+
+    public void setTotalClosed(long totalClosed) {
+        this.totalClosed = totalClosed;
     }
 
 
