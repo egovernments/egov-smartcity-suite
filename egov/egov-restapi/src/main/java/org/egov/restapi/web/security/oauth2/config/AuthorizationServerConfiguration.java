@@ -49,18 +49,16 @@ package org.egov.restapi.web.security.oauth2.config;
 
 import java.io.IOException;
 
-import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonMethod;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.restapi.web.security.oauth2.entity.SecuredClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
@@ -80,6 +78,8 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 @EnableAuthorizationServer
 public class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
 
+    private static final String SECURED_CLIENTS_CONFIG_JSON = "secured-clients-config.json";
+    private static final String SECURED_CLIENTS_CONFIG_OVERRIDE_JSON = "secured-clients-config-override.json";
     private static final String SCOPE_WRITE = "write";
     private static final String SCOPE_READ = "read";
     private static final String GRANT_TYPE_PASSWORD = "password";
@@ -97,17 +97,14 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     @Autowired
     private TokenStore tokenStore;
 
-    @Value("classpath:secured-clients-config.json")
-    private Resource resource;
-
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         getSecuredClientFromResource().getClients().forEach(client -> {
             try {
                 clients.inMemory().withClient(client.getClientId()).secret(client.getClientSecret())
-                        .authorizedGrantTypes(GRANT_TYPE_AUTHORIZATION_CODE, GRANT_TYPE_REFRESH_TOKEN, GRANT_TYPE_PASSWORD)
-                        .scopes(SCOPE_READ, SCOPE_WRITE)
-                        .resourceIds(RESOURCE_ID)
+                        .authorizedGrantTypes(GRANT_TYPE_AUTHORIZATION_CODE, GRANT_TYPE_REFRESH_TOKEN,
+                                GRANT_TYPE_PASSWORD)
+                        .scopes(SCOPE_READ, SCOPE_WRITE).resourceIds(RESOURCE_ID)
                         .accessTokenValiditySeconds(client.getAccessTokenValidity() * 60)
                         .refreshTokenValiditySeconds(client.getRefreshTokenValidity() * 60);
             } catch (Exception e) {
@@ -126,8 +123,14 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
         final ObjectMapper mapper = new ObjectMapper();
         mapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
         mapper.configure(SerializationConfig.Feature.AUTO_DETECT_FIELDS, true);
-        return mapper.readValue(resource.getInputStream(),
-                SecuredClient.class);
+        return mapper.readValue(getClientsConfig().getInputStream(), SecuredClient.class);
+    }
+
+    private Resource getClientsConfig() {
+        Resource res = new ClassPathResource(SECURED_CLIENTS_CONFIG_OVERRIDE_JSON);
+        if (!res.exists())
+            res = new ClassPathResource(SECURED_CLIENTS_CONFIG_JSON);
+        return res;
     }
 
 }
