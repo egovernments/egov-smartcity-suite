@@ -48,6 +48,23 @@
 
 package org.egov.wtms.service;
 
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getCityName;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
+import static org.egov.ptis.constants.PropertyTaxConstants.WATER_TAX_INDEX_NAME;
+import static org.egov.wtms.masters.entity.enums.ConnectionStatus.DISCONNECTED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ACTIVE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ADDNLCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CHANGEOFUSE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSINGCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CONNECTIONTYPE_METERED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_OPERATOR;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -65,23 +82,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.egov.infra.config.core.ApplicationThreadLocals.getCityName;
-import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
-import static org.egov.ptis.constants.PropertyTaxConstants.WATER_TAX_INDEX_NAME;
-import static org.egov.wtms.masters.entity.enums.ConnectionStatus.DISCONNECTED;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.ACTIVE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.ADDNLCONNECTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.CHANGEOFUSE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSINGCONNECTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.CONNECTIONTYPE_METERED;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_OPERATOR;
 
 @Service
 public class WaterTaxSearchService {
@@ -166,7 +166,8 @@ public class WaterTaxSearchService {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
                 .filter(QueryBuilders.termQuery("cityName", getCityName()));
         if (isNotBlank(searchRequest.getApplicantName()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("consumerName", searchRequest.getApplicantName()));
+            boolQuery = boolQuery.filter(
+                    QueryBuilders.wildcardQuery("consumerName", "*".concat(searchRequest.getApplicantName()).concat("*")));
         if (isNotBlank(searchRequest.getConsumerCode()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("consumerCode", searchRequest.getConsumerCode()));
         if (isNotBlank(searchRequest.getOldConsumerNumber()))
