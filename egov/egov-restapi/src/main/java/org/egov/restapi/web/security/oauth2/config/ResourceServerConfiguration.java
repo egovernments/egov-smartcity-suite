@@ -76,8 +76,8 @@ import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHand
 @EnableResourceServer
 public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
 
-    private static final String SECURED_APIS_CONFIG_JSON = "restapi-secured-apis-config.json";
-    private static final String SECURED_APIS_CONFIG_OVERRIDE_JSON = "restapi-secured-apis-config-override.json";
+    private static final String APIS_CONFIG = "restapi-secured-apis-config.json";
+    private static final String APIS_CONFIG_OVERRIDE = "restapi-secured-apis-config-override.json";
     private static final String RESOURCE_ID = "egov-restapi";
 
     @Override
@@ -118,9 +118,9 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
     }
 
     private Resource getResourcesConfig() {
-        Resource res = new ClassPathResource(SECURED_APIS_CONFIG_OVERRIDE_JSON);
+        Resource res = new ClassPathResource(APIS_CONFIG_OVERRIDE);
         if (!res.exists())
-            res = new ClassPathResource(SECURED_APIS_CONFIG_JSON);
+            res = new ClassPathResource(APIS_CONFIG);
         return res;
     }
 
