@@ -527,10 +527,10 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
                         mutationFee = mutationFeeDetails.getFlatAmount();
                     else {
                         excessDocValue = documentValue.subtract(mutationFeeDetails.getLowLimit()).add(BigDecimal.ONE);
-                        multiplicationFactor = excessDocValue.divide(mutationFeeDetails.getRecursiveAmount(),
+                        multiplicationFactor = excessDocValue.divide(mutationFeeDetails.getRecursiveFactor(),
                                 BigDecimal.ROUND_CEILING);
                         mutationFee = mutationFeeDetails.getFlatAmount()
-                                .add(multiplicationFactor.multiply(mutationFeeDetails.getRecursiveFactor()));
+                                .add(multiplicationFactor.multiply(mutationFeeDetails.getRecursiveAmount()));
                     }
                 if (mutationFeeDetails.getPercentage() != null
                         && mutationFeeDetails.getPercentage().compareTo(ZERO) > 0)
