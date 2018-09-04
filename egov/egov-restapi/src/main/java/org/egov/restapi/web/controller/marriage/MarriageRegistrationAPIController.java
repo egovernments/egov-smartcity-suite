@@ -107,7 +107,6 @@ public class MarriageRegistrationAPIController {
     @Autowired
     private UserService userService;
     
-
     @PostMapping("/marriageregistration/create")
     public MarriageRegistrationResponse createMarriageRegistration(
             @Valid @RequestBody MarriageRegistrationRequest marriageRegistrationRequest,
@@ -139,14 +138,15 @@ public class MarriageRegistrationAPIController {
                 && marriageRegistration.getSource().equals(Source.CHPK.toString())) {
 
             MarriageCertificate marriageCertificate = marriageCertificateService.getGeneratedCertificate(marriageRegistration);
-            Assignment assignment = assignmentService
+            Assignment assignment=assignmentService
                     .getPrimaryAssignmentForUser(
                             userService.getUsersByNameLike(marriageRegistration.getRegistrarName()).get(0).getId());
+
             return new MarriageCertificateResponse(marriageRegistration.getStatus().getDescription(),
                     ApplicationThreadLocals.getDomainURL() + MRS_REGISTRATION_PRINTCERTFICATE + marriageCertificate.getId(),
                     marriageCertificate.getCertificateNo(),
                     DateUtils.getFormattedDate(marriageCertificate.getCertificateDate(), DATE_FORMAT),
-                    marriageRegistration.getRegistrarName(), assignment.getDesignation().getName(),
+                    marriageRegistration.getRegistrarName(),  assignment == null ? "N/A" : assignment.getDesignation().getName(),
                     "Marriage Certificate sent Successfully");
         } else if (marriageRegistration.getStatus().getCode().equals(REJECTED)
                 && marriageRegistration.getSource().equals(Source.CHPK.toString())) {
