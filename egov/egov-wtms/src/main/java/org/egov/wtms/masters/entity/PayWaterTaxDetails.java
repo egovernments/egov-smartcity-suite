@@ -61,7 +61,7 @@ public class PayWaterTaxDetails implements Serializable {
     private String consumerNo;
     private String ulbCode;
     @JsonIgnore
-    private String applicaionNumber;
+    private String applicationNumber;
     private String paymentMode;
     private BigDecimal paymentAmount;
     private String paidBy;
@@ -107,9 +107,17 @@ public class PayWaterTaxDetails implements Serializable {
 
     @Override
     public String toString() {
-        return "PayWaterTaxDetails [consumerNo=" + consumerNo + ", applicaionNumber=" + applicaionNumber
+        return "PayWaterTaxDetails [consumerNo=" + consumerNo + ", applicationNumber=" + applicationNumber
                 + ", paymentMode=" + paymentMode + ", paymentAmount=" + paymentAmount + ", paidBy=" + paidBy
                 + ", transactionId=" + transactionId + "]";
+    }
+
+    public String getApplicationNumber() {
+        return applicationNumber;
+    }
+
+    public void setApplicationNumber(String applicationNumber) {
+        this.applicationNumber = applicationNumber;
     }
 
     public String getTransactionId() {
@@ -118,14 +126,6 @@ public class PayWaterTaxDetails implements Serializable {
 
     public void setTransactionId(final String transactionId) {
         this.transactionId = transactionId;
-    }
-
-    public String getApplicaionNumber() {
-        return applicaionNumber;
-    }
-
-    public void setApplicaionNumber(final String applicaionNumber) {
-        this.applicaionNumber = applicaionNumber;
     }
 
     public BigDecimal getPaymentAmount() {
@@ -183,6 +183,5 @@ public class PayWaterTaxDetails implements Serializable {
     public void setSource(String source) {
         this.source = source;
     }
-
 
 }

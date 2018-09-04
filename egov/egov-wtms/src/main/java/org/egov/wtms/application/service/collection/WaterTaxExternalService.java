@@ -181,9 +181,9 @@ public class WaterTaxExternalService {
         WaterConnectionDetails waterConnectionDetails = new WaterConnectionDetails();
 
         String consumerNo = payWaterTaxDetails.getConsumerNo();
-        if (isNotBlank(consumerNo) || isNotBlank(payWaterTaxDetails.getApplicaionNumber()))
+        if (isNotBlank(consumerNo) || isNotBlank(payWaterTaxDetails.getApplicationNumber()))
             waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(
-                    isNotBlank(consumerNo) ? consumerNo : payWaterTaxDetails.getApplicaionNumber(), ACTIVE);
+                    isNotBlank(consumerNo) ? consumerNo : payWaterTaxDetails.getApplicationNumber(), ACTIVE);
 
         if (INPROGRESS.equals(waterConnectionDetails.getConnectionStatus()))
             currentInstallmentYear = toYearFormat(connectionDemandService.getCurrentInstallment(
@@ -289,8 +289,8 @@ public class WaterTaxExternalService {
     public WaterTaxDetails getWaterTaxDemandDet(PayWaterTaxDetails payWaterTaxDetails) {
 
         WaterConnectionDetails waterConnectionDetails = null;
-        if (isNotBlank(payWaterTaxDetails.getApplicaionNumber()))
-            waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumber(payWaterTaxDetails.getApplicaionNumber());
+        if (isNotBlank(payWaterTaxDetails.getApplicationNumber()))
+            waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumber(payWaterTaxDetails.getApplicationNumber());
         else if (isNotBlank(payWaterTaxDetails.getConsumerNo()))
             waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(
                     payWaterTaxDetails.getConsumerNo(), ACTIVE);
@@ -301,7 +301,7 @@ public class WaterTaxExternalService {
             errorDetails.setErrorCode(WaterTaxConstants.PROPERTYID_NOT_EXIST_ERR_CODE);
             errorDetails.setErrorMessage(WaterTaxConstants.WTAXDETAILS_CONSUMER_CODE_NOT_EXIST_ERR_MSG_PREFIX + (payWaterTaxDetails.getConsumerNo() != null
                     ? payWaterTaxDetails.getConsumerNo()
-                    : payWaterTaxDetails.getApplicaionNumber()) + WaterTaxConstants.WTAXDETAILS_NOT_EXIST_ERR_MSG_SUFFIX);
+                    : payWaterTaxDetails.getApplicationNumber()) + WaterTaxConstants.WTAXDETAILS_NOT_EXIST_ERR_MSG_SUFFIX);
             waterTaxDetails.setErrorDetails(errorDetails);
         } else {
             waterTaxDetails.setConsumerNo(waterConnectionDetails.getConnection().getConsumerCode());
