@@ -146,7 +146,7 @@ public class TradeLicense extends StateAware<Position> {
 
     @SafeHtml
     @Length(max = 50)
-    @Column(name = "LICENSE_NUMBER")
+    @Column(name = "LICENSE_NUMBER", updatable = false)
     @NotAudited
     private String licenseNumber;
 
@@ -240,7 +240,7 @@ public class TradeLicense extends StateAware<Position> {
     @JoinColumn(name = "adminward")
     private Boundary adminWard;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "NATUREOFBUSINESS")
     private NatureOfBusiness natureOfBusiness;
 
@@ -250,26 +250,26 @@ public class TradeLicense extends StateAware<Position> {
     private EgDemand egDemand;
 
     @Valid
-    @OneToOne(mappedBy = "license", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "license", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
     @Audited(targetAuditMode = RelationTargetAuditMode.AUDITED)
     private Licensee licensee;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ID_STATUS")
     private LicenseStatus status;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ID_SUB_CATEGORY")
     private LicenseSubCategory tradeName;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "licenseAppType")
     private LicenseAppType licenseAppType;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ID_CATEGORY")
     private LicenseCategory category;
 
@@ -338,10 +338,7 @@ public class TradeLicense extends StateAware<Position> {
     @Override
     public String myLinkId() {
         if (CLOSURE_APPTYPE_CODE.equals(this.getLicenseAppType().getCode()))
-            if (isNewWorkflow())
-                return format(CLOSURE_UPDATE_URL, id);
-            else
-                return format(CLOSURE_APPROVAL_URL, id);
+            return isNewWorkflow() ? format(CLOSURE_UPDATE_URL, id) : format(CLOSURE_APPROVAL_URL, id);
         else
             return format(NEW_RENEW_APPROVAL_URL, id);
     }
@@ -691,6 +688,7 @@ public class TradeLicense extends StateAware<Position> {
         return isStatusActive() || getIsActive() && LICENSE_STATUS_CANCELLED.equals(getStatus().getName());
     }
 
+    @SuppressWarnings("unused")
     public BigDecimal getLatestAmountPaid() {
         Optional<EgDemandDetails> demandDetails = this.getCurrentDemand().getEgDemandDetails().stream()
                 .sorted(Comparator.comparing(EgDemandDetails::getInstallmentEndDate).reversed())

@@ -1076,14 +1076,15 @@ public class TradeLicenseService {
     }
 
     @ReadOnly
-    public Page<SearchForm> searchTradeLicense(final SearchForm searchForm) {
+    public Page<SearchForm> searchTradeLicense(SearchForm searchForm) {
         Pageable pageable = new PageRequest(searchForm.pageNumber(),
                 searchForm.pageSize(), searchForm.orderDir(), searchForm.orderBy());
         User currentUser = securityUtils.getCurrentUser();
         Page<TradeLicense> licenses = searchTradeRepository.findAll(SearchTradeSpec.searchTrade(searchForm), pageable);
         List<SearchForm> searchResults = new ArrayList<>();
+        String[] feeCollectorRoles = licenseConfigurationService.getFeeCollectorRoles();
         licenses.forEach(license ->
-                searchResults.add(new SearchForm(license, currentUser, getOwnerName(license), licenseConfigurationService.getFeeCollectorRoles()))
+                searchResults.add(new SearchForm(license, currentUser, getOwnerName(license), feeCollectorRoles))
         );
         return new PageImpl<>(searchResults, pageable, licenses.getTotalElements());
     }

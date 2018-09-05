@@ -85,7 +85,7 @@ public final class SearchTradeSpec {
             if (searchForm.getMobileNo() != null)
                 predicate.getExpressions()
                         .add(builder.equal(root.get("licensee").get("mobilePhoneNumber"), searchForm.getMobileNo()));
-            if (searchForm.getInactive() != null && searchForm.getInactive().equals(Boolean.TRUE))
+            if (searchForm.getInactive() != null && searchForm.getInactive())
                 predicate.getExpressions().add(builder.equal(root.get("isActive"), false));
             if (searchForm.getApplicationTypeId() != null)
                 predicate.getExpressions()
