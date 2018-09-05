@@ -206,8 +206,12 @@ public class RestWaterConnectionCollection {
             boolean ownerdetailsnotexists = false;
             waterConnectionRequestDetails.setAssessmentNo(isBlank(waterConnectionRequestDetails.getAssessmentNo())
                     ? EMPTY : waterConnectionRequestDetails.getAssessmentNo());
-            if (!waterConnectionRequestDetails.getAssessmentNo().isEmpty()
-                    && !waterConnectionRequestDetails.getConsumerNo().isEmpty()) {
+            if (isBlank(waterConnectionRequestDetails.getAssessmentNo())
+                    && isNotBlank(waterConnectionRequestDetails.getConsumerNo())) {
+                consumerExists = true;
+                ownerdetailsnotexists = false;
+            } else if (isNotBlank(waterConnectionRequestDetails.getAssessmentNo())
+                    && isNotBlank(waterConnectionRequestDetails.getConsumerNo())) {
                 ownerdetailsnotexists = true;
                 List<WaterConnection> waterconnectionList = waterConnectionService
                         .findByPropertyIdentifier(waterConnectionRequestDetails.getAssessmentNo());
@@ -217,10 +221,6 @@ public class RestWaterConnectionCollection {
                         ownerdetailsnotexists = false;
                         break;
                     }
-            } else if (isBlank(waterConnectionRequestDetails.getAssessmentNo())
-                    && isNotBlank(waterConnectionRequestDetails.getConsumerNo())) {
-                consumerExists = true;
-                ownerdetailsnotexists = false;
             } else
                 assessmentNo = waterConnectionRequestDetails.getAssessmentNo();
             if (!consumerExists && ownerdetailsnotexists)

@@ -222,7 +222,7 @@ public class RestWaterConnectionController {
             return getJSONResponse(errorDetails);
         final WaterConnectionDetails connectionUnderChange = waterConnectionDetailsService
                 .findByConsumerCodeAndConnectionStatus(waterConnectionInfo.getConsumerCode(), ConnectionStatus.ACTIVE);
-        waterConnectionDetails = prepareChangeOfUsageWaterConnectionDetails(waterConnectionInfo, connectionUnderChange);
+        waterConnectionDetails = prepareChangeOfUsageWaterConnectionDetails(waterConnectionInfo);
         if (connectionUnderChange != null) {
             waterConnectionDetails.setConnection(connectionUnderChange.getConnection());
             userPosition = waterTaxUtils.getZonalLevelClerkForLoggedInUser(connectionUnderChange.getConnection()
@@ -240,7 +240,7 @@ public class RestWaterConnectionController {
 
     private WaterConnectionDetails populateAndPersistWaterConnectionDetails(final WaterConnectionInfo waterConnectionInfo,
             final String applicationCode) {
-        WaterConnectionDetails waterConnectionDetails = null;
+        WaterConnectionDetails waterConnectionDetails = new WaterConnectionDetails();
         Long approvalPosition = 0l;
 
         Position userPosition = null;
@@ -283,8 +283,7 @@ public class RestWaterConnectionController {
         return prepareWaterConnectionDetails(waterConnectionInfo, waterConnectionDetails);
     }
 
-    private WaterConnectionDetails prepareChangeOfUsageWaterConnectionDetails(final WaterChargesDetailInfo waterConnectionInfo,
-            final WaterConnectionDetails waterConnectionDetails) {
+    private WaterConnectionDetails prepareChangeOfUsageWaterConnectionDetails(final WaterChargesDetailInfo waterConnectionInfo) {
         final WaterConnectionDetails changeOfUse = new WaterConnectionDetails();
         changeOfUse.setApplicationDate(new Date());
         changeOfUse.setApplicationType(applicationTypeService.findByCode(WaterTaxConstants.CHANGEOFUSE));
