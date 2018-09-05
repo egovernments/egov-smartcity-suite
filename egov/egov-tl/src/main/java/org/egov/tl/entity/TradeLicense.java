@@ -146,7 +146,7 @@ public class TradeLicense extends StateAware<Position> {
 
     @SafeHtml
     @Length(max = 50)
-    @Column(name = "LICENSE_NUMBER", updatable = false)
+    @Column(name = "LICENSE_NUMBER")
     @NotAudited
     private String licenseNumber;
 
