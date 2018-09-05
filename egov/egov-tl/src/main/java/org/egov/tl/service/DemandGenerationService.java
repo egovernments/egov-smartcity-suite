@@ -52,7 +52,6 @@ import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.commons.service.CFinancialYearService;
 import org.egov.infra.admin.master.entity.Module;
-import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.EnvironmentSettings;
 import org.egov.infra.exception.ApplicationValidationException;
 import org.egov.infra.validation.exception.ValidationException;
@@ -60,6 +59,7 @@ import org.egov.tl.entity.DemandGenerationLog;
 import org.egov.tl.entity.DemandGenerationLogDetail;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.contracts.DemandGenerationRequest;
+import org.egov.tl.utils.LicenseUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,14 +101,14 @@ public class DemandGenerationService {
     private InstallmentDao installmentDao;
 
     @Autowired
-    private ModuleService moduleService;
-
-    @Autowired
     @Qualifier("tradeLicenseService")
     private TradeLicenseService licenseService;
 
     @Autowired
     private LicenseRenewalNotificationService renewalNotificationService;
+
+    @Autowired
+    private LicenseUtils licenseUtils;
 
     private int batchSize;
 
@@ -152,7 +152,7 @@ public class DemandGenerationService {
                 .getDemandGenerationLogByInstallmentYear(demandGenerationRequest.getInstallmentYear());
         List<DemandGenerationLogDetail> demandGenerationLogDetails = new ArrayList<>();
         if (demandGenerationLog != null && !demandGenerationRequest.getLicenseIds().isEmpty()) {
-            Module module = moduleService.getModuleByName(TRADE_LICENSE);
+            Module module = licenseUtils.getModule(TRADE_LICENSE);
             CFinancialYear financialYear = financialYearService.getFinacialYearByYearRange(demandGenerationRequest.getInstallmentYear());
             Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(module, financialYear.getStartingDate());
             int batchUpdateCount = 0;
@@ -184,9 +184,9 @@ public class DemandGenerationService {
         boolean generationSuccess = true;
         try {
             TradeLicense license = licenseService.getLicenseById(licenseId);
-            Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(licenseService.getModuleName(),
+            Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(licenseUtils.getModule(TRADE_LICENSE),
                     new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate());
-            licenseService.raiseDemand(license, licenseService.getModuleName(), installment);
+            licenseService.raiseDemand(license, licenseUtils.getModule(TRADE_LICENSE), installment);
             renewalNotificationService.notifyLicenseRenewal(license, installment);
         } catch (ValidationException e) {
             LOGGER.warn(ERROR_MSG, e);

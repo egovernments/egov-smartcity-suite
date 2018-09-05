@@ -50,6 +50,7 @@ package org.egov.tl.entity;
 
 import com.google.gson.annotations.Expose;
 import org.egov.commons.EgwStatus;
+import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -97,6 +98,7 @@ import java.util.Optional;
 
 import static java.lang.String.format;
 import static java.lang.System.lineSeparator;
+import static java.math.BigDecimal.ZERO;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.config.core.LocalizationSettings.currencySymbolUtf8;
@@ -245,7 +247,7 @@ public class TradeLicense extends StateAware<Position> {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_demand")
     @NotAudited
-    private LicenseDemand licenseDemand;
+    private EgDemand egDemand;
 
     @Valid
     @OneToOne(mappedBy = "license", cascade = CascadeType.ALL)
@@ -344,12 +346,12 @@ public class TradeLicense extends StateAware<Position> {
             return format(NEW_RENEW_APPROVAL_URL, id);
     }
 
-    public LicenseDemand getLicenseDemand() {
-        return licenseDemand;
+    public EgDemand getEgDemand() {
+        return egDemand;
     }
 
-    public void setLicenseDemand(final LicenseDemand licenseDemand) {
-        this.licenseDemand = licenseDemand;
+    public void setEgDemand(EgDemand egDemand) {
+        this.egDemand = egDemand;
     }
 
     public Date getApplicationDate() {
@@ -619,8 +621,8 @@ public class TradeLicense extends StateAware<Position> {
                 .anyMatch(licenseDocument -> licenseDocument.getMultipartFiles().stream().anyMatch(MultipartFile::isEmpty));
     }
 
-    public LicenseDemand getCurrentDemand() {
-        return getLicenseDemand();
+    public EgDemand getCurrentDemand() {
+        return getEgDemand();
     }
 
     public boolean isPaid() {
@@ -628,7 +630,7 @@ public class TradeLicense extends StateAware<Position> {
     }
 
     public BigDecimal getTotalBalance() {
-        return licenseDemand.getBaseDemand().subtract(licenseDemand.getAmtCollected());
+        return egDemand.getBaseDemand().subtract(egDemand.getAmtCollected());
     }
 
     public boolean isRejected() {
@@ -811,5 +813,17 @@ public class TradeLicense extends StateAware<Position> {
     @Override
     public int hashCode() {
         return Objects.hash(getUid());
+    }
+
+    public void recalculateBaseDemand(EgDemand egDemand) {
+        if (egDemand != null) {
+            egDemand.setAmtCollected(ZERO);
+            egDemand.setBaseDemand(ZERO);
+            egDemand.setModifiedDate(new Date());
+            for (final EgDemandDetails demandDetail : egDemand.getEgDemandDetails()) {
+                egDemand.setAmtCollected(egDemand.getAmtCollected().add(demandDetail.getAmtCollected()));
+                egDemand.setBaseDemand(egDemand.getBaseDemand().add(demandDetail.getAmount()));
+            }
+        }
     }
 }
