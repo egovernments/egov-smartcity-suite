@@ -159,16 +159,16 @@ public class AadharSeedingService extends GenericWorkFlowController {
                 + "where mv.basicPropertyID in(select p.basicProperty from PropertyImpl p where "
                 + "p.propertyDetail.structure=false and p.status in('A','I') and p.id not in(select m.property from PropertyMutation m "
                 + "where m.state.status <> 2)) and mv.basicPropertyID not in(select basicProperty from AadharSeeding)";
-        String wherClause = "";
+        final StringBuilder wherClause = new StringBuilder();
         String orderBy = " order by mv.propertyId";
         if (isNotBlank(aadharSeedingRequest.getAssessmentNo()))
-            wherClause = " and mv.propertyId= '" + aadharSeedingRequest.getAssessmentNo() + "'";
+            wherClause.append(" and mv.propertyId= '" + aadharSeedingRequest.getAssessmentNo() + "'");
         if (isNotBlank(aadharSeedingRequest.getDoorNo()))
-            wherClause = " and mv.houseNo like '" + aadharSeedingRequest.getDoorNo() + ""+ "%'";
+            wherClause.append(" and mv.houseNo like '" + aadharSeedingRequest.getDoorNo() + ""+ "%'"); 
         if (aadharSeedingRequest.getElectionWardId() != null)
-            wherClause = " and mv.electionWard.id=" + aadharSeedingRequest.getElectionWardId();
+            wherClause.append(" and mv.electionWard.id=" + aadharSeedingRequest.getElectionWardId());
         if (aadharSeedingRequest.getWardId() != null)
-            wherClause = " and mv.ward.id=" + aadharSeedingRequest.getWardId();
+            wherClause.append(" and mv.ward.id=" + aadharSeedingRequest.getWardId());
         searchQry = baseQry + wherClause + orderBy;
         return entityManager.unwrap(Session.class).createQuery(searchQry).list();
     }
@@ -219,27 +219,24 @@ public class AadharSeedingService extends GenericWorkFlowController {
     @Transactional
     public void saveSeedingDetails(AadharSeedingRequest aadharSeedingRequest) {
         WorkFlowMatrix wfmatrix;
-        BasicPropertyImpl basicProperty = (BasicPropertyImpl) basicPropertyDAO
-                .getBasicPropertyByPropertyID(aadharSeedingRequest.getAssessmentNo());
-        if (aadharSeedingRepository.getAadharSeedingByBasicProperty(basicProperty) == null) {
-            AadharSeeding aadharSeeding = new AadharSeeding();
-            List<AadharSeedingDetails> detailsList = new ArrayList<>();
-            aadharSeeding.setBasicProperty(basicProperty);
-            aadharSeeding.setStatus(UPDATED);
-            aadharSeeding.setFlag(false);
-            wfmatrix = propertyWorkflowService.getWfMatrix("AadharSeeding", null,
-                    null, "AADHAR SEEDING", "AadharSeeding:New", null);
-            startWorkflow(wfmatrix, aadharSeeding);
-            for (PropertyOwnerInfo owner : aadharSeedingRequest.getPropertyOwnerInfoProxy()) {
-                AadharSeedingDetails aadharSeedingDetails = new AadharSeedingDetails();
-                aadharSeedingDetails.setAadharSeeding(aadharSeeding);
-                aadharSeedingDetails.setOwner(owner.getUserId());
-                aadharSeedingDetails.setAadharNo(owner.getOwner().getAadhaarNumber());
-                detailsList.add(aadharSeedingDetails);
-            }
-            aadharSeeding.setAadharSeedingDetails(detailsList);
-            aadharSeedingRepository.save(aadharSeeding);
+        AadharSeeding aadharSeeding = new AadharSeeding();
+        List<AadharSeedingDetails> detailsList = new ArrayList<>();
+        aadharSeeding.setBasicProperty(
+                (BasicPropertyImpl) basicPropertyDAO.getBasicPropertyByPropertyID(aadharSeedingRequest.getAssessmentNo()));
+        aadharSeeding.setStatus(UPDATED);
+        aadharSeeding.setFlag(false);
+        wfmatrix = propertyWorkflowService.getWfMatrix("AadharSeeding", null,
+                null, "AADHAR SEEDING", "AadharSeeding:New", null);
+        startWorkflow(wfmatrix, aadharSeeding);
+        for (PropertyOwnerInfo owner : aadharSeedingRequest.getPropertyOwnerInfoProxy()) {
+            AadharSeedingDetails aadharSeedingDetails = new AadharSeedingDetails();
+            aadharSeedingDetails.setAadharSeeding(aadharSeeding);
+            aadharSeedingDetails.setOwner(owner.getUserId());
+            aadharSeedingDetails.setAadharNo(owner.getOwner().getAadhaarNumber());
+            detailsList.add(aadharSeedingDetails);
         }
+        aadharSeeding.setAadharSeedingDetails(detailsList);
+        aadharSeedingRepository.save(aadharSeeding);
     }
 
     private void startWorkflow(WorkFlowMatrix wfmatrix,
