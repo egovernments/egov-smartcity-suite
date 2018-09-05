@@ -196,8 +196,7 @@ public class BillService {
                     isValidFundCode = true;
                 }
             }
-            if(isValidFundCode){
-            }else{
+            if(!isValidFundCode){
                 restErrors = new RestErrors();
                 restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NOT_VALID_FUND_CODE);
                 restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NOT_VALID_FUND_CODE);
@@ -208,8 +207,7 @@ public class BillService {
             Pattern pattern = Pattern.compile("^[a-zA-Z\\d-/]+$", Pattern.CASE_INSENSITIVE);
             Matcher matcher = pattern.matcher(billRegister.getPartyBillNumber());
             boolean isValidBillNumber = matcher.find();
-            if (isValidBillNumber){
-            }else{
+            if (!isValidBillNumber){
                 restErrors = new RestErrors();
                 restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NOT_VALID_BILLNUMBER);
                 restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NOT_VALID_BILLNUMBER);
