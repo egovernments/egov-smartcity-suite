@@ -52,6 +52,7 @@ import org.apache.commons.lang.StringUtils;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.CChartOfAccounts;
+import org.egov.commons.Fund;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.service.AccountdetailtypeService;
@@ -85,10 +86,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -188,6 +188,35 @@ public class BillService {
             restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_SCHEME);
             errors.add(restErrors);
         }
+        if(StringUtils.isNotBlank(billRegister.getFundCode())){
+            List<Fund> fundCode = fundService.getByIsActive(true);
+            boolean isValidFundCode = false;
+            for(Fund fund : fundCode){
+                if(fund.getCode().equals(billRegister.getFundCode())){
+                    isValidFundCode = true;
+                }
+            }
+            if(isValidFundCode){
+            }else{
+                restErrors = new RestErrors();
+                restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NOT_VALID_FUND_CODE);
+                restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NOT_VALID_FUND_CODE);
+                errors.add(restErrors);
+            }
+        }
+        if(StringUtils.isNotBlank(billRegister.getPartyBillNumber())){
+            Pattern pattern = Pattern.compile("^[a-zA-Z\\d-/]+$", Pattern.CASE_INSENSITIVE);
+            Matcher matcher = pattern.matcher(billRegister.getPartyBillNumber());
+            boolean isValidBillNumber = matcher.find();
+            if (isValidBillNumber){
+            }else{
+                restErrors = new RestErrors();
+                restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NOT_VALID_BILLNUMBER);
+                restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NOT_VALID_BILLNUMBER);
+                errors.add(restErrors);
+            }
+        }
+
         validateBillDetails(billRegister, errors);
         validateBillPayeeDetails(billRegister, errors);
 
@@ -234,6 +263,7 @@ public class BillService {
             restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_PAYTO);
             errors.add(restErrors);
         }
+
     }
 
     private void validateBillDates(final BillRegister billRegister, final List<RestErrors> errors) {
@@ -250,7 +280,7 @@ public class BillService {
             restErrors.setErrorMessage(
                     sdf.format(billRegister.getBillDate()) + " - " + RestApiConstants.THIRD_PARTY_ERR_MSG_DATE_CANNOT_BE_FUTTURE);
             errors.add(restErrors);
-        } else
+        }else
             try {
                 financialYearHibernateDAO.getFinancialYearByDate(billRegister.getBillDate());
             } catch (final Exception e) {
@@ -413,6 +443,7 @@ public class BillService {
             restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_PAYEE_DETAILS);
             errors.add(restErrors);
         }
+
         if (billRegister.getBillPayeeDetails() != null && !billRegister.getBillPayeeDetails().isEmpty())
             for (final BillPayeeDetails billPayeeDetails : billRegister.getBillPayeeDetails()) {
                 Boolean isCOAExistInDetails = false;
@@ -493,6 +524,28 @@ public class BillService {
                     errors.add(restErrors);
                 }
             }
+
+        Map<String,BigDecimal> amountMap = new HashMap<>();
+        for (final BillPayeeDetails billPayeeDetails : billRegister.getBillPayeeDetails()) {
+            if (amountMap.get(billPayeeDetails.getGlcode()) == null) {
+                amountMap.put(billPayeeDetails.getGlcode(), billPayeeDetails.getCreditAmount());
+            }else{
+                if(billPayeeDetails.getCreditAmount() != null && billPayeeDetails.getCreditAmount().doubleValue() > 0){
+                    amountMap.put(billPayeeDetails.getGlcode(), amountMap.get(billPayeeDetails.getGlcode()).add(billPayeeDetails.getCreditAmount()));
+                }
+            }
+        }
+        for(final BillDetails billDetails : billRegister.getBillDetails()){
+            if(billDetails.getCreditAmount() != null && billDetails.getCreditAmount().doubleValue() > 0){
+                if (amountMap.containsKey(billDetails.getGlcode()) && amountMap.get(billDetails.getGlcode()).compareTo(billDetails.getCreditAmount()) != 0) {
+                    restErrors = new RestErrors();
+                    restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NOT_MATCHING_CREDIT_AMOUNT);
+                    restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NOT_MATCHING_CREDIT_AMOUNT + " - "
+                            + billDetails.getGlcode());
+                    errors.add(restErrors);
+                }
+            }
+        }
     }
 
     public void populateBillRegister(final EgBillregister egBillregister, final BillRegister billRegister)
@@ -540,7 +593,7 @@ public class BillService {
      * has to be supported
      */
     private void populateEgBilldetails(final EgBillregister egBillregister, final BillDetails details,
-            final BillRegister billRegister) throws ClassNotFoundException {
+                                       final BillRegister billRegister) throws ClassNotFoundException {
         final EgBilldetails egBilldetails = new EgBilldetails();
         Accountdetailtype contractorAccountDetailType;
         Accountdetailtype projectCodeAccountDetailType;
@@ -572,7 +625,7 @@ public class BillService {
 
     @SuppressWarnings("unchecked")
     private void populateEgBillPayeedetails(final EgBilldetails egBilldetails, final BillPayeeDetails payeeDetails,
-            final BillDetails details) throws ClassNotFoundException {
+                                            final BillDetails details) throws ClassNotFoundException {
         final EgBillPayeedetails billPayeedetails = new EgBillPayeedetails();
         if (payeeDetails.getGlcode() != null && payeeDetails.getGlcode().equals(details.getGlcode())) {
             if (payeeDetails.getCreditAmount() != null && payeeDetails.getCreditAmount().longValue() > 0)
@@ -611,9 +664,9 @@ public class BillService {
     }
 
     public List<BillPaymentDetails> getBillAndPaymentDetails(String billNo) {
-            return billsService.getBillAndPaymentDetails(billNo);
-    	}
+        return billsService.getBillAndPaymentDetails(billNo);
+    }
 
 
 
-	}
+}
