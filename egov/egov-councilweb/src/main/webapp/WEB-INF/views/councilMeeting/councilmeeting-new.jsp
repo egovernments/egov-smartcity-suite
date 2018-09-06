@@ -75,11 +75,16 @@
 <script>
 	 $('#buttonSubmit').click(function(e) {
 		  var place = $('#meetingLocation').val().trim();
+			place=place.replace(/\s\s+/g, ' ');
+
 			if ($('#meetingLocation').val() != '' && place.length < 5) {
 				$('#meetingLocation').val('');
 				bootbox.alert("Meeting place should have atleast 5 characters");
 				e.preventDefault();
-			} 
+			}
+			 if($('#meetingLocation').val() != ''){
+					$('#meetingLocation').val(place);
+		     }
 
 		if ($('form').valid()) {
 			 var action = '/council/councilmeeting/create' ;
