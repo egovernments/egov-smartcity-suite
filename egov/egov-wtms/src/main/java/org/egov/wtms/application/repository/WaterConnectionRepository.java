@@ -64,6 +64,9 @@ public interface WaterConnectionRepository extends JpaRepository<WaterConnection
 
     List<WaterConnection> findByPropertyIdentifier(String propertyIdentifier);
 
+    @Query(" select WC from WaterConnection WC where WC.propertyIdentifier in (:propertyIdentifiers)")
+    List<WaterConnection> findByPropertyIdentifierList(@Param("propertyIdentifiers") List<String> propertyIdentifiers);
+
     @Query(" from WaterConnection WC where WC.propertyIdentifier=:propertyIdentifier and WC.parentConnection is null")
     WaterConnection findParentWaterConnection(@Param("propertyIdentifier") final String propertyIdentifier);
 
