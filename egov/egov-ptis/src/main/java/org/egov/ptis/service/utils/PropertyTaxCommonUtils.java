@@ -207,7 +207,7 @@ public class PropertyTaxCommonUtils {
                     wfPropTaxDetailsMap.put("firstHalfGT",
                             reasonDmd.get(DEMANDRSN_STR_GENERAL_TAX) != null
                                     ? getAggregateGenralTax(reasonDmd)
-                                    : demandCollMap.get(DEMANDRSN_STR_VACANT_TAX));
+                                    : demandCollMap.get(CURRENTYEAR_FIRST_HALF).get(DEMANDRSN_STR_VACANT_TAX));
                     wfPropTaxDetailsMap.put("firstHalfEC", reasonDmd.get(DEMANDRSN_STR_EDUCATIONAL_TAX) != null
                             ? reasonDmd.get(DEMANDRSN_STR_EDUCATIONAL_TAX) : BigDecimal.ZERO);
                     wfPropTaxDetailsMap.put("firstHalfLC", reasonDmd.get(DEMANDRSN_STR_LIBRARY_CESS));
@@ -227,7 +227,7 @@ public class PropertyTaxCommonUtils {
                     wfPropTaxDetailsMap.put("secondHalfGT",
                             reasonDmd.get(DEMANDRSN_STR_GENERAL_TAX) != null
                                     ? getAggregateGenralTax(reasonDmd)
-                                    : demandCollMap.get(DEMANDRSN_STR_VACANT_TAX));
+                                    : demandCollMap.get(CURRENTYEAR_SECOND_HALF).get(DEMANDRSN_STR_VACANT_TAX));
                     wfPropTaxDetailsMap.put("secondHalfEC", reasonDmd.get(DEMANDRSN_STR_EDUCATIONAL_TAX) != null
                             ? reasonDmd.get(DEMANDRSN_STR_EDUCATIONAL_TAX) : BigDecimal.ZERO);
                     wfPropTaxDetailsMap.put("secondHalfLC", reasonDmd.get(DEMANDRSN_STR_LIBRARY_CESS));
