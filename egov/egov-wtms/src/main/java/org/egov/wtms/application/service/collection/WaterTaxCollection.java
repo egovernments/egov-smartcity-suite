@@ -285,11 +285,12 @@ public class WaterTaxCollection extends TaxCollection {
                         approvalPosition, FEE_COLLECTION_COMMENT,
                         waterConnectionDetails.getApplicationType().getCode(), null);
 
-            if ((!REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
-                    && APPLICATION_STATUS_ESTIMATENOTICEGEN.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()))
-                    || (APPLICATION_STATUS_ESTIMATENOTICEGEN.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()) &&
-                    connectionDemandService.getTotalDemandAmountDue(
-                            waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand()).compareTo(BigDecimal.ZERO) == 0))
+            if (!REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
+                    && APPLICATION_STATUS_ESTIMATENOTICEGEN.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
+                    || APPLICATION_STATUS_ESTIMATENOTICEGEN.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()) &&
+                            connectionDemandService.getTotalDemandAmountDue(
+                                    waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand())
+                                    .compareTo(BigDecimal.ZERO) == 0)
                 waterConnectionDetails
                         .setStatus(waterTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_FEEPAID, MODULETYPE));
             waterConnectionSmsAndEmailService.sendSmsAndEmail(waterConnectionDetails, null);

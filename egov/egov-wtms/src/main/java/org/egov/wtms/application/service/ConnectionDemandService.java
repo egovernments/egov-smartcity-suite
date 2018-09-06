@@ -482,7 +482,7 @@ public class ConnectionDemandService {
             List<EgBill> billlist = demandGenericDao.getAllBillsForDemand(demandObj, "N", "N");
             if (!billlist.isEmpty()) {
                 EgBill billObj = billlist.get(0);
-                billObj.setIs_History("Y");
+                billObj.setIs_History(DEMAND_ISHISTORY_Y);
                 billObj.setModifiedDate(date);
                 egBillDAO.create(billObj);
             }
@@ -571,7 +571,7 @@ public class ConnectionDemandService {
         if (demandObj.getId() == null) {
             WaterDemandConnection waterdemandConnection = new WaterDemandConnection();
             if (waterConnectionDetails.getWaterDemandConnection().isEmpty()
-                    || "Y".equalsIgnoreCase(
+                    || DEMAND_ISHISTORY_Y.equalsIgnoreCase(
                             waterConnectionDetails.getWaterDemandConnection().get(0).getDemand().getIsHistory())) {
                 waterdemandConnection.setDemand(demandObj);
                 waterdemandConnection.setWaterConnectionDetails(waterConnectionDetails);
@@ -913,9 +913,9 @@ public class ConnectionDemandService {
 
     public BigDecimal getTotalDemandAmountDue(EgDemand demand) {
         if (demand == null)
-            return BigDecimal.ZERO;
+            return ZERO;
         else {
-            BigDecimal amountDue = BigDecimal.ZERO;
+            BigDecimal amountDue = ZERO;
             for (EgDemandDetails details : demand.getEgDemandDetails())
                 amountDue = amountDue.add(details.getAmount().subtract(details.getAmtCollected()));
             return amountDue;
