@@ -245,7 +245,7 @@ function openVoucher(vid)
 																<td class="greybox"><strong><s:text
 																			name="payment.amount" />(Rs)</strong></td>
 																<td class="greybox" colspan="2"><span
-																	id="paymentAmountspan" /></td>
+																	id="paymentAmountspan" /><s:text name="%{paymentheader.paymentAmount}" /></td>
 															</tr>
 															<s:hidden name="functionSel" id="functionSel"
 																value="%{functionSel}" />
@@ -462,6 +462,7 @@ function openVoucher(vid)
 
 			<script>
 		document.getElementById('paymentAmountspan').innerHTML = "<fmt:formatNumber value='${totalAmt}' pattern='#0.00'/>";
+		document.getElementById('paymentAmountspan').innerHTML = "<fmt:formatNumber value='${paymentheader.paymentAmount}' pattern='#0.00'/>";
 		if('<%=request.getParameter("paymentid")%>'==null || '<%=request.getParameter("paymentid")%>'=='null'){
 			//document.getElementById('backbtnid').style.display='inline';
 			document.getElementById('printPreview').disabled=true;
