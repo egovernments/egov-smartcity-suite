@@ -90,7 +90,7 @@ public interface LicenseRepository extends JpaRepository<TradeLicense, Long> {
     List<String> findAllMobilePhoneNumberLike(@Param("mobilePhoneNumber") String mobilePhoneNumber);
 
     @Query("select l.id from TradeLicense l where l.natureOfBusiness.name='Permanent' " +
-            "and l.isActive=true and l.egDemand.egInstallmentMaster.fromDate < :installmentFromDate ")
+            "and l.isActive=true and l.demand.egInstallmentMaster.fromDate < :installmentFromDate ")
     List<Long> findLicenseIdsForDemandGeneration(@Param("installmentFromDate") Date installmentFromDate);
 
     List<TradeLicense> findByLicenseAppTypeIdAndStateNextActionAndStateOwnerPositionIn(Long licenseAppTypeId,
@@ -100,5 +100,5 @@ public interface LicenseRepository extends JpaRepository<TradeLicense, Long> {
 
     TradeLicense findByUid(String uid);
 
-    TradeLicense findByEgDemand(EgDemand egDemand);
+    TradeLicense findByDemand(EgDemand demand);
 }

@@ -247,7 +247,7 @@ public class TradeLicense extends StateAware<Position> {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_demand")
     @NotAudited
-    private EgDemand egDemand;
+    private EgDemand demand;
 
     @Valid
     @OneToOne(mappedBy = "license", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -343,12 +343,12 @@ public class TradeLicense extends StateAware<Position> {
             return format(NEW_RENEW_APPROVAL_URL, id);
     }
 
-    public EgDemand getEgDemand() {
-        return egDemand;
+    public EgDemand getDemand() {
+        return demand;
     }
 
-    public void setEgDemand(EgDemand egDemand) {
-        this.egDemand = egDemand;
+    public void setDemand(EgDemand demand) {
+        this.demand = demand;
     }
 
     public Date getApplicationDate() {
@@ -619,7 +619,7 @@ public class TradeLicense extends StateAware<Position> {
     }
 
     public EgDemand getCurrentDemand() {
-        return getEgDemand();
+        return getDemand();
     }
 
     public boolean isPaid() {
@@ -627,7 +627,7 @@ public class TradeLicense extends StateAware<Position> {
     }
 
     public BigDecimal getTotalBalance() {
-        return egDemand.getBaseDemand().subtract(egDemand.getAmtCollected());
+        return demand.getBaseDemand().subtract(demand.getAmtCollected());
     }
 
     public boolean isRejected() {
@@ -813,15 +813,13 @@ public class TradeLicense extends StateAware<Position> {
         return Objects.hash(getUid());
     }
 
-    public void recalculateBaseDemand(EgDemand egDemand) {
-        if (egDemand != null) {
-            egDemand.setAmtCollected(ZERO);
-            egDemand.setBaseDemand(ZERO);
-            egDemand.setModifiedDate(new Date());
-            for (final EgDemandDetails demandDetail : egDemand.getEgDemandDetails()) {
-                egDemand.setAmtCollected(egDemand.getAmtCollected().add(demandDetail.getAmtCollected()));
-                egDemand.setBaseDemand(egDemand.getBaseDemand().add(demandDetail.getAmount()));
-            }
+    public void recalculateBaseDemand() {
+        demand.setAmtCollected(ZERO);
+        demand.setBaseDemand(ZERO);
+        demand.setModifiedDate(new Date());
+        for (final EgDemandDetails demandDetail : demand.getEgDemandDetails()) {
+            demand.setAmtCollected(demand.getAmtCollected().add(demandDetail.getAmtCollected()));
+            demand.setBaseDemand(demand.getBaseDemand().add(demandDetail.getAmount()));
         }
     }
 }

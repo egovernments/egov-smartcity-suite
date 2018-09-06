@@ -74,7 +74,6 @@ import static org.egov.tl.utils.Constants.RENEWLICENSEREJECT;
 import static org.egov.tl.utils.Constants.RENEW_WITHOUT_FEE;
 import static org.egov.tl.utils.Constants.SIGNWORKFLOWACTION;
 import static org.egov.tl.utils.Constants.STATUS_ACTIVE;
-import static org.egov.tl.utils.Constants.TRADE_LICENSE;
 
 @Service
 @Transactional(readOnly = true)
@@ -98,10 +97,10 @@ public class LicenseApplicationService extends TradeLicenseService {
 
     @Transactional
     public TradeLicense create(TradeLicense license, WorkflowBean workflowBean) {
-        Date fromRange = installmentDao.getInsatllmentByModuleForGivenDate(licenseUtils.getModule(TRADE_LICENSE), new DateTime().toDate())
+        Date fromRange = installmentDao.getInsatllmentByModuleForGivenDate(licenseUtils.getModule(), new DateTime().toDate())
                 .getFromDate();
         Date toRange = installmentDao
-                .getInsatllmentByModuleForGivenDate(licenseUtils.getModule(TRADE_LICENSE), new DateTime().plusYears(1).toDate()).getToDate();
+                .getInsatllmentByModuleForGivenDate(licenseUtils.getModule(), new DateTime().plusYears(1).toDate()).getToDate();
         if (license.getCommencementDate() == null || license.getCommencementDate().before(fromRange)
                 || license.getCommencementDate().after(toRange))
             throw new ValidationException("TL-009", "TL-009");
@@ -135,7 +134,7 @@ public class LicenseApplicationService extends TradeLicenseService {
         final BigDecimal feematrixDmdAmt = calculateFeeAmount(license);
         if (feematrixDmdAmt.compareTo(currentDemandAmount) >= 0)
             recalculateDemand(this.feeMatrixService.getLicenseFeeDetails(license,
-                    license.getEgDemand().getEgInstallmentMaster().getFromDate()), license);
+                    license.getDemand().getEgInstallmentMaster().getFromDate()), license);
         license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
         processAndStoreDocument(license);
         if (license.isPaid())

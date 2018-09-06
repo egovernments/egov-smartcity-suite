@@ -67,6 +67,7 @@ import java.util.List;
 import static org.egov.tl.utils.Constants.COMMISSIONER_DESGN;
 import static org.egov.tl.utils.Constants.NEW_APPTYPE_CODE;
 import static org.egov.tl.utils.Constants.RENEW_APPTYPE_CODE;
+import static org.egov.tl.utils.Constants.TRADE_LICENSE;
 
 @Service
 public class LicenseUtils {
@@ -85,8 +86,8 @@ public class LicenseUtils {
     @Autowired
     private LicenseConfigurationService licenseConfigurationService;
 
-    public Module getModule(final String moduleName) {
-        return moduleService.getModuleByName(moduleName);
+    public Module getModule() {
+        return moduleService.getModuleByName(TRADE_LICENSE);
     }
 
     public List<Department> getAllDepartments() {

@@ -188,7 +188,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         licenseBill.setLicense(license);
         licenseBill.setModuleName(TRADE_LICENSE);
         licenseBill.setServiceCode(TL_SERVICE_CODE);
-        licenseBill.setModule(licenseUtils.getModule(TRADE_LICENSE));
+        licenseBill.setModule(licenseUtils.getModule());
         licenseBill.setBillType(egBillDao.getBillTypeByCode(BILL_TYPE_AUTO));
         licenseBill.setDepartmentCode(licenseConfigurationService.getDepartmentCodeForBillGenerate());
         licenseBill.setUserId(ApplicationThreadLocals.getUserId() == null ?
@@ -207,11 +207,11 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         final Date currentDate = new Date();
         final Map installmentWise = new HashMap<Installment, List<EgDemandDetails>>();
         final Set<Installment> sortedInstallmentSet = new TreeSet<>();
-        Module module = licenseUtils.getModule(TRADE_LICENSE);
+        Module module = licenseUtils.getModule();
         getCurrentInstallment(module);
         final List<EgDemandDetails> orderedDetailsList = new ArrayList<>();
         licenseApplicationService.calcPenaltyDemandDetails(license, demand);
-        license.recalculateBaseDemand(demand);
+        license.recalculateBaseDemand();
         for (final EgDemandDetails demandDetail : demand.getEgDemandDetails()) {
             final Installment installment = demandDetail.getEgDemandReason().getEgInstallmentMaster();
             if (installmentWise.get(installment) == null) {
@@ -314,7 +314,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
             final EgBill bill = egBillDao.findById(Long.valueOf(billReceiptInfoImpl.getBillReferenceNum()), false);
             final EgDemand demand = bill.getEgDemand();
             if (billReceipt.getEvent().equals(EVENT_RECEIPT_CREATED)) {
-                final TradeLicense tradeLicense = licenseApplicationService.getLicenseByEgDemand(demand);
+                final TradeLicense tradeLicense = licenseApplicationService.getLicenseByDemand(demand);
                 final Map<String, Map<String, EgDemandDetails>> installmentWiseDemandDetailsByReason = new HashMap<>();
                 Map<String, EgDemandDetails> demandDetailByReason;
                 EgDemandReason dmdRsn;
@@ -493,7 +493,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         EgDemandDetails dmdDet;
         final EgDemandDetails penaltyDmdDet = getDemandDetail(demand, "CHEQUE BOUNCE PENALTY");
         if (penaltyDmdDet == null)
-            dmdDet = insertPenalty(chqBouncePenalty, licenseUtils.getModule(TRADE_LICENSE));
+            dmdDet = insertPenalty(chqBouncePenalty, licenseUtils.getModule());
         else {
             BigDecimal existDmdDetAmt = penaltyDmdDet.getAmount();
             existDmdDetAmt = existDmdDetAmt == null || existDmdDetAmt.compareTo(ZERO) == 0 ? ZERO
@@ -803,8 +803,8 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         BigDecimal currentInstallmentAmount = ZERO;
         BigDecimal arrearAmount = ZERO;
         BigDecimal latePaymentCharges = ZERO;
-        final TradeLicense tradeLicense = licenseApplicationService.getLicenseByEgDemand(egBill.getEgDemand());
-        Installment currentInstallment = tradeLicense.getEgDemand().getEgInstallmentMaster();
+        final TradeLicense tradeLicense = licenseApplicationService.getLicenseByDemand(egBill.getEgDemand());
+        Installment currentInstallment = tradeLicense.getDemand().getEgInstallmentMaster();
         for (final EgBillDetails billdetail : billDetails)
             if (billdetail.getCrAmount() != null && billdetail.getCrAmount().compareTo(ZERO) > 0) {
                 final String[] desc = billdetail.getDescription().split("-", 2);

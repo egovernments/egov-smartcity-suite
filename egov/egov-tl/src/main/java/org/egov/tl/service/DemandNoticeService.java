@@ -89,7 +89,6 @@ import static org.egov.infra.utils.PdfUtils.appendFiles;
 import static org.egov.tl.utils.Constants.CITY_GRADE_CORPORATION;
 import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
 import static org.egov.tl.utils.Constants.RENEW_APPTYPE_CODE;
-import static org.egov.tl.utils.Constants.TRADE_LICENSE;
 
 @Service
 @Transactional(readOnly = true)
@@ -146,7 +145,7 @@ public class DemandNoticeService {
         reportParams.put("actDeclaration", actDeclaration);
 
         List<Installment> previousInstallment = installmentDao.fetchPreviousInstallmentsInDescendingOrderByModuleAndDate(
-                licenseUtils.getModule(TRADE_LICENSE), currentInstallment.getToDate(), 1);
+                licenseUtils.getModule(), currentInstallment.getToDate(), 1);
         if (!previousInstallment.isEmpty()) {
             reportParams.put("lastyear", getFinancialYearRange(previousInstallment.get(0)));
 

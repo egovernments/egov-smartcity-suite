@@ -132,7 +132,7 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
 
     @Override
     public List<EgDemand> getAllDemands() {
-        return Arrays.asList(license.getEgDemand());
+        return Arrays.asList(license.getDemand());
 
     }
 

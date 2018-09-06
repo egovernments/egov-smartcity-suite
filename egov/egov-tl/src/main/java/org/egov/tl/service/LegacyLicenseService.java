@@ -272,7 +272,7 @@ public class LegacyLicenseService extends LicenseService {
         egDemand.setIsHistory("N");
         egDemand.setCreateDate(new Date());
         egDemand.setModifiedDate(new Date());
-        Module module = licenseUtils.getModule(TRADE_LICENSE);
+        Module module = licenseUtils.getModule();
         for (Entry<Integer, Integer> legacyInstallmentwiseFee : legacyInstallmentwiseFees.entrySet())
             if (legacyInstallmentwiseFee.getValue() != null && legacyInstallmentwiseFee.getValue() > 0) {
                 Installment installment = installmentDao.fetchInstallmentByModuleAndInstallmentNumber(module,
@@ -292,7 +292,7 @@ public class LegacyLicenseService extends LicenseService {
                 egDemand.setBaseDemand(demandAmount.add(egDemand.getBaseDemand()).setScale(0, RoundingMode.HALF_UP));
                 egDemand.setAmtCollected(amtCollected.add(egDemand.getAmtCollected()).setScale(0, RoundingMode.HALF_UP));
             }
-        license.setEgDemand(egDemand);
+        license.setDemand(egDemand);
 
     }
 
@@ -327,7 +327,7 @@ public class LegacyLicenseService extends LicenseService {
     private void updateNewLegacyDemand(Map<Integer, Integer> updatedInstallmentFees,
                                        Map<Integer, Boolean> legacyFeePayStatus, EgDemand egDemand, TradeLicense license) {
 
-        Module module = licenseUtils.getModule(TRADE_LICENSE);
+        Module module = licenseUtils.getModule();
         for (Entry<Integer, Integer> updatedInstallmentFee : updatedInstallmentFees.entrySet())
             if (updatedInstallmentFee.getValue() != null && updatedInstallmentFee.getValue() > 0) {
 
@@ -343,12 +343,12 @@ public class LegacyLicenseService extends LicenseService {
                         amtCollected));
             }
         // Recalculating BasedDemand
-        license.recalculateBaseDemand(egDemand);
+        license.recalculateBaseDemand();
     }
 
     private List<Installment> getLastFiveYearInstallmentsForLicense() {
         List<Installment> installmentList = installmentDao
-                .fetchInstallments(licenseUtils.getModule(TRADE_LICENSE), new Date(), 6);
+                .fetchInstallments(licenseUtils.getModule(), new Date(), 6);
         Collections.reverse(installmentList);
         return installmentList;
     }

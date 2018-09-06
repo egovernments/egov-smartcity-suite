@@ -294,7 +294,7 @@ public class TradeLicenseService {
 
     public void raiseNewDemand(TradeLicense license) {
         final EgDemand ld = new EgDemand();
-        final Module moduleName = licenseUtils.getModule(TRADE_LICENSE);
+        final Module moduleName = licenseUtils.getModule();
         final Installment installment = this.installmentDao.getInsatllmentByModuleForGivenDate(moduleName,
                 license.getCommencementDate());
         ld.setIsHistory("N");
@@ -317,8 +317,8 @@ public class TradeLicenseService {
         }
 
         calcPenaltyDemandDetails(license, ld);
-        license.recalculateBaseDemand(ld);
-        license.setEgDemand(ld);
+        license.setDemand(ld);
+        license.recalculateBaseDemand();
     }
 
     private BigDecimal calculateAmountByRateType(TradeLicense license, FeeMatrixDetail feeMatrixDetail) {
@@ -338,7 +338,7 @@ public class TradeLicenseService {
     }
 
     public TradeLicense updateDemandForChangeTradeArea(TradeLicense license) {
-        final EgDemand egDemand = license.getEgDemand();
+        final EgDemand egDemand = license.getDemand();
         Date date = new Date();
         final Set<EgDemandDetails> demandDetails = egDemand.getEgDemandDetails();
         final Date licenseDate = license.isNewApplication() ? license.getCommencementDate()
@@ -354,7 +354,7 @@ public class TradeLicenseService {
                     dmd.setModifiedDate(date);
                 }
         calcPenaltyDemandDetails(license, egDemand);
-        license.recalculateBaseDemand(egDemand);
+        license.recalculateBaseDemand();
         return license;
 
     }
@@ -422,7 +422,7 @@ public class TradeLicenseService {
     private EgDemandDetails insertPenaltyDmdDetail(Installment inst, BigDecimal penaltyAmount) {
         EgDemandDetails demandDetail = null;
         if (penaltyAmount != null && penaltyAmount.compareTo(ZERO) > 0) {
-            Module module = licenseUtils.getModule(TRADE_LICENSE);
+            Module module = licenseUtils.getModule();
             final EgDemandReasonMaster egDemandReasonMaster = demandGenericDao.getDemandReasonMasterByCode(
                     PENALTY_DMD_REASON_CODE,
                     module);
@@ -457,14 +457,14 @@ public class TradeLicenseService {
                     dmd.setAmount(tradeAmt.setScale(0, RoundingMode.HALF_UP));
                 }
         calcPenaltyDemandDetails(license, egDemand);
-        license.recalculateBaseDemand(egDemand);
+        license.recalculateBaseDemand();
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void raiseDemand(TradeLicense licenze, final Module module, final Installment installment) {
         // Refetching license in this txn to avoid lazy initialization issue
         TradeLicense license = licenseRepository.findOne(licenze.getId());
-        Map<EgDemandReason, EgDemandDetails> reasonWiseDemandDetails = getReasonWiseDemandDetails(license.getEgDemand());
+        Map<EgDemandReason, EgDemandDetails> reasonWiseDemandDetails = getReasonWiseDemandDetails(license.getDemand());
         license.setLicenseAppType(licenseAppTypeService.getLicenseAppTypeByCode(RENEW_APPTYPE_CODE));
         for (FeeMatrixDetail feeMatrixDetail : feeMatrixService.getLicenseFeeDetails(license, installment.getFromDate())) {
             String feeType = feeMatrixDetail.getFeeMatrix().getFeeType().getName();
@@ -477,15 +477,15 @@ public class TradeLicenseService {
             EgDemandDetails licenseDemandDetail = reasonWiseDemandDetails.get(reason);
             BigDecimal tradeAmt = calculateAmountByRateType(license, feeMatrixDetail);
             if (licenseDemandDetail == null)
-                license.getEgDemand().getEgDemandDetails()
+                license.getDemand().getEgDemandDetails()
                         .add(EgDemandDetails.fromReasonAndAmounts(tradeAmt, reason, ZERO));
             else if (licenseDemandDetail.getBalance().compareTo(ZERO) != 0)
                 licenseDemandDetail.setAmount(tradeAmt);
             if (license.getCurrentDemand().getEgInstallmentMaster().getInstallmentYear().before(installment.getInstallmentYear()))
-                license.getEgDemand().setEgInstallmentMaster(installment);
+                license.getDemand().setEgInstallmentMaster(installment);
 
         }
-        license.recalculateBaseDemand(license.getEgDemand());
+        license.recalculateBaseDemand();
         licenseRepository.save(license);
     }
 
@@ -716,7 +716,7 @@ public class TradeLicenseService {
 
     public BigDecimal calculateFeeAmount(final TradeLicense license) {
         final Date licenseDate = license.isNewApplication() ? license.getCommencementDate()
-                : license.getEgDemand().getEgInstallmentMaster().getFromDate();
+                : license.getDemand().getEgInstallmentMaster().getFromDate();
         final List<FeeMatrixDetail> feeList = this.feeMatrixService.getLicenseFeeDetails(license, licenseDate);
         BigDecimal totalAmount = ZERO;
         for (final FeeMatrixDetail fm : feeList) {
@@ -873,7 +873,7 @@ public class TradeLicenseService {
     }
 
     public List<Long> getLicenseIdsForDemandGeneration(CFinancialYear financialYear) {
-        Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(licenseUtils.getModule(TRADE_LICENSE),
+        Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(licenseUtils.getModule(),
                 financialYear.getStartingDate());
         return licenseRepository.findLicenseIdsForDemandGeneration(installment.getFromDate());
     }
@@ -1117,7 +1117,7 @@ public class TradeLicenseService {
     public BigDecimal[] getDemandColl(TradeLicense license) {
         BigDecimal[] dmdColl = new BigDecimal[3];
         Arrays.fill(dmdColl, ZERO);
-        final Installment latestInstallment = this.installmentDao.getInsatllmentByModuleForGivenDate(licenseUtils.getModule(TRADE_LICENSE),
+        final Installment latestInstallment = this.installmentDao.getInsatllmentByModuleForGivenDate(licenseUtils.getModule(),
                 new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate());
         license.getCurrentDemand().getEgDemandDetails().stream().forEach(egDemandDetails -> {
                     if (latestInstallment.equals(egDemandDetails.getEgDemandReason().getEgInstallmentMaster())) {
@@ -1137,7 +1137,7 @@ public class TradeLicenseService {
         final Criteria searchCriteria = entityManager.unwrap(Session.class).createCriteria(TradeLicense.class);
         searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat").createAlias("tradeName", "subcat")
                 .createAlias("status", "licstatus").createAlias("natureOfBusiness", "nob")
-                .createAlias("licenseDemand", "licDemand").createAlias("licenseAppType", "appType")
+                .createAlias("demand", "licDemand").createAlias("licenseAppType", "appType")
                 .add(Restrictions.ne("appType.code", CLOSURE_APPTYPE_CODE));
         if (isNotBlank(demandNoticeForm.getLicenseNumber()))
             searchCriteria.add(Restrictions.eq("licenseNumber", demandNoticeForm.getLicenseNumber()).ignoreCase());
@@ -1174,7 +1174,7 @@ public class TradeLicenseService {
                 Installment currentInstallment = egDemand.getEgInstallmentMaster();
                 List<Installment> previousInstallment = installmentDao
                         .fetchPreviousInstallmentsInDescendingOrderByModuleAndDate(
-                                licenseUtils.getModule(TRADE_LICENSE), currentInstallment.getToDate(), 1);
+                                licenseUtils.getModule(), currentInstallment.getToDate(), 1);
                 Map<String, Map<String, BigDecimal>> outstandingFees = getOutstandingFeeForDemandNotice(license,
                         currentInstallment, previousInstallment.get(0));
                 Map<String, BigDecimal> licenseFees = outstandingFees.get(LICENSE_FEE_TYPE);
@@ -1320,7 +1320,7 @@ public class TradeLicenseService {
         return licenseRepository.findByUid(uid);
     }
 
-    public TradeLicense getLicenseByEgDemand(EgDemand egDemand) {
-        return licenseRepository.findByEgDemand(egDemand);
+    public TradeLicense getLicenseByDemand(EgDemand demand) {
+        return licenseRepository.findByDemand(demand);
     }
 }

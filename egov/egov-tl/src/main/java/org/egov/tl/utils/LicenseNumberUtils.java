@@ -59,7 +59,6 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.egov.tl.utils.Constants.TRADE_LICENSE;
 
 @Service
 public class LicenseNumberUtils {
@@ -89,7 +88,7 @@ public class LicenseNumberUtils {
 
     public String generateBillNumber() {
         String currentInstallmentYear = DateUtils.toYearFormat(installmentDao.getInsatllmentByModuleForGivenDate(
-                licenseUtils.getModule(TRADE_LICENSE), new Date()).getInstallmentYear());
+                licenseUtils.getModule(), new Date()).getInstallmentYear());
         String sequenceName = Constants.LICENSE_BILLNO_SEQ + currentInstallmentYear;
         return String.format("%s%06d", EMPTY, genericSequenceNumberGenerator.getNextSequence(sequenceName));
     }

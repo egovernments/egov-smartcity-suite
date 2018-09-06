@@ -78,7 +78,6 @@ import java.util.List;
 import static org.egov.infra.persistence.utils.PersistenceUtils.flushBatchUpdate;
 import static org.egov.tl.entity.enums.ProcessStatus.COMPLETED;
 import static org.egov.tl.entity.enums.ProcessStatus.INCOMPLETE;
-import static org.egov.tl.utils.Constants.TRADE_LICENSE;
 
 @Service
 @Transactional(readOnly = true)
@@ -152,7 +151,7 @@ public class DemandGenerationService {
                 .getDemandGenerationLogByInstallmentYear(demandGenerationRequest.getInstallmentYear());
         List<DemandGenerationLogDetail> demandGenerationLogDetails = new ArrayList<>();
         if (demandGenerationLog != null && !demandGenerationRequest.getLicenseIds().isEmpty()) {
-            Module module = licenseUtils.getModule(TRADE_LICENSE);
+            Module module = licenseUtils.getModule();
             CFinancialYear financialYear = financialYearService.getFinacialYearByYearRange(demandGenerationRequest.getInstallmentYear());
             Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(module, financialYear.getStartingDate());
             int batchUpdateCount = 0;
@@ -184,9 +183,9 @@ public class DemandGenerationService {
         boolean generationSuccess = true;
         try {
             TradeLicense license = licenseService.getLicenseById(licenseId);
-            Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(licenseUtils.getModule(TRADE_LICENSE),
+            Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(licenseUtils.getModule(),
                     new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate());
-            licenseService.raiseDemand(license, licenseUtils.getModule(TRADE_LICENSE), installment);
+            licenseService.raiseDemand(license, licenseUtils.getModule(), installment);
             renewalNotificationService.notifyLicenseRenewal(license, installment);
         } catch (ValidationException e) {
             LOGGER.warn(ERROR_MSG, e);
