@@ -250,7 +250,7 @@ public class TradeLicense extends StateAware<Position> {
     private EgDemand egDemand;
 
     @Valid
-    @OneToOne(mappedBy = "license", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
+    @OneToOne(mappedBy = "license", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Audited(targetAuditMode = RelationTargetAuditMode.AUDITED)
     private Licensee licensee;
 
