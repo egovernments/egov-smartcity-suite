@@ -70,6 +70,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.CHANGEOFUSE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSECONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSINGCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.COMMISSIONER_DESGN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.COMM_APPROVAL_PENDING;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.DEPUTY_ENGINEER_DESIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.EXECUTIVE_ENGINEER_DESIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.FILESTORE_MODULECODE;
@@ -81,7 +82,6 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULETYPE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MUNICIPAL_ENGINEER_DESIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.COMM_APPROVAL_PENDING;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PENDING_DIGI_SIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PERMENENTCLOSECODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PROCEED_WITHOUT_METER_EST_AMT;
@@ -149,6 +149,7 @@ import org.egov.wtms.masters.service.MeterCostService;
 import org.egov.wtms.masters.service.RoadCategoryService;
 import org.egov.wtms.utils.WaterTaxNumberGenerator;
 import org.egov.wtms.utils.WaterTaxUtils;
+import org.egov.wtms.web.validator.UpdateWaterConnectionValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -220,6 +221,9 @@ public class UpdateConnectionController extends GenericConnectionController {
     @Autowired
     private WaterTaxNumberGenerator waterTaxNumberGenerator;
 
+    @Autowired
+    private UpdateWaterConnectionValidator updateWaterConnectionValidator;
+
     @ModelAttribute
     public WaterConnectionDetails getWaterConnectionDetails(@PathVariable final String applicationNumber) {
         return waterConnectionDetailsService.findByApplicationNumber(applicationNumber);
@@ -230,6 +234,14 @@ public class UpdateConnectionController extends GenericConnectionController {
             final HttpServletRequest request) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByApplicationNumber(applicationNumber);
+        if (REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())
+                && APPLICATION_STATUS_ESTIMATENOTICEGEN.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
+                && updateWaterConnectionValidator.validateRegularizationAmount(waterConnectionDetails)) {
+            final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getWaterTaxDueAmount(waterConnectionDetails);
+            model.addAttribute("waterTaxDueforParent", waterTaxDueforParent);
+            model.addAttribute("message", "msg.watercharges.amount.due");
+            return "newconnection-edit";
+        }
         return loadViewData(model, request, waterConnectionDetails);
     }
 
@@ -330,6 +342,11 @@ public class UpdateConnectionController extends GenericConnectionController {
                 APPLICATION_STATUS_FEEPAID.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()) &&
                 COMMISSIONER_DESGN.equalsIgnoreCase(loggedInUserDesignation))
             workflowContainer.setPendingActions(COMM_APPROVAL_PENDING);
+        else if (REGULARIZE_CONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())) {
+            workflowContainer.setPendingActions(waterConnectionDetailsService
+                    .getReglnConnectionPendingAction(waterConnectionDetails, loggedInUserDesignation, null));
+            model.addAttribute("pendingActions", workflowContainer.getPendingActions());
+        }
         prepareWorkflow(model, waterConnectionDetails, workflowContainer);
         model.addAttribute("currentState", waterConnectionDetails.getCurrentState().getValue());
         model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
