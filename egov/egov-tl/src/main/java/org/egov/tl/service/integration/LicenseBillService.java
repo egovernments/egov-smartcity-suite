@@ -355,12 +355,11 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                 if (tradeLicense.hasState()) {
                     if (tradeLicense.transitionCompleted())
                         throw new ValidationException("TL-008", "License application may be already cancelled");
-                    if (!tradeLicense.isNewWorkflow())
-                        updateWorkflowState(tradeLicense);
-                    else {
+                    if (tradeLicense.isNewWorkflow()) {
                         tradeLicense.setCollectionPending(false);
                         licenseApplicationService.collectionTransition(tradeLicense);
-                    }
+                    } else
+                        updateWorkflowState(tradeLicense);
                 }
                 licenseCitizenPortalService.onUpdate(tradeLicense);
                 licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(tradeLicense);
@@ -828,7 +827,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
             receiptAmountInfo.setInstallmentTo(formatter.format(filteredBillDetails.get(billDetailsSize - 1).getInstallmentEndDate()));
         }
 
-        String revenueWard = tradeLicense.getParentBoundary() != null ? tradeLicense.getParentBoundary().getName() : "NA";
+        String revenueWard = tradeLicense.getParentBoundary() == null ? "NA" : tradeLicense.getParentBoundary().getName();
         receiptAmountInfo.setArrearsAmount(arrearAmount);
         receiptAmountInfo.setCurrentInstallmentAmount(currentInstallmentAmount);
         receiptAmountInfo.setLatePaymentCharges(latePaymentCharges);

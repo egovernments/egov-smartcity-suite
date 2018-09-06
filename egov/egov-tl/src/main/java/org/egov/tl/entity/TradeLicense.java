@@ -627,7 +627,7 @@ public class TradeLicense extends StateAware<Position> {
     }
 
     public BigDecimal getTotalBalance() {
-        return demand.getBaseDemand().subtract(demand.getAmtCollected());
+        return getDemand().getBaseDemand().subtract(getDemand().getAmtCollected());
     }
 
     public boolean isRejected() {
@@ -814,12 +814,12 @@ public class TradeLicense extends StateAware<Position> {
     }
 
     public void recalculateBaseDemand() {
-        demand.setAmtCollected(ZERO);
-        demand.setBaseDemand(ZERO);
-        demand.setModifiedDate(new Date());
-        for (final EgDemandDetails demandDetail : demand.getEgDemandDetails()) {
-            demand.setAmtCollected(demand.getAmtCollected().add(demandDetail.getAmtCollected()));
-            demand.setBaseDemand(demand.getBaseDemand().add(demandDetail.getAmount()));
+        getDemand().setAmtCollected(ZERO);
+        getDemand().setBaseDemand(ZERO);
+        getDemand().setModifiedDate(new Date());
+        for (final EgDemandDetails demandDetail : getDemand().getEgDemandDetails()) {
+            getDemand().setAmtCollected(getDemand().getAmtCollected().add(demandDetail.getAmtCollected()));
+            getDemand().setBaseDemand(getDemand().getBaseDemand().add(demandDetail.getAmount()));
         }
     }
 }
