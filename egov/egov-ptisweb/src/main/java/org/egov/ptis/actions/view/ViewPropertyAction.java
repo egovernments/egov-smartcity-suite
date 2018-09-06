@@ -383,7 +383,7 @@ public class ViewPropertyAction extends BaseFormAction {
 			viewMap.put(DOCUMENTNO, documentTypeDetails.getDocumentNo());
 			viewMap.put(DOCUMENTDATE, documentTypeDetails.getDocumentDate());
 		} catch (Exception e) {
-			LOGGER.error("No Document type details present for Basicproperty " + e);
+			LOGGER.warn("No Document type details present for Basicproperty ", e);
 			viewMap.put(DOCUMENTNO,
 					basicProperty.getRegdDocNo() != null ? basicProperty.getRegdDocNo() : StringUtils.EMPTY);
 			viewMap.put(DOCUMENTDATE, basicProperty.getRegdDocDate() != null ? basicProperty.getRegdDocDate() : null);
