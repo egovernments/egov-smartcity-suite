@@ -74,7 +74,7 @@
 				<div class="form-group">
 					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.accountnumber" /> <span class="mandatory"></span> </label>
 					<div class="col-sm-3 add-margin">
-						<form:input path="accountnumber" class="form-control text-left patternvalidation" 
+						<form:input path="accountnumber" class="form-control text-left patternvalidation"
 						onkeypress="return replaceSpecialChar(event)" data-pattern="alphanumeric" maxlength="50" required="required" />
 						<form:errors path="accountnumber" cssClass="error-msg" />
 					</div>
@@ -145,6 +145,12 @@
 	</div>
 </div>
 <script type="text/javascript" >
+	var bankAccountId = '${bankaccount.id}';
+	if(bankAccountId != "" && bankAccountId != null){
+        document.getElementById("accounttype").disabled = true;
+	}else{
+        document.getElementById("accounttype").disabled = false;
+	}
 	function replaceSpecialChar(e) {
 	    var k;
 	    document.all ? k = e.keyCode : k = e.which;
