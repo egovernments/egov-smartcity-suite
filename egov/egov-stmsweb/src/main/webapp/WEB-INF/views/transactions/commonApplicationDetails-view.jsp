@@ -179,7 +179,7 @@
 			</div>
 			<div class="col-xs-3 add-margin view-content" id="propertytaxdue">
 				<c:choose>
-					<c:when test="${null!= mode && propertyTax > 0}">
+					<c:when test="${mode != null && propertyTax > 0}">
 						<c:out value="${propertyTax}" />
 					</c:when>
 					<c:otherwise>
@@ -187,20 +187,21 @@
 					</c:otherwise>
 				</c:choose>
 			</div>
-			<div class="col-xs-3 add-margin">
-				<spring:message code="lbl.current.due" />
+			 <div class="col-xs-3 add-margin">
+				<spring:message code="lbl.executiondate" />
 			</div>
-			<div class="col-xs-3 add-margin view-content"></div>
 			<div class="col-xs-3 add-margin view-content">
 				<c:choose>
-					<c:when test="${null!= mode && sewerageTaxDue > 0}">
-						<c:out value="${sewerageTaxDue}" />
+					<c:when test="${sewerageApplicationDetails.connection.status=='ACTIVE'}">
+					  <fmt:formatDate value="${sewerageApplicationDetails.connection.executionDate}"
+														pattern="dd/MM/yyyy" var="executionDate" />
+					  <c:out value="${executionDate}" />
 					</c:when>
 					<c:otherwise>
-						<spring:message code="lbl.zero.code" />
+						<spring:message code="lb.NA.code" />
 					</c:otherwise>
 				</c:choose>
 			</div>
-		</div>
+ 		</div>
 	</div>
 </div>
