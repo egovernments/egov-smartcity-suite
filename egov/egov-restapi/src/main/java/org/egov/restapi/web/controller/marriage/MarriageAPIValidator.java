@@ -106,15 +106,27 @@ public class MarriageAPIValidator implements Validator {
             if (childBoundary == null)
                 errors.rejectValue("locality", "Invalid Locality", "Invalid Locality");
         }
-        if (marriageRegistrationRequest.getHusbandName() != null &&
-                StringUtils.isBlank(marriageRegistrationRequest.getHusbandName().getFirstName())) {
-            errors.rejectValue("husbandName.firstName", "Husband firstName cannot be empty","Husband firstName cannot be empty");
+
+        if (marriageRegistrationRequest.getHusbandName() != null
+                && StringUtils.isBlank(marriageRegistrationRequest.getHusbandName().getFirstName())) {
+            errors.rejectValue("husbandName.firstName", "Husband firstName cannot be empty", "Husband firstName cannot be empty");
+        } else if (!isCorrectNamePattern(new String[] { marriageRegistrationRequest.getHusbandName().getFirstName(),
+                marriageRegistrationRequest.getHusbandName().getMiddleName(),
+                marriageRegistrationRequest.getHusbandName().getLastName() })) {
+            errors.rejectValue("husbandName", "Husband firstName/MiddleName/LastName must contain alphabets only",
+                    "Husband firstName/MiddleName/LastName must contain alphabets only");
         }
+
         if (marriageRegistrationRequest.getWifeName() != null
                 && StringUtils.isBlank(marriageRegistrationRequest.getWifeName().getFirstName())) {
             errors.rejectValue("wifeName.firstName", "Wife firstName cannot be empty", "Wife firstName cannot be empty");
+        } else if (!isCorrectNamePattern(new String[] { marriageRegistrationRequest.getWifeName().getFirstName(),
+                marriageRegistrationRequest.getWifeName().getMiddleName(),
+                marriageRegistrationRequest.getWifeName().getLastName() })) {
+            errors.rejectValue("wifeName", "Wife firstName/MiddleName/LastName must contain alphabets only",
+                    "Wife firstName/MiddleName/LastName must contain alphabets only");
         }
-        
+
         if (marriageRegistrationRequest.getHusbandreligion() != null
                 && religionService.getReligion(marriageRegistrationRequest.getHusbandreligion()) == null) {
             errors.rejectValue("husbandreligion", "Invalid bridegroom's religion", "Invalid bridegroom's religion");
@@ -141,6 +153,20 @@ public class MarriageAPIValidator implements Validator {
 
     }
     
+    public boolean isCorrectNamePattern(String[] applicantNames) {
+        for (String applicantName : applicantNames) {
+            if (!StringUtils.isBlank(applicantName)) {
+                CharSequence inputStr = applicantName;
+                Pattern namePattern = Pattern.compile("^[a-zA-Z\\s]*$", Pattern.CASE_INSENSITIVE);
+                matcher = namePattern.matcher(inputStr);
+                if (!matcher.matches())
+                    return false;
+            }
+        }
+        return true;
+
+    }
+
     private void validateBrideGroomInformation(final MarriageRegistrationRequest registration, final Errors errors) {
         if (registration.getHusbnadAgeInYearsAsOnMarriage() != null
                 && registration.getHusbnadAgeInYearsAsOnMarriage() < 21)
