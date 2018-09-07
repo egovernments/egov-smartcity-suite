@@ -269,20 +269,6 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
                 sbimopsResponse.setTxnReferenceNo(responseParameterMap.get(SBIMOPS_CFMSID).toString());
                 // CFMS is not sending the bank transaction date. Setting receipt date as transaction date.
                 sbimopsResponse.setTxnDate(onlinePayment.getReceiptHeader().getReceiptDate());
-                
-/*                final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
-                Date transDate = null;
-                try {
-                    transDate = simpleDateFormat.parse(responseParameterMap.get(SBIMOPS_BNKDT).toString());
-                    sbimopsResponse.setTxnDate(transDate);
-                } catch (final ParseException e) {
-                    LOGGER.error(
-                            "Error in parsing transaction date ["
-                                    + responseParameterMap.get(SBIMOPS_BNKDT)
-                                    + "]",
-                            e);
-                    throw new ApplicationRuntimeException(".transactiondate.parse.error", e);
-                }*/
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("End SbimopsAdaptor-parsePaymentResponse");
             }
