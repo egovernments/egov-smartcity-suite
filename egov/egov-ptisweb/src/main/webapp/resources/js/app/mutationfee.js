@@ -60,10 +60,12 @@ jQuery(document).ready(
 				if (this.value != "" || this.value.length > 0) {
 					jQuery('#flatAmount').val("").attr('disabled','disabled');
 					jQuery('#recursiveFactor').val("").attr('disabled','disabled');
+					jQuery('#recursiveAmount').val("").attr('disabled','disabled');
 				}
 				else {
 					jQuery('#flatAmount').removeAttr('disabled');
 					jQuery('#recursiveFactor').removeAttr('disabled');
+					jQuery('#recursiveAmount').removeAttr('disabled');
 				}
 				
 			});
