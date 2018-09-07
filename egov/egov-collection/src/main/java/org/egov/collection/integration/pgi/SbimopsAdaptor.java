@@ -267,7 +267,10 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
                 sbimopsResponse
                         .setTxnAmount(new BigDecimal(Double.valueOf(responseParameterMap.get(SBIMOPS_TAMT))));
                 sbimopsResponse.setTxnReferenceNo(responseParameterMap.get(SBIMOPS_CFMSID).toString());
-                final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
+                // CFMS is not sending the bank transaction date. Setting receipt date as transaction date.
+                sbimopsResponse.setTxnDate(onlinePayment.getReceiptHeader().getReceiptDate());
+                
+/*                final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
                 Date transDate = null;
                 try {
                     transDate = simpleDateFormat.parse(responseParameterMap.get(SBIMOPS_BNKDT).toString());
@@ -279,7 +282,7 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
                                     + "]",
                             e);
                     throw new ApplicationRuntimeException(".transactiondate.parse.error", e);
-                }
+                }*/
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("End SbimopsAdaptor-parsePaymentResponse");
             }
@@ -314,7 +317,7 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
             response = (CloseableHttpResponse) client.execute(httpPost);
         } catch (IOException e) {
             LOGGER.error(
-                    "SBIMOPS reconciliation, error while sending the request for SBIMOPS reconciliation");
+                    "SBIMOPS reconciliation, error while sending the request for SBIMOPS reconciliation", e);
             throw new ApplicationRuntimeException(
                     "SBIMOPS reconciliation, error while sending the request for SBIMOPS reconciliation", e);
         }
@@ -369,7 +372,7 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
                 return responseSbimopsMap;
             }
         } catch (IOException e) {
-            LOGGER.error("SBIMOPS reconciliation, error while reading the response content");
+            LOGGER.error("SBIMOPS reconciliation, error while reading the response content", e);
             throw new ApplicationRuntimeException(" SBIMOPS reconciliation, error while reading the response content", e);
         }
     }
