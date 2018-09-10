@@ -167,7 +167,7 @@ public class RegularisedConnectionController extends GenericConnectionController
     @PostMapping("/regulariseconnection/new")
     public String createRegulariseConnApplication(@ModelAttribute final WaterConnectionDetails waterConnectionDetails,
             final HttpServletRequest request, final BindingResult errors, final Model model) {
-        return createRegularisedConnection(waterConnectionDetails, null, errors, model, request);
+        return createReglnConnection(waterConnectionDetails, null, errors, model, request);
     }
 
     @GetMapping("/regulariseconnection-form/{id}")
@@ -182,7 +182,7 @@ public class RegularisedConnectionController extends GenericConnectionController
     }
 
     @PostMapping("/regulariseconnection-form/{id}")
-    public String createRegularisedConnection(@ModelAttribute final WaterConnectionDetails waterConnectionDetails,
+    public String createReglnConnection(@ModelAttribute final WaterConnectionDetails waterConnectionDetails,
             @PathVariable final Long id, final BindingResult errors, final Model model,
             final HttpServletRequest request) {
 
@@ -227,10 +227,10 @@ public class RegularisedConnectionController extends GenericConnectionController
             waterConnectionDetailsService.validateWaterRateAndDonationHeader(waterConnectionDetails);
         final List<ApplicationDocuments> applicationDocuments = new ArrayList<>();
         final String documentsRequired = waterTaxUtils.documentRequiredForBPLCategory();
-        final int i = 0;
+        final int index = 0;
         if (!waterConnectionDetails.getApplicationDocs().isEmpty())
             for (final ApplicationDocuments applicationDocument : waterConnectionDetails.getApplicationDocs())
-                newConnectionService.validateDocuments(applicationDocuments, applicationDocument, i, errors,
+                newConnectionService.validateDocuments(applicationDocuments, applicationDocument, index, errors,
                         waterConnectionDetails.getCategory().getId(), documentsRequired);
 
         if (waterConnectionDetails.getState() == null)

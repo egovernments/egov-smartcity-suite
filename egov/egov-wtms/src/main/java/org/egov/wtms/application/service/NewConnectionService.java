@@ -194,7 +194,7 @@ public class NewConnectionService {
     }
 
     public void validateDocuments(final List<ApplicationDocuments> applicationDocs,
-            final ApplicationDocuments applicationDocument, final int i, final BindingResult resultBinder,
+            final ApplicationDocuments applicationDocument, final int index, final BindingResult resultBinder,
             final Long categoryId, final String documentRequired) {
 
         final ConnectionCategory connectionCategory = connectionCategoryService.findOne(categoryId);
@@ -202,22 +202,22 @@ public class NewConnectionService {
                 && connectionCategory.getName().equalsIgnoreCase(CATEGORY_BPL)
                 && documentRequired.equalsIgnoreCase(applicationDocument.getDocumentNames().getDocumentName())
                 && applicationDocument.getDocumentNames().isRequired())
-            validateDocumentsForBPLCategory(applicationDocs, applicationDocument, resultBinder, i);
+            validateDocumentsForBPLCategory(applicationDocs, applicationDocument, resultBinder, index);
         else {
-            validateDocumentsRequired(applicationDocument, resultBinder, i);
+            validateDocumentsRequired(applicationDocument, resultBinder, index);
             if (connectionDetailService.validApplicationDocument(applicationDocument))
                 applicationDocs.add(applicationDocument);
         }
     }
 
     public void validateDocumentsRequired(final ApplicationDocuments applicationDocument, final BindingResult resultBinder,
-            final int i) {
+            final int index) {
         if (applicationDocument.getDocumentNumber() == null && applicationDocument.getDocumentDate() != null) {
-            final String fieldError = "applicationDocs[" + i + "].documentNumber";
+            final String fieldError = "applicationDocs[" + index + "].documentNumber";
             resultBinder.rejectValue(fieldError, "documentNumber.required");
         }
         if (applicationDocument.getDocumentNumber() != null && applicationDocument.getDocumentDate() == null) {
-            final String fieldError = "applicationDocs[" + i + "].documentDate";
+            final String fieldError = "applicationDocs[" + index + "].documentDate";
             resultBinder.rejectValue(fieldError, "documentDate.required");
         }
         if (applicationDocument.getDocumentNumber() != null && applicationDocument.getDocumentDate() != null) {
@@ -226,20 +226,20 @@ public class NewConnectionService {
                 stream = Arrays.asList(applicationDocument.getFiles()).stream().filter(file -> !file.isEmpty())
                         .iterator();
             if (stream == null) {
-                final String fieldError = "applicationDocs[" + i + "].files";
+                final String fieldError = "applicationDocs[" + index + "].files";
                 resultBinder.rejectValue(fieldError, "files.required");
             }
         }
     }
 
     public void validateDocumentsForBPLCategory(final List<ApplicationDocuments> applicationDocs,
-            final ApplicationDocuments applicationDocument, final BindingResult resultBinder, final int i) {
+            final ApplicationDocuments applicationDocument, final BindingResult resultBinder, final int index) {
         if (applicationDocument.getDocumentNumber() == null) {
-            final String fieldError = "applicationDocs[" + i + "].documentNumber";
+            final String fieldError = "applicationDocs[" + index + "].documentNumber";
             resultBinder.rejectValue(fieldError, "documentNumber.required");
         }
         if (applicationDocument.getDocumentDate() == null) {
-            final String fieldError = "applicationDocs[" + i + "].documentDate";
+            final String fieldError = "applicationDocs[" + index + "].documentDate";
             resultBinder.rejectValue(fieldError, "documentDate.required");
         }
 
@@ -251,7 +251,7 @@ public class NewConnectionService {
             if (stream != null && connectionDetailService.validApplicationDocument(applicationDocument))
                 applicationDocs.add(applicationDocument);
         } else {
-            final String fieldError = "applicationDocs[" + i + "].files";
+            final String fieldError = "applicationDocs[" + index + "].files";
             resultBinder.rejectValue(fieldError, "files.required");
         }
     }
