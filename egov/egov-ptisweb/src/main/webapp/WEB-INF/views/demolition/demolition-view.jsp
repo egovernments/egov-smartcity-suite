@@ -158,6 +158,11 @@ body
 					</div>
 				</div>
 			</div>
+			<c:if test="${state != null}">
+				<tr>
+					<jsp:include page="../common/workflowHistoryView.jsp" />
+				<tr>
+			</c:if>
 		    <c:choose>
             <c:when test="${currentDesignation != 'Commissioner'}">
 			<jsp:include page="../common/commonWorkflowMatrix.jsp"/>

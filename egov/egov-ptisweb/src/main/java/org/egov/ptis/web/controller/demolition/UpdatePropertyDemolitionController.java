@@ -79,6 +79,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -140,6 +141,7 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
         String currentDesignation = null;
         final String currState = property.getState().getValue();
         final String nextAction = property.getState().getNextAction();
+        List<HashMap<String, Object>> historyMap;
 
         String userDesignationList = propertyTaxCommonUtils.getAllDesignationsForUser(securityUtils.getCurrentUser().getId());
         model.addAttribute("transactionType", APPLICATION_TYPE_DEMOLITION);
@@ -169,6 +171,11 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
 
         model.addAttribute("userDesignationList", userDesignationList);
         model.addAttribute("designation", COMMISSIONER_DESGN);
+        if (property.getState() != null) {
+            historyMap = propService.populateHistory(property);
+            model.addAttribute("historyMap", historyMap);
+            model.addAttribute("state", property.getState());
+        }
         if (currState.endsWith(WF_STATE_REJECTED) || nextAction.equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING)
                 || currState.endsWith(WFLOW_ACTION_NEW)) {
             model.addAttribute("isEmployee", propService.isEmployee(securityUtils.getCurrentUser()));
