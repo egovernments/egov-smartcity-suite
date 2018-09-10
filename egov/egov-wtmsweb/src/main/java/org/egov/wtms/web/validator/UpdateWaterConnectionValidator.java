@@ -48,8 +48,6 @@
 
 package org.egov.wtms.web.validator;
 
-import java.math.BigDecimal;
-
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.utils.WaterTaxUtils;
@@ -57,6 +55,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
+
+import java.math.BigDecimal;
+
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 @Component
 public class UpdateWaterConnectionValidator implements Validator {
@@ -68,16 +70,20 @@ public class UpdateWaterConnectionValidator implements Validator {
     private ConnectionDemandService connectionDemandService;
 
     @Override
-    public boolean supports(final Class<?> clazz) {
+    public boolean supports(Class<?> clazz) {
         return WaterConnectionDetails.class.equals(clazz);
     }
 
     @Override
-    public void validate(final Object target, final Errors errors) {
-        // Due to additonal parameter create new method
+    public void validate(Object target, Errors errors) {
+        WaterConnectionDetails connectionDetails = (WaterConnectionDetails) target;
+        if (isBlank(connectionDetails.getApprovalNumber()))
+            errors.rejectValue("approvalNumber", "approvalNumber.required");
+        if (connectionDetails.getApprovalDate() == null)
+            errors.rejectValue("approvalDate", "approvalDate.required");
     }
 
-    public boolean validateRegularizationAmount(final WaterConnectionDetails waterConnectionDetails) {
+    public boolean validateRegularizationAmount(WaterConnectionDetails waterConnectionDetails) {
         return connectionDemandService.getTotalDemandAmountDue(
                 waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand()).compareTo(BigDecimal.ZERO) > 0 ? true : false;
     }

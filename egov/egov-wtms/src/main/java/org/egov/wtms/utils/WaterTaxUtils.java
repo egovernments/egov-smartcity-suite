@@ -94,6 +94,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -110,14 +111,21 @@ import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLIST
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ADDITIONALCONNECTIONALLOWEDIFPTDUE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPCONFIGVALUEOFENABLED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CLOSERDIGSIGNPENDING;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CLOSERINPROGRESS;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNPENDING;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_FEEPAID;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_RECONNCTIONINPROGRESS;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_RECONNDIGSIGNPENDING;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.BOUNDARY_TYPE_CITY;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CONNECTIONALLOWEDIFPTDUE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.DEPUTY_ENGINEER_DESIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.DOCUMENTREQUIREDFORBPL;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.EXECUTIVE_ENGINEER_DESIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.JUNIOR_OR_SENIOR_ASSISTANT_DESIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MULTIPLENEWCONNECTIONFORPID;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.MUNICIPAL_ENGINEER_DESIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTIONALLOWEDIFPTDUE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REASSIGNMENT;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_ADMIN;
@@ -130,6 +138,8 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_SUPERUSER;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_ULBOPERATOR;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SENDEMAILFORWATERTAX;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SENDSMSFORWATERTAX;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.SUPERIENTEND_ENGINEER_DESIGN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.SUPERINTENDING_ENGINEER_DESIGNATION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.USERNAME_ANONYMOUS;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAXWORKFLOWDEPARTEMENT;
 import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
@@ -724,6 +734,32 @@ public class WaterTaxUtils {
         User user = getUserId() == null ? securityUtils.getCurrentUser() : userService.getUserById(getUserId());
         Optional<Role> roles = user.getRoles().stream().filter(role -> userRole.equals(role.getName())).findFirst();
         return roles.isPresent() ? roles.get().getName() : EMPTY;
+    }
+
+    public boolean currentUserIsApprover(String currentUserDesignation) {
+        return COMMISSIONER_DESGN.equalsIgnoreCase(currentUserDesignation)
+                || DEPUTY_ENGINEER_DESIGN.equalsIgnoreCase(currentUserDesignation)
+                || EXECUTIVE_ENGINEER_DESIGN.equalsIgnoreCase(currentUserDesignation)
+                || MUNICIPAL_ENGINEER_DESIGN.equalsIgnoreCase(currentUserDesignation)
+                || SUPERIENTEND_ENGINEER_DESIGN.equalsIgnoreCase(currentUserDesignation)
+                || SUPERINTENDING_ENGINEER_DESIGNATION.equalsIgnoreCase(currentUserDesignation);
+    }
+
+    public boolean isConnectionInProgress(String connectionStatus) {
+        return Arrays.asList(APPLICATION_STATUS_FEEPAID, APPLICATION_STATUS_DIGITALSIGNPENDING, APPLICATION_STATUS_CLOSERDIGSIGNPENDING,
+                APPLICATION_STATUS_RECONNDIGSIGNPENDING, APPLICATION_STATUS_RECONNCTIONINPROGRESS, APPLICATION_STATUS_CLOSERINPROGRESS)
+                .contains(connectionStatus);
+    }
+
+    public boolean currentUserIsCommissionerAndConnectionInProgress(WaterConnectionDetails waterConnectionDetails) {
+        return COMMISSIONER_DESGN.equals(loggedInUserDesignation(waterConnectionDetails))
+                && isConnectionInProgress(waterConnectionDetails.getStatus().getCode());
+    }
+
+    public boolean isSanctionDetailsEnabled(WaterConnectionDetails waterConnectionDetails) {
+        return currentUserIsApprover(loggedInUserDesignation(waterConnectionDetails))
+                && (waterConnectionDetails.getApprovalNumber() == null
+                || !APPLICATION_STATUS_DIGITALSIGNPENDING.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()));
     }
 
 }
