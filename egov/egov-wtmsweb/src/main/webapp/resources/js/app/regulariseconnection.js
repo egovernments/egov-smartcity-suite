@@ -46,8 +46,8 @@
  *
  */
 $(document).ready(function(){
-	
-	loadPropertyDetails();
+	if($("#mode").val()!="error")
+		loadPropertyDetails();
 	
 	var typeOfApplication=$("#typeOfConnection").val();
 	var propertyId = $("#propertyId").val();
