@@ -1376,15 +1376,15 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
             List<Object> params = new LinkedList<>();
             if (isNotBlank(fromDate)) {
                 sql.append(" and iv.voucherHeaderId.voucherDate>=? ");
-                params.add(sdf.format(formatter.parse(fromDate)));
+                params.add(new Date(sdf.format(formatter.parse(fromDate))));
             }
             if (isNotBlank(toDate)) {
                 sql.append(" and iv.voucherHeaderId.voucherDate<=? ");
-                params.add(sdf.format(formatter.parse(toDate)));
+                params.add(new Date(sdf.format(formatter.parse(toDate))));
             }
             if (bankaccount != null && bankaccount != -1) {
                 sql.append(" and  ih.bankAccountId.id=? ");
-                params.add(bankaccount);
+                params.add(Long.valueOf(bankaccount));
             }
             if (isNotBlank(instrumentNumber)) {
                 sql.append(" and  ih.instrumentNumber=? ");
@@ -1392,7 +1392,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
             }
             if (department != null && department != -1) {
                 sql.append(" and  iv.voucherHeaderId.vouchermis.departmentid.id=? ");
-                params.add(department);
+                params.add(Long.valueOf(department));
             }
             if (isNotBlank(voucherHeader.getVoucherNumber())) {
                 sql.append(" and  iv.voucherHeaderId.voucherNumber=? ");
