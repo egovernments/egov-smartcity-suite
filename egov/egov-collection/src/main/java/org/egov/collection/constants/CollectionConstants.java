@@ -216,6 +216,7 @@ public final class CollectionConstants {
     public static final String QUERY_INSTRUMENTTYPE_BY_TYPE = "getInstrumentTypeByType";
     public static final String QUERY_CHARTOFACCOUNT_BY_INSTRTYPE = "getChartofAccountByInstrumentType";
     public static final String QUERY_CHARTOFACCOUNT_BY_INSTRTYPE_SERVICE = "getCOAByInstrumentTypeAndService";
+    public static final String QUERY_CHARTOFACCOUNT_BY_INSTRTYPE_SERVICE_BILLSERVICE = "getCOAByInstrumentTypeAndServiceAndBillservice";
     public static final String QUERY_ALLCOUNTERS = "getAllCounters";
     public static final String QUERY_ZONE_OF_RECEIPTS = "getAllReceiptBoundary";
     public static final String QUERY_SERVICE_BY_NAME = "getServicesByName";

@@ -47,6 +47,15 @@
  */
 package org.egov.collection.entity;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
 import org.egov.commons.CChartOfAccounts;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.entity.Auditable;
@@ -57,23 +66,14 @@ import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-
 @Entity
 @Table(name = "EGCL_SERVICE_INSTRUMENTACCOUNTS")
 @SequenceGenerator(name = ServiceInstrumentAccounts.SEQ_EGCL_SERVICE_INSTRUMENTACCOUNTS, sequenceName = ServiceInstrumentAccounts.SEQ_EGCL_SERVICE_INSTRUMENTACCOUNTS, allocationSize = 1)
 @AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
-    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate"),
-    @AuditOverride(forClass = AbstractAuditable.class, name = "createdDate") })
+        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate"),
+        @AuditOverride(forClass = AbstractAuditable.class, name = "createdDate") })
 public class ServiceInstrumentAccounts extends AbstractAuditable implements Auditable {
-    
+
     private static final long serialVersionUID = -3603055750726983915L;
 
     public static final String SEQ_EGCL_SERVICE_INSTRUMENTACCOUNTS = "SEQ_EGCL_SERVICE_INSTRUMENTACCOUNTS";
@@ -96,6 +96,11 @@ public class ServiceInstrumentAccounts extends AbstractAuditable implements Audi
     @JoinColumn(name = "instrumenttype", nullable = false)
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private InstrumentType instrumentType;
+
+    @ManyToOne
+    @JoinColumn(name = "billservicedetails")
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    private ServiceDetails billServiceDetails;
 
     public CChartOfAccounts getChartOfAccounts() {
         return chartOfAccounts;
@@ -129,6 +134,14 @@ public class ServiceInstrumentAccounts extends AbstractAuditable implements Audi
     @Override
     public void setId(final Long id) {
         this.id = id;
+    }
+
+    public ServiceDetails getBillServiceDetails() {
+        return billServiceDetails;
+    }
+
+    public void setBillServiceDetails(ServiceDetails billServiceDetails) {
+        this.billServiceDetails = billServiceDetails;
     }
 
 }
