@@ -145,6 +145,7 @@ import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
+import static org.elasticsearch.search.aggregations.AggregationBuilders.sum;
 
 @Service
 @Transactional(readOnly = true)
@@ -602,11 +603,12 @@ public class SewerageIndexService {
 
     public Map<String, List<SewerageApplicationDetails>> wardWiseBoolQueryFilter(final List<String> wardList, final List<String> propertyTypeList) {
         final Map<String, List<SewerageApplicationDetails>> dcbMap = new HashMap<>();
-        BoolQueryBuilder boolQuery = new BoolQueryBuilder();
-        boolQuery = boolQuery.must(matchQuery(ULB_NAME, ApplicationThreadLocals.getCityName()));
-        boolQuery = boolQuery.filter(termsQuery(PROPERTY_TYPE, propertyTypeList));
-        boolQuery = boolQuery.filter(termsQuery(WARD, wardList));
-        boolQuery = boolQuery.filter(matchQuery(ACTIVE, true));
+         
+        BoolQueryBuilder boolQuery = boolQuery().must(matchQuery(ULB_NAME, ApplicationThreadLocals.getCityName()))
+                .filter(termsQuery(PROPERTY_TYPE, propertyTypeList))
+                .filter(termsQuery(WARD, wardList))
+                .filter(matchQuery(ACTIVE, true))
+                .mustNot(matchQuery(APPLICATION_TYPE, "Close Sewerage Connection"));
         final SearchQuery pagedSearchQuery = preparePagedSearchRequest(boolQuery);
 
         final Iterable<SewerageIndex> searchResultList = sewerageIndexRepository.search(pagedSearchQuery);
@@ -616,8 +618,7 @@ public class SewerageIndexService {
             final SewerageApplicationDetails sewerageApplicationDetails = sewerageApplicationDetailsService
                     .findByApplicationNumber(indexObj.getApplicationNumber());
 
-            if (sewerageApplicationDetails != null
-                    && !sewerageApplicationDetails.getApplicationType().getCode().equals(CLOSESEWERAGECONNECTION)){
+            if (sewerageApplicationDetails != null){
                 if (dcbMap.get(indexObj.getWard()) != null)
                     dcbMap.get(indexObj.getWard()).add(sewerageApplicationDetails);
                 else {
@@ -735,9 +736,10 @@ public class SewerageIndexService {
     public Page<SewerageIndex> wardwiseBaseRegisterQueryFilter(final String ulbName,
             final List<String> wardList, final SewerageBaseRegisterResult sewerageBaseRegisterResult) {
 
-        BoolQueryBuilder boolQuery = boolQuery().filter(matchQuery(ULB_NAME, ulbName));
-        boolQuery = boolQuery.filter(termsQuery(WARD, wardList));
-        boolQuery = boolQuery.filter(matchQuery(ACTIVE, true));
+        BoolQueryBuilder boolQuery = boolQuery().filter(matchQuery(ULB_NAME, ulbName))
+                .filter(termsQuery(WARD, wardList))
+                .filter(matchQuery(ACTIVE, true))
+                .mustNot(matchQuery(APPLICATION_TYPE, "Close Sewerage Connection"));
 
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices(SEWERAGE).withQuery(boolQuery)
                 .withPageable(new PageRequest(sewerageBaseRegisterResult.pageNumber(), sewerageBaseRegisterResult.pageSize(),
@@ -749,9 +751,10 @@ public class SewerageIndexService {
 
     public List<SewerageIndex> getAllwardwiseBaseRegisterOrderByShscNumberAsc(final String ulbName,
             final List<String> wardList) {
-        BoolQueryBuilder boolQuery = boolQuery().filter(matchQuery(ULB_NAME, ulbName));
-        boolQuery = boolQuery.filter(termsQuery(WARD, wardList));
-        boolQuery = boolQuery.filter(matchQuery(ACTIVE, true));
+        BoolQueryBuilder boolQuery = boolQuery().filter(matchQuery(ULB_NAME, ulbName))
+                .filter(termsQuery(WARD, wardList))
+                .filter(matchQuery(ACTIVE, true))
+                .mustNot(matchQuery(APPLICATION_TYPE, "Close Sewerage Connection"));
         final FieldSortBuilder sort = new FieldSortBuilder(SHSC_NUMBER).order(SortOrder.ASC);
 
         final SearchQuery countQuery = new NativeSearchQueryBuilder().withIndices(SEWERAGE).withQuery(boolQuery).build();
@@ -770,12 +773,12 @@ public class SewerageIndexService {
 
         final SearchRequestBuilder searchRequestBuilder = elasticsearchTemplate.getClient()
                 .prepareSearch(SEWERAGE).setQuery(boolQuery)
-                .addAggregation(AggregationBuilders.sum(ARREARSSUM).field("arrearAmount"))
-                .addAggregation(AggregationBuilders.sum(DEMAND_AMOUNT_SUM).field("demandAmount"))
-                .addAggregation(AggregationBuilders.sum(TOTALDEMAND_AMOUNT_SUM).field("totalAmount"))
-                .addAggregation(AggregationBuilders.sum(COLLECTED_ARREAR_AMOUNT).field(COLLECTED_ARREAR_AMOUNT))
-                .addAggregation(AggregationBuilders.sum(COLLECTED_DEMAND_AMOUNT).field(COLLECTED_DEMAND_AMOUNT))
-                .addAggregation(AggregationBuilders.sum(EXTRA_ADVANCE_AMOUNT).field(EXTRA_ADVANCE_AMOUNT));
+                .addAggregation(sum(ARREARSSUM).field("arrearAmount"))
+                .addAggregation(sum(DEMAND_AMOUNT_SUM).field("demandAmount"))
+                .addAggregation(sum(TOTALDEMAND_AMOUNT_SUM).field("totalAmount"))
+                .addAggregation(sum(COLLECTED_ARREAR_AMOUNT).field(COLLECTED_ARREAR_AMOUNT))
+                .addAggregation(sum(COLLECTED_DEMAND_AMOUNT).field(COLLECTED_DEMAND_AMOUNT))
+                .addAggregation(sum(EXTRA_ADVANCE_AMOUNT).field(EXTRA_ADVANCE_AMOUNT));
 
         final SearchResponse searchResponse = searchRequestBuilder.execute().actionGet();
         if (searchResponse != null && searchResponse.getAggregations() != null) {
