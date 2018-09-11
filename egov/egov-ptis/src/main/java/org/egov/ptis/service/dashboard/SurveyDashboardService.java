@@ -484,7 +484,7 @@ public class SurveyDashboardService {
         if (completedApplicationsMap.get(name) != null)
             surveyResponse.setTotalCompleted(completedApplicationsMap.get(name));
         surveyResponse.setTotalPending(
-                surveyResponse.getTotalReceived() - surveyResponse.getTotalClosed() - surveyResponse.getTotalCancelled());
+                surveyResponse.getTotalReceived() - surveyResponse.getTotalClosed());
         if (approvedTotalMap.containsKey(name)) {
             approvedSysTax = approvedTotalMap.get(name).get(0).get("approvedSystemTax");
             approvedTotalTax = approvedTotalMap.get(name).get(1).get("totalApprovedTax");
