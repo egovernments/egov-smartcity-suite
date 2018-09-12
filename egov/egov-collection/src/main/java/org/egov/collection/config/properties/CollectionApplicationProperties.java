@@ -137,7 +137,7 @@ public class CollectionApplicationProperties {
 
     public String sbimopsHoa(final String cityCode, final String serviceCode) {
         if (StringUtils.isNotBlank(environment.getProperty(cityCode.concat(".").concat(serviceCode).concat(HOASUFFIX))))
-            return environment.getProperty(cityCode.concat(serviceCode).concat(HOASUFFIX));
+            return environment.getProperty(cityCode.concat(".").concat(serviceCode).concat(HOASUFFIX));
         else
             return environment.getProperty(cityCode.concat(HOASUFFIX));
     }
