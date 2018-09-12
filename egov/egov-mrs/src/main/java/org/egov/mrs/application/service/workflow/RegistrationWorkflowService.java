@@ -584,7 +584,6 @@ public class RegistrationWorkflowService {
     public void onCreateRegistrationAPI(MarriageRegistration marriageRegistration) {
         Position assignee = null;
         WorkFlowMatrix wfmatrix = null;
-        User nextOwner = null;
         wfmatrix = marriageRegistrationWorkflowService.getWfMatrix(marriageRegistration.getStateType(), null, null,
                 null,
                 MarriageConstants.WFSTATE_MARRIAGEAPI_NEW, null);
@@ -597,14 +596,16 @@ public class RegistrationWorkflowService {
                         "No Commisioner is configured to receive Marriage regitration");
             assignee = assignment.get(0).getPosition();
         } else {
-            nextOwner = users.iterator().next();
-            if (nextOwner != null) {
-                List<Position> assigneePositions = positionMasterService.getPositionsForEmployee(nextOwner.getId(), new Date());
-                if (assigneePositions.isEmpty())
-                    throw new ApplicationRuntimeException("No position defined for Marriage Registrar role");
-                else
-                    assignee = assigneePositions.iterator().next();
+            List<Position> assigneePositions = new ArrayList<>();
+            for (User nextOwner : users) {
+                assigneePositions = positionMasterService.getPositionsForEmployee(nextOwner.getId(), new Date());
+                if (!assigneePositions.isEmpty()) {
+                    assignee = assigneePositions.get(0);
+                    break;
+                }
             }
+            if (assigneePositions.isEmpty())
+                throw new ApplicationRuntimeException("No position defined for Marriage Registrar role");
         }
         marriageRegistration.transition()
                 .start()
